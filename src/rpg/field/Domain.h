@@ -54,7 +54,6 @@ namespace Rpg {
       using Base::setFileMaster;
       using Base::readParameters;
       using Base::readRGridFieldHeader;
-      using Base::setUnitCell;
       using Base::makeBasis;
       using Base::unitCell;
       using Base::mesh;

@@ -210,9 +210,9 @@ namespace Prdc
    */
    template <int D>
    void FilmFieldGenExtBase<D>::setParameter(std::string name, 
-                                        DArray<int> ids, 
-                                        double value,
-                                        bool& success)
+                                             DArray<int> ids, 
+                                             double value,
+                                             bool& success)
    {
       success = true;
       bool wasAthermal = isAthermal();
@@ -223,12 +223,6 @@ namespace Prdc
       } else {
          success = false;
       }
-      
-      // If walls were athermal but are not anymore, then the h fields
-      // have not been allocated. Thus, we must call allocate() again.
-      if (wasAthermal && success && (!isAthermal())) {
-         allocate();
-      }
    }
 
    /*
@@ -236,8 +230,8 @@ namespace Prdc
    */
    template <int D>
    double FilmFieldGenExtBase<D>::getParameter(std::string name, 
-                                          DArray<int> ids, 
-                                          bool& success) 
+                                               DArray<int> ids, 
+                                               bool& success) 
    const
    {
       success = true;

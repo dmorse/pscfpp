@@ -1,120 +1,302 @@
-Unit Cell Modification
-----------------------
+Proposed Use of Signals
+-----------------------
 
-General Proposal: Consider using signals to keep track of changes to unit 
-cell dimensions, possibly other changes. 
+General Proposal: Consider using signals to keep track of basis 
+initialization, changes in unit cell dimensions, changes in input 
+fields (w, h and mask)
 
-Changes to unit cell cause changes in internal parameters in all Block 
-objects, as well as WaveList in Rpg. Signals sent to Mixture and 
-WaveList would do the trick. The Mixture::modifyUnitCell() method could
-call 
+Strategy:
+
+ - Have the Basis use a private Signal<void> object to make completion of
+   Basis::makeBasis trigger a call to System::allocateBasis(), which 
+   allocates the basis representations for w_ and c_ fields. This would 
+   call Signal<void>::notify just before exiting Basis::makeBasis()
+
+ - Use a Signal<void> objected owned by Prdc::WContainerReal() that 
+   is triggered by all functions that modify fields. Have changes 
+   to System::w_ or System::h_ trigger calls to a new function
+   System::clearCFields() that simply set System::hasCFields_ == false 
+   and System::hasFreeEnergy_ == false.
+
+ - Add a Signal<> member to Prdc::MaskTmpl, and have changes to
+   System::mask_ also trigger clearing of hasCFields_ ahd hasFreeEnergy_ 
+   flags, similar to stategy for WContainerReal.
+
+ - Use FieldIo::readFieldHeader in all functions that read field file
+   headers. This uses unit cell information in the header to build a
+   basis if needed, and does so whether or not the UnitCell<D> is the
+   main system unit cell, Domain::unitCell_, or a temporary object.
+   This is sufficient to guarantee that a basis will be constructed
+   the first time a field file is read, if not sooner.
+
+ - Have member functions of UnitCell<D> that modify data use a Signal<>.
+   For the system unit cell,  Domain::unitCell_, register the functions
+
+      Basis::makeBasis() [if Domain has a group]
+      WaveList::clearUnitCellData() 
+      Mixture::clearUnitCellData() 
+
+   as observers. Modify Basis::makeBasis() [possibly renamed] so that it 
+   returns immediately if the basis is already constructed, and creates 
+   a Basis only if needed.
+
+   Every change to the main system unit cell by any mechanism in a system
+   with a space group declared will then cause construction of the basis 
+   to be checked, and constructed if needed.
+
+Changes to System interface:
+
+One possible benefit of the strategy outlined above is that, by automating 
+the synchronization of objects that belong to different member of the 
+System, it could allow us to provide a simpler public interface for the
+System class, with more direct read/write access to some members
+(e.g., System::w_, and System::h_) and fewer member functions.
+
+Basis (Discussion):
+
+ - Using a signal that is triggered by basis construction seems like
+   the most straightforward part of this. It won't change the public
+   interface of any class other than Basis, and will simplify the
+   source code for System slightly. We should just do this.
+
+Fields (Discussion):
+
+ - Addding a signal to  the WContainerReal class and registering the
+   clearUnitCellData functions as observer functions is straightforward.
+   It won't change public interfaces of other classes, and would just
+   allow us to remove some checks from members of the System class that
+   modify fields. We should just go ahead and to this first, then 
+   consider further changes.
+
+ - We can't provide a public non-const reference to System::w_ with the 
+   current interface of Prdc::WContainerReal, because the readBasis and 
+   readRGrid functions take a UnitCell<D> as an argument, and public 
+   read-write access would not enforce the requirement that reading a w 
+   field file should automatically update Domain::unitCell_.
+
+ - Proposed change: Have Prdc::WContainerReal own a private UnitCell<D>*
+   pointer that points to a unit cell object that would be modified
+   whenever a field file is read by calling readBasis or readRGrid. 
+   This would be set by a new public function WContainerReal::setUnitCell. 
+
+      * Set the UnitCell for System::w_ to be Domain::unitCell_
+        This could be done in the System constructor.
+
+      * The UnitCell for System::h_ could be either Domain::unitCell_
+        or a mutable tmpUnitCell_ object owned by the System.
+
+   Reading w fields from file by calling w().readBasis(std::istream*& ) or 
+   w().readRGrid(std::istream& ) would then modify the main unit cell owned 
+   by the Domain. Unit cell information in external field files could 
+   either be discarded or used to update unit cell - we could choose 
+   either policy, and the code would enforce our choice.
+
+ - These changes also look relatively straightforward, and so should be
+   implemented soon.
+
+Unit Cell (Discussion):
+
+ - This appears to be a bit more complicated.
+
+ - Most members of the Domain are designed to be immutable after 
+   initialization (Mesh, lattice, groupName, SpaceGroup, Basis, FFT).  It 
+   thus seems like a bad idea to have the System provide read/write access 
+   to the entire Domain object via a non-const reference - this would 
+   allow users to do things that they should not be allowed to do. 
+
+ - Alternative 1: We could provide a UnitCell<D>& System::unitCellCell() 
+   accessor that returned just the Domain::unitCell_ as a non-const 
+   reference. We would rely on the Signal embedded in the 
+   Domain::unitCell_ to guarantee that any changes to Domain::unitCell_ 
+   trigger appropriate changes elsewhere. In this strategy, I think we
+   might need to have changes to Domain::unitCell_ trigger an attempted
+   basis construction.
+
+ - Alternative 2: We could continue to provide one or more 
+   setUnitCell(...) member functions of System, which would just require 
+   fewer explicit actions triggered by modification of the unit cell. We 
+   might still be able to get rid of the setUnitCell functions of Domain.
+   The System setUnitCell function(s) could call Basis::makeBasis 
+   explicitly if the basis is not initialized, as done now. This could 
+   make it unnecessary to register Basis::makeBasis as an observer of 
+   the signal that registers changes in unit cell parameters.
+ 
+   Strategy underlying alternative 2: The only ways of using a System<D>& 
+   reference to modify the system unit cell would be by reading a file, 
+   and thereby indirectly using FieldIo::readFieldHeader to read a field 
+   file header, or by calling System::setUnitCell . Putting calls to 
+   makeBasis in functions FieldIo::readFieldHeader and System::setUnitCell 
+   might be enough to guarantee that the basis is constructed whenever 
+   unit cell information is obtained via a System<D>.  It would remain 
+   possible to modify Domain::unitCell_ and not automatically construct 
+   a basis via access to a non-const reference to Domain, but the System
+   only provides a const reference to the domain. That security risk 
+   already exists within any class that has a pointer to the domain or 
+   unit cell.  This is not a risk of that can cause invalid data - we are
+   just trying to make sure that the basis somehow get constructed before
+   it is needed. Putting a signal within Domain::unitCell_ that calls the
+   clearUnitCellData functions is enough to guarantee data validity (but
+   not that basis is constructed before it is needed).
+
+   Comment: I suspect that the 3 existing setUnitCell functions defined
+   in both System and DomainReal are not all necessary, and that we could 
+   reduce this to 1 or 2 functions in one or both classes.
+
+   Comment: Domain already provides public access to the UnitCell 
+   through an accessor that provides non-const access, in addition to the 
+   setUnitCell functions. The DomainReal::setUnitCell functions provide
+   a little bit convenience, but don't provide any real security in 
+   contexts in which one has a non-const reference to the Domain.
+   Perhaps we should try to do away with these functions and only try 
+   to maintain restrictive access that builds a basis when needed via
+   the System.
+
+   Conclusion: I am leaning toward strategy 2.
+
+===========================================================================
+Basis class:
+------------
 
 Proposed approach:
 
-   (1) Add a Signal<> unitCellModifySignal_ object to the Domain.
+  - Add a private Signal<void> signalPtr_ member to the Basis class and
+    dynamically allocate a Signal<void> object.
 
-   (2) Give the UnitCell class a pointer to a Signal<> objects, which
-       is null by default, so that it can manage side-affects of
-       changes to its own internal state when that pointer is not null. 
+  - Call signal_.notify() just before exit from Basis::makeBasis.
 
-   (3) Behavior of the UnitCell<D> should be unchanged when the pointer
-       to the Signal<> is null, or when the associated Signal<> has no
-       observers.
+  - Add System::allocateFieldsBasis() as an observer (make sure this is a
+     public member of System).
 
-Unit Cell classes (details):
+Comment:
 
-   - Add private member Signal<>* signalPtr_ to UnitCell
+  Propose using a dynamically allocated Signal<void> to allow use of a
+  forward declaration in the Basis.h header file, to keep the header 
+  file clean and compact.
 
-   - Copy construction of a UnitCell is prohibited (already true)
+===========================================================================
+WContainerReal:
+----------------
 
-   - Pointer signalPtr_ is NOT modified by the assignment (=) operator
+Proposal:
 
-   - Signal<>::notify method is called by 
+   1) Add a Signal<void> signalPtr_ variable to the WContainerReal 
+      template. Dynamically allocate a Signal in the constructor.
+
+      [Use dynamically allocated object to allow the use of forward
+       declaration for the Signal class template, and keep the header
+       small and clean].
+
+   2) Add a public WContainerReal::signal() member to access the signal.
+
+   3) Call signal().notify() in all functions that modify fields.
+
+   4) Add a public member function System::clearCFields() that sets
+      System::hasCFields_ == false and System::hasFreeEnergy_ == false.
+
+   5) Register System::clearCFields to the WFieldContainer Signal<> as 
+      an observer for w_ and h_. Registration could be completed in the 
+      System constructor.
+
+===========================================================================
+MaskTmpl:
+---------
+
+   - Closely analogous to WContainerReal
+
+   - Add System::clearCFields as an observer to the MaskTmpl::signal()
+     in the System constructor
+
+===========================================================================
+Unit Cell:
+
+Unit Cell Class:
+----------------
+
+Proposed approach: Because the UnitCell is a small object that is 
+sometimes created temporarily, have it own a pointer to a Signal that
+is created externally rather than owning a Signal<> member.
+
+   (1) Give the UnitCell class a member variable 
+
+          Signal<>* signalPtr_
+
+       and functions 
+
+           void setSignal(Signal<>& )
+           bool hasSignal();
+           Signal<>& signal();
+
+   (2) Add a private member variable Signal<> unitCellSignal_ object to the 
+       Domain. Associate Domain::unitCellSignal_ with Domain::unitCell_.
+
+   (3) If a UnitCell has an associated Signal, signalPtr_->notify must
+       be called by all functions that modify the unit cell parameters
 
           UnitCell<D>::set(UnitCell<D>::Lattice, 
                            FSArray<double, 6> const& parameters)
 
           UnitCell<D>::operator = (UnitCell<D> const &)
 
-          // friend functions
-
           operator >> 
 
-          readUnitCellHeader 
+   (5) Pointer signalPtr_ is NOT copied by the assignment (=) operator.
+       A copy of a unit cell does not inherit its signal.
 
-Domain class details :
+   (6) Add observers:
 
-   - Associate unit cell that is owned by Domain with associated Signal<>.
-     This could be done in the Domain constructor.
+         Domain::WaveList::clearUnitCellParameters()
+         Mixture::clearUnitCellParameters()
+         System::clearCFields() [See below for discussion of new function]
 
-   - Provide public member function to add observers to signal.
-
-     template <class Observer>
-     void 
-     addUnitCelllModifyObserver(Observer&, void (Observers::*methodPtr)());
-
-   - Domain does not need to provide public access to the Signal<>, or a 
-     function to explicitly call Signal<>::notify . Notification should 
-     happen if and only if the UnitCell is actually modified, which can
-     be enforced if only the UnitCell can call notify. 
-
-
-Observers:
-
-   Mixture::modifyUnitCell 
-       - Mark all blocks as dirty (invalid)
-
-   Domain::WaveList::modifyUnitCell 
-       - Mark wave magnitudes and dot products as dirty (invalid)
-
-   We could also consider making Basis::makeBasis() an observer.
-
-   General Policy:
-
-       - Notification is used to mark associated data as invalid.
-       - Data is updated when needed, by checking validity before access
-
-       -> Just in time updates, avoids unnecessary or redundant updates.
-
+    Note: We could not add Basis::makeBasis as a direct observer because 
+    the basis is only constructed when a group is declared, and that 
+    isn't known within the UnitCell or Basis. There are ways around this,
+    by calling a makeBasis function declared in the Domain_, but we don't
+    need basis construction to be triggered in strategy #2 (above), and
+    I'm leaning toward stategy #2.
 
 ===========================================================================
+Plan (order of changes):
 
-Signals to note W Field Modification (?????)
---------------------------------------------
+For each stage, implement in Rpc first, then in Rpg, before moving on to
+next stage. Each stage should yield functional, fully tested code.
 
-Proposal:
+Stage 1:
 
-   1) Add a Signal<> member to the WFieldContainer.
+    - Add Signal to Prdc::Basis [signalPtr_ and signal() accessor function]
+    - Add signal().notify() to Basis::makeBasis
+    - Register allocateSystemBasis as an observer in System
+    - Remove explicit allocateSystemBasis calls in System
 
-   2) Add public functions System::clearCFields() and System::clearFreeEnergy()
-       to System that sets hasCFields_ and hasFreeEnergy_ false respectively.
+Stage 2: 
 
-   3) Add the clear functions to the WFieldContainer Signal<> as observers
+    - Add clearCFields() function to System
+    - Add Signal<void> signalPtr_ and signal() to WContainerReal.
+      Dynamically construct a new Signal<void>() in w-field constructor.
+    - Add calls to signal().notify() anywhere that the field is modified
+    - Add System::clearCFields() as observer in System constructor
+    - Remove explicit calls to set hasCFields_ and hasFreeEnergy false
+      in the source code for System.
 
-   4) Features added to WFieldContainer can be applied to external fields
-      as well as w fields.
+Stage 3:
 
-Discussion:
+    - Add Signal<> to DomainReal
+    - Add signalPtr_ to UnitCell, & setSignal, hasSignal, signal() functions
+    - Set signal in DomainReal::UnitCell_ in DomainReal constructor
+    - Register clearUnitCellData function or functions
+    - Remove explicit calls to clearUnitCellData functions
 
-   - Retains current system for keeping track of the relationship between 
-     WFields and CFields, just automates the process of marking variables 
-     as dirty.
+Stage 4 (final):
 
-   - Might make the System setWBasis and setWRGrid functions trivial or 
-     unnecssary.  Might not get rid of the need for readWBasis, since we 
-     may still need the code to peek at the header in order to construct 
-     a basis, unless we rely on the FieldIo to do this.
+    - Confirm that functions that read and modify w, h, and mask fields
+      are only calling corresponding member functions of field containers,
+      and that the call-through function has thus become unnecessary.
 
-===========================================================================
-Conclusion:
- 
-   - Recommend against the use of signals to keep track of the relationship
-     between W and C fields.  Not worth the effort, and harder to understand
-     because it is less explicit.
+    - Change design of WContainerReal to use a stored pointer to an
+      associated unit cell.
 
-   - Leaning against using it for UnitCell as well, since the only thing it
-     would accomplish would be allowing us to all access to Domain::unitCell_
-     via a non-const reference, and I'm not sure we should do that.
+    - Add public member functions to System that return w(), h(),
+      and mask() as non-const references.
 
-   Maybe the current system is not bad. It is more explicit and easier to
-   understand than the hidden use of Signals.
+    - Replace calls to modification functions by functions that 
+      access subobjects directly. 

@@ -19,5 +19,5 @@ sources.mk    - list of source files (makefile fragment)
 
 Doxygen documentation files:
 
-fts.mod       - defintion of the Rpc_Fts_Module doxygen topic module
+fts.mod       - definition of the Rpc_Fts_Module doxygen topic module
 

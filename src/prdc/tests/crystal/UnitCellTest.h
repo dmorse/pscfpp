@@ -7,6 +7,8 @@
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/replicateUnitCell.h>
+
+#include <util/signal/Signal.h>
 #include <util/math/Constants.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -1083,17 +1085,21 @@ public:
       // printEndl();
 
       UnitCell<3> v;
-      TEST_ASSERT(v.nObserver() == 0);
+      Signal<void> signal;
+      v.setSignal(signal);
+
+      TEST_ASSERT(v.hasSignal());
+      TEST_ASSERT(v.signal().nObserver() == 0);
 
       Observer observer1;
       Observer observer2;
       void (Observer::*functionPtr)() = nullptr;
       functionPtr = &Observer::receive;
 
-      v.addObserver(observer1, functionPtr);
-      TEST_ASSERT(v.nObserver() == 1);
-      v.addObserver(observer2, &Observer::receive);
-      TEST_ASSERT(v.nObserver() == 2);
+      v.signal().addObserver(observer1, functionPtr);
+      TEST_ASSERT(v.signal().nObserver() == 1);
+      v.signal().addObserver(observer2, &Observer::receive);
+      TEST_ASSERT(v.signal().nObserver() == 2);
 
       TEST_ASSERT(!observer1.notified);
       TEST_ASSERT(!observer2.notified);
@@ -1107,7 +1113,7 @@ public:
       TEST_ASSERT(isValidDerivative(v));
       TEST_ASSERT(observer1.notified);
       TEST_ASSERT(observer2.notified);
-      TEST_ASSERT(v.nObserver() == 2);
+      TEST_ASSERT(v.signal().nObserver() == 2);
 
       observer1.notified = false;
       observer2.notified = false;
@@ -1119,10 +1125,10 @@ public:
       v.setParameters(parameters);
       TEST_ASSERT(observer1.notified);
       TEST_ASSERT(observer2.notified);
-      TEST_ASSERT(v.nObserver() == 2);
+      TEST_ASSERT(v.signal().nObserver() == 2);
 
-      v.clearObservers();
-      TEST_ASSERT(v.nObserver() == 0);
+      v.signal().clear();
+      TEST_ASSERT(v.signal().nObserver() == 0);
       TEST_ASSERT(observer1.notified);
       TEST_ASSERT(observer2.notified);
 

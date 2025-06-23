@@ -19,7 +19,7 @@
 #include <util/misc/FileMaster.h>        // member
 
 
-// Forward references
+// Forward declarations
 namespace Util {
    template <typename T> class DArray;
    template <typename T, int N> class FSArray;
@@ -188,8 +188,8 @@ namespace Rpc {
       * real-space grid (r-grid format). System unit cell parameters
       * are also set to values read from the field file header. Upon
       * exit, both w().basis() and w().rgrid() are set, w().hasData()
-      * and w().isSymmetric() are true, while hasCFields() and
-      * hasFreeEnergy() are false.
+      * and w().isSymmetric() are true, while hasCFields(), 
+      * hasFreeEnergy(), and hasStress() are false.
       *
       * If a space group has been set but a basis has not yet been
       * constructed, then this and every other member function that reads
@@ -219,9 +219,9 @@ namespace Rpc {
       * field values in symmetry-adapted basis format, because it cannot
       * assume that the r-grid field exhibits the declared space group
       * symmetry. Upon exit, w().rgrid() is set and w().hasData() is
-      * true, while w().isSymmetric(), hasCFields(), and hasFreeEnergy()
-      * are false. System unit cell parameters are set to values read
-      * from the field file header.
+      * true, while w().isSymmetric(), hasCFields(), hasFreeEnergy(), 
+      * and hasStress() are false. System unit cell parameters are set to 
+      * values read from the field file header.
       *
       * Chemical potential fields for field theoretic simulations are
       * normally initialized using a function that sets the fields in
@@ -239,8 +239,9 @@ namespace Rpc {
       * "fields" container that is passed as an argument, and computing
       * values on a real-space grid. Upon return, values of both
       * w().basis() and w().rgrid() are set, while w().hasData() and
-      * w().isSymmetric() are true, and hasCFields() and hasFreeEnergy()
-      * are false. System unit cell parameters are not modified.
+      * w().isSymmetric() are true, and hasCFields(), hasFreeEnergy(),
+      * and hasStress() are false. System unit cell parameters are not 
+      * modified.
       *
       * \param fields  array of new w fields in basis format
       */
@@ -252,8 +253,8 @@ namespace Rpc {
       * This function set values for w fields in r-grid format, but
       * does not set components for symmetry-adapted basis format. Upon
       * return, w().rgrid() is set and w().hasData() is true, while
-      * hasCFields(), hasFreeEnergy(), and w().isSymmetric() are false.
-      * System unit cell parameters are not modified.
+      * hasCFields(), hasFreeEnergy(), hasStress(), and w().isSymmetric() 
+      * are false. System unit cell parameters are not modified.
       *
       * \param fields  array of new w fields in r-grid form
       */
@@ -268,8 +269,9 @@ namespace Rpc {
       * to zero. The result is stored in the system w field container.
       *
       * Upon return, w().hasData() and w().isSymmetric() are true, while
-      * hasCFields() and hasFreeEnergy() are false. System unit cell
-      * parameters are set to those read from the c field file header.
+      * hasCFields(), hasFreeEnergy(), and hasStress() are false. System 
+      * unit cell parameters are set to those read from the c field file 
+      * header.
       *
       * \param filename  name of input c field file (basis format)
       */
@@ -298,23 +300,6 @@ namespace Rpc {
       /**
       * Set parameters of the associated unit cell.
       *
-      * The "lattice" (lattice system) enumeration parameter must agree
-      * with any lattice value that was set previously in the parameter
-      * file. The logical size of the "parameters" array must agree with
-      * the expected number of lattice parameters for this lattice type.
-      *
-      * See documentation of setUnitCell(UnitCell<D> const &) regarding
-      * possible construction of a basis as a side effect.
-      *
-      * \param lattice  lattice system
-      * \param parameters  array of new unit cell parameters
-      */
-      void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
-                       FSArray<double, 6> const & parameters);
-
-      /**
-      * Set parameters of the associated unit cell.
-      *
       * The lattice type must have been set before this function is
       * called. The logical size of the FSArray<double, 6> "parameters"
       * array must match the expected number of parameters for the
@@ -326,6 +311,16 @@ namespace Rpc {
       * \param parameters  array of new unit cell parameters
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
+
+      /**
+      * Notify System members of updated unit cell parameters.
+      * 
+      * In particular, this method calls mixture().clearUnitCellData(), 
+      * domain().wavelist().clearUnitCellData(), clearCFields(), and, 
+      * if an Environment exists in the System, environment().update(). 
+      * It should be called whenever the lattice parameters change.
+      */
+      void updateUnitCellData();
 
       ///@}
       /// \name Field Theory Computations
@@ -764,7 +759,7 @@ namespace Rpc {
       FileMaster const & fileMaster() const;
 
       ///@}
-      /// \name Boolean Queries
+      /// \name Boolean Flags
       ///@{
 
       /**
@@ -798,12 +793,12 @@ namespace Rpc {
       bool hasMask() const;
 
       /**
-      * Have c fields been computed from the current w fields?
+      * Are c fields current, consistent with the current w fields?
       */
       bool hasCFields() const;
 
       /**
-      * Has the SCFT free energy been computed for the current w fields?
+      * Is the SCFT free energy current, consistent with current w fields?
       */
       bool hasFreeEnergy() const;
 
@@ -811,6 +806,17 @@ namespace Rpc {
       * Has the SCFT stress been computed for the current w fields?
       */
       bool hasStress() const;
+
+      /**
+      * Mark c-fields and free energy as outdated or invalid.
+      *
+      * Upon return, hasCfields(), hasFreeEnergy(), and hasStress() all
+      * return false. This function should be called by functions that 
+      * modify any of the inputs to the solution of the modified diffusion 
+      * equation and calculation of c-fields and free energy, including 
+      * the w fields, unit cell parameters, external fields or mask.
+      */
+      void clearCFields();
 
       ///@}
 
@@ -910,9 +916,8 @@ namespace Rpc {
       /**
       * Ideal gas contribution to fHelmholtz_.
       *
-      * This encompasses the internal energy and entropy of
-      * non-interacting free chains in their corresponding
-      * potential fields defined by w_.
+      * This includes the internal energy and entropy of
+      * non-interacting molecules in the current w fields.
       */
       double fIdeal_;
 

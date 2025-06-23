@@ -35,6 +35,7 @@
 #include <util/containers/FSArray.h>
 #include <util/param/BracketPolicy.h>
 #include <util/param/ParamComponent.h>
+#include <util/signal/Signal.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -84,19 +85,41 @@ namespace Rpg {
       hasFreeEnergy_(false),
       hasStress_(false)
    {
-      setClassName("System");
+      setClassName("System");  // Set block label in parameter file
+      BracketPolicy::set(BracketPolicy::Optional);
+      ThreadArray::init();
+
+      // Create associations among class members
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
       h_.setFieldIo(domain_.fieldIo());
       mask_.setFieldIo(domain_.fieldIo());
 
+      // Create dynamically allocated objects owned by this System
       interactionPtr_ = new Interaction();
       environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
-      BracketPolicy::set(BracketPolicy::Optional);
-      ThreadArray::init();
+
+      // Add observers to signals
+
+      // Signal triggered by basis construction
+      Signal<void>& basisSignal = domain_.basis().signal();
+      basisSignal.addObserver(*this, &System<D>::allocateFieldsBasis);
+
+      // Signal triggered by unit cell modification
+      Signal<void>& cellSignal = domain_.unitCell().signal();
+      cellSignal.addObserver(*this, &System<D>::updateUnitCellData);
+
+      // Signal triggered by w-field modification
+      w_.signal().addObserver(*this, &System<D>::clearCFields);
+
+      // Signal triggered by h-field modification
+      h_.signal().addObserver(*this, &System<D>::clearCFields);
+
+      // Signal triggered by mask modification
+      mask_.signal().addObserver(*this, &System<D>::clearCFields);
    }
 
    /*
@@ -133,6 +156,8 @@ namespace Rpg {
          delete simulatorFactoryPtr_;
       }
    }
+
+   // Lifetime (called in main program)
 
    /*
    * Process command line options.
@@ -182,7 +207,7 @@ namespace Rpg {
             oFlag = true;
             oArg  = optarg;
             break;
-         case 't': //number of threads per block, user set
+         case 't': // number of threads per block, user set
             tFlag = true;
             tArg = atoi(optarg);
             break;
@@ -233,7 +258,6 @@ namespace Rpg {
          ThreadArray::setThreadsPerBlock(tArg);
          ThreadMesh::setThreadsPerBlock(tArg);
       }
-
    }
 
    /*
@@ -285,10 +309,10 @@ namespace Rpg {
                          domain_.unitCell(), domain_.waveList());
       mixture_.allocate();
 
-      // Allocate memory for r-grid w and c fields
+      // Allocate memory for w and c fields in r-grid form
       allocateFieldsGrid();
 
-      // Optionally instantiate an Environment object
+      // Optionally construct an Environment object
       std::string className;
       bool isEnd;
       environmentPtr_ =
@@ -298,7 +322,7 @@ namespace Rpg {
          Log::file() << indent() << "  Environment{ [absent] }\n";
       }
 
-      // Optionally instantiate an Iterator object
+      // Optionally construct an Iterator object
       if (!isEnd) {
          iteratorPtr_ =
             iteratorFactoryPtr_->readObjectOptional(in, *this, className,
@@ -308,7 +332,7 @@ namespace Rpg {
          }
       }
 
-      // Optionally instantiate a Sweep object (if an iterator exists)
+      // Optionally construct a Sweep object (if an iterator exists)
       if (hasIterator() && !isEnd) {
          sweepPtr_ =
             sweepFactoryPtr_->readObjectOptional(in, *this, className,
@@ -318,7 +342,7 @@ namespace Rpg {
          }
       }
 
-      // Optionally instantiate a Simulator object
+      // Optionally construct a Simulator object
       if (!isEnd) {
          simulatorPtr_ =
             simulatorFactoryPtr_->readObjectOptional(in, *this,
@@ -434,16 +458,6 @@ namespace Rpg {
             readEcho(in, filename);
             simulator().analyze(min, max, classname, filename);
          } else
-         if (command == "WRITE_TIMERS") {
-            readEcho(in, filename);
-            std::ofstream file;
-            fileMaster_.openOutputFile(filename, file);
-            writeTimers(file);
-            file.close();
-         } else
-         if (command == "CLEAR_TIMERS") {
-            clearTimers();
-         } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
             std::ofstream file;
@@ -504,8 +518,8 @@ namespace Rpg {
                                   segmentId);
          } else
          if (command == "WRITE_Q_TAIL") {
-            int polymerId, blockId, directionId;
             readEcho(in, filename);
+            int polymerId, blockId, directionId;
             in >> polymerId;
             in >> blockId;
             in >> directionId;
@@ -516,8 +530,8 @@ namespace Rpg {
             writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
-            int polymerId, blockId, directionId;
             readEcho(in, filename);
+            int polymerId, blockId, directionId;
             in >> polymerId;
             in >> blockId;
             in >> directionId;
@@ -581,7 +595,7 @@ namespace Rpg {
             hasSymmetry = fieldIo.hasSymmetry(inFileName, epsilon);
             if (hasSymmetry) {
                Log::file() << std::endl
-                   << "Symmetry of r-grid file matches this space group."
+                   << "Symmetry of r-grid file matches this space group"
                    << std::endl << std::endl;
             } else {
                Log::file() << std::endl
@@ -650,7 +664,7 @@ namespace Rpg {
             // Read numbers of replicas along each direction
             IntVec<D> replicas;
             for (int i = 0; i < D; i++){
-              in >> replicas[i];
+               in >> replicas[i];
             }
             for (int i = 0; i < D; i++){
                Log::file() << "Replicate unit cell in direction "
@@ -671,6 +685,7 @@ namespace Rpg {
             }
             UnitCell<D> tmpUnitCell;
             h_.readBasis(filename, tmpUnitCell);
+            UTIL_CHECK(!hasCFields_);
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
@@ -682,6 +697,7 @@ namespace Rpg {
             }
             UnitCell<D> tmpUnitCell;
             h_.readRGrid(filename, tmpUnitCell);
+            UTIL_CHECK(!hasCFields_);
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
@@ -733,6 +749,16 @@ namespace Rpg {
             fieldIo.writeFieldRGrid(filename, mask_.rgrid(),
                                     domain_.unitCell(),
                                     mask_.isSymmetric());
+         } else
+         if (command == "WRITE_TIMERS") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster_.openOutputFile(filename, file);
+            writeTimers(file);
+            file.close();
+         } else
+         if (command == "CLEAR_TIMERS") {
+            clearTimers();
          } else {
             Log::file() << "Error: Unknown command  "
                         << command << std::endl;
@@ -763,29 +789,19 @@ namespace Rpg {
    {
       // Preconditions
       UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(filename);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
+      UTIL_CHECK(isAllocatedGrid_);
 
-      // Read w fields
+      // Read w fields and set unit cell parameters
       w_.readBasis(filename, domain_.unitCell());
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-      hasStress_ = false;
 
-      // Clear unit cell data in waveList and mixture
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-
-      // Update Environment if needed
-      if (hasEnvironment() && environment().isInitialized()) {
-         environment().update();
-      }
-
-      // Postcondition
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+      UTIL_CHECK(isAllocatedBasis_);
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    /*
@@ -794,32 +810,22 @@ namespace Rpg {
    template <int D>
    void System<D>::readWRGrid(std::string const & filename)
    {
-      // Preconditions
+      // Precondition
       UTIL_CHECK(isAllocatedGrid_);
 
-      // Read w fields
+      // Read w fields and set unit cell parameters
       w_.readRGrid(filename, domain_.unitCell());
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-      hasStress_ = false;
 
-      // Clear unit cell data in waveList and mixture
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-
-      // Update Environment if needed
-      if (hasEnvironment() && environment().isInitialized()) {
-         environment().update();
-      }
-
-      // Postcondition
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    /*
    * Construct estimate for w fields from c fields.
-   *
-   * Modifies wFields and wFieldsRGrid.
    */
    template <int D>
    void System<D>::estimateWfromC(std::string const & filename)
@@ -832,9 +838,6 @@ namespace Rpg {
          readFieldHeader(filename);
       }
       UTIL_CHECK(domain_.basis().isInitialized());
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis();
-      }
       UTIL_CHECK(isAllocatedBasis_);
       const int nm = mixture_.nMonomer();
       const int nb = domain_.basis().nBasis();
@@ -842,7 +845,7 @@ namespace Rpg {
       UTIL_CHECK(nb > 0);
 
       // Allocate local array of fields in basis format
-      DArray< DArray<double> > tmpFieldsBasis; 
+      DArray< DArray<double> > tmpFieldsBasis;
       tmpFieldsBasis.allocate(nm);
       for (int i = 0; i < nm; ++i) {
          tmpFieldsBasis[i].allocate(nb);
@@ -852,7 +855,7 @@ namespace Rpg {
       domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis,
                                         domain_.unitCell());
 
-      // Allocate work space array
+      // Allocate work space array (one element per monomer type)
       DArray<double> wtmp;
       wtmp.allocate(nm);
 
@@ -928,33 +931,34 @@ namespace Rpg {
 
       // Set estimated w fields in system w field container
       w_.setBasis(tmpFieldsBasis);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-      hasStress_ = false;
 
-      // Clear unit cell data in waveList and mixture
-      domain_.waveList().clearUnitCellData();
-      mixture_.clearUnitCellData();
-
-      // Postcondition
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    /*
-   * Set new w field values.
+   * Set new w field values in basis form.
    */
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.hasGroup());
       UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(isAllocatedBasis_);
+
       w_.setBasis(fields);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-      hasStress_ = false;
+
+      // Postconditions
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    /*
@@ -963,12 +967,16 @@ namespace Rpg {
    template <int D>
    void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
-      UTIL_CHECK(domain_.unitCell().isInitialized());
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+
       w_.setRGrid(fields);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-      hasStress_ = false;
+
+      // Postconditions
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    // Unit Cell Modifiers
@@ -979,44 +987,26 @@ namespace Rpg {
    template <int D>
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
-      domain_.setUnitCell(unitCell);
-      // Note: Domain::setUnitCell clears the WaveList unit cell data
-      // and makes basis if needed
-      mixture_.clearUnitCellData();
+      // Preconditions
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.lattice() == unitCell.lattice());
 
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+      // Set system unit cell
+      domain_.unitCell() = unitCell;
+
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
       }
+
+      // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
-
-      if (hasEnvironment() && environment().isInitialized()) {
-         environment().update();
-      }
-   }
-
-   /*
-   * Set the system unit cell.
-   */
-   template <int D>
-   void
-   System<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
-                          FSArray<double, 6> const & parameters)
-   {
-      domain_.setUnitCell(lattice, parameters);
-      // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and makes basis if needed
-      mixture_.clearUnitCellData();
-
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
+      if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+         UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-
-      if (hasEnvironment() && environment().isInitialized()) {
-         environment().update();
-      }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
    }
 
    /*
@@ -1025,17 +1015,40 @@ namespace Rpg {
    template <int D>
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
-      domain_.setUnitCell(parameters);
-      // Note: Domain::setUnitCell clears WaveList unit cell data
-      // and makes basis if needed
-      mixture_.clearUnitCellData();
+      // Precondition
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
 
-      if (domain_.hasGroup() && !isAllocatedBasis_) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         allocateFieldsBasis();
+      // Set system unit cell
+      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
+         domain_.unitCell().set(domain_.lattice(), parameters);
+      } else {
+         domain_.unitCell().setParameters(parameters);
       }
-      UTIL_CHECK(domain_.unitCell().isInitialized());
 
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
+
+      // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
+      if (domain_.hasGroup()) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(isAllocatedBasis_);
+      }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+   }
+
+   /*
+   * Notify System members of updated unit cell parameters.
+   */
+   template <int D>
+   void System<D>::updateUnitCellData()
+   {
+      clearCFields();
+      mixture_.clearUnitCellData();
+      domain_.waveList().clearUnitCellData();
       if (hasEnvironment() && environment().isInitialized()) {
          environment().update();
       }
@@ -1049,13 +1062,20 @@ namespace Rpg {
    template <int D>
    void System<D>::compute(bool needStress)
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(w_.isAllocatedRGrid());
       UTIL_CHECK(c_.isAllocatedRGrid());
       UTIL_CHECK(w_.hasData());
+      clearCFields();
 
-      // Initialize Environment if needed
-      if (hasEnvironment() && !environment().isInitialized()) {
-         environment().initialize();
+      // Initialize or update Environment if needed
+      if (hasEnvironment()) {
+         if (environment().isInitialized()) {
+            environment().update();
+         } else {
+            environment().initialize();
+         }
       }
 
       // Solve the modified diffusion equation (without iteration)
@@ -1078,32 +1098,35 @@ namespace Rpg {
    }
 
    /*
-   * Iteratively solve a SCFT problem for specified parameters.
+   * Iteratively solve a SCFT problem.
    */
    template <int D>
    int System<D>::iterate(bool isContinuation)
    {
+      // Preconditions
       UTIL_CHECK(hasIterator());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
-         UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
+         UTIL_CHECK(w_.isSymmetric());
       }
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-      hasStress_ = false;
+      clearCFields();
 
       Log::file() << std::endl;
       Log::file() << std::endl;
 
-      // Initialize Environment if needed
-      if (hasEnvironment() && !environment().isInitialized()) {
-         environment().initialize();
+      // Initialize or update Environment if needed
+      if (hasEnvironment()) {
+         if (environment().isInitialized()) {
+            environment().update();
+         } else {
+            environment().initialize();
+         }
       }
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      hasCFields_ = true;
+      UTIL_CHECK(hasCFields_);
 
       // If converged, compute related thermodynamic properties
       if (!error) {
@@ -1121,21 +1144,19 @@ namespace Rpg {
    }
 
    /*
-   * Perform a sweep of SCFT calculations along a path in parameter space.
+   * Perform an SCFT sweep along a path in parameter space.
    */
    template <int D>
    void System<D>::sweep()
    {
+      // Preconditions
       UTIL_CHECK(hasIterator());
       UTIL_CHECK(hasSweep());
       UTIL_CHECK(w_.hasData());
       if (iterator().isSymmetric()) {
-         UTIL_CHECK(w_.isSymmetric());
          UTIL_CHECK(isAllocatedBasis_);
+         UTIL_CHECK(w_.isSymmetric());
       }
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-      hasStress_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -1152,18 +1173,15 @@ namespace Rpg {
    {
       UTIL_CHECK(nStep > 0);
       UTIL_CHECK(hasSimulator());
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
-      hasStress_ = false;
+      clearCFields();
 
       simulator().simulate(nStep);
-      hasCFields_ = true;
    }
 
-   // Thermodynamic Properties
+   // SCFT Thermodynamic Properties
 
    /*
-   * Compute Helmholtz free energy and pressure
+   * Compute Helmholtz free energy and pressure.
    */
    template <int D>
    void System<D>::computeFreeEnergy()
@@ -1396,37 +1414,8 @@ namespace Rpg {
       hasStress_ = true;
    }
 
-   // Output Operations
 
-   /*
-   * Write timer values to output stream (computational cost).
-   */
-   template <int D>
-   void System<D>::writeTimers(std::ostream& out)
-   {
-      if (hasIterator()) {
-         iterator().outputTimers(Log::file());
-         iterator().outputTimers(out);
-      }
-      if (hasSimulator()){
-         simulator().outputTimers(Log::file());
-         simulator().outputTimers(out);
-      }
-   }
 
-   /*
-   * Clear state of all timers.
-   */
-   template <int D>
-   void System<D>::clearTimers()
-   {
-      if (hasIterator()) {
-         iterator().clearTimers();
-      }
-      if (hasSimulator()){
-         simulator().clearTimers();
-      }
-   }
 
    /*
    * Write parameter file for SCFT, omitting any sweep block.
@@ -1541,11 +1530,13 @@ namespace Rpg {
    template <int D>
    void System<D>::writeWBasis(std::string const & filename) const
    {
+      // Preconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
+
       domain_.fieldIo().writeFieldsBasis(filename, w_.basis(),
                                          domain_.unitCell());
    }
@@ -1556,38 +1547,45 @@ namespace Rpg {
    template <int D>
    void System<D>::writeWRGrid(std::string const & filename) const
    {
-      UTIL_CHECK(domain_.unitCell().isInitialized());
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(w_.hasData());
+
       domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
                                          domain_.unitCell(),
-                                          w_.isSymmetric());
+                                         w_.isSymmetric());
    }
 
    /*
-   * Write all concentration fields in symmetry-adapted basis format.
+   * Write concentration fields in symmetry-adapted basis format.
    */
    template <int D>
    void System<D>::writeCBasis(std::string const & filename) const
    {
+      // Preconditions
+      UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.isSymmetric());
+
       domain_.fieldIo().writeFieldsBasis(filename, c_.basis(),
                                          domain_.unitCell());
    }
 
    /*
-   * Write all concentration fields in real space (r-grid) format.
+   * Write concentration fields in real space (r-grid) format.
    */
    template <int D>
    void System<D>::writeCRGrid(std::string const & filename) const
    {
-      UTIL_CHECK(domain_.unitCell().isInitialized());
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(hasCFields_);
+
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
                                          domain_.unitCell(),
                                          w_.isSymmetric());
@@ -1595,13 +1593,14 @@ namespace Rpg {
 
    /*
    * Write all concentration fields in real space (r-grid) format, for
-   * each block (or solvent) individually rather than for each species.
+   * each block and solvent species, rather than for each monomer type.
    */
    template <int D>
    void System<D>::writeBlockCRGrid(std::string const & filename) const
    {
-      UTIL_CHECK(domain_.unitCell().isInitialized());
+      // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(hasCFields_);
 
       // Create array to hold block and solvent c field data
@@ -1612,7 +1611,7 @@ namespace Rpg {
          blockCFields[i].allocate(domain_.mesh().dimensions());
       }
 
-      // Get c field data from the from Mixture
+      // Get c field data from the Mixture
       mixture_.createBlockCRGrid(blockCFields);
 
       // Write block and solvent c field data to file
@@ -1640,10 +1639,10 @@ namespace Rpg {
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      Propagator<D> const&
-          propagator = polymer.propagator(blockId, directionId);
-      domain_.fieldIo().writeFieldRGrid(filename,
-                                        propagator.q(segmentId),
+      Propagator<D> const &
+           propagator = polymer.propagator(blockId, directionId);
+      RField<D> const & field = propagator.q(segmentId);
+      domain_.fieldIo().writeFieldRGrid(filename, field,
                                         domain_.unitCell(),
                                         w_.isSymmetric());
    }
@@ -1664,9 +1663,9 @@ namespace Rpg {
       UTIL_CHECK(directionId >= 0);
       UTIL_CHECK(directionId <= 1);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      Propagator<D> const&
-           propagator = polymer.propagator(blockId, directionId);
-      domain_.fieldIo().writeFieldRGrid(filename, propagator.tail(),
+      RField<D> const &
+            field = polymer.propagator(blockId, directionId).tail();
+      domain_.fieldIo().writeFieldRGrid(filename, field,
                                         domain_.unitCell(),
                                         w_.isSymmetric());
    }
@@ -1696,8 +1695,7 @@ namespace Rpg {
       fileMaster_.openOutputFile(filename, file);
 
       // Write header
-      domain_.fieldIo().writeFieldHeader(file, 1,
-                                         domain_.unitCell(),
+      domain_.fieldIo().writeFieldHeader(file, 1, domain_.unitCell(),
                                          w_.isSymmetric());
       file << "mesh" << std::endl
            << "          " << domain_.mesh().dimensions() << std::endl
@@ -1712,6 +1710,7 @@ namespace Rpg {
                                            domain_.unitCell(),
                                            hasHeader);
       }
+      file.close();
    }
 
    /*
@@ -1739,6 +1738,51 @@ namespace Rpg {
             }
          }
       }
+   }
+
+   // Timer Operations
+
+   /*
+   * Write timer values to output stream (computational cost).
+   */
+   template <int D>
+   void System<D>::writeTimers(std::ostream& out)
+   {
+      if (hasIterator()) {
+         iterator().outputTimers(Log::file());
+         iterator().outputTimers(out);
+      }
+      if (hasSimulator()){
+         simulator().outputTimers(Log::file());
+         simulator().outputTimers(out);
+      }
+   }
+
+   /*
+   * Clear state of all timers.
+   */
+   template <int D>
+   void System<D>::clearTimers()
+   {
+      if (hasIterator()) {
+         iterator().clearTimers();
+      }
+      if (hasSimulator()){
+         simulator().clearTimers();
+      }
+   }
+
+   // Miscellaneous public functions
+
+   /*
+   * Mark c-fields and free energy as outdated/invalid.
+   */
+   template <int D>
+   void System<D>::clearCFields()
+   {
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
+      hasStress_ = false;
    }
 
    // Private member functions
@@ -1790,7 +1834,7 @@ namespace Rpg {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);
 
-      // Allocate basis field containers
+      // Allocate basis fields in w and c field containers
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
 
@@ -1810,7 +1854,7 @@ namespace Rpg {
       std::ifstream file;
       fileMaster_.openInputFile(filename, file);
 
-      // Read file header, make basis if needed
+      // Read file header
       int nMonomer;
       UnitCell<D> tmpUnitCell;
       bool isSymmetric;
@@ -1823,9 +1867,6 @@ namespace Rpg {
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
       if (domain_.hasGroup()) {
          UTIL_CHECK(domain_.basis().isInitialized());
-         if (!isAllocatedBasis_) {
-            allocateFieldsBasis();
-         }
          UTIL_CHECK(isAllocatedBasis_);
       }
    }
@@ -1866,8 +1907,9 @@ namespace Rpg {
    {
       UTIL_CHECK(isAllocatedGrid_);
       w_.setRGrid(fields);
-      hasCFields_ = false;
-      hasFreeEnergy_ = false;
+      UTIL_CHECK(!hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    /*

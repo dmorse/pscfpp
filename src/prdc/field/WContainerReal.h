@@ -11,41 +11,52 @@
 #include <pscf/math/IntVec.h>              // member
 #include <util/containers/DArray.h>        // member template
 
+// Forward declarations
+namespace Util {
+   template <typename T> class Signal;
+   template <> class Signal<void>;
+}
+namespace Pscf {
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
+}
+
 namespace Pscf {
 namespace Prdc {
 
-   // Forward reference
-   template <int D> class UnitCell;
 
    using namespace Util;
 
    /**
    * A container of fields stored in both basis and r-grid format.
+   * 
+   * <b> Field Representations </b>: A WContainerReal contains a list of
+   * nMonomer fields that are each associated with a monomer type. The
+   * fields may be stored in two different formats:
    *
-   * A WContainerReal contains representations of a list of nMonomer
-   * fields that are associated with different monomer types. Fields may
-   * be stored in two different formats:
+   *  - A DArray of RField containers holds valus of each field on
+   *    the nodes of a regular grid. This is accessed by the rgrid()
+   *    and rgrid(int) member functions.
    *
    *  - A DArray of DArray<double> containers holds components of each
    *    field in a symmetry-adapted Fourier expansion (i.e., in basis
    *    format). This is accessed by the basis() and basis(int) member
    *    functions.
    *
-   *  - A DArray of RField containers holds valus of each field on
-   *    the nodes of a regular grid. This is accessed by the rgrid()
-   *    and rgrid(int) member functions.
-   *
    * A WContainerReal is designed to automatically update one of 
    * these representations when the other is modified, when appropriate.
    * A pointer to an associated FieldIo is used for these conversions.
-   * The setBasis function allows the user to input new components in
-   * basis format and internally recomputes the values in r-grid format.
-   * The setRGrid function allows the user to reset the fields in r-grid
-   * format, but recomputes the components in basis format if and only if
-   * the user declares that the fields are known to be invariant under all
-   * symmetries of the space group. A boolean flag named isSymmetric is
-   * used to keep track of whether the current field is symmetric, and
-   * thus whether the basis format exists.
+   *
+   * The setBasis and readBasis functions allow the user to input new 
+   * components in basis format, and both internally recompute the values 
+   * in r-grid format.  The setRGrid and readRGrid functions allow the 
+   * user to input the fields in r-grid format, and compute corresponding
+   * components in basis format if and only if the user declares that the 
+   * fields are known to be invariant under all symmetries of the space 
+   * group. A boolean flag named isSymmetric is used to keep track of 
+   * whether the current field is symmetric, and thus whether the basis 
+   * format exists.
    *
    * <b> Subclasses </b>: Partial specializations of WContainerReal are
    * used as base classes for classes Rpc::WFieldContainer \<D \> and 
@@ -60,6 +71,14 @@ namespace Prdc {
    *    specialization of WContainerReal with template parameters 
    *    RField = Cuda::RField \<D\> and FieldIo = Rpg::FieldIo \<D\> ,
    *    and is use in the pscf_pg GPU accelerated program.
+   *
+   * <b> Signal </b>: A WContainerReal owns an instance of class
+   * Util::Signal<void> that notifies all observers whenever the fields
+   * owned by the WContainerReal are modified. The signal object may be 
+   * accessed by reference using the signal() member function. The
+   * Util::Signal<void>::addObserver function may used to add "observer"
+   * objects and indicate a zero-parameter member function of each 
+   * observer that will be called whenever the fields are modified.
    *
    * \ingroup Prdc_Field_Module
    */
@@ -134,7 +153,7 @@ namespace Prdc {
       void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
 
       ///@}
-      /// \name Field Mutators
+      /// \name Field Modifiers
       ///@{
 
       /**
@@ -142,6 +161,9 @@ namespace Prdc {
       *
       * This function also computes and stores the corresponding r-grid
       * representation. On return, hasData and isSymmetric are both true.
+      * 
+      * The associated basis must be initialized on entry.  As needed, 
+      * r-grid and/or basis fields may be allocated within this function.
       *
       * \param fields  array of new fields in basis format
       */
@@ -159,6 +181,10 @@ namespace Prdc {
       * defined by the class is set to the value of the isSymmetric
       * input parameter.
       *
+      * As needed, r-grid and/or basis fields may be allocated within this 
+      * function. If the isSymmetric parameter is true, the a basis must 
+      * be initialized prior to entry.
+      *
       * \param fields  array of new fields in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
@@ -166,15 +192,14 @@ namespace Prdc {
                     bool isSymmetric = false);
 
       /**
-      * Read field component values from input stream, in symmetrized
-      * Fourier format.
+      * Read fields from an input stream in symmetrized basis format.
       *
-      * This function also computes and stores the corresponding
-      * r-grid representation. On return, hasData and isSymmetric
-      * are both true.
+      * This function also computes and stores the corresponding r-grid
+      * representation. On return, hasData and isSymmetric are both true.
       *
-      * This object must already be allocated and associated with
-      * a FieldIo object to run this function.
+      * As needed, r-grid and/or basis fields can be allocated within
+      * this function, if not allocated on entry. An associated basis 
+      * will be initialized if not initialized on entry.
       *
       * \param in  input stream from which to read fields
       * \param unitCell  associated crystallographic unit cell
@@ -182,15 +207,15 @@ namespace Prdc {
       void readBasis(std::istream& in, UnitCell<D>& unitCell);
 
       /**
-      * Read field component values from file, in symmetrized
-      * Fourier format.
+      * Read fields from a named file, in symmetrized basis format.
       *
       * This function also computes and stores the corresponding
       * r-grid representation. On return, hasData and isSymmetric
       * are both true.
       *
-      * This object must already be allocated and associated with
-      * a FieldIo object to run this function.
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
       *
       * \param filename  file from which to read fields
       * \param unitCell  associated crystallographic unit cell
@@ -209,8 +234,9 @@ namespace Prdc {
       * defined by the class is set to the value of the isSymmetric
       * input parameter.
       *
-      * This object must already be allocated and associated with a
-      * FieldIo object to run this function.
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
       *
       * \param in  input stream from which to read fields
       * \param unitCell  associated crystallographic unit cell
@@ -220,7 +246,7 @@ namespace Prdc {
                      bool isSymmetric = false);
 
       /**
-      * Reads fields from a file in real-space (r-grid) format.
+      * Reads fields from a named file in real-space (r-grid) format.
       *
       * If the isSymmetric parameter is true, this function assumes that
       * the fields are known to be symmetric and so computes and stores
@@ -231,8 +257,9 @@ namespace Prdc {
       * defined by the class is set to the value of the isSymmetric input
       * parameter.
       *
-      * This object must already be allocated and associated with a
-      * FieldIo object to run this function.
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
       *
       * \param filename  file from which to read fields
       * \param unitCell  associated crystallographic unit cell
@@ -267,6 +294,11 @@ namespace Prdc {
       * Clear data stored in this object without deallocating.
       */
       void clear();
+
+      /**
+      * Get a signal that notifies observers of field modification.
+      */
+      Signal<void>& signal();
 
       ///@}
       /// \name Field Accessors (by const reference)
@@ -338,28 +370,30 @@ namespace Prdc {
 
    protected:
 
-      /// Mesh dimensions in each direction, set on allocation.
-      IntVec<D> const & meshDimensions() const
-      {  return meshDimensions_; }
+      /**
+      * Get mesh dimensions in each direction, set on r-grid allocation.
+      */
+      IntVec<D> const & meshDimensions() const;
 
-      /// Mesh size (number of grid points), set on allocation.
-      int meshSize() const
-      {  return meshSize_; }
+      /**
+      * Get mesh size (number of grid points), set on r-grid allocation.
+      */
+      int meshSize() const;
 
-      /// Number of basis functions, set on allocation.
-      int nBasis() const
-      {  return nBasis_; }
+      /**
+      * Get number of basis functions, set on basis allocation.
+      */
+      int nBasis() const;
 
-      /// Number of monomer types.
-      int nMonomer() const
-      {  return nMonomer_; }
+      /**
+      * Get number of monomer types.
+      */
+      int nMonomer() const;
 
-      /// Associated FieldIo object (const reference).
-      FieldIo const & fieldIo() const
-      {
-         UTIL_CHECK(fieldIoPtr_);
-         return *fieldIoPtr_;
-      }
+      /**
+      * Get associated FieldIo object (const reference).
+      */
+      FieldIo const & fieldIo() const;
 
    private:
 
@@ -379,11 +413,6 @@ namespace Prdc {
       * field associated with monomer i on the nodes of a regular mesh.
       */
       DArray< RField > rgrid_;
-
-      /*
-      * Pointer to an associated FieldIo object.
-      */
-      FieldIo const * fieldIoPtr_;
 
       /*
       * Integer vector of grid dimensions.
@@ -406,6 +435,16 @@ namespace Prdc {
       * Number of monomer types (number of fields).
       */
       int nMonomer_;
+
+      /*
+      * Pointer to a Signal that is triggered by field modification.
+      */
+      Signal<void>* signalPtr_;
+ 
+      /*
+      * Pointer to an associated FieldIo object.
+      */
+      FieldIo const * fieldIoPtr_;
 
       /*
       * Has memory been allocated for fields in r-grid format?
@@ -509,6 +548,42 @@ namespace Prdc {
    inline 
    bool WContainerReal<D,RField,FieldIo>::isSymmetric() const
    {  return isSymmetric_; }
+
+   // Protected inline member functions
+   
+   // Get mesh dimensions in each direction, set on r-grid allocation.
+   template <int D, class RField, class FieldIo>
+   inline 
+   IntVec<D> const & 
+   WContainerReal<D,RField,FieldIo>::meshDimensions() const
+   {  return meshDimensions_; }
+
+   // Get mesh size (number of grid points), set on r-grid allocation.
+   template <int D, class RField, class FieldIo>
+   inline 
+   int WContainerReal<D,RField,FieldIo>::meshSize() const
+   {  return meshSize_; }
+
+   // Get number of basis functions, set on basis allocation.
+   template <int D, class RField, class FieldIo>
+   inline 
+   int WContainerReal<D,RField,FieldIo>::nBasis() const
+   {  return nBasis_; }
+
+   // Get number of monomer types.
+   template <int D, class RField, class FieldIo>
+   inline 
+   int WContainerReal<D,RField,FieldIo>::nMonomer() const
+   {  return nMonomer_; }
+
+   // Associated FieldIo object (const reference).
+   template <int D, class RField, class FieldIo>
+   inline 
+   FieldIo const & WContainerReal<D,RField,FieldIo>::fieldIo() const
+   {
+      UTIL_CHECK(fieldIoPtr_);
+      return *fieldIoPtr_;
+   }
 
 } // namespace Prdc
 } // namespace Pscf

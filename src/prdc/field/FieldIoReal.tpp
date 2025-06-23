@@ -11,8 +11,6 @@
 #include "FieldIoReal.h"
 
 #include <prdc/field/fieldIoUtil.h>
-#include <prdc/crystal/fieldHeader.h>
-
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
@@ -171,7 +169,7 @@ namespace Prdc {
          fields[0].allocate(capacity);
       }
       // Otherwise, pass unallocated fields array to readFieldsBasis,
-      // which will allocate it it necessary.
+      // which will allocate it as necessary.
 
       // Read file containing a single field
       readFieldsBasis(in, fields, unitCell);
@@ -180,7 +178,7 @@ namespace Prdc {
       UTIL_CHECK(fields.capacity() == 1);
 
       // Copy data from local array fields to function parameter field.
-      // The assignment operator will allocate field if necessary.
+      // The assignment operator will allocate the field if necessary.
       field = fields[0];
    }
 

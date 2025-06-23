@@ -19,6 +19,8 @@
 // Forward declaration
 namespace Util{
    class FileMaster;
+   template <typename T> class Signal;
+   template <> class Signal<void>;
 }
 
 namespace Pscf {
@@ -110,57 +112,8 @@ namespace Prdc {
       void makeBasis();
 
       ///@}
-      /// \name Unit Cell Modifiers
-      ///@{
-
-      /**
-      * Set unit cell by copying another UnitCell<D> object.
-      *
-      * The lattice system in the unitCell must match any value that was
-      * read from the parameter file. This function initializes the basis
-      * if needed.
-      *
-      * \param unitCell new unit cell
-      */
-      void setUnitCell(UnitCell<D> const & unitCell);
-
-      /**
-      * Set unit cell state, given the lattice system and parameters.
-      *
-      * The "lattice" enumeration value must match any value that was
-      * read from the parameter file. This function initializes the basis 
-      * if needed. 
-      *
-      * \param lattice  lattice system
-      * \param parameters array of unit cell parameters
-      */
-      void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
-                       FSArray<double, 6> const & parameters);
-
-      /**
-      * Set unit cell parameters.
-      *
-      * The lattice system must be set to non-null value on entry. The
-      * size of the parameters array must match the number expected for
-      * the lattice type. The basis is initialized if needed. 
-      *
-      * \param parameters array of unit cell parameters
-      */
-      void setUnitCell(FSArray<double, 6> const & parameters);
-
-      ///@}
       /// \name Accessors (return component objects by reference)
       ///@{
-
-      /**
-      * Get the UnitCell by non-const reference.
-      */
-      UnitCell<D>& unitCell();
-
-      /**
-      * Get the UnitCell by const reference.
-      */
-      UnitCell<D> const & unitCell() const;
 
       /**
       * Get the Mesh by non-const reference.
@@ -171,6 +124,16 @@ namespace Prdc {
       * Get the Mesh by const reference.
       */
       Mesh<D> const & mesh() const;
+
+      /**
+      * Get the UnitCell by non-const reference.
+      */
+      UnitCell<D>& unitCell();
+
+      /**
+      * Get the UnitCell by const reference.
+      */
+      UnitCell<D> const & unitCell() const;
 
       /**
       * Get the SpaceGroup by const reference.
@@ -232,7 +195,7 @@ namespace Prdc {
       std::string groupName() const;
 
       /**
-      * Has a space group been identified?
+      * Has a space group been declared?
       */ 
       bool hasGroup() const;
 
@@ -279,14 +242,14 @@ namespace Prdc {
       // Private member variables
 
       /**
-      * Crystallographic unit cell (crystal system and cell parameters).
-      */
-      UnitCell<D> unitCell_;
-
-      /**
       * Spatial discretization mesh.
       */
       Mesh<D> mesh_;
+
+      /**
+      * Crystallographic unit cell (crystal system and cell parameters).
+      */
+      UnitCell<D> unitCell_;
 
       /**
       * SpaceGroup object
@@ -322,6 +285,11 @@ namespace Prdc {
       * Group name.
       */
       std::string groupName_;
+
+      /**
+      * Pointer to a Signal owned by this DomainReal.
+      */
+      Signal<void>* signalPtr_;
 
       /**
       * Pointer to associated FileMaster.

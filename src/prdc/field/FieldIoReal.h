@@ -205,8 +205,9 @@ namespace Prdc {
       * array contains the components of a single field, defined as
       * coefficients of symmetry-adapted basis functions. On entry,
       * the field array must either be allocated with a capacity equal
-      * to the number of basis functions in the basis, or unallocated.
-      * If field is unallocated, it will be allocated by this function.
+      * to the number of basis functions in the associated basis, or 
+      * unallocated.  If field is unallocated, it will be allocated by 
+      * this function.
       *
       * \param in  input stream (i.e., input file stream)
       * \param field  array to store the field (basis format)

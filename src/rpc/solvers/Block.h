@@ -16,7 +16,7 @@
 #include <util/containers/DMatrix.h>      // member template
 #include <util/containers/FSArray.h>      // member template
 
-// Forward references
+// Forward declarations
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc{

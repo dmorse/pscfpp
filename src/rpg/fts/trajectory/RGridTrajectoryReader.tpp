@@ -62,13 +62,15 @@ namespace Rpg
    { 
       // Read Header
       int nMonomer = system().mixture().nMonomer();
-      Domain<D> & domain = system().domain();
-      FieldIo<D> & fieldIo = domain.fieldIo();
-      UnitCell<D> & unitcell = domain.unitCell();
-      bool isSymmetric;
-      fieldIo.readFieldHeader(inputfile_, nMonomer, unitcell, isSymmetric);
+      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      UnitCell<D> tmpUnitCell;
+      bool hasSymmetry;
+      fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell, 
+                              hasSymmetry);
+      system().setUnitCell(tmpUnitCell);
       Log::file() << "Read Header" << "\n";
    }
+
    /*
    * Read frame, return false if end-of-file
    */

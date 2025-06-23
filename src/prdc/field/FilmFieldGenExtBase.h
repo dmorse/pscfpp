@@ -186,6 +186,7 @@ namespace Prdc {
 
       using ParameterModifier::setParameter; // overloaded method
       using ParameterModifier::getParameter; // overloaded method
+      using FieldGenerator::update; 
 
    protected:
 

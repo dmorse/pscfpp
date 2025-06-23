@@ -91,9 +91,10 @@ namespace Rpg {
       }
 
       // Read in reference field from a file
+      UnitCell<D> tempUnitCell;
       FieldIo<D> const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsRGrid(referenceFieldFileName_,
-                              w0_, system().domain().unitCell());
+                              w0_, tempUnitCell);
 
       // Compute eigenvector components of the reference field
       computeWcReference();

@@ -145,7 +145,8 @@ public:
       FSArray<double, 6> parameters;
       parameters.append(2.0);
       parameters.append(4.0);
-      system1.setUnitCell(UnitCell<3>::Hexagonal, parameters);
+      //system1.setUnitCell(UnitCell<3>::Hexagonal, parameters);
+      system1.setUnitCell(parameters);
 
       // Set up external field
       FilmFieldGenExt<3> ext1(system1);
@@ -175,7 +176,8 @@ public:
       createSystem(system2, "in/film/system3D_3");
       system2.mask().allocateBasis(1920);
       system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
-      system2.setUnitCell(UnitCell<3>::Hexagonal, parameters);
+      //system2.setUnitCell(UnitCell<3>::Hexagonal, parameters);
+      system2.setUnitCell(parameters);
 
       // Set up external field
       FilmFieldGenExt<3> ext2(system2);
@@ -204,7 +206,8 @@ public:
       // Set unit cell parameter
       FSArray<double, 6> parameters;
       parameters.append(2.9);
-      system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      //system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      system.setUnitCell(parameters);
       system.mask().allocateBasis(37);
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
       system.mask().setFieldIo(system.domain().fieldIo());
@@ -218,7 +221,8 @@ public:
 
       // Change lattice parameter and update
       parameters[0] = 3.0;
-      system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      //system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+      system.setUnitCell(parameters);
       TEST_ASSERT(ext.updateNeeded());
       ext.update();
       TEST_ASSERT(!ext.updateNeeded());
@@ -278,7 +282,8 @@ public:
       FSArray<double, 6> parameters;
       parameters.append(1.6353661975);
       parameters.append(2.0);
-      system.setUnitCell(UnitCell<2>::Rectangular, parameters);
+      //system.setUnitCell(UnitCell<2>::Rectangular, parameters);
+      system.setUnitCell(parameters);
 
       // Set up mask
       system.mask().allocateBasis(561);

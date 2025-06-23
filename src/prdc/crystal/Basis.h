@@ -11,12 +11,22 @@
 #include <pscf/mesh/Mesh.h>               // inline waveId
 #include <util/containers/DArray.h>       // member
 #include <util/containers/GArray.h>       // member
+#include <util/signal/Signal.h>           // member
+
+// Forward declarations
+namespace Util {
+   template <typename T> class Signal;
+   template <> class Signal<void>;
+}
+namespace Pscf {
+  namespace Prdc {
+     template <int D> class UnitCell;
+     template <int D> class SpaceGroup;
+  }
+}
 
 namespace Pscf {
 namespace Prdc {
-
-   template <int D> class UnitCell;
-   template <int D> class SpaceGroup;
 
    using namespace Util;
 
@@ -323,7 +333,7 @@ namespace Prdc {
    * another. This is done by requiring that the coefficient of the
    * characteristic wave of each such star is real and positive.
    *
-   * <b> Fourier expansion of a real Function </b>
+   * <b> Fourier expansion of a symmetric real function </b>
    *
    * The expansion of a real function with a specified space group
    * symmetry is specified by specifying a real coefficient for each
@@ -354,6 +364,17 @@ namespace Prdc {
    * The contribution of a basis function f(r) associated with a closed
    * star is simply given by the product of the associated real 
    * coefficient and this real basis function.
+   *
+   * <b> Signals </b>
+   *
+   * A Basis owns an instance of Util::Signal<void> that notifies any
+   * observers when the basis is initialized. The Signal::notify() method
+   * is called at the end of the makeBasis() member function, after 
+   * completion of successful construction of a basis. The Signal object
+   * may be accessed by reference via the signal() member function, and
+   * the Signal<void>::addObserver function may be used to add observer
+   * objects and register a zero-parameter function for each observer
+   * that will be called when the basis is constructed.
    *
    * \ingroup Prdc_Crystal_Module
    */
@@ -584,13 +605,18 @@ namespace Prdc {
       */
       ~Basis();
 
+      // Initialization
+
       /**
       * Construct basis for a specific mesh and space group.
       *
-      * This function implements the algorithm for constructing a
-      * basis. It is called internally by the overloaded makeBasis
-      * function that takes a file name as an argument rather than a
-      * SpaceGroup<D> object.
+      * This function implements the algorithm for constructing a basis. 
+      * It is called internally by the overloaded makeBasis function that 
+      * takes a file name as an argument rather than a SpaceGroup<D> object.
+      *
+      * Observers are notified of successful basis construction, by calling
+      * the Signal<void>::notify() function of the associated signal object
+      * just before returning.
       *
       * \param mesh  spatial discretization grid
       * \param unitCell  crystallographic unitCell
@@ -618,8 +644,8 @@ namespace Prdc {
       * the resulting SpaceGroup\<D\> object to the overloaded function
       * makeBasis(Mesh<D> const&, UnitCell<D> const&, SpaceGroup<D> const&).
       *
-      * This function throws an exception if a file with specified name
-      * is not found or does not contain a valid space group.
+      * This function throws an exception if a file with specified name is
+      * not found or does not contain a valid space group.
       *
       * \param mesh  spatial discretization grid
       * \param unitCell  crystallographic unitCell
@@ -630,30 +656,31 @@ namespace Prdc {
                      std::string groupName);
 
       /**
+      * Get a Signal that is triggered by basis initialization.
+      *
+      * This function returns a Signal<void> object that notifies all
+      * observers upon successful initialization of this Basis. Observers
+      * may be added using Signal<void>::addObserver function. 
+      */
+      Signal<void>& signal();
+
+      // Data Output
+
+      /**
       * Print a list of all waves to an output stream.
       *
-      * \param out output stream to which to write
-      * \param outputAll output cancelled waves only if true
+      * \param out  output stream to which to write
+      * \param outputAll  output cancelled waves only if true
       */
       void outputWaves(std::ostream& out, bool outputAll = false) const;
 
       /**
       * Print a list of all stars to an output stream.
       *
-      * \param out output stream to which to write
-      * \param outputAll output cancelled waves only if true
+      * \param out  output stream to which to write
+      * \param outputAll  output cancelled waves only if true
       */
       void outputStars(std::ostream& out, bool outputAll = false) const;
-
-      /**
-      * Returns true if valid, false otherwise.
-      */
-      bool isValid() const;
-
-      /**
-      * Returns true iff this basis is fully initialized.
-      */
-      bool isInitialized() const;
 
       // Accessors
 
@@ -712,6 +739,16 @@ namespace Prdc {
       * \param vector vector of integer indices of a wave vector.
       */
       int waveId(IntVec<D> vector) const;
+
+      /**
+      * Returns true iff this basis is fully initialized.
+      */
+      bool isInitialized() const;
+
+      /**
+      * Returns true if this basis is valid, false otherwise.
+      */
+      bool isValid() const;
 
    private:
 
@@ -775,6 +812,11 @@ namespace Prdc {
       * Total number of basis functions, or uncancelled stars.
       */
       int nBasis_;
+
+      /**
+      * Pointer to a signal that is triggered when basis is constructed.
+      */
+      Signal<>* signalPtr_;
 
       /**
       * Pointer to an associated UnitCell.
