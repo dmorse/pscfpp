@@ -19,8 +19,8 @@ namespace Pscf
 
    public:
 
-      typedef PropagatorStub Propagator;
-      typedef PropagatorStub::WField WField; 
+      typedef PropagatorStub PropagatorT;
+      typedef PropagatorStub::WFieldT WFieldT; 
 
       /**
       * Constructor.
@@ -34,7 +34,7 @@ namespace Pscf
       /**
       * Compute monomer concentration for this block.
       */ 
-      void setupSolver(WField const & wField)
+      void setupSolver(WFieldT const & wField)
       {}
    
       /**

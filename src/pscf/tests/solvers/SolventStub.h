@@ -22,7 +22,7 @@ namespace Pscf
       SolventStub()
       {  setClassName("Solvent"); }
 
-      void compute(PropagatorStub::WField const &)
+      void compute(PropagatorStub::WFieldT const &)
       {}
 
    };
