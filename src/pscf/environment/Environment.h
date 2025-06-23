@@ -114,10 +114,26 @@ namespace Pscf {
       */
       bool isInitialized() const;
 
+      /**
+      * Does this Environment generate a mask?
+      */
+      bool generatesMask() const;
+
+      /**
+      * Does this Environment generate external fields?
+      */
+      bool generatesExternalFields() const;
+
    protected:
    
       /// Has the Environment been initialized?
       bool isInitialized_;
+
+      /// Does this Environment generate a mask?
+      bool generatesMask_;
+
+      /// Does this Environment generate external fields?
+      bool generatesExternalFields_;
 
    };
 
@@ -125,7 +141,9 @@ namespace Pscf {
 
    // Constructor
    inline Environment::Environment()
-    : isInitialized_(false)
+    : isInitialized_(false),
+      generatesMask_(false),
+      generatesExternalFields_(false)
    {  setClassName("Environment"); }
 
    // Destructor
@@ -144,6 +162,14 @@ namespace Pscf {
    // Has the Environment been initialized? 
    inline bool Environment::isInitialized() const
    {  return isInitialized_; }
+
+   // Does this Environment generate a mask?
+   inline bool Environment::generatesMask() const
+   {  return generatesMask_; }
+
+   // Does this Environment generate external fields?
+   inline bool Environment::generatesExternalFields() const
+   {  return generatesExternalFields_; }
 
 } // namespace Pscf
 #endif

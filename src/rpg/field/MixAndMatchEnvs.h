@@ -50,19 +50,17 @@ namespace Rpg {
       FilmEnvironment(System<D>& sys)
        : MixAndMatchEnv::MixAndMatchEnv(),
          sysPtr_(&sys)
-      {  setClassName("FilmEnvironment"); }
+      {  
+         ParamComposite::setClassName("FilmEnvironment");
+         Environment::generatesMask_ = true;
+         Environment::generatesExternalFields_ = true;
+      }
 
       /**
       * Destructor
       */
       ~FilmEnvironment()
       {}
-
-   protected:
-
-      using MixAndMatchEnv::fieldGenPtr1_;
-      using MixAndMatchEnv::fieldGenPtr2_;
-      using ParamComposite::setClassName;
 
    private:
 
@@ -77,8 +75,8 @@ namespace Rpg {
       */
       void createGenerators()
       {
-         fieldGenPtr1_ = new FilmFieldGenMask<D>(*sysPtr_);
-         fieldGenPtr2_ = new FilmFieldGenExt<D>(*sysPtr_);
+         MixAndMatchEnv::fieldGenPtr1_ = new FilmFieldGenMask<D>(*sysPtr_);
+         MixAndMatchEnv::fieldGenPtr2_ = new FilmFieldGenExt<D>(*sysPtr_);
       }
 
       /// Pointer to the associated system object.

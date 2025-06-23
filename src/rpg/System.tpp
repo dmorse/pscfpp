@@ -1813,6 +1813,16 @@ namespace Rpg {
 
       h_.setNMonomer(nMonomer);
 
+      // If hasEnvironment(), allocate mask and h fields
+      if (hasEnvironment()) {
+         if (environment().generatesMask()) {
+            mask_.allocateRGrid(dimensions);
+         }
+         if (environment().generatesExternalFields()) {
+            h_.allocateRGrid(dimensions);
+         }
+      }
+
       isAllocatedGrid_ = true;
    }
 
@@ -1837,6 +1847,16 @@ namespace Rpg {
       // Allocate basis fields in w and c field containers
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
+
+      // If hasEnvironment(), allocate mask and h fields
+      if (hasEnvironment()) {
+         if (environment().generatesMask()) {
+            mask_.allocateBasis(nBasis);
+         }
+         if (environment().generatesExternalFields()) {
+            h_.allocateBasis(nBasis);
+         }
+      }
 
       isAllocatedBasis_ = true;
    }
