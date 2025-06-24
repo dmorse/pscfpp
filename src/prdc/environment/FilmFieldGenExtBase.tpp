@@ -81,6 +81,40 @@ namespace Prdc
    }
 
    /*
+   * Check whether system has changed such that the fields need updating
+   */
+   template <int D>
+   bool FilmFieldGenExtBase<D>::needsUpdate() const
+   {
+      UTIL_CHECK(normalVecId_ >= 0); // Check that readParameters was called
+
+      // If chiBottomCurrent_ and chiTopCurrent_ are unset, generate() has 
+      // not been called. Therefore, needsUpdate is true
+      if (!chiBottomCurrent_.isAllocated()) {
+         UTIL_CHECK(!chiTopCurrent_.isAllocated());
+         return true;
+      }
+      
+      // Check if chiBottom or chiTop have been changed
+      for (int i = 0; i < chiBottom_.capacity(); i++) {
+         if ((chiBottom_[i] != chiBottomCurrent_[i]) || 
+               (chiTop_[i] != chiTopCurrent_[i])) {
+            return true;
+         }
+      }
+
+      // If chiTop and chiBottom are unchanged and all zeros, no update needed
+      if (isAthermal()) return false;
+
+      // Check if system normalVec differ from normalVecCurrent_
+      if (normalVecCurrent_ == systemLatticeVector(normalVecId_)) {
+         return false;
+      } else {
+         return true;
+      }
+   }
+
+   /*
    * Check that the system is compatible with this field
    */
    template <int D>
@@ -119,34 +153,6 @@ namespace Prdc
          if (group[i].t(normalVecId_) != 0) {
             UTIL_THROW(msg.c_str());
          }
-      }
-   }
-
-   /*
-   * Check whether system has changed such that the field needs updating
-   */
-   template <int D>
-   bool FilmFieldGenExtBase<D>::updateNeeded() const
-   {
-      UTIL_CHECK(isInitialized());
-      UTIL_CHECK(normalVecId_ >= 0);
-      
-      // Check if chiBottom or chiTop have been changed
-      for (int i = 0; i < chiBottom_.capacity(); i++) {
-         if ((chiBottom_[i] != chiBottomCurrent_[i]) || 
-               (chiTop_[i] != chiTopCurrent_[i])) {
-            return true;
-         }
-      }
-
-      // If chiTop and chiBottom are unchanged and all zeros, no update needed
-      if (isAthermal()) return false;
-
-      // Check if system normalVec differ from normalVecCurrent_
-      if (normalVecCurrent_ == systemLatticeVector(normalVecId_)) {
-         return false;
-      } else {
-         return true;
       }
    }
 
@@ -215,7 +221,6 @@ namespace Prdc
                                              bool& success)
    {
       success = true;
-      bool wasAthermal = isAthermal();
       if (name == "chi_top") {
          chiTop_[ids[0]] = value;
       } else if (name == "chi_bottom") {

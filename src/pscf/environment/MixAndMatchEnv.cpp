@@ -87,26 +87,19 @@ namespace Pscf {
       }
    }
 
-   // Allocate, check compatibility, calculate, and store the field(s)
-   void MixAndMatchEnv::initialize()
+   // Checks if fields need to be (re)generated. If so, generates them. 
+   void MixAndMatchEnv::generate()
    {
-      if (fieldGenPtr1_) fieldGenPtr1_->initialize();
-      if (fieldGenPtr2_) fieldGenPtr2_->initialize();
-      isInitialized_ = true;
-   }
-
-   // Check whether system has changed and update the field(s) if necessary
-   void MixAndMatchEnv::update()
-   {
-      UTIL_CHECK(isInitialized_);
-      if (fieldGenPtr1_) fieldGenPtr1_->update();
-      if (fieldGenPtr2_) fieldGenPtr2_->update();
+      if (!needsUpdate_) return;
+      if (fieldGenPtr1_) fieldGenPtr1_->generate();
+      if (fieldGenPtr2_) fieldGenPtr2_->generate();
+      needsUpdate_ = false;
    }
 
    // Return the Environment's contribution to the stress
    double MixAndMatchEnv::stress(int paramId) const
    {
-      UTIL_CHECK(isInitialized_);
+      UTIL_CHECK(!needsUpdate());
 
       double stress(0.0);
       if (fieldGenPtr1_) {
@@ -121,7 +114,7 @@ namespace Pscf {
    // Modify stress to minimize a property other than fHelmholtz
    double MixAndMatchEnv::modifyStress(int paramId, double stress) const
    {
-      UTIL_CHECK(isInitialized_);
+      UTIL_CHECK(!needsUpdate());
 
       if (fieldGenPtr1_) {
          stress = fieldGenPtr1_->modifyStress(paramId, stress);
@@ -158,6 +151,7 @@ namespace Pscf {
       if ((!success) && (fieldGenPtr2_)) {
          fieldGenPtr2_->setParameter(name, ids, value, success);
       }
+      if (success) reset();
    }
 
    // Get the value of a specialized sweep parameter

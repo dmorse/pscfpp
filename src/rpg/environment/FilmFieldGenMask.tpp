@@ -269,43 +269,16 @@ namespace Rpg
    }
 
    /*
-   * Allocate container necessary to generate and store field
+   * Compute the field and store where the System can access
    */
    template <int D>
-   void FilmFieldGenMask<D>::allocate()
-   {
-      UTIL_CHECK(system().domain().unitCell().isInitialized());
-
-      Domain<D> const & domain = system().domain();
-      Mask<D> & mask = system().mask();
-
-      // Make sure mask has access to a fieldIo
-      mask.setFieldIo(domain.fieldIo());
-
-      // Allocate the mask containers if needed
-      if (!system().mask().isAllocatedRGrid()) {
-         mask.allocateRGrid(domain.mesh().dimensions());
-      }
-      if (system().iterator().isSymmetric()) {
-         UTIL_CHECK(domain.basis().isInitialized());
-         if (!system().mask().isAllocatedBasis()) {
-            mask.allocateBasis(domain.basis().nBasis());
-         }
-      }
-   }
-
-   /*
-   * Generate the field and store where the System can access
-   */
-   template <int D>
-   void FilmFieldGenMask<D>::generate()
+   void FilmFieldGenMask<D>::compute()
    {
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
-      UTIL_CHECK(system().mask().isAllocatedRGrid());
       if (system().iterator().isSymmetric()) {
-         UTIL_CHECK(system().mask().isAllocatedBasis());
+         UTIL_CHECK(system().domain().basis().isInitialized());
       }
 
       // Get the length of the lattice basis vector normal to the walls

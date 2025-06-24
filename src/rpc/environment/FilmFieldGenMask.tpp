@@ -192,41 +192,17 @@ namespace Rpc
    }
 
    /*
-   * Allocate container necessary to generate and store field
+   * Compute the field and store where the System can access
    */
    template <int D>
-   void FilmFieldGenMask<D>::allocate()
-   {
-      UTIL_CHECK(sysPtr_);
-      UTIL_CHECK(system().domain().unitCell().isInitialized());
-
-      // Make sure mask has access to a fieldIo
-      system().mask().setFieldIo(system().domain().fieldIo());
-
-      // Allocate the mask containers if needed
-      if (!system().mask().isAllocatedRGrid()) {
-         system().mask().allocateRGrid(system().domain().mesh().dimensions());
-      }
-      if (system().iterator().isSymmetric()) {
-         UTIL_CHECK(system().domain().basis().isInitialized());
-         if (!system().mask().isAllocatedBasis()) {
-            system().mask().allocateBasis(system().domain().basis().nBasis());
-         }
-      }
-   }
-
-   /*
-   * Generate the field and store where the System can access
-   */
-   template <int D>
-   void FilmFieldGenMask<D>::generate()
+   void FilmFieldGenMask<D>::compute()
    {
       UTIL_CHECK(sysPtr_);
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
-      UTIL_CHECK(system().mask().isAllocatedRGrid());
+      UTIL_CHECK(normalVecId() >= 0);
       if (system().iterator().isSymmetric()) {
-         UTIL_CHECK(system().mask().isAllocatedBasis());
+         UTIL_CHECK(system().domain().basis().isInitialized());
       }
       
       // Get the length L of the lattice basis vector normal to the walls

@@ -93,14 +93,9 @@ namespace Rpg {
    protected:
 
       /**
-      * Allocate container necessary to generate and store field
-      */ 
-      void allocate();
-
-      /**
-      * Generate the field and store where the System can access.
+      * Compute the field and store where the System can access.
       */
-      void generate();
+      void compute();
 
       /**
       * Modifies iterator().flexibleParams_ to be compatible with the mask.

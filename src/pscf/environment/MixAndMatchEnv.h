@@ -64,14 +64,9 @@ namespace Pscf {
       void readParameters(std::istream& in);
 
       /**
-      * Allocate, check compatibility, calculate, and store the field(s).
+      * Checks if fields need to be (re)generated. If so, generates them. 
       */
-      void initialize();
-
-      /**
-      * Check whether system has changed, update the field(s) if necessary.
-      */
-      void update();
+      void generate();
 
       /**
       * Return the Environment's contribution to the stress.
@@ -134,12 +129,13 @@ namespace Pscf {
       double getParameter(std::string name, DArray<int> ids, bool& success)
       const;
 
+      using Environment::reset;
       using ParameterModifier::setParameter; // overloaded method
       using ParameterModifier::getParameter; // overloaded method
 
    protected:
 
-      using Environment::isInitialized_;
+      using Environment::needsUpdate_;
 
       /**
       * Create FieldGenerator objects for mask and/or external field.

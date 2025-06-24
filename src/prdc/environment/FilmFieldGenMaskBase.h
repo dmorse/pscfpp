@@ -23,8 +23,8 @@ namespace Prdc {
    * Base class Field Generator for thin-film masks.
    * 
    * This is a base class for FilmFieldGenMask that defines all traits of a 
-   * FilmFieldGenMask that do not require access to the System (System access is
-   * needed, for example, to get the space group and set the mask field).
+   * FilmFieldGenMask that do not require access to the System (System access 
+   * is needed, for example, to get the space group and set the mask field).
    * 
    * If the user chooses a FilmFieldGenMask object to construct the mask, then 
    * the system will contain two parallel hard surfaces ("walls"), confining
@@ -59,17 +59,17 @@ namespace Prdc {
       void readParameters(std::istream& in);
 
       /**
+      * Check whether system has changed such that the field needs updating.
+      */
+      bool needsUpdate() const;
+
+      /**
       * Check that the system is compatible with this field.
       * 
       * This method calls setFlexibleParams, checkLatticeVectors, and
       * checkSpaceGroup.
       */
       void checkCompatibility();
-
-      /**
-      * Check whether system has changed such that the field needs updating.
-      */
-      bool updateNeeded() const;
 
       /**
       * Get value of normalVecId.
@@ -136,6 +136,11 @@ namespace Prdc {
    protected:
 
       /**
+      * Compute the field and store where the System can access
+      */
+      virtual void compute() = 0;
+
+      /**
       * Check that space group is compatible with the mask.
       */
       void checkSpaceGroup() const;
@@ -150,31 +155,6 @@ namespace Prdc {
       * basis vectors must be parallel to the walls.
       */
       void checkLatticeVectors() const;
-
-      /**
-      * Allocate container necessary to generate and store field.
-      */ 
-      virtual void allocate() = 0;
-
-      /**
-      * Generate the field and store where the System can access.
-      */
-      virtual void generate() = 0;
-
-      /**
-      * Sets iterator's flexibleParams array to be compatible with the mask.
-      * 
-      * If the iterator allows for flexible lattice parameters, this 
-      * method will access the "flexibleParams" array of the iterator
-      * (a FSArray<bool,6> that indicates which parameters are flexible),
-      * create a modified version using modifyFlexibleParams to be 
-      * compatible with this mask, and then update the flexibleParams 
-      * array owned by the iterator to match this modified array.
-      * 
-      * Because this requires access to the iterator, it must be 
-      * implemented by subclasses.
-      */
-      virtual void setFlexibleParams() const = 0;
 
       /**
       * Modifies a flexibleParams array to be compatible with this mask.
@@ -203,6 +183,21 @@ namespace Prdc {
       */
       FSArray<bool,6> modifyFlexibleParams(FSArray<bool,6> current,
                                            UnitCell<D> const & cell) const;
+
+      /**
+      * Sets iterator's flexibleParams array to be compatible with the mask.
+      * 
+      * If the iterator allows for flexible lattice parameters, this 
+      * method will access the "flexibleParams" array of the iterator
+      * (a FSArray<bool,6> that indicates which parameters are flexible),
+      * create a modified version using modifyFlexibleParams to be 
+      * compatible with this mask, and then update the flexibleParams 
+      * array owned by the iterator to match this modified array.
+      * 
+      * Because this requires access to the iterator, it must be 
+      * implemented by subclasses.
+      */
+      virtual void setFlexibleParams() const = 0;
 
       /**
       * Get the space group name for this system.

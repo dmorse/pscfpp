@@ -106,7 +106,7 @@ public:
       
       Log::file() << "Testing system 1:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask1,false));
-      TEST_ASSERT(!mask1.isInitialized());
+      TEST_ASSERT(mask1.needsUpdate());
       TEST_ASSERT(system1.iterator().isFlexible() == true);
       TEST_ASSERT(system1.iterator().nFlexibleParams() == 1);
       TEST_ASSERT(system1.iterator().flexibleParams()[0] == true);
@@ -214,10 +214,10 @@ public:
 
    }
 
-   void testInitialize() // test FieldGenerator::initialize()
+   void testGenerate() // test FieldGenerator::generate()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/maskTestInitialize.log");
+      openLogFile("out/maskTestGenerate.log");
 
       // Set up 2D mask with a compatible system
       System<2> system;
@@ -233,8 +233,10 @@ public:
       // Set up mask
       FilmFieldGenMask<2> mask(system);
       createFilmFieldGenMask(mask, "in/filmMask2");
-      mask.initialize();
-      TEST_ASSERT(mask.isInitialized());
+      Log::file() << "1" << std::endl;
+      mask.generate();
+      Log::file() << "2" << std::endl;
+      TEST_ASSERT(!mask.needsUpdate());
       TEST_ASSERT(system.mask().isAllocatedBasis());
       TEST_ASSERT(system.mask().isAllocatedRGrid());
       TEST_ASSERT(system.mask().hasData());
@@ -254,10 +256,10 @@ public:
       TEST_ASSERT(bComparison.maxDiff() < 1.0E-7);
    }
 
-   void testUpdate() // test FieldGenerator::update()
+   void testRegenerate() // test generate() after parameter changes
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/maskTestUpdate.log");
+      openLogFile("out/maskTestRegenerate.log");
 
       // Set up 1D mask with a compatible system
       System<1> system;
@@ -272,15 +274,15 @@ public:
       // Set up mask
       FilmFieldGenMask<1> mask(system);
       createFilmFieldGenMask(mask, "in/filmMask1");
-      mask.initialize();
-      TEST_ASSERT(!mask.updateNeeded());
+      mask.generate();
+      TEST_ASSERT(!mask.needsUpdate());
 
       // Change lattice parameter and update
       parameters[0] = 3.0;
       //system.setUnitCell(UnitCell<1>::Lamellar, parameters);
       system.setUnitCell(parameters);
-      TEST_ASSERT(mask.updateNeeded());
-      mask.update();
+      TEST_ASSERT(mask.needsUpdate());
+      mask.generate();
 
       // Check that updated mask is correct
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
@@ -314,7 +316,7 @@ public:
       // Set up mask
       FilmFieldGenMask<2> mask(system);
       createFilmFieldGenMask(mask, "in/filmMask2");
-      mask.initialize();
+      mask.generate();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
       system.readWBasis("in/wIn2D.bf");
@@ -343,7 +345,7 @@ public:
       // Set up mask
       FilmFieldGenMask<1> mask(system);
       createFilmFieldGenMask(mask, "in/filmMask1");
-      mask.initialize();
+      mask.generate();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
       system.readWBasis("in/wIn1D_2.bf");
@@ -410,8 +412,8 @@ TEST_BEGIN(FilmFieldGenMaskTest)
 TEST_ADD(FilmFieldGenMaskTest, testConstructor)
 TEST_ADD(FilmFieldGenMaskTest, testReadParameters)
 TEST_ADD(FilmFieldGenMaskTest, testCheckCompatibility)
-TEST_ADD(FilmFieldGenMaskTest, testInitialize)
-TEST_ADD(FilmFieldGenMaskTest, testUpdate)
+TEST_ADD(FilmFieldGenMaskTest, testGenerate)
+TEST_ADD(FilmFieldGenMaskTest, testRegenerate)
 TEST_ADD(FilmFieldGenMaskTest, testStress)
 TEST_ADD(FilmFieldGenMaskTest, testModifyStress)
 TEST_END(FilmFieldGenMaskTest)

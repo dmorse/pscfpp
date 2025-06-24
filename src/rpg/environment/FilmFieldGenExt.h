@@ -81,14 +81,9 @@ namespace Rpg {
    protected:
 
       /**
-      * Allocate container necessary to generate and store fields
-      */ 
-      void allocate();
-
-      /**
-      * Generate the fields and store where the System can access.
+      * Compute the fields and store where the System can access.
       */
-      void generate();
+      void compute();
 
       /**
       * Get the System associated with this object by reference.
@@ -115,16 +110,6 @@ namespace Rpg {
       * Get the number of monomer species for this system.
       */
       int systemNMonomer() const;
-
-      /**
-      * Use the mask to determine and store the value of normalVecId
-      */
-      void maskNormalVecId();
-
-      /**
-      * Use the mask to determine and store the value of interfaceThickness
-      */
-      void maskInterfaceThickness();
 
       using FilmFieldGenExtBase<D>::normalVecCurrent_;
       using FilmFieldGenExtBase<D>::chiBottomCurrent_;

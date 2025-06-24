@@ -50,14 +50,14 @@ namespace Pscf {
       ~FieldGenerator();
       
       /**
-      * Allocate, check compatibility, calculate, and store the field(s)
+      * Checks if fields need to be (re)generated. If so, generates them. 
       */
-      void initialize();
+      void generate();
 
       /**
-      * Check whether system has changed, update the field(s) if necessary
+      * Check whether system has changed such that the field(s) need updating
       */
-      void update();
+      virtual bool needsUpdate() const = 0;
 
       /**
       * Check that the system is compatible with these fields
@@ -68,11 +68,6 @@ namespace Pscf {
       * with the design of the fields.
       */
       virtual void checkCompatibility() = 0;
-
-      /**
-      * Check whether system has changed such that the field(s) need updating
-      */
-      virtual bool updateNeeded() const = 0;
 
       /**
       * Get contribution to the stress from this imposed field.
@@ -131,11 +126,6 @@ namespace Pscf {
       Type type() const;
 
       /**
-      * Check whether the field(s) have been initialized
-      */
-      bool isInitialized() const;
-
-      /**
       * Is this object dependent on the parameters of another FieldGenerator?
       * 
       * The parent MixAndMatchEnv object can contain up to two 
@@ -162,14 +152,9 @@ namespace Pscf {
    protected:
 
       /**
-      * Allocate container(s) necessary to generate and store field(s)
-      */ 
-      virtual void allocate() = 0;
-
-      /**
-      * Generate the field(s) and store where the System can access
+      * Compute the field(s) and store where the System can access
       */
-      virtual void generate() = 0;
+      virtual void compute() = 0;
 
       /**
       * Type of field (Mask, External, or None)
@@ -179,9 +164,6 @@ namespace Pscf {
       * the calculation.
       */
       Type type_;
-
-      /// Have the field(s) been initialized?
-      bool isInitialized_;
 
       /// Is this object dependent on the parameters of another FieldGenerator?
       bool isDependent_;
@@ -202,10 +184,6 @@ namespace Pscf {
    // Return Type enumeration value (Mask, External, or None)
    inline FieldGenerator::Type FieldGenerator::type() const
    {  return type_; }
-
-   // Check whether the field(s) have been initialized
-   inline bool FieldGenerator::isInitialized() const
-   {  return isInitialized_; }
 
    // Is this object dependent on the parameters of another FieldGenerator?
    inline bool FieldGenerator::isDependent() const

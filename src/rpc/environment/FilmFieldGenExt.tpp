@@ -147,36 +147,11 @@ namespace Rpc
       return term;
    }
 
-   /*
-   * Allocate container necessary to generate and store field
-   */
-   template <int D>
-   void FilmFieldGenExt<D>::allocate()
-   {
-      UTIL_CHECK(system().domain().unitCell().isInitialized());
-
-      // Make sure h field container has access to a fieldIo
-      system().h().setFieldIo(system().domain().fieldIo());
-
-      // Allocate the external field containers if needed
-      if (!isAthermal()) {
-         if (!system().h().isAllocatedRGrid()) {
-            system().h().allocateRGrid(system().domain().mesh().dimensions());
-         }
-         if (system().iterator().isSymmetric()) {
-            UTIL_CHECK(system().domain().basis().isInitialized());
-            if (!system().h().isAllocatedBasis()) {
-               system().h().allocateBasis(system().domain().basis().nBasis());
-            }
-         }
-      }
-   }
-
    /**
-   * Generate the fields and store where the System can access.
+   * Compute the fields and store where the System can access.
    */
    template <int D>
-   void FilmFieldGenExt<D>::generate()
+   void FilmFieldGenExt<D>::compute()
    {
       // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
@@ -190,15 +165,11 @@ namespace Rpc
          return;
       }
 
-      // If this point is reached, external field must be generated
-      UTIL_CHECK(system().h().isAllocatedRGrid());
-      UTIL_CHECK(system().mask().isAllocatedRGrid());
-      if (system().iterator().isSymmetric()) {
-         UTIL_CHECK(system().h().isAllocatedBasis());
-         UTIL_CHECK(system().mask().isAllocatedBasis());
-      }
-
+      // If this point is reached, external field must be computed
       UTIL_CHECK(normalVecId() >= 0);
+      if (system().iterator().isSymmetric()) {
+         UTIL_CHECK(system().domain().basis().isInitialized());
+      }
 
       int nm = systemNMonomer();
 

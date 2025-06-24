@@ -73,14 +73,41 @@ namespace Pscf {
       ~Environment();
 
       /**
-      * Allocate, check compatibility, calculate, and store the field(s).
+      * Checks if fields need to be (re)generated. If so, generates them. 
+      * 
+      * Upon completion, needsUpdate() is set to false, and will remain
+      * false until the reset() method is called. If needsUpdate() is 
+      * already false when generate() is called, it will do nothing and
+      * return immediately.
+      * 
+      * If the fields have already been generated, this method may or may
+      * not need to regenerate some or all of them, depending on which 
+      * system properties have changed since the fields were last generated. 
+      * Subclass implementations of generate() should check relevant system 
+      * properties and only regenerate fields if necessary.
       */
-      virtual void initialize() = 0;
+      virtual void generate() = 0;
 
       /**
-      * Check whether system has changed, update the field(s) if necessary.
+      * Sets needsUpdate() to true. 
+      * 
+      * Whenever system properties that may affect the Environment are 
+      * changed, reset() should be called. Such properties include 
+      * lattice parameters and any input parameters in the Environment
+      * block of the parameter file. 
+      * 
+      * Methods that use the Environment for calculations should first
+      * check if needsUpdate() is true, and if so, call generate(). Or,
+      * if a method expects that the Environment should always be up
+      * to date when it is called, it can simply check that needsUpdate()
+      * is false. 
       */
-      virtual void update() = 0;
+      void reset();
+
+      /**
+      * Does this Environment need to be updated?
+      */
+      bool needsUpdate() const;
 
       /**
       * Return the Environment's contribution to the stress.
@@ -110,11 +137,6 @@ namespace Pscf {
       virtual double modifyStress(int paramId, double stress) const;
 
       /**
-      * Has the Environment been initialized?
-      */
-      bool isInitialized() const;
-
-      /**
       * Does this Environment generate a mask?
       */
       bool generatesMask() const;
@@ -125,9 +147,6 @@ namespace Pscf {
       bool generatesExternalFields() const;
 
    protected:
-   
-      /// Has the Environment been initialized?
-      bool isInitialized_;
 
       /// Does this Environment generate a mask?
       bool generatesMask_;
@@ -135,20 +154,31 @@ namespace Pscf {
       /// Does this Environment generate external fields?
       bool generatesExternalFields_;
 
+      /// Does this Environment need to be updated?
+      bool needsUpdate_;
+
    };
 
    // Inline member functions
 
    // Constructor
    inline Environment::Environment()
-    : isInitialized_(false),
-      generatesMask_(false),
-      generatesExternalFields_(false)
+    : generatesMask_(false),
+      generatesExternalFields_(false),
+      needsUpdate_(true)
    {  setClassName("Environment"); }
 
    // Destructor
    inline Environment::~Environment()
    {}
+
+   // Sets needsUpdate() to true. 
+   inline void Environment::reset()
+   {  needsUpdate_ = true; }
+
+   // Does this Environment need to be updated?
+   inline bool Environment::needsUpdate() const
+   {  return needsUpdate_; }
 
    // Return the Environment's contribution to the stress. 
    inline double Environment::stress(int paramId) const
@@ -157,11 +187,10 @@ namespace Pscf {
    // Modify stress to minimize a property other than fHelmholtz. 
    inline double 
    Environment::modifyStress(int paramId, double stress) const
-   {  return stress; }
-
-   // Has the Environment been initialized? 
-   inline bool Environment::isInitialized() const
-   {  return isInitialized_; }
+   {  
+      UTIL_CHECK(!needsUpdate_);
+      return stress; 
+   }
 
    // Does this Environment generate a mask?
    inline bool Environment::generatesMask() const

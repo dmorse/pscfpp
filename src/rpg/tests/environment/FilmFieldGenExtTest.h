@@ -97,7 +97,7 @@ public:
       TEST_ASSERT(checkCheckCompatibility(ext1,false));
       TEST_ASSERT(ext1.hasSymmetricWalls());
       TEST_ASSERT(!ext1.isAthermal());
-      TEST_ASSERT(!ext1.isInitialized());
+      TEST_ASSERT(ext1.needsUpdate());
 
       // Set up 2D external field with asymmetric walls and an 
       // incompatible space group
@@ -123,14 +123,14 @@ public:
       TEST_ASSERT(checkCheckCompatibility(ext3,false));
       TEST_ASSERT(!ext3.hasSymmetricWalls());
       TEST_ASSERT(!ext3.isAthermal());
-      TEST_ASSERT(!ext3.isInitialized());
+      TEST_ASSERT(ext3.needsUpdate());
       TEST_ASSERT(ext3.normalVecId() == 2);
    }
 
-   void testInitialize() // test FieldGenerator::initialize()
+   void testGenerate() // test FieldGenerator::generate()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/extTestInitialize.log");
+      openLogFile("out/extTestGenerate.log");
 
       // Set up 3D external field with a compatible system
       System<3> system1;
@@ -151,8 +151,8 @@ public:
       // Set up external field
       FilmFieldGenExt<3> ext1(system1);
       createFilmFieldGenExt(ext1, "in/filmExt3Asym");
-      ext1.initialize();
-      TEST_ASSERT(ext1.isInitialized());
+      ext1.generate();
+      TEST_ASSERT(!ext1.needsUpdate());
       TEST_ASSERT(system1.h().isAllocatedRGrid());
       TEST_ASSERT(system1.h().isAllocatedBasis());
       TEST_ASSERT(system1.h().hasData());
@@ -182,22 +182,22 @@ public:
       // Set up external field
       FilmFieldGenExt<3> ext2(system2);
       createFilmFieldGenExt(ext2, "in/filmExt3Athermal");
-      ext2.initialize();
+      ext2.generate();
 
-      TEST_ASSERT(ext2.isInitialized());
+      TEST_ASSERT(!ext2.needsUpdate());
       TEST_ASSERT(!system2.h().isAllocatedRGrid());
       TEST_ASSERT(!system2.h().isAllocatedBasis());
       TEST_ASSERT(!system2.h().hasData());
    }
 
-   void testUpdate() // test FieldGenerator::update()
+   void testRegenerate() // test generate() with parameter changes
    {
       // Note: this test also tests the methods getParameter and 
       // setParameter, which are used by Sweep to modify chiBottom
       // and chiTop.
 
       printMethod(TEST_FUNC);
-      openLogFile("out/extTestUpdate.log");
+      openLogFile("out/extTestRegenerate.log");
 
       // Set up 1D external field with a compatible system
       System<1> system;
@@ -217,15 +217,15 @@ public:
       // Set up external field generator
       FilmFieldGenExt<1> ext(system);
       createFilmFieldGenExt(ext, "in/filmExt1Sym");
-      ext.initialize();
+      ext.generate();
 
       // Change lattice parameter and update
       parameters[0] = 3.0;
       //system.setUnitCell(UnitCell<1>::Lamellar, parameters);
       system.setUnitCell(parameters);
-      TEST_ASSERT(ext.updateNeeded());
-      ext.update();
-      TEST_ASSERT(!ext.updateNeeded());
+      TEST_ASSERT(ext.needsUpdate());
+      ext.generate();
+      TEST_ASSERT(!ext.needsUpdate());
 
       // Check that updated external fields are correct
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
@@ -251,9 +251,9 @@ public:
       TEST_ASSERT(eq(ext.getParameter("chi_top",ids), -2.0));
       TEST_ASSERT(eq(ext.getParameter("chi_bottom",ids), -2.0));
 
-      TEST_ASSERT(ext.updateNeeded());
-      ext.update();
-      TEST_ASSERT(!ext.updateNeeded());
+      TEST_ASSERT(ext.needsUpdate());
+      ext.generate();
+      TEST_ASSERT(!ext.needsUpdate());
 
       // Check that updated external fields are is correct
       UnitCell<1> unitCell2; // UnitCell object to pass to FieldIo functions
@@ -295,7 +295,7 @@ public:
       // Set up external field generator
       FilmFieldGenExt<2> ext(system);
       createFilmFieldGenExt(ext, "in/filmExt2Sym");
-      ext.initialize();
+      ext.generate();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
       system.readWBasis("in/wIn2D.bf");
@@ -362,8 +362,8 @@ TEST_BEGIN(FilmFieldGenExtTest)
 TEST_ADD(FilmFieldGenExtTest, testConstructor)
 TEST_ADD(FilmFieldGenExtTest, testReadParameters)
 TEST_ADD(FilmFieldGenExtTest, testCheckCompatibility)
-TEST_ADD(FilmFieldGenExtTest, testInitialize)
-TEST_ADD(FilmFieldGenExtTest, testUpdate)
+TEST_ADD(FilmFieldGenExtTest, testGenerate)
+TEST_ADD(FilmFieldGenExtTest, testRegenerate)
 TEST_ADD(FilmFieldGenExtTest, testStress)
 TEST_END(FilmFieldGenExtTest)
 

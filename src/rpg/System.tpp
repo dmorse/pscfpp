@@ -110,7 +110,7 @@ namespace Rpg {
 
       // Signal triggered by unit cell modification
       Signal<void>& cellSignal = domain_.unitCell().signal();
-      cellSignal.addObserver(*this, &System<D>::updateUnitCellData);
+      cellSignal.addObserver(*this, &System<D>::clearUnitCellData);
 
       // Signal triggered by w-field modification
       w_.signal().addObserver(*this, &System<D>::clearCFields);
@@ -875,11 +875,11 @@ namespace Rpg {
 
       if (hasEnvironment()) {
 
-         // Ensure Environment is initialized and updated
-         if (!environment().isInitialized()) {
-            environment().initialize();
-         } else {
-            environment().update();
+         // Make sure Environment is up-to-date
+         if (hasEnvironment()) {
+            if (environment().needsUpdate()) {
+               environment().generate();
+            }
          }
 
          // Calculate sumChiInverse
@@ -1044,13 +1044,13 @@ namespace Rpg {
    * Notify System members of updated unit cell parameters.
    */
    template <int D>
-   void System<D>::updateUnitCellData()
+   void System<D>::clearUnitCellData()
    {
       clearCFields();
       mixture_.clearUnitCellData();
       domain_.waveList().clearUnitCellData();
-      if (hasEnvironment() && environment().isInitialized()) {
-         environment().update();
+      if (hasEnvironment()) {
+         environment().reset();
       }
    }
 
@@ -1069,12 +1069,10 @@ namespace Rpg {
       UTIL_CHECK(w_.hasData());
       clearCFields();
 
-      // Initialize or update Environment if needed
+      // Make sure Environment is up-to-date
       if (hasEnvironment()) {
-         if (environment().isInitialized()) {
-            environment().update();
-         } else {
-            environment().initialize();
+         if (environment().needsUpdate()) {
+            environment().generate();
          }
       }
 
@@ -1115,12 +1113,10 @@ namespace Rpg {
       Log::file() << std::endl;
       Log::file() << std::endl;
 
-      // Initialize or update Environment if needed
+      // Make sure Environment is up-to-date
       if (hasEnvironment()) {
-         if (environment().isInitialized()) {
-            environment().update();
-         } else {
-            environment().initialize();
+         if (environment().needsUpdate()) {
+            environment().generate();
          }
       }
 
@@ -1190,6 +1186,8 @@ namespace Rpg {
 
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(hasCFields_);
+
+      if (hasEnvironment()) UTIL_CHECK(!environment().needsUpdate());
 
       int nm = mixture_.nMonomer();   // number of monomer types
       int np = mixture_.nPolymer();   // number of polymer species
@@ -1398,7 +1396,7 @@ namespace Rpg {
       }
 
       if (hasEnvironment()) {
-         UTIL_CHECK(environment().isInitialized());
+         UTIL_CHECK(!environment().needsUpdate());
          for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
             if (iterator().flexibleParams()[i]) {
                // Add stress contributions from Environment

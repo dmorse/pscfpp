@@ -334,10 +334,10 @@ namespace Rpg {
       * 
       * In particular, this method calls mixture().clearUnitCellData(), 
       * domain().wavelist().clearUnitCellData(), clearCFields(), and, 
-      * if an Environment exists in the System, environment().update(). 
+      * if an Environment exists in the System, environment().reset(). 
       * It should be called whenever the lattice parameters change.
       */
-      void updateUnitCellData();
+      void clearUnitCellData();
 
       ///@}
       /// \name Field Theory Computations

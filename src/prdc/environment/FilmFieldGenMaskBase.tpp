@@ -31,7 +31,10 @@ namespace Prdc
       interfaceThickness_(-1.0),
       excludedThickness_(-1.0),
       hasFBulk_(false)
-   {  type_ = Mask; }
+   {  
+      type_ = Mask; 
+      normalVecCurrent_.setToZero();
+   }
 
    /*
    * Destructor
@@ -68,6 +71,25 @@ namespace Prdc
    }
 
    /*
+   * Check whether system has changed such that the field needs updating
+   */
+   template <int D>
+   bool FilmFieldGenMaskBase<D>::needsUpdate() const
+   {
+      UTIL_CHECK(normalVecId_ >= 0); // Check that readParameters was called
+      
+      // Check if system normalVec differ from normalVecCurrent_
+      //    Note: normalVecCurrent_ is set to array of zeros in constructor,
+      //    so if generate() has not been called, it is still an array of 
+      //    zeros and this method will return true, as it should.
+      if (normalVecCurrent_ == systemLatticeVector(normalVecId_)) {
+         return false;
+      } else {
+         return true;
+      }
+   }
+
+   /*
    * Check that the system is compatible with this field
    */
    template <int D>
@@ -84,23 +106,6 @@ namespace Prdc
 
       // Ensure that unit cell is compatible with wall
       checkLatticeVectors();
-   }
-
-   /*
-   * Check whether system has changed such that the field needs updating
-   */
-   template <int D>
-   bool FilmFieldGenMaskBase<D>::updateNeeded() const
-   {
-      UTIL_CHECK(isInitialized());
-      UTIL_CHECK(normalVecId_ >= 0);
-      
-      // Check if system normalVec differ from normalVecCurrent_
-      if (normalVecCurrent_ == systemLatticeVector(normalVecId_)) {
-         return false;
-      } else {
-         return true;
-      }
    }
 
    /*
@@ -139,8 +144,8 @@ namespace Prdc
       }
    }
 
-   // Explicit Specializations for checkLatticeVectors are in
-   // FilmFieldGenMaskBase.cpp
+   // Explicit Specializations for checkLatticeVectors and 
+   // modifyFlexibleParams are in FilmFieldGenMaskBase.cpp
 }
 }
 #endif
