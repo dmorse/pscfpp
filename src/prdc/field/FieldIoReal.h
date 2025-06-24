@@ -15,6 +15,7 @@
 // Forward declarations for classes used in interfaces
 namespace Util {
    class FileMaster;
+   template <typename T> class DMatrix;
 }
 namespace Pscf {
    template <int D> class Mesh;
@@ -36,45 +37,45 @@ namespace Prdc {
    *
    * This class template provides functions to read and write real-valued
    * fields in any of three representations (symmetry-adapted basis,
-   * real-space r-grid, or Fourier space k-grid form), functions to 
-   * convert among these three representations, and other utilities for 
-   * manipulating fields and field files. 
+   * real-space r-grid, or Fourier space k-grid form), functions to
+   * convert among these three representations, and other utilities for
+   * manipulating fields and field files.
    *
    * <b>Template parameters:</b>
    *
    *    - D    : integer dimension of space, i.e., 1, 2, or 3
-   *    - RFT  : r-grid (real space) field type, e.g., RField<D> 
-   *    - KFT  : k-grid (Fourier space) field type, e.g., RFieldDft<D> 
-   *    - FFT  : fast Fourier transform type, e.g., FFT<D> 
+   *    - RFT  : r-grid (real space) field type, e.g., RField<D>
+   *    - KFT  : k-grid (Fourier space) field type, e.g., RFieldDft<D>
+   *    - FFT  : fast Fourier transform type, e.g., FFT<D>
    *
    * <b>Subclasses:</b>
    * The FieldIoReal template is a base class for two class templates
-   * named FieldIo that are defined in namespaces Pscf::Rpc and Pscf::Rpg. 
-   * The Pscf::Rpc::FieldIo<int D> template is derived from a partial 
-   * specialization of FieldIoReal with parameters RFT = Cpu::RField<D>, 
-   * KFT = Cpu::RFieldDft<D>, and FFT = Cpu::FFT<D> that are all defined 
-   * in the Prdc::Cpu namespace, and that all use standard CPU hardware. 
-   * The analogous template Rpg::Field<int D> in the Pscf::Rpg namespace 
-   * is derived from a partial specialization of FieldIoReal in which 
-   * these three parameters are class templates with the same names 
-   * (RField, RFieldDft, and FFT) that are defined in the Prdc::Cuda 
-   * namespace, and that all use a GPU. 
+   * named FieldIo that are defined in namespaces Pscf::Rpc and Pscf::Rpg.
+   * The Pscf::Rpc::FieldIo<int D> template is derived from a partial
+   * specialization of FieldIoReal with parameters RFT = Cpu::RField<D>,
+   * KFT = Cpu::RFieldDft<D>, and FFT = Cpu::FFT<D> that are all defined
+   * in the Prdc::Cpu namespace, and that all use standard CPU hardware.
+   * The analogous template Rpg::Field<int D> in the Pscf::Rpg namespace
+   * is derived from a partial specialization of FieldIoReal in which
+   * these three parameters are class templates with the same names
+   * (RField, RFieldDft, and FFT) that are defined in the Prdc::Cuda
+   * namespace, and that all use a GPU.
    *
-   * <b>Basis construction as side effect of reading field files:</b> 
+   * <b>Basis construction as side effect of reading field files:</b>
    * Every member function that reads fields from a file may construct a
-   * symmetry adapted basis in an associated Basis<D> object as a side 
-   * effect of reading a field file header. All such functions call the 
-   * member function readFieldHeader to read the field file header. 
-   * If a space group was declared in the parameter file, but the 
+   * symmetry adapted basis in an associated Basis<D> object as a side
+   * effect of reading a field file header. All such functions call the
+   * member function readFieldHeader to read the field file header.
+   * If a space group was declared in the parameter file, but the
    * symmetry-adapted basis has not been initialized before reading a
-   * field file header, then the readFieldHeader function will initialize 
+   * field file header, then the readFieldHeader function will initialize
    * the associated Basis<D> object using the unit cell parameters found
-   * in the field file header. 
+   * in the field file header.
    *
-   * <b> Pure virtual member functions </b>: This class template defines 
-   * several pure virtual functions for which different implementations 
-   * are required for Cpu and Cuda code. Cpu and Cuda implementations 
-   * of these functions, which are defined in the Rpc::FieldIo<D> and 
+   * <b> Pure virtual member functions </b>: This class template defines
+   * several pure virtual functions for which different implementations
+   * are required for Cpu and Cuda code. Cpu and Cuda implementations
+   * of these functions, which are defined in the Rpc::FieldIo<D> and
    * Rpg::FieldIo<D> subclasses, differ because the Cuda versions must
    * explicitly transfer data between Cpu and Gpu memory.
    *
@@ -136,11 +137,11 @@ namespace Prdc {
 
       /**
       * Set the number of monomer types.
-      * 
-      * This is used to allocate private arrays of fields used by some 
+      *
+      * This is used to allocate private arrays of fields used by some
       * functions that read field data into this workspace memory. This
-      * function may only be called once, shortly after the value of 
-      * nMonomer is read from the parameter file. 
+      * function may only be called once, shortly after the value of
+      * nMonomer is read from the parameter file.
       *
       * \param nMonomer  number of monomer types
       */
@@ -156,19 +157,19 @@ namespace Prdc {
       * This function reads fields in a symmetry adapted basis format from
       * input stream in. The header of the field file must declare a group
       * name, and this name must agree with that declared in the parameter
-      * file.  Upon successful return, element fields[i] of the fields 
-      * container is a DArray<double> containing the components of the 
-      * field associated with monomer type i, defined as coefficients of 
-      * symmetry-adapted basis functions defined by the current basis. 
+      * file.  Upon successful return, element fields[i] of the fields
+      * container is a DArray<double> containing the components of the
+      * field associated with monomer type i, defined as coefficients of
+      * symmetry-adapted basis functions defined by the current basis.
       * If a basis has not been constructed before entry, it will be
       * constructed within this function.
-      * 
-      * On entry, the fields container must either be allocated with a 
-      * capacity equal to the number of monomer types in the field file, 
-      * and a capacity for each field equal to the number of basis 
+      *
+      * On entry, the fields container must either be allocated with a
+      * capacity equal to the number of monomer types in the field file,
+      * and a capacity for each field equal to the number of basis
       * functions in the basis, or it may be unallocated. If the fields
       * container is not allocated, it will allocated within this function
-      * with these dimensions. The number of monomer types does not need 
+      * with these dimensions. The number of monomer types does not need
       * to be equal to the value set by the setNMonomer(int) function.
       *
       * \param in  input stream (e.g., input file stream)
@@ -176,18 +177,18 @@ namespace Prdc {
       * \param unitCell  associated unit cell object
       */
       void
-      readFieldsBasis(std::istream& in, 
+      readFieldsBasis(std::istream& in,
 		      DArray< DArray<double> >& fields,
                       UnitCell<D> & unitCell) const;
 
       /**
       * Read an array of fields in basis format from a named file.
       *
-      * This function opens an input file with the specified filename, 
-      * reads an array of fields in symmetry-adapted form from that file, 
+      * This function opens an input file with the specified filename,
+      * reads an array of fields in symmetry-adapted form from that file,
       * and then closes the file. The overloaded readFieldsBasis member
       * function that takes a std::istream& argument is called internally
-      * to read the file. 
+      * to read the file.
       *
       * \param filename  name of input file
       * \param fields  array of fields (symmetry adapted basis components)
@@ -200,13 +201,13 @@ namespace Prdc {
       /**
       * Read a single field in basis format from an input stream.
       *
-      * This function reads a single field in symmetry adapted basis 
+      * This function reads a single field in symmetry adapted basis
       * format from an input stream. Upon successful return, the field
       * array contains the components of a single field, defined as
       * coefficients of symmetry-adapted basis functions. On entry,
       * the field array must either be allocated with a capacity equal
-      * to the number of basis functions in the associated basis, or 
-      * unallocated.  If field is unallocated, it will be allocated by 
+      * to the number of basis functions in the associated basis, or
+      * unallocated.  If field is unallocated, it will be allocated by
       * this function.
       *
       * \param in  input stream (i.e., input file stream)
@@ -221,16 +222,16 @@ namespace Prdc {
       * Read a single field in basis format from a named file.
       *
       * This function opens an input file with the specified filename,
-      * reads a single field in symmetry adapted basis format from that 
+      * reads a single field in symmetry adapted basis format from that
       * file, and and then closes the file. The overloaded member
       * function readFieldBasis that takes an std::istream& argument
-      * is called internally to read the file.  
+      * is called internally to read the file.
       *
       * \param filename  name of input file
       * \param field  array to store the field (basis format)
       * \param unitCell  associated crystallographic unit cell
       */
-      void readFieldBasis(std::string filename, 
+      void readFieldBasis(std::string filename,
 		          DArray<double>& field,
                           UnitCell<D> & unitCell) const;
 
@@ -239,7 +240,7 @@ namespace Prdc {
       *
       * This function writes field components in a symmetry adapted basis
       * to an output stream. On entry, the fields array must be allocated,
-      * and the capacity of each field must be equal the number of 
+      * and the capacity of each field must be equal the number of
       * basis functions in the basis.
       *
       * \param out  output stream (i.e., output file)
@@ -282,7 +283,7 @@ namespace Prdc {
                            UnitCell<D> const & unitCell) const;
 
       /**
-      * Write single field in basis format to a named file. 
+      * Write single field in basis format to a named file.
       *
       * This function opens an output file with the specified filename,
       * writes the field in symmetry adapted basis format to that file,
@@ -308,15 +309,15 @@ namespace Prdc {
       * the instance of RFT containing the r-grid field associated with
       * monomer type i.
       *
-      * On entry, array fields must either be unallocated or be allocated 
+      * On entry, array fields must either be unallocated or be allocated
       * with capacity equal to the number of monomers in the field file,
       * with mesh dimensions for each field equal to mesh().dimensions().
       * If it is unallocated, it will be allocated within this function.
       *
       * \param in  input stream (i.e., input file)
-      * \param fields  array of r-grid fields 
+      * \param fields  array of r-grid fields
       * \param unitCell  associated crystallographic unit cell
-      * \return  true iff header declares a space group 
+      * \return  true iff header declares a space group
       */
       virtual
       bool readFieldsRGrid(std::istream& in,
@@ -327,7 +328,7 @@ namespace Prdc {
       * Read an array of r-grid fields from a named file.
       *
       * This function opens an input file with the specified filename,
-      * reads fields in real-space grid format from that file, and 
+      * reads fields in real-space grid format from that file, and
       * then closes the file. The overloaded readFieldsRGrid member
       * function that takes a std::istream& argument is called to read
       * the file.
@@ -344,10 +345,10 @@ namespace Prdc {
       /**
       * Read data for array of r-grid fields, with no header section.
       *
-      * This function reads the data section of the rgrid-field format, 
+      * This function reads the data section of the rgrid-field format,
       * without first reading a header.
       *
-      * On entry, array fields must either be unallocated or be allocated 
+      * On entry, array fields must either be unallocated or be allocated
       * with capacity equal to the number of monomers in the field file,
       * with mesh dimensions for each field equal to mesh().dimensions().
       * If it is unallocated, it will be allocated within this function.
@@ -364,7 +365,7 @@ namespace Prdc {
       /**
       * Read a single r-grid field from an input stream.
       *
-      * On entry, the field must either be unallocated or be allocated 
+      * On entry, the field must either be unallocated or be allocated
       * with a mesh dimension equal to mesh().dimensions(). If it is
       * unallocated, it will be allocated within this function.
       *
@@ -382,7 +383,7 @@ namespace Prdc {
       * Read a single r-grid field from a named file.
       *
       * This function opens an input file with the specified filename,
-      * reads a field in real-space grid format from that file, and 
+      * reads a field in real-space grid format from that file, and
       * then closes the file. The overloaded readFieldRGrid member
       * function that takes a std::istream& argument is called to read
       * the file.
@@ -422,8 +423,8 @@ namespace Prdc {
 
       /**
       * Write an array of r-grid fields to a named file.
-      * 
-      * This function opens a file, writes field file header and data 
+      *
+      * This function opens a file, writes field file header and data
       * to the file, and closes the file. The overloaded writeFieldsGrid
       * member function that takes a std::ostream& argument is called
       * internally with writeHeader == true to  write the data.
@@ -445,7 +446,7 @@ namespace Prdc {
       * dimensions equal to mesh().dimensions(). The writeHeader
       * argument may be set false to suppress writing of the file
       * header.
-      * 
+      *
       * \param out  output stream
       * \param field  field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
@@ -460,12 +461,12 @@ namespace Prdc {
                            bool isSymmetric = true) const = 0;
 
       /**
-      * Write a single r-grid field to a named file. 
+      * Write a single r-grid field to a named file.
       *
       * This function opens a file, writes the header and data for a
-      * single field to the file, and closes that file. The overloaded 
-      * writeFieldGrid member function that takes a std::ostream& 
-      * argument is called internally with writeHeader == true to 
+      * single field to the file, and closes that file. The overloaded
+      * writeFieldGrid member function that takes a std::ostream&
+      * argument is called internally with writeHeader == true to
       * write the file.
       *
       * \param filename  name of output file
@@ -486,10 +487,10 @@ namespace Prdc {
       * Read an array of k-grid fields from an input stream.
       *
       * Upon successful return, element fields[i] of the fields array is
-      * the instance of KFT containing the DFT of a real field associated 
+      * the instance of KFT containing the DFT of a real field associated
       * with monomer type i.
       *
-      * On entry, array fields must either be unallocated or be allocated 
+      * On entry, array fields must either be unallocated or be allocated
       * with capacity equal to the number of monomers in the field file,
       * with mesh dimensions for each field equal to mesh().dimensions().
       * If it is unallocated, it will be allocated within this function.
@@ -504,15 +505,15 @@ namespace Prdc {
                            UnitCell<D> & unitCell) const = 0;
 
       /**
-      * Read an array of k-grid fields from a named file. 
+      * Read an array of k-grid fields from a named file.
       *
       * This function opens a file with name filename, reads discrete
       * Fourier components (Dft) of fields from that file, and closes
       * the file.  The overloaded readFieldsKGrid member function that
-      * takes a std::istream& argument is called to read the file. 
+      * takes a std::istream& argument is called to read the file.
       *
       * \param filename  name of input file
-      * \param fields  array of k-space (KFT) fields 
+      * \param fields  array of k-space (KFT) fields
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::string filename,
@@ -556,7 +557,7 @@ namespace Prdc {
                            bool isSymmetric = true) const;
 
       ///@}
-      /// \name Field Format Conversion
+      /// \name Field Array Format Conversion
       ///@{
 
       /**
@@ -699,7 +700,7 @@ namespace Prdc {
       /**
       * Convert an array of fields from r-grid to k-grid (Fourier) format.
       *
-      * This function simply calls the forward FFT repeatedly for an 
+      * This function simply calls the forward FFT repeatedly for an
       * array of fields.
       *
       * \param in  fields defined on real-space grid (r-grid)
@@ -731,10 +732,10 @@ namespace Prdc {
       * to a different file.
       *
       * This and other field file format conversion functions read field
-      * data into private workspace in which memory is allocated for 
+      * data into private workspace in which memory is allocated for
       * nMonomer fields, where nMonomer is the value set by the
-      * setNMonomer(int i) member function. The number of monomer types 
-      * in the input file must thus be equal to this stored value of 
+      * setNMonomer(int i) member function. The number of monomer types
+      * in the input file must thus be equal to this stored value of
       * nMonomer.
       *
       * \param inFileName name of input file (basis format)
@@ -827,10 +828,10 @@ namespace Prdc {
       * Check if a k-grid field has the declared space group symmetry.
       *
       * This function checks whether the discrete Fourier transform of
-      * a real field is invariant under all the symmetry operations of 
+      * a real field is invariant under all the symmetry operations of
       * a declared space group to within an specfiied error threshhold,
-      * given by parameter epsilon. If the parameter verbose is true 
-      * and the deviation from symmetry exceeds the error threshhold, 
+      * given by parameter epsilon. If the parameter verbose is true
+      * and the deviation from symmetry exceeds the error threshhold,
       * errors are written to Log::file().
       *
       * \param in  field in real space grid (r-grid) format
@@ -840,7 +841,7 @@ namespace Prdc {
       * \return true if the field is symmetric, false otherwise
       */
       virtual
-      bool hasSymmetry(KFT const & in, 
+      bool hasSymmetry(KFT const & in,
                        double epsilon = 1.0e-8,
                        bool verbose = true) const = 0;
 
@@ -848,10 +849,10 @@ namespace Prdc {
       * Check if an r-grid field has the declared space group symmetry.
       *
       * This function checks whether a field defined on the nodes of a
-      * regular real-space grid is invariant under all the symmetry 
-      * operations of a declared space group to within an error 
+      * regular real-space grid is invariant under all the symmetry
+      * operations of a declared space group to within an error
       * threshhold given by function parameter epsilon. If parameter
-      * verbose is true and the deviation from symmetry exceeds the 
+      * verbose is true and the deviation from symmetry exceeds the
       * error threshhold, errors are written to Log::file().
       *
       * \param in field in real space grid (r-grid) format
@@ -860,7 +861,7 @@ namespace Prdc {
       *
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(RFT const & in, 
+      bool hasSymmetry(RFT const & in,
                        double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
@@ -888,7 +889,7 @@ namespace Prdc {
       * \param field2  second array of fields (basis form)
       */
       void compareFieldsBasis(DArray< DArray<double> > const & field1,
-                              DArray< DArray<double> > const & field2) 
+                              DArray< DArray<double> > const & field2)
       const;
 
       /**
@@ -912,7 +913,7 @@ namespace Prdc {
       virtual
       void compareFieldsRGrid(DArray< RFT > const & field1,
                               DArray< RFT > const & field2) const = 0;
-  
+
       /**
       * Compare two r-grid field files, write a report to Log file.
       *
@@ -920,7 +921,7 @@ namespace Prdc {
       * \param filename2  name of 2nd field file
       */
       void compareFieldsRGrid(std::string const & filename1,
-                              std::string const & filename2) const; 
+                              std::string const & filename2) const;
 
       ///@}
       /// \name Field Scaling (Multiplication by a Scalar)
@@ -930,27 +931,27 @@ namespace Prdc {
       * Multiply a single field in basis form by a real scalar.
       *
       * This function takes a single real periodic field and multiplies all
-      * components in place by a common real factor, thereby modifying the 
+      * components in place by a common real factor, thereby modifying the
       * input.
-      * 
+      *
       * \param field  field in basis form to be rescaled (in/out)
       * \param factor  factor by which to multiply every field element
       */
       virtual
-      void scaleFieldBasis(DArray<double>& field, 
+      void scaleFieldBasis(DArray<double>& field,
                            double factor) const;
 
       /**
       * Multiply an array of fields in basis format by a real scalar.
       *
       * This function takes an array of real periodic fields and multiplies
-      * all components in place by a common real scalar, thereby modifying 
+      * all components in place by a common real scalar, thereby modifying
       * the input.
-      * 
+      *
       * \param fields  array of fields in basis form to be rescaled
       * \param factor  factor by which to multiply every field element
       */
-      void scaleFieldsBasis(DArray< DArray<double> >& fields, 
+      void scaleFieldsBasis(DArray< DArray<double> >& fields,
                             double factor) const;
 
       /**
@@ -968,9 +969,9 @@ namespace Prdc {
       * Multiply a single field in r-grid format by a scalar.
       *
       * This function takes a single real periodic field and multiplies all
-      * elements in place by a common real factor, thereby modifying the 
+      * elements in place by a common real factor, thereby modifying the
       * input.
-      * 
+      *
       * \param field  field in r-grid (RFT) form to be rescaled
       * \param factor  factor by which to multiply every field element
       */
@@ -981,9 +982,9 @@ namespace Prdc {
       * Scale an array of r-grid fields by a scalar.
       *
       * This function takes an array of real periodic fields and multiplies
-      * all elements in place by a common real scalar, thereby modifying 
+      * all elements in place by a common real scalar, thereby modifying
       * the input.
-      * 
+      *
       * \param fields  array of r-grid (RFT) fields to be rescaled
       * \param factor  factor by which to multiply every field element
       */
@@ -992,8 +993,8 @@ namespace Prdc {
       /**
       * Multiply all fields in an r-grid field file by a scalar.
       *
-      * Read a set of fields from a file, multiply fields by a constant, 
-      * and write rescaled fields to a different file. 
+      * Read a set of fields from a file, multiply fields by a constant,
+      * and write rescaled fields to a different file.
       *
       * \param inFileName  name of input field file
       * \param outFileName  name of file for rescaled output fields
@@ -1004,6 +1005,51 @@ namespace Prdc {
                             double factor) const;
 
       ///@}
+      /// \name Computing Estimated W Fields
+      ///@{
+
+      /**
+      * Convert c fields to estimated w fields, in basis format.
+      *
+      * This function converts an array of c-fields in place to an array
+      * of estimated w fields. The approximation starts from the SCFT
+      * equation
+      * \f[
+      *    w_{i}({\bf r}) = \sum_{j=1}^{M} \chi_{ij} \phi_{j}({\bf r})
+                          + \xi({\bf r})
+      * \f]
+      * in which \f$\xi({\bf r})\f$ is a pressure like field, and simply
+      * sets \f$ \xi({\bf r}) = 0 \f$ for all \f$ {\bf r} \f$. Here,
+      * \f$ M \f$ is the number of monomer types (nMonomer), i and j are
+      * monomer type indices, \f$\chi_{ij}\f$ is a Flory-Huggins
+      * interaction parameter, \f$ \phi_{j} \f$ is a non-dimensiona
+      * monomer concentration (or volume fraction) field (which is an
+      * input to this function), and \f$ w_{i}\f$ is a monomer chemical
+      * potential field.
+      *
+      * \param chi  matrix of Flory-Huggins chi parameters
+      * \param fields  array of field in basis format
+      */
+      void estimateWBasis(DMatrix<double> const & chi,
+                          DArray< DArray<double> > & fields) const;
+
+      /**
+      * Convert a file of c fields to estimated w fields, in basis format.
+      *
+      * This function reads an array of monomer concentration fields
+      * (c-fields) in basis format from a file named inFileName, converts
+      * them to estimated w fields, and writes the estimated w fields to
+      * a file named outFileName.
+      *
+      * \param inFileName  name of input file of c-fields
+      * \param outFileName  name of output file of w-fields
+      * \param chi  matrix of Flory-Huggins chi parameters
+      */
+      void estimateWBasis(std::string const & inFileName,
+                          std::string const & outFileName,
+                          DMatrix<double> const & chi) const;
+
+      ///@}
       /// \name Replicate Unit Cell
       ///@{
 
@@ -1011,12 +1057,12 @@ namespace Prdc {
       * Write r-grid fields in a replicated unit cell to std::ostream.
       *
       * This function takes an input array of periodic fields and outputs
-      * them within an expanded unit cell in which the original input 
-      * unit cell has been replicated a specified number of times in each 
+      * them within an expanded unit cell in which the original input
+      * unit cell has been replicated a specified number of times in each
       * direction. Results are written to an std::ostream output stream.
       *
       * Element i of the replicas IntVec<D> parameter contains the number
-      * of unit cell replicas along direction i. 
+      * of unit cell replicas along direction i.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField (r-space) fields to be replicated
@@ -1032,10 +1078,10 @@ namespace Prdc {
       /**
       * Write r-grid fields in a replicated unit cell to a named file.
       *
-      * This function opens output file filename, writes fields within 
+      * This function opens output file filename, writes fields within
       * a replicated unit cell to the file, and closes the file. See
-      * documentation of the overloaded function of the same name with 
-      * a std::ostream parameter, which is called internally. 
+      * documentation of the overloaded function of the same name with
+      * a std::ostream parameter, which is called internally.
       *
       * \param filename  output file name
       * \param fields  array of RField fields (r-space grid) needs
@@ -1062,7 +1108,7 @@ namespace Prdc {
                              IntVec<D> const & replicas) const;
 
       ///@}
-      /// \name Expand Spatial Dimension 
+      /// \name Expand Spatial Dimension
       ///@{
 
       /**
@@ -1071,10 +1117,10 @@ namespace Prdc {
       * This function is used for spatial dimension D < 3, and allows a
       * 1D or 2D field to be transformed into a field defined in a higher
       * dimension (2D or 3D) space in which field values are indepedendent
-      * of the values of coordinates associated with the added dimensions. 
-      * For example, when invoked with D=1, it can transform a lamellar 
-      * field computed with D=1 to a lamellar field defined on a 3D grid 
-      * (d=3), written in a format that can be read by pscf_pc when 
+      * of the values of coordinates associated with the added dimensions.
+      * For example, when invoked with D=1, it can transform a lamellar
+      * field computed with D=1 to a lamellar field defined on a 3D grid
+      * (d=3), written in a format that can be read by pscf_pc when
       * invoked with D=3.
       *
       * \param out  output stream (i.e., output file)
@@ -1088,15 +1134,15 @@ namespace Prdc {
                                 DArray<RFT > const & fields,
                                 UnitCell<D> const & unitCell,
                                 int d,
-                                DArray<int> const& newGridDimensions) 
+                                DArray<int> const& newGridDimensions)
       const = 0;
 
       /**
       * Increase D for an array of r-grid fields, write to a named file.
       *
       * This function opens an output file with the specified filename,
-      * writes expanded fields in RField<d> real-space grid format to 
-      * that file, and then closes the file. The overloaded function of 
+      * writes expanded fields in RField<d> real-space grid format to
+      * that file, and then closes the file. The overloaded function of
       * the same name with an std::ostream parameter is called internally.
       *
       * \param filename  name of output file
@@ -1114,8 +1160,8 @@ namespace Prdc {
       /**
       * Increase D for an r-grid field file.
       *
-      * This function reads an array of fields in D-dimensional space 
-      * from an r-grid field file and writes expanded fields in 
+      * This function reads an array of fields in D-dimensional space
+      * from an r-grid field file and writes expanded fields in
       * d-dimensional space to another file.
       *
       * \param inFileName filename name of input field file
@@ -1136,48 +1182,48 @@ namespace Prdc {
       * Reader header of field file (fortran PSCF format)
       *
       * This reads the common part of the header for all PSCF field file
-      * formats. This contains the dimension of space, the lattice 
-      * system, a list of unit cell parameters, the space group name as 
+      * formats. This contains the dimension of space, the lattice
+      * system, a list of unit cell parameters, the space group name as
       * an optional parameter, and the number of monomer types. The unit
-      * cell data is used to update a UnitCell<D> that is passed as a 
+      * cell data is used to update a UnitCell<D> that is passed as a
       * parameter.
       *
-      * If a space group was declared in the parameter file but the 
+      * If a space group was declared in the parameter file but the
       * associated Basis object is not been initialized, this function will
       * initialize the Basis by calling Basis<D>::makeBasis via a private
       * pointer, using the unit cell parameters found in the file header.
-      * This function may thus modify the associated Basis object as a 
-      * side effect (even though this function is marked const). Because 
-      * all member functions that read complete field files call this 
+      * This function may thus modify the associated Basis object as a
+      * side effect (even though this function is marked const). Because
+      * all member functions that read complete field files call this
       * function to read the file header, any member function of FieldIo
-      * that reads a field file header may thus cause the Basis to be 
+      * that reads a field file header may thus cause the Basis to be
       * constructed as a side effect.
       *
-      * On return, parameter nMonomer contains the number of monomer 
-      * types declared in the field file header.  This function does 
-      * not require the number of monomers declared in the field file 
-      * header to match the value of nMonomer set by the setNMonomer 
-      * member function. 
+      * On return, parameter nMonomer contains the number of monomer
+      * types declared in the field file header.  This function does
+      * not require the number of monomers declared in the field file
+      * header to match the value of nMonomer set by the setNMonomer
+      * member function.
       *
       * On return, isSymmetric is set true iff a group name was found
       * in the header.
-      * 
+      *
       * Consistency checks (Exceptions thrown on failure):
       *
       * The value of "dim" in the header file must match the template
-      * parameter D.  If the UnitCell<D> object passed to this function 
-      * already contains a non-null lattice type, it must match the 
-      * lattice system in the header file. 
+      * parameter D.  If the UnitCell<D> object passed to this function
+      * already contains a non-null lattice type, it must match the
+      * lattice system in the header file.
       *
       * If the header declares a group name, then a matching group name
-      * must have been declared in the parameter file. 
+      * must have been declared in the parameter file.
       *
       * \param in  input stream (i.e., file)
       * \param nMonomer  number of monomer types in the header (output)
       * \param unitCell  associated crystallographic unit cell (output)
       * \param isSymmetric  Is there a group name in the header? (output)
       */
-      void readFieldHeader(std::istream& in, 
+      void readFieldHeader(std::istream& in,
                            int& nMonomer,
                            UnitCell<D> & unitCell,
                            bool & isSymmetric) const;
@@ -1190,7 +1236,7 @@ namespace Prdc {
       * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  Should a space group be declared?
       */
-      void writeFieldHeader(std::ostream& out, 
+      void writeFieldHeader(std::ostream& out,
                             int nMonomer,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) const;
@@ -1288,11 +1334,11 @@ namespace Prdc {
       /**
       * Check if basis workspace is allocated, allocate if necessary.
       *
-      * If the basis is not initialized, this function peeks at the 
+      * If the basis is not initialized, this function peeks at the
       * header of the field file to initialize it, and thus obtain the
       * number of basis functions.
       *
-      * \param inFileName  name of field file 
+      * \param inFileName  name of field file
       */
       void checkAllocateBasis(std::string const & inFileName) const;
 
