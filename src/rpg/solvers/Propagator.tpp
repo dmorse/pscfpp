@@ -90,7 +90,7 @@ namespace Rpg {
    }
 
    /*
-   * Compute initial head QField from final tail QFields of sources.
+   * Compute initial head q-field from final tail q-fields of sources.
    */
    template <int D>
    void Propagator<D>::computeHead()
@@ -239,12 +239,12 @@ namespace Rpg {
       double Q = 0.0;
       if (PolymerModel::isBead() && isHeadEnd()) {
          // Compute average of q for last bead of partner
-         QField const & qt = partner().q(ns_-2);
+         RField<D> const & qt = partner().q(ns_-2);
          Q = Reduce::sum(qt);
       } else {
          // Compute average product of head slice and partner tail slice
-         QField const & qh = head();
-         QField const & qt = partner().tail();
+         RField<D> const & qh = head();
+         RField<D> const & qt = partner().tail();
          Q = Reduce::innerProduct(qh, qt);
       }
       Q /= double(meshPtr_->size());

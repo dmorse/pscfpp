@@ -24,6 +24,7 @@
 #include <pscf/math/IntVec.h>
 
 #include <util/containers/DArray.h>
+#include <util/containers/DMatrix.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/Log.h>
 #include <util/format/Str.h>
@@ -847,6 +848,92 @@ namespace Prdc {
       writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell,
                        isSymmetric);
    }
+
+   // Computation of Estimated W Fields
+
+   /*
+   * Convert an array of c fields to estimated w fields, in basis form.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::estimateWBasis(
+                       DMatrix<double> const & chi,
+                       DArray< DArray<double> > & fields) const
+   {
+      // Check dimensions
+      UTIL_CHECK(fields.capacity() == nMonomer_);
+      UTIL_CHECK(chi.capacity1() == nMonomer_);
+      UTIL_CHECK(chi.capacity2() == nMonomer_);
+      const int nb = fields[0].capacity();
+      for (int i = 0; i < nMonomer_; ++i) {
+         UTIL_CHECK(fields[i].capacity() == nb);
+      }
+
+      // Allocate small work array (one element per monomer type)
+      DArray<double> wtmp;
+      wtmp.allocate(nMonomer_);
+
+      // Compute estimated w fields from c fields - convert in place
+      int i, j, k;
+      for (i = 0; i < nb; ++i) {
+         for (j = 0; j < nMonomer_;  ++j) {
+            wtmp[j] = 0.0;
+            for (k = 0; k < nMonomer_; ++k) {
+               wtmp[j] += chi(j,k)*fields[k][i];
+            }
+         }
+         for (j = 0; j < nMonomer_;  ++j) {
+            fields[j][i] = wtmp[j];
+         }
+      }
+
+   }
+
+   /*
+   * Convert a file of c fields to estimated w fields, in basis format.
+   */
+   template <int D, class RFT, class KFT, class FFT>
+   void FieldIoReal<D,RFT,KFT,FFT>::estimateWBasis(
+                       std::string const & inFileName,
+                       std::string const & outFileName,
+                       DMatrix<double> const & chi) const
+   {
+      // Preconditions
+      UTIL_CHECK(chi.capacity1() == nMonomer_);;
+      UTIL_CHECK(chi.capacity2() == nMonomer_);;
+
+      // Set and check nb = number of basis functions
+      checkAllocateBasis(inFileName);
+      UTIL_CHECK(basis().isInitialized());
+      const int nb = basis().nBasis();
+      UTIL_CHECK(nb > 0);
+
+      // Open input file
+      std::ifstream in;
+      fileMaster().openInputFile(inFileName, in);
+
+      // Read input file header
+      int nMonomerIn;
+      bool isSymmetric;
+      UnitCell<D> tmpUnitCell;
+      readFieldHeader(in, nMonomerIn, tmpUnitCell, isSymmetric);
+      int nBasisIn = readNBasis(in);
+      UTIL_CHECK(nMonomer_ == nMonomerIn);
+      UTIL_CHECK(isSymmetric);
+
+      // Read c field data into tmpFieldsBasis_
+      Prdc::readBasisData(in, tmpFieldsBasis_,
+                          tmpUnitCell, mesh(), basis(), nBasisIn);
+      in.close();
+
+      // Compute estimated w, stored in tmpFilesBasis_
+      estimateWBasis(chi, tmpFieldsBasis_);
+
+      // Open and write output file
+      std::ofstream out;
+      fileMaster().openOutputFile(outFileName, out);
+      writeFieldsBasis(out, tmpFieldsBasis_, tmpUnitCell);
+   }
+
 
    // Grid manipulation utilities
 

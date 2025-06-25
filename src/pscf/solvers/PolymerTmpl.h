@@ -27,8 +27,15 @@ namespace Pscf
    /**
    * Template for an MDE solver and descriptor for a block polymer.
    *
-   * A PolymerTmpl<Block> object has an array of Block objects, as well
-   * as an array of Vertex objects inherited from the PolymerSpecies base
+   * Class template argument BT is an alias for a class that represents a 
+   * block of a block polymer. By convention, this is a class named Block
+   * defined in each implementation-level sub-namespace of Pscf.  Each 
+   * such namespace contains a class named Block that is a subclass of 
+   * Pscf::Edge, and a class named Polymer that is a subclass of the
+   * template instantiation PolymerTmpl<Block>.
+   * 
+   * A PolymerTmpl<Block> object has an array of Block objects, as well as
+   * an array of Vertex objects inherited from the PolymerSpecies base
    * class.  Each Block has two Propagator MDE solver objects associated
    * with the two directions along each block.
    *
@@ -36,26 +43,35 @@ namespace Pscf
    * (MDE) for all propagators in the molecule (i.e., all blocks, in both
    * directions) in a pre-defined order.
    *
-   * Each implementation-level sub-namespace of Pscf contains a class
-   * named Block that is derived from Pscf::Edge, and a class named
-   * Polymer that is derived from PolymerTmpl<Block>.
-   *
    * \ingroup Pscf_Solver_Module
    */
-   template <class Block>
+   template <class BT>
    class PolymerTmpl : public PolymerSpecies
    {
 
    public:
 
-      // Modified diffusion equation solver for one block.
-      typedef typename Block::Propagator Propagator;
+      /**
+      * Block of a block polymer.
+      */
+      typedef BT BlockT;
 
-      // Monomer concentration field.
-      typedef typename Propagator::CField CField;
+      /**
+      * Modified diffusion equation solver for one block, in one direction.
+      */
+      typedef typename BT::PropagatorT PropagatorT;
 
-      // Chemical potential field.
-      typedef typename Propagator::WField WField;
+      #if 0
+      /**
+      * Monomer concentration field.
+      */
+      typedef typename PropagatorT::CFieldT CFieldT;
+
+      /**
+      * Chemical potential field.
+      */
+      typedef typename PropagatorT::WFieldT WFieldT;
+      #endif
 
       /**
       * Constructor.
@@ -86,21 +102,21 @@ namespace Pscf
       * This solve() function does not compute monomer concentration
       * field.
       *
-      * Each implementation-level namespace defines a concrete subclass
-      * of PolymerTmpl<Block> that is named Polymer by convention. Each
-      * such Polymer class defines a function named "compute" that takes
-      * an array of chemical fields (w-fields) as an argument, and that
-      * calls PolymerTmpl<Block>::solve internally.  Before calling the
-      * solve() function declared here, the Polymer::compute() function
-      * must pass the w-fields and any other required mutable data to all
-      * Block objects in order to set up the MDE solver for each block.
-      * After calling the solve() function, the Polymer::compute function
-      * must also compute monomer concentrations for all blocks, each of
-      * which is stored in a field container owned by the associated Block.
+      * Each implementation-level namespace defines a concrete subclass 
+      * of PolymerTmpl<BT> that is named Polymer by convention. Each such 
+      * Polymer class defines a function named "compute" that takes an 
+      * array of chemical fields (w-fields) as an argument, and that calls
+      * PolymerTmpl<BT>::solve internally.  Before calling the solve()
+      * function declared here, the Polymer::compute() function must pass
+      * pass the w-fields and any other required mutable data to all Block
+      * objects in order to set up the MDE solver for each block. After
+      * calling the solve() function, the Polymer::compute function must
+      * also compute monomer concentrations for all blocks, each of which
+      * is stored in a field container owned by the associated Block.
       *
-      * The optional parameter phiTot is only relevant to problems
-      * involving a Mask that excludes material from part of the unit
-      * cell, as done to define thin film problems.
+      * The optional parameter phiTot is only relevant to problems 
+      * involving a Mask that excludes material from part of the unit cell,
+      * as done to define thin film problems.
       *
       * \param phiTot  fraction of unit cell volume occupied by material
       */
@@ -128,21 +144,21 @@ namespace Pscf
       Edge const& edge(int id) const final;
 
       /**
-      * Get a specified Block (block solver and descriptor).
+      * Get a specified Block (solver and descriptor).
       *
       * \param id block index, 0 <= id < nBlock
       */
-      Block& block(int id);
+      BT& block(int id);
 
       /**
       * Get a specified Block (solver and descriptor) by const reference.
       *
       * \param id block index, 0 <= id < nBlock
       */
-      Block const& block(int id) const ;
+      BT const& block(int id) const ;
 
       /**
-      * Get the Propagator for a specific block and direction (non-const).
+      * Get the propagator for a specific block and direction (non-const).
       *
       * For an edge that terminates at vertices with vertex indices given
       * by the return values of Edge::vertexId(0) and Edge::vertexId(1):
@@ -153,15 +169,15 @@ namespace Pscf
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
       */
-      Propagator& propagator(int blockId, int directionId);
+      PropagatorT& propagator(int blockId, int directionId);
 
       /**
-      * Get the Propagator for a specific block and direction (const).
+      * Get the propagator for a specific block and direction (const).
       *
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
       */
-      Propagator const & propagator(int blockId, int directionId) const;
+      PropagatorT const & propagator(int blockId, int directionId) const;
 
       /**
       * Get a propagator indexed in order of computation (non-const).
@@ -170,7 +186,7 @@ namespace Pscf
       *
       * \param id  propagator index, in order of computation plan
       */
-      Propagator& propagator(int id);
+      PropagatorT& propagator(int id);
 
       ///@}
 
@@ -207,7 +223,7 @@ namespace Pscf
    private:
 
       /// Array of Block objects in this polymer.
-      DArray<Block> blocks_;
+      DArray<BT> blocks_;
 
       /**
       * Check validity of internal data structures set by readParameters.
@@ -223,59 +239,59 @@ namespace Pscf
    /*
    * Get a specified Edge (block descriptor) by non-const reference.
    */
-   template <class Block>
+   template <class BT>
    inline
-   Edge& PolymerTmpl<Block>::edge(int id)
+   Edge& PolymerTmpl<BT>::edge(int id)
    {  return blocks_[id]; }
 
    /*
    * Get a specified Edge (block descriptor) by const reference.
    */
-   template <class Block>
+   template <class BT>
    inline
-   Edge const & PolymerTmpl<Block>::edge(int id) const
+   Edge const & PolymerTmpl<BT>::edge(int id) const
    {  return blocks_[id]; }
 
    /*
    * Get a specified Block solver by non-const reference.
    */
-   template <class Block>
+   template <class BT>
    inline
-   Block& PolymerTmpl<Block>::block(int id)
+   BT& PolymerTmpl<BT>::block(int id)
    {  return blocks_[id]; }
 
    /*
    * Get a specified Block solver by const reference.
    */
-   template <class Block>
+   template <class BT>
    inline
-   Block const & PolymerTmpl<Block>::block(int id) const
+   BT const & PolymerTmpl<BT>::block(int id) const
    {  return blocks_[id]; }
 
    /*
-   * Get a Propagator, indexed by block and direction ids (non-const).
+   * Get a propagator, indexed by block and direction ids (non-const).
    */
-   template <class Block>
+   template <class BT>
    inline
-   typename Block::Propagator&
-   PolymerTmpl<Block>::propagator(int blockId, int directionId)
+   typename BT::PropagatorT&
+   PolymerTmpl<BT>::propagator(int blockId, int directionId)
    {  return block(blockId).propagator(directionId); }
 
    /*
-   * Get a Propagator, indexed by block and direction ids (const).
+   * Get a propagator, indexed by block and direction ids (const).
    */
-   template <class Block>
+   template <class BT>
    inline
-   typename Block::Propagator const &
-   PolymerTmpl<Block>::propagator(int blockId, int directionId) const
+   typename BT::PropagatorT const &
+   PolymerTmpl<BT>::propagator(int blockId, int directionId) const
    {  return block(blockId).propagator(directionId); }
 
    /*
-   * Get a Propagator, indexed in order of computation.
+   * Get a propagator, indexed in order of computation.
    */
-   template <class Block>
+   template <class BT>
    inline
-   typename Block::Propagator& PolymerTmpl<Block>::propagator(int id)
+   typename BT::PropagatorT& PolymerTmpl<BT>::propagator(int id)
    {
       Pair<int> propId = propagatorId(id);
       return propagator(propId[0], propId[1]);
@@ -286,8 +302,8 @@ namespace Pscf
    /*
    * Constructor.
    */
-   template <class Block>
-   PolymerTmpl<Block>::PolymerTmpl()
+   template <class BT>
+   PolymerTmpl<BT>::PolymerTmpl()
     : PolymerSpecies(),
       blocks_()
    {  setClassName("PolymerTmpl"); }
@@ -295,29 +311,29 @@ namespace Pscf
    /*
    * Destructor.
    */
-   template <class Block>
-   PolymerTmpl<Block>::~PolymerTmpl()
+   template <class BT>
+   PolymerTmpl<BT>::~PolymerTmpl()
    {}
 
    /*
    * Allocate blocks array.
    */
-   template <class Block>
-   void PolymerTmpl<Block>::allocateBlocks()
+   template <class BT>
+   void PolymerTmpl<BT>::allocateBlocks()
    {  blocks_.allocate(nBlock()); }
 
    /*
    * Read blocks array from parameter file.
    */
-   template <class Block>
-   void PolymerTmpl<Block>::readBlocks(std::istream& in)
-   {  readDArray<Block>(in, "blocks", blocks_, nBlock()); }
+   template <class BT>
+   void PolymerTmpl<BT>::readBlocks(std::istream& in)
+   {  readDArray<BT>(in, "blocks", blocks_, nBlock()); }
 
    /*
    * Read parameter file block.
    */
-   template <class Block>
-   void PolymerTmpl<Block>::readParameters(std::istream& in)
+   template <class BT>
+   void PolymerTmpl<BT>::readParameters(std::istream& in)
    {
 
       // Call PoymerSpecies base class member function
@@ -327,8 +343,8 @@ namespace Pscf
       // The remainder of this function sets and validates immutable
       // information about graph topology that is stored by propagators.
 
-      Propagator * propagatorPtr = nullptr;
-      Propagator const * sourcePtr = nullptr;
+      PropagatorT * propagatorPtr = nullptr;
+      PropagatorT const * sourcePtr = nullptr;
       Vertex const * headPtr = nullptr;
       Vertex const * tailPtr = nullptr;
       Pair<int> propId;
@@ -379,19 +395,19 @@ namespace Pscf
    /*
    * Checks validity of propagator data set in readParameters.
    *
-   * This function only checks validity of Propagator source and end flag
-   * member data that is set in PolymerTmpl<Block>::readParameters. It 
+   * This function only checks validity of propagator source and end flag
+   * member data that is set in PolymerTmpl<BT>::readParameters. It 
    * does not check validity of members of PolymerSpecies, Edge, and Vertex
    * that are set and validated within the PolymerSpecies::readParameters 
    * base class member function. 
    */
-   template <class Block>
-   void PolymerTmpl<Block>::isValid()
+   template <class BT>
+   void PolymerTmpl<BT>::isValid()
    {
       Vertex const * v0Ptr = nullptr;
       Vertex const * v1Ptr = nullptr;
-      Propagator const * p0Ptr = nullptr;
-      Propagator const * p1Ptr = nullptr;
+      PropagatorT const * p0Ptr = nullptr;
+      PropagatorT const * p1Ptr = nullptr;
       int bId, v0Id, v1Id;
 
       // Loop over blocks
@@ -417,8 +433,8 @@ namespace Pscf
    /*
    * Solve the MDE for all blocks of this polymer.
    */
-   template <class Block>
-   void PolymerTmpl<Block>::solve(double phiTot)
+   template <class BT>
+   void PolymerTmpl<BT>::solve(double phiTot)
    {
 
       // Clear all propagators
@@ -436,7 +452,7 @@ namespace Pscf
       // Compute molecular partition function Q
       double Q = block(0).propagator(0).computeQ();
 
-      // The Propagator::computeQ function returns a spatial average.
+      // The PropagatorT::computeQ function returns a spatial average.
       // Correct for partial occupation of the unit cell.
       Q = Q/phiTot;
 

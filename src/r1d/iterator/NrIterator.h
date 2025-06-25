@@ -34,12 +34,12 @@ namespace R1d
       /**
       * Monomer chemical potential field.
       */
-      typedef Mixture::WField WField;
+      typedef Mixture::WFieldT WFieldT;
 
       /**
       * Monomer concentration / volume fraction field.
       */
-      typedef Mixture::CField CField;
+      typedef Mixture::CFieldT CFieldT;
 
       /**
       * Default constructor.
@@ -79,10 +79,10 @@ namespace R1d
       LuSolver solver_;
 
       /// Perturbed chemical potential fields (work space).
-      DArray<WField> wFieldsNew_;
+      DArray<WFieldT> wFieldsNew_;
 
       /// Perturbed monomer concentration fields (work space).
-      DArray<WField> cFieldsNew_;
+      DArray<WFieldT> cFieldsNew_;
 
       /// Concentrations at one point (work space).
       DArray<double> cArray_;
@@ -134,8 +134,8 @@ namespace R1d
       * \param cFields monomer concentration fields (input)
       * \param residual vector of residuals (errors) (output)
       */
-      void computeResidual(Array<WField> const & wFields, 
-                           Array<WField> const & cFields, 
+      void computeResidual(Array<WFieldT> const & wFields, 
+                           Array<WFieldT> const & cFields, 
                            Array<double>& residual);
 
       /**
@@ -157,9 +157,9 @@ namespace R1d
       * \param dW array of increments, indexed as in residual columns
       * \param wNew array of new chemical potential fields
       */
-      void incrementWFields(Array<WField> const & wOld,
+      void incrementWFields(Array<WFieldT> const & wOld,
                             Array<double> const & dW,
-                            Array<WField>& wNew);
+                            Array<WFieldT>& wNew);
 
    };
 

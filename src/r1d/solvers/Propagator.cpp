@@ -75,13 +75,13 @@ namespace R1d
    {  return isAllocated_; }
 
    /*
-   * Compute initial head QField from final tail QFields of sources.
+   * Compute initial head q-field from final tail q-fields of sources.
    */
    void Propagator::computeHead()
    {
 
       // Reference to head of this propagator
-      QField& qh = qFields_[0];
+      QFieldT& qh = qFields_[0];
 
       // Initialize qh field to 1.0 at all grid points
       int ix;
@@ -89,12 +89,12 @@ namespace R1d
          qh[ix] = 1.0;
       }
 
-      // Pointwise multiply tail QFields of all sources
+      // Pointwise multiply tail q-fields of all sources
       for (int is = 0; is < nSource(); ++is) {
          if (!source(is).isSolved()) {
             UTIL_THROW("Source not solved in computeHead");
          }
-         QField const& qt = source(is).tail();
+         QFieldT const& qt = source(is).tail();
          for (ix = 0; ix < nx_; ++ix) {
             qh[ix] *= qt[ix];
          }
@@ -116,10 +116,10 @@ namespace R1d
    /*
    * Solve the modified diffusion equation with specified initial field.
    */
-   void Propagator::solve(const Propagator::QField& head) 
+   void Propagator::solve(const Propagator::QFieldT& head) 
    {
       // Initialize initial (head) field
-      QField& qh = qFields_[0];
+      QFieldT& qh = qFields_[0];
       for (int i = 0; i < nx_; ++i) {
          qh[i] = head[i];
       }
@@ -145,8 +145,8 @@ namespace R1d
       if (!partner().isSolved()) {
          UTIL_THROW("Partner propagator is not solved");
       }
-      QField const& qh = head();
-      QField const& qt = partner().tail();
+      QFieldT const& qh = head();
+      QFieldT const& qt = partner().tail();
       return block().domain().innerProduct(qh, qt);
    }
 

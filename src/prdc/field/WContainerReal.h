@@ -31,11 +31,17 @@ namespace Prdc {
    /**
    * A container of fields stored in both basis and r-grid format.
    * 
+   * <b> Template parameters </b>: The template parameters represent:
+   * 
+   *     - D   : integer dimensionality of space, D=1,2, or 3
+   *     - RFT : field type for r-grid data (e.g., RField<D>)
+   *     - FIT : FieldIo type for field io operations (e.g., FieldIo<D>)
+   * 
    * <b> Field Representations </b>: A WContainerReal contains a list of
    * nMonomer fields that are each associated with a monomer type. The
    * fields may be stored in two different formats:
    *
-   *  - A DArray of RField containers holds valus of each field on
+   *  - A DArray of RFT containers holds valus of each field on
    *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
@@ -44,9 +50,9 @@ namespace Prdc {
    *    format). This is accessed by the basis() and basis(int) member
    *    functions.
    *
-   * A WContainerReal is designed to automatically update one of 
-   * these representations when the other is modified, when appropriate.
-   * A pointer to an associated FieldIo is used for these conversions.
+   * A WContainerReal is designed to automatically update one of these
+   * representations when the other is modified, when appropriate. A 
+   * pointer to an associated FIT object is used for these conversions.
    *
    * The setBasis and readBasis functions allow the user to input new 
    * components in basis format, and both internally recompute the values 
@@ -64,17 +70,17 @@ namespace Prdc {
    *
    *  - Subclass Rpc::WFieldContainer \<D\> is derived from a partial
    *    specialization of WContainerReal with template parameters 
-   *    RField = Cpu::RField \<D\> and FieldIo = Rpc::FieldIo \<D\> ,
-   *    and is used in the pscf_pc program, using CPU hardware.
+   *    RFT = Cpu::RFT \<D\> and FIT = Rpc::FIT \<D\> , and is used in
+   *    the pscf_pc CPU program.
    *
    *  - Subclass Rpg::WFieldContainer \<D\> is derived from a partial
    *    specialization of WContainerReal with template parameters 
-   *    RField = Cuda::RField \<D\> and FieldIo = Rpg::FieldIo \<D\> ,
-   *    and is use in the pscf_pg GPU accelerated program.
+   *    RFT = Cuda::RFT \<D\> and FIT = Rpg::FIT \<D\> , and is used in
+   *    the pscf_pg GPU accelerated program.
    *
    * <b> Signal </b>: A WContainerReal owns an instance of class
    * Util::Signal<void> that notifies all observers whenever the fields
-   * owned by the WContainerReal are modified. The signal object may be 
+   * owned by the WContainerReal are modified. This signal object may be 
    * accessed by reference using the signal() member function. The
    * Util::Signal<void>::addObserver function may used to add "observer"
    * objects and indicate a zero-parameter member function of each 
@@ -82,7 +88,7 @@ namespace Prdc {
    *
    * \ingroup Prdc_Field_Module
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    class WContainerReal 
    {
 
@@ -102,11 +108,11 @@ namespace Prdc {
       ///@{
 
       /**
-      * Create association with FieldIo (store pointer).
+      * Create association with FIT (store pointer).
       *
-      * \param fieldIo  associated FieldIo object
+      * \param fieldIo  associated FIT object
       */
-      void setFieldIo(FieldIo const & fieldIo);
+      void setFieldIo(FIT const & fieldIo);
 
       /**
       * Set stored value of nMonomer.
@@ -188,7 +194,7 @@ namespace Prdc {
       * \param fields  array of new fields in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
-      void setRGrid(DArray< RField > const & fields,
+      void setRGrid(DArray< RFT > const & fields,
                     bool isSymmetric = false);
 
       /**
@@ -325,14 +331,14 @@ namespace Prdc {
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray< RField > const & rgrid() const;
+      DArray< RFT > const & rgrid() const;
 
       /**
       * Get the field for one monomer type in r-space grid format.
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RField const & rgrid(int monomerId) const;
+      RFT const & rgrid(int monomerId) const;
 
       ///@}
       /// \name Boolean Queries
@@ -391,9 +397,9 @@ namespace Prdc {
       int nMonomer() const;
 
       /**
-      * Get associated FieldIo object (const reference).
+      * Get associated FIT object (const reference).
       */
-      FieldIo const & fieldIo() const;
+      FIT const & fieldIo() const;
 
    private:
 
@@ -409,10 +415,10 @@ namespace Prdc {
       /*
       * Array of fields in real-space grid (r-grid) format.
       *
-      * Element basis_[i] is an RField that contains values of the
+      * Element basis_[i] is an RFT that contains values of the
       * field associated with monomer i on the nodes of a regular mesh.
       */
-      DArray< RField > rgrid_;
+      DArray< RFT > rgrid_;
 
       /*
       * Integer vector of grid dimensions.
@@ -442,9 +448,9 @@ namespace Prdc {
       Signal<void>* signalPtr_;
  
       /*
-      * Pointer to an associated FieldIo object.
+      * Pointer to an associated FIT object.
       */
-      FieldIo const * fieldIoPtr_;
+      FIT const * fieldIoPtr_;
 
       /*
       * Has memory been allocated for fields in r-grid format?
@@ -470,12 +476,12 @@ namespace Prdc {
       bool isSymmetric_;
 
       /*
-      *  Assign one RField to another: lhs = rhs.
+      *  Assign one RFT to another: lhs = rhs.
       *  
       *  \param lhs  left hand side of assignment
       *  \param rhs  right hand side of assignment
       */
-      virtual void assignRField(RField& lhs, RField const & rhs) const;
+      virtual void assignRField(RFT& lhs, RFT const & rhs) const;
 
    };
 
@@ -487,19 +493,19 @@ namespace Prdc {
    {  hasData_ = false; }
 
    // Get array of all fields in basis format (const)
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline
    DArray< DArray<double> > const & 
-   WContainerReal<D,RField,FieldIo>::basis() const
+   WContainerReal<D,RFT,FIT>::basis() const
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_;
    }
 
    // Get one field in basis format (const)
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline
-   DArray<double> const & WContainerReal<D,RField,FieldIo>::basis(int id)
+   DArray<double> const & WContainerReal<D,RFT,FIT>::basis(int id)
    const
    {
       UTIL_ASSERT(isAllocatedBasis_);
@@ -507,79 +513,79 @@ namespace Prdc {
    }
 
    // Get all fields in r-grid format (const)
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline
-   DArray< RField > const &
-   WContainerReal<D,RField,FieldIo>::rgrid() const
+   DArray< RFT > const &
+   WContainerReal<D,RFT,FIT>::rgrid() const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
    }
 
    // Get one field in r-grid format (const)
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline
-   RField const & WContainerReal<D,RField,FieldIo>::rgrid(int id) const
+   RFT const & WContainerReal<D,RFT,FIT>::rgrid(int id) const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];
    }
 
    // Has memory been allocated for fields in r-grid format?
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline 
-   bool WContainerReal<D,RField,FieldIo>::isAllocatedRGrid() const
+   bool WContainerReal<D,RFT,FIT>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Has memory been allocated for fields in basis format?
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline 
-   bool WContainerReal<D,RField,FieldIo>::isAllocatedBasis() const
+   bool WContainerReal<D,RFT,FIT>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Has field data been initialized ?
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline 
-   bool WContainerReal<D,RField,FieldIo>::hasData() const
+   bool WContainerReal<D,RFT,FIT>::hasData() const
    {  return hasData_; }
 
    // Are the fields symmetric under space group operations?
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline 
-   bool WContainerReal<D,RField,FieldIo>::isSymmetric() const
+   bool WContainerReal<D,RFT,FIT>::isSymmetric() const
    {  return isSymmetric_; }
 
    // Protected inline member functions
    
    // Get mesh dimensions in each direction, set on r-grid allocation.
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline 
    IntVec<D> const & 
-   WContainerReal<D,RField,FieldIo>::meshDimensions() const
+   WContainerReal<D,RFT,FIT>::meshDimensions() const
    {  return meshDimensions_; }
 
    // Get mesh size (number of grid points), set on r-grid allocation.
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline 
-   int WContainerReal<D,RField,FieldIo>::meshSize() const
+   int WContainerReal<D,RFT,FIT>::meshSize() const
    {  return meshSize_; }
 
    // Get number of basis functions, set on basis allocation.
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline 
-   int WContainerReal<D,RField,FieldIo>::nBasis() const
+   int WContainerReal<D,RFT,FIT>::nBasis() const
    {  return nBasis_; }
 
    // Get number of monomer types.
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    inline 
-   int WContainerReal<D,RField,FieldIo>::nMonomer() const
+   int WContainerReal<D,RFT,FIT>::nMonomer() const
    {  return nMonomer_; }
 
-   // Associated FieldIo object (const reference).
-   template <int D, class RField, class FieldIo>
+   // Associated FIT object (const reference).
+   template <int D, class RFT, class FIT>
    inline 
-   FieldIo const & WContainerReal<D,RField,FieldIo>::fieldIo() const
+   FIT const & WContainerReal<D,RFT,FIT>::fieldIo() const
    {
       UTIL_CHECK(fieldIoPtr_);
       return *fieldIoPtr_;

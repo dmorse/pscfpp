@@ -77,8 +77,8 @@ namespace R1d
       }
    }
 
-   void NrIterator::computeResidual(Array<WField> const & wFields,
-                                    Array<CField> const & cFields,
+   void NrIterator::computeResidual(Array<WFieldT> const & wFields,
+                                    Array<CFieldT> const & cFields,
                                     Array<double>& residual)
    {
       int nm = system().mixture().nMonomer();  // number of monomer types
@@ -176,9 +176,9 @@ namespace R1d
 
    }
 
-   void NrIterator::incrementWFields(Array<WField> const & wOld,
+   void NrIterator::incrementWFields(Array<WFieldT> const & wOld,
                                      Array<double> const & dW,
-                                     Array<WField> & wNew)
+                                     Array<WFieldT> & wNew)
    {
       int nm = system().mixture().nMonomer(); // number of monomers types
       int nx = domain().nx();        // number of grid points

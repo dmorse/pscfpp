@@ -21,10 +21,10 @@ namespace Pscf
    /**
    * Class template for a block solver in a block copolymer.
    *
-   * Class template argument TP is a concrete propagator class. A 
-   * BlockTmpl<TP> object has:
+   * Class template argument QT is a concrete propagator class. A 
+   * BlockTmpl<QT> object has:
    *
-   *   - two TP propagator objects, one per direction
+   *   - two QT propagator objects, one per direction
    *   - a monomer concentration field for the block
    *   - a kuhn length
    * 
@@ -102,20 +102,16 @@ namespace Pscf
    * 
    * \ingroup Pscf_Solver_Module
    */
-   template <class TP>
+   template <class QT>
    class BlockTmpl : public Edge
    {
 
    public:
 
-      // Modified diffusion equation propagator for one block direction.
-      typedef TP Propagator;
-
-      // Monomer concentration field.
-      typedef typename TP::CField CField;
- 
-      // Chemical potential field.
-      typedef typename TP::WField WField;
+      /**
+      * Modified diffusion equation solver (propagator) type.
+      */
+      typedef QT PropagatorT;
 
       /**
       * Constructor.
@@ -143,7 +139,7 @@ namespace Pscf
       *
       * \param directionId integer index for direction (0 or 1)
       */
-      TP& propagator(int directionId);
+      QT& propagator(int directionId);
    
       /**
       * Get a const Propagator for a specified direction.
@@ -152,17 +148,17 @@ namespace Pscf
       *
       * \param directionId integer index for direction (0 or 1)
       */
-      TP const & propagator(int directionId) const;
+      QT const & propagator(int directionId) const;
    
       /**
       * Get the associated monomer concentration field.
       */
-      typename TP::CField& cField();
+      typename QT::CFieldT& cField();
 
       /**
       * Get the associated const monomer concentration field.
       */
-      typename TP::CField const & cField() const;
+      typename QT::CFieldT const & cField() const;
    
       /**
       * Get monomer statistical segment length.
@@ -172,10 +168,10 @@ namespace Pscf
    private:
 
       /// Pair of Propagator objects (one for each direction).
-      Pair<Propagator> propagators_;
+      Pair<PropagatorT> propagators_;
 
       /// Monomer concentration field.
-      CField cField_;
+      typename QT::CFieldT cField_;
 
       /// Monomer statistical segment length.
       double kuhn_;
@@ -187,40 +183,40 @@ namespace Pscf
    /*
    * Get a Propagator indexed by direction.
    */
-   template <class TP>
+   template <class QT>
    inline 
-   TP& BlockTmpl<TP>::propagator(int directionId)
+   QT& BlockTmpl<QT>::propagator(int directionId)
    {  return propagators_[directionId]; }
 
    /*
    * Get a const Propagator indexed by direction.
    */
-   template <class TP>
+   template <class QT>
    inline 
-   TP const & BlockTmpl<TP>::propagator(int directionId) const
+   QT const & BlockTmpl<QT>::propagator(int directionId) const
    {  return propagators_[directionId]; }
 
    /*
    * Get the monomer concentration field.
    */
-   template <class TP>
+   template <class QT>
    inline
-   typename TP::CField& BlockTmpl<TP>::cField()
+   typename QT::CFieldT& BlockTmpl<QT>::cField()
    {  return cField_; }
 
    /*
    * Get the const monomer concentration field.
    */
-   template <class TP>
+   template <class QT>
    inline
-   typename TP::CField const & BlockTmpl<TP>::cField() const
+   typename QT::CFieldT const & BlockTmpl<QT>::cField() const
    {  return cField_; }
 
    /*
    * Get the monomer statistical segment length. 
    */
-   template <class TP>
-   inline double BlockTmpl<TP>::kuhn() const
+   template <class QT>
+   inline double BlockTmpl<QT>::kuhn() const
    {  return kuhn_; }
 
    // Non-inline functions
@@ -228,8 +224,8 @@ namespace Pscf
    /*
    * Constructor.
    */
-   template <class TP>
-   BlockTmpl<TP>::BlockTmpl()
+   template <class QT>
+   BlockTmpl<QT>::BlockTmpl()
     : propagators_(),
       cField_(),
       kuhn_(0.0)
@@ -243,15 +239,15 @@ namespace Pscf
    /*
    * Destructor.
    */
-   template <class TP>
-   BlockTmpl<TP>::~BlockTmpl()
+   template <class QT>
+   BlockTmpl<QT>::~BlockTmpl()
    {}
 
    /*
    * Set the monomer statistical segment length.
    */
-   template <class TP>
-   void BlockTmpl<TP>::setKuhn(double kuhn)
+   template <class QT>
+   void BlockTmpl<QT>::setKuhn(double kuhn)
    {  kuhn_ = kuhn; }
 
 }

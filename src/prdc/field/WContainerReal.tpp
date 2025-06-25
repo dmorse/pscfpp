@@ -26,8 +26,8 @@ namespace Prdc {
    /*
    * Constructor.
    */
-   template <int D, class RField, class FieldIo>
-   WContainerReal<D,RField,FieldIo>::WContainerReal()
+   template <int D, class RFT, class FIT>
+   WContainerReal<D,RFT,FIT>::WContainerReal()
     : basis_(),
       rgrid_(),
       meshDimensions_(),
@@ -47,25 +47,25 @@ namespace Prdc {
    /*
    * Destructor.
    */
-   template <int D, class RField, class FieldIo>
-   WContainerReal<D,RField,FieldIo>::~WContainerReal()
+   template <int D, class RFT, class FIT>
+   WContainerReal<D,RFT,FIT>::~WContainerReal()
    {
       delete signalPtr_;
    }
 
    /*
-   * Create an association with a FieldIo object.
+   * Create an association with a FIT object.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::setFieldIo(FieldIo const & fieldIo)
+   WContainerReal<D,RFT,FIT>::setFieldIo(FIT const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Set the stored value of nMonomer (this may only be called once).
    */
-   template <int D, class RField, class FieldIo>
-   void WContainerReal<D,RField,FieldIo>::setNMonomer(int nMonomer)
+   template <int D, class RFT, class FIT>
+   void WContainerReal<D,RFT,FIT>::setNMonomer(int nMonomer)
    {
       UTIL_CHECK(nMonomer_ == 0);
       UTIL_CHECK(nMonomer > 0);
@@ -75,9 +75,9 @@ namespace Prdc {
    /*
    * Allocate memory for fields in r-grid format.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::allocateRGrid(IntVec<D> const & meshDimensions)
+   WContainerReal<D,RFT,FIT>::allocateRGrid(IntVec<D> const & meshDimensions)
    {
       UTIL_CHECK(nMonomer_ > 0);
 
@@ -108,8 +108,8 @@ namespace Prdc {
    /*
    * De-allocate memory for fields in r-grid format
    */
-   template <int D, class RField, class FieldIo>
-   void WContainerReal<D,RField,FieldIo>::deallocateRGrid()
+   template <int D, class RFT, class FIT>
+   void WContainerReal<D,RFT,FIT>::deallocateRGrid()
    {
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(nMonomer_ > 0);
@@ -126,8 +126,8 @@ namespace Prdc {
    /*
    * Allocate memory for fields in basis format.
    */
-   template <int D, class RField, class FieldIo>
-   void WContainerReal<D,RField,FieldIo>::allocateBasis(int nBasis)
+   template <int D, class RFT, class FIT>
+   void WContainerReal<D,RFT,FIT>::allocateBasis(int nBasis)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(nBasis > 0);
@@ -151,8 +151,8 @@ namespace Prdc {
    /*
    * De-allocate memory for fields in basis format.
    */
-   template <int D, class RField, class FieldIo>
-   void WContainerReal<D,RField,FieldIo>::deallocateBasis()
+   template <int D, class RFT, class FIT>
+   void WContainerReal<D,RFT,FIT>::deallocateBasis()
    {
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(nMonomer_ > 0);
@@ -168,9 +168,9 @@ namespace Prdc {
    /*
    * Allocate memory for all fields.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::allocate(
+   WContainerReal<D,RFT,FIT>::allocate(
                                         int nMonomer,
                                         int nBasis,
                                         IntVec<D> const & meshDimensions)
@@ -183,9 +183,9 @@ namespace Prdc {
    /*
    * Set new field values, in basis form.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::setBasis(DArray< DArray<double> > const & fields)
+   WContainerReal<D,RFT,FIT>::setBasis(DArray< DArray<double> > const & fields)
    {
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
@@ -227,9 +227,9 @@ namespace Prdc {
    /*
    * Set new field values, in r-grid form.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::setRGrid(DArray<RField> const & fields,
+   WContainerReal<D,RFT,FIT>::setRGrid(DArray<RFT> const & fields,
                                               bool isSymmetric)
    {
       // Allocate r-grid fields as needed
@@ -270,9 +270,9 @@ namespace Prdc {
    * This function also computes and stores the corresponding r-grid
    * representation. On return, hasData and isSymmetric are both true.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void 
-   WContainerReal<D,RField,FieldIo>::readBasis(std::istream& in,
+   WContainerReal<D,RFT,FIT>::readBasis(std::istream& in,
                                                UnitCell<D>& unitCell)
    {
       UTIL_CHECK(nMonomer_ > 0);
@@ -281,7 +281,7 @@ namespace Prdc {
       int nMonomerIn;
       bool isSymmetricIn;
       fieldIo().readFieldHeader(in, nMonomerIn, unitCell, isSymmetricIn);
-      // Note: FieldIo::readFieldHeader initializes basis if needed
+      // Note: FIT::readFieldHeader initializes basis if needed
       UTIL_CHECK(nMonomerIn == nMonomer_);
       UTIL_CHECK(isSymmetricIn);
       int nBasisIn = readNBasis(in);
@@ -320,9 +320,9 @@ namespace Prdc {
    *
    * Calls readBasis(std::ifstream&, UnitCell<D>&) internally.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::readBasis(std::string filename,
+   WContainerReal<D,RFT,FIT>::readBasis(std::string filename,
                                                UnitCell<D>& unitCell)
    {
       std::ifstream file;
@@ -342,9 +342,9 @@ namespace Prdc {
    * On return, hasData is true and the bool class member isSymmetric_ 
    * is set to the value of the isSymmetric function parameter.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::readRGrid(std::istream& in,
+   WContainerReal<D,RFT,FIT>::readRGrid(std::istream& in,
                                                UnitCell<D>& unitCell,
                                                bool isSymmetric)
    {
@@ -377,9 +377,9 @@ namespace Prdc {
    /*
    * Read fields from a file in r-grid format, by filename.
    */
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::readRGrid(std::string filename,
+   WContainerReal<D,RFT,FIT>::readRGrid(std::string filename,
                                                UnitCell<D>& unitCell,
                                                bool isSymmetric)
    {
@@ -392,8 +392,8 @@ namespace Prdc {
    /*
    * Symmetrize r-grid fields, convert to basis format.
    */
-   template <int D, class RField, class FieldIo>
-   void WContainerReal<D,RField,FieldIo>::symmetrize()
+   template <int D, class RFT, class FIT>
+   void WContainerReal<D,RFT,FIT>::symmetrize()
    {
       UTIL_CHECK(hasData_);
       fieldIo().convertRGridToBasis(rgrid_, basis_);
@@ -407,8 +407,8 @@ namespace Prdc {
    /*
    * Get a signal that is triggered by field modification.
    */
-   template <int D, class RField, class FieldIo>
-   Signal<void>& WContainerReal<D,RField,FieldIo>::signal()
+   template <int D, class RFT, class FIT>
+   Signal<void>& WContainerReal<D,RFT,FIT>::signal()
    {
       UTIL_CHECK(signalPtr_);
       return *signalPtr_;
@@ -417,14 +417,13 @@ namespace Prdc {
    // Private virtual function
 
    /*
-   * Assignment operation for r-grid fields (RField objects).
+   * Assignment operation for r-grid fields (RFT objects).
    *
    * Unimplemented virtual function - must be overridden by subclasses.
    */ 
-   template <int D, class RField, class FieldIo>
+   template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RField,FieldIo>::assignRField(RField & lhs,
-                                                  RField const & rhs) const
+   WContainerReal<D,RFT,FIT>::assignRField(RFT & lhs, RFT const & rhs) const
    {  UTIL_THROW("Unimplemented function WContainerReal::assignRField");
 
 }

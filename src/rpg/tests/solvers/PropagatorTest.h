@@ -422,7 +422,7 @@ public:
       block.setupSolver(w);
 
       // Setup fields on host and device
-      Propagator<1>::QField d_qin, d_qout;
+      Propagator<1>::QFieldT d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostDArray<cudaReal> qin(nx);
@@ -513,8 +513,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      Propagator<1>::QField qin;
-      Propagator<1>::QField qout;
+      Propagator<1>::QFieldT qin;
+      Propagator<1>::QFieldT qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -628,7 +628,7 @@ public:
       block.setupSolver(w);
 
       // Setup fields on host and device
-      Propagator<2>::QField d_qin, d_qout;
+      Propagator<2>::QFieldT d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostDArray<cudaReal> qin(nx);
@@ -733,7 +733,7 @@ public:
       block.setupSolver(w);
 
       // Setup fields on host and device
-      Propagator<3>::QField d_qin, d_qout;
+      Propagator<3>::QFieldT d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostDArray<cudaReal> qin(nx);

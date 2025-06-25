@@ -33,22 +33,22 @@ namespace R1d
       /**
       * Generic field (function of position).
       */
-      typedef DArray<double> Field;
+      typedef DArray<double> FieldT;
 
       /**
       * Chemical potential field type.
       */
-      typedef DArray<double> WField;
+      typedef DArray<double> WFieldT;
 
       /**
       * Monomer concentration field type.
       */
-      typedef DArray<double> CField;
+      typedef DArray<double> CFieldT;
 
       /**
       * Propagator q-field type.
       */
-      typedef DArray<double> QField;
+      typedef DArray<double> QFieldT;
 
       // Member functions
 
@@ -95,11 +95,11 @@ namespace R1d
       /**
       * Solve the modified diffusion equation (MDE) for this block.
       *
-      * This function computes an initial QField at the head of this
+      * This function computes an initial q-field at the head of this
       * block, and then solves the modified diffusion equation for 
       * the block to propagate from the head to the tail. The initial
-      * QField at the head is computed by pointwise multiplication of
-      * of the tail QFields of all source propagators.
+      * q-field at the head is computed by pointwise multiplication of
+      * of the tail q-field of all source propagators.
       */
       void solve();
   
@@ -111,9 +111,9 @@ namespace R1d
       * head parameter of the function. The function is intended for 
       * use in testing.
       *
-      * \param head initial condition of QField at head of block
+      * \param head initial condition of q-field at head of block
       */
-      void solve(const QField& head);
+      void solve(const QFieldT& head);
  
       /**
       * Compute and return partition function for the molecule.
@@ -130,17 +130,17 @@ namespace R1d
       *
       * \param i step index
       */
-      QField const & q(int i) const;
+      QFieldT const & q(int i) const;
 
       /**
       * Return q-field at beginning of block (initial condition).
       */
-      QField const & head() const;
+      QFieldT const & head() const;
 
       /**
       * Return q-field at end of block.
       */
-      QField const & tail() const;
+      QFieldT const & tail() const;
       
       /**
       * Number of values of s (or slices), including head and tail.
@@ -160,10 +160,10 @@ namespace R1d
    private:
      
       /// Array of statistical weight fields 
-      DArray<QField> qFields_;
+      DArray<QFieldT> qFields_;
 
       /// Workspace
-      QField work_;
+      QFieldT work_;
 
       /// Pointer to associated Block.
       Block* blockPtr_;
@@ -183,7 +183,7 @@ namespace R1d
       Block & block();
 
       /**
-      * Compute initial QField at head from tail QFields of sources.
+      * Compute initial q-field at head from tail q-fields of sources.
       */
       void computeHead();
 
@@ -194,19 +194,19 @@ namespace R1d
    /*
    * Return q-field at beginning of block.
    */
-   inline Propagator::QField const& Propagator::head() const
+   inline Propagator::QFieldT const& Propagator::head() const
    {  return qFields_[0]; }
 
    /*
    * Return q-field at end of block, after solution.
    */
-   inline Propagator::QField const& Propagator::tail() const
+   inline Propagator::QFieldT const& Propagator::tail() const
    {  return qFields_[ns_-1]; }
 
    /*
    * Return q-field at specified step.
    */
-   inline Propagator::QField const& Propagator::q(int i) const
+   inline Propagator::QFieldT const& Propagator::q(int i) const
    {  return qFields_[i]; }
 
    /*

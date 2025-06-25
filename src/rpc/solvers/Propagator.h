@@ -57,22 +57,22 @@ namespace Rpc {
       /**
       * Generic field (function of position, defined on regular grid).
       */
-      typedef RField<D> Field;
+      typedef RField<D> FieldT;
 
       /**
       * Chemical potential field type (r-grid format)
       */
-      typedef RField<D> WField;
+      typedef RField<D> WFieldT;
 
       /**
       * Monomer concentration field type (r-grid format)
       */
-      typedef RField<D> CField;
+      typedef RField<D> CFieldT;
 
       /**
       * Propagator q-field type, i.e., q(r,s) at fixed s.
       */
-      typedef RField<D> QField;
+      typedef RField<D> QFieldT;
 
       // Member functions
 
@@ -130,7 +130,7 @@ namespace Rpc {
       /**
       * Solve the modified diffusion equation (MDE) for this block.
       *
-      * This function computes an initial QField at the head of this 
+      * This function computes an initial q-field at the head of this 
       * block, and then solves the modified diffusion equation (MDE) to
       * propagate the solution from the head to the tail. Algorithms for
       * the thread or bead model may be used, depending on the value of
@@ -146,9 +146,9 @@ namespace Rpc {
       * the function parameter "head". Algorithms for the thread or bead
       * model may be used, depending on value of PolymerModel::model().
       *
-      * \param head  initial condition of QField at head of block
+      * \param head  initial condition of q-field at head of block
       */
-      void solve(QField const & head);
+      void solve(QFieldT const & head);
  
       /**
       * Compute and return partition function for the polymer.
@@ -169,17 +169,17 @@ namespace Rpc {
       *
       * \param i step index, 0 <= i < ns
       */
-      const QField& q(int i) const;
+      const QFieldT& q(int i) const;
 
       /**
       * Return q-field at beginning of the block (initial condition).
       */
-      const QField& head() const;
+      const QFieldT& head() const;
 
       /**
       * Return q-field at the end of the block.
       */
-      const QField& tail() const;
+      const QFieldT& tail() const;
 
       /**
       * Get the associated Block object by reference.
@@ -216,10 +216,10 @@ namespace Rpc {
    private:
      
       /// Array of propagator slices at different contour variable values.
-      DArray<QField> qFields_;
+      DArray<QFieldT> qFields_;
 
       /// Workspace
-      QField work_;
+      QFieldT work_;
 
       /// Pointer to associated Block.
       Block<D>* blockPtr_;
@@ -234,7 +234,7 @@ namespace Rpc {
       bool isAllocated_;
 
       /**
-      * Compute initial QField at head.
+      * Compute initial q-field at head.
       * 
       * In either model, the head slice of each propagator is the product
       * of tail slices for incoming propagators from other bonds that
@@ -245,7 +245,7 @@ namespace Rpc {
       /**
       * Assign one slice to another (RHS = LHS).
       */
-      void assign(QField& lhs, QField const & rhs);
+      void assign(QFieldT& lhs, QFieldT const & rhs);
 
    };
 
@@ -256,7 +256,7 @@ namespace Rpc {
    */
    template <int D>
    inline 
-   typename Propagator<D>::QField const& Propagator<D>::head() const
+   typename Propagator<D>::QFieldT const& Propagator<D>::head() const
    {  
       UTIL_CHECK(isSolved()); 
       return qFields_[0]; }
@@ -266,7 +266,7 @@ namespace Rpc {
    */
    template <int D>
    inline 
-   typename Propagator<D>::QField const& Propagator<D>::tail() const
+   typename Propagator<D>::QFieldT const& Propagator<D>::tail() const
    {
       UTIL_CHECK(isSolved()); 
       UTIL_CHECK(PolymerModel::isThread() || !isTailEnd());
@@ -278,7 +278,7 @@ namespace Rpc {
    */
    template <int D>
    inline 
-   typename Propagator<D>::QField const& Propagator<D>::q(int i) const
+   typename Propagator<D>::QFieldT const& Propagator<D>::q(int i) const
    {  
       UTIL_CHECK(isSolved()); 
       return qFields_[i]; 

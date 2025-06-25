@@ -58,22 +58,22 @@ namespace Rpg {
       /**
       * Generic field (function of position).
       */
-      typedef RField<D> Field;
+      typedef RField<D> FieldT;
 
       /**
       * Chemical potential field type.
       */
-      typedef RField<D> WField;
+      typedef RField<D> WFieldT;
 
       /**
       * Monomer concentration field type.
       */
-      typedef RField<D> CField;
+      typedef RField<D> CFieldT;
 
       /**
       * Propagator q-field type.
       */
-      typedef RField<D> QField;
+      typedef RField<D> QFieldT;
 
       // Member functions
 
@@ -120,11 +120,11 @@ namespace Rpg {
       /**
       * Solve the modified diffusion equation (MDE) for this block.
       *
-      * This function computes an initial QField at the head of this
+      * This function computes an initial q-field at the head of this
       * propagator, and then solves the modified diffusion equation for
       * the block to propagate from the head to the tail. The initial
-      * QField at the head is computed by pointwise multiplication of
-      * of the tail QFields of all source propagators.
+      * q-file at the head is computed by pointwise multiplication of
+      * of the tail q-fields of all source propagators.
       */
       void solve();
 
@@ -136,7 +136,7 @@ namespace Rpg {
       * parameter of the function. The function is intended for use in
       * testing.
       *
-      * \param head initial condition of QField at head of block
+      * \param head initial condition of q-field at head of block
       */
       void solve(RField<D> const & head);
 
@@ -205,7 +205,7 @@ namespace Rpg {
    protected:
 
       /**
-      * Compute initial QField at head for the thread model.
+      * Compute initial q-field at head for the thread model.
       *
       * In either model, the head slice of each propagator is the product
       * of tail slices for incoming propagators from other bonds that
@@ -232,7 +232,7 @@ namespace Rpg {
       * correspond to a single contour point, and there will be ns_ of
       * these reference arrays.
       */
-      DArray<RField<D> > qFields_;
+      DArray< RField<D> > qFields_;
 
       /// Pointer to associated Block.
       Block<D>* blockPtr_;

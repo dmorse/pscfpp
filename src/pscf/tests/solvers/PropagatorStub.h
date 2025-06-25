@@ -27,12 +27,12 @@ namespace Pscf
       /**
       * Chemical potential field type.
       */
-      typedef DArray<double> WField;
+      typedef DArray<double> WFieldT;
 
       /**
       * Monomer concentration field type.
       */
-      typedef DArray<double> CField;
+      typedef DArray<double> CFieldT;
 
       // Member functions
 
