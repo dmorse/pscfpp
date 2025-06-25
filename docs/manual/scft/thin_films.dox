@@ -1,17 +1,16 @@
 /*! \page scft_thin_films_page Thin-Film Confinement
 
- \ref scft_imposed_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_environment_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_visualize_page   (Next) 
 <BR>
 
-Thin-film confinement can be imposed on the PSCF unit cell by including an 
-ImposedFieldsGenerator object in the parameter file with "film" as the 
-type parameter. See \ref scft_imposed_page "this previous page" 
-for more general information about the ImposedFieldsGenerator feature and 
-for a description of how masks and external potential fields are implemented 
-in PSCF. On this page, we first explain the model used to represent thin 
-film confinement, followed by an explanation of how a user can impose the 
-constraint in PSCF.
+Thin-film confinement can be imposed on the PSCF unit cell by including a
+FilmEnvironment block in the parameter file, above the Iterator block.  See
+\ref scft_environment_page "this previous page" for more general
+information about Environments and for a description of how masks and
+external potential fields are implemented in PSCF. On this page, we first
+explain the model used to represent thin film confinement, followed by an
+explanation of how a user can impose the constraint in PSCF.
 
 If you use this tool in your research, please cite the following paper in 
 which the tool was first presented:
@@ -28,7 +27,7 @@ below, on which our implementation is largely based:
 - Matsen, M. W. (1997). *J. Chem. Phys.*, **106**, 7781.
 - Khanna, V., *et al.* (2006). *Macromolecules*, **39**, 9346.
 
-# Functional form of the imposed fields
+\section scft_films_functional_sec Functional form of the imposed fields
 
 The thin film is modeled as a polymer melt confined between two parallel
 walls with a fixed distance between them. The mask that is used to enforce 
@@ -54,7 +53,7 @@ of the wall in this direction (i.e., the "excluded" thickness where
 \f$ m(z) \f$ decays from 1 to 0 when passing from the film 
 region into the wall. If *t* is small, the calculation will require high 
 spatial resolution to converge, which can be computationally prohibitive, 
-but a sufficiently large *t* will not be able to accurately model a rigid 
+but a large value of *t* may not be an accurate representation of a rigid 
 film boundary. A common compromise in literature is to choose 
 \f$ 0.15R_g \le t \le 0.5R_g \f$, where \f$ R_g \f$ is the radius of 
 gyration of the polymer (for a one-component system). 
@@ -77,32 +76,43 @@ where \f$ \chi_{\alpha,{\rm bot}} \f$ and \f$ \chi_{\alpha,{\rm top}} \f$
 are the interaction parameters between species \f$\alpha\f$ and the bottom 
 wall and top wall, respectively.
 
-## Constraint on the unit-cell shape
+\subsection scft_films_unitcell_sec Constraint on the unit-cell shape
 
-Although it is not strictly necessary, we impose an additional constraint 
-on the unit cells used for thin film calculations in order to simplify the 
-construction and interpretation of the mask: one lattice basis vector must 
-be oriented normal to the walls, and all other lattice basis vectors must 
-be parallel to the walls. It does not matter which basis vector is normal 
-to the walls, as long as all basis vectors satisfy this requirement. For 
-example, if one were to use a hexagonal unit 
-cell in 3D, the walls must be parallel to the **a** and **b** lattice 
-vectors, because this is the only orientation of the walls for which the 
-third lattice vector is normal to the walls. Additionally, the length of 
-the lattice vector that is normal to the walls is not allowed to vary, so 
-the film thickness will be held constant throughout the calculation even 
-if the user chooses to have a flexible unit cell. 
+Although it is not strictly necessary, we impose an additional constraint
+on the unit cells used for thin film calculations in order to simplify the
+construction and interpretation of the mask: one lattice basis vector must
+be oriented normal to the walls, and all other lattice basis vectors must
+be parallel to the walls. It does not matter which basis vector is normal
+to the walls, as long as all basis vectors satisfy this requirement. For
+example, if one were to use a hexagonal unit cell in 3D, the walls must be
+parallel to the **a** and **b** lattice vectors, because this is the only
+orientation of the walls for which the third lattice vector is normal to
+the walls.  
 
 The space group used to describe the system must accurately describe the 
 symmetry of the mask and the external fields within a unit cell that 
 satisfies the constraints described here. Determining the proper space 
 group can be difficult in some cases, so an entire section is dedicated
-to this topic below.
+to this topic \ref scft_films_space_groups_sec "below."
 
-# Parameter file input
+By default, the length of the lattice vector that is normal to the walls is
+not allowed to vary, so the film thickness will be held constant throughout
+the calculation. The lattice parameters that define the size of the unit
+cell in the plane of the film are allowed to vary just as they would in a
+bulk SCFT calculation, if the user chooses a flexible unit cell. PSCF will
+automatically hold the film thickness parameter constant, so the user does
+not have to set it to rigid manually.
+
+PSCF does, however, provide a feature that allows the film thickness to be
+optimized within a single SCFT calculation. This feature is an
+implementation of the "dynamic mask method" developed by Magruder and
+Dorfman (2025). The method is explained in more detail \ref
+scft_films_dynamic_sec "below."
+
+\section scft_films_param_file_sec Parameter file input
 
 In the parameter file, the thin film constraint is included by adding a 
-ImposedFieldsGenerator object to the end of the iterator block. In this 
+FilmEnvironment block that precedes the Iterator block. In this 
 section, we consider an example system that one might wish to study: a bcc 
 morphology in a thin film that is 2 unit cells thick, with walls that are 
 normal to the **c** lattice basis vector. We provide a parameter file for 
@@ -122,25 +132,24 @@ System{
       lattice          tetragonal
       groupName        P_4%m_m_m
    }
+   FilmEnvironment{
+      normalVecId         2
+      interfaceThickness  0.2
+      excludedThickness   0.4
+      chiBottom[
+                          0
+                          10
+      ]
+      chiTop[
+                          0
+                          10
+      ]
+   }
    Iterator{
       epsilon      1e-6
       maxItr       100
       maxHist      50
       isFlexible   1
-      ImposedFieldsGenerator{
-         type                film 
-         normalVecId         2
-         interfaceThickness  0.2
-         excludedThickness   0.4
-         chiBottom[
-                             0
-                             10
-         ]
-         chiTop[
-                             0
-                             10
-         ]
-      }
    }
    LinearSweep{
       ns            20  
@@ -156,33 +165,28 @@ System{
 }
 \endcode
 
-## Domain block
+\subsection scft_films_domain_sec Domain block
 
-First, we draw your attention to the `Domain` block. Notice that this 
-differs significantly from the `Domain` block that would be expected for 
-a bcc structure in a neat melt. The space group has been downgraded from
-the cubic <i>Im</i>-3<i>m</i> group to tetragonal <i>P</i>4/<i>mmm</i>. 
-See the "Space groups" section below for more information about determining 
-the appropriate space group symmetry for a thin film. Also notice that we 
-have chosen specific and intentional values for the mesh discretization in 
-the **c** direction, with 4x more gridpoints than in the other directions. 
-The gridpoint density required to resolve the polymer/wall interface is, as 
-a good rule of thumb, about twice that of a bulk SCFT phase, and the film 
-is two unit cells thick (while only being one unit cell wide in the **a** 
-and **b** directions), hence the 4x higher gridpoint density.
+First, we draw your attention to the `Domain` block. Notice that this
+differs significantly from the `Domain` block that would be expected for a
+bcc structure in a neat melt. The space group has been downgraded from the
+cubic <i>Im</i>-3<i>m</i> group to tetragonal <i>P</i>4/<i>mmm</i>.  See
+the \ref scft_films_space_groups_sec "space groups" section below for more
+information about determining the appropriate space group symmetry for a
+thin film. Also notice that we have chosen specific and intentional values
+for the mesh discretization in the **c** direction, with 4x more gridpoints
+than in the other directions.  The gridpoint density required to resolve
+the polymer/wall interface is, as a good rule of thumb, about 2-3x that of
+a bulk SCFT phase, and the film is two unit cells thick (while only being
+one unit cell wide in the **a** and **b** directions), hence the 4x higher
+gridpoint density.
 
-## Iterator block
+\subsection scft_films_iterator_sec FilmEnvironment block
 
-Now, we proceed to the `AmIteratorBasis` block. The first four parameters 
-in this block define the AmIteratorBasis object and do not pertain to the 
-thin film constraint (from `epsilon` to `isFlexible`). Then we get to the 
-`ImposedFieldsGenerator` block that defines the mask. The first parameter 
-in this block is `type`, which is given the keyword "film" to indicate that 
-the object should generate a mask and external fields that have the 
-functional form described above. The parameters that follow are those that 
-are necessary to define the imposed fields. 
+Now, we proceed to the `FilmEnvironment` block. The parameters contained in
+this block are those that are necessary to define the imposed fields. 
 
-### normalVecId
+\subsubsection scft_films_normalvecid_sec normalVecId
 
 The first of these required parameters is `normalVecId`, indicating which 
 of the 3 lattice basis vectors is oriented normal to the walls. The input 
@@ -194,14 +198,14 @@ So, if <b>c</b> is normal to the wall, then the unit cell angles *&alpha;*
 and *&beta;* must both be 90&deg;. The software will throw an Exception if 
 this condition is not met.
 
-### interfaceThickness and excludedThickness
+\subsubsection scft_films_thickness_sec interfaceThickness and excludedThickness
 
 The next required inputs are `interfaceThickness` and `excludedThickness`,
-which correspond to *t* and *T* in the expression for \f$m(z)\f$ above. 
-These values are defined in the same units as other length inputs (unit cell 
-parameters, segment lengths). In the example, we have chosen *t* to be 0.2, 
-or ~\f$0.49R_g\f$ based on information from the `Mixture` block, and we have 
-chosen *T* to be 0.4, or ~\f$0.98R_g\f$. 
+which correspond to *t* and *T* in the expression for \f$m(z)\f$ above,
+respectively.  These values are defined in the same units as other length
+inputs (unit cell parameters, segment lengths). In the example, we have
+chosen *t* to be 0.2, or ~\f$0.49R_g\f$ based on information from the
+`Mixture` block, and we have chosen *T* to be 0.4, or ~\f$0.98R_g\f$. 
 
 Let us also briefly consider the parameter *L* (the length of the unit 
 cell in the direction normal to the wall) in the context of the example 
@@ -228,10 +232,10 @@ used at each step. It also ensures that the excludedThickness is always set
 to an appropriate value, and will never accidentally drift to be too small 
 or unnecessarily large.
 
-### chiBottom and chiTop
+\subsubsection scft_films_chi_sec chiBottom and chiTop
 
 Next, there are required input arrays `chiBottom` and `chiTop`. These 
-allow the user to define the Flory-Huggins-like interaction parameter 
+allow the user to define the Flory--Huggins-like interaction parameter 
 between each monomer species and the walls. For a system with `n`
 monomer species, the chi arrays will contain `n` entries each. Each entry 
 corresponds to a single monomer species, in the same order that they are 
@@ -254,7 +258,7 @@ coworkers:
 - Hur, S.-M., Garcia-Cervera, C. J., & Fredrickson, G. H. (2012). 
 *Macromolecules*, **45**, 2905.
 
-## Sweep block
+\subsection scft_films_sweep_sec Sweep block
 
 We also briefly draw your attention to the Sweep block at the bottom of the 
 example parameter file. To make it easier to efficiently explore the state 
@@ -267,9 +271,9 @@ change in this parameter over the entire sweep. Note that `i` refers to the
 index of the parameter in the array that is input in the `unitCell` line of 
 the parameter file. So, in the example above, `i` can only be 0 or 1 because 
 there are only 2 lattice parameters specified on the `unitCell` line.
-Note that the lattice parameter being swept should be held rigid during the 
-calculation, or else the iterator will allow that parameter to relax
-back to it's most optimal value at each step of the sweep.
+Also note that the lattice parameter being swept should be held rigid
+during the calculation, or else the iterator will allow that parameter to
+relax back to it's most optimal value at each step of the sweep.
 
 The second and third sweep parameters for thin films are `chi_bottom` and 
 `chi_top`, which allow the user to sweep any of the values in the 
@@ -280,13 +284,13 @@ the desired change in this parameter over the entire sweep. `i` must be
 less than n\_monomer. Replace `chi_bottom` with `chi_top` to sweep a value 
 in the `chiTop` array instead.
 
-In the example parameter file above, we show how one would perform a sweep 
-along all three thin film sweep parameters at once; we sweep the *c* lattice 
-parameter from 4.4 to 5.4, and we sweep `chiBottom[1]` and `chiTop[1]` from 
-10 to 0. Note that we chose a sweep that keeps the walls chemically 
-identical, because asymmetric walls would break the symmetry of the space 
-group that we've chosen, so we'd need to switch to a different space group 
-to model bcc with asymmetric walls.
+In the example parameter file above, we show how one would perform a sweep
+along all three thin film sweep parameters at once; we sweep the *c*
+lattice parameter from 4.4 to 5.4, and simultaneously sweep `chiBottom[1]`
+and `chiTop[1]` from 10 to 0. Note that we chose a sweep that keeps the
+walls chemically identical, because asymmetric walls would break the
+symmetry of the space group that we've chosen, so we'd need to switch to a
+different space group to model bcc with asymmetric walls.
 
 Finally, notice that there is an additional line in the Sweep block: 
 `reuseState 0`. The reuseState feature typically improves convergence time
@@ -296,7 +300,7 @@ actually worsens convergence time when paired with a thin film thickness
 (`cell_param`) sweep, and thus we include `reuseState 0` in the param file 
 to turn off the feature when sweeping film thickness.
 
-## The effect of the parameter t
+\subsection scft_films_t_sec The effect of the parameter t
 
 It is important to note that the free energy contribution arising from 
 polymer/wall interactions has an inherent linear dependence on *t*. For 
@@ -318,16 +322,17 @@ is dependent not only on \f$ \chi_{\rm A,wall} \f$ but also on *t*. Because
 of this, it is strongly recommended to use the same value of *t* for all 
 calculations that are to be compared to one another.
 
-## Variable lattice parameters
+\subsection scft_films_flexible_sec Variable lattice parameters
 
-When walls are added into the system, the user can still choose whether to 
-fix the unit cell parameters or allow some or all of them to vary, but the 
-implementation is slightly different. Specifically, we require that the 
-length of the lattice basis vector that is orthogonal to the wall is fixed 
-regardless of the inputs provided in `isFlexible` and `flexibleParams`, in 
-order to force the thin film to maintain a constant thickness throughout the 
-iteration process. Furthermore, we require that the other lattice basis 
-vector(s) remain parallel to the walls. This implies the following:
+As mentioned above, when walls are added into the system, the user can
+still choose whether to fix the unit cell parameters or allow some or all
+of them to vary, but the implementation is slightly different.
+Specifically, we require by default that the length of the lattice basis
+vector that is orthogonal to the wall is fixed regardless of the inputs
+provided in `isFlexible` and `flexibleParams`, in order to force the thin
+film to maintain a constant thickness throughout the iteration process.
+Furthermore, we require that the other lattice basis vector(s) remain
+parallel to the walls. This implies the following:
 - In 1D, the size of the unit cell is always fixed.
 - In 2D, the length of the lattice basis vector parallel to the walls 
 (either **a** or **b**) may vary, but the angle *&gamma;* between **a** and 
@@ -339,36 +344,20 @@ depend on the choice of `normalVecId`. The length of the lattice basis vector
 that is normal to the wall (the vector indicated by `normalVecId`) is held 
 fixed, and the remaining two angles are fixed at 90&deg;. 
 
-This behavior is implemented automatically. If the user specifies that some 
-or all lattice parameters may vary, then the software will decide which 
-lattice parameters are actually allowed to vary based on `normalVecId` and 
-`unitCell`. If the user tries to define a unit cell that is incompatible 
-with the rules above (*e.g.,* a 2D unit cell with <i>&alpha;</i> &ne; 
-90&deg;), the software will throw an error.
+This behavior is implemented automatically. If the user specifies that some
+or all lattice parameters may vary (as in the example parameter file
+above), then the software will decide which lattice parameters are actually
+allowed to vary based on `normalVecId` and `unitCell`. If the user tries to
+define a unit cell that is incompatible with the rules above (*e.g.,* a 2D
+unit cell with <i>&alpha;</i> &ne; 90&deg;), the software will throw an
+error.
 
-## Note about the COMPUTE command
+The exception to this is if the user includes the optional input parameter
+`fBulk`, in which case the film thickness can be optimized within an SCFT
+calculation. This is described in more detail \ref scft_films_dynamic_sec
+"below."
 
-When using PSCF for bulk systems (those without a thin film constraint), 
-users can use the COMPUTE command in the command file to solve the MDEs
-and determine the concentration fields from a given set of potential (w) 
-fields. Based on the way the thin film code is implemented, the COMPUTE
-command will currently give the wrong result if the system in question 
-has a thin film constraint. This is because the code has to generate 
-external fields and a mask field to represent the upper and lower walls,
-which alter the other calculations that happen within the system, and these
-fields are not generated until the ITERATE command is called. 
-
-If the user wishes to simply solve the MDEs for a thin film system without 
-iterating to a solution, we recommend the following workaround: instead of
-calling COMPUTE, set the epsilon value of the iterator to a very large 
-number (say, 1e5) and call ITERATE. The MDE solution at Iteration 0 will 
-be "converged" because it will have an error value that is lower than 
-epsilon, and so the iteration procedure will terminate on Iteration 0 
-without ever updating the potential fields. Thus, the only operation 
-performed by ITERATE will be solving the MDEs, which will then allow the
-user to write the resulting concentration fields to a file.
-
-#  Space groups
+\section scft_films_space_groups_sec Space groups
 
 Although we are imposing a thin film constraint on the system, we still use 
 periodic boundary conditions in all directions so that the symmetry-adapted 
@@ -383,7 +372,7 @@ system: the mask, the external fields, and the polymer morphology. Thus, the
 selection of the appropriate space group for a thin film requires more 
 substantial thought than is the case for bulk systems. 
 
-## Identifying the correct space group
+\subsection scft_films_correct_sg_sec Identifying the correct space group
 
 The appropriate space group for a desired system can be identified by 
 looking at the symmetry operations for the space group that describes the 
@@ -435,7 +424,7 @@ through the tetragonal space groups, we find that
 [<i>P</i>4/<i>mmm</i>](http://img.chem.ucl.ac.uk/sgp/large/123az1.htm) is 
 the space group we are looking for. 
 
-## Relationship between unit cell and space group
+\subsection scft_films_relationship_sec Relationship between unit cell and space group
 
 An important detail to note is the difference between the space group and 
 the unit cell. The unit cell shape only defines the lattice vectors along 
@@ -481,7 +470,7 @@ vary in a monoclinic unit cell, but a choice of 0 or 2 for `normalVecId`
 would force &beta; to be 90&deg; and thus force the unit cell to be stuck in 
 an orthorhombic shape.
 
-## Initial guess
+\subsection scft_films_initial_guess_sec Initial guess
 
 The recommended technique for generating an initial guess is to first 
 converge the desired morphology as a bulk calculation, and generate a 
@@ -502,13 +491,13 @@ experience using this tool, this approach is sufficient to achieve a
 converged SCFT solution for most systems of interest with minimal 
 difficulty.
 
-## Rules for determining allowed space groups and unit cells
+\subsection scft_films_rules_sec Rules for determining allowed space groups and unit cells
 
 Here we present a comprehensive list of the rules determining 
 permitted/forbidden choices of unit cell and space group in a thin film 
 system, which have been alluded to in the above discussion.
 
-The systems that are compatible with the thin film constraint must obey the 
+Systems that are compatible with the thin film constraint must obey the
 following rules:
 - One lattice basis vector must be normal to the walls, and all other 
 lattice basis vectors must be parallel to the walls (discussed above). 
@@ -552,7 +541,72 @@ trigonal crystal system, so the reader is directed to the very helpful
 summary at <https://en.wikipedia.org/wiki/Hexagonal_crystal_family> for more 
 details.
 
+\section scft_films_dynamic_sec Dynamic mask method
+
+As mentioned briefly above, PSCF has a feature that allows the film
+thickness to be optimized within a single SCFT calculation, using the
+so-called "dynamic mask method". The method is described in detail in a
+forthcoming manuscript by B. R. Magruder and K. D. Dorfman (2025). Here we
+summarize only the key details needed to use the feature in PSCF, and
+readers are directed to the manuscript for more information on the theory.
+
+The "stress" defined in PSCF is simply the derivative of the Helmholtz free
+energy per monomer reference volume \f$ f \f$ with respect to a lattice
+parameter \f$ \theta \f$. We typically define masks and external fields as
+functions of the lattice parameters, and these imposed fields will distort
+non-affinely upon changes to the lattice parameters. The stress in such
+cases requires the computation of added contributions from the non-affine
+distortions of the imposed fields. The "dynamic mask method" provides an
+expression for these additional terms, which are calculated in PSCF.
+
+To optimize the film thickess using a stress, we must define what it means
+for the thickness to be "optimized". It is understood in the literature
+(see references above) that a thin film is at its commensurate film
+thickness when the excess free energy per unit area of film is minimized.
+The excess free energy is defined relative to the free energy of the
+corresponding bulk phase. For example, in a thin film with a lamellar
+morphology, the reference free energy would be that of a lamellar phase of
+that same polymer system in the bulk. Let \f$ f_{\rm bulk} \f$ denote this
+reference free energy (per monomer reference volume), and let \f$ f_{\rm
+ex}=f-f_{\rm bulk} \f$ denote the excess free energy per monomer reference
+volume. To convert this into an excess free energy per unit area, we need
+only multiply by the film thickness \f$ \Delta \f$. The property we wish to
+minimize in the SCFT calculation, then, is \f$ f_{\rm ex} \Delta \f$. 
+
+We therefore redefine the stress in the direction normal to the film, so
+that the value used to optimize the unit cell is the derivative of \f$
+f_{\rm ex} \Delta \f$ with respect to the lattice parameter \f$ \theta_j
+\f$. Using the dynamic mask method, this stress can be calculated, and the
+optimized unit cell size is found by minimizing this stress. 
+
+To actually perform such a calculation in PSCF, one simply needs to include
+the reference free energy \f$ f_{\rm bulk} \f$ as an additional parameter
+in the parameter file. The parameter is named `fBulk` and comes immediately
+after `interfaceThickness`, as exemplified by the parameter file block
+below:
+\code
+   FilmEnvironment{
+      normalVecId         2
+      interfaceThickness  0.2
+      excludedThickness   0.4
+      fBulk               2.98353412
+      chiBottom[
+                          0
+                          10
+      ]
+      chiTop[
+                          0
+                          10
+      ]
+   }
+\endcode
+If `fBulk` is provided, PSCF will allow the film thickness to be flexible
+during iteration, using the dynamic mask method to calculate the stress,
+unless the user specifies in the Iterator block that the parameter should
+be rigid. The value to use for `fBulk` should be computed using a separate
+PSCF calculation for the corresponding bulk phase.
+
 <BR>
- \ref scft_imposed_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_environment_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_visualize_page   (Next) 
 */

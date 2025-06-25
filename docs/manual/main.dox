@@ -75,7 +75,7 @@ manual for the most recent release of PSCF is available online at:
     <li> \ref scft_thermo_page  </li>
     <li> \ref scft_unitcell_page  </li>
     <li> \ref scft_groups_page  </li>
-    <li> \ref scft_imposed_page  </li>
+    <li> \ref scft_environment_page  </li>
     <li> \ref scft_thin_films_page  </li>
     <li> \ref scft_visualize_page  </li>
     <li> \ref scft_python_page  </li>
