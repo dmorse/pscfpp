@@ -197,13 +197,12 @@ namespace Rpg {
       * parameters will construct a symmetry-adapted basis and allocate
       * memory for fields stored in basis form. Member functions that
       * may construct a basis as a side effect include this function,
-      * readWRGrid, estimateWfromC, and all of the overloaded setUnitCell
-      * functions.
+      * readWRGrid, and all of the overloaded setUnitCell functions.
       *
       * SCFT calculations that use an iterator that preserves space group
       * symmetry must set an initial field using a function that creates
-      * fields in symmetry-adapted basis form, such as this function,
-      * setWBasis, or estimateWFromC.
+      * fields in symmetry-adapted basis form, such as this function or
+      * setWBasis.
       *
       * \param filename  name of input w field file in basis format
       */

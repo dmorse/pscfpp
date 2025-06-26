@@ -486,7 +486,7 @@ leaves us with a 32x32x68 initial guess in rgrid format for the bcc thin
 film. The gridpoint density can be increased, if desired, by 
 interpolation. This rgrid can subsequently be converted into an initial 
 guess for the omega field in symmetry-adapted basis format by using the 
-RGRID_TO_BASIS and ESTIMATE_W_FROM_C commands in the command file. In our 
+RGRID_TO_BASIS and ESTIMATE_W_BASIS commands in the command file. In our 
 experience using this tool, this approach is sufficient to achieve a 
 converged SCFT solution for most systems of interest with minimal 
 difficulty.

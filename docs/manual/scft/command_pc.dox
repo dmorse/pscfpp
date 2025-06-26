@@ -114,13 +114,6 @@ that command or a group of closely related commands.
          format. See \ref scft_command_pc_readwrgrid_sub "discussion"
          for constraints on usage. </td>
   </tr>
-  <tr>
-    <td> \ref scft_command_pc_estimatewc_sub "ESTIMATE_W_FROM_C" </td>
-    <td> filename [string] </td>
-    <td> Read c fields in symmetry-adapted basis format from file 
-         filename, compute estimated w fields as initial guesses for 
-         iteration. </td>
-  </tr>
 
   <tr>
     <td colspan="3" style="text-align:center">
@@ -349,6 +342,13 @@ that command or a group of closely related commands.
     </td>
   </tr>
   <tr>
+    <td> \ref scft_command_pc_estimatewbasis_sub "ESTIMATE_W_BASIS" </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read c fields in symmetry-adapted basis format from file 
+         inFile, compute estimated w fields as initial guesses for 
+         iteration, and write to file outFile. </td>
+  </tr>
+  <tr>
     <td> \ref scft_command_pc_scale_sub "SCALE_BASIS" </td>
     <td> inFile [string], outFile [string], factor [real] </td>
     <td> Read fields from file inFile in basis format, multiply all 
@@ -482,28 +482,25 @@ provided below.
 
 \section scft_command_pc_fieldin_sec W field initialization
 
-The READ_W_BASIS, ESTIMATE_W_FROM_C and READ_W_RGRID commands allow
-a user to set or reset the w fields that are stored in program
-memory. The READ_W_BASIS and ESTIMATE_W_FROM_C commands both read files
-in symmetry-adapted basis format. The READ_W_RGRID command reads w files
-in real-space grid (r-grid) format, which does not require the fields
-to have any particular space group symmetry.  One of these commands
-must be invoked to initialize the w fields before invoking any of
-the computation commands. The w fields must normally be initialized
-by either the READ_W_BASIS or ESTIMATE_W_FROM_C command prior to any
-operation which assumes the existence of a specified space group
-symmetry.
+The READ_W_BASIS, and READ_W_RGRID commands allow a user to set or reset
+the w fields that are stored in program memory. The READ_W_BASIS command
+reads files in symmetry-adapted basis format. The READ_W_RGRID command
+reads w files in real-space grid (r-grid) format, which does not require
+the fields to have any particular space group symmetry.  One of these
+commands must be invoked to initialize the w fields before invoking any of
+the computation commands. The w fields must normally be initialized by the
+READ_W_BASIS command prior to any operation which assumes the existence of
+a specified space group symmetry.
 
-Each of these three field initialization commands reads a field file
-that contains a header section that includes information about the
-crystallographic unit cell and the space group name, as well as the
-number of monomer types. The description of the unit cell type and
-space group name given in this header section must match those
-declared in the parameter file, as must the value of the number of
-monomer types. Each of these three commands sets or resets the values
-of unit cell parameters that are stored in program memory, by
-setting them equal equal to the values that are given in this field
-file header.
+Each of these two field initialization commands reads a field file that
+contains a header section that includes information about the
+crystallographic unit cell and the space group name, as well as the number
+of monomer types. The description of the unit cell type and space group
+name given in this header section must match those declared in the
+parameter file, as must the value of the number of monomer types. Each of
+these two commands sets or resets the values of unit cell parameters that
+are stored in program memory, by setting them equal to the values that are
+given in this field file header.
 
 \anchor scft_command_pc_readwbasis_sub
 <b> READ_W_BASIS</b>:
@@ -511,17 +508,16 @@ The READ_W_BASIS command reads the coefficients of an expansion of
 the w fields in a symmetry-adapted Fourier basis from an input file
 whose name is specified as command parameter.
 
-The code that reads files in basis format that is used by both
-READ_W_BASIS and ESTIMATE_W_FROM_C can read files that were generated
-for a structure that has the space group symmetry declared in the
-parameter file but that is defined on a different computation mesh
-mesh, with different number of grid points along each direction, than
-that described by the "mesh" parameter in the parameter file. This
-code initializes to zero the coefficients of any basis function that
-exists in the current basis (which is created for the mesh declared
-in the parameter file) but does appear in the input file. It also
-ignores values for coefficients of basis functions that appear in
-the input file but that do not exist in the current basis.
+The code that reads files in basis format can read files that were
+generated for a structure that has the space group symmetry declared in the
+parameter file but that is defined on a different computation mesh, with
+different number of grid points along each direction, than that described
+by the "mesh" parameter in the parameter file. This code initializes to
+zero the coefficients of any basis function that exists in the current
+basis (which is created for the mesh declared in the parameter file) but
+does appear in the input file. It also ignores values for coefficients of
+basis functions that appear in the input file but that do not exist in the
+current basis.
 
 * *Technical note* :
 The symmetry-adapted basis used by pscf_pc is normally created during 
@@ -534,37 +530,12 @@ are not provided in the parameter file, and required by the algorithm
 that creates this basis. The choice of the initial values for the unit
 cell parameters that are obtained in this way can affect the order in
 which basis functions are listed internally, because the basis functions
-are symmetry-adapted eigenvalues of the Lapacian that are listed in an
+are symmetry-adapted eigenvalues of the Laplacian that are listed in an
 order of non-decreasing eigenvalues (or non-decreasing wavenumber) at
 the time of creation. The set of basis functions that is created for a
 particular mesh and space group is, however, independent of the values
 of the unit cell parameter values that were used to create this order
 during creation of the basis.
-
-\anchor scft_command_pc_estimatewc_sub
-<b> ESTIMATE_W_FROM_C </b>:
-The ESTIMATE_W_FROM_C command reads a set of approximate monomer volume
-fraction fields in symmetry-adapted basis format from the file whose name
-is passed as a command parameter, and uses these to construct and store 
-an estimate of the corresponding w fields. This is intended to allow 
-users to construct an initial guess for w fields needed as an input to 
-the ITERATE and SWEEP commands from an initial guess for the volume 
-fraction fields for the structure of interest. The initial guess for the 
-volume fraction fields does not need to be perfect, merely close enough 
-to the final structure to allow a chosen iteration algorithm to 
-converge.
-
-The estimated w fields are computed by setting the Lagrange multiplier
-field to zero in the self-consistent field condition, giving an estimated
-w field
-\f[
-   w_{\alpha}({\bf r}) =
-   \sum_{\beta} \chi_{\alpha\beta}\phi_{\beta}({\bf r})
-\f]
-for monomer type \f$ \alpha \f$, in which \f$ \phi_{\beta} ({\bf r}) \f$
-is the volume fraction of monomer type \f$ \beta \f$, as read from the
-input file, and \f$ \chi_{\alpha\beta} \f$ is a binary Flory-Huggins
-interaction parameter.
 
 \anchor scft_command_pc_readwrgrid_sub
 <b> READ_W_RGRID </b>:
@@ -578,22 +549,20 @@ execution.
 
 The READ_W_RGRID command cannot be used to initialize w fields for
 subsequent use in an SCFT simulation of a structure with a specified
-symmetry, for reasons that are explained below.
-Users who wish to perform an SCFT calculation for a structure with a
-specified space group should thus initialize the w fields using either
-the READ_W_BASIS or ESTIMATE_W_FROM_C commands, rather than READ_W_RGRID.
-The r-grid file format can represent a field with no particular space
-group symmetry. When w fields are read in r-grid format using this
-command, pscf_pc thus assumes that the w fields and any fields that 
-are computed from them may not be symmetric under the elements of 
-the space group declared in the parameter file. Because the existing 
-iteration algorithms for pscf_pc all use an expansion of the fields 
-in symmetry-adapted basis, the ITERATE and SWEEP command thus cannot 
-be invoked when the current w fields were initialized using the 
-READ_W_RGRID command. W fields that were initialize with the 
-READ_W_RGRID command may, however, be used by the COMPUTE command, 
-which uses an algorithm that does not assume the existence of any 
-space group symmetry.
+symmetry, for reasons that are explained below.  Users who wish to perform
+an SCFT calculation for a structure with a specified space group should
+thus initialize the w fields using either the READ_W_BASIS command, rather
+than READ_W_RGRID.  The r-grid file format can represent a field with no
+particular space group symmetry. When w fields are read in r-grid format
+using this command, pscf_pc thus assumes that the w fields and any fields
+that are computed from them may not be symmetric under the elements of the
+space group declared in the parameter file. Because the existing iteration
+algorithms for pscf_pc all use an expansion of the fields in
+symmetry-adapted basis, the ITERATE and SWEEP command thus cannot be
+invoked when the current w fields were initialized using the READ_W_RGRID
+command. W fields that were initialize with the READ_W_RGRID command may,
+however, be used by the COMPUTE command, which uses an algorithm that does
+not assume the existence of any space group symmetry.
 
 The READ_W_RGRID command is thus currently of very limited utility 
 in pscf_pc. It was implemented as a starting point for later 
@@ -629,7 +598,7 @@ involved in a self-consistent field calculation.  Each performs the
 same operation as the analogous command for the pscf_1d program. Each
 of these commands requires an initialized set of w fields and unit cell
 parameters as an input, which must have been initialized by a previous
-call to READ_W_BASIS, READ_W_RGRID, or ESTIMATE_W_FROM_C.
+call to READ_W_BASIS or READ_W_RGRID.
 
 \anchor scft_command_pc_compute_sub
 <b> COMPUTE </b>:
@@ -729,21 +698,20 @@ fields (monomer chemical potential fields) to a specified output
 file in basis or rgrid format, respectively.
 
 <b> WRITE_C_(FORMAT) </b>:
-The WRITE_W_BASIS and WRITE_W_RGRID commands output the current 
-c fields (volume fraction fields) to a specified output file in 
-basis or rgrid format.
+The WRITE_W_BASIS and WRITE_W_RGRID commands output the current c fields
+(volume fraction fields) to a specified output file in basis or rgrid
+format.
 
-Fields can be output in symmetry-adapted basis format only if those
-fields are known to have the specified space group symmetry. This
-symmetry is known to exist for w fields if and only if they were 
-initialized using the READ_W_BASIS or ESTIMATE_W_FROM_C commands
-and subsequently modified only by iteration algorithms that 
-maintain space group symmetry.  Symmetry is assumed to exist for 
-c fields only if the c fields were computed from w fields that 
-are known to be symmetric.
+Fields can be output in symmetry-adapted basis format only if those fields
+are known to have the specified space group symmetry. This symmetry is
+known to exist for w fields if and only if they were initialized using the
+READ_W_BASIS command and subsequently modified only by iteration algorithms
+that maintain space group symmetry.  Symmetry is assumed to exist for c
+fields only if the c fields were computed from w fields that are known to
+be symmetric.
 
-Fields that represent states in a field theoretic MC or BD
-simulation must be input and output using the RGRID format.
+Fields that represent states in a field theoretic MC or BD simulation must
+be input and output using the RGRID format.
 
 \anchor scft_command_pc_writeblockc_sub
 <b> WRITE_BLOCK_C_RGRID </b>:
@@ -990,6 +958,32 @@ and write a report to the log file summarizing several measures of
 the magnitude of the differences. 
 
 \section scft_command_pc_fieldmanip_sec Field File Manipulations
+
+\anchor scft_command_pc_estimatewbasis_sub
+<b> ESTIMATE_W_BASIS </b>:
+The ESTIMATE_W_BASIS command reads a set of approximate monomer volume
+fraction fields in symmetry-adapted basis format from the file whose name
+is passed as the first command parameter, and uses these to construct 
+an estimate of the corresponding w fields, which is written to a file whose
+name is passed as the second command parameter. This is intended to allow 
+users to construct an initial guess for w fields needed as an input to 
+the ITERATE and SWEEP commands from an initial guess for the volume 
+fraction fields for the structure of interest. The initial guess for the 
+volume fraction fields does not need to be perfect, merely close enough 
+to the final structure to allow a chosen iteration algorithm to 
+converge.
+
+The estimated w fields are computed by setting the Lagrange multiplier
+field to zero in the self-consistent field condition, giving an estimated
+w field
+\f[
+   w_{\alpha}({\bf r}) =
+   \sum_{\beta} \chi_{\alpha\beta}\phi_{\beta}({\bf r})
+\f]
+for monomer type \f$ \alpha \f$, in which \f$ \phi_{\beta} ({\bf r}) \f$
+is the volume fraction of monomer type \f$ \beta \f$, as read from the
+input file, and \f$ \chi_{\alpha\beta} \f$ is a binary Flory-Huggins
+interaction parameter.
 
 \anchor scft_command_pc_scale_sub 
 The <b>SCALE_BASIS</b> and <b>SCALE_RGRID</b> commands each read 
