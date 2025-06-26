@@ -310,6 +310,7 @@ namespace Rpc {
       using Base::compareFieldsRGrid;
       using Base::scaleFieldsBasis;
       using Base::scaleFieldsRGrid;
+      using Base::estimateWBasis;
       using Base::replicateUnitCell;
       using Base::expandRGridDimension;
       using Base::readFieldHeader;

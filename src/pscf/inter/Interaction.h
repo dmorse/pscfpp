@@ -92,7 +92,7 @@ namespace Pscf {
       /**
       * Compute Langrange multiplier xi from chemical potential fields.
       *
-      * \param w array of chemical potentials for types (inut) 
+      * \param w array of chemical potentials for types (input) 
       * \param xi Langrange multiplier pressure (output)
       */
       virtual 

@@ -50,6 +50,7 @@ namespace Rpc {
       using Base::readBasis;
       using Base::readRGrid;
       using Base::symmetrize;
+      using Base::clear;
       using Base::basis;
       using Base::rgrid;
       using Base::isAllocatedRGrid;

@@ -40,7 +40,7 @@ public:
    void setUp()
    {
       setVerbose(0);
-      openLogFile("out/maskTestLogFile");
+      openLogFile("out/maskTest.log");
    }
 
    void tearDown()

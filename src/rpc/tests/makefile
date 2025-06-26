@@ -22,7 +22,7 @@ run-quiet: $(rpc_tests_OBJS) $(BLD_DIR)/$(TEST)
 clean-outputs:
 	rm -f log count 
 	-cd $(SRC_DIR)/rpc/tests/field; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/rpc/tests/iterator; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/rpc/tests/environment; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/solvers; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/system; $(MAKE) clean-outputs
 	-cd $(SRC_DIR)/rpc/tests/sweep; $(MAKE) clean-outputs
@@ -33,7 +33,7 @@ clean:
 	rm -f $(rpc_tests_OBJS) $(rpc_tests_OBJS:.o=.d)
 	rm -f log count 
 	-cd $(SRC_DIR)/rpc/tests/field; $(MAKE) clean
-	-cd $(SRC_DIR)/rpc/tests/iterator; $(MAKE) clean
+	-cd $(SRC_DIR)/rpc/tests/environment; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/solvers; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/system; $(MAKE) clean
 	-cd $(SRC_DIR)/rpc/tests/sweep; $(MAKE) clean

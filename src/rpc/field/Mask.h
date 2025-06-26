@@ -22,7 +22,7 @@ namespace Rpc {
    *
    * Please refer to the documentation of the base class Prdc::MaskTmpl
    * for more complete API documentation for this class template.
-   * The public interface of Rpg::Mask is identical to that of the
+   * The public interface of Rpc::Mask is identical to that of the
    * base class template Prdc::MaskTmpl. 
    *
    * \ingroup Rpc_Field_Module

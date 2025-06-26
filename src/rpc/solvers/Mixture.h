@@ -228,6 +228,12 @@ namespace Rpc {
       */
       bool isCanonical();
 
+      /**
+      * Has the stress been computed?
+      */
+      bool hasStress() const;
+
+
       // Inherited public member functions with non-dependent names
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
@@ -276,6 +282,15 @@ namespace Rpc {
    {
       UTIL_CHECK(hasStress_);  
       return stress_[n]; 
+   }
+
+   /*
+   * Has the stress been computed?
+   */
+   template <int D>
+   inline bool Mixture<D>::hasStress() const
+   {
+      return hasStress_;
    }
 
    // Get Mesh<D> by constant reference (private).

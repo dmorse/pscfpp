@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------- #
-# This file must be included by every makefile in the rpc/ directory.   #
+# This file must be included by every makefile in the rpc/ directory.    #
 # It must be included after the config.mk file located in the root of    #
 # the build  directory (referred to by a relative path), which defines   #
 # values for the macros $(BLD_DIR) and $(SRC_DIR) used below.            # 

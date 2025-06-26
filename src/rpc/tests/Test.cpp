@@ -5,9 +5,9 @@
 #include <test/CompositeTestRunner.h>
 
 #include "field/FieldTestComposite.h"
+#include "environment/EnvironmentTestComposite.h"
 #include "solvers/SolverTestComposite.h"
 #include "system/SystemTestComposite.h"
-#include "iterator/IteratorTestComposite.h"
 #include "sweep/SweepTestComposite.h"
 #include "fts/FtsTestComposite.h"
 
@@ -16,9 +16,9 @@
 
 TEST_COMPOSITE_BEGIN(RpcNsTestComposite)
 addChild(new FieldTestComposite, "field/");
+addChild(new EnvironmentTestComposite, "environment/");
 addChild(new SolverTestComposite, "solvers/");
 addChild(new SystemTestComposite, "system/");
-addChild(new IteratorTestComposite, "iterator/");
 addChild(new SweepTestComposite, "sweep/");
 addChild(new FtsTestComposite, "fts/");
 TEST_COMPOSITE_END

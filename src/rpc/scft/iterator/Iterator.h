@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/ParameterModifier.h> // base class
 #include <util/param/ParamComposite.h>    // base class
 #include <util/containers/FSArray.h>
 #include <util/global.h>         
@@ -29,7 +28,7 @@ namespace Rpc
    * \ingroup Rpc_Scft_Iterator_Module
    */
    template <int D>
-   class Iterator : public ParamComposite, public ParameterModifier
+   class Iterator : public ParamComposite
    {
 
    public:

@@ -6,13 +6,13 @@
 include $(SRC_DIR)/prdc/crystal/sources.mk
 include $(SRC_DIR)/prdc/cpu/sources.mk
 include $(SRC_DIR)/prdc/field/sources.mk
-include $(SRC_DIR)/prdc/iterator/sources.mk
+include $(SRC_DIR)/prdc/environment/sources.mk
 
 prdc_CPP= \
   $(prdc_crystal_) \
   $(prdc_cpu_) \
   $(prdc_field_) \
-  $(prdc_iterator_) \
+  $(prdc_environment_) \
 
 prdc_CPP_OBJS=\
      $(addprefix $(BLD_DIR)/, $(prdc_CPP:.cpp=.o))

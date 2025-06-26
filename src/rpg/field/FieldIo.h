@@ -317,6 +317,7 @@ namespace Rpg {
       using Base::hasSymmetry;
       using Base::compareFieldsBasis;
       using Base::compareFieldsRGrid;
+      using Base::estimateWBasis;
       using Base::scaleFieldsBasis;
       using Base::scaleFieldsRGrid;
       using Base::replicateUnitCell;

@@ -381,7 +381,7 @@ namespace Pscf
    inline Vec<D, T>& Vec<D, T>::setToZero()
    {
       for (int i = 0; i < D; ++i) {
-         setToZero(elem_[i]); 
+         Util::setToZero(elem_[i]); 
       }
       return *this;
    }

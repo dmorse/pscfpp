@@ -25,6 +25,7 @@ namespace Util {
 }
 namespace Pscf {
    class Interaction;
+   class Environment;
    template <typename Data> class DeviceArray;
    namespace Prdc {
       template <int D> class UnitCell;
@@ -34,6 +35,7 @@ namespace Pscf {
       }
    }
    namespace Rpg {
+      template <int D> class EnvironmentFactory;
       template <int D> class Iterator;
       template <int D> class IteratorFactory;
       template <int D> class Sweep;
@@ -186,8 +188,8 @@ namespace Rpg {
       * real-space grid (r-grid format). System unit cell parameters
       * are also set to values read from the field file header. Upon
       * exit, both w().basis() and w().rgrid() are set, w().hasData()
-      * and w().isSymmetric() are true, while hasCFields() and
-      * hasFreeEnergy() are false.
+      * and w().isSymmetric() are true, while hasCFields(), hasStress(),
+      * and hasFreeEnergy() are false.
       *
       * If a space group has been set but a basis has not yet been
       * constructed, then this and every other member function that reads
@@ -195,13 +197,12 @@ namespace Rpg {
       * parameters will construct a symmetry-adapted basis and allocate
       * memory for fields stored in basis form. Member functions that
       * may construct a basis as a side effect include this function,
-      * readWRGrid, estimateWfromC, and all of the overloaded setUnitCell
-      * functions.
+      * readWRGrid, and all of the overloaded setUnitCell functions.
       *
       * SCFT calculations that use an iterator that preserves space group
       * symmetry must set an initial field using a function that creates
-      * fields in symmetry-adapted basis form, such as this function,
-      * setWBasis, or estimateWFromC.
+      * fields in symmetry-adapted basis form, such as this function or
+      * setWBasis.
       *
       * \param filename  name of input w field file in basis format
       */
@@ -217,9 +218,9 @@ namespace Rpg {
       * field values in symmetry-adapted basis format, because it cannot
       * assume that the r-grid field exhibits the declared space group
       * symmetry. Upon exit, w().rgrid() is set and w().hasData() is
-      * true, while w().isSymmetric(), hasCFields(), and hasFreeEnergy()
-      * are false. System unit cell parameters are set to values read
-      * from the field file header.
+      * true, while w().isSymmetric(), hasCFields(), hasFreeEnergy(), and
+      * hasStress() are false. System unit cell parameters are set to 
+      * values read from the field file header.
       *
       * Chemical potential fields for field theoretic simulations are
       * normally initialized using a function that sets the fields in
@@ -237,8 +238,9 @@ namespace Rpg {
       * "fields" container that is passed as an argument, and computing
       * values on a real-space grid. Upon return, values of both
       * w().basis() and w().rgrid() are set, while w().hasData() and
-      * w().isSymmetric() are true, and hasCFields() and hasFreeEnergy()
-      * are false. System unit cell parameters are not modified.
+      * w().isSymmetric() are true, and hasCFields(), hasFreeEnergy(),
+      * and hasStress() are false. System unit cell parameters are not 
+      * modified.
       *
       * \param fields  array of new w fields in basis format
       */
@@ -250,8 +252,8 @@ namespace Rpg {
       * This function set values for w fields in r-grid format, but
       * does not set components for symmetry-adapted basis format. Upon
       * return, w().rgrid() is set and w().hasData() is true, while
-      * hasCFields(), hasFreeEnergy(), and w().isSymmetric() are false.
-      * System unit cell parameters are not modified.
+      * hasCFields(), hasFreeEnergy(), hasStress(), and w().isSymmetric() 
+      * are false. System unit cell parameters are not modified.
       *
       * \param fields  array of new w fields in r-grid form
       */
@@ -265,7 +267,7 @@ namespace Rpg {
       * field for monomer 0 first, followed by the field for monomer 1,
       * etc. This function sets w().rgrid() but does not set w().basis().
       * On exit, w().hasData() is true, while w().isSymmetric(),
-      * hasFreeEnergy(), and hasCFields() are all false.
+      * hasFreeEnergy(), hasStress(), and hasCFields() are all false.
       *
       * \param fields  unfolded array of new chemical potential fields
       */
@@ -278,22 +280,6 @@ namespace Rpg {
       * hasCFields() is false.
       */
       void symmetrizeWFields();
-
-      /**
-      * Construct trial w fields from c fields in basis form.
-      *
-      * This function reads concentration fields in symmetrized basis
-      * form and constructs an initial guess for corresponding chemical
-      * potential fields by setting the Lagrange multiplier pressure field
-      * to zero. The result is stored in the system w field container.
-      *
-      * Upon return, w().hasData() and w().isSymmetric() are true, while
-      * hasCFields() and hasFreeEnergy() are false. System unit cell
-      * parameters are set to those read from the c field file header.
-      *
-      * \param filename  name of input c field file (basis format)
-      */
-      void estimateWfromC(std::string const & filename);
 
       ///@}
       /// \name Unit Cell Modifiers
@@ -325,6 +311,16 @@ namespace Rpg {
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
 
+      /**
+      * Notify System members of updated unit cell parameters.
+      * 
+      * In particular, this method calls mixture().clearUnitCellData(), 
+      * domain().wavelist().clearUnitCellData(), clearCFields(), and, 
+      * if an Environment exists in the System, environment().reset(). 
+      * It should be called whenever the lattice parameters change.
+      */
+      void clearUnitCellData();
+
       ///@}
       /// \name Field Theory Computations
       ///@{
@@ -345,7 +341,7 @@ namespace Rpg {
       * return, hasCFields() is true.
       *
       * If argument needStress is true, then this function also calls
-      * Mixture<D>::computeStress() to compute the stress.
+      * computeStress() to compute the stress.
       *
       * \pre The w().hasData() flag must be true on entry.
       *
@@ -458,6 +454,31 @@ namespace Rpg {
       */
       double pressure() const;
 
+      /**
+      * Compute SCFT stress for current fields.
+      * 
+      * The stress contains contributions from the Mixture object and the
+      * Environment object (if one exists), and may also be modified by 
+      * the Environment object so that a property other than fHelmholtz
+      * will be minimized during iteration, which depends on the type of
+      * Environment.
+      *
+      * \pre w().hasData() must return true
+      * \pre hasCFields() must return true
+      */
+      void computeStress();
+
+      /**
+      * Get the stress for a single lattice parameter.
+      *
+      * This function retrieves a value computed by computeStress().
+      * If computeStress() has not been called for the current set of 
+      * fields, an error will be raised. 
+      * 
+      * \param paramId  lattice parameter index
+      */
+      double stress(int paramId) const;
+
       ///@}
       /// \name SCFT Thermodynamic Data Output
       ///@{
@@ -466,11 +487,11 @@ namespace Rpg {
       * Write partial parameter file to an ostream.
       *
       * This function writes the Mixture, Interaction, and Domain blocks
-      * of a parameter file, as well as any Iterator block, but omits any
-      * Sweep or Simulator blocks. The intent is to produce an output
-      * during an SCFT sweep that only refers to parameters relevant to a
-      * single state point, in a form that could be used as a parameter
-      * file for a single SCFT calculation.
+      * of a parameter file, as well as any Environment and Iterator block, 
+      * but omits any Sweep or Simulator blocks. The intent is to produce 
+      * an output during an SCFT sweep that only refers to parameters 
+      * relevant to a single state point, in a form that could be used as 
+      * a parameter file for a single SCFT calculation.
       *
       * \param out  output stream
       */
@@ -504,6 +525,13 @@ namespace Rpg {
       * The log output created by an Iterator upon convergence should call
       * writeStress after writeThermo if and only if the iterator is not
       * flexible.
+      * 
+      * If an Environment is present in the system, it will, in general,
+      * contribute to the stress. However, the stress values written by 
+      * this method do not take the Environment into account, and only 
+      * represent contributions from the Mixture (terms which are the 
+      * functional derivatives of ln(Q) with respect to each lattice 
+      * parameter).
       *
       * \param out  output stream
       */
@@ -693,6 +721,16 @@ namespace Rpg {
       Domain<D> const & domain() const;
 
       /**
+      * Get the Environment by non-const reference.
+      */
+      Environment& environment();
+
+      /**
+      * Get the Environment by const reference.
+      */
+      Environment const & environment() const;
+
+      /**
       * Get the Iterator by non-const reference.
       */
       Iterator<D>& iterator();
@@ -722,6 +760,11 @@ namespace Rpg {
       ///@}
       /// \name Boolean Flags
       ///@{
+
+      /**
+      * Does this system have an Environment?
+      */
+      bool hasEnvironment() const;
 
       /**
       * Does this system have an Iterator?
@@ -759,13 +802,18 @@ namespace Rpg {
       bool hasFreeEnergy() const;
 
       /**
+      * Has the SCFT stress been computed for the current w fields?
+      */
+      bool hasStress() const;
+
+      /**
       * Mark c-fields and free energy as outdated or invalid.
       *
-      * Upon return, hasCfields() and hasFreeEnergy() both return false.
-      * This function should be called by functions that modify any of
-      * inputs to the solution of the modified diffusion equation and
-      * calculation of c-fields and free energy, including the w fields,
-      * unit cell parameters, external fields or mask.
+      * Upon return, hasCfields(), hasFreeEnergy(), and hasStress() all
+      * return false. This function should be called by functions that 
+      * modify any of the inputs to the solution of the modified diffusion 
+      * equation and calculation of c-fields and free energy, including 
+      * the w fields, unit cell parameters, external fields or mask.
       */
       void clearCFields();
 
@@ -816,6 +864,16 @@ namespace Rpg {
       * Pointer to Interaction (excess free energy model).
       */
       Interaction* interactionPtr_;
+
+      /**
+      * Pointer to an Environment.
+      */
+      Environment* environmentPtr_;
+
+      /**
+      * Pointer to an Environment factory object.
+      */
+      EnvironmentFactory<D>* environmentFactoryPtr_;
 	
       /**
       * Pointer to an iterator.
@@ -881,6 +939,13 @@ namespace Rpg {
       double pressure_;
 
       /**
+      * Array of stress values for this set of w fields.
+      *
+      * The array contains one value per lattice parameter.
+      */
+      FSArray<double, 6> stress_;
+
+      /**
       * Polymer model enumeration (thread or bead), read from file.
       */
       PolymerModel::Type polymerModel_;
@@ -924,6 +989,15 @@ namespace Rpg {
       * system unit cell parameters are modified.
       */
       bool hasFreeEnergy_;
+
+      /**
+      * Has SCFT stress been computed for the current w and c fields?
+      *
+      * This is set true in the computeStress function, and is set false
+      * false whenever the system w fields, mask or external fields, or
+      * system unit cell parameters are modified.
+      */
+      bool hasStress_;
 
       // Private member functions
 
@@ -1001,6 +1075,22 @@ namespace Rpg {
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
+
+   // Get the Environment by non-const reference.
+   template <int D>
+   inline Environment & System<D>::environment()
+   {
+      UTIL_ASSERT(environmentPtr_);
+      return *environmentPtr_;
+   }
+
+   // Get the Environment by const reference.
+   template <int D>
+   inline Environment const & System<D>::environment() const
+   {
+      UTIL_ASSERT(environmentPtr_);
+      return *environmentPtr_;
+   }
 
    // Get the Iterator by non-const reference.
    template <int D>
@@ -1108,6 +1198,19 @@ namespace Rpg {
       return pressure_;
    }
 
+   // Get the precomputed stress for one lattice parameter.
+   template <int D>
+   inline double System<D>::stress(int paramId) const
+   {
+      UTIL_CHECK(hasStress_);
+      return stress_[paramId];
+   }
+
+   // Does this system have an Environment?
+   template <int D>
+   inline bool System<D>::hasEnvironment() const
+   {  return (environmentPtr_); }
+
    // Does this system have an Iterator?
    template <int D>
    inline bool System<D>::hasIterator() const
@@ -1142,6 +1245,11 @@ namespace Rpg {
    template <int D>
    inline bool System<D>::hasFreeEnergy() const
    {  return hasFreeEnergy_; }
+
+   // Has the stress been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasStress() const
+   {  return hasStress_; }
 
    #ifndef RPG_SYSTEM_TPP
    // Suppress implicit instantiation

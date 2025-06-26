@@ -297,6 +297,11 @@ namespace Prdc {
       void symmetrize();
 
       /**
+      * Clear data stored in this object without deallocating.
+      */
+      void clear();
+
+      /**
       * Get a signal that notifies observers of field modification.
       */
       Signal<void>& signal();
@@ -481,6 +486,11 @@ namespace Prdc {
    };
 
    // Inline member functions
+
+   // Clear data stored in this object without deallocating
+   template <int D, class RField, class FieldIo>
+   inline void WContainerReal<D,RField,FieldIo>::clear()
+   {  hasData_ = false; }
 
    // Get array of all fields in basis format (const)
    template <int D, class RFT, class FIT>

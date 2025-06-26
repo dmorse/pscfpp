@@ -17,6 +17,7 @@
 #include <rpc/scft/sweep/SweepFactory.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/iterator/IteratorFactory.h>
+#include <rpc/environment/EnvironmentFactory.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 
@@ -26,6 +27,7 @@
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 
+#include <pscf/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 
@@ -62,6 +64,8 @@ namespace Rpc {
       h_(),
       mask_(),
       interactionPtr_(nullptr),
+      environmentPtr_(nullptr),
+      environmentFactoryPtr_(nullptr),
       iteratorPtr_(nullptr),
       iteratorFactoryPtr_(nullptr),
       sweepPtr_(nullptr),
@@ -78,7 +82,8 @@ namespace Rpc {
       isAllocatedBasis_(false),
       hasMixture_(false),
       hasCFields_(false),
-      hasFreeEnergy_(false)
+      hasFreeEnergy_(false),
+      hasStress_(false)
    {
       setClassName("System");  // Set block label in parameter file
       BracketPolicy::set(BracketPolicy::Optional);
@@ -92,6 +97,7 @@ namespace Rpc {
 
       // Create dynamically allocated objects owned by this System
       interactionPtr_ = new Interaction();
+      environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
@@ -104,10 +110,7 @@ namespace Rpc {
 
       // Signal triggered by unit cell modification
       Signal<void>& cellSignal = domain_.unitCell().signal();
-      WaveList<D>& waveList = domain_.waveList();
-      cellSignal.addObserver(mixture_, &Mixture<D>::clearUnitCellData);
-      cellSignal.addObserver(waveList, &WaveList<D>::clearUnitCellData);
-      cellSignal.addObserver(*this, &System<D>::clearCFields);
+      cellSignal.addObserver(*this, &System<D>::clearUnitCellData);
 
       // Signal triggered by w-field modification
       w_.signal().addObserver(*this, &System<D>::clearCFields);
@@ -127,6 +130,12 @@ namespace Rpc {
    {
       if (interactionPtr_) {
          delete interactionPtr_;
+      }
+      if (environmentPtr_) {
+         delete environmentPtr_;
+      }
+      if (environmentFactoryPtr_) {
+         delete environmentFactoryPtr_;
       }
       if (iteratorPtr_) {
          delete iteratorPtr_;
@@ -303,14 +312,24 @@ namespace Rpc {
       // Allocate memory for w and c fields in r-grid form
       allocateFieldsGrid();
 
-      // Optionally construct an Iterator object
+      // Optionally construct an Environment object
       std::string className;
       bool isEnd;
-      iteratorPtr_ =
-         iteratorFactoryPtr_->readObjectOptional(in, *this, className,
-                                                 isEnd);
-      if (!iteratorPtr_ && ParamComponent::echo()) {
-         Log::file() << indent() << "  Iterator{ [absent] }\n";
+      environmentPtr_ =
+         environmentFactoryPtr_->readObjectOptional(in, *this, className,
+                                                    isEnd);
+      if (!environmentPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Environment{ [absent] }\n";
+      }
+
+      // Optionally construct an Iterator object
+      if (!isEnd) {
+         iteratorPtr_ =
+            iteratorFactoryPtr_->readObjectOptional(in, *this, className,
+                                                   isEnd);
+         if (!iteratorPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Iterator{ [absent] }\n";
+         }
       }
 
       // Optionally construct a Sweep object (if an iterator exists)
@@ -388,9 +407,11 @@ namespace Rpc {
             readEcho(in, filename);
             readWRGrid(filename);
          } else
-         if (command == "ESTIMATE_W_FROM_C") {
+         if (command == "ESTIMATE_W_BASIS") {
             readEcho(in, inFileName);
-            estimateWfromC(inFileName);
+            readEcho(in, outFileName);
+            fieldIo.estimateWBasis(inFileName, outFileName, 
+                                   interaction().chi());
          } else
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
@@ -782,6 +803,7 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(!hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    /*
@@ -801,65 +823,7 @@ namespace Rpc {
       UTIL_CHECK(!domain_.waveList().hasKSq());
       UTIL_CHECK(!hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
-   }
-
-   /*
-   * Construct estimate for w fields from c fields.
-   */
-   template <int D>
-   void System<D>::estimateWfromC(std::string const & filename)
-   {
-      // Preconditions
-      UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(filename);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-      const int nm = mixture_.nMonomer();
-      const int nb = domain_.basis().nBasis();
-      UTIL_CHECK(nm > 0);
-      UTIL_CHECK(nb > 0);
-
-      // Allocate local array of fields in basis format
-      DArray< DArray<double> > tmpFieldsBasis;
-      tmpFieldsBasis.allocate(nm);
-      for (int i = 0; i < nm; ++i) {
-         tmpFieldsBasis[i].allocate(nb);
-      }
-
-      // Read c fields into temporary array and set unit cell
-      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis,
-                                        domain_.unitCell());
-
-      // Allocate work space array (one element per monomer type)
-      DArray<double> wtmp;
-      wtmp.allocate(nm);
-
-      // Compute estimated w fields from c fields
-      int i, j, k;
-      for (i = 0; i < nb; ++i) {
-         for (j = 0; j < nm;  ++j) {
-            wtmp[j] = 0.0;
-            for (k = 0; k < nm; ++k) {
-               wtmp[j] += interaction().chi(j,k)*tmpFieldsBasis[k][i];
-            }
-         }
-         for (j = 0; j < nm;  ++j) {
-            tmpFieldsBasis[j][i] = wtmp[j];
-         }
-      }
-
-      // Set estimated w fields in system w field container
-      w_.setBasis(tmpFieldsBasis);
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-      UTIL_CHECK(!hasCFields_);
-      UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    /*
@@ -880,6 +844,7 @@ namespace Rpc {
       // Postconditions
       UTIL_CHECK(!hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    /*
@@ -897,6 +862,7 @@ namespace Rpc {
       // Postconditions
       UTIL_CHECK(!hasCFields_);
       UTIL_CHECK(!hasFreeEnergy_);
+      UTIL_CHECK(!hasStress_);
    }
 
    // Unit Cell Modifiers
@@ -960,6 +926,20 @@ namespace Rpc {
       UTIL_CHECK(!domain_.waveList().hasKSq());
    }
 
+   /*
+   * Notify System members of updated unit cell parameters.
+   */
+   template <int D>
+   void System<D>::clearUnitCellData()
+   {
+      clearCFields();
+      mixture_.clearUnitCellData();
+      domain_.waveList().clearUnitCellData();
+      if (hasEnvironment()) {
+         environment().reset();
+      }
+   }
+
    // Primary Field Theory Computations
 
    /*
@@ -975,10 +955,18 @@ namespace Rpc {
       UTIL_CHECK(w_.hasData());
       clearCFields();
 
+      // Make sure Environment is up-to-date
+      if (hasEnvironment()) {
+         if (environment().needsUpdate()) {
+            environment().generate();
+         }
+      }
+
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
 
       // If w fields are symmetric, compute basis components for c fields
       if (w_.isSymmetric()) {
@@ -989,7 +977,7 @@ namespace Rpc {
 
       // Compute stress if needed
       if (needStress) {
-         mixture_.computeStress(mask().phiTot());
+         computeStress();
       }
    }
 
@@ -1011,6 +999,13 @@ namespace Rpc {
       Log::file() << std::endl;
       Log::file() << std::endl;
 
+      // Make sure Environment is up-to-date
+      if (hasEnvironment()) {
+         if (environment().needsUpdate()) {
+            environment().generate();
+         }
+      }
+
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
       UTIL_CHECK(hasCFields_);
@@ -1020,7 +1015,9 @@ namespace Rpc {
          computeFreeEnergy(); // Sets hasFreeEnergy_ = true
          writeThermo(Log::file());
          if (!iterator().isFlexible()) {
-            mixture_.computeStress(mask().phiTot());
+            if (!mixture_.hasStress()) {
+               mixture_.computeStress(mask().phiTot());
+            }
             writeStress(Log::file());
          }
       }
@@ -1075,6 +1072,8 @@ namespace Rpc {
 
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(hasCFields_);
+
+      if (hasEnvironment()) UTIL_CHECK(!environment().needsUpdate());
 
       int nm = mixture_.nMonomer();   // number of monomer types
       int np = mixture_.nPolymer();   // number of polymer species
@@ -1271,6 +1270,41 @@ namespace Rpc {
    }
 
    /*
+   * Compute SCFT stress for current fields.
+   */
+   template <int D>
+   void System<D>::computeStress()
+   {
+      if (hasStress_) return;
+
+      stress_.clear();
+
+      // Compute and store stress contribution from Mixture
+      if (!mixture_.hasStress()) {
+         mixture_.computeStress(mask().phiTot());
+      }
+      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
+         stress_.append(mixture_.stress(i));
+      }
+
+      if (hasEnvironment()) {
+         UTIL_CHECK(!environment().needsUpdate());
+         for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
+            if (iterator().flexibleParams()[i]) {
+               // Add stress contributions from Environment
+               stress_[i] += environment().stress(i);
+
+               // Allow Environment to modify stress contributions to
+               // minimize something other than fHelmholtz if desired
+               stress_[i] = environment().modifyStress(i,stress_[i]);
+            }
+         }
+      }
+
+      hasStress_ = true;
+   }
+
+   /*
    * Write parameter file for SCFT, omitting any sweep block.
    */
    template <int D>
@@ -1280,6 +1314,9 @@ namespace Rpc {
       mixture_.writeParam(out);
       interaction().writeParam(out);
       domain_.writeParam(out);
+      if (hasEnvironment()) {
+         environment().writeParam(out);
+      }
       if (hasIterator()) {
          iterator().writeParam(out);
       }
@@ -1356,12 +1393,19 @@ namespace Rpc {
    template <int D>
    void System<D>::writeStress(std::ostream& out)
    {
-      out << "stress:" << std::endl;
+      UTIL_CHECK(mixture_.hasStress()); // ensure stress has been calculated
+
+      out << "stress:";
+      if (hasEnvironment()) {
+         out << " (Environment contributions not included)";
+      }
+      out << std::endl;
+      
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
-             << "  "
-             << Dbl(mixture_.stress(i), 18, 11)
-             << std::endl;
+            << "  "
+            << Dbl(mixture_.stress(i), 18, 11)
+            << std::endl;
       }
       out << std::endl;
    }
@@ -1626,6 +1670,7 @@ namespace Rpc {
    {
       hasCFields_ = false;
       hasFreeEnergy_ = false;
+      hasStress_ = false;
    }
 
    // Private member functions
@@ -1656,6 +1701,16 @@ namespace Rpc {
 
       h_.setNMonomer(nMonomer);
 
+      // If hasEnvironment(), allocate mask and h fields
+      if (hasEnvironment()) {
+         if (environment().generatesMask()) {
+            mask_.allocateRGrid(dimensions);
+         }
+         if (environment().generatesExternalFields()) {
+            h_.allocateRGrid(dimensions);
+         }
+      }
+
       isAllocatedGrid_ = true;
    }
 
@@ -1680,6 +1735,16 @@ namespace Rpc {
       // Allocate basis fields in w and c field containers
       w_.allocateBasis(nBasis);
       c_.allocateBasis(nBasis);
+
+      // If hasEnvironment(), allocate mask and h fields
+      if (hasEnvironment()) {
+         if (environment().generatesMask()) {
+            mask_.allocateBasis(nBasis);
+         }
+         if (environment().generatesExternalFields()) {
+            h_.allocateBasis(nBasis);
+         }
+      }
 
       isAllocatedBasis_ = true;
    }
