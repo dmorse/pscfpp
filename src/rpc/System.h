@@ -260,23 +260,6 @@ namespace Rpc {
       */
       void setWRGrid(DArray< RField<D> > const & fields);
 
-      /**
-      * Construct trial w fields from c fields in basis form.
-      *
-      * This function reads concentration fields in symmetrized basis
-      * form and constructs an initial guess for corresponding chemical
-      * potential fields by setting the Lagrange multiplier pressure field
-      * to zero. The result is stored in the system w field container.
-      *
-      * Upon return, w().hasData() and w().isSymmetric() are true, while
-      * hasCFields(), hasFreeEnergy(), and hasStress() are false. System 
-      * unit cell parameters are set to those read from the c field file 
-      * header.
-      *
-      * \param filename  name of input c field file (basis format)
-      */
-      void estimateWfromC(std::string const & filename);
-
       ///@}
       /// \name Unit Cell Modifiers
       ///@{

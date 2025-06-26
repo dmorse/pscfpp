@@ -407,9 +407,11 @@ namespace Rpg {
             readEcho(in, filename);
             readWRGrid(filename);
          } else
-         if (command == "ESTIMATE_W_FROM_C") {
+         if (command == "ESTIMATE_W_BASIS") {
             readEcho(in, inFileName);
-            estimateWfromC(inFileName);
+            readEcho(in, outFileName);
+            fieldIo.estimateWBasis(inFileName, outFileName, 
+                                   interaction().chi());
          } else
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
@@ -815,122 +817,6 @@ namespace Rpg {
 
       // Read w fields and set unit cell parameters
       w_.readRGrid(filename, domain_.unitCell());
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-      UTIL_CHECK(!hasCFields_);
-      UTIL_CHECK(!hasFreeEnergy_);
-      UTIL_CHECK(!hasStress_);
-   }
-
-   /*
-   * Construct estimate for w fields from c fields.
-   */
-   template <int D>
-   void System<D>::estimateWfromC(std::string const & filename)
-   {
-      // Preconditions
-      UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.hasGroup());
-      if (!domain_.basis().isInitialized()) {
-         readFieldHeader(filename);
-      }
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-      const int nm = mixture_.nMonomer();
-      const int nb = domain_.basis().nBasis();
-      UTIL_CHECK(nm > 0);
-      UTIL_CHECK(nb > 0);
-
-      // Allocate local array of fields in basis format
-      DArray< DArray<double> > tmpFieldsBasis;
-      tmpFieldsBasis.allocate(nm);
-      for (int i = 0; i < nm; ++i) {
-         tmpFieldsBasis[i].allocate(nb);
-      }
-
-      // Read c fields into temporary array and set unit cell
-      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis,
-                                        domain_.unitCell());
-
-      // Allocate work space array (one element per monomer type)
-      DArray<double> wtmp;
-      wtmp.allocate(nm);
-
-      // Compute estimated w fields from c fields
-      int i, j, k;
-      for (i = 0; i < nb; ++i) {
-         for (j = 0; j < nm;  ++j) {
-            wtmp[j] = 0.0;
-            for (k = 0; k < nm; ++k) {
-               wtmp[j] += interaction().chi(j,k)*tmpFieldsBasis[k][i];
-            }
-         }
-         for (j = 0; j < nm;  ++j) {
-            tmpFieldsBasis[j][i] = wtmp[j];
-         }
-      }
-
-      if (hasEnvironment()) {
-
-         // Make sure Environment is up-to-date
-         if (hasEnvironment()) {
-            if (environment().needsUpdate()) {
-               environment().generate();
-            }
-         }
-
-         // Calculate sumChiInverse
-         double sumChiInverse = 0.0;
-         for (i = 0; i < nm; i++) {
-            for (j = 0; j < nm; j++) {
-               sumChiInverse += interaction().chiInverse(j,i);
-            }
-         }
-
-         // If system has a mask, add component of xi arising from the mask
-         if (hasMask()) {
-            UTIL_CHECK(mask().isSymmetric());
-            for (i = 1; i < nb; i++) { 
-               // note: loop starts at i = 1 since spatial average of xi is 0
-               for (j = 0; j < nm; j++) {
-                  tmpFieldsBasis[j][i] -= mask().basis()[i] / sumChiInverse;
-               }
-            }
-         }
-
-         // Adjust guess to account for external fields
-         if (hasExternalFields()) {
-            UTIL_CHECK(h().isSymmetric());
-
-            // First term: add h().basis(j) to guess for field j
-            for (i = 0; i < nb; i++) {
-               for (j = 0; j < nm; j++) {
-                  tmpFieldsBasis[j][i] += h().basis(j)[i];
-               }
-            }
-
-            // Second term: add the component of xi arising from the h fields
-            double tmp;
-            for (i = 1; i < nb; i++) {
-               // note: loop starts at i = 1 since spatial average of xi is 0
-               tmp = 0.0;
-               for (j = 0; j < nm; j++) {
-                  for (k = 0; k < nm; k++) {
-                     tmp += h().basis(j)[i] * interaction().chiInverse(j,k);
-                  }
-               }
-               for (j = 0; j < nm; j++) {
-                  tmpFieldsBasis[j][i] -= tmp / sumChiInverse;
-               }
-            }
-         }
-      }
-
-      // Set estimated w fields in system w field container
-      w_.setBasis(tmpFieldsBasis);
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());

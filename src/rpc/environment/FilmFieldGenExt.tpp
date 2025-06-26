@@ -167,6 +167,8 @@ namespace Rpc
 
       // If this point is reached, external field must be computed
       UTIL_CHECK(normalVecId() >= 0);
+      UTIL_CHECK(system().domain().unitCell().isInitialized());
+      UTIL_CHECK(system().hasMask());
       if (system().iterator().isSymmetric()) {
          UTIL_CHECK(system().domain().basis().isInitialized());
       }

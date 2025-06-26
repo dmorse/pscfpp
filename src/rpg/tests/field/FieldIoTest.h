@@ -19,6 +19,7 @@
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/inter/Interaction.h>
 
 #include <util/tests/LogFileUnitTest.h>
 #include <util/containers/DArray.h>
@@ -46,6 +47,7 @@ public:
    {
       setVerbose(0);
       nMonomer_ = 2;
+      fileMaster_.setRootPrefix(UnitTest::filePrefix());
    }
 
    /*
@@ -449,6 +451,43 @@ public:
 
    }
 
+   void testEstimateWBasis() 
+   {
+      printMethod(TEST_FUNC);
+      nMonomer_ = 2;
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      domain.fieldIo().setNMonomer(nMonomer_);
+      readHeader("in/c_c15_1.rf", domain);
+
+      Interaction v;
+      v.setNMonomer(nMonomer_);
+      std::ifstream in;
+      openInputFile("in/Interaction", in);
+      v.readParam(in);
+      in.close();
+
+      domain.fieldIo().estimateWBasis("in/c_c15_1.bf","out/w_c15_est.bf",
+                                      v.chi());
+
+      DArray< DArray<double> > bf_0, bf_1;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
+      readFieldsBasis("out/w_c15_est.bf", domain, bf_0);
+      readFieldsBasis("in/w_c15_est.bf", domain, bf_1);
+
+      BFieldComparison comparison;
+      comparison.compare(bf_0, bf_1);
+
+      if (verbose() > 0) {
+         std::cout  << "\n";
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
+      }
+      TEST_ASSERT(comparison.rmsDiff() < 1.0E-8);
+   }
+
    void testKGridIo_bcc() 
    {
       printMethod(TEST_FUNC);
@@ -670,6 +709,7 @@ TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG) 
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_c15_1)
+TEST_ADD(FieldIoTest, testEstimateWBasis)
 TEST_ADD(FieldIoTest, testKGridIo_bcc)
 TEST_ADD(FieldIoTest, testKGridIo_altG)
 TEST_ADD(FieldIoTest, testKGridIo_lam)

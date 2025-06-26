@@ -78,6 +78,13 @@ namespace Prdc
    {
       UTIL_CHECK(normalVecId_ >= 0); // Check that readParameters was called
       
+      // If normalVecCurrent_ has not yet been set, return true
+      RealVec<D> tmp;
+      tmp.setToZero();
+      if (normalVecCurrent_ == tmp) {
+         return true;
+      }
+      
       // Check if system normalVec differ from normalVecCurrent_
       //    Note: normalVecCurrent_ is set to array of zeros in constructor,
       //    so if generate() has not been called, it is still an array of 
