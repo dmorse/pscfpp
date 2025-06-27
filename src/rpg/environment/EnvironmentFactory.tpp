@@ -2,7 +2,7 @@
 #define RPG_ENVIRONMENT_FACTORY_TPP
 
 #include "EnvironmentFactory.h"  
-#include "MixAndMatchEnvs.h" // Subclasses of Environment
+#include "FilmEnvironment.h" 
 
 namespace Pscf {
 namespace Rpg {
