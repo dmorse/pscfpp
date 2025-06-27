@@ -1,5 +1,5 @@
-#ifndef PRDC_EXT_GEN_FILM_BASE_TPP
-#define PRDC_EXT_GEN_FILM_BASE_TPP
+#ifndef PRDC_FILM_FIELD_GEN_EXT_BASE_TPP
+#define PRDC_FILM_FIELD_GEN_EXT_BASE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,12 +9,13 @@
 */
 
 #include "FilmFieldGenExtBase.h"
-#include "prdc/crystal/SpaceGroup.h"
+#include <prdc/crystal/SpaceGroup.h>
+#include <pscf/sweep/ParameterType.h>
 #include <util/param/ParamComponent.h>
+#include <util/containers/GArray.h>
 
 namespace Pscf {
-namespace Prdc
-{
+namespace Prdc {
 
    using namespace Util;
 

@@ -44,7 +44,7 @@ namespace Prdc
    {}
 
    /*
-   * Read and initialize.
+   * Read parameters and initialize.
    */
    template <int D>
    void FilmFieldGenMaskBase<D>::readParameters(std::istream& in)
@@ -71,7 +71,7 @@ namespace Prdc
    }
 
    /*
-   * Check whether system has changed such that the field needs updating
+   * Check whether system has changed such that the field needs updating.
    */
    template <int D>
    bool FilmFieldGenMaskBase<D>::needsUpdate() const
@@ -97,7 +97,7 @@ namespace Prdc
    }
 
    /*
-   * Check that the system is compatible with this field
+   * Check that the system is compatible with this field.
    */
    template <int D>
    void FilmFieldGenMaskBase<D>::checkCompatibility()

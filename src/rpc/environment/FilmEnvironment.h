@@ -1,5 +1,5 @@
-#ifndef RPG_MIX_AND_MATCH_ENVS_H
-#define RPG_MIX_AND_MATCH_ENVS_H
+#ifndef RPC_FILM_ENVIRONMENT_H
+#define RPC_FILM_ENVIRONMENT_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,7 +10,7 @@
 
 /*
 * NOTE: In this file, we break from PSCF's conventional coding standards.
-* Specifically, any subclass of MixAndMatchEnv in the Rpg namespace should 
+* Specifically, any subclass of MixAndMatchEnv in the Rpc namespace should 
 * be declared in this header file, and the methods should be defined in 
 * the class declaration rather than in a .tpp file. This is simply for the 
 * sake of conciseness. These subclasses of MixAndMatchEnv require very
@@ -20,11 +20,10 @@
 
 #include "FilmFieldGenMask.h"
 #include "FilmFieldGenExt.h"
-#include <rpg/scft/iterator/Iterator.h>
 #include <pscf/environment/MixAndMatchEnv.h>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rpc {
 
    using namespace Util;
 
@@ -34,7 +33,7 @@ namespace Rpg {
    /**
    * Class defining mask & external fields for thin-film systems
    * 
-   * \ingroup Rpg_Field_Module
+   * \ingroup Rpc_Field_Module
    */
    template <int D>
    class FilmEnvironment : public MixAndMatchEnv
@@ -64,6 +63,9 @@ namespace Rpg {
 
    private:
 
+      /// Pointer to the associated system object.
+      System<D>* sysPtr_;
+
       /**
       * Create FieldGenerator objects for the mask & external field
       * 
@@ -79,9 +81,6 @@ namespace Rpg {
          MixAndMatchEnv::fieldGenPtr2_ = new FilmFieldGenExt<D>(*sysPtr_);
       }
 
-      /// Pointer to the associated system object.
-      System<D>* sysPtr_;
-
    };
 
    // Suppress implicit instantiation
@@ -89,6 +88,6 @@ namespace Rpg {
    extern template class FilmEnvironment<2>;
    extern template class FilmEnvironment<3>;
 
-} // namespace Rpg
+} // namespace Rpc
 } // namespace Pscf
 #endif

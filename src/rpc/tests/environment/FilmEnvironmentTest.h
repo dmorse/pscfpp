@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/environment/MixAndMatchEnvs.h>
+#include <rpc/environment/FilmEnvironment.h>
 #include <rpc/System.h>
 
 #include <prdc/crystal/BFieldComparison.h>
@@ -54,6 +54,7 @@ public:
    void testReadParameters() // test FilmEnvironment::readParameters()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestReadParameters.log");
 
       // Set up film environment from file
       System<1> system;

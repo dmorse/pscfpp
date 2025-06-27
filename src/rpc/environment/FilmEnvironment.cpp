@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MixAndMatchEnvs.h"
+#include "FilmEnvironment.h"
 
 namespace Pscf {
 namespace Rpc {

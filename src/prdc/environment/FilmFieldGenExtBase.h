@@ -1,5 +1,5 @@
-#ifndef PRDC_EXT_GEN_FILM_BASE_H
-#define PRDC_EXT_GEN_FILM_BASE_H
+#ifndef PRDC_FILM_FIELD_GEN_EXT_BASE_H
+#define PRDC_FILM_FIELD_GEN_EXT_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,12 +8,19 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/ParameterType.h>         // Return type of method
 #include <pscf/environment/FieldGenerator.h>  // Base class
-#include <pscf/math/RealVec.h>                // Container
-#include <util/containers/DArray.h>           // Container
+#include <pscf/math/RealVec.h>                // member
+#include <util/containers/DArray.h>           // member
+
 #include <string>
 
+// Forward declarations
+namespace Util {
+  template <typename T> class GArray;
+}
+namespace Pscf {
+  struct ParameterType;
+}
 
 
 namespace Pscf {
@@ -24,14 +31,15 @@ namespace Prdc {
    /**
    * Base class Field Generator for external fields in thin-film systems.
    * 
-   * This is a base class for FilmFieldGenExt that defines all traits of a 
-   * FilmFieldGenExt that do not require access to the System (System access is
-   * needed, for example, to access the mask and set the external fields).
+   * This is a base class for FilmFieldGenExt that defines all traits of 
+   * a FilmFieldGenExt that do not require access to the System. System 
+   * access is needed, for example, to access the mask and set the external
+   * fields.
    * 
-   * If the user chooses a FilmFieldGenExt object to generate external fields,
-   * the external fields will have the same shape as the mask, with a 
-   * magnitude defined by a Flory--Huggins-like chi parameter. This class
-   * is specific to thin-film systems because it also allows for a 
+   * If the user chooses a FilmFieldGenExt object to generate external 
+   * fields, the external fields will have the same shape as the mask, 
+   * with a magnitude defined by a Flory--Huggins-like chi parameter. This 
+   * class is specific to thin-film systems because it also allows for a 
    * different chi parameter to be defined on the top boundary than on
    * the bottom, through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
@@ -55,7 +63,7 @@ namespace Prdc {
       ~FilmFieldGenExtBase();
 
       /**
-      * Read and initialize.
+      * Read parameters and initialize.
       *
       * \param in  input parameter stream
       */
@@ -73,24 +81,24 @@ namespace Prdc {
       * form and system constraints as the mask, so it is assumed that these
       * checks have already been performed by the object that generated the
       * mask. However, there is one exception: the external fields can have
-      * different chi values on top and bottom, which reduces the symmetry
-      * of the system below the symmetry of the mask. If chiBottom != chiTop,
-      * this method checks that the space group is compatible with a thin
-      * film unit cell with asymmetric walls.
+      * different chi values on top and bottom, which makes the system less
+      * symmetric than the mask. If chiBottom != chiTop, this method checks
+      * that the space group is compatible with a thin film unit cell with 
+      * asymmetric walls.
       */
       void checkCompatibility();
 
       /**
       * Are the walls chemically identical?
       * 
-      * This is the case when chiBottom is equal to chiTop.
+      * This is true if and only if chiBottom is equal to chiTop.
       */
       bool hasSymmetricWalls() const;
 
       /**
       * Are the walls athermal?
       * 
-      * This is only true if all values in chiBottom and chiTop are zero.
+      * This is true only if all values in chiBottom and chiTop are zero.
       */
       bool isAthermal() const;
 
@@ -311,8 +319,13 @@ namespace Prdc {
    inline double FilmFieldGenExtBase<D>::excludedThickness() const
    {  return excludedThickness_; }
 
-}
-}
+   #ifndef PRDC_FILM_FIELD_GEN_EXT_BASE_TPP
+   // Suppress implicit instantiation
+   extern template class FilmFieldGenExtBase<1>;
+   extern template class FilmFieldGenExtBase<2>;
+   extern template class FilmFieldGenExtBase<3>;
+   #endif
 
-#include "FilmFieldGenExtBase.tpp"
+}
+}
 #endif

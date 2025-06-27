@@ -17,7 +17,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Base class for Environments that mix and match masks and external fields.
+   * Environment that can mix and match mask and external field generators.
    * 
    * An Environment in PSCF is an object that generates a mask and/or a 
    * set of external fields to impose upon the calculation. In some cases,
@@ -98,13 +98,22 @@ namespace Pscf {
       virtual double modifyStress(int paramId, double stress) const;
 
       /**
-       * Return const references to the FieldGenerator child objects
-       */
+      * Get the first FieldGenerator by const reference.
+      */
       FieldGenerator const & fieldGenerator1() const;
+
+      /**
+      * Get the second FieldGenerator (if any) by const reference.
+      */
       FieldGenerator const & fieldGenerator2() const;
 
       /**
-      * Return specialized sweep parameter types to add to a Sweep object.
+      * Does a second FieldGenerator exist?
+      */
+      bool hasFieldGenerator2() const;
+
+      /**
+      * Get specialized sweep parameter types to add to a Sweep object.
       */
       GArray<ParameterType> getParameterTypes();
 
@@ -124,7 +133,7 @@ namespace Pscf {
       * 
       * \param name  name of the specialized parameter
       * \param ids  array of integer indices specifying the value to get
-      * \param success  boolean flag used to indicate if parameter was gotten
+      * \param success  boolean  Was the parameter found?
       */
       double getParameter(std::string name, DArray<int> ids, bool& success)
       const;
@@ -174,5 +183,6 @@ namespace Pscf {
       FieldGenerator* fieldGenPtr2_;
 
    };
+
 }
 #endif

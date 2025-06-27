@@ -24,10 +24,10 @@ namespace Rpc {
    * FilmFieldGenExt that do not require access to the System. This subclass
    * defines all methods that need System access.
    * 
-   * If the user chooses an FilmFieldGenExt object to generate external fields,
-   * the external fields will have the same shape as the mask, with a 
-   * magnitude defined by a Flory--Huggins-like chi parameter. This class
-   * is specific to thin-film systems because it also allows for a 
+   * If the user chooses an FilmFieldGenExt object to generate external 
+   * fields, the external fields will have the same shape as the mask, 
+   * with a magnitude defined by a Flory--Huggins-like chi parameter. This 
+   * class is specific to thin-film systems because it also allows for a 
    * different chi parameter to be defined on the top boundary than on
    * the bottom, through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
@@ -121,7 +121,7 @@ namespace Rpc {
       /// Pointer to the associated system object.
       System<D>* sysPtr_;
 
-      /// interfaceThickness of the mask, obtained via maskInterfaceThickness
+      /// Mask interfaceThickness, obtained via maskInterfaceThickness
       double interfaceThickness_;
 
    };

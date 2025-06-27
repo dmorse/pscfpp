@@ -1,5 +1,5 @@
-#ifndef RPC_MIX_AND_MATCH_ENVS_H
-#define RPC_MIX_AND_MATCH_ENVS_H
+#ifndef RPG_FILM_ENVIRONMENT_H
+#define RPG_FILM_ENVIRONMENT_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,22 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-/*
-* NOTE: In this file, we break from PSCF's conventional coding standards.
-* Specifically, any subclass of MixAndMatchEnv in the Rpc namespace should 
-* be declared in this header file, and the methods should be defined in 
-* the class declaration rather than in a .tpp file. This is simply for the 
-* sake of conciseness. These subclasses of MixAndMatchEnv require very
-* little code to declare and define, so we opt to consolidate the code 
-* into a single file rather than spreading it across many small files.
-*/
-
 #include "FilmFieldGenMask.h"
 #include "FilmFieldGenExt.h"
+#include <rpg/scft/iterator/Iterator.h>
 #include <pscf/environment/MixAndMatchEnv.h>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rpg {
 
    using namespace Util;
 
@@ -33,7 +24,7 @@ namespace Rpc {
    /**
    * Class defining mask & external fields for thin-film systems
    * 
-   * \ingroup Rpc_Field_Module
+   * \ingroup Rpg_Field_Module
    */
    template <int D>
    class FilmEnvironment : public MixAndMatchEnv
@@ -88,6 +79,6 @@ namespace Rpc {
    extern template class FilmEnvironment<2>;
    extern template class FilmEnvironment<3>;
 
-} // namespace Rpc
+} // namespace Rpg
 } // namespace Pscf
 #endif

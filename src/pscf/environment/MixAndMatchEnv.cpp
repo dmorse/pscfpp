@@ -10,13 +10,17 @@
 
 namespace Pscf {
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    MixAndMatchEnv::MixAndMatchEnv()
     : fieldGenPtr1_(0),
       fieldGenPtr2_(0)
    {  setClassName("MixAndMatchEnv"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    MixAndMatchEnv::~MixAndMatchEnv()
    {
       if (fieldGenPtr1_) {
@@ -27,13 +31,22 @@ namespace Pscf {
       }
    }
 
-   // Read parameters from input stream
+   /*
+   * Read parameters from input stream.
+   *
+   * Parameters for field generators are read at the same indentation level
+   * as parameters of the parent MaxAndMatchEnv object, without enclosed curly
+   * bracket delimiters around blocks for each generator.
+   *
+   * If the second generator is "dependent", it backs up and re-reads the
+   * block of the first generator.
+   */
    void MixAndMatchEnv::readParameters(std::istream& in)
    {
       // Before reading parameters, create FieldGenerator objects
-      createGenerators(); 
+      createGenerators();
 
-      // Save current istream position
+      // Save current istream position (allows for possible rewind to here)
       std::streampos pos = in.tellg();
 
       // Read first FieldGenerator
@@ -41,13 +54,12 @@ namespace Pscf {
 
          UTIL_CHECK(!fieldGenPtr1_->isDependent());
 
-         // Make fieldGenPtr1_ a child paramComponent of this object, so that 
-         // it will be read/written correctly to/from param file with correct 
-         // indentation
-         setParent(*fieldGenPtr1_,false);
-         addComponent(*fieldGenPtr1_,false);
+         // Make fieldGenPtr1_ a child ParamComponent of this object
+         bool next = false; // Set indentation to be same as that of parent
+         addParamComposite(*fieldGenPtr1_, next);
 
-         // Read parameters for this FieldGenerator
+         // Read parameters for this FieldGenerator.
+         // Reads body without indentation or curly bracket delimiters
          fieldGenPtr1_->readParameters(in);
 
       } else {
@@ -59,18 +71,11 @@ namespace Pscf {
       // Read second FieldGenerator (optional)
       if (fieldGenPtr2_) {
 
-         // Make fieldGenPtr2_ a child paramComponent of this object, so that 
-         // it will be read/written correctly to/from param file with correct 
-         // indentation
-         setParent(*fieldGenPtr2_,false);
-         addComponent(*fieldGenPtr2_,false);
-
-         // Check that one of the FieldGenerator objects has type Mask and
-         // the other has type External
+         // Check that one FieldGenerator is a Mask and other is External
          if (fieldGenPtr2_->type() == FieldGenerator::External) {
             UTIL_CHECK(fieldGenPtr1_->type() == FieldGenerator::Mask);
          } else if (fieldGenPtr2_->type() == FieldGenerator::Mask) {
-            UTIL_CHECK(fieldGenPtr1_->type() == 
+            UTIL_CHECK(fieldGenPtr1_->type() ==
                                             FieldGenerator::External);
          } else {
             UTIL_THROW("fieldGenPtr2_ must have type Mask or External.");
@@ -81,13 +86,20 @@ namespace Pscf {
             in.seekg(pos);
             Label::clear();
          }
-         
-         // Read parameters for this FieldGenerator
+
+         // Make this FieldGenerator a child ParamComponent of this object
+         bool next = false; // Set indentation to be same as that of parent
+         addParamComposite(*fieldGenPtr2_, next);
+
+         // Read parameters for this FieldGenerator.
+         // Reads body without indentation or curly bracket delimiters
          fieldGenPtr2_->readParameters(in);
       }
    }
 
-   // Checks if fields need to be (re)generated. If so, generates them. 
+   /*
+   * Check if fields need to be (re)generated. If so, generates them.
+   */
    void MixAndMatchEnv::generate()
    {
       if (!needsUpdate_) return;
@@ -96,7 +108,9 @@ namespace Pscf {
       needsUpdate_ = false;
    }
 
-   // Return the Environment's contribution to the stress
+   /*
+   * Return the Environment's contribution to the stress.
+   */
    double MixAndMatchEnv::stress(int paramId) const
    {
       UTIL_CHECK(!needsUpdate());
@@ -111,7 +125,9 @@ namespace Pscf {
       return stress;
    }
 
-   // Modify stress to minimize a property other than fHelmholtz
+   /*
+   * Modify stress to minimize a property other than fHelmholtz.
+   */
    double MixAndMatchEnv::modifyStress(int paramId, double stress) const
    {
       UTIL_CHECK(!needsUpdate());
@@ -125,7 +141,9 @@ namespace Pscf {
       return stress;
    }
 
-   // Return specialized sweep parameter types to add to the Sweep object
+   /*
+   * Return specialized sweep parameter types to add to the Sweep object.
+   */
    GArray<ParameterType> MixAndMatchEnv::getParameterTypes()
    {
       GArray<ParameterType> a1, a2;
@@ -140,8 +158,10 @@ namespace Pscf {
       return a1;
    }
 
-   // Set the value of a specialized sweep parameter
-   void MixAndMatchEnv::setParameter(std::string name, DArray<int> ids, 
+   /*
+   * Set the value of a specialized sweep parameter.
+   */
+   void MixAndMatchEnv::setParameter(std::string name, DArray<int> ids,
                                      double value, bool& success)
    {
       success = false;
@@ -154,8 +174,10 @@ namespace Pscf {
       if (success) reset();
    }
 
-   // Get the value of a specialized sweep parameter
-   double MixAndMatchEnv::getParameter(std::string name, DArray<int> ids, 
+   /*
+   * Get the value of a specialized sweep parameter.
+   */
+   double MixAndMatchEnv::getParameter(std::string name, DArray<int> ids,
                                        bool& success) const
    {
       double val(0);
@@ -169,11 +191,28 @@ namespace Pscf {
       return val;
    }
 
-   // Return const references to the FieldGenerator child objects
+   /*
+   * Get the first field generator by const reference.
+   */
    FieldGenerator const & MixAndMatchEnv::fieldGenerator1() const
-   {  return *fieldGenPtr1_; }
+   {  
+      UTIL_CHECK(fieldGenPtr1_);  
+      return *fieldGenPtr1_; 
+   }
 
+   /*
+   * Get the second field generator (if any).
+   */
    FieldGenerator const & MixAndMatchEnv::fieldGenerator2() const
-   {  return *fieldGenPtr2_; }
+   { 
+      UTIL_CHECK(fieldGenPtr2_);  
+      return *fieldGenPtr2_; 
+   }
+
+   /*
+   * Does a second FieldGenerator child object exist?
+   */
+   bool MixAndMatchEnv::hasFieldGenerator2() const
+   {  return (bool) fieldGenPtr2_; }
 
 }
