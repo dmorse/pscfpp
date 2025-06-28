@@ -312,7 +312,8 @@ public:
 
       std::ifstream in;
       openInputFile("in/w_bcc.bf", in);
-      fields.readBasis(in, domain.unitCell());
+      fields.setReadUnitCell(domain.unitCell());
+      fields.readBasis(in);
       TEST_ASSERT(fields.hasData());
       TEST_ASSERT(fields.isSymmetric());
 
@@ -352,7 +353,8 @@ public:
 
       std::ifstream in;
       openInputFile("in/w_bcc.rf", in);
-      fields.readRGrid(in, domain.unitCell());
+      fields.setReadUnitCell(domain.unitCell());
+      fields.readRGrid(in);
       TEST_ASSERT(fields.hasData());
       TEST_ASSERT(!fields.isSymmetric());
 
@@ -392,7 +394,8 @@ public:
       std::ifstream in;
       openInputFile("in/w_bcc.rf", in);
       bool isSymmetric = true;
-      fields.readRGrid(in, domain.unitCell(), isSymmetric);
+      fields.setReadUnitCell(domain.unitCell());
+      fields.readRGrid(in, isSymmetric);
       TEST_ASSERT(fields.hasData());
       TEST_ASSERT(fields.isSymmetric());
 

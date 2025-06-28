@@ -29,7 +29,7 @@ namespace Prdc {
    using namespace Util;
 
    /**
-   * A container of fields stored in both basis and r-grid format.
+   * A container of input fields stored in both basis and r-grid format.
    * 
    * <b> Template parameters </b>: The template parameters represent:
    * 
@@ -124,6 +124,30 @@ namespace Prdc {
       void setNMonomer(int nMonomer);
 
       /**
+      * Set unit cell used when reading field files. 
+      *
+      * This function creates a stored pointer to a UnitCell<D> that is
+      * is used by the readBasis and readRGrid functions, which reset the
+      * unit cell parameters in this object to those read from the field 
+      * file header. This function may only be called once.
+      *
+      * \param cell  unit cell that is modified by readBasis and readRGrid.
+      */
+      void setReadUnitCell(UnitCell<D>& cell);
+
+      /**
+      * Set unit cell used when writing field files.
+      *
+      * This function creates a stored pointer to a UnitCell<D> that is
+      * is used by the writeBasis and writeRGrid functions, which each
+      * write the unit cell parameters from in this object to a field 
+      * file header. This function may only be called once.
+      *
+      * \param cell  unit cell that is used by writeBasis and writeRGrid.
+      */
+      void setWriteUnitCell(UnitCell<D> const & cell);
+
+      /**
       * Allocate or re-allocate memory for fields in rgrid format.
       *
       * \param dimensions  dimensions of spatial mesh
@@ -208,9 +232,8 @@ namespace Prdc {
       * will be initialized if not initialized on entry.
       *
       * \param in  input stream from which to read fields
-      * \param unitCell  associated crystallographic unit cell
       */
-      void readBasis(std::istream& in, UnitCell<D>& unitCell);
+      void readBasis(std::istream& in);
 
       /**
       * Read fields from a named file, in symmetrized basis format.
@@ -224,9 +247,8 @@ namespace Prdc {
       * will be initialized if not initialized on entry.
       *
       * \param filename  file from which to read fields
-      * \param unitCell  associated crystallographic unit cell
       */
-      void readBasis(std::string filename, UnitCell<D>& unitCell);
+      void readBasis(std::string filename);
 
       /**
       * Reads fields from an input stream in real-space (r-grid) format.
@@ -245,11 +267,9 @@ namespace Prdc {
       * will be initialized if not initialized on entry.
       *
       * \param in  input stream from which to read fields
-      * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  is this field symmetric under the space group?
       */
-      void readRGrid(std::istream& in, UnitCell<D>& unitCell,
-                     bool isSymmetric = false);
+      void readRGrid(std::istream& in, bool isSymmetric = false);
 
       /**
       * Reads fields from a named file in real-space (r-grid) format.
@@ -268,11 +288,9 @@ namespace Prdc {
       * will be initialized if not initialized on entry.
       *
       * \param filename  file from which to read fields
-      * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  Is this field symmetric under the space group?
       */
-      void readRGrid(std::string filename, UnitCell<D>& unitCell,
-                     bool isSymmetric = false);
+      void readRGrid(std::string filename, bool isSymmetric = false);
 
       /**
       * Symmetrize r-grid fields, compute corresponding basis components.
@@ -443,15 +461,27 @@ namespace Prdc {
       int nMonomer_;
 
       /*
-      * Pointer to a Signal that is triggered by field modification.
+      * Pointer to unit cell modified by read functions.
       */
-      Signal<void>* signalPtr_;
- 
+      UnitCell<D> * readUnitCellPtr_;
+
+      /*
+      * Pointer to unit cell access by write functions.
+      */
+      UnitCell<D> const * writeUnitCellPtr_;
+
       /*
       * Pointer to an associated FIT object.
       */
       FIT const * fieldIoPtr_;
 
+      /*
+      * Pointer to a Signal that is triggered by field modification.
+      *
+      * The Signal is constructed and owned by this field container.
+      */
+      Signal<void>* signalPtr_;
+ 
       /*
       * Has memory been allocated for fields in r-grid format?
       */

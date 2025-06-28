@@ -4,6 +4,7 @@
 
 //#include "RFieldTest.h"
 #include "FieldTestComposite.h"
+#include <util/param/BracketPolicy.h>
 //#include <util/global.h>
 
 #include <test/TestRunner.h>
@@ -12,6 +13,7 @@
 int main(int argc, char* argv[])
 {
    FieldTestComposite runner;
+   BracketPolicy::set(BracketPolicy::Optional);
 
    #if 0
    if (argc > 2) {

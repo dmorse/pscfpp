@@ -51,6 +51,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/maskTestConstructor.log");
       System<1> system;
       FilmFieldGenMask<1> mask(system);
    }
@@ -58,6 +59,7 @@ public:
    void testReadParameters() // test FilmFieldGenMaskBase::readParameters()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/maskTestReadParameters.log");
 
       // Set up mask from file
       System<2> system;

@@ -34,8 +34,10 @@ namespace Prdc {
       meshSize_(0),
       nBasis_(0),
       nMonomer_(0),
-      signalPtr_(nullptr),
+      readUnitCellPtr_(nullptr),
+      writeUnitCellPtr_(nullptr),
       fieldIoPtr_(nullptr),
+      signalPtr_(nullptr),
       isAllocatedRGrid_(false),
       isAllocatedBasis_(false),
       hasData_(false),
@@ -70,6 +72,26 @@ namespace Prdc {
       UTIL_CHECK(nMonomer_ == 0);
       UTIL_CHECK(nMonomer > 0);
       nMonomer_ = nMonomer;
+   }
+
+   /*
+   * Set the unit cell that is modified by reading a field file.
+   */
+   template <int D, class RFT, class FIT>
+   void WContainerReal<D,RFT,FIT>::setReadUnitCell(UnitCell<D>& cell)
+   {
+      UTIL_CHECK(!readUnitCellPtr_);
+      readUnitCellPtr_ = &cell;
+   }
+
+   /*
+   * Set the unit cell that whose parameters are written to a field header.
+   */
+   template <int D, class RFT, class FIT>
+   void WContainerReal<D,RFT,FIT>::setWriteUnitCell(UnitCell<D> const & cell)
+   {
+      UTIL_CHECK(!writeUnitCellPtr_);
+      writeUnitCellPtr_ = &cell;
    }
 
    /*
@@ -170,15 +192,16 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::allocate(
-                                        int nMonomer,
-                                        int nBasis,
-                                        IntVec<D> const & meshDimensions)
+   WContainerReal<D,RFT,FIT>::allocate(int nMonomer,
+                                       int nBasis,
+                                       IntVec<D> const & meshDimensions)
    {
       setNMonomer(nMonomer);
       allocateRGrid(meshDimensions);
       allocateBasis(nBasis);
    }
+
+   // Field Modification Functions
 
    /*
    * Set new field values, in basis form.
@@ -220,7 +243,7 @@ namespace Prdc {
       hasData_ = true;
       isSymmetric_ = true;
 
-      // Notify observers of field modification
+      // Notify signal observers of field modification
       signal().notify();
    }
 
@@ -230,7 +253,7 @@ namespace Prdc {
    template <int D, class RFT, class FIT>
    void
    WContainerReal<D,RFT,FIT>::setRGrid(DArray<RFT> const & fields,
-                                              bool isSymmetric)
+                                       bool isSymmetric)
    {
       // Allocate r-grid fields as needed
       if (!isAllocatedRGrid_) {
@@ -260,7 +283,7 @@ namespace Prdc {
       hasData_ = true;
       isSymmetric_ =  isSymmetric;
 
-      // Notify observers of field modification
+      // Notify signal observers of field modification
       signal().notify();
    }
 
@@ -272,16 +295,18 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void 
-   WContainerReal<D,RFT,FIT>::readBasis(std::istream& in,
-                                               UnitCell<D>& unitCell)
+   WContainerReal<D,RFT,FIT>::readBasis(std::istream& in)
    {
+      // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
+      UTIL_CHECK(readUnitCellPtr_);
 
       // Read field file header
       int nMonomerIn;
       bool isSymmetricIn;
-      fieldIo().readFieldHeader(in, nMonomerIn, unitCell, isSymmetricIn);
-      // Note: FIT::readFieldHeader initializes basis if needed
+      fieldIo().readFieldHeader(in, nMonomerIn, *readUnitCellPtr_, 
+                                isSymmetricIn);
+      // Note: FieldIo::readFieldHeader initializes basis if needed
       UTIL_CHECK(nMonomerIn == nMonomer_);
       UTIL_CHECK(isSymmetricIn);
       int nBasisIn = readNBasis(in);
@@ -303,7 +328,8 @@ namespace Prdc {
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read data in basis form (array basis_)
-      Prdc::readBasisData(in, basis_, unitCell, mesh, basis, nBasisIn);
+      Prdc::readBasisData(in, basis_, 
+                          *readUnitCellPtr_, mesh, basis, nBasisIn);
 
       // Convert to r-grid form (array rgrid_)
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
@@ -311,23 +337,22 @@ namespace Prdc {
       hasData_ = true;
       isSymmetric_ = true;
 
-      // Notify observers of field modification
+      // Notify signal observers of field modification
       signal().notify();
    }
 
    /*
    * Read fields from a file in basis format, by filename.
    *
-   * Calls readBasis(std::ifstream&, UnitCell<D>&) internally.
+   * Calls readBasis(std::ifstream&) internally.
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::readBasis(std::string filename,
-                                               UnitCell<D>& unitCell)
+   WContainerReal<D,RFT,FIT>::readBasis(std::string filename)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
-      readBasis(file, unitCell);
+      readBasis(file);
       file.close();
    }
 
@@ -344,10 +369,13 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::readRGrid(std::istream& in,
-                                               UnitCell<D>& unitCell,
-                                               bool isSymmetric)
+   WContainerReal<D,RFT,FIT>::readRGrid(std::istream& in, 
+                                        bool isSymmetric)
    {
+      // Preconditions
+      UTIL_CHECK(nMonomer_ > 0);
+      UTIL_CHECK(readUnitCellPtr_);
+      
       // If necessary, allocate r-grid fields
       if (!isAllocatedRGrid_) {
          Mesh<D> const & mesh = fieldIo().mesh();
@@ -355,7 +383,7 @@ namespace Prdc {
       }
 
       // Read field file in r-grid format (array rgrid_)
-      fieldIo().readFieldsRGrid(in, rgrid_, unitCell);
+      fieldIo().readFieldsRGrid(in, rgrid_, *readUnitCellPtr_);
 
       // Optionally convert to basis form
       if (isSymmetric) {
@@ -370,7 +398,7 @@ namespace Prdc {
       hasData_ = true;
       isSymmetric_ = isSymmetric;
 
-      // Notify observers of field modification
+      // Notify signal observers of field modification
       signal().notify();
    }
 
@@ -380,12 +408,11 @@ namespace Prdc {
    template <int D, class RFT, class FIT>
    void
    WContainerReal<D,RFT,FIT>::readRGrid(std::string filename,
-                                               UnitCell<D>& unitCell,
-                                               bool isSymmetric)
+                                        bool isSymmetric)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
-      readRGrid(file, unitCell, isSymmetric);
+      readRGrid(file, isSymmetric);
       file.close();
    }
 
@@ -400,12 +427,12 @@ namespace Prdc {
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
       isSymmetric_ = true;
 
-      // Notify observers of field modification
+      // Notify signal observers of field modification
       signal().notify();
    }
 
    /*
-   * Get a signal that is triggered by field modification.
+   * Get the Signal<void> that is triggered by field modification.
    */
    template <int D, class RFT, class FIT>
    Signal<void>& WContainerReal<D,RFT,FIT>::signal()

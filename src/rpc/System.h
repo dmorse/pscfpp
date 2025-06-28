@@ -15,6 +15,7 @@
 #include <rpc/field/WFieldContainer.h>   // member
 #include <rpc/field/CFieldContainer.h>   // member
 #include <rpc/field/Mask.h>              // member
+#include <prdc/crystal/UnitCell.h>       // member
 #include <pscf/chem/PolymerModel.h>      // member
 #include <util/misc/FileMaster.h>        // member
 
@@ -28,7 +29,6 @@ namespace Pscf {
    class Interaction;
    class Environment;
    namespace Prdc {
-      template <int D> class UnitCell;
       namespace Cpu {
          template <int D> class RField;
          template <int D> class RFieldDft;
@@ -982,6 +982,10 @@ namespace Rpc {
       */
       bool hasStress_;
 
+      // Mutable work space
+
+      mutable UnitCell<D> tmpUnitCell_;
+
       // Private member functions
 
       /**
@@ -994,6 +998,7 @@ namespace Rpc {
       */
       void allocateFieldsBasis();
 
+      #if 0
       /**
       * Read a field file header, make the basis if not done previously.
       *
@@ -1003,6 +1008,7 @@ namespace Rpc {
       * \param filename  name of field file
       */
       void readFieldHeader(std::string const & filename);
+      #endif
 
       /**
       * Read a string and echo to log file.

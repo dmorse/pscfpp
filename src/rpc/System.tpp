@@ -92,8 +92,19 @@ namespace Rpc {
       // Create associations among class members
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
-      h_.setFieldIo(domain_.fieldIo());
+      w_.setReadUnitCell(domain_.unitCell());  
+      w_.setWriteUnitCell(domain_.unitCell());
+      h_.setFieldIo(domain_.fieldIo());        
+      h_.setReadUnitCell(tmpUnitCell_);       
+      h_.setWriteUnitCell(domain_.unitCell());
       mask_.setFieldIo(domain_.fieldIo());
+
+      // Note: When w_ is read from a file  in basis or r-grid format,
+      // the parameters of the system unit cell, domain_.unitCell(), are
+      // set to those in the field file header. When imposed fields h_
+      // and mask_ are read from a file, however unit cell parameters 
+      // from the field file header are read into a mutable workspace 
+      // object, tmpUnitCell_, and ignored.
 
       // Create dynamically allocated objects owned by this System
       interactionPtr_ = new Interaction();
@@ -102,15 +113,28 @@ namespace Rpc {
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
 
-      // Add observers to signals
+      // Use of "signals" to maintain data relationships:
+      // Signals are instances of Unit::Signal<void> that are used to 
+      // notify "observer" objects of modification of data owned by a 
+      // related "notifier" object. Each signal is owned by a notifier
+      // object that maintains data that may be modified. Each signal
+      // maintains a list of observers objects that should be notified
+      // whenever the data owned by the notifier object changes. Each 
+      // observer is added by the Signal<void>::addObserver function
+      // template, which takes two arguments: a reference to an observer 
+      // object (i.e., an instance of a class) and a pointer to a member 
+      // function of that class which will be invoked on that object when 
+      // the signal is triggered by modification of associated data.
 
-      // Signal triggered by basis construction
-      Signal<void>& basisSignal = domain_.basis().signal();
-      basisSignal.addObserver(*this, &System<D>::allocateFieldsBasis);
+      // Addition of observers to signals
 
       // Signal triggered by unit cell modification
       Signal<void>& cellSignal = domain_.unitCell().signal();
       cellSignal.addObserver(*this, &System<D>::clearUnitCellData);
+
+      // Signal triggered by basis construction
+      Signal<void>& basisSignal = domain_.basis().signal();
+      basisSignal.addObserver(*this, &System<D>::allocateFieldsBasis);
 
       // Signal triggered by w-field modification
       w_.signal().addObserver(*this, &System<D>::clearCFields);
@@ -401,11 +425,23 @@ namespace Rpc {
          } else
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
-            readWBasis(filename);
+            w_.readBasis(filename);
+            UTIL_CHECK(domain_.unitCell().isInitialized());
+            UTIL_CHECK(domain_.basis().isInitialized());
+            UTIL_CHECK(!domain_.waveList().hasKSq());
+            UTIL_CHECK(isAllocatedBasis_);
+            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!hasFreeEnergy_);
+            UTIL_CHECK(!hasStress_);
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
-            readWRGrid(filename);
+            w_.readRGrid(filename);
+            UTIL_CHECK(domain_.unitCell().isInitialized());
+            UTIL_CHECK(!domain_.waveList().hasKSq());
+            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!hasFreeEnergy_);
+            UTIL_CHECK(!hasStress_);
          } else
          if (command == "ESTIMATE_W_BASIS") {
             readEcho(in, inFileName);
@@ -679,26 +715,12 @@ namespace Rpc {
          } else
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
-            if (!h_.isAllocatedBasis()) {
-               h_.allocateBasis(domain_.basis().nBasis());
-            }
-            if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(domain_.mesh().dimensions());
-            }
-            UnitCell<D> tmpUnitCell;
-            h_.readBasis(filename, tmpUnitCell);
+            h_.readBasis(filename);
             UTIL_CHECK(!hasCFields_);
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
-            if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(domain_.mesh().dimensions());
-            }
-            if (iterator().isSymmetric() && !h_.isAllocatedBasis()) {
-               mask_.allocateBasis(domain_.basis().nBasis());
-            }
-            UnitCell<D> tmpUnitCell;
-            h_.readRGrid(filename, tmpUnitCell);
+            h_.readRGrid(filename);
             UTIL_CHECK(!hasCFields_);
          } else
          if (command == "WRITE_H_BASIS") {
@@ -794,7 +816,7 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedGrid_);
 
       // Read w fields and set unit cell parameters
-      w_.readBasis(filename, domain_.unitCell());
+      w_.readBasis(filename);
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -816,7 +838,7 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedGrid_);
 
       // Read w fields and set unit cell parameters
-      w_.readRGrid(filename, domain_.unitCell());
+      w_.readRGrid(filename);
 
       // Postconditions
       UTIL_CHECK(domain_.unitCell().isInitialized());
@@ -1749,6 +1771,7 @@ namespace Rpc {
       isAllocatedBasis_ = true;
    }
 
+   #if 0
    /*
    * Peek at field file header, initialize basis if needed.
    */
@@ -1778,6 +1801,7 @@ namespace Rpc {
          UTIL_CHECK(isAllocatedBasis_);
       }
    }
+   #endif
 
    /*
    * Read a filename string and echo to log file (used in readCommands).

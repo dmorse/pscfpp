@@ -15,6 +15,7 @@
 #include <rpg/field/WFieldContainer.h>   // member
 #include <rpg/field/CFieldContainer.h>   // member
 #include <rpg/field/Mask.h>              // member
+#include <prdc/crystal/UnitCell.h>       // member
 #include <pscf/chem/PolymerModel.h>      // member
 #include <util/misc/FileMaster.h>        // member
 
@@ -28,7 +29,6 @@ namespace Pscf {
    class Environment;
    template <typename Data> class DeviceArray;
    namespace Prdc {
-      template <int D> class UnitCell;
       namespace Cuda {
          template <int D> class RField;
          template <int D> class RFieldDft;
@@ -998,6 +998,10 @@ namespace Rpg {
       * system unit cell parameters are modified.
       */
       bool hasStress_;
+
+      // Mutable work space
+
+      mutable UnitCell<D> tmpUnitCell_;
 
       // Private member functions
 

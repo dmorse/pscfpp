@@ -1410,7 +1410,7 @@ public:
       system.h().setFieldIo(system.domain().fieldIo());
       system.h().allocateBasis(system.domain().basis().nBasis());
       system.h().allocateRGrid(system.domain().mesh().dimensions());
-      system.h().readBasis("in/maskAndH/h.bf", unitCell);
+      system.h().readBasis("in/maskAndH/h.bf");
 
       // Iterate to convergence
       system.iterate();
