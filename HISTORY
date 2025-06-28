@@ -13,22 +13,27 @@ programs are affected by specific changes:
   1d  - CPU finite difference code for 1D problems (pscf_1d)
   all - all programs (1d, pc, and pg)
 
-Versions before v1.2 use program name pscf_fd and label fd for the 1D
+Versions before v1.2 use program name pscf_fd and label fd for the 1D 
 finite difference SCFT code that is now called pscf_1d.
 
-Version 1.3.0 (6/15/2025)
+Version 1.3.0 (7/15/2025)
 =========================================
 
 User-visible features
 ---------------------
-* Option to use a discrete bead model for chain conformations
+* Choice of continuous thread and discrete bead model for polymers (pc, pg)
+
+User-visible changes
+--------------------
+* Optional Environment block in parameter file for imposed fields (pc, pg)
 
 Developer-visible changes
 -------------------------
-* Introduction of WaveList in code for pscf_pc, by analogy to pscf_pg
-* Re-organization to reduce code duplication between Rpc, Rpg namespaces
-* Introduce use of signals (Util::Signal) to coordinate object states
-* Move file manipulation functions from System to FieldIo in Rpc, Rpg
+* Reduced code duplication between Rpc, Rpg namespaces (pc, pg)
+* Use of signals (Util::Signal) to coordinate object states (pc, pg)
+* Field file manipulation functions moved from System to FieldIo (pc, pg)
+* Generation of imposed fields moved into new Environment class (pc, pg)
+* Added WaveList class to code for pscf_pc, by analogy to pscf_pg (pc)
 
 Version 1.2.0 (4/14/2025)
 =========================================
