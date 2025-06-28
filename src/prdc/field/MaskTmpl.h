@@ -104,6 +104,30 @@ namespace Prdc {
       void setFieldIo(FieldIo const & fieldIo);
 
       /**
+      * Set unit cell used when reading a mask field file.
+      *
+      * This function creates a stored pointer to a UnitCell<D> that is
+      * is used by the readBasis and readRGrid functions, which reset the
+      * unit cell parameters in this object to those read from the field 
+      * file header. This function may only be called once.
+      *
+      * \param cell  unit cell that is modified by readBasis and readRGrid.
+      */
+      void setReadUnitCell(UnitCell<D>& cell);
+
+      /**
+      * Set unit cell used when writing a mask field file.
+      *
+      * This function creates a stored pointer to a UnitCell<D> that is
+      * is used by the writeBasis and writeRGrid functions, which each
+      * write the unit cell parameters from in this object to a field 
+      * file header. This function may only be called once.
+      *
+      * \param cell  unit cell that is used by writeBasis and writeRGrid.
+      */
+      void setWriteUnitCell(UnitCell<D> const & cell);
+
+      /**
       * Allocate memory for the field in basis format.
       *
       * An Exception will be thrown if this is called more than once.
@@ -173,9 +197,8 @@ namespace Prdc {
       * will be initialized if it is not initialized on entry.
       *
       * \param in  input stream from which to read field
-      * \param unitCell  associated crystallographic unit cell
       */
-      void readBasis(std::istream& in, UnitCell<D>& unitCell);
+      void readBasis(std::istream& in);
 
       /**
       * Read field from a named file, in symmetrized basis format.
@@ -189,9 +212,8 @@ namespace Prdc {
       * will be initialized if it is not initialized on entry.
       *
       * \param filename  file from which to read field
-      * \param unitCell  associated crystallographic unit cell
       */
-      void readBasis(std::string filename, UnitCell<D>& unitCell);
+      void readBasis(std::string filename);
 
       /**
       * Reads field from an input stream in real-space (r-grid) format.
@@ -210,11 +232,9 @@ namespace Prdc {
       * will be initialized if it is not initialized on entry.
       * 
       * \param in  input stream from which to read field
-      * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  is this field symmetric under the space group?
       */
-      void readRGrid(std::istream& in, UnitCell<D>& unitCell,
-                     bool isSymmetric = false);
+      void readRGrid(std::istream& in, bool isSymmetric = false);
 
       /**
       * Reads field from a named file, in real-space (r-grid) format.
@@ -233,11 +253,9 @@ namespace Prdc {
       * will be initialized if it is not initialized on entry.
       * 
       * \param filename  file from which to read field
-      * \param unitCell  associated crystallographic unit cell
       * \param isSymmetric  is this field symmetric under the space group?
       */
-      void readRGrid(std::string filename, UnitCell<D>& unitCell,
-                     bool isSymmetric = false);
+      void readRGrid(std::string filename, bool isSymmetric = false);
 
       ///@}
       /// \name Field Accessors 
@@ -377,14 +395,24 @@ namespace Prdc {
       int nBasis_;
 
       /*
-      * Pointer to a Signal that is triggered by field modification.
+      * Pointer to unit cell modified by read functions.
       */
-      Signal<void>* signalPtr_;
+      UnitCell<D> * readUnitCellPtr_;
+
+      /*
+      * Pointer to unit cell access by write functions.
+      */
+      UnitCell<D> const * writeUnitCellPtr_;
 
       /**
       * Pointer to associated FieldIo object.
       */
       FieldIo const * fieldIoPtr_;
+
+      /*
+      * Pointer to a Signal that is triggered by field modification.
+      */
+      Signal<void>* signalPtr_;
 
       /**
       * Has memory been allocated for field in basis format?

@@ -221,6 +221,7 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
+      mask.setReadUnitCell(domain.unitCell());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
       TEST_ASSERT(mask.isAllocatedBasis());
@@ -230,7 +231,7 @@ public:
 
       std::ifstream in;
       openInputFile("in/mask.bf", in);
-      mask.readBasis(in, domain.unitCell());
+      mask.readBasis(in);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(mask.isSymmetric());
 
@@ -262,6 +263,7 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
+      mask.setReadUnitCell(domain.unitCell());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
       TEST_ASSERT(mask.isAllocatedBasis());
@@ -271,7 +273,7 @@ public:
 
       std::ifstream in;
       openInputFile("in/mask.rf", in);
-      mask.readRGrid(in, domain.unitCell());
+      mask.readRGrid(in);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
@@ -297,6 +299,7 @@ public:
 
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
+      mask.setReadUnitCell(domain.unitCell());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
       TEST_ASSERT(mask.isAllocatedBasis());
@@ -306,7 +309,7 @@ public:
 
       std::ifstream in;
       openInputFile("in/mask.rf", in);
-      mask.readRGrid(in, domain.unitCell(), true);
+      mask.readRGrid(in, true);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(mask.isSymmetric());
 
@@ -328,6 +331,7 @@ public:
       // Create empty mask object, check phiTot
       Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
+      mask.setReadUnitCell(domain.unitCell());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
       TEST_ASSERT(mask.isAllocatedBasis());
@@ -339,7 +343,7 @@ public:
       // Read unsymmetrized r-grid, check phiTot
       std::ifstream in;
       openInputFile("in/mask.rf", in);
-      mask.readRGrid(in, domain.unitCell());
+      mask.readRGrid(in);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
       TEST_ASSERT(eq(mask.phiTot(), 8.9461021637e-01));
@@ -347,7 +351,7 @@ public:
       // Read basis, check phiTot
       std::ifstream in2;
       openInputFile("in/mask.bf", in2);
-      mask.readBasis(in2, domain.unitCell());
+      mask.readBasis(in2);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(mask.isSymmetric());
       TEST_ASSERT(eq(mask.phiTot(), mask.basis()[0]));

@@ -1404,7 +1404,7 @@ public:
       system.mask().setFieldIo(system.domain().fieldIo());
       system.mask().allocateBasis(system.domain().basis().nBasis());
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
-      system.mask().readBasis("in/maskAndH/mask.bf", unitCell);
+      system.mask().readBasis("in/maskAndH/mask.bf");
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 
       system.h().setFieldIo(system.domain().fieldIo());

@@ -288,11 +288,13 @@ namespace Rpg {
       /**
       * Set parameters of the associated unit cell.
       *
-      * The lattice system type set in the unitCell input parameter must
-      * be equal to that set in the parameter file. 
+      * The lattice (i.e., lattice system type) set in the UnitCell<D>
+      * unitCell input parameter must agree with any lattice enum value
+      * that was set previously in the parameter file. 
       *
-      * If a space group has been declared but a basis has not yet been
-      * initialized, then the symmetry-adapted basis will be initialized.
+      * If a space group has been set but a basis has not yet been
+      * initialized, then this and the other setUnitCell member function
+      * will initialize a symmetry-adapted basis as a side effect.
       *
       * \param unitCell  new UnitCell<D> (with new parameters)
       */
@@ -301,23 +303,25 @@ namespace Rpg {
       /**
       * Set parameters of the associated unit cell.
       *
-      * The number of parameters must be consistent with that appropriate
-      * to the lattice system declared in the parameter file. 
+      * The lattice type must have been set before this function is 
+      * called. The logical size of the FSArray<double, 6> "parameters"
+      * array must match the expected number of parameters for the
+      * current lattice type.
       *
-      * If a space group has been declared but a basis has not yet been
-      * initialized, then the symmetry-adapted basis will be initialized.
+      * See documentation of setUnitCell(UnitCell<D> const &) regarding
+      * possible construction of a basis as a side effect.
       *
       * \param parameters  array of new unit cell parameters
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       /**
-      * Notify System members of updated unit cell parameters.
+      * Notify System members that unit cell parameters have been modified.
       * 
-      * In particular, this method calls mixture().clearUnitCellData(), 
+      * This function should be called whenever the unit cell parameters 
+      * are modified. It calls functions mixture().clearUnitCellData(), 
       * domain().wavelist().clearUnitCellData(), clearCFields(), and, 
-      * if an Environment exists in the System, environment().reset(). 
-      * It should be called whenever the lattice parameters change.
+      * if an Environment exists, environment().reset(). 
       */
       void clearUnitCellData();
 

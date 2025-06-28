@@ -108,8 +108,7 @@ public:
       createSystem(system2, "in/system2D_1");
       system2.mask().allocateBasis(1225);
       system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
-      UnitCell<2> tmpUnitCell;
-      system2.mask().readBasis("in/maskRef2.bf",tmpUnitCell);
+      system2.mask().readBasis("in/maskRef2.bf");
 
       FilmFieldGenExt<2> ext2(system2);
       createFilmFieldGenExt(ext2, "in/filmExt2Asym");
@@ -124,8 +123,7 @@ public:
       createSystem(system3, "in/system3D_3");
       system3.mask().allocateBasis(1920);
       system3.mask().allocateRGrid(system3.domain().mesh().dimensions());
-      UnitCell<3> tmpUnitCell2;
-      system3.mask().readBasis("in/maskRef3.bf",tmpUnitCell2);
+      system3.mask().readBasis("in/maskRef3.bf");
 
       FilmFieldGenExt<3> ext3(system3);
       createFilmFieldGenExt(ext3, "in/filmExt3Asym");
@@ -148,8 +146,7 @@ public:
       createSystem(system1, "in/system3D_3");
       system1.mask().allocateBasis(1920);
       system1.mask().allocateRGrid(system1.domain().mesh().dimensions());
-      UnitCell<3> tmpUnitCell1;
-      system1.mask().readBasis("in/maskRef3.bf",tmpUnitCell1);
+      system1.mask().readBasis("in/maskRef3.bf");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -220,8 +217,7 @@ public:
       system.setUnitCell(parameters);
       system.mask().allocateBasis(37);
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
-      UnitCell<1> tmpUnitCell;
-      system.mask().readBasis("in/maskRef1.bf",tmpUnitCell);
+      system.mask().readBasis("in/maskRef1.bf");
 
       // Set up external field generator
       FilmFieldGenExt<1> ext(system);

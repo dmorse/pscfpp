@@ -271,11 +271,10 @@ namespace Rpc {
       * that was set previously in the parameter file.
       *
       * If a space group has been set but a basis has not yet been
-      * constructed, then this and the other setUnitCell member functions
-      * will all construct a symmetry-adapted basis and then allocate
-      * memory for fields stored in a symmetry-adapted basis format.
+      * constructed, then this and the other setUnitCell member function
+      * will initialize a symmetry-adpated basis as a side effect.
       *
-      * \param unitCell  new UnitCell<D> (i.e., new parameters)
+      * \param unitCell  new UnitCell<D> (with new parameters)
       */
       void setUnitCell(UnitCell<D> const & unitCell);
 
@@ -295,12 +294,12 @@ namespace Rpc {
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       /**
-      * Notify System members of updated unit cell parameters.
+      * Notify System members that unit cell parameters have been modified.
       * 
-      * In particular, this method calls mixture().clearUnitCellData(), 
+      * This function should be called whenever the unit cell parameters 
+      * are modified. It calls functions mixture().clearUnitCellData(), 
       * domain().wavelist().clearUnitCellData(), clearCFields(), and, 
-      * if an Environment exists in the System, environment().reset(). 
-      * It should be called whenever the lattice parameters change.
+      * if an Environment exists, environment().reset(). 
       */
       void clearUnitCellData();
 

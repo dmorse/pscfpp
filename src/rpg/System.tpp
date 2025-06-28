@@ -95,9 +95,11 @@ namespace Rpg {
       w_.setReadUnitCell(domain_.unitCell());
       w_.setWriteUnitCell(domain_.unitCell());
       h_.setFieldIo(domain_.fieldIo());
-      w_.setReadUnitCell(tmpUnitCell);
-      w_.setWriteUnitCell(domain_.unitCell());
+      h_.setReadUnitCell(tmpUnitCell);
+      h_.setWriteUnitCell(domain_.unitCell());
       mask_.setFieldIo(domain_.fieldIo());
+      mask_.setReadUnitCell(tmpUnitCell);
+      mask_.setWriteUnitCell(domain_.unitCell());
 
       // Note: When w_ is read from a file  in basis or r-grid format,
       // the parameters of the system unit cell, domain_.unitCell(), are
@@ -745,8 +747,7 @@ namespace Rpg {
             if (!mask_.isAllocatedRGrid()) {
                mask_.allocateRGrid(domain_.mesh().dimensions());
             }
-            UnitCell<D> tmpUnitCell;
-            mask_.readBasis(filename, tmpUnitCell);
+            mask_.readBasis(filename);
          } else
          if (command == "READ_MASK_RGRID") {
             readEcho(in, filename);
@@ -757,8 +758,7 @@ namespace Rpg {
                UTIL_CHECK(domain_.basis().isInitialized());
                mask_.allocateBasis(domain_.basis().nBasis());
             }
-            UnitCell<D> tmpUnitCell;
-            mask_.readRGrid(filename, tmpUnitCell);
+            mask_.readRGrid(filename);
          } else
          if (command == "WRITE_MASK_BASIS") {
             readEcho(in, filename);

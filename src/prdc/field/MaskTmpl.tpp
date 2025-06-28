@@ -31,8 +31,10 @@ namespace Prdc {
       meshDimensions_(),
       meshSize_(0),
       nBasis_(0),
-      signalPtr_(nullptr),
+      readUnitCellPtr_(nullptr),
+      writeUnitCellPtr_(nullptr),
       fieldIoPtr_(nullptr),
+      signalPtr_(nullptr),
       isAllocatedBasis_(false),
       isAllocatedRGrid_(false),
       hasData_(false),
@@ -56,6 +58,27 @@ namespace Prdc {
    template <int D, class FieldIo, class RField>
    void MaskTmpl<D,FieldIo,RField>::setFieldIo(FieldIo const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
+
+   /*
+   * Set the unit cell that is modified by reading a field file.
+   */
+   template <int D, class FieldIo, class RField>
+   void MaskTmpl<D,FieldIo,RField>::setReadUnitCell(UnitCell<D>& cell)
+   {
+      UTIL_CHECK(!readUnitCellPtr_);
+      readUnitCellPtr_ = &cell;
+   }
+
+   /*
+   * Set the unit cell that whose parameters are written to a field header.
+   */
+   template <int D, class FieldIo, class RField>
+   void 
+   MaskTmpl<D,FieldIo,RField>::setWriteUnitCell(UnitCell<D> const & cell)
+   {
+      UTIL_CHECK(!writeUnitCellPtr_);
+      writeUnitCellPtr_ = &cell;
+   }
 
    /*
    * Allocate memory for a field in basis format.
@@ -173,13 +196,16 @@ namespace Prdc {
    * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::readBasis(std::istream& in, 
-                                              UnitCell<D>& unitCell)
+   void MaskTmpl<D,FieldIo,RField>::readBasis(std::istream& in)
    {
+      // Preconditions
+      UTIL_CHECK(readUnitCellPtr_);
+
       // Read field file header
       int nMonomerIn;
       bool isSymmetricIn;
-      fieldIo().readFieldHeader(in, nMonomerIn, unitCell, isSymmetricIn);
+      fieldIo().readFieldHeader(in, nMonomerIn, *readUnitCellPtr_, 
+                                isSymmetricIn);
       UTIL_CHECK(1 == nMonomerIn);
       UTIL_CHECK(isSymmetricIn);
       UTIL_CHECK(fieldIo().basis().isInitialized());
@@ -203,7 +229,8 @@ namespace Prdc {
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read field data in basis form (array basis_)
-      Prdc::readBasisData(in, basis_, unitCell, mesh, basis, nBasisIn);
+      Prdc::readBasisData(in, basis_, *readUnitCellPtr_, 
+                          mesh, basis, nBasisIn);
 
       // Convert r-grid form (array rgrid_)
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
@@ -219,12 +246,11 @@ namespace Prdc {
    * Read field components from a file basis format, by filename.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::readBasis(std::string filename, 
-                                              UnitCell<D>& unitCell)
+   void MaskTmpl<D,FieldIo,RField>::readBasis(std::string filename)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
-      readBasis(file, unitCell);
+      readBasis(file);
       file.close();
    }
 
@@ -238,9 +264,11 @@ namespace Prdc {
    */
    template <int D, class FieldIo, class RField>
    void MaskTmpl<D,FieldIo,RField>::readRGrid(std::istream& in, 
-                                              UnitCell<D>& unitCell, 
                                               bool isSymmetric)
    {
+      // Preconditions
+      UTIL_CHECK(readUnitCellPtr_);
+
       // If necessary, allocate rgrid_ fields
       if (!isAllocatedRGrid_) {
          Mesh<D> const & mesh = fieldIo().mesh();
@@ -250,7 +278,7 @@ namespace Prdc {
       UTIL_CHECK(isAllocatedRGrid_);
   
       // Read field file in r-grid format (array rgrid_)
-      fieldIo().readFieldRGrid(in, rgrid_, unitCell);
+      fieldIo().readFieldRGrid(in, rgrid_, *readUnitCellPtr_);
 
       // Optionally convert to basis form
       if (isSymmetric) {
@@ -274,12 +302,11 @@ namespace Prdc {
    */
    template <int D, class FieldIo, class RField>
    void MaskTmpl<D,FieldIo,RField>::readRGrid(std::string filename, 
-                                              UnitCell<D>& unitCell, 
                                               bool isSymmetric)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
-      readRGrid(file, unitCell, isSymmetric);
+      readRGrid(file, isSymmetric);
       file.close();
    }
 
