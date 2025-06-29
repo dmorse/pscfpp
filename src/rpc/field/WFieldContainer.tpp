@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFieldContainer.h"              // class header
-#include <prdc/field/WContainerReal.tpp>  // base class implementation
+#include "WFieldContainer.h"           // class header
+#include <prdc/field/WFieldsReal.tpp>  // base class implementation
 
 namespace Pscf {
 namespace Rpc {

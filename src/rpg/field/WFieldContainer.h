@@ -23,20 +23,20 @@ namespace Rpg {
    * A container of fields stored in both basis and r-grid format.
    *
    * Almost all of the implementation of this class is defined by the base
-   * class template Prdc::WContainerReal . See documentation of that
+   * class template Prdc::WFieldsReal . See documentation of that
    * template for information.
    *
    * \ingroup Rpg_Field_Module
    */
    template <int D>
    class WFieldContainer 
-     : public WContainerReal<D, Prdc::Cuda::RField<D>, Rpg::FieldIo<D> >
+     : public WFieldsReal<D, Prdc::Cuda::RField<D>, Rpg::FieldIo<D> >
    {
 
    public:
 
       /// Alias for base class template instantiation
-      typedef WContainerReal<D, RField<D>, FieldIo<D> > Base;
+      typedef WFieldsReal<D, RField<D>, FieldIo<D> > Base;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -100,9 +100,9 @@ namespace Rpg {
 #ifndef RPG_W_FIELD_CONTAINER_TPP
 namespace Prdc {
    // Suppress implicit instantiation
-   extern template class WContainerReal<1, RField<1>, Rpg::FieldIo<1> >;
-   extern template class WContainerReal<2, RField<2>, Rpg::FieldIo<2> >;
-   extern template class WContainerReal<3, RField<3>, Rpg::FieldIo<3> >;
+   extern template class WFieldsReal<1, RField<1>, Rpg::FieldIo<1> >;
+   extern template class WFieldsReal<2, RField<2>, Rpg::FieldIo<2> >;
+   extern template class WFieldsReal<3, RField<3>, Rpg::FieldIo<3> >;
 } // namespace Prdc
 #endif
 

@@ -1,5 +1,5 @@
-#ifndef PRDC_W_CONTAINER_REAL_TPP
-#define PRDC_W_CONTAINER_REAL_TPP
+#ifndef PRDC_W_FIELDS_REAL_TPP
+#define PRDC_W_FIELDS_REAL_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WContainerReal.h"
+#include "WFieldsReal.h"
 #include <prdc/field/fieldIoUtil.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
@@ -27,7 +27,7 @@ namespace Prdc {
    * Constructor.
    */
    template <int D, class RFT, class FIT>
-   WContainerReal<D,RFT,FIT>::WContainerReal()
+   WFieldsReal<D,RFT,FIT>::WFieldsReal()
     : basis_(),
       rgrid_(),
       meshDimensions_(),
@@ -50,7 +50,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D, class RFT, class FIT>
-   WContainerReal<D,RFT,FIT>::~WContainerReal()
+   WFieldsReal<D,RFT,FIT>::~WFieldsReal()
    {
       delete signalPtr_;
    }
@@ -60,14 +60,14 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::setFieldIo(FIT const & fieldIo)
+   WFieldsReal<D,RFT,FIT>::setFieldIo(FIT const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Set the stored value of nMonomer (this may only be called once).
    */
    template <int D, class RFT, class FIT>
-   void WContainerReal<D,RFT,FIT>::setNMonomer(int nMonomer)
+   void WFieldsReal<D,RFT,FIT>::setNMonomer(int nMonomer)
    {
       UTIL_CHECK(nMonomer_ == 0);
       UTIL_CHECK(nMonomer > 0);
@@ -78,7 +78,7 @@ namespace Prdc {
    * Set the unit cell that is modified by reading a field file.
    */
    template <int D, class RFT, class FIT>
-   void WContainerReal<D,RFT,FIT>::setReadUnitCell(UnitCell<D>& cell)
+   void WFieldsReal<D,RFT,FIT>::setReadUnitCell(UnitCell<D>& cell)
    {
       UTIL_CHECK(!readUnitCellPtr_);
       readUnitCellPtr_ = &cell;
@@ -88,7 +88,7 @@ namespace Prdc {
    * Set the unit cell that whose parameters are written to a field header.
    */
    template <int D, class RFT, class FIT>
-   void WContainerReal<D,RFT,FIT>::setWriteUnitCell(UnitCell<D> const & cell)
+   void WFieldsReal<D,RFT,FIT>::setWriteUnitCell(UnitCell<D> const & cell)
    {
       UTIL_CHECK(!writeUnitCellPtr_);
       writeUnitCellPtr_ = &cell;
@@ -99,7 +99,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::allocateRGrid(IntVec<D> const & meshDimensions)
+   WFieldsReal<D,RFT,FIT>::allocateRGrid(IntVec<D> const & meshDimensions)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(!hasData_);
@@ -126,7 +126,7 @@ namespace Prdc {
    * Allocate memory for fields in basis format.
    */
    template <int D, class RFT, class FIT>
-   void WContainerReal<D,RFT,FIT>::allocateBasis(int nBasis)
+   void WFieldsReal<D,RFT,FIT>::allocateBasis(int nBasis)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(nBasis > 0);
@@ -146,7 +146,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::allocate(int nMonomer,
+   WFieldsReal<D,RFT,FIT>::allocate(int nMonomer,
                                        int nBasis,
                                        IntVec<D> const & meshDimensions)
    {
@@ -162,7 +162,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::setBasis(DArray< DArray<double> > const & fields)
+   WFieldsReal<D,RFT,FIT>::setBasis(DArray< DArray<double> > const & fields)
    {
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
@@ -206,7 +206,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::setRGrid(DArray<RFT> const & fields,
+   WFieldsReal<D,RFT,FIT>::setRGrid(DArray<RFT> const & fields,
                                        bool isSymmetric)
    {
       // Allocate r-grid fields as needed
@@ -249,7 +249,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void 
-   WContainerReal<D,RFT,FIT>::readBasis(std::istream& in)
+   WFieldsReal<D,RFT,FIT>::readBasis(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -302,7 +302,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::readBasis(std::string filename)
+   WFieldsReal<D,RFT,FIT>::readBasis(std::string filename)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
@@ -323,7 +323,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::readRGrid(std::istream& in, 
+   WFieldsReal<D,RFT,FIT>::readRGrid(std::istream& in, 
                                         bool isSymmetric)
    {
       // Preconditions
@@ -361,7 +361,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::readRGrid(std::string filename,
+   WFieldsReal<D,RFT,FIT>::readRGrid(std::string filename,
                                         bool isSymmetric)
    {
       std::ifstream file;
@@ -374,7 +374,7 @@ namespace Prdc {
    * Symmetrize r-grid fields, convert to basis format.
    */
    template <int D, class RFT, class FIT>
-   void WContainerReal<D,RFT,FIT>::symmetrize()
+   void WFieldsReal<D,RFT,FIT>::symmetrize()
    {
       UTIL_CHECK(hasData_);
       fieldIo().convertRGridToBasis(rgrid_, basis_);
@@ -389,7 +389,7 @@ namespace Prdc {
    * Get the Signal<void> that is triggered by field modification.
    */
    template <int D, class RFT, class FIT>
-   Signal<void>& WContainerReal<D,RFT,FIT>::signal()
+   Signal<void>& WFieldsReal<D,RFT,FIT>::signal()
    {
       UTIL_CHECK(signalPtr_);
       return *signalPtr_;
@@ -404,8 +404,8 @@ namespace Prdc {
    */ 
    template <int D, class RFT, class FIT>
    void
-   WContainerReal<D,RFT,FIT>::assignRField(RFT & lhs, RFT const & rhs) const
-   {  UTIL_THROW("Unimplemented function WContainerReal::assignRField");
+   WFieldsReal<D,RFT,FIT>::assignRField(RFT & lhs, RFT const & rhs) const
+   {  UTIL_THROW("Unimplemented function WFieldsReal::assignRField");
 
 }
 
