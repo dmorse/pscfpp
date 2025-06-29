@@ -95,18 +95,19 @@ namespace Rpg {
       w_.setReadUnitCell(domain_.unitCell());
       w_.setWriteUnitCell(domain_.unitCell());
       h_.setFieldIo(domain_.fieldIo());
-      h_.setReadUnitCell(tmpUnitCell);
+      h_.setReadUnitCell(tmpUnitCell_);
       h_.setWriteUnitCell(domain_.unitCell());
       mask_.setFieldIo(domain_.fieldIo());
-      mask_.setReadUnitCell(tmpUnitCell);
+      mask_.setReadUnitCell(tmpUnitCell_);
       mask_.setWriteUnitCell(domain_.unitCell());
 
-      // Note: When w_ is read from a file  in basis or r-grid format,
-      // the parameters of the system unit cell, domain_.unitCell(), are
-      // set to those in the field file header. When imposed fields h_
-      // and mask_ are read from a file, however unit cell parameters
+      // Note the arguments of setReadUnitCell functions used above:
+      // When w_ is read from a file in basis or r-grid format, the
+      // parameters of the system unit cell, domain_.unitCell(), are
+      // reset to those in the field file header. When imposed fields h_
+      // and mask_ are read from a file, however, unit cell parameters
       // from the field file header are read into a mutable workspace
-      // object, tmpUnitCell_, and ignored.
+      // object, tmpUnitCell_, and ultimately discarded.
 
       // Create dynamically allocated objects owned by this System
       interactionPtr_ = new Interaction();
@@ -801,90 +802,6 @@ namespace Rpg {
          UTIL_THROW("Empty command file name");
       }
       readCommands(fileMaster_.commandFile());
-   }
-
-   // W Field Modifier Functions
-
-   /*
-   * Read w field in symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::readWBasis(std::string const & filename)
-   {
-      // Preconditions
-      UTIL_CHECK(domain_.hasGroup());
-      UTIL_CHECK(isAllocatedGrid_);
-
-      // Read w fields and set unit cell parameters
-      w_.readBasis(filename);
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-      UTIL_CHECK(isAllocatedBasis_);
-      UTIL_CHECK(!hasCFields_);
-      UTIL_CHECK(!hasFreeEnergy_);
-      UTIL_CHECK(!hasStress_);
-   }
-
-   /*
-   * Read w fields in real-space grid (r-grid) format.
-   */
-   template <int D>
-   void System<D>::readWRGrid(std::string const & filename)
-   {
-      // Precondition
-      UTIL_CHECK(isAllocatedGrid_);
-
-      // Read w fields and set unit cell parameters
-      w_.readRGrid(filename);
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-      UTIL_CHECK(!hasCFields_);
-      UTIL_CHECK(!hasFreeEnergy_);
-      UTIL_CHECK(!hasStress_);
-   }
-
-   /*
-   * Set new w field values in basis form.
-   */
-   template <int D>
-   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.hasGroup());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-
-      w_.setBasis(fields);
-
-      // Postconditions
-      UTIL_CHECK(!hasCFields_);
-      UTIL_CHECK(!hasFreeEnergy_);
-      UTIL_CHECK(!hasStress_);
-   }
-
-   /*
-   * Set new w field values, using r-grid fields as inputs.
-   */
-   template <int D>
-   void System<D>::setWRGrid(DArray< RField<D> > const & fields)
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-
-      w_.setRGrid(fields);
-
-      // Postconditions
-      UTIL_CHECK(!hasCFields_);
-      UTIL_CHECK(!hasFreeEnergy_);
-      UTIL_CHECK(!hasStress_);
    }
 
    // Unit Cell Modifiers
@@ -1768,36 +1685,6 @@ namespace Rpg {
    }
 
    /*
-   * Peek at field file header, initialize basis if needed.
-   */
-   template <int D>
-   void System<D>::readFieldHeader(std::string const & filename)
-   {
-      UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(mixture_.nMonomer() > 0);
-
-      // Open field file
-      std::ifstream file;
-      fileMaster_.openInputFile(filename, file);
-
-      // Read file header
-      int nMonomer;
-      UnitCell<D> tmpUnitCell;
-      bool isSymmetric;
-      domain_.fieldIo().readFieldHeader(file, nMonomer,
-                                        tmpUnitCell, isSymmetric);
-      file.close();
-      // Note: FieldIo<D>::readFieldHeader makes basis if needed
-
-      // Postconditions
-      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
-      if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(isAllocatedBasis_);
-      }
-   }
-
-   /*
    * Read a filename string and echo to log file (used in readCommands).
    */
    template <int D>
@@ -1822,28 +1709,6 @@ namespace Rpg {
       }
       Log::file() << " " << Dbl(value, 20) << std::endl;
    }
-
-   // Functions with no analogs in Rpc::System
-
-   /*
-   * Set new w field values, using unfoldeded array of r-grid fields.
-   */
-   template <int D>
-   void System<D>::setWRGrid(DeviceArray<cudaReal> & fields)
-   {
-      UTIL_CHECK(isAllocatedGrid_);
-      w_.setRGrid(fields);
-      UTIL_CHECK(!hasCFields_);
-      UTIL_CHECK(!hasFreeEnergy_);
-      UTIL_CHECK(!hasStress_);
-   }
-
-   /*
-   * Set new w field values, using array of r-grid fields as input.
-   */
-   template <int D>
-   void System<D>::symmetrizeWFields()
-   {  w_.symmetrize(); }
 
 } // namespace Rpg
 } // namespace Pscf

@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/WContainerReal.h>     // base class template
-#include <prdc/cpu/RField.h>               // template parameter
-#include <rpg/field/FieldIo.h>             // template parameter
+#include <prdc/field/WFieldsReal.h>     // base class template
+#include <prdc/cpu/RField.h>            // template parameter
+#include <rpg/field/FieldIo.h>          // template parameter
 
 namespace Pscf {
 namespace Rpg {

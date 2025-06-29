@@ -138,8 +138,7 @@ public:
       system1.mask().allocateBasis(1920);
       system1.mask().allocateRGrid(system1.domain().mesh().dimensions());
       system1.mask().setFieldIo(system1.domain().fieldIo());
-      UnitCell<3> tmpUnitCell1;
-      system1.mask().readBasis("in/maskRef3.bf", tmpUnitCell1);
+      system1.mask().readBasis("in/maskRef3.bf");
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
@@ -211,8 +210,7 @@ public:
       system.mask().allocateBasis(37);
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
       system.mask().setFieldIo(system.domain().fieldIo());
-      UnitCell<1> tmpUnitCell;
-      system.mask().readBasis("in/maskRef1.bf",tmpUnitCell);
+      system.mask().readBasis("in/maskRef1.bf");
 
       // Set up external field generator
       FilmFieldGenExt<1> ext(system);
@@ -289,8 +287,7 @@ public:
       system.mask().allocateBasis(561);
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
       system.mask().setFieldIo(system.domain().fieldIo());
-      UnitCell<2> tmpUnitCell;
-      system.mask().readBasis("in/maskRef2.bf",tmpUnitCell);
+      system.mask().readBasis("in/maskRef2.bf");
 
       // Set up external field generator
       FilmFieldGenExt<2> ext(system);
@@ -298,7 +295,7 @@ public:
       ext.generate();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
-      system.readWBasis("in/wIn2D.bf");
+      system.w().readBasis("in/wIn2D.bf");
       system.compute();
 
       // Call stress and check that the result is correct

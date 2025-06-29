@@ -174,114 +174,6 @@ namespace Rpg {
       void readCommands();
 
       ///@}
-      /// \name W Field (Chemical Potential Field) Modifiers
-      ///@{
-
-      /**
-      * Read chemical potential fields in symmetry-adapted basis format.
-      *
-      * This function opens and reads the file named by the "filename"
-      * string parameter, which must contain chemical potential fields
-      * in symmetry-adapted basis format. This function sets the system
-      * w fields equal to those given in this file, by copying the
-      * coefficients of the basis expansion and computing values on a
-      * real-space grid (r-grid format). System unit cell parameters
-      * are also set to values read from the field file header. Upon
-      * exit, both w().basis() and w().rgrid() are set, w().hasData()
-      * and w().isSymmetric() are true, while hasCFields(), hasStress(),
-      * and hasFreeEnergy() are false.
-      *
-      * If a space group has been set but a basis has not yet been
-      * constructed, then this and every other member function that reads
-      * unit cell parameters from file and/or sets values for unit cell
-      * parameters will construct a symmetry-adapted basis and allocate
-      * memory for fields stored in basis form. Member functions that
-      * may construct a basis as a side effect include this function,
-      * readWRGrid, and all of the overloaded setUnitCell functions.
-      *
-      * SCFT calculations that use an iterator that preserves space group
-      * symmetry must set an initial field using a function that creates
-      * fields in symmetry-adapted basis form, such as this function or
-      * setWBasis.
-      *
-      * \param filename  name of input w field file in basis format
-      */
-      void readWBasis(std::string const & filename);
-
-      /**
-      * Read chemical potential fields in real space grid (r-grid) format.
-      *
-      * This function opens and reads the file with the name given by the
-      * "filename" string, which must contain chemical potential fields
-      * in real space grid (r-grid) format. The function sets values for
-      * the system w fields in r-grid format. It does not attempt to set
-      * field values in symmetry-adapted basis format, because it cannot
-      * assume that the r-grid field exhibits the declared space group
-      * symmetry. Upon exit, w().rgrid() is set and w().hasData() is
-      * true, while w().isSymmetric(), hasCFields(), hasFreeEnergy(), and
-      * hasStress() are false. System unit cell parameters are set to 
-      * values read from the field file header.
-      *
-      * Chemical potential fields for field theoretic simulations are
-      * normally initialized using a function that sets the fields in
-      * r-grid format, such as this function or setWRGrid.
-      *
-      * \param filename  name of input w field file in r-grid format
-      */
-      void readWRGrid(std::string const & filename);
-
-      /**
-      * Set chemical potential fields in symmetry-adapted basis format.
-      *
-      * This function sets values for w fields in both symmetry-adapted
-      * and r-grid format by copying coefficient values provided in the
-      * "fields" container that is passed as an argument, and computing
-      * values on a real-space grid. Upon return, values of both
-      * w().basis() and w().rgrid() are set, while w().hasData() and
-      * w().isSymmetric() are true, and hasCFields(), hasFreeEnergy(),
-      * and hasStress() are false. System unit cell parameters are not 
-      * modified.
-      *
-      * \param fields  array of new w fields in basis format
-      */
-      void setWBasis(DArray< DArray<double> > const & fields);
-
-      /**
-      * Set chemical potential fields in real-space (r-grid) format.
-      *
-      * This function set values for w fields in r-grid format, but
-      * does not set components for symmetry-adapted basis format. Upon
-      * return, w().rgrid() is set and w().hasData() is true, while
-      * hasCFields(), hasFreeEnergy(), hasStress(), and w().isSymmetric() 
-      * are false. System unit cell parameters are not modified.
-      *
-      * \param fields  array of new w fields in r-grid form
-      */
-      void setWRGrid(DArray< RField<D> > const & fields);
-
-      /**
-      * Set new w fields, in unfolded real-space (r-grid) format.
-      *
-      * The function parameter "fields" is an unfolded array containing
-      * r-grid fields for all monomer types in a single array, with the
-      * field for monomer 0 first, followed by the field for monomer 1,
-      * etc. This function sets w().rgrid() but does not set w().basis().
-      * On exit, w().hasData() is true, while w().isSymmetric(),
-      * hasFreeEnergy(), hasStress(), and hasCFields() are all false.
-      *
-      * \param fields  unfolded array of new chemical potential fields
-      */
-      void setWRGrid(DeviceArray<cudaReal>& fields);
-
-      /**
-      * Symmetrize r-grid w fields, compute basis components.
-      *
-      * On exit, w().hasData() and w().isSymmetric() are true, while
-      * hasCFields() is false.
-      */
-      void symmetrizeWFields();
-
-      ///@}
       /// \name Unit Cell Modifiers
       ///@{
 
@@ -666,7 +558,12 @@ namespace Rpg {
       ///@{
 
       /**
-      * Get container of chemical potential fields (w fields).
+      * Get container of chemical potential (w) fields  by non-const reference.
+      */
+      WFieldContainer<D>& w();
+
+      /**
+      * Get container of chemical potential (w) fields by const reference.
       */
       WFieldContainer<D> const & w() const;
 
@@ -1020,16 +917,6 @@ namespace Rpg {
       void allocateFieldsBasis();
 
       /**
-      * Read a field file header, make the basis if not done previously.
-      *
-      * Used to peek at a file header to get initial unit cell parameters
-      * that can be used to initialize a basis.
-      *
-      * \param filename  name of field file
-      */
-      void readFieldHeader(std::string const & filename);
-
-      /**
       * Read a string and echo to log file.
       *
       * Used to read filenames in readCommands.
@@ -1134,17 +1021,23 @@ namespace Rpg {
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
 
-   // Get the container of w fields (const reference).
-   template <int D>
-   inline
-   WFieldContainer<D> const & System<D>::w() const
-   {  return w_; }
-
    // Get the container of c fields (const reference).
    template <int D>
    inline
    CFieldContainer<D> const & System<D>::c() const
    {  return c_; }
+
+   // Get the container of w fields (non-const reference).
+   template <int D>
+   inline
+   WFieldContainer<D>& System<D>::w() 
+   {  return w_; }
+
+   // Get the container of w fields (const reference).
+   template <int D>
+   inline
+   WFieldContainer<D> const & System<D>::w() const
+   {  return w_; }
 
    // Get the container of external fields (non-const reference).
    template <int D>

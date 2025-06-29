@@ -110,7 +110,7 @@ namespace Rpg {
       }
 
       // Set w-fields of parent System
-      system().setWRGrid(w_);
+      system().w().setRGrid(w_);
 
    }
 

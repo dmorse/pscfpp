@@ -46,7 +46,7 @@ public:
       openLogFile("out/testComputeFreeEnergyThread.log");
       System<1> system;
       initSystem(system, "in/thread/param_system_1D");
-      system.readWBasis("in/thread/omega.in");
+      system.w().readBasis("in/thread/omega.in");
       system.compute();
       system.computeFreeEnergy();
       double diff = fabs(1.92567500293 - system.fHelmholtz());
@@ -62,7 +62,7 @@ public:
       openLogFile("out/testComputelnqThread.log");
       System<1> system;
       initSystem(system, "in/thread/param_system_1D");
-      system.readWBasis("in/thread/omega.in");
+      system.w().readBasis("in/thread/omega.in");
       system.compute();
       Polymer<1> & polymer = system.mixture().polymer(0);
       double q; double lnq;

@@ -318,7 +318,7 @@ public:
       mask.generate();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
-      system.readWBasis("in/wIn2D.bf");
+      system.w().readBasis("in/wIn2D.bf");
       system.compute();
 
       // Call stress and check that the result is correct
@@ -357,7 +357,7 @@ public:
       mask.generate();
 
       // Read w field and solve MDEs, so system can calculate fHelmholtz
-      system.readWBasis("in/wIn1D_2.bf");
+      system.w().readBasis("in/wIn1D_2.bf");
       system.compute();
 
       // Call modifyStress with an arbitrary input stress value 

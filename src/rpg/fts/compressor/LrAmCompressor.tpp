@@ -253,7 +253,7 @@ namespace Rpg{
       }
       
       // Set system r grid
-      system().setWRGrid(wFieldTmp_);
+      system().w().setRGrid(wFieldTmp_);
    }
    
    template<int D>

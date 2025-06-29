@@ -51,7 +51,7 @@ public:
       openLogFile(outfilename);
       System<1> system; 
       initSystem(system, paramFilename);
-      system.readWRGrid(inFieldFilename);
+      system.w().readRGrid(inFieldFilename);
       
       int meshSize = system.domain().mesh().size();
       IntVec<1> const & dimensions = system.domain().mesh().dimensions();
@@ -92,7 +92,7 @@ public:
       for (int i = 0; i < nMonomer; ++i) {
          VecOp::addVV(w2[i], w[i], cosF);
       }
-      system.setWRGrid(w2);
+      system.w().setRGrid(w2);
       
       system.compute();
       
@@ -185,7 +185,7 @@ public:
       openLogFile("out/testIntraHomoThread.log");
       System<1> system; 
       initSystem(system, "in/param_system_1D_diblcok_thread");
-      system.readWRGrid("in/w_diblock_homogenous.rf");
+      system.w().readRGrid("in/w_diblock_homogenous.rf");
       
       IntVec<1> const & dimensions = system.domain().mesh().dimensions();
      
@@ -200,7 +200,7 @@ public:
       // The intracorrelation function of conformational homo
       System<1> systemHomo; 
       initSystem(systemHomo, "in/param_system_1D_homo_thread");
-      systemHomo.readWRGrid("in/w_homo_homogenous.rf");
+      systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
       RField<1> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
       IntraCorrelation<1> intraHomo(systemHomo);
@@ -220,7 +220,7 @@ public:
       openLogFile("out/testIntraHomoBead.log");
       System<1> system; 
       initSystem(system, "in/param_system_1D_diblcok_bead");
-      system.readWRGrid("in/w_diblock_homogenous.rf");
+      system.w().readRGrid("in/w_diblock_homogenous.rf");
       
       IntVec<1> const & dimensions = system.domain().mesh().dimensions();
      
@@ -235,7 +235,7 @@ public:
       // The intracorrelation function of conformational homo
       System<1> systemHomo; 
       initSystem(systemHomo, "in/param_system_1D_homo_bead");
-      systemHomo.readWRGrid("in/w_homo_homogenous.rf");
+      systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
       RField<1> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
       IntraCorrelation<1> intraHomo(systemHomo);

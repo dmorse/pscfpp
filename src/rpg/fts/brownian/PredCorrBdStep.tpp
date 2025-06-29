@@ -153,7 +153,7 @@ namespace Rpg {
       }
 
       // Set modified fields at predicted state wp_
-      system().setWRGrid(wp_);
+      system().w().setRGrid(wp_);
       
       // Enforce incompressibility (also solves MDE repeatedly)
       bool isConverged = false;
@@ -197,7 +197,7 @@ namespace Rpg {
          }
          
          // Set fields at final point
-         system().setWRGrid(wf_);
+         system().w().setRGrid(wf_);
          
          // Enforce incompressibility for final point
          int compress2 = simulator().compressor().compress();

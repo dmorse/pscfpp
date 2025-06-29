@@ -378,8 +378,8 @@ namespace Rpg {
          }
       }
 
-      system().setWRGrid(newGuess);
-      system().symmetrizeWFields();
+      system().w().setRGrid(newGuess);
+      system().w().symmetrize();
 
       // If flexible unit cell, update cell parameters 
       if (isFlexible_) {

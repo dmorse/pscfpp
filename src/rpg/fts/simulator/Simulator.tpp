@@ -632,7 +632,7 @@ namespace Rpg {
       int meshSize = system().domain().mesh().size();
 
       // Restore fields
-      system().setWRGrid(state_.w);
+      system().w().setRGrid(state_.w);
 
       // Restore Hamiltonian and components
       if (state_.needsHamiltonian){

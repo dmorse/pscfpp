@@ -401,7 +401,7 @@ namespace Rpg {
             }
          }
       }
-      system().setWBasis(wField);
+      system().w().setBasis(wField);
 
       if (isFlexible_) {
          const int nParam = system().domain().unitCell().nParameter();

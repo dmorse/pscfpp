@@ -34,7 +34,7 @@ public:
       setupSystem<1>(system,"in/diblock/lam/param.rigid_grid");
 
       // Read w fields
-      system.readWBasis("in/diblock/lam/omega.ref");
+      system.w().readBasis("in/diblock/lam/omega.ref");
 
       // Get reference field in basis format
       DArray< DArray<double> > b_wFields_check;
@@ -69,14 +69,14 @@ public:
       System<1> system;
       setupSystem<1>(system,"in/diblock/lam/param.flex_grid"); 
 
-      system.readWBasis("in/diblock/lam/omega.ref");
+      system.w().readBasis("in/diblock/lam/omega.ref");
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
-      system.readWBasis("in/diblock/lam/omega.in");
+      system.w().readBasis("in/diblock/lam/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -113,7 +113,7 @@ public:
       setupSystem<1>(system,"in/solution/lam/param.grid"); 
 
       // Get reference field
-      system.readWBasis("in/solution/lam/w.bf");
+      system.w().readBasis("in/solution/lam/w.bf");
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
@@ -154,12 +154,12 @@ public:
       setupSystem<1>(system,"in/blend/lam/param.closed_grid"); 
 
       // Get reference field
-      system.readWBasis("in/blend/lam/w.ref");
+      system.w().readBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
-      system.readWBasis("in/blend/lam/w.bf");
+      system.w().readBasis("in/blend/lam/w.bf");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -195,12 +195,12 @@ public:
       setupSystem<1>(system,"in/solution/lam_open/param.grid"); 
 
       // Get reference field
-      system.readWBasis("in/solution/lam_open/w.ref");
+      system.w().readBasis("in/solution/lam_open/w.ref");
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
-      system.readWBasis("in/solution/lam_open/w.bf");
+      system.w().readBasis("in/solution/lam_open/w.bf");
 
       int error = system.iterate();
       if (error) {
@@ -239,12 +239,12 @@ public:
       setupSystem<1>(system,"in/blend/lam/param.open_grid"); 
 
       // Get reference field
-      system.readWBasis("in/blend/lam/w.ref");
+      system.w().readBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
-      system.readWBasis("in/blend/lam/w.bf");
+      system.w().readBasis("in/blend/lam/w.bf");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -281,7 +281,7 @@ public:
       setupSystem<2>(system,"in/diblock/hex/param.rigid_grid"); 
 
       // Read reference solution
-      system.readWBasis("in/diblock/hex/omega.ref");
+      system.w().readBasis("in/diblock/hex/omega.ref");
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
@@ -290,7 +290,7 @@ public:
       // Read initial guess, iterate, output solution
       // RPC tests start from the reference solution, 
       // rather than a nearby solution, so I guess do that here too?
-      // system.readWBasis("in/diblock/hex/omega.in");
+      // system.w().readBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -327,13 +327,13 @@ public:
       setupSystem<2>(system,"in/diblock/hex/param.flex_grid"); 
 
       // Read reference solution (produced by Fortran code)
-      system.readWBasis("in/diblock/hex/omega.ref");
+      system.w().readBasis("in/diblock/hex/omega.ref");
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
-      system.readWBasis("in/diblock/hex/omega.in");
+      system.w().readBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -370,13 +370,13 @@ public:
       System<3> system;
       setupSystem<3>(system,"in/diblock/bcc/param.rigid_grid"); 
 
-      system.readWBasis("in/diblock/bcc/omega.ref");
+      system.w().readBasis("in/diblock/bcc/omega.ref");
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
-      system.readWBasis("in/diblock/bcc/omega.in");
+      system.w().readBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -413,13 +413,13 @@ public:
       System<3> system;
       setupSystem<3>(system,"in/diblock/bcc/param.flex_grid"); 
 
-      system.readWBasis("in/diblock/bcc/omega.ref");
+      system.w().readBasis("in/diblock/bcc/omega.ref");
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
-      system.readWBasis("in/diblock/bcc/omega.in");
+      system.w().readBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -463,27 +463,27 @@ public:
       in.close();
 
       // Read initial guess
-      system.readWBasis("in/maskAndH/w.bf");
+      system.w().readBasis("in/maskAndH/w.bf");
 
       // Read in the mask and external fields from file
-      UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      unitCell = system.domain().unitCell();
       system.mask().setFieldIo(system.domain().fieldIo());
       system.mask().allocateBasis(system.domain().basis().nBasis()); 
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
-      system.mask().readBasis("in/maskAndH/mask.bf", unitCell);
+      system.mask().readBasis("in/maskAndH/mask.bf");
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 
       system.h().setFieldIo(system.domain().fieldIo());
       system.h().allocateBasis(system.domain().basis().nBasis());
       system.h().allocateRGrid(system.domain().mesh().dimensions());
-      system.h().readBasis("in/maskAndH/h.bf", unitCell);
+      system.h().readBasis("in/maskAndH/h.bf");
 
       // Run the solve function
       system.iterate();
 
       // Check converged field is correct by comparing to files in in/maskAndH
       DArray< DArray<double> > wFieldsCheck; // Copy of reference field
+      UnitCell<1> unitCell;
+      unitCell = system.domain().unitCell();
       system.domain().fieldIo().readFieldsBasis("in/maskAndH/w.ref", 
                                                 wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields

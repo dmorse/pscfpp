@@ -332,7 +332,7 @@ public:
       }
 
       // Read initial field guess and sweep
-      system.readWBasis("in/" + paramname + "/w.bf");
+      system.w().readBasis("in/" + paramname + "/w.bf");
       system.sweep();
 
       // Check if sweep had to backtrack. It shouldn't need to. 

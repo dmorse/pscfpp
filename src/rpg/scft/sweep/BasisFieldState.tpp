@@ -124,7 +124,7 @@ namespace Rpg
    template <int D>
    void BasisFieldState<D>::setSystemState(bool newCellParams)
    {
-      system().setWBasis(fields());
+      system().w().setBasis(fields());
 
       if (newCellParams) {
          system().setUnitCell(unitCell());

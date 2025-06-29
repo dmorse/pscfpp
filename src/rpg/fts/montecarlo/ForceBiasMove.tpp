@@ -167,7 +167,7 @@ namespace Rpg {
       }
 
       // Set modified fields in parent system
-      system().setWRGrid(w_);
+      system().w().setRGrid(w_);
       simulator().clearData();
 
       attemptMoveTimer_.stop();

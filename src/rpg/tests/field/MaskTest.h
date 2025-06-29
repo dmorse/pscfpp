@@ -231,7 +231,8 @@ public:
 
       std::ifstream in;
       openInputFile("in/mask.bf", in);
-      mask.readBasis(in, domain.unitCell());
+      mask.setReadUnitCell(domain.unitCell());
+      mask.readBasis(in);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(mask.isSymmetric());
 
@@ -265,6 +266,7 @@ public:
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
+      mask.setReadUnitCell(domain.unitCell());
       TEST_ASSERT(mask.isAllocatedBasis());
       TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
@@ -272,7 +274,7 @@ public:
 
       std::ifstream in;
       openInputFile("in/mask.rf", in);
-      mask.readRGrid(in, domain.unitCell());
+      mask.readRGrid(in);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
@@ -307,7 +309,8 @@ public:
 
       std::ifstream in;
       openInputFile("in/mask.rf", in);
-      mask.readRGrid(in, domain.unitCell(), true);
+      mask.setReadUnitCell(domain.unitCell());
+      mask.readRGrid(in, true);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(mask.isSymmetric());
 
@@ -331,6 +334,7 @@ public:
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
+      mask.setReadUnitCell(domain.unitCell());
       TEST_ASSERT(mask.isAllocatedBasis());
       TEST_ASSERT(mask.isAllocatedRGrid());
       TEST_ASSERT(!mask.hasData());
@@ -340,7 +344,7 @@ public:
       // Read unsymmetrized r-grid, check phiTot
       std::ifstream in;
       openInputFile("in/mask.rf", in);
-      mask.readRGrid(in, domain.unitCell());
+      mask.readRGrid(in);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
       TEST_ASSERT(eq(mask.phiTot(), 8.9461021637e-01));
@@ -348,7 +352,7 @@ public:
       // Read basis, check phiTot
       std::ifstream in2;
       openInputFile("in/mask.bf", in2);
-      mask.readBasis(in2, domain.unitCell());
+      mask.readBasis(in2);
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(mask.isSymmetric());
       TEST_ASSERT(eq(mask.phiTot(), mask.basis()[0]));

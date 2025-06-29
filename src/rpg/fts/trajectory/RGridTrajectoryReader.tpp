@@ -115,7 +115,7 @@ namespace Rpg
       fieldIo.readFieldsRGridData(inputfile_, wField_, nMonomer);
 
       // Update system real-space grid field 
-      system().setWRGrid(wField_);
+      system().w().setRGrid(wField_);
 
       return true;
    }

@@ -48,7 +48,7 @@ public:
       setupSystem<1>(system,"in/diblock/lam/param.flex"); 
 
       // Read w-fields (reference solution, solved by Fortran PSCF)
-      system.readWBasis("in/diblock/lam/omega.in");
+      system.w().readBasis("in/diblock/lam/omega.in");
       TEST_ASSERT(system.w().basis().isAllocated());
       TEST_ASSERT(system.domain().unitCell().isInitialized());
 
@@ -62,7 +62,7 @@ public:
                                   "out/testConversion1D_lam_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion1D_lam_w.rf",
                                   "out/testConversion1D_lam_w.bf");
-      system.readWBasis("out/testConversion1D_lam_w.bf");
+      system.w().readBasis("out/testConversion1D_lam_w.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -87,7 +87,7 @@ public:
       setupSystem<2>(system,"in/diblock/hex/param.flex"); 
 
       // Read w fields
-      system.readWBasis("in/diblock/hex/omega.in");
+      system.w().readBasis("in/diblock/hex/omega.in");
       TEST_ASSERT(system.w().basis().isAllocated());
       TEST_ASSERT(system.domain().unitCell().isInitialized());
 
@@ -102,7 +102,7 @@ public:
 
       fieldIo.convertRGridToBasis("out/testConversion2D_hex_w.rf",
                                   "out/testConversion2D_hex_w.bf");
-      system.readWBasis("out/testConversion2D_hex_w.bf");
+      system.w().readBasis("out/testConversion2D_hex_w.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -127,7 +127,7 @@ public:
       setupSystem<3>(system,"in/diblock/bcc/param.flex"); 
 
       // Read w fields in system.wFields
-      system.readWBasis("in/diblock/bcc/omega.in");
+      system.w().readBasis("in/diblock/bcc/omega.in");
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
@@ -139,7 +139,7 @@ public:
                                   "out/testConversion3D_bcc_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion3D_bcc_w.rf",
                                   "out/testConversion3D_bcc_w.bf");
-      system.readWBasis("out/testConversion3D_bcc_w.bf");
+      system.w().readBasis("out/testConversion3D_bcc_w.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -170,7 +170,7 @@ public:
 *      system.readParam(in);
 *      in.close();
 *
-*      system.readWBasis("in/diblock/bcc/omega.in");
+*      system.w().readBasis("in/diblock/bcc/omega.in");
 *      bool hasSymmetry = system.fieldIo().hasSymmetry(system.w().rgrid(0));
 *      TEST_ASSERT(hasSymmetry);
 *

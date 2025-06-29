@@ -149,7 +149,7 @@ public:
       in.close();
 
       // Read w fields
-      system.readWBasis(wFileName);
+      system.w().readBasis(wFileName);
    }
 
    /*
@@ -328,14 +328,14 @@ public:
       System<1> system;
       setupSystem<1>(system,"in/diblock/lam/param_noBatched.flex");
 
-      system.readWBasis("in/diblock/lam/omega.ref");
+      system.w().readBasis("in/diblock/lam/omega.ref");
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
-      system.readWBasis("in/diblock/lam/omega.in");
+      system.w().readBasis("in/diblock/lam/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -566,12 +566,12 @@ public:
       setupSystem<1>(system,"in/blend/lam/param.closed");
 
       // Make reference copy of w fields
-      system.readWBasis("in/blend/lam/w.ref");
+      system.w().readBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
-      system.readWBasis("in/blend/lam/w.bf");
+      system.w().readBasis("in/blend/lam/w.bf");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -884,13 +884,13 @@ public:
       setupSystem<2>(system,"in/diblock/hex/param_noBatched.flex");
 
       // Read reference solution (produced by Fortran code)
-      system.readWBasis("in/diblock/hex/omega.ref");
+      system.w().readBasis("in/diblock/hex/omega.ref");
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
-      system.readWBasis("in/diblock/hex/omega.in");
+      system.w().readBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -988,13 +988,13 @@ public:
       System<3> system;
       setupSystem<3>(system,"in/diblock/bcc/param_noBatched.flex");
 
-      system.readWBasis("in/diblock/bcc/omega.ref");
+      system.w().readBasis("in/diblock/bcc/omega.ref");
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
       b_wFields_check = system.w().basis();
 
-      system.readWBasis("in/diblock/bcc/omega.in");
+      system.w().readBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -1179,7 +1179,7 @@ public:
       in.close();
 
       // Read initial guess
-      system.readWBasis("in/maskAndH/w.bf");
+      system.w().readBasis("in/maskAndH/w.bf");
 
       // Read in the mask and external fields from file
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
@@ -1187,13 +1187,13 @@ public:
       system.mask().setFieldIo(system.domain().fieldIo());
       system.mask().allocateBasis(system.domain().basis().nBasis());
       system.mask().allocateRGrid(system.domain().mesh().dimensions());
-      system.mask().readBasis("in/maskAndH/mask.bf", unitCell);
+      system.mask().readBasis("in/maskAndH/mask.bf");
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
 
       system.h().setFieldIo(system.domain().fieldIo());
       system.h().allocateBasis(system.domain().basis().nBasis());
       system.h().allocateRGrid(system.domain().mesh().dimensions());
-      system.h().readBasis("in/maskAndH/h.bf", unitCell);
+      system.h().readBasis("in/maskAndH/h.bf");
 
       // Run the solve function
       system.iterate();
