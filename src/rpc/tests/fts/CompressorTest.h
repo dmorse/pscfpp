@@ -72,7 +72,7 @@ public:
             w2[i][k] =  w[i][k]+ r;
          }
       }
-      system.setWRGrid(w2);
+      system.w().setRGrid(w2);
    }
    
    template <int D>
@@ -98,7 +98,7 @@ public:
             w2[i][k] =  w[i][k]+ r;
          }
       }
-      system.setWRGrid(w2);
+      system.w().setRGrid(w2);
    }
    
    template <typename Compressor>
@@ -123,7 +123,7 @@ public:
       
       initSystem(system, "in/param_system_disordered");
       initCompressor(compressor, infilename);
-      system.readWRGrid("in/w_dis.rf");
+      system.w().readRGrid("in/w_dis.rf");
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<3> const & dimensions = system.domain().mesh().dimensions();
@@ -154,7 +154,7 @@ public:
       TEST_ASSERT(sqrt(totalError)/sqrt(meshSize) < 1.0E-8);
       
       // Reset back to input chemical potential fields
-      system.setWRGrid(w0);
+      system.w().setRGrid(w0);
       
       // Apply pressure field
       addPressureField(system);

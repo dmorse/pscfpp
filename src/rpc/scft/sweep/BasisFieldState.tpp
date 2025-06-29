@@ -122,7 +122,7 @@ namespace Rpc
    template <int D>
    void BasisFieldState<D>::setSystemState(bool isFlexible)
    {
-      system().setWBasis(fields());
+      system().w().setBasis(fields());
       if (isFlexible) {
          system().setUnitCell(unitCell());
       }

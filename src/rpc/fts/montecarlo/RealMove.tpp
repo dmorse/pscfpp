@@ -105,7 +105,7 @@ namespace Rpc {
       }
 
       // Update w-fields in parent system
-      system().setWRGrid(w_);
+      system().w().setRGrid(w_);
    }
 
    /*

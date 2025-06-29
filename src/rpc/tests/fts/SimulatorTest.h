@@ -105,7 +105,7 @@ public:
       simulator.allocate();
       simulator.analyzeChi();
 
-      system.readWRGrid("in/w_gyr.rf");
+      system.w().readRGrid("in/w_gyr.rf");
       DArray< RField<3> > const & w = system.w().rgrid();
 
       system.compute();
@@ -208,7 +208,7 @@ public:
       simulator.allocate();
       simulator.analyzeChi();
       
-      system.readWRGrid("in/w_dis.rf");
+      system.w().readRGrid("in/w_dis.rf");
       system.compute();
       simulator.computeWc();
       simulator.computeCc();
@@ -246,7 +246,7 @@ public:
       simulator.allocate();
       simulator.analyzeChi();
       
-      system.readWRGrid("in/w_dis.rf");
+      system.w().readRGrid("in/w_dis.rf");
       system.compute();
       simulator.computeWc();
       simulator.computeCc();

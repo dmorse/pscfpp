@@ -237,7 +237,7 @@ namespace Rpc{
             wFieldTmp_[i][k] = w0_[i][k] + newGuess[k];
          }
       }
-      system().setWRGrid(wFieldTmp_);
+      system().w().setRGrid(wFieldTmp_);
    }
 
    template<int D>

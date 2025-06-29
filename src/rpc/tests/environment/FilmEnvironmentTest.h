@@ -92,7 +92,7 @@ public:
       createSystem(system, "in/system1DEnv");
 
       // Read initial guess
-      system.readWBasis("in/wIn1D.bf");
+      system.w().readBasis("in/wIn1D.bf");
 
       // Iterate to a solution
       system.iterate();
@@ -145,7 +145,7 @@ public:
       createSystem(system, "in/system2DEnv");
 
       // Read initial guess
-      system.readWBasis("in/wIn2D.bf");
+      system.w().readBasis("in/wIn2D.bf");
 
       // Solve
       system.iterate();
@@ -198,7 +198,7 @@ public:
       createSystem(system, "in/system1DEnv");
 
       // Read initial guess
-      system.readWBasis("out/w1D.bf");
+      system.w().readBasis("out/w1D.bf");
 
       // Run the sweep function
       system.sweep();
@@ -242,7 +242,7 @@ public:
       createSystem(system, "in/system1DEnvFBulk");
 
       // Read initial guess
-      system.readWBasis("in/wIn1D_3.bf");
+      system.w().readBasis("in/wIn1D_3.bf");
 
       // Iterate to a solution
       system.iterate();

@@ -340,7 +340,7 @@ namespace Rpc{
       }
 
       // Update w fields in the system WContainer
-      system().setWRGrid(wFieldTmp_);
+      system().w().setRGrid(wFieldTmp_);
    }
 
    template<int D>

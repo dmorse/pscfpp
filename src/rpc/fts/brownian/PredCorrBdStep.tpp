@@ -149,7 +149,7 @@ namespace Rpc {
       }
 
       // Set modified system fields at predicted state wp_
-      system().setWRGrid(wp_);
+      system().w().setRGrid(wp_);
 
       // Set function return value to indicate failure by default
       bool isConverged = false;
@@ -201,7 +201,7 @@ namespace Rpc {
          }
 
          // Set system fields after predictor step
-         system().setWRGrid(wf_);
+         system().w().setRGrid(wf_);
 
          // Apply compressor to final state
          int compress2 = simulator().compressor().compress();

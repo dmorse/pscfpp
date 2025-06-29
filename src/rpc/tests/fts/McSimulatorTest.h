@@ -60,7 +60,7 @@ public:
       McSimulator<3> simulator(system);
       initSimulator(simulator, "in/param_McSimulator");
       
-      system.readWRGrid("in/w_dis.rf");
+      system.w().readRGrid("in/w_dis.rf");
       simulator.compressor().compress();
       simulator.simulate(50);
    }
@@ -76,7 +76,7 @@ public:
       McSimulator<3> simulator(system);
       initSimulator(simulator, "in/param_triblock_McSimulator");
       
-      system.readWRGrid("in/w_triblock.rf");
+      system.w().readRGrid("in/w_triblock.rf");
       simulator.compressor().compress();
       simulator.simulate(50);
    }

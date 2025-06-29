@@ -158,7 +158,7 @@ public:
       in.close();
 
       // Read w fields
-      system.readWBasis(wFileName);
+      system.w().readBasis(wFileName);
    }
 
    /*
@@ -294,7 +294,7 @@ public:
                                   "out/testConversion1D_lam_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion1D_lam_w.rf",
                                   "out/testConversion1D_lam_w.bf");
-      system.readWBasis("out/testConversion1D_lam_w.bf");
+      system.w().readBasis("out/testConversion1D_lam_w.bf");
 
       // Compare result to original
       BFieldComparison comparison1;
@@ -310,7 +310,7 @@ public:
                                   "out/testConversion1D_lam_w.kf");
       fieldIo.convertKGridToBasis("out/testConversion1D_lam_w.kf",
                                   "out/testConversion1D_lam_w_2.bf");
-      system.readWBasis("out/testConversion1D_lam_w_2.bf");
+      system.w().readBasis("out/testConversion1D_lam_w_2.bf");
 
       // Compare result to original
       BFieldComparison comparison2;
@@ -322,7 +322,7 @@ public:
       TEST_ASSERT(comparison2.maxDiff() < 1.0E-10);
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
-      system.readWRGrid("out/testConversion1D_lam_w.rf");
+      system.w().readRGrid("out/testConversion1D_lam_w.rf");
       DArray< RField<1> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
@@ -330,7 +330,7 @@ public:
                                   "out/testConversion1D_lam_w_2.kf");
       fieldIo.convertKGridToRGrid("out/testConversion1D_lam_w_2.kf",
                                   "out/testConversion1D_lam_w_2.rf");
-      system.readWRGrid("out/testConversion1D_lam_w_2.rf");
+      system.w().readRGrid("out/testConversion1D_lam_w_2.rf");
 
       // Compare result to original
       RFieldComparison<1> comparison3;
@@ -367,7 +367,7 @@ public:
 
       fieldIo.convertRGridToBasis("out/testConversion2D_hex_w.rf",
                           "out/testConversion2D_hex_w.bf");
-      system.readWBasis("out/testConversion2D_hex_w.bf");
+      system.w().readBasis("out/testConversion2D_hex_w.bf");
 
       // Check symmetry of rgrid representation
       bool hasSymmetry;
@@ -388,7 +388,7 @@ public:
                           "out/testConversion2D_hex_w.kf");
       fieldIo.convertKGridToBasis("out/testConversion2D_hex_w.kf",
                           "out/testConversion2D_hex_w_2.bf");
-      system.readWBasis("out/testConversion2D_hex_w_2.bf");
+      system.w().readBasis("out/testConversion2D_hex_w_2.bf");
 
       // Compare result to original
       BFieldComparison comparison2;
@@ -400,7 +400,7 @@ public:
       TEST_ASSERT(comparison2.maxDiff() < 1.0E-10);
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
-      system.readWRGrid("out/testConversion2D_hex_w.rf");
+      system.w().readRGrid("out/testConversion2D_hex_w.rf");
       DArray< RField<2> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
@@ -408,7 +408,7 @@ public:
                           "out/testConversion2D_hex_w_2.kf");
       fieldIo.convertKGridToRGrid("out/testConversion2D_hex_w_2.kf",
                           "out/testConversion2D_hex_w_2.rf");
-      system.readWRGrid("out/testConversion2D_hex_w_2.rf");
+      system.w().readRGrid("out/testConversion2D_hex_w_2.rf");
 
       // Compare result to original
       RFieldComparison<2> comparison3;
@@ -437,7 +437,7 @@ public:
       in.close();
 
       // Read w fields in system.wFields
-      system.readWBasis("in/diblock/bcc/omega.in");
+      system.w().readBasis("in/diblock/bcc/omega.in");
 
       // Store components of field as input
       DArray< DArray<double> > wFields_check;
@@ -449,7 +449,7 @@ public:
                           "out/testConversion3D_bcc_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion3D_bcc_w.rf",
                           "out/testConversion3D_bcc_w.bf");
-      system.readWBasis("out/testConversion3D_bcc_w.bf");
+      system.w().readBasis("out/testConversion3D_bcc_w.bf");
 
       // Check symmetry of rgrid representation
       bool hasSymmetry 
@@ -470,7 +470,7 @@ public:
                           "out/testConversion3D_bcc_w.kf");
       fieldIo.convertKGridToBasis("out/testConversion3D_bcc_w.kf",
                           "out/testConversion3D_bcc_w_2.bf");
-      system.readWBasis("out/testConversion3D_bcc_w_2.bf");
+      system.w().readBasis("out/testConversion3D_bcc_w_2.bf");
 
       // Compare result to original
       BFieldComparison comparison2;
@@ -482,7 +482,7 @@ public:
       TEST_ASSERT(comparison2.maxDiff() < 1.0E-10);
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
-      system.readWRGrid("out/testConversion3D_bcc_w.rf");
+      system.w().readRGrid("out/testConversion3D_bcc_w.rf");
       DArray< RField<3> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
@@ -490,7 +490,7 @@ public:
                           "out/testConversion3D_bcc_w_2.kf");
       fieldIo.convertKGridToRGrid("out/testConversion3D_bcc_w_2.kf",
                           "out/testConversion3D_bcc_w_2.rf");
-      system.readWRGrid("out/testConversion3D_bcc_w_2.rf");
+      system.w().readRGrid("out/testConversion3D_bcc_w_2.rf");
 
       // Compare result to original
       RFieldComparison<3> comparison3;
@@ -518,7 +518,7 @@ public:
       system.readParam(in);
       in.close();
 
-      system.readWBasis("in/diblock/bcc/omega.in");
+      system.w().readBasis("in/diblock/bcc/omega.in");
       bool hasSymmetry
             = system.domain().fieldIo().hasSymmetry(system.w().rgrid(0));
       TEST_ASSERT(hasSymmetry);
@@ -911,7 +911,7 @@ public:
       for (int i = 0; i < systemShift.mixture().nMonomer(); ++i) {
          wFields_[i][0] += shift;
       }
-      systemShift.setWBasis(wFields_);
+      systemShift.w().setBasis(wFields_);
 
       // Shift chemical potentials in SystemShift
       double L, newMu;

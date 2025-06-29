@@ -46,7 +46,7 @@ public:
       openLogFile("out/testComputeFreeEnergyBead.log");
       System<1> system;
       initSystem(system, "in/bead/param_system_1D_N100");
-      system.readWBasis("in/bead/omegaN100.in");
+      system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
       system.computeFreeEnergy();
       double diff = fabs(1.92537673380e-02 - system.fHelmholtz());
@@ -62,7 +62,7 @@ public:
       openLogFile("out/testComputelnqBead.log");
       System<1> system;
       initSystem(system, "in/bead/param_system_1D_N100");
-      system.readWBasis("in/bead/omegaN100.in");
+      system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
       Polymer<1> & polymer = system.mixture().polymer(0);
       double q; double lnq;

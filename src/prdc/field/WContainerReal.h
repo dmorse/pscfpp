@@ -155,21 +155,11 @@ namespace Prdc {
       void allocateRGrid(IntVec<D> const & dimensions);
 
       /**
-      * De-allocate fields in rgrid format.
-      */
-      void deallocateRGrid();
-
-      /**
       * Allocate or re-allocate memory for fields in basis format.
       *
       * \param nBasis  number of basis functions
       */
       void allocateBasis(int nBasis);
-
-      /**
-      * De-allocate fields in basis format.
-      */
-      void deallocateBasis();
 
       /**
       * Allocate memory for all fields.
@@ -612,7 +602,7 @@ namespace Prdc {
    int WContainerReal<D,RFT,FIT>::nMonomer() const
    {  return nMonomer_; }
 
-   // Associated FIT object (const reference).
+   // Associated FieldIo object (const reference).
    template <int D, class RFT, class FIT>
    inline 
    FIT const & WContainerReal<D,RFT,FIT>::fieldIo() const

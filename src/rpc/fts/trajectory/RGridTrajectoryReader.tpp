@@ -118,7 +118,7 @@ namespace Rpc {
       fieldIo.readFieldsRGridData(inputfile_, wField_, nMonomer);
 
       // Update system r-grid field
-      system().setWRGrid(wField_);
+      system().w().setRGrid(wField_);
 
       return true;
    }

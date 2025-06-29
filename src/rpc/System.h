@@ -177,6 +177,7 @@ namespace Rpc {
       /// \name W Field (Chemical Potential Field) Modifiers
       ///@{
 
+      #if 0
       /**
       * Read chemical potential fields in symmetry-adapted basis format.
       *
@@ -258,6 +259,7 @@ namespace Rpc {
       * \param fields  array of new w fields in r-grid form
       */
       void setWRGrid(DArray< RField<D> > const & fields);
+      #endif
 
       ///@}
       /// \name Unit Cell Modifiers
@@ -644,7 +646,12 @@ namespace Rpc {
       ///@{
 
       /**
-      * Get container of chemical potential fields (w fields).
+      * Get container of chemical potential (w) fields by non-const reference.
+      */
+      WFieldContainer<D>& w();
+
+      /**
+      * Get container of chemical potential (w) fields by const reference.
       */
       WFieldContainer<D> const & w() const;
 
@@ -1113,6 +1120,12 @@ namespace Rpc {
    template <int D>
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
+
+   // Get the container of w fields (non-const reference).
+   template <int D>
+   inline
+   WFieldContainer<D>& System<D>::w()
+   {  return w_; }
 
    // Get the container of w fields (const reference).
    template <int D>

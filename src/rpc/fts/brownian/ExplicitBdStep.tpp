@@ -114,7 +114,7 @@ namespace Rpc {
       }
 
       // Set modified fields in parent system
-      system().setWRGrid(w_);
+      system().w().setRGrid(w_);
       simulator().clearData();
 
       // Enforce incompressibility (also solves MDE repeatedly)

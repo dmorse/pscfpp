@@ -641,7 +641,7 @@ namespace Rpc {
       const int nMonomer = system().mixture().nMonomer();
 
       // Restore fields
-      system().setWRGrid(state_.w); 
+      system().w().setRGrid(state_.w); 
 
       // Restore Hamiltonian and components
       if (state_.needsHamiltonian){

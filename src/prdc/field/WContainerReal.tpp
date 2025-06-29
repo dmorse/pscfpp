@@ -102,13 +102,8 @@ namespace Prdc {
    WContainerReal<D,RFT,FIT>::allocateRGrid(IntVec<D> const & meshDimensions)
    {
       UTIL_CHECK(nMonomer_ > 0);
-
-      // If already allocated, deallocate.
-      if (isAllocatedRGrid_) {
-         deallocateRGrid();
-      }
-
       UTIL_CHECK(!hasData_);
+      UTIL_CHECK(!isAllocatedRGrid_);
 
       // Store mesh dimensions
       meshDimensions_ = meshDimensions;
@@ -128,24 +123,6 @@ namespace Prdc {
    }
 
    /*
-   * De-allocate memory for fields in r-grid format
-   */
-   template <int D, class RFT, class FIT>
-   void WContainerReal<D,RFT,FIT>::deallocateRGrid()
-   {
-      UTIL_CHECK(isAllocatedRGrid_);
-      UTIL_CHECK(nMonomer_ > 0);
-      for (int i = 0; i < nMonomer_; ++i) {
-         rgrid_[i].deallocate();
-      }
-      rgrid_.deallocate();
-      meshDimensions_ = 0;
-      meshSize_ = 0;
-      isAllocatedRGrid_ = false;
-      hasData_ = false;
-   }
-
-   /*
    * Allocate memory for fields in basis format.
    */
    template <int D, class RFT, class FIT>
@@ -153,38 +130,15 @@ namespace Prdc {
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(nBasis > 0);
-
-      // If already allocated, deallocate.
-      if (isAllocatedBasis_) {
-         deallocateBasis();
-      }
-
+      UTIL_CHECK(!isAllocatedBasis_);
       UTIL_CHECK(!hasData_);
 
-      // Allocate
       nBasis_ = nBasis;
       basis_.allocate(nMonomer_);
       for (int i = 0; i < nMonomer_; ++i) {
          basis_[i].allocate(nBasis);
       }
       isAllocatedBasis_ = true;
-   }
-
-   /*
-   * De-allocate memory for fields in basis format.
-   */
-   template <int D, class RFT, class FIT>
-   void WContainerReal<D,RFT,FIT>::deallocateBasis()
-   {
-      UTIL_CHECK(isAllocatedBasis_);
-      UTIL_CHECK(nMonomer_ > 0);
-      for (int i = 0; i < nMonomer_; ++i) {
-         basis_[i].deallocate();
-      }
-      basis_.deallocate();
-      nBasis_ = 0;
-      isAllocatedBasis_ = false;
-      hasData_ = false;
    }
 
    /*

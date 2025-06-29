@@ -214,7 +214,7 @@ namespace Rpc{
             wFieldTmp_[i][k] = system().w().rgrid(i)[k] + resid_[k];
          }
       }
-      system().setWRGrid(wFieldTmp_);
+      system().w().setRGrid(wFieldTmp_);
    }
 
    template<int D>

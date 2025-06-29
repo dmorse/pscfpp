@@ -173,7 +173,7 @@ namespace Rpc {
       }
 
       // Set modified fields
-      system().setWRGrid(w_);
+      system().w().setRGrid(w_);
 
       // Enforce incompressibility (also solves MDE repeatedly)
       bool isConverged = false;

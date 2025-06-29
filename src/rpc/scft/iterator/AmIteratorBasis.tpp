@@ -389,7 +389,7 @@ namespace Rpc {
             }
          }
       }
-      system().setWBasis(wField);
+      system().w().setBasis(wField);
 
       if (isFlexible()) {
          const int nParam = system().domain().unitCell().nParameter();

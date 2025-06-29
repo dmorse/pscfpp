@@ -805,6 +805,7 @@ namespace Rpc {
 
    // W Field Modifier Functions
 
+   #if 0
    /*
    * Read w field in symmetry-adapted basis format.
    */
@@ -886,6 +887,7 @@ namespace Rpc {
       UTIL_CHECK(!hasFreeEnergy_);
       UTIL_CHECK(!hasStress_);
    }
+   #endif
 
    // Unit Cell Modifiers
 

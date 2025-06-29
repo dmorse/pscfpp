@@ -41,9 +41,7 @@ namespace Rpc {
       using Base::setFieldIo;
       using Base::setNMonomer;
       using Base::allocateRGrid;
-      using Base::deallocateRGrid;
       using Base::allocateBasis;
-      using Base::deallocateBasis;
       using Base::allocate;
       using Base::setBasis;
       using Base::setRGrid;

@@ -48,7 +48,7 @@ public:
       TEST_ASSERT(system.domain().basis().isInitialized());
 
       // Read in file one way
-      system.readWBasis("in/bcc/omega.ref");
+      system.w().readBasis("in/bcc/omega.ref");
       // Read in file another way
       bfs.read("in/bcc/omega.ref");
       // Compare
@@ -93,7 +93,7 @@ public:
       BasisFieldStateTest::SetUpSystem(system);
 
       // Read in state using system
-      system.readWBasis("in/bcc/omega.ref");
+      system.w().readBasis("in/bcc/omega.ref");
       // get it using bfs
       bfs.getSystemState();
       // compare
