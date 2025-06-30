@@ -29,13 +29,13 @@ namespace Rpg {
    */
    template <int D>
    class Mask 
-     : public Prdc::MaskReal< D, FieldIo<D>, Prdc::Cuda::RField<D> >
+     : public Prdc::MaskReal< D, Prdc::Cuda::RField<D>, FieldIo<D> >
    {
 
    public:
 
       /// Base class typedef
-      typedef Prdc::MaskReal< D, FieldIo<D>, Prdc::Cuda::RField<D> > Base;
+      typedef Prdc::MaskReal< D, Prdc::Cuda::RField<D>, FieldIo<D> > Base;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -77,9 +77,9 @@ namespace Rpg {
 
 #ifndef RPG_MASK_TPP
 namespace Prdc {
-   extern template class MaskReal< 1, Rpg::FieldIo<1>, Cuda::RField<1> >;
-   extern template class MaskReal< 2, Rpg::FieldIo<2>, Cuda::RField<2> >;
-   extern template class MaskReal< 3, Rpg::FieldIo<3>, Cuda::RField<3> >;
+   extern template class MaskReal< 1, Cuda::RField<1>, Rpg::FieldIo<1> >;
+   extern template class MaskReal< 2, Cuda::RField<2>, Rpg::FieldIo<2> >;
+   extern template class MaskReal< 3, Cuda::RField<3>, Rpg::FieldIo<3> >;
 } 
 #endif
 

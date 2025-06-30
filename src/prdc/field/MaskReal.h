@@ -65,8 +65,8 @@ namespace Prdc {
    * whether the symmetry-adapted basis representation exists.
    *
    * <b> Subclasses </b>: Partial specializations of the template
-   * MaskReal \<D, FIT, RFT\> are used as base classes for the 
-   * class templates Rpc::Mask \<D \> and Rpg::Mask \<D\> that are used by
+   * MaskReal \<D, RFT, FIT\> are used as base classes for the class 
+   * templates Rpc::Mask \<D \> and Rpg::Mask \<D\> that are used by
    * pscf_pc and pscf_pg, respectively.
    *
    * <b> Signal </b>: A MaskReal owns an instance of class
@@ -79,7 +79,7 @@ namespace Prdc {
    *
    * \ingroup Prdc_Field_Module
    */
-   template <int D, class FIT, class RFT>
+   template <int D, class RFT, class FIT>
    class MaskReal 
    {
 
@@ -258,6 +258,38 @@ namespace Prdc {
       * \param isSymmetric  is this field symmetric under the space group?
       */
       void readRGrid(std::string filename, bool isSymmetric = false);
+
+      ///@}
+      /// \name Field Output
+      ///@{
+
+      /**
+      * Write fields to an input stream in symmetrized basis format.
+      *
+      * \param out  output stream to which to write fields
+      */
+      void writeBasis(std::ostream& out) const;
+
+      /**
+      * Write fields to a named file, in symmetrized basis format.
+      *
+      * \param filename  name of file to which to write fields
+      */
+      void writeBasis(std::string filename) const;
+
+      /**
+      * Writes fields to an input stream in real-space (r-grid) format.
+      *
+      * \param out  output stream to which to write fields
+      */
+      void writeRGrid(std::ostream& out) const;
+
+      /**
+      * Writes fields to a named file in real-space (r-grid) format.
+      *
+      * \param filename  name of file to which to write fields
+      */
+      void writeRGrid(std::string filename) const;
 
       ///@}
       /// \name Field Accessors 
@@ -444,8 +476,8 @@ namespace Prdc {
    // Inline member functions
 
    // Get field in basis format (const)
-   template <int D, class FIT, class RFT>
-   inline DArray<double> const & MaskReal<D, FIT, RFT>::basis() const
+   template <int D, class RFT, class FIT>
+   inline DArray<double> const & MaskReal<D,RFT,FIT>::basis() const
    {
       UTIL_ASSERT(hasData_);
       UTIL_ASSERT(isSymmetric_);
@@ -453,31 +485,31 @@ namespace Prdc {
    }
 
    // Get field in r-grid format (const)
-   template <int D, class FIT, class RFT>
-   inline RFT const & MaskReal<D, FIT, RFT>::rgrid() const
+   template <int D, class RFT, class FIT>
+   inline RFT const & MaskReal<D,RFT,FIT>::rgrid() const
    {
       UTIL_ASSERT(hasData_);
       return rgrid_;
    }
 
    // Has memory been allocated in basis format?
-   template <int D, class FIT, class RFT>
-   inline bool MaskReal<D, FIT, RFT>::isAllocatedBasis() const
+   template <int D, class RFT, class FIT>
+   inline bool MaskReal<D,RFT,FIT>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Has memory been allocated in rgrid format?
-   template <int D, class FIT, class RFT>
-   inline bool MaskReal<D, FIT, RFT>::isAllocatedRGrid() const
+   template <int D, class RFT, class FIT>
+   inline bool MaskReal<D,RFT,FIT>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Have the field data been set?
-   template <int D, class FIT, class RFT>
-   inline bool MaskReal<D, FIT, RFT>::hasData() const
+   template <int D, class RFT, class FIT>
+   inline bool MaskReal<D,RFT,FIT>::hasData() const
    {  return hasData_; }
 
    // Is the field symmetric under space group operations?
-   template <int D, class FIT, class RFT>
-   inline bool MaskReal<D, FIT, RFT>::isSymmetric() const
+   template <int D, class RFT, class FIT>
+   inline bool MaskReal<D,RFT,FIT>::isSymmetric() const
    {  return isSymmetric_; }
 
 } // namespace Prdc

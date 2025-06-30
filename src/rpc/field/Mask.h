@@ -28,13 +28,13 @@ namespace Rpc {
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class Mask : public Prdc::MaskReal< D, FieldIo<D>, Prdc::Cpu::RField<D> >
+   class Mask : public Prdc::MaskReal<D, Prdc::Cpu::RField<D>, FieldIo<D> >
    {
 
    public:
 
       /// Base class typedef
-      typedef Prdc::MaskReal< D, FieldIo<D>, Prdc::Cpu::RField<D> > Base;
+      typedef Prdc::MaskReal< D, Prdc::Cpu::RField<D>, FieldIo<D> > Base;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -77,9 +77,9 @@ namespace Rpc {
 
 #ifndef RPC_MASK_TPP
 namespace Prdc {
-   extern template class MaskReal< 1, Rpc::FieldIo<1>, Cpu::RField<1> >;
-   extern template class MaskReal< 2, Rpc::FieldIo<2>, Cpu::RField<2> >;
-   extern template class MaskReal< 3, Rpc::FieldIo<3>, Cpu::RField<3> >;
+   extern template class MaskReal< 1, Cpu::RField<1>, Rpc::FieldIo<1> >;
+   extern template class MaskReal< 2, Cpu::RField<2>, Rpc::FieldIo<2> >;
+   extern template class MaskReal< 3, Cpu::RField<3>, Rpc::FieldIo<3> >;
 } 
 #endif
 

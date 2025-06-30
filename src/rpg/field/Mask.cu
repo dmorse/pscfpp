@@ -13,9 +13,9 @@ namespace Pscf {
 namespace Prdc {
 
    // Explicit instantiation
-   template class MaskReal< 1, Rpg::FieldIo<1>, Cuda::RField<1> >;
-   template class MaskReal< 2, Rpg::FieldIo<2>, Cuda::RField<2> >;
-   template class MaskReal< 3, Rpg::FieldIo<3>, Cuda::RField<3> >;
+   template class MaskReal< 1, Cuda::RField<1>, Rpg::FieldIo<1> >;
+   template class MaskReal< 2, Cuda::RField<2>, Rpg::FieldIo<2> >;
+   template class MaskReal< 3, Cuda::RField<3>, Rpg::FieldIo<3> >;
 
 } // namespace Prdc
 
