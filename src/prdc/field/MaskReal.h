@@ -40,9 +40,9 @@ namespace Prdc {
    * <b> Field representations </b>: A Mask \<D\> contains representations 
    * of the mask field in two formats:
    * 
-   *  - An RField object (where RField is a template type parameter) 
-   *    contains values of the field on the nodes of a regular mesh. This
-   *    is accessed by the rgrid() member function.
+   *  - An RFT object (where RFT is a template type parameter) contains
+   *    values of the field on the nodes of a regular mesh. This is
+   *    accessed by the rgrid() member function.
    *
    *  - A DArray \<double\> that contains components of the field in a
    *    symmetry-adapted Fourier expansion (i.e., in basis format). This 
@@ -50,8 +50,8 @@ namespace Prdc {
    *
    * A Mask is designed to automatically update one of these
    * representations when the other is modified, when appropriate. 
-   * A pointer to an associated FieldIo (another template parameter) 
-   * is used for these conversions. The FieldIo class that is used to 
+   * A pointer to an associated FIT (another template parameter) is
+   * used for these conversions. The FieldIo class that is used to 
    * instantiate this template should be a subclass of Prdc::FieldIoReal.
    * 
    * The setBasis and readBasis functions allow the user to input field
@@ -65,7 +65,7 @@ namespace Prdc {
    * whether the symmetry-adapted basis representation exists.
    *
    * <b> Subclasses </b>: Partial specializations of the template
-   * MaskReal \<D, FieldIo, RField\> are used as base classes for the 
+   * MaskReal \<D, FIT, RFT\> are used as base classes for the 
    * class templates Rpc::Mask \<D \> and Rpg::Mask \<D\> that are used by
    * pscf_pc and pscf_pg, respectively.
    *
@@ -79,7 +79,7 @@ namespace Prdc {
    *
    * \ingroup Prdc_Field_Module
    */
-   template <int D, class FieldIo, class RField>
+   template <int D, class FIT, class RFT>
    class MaskReal 
    {
 
@@ -103,7 +103,7 @@ namespace Prdc {
       * 
       * \param fieldIo  associated FieldIo object
       */
-      void setFieldIo(FieldIo const & fieldIo);
+      void setFieldIo(FIT const & fieldIo);
 
       /**
       * Set unit cell used when reading a mask field file.
@@ -183,7 +183,7 @@ namespace Prdc {
       * \param field  new field in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
-      void setRGrid(RField const & field, bool isSymmetric = false);
+      void setRGrid(RFT const & field, bool isSymmetric = false);
 
       /**
       * Read field from input stream in symmetrized basis format.
@@ -191,7 +191,7 @@ namespace Prdc {
       * This function also computes and stores the corresponding r-grid
       * representation. On return, hasData and isSymmetric are both true.
       * 
-      * This object must already be allocated and associated with
+      * This object must already be allocated and associated with a
       * a FieldIo object to run this function.
       *
       * As needed, r-grid and/or basis fields may be allocated within
@@ -271,7 +271,7 @@ namespace Prdc {
       /**
       * Get the field in r-grid format.
       */
-      RField const & rgrid() const;
+      RFT const & rgrid() const;
 
       /**
       * Return the volume fraction of unit cell occupied by material.
@@ -353,7 +353,7 @@ namespace Prdc {
       /**
       * Associated FieldIo object (const reference).
       */
-      FieldIo const & fieldIo() const
+      FIT const & fieldIo() const
       {
          UTIL_CHECK(fieldIoPtr_);
          return *fieldIoPtr_;
@@ -363,7 +363,7 @@ namespace Prdc {
       * Calculate the average value of the rgrid_ member.
       * 
       * Must be implemented by subclasses, because this calculation
-      * depends on the specific implementation of the RField type.
+      * depends on the specific implementation of the RFT type.
       */
       virtual double rGridAverage() const = 0;
 
@@ -377,7 +377,7 @@ namespace Prdc {
       /**
       * Field in real-space grid (r-grid) format
       */
-      RField rgrid_;
+      RFT rgrid_;
 
       /**
       * Integer vector of grid dimensions.
@@ -409,7 +409,7 @@ namespace Prdc {
       /**
       * Pointer to associated FieldIo object.
       */
-      FieldIo const * fieldIoPtr_;
+      FIT const * fieldIoPtr_;
 
       /*
       * Pointer to a Signal that is triggered by field modification.
@@ -444,8 +444,8 @@ namespace Prdc {
    // Inline member functions
 
    // Get field in basis format (const)
-   template <int D, typename FieldIo, typename RField>
-   inline DArray<double> const & MaskReal<D, FieldIo, RField>::basis() const
+   template <int D, class FIT, class RFT>
+   inline DArray<double> const & MaskReal<D, FIT, RFT>::basis() const
    {
       UTIL_ASSERT(hasData_);
       UTIL_ASSERT(isSymmetric_);
@@ -453,31 +453,31 @@ namespace Prdc {
    }
 
    // Get field in r-grid format (const)
-   template <int D, typename FieldIo, typename RField>
-   inline RField const & MaskReal<D, FieldIo, RField>::rgrid() const
+   template <int D, class FIT, class RFT>
+   inline RFT const & MaskReal<D, FIT, RFT>::rgrid() const
    {
       UTIL_ASSERT(hasData_);
       return rgrid_;
    }
 
    // Has memory been allocated in basis format?
-   template <int D, typename FieldIo, typename RField>
-   inline bool MaskReal<D, FieldIo, RField>::isAllocatedBasis() const
+   template <int D, class FIT, class RFT>
+   inline bool MaskReal<D, FIT, RFT>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Has memory been allocated in rgrid format?
-   template <int D, typename FieldIo, typename RField>
-   inline bool MaskReal<D, FieldIo, RField>::isAllocatedRGrid() const
+   template <int D, class FIT, class RFT>
+   inline bool MaskReal<D, FIT, RFT>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Have the field data been set?
-   template <int D, typename FieldIo, typename RField>
-   inline bool MaskReal<D, FieldIo, RField>::hasData() const
+   template <int D, class FIT, class RFT>
+   inline bool MaskReal<D, FIT, RFT>::hasData() const
    {  return hasData_; }
 
    // Is the field symmetric under space group operations?
-   template <int D, typename FieldIo, typename RField>
-   inline bool MaskReal<D, FieldIo, RField>::isSymmetric() const
+   template <int D, class FIT, class RFT>
+   inline bool MaskReal<D, FIT, RFT>::isSymmetric() const
    {  return isSymmetric_; }
 
 } // namespace Prdc
