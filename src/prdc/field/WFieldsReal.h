@@ -115,15 +115,6 @@ namespace Prdc {
       void setFieldIo(FIT const & fieldIo);
 
       /**
-      * Set stored value of nMonomer.
-      *
-      * May only be called once.
-      *
-      * \param nMonomer number of monomer types.
-      */
-      void setNMonomer(int nMonomer);
-
-      /**
       * Set unit cell used when reading field files. 
       *
       * This function creates a stored pointer to a UnitCell<D> that is
@@ -146,6 +137,15 @@ namespace Prdc {
       * \param cell  unit cell that is used by writeBasis and writeRGrid.
       */
       void setWriteUnitCell(UnitCell<D> const & cell);
+
+      /**
+      * Set stored value of nMonomer.
+      *
+      * May only be called once.
+      *
+      * \param nMonomer number of monomer types.
+      */
+      void setNMonomer(int nMonomer);
 
       /**
       * Allocate or re-allocate memory for fields in rgrid format.

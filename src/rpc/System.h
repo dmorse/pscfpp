@@ -251,7 +251,7 @@ namespace Rpc {
       * This function calls the iterator to solve the SCFT problem for
       * the current system parameters, using the current chemical
       * potential fields and unit cell parameters as initial guesses.
-      * Upon exit, hasCFields is set true whether or not convergence
+      * Upon exit, hasCFields() is true whether or not convergence
       * is obtained to within the desired tolerance. The Helmholtz free
       * energy and pressure are computed only if convergence is obtained.
       *

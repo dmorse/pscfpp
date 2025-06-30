@@ -6,6 +6,8 @@
 */
 
 #include "CFieldContainer.h"
+#include <rpc/field/FieldIo.h>
+#include <prdc/cpu/RField.h>
 #include <prdc/field/CFieldsReal.tpp>
 
 namespace Pscf {

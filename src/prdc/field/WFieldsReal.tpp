@@ -64,17 +64,6 @@ namespace Prdc {
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
-   * Set the stored value of nMonomer (this may only be called once).
-   */
-   template <int D, class RFT, class FIT>
-   void WFieldsReal<D,RFT,FIT>::setNMonomer(int nMonomer)
-   {
-      UTIL_CHECK(nMonomer_ == 0);
-      UTIL_CHECK(nMonomer > 0);
-      nMonomer_ = nMonomer;
-   }
-
-   /*
    * Set the unit cell that is modified by reading a field file.
    */
    template <int D, class RFT, class FIT>
@@ -92,6 +81,17 @@ namespace Prdc {
    {
       UTIL_CHECK(!writeUnitCellPtr_);
       writeUnitCellPtr_ = &cell;
+   }
+
+   /*
+   * Set the stored value of nMonomer (this may only be called once).
+   */
+   template <int D, class RFT, class FIT>
+   void WFieldsReal<D,RFT,FIT>::setNMonomer(int nMonomer)
+   {
+      UTIL_CHECK(nMonomer_ == 0);
+      UTIL_CHECK(nMonomer > 0);
+      nMonomer_ = nMonomer;
    }
 
    /*
@@ -429,8 +429,7 @@ namespace Prdc {
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(hasData_);
 
-      fieldIo().writeFieldsRGrid(out, rgrid_,
-                                 *writeUnitCellPtr_,
+      fieldIo().writeFieldsRGrid(out, rgrid_, *writeUnitCellPtr_,
                                  isSymmetric_);
    }
 

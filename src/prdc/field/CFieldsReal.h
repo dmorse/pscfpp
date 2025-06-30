@@ -94,15 +94,6 @@ namespace Prdc {
       void setFieldIo(FIT const & fieldIo);
 
       /**
-      * Set stored value of nMonomer.
-      * 
-      * May only be called once.
-      *
-      * \param nMonomer number of monomer types.
-      */
-      void setNMonomer(int nMonomer);
-
-      /**
       * Set unit cell used when writing field files.
       *
       * This function creates a stored pointer to a UnitCell<D> that is
@@ -115,7 +106,19 @@ namespace Prdc {
       void setWriteUnitCell(UnitCell<D> const & cell);
 
       /**
-      * Allocate or re-allocate memory for fields in rgrid format.
+      * Set stored value of nMonomer.
+      * 
+      * This function may only be called once. The value of nMonomer must
+      * be positive.
+      *
+      * \param nMonomer number of monomer types.
+      */
+      void setNMonomer(int nMonomer);
+
+      /**
+      * Allocate memory for fields in rgrid format.
+      *
+      * This function may only be called once.
       *
       * \param dimensions  dimensions of spatial mesh
       */
@@ -123,6 +126,8 @@ namespace Prdc {
 
       /**
       * Allocate or re-allocate memory for fields in basis format.
+      *
+      * This function may only be called once.
       *
       * \param nBasis  number of basis functions 
       */
@@ -140,7 +145,7 @@ namespace Prdc {
       void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
 
       ///@}
-      /// \name Field Mutators and Accessors (return by reference)
+      /// \name Field Accessors (return by reference)
       ///@{
 
       /**
@@ -194,7 +199,39 @@ namespace Prdc {
       RFT const & rgrid(int monomerId) const;
 
       ///@}
-      /// \name Boolean Queries
+      /// \name Field Output
+      ///@{
+
+      /**
+      * Write fields to an input stream in symmetrized basis format.
+      *
+      * \param out  output stream to which to write fields
+      */
+      void writeBasis(std::ostream& out) const;
+
+      /**
+      * Write fields to a named file, in symmetrized basis format.
+      *
+      * \param filename  name of file to which to write fields
+      */
+      void writeBasis(std::string filename) const;
+
+      /**
+      * Writes fields to an input stream in real-space (r-grid) format.
+      *
+      * \param out  output stream to which to write fields
+      */
+      void writeRGrid(std::ostream& out) const;
+
+      /**
+      * Writes fields to a named file in real-space (r-grid) format.
+      *
+      * \param filename  name of file to which to write fields
+      */
+      void writeRGrid(std::string filename) const;
+
+      ///@}
+      /// \name Boolean Variable Queries
       ///@{
 
       /**
@@ -206,6 +243,38 @@ namespace Prdc {
       * Has memory been allocated for fields in basis format?
       */
       bool isAllocatedBasis() const;
+
+      /**
+      * Does this container have up-to-date fields?
+      */
+      bool hasData() const;
+
+      /**
+      * Are the fields invariant under elements of the space group?
+      */
+      bool isSymmetric() const;
+
+      ///@}
+      /// \name Boolean Variable Setters
+      ///@{
+
+      /**
+      * Set the hasData flag.
+      *
+      * This should be set true when fields are set to those computed
+      * from the current w fields, and false when any input to that
+      * calculation changes.
+      */
+      void setHasData(bool hasData);
+
+      /**
+      * Set the isSymmetric flag.
+      *
+      * This should be set true if and only if the fields are known to
+      * have been computed from symmetric w fields, and the basis
+      * representation exists.
+      */
+      void setIsSymmetric(bool isSymmetric);
 
       ///@}
 
@@ -259,6 +328,16 @@ namespace Prdc {
       * Has memory been allocated for fields in basis format?
       */
       bool isAllocatedBasis_;
+
+      /*
+      * Does this container hold up-to-date field data?
+      */
+      bool hasData_;
+
+      /*
+      * Are the fields symmetric?
+      */
+      bool isSymmetric_;
 
    };
 
@@ -338,6 +417,16 @@ namespace Prdc {
    template <int D, class RFT, class FIT> inline 
    bool CFieldsReal<D,RFT,FIT>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
+
+   // Are the fields up-to-date?
+   template <int D, class RFT, class FIT> inline 
+   bool CFieldsReal<D,RFT,FIT>::hasData() const
+   {  return hasData_; }
+
+   // Are the fields symmetric under elements of the space group?
+   template <int D, class RFT, class FIT> inline 
+   bool CFieldsReal<D,RFT,FIT>::isSymmetric() const
+   {  return isSymmetric_; }
 
    // Protected inline member function
 

@@ -100,6 +100,8 @@ namespace Rpg {
       mask_.setFieldIo(domain_.fieldIo());
       mask_.setReadUnitCell(tmpUnitCell_);
       mask_.setWriteUnitCell(domain_.unitCell());
+      c_.setFieldIo(domain_.fieldIo());
+      c_.setWriteUnitCell(domain_.unitCell());
 
       // Note the arguments of setReadUnitCell functions used above:
       // When w_ is read from a file in basis or r-grid format, the
@@ -903,6 +905,7 @@ namespace Rpg {
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
+      c_.setHasData(true);
       hasCFields_ = true;
       hasFreeEnergy_ = false;
       hasStress_ = false;
@@ -912,6 +915,7 @@ namespace Rpg {
          UTIL_CHECK(c_.isAllocatedBasis());
          domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
                                                false);
+         c_.setIsSymmetric(true);
       }
 
       // Compute stress if needed
@@ -1603,6 +1607,7 @@ namespace Rpg {
    template <int D>
    void System<D>::clearCFields()
    {
+      c_.setHasData(false);
       hasCFields_ = false;
       hasFreeEnergy_ = false;
       hasStress_ = false;

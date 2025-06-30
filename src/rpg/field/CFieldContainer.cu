@@ -6,7 +6,9 @@
 */
 
 #include "CFieldContainer.h"
-#include <prdc/field/CFieldsReal.tpp>
+#include <rpg/field/FieldIo.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/field/CFieldsReal.tpp>  // Base class implementation
 
 namespace Pscf {
    namespace Prdc {

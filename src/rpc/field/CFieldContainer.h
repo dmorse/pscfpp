@@ -49,8 +49,10 @@ namespace Rpc {
       using Base::rgrid;
       using Base::isAllocatedRGrid;
       using Base::isAllocatedBasis;
-      //using Base::hasData;
-      //using Base::isSymmetric;
+      using Base::hasData;
+      using Base::isSymmetric;
+      using Base::setHasData;
+      using Base::setIsSymmetric;
 
    protected:
 
