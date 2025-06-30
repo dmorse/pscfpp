@@ -248,7 +248,7 @@ namespace Prdc {
    * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D, class RFT, class FIT>
-   void 
+   void
    WFieldsReal<D,RFT,FIT>::readBasis(std::istream& in)
    {
       // Preconditions
@@ -258,7 +258,7 @@ namespace Prdc {
       // Read field file header
       int nMonomerIn;
       bool isSymmetricIn;
-      fieldIo().readFieldHeader(in, nMonomerIn, *readUnitCellPtr_, 
+      fieldIo().readFieldHeader(in, nMonomerIn, *readUnitCellPtr_,
                                 isSymmetricIn);
       // Note: FieldIo::readFieldHeader initializes basis if needed
       UTIL_CHECK(nMonomerIn == nMonomer_);
@@ -271,7 +271,7 @@ namespace Prdc {
       UTIL_CHECK(mesh.size() > 0);
       UTIL_CHECK(basis.isInitialized());
 
-      // If necessary, allocate fields 
+      // If necessary, allocate fields
       if (!isAllocatedRGrid_) {
          allocateRGrid(mesh.dimensions());
       }
@@ -282,7 +282,7 @@ namespace Prdc {
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read data in basis form (array basis_)
-      Prdc::readBasisData(in, basis_, 
+      Prdc::readBasisData(in, basis_,
                           *readUnitCellPtr_, mesh, basis, nBasisIn);
 
       // Convert to r-grid form (array rgrid_)
@@ -313,23 +313,23 @@ namespace Prdc {
    /*
    * Read fields from an input stream in real-space (r-grid) format.
    *
-   * If the isSymmetric parameter is true, this function assumes that 
-   * the fields are known to be symmetric and so computes and stores 
+   * If the isSymmetric parameter is true, this function assumes that
+   * the fields are known to be symmetric and so computes and stores
    * the corresponding basis components. If isSymmetric is false, it
    * only sets the values in the r-grid format.
    *
-   * On return, hasData is true and the bool class member isSymmetric_ 
+   * On return, hasData is true and the bool class member isSymmetric_
    * is set to the value of the isSymmetric function parameter.
    */
    template <int D, class RFT, class FIT>
    void
-   WFieldsReal<D,RFT,FIT>::readRGrid(std::istream& in, 
+   WFieldsReal<D,RFT,FIT>::readRGrid(std::istream& in,
                                         bool isSymmetric)
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(readUnitCellPtr_);
-      
+
       // If necessary, allocate r-grid fields
       if (!isAllocatedRGrid_) {
          Mesh<D> const & mesh = fieldIo().mesh();
@@ -385,6 +385,69 @@ namespace Prdc {
       signal().notify();
    }
 
+   // Field output to file
+
+   /*
+   * Write fields to an output stream in basis format.
+   */
+   template <int D, class RFT, class FIT>
+   void WFieldsReal<D,RFT,FIT>::writeBasis(std::ostream& out) const
+   {
+      // Preconditions
+      UTIL_CHECK(nMonomer_ > 0);
+      UTIL_CHECK(fieldIoPtr_);
+      UTIL_CHECK(writeUnitCellPtr_);
+      UTIL_CHECK(isAllocatedBasis_);
+      UTIL_CHECK(hasData_);
+      UTIL_CHECK(isSymmetric_);
+
+      fieldIo().writeFieldsBasis(out, basis_, *writeUnitCellPtr_);
+   }
+
+   /*
+   * Write fields to a file in basis format, by filename.
+   */
+   template <int D, class RFT, class FIT>
+   void WFieldsReal<D,RFT,FIT>::writeBasis(std::string filename) const
+   {
+      std::ofstream file;
+      fieldIo().fileMaster().openOutputFile(filename, file);
+      writeBasis(file);
+      file.close();
+   }
+
+   /*
+   * Write fields to an output stream in real-space (r-grid) format.
+   */
+   template <int D, class RFT, class FIT>
+   void WFieldsReal<D,RFT,FIT>::writeRGrid(std::ostream& out) const
+   {
+      // Preconditions
+      UTIL_CHECK(nMonomer_ > 0);
+      UTIL_CHECK(writeUnitCellPtr_);
+      UTIL_CHECK(fieldIoPtr_);
+      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(hasData_);
+
+      fieldIo().writeFieldsRGrid(out, rgrid_,
+                                 *writeUnitCellPtr_,
+                                 isSymmetric_);
+   }
+
+   /*
+   * Write fields to a file in r-grid format, by filename.
+   */
+   template <int D, class RFT, class FIT>
+   void WFieldsReal<D,RFT,FIT>::writeRGrid(std::string filename) const
+   {
+      std::ofstream file;
+      fieldIo().fileMaster().openOutputFile(filename, file);
+      writeRGrid(file);
+      file.close();
+   }
+
+   // Signal accessor
+
    /*
    * Get the Signal<void> that is triggered by field modification.
    */
@@ -401,7 +464,7 @@ namespace Prdc {
    * Assignment operation for r-grid fields (RFT objects).
    *
    * Unimplemented virtual function - must be overridden by subclasses.
-   */ 
+   */
    template <int D, class RFT, class FIT>
    void
    WFieldsReal<D,RFT,FIT>::assignRField(RFT & lhs, RFT const & rhs) const

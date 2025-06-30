@@ -29,7 +29,7 @@ namespace Prdc {
    using namespace Util;
 
    /**
-   * A container of input fields stored in both basis and r-grid format.
+   * A container of w fields stored in both basis and r-grid format.
    * 
    * <b> Template parameters </b>: The template parameters represent:
    * 
@@ -38,8 +38,8 @@ namespace Prdc {
    *     - FIT : FieldIo type for field io operations (e.g., FieldIo<D>)
    * 
    * <b> Field Representations </b>: A WFieldsReal contains a list of
-   * nMonomer fields that are each associated with a monomer type. The
-   * fields may be stored in two different formats:
+   * nMonomer chemical potential (w) fields that are each associated with 
+   * a monomer type. The fields may be stored in two different formats:
    *
    *  - A DArray of RFT containers holds valus of each field on
    *    the nodes of a regular grid. This is accessed by the rgrid()
@@ -313,6 +313,38 @@ namespace Prdc {
       * Get a signal that notifies observers of field modification.
       */
       Signal<void>& signal();
+
+      ///@}
+      /// \name Field Output
+      ///@{
+
+      /**
+      * Write fields to an input stream in symmetrized basis format.
+      *
+      * \param out  output stream to which to write fields
+      */
+      void writeBasis(std::ostream& out) const;
+
+      /**
+      * Write fields to a named file, in symmetrized basis format.
+      *
+      * \param filename  file to which to write fields
+      */
+      void writeBasis(std::string filename) const;
+
+      /**
+      * Writes fields to an input stream in real-space (r-grid) format.
+      *
+      * \param out  output stream to which to write fields
+      */
+      void writeRGrid(std::ostream& out) const;
+
+      /**
+      * Writes fields to a named file in real-space (r-grid) format.
+      *
+      * \param filename  file to which to write fields
+      */
+      void writeRGrid(std::string filename) const;
 
       ///@}
       /// \name Field Accessors (by const reference)
