@@ -61,16 +61,6 @@ namespace Rpc {
    public:
 
       /**
-      * Default constructor.
-      */
-      FieldIo();
-
-      /**
-      * Destructor.
-      */
-      ~FieldIo();
-
-      /**
       * Read array of RField objects (r-grid fields) from a stream.
       *
       * See documentation of analogous function in Prdc::FieldIoReal.

@@ -20,27 +20,12 @@ namespace Rpg
    using namespace Pscf::Prdc::Cuda;
 
    /*
-   * Constructor.
-   */
-   template <int D>
-   Mask<D>::Mask()
-    : MaskTmpl< D, FieldIo<D>, RField<D> >()
-   {}
-
-   /*
-   * Destructor.
-   */
-   template <int D>
-   Mask<D>::~Mask()
-   {}
-
-   /*
    * Calculate the average value of the rgrid_ member.
    */
    template <int D>
    double Mask<D>::rGridAverage() const
    {
-      RField<D> const & rg = MaskTmpl< D, FieldIo<D>, RField<D> >::rgrid();
+      RField<D> const & rg = MaskReal< D, FieldIo<D>, RField<D> >::rgrid();
       return (Reduce::sum(rg) / ((double)rg.capacity()));
    }
 

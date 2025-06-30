@@ -10,7 +10,7 @@
 
 #include "FieldIo.h"              // parent class template parameter
 #include <prdc/cpu/RField.h>      // parent class template parameter
-#include <prdc/field/MaskTmpl.h>  // parent class
+#include <prdc/field/MaskReal.h>  // parent class
 
 namespace Pscf {
 namespace Rpc {
@@ -20,31 +20,21 @@ namespace Rpc {
    /**
    * A field to which the total density is constrained.
    *
-   * Please refer to the documentation of the base class Prdc::MaskTmpl
+   * Please refer to the documentation of the base class Prdc::MaskReal
    * for more complete API documentation for this class template.
    * The public interface of Rpc::Mask is identical to that of the
-   * base class template Prdc::MaskTmpl. 
+   * base class template Prdc::MaskReal. 
    *
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class Mask : public Prdc::MaskTmpl< D, FieldIo<D>, Prdc::Cpu::RField<D> >
+   class Mask : public Prdc::MaskReal< D, FieldIo<D>, Prdc::Cpu::RField<D> >
    {
 
    public:
 
       /// Base class typedef
-      typedef Prdc::MaskTmpl< D, FieldIo<D>, Prdc::Cpu::RField<D> > Base;
-
-      /**
-      * Constructor.
-      */
-      Mask();
-
-      /**
-      * Destructor.
-      */
-      ~Mask();
+      typedef Prdc::MaskReal< D, FieldIo<D>, Prdc::Cpu::RField<D> > Base;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -64,6 +54,7 @@ namespace Rpc {
 
    protected:
 
+      // Inherited protected member functions
       using Base::meshDimensions;
       using Base::meshSize;
       using Base::nBasis;
@@ -86,9 +77,9 @@ namespace Rpc {
 
 #ifndef RPC_MASK_TPP
 namespace Prdc {
-   extern template class MaskTmpl< 1, Rpc::FieldIo<1>, Cpu::RField<1> >;
-   extern template class MaskTmpl< 2, Rpc::FieldIo<2>, Cpu::RField<2> >;
-   extern template class MaskTmpl< 3, Rpc::FieldIo<3>, Cpu::RField<3> >;
+   extern template class MaskReal< 1, Rpc::FieldIo<1>, Cpu::RField<1> >;
+   extern template class MaskReal< 2, Rpc::FieldIo<2>, Cpu::RField<2> >;
+   extern template class MaskReal< 3, Rpc::FieldIo<3>, Cpu::RField<3> >;
 } 
 #endif
 

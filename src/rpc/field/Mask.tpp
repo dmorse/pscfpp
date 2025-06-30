@@ -19,28 +19,13 @@ namespace Rpc
    using namespace Pscf::Prdc::Cpu;
 
    /*
-   * Constructor.
-   */
-   template <int D>
-   Mask<D>::Mask()
-    : MaskTmpl< D, FieldIo<D>, RField<D> >()
-   {}
-
-   /*
-   * Destructor.
-   */
-   template <int D>
-   Mask<D>::~Mask()
-   {}
-
-   /*
    * Return volume fraction of the unit cell occupied by the 
    * polymers/solvents.
    */
    template <int D>
    double Mask<D>::rGridAverage() const
    {
-      RField<D> const & rg = MaskTmpl< D, FieldIo<D>, RField<D> >::rgrid();
+      RField<D> const & rg = MaskReal< D, FieldIo<D>, RField<D> >::rgrid();
 
       // Sum up elements of r-grid mask field.
       // Use Kahan summation to reduce accumulation of error

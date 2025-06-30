@@ -65,13 +65,13 @@ namespace Prdc {
    * whether the symmetry-adapted basis representation exists.
    *
    * <b> Subclasses </b>: Partial specializations of the template
-   * MaskTmpl \<D, FieldIo, RField\> are used as base classes for the 
+   * MaskReal \<D, FieldIo, RField\> are used as base classes for the 
    * class templates Rpc::Mask \<D \> and Rpg::Mask \<D\> that are used by
    * pscf_pc and pscf_pg, respectively.
    *
-   * <b> Signal </b>: A MaskTmpl owns an instance of class
+   * <b> Signal </b>: A MaskReal owns an instance of class
    * Util::Signal<void> that notifies all observers whenever the field
-   * owned by the MaskTmpl is modified. This Signal object may be 
+   * owned by the MaskReal is modified. This Signal object may be 
    * accessed by reference using the signal() member function. The
    * Util::Signal<void>::addObserver function may used to add observer 
    * objects and indicate a zero-parameter member function of each 
@@ -80,7 +80,7 @@ namespace Prdc {
    * \ingroup Prdc_Field_Module
    */
    template <int D, class FieldIo, class RField>
-   class MaskTmpl 
+   class MaskReal 
    {
 
    public:
@@ -88,12 +88,12 @@ namespace Prdc {
       /**
       * Constructor.
       */
-      MaskTmpl();
+      MaskReal();
 
       /**
       * Destructor.
       */
-      ~MaskTmpl();
+      ~MaskReal();
 
       /// \name Initialization and Memory Management
       ///@{
@@ -445,7 +445,7 @@ namespace Prdc {
 
    // Get field in basis format (const)
    template <int D, typename FieldIo, typename RField>
-   inline DArray<double> const & MaskTmpl<D, FieldIo, RField>::basis() const
+   inline DArray<double> const & MaskReal<D, FieldIo, RField>::basis() const
    {
       UTIL_ASSERT(hasData_);
       UTIL_ASSERT(isSymmetric_);
@@ -454,7 +454,7 @@ namespace Prdc {
 
    // Get field in r-grid format (const)
    template <int D, typename FieldIo, typename RField>
-   inline RField const & MaskTmpl<D, FieldIo, RField>::rgrid() const
+   inline RField const & MaskReal<D, FieldIo, RField>::rgrid() const
    {
       UTIL_ASSERT(hasData_);
       return rgrid_;
@@ -462,22 +462,22 @@ namespace Prdc {
 
    // Has memory been allocated in basis format?
    template <int D, typename FieldIo, typename RField>
-   inline bool MaskTmpl<D, FieldIo, RField>::isAllocatedBasis() const
+   inline bool MaskReal<D, FieldIo, RField>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Has memory been allocated in rgrid format?
    template <int D, typename FieldIo, typename RField>
-   inline bool MaskTmpl<D, FieldIo, RField>::isAllocatedRGrid() const
+   inline bool MaskReal<D, FieldIo, RField>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Have the field data been set?
    template <int D, typename FieldIo, typename RField>
-   inline bool MaskTmpl<D, FieldIo, RField>::hasData() const
+   inline bool MaskReal<D, FieldIo, RField>::hasData() const
    {  return hasData_; }
 
    // Is the field symmetric under space group operations?
    template <int D, typename FieldIo, typename RField>
-   inline bool MaskTmpl<D, FieldIo, RField>::isSymmetric() const
+   inline bool MaskReal<D, FieldIo, RField>::isSymmetric() const
    {  return isSymmetric_; }
 
 } // namespace Prdc

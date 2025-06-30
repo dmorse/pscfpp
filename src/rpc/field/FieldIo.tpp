@@ -31,21 +31,6 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    /*
-   * Constructor.
-   */
-   template <int D>
-   FieldIo<D>::FieldIo()
-    : FieldIoReal< D, RField<D>, RFieldDft<D>, FFT<D> >()
-   {}
-
-   /*
-   * Destructor.
-   */
-   template <int D>
-   FieldIo<D>::~FieldIo()
-   {}
-
-   /*
    * Read an array of fields in r-grid format.
    */
    template <int D>

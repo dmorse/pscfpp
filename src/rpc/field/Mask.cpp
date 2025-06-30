@@ -6,16 +6,16 @@
 */
 
 #include "Mask.tpp"
-#include <prdc/field/MaskTmpl.tpp> // needed for implementation
+#include <prdc/field/MaskReal.tpp> // needed for implementation
 
 namespace Pscf {
 
 namespace Prdc {
 
    // Explicit instantiation
-   template class MaskTmpl< 1, Rpc::FieldIo<1>, Cpu::RField<1> >;
-   template class MaskTmpl< 2, Rpc::FieldIo<2>, Cpu::RField<2> >;
-   template class MaskTmpl< 3, Rpc::FieldIo<3>, Cpu::RField<3> >;
+   template class MaskReal< 1, Rpc::FieldIo<1>, Cpu::RField<1> >;
+   template class MaskReal< 2, Rpc::FieldIo<2>, Cpu::RField<2> >;
+   template class MaskReal< 3, Rpc::FieldIo<3>, Cpu::RField<3> >;
 
 } // namespace Prdc
 

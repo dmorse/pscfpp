@@ -36,21 +36,6 @@ namespace Rpg {
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
-   /*
-   * Constructor.
-   */
-   template <int D>
-   FieldIo<D>::FieldIo()
-    : FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> >()
-   {}
-
-   /*
-   * Destructor.
-   */
-   template <int D>
-   FieldIo<D>::~FieldIo()
-   {}
-
    // Field Io in r-grid format
 
    /*

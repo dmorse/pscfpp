@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MaskTmpl.h"
+#include "MaskReal.h"
 #include <prdc/field/fieldIoUtil.h> 
 #include <prdc/crystal/Basis.h> 
 #include <prdc/crystal/UnitCell.h> 
@@ -25,7 +25,7 @@ namespace Prdc {
    * Constructor.
    */
    template <int D, class FieldIo, class RField>
-   MaskTmpl<D, FieldIo, RField>::MaskTmpl()
+   MaskReal<D, FieldIo, RField>::MaskReal()
     : basis_(),
       rgrid_(),
       meshDimensions_(),
@@ -47,7 +47,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D, class FieldIo, class RField>
-   MaskTmpl<D,FieldIo,RField>::~MaskTmpl()
+   MaskReal<D,FieldIo,RField>::~MaskReal()
    {
       delete signalPtr_;
    }
@@ -56,14 +56,14 @@ namespace Prdc {
    * Create an association with a FieldIo object.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::setFieldIo(FieldIo const & fieldIo)
+   void MaskReal<D,FieldIo,RField>::setFieldIo(FieldIo const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Set the unit cell that is modified by reading a field file.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::setReadUnitCell(UnitCell<D>& cell)
+   void MaskReal<D,FieldIo,RField>::setReadUnitCell(UnitCell<D>& cell)
    {
       UTIL_CHECK(!readUnitCellPtr_);
       readUnitCellPtr_ = &cell;
@@ -74,7 +74,7 @@ namespace Prdc {
    */
    template <int D, class FieldIo, class RField>
    void 
-   MaskTmpl<D,FieldIo,RField>::setWriteUnitCell(UnitCell<D> const & cell)
+   MaskReal<D,FieldIo,RField>::setWriteUnitCell(UnitCell<D> const & cell)
    {
       UTIL_CHECK(!writeUnitCellPtr_);
       writeUnitCellPtr_ = &cell;
@@ -84,7 +84,7 @@ namespace Prdc {
    * Allocate memory for a field in basis format.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::allocateBasis(int nBasis)
+   void MaskReal<D,FieldIo,RField>::allocateBasis(int nBasis)
    {
       UTIL_CHECK(!isAllocatedBasis_);
 
@@ -101,7 +101,7 @@ namespace Prdc {
    */
    template <int D, class FieldIo, class RField>
    void 
-   MaskTmpl<D,FieldIo,RField>::allocateRGrid(IntVec<D> const & meshDimensions)
+   MaskReal<D,FieldIo,RField>::allocateRGrid(IntVec<D> const & meshDimensions)
    {
       UTIL_CHECK(!isAllocatedRGrid_);
 
@@ -122,7 +122,7 @@ namespace Prdc {
    * Set new field values, in basis form.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::setBasis(DArray<double> const & field)
+   void MaskReal<D,FieldIo,RField>::setBasis(DArray<double> const & field)
    {
       // Allocate fields as needed
       if (!isAllocatedRGrid_) {
@@ -158,7 +158,7 @@ namespace Prdc {
    * Set new field values, in r-grid form.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::setRGrid(RField const & field,
+   void MaskReal<D,FieldIo,RField>::setRGrid(RField const & field,
                                              bool isSymmetric)
    {
       // Allocate rgrid_ field as needed
@@ -196,7 +196,7 @@ namespace Prdc {
    * representation. On return, hasData and isSymmetric are both true.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::readBasis(std::istream& in)
+   void MaskReal<D,FieldIo,RField>::readBasis(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(readUnitCellPtr_);
@@ -246,7 +246,7 @@ namespace Prdc {
    * Read field components from a file basis format, by filename.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::readBasis(std::string filename)
+   void MaskReal<D,FieldIo,RField>::readBasis(std::string filename)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
@@ -263,7 +263,7 @@ namespace Prdc {
    * only sets the values in the r-grid format.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::readRGrid(std::istream& in, 
+   void MaskReal<D,FieldIo,RField>::readRGrid(std::istream& in, 
                                               bool isSymmetric)
    {
       // Preconditions
@@ -301,7 +301,7 @@ namespace Prdc {
    * Read field from a file in r-grid format, by filename.
    */
    template <int D, class FieldIo, class RField>
-   void MaskTmpl<D,FieldIo,RField>::readRGrid(std::string filename, 
+   void MaskReal<D,FieldIo,RField>::readRGrid(std::string filename, 
                                               bool isSymmetric)
    {
       std::ifstream file;
@@ -315,7 +315,7 @@ namespace Prdc {
    * polymers/solvents.
    */
    template <int D, class FieldIo, class RField>
-   double MaskTmpl<D,FieldIo,RField>::phiTot() const
+   double MaskReal<D,FieldIo,RField>::phiTot() const
    {
       if (isSymmetric() && hasData()) {
          // Data in basis format is available
@@ -332,7 +332,7 @@ namespace Prdc {
    * Get a signal that is triggered by field modification.
    */
    template <int D, class FieldIo, class RField>
-   Signal<void>& MaskTmpl<D,FieldIo,RField>::signal()
+   Signal<void>& MaskReal<D,FieldIo,RField>::signal()
    {
       UTIL_CHECK(signalPtr_);
       return *signalPtr_;
