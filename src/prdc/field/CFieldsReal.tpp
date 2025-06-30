@@ -10,7 +10,6 @@
 
 #include "CFieldsReal.h"
 #include <prdc/crystal/UnitCell.h>
-#include <pscf/math/IntVec.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -72,7 +71,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   CFieldsReal<D,RFT,FIT>::allocateRGrid(IntVec<D> const& meshDimensions)
+   CFieldsReal<D,RFT,FIT>::allocateRGrid(IntVec<D> const & dimensions)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(!isAllocatedRGrid_);
@@ -80,7 +79,7 @@ namespace Prdc {
       // Allocate arrays
       rgrid_.allocate(nMonomer_);
       for (int i = 0; i < nMonomer_; ++i) {
-         rgrid_[i].allocate(meshDimensions);
+         rgrid_[i].allocate(dimensions);
       }
       isAllocatedRGrid_ = true;
    }
@@ -108,10 +107,10 @@ namespace Prdc {
    template <int D, class RFT, class FIT>
    void 
    CFieldsReal<D,RFT,FIT>::allocate(int nMonomer, int nBasis,
-                                       IntVec<D> const & meshDimensions)
+                                    IntVec<D> const & dimensions)
    {
       setNMonomer(nMonomer);
-      allocateRGrid(meshDimensions);
+      allocateRGrid(dimensions);
       allocateBasis(nBasis);
    }
 

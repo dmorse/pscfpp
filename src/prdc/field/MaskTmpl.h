@@ -100,6 +100,8 @@ namespace Prdc {
 
       /**
       * Create association with FieldIo (store pointer).
+      * 
+      * \param fieldIo  associated FieldIo object
       */
       void setFieldIo(FieldIo const & fieldIo);
 

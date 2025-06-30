@@ -8,12 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>      // member template
+#include <util/containers/DArray.h>   // member template
+#include <pscf/math/IntVec.h>         // template with defaults
 
 // Forward declarations
-namespace Util {
-  template <int D> class IntVec;
-}
 namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
@@ -24,7 +22,6 @@ namespace Pscf {
 namespace Prdc {
 
    using namespace Util;
-   using namespace Prdc::Cpu;
 
    /**
    * A list of c fields stored in both basis and r-grid format.
@@ -39,8 +36,8 @@ namespace Prdc {
    * nMonomer fields that are each associated with a monomer type. The
    * fields may be stored in two different formats:
    *
-   *  - A DArray of RFT containers holds valus of each field on
-   *    the nodes of a regular grid. This is accessed by the rgrid()
+   *  - A DArray of RFT (RField) containers holds valus of each field 
+   *    on the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
    *  - A DArray of DArray<double> containers holds components of each
@@ -48,7 +45,13 @@ namespace Prdc {
    *    format). This is accessed by the basis() and basis(int) member
    *    functions.
    *
-   * <b> Subclasses </b>: Partial specializations of CFieldsReal are
+   * The CFields container provides public non-const access to both field
+   * representations, and does not automatically update one of these 
+   * field representations when the other is modified. Maintenance of the 
+   * intended relationship between the two data representations is instead
+   * left as the responsibility of an object that owns this container. 
+   * 
+   * <b> Subclasses </b>: Partial specializations of CFieldsReal are 
    * used as base classes for classes Prdc::CFieldsReal \<D \> and 
    * Rpg::CFieldsReal \<D\>:
    *
@@ -86,7 +89,7 @@ namespace Prdc {
       /**
       * Create association with FIT (store pointer).
       *
-      * \param fieldIo  associated FIT object
+      * \param fieldIo  associated FIT (FieldIo) object
       */
       void setFieldIo(FIT const & fieldIo);
 
@@ -144,59 +147,51 @@ namespace Prdc {
       * Get array of all fields in basis format (non-const).
       */
       DArray< DArray<double> > & basis();
-      {  return basis_; }
 
       /**
       * Get array of all fields in basis format (const)
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray< DArray<double> > const & basis() const
-      {  return basis_; }
+      DArray< DArray<double> > const & basis() const;
 
       /**
       * Get the field for one monomer type in basis format (non-const).
       *
       * \param monomerId integer monomer type index (0, ... ,nMonomer-1)
       */
-      DArray<double> & basis(int monomerId)
-      {  return basis_[monomerId]; }
+      DArray<double> & basis(int monomerId);
 
       /**
       * Get the field for one monomer type in basis format (const)
       *
       * \param monomerId integer monomer type index (0, ... ,nMonomer-1)
       */
-      DArray<double> const & basis(int monomerId) const
-      {  return basis_[monomerId]; }
+      DArray<double> const & basis(int monomerId) const;
 
       /**
       * Get array of all fields in r-grid format (non-const).
       */
-      DArray<RFT> & rgrid()
-      {  return rgrid_; }
+      DArray<RFT> & rgrid();
 
       /**
       * Get array of all fields in r-grid format (const).
       */
-      DArray<RFT> const & rgrid() const
-      {  return rgrid_; }
+      DArray<RFT> const & rgrid() const;
 
       /**
       * Get field for one monomer type in r-grid format (non-const)
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RFT & rgrid(int monomerId)
-      {  return rgrid_[monomerId]; }
+      RFT & rgrid(int monomerId);
 
       /**
       * Get field for one monomer type in r-grid format (const).
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RFT const & rgrid(int monomerId) const
-      {  return rgrid_[monomerId]; }
+      RFT const & rgrid(int monomerId) const;
 
       ///@}
       /// \name Boolean Queries
@@ -205,27 +200,21 @@ namespace Prdc {
       /**
       * Has memory been allocated for fields in r-grid format?
       */
-      bool isAllocatedRGrid() const
-      {  return isAllocatedRGrid_; }
+      bool isAllocatedRGrid() const;
 
       /**
       * Has memory been allocated for fields in basis format?
       */
-      bool isAllocatedBasis() const
-      {  return isAllocatedBasis_; }
+      bool isAllocatedBasis() const;
 
       ///@}
 
    protected:
 
       /**
-      * Get associated FIT object (const reference).
+      * Get associated FieldIo object (const reference).
       */
       FIT const & fieldIo() const;
-      {
-         UTIL_CHECK(fieldIoPtr_);
-         return *fieldIoPtr_;
-      }
 
    private:
 
@@ -272,6 +261,94 @@ namespace Prdc {
       bool isAllocatedBasis_;
 
    };
+
+   // Public inline member functions
+
+   // Get array of all fields in basis format (non-const)
+   template <int D, class RFT, class FIT> inline
+   DArray< DArray<double> >& CFieldsReal<D,RFT,FIT>::basis()
+   {
+      UTIL_ASSERT(isAllocatedBasis_);
+      return basis_;
+   }
+
+   // Get array of all fields in basis format (const)
+   template <int D, class RFT, class FIT> inline
+   DArray< DArray<double> > const & CFieldsReal<D,RFT,FIT>::basis() const
+   {
+      UTIL_ASSERT(isAllocatedBasis_);
+      return basis_;
+   }
+
+   // Get one field in basis format (non-const)
+   template <int D, class RFT, class FIT> inline
+   DArray<double> & CFieldsReal<D,RFT,FIT>::basis(int id)
+   {
+      UTIL_ASSERT(isAllocatedBasis_);
+      return basis_[id];
+   }
+
+   // Get one field in basis format (const)
+   template <int D, class RFT, class FIT> inline
+   DArray<double> const & CFieldsReal<D,RFT,FIT>::basis(int id)
+   const
+   {
+      UTIL_ASSERT(isAllocatedBasis_);
+      return basis_[id];
+   }
+
+   // Get all fields in r-grid format (non-const)
+   template <int D, class RFT, class FIT> inline
+   DArray<RFT>& CFieldsReal<D,RFT,FIT>::rgrid()
+   {
+      UTIL_ASSERT(isAllocatedRGrid_);
+      return rgrid_;
+   }
+
+   // Get all fields in r-grid format (const)
+   template <int D, class RFT, class FIT> inline
+   DArray<RFT> const & CFieldsReal<D,RFT,FIT>::rgrid() const
+   {
+      UTIL_ASSERT(isAllocatedRGrid_);
+      return rgrid_;
+   }
+
+   // Get one field in r-grid format (non-const)
+   template <int D, class RFT, class FIT> inline
+   RFT& CFieldsReal<D,RFT,FIT>::rgrid(int id)
+   {
+      UTIL_ASSERT(isAllocatedRGrid_);
+      return rgrid_[id];
+   }
+
+   // Get one field in r-grid format (const)
+   template <int D, class RFT, class FIT> inline
+   RFT const & CFieldsReal<D,RFT,FIT>::rgrid(int id) const
+   {
+      UTIL_ASSERT(isAllocatedRGrid_);
+      return rgrid_[id];
+   }
+
+   // Has memory been allocated for fields in r-grid format?
+   template <int D, class RFT, class FIT> inline 
+   bool CFieldsReal<D,RFT,FIT>::isAllocatedRGrid() const
+   {  return isAllocatedRGrid_; }
+
+   // Has memory been allocated for fields in basis format?
+   template <int D, class RFT, class FIT> inline 
+   bool CFieldsReal<D,RFT,FIT>::isAllocatedBasis() const
+   {  return isAllocatedBasis_; }
+
+   // Protected inline member function
+
+   // Associated FieldIo object (const reference).
+   template <int D, class RFT, class FIT>
+   inline 
+   FIT const & CFieldsReal<D,RFT,FIT>::fieldIo() const
+   {
+      UTIL_CHECK(fieldIoPtr_);
+      return *fieldIoPtr_;
+   }
 
 } // namespace Prdc
 } // namespace Pscf

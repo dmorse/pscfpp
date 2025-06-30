@@ -5,15 +5,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CFieldContainer.tpp"
+#include "CFieldContainer.h"
+#include <prdc/field/CFieldsReal.tpp>
 
 namespace Pscf {
-namespace Rpc
-{
-
-   template class CFieldContainer<1>;
-   template class CFieldContainer<2>;
-   template class CFieldContainer<3>;
-
-} // namespace Rpc
-} // namespace Pscf
+   namespace Prdc {
+      // Explicit instantiations of base class template
+      template class CFieldsReal<1, Cpu::RField<1>, Rpc::FieldIo<1> >;
+      template class CFieldsReal<2, Cpu::RField<2>, Rpc::FieldIo<2> >;
+      template class CFieldsReal<3, Cpu::RField<3>, Rpc::FieldIo<3> >;
+   } 
+   namespace Rpc {
+      // Explicit instantiations of this class
+      template class CFieldContainer<1>;
+      template class CFieldContainer<2>;
+      template class CFieldContainer<3>;
+   
+   } 
+}

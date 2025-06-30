@@ -1,0 +1,19 @@
+This directory contains base class templates for classes that define the 
+domain or contain or manipulate fields for systems with periodic boundary 
+conditions.  Classes with names that end in the suffix "Real" are designed 
+for systems with real fields, for use in the Rpc and Rpg namespaces, and
+the pscf_pc and pscf_pg programs.
+
+Classes:
+
+  DomainReal  - base class template for (Rpc|Rpg)::Domain
+  FieldIoReal - base class template for (Rpc|Rpg)::FieldIo
+  WFieldsReal - base class template for (Rpc|Rpg)::WFieldContainer 
+  CFieldsReal - base class template for (Rpc|Rpg)::CFieldContainer 
+  MaskTmpl    - base class template for (Rpc|Rpg)::Mask
+
+Files that define global function templates:
+
+  fieldIoUtil.h    - functions used in FieldIoReal
+  fieldArrayUtil.h - utilities field containers
+    
