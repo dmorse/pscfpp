@@ -1140,7 +1140,10 @@ namespace Rpc {
    // Have the c fields been computed for the current w fields?
    template <int D>
    inline bool System<D>::hasCFields() const
-   {  return hasCFields_; }
+   {
+      UTIL_CHECK(c_.hasData() == hasCFields_);  
+      return c_.hasData(); 
+   }
 
    // Has the free energy been computed for the current w fields?
    template <int D>

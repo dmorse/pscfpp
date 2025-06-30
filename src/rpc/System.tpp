@@ -434,7 +434,8 @@ namespace Rpc {
             UTIL_CHECK(domain_.basis().isInitialized());
             UTIL_CHECK(!domain_.waveList().hasKSq());
             UTIL_CHECK(isAllocatedBasis_);
-            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(c_.hasData() == hasCFields_);
             UTIL_CHECK(!hasFreeEnergy_);
             UTIL_CHECK(!hasStress_);
          } else
@@ -443,9 +444,10 @@ namespace Rpc {
             w_.readRGrid(filename);
             UTIL_CHECK(domain_.unitCell().isInitialized());
             UTIL_CHECK(!domain_.waveList().hasKSq());
-            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!hasFreeEnergy_);
             UTIL_CHECK(!hasStress_);
+            UTIL_CHECK(c_.hasData() == hasCFields_);
          } else
          if (command == "ESTIMATE_W_BASIS") {
             readEcho(in, inFileName);
@@ -720,12 +722,14 @@ namespace Rpc {
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
             h_.readBasis(filename);
-            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(c_.hasData() == hasCFields_);
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
             h_.readRGrid(filename);
-            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(c_.hasData() == hasCFields_);
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
@@ -950,7 +954,8 @@ namespace Rpc {
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(c_.hasData());
+      UTIL_CHECK(c_.hasData() == hasCFields_);
 
       // If converged, compute related thermodynamic properties
       if (!error) {
@@ -1013,7 +1018,8 @@ namespace Rpc {
       if (hasFreeEnergy_) return;
 
       UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(c_.hasData());
+      UTIL_CHECK(c_.hasData() == hasCFields_);
 
       if (hasEnvironment()) UTIL_CHECK(!environment().needsUpdate());
 
@@ -1398,7 +1404,8 @@ namespace Rpc {
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
-      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(c_.hasData());
+      UTIL_CHECK(c_.hasData() == hasCFields_);
       UTIL_CHECK(w_.isSymmetric());
 
       domain_.fieldIo().writeFieldsBasis(filename, c_.basis(),
@@ -1414,7 +1421,8 @@ namespace Rpc {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(c_.hasData());
+      UTIL_CHECK(c_.hasData() == hasCFields_);
 
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
                                          domain_.unitCell(),
@@ -1431,7 +1439,8 @@ namespace Rpc {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(c_.hasData());
+      UTIL_CHECK(c_.hasData() == hasCFields_);
 
       // Create array to hold block and solvent c field data
       DArray< RField<D> > blockCFields;
