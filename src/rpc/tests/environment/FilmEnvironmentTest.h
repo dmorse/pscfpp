@@ -149,7 +149,7 @@ public:
 
       // Solve
       system.iterate();
-      system.writeWBasis("out/w2D.bf");
+      system.w().writeBasis("out/w2D.bf");
       TEST_ASSERT(eq(system.mask().phiTot(), 7.99990525324e-01));
       
       // Check that lattice parameters are correct

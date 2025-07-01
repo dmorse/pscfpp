@@ -46,8 +46,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterateGrid1D_lam_rigid_w.bf");
-      system.writeCBasis("out/testIterateGrid1D_lam_rigid_c.bf");
+      system.w().writeBasis("out/testIterateGrid1D_lam_rigid_w.bf");
+      system.c().writeBasis("out/testIterateGrid1D_lam_rigid_c.bf");
 
       // Compare result to original in basis format
       DArray< DArray<double> > b_wFields;
@@ -81,8 +81,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid1D_lam_flex_w.bf");
-      system.writeCBasis("out/testIterateGrid1D_lam_flex_c.bf");
+      system.w().writeBasis("out/testIterateGrid1D_lam_flex_w.bf");
+      system.c().writeBasis("out/testIterateGrid1D_lam_flex_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -122,8 +122,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid1D_lam_soln_w.bf");
-      system.writeCBasis("out/testIterateGrid1D_lam_soln_c.bf");
+      system.w().writeBasis("out/testIterateGrid1D_lam_soln_w.bf");
+      system.c().writeBasis("out/testIterateGrid1D_lam_soln_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -164,8 +164,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid1D_lam_blend_w.bf");
-      system.writeCBasis("out/testIterateGrid1D_lam_blend_c.bf");
+      system.w().writeBasis("out/testIterateGrid1D_lam_blend_w.bf");
+      system.c().writeBasis("out/testIterateGrid1D_lam_blend_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -206,8 +206,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid1D_lam_open_soln_w.bf");
-      system.writeCBasis("out/testIterateGrid1D_lam_open_soln_c.bf");
+      system.w().writeBasis("out/testIterateGrid1D_lam_open_soln_w.bf");
+      system.c().writeBasis("out/testIterateGrid1D_lam_open_soln_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -249,8 +249,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid1D_lam_open_blend_w.bf");
-      system.writeCBasis("out/testIterateGrid1D_lam_open_blend_c.bf");
+      system.w().writeBasis("out/testIterateGrid1D_lam_open_blend_w.bf");
+      system.c().writeBasis("out/testIterateGrid1D_lam_open_blend_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -295,8 +295,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid2D_hex_rigid_w.bf");
-      system.writeCBasis("out/testIterateGrid2D_hex_rigid_c.bf");
+      system.w().writeBasis("out/testIterateGrid2D_hex_rigid_w.bf");
+      system.c().writeBasis("out/testIterateGrid2D_hex_rigid_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -338,8 +338,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid2D_hex_flex_w.bf");
-      system.writeCBasis("out/testIterateGrid2D_hex_flex_c.bf");
+      system.w().writeBasis("out/testIterateGrid2D_hex_flex_w.bf");
+      system.c().writeBasis("out/testIterateGrid2D_hex_flex_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -381,8 +381,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid3D_bcc_rigid_w.bf");
-      system.writeCBasis("out/testIterateGrid3D_bcc_rigid_c.bf");
+      system.w().writeBasis("out/testIterateGrid3D_bcc_rigid_w.bf");
+      system.c().writeBasis("out/testIterateGrid3D_bcc_rigid_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -424,8 +424,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateGrid3D_bcc_flex_w.bf");
-      system.writeCBasis("out/testIterateGrid3D_bcc_flex_c.bf");
+      system.w().writeBasis("out/testIterateGrid3D_bcc_flex_w.bf");
+      system.c().writeBasis("out/testIterateGrid3D_bcc_flex_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;

@@ -68,7 +68,7 @@ namespace Rpc
     void ConcentrationWriter<D>::writeFrame(std::ofstream& out, long iStep)
    {  
       UTIL_CHECK(system().w().hasData());
-      if (!system().hasCFields()){
+      if (!system().c().hasData()){
          system().compute();
       }
       out << "i = " << iStep << "\n";

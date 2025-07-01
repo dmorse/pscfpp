@@ -45,6 +45,8 @@ namespace Rpg {
       using Base::setRGrid;
       using Base::readBasis;
       using Base::readRGrid;
+      using Base::writeBasis;
+      using Base::writeRGrid;
       using Base::basis;
       using Base::rgrid;
       using Base::phiTot;

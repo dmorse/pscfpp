@@ -105,7 +105,7 @@ namespace Rpc {
       // Call compressor to modify pressure-like fields
       compressorTimer_.start();
       int compress = simulator().compressor().compress();
-      UTIL_CHECK(system().hasCFields()); 
+      UTIL_CHECK(system().c().hasData()); 
       compressorTimer_.stop();
 
       bool isConverged = false;
@@ -120,7 +120,7 @@ namespace Rpc {
          simulator().computeWc();
          // Compute cc fields if any move require cc fields
          if (simulator().needsCc() || simulator().needsDc()){
-            UTIL_CHECK(system().hasCFields()); 
+            UTIL_CHECK(system().c().hasData()); 
             //system().compute();
             simulator().computeCc();
          }

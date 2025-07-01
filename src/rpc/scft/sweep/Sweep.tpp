@@ -312,7 +312,7 @@ namespace Rpc {
          outFileName += indexString;
          outFileName += "_c";
          outFileName += ".bf";
-         UTIL_CHECK(system().hasCFields());
+         UTIL_CHECK(system().c().hasData());
          fieldIo.writeFieldsBasis(outFileName,
                                   system().c().basis(), unitCell);
 

@@ -81,7 +81,6 @@ namespace Rpg {
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasMixture_(false),
-      hasCFields_(false),
       hasFreeEnergy_(false),
       hasStress_(false)
    {
@@ -430,21 +429,21 @@ namespace Rpg {
          } else
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
-            w_.readBasis(filename);
+            w().readBasis(filename);
             UTIL_CHECK(domain_.unitCell().isInitialized());
             UTIL_CHECK(domain_.basis().isInitialized());
             UTIL_CHECK(!domain_.waveList().hasKSq());
             UTIL_CHECK(isAllocatedBasis_);
-            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!hasFreeEnergy_);
             UTIL_CHECK(!hasStress_);
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
-            w_.readRGrid(filename);
+            w().readRGrid(filename);
             UTIL_CHECK(domain_.unitCell().isInitialized());
             UTIL_CHECK(!domain_.waveList().hasKSq());
-            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!hasFreeEnergy_);
             UTIL_CHECK(!hasStress_);
          } else
@@ -526,19 +525,19 @@ namespace Rpg {
          } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
-            writeWBasis(filename);
+            w().writeBasis(filename);
          } else
          if (command == "WRITE_W_RGRID") {
             readEcho(in, filename);
-            writeWRGrid(filename);
+            w().writeRGrid(filename);
          } else
          if (command == "WRITE_C_BASIS") {
             readEcho(in, filename);
-            writeCBasis(filename);
+            c().writeBasis(filename);
          } else
          if (command == "WRITE_C_RGRID") {
             readEcho(in, filename);
-            writeCRGrid(filename);
+            c().writeRGrid(filename);
          } else
          if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
@@ -721,12 +720,12 @@ namespace Rpg {
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
             h_.readBasis(filename);
-            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!c_.hasData());
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
             h_.readRGrid(filename);
-            UTIL_CHECK(!hasCFields_);
+            UTIL_CHECK(!c_.hasData());
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
@@ -906,7 +905,6 @@ namespace Rpg {
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       c_.setHasData(true);
-      hasCFields_ = true;
       hasFreeEnergy_ = false;
       hasStress_ = false;
 
@@ -951,7 +949,7 @@ namespace Rpg {
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(c_.hasData());
 
       // If converged, compute related thermodynamic properties
       if (!error) {
@@ -1014,7 +1012,7 @@ namespace Rpg {
       if (hasFreeEnergy_) return;
 
       UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(c_.hasData());
 
       if (hasEnvironment()) UTIL_CHECK(!environment().needsUpdate());
 
@@ -1349,75 +1347,6 @@ namespace Rpg {
       out << std::endl;
    }
 
-   // Field Output
-
-   /*
-   * Write w fields in symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::writeWBasis(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-      UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(w_.isSymmetric());
-
-      domain_.fieldIo().writeFieldsBasis(filename, w_.basis(),
-                                         domain_.unitCell());
-   }
-
-   /*
-   * Write w fields in real space grid file format.
-   */
-   template <int D>
-   void System<D>::writeWRGrid(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(w_.hasData());
-
-      domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
-                                         domain_.unitCell(),
-                                         w_.isSymmetric());
-   }
-
-   /*
-   * Write concentration fields in symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::writeCBasis(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-      UTIL_CHECK(hasCFields_);
-      UTIL_CHECK(w_.isSymmetric());
-
-      domain_.fieldIo().writeFieldsBasis(filename, c_.basis(),
-                                         domain_.unitCell());
-   }
-
-   /*
-   * Write concentration fields in real space (r-grid) format.
-   */
-   template <int D>
-   void System<D>::writeCRGrid(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(hasCFields_);
-
-      domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
-                                         domain_.unitCell(),
-                                         w_.isSymmetric());
-   }
-
    /*
    * Write all concentration fields in real space (r-grid) format, for
    * each block and solvent species, rather than for each monomer type.
@@ -1428,7 +1357,7 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(c_.hasData());
 
       // Create array to hold block and solvent c field data
       DArray< RField<D> > blockCFields;
@@ -1608,7 +1537,6 @@ namespace Rpg {
    void System<D>::clearCFields()
    {
       c_.setHasData(false);
-      hasCFields_ = false;
       hasFreeEnergy_ = false;
       hasStress_ = false;
    }

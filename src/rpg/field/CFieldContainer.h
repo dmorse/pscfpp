@@ -46,6 +46,8 @@ namespace Rpg {
       using Base::allocate;
       using Base::basis;
       using Base::rgrid;
+      using Base::writeBasis;
+      using Base::writeRGrid;
       using Base::isAllocatedRGrid;
       using Base::isAllocatedBasis;
       using Base::hasData;

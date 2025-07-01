@@ -175,7 +175,7 @@ namespace Rpg {
       // Call compressor
       compressorTimer_.start();
       int compress = simulator().compressor().compress();
-      UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(system().c().hasData());
       compressorTimer_.stop();
       
       bool isConverged = false;
@@ -188,7 +188,7 @@ namespace Rpg {
          // Compute eigenvector components of current fields
          componentTimer_.start();
          simulator().computeWc();
-         UTIL_CHECK(system().hasCFields());
+         UTIL_CHECK(system().c().hasData());
          simulator().computeCc();
          simulator().computeDc();
          componentTimer_.stop();

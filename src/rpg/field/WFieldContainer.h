@@ -50,6 +50,8 @@ namespace Rpg {
       using Base::readRGrid;
       using Base::symmetrize;
       using Base::clear;
+      using Base::writeBasis;
+      using Base::writeRGrid;
       using Base::basis;
       using Base::rgrid;
       using Base::isAllocatedRGrid;

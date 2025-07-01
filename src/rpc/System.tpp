@@ -81,7 +81,6 @@ namespace Rpc {
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasMixture_(false),
-      hasCFields_(false),
       hasFreeEnergy_(false),
       hasStress_(false)
    {
@@ -429,37 +428,34 @@ namespace Rpc {
          } else
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
-            w_.readBasis(filename);
+            w().readBasis(filename);
             UTIL_CHECK(domain_.unitCell().isInitialized());
             UTIL_CHECK(domain_.basis().isInitialized());
             UTIL_CHECK(!domain_.waveList().hasKSq());
             UTIL_CHECK(isAllocatedBasis_);
             UTIL_CHECK(!c_.hasData());
-            UTIL_CHECK(c_.hasData() == hasCFields_);
             UTIL_CHECK(!hasFreeEnergy_);
             UTIL_CHECK(!hasStress_);
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
-            w_.readRGrid(filename);
+            w().readRGrid(filename);
             UTIL_CHECK(domain_.unitCell().isInitialized());
             UTIL_CHECK(!domain_.waveList().hasKSq());
             UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!hasFreeEnergy_);
             UTIL_CHECK(!hasStress_);
-            UTIL_CHECK(c_.hasData() == hasCFields_);
-         } else
-         if (command == "ESTIMATE_W_BASIS") {
-            readEcho(in, inFileName);
-            readEcho(in, outFileName);
-            fieldIo.estimateWBasis(inFileName, outFileName, 
-                                   interaction().chi());
          } else
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
             in >> unitCell;
             Log::file() << "   " << unitCell << std::endl;
             setUnitCell(unitCell);
+            UTIL_CHECK(domain_.unitCell().isInitialized());
+            UTIL_CHECK(!domain_.waveList().hasKSq());
+            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(!hasFreeEnergy_);
+            UTIL_CHECK(!hasStress_);
          } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
@@ -527,19 +523,23 @@ namespace Rpc {
          } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
-            writeWBasis(filename);
+            w().writeBasis(filename);
+            //writeWBasis(filename);
          } else
          if (command == "WRITE_W_RGRID") {
             readEcho(in, filename);
-            writeWRGrid(filename);
+            w().writeRGrid(filename);
+            //writeWRGrid(filename);
          } else
          if (command == "WRITE_C_BASIS") {
             readEcho(in, filename);
-            writeCBasis(filename);
+            c().writeBasis(filename);
+            //writeCBasis(filename);
          } else
          if (command == "WRITE_C_RGRID") {
             readEcho(in, filename);
-            writeCRGrid(filename);
+            c().writeRGrid(filename);
+            //writeCRGrid(filename);
          } else
          if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
@@ -719,66 +719,45 @@ namespace Rpc {
             fieldIo.replicateUnitCell(inFileName, outFileName, replicas);
 
          } else
+         if (command == "ESTIMATE_W_BASIS") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            fieldIo.estimateWBasis(inFileName, outFileName, 
+                                   interaction().chi());
+         } else
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
-            h_.readBasis(filename);
+            h().readBasis(filename);
             UTIL_CHECK(!c_.hasData());
-            UTIL_CHECK(c_.hasData() == hasCFields_);
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
-            h_.readRGrid(filename);
+            h().readRGrid(filename);
             UTIL_CHECK(!c_.hasData());
-            UTIL_CHECK(c_.hasData() == hasCFields_);
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(h_.hasData());
-            UTIL_CHECK(h_.isSymmetric());
-            fieldIo.writeFieldsBasis(filename, h_.basis(),
-                                     domain_.unitCell());
+            h().writeBasis(filename);
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
-            UTIL_CHECK(h_.hasData());
-            fieldIo.writeFieldsRGrid(filename, h_.rgrid(),
-                                     domain_.unitCell());
+            h().writeBasis(filename);
          } else
          if (command == "READ_MASK_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(domain_.basis().isInitialized());
-            if (!mask_.isAllocatedBasis()) {
-               mask_.allocateBasis(domain_.basis().nBasis());
-            }
-            if (!mask_.isAllocatedRGrid()) {
-               mask_.allocateRGrid(domain_.mesh().dimensions());
-            }
-            mask_.readBasis(filename);
+            mask().readBasis(filename);
          } else
          if (command == "READ_MASK_RGRID") {
             readEcho(in, filename);
-            if (!mask_.isAllocatedRGrid()) {
-               mask_.allocateRGrid(domain_.mesh().dimensions());
-            }
-            if (iterator().isSymmetric() && !mask_.isAllocatedBasis()) {
-               UTIL_CHECK(domain_.basis().isInitialized());
-               mask_.allocateBasis(domain_.basis().nBasis());
-            }
-            mask_.readRGrid(filename);
+            mask().readRGrid(filename);
          } else
          if (command == "WRITE_MASK_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(mask_.hasData());
-            UTIL_CHECK(mask_.isSymmetric());
-            fieldIo.writeFieldBasis(filename, mask_.basis(),
-                                    domain_.unitCell());
+            mask().writeBasis(filename);
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
-            UTIL_CHECK(mask_.hasData());
-            fieldIo.writeFieldRGrid(filename, mask_.rgrid(),
-                                    domain_.unitCell(),
-                                    mask_.isSymmetric());
+            mask().writeRGrid(filename);
          } else
          if (command == "WRITE_TIMERS") {
             readEcho(in, filename);
@@ -909,7 +888,6 @@ namespace Rpc {
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       c_.setHasData(true);
-      hasCFields_ = true;
       hasFreeEnergy_ = false;
       hasStress_ = false;
 
@@ -955,7 +933,6 @@ namespace Rpc {
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
       UTIL_CHECK(c_.hasData());
-      UTIL_CHECK(c_.hasData() == hasCFields_);
 
       // If converged, compute related thermodynamic properties
       if (!error) {
@@ -1019,7 +996,6 @@ namespace Rpc {
 
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(c_.hasData());
-      UTIL_CHECK(c_.hasData() == hasCFields_);
 
       if (hasEnvironment()) UTIL_CHECK(!environment().needsUpdate());
 
@@ -1252,6 +1228,8 @@ namespace Rpc {
       hasStress_ = true;
    }
 
+   // Property Output
+
    /*
    * Write parameter file for SCFT, omitting any sweep block.
    */
@@ -1358,77 +1336,6 @@ namespace Rpc {
       out << std::endl;
    }
 
-   // Field Output
-
-   /*
-   * Write w fields in symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::writeWBasis(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-      UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(w_.isSymmetric());
-
-      domain_.fieldIo().writeFieldsBasis(filename, w_.basis(),
-                                         domain_.unitCell());
-   }
-
-   /*
-   * Write w fields in real space grid file format.
-   */
-   template <int D>
-   void System<D>::writeWRGrid(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(w_.hasData());
-
-      domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
-                                         domain_.unitCell(),
-                                         w_.isSymmetric());
-   }
-
-   /*
-   * Write concentration fields in symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::writeCBasis(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(isAllocatedBasis_);
-      UTIL_CHECK(c_.hasData());
-      UTIL_CHECK(c_.hasData() == hasCFields_);
-      UTIL_CHECK(w_.isSymmetric());
-
-      domain_.fieldIo().writeFieldsBasis(filename, c_.basis(),
-                                         domain_.unitCell());
-   }
-
-   /*
-   * Write concentration fields in real space (r-grid) format.
-   */
-   template <int D>
-   void System<D>::writeCRGrid(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(c_.hasData());
-      UTIL_CHECK(c_.hasData() == hasCFields_);
-
-      domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(),
-                                         domain_.unitCell(),
-                                         w_.isSymmetric());
-   }
-
    /*
    * Write all concentration fields in real space (r-grid) format, for
    * each block and solvent species, rather than for each monomer type.
@@ -1440,7 +1347,6 @@ namespace Rpc {
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(c_.hasData());
-      UTIL_CHECK(c_.hasData() == hasCFields_);
 
       // Create array to hold block and solvent c field data
       DArray< RField<D> > blockCFields;
@@ -1620,7 +1526,6 @@ namespace Rpc {
    void System<D>::clearCFields()
    {
       c_.setHasData(false);
-      hasCFields_ = false;
       hasFreeEnergy_ = false;
       hasStress_ = false;
    }

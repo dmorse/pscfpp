@@ -233,13 +233,13 @@ namespace Rpg {
       * computation of concentration fields for all blocks and solvents,
       * and computation of overall concentrations for all monomer types.
       * This function does not compute the canonical (Helmholtz) free
-      * energy or grand-canonical free energy (i.e., pressure). Upon
-      * return, hasCFields() is true.
+      * energy or grand-canonical free energy (i.e., pressure). 
       *
       * If argument needStress is true, then this function also calls
       * computeStress() to compute the stress.
       *
-      * \pre The w().hasData() flag must be true on entry.
+      * \pre  w().hasData() == true 
+      * \post c().hasData() == true 
       *
       * \param needStress  true if stress is needed, false otherwise
       */
@@ -251,7 +251,7 @@ namespace Rpg {
       * This function calls the iterator to solve the SCFT problem for
       * the current system parameters, using the current chemical
       * potential fields and unit cell parameters as initial guesses.
-      * Upon exit, hasCFields is set true whether or not convergence
+      * Upon exit, c().hasData() is set true whether or not convergence
       * is obtained to within the desired tolerance. The Helmholtz free
       * energy and pressure are computed only if convergence is obtained.
       *
@@ -297,6 +297,17 @@ namespace Rpg {
       */
       void simulate(int nStep);
 
+      /**
+      * Mark c-fields and free energy as outdated or invalid.
+      *
+      * This function should be called whenever any of the inputs to the
+      * inputs to the solutin of the modified diffusion equation are 
+      * modified, including the w fields, unit cell parameters, external 
+      * fields or mask.  Upon return, hasCfields(), hasFreeEnergy(), and 
+      * hasStress() all return false. 
+      */
+      void clearCFields();
+
       ///@}
       /// \name SCFT Thermodynamic Properties
       ///@{
@@ -308,8 +319,8 @@ namespace Rpg {
       * iterate(). Resulting values are retrieved by the fHelmholtz(),
       * fIdeal(), fInter(), fExt(), and pressure() accessor functions.
       *
-      * \pre w().hasData() must return true
-      * \pre hasCFields() must return true
+      * \pre w().hasData() == true
+      * \pre c().hasData() == true
       */
       void computeFreeEnergy();
 
@@ -359,8 +370,8 @@ namespace Rpg {
       * will be minimized during iteration, which depends on the type of
       * Environment.
       *
-      * \pre w().hasData() must return true
-      * \pre hasCFields() must return true
+      * \pre w().hasData() == true
+      * \pre c().hasData() == true
       */
       void computeStress();
 
@@ -376,18 +387,18 @@ namespace Rpg {
       double stress(int paramId) const;
 
       ///@}
-      /// \name SCFT Thermodynamic Data Output
+      /// \name Property Output
       ///@{
 
       /**
       * Write partial parameter file to an ostream.
       *
-      * This function writes the Mixture, Interaction, and Domain blocks
-      * of a parameter file, as well as any Environment and Iterator block, 
-      * but omits any Sweep or Simulator blocks. The intent is to produce 
-      * an output during an SCFT sweep that only refers to parameters 
-      * relevant to a single state point, in a form that could be used as 
-      * a parameter file for a single SCFT calculation.
+      * This function writes the Mixture, Interaction, and Domain blocks 
+      * of a parameter file, as well as any Environment and Iterator block,
+      * but omits any Sweep or Simulator blocks. It is used to produce an
+      * output during an SCFT sweep that only refers to parameters relevant
+      * to a single state point, in a form that could be used as a 
+      * parameter file for a single SCFT calculation.
       *
       * \param out  output stream
       */
@@ -432,38 +443,6 @@ namespace Rpg {
       * \param out  output stream
       */
       void writeStress(std::ostream& out);
-
-      ///@}
-      /// \name Field Output
-      ///@{
-
-      /**
-      * Write chemical potential fields in symmetry-adapted basis format.
-      *
-      * \param filename  name of output file
-      */
-      void writeWBasis(std::string const & filename) const;
-
-      /**
-      * Write chemical potential fields in real space grid (r-grid) format.
-      *
-      * \param filename  name of output file
-      */
-      void writeWRGrid(std::string const & filename) const;
-
-      /**
-      * Write concentration fields in symmetry-adapted basis format.
-      *
-      * \param filename  name of output file
-      */
-      void writeCBasis(std::string const & filename) const;
-
-      /**
-      * Write concentration fields in real space grid (r-grid) format.
-      *
-      * \param filename  name of output file
-      */
-      void writeCRGrid(std::string const & filename) const;
 
       /**
       * Write c fields for all blocks and solvents in r-grid format.
@@ -558,32 +537,32 @@ namespace Rpg {
       ///@{
 
       /**
-      * Get container of chemical potential (w) fields  by non-const reference.
-      */
-      WFieldContainer<D>& w();
-
-      /**
-      * Get container of chemical potential (w) fields by const reference.
-      */
-      WFieldContainer<D> const & w() const;
-
-      /**
-      * Get container of monomer concentration fields (c fields).
+      * Get the monomer concentration (c) fields by const reference.
       */
       CFieldContainer<D> const & c() const;
 
       /**
-      * Get container of external potential fields (non-const reference).
+      * Get the chemical potential (w) fields  by non-const reference.
+      */
+      WFieldContainer<D>& w();
+
+      /**
+      * Get the chemical potential (w) fields by const reference.
+      */
+      WFieldContainer<D> const & w() const;
+
+      /**
+      * Get the external potential fields (non-const reference).
       */
       WFieldContainer<D>& h();
 
       /**
-      * Get container of external potential fields (const reference).
+      * Get the external potential fields (const reference).
       */
       WFieldContainer<D> const & h() const;
 
       /**
-      * Get the mask (field to which total density is constrained).
+      * Get the mask (total density constraint) by non-const reference.
       */
       Mask<D>& mask();
 
@@ -693,11 +672,6 @@ namespace Rpg {
       bool hasMask() const;
 
       /**
-      * Are the c fields current, consistent with current w fields?
-      */
-      bool hasCFields() const;
-
-      /**
       * Is the SCFT free energy current, consistent with current w fields?
       */
       bool hasFreeEnergy() const;
@@ -706,17 +680,6 @@ namespace Rpg {
       * Has the SCFT stress been computed for the current w fields?
       */
       bool hasStress() const;
-
-      /**
-      * Mark c-fields and free energy as outdated or invalid.
-      *
-      * Upon return, hasCfields(), hasFreeEnergy(), and hasStress() all
-      * return false. This function should be called by functions that 
-      * modify any of the inputs to the solution of the modified diffusion 
-      * equation and calculation of c-fields and free energy, including 
-      * the w fields, unit cell parameters, external fields or mask.
-      */
-      void clearCFields();
 
       ///@}
 
@@ -867,20 +830,6 @@ namespace Rpg {
       * Has the mixture been initialized?
       */
       bool hasMixture_;
-
-      /**
-      * Have c fields been computed for the current w fields?
-      *
-      * When hasCFields_ is true, the c fields for all individual blocks
-      * and solvent species in the Mixture and the total concentration
-      * fields for all monomer types in the System::c_ container are  all
-      * values computed from the current w fields in System::w_ container,
-      * using the current unit cell parameters. This should be set true
-      * when all c fields are computed, and set false whenever the system
-      * w fields, the mask or external fields, or the system unit cell
-      * parameters are modified.
-      */
-      bool hasCFields_;
 
       /**
       * Has SCFT free energy been computed for the current w and c fields?
@@ -1137,11 +1086,6 @@ namespace Rpg {
    inline bool System<D>::hasSimulator() const
    {  return (simulatorPtr_); }
 
-   // Have the c fields been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasCFields() const
-   {  return hasCFields_; }
-
    // Has the free energy been computed for the current w fields?
    template <int D>
    inline bool System<D>::hasFreeEnergy() const
@@ -1162,3 +1106,4 @@ namespace Rpg {
 } // namespace Rpg
 } // namespace Pscf
 #endif
+

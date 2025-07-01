@@ -212,8 +212,8 @@ namespace Rpc {
       * 
       * This function should be called whenever the unit cell parameters 
       * are modified. It calls functions mixture().clearUnitCellData(), 
-      * domain().wavelist().clearUnitCellData(), clearCFields(), and, 
-      * if an Environment exists, environment().reset(). 
+      * domain().wavelist().clearUnitCellData(), clearCFields(), and, if
+      * an Environment exists, environment().reset(). 
       */
       void clearUnitCellData();
 
@@ -234,12 +234,15 @@ namespace Rpc {
       * and computation of overall concentrations for all monomer types.
       * This function does not compute the canonical (Helmholtz) free
       * energy or grand-canonical free energy (i.e., pressure). Upon
-      * return, hasCFields() is true.
+      * return, () is true.
       *
       * If argument needStress is true, then this function also calls
       * computeStress() to compute the stress.
       *
-      * \pre The w().hasData() flag must be true on entry.
+      * \pre  w().hasData() == true
+      *
+      * \post c().hasData() == true
+      * \post hasStress() == true iff needStress = true
       *
       * \param needStress  true if stress is needed, false otherwise
       */
@@ -251,14 +254,14 @@ namespace Rpc {
       * This function calls the iterator to solve the SCFT problem for
       * the current system parameters, using the current chemical
       * potential fields and unit cell parameters as initial guesses.
-      * Upon exit, hasCFields() is true whether or not convergence
-      * is obtained to within the desired tolerance. The Helmholtz free
+      * Upon exit, c().hasData() is true whether or not convergence is
+      * obtained to within the desired tolerance. The Helmholtz free
       * energy and pressure are computed only if convergence is obtained.
       *
-      * \pre Function hasIterator() must return true
-      * \pre Function w().hasData() must return true
-      * \pre Function w().isSymmetric() must return true if the iterator
-      * uses a symmetry-adapted basis.
+      * \pre Function hasIterator() == true
+      * \pre Function w().hasData() == true
+      * \pre Function w().isSymmetric() == true if iterator is symmetric
+      * \post c().hasData() == true
       *
       * \return returns 0 for successful convergence, 1 for failure
       *
@@ -297,6 +300,17 @@ namespace Rpc {
       */
       void simulate(int nStep);
 
+      /**
+      * Mark c-fields and free energy as outdated or invalid.
+      *
+      * This function should be called when any of the inputs to the 
+      * solution of the modified diffusion equation are modified,
+      * including the w fields, unit cell parameters, external fields 
+      * or mask.  Upon return, c().hasData(), hasFreeEnergy(), and 
+      * hasStress() all return false. 
+      */
+      void clearCFields();
+
       ///@}
       /// \name SCFT Thermodynamic Properties
       ///@{
@@ -308,8 +322,8 @@ namespace Rpc {
       * iterate(). Resulting values are retrieved by the fHelmholtz(),
       * fIdeal(), fInter(), fExt(), and pressure() accessor functions.
       *
-      * \pre w().hasData() must return true
-      * \pre hasCFields() must return true
+      * \pre w().hasData() == true
+      * \pre c().hadData() == true
       */
       void computeFreeEnergy();
 
@@ -359,13 +373,14 @@ namespace Rpc {
       * will be minimized during iteration, which depends on the type of
       * Environment.
       *
-      * \pre w().hasData() must return true
-      * \pre hasCFields() must return true
+      * \pre w().hasData() == true
+      * \pre c().hasData() == true
+      * \post hasStress() == true
       */
       void computeStress();
 
       /**
-      * Get the stress for a single lattice parameter.
+      * Get the SCFT stress for a single lattice parameter.
       *
       * This function retrieves a value computed by computeStress().
       * If computeStress() has not been called for the current set of 
@@ -376,7 +391,7 @@ namespace Rpc {
       double stress(int paramId) const;
 
       ///@}
-      /// \name SCFT Thermodynamic Data Output
+      /// \name Property Output
       ///@{
 
       /**
@@ -432,38 +447,6 @@ namespace Rpc {
       * \param out  output stream
       */
       void writeStress(std::ostream& out);
-
-      ///@}
-      /// \name Field Output
-      ///@{
-
-      /**
-      * Write chemical potential fields in symmetry-adapted basis format.
-      *
-      * \param filename  name of output file
-      */
-      void writeWBasis(std::string const & filename) const;
-
-      /**
-      * Write chemical potential fields in real space grid (r-grid) format.
-      *
-      * \param filename  name of output file
-      */
-      void writeWRGrid(std::string const & filename) const;
-
-      /**
-      * Write concentration fields in symmetry-adapted basis format.
-      *
-      * \param filename  name of output file
-      */
-      void writeCBasis(std::string const & filename) const;
-
-      /**
-      * Write concentration fields in real space grid (r-grid) format.
-      *
-      * \param filename  name of output file
-      */
-      void writeCRGrid(std::string const & filename) const;
 
       /**
       * Write c fields for all blocks and solvents in r-grid format.
@@ -558,6 +541,11 @@ namespace Rpc {
       ///@{
 
       /**
+      * Get container of monomer concentration (c) fields by const reference.
+      */
+      CFieldContainer<D> const & c() const;
+
+      /**
       * Get container of chemical potential (w) fields by non-const reference.
       */
       WFieldContainer<D>& w();
@@ -566,11 +554,6 @@ namespace Rpc {
       * Get container of chemical potential (w) fields by const reference.
       */
       WFieldContainer<D> const & w() const;
-
-      /**
-      * Get container of monomer concentration fields (c fields).
-      */
-      CFieldContainer<D> const & c() const;
 
       /**
       * Get container of external potential fields (non-const reference).
@@ -693,11 +676,6 @@ namespace Rpc {
       bool hasMask() const;
 
       /**
-      * Are c fields current, consistent with the current w fields?
-      */
-      bool hasCFields() const;
-
-      /**
       * Is the SCFT free energy current, consistent with current w fields?
       */
       bool hasFreeEnergy() const;
@@ -706,17 +684,6 @@ namespace Rpc {
       * Has the SCFT stress been computed for the current w fields?
       */
       bool hasStress() const;
-
-      /**
-      * Mark c-fields and free energy as outdated or invalid.
-      *
-      * Upon return, hasCfields(), hasFreeEnergy(), and hasStress() all
-      * return false. This function should be called by functions that 
-      * modify any of the inputs to the solution of the modified diffusion 
-      * equation and calculation of c-fields and free energy, including 
-      * the w fields, unit cell parameters, external fields or mask.
-      */
-      void clearCFields();
 
       ///@}
 
@@ -867,20 +834,6 @@ namespace Rpc {
       * Has the mixture been initialized?
       */
       bool hasMixture_;
-
-      /**
-      * Have c fields been computed for the current w fields?
-      *
-      * When hasCFields_ is true, the c fields for all individual blocks
-      * and solvent species in the Mixture and the total concentration
-      * fields for all monomer types in the System::c_ container are  all
-      * values computed from the current w fields in System::w_ container,
-      * using the current unit cell parameters. This should be set true
-      * when all c fields are computed, and set false whenever the system
-      * w fields, the mask or external fields, or the system unit cell
-      * parameters are modified.
-      */
-      bool hasCFields_;
 
       /**
       * Has SCFT free energy been computed for the current w and c fields?
@@ -1136,14 +1089,6 @@ namespace Rpc {
    template <int D>
    inline bool System<D>::hasSimulator() const
    {  return (simulatorPtr_); }
-
-   // Have the c fields been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasCFields() const
-   {
-      UTIL_CHECK(c_.hasData() == hasCFields_);  
-      return c_.hasData(); 
-   }
 
    // Has the free energy been computed for the current w fields?
    template <int D>

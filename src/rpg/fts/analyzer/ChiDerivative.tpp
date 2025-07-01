@@ -52,7 +52,7 @@ namespace Rpg
       double chi = system().interaction().chi(0,1);
 
       // Pre-requisite computations
-      if (!system().hasCFields()) {
+      if (!system().c().hasData()) {
          system().compute();
       }
       if (!simulator().hasWc()){

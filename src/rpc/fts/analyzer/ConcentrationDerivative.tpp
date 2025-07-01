@@ -50,7 +50,7 @@ namespace Rpc
       double vMonomer = system().mixture().vMonomer();
       const int meshSize = system().domain().mesh().size();
       
-      if (!system().hasCFields()) {
+      if (!system().c().hasData()) {
          system().compute();
       }
       if (!simulator().hasWc()){

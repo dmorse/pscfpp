@@ -193,7 +193,7 @@ namespace Rpg {
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(system().c().hasData());
       UTIL_CHECK(hasWc_);
       hasHamiltonian_ = false;
 
@@ -500,7 +500,7 @@ namespace Rpg {
       // Preconditions
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(system().c().hasData());
 
       const int nMonomer = system().mixture().nMonomer();
       int i, j;

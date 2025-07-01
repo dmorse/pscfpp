@@ -58,10 +58,10 @@ namespace Rpc {
    {
       UTIL_CHECK(system().w().hasData());
 
-      if (!system().hasCFields()) {
+      if (!system().c().hasData()) {
          system().compute();
       }
-      UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(system().c().hasData());
       if (!simulator().hasWc()){
          simulator().computeWc();
       }

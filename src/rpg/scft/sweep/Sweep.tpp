@@ -297,7 +297,7 @@ namespace Rpg {
       outFileName += indexString;
       outFileName += "_w";
       outFileName += ".bf";
-      system().writeWBasis(outFileName);
+      system().w().writeBasis(outFileName);
 
       // Optionally write c rgrid files
       if (writeCRGrid_) {
@@ -305,7 +305,7 @@ namespace Rpg {
         outFileName += indexString;
         outFileName += "_c";
         outFileName += ".rf";
-        system().writeCRGrid(outFileName);
+        system().c().writeRGrid(outFileName);
       }
 
       // Optionally write c basis files
@@ -314,7 +314,7 @@ namespace Rpg {
          outFileName += indexString;
          outFileName += "_c";
          outFileName += ".bf";
-         system().writeCBasis(outFileName);
+         system().c().writeBasis(outFileName);
       }
 
       // Optionally write w rgrid files
@@ -323,7 +323,7 @@ namespace Rpg {
         outFileName += indexString;
         outFileName += "_w";
         outFileName += ".rf";
-        system().writeWRGrid(outFileName);
+        system().w().writeRGrid(outFileName);
       }
    }
 

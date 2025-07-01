@@ -48,7 +48,7 @@ namespace Rpg {
       const int meshSize = system().domain().mesh().size();
       
       // Compute hamiltonian, if necessary
-      if (!system().hasCFields()) {
+      if (!system().c().hasData()) {
          system().compute();
       }
       if (!simulator().hasWc()){

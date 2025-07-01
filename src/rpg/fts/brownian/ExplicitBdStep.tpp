@@ -132,7 +132,7 @@ namespace Rpg {
          simulator().restoreState();
       } else {
          isConverged = true;
-         UTIL_CHECK(system().hasCFields());
+         UTIL_CHECK(system().c().hasData());
          
          // Evaluate component properties in new state
          simulator().clearState();

@@ -56,7 +56,7 @@ namespace Rpg
    void HamiltonianAnalyzer<D>::compute() 
    {  
       UTIL_CHECK(system().w().hasData());
-      if (!system().hasCFields()) {
+      if (!system().c().hasData()) {
          system().compute();
       }
       if (!simulator().hasWc()){

@@ -178,8 +178,8 @@ public:
       }
 
       // Write final fields
-      system.writeWBasis(outFileRoot + "_w.bf");
-      system.writeCBasis(outFileRoot + "_w.bf");
+      system.w().writeBasis(outFileRoot + "_w.bf");
+      system.c().writeBasis(outFileRoot + "_w.bf");
    }
 
    /*
@@ -340,8 +340,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateBasis1D_lam_flex_noBatched_w.bf");
-      system.writeCBasis("out/testIterateBasis1D_lam_flex_noBatched_c.bf");
+      system.w().writeBasis("out/testIterateBasis1D_lam_flex_noBatched_w.bf");
+      system.c().writeBasis("out/testIterateBasis1D_lam_flex_noBatched_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -576,8 +576,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateBasis1D_lam_blend_w.bf");
-      system.writeCBasis("out/testIterateBasis1D_lam_blend_c.bf");
+      system.w().writeBasis("out/testIterateBasis1D_lam_blend_w.bf");
+      system.c().writeBasis("out/testIterateBasis1D_lam_blend_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -895,8 +895,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateBasis2D_hex_flex_noBatched_w.bf");
-      system.writeCBasis("out/testIterateBasis2D_hex_flex_noBatched_c.bf");
+      system.w().writeBasis("out/testIterateBasis2D_hex_flex_noBatched_w.bf");
+      system.c().writeBasis("out/testIterateBasis2D_hex_flex_noBatched_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;
@@ -999,8 +999,8 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       };
-      system.writeWBasis("out/testIterateBasis3D_bcc_flex_noBatched_w.bf");
-      system.writeCBasis("out/testIterateBasis3D_bcc_flex_noBatched_c.bf");
+      system.w().writeBasis("out/testIterateBasis3D_bcc_flex_noBatched_w.bf");
+      system.c().writeBasis("out/testIterateBasis3D_bcc_flex_noBatched_c.bf");
 
       // Get test result
       DArray< DArray<double> > b_wFields;

@@ -101,7 +101,7 @@ namespace Rpg {
       // Call compressor
       compressorTimer_.start();
       int compress = simulator().compressor().compress();
-      UTIL_CHECK(system().hasCFields());
+      UTIL_CHECK(system().c().hasData());
       compressorTimer_.stop();
       
       bool isConverged = false;
@@ -117,7 +117,7 @@ namespace Rpg {
          // Compute cc fields if any move require cc fields
          if (simulator().needsCc() || simulator().needsDc()){
             //system().compute();
-            UTIL_CHECK(system().hasCFields());
+            UTIL_CHECK(system().c().hasData());
             simulator().computeCc();
          }
          // Compute dc fields if any move require dc fields

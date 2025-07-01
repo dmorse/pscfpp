@@ -58,7 +58,7 @@ namespace Rpc
       * The fieldHamitonian is calculated in the computeHamiltonian() function,
       * located in rpc/fts/Simulator.tpp 
       */
-      if (!system().hasCFields()) {
+      if (!system().c().hasData()) {
          system().compute();
       }
       if (!simulator().hasWc()){

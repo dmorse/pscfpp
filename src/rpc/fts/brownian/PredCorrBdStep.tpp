@@ -159,7 +159,7 @@ namespace Rpc {
       if (compress != 0){
          simulator().restoreState();
       } else {
-         UTIL_CHECK(system().hasCFields());
+         UTIL_CHECK(system().c().hasData());
 
          // Compute components and derivatives at wp_
          simulator().clearData();
@@ -209,7 +209,7 @@ namespace Rpc {
             simulator().restoreState();
          } else {
             isConverged = true;
-            UTIL_CHECK(system().hasCFields());
+            UTIL_CHECK(system().c().hasData());
 
             // Compute components and derivatives at final point
             simulator().clearState();
