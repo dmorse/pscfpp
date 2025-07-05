@@ -68,7 +68,7 @@ namespace Rpg {
       using BlockT = Block<D>;
 
       /// Propagator type, for one direction within a block. 
-      using PropagatorT = typename BlockT::Propagator<D>;
+      using PropagatorT = typename BlockT::PropagatorT;
 
       // Public member functions
 

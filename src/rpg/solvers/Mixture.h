@@ -277,7 +277,7 @@ namespace Rpg {
       Mesh<D> const * meshPtr_;
 
       /// Number of unit cell parameters.
-      int nParams_;
+      int nParam_;
 
       /// Has the stress been computed?
       bool hasStress_;
