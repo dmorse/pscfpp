@@ -9,6 +9,7 @@
 */
 
 #include "Polymer.h"
+#include <prdc/cpu/RField.h>
 
 namespace Pscf {
 namespace Rpc { 

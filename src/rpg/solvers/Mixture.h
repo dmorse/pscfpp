@@ -40,16 +40,26 @@ namespace Rpg {
    /**
    * Solver for a mixture of polymers and solvents.
    *
-   * A Mixture contains a list of Polymer and Solvent objects. Each
-   * such object can solve the single-molecule statistical mechanics 
-   * problem for an ideal gas of the associated species in a set of
-   * specified chemical potential fields, and thereby compute 
-   * concentrations and single-molecule partition functions. A
-   * Mixture is thus both a chemistry descriptor and an ideal-gas 
-   * solver.
+   * A Mixture contain lists of Polymer and Solvent objects. Each such
+   * object can solve the single-molecule statistical mechanics problem
+   * for an ideal gas of the associated species in a set of specified 
+   * chemical potential fields, and thereby compute concentrations and
+   * single-molecule partition functions. A Mixture is thus both a 
+   * chemistry descriptor and an ideal-gas solver.
    *
-   * A Mixture is associated with a Mesh<D> object, which models a
-   * spatial discretization mesh. 
+   * The single-molecule partition functions and concentrations for a
+   * non-interacting mixture of polymer and solvent species are computed
+   * by invoking the Mixture::compute function.  The Mixture::compute
+   * function takes an arrays of monomer chemical potential fields
+   * (w fields) as an input argument and an array of monomer concentration
+   * fields (c fields) as an output.
+   *
+   * A Mixture is associated with a Mesh<D> object, which models a spatial
+   * discretization mesh, and a UnitCell<D> object, which models the
+   * periodic unit cell. The Mixture::clearUnitCellData function clears
+   * parameters that depend on the unit cell as invalid, and must be called
+   * once after every time the unit cell parameters are set or modified,
+   * before the next call to Mixture::compute.
    *
    * \ingroup Rpg_Solvers_Module
    */
@@ -58,6 +68,28 @@ namespace Rpg {
    {
 
    public:
+
+      // Public typename aliases 
+
+      /// Base class.
+      using Base = MixtureTmpl< Polymer<D>, Solvent<D> >;
+
+      /// Solvent object type: SolventT = Solvent<D> (inherited)
+      using typename Base::SolventT;
+
+      /// Polymer object type: PolymerT = Polymer<D> (inherited)
+      using typename Base::PolymerT;
+
+      /// Block type, for a block in a block polymer (inherited)
+      using typename Base::BlockT;
+
+      /// Propagator type, for one direction within a block (inherited).
+      using typename Base::PropagatorT;
+
+      /// Field type, for data defined on a real-space grid.
+      using FieldT = typename PropagatorT::FieldT;
+
+      // Public member functions
 
       /**
       * Constructor.
@@ -72,9 +104,9 @@ namespace Rpg {
       /**
       * Read all parameters and initialize.
       *
-      * This function reads in a complete description of
-      * the chemical composition and structure of all species,
-      * as well as the target contour length step size ds.
+      * This function reads in a complete description of the structure of
+      * all species and the composition of the mixture, plus a few other 
+      * parameters.
       *
       * \param in input parameter stream
       */
@@ -85,12 +117,14 @@ namespace Rpg {
       * 
       * The Mesh<D> object must have already been initialized, e.g., by 
       * reading the dimensions from a file, so that the mesh dimensions 
-      * are known on entry. The FFT<D> object must have been set up using
-      * the same mesh dimensions as those stored by the mesh. The UnitCell
-      * must have been assigned a lattice system, but does not yet need to 
-      * be initialized.
+      * are known on entry. The FFT<D> object must have been set up with
+      * mesh dimensions equal to those of the mesh. The UnitCell<D> must
+      * have been assigned a non-null lattice system, but does not need
+      * to have initialized lattice parameters.
       * 
-      * Must be called before allocate().
+      * The associate and allocate functions are called within the base
+      * class readParameters function. This function must be called before 
+      * allocate().
       *
       * \param mesh  Mesh<D> object - spatial discretization mesh
       * \param fft  FFT<D> object - Fourier transforms
@@ -103,9 +137,10 @@ namespace Rpg {
                      WaveList<D>& waveList);
 
       /**
-      * Allocate internal data containers in all solvers. 
+      * Allocate required internal memory for all solvers. 
       * 
-      * associate() must have been called first.
+      * This function is called within the base class readParameters
+      * function, after the associate() function.
       */
       void allocate();
 
@@ -130,24 +165,28 @@ namespace Rpg {
       * Compute partition functions and concentrations.
       *
       * This function calls the compute function of every molecular
-      * species, and then adds the resulting block concentration
-      * fields for blocks of each type to compute a total monomer
-      * concentration (or volume fraction) for each monomer type.
-      * Upon return, values are set for volume fraction and chemical 
-      * potential (mu) members of each species, and for the 
-      * concentration fields for each Block and Solvent. The total
-      * concentration for each monomer type is returned in the
-      * cFields output parameter. Monomer "concentrations" are returned 
-      * in units of inverse steric volume per monomer in an incompressible
-      * mixture, and are thus also volume fractions.
+      * species, and then adds the resulting block concentration fields
+      * for blocks of each type to compute a total monomer concentrations
+      * (or volume fraction) for each monomer type.  Upon return, values 
+      * are set for volume fraction (phi) and chemical potential (mu) 
+      * members of each species, and for the concentration fields for each 
+      * Block and Solvent. The total concentration for each monomer type 
+      * is returned in the cFields function parameter. Monomer 
+      * "concentrations" fields returned in units of inverse steric volume 
+      * per monomer in an incompressible mixture, and are thus also volume 
+      * fractions. 
       *
-      * The arrays wFields and cFields must each have size nMonomer(),
-      * and contain fields that are indexed by monomer type index. 
+      * The function parameters wFields and cFields must each have array
+      * size nMonomer(), and contain fields that are indexed by monomer 
+      * type index. 
       * 
       * The optional parameter phiTot is only relevant to problems such as 
       * thin films in which the material is excluded from part of the unit
       * cell by imposing an inhomogeneous constraint on the sum of monomer 
       * concentrations, (i.e., a "mask"). 
+      *
+      * This function does not compute SCFT free energies or stress (i.e.,
+      * derivatives of free energy with respect to unit cell parameters).
       *
       * \param wFields array of chemical potential fields (input)
       * \param cFields array of monomer concentration fields (output)
@@ -191,20 +230,13 @@ namespace Rpg {
       */
       double stress(int parameterId) const;
 
-      #if 0
-      /**
-      * Get monomer reference volume.
-      */
-      double vMonomer() const;
-      #endif
-
       /**
       * Is the ensemble canonical (i.e, closed for all species)?
       *
-      * Return true if and only if the ensemble is closed for all polymer 
-      * and solvent species.
+      * Return true if and only if the species ensemble is closed for all 
+      * polymer and solvent species.
       */
-      bool isCanonical();
+      bool isCanonical() const;
 	 
       /**
       * Has the stress been computed?
@@ -212,27 +244,33 @@ namespace Rpg {
       bool hasStress() const;
 
       // Public members from MixtureTmpl with non-dependent names 
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::nBlock;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::polymer;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::monomer;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::solvent;
+
+      using Base::polymer;
+      using Base::polymerSpecies;
+      using Base::solvent;
+      using Base::solventSpecies;
+      using MixtureBase::nMonomer;
+      using MixtureBase::monomer;
+      using MixtureBase::nPolymer;
+      using MixtureBase::nSolvent;
+      using MixtureBase::nBlock;
+      using MixtureBase::vMonomer;
 
    protected:
 
-      // Public members from MixtureTmpl with non-dependent names 
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::setClassName;
+      // Inherited protected member functions with non-dependent names 
+      using ParamComposite::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 
    private:
 
-      /// Derivatives of free energy w/ respect to cell parameters.
+      // Private member data
+
+      /// Derivatives of SCFT free energy w/ respect to cell parameters.
       FArray<double, 6> stress_;
    
-      /// Optimal contour length step size.
+      /// Target contour length step size (thread model).
       double ds_;
 
       /// Pointer to associated Mesh<D> object.
@@ -247,9 +285,9 @@ namespace Rpg {
       /// Use batched FFTs to compute stress? (faster, but doubles memory)
       bool useBatchedFFT_;
 
-      // Private function
+      // Private member function
       
-      /// Return associated domain by reference.
+      /// Return associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const;
 
    };

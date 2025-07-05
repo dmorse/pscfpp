@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <rpc/solvers/Propagator.h>       // base class argument
+#include <rpc/solvers/Propagator.h>       // base class template argument
 
 #include <prdc/cpu/RField.h>              // member
 #include <prdc/cpu/RFieldDft.h>           // member
@@ -49,6 +49,13 @@ namespace Rpc {
    {
 
    public:
+
+      // Public type name aliases
+
+      using Base = BlockTmpl< Propagator<D> >;
+      using PropagatorT = Propagator<D>;
+
+      // Public member functions
 
       /**
       * Constructor.
@@ -299,19 +306,20 @@ namespace Rpc {
       * a step length ds = length/(ns - 1) as close as possible to the
       * target value of ds passed to the allocate function.
       *
-      * Bead model: For the bead model, ns is equal to nBead + 2, so as
-      * to include slices for all beads and two dangling ends. Beads are
-      * indexed 1, ..., ns - 2.
+      * Bead model: For the bead model, ns is equal to nBead + 2, so as 
+      * to include slices for all beads and two attached phantom vertices. 
+      * Beads are indexed 1, ..., ns - 2, vertices have indices 0 and
+      * ns - 1.
       */
       int ns() const;
 
-      // Functions with non-dependent names from BlockTmpl< Propagator<D> >
-      using BlockTmpl< Propagator<D> >::setKuhn;
-      using BlockTmpl< Propagator<D> >::propagator;
-      using BlockTmpl< Propagator<D> >::cField;
-      using BlockTmpl< Propagator<D> >::kuhn;
+      // Inherited public member functions with non-dependent names
 
-      // Functions with non-dependent names inherited from Edge
+      using Base::setKuhn;
+      using Base::propagator;
+      using Base::cField;
+      using Base::kuhn;
+
       using Edge::setId;
       using Edge::setVertexIds;
       using Edge::setMonomerId;
@@ -325,13 +333,17 @@ namespace Rpc {
 
    private:
 
+      // Private member data
+
+      // In bead model, ds=1 by definition.
+
       /// Stress arising from this block.
       FSArray<double, 6> stress_;
 
       /// Array of elements containing exp(-K^2 b^2 ds/6)
       RField<D> expKsq_;
 
-      /// Array containing exp(-W[i] ds/2) (thread) or exp(-W[i] ds) (bead)
+      /// Array containing exp(-W[i] ds/2) (thread) or exp(-W[i]) (bead)
       RField<D> expW_;
 
       /// Array of elements containing exp(-K^2 b^2 ds/(6*2)) 
@@ -340,13 +352,13 @@ namespace Rpc {
       /// Array of elements containing exp(-W[i] (ds/2)*0.5) (thread model)
       RField<D> expW2_;
 
-      /// Array of elements containing exp(+W[i] ds) (bead model)
+      /// Array of elements containing exp(+W[i]) (bead model)
       RField<D> expWInv_;
 
-      /// Work array for real-space field (step size ds)
+      /// Work array for real-space q field (step size ds)
       RField<D> qr_;
 
-      /// Work array for real-space field (step size ds/2, thread model)
+      /// Work array for real-space q field (step size ds/2, thread model)
       RField<D> qr2_;
 
       /// Work array for wavevector space field (step size ds)

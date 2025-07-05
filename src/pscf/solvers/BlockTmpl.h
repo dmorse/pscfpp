@@ -79,7 +79,7 @@ namespace Pscf
    *   // \param in   input q-field from previous step
    *   // \param out  output q-field at next step
    *   // -------------------------------------------------------------
-   *   void step(Propagator::QField const & in, Propagator::QField& out);
+   *   void step(Propagator::FieldT const & in, Propagator::FieldT& out);
    *
    *   // -------------------------------------------------------------
    *   // Compute monomer concentration field for this block.
@@ -108,10 +108,14 @@ namespace Pscf
 
    public:
 
+      // Public typename alias
+
       /**
       * Modified diffusion equation solver (propagator) type.
       */
-      typedef QT PropagatorT;
+      using PropagatorT = QT;
+
+      // Public member functions
 
       /**
       * Constructor.
@@ -153,12 +157,12 @@ namespace Pscf
       /**
       * Get the associated monomer concentration field.
       */
-      typename QT::CFieldT& cField();
+      typename QT::FieldT& cField();
 
       /**
       * Get the associated const monomer concentration field.
       */
-      typename QT::CFieldT const & cField() const;
+      typename QT::FieldT const & cField() const;
    
       /**
       * Get monomer statistical segment length.
@@ -171,7 +175,7 @@ namespace Pscf
       Pair<PropagatorT> propagators_;
 
       /// Monomer concentration field.
-      typename QT::CFieldT cField_;
+      typename QT::FieldT cField_;
 
       /// Monomer statistical segment length.
       double kuhn_;
@@ -201,7 +205,7 @@ namespace Pscf
    */
    template <class QT>
    inline
-   typename QT::CFieldT& BlockTmpl<QT>::cField()
+   typename QT::FieldT& BlockTmpl<QT>::cField()
    {  return cField_; }
 
    /*
@@ -209,7 +213,7 @@ namespace Pscf
    */
    template <class QT>
    inline
-   typename QT::CFieldT const & BlockTmpl<QT>::cField() const
+   typename QT::FieldT const & BlockTmpl<QT>::cField() const
    {  return cField_; }
 
    /*

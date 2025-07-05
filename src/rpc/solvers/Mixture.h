@@ -11,8 +11,7 @@
 #include <pscf/solvers/MixtureTmpl.h>    // base class template
 #include "Polymer.h"                     // base class argument
 #include "Solvent.h"                     // base class argument
-#include <util/containers/FArray.h>      // member
-
+#include <util/containers/FArray.h>      // member template (stress)
 #include <iostream>
 
 // Forward declarations
@@ -34,17 +33,19 @@ namespace Pscf {
 namespace Pscf {
 namespace Rpc {
 
+   using namespace Util;
+   using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Solver for a mixture of polymers and solvents.
+   * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A Mixture contains a list of Polymer and Solvent objects. Each such
+   * A Mixture contains lists of Polymer and Solvent objects. Each such
    * object can solve the single-molecule statistical mechanics problem
    * for an ideal gas of the associated species in a set of specified
    * chemical potential fields, and thereby compute concentrations and
-   * and single-molecule partition functions. A Mixture is thus both a
-   * a chemistry descriptor and an ideal-gas solver.
+   * single-molecule partition functions. A Mixture is thus both a
+   * chemistry descriptor and an ideal-gas solver.
    *
    * The single-molecule partition functions and concentrations for a
    * non-interacting mixture of polymer and solvent species are computed
@@ -54,7 +55,7 @@ namespace Rpc {
    * fields (c fields) as an output. 
    *
    * A Mixture is associated with a Mesh<D> object, which models a spatial
-   * discretization mesh, and a UnitCell<D> object, which describes the
+   * discretization mesh, and a UnitCell<D> object, which models the 
    * periodic unit cell. The Mixture::clearUnitCellData function clears
    * parameters that depend on the unit cell as invalid, and must be called
    * once after every time the unit cell parameters are set or modified, 
@@ -68,6 +69,28 @@ namespace Rpc {
    {
 
    public:
+
+      // Public type name aliases 
+
+      /// Base class
+      using Base = MixtureTmpl< Polymer<D>, Solvent<D> >;
+
+      /// Solvent object type: SolventT = Solvent<D> (inherited)
+      using typename Base::SolventT;
+
+      /// Polymer object type: PolymerT = Polymer<D> (inherited).
+      using typename Base::PolymerT;
+
+      /// Block type, for a block in a block polymer (inherited).
+      using typename Base::BlockT;
+
+      /// Propagator type, for one direction within a block (inherited).
+      using typename Base::PropagatorT;
+
+      /// Field type, for data defined on a real-space grid.
+      using FieldT = typename PropagatorT::FieldT;
+
+      // Public member functions
 
       /**
       * Constructor.
@@ -83,20 +106,22 @@ namespace Rpc {
       * Read all parameters and initialize.
       *
       * This function reads in a complete description of the structure of
-      * all species and the composition of the mixture, as well as the
-      * target contour length step size ds.
+      * all species and the composition of the mixture, plus a few other
+      * parameters.
       *
       * \param in input parameter stream
       */
       void readParameters(std::istream& in);
 
       /**
-      * Create an association with a mesh and fft, and allocate memory.
+      * Create associations with mesh, FFT, UnitCell and WaveList objects.
       * 
       * The Mesh<D> object must have already been initialized, e.g., by 
-      * reading its parameters from a file, so that the mesh dimensions 
-      * are known on entry. The FFT<D> object must have been setup with
-      * meshDimensions equal to those of the mesh.
+      * reading the dimensions from a file, so that the mesh dimensions 
+      * are known on entry. The FFT<D> object must have been set up with
+      * meshDimensions equal to those of the mesh. The UnitCell<D> must
+      * have been assigned a non-null lattice system, but does not need
+      * to have initialized lattice parameters.
       *
       * \param mesh  associated Mesh<D> object (stores address)
       * \param fft  associated FFT<D> object (stores address)
@@ -110,6 +135,9 @@ namespace Rpc {
 
       /**
       * Allocate required internal memory for all solvers.
+      *
+      * The associate() function must have been called previously, to 
+      * provide mesh dimensions.
       */
       void allocate();
 
@@ -226,36 +254,40 @@ namespace Rpc {
       * and solve species, by specifying a volume fraction phi rather
       * than a chemical potential mu for every species in the mixture.
       */
-      bool isCanonical();
+      bool isCanonical() const;
 
       /**
       * Has the stress been computed?
       */
       bool hasStress() const;
 
-
-      // Inherited public member functions with non-dependent names
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::nBlock;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::polymer;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::monomer;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::solvent;
+      // Inherited public member functions 
+      using Base::polymer;
+      using Base::polymerSpecies;
+      using Base::solvent;
+      using Base::solventSpecies;
+      using MixtureBase::nMonomer;
+      using MixtureBase::monomer;
+      using MixtureBase::nPolymer;
+      using MixtureBase::nSolvent;
+      using MixtureBase::nBlock;
+      using MixtureBase::vMonomer;
 
    protected:
 
       // Inherited protected member functions with non-dependent names
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::setClassName;
+      using ParamComposite::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 
    private:
 
-      /// Array to store total stress
+      // Private member data
+
+      /// Derivatives of SCFT free energy w/ respect to cell parameters
       FArray<double, 6> stress_;
 
-      /// Optimal contour length step size.
+      /// Target contour length step size (thread model)
       double ds_;
 
       /// Pointer to associated Mesh<D> object.
@@ -267,14 +299,14 @@ namespace Rpc {
       /// Has stress been computed for current w fields?
       bool hasStress_;
 
-      // Private function
+      // Private member function
       
       /// Return associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const;
 
    };
 
-   // Inline member function
+   // Inline member functions
 
    // Stress with respect to unit cell parameter n.
    template <int D>
@@ -289,9 +321,7 @@ namespace Rpc {
    */
    template <int D>
    inline bool Mixture<D>::hasStress() const
-   {
-      return hasStress_;
-   }
+   {  return hasStress_; }
 
    // Get Mesh<D> by constant reference (private).
    template <int D>

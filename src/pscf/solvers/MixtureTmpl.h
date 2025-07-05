@@ -30,24 +30,24 @@ namespace Pscf
       // Public typedefs
 
       /**
-      * Polymer species solver typename.
+      * Solvent species solver type.
       */
-      typedef PT PolymerT;
+      using SolventT = ST;
 
       /**
-      * Solvent species solver typename.
+      * Polymer species solver type.
       */
-      typedef ST SolventT;
+      using PolymerT = PT;
 
       /**
-      * Polymer block type.
+      * Block polymer block type.
       */
-      typedef typename PT::BlockT BlockT;
+      using BlockT = typename PT::BlockT;
 
       /**
-      * Polymer propagator type.
+      * Polymer block propagator type.
       */
-      typedef typename PT::BlockT::PropagatorT PropagatorT;
+      using PropagatorT = typename BlockT::PropagatorT;
 
       // Public member functions
 

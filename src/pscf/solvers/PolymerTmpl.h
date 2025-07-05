@@ -51,27 +51,19 @@ namespace Pscf
 
    public:
 
+      // Public typename aliases
+
       /**
       * Block of a block polymer.
       */
-      typedef BT BlockT;
+      using BlockT = BT;
 
       /**
       * Modified diffusion equation solver for one block, in one direction.
       */
-      typedef typename BT::PropagatorT PropagatorT;
+      using PropagatorT = typename BT::PropagatorT;
 
-      #if 0
-      /**
-      * Monomer concentration field.
-      */
-      typedef typename PropagatorT::CFieldT CFieldT;
-
-      /**
-      * Chemical potential field.
-      */
-      typedef typename PropagatorT::WFieldT WFieldT;
-      #endif
+      // Public member functions
 
       /**
       * Constructor.
@@ -191,6 +183,7 @@ namespace Pscf
       ///@}
 
       // Inherited public members
+
       using PolymerSpecies::vertex;
       using PolymerSpecies::propagatorId;
       using PolymerSpecies::path;
@@ -223,7 +216,7 @@ namespace Pscf
    private:
 
       /// Array of Block objects in this polymer.
-      DArray<BT> blocks_;
+      DArray<BlockT> blocks_;
 
       /**
       * Check validity of internal data structures set by readParameters.
@@ -297,6 +290,7 @@ namespace Pscf
       return propagator(propId[0], propId[1]);
    }
 
+   #if 0
    // Non-inline functions
 
    /*
@@ -460,6 +454,8 @@ namespace Pscf
       Species::setQ(Q);
 
    }
+   #endif
 
 }
+#include "PolymerTmpl.tpp"
 #endif

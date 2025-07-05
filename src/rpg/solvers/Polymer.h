@@ -36,11 +36,7 @@ namespace Rpg {
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Descriptor and solver for a branched polymer species.
-   *
-   * The propagator solutions and block concentrations stored in the
-   * constituent Block<D> objects contain solutions computed in the most
-   * recent call of the compute function.
+   * Descriptor and solver for one polymer species.
    *
    * The phi() and mu() accessor functions, which are inherited from
    * PolymerSpecies, return the value of phi (spatial average volume
@@ -50,6 +46,11 @@ namespace Rpg {
    * computed. If the ensemble is open, mu is read from the parameter 
    * file and phi is computed.
    *
+   * The block concentrations stored in the constituent Block<D> objects
+   * contain the block concentrations (i.e., volume fractions) computed in
+   * the most recent call of the compute function. These can be accessed
+   * using the Block<D>::cField() function.
+   *
    * \ingroup Rpg_Solvers_Module
    */
    template <int D>
@@ -58,10 +59,18 @@ namespace Rpg {
 
    public:
 
-      /**
-      * Alias for base class.
-      */
-      typedef PolymerTmpl< Block<D> > Base;
+      // Public type name aliases
+
+      /// Alias for base class, partial template specialization.
+      using Base = PolymerTmpl< Block<D> >;
+
+      /// Block type, for a block within a block polymer.
+      using BlockT = Block<D>;
+
+      /// Propagator type, for one direction within a block. 
+      using PropagatorT = typename BlockT::Propagator<D>;
+
+      // Public member functions
 
       /**
       * Constructor. 
@@ -74,9 +83,9 @@ namespace Rpg {
       ~Polymer();
 
       /**
-      * Store the number of lattice parameters in the unit cell.
+      * Set the number of unit cell parameters.
       *
-      * \param nParams  the number of lattice parameters in the unit cell
+      * \param nParams  the number of unit cell parameters
       */ 
       void setNParams(int nParams);
 
@@ -102,7 +111,13 @@ namespace Rpg {
                    double phiTot = 1.0);
 
       /**
-      * Compute stress contribution from this polymer species.
+      * Compute SCFT stress contribution from this polymer species.
+      *
+      * This function computes contributions from this species to the
+      * derivatives of SCFT free energy per monomer with respect to unit 
+      * cell parameters and stores the values. It requires that the MDE
+      * has been solved for all blocks prior to entry, and so must be
+      * called after the compute function.
       */
       void computeStress();
 
@@ -110,13 +125,15 @@ namespace Rpg {
       * Get derivative of free energy w/ respect to a unit cell parameter.
       *
       * Get the contribution from this polymer species to the derivative of
-      * free energy per monomer with respect to unit cell parameter n.
+      * free energy per monomer with respect to unit cell parameter n, as
+      * computed by the most recent call to computeStress.
       *
       * \param n unit cell parameter index
       */
       double stress(int n);
 
-      // Inherited public functions
+      // Inherited public member functions
+
       using Base::edge;
       using Base::block;
       using Base::propagator;
@@ -133,6 +150,8 @@ namespace Rpg {
       using Species::mu;
       using Species::q;
       using Species::ensemble;
+      using Species::setPhi;
+      using Species::setMu;
 
    private: 
 
@@ -142,11 +161,13 @@ namespace Rpg {
       /// Number of unit cell parameters. 
       int nParams_;
 
-      // Restrict access
+      // Restrict access to inherited functions
       using Base::solve;
+      using Species::setQ;
 
    };
 
+   // Get stress component n.
    template <int D>
    double Polymer<D>::stress(int n)
    {  return stress_[n]; }
@@ -160,7 +181,4 @@ namespace Rpg {
 
 }
 }
-//#include "Polymer.tpp"
 #endif
-
-

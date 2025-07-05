@@ -282,7 +282,7 @@ namespace Rpc
    }
 
    template <int D>
-   bool Mixture<D>::isCanonical()
+   bool Mixture<D>::isCanonical() const
    {
       // Check ensemble of all polymers
       for (int i = 0; i < nPolymer(); ++i) {

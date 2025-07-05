@@ -8,31 +8,43 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Block.h"
-#include <prdc/cpu/RField.h>
-#include <pscf/solvers/PolymerTmpl.h>
+#include "Block.h"                       // base class template parameter
+#include <pscf/solvers/PolymerTmpl.h>    // base class template
 #include <util/containers/FArray.h>      // member template
+
+// Forward declarations
+namespace Util {
+   template <typename T> class DArray;
+}
+namespace Pscf { 
+   namespace Prdc { 
+      namespace Cpu { 
+         template <int D> class RField;
+      }
+   }
+}
 
 namespace Pscf { 
 namespace Rpc { 
 
+   using namespace Prdc;
    using namespace Pscf::Prdc::Cpu;
 
    /**
    * Descriptor and solver for one polymer species.
    *
    * The phi() and mu() accessor functions, which are inherited from
-   * PolymerTmp< Block<D> >, return the value of phi (spatial average
-   * volume fraction of a species) or mu (species chemical potential)
-   * computed in the most recent call of the compute() function.
-   * If the ensemble for this species is closed, phi is read from the
-   * parameter file and mu is computed. If the ensemble is open, mu
-   * is read from the parameter file and phi is computed.
+   * PolymerSpecies, return the value of phi (spatial average volume
+   * fraction of a species) or mu (species chemical potential) computed
+   * in the last call of the compute() function. If the ensemble for this
+   * species is closed, phi is read from the parameter file and mu is 
+   * computed. If the ensemble is open, mu is read from the parameter 
+   * file and phi is computed.
    *
    * The block concentrations stored in the constituent Block<D> objects
-   * contain the block concentrations (i.e., volume fractions) computed 
-   * in the most recent call of the compute function. These can be 
-   * accessed using the Block<D>::cField() function.
+   * contain the block concentrations (i.e., volume fractions) computed in
+   * the most recent call of the compute function. These can be accessed
+   * using the Block<D>::cField() function.
    *
    * \ref user_param_polymer_sec "Manual Page"
    *
@@ -44,10 +56,18 @@ namespace Rpc {
 
    public:
 
-      /**
-      * Base class typedef (PolymerTmpl instance)
-      */
-      typedef PolymerTmpl< Block<D> > Base;
+      // Public type name aliases
+
+      /// Base class, partial template specialization.
+      using Base = PolymerTmpl< Block<D> >;
+
+      /// Block type, for block within a block polymer.
+      using BlockT = Block<D>;
+
+      /// Propagator type, for one direction within a block.
+      using PropagatorT = typename BlockT::PropagatorT;
+
+      // Public member functions
 
       /**
       * Default constructor.
@@ -60,7 +80,7 @@ namespace Rpc {
       ~Polymer();
 
       /**
-      * Store the number of unit cell parameters.
+      * Set the number of unit cell parameters.
       *
       * \param nParam  the number of unit cell parameters
       */
@@ -97,31 +117,32 @@ namespace Rpc {
                    double phiTot = 1.0);
 
       /**
-      * Compute stress contribution from this species.
+      * Compute SCFT stress contribution from this polymer species.
       *
       * This function computes contributions from this species to the 
-      * derivatives of free energy per monomer with respect to unit cell 
-      * parameters and stores the values. 
+      * derivatives of SCFT free energy per monomer with respect to unit 
+      * cell parameters and stores the values. It requires that the MDE
+      * has been solved for all blocks prior to entry, and so must be 
+      * called after the compute function.
       */
       void computeStress();
 
       /**
       * Get precomputed contribution to stress from this species.
       *  
-      * This function gets the precomputed value of the derivative of
-      * free energy per monomer with respect to unit cell parameter n,
-      * as computed by the most recent call to computeStress().
+      * Get the contribution from this polymer species to the deritative of
+      * free energy per monomer with respect to unit cell parameter n, as
+      * computed by the most recent call to computeStress().
       *  
       * \param n index of unit cell parameter
       */
       double stress(int n) const;
 
-      // Inherited public functions
+      // Inherited public member functions
       
       using Base::edge;
       using Base::block;
       using Base::propagator;
-
       using PolymerSpecies::vertex;
       using PolymerSpecies::propagatorId;
       using PolymerSpecies::path;
@@ -131,17 +152,12 @@ namespace Rpc {
       using PolymerSpecies::length;
       using PolymerSpecies::nBead;
       using PolymerSpecies::type;
-
       using Species::phi;
       using Species::mu;
       using Species::q;
       using Species::ensemble;
       using Species::setPhi;
       using Species::setMu;
-
-   protected: 
-
-      using Species::setQ;
 
    private: 
 
@@ -151,17 +167,13 @@ namespace Rpc {
       /// Number of unit cell parameters.
       int nParam_;
 
-      // Restricting access
+      // Restricting access to inherited functions
       using Base::solve;
-
-      //using Species::ensemble_;
-      //using Species::phi_;
-      //using Species::mu_;
-      //using Species::q_;
+      using Species::setQ;
 
    };
 
-   /// Get stress with respect to unit cell parameter n.
+   /// Get stress component n.
    template <int D>
    inline double Polymer<D>::stress(int n) const
    {  return stress_[n]; }

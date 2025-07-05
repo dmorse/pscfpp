@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
-#include <prdc/cpu/RField.h>             // member template and typedef
+#include <prdc/cpu/RField.h>             // member template 
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/FArray.h>      // member template
 
@@ -28,21 +28,23 @@ namespace Rpc {
    /**
    * MDE solver for one direction of one block.
    *
-   * A fully initialized Propagator<D> has associations with a 
-   * Block<D> that owns this propagator and with a partner Propagator<D>.
-   * It also has an association with a Mesh<D> that describes a spatial 
-   * grid, and to source Propagator<D> objects that are used to compute
-   * an initial condition for the propagator at the head vertex.
+   * A fully initialized Propagator<D> has an associations with a Block<D>
+   * object that owns this propagator and its partner, and with a partner 
+   * Propagator<D> that solves the MDE within the same block in the 
+   * opposite direction. It also has an association with a Mesh<D> that 
+   * describes a spatial grid, and associations with zero or more source 
+   * Propagator<D> objects that are used to compute an initial condition 
+   * for this propagator at the head vertex.
    *
    * The associated Block<D> stores information required to numerically
-   * solve the modified diffusion equation (MDE) within the block, 
-   * including the contour step size ds (in the thread model) and all 
-   * parameters that depend on ds, unit cell parameters and the w-field
-   * associated with this block. These quantities are set and stored by 
-   * the block because their values must be the same for both of the two 
-   * propagators owned by each block (i.e., this propagator and its 
-   * partner). The algorithm used by a propagator to solve the MDE 
-   * repeatedly calls step functions provided by the associated block.
+   * solve the modified diffusion equation (MDE), including quantities 
+   * that depend upon the w-field associated with this block, the unit
+   * cell parameters and (in the thread model) the contour step size.
+   * These quantities are set and stored by the block because their values 
+   * are the same for the two propagators owned by each block, but may be
+   * different for different blocks.  The algorithm used by a Propagator 
+   * to solve the MDE repeatedly calls step functions provided by the 
+   * parent Block.
    *
    * \ingroup Rpc_Solver_Module
    */
@@ -52,27 +54,17 @@ namespace Rpc {
 
    public:
 
-      // Public typedefs
+      // Public typename aliases
 
       /**
-      * Generic field (function of position, defined on regular grid).
+      * Base class (partial template specialization).
       */
-      typedef RField<D> FieldT;
+      using Base = PropagatorTmpl< Propagator<D> >;
 
       /**
-      * Chemical potential field type (r-grid format)
+      * Field type (function of position, defined on a r-space grid).
       */
-      typedef RField<D> WFieldT;
-
-      /**
-      * Monomer concentration field type (r-grid format)
-      */
-      typedef RField<D> CFieldT;
-
-      /**
-      * Propagator q-field type, i.e., q(r,s) at fixed s.
-      */
-      typedef RField<D> QFieldT;
+      using FieldT = RField<D>;
 
       // Member functions
 
@@ -104,7 +96,7 @@ namespace Rpc {
       *
       * An Exception is thrown if the propagator is already allocated.
       * 
-      * \param ns  number of slices (including end points)
+      * \param ns  number of slices (including end points at vertices)
       * \param mesh  spatial discretization mesh
       */ 
       void allocate(int ns, const Mesh<D>& mesh);
@@ -112,13 +104,8 @@ namespace Rpc {
       /**
       * Reallocate memory used by this propagator.
       * 
-      * This function is used when the value of ns is changed after initial
-      * allocation. This occurs during parameter sweeps that change the
-      * block length. See the docs for the function ns() for the definition
-      * of ns.
-      *
-      * The spatial mesh is set by derefencing a pointer to the associated
-      * Mesh<D> object, which was set by a previous call to allocate.
+      * This function is used when the value of ns is changed, which can
+      * occur during some parameter sweeps. See docs for allocate and ns.
       * 
       * An Exception is thrown if the propagator has not been previously
       * allocated, or if the parameter ns is equal to the current value.
@@ -143,22 +130,18 @@ namespace Rpc {
       *
       * This function solves the modified diffusion equation (MDE) for 
       * this block with a specified initial condition, which is given by
-      * the function parameter "head". Algorithms for the thread or bead
-      * model may be used, depending on value of PolymerModel::model().
+      * the function parameter "head".
       *
       * \param head  initial condition of q-field at head of block
       */
-      void solve(QFieldT const & head);
+      void solve(FieldT const & head);
  
       /**
       * Compute and return partition function for the polymer.
       *
-      * This function computes the partition function Q for the 
-      * molecule as a spatial average of pointwise product of the
-      * initial/head Qfield for this propagator and the final/tail 
-      * Qfield of its partner. An algorithm appropriate to the 
-      * thread or bead model is chosen based on the value of
-      * PolymerModel::model().
+      * This function computes the partition function Q for the molecule
+      * as a spatial average of the pointwise product of the initial/head 
+      * slice for this propagator and the final/tail slice of its partner. 
       *
       * \return value of Q (spatial average of q*q^{+} at head)
       */ 
@@ -169,17 +152,22 @@ namespace Rpc {
       *
       * \param i step index, 0 <= i < ns
       */
-      const QFieldT& q(int i) const;
+      const FieldT& q(int i) const;
 
       /**
       * Return q-field at beginning of the block (initial condition).
       */
-      const QFieldT& head() const;
+      const FieldT& head() const;
 
       /**
       * Return q-field at the end of the block.
+      *
+      * This function throws an Exception if invoked while the bead model
+      * is in use (i.e., if PolymerModel::isThread() == false) and the tail 
+      * for this propagator is a chain end (i.e., if isTailEnd() == true).
+      * In this case, the tail slice is not needed, and so is not computed.
       */
-      const QFieldT& tail() const;
+      const FieldT& tail() const;
 
       /**
       * Get the associated Block object by reference.
@@ -187,13 +175,13 @@ namespace Rpc {
       Block<D>& block();
 
       /**
-      * Number of values of s (or slices), including head and tail.
+      * Get the number of values of s (or slices), including head and tail.
       *
       * The value of ns is the number of values of s at which q(r,s) is
       * calculated, including the end values at the terminating vertices
-      * (the head and tail).  This is one more than the number of 
-      * contour variable steps. If the propagator does not own both
-      * terminal vertex beads, it ns may exceed nBead.
+      * (the head and tail).  In the bead model, this is two more than the
+      * number of beads in the block. In the thread model, this is one 
+      * more than the number length/ds of contour length steps.
       */
       int ns() const;
 
@@ -204,30 +192,30 @@ namespace Rpc {
 
       // Inherited public members with non-dependent names
 
-      using PropagatorTmpl< Propagator<D> >::nSource;
-      using PropagatorTmpl< Propagator<D> >::source;
-      using PropagatorTmpl< Propagator<D> >::partner;
-      using PropagatorTmpl< Propagator<D> >::setIsSolved;
-      using PropagatorTmpl< Propagator<D> >::isSolved;
-      using PropagatorTmpl< Propagator<D> >::hasPartner;
-      using PropagatorTmpl< Propagator<D> >::isHeadEnd;
-      using PropagatorTmpl< Propagator<D> >::isTailEnd;
+      using Base::nSource;
+      using Base::source;
+      using Base::partner;
+      using Base::setIsSolved;
+      using Base::isSolved;
+      using Base::hasPartner;
+      using Base::isHeadEnd;
+      using Base::isTailEnd;
 
    private:
      
       /// Array of propagator slices at different contour variable values.
-      DArray<QFieldT> qFields_;
+      DArray<FieldT> qFields_;
 
-      /// Workspace
-      QFieldT work_;
+      /// Workspace.
+      FieldT work_;
 
-      /// Pointer to associated Block.
+      /// Pointer to the associated Block.
       Block<D>* blockPtr_;
 
-      /// Pointer to associated Mesh
+      /// Pointer to the associated Mesh.
       Mesh<D> const * meshPtr_;
 
-      /// Number of grid points = # of contour length steps + 1
+      /// Number of slices, including head and tail slices.
       int ns_;
 
       /// Is this propagator allocated?
@@ -245,7 +233,7 @@ namespace Rpc {
       /**
       * Assign one slice to another (RHS = LHS).
       */
-      void assign(QFieldT& lhs, QFieldT const & rhs);
+      void assign(FieldT& lhs, FieldT const & rhs);
 
    };
 
@@ -256,7 +244,7 @@ namespace Rpc {
    */
    template <int D>
    inline 
-   typename Propagator<D>::QFieldT const& Propagator<D>::head() const
+   typename Propagator<D>::FieldT const& Propagator<D>::head() const
    {  
       UTIL_CHECK(isSolved()); 
       return qFields_[0]; }
@@ -266,7 +254,7 @@ namespace Rpc {
    */
    template <int D>
    inline 
-   typename Propagator<D>::QFieldT const& Propagator<D>::tail() const
+   typename Propagator<D>::FieldT const& Propagator<D>::tail() const
    {
       UTIL_CHECK(isSolved()); 
       UTIL_CHECK(PolymerModel::isThread() || !isTailEnd());
@@ -278,7 +266,7 @@ namespace Rpc {
    */
    template <int D>
    inline 
-   typename Propagator<D>::QFieldT const& Propagator<D>::q(int i) const
+   typename Propagator<D>::FieldT const& Propagator<D>::q(int i) const
    {  
       UTIL_CHECK(isSolved()); 
       return qFields_[i]; 
@@ -291,7 +279,7 @@ namespace Rpc {
    inline 
    Block<D>& Propagator<D>::block()
    {
-      assert(blockPtr_);  
+      UTIL_ASSERT(blockPtr_);  
       return *blockPtr_; 
    }
 
@@ -312,7 +300,7 @@ namespace Rpc {
    template <int D>
    inline void Propagator<D>::setBlock(Block<D>& block)
    {
-      assert(blockPtr_);  
+      UTIL_ASSERT(blockPtr_);  
       blockPtr_ = &block; 
    }
 

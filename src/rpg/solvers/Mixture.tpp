@@ -34,7 +34,7 @@ namespace Rpg
     : stress_(),
       ds_(-1.0),
       meshPtr_(nullptr),
-      nParams_(0),
+      nParam_(0),
       hasStress_(false),
       useBatchedFFT_(true)
    {  setClassName("Mixture"); }
@@ -83,13 +83,13 @@ namespace Rpg
 
       // Assign internal pointers and variables
       meshPtr_ = &mesh;
-      nParams_ = cell.nParameter();
+      nParam_ = cell.nParameter();
 
       // Create associations for all blocks, set nParams in Polymer objects
       if (nPolymer() > 0) {
          int i, j;
          for (i = 0; i < nPolymer(); ++i) {
-            polymer(i).setNParams(nParams_);
+            polymer(i).setNParams(nParam_);
             for (j = 0; j < polymer(i).nBlock(); ++j) {
                polymer(i).block(j).associate(mesh, fft, cell, waveList);
             }
@@ -241,7 +241,7 @@ namespace Rpg
    template <int D>
    void Mixture<D>::computeStress(double phiTot)
    {   
-      UTIL_CHECK(nParams_ > 0);
+      UTIL_CHECK(nParam_ > 0);
 
       int i, j;
 
@@ -251,7 +251,7 @@ namespace Rpg
       } 
 
       // Accumulate total stress 
-      for (i = 0; i < nParams_; ++i) {
+      for (i = 0; i < nParam_; ++i) {
          stress_[i] = 0.0;
          for (j = 0; j < nPolymer(); ++j) {
             stress_[i] += polymer(j).stress(i);
@@ -259,7 +259,7 @@ namespace Rpg
       }
 
       // Correct for partial occupation of the unit cell
-      for (i = 0; i < nParams_; ++i) {
+      for (i = 0; i < nParam_; ++i) {
          stress_[i] /= phiTot;
       }
 
@@ -273,7 +273,7 @@ namespace Rpg
    * Is the ensemble canonical (i.e, closed for all species)?
    */
    template <int D>
-   bool Mixture<D>::isCanonical()
+   bool Mixture<D>::isCanonical() const
    {
       // Check ensemble of all polymers
       for (int i = 0; i < nPolymer(); ++i) {

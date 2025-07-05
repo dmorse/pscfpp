@@ -40,14 +40,14 @@ namespace Pscf
    * pointers to other instances of the derived class Propagator (or QT).
    *
    * The concrete Propagator class is used in templates BlockTmpl, 
-   * PolymerTmpl and MixtureTmpl. The usage in those templates require 
-   * that the Propagator class define typedefs named WFieldT and CFieldT.
+   * PolymerTmpl and MixtureTmpl. The usage in those templates require that
+   * the Propagator class define an alias named FieldT for the field type.
    * Propagator must also provide member functions named solve() and 
    * computeQ(), neither of which takes any arguments.
    * 
-   * The typedefs WFieldT and CFieldT must be aliases for the type of 
-   * containers used to a single chemical potential or concentration 
-   * field, respectively.
+   * The type FieldT must be an aliases for the type of containers used 
+   * to store a single chemical potential or concentration field, or a
+   * slice of a propagator.
    * 
    * The function void solve() must solve the modified diffusion equation 
    * for this propapagator, using information that is accessible to the
@@ -58,18 +58,15 @@ namespace Pscf
    * The function computeQ() must compute and return the molecular 
    * partition function Q using information available to this propagator. 
    *
-   * An example of the required interface is shown below:
+   * A simple example of the required interface is shown below:
    * \code
    *
    *    class Propagator : public PropagatorTmpl<Propagator> 
    *    {
    *    public:
    * 
-   *        // Chemical potential field type.
-   *        typedef DArray<double> WFieldT;
-   *
-   *        // Monomer concentration field type.
-   *        typedef DArray<double> CFieldT;
+   *        // Field type.
+   *        using FieldT = DArray<double>;
    *
    *        // Solve the modified diffusion equation for this direction.
    *        void solve();
@@ -81,10 +78,10 @@ namespace Pscf
    *
    * \endcode
    *
-   * In the above example, the field container typenames WFieldT and 
-   * CFieldT are defined to be synonyms for DArrray<double>, i.e., for 
-   * dynamically allocated arrays of double precision floating point 
-   * numbers. Other implementations may use more specialized types.
+   * In the above example, the field container typenames FieldT is
+   * an alias for DArrray<double>, i.e., for a dynamically allocated 
+   * arrays of double precision floating point numbers. Other 
+   * implementations may use more specialized types.
    *
    * \ingroup Pscf_Solver_Module
    */
@@ -250,9 +247,22 @@ namespace Pscf
    * Does this have a partner propagator?
    */
    template <class QT>
-   inline
-   bool PropagatorTmpl<QT>::hasPartner() const
+   inline bool PropagatorTmpl<QT>::hasPartner() const
    {  return partnerPtr_; }
+
+   /*
+   * Does this propagator own the head vertex bead?
+   */
+   template <class QT>
+   inline bool PropagatorTmpl<QT>::isHeadEnd() const
+   {  return isHeadEnd_; }
+
+   /*
+   * Does this propagator own the tail vertex bead?
+   */
+   template <class QT>
+   inline bool PropagatorTmpl<QT>::isTailEnd() const
+   {  return isTailEnd_; }
 
    /*
    * Is the computation of this propagator completed?
@@ -305,26 +315,6 @@ namespace Pscf
       isTailEnd_ = isTailEnd;  
    }
 
-   // Accessors
-
-   /*
-   * Get partner propagator.
-   */
-   template <class QT>
-   const QT& PropagatorTmpl<QT>::partner() 
-   const
-   {
-      UTIL_CHECK(partnerPtr_);
-      return *partnerPtr_;
-   }
-
-   /*
-   * Mark this propagator as solved (true) or not (false).
-   */
-   template <class QT>
-   void PropagatorTmpl<QT>::setIsSolved(bool isSolved)
-   {  isSolved_ = isSolved; }
-
    /*
    * Check if all source propagators are marked completed.
    */
@@ -340,21 +330,21 @@ namespace Pscf
    }
 
    /*
-   * Does this propagator own the head vertex bead?
+   * Mark this propagator as solved (true) or not (false).
    */
    template <class QT>
-   inline bool PropagatorTmpl<QT>::isHeadEnd() const
-   {
-      return isHeadEnd_; 
-   }
+   void PropagatorTmpl<QT>::setIsSolved(bool isSolved)
+   {  isSolved_ = isSolved; }
 
    /*
-   * Does this propagator own the tail vertex bead?
+   * Get partner propagator.
    */
    template <class QT>
-   inline bool PropagatorTmpl<QT>::isTailEnd() const
+   const QT& PropagatorTmpl<QT>::partner() 
+   const
    {
-      return isTailEnd_; 
+      UTIL_CHECK(partnerPtr_);
+      return *partnerPtr_;
    }
 
 }
