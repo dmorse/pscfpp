@@ -61,7 +61,7 @@ namespace Rpg {
 
       // Public type name aliases
 
-      /// Alias for base class, partial template specialization.
+      /// Base class, partial template specialization.
       using Base = PolymerTmpl< Block<D> >;
 
       /// Block type, for a block within a block polymer.
@@ -88,6 +88,15 @@ namespace Rpg {
       * \param nParams  the number of unit cell parameters
       */ 
       void setNParams(int nParams);
+
+      /**
+      * Clear all data that depends on unit cell parameters.
+      *
+      * This function should be called after each change in the unit cell.
+      * It calls Block<D>::clearUnitCellData() for all blocks in this
+      * polymer.
+      */
+      void clearUnitCellData();
 
       /**
       * Compute MDE solutions and block concentrations.

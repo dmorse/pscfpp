@@ -39,6 +39,17 @@ namespace Rpg {
    {  nParams_ = nParams; }
 
    /*
+   * Clear all data that depends on unit cell dimensions.
+   */
+   template <int D>
+   void Polymer<D>::clearUnitCellData()
+   {
+      for (int j = 0; j < nBlock(); ++j) {
+         block(j).clearUnitCellData();
+      }
+   }
+
+   /*
    * Compute solution to MDE and concentrations.
    */ 
    template <int D>
