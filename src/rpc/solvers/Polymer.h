@@ -61,7 +61,7 @@ namespace Rpc {
       /// Base class, partial template specialization.
       using Base = PolymerTmpl< Block<D> >;
 
-      /// Block type, for block within a block polymer.
+      /// Block type, for a block within a block polymer.
       using BlockT = Block<D>;
 
       /// Propagator type, for one direction within a block.
@@ -70,7 +70,7 @@ namespace Rpc {
       // Public member functions
 
       /**
-      * Default constructor.
+      * Constructor.
       */
       Polymer();
 

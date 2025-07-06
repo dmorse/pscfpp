@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/solvers/MixtureTmpl.h>    // base class template
-#include "Polymer.h"                     // base class argument
-#include "Solvent.h"                     // base class argument
-#include <util/containers/FArray.h>      // member template (stress)
+#include <pscf/solvers/MixtureTmpl.h>     // base class template
+#include "Polymer.h"                      // base class parameter
+#include "Solvent.h"                      // base class parameter
+#include <util/containers/FArray.h>       // member template (stress)
 #include <iostream>
 
 // Forward declarations
@@ -123,10 +123,14 @@ namespace Rpc {
       * have been assigned a non-null lattice system, but does not need
       * to have initialized lattice parameters.
       *
-      * \param mesh  associated Mesh<D> object (stores address)
-      * \param fft  associated FFT<D> object (stores address)
-      * \param cell  associated UnitCell<D> object (stores address)
-      * \param waveList  associated WaveList<D> object (stores address)
+      * The associate and allocate functions are called within the base
+      * class readParameters function. This function must be called before
+      * allocate().
+      *
+      * \param mesh  associated Mesh<D> object
+      * \param fft  associated FFT<D> object
+      * \param cell  associated UnitCell<D> object
+      * \param waveList  associated WaveList<D> object
       */
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
@@ -136,20 +140,17 @@ namespace Rpc {
       /**
       * Allocate required internal memory for all solvers.
       *
-      * The associate() function must have been called previously, to 
-      * provide mesh dimensions.
+      * This function is called within the base class readParameters
+      * function, after the associate() function.
       */
       void allocate();
 
       /**
       * Clear all data in solvers that depends on the unit cell parameters.
       * 
-      * This function marks all private data that is maintained by solvers
-      * and that depends on values of the unit cell parameters as invalid.
-      * It should be called once after every change in the unit cell and
-      * before the next call to compute or computeStress. Such outdated
-      * internal data is then recomputed just before it is needed for 
-      * solution of the MDE or calculation of the stress. 
+      * This function marks all private data that depends on the values
+      * of the unit cell parameters as invalid, so that it can be 
+      * recomputed before it is next needed.
       */
       void clearUnitCellData();
 
@@ -168,59 +169,41 @@ namespace Rpc {
       /**
       * Compute partition functions and concentrations.
       *
-      * This function calls the solve function of every molecular
+      * This function calls the compute function of every molecular
       * species, and then adds the resulting block concentration fields
-      * for blocks of the same monomer type to compute a total monomer
-      * concentration (or volume fraction) for each monomer type.
-      * Upon return, values are set for volume fraction and chemical 
-      * potential (mu) members of each species, and for the 
-      * concentration fields for each Block and Solvent. The total
-      * concentration for each monomer type is returned in the
-      * cFields output parameter. Monomer "concentrations" are returned 
-      * in units of inverse steric volume per monomer in an incompressible
-      * mixture, and are thus also volume fractions.
+      * for blocks of each type to compute a total monomer concentration
+      * (or volume fraction) for each monomer type.  Upon return, values 
+      * are set for volume fraction (phi) and chemical potential (mu) 
+      * members of each species, and for the concentration fields for each 
+      * Block and Solvent. The total concentration for each monomer type 
+      * is returned in the cFields function parameter. Monomer 
+      * concentration fields are given in units of inverse steric volume 
+      * per monomer in an incompressible mixture, and are thus also volume
+      * fractions.
       *
-      * The arrays wFields and cFields must each have capacity nMonomer(),
-      * and contain fields that are indexed by monomer type index. 
+      * The arrays function parameters wFields and cFields must each have 
+      * capacity nMonomer(), and contain fields that are indexed by 
+      * monomer type index. 
       *
       * The optional parameter phiTot is only relevant to problems such as 
       * thin films in which the material is excluded from part of the unit
       * cell by imposing an inhomogeneous constraint on the sum of monomer 
       * concentrations, (i.e., a "mask"). In such cases, the volume 
-      * fraction phi associated with each species is interpreted as a 
-      * fraction of the volume that is occupied by material, rather than 
-      * as a fraction of the computational unit cell.
+      * fraction phi for each species is defined as a fraction of the
+      * volume that is occupied by material, rather than as a fraction 
+      * of the entire unit cell volume.
       *
-      * \param wFields array of chemical potential fields (input)
-      * \param cFields array of monomer concentration fields (output)
+      * This function does not compute SCFT free energies or stress (i.e.,
+      * derivatives of free energy with respect to unit cell parameters).
+      *
+      * \param wFields  array of chemical potential fields (input)
+      * \param cFields  array of monomer concentration fields (output)
       * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void compute(DArray< RField<D> > const & wFields, 
-                   DArray< RField<D> >& cFields, 
+      void compute(DArray< FieldT > const & wFields, 
+                   DArray< FieldT >& cFields, 
                    double phiTot = 1.0);
       
-      /**
-      * Get c-fields for all blocks and solvents as array of r-grid fields.
-      * 
-      * On return, each element of the blockCFields array contains the
-      * monomer concentration field for a single block of a polymer or 
-      * a single solvent species. These are indexed with polymer blocks 
-      * first, followed by solvent species. Polymer blocks are listed with
-      * blocks of each polymer placed consecutively in order of block
-      * index, with polymers ordered by polymer index. Fields associated
-      * with solvents are listed after all polymer blocks ordered by
-      * solvent species index.
-      *
-      * This function will allocate the blockCFields array and the 
-      * RField<D> arrays it contains as needed. This array thus does not
-      * need to be allocated on entry. If the array or the fields objects
-      * it contains are allocated on entry, their capacities must be 
-      * correct or an error will be thrown.
-      *
-      * \param blockCFields DArray of RField<D> field objects (output)
-      */
-      void createBlockCRGrid(DArray< RField<D> >& blockCFields) const;
-
       /**
       * Compute derivatives of free energy w/ respect to cell parameters.
       * 
@@ -237,31 +220,39 @@ namespace Rpc {
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.
       *
-      * Get the pre-computed derivative with respect to unit cell 
-      * parameter number n of the free energy per monomer (i.e., of the 
-      * product of the free energy density and the monomer reference 
-      * volume). The returned value is precomputed by the computeStress()
-      * function.
+      * Get the pre-computed derivative of the free energy per monomer
+      * with respect to a single unit cell parameter.
       *
-      * \param n  index of unit cell parameter
+      * \param parameterId  index of unit cell parameter
       */
-      double stress(int n) const;
-
-      #if 0
-      /**
-      * Is this mixture being treated in canonical ensemble?
-      *
-      * Returns true iff a closed ensemble is used for every polymer
-      * and solve species, by specifying a volume fraction phi rather
-      * than a chemical potential mu for every species in the mixture.
-      */
-      bool isCanonical() const;
-      #endif
+      double stress(int parameterId) const;
 
       /**
       * Has the stress been computed?
       */
       bool hasStress() const;
+
+      /**
+      * Get c-fields for all blocks and solvents as array of r-grid fields.
+      * 
+      * On return, each element of the blockCFields array contains the
+      * monomer concentration field for a single block of a polymer species 
+      * or a single solvent species. These are indexed with polymer blocks 
+      * first, followed by solvent species. Polymer blocks are listed with
+      * blocks of each polymer placed consecutively in order of block 
+      * index, with polymers ordered by polymer index. Fields associated
+      * with solvents are listed after all polymer blocks, ordered by
+      * solvent species index.
+      *
+      * This function will allocate the blockCFields array and the 
+      * FieldT arrays it contains as needed. This array thus does not
+      * need to be allocated on entry. If the array or the fields objects
+      * it contains are allocated on entry, their capacities must be 
+      * correct or an error will be thrown.
+      *
+      * \param blockCFields DArray of FieldT field objects (output)
+      */
+      void createBlockCRGrid(DArray< FieldT >& blockCFields) const;
 
       // Inherited public member functions 
       using Base::polymer;
@@ -278,7 +269,7 @@ namespace Rpc {
 
    protected:
 
-      // Inherited protected member functions with non-dependent names
+      // Inherited protected member functions 
       using ParamComposite::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
@@ -287,10 +278,10 @@ namespace Rpc {
 
       // Private member data
 
-      /// Derivatives of SCFT free energy w/ respect to cell parameters
+      /// Derivatives of SCFT free energy w/ respect to cell parameters.
       FArray<double, 6> stress_;
 
-      /// Target contour length step size (thread model)
+      /// Target contour length step size (thread model).
       double ds_;
 
       /// Pointer to associated Mesh<D> object.
@@ -299,7 +290,7 @@ namespace Rpc {
       /// Number of unit cell parameters.
       int nParam_;
 
-      /// Has stress been computed for current w fields?
+      /// Has stress been computed for the current w fields?
       bool hasStress_;
 
       // Private member function
@@ -311,22 +302,26 @@ namespace Rpc {
 
    // Inline member functions
 
-   // Stress with respect to unit cell parameter n.
+   /*
+   * Get derivative of free energy w/ respect to a cell parameter.
+   */
    template <int D>
-   inline double Mixture<D>::stress(int n) const
+   inline double Mixture<D>::stress(int parameterId) const
    {
       UTIL_CHECK(hasStress_);  
-      return stress_[n]; 
+      return stress_[parameterId]; 
    }
 
    /*
-   * Has the stress been computed?
+   * Has the stress been computed for the current w fields?
    */
    template <int D>
    inline bool Mixture<D>::hasStress() const
    {  return hasStress_; }
 
-   // Get Mesh<D> by constant reference (private).
+   /*
+   * Get the Mesh<D> by constant reference (private).
+   */
    template <int D>
    inline Mesh<D> const & Mixture<D>::mesh() const
    {
@@ -335,6 +330,7 @@ namespace Rpc {
    }
 
    #ifndef RPC_MIXTURE_TPP
+   // Suppress implicit instantiation
    extern template class Mixture<1>;
    extern template class Mixture<2>;
    extern template class Mixture<3>;
