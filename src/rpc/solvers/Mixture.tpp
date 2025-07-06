@@ -9,25 +9,24 @@
 */
 
 #include "Mixture.h"
-#include <prdc/cpu/RField.h>
-
 #include <prdc/cpu/FFT.h>
+#include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
-
 #include <pscf/mesh/Mesh.h>
 #include <pscf/chem/Monomer.h>
 #include <pscf/chem/PolymerModel.h>
-
 #include <util/containers/DArray.h>
 
-#include <cmath>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
+   using namespace Prdc;
    using namespace Prdc::Cpu;
 
+   /*
+   * Constructor
+   */
    template <int D>
    Mixture<D>::Mixture()
     : stress_(),
@@ -37,15 +36,22 @@ namespace Rpc
       hasStress_(false)
    {  setClassName("Mixture"); }
 
+
+   /*
+   * Destructor
+   */
    template <int D>
    Mixture<D>::~Mixture()
    {}
 
+   /*
+   * Read all parameters and initialize.
+   */
    template <int D>
    void Mixture<D>::readParameters(std::istream& in)
    {
-      // Read majority of mixture
-      MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
+      // Read standard data for a mixture
+      MixtureTmpl< PolymerT, SolventT >::readParameters(in);
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
 
@@ -75,7 +81,7 @@ namespace Rpc
       UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
       UTIL_CHECK(cell.nParameter() > 0);
 
-      // Save addresses of mesh and unit cell
+      // Assign member variables
       meshPtr_ = &mesh;
       nParam_ = cell.nParameter();
 
@@ -122,7 +128,7 @@ namespace Rpc
          }
       }
 
-      // Set spatial discretization for solvents
+      // Allocate memory for all Solvent objects
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
             solvent(i).allocate();
@@ -158,7 +164,7 @@ namespace Rpc
       // Update kuhn length for all blocks of this monomer type
       for (int i = 0; i < nPolymer(); ++i) {
          for (int j =  0; j < polymer(i).nBlock(); ++j) {
-            Block<D>& block = polymer(i).block(j);
+            BlockT& block = polymer(i).block(j);
             if (monomerId == block.monomerId()) {
                block.setKuhn(kuhn);
             }
@@ -171,8 +177,8 @@ namespace Rpc
    * Compute concentrations (but not total free energy).
    */
    template <int D>
-   void Mixture<D>::compute(DArray< RField<D> > const & wFields,
-                            DArray< RField<D> > & cFields,
+   void Mixture<D>::compute(DArray<FieldT> const & wFields,
+                            DArray<FieldT> & cFields,
                             double phiTot)
    {
       UTIL_CHECK(meshPtr_);
@@ -195,7 +201,6 @@ namespace Rpc
          }
       }
 
-      // Process polymer species
       // Solve MDE for all polymers
       for (i = 0; i < nPolymer(); ++i) {
          polymer(i).compute(wFields, phiTot);
@@ -208,8 +213,8 @@ namespace Rpc
             monomerId = polymer(i).block(j).monomerId();
             UTIL_CHECK(monomerId >= 0);
             UTIL_CHECK(monomerId < nm);
-            RField<D>& monomerField = cFields[monomerId];
-            RField<D> const & blockField = polymer(i).block(j).cField();
+            FieldT& monomerField = cFields[monomerId];
+            FieldT const & blockField = polymer(i).block(j).cField();
             UTIL_CHECK(blockField.capacity() == meshSize);
             for (k = 0; k < meshSize; ++k) {
                monomerField[k] += blockField[k];
@@ -218,7 +223,6 @@ namespace Rpc
       }
 
       // Process solvent species
-      // For each solvent, call compute and accumulate cFields
       for (i = 0; i < nSolvent(); ++i) {
          monomerId = solvent(i).monomerId();
          UTIL_CHECK(monomerId >= 0);
@@ -228,8 +232,8 @@ namespace Rpc
          solvent(i).compute(wFields[monomerId], phiTot);
 
          // Add solvent contribution to relevant monomer concentration
-         RField<D>& monomerField = cFields[monomerId];
-         RField<D> const & solventField = solvent(i).cField();
+         FieldT& monomerField = cFields[monomerId];
+         FieldT const & solventField = solvent(i).cField();
          UTIL_CHECK(solventField.capacity() == meshSize);
          for (k = 0; k < meshSize; ++k) {
             monomerField[k] += solventField[k];
@@ -255,12 +259,12 @@ namespace Rpc
 
       if (nPolymer() > 0) {
 
-         // Compute stress for all polymers, after solving MDE
+         // Compute stress for each polymer
          for (i = 0; i < nPolymer(); ++i) {
             polymer(i).computeStress();
          }
    
-         // Accumulate stress for all the polymer chains
+         // Accumulate total stress 
          for (i = 0; i < nParam_; ++i) {
             for (j = 0; j < nPolymer(); ++j) {
                stress_[i] += polymer(j).stress(i);
@@ -281,37 +285,16 @@ namespace Rpc
       hasStress_ = true;
    }
 
-   #if 0
-   template <int D>
-   bool Mixture<D>::isCanonical() const
-   {
-      // Check ensemble of all polymers
-      for (int i = 0; i < nPolymer(); ++i) {
-         if (polymerSpecies(i).ensemble() == Species::Open) {
-            return false;
-         }
-      }
-      // Check ensemble of all solvents
-      for (int i = 0; i < nSolvent(); ++i) {
-         if (solventSpecies(i).ensemble() == Species::Open) {
-            return false;
-         }
-      }
-      // Returns true if false was never returned
-      return true;
-   }
-   #endif
-
    /*
    * Combine cFields for all blocks and solvents into one DArray
    */
    template <int D>
-   void
-   Mixture<D>::createBlockCRGrid(DArray< RField<D> >& blockCFields) 
+   void Mixture<D>::createBlockCRGrid(DArray<FieldT>& blockCFields) 
    const
    {
       int np = nSolvent() + nBlock();
       UTIL_CHECK(np > 0);
+      UTIL_CHECK(nMonomer() > 0);
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       int i, j;

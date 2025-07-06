@@ -32,7 +32,7 @@ namespace Rpc {
    {   nParam_ = nParam; }
 
    /*
-   * Set unit cell dimensions in all solvers.
+   * Clear all data that depends on unit cell parameters.
    */ 
    template <int D>
    void Polymer<D>::clearUnitCellData()
