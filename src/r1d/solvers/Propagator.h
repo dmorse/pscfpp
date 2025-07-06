@@ -36,16 +36,6 @@ namespace R1d
       typedef DArray<double> FieldT;
 
       /**
-      * Chemical potential field type.
-      */
-      typedef DArray<double> WFieldT;
-
-      /**
-      * Monomer concentration field type.
-      */
-      typedef DArray<double> CFieldT;
-
-      /**
       * Propagator q-field type.
       */
       typedef DArray<double> QFieldT;

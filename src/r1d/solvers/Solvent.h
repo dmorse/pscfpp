@@ -28,15 +28,14 @@ namespace R1d {
 
    public:
 
-      /**
-      * Monomer concentration field type.
-      */
-      typedef typename Propagator::CFieldT CFieldT;
+      // Public typename alias
 
-      /** 
-      * Monomer chemical potential field type.
+      /**
+      * Field type.
       */
-      typedef typename Propagator::WFieldT WFieldT;
+      using FieldT = typename Propagator::FieldT;
+
+      // Public member functions
 
       /**
       * Constructor.
@@ -62,7 +61,7 @@ namespace R1d {
       *
       * \param wField monomer chemical potential field of relevant type.
       */
-      void compute(WFieldT const & wField );
+      void compute(FieldT const & wField );
 
       /// \name Accessors (getters)
       ///@{
@@ -75,14 +74,14 @@ namespace R1d {
       /**
       * Get monomer concentration field for this solvent.
       */
-      const CFieldT& cField() const;
+      const FieldT& cField() const;
   
       ///@}
 
    private:
 
       // Concentration field for this solvent
-      CFieldT cField_;
+      FieldT cField_;
  
       // Pointer to associated domain
       Domain const *  domainPtr_;
@@ -92,7 +91,7 @@ namespace R1d {
    // Inline member functions
 
    /// Get monomer concentration field for this solvent.
-   inline const typename Solvent::CFieldT& Solvent::cField() const
+   inline const typename Solvent::FieldT& Solvent::cField() const
    {  return cField_;  }
 
    /// Get associated Domain by reference.

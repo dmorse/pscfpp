@@ -327,7 +327,7 @@ namespace Rpg {
    * Output timer results.
    */
    template<int D>
-   void BdSimulator<D>::outputTimers(std::ostream& out)
+   void BdSimulator<D>::outputTimers(std::ostream& out) const
    {
       compressor().outputTimers(out);
    }

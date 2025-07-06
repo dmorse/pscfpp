@@ -85,7 +85,7 @@ namespace Pscf
       */
 
       /**
-      * Get a polymer solver object.
+      * Get a polymer solver object by non-const reference.
       *
       * \param id  integer polymer species index (0 <= id < nPolymer)
       */
@@ -101,7 +101,7 @@ namespace Pscf
       /**
       * Get a PolymerSpecies descriptor by const reference.
       *
-      * Implements pure virtual function
+      * Defines function declared pure virtual by MixtureBase.
       *
       * \param id  integer polymer species index (0 <= id < nPolymer)
       */
@@ -123,6 +123,8 @@ namespace Pscf
 
       /**
       * Set a SolventSpecies descriptor object by const reference.
+      *
+      * Defines function declared pure virtual by MixtureBase.
       *
       * \param id integer solvent species index (0 <= id < nSolvent)
       */

@@ -80,7 +80,7 @@ namespace Rpc {
 
    // Output timing results to log file.
    template<int D>
-   void AmIteratorBasis<D>::outputTimers(std::ostream& out)
+   void AmIteratorBasis<D>::outputTimers(std::ostream& out) const
    {
       // Output timing results, if requested.
       out << "\n";

@@ -67,9 +67,9 @@ namespace R1d
       isAllocated_ = true;
    }
  
-   void BinaryRelaxIterator::computeDW(Array<WFieldT> const & wOld, 
-                              Array<CFieldT> const & cFields,
-                              Array<WFieldT> & dW,
+   void BinaryRelaxIterator::computeDW(Array<FieldT> const & wOld, 
+                              Array<FieldT> const & cFields,
+                              Array<FieldT> & dW,
                               double & dWNorm)
    
    {
@@ -98,9 +98,9 @@ namespace R1d
       dWNorm = sqrt(dWNorm);
    }
 
-   void BinaryRelaxIterator::updateWFields(Array<WFieldT> const & wOld,
-                                  Array<WFieldT> const & dW,
-                                  Array<WFieldT> & wNew)
+   void BinaryRelaxIterator::updateWFields(Array<FieldT> const & wOld,
+                                  Array<FieldT> const & dW,
+                                  Array<FieldT> & wNew)
    {
       int nm = mixture().nMonomer();  // number of monomer types
       UTIL_CHECK(nm == 2);

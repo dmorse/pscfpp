@@ -222,7 +222,7 @@ namespace Rpc{
    {}
 
    template<int D>
-   void LrCompressor<D>::outputTimers(std::ostream& out)
+   void LrCompressor<D>::outputTimers(std::ostream& out) const
    {
       // Output timing results, if requested.
       double total = timerTotal_.time();

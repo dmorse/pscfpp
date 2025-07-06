@@ -60,7 +60,7 @@ namespace Rpc
       *
       * \param out  output stream for timer report
       */
-      void outputTimers(std::ostream& out);
+      void outputTimers(std::ostream& out) const;
 
       // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;

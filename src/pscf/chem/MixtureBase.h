@@ -103,6 +103,15 @@ namespace Pscf
       */
       double vMonomer() const;
 
+      /**
+      * Is this mixture being treated in canonical ensemble?
+      *
+      * Returns true iff a closed ensemble is used for every polymer
+      * and solve species, by specifying a volume fraction phi rather
+      * than a chemical potential mu for every species in the mixture.
+      */
+      bool isCanonical() const;
+
       ///@}
       /// \name Accessors (by const reference)
       ///@{

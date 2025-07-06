@@ -247,6 +247,7 @@ namespace Rpc {
       */
       double stress(int n) const;
 
+      #if 0
       /**
       * Is this mixture being treated in canonical ensemble?
       *
@@ -255,6 +256,7 @@ namespace Rpc {
       * than a chemical potential mu for every species in the mixture.
       */
       bool isCanonical() const;
+      #endif
 
       /**
       * Has the stress been computed?
@@ -272,6 +274,7 @@ namespace Rpc {
       using MixtureBase::nSolvent;
       using MixtureBase::nBlock;
       using MixtureBase::vMonomer;
+      using MixtureBase::isCanonical;
 
    protected:
 

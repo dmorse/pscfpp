@@ -145,7 +145,7 @@ namespace Rpc {
       *
       * \return value of Q (spatial average of q*q^{+} at head)
       */ 
-      double computeQ();
+      double computeQ() const;
 
       /**
       * Return q-field at specified step.
@@ -170,9 +170,9 @@ namespace Rpc {
       const FieldT& tail() const;
 
       /**
-      * Get the associated Block object by reference.
+      * Get the associated Block object by const reference.
       */
-      Block<D>& block();
+      Block<D> const & block() const;
 
       /**
       * Get the number of values of s (or slices), including head and tail.
@@ -273,11 +273,11 @@ namespace Rpc {
    }
 
    /*
-   * Get the associated Block object.
+   * Get the associated Block object by const reference.
    */
    template <int D>
    inline 
-   Block<D>& Propagator<D>::block()
+   Block<D> const & Propagator<D>::block() const
    {
       UTIL_ASSERT(blockPtr_);  
       return *blockPtr_; 

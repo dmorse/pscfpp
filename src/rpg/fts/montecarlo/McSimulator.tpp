@@ -349,7 +349,7 @@ namespace Rpg {
    * Output McMoveManager timer results.
    */
    template<int D>
-   void McSimulator<D>::outputTimers(std::ostream& out)
+   void McSimulator<D>::outputTimers(std::ostream& out) const
    {
       compressor().outputTimers(out);
       out << "\n";

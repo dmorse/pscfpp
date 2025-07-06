@@ -146,7 +146,7 @@ namespace Rpg {
       *
       * \param out  output stream
       */
-      virtual void outputTimers(std::ostream& out);
+      virtual void outputTimers(std::ostream& out) const;
 
       /**
       * Output MDE counter.
@@ -487,9 +487,14 @@ namespace Rpg {
       System<D>& system();
 
       /**
-      * Get the compressor by reference.
+      * Get the compressor by non-const reference.
       */
       Compressor<D>& compressor();
+
+      /**
+      * Get the compressor by const reference.
+      */
+      Compressor<D> const & compressor() const;
 
       /**
       * Does this Simulator have a Compressor object?
@@ -822,9 +827,17 @@ namespace Rpg {
    inline bool Simulator<D>::hasCompressor() const
    {  return (bool)compressorPtr_; }
 
-   // Get the Compressor by reference.
+   // Get the Compressor by non-const reference.
    template <int D>
    inline Compressor<D>& Simulator<D>::compressor()
+   {
+      UTIL_CHECK(compressorPtr_);
+      return *compressorPtr_;
+   }
+
+   // Get the Compressor by const reference.
+   template <int D>
+   inline Compressor<D> const & Simulator<D>::compressor() const
    {
       UTIL_CHECK(compressorPtr_);
       return *compressorPtr_;

@@ -94,8 +94,8 @@ public:
       domain.writeParam(Log::file());
 
       int nMonomer = mix.nMonomer();
-      DArray<Mixture::WFieldT> wFields;
-      DArray<Mixture::CFieldT> cFields;
+      DArray<Mixture::FieldT> wFields;
+      DArray<Mixture::FieldT> cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)domain.nx();

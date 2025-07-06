@@ -39,7 +39,7 @@ namespace R1d {
    /*
    * Compute concentration, q, and phi or mu.
    */ 
-   void Solvent::compute(WFieldT const & wField)
+   void Solvent::compute(FieldT const & wField)
    {
       UTIL_CHECK(cField_.isAllocated());
 

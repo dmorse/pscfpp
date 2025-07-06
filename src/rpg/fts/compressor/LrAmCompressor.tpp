@@ -261,7 +261,7 @@ namespace Rpg{
    {}
    
    template<int D>
-   void LrAmCompressor<D>::outputTimers(std::ostream& out)
+   void LrAmCompressor<D>::outputTimers(std::ostream& out) const
    {
       // Output timing results, if requested.
       out << "\n";

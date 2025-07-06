@@ -85,7 +85,7 @@ namespace Rpg {
 
    // Output timing results to log file.
    template<int D>
-   void AmIteratorGrid<D>::outputTimers(std::ostream& out)
+   void AmIteratorGrid<D>::outputTimers(std::ostream& out) const
    {
       // Output timing results, if requested.
       out << "\n";

@@ -73,7 +73,7 @@ namespace Pscf {
       /**
       * Log output timing results 
       */
-      void outputTimers(std::ostream& out);
+      void outputTimers(std::ostream& out) const;
       
       /**
       * Clear timers 

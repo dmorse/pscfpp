@@ -58,7 +58,7 @@ namespace Rpg
       *
       * \param out  output stream for timer report
       */
-      void outputTimers(std::ostream& out);
+      void outputTimers(std::ostream& out) const;
 
       // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>, FieldCUDA>::solve;

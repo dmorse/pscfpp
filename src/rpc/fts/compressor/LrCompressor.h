@@ -84,7 +84,7 @@ namespace Rpc
       /**
       * Return compressor times contributions.
       */
-      void outputTimers(std::ostream& out);
+      void outputTimers(std::ostream& out) const;
 
       void clearTimers();
 

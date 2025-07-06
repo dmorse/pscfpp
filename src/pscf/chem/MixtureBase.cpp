@@ -6,6 +6,8 @@
 */
 
 #include "MixtureBase.h"
+#include "PolymerSpecies.h"
+#include "SolventSpecies.h"
 
 namespace Pscf
 {
@@ -32,6 +34,29 @@ namespace Pscf
    {
       UTIL_CHECK(vMonomer > 0.0);  
       vMonomer_ = vMonomer; 
+   }
+
+   /*
+   * Is the ensemble closed for every species.
+   */
+   bool MixtureBase::isCanonical() const
+   {
+      // Check ensemble of all polymer species
+      for (int i = 0; i < nPolymer(); ++i) {
+         if (polymerSpecies(i).ensemble() == Species::Open) {
+            return false;
+         }
+      }
+
+      // Check ensemble of all solvent species
+      for (int i = 0; i < nSolvent(); ++i) {
+         if (solventSpecies(i).ensemble() == Species::Open) {
+            return false;
+         }
+      }
+
+      // Returns true if false was not returned earlier
+      return true;
    }
 
 }

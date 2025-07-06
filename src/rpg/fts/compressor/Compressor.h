@@ -58,12 +58,12 @@ namespace Rpg {
       /**
       * Get the number of times the MDE has been solved.
       */
-      int mdeCounter();
+      int mdeCounter() const;
       
       /**
       * Log output timing results 
       */
-      virtual void outputTimers(std::ostream& out) = 0;
+      virtual void outputTimers(std::ostream& out) const = 0;
       
       /**
       * Clear timers 
@@ -118,7 +118,7 @@ namespace Rpg {
 
    // Get number of times MDE has been solved.
    template <int D>
-   inline int Compressor<D>::mdeCounter()
+   inline int Compressor<D>::mdeCounter() const
    {  return mdeCounter_; }
 
 } // namespace Rpg

@@ -311,6 +311,36 @@ namespace Rpc {
       */
       void clearCFields();
 
+      /// \name SCFT Stress
+      ///@{
+
+      /**
+      * Compute SCFT stress for current fields.
+      * 
+      * The stress contains contributions from the Mixture object and the
+      * Environment object (if one exists), and may also be modified by 
+      * the Environment object so that a property other than fHelmholtz
+      * will be minimized during iteration, which depends on the type of
+      * Environment.
+      *
+      * \pre w().hasData() == true
+      * \pre c().hasData() == true
+      * \post hasStress() == true
+      */
+      void computeStress();
+
+      /**
+      * Get the SCFT stress for a single lattice parameter.
+      *
+      * This function retrieves a value computed by computeStress().
+      * If computeStress() has not been called for the current set of 
+      * fields, an error will be raised. 
+      * 
+      * \param paramId  lattice parameter index
+      */
+      double stress(int paramId) const;
+
+      ///@}
       ///@}
       /// \name SCFT Thermodynamic Properties
       ///@{
@@ -364,32 +394,6 @@ namespace Rpc {
       */
       double pressure() const;
 
-      /**
-      * Compute SCFT stress for current fields.
-      * 
-      * The stress contains contributions from the Mixture object and the
-      * Environment object (if one exists), and may also be modified by 
-      * the Environment object so that a property other than fHelmholtz
-      * will be minimized during iteration, which depends on the type of
-      * Environment.
-      *
-      * \pre w().hasData() == true
-      * \pre c().hasData() == true
-      * \post hasStress() == true
-      */
-      void computeStress();
-
-      /**
-      * Get the SCFT stress for a single lattice parameter.
-      *
-      * This function retrieves a value computed by computeStress().
-      * If computeStress() has not been called for the current set of 
-      * fields, an error will be raised. 
-      * 
-      * \param paramId  lattice parameter index
-      */
-      double stress(int paramId) const;
-
       ///@}
       /// \name Property Output
       ///@{
@@ -398,11 +402,11 @@ namespace Rpc {
       * Write partial parameter file to an ostream.
       *
       * This function writes the Mixture, Interaction, and Domain blocks
-      * of a parameter file, as well as any Environment and Iterator block, 
-      * but omits any Sweep or Simulator blocks. The intent is to produce 
-      * an output during an SCFT sweep that only refers to parameters 
-      * relevant to a single state point, in a form that could be used as 
-      * a parameter file for a single SCFT calculation.
+      * of a parameter file, as well as any Environment and Iterator 
+      * blocks, but omits any Sweep or Simulator blocks. The intent is 
+      * to produce an output during an SCFT sweep that only refers to 
+      * parameters relevant to a single state point, in a form that could 
+      * be used as a parameter file for a single SCFT calculation.
       *
       * \param out  output stream
       */
@@ -529,7 +533,7 @@ namespace Rpc {
       *
       * \param out  output stream
       */
-      void writeTimers(std::ostream& out);
+      void writeTimers(std::ostream& out) const;
 
       /**
       * Clear timers
@@ -628,6 +632,11 @@ namespace Rpc {
       * Get the Simulator by non-const reference.
       */
       Simulator<D>& simulator();
+
+      /**
+      * Get the Simulator by const reference.
+      */
+      Simulator<D> const & simulator() const;
 
       /**
       * Get the FileMaster by non-const reference.
@@ -959,6 +968,14 @@ namespace Rpc {
    // Get the Simulator by non-const reference.
    template <int D>
    inline Simulator<D>& System<D>::simulator()
+   {
+      UTIL_ASSERT(simulatorPtr_);
+      return *simulatorPtr_;
+   }
+
+   // Get the Simulator by const reference.
+   template <int D>
+   inline Simulator<D> const & System<D>::simulator() const
    {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;

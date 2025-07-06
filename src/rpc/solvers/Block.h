@@ -160,7 +160,7 @@ namespace Rpc {
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, from step i+1
       */
-      void stepThread(RField<D> const & qin, RField<D>& qout);
+      void stepThread(RField<D> const & qin, RField<D>& qout) const;
 
       /**
       * Compute one step of solution of MDE for the bead model.
@@ -173,7 +173,7 @@ namespace Rpc {
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, for step i+1
       */
-      void stepBead(RField<D> const & qin, RField<D>& qout);
+      void stepBead(RField<D> const & qin, RField<D>& qout) const;
 
       /**
       * Apply the exponential field operator for the bead model. 
@@ -183,7 +183,7 @@ namespace Rpc {
       *
       * \param q  slice of propagator q, modified in place
       */
-      void stepFieldBead(RField<D> & q);
+      void stepFieldBead(RField<D> & q) const;
 
       /**
       * Apply a bond operator for the bead model. 
@@ -195,7 +195,7 @@ namespace Rpc {
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
       */
-      void stepBondBead(RField<D> const & qin, RField<D>& qout);
+      void stepBondBead(RField<D> const & qin, RField<D>& qout) const;
 
       /**
       * Apply a half-bond operator for the bead model. 
@@ -208,7 +208,7 @@ namespace Rpc {
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
       */
-      void stepHalfBondBead(RField<D> const & qin, RField<D>& qout);
+      void stepHalfBondBead(RField<D> const & qin, RField<D>& qout) const;
 
       /**
       * Compute the concentration for this block, for the thread model.
@@ -356,16 +356,16 @@ namespace Rpc {
       RField<D> expWInv_;
 
       /// Work array for real-space q field (step size ds)
-      RField<D> qr_;
+      mutable RField<D> qr_;
 
       /// Work array for real-space q field (step size ds/2, thread model)
-      RField<D> qr2_;
+      mutable RField<D> qr2_;
 
       /// Work array for wavevector space field (step size ds)
-      RFieldDft<D> qk_;
+      mutable RFieldDft<D> qk_;
 
       /// Work array for wavevector space field (step size ds/2)
-      RFieldDft<D> qk2_;
+      mutable RFieldDft<D> qk2_;
 
       /// Pointer to associated Mesh<D> object
       Mesh<D> const * meshPtr_;

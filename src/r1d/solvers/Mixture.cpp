@@ -82,8 +82,8 @@ namespace R1d
    /*
    * Compute concentrations (but not total free energy).
    */
-   void Mixture::compute(DArray<Mixture::WFieldT> const & wFields, 
-                         DArray<Mixture::CFieldT>& cFields)
+   void Mixture::compute(DArray<Mixture::FieldT> const & wFields, 
+                         DArray<Mixture::FieldT>& cFields)
    {
       UTIL_CHECK(domainPtr_);
       UTIL_CHECK(domain().nx() > 0);
@@ -118,8 +118,8 @@ namespace R1d
                int monomerId = polymer(i).block(j).monomerId();
                UTIL_CHECK(monomerId >= 0);
                UTIL_CHECK(monomerId < nm);
-               CFieldT& monomerField = cFields[monomerId];
-               CFieldT const & blockField = polymer(i).block(j).cField();
+               FieldT& monomerField = cFields[monomerId];
+               FieldT const & blockField = polymer(i).block(j).cField();
                for (k = 0; k < nx; ++k) {
                   monomerField[k] += blockField[k];
                }
@@ -141,8 +141,8 @@ namespace R1d
             solvent(i).compute(wFields[monomerId]);
 
             // Add to monomer concentrations
-            CFieldT& monomerField = cFields[monomerId];
-            CFieldT const & solventField = solvent(i).cField();
+            FieldT& monomerField = cFields[monomerId];
+            FieldT const & solventField = solvent(i).cField();
             for (k = 0; k < nx; ++k) {
                monomerField[k] += solventField[k];
             }

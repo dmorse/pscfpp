@@ -692,7 +692,7 @@ namespace Rpc {
    * Output all timer results.
    */
    template<int D>
-   void Simulator<D>::outputTimers(std::ostream& out)
+   void Simulator<D>::outputTimers(std::ostream& out) const
    {  
       UTIL_CHECK(compressorPtr_);
       compressor().outputTimers(out); 

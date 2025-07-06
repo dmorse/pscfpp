@@ -635,7 +635,7 @@ namespace Pscf
    }
 
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::outputTimers(std::ostream& out)
+   void AmIteratorTmpl<Iterator,T>::outputTimers(std::ostream& out) const
    {
       // Output timing results, if requested.
       double total = timerTotal_.time();

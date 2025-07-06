@@ -682,7 +682,7 @@ namespace Rpg {
    * Output all timer results.
    */
    template<int D>
-   void Simulator<D>::outputTimers(std::ostream& out)
+   void Simulator<D>::outputTimers(std::ostream& out) const
    {
       outputMdeCounter(out);
       compressor().outputTimers(out);

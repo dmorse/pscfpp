@@ -63,7 +63,7 @@ namespace Rpg
       /**
       * Log output timing results 
       */
-      virtual void outputTimers(std::ostream& out) = 0;
+      virtual void outputTimers(std::ostream& out) const = 0;
       
       /**
       * Clear timers 

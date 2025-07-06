@@ -281,24 +281,26 @@ namespace Rpc
       hasStress_ = true;
    }
 
+   #if 0
    template <int D>
    bool Mixture<D>::isCanonical() const
    {
       // Check ensemble of all polymers
       for (int i = 0; i < nPolymer(); ++i) {
-         if (polymer(i).ensemble() == Species::Open) {
+         if (polymerSpecies(i).ensemble() == Species::Open) {
             return false;
          }
       }
       // Check ensemble of all solvents
       for (int i = 0; i < nSolvent(); ++i) {
-         if (solvent(i).ensemble() == Species::Open) {
+         if (solventSpecies(i).ensemble() == Species::Open) {
             return false;
          }
       }
       // Returns true if false was never returned
       return true;
    }
+   #endif
 
    /*
    * Combine cFields for all blocks and solvents into one DArray

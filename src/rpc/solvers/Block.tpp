@@ -270,7 +270,7 @@ namespace Rpc {
    * Propagate solution by one step for the thread model.
    */
    template <int D>
-   void Block<D>::stepThread(RField<D> const & q, RField<D>& qout)
+   void Block<D>::stepThread(RField<D> const & q, RField<D>& qout) const
    {
       UTIL_CHECK(PolymerModel::isThread());
 
@@ -346,7 +346,7 @@ namespace Rpc {
    * Apply one step of MDE solution for the bead model.
    */
    template <int D>
-   void Block<D>::stepBead(RField<D> const & q, RField<D>& qout)
+   void Block<D>::stepBead(RField<D> const & q, RField<D>& qout) const
    {
       UTIL_CHECK(PolymerModel::isBead());
       stepBondBead(q, qout);
@@ -357,7 +357,7 @@ namespace Rpc {
    * Apply the bond operator for the bead model.
    */
    template <int D>
-   void Block<D>::stepBondBead(RField<D> const & q, RField<D>& qout)
+   void Block<D>::stepBondBead(RField<D> const & q, RField<D>& qout) const
    {
       // Prereconditions 
       UTIL_CHECK(isAllocated_);
@@ -383,7 +383,7 @@ namespace Rpc {
    * Apply the half-bond operator for the bead model.
    */
    template <int D>
-   void Block<D>::stepHalfBondBead(RField<D> const & q, RField<D>& qout)
+   void Block<D>::stepHalfBondBead(RField<D> const & q, RField<D>& qout) const
    {
       // Preconditions 
       UTIL_CHECK(isAllocated_);
@@ -409,7 +409,7 @@ namespace Rpc {
    * Apply the local field operator for the bead model.
    */
    template <int D>
-   void Block<D>::stepFieldBead(RField<D>& q)
+   void Block<D>::stepFieldBead(RField<D>& q) const
    {
       // Preconditions 
       int nx = mesh().size();

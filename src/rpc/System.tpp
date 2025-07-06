@@ -1491,7 +1491,7 @@ namespace Rpc {
    * Write timer values to output stream (computational cost).
    */
    template <int D>
-   void System<D>::writeTimers(std::ostream& out)
+   void System<D>::writeTimers(std::ostream& out) const
    {
       if (hasIterator()) {
          iterator().outputTimers(Log::file());

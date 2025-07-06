@@ -84,7 +84,7 @@ namespace Rpg
       /**
       * Return compressor times contributions.
       */
-      void outputTimers(std::ostream& out);
+      void outputTimers(std::ostream& out) const;
 
       /**
       * Clear all timers (reset accumulated time to zero).

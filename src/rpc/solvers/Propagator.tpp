@@ -240,7 +240,7 @@ namespace Rpc {
    * Compute spatial average of product of head and tail of partner.
    */
    template <int D>
-   double Propagator<D>::computeQ()
+   double Propagator<D>::computeQ() const
    {
       // Preconditions
       if (!isSolved()) {

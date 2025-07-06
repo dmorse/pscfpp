@@ -85,7 +85,7 @@ namespace Rpc {
       /**
       * Output timing results
       */
-      virtual void outputTimers(std::ostream& out);
+      virtual void outputTimers(std::ostream& out) const;
 
       /**
       * Clear timers

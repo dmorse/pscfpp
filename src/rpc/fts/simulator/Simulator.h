@@ -163,7 +163,7 @@ namespace Rpc {
       *
       * \param out  output stream
       */
-      virtual void outputTimers(std::ostream& out);
+      virtual void outputTimers(std::ostream& out) const;
 
       /**
       * Output MDE counter.
@@ -514,9 +514,14 @@ namespace Rpc {
       bool hasCompressor() const;
 
       /**
-      * Get the compressor by reference.
+      * Get the compressor by non-const reference.
       */
       Compressor<D>& compressor();
+
+      /**
+      * Get the compressor by const reference.
+      */
+      Compressor<D> const & compressor() const;
 
       /**
       * Does this Simulator have a Perturbation?
@@ -524,14 +529,14 @@ namespace Rpc {
       bool hasPerturbation() const;
 
       /**
-      * Get the associated Perturbation by const reference.
-      */
-      Perturbation<D> const & perturbation() const;
-
-      /**
       * Get the perturbation factory by non-const reference.
       */
       Perturbation<D>& perturbation();
+
+      /**
+      * Get the associated Perturbation by const reference.
+      */
+      Perturbation<D> const & perturbation() const;
 
       /**
       * Does this Simulator have a Ramp?
@@ -847,9 +852,17 @@ namespace Rpc {
    inline bool Simulator<D>::hasCompressor() const
    {  return (bool)compressorPtr_; }
    
-   // Get the Compressor by reference.
+   // Get the Compressor by non-const reference.
    template <int D>
    inline Compressor<D>& Simulator<D>::compressor()
+   {
+      UTIL_CHECK(hasCompressor());
+      return *compressorPtr_;
+   }
+
+   // Get the Compressor by const reference.
+   template <int D>
+   inline Compressor<D> const& Simulator<D>::compressor() const
    {
       UTIL_CHECK(hasCompressor());
       return *compressorPtr_;
