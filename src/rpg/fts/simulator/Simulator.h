@@ -156,7 +156,7 @@ namespace Rpg {
       *
       * \param out  output stream
       */
-      virtual void outputMdeCounter(std::ostream& out);
+      virtual void outputMdeCounter(std::ostream& out) const;
 
       /**
       * Clear timers

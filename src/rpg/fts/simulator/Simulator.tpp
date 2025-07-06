@@ -684,19 +684,21 @@ namespace Rpg {
    template<int D>
    void Simulator<D>::outputTimers(std::ostream& out) const
    {
+      UTIL_CHECK(compressorPtr_);
       outputMdeCounter(out);
-      compressor().outputTimers(out);
+      compressorPtr_->outputTimers(out);
    }
 
    /*
    * Output modified diffusion equation (MDE) counter.
    */
    template<int D>
-   void Simulator<D>::outputMdeCounter(std::ostream& out)
+   void Simulator<D>::outputMdeCounter(std::ostream& out) const
    {
+      UTIL_CHECK(compressorPtr_);
       //out << std::endl;
       out << "MDE counter   "
-          << compressor().mdeCounter() << std::endl;
+          << compressorPtr_->mdeCounter() << std::endl;
       out << std::endl;
    }
 

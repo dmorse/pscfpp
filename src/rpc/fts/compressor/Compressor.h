@@ -64,7 +64,7 @@ namespace Rpc
       /**
       * Get the number of times the MDE has been solved.
       */
-      int mdeCounter();
+      int mdeCounter() const;
 
    protected:
 
@@ -114,7 +114,7 @@ namespace Rpc
 
    // Get number of times MDE has been solved.
    template <int D>
-   inline int Compressor<D>::mdeCounter()
+   inline int Compressor<D>::mdeCounter() const
    {  return mdeCounter_; }
 
 } // namespace Rpc

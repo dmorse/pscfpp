@@ -695,18 +695,19 @@ namespace Rpc {
    void Simulator<D>::outputTimers(std::ostream& out) const
    {  
       UTIL_CHECK(compressorPtr_);
-      compressor().outputTimers(out); 
+      outputMdeCounter(out);
+      compressorPtr_->outputTimers(out); 
    }
 
    /*
    * Output modified diffusion equation (MDE) counter.
    */
    template<int D>
-   void Simulator<D>::outputMdeCounter(std::ostream& out)
+   void Simulator<D>::outputMdeCounter(std::ostream& out) const
    { 
       UTIL_CHECK(compressorPtr_);
       out << "MDE counter   "
-          << compressor().mdeCounter() << std::endl;
+          << compressorPtr_->mdeCounter() << std::endl;
       out << std::endl;
    }
 
@@ -717,7 +718,7 @@ namespace Rpc {
    void Simulator<D>::clearTimers()
    {  
       UTIL_CHECK(compressorPtr_);
-      compressor().clearTimers(); 
+      compressorPtr_->clearTimers(); 
    }
 
    // Protected Functions
