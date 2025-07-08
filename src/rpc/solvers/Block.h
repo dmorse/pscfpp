@@ -52,8 +52,17 @@ namespace Rpc {
 
       // Public type name aliases
 
+      /// Base class.
       using Base = BlockTmpl< Propagator<D> >;
+
+      /// Propagator type.
       using PropagatorT = Propagator<D>;
+
+      /// WaveList type.
+      using WaveListT = WaveList<D>;
+
+      /// Fast Fourier Transform type.
+      using FFTT = FFT<D>;
 
       // Public member functions
 
