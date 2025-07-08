@@ -40,7 +40,7 @@ namespace Rpg {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A Mixture contain lists of Polymer and Solvent objects. Each such
+   * A Mixture contains lists of Polymer and Solvent objects. Each such
    * object can solve the single-molecule statistical mechanics problem
    * for an ideal gas of the associated species in a set of specified
    * chemical potential fields, and thereby compute concentrations and
@@ -50,8 +50,8 @@ namespace Rpg {
    * The single-molecule partition functions and concentrations for a
    * non-interacting mixture of polymer and solvent species are computed
    * by invoking the Mixture::compute function.  The Mixture::compute
-   * function takes an arrays of monomer chemical potential fields
-   * (w fields) as an input argument and an array of monomer concentration
+   * function takes an array of monomer chemical potential fields
+   * (w fields) as an input and yields an array of monomer concentration
    * fields (c fields) as an output.
    *
    * A Mixture is associated with a Mesh<D> object, which models a spatial
@@ -75,13 +75,13 @@ namespace Rpg {
       /// Base class.
       using Base = MixtureTmpl< Polymer<D>, Solvent<D> >;
 
-      /// Solvent object type: SolventT = Solvent<D> (inherited)
+      /// Solvent object type: SolventT = Solvent<D> (inherited).
       using typename Base::SolventT;
 
-      /// Polymer object type: PolymerT = Polymer<D> (inherited)
+      /// Polymer object type: PolymerT = Polymer<D> (inherited).
       using typename Base::PolymerT;
 
-      /// Block type, for a block in a block polymer (inherited)
+      /// Block type, for a block in a block polymer (inherited).
       using typename Base::BlockT;
 
       /// Propagator type, for one direction within a block (inherited).
@@ -114,7 +114,7 @@ namespace Rpg {
       void readParameters(std::istream& in);
 
       /**
-      * Create associations with a mesh, FFT, UnitCell, and WaveList object.
+      * Create associations with mesh, FFT, UnitCell, and WaveList objects.
       *
       * The Mesh<D> object must have already been initialized, e.g., by
       * reading the dimensions from a file, so that the mesh dimensions
@@ -125,7 +125,7 @@ namespace Rpg {
       *
       * The associate and allocate functions are called within the base
       * class readParameters function. This function must be called before
-      * allocate(). It stores addresses for all objects.
+      * allocate().
       *
       * \param mesh  associated Mesh<D> object
       * \param fft  associated FFT<D> object
@@ -146,7 +146,7 @@ namespace Rpg {
       void allocate();
 
       /**
-      * Clear data that depends on lattice parameters in all solvers.
+      * Clear all data that depends on the unit cell parameters.
       *
       * This function marks all private data that depends on the values
       * of the unit cell parameters as invalid, so that it can be
@@ -175,15 +175,14 @@ namespace Rpg {
       * (or volume fraction) for each monomer type.  Upon return, values
       * are set for volume fraction (phi) and chemical potential (mu)
       * members of each species, and for the concentration fields for each
-      * Block and Solvent. The total concentration for each monomer type
-      * is returned in the cFields function parameter. Monomer
-      * concentrations fields are given in units of inverse steric volume
-      * per monomer in an incompressible mixture, and are thus also volume
-      * fractions.
+      * Block and Solvent. The total concentration for each monomer type is
+      * returned in the cFields function parameter. Monomer concentration
+      * fields are normalized by the inverse steric volume per monomer in
+      * an incompressible mixture, and are thus also volume fractions.
       *
       * The array function parameters wFields and cFields must each have
-      * array size nMonomer(), and contain fields that are indexed by
-      * monomer type index.
+      * capacity nMonomer(), and contain fields that are indexed by monomer
+      * type index.
       *
       * The optional parameter phiTot is only relevant to problems such as
       * thin films in which the material is excluded from part of the unit
@@ -201,7 +200,7 @@ namespace Rpg {
       * \param phiTot  volume fraction of unit cell occupied by material
       */
       void compute(DArray<FieldT> const & wFields,
-                   DArray<FieldT> & cFields,
+                   DArray<FieldT>& cFields,
                    double phiTot = 1.0);
 
       /**
@@ -218,10 +217,10 @@ namespace Rpg {
       void computeStress(double phiTot = 1.0);
 
       /**
-      * Get derivative of free energy w/ respect to cell parameter.
+      * Get derivative of free energy w/ respect to a unit cell parameter.
       *
-      * Get precomputed value of derivative of free energy per monomer
-      * with respect to a single unit cell parameter.
+      * Get the pre-computed derivative of the free energy per monomer with
+      * respect to a single unit cell parameter.
       *
       * \param parameterId  index of unit cell parameter
       */
@@ -269,7 +268,7 @@ namespace Rpg {
 
    protected:
 
-      // Inherited protected member functions 
+      // Inherited protected member functions
       using ParamComposite::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
@@ -290,7 +289,7 @@ namespace Rpg {
       /// Number of unit cell parameters.
       int nParam_;
 
-      /// Has the stress been computed for the current w fields?
+      /// Has stress been computed for the current w fields?
       bool hasStress_;
 
       /// Use batched FFTs to compute stress? (faster, but doubles memory)
@@ -303,10 +302,10 @@ namespace Rpg {
 
    };
 
-   // Inline member function
+   // Inline member functions
 
    /*
-   * Get derivative of free energy w/ respect to a cell parameter.
+   * Get derivative of free energy w/ respect to a unit cell parameter.
    */
    template <int D>
    inline double Mixture<D>::stress(int parameterId) const
@@ -341,5 +340,4 @@ namespace Rpg {
 
 } // namespace Rpg
 } // namespace Pscf
-//#include "Mixture.tpp"
 #endif

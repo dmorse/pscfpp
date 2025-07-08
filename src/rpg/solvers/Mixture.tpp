@@ -18,7 +18,7 @@
 #include <pscf/chem/PolymerModel.h>
 #include <util/containers/DArray.h>
 
-namespace Pscf { 
+namespace Pscf {
 namespace Rpg {
 
    using namespace Prdc;
@@ -69,19 +69,19 @@ namespace Rpg {
    }
 
    /*
-   * Create associations with a mesh, FFT, UnitCell, and WaveList object.
+   * Create associations with Mesh, FFT, UnitCell, and WaveList objects.
    */
    template <int D>
-   void Mixture<D>::associate(Mesh<D> const & mesh, 
-                              FFT<D> const & fft, 
-                              UnitCell<D> const & cell, 
+   void Mixture<D>::associate(Mesh<D> const & mesh,
+                              FFT<D> const & fft,
+                              UnitCell<D> const & cell,
                               WaveList<D> & waveList)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer() + nSolvent() > 0);
       UTIL_CHECK(mesh.size() > 0);
       UTIL_CHECK(fft.isSetup());
-      UTIL_CHECK(fft.meshDimensions() == mesh.dimensions());
+      UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
       UTIL_CHECK(cell.nParameter() > 0);
 
       // Assign member variables
@@ -99,7 +99,7 @@ namespace Rpg {
          }
       }
 
-      // Create associations for all solvents
+      // Create associations for all solvents (if any)
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
             solvent(i).associate(mesh);
@@ -109,7 +109,7 @@ namespace Rpg {
    }
 
    /*
-   * Allocate internal data containers in all solvers. 
+   * Allocate internal data containers in all solvers.
    */
    template <int D>
    void Mixture<D>::allocate()
@@ -179,7 +179,7 @@ namespace Rpg {
    * Compute concentrations (but not total free energy).
    */
    template <int D>
-   void Mixture<D>::compute(DArray<FieldT> const & wFields, 
+   void Mixture<D>::compute(DArray<FieldT> const & wFields,
                             DArray<FieldT> & cFields,
                             double phiTot)
    {
@@ -219,9 +219,9 @@ namespace Rpg {
             VecOp::addEqV(monomerField, blockField);
          }
       }
-      
+
       // Process solvent species
-      for (i = 0; i < nSolvent(); i++) {
+      for (i = 0; i < nSolvent(); ++i) {
          monomerId = solvent(i).monomerId();
          UTIL_CHECK(monomerId >= 0);
          UTIL_CHECK(monomerId < nm);
@@ -235,16 +235,16 @@ namespace Rpg {
          UTIL_CHECK(solventField.capacity() == meshSize);
          VecOp::addEqV(monomerField, solventField);
       }
-      
+
       hasStress_ = false;
    }
 
-   /*  
+   /*
    * Compute total stress for this mixture.
-   */  
+   */
    template <int D>
    void Mixture<D>::computeStress(double phiTot)
-   {   
+   {
       int i, j;
 
       // Initialize all stress components to zero
@@ -257,19 +257,19 @@ namespace Rpg {
          // Compute stress for each polymer
          for (i = 0; i < nPolymer(); ++i) {
             polymer(i).computeStress();
-         } 
-   
-         // Accumulate total stress 
+         }
+
+         // Accumulate total stress
          for (i = 0; i < nParam_; ++i) {
             for (j = 0; j < nPolymer(); ++j) {
                stress_[i] += polymer(j).stress(i);
-            }   
+            }
          }
 
       }
 
-      // Correct for partial occupation of the unit cell
-      // Used in problems that contain a Mask, e.g., thin films
+      // Correct for possible partial occupation of the unit cell.
+      // Used in problems that contain a Mask, e.g., thin films.
       for (i = 0; i < nParam_; ++i) {
          stress_[i] /= phiTot;
       }
@@ -284,7 +284,7 @@ namespace Rpg {
    * Combine cFields for all blocks and solvents into one DArray
    */
    template <int D>
-   void Mixture<D>::createBlockCRGrid(DArray<FieldT> & blockCFields) 
+   void Mixture<D>::createBlockCRGrid(DArray<FieldT>& blockCFields)
    const
    {
       int np = nSolvent() + nBlock();
@@ -307,16 +307,6 @@ namespace Rpg {
          UTIL_CHECK(blockCFields[i].capacity() == nx);
          VecOp::eqS(blockCFields[i], 0.0);
       }
-
-      #if 0
-      UTIL_CHECK(blockCFields.capacity() == nBlock() + nSolvent());
-
-      // Clear all monomer concentration fields, check capacities
-      for (i = 0; i < np; ++i) {
-         UTIL_CHECK(blockCFields[i].capacity() == nx);
-         VecOp::eqS(blockCFields[i], 0.0);
-      }
-      #endif
 
       // Initialize section (block or solvent) index
       int sectionId = 0;
@@ -341,7 +331,7 @@ namespace Rpg {
          for (i = 0; i < nSolvent(); ++i) {
             UTIL_CHECK(sectionId >= 0);
             UTIL_CHECK(sectionId < np);
-               // Copy solvent r-grid c-field to blockCFields
+            // Copy solvent r-grid c-field to blockCFields
             blockCFields[sectionId] = solvent(i).cField();
             sectionId++;
          }

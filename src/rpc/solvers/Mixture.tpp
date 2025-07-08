@@ -55,7 +55,7 @@ namespace Rpc {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
 
-      // Read ds parameter
+      // Set ds_ parameter (only used in thread model)
       if (PolymerModel::isThread()) {
          read(in, "ds", ds_);
          UTIL_CHECK(ds_ > 0);
@@ -66,7 +66,7 @@ namespace Rpc {
    }
 
    /*
-   * Create associations with mesh, fft, and unit cell.
+   * Create associations with Mesh, FFT, UnitCell, and WaveList objects.
    */
    template <int D>
    void Mixture<D>::associate(Mesh<D> const & mesh,
@@ -75,7 +75,7 @@ namespace Rpc {
                               WaveList<D> & waveList)
    {
       UTIL_CHECK(nMonomer() > 0);
-      UTIL_CHECK(nPolymer()+ nSolvent() > 0);
+      UTIL_CHECK(nPolymer() + nSolvent() > 0);
       UTIL_CHECK(mesh.size() > 0);
       UTIL_CHECK(fft.isSetup());
       UTIL_CHECK(mesh.dimensions() == fft.meshDimensions());
@@ -107,7 +107,7 @@ namespace Rpc {
 
 
    /*
-   * Allocate internal data containers for all solvers.
+   * Allocate internal data containers in all solvers.
    */
    template <int D>
    void Mixture<D>::allocate()
@@ -263,8 +263,8 @@ namespace Rpc {
          for (i = 0; i < nPolymer(); ++i) {
             polymer(i).computeStress();
          }
-   
-         // Accumulate total stress 
+
+         // Accumulate total stress
          for (i = 0; i < nParam_; ++i) {
             for (j = 0; j < nPolymer(); ++j) {
                stress_[i] += polymer(j).stress(i);
@@ -289,7 +289,7 @@ namespace Rpc {
    * Combine cFields for all blocks and solvents into one DArray
    */
    template <int D>
-   void Mixture<D>::createBlockCRGrid(DArray<FieldT>& blockCFields) 
+   void Mixture<D>::createBlockCRGrid(DArray<FieldT>& blockCFields)
    const
    {
       int np = nSolvent() + nBlock();
