@@ -1332,7 +1332,7 @@ public:
 
       // v1.1 test used w.bf as input, compared to input
 
-      system.writeBlockCRGrid("out/testIterate3D_altGyr_flex_block_c.rf");
+      system.mixture().writeBlockCRGrid("out/testIterate3D_altGyr_flex_block_c.rf");
 
       // Compare Helmoltz free energies
       if (!system.hasFreeEnergy()) system.computeFreeEnergy();

@@ -257,7 +257,7 @@ namespace Prdc {
       void clearUnitCellData();
 
       ///@}
-      /// \name Field Output
+      /// \name Concentration Field Output
       ///@{
 
       /**
@@ -278,10 +278,29 @@ namespace Prdc {
       * it contains are allocated on entry, their capacities must be
       * correct or an error will be thrown.
       *
-      * \param blockCFields DArray of FieldT field objects (output)
+      * \param blockCFields  DArray of FieldT field objects (output)
       */
       void createBlockCRGrid(DArray<FieldT>& blockCFields) const;
 
+      /**
+      * Write c fields for all blocks and solvents in r-grid format.
+      *
+      * Writes concentrations for all blocks of all polymers and all
+      * solvent species in r-grid format. Columns associated with polymer
+      * blocks appear first, followed by columns associated with solvent
+      * species. Polymer blocks are listed with blocks blocks of each 
+      * species ordered consecutively in order of block index, with groups
+      * of columns associated with polymers ordered by polymer index. 
+      * Solvents are ordered by solvent species index.
+      *
+      * \param filename  name of output file
+      */
+      void writeBlockCRGrid(std::string const & filename) const;
+
+      ///@}
+      /// \name Propagator Output
+      ///@{
+      
       /**
       * Write one slice of a propagator at fixed s in r-grid format.
       *
@@ -358,15 +377,17 @@ namespace Prdc {
       Mesh<D> const & mesh() const
       {  return *meshPtr_; }
 
+      /// Return associated UnitCell<D> by const reference.
       UnitCell<D> const & unitCell() const
       {  return *unitCellPtr_; }
 
+      /// Return associated FieldIoT by const reference.
       FieldIoT const & fieldIo() const
       {  return *fieldIoPtr_; }
 
       /// Return target value for the contour step size ds.
       double ds() const
-      {   return ds_; }
+      {  return ds_; }
 
       // Inherited protected member functions
       using ParamComposite::setClassName;

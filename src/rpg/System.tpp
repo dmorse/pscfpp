@@ -335,6 +335,7 @@ namespace Rpg {
       // Setup the mixture
       mixture_.associate(domain_.mesh(), domain_.fft(),
                          domain_.unitCell(), domain_.waveList());
+      mixture_.setFieldIo(domain_.fieldIo());
       mixture_.allocate();
 
       // Allocate memory for w and c fields in r-grid form
@@ -541,7 +542,8 @@ namespace Rpg {
          } else
          if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
-            writeBlockCRGrid(filename);
+            //writeBlockCRGrid(filename);
+            mixture_.writeBlockCRGrid(filename);
          } else
          if (command == "WRITE_Q_SLICE") {
             int polymerId, blockId, directionId, segmentId;
@@ -556,8 +558,8 @@ namespace Rpg {
                         << "\n"
                         << Str("segment ID  ", 21) << segmentId
                         << std::endl;
-            writeQSlice(filename, polymerId, blockId, directionId,
-                                  segmentId);
+            mixture_.writeQSlice(filename, polymerId, blockId, 
+                                 directionId, segmentId);
          } else
          if (command == "WRITE_Q_TAIL") {
             readEcho(in, filename);
@@ -569,7 +571,7 @@ namespace Rpg {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
-            writeQTail(filename, polymerId, blockId, directionId);
+            mixture_.writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
             readEcho(in, filename);
@@ -581,11 +583,11 @@ namespace Rpg {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
-            writeQ(filename, polymerId, blockId, directionId);
+            mixture_.writeQ(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q_ALL") {
             readEcho(in, filename);
-            writeQAll(filename);
+            mixture_.writeQAll(filename);
          } else
          if (command == "WRITE_STARS") {
             readEcho(in, filename);
@@ -904,6 +906,7 @@ namespace Rpg {
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
+      mixture_.setIsSymmetric(w_.isSymmetric());
       c_.setHasData(true);
       hasFreeEnergy_ = false;
       hasStress_ = false;
@@ -1347,6 +1350,7 @@ namespace Rpg {
       out << std::endl;
    }
 
+   #if 0
    /*
    * Write all concentration fields in real space (r-grid) format, for
    * each block and solvent species, rather than for each monomer type.
@@ -1375,126 +1379,7 @@ namespace Rpg {
                                          domain_.unitCell(),
                                          w_.isSymmetric());
    }
-
-   // Propagator Output
-
-   /*
-   * Write the last time slice of the propagator in r-grid format.
-   */
-   template <int D>
-   void System<D>::writeQSlice(std::string const & filename,
-                               int polymerId, int blockId,
-                               int directionId, int segmentId)
-   const
-   {
-      UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture_.nPolymer());
-      Polymer<D> const& polymer = mixture_.polymer(polymerId);
-      UTIL_CHECK(blockId >= 0);
-      UTIL_CHECK(blockId < polymer.nBlock());
-      UTIL_CHECK(directionId >= 0);
-      UTIL_CHECK(directionId <= 1);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      Propagator<D> const &
-           propagator = polymer.propagator(blockId, directionId);
-      RField<D> const & field = propagator.q(segmentId);
-      domain_.fieldIo().writeFieldRGrid(filename, field,
-                                        domain_.unitCell(),
-                                        w_.isSymmetric());
-   }
-
-   /*
-   * Write the last (tail) slice of the propagator in r-grid format.
-   */
-   template <int D>
-   void System<D>::writeQTail(std::string const & filename,
-                              int polymerId, int blockId, int directionId)
-   const
-   {
-      UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture_.nPolymer());
-      Polymer<D> const& polymer = mixture_.polymer(polymerId);
-      UTIL_CHECK(blockId >= 0);
-      UTIL_CHECK(blockId < polymer.nBlock());
-      UTIL_CHECK(directionId >= 0);
-      UTIL_CHECK(directionId <= 1);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      RField<D> const &
-            field = polymer.propagator(blockId, directionId).tail();
-      domain_.fieldIo().writeFieldRGrid(filename, field,
-                                        domain_.unitCell(),
-                                        w_.isSymmetric());
-   }
-
-   /*
-   * Write the propagator for a block and direction.
-   */
-   template <int D>
-   void System<D>::writeQ(std::string const & filename,
-                          int polymerId, int blockId, int directionId)
-   const
-   {
-      UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture_.nPolymer());
-      Polymer<D> const& polymer = mixture_.polymer(polymerId);
-      UTIL_CHECK(blockId >= 0);
-      UTIL_CHECK(blockId < polymer.nBlock());
-      UTIL_CHECK(directionId >= 0);
-      UTIL_CHECK(directionId <= 1);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      Propagator<D> const&
-           propagator = polymer.propagator(blockId, directionId);
-      int ns = propagator.ns();
-
-      // Open file
-      std::ofstream file;
-      fileMaster_.openOutputFile(filename, file);
-
-      // Write header
-      domain_.fieldIo().writeFieldHeader(file, 1, domain_.unitCell(),
-                                         w_.isSymmetric());
-      file << "mesh" << std::endl
-           << "          " << domain_.mesh().dimensions() << std::endl
-           << "nslice"    << std::endl
-           << "          " << ns << std::endl;
-
-      // Write data
-      bool hasHeader = false;
-      for (int i = 0; i < ns; ++i) {
-         file << "slice " << i << std::endl;
-         domain_.fieldIo().writeFieldRGrid(file, propagator.q(i),
-                                           domain_.unitCell(),
-                                           hasHeader);
-      }
-      file.close();
-   }
-
-   /*
-   * Write propagators for all blocks of all polymers to files.
-   */
-   template <int D>
-   void System<D>::writeQAll(std::string const & basename)
-   {
-      std::string filename;
-      int np, nb, ip, ib, id;
-      np = mixture_.nPolymer();
-      for (ip = 0; ip < np; ++ip) {
-         nb = mixture_.polymer(ip).nBlock();
-         for (ib = 0; ib < nb; ++ib) {
-            for (id = 0; id < 2; ++id) {
-               filename = basename;
-               filename += "_";
-               filename += toString(ip);
-               filename += "_";
-               filename += toString(ib);
-               filename += "_";
-               filename += toString(id);
-               filename += ".rq";
-               writeQ(filename, ip, ib, id);
-            }
-         }
-      }
-   }
+   #endif
 
    // Timer Operations
 

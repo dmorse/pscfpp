@@ -452,6 +452,7 @@ namespace Rpc {
       */
       void writeStress(std::ostream& out);
 
+      #if 0
       /**
       * Write c fields for all blocks and solvents in r-grid format.
       *
@@ -464,22 +465,7 @@ namespace Rpc {
       * \param filename  name of output file
       */
       void writeBlockCRGrid(std::string const & filename) const;
-
-      ///@}
-      /// \name Timers
-      ///@{
-
-      /**
-      * Write timer information to an output stream.
-      *
-      * \param out  output stream
-      */
-      void writeTimers(std::ostream& out) const;
-
-      /**
-      * Clear timers
-      */
-      void clearTimers();
+      #endif
 
       ///@}
       /// \name Field Containers
@@ -634,6 +620,22 @@ namespace Rpc {
       * Has the SCFT stress been computed for the current w fields?
       */
       bool hasStress() const;
+
+      ///@}
+      /// \name Timers
+      ///@{
+
+      /**
+      * Write timer information to an output stream.
+      *
+      * \param out  output stream
+      */
+      void writeTimers(std::ostream& out) const;
+
+      /**
+      * Clear timers
+      */
+      void clearTimers();
 
       ///@}
 

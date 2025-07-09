@@ -535,16 +535,15 @@ namespace Rpc {
          if (command == "WRITE_C_BASIS") {
             readEcho(in, filename);
             c().writeBasis(filename);
-            //writeCBasis(filename);
          } else
          if (command == "WRITE_C_RGRID") {
             readEcho(in, filename);
             c().writeRGrid(filename);
-            //writeCRGrid(filename);
          } else
          if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
-            writeBlockCRGrid(filename);
+            //writeBlockCRGrid(filename);
+            mixture_.writeBlockCRGrid(filename);
          } else
          if (command == "WRITE_Q_SLICE") {
             int polymerId, blockId, directionId, segmentId;
@@ -1338,6 +1337,7 @@ namespace Rpc {
       out << std::endl;
    }
 
+   #if 0
    /*
    * Write all concentration fields in real space (r-grid) format, for
    * each block and solvent species, rather than for each monomer type.
@@ -1366,6 +1366,7 @@ namespace Rpc {
                                          domain_.unitCell(),
                                          w_.isSymmetric());
    }
+   #endif
 
    // Timer Operations
 

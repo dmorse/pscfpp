@@ -181,13 +181,15 @@ namespace Prdc {
       hasStress_ = false;
    }
 
+   // Concentration field output
+
    /*
    * Compute concentrations (but not total free energy).
    */
    template <int D, class PT, class ST>
    void MixtureReal<D,PT,ST>::compute(DArray<FieldT> const & wFields,
-                            DArray<FieldT> & cFields,
-                            double phiTot)
+                                      DArray<FieldT> & cFields,
+                                      double phiTot)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(mesh().size() > 0);
@@ -358,6 +360,33 @@ namespace Prdc {
       }
       UTIL_CHECK(sectionId == np);
 
+   }
+
+   /*
+   * Output all concentration fields in real space (r-grid) format for
+   * each block and solvent species to specified file.
+   */
+   template <int D, class PT, class ST>
+   void 
+   MixtureReal<D,PT,ST>::writeBlockCRGrid(std::string const & filename) 
+   const
+   {
+      UTIL_CHECK(fieldIoPtr_);
+
+      // Create and allocate array to hold c field data
+      DArray<FieldT> blockCFields;
+      int np = nSolvent() + nBlock();
+      blockCFields.allocate(np);
+      for (int i = 0; i < np; i++) {
+         blockCFields[i].allocate(mesh().dimensions());
+      }
+
+      // Get c field data from the Mixture
+      createBlockCRGrid(blockCFields);
+
+      // Write block and solvent c field data to file
+      fieldIo().writeFieldsRGrid(filename, blockCFields,
+                                 unitCell(), isSymmetric_);
    }
 
    // Propagator field output
