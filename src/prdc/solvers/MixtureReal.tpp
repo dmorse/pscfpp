@@ -217,7 +217,7 @@ namespace Prdc {
       }
 
       // Process solvent species
-      if (nPolymer() > 0) {
+      if (nSolvent() > 0) {
       
          // Compute solvent concentrations
          for (i = 0; i < nSolvent(); ++i) {
