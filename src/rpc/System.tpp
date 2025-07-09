@@ -337,7 +337,7 @@ namespace Rpc {
       mixture_.setFieldIo(domain_.fieldIo());
       mixture_.allocate();
 
-      // Allocate memory for w and c fields in r-grid form
+      // Allocate memory for field containers in r-grid form
       allocateFieldsGrid();
 
       // Optionally construct an Environment object
@@ -559,8 +559,8 @@ namespace Rpc {
                         << "\n"
                         << Str("segment ID  ", 21) << segmentId
                         << std::endl;
-            writeQSlice(filename, polymerId, blockId, directionId,
-                                  segmentId);
+            mixture_.writeQSlice(filename, polymerId, blockId,
+                                 directionId, segmentId);
          } else
          if (command == "WRITE_Q_TAIL") {
             readEcho(in, filename);
@@ -572,7 +572,7 @@ namespace Rpc {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
-            writeQTail(filename, polymerId, blockId, directionId);
+            mixture_.writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
             readEcho(in, filename);
@@ -584,11 +584,11 @@ namespace Rpc {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
-            writeQ(filename, polymerId, blockId, directionId);
+            mixture_.writeQ(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q_ALL") {
             readEcho(in, filename);
-            writeQAll(filename);
+            mixture_.writeQAll(filename);
          } else
          if (command == "WRITE_STARS") {
             readEcho(in, filename);
@@ -1365,126 +1365,6 @@ namespace Rpc {
       domain_.fieldIo().writeFieldsRGrid(filename, blockCFields,
                                          domain_.unitCell(),
                                          w_.isSymmetric());
-   }
-
-   // Propagator Output
-
-   /*
-   * Write the last time slice of the propagator in r-grid format.
-   */
-   template <int D>
-   void System<D>::writeQSlice(std::string const & filename,
-                               int polymerId, int blockId,
-                               int directionId, int segmentId)
-   const
-   {
-      UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture_.nPolymer());
-      Polymer<D> const& polymer = mixture_.polymer(polymerId);
-      UTIL_CHECK(blockId >= 0);
-      UTIL_CHECK(blockId < polymer.nBlock());
-      UTIL_CHECK(directionId >= 0);
-      UTIL_CHECK(directionId <= 1);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      Propagator<D> const &
-           propagator = polymer.propagator(blockId, directionId);
-      RField<D> const & field = propagator.q(segmentId);
-      domain_.fieldIo().writeFieldRGrid(filename, field,
-                                        domain_.unitCell(),
-                                        w_.isSymmetric());
-   }
-
-   /*
-   * Write the last (tail) slice of the propagator in r-grid format.
-   */
-   template <int D>
-   void System<D>::writeQTail(std::string const & filename,
-                              int polymerId, int blockId, int directionId)
-   const
-   {
-      UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture_.nPolymer());
-      Polymer<D> const& polymer = mixture_.polymer(polymerId);
-      UTIL_CHECK(blockId >= 0);
-      UTIL_CHECK(blockId < polymer.nBlock());
-      UTIL_CHECK(directionId >= 0);
-      UTIL_CHECK(directionId <= 1);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      RField<D> const &
-            field = polymer.propagator(blockId, directionId).tail();
-      domain_.fieldIo().writeFieldRGrid(filename, field,
-                                        domain_.unitCell(),
-                                        w_.isSymmetric());
-   }
-
-   /*
-   * Write the propagator for a block and direction.
-   */
-   template <int D>
-   void System<D>::writeQ(std::string const & filename,
-                          int polymerId, int blockId, int directionId)
-   const
-   {
-      UTIL_CHECK(polymerId >= 0);
-      UTIL_CHECK(polymerId < mixture_.nPolymer());
-      Polymer<D> const& polymer = mixture_.polymer(polymerId);
-      UTIL_CHECK(blockId >= 0);
-      UTIL_CHECK(blockId < polymer.nBlock());
-      UTIL_CHECK(directionId >= 0);
-      UTIL_CHECK(directionId <= 1);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      Propagator<D> const&
-           propagator = polymer.propagator(blockId, directionId);
-      int ns = propagator.ns();
-
-      // Open file
-      std::ofstream file;
-      fileMaster_.openOutputFile(filename, file);
-
-      // Write header
-      domain_.fieldIo().writeFieldHeader(file, 1, domain_.unitCell(),
-                                         w_.isSymmetric());
-      file << "mesh" << std::endl
-           << "          " << domain_.mesh().dimensions() << std::endl
-           << "nslice"    << std::endl
-           << "          " << ns << std::endl;
-
-      // Write data
-      bool hasHeader = false;
-      for (int i = 0; i < ns; ++i) {
-         file << "slice " << i << std::endl;
-         domain_.fieldIo().writeFieldRGrid(file, propagator.q(i),
-                                           domain_.unitCell(),
-                                           hasHeader);
-      }
-      file.close();
-   }
-
-   /*
-   * Write propagators for all blocks of all polymers to files.
-   */
-   template <int D>
-   void System<D>::writeQAll(std::string const & basename)
-   {
-      std::string filename;
-      int np, nb, ip, ib, id;
-      np = mixture_.nPolymer();
-      for (ip = 0; ip < np; ++ip) {
-         nb = mixture_.polymer(ip).nBlock();
-         for (ib = 0; ib < nb; ++ib) {
-            for (id = 0; id < 2; ++id) {
-               filename = basename;
-               filename += "_";
-               filename += toString(ip);
-               filename += "_";
-               filename += toString(ib);
-               filename += "_";
-               filename += toString(id);
-               filename += ".rq";
-               writeQ(filename, ip, ib, id);
-            }
-         }
-      }
    }
 
    // Timer Operations

@@ -466,65 +466,6 @@ namespace Rpc {
       void writeBlockCRGrid(std::string const & filename) const;
 
       ///@}
-      /// \name Propagator Output
-      ///@{
-
-      /**
-      * Write one slice of a propagator at fixed s in r-grid format.
-      *
-      * \param filename  name of output file
-      * \param polymerId  integer id of the polymer
-      * \param blockId  integer id of the block within the polymer
-      * \param directionId  integer id of the direction (0 or 1)
-      * \param segmentId  integer integration step index
-      */
-      void writeQSlice(std::string const & filename,
-                       int polymerId, int blockId,
-                       int directionId, int segmentId)  const;
-
-      /**
-      * Write the final slice of a propagator in r-grid format.
-      *
-      * \param filename  name of output file
-      * \param polymerId  integer id of the polymer
-      * \param blockId  integer id of the block within the polymer
-      * \param directionId  integer id of the direction (0 or 1)
-      */
-      void writeQTail(std::string const & filename, int polymerId,
-                      int blockId, int directionId)  const;
-
-      /**
-      * Write the complete propagator for one block, in r-grid format.
-      *
-      * \param filename  name of output file
-      * \param polymerId  integer id of the polymer
-      * \param blockId  integer id of the block within the polymer
-      * \param directionId  integer id of the direction (0 or 1)
-      */
-      void writeQ(std::string const & filename, int polymerId,
-                  int blockId, int directionId)  const;
-
-      /**
-      * Write all propagators of all blocks, each to a separate file.
-      *
-      * Write all propagators for both directions for all blocks
-      * of all polymers, with each propagator in a separate file.
-      * The function writeQ is called internally for each propagator,
-      * and is passed an automatically generated file name. The file
-      * name for each propagator is given by a string of the form
-      * (basename)_(ip)_(ib)_(id), where (basename) denotes the value
-      * of the std::string function parameter basename, and where
-      * (ip), (ib), and (id) denote the string representations of
-      * a polymer indiex ip, a block index ib, and direction index id,
-      * with id = 0 or 1. For example, if basename == "out/q", then
-      * the file name of the propagator for direction 1 of block 2
-      * of polymer 0 would be "out/q_0_2_1".
-      *
-      * \param basename  common prefix for output file names
-      */
-      void writeQAll(std::string const & basename);
-
-      ///@}
       /// \name Timers
       ///@{
 
@@ -541,41 +482,41 @@ namespace Rpc {
       void clearTimers();
 
       ///@}
-      /// \name Field Accessors
+      /// \name Field Containers
       ///@{
 
       /**
-      * Get container of monomer concentration (c) fields by const reference.
+      * Get monomer concentration (c) field container (const reference).
       */
       CFieldContainer<D> const & c() const;
 
       /**
-      * Get container of chemical potential (w) fields by non-const reference.
+      * Get chemical potential (w) field container (non-const reference).
       */
       WFieldContainer<D>& w();
 
       /**
-      * Get container of chemical potential (w) fields by const reference.
+      * Get chemical potential (w) field container (const reference).
       */
       WFieldContainer<D> const & w() const;
 
       /**
-      * Get container of external potential fields (non-const reference).
+      * Get external potential field container (non-const reference).
       */
       WFieldContainer<D>& h();
 
       /**
-      * Get container of external potential fields (const reference).
+      * Get external potential (h) field container (const reference).
       */
       WFieldContainer<D> const & h() const;
 
       /**
-      * Get the mask (field to which total density is constrained).
+      * Get the mask field container (non-const reference).
       */
       Mask<D>& mask();
 
       /**
-      * Get the mask by const reference.
+      * Get the mask field container (const reference).
       */
       Mask<D> const & mask() const;
 
@@ -584,69 +525,69 @@ namespace Rpc {
       ///@{
 
       /**
-      * Get the Mixture by non-const reference.
+      * Get the Mixture (non-const reference).
       */
       Mixture<D>& mixture();
 
       /**
-      * Get the Mixture by const reference.
+      * Get the Mixture (const reference).
       */
       Mixture<D> const & mixture() const;
 
       /**
-      * Get the Interaction (excess free energy) by non-const reference.
+      * Get the Interaction (non-const reference).
       */
       Interaction& interaction();
 
       /**
-      * Get the Interaction (excess free energy) by const reference.
+      * Get the Interaction (const reference).
       */
       Interaction const & interaction() const;
 
       /**
-      * Get the Domain by const reference.
+      * Get the Domain (const reference).
       */
       Domain<D> const & domain() const;
 
       /**
-      * Get the Environment by non-const reference.
+      * Get the Environment (non-const reference).
       */
       Environment& environment();
 
       /**
-      * Get the Environment by const reference.
+      * Get the Environment (const reference).
       */
       Environment const & environment() const;
 
       /**
-      * Get the Iterator by non-const reference.
+      * Get the Iterator (non-const reference).
       */
       Iterator<D>& iterator();
 
       /**
-      * Get the Iterator by const reference.
+      * Get the Iterator (const reference).
       */
       Iterator<D> const & iterator() const;
 
       /**
-      * Get the Simulator by non-const reference.
+      * Get the Simulator (non-const reference).
       */
       Simulator<D>& simulator();
 
       /**
-      * Get the Simulator by const reference.
+      * Get the Simulator (const reference).
       */
       Simulator<D> const & simulator() const;
 
       /**
-      * Get the FileMaster by non-const reference.
+      * Get the FileMaster (non-const reference).
       *
-      * Access by non-const reference is used in some unit tests.
+      * Access (non-const reference) is used in some unit tests.
       */
       FileMaster& fileMaster();
 
       /**
-      * Get the FileMaster by const reference.
+      * Get the FileMaster (const reference).
       */
       FileMaster const & fileMaster() const;
 
