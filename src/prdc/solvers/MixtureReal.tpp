@@ -114,12 +114,15 @@ namespace Prdc {
 
       // Allocate memory for all Block objects
       if (nPolymer() > 0) {
+         allocateBlocks();
+         #if 0
          int i, j;
          for (i = 0; i < nPolymer(); ++i) {
             for (j = 0; j < polymer(i).nBlock(); ++j) {
                polymer(i).block(j).allocate(ds_);
             }
          }
+         #endif
       }
 
       // Allocate memory for all Solvent objects
@@ -302,10 +305,7 @@ namespace Prdc {
          if (!blockCFields[i].isAllocated()) {
             blockCFields[i].allocate(mesh().dimensions());
          }
-         UTIL_CHECK(blockCFields[i].capacity() == nx);
-         for (j = 0; j < nx; ++j) {
-            blockCFields[i][j] = 0.0;
-         }
+         eqS(blockCFields[i], 0.0);
       }
 
       // Initialize section (block or solvent) index

@@ -40,6 +40,21 @@ namespace Rpc {
       }
    }
 
+   /*
+   * Allocate memory for all blocks.
+   */
+   template <int D>
+   void Mixture<D>::allocateBlocks()
+   {
+      int i, j;
+      for (i = 0; i < nPolymer(); ++i) {
+         for (j = 0; j < polymer(i).nBlock(); ++j) {
+            polymer(i).block(j).allocate(ds());
+         }
+      }
+   }
+
+
 } // namespace Rpc
 } // namespace Pscf
 #endif

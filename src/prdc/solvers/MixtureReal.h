@@ -107,7 +107,7 @@ namespace Prdc {
       *
       * \param in input parameter stream
       */
-      void readParameters(std::istream& in);
+      virtual void readParameters(std::istream& in);
 
       /**
       * Create associations with mesh, FFTT, UnitCell, and WaveList objects.
@@ -274,6 +274,9 @@ namespace Prdc {
       /// Return associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const;
 
+      /// Return value of contour step size ds.
+      double ds() const;
+
    private:
 
       // Private member data
@@ -311,6 +314,11 @@ namespace Prdc {
       */
       virtual void addEqV(FieldT& A, FieldT const & B) const = 0;
 
+      /**
+      * Allocate blocks
+      */
+      virtual void allocateBlocks() = 0; 
+
 
    };
 
@@ -332,6 +340,13 @@ namespace Prdc {
    template <int D, class PT, class ST>
    inline bool MixtureReal<D,PT,ST>::hasStress() const
    {  return hasStress_; }
+
+   /*
+   * Get value of contour step size ds.
+   */
+   template <int D, class PT, class ST>
+   inline double MixtureReal<D,PT,ST>::ds() const
+   {  return ds_; }
 
    /*
    * Get the Mesh<D> by constant reference (private).

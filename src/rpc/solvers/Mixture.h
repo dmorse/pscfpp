@@ -12,17 +12,6 @@
 #include "Polymer.h"                      // base class parameter
 #include "Solvent.h"                      // base class parameter
 
-// Forward declarations
-namespace Pscf {
-   namespace Prdc {
-      namespace Cpu {
-         template <int D> class WaveList;
-         template <int D> class FFT;
-         template <int D> class RField;
-      }
-   }
-}
-
 namespace Pscf {
 namespace Rpc {
 
@@ -84,6 +73,7 @@ namespace Rpc {
    protected:
 
       using MixtureRealT::mesh;
+      using MixtureRealT::ds;
 
    private:
 
@@ -93,7 +83,7 @@ namespace Rpc {
       * \param A  field (LHS)
       * \param s  scalar (RHS)
       */
-      virtual void eqS(FieldT& A, double s) const override;
+      void eqS(FieldT& A, double s) const override;
 
       /**
       * Compound addition assignment for fields : A[i] += B[i].
@@ -101,7 +91,12 @@ namespace Rpc {
       * \param A  field (LHS)
       * \param B  field (RHS)
       */
-      virtual void addEqV(FieldT& A, FieldT const & B) const override;
+      void addEqV(FieldT& A, FieldT const & B) const override;
+
+      /**
+      * Allocate memory for all blocks
+      */
+      void allocateBlocks() override; 
 
    };
 
