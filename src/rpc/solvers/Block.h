@@ -22,9 +22,12 @@ namespace Pscf {
    namespace Prdc{
      template <int D> class UnitCell;
      namespace Cpu {
-        template <int D> class WaveList;
         template <int D> class FFT;
+        template <int D> class WaveList;
      }
+   }
+   namespace Rpc{
+     template <int D> class FieldIo;
    }
 }
 
@@ -58,11 +61,14 @@ namespace Rpc {
       /// Propagator type.
       using PropagatorT = Propagator<D>;
 
+      /// Fast Fourier Transform type.
+      using FFTT = FFT<D>;
+
       /// WaveList type.
       using WaveListT = WaveList<D>;
 
-      /// Fast Fourier Transform type.
-      using FFTT = FFT<D>;
+      /// FieldIo type.
+      using FieldIoT = FieldIo<D>;
 
       // Public member functions
 

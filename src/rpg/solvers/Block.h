@@ -29,6 +29,9 @@ namespace Pscf {
          template <int D> class FFT;
       }
    }
+   namespace Rpg {
+      template <int D> class FieldIo;
+   }
 }
 
 namespace Pscf {
@@ -61,11 +64,14 @@ namespace Rpg {
       /// Propagator type.
       using PropagatorT = Propagator<D>;
 
+      /// Fast Fourier Transform (FFT) type.
+      using FFTT = FFT<D>;
+
       /// Wavelist type.
       using WaveListT = WaveList<D>;
 
-      /// Fast Fourier Transform type.
-      using FFTT = FFT<D>;
+      /// FieldIo type.
+      using FieldIoT = FieldIo<D>;
 
       // Public member functions
 
@@ -118,7 +124,7 @@ namespace Rpg {
       *
       * Precondition: associate() must be called before this function
       *
-      * \param ds  desired (optimal) value for contour length step
+      * \param ds  target (optimal) value for contour length step size
       * \param useBatchedFFT  Flag indicating whether to use batched FFTs
       */
       void allocate(double ds, bool useBatchedFFT = true);

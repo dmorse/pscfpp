@@ -14,6 +14,8 @@
 #include <pscf/chem/Monomer.h>
 #include <pscf/chem/PolymerModel.h>
 #include <util/containers/DArray.h>
+#include <util/misc/ioUtil.h>
+#include <util/misc/FileMaster.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -26,10 +28,12 @@ namespace Prdc {
     : stress_(),
       ds_(-1.0),
       meshPtr_(nullptr),
+      unitCellPtr_(nullptr),
+      fieldIoPtr_(nullptr),
       nParam_(0),
-      hasStress_(false)
+      hasStress_(false),
+      isSymmetric_(false)
    {  setClassName("Mixture"); }
-
 
    /*
    * Destructor
@@ -77,6 +81,7 @@ namespace Prdc {
 
       // Assign member variables
       meshPtr_ = &mesh;
+      unitCellPtr_ = &cell;
       nParam_ = cell.nParameter();
 
       // Create associations for all blocks, set nParams in Polymer objects
@@ -99,6 +104,12 @@ namespace Prdc {
 
    }
 
+   /*
+   * Create an association with a FieldIo object, for file output.
+   */
+   template <int D, class PT, class ST>
+   void MixtureReal<D,PT,ST>::setFieldIo(FieldIoT const & fieldIo)
+   {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Allocate internal data containers in all solvers.
@@ -237,11 +248,19 @@ namespace Prdc {
 
       }
 
+      isSymmetric_ = false;
       hasStress_ = false;
    }
 
    /*
-   * Compute total stress for this mixture.
+   * Set the isSymmetric boolean variable true or false.
+   */
+   template <int D, class PT, class ST>
+   void MixtureReal<D,PT,ST>::setIsSymmetric(bool isSymmetric)
+   {  isSymmetric_ = isSymmetric; }
+
+   /*
+   * Compute total SCFT stress for this mixture.
    */
    template <int D, class PT, class ST>
    void MixtureReal<D,PT,ST>::computeStress(double phiTot)
@@ -280,6 +299,8 @@ namespace Prdc {
 
       hasStress_ = true;
    }
+
+   // Concentration Field Output
 
    /*
    * Combine cFields for all blocks and solvents into one DArray
@@ -337,6 +358,130 @@ namespace Prdc {
       }
       UTIL_CHECK(sectionId == np);
 
+   }
+
+   // Propagator field output
+
+   /*
+   * Write a specified slice of the propagator in r-grid format.
+   */
+   template <int D, class PT, class ST>
+   void MixtureReal<D,PT,ST>::writeQSlice(
+                                  std::string const & filename,
+                                  int polymerId, 
+                                  int blockId,
+                                  int directionId, 
+                                  int sliceId) const
+   {
+      UTIL_CHECK(fieldIoPtr_);
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < nPolymer());
+      PolymerT const& polymerRef = polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymerRef.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(unitCell().isInitialized());
+      PropagatorT const &
+         propagator = polymerRef.propagator(blockId, directionId);
+      FieldT const & field = propagator.q(sliceId);
+      fieldIo().writeFieldRGrid(filename, field, unitCell(), isSymmetric_);
+   }
+
+   /*
+   * Write the last (tail) slice of the propagator in r-grid format.
+   */
+   template <int D, class PT, class ST>
+   void MixtureReal<D,PT,ST>::writeQTail(
+                                  std::string const & filename,
+                                  int polymerId, 
+                                  int blockId, 
+                                  int directionId) const
+   {
+      UTIL_CHECK(fieldIoPtr_);
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < nPolymer());
+      PolymerT const& polymerRef = polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymerRef.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(unitCell().isInitialized());
+      FieldT const &
+         field = polymerRef.propagator(blockId, directionId).tail();
+      fieldIo().writeFieldRGrid(filename, field, unitCell(), isSymmetric_);
+   }
+
+   /*
+   * Write the entire propagator for a specified block and direction.
+   */
+   template <int D, class PT, class ST>
+   void MixtureReal<D,PT,ST>::writeQ(
+                                  std::string const & filename,
+                                  int polymerId, 
+                                  int blockId, 
+                                  int directionId) const
+   {
+      UTIL_CHECK(fieldIoPtr_);
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < nPolymer());
+      PolymerT const& polymerRef = polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymerRef.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
+      UTIL_CHECK(unitCell().isInitialized());
+      PropagatorT const&
+           propagator = polymerRef.propagator(blockId, directionId);
+      int ns = propagator.ns();
+
+      // Open file
+      std::ofstream file;
+      fieldIo().fileMaster().openOutputFile(filename, file);
+
+      // Write header
+      fieldIo().writeFieldHeader(file, 1, unitCell(), isSymmetric_);
+      file << "mesh" << std::endl
+           << "          " << mesh().dimensions() << std::endl
+           << "nslice"    << std::endl
+           << "          " << ns << std::endl;
+
+      // Write data
+      bool hasHeader = false;
+      for (int i = 0; i < ns; ++i) {
+         file << "slice " << i << std::endl;
+         fieldIo().writeFieldRGrid(file, propagator.q(i), unitCell(),
+                                   hasHeader);
+      }
+      file.close();
+   }
+
+   /*
+   * Write propagators for all blocks of all polymers to files.
+   */
+   template <int D, class PT, class ST>
+   void MixtureReal<D,PT,ST>::writeQAll(std::string const & basename)
+   {
+      UTIL_CHECK(fieldIoPtr_);
+      std::string filename;
+      int np, nb, ip, ib, id;
+      np = nPolymer();
+      for (ip = 0; ip < np; ++ip) {
+         nb = polymer(ip).nBlock();
+         for (ib = 0; ib < nb; ++ib) {
+            for (id = 0; id < 2; ++id) {
+               filename = basename;
+               filename += "_";
+               filename += toString(ip);
+               filename += "_";
+               filename += toString(ib);
+               filename += "_";
+               filename += toString(id);
+               filename += ".rq";
+               writeQ(filename, ip, ib, id);
+            }
+         }
+      }
    }
 
 } // namespace Prdc

@@ -9,10 +9,10 @@
 */
 
 #include "Mixture.h"
+#include <rpc/field/FieldIo.h>
 #include <prdc/solvers/MixtureReal.tpp>
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/RField.h>
-
 
 namespace Pscf {
 namespace Rpc {
@@ -53,7 +53,6 @@ namespace Rpc {
          }
       }
    }
-
 
 } // namespace Rpc
 } // namespace Pscf

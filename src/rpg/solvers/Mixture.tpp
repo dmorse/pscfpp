@@ -9,10 +9,10 @@
 */
 
 #include "Mixture.h"
+#include <rpg/field/FieldIo.h>
 #include <prdc/solvers/MixtureReal.tpp>
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
-
 
 namespace Pscf {
 namespace Rpg {

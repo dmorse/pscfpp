@@ -31,26 +31,18 @@ namespace Prdc {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A Mixture contains lists of Polymer and Solvent objects. Each such
-   * object can solve the single-molecule statistical mechanics problem
-   * for an ideal gas of the associated species in a set of specified
-   * chemical potential fields, and thereby compute concentrations and
-   * single-molecule partition functions. A Mixture is thus both a
-   * chemistry descriptor and an ideal-gas solver.
+   * A MixtureReal contains lists of Polymer (PT) and Solvent (ST) 
+   * objects. Each such object can solve statistical mechanics of a single 
+   * molecule of the associated species in a set of specified chemical 
+   * potential fields, and thereby compute concentrations and molecular 
+   * partition functions for all species in non-interacting reference 
+   * system. 
    *
-   * The single-molecule partition functions and concentrations for a
-   * non-interacting mixture of polymer and solvent species are computed
-   * by invoking the Mixture::compute function.  The Mixture::compute
-   * function takes an array of monomer chemical potential fields
-   * (w fields) as an input and yields an array of monomer concentration
-   * fields (c fields) as an output.
-   *
-   * A Mixture is associated with a Mesh<D> object, which models a spatial
-   * discretization mesh, and a UnitCell<D> object, which models the
-   * periodic unit cell. The Mixture::clearUnitCellData function clears
-   * parameters that depend on the unit cell as invalid, and must be called
-   * once after every time the unit cell parameters are set or modified,
-   * before the next call to Mixture::compute.
+   * The compute() member function computes single-molecule partition 
+   * functions and monomer concentrations all species.  This function 
+   * takes an array of chemical potential fields (w fields) acting on
+   * different monomer types an  input and yields an array of total
+   * monomer concentration fields (c fields) as an output.
    *
    * \ref user_param_mixture_page "Manual Page"
    */
@@ -86,7 +78,13 @@ namespace Prdc {
       /// WaveList type.
       using WaveListT = typename BlockT::WaveListT;
 
+      /// FieldIo type.
+      using FieldIoT = typename BlockT::FieldIoT;
+
       // Public member functions
+
+      /// \name Construction, Initialization and Destruction
+      ///@{
 
       /**
       * Constructor.
@@ -110,7 +108,7 @@ namespace Prdc {
       virtual void readParameters(std::istream& in);
 
       /**
-      * Create associations with mesh, FFTT, UnitCell, and WaveList objects.
+      * Create associations with Mesh, FFT, UnitCell, and WaveList objects.
       *
       * The Mesh<D> object must have already been initialized, e.g., by
       * reading the dimensions from a file, so that the mesh dimensions
@@ -119,12 +117,13 @@ namespace Prdc {
       * have been assigned a non-null lattice system, but does not need
       * to have initialized lattice parameters.
       *
-      * The associate and allocate functions are called within the base
-      * class readParameters function. This function must be called before
-      * allocate().
+      * This function is called within the readParameters function of the
+      * parent System, after calls to the readParameters member functions 
+      * of the Mixture and Domain. The Mesh, FFT, and UnitCell lattice are
+      * initialized by the Domain readParameters function prior to entry.
       *
       * \param mesh  associated Mesh<D> object
-      * \param fft  associated FFTT object (Fourier Transform type)
+      * \param fft  associated FFTT object (Fast Fourier Transform type)
       * \param cell  associated UnitCell<D> object
       * \param waveList  associated WaveListT object
       */
@@ -134,33 +133,26 @@ namespace Prdc {
                      WaveListT& waveList);
 
       /**
+      * Create an association with a FieldIoT object.
+      *
+      * The associated FieldIoT is only used by member functions that write 
+      * concentration or propagator fields to file.
+      *
+      * \param fieldIo  associated FieldIoT object
+      */
+      void setFieldIo(FieldIoT const & fieldIo);
+
+      /**
       * Allocate required internal memory for all solvers.
       *
-      * This function is called within the base class readParameters
-      * function, after the associate() function.
+      * This function is called within the readParameters of the parent
+      * System, after the associate() function.
       */
       void allocate();
 
-      /**
-      * Clear all data that depends on the unit cell parameters.
-      *
-      * This function marks all private data that depends on the values
-      * of the unit cell parameters as invalid, so that it can be
-      * recomputed before it is next needed.
-      */
-      void clearUnitCellData();
-
-      /**
-      * Reset statistical segment length for one monomer type.
-      *
-      * This function resets the kuhn or statistical segment length value
-      * for a monomer type, and updates the associcated value in every
-      * block of that monomer type.
-      *
-      * \param monomerId  monomer type id
-      * \param kuhn  new value for the statistical segment length
-      */
-      void setKuhn(int monomerId, double kuhn);
+      ///@}
+      /// \name Primary Computations
+      ///@{
 
       /**
       * Compute partition functions and concentrations.
@@ -200,6 +192,17 @@ namespace Prdc {
                    double phiTot = 1.0);
 
       /**
+      * Set the isSymmetric flag true or false.
+      *
+      * The isSymmetric variable affects whether a space group is written
+      * in field file headers by functions that write concentration or
+      * propagator fields to file.  This variable should be set true after
+      * calling compute if the w fields passed to the compute function 
+      * were known to be symmetric under the space group. 
+      */
+      void setIsSymmetric(bool isSymmetric);
+
+      /**
       * Compute derivatives of free energy w/ respect to cell parameters.
       *
       * The optional parameter phiTot is only relevant to problems with a
@@ -213,6 +216,11 @@ namespace Prdc {
       void computeStress(double phiTot = 1.0);
 
       /**
+      * Has the stress been computed since the last MDE solution?
+      */
+      bool hasStress() const;
+
+      /**
       * Get derivative of free energy w/ respect to a unit cell parameter.
       *
       * Get the pre-computed derivative of the free energy per monomer with
@@ -222,10 +230,35 @@ namespace Prdc {
       */
       double stress(int parameterId) const;
 
+      ///@}
+      /// \name Parameter Modification
+      ///@{
+
       /**
-      * Has the stress been computed?
+      * Reset statistical segment length for one monomer type.
+      *
+      * This function resets the kuhn or statistical segment length value
+      * for a monomer type, and updates the associcated value in every
+      * block of that monomer type.
+      *
+      * \param monomerId  monomer type id
+      * \param kuhn  new value for the statistical segment length
       */
-      bool hasStress() const;
+      void setKuhn(int monomerId, double kuhn);
+
+      /**
+      * Clear all data that depends on the unit cell parameters.
+      *
+      * This function marks all private data that depends on the values of
+      * the unit cell parameters as invalid, so that it can be recomputed
+      * before it is next needed. This function should be called after any 
+      * change in unit cell parameters.
+      */
+      void clearUnitCellData();
+
+      ///@}
+      /// \name Field Output
+      ///@{
 
       /**
       * Get c-fields for all blocks and solvents as array of r-grid fields.
@@ -249,6 +282,63 @@ namespace Prdc {
       */
       void createBlockCRGrid(DArray<FieldT>& blockCFields) const;
 
+      /**
+      * Write one slice of a propagator at fixed s in r-grid format.
+      *
+      * \param filename  name of output file
+      * \param polymerId  integer id of the polymer
+      * \param blockId  integer id of the block within the polymer
+      * \param directionId  integer id of the direction (0 or 1)
+      * \param segmentId  integer integration step index
+      */
+      void writeQSlice(std::string const & filename,
+                       int polymerId, int blockId,
+                       int directionId, int segmentId)  const;
+
+      /**
+      * Write the final slice of a propagator in r-grid format.
+      *
+      * \param filename  name of output file
+      * \param polymerId  integer id of the polymer
+      * \param blockId  integer id of the block within the polymer
+      * \param directionId  integer id of the direction (0 or 1)
+      */
+      void writeQTail(std::string const & filename, int polymerId,
+                      int blockId, int directionId)  const;
+
+      /**
+      * Write the complete propagator for one block, in r-grid format.
+      *
+      * \param filename  name of output file
+      * \param polymerId  integer id of the polymer
+      * \param blockId  integer id of the block within the polymer
+      * \param directionId  integer id of the direction (0 or 1)
+      */
+      void writeQ(std::string const & filename, int polymerId,
+                  int blockId, int directionId)  const;
+
+      /**
+      * Write all propagators of all blocks, each to a separate file.
+      *
+      * Write all propagators for both directions for all blocks
+      * of all polymers, with each propagator in a separate file.
+      * The function writeQ is called internally for each propagator,
+      * and is passed an automatically generated file name. The file
+      * name for each propagator is given by a string of the form
+      * (basename)_(ip)_(ib)_(id), where (basename) denotes the value
+      * of the std::string function parameter basename, and where
+      * (ip), (ib), and (id) denote the string representations of
+      * a polymer indiex ip, a block index ib, and direction index id,
+      * with id = 0 or 1. For example, if basename == "out/q", then
+      * the file name of the propagator for direction 1 of block 2
+      * of polymer 0 would be "out/q_0_2_1".
+      *
+      * \param basename  common prefix for output file names
+      */
+      void writeQAll(std::string const & basename);
+
+      ///@}
+
       // Inherited public member functions
       using MixtureTmplT::polymer;
       using MixtureTmplT::polymerSpecies;
@@ -264,18 +354,24 @@ namespace Prdc {
 
    protected:
 
+      /// Return associated Mesh<D> by const reference.
+      Mesh<D> const & mesh() const
+      {  return *meshPtr_; }
+
+      UnitCell<D> const & unitCell() const
+      {  return *unitCellPtr_; }
+
+      FieldIoT const & fieldIo() const
+      {  return *fieldIoPtr_; }
+
+      /// Return target value for the contour step size ds.
+      double ds() const
+      {   return ds_; }
+
       // Inherited protected member functions
       using ParamComposite::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
-
-   protected:
-
-      /// Return associated Mesh<D> by const reference.
-      Mesh<D> const & mesh() const;
-
-      /// Return value of contour step size ds.
-      double ds() const;
 
    private:
 
@@ -284,17 +380,26 @@ namespace Prdc {
       /// Derivatives of SCFT free energy w/ respect to cell parameters.
       FArray<double, 6> stress_;
 
-      /// Target contour length step size (thread model).
+      /// Target contour length step size (only used in thread model).
       double ds_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
+
+      // Pointer to associated UnitCell<D> object 
+      UnitCell<D> const * unitCellPtr_;
+
+      // Pointer to associated FieldIoT object 
+      FieldIoT const * fieldIoPtr_;
 
       /// Number of unit cell parameters.
       int nParam_;
 
       /// Has stress been computed for the current w fields?
       bool hasStress_;
+
+      // Set true iff the w fields used in the MDE are symmetric
+      bool isSymmetric_;
 
       // Private member functions
 
@@ -319,10 +424,9 @@ namespace Prdc {
       */
       virtual void allocateBlocks() = 0; 
 
-
    };
 
-   // Inline member functions
+   // Public inline member functions
 
    /*
    * Get derivative of free energy w/ respect to a unit cell parameter.
@@ -340,23 +444,6 @@ namespace Prdc {
    template <int D, class PT, class ST>
    inline bool MixtureReal<D,PT,ST>::hasStress() const
    {  return hasStress_; }
-
-   /*
-   * Get value of contour step size ds.
-   */
-   template <int D, class PT, class ST>
-   inline double MixtureReal<D,PT,ST>::ds() const
-   {  return ds_; }
-
-   /*
-   * Get the Mesh<D> by constant reference (private).
-   */
-   template <int D, class PT, class ST>
-   inline Mesh<D> const & MixtureReal<D,PT,ST>::mesh() const
-   {
-      UTIL_ASSERT(meshPtr_);
-      return *meshPtr_;
-   }
 
 } // namespace Prdc
 } // namespace Pscf

@@ -334,6 +334,7 @@ namespace Rpc {
       // Setup the mixture
       mixture_.associate(domain_.mesh(), domain_.fft(),
                          domain_.unitCell(), domain_.waveList());
+      mixture_.setFieldIo(domain_.fieldIo());
       mixture_.allocate();
 
       // Allocate memory for w and c fields in r-grid form
@@ -887,6 +888,7 @@ namespace Rpc {
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
+      mixture_.setIsSymmetric(w_.isSymmetric());
       c_.setHasData(true);
       hasFreeEnergy_ = false;
       hasStress_ = false;
