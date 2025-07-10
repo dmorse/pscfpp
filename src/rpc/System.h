@@ -61,8 +61,8 @@ namespace Rpc {
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an Interaction (list of binary interaction parameters)
    *    - a Domain (description of unit cell and discretization)
-   *    - a container of monomer chemical potential fields (w fields)
-   *    - a container of monomer concentration fields (c fields)
+   *    - a container of monomer chemical potential (w) fields 
+   *    - a container of monomer concentration fields (c) fields
    *
    * A System may also optionally own Iterator, Sweep, and Simulator
    * (BdSimulator or McSimulator) components. Iterator and Sweep objects
@@ -105,6 +105,14 @@ namespace Rpc {
    {
 
    public:
+
+      // Public type name aliases
+      using MixtureT = Mixture<D>;
+      using InteractionT = Interaction;
+      using DomainT = Domain<D>;
+      using WFieldContainerT = WFieldContainer<D>;
+      using CFieldContainerT = CFieldContainer<D>;
+      using MaskT = Mask<D>;
 
       /// \name Construction and Destruction
       ///@{
