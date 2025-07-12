@@ -9,6 +9,7 @@
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
+#include <prdc/crystal/shiftToMinimum.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -93,8 +94,36 @@ namespace Rpg {
       // Comput W_(k)^2
       VecOp::sqNormV(psi, wK_);
 
+      HostDArray<cudaReal> psiHost(kSize_);
+      
+      psiHost = psi;
+      
       // Obtain max[W_(k)^2]
-      maxOrderParameter_ = Reduce::maxAbs(psi);
+      maxOrderParameter_ = psiHost[1];
+      int maxIndex = 1;
+      for (int i = 2; i < kSize_; ++i){
+         if (psiHost[i] > maxOrderParameter_){
+            maxOrderParameter_ = psiHost[i];
+            maxIndex = i;
+         }
+      }
+
+      MeshIterator<D> itr;
+      itr.setDimensions(kMeshDimensions_);
+
+      DArray<IntVec<D>> GminList;
+      GminList.allocate(kSize_);
+      IntVec<D> G;
+      IntVec<D> Gmin;
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         G = itr.position();
+         Gmin = shiftToMinimum(G, dimensions, unitCell);
+         GminList[itr.rank()] = Gmin;
+      }
+
+      GminStar_ = GminList[maxIndex];
 
       return maxOrderParameter_;
    }
@@ -108,10 +137,23 @@ namespace Rpg {
          UTIL_CHECK(outputFile_.is_open());
          outputFile_ << Int(step);
          outputFile_ << Dbl(chi);
+         outputFile_ << "   ( ";
+         for (int i = 0; i < D; i++){
+            outputFile_ << Int(GminStar_[i],3) << " ";
+         }
+         outputFile_ << " )  ";
          outputFile_ << Dbl(value);
          outputFile_ << "\n";
        } else {
-         AverageAnalyzer<D>::outputValue(step, value);
+         // AverageAnalyzer<D>::outputValue(step, value);
+         outputFile_ << Int(step);
+         outputFile_ << "   ( ";
+         for (int i = 0; i < D; i++){
+            outputFile_ << Int(GminStar_[i],3) << " ";
+         }
+         outputFile_ << " )  ";
+         outputFile_ << Dbl(value);
+         outputFile_ << "\n";
        }
    }
 

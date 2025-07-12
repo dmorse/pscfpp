@@ -63,9 +63,9 @@ Meanings of the parameters are described briefly below:
 
 \section rpc_MaxOrderParameter_output_sec Output
 
-During the simulation, \f$\chi_b N \f$ and max order
-parameter are output to the file {outputFileName} every interval
-simulation steps.
+During the simulation, the step index, the highest peak indicies, 
+and max order parameter are output to the file {outputFileName} 
+every interval simulation steps.
 
 At the end of the simulation, if hasAverage is true:
   - average and error analysis info are output to log file.

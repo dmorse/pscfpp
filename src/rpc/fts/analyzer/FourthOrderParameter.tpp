@@ -107,8 +107,13 @@ namespace Rpc {
          psi[itr.rank()] *= prefactor_[itr.rank()];
       }
 
+      FourthOrderParameter_ = 0.0;
+
       // Get sum over all wavevectors
-      FourthOrderParameter_ = std::accumulate(psi.begin(), psi.end(), 0.0);
+      for (int i = 1; i < kSize_; ++i){
+         FourthOrderParameter_ += psi[i];
+      }
+
       FourthOrderParameter_ = std::pow(FourthOrderParameter_, 0.25);
 
       return FourthOrderParameter_;

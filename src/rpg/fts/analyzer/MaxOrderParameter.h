@@ -105,6 +105,9 @@ namespace Rpg {
       /// Max order parameter
       double maxOrderParameter_;
 
+      /// Peak indices
+      IntVec<D> GminStar_;
+
    };
    
    #ifndef RPG_MAX_ORDER_PARAMETER_TPP
