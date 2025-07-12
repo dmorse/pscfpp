@@ -99,14 +99,17 @@ namespace Rpc {
       /// Dimensions of fourier space 
       IntVec<D> kMeshDimensions_;
       
-      /// Has readParam been called?
-      bool isInitialized_;
-      
       /// W_ in Fourier mode
       RFieldDft<D> wK_;
 
       /// Max order parameter
       double maxOrderParameter_;
+
+      /// q*
+      IntVec<D> GminStar_;
+
+      /// Has readParam been called?
+      bool isInitialized_;
 
    };
    
