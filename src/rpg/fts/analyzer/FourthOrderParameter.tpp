@@ -98,7 +98,14 @@ namespace Rpg {
       VecOp::mulEqV(psi, prefactor_);
 
       // Get sum over all wavevectors
-      FourthOrderParameter_ = Reduce::sum(psi);
+      HostDArray<cudaReal> psiHost(kSize_);
+      psiHost = psi;
+      FourthOrderParameter_ = 0.0;
+
+      for (int i = 1; i < kSize_; ++i){
+         FourthOrderParameter_ += psiHost[i];
+      }
+      
       FourthOrderParameter_ = std::pow(FourthOrderParameter_, 0.25);
 
       return FourthOrderParameter_;
