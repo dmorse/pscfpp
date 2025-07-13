@@ -609,6 +609,7 @@ namespace Rpc {
       */
       bool hasSimulator() const;
 
+      #if 0
       /**
       * Does this system have external potential fields?
       */
@@ -618,6 +619,7 @@ namespace Rpc {
       * Does this system have a mask (inhomogeneous density constraint)?
       */
       bool hasMask() const;
+      #endif
 
       /**
       * Is the SCFT free energy current, consistent with current w fields?
@@ -1043,6 +1045,7 @@ namespace Rpc {
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_); }
 
+   #if 0
    // Does this system have external potential fields?
    template <int D>
    inline bool System<D>::hasExternalFields() const
@@ -1052,6 +1055,7 @@ namespace Rpc {
    template <int D>
    inline bool System<D>::hasMask() const
    {  return mask_.hasData(); }
+   #endif
 
    // Does this system have a Simulator?
    template <int D>

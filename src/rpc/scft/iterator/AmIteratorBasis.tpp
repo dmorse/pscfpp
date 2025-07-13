@@ -285,7 +285,7 @@ namespace Rpc {
       }
 
       // If iterator has mask, account for it in residual values
-      if (system().hasMask()) {
+      if (system().mask().hasData()) {
          DArray<double> const & mask = system().mask().basis();
          double sumChiInv = interaction_.sumChiInverse();
          for (int i = 0; i < nMonomer; ++i) {
@@ -298,7 +298,7 @@ namespace Rpc {
 
       // If iterator has external fields, account for them in the values 
       // of the residuals
-      if (system().hasExternalFields()) {
+      if (system().h().hasData()) {
          for (int i = 0; i < nMonomer; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
                double p = interaction_.p(i,j);
@@ -313,7 +313,7 @@ namespace Rpc {
 
       // If not canonical, account for incompressibility
       if (!system().mixture().isCanonical()) {
-         if (!system().hasMask()) {
+         if (!system().mask().hasData()) {
             for (int i = 0; i < nMonomer; ++i) {
                resid[i*nBasis] -= 1.0 / interaction_.sumChiInverse();
             }
@@ -383,7 +383,7 @@ namespace Rpc {
             }
          }
          // If iterator has external fields, include them in homogeneous field
-         if (system().hasExternalFields()) {
+         if (system().h().hasData()) {
             for (int i = 0; i < nMonomer; ++i) {
                wField[i][0] += system().h().basis(i)[0];
             }

@@ -58,17 +58,20 @@ namespace Rpc
    double FilmFieldGenMask<D>::stress(int paramId) const
    {
       UTIL_CHECK(sysPtr_);
+      Domain<D> const & domain = system().domain();
+      Mesh<D> const & mesh = domain.mesh();
+
       int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),
-                                                system().domain().lattice());
+                                                        domain.lattice());
 
       // If paramId is not normalVecId, there is no stress contribution
       if (normalVecParamId != paramId) return 0.0;
 
       // If this point is reached, stress contribution must be calculated
-      UTIL_CHECK(system().hasMask());
+      UTIL_CHECK(system().mask().hasData());
       
       // Get the length of the lattice basis vector normal to the walls
-      double nvLength = system().domain().unitCell().parameter(paramId);
+      double nvLength = domain.unitCell().parameter(paramId);
 
       // Get the volume fraction of the unit cell occupied by polymers
       double phiTot = system().mask().phiTot();
@@ -78,7 +81,7 @@ namespace Rpc
       IntVec<3> dim;
       for (int ind = 0; ind < 3; ind++) {
          if (ind < D) {
-            dim[ind] = system().domain().mesh().dimensions()[ind];
+            dim[ind] = mesh.dimensions()[ind];
          } else {
             dim[ind] = 1;
          }
@@ -91,7 +94,7 @@ namespace Rpc
       int counter = 0;
       double d, maskVal;
 
-      deriv.allocate(system().domain().mesh().dimensions());
+      deriv.allocate(mesh.dimensions());
       RField<D> const & maskRGrid = system().mask().rgrid();
       
       for (x = 0; x < dim[0]; x++) {
@@ -117,10 +120,10 @@ namespace Rpc
 
       // Get xi, the Lagrange multiplier field, in rgrid format
       int nMonomer = system().mixture().nMonomer();
-      int nx = system().domain().mesh().size();
+      int nx = mesh.size();
       double chi;
       RField<D> xi;
-      xi.allocate(system().domain().mesh().dimensions());
+      xi.allocate(mesh.dimensions());
 
       for (int i = 0; i < nx; i++) {
          xi[i] = system().w().rgrid(0)[i];
@@ -129,15 +132,19 @@ namespace Rpc
       for (int in = 0; in < nMonomer; in++) {
          chi = system().interaction().chi(0,in);
          if (fabs(chi) > 1e-6) { // if chi is nonzero
+            RField<D> const & cfield = system().c().rgrid(in);
             for (int i = 0; i < nx; i++) {
-               xi[i] -= system().c().rgrid(in)[i] * chi;
+               //xi[i] -= system().c().rgrid(in)[i] * chi;
+               xi[i] -= cfield[i] * chi;
             }
          }
       }
 
-      if (system().hasExternalFields()) {
+      if (system().h().hasData()) {
+         RField<D> const & hfield = system().h().rgrid(0);
          for (int i = 0; i < nx; i++) {
-            xi[i] -= system().h().rgrid(0)[i];
+            //xi[i] -= system().h().rgrid(0)[i];
+            xi[i] -= hfield[i];
          }
       }
 
@@ -149,10 +156,10 @@ namespace Rpc
       intTerm /= (phiTot * nx);
 
       // Get the pressure term in the stress
-      if (!sysPtr_->hasFreeEnergy()) {
+      if (!system().hasFreeEnergy()) {
          sysPtr_->computeFreeEnergy();
       }
-      double pSys = sysPtr_->pressure();
+      double pSys = system().pressure();
       double pTerm = pSys * excludedThickness() / 
                      (phiTot * nvLength * nvLength);
       
@@ -167,17 +174,17 @@ namespace Rpc
       int nvParamId = convertFullParamIdToReduced<D>(normalVecId(),
                                              system().domain().lattice());
       if (nvParamId == paramId) {
-         UTIL_CHECK(system().hasMask());
+         UTIL_CHECK(system().mask().hasData());
 
          if (!hasFBulk()) {
             UTIL_THROW("fBulk must be set before calculating this stress.");
          }
 
          // Get system free energy
-         if (!sysPtr_->hasFreeEnergy()) {
+         if (!system().hasFreeEnergy()) {
             sysPtr_->computeFreeEnergy();
          }
-         double fSys = sysPtr_->fHelmholtz();
+         double fSys = system().fHelmholtz();
 
          // Get the length L of the basis vector normal to the walls
          double L = system().domain().unitCell().parameter(paramId);

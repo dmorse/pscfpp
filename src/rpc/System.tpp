@@ -1086,7 +1086,7 @@ namespace Rpc {
       fHelmholtz_ += fIdeal_;
 
       // Compute contribution from external fields, if they exist
-      if (hasExternalFields()) {
+      if (h().hasData()) {
          if (w_.isSymmetric() && h_.isSymmetric()) {
             // Use expansion in symmetry-adapted orthonormal basis
             UTIL_CHECK(h_.isAllocatedBasis());
@@ -1266,7 +1266,7 @@ namespace Rpc {
       out << std::endl;
       out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
       out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
-      if (hasExternalFields()) {
+      if (h().hasData()) {
          out << "fExt          " << Dbl(fExt_, 18, 11) << std::endl;
       }
       out << std::endl;

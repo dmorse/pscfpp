@@ -103,11 +103,12 @@ namespace Rpc {
       void setFlexibleParams() const;
 
       /**
-      * Get the System associated with this object by reference.
+      * Get the parent System by non-const reference.
       */
       System<D>& system();
+
       /**
-      * Get the System associated with this object by const reference.
+      * Get the parent System by const reference.
       */
       System<D> const & system() const;
 

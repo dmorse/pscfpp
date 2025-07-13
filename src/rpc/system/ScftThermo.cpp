@@ -7,6 +7,7 @@
 
 #include "ScftThermo.h"
 #include <prdc/system/ScftReal.tpp>
+#include <pscf/inter/Interaction.h>
 
 namespace Pscf {
    namespace Prdc {

@@ -48,7 +48,7 @@ namespace Rpc {
       /**
       * Constructor
       * 
-      * \param sys  System parent object
+      * \param sys  parent System object
       */
       FilmFieldGenExt(System<D>& sys);
 
@@ -86,11 +86,12 @@ namespace Rpc {
       void compute();
 
       /**
-      * Get the System associated with this object by reference.
+      * Get the parent System by non-const reference.
       */
       System<D> & system();
+
       /**
-      * Get the System associated with this object by const reference.
+      * Get the parent System by const reference.
       */
       System<D> const & system() const;
 

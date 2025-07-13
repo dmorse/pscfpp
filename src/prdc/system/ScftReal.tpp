@@ -10,19 +10,11 @@
 
 #include "ScftReal.h"
 
-#include <pscf/inter/Interaction.h>
 #include <pscf/mesh/Mesh.h>
-
-//#include <util/format/Str.h>
+#include <pscf/chem/PolymerSpecies.h>
+#include <pscf/chem/SolventSpecies.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
-
-//#include <pscf/math/IntVec.h>
-//#include <prdc/crystal/UnitCell.h>
-//#include <util/containers/DArray.h>
-//#include <util/containers/FSArray.h>
-//#include <util/misc/ioUtil.h>
-//#include <string>
 
 namespace Pscf {
 namespace Prdc {
@@ -149,7 +141,7 @@ namespace Prdc {
       fHelmholtz_ += fIdeal_;
 
       // Compute contribution from external fields, if they exist
-      if (system().hasExternalFields()) {
+      if (h().hasData()) {
          if (w().isSymmetric() && h().isSymmetric()) {
             // Use expansion in symmetry-adapted orthonormal basis
             UTIL_CHECK(h().isAllocatedBasis());
@@ -280,7 +272,7 @@ namespace Prdc {
       out << std::endl;
       out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
       out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
-      if (system().hasExternalFields()) {
+      if (h().hasData()) {
          out << "fExt          " << Dbl(fExt_, 18, 11) << std::endl;
       }
       out << std::endl;
