@@ -34,7 +34,7 @@ namespace Prdc {
       fInter_(0.0),
       fExt_(0.0),
       pressure_(0.0),
-      hasFreeEnergy_(false)
+      hasData_(false)
    {}
 
    /*
@@ -50,7 +50,7 @@ namespace Prdc {
    template <int D, class ST>
    void ScftReal<D,ST>::compute()
    {
-      if (hasFreeEnergy_) return;
+      if (hasData_) return;
 
       UTIL_CHECK(w().hasData());
       UTIL_CHECK(c().hasData());
@@ -246,7 +246,7 @@ namespace Prdc {
          }
       }
 
-      hasFreeEnergy_ = true;
+      hasData_ = true;
    }
 
    /*
@@ -254,7 +254,7 @@ namespace Prdc {
    */
    template <int D, class ST>
    void ScftReal<D, ST>::clear()
-   {  hasFreeEnergy_ = false; }
+   {  hasData_ = false; }
 
    /*
    * Write thermodynamic properties to file.
@@ -262,7 +262,7 @@ namespace Prdc {
    template <int D, class ST>
    void ScftReal<D, ST>::write(std::ostream& out)
    {
-      if (!hasFreeEnergy_) {
+      if (!hasData_) {
          compute();
       }
 

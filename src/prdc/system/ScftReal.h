@@ -60,14 +60,14 @@ namespace Prdc {
       *
       * \pre w().hasData() == true
       * \pre c().hasData() == true
-      * \post hasFreeEnergy() == true
+      * \post hasData() == true
       */
       void compute();
 
       /**
       * Clear all thermodynamic data.
       *
-      * \post hasFreeEnergy() == false
+      * \post hasData() == false
       */
       void clear();
 
@@ -78,7 +78,7 @@ namespace Prdc {
       /**
       * Have free energies and pressure been computed?
       */
-      bool hasFreeEnergy() const;
+      bool hasData() const;
 
       /**
       * Get total Helmholtz free energy per monomer / kT.
@@ -189,7 +189,7 @@ namespace Prdc {
       * This is set true in the compute() function, and is set false by
       * clear function.
       */
-      bool hasFreeEnergy_;
+      bool hasData_;
 
    };
 
@@ -199,7 +199,7 @@ namespace Prdc {
    template <int D, class ST>
    inline double ScftReal<D,ST>::fHelmholtz() const
    {
-      UTIL_CHECK(hasFreeEnergy_);
+      UTIL_CHECK(hasData_);
       return fHelmholtz_;
    }
 
@@ -207,7 +207,7 @@ namespace Prdc {
    template <int D, class ST>
    inline double ScftReal<D,ST>::fIdeal() const
    {
-      UTIL_CHECK(hasFreeEnergy_);
+      UTIL_CHECK(hasData_);
       return fIdeal_;
    }
 
@@ -215,7 +215,7 @@ namespace Prdc {
    template <int D, class ST>
    inline double ScftReal<D,ST>::fInter() const
    {
-      UTIL_CHECK(hasFreeEnergy_);
+      UTIL_CHECK(hasData_);
       return fInter_;
    }
 
@@ -223,7 +223,7 @@ namespace Prdc {
    template <int D, class ST>
    inline double ScftReal<D,ST>::fExt() const
    {
-      UTIL_CHECK(hasFreeEnergy_);
+      UTIL_CHECK(hasData_);
       return fExt_;
    }
 
@@ -231,14 +231,14 @@ namespace Prdc {
    template <int D, class ST>
    inline double ScftReal<D,ST>::pressure() const
    {
-      UTIL_CHECK(hasFreeEnergy_);
+      UTIL_CHECK(hasData_);
       return pressure_;
    }
 
    // Have free energies and pressure been computed?
    template <int D, class ST>
-   inline bool ScftReal<D,ST>::hasFreeEnergy() const
-   {  return hasFreeEnergy_; }
+   inline bool ScftReal<D,ST>::hasData() const
+   {  return hasData_; }
 
 } // namespace Prdc
 } // namespace Pscf

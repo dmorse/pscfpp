@@ -545,6 +545,16 @@ namespace Rpc {
       Domain<D> const & domain() const;
 
       /**
+      * Get the ScftThermo<D> object (non-const reference).
+      */
+      ScftThermo<D>& scft();
+
+      /**
+      * Get the ScftThermo<D> object (const reference).
+      */
+      ScftThermo<D> const & scft() const;
+
+      /**
       * Get the Environment (non-const reference).
       */
       Environment& environment();
@@ -775,6 +785,15 @@ namespace Rpc {
       double pressure_;
 
       /**
+      * Has SCFT free energy been computed for the current w and c fields?
+      *
+      * This is set true in the computeFreeEnergy function, and is set
+      * false whenever the system w fields, mask or external fields, or
+      * system unit cell parameters are modified.
+      */
+      bool hasFreeEnergy_;
+
+      /**
       * Array of stress values for this set of w fields.
       *
       * The array contains one value per lattice parameter.
@@ -802,15 +821,6 @@ namespace Rpc {
       * Has the mixture been initialized?
       */
       bool hasMixture_;
-
-      /**
-      * Has SCFT free energy been computed for the current w and c fields?
-      *
-      * This is set true in the computeFreeEnergy function, and is set
-      * false whenever the system w fields, mask or external fields, or
-      * system unit cell parameters are modified.
-      */
-      bool hasFreeEnergy_;
 
       /**
       * Has SCFT stress been computed for the current w and c fields?
@@ -891,6 +901,22 @@ namespace Rpc {
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
+
+   // Get the Scft calculator by non-const reference.
+   template <int D>
+   inline ScftThermo<D> & System<D>::scft()
+   {
+      UTIL_ASSERT(scftPtr_);
+      return *scftPtr_;
+   }
+
+   // Get the Scft calculator by const reference.
+   template <int D>
+   inline ScftThermo<D> const & System<D>::scft() const
+   {
+      UTIL_ASSERT(scftPtr_);
+      return *scftPtr_;
+   }
 
    // Get the Environment by non-const reference.
    template <int D>
@@ -988,6 +1014,7 @@ namespace Rpc {
    inline Mask<D> const & System<D>::mask() const
    {  return mask_; }
 
+   #if 0
    // Get the Helmholtz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
@@ -1028,6 +1055,13 @@ namespace Rpc {
       return pressure_;
    }
 
+   // Has the free energy been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasFreeEnergy() const
+   {  return scft().hasData(); }
+
+   #endif
+
    // Get the precomputed stress for one lattice parameter.
    template <int D>
    inline double System<D>::stress(int paramId) const
@@ -1067,11 +1101,6 @@ namespace Rpc {
    template <int D>
    inline bool System<D>::hasSimulator() const
    {  return (simulatorPtr_); }
-
-   // Has the free energy been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasFreeEnergy() const
-   {  return hasFreeEnergy_; }
 
    // Has the stress been computed for the current w fields?
    template <int D>

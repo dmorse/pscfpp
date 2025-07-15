@@ -79,11 +79,11 @@ namespace Rpc {
       fInter_(0.0),
       fExt_(0.0),
       pressure_(0.0),
+      hasFreeEnergy_(false),
       polymerModel_(PolymerModel::Thread),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
       hasMixture_(false),
-      hasFreeEnergy_(false),
       hasStress_(false)
    {
       setClassName("System");  // Set block label in parameter file
@@ -438,7 +438,7 @@ namespace Rpc {
             UTIL_CHECK(!domain_.waveList().hasKSq());
             UTIL_CHECK(isAllocatedBasis_);
             UTIL_CHECK(!c_.hasData());
-            UTIL_CHECK(!hasFreeEnergy_);
+            UTIL_CHECK(!scft().hasData());
             UTIL_CHECK(!hasStress_);
          } else
          if (command == "READ_W_RGRID") {
@@ -447,7 +447,7 @@ namespace Rpc {
             UTIL_CHECK(domain_.unitCell().isInitialized());
             UTIL_CHECK(!domain_.waveList().hasKSq());
             UTIL_CHECK(!c_.hasData());
-            UTIL_CHECK(!hasFreeEnergy_);
+            UTIL_CHECK(!scft().hasData());
             UTIL_CHECK(!hasStress_);
          } else
          if (command == "SET_UNIT_CELL") {
@@ -458,7 +458,7 @@ namespace Rpc {
             UTIL_CHECK(domain_.unitCell().isInitialized());
             UTIL_CHECK(!domain_.waveList().hasKSq());
             UTIL_CHECK(!c_.hasData());
-            UTIL_CHECK(!hasFreeEnergy_);
+            UTIL_CHECK(!scft().hasData());
             UTIL_CHECK(!hasStress_);
          } else
          if (command == "COMPUTE") {
@@ -892,7 +892,7 @@ namespace Rpc {
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       mixture_.setIsSymmetric(w_.isSymmetric());
       c_.setHasData(true);
-      hasFreeEnergy_ = false;
+      scft().clear();
       hasStress_ = false;
 
       // If w fields are symmetric, compute basis components for c fields
@@ -940,7 +940,7 @@ namespace Rpc {
 
       // If converged, compute related thermodynamic properties
       if (!error) {
-         computeFreeEnergy(); // Sets hasFreeEnergy_ = true
+         computeFreeEnergy(); 
          writeThermo(Log::file());
          if (!iterator().isFlexible()) {
             if (!mixture_.hasStress()) {
@@ -996,6 +996,10 @@ namespace Rpc {
    template <int D>
    void System<D>::computeFreeEnergy()
    {
+      scft().compute();
+   }
+
+   #if 0
       if (hasFreeEnergy_) return;
 
       UTIL_CHECK(w_.hasData());
@@ -1196,6 +1200,52 @@ namespace Rpc {
 
       hasFreeEnergy_ = true;
    }
+   #endif
+
+   // Get the Helmholtz free energy per monomer / kT.
+   template <int D>
+   double System<D>::fHelmholtz() const
+   {
+      UTIL_CHECK(scft().hasData());
+      return scft().fHelmholtz();
+   }
+
+   // Get the ideal gas contribution to fHelmholtz.
+   template <int D>
+   double System<D>::fIdeal() const
+   {
+      UTIL_CHECK(scft().hasData());
+      return scft().fIdeal();
+   }
+
+   // Get the interaction contribution to fHelmholtz.
+   template <int D>
+   double System<D>::fInter() const
+   {
+      UTIL_CHECK(scft().hasData());
+      return scft().fInter();
+   }
+
+   // Get the external field contribution to fHelmholtz.
+   template <int D>
+   double System<D>::fExt() const
+   {
+      UTIL_CHECK(scft().hasData());
+      return scft().fExt();
+   }
+
+   // Get the precomputed pressure (units of kT / monomer volume).
+   template <int D>
+   double System<D>::pressure() const
+   {
+      UTIL_CHECK(scft().hasData());
+      return scft().pressure();
+   }
+
+   // Has the free energy been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasFreeEnergy() const
+   {  return scft().hasData(); }
 
    /*
    * Compute SCFT stress for current fields.
@@ -1259,7 +1309,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeThermo(std::ostream& out)
    {
-      if (!hasFreeEnergy_) {
+      if (!scft().hasData()) {
          computeFreeEnergy();
       }
 
@@ -1412,7 +1462,7 @@ namespace Rpc {
    void System<D>::clearCFields()
    {
       c_.setHasData(false);
-      hasFreeEnergy_ = false;
+      scft().clear();
       hasStress_ = false;
    }
 
