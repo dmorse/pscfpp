@@ -35,6 +35,7 @@ namespace Pscf {
       }
    }
    namespace Rpc {
+      template <int D> class ScftThermo;
       template <int D> class EnvironmentFactory;
       template <int D> class Iterator;
       template <int D> class IteratorFactory;
@@ -694,6 +695,11 @@ namespace Rpc {
       * Pointer to Interaction (excess free energy model).
       */
       Interaction* interactionPtr_;
+
+      /**
+      * Pointer to ScftThermo (SCFT property calculator).
+      */
+      ScftThermo<D>* scftPtr_;
 
       /**
       * Pointer to an Environment.

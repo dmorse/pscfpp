@@ -30,6 +30,13 @@ namespace Rpc {
       /// Alias for base class
       using Base = ScftReal<D, System<D> >;
 
+      /*
+      * Constructor
+      */
+      ScftThermo(System<D>& system)
+       : Base(system)
+      {}; 
+
    };
 
    // Suppress implicit instantiation

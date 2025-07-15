@@ -10,6 +10,7 @@
 
 #include "System.h"
 
+#include <rpc/system/ScftThermo.h>
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/simulator/SimulatorFactory.h>
 #include <rpc/fts/compressor/Compressor.h>
@@ -64,6 +65,7 @@ namespace Rpc {
       h_(),
       mask_(),
       interactionPtr_(nullptr),
+      scftPtr_(nullptr),
       environmentPtr_(nullptr),
       environmentFactoryPtr_(nullptr),
       iteratorPtr_(nullptr),
@@ -111,6 +113,7 @@ namespace Rpc {
 
       // Create dynamically allocated objects owned by this System
       interactionPtr_ = new Interaction();
+      scftPtr_ = new ScftThermo<D>(*this);
       environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
