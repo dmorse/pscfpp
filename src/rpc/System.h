@@ -403,6 +403,11 @@ namespace Rpc {
       */
       double pressure() const;
 
+      /**
+      * Is the SCFT free energy current, consistent with current w fields?
+      */
+      bool hasFreeEnergy() const;
+
       ///@}
       /// \name Property Output
       ///@{
@@ -460,21 +465,6 @@ namespace Rpc {
       * \param out  output stream
       */
       void writeStress(std::ostream& out);
-
-      #if 0
-      /**
-      * Write c fields for all blocks and solvents in r-grid format.
-      *
-      * Writes concentrations for all blocks of all polymers and all
-      * solvent species in r-grid format. Columns associated with blocks
-      * appear ordered by polymer id and then by block id, with blocks of
-      * the same polymer listed sequentially, followed by columns
-      * associated with solvent species ordered by solvent id.
-      *
-      * \param filename  name of output file
-      */
-      void writeBlockCRGrid(std::string const & filename) const;
-      #endif
 
       ///@}
       /// \name Field Containers
@@ -620,23 +610,6 @@ namespace Rpc {
       */
       bool hasSimulator() const;
 
-      #if 0
-      /**
-      * Does this system have external potential fields?
-      */
-      bool hasExternalFields() const;
-
-      /**
-      * Does this system have a mask (inhomogeneous density constraint)?
-      */
-      bool hasMask() const;
-      #endif
-
-      /**
-      * Is the SCFT free energy current, consistent with current w fields?
-      */
-      bool hasFreeEnergy() const;
-
       /**
       * Has the SCFT stress been computed for the current w fields?
       */
@@ -707,11 +680,6 @@ namespace Rpc {
       Interaction* interactionPtr_;
 
       /**
-      * Pointer to ScftThermo (SCFT property calculator).
-      */
-      ScftThermo<D>* scftPtr_;
-
-      /**
       * Pointer to an Environment.
       */
       Environment* environmentPtr_;
@@ -722,7 +690,12 @@ namespace Rpc {
       EnvironmentFactory<D>* environmentFactoryPtr_;
 
       /**
-      * Pointer to an iterator.
+      * Pointer to SCFT property calculator.
+      */
+      ScftThermo<D>* scftPtr_;
+
+      /**
+      * Pointer to an SCFT iterator.
       */
       Iterator<D>* iteratorPtr_;
 
@@ -732,7 +705,7 @@ namespace Rpc {
       IteratorFactory<D>* iteratorFactoryPtr_;
 
       /**
-      * Pointer to a Sweep object.
+      * Pointer to an SCFT Sweep object.
       */
       Sweep<D>* sweepPtr_;
 
@@ -750,48 +723,6 @@ namespace Rpc {
       * Pointer to a simulator factory object.
       */
       SimulatorFactory<D>* simulatorFactoryPtr_;
-
-      // SCFT Thermodynamic properties
-
-      /**
-      * Helmholtz free energy per monomer / kT.
-      */
-      double fHelmholtz_;
-
-      /**
-      * Ideal gas contribution to fHelmholtz_.
-      *
-      * This includes the internal energy and entropy of
-      * non-interacting molecules in the current w fields.
-      */
-      double fIdeal_;
-
-      /**
-      * Interaction contribution to fHelmholtz_.
-      */
-      double fInter_;
-
-      /**
-      * External field contribution to fHelmholtz_ (if any).
-      */
-      double fExt_;
-
-      /**
-      * Pressure times monomer volume / kT.
-      *
-      * This is -1 times the grand-canonical free energy per monomer,
-      * divided by kT.
-      */
-      double pressure_;
-
-      /**
-      * Has SCFT free energy been computed for the current w and c fields?
-      *
-      * This is set true in the computeFreeEnergy function, and is set
-      * false whenever the system w fields, mask or external fields, or
-      * system unit cell parameters are modified.
-      */
-      bool hasFreeEnergy_;
 
       /**
       * Array of stress values for this set of w fields.
@@ -1014,54 +945,6 @@ namespace Rpc {
    inline Mask<D> const & System<D>::mask() const
    {  return mask_; }
 
-   #if 0
-   // Get the Helmholtz free energy per monomer / kT.
-   template <int D>
-   inline double System<D>::fHelmholtz() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return fHelmholtz_;
-   }
-
-   // Get the ideal gas contribution to fHelmholtz.
-   template <int D>
-   inline double System<D>::fIdeal() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return fIdeal_;
-   }
-
-   // Get the interaction contribution to fHelmholtz.
-   template <int D>
-   inline double System<D>::fInter() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return fInter_;
-   }
-
-   // Get the external field contribution to fHelmholtz.
-   template <int D>
-   inline double System<D>::fExt() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return fExt_;
-   }
-
-   // Get the precomputed pressure (units of kT / monomer volume).
-   template <int D>
-   inline double System<D>::pressure() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return pressure_;
-   }
-
-   // Has the free energy been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasFreeEnergy() const
-   {  return scft().hasData(); }
-
-   #endif
-
    // Get the precomputed stress for one lattice parameter.
    template <int D>
    inline double System<D>::stress(int paramId) const
@@ -1084,18 +967,6 @@ namespace Rpc {
    template <int D>
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_); }
-
-   #if 0
-   // Does this system have external potential fields?
-   template <int D>
-   inline bool System<D>::hasExternalFields() const
-   {  return h_.hasData(); }
-
-   // Does this system have a mask?
-   template <int D>
-   inline bool System<D>::hasMask() const
-   {  return mask_.hasData(); }
-   #endif
 
    // Does this system have a Simulator?
    template <int D>

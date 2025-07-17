@@ -65,21 +65,15 @@ namespace Rpc {
       h_(),
       mask_(),
       interactionPtr_(nullptr),
-      scftPtr_(nullptr),
       environmentPtr_(nullptr),
       environmentFactoryPtr_(nullptr),
+      scftPtr_(nullptr),
       iteratorPtr_(nullptr),
       iteratorFactoryPtr_(nullptr),
       sweepPtr_(nullptr),
       sweepFactoryPtr_(nullptr),
       simulatorPtr_(nullptr),
       simulatorFactoryPtr_(nullptr),
-      fHelmholtz_(0.0),
-      fIdeal_(0.0),
-      fInter_(0.0),
-      fExt_(0.0),
-      pressure_(0.0),
-      hasFreeEnergy_(false),
       polymerModel_(PolymerModel::Thread),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
@@ -113,8 +107,8 @@ namespace Rpc {
 
       // Create dynamically allocated objects owned by this System
       interactionPtr_ = new Interaction();
-      scftPtr_ = new ScftThermo<D>(*this);
       environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
+      scftPtr_ = new ScftThermo<D>(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
@@ -163,6 +157,9 @@ namespace Rpc {
       }
       if (environmentPtr_) {
          delete environmentPtr_;
+      }
+      if (scftPtr_) {
+         delete scftPtr_;
       }
       if (environmentFactoryPtr_) {
          delete environmentFactoryPtr_;
@@ -995,212 +992,7 @@ namespace Rpc {
    */
    template <int D>
    void System<D>::computeFreeEnergy()
-   {
-      scft().compute();
-   }
-
-   #if 0
-      if (hasFreeEnergy_) return;
-
-      UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(c_.hasData());
-
-      if (hasEnvironment()) UTIL_CHECK(!environment().needsUpdate());
-
-      int nm = mixture_.nMonomer();   // number of monomer types
-      int np = mixture_.nPolymer();   // number of polymer species
-      int ns = mixture_.nSolvent();   // number of solvent species
-
-      // Initialize all free energy contributions to zero
-      fHelmholtz_ = 0.0;
-      fIdeal_ = 0.0;
-      fInter_ = 0.0;
-      fExt_ = 0.0;
-
-      double phi, mu;
-
-      // Compute polymer ideal gas contributions to fIdeal_
-      if (np > 0) {
-         Polymer<D>* polymerPtr;
-         double length;
-         for (int i = 0; i < np; ++i) {
-            polymerPtr = &mixture_.polymer(i);
-            phi = polymerPtr->phi();
-            mu = polymerPtr->mu();
-            if (PolymerModel::isThread()) {
-               length = polymerPtr->length();
-            } else {
-               length = (double) polymerPtr->nBead();
-            }
-            if (phi > 1.0E-08) {
-               fIdeal_ += phi*( mu - 1.0 ) / length;
-               // Recall: mu = ln(phi/q)
-            }
-         }
-      }
-
-      // Compute solvent ideal gas contributions to fIdeal_
-      if (ns > 0) {
-         Solvent<D>* solventPtr;
-         double size;
-         for (int i = 0; i < ns; ++i) {
-            solventPtr = &mixture_.solvent(i);
-            phi = solventPtr->phi();
-            mu = solventPtr->mu();
-            size = solventPtr->size();
-            if (phi > 1.0E-08) {
-               fIdeal_ += phi*( mu - 1.0 )/size;
-            }
-         }
-      }
-
-      // Volume integrals with a mask: If the system has a mask, then the
-      // volume that should be used in calculating free energy/pressure
-      // is the volume available to the material, not the total unit cell
-      // volume. We thus divide all terms that involve integrating over
-      // the unit cell volume by quantity mask().phiTot(), which is the
-      // volume fraction of the unit cell that is occupied by material.
-      // This properly scales them to the correct value. fExt_, fInter_,
-      // and the Legendre transform component of fIdeal_ all require
-      // this scaling. If no mask is present, mask.phiTot() = 1 and no
-      // scaling occurs.
-      const double phiTot = mask().phiTot();
-
-      // Compute Legendre transform subtraction from fIdeal_
-      double temp = 0.0;
-      if (w_.isSymmetric()) {
-         // Use expansion in symmetry-adapted orthonormal basis
-         UTIL_CHECK(w_.isAllocatedBasis());
-         UTIL_CHECK(c_.isAllocatedBasis());
-         const int nBasis = domain_.basis().nBasis();
-         for (int i = 0; i < nm; ++i) {
-            for (int k = 0; k < nBasis; ++k) {
-               temp -= w_.basis(i)[k] * c_.basis(i)[k];
-            }
-         }
-      } else {
-         // Use summation over grid points
-         const int meshSize = domain_.mesh().size();
-         for (int i = 0; i < nm; ++i) {
-            for (int k = 0; k < meshSize; ++k) {
-               temp -= w_.rgrid(i)[k] * c_.rgrid(i)[k];
-            }
-         }
-         temp /= double(meshSize);
-      }
-      temp /= phiTot;
-      fIdeal_ += temp;
-      fHelmholtz_ += fIdeal_;
-
-      // Compute contribution from external fields, if they exist
-      if (h().hasData()) {
-         if (w_.isSymmetric() && h_.isSymmetric()) {
-            // Use expansion in symmetry-adapted orthonormal basis
-            UTIL_CHECK(h_.isAllocatedBasis());
-            UTIL_CHECK(c_.isAllocatedBasis());
-            const int nBasis = domain_.basis().nBasis();
-            for (int i = 0; i < nm; ++i) {
-               for (int k = 0; k < nBasis; ++k) {
-                  fExt_ += h_.basis(i)[k] * c_.basis(i)[k];
-               }
-            }
-         } else {
-            // Use summation over grid points
-            const int meshSize = domain_.mesh().size();
-            for (int i = 0; i < nm; ++i) {
-               for (int k = 0; k < meshSize; ++k) {
-                  fExt_ += h_.rgrid(i)[k] * c_.rgrid(i)[k];
-               }
-            }
-            fExt_ /= double(meshSize);
-         }
-         fExt_ /= phiTot;
-         fHelmholtz_ += fExt_;
-      }
-
-      // Compute excess interaction free energy [ phi^{T}*chi*phi/2 ]
-      if (w_.isSymmetric()) {
-         UTIL_CHECK(c_.isAllocatedBasis());
-         const int nBasis = domain_.basis().nBasis();
-         for (int i = 0; i < nm; ++i) {
-            for (int j = i; j < nm; ++j) {
-               const double chi = interaction().chi(i,j);
-               if (std::abs(chi) > 1.0E-9) {
-                  double temp = 0.0;
-                  for (int k = 0; k < nBasis; ++k) {
-                     temp += c_.basis(i)[k] * c_.basis(j)[k];
-                  }
-                  if (i == j) {
-                     fInter_ += 0.5*chi*temp;
-                  } else {
-                     fInter_ += chi*temp;
-                  }
-               }
-            }
-         }
-      } else {
-         const int meshSize = domain_.mesh().size();
-         for (int i = 0; i < nm; ++i) {
-            for (int j = i; j < nm; ++j) {
-               const double chi = interaction().chi(i,j);
-               if (std::abs(chi) > 1.0E-9) {
-                  double temp = 0.0;
-                  for (int k = 0; k < meshSize; ++k) {
-                     temp += c_.rgrid(i)[k] * c_.rgrid(j)[k];
-                  }
-                  if (i == j) {
-                     fInter_ += 0.5*chi*temp;
-                  } else {
-                     fInter_ += chi*temp;
-                  }
-               }
-            }
-         }
-         fInter_ /= double(meshSize);
-      }
-      fInter_ /= phiTot;
-      fHelmholtz_ += fInter_;
-
-      // Initialize pressure (-1 x grand-canonical free energy / monomer)
-      pressure_ = -fHelmholtz_;
-
-      // Polymer chemical potential corrections to pressure
-      if (np > 0) {
-         Polymer<D>* polymerPtr;
-         double length;
-         for (int i = 0; i < np; ++i) {
-            polymerPtr = &mixture_.polymer(i);
-            phi = polymerPtr->phi();
-            mu = polymerPtr->mu();
-            if (PolymerModel::isThread()) {
-               length = polymerPtr->length();
-            } else {
-               length = (double) polymerPtr->nBead();
-            }
-            if (phi > 1.0E-08) {
-               pressure_ += mu * phi / length;
-            }
-         }
-      }
-
-      // Solvent corrections to pressure
-      if (ns > 0) {
-         Solvent<D>* solventPtr;
-         double size;
-         for (int i = 0; i < ns; ++i) {
-            solventPtr = &mixture_.solvent(i);
-            phi = solventPtr->phi();
-            mu = solventPtr->mu();
-            size = solventPtr->size();
-            if (phi > 1.0E-08) {
-               pressure_ += mu * phi / size;
-            }
-         }
-      }
-
-      hasFreeEnergy_ = true;
-   }
-   #endif
+   {  scft().compute(); }
 
    // Get the Helmholtz free energy per monomer / kT.
    template <int D>
@@ -1309,62 +1101,7 @@ namespace Rpc {
    template <int D>
    void System<D>::writeThermo(std::ostream& out)
    {
-      if (!scft().hasData()) {
-         computeFreeEnergy();
-      }
-
-      out << std::endl;
-      out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
-      out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
-      out << std::endl;
-      out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
-      out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
-      if (h().hasData()) {
-         out << "fExt          " << Dbl(fExt_, 18, 11) << std::endl;
-      }
-      out << std::endl;
-
-      int np = mixture_.nPolymer();
-      int ns = mixture_.nSolvent();
-
-      if (np > 0) {
-         out << "polymers:" << std::endl;
-         out << "     "
-             << "        phi         "
-             << "        mu          "
-             << std::endl;
-         for (int i = 0; i < np; ++i) {
-            out << Int(i, 5)
-                << "  " << Dbl(mixture_.polymer(i).phi(),18, 11)
-                << "  " << Dbl(mixture_.polymer(i).mu(), 18, 11)
-                << std::endl;
-         }
-         out << std::endl;
-      }
-
-      if (ns > 0) {
-         out << "solvents:" << std::endl;
-         out << "     "
-             << "        phi         "
-             << "        mu          "
-             << std::endl;
-         for (int i = 0; i < ns; ++i) {
-            out << Int(i, 5)
-                << "  " << Dbl(mixture_.solvent(i).phi(),18, 11)
-                << "  " << Dbl(mixture_.solvent(i).mu(), 18, 11)
-                << std::endl;
-         }
-         out << std::endl;
-      }
-
-      out << "cellParams:" << std::endl;
-      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
-         out << Int(i, 5)
-             << "  "
-             << Dbl(domain_.unitCell().parameter(i), 18, 11)
-             << std::endl;
-      }
-      out << std::endl;
+      scft().write(out);
    }
 
    /*
@@ -1389,37 +1126,6 @@ namespace Rpc {
       }
       out << std::endl;
    }
-
-   #if 0
-   /*
-   * Write all concentration fields in real space (r-grid) format, for
-   * each block and solvent species, rather than for each monomer type.
-   */
-   template <int D>
-   void System<D>::writeBlockCRGrid(std::string const & filename) const
-   {
-      // Preconditions
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(c_.hasData());
-
-      // Create array to hold block and solvent c field data
-      DArray< RField<D> > blockCFields;
-      blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
-      int n = blockCFields.capacity();
-      for (int i = 0; i < n; i++) {
-         blockCFields[i].allocate(domain_.mesh().dimensions());
-      }
-
-      // Get c field data from the Mixture
-      mixture_.createBlockCRGrid(blockCFields);
-
-      // Write block and solvent c field data to file
-      domain_.fieldIo().writeFieldsRGrid(filename, blockCFields,
-                                         domain_.unitCell(),
-                                         w_.isSymmetric());
-   }
-   #endif
 
    // Timer Operations
 
@@ -1484,17 +1190,18 @@ namespace Rpc {
       // Alias for mesh dimensions
       IntVec<D> const & dimensions = domain_.mesh().dimensions();
 
-      // Allocate w (chemical potential) fields
-      w_.setNMonomer(nMonomer);
-      w_.allocateRGrid(dimensions);
-
-      // Allocate c (monomer concentration) fields
+      // Allocate c (monomer concentration) field container
       c_.setNMonomer(nMonomer);
       c_.allocateRGrid(dimensions);
 
+      // Allocate w (chemical potential) field container
+      w_.setNMonomer(nMonomer);
+      w_.allocateRGrid(dimensions);
+
+      // Set nMonomer for external field container
       h_.setNMonomer(nMonomer);
 
-      // If hasEnvironment(), allocate mask and h fields
+      // If hasEnvironment(), allocate mask and h field containers
       if (hasEnvironment()) {
          if (environment().generatesMask()) {
             mask_.allocateRGrid(dimensions);
