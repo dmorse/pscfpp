@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
-#include <rpc/system/ScftThermo.h>
+#include <rpc/scft/ScftThermo.h>
 #include <rpc/environment/FilmEnvironment.h>
 
 #include <prdc/crystal/BFieldComparison.h>

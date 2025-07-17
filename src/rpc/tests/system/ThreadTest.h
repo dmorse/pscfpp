@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
-#include <rpc/system/ScftThermo.h>
+#include <rpc/scft/ScftThermo.h>
 #include <rpc/solvers/Polymer.h>
 
 #include <util/tests/LogFileUnitTest.h>

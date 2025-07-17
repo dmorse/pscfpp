@@ -10,7 +10,7 @@
 
 #include "FilmFieldGenMask.h"
 #include <rpc/scft/iterator/Iterator.h>
-#include <rpc/system/ScftThermo.h>
+#include <rpc/scft/ScftThermo.h>
 #include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
