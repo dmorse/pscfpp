@@ -350,65 +350,6 @@ namespace Rpc {
       double stress(int paramId) const;
 
       ///@}
-      ///@}
-      /// \name SCFT Thermodynamic Properties
-      ///@{
-
-      /**
-      * Compute SCFT free energy density and pressure for current fields.
-      *
-      * This function should be called after a successful call of
-      * iterate(). Resulting values are retrieved by the fHelmholtz(),
-      * fIdeal(), fInter(), fExt(), and pressure() accessor functions.
-      *
-      * \pre w().hasData() == true
-      * \pre c().hadData() == true
-      */
-      void computeFreeEnergy();
-
-      /**
-      * Get total Helmholtz free energy per monomer / kT.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      */
-      double fHelmholtz() const;
-
-      /**
-      * Get the ideal gas contribution to fHelmholtz.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      */
-      double fIdeal() const;
-
-      /**
-      * Get the interaction contribution to fHelmholtz.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      */
-      double fInter() const;
-
-      /**
-      * Get the external field contribution to fHelmholtz.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      */
-      double fExt() const;
-
-      /**
-      * Get the precomputed pressure times monomer volume / kT.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      * The value is -1 times the grand-canonical free energy per monomer
-      * divided by kT.
-      */
-      double pressure() const;
-
-      /**
-      * Is the SCFT free energy current, consistent with current w fields?
-      */
-      bool hasFreeEnergy() const;
-
-      ///@}
       /// \name Property Output
       ///@{
 

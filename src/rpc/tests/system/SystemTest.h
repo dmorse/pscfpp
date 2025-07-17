@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
+#include <rpc/system/ScftThermo.h>
 
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
@@ -131,9 +132,9 @@ public:
    void compareFreeEnergies(System<D> const & system,
                             double& fHelmholtz, double& pressure)
    {
-      UTIL_CHECK(system.hasFreeEnergy());
-      fHelmholtz = std::abs(fHelmholtz - system.fHelmholtz());
-      pressure   = std::abs(pressure - system.pressure());
+      UTIL_CHECK(system.scft().hasData());
+      fHelmholtz = std::abs(fHelmholtz - system.scft().fHelmholtz());
+      pressure   = std::abs(pressure - system.scft().pressure());
       if (verbose() > 0) {
          std::cout << "\nfHelmholtz diff = " << fHelmholtz;
          std::cout << "\npressure diff   = " << pressure;
@@ -662,14 +663,14 @@ public:
       parameters.append(am);
       system.setUnitCell(parameters);
       system.iterate();
-      double fm = system.fHelmholtz();
+      double fm = system.scft().fHelmholtz();
 
       // Solve for upper unit cell parameter ap (plus)
       parameters.clear();
       parameters.append(ap);
       system.setUnitCell(parameters);
       system.iterate();
-      double fp = system.fHelmholtz();
+      double fp = system.scft().fHelmholtz();
 
       // Numerical stress by finite differences
       double sn = (fp - fm)/(ap - am);
@@ -758,14 +759,14 @@ public:
       parameters.append(am);
       system.setUnitCell(parameters);
       system.iterate();
-      double fm = system.fHelmholtz();
+      double fm = system.scft().fHelmholtz();
 
       // Solve for upper unit cell parameter ap (plus)
       parameters.clear();
       parameters.append(ap);
       system.setUnitCell(parameters);
       system.iterate();
-      double fp = system.fHelmholtz();
+      double fp = system.scft().fHelmholtz();
 
       // Numerical stress by finite differences
       double sn = (fp - fm)/(ap - am);
@@ -946,10 +947,10 @@ public:
 
       // Compare free energies and pressures
       double fDiff, pDiff;
-      if (!system.hasFreeEnergy()) system.computeFreeEnergy();
-      if (!systemShift.hasFreeEnergy()) systemShift.computeFreeEnergy();
-      fDiff = std::abs(system.fHelmholtz() - systemShift.fHelmholtz());
-      pDiff = std::abs(system.pressure() - systemShift.pressure() + shift);
+      if (!system.scft().hasData()) system.scft().compute();
+      if (!systemShift.scft().hasData()) systemShift.scft().compute();
+      fDiff = std::abs(system.scft().fHelmholtz() - systemShift.scft().fHelmholtz());
+      pDiff = std::abs(system.scft().pressure() - systemShift.scft().pressure() + shift);
       TEST_ASSERT(fDiff < 1.0E-6);
       TEST_ASSERT(pDiff < 1.0E-6);
    }
@@ -1068,14 +1069,14 @@ public:
       parameters.append(am);
       system.setUnitCell(parameters);
       system.iterate();
-      double fm = system.fHelmholtz();
+      double fm = system.scft().fHelmholtz();
 
       // Solve for upper unit cell parameter ap (plus)
       parameters.clear();
       parameters.append(ap);
       system.setUnitCell(parameters);
       system.iterate();
-      double fp = system.fHelmholtz();
+      double fp = system.scft().fHelmholtz();
 
       // Numerical stress by finite differences
       double sn = (fp - fm)/(ap - am);
@@ -1159,14 +1160,14 @@ public:
       parameters.append(am);
       system.setUnitCell(parameters);
       system.iterate();
-      double fm = system.fHelmholtz();
+      double fm = system.scft().fHelmholtz();
 
       // Solve for upper unit cell parameter ap (plus)
       parameters.clear();
       parameters.append(ap);
       system.setUnitCell(parameters);
       system.iterate();
-      double fp = system.fHelmholtz();
+      double fp = system.scft().fHelmholtz();
 
       // Numerical stress by finite differences
       double sn = (fp - fm)/(ap - am);
@@ -1287,14 +1288,14 @@ public:
       parameters.append(am);
       system.setUnitCell(parameters);
       system.iterate();
-      double fm = system.fHelmholtz();
+      double fm = system.scft().fHelmholtz();
       
       // Upper unit cell parameter ap (plus)
       parameters.clear();
       parameters.append(ap);
       system.setUnitCell(parameters);
       system.iterate();
-      double fp = system.fHelmholtz();
+      double fp = system.scft().fHelmholtz();
 
       // Numerical stress by finite differences
       double sn = (fp - fm)/(ap - am);
@@ -1335,8 +1336,8 @@ public:
       system.mixture().writeBlockCRGrid("out/testIterate3D_altGyr_flex_block_c.rf");
 
       // Compare Helmoltz free energies
-      if (!system.hasFreeEnergy()) system.computeFreeEnergy();
-      double fHelmholtz = system.fHelmholtz();
+      if (!system.scft().hasData()) system.scft().compute();
+      double fHelmholtz = system.scft().fHelmholtz();
       double fHelmholtzRef = 3.9642295402;     // from PSCF Fortran
       double fDiff = fHelmholtz - fHelmholtzRef;
       if (verbose() > 0) {
