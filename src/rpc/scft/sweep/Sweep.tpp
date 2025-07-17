@@ -9,6 +9,7 @@
 #include "Sweep.h"
 #include <rpc/System.h>
 #include <rpc/scft/iterator/Iterator.h>
+#include <rpc/system/ScftThermo.h>
 #include <pscf/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
@@ -335,10 +336,10 @@ namespace Rpc {
    {
       int i = nAccept() - 1;
       double sNew = s(0);
-      if (!system().hasFreeEnergy()) system().computeFreeEnergy();
+      if (!system().scft().hasData()) system().scft().compute();
       out << Int(i,5) << Dbl(sNew)
-          << Dbl(system().fHelmholtz(),16)
-          << Dbl(system().pressure(),16);
+          << Dbl(system().scft().fHelmholtz(),16)
+          << Dbl(system().scft().pressure(),16);
       out << std::endl;
    }
 

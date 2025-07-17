@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/System.h>
+#include <rpc/system/ScftThermo.h>
 #include <rpc/solvers/Polymer.h>
 
 #include <util/tests/LogFileUnitTest.h>
@@ -48,8 +49,8 @@ public:
       initSystem(system, "in/bead/param_system_1D_N100");
       system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
-      system.computeFreeEnergy();
-      double diff = fabs(1.92537673380e-02 - system.fHelmholtz());
+      system.scft().compute();
+      double diff = fabs(1.92537673380e-02 - system.scft().fHelmholtz());
       TEST_ASSERT(diff < 1.0E-5);
    }
    

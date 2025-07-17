@@ -6,6 +6,7 @@
 
 #include <rpc/System.h>
 #include <rpc/fts/simulator/Simulator.h>
+#include <rpc/system/ScftThermo.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
 
@@ -174,8 +175,8 @@ public:
       double ratio = volume/vMonomer;
 
       // SCFT free energy for converged solution
-      system.computeFreeEnergy();
-      double fHelmholtz = system.fHelmholtz();
+      system.scft().compute();
+      double fHelmholtz = system.scft().fHelmholtz();
 
       // FTS Hamiltonian at saddle-point
       simulator.computeHamiltonian();

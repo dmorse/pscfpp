@@ -937,7 +937,7 @@ namespace Rpc {
 
       // If converged, compute related thermodynamic properties
       if (!error) {
-         computeFreeEnergy(); 
+         scft().compute(); 
          writeThermo(Log::file());
          if (!iterator().isFlexible()) {
             if (!mixture_.hasStress()) {
@@ -985,6 +985,7 @@ namespace Rpc {
       simulator().simulate(nStep);
    }
 
+   #if 0
    // SCFT Thermodynamic Properties
 
    /*
@@ -1038,6 +1039,7 @@ namespace Rpc {
    template <int D>
    inline bool System<D>::hasFreeEnergy() const
    {  return scft().hasData(); }
+   #endif
 
    /*
    * Compute SCFT stress for current fields.
