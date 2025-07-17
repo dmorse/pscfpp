@@ -10,6 +10,7 @@
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <rpg/System.h>
 #include <rpg/scft/iterator/Iterator.h>
+#include <rpg/scft/ScftThermo.h>
 #include <pscf/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 
@@ -333,8 +334,8 @@ namespace Rpg {
       int i = nAccept() - 1;
       double sNew = s(0);
       out << Int(i,5) << Dbl(sNew)
-          << Dbl(system().fHelmholtz(),16)
-          << Dbl(system().pressure(),16);
+          << Dbl(system().scft().fHelmholtz(),16)
+          << Dbl(system().scft().pressure(),16);
       out << std::endl;
    }
 

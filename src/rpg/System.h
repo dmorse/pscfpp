@@ -36,6 +36,7 @@ namespace Pscf {
    }
    namespace Rpg {
       template <int D> class EnvironmentFactory;
+      template <int D> class ScftThermo;
       template <int D> class Iterator;
       template <int D> class IteratorFactory;
       template <int D> class Sweep;
@@ -113,6 +114,7 @@ namespace Rpg {
       using WFieldContainerT = WFieldContainer<D>;
       using CFieldContainerT = CFieldContainer<D>;
       using MaskT = Mask<D>;
+      using FieldT = RField<D>;
 
       /// \name Construction and Destruction
       ///@{
@@ -317,58 +319,9 @@ namespace Rpg {
       void clearCFields();
 
       ///@}
-      /// \name SCFT Thermodynamic Properties
+      /// \name SCFT Stress
       ///@{
-
-      /**
-      * Compute SCFT free energy density and pressure for current fields.
-      *
-      * This function should be called after a successful call of
-      * iterate(). Resulting values are retrieved by the fHelmholtz(),
-      * fIdeal(), fInter(), fExt(), and pressure() accessor functions.
-      *
-      * \pre w().hasData() == true
-      * \pre c().hasData() == true
-      */
-      void computeFreeEnergy();
-
-      /**
-      * Get total Helmholtz free energy per monomer / kT.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      */
-      double fHelmholtz() const;
-
-      /**
-      * Get the ideal gas contribution to fHelmholtz.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      */
-      double fIdeal() const;
-
-      /**
-      * Get the interaction contribution to fHelmholtz.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      */
-      double fInter() const;
-
-      /**
-      * Get the external field contribution to fHelmholtz.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      */
-      double fExt() const;
-
-      /**
-      * Get the precomputed pressure times monomer volume / kT.
-      *
-      * This function retrieves a value computed by computeFreeEnergy().
-      * The value is -1 times the grand-canonical free energy per monomer
-      * divided by kT.
-      */
-      double pressure() const;
-
+      
       /**
       * Compute SCFT stress for current fields.
       * 
@@ -531,6 +484,16 @@ namespace Rpg {
       Environment const & environment() const;
 
       /**
+      * Get the ScftThermo<D> object (non-const reference).
+      */
+      ScftThermo<D>& scft();
+
+      /**
+      * Get the ScftThermo<D> object (const reference).
+      */
+      ScftThermo<D> const & scft() const;
+
+      /**
       * Get the Iterator by non-const reference.
       */
       Iterator<D>& iterator();
@@ -676,6 +639,11 @@ namespace Rpg {
       EnvironmentFactory<D>* environmentFactoryPtr_;
 	
       /**
+      * Pointer to SCFT property calculator.
+      */
+      ScftThermo<D>* scftPtr_;
+
+      /**
       * Pointer to an iterator.
       */
       Iterator<D>* iteratorPtr_;
@@ -705,39 +673,6 @@ namespace Rpg {
       */
       SimulatorFactory<D>* simulatorFactoryPtr_;
 
-      // SCFT Thermodynamic properties
-
-      /**
-      * Helmholtz free energy per monomer / kT.
-      */
-      double fHelmholtz_;
-
-      /**
-      * Ideal gas contribution to fHelmholtz_.
-      *
-      * This includes the internal energy and entropy of
-      * non-interacting molecules in the current w fields.
-      */
-      double fIdeal_;
-
-      /**
-      * Interaction contribution to fHelmholtz_.
-      */
-      double fInter_;
-
-      /**
-      * External field contribution to fHelmholtz_ (if any).
-      */
-      double fExt_;
-
-      /**
-      * Pressure times monomer volume / kT.
-      *
-      * This is -1 times the grand-canonical free energy per monomer,
-      * divided by kT.
-      */
-      double pressure_;
-
       /**
       * Array of stress values for this set of w fields.
       *
@@ -766,15 +701,6 @@ namespace Rpg {
       * Has the mixture been initialized?
       */
       bool hasMixture_;
-
-      /**
-      * Has SCFT free energy been computed for the current w and c fields?
-      *
-      * This is set true in the computeFreeEnergy function, and is set
-      * false whenever the system w fields, mask or external fields, or
-      * system unit cell parameters are modified.
-      */
-      bool hasFreeEnergy_;
 
       /**
       * Has SCFT stress been computed for the current w and c fields?
@@ -944,46 +870,6 @@ namespace Rpg {
    inline Mask<D> const & System<D>::mask() const
    {  return mask_; }
 
-   // Get the Helmholtz free energy per monomer / kT.
-   template <int D>
-   inline double System<D>::fHelmholtz() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return fHelmholtz_;
-   }
-
-   // Get the ideal gas contribution to fHelmholtz.
-   template <int D>
-   inline double System<D>::fIdeal() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return fIdeal_;
-   }
-
-   // Get the interaction contribution to fHelmholtz.
-   template <int D>
-   inline double System<D>::fInter() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return fInter_;
-   }
-
-   // Get the external field contribution to fHelmholtz.
-   template <int D>
-   inline double System<D>::fExt() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return fExt_;
-   }
-
-   // Get the precomputed pressure (units of kT / monomer volume).
-   template <int D>
-   inline double System<D>::pressure() const
-   {
-      UTIL_CHECK(hasFreeEnergy_);
-      return pressure_;
-   }
-
    // Get the precomputed stress for one lattice parameter.
    template <int D>
    inline double System<D>::stress(int paramId) const
@@ -996,6 +882,22 @@ namespace Rpg {
    template <int D>
    inline bool System<D>::hasEnvironment() const
    {  return (environmentPtr_); }
+
+   // Get the Scft calculator by non-const reference.
+   template <int D>
+   inline ScftThermo<D> & System<D>::scft()
+   {
+      UTIL_ASSERT(scftPtr_);
+      return *scftPtr_;
+   }
+
+   // Get the Scft calculator by const reference.
+   template <int D>
+   inline ScftThermo<D> const & System<D>::scft() const
+   {
+      UTIL_ASSERT(scftPtr_);
+      return *scftPtr_;
+   }
 
    // Does this system have an Iterator?
    template <int D>
@@ -1021,11 +923,6 @@ namespace Rpg {
    template <int D>
    inline bool System<D>::hasSimulator() const
    {  return (simulatorPtr_); }
-
-   // Has the free energy been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasFreeEnergy() const
-   {  return hasFreeEnergy_; }
 
    // Has the stress been computed for the current w fields?
    template <int D>

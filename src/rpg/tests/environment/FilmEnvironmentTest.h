@@ -6,6 +6,7 @@
 
 #include <rpg/environment/FilmEnvironment.h>
 #include <rpg/System.h>
+#include <rpg/scft/ScftThermo.h>
 
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldComparison.h>
@@ -114,12 +115,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free energy error = " 
-                   << (system.fHelmholtz() - 3.87784944222) << "\n";
+                   << (system.scft().fHelmholtz() - 3.87784944222) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.1117881919) << "\n";
+                   << (system.scft().pressure() + 12.1117881919) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.87784944222) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.1117881919) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.87784944222) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.1117881919) < 1e-4);
    }
 
    void testSolve2D() // solve a 2D system with an FilmEnvironment
@@ -164,12 +165,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free energy error = " 
-                   << (system.fHelmholtz() - 3.91037539514) << "\n";
+                   << (system.scft().fHelmholtz() - 3.91037539514) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.8397354494) << "\n";
+                   << (system.scft().pressure() + 12.8397354494) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.91037539514) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.8397354494) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.91037539514) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.8397354494) < 1e-4);
    }
 
    void testSweep() // test sweep along chiBottom and lattice parameter
@@ -208,12 +209,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.87318676998) << "\n";
+                   << (system.scft().fHelmholtz() - 3.87318676998) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.0498211637) << "\n";
+                   << (system.scft().pressure() + 12.0498211637) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.87318676998) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.0498211637) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.87318676998) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.0498211637) < 1e-4);
    }
 
    void testSolveWithFBulk() // solve a 1D system w/ flexible film thickness
@@ -256,12 +257,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.80033554388) << "\n";
+                   << (system.scft().fHelmholtz() - 3.80033554388) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.9408830685) << "\n";
+                   << (system.scft().pressure() + 12.9408830685) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.80033554388) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.9408830685) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1e-4);
    }
 
    void testSolve1DGrid() // solve a 1D system with an FilmEnvironment
@@ -296,12 +297,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.87784944222) << "\n";
+                   << (system.scft().fHelmholtz() - 3.87784944222) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.1117881919) << "\n";
+                   << (system.scft().pressure() + 12.1117881919) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.87784944222) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.1117881919) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.87784944222) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.1117881919) < 1e-4);
    }
 
    void testSolve2DGrid() // solve a 2D system with an FilmEnvironment
@@ -346,12 +347,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.91037539514) << "\n";
+                   << (system.scft().fHelmholtz() - 3.91037539514) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.8397354494) << "\n";
+                   << (system.scft().pressure() + 12.8397354494) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.91037539514) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.8397354494) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.91037539514) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.8397354494) < 1e-4);
    }
 
    void testSweepGrid() // test sweep along chiBottom and lattice parameter
@@ -390,12 +391,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.87318676998) << "\n";
+                   << (system.scft().fHelmholtz() - 3.87318676998) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.0498211637) << "\n";
+                   << (system.scft().pressure() + 12.0498211637) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.87318676998) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.0498211637) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.87318676998) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.0498211637) < 1e-4);
    }
 
    void testSolveWithFBulkGrid() // solve a 1D system w flexible film thickness
@@ -438,12 +439,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "Free Energy error = " 
-                   << (system.fHelmholtz() - 3.80033554388) << "\n";
+                   << (system.scft().fHelmholtz() - 3.80033554388) << "\n";
          std::cout << "Pressure error = " 
-                   << (system.pressure() + 12.9408830685) << "\n";
+                   << (system.scft().pressure() + 12.9408830685) << "\n";
       }
-      TEST_ASSERT(abs(system.fHelmholtz() - 3.80033554388) < 1e-5);
-      TEST_ASSERT(abs(system.pressure() + 12.9408830685) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1e-4);
    }
 
    // Read parameter file to create a System object

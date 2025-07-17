@@ -11,6 +11,7 @@
 #include "FilmFieldGenMask.h"
 #include <rpg/field/FieldIo.h>
 #include <rpg/scft/iterator/Iterator.h>
+#include <rpg/scft/ScftThermo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
@@ -226,10 +227,10 @@ namespace Rpg
       intTerm /= phiTot * deriv.capacity();
 
       // Get the pressure term in the stress
-      if (!sysPtr_->hasFreeEnergy()) {
-         sysPtr_->computeFreeEnergy();
+      if (!sysPtr_->scft().hasData()) {
+         sysPtr_->scft().compute();
       }
-      double pSys = sysPtr_->pressure();
+      double pSys = sysPtr_->scft().pressure();
       double pTerm = pSys * excludedThickness() / 
                      (phiTot * nvLength * nvLength);
       
@@ -254,10 +255,10 @@ namespace Rpg
       }
 
       // Get system free energy
-      if (!sysPtr_->hasFreeEnergy()) {
-         sysPtr_->computeFreeEnergy();
+      if (!sysPtr_->scft().hasData()) {
+         sysPtr_->scft().compute();
       }
-      double fSys = sysPtr_->fHelmholtz();
+      double fSys = sysPtr_->scft().fHelmholtz();
 
       // Get the length L of the basis vector normal to the walls
       double L = system().domain().unitCell().parameter(paramId);

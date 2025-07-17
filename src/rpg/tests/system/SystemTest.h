@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/System.h>
+#include <rpg/scft/ScftThermo.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
 #include <prdc/crystal/BFieldComparison.h>

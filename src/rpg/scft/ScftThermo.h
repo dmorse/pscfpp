@@ -35,7 +35,7 @@ namespace Rpg {
       *
       * \param system  parent System
       */
-      ScftThermo(System<D>& system);
+      ScftThermo(System<D> const & system);
 
    protected:
 
