@@ -130,9 +130,12 @@ namespace Prdc {
          // Use summation over grid points
          const int meshSize = domain().mesh().size();
          for (int i = 0; i < nm; ++i) {
+            temp -= innerProduct(w().rgrid(i), c().rgrid(i));
+            #if 0
             for (int k = 0; k < meshSize; ++k) {
                temp -= w().rgrid(i)[k] * c().rgrid(i)[k];
             }
+            #endif
          }
          temp /= double(meshSize);
       }
@@ -156,9 +159,12 @@ namespace Prdc {
             // Use summation over grid points
             const int meshSize = domain().mesh().size();
             for (int i = 0; i < nm; ++i) {
+               fExt_ += innerProduct(h().rgrid(i), c().rgrid(i));
+               #if 0
                for (int k = 0; k < meshSize; ++k) {
                   fExt_ += h().rgrid(i)[k] * c().rgrid(i)[k];
                }
+               #endif
             }
             fExt_ /= double(meshSize);
          }
@@ -168,13 +174,15 @@ namespace Prdc {
 
       // Compute excess interaction free energy [ phi^{T}*chi*phi/2 ]
       if (w().isSymmetric()) {
+         // Use basis expansion
          UTIL_CHECK(c().isAllocatedBasis());
          const int nBasis = domain().basis().nBasis();
+         double temp;
          for (int i = 0; i < nm; ++i) {
             for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
                if (std::abs(chi) > 1.0E-9) {
-                  double temp = 0.0;
+                  temp = 0.0;
                   for (int k = 0; k < nBasis; ++k) {
                      temp += c().basis(i)[k] * c().basis(j)[k];
                   }
@@ -187,15 +195,20 @@ namespace Prdc {
             }
          }
       } else {
+         // Use r-grid data
          const int meshSize = domain().mesh().size();
+         double temp;
          for (int i = 0; i < nm; ++i) {
             for (int j = i; j < nm; ++j) {
                const double chi = interaction().chi(i,j);
                if (std::abs(chi) > 1.0E-9) {
-                  double temp = 0.0;
+                  temp = innerProduct(c().rgrid(i), c().rgrid(j));
+                  #if 0
+                  temp = 0.0;
                   for (int k = 0; k < meshSize; ++k) {
                      temp += c().rgrid(i)[k] * c().rgrid(j)[k];
                   }
+                  #endif
                   if (i == j) {
                      fInter_ += 0.5*chi*temp;
                   } else {

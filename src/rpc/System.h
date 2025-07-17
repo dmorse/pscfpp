@@ -114,6 +114,7 @@ namespace Rpc {
       using WFieldContainerT = WFieldContainer<D>;
       using CFieldContainerT = CFieldContainer<D>;
       using MaskT = Mask<D>;
+      using FieldT = RField<D>;
 
       /// \name Construction and Destruction
       ///@{

@@ -21,24 +21,16 @@ namespace Prdc {
    * \ingroup Pscf_Prdc_Module
    */
    template <int D, class ST>
-   class ScftReal : SystemConstRefReal<ST>
+   class ScftReal : protected SystemConstRefReal<ST>
    {
 
    public:
 
-      // Public type name aliases
-
-      /// Base class.
+      /// Base class type name alias.
       using Base = SystemConstRefReal<ST>;
 
-      // Inherited type name aliases.
+      /// Parent System type name alias.
       using SystemT = typename Base::SystemT;
-      using MixtureT = typename Base::MixtureT;
-      using InteractionT = typename Base::InteractionT;
-      using DomainT = typename Base::DomainT;
-      using WFieldContainerT = typename Base::WFieldContainerT;
-      using CFieldContainerT = typename Base::CFieldContainerT;
-      using MaskT = typename Base::MaskT;
 
       // Public member functions
 
@@ -50,7 +42,11 @@ namespace Prdc {
       /**
       * Destructor.
       */
-      ~ScftReal();
+      virtual ~ScftReal();
+
+      ///@}
+      /// \name State modifiers
+      ///@{
 
       /**
       * Compute SCFT free energy density and pressure for current fields.
@@ -72,7 +68,7 @@ namespace Prdc {
       void clear();
 
       ///@}
-      /// \name SCFT Property Accessors
+      /// \name SCFT Property Access and Output
       ///@{
 
       /**
@@ -117,16 +113,15 @@ namespace Prdc {
       */
       double pressure() const;
 
-      ///@}
-      /// \name SCFT Thermodynamic Data Output
-      ///@{
-
       /**
       * Write SCFT thermodynamic properties to a file.
       *
       * This function outputs Helmholtz free energy per monomer, pressure
       * (in units of kT per monomer volume), the volume fraction and
       * chemical potential of each species, and all unit cell parameters.
+      *
+      * If data is not available (i.e,. if hasData() == false), this function 
+      * calls compute() on entry.
       *
       * If parameter "out" is a file that already exists, this function
       * will append to the end of that file, rather than overwriting it.
@@ -138,8 +133,20 @@ namespace Prdc {
       */
       void write(std::ostream& out);
 
+      ///@}
+
    protected:
 
+      // Protected inherited type name aliases.
+      using MixtureT = typename Base::MixtureT;
+      using InteractionT = typename Base::InteractionT;
+      using DomainT = typename Base::DomainT;
+      using WFieldContainerT = typename Base::WFieldContainerT;
+      using CFieldContainerT = typename Base::CFieldContainerT;
+      using MaskT = typename Base::MaskT;
+      using FieldT = typename Base::FieldT;
+
+      // Protected inherited member functions
       using Base::system;
       using Base::mixture;
       using Base::interaction;
@@ -149,6 +156,17 @@ namespace Prdc {
       using Base::h;
       using Base::mask;
       using Base::fileMaster;
+
+      /**
+      * Inner product of two fields.
+      *
+      * \param A  1st field
+      * \param B  2nd field
+      * \return inner product (sum of product A[i]*B[i] over mesh points)
+      */
+      virtual
+      double innerProduct(FieldT const & A, FieldT const & B) const
+      { return 0.0; };
 
    private:
 

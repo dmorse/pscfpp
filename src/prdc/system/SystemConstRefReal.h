@@ -42,6 +42,7 @@ namespace Prdc {
       using CFieldContainerT = typename SystemT::CFieldContainerT;
       using WFieldContainerT = typename SystemT::WFieldContainerT;
       using MaskT = typename SystemT::MaskT;
+      using FieldT = typename SystemT::FieldT;
 
       // Public member functions
 
@@ -64,8 +65,6 @@ namespace Prdc {
       * Create associations with a system and its components.
       */
       void associate(SystemT const & system);
-
-   protected:
 
       /// Get the associated System.    
       SystemT const & system() const

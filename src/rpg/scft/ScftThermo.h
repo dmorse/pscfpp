@@ -30,12 +30,27 @@ namespace Rpg {
       /// Alias for base class
       using Base = ScftReal<D, System<D> >;
 
-      /*
+      /**
       * Constructor
+      *
+      * \param system  parent System
       */
-      ScftThermo(System<D>& system)
-       : Base(system)
-      {};
+      ScftThermo(System<D>& system);
+
+   protected:
+
+      /// Alias for r-grid field type.
+      using FieldT = typename Base::FieldT;
+ 
+      /**
+      * Inner product of fields (sum of elements on a grid).
+      * 
+      * \param A 1st field
+      * \param B 2nd field
+      * \return sum of product A[i]*B[i] of values at mesh nodes.
+      */
+      double innerProduct(FieldT const & A,
+                          FieldT const & B) const override;
 
    };
 

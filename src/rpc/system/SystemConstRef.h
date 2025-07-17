@@ -40,6 +40,8 @@ namespace Rpc {
 
       /**
       * Constructor.
+      * 
+      * \param system  System<D> object to which this refers.
       */
       SystemConstRef(System<D> const & system)
        : Base(system)

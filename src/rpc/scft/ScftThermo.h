@@ -20,22 +20,36 @@ namespace Rpc {
    /**
    * Computes SCFT free energies.
    *
-   * \ingroup Rpc_Field_Module
+   * \ingroup Rpc_Scft_Module
    */
    template <int D>
    class ScftThermo : public ScftReal<D, System<D> >
    {
    public:
 
-      /// Alias for base class
+      /// Alias for base class.
       using Base = ScftReal<D, System<D> >;
 
-      /*
-      * Constructor
+      /**
+      * Constructor.
+      *
+      * \param system  parent System
       */
-      ScftThermo(System<D>& system)
-       : Base(system)
-      {}; 
+      ScftThermo(System<D> const & system);
+
+   protected:
+
+      /// Alias for r-grid field type.
+      using FieldT = typename Base::FieldT;
+ 
+      /**
+      * Inner product of fields (sum of elements on a grid).
+      * 
+      * \param A 1st field
+      * \param B 2nd field
+      */
+      double innerProduct(FieldT const & A,
+                          FieldT const & B) const override;
 
    };
 
