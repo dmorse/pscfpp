@@ -5,6 +5,7 @@ include $(SRC_DIR)/rpc/scft/sweep/sources.mk
 rpc_scft_= \
   $(rpc_scft_iterator_) \
   $(rpc_scft_sweep_) \
+  rpc/scft/ScftThermo.cpp
   
 rpc_scft_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpc_scft_:.cpp=.o))

@@ -106,6 +106,14 @@ namespace Rpg {
 
    public:
 
+      // Public type name aliases
+      using MixtureT = Mixture<D>;
+      using InteractionT = Interaction;
+      using DomainT = Domain<D>;
+      using WFieldContainerT = WFieldContainer<D>;
+      using CFieldContainerT = CFieldContainer<D>;
+      using MaskT = Mask<D>;
+
       /// \name Construction and Destruction
       ///@{
 
@@ -443,21 +451,6 @@ namespace Rpg {
       * \param out  output stream
       */
       void writeStress(std::ostream& out);
-
-      #if 0
-      /**
-      * Write c fields for all blocks and solvents in r-grid format.
-      *
-      * Writes concentrations for all blocks of all polymers and all
-      * solvent species in r-grid format. Columns associated with blocks
-      * appear ordered by polymer id and then by block id, with blocks of
-      * the same polymer listed sequentially, followed by columns
-      * associated with solvent species ordered by solvent id.
-      *
-      * \param filename  name of output file
-      */
-      void writeBlockCRGrid(std::string const & filename) const;
-      #endif
 
       ///@}
       /// \name Field Containers

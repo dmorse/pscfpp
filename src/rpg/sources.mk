@@ -6,6 +6,7 @@ include $(SRC_DIR)/rpg/field/sources.mk
 include $(SRC_DIR)/rpg/solvers/sources.mk
 include $(SRC_DIR)/rpg/scft/sources.mk
 include $(SRC_DIR)/rpg/fts/sources.mk
+include $(SRC_DIR)/rpg/system/sources.mk
 
 # List of source files in src/rpg
 rpg_= \
@@ -14,6 +15,7 @@ rpg_= \
   $(rpg_solvers_) \
   $(rpg_scft_) \
   $(rpg_fts_) \
+  $(rpg_system_) \
   rpg/System.cu
 
 # List of object file targets

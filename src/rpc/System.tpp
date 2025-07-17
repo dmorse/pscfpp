@@ -10,7 +10,6 @@
 
 #include "System.h"
 
-#include <rpc/system/ScftThermo.h>
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/simulator/SimulatorFactory.h>
 #include <rpc/fts/compressor/Compressor.h>
@@ -18,6 +17,7 @@
 #include <rpc/scft/sweep/SweepFactory.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/iterator/IteratorFactory.h>
+#include <rpc/scft/ScftThermo.h>
 #include <rpc/environment/EnvironmentFactory.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>

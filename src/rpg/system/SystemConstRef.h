@@ -1,5 +1,5 @@
-#ifndef RPC_SYSTEM_CONST_REF_H
-#define RPC_SYSTEM_CONST_REF_H
+#ifndef RPG_SYSTEM_CONST_REF_H
+#define RPG_SYSTEM_CONST_REF_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,10 +9,10 @@
 */
 
 #include <prdc/system/SystemConstRefReal.h>   // base class template
-#include <rpc/System.h>                       // template parameter
+#include <rpg/System.h>                       // template parameter
 
 namespace Pscf {
-namespace Rpc {
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -21,7 +21,7 @@ namespace Rpc {
    /**
    * Const access to a System<D>.
    *
-   * \ingroup Rpc_Field_Module
+   * \ingroup Rpg_Field_Module
    */
    template <int D>
    class SystemConstRef : public SystemConstRefReal< System<D> >
@@ -52,14 +52,14 @@ namespace Rpc {
    extern template class SystemConstRef<2>;
    extern template class SystemConstRef<3>;
 
-} // namespace Rpc
+}
 
 namespace Prdc {
    // Suppress implicit instantiation of base class
-   extern template class SystemConstRefReal< Rpc::System<1> >;
-   extern template class SystemConstRefReal< Rpc::System<2> >;
-   extern template class SystemConstRefReal< Rpc::System<3> >;
-} // namespace Rpc
+   extern template class SystemConstRefReal< Rpg::System<1> >;
+   extern template class SystemConstRefReal< Rpg::System<2> >;
+   extern template class SystemConstRefReal< Rpg::System<3> >;
+}
 
 } // namespace Pscf
 #endif
