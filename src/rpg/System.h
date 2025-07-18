@@ -62,10 +62,10 @@ namespace Rpg {
    *    - a container of monomer chemical potential fields (w fields)
    *    - a container of monomer concentration fields (c fields)
    *
-   * A System may also optionally have Environment, Iterator, Sweep, and 
-   * Simulator (BdSimulator or McSimulator) components. Iterator and Sweep 
-   * objects are only used for SCFT calculations. A Simulator object is 
-   * only used for PS-FTS calculations (i.e., field theoretic simulations 
+   * A System may also optionally have Environment, Iterator, Sweep, and
+   * Simulator (BdSimulator or McSimulator) components. Iterator and Sweep
+   * objects are only used for SCFT calculations. A Simulator object is
+   * only used for PS-FTS calculations (i.e., field theoretic simulations
    * that use a partial saddle-point approximation).
    *
    * System is a class template with an integer template parameter
@@ -189,7 +189,7 @@ namespace Rpg {
       *
       * The lattice (i.e., lattice system type) set in the UnitCell<D>
       * unitCell input parameter must agree with any lattice enum value
-      * that was set previously in the parameter file. 
+      * that was set previously in the parameter file.
       *
       * If a space group has been set but a basis has not yet been
       * initialized, then this and the other setUnitCell member function
@@ -202,7 +202,7 @@ namespace Rpg {
       /**
       * Set parameters of the associated unit cell.
       *
-      * The lattice type must have been set before this function is 
+      * The lattice type must have been set before this function is
       * called. The logical size of the FSArray<double, 6> "parameters"
       * array must match the expected number of parameters for the
       * current lattice type.
@@ -216,11 +216,11 @@ namespace Rpg {
 
       /**
       * Notify System members that unit cell parameters have been modified.
-      * 
-      * This function should be called whenever the unit cell parameters 
-      * are modified. It calls functions mixture().clearUnitCellData(), 
-      * domain().wavelist().clearUnitCellData(), clearCFields(), and, 
-      * if an Environment exists, environment().reset(). 
+      *
+      * This function should be called whenever the unit cell parameters
+      * are modified. It calls functions mixture().clearUnitCellData(),
+      * domain().wavelist().clearUnitCellData(), clearCFields(), and,
+      * if an Environment exists, environment().reset().
       */
       void clearUnitCellData();
 
@@ -240,13 +240,13 @@ namespace Rpg {
       * computation of concentration fields for all blocks and solvents,
       * and computation of overall concentrations for all monomer types.
       * This function does not compute the canonical (Helmholtz) free
-      * energy or grand-canonical free energy (i.e., pressure). 
+      * energy or grand-canonical free energy (i.e., pressure).
       *
       * If argument needStress is true, then this function also calls
       * computeStress() to compute the stress.
       *
-      * \pre  w().hasData() == true 
-      * \post c().hasData() == true 
+      * \pre  w().hasData() == true
+      * \post c().hasData() == true
       * \post hasStress() == true iff needStress == true
       *
       * \param needStress  true if stress is needed, false otherwise
@@ -260,8 +260,8 @@ namespace Rpg {
       * the current system parameters, using the current chemical
       * potential fields and unit cell parameters as initial guesses.
       * Upon exit, c().hasData() == true whether or not convergence is
-      * obtained to within the desired tolerance, but the SCFT Helmholtz 
-      * free energy and pressure are computed only if convergence is 
+      * obtained to within the desired tolerance, but the SCFT Helmholtz
+      * free energy and pressure are computed only if convergence is
       * successful.
       *
       * \pre hasIterator() == true
@@ -313,20 +313,20 @@ namespace Rpg {
       * This function should be called whenever any of the inputs to the
       * solution of the modified diffusion equation are modified, including
       * the w fields, unit cell parameters, external fields or mask. Upon
-      * return, hasCfields(), scft().hasData(), and hasStress() all return 
-      * false. 
+      * return, hasCfields(), scft().hasData(), and hasStress() all return
+      * false.
       */
       void clearCFields();
 
       ///@}
       /// \name SCFT Stress
       ///@{
-      
+
       /**
       * Compute SCFT stress for current fields.
-      * 
+      *
       * The stress contains contributions from the Mixture object and the
-      * Environment object (if one exists), and may also be modified by 
+      * Environment object (if one exists), and may also be modified by
       * the Environment object so that a property other than fHelmholtz
       * will be minimized during iteration, which depends on the type of
       * Environment.
@@ -340,9 +340,9 @@ namespace Rpg {
       * Get the stress for a single lattice parameter.
       *
       * This function retrieves a value computed by computeStress().
-      * If computeStress() has not been called for the current set of 
-      * fields, an error will be raised. 
-      * 
+      * If computeStress() has not been called for the current set of
+      * fields, an error will be raised.
+      *
       * \param paramId  lattice parameter index
       */
       double stress(int paramId) const;
@@ -354,11 +354,11 @@ namespace Rpg {
       /**
       * Write partial parameter file to an ostream.
       *
-      * This function writes the Mixture, Interaction, and Domain blocks 
+      * This function writes the Mixture, Interaction, and Domain blocks
       * of a parameter file, as well as any Environment and Iterator block,
       * but omits any Sweep or Simulator blocks. It is used to produce an
       * output during an SCFT sweep that only refers to parameters relevant
-      * to a single state point, in a form that could be used as a 
+      * to a single state point, in a form that could be used as a
       * parameter file for a single SCFT calculation.
       *
       * \param out  output stream
@@ -376,12 +376,12 @@ namespace Rpg {
       * The log output created by an Iterator upon convergence should call
       * writeStress after writeThermo if and only if the iterator is not
       * flexible.
-      * 
+      *
       * If an Environment is present in the system, it will, in general,
-      * contribute to the stress. However, the stress values written by 
-      * this method do not take the Environment into account, and only 
-      * represent contributions from the Mixture (terms which are the 
-      * functional derivatives of ln(Q) with respect to each lattice 
+      * contribute to the stress. However, the stress values written by
+      * this method do not take the Environment into account, and only
+      * represent contributions from the Mixture (terms which are the
+      * functional derivatives of ln(Q) with respect to each lattice
       * parameter).
       *
       * \param out  output stream
@@ -526,16 +526,6 @@ namespace Rpg {
       * Does this system have a Simulator?
       */
       bool hasSimulator() const;
-
-      /**
-      * Does this system have external potential fields?
-      */
-      bool hasExternalFields() const;
-
-      /**
-      * Does this system have a mask (inhomogeneous density constraint)?
-      */
-      bool hasMask() const;
 
       /**
       * Has the SCFT stress been computed for the current w fields?
@@ -819,7 +809,7 @@ namespace Rpg {
    // Get the container of w fields (non-const reference).
    template <int D>
    inline
-   WFieldContainer<D>& System<D>::w() 
+   WFieldContainer<D>& System<D>::w()
    {  return w_; }
 
    // Get the container of w fields (const reference).
@@ -886,16 +876,6 @@ namespace Rpg {
    template <int D>
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_); }
-
-   // Does this system have external potential fields?
-   template <int D>
-   inline bool System<D>::hasExternalFields() const
-   {  return h_.hasData(); }
-
-   // Does this system have a mask?
-   template <int D>
-   inline bool System<D>::hasMask() const
-   {  return mask_.hasData(); }
 
    // Does this system have a Simulator?
    template <int D>

@@ -452,7 +452,7 @@ namespace Rpg {
          if (command == "ESTIMATE_W_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            fieldIo.estimateWBasis(inFileName, outFileName, 
+            fieldIo.estimateWBasis(inFileName, outFileName,
                                    interaction().chi());
          } else
          if (command == "SET_UNIT_CELL") {
@@ -559,7 +559,7 @@ namespace Rpg {
                         << "\n"
                         << Str("segment ID  ", 21) << segmentId
                         << std::endl;
-            mixture_.writeQSlice(filename, polymerId, blockId, 
+            mixture_.writeQSlice(filename, polymerId, blockId,
                                  directionId, segmentId);
          } else
          if (command == "WRITE_Q_TAIL") {
@@ -957,7 +957,7 @@ namespace Rpg {
 
       // If converged, compute related thermodynamic properties
       if (!error) {
-         scft().compute(); 
+         scft().compute();
          scft().write(Log::file());
          if (!iterator().isFlexible()) {
             if (!mixture_.hasStress()) {

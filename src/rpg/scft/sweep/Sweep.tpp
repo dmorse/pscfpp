@@ -290,7 +290,7 @@ namespace Rpg {
       // Write data file, with thermodynamic properties at end
       system().writeParamNoSweep(out);
       out << std::endl;
-      system().writeThermo(out);
+      system().scft().write(out);
       out.close();
 
       // Write w fields

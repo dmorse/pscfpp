@@ -87,13 +87,13 @@ namespace Rpc {
       // Create associations among class members
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
-      w_.setReadUnitCell(domain_.unitCell());  
+      w_.setReadUnitCell(domain_.unitCell());
       w_.setWriteUnitCell(domain_.unitCell());
-      h_.setFieldIo(domain_.fieldIo());        
-      h_.setReadUnitCell(tmpUnitCell_);       
+      h_.setFieldIo(domain_.fieldIo());
+      h_.setReadUnitCell(tmpUnitCell_);
       h_.setWriteUnitCell(domain_.unitCell());
       mask_.setFieldIo(domain_.fieldIo());
-      mask_.setReadUnitCell(tmpUnitCell_);       
+      mask_.setReadUnitCell(tmpUnitCell_);
       mask_.setWriteUnitCell(domain_.unitCell());
       c_.setFieldIo(domain_.fieldIo());
       c_.setWriteUnitCell(domain_.unitCell());
@@ -101,8 +101,8 @@ namespace Rpc {
       // Note: When w_ is read from a file  in basis or r-grid format,
       // the parameters of the system unit cell, domain_.unitCell(), are
       // set to those in the field file header. When imposed fields h_
-      // and mask_ are read from a file, however unit cell parameters 
-      // from the field file header are read into a mutable workspace 
+      // and mask_ are read from a file, however unit cell parameters
+      // from the field file header are read into a mutable workspace
       // object, tmpUnitCell_, and ignored.
 
       // Create dynamically allocated objects owned by this System
@@ -114,16 +114,16 @@ namespace Rpc {
       simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
 
       // Use of "signals" to maintain data relationships:
-      // Signals are instances of Unit::Signal<void> that are used to 
-      // notify "observer" objects of modification of data owned by a 
+      // Signals are instances of Unit::Signal<void> that are used to
+      // notify "observer" objects of modification of data owned by a
       // related "notifier" object. Each signal is owned by a notifier
       // object that maintains data that may be modified. Each signal
       // maintains a list of observers objects that should be notified
-      // whenever the data owned by the notifier object changes. Each 
+      // whenever the data owned by the notifier object changes. Each
       // observer is added by the Signal<void>::addObserver function
-      // template, which takes two arguments: a reference to an observer 
-      // object (i.e., an instance of a class) and a pointer to a member 
-      // function of that class which will be invoked on that object when 
+      // template, which takes two arguments: a reference to an observer
+      // object (i.e., an instance of a class) and a pointer to a member
+      // function of that class which will be invoked on that object when
       // the signal is triggered by modification of associated data.
 
       // Addition of observers to signals
@@ -722,7 +722,7 @@ namespace Rpc {
          if (command == "ESTIMATE_W_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            fieldIo.estimateWBasis(inFileName, outFileName, 
+            fieldIo.estimateWBasis(inFileName, outFileName,
                                    interaction().chi());
          } else
          if (command == "READ_H_BASIS") {
@@ -937,7 +937,7 @@ namespace Rpc {
 
       // If converged, compute related thermodynamic properties
       if (!error) {
-         scft().compute(); 
+         scft().compute();
          scft().write(Log::file());
          if (!iterator().isFlexible()) {
             if (!mixture_.hasStress()) {
@@ -985,61 +985,7 @@ namespace Rpc {
       simulator().simulate(nStep);
    }
 
-   #if 0
-   // SCFT Thermodynamic Properties
-
-   /*
-   * Compute Helmholtz free energy and pressure.
-   */
-   template <int D>
-   void System<D>::computeFreeEnergy()
-   {  scft().compute(); }
-
-   // Get the Helmholtz free energy per monomer / kT.
-   template <int D>
-   double System<D>::fHelmholtz() const
-   {
-      UTIL_CHECK(scft().hasData());
-      return scft().fHelmholtz();
-   }
-
-   // Get the ideal gas contribution to fHelmholtz.
-   template <int D>
-   double System<D>::fIdeal() const
-   {
-      UTIL_CHECK(scft().hasData());
-      return scft().fIdeal();
-   }
-
-   // Get the interaction contribution to fHelmholtz.
-   template <int D>
-   double System<D>::fInter() const
-   {
-      UTIL_CHECK(scft().hasData());
-      return scft().fInter();
-   }
-
-   // Get the external field contribution to fHelmholtz.
-   template <int D>
-   double System<D>::fExt() const
-   {
-      UTIL_CHECK(scft().hasData());
-      return scft().fExt();
-   }
-
-   // Get the precomputed pressure (units of kT / monomer volume).
-   template <int D>
-   double System<D>::pressure() const
-   {
-      UTIL_CHECK(scft().hasData());
-      return scft().pressure();
-   }
-
-   // Has the free energy been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasFreeEnergy() const
-   {  return scft().hasData(); }
-   #endif
+   // SCFT Stress
 
    /*
    * Compute SCFT stress for current fields.
@@ -1110,7 +1056,7 @@ namespace Rpc {
          out << " (Environment contributions not included)";
       }
       out << std::endl;
-      
+
       for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
          out << Int(i, 5)
             << "  "
