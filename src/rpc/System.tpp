@@ -511,7 +511,7 @@ namespace Rpc {
             std::ofstream file;
             fileMaster_.openOutputFile(filename, file,
                                        std::ios_base::app);
-            writeThermo(file);
+            scft().write(file);
             file.close();
          } else
          if (command == "WRITE_STRESS") {
@@ -938,7 +938,7 @@ namespace Rpc {
       // If converged, compute related thermodynamic properties
       if (!error) {
          scft().compute(); 
-         writeThermo(Log::file());
+         scft().write(Log::file());
          if (!iterator().isFlexible()) {
             if (!mixture_.hasStress()) {
                mixture_.computeStress(mask().phiTot());
@@ -1095,15 +1095,6 @@ namespace Rpc {
          iterator().writeParam(out);
       }
       out << "}" << std::endl;
-   }
-
-   /*
-   * Write thermodynamic properties to file.
-   */
-   template <int D>
-   void System<D>::writeThermo(std::ostream& out)
-   {
-      scft().write(out);
    }
 
    /*

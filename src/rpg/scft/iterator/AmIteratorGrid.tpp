@@ -276,7 +276,7 @@ namespace Rpg {
       }
 
       // If iterator has mask, account for it in residual values
-      if (system().hasMask()) {
+      if (system().mask().hasData()) {
          double coeff = -1.0 / interaction_.sumChiInverse();
          for (int i = 0; i < nMonomer; ++i) {
             VecOp::addEqVc(residSlices[i], system().mask().rgrid(), coeff);
@@ -285,7 +285,7 @@ namespace Rpg {
 
       // If iterator has external fields, account for them in the values 
       // of the residuals
-      if (system().hasExternalFields()) {
+      if (system().h().hasData()) {
          for (int i = 0; i < nMonomer; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
                double p = interaction_.p(i,j);
@@ -364,7 +364,7 @@ namespace Rpg {
             }
 
             // If system has external fields, include them in homogeneous field
-            if (system().hasExternalFields()) {
+            if (system().h().hasData()) {
                if (system().h().isSymmetric()) { // h().basis() has data
                   UTIL_CHECK(system().h().isAllocatedBasis());
                   wAverage += system().h().basis(i)[0];

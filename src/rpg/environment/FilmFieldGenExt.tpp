@@ -203,8 +203,8 @@ namespace Rpg
       // If this point is reached, calculate the stress contribution
       // from the external fields.
       UTIL_CHECK(interfaceThickness() > 0); 
-      UTIL_CHECK(system().hasMask());
-      UTIL_CHECK(system().hasExternalFields());
+      UTIL_CHECK(system().mask().hasData());
+      UTIL_CHECK(system().h().hasData());
 
       // Setup
       int nMonomer = system().mixture().nMonomer();
@@ -270,7 +270,7 @@ namespace Rpg
       // If this point is reached, external field must be generated
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(system().domain().unitCell().isInitialized());
-      UTIL_CHECK(system().hasMask());
+      UTIL_CHECK(system().mask().hasData());
       if (system().iterator().isSymmetric()) {
          UTIL_CHECK(system().domain().basis().isInitialized());
       }

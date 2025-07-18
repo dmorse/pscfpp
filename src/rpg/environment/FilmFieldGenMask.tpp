@@ -182,7 +182,7 @@ namespace Rpg
       if (normalVecParamId != paramId) return 0.0;
 
       // If this point is reached, stress contribution must be calculated
-      UTIL_CHECK(system().hasMask());
+      UTIL_CHECK(system().mask().hasData());
       
       // Get the length of the lattice basis vector normal to the walls
       double nvLength = system().domain().unitCell().parameter(paramId);
@@ -208,7 +208,7 @@ namespace Rpg
       RField<D> xi;
       xi.allocate(system().domain().mesh().dimensions());
 
-      if (system().hasExternalFields()) {
+      if (system().h().hasData()) {
          VecOp::subVV(xi, system().w().rgrid(0), system().h().rgrid(0));
       } else {
          VecOp::eqV(xi, system().w().rgrid(0));
@@ -248,7 +248,7 @@ namespace Rpg
       if (nvParamId != paramId) return stress;
 
       // If this point is reached, stress must be modified
-      UTIL_CHECK(system().hasMask());
+      UTIL_CHECK(system().mask().hasData());
 
       if (!hasFBulk()) {
          UTIL_THROW("fBulk must be set before calling modifyStress.");

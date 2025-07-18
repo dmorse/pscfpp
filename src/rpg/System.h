@@ -21,17 +21,14 @@
 
 // Forward declarations
 namespace Util {
-   template <typename T> class DArray;
    template <typename T, int N> class FSArray;
 }
 namespace Pscf {
    class Interaction;
    class Environment;
-   template <typename Data> class DeviceArray;
    namespace Prdc {
       namespace Cuda {
          template <int D> class RField;
-         template <int D> class RFieldDft;
       }
    }
    namespace Rpg {
@@ -49,7 +46,7 @@ namespace Pscf {
 namespace Pscf {
 namespace Rpg {
 
-   // Namespaces that are used implicitly, without name qualification
+   // Namespaces that may be used implicitly
    using namespace Util;
    using namespace Prdc;
    using namespace Prdc::Cuda;
@@ -65,11 +62,11 @@ namespace Rpg {
    *    - a container of monomer chemical potential fields (w fields)
    *    - a container of monomer concentration fields (c fields)
    *
-   * A System may also optionally own Iterator, Sweep, and Simulator
-   * (BdSimulator or McSimulator) components. Iterator and Sweep objects
-   * are only used for SCFT calculations. A Simulator object is only used
-   * for PS-FTS calculations (i.e., field theoretic simulations that use
-   * a partial saddle-point approximation).
+   * A System may also optionally have Environment, Iterator, Sweep, and 
+   * Simulator (BdSimulator or McSimulator) components. Iterator and Sweep 
+   * objects are only used for SCFT calculations. A Simulator object is 
+   * only used for PS-FTS calculations (i.e., field theoretic simulations 
+   * that use a partial saddle-point approximation).
    *
    * System is a class template with an integer template parameter
    * D = 1, 2, or 3 that represents the dimension of space. Many related
@@ -250,6 +247,7 @@ namespace Rpg {
       *
       * \pre  w().hasData() == true 
       * \post c().hasData() == true 
+      * \post hasStress() == true iff needStress == true
       *
       * \param needStress  true if stress is needed, false otherwise
       */
@@ -261,14 +259,16 @@ namespace Rpg {
       * This function calls the iterator to solve the SCFT problem for
       * the current system parameters, using the current chemical
       * potential fields and unit cell parameters as initial guesses.
-      * Upon exit, c().hasData() is set true whether or not convergence
-      * is obtained to within the desired tolerance. The Helmholtz free
-      * energy and pressure are computed only if convergence is obtained.
+      * Upon exit, c().hasData() == true whether or not convergence is
+      * obtained to within the desired tolerance, but the SCFT Helmholtz 
+      * free energy and pressure are computed only if convergence is 
+      * successful.
       *
-      * \pre Function hasIterator() must return true
-      * \pre Function w().hasData() must return true
-      * \pre Function w().isSymmetric() must return true if the iterator
-      * uses a symmetry-adapted basis.
+      * \pre hasIterator() == true
+      * \pre w().hasData() == true
+      * \pre w().isSymmetric() == true if the iterator is symmetric
+      * \post c().hasData() == true
+      * \post scft().hadData() == true upon successful convergence
       *
       * \return returns 0 for successful convergence, 1 for failure
       *
@@ -311,10 +311,10 @@ namespace Rpg {
       * Mark c-fields and free energy as outdated or invalid.
       *
       * This function should be called whenever any of the inputs to the
-      * inputs to the solutin of the modified diffusion equation are 
-      * modified, including the w fields, unit cell parameters, external 
-      * fields or mask.  Upon return, hasCfields(), hasFreeEnergy(), and 
-      * hasStress() all return false. 
+      * solution of the modified diffusion equation are modified, including
+      * the w fields, unit cell parameters, external fields or mask. Upon
+      * return, hasCfields(), scft().hasData(), and hasStress() all return 
+      * false. 
       */
       void clearCFields();
 
@@ -364,23 +364,6 @@ namespace Rpg {
       * \param out  output stream
       */
       void writeParamNoSweep(std::ostream& out) const;
-
-      /**
-      * Write SCFT thermodynamic properties to a file.
-      *
-      * This function outputs Helmholtz free energy per monomer, pressure
-      * (in units of kT per monomer volume), the volume fraction and
-      * chemical potential of each species, and all unit cell parameters.
-      *
-      * If parameter "out" is a file that already exists, this function
-      * will append to the end of that file, rather than overwriting it.
-      * Calling writeParamNoSweep and writeThermo in succession with the
-      * same output stream will thus produce a single file containing both
-      * input parameters and calculated thermodynamic properties.
-      *
-      * \param out  output stream
-      */
-      void writeThermo(std::ostream& out);
 
       /**
       * Write SCFT stress to a file.
@@ -553,11 +536,6 @@ namespace Rpg {
       * Does this system have a mask (inhomogeneous density constraint)?
       */
       bool hasMask() const;
-
-      /**
-      * Is the SCFT free energy current, consistent with current w fields?
-      */
-      bool hasFreeEnergy() const;
 
       /**
       * Has the SCFT stress been computed for the current w fields?
@@ -939,4 +917,3 @@ namespace Rpg {
 } // namespace Rpg
 } // namespace Pscf
 #endif
-
