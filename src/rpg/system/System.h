@@ -254,6 +254,18 @@ namespace Rpg {
       void compute(bool needStress = false);
 
       /**
+      * Compute SCFT stress.
+      *
+      * This function computes the standard definition of stress maintained
+      * by the Mixture class. If an Environment exists, it also allows the
+      * Environment to compute a modified definition of the stress.
+      *
+      * \pre w().hasData() == true
+      * \pre c().hasData() == true
+      */
+      void computeStress();
+
+      /**
       * Iteratively solve a SCFT problem.
       *
       * This function calls the iterator to solve the SCFT problem for
@@ -323,20 +335,6 @@ namespace Rpg {
       ///@{
 
       /**
-      * Compute SCFT stress for current fields.
-      *
-      * The stress contains contributions from the Mixture object and the
-      * Environment object (if one exists), and may also be modified by
-      * the Environment object so that a property other than fHelmholtz
-      * will be minimized during iteration, which depends on the type of
-      * Environment.
-      *
-      * \pre w().hasData() == true
-      * \pre c().hasData() == true
-      */
-      void computeStress();
-
-      /**
       * Get the stress for a single lattice parameter.
       *
       * This function retrieves a value computed by computeStress().
@@ -346,24 +344,6 @@ namespace Rpg {
       * \param paramId  lattice parameter index
       */
       double stress(int paramId) const;
-
-      ///@}
-      /// \name Property Output
-      ///@{
-
-      /**
-      * Write partial parameter file to an ostream.
-      *
-      * This function writes the Mixture, Interaction, and Domain blocks
-      * of a parameter file, as well as any Environment and Iterator block,
-      * but omits any Sweep or Simulator blocks. It is used to produce an
-      * output during an SCFT sweep that only refers to parameters relevant
-      * to a single state point, in a form that could be used as a
-      * parameter file for a single SCFT calculation.
-      *
-      * \param out  output stream
-      */
-      void writeParamNoSweep(std::ostream& out) const;
 
       /**
       * Write SCFT stress to a file.
@@ -387,6 +367,29 @@ namespace Rpg {
       * \param out  output stream
       */
       void writeStress(std::ostream& out);
+
+      /**
+      * Has the SCFT stress been computed for the current w fields?
+      */
+      bool hasStress() const;
+
+      ///@}
+      /// \name Property Output
+      ///@{
+
+      /**
+      * Write partial parameter file to an ostream.
+      *
+      * This function writes the Mixture, Interaction, and Domain blocks
+      * of a parameter file, as well as any Environment and Iterator block,
+      * but omits any Sweep or Simulator blocks. It is used to produce an
+      * output during an SCFT sweep that only refers to parameters relevant
+      * to a single state point, in a form that could be used as a
+      * parameter file for a single SCFT calculation.
+      *
+      * \param out  output stream
+      */
+      void writeParamNoSweep(std::ostream& out) const;
 
       ///@}
       /// \name Field Containers
@@ -457,6 +460,11 @@ namespace Rpg {
       Domain<D> const & domain() const;
 
       /**
+      * Does this system have an Environment?
+      */
+      bool hasEnvironment() const;
+
+      /**
       * Get the Environment by non-const reference.
       */
       Environment& environment();
@@ -467,14 +475,19 @@ namespace Rpg {
       Environment const & environment() const;
 
       /**
-      * Get the ScftThermo<D> object (non-const reference).
+      * Get the ScftThermo object (non-const reference).
       */
       ScftThermo<D>& scft();
 
       /**
-      * Get the ScftThermo<D> object (const reference).
+      * Get the ScftThermo object (const reference).
       */
       ScftThermo<D> const & scft() const;
+
+      /**
+      * Does this system have an Iterator?
+      */
+      bool hasIterator() const;
 
       /**
       * Get the Iterator by non-const reference.
@@ -485,6 +498,16 @@ namespace Rpg {
       * Get the Iterator by const reference.
       */
       Iterator<D> const & iterator() const;
+
+      /**
+      * Does this system have a Sweep?
+      */
+      bool hasSweep() const;
+
+      /**
+      * Does this system have a Simulator?
+      */
+      bool hasSimulator() const;
 
       /**
       * Get the Simulator by non-const reference.
@@ -502,35 +525,6 @@ namespace Rpg {
       * Get the FileMaster by const reference.
       */
       FileMaster const & fileMaster() const;
-
-      ///@}
-      /// \name Boolean Flags
-      ///@{
-
-      /**
-      * Does this system have an Environment?
-      */
-      bool hasEnvironment() const;
-
-      /**
-      * Does this system have an Iterator?
-      */
-      bool hasIterator() const;
-
-      /**
-      * Does this system have a Sweep?
-      */
-      bool hasSweep() const;
-
-      /**
-      * Does this system have a Simulator?
-      */
-      bool hasSimulator() const;
-
-      /**
-      * Has the SCFT stress been computed for the current w fields?
-      */
-      bool hasStress() const;
 
       ///@}
       /// \name Timers
@@ -750,6 +744,11 @@ namespace Rpg {
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
 
+   // Does this system have an Environment?
+   template <int D>
+   inline bool System<D>::hasEnvironment() const
+   {  return (environmentPtr_); }
+
    // Get the Environment by non-const reference.
    template <int D>
    inline Environment & System<D>::environment()
@@ -766,6 +765,27 @@ namespace Rpg {
       return *environmentPtr_;
    }
 
+   // Get the Scft calculator by non-const reference.
+   template <int D>
+   inline ScftThermo<D> & System<D>::scft()
+   {
+      UTIL_ASSERT(scftPtr_);
+      return *scftPtr_;
+   }
+
+   // Get the Scft calculator by const reference.
+   template <int D>
+   inline ScftThermo<D> const & System<D>::scft() const
+   {
+      UTIL_ASSERT(scftPtr_);
+      return *scftPtr_;
+   }
+
+   // Does this system have an Iterator?
+   template <int D>
+   inline bool System<D>::hasIterator() const
+   {  return (iteratorPtr_); }
+
    // Get the Iterator by non-const reference.
    template <int D>
    inline Iterator<D>& System<D>::iterator()
@@ -781,6 +801,16 @@ namespace Rpg {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
    }
+
+   // Does this system have a Sweep?
+   template <int D>
+   inline bool System<D>::hasSweep() const
+   {  return (sweepPtr_); }
+
+   // Does this system have a Simulator?
+   template <int D>
+   inline bool System<D>::hasSimulator() const
+   {  return (simulatorPtr_); }
 
    // Get the Simulator by non-const reference.
    template <int D>
@@ -845,42 +875,6 @@ namespace Rpg {
       UTIL_CHECK(hasStress_);
       return stress_[paramId];
    }
-
-   // Does this system have an Environment?
-   template <int D>
-   inline bool System<D>::hasEnvironment() const
-   {  return (environmentPtr_); }
-
-   // Get the Scft calculator by non-const reference.
-   template <int D>
-   inline ScftThermo<D> & System<D>::scft()
-   {
-      UTIL_ASSERT(scftPtr_);
-      return *scftPtr_;
-   }
-
-   // Get the Scft calculator by const reference.
-   template <int D>
-   inline ScftThermo<D> const & System<D>::scft() const
-   {
-      UTIL_ASSERT(scftPtr_);
-      return *scftPtr_;
-   }
-
-   // Does this system have an Iterator?
-   template <int D>
-   inline bool System<D>::hasIterator() const
-   {  return (iteratorPtr_); }
-
-   // Does this system have a Sweep?
-   template <int D>
-   inline bool System<D>::hasSweep() const
-   {  return (sweepPtr_); }
-
-   // Does this system have a Simulator?
-   template <int D>
-   inline bool System<D>::hasSimulator() const
-   {  return (simulatorPtr_); }
 
    // Has the stress been computed for the current w fields?
    template <int D>
