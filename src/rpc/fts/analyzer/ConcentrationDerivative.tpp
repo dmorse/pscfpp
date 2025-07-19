@@ -10,7 +10,7 @@
 
 #include "ConcentrationDerivative.h"
 
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>

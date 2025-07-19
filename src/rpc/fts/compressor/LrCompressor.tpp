@@ -9,7 +9,7 @@
 */
 
 #include "LrCompressor.h"
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <rpc/fts/compressor/intra/IntraCorrelation.h> 
 #include <util/global.h>
 #include <util/format/Dbl.h>

@@ -2,7 +2,7 @@
 #define RPC_SIMULATOR_FACTORY_TPP
 
 #include "SimulatorFactory.h"  
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 
 // Subclasses of Simulator 
 #include <rpc/fts/montecarlo/McSimulator.h>

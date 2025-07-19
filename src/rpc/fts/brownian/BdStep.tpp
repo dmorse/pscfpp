@@ -11,7 +11,7 @@
 #include "BdStep.h"
 
 #include <rpc/fts/brownian/BdSimulator.h>
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 
 namespace Pscf {
 namespace Rpc {

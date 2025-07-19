@@ -3,7 +3,7 @@
 
 #include "TrajectoryReaderFactory.h"
 
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 
 // Subclasses of ConfigIo
 #include "RGridTrajectoryReader.h"

@@ -1,4 +1,5 @@
 rpc_system_= \
+  rpc/system/System.cpp \
   rpc/system/SystemConstRef.cpp
 
 rpc_system_OBJS=\

@@ -9,7 +9,7 @@
 */
 
 #include "AmIteratorBasis.h"
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/iterator/NanException.h>
 #include <util/global.h>

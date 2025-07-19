@@ -10,7 +10,7 @@
 
 #include "Simulator.h"
 
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/CompressorFactory.h>
 #include <rpc/fts/perturbation/Perturbation.h>

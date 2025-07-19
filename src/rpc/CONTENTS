@@ -17,16 +17,17 @@ without explicit namespace qualifiers.
 Subdirectories:
 ---------------
 
-field/       - classes related to fields and spatial domain
+environment/ - generation of imposed mask and external fields
+field/       - fields and spatial domain
 fts/         - stochastic field-theoretic simulation (FTS)
 scft/        - self-consistent field theory (SCFT)
 solvers/     - modified diffusion equation (MDE) solvers
+system/      - main System class template
 tests/       - unit tests for code in src/rpc
 
-C++ files (file extensions .h, .tpp and .cpp):
-----------------------------------------------
+C++ file:
+---------
 
-System.*     - System<D> class template (main object)
 pscf_pc.cpp  - main program for periodic structures on CPU hardware
 
 Makefile and makefile fragments:
@@ -41,6 +42,5 @@ Doxygen documentation files:
 ----------------------------
 
 pscf_pc.dox  - command line interface for pscf_pc executable
-System.dox   - parameter file format for main System block
 rpc.mod      - definition of Pscf_Rpc_Module doxygen topics module 
 

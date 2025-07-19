@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/environment/FilmFieldGenExt.h>
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>

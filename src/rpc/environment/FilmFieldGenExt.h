@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <prdc/environment/FilmFieldGenExtBase.h>  // Base class
 
 namespace Pscf {

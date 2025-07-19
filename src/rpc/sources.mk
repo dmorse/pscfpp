@@ -15,8 +15,7 @@ rpc_= \
   $(rpc_solvers_) \
   $(rpc_scft_) \
   $(rpc_fts_) \
-  $(rpc_system_) \
-  rpc/System.cpp 
+  $(rpc_system_) 
 
 # List of object file targets
 rpc_OBJS=\

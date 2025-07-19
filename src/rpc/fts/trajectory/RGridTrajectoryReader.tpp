@@ -10,7 +10,7 @@
 
 #include "RGridTrajectoryReader.h"
 
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/misc/ioUtil.h>
 

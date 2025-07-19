@@ -12,7 +12,7 @@
 
 #include <rpc/fts/montecarlo/McSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <util/archives/Serializable_includes.h>
 
 namespace Pscf {

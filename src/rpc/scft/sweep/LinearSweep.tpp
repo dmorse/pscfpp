@@ -9,7 +9,7 @@
 */
 
 #include "LinearSweep.h"
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 
 namespace Pscf {
 namespace Rpc {

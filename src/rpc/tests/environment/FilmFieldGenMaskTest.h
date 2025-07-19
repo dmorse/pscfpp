@@ -6,7 +6,7 @@
 
 #include <rpc/environment/FilmFieldGenMask.h>
 #include <rpc/scft/iterator/Iterator.h>
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>

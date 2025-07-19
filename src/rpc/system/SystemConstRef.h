@@ -9,7 +9,7 @@
 */
 
 #include <prdc/system/SystemConstRefReal.h>   // base class template
-#include <rpc/System.h>                       // template parameter
+#include <rpc/system/System.h>                       // template parameter
 
 namespace Pscf {
 namespace Rpc {

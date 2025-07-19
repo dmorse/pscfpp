@@ -12,7 +12,7 @@
 #include "McMove.h" 
 #include <rpc/fts/montecarlo/McSimulator.h>
 #include <util/param/ParamComposite.h>
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <util/random/Random.h>
 
 namespace Pscf {

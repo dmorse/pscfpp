@@ -7,7 +7,7 @@
 */
 
 #include "Sweep.h"
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/ScftThermo.h>
 #include <pscf/environment/Environment.h>

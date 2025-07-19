@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/System.h>
+#include <rpc/system/System.h>
 #include <rpc/scft/sweep/SweepFactory.h>
 #include <rpc/scft/sweep/LinearSweep.h>
 
