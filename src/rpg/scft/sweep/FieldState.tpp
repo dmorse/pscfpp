@@ -10,7 +10,7 @@
 
 #include "FieldState.h"
 
-#include <rpg/System.h>                   
+#include <rpg/system/System.h>                   
 #include <prdc/cuda/FFT.h>                
 #include <prdc/crystal/Basis.h>           
 #include <pscf/mesh/Mesh.h>                

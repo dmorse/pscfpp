@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/brownian/BdSimulator.h>
 #include <rpg/fts/analyzer/AnalyzerManager.h>

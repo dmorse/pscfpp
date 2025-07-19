@@ -10,7 +10,7 @@
 
 #include "McSimulator.h"
 
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/fts/montecarlo/McMoveFactory.h>
 #include <rpg/fts/analyzer/AnalyzerFactory.h>
 #include <rpg/fts/trajectory/TrajectoryReader.h>

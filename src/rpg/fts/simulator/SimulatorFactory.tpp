@@ -2,7 +2,7 @@
 #define RPG_SIMULATOR_FACTORY_TPP
 
 #include "SimulatorFactory.h"  
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 // Subclasses of Simulator 
 #include <rpg/fts/montecarlo/McSimulator.h>

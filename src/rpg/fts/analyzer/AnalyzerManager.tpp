@@ -5,7 +5,7 @@
 #include "Analyzer.h" 
 #include "AnalyzerFactory.h"
 #include <util/archives/Serializable_includes.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 namespace Pscf {
 namespace Rpg {

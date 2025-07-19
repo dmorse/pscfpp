@@ -10,7 +10,7 @@
 
 #include "IntraCorrelation.h"
 
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/field/Domain.h>
 #include <rpg/solvers/Mixture.h>
 

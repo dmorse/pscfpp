@@ -9,7 +9,7 @@
 */
 
 #include "LrCompressor.h"
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/fts/compressor/intra/IntraCorrelation.h> 
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/cuda/resources.h>

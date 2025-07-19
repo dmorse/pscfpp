@@ -10,7 +10,7 @@
 
 #include "Analyzer.h"
 #include <util/global.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 namespace Pscf {
 namespace Rpg

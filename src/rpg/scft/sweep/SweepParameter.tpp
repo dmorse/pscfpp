@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Block.h>

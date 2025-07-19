@@ -9,7 +9,7 @@
 */
 
 #include "AverageAnalyzer.h"
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/fts/simulator/Simulator.h>
 
 namespace Pscf {

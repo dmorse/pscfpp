@@ -4,7 +4,7 @@
 #include "BinaryStructureFactorGrid.h"
 
 #include <rpg/fts/simulator/Simulator.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/cuda/FFT.h>

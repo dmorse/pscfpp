@@ -15,7 +15,7 @@
 #include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
 #include <util/param/ParamComposite.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <pscf/cuda/CudaRandom.h>
 
 namespace Pscf {

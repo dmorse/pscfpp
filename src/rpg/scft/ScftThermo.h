@@ -9,7 +9,7 @@
 */
 
 #include <prdc/system/ScftReal.h>   // base class template
-#include <rpg/System.h>             // template parameter
+#include <rpg/system/System.h>             // template parameter
 
 namespace Pscf {
 namespace Rpg {

@@ -9,7 +9,7 @@
 */
 
 #include "LrAmCompressor.h"
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/fts/compressor/intra/IntraCorrelation.h>
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/resources.h>

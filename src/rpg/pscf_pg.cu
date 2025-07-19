@@ -6,7 +6,7 @@
 */
 
 #include <prdc/crystal/getDimension.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <iostream>
 
 namespace Pscf {

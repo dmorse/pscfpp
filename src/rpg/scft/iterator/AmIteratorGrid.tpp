@@ -9,7 +9,7 @@
 */
 
 #include "AmIteratorGrid.h"
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/inter/Interaction.h>

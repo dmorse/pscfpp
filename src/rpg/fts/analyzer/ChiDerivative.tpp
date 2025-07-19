@@ -10,7 +10,7 @@
 
 #include "ChiDerivative.h"
 
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <pscf/inter/Interaction.h>
 

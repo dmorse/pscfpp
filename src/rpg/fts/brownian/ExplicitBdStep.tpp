@@ -12,7 +12,7 @@
 
 #include <rpg/fts/brownian/BdSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
 

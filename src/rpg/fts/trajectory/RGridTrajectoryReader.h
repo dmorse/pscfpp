@@ -11,7 +11,7 @@
 #include "TrajectoryReader.h"
 #include <util/global.h>
 #include <iostream>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <prdc/cuda/RField.h>
 #include <util/containers/DArray.h>
 

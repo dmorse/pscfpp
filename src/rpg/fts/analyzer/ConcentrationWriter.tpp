@@ -10,7 +10,7 @@
 #include "ConcentrationWriter.h"
 #include "Analyzer.h"
 #include <rpg/fts/simulator/Simulator.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 #include <sstream>

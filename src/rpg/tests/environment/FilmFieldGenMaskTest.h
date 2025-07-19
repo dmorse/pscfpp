@@ -6,7 +6,7 @@
 
 #include <rpg/environment/FilmFieldGenMask.h>
 #include <rpg/scft/iterator/Iterator.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>

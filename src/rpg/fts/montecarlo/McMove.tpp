@@ -12,7 +12,7 @@
 
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 namespace Pscf {
 namespace Rpg {

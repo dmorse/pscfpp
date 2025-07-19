@@ -16,12 +16,12 @@ programs are affected by specific changes:
 Versions before v1.2 use program name pscf_fd and label fd for the 1D 
 finite difference SCFT code that is now called pscf_1d.
 
-Version 1.3.0 (7/15/2025)
+Version 1.3.0 (8/15/2025)
 =========================================
 
 User-visible features
 ---------------------
-* Choice of continuous thread and discrete bead model for polymers (pc, pg)
+* Choice of discrete bead or continuous thread model for polymers (pc, pg)
 
 User-visible changes
 --------------------
@@ -29,10 +29,10 @@ User-visible changes
 
 Developer-visible changes
 -------------------------
-* Reduced code duplication between Rpc, Rpg namespaces (pc, pg)
-* Use of signals (Util::Signal) to coordinate object states (pc, pg)
-* Field file manipulation functions moved from System to FieldIo (pc, pg)
 * Generation of imposed fields moved into new Environment class (pc, pg)
+* Use of signals (Util::Signal) to coordinate object states (pc, pg)
+* Reduced code duplication between Rpc, Rpg namespaces (pc, pg)
+* Moved some functions from main System class into component objects (pc, pg)
 * Added WaveList class to code for pscf_pc, by analogy to pscf_pg (pc)
 
 Version 1.2.0 (4/14/2025)

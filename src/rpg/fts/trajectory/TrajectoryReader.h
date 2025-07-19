@@ -11,7 +11,7 @@
 #include <util/param/ParamComposite.h>    
 #include <util/global.h>
 #include <iostream>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 
 namespace Pscf {

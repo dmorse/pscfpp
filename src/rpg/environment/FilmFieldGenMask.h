@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <prdc/environment/FilmFieldGenMaskBase.h>  // Base class
 
 namespace Pscf {

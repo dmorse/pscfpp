@@ -20,7 +20,7 @@
 #include <rpg/fts/ramp/RampFactory.h>
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/compressor/Compressor.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 #include <pscf/cuda/CudaRandom.h>
 #include <util/misc/Timer.h>

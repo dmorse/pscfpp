@@ -4,7 +4,7 @@
 #include "MaxOrderParameter.h"
 
 #include <rpg/fts/simulator/Simulator.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>

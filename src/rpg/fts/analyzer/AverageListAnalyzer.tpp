@@ -10,7 +10,7 @@
 
 #include "AverageListAnalyzer.h"
 
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 #include <util/misc/FileMaster.h>

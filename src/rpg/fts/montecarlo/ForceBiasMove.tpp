@@ -13,7 +13,7 @@
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/VecOpFts.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/cuda/CudaRandom.h>
 #include <util/param/ParamComposite.h>

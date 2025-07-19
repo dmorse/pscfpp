@@ -15,8 +15,7 @@ rpg_= \
   $(rpg_solvers_) \
   $(rpg_scft_) \
   $(rpg_fts_) \
-  $(rpg_system_) \
-  rpg/System.cu
+  $(rpg_system_) 
 
 # List of object file targets
 rpg_OBJS=\

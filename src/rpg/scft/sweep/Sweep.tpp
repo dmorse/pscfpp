@@ -8,7 +8,7 @@
 
 #include "Sweep.h"
 #include <pscf/sweep/SweepTmpl.tpp>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/ScftThermo.h>
 #include <pscf/environment/Environment.h>

@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/environment/FilmEnvironment.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <rpg/scft/ScftThermo.h>
 
 #include <prdc/cuda/RField.h>

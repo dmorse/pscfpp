@@ -10,7 +10,7 @@
 
 #include <util/param/Factory.h>  
 #include <rpg/fts/compressor/Compressor.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 #include <string>
 

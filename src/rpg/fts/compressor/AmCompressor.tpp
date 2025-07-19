@@ -9,7 +9,7 @@
 */
 
 #include "AmCompressor.h"
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/math/IntVec.h>

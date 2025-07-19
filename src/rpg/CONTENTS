@@ -1,45 +1,47 @@
 This directory contains C++ and C++/CUDA code used by a GPU-accelerated
-program pscf_pg for self-consistent field theory (SCFT) and field 
-theoretic theoretic simulation (FTS) with real fields and periodic 
-boundary conditions.  All stochastic FTS algorithms implemented in 
-this directory rely on a partial saddle point approximation (PS-FTS). 
-Code in this directory are generally very closely analogous to that in 
-the src/rpc directory, which is used to construct the analogous pscf_pc 
-CPU program.
+program pscf_pg for self-consistent field theory (SCFT) and field theoretic
+simulation (FTS) with real fields and periodic boundary conditions.  All 
+FTS algorithms implemented in this directory rely on a partial saddle point
+approximation (PS-FTS).  Code in this directory are generally very closely 
+analogous to that in the src/rpc directory, which is used to construct the 
+analogous pscf_pc CPU program.
 
-All code in this directory is defined in the namespace Pscf::Rpg.  The 
-symbol Rpg stands for 'real periodic GPU'. Code defined in this namespace 
-may use classes and functions defined in namespace Util (or directory 
-src/util), parent namespace Pscf (directory src/pscf), or namespace 
-Pscf::Prdc (directory src/prdc).
-
+All classes and functions defined in this directory are in namespace 
+Pscf::Rpg.  The name Rpg stands for 'real periodic GPU'. Code in namespace
+Rpg may use classes and functions defined in namespace Util (or directory 
+src/util), namespace Pscf::Prdc (directory src/prdc/), or namespace 
+Pscf::Prdc::Cuda (or src/prdc/cuda). Many header and source code files in 
+this directory contain "using namespace" expressions that allow names from 
+the Util, Pscf::Prdc and Pscf::Prdc::Cuda namespaces to be used without
+explicit namespace qualifiers.
 
 Subdirectories:
 ---------------
 
-field/      - classes to represent or manipulate fields
-solvers/    - modified diffusion equation (MDE) solvers
-scft/       - self-consistent field theory (SCFT)
-fts/        - stochastic field theoretic simulation (FTS)
-tests/      - unit tests for code in src/rpg
+environment/ - generation of imposed mask and external fields
+field/       - fields and spatial domain
+solvers/     - modified diffusion equation (MDE) solvers
+scft/        - self-consistent field theory (SCFT)
+fts/         - field theoretic simulation (FTS)
+system/      - main System class template
+tests/       - unit tests for code in src/rpg
 
-C++/CUDA Source Files (file extensions .h, .tpp and .cu):
----------------------------------------------------------
+C++/CUDA Source File:
+---------------------
 
-System.*    - System<D> class template (main object)
-pscf_pg.cu  - Main program for real perodic fields using a GPU
+pscf_pg.cu   - Main program for real perodic systems using a GPU
 
 Makefile and makefile fragments:
 --------------------------------
 
-makefile    - main makefile for src/rpg directory tree
-sources.mk  - list of source files in src/rpg (makefile fragment)
-patterns.mk - pattern rules for src/rpg (makefile fragment)
-include.mk  - makefile include statements (makefile fragment)
+makefile     - main makefile for src/rpg directory tree
+sources.mk   - list of source files in src/rpg (makefile fragment)
+patterns.mk  - pattern rules for src/rpg (makefile fragment)
+include.mk   - makefile include statements (makefile fragment)
 
 Doxygen documentation files:
 ----------------------------
 
-pscf_pg.dox - command line interface for pscf_pg main program
-rpg.mod     - definition of Pscf_Rpg_Module doxygen topic module 
+pscf_pg.dox  - command line interface for pscf_pg main program
+rpg.mod      - definition of Pscf_Rpg_Module doxygen topic module 
 

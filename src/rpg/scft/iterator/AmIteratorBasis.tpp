@@ -9,7 +9,7 @@
 */
 
 #include "AmIteratorBasis.h"
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>

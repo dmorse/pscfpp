@@ -4,7 +4,7 @@
 #include "EinsteinCrystalPerturbation.h"
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/VecOpFts.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 #include <prdc/cuda/resources.h>
 #include <util/global.h>
 

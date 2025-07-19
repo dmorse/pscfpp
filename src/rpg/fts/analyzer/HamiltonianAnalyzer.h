@@ -9,7 +9,7 @@
 */
 
 #include "AverageListAnalyzer.h"
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 namespace Util{
    class Average;

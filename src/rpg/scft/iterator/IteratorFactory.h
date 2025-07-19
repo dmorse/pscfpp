@@ -10,7 +10,7 @@
 
 #include <util/param/Factory.h>  
 #include <rpg/scft/iterator/Iterator.h>
-#include <rpg/System.h>
+#include <rpg/system/System.h>
 
 #include <string>
 
