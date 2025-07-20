@@ -1,4 +1,10 @@
 
+Note (July 20, 2025): This describes a proposed implementation for a
+discrete bead model that could deal with branched polymers. The model
+described here was implemented, but then replaced by a model in which 
+the vertices are treated as "phantom" beads that are connected to 
+each attached block by a bond of length ds = 1/2.
+
 Model (simple bead-spring model):
 ---------------------------------
 

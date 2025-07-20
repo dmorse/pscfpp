@@ -1,0 +1,72 @@
+Proposal for Intramolecular Correlation Functions
+
+Directory:
+
+   pscf/correlation
+       class MixtureCorrelation;
+       class PolymerCorrelation;
+
+=================================================================
+class MixtureCorrelation {
+
+   MixtureCorrelation(MixtureBase const & mixture);
+
+   initialize();
+
+   clear();
+
+   PolymerCorrelation & polymer(int i);
+
+   void monomerOmega(int im, int jm, double kSq);
+
+   template <class FT>
+   void monomerOmega(int im, int jm, FT kSq, FT omega);
+
+   template <class FT>
+   void totalOmega(FT kSq, FT omega);
+
+private:
+
+   // Array of Polymer correlation objects
+   DArray<PolymerCorrelation> polymers_;
+
+   // Lists of blocks indexed by monomer type
+   DArray< GArray< Pair<int> > > blocks_;
+
+   // Lists of solvents indexed by monomer type
+   DArray< GArray< solvent > blocks_;
+
+};
+
+=================================================================
+class PolymerCorrelation {
+
+   PolymerCorrelation(PolymerSpecies& Polymer);
+
+   void initialize();
+   void clear();
+
+   double rSq(int ib, int jb);
+
+   double bSq(int ib);
+
+   double blockOmega(int ib, int jb, double kSq);
+
+   template <class FT>
+   void blockOmega(int i, int j, FT kSq, FT omega);
+
+private:
+
+   // Array of matrices of values Rsq_
+   DMatrix<double> rSq_;
+
+   // Array of values of square statistical segment lengths
+   DArray<double> bSq_;
+
+   // Pointer to associated polymer
+   PolymerPointer* polymerPtr_;
+
+   // True if rSq_ and bSq_ are up to date
+   bool isInitialized_;
+
+};
