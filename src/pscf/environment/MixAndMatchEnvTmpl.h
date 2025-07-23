@@ -1,5 +1,5 @@
-#ifndef PSCF_MIX_AND_MATCH_ENV_H
-#define PSCF_MIX_AND_MATCH_ENV_H
+#ifndef PSCF_MIX_AND_MATCH_ENV_TMPL_H
+#define PSCF_MIX_AND_MATCH_ENV_TMPL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,40 +8,55 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldGenerator.h"
-#include "Environment.h"
+#include <util/param/ParamComposite.h>    // base class of parent Env
+#include <pscf/sweep/ParameterModifier.h> // base class of parent Env
 #include <string>
+#include <iostream>
 
 namespace Pscf {
 
    using namespace Util;
 
    /**
-   * Environment that can mix and match mask and external field generators.
+   * Template class for Environments that mix and match field generators.
    * 
    * An Environment in PSCF is an object that generates a mask and/or a 
    * set of external fields to impose upon the calculation. In some cases,
    * one may wish to design multiple types of Environment subclasses that
    * generate the same mask but different external fields, or vice versa.
-   * The MixAndMatchEnv class is designed to allow for such cases without
-   * the need for extensive duplicate code. In a MixAndMatchEnv object, the 
-   * mask generation and external field generation are handled by separate 
-   * FieldGenerator objects, which are owned by the MixAndMatchEnv object. 
-   * This way, multiple subclasses of MixAndMatchEnv can use the same 
+   * This class is designed to allow for such cases without the need for 
+   * extensive duplicate code. In a MixAndMatchEnvTmpl object, the mask
+   * generation and external field generation are handled by separate 
+   * FieldGenerator objects, which are owned by the MixAndMatchEnvTmpl. 
+   * This way, multiple subclasses of MixAndMatchEnvTmpl can use the same 
    * FieldGenerator for their masks or external fields, a "mix-and-match" 
    * approach.
    * 
-   * Subclasses of MixAndMatchEnv should have names that correspond to
-   * the type of Environment they generate (e.g., "FilmEnvironment" for
-   * thin-film systems). The only method that needs to be implemented by 
-   * subclasses is createGenerators, which should dynamically allocate 
-   * the types of FieldGenerator objects needed by that Environment and 
-   * store pointers to them. Otherwise, all behavior is defined in this
-   * parent class.
+   * This class has two template parameters, Env and FG, both of which
+   * are class types. Env is the parent Environment class type, which 
+   * may be EnvironmentBase or a subclass of EnvironmentBase. Similarly, 
+   * FG is the class type for the FieldGenerator objects, which may be 
+   * FieldGeneratorBase or a subclass of FieldGeneratorBase. This template
+   * structure allows for this class to be paired with a namespace-specific 
+   * Environment base class, rather than the more generic EnvironmentBase,
+   * in cases where the Environment must assume namespace-specific 
+   * functionality that is not defined in EnvironmentBase. In such cases, 
+   * it may also be necessary to use a namespace-specific FieldGenerator 
+   * base class that defines additional methods to accommodate the 
+   * Environment class's namespace-specific functionality. 
+   * 
+   * Fully defined subclasses of MixAndMatchEnvTmpl should have names that 
+   * correspond to the type of Environment they generate (e.g., 
+   * "FilmEnvironment" for thin-film systems). The only method that needs 
+   * to be implemented by subclasses is createGenerators, which should 
+   * dynamically allocate the types of FieldGenerator objects needed by 
+   * that Environment and store pointers to them. Otherwise, all behavior 
+   * is defined in this parent class.
    * 
    * \ingroup Pscf_Environment_Module
    */
-   class MixAndMatchEnv : public Environment
+   template <class Env, class FG>
+   class MixAndMatchEnvTmpl : public Env
    {
 
    public:
@@ -49,12 +64,12 @@ namespace Pscf {
       /**
       * Constructor.
       */
-      MixAndMatchEnv();
+      MixAndMatchEnvTmpl();
 
       /**
       * Destructor.
       */
-      ~MixAndMatchEnv();
+      ~MixAndMatchEnvTmpl();
       
       /**
       * Read parameters from input stream.
@@ -69,43 +84,14 @@ namespace Pscf {
       void generate();
 
       /**
-      * Return the Environment's contribution to the stress.
-      * 
-      * The value returned is the sum of the stress contributions from
-      * the two FieldGenerator objects owned by this object. 
-      * 
-      * \param paramId  index of the lattice parameter with this stress
-      */
-      double stress(int paramId) const;
-
-      /**
-      * Modify stress to minimize a property other than fHelmholtz. 
-      * 
-      * The property that should be minimized will vary depending on the
-      * type of Environment. In cases where fHelmholtz is the desired 
-      * property to be minimized, this method returns the stress that
-      * it was provided, without modification. 
-      * 
-      * By default, this method calls fieldGenerator1().modifyStress(), 
-      * then passes the result into fieldGenerator2().modifyStress(), 
-      * and returns the result. However, the method is virtual so that
-      * a subclass may define an alternative approach to modifying the
-      * stress if needed.
-      * 
-      * \param stress  unmodified stress value
-      * \param paramId  index of the lattice parameter with this stress
-      */
-      virtual double modifyStress(int paramId, double stress) const;
-
-      /**
       * Get the first FieldGenerator by const reference.
       */
-      FieldGenerator const & fieldGenerator1() const;
+      FG const & fieldGenerator1() const;
 
       /**
       * Get the second FieldGenerator (if any) by const reference.
       */
-      FieldGenerator const & fieldGenerator2() const;
+      FG const & fieldGenerator2() const;
 
       /**
       * Does a second FieldGenerator exist?
@@ -138,13 +124,17 @@ namespace Pscf {
       double getParameter(std::string name, DArray<int> ids, bool& success)
       const;
 
-      using Environment::reset;
+      using Env::reset;
+      using Env::needsUpdate;
       using ParameterModifier::setParameter; // overloaded method
       using ParameterModifier::getParameter; // overloaded method
+      using ParamComposite::setClassName;
+      using ParamComposite::addParamComposite;
 
    protected:
 
-      using Environment::needsUpdate_;
+      using Env::setNeedsUpdateFalse;
+      using Env::setGenerateBools;
 
       /**
       * Create FieldGenerator objects for mask and/or external field.
@@ -154,7 +144,7 @@ namespace Pscf {
       * allocated FieldGenerator objects (created with "new" command). 
       * The actual class of each of these objects will be a subclass of 
       * FieldGenerator, the type of which will vary in each subclass of
-      * MixAndMatchEnv.
+      * MixAndMatchEnvTmpl.
       * 
       * If only fieldGenPtr1_ is assigned, then it can be either type of 
       * FieldGenerator (Mask or External). If both fieldGenPtr1_
@@ -171,7 +161,7 @@ namespace Pscf {
       * 
       * This FieldGenerator may generate a mask or a set of external fields.
       */
-      FieldGenerator* fieldGenPtr1_;
+      FG* fieldGenPtr1_;
 
       /**
       * Pointer to the second FieldGenerator object (optional).
@@ -180,9 +170,10 @@ namespace Pscf {
       * fieldGenPtr2_ points to an object that generates a set of external
       * fields, and vice versa. 
       */
-      FieldGenerator* fieldGenPtr2_;
+      FG* fieldGenPtr2_;
 
    };
 
 }
+#include "MixAndMatchEnvTmpl.tpp"
 #endif

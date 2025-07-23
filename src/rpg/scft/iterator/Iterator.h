@@ -9,9 +9,11 @@
 */
 
 #include <rpg/scft/sweep/Sweep.h>
+#include <prdc/environment/Environment.h>
 #include <pscf/cuda/DeviceArray.h>
 #include <util/param/ParamComposite.h>    // base class
-#include <util/global.h>                  
+#include <util/containers/FSArray.h>
+#include <util/global.h>
 
 namespace Pscf {
 namespace Rpg
@@ -99,6 +101,16 @@ namespace Rpg
       * \param flexParams input boolean array
       */ 
       void setFlexibleParams(FSArray<bool,6> const & flexParams);
+
+      /**
+      * Return the stress used by this Iterator, for one lattice parameter.
+      * 
+      * Will throw an error if paramId corresponds to a lattice parameter
+      * that is not flexible (according to the flexibleParams array).
+      * 
+      * \param paramId  index of lattice parameter
+      */ 
+      virtual double stress(int paramId) const;
 
    protected:
 
@@ -193,6 +205,20 @@ namespace Rpg
          isFlexible_ = false;
       } else {
          isFlexible_ = true;
+      }
+   }
+
+   // Return the stress used by this Iterator, for one lattice parameter.
+   template <int D>
+   double Iterator<D>::stress(int paramId) const
+   {
+      // Parameter must be flexible to access the stress
+      UTIL_CHECK(flexibleParams_[paramId]);
+
+      if (system().hasEnvironment()) {
+         return system().environment().stress(paramId);
+      } else {
+         return system().mixture().stress(paramId);
       }
    }
 

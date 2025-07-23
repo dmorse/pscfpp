@@ -267,11 +267,14 @@ namespace Prdc {
    template <int D, class PT, class ST>
    void MixtureReal<D,PT,ST>::computeStress(double phiTot)
    {
+      UTIL_CHECK(nParam_ > 0);
+      
       int i, j;
 
       // Initialize all stress components to zero
-      for (i = 0; i < 6; ++i) {
-         stress_[i] = 0.0;
+      stress_.clear();
+      for (i = 0; i < nParam_; ++i) {
+         stress_.append(0.0);
       }
 
       if (nPolymer() > 0) {
@@ -511,6 +514,25 @@ namespace Prdc {
             }
          }
       }
+   }
+
+   /*
+   * Write stress to output stream.
+   */
+   template <int D, class PT, class ST>
+   void MixtureReal<D,PT,ST>::writeStress(std::ostream& out) const
+   {
+      UTIL_CHECK(hasStress_);
+
+      out << "stress:" << std::endl;
+
+      for (int i = 0; i < nParam_; i++) {
+         out << Int(i, 5)
+            << "  "
+            << Dbl(stress_[i], 18, 11)
+            << std::endl;
+      }
+      out << std::endl;
    }
 
 } // namespace Prdc

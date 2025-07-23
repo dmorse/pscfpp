@@ -10,8 +10,7 @@
 
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldComparison.h>
-
-#include <pscf/environment/FieldGenerator.h>
+#include <prdc/environment/FieldGenerator.h>
 
 #include <fstream>
 

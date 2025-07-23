@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/environment/FieldGenerator.h>  // Base class
+#include <prdc/environment/FieldGenerator.h>  // Base class
 #include <pscf/math/RealVec.h>                // member
 #include <util/containers/DArray.h>           // member
 

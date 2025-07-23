@@ -10,8 +10,7 @@
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>
-
-#include <pscf/environment/FieldGenerator.h>
+#include <prdc/environment/FieldGenerator.h>
 
 #include <util/misc/Exception.h>
 

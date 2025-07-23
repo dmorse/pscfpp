@@ -9,8 +9,7 @@
 #include <rpc/environment/FilmEnvironment.h>
 
 #include <prdc/crystal/BFieldComparison.h>
-
-#include <pscf/environment/FieldGenerator.h>
+#include <prdc/environment/FieldGenerator.h>
 
 #include <fstream>
 

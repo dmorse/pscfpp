@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/environment/Environment.h>
+#include <prdc/environment/Environment.h>
 #include <util/param/Factory.h>  
 
 #include <string>
@@ -19,6 +19,7 @@ namespace Rpg {
    template <int D> class System;
 
    using namespace Util;
+   using namespace Pscf::Prdc;
 
    /**
    * Factory for subclasses of Environment.

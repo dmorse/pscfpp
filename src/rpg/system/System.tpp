@@ -27,8 +27,8 @@
 #include <prdc/cuda/RFieldDft.h>
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
+#include <prdc/environment/Environment.h>
 
-#include <pscf/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 
@@ -77,8 +77,7 @@ namespace Rpg {
       polymerModel_(PolymerModel::Thread),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
-      hasMixture_(false),
-      hasStress_(false)
+      hasMixture_(false)
    {
       setClassName("System");  // Set block label in parameter file
       BracketPolicy::set(BracketPolicy::Optional);
@@ -351,6 +350,9 @@ namespace Rpg {
       if (!environmentPtr_ && ParamComponent::echo()) {
          Log::file() << indent() << "  Environment{ [absent] }\n";
       }
+      if (environmentPtr_) {
+         environment().setNParams(domain_.unitCell().nParameter());
+      }
 
       // Optionally construct an Iterator object
       if (!isEnd) {
@@ -438,7 +440,6 @@ namespace Rpg {
             UTIL_CHECK(isAllocatedBasis_);
             UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!scft().hasData());
-            UTIL_CHECK(!hasStress_);
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
@@ -447,7 +448,6 @@ namespace Rpg {
             UTIL_CHECK(!domain_.waveList().hasKSq());
             UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!scft().hasData());
-            UTIL_CHECK(!hasStress_);
          } else
          if (command == "ESTIMATE_W_BASIS") {
             readEcho(in, inFileName);
@@ -520,9 +520,15 @@ namespace Rpg {
          if (command == "WRITE_STRESS") {
             readEcho(in, filename);
             std::ofstream file;
+            if (!mixture().hasStress()) {
+               computeStress();
+            }
             fileMaster_.openOutputFile(filename, file,
                                        std::ios_base::app);
-            writeStress(file);
+            mixture().writeStress(file);
+            if (hasEnvironment()) {
+               environment().writeStress(file);
+            }
             file.close();
          } else
          if (command == "WRITE_W_BASIS") {
@@ -910,7 +916,6 @@ namespace Rpg {
       mixture_.setIsSymmetric(w_.isSymmetric());
       c_.setHasData(true);
       scft().clear();
-      hasStress_ = false;
 
       // If w fields are symmetric, compute basis components for c fields
       if (w_.isSymmetric()) {
@@ -960,10 +965,13 @@ namespace Rpg {
          scft().compute();
          scft().write(Log::file());
          if (!iterator().isFlexible()) {
-            if (!mixture_.hasStress()) {
-               mixture_.computeStress(mask().phiTot());
+            if (!mixture().hasStress()) {
+               computeStress();
             }
-            writeStress(Log::file());
+            mixture().writeStress(Log::file());
+            if (hasEnvironment()) {
+               environment().writeStress(Log::file());
+            }
          }
       }
 
@@ -1013,37 +1021,19 @@ namespace Rpg {
    template <int D>
    void System<D>::computeStress()
    {
-      if (hasStress_) return;
-
-      stress_.clear();
-
       // Compute and store stress contribution from Mixture
       if (!mixture_.hasStress()) {
          mixture_.computeStress(mask().phiTot());
       }
-      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
-         stress_.append(mixture_.stress(i));
-      }
 
       if (hasEnvironment()) {
-         UTIL_CHECK(!environment().needsUpdate());
-         for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
-            if (iterator().flexibleParams()[i]) {
-               // Add stress contributions from Environment
-               stress_[i] += environment().stress(i);
-
-               // Allow Environment to modify stress contributions to
-               // minimize something other than fHelmholtz if desired
-               stress_[i] = environment().modifyStress(i,stress_[i]);
-            }
+         if (!environment().hasStress()) {
+            environment().computeStress(mixture(), iterator().flexibleParams());
          }
       }
-
-      hasStress_ = true;
    }
 
-
-
+   // Property Output
 
    /*
    * Write parameter file for SCFT, omitting any sweep block.
@@ -1062,28 +1052,6 @@ namespace Rpg {
          iterator().writeParam(out);
       }
       out << "}" << std::endl;
-   }
-
-   /*
-   * Write stress properties to file.
-   */
-   template <int D>
-   void System<D>::writeStress(std::ostream& out)
-   {
-      UTIL_CHECK(mixture_.hasStress());
-
-      out << "stress:";
-      if (hasEnvironment()) {
-         out << " (Environment contributions not included)";
-      }
-
-      for (int i = 0; i < domain_.unitCell().nParameter(); ++i) {
-         out << Int(i, 5)
-             << "  "
-             << Dbl(mixture_.stress(i), 18, 11)
-             << std::endl;
-      }
-      out << std::endl;
    }
 
    // Timer Operations
@@ -1128,7 +1096,6 @@ namespace Rpg {
    {
       c_.setHasData(false);
       scft().clear();
-      hasStress_ = false;
    }
 
    // Private member functions
