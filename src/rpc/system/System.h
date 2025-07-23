@@ -32,6 +32,7 @@ namespace Pscf {
       }
    }
    namespace Rpc {
+      template <int D> class MixtureModifier;
       template <int D> class EnvironmentFactory;
       template <int D> class ScftThermo;
       template <int D> class Iterator;
@@ -434,14 +435,14 @@ namespace Rpc {
       ///@{
 
       /**
-      * Get the Mixture (non-const reference).
-      */
-      Mixture<D>& mixture();
-
-      /**
       * Get the Mixture (const reference).
       */
       Mixture<D> const & mixture() const;
+
+      /**
+      * Get the MixtureModifier (non-const reference).
+      */
+      MixtureModifier<D>& mixtureModifier();
 
       /**
       * Get the Interaction (non-const reference).
@@ -590,6 +591,11 @@ namespace Rpc {
       // Pointers to dynamic objects owned by this System
 
       /**
+      * Pointer to MixtureModifier object (non-const interface for Mixture).
+      */
+      MixtureModifier<D>* mixtureModifierPtr_;
+
+      /**
       * Pointer to Interaction (excess free energy model).
       */
       Interaction* interactionPtr_;
@@ -717,15 +723,18 @@ namespace Rpc {
 
    // Inline member functions
 
-   // Get the Mixture by non-const reference.
-   template <int D>
-   inline Mixture<D>& System<D>::mixture()
-   {  return mixture_; }
-
    // Get the Mixture by const reference.
    template <int D>
    inline Mixture<D> const & System<D>::mixture() const
    {  return mixture_; }
+
+   // Get the MixtureModifier by non-const reference.
+   template <int D>
+   inline MixtureModifier<D>& System<D>::mixtureModifier()
+   {  
+      UTIL_ASSERT(mixtureModifierPtr_);
+      return *mixtureModifierPtr_; 
+   }
 
    // Get the Interaction (excess free energy) by non-const reference.
    template <int D>

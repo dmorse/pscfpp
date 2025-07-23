@@ -19,6 +19,7 @@
 #include <rpc/scft/iterator/IteratorFactory.h>
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/environment/EnvironmentFactory.h>
+#include <rpc/solvers/MixtureModifier.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 
@@ -64,6 +65,7 @@ namespace Rpc {
       c_(),
       h_(),
       mask_(),
+      mixtureModifierPtr_(nullptr),
       interactionPtr_(nullptr),
       environmentPtr_(nullptr),
       environmentFactoryPtr_(nullptr),
@@ -84,7 +86,17 @@ namespace Rpc {
       BracketPolicy::set(BracketPolicy::Optional);
 
 
+      // Create dynamically allocated objects owned by this System
+      mixtureModifierPtr_ = new MixtureModifier<D>();
+      interactionPtr_ = new Interaction();
+      environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
+      scftPtr_ = new ScftThermo<D>(*this);
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
+      sweepFactoryPtr_ = new SweepFactory<D>(*this);
+      simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
+
       // Create associations among class members
+      mixtureModifier().associate(mixture_);
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
       w_.setReadUnitCell(domain_.unitCell());
@@ -104,14 +116,6 @@ namespace Rpc {
       // and mask_ are read from a file, however unit cell parameters
       // from the field file header are read into a mutable workspace
       // object, tmpUnitCell_, and ignored.
-
-      // Create dynamically allocated objects owned by this System
-      interactionPtr_ = new Interaction();
-      environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
-      scftPtr_ = new ScftThermo<D>(*this);
-      iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
-      sweepFactoryPtr_ = new SweepFactory<D>(*this);
-      simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
 
       // Use of "signals" to maintain data relationships:
       // Signals are instances of Unit::Signal<void> that are used to
