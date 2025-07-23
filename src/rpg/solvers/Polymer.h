@@ -12,7 +12,7 @@
 #include <rpg/solvers/Block.h>             // base class argument
 
 //#include <prdc/cuda/RField.h>
-#include <util/containers/FArray.h> 
+#include <util/containers/FSArray.h> 
 
 // Forward declarations
 namespace Util {
@@ -165,7 +165,7 @@ namespace Rpg {
    private: 
 
       /// Stress contribution from this polymer species.
-      FArray<double, 6> stress_;
+      FSArray<double, 6> stress_;
      
       /// Number of unit cell parameters. 
       int nParams_;

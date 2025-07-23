@@ -157,6 +157,7 @@ namespace Prdc {
             polymer(i).clearUnitCellData();
          }
       }
+      stress_.clear();
       hasStress_ = false;
    }
 

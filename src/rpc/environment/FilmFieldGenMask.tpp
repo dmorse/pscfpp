@@ -16,7 +16,6 @@
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <pscf/math/IntVec.h>
-#include <util/containers/FArray.h>
 #include <cmath>
 
 namespace Pscf {
@@ -90,7 +89,7 @@ namespace Rpc
 
       // Create the derivative field in rgrid format
       RField<D> deriv;
-      FArray<int,3> coords;
+      IntVec<3> coords;
       int x, y, z;
       int counter = 0;
       double d, maskVal;
@@ -234,7 +233,7 @@ namespace Rpc
       rGrid.allocate(system().domain().mesh().dimensions());
       int x, y, z;
       int counter = 0;
-      FArray<int,3> coords;
+      IntVec<3> coords;
       double d, rhoW;
 
       for (x = 0; x < dim[0]; x++) {

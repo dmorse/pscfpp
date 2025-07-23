@@ -14,7 +14,6 @@
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <pscf/math/IntVec.h>
-#include <util/containers/FArray.h>
 #include <cmath>
 
 namespace Pscf {
@@ -79,7 +78,7 @@ namespace Rpc
       RField<D> maskDeriv, hDeriv;
       maskDeriv.allocate(system().domain().mesh().dimensions());
       hDeriv.allocate(system().domain().mesh().dimensions());
-      FArray<int,3> coords;
+      IntVec<3> coords;
       int x, y, z;
       int counter = 0;
       double d, maskVal;
@@ -198,7 +197,7 @@ namespace Rpc
 
       int i, x, y, z;
       int counter = 0;
-      FArray<int,3> coords;
+      IntVec<3> coords;
       double rhoW;
 
       for (i = 0; i < nm; i++) {

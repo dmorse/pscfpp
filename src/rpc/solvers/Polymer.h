@@ -10,7 +10,7 @@
 
 #include "Block.h"                       // base class template parameter
 #include <pscf/solvers/PolymerTmpl.h>    // base class template
-#include <util/containers/FArray.h>      // member template
+#include <util/containers/FSArray.h>     // member template
 
 // Forward declarations
 namespace Util {
@@ -162,7 +162,7 @@ namespace Rpc {
    private: 
 
       /// Stress contribution from this polymer species
-      FArray<double, 6> stress_;
+      FSArray<double, 6> stress_;
 
       /// Number of unit cell parameters.
       int nParam_;

@@ -11,7 +11,6 @@
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/LuSolver.h>
 #include "NanException.h"
-#include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
 #include <util/format/Int.h>
 #include <util/misc/Timer.h>

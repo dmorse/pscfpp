@@ -40,6 +40,7 @@ namespace Rpc {
       for (int j = 0; j < nBlock(); ++j) {
          block(j).clearUnitCellData();
       }
+      stress_.clear();
    }
 
    /*
@@ -99,8 +100,9 @@ namespace Rpc {
       }
 
       // Initialize all stress_ elements zero
-      for (int i = 0; i < 6; ++i) {
-        stress_[i] = 0.0;
+      stress_.clear();
+      for (int i = 0; i < nParam_; ++i) {
+        stress_.append(0.0);
       }
 
       // Sum over all block stress contributions

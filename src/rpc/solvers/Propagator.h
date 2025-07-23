@@ -11,7 +11,6 @@
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
 #include <prdc/cpu/RField.h>             // member template 
 #include <util/containers/DArray.h>      // member template
-#include <util/containers/FArray.h>      // member template
 
 namespace Pscf { template <int D> class Mesh; }
 
