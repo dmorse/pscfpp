@@ -238,7 +238,7 @@ public:
       FSArray<double, 6> stress;
       int nParameter = system.domain().unitCell().nParameter();
 
-      system.mixture().computeStress();
+      system.computeStress();
       for (int i = 0; i < nParameter; ++i) {
          stress.append(system.mixture().stress(i));
       }
@@ -395,7 +395,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       TEST_ASSERT(std::fabs((s0 - 3.3354925e-01)/s0) < 1.0E-5);
 
@@ -491,7 +491,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       TEST_ASSERT(std::fabs((s0 - 3.3354725E-3)/s0) < 1.0E-4);
 
@@ -747,7 +747,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       if (verbose() > 0) {
          std::cout << "\nstress = " << Dbl(s0, 20, 12);
@@ -840,7 +840,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       double diff = std::fabs((s0 - 1.654755884391e-03)/s0);
       if (verbose() > 0) {
@@ -1048,7 +1048,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       double diff = std::fabs((s0 - 8.0561073E-2)/s0);
       if (verbose() > 0) {

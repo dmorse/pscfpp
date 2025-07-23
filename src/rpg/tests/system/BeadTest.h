@@ -65,7 +65,7 @@ public:
       initSystem(system, "in/bead/param_system_1D_N100");
       system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
-      Polymer<1> & polymer = system.mixture().polymer(0);
+      Polymer<1> const & polymer = system.mixture().polymer(0);
       double q; double lnq;
       q = polymer.q();
       lnq = log(q);

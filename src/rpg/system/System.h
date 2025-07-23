@@ -32,6 +32,7 @@ namespace Pscf {
       }
    }
    namespace Rpg {
+      template <int D> class MixtureModifier;
       template <int D> class EnvironmentFactory;
       template <int D> class ScftThermo;
       template <int D> class Iterator;
@@ -411,12 +412,12 @@ namespace Rpg {
       WFieldContainer<D> const & w() const;
 
       /**
-      * Get the external potential fields (non-const reference).
+      * Get the external potential fields (non-const).
       */
       WFieldContainer<D>& h();
 
       /**
-      * Get the external potential fields (const reference).
+      * Get the external potential fields (const).
       */
       WFieldContainer<D> const & h() const;
 
@@ -435,27 +436,27 @@ namespace Rpg {
       ///@{
 
       /**
-      * Get the Mixture by non-const reference.
-      */
-      Mixture<D>& mixture();
-
-      /**
-      * Get the Mixture by const reference.
+      * Get the Mixture (const).
       */
       Mixture<D> const & mixture() const;
 
       /**
-      * Get the Interaction (excess free energy) by non-const reference.
+      * Get the MixtureModifier (non-const).
+      */
+      MixtureModifier<D>& mixtureModifier();
+
+      /**
+      * Get the Interaction (non-const).
       */
       Interaction& interaction();
 	
       /**
-      * Get the Interaction (excess free energy) by const reference.
+      * Get the Interaction (const).
       */
       Interaction const & interaction() const;
 
       /**
-      * Get the Domain by const reference.
+      * Get the Domain (const).
       */
       Domain<D> const & domain() const;
 
@@ -465,22 +466,22 @@ namespace Rpg {
       bool hasEnvironment() const;
 
       /**
-      * Get the Environment by non-const reference.
+      * Get the Environment (non-const).
       */
       Environment& environment();
 
       /**
-      * Get the Environment by const reference.
+      * Get the Environment (const).
       */
       Environment const & environment() const;
 
       /**
-      * Get the ScftThermo object (non-const reference).
+      * Get the ScftThermo object (non-const).
       */
       ScftThermo<D>& scft();
 
       /**
-      * Get the ScftThermo object (const reference).
+      * Get the ScftThermo object (const).
       */
       ScftThermo<D> const & scft() const;
 
@@ -584,6 +585,11 @@ namespace Rpg {
       Mask<D> mask_;
 
       // Pointers to dynamic objects owned by this System
+
+      /**
+      * Pointer to MixtureModifier (non-const interface for Mixture).
+      */
+      MixtureModifier<D>* mixtureModifierPtr_;
 
       /**
       * Pointer to Interaction (excess free energy model).
@@ -713,17 +719,20 @@ namespace Rpg {
 
    // Inline member functions
 
-   // Get the Mixture by non-const reference.
-   template <int D>
-   inline Mixture<D>& System<D>::mixture()
-   {  return mixture_; }
-
-   // Get the Mixture by const reference.
+   // Get the Mixture (const).
    template <int D>
    inline Mixture<D> const & System<D>::mixture() const
    {  return mixture_; }
 
-   // Get the Interaction (excess free energy) by non-const reference.
+   // Get the MixtureModifier (non-const).
+   template <int D>
+   inline MixtureModifier<D>& System<D>::mixtureModifier()
+   {  
+      UTIL_ASSERT(mixtureModifierPtr_);
+      return *mixtureModifierPtr_; 
+   }
+
+   // Get the Interaction (non-const).
    template <int D>
    inline Interaction& System<D>::interaction()
    {
@@ -731,7 +740,7 @@ namespace Rpg {
       return *interactionPtr_;
    }
 
-   // Get the Interaction (excess free energy) by const reference.
+   // Get the Interaction (const).
    template <int D>
    inline Interaction const & System<D>::interaction() const
    {
@@ -739,7 +748,7 @@ namespace Rpg {
       return *interactionPtr_;
    }
 
-   // Get the Domain by const reference.
+   // Get the Domain (const).
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
@@ -757,7 +766,7 @@ namespace Rpg {
       return *environmentPtr_;
    }
 
-   // Get the Environment by const reference.
+   // Get the Environment (const).
    template <int D>
    inline Environment const & System<D>::environment() const
    {
@@ -773,7 +782,7 @@ namespace Rpg {
       return *scftPtr_;
    }
 
-   // Get the Scft calculator by const reference.
+   // Get the Scft calculator (const).
    template <int D>
    inline ScftThermo<D> const & System<D>::scft() const
    {
@@ -794,7 +803,7 @@ namespace Rpg {
       return *iteratorPtr_;
    }
 
-   // Get the Iterator by const reference.
+   // Get the Iterator (const).
    template <int D>
    inline Iterator<D> const & System<D>::iterator() const
    {
@@ -812,7 +821,7 @@ namespace Rpg {
    inline bool System<D>::hasSimulator() const
    {  return (simulatorPtr_); }
 
-   // Get the Simulator by non-const reference.
+   // Get the Simulator (non-const).
    template <int D>
    inline Simulator<D>& System<D>::simulator()
    {
@@ -820,50 +829,50 @@ namespace Rpg {
       return *simulatorPtr_;
    }
 
-   // Get the FileMaster by non-const reference.
+   // Get the FileMaster (non-const).
    template <int D>
    inline FileMaster& System<D>::fileMaster()
    {  return fileMaster_; }
 
-   // Get the FileMaster by const reference.
+   // Get the FileMaster (const).
    template <int D>
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
 
-   // Get the container of c fields (const reference).
+   // Get the container of c fields (const).
    template <int D>
    inline
    CFieldContainer<D> const & System<D>::c() const
    {  return c_; }
 
-   // Get the container of w fields (non-const reference).
+   // Get the container of w fields (non-const).
    template <int D>
    inline
    WFieldContainer<D>& System<D>::w()
    {  return w_; }
 
-   // Get the container of w fields (const reference).
+   // Get the container of w fields (const).
    template <int D>
    inline
    WFieldContainer<D> const & System<D>::w() const
    {  return w_; }
 
-   // Get the container of external fields (non-const reference).
+   // Get the container of external fields (non-const).
    template <int D>
    inline WFieldContainer<D>& System<D>::h()
    {  return h_; }
 
-   // Get the container of external fields (const reference).
+   // Get the container of external fields (const).
    template <int D>
    inline WFieldContainer<D> const & System<D>::h() const
    {  return h_; }
 
-   // Get the mask field (non-const reference).
+   // Get the mask field (non-const).
    template <int D>
    inline Mask<D>& System<D>::mask()
    {  return mask_; }
 
-   // Get the mask field (const reference).
+   // Get the mask field (const).
    template <int D>
    inline Mask<D> const & System<D>::mask() const
    {  return mask_; }

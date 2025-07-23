@@ -4,6 +4,7 @@ rpg_solvers_= \
      rpg/solvers/Solvent.cu \
      rpg/solvers/Polymer.cu \
      rpg/solvers/Mixture.cu \
+     rpg/solvers/MixtureModifier.cu
 
 rpg_solvers_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpg_solvers_:.cu=.o))
