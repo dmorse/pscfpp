@@ -37,7 +37,7 @@ the reference system may depend on the choice of an initial guess. The
 only difference between modes 1 and 2 is a difference in the choice of
 initial guess of composition used for this iterative solution. In mode 
 1 the initial guess is chosen so as to give a volume fraction for each
-equal to the local volume fraction for all mononers of that species at
+equal to the local volume fraction for all monomers of that species at
 the last grid point in the SCFT solution.  In mode 2, the initial guess 
 is instead chosen so as to give a composition equal to that found at the 
 first grid point. 
@@ -62,7 +62,7 @@ xmax - xmin of the calculation domain along a direction perpendicular to
 the interface, or the volume per unit interfacial area. Correspondingly, 
 the values of "Phi (ex)" and "F (ex)" reported in this case are actually 
 values of free energy per unit interfacial area, in thermal energy units, 
-while values of "delta V" for each species are excess volumes per unit 
+while values of "deltaV" for each species are excess volumes per unit 
 area.
 
 For calculations that are performed using a cylindrical coordinate system,
@@ -97,11 +97,11 @@ species:
 
    - mu        : species chemical potential
    - phi(homo) : species volume fraction in homogeneous reference system
-   - delta V   : Total excess volume of a species
+   - deltaV    : Total excess volume of a species
 
 The total excess volume associated with a species can be interpreted as 
 a spatial integral of an excess volume fraction.  In an incompressible 
-system, the sum of values of delta V for different species must add to 
+system, the sum of values of deltaV for different species must add to 
 zero. 
 
 Values of system volumes and total excess properties have the same 

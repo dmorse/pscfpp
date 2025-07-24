@@ -229,8 +229,9 @@ each command:
   </tr>
   <tr> 
     <td> \ref scft_command_1d_compare_sub "COMPARE_HOMOGENEOUS" </td>
-    <td> mode [int] </td>
-    <td> Compare solution to a homogeneous solution </td>
+    <td> mode [int], filename </td>
+    <td> Compare solution to a homogeneous solution, and write 
+         results to output file "filename". </td>
   </tr>
 </table>
 
