@@ -155,14 +155,15 @@ that command or a group of closely related commands.
     <td> Write SCFT predictions for thermodynamic data (free energy, 
          pressure, phi and mu for each species, and unit cell parameters) 
          to file filename.
-         See \ref scft_command_pc_thermo_sub "discussion"
          </td>
   </tr>
   <tr>
     <td> \ref scft_command_pc_stress_sub "WRITE_STRESS" </td>
     <td> filename [string] </td>
     <td> Write derivatives of SCFT free energy with respect to unit cell 
-         parameters.  </td>
+         parameters. If calculation contains an \ref scft_environment_page
+         "Environment" object, the environment-modified stresses are also 
+         written if they were calculated.  </td>
   </tr>
 
   <tr>
@@ -670,7 +671,7 @@ WRITE_PARAM and WRITE_THERMO with the same file name parameter.
 
 \anchor scft_command_pc_stress_sub
 <b> WRITE_STRESS </b>:
-The WRITE_THERMO command outputs a report of values of derivatives
+The WRITE_STRESS command outputs a report of values of derivatives
 of the SCFT free energy with respect to unit cell parameters. These
 derivatives should be zero to within numerical error for a converged 
 SCFT solution of a problem with a flexible unit cell, for which the
@@ -681,6 +682,18 @@ cell. Results are derivatives of the Helmholtz free energy per monomer
 parameters. These derivatives are listed the conventional order of
 the unit cell parameters for the relevant lattice type, as described 
 \ref scft_unitcell_page "here".
+
+In a system that contains an \ref scft_environment_page "Environment",
+the environment-modified stresses are also written, if they were 
+calculated. These stresses take into account the presence of a mask 
+and/or external field in the stress calculation, and may perform 
+additional modifications so that the stress can minimize a property 
+other than the Helmholtz free energy per monomer. The specific meaning 
+of an environment-modified stress depends on the type of Environment, 
+as documented \ref scft_environment_page "elsewhere".
+
+As with WRITE_THERMO, if the file passed to WRITE_STRESS already 
+exists, then the stress data will be appended to the end of this file.
 
 \section scft_command_pc_fieldout_sec Field output commands
 
