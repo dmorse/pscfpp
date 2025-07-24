@@ -32,6 +32,7 @@ namespace Pscf {
       }
    }
    namespace Rpg {
+      template <int D> class MixtureModifier;
       template <int D> class EnvironmentFactory;
       template <int D> class ScftThermo;
       template <int D> class Iterator;
@@ -59,8 +60,8 @@ namespace Rpg {
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an Interaction (list of binary interaction parameters)
    *    - a Domain (description of unit cell and discretization)
-   *    - a container of monomer chemical potential fields (w fields)
-   *    - a container of monomer concentration fields (c fields)
+   *    - a container of monomer chemical potential (w) fields
+   *    - a container of monomer concentration (c) fields
    *
    * A System may also optionally have Environment, Iterator, Sweep, and
    * Simulator (BdSimulator or McSimulator) components. Iterator and Sweep
@@ -181,50 +182,6 @@ namespace Rpg {
       void readCommands();
 
       ///@}
-      /// \name Unit Cell Modifiers
-      ///@{
-
-      /**
-      * Set parameters of the associated unit cell.
-      *
-      * The lattice (i.e., lattice system type) set in the UnitCell<D>
-      * unitCell input parameter must agree with any lattice enum value
-      * that was set previously in the parameter file.
-      *
-      * If a space group has been set but a basis has not yet been
-      * initialized, then this and the other setUnitCell member function
-      * will initialize a symmetry-adapted basis as a side effect.
-      *
-      * \param unitCell  new UnitCell<D> (with new parameters)
-      */
-      void setUnitCell(UnitCell<D> const & unitCell);
-
-      /**
-      * Set parameters of the associated unit cell.
-      *
-      * The lattice type must have been set before this function is
-      * called. The logical size of the FSArray<double, 6> "parameters"
-      * array must match the expected number of parameters for the
-      * current lattice type.
-      *
-      * See documentation of setUnitCell(UnitCell<D> const &) regarding
-      * possible construction of a basis as a side effect.
-      *
-      * \param parameters  array of new unit cell parameters
-      */
-      void setUnitCell(FSArray<double, 6> const & parameters);
-
-      /**
-      * Notify System members that unit cell parameters have been modified.
-      *
-      * This function should be called whenever the unit cell parameters
-      * are modified. It calls functions mixture().clearUnitCellData(),
-      * domain().wavelist().clearUnitCellData(), clearCFields(), and,
-      * if an Environment exists, environment().reset().
-      */
-      void clearUnitCellData();
-
-      ///@}
       /// \name Field Theory Computations
       ///@{
 
@@ -280,7 +237,7 @@ namespace Rpg {
       * \pre w().hasData() == true
       * \pre w().isSymmetric() == true if the iterator is symmetric
       * \post c().hasData() == true
-      * \post scft().hadData() == true upon successful convergence
+      * \post scft().hasData() == true upon successful convergence
       *
       * \return returns 0 for successful convergence, 1 for failure
       *
@@ -297,7 +254,7 @@ namespace Rpg {
       * is determined by implementation of a subclass of Sweep and the
       * parameters passed to the sweep object in the parameter file.
       *
-      * \pre Function hasSweep() must return true
+      * \pre hasSweep() == true
       * \pre All preconditions of the iterate() function must be satisfied
       */
       void sweep();
@@ -312,8 +269,8 @@ namespace Rpg {
       * attempted MC moves to be performed is given by the parameter
       * "nStep".
       *
-      * \pre Function hasSimulator() must return true
-      * \pre Function w().hasData() must return true
+      * \pre Function hasSimulator() == true
+      * \pre Function w().hasData() == true
       *
       * \param nStep  number of simulation (BD or MC) steps
       */
@@ -332,59 +289,85 @@ namespace Rpg {
       void clearCFields();
 
       ///@}
-      /// \name Property Output
+      /// \name Unit Cell Modifiers
       ///@{
 
       /**
-      * Write partial parameter file to an ostream.
+      * Set parameters of the associated unit cell.
       *
-      * This function writes the Mixture, Interaction, and Domain blocks
-      * of a parameter file, as well as any Environment and Iterator block,
-      * but omits any Sweep or Simulator blocks. It is used to produce an
-      * output during an SCFT sweep that only refers to parameters relevant
-      * to a single state point, in a form that could be used as a
-      * parameter file for a single SCFT calculation.
+      * The lattice (i.e., lattice system type) set in the UnitCell<D>
+      * unitCell input parameter must agree with any lattice enum value
+      * that was set previously in the parameter file.
       *
-      * \param out  output stream
+      * If a space group has been set but a basis has not yet been
+      * initialized, then this and the other setUnitCell member function
+      * will initialize a symmetry-adapted basis as a side effect.
+      *
+      * \param unitCell  new UnitCell<D> (with new parameters)
       */
-      void writeParamNoSweep(std::ostream& out) const;
+      void setUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * The lattice type must have been set before this function is
+      * called. The logical size of the FSArray<double, 6> "parameters"
+      * array must match the expected number of parameters for the
+      * current lattice type.
+      *
+      * See documentation of setUnitCell(UnitCell<D> const &) regarding
+      * possible construction of a basis as a side effect.
+      *
+      * \param parameters  array of new unit cell parameters
+      */
+      void setUnitCell(FSArray<double, 6> const & parameters);
+
+      /**
+      * Notify System members that unit cell parameters have been modified.
+      *
+      * This function should be called whenever the unit cell parameters
+      * are modified. It calls functions mixture().clearUnitCellData(),
+      * domain().wavelist().clearUnitCellData(), clearCFields(), and, if
+      * an Environment exists, environment().reset().
+      */
+      void clearUnitCellData();
 
       ///@}
       /// \name Field Containers
       ///@{
 
       /**
-      * Get the monomer concentration (c) fields by const reference.
+      * Get the monomer concentration (c) fields (const).
       */
       CFieldContainer<D> const & c() const;
 
       /**
-      * Get the chemical potential (w) fields  by non-const reference.
+      * Get the chemical potential (w) fields (non-const).
       */
       WFieldContainer<D>& w();
 
       /**
-      * Get the chemical potential (w) fields by const reference.
+      * Get the chemical potential (w) fields (const).
       */
       WFieldContainer<D> const & w() const;
 
       /**
-      * Get the external potential fields (non-const reference).
+      * Get the external potential (h) fields (non-const).
       */
       WFieldContainer<D>& h();
 
       /**
-      * Get the external potential fields (const reference).
+      * Get the external potential (h) fields (const).
       */
       WFieldContainer<D> const & h() const;
 
       /**
-      * Get the mask (total density constraint) by non-const reference.
+      * Get the mask (non-const).
       */
       Mask<D>& mask();
 
       /**
-      * Get the mask by const reference.
+      * Get the mask (const).
       */
       Mask<D> const & mask() const;
 
@@ -393,27 +376,27 @@ namespace Rpg {
       ///@{
 
       /**
-      * Get the Mixture by non-const reference.
-      */
-      Mixture<D>& mixture();
-
-      /**
-      * Get the Mixture by const reference.
+      * Get the Mixture (const).
       */
       Mixture<D> const & mixture() const;
 
       /**
-      * Get the Interaction (excess free energy) by non-const reference.
+      * Get the MixtureModifier (non-const).
+      */
+      MixtureModifier<D>& mixtureModifier();
+
+      /**
+      * Get the Interaction (non-const).
       */
       Interaction& interaction();
 	
       /**
-      * Get the Interaction (excess free energy) by const reference.
+      * Get the Interaction (const).
       */
       Interaction const & interaction() const;
 
       /**
-      * Get the Domain by const reference.
+      * Get the Domain (const).
       */
       Domain<D> const & domain() const;
 
@@ -423,22 +406,22 @@ namespace Rpg {
       bool hasEnvironment() const;
 
       /**
-      * Get the Environment by non-const reference.
+      * Get the Environment (non-const).
       */
       Environment& environment();
 
       /**
-      * Get the Environment by const reference.
+      * Get the Environment (const).
       */
       Environment const & environment() const;
 
       /**
-      * Get the ScftThermo object (non-const reference).
+      * Get the ScftThermo object (non-const).
       */
       ScftThermo<D>& scft();
 
       /**
-      * Get the ScftThermo object (const reference).
+      * Get the ScftThermo object (const).
       */
       ScftThermo<D> const & scft() const;
 
@@ -448,12 +431,12 @@ namespace Rpg {
       bool hasIterator() const;
 
       /**
-      * Get the Iterator by non-const reference.
+      * Get the Iterator (non-const).
       */
       Iterator<D>& iterator();
 
       /**
-      * Get the Iterator by const reference.
+      * Get the Iterator (const).
       */
       Iterator<D> const & iterator() const;
 
@@ -468,21 +451,44 @@ namespace Rpg {
       bool hasSimulator() const;
 
       /**
-      * Get the Simulator by non-const reference.
+      * Get the Simulator (non-const).
       */
       Simulator<D>& simulator();
 
       /**
-      * Get the FileMaster by non-const reference.
+      * Get the Simulator (const).
+      */
+      Simulator<D> const & simulator() const;
+
+      /**
+      * Get the FileMaster (non-const).
       *
-      * Access by non-const reference is used in some unit tests.
+      * Access (non-const) is used in some unit tests.
       */
       FileMaster& fileMaster();
 
       /**
-      * Get the FileMaster by const reference.
+      * Get the FileMaster (const).
       */
       FileMaster const & fileMaster() const;
+
+      ///@}
+      /// \name Property Output
+      ///@{
+
+      /**
+      * Write partial parameter file to an ostream.
+      *
+      * This function writes the Mixture, Interaction, and Domain blocks
+      * of a parameter file, as well as any Environment and Iterator
+      * blocks, but omits any Sweep or Simulator blocks. The intent is
+      * to produce an output during an SCFT sweep that only refers to
+      * parameters relevant to a single state point, in a form that could
+      * be used as a parameter file for a single SCFT calculation.
+      *
+      * \param out  output stream
+      */
+      void writeParamNoSweep(std::ostream& out) const;
 
       ///@}
       /// \name Timers
@@ -544,6 +550,11 @@ namespace Rpg {
       // Pointers to dynamic objects owned by this System
 
       /**
+      * Pointer to MixtureModifier (non-const interface for Mixture).
+      */
+      MixtureModifier<D>* mixtureModifierPtr_;
+
+      /**
       * Pointer to Interaction (excess free energy model).
       */
       Interaction* interactionPtr_;
@@ -564,17 +575,17 @@ namespace Rpg {
       ScftThermo<D>* scftPtr_;
 
       /**
-      * Pointer to an iterator.
+      * Pointer to an SCFT Iterator.
       */
       Iterator<D>* iteratorPtr_;
 
       /**
-      * Pointer to an iterator factory object.
+      * Pointer to an Iterator factory object.
       */
       IteratorFactory<D>* iteratorFactoryPtr_;
 
       /**
-      * Pointer to a Sweep object.
+      * Pointer to an SCFT Sweep object.
       */
       Sweep<D>* sweepPtr_;
 
@@ -655,17 +666,20 @@ namespace Rpg {
 
    // Inline member functions
 
-   // Get the Mixture by non-const reference.
-   template <int D>
-   inline Mixture<D>& System<D>::mixture()
-   {  return mixture_; }
-
-   // Get the Mixture by const reference.
+   // Get the Mixture (const).
    template <int D>
    inline Mixture<D> const & System<D>::mixture() const
    {  return mixture_; }
 
-   // Get the Interaction (excess free energy) by non-const reference.
+   // Get the MixtureModifier (non-const).
+   template <int D>
+   inline MixtureModifier<D>& System<D>::mixtureModifier()
+   {
+      UTIL_ASSERT(mixtureModifierPtr_);
+      return *mixtureModifierPtr_;
+   }
+
+   // Get the Interaction (non-const).
    template <int D>
    inline Interaction& System<D>::interaction()
    {
@@ -673,7 +687,7 @@ namespace Rpg {
       return *interactionPtr_;
    }
 
-   // Get the Interaction (excess free energy) by const reference.
+   // Get the Interaction (const).
    template <int D>
    inline Interaction const & System<D>::interaction() const
    {
@@ -681,7 +695,7 @@ namespace Rpg {
       return *interactionPtr_;
    }
 
-   // Get the Domain by const reference.
+   // Get the Domain (const).
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    {  return domain_; }
@@ -691,7 +705,7 @@ namespace Rpg {
    inline bool System<D>::hasEnvironment() const
    {  return (environmentPtr_); }
 
-   // Get the Environment by non-const reference.
+   // Get the Environment (non-const).
    template <int D>
    inline Environment & System<D>::environment()
    {
@@ -699,7 +713,7 @@ namespace Rpg {
       return *environmentPtr_;
    }
 
-   // Get the Environment by const reference.
+   // Get the Environment (const).
    template <int D>
    inline Environment const & System<D>::environment() const
    {
@@ -707,7 +721,7 @@ namespace Rpg {
       return *environmentPtr_;
    }
 
-   // Get the Scft calculator by non-const reference.
+   // Get the Scft calculator (non-const).
    template <int D>
    inline ScftThermo<D> & System<D>::scft()
    {
@@ -715,7 +729,7 @@ namespace Rpg {
       return *scftPtr_;
    }
 
-   // Get the Scft calculator by const reference.
+   // Get the Scft calculator (const).
    template <int D>
    inline ScftThermo<D> const & System<D>::scft() const
    {
@@ -728,7 +742,7 @@ namespace Rpg {
    inline bool System<D>::hasIterator() const
    {  return (iteratorPtr_); }
 
-   // Get the Iterator by non-const reference.
+   // Get the Iterator (non-const).
    template <int D>
    inline Iterator<D>& System<D>::iterator()
    {
@@ -736,7 +750,7 @@ namespace Rpg {
       return *iteratorPtr_;
    }
 
-   // Get the Iterator by const reference.
+   // Get the Iterator (const).
    template <int D>
    inline Iterator<D> const & System<D>::iterator() const
    {
@@ -754,7 +768,7 @@ namespace Rpg {
    inline bool System<D>::hasSimulator() const
    {  return (simulatorPtr_); }
 
-   // Get the Simulator by non-const reference.
+   // Get the Simulator (non-const).
    template <int D>
    inline Simulator<D>& System<D>::simulator()
    {
@@ -762,50 +776,58 @@ namespace Rpg {
       return *simulatorPtr_;
    }
 
-   // Get the FileMaster by non-const reference.
+   // Get the Simulator (const).
+   template <int D>
+   inline Simulator<D> const & System<D>::simulator() const
+   {
+      UTIL_ASSERT(simulatorPtr_);
+      return *simulatorPtr_;
+   }
+
+   // Get the FileMaster (non-const).
    template <int D>
    inline FileMaster& System<D>::fileMaster()
    {  return fileMaster_; }
 
-   // Get the FileMaster by const reference.
+   // Get the FileMaster (const).
    template <int D>
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
 
-   // Get the container of c fields (const reference).
+   // Get the container of c fields (const).
    template <int D>
    inline
    CFieldContainer<D> const & System<D>::c() const
    {  return c_; }
 
-   // Get the container of w fields (non-const reference).
+   // Get the container of w fields (non-const).
    template <int D>
    inline
    WFieldContainer<D>& System<D>::w()
    {  return w_; }
 
-   // Get the container of w fields (const reference).
+   // Get the container of w fields (const).
    template <int D>
    inline
    WFieldContainer<D> const & System<D>::w() const
    {  return w_; }
 
-   // Get the container of external fields (non-const reference).
+   // Get the container of external fields (non-const).
    template <int D>
    inline WFieldContainer<D>& System<D>::h()
    {  return h_; }
 
-   // Get the container of external fields (const reference).
+   // Get the container of external fields (const).
    template <int D>
    inline WFieldContainer<D> const & System<D>::h() const
    {  return h_; }
 
-   // Get the mask field (non-const reference).
+   // Get the mask field (non-const).
    template <int D>
    inline Mask<D>& System<D>::mask()
    {  return mask_; }
 
-   // Get the mask field (const reference).
+   // Get the mask field (const).
    template <int D>
    inline Mask<D> const & System<D>::mask() const
    {  return mask_; }

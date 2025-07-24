@@ -65,7 +65,7 @@ public:
       initSystem(system, "in/thread/param_system_1D");
       system.w().readBasis("in/thread/omega.in");
       system.compute();
-      Polymer<1> & polymer = system.mixture().polymer(0);
+      Polymer<1> const & polymer = system.mixture().polymer(0);
       double q; double lnq;
       q = polymer.q();
       lnq = log(q);

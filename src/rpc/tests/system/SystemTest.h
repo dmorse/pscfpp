@@ -6,6 +6,10 @@
 
 #include <rpc/system/System.h>
 #include <rpc/scft/ScftThermo.h>
+#include <rpc/solvers/MixtureModifier.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Solvent.h>
 
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
@@ -237,7 +241,7 @@ public:
       FSArray<double, 6> stress;
       int nParameter = system.domain().unitCell().nParameter();
 
-      system.mixture().computeStress();
+      system.computeStress();
       for (int i = 0; i < nParameter; ++i) {
          stress.append(system.mixture().stress(i));
       }
@@ -654,7 +658,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       TEST_ASSERT(std::fabs((s0 - 3.3354925e-01)/s0) < 1.0E-5);
 
@@ -750,7 +754,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       TEST_ASSERT(std::fabs((s0 - 3.3354725E-3)/s0) < 1.0E-4);
 
@@ -920,7 +924,7 @@ public:
       for (int i = 0; i < nSolvent; ++i) {
          L = systemShift.mixture().solvent(i).size();
          newMu = systemShift.mixture().solvent(i).mu() + L*shift;
-         systemShift.mixture().solvent(i).setMu(newMu);
+         systemShift.mixtureModifier().setMuSolvent(i, newMu);
       }
       int nPolymer = systemShift.mixture().nPolymer();
       int nBlock;
@@ -931,7 +935,7 @@ public:
             L += systemShift.mixture().polymer(i).block(j).length();
          }
          newMu = systemShift.mixture().polymer(i).mu() + L*shift;
-         systemShift.mixture().polymer(i).setMu(newMu);
+         systemShift.mixtureModifier().setMuPolymer(i, newMu);
       }
 
       // Iterate systemShift
@@ -1060,7 +1064,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       TEST_ASSERT(std::fabs((s0 - 1.6546466e-01)/s0) < 1.0E-5);
 
@@ -1151,7 +1155,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       TEST_ASSERT(std::fabs((s0 - 1.654755884391e-03)/s0) < 1.0E-5);
 
@@ -1279,7 +1283,7 @@ public:
       parameters.append(a0);
       system.setUnitCell(parameters);
       system.iterate();
-      system.mixture().computeStress();
+      system.computeStress();
       double s0 = system.mixture().stress(0);
       TEST_ASSERT(std::fabs(s0 - 8.0561073E-2) < 1.0E-6);
 

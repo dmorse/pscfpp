@@ -19,6 +19,7 @@
 #include <rpc/scft/iterator/IteratorFactory.h>
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/environment/EnvironmentFactory.h>
+#include <rpc/solvers/MixtureModifier.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 
@@ -64,6 +65,7 @@ namespace Rpc {
       c_(),
       h_(),
       mask_(),
+      mixtureModifierPtr_(nullptr),
       interactionPtr_(nullptr),
       environmentPtr_(nullptr),
       environmentFactoryPtr_(nullptr),
@@ -83,7 +85,17 @@ namespace Rpc {
       BracketPolicy::set(BracketPolicy::Optional);
 
 
+      // Create dynamically allocated objects owned by this System
+      mixtureModifierPtr_ = new MixtureModifier<D>();
+      interactionPtr_ = new Interaction();
+      environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
+      scftPtr_ = new ScftThermo<D>(*this);
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
+      sweepFactoryPtr_ = new SweepFactory<D>(*this);
+      simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
+
       // Create associations among class members
+      mixtureModifier().associate(mixture_);
       domain_.setFileMaster(fileMaster_);
       w_.setFieldIo(domain_.fieldIo());
       w_.setReadUnitCell(domain_.unitCell());
@@ -103,14 +115,6 @@ namespace Rpc {
       // and mask_ are read from a file, however unit cell parameters
       // from the field file header are read into a mutable workspace
       // object, tmpUnitCell_, and ignored.
-
-      // Create dynamically allocated objects owned by this System
-      interactionPtr_ = new Interaction();
-      environmentFactoryPtr_ = new EnvironmentFactory<D>(*this);
-      scftPtr_ = new ScftThermo<D>(*this);
-      iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
-      sweepFactoryPtr_ = new SweepFactory<D>(*this);
-      simulatorFactoryPtr_ = new SimulatorFactory<D>(*this);
 
       // Use of "signals" to maintain data relationships:
       // Signals are instances of Unit::Signal<void> that are used to
@@ -793,81 +797,6 @@ namespace Rpc {
       readCommands(fileMaster_.commandFile());
    }
 
-   // Unit Cell Modifiers
-
-   /*
-   * Set the system unit cell.
-   */
-   template <int D>
-   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
-   {
-      // Preconditions
-      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain_.lattice() == unitCell.lattice());
-
-      // Set system unit cell
-      domain_.unitCell() = unitCell;
-
-      // If necessary, make basis
-      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
-         domain_.makeBasis();
-      }
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
-      if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(isAllocatedBasis_);
-      }
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-   }
-
-   /*
-   * Set parameters of the system unit cell.
-   */
-   template <int D>
-   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
-   {
-      // Precondition
-      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
-
-      // Set system unit cell
-      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
-         domain_.unitCell().set(domain_.lattice(), parameters);
-      } else {
-         domain_.unitCell().setParameters(parameters);
-      }
-
-      // If necessary, make basis
-      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
-         domain_.makeBasis();
-      }
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
-      if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(isAllocatedBasis_);
-      }
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-   }
-
-   /*
-   * Notify System members that unit cell parameters have been modified.
-   */
-   template <int D>
-   void System<D>::clearUnitCellData()
-   {
-      clearCFields();
-      mixture_.clearUnitCellData();
-      domain_.waveList().clearUnitCellData();
-      if (hasEnvironment()) {
-         environment().reset();
-      }
-   }
-
    // Primary Field Theory Computations
 
    /*
@@ -907,6 +836,24 @@ namespace Rpc {
       // Compute stress if needed
       if (needStress) {
          computeStress();
+      }
+   }
+
+   /*
+   * Compute SCFT stress for current fields.
+   */
+   template <int D>
+   void System<D>::computeStress()
+   {
+      // Compute and store stress contribution from Mixture
+      if (!mixture_.hasStress()) {
+         mixture_.computeStress(mask().phiTot());
+      }
+
+      if (hasEnvironment()) {
+         if (!environment().hasStress()) {
+            environment().computeStress(mixture(), iterator().flexibleParams());
+         }
       }
    }
 
@@ -992,23 +939,88 @@ namespace Rpc {
       simulator().simulate(nStep);
    }
 
-   // SCFT Stress
-
    /*
-   * Compute SCFT stress for current fields.
+   * Mark c-fields and free energy as outdated/invalid.
    */
    template <int D>
-   void System<D>::computeStress()
+   void System<D>::clearCFields()
    {
-      // Compute and store stress contribution from Mixture
-      if (!mixture_.hasStress()) {
-         mixture_.computeStress(mask().phiTot());
+      c_.setHasData(false);
+      scft().clear();
+   }
+
+   // Unit Cell Modifiers
+
+   /*
+   * Set the system unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      // Preconditions
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.lattice() == unitCell.lattice());
+
+      // Set system unit cell
+      domain_.unitCell() = unitCell;
+
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
       }
 
+      // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
+      if (domain_.hasGroup()) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(isAllocatedBasis_);
+      }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+   }
+
+   /*
+   * Set parameters of the system unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      // Precondition
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+
+      // Set system unit cell
+      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
+         domain_.unitCell().set(domain_.lattice(), parameters);
+      } else {
+         domain_.unitCell().setParameters(parameters);
+      }
+
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
+
+      // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
+      if (domain_.hasGroup()) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(isAllocatedBasis_);
+      }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+   }
+
+   /*
+   * Notify System members that unit cell parameters have been modified.
+   */
+   template <int D>
+   void System<D>::clearUnitCellData()
+   {
+      clearCFields();
+      mixture_.clearUnitCellData();
+      domain_.waveList().clearUnitCellData();
       if (hasEnvironment()) {
-         if (!environment().hasStress()) {
-            environment().computeStress(mixture(), iterator().flexibleParams());
-         }
+         environment().reset();
       }
    }
 
@@ -1063,18 +1075,6 @@ namespace Rpc {
       if (hasSimulator()){
          simulator().clearTimers();
       }
-   }
-
-   // Miscellaneous public functions
-
-   /*
-   * Mark c-fields and free energy as outdated/invalid.
-   */
-   template <int D>
-   void System<D>::clearCFields()
-   {
-      c_.setHasData(false);
-      scft().clear();
    }
 
    // Private member functions
