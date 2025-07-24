@@ -47,6 +47,7 @@ namespace Rpg {
       for (int j = 0; j < nBlock(); ++j) {
          block(j).clearUnitCellData();
       }
+      stress_.clear();
    }
 
    /*
@@ -106,8 +107,9 @@ namespace Rpg {
       }
 
       // Initialize all stress_ elements to zero
+      stress_.clear();
       for (int i = 0; i < nParams_; ++i) {
-        stress_[i] = 0.0;
+        stress_.append(0.0);
       }
 
       // Sum over all block stress contributions

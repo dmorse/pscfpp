@@ -280,10 +280,10 @@ namespace Prdc {
                               DArray<DArray<double> > const & fields,
                               UnitCell<D> const & unitCell) const
    {
-       std::ofstream file;
-       fileMaster().openOutputFile(filename, file);
-       writeFieldsBasis(file, fields, unitCell);
-       file.close();
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsBasis(file, fields, unitCell);
+      file.close();
    }
 
    /*

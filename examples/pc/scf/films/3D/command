@@ -10,5 +10,6 @@ WRITE_C_RGRID      out/c.rf
 WRITE_MASK_RGRID   out/mask.rf
 WRITE_PARAM        out/data
 WRITE_THERMO       out/data
+WRITE_STRESS       out/data
 FINISH
 

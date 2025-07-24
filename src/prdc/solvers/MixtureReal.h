@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/MixtureTmpl.h>     // base class template
-#include <util/containers/FArray.h>       // member template (stress_)
+#include <util/containers/FSArray.h>      // member template (stress_)
 #include <iostream>
 
 // Forward declarations
@@ -288,9 +288,9 @@ namespace Prdc {
       * Writes concentrations for all blocks of all polymers and all
       * solvent species in r-grid format. Columns associated with polymer
       * blocks appear first, followed by columns associated with solvent
-      * species. Polymer blocks are listed with blocks blocks of each 
-      * species ordered consecutively in order of block index, with groups
-      * of columns associated with polymers ordered by polymer index. 
+      * species. Polymer blocks are listed with blocks of each species
+      * ordered consecutively in order of block index, with groups of
+      * columns associated with polymers ordered by polymer index. 
       * Solvents are ordered by solvent species index.
       *
       * \param filename  name of output file
@@ -357,6 +357,17 @@ namespace Prdc {
       void writeQAll(std::string const & basename);
 
       ///@}
+      /// \name Stress Output
+      ///@{
+
+      /**
+      * Write stress values to output stream.
+      *
+      * \param out  output stream
+      */
+      void writeStress(std::ostream& out) const;
+
+      ///@}
 
       // Inherited public member functions
       using MixtureTmplT::polymer;
@@ -399,7 +410,7 @@ namespace Prdc {
       // Private member data
 
       /// Derivatives of SCFT free energy w/ respect to cell parameters.
-      FArray<double, 6> stress_;
+      FSArray<double, 6> stress_;
 
       /// Target contour length step size (only used in thread model).
       double ds_;
@@ -456,6 +467,7 @@ namespace Prdc {
    inline double MixtureReal<D,PT,ST>::stress(int parameterId) const
    {
       UTIL_CHECK(hasStress_);
+      UTIL_CHECK(parameterId < nParam_);
       return stress_[parameterId];
    }
 

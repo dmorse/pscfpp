@@ -7,13 +7,12 @@
 */
 
 #include "Sweep.h"
-#include <pscf/sweep/SweepTmpl.tpp>
 #include <rpg/system/System.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/ScftThermo.h>
-#include <pscf/environment/Environment.h>
+#include <prdc/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
-
+#include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 

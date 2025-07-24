@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/environment/FieldGenerator.h>  // Base class
 #include <prdc/crystal/UnitCell.h>            // Function parameter
-#include <pscf/environment/FieldGenerator.h>  // Base class
 #include <pscf/math/RealVec.h>                // container
 #include <iostream>
 #include <string>

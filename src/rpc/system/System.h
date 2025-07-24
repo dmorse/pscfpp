@@ -25,8 +25,8 @@ namespace Util {
 }
 namespace Pscf {
    class Interaction;
-   class Environment;
    namespace Prdc {
+      class Environment;
       namespace Cpu {
          template <int D> class RField;
       }
@@ -325,52 +325,11 @@ namespace Rpc {
       * This function should be called whenever any of the inputs to the 
       * solution of the modified diffusion equation are modified, including
       * the w fields, unit cell parameters, external fields, or mask. Upon
-      * return, c().hasData(), scft().hasData(), and hasStress() all return
-      * false. 
+      * return, c().hasData(), scft().hasData(), and mixture().hasStress() 
+      * all return false; if the system has an Environment, 
+      * environment().needsUpdate() will return true.
       */
       void clearCFields();
-
-      /// \name SCFT Stress
-      ///@{
-
-      /**
-      * Get the SCFT stress for a single lattice parameter.
-      *
-      * This function retrieves a value computed by computeStress().
-      * If computeStress() has not been called for the current set of 
-      * fields, an error will be raised. 
-      * 
-      * \param paramId  lattice parameter index
-      */
-      double stress(int paramId) const;
-
-      /**
-      * Write SCFT stress to a file.
-      *
-      * This function outputs derivatives of SCFT free energy w/ respect
-      * to each unit cell parameter.
-      *
-      * If parameter "out" is a file that already exists, this function
-      * will append to the end of that file, rather than overwriting it.
-      * The log output created by an Iterator upon convergence should call
-      * writeStress after writeThermo if and only if the iterator is not
-      * flexible.
-      * 
-      * If an Environment is present in the system, it will, in general,
-      * contribute to the stress. However, the stress values written by 
-      * this method do not take the Environment into account, and only 
-      * represent contributions from the Mixture (terms which are the 
-      * functional derivatives of ln(Q) with respect to each lattice 
-      * parameter). 
-      *
-      * \param out  output stream
-      */
-      void writeStress(std::ostream& out);
-
-      /**
-      * Has the SCFT stress been computed for the current w fields?
-      */
-      bool hasStress() const;
 
       ///@}
       /// \name Property Output
@@ -640,13 +599,6 @@ namespace Rpc {
       SimulatorFactory<D>* simulatorFactoryPtr_;
 
       /**
-      * Array of stress values for this set of w fields.
-      *
-      * The array contains one value per lattice parameter.
-      */
-      FSArray<double, 6> stress_;
-
-      /**
       * Polymer model enumeration (thread or bead), read from file.
       */
       PolymerModel::Type polymerModel_;
@@ -667,15 +619,6 @@ namespace Rpc {
       * Has the mixture been initialized?
       */
       bool hasMixture_;
-
-      /**
-      * Has SCFT stress been computed for the current w and c fields?
-      *
-      * This is set true in the computeStress function, and is set false
-      * false whenever the system w fields, mask or external fields, or
-      * system unit cell parameters are modified.
-      */
-      bool hasStress_;
 
       // Mutable work space
 
@@ -879,19 +822,6 @@ namespace Rpc {
    template <int D>
    inline Mask<D> const & System<D>::mask() const
    {  return mask_; }
-
-   // Get the precomputed stress for one lattice parameter.
-   template <int D>
-   inline double System<D>::stress(int paramId) const
-   {
-      UTIL_CHECK(hasStress_);
-      return stress_[paramId];
-   }
-
-   // Has the stress been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasStress() const
-   {  return hasStress_; }
 
    #ifndef RPC_SYSTEM_TPP
    // Suppress implicit instantiation

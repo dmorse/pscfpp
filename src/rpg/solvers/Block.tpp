@@ -395,6 +395,7 @@ namespace Rpg {
       UTIL_CHECK(unitCellPtr_);
       UTIL_CHECK(nParams_ == unitCell().nParameter());
       hasExpKsq_ = false;
+      stress_.clear();
    }
 
    /*

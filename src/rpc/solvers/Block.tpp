@@ -22,7 +22,6 @@
 
 #include <util/containers/DMatrix.h>
 #include <util/containers/DArray.h>
-#include <util/containers/FArray.h>
 #include <util/containers/FSArray.h>
 
 namespace Pscf {
@@ -192,7 +191,10 @@ namespace Rpc {
    */
    template <int D>
    void Block<D>::clearUnitCellData()
-   {  hasExpKsq_ = false; }
+   {  
+      hasExpKsq_ = false;
+      stress_.clear();
+   }
 
    /*
    * Compute all elements of expKsq_ and expKsq2_ arrays

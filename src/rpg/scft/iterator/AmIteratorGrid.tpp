@@ -309,15 +309,14 @@ namespace Rpg {
 
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
-         UTIL_CHECK(system().hasStress());
          const int nParam = system().domain().unitCell().nParameter();
          HostDArray<cudaReal> stressH(nFlexibleParams());
 
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               double stress = system().stress(i);
-               stressH[counter] = -1 * scaleStress_ * stress;
+               double str = system().stress(i);
+               stressH[counter] = -1 * scaleStress_ * str;
                counter++;
             }
          }
@@ -421,12 +420,12 @@ namespace Rpg {
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               double stress = tempH[counter] / (-1.0 * scaleStress_);
+               double str = tempH[counter] / (-1.0 * scaleStress_);
                Log::file() 
                    << " Cell Param  " << i << " = "
                    << Dbl(system().domain().unitCell().parameters()[i], 15)
                    << " , stress = " 
-                   << Dbl(stress, 15)
+                   << Dbl(str, 15)
                    << "\n";
                counter++;
             }

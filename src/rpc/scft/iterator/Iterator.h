@@ -8,10 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rpc/scft/sweep/Sweep.h>
+#include <prdc/environment/Environment.h>
 #include <util/param/ParamComposite.h>    // base class
 #include <util/containers/FSArray.h>
-#include <util/global.h>         
-#include <rpc/scft/sweep/Sweep.h>
+#include <util/global.h>
 
 namespace Pscf {
 namespace Rpc
@@ -101,6 +102,16 @@ namespace Rpc
       */ 
       void setFlexibleParams(FSArray<bool,6> const & flexParams);
 
+      /**
+      * Return the stress used by this Iterator, for one lattice parameter.
+      * 
+      * Will throw an error if paramId corresponds to a lattice parameter
+      * that is not flexible (according to the flexibleParams array).
+      * 
+      * \param paramId  index of lattice parameter
+      */ 
+      virtual double stress(int paramId) const;
+
    protected:
 
       /**
@@ -188,6 +199,20 @@ namespace Rpc
          isFlexible_ = false;
       } else {
          isFlexible_ = true;
+      }
+   }
+
+   // Return the stress used by this Iterator, for one lattice parameter.
+   template <int D>
+   double Iterator<D>::stress(int paramId) const
+   {
+      // Parameter must be flexible to access the stress
+      UTIL_CHECK(flexibleParams_[paramId]);
+
+      if (system().hasEnvironment()) {
+         return system().environment().stress(paramId);
+      } else {
+         return system().mixture().stress(paramId);
       }
    }
 

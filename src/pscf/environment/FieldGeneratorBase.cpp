@@ -5,23 +5,23 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldGenerator.h"
+#include "FieldGeneratorBase.h"
 
 namespace Pscf
 {
    
    // Constructor
-   FieldGenerator::FieldGenerator()
+   FieldGeneratorBase::FieldGeneratorBase()
     : type_(None),
       isDependent_(false)
    {}
 
    // Destructor
-   FieldGenerator::~FieldGenerator()
+   FieldGeneratorBase::~FieldGeneratorBase()
    {}
 
    // Checks if fields need to be (re)generated. If so, generates them. 
-   void FieldGenerator::generate()
+   void FieldGeneratorBase::generate()
    {
       if (needsUpdate()) {
          checkCompatibility();

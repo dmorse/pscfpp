@@ -11,7 +11,7 @@
 #include "FilmFieldGenMask.h"
 #include "FilmFieldGenExt.h"
 #include <rpg/scft/iterator/Iterator.h>
-#include <pscf/environment/MixAndMatchEnv.h>
+#include <prdc/environment/MixAndMatchEnv.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -40,11 +40,7 @@ namespace Rpg {
       FilmEnvironment(System<D>& sys)
        : MixAndMatchEnv::MixAndMatchEnv(),
          sysPtr_(&sys)
-      {  
-         ParamComposite::setClassName("FilmEnvironment");
-         Environment::generatesMask_ = true;
-         Environment::generatesExternalFields_ = true;
-      }
+      {  ParamComposite::setClassName("FilmEnvironment"); }
 
       /**
       * Destructor

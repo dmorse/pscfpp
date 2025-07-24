@@ -68,6 +68,7 @@ namespace Rpg
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
       using Iterator<D>::nFlexibleParams;
+      using Iterator<D>::stress;
 
    protected:
 
