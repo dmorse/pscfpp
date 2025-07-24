@@ -60,8 +60,8 @@ namespace Rpg {
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an Interaction (list of binary interaction parameters)
    *    - a Domain (description of unit cell and discretization)
-   *    - a container of monomer chemical potential fields (w fields)
-   *    - a container of monomer concentration fields (c fields)
+   *    - a container of monomer chemical potential (w) fields
+   *    - a container of monomer concentration (c) fields
    *
    * A System may also optionally have Environment, Iterator, Sweep, and
    * Simulator (BdSimulator or McSimulator) components. Iterator and Sweep
@@ -220,8 +220,8 @@ namespace Rpg {
       *
       * This function should be called whenever the unit cell parameters
       * are modified. It calls functions mixture().clearUnitCellData(),
-      * domain().wavelist().clearUnitCellData(), clearCFields(), and,
-      * if an Environment exists, environment().reset().
+      * domain().wavelist().clearUnitCellData(), clearCFields(), and, if
+      * an Environment exists, environment().reset().
       */
       void clearUnitCellData();
 
@@ -281,7 +281,7 @@ namespace Rpg {
       * \pre w().hasData() == true
       * \pre w().isSymmetric() == true if the iterator is symmetric
       * \post c().hasData() == true
-      * \post scft().hadData() == true upon successful convergence
+      * \post scft().hasData() == true upon successful convergence
       *
       * \return returns 0 for successful convergence, 1 for failure
       *
@@ -298,7 +298,7 @@ namespace Rpg {
       * is determined by implementation of a subclass of Sweep and the
       * parameters passed to the sweep object in the parameter file.
       *
-      * \pre Function hasSweep() must return true
+      * \pre hasSweep() == true
       * \pre All preconditions of the iterate() function must be satisfied
       */
       void sweep();
@@ -313,8 +313,8 @@ namespace Rpg {
       * attempted MC moves to be performed is given by the parameter
       * "nStep".
       *
-      * \pre Function hasSimulator() must return true
-      * \pre Function w().hasData() must return true
+      * \pre Function hasSimulator() == true
+      * \pre Function w().hasData() == true
       *
       * \param nStep  number of simulation (BD or MC) steps
       */
@@ -325,8 +325,8 @@ namespace Rpg {
       *
       * This function should be called whenever any of the inputs to the
       * solution of the modified diffusion equation are modified, including
-      * the w fields, unit cell parameters, external fields or mask. Upon
-      * return, hasCfields(), scft().hasData(), and hasStress() all return
+      * the w fields, unit cell parameters, external fields, or mask. Upon
+      * return, c().hasData(), scft().hasData(), and hasStress() all return
       * false.
       */
       void clearCFields();
@@ -336,7 +336,7 @@ namespace Rpg {
       ///@{
 
       /**
-      * Get the stress for a single lattice parameter.
+      * Get the SCFT stress for a single lattice parameter.
       *
       * This function retrieves a value computed by computeStress().
       * If computeStress() has not been called for the current set of
@@ -382,11 +382,11 @@ namespace Rpg {
       * Write partial parameter file to an ostream.
       *
       * This function writes the Mixture, Interaction, and Domain blocks
-      * of a parameter file, as well as any Environment and Iterator block,
-      * but omits any Sweep or Simulator blocks. It is used to produce an
-      * output during an SCFT sweep that only refers to parameters relevant
-      * to a single state point, in a form that could be used as a
-      * parameter file for a single SCFT calculation.
+      * of a parameter file, as well as any Environment and Iterator
+      * blocks, but omits any Sweep or Simulator blocks. The intent is
+      * to produce an output during an SCFT sweep that only refers to
+      * parameters relevant to a single state point, in a form that could
+      * be used as a parameter file for a single SCFT calculation.
       *
       * \param out  output stream
       */
@@ -397,37 +397,37 @@ namespace Rpg {
       ///@{
 
       /**
-      * Get the monomer concentration (c) fields by const reference.
+      * Get the monomer concentration (c) fields (const).
       */
       CFieldContainer<D> const & c() const;
 
       /**
-      * Get the chemical potential (w) fields  by non-const reference.
+      * Get the chemical potential (w) fields (non-const).
       */
       WFieldContainer<D>& w();
 
       /**
-      * Get the chemical potential (w) fields by const reference.
+      * Get the chemical potential (w) fields (const).
       */
       WFieldContainer<D> const & w() const;
 
       /**
-      * Get the external potential fields (non-const).
+      * Get the external potential (h) fields (non-const).
       */
       WFieldContainer<D>& h();
 
       /**
-      * Get the external potential fields (const).
+      * Get the external potential (h) fields (const).
       */
       WFieldContainer<D> const & h() const;
 
       /**
-      * Get the mask (total density constraint) by non-const reference.
+      * Get the mask (non-const).
       */
       Mask<D>& mask();
 
       /**
-      * Get the mask by const reference.
+      * Get the mask (const).
       */
       Mask<D> const & mask() const;
 
@@ -491,12 +491,12 @@ namespace Rpg {
       bool hasIterator() const;
 
       /**
-      * Get the Iterator by non-const reference.
+      * Get the Iterator (non-const).
       */
       Iterator<D>& iterator();
 
       /**
-      * Get the Iterator by const reference.
+      * Get the Iterator (const).
       */
       Iterator<D> const & iterator() const;
 
@@ -511,19 +511,24 @@ namespace Rpg {
       bool hasSimulator() const;
 
       /**
-      * Get the Simulator by non-const reference.
+      * Get the Simulator (non-const).
       */
       Simulator<D>& simulator();
 
       /**
-      * Get the FileMaster by non-const reference.
+      * Get the Simulator (const).
+      */
+      Simulator<D> const & simulator() const;
+
+      /**
+      * Get the FileMaster (non-const).
       *
-      * Access by non-const reference is used in some unit tests.
+      * Access (non-const) is used in some unit tests.
       */
       FileMaster& fileMaster();
 
       /**
-      * Get the FileMaster by const reference.
+      * Get the FileMaster (const).
       */
       FileMaster const & fileMaster() const;
 
@@ -612,17 +617,17 @@ namespace Rpg {
       ScftThermo<D>* scftPtr_;
 
       /**
-      * Pointer to an iterator.
+      * Pointer to an SCFT Iterator.
       */
       Iterator<D>* iteratorPtr_;
 
       /**
-      * Pointer to an iterator factory object.
+      * Pointer to an Iterator factory object.
       */
       IteratorFactory<D>* iteratorFactoryPtr_;
 
       /**
-      * Pointer to a Sweep object.
+      * Pointer to an SCFT Sweep object.
       */
       Sweep<D>* sweepPtr_;
 
@@ -727,9 +732,9 @@ namespace Rpg {
    // Get the MixtureModifier (non-const).
    template <int D>
    inline MixtureModifier<D>& System<D>::mixtureModifier()
-   {  
+   {
       UTIL_ASSERT(mixtureModifierPtr_);
-      return *mixtureModifierPtr_; 
+      return *mixtureModifierPtr_;
    }
 
    // Get the Interaction (non-const).
@@ -758,7 +763,7 @@ namespace Rpg {
    inline bool System<D>::hasEnvironment() const
    {  return (environmentPtr_); }
 
-   // Get the Environment by non-const reference.
+   // Get the Environment (non-const).
    template <int D>
    inline Environment & System<D>::environment()
    {
@@ -774,7 +779,7 @@ namespace Rpg {
       return *environmentPtr_;
    }
 
-   // Get the Scft calculator by non-const reference.
+   // Get the Scft calculator (non-const).
    template <int D>
    inline ScftThermo<D> & System<D>::scft()
    {
@@ -795,7 +800,7 @@ namespace Rpg {
    inline bool System<D>::hasIterator() const
    {  return (iteratorPtr_); }
 
-   // Get the Iterator by non-const reference.
+   // Get the Iterator (non-const).
    template <int D>
    inline Iterator<D>& System<D>::iterator()
    {
@@ -824,6 +829,14 @@ namespace Rpg {
    // Get the Simulator (non-const).
    template <int D>
    inline Simulator<D>& System<D>::simulator()
+   {
+      UTIL_ASSERT(simulatorPtr_);
+      return *simulatorPtr_;
+   }
+
+   // Get the Simulator (const).
+   template <int D>
+   inline Simulator<D> const & System<D>::simulator() const
    {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
