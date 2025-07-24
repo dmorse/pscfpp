@@ -10,6 +10,7 @@
 
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
+#include <rpg/solvers/MixtureModifier.h>
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Block.h>
 
@@ -223,10 +224,23 @@ namespace Rpg {
    template <int D>
    void SweepParameter<D>::set_(double newVal)
    {
-      if (type_ == Block) {
-         systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);
-      } else if (type_ == Chi) {
+      if (type_ == Chi) {
          systemPtr_->interaction().setChi(id(0), id(1), newVal);
+      } else if (type_ == Kuhn) {
+         systemPtr_->mixtureModifier().setKuhn(id(0), newVal);
+      } else if (type_ == Phi_Polymer) {
+         systemPtr_->mixtureModifier().setPhiPolymer(id(0), newVal);
+      } else if (type_ == Mu_Polymer) {
+         systemPtr_->mixtureModifier().setMuPolymer(id(0), newVal);
+      } else if (type_ == Block) {
+         systemPtr_->mixtureModifier().setBlockLength(id(0), id(1), newVal);
+      } else if (type_ == Phi_Solvent) {
+         systemPtr_->mixtureModifier().setPhiSolvent(id(0), newVal);
+      } else if (type_ == Mu_Solvent) {
+         systemPtr_->mixtureModifier().setMuSolvent(id(0), newVal);
+      } else if (type_ == Solvent) {
+         systemPtr_->mixtureModifier().setSolventSize(id(0), newVal);
+      #if 0
       } else if (type_ == Kuhn) {
          systemPtr_->mixture().setKuhn(id(0), newVal);
       } else if (type_ == Phi_Polymer) {
@@ -237,8 +251,11 @@ namespace Rpg {
          systemPtr_->mixture().polymer(id(0)).setMu(newVal);
       } else if (type_ == Mu_Solvent) {
          systemPtr_->mixture().solvent(id(0)).setMu(newVal);
+      } else if (type_ == Block) {
+         systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);
       } else if (type_ == Solvent) {
          systemPtr_->mixture().solvent(id(0)).setSize(newVal);
+      #endif
       } else if (type_ == Cell_Param) {
          FSArray<double,6> params = systemPtr_->domain().unitCell().parameters();
          params[id(0)] = newVal;
