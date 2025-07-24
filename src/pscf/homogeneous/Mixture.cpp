@@ -291,7 +291,7 @@ namespace Homogeneous {
 
       // Allocate residual and jacobian on first use.
       if (residual_.capacity() == 0) {
-         residual_.allocate(nMonomer_);
+         residual_.allocate(nMolecule_);
          dX_.allocate(nMolecule_);
          dWdC_.allocate(nMonomer_, nMonomer_);
          dWdPhi_.allocate(nMonomer_, nMolecule_);
@@ -465,7 +465,7 @@ namespace Homogeneous {
    void Mixture::computeResidual(DArray<double> const & mu, double& error)
    {
       error = 0.0;
-      for (int i = 0; i < nMonomer_; ++i) {
+      for (int i = 0; i < nMolecule_; ++i) {
          residual_[i] = mu_[i] - mu[i];
          if (std::abs(residual_[i]) > error) {
             error = std::abs(residual_[i]);
