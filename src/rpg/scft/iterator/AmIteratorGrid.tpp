@@ -315,7 +315,7 @@ namespace Rpg {
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               double str = system().stress(i);
+               double str = stress(i);
                stressH[counter] = -1 * scaleStress_ * str;
                counter++;
             }
