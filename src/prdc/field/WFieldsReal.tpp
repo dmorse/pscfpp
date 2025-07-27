@@ -429,7 +429,9 @@ namespace Prdc {
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(hasData_);
 
-      fieldIo().writeFieldsRGrid(out, rgrid_, *writeUnitCellPtr_,
+      bool writeHeader = true;
+
+      fieldIo().writeFieldsRGrid(out, rgrid_, *writeUnitCellPtr_, writeHeader,
                                  isSymmetric_);
    }
 
