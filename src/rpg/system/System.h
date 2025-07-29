@@ -281,9 +281,9 @@ namespace Rpg {
       *
       * This function should be called whenever any of the inputs to the
       * solution of the modified diffusion equation are modified, including
-      * the w fields, unit cell parameters, external fields or mask. Upon
-      * return, c().hasData(), scft().hasData(), and mixture().hasStress() 
-      * all return false; if the system has an Environment, 
+      * the w fields, unit cell parameters, external fields, or mask. Upon
+      * return, c().hasData(), scft().hasData(), and mixture().hasStress()
+      * all return false; if the system has an Environment,
       * environment().needsUpdate() will return true.
       */
       void clearCFields();
@@ -372,7 +372,7 @@ namespace Rpg {
       Mask<D> const & mask() const;
 
       ///@}
-      /// \name Member Object Accessors
+      /// \name Component Object Accessors
       ///@{
 
       /**
@@ -389,7 +389,7 @@ namespace Rpg {
       * Get the Interaction (non-const).
       */
       Interaction& interaction();
-	
+
       /**
       * Get the Interaction (const).
       */
@@ -499,7 +499,7 @@ namespace Rpg {
       *
       * \param out  output stream
       */
-      void writeTimers(std::ostream& out);
+      void writeTimers(std::ostream& out) const;
 
       /**
       * Clear timers
@@ -568,7 +568,7 @@ namespace Rpg {
       * Pointer to an Environment factory object.
       */
       EnvironmentFactory<D>* environmentFactoryPtr_;
-	
+
       /**
       * Pointer to SCFT property calculator.
       */

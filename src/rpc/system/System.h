@@ -282,8 +282,8 @@ namespace Rpc {
       * This function should be called whenever any of the inputs to the
       * solution of the modified diffusion equation are modified, including
       * the w fields, unit cell parameters, external fields, or mask. Upon
-      * return, c().hasData(), scft().hasData(), and mixture().hasStress() 
-      * all return false; if the system has an Environment, 
+      * return, c().hasData(), scft().hasData(), and mixture().hasStress()
+      * all return false; if the system has an Environment,
       * environment().needsUpdate() will return true.
       */
       void clearCFields();
