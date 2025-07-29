@@ -5,9 +5,9 @@
 \ref about_features_page (Next)
 <BR>
 
-The PSCF package contains source code for three executable programs 
-named pscf_1d, pscf_pc and pscf_pg. The purpose and capabilties of 
-each of these programs are described below;
+The PSCF package currently contains source code for three executable 
+programs named pscf_1d, pscf_pc and pscf_pg. The purpose and 
+capabilties of each of these are described below;
 
 <b>pscf_1d</b>:
 
@@ -21,23 +21,22 @@ program cannot be used for field theoretic simulation.
 
 <b>pscf_pc</b>:
 
-The pscf_pc program is designed to treat problems with periodic boundary
-conditions in 1, 2 or 3 dimensions, using conventional CPU hardware. 
-A pseudo-spectral algorithm is used to solve the MDE.  This program 
-provides capabilities for SCFT calculations of periodic microstructures
-analogous to those of the older PSCF Fortran program, and can also 
-perform PS-FTS calculations.  The suffix "pc" stands for "periodic CPU".
+The pscf_pc program can perform SCFT or PS-FTS calculations on systems
+with periodic boundary conditions in 1, 2 or 3 dimensions, using 
+conventional CPU hardware.  A pseudo-spectral algorithm is used to solve 
+the MDE.  This program provides capabilities for SCFT analogous to those 
+of the older PSCF Fortran program.  The suffix "pc" stands for "periodic 
+CPU".
 
 <b>pscf_pg</b>:
 
 The pscf_pg program is a GPU-accelerated variant of pscf_pc that can also 
 perform SCFT and PS-FTS calculations on systems with periodic boundary 
 conditions.  The pscf_pc and pscf_pg programs use analogous algorithms, 
-and provide identical features with identical user interfaces.  The only 
-important difference between these two programs is that pscf_pg uses a 
-GPU, which provides higher performance for problems involving a 
-sufficiently large number grid points per unit cell. The suffix "pg" 
-stands for "periodic GPU".
+and provide identical features and user interfaces.  The use of a GPU,
+however, provides much higher performance for problems involving a
+sufficiently large number of grid points per unit cell.  The suffix 
+"pg" stands for "periodic GPU".
 
 <BR>
 \ref about_history_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

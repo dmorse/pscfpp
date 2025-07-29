@@ -5,7 +5,7 @@
 <BR>
 
 Features of PSCF programs are listed below, grouped so as to indicate
-the programs and computational methods to which they apply:
+the computational methods and programs to which they apply:
 
 * **Features for both SCFT and FTS (all programs):**
 
@@ -16,14 +16,14 @@ the programs and computational methods to which they apply:
     block polymers
 
   - Ability to use canonical, grand-canonical or mixed statistical
-    ensembles. 
+    ensembles
 
   - Thorough user and developer documentation provided via an integrated
     web manual
 
   - Well documented source code written in object-oriented C++
 
-  - A library of example input files for many types of calculation
+  - Example input files for many types of calculation
 
   - Python tools for data analysis and file processing
 
@@ -31,26 +31,23 @@ the programs and computational methods to which they apply:
 
   - Efficient Anderson-mixing SCFT iteration algorithms
 
-  - Efficient SCFT calculations for sequences of parameter choices along
-    a path in parameter space ("sweeps"), using extrapolation to construct
-    initial guesses
+  - Efficient "parameter sweeps": SCFT alculations for a sequence of 
+    states along a path in parameter space 
 
 All features listed below are specific to the pscf_pc and pscf_pg 
 programs. Both of these programs are designed for systems with periodic
-boundary conditions and provide very similar features. Both can be used 
-perform either SCFT or PS-FTS calculations. In SCFT, the periodic 
-computational unit cell is usually chosen so as to represent a single 
-crystallographic unit cell, whereas in FTS it may represent a larger
-region. 
+boundary conditions and can perform either SCFT or PS-FTS calculations. 
+In SCFT, the periodic computational unit cell is usually chosen so as 
+to represent a single crystallographic unit cell, whereas in FTS it may 
+represent a larger region. 
 
 * **Features for SCFT or PS-FTS on periodic systems (pscf_pc and pscf_pg):**
 
   - Choice of continuous thread or discrete bead models of polymer
-    chains conformations.
+    chains.
 
-  - Accurate pseudo-spectral solution of the modified diffusion equation
-    for a continuous chain using an algorithm that is accurate to 4th 
-    order in the contour length step size.
+  - High accuracy pseudo-spectral solution of the modified diffusion 
+    equation for the continuous chain model.
 
   - Periodic unit cells with 1, 2 or 3 dimensional periodicity
 
@@ -68,7 +65,7 @@ region.
   - Imposition of any user-selected space-group symmetry on SCFT solutions
 
   - Built-in database of symmetry operations for all 230 3D space groups
-    and 17 2D plane groups for use in SCFT
+    and 17 2D plane groups.
 
   - Inhomogeneous density constraint (a "mask")
 
@@ -88,14 +85,14 @@ region.
   - Efficient new algorithms for adjusting the pressure field so as to 
     find a partial saddle-point (i.e., to impose incompressibility)
 
-  - Tools for calculation of free energy differences by thermodynamic 
-    integration, including the Einstein-crystal integration method
+  - Tools for calculating free energy differences by thermodynamic 
+    integration, including the Einstein-crystal method
 
   - Parameter "ramps" in which one or more parameters change continuously
     during a simulation
 
-  - Analysis tools to compute several quantities of interest, including
-    the structure factor, order parameters used to identify phase 
+  - Analysis tools to compute quantities of interest, including the 
+    structure factor, order parameters used to identify phase 
     transitions, and derivatives of the Hamiltonian needed for 
     thermodynamic integration calculations
 

@@ -24,13 +24,13 @@ namespace Prdc {
    * operations that need to modify these parameters.
    * 
    * Each PSCF implementation for real periodic fields defines a class 
-   * template int <D> MixtureModifier<D> that is derived from a template 
-   * specialization MixtureModifierReal< Mixture<D> >. The System<D> 
+   * template int <D> MixtureModifier that is derived from a template 
+   * specialization MixtureModifierReal\< Mixture\<D\> \>. The System\<D\> 
    * class provides public access to its Mixture<D> only through a const 
    * reference, but provides a non-const reference to an associated 
-   * MixtureModifier<D>. The MixtureModifier<D> thus defines a set of 
+   * MixtureModifier. The MixtureModifier template thus defines a set of 
    * operations that modify parameters of the mixture that may be called 
-   * via a non-const reference to a System<D>.
+   * via a non-const reference to a System.
    */
    template <class MT>
    class MixtureModifierReal 
@@ -86,7 +86,7 @@ namespace Prdc {
       * Set the chemical for a polymer species.
       *
       * \param polymerId  polymer species id
-      * \param phi  new value for the species chemical potential
+      * \param mu  new value for the species chemical potential
       */
       void setMuPolymer(int polymerId, double mu);
 
@@ -95,7 +95,7 @@ namespace Prdc {
       *
       * \param polymerId  polymer species id
       * \param blockId  block identifier
-      * \param phi  new value for the block length
+      * \param length  new value for the block length
       */
       void setBlockLength(int polymerId, int blockId, double length);
 
@@ -111,7 +111,7 @@ namespace Prdc {
       * Set the chemical for a solvent species.
       *
       * \param solventId  solvent species id
-      * \param phi  new value for the species chemical potential
+      * \param mu  new value for the species chemical potential
       */
       void setMuSolvent(int solventId, double mu);
 

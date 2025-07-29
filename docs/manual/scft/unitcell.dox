@@ -134,7 +134,7 @@ provided in radians, and not in degrees.
   <tr>
     <td> hexagonal </td>
     <td> 1 </td>
-    <td> a </tr>
+    <td> a </td>
     <td> 2 basis vectors of length a=b separated by 120 degrees  </td>
   </tr>
   <tr>

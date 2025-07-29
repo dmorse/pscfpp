@@ -17,39 +17,36 @@ repository at
 <a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a> ,
 but is no longer being actively developed. The name "pscfpp" that is 
 used for the github repository containing the current version was 
-chosen to avoid a clash with the name "pscf" that is used for the 
-repository containing the older Fortran code.
+chosen to avoid a clash with the name "pscf" of the repository 
+containing the older Fortran version.
 
 The current C++/CUDA version of PSCF is intended to supersede the Fortran
 version. The current version provides almost all of the capabilities of
-the Fortran program, and some important new capabilities. New users of 
-PSCF should use the current version documented here, and users of the 
-Fortran version should consider switching to the current version
-whenever they can.
+the Fortran program, and many new capabilities. New users of PSCF should 
+use the current version documented here, and users of the Fortran version 
+should consider switching to the current version whenever they can.
 
 <b> Features and advantages of current C++ version </b>:
 
-Features of the current version of PSCF that distinguish it from the
-legacy Fortran version include the following:
+Characteristics of the current version of PSCF that distinguish it from 
+the legacy Fortran version include the following:
 <ul>
   <li>
-  The current version was designed as an extensible package of several 
-  programs intended for different geometries, algorithms and/or computer
-  hardware. The Fortran code is a single SCFT program designed for 
-  periodic structures and linear polymers.
+  Designed as an extensible package of several programs intended for 
+  different geometries, algorithms and/or computer hardware. The 
+  Fortran version is a single SCFT program for periodic structures
+  and linear polymers.
   </li>
   <li>
-  The current version enables simulations of mixtures containing acyclic
-  branched block polymers, in addition to the linear block polymers and
-  linear homopolymers allowed by the Fortran code.
+  Enables simulations of mixtures containing acyclic branched block 
+  polymers.
   </li>
   <li>
-  The current version enables the use of graphics processing units (GPUs)
-  to dramatically accelerate some applications.
+  Enables the use of graphics processing units (GPUs).
   </li>
   <li>
-  The current version enables partial-saddle point field theoretic 
-  simulation (PS-FTS) calculations in addition to SCFT.
+  Enables partial-saddle point field theoretic simulation (PS-FTS) 
+  calculations in addition to SCFT.
   </li>
 </ul>
 
@@ -58,15 +55,12 @@ legacy Fortran version include the following:
 The following features of the legacy Fortran program have not been ported 
 to the C++/CUDA version:
 <ul>
-  <li> The Fortran PSCF program provides a quasi-Newton-Broyden SCFT
-       iteration algorithm that works very well for problems of modest 
-       size.
+  <li> A quasi-Newton-Broyden SCFT iteration algorithm that works well
+       for problems of modest size.
   </li>
-  <li> The Fortran PSCF program can perform RPA-like linear-reponse 
-       calculations for ordered structures.
-  </li>
+  <li> RPA-like linear-reponse calculations for ordered structures.  </li>
 </ul>
-These two features are described in more detail below;
+These two features are described in more detail below.
 
 The Fortran PSCF program provided a unique quasi-Newton/Broyden SCFT 
 iteration algorithm that was based on a physically motivated initial
@@ -79,13 +73,13 @@ algorithm increases as the square of the number of spatial degrees of
 freedom (i.e., number of basis functions), which prevented the algorithm 
 from being applied to larger problems.
 
-The Fortran PSCF program has the ability to compute the linear response 
-of a periodic structure to an infinitesimal inhomogeneous external field. 
-This algorithm allowed description of limits of stability of ordered phases 
-and of composition fluctuations within such phases. This feature has not been 
-ported to the new C++ version, but will remain available within the legacy 
-Fortran program, via the github repository for that program. The required 
-algorithm and some application are described in the following reference: 
+The Fortran PSCF program contains algorithms to to compute the linear 
+response of a periodic structure to an infinitesimal inhomogeneous external 
+field.  This algorithm allowed description of limits of stability of ordered 
+phases and of composition fluctuations within such phases. This feature has 
+not been ported to the new C++ version, but will remain available within the 
+Fortran program, which will remain available. The required algorithm and 
+some application are described in the following reference: 
 
 Ranjan, A. and Qin, J. and Morse, D.C., 
 <a href="https://doi.org/10.1021/ma0714316">
