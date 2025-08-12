@@ -12,7 +12,7 @@ CUDA to enable the use of a graphics processing unit (GPU). PSCF is
 distributed only in source code form, and so must be compiled by the 
 user. 
 
-## SCFT and FTS
+## Methods: SCFT and PS-FTS
 
 PSCF was originally designed for SCFT calculations, and provides an
 extensive set of tools for this purpose .  The acronym PSCF stands for 
@@ -62,13 +62,6 @@ the legacy Fortran version include the following:
 
    - The current version enables use of a graphics processing unit (GPU)
      to dramatically accelerate some applications.
-
-The only important capability of the Fortran PSCF program that has *not*
-been ported to the current version is the ability to perform SCFT linear
-susceptibility calculations for periodic ordered phases
-[A. Ranjan, J. Qin, and D. Morse, *Macromolecules* **41**, 942 (2008)]. 
-Such calculations can be used to characterize composition fluctuations 
-and SCFT limits of stability for periodic structures.
 
 ## Programs
 
@@ -190,6 +183,13 @@ Features for PS-FTS (pscf_pc and pscf_pg):
     by postprocessing field trajectory files that are created during
     a simulation 
 
+Non-features (provided by the Fortran program but not the current version):
+
+  - The only capability of the older Fortran PSCF program that is *not* 
+    provided by the current version is the ability to perform SCFT linear 
+    susceptibility calculations for periodic ordered phases
+    [A. Ranjan, J. Qin, and D. Morse, *Macromolecules* **41**, 942 (2008)].
+
 ## Getting the source code
 
 The PSCF source code is maintained in the github repository
@@ -224,31 +224,28 @@ the manual for the most recent numbered release is available online at
   <https://dmorse.github.io/pscfpp-man>
 
 All information given in this README file is also given in the web manual,
-in much greater detail. 
+often in much greater detail. 
 
-Users can also use the [doxygen](<https://www.doxygen.nl/index.html>)
-documentation generation program to generate a local copy of the web manual,
-which will be installed within a subdirectory of the pscfpp/ directory.  
-To do this, the doxygen application must be installed on your computer, 
-and the directory containing the doxygen executable must be in your unix 
-command search PATH. To generate a local copy of the web manual:
+If desired, users can use the [doxygen](<https://www.doxygen.nl/index.html>)
+documentation generation program to generate a local copy of the web manual.
+The resulting html pages will be installed within the docs/html subdirectory
+of the pscfpp/ root directory.  To do this, the doxygen application must be
+installed on your computer, and the directory containing the doxygen 
+executable must be in the unix command search PATH variable. To generate a 
+local copy of the web manual:
 
    - Change directory (cd) to the pscfpp/ root directory
 
    - Enter "make html"
 
-This should create many html files in the docs/html subdirectory of the
-pscfpp/ root directory.  To begin reading the resulting documentation, 
-point a web browser at the file pscfpp/docs/html/index.html , which is the 
-main page of the web manual.
+This should create many html files in the pscfpp/docs/html directory. To 
+begin reading, point a web browser at the file pscfpp/docs/html/index.html ,
+which is the main page of the web manual.
 
 ## Dependencies
 
 PSCF has been developed and tested on both linux and and Mac OS X operating
-systems, and is designed to run on these or other unix-like systems. The
-source code is written in standard compliant C++/CUDA, which would work in
-any operating system, but the build system relies on the unix "make"
-utility.
+systems, and is designed to be compiled on these or other unix-like systems.
 
 The pscf_1d and pscf_pc CPU programs depend on the following external
 libraries:
@@ -278,17 +275,18 @@ The PSCF source code is written using C++ as the primary language, with
 CUDA used in pscf_pg for GPU acceleration. PSCF is only provided in source 
 code format, and so must be compiled from source.
 
-The build system used to compile and install PSCF relies on standard unix
-utilities that are available in any unix-like command-line environment.
-It also uses some Python modules, and so requires access to a Python 3
-interpreter.  To compile and run this or other unix software on Mac OS X, 
-the user must first install the Mac OS X unix command line tools.
+The build system used to compile and install PSCF uses the unix "make"
+utility, which is available in any unix-like command-line environment.
+The build system also uses some Python modules that are provided within 
+the package, and so requires access to a Python 3 interpreter.  To compile 
+and run this or other unix software on Mac OS X, the user must first 
+install the Mac OS X unix command line tools.
 
 Complete instructions for compiling PSCF are provided in section 2 of 
 the [web manual](<https://dmorse.github.io/pscfpp-man>).  A brief summary 
 is given below of instructions for steps that must be taken after cloning 
-the git repository and installing all of the required dependencies (i.e.,
-GSL and FFTW).
+the pscfpp git repository and installing all of the required dependencies 
+(i.e., GSL and FFTW) in a linux or Mac OS X environment.
 
    - Add the absolute path to the directory pscfpp/bin to your unix 
      command search PATH environment variable. This is where executable
@@ -300,16 +298,15 @@ GSL and FFTW).
 
    - Run the pscfpp/configure script by entering "./configure" from the
      pscfpp/ root directory.  This script installs default versions of 
-     several customizable files that are used by the build system. The 
-     configure script usually only needs to be run once, before compiling 
-     for the first time.  See Section 2.6 of the 
+     several customizable configuration files that are used by the build 
+     system. The configure script usually only needs to be run once, 
+     before compiling for PSCF the first time.  See Section 2.6 of the 
      [web manual](<https://dmorse.github.io/pscfpp-man>) for more
      information about this script.
 
    - To compile and install only the CPU-based programs on a computer that
-     does not have an appropriate NVIDA GPU, simply enter "make" from 
-     the pscfpp/ root directory immediately after running the configure 
-     script.
+     does not have an appropriate NVIDA GPU, simply enter "make" from the
+     pscfpp/ root directory immediately after running the configure script.
 
    - Some further configuration is required to compile the GPU-enabled
      pscf_pg program. Compilation of pscf_pg is only possible on a 
@@ -320,37 +317,38 @@ GSL and FFTW).
      example, to compile for a V100 GPU with CUDA compute capability 7.0, 
      one would enter "./setopts -a sm_70". Instructions for choosing the 
      correct string parameter for the -a option for a particular GPU can 
-     be obtained by entering "./setopts -h" or by consulting the 
+     be obtained by entering "./setopts -h", or by consulting the 
      installation section of the web manual.  After taking these steps to 
      enable CUDA compilation, re-enter "make" to re-compile.
 
-The procedure described above for building PSCF is similar to the standard
-"configure; make; make install" procedure for GNU open source software. 
+The procedure described above for building PSCF is somewhat similar to the 
+standard "configure; make; make install" procedure used for GNU software.  
 One difference is that PSCF does not require a separate "make install" 
 command. The PSCF "make" command creates executables in the bin/ 
-subdirectory of the root pscfpp/ directory that also contains the source
-code.  The above instructions assume that this is the intended final 
+subdirectory of the pscfpp/ directory tree that also contains source
+files.  The above instructions assume that this is the intended final 
 destination of the executable files, rather than a standard unix system 
 directory such as /user/local in which the unix shell would look for
 executable files by default. If the pscfpp/ directory is created within 
 a user's home directory, the above instructions thus do not require the 
-use of special sudo or adminstrator permission in order to install the 
-package, but instead require the user to modify their system PATH variable 
-to allow the unix shell to find the executable files by name.
+use of special sudo or adminstrator permission in order to comple and
+install the package. This procedure, however, instead requires the user 
+to modify their PATH environment variable to allow the unix shell to find 
+executable files that have been placed in a non-standard location.
 
 ## Command line usage
 
 PSCF is a package the provides three executable programs (pscf_1d, pscf_pc,
-and pscf_pg) with somewhat different capabilities but very similar command 
-line interfaces. To perform a calculation, each PSCF program must read two 
-files, which we refer to as a parameter file and a command file. The 
-parameter file, which is processed first, is a fixed format file that 
-contains parameters required to describe the physical system of interest 
-and initialize the program.  The command file, which is processed after 
-the parameter file, is a script that contains a sequence of commands that 
-are interpreted and executed in the order that they appear. Contents and 
-syntax for PSCF parameter and command files are discussed in Secs.  3-5 of 
-the web manual.
+and pscf_pg) with different capabilities but very similar command line 
+interfaces. To perform a calculation, each PSCF program must read two files,
+which we refer to as a parameter file and a command file. The parameter 
+file, which is processed first, is a fixed format file that contains 
+physical and algorithmic parameters required to describe the system of 
+interest and initialize the program.  The command file, which is processed 
+after the parameter file, is a script that contains a sequence of commands 
+that are interpreted and executed in the order that they appear. Contents 
+and syntax for PSCF parameter and command files are discussed in Secs. 3-5 
+of the web manual.
 
 A PSCF command file normally contains the names of several input and 
 output data files as arguments to commands that read or write these files.
@@ -395,31 +393,31 @@ network structure or a 3D arrangement of spheres), while also using the
 ```
 pscf_pc -d 3 -p param -c command -e
 ```
-where "param" and "command" again denote names of parameter and command 
+Here, "param" and "command" again denote names of parameter and command 
 files. The syntax for an SCFT calculation for a one-dimensionally periodic 
 lamellar phase would instead contain an option "-d 1", while an SCFT
 calculation for a 2D periodic phase of hexagonally packed cylinders would
 use an option "-d 2".  The syntax for invoking pscf_pg is the same as that 
-for pccf_pc, except for the use of the different program name.
+for pscf_pc, except for the use of the program name pscf_pg rather than
+pscf_pc.
 
-The pscf_pc and pscf_pg programs can also perform PS-FTS simulations. 
-Such simulations usually allow field fluctuations vary in all three 
-spatial dimensions, and so pscf_pc and pscf_pg are normally invoked 
-using an option "-d 3" when used for this purpose.
+The pscf_pc and pscf_pg programs can also both perform PS-FTS simulations. 
+Such simulations usually allow field fluctuations to vary in all three 
+spatial dimensions, and so pscf_pc and pscf_pg are normally invoked using 
+an option "-d 3" when used for this purpose.
 
 **Output redirection** : Programs that are invoked as shown in the above 
 examples would write log output that is produced during execution to the 
 user's screen (i.e., to standard output).  This log output may instead be
-redirected to a file by using the unix ">" operator to direct standard 
-output to a file.  For example, the command
+redirected to a file by using the unix ">" redirection operator.  For 
+example, the command
 ```
 pscf_pc -d 3 -p param -c command -e > log
 ```
-would redirect log output that is written during simulation of a 3D
-periodic structure to a file named "log" in the current working 
-directory. Standard output is normally redirected to a file for long 
-calculations, or whenever a program is run in a queue on a shared 
-computing cluster.
+would redirect log output that is written during a calculation to a file
+named "log" in the current working directory. Standard output is normally 
+redirected to a file for long calculations, or whenever a program is run 
+in a queue on a shared computing cluster.
 
 ## Examples
 
@@ -430,25 +428,24 @@ calculations.  Top level subdirectories of the examples/ directory named
 1d/, pc/ and pg/ contain examples for the three different PSCF programs,
 pscf_1d, pscf_pc, and pscf_pg.
 
-Subdirectory examples/1d contains examples of SCFT calculations for the
-1D finite-difference program pscf_1d. Top level subdirectories of the
-directory examples/1d contain examples for planar, cylindrical and
-spherical geometries, as indicated by the subdirectory names. One or
-more example is given for each geometry.
+Subdirectory examples/1d contains examples of SCFT calculations for the 
+1D finite-difference program pscf_1d. Top level subdirectories of the 
+directory examples/1d contain examples for planar, cylindrical and 
+spherical geometries, as indicated by the subdirectory names. One or more 
+example is given for each geometry.
 
-Subdirectory examples/pc contains examples for the pscf_pc CPU program.
-Top level subdirectories of examples/pc named scf/ and fts/ contain
-examples of SCFT and FTS calculations, respectively. Top level
-subdirectories of examples/pc/scf contain examples of input files for
-SCFT calculations performed on different types of physical system.
-For example, the directory examples/pc/scf/diblock contains examples
-for a diblock copolymer melt.  Subdirectories of examples/pc/scf/diblock
-contain examples for lamellar, hexagonal, and BCC structures, among
-others.
+Subdirectory examples/pc contains examples for the pscf_pc CPU program. Top
+level subdirectories of examples/pc named scf/ and fts/ contain examples
+of SCFT and PS-FTS calculations, respectively. Top level subdirectories 
+of directory examples/pc/scf contain examples of input files for SCFT 
+calculations performed on different types of physical system.  For example,
+the directory examples/pc/scf/diblock contains SCFT examples for a diblock
+copolymer melt.  Subdirectories of examples/pc/scf/diblock contain examples
+for lamellar, hexagonal, and BCC structures, among others.
 
 Subdirectory examples/pg contains examples for the pscf_pg program for
-periodic structures. Subdirectories are organized in a manner similar
-to that used for the examples/pc directory tree.
+periodic structures. Subdirectories are organized in a manner similar to 
+that of the examples/pc directory tree.
 
 We refer to a directory that contains all of the input files for a single
 example or a set of closely related examples as an example directory.
@@ -459,28 +456,38 @@ that contain input files for two or more examples usually contain a single
 initial chemical potential field, but may contain two or more different 
 sets of parameter or command files for use in different examples. 
 By convention, input field files are located in a subdirectory of each
-example directory named "\in", while output files are created in a 
-subdirectory named "\out". 
+example directory named "/in", while output files are created in a 
+subdirectory named "/out". 
 
 Example directories that contain files for a single example usually
 contain a shell script named "run" that can be executed to run the example
 using the supplied input files.  The simplest way to run such an example
 is thus to change directory (cd) to the relevant example directory and 
-enter "./run" from within that directory. (Note the use of the prefix
-prefix "./", which tells the operating system to look for the run script
-in the current working directory). Users may also inspect the text of such
-a run script to see the command and command line options that are being
-used to run the example.  Example directories that contain input files
-for two or more closely related examples may contain several such scripts
-with names that are variants of "run", each of which can be executed to 
-run a specific example. Such directories also usually contain a file 
-named CONTENTS that explains the purposes of different run scripts.
+enter "./run" from within that directory. (Note the use of the prefix "./",
+which tells the operating system to look for the run script in the current 
+working directory.) Users may inspect the text of such run scripts to see 
+the command and command line options that are being used to run an example.
+Example directories that contain input files for two or more closely 
+related examples may contain several such scripts with names that are 
+variants of "run", each of which can be executed to run a specific 
+example. Many such directories also contain a file named CONTENTS that 
+explains the purposes of different run scripts.
 
 Almost every example directory also contains a script named "clean" that 
 can be used to remove all of the output files that are created by running 
-the example, by entering "./clean". 
+the example. To remove such files, simply enter "./clean". 
 
-## License and Copyright
+## Contributors
+
+- David Morse
+- Guo Kang Cheong
+- Anshul Chawla
+- Ryan Collanton
+- Ben Magruder
+- Kexin Chen
+- Ying Zheng
+
+## License and copyright
 
 This C++/CUDA version of PSCF is free, open source software. It is
 distributed under the terms of the GNU General Public License (GPL) as 
@@ -497,14 +504,4 @@ Copyright 2015-2025, The Regents of the University of Minnesota.
 Development of PSCF is currently supported by the National Science
 Foundation program for Cyberinfrastructure for Sustained Scientific
 Development (CSSI) under Grant No. 2103627.
-
-## Contributors
-
-- David Morse
-- Guo Kang Cheong
-- Anshul Chawla
-- Ryan Collanton
-- Ben Magruder
-- Kexin Chen
-- Ying Zheng
 

@@ -5,7 +5,7 @@ C++ namespace.  Subdirectories util/ and test/ are maintained as separate
 github repositories that are installed as submodules of the pscfpp 
 respository. 
 
-Subdirectories (corresponding namespace names in parentheses):
+Subdirectories (with corresponding C++ namespace names in parentheses):
 
   util/  general utilities for scientific computation (Util)
   pscf/  shared classes accessible throughout the PSCF package (Pscf)
@@ -19,8 +19,10 @@ Subdirectories (corresponding namespace names in parentheses):
   that each contain code that is only accessible to and used by a single 
   executable program, namely pscf_1d, pscf_pc or pscf_pg, respectively. 
 
-  Directories util, pscf, and prdc each contain code that may be used 
-  by two or more programs.
+  Directories util, pscf, and prdc each contain code that may be used in
+  two or more programs. Names defined by files in the util/ and pscf/ 
+  directories are accessible anywhere in PSCF, while names defined in
+  the prdc/ directory are only used in prdc/, rpc/ and prg/ directories.
 
 Files (maintained in the git repository):
 
@@ -29,7 +31,7 @@ Files (maintained in the git repository):
   programs.mod - doxygen page for program command-line interfaces
   CONTENTS - this file
 
-Files (installed by the configure script):
+Files (initially installed by the configure script):
 
   config.mk - main configuration file (editable makefile fragment)
 
