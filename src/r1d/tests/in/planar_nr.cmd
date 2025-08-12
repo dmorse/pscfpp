@@ -1,6 +1,6 @@
 READ_W  in/planar.w
 ITERATE
-COMPARE_HOMOGENEOUS 0
+COMPARE_HOMOGENEOUS 0  out/planar_nr3.homo
 WRITE_C  out/planar_nr3.c
 WRITE_W  out/planar_nr3.w
 WRITE_BLOCK_C  out/planar_nr3_all.c

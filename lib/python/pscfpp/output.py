@@ -54,7 +54,7 @@ import os
 # 
 #  After creating a Thermo object, users can retrieve the values of 
 #  any property by name, using a dot notation for properties stored
-#  within the Thermo object. There are three different types of 
+#  within the Thermo object. There are four different types of 
 #  properties that are stored within a Thermo object. These are listed 
 #  below, along with a summary of what is returned when they are 
 #  accessed, and an example Python expression that would access this 
@@ -90,20 +90,63 @@ import os
 #  return the volume fraction of polymer 0 (the first polymer) and
 #  the chemical potential of solvent 1 (the second solvent). 
 #
-#  *LatticeParameters:* The attribute LatticeParameter is created only
-#  by calculations for a periodic system, and is a list of values for
-#  different lattice parameters. The interpretation of the order and
-#  meaning of the lattice parameters depends on the lattice system,
-#  which is given in the input parameter file. Specific parameters 
-#  can be accessed by square bracket indexing, and are float values.
+#  *LatticeParameters and stresses:* The attribute cellParams is 
+#  created only by calculations for a periodic system, and is a list 
+#  of values for each lattice parameter of the unit cell. The 
+#  interpretation of the order and meaning of the lattice parameters 
+#  depends on the lattice system, which is given in the input parameter 
+#  file. Specific parameters can be accessed by square bracket indexing, 
+#  and are float values.
 #
 #  Example:  The expressions
 #  \code
-#      t.LatticeParameters   
-#      t.LatticeParameters[0]
+#      t.cellParams   
+#      t.cellParams[0]
 #  \endcode
 #  return the list of lattice parameters and the first lattice parameter,
 #  respectively.
+#
+#  Two additional attributes, stress and environmentStress, are optional
+#  elements of the thermo file that are written by the PSCF command 
+#  WRITE_STRESS. These arrays contain one value of stress for each lattice
+#  parameter, and are therefore stored in the same form as cellParams.
+#  Note that environmentStress is only included in the output from PSCF 
+#  if the calculation contained an Environment object and used a flexible
+#  unit cell.
+#
+#  *Homogeneous information:* In r1d, the COMPARE_HOMOGENEOUS command or 
+#  the homogeneousMode parameter in a Sweep object will result in the 
+#  output of additional data comparing the result to a corresponding
+#  homogeneous state. This contains two to seven parameters with labels
+#  "f (homo)", "p (homo)", "delta f", "delta p", "F (ex)", "Phi (ex)", 
+#  and "V(tot)/v". If the parser encounters this block, the data will be
+#  read into an attribute called homogeneous, which is a dictionary. The
+#  key of the dictionary is the parameter name string (e.g., "f (homo)"),
+#  and the value is the number that follows.
+#
+#  Example:  The expressions
+#  \code
+#      t.homogeneous   
+#      t.homogeneous["f (homo)"]
+#  \endcode
+#  return the dictionary of homogeneous data and the "f (homo)" value,
+#  respectively.
+#
+#  Following this data, a list of species is provided, with their 
+#  homogeneous mu, phi, and deltaV values. These values are stored in
+#  the attribute named homogeneousSpecies, which is a list with one 
+#  entry per species. Each entry is a dictionary where the key is the
+#  name of the parameter from the parameter file, and the value is its
+#  numerical value.
+#
+#  Example:  The expressions
+#  \code
+#      t.homogeneousSpecies   
+#      t.homogeneousSpecies[1]
+#      t.homogeneousSpecies[1]["mu"]
+#  \endcode
+#  return the list of species data, the dictionary of data for species 1,
+#  and the mu value for species 1, respectively.
 #
 #  **Modifying properties:**
 #  
@@ -155,6 +198,10 @@ class Thermo:
       self.solvents = None
       self.cellParams = None
       self.tableLabel = None
+      self.homogeneous = None
+      self.homogeneousSpecies = None
+      self.stress = None
+      self.environmentStress = None
 
       if filename != None:
          with open(filename) as f:
@@ -170,60 +217,117 @@ class Thermo:
    #
    def read(self, file):
       line = self.skipEmptyLine(file)
-      l = line.split()
-      if l[0] != 'fHelmholtz':
-         raise Exception('Not valid Thermo file')
+
+      # Read fHelmholtz and pressure (required)
+      if line.startswith('fHelmholtz'):
+         self.fHelmholtz = float(line.split()[-1])
       else:
-         self.fHelmholtz = float(l[-1])
+         raise Exception('Not valid Thermo file. No fHelmholtz found.')
       line = file.readline()
-      l = line.split()
-      self.pressure = float(l[-1])
-
+      if line.startswith('pressure'):
+         self.pressure = float(line.split()[-1])
+      else:
+         raise Exception('Not valid Thermo file. No pressure found.')
       line = self.skipEmptyLine(file)
-      l = line.split()
-      if l[0] == 'fIdeal':
-         while line != '\n':
-            if l[0] == 'fIdeal':
-               self.fIdeal = float(l[-1])
-            if l[0] == 'fInter':
-               self.fInter = float(l[-1])
-            if l[0] == 'fExt':
-               self.fExt = float(l[-1])
-            line = file.readline()
-            l = line.split()
-         line = self.skipEmptyLine(file)
 
-      while line != '\n':
-         if line.lower() == 'polymers:\n':
+      # Now, read all other blocks of thermo file in any order
+      hasPolymersBlock = False
+      while line != '':
+
+         # Read free energy contributions (optional)
+         if line.startswith('fIdeal'):
+            while line.strip() != '':
+               l = line.split()
+               if l[0] == 'fIdeal':
+                  self.fIdeal = float(l[-1])
+               if l[0] == 'fInter':
+                  self.fInter = float(l[-1])
+               if l[0] == 'fExt':
+                  self.fExt = float(l[-1])
+               line = file.readline()
+            line = self.skipEmptyLine(file)
+
+         # Read polymers block
+         elif line.lower().startswith('polymers:'):
             self.polymers = []
             self.tableLabel = file.readline()
             line = file.readline()
-            while line != '\n':
+            while line.strip() != '':
                l = line.split()
                self.polymers.append(Species(l))
                line = file.readline()
+            line = self.skipEmptyLine(file)
+            hasPolymersBlock = True
 
-         if line.lower == 'solvents:\n':
+         # Read solvents block (optional)
+         elif line.lower().startswith('solvents:'):
             self.solvents = []
             line = file.readline()
             line = file.readline()
-            while line != '\n':
+            while line.strip() != '':
                l = line.split()
                self.solvents.append(Species(l))
                line = file.readline()
+            line = self.skipEmptyLine(file)
 
-         if line == 'cellParams:\n':
+         # Read lattice parameters (optional)
+         elif line.startswith('cellParams:'):
             self.cellParams = []
             line = file.readline()
-            while line != '\n':
+            while line.strip() != '':
                l = line.split()
                self.cellParams.append(float(l[1]))
                line = file.readline()
-         
-         line = self.skipEmptyLine(file)
+            line = self.skipEmptyLine(file)
 
-         if line == '':
-            break
+         # Read homogeneous block (optional, r1d only)
+         elif line.startswith('f (homo)'):
+            self.homogeneous = {}
+            self.homogeneousSpecies = []
+
+            while line.strip() != '':
+               self.homogeneous[line[:11].strip()] = float(line[12:31])
+               line = file.readline()
+            
+            line = self.skipEmptyLine(file)
+            if line.lower().startswith('species:'):
+               line = file.readline()
+               speciesParams = line.split()
+               line = file.readline()
+               while line.strip() != '':
+                  l = line.split()
+                  self.homogeneousSpecies.append({})
+                  for i in range(4):
+                     prm = speciesParams[i]
+                     if i == 0:
+                        self.homogeneousSpecies[-1][prm] = int(l[i])
+                     else:
+                        self.homogeneousSpecies[-1][prm] = float(l[i])
+                  line = file.readline()
+            line = self.skipEmptyLine(file)
+      
+         # Read stress block (optional)
+         elif line.lower().startswith('stress:'):
+            self.stress = []
+            line = file.readline()
+            while line.strip() != '':
+               l = line.split()
+               self.stress.append(float(l[1]))
+               line = file.readline()
+            line = self.skipEmptyLine(file)
+         
+         # Read environment stress block (optional)
+         elif line.lower().startswith('environment-modified stress:'):
+            self.environmentStress = []
+            line = file.readline()
+            while line.strip() != '':
+               l = line.split()
+               self.environmentStress.append(float(l[1]))
+               line = file.readline()
+            line = self.skipEmptyLine(file)
+
+      if not hasPolymersBlock:
+         raise Exception('Not valid Thermo file. No polymers block found.')
 
    ##
    # Skip empty lines in the file.
@@ -304,7 +408,42 @@ class Thermo:
             s += f'{i:>5}{v:>20}\n'
          s += '\n'
 
-      s += '\n'
+      if self.homogeneous:
+         counter = 0
+         for key, val in self.homogeneous.items():
+            s += f'{key:<10} = {val:18.11e}'
+            if key == "V(tot)/v":
+               s += "\n"
+            elif key.lower() == key: # key is all lowercase
+               s += "   [per monomer volume]\n"
+            else:
+               s += "   [total]\n"
+            counter += 1
+         s += '\n'
+
+      if self.homogeneousSpecies:
+         s += 'Species:\n'
+         s += '    i      mu                  phi(homo)           deltaV\n'
+         for sp in self.homogeneousSpecies:
+            s += f'{sp["i"]:>5}'
+            s += f'{sp["mu"]:>20.11e}'
+            s += f'{sp["phi(homo)"]:>20.11e}'
+            s += f'{sp["deltaV"]:>20.11e}\n'
+         s += '\n'
+      
+      if self.stress != None:
+         s += 'stress:\n'
+         for i in range(len(self.stress)):
+            v = f'{self.stress[i]:.11e}'
+            s += f'{i:>5}{v:>20}\n'
+         s += '\n'
+      
+      if self.environmentStress != None:
+         s += 'environment-modified stress:\n'
+         for i in range(len(self.environmentStress)):
+            v = f'{self.environmentStress[i]:.11e}'
+            s += f'{i:>5}{v:>20}\n'
+         s += '\n'
 
       return s
 

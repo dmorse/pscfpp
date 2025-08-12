@@ -289,13 +289,13 @@ energy units. A similar syntax is used to access the attributes
 'pressure', 'fIdeal' and 'fInter', each of which is stored as a
 corresponding floating point data attribute of object thermo.
 
-A Thermo object may have attributes named 'polymers', 'solvents'
-and/or 'cellParams' if the corresponding thermo file block contains
-corresponding elements. Each of these attributes, when present, is a
-Python list, with elements that can be accessed using the square bracket
-syntax.  For example, if thermo contains the contents of the thermo
-block produced by a pscf_pc or pscf_pg simulation of a periodic system,
-the quantity
+A Thermo object may have attributes named 'polymers', 'solvents',
+'cellParams', 'stress', and/or 'environmentStress' if the thermo file 
+block contains the corresponding elements. Each of these attributes, 
+when present, is a Python list, with elements that can be accessed 
+using the square bracket syntax.  For example, if thermo contains the 
+contents of the thermo block produced by a pscf_pc or pscf_pg 
+simulation of a periodic system, the quantity
 \code
    thermo.cellParams[0]
 \endcode
@@ -322,6 +322,29 @@ The string representation of a Thermo object is a multi-line string
 formatted like the thermo file block from which the object was created.
 This string representation of Thermo object named thermo is given by the
 expression str(thermo), and can be printed to screen using print(thermo).
+
+<b> Homogeneous comparison </b>
+
+In r1d, one can use the \ref scft_command_1d_homo_page
+"COMPARE_HOMOGENEOUS" command to write data to a thermo file that 
+compares the results to a corresponding homogeneous phase. This block
+of the thermo file is read into a Thermo object in the form of two 
+attributes: thermo.homogeneous and thermo.homogeneousSpecies. The former
+is a Python dictionary containing the first block of homogeneous data,
+where each value is stored with a key equal to the name of the property 
+as written in the PSCF output. For example, the property labeled 'f (homo)'
+can be accessed by 
+\code
+   thermo.homogeneous['f (homo)']
+\endcode
+The attribute thermo.homogeneousSpecies is a list of dictionaries, one for
+each species, where each member of the list corresponds to a single species
+and the data values for each species are stored with keys that match the
+name given in the thermo output. For example, the 'deltaV' property of 
+species 0 can be accessed by
+\code
+   thermo.homogeneousSpecies[0]['deltaV']
+\endcode
 
 \section scft_python_state_sec State files
 
