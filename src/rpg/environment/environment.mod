@@ -7,7 +7,7 @@ namespace Rpg{
    *
    * Classes for imposing masks and external fields in periodic systems (GPU).
    *
-   * \ingroup Rpg_Base_Module
+   * \ingroup Pscf_Rpg_Module
    */
 
 }

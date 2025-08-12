@@ -24,7 +24,7 @@ namespace Prdc {
    * operations that need to modify these parameters.
    * 
    * Each PSCF implementation for real periodic fields defines a class 
-   * template int <D> MixtureModifier that is derived from a template 
+   * template int \<D\> MixtureModifier that is derived from a template 
    * specialization MixtureModifierReal\< Mixture\<D\> \>. The System\<D\> 
    * class provides public access to its Mixture<D> only through a const 
    * reference, but provides a non-const reference to an associated 

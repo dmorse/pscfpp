@@ -51,7 +51,7 @@ namespace Rpg {
    * the most recent call of the compute function. These can be accessed
    * using the Block<D>::cField() function.
    *
-   * \ingroup Rpg_Solvers_Module
+   * \ingroup Rpg_Solver_Module
    */
    template <int D>
    class Polymer : public PolymerTmpl< Block<D> >

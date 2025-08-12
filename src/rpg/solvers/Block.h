@@ -48,7 +48,7 @@ namespace Rpg {
    * Derived from BlockTmpl<Propagator<D>>. A BlockTmpl<Propagator<D>>
    * has two Propagator<D> members and is derived from Edge.
    *
-   * \ingroup Rpg_Solvers_Module
+   * \ingroup Rpg_Solver_Module
    */
    template <int D>
    class Block : public BlockTmpl< Propagator<D> >

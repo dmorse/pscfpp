@@ -7,7 +7,7 @@ namespace Prdc{
    *
    * Templates for imposing masks and external fields in periodic systems.
    *
-   * \ingroup Prdc_Base_Module
+   * \ingroup Pscf_Prdc_Module
    */
 
 }

@@ -140,13 +140,13 @@ provided in radians, and not in degrees.
   <tr>
     <td> rectangular </td>
     <td> 2 </td>
-    <td> a, b </tr>
+    <td> a, b </td>
     <td> 2 orthogonal basis vectors of unequal lengths a and b </td>
   </tr>
   <tr>
     <td> rhombic </td>
     <td> 2 </td>
-    <td> a, alpha </tr>
+    <td> a, alpha </td>
     <td>
      2 basis vectors of equal length a separated by an angle alpha (radians)
     </td>
@@ -154,8 +154,11 @@ provided in radians, and not in degrees.
   <tr>
     <td> oblique </td>
     <td> 3 </td>
-    <td> a, b, alpha </tr>
-    <td> 2 basis vectors of unequal lengths a and b separated by an angle alpha (radians) </td>
+    <td> a, b, alpha </td>
+    <td> 
+      2 basis vectors of unequal lengths a and b separated by an angle 
+      alpha (radians) 
+    </td>
   </tr>
 </table>
 

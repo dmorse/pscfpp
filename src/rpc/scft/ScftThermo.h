@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/system/ScftReal.h>   // base class template
-#include <rpc/system/System.h>             // template parameter
+#include <prdc/system/ScftReal.h>    // base class template
+#include <rpc/system/System.h>       // template parameter
 
 namespace Pscf {
 namespace Rpc {

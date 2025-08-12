@@ -7,7 +7,7 @@ namespace Rpc{
    *
    * Classes for imposing masks and external fields in periodic systems (CPU).
    *
-   * \ingroup Rpc_Base_Module
+   * \ingroup Pscf_Rpc_Module
    */
 
 }

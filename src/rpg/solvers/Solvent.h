@@ -26,7 +26,7 @@ namespace Rpg {
    /**
    * Solver and descriptor for a solvent species.
    *
-   * \ingroup Rpg_Solvers_Module
+   * \ingroup Rpg_Solver_Module
    */
    template <int D>
    class Solvent : public SolventSpecies

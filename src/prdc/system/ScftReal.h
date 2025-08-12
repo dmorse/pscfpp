@@ -16,7 +16,7 @@ namespace Pscf {
 namespace Prdc {
 
    /**
-   *
+   * Base class for SCFT thermodynamic property calculator.
    *
    * \ingroup Pscf_Prdc_Module
    */
@@ -36,6 +36,8 @@ namespace Prdc {
 
       /**
       * Constructor.
+      *
+      * \param system  parent System object
       */
       ScftReal(SystemT const & system);
 
@@ -166,7 +168,7 @@ namespace Prdc {
       */
       virtual
       double innerProduct(FieldT const & A, FieldT const & B) const
-      { return 0.0; };
+      {  return 0.0; };
 
    private:
 

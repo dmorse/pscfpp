@@ -47,7 +47,7 @@ namespace Rpg {
    * to solve the the MDE repeatedly calls the step functions provided 
    * by the parent Block. 
    *
-   * \ingroup Rpg_Solvers_Module
+   * \ingroup Rpg_Solver_Module
    */
    template <int D>
    class Propagator : public PropagatorTmpl< Propagator<D> >
