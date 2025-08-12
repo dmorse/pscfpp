@@ -2,7 +2,7 @@
 #define RPG_MC_MOVE_MANAGER_TPP
 
 /*
-* PSCF - Polymer Self-Consistent Field 
+* PSCF - Polymer Self-Consistent Field Theory
 *
 * Copyright 2015 - 2025, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
@@ -31,7 +31,9 @@ namespace Rpg {
      randomPtr_(&simulator.random())
    {  setClassName("McMoveManager"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    McMoveManager<D>::~McMoveManager()
    {}
