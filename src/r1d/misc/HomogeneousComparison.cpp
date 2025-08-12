@@ -175,7 +175,7 @@ namespace R1d
          out << "    i"
              << "      mu            "
              << "      phi(homo)     "
-             << "      delta V       " 
+             << "      deltaV        " 
              << std::endl;
          for (int i = 0; i < homogeneous().nMolecule(); ++i) {
             dV = mixture().polymer(i).phi() - homogeneous().phi(i);

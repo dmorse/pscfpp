@@ -331,12 +331,18 @@ namespace R1d
          if (command == "COMPARE_HOMOGENEOUS") {
             int mode;
             inBuffer >> mode;
+
+            readEcho(inBuffer, filename);
             Log::file() << std::endl;
             Log::file() << "mode       = " << mode << std::endl;
 
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file, std::ios_base::app);
+
             HomogeneousComparison comparison(*this);
             comparison.compute(mode);
-            comparison.output(mode, Log::file());
+            comparison.output(mode, file);
+            file.close();
          } else 
          if (command == "WRITE_W") {
             readEcho(inBuffer, filename);
