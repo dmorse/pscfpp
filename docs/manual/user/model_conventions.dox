@@ -31,57 +31,59 @@ while using larger values for the statistical segment length \f$ b \f$
 and the volume \f$ v \f$ per monomer in the model with fewer, larger
 monomers.
 
-This flexibility of the definition of a "monomer" becomes even more
-profound in the thread model. The thread model allows the use of block
-lengths that are not integers, and that are not required to be greater
-than 1.  In the thread model, we implicitly assume that the number of
-elementary chemical repeat units in any chain segment of interest is
-sufficiently large that we may ignore details of chemical structure and
-characterize positions along a polymer by a real (rather than integer)
-contour coordinate \f$ s \f$.  The contour length \f$ |s-s'| \f$ of a
-segment between two points in the same block with contour coordinates
-\f$ s \f$ and \f$ s' \f$ is assumed to be proportional, but generally
-not equal, to the number of chemical repeat units contained in the chain
-segment between those points. As a result, the dimensionless contour
-length of a chemically homogeneous chain segment is also proportional
-to the molecular weight of that segment. Values for the constants of
-proportionality that determine the number of elementary chemical repeat
-units and molecular weight per unit contour length for each type of
-block are not, however, specified by the equations used within PSCF.
-The software is instead designed to allow users to choose any convention
-they wish for these constants of proportionality. The cost of this
-flexibility is, of course, that it places responsibility on the user
-to choose a convention and to make sure that the chosen convention is
-correctly reflected in the values of all parameters that they provide
-as inputs to the program.
+This flexibility of the definition of a "monomer" becomes even greater
+in the continous thread model. The thread model allows the use of block
+lengths that are not integers, and that thus need not be greater than 1. 
+In the thread model, we implicitly assume that the number of elementary 
+chemical repeat units in any chain segment of interest is sufficiently 
+large that we may ignore details of chemical structure and characterize 
+positions along a polymer by a real contour coordinate \f$ s \f$, rather
+than by an integer.  The contour length \f$ |s-s'| \f$ of a segment 
+between two points in the same block with contour coordinates \f$ s \f$ 
+and \f$ s' \f$ is assumed to be proportional, but generally not equal, to
+the number of chemical repeat units contained in the chain segment between
+those points. As a result, the dimensionless contour length of a chemically
+homogeneous chain segment is also proportional to the molecular weight of 
+that segment. 
+
+Values for the constants of proportionality that determine the number of 
+elementary chemical repeat units and molecular weight per unit contour 
+length for each type of block are not, however, specified by the equations 
+used within PSCF for the thread model.  The software is instead designed 
+to allow users to choose any convention they wish for these constants of 
+proportionality. The cost of this flexibility is, of course, that it 
+places responsibility on the user to choose a convention and to make sure 
+that the chosen convention is correctly reflected in the values of all 
+parameters that the user provides as inputs to the program.
 
 The only restriction that PSCF places on the definition of polymer
 contour lengths in the thread model is a requirement that, as a matter
 of convention, chain segments of equal contour length but different
 monomer type must correspond to the same volume within an incompressible
 melt.  The steric volume of any chain segment of contour length \f$ L \f$
-is thus given by \f$ v L \f$ , for segments of any monomer type, using
-a value for the monomer reference volume \f$ v \f$ (i.e., the volume
-per unit contour length) that is the same for all monomer types.  The
+is thus given by \f$ v L \f$ , for segments of any monomer type, using a 
+value for the monomer reference volume \f$ v \f$ (i.e., the volume per 
+unit contour length) that is the same for all monomer types.  The
 requirement that the same volume per unit contour length be used for
 all monomer types does not lead to any loss of generality, as long as
 different values may be assigned for the statistical segment lengths
 of different monomer types.
 
-There are two common types of convention for block contour lengths
-used in the thread model, which we refer to here as "experimentalist"
-and "theorist" conventions. Both are described below. Experimentalist
-conventions are sometimes convenient for computational studies that
-are used to predict behavior for a particular experimental system with
-blocks of known chemistry and molecular weight. Theorist conventions
-are instead often convenient for studies of trends with changes in
-parameters, and for studies of phase maps for classes of systems for
-which it is known that predictions of relevant thermodynamic properties
-can be parameterized by a small set of dimensionless parameters.
+There are two common types of convention for block contour lengths and
+length units used in the thread model, which we refer to here as 
+"experimentalist" and "theorist" conventions. Both are described below. 
+Experimentalist conventions are sometimes convenient for computational 
+studies that are used to predict behavior for a particular experimental 
+system with blocks of known chemistry and molecular weight. Theorist 
+conventions are instead often convenient for studies of trends with 
+changes in parameters, and for studies of phase maps for classes of 
+systems for which it is known that predictions of coarse-grained models
+for relevant thermodynamic properties can be parameterized by a small 
+set of dimensionless parameters.
 
 \section user_model_conventions_experimentalist_sec Experimentalist conventions
 
-In the "experimentalist" convention, a monomer (i.e., a unit of contour
+In an "experimentalist" convention, a monomer (i.e., a unit of contour
 length) is defined for each monomer type so as to correspond to a
 segment with a molecular weight chosen so that the volume occupied by
 that segment in a melt is equal to a chosen value for a monomer reference
@@ -93,7 +95,7 @@ and/or to SCFT predictions for inhomogeneous structures.
 
 In such studies, the reference volume \f$ v \f$ is usually chosen to have
 a value of order 50 - 100 cubic Angstrom that is comparable to the volume
-of some common hydrocarbon chemical repeat unit containing a few carbon
+of a common hydrocarbon chemical repeat unit containing a few carbon
 atoms. Ultimately, however, the choice of a value for \f$ v \f$ is
 arbitrary. In a system that contains two or more different types of
 monomer, it is generally not possible to choose a single value for the
@@ -132,7 +134,7 @@ with a specific monomer type is then given by
 \f]
 where \f$ R_{e}^{2}(M) \f$ denotes the mean-squared end-to-end length
 for a homopolymer chain of molecular weight \f$ M \f$ and monomer type
-\f$ \alpha \f$.
+\f$ \alpha \f$ within a homopolymer melt.
 Note that the ratio \f$ R_{e}^{2}(M)/M \f$ is independent of molecular
 weight for chains with random-walk statistics. If a value for the
 statistical segment length is known for some other definition of a
@@ -145,19 +147,19 @@ or nanometer units are usually used for all lengths.
 
 \section user_model_conventions_theorist_sec Theorist conventions
 
-In a "theorist" convention, contour coordinates are scaled so as to
+In a "theorist" convention, contour coordinates are often scaled so as to
 define the overall contour length of some reference chain or chain segment
-to be equal to 1.0, by convention.  The reference chain is often chosen
-to correspond to either an entire molecule of some polymer species that
+to be equal to unity, by convention.  The reference chain is often chosen 
+to correspond to either an entire molecule of some polymer species that 
 is present in the system, or one block of one such species.  This is
-equivalent to setting the "monomer" reference volume equal to the
-occupied volume of the entire reference polymer or block.  In this
-convention, the length assigned to each block of each polymer must
-then be equal to the ratio of the actual volume of that block to the
-volume of the reference chain.
+equivalent to setting the "monomer" reference volume equal to the total
+steric volume of the entire reference polymer or block.  In this convention,
+the length assigned to each block of each polymer must then be equal to the
+ratio of the actual volume of that block to the volume of the reference 
+chain.
 
 For example, in a system that contains a single linear block polymer
-species, the length of the entire polymer is often set equal to 1.0 by
+species, the length of the entire polymer is often set equal to 1 by
 convention. In this convention, we  assign the blocks of that polymer
 block lengths that are each less than 1 and that add to exactly 1.
 In the case of a one-component block polymer melt, the value of each
@@ -177,25 +179,31 @@ by changes in one's convention for the monomer reference volume.
 
 If one describes a polymer solution in a thread model using "theorist"
 units in which the reference volume it defined to be equal to the total
-volume of some reference polymer species, then values for the solvent
-size parameter will usually much less than 1.0. Thus for example, a
+volume of some reference polymer species, then values for any solvent
+size parameter is normally much less than 1.0. Thus for example, a
 system with a homopolymer of length 1.0 and a solvent with a size equal
 to 0.01 could be used to describe a homopolymer solution in which the
 polymer molecular volume is 100 times greater than that of the solvent.
 It is also valid, and sometimes more convenient, to describe a solution
 using a theorist convention in which the volume of the solvent species
 is taken as the reference volume. In this case, the solvent size wil be
-set equal to 1.0 by convention, and the lengths for polymer blocks will
+set equal to 1 by convention, and the lengths for polymer blocks will
 generally be much greater than 1.
 
-All of the SCFT examples shown in this user's manual use a theorist
-convention in which the overall length of one type of polymer (i.e., the
-sum of the block lengths) is set to 1.0, and in which the statistical
-segment length of at least one monomer type is set to 1.0.  This type
-of convention is also used in the input files for all of the examples
-provided with PSCF.
+All of the SCFT examples shown in this user's manual use a thread 
+model and a theorist convention in which the overall length of one 
+type of polymer (i.e., the sum of the block lengths) is set to 1, and 
+in which the statistical segment length of at least one monomer type 
+is set to 1.  This type of convention is also used in the input files 
+for all of the SCFT examples provided with PSCF.
 
-\section user_model_conventions_vMonomer_sec Monomer Reference Volume
+In simulations that use a bead model, the number of monomers in each
+block is treated as a physical parameter that is usually much greater
+than 1. In the bead model, one's choice for the level of discretization 
+that is used in underying numerical algorithms thus also restricts
+the choice of values for block lengths.
+
+\section user_model_conventions_vMonomer_sec Monomer reference volume
 
 A value for the monomer reference volume \f$ v \f$ is not required as
 an input to a standard SCFT calculation.  As discussed
@@ -222,9 +230,9 @@ that is reported in the standard output of SCFT
 free energy per monomer (or per unit contour length) normalized by
 \f$ kT \f$.
 
-A value for \f$ v \f$ is, however, required as an independent input
-parameter for PS-FTS calculations. If all other parameters are held
-fixed, smaller values for \f$ v \f$ lead to more overlap among
+A value for \f$ v \f$ is, however, always required as an independent 
+input parameter for PS-FTS calculations. If all other parameters are 
+held fixed, smaller values for \f$ v \f$ lead to more overlap among
 polymers, and weaker field fluctuations. In systems with a single block
 polymers species of total chain length \f$ N \f$ and a single statistical
 segment length \f$ b \f$, the extent of overlap and the magnitude of
@@ -237,11 +245,19 @@ are recovered in the limit \f$ \overline{N} \rightarrow \infty \f$ or,
 equivalenty, in the limit \f$ v \rightarrow \infty \f$.
 
 <b> Example </b>: When performing a PS-FTS calculation for a
-one-component block polymer melt using the thread model, one could
+one-component diblock polymer melt using the thread model, one could
 choose a "theorist" convention in which \f$ N = 1 \f$ and \f$ b = 1 \f$
-and then choose a value of \f$ v \f$ so as to obtain a desired value for
-\f$ \overline{N} \f$. For example, we would, use \f$ v = 10^{-2} \f$ to
-obtain \f$ \overline{N} = 10^{4} \f$.
+for both monomers, and then choose a value of \f$ v \f$ so as to obtain 
+a desired value for \f$ \overline{N} \f$. For example, in this case we 
+could use \f$ v = 10^{-2} \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
+
+<b> Example </b>: When performing a PS-FTS calculation for a
+one-component diblock polymer melt using a discrete bead model for a 
+chain of \f$ N = 100 \f$ beads, one could still choose \f$ b = 1 \f$ 
+for both monomers (thus defining the root-mean-squared bond length as 
+a unit of length) and then choose a value of \f$ v \f$ so as to obtain 
+a desired value for \f$ \overline{N} \f$. For example, in this case we 
+could use \f$ v = 1 \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
 
 <BR>
 \ref user_model_solvent_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

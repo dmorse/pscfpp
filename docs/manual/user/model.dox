@@ -5,10 +5,9 @@
 <BR>
 
 The manual pages linked below discuss the physical models used by PSCF 
-for either SCFT or PS-FTS calculations, in order to explain the 
-information that a user must provide to describe a system of interest. 
-Details of input file formats and other aspects of the PSCF user 
-interface are discussed separately in subsequent pages.
+for either SCFT or PS-FTS calculations, with an emphasis on explaining
+the information that a user must provide. Details of input file 
+formats are discussed separately in subsequent pages.
 
 <h2> Contents:</h2>
 

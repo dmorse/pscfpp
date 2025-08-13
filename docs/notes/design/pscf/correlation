@@ -1,72 +1,160 @@
-Proposal for Intramolecular Correlation Functions
+Proposal for Intramolecular Correlation Functions:
 
-Directory:
+=================================================================
+Current arrangement:
+
+   Class Pscf::Debye in directory pscf/chem
+
+   class Pscf::Rpc::IntraCorrelation in rpc/fts/compressor/intra
+   class Pscf::Rpg::IntraCorrelation in rpg/fts/compressor/intra
+
+   Provide function computeIntraCorrelations(RField<D>& correlations),
+   in which RField<D> has dimensions IntVec<D> kMeshDimensions_;
+
+=================================================================
+Proposed directory and namespace structure:
+
+   Rename Pscf::Homogeneous to Pscf::FloryHuggins;
 
    pscf/correlation
-       class MixtureCorrelation;
-       class PolymerCorrelation;
+   pscf/floryHuggins
+  
+   namespace Pscf {
+      namespace Correlation {
+         class Debye;
+         class Mixture;
+         class Polymer;
+      }
+      namespace FloryHuggins {
+         class Mixture;
+         class Molecule;
+         class Clump;
+      }
+   }
 
 =================================================================
-class MixtureCorrelation {
+Thread vs. bead models:
 
-   MixtureCorrelation(MixtureBase const & mixture);
+   Automatically use correct algorithm for chosen model (bead or
+   thread) in all functions. Public interface will thus not need
+   to distinguish bead and thread models. 
 
-   initialize();
-
-   clear();
-
-   PolymerCorrelation & polymer(int i);
-
-   void monomerOmega(int im, int jm, double kSq);
-
-   template <class FT>
-   void monomerOmega(int im, int jm, FT kSq, FT omega);
-
-   template <class FT>
-   void totalOmega(FT kSq, FT omega);
-
-private:
-
-   // Array of Polymer correlation objects
-   DArray<PolymerCorrelation> polymers_;
-
-   // Lists of blocks indexed by monomer type
-   DArray< GArray< Pair<int> > > blocks_;
-
-   // Lists of solvents indexed by monomer type
-   DArray< GArray< solvent > blocks_;
-
-};
+   We can store isThread_ as a private variable of class that
+   computes polymer correlation functions.
 
 =================================================================
-class PolymerCorrelation {
+namespace Pscf {
+namespace Correlation {
 
-   PolymerCorrelation(PolymerSpecies& Polymer);
+   =================================================================
+   class PolymerOmega {
+   
+      /**
+      * Constructor.
+      */
+      PolymerOmega(PolymerSpecies& polymer);
+   
+      /**
+      * Set q-independent structural properties.
+      */ 
+      void initialize();
+   
+      /**
+      * Clears q-independent structural properties (rSq_ and bSq_)
+      */ 
+      void clear();
+   
+      /**
+      * Get pre-computed value of R^2 for path between blocks.
+      *
+      * \param ib block id
+      * \param jb block id
+      */
+      double rSq(int ib, int jb);
+   
+      /**
+      * Get statistical segment length for a block. 
+      *
+      * \param ib block id
+      */
+      double bSq(int ib);
+   
+      /**
+      * Get omega function associated with two blocks.
+      *
+      * \param ib  block id (in)
+      * \param jb  block id (in) 
+      * \param kSq  square wavenumber (in)
+      * \return  calculated omega value
+      */
+      double blockOmega(int ib, int jb, double kSq);
+   
+      /**
+      * Set array of omega function values for two blocks.
+      *
+      * \param ib  block id
+      * \param jb  block id
+      * \param kSq  array of values of square wavenumber
+      * \param omega  array of corresponding omega values 
+      */
+      template <class FT>
+      void blockOmega(int i, int j, FT const & kSq, FT& omega);
+   
+   private:
+   
+      // Array of matrices of values Rsq_ between two blocks.
+      DMatrix<double> rSq_;
+   
+      // Array of values of square statistical segment lengths for blocks.
+      DArray<double> bSq_;
+   
+      // Pointer to associated PolymerSpecies object.
+      PolymerSpecies const * polymerPtr_;
+   
+      // Is a continuous thread model in use?
+      bool isThread_;
+   
+      // True if rSq_, bSq_, and isThread_ are up to date.
+      bool isInitialized_;
+   
+   };
+   =================================================================
+   
+   =================================================================
+   class Mixture {
+   
+      MixtureOmega(MixtureBase const & mixture);
+   
+      initialize();
+   
+      clear();
+   
+      PolymerOmega & polymer(int i);
+   
+      double monomerOmega(int im, int jm, double kSq);
+      double totalOmega(double kSq);
+      double sRpa(double kSq);
+   
+      template <class FT>
+      void monomerOmega(int im, int jm, FT const & kSq, FT& omega);
+   
+      template <class FT>
+      void totalOmega(FT const & kSq, FT& omega);
+   
+   private:
+   
+      // Array of Polymer correlation objects
+      DArray<PolymerOmega> polymers_;
+   
+      // Lists of blocks indexed by monomer type (??)
+      DArray< GArray< Pair<int> > > blocks_;
+   
+      // Lists of solvents indexed by monomer type (??)
+      DArray< GArray< solvent > blocks_;
+   
+   };
+   =================================================================
 
-   void initialize();
-   void clear();
+}
+}
 
-   double rSq(int ib, int jb);
-
-   double bSq(int ib);
-
-   double blockOmega(int ib, int jb, double kSq);
-
-   template <class FT>
-   void blockOmega(int i, int j, FT kSq, FT omega);
-
-private:
-
-   // Array of matrices of values Rsq_
-   DMatrix<double> rSq_;
-
-   // Array of values of square statistical segment lengths
-   DArray<double> bSq_;
-
-   // Pointer to associated polymer
-   PolymerPointer* polymerPtr_;
-
-   // True if rSq_ and bSq_ are up to date
-   bool isInitialized_;
-
-};

@@ -4,103 +4,109 @@
 \ref user_usage_page (Next)
 <BR>
 
-\section user_files_types_sec Types of file
+\section user_files_types_sec Types of input file
 
-To perform a typical self-consistent field theory (SCFT) calculation, a
-PSCF program generally reads three different types of input file:
+To perform either a SCFT of PS-FTS calculation, a PSCF program must generally
+read three different types of input file:
 <ul>
    <li> a parameter file </li>
    <li> a command file </li>
    <li> a field file </li>
 </ul>
-All PSCF programs use similar formats for the parameter and command 
-files. Several different formats are used for field files.
+All PSCF programs use similar formats for parameter and command files.
+Several different formats may be used for field files.
 
 \section user_files_parameter_sec Parameter file
 
 When any PSCF program is executed, the parameter file is processed first.
-The name of the parameter file is specified as command line argument when 
-a PSCF program is invoked, as the parameter of the required "-p" command 
-line option.  
+The name of the parameter file is specified as command line argument when
+a PSCF program is invoked, as the parameter of the required "-p" command
+line option.
 
-The parameter file defines the basic parameters of a physical problem of 
-interest, and initializes the state of the program.  This file contains 
-physical information about chemical structures (e.g., monomer properties 
-and block polymer structures), composition (the volume fraction or 
-chemical potential of each species in a mixture), interactions among the 
-constituents (Flory-Huggins chi parameters), information about the spatial 
-domain of interest (e.g., the Bravais lattice type of a periodic 
-structure), a description of a spatial discretization of that domain, 
-and a variety of algorithmic parameters. 
+The parameter file defines the basic parameters of a physical problem of
+interest, and initializes the state of the program.  This file contains
+physical information about chemical structures (e.g., monomer properties
+and block polymer structures), composition (the volume fraction or chemical
+potential of each species in a mixture), interactions among constituents
+(Flory-Huggins chi parameters), information about the spatial domain of
+interest (e.g., the Bravais lattice type of a periodic structure), a
+description of a spatial discretization for that domain, and a variety of
+other algorithmic parameters.
 
-An example of a simple parameter file for an SCFT calculation performed
-by the pscf_pc program is shown \ref user_param_example_page "here" .
+An example of a parameter file for an SCFT calculation performed using 
+the pscf_pc or pscf_pg program is shown and discussed in later manual
+page, \ref user_param_example_page "here" .
 
 \section user_files_command_sec Command file
 
-The command file is processed after the parameter file, and controls
-program flow after initialization.  The command file contains a list of 
-commands that are interpreted and executed in the order listed.  Each 
-line of a command file starts with a capitalized command name, which
-is sometimes followed by one or more arguments.  The name of the command 
-file that controls a calculation is always specified as a required 
-command line argument, as the parameter of the "-c" command line option.
+The command file is always processed immediately after the parameter file,
+and controls program flow after initialization.  A command file contains
+a list of commands that are interpreted and executed in the order listed.
+Each line of a command file starts with a capitalized command name, which
+may be followed by one or more arguments.  The name of the command file
+that controls a calculation is always specified as a required command line 
+argument, as the parameter of the "-c" command line option.
 
-An example of a simple command file for an SCFT calculation performed
-with the pscf_pc program is shown \ref user_command_example_sec "here" .
-
-Some commands in a command file perform operations that perform file
-input and output operations on field data.  For example, the first 
-command in a command file for a simple SCFT calculation is usually a 
-command to read an initial guess for the monomer chemical potential 
-fields from an input field file. The last commands in such a script 
-are often commands that write the converged chemical potential and 
-monomer concentration fields to output files.  The names of these
-input and output field files are specified within the command file as 
-parameters of commands.
+An example of a command file for an SCFT calculation performed with the 
+pscf_pc or pscf_pg program is shown and discussed 
+\ref user_command_example_sec "here".
 
 \section user_files_field_sec Field files
 
 A field file contains a description of a set of fields (i.e., functions
 of position) that are associated with different monomer types. The most
-important types of field are chemical potential fields associated with 
-different monomer types, sometimes referred to as "w-fields", and fields 
-that represent mononer concentration or volume fraction, sometimes 
-referred to as "c-fields".  Several different field file formats are 
-used by different PSCF programs. For each program, the same file format 
-or set of file formats are used for both w-fields and c-cfields.  The 
-command file for every SCFT and PS-FTS calculation generally includes a 
-command that reads an input file containing an initial set of chemical 
-potential fields. 
+important types of field are chemical potential fields associated with
+different monomer types, sometimes referred to as "w-fields", and fields
+that represent mononer concentration or volume fraction, sometimes
+referred to as "c-fields".  
+
+Many commands in a command file perform operations that read or write
+field files. For example, the first command in a command file for a SCFT 
+calculation is usually a command to read an initial guess for the monomer 
+chemical potential fields from an input field file. The last commands 
+in such a script are often commands that write the converged chemical 
+potential and monomer concentration fields to output files.  The names 
+of these input and output field files are specified within the command 
+file as parameters of commands.
+
+Several different field file formats are used by different PSCF programs. 
+For each program, the same file format or set of file formats are used 
+for both w-fields and c-cfields.  The pscf_pc and pscf_pg programs use
+identical field file formats, while pscf_1d uses a somewhat different
+format. 
 
 The pscf_pc and pscf_pg programs can use either "basis" or "r-grid" format
-to read and write field files.  The "basis" format uses a symmetry-adapted 
-Fourier series expansion of each field that is designed to represent 
-periodic fields with the space group symmetry specified by the "groupName" 
-parameter in the parameter file.  By construction, any field that is 
-represented in using this file format is invariant under all symmetry 
-operations of the specified space group.  The "r-grid" file format instead 
-contains values of fields on nodes of a regular computational mesh, and 
-does not assume or impose the existence of any space group symmetry. 
-  
-The names of commands used by pscf_pc and pscf_pg to read or write fields
-all end with a suffix "BASIS" or "RGRID", respectively, to specify which
-of these two file format should be used. For example, the command that
-reads an initial set of w-fields in basis format is named READ_W_BASIS, 
-while the command to output final converged c-fields in r-grid format is
-named WRITE_C_RGRID. Files containing chemical potential fields (w-fields) 
-used for SCFT calculations for periodic structures are usually input and 
-output in basis format, since this format automatically imposes the 
-declared space group symmetry.  Files containing w-fields used for 
-PS-FTS simulations are instead normally input and output in r-grid format, 
-since stochastic field theoretic simulations do not exactly preserve any 
-space group symmetry.  Monomer concentration fields are may be output in 
-either format, and are usually output in r-grid format for visualization.
+to read and write field files.  The "basis" format uses a symmetry-adapted
+Fourier series expansion of each field that is designed to represent
+periodic fields with the space group symmetry specified by the "groupName"
+parameter in the parameter file.  By construction, any field that is
+represented using this file format must be invariant under all symmetry
+operations of the specified space group. The "r-grid" file format instead
+contains values of fields on nodes of a regular computational mesh, and
+does not require or assume the existence of any space group symmetry.
 
-The pscf_1d command uses a single format for all fields that lists values 
-of fields on the nodes of a 1D grid. The names of commands used by pscf_1d 
-to read and write field fields thus do not contain information needed to 
-specify a file format. 
+The names of commands used by pscf_pc and pscf_pg to read or write field
+files all end with a suffix "BASIS" or "RGRID", respectively, to specify
+which of these two file format should be used. For example, the command 
+for these programs that reads an initial set of w-fields in basis format 
+is named READ_W_BASIS, while the command that outputs the current set of 
+c-fields in r-grid format is named WRITE_C_RGRID. Files containing 
+chemical potential fields (w-fields) used for SCFT calculations for 
+periodic structures are often input and output in basis format, since 
+this format automatically imposes a specific space group symmetry that
+has been declared by the user. Files containing w-fields used for PS-FTS 
+simulations are instead normally input and output in r-grid format, since 
+stochastic field theoretic simulations do not exactly preserve any space 
+group symmetry.  Monomer concentration fields may be output in either 
+format, but are usually output in r-grid format for purposes of
+visualization.
+
+The pscf_1d command uses a single simple format for both w- and c-fields.
+The data section of this file format simply lists values of fields on 
+the nodes of a regular 1D grid, much like the r-grid format used pscf_pc
+and pscf_pg. Because only one field file format is used, names of commands 
+used by pscf_1d to read and write field fields thus do not contain 
+suffixes that specify a file format.
 
 <BR>
 \ref user_model_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

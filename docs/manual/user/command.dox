@@ -19,11 +19,11 @@ command name 'FINISH' on a line by itself.
 Full descriptions of all of the commands recognized by all three PSCF
 programs are given \ref scft_command_page "here". 
 
-\section user_command_example_sec Example: SCFT command file 
+\section user_command_example_sec Example: SCFT command file, periodic structure
 
 The following is an example of a minimal command file for using the 
-pscf_pc program to perform an SCFT calculation for a periodic structure
-of known space group symmetry and output the results to file:
+pscf_pc or pscf_pg program to perform an SCFT calculation for a periodic 
+structure of known space group symmetry and output the results to file:
 \code
 READ_W_BASIS    in/w.bf
 ITERATE
@@ -56,19 +56,30 @@ The FINISH command is always the last command that is read in a command
 file, and causes execution of the program to halt. Anything in a command 
 file that appears after the FINISH command is ignored.
 
+In this example, the concentration field that is written in r-grid format 
+by the command WRITE_C_RGRID could be used for visualization.
+
 <b> File names as command arguments </b>:
 Many commands take the names of input or output files as arguments.
 File names are given as paths that, by default, are specified relative 
 to the current working directory, i.e., the directory from which the 
 program executable was invoked. File name paths may thus include names 
 of subdirectories of this directory and path separator slash characters. 
-This default may be modified by using the "-i" and/or "-o" 
-\ref user_usage_page "command line options" to add prefixes to paths 
-to input and output files, respectively.  The above example is designed 
-for a case in which pscf_pc is invoked without using either of these 
-command line options, and in which it is invoked from a directory 
-containing subdirectories named "in" and "out" that contain input and 
-output files, respectively.
+
+This default behavior may be modified by using the "-i" and/or "-o" 
+\ref user_usage_page "command line options" to automatically add prefixes 
+to paths for input and output files, respectively.  The above example is 
+designed for a case in which pscf_pc or pscf_pg is invoked without using 
+either of these command line options, and in which it is invoked from a 
+directory with subdirectories named "in" and "out" that contain input 
+and output files, respectively. If the program had instead been invoked 
+from such a directory using the options "-i in/" and "-o out/", e.g., as
+\code
+ > pscf_pc -d 3 -p param -c command -i in/ -o out/ -e
+\endcode
+then input and output file names could have been specified in the command 
+file without the explicit "in/" and "out/" directory names prefixes in
+the file names give as command arguments.
 
  <BR>
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

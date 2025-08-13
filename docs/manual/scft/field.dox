@@ -28,8 +28,8 @@ in the sub-pages linked below.
 
 <h2> Contents :</h2>
 <ol>
-  <li> \subpage scft_field_r1d_page "1D Fields"  </li>
-  <li> \subpage scft_field_periodic_page "Period Fields" 
+  <li> \subpage scft_field_r1d_page "1D Fields (pscf_1d)"  </li>
+  <li> \subpage scft_field_periodic_page "Period Fields (pscf_pc and pscf_pg)" 
     <ul>
       <li> \ref scft_field_basis_page "Basis Format" </li>
       <li> \ref scft_field_rgrid_page "R-Grid Format" </li>

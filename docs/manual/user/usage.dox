@@ -5,24 +5,26 @@
 <BR>
 
 
-All of the PSCF programs are designed to be run from a unix command line,
-and all have a similar command line interface. The names of the parameter
-and command files required to perform a computation are passed to the the
-program as arguments of the "-p" and "-c" command line options, respectively.
-Names of other input and output files are provided as arguments to commands
-in the command file.
+All PSCF executable programs are designed to be run from a unix command line,
+and all have a similar command line interface. The names of the required
+parameter and command files are passed to the program as arguments of the 
+"-p" and "-c" command line options, respectively.  Names of other input and 
+output files are provided as arguments to commands in the command file.
 
-\section user_usage_example_sec Example
+\section user_usage_example_sec Examples
 
-As an example, consider use of the program pscf_1d, which is used to
-simulate problems in which the fields depend on a single coordinate.
+<b> pscf_1d </b>:
+As a first example, consider use of the program pscf_1d, which is used 
+to simulate problems in which the fields depend on a single coordinate.
 To run this program using a parameter file named "param" and command
 file named "commands" that are both in the current working directory,
 one would enter
 \code
    pscf_1d -p param -c commands
 \endcode
-The syntax to invoke the pscf_pc and pscf_pg programs for periodic
+
+<b> pscf_pc and pscf_pg</b>:
+The syntax to invoke either the pscf_pc or pscf_pg programs for periodic
 microstructures is similar, but requires that parameter also pass the 
 spatial dimensionality as a parameter of the -d option. For example,
 to use pscf_pc to perform a calculation involving a three-dimensional 
@@ -33,6 +35,7 @@ periodic microstructures, one would enter
 The command line interface for pscf_pg is identical to the interface
 for pscf_pc. 
 
+<b> Redirecting log output </b>:
 During execution, some log information is written to standard output,
 which outputs to a terminal by default. This log output can be re-directed
 to a file by using the unix ">" output redirect operator. For example,
@@ -60,31 +63,24 @@ echoed output ends immediately before the line at which the error is
 detected, and is followed by an error message with any avaiable 
 information about the nature of the error.
 
-PSCF parameter files are fixed-format files in which every element is 
-preceded by a label string that gives the name of a parameter or a block 
-of parameters. During processing of the parameter file, the program reads 
+PSCF parameter files have a relatively rigid format in which elements
+must appear in a particular order, and in which every element is preceded 
+by a label string that gives the name of a parameter or a block of 
+parameters.  During processing of the parameter file, the program reads 
 each such label and compares it to a label that it expects to appear next 
-in the file. Error messages that are generated in response to parameter 
-file syntax errors output both the expected label string and the label 
-string that was actually read from file. This error message is usually 
-enough to allow a user to identify and fix such an error.
-
-Another advantage of using the echo option is that it creates an output
-that indicates the existence of optional elements that are allowed by 
-the parameter file format but that were omitted in a particular 
-parameter file. If an optional parameter or subblock is omitted, the 
-label of the omitted element is echoed to standard output followed by 
-the string "[absent]". The inclusion of omitted optional elements in
-the echoed output may help users more quickly become familiar with the
-full format of each parameter file block, including optional elements 
-that are omitted from some examples.
+in the file, or to a list of valid possibilities. Error messages that are 
+generated in response to parameter file syntax errors output both the 
+label string that was actually read from file and information about 
+what was expected. When echoing is turned on, these error messages often 
+provide enough information to allow a user to rapidly understand and fix 
+such errors.
 
 \section user_usage_options_sec Command line options 
 
 The table shown below lists all command line options accepted by PSCF
 programs. The second column, which describes the option parameter, is
-left empty for options that do not take a parameter.  All but one of 
-the options listed below can be used with any of the three PSCF programs. 
+left empty for options that do not take a parameter.  All but one of the 
+options listed below can be used with any of the three PSCF programs. 
 The only exception to this is the -d option, which is a required input
 to the pscf_pc and pscf_pg programs, but is not a valid option for 
 pscf_1d.
@@ -110,48 +106,53 @@ pscf_1d.
      <td> Name of the command file  (required) </td>
   </tr>
   <tr> 
-     <td> -i </td>
-     <td> prefix </td>
-     <td> string that is prepended to the paths for all input data 
-     files (optional) </td>
-  </tr>
-  <tr> 
-     <td> -o </td>
-     <td> prefix </td>
-     <td> string that is prepended to the the paths for 
-     all output data files (optional) </td>
-  </tr>
-  <tr> 
      <td> -e </td> 
      <td>    </td>
      <td> Activates echoing of parameter file to standard output (optional) 
      </td>
   </tr>
+  <tr> 
+     <td> -i </td>
+     <td> prefix </td>
+     <td> string that is prepended to the names (paths) for all input 
+     data files (optional) </td>
+  </tr>
+  <tr> 
+     <td> -o </td>
+     <td> prefix </td>
+     <td> string that is prepended to the names (paths) for all output 
+     data files (optional) </td>
+  </tr>
 </table>
-The -p and -c options are required, while the -i, -o and -e options 
-are optional.  The -d option only exists for the pscf_pc and pscf_pg 
-programs, and is required for those programs. The -e option does not
-take a parameter.
+The -p and -c options are required, while the -e, -i, -o options are 
+not.  The -d option only exists for the pscf_pc and pscf_pg programs, 
+and is required by those two programs. The -e option does not take a 
+parameter.
 
+\section user_usage_prefixes_sec File name prefixes
+
+The -i and -o command line options allow the user to specify standard
+prefix strings that should be prepended to the names of input and output 
+files, respectively, that appear in the parameter and command files.
 The "prefix" parameter of the -i or -o option is often used to specify
 a directory for input or output files. To do so, set the value of this
-argument to the name of a directory, terminated by the directory 
-separator charactor "/", giving a string such as "in/" or "out/".  
-These prefix strings are prepended verbatim to names of input and output 
-files that are specified as parameters in the command or parameter file.
-No such prefix is added to the names of the parameter and command files 
-that are specified in the program command line.
+argument to the name of a directory, terminated by the directory separator 
+charactor "/", giving a string such as "in/" or "out/".  These prefix 
+strings are prepended verbatim to names of input and output files that 
+are specified as parameters in the command or parameter file. The input
+prefix (if any) is not, however, added to the names of the parameter and 
+command files that are given in the command line.
 
 <em> Example </em>:
 The command
 \code
    pscf_pc -d 3 -e -p param -c commands -i in/ -o out/ > log
 \endcode
-would run the pscf_pc using a parameter file named "param" and a 
-command file named "commands", while echoing the parameter file during
-initialization, writing all output files to subdirectory "out/" of the 
-current working directory, and reading all input files other than the 
-parameter and command files from subdirectory "in/".
+would run the pscf_pc program using a parameter file named "param" and 
+a command file named "commands" in the current working directory, while 
+echoing the parameter file, and writing all output files to subdirectory 
+"out/" of the current working directory, and reading all input files 
+other than the parameter and command files from subdirectory "in/".
 
 <BR>
 \ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

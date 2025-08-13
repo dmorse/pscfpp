@@ -5,16 +5,16 @@
 <BR>
 
 The PSCF package allows users to perform two primary types of field 
-theoretic calculation of material properties. These are:
+theoretic calculation. These are:
 
   - Self-Consistent Field Theory (SCFT)
 
   - Partial Saddle-Point Field Theoretic Simulation (PS-FTS) 
 
-All three PSCF programs (pscf_1d, pscf_pc and pscf_pg) can perform 
-SCFT calculations.  PS-FTS simulations that use either Brownian
-dynamics or Monte-Carlo sampling techniques can be performed with 
-the pscf_pc and pscf_pg programs for periodic systems, but not with 
+SCFT calculations can be performed with any of the three PSCF programs
+(pscf_1d, pscf_pc and pscf_pg).  PS-FTS calculations that use either 
+Brownian dynamics or Monte-Carlo sampling techniques can be performed 
+with the pscf_pc and pscf_pg programs for periodic systems, but not with 
 the pscf_1d program.  
 
 All three PSCF programs can also perform SCFT parameter sweeps. 
@@ -24,9 +24,9 @@ of parameter values spaced along a path through parameter space, as
 discussed in more detail \ref scft_param_sweep_page "here".
 
 Each of the PSCF programs is initialized using data in a parameter file
-and then executes a series of commands specified in a command file. The 
-following commands performs one of the types of calculation described 
-above:
+and then executes a series of commands specified in a command file. 
+Each of the following commands performs one of the types of calculation 
+described above:
 
    - ITERATE performs a single SCFT calculation 
 
@@ -38,24 +38,6 @@ The format of a parameter file contains some optional elements that are
 required for some types of calculations but unnecessary for others. The 
 required format of a parameter file thus depends to some extent on what 
 type of commands are going to be used in the associated command file.  
-
-For example, consider a parameter file that is designed to initialize an 
-SCFT calculation, by using it together with a command file that invokes 
-the ITERATE or SWEEP command. The parameter file for such a calculation 
-must specifies a choice of SCFT iteration algorithm from among several 
-possible algorithms, and specifies values of any parameters required by 
-that algorithm. This information is given in a section of the parameter 
-file that is referred to in what follows as an Iterator block. The 
-Iterator block is an optional component of a PSCF parameter file that 
-is needed for SCFT calculations but is not used in a PS-FTS calculation. 
-Conversely, a parameter file used to initialize a PS-FTS calculation 
-must contain other specialized blocks that specify information used 
-by a BD or MC sampling algorithm, none of which is necessary for SCFT.
-
-The discussion of parameter files given in this chapter focuses on
-examples that describe elements needed for SCFT calculations and SCFT 
-parameter sweeps. Parameter file sections that are needed only for 
-PS-FTS calculation are discussed separately.
 
 <BR>
 \ref user_usage_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

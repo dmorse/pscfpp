@@ -5,19 +5,14 @@
 <BR>
 
 This manual section describes the format and contents of the parameter 
-files used by all of the PSCF programs to perform self-consistent field 
-(SCFT) calculations. The discussion given here is thus limited to parameter
-file elements that are required to perform SCFT calculations and SCFT
-parameter sweeps, while deferring discussion of elements that are only
-needed for field-theoretic Monte-Carlo or Brownian dynamics simulations.
-
-The parameter files required by the three different PSCF programs exhibit 
-a very similar structure and syntax, but differ in a few details. The
-discussion in this introductory section of the user manual focuses on
-syntactical features that are common to all PSCF parameter files, and 
-of parameter file elements that are required for multiple applications.
-More detailed descriptions of elements that are required for SCFT and
-FTS calculations are given elsewhere.
+files used by all of the PSCF programs.  The parameter files required by 
+the three different PSCF programs exhibit a very similar structure and 
+syntax, but differ in some details. The discussion given here focuses on 
+general syntactical features that are common to all PSCF parameter files. 
+For simplicity, however, the examples given in this chapter only contain 
+elements required for SCFT calculations. More complete discussions of 
+parameter files elements required to initialize either SCFT or PS-FTS 
+calculations are given in the following two chapters.
 
 <h2> Contents:</h2>
    <ol>

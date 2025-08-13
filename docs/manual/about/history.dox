@@ -32,21 +32,21 @@ Characteristics of the current version of PSCF that distinguish it from
 the legacy Fortran version include the following:
 <ul>
   <li>
-  Designed as an extensible package of several programs intended for 
-  different geometries, algorithms and/or computer hardware. The 
-  Fortran version is a single SCFT program for periodic structures
-  and linear polymers.
+  The current version is an extensible package of several programs intended 
+  for different geometries, algorithms and/or computer hardware. The legacy
+  Fortran version is a single program for SCFT of periodic structures.
   </li>
   <li>
-  Enables simulations of mixtures containing acyclic branched block 
-  polymers.
+  The current version can simulate mixtures containing acyclic branched block 
+  polymers. The Fortran version was designed for linear block polymers.
   </li>
   <li>
-  Enables the use of graphics processing units (GPUs).
+  The current version can use a graphics processing units (GPU) to 
+  accelerate calculations involving large systems.
   </li>
   <li>
-  Enables partial-saddle point field theoretic simulation (PS-FTS) 
-  calculations in addition to SCFT.
+  The current version can perform partial-saddle point field theoretic 
+  simulation (PS-FTS) calculations in addition to SCFT.
   </li>
 </ul>
 
@@ -55,36 +55,36 @@ the legacy Fortran version include the following:
 The following features of the legacy Fortran program have not been ported 
 to the C++/CUDA version:
 <ul>
-  <li> A quasi-Newton-Broyden SCFT iteration algorithm that works well
-       for problems of modest size.
+  <li> SCFT linear-reponse calculations for ordered structures.  </li>
+  <li> A useful quasi-Newton-Broyden SCFT iteration algorithm. </li>
   </li>
-  <li> RPA-like linear-reponse calculations for ordered structures.  </li>
 </ul>
 These two features are described in more detail below.
 
-The Fortran PSCF program provided a unique quasi-Newton/Broyden SCFT 
-iteration algorithm that was based on a physically motivated initial
-approximation for the inverse Jacobian that is iteratively improved via 
-a Broyden update algorithm.  This was an excellent algorithm for the 
-problems of moderate size for which it was originally designed. It was 
-abandoned in the new version in favor of a variety of Anderson-mixing 
-algorithms because the amount of memory required by the Newton/Broyden
-algorithm increases as the square of the number of spatial degrees of 
-freedom (i.e., number of basis functions), which prevented the algorithm 
-from being applied to larger problems.
-
-The Fortran PSCF program contains algorithms to to compute the linear 
-response of a periodic structure to an infinitesimal inhomogeneous external 
-field.  This algorithm allowed description of limits of stability of ordered 
-phases and of composition fluctuations within such phases. This feature has 
-not been ported to the new C++ version, but will remain available within the 
-Fortran program, which will remain available. The required algorithm and 
-some application are described in the following reference: 
+The Fortran PSCF program can compute the SCFT linear response of periodic 
+equilibrium structures to infinitesimal inhomogeneous external fields.  This 
+capaability allows calculation of limits of stability of ordered phases and 
+description of composition fluctuations within such phases. This is the only 
+important capability of the Fortran program that has not been ported to the 
+new C++ version.  It will remain available within the Fortran program, which 
+is still maintained in a separate github repository.  The required algorithm 
+and some applications are described in the following reference: 
 
 Ranjan, A. and Qin, J. and Morse, D.C., 
 <a href="https://doi.org/10.1021/ma0714316">
 "Linear Response and Stability of Ordered Phases of Block Copolymers", 
 </a> **2008** *Macromolecules* <i>41</i>, 942.  
+
+The Fortran PSCF program also provides a unique quasi-Newton/Broyden SCFT 
+iteration algorithm that is still an excellent algorithm for the problems 
+of moderate size for which it was originally designed. This algorithm is
+based on a physically motivated initial approximation for the inverse 
+Jacobian of the SCFT fixed-point problem and iterative improvement of this 
+guess via a Broyden update scheme.  This algorithm was abandoned in the 
+new C++ version in favor of Anderson-mixing algorithms because the amount 
+of memory required by this Newton/Broyden algorithm increases as the square 
+of the number of spatial degrees of freedom (i.e., number of basis functions), 
+which prevented the algorithm from being applied to larger problems.
 
 <BR>
 \ref about_methods_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

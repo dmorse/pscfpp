@@ -10,7 +10,7 @@ the computational methods and programs to which they apply:
 * **Features for both SCFT and FTS (all programs):**
 
   - Ability to treat mixtures containing any number of block polymer,
-    homopolymer, and solvent molecular species. 
+    homopolymer, and solvent molecular species
 
   - Ability to treat acyclic branched block polymers, as well as linear
     block polymers
@@ -31,8 +31,8 @@ the computational methods and programs to which they apply:
 
   - Efficient Anderson-mixing SCFT iteration algorithms
 
-  - Efficient "parameter sweeps": SCFT alculations for a sequence of 
-    states along a path in parameter space 
+  - Efficient "parameter sweeps": SCFT calculations for a sequence of 
+    states along a path in parameter space, with continuation of solutions 
 
 All features listed below are specific to the pscf_pc and pscf_pg 
 programs. Both of these programs are designed for systems with periodic
@@ -43,8 +43,8 @@ represent a larger region.
 
 * **Features for SCFT or PS-FTS on periodic systems (pscf_pc and pscf_pg):**
 
-  - Choice of continuous thread or discrete bead models of polymer
-    chains.
+  - Choice of continuous thread or discrete bead-spring models of polymer
+    chains
 
   - High accuracy pseudo-spectral solution of the modified diffusion 
     equation for the continuous chain model.
@@ -73,14 +73,14 @@ represent a larger region.
 
   - Thin polymer films (implemented using a mask and external fields)
 
-* **Features for PS-FTS (pscf_pc and pscf_pg):**
+* **Features for PS-FTS with periodic boundary conditions (pscf_pc and pscf_pg):**
 
-  - Brownian dynamics (BD) and Monte Carlo (MC) sampling 
+  - Brownian dynamics (BD) and Monte Carlo (MC) sampling algorithms
 
   - BD algorithms: Leimkuhler-Matthews and predictor-corrector step
     algorithms
 
-  - MC move algorithms: real-space and "smart"/force-bias moves 
+  - MC algorithms: real-space and "smart"/force-bias MC moves 
 
   - Efficient new algorithms for adjusting the pressure field so as to 
     find a partial saddle-point (i.e., to impose incompressibility)
@@ -97,7 +97,8 @@ represent a larger region.
     thermodynamic integration calculations
 
   - Analysis tools can applied either during a simulation or by
-    postprocessing of field trajectory files 
+    postprocessing of field trajectory files that are written during
+    an earlier simulation
 
 <BR>
 \ref about_programs_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

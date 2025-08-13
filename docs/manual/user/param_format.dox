@@ -4,19 +4,20 @@
 \ref user_param_mixture_page  (Next)
 <BR>
 
-Users of PSCF require precise and complete documentation of the required
-format for each block that can appear with a parameter file of a PSCF
-program.  This page describes a representation that is used in the PSCF
-documentation to indicate the format of each parameter file block. This
-format representation is similar to that of the actual block, supplemented
-by notation to indicate data types of parameter values, and by the use of
+Users of PSCF require complete documentation of the required format for 
+each type of block that can appear with a parameter file.  This manual 
+page describes a representation that is used in the PSCF documentation to 
+indicate the format of each such parameter file block. This format 
+representation is similar to that of the actual block, supplemented by 
+notation to indicate data types of parameter values, and by the use of
 special symbols to indicate syntactical elements such as array-valued
 parameters, optional elements and selectable subblocks.
 
-\section user_format_example1_sec Example 1: SCFT parameter file for pscf_pc
+\section user_format_example1_sec Example 1: SCFT parameter file for a periodic structure
 
-As a simple first example of this sort of description, the overall syntax
-for a pscf_pc parameter file is shown in skeleton form below:
+As a simple first example of this sort of format description, the overall 
+format for a pscf_pc or pscf_pg parameter file used to initialize a SCFT 
+calculation is shown below:
 \code
 System{
    polymerModel*  enumeration ("thread" or "bead", "thread" by default)
@@ -29,28 +30,28 @@ System{
 \endcode
 This description should look familiar, except for the inclusion of a
 Sweep{...} block, which is an optional element that was omitted from our
-example file.  In such a description, the syntax Label{...} is used to
+earlier example.  In such a description, the syntax Label{...} is used to
 indicate a nested subblock, for which the format of the subblock must be
 described separately somewhere else.  The appearance of an asterisk (*)
 after any block or parameter label is used to indicate that the element is
 optional (i.e., omittable).  Parameters and block labels that are not
-followed by an asterisk thus indicate required elements. The appearance
-of a "#" symbol after a block label indicate that the block is selectable.
+followed by an asterisk are thus required elements. The appearance of 
+a "#" symbol after a block label indicate that the block is selectable.
 The above description thus indicates that the Iterator and Sweep blocks
 are both optional and selectable. 
 
 \section user_format_example2_sec Example 2: Mixture block
 
 As a second example, consider the format for a Mixture block used in any 
-PSCF parameter. This can described compactly as follows:
+PSCF parameter file. This can described compactly as follows:
 \code
 Mixture{
   nMonomer   int
   monomers   Array [ real ]
   nPolymer   int
+  nSolvent*  int (0 by default)
   Polymer{ ... }
     ...
-  nSolvent*  int (0 by default)
   Solvent*{ ... }
     ...
   vMonomer*  real (1.0 by default)
@@ -64,7 +65,7 @@ by labels that specify the type of parameter value, such as int or real.
 The word Array followed by opening a closing square brackets enclosing
 a type descriptor is describe an array-value parameter.  Note that default
 values for some optional elements (nSolvent and vMonomer) are given as
-comments enclosed in parentheses.
+comments enclosed in parentheses. 
 
 This sort of compact format description is usually supplemented by a table 
 and/or text discussion that contains an explanation of the the meaning of
@@ -72,10 +73,15 @@ each parameter, comments about allowed values for particular parameters,
 values for dimensions of arrays or matrices, relationships among choices
 of parameter values, and any other required supplementary information.
 
-\section user_format_conventions_sec Conventions
+A Mixture block may contain multiple Polymer and Solvent blocks, as 
+indicated in the above format by ellipses. The number of Polymer and 
+Solvent blocks must, however, match the values of nPolymer and nSolvent, 
+respectively.
 
-The following conventions, most of which are illustrated in the above
-examples, are used in this type of parameter file format summary:
+\section user_format_conventions_sec Parameter format conventions
+
+The following conventions for parameter values are used in this type of 
+parameter file format summary:
 
  - <b> Parameters </b>: Individual parameters are indicated using the
    syntax
@@ -136,14 +142,26 @@ examples, are used in this type of parameter file format summary:
    is used to indicate the body of the block, the format of which must 
    be described somewhere else in the documentation.
 
+\section user_format_optional_sec Optional and Selectable Elements
+
+Optional elements and selectable blocks are described using the following
+conventions:
+
  - <b> Optional elements </b>: Optional parameters and blocks (i.e.,
    elements that may be omitted from the file) are indicated by an
-   asterisk after the subblock or parameter label. The label for an
-   optional simple parameter is thus
+   asterisk after the subblock or parameter label. The description
+   for an optional individual parameter is thus of the form
    \code
       label*   type
    \endcode
-   where "label" denotes the actual label string.
+   where "label" denotes the actual label string. Similarly, the
+   description of an optional block would be of the form
+   \code
+      Label*{ 
+        ....
+      }
+   \endcode
+   where "Label" denotes the block label string.
 
  - <b> Default values </b>: Default values for optional parameters may
    be indicated by a comment enclosed in parentheses after the label and
@@ -158,11 +176,10 @@ examples, are used in this type of parameter file format summary:
    \code
        Label#{ ... }
    \endcode
-   for a required but selectable subblock.
-   The label for a selectable subblock in a
-   format description should be the generic name for the subblock
-   (e.g., the generic name "Iterator", rather than the name of a
-   class that implements a specific iterator algorithm). This generic
+   for a required but selectable subblock. The label for a selectable 
+   subblock in a format description should be the generic name for the 
+   subblock (e.g., the generic name "Iterator", rather than the name of 
+   a class that implements a specific iterator algorithm). This generic
    name can also be used as a block label to select the default choice
    for this block.
 
@@ -173,9 +190,8 @@ examples, are used in this type of parameter file format summary:
       Label#*{ ... }
    \endcode
    where Label denotes the generic name of the block.  For example, the
-   Sweep block of a pscf_1d parameter file is both selectable and optional,
-   and so is described in the first of the above examples by a line of the
-   form "Sweep#*{ ... }.
+   Iterator and Sweep parameter file blocks are both selectable and 
+   optional.
 
 <BR>
 \ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

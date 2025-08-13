@@ -5,10 +5,10 @@
 <BR>
 
 The first subblock of the main System block in every PSCF parameter file
-starts with a label "Mixture", and is referred to as the Mixture block.
-The Mixture block describes the chemical composition of the system that
-is being simulated, and includes a description of the chemical structure
-of each species in the mixture.
+is required block that starts with a label "Mixture", and is referred to 
+as the Mixture block.  The Mixture block describes the chemical composition 
+of the system that is being simulated, and includes a description of the 
+chemical structure of each species in the mixture.
 
 PSCF programs are designed to treat a mixture that may contain one or
 more polymer species and zero or more solvent point-particle species.
@@ -58,24 +58,26 @@ shown \ref user_param_example_page "previously" :
 
 \section user_param_mixture_format_sec Format 
 
-The format for the mixture block in any PSCF parameter file is described
-somewhat more generally below:
+The format for the mixture block in any PSCF parameter file, which has been
+shown previously, is also repeated below:
 \code
 Mixture{
   nMonomer   int
   monomers   Array [ real ]
   nPolymer   int
+  nSolvent*  int (0 by default)
   Polymer{ ... }
     ...
-  nSolvent*  int (0 by default)
   Solvent*{ ... }
     ...
   vMonomer*  real (1.0 by default)
-  ds         real
+  ds         real (only allowed for thread model)
 }
 \endcode
 The asterisks after the nSolvent and vMonomer labels indicates that 
-these are optional parameters.  The number of Polymer subblocks must 
+these are optional parameters.  The ellipses after the Polymer and 
+Solvent blocks are used to indicate that the Mixture block may contain
+several subblocks of each type.  The number of Polymer subblocks must 
 equal nPolymer, and the number of Solvent subblocks must equal nSolvent.
 Because the optional parameter nSolvent is set to 0 by default, there 
 cannot be any Solvent subblocks if the nSolvent parameter is absent.
@@ -130,6 +132,7 @@ table:
      <td> ds </td>
      <td> Preferred value for the block length step size used to
           integrate the modified diffusion equation within each block.
+          The ds parameter is only valid for the thread model.
           </td>
   </tr>
 </table>
@@ -170,6 +173,14 @@ Comments:
     of a spherical micelle). It is also included as an optional parameter 
     because the value of vMonomer is a required input parameter for 
     stochastic PS-FTS simulations.
+
+  - The parameter ds is required when the thread model is being used, 
+    but may not appear in a parameter file that uses a bead model. The
+    pscf_1d program can only use the thread model, and so always requires
+    a "ds" parameter. For the pscf_pc and pscf_pg programs, the choice of
+    bead or thread model is determined by the value of the polymerModel
+    parameter, which is the first (optional) element of the main System
+    block and appears before the Mixture block. 
 
 <i> Technical comments (for users who examine the source code) </i>:
 

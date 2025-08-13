@@ -1,4 +1,4 @@
-/*! \mainpage PSCF - Polymer Self-Consistent Field Theory
+/*! \mainpage PSCF - Polymer Self-Consistent Field 
 
 PSCF is a software package for field-theoretic simulation of inhomogeneous
 equilibrium structures formed by polymer liquids with constituents that 
@@ -23,12 +23,13 @@ Sustained Scientific Development (CSSI) under Grant No. 2103627.
 
 This web manual is designed to provide both usage information for users who 
 never look at the source code and full developer documentation for those who
-do. Information about how to install and use PSCF is provided in Chapters 
+do. Information about how to install and use PSCF is provided in chapters 
 1-5 of the web manual, as outlined below.  Additional documentation aimed at 
 developers is accessible via the "Topics", "Namespaces", "Classes", and 
 "Files" tabs that appear at the top of every web manual page, as well as in 
-the "Developer Information" chapter of the manual.  The web manual for the 
-most recent release of PSCF is available online at: 
+the "Developer Information" chapter of the manual, chapter 6  
+
+The web manual for the most recent release of PSCF is available online at: 
 <a ref=https://dmorse.github.io/pscfpp-man/> https://dmorse.github.io/pscfpp-man </a>.
 
 <h2>Contents:</h2>
