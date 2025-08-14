@@ -20,9 +20,9 @@ Subdirectories:
 
 environment/ - generation of imposed mask and external fields
 field/       - fields and spatial domain
-solvers/     - modified diffusion equation (MDE) solvers
-scft/        - self-consistent field theory (SCFT)
 fts/         - field theoretic simulation (FTS)
+scft/        - self-consistent field theory (SCFT)
+solvers/     - modified diffusion equation (MDE) solvers
 system/      - main System class template
 tests/       - unit tests for code in src/rpg
 

@@ -7,6 +7,7 @@ Subdirectories:
 
    chem/        - molecular structure descriptors
    cuda/        - utilities for graphics processing units (GPUs)
+   environment/ - generation of imposed mask and external fields
    homogeneous/ - spatially homogeneous mixtures
    inter/       - interaction (excess) free energy 
    iterator/    - utilities for iterator algorithms

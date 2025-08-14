@@ -12,12 +12,13 @@ boundary conditions.
 Subdirectories:
 ---------------
 
-  crystal/  - unit cells, space groups, and symmetry adapted basis
-  cpu/      - field containers and related classes, only used in pscf_pc
-  cuda/     - field containers and related classes, only used in pscf_pg
-  field/    - shared base classes and utilities for fields (CPU & GPU)
-  iterator/ - tools and base classes for iterators
-  tests/    - unit tests for code in src/prdc
+  crystal/     - unit cells, space groups, and symmetry adapted basis
+  cpu/         - field containers etc. for CPU, only used in pscf_pc
+  cuda/        - field containers etc. for GPU, only used in pscf_pg
+  environment/ - generation of imposed mask and external fields
+  field/       - shared base classes and utilities for fields (CPU & GPU)
+  iterator/    - tools and base classes for iterators
+  tests/       - unit tests for code in src/prdc
 
 Enclosed namespaces:
 --------------------
