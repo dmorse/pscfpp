@@ -204,7 +204,6 @@ that is used in underying numerical algorithms thus also restricts
 the choice of values for block lengths.
 
 \section user_model_conventions_vMonomer_sec Monomer reference volume
-(relevance or irrelevance)
 
 A value for the monomer reference volume \f$ v \f$ is not required as
 an input to a standard SCFT calculation.  As discussed
@@ -245,20 +244,20 @@ known as the invariant degree of polymerization.  SCFT predictions
 are recovered in the limit \f$ \overline{N} \rightarrow \infty \f$ or,
 equivalenty, in the limit \f$ v \rightarrow \infty \f$.
 
-<b> Example </b>: When performing a PS-FTS calculation for a
-one-component diblock polymer melt using the thread model, one could
+<b> Example (thread model) </b>: When performing a PS-FTS calculation for 
+a one-component diblock polymer melt using the thread model, one could
 choose a "theorist" convention in which \f$ N = 1 \f$ and \f$ b = 1 \f$
 for both monomers, and then choose a value of \f$ v \f$ so as to obtain 
 a desired value for \f$ \overline{N} \f$. For example, in this case we 
 could use \f$ v = 10^{-2} \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
 
-<b> Example </b>: When performing a PS-FTS calculation for a
-one-component diblock polymer melt using a discrete bead model for a 
-chain of \f$ N = 100 \f$ beads, one could still choose \f$ b = 1 \f$ 
-for both monomers (thus defining the root-mean-squared bond length as 
-a unit of length) and then choose a value of \f$ v \f$ so as to obtain 
-a desired value for \f$ \overline{N} \f$. For example, in this case we 
-could use \f$ v = 1 \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
+<b> Example (bead model) </b>: When performing a PS-FTS calculation for 
+a one-component diblock polymer melt using a discrete bead model for a 
+chain of \f$ N = 100 \f$ beads, one could choose \f$ b = 1 \f$ for both 
+monomer types (thus defining the root-mean-squared bond length as the 
+unit of length) and then choose a value of \f$ v \f$ so as to obtain 
+a desired value for \f$ \overline{N} \f$. For example, in this case, 
+we could set \f$ v = 0.1 \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
 
 <BR>
 \ref user_model_solvent_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

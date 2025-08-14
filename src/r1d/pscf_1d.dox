@@ -31,14 +31,10 @@ and spherical or cylindrical micelles.
   -i prefix
 
    Set the input file path prefix, given by the argument "prefix".
-   If not set here, this may also be set in the FileMaster block 
-   of the parameter file.
 
   -o prefix
 
    Set the output file path prefix, given by the argument "prefix".
-   If not set here, this may also be set in the FileMaster block 
-   of the parameter file.
 
   -e
 

@@ -7,7 +7,7 @@ The main object in a pscf_pc or pscf_pg program is an instance of a class
 System<D>, in which the integer template parameter D is the dimension of 
 space specified by the argument of the "-d" command line option.  Closely 
 analogous class templates with this name are defined in the Pscf::Rpc and 
-Pscf::Rpg namespaces.
+Pscf::Rpg namespaces for use in pscf_pc and pscf_pg, respectively.
 
 Class API Documentation:
 <ul> 
@@ -18,45 +18,63 @@ Class API Documentation:
 \section rpc_System_param_sec Parameter File format
 The outermost block of the parameter file for pscf_pc or pscf_pg, which 
 encloses all of the data in the file, is a block labelled "System". The 
-parameter file format for this file block (and thus for the entire file)
-is given in skeleton form below
+parameter block format for this file block (and thus for the entire 
+parameter file) is shown in skeleton form below:
 \code
 System{
+  polymerModel* enumeration ("thread" or "bead", "thread" by default)
   Mixture{ ... }
   Interaction{ ... }
   Domain{ ... }
+  Environment#*{ ... }
   Iterator#*{ ... }
   Sweep#*{ ... }
   Simulator#*{ ... }
 }
 \endcode
 Here, as elsewhere in this documentation, the suffixes # and * after a 
-name denote selectable and optional elements, respectively. Subblocks 
-are described below:
+name denote selectable and optional elements, respectively. Parameters
+and subblocks are described below:
 <table>
+  <tr> 
+    <td> polymerModel </td>
+    <td> Specifies whether the continuous thread model (value "thread") 
+    or the discrete bead model (value "bead") of polymer conformations 
+    will be used globally. (optional, "thread" by default) 
+    </td>
+  </tr>
   <tr>
     <td> Mixture </td>
     <td> 
-    The Mixture block contains a description of all of the chemical
-    species in a mixture, as described in detail 
-    \ref user_param_mixture_page "here". (required)
+    The Mixture block contains a description of all molecular species in a
+    mixture, as described in detail \ref user_param_mixture_page "here". 
+    (required)
     </td>
   </tr>
   <tr>
     <td> Interaction </td>
     <td> 
-    The interaction block for a system described by the "standard model" 
-    of an incompressible polymer mixture. This contains a list of nonzero
-    Flory-Huggins chi parameters, as discussed 
-    \ref user_param_example_interaction "here". (required)
+    The Interaction block for a system described by the "standard model" 
+    of an incompressible polymer mixture. This matrix-valued "chi" parameter
+    entry contains a list of nonzero Flory-Huggins chi parameters, as 
+    discussed \ref user_param_example_interaction "here". (required)
     </td>
   </tr>
   <tr>
     <td> Domain </td>
     <td>
-    The Domain block contains information about the periodic unit
-    cell and the computational mesh used to discretize fields in that 
-    cell, as described \ref rpc_Domain_page "here". (required)
+    The Domain block contains information about the periodic unit cell 
+    and the computational mesh used to discretize fields in that cell, as 
+    described \ref rpc_Domain_page "here". (required)
+  </tr>
+  <tr>
+    <td> Environment#* </td>
+    <td>
+    An Environment defines a set of inhomogeneous imposed fields, which 
+    may include a mask and/or a set of external fields, as discussed 
+    \ref scft_environment_page "here". An Environment may be used to 
+    define a confined environment, such as that experienced by a thin 
+    film. (optional and selectable)
   </tr>
   <tr>
     <td> Iterator#* </td>
@@ -71,25 +89,27 @@ are described below:
     <td> Sweep#* </td>
     <td>
     A Sweep performs a sequence of SCFT calculations along a 
-    user-prescribed path through parameter space, as described
+    user-prescribed 1D path through parameter space, as described
     \ref scft_param_sweep_page "here". The block is optional and
     selectable, but the only option that is currently implemented is 
     a LinearSweep (class Pscf::Rpc::LinearSweep). This is thus also 
     the default choice obtained using the generic block name "Sweep". 
+    (optional and selectable)
     </td>
   </tr>
   <tr>
     <td> Simulator#* </td>
     <td>
-    The selectable \ref psfts_param_page "Simulator" block contains parameters 
-    for all of the objects and algorithms that required to perform a partial 
-    saddle-point field theoretic simulation (PS-FTS), but that are not 
-    required for SCFT.  Users may currently select either a 
-    \ref rpc_BdSimulator_page "BdSimulator" block (which creates an instance 
-    of class Pscf::Rpc::BdSimulator \<D\> ) to perform a field theoretic 
-    Brownian dynamics simulation or a \ref rpc_McSimulator_page McSimulator 
-    block (which creates an instance of class Pscf::Rpc::McSimulator \<D\>) 
-    to perform a Monte-Carlo simulation.
+    The selectable \ref psfts_param_page "Simulator" block contains 
+    parameters for all of the objects and algorithms that required to 
+    perform a partial saddle-point field theoretic simulation (PS-FTS), 
+    but that are not required for SCFT.  Users may currently select 
+    either a \ref rpc_BdSimulator_page "BdSimulator" block (which 
+    creates an instance of class Pscf::Rpc::BdSimulator \<D\> ) to 
+    perform a field theoretic Brownian dynamics simulation or a 
+    \ref rpc_McSimulator_page McSimulator block (which creates an 
+    instance of class Pscf::Rpc::McSimulator \<D\>) to perform a 
+    field theoretic Monte-Carlo simulation.
     </td>
   </tr>
 </table>
@@ -99,6 +119,7 @@ are described below:
   <li> \ref user_param_mixture_page "Mixture" </li>
   <li> \ref user_param_example_interaction "Interaction" </li>
   <li> \ref rpc_Domain_page "Domain" </li>
+  <li> \ref scft_environment_page "Environment" </li>
   <li> \ref scft_param_pc_iterator_sec "Iterator" </li>
      <ul> <li> \ref rpc_AmIteratorBasis_page </li></ul>
   <li> \ref scft_param_sweep_page "Sweep" </li>

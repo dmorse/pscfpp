@@ -5,7 +5,7 @@
 */
 
 /**
-* \page programs_page Programs
+* \page programs_page Executable Programs - Usage
 *  
 *   <ul style="list-style: none;">
 *   <li> \subpage pscf_1d_page </li>

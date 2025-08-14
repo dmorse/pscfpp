@@ -5,13 +5,14 @@
 <BR>
 
 Users of PSCF require complete documentation of the required format for 
-each type of block that can appear with a parameter file.  This manual 
-page describes a representation that is used in the PSCF documentation to 
-indicate the format of each such parameter file block. This format 
-representation is similar to that of the actual block, supplemented by 
-notation to indicate data types of parameter values, and by the use of
-special symbols to indicate syntactical elements such as array-valued
-parameters, optional elements and selectable subblocks.
+each type of block that can appear within a parameter file.  This manual 
+page discusses a representation that is used throughout the PSCF 
+documentation to describe the required format of parameter file blocks. 
+This format representation looks similar to that of the actual block, 
+except for thus use of notation to indicate data types of parameter 
+values (rather than actual values), and by the use of special symbols to 
+indicate syntactical elements such as array-valued parameters, optional 
+elements and selectable subblocks.
 
 \section user_format_example1_sec Example 1: SCFT parameter file for a periodic structure
 
@@ -33,17 +34,25 @@ Sweep{...} block, which is an optional element that was omitted from our
 earlier example.  In such a description, the syntax Label{...} is used to
 indicate a nested subblock, for which the format of the subblock must be
 described separately somewhere else.  The appearance of an asterisk (*)
-after any block or parameter label is used to indicate that the element is
-optional (i.e., omittable).  Parameters and block labels that are not
-followed by an asterisk are thus required elements. The appearance of 
-a "#" symbol after a block label indicate that the block is selectable.
-The above description thus indicates that the Iterator and Sweep blocks
-are both optional and selectable. 
+after any block or parameter label is used to indicate that an element 
+is optional (i.e., omittable).  Parameters and block labels that are not
+followed by an asterisk are thus labels for required elements. The 
+appearance of a "#" symbol after a block label indicate that the block is 
+selectable. The above description thus indicates that the Iterator and 
+Sweep blocks are both optional and selectable. 
+
+For simplicity, the above format description only shows allowed elements 
+of the System block that are relevant to SCFT calculations for spatially
+periodic structure. A complete format description for the System block
+of the pscf_pc program, which includes additional optional elements, is
+given \ref rpc_System_page "here".
 
 \section user_format_example2_sec Example 2: Mixture block
 
-As a second example, consider the format for a Mixture block used in any 
-PSCF parameter file. This can described compactly as follows:
+Every PSCF parameter file contains a Mixture block, which is always a
+required element of the System block. Different PSCF programs use a 
+Mixture block with the same file format. This format can be described
+compactly as follows:
 \code
 Mixture{
   nMonomer   int
@@ -67,30 +76,40 @@ a type descriptor is describe an array-value parameter.  Note that default
 values for some optional elements (nSolvent and vMonomer) are given as
 comments enclosed in parentheses. 
 
-This sort of compact format description is usually supplemented by a table 
-and/or text discussion that contains an explanation of the the meaning of
-each parameter, comments about allowed values for particular parameters,
-values for dimensions of arrays or matrices, relationships among choices
-of parameter values, and any other required supplementary information.
-
 A Mixture block may contain multiple Polymer and Solvent blocks, as 
-indicated in the above format by ellipses. The number of Polymer and 
-Solvent blocks must, however, match the values of nPolymer and nSolvent, 
-respectively.
+indicated by ellipses in the above format description. The number of 
+Polymer and Solvent blocks must match the values of nPolymer and 
+nSolvent, respectively.
 
-\section user_format_conventions_sec Parameter format conventions
+The sort of compact format description shown above is usually supplemented 
+by a table and/or text discussion that contains an explanation of the the 
+meaning of each parameter, as well comments about allowed values for 
+particular parameters, values for dimensions of arrays or matrices, 
+relationships among choices of parameter values, and any other required 
+supplementary information.
 
-The following conventions for parameter values are used in this type of 
-parameter file format summary:
+\section user_format_conventions_sec Element descriptors
 
- - <b> Parameters </b>: Individual parameters are indicated using the
-   syntax
+The following conventions are used to describe different types of element
+that may appear in the description of a parameter block format:
+
+ - <b> Nested subblocks </b>: The presence of a nested block is indicated 
+   using the syntax
+   \code
+       Label{ ... }
+   \endcode
+   where "Label" denote the label string for the nested block. The ellipses
+   (...) within curly brackets is used to indicate the body of the sub-block, 
+   the format of which must be described somewhere else in the documentation.
+
+ - <b> Individual parameters </b>: Individual parameters are indicated using 
+   the syntax
    \code
        label   type
    \endcode
    where "label" denotes the name (or label string) of the parameter and
-   "type" is a string that identifies the data type of the parameter
-   value (e.g., int, real, string, etc.).
+   "type" is a string that identifies the data type of the parameter value 
+   (e.g., int, real, string, etc.).
 
    The main labels used to indicate elementary data types are "int" for
    integer, "real" for a real (i.e., floating point) number, "bool" for
@@ -99,19 +118,8 @@ parameter file format summary:
    contain any whitespace.
 
    Values for parameters that are represented internally by a enumeration 
-   are indicated by the data type "enumeration", followed by a description
+   may be indicated by the data type "enumeration", followed by a list
    of the string representations of all allowed values.
-
- - <b> Arrays </b>: Array-valued parameters are indicated using the syntax
-   \code
-       label  Array[ type ]
-   \endcode
-   where "label" is the name of the array, and "type" is a string that
-   identifies the data type of a single element.  For example,
-   "monomers Array[real]" indicates that monomers is a one-dimensional
-   array in which each element is a real floating point number. Arrays
-   are formatted in the parameter file a format in which each element 
-   is on a separate line, delimited by square brackets.
 
  - <b> Vectors </b>: Vector-valued parameters are indicated using the 
    syntax
@@ -125,26 +133,28 @@ parameter file format summary:
    but use a single-line parameter file format with no delimiters, 
    rather than the mult-line format used for an array. 
 
+ - <b> Arrays </b>: Array-valued parameters are indicated using the syntax
+   \code
+       label  Array[ type ]
+   \endcode
+   where "label" is the name of the array, and "type" is a string that
+   identifies the data type of a single element.  For example,
+   "monomers Array[real]" indicates that monomers is a one-dimensional
+   array in which each element is a real floating point number. Arrays
+   are formatted in the parameter file a format in which each element 
+   is on a separate line, delimited by square brackets.
+
  - <b> Matrices </b>: Parameters that represent two-dimensional arrays
-   or matrices that must be input in element format are indicated using
-   the syntax
+   or matrices that must be input in element format (which uses 
+   parentheses as delimiters) are indicated using the syntax
    \code
        label Matrix ( type )
    \endcode
    where "type" is the data type for a single element.
 
- - <b> Subblocks </b>: The presence of a nested block is indicated using
-   the syntax
-   \code
-       Label{ ... }
-   \endcode
-   where "Label" denote the label string for the nested block. The ...
-   is used to indicate the body of the block, the format of which must 
-   be described somewhere else in the documentation.
-
 \section user_format_optional_sec Optional and Selectable Elements
 
-Optional elements and selectable blocks are described using the following
+Optional elements and selectable blocks are identified using the following
 conventions:
 
  - <b> Optional elements </b>: Optional parameters and blocks (i.e.,

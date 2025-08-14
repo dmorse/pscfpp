@@ -8,9 +8,10 @@ The parameter file format for SCFT calculations using the pscf_pg
 GPU-accelerated program is almost identical to the parameter file 
 format for the \ref scft_param_pc_page "pscf_pc".
 The Mixture and Interaction blocks use the same format as that used
-by both pscf_1d and pscf_pc, and the Domain block has the same format 
-as that used by pscf_pc. The only differences are differences in the 
-available iterators.
+by both pscf_1d and pscf_pc, and the Domain block and Environment
+blocks have the same formats as that used by pscf_pc. The only 
+differences between pscf_pc and pscf_pg parameter files are 
+differences in the available iterators.
 
 \section scft_param_pg_iterator_sec Iterators
 
@@ -60,7 +61,7 @@ can be found by following the links in the table below:
 
 The only sweep algorithm currently available for use with pscf_pg is a
 general linear sweep algorithm identical to that used by pscf_pc. This 
-can be ensabled by including a block that starts either with the generic 
+can be enabled by including a block that starts either with the generic 
 label Sweep or the specific label LinearSweep.  The required parameter 
 file format for a linear sweep is described 
 \ref scft_param_sweep_linear_sec "here". 

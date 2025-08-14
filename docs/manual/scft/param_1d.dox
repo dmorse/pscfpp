@@ -73,14 +73,15 @@ System{
   Interaction{ ...  }
   Domain{ ...  }
   Iterator#{ ... }
-  Sweepr#*{ ... }
+  Sweep#*{ ... }
 }
 \endcode
 The overall structure is similar to that of the example pscf_pc parameter 
-file shown \ref user_param_example_page "previously", with one important 
-difference: The System block of a pscf_1d parameter file does not contain 
-a polymerModel parameter because the pscf_1d program does not offer a 
-choice of bead or thread models, and instead always uses a thread model.  
+file shown \ref user_param_example_page "previously" as an example, with 
+one important difference: The System block of a pscf_1d parameter file does 
+not contain a polymerModel parameter because the pscf_1d program does not 
+offer a choice of bead or thread models, and instead always uses a thread 
+model.  
 
 The purposes of each the the top-level sub-blocks of the System block are 
 similar for different PSCF programs, and have been discussed previously. 

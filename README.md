@@ -205,12 +205,12 @@ git clone --recursive https://github.com/dmorse/pscfpp.git
 Note the use of the --recursive option of the git clone command. Use of
 this option is necessary with PSCF to clone and install two git submodules 
 that are maintained in separate github repositories. This command will 
-create a new directory called pscfpp/ that contains all of the source code 
+create a new directory called pscfpp that contains all of the source code 
 and associated documentation, including the two required git submodules.
 
 We do *not* recommend that users obtain the source code by simply
 downloading and unpackng a zip or tar file of a tagged release from the 
-PSCF github repository. Doing so would create a pscfpp/ directory that does
+PSCF github repository. Doing so would create a pscfpp directory that does
 not contain source code for two git repositories that are automatically 
 installed as submodules by the above git command. It is possible to install
 these submodules after the fact, but simpler to follow the instructions 
@@ -229,12 +229,12 @@ often in much greater detail.
 If desired, users can use the [doxygen](<https://www.doxygen.nl/index.html>)
 documentation generation program to generate a local copy of the web manual.
 The resulting html pages will be installed within the docs/html subdirectory
-of the pscfpp/ root directory.  To do this, the doxygen application must be
+of the pscfpp root directory.  To do this, the doxygen application must be
 installed on your computer, and the directory containing the doxygen 
 executable must be in the unix command search PATH variable. To generate a 
 local copy of the web manual:
 
-   - Change directory (cd) to the pscfpp/ root directory
+   - Change directory (cd) to the pscfpp root directory
 
    - Enter "make html"
 
@@ -297,7 +297,7 @@ the pscfpp git repository and installing all of the required dependencies
      modules that are used by the build system.
 
    - Run the pscfpp/configure script by entering "./configure" from the
-     pscfpp/ root directory.  This script installs default versions of 
+     pscfpp root directory.  This script installs default versions of 
      several customizable configuration files that are used by the build 
      system. The configure script usually only needs to be run once, 
      before compiling for PSCF the first time.  See Section 2.6 of the 
@@ -306,13 +306,13 @@ the pscfpp git repository and installing all of the required dependencies
 
    - To compile and install only the CPU-based programs on a computer that
      does not have an appropriate NVIDA GPU, simply enter "make" from the
-     pscfpp/ root directory immediately after running the configure script.
+     pscfpp root directory immediately after running the configure script.
 
    - Some further configuration is required to compile the GPU-enabled
      pscf_pg program. Compilation of pscf_pg is only possible on a 
      machine that has an appropriate NVIDA GPU and a CUDA development kit. 
      To enable compilation of CUDA code, first enter "./setopts -c1" from 
-     the pscfpp/ directory.  Then use the -a option of the same setopts
+     the pscfpp directory.  Then use the -a option of the same setopts
      script to set the correct GPU architecture for your system. For
      example, to compile for a V100 GPU with CUDA compute capability 7.0, 
      one would enter "./setopts -a sm_70". Instructions for choosing the 
@@ -324,12 +324,12 @@ the pscfpp git repository and installing all of the required dependencies
 The procedure described above for building PSCF is somewhat similar to the 
 standard "configure; make; make install" procedure used for GNU software.  
 One difference is that PSCF does not require a separate "make install" 
-command. The PSCF "make" command creates executables in the bin/ 
-subdirectory of the pscfpp/ directory tree that also contains source
+command. The PSCF "make" command creates executables in the bin 
+subdirectory of the pscfpp directory tree that also contains source
 files.  The above instructions assume that this is the intended final 
 destination of the executable files, rather than a standard unix system 
 directory such as /user/local in which the unix shell would look for
-executable files by default. If the pscfpp/ directory is created within 
+executable files by default. If the pscfpp directory is created within 
 a user's home directory, the above instructions thus do not require the 
 use of special sudo or adminstrator permission in order to comple and
 install the package. This procedure, however, instead requires the user 
@@ -424,8 +424,8 @@ in a queue on a shared computing cluster.
 The quickest way to become familiar with PSCF parameter and command files 
 is by studying examples.  The directory pscfpp/examples contains input 
 files for examples of a variety of different types of SCFT and PS-FTS 
-calculations.  Top level subdirectories of the examples/ directory named 
-1d/, pc/ and pg/ contain examples for the three different PSCF programs,
+calculations.  Top level subdirectories of the examples directory named 
+1d, pc and pg contain examples for the three different PSCF programs,
 pscf_1d, pscf_pc, and pscf_pg.
 
 Subdirectory examples/1d contains examples of SCFT calculations for the 
@@ -434,8 +434,8 @@ directory examples/1d contain examples for planar, cylindrical and
 spherical geometries, as indicated by the subdirectory names. One or more 
 example is given for each geometry.
 
-Subdirectory examples/pc contains examples for the pscf_pc CPU program. Top
-level subdirectories of examples/pc named scf/ and fts/ contain examples
+Subdirectory examples/pc contains examples for the pscf_pc CPU program. 
+Top level subdirectories of examples/pc named scf and fts contain examples
 of SCFT and PS-FTS calculations, respectively. Top level subdirectories 
 of directory examples/pc/scf contain examples of input files for SCFT 
 calculations performed on different types of physical system.  For example,

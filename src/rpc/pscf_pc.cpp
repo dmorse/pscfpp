@@ -17,9 +17,10 @@ namespace Rpc {
    /**
    * Function template for main pscf_pc program.
    *
+   * \ingroup Pscf_Rpc_Module
+   *
    * \param argc  number of command line parameters
    * \param argv  array of command line parameter strings
-   * \ingroup Pscf_Rpc_Module
    */
    template <int D>
    void run(int argc, char **argv) {

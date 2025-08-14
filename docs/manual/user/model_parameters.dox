@@ -6,26 +6,27 @@
 
 \section user_model_model_sec Physical model
 
-All of the programs in the PSCF software package are designed to treat an
-incompressible liquid mixture that may contain one or more polymer species
-and any number of small-molecule solvent species.  Each polymer species in 
-such a mixture may be either a linear block polymer or an acyclic branched 
-block polymer. Hompolymers are treated as a special case of a block polymer
-with only one block. Solvent species, if present, are treated as point-like
-particles that occupy a specified volume per molecule.  
+All programs in the PSCF package are designed to treat an incompressible 
+liquid mixture that may contain one or more polymer species and any number 
+of small-molecule solvent species.  Each polymer species in such a mixture 
+may be either a linear block polymer or an acyclic branched block polymer. 
+Hompolymers are treated as a special case of a block polymer with only one
+block. Solvent species, if present, are treated as point-like particles 
+that occupy a specified volume per molecule.  
 
-In the pscf_pc and pscf_pg programs, conformations of individual polymers 
-may be modelled using either a continuous "thread" model or a discrete 
-"bead" model. The thread model idealizes blocks within a block polymer
-as continuous random walks. The bead model instead represents each block 
-as a sequence of a finite number of discrete beads connected by harmonic 
-bonds. The pscf_1d program can only use a continuous thread model.
+In the pscf_pc and pscf_pg programs for periodic domains, conformations of 
+individual polymers may be modelled using either a continuous "thread" 
+model or a discrete "bead" model. The thread model idealizes blocks within 
+a block polymer as continuous random walks. The bead model instead 
+represents each block as a sequence of a finite number of discrete beads 
+connected by harmonic springs. The pscf_1d program for one-dimensional
+SCFT problems can only use the continuous thread model.
 
 Each polymer species is constructed from chemically homogeneous blocks 
 that each contain monomers of a specific type.  Each block within a block 
 polymer is thus assigned a monomer type (identified by an integer index) 
-and a block length.  The block length is given as a real (i.e., floating 
-point) number in the continuous thread model and as an integer number of 
+and a block length.  The block length is given by a real (i.e., floating 
+point) number in the continuous thread model and by an integer number of 
 beads in the discrete bead model. In either model, the volume occupied 
 by a block within an incompressible liquid is given by the product of its 
 length and a monomer reference volume. By convention, PSCF requires that 
@@ -80,32 +81,32 @@ conformations also require a target value for a contour length step size,
 denoted by ds, that is used to discretize the contour of each block within 
 algorithms that compute statistical properties for individual polymers 
 (i.e., within the solution of the modified diffusion equation). Specific
-numerical algorithms (such as iteration algorithms used in SCFT or 
-stochastic sampling algorithms used for PS-FTS) require a variety of 
+numerical algorithms, such as iteration algorithms used in SCFT or
+stochastic sampling algorithms used for PS-FTS, require a variety of 
 other more specialized parameters and options.
 
 \section user_model_parameters_energy_sec Energy units
 
 The PSCF documentation, file formats and source code all use "thermal" 
-units for energy in which we take \f$ k_{B}T = 1\f$ to define values of 
-quantities with units that involve energy. Here and hereafter, 
+units for energy. In these units, we take \f$ k_{B}T = 1\f$ to define 
+values of quantities with units that involve energy, where
 \f$ k_{B} \f$ is Boltmann's constant and \f$ T \f$ is absolute temperature.
 For example, the value for the chemical potential \f$ \mu \f$ of each
-molecular species is actually given as a value of the ratio 
-\f$ \mu / k_{B}T \f$.
+molecular species is actually given throughout the source code and 
+input and output files as a value of the ratio \f$ \mu / k_{B}T \f$.
 
 \section user_model_parameters_length_sec Length units
 
 PSCF allows the user to use any unit of length they wish, as long as the 
-same choice of unit is used for all input parameters. Users are not asked 
-to explicitly declare their choice of a unit of length, but are instead 
+same choice of unit is used for all input parameters. Users are not to 
+explicitly declare their choice of a unit of length, but are instead 
 responsible for providing input parameter values that have been assigned
-using some consistent but unspecified choice of unit.
+using some consistent but unspecified choice of length unit.
 
 The only parameters required for a standard SCFT calculation that have
 units involving length are the values of the monomer statistical segment 
 lengths, and values (or initial guesses) for the dimensions of a spatial
-domain or perioidic unit cell for the system of interest. In addition, 
+domain or perioidic unit cell for the system of interest.  In addition, 
 PS-FTS calculations require a value for the monomer reference volume, 
 denoted by \f$ v \f$, which has units of volume, or length cubed. 
 
@@ -116,20 +117,19 @@ values for these quantities are specified using some user-defined system of
 non-dimensional units, e.g., by defining the unperturbed root-mean-squared
 of a specific linear polymer species to be equal to unity. In the 
 continuous chain model, conventions for units of length are related to a 
-separate arbitrary choice regarding  how much polymer backbone corresponds 
-to one "monomer", or one unit of contour length. Some common choices of 
+separate arbitrary choice regarding how much polymer backbone corresponds 
+to one "monomer", or to one unit of contour length. Some common choices of 
 conventions for units of physical length and polymer contour length are 
 discussed in detail in a \ref user_model_conventions_page "separate page". 
 
-If a user supplies input parameters values that were assigned using some 
+If a user supplies input parameters values that were defined using a
 consistent choice of a unit of length, output values will automatically 
 be reported using the same units.  For example, in SCFT simulations of 
-a periodic microstructures in which one or more dimensions of the crystal 
+periodic microstructures in which one or more dimensions of the crystal 
 unit cell are iteratively ajdusted so as to minimize the free energy 
 density, output values for the optimized unit cell parameters will be 
 reported using the same unit of length as those used to define the 
-monomer statistical segment lengths that were provided as inputs to the
-calculation.
+monomer statistical segment lengths that were provided as inputs.
 
 <BR>
 \ref user_model_page         (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;

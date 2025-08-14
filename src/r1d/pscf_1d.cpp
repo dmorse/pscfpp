@@ -12,9 +12,10 @@
 /**
 * Main function for pscf_1d program.
 *
+* \ingroup Pscf_R1d_Module
+*
 * \param argc number of command line parameter strings
 * \param argv array of command line parameter strings
-* \ingroup Pscf_R1d_Module
 */
 int main(int argc, char **argv)
 {

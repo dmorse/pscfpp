@@ -41,8 +41,9 @@ Each parameter block may contain a sequence of two general types of
 enclosed elements:
 <ul>
    <li> 
-     <b> Nested Subblocks </b> : Each nested subblock is delimited by an
-     upper case label and matched opening and closing curly brackets, as 
+     <b> Nested subblocks </b> : Each nested subblock begins with by an
+     upper case label and has a body that is delimited by matched opening 
+     and closing curly brackets, as 
      described above. 
    </li>
    <li> 
@@ -54,8 +55,8 @@ enclosed elements:
 Each element in a parameter file block may be either required or optional,
 as discussed in more detail \ref user_param_syntax_optional_sec "below".
 
-The following different types of parameter entries may exist, as already 
-discussed on the previous page:
+A parameter block may contain any of the following different types of
+parameter entries, as already noted on the previous page:
 <ul>
    <li> 
      <b> Individual parameters </b>:
@@ -220,6 +221,28 @@ strings "linear" or "branched".  The text representation of the value
 of the "type" parameter must thus be given by a string that matches
 one of these two allowed values. 
 
+\section user_param_syntax_vector_sec Vector-valued parameters
+
+Vector-valued parameters are stored as elements of a one-dimensional
+array container, and are represented in a parameter file in a simple
+one-line format. A vector valued parameter starts with a lower case 
+parameter label, followed by a list of element values on the same 
+line on the same line, with whitespace between element values.
+
+A vector-valued parameter entry for a vector named "v" with N elements is 
+thus of the form
+\code
+   v  v[0] ... v[D-1]
+\endcode
+where "v" denotes a parameter label, and v[0], ... , v[D-1] denote array 
+element values.
+
+In the example given in the previous page, this syntax is used for the 
+"mesh" vector within the Domain block. This is a vector with integer
+elements, for which the number of elements is given by the spatial 
+dimension of the problem (i.e., the argument of the -d command line
+argument).
+
 \section user_param_syntax_array_sec Array-valued parameters
 
 Array-valued parameters are stored as elements of a one-dimensional 
@@ -232,17 +255,17 @@ lines that contain values of elements of the array, with one element
 per line.  Elements appear in the parameter file in order of increasing 
 array index, with an index value of 0 for the first element.
 
-For example, the parameter file entry for the contents of an array 
-named A with N elements would thus be of the form
+For example, an array-valued parameter file entry for the contents of 
+an array named a with N elements would thus be of the form
 \code
-     A[
-        A[0]
-        A[1]
+     a[ 
+        a[0]
+        a[1]
          :
-        A[N-1]
+        a[N-1]
      ]
 \endcode
-Here, A[0], ... A[N-1] denote array element values, with zero-based
+Here, a[0], ... a[N-1] denote array element values, with zero-based
 indices.  
 
 In the example given in the previous page, this syntax is used for the 
@@ -399,52 +422,56 @@ contents of the block.  The format of the body of a selectable block
 must match that expected for the type of block declared in the block 
 label. 
 
-A default choice of algorithm is defined for every selectable block. 
-The default choice may be selected either by using a generic name for 
-the type of element (such as "Iterator") or the label for the specific 
-algorithm.  In the example shown on the previous page, the default 
-choice of a iterator is an Anderson-Mixing iterator that is implemented 
-by a class named AmIterator. Because it is the default iterator 
-algorithm, this choice may be selected by using a parameter file in 
-which the block begins with the generic label "Iterator", as is done 
-the example.  The same algorithm could also have been selected, 
-however, by using a block that starts with the specific label 
-"AmIterator".
+Every selectable block has an associated generic name (such as the name
+"Iterator" for the iterator block) and a default choice of algorithm. 
+The default algorithm may be selected either by using the generic name as
+a label for the block (such as "Iterator") or by using the specific name 
+of the default algorithm.  For example, the default choice of SCFT 
+iterator for both the pscf_pc and pscf_pg programs is an Anderson-Mixing 
+iterator that imposes a known space group symmetry. This algorithm is
+identified in a parameter file by a specific label AmIteratorBasis, which 
+is also the name of a class that implements this algorithm. Because this 
+is the default iterator algorithm, however, this choice may be selected 
+by using a parameter entry in which the selectable iterator block begins 
+with either the generic label "Iterator", as is done in the example shown 
+on the previous page, or by the specific label "AmIteratorBasis". 
  
 <i> Technical comments (for users familiar with C++): </i>
 
 The implementation of selectable parameter file blocks in PSCF relies
 on C++ class inheritance and polymorphism. The different options for a 
 selectable block are always implemented by different subclasses of a 
-common base class. The base class defines a required C++ class interface 
-for objects of the relevant type, thus allowing instances of different
-subclasses to be used interchangeably.  Each selectable block in a
-parameter file has a generic name that is the name of the relevant base
-class. The parent object (e.g., the System) has a member variable which 
-is a pointer to an instance of that base class, which normally points 
-to an instance of the subclass declared in the block label. The generic
-name (i.e., the name of the base class) may also be used to select the
-default choice of subclass.
+common base class. The base class defines a C++ class interface for
+objects of the relevant type, thus allowing instances of different
+subclasses to be used interchangeably in code that invokes the algorithm.  
+Each selectable block in a parameter file has a generic name that is the 
+name of the relevant base class. The parent object that must invoke the
+algorithm has a member variable which is a pointer to an instance of that 
+base class, which normally points to an instance of the subclass declared 
+in the block label of the associated parameter entry.
 
-For example, different iteration algorithms for a particular PSCF
-program are implemented by subclasses of a base class named "Iterator".
-The Iterator base class defines a common interface for SCFT iteration 
-algorithms. The parent System object has a private member variable 
-that is a pointer of type Iterator* that can point to an instance of 
-any subclass of class Iterator, each of which implements a different
-iteration algorithm.
+For example, in a simple PSCF program, different iteration algorithms 
+might be implemented by subclasses of a base class named "Iterator". The 
+Iterator base class would define a common interface for SCFT iteration 
+algorithms.  The parent object that owns an Iterator would have a private 
+member variable that is a pointer of type Iterator* that can point to an 
+instance of any subclass of class Iterator, each of which implements a 
+different iteration algorithm.
 
-If the block label for a selectable block matches the name of an 
-known subclass of the relevant base class (e.g., a subclass of 
-Iterator), then an instance of the selected subclass is constructed 
-after the opening line of the block is read and interpreted.  If the
-block label matches the name of the base class (e.g., "Iterator") then
-an instance of the default subsclass is constructed. The address of 
-that new object is then assigned to the base class pointer owned by the 
-parent class (i.e., the Iterator* pointer variable owned by the parent 
-System).  The "readParameters" member function of the new object is 
-then invoked to read the body of the selectable block, which requires
-that the format of this block match that defined by the chosen subclass. 
+If the block label for a selectable block matches the name of an known 
+subclass of the relevant base class (e.g., a subclass of Iterator), then 
+an instance of the selected subclass is constructed after the opening 
+line of the block is read and interpreted.  If the block label matches 
+the generic name of the block, which is also the name base class (e.g., 
+"Iterator"), then an instance of the default subclass is constructed. 
+The address of that new object is then assigned to the base class pointer 
+owned by the parent class (i.e., the Iterator* pointer variable owned by 
+the parent System).  The "readParameters" member function of the newly
+constructed object is then invoked to read the body of the selectable 
+block. The format of the body of this block must thus match that 
+required by the chosen subclass, which may be different for different 
+subclasses, since different algorithms may require different algorithmic
+parameters.
 
 <BR>
 \ref user_param_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

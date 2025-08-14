@@ -46,7 +46,6 @@ namespace Prdc {
       */
       virtual ~ScftReal();
 
-      ///@}
       /// \name State modifiers
       ///@{
 

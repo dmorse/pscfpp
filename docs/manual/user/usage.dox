@@ -28,7 +28,7 @@ The syntax to invoke either the pscf_pc or pscf_pg programs for periodic
 microstructures is similar, but requires that parameter also pass the 
 spatial dimensionality as a parameter of the -d option. For example,
 to use pscf_pc to perform a calculation involving a three-dimensional 
-periodic microstructures, one would enter
+periodic microstructures, one could enter
 \code
    pscf_pc -d 3  -p param -c commands
 \endcode
@@ -36,32 +36,31 @@ The command line interface for pscf_pg is identical to the interface
 for pscf_pc. 
 
 <b> Redirecting log output </b>:
-During execution, some log information is written to standard output,
-which outputs to a terminal by default. This log output can be re-directed
-to a file by using the unix ">" output redirect operator. For example,
-the command
+During execution, some information is written to standard output, which 
+outputs to a terminal by default. This log output can be re-directed to 
+a file by using the unix ">" output redirect operator. For example, the 
+command
 \code
   pscf_pc -d 3 -p param -c commands > log
 \endcode
 would direct standard output to a file named "log" in the current working
 directory.  Standard output should normally be redirected to a file when
-a job is run in background or in a queue.
+a job is run in background or in a queue on a shared computing cluster.
 
 \section user_usage_echo_sec Echoing the parameter file
 
-All PSCF programs accept a command line option "-e" that causes the
-contents of each line of the parameter file to be echoed to standard
-output while the parameter file is being read. For example, to invoke
-pscf_pc with echoing of the parameter file to a log file, one could 
-enter
+All PSCF programs accept a command line option "-e" that causes the 
+contents of each line of the parameter file to be echoed to standard output
+while the parameter file is being read. For example, to invoke pscf_pc
+with echoing of the parameter file to a log file, one could enter 
 \code
-   pscf_pc -e -d 3 -p param -c commands > log
+   pscf_pc -d 3 -p param -c commands -e > log
 \endcode
-The "echo" option is very useful for locating errors in the parameter 
-file.  When an error is detected while reading a parameter file, the 
-echoed output ends immediately before the line at which the error is 
-detected, and is followed by an error message with any avaiable 
-information about the nature of the error.
+The -e "echo" option is very useful for locating syntax errors in the 
+parameter file.  When an error is detected while reading a parameter file, 
+the echoed output ends immediately before the line at which the error is 
+detected, and is followed by an error message that contains information
+about the nature of the error.
 
 PSCF parameter files have a relatively rigid format in which elements
 must appear in a particular order, and in which every element is preceded 
@@ -73,7 +72,7 @@ generated in response to parameter file syntax errors output both the
 label string that was actually read from file and information about 
 what was expected. When echoing is turned on, these error messages often 
 provide enough information to allow a user to rapidly understand and fix 
-such errors.
+any such errors.
 
 \section user_usage_options_sec Command line options 
 
@@ -136,12 +135,12 @@ prefix strings that should be prepended to the names of input and output
 files, respectively, that appear in the parameter and command files.
 The "prefix" parameter of the -i or -o option is often used to specify
 a directory for input or output files. To do so, set the value of this
-argument to the name of a directory, terminated by the directory separator 
-charactor "/", giving a string such as "in/" or "out/".  These prefix 
-strings are prepended verbatim to names of input and output files that 
-are specified as parameters in the command or parameter file. The input
-prefix (if any) is not, however, added to the names of the parameter and 
-command files that are given in the command line.
+parameter to the name of a directory, terminated by a directory separator 
+charactor "/", giving a prefix string such as "in/" or "out/".  These 
+prefix strings are prepended verbatim to names of input and output files 
+that are specified in the command or parameter file. The input prefix (if 
+any) is not, however, added to the names of the parameter and command 
+files that are given in the command line.
 
 <em> Example </em>:
 The command
@@ -150,9 +149,10 @@ The command
 \endcode
 would run the pscf_pc program using a parameter file named "param" and 
 a command file named "commands" in the current working directory, while 
-echoing the parameter file, and writing all output files to subdirectory 
-"out/" of the current working directory, and reading all input files 
-other than the parameter and command files from subdirectory "in/".
+echoing the parameter file, reading all input files other than the 
+parameter and command files from subdirectory of the current working
+directory named "in", and writing all output files to a subdirectory 
+named "out".
 
 <BR>
 \ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

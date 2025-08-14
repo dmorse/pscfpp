@@ -77,6 +77,7 @@ System{
   Mixture{ ...  }
   Interaction{ ...  }
   Domain{ ...  }
+  Environment#*{ ...  }
   Iterator#*{ ... }
   Sweep#*{ ... }
 }
@@ -244,6 +245,17 @@ At the end of such a calculation, converged values for the optimal
 unit cell parameters are normally output within the header of a file 
 that contains the converged w-fields.
 
+\section scft_param_pc_environment_sec Environment
+
+The Environment block is an optional selectable block that can be used
+to define a mask and/or external potential fields in order to define 
+an inhomogeneous externally imposed environment, as described in detail
+\ref scft_environment_page "here". An environment can be used to describe 
+a confined environment such as that experienced by a 
+\ref scft_thin_films_page "thin film".
+This block is not needed for standard SCFT calculations involving bulk 
+periodic phases.
+
 \section scft_param_pc_iterator_sec Iterators
 
 The default Iterator for the pscf_pc and pscf_pg programs is based on
@@ -286,6 +298,7 @@ of the associated parameter file block is described
  <li> \ref user_param_mixture_page "Mixture"  </li>
  <li> \ref user_param_example_interaction "Interaction"  </li>
  <li> \subpage rpc_Domain_page "Domain" </li>
+ <li> \subpage scft_environment_page "Environment" </li>
  <li> \subpage rpc_AmIteratorBasis_page "AmIteratorBasis" </li>
  <li> \ref scft_param_sweep_page "Sweep" </li>
  <ul> <li> \ref scft_param_sweep_linear_sec "LinearSweep" </li> </ul>

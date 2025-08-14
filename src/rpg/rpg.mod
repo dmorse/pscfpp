@@ -9,7 +9,7 @@ namespace Pscf
       /**
       * \defgroup Pscf_Rpg_Module Pscf::Rpg - Real Periodic Fields (GPU)
       *
-      * SCFT and PS-FTS with real periodic fields on a GPU, namespace Pscf::Rpg.
+      * SCFT and PS-FTS with real periodic fields on a GPU (namespace Pscf::Rpg)
       *
       * \ingroup Pscf_NS_Module
       */
