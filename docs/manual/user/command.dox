@@ -21,9 +21,17 @@ programs are given \ref scft_command_page "here".
 
 \section user_command_example_sec Example: SCFT command file, periodic structure
 
-The following is an example of a minimal command file for using the 
-pscf_pc or pscf_pg program to perform an SCFT calculation for a periodic 
-structure of known space group symmetry and output the results to file:
+Suppose that pscf_pc is used to perform an SCFT calculation periodic 
+structure of known space group symmetry, and is invoked from a directory 
+that contains a parameter file named "param" and a command file named 
+"command", using the command
+\code
+   pscf_pc -e -p param -c command > log
+\endcode
+Suppose that the working directory has subdirectories named "in" and "out",
+such that the "in" directory contains an initial w-field file named w.bf, 
+while output files are all written to the out directory.  The following is 
+an example of a minimal command file that could be used for this purpose:
 \code
 READ_W_BASIS    in/w.bf
 ITERATE
@@ -31,14 +39,12 @@ WRITE_W_BASIS   out/w.bf
 WRITE_C_RGRID   out/c.rf
 FINISH
 \endcode
-In this example, we assume that the input chemical potential field 
-file (which we refer to as a w field file) is located in a subirectory 
-of the working directory named in/, and that output files are written 
-to a subdirector named out/.  This command file instructs the program 
-to:
+This file would work equally well as input to the GPU accelerated pscf_pg
+program, which has the same user interface as pscf_pc.
+This command file instructs the program to:
 
-- READ_W_BASIS: Read in a chemical potential fields (w-fields) from 
-  a file named in/w.rf in symmetry-adapted Fourier basis format.
+- READ_W_BASIS: Read in a chemical potential fields (w-fields) from the
+  file in/w.rf in symmetry-adapted Fourier basis format.
 
 - ITERATE: Iteratively solve the SCFT equation, using the iterator 
   algorithm and parameters that are specified in the parameter file.
@@ -50,36 +56,48 @@ to:
   (c-fields) to a file out/c.rf in r-grid format, in which field values
   are given as values of nodes of a real-space grid.
 
-- FINISH: finish execution and halt the main program
+- FINISH: stop execution
 
 The FINISH command is always the last command that is read in a command 
-file, and causes execution of the program to halt. Anything in a command 
-file that appears after the FINISH command is ignored.
+file, and causes execution of the program to halt. 
 
 In this example, the concentration field that is written in r-grid format 
 by the command WRITE_C_RGRID could be used for visualization.
 
-<b> File names as command arguments </b>:
-Many commands take the names of input or output files as arguments.
-File names are given as paths that, by default, are specified relative 
-to the current working directory, i.e., the directory from which the 
-program executable was invoked. File name paths may thus include names 
-of subdirectories of this directory and path separator slash characters. 
+<b> Interpretation of file names </b>:
+Many commands require the names of input or output files as arguments.
+By default, file names are interpreted as paths that are defined relative 
+to the current working directory, i.e., relative to the directory from which 
+the program executable was invoked. File name paths may include names of 
+subdirectories of this directory and path separator slash characters, as 
+done in the above example.  This default behavior may, however, be modified 
+by using the "-i" and/or "-o" \ref user_usage_page "command line options" 
+to automatically add prefixes to paths for input and output files, 
+respectively.  
 
-This default behavior may be modified by using the "-i" and/or "-o" 
-\ref user_usage_page "command line options" to automatically add prefixes 
-to paths for input and output files, respectively.  The above example is 
+<b> Example (revisited) </b>: The command file in the above example was
 designed for a case in which pscf_pc or pscf_pg is invoked without using 
-either of these command line options, and in which it is invoked from a 
-directory with subdirectories named "in" and "out" that contain input 
-and output files, respectively. If the program had instead been invoked 
-from such a directory using the options "-i in/" and "-o out/", e.g., as
+the -i or -o command line options. If the program had instead been invoked 
+using these options to specify prefixes of "in/" and "out/", e.g., as
 \code
- > pscf_pc -d 3 -p param -c command -i in/ -o out/ -e
+ > pscf_pc -d 3 -p param -c command -i in/ -o out/ -e > log
 \endcode
-then input and output file names could have been specified in the command 
-file without the explicit "in/" and "out/" directory names prefixes in
-the file names give as command arguments.
+then the corresponding command file could have been written in a form
+\code
+READ_W_BASIS    w.bf
+ITERATE
+WRITE_W_BASIS   w.bf
+WRITE_C_RGRID   c.rf
+FINISH
+\endcode
+in which the names of the input and output files that appear in the 
+command file do not need to include explicit "in/" and "out/" directory 
+names. In this case, the prefix "in/" is instead automatically prepended 
+to the name given for any input file in the parameter or command file, 
+while the prefix "out/" is prepended to the name of any output file. 
+Note that, if a prefix is used to specify a subdirectory in which files
+are located, as in this example, then the prefix string must include a
+trailing backlash character.
 
  <BR>
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

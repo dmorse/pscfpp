@@ -32,11 +32,10 @@ CPU".
 
 The pscf_pg program is a GPU-accelerated variant of pscf_pc that can also 
 perform SCFT and PS-FTS calculations on systems with periodic boundary 
-conditions.  The pscf_pc and pscf_pg programs use analogous algorithms, 
-and provide identical features and user interfaces.  The use of a GPU,
-however, provides much higher performance for problems involving a
-sufficiently large number of grid points per unit cell.  The suffix 
-"pg" stands for "periodic GPU".
+conditions.  The pscf_pc and pscf_pg programs provide identical features
+and user interfaces, but pscf_pg provides much higher performance for 
+problems involving a sufficiently large number of grid points per unit 
+cell.  The suffix "pg" stands for "periodic GPU".
 
 <BR>
 \ref about_history_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

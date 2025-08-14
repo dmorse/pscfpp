@@ -31,9 +31,9 @@ while using larger values for the statistical segment length \f$ b \f$
 and the volume \f$ v \f$ per monomer in the model with fewer, larger
 monomers.
 
-This flexibility of the definition of a "monomer" becomes even greater
+This flexibility in the definition of a "monomer" becomes much greater
 in the continous thread model. The thread model allows the use of block
-lengths that are not integers, and that thus need not be greater than 1. 
+lengths that are not integers, and that need not be greater than 1. 
 In the thread model, we implicitly assume that the number of elementary 
 chemical repeat units in any chain segment of interest is sufficiently 
 large that we may ignore details of chemical structure and characterize 
@@ -204,6 +204,7 @@ that is used in underying numerical algorithms thus also restricts
 the choice of values for block lengths.
 
 \section user_model_conventions_vMonomer_sec Monomer reference volume
+(relevance or irrelevance)
 
 A value for the monomer reference volume \f$ v \f$ is not required as
 an input to a standard SCFT calculation.  As discussed

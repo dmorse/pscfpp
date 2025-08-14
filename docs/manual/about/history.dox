@@ -62,13 +62,12 @@ to the C++/CUDA version:
 These two features are described in more detail below.
 
 The Fortran PSCF program can compute the SCFT linear response of periodic 
-equilibrium structures to infinitesimal inhomogeneous external fields.  This 
-capaability allows calculation of limits of stability of ordered phases and 
-description of composition fluctuations within such phases. This is the only 
-important capability of the Fortran program that has not been ported to the 
-new C++ version.  It will remain available within the Fortran program, which 
-is still maintained in a separate github repository.  The required algorithm 
-and some applications are described in the following reference: 
+equilibrium structures to infinitesimal inhomogeneous external fields.
+This allows calculation of limits of stability of ordered phases and 
+description composition fluctuations within such phases. This is now the 
+only important capability of the Fortran program that has not been ported 
+to the new C++ version.  The required algorithm and some applications are 
+described in the following reference: 
 
 Ranjan, A. and Qin, J. and Morse, D.C., 
 <a href="https://doi.org/10.1021/ma0714316">
@@ -76,15 +75,15 @@ Ranjan, A. and Qin, J. and Morse, D.C.,
 </a> **2008** *Macromolecules* <i>41</i>, 942.  
 
 The Fortran PSCF program also provides a unique quasi-Newton/Broyden SCFT 
-iteration algorithm that is still an excellent algorithm for the problems 
-of moderate size for which it was originally designed. This algorithm is
-based on a physically motivated initial approximation for the inverse 
-Jacobian of the SCFT fixed-point problem and iterative improvement of this 
-guess via a Broyden update scheme.  This algorithm was abandoned in the 
-new C++ version in favor of Anderson-mixing algorithms because the amount 
-of memory required by this Newton/Broyden algorithm increases as the square 
-of the number of spatial degrees of freedom (i.e., number of basis functions), 
-which prevented the algorithm from being applied to larger problems.
+iteration algorithm that is very efficient for the problems of moderate 
+size for which it was designed.  This algorithm is based on a physically 
+motivated initial approximation for the inverse Jacobian of the SCFT 
+fixed-point problem and iterative improvement via a Broyden update 
+scheme.  This algorithm was abandoned in the new C++ version in favor of 
+Anderson-mixing algorithms because the amount of memory required by the
+quasi-Newton / Broyden scheme increases as the square of the number of 
+spatial degrees of freedom, which prevented the algorithm from being 
+applied to larger problems.
 
 <BR>
 \ref about_methods_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

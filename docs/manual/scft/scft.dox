@@ -4,11 +4,10 @@
 \ref psfts_page (Next)
 <BR>
 
-This chapter provides more detailed information about how to use any of the
-PSCF programs to perform SCFT calculations. This includes documentation of 
-file formats for all relevant types of input and output files, as well as
-discussion of specialized features for SCFT, relevant aspects of crystallography, 
-and tools for manipulating files and visualizing results.
+This chapter provides more detailed information about how to use any 
+of the PSCF programs to perform SCFT calculations and SCFT parameter
+sweeps.  The \ref psfts_page "following chapter" provides analogous 
+information about PS-FTS calculations.
 
 <h2> Contents:</h2>
    <ol>

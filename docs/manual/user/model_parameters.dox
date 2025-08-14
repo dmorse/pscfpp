@@ -19,17 +19,17 @@ may be modelled using either a continuous "thread" model or a discrete
 "bead" model. The thread model idealizes blocks within a block polymer
 as continuous random walks. The bead model instead represents each block 
 as a sequence of a finite number of discrete beads connected by harmonic 
-bonds. The pscf_1d program only uses the continuous thread model.
+bonds. The pscf_1d program can only use a continuous thread model.
 
-Each polymer species is constructed from blocks that must each contain
-monomers of a specified type.  Each block within a block polymer is thus
-assigned a monomer type (identified by an integer index) and a block length.
-The block length is given as a real (i.e., floating point) number in the 
-continuous thread model and as an integer number of beads in the discrete 
-bead model.  In either model, the volume occupied by a block within an 
-incompressible liquid is given by the product of its length and a 
-monomer reference volume. By convention, PSCF requires that the monomer 
-reference volume be the same for every monomer type. 
+Each polymer species is constructed from chemically homogeneous blocks 
+that each contain monomers of a specific type.  Each block within a block 
+polymer is thus assigned a monomer type (identified by an integer index) 
+and a block length.  The block length is given as a real (i.e., floating 
+point) number in the continuous thread model and as an integer number of 
+beads in the discrete bead model. In either model, the volume occupied 
+by a block within an incompressible liquid is given by the product of its 
+length and a monomer reference volume. By convention, PSCF requires that 
+the monomer reference volume be the same for every monomer type. 
 
 Each small-molecule solvent species is assigned a monomer type index and
 a dimensionless "size" parameter. The volume occupied by one molecule of 
@@ -48,7 +48,7 @@ PS-FTS calculation thus include:
   - The number of different monomer types present in the system, and
     a value for the statistical segment length of each monomer type.
 
-  - A description of each polymer species that includes the monomer
+  - A description of each polymer species that specifies the monomer
     type and length of each block, and (for branched polymers) a
     description of how the blocks are connected.
 
@@ -62,13 +62,13 @@ PS-FTS calculation thus include:
     \f$ \chi_{ij} \f$ for interactions between monomers of types
     \f$ i \f$ and \f$ j \f$ for each distinct pair of monomer types.
 
-  - Parameters that specify the unit cell (for periodic structures) or 
+  - Parameters that describe the unit cell (for periodic structures) or 
     spatial domain of interest.
 
-To perform a PS-FTS calculation, a user must also input a value for the 
-monomer reference volume (i.e., volume per monomer in an incompressible 
-liquid), but this parameter is normally not needed as an input to an SCFT 
-calculation. 
+To perform a PS-FTS calculation, a user must also input a value for 
+the monomer reference volume, i.e., the volume per monomer or per unit
+contour length in an incompressible liquid. This parameter is, however, 
+usually not needed as an input to a SCFT calculation. 
 
 In addition to these physical parameters, users of PSCF must provide 
 values for computational parameters required by a variety of different
@@ -115,20 +115,21 @@ length unit, such as Angstroms or nanometers, or using units in which
 values for these quantities are specified using some user-defined system of
 non-dimensional units, e.g., by defining the unperturbed root-mean-squared
 of a specific linear polymer species to be equal to unity. In the 
-continuous chain model, conventions for units of length are related
-to a separate arbitrary choice regarding how one defines how much 
-polymer corresponds to one "monomer". Common choices of conventions 
-for units of physical length and polymer contour length are discussed 
-on a \ref user_model_conventions_page "separate page". 
+continuous chain model, conventions for units of length are related to a 
+separate arbitrary choice regarding  how much polymer backbone corresponds 
+to one "monomer", or one unit of contour length. Some common choices of 
+conventions for units of physical length and polymer contour length are 
+discussed in detail in a \ref user_model_conventions_page "separate page". 
 
-If a user supplies input parameters values that were assigned using 
-some consistent unit of length, output values will automatically be 
-reported using the same system of units.  For example, in SCFT 
-simulations of a periodic microstructures in which one or more dimensions 
-of the crystal unit cell are iteratively ajdusted so as to minimize the 
-free energy density, output values for the optimized unit cell parameters 
-will be reported using the same length units as those used to define the 
-monomer statistical segment lengths provided by the user.
+If a user supplies input parameters values that were assigned using some 
+consistent choice of a unit of length, output values will automatically 
+be reported using the same units.  For example, in SCFT simulations of 
+a periodic microstructures in which one or more dimensions of the crystal 
+unit cell are iteratively ajdusted so as to minimize the free energy 
+density, output values for the optimized unit cell parameters will be 
+reported using the same unit of length as those used to define the 
+monomer statistical segment lengths that were provided as inputs to the
+calculation.
 
 <BR>
 \ref user_model_page         (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
