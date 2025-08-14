@@ -1,10 +1,10 @@
-#ifndef PSCF_HOMOGENEOUS_MOLECULE_TEST_H
-#define PSCF_HOMOGENEOUS_MOLECULE_TEST_H
+#ifndef PSCF_FLORY_HUGGINS_MOLECULE_TEST_H
+#define PSCF_FLORY_HUGGINS_MOLECULE_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/homogeneous/Molecule.h>
+#include <pscf/floryHuggins/Molecule.h>
 #include <util/misc/Log.h>
 
 #include <fstream>
@@ -27,13 +27,13 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Homogeneous::Molecule molecule;
+      FloryHuggins::Molecule molecule;
    } 
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
 
-      Homogeneous::Molecule molecule;
+      FloryHuggins::Molecule molecule;
       std::ifstream in;
       openInputFile("in/Molecule", in);
 
@@ -53,7 +53,7 @@ public:
    void testSetters()
    {
       printMethod(TEST_FUNC);
-      Homogeneous::Molecule molecule;
+      FloryHuggins::Molecule molecule;
 
       molecule.setNClump(2);
       molecule.clump(0).setMonomerId(0);

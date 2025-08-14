@@ -1,5 +1,5 @@
-#ifndef PSCF_HOMOGENEOUS_CLUMP_H
-#define PSCF_HOMOGENEOUS_CLUMP_H
+#ifndef PSCF_FLORY_HUGGINS_CLUMP_H
+#define PSCF_FLORY_HUGGINS_CLUMP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -13,12 +13,12 @@
 #include <iostream>
 
 namespace Pscf { 
-namespace Homogeneous { 
+namespace FloryHuggins { 
 
    using namespace Util;
 
    /**
-   * Collection of all monomers of a single type in a molecule.
+   * All monomers of a specific monomer type in a molecule.
    *
    * A clump has a monomer id and a size. The size of a clump is 
    * the volume occupied by all monomers of the specified type in
@@ -30,7 +30,7 @@ namespace Homogeneous {
    * more blocks of the same monomer type. Hompolymer and point
    * solvent molecular species each have only one clump.
    *
-   * \ingroup Pscf_Homogeneous_Module
+   * \ingroup Pscf_FloryHuggins_Module
    */
    class Clump
    {
@@ -54,23 +54,23 @@ namespace Homogeneous {
       //@{
     
       /**
-      * Set the monomer id.
+      * Set the monomer type id.
       *
       * \param monomerId integer id of monomer type (>=0)
       */ 
       void setMonomerId(int monomerId);
   
       /**
-      * Set the size of this block.
+      * Set the size of this clump.
       *
       * The ``size" is steric volume / reference volume.
       *
-      * \param size block size (number of monomers).
+      * \param size clump size (volume / monomer volume)
       */ 
       void setSize(double size);
   
       //@}
-      /// \name Accessors (getters)
+      /// \name Accessors
       //@{
     
       /**

@@ -8,7 +8,7 @@
 #include "chem/ChemTestComposite.h"
 #include "solvers/SolversTestComposite.h"
 #include "inter/InterTestComposite.h"
-#include "homogeneous/HomogeneousTestComposite.h"
+#include "floryHuggins/FloryHugginsTestComposite.h"
 #include "mesh/MeshTestComposite.h"
 
 #include <util/param/BracketPolicy.h>
@@ -19,7 +19,7 @@ addChild(new MathTestComposite, "math/");
 addChild(new ChemTestComposite, "chem/");
 addChild(new SolversTestComposite, "solvers/");
 addChild(new InterTestComposite, "inter/");
-addChild(new HomogeneousTestComposite, "homogeneous/");
+addChild(new FloryHugginsTestComposite, "floryHuggins/");
 addChild(new MeshTestComposite, "mesh/");
 TEST_COMPOSITE_END
 

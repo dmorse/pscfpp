@@ -17,7 +17,7 @@
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/Interaction.h>
-#include <pscf/homogeneous/Clump.h>
+#include <pscf/floryHuggins/Clump.h>
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>
@@ -173,13 +173,7 @@ namespace R1d
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
-      // Initialize homogeneous object
-      //int nm = mixture().nMonomer(); 
-      //int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      //homogeneous_.setNMolecule(np+ns);
-      //homogeneous_.setNMonomer(nm);
-      //initHomogeneous();
+      // Initialize FloryHuggins::Mixture object
       homogeneous_.initialize(mixture());
 
       interaction().setNMonomer(mixture().nMonomer());
@@ -601,85 +595,6 @@ namespace R1d
             if (phi > 1E-08) {
                pressure_ += phi*mu/size;
             }
-         }
-      }
-
-   }
-
-   void System::initHomogeneous()
-   {
-      // Set number of molecular species and monomers
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      int ns = mixture().nSolvent(); 
-      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
-      UTIL_CHECK(homogeneous_.nMonomer() == nm);
-
-      // Allocate c_ work array, if necessary
-      if (c_.isAllocated()) {
-         UTIL_CHECK(c_.capacity() == nm);
-      } else {
-         c_.allocate(nm);
-      }
-
-      int i;   // molecule index
-      int j;   // monomer index
-      int k;   // block or clump index
-      int nb;  // number of blocks
-      int nc;  // number of clumps
- 
-      // Loop over polymer molecule species
-      if (np > 0) {
-         for (i = 0; i < np; ++i) {
-   
-            // Initial array of clump sizes 
-            for (j = 0; j < nm; ++j) {
-               c_[j] = 0.0;
-            }
-   
-            // Compute clump sizes for all monomer types.
-            nb = mixture().polymer(i).nBlock(); 
-            for (k = 0; k < nb; ++k) {
-               Block& block = mixture().polymer(i).block(k);
-               j = block.monomerId();
-               c_[j] += block.length();
-            }
-    
-            // Count the number of clumps of nonzero size
-            nc = 0;
-            for (j = 0; j < nm; ++j) {
-               if (c_[j] > 1.0E-8) {
-                  ++nc;
-               }
-            }
-            homogeneous_.molecule(i).setNClump(nc);
-    
-            // Set clump properties for this Homogeneous::Molecule
-            k = 0; // Clump index
-            for (j = 0; j < nm; ++j) {
-               if (c_[j] > 1.0E-8) {
-                  homogeneous_.molecule(i).clump(k).setMonomerId(j);
-                  homogeneous_.molecule(i).clump(k).setSize(c_[j]);
-                  ++k;
-               }
-            }
-            homogeneous_.molecule(i).computeSize();
-   
-         }
-      }
-
-      // Add solvent contributions
-      if (np > 0) {
-         double size;
-         int monomerId;
-         for (int is = 0; is < ns; ++is) {
-            i = is + np;
-            monomerId = mixture().solvent(is).monomerId();
-            size = mixture().solvent(is).size();
-            homogeneous_.molecule(i).setNClump(1);
-            homogeneous_.molecule(i).clump(0).setMonomerId(monomerId);
-            homogeneous_.molecule(i).clump(0).setSize(size);
-            homogeneous_.molecule(i).computeSize();
          }
       }
 

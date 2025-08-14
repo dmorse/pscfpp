@@ -93,14 +93,14 @@ namespace R1d {
       Interaction& interaction();
 
       /**
-      * Get homogeneous mixture (for reference calculations).
+      * Get homogeneous mixture by const reference.
       */
-      const Homogeneous::Mixture& homogeneous() const;
+      FloryHuggins::Mixture const & homogeneous() const;
 
       /**
-      * Get homogeneous mixture (for reference calculations).
+      * Get homogeneous mixture by non-const reference.
       */
-      Homogeneous::Mixture& homogeneous();
+      FloryHuggins::Mixture& homogeneous();
 
       /**
       * Get FileMaster by reference.
@@ -234,10 +234,10 @@ namespace R1d {
    }
 
    /*
-   * Get the Homogeneous::Mixture object.
+   * Get the FloryHuggins::Mixture object.
    */
    inline 
-   Homogeneous::Mixture& SystemAccess::homogeneous()
+   FloryHuggins::Mixture& SystemAccess::homogeneous()
    {  
       UTIL_ASSERT(systemPtr_);
       return systemPtr_->homogeneous(); 

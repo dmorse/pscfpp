@@ -249,7 +249,7 @@ namespace Pscf
       * value for the monomer statistical segment Monomer::kuhn.
       */
 
-      // Read nPolymer
+      // Read nPolymer (required parameter, must be > 0)
       read<int>(in, "nPolymer", nPolymer_);
       UTIL_CHECK(nPolymer_ > 0);
 

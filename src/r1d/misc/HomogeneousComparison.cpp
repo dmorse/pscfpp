@@ -8,7 +8,7 @@
 #include "HomogeneousComparison.h"
 
 #include <pscf/inter/Interaction.h>
-#include <pscf/homogeneous/Clump.h>
+#include <pscf/floryHuggins/Clump.h>
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>

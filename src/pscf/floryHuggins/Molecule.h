@@ -1,5 +1,5 @@
-#ifndef PSCF_HOMOGENEOUS_MOLECULE_H
-#define PSCF_HOMOGENEOUS_MOLECULE_H
+#ifndef PSCF_FLORY_HUGGINS_MOLECULE_H
+#define PSCF_FLORY_HUGGINS_MOLECULE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -10,30 +10,30 @@
 
 #include <util/param/ParamComposite.h>   // base class
 
-#include <pscf/homogeneous/Clump.h>      // member template argument
+#include <pscf/floryHuggins/Clump.h>      // member template argument
 #include <util/containers/Pair.h>        // member template
 #include <util/containers/DArray.h>      // member template
 
 #include <cmath>
 
 namespace Pscf { 
-   namespace Homogeneous { 
+   namespace FloryHuggins { 
    
       using namespace Util;
    
       /**
       * Descriptor of a molecular species in a homogeneous mixture.
       *
-      * A Homogeneous::Molecule has:
+      * A FloryHuggins::Molecule has:
       *
-      *  - An array of Homogeneous::Clump objects
+      *  - An array of FloryHuggins::Clump objects
       *  - An overall size (volume/monomer volume)
       *
       * Each Clump has a monomer type id and a size. The size is the
       * total volume of monomers of that type in a molecule of this
       * species.
       *
-      * \ingroup Pscf_Homogeneous_Module
+      * \ingroup Pscf_FloryHuggins_Module
       */
       class Molecule : public Util::ParamComposite
       {
@@ -123,13 +123,13 @@ namespace Pscf {
    /*
    * Number of clumps.
    */
-   inline int Homogeneous::Molecule::nClump() const
+   inline int FloryHuggins::Molecule::nClump() const
    {  return nClump_; }
 
    /*
    * Total size of all clumps = volume / reference volume
    */
-   inline double Homogeneous::Molecule::size() const
+   inline double FloryHuggins::Molecule::size() const
    {
       UTIL_CHECK(hasSize_);
       return size_; 
@@ -138,13 +138,13 @@ namespace Pscf {
    /*
    * Get a specified Clump (non-constant reference)
    */
-   inline Homogeneous::Clump& Homogeneous::Molecule::clump(int id)
+   inline FloryHuggins::Clump& FloryHuggins::Molecule::clump(int id)
    {  return clumps_[id]; }
  
    /*
    * Get a specified Clump (constant reference)
    */
-   inline const Homogeneous::Clump& Homogeneous::Molecule::clump(int id) const
+   inline const FloryHuggins::Clump& FloryHuggins::Molecule::clump(int id) const
    {  return clumps_[id]; }
  
 }

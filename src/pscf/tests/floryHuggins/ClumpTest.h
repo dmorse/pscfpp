@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/homogeneous/Clump.h>
+#include <pscf/floryHuggins/Clump.h>
 #include <util/misc/Log.h>
 
 #include <fstream>
@@ -29,13 +29,13 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Homogeneous::Clump clump;
+      FloryHuggins::Clump clump;
    } 
 
    void testSetters()
    {
       printMethod(TEST_FUNC);
-      Homogeneous::Clump clump;
+      FloryHuggins::Clump clump;
       clump.setMonomerId(0);
       clump.setSize(2.0);
       TEST_ASSERT(clump.monomerId() == 0);
@@ -45,7 +45,7 @@ public:
    void testReadWrite() {
       printMethod(TEST_FUNC);
 
-      Homogeneous::Clump clump;
+      FloryHuggins::Clump clump;
       std::ifstream in;
       openInputFile("in/Clump", in);
 

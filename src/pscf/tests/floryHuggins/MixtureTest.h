@@ -1,11 +1,11 @@
-#ifndef PSCF_HOMOGENEOUS_MIXTURE_TEST_H
-#define PSCF_HOMOGENEOUS_MIXTURE_TEST_H
+#ifndef PSCF_FLORY_HUGGINS_MIXTURE_TEST_H
+#define PSCF_FLORY_HUGGINS_MIXTURE_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/homogeneous/Mixture.h>
-#include <pscf/homogeneous/Molecule.h>
+#include <pscf/floryHuggins/Mixture.h>
+#include <pscf/floryHuggins/Molecule.h>
 #include <pscf/inter/Interaction.h>
 #include <util/containers/DArray.h>
 #include <util/misc/Log.h>
@@ -31,13 +31,13 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Homogeneous::Mixture mixture;
+      FloryHuggins::Mixture mixture;
    } 
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
 
-      Homogeneous::Mixture mixture;
+      FloryHuggins::Mixture mixture;
       std::ifstream in;
       openInputFile("in/Mixture", in);
       mixture.readParam(in);
@@ -65,7 +65,7 @@ public:
    void testSetComposition() {
       printMethod(TEST_FUNC);
 
-      Homogeneous::Mixture mixture;
+      FloryHuggins::Mixture mixture;
       std::ifstream in;
       openInputFile("in/Mixture", in);
       mixture.readParam(in);
@@ -86,7 +86,7 @@ public:
    void testComputeMu() {
       printMethod(TEST_FUNC);
 
-      Homogeneous::Mixture mixture;
+      FloryHuggins::Mixture mixture;
       std::ifstream in;
       openInputFile("in/Mixture", in);
       mixture.readParam(in);
@@ -126,7 +126,7 @@ public:
    void testComputePhi() {
       printMethod(TEST_FUNC);
 
-      Homogeneous::Mixture mixture;
+      FloryHuggins::Mixture mixture;
       std::ifstream in;
       openInputFile("in/Mixture", in);
       mixture.readParam(in);

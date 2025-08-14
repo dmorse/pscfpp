@@ -1,5 +1,5 @@
-#ifndef PSCF_HOMOGENEOUS_MIXTURE_H
-#define PSCF_HOMOGENEOUS_MIXTURE_H
+#ifndef PSCF_FLORY_HUGGINS_MIXTURE_H
+#define PSCF_FLORY_HUGGINS_MIXTURE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -11,7 +11,7 @@
 #include <util/param/ParamComposite.h>    // base class
 
 #include <pscf/chem/Monomer.h>            // Member template argument
-#include <pscf/homogeneous/Molecule.h>    // Member template argument
+#include <pscf/floryHuggins/Molecule.h>    // Member template argument
 #include <util/containers/DArray.h>       // Member template
 #include <util/containers/DMatrix.h>      // Member template
 
@@ -22,14 +22,14 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Homogeneous {
+namespace FloryHuggins {
 
    using namespace Util;
 
    /**
    * A spatially homogeneous mixture.
    *
-   * \ingroup Pscf_Homogeneous_Module
+   * \ingroup Pscf_FloryHuggins_Module
    */
    class Mixture : public ParamComposite
    {
@@ -334,6 +334,6 @@ namespace Homogeneous {
    inline int Mixture::nMonomer() const
    {  return nMonomer_; }
 
-} // namespace Homogeneous
+} // namespace FloryHuggins
 } // namespace Pscf
 #endif

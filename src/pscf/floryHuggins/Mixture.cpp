@@ -15,7 +15,7 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Homogeneous {
+namespace FloryHuggins {
 
    using namespace Util;
 
@@ -158,7 +158,7 @@ namespace Homogeneous {
             }
             molecule(i).setNClump(nc);
     
-            // Set clump properties for this Homogeneous::Molecule
+            // Set clump properties for this FloryHuggins::Molecule
             k = 0; // Clump index
             for (j = 0; j < nm; ++j) {
                if (c_[j] > 1.0E-8) {
@@ -174,7 +174,7 @@ namespace Homogeneous {
       }
 
       // Add solvent contributions
-      if (np > 0) {
+      if (ns > 0) {
          double size;
          int monomerId;
          for (int is = 0; is < ns; ++is) {
@@ -515,5 +515,5 @@ namespace Homogeneous {
       }
    }
 
-} // namespace Homogeneous
+} // namespace FloryHuggins
 } // namespace Pscf

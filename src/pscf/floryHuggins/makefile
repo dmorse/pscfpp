@@ -8,10 +8,10 @@ include $(SRC_DIR)/pscf/include.mk
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(pscf_homogeneous_OBJS) 
+all: $(pscf_floryHuggins_OBJS) 
 
 clean:
-	rm -f $(pscf_homogeneous_OBJS) $(pscf_homogeneous_OBJS:.o=.d) 
+	rm -f $(pscf_floryHuggins_OBJS) $(pscf_floryHuggins_OBJS:.o=.d) 
 
 #-----------------------------------------------------------------------
 # Include dependency files

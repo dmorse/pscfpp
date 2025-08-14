@@ -3,7 +3,7 @@
 */ 
 
 #include <util/global.h>
-#include "HomogeneousTestComposite.h"
+#include "FloryHugginsTestComposite.h"
 
 #include <test/CompositeTestRunner.h>
 
@@ -12,7 +12,7 @@ using namespace Util;
 
 int main(int argc, char* argv[])
 {
-   HomogeneousTestComposite runner;
+   FloryHugginsTestComposite runner;
 
    if (argc > 2) {
       UTIL_THROW("Too many arguments");

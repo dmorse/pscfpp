@@ -12,7 +12,7 @@
 #include <r1d/misc/FieldIo.h>             // member
 #include <r1d/solvers/Mixture.h>          // member
 #include <r1d/domain/Domain.h>            // member
-#include <pscf/homogeneous/Mixture.h>      // member
+#include <pscf/floryHuggins/Mixture.h>      // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
@@ -406,9 +406,9 @@ namespace R1d
       Iterator& iterator();
 
       /**
-      * Get homogeneous mixture (for reference calculations).
+      * Get the homogeneous Flory-Huggins mixture (for reference calculations).
       */
-      Homogeneous::Mixture& homogeneous();
+      FloryHuggins::Mixture& homogeneous();
 
       /**
       * Get FileMaster by reference.
@@ -440,9 +440,9 @@ namespace R1d
       FieldIo fieldIo_;
 
       /**
-      * Homogeneous mixture, for reference.
+      * Homogeneous Flory-Huggins mixture, for reference.
       */
-      Homogeneous::Mixture homogeneous_;
+      FloryHuggins::Mixture homogeneous_;
 
       /**
       * Pointer to Interaction (excess free energy model).
@@ -545,11 +545,6 @@ namespace R1d
       void allocateFields();
 
       /**
-      * Initialize Homogeneous::Mixture object.
-      */
-      void initHomogeneous();
-
-      /**
       * Read a string (e.g., a filename) and echo it to the log file.
       *
       * \param in  input stream from which to read
@@ -598,10 +593,10 @@ namespace R1d
    { return domain_; }
 
    /*
-   * Get the Homogeneous::Mixture object.
+   * Get the FloryHuggins::Mixture object.
    */
    inline 
-   Homogeneous::Mixture& System::homogeneous()
+   FloryHuggins::Mixture& System::homogeneous()
    {  return homogeneous_; }
 
    /*

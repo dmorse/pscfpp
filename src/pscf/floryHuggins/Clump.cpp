@@ -8,7 +8,7 @@
 #include "Clump.h"
 
 namespace Pscf { 
-namespace Homogeneous { 
+namespace FloryHuggins { 
 
    /*
    * Constructor.

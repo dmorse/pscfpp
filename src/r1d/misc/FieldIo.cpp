@@ -12,7 +12,7 @@
 #include <r1d/solvers/Polymer.h>
 
 #include <pscf/chem/Vertex.h>
-#include <pscf/homogeneous/Clump.h>
+#include <pscf/floryHuggins/Clump.h>
 //#include <pscf/inter/Interaction.h>
 
 #include <util/misc/FileMaster.h>
