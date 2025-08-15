@@ -168,7 +168,6 @@ namespace Rpg {
       if (scftPtr_) {
          delete scftPtr_;
       }
-
       if (iteratorPtr_) {
          delete iteratorPtr_;
       }

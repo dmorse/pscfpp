@@ -1095,13 +1095,13 @@ namespace Rpc {
       // Alias for mesh dimensions
       IntVec<D> const & dimensions = domain_.mesh().dimensions();
 
-      // Allocate c (monomer concentration) fields
-      c_.setNMonomer(nMonomer);
-      c_.allocateRGrid(dimensions);
-
       // Allocate w (chemical potential) fields
       w_.setNMonomer(nMonomer);
       w_.allocateRGrid(dimensions);
+
+      // Allocate c (monomer concentration) fields
+      c_.setNMonomer(nMonomer);
+      c_.allocateRGrid(dimensions);
 
       // Set nMonomer for external field container
       h_.setNMonomer(nMonomer);
