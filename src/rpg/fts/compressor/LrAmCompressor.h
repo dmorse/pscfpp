@@ -9,18 +9,16 @@
 */
 
 #include "Compressor.h"
+#include <rpg/fts/compressor/IntraCorrelation.h> 
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
 #include <pscf/cuda/DeviceArray.h>
 #include <pscf/iterator/AmIteratorTmpl.h>                 
-#include <rpg/fts/compressor/intra/IntraCorrelation.h> 
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    template <int D> class System;
-   template <int D> class IntraCorrelation;
 
    using namespace Util;
    using namespace Pscf::Prdc;

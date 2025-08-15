@@ -31,7 +31,7 @@ namespace Rpc {
    /**
    * Intramolecular correlation analysis for LR compressors.
    *
-   * \ingroup Rpc_Compressor_Intra_Module
+   * \ingroup Rpc_Fts_Compressor_Module
    */
    template <int D>
    class IntraCorrelation 

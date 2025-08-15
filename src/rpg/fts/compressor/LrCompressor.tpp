@@ -10,21 +10,21 @@
 
 #include "LrCompressor.h"
 #include <rpg/system/System.h>
-#include <rpg/fts/compressor/intra/IntraCorrelation.h> 
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/iterator/NanException.h>
-#include <util/global.h>
 #include <util/format/Dbl.h>
-
+#include <util/global.h>
 
 namespace Pscf {
 namespace Rpg{
 
    using namespace Util;
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    template <int D>
    LrCompressor<D>::LrCompressor(System<D>& system)
     : Compressor<D>(system),
@@ -39,12 +39,16 @@ namespace Rpg{
       isAllocated_(false)
    { setClassName("LrCompressor"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    LrCompressor<D>::~LrCompressor()
    {}
 
-   // Read parameters from file
+   /*
+   * Read parameters from file.
+   */
    template <int D>
    void LrCompressor<D>::readParameters(std::istream& in)
    {
@@ -56,7 +60,9 @@ namespace Rpg{
       readOptional(in, "errorType", errorType_);
    }
 
-   // Initialize just before entry to iterative loop.
+   /*
+   * Initialize just before entry to iterative loop.
+   */
    template <int D>
    void LrCompressor<D>::setup()
    {
@@ -101,6 +107,9 @@ namespace Rpg{
       
    }
 
+   /*
+   * Iteratively adjust pressure field.
+   */
    template <int D>
    int LrCompressor<D>::compress()
    {
@@ -183,7 +192,9 @@ namespace Rpg{
 
    }
 
-   // Compute the residual for the current system state
+   /*
+   * Compute the residual for the current system state.
+   */
    template <int D>
    void LrCompressor<D>::getResidual()
    {
@@ -198,7 +209,9 @@ namespace Rpg{
       }
    }
 
-   // update system w field using linear response approximation
+   /*
+   * Update system w field using linear response approximation.
+   */
    template <int D>
    void LrCompressor<D>::updateWFields(){
       const int nMonomer = system().mixture().nMonomer();
@@ -222,10 +235,16 @@ namespace Rpg{
       system().w().setRGrid(wFieldTmp_);
    }
 
+   /*
+   * Output information to a log file (do-nothing implementation).
+   */
    template<int D>
    void LrCompressor<D>::outputToLog()
    {}
 
+   /*
+   * Output timing information to evaluate performance.
+   */
    template<int D>
    void LrCompressor<D>::outputTimers(std::ostream& out) const
    {
@@ -243,6 +262,9 @@ namespace Rpg{
       out << "\n";
    }
 
+   /*
+   * Clear all timers.
+   */
    template<int D>
    void LrCompressor<D>::clearTimers()
    {
@@ -258,7 +280,9 @@ namespace Rpg{
       return Reduce::maxAbs(a);
    }
 
-   // Compute and return inner product of two vectors.
+   /*
+   * Compute and return inner product of two vectors.
+   */
    template <int D>
    double LrCompressor<D>::dotProduct(RField<D> const & a,
                                       RField<D> const & b)
@@ -267,7 +291,9 @@ namespace Rpg{
       return Reduce::innerProduct(a, b);
    }
 
-   // Compute L2 norm of an RField
+   /*
+   * Compute the L2 norm of an RField.
+   */
    template <int D>
    double LrCompressor<D>::norm(RField<D> const & a)
    {
@@ -275,7 +301,9 @@ namespace Rpg{
       return sqrt(normSq);
    }
 
-   // Compute and return the scalar error
+   /*
+   * Compute and return the scalar error.
+   */
    template <int D>
    double LrCompressor<D>::computeError(int verbose)
    {

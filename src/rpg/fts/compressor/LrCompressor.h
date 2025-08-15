@@ -14,14 +14,13 @@
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
 #include <util/misc/Timer.h>
-#include <rpg/fts/compressor/intra/IntraCorrelation.h>  
+#include <rpg/fts/compressor/IntraCorrelation.h>  
 
 namespace Pscf {
 namespace Rpg
 {
 
    template <int D> class System;
-   template <int D> class IntraCorrelation;
 
    using namespace Util;
    using namespace Pscf::Prdc;

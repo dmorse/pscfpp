@@ -10,18 +10,19 @@
 
 #include "LrAmCompressor.h"
 #include <rpg/system/System.h>
-#include <rpg/fts/compressor/intra/IntraCorrelation.h>
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/global.h>
 
 namespace Pscf {
-namespace Rpg{
+namespace Rpg {
 
    using namespace Util;
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    template <int D>
    LrAmCompressor<D>::LrAmCompressor(System<D>& system)
    : Compressor<D>(system),
@@ -30,12 +31,16 @@ namespace Rpg{
      isAllocated_(false)
    { setClassName("LrAmCompressor"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    LrAmCompressor<D>::~LrAmCompressor()
    {}
 
-   // Read parameters from file
+   /*
+   * Read parameters from file.
+   */
    template <int D>
    void LrAmCompressor<D>::readParameters(std::istream& in)
    {
@@ -43,8 +48,10 @@ namespace Rpg{
       AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::readParameters(in);
       AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::readErrorType(in);
    }
-   
-   // Initialize just before entry to iterative loop.
+  
+   /* 
+   * Initialize just before entry to iterative loop.
+   */
    template <int D>
    void LrAmCompressor<D>::setup(bool isContinuation)
    {  
@@ -99,7 +106,10 @@ namespace Rpg{
       }
       
    }
-   
+  
+   /*
+   * Main function - iteratively adjust the pressure field.
+   */ 
    template <int D>
    int LrAmCompressor<D>::compress()
    {

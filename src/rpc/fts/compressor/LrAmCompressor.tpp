@@ -10,7 +10,6 @@
 
 #include "LrAmCompressor.h"
 #include <rpc/system/System.h>
-#include <rpc/fts/compressor/intra/IntraCorrelation.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/global.h>
 
@@ -19,7 +18,9 @@ namespace Rpc{
 
    using namespace Util;
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    template <int D>
    LrAmCompressor<D>::LrAmCompressor(System<D>& system)
     : Compressor<D>(system),
@@ -28,12 +29,16 @@ namespace Rpc{
       isAllocated_(false)
    {  setClassName("LrAmCompressor"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    LrAmCompressor<D>::~LrAmCompressor()
    {}
 
-   // Read parameters from file
+   /*
+   * Read parameters from file.
+   */
    template <int D>
    void LrAmCompressor<D>::readParameters(std::istream& in)
    {
@@ -43,7 +48,9 @@ namespace Rpc{
    
    }
 
-   // Initialize just before entry to iterative loop.
+   /*
+   * Initialize just before entry to iterative loop.
+   */
    template <int D>
    void LrAmCompressor<D>::setup(bool isContinuation)
    {
@@ -343,6 +350,9 @@ namespace Rpc{
       system().w().setRGrid(wFieldTmp_);
    }
 
+   /*
+   * Output results to log file (do-nothing implementation).
+   */
    template<int D>
    void LrAmCompressor<D>::outputToLog()
    {}

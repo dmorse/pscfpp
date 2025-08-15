@@ -24,9 +24,9 @@ namespace Rpg
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Base class for iterators that impose incompressibility.
+   * Linear response function for response to pressure.
    *
-   * \ingroup Rpg_Compressor_Intra_Module
+   * \ingroup Rpg_Fts_Compressor_Module
    */
    template <int D>
    class IntraCorrelation : public ParamComposite

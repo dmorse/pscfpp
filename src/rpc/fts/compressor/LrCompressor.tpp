@@ -10,12 +10,11 @@
 
 #include "LrCompressor.h"
 #include <rpc/system/System.h>
-#include <rpc/fts/compressor/intra/IntraCorrelation.h> 
-#include <util/global.h>
-#include <util/format/Dbl.h>
+#include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/iterator/NanException.h>
-#include <prdc/crystal/shiftToMinimum.h>
+#include <util/global.h>
+#include <util/format/Dbl.h>
 
 
 namespace Pscf {
@@ -87,6 +86,9 @@ namespace Rpc{
       }
    }
 
+   /*
+   * Adjust pressure field find partial saddle point.
+   */
    template <int D>
    int LrCompressor<D>::compress()
    {
@@ -169,7 +171,9 @@ namespace Rpc{
 
    }
 
-   // Compute the residual for the current system state
+   /*
+   * Compute the residual for the current system state
+   */
    template <int D>
    void LrCompressor<D>::getResidual()
    {
