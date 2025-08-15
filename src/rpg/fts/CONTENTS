@@ -2,22 +2,30 @@ This directory contains code used only stochastic FTS calculations
 using a partial-saddle point approximation using a GPU accelerator.
 
 Subdirectories:
+---------------
 
-simulator/     - Simulator base class and factory, class SimState
-compressor/    - algorithms to iteratively find a partial saddle point
+analyzer/      - data analysis classes (for on-the-fly or postprocessing)
 brownian/      - Brownian dynamics FTS algorithms
+compressor/    - algorithms to iteratively find a partial saddle point
 montecarlo/    - Monte Carlo FTS algorithms
 perturbation/  - perturbations of the Hamiltonian (e.g., Einstein crystal)
 ramp/          - continuous parameter ramp during simulation
-analyzer/      - data analysis classes (for on-the-fly or postprocessing)
+simulator/     - Simulator base class and factory, class SimState
 trajectory/    - reading field trajectory files (postprocessing)
 
-Makefile and makefile fragments:
+C++/CUDA source files:
+----------------------
 
-sources.mk    - list of source files (makefile fragment)
-makefile      - main makefile for rpg/fts directory tree
+VecOpFts.*     - GPU vector operations needed for FTS simulations
+
+Makefile and makefile fragments:
+--------------------------------
+
+makefile      - makefile for rpg/fts directory tree
+sources.mk    - list of source files in rpg/fts (makefile fragment)
 
 Doxygen documentation files:
+----------------------------
 
 fts.mod       - definition of the Rpg_Fts_Module doxygen topic module
 

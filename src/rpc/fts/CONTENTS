@@ -1,23 +1,26 @@
 This directory contains code used only in stochastic FTS calculations
-using a partial saddle-point approximation on CPU hardware.
+using a partial saddle-point approximation (PS-FTS) on CPU hardware.
 
 Subdirectories:
+---------------
 
-simulator /   - Simulator base class and factory, class SimState
-compressor/   - algorithms to iteratively find a partial saddle point
-brownian/     - Brownian dynamics simulation 
-montecarlo/   - Monte Carlo simulation
 analyzer/     - data analysis classes (for on-the-fly or postprocessing)
-trajectory/   - reading field trajectory files (postprocessing)
+brownian/     - Brownian dynamics simulation 
+compressor/   - algorithms to iteratively find a partial saddle point
+montecarlo/   - Monte Carlo simulation
 perturbation/ - perturbations of the Hamiltonian (e.g., Einstein crystal)
 ramp/         - continuous change of parameters during a simulation
+trajectory/   - reading field trajectory files (postprocessing)
+simulator /   - Simulator base class and factory, class SimState
 
 Makefile and makefile fragments:
+--------------------------------
 
 makefile      - main makefile for rpc/fts directory tree
 sources.mk    - list of source files (makefile fragment)
 
 Doxygen documentation files:
+----------------------------
 
 fts.mod       - definition of the Rpc_Fts_Module doxygen topic module
 

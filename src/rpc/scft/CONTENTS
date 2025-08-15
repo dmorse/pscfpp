@@ -1,16 +1,24 @@
 This directory contains code specific to SCFT calculations.
 
 Subdirectories:
+---------------
 
 iterator/    - classes to implement SCFT iteration algorithms
 sweep/       - classes to peform a sweep through parameter space
 
+C++ source files:
+-----------------
+
+ScftThermo.*  - Computes SCFT thermodynamic properties
+
 Makefile and makefile fragments:
+--------------------------------
 
 makefile      - main makefile for rpc/scft directory tree
-sources.mk    - list of source files (makefile fragment)
+sources.mk    - list of source files in rpc/scft (makefile fragment)
 
 Doxygen documentation files:
+----------------------------
 
 scft.mod      - defintion of the Rpc_Scft_Module doxygen module
 

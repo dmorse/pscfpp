@@ -1,22 +1,24 @@
 This directory contains code specific to SCFT calculations.
 
 Subdirectories:
+---------------
 
 iterator/    - classes to implement SCFT iteration algorithms
 sweep/       - classes to peform a sweep through parameter space
 
-C++ Files:
+C++/CUDA source files:
+----------------------
 
-System.h      - System<D> class template header (main object)
-System.tpp    - System<D> class template definition
-System.cpp    - System<D> explicit instantiations for D=1,2,3
+ScftThermo.*  - Computes SCFT thermodynamic properties
 
 Makefile and makefile fragments:
+--------------------------------
 
-sources.mk    - list of source files (makefile fragment)
-makefile      - main makefile for rpg/scft directory tree
+makefile      - makefile for rpg/scft directory tree
+sources.mk    - list of source files in rpg/scft (makefile fragment)
 
 Doxygen documentation files:
+----------------------------
 
-scft.mod      - defintion of the Rpg_Scft doxygen module
+scft.mod      - defintion of the Rpg_Scft_Module doxygen module
 
