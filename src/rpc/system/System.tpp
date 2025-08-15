@@ -83,7 +83,7 @@ namespace Rpc {
    {
       setClassName("System");  // Set block label in parameter file
       BracketPolicy::set(BracketPolicy::Optional);
-
+      // Padding for alignment with Rpg version
 
       // Create dynamically allocated objects owned by this System
       mixtureModifierPtr_ = new MixtureModifier<D>();
@@ -202,7 +202,7 @@ namespace Rpc {
       bool cFlag = false;  // command file
       bool iFlag = false;  // input prefix
       bool oFlag = false;  // output prefix
-      bool tFlag = false;  // nThread
+      bool tFlag = false;  // thread count
       char* pArg = 0;
       char* cArg = 0;
       char* iArg = 0;
@@ -238,7 +238,7 @@ namespace Rpc {
             oFlag = true;
             oArg  = optarg;
             break;
-         case 't': // number of threads, user set
+         case 't': // thread count, if set by user
             tFlag = true;
             tArg = atoi(optarg);
             break;
@@ -248,30 +248,32 @@ namespace Rpc {
          }
       }
 
-      // Set flag to echo parameters as they are read.
-      if (eFlag) {
-         Util::ParamComponent::setEcho(true);
-      }
+      // Process program arguments
 
-      // Check -d flag
+      // Check required option -d
       if (dFlag) {
          UTIL_CHECK(D == dArg);
       } else {
          UTIL_THROW("Missing required -d option");
       }
 
-      // Check option -p, set parameter file name
+      // Check required option -p, set parameter file name
       if (pFlag) {
          fileMaster_.setParamFileName(std::string(pArg));
       } else {
          UTIL_THROW("Missing required -p option - no parameter file");
       }
 
-      // Check option -c, set command file name
+      // Check required option -c, set command file name
       if (cFlag) {
          fileMaster_.setCommandFileName(std::string(cArg));
       } else {
          UTIL_THROW("Missing required -c option - no command file");
+      }
+
+      // If option -e, set to echo parameters as they are read
+      if (eFlag) {
+         Util::ParamComponent::setEcho(true);
       }
 
       // If option -i, set path prefix for input files
@@ -284,10 +286,13 @@ namespace Rpc {
          fileMaster_.setOutputPrefix(std::string(oArg));
       }
 
+      // If option -t, process the thread count
       if (tFlag) {
          if (tArg <= 0) {
             UTIL_THROW("Error: Non-positive thread count -t option");
          }
+         // Padding for alignment with Rpg version
+         // Padding for alignment with Rpg version
       }
    }
 
