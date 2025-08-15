@@ -1,40 +1,40 @@
-/*! \mainpage PSCF - Polymer Self-Consistent Field 
+/*! \mainpage PSCF - Polymer Self-Consistent Field
 
 PSCF is a software package for field-theoretic simulation of inhomogeneous
-equilibrium structures formed by polymer liquids with constituents that 
+equilibrium structures formed by polymer liquids with constituents that
 tend to phase separate. The current version of PSCF can perform either
-self-consistent field theory calculations or stochastic field theoretic 
+self-consistent field theory calculations or stochastic field theoretic
 simulations that use a partial saddle-point approximation.
 
 PSCF is written primarily in C++, supplemented by CUDA to use a NVIDIA
-graphics processing unit if one is available.  The package is only 
-distributed in source code form, and so must be compiled by the user.  
-PSCF is designed for a unix-like environment, and is regularly tested on 
+graphics processing unit if one is available.  The package is only
+distributed in source code form, and so must be compiled by the user.
+PSCF is designed for a unix-like environment, and is regularly tested on
 Linux and Mac OS X operating systems.
 
-PSCF is free, open source software. It is distributed under the terms of 
-the GNU General Public License as (GPL) published by the Free Software 
-Foundation, either version 3 of the License or (at your option) any later 
+PSCF is free, open source software. It is distributed under the terms of
+the GNU General Public License as (GPL) published by the Free Software
+Foundation, either version 3 of the License or (at your option) any later
 version. See the LICENSE file or the <a href=http://www.gnu.org/licenses/>
-gnu web page</a> for details.  Development of PSCF is currently supported 
-by the National Science Foundation program for Cyberinfrastructure for 
+gnu web page</a> for details.  Development of PSCF is currently supported
+by the National Science Foundation program for Cyberinfrastructure for
 Sustained Scientific Development (CSSI) under Grant No. 2103627.
 
 <h2>Manual Organization:</h2>
-This web manual is designed to provide both usage information for users 
-who may never look at the source code and complete developer documentation 
-for those who do. 
+This web manual is designed to provide both usage information for users
+who may never look at the source code and complete developer documentation
+for those who do.
 
-Information for users about how to install and use PSCF is provided in 
-chapters 1-5 of the web manual, as outlined below. Additional general 
-information aimed at developers is given in chapter 6, 
-\ref developer_page "Developer Information".  
+Information for users about how to install and use PSCF is provided in
+chapters 1-5 of the web manual, as outlined below. Additional general
+information aimed at developers is given in chapter 6,
+\ref developer_page "Developer Information".
 
-Detailed programming interface documentation aimed at developers is 
-accessible via the "Topics", "Namespaces", "Classes", and "Files" tabs 
-that appear at the top of every web manual page.  The "Topics" page 
-provides a hierarchical list of classes and functions, organized into 
-C++ namespaces and, within each namespace, into groups of functionally 
+Detailed programming interface documentation aimed at developers is
+accessible via the "Topics", "Namespaces", "Classes", and "Files" tabs
+that appear at the top of every web manual page.  The "Topics" page
+provides a hierarchical list of classes and functions, organized into
+C++ namespaces and, within each namespace, into groups of functionally
 related classes.
 
 The web manual for the most recent release of PSCF is available online at
