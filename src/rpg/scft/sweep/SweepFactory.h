@@ -47,9 +47,11 @@ namespace Rpg {
       Sweep<D>* factory(std::string const & className) const;
 
       using Factory< Sweep<D> >::trySubfactories;
+      using Factory< Sweep<D> >::readObjectOptional;
 
    private:
 
+      // Pointer to parent system.
       System<D>* systemPtr_;
 
    };

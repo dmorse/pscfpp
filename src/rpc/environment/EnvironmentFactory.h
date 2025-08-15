@@ -33,7 +33,9 @@ namespace Rpc {
 
    public:
 
-      /// Constructor
+      /**
+      * Constructor.
+      */
       EnvironmentFactory(System<D>& system);
 
       /**
@@ -45,6 +47,7 @@ namespace Rpc {
       Environment* factory(const std::string &className) const;
 
       using Factory<Environment>::trySubfactories;
+      using Factory<Environment>::readObjectOptional;
 
    private:
 

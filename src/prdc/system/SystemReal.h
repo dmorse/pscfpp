@@ -10,6 +10,7 @@
 
 // Header file includes
 #include <util/param/ParamComposite.h>   // base class
+
 #include <prdc/crystal/UnitCell.h>       // member
 #include <pscf/chem/PolymerModel.h>      // member
 #include <util/misc/FileMaster.h>        // member
@@ -18,62 +19,34 @@
 namespace Util {
    template <typename E, int N> class FSArray;
 }
-namespace Pscf {
-   class Interaction;
-   namespace Prdc {
-      class Environment;
-      namespace Cuda {
-         template <int D> class RField;
-      }
-   }
-   namespace Rpg {
-      template <int D> class Mixture;
-      template <int D> class MixtureModifier;
-      template <int D> class Domain;
-      template <int D> class WFieldContainer;
-      template <int D> class CFieldContainer;
-      template <int D> class Mask;
-      template <int D> class EnvironmentFactory;
-      template <int D> class ScftThermo;
-      template <int D> class Iterator;
-      template <int D> class IteratorFactory;
-      template <int D> class Sweep;
-      template <int D> class SweepFactory;
-      template <int D> class Simulator;
-      template <int D> class SimulatorFactory;
-   }
-}
 
 namespace Pscf {
-namespace Rpg {
+namespace Prdc {
 
-   // Namespaces that may be used implicitly
+   // Namespace that may be used implicitly
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Main class, representing one complete system.
    *
-   * A System has (among other components):
+   * Template parameters:
+   *
+   *    D - integer dimensionality of space (D=1, 2, or 3)
+   *    T - "Types" class containing aliases for other required types
+   *
+   * A SystemReal has (among other components):
    *
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an Interaction (list of binary interaction parameters)
    *    - a Domain (description of unit cell and discretization)
-   *    - a container of monomer chemical potential (w) fields
-   *    - a container of monomer concentration (c) fields
+   *    - a WFieldContainer of monomer chemical potential (w) fields
+   *    - a CFieldContainer of monomer concentration (c) fields
    *
-   * A System may also optionally have Environment, Iterator, Sweep, and
+   * A SystemReal may also optionally have Environment, Iterator, Sweep, and
    * Simulator (BdSimulator or McSimulator) components. Iterator and Sweep
    * objects are only used for SCFT calculations. A Simulator object is
    * only used for PS-FTS calculations (i.e., field theoretic simulations
    * that use a partial saddle-point approximation).
-   *
-   * System is a class template with an integer template parameter
-   * D = 1, 2, or 3 that represents the dimension of space. Many related
-   * components are also class templates of the same type. Names such as
-   * System, Mixture, Domain, etc. mentioned above are thus names of
-   * class templates, while actual class names are of the form
-   * Mixture\<D\>, Domain\<D\>, etc. with D=1, 2, or 3.
    *
    * See also:
    * <ul>
@@ -86,7 +59,7 @@ namespace Rpg {
    * \ingroup Pscf_Rpg_Module
    */
    template <int D, class T>
-   class System : public ParamComposite
+   class SystemReal : public ParamComposite
    {
 
    public:
@@ -105,13 +78,20 @@ namespace Rpg {
 
       /**
       * Constructor.
+      *
+      * \param system  instance of System subclass
       */
-      System();
+      SystemReal(typename T::System& system);
 
       /**
       * Destructor.
       */
-      ~System();
+      ~SystemReal();
+
+      // Suppress compiler generated operations
+      SystemReal() = delete;
+      //SystemReal(SystemReal<D,T> const &) = delete;
+      //SystemReal<D,T>& operator = (SystemReal<D,T> const & ) = delete;
 
       ///@}
       /// \name Lifetime (Actions in Main Program)
@@ -394,12 +374,12 @@ namespace Rpg {
       /**
       * Get the Environment (non-const).
       */
-      Environment& environment();
+      typename T::Environment& environment();
 
       /**
       * Get the Environment (const).
       */
-      Environment const & environment() const;
+      typename T::Environment const & environment() const;
 
       /**
       * Get the ScftThermo object (non-const).
@@ -494,6 +474,26 @@ namespace Rpg {
 
       ///@}
 
+   protected:
+
+      /**
+      * Set the number of threads given as a command line argument.
+      *
+      * This function is called in the setOpts function that processes
+      * command line arguments. The argument nThread may be passed to the 
+      * main program as the argument of the -t option. This value gives
+      * the number of threads in a threaded CPU implementation or an
+      * explicit choice for the maximum number of threads per block in 
+      * GPU code. 
+      *
+      * The do-nothing default implementation is used by CPU code that
+      * has not implemented threading (the current status). 
+      *
+      * \param nThread  thread count
+      */
+      virtual void setThreadCount(int nThread)
+      {};
+
    private:
 
       // Component objects
@@ -533,7 +533,7 @@ namespace Rpg {
       */
       typename T::Mask mask_;
 
-      // Pointers to dynamic objects owned by this System
+      // Pointers to dynamic objects owned by this SystemReal
 
       /**
       * Pointer to MixtureModifier (non-const interface for Mixture).
@@ -548,7 +548,7 @@ namespace Rpg {
       /**
       * Pointer to an Environment.
       */
-      Environment* environmentPtr_;
+      typename T::Environment* environmentPtr_;
 
       /**
       * Pointer to an Environment factory object.
@@ -589,6 +589,11 @@ namespace Rpg {
       * Pointer to a simulator factory object.
       */
       typename T::SimulatorFactory* simulatorFactoryPtr_;
+
+      /**
+      * Pointer to enclosing instance of System subclass.
+      */
+      typename T::System* systemPtr_;
 
       /**
       * Polymer model enumeration (thread or bead), read from file.
@@ -693,7 +698,7 @@ namespace Rpg {
 
    // Get the Environment (non-const).
    template <int D, class T> inline 
-   Environment & SystemReal<D,T>::environment()
+   typename T::Environment & SystemReal<D,T>::environment()
    {
       UTIL_ASSERT(environmentPtr_);
       return *environmentPtr_;
@@ -701,7 +706,7 @@ namespace Rpg {
 
    // Get the Environment (const).
    template <int D, class T> inline 
-   Environment const & SystemReal<D,T>::environment() const
+   typename T::Environment const & SystemReal<D,T>::environment() const
    {
       UTIL_ASSERT(environmentPtr_);
       return *environmentPtr_;

@@ -44,6 +44,7 @@ namespace Rpc {
       Iterator<D>* factory(const std::string &className) const;
 
       using Factory< Iterator<D> >::trySubfactories;
+      using Factory< Iterator<D> >::readObjectOptional;
 
    private:
 

@@ -45,6 +45,7 @@ namespace Rpc {
       Sweep<D>* factory(std::string const & className) const;
 
       using Factory< Sweep<D> >::trySubfactories;
+      using Factory< Sweep<D> >::readObjectOptional;
 
    private:
 

@@ -26,16 +26,15 @@
 #include <unistd.h>
 
 namespace Pscf {
-namespace Rpg {
+namespace Prdc {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /*
    * Constructor.
    */
    template <int D, class T>
-   SystemReal<D,T>::SystemReal()
+   SystemReal<D,T>::SystemReal(typename T::System& system)
     : mixture_(),
       domain_(),
       fileMaster_(),
@@ -54,6 +53,7 @@ namespace Rpg {
       sweepFactoryPtr_(nullptr),
       simulatorPtr_(nullptr),
       simulatorFactoryPtr_(nullptr),
+      systemPtr_(&system),
       polymerModel_(PolymerModel::Thread),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
@@ -61,17 +61,17 @@ namespace Rpg {
    {
       setClassName("SystemReal");  // Set block label in parameter file
       BracketPolicy::set(BracketPolicy::Optional);
-      ThreadArray::init();
+      //ThreadArray::init();
 
       // Create dynamically allocated objects owned by this SystemReal
       mixtureModifierPtr_ = new typename T::MixtureModifier();
       interactionPtr_ = new typename T::Interaction();
-      scftPtr_ = new typename T::ScftThermo(*this);
+      scftPtr_ = new typename T::ScftThermo(*systemPtr_);
       environmentFactoryPtr_ 
-         = new typename T::EnvironmentFactory<D>(*this);
-      iteratorFactoryPtr_ = new typename T::IteratorFactory(*this);
-      sweepFactoryPtr_ = new typename T::SweepFactory(*this);
-      simulatorFactoryPtr_ = new typename T::SimulatorFactory(*this);
+         = new typename T::EnvironmentFactory(*systemPtr_);
+      iteratorFactoryPtr_ = new typename T::IteratorFactory(*systemPtr_);
+      sweepFactoryPtr_ = new typename T::SweepFactory(*systemPtr_);
+      simulatorFactoryPtr_ = new typename T::SimulatorFactory(*systemPtr_);
 
       // Create associations among class members
       mixtureModifier().associate(mixture_);
@@ -270,8 +270,9 @@ namespace Rpg {
          if (tArg <= 0) {
             UTIL_THROW("Error: Non-positive thread count -t option");
          }
-         ThreadArray::setThreadsPerBlock(tArg);
-         ThreadMesh::setThreadsPerBlock(tArg);
+         setThreadCount(tArg);
+         //ThreadArray::setThreadsPerBlock(tArg);
+         //ThreadMesh::setThreadsPerBlock(tArg);
       }
    }
 
@@ -332,8 +333,8 @@ namespace Rpg {
       std::string className;
       bool isEnd;
       environmentPtr_ =
-         environmentFactoryPtr_->readObjectOptional(in, *this, className,
-                                                    isEnd);
+         environmentFactoryPtr_->readObjectOptional(in, *this, 
+                                                    className, isEnd);
       if (!environmentPtr_ && ParamComponent::echo()) {
          Log::file() << indent() << "  Environment{ [absent] }\n";
       }
@@ -344,8 +345,8 @@ namespace Rpg {
       // Optionally construct an Iterator object
       if (!isEnd) {
          iteratorPtr_ =
-            iteratorFactoryPtr_->readObjectOptional(in, *this, className,
-                                                   isEnd);
+            iteratorFactoryPtr_->readObjectOptional(in, *this, 
+                                                    className, isEnd);
          if (!iteratorPtr_ && ParamComponent::echo()) {
             Log::file() << indent() << "  Iterator{ [absent] }\n";
          }
@@ -354,8 +355,8 @@ namespace Rpg {
       // Optionally construct a Sweep object (if an iterator exists)
       if (hasIterator() && !isEnd) {
          sweepPtr_ =
-            sweepFactoryPtr_->readObjectOptional(in, *this, className,
-                                                 isEnd);
+            sweepFactoryPtr_->readObjectOptional(in, *this,
+                                                 className, isEnd);
          if (!sweepPtr_ && ParamComponent::echo()) {
             Log::file() << indent() << "  Sweep{ [absent] }\n";
          }
@@ -1164,6 +1165,6 @@ namespace Rpg {
       Log::file() << " " << Dbl(value, 20) << std::endl;
    }
 
-} // namespace Rpg
+} // namespace Prdc
 } // namespace Pscf
 #endif

@@ -47,6 +47,7 @@ namespace Rpc {
       Simulator<D>* factory(const std::string &className) const;
 
       using Factory< Simulator<D> >::trySubfactories;
+      using Factory< Simulator<D> >::readObjectOptional;
 
    private:
 

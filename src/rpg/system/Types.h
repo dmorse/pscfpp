@@ -1,5 +1,5 @@
-#ifndef RPC_TYPES_H
-#define RPC_TYPES_H
+#ifndef RPG_TYPES_H
+#define RPG_TYPES_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -13,7 +13,7 @@ namespace Pscf {
    class Interaction;
    namespace Prdc {
       class Environment;
-      namespace Cpu {
+      namespace Cuda {
          template <int D> class RField;
          template <int D> class RFieldDft;
          template <int D> class FFT;
@@ -22,7 +22,7 @@ namespace Pscf {
          template <int D> class WaveList;
       }
    }
-   namespace Rpc {
+   namespace Rpg {
       template <int D> class System;
       template <int D> class Mixture;
       template <int D> class MixtureModifier;
@@ -47,16 +47,16 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Rpc {
+namespace Rpg {
 
    // Namespaces that may be used implicitly
    using namespace Util;
    using namespace Prdc;
 
    /**
-   * List of aliases for types used the in Rpc namespace.
+   * List of aliases for types used the in Rpg namespace.
    *
-   * \ingroup Pscf_Rpc_Module
+   * \ingroup Pscf_Rpg_Module
    */
    template <int D>
    class Types
@@ -64,39 +64,39 @@ namespace Rpc {
 
    public:
 
-      using System = Rpc::System<D>;
-      using Mixture = Rpc::Mixture<D>;
-      using MixtureModifier = Rpc::MixtureModifier<D>;
-      using Polymer = Rpc::Polymer<D>;
-      using Solvent = Rpc::Solvent<D>;
-      using Block = Rpc::Block<D>;
-      using Propagator = Rpc::Propagator<D>;
+      using System = Rpg::System<D>;
+      using Mixture = Rpg::Mixture<D>;
+      using MixtureModifier = Rpg::MixtureModifier<D>;
+      using Polymer = Rpg::Polymer<D>;
+      using Solvent = Rpg::Solvent<D>;
+      using Block = Rpg::Block<D>;
+      using Propagator = Rpg::Propagator<D>;
       using Interaction = Pscf::Interaction;
-      using Domain = Rpc::Domain<D>;
-      using FieldIo = Rpc::FieldIo<D>;
-      using WFieldContainer = Rpc::WFieldContainer<D>;
-      using CFieldContainer = Rpc::CFieldContainer<D>;
-      using Mask = Rpc::Mask<D>;
-      using ScftThermo = Rpc::ScftThermo<D>;
+      using Domain = Rpg::Domain<D>;
+      using FieldIo = Rpg::FieldIo<D>;
+      using WFieldContainer = Rpg::WFieldContainer<D>;
+      using CFieldContainer = Rpg::CFieldContainer<D>;
+      using Mask = Rpg::Mask<D>;
+      using ScftThermo = Rpg::ScftThermo<D>;
 
       using Environment = Prdc::Environment;
-      using EnvironmentFactory = Rpc::EnvironmentFactory<D>;
-      using Iterator = Rpc::Iterator<D>;
-      using IteratorFactory = Rpc::IteratorFactory<D>;
-      using Sweep = Rpc::Sweep<D>;
-      using SweepFactory = Rpc::SweepFactory<D>;
-      using Simulator = Rpc::Simulator<D>;
-      using SimulatorFactory = Rpc::SimulatorFactory<D>;
+      using EnvironmentFactory = Rpg::EnvironmentFactory<D>;
+      using Iterator = Rpg::Iterator<D>;
+      using IteratorFactory = Rpg::IteratorFactory<D>;
+      using Sweep = Rpg::Sweep<D>;
+      using SweepFactory = Rpg::SweepFactory<D>;
+      using Simulator = Rpg::Simulator<D>;
+      using SimulatorFactory = Rpg::SimulatorFactory<D>;
 
-      using RField = Prdc::Cpu::RField<D>;
-      using RFieldDft = Prdc::Cpu::RFieldDft<D>;
-      using FFT = Prdc::Cpu::FFT<D>;
-      using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;
-      using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
-      using WaveList = Prdc::Cpu::WaveList<D>;
+      using RField = Prdc::Cuda::RField<D>;
+      using RFieldDft = Prdc::Cuda::RFieldDft<D>;
+      using FFT = Prdc::Cuda::FFT<D>;
+      using RFieldComparison = Prdc::Cuda::RFieldComparison<D>;
+      using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;
+      using WaveList = Prdc::Cuda::WaveList<D>;
 
    };
 
-} // namespace Rpc
+} // namespace Rpg
 } // namespace Pscf
 #endif

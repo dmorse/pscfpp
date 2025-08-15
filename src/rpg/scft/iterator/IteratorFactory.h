@@ -33,7 +33,11 @@ namespace Rpg {
 
    public:
 
-      /// Constructor
+      /**
+      * Constructor.
+      *
+      * \param system  parent system
+      */
       IteratorFactory(System<D>& system);
 
       /**
@@ -45,6 +49,7 @@ namespace Rpg {
       Iterator<D>* factory(const std::string &className) const;
 
       using Factory< Iterator<D> >::trySubfactories;
+      using Factory< Iterator<D> >::readObjectOptional;
 
    private:
 
