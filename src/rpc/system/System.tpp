@@ -109,12 +109,13 @@ namespace Rpc {
       c_.setFieldIo(domain_.fieldIo());
       c_.setWriteUnitCell(domain_.unitCell());
 
-      // Note: When w_ is read from a file  in basis or r-grid format,
-      // the parameters of the system unit cell, domain_.unitCell(), are
-      // set to those in the field file header. When imposed fields h_
-      // and mask_ are read from a file, however unit cell parameters
+      // Note the arguments of setReadUnitCell functions used above:
+      // When w_ is read from a file in basis or r-grid format, the
+      // parameters of the system unit cell, domain_.unitCell(), are
+      // reset to those in the field file header. When imposed fields h_
+      // and mask_ are read from a file, however, unit cell parameters
       // from the field file header are read into a mutable workspace
-      // object, tmpUnitCell_, and ignored.
+      // object, tmpUnitCell_, and ultimately discarded.
 
       // Use of "signals" to maintain data relationships:
       // Signals are instances of Unit::Signal<void> that are used to
@@ -161,11 +162,11 @@ namespace Rpc {
       if (environmentPtr_) {
          delete environmentPtr_;
       }
-      if (scftPtr_) {
-         delete scftPtr_;
-      }
       if (environmentFactoryPtr_) {
          delete environmentFactoryPtr_;
+      }
+      if (scftPtr_) {
+         delete scftPtr_;
       }
       if (iteratorPtr_) {
          delete iteratorPtr_;
@@ -534,12 +535,10 @@ namespace Rpc {
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
             w().writeBasis(filename);
-            //writeWBasis(filename);
          } else
          if (command == "WRITE_W_RGRID") {
             readEcho(in, filename);
             w().writeRGrid(filename);
-            //writeWRGrid(filename);
          } else
          if (command == "WRITE_C_BASIS") {
             readEcho(in, filename);
@@ -551,7 +550,6 @@ namespace Rpc {
          } else
          if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
-            //writeBlockCRGrid(filename);
             mixture_.writeBlockCRGrid(filename);
          } else
          if (command == "WRITE_Q_SLICE") {
@@ -750,7 +748,7 @@ namespace Rpc {
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
-            h().writeBasis(filename);
+            h().writeRGrid(filename);
          } else
          if (command == "READ_MASK_BASIS") {
             readEcho(in, filename);
@@ -845,14 +843,16 @@ namespace Rpc {
    template <int D>
    void System<D>::computeStress()
    {
-      // Compute and store stress contribution from Mixture
+      // Compute and store standard Mixture stress
       if (!mixture_.hasStress()) {
          mixture_.computeStress(mask().phiTot());
       }
 
+      // If necessary, compute and store Environment stress
       if (hasEnvironment()) {
          if (!environment().hasStress()) {
-            environment().computeStress(mixture(), iterator().flexibleParams());
+            environment().computeStress(mixture(),
+                                        iterator().flexibleParams());
          }
       }
    }
@@ -1095,18 +1095,18 @@ namespace Rpc {
       // Alias for mesh dimensions
       IntVec<D> const & dimensions = domain_.mesh().dimensions();
 
-      // Allocate c (monomer concentration) field container
+      // Allocate c (monomer concentration) fields
       c_.setNMonomer(nMonomer);
       c_.allocateRGrid(dimensions);
 
-      // Allocate w (chemical potential) field container
+      // Allocate w (chemical potential) fields
       w_.setNMonomer(nMonomer);
       w_.allocateRGrid(dimensions);
 
       // Set nMonomer for external field container
       h_.setNMonomer(nMonomer);
 
-      // If hasEnvironment(), allocate mask and h field containers
+      // If hasEnvironment(), allocate mask and h fields
       if (hasEnvironment()) {
          if (environment().generatesMask()) {
             mask_.allocateRGrid(dimensions);

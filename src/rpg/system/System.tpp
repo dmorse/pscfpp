@@ -122,7 +122,7 @@ namespace Rpg {
       // notify "observer" objects of modification of data owned by a
       // related "notifier" object. Each signal is owned by a notifier
       // object that maintains data that may be modified. Each signal
-      // maintains an list of observers objects that should be notified
+      // maintains a list of observers objects that should be notified
       // whenever the data owned by the notifier object changes. Each
       // observer is added by the Signal<void>::addObserver function
       // template, which takes two arguments: a reference to an observer
@@ -342,7 +342,7 @@ namespace Rpg {
       mixture_.setFieldIo(domain_.fieldIo());
       mixture_.allocate();
 
-      // Allocate memory for w and c fields in r-grid form
+      // Allocate memory for field containers in r-grid form
       allocateFieldsGrid();
 
       // Optionally construct an Environment object
@@ -453,17 +453,15 @@ namespace Rpg {
             UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!scft().hasData());
          } else
-         if (command == "ESTIMATE_W_BASIS") {
-            readEcho(in, inFileName);
-            readEcho(in, outFileName);
-            fieldIo.estimateWBasis(inFileName, outFileName,
-                                   interaction().chi());
-         } else
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
             in >> unitCell;
             Log::file() << "   " << unitCell << std::endl;
             setUnitCell(unitCell);
+            UTIL_CHECK(domain_.unitCell().isInitialized());
+            UTIL_CHECK(!domain_.waveList().hasKSq());
+            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(!scft().hasData());
          } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
@@ -729,64 +727,45 @@ namespace Rpg {
             fieldIo.replicateUnitCell(inFileName, outFileName, replicas);
 
          } else
+         if (command == "ESTIMATE_W_BASIS") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            fieldIo.estimateWBasis(inFileName, outFileName,
+                                   interaction().chi());
+         } else
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
-            h_.readBasis(filename);
+            h().readBasis(filename);
             UTIL_CHECK(!c_.hasData());
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
-            h_.readRGrid(filename);
+            h().readRGrid(filename);
             UTIL_CHECK(!c_.hasData());
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(h_.hasData());
-            UTIL_CHECK(h_.isSymmetric());
-            fieldIo.writeFieldsBasis(filename, h_.basis(),
-                                     domain_.unitCell());
+            h().writeBasis(filename);
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
-            UTIL_CHECK(h_.hasData());
-            fieldIo.writeFieldsRGrid(filename, h_.rgrid(),
-                                     domain_.unitCell());
+            h().writeRGrid(filename);
          } else
          if (command == "READ_MASK_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(domain_.basis().isInitialized());
-            if (!mask_.isAllocatedBasis()) {
-               mask_.allocateBasis(domain_.basis().nBasis());
-            }
-            if (!mask_.isAllocatedRGrid()) {
-               mask_.allocateRGrid(domain_.mesh().dimensions());
-            }
-            mask_.readBasis(filename);
+            mask().readBasis(filename);
          } else
          if (command == "READ_MASK_RGRID") {
             readEcho(in, filename);
-            if (!mask_.isAllocatedRGrid()) {
-               mask_.allocateRGrid(domain_.mesh().dimensions());
-            }
-            if (iterator().isSymmetric() && !mask_.isAllocatedBasis()) {
-               UTIL_CHECK(domain_.basis().isInitialized());
-               mask_.allocateBasis(domain_.basis().nBasis());
-            }
-            mask_.readRGrid(filename);
+            mask().readRGrid(filename);
          } else
          if (command == "WRITE_MASK_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(mask_.hasData());
-            UTIL_CHECK(mask_.isSymmetric());
-            fieldIo.writeFieldBasis(filename, mask_.basis(),
-                                    domain_.unitCell());
+            mask().writeBasis(filename);
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
-            UTIL_CHECK(mask_.hasData());
-            fieldIo.writeFieldRGrid(filename, mask_.rgrid(),
-                                    domain_.unitCell(),
-                                    mask_.isSymmetric());
+            mask().writeRGrid(filename);
          } else
          if (command == "WRITE_TIMERS") {
             readEcho(in, filename);
@@ -815,81 +794,6 @@ namespace Rpg {
          UTIL_THROW("Empty command file name");
       }
       readCommands(fileMaster_.commandFile());
-   }
-
-   // Unit Cell Modifiers
-
-   /*
-   * Set the system unit cell.
-   */
-   template <int D>
-   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
-   {
-      // Preconditions
-      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain_.lattice() == unitCell.lattice());
-
-      // Set system unit cell
-      domain_.unitCell() = unitCell;
-
-      // If necessary, make basis
-      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
-         domain_.makeBasis();
-      }
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
-      if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(isAllocatedBasis_);
-      }
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-   }
-
-   /*
-   * Set parameters of the system unit cell.
-   */
-   template <int D>
-   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
-   {
-      // Precondition
-      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
-
-      // Set system unit cell
-      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
-         domain_.unitCell().set(domain_.lattice(), parameters);
-      } else {
-         domain_.unitCell().setParameters(parameters);
-      }
-
-      // If necessary, make basis
-      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
-         domain_.makeBasis();
-      }
-
-      // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
-      if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
-         UTIL_CHECK(isAllocatedBasis_);
-      }
-      UTIL_CHECK(!domain_.waveList().hasKSq());
-   }
-
-   /*
-   * Notify System members of updated unit cell parameters.
-   */
-   template <int D>
-   void System<D>::clearUnitCellData()
-   {
-      clearCFields();
-      mixture_.clearUnitCellData();
-      domain_.waveList().clearUnitCellData();
-      if (hasEnvironment()) {
-         environment().reset();
-      }
    }
 
    // Primary Field Theory Computations
@@ -931,6 +835,26 @@ namespace Rpg {
       // Compute stress if needed
       if (needStress) {
          computeStress();
+      }
+   }
+
+   /*
+   * Compute SCFT stress for current fields.
+   */
+   template <int D>
+   void System<D>::computeStress()
+   {
+      // Compute and store standard Mixture stress
+      if (!mixture_.hasStress()) {
+         mixture_.computeStress(mask().phiTot());
+      }
+
+      // If necessary, compute and store Environment stress
+      if (hasEnvironment()) {
+         if (!environment().hasStress()) {
+            environment().computeStress(mixture(),
+                                        iterator().flexibleParams());
+         }
       }
    }
 
@@ -1016,23 +940,88 @@ namespace Rpg {
       simulator().simulate(nStep);
    }
 
-   // SCFT Stress
-
    /*
-   * Compute SCFT stress for current fields.
+   * Mark c-fields and free energy as outdated/invalid.
    */
    template <int D>
-   void System<D>::computeStress()
+   void System<D>::clearCFields()
    {
-      // Compute and store stress contribution from Mixture
-      if (!mixture_.hasStress()) {
-         mixture_.computeStress(mask().phiTot());
+      c_.setHasData(false);
+      scft().clear();
+   }
+
+   // Unit Cell Modifiers
+
+   /*
+   * Set the system unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      // Preconditions
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.lattice() == unitCell.lattice());
+
+      // Set system unit cell
+      domain_.unitCell() = unitCell;
+
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
       }
 
+      // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
+      if (domain_.hasGroup()) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(isAllocatedBasis_);
+      }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+   }
+
+   /*
+   * Set parameters of the system unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      // Precondition
+      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+
+      // Set system unit cell
+      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
+         domain_.unitCell().set(domain_.lattice(), parameters);
+      } else {
+         domain_.unitCell().setParameters(parameters);
+      }
+
+      // If necessary, make basis
+      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
+         domain_.makeBasis();
+      }
+
+      // Postconditions
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
+      if (domain_.hasGroup()) {
+         UTIL_CHECK(domain_.basis().isInitialized());
+         UTIL_CHECK(isAllocatedBasis_);
+      }
+      UTIL_CHECK(!domain_.waveList().hasKSq());
+   }
+
+   /*
+   * Notify System members that unit cell parameters have been modified.
+   */
+   template <int D>
+   void System<D>::clearUnitCellData()
+   {
+      clearCFields();
+      mixture_.clearUnitCellData();
+      domain_.waveList().clearUnitCellData();
       if (hasEnvironment()) {
-         if (!environment().hasStress()) {
-            environment().computeStress(mixture(), iterator().flexibleParams());
-         }
+         environment().reset();
       }
    }
 
@@ -1089,18 +1078,6 @@ namespace Rpg {
       }
    }
 
-   // Miscellaneous public functions
-
-   /*
-   * Mark c-fields and free energy as outdated/invalid.
-   */
-   template <int D>
-   void System<D>::clearCFields()
-   {
-      c_.setHasData(false);
-      scft().clear();
-   }
-
    // Private member functions
 
    /*
@@ -1127,6 +1104,7 @@ namespace Rpg {
       c_.setNMonomer(nMonomer);
       c_.allocateRGrid(dimensions);
 
+      // Set nMonomer for external field container
       h_.setNMonomer(nMonomer);
 
       // If hasEnvironment(), allocate mask and h fields
