@@ -12,19 +12,20 @@ polymers and (optionally) one or more small molecule solvent species.
 The acronym PSCF stands for "Polymer Self-Consistent Field", reflecting 
 this origin of the package as an SCFT program. 
 
-The Fortran version of PSCF is maintained in a separate github.com 
+The Fortran version of PSCF is still available in a separate github.com 
 repository at
 <a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a> ,
-but is no longer being actively developed. The name "pscfpp" that is 
-used for the github repository containing the current version was 
-chosen to avoid a clash with the name "pscf" of the repository 
-containing the older Fortran version.
+but is no longer being actively developed. The name "pscfpp" that is used 
+for the github repository containing the current version was chosen to 
+avoid a clash with the name "pscf" of the repository containing the 
+older Fortran version.
 
 The current C++/CUDA version of PSCF is intended to supersede the Fortran
 version. The current version provides almost all of the capabilities of
-the Fortran program, and many new capabilities. New users of PSCF should 
-use the current version documented here, and users of the Fortran version 
-should consider switching to the current version whenever they can.
+the Fortran program, as well as some important new capabilities. New users 
+of PSCF should use the current version documented here, and users of the 
+Fortran version should consider switching to the current version whenever 
+they can.
 
 <b> Features and advantages of current C++ version </b>:
 
@@ -32,13 +33,13 @@ Characteristics of the current version of PSCF that distinguish it from
 the legacy Fortran version include the following:
 <ul>
   <li>
-  The current version is an extensible package of several programs intended 
+  The current version is an extensible package of several programs designed
   for different geometries, algorithms and/or computer hardware. The legacy
   Fortran version is a single program for SCFT of periodic structures.
   </li>
   <li>
   The current version can simulate mixtures containing acyclic branched block 
-  polymers. The Fortran version was designed for linear block polymers.
+  polymers. The Fortran version can only treat linear block polymers.
   </li>
   <li>
   The current version can use a graphics processing units (GPU) to 
@@ -64,9 +65,9 @@ These two features are described in more detail below.
 The Fortran PSCF program can compute the SCFT linear response of periodic 
 equilibrium structures to infinitesimal inhomogeneous external fields.
 This allows calculation of limits of stability of ordered phases and 
-description composition fluctuations within such phases. This is now the 
-only important capability of the Fortran program that has not been ported 
-to the new C++ version.  The required algorithm and some applications are 
+description composition fluctuations within such phases. This is the only
+important capability of the Fortran program that has not been ported to 
+the new C++ version.  The required algorithm and some applications are 
 described in the following reference: 
 
 Ranjan, A. and Qin, J. and Morse, D.C., 
@@ -74,11 +75,11 @@ Ranjan, A. and Qin, J. and Morse, D.C.,
 "Linear Response and Stability of Ordered Phases of Block Copolymers", 
 </a> **2008** *Macromolecules* <i>41</i>, 942.  
 
-The Fortran PSCF program also provides a unique quasi-Newton/Broyden SCFT 
+The Fortran PSCF program also uses a unique quasi-Newton/Broyden SCFT 
 iteration algorithm that is very efficient for the problems of moderate 
 size for which it was designed.  This algorithm is based on a physically 
 motivated initial approximation for the inverse Jacobian of the SCFT 
-fixed-point problem and iterative improvement via a Broyden update 
+fixed-point problem that is iteratively improved via a Broyden update 
 scheme.  This algorithm was abandoned in the new C++ version in favor of 
 Anderson-mixing algorithms because the amount of memory required by the
 quasi-Newton / Broyden scheme increases as the square of the number of 

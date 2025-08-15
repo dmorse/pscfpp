@@ -7,7 +7,7 @@
 Features of PSCF programs are listed below, grouped so as to indicate
 the computational methods and programs to which they apply:
 
-* **Features for both SCFT and FTS (all programs):**
+* **Features for both SCFT and PS-FTS (all programs):**
 
   - Ability to treat mixtures containing any number of block polymer,
     homopolymer, and solvent molecular species
@@ -31,28 +31,28 @@ the computational methods and programs to which they apply:
 
   - Efficient Anderson-mixing SCFT iteration algorithms
 
-  - Efficient "parameter sweeps": SCFT calculations for a sequence of 
-    states along a path in parameter space, with continuation of solutions 
+  - Efficient "parameter sweeps": SCFT calculations for a sequence of
+    states along a path in parameter space, with continuation of solutions
 
-All features listed below are specific to the pscf_pc and pscf_pg 
+All features listed below are specific to the pscf_pc and pscf_pg
 programs. Both of these programs are designed for systems with periodic
-boundary conditions and can perform either SCFT or PS-FTS calculations. 
-In SCFT, the periodic computational unit cell is usually chosen so as 
-to represent a single crystallographic unit cell, whereas in FTS it may 
-represent a larger region. 
+boundary conditions and can perform either SCFT or PS-FTS calculations.
+In SCFT, the periodic computational unit cell is usually chosen so as
+to represent a single crystallographic unit cell, whereas in FTS it may
+represent a larger region.
 
 * **Features for SCFT or PS-FTS on periodic systems (pscf_pc and pscf_pg):**
 
   - Choice of continuous thread or discrete bead-spring models of polymer
     chains
 
-  - High accuracy pseudo-spectral solution of the modified diffusion 
-    equation for the continuous chain model.
+  - High accuracy pseudo-spectral solution of the modified diffusion
+    equation for the continuous thread model.
 
   - Periodic unit cells with 1, 2 or 3 dimensional periodicity
 
-  - Unit cells with all possible 2D and 3D Bravais lattice systems 
-    (i.e., cubic, orthorhombic, monoclinic, etc.) 
+  - Unit cells with all possible 2D and 3D Bravais lattice systems
+    (i.e., cubic, orthorhombic, monoclinic, etc.)
 
   - A companion matlab package
     [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
@@ -80,20 +80,20 @@ represent a larger region.
   - BD algorithms: Leimkuhler-Matthews and predictor-corrector step
     algorithms
 
-  - MC algorithms: real-space and "smart"/force-bias MC moves 
+  - MC algorithms: real-space and "smart"/force-bias MC moves
 
-  - Efficient new algorithms for adjusting the pressure field so as to 
+  - Efficient algorithms for adjusting the pressure field so as to
     find a partial saddle-point (i.e., to impose incompressibility)
 
-  - Tools for calculating free energy differences by thermodynamic 
+  - Tools for calculating free energy differences by thermodynamic
     integration, including the Einstein-crystal method
 
   - Parameter "ramps" in which one or more parameters change continuously
     during a simulation
 
-  - Analysis tools to compute quantities of interest, including the 
-    structure factor, order parameters used to identify phase 
-    transitions, and derivatives of the Hamiltonian needed for 
+  - Analysis tools to compute quantities of interest, including the
+    structure factor, order parameters used to identify phase
+    transitions, and derivatives of the Hamiltonian needed for
     thermodynamic integration calculations
 
   - Analysis tools can applied either during a simulation or by

@@ -63,7 +63,7 @@ install the "doxygen" documentation utility.
 
 In order to compile the PSCF CPU programs in Mac OS X, the operatign 
 system must first be configured to provide a unix command-line development 
-environment. We can do this by installing the Mac Command Line Tools 
+environment. One can do this by installing the Mac Command Line Tools 
 package for XCode.  In recent versions of Mac OS X, it is not necessary 
 to install the rather large XCode integrated development environment 
 (IDE) to obtain just the much smaller set of command line tools. The 
@@ -87,6 +87,10 @@ Terms of Service.  The package will then download and install.
 If you choose to install the full XCode package from the Apple App store,
 installation of the Command Line Tools is offered as an option during the
 installation process. 
+
+To use PSCF on a Mac, you must type commands from a terminal window, as
+in a traditional unix command line environment. Mac users may thus want
+to add the Terminal app to their Dock for easy access.
 
 \section require_git_section Git client
 
@@ -123,49 +127,50 @@ and in chapter 1.5 of the
 by Scott Chacon, which is available to be read for free online. 
 If you are using linux, and git is not already installed, you should
 use the preferred package manager on your linux distribution to install
-a git client. 
-If you are using Mac OS X, a git client should be installed as a
-component of the XCode Command Line Tools package, which is needed
-for many other purposes. 
+a git client.  If you are using Mac OS X, a git client should be installed 
+as a component of the XCode Command Line Tools package, which is also 
+needed for other purposes. 
 
 \section install_require_python Python interpeter
 
-Similarly, one can check if a Python 3 interpreter is accessible by 
-issuing the command
+The system used to compile and install PSCF requires access to a 
+Python 3 interpreter.  One can check if a python interpreter is 
+accessible by issuing the command
 \code
 python3 --version
 \endcode
 and confirming that the command works, and returns a version number 
 3.0 or greater. Alternatively, one can issue the command
 \code
-which python
+which python3
 \endcode
 and confirm that it returns a non-empty path such as /user/bin/python3. 
 We recommend using of the command "python3" rather than "python" to make 
 sure that you access a python 3 interpreter on any system in which a
-Python 2.* interpreter may still also be installed. A Python 3 
-interpreter should be available from the command line in any common 
-linux distribution (e.g., Fedora or Ubuntu), and should be available 
-in Mac OS X after installation of the command line tools package.
+Python 2.* interpreter may still also be installed. A Python 3 interpeter
+should be available from the command line by default in any common linux 
+distribution (e.g., Ubuntu or Fedora), and should be available in Mac 
+OS X after installation of the command line tools package.
 
 \section install_require_compiler_cpp C++ compiler
 
 By default, the PSCF build system invokes a C++ compiler using the
-compiler commnd name "g++". On linux systems, this command normally
-invokes the GNU compiler collection (GCC) C++ compiler. On a Apple
-computer running Mac OS X that is set up for C++ developent (see above), 
-the "g++" command is normally a link to the Clang compiler, which is the 
-default compiler for C++ development on Mac OS X. The Clang compiler 
-accepts almost all the same command line options as the GNU compiler, 
-and so functions as a compatible replacement for the GCC C++ compiler. 
+compiler commnd name "g++". On linux systems, this command normally 
+invokes the GNU compiler collection (GCC) C++ compiler. On an Apple
+computer running Mac OS X that is configured for unix C++ development 
+(see above), the "g++" command is normally a link to the Clang compiler, 
+which is the default compiler for C++ development on Mac OS X. The Clang 
+compiler accepts almost all the same command line options as the GNU 
+compiler, and so functions as a compatible replacement for the GCC C++ 
+compiler. 
 
-It is possible to configure the build system during the initial 
+It is possible to configure the PSCF build system during the initial 
 configuration process so as to instead use a different C++ compiler, as 
 discussed \ref install_configure_page "here".  Even when a different 
 compiler command is used to compile source code, however, the PSCF build 
 system will still invoke the "g++" command with appropriate options to 
 analyse dependencies among source files. The PSCF makefile system thus 
-always requires that the "g++" command be available on the build system.
+always requires that the "g++" command be available to the build system.
 
 One can check if the command "g++" exists by entering
 \code
@@ -183,8 +188,8 @@ is described in more detail \ref install_configure_page "here".
 
 \section install_require_compiler_cuda CUDA compiler
 
-To compile the GPU-accelerated program, the system must also have an
-appropriate NVIDIA GPU and a CUDA development package installed. The
+To compile the GPU-accelerated pscf_pg program, the system must have 
+an appropriate NVIDIA GPU and a CUDA development package installed. The
 NVIDIA nvcc C++/CUDA compiler is designed to integrate with the GNU g++ 
 compiler, so we recommend using the GNU compiler to compile C++ source 
 files if you are planning to compile CUDA code for use on the same 
@@ -192,8 +197,8 @@ machine.
 
 \section install_require_ubuntu Packages: Ubuntu and other Debian-based linux systems
 
-The CPU-based programs in PSCF require access to development versions of 
-the Gnu Scientific Library (GSL) and FFTW packages.  These may be installed
+The CPU programs in PSCF require access to development versions of the 
+Gnu Scientific Library (GSL) and FFTW packages.  These may be installed
 on Ubuntu or other Debian based linux distribution later on version 16.0 
 or later using the commands:
 \code

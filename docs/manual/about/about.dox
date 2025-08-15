@@ -7,8 +7,8 @@
 PSCF is package of software for field-theoretic simulations of
 inhomogeneous equilibrium structures formed by polymer liquids, with a
 focus on systems that contain block polymers.  The package can be used
-to perform either self-consistent field (SCFT) or some types of 
-stochastic field theoretic simulation (FTS). 
+to perform either self-consistent field (SCFT) or some types of
+stochastic field theoretic simulation (FTS).
 
 <BR>
 
