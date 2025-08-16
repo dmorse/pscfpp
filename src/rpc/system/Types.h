@@ -65,19 +65,22 @@ namespace Rpc {
    public:
 
       using System = Rpc::System<D>;
+
       using Mixture = Rpc::Mixture<D>;
       using MixtureModifier = Rpc::MixtureModifier<D>;
       using Polymer = Rpc::Polymer<D>;
       using Solvent = Rpc::Solvent<D>;
       using Block = Rpc::Block<D>;
       using Propagator = Rpc::Propagator<D>;
+
       using Interaction = Pscf::Interaction;
       using Domain = Rpc::Domain<D>;
       using FieldIo = Rpc::FieldIo<D>;
+      using ScftThermo = Rpc::ScftThermo<D>;
+
       using WFieldContainer = Rpc::WFieldContainer<D>;
       using CFieldContainer = Rpc::CFieldContainer<D>;
       using Mask = Rpc::Mask<D>;
-      using ScftThermo = Rpc::ScftThermo<D>;
 
       using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpc::EnvironmentFactory<D>;

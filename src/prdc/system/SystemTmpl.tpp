@@ -61,7 +61,6 @@ namespace Prdc {
    {
       setClassName("SystemTmpl");  // Set block label in parameter file
       BracketPolicy::set(BracketPolicy::Optional);
-      //ThreadArray::init();
 
       // Create dynamically allocated objects owned by this SystemTmpl
       mixtureModifierPtr_ = new typename T::MixtureModifier();
@@ -271,8 +270,6 @@ namespace Prdc {
             UTIL_THROW("Error: Non-positive thread count -t option");
          }
          setThreadCount(tArg);
-         //ThreadArray::setThreadsPerBlock(tArg);
-         //ThreadMesh::setThreadsPerBlock(tArg);
       }
    }
 

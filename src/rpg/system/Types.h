@@ -75,9 +75,9 @@ namespace Rpg {
 
       using Interaction = Pscf::Interaction;
       using Domain = Rpg::Domain<D>;
+      using FieldIo = Rpg::FieldIo<D>;
       using ScftThermo = Rpg::ScftThermo<D>;
 
-      using FieldIo = Rpg::FieldIo<D>;
       using WFieldContainer = Rpg::WFieldContainer<D>;
       using CFieldContainer = Rpg::CFieldContainer<D>;
       using Mask = Rpg::Mask<D>;

@@ -9,7 +9,7 @@
 */
 
 #include <prdc/system/SystemConstRefTmpl.h>   // base class template
-#include <rpc/system/System.h>                       // template parameter
+#include <rpc/system/System.h>                // template parameter
 
 namespace Pscf {
 namespace Rpc {
@@ -20,6 +20,9 @@ namespace Rpc {
 
    /**
    * Const access to a System<D>.
+   *
+   * See documentation of the base class template Prdc::SystemConstRefTmpl
+   * for documentation of the public interface.
    *
    * \ingroup Rpc_Field_Module
    */

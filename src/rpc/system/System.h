@@ -26,10 +26,10 @@ namespace Rpc {
    /**
    * Main class, representing a complete physical system.
    *
-   * This class is essentially a named partial specialization of the base
-   * class template SystemTmpl, and has the same public interface as this 
-   * base class.  See the documentation of the base class for the class
-   * interface.
+   * This class is derived from a partial specialization of the class
+   * template Prdc::SystemTmpl, and has the same public interface as 
+   * its base class.  See the documentation of this base class template 
+   * for details.
    *
    * \ingroup Pscf_Rpc_Module
    */
