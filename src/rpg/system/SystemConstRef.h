@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/system/SystemConstRefReal.h>   // base class template
+#include <prdc/system/SystemConstRefTmpl.h>   // base class template
 #include <rpg/system/System.h>                       // template parameter
 
 namespace Pscf {
@@ -24,12 +24,12 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class SystemConstRef : public SystemConstRefReal< System<D> >
+   class SystemConstRef : public SystemConstRefTmpl< System<D> >
    {
    public:
 
       /// Alias for base class
-      using Base = SystemConstRefReal< System<D> >;
+      using Base = SystemConstRefTmpl< System<D> >;
 
       /**
       * Default constructor.
@@ -56,9 +56,9 @@ namespace Rpg {
 
 namespace Prdc {
    // Suppress implicit instantiation of base class
-   extern template class SystemConstRefReal< Rpg::System<1> >;
-   extern template class SystemConstRefReal< Rpg::System<2> >;
-   extern template class SystemConstRefReal< Rpg::System<3> >;
+   extern template class SystemConstRefTmpl< Rpg::System<1> >;
+   extern template class SystemConstRefTmpl< Rpg::System<2> >;
+   extern template class SystemConstRefTmpl< Rpg::System<3> >;
 }
 
 } // namespace Pscf

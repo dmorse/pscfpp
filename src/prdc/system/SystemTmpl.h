@@ -1,5 +1,5 @@
-#ifndef PRDC_SYSTEM_REAL_H
-#define PRDC_SYSTEM_REAL_H
+#ifndef PRDC_SYSTEM_TMPL_H
+#define PRDC_SYSTEM_TMPL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -34,7 +34,7 @@ namespace Prdc {
    *    D - integer dimensionality of space (D=1, 2, or 3)
    *    T - "Types" class containing aliases for other required types
    *
-   * A SystemReal has (among other components):
+   * A SystemTmpl has (among other components):
    *
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an Interaction (list of binary interaction parameters)
@@ -42,7 +42,7 @@ namespace Prdc {
    *    - a WFieldContainer of monomer chemical potential (w) fields
    *    - a CFieldContainer of monomer concentration (c) fields
    *
-   * A SystemReal may also optionally have Environment, Iterator, Sweep, and
+   * A SystemTmpl may also optionally have Environment, Iterator, Sweep, and
    * Simulator (BdSimulator or McSimulator) components. Iterator and Sweep
    * objects are only used for SCFT calculations. A Simulator object is
    * only used for PS-FTS calculations (i.e., field theoretic simulations
@@ -59,7 +59,7 @@ namespace Prdc {
    * \ingroup Pscf_Rpg_Module
    */
    template <int D, class T>
-   class SystemReal : public ParamComposite
+   class SystemTmpl : public ParamComposite
    {
 
    public:
@@ -81,17 +81,17 @@ namespace Prdc {
       *
       * \param system  instance of System subclass
       */
-      SystemReal(typename T::System& system);
+      SystemTmpl(typename T::System& system);
 
       /**
       * Destructor.
       */
-      ~SystemReal();
+      ~SystemTmpl();
 
       // Suppress compiler generated operations
-      SystemReal() = delete;
-      //SystemReal(SystemReal<D,T> const &) = delete;
-      //SystemReal<D,T>& operator = (SystemReal<D,T> const & ) = delete;
+      SystemTmpl() = delete;
+      //SystemTmpl(SystemTmpl<D,T> const &) = delete;
+      //SystemTmpl<D,T>& operator = (SystemTmpl<D,T> const & ) = delete;
 
       ///@}
       /// \name Lifetime (Actions in Main Program)
@@ -533,7 +533,7 @@ namespace Prdc {
       */
       typename T::Mask mask_;
 
-      // Pointers to dynamic objects owned by this SystemReal
+      // Pointers to dynamic objects owned by this SystemTmpl
 
       /**
       * Pointer to MixtureModifier (non-const interface for Mixture).
@@ -659,12 +659,12 @@ namespace Prdc {
 
    // Get the Mixture (const).
    template <int D, class T> inline 
-   typename T::Mixture const & SystemReal<D,T>::mixture() const
+   typename T::Mixture const & SystemTmpl<D,T>::mixture() const
    {  return mixture_; }
 
    // Get the MixtureModifier (non-const).
    template <int D, class T> inline 
-   typename T::MixtureModifier& SystemReal<D,T>::mixtureModifier()
+   typename T::MixtureModifier& SystemTmpl<D,T>::mixtureModifier()
    {
       UTIL_ASSERT(mixtureModifierPtr_);
       return *mixtureModifierPtr_;
@@ -672,7 +672,7 @@ namespace Prdc {
 
    // Get the Interaction (non-const).
    template <int D, class T> inline 
-   typename T::Interaction& SystemReal<D,T>::interaction()
+   typename T::Interaction& SystemTmpl<D,T>::interaction()
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
@@ -680,7 +680,7 @@ namespace Prdc {
 
    // Get the Interaction (const).
    template <int D, class T> inline 
-   typename T::Interaction const & SystemReal<D,T>::interaction() const
+   typename T::Interaction const & SystemTmpl<D,T>::interaction() const
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
@@ -688,17 +688,17 @@ namespace Prdc {
 
    // Get the Domain (const).
    template <int D, class T> inline 
-   typename T::Domain const & SystemReal<D,T>::domain() const
+   typename T::Domain const & SystemTmpl<D,T>::domain() const
    {  return domain_; }
 
    // Does this system have an Environment?
    template <int D, class T> inline 
-   bool SystemReal<D,T>::hasEnvironment() const
+   bool SystemTmpl<D,T>::hasEnvironment() const
    {  return (environmentPtr_); }
 
    // Get the Environment (non-const).
    template <int D, class T> inline 
-   typename T::Environment & SystemReal<D,T>::environment()
+   typename T::Environment & SystemTmpl<D,T>::environment()
    {
       UTIL_ASSERT(environmentPtr_);
       return *environmentPtr_;
@@ -706,7 +706,7 @@ namespace Prdc {
 
    // Get the Environment (const).
    template <int D, class T> inline 
-   typename T::Environment const & SystemReal<D,T>::environment() const
+   typename T::Environment const & SystemTmpl<D,T>::environment() const
    {
       UTIL_ASSERT(environmentPtr_);
       return *environmentPtr_;
@@ -714,7 +714,7 @@ namespace Prdc {
 
    // Get the Scft calculator (non-const).
    template <int D, class T> inline 
-   typename T::ScftThermo & SystemReal<D,T>::scft()
+   typename T::ScftThermo & SystemTmpl<D,T>::scft()
    {
       UTIL_ASSERT(scftPtr_);
       return *scftPtr_;
@@ -722,7 +722,7 @@ namespace Prdc {
 
    // Get the Scft calculator (const).
    template <int D, class T> inline 
-   typename T::ScftThermo const & SystemReal<D,T>::scft() const
+   typename T::ScftThermo const & SystemTmpl<D,T>::scft() const
    {
       UTIL_ASSERT(scftPtr_);
       return *scftPtr_;
@@ -730,12 +730,12 @@ namespace Prdc {
 
    // Does this system have an Iterator?
    template <int D, class T> inline 
-   bool SystemReal<D,T>::hasIterator() const
+   bool SystemTmpl<D,T>::hasIterator() const
    {  return (iteratorPtr_); }
 
    // Get the Iterator (non-const).
    template <int D, class T> inline 
-   typename T::Iterator& SystemReal<D,T>::iterator()
+   typename T::Iterator& SystemTmpl<D,T>::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
@@ -743,7 +743,7 @@ namespace Prdc {
 
    // Get the Iterator (const).
    template <int D, class T> inline 
-   typename T::Iterator const & SystemReal<D,T>::iterator() const
+   typename T::Iterator const & SystemTmpl<D,T>::iterator() const
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
@@ -751,17 +751,17 @@ namespace Prdc {
 
    // Does this system have a Sweep?
    template <int D, class T> inline 
-   bool SystemReal<D,T>::hasSweep() const
+   bool SystemTmpl<D,T>::hasSweep() const
    {  return (sweepPtr_); }
 
    // Does this system have a Simulator?
    template <int D, class T> inline 
-   bool SystemReal<D,T>::hasSimulator() const
+   bool SystemTmpl<D,T>::hasSimulator() const
    {  return (simulatorPtr_); }
 
    // Get the Simulator (non-const).
    template <int D, class T> inline 
-   typename T::Simulator& SystemReal<D,T>::simulator()
+   typename T::Simulator& SystemTmpl<D,T>::simulator()
    {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
@@ -769,7 +769,7 @@ namespace Prdc {
 
    // Get the Simulator (const).
    template <int D, class T> inline 
-   typename T::Simulator const & SystemReal<D,T>::simulator() const
+   typename T::Simulator const & SystemTmpl<D,T>::simulator() const
    {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
@@ -777,47 +777,47 @@ namespace Prdc {
 
    // Get the FileMaster (non-const).
    template <int D, class T> inline 
-   FileMaster& SystemReal<D,T>::fileMaster()
+   FileMaster& SystemTmpl<D,T>::fileMaster()
    {  return fileMaster_; }
 
    // Get the FileMaster (const).
    template <int D, class T> inline 
-   FileMaster const & SystemReal<D,T>::fileMaster() const
+   FileMaster const & SystemTmpl<D,T>::fileMaster() const
    {  return fileMaster_; }
 
    // Get the container of c fields (const).
    template <int D, class T> inline
-   typename T::CFieldContainer const & SystemReal<D,T>::c() const
+   typename T::CFieldContainer const & SystemTmpl<D,T>::c() const
    {  return c_; }
 
    // Get the container of w fields (non-const).
    template <int D, class T> inline
-   typename T::WFieldContainer& SystemReal<D,T>::w()
+   typename T::WFieldContainer& SystemTmpl<D,T>::w()
    {  return w_; }
 
    // Get the container of w fields (const).
    template <int D, class T> inline
-   typename T::WFieldContainer const & SystemReal<D,T>::w() const
+   typename T::WFieldContainer const & SystemTmpl<D,T>::w() const
    {  return w_; }
 
    // Get the container of external fields (non-const).
    template <int D, class T> inline 
-   typename T::WFieldContainer& SystemReal<D,T>::h()
+   typename T::WFieldContainer& SystemTmpl<D,T>::h()
    {  return h_; }
 
    // Get the container of external fields (const).
    template <int D, class T> inline 
-   typename T::WFieldContainer const & SystemReal<D,T>::h() const
+   typename T::WFieldContainer const & SystemTmpl<D,T>::h() const
    {  return h_; }
 
    // Get the mask field (non-const).
    template <int D, class T> inline 
-   typename T::Mask& SystemReal<D,T>::mask()
+   typename T::Mask& SystemTmpl<D,T>::mask()
    {  return mask_; }
 
    // Get the mask field (const).
    template <int D, class T> inline 
-   typename T::Mask const & SystemReal<D,T>::mask() const
+   typename T::Mask const & SystemTmpl<D,T>::mask() const
    {  return mask_; }
 
 } // namespace Rpg

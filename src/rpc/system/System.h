@@ -9,7 +9,7 @@
 */
 
 // Header file includes
-#include <prdc/system/SystemReal.h>      // base class template
+#include <prdc/system/SystemTmpl.h>      // base class template
 #include <rpc/system/Types.h>            // base class template param
 #include <rpc/solvers/Mixture.h>         // member
 #include <rpc/field/Domain.h>            // member
@@ -27,14 +27,14 @@ namespace Rpc {
    * Main class, representing a complete physical system.
    *
    * This class is essentially a named partial specialization of the base
-   * class template SystemReal, and has the same public interface as this 
+   * class template SystemTmpl, and has the same public interface as this 
    * base class.  See the documentation of the base class for the class
    * interface.
    *
    * \ingroup Pscf_Rpc_Module
    */
    template <int D>
-   class System : public SystemReal< D, Types<D> >
+   class System : public SystemTmpl< D, Types<D> >
    {
    public:
 
@@ -60,9 +60,9 @@ namespace Prdc {
 
    #ifndef RPC_SYSTEM_CPP
    // Suppress implicit instantiation
-   extern template class SystemReal<1, Rpc::Types<1> >;
-   extern template class SystemReal<2, Rpc::Types<1> >;
-   extern template class SystemReal<3, Rpc::Types<1> >;
+   extern template class SystemTmpl<1, Rpc::Types<1> >;
+   extern template class SystemTmpl<2, Rpc::Types<1> >;
+   extern template class SystemTmpl<3, Rpc::Types<1> >;
    #endif
 
 } // namespace Prdc 

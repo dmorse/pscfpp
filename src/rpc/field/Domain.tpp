@@ -9,7 +9,7 @@
 */
 
 #include "Domain.h"
-#include <prdc/field/DomainReal.tpp>
+#include <prdc/field/DomainTmpl.tpp>
 
 namespace Pscf {
 namespace Rpc {
@@ -20,7 +20,7 @@ namespace Rpc {
 
    template <int D>
    Domain<D>::Domain()
-    : DomainReal<D, FFT<D>, WaveList<D>, FieldIo<D> >()
+    : DomainTmpl<D, FFT<D>, WaveList<D>, FieldIo<D> >()
    {  ParamComposite::setClassName("Domain"); }
 
 } // namespace Rpc

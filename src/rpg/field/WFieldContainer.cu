@@ -9,9 +9,9 @@
 
 namespace Pscf {
 namespace Prdc {
-   template class WFieldsReal<1, RField<1>, Rpg::FieldIo<1> >;
-   template class WFieldsReal<2, RField<2>, Rpg::FieldIo<2> >;
-   template class WFieldsReal<3, RField<3>, Rpg::FieldIo<3> >;
+   template class WFieldsTmpl<1, RField<1>, Rpg::FieldIo<1> >;
+   template class WFieldsTmpl<2, RField<2>, Rpg::FieldIo<2> >;
+   template class WFieldsTmpl<3, RField<3>, Rpg::FieldIo<3> >;
 }
 namespace Rpg {
    template class WFieldContainer<1>;

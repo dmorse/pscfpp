@@ -9,7 +9,7 @@
 */
 
 #include "FieldIo.h"
-#include <prdc/field/FieldIoReal.tpp>     // base class implementation
+#include <prdc/field/FieldIoTmpl.tpp>     // base class implementation
 
 #include <rpc/field/Domain.h>
 

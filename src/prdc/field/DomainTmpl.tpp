@@ -1,5 +1,5 @@
-#ifndef PRDC_DOMAIN_REAL_TPP
-#define PRDC_DOMAIN_REAL_TPP
+#ifndef PRDC_DOMAIN_TMPL_TPP
+#define PRDC_DOMAIN_TMPL_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "DomainReal.h"
+#include "DomainTmpl.h"
 #include <prdc/field/fieldIoUtil.h>
 #include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>
@@ -22,7 +22,7 @@ namespace Prdc {
    * Constructor.
    */
    template <int D, class FFT, class WLT, class FIT>
-   DomainReal<D,FFT,WLT,FIT>::DomainReal()
+   DomainTmpl<D,FFT,WLT,FIT>::DomainTmpl()
     : mesh_(),
       unitCell_(),
       group_(),
@@ -37,7 +37,7 @@ namespace Prdc {
       hasGroup_(false),
       isInitialized_(false)
    {
-      setClassName("DomainReal");
+      setClassName("DomainTmpl");
       fieldIo_.associate(mesh_, fft_, lattice_,
                          hasGroup_, groupName_, group_, basis_);
 
@@ -50,7 +50,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D, class FFT, class WLT, class FIT>
-   DomainReal<D,FFT,WLT,FIT>::~DomainReal()
+   DomainTmpl<D,FFT,WLT,FIT>::~DomainTmpl()
    {
       delete signalPtr_;
    }
@@ -59,7 +59,7 @@ namespace Prdc {
    * Create association with a FileMaster.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void DomainReal<D,FFT,WLT,FIT>::setFileMaster(FileMaster& fileMaster)
+   void DomainTmpl<D,FFT,WLT,FIT>::setFileMaster(FileMaster& fileMaster)
    {
       fileMasterPtr_ = &fileMaster;
       fieldIo_.setFileMaster(fileMaster);
@@ -69,7 +69,7 @@ namespace Prdc {
    * Read parameters and initialize.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void DomainReal<D,FFT,WLT,FIT>::readParameters(std::istream& in)
+   void DomainTmpl<D,FFT,WLT,FIT>::readParameters(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(!isInitialized_);
@@ -106,13 +106,13 @@ namespace Prdc {
    }
 
    /*
-   * Read header of r-grid field to initialize the DomainReal.
+   * Read header of r-grid field to initialize the DomainTmpl.
    *
    * Alternative to parameter file, used only for unit testing.
    */
    template <int D, class FFT, class WLT, class FIT>
    void
-   DomainReal<D,FFT,WLT,FIT>::readRGridFieldHeader(std::istream& in,
+   DomainTmpl<D,FFT,WLT,FIT>::readRGridFieldHeader(std::istream& in,
                                                    int& nMonomer)
    {
       // Preconditions - confirm that nothing is initialized
@@ -171,7 +171,7 @@ namespace Prdc {
    * Make basis if needed.
    */
    template <int D, class FFT, class WLT, class FIT>
-   void DomainReal<D,FFT,WLT,FIT>::makeBasis()
+   void DomainTmpl<D,FFT,WLT,FIT>::makeBasis()
    {
       UTIL_CHECK(mesh_.size() > 0);
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
@@ -192,7 +192,7 @@ namespace Prdc {
    */
    template <int D, class FFT, class WLT, class FIT>
    void
-   DomainReal<D,FFT,WLT,FIT>::writeStars(std::string const & filename)
+   DomainTmpl<D,FFT,WLT,FIT>::writeStars(std::string const & filename)
    const
    {
       UTIL_CHECK(hasGroup());
@@ -211,7 +211,7 @@ namespace Prdc {
    */
    template <int D, class FFT, class WLT, class FIT>
    void
-   DomainReal<D,FFT,WLT,FIT>::writeWaves(std::string const & filename)
+   DomainTmpl<D,FFT,WLT,FIT>::writeWaves(std::string const & filename)
    const
    {
       UTIL_CHECK(hasGroup());
@@ -230,7 +230,7 @@ namespace Prdc {
    */
    template <int D, class FFT, class WLT, class FIT>
    void
-   DomainReal<D,FFT,WLT,FIT>::writeGroup(std::string const & filename)
+   DomainTmpl<D,FFT,WLT,FIT>::writeGroup(std::string const & filename)
    const
    {
       UTIL_CHECK(hasGroup());

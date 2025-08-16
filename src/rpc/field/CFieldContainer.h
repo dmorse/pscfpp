@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/CFieldsReal.h>   // base class template
+#include <prdc/field/CFieldsTmpl.h>   // base class template
 #include <rpc/field/FieldIo.h>        // base class template parameter
 #include <prdc/cpu/RField.h>          // base class template parameter
 
@@ -23,20 +23,20 @@ namespace Rpc {
    * A list of c fields stored in both basis and r-grid format.
    *
    * This class is simply a named partial specialization of the base 
-   * class template Pscf::Prdc::CFieldsReal, designed for use on CPU
+   * class template Pscf::Prdc::CFieldsTmpl, designed for use on CPU
    * hardware. Please see documentation of the base class for API 
    * documentation.
    *
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class CFieldContainer : public CFieldsReal<D, RField<D>, FieldIo<D> >
+   class CFieldContainer : public CFieldsTmpl<D, RField<D>, FieldIo<D> >
    {
 
    public:
 
       /// Alias for base class
-      typedef CFieldsReal<D, RField<D>, FieldIo<D> >  Base;
+      typedef CFieldsTmpl<D, RField<D>, FieldIo<D> >  Base;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -68,9 +68,9 @@ namespace Rpc {
 } // namespace Rpc
 namespace Prdc {
    // Suppress implicit instantiation of base class
-   extern template class CFieldsReal<1, Cpu::RField<1>, Rpc::FieldIo<1> >;
-   extern template class CFieldsReal<2, Cpu::RField<2>, Rpc::FieldIo<2> >;
-   extern template class CFieldsReal<3, Cpu::RField<3>, Rpc::FieldIo<3> >;
+   extern template class CFieldsTmpl<1, Cpu::RField<1>, Rpc::FieldIo<1> >;
+   extern template class CFieldsTmpl<2, Cpu::RField<2>, Rpc::FieldIo<2> >;
+   extern template class CFieldsTmpl<3, Cpu::RField<3>, Rpc::FieldIo<3> >;
 } 
 } // namespace Pscf
 #endif

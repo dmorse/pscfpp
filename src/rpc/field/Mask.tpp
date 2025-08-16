@@ -25,7 +25,7 @@ namespace Rpc
    template <int D>
    double Mask<D>::rGridAverage() const
    {
-      RField<D> const & rg = MaskReal< D, RField<D>, FieldIo<D> >::rgrid();
+      RField<D> const & rg = MaskTmpl< D, RField<D>, FieldIo<D> >::rgrid();
 
       // Sum up elements of r-grid mask field.
       // Use Kahan summation to reduce accumulation of error

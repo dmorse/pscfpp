@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/CFieldsReal.h>   // base class template
+#include <prdc/field/CFieldsTmpl.h>   // base class template
 #include <rpg/field/FieldIo.h>        // base class template parameter
 #include <prdc/cuda/RField.h>         // base class template parameter
 
@@ -23,19 +23,19 @@ namespace Rpg {
    * A list of c fields stored in both basis and r-grid format.
    *
    * This class is simply a named partial specialization of the base 
-   * class template Pscf::Prdc::CFieldsReal, designed for use with a GPU.
+   * class template Pscf::Prdc::CFieldsTmpl, designed for use with a GPU.
    * Please see documentation of the base class for API documentation.
    *
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class CFieldContainer : public CFieldsReal<D, RField<D>, FieldIo<D> >
+   class CFieldContainer : public CFieldsTmpl<D, RField<D>, FieldIo<D> >
    {
 
    public:
 
       /// Alias for base class
-      typedef CFieldsReal<D, RField<D>, FieldIo<D> >  Base;
+      typedef CFieldsTmpl<D, RField<D>, FieldIo<D> >  Base;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -69,9 +69,9 @@ namespace Rpg {
 } // namespace Rpg
 namespace Prdc {
    // Suppress implicit instantiation of base class
-   extern template class CFieldsReal<1, Cuda::RField<1>, Rpg::FieldIo<1> >;
-   extern template class CFieldsReal<2, Cuda::RField<2>, Rpg::FieldIo<2> >;
-   extern template class CFieldsReal<3, Cuda::RField<3>, Rpg::FieldIo<3> >;
+   extern template class CFieldsTmpl<1, Cuda::RField<1>, Rpg::FieldIo<1> >;
+   extern template class CFieldsTmpl<2, Cuda::RField<2>, Rpg::FieldIo<2> >;
+   extern template class CFieldsTmpl<3, Cuda::RField<3>, Rpg::FieldIo<3> >;
 } 
 } // namespace Pscf
 #endif

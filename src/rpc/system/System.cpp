@@ -9,7 +9,7 @@
 */
 
 #include "System.h"
-#include <prdc/system/SystemReal.tpp>
+#include <prdc/system/SystemTmpl.tpp>
 
 #include <rpc/solvers/MixtureModifier.h>
 #include <rpc/solvers/Polymer.h>
@@ -33,15 +33,15 @@
 // Explicit template instantiation
 namespace Pscf {
    namespace Prdc {
-      template class SystemReal< 1, Rpc::Types<1> >;
-      template class SystemReal< 2, Rpc::Types<2> >;
-      template class SystemReal< 3, Rpc::Types<3> >;
+      template class SystemTmpl< 1, Rpc::Types<1> >;
+      template class SystemTmpl< 2, Rpc::Types<2> >;
+      template class SystemTmpl< 3, Rpc::Types<3> >;
    }
    namespace Rpc {
 
       template <int D>
       System<D>::System()
-       : SystemReal<D, Types<D> >(*this)
+       : SystemTmpl<D, Types<D> >(*this)
       {  ParamComposite::setClassName("System"); }
 
       template class System<1>;

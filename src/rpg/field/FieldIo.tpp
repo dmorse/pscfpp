@@ -14,7 +14,7 @@
 
 #include <pscf/math/complex.h>
 
-#include <prdc/field/FieldIoReal.tpp>      // base class implementation
+#include <prdc/field/FieldIoTmpl.tpp>      // base class implementation
 #include <prdc/field/fieldIoUtil.h>
 #include <prdc/field/fieldArrayUtil.h>
 #include <prdc/crystal/Basis.h>

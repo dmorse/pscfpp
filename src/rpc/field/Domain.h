@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/DomainReal.h>        // base class template
+#include <prdc/field/DomainTmpl.h>        // base class template
 #include <rpc/field/FieldIo.h>            // member
 #include <prdc/cpu/WaveList.h>            // member
 #include <prdc/cpu/FFT.h>                 // member
@@ -24,11 +24,11 @@ namespace Rpc {
    * Spatial domain for a periodic structure with real fields, on a CPU.
    *
    * The public interface of this class is identical to that of the 
-   * Prdc::DomainReal base class template. Please see documentation of
+   * Prdc::DomainTmpl base class template. Please see documentation of
    * that base class for API documentation. 
    *
    * The Rpc::Domain\<D\> class template is a named partial specialization
-   * of the base class template Prdc::DomainReal<D, FFT, WLT, FIT> that 
+   * of the base class template Prdc::DomainTmpl<D, FFT, WLT, FIT> that 
    * is designed to use standard CPU hardware, defined using template type 
    * parameters FFT = Prdc::Cpu::FFT\<D\>, WLT = Prdc::Cpu::WaveList\<D\>, 
    * and FIT = Rpc::FieldIo\<D\> . 
@@ -37,7 +37,7 @@ namespace Rpc {
    */
    template <int D>
    class Domain 
-     : public DomainReal< D, FFT<D>, WaveList<D>, FieldIo<D> >
+     : public DomainTmpl< D, FFT<D>, WaveList<D>, FieldIo<D> >
    {
 
    public:
@@ -50,7 +50,7 @@ namespace Rpc {
       Domain();
 
       /// Typedef for base class
-      typedef DomainReal< D, FFT<D>, WaveList<D>, FieldIo<D> > Base;
+      typedef DomainTmpl< D, FFT<D>, WaveList<D>, FieldIo<D> > Base;
 
       // Inherited pubic member functions
       using Base::setFileMaster;
@@ -88,11 +88,11 @@ namespace Prdc {
    // Suppress implicit instantiation of base class template
    using namespace Cpu;
    extern template 
-   class DomainReal<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;
+   class DomainTmpl<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;
    extern template 
-   class DomainReal<2, FFT<2>, WaveList<2>, Rpc::FieldIo<2> >;
+   class DomainTmpl<2, FFT<2>, WaveList<2>, Rpc::FieldIo<2> >;
    extern template 
-   class DomainReal<3, FFT<3>, WaveList<3>, Rpc::FieldIo<3> >;
+   class DomainTmpl<3, FFT<3>, WaveList<3>, Rpc::FieldIo<3> >;
 } // namespace Prdc
 #endif
 

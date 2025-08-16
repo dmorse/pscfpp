@@ -15,9 +15,9 @@ namespace Prdc {
    using namespace Cpu;
 
    // Explicit instantiation
-   template class FieldIoReal<1, RField<1>, RFieldDft<1>, FFT<1> >;
-   template class FieldIoReal<2, RField<2>, RFieldDft<2>, FFT<2> >;
-   template class FieldIoReal<3, RField<3>, RFieldDft<3>, FFT<3> >;
+   template class FieldIoTmpl<1, RField<1>, RFieldDft<1>, FFT<1> >;
+   template class FieldIoTmpl<2, RField<2>, RFieldDft<2>, FFT<2> >;
+   template class FieldIoTmpl<3, RField<3>, RFieldDft<3>, FFT<3> >;
 }
 
 namespace Rpc {

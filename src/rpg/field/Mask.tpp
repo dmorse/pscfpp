@@ -25,7 +25,7 @@ namespace Rpg
    template <int D>
    double Mask<D>::rGridAverage() const
    {
-      RField<D> const & rg = MaskReal< D, RField<D>, FieldIo<D> >::rgrid();
+      RField<D> const & rg = MaskTmpl< D, RField<D>, FieldIo<D> >::rgrid();
       return (Reduce::sum(rg) / ((double)rg.capacity()));
    }
 

@@ -1,5 +1,5 @@
-#ifndef RPC_FIELD_IO_REAL_H
-#define RPC_FIELD_IO_REAL_H
+#ifndef RPC_FIELD_IO_TMPL_H
+#define RPC_FIELD_IO_TMPL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -49,14 +49,14 @@ namespace Prdc {
    *    - FFT  : fast Fourier transform type, e.g., FFT<D>
    *
    * <b>Subclasses:</b>
-   * The FieldIoReal template is a base class for two class templates
+   * The FieldIoTmpl template is a base class for two class templates
    * named FieldIo that are defined in namespaces Pscf::Rpc and Pscf::Rpg.
    * The Pscf::Rpc::FieldIo<int D> template is derived from a partial
-   * specialization of FieldIoReal with parameters RFT = Cpu::RField<D>,
+   * specialization of FieldIoTmpl with parameters RFT = Cpu::RField<D>,
    * KFT = Cpu::RFieldDft<D>, and FFT = Cpu::FFT<D> that are all defined
    * in the Prdc::Cpu namespace, and that all use standard CPU hardware.
    * The analogous template Rpg::Field<int D> in the Pscf::Rpg namespace
-   * is derived from a partial specialization of FieldIoReal in which
+   * is derived from a partial specialization of FieldIoTmpl in which
    * these three parameters are class templates with the same names
    * (RField, RFieldDft, and FFT) that are defined in the Prdc::Cuda
    * namespace, and that all use a GPU.
@@ -82,7 +82,7 @@ namespace Prdc {
    * \ingroup Prdc_Field_Module
    */
    template <int D, class RFT, class KFT, class FFT>
-   class FieldIoReal
+   class FieldIoTmpl
    {
 
    public:
@@ -93,12 +93,12 @@ namespace Prdc {
       /**
       * Constructor.
       */
-      FieldIoReal();
+      FieldIoTmpl();
 
       /**
       * Destructor.
       */
-      virtual ~FieldIoReal();
+      virtual ~FieldIoTmpl();
 
       /**
       * Create associations with other members of the parent Domain.

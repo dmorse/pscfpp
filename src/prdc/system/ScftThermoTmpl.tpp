@@ -1,5 +1,5 @@
-#ifndef PRDC_SCFT_REAL_TPP
-#define PRDC_SCFT_REAL_TPP
+#ifndef PRDC_SCFT_THERMO_TMPL_TPP
+#define PRDC_SCFT_THERMO_TMPL_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ScftReal.h"
+#include "ScftThermoTmpl.h"
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/chem/PolymerSpecies.h>
@@ -27,8 +27,8 @@ namespace Prdc {
    * Constructor.
    */
    template <int D, class ST>
-   ScftReal<D,ST>::ScftReal(SystemT const & system)
-    : SystemConstRefReal<ST>(system),
+   ScftThermoTmpl<D,ST>::ScftThermoTmpl(SystemT const & system)
+    : SystemConstRefTmpl<ST>(system),
       fHelmholtz_(0.0),
       fIdeal_(0.0),
       fInter_(0.0),
@@ -41,14 +41,14 @@ namespace Prdc {
    * Destructor.
    */
    template <int D, class ST>
-   ScftReal<D,ST>::~ScftReal()
+   ScftThermoTmpl<D,ST>::~ScftThermoTmpl()
    {}
 
    /*
    * Compute Helmholtz free energy and pressure.
    */
    template <int D, class ST>
-   void ScftReal<D,ST>::compute()
+   void ScftThermoTmpl<D,ST>::compute()
    {
       if (hasData_) return;
 
@@ -266,14 +266,14 @@ namespace Prdc {
    * Clear stored values of thermodynamic properties.
    */
    template <int D, class ST>
-   void ScftReal<D, ST>::clear()
+   void ScftThermoTmpl<D, ST>::clear()
    {  hasData_ = false; }
 
    /*
    * Write thermodynamic properties to file.
    */
    template <int D, class ST>
-   void ScftReal<D, ST>::write(std::ostream& out)
+   void ScftThermoTmpl<D, ST>::write(std::ostream& out)
    {
       if (!hasData_) {
          compute();

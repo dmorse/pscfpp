@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/WFieldsReal.h>     // base class template
+#include <prdc/field/WFieldsTmpl.h>     // base class template
 #include <prdc/cpu/RField.h>            // template parameter
 #include <rpg/field/FieldIo.h>          // template parameter
 
@@ -23,20 +23,20 @@ namespace Rpg {
    * A container of fields stored in both basis and r-grid format.
    *
    * Almost all of the implementation of this class is defined by the base
-   * class template Prdc::WFieldsReal . See documentation of that
+   * class template Prdc::WFieldsTmpl . See documentation of that
    * template for information.
    *
    * \ingroup Rpg_Field_Module
    */
    template <int D>
    class WFieldContainer 
-     : public WFieldsReal<D, Prdc::Cuda::RField<D>, Rpg::FieldIo<D> >
+     : public WFieldsTmpl<D, Prdc::Cuda::RField<D>, Rpg::FieldIo<D> >
    {
 
    public:
 
       /// Alias for base class template instantiation
-      typedef WFieldsReal<D, RField<D>, FieldIo<D> > Base;
+      typedef WFieldsTmpl<D, RField<D>, FieldIo<D> > Base;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -102,9 +102,9 @@ namespace Rpg {
 #ifndef RPG_W_FIELD_CONTAINER_TPP
 namespace Prdc {
    // Suppress implicit instantiation
-   extern template class WFieldsReal<1, RField<1>, Rpg::FieldIo<1> >;
-   extern template class WFieldsReal<2, RField<2>, Rpg::FieldIo<2> >;
-   extern template class WFieldsReal<3, RField<3>, Rpg::FieldIo<3> >;
+   extern template class WFieldsTmpl<1, RField<1>, Rpg::FieldIo<1> >;
+   extern template class WFieldsTmpl<2, RField<2>, Rpg::FieldIo<2> >;
+   extern template class WFieldsTmpl<3, RField<3>, Rpg::FieldIo<3> >;
 } // namespace Prdc
 #endif
 

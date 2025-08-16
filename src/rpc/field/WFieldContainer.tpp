@@ -9,7 +9,7 @@
 */
 
 #include "WFieldContainer.h"           // class header
-#include <prdc/field/WFieldsReal.tpp>  // base class implementation
+#include <prdc/field/WFieldsTmpl.tpp>  // base class implementation
 
 namespace Pscf {
 namespace Rpc {

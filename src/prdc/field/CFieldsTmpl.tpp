@@ -1,5 +1,5 @@
-#ifndef PRDC_C_FIELDS_REAL_TPP
-#define PRDC_C_FIELDS_REAL_TPP
+#ifndef PRDC_C_FIELDS_TMPL_TPP
+#define PRDC_C_FIELDS_TMPL_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CFieldsReal.h"
+#include "CFieldsTmpl.h"
 #include <prdc/crystal/UnitCell.h>
 #include <util/misc/FileMaster.h>
 
@@ -21,7 +21,7 @@ namespace Prdc {
    * Constructor.
    */
    template <int D, class RFT, class FIT>
-   CFieldsReal<D,RFT,FIT>::CFieldsReal()
+   CFieldsTmpl<D,RFT,FIT>::CFieldsTmpl()
     : basis_(),
       rgrid_(),
       nMonomer_(0),
@@ -37,7 +37,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D, class RFT, class FIT>
-   CFieldsReal<D,RFT,FIT>::~CFieldsReal()
+   CFieldsTmpl<D,RFT,FIT>::~CFieldsTmpl()
    {}
 
    /*
@@ -45,14 +45,14 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   CFieldsReal<D,RFT,FIT>::setFieldIo(FIT const & fieldIo)
+   CFieldsTmpl<D,RFT,FIT>::setFieldIo(FIT const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Set the unit cell used for parameters written to a field header.
    */
    template <int D, class RFT, class FIT>
-   void CFieldsReal<D,RFT,FIT>::setWriteUnitCell(UnitCell<D> const & cell)
+   void CFieldsTmpl<D,RFT,FIT>::setWriteUnitCell(UnitCell<D> const & cell)
    {
       UTIL_CHECK(!writeUnitCellPtr_);
       writeUnitCellPtr_ = &cell;
@@ -62,7 +62,7 @@ namespace Prdc {
    * Set the stored value of nMonomer (this may only be called once).
    */
    template <int D, class RFT, class FIT>
-   void CFieldsReal<D,RFT,FIT>::setNMonomer(int nMonomer)
+   void CFieldsTmpl<D,RFT,FIT>::setNMonomer(int nMonomer)
    {
       UTIL_CHECK(nMonomer_ == 0);
       UTIL_CHECK(nMonomer > 0);
@@ -74,7 +74,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void
-   CFieldsReal<D,RFT,FIT>::allocateRGrid(IntVec<D> const & dimensions)
+   CFieldsTmpl<D,RFT,FIT>::allocateRGrid(IntVec<D> const & dimensions)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(!isAllocatedRGrid_);
@@ -91,7 +91,7 @@ namespace Prdc {
    * Allocate memory for fields in basis format.
    */
    template <int D, class RFT, class FIT>
-   void CFieldsReal<D,RFT,FIT>::allocateBasis(int nBasis)
+   void CFieldsTmpl<D,RFT,FIT>::allocateBasis(int nBasis)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(!isAllocatedBasis_);
@@ -109,7 +109,7 @@ namespace Prdc {
    */
    template <int D, class RFT, class FIT>
    void 
-   CFieldsReal<D,RFT,FIT>::allocate(int nMonomer, int nBasis,
+   CFieldsTmpl<D,RFT,FIT>::allocate(int nMonomer, int nBasis,
                                     IntVec<D> const & dimensions)
    {
       setNMonomer(nMonomer);
@@ -123,7 +123,7 @@ namespace Prdc {
    * Write fields to an output stream in basis format.
    */
    template <int D, class RFT, class FIT>
-   void CFieldsReal<D,RFT,FIT>::writeBasis(std::ostream& out) const
+   void CFieldsTmpl<D,RFT,FIT>::writeBasis(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -140,7 +140,7 @@ namespace Prdc {
    * Write fields to a file in basis format, by filename.
    */
    template <int D, class RFT, class FIT>
-   void CFieldsReal<D,RFT,FIT>::writeBasis(std::string filename) const
+   void CFieldsTmpl<D,RFT,FIT>::writeBasis(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -152,7 +152,7 @@ namespace Prdc {
    * Write fields to an output stream in real-space (r-grid) format.
    */
    template <int D, class RFT, class FIT>
-   void CFieldsReal<D,RFT,FIT>::writeRGrid(std::ostream& out) const
+   void CFieldsTmpl<D,RFT,FIT>::writeRGrid(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -171,7 +171,7 @@ namespace Prdc {
    * Write fields to a file in r-grid format, by filename.
    */
    template <int D, class RFT, class FIT>
-   void CFieldsReal<D,RFT,FIT>::writeRGrid(std::string filename) const
+   void CFieldsTmpl<D,RFT,FIT>::writeRGrid(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -183,7 +183,7 @@ namespace Prdc {
 
    // Set the hasData flag.
    template <int D, class RFT, class FIT> inline 
-   void CFieldsReal<D,RFT,FIT>::setHasData(bool hasData)
+   void CFieldsTmpl<D,RFT,FIT>::setHasData(bool hasData)
    {  
       hasData_ = hasData;
       if (!hasData_) {
@@ -193,7 +193,7 @@ namespace Prdc {
 
    // Set the isSymmetric flag.
    template <int D, class RFT, class FIT> inline 
-   void CFieldsReal<D,RFT,FIT>::setIsSymmetric(bool isSymmetric)
+   void CFieldsTmpl<D,RFT,FIT>::setIsSymmetric(bool isSymmetric)
    {
       UTIL_CHECK(hasData_);  
       isSymmetric_ = isSymmetric; 

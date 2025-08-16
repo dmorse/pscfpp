@@ -65,19 +65,22 @@ namespace Rpg {
    public:
 
       using System = Rpg::System<D>;
+
       using Mixture = Rpg::Mixture<D>;
       using MixtureModifier = Rpg::MixtureModifier<D>;
       using Polymer = Rpg::Polymer<D>;
       using Solvent = Rpg::Solvent<D>;
       using Block = Rpg::Block<D>;
       using Propagator = Rpg::Propagator<D>;
+
       using Interaction = Pscf::Interaction;
       using Domain = Rpg::Domain<D>;
+      using ScftThermo = Rpg::ScftThermo<D>;
+
       using FieldIo = Rpg::FieldIo<D>;
       using WFieldContainer = Rpg::WFieldContainer<D>;
       using CFieldContainer = Rpg::CFieldContainer<D>;
       using Mask = Rpg::Mask<D>;
-      using ScftThermo = Rpg::ScftThermo<D>;
 
       using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpg::EnvironmentFactory<D>;

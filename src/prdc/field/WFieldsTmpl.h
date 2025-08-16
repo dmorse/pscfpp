@@ -1,5 +1,5 @@
-#ifndef PRDC_W_FIELDS_REAL_H
-#define PRDC_W_FIELDS_REAL_H
+#ifndef PRDC_W_FIELDS_TMPL_H
+#define PRDC_W_FIELDS_TMPL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -37,7 +37,7 @@ namespace Prdc {
    *     - RFT : field type for r-grid data (e.g., RField<D>)
    *     - FIT : FieldIo type for field io operations (e.g., FieldIo<D>)
    * 
-   * <b> Field Representations </b>: A WFieldsReal contains a list of
+   * <b> Field Representations </b>: A WFieldsTmpl contains a list of
    * nMonomer chemical potential (w) fields that are each associated with 
    * a monomer type. The fields may be stored in two different formats:
    *
@@ -50,7 +50,7 @@ namespace Prdc {
    *    format). This is accessed by the basis() and basis(int) member
    *    functions.
    *
-   * A WFieldsReal is designed to automatically update one of these
+   * A WFieldsTmpl is designed to automatically update one of these
    * representations when the other is modified, when appropriate. A 
    * pointer to an associated FIT object is used for these conversions.
    *
@@ -64,23 +64,23 @@ namespace Prdc {
    * whether the current field is symmetric, and thus whether the basis 
    * format exists.
    *
-   * <b> Subclasses </b>: Partial specializations of WFieldsReal are
+   * <b> Subclasses </b>: Partial specializations of WFieldsTmpl are
    * used as base classes for classes Rpc::WFieldContainer \<D \> and 
    * Rpg::WFieldContainer \<D\>:
    *
    *  - Subclass Rpc::WFieldContainer \<D\> is derived from a partial
-   *    specialization of WFieldsReal with template parameters 
+   *    specialization of WFieldsTmpl with template parameters 
    *    RFT = Cpu::RFT \<D\> and FIT = Rpc::FIT \<D\> , and is used in
    *    the pscf_pc CPU program.
    *
    *  - Subclass Rpg::WFieldContainer \<D\> is derived from a partial
-   *    specialization of WFieldsReal with template parameters 
+   *    specialization of WFieldsTmpl with template parameters 
    *    RFT = Cuda::RFT \<D\> and FIT = Rpg::FIT \<D\> , and is used in
    *    the pscf_pg GPU accelerated program.
    *
-   * <b> Signal </b>: A WFieldsReal owns an instance of class
+   * <b> Signal </b>: A WFieldsTmpl owns an instance of class
    * Util::Signal<void> that notifies all observers whenever the fields
-   * owned by the WFieldsReal are modified. This signal object may be 
+   * owned by the WFieldsTmpl are modified. This signal object may be 
    * accessed by reference using the signal() member function. The
    * Util::Signal<void>::addObserver function may used to add "observer"
    * objects and indicate a zero-parameter member function of each 
@@ -89,7 +89,7 @@ namespace Prdc {
    * \ingroup Prdc_Field_Module
    */
    template <int D, class RFT, class FIT>
-   class WFieldsReal 
+   class WFieldsTmpl 
    {
 
    public:
@@ -97,12 +97,12 @@ namespace Prdc {
       /**
       * Constructor.
       */
-      WFieldsReal();
+      WFieldsTmpl();
 
       /**
       * Destructor.
       */
-      ~WFieldsReal();
+      ~WFieldsTmpl();
 
       /// \name Initialization and Memory Management
       ///@{
@@ -541,14 +541,14 @@ namespace Prdc {
 
    // Clear data stored in this object without deallocating
    template <int D, class RField, class FieldIo>
-   inline void WFieldsReal<D,RField,FieldIo>::clear()
+   inline void WFieldsTmpl<D,RField,FieldIo>::clear()
    {  hasData_ = false; }
 
    // Get array of all fields in basis format (const)
    template <int D, class RFT, class FIT>
    inline
    DArray< DArray<double> > const & 
-   WFieldsReal<D,RFT,FIT>::basis() const
+   WFieldsTmpl<D,RFT,FIT>::basis() const
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_;
@@ -557,7 +557,7 @@ namespace Prdc {
    // Get one field in basis format (const)
    template <int D, class RFT, class FIT>
    inline
-   DArray<double> const & WFieldsReal<D,RFT,FIT>::basis(int id)
+   DArray<double> const & WFieldsTmpl<D,RFT,FIT>::basis(int id)
    const
    {
       UTIL_ASSERT(isAllocatedBasis_);
@@ -568,7 +568,7 @@ namespace Prdc {
    template <int D, class RFT, class FIT>
    inline
    DArray< RFT > const &
-   WFieldsReal<D,RFT,FIT>::rgrid() const
+   WFieldsTmpl<D,RFT,FIT>::rgrid() const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
@@ -577,7 +577,7 @@ namespace Prdc {
    // Get one field in r-grid format (const)
    template <int D, class RFT, class FIT>
    inline
-   RFT const & WFieldsReal<D,RFT,FIT>::rgrid(int id) const
+   RFT const & WFieldsTmpl<D,RFT,FIT>::rgrid(int id) const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];
@@ -586,25 +586,25 @@ namespace Prdc {
    // Has memory been allocated for fields in r-grid format?
    template <int D, class RFT, class FIT>
    inline 
-   bool WFieldsReal<D,RFT,FIT>::isAllocatedRGrid() const
+   bool WFieldsTmpl<D,RFT,FIT>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Has memory been allocated for fields in basis format?
    template <int D, class RFT, class FIT>
    inline 
-   bool WFieldsReal<D,RFT,FIT>::isAllocatedBasis() const
+   bool WFieldsTmpl<D,RFT,FIT>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Has field data been initialized ?
    template <int D, class RFT, class FIT>
    inline 
-   bool WFieldsReal<D,RFT,FIT>::hasData() const
+   bool WFieldsTmpl<D,RFT,FIT>::hasData() const
    {  return hasData_; }
 
    // Are the fields symmetric under space group operations?
    template <int D, class RFT, class FIT>
    inline 
-   bool WFieldsReal<D,RFT,FIT>::isSymmetric() const
+   bool WFieldsTmpl<D,RFT,FIT>::isSymmetric() const
    {  return isSymmetric_; }
 
    // Protected inline member functions
@@ -613,31 +613,31 @@ namespace Prdc {
    template <int D, class RFT, class FIT>
    inline 
    IntVec<D> const & 
-   WFieldsReal<D,RFT,FIT>::meshDimensions() const
+   WFieldsTmpl<D,RFT,FIT>::meshDimensions() const
    {  return meshDimensions_; }
 
    // Get mesh size (number of grid points), set on r-grid allocation.
    template <int D, class RFT, class FIT>
    inline 
-   int WFieldsReal<D,RFT,FIT>::meshSize() const
+   int WFieldsTmpl<D,RFT,FIT>::meshSize() const
    {  return meshSize_; }
 
    // Get number of basis functions, set on basis allocation.
    template <int D, class RFT, class FIT>
    inline 
-   int WFieldsReal<D,RFT,FIT>::nBasis() const
+   int WFieldsTmpl<D,RFT,FIT>::nBasis() const
    {  return nBasis_; }
 
    // Get number of monomer types.
    template <int D, class RFT, class FIT>
    inline 
-   int WFieldsReal<D,RFT,FIT>::nMonomer() const
+   int WFieldsTmpl<D,RFT,FIT>::nMonomer() const
    {  return nMonomer_; }
 
    // Associated FieldIo object (const reference).
    template <int D, class RFT, class FIT>
    inline 
-   FIT const & WFieldsReal<D,RFT,FIT>::fieldIo() const
+   FIT const & WFieldsTmpl<D,RFT,FIT>::fieldIo() const
    {
       UTIL_CHECK(fieldIoPtr_);
       return *fieldIoPtr_;

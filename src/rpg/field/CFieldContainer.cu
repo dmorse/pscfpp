@@ -8,14 +8,14 @@
 #include "CFieldContainer.h"
 #include <rpg/field/FieldIo.h>
 #include <prdc/cuda/RField.h>
-#include <prdc/field/CFieldsReal.tpp>  // Base class implementation
+#include <prdc/field/CFieldsTmpl.tpp>  // Base class implementation
 
 namespace Pscf {
    namespace Prdc {
       // Explicit instantiations of base class template
-      template class CFieldsReal<1, Cuda::RField<1>, Rpg::FieldIo<1> >;
-      template class CFieldsReal<2, Cuda::RField<2>, Rpg::FieldIo<2> >;
-      template class CFieldsReal<3, Cuda::RField<3>, Rpg::FieldIo<3> >;
+      template class CFieldsTmpl<1, Cuda::RField<1>, Rpg::FieldIo<1> >;
+      template class CFieldsTmpl<2, Cuda::RField<2>, Rpg::FieldIo<2> >;
+      template class CFieldsTmpl<3, Cuda::RField<3>, Rpg::FieldIo<3> >;
    } 
    namespace Rpg {
       // Explicit instantiations of this class

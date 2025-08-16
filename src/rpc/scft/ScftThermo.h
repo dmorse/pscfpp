@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/system/ScftReal.h>    // base class template
+#include <prdc/system/ScftThermoTmpl.h>    // base class template
 #include <rpc/system/System.h>       // template parameter
 
 namespace Pscf {
@@ -23,12 +23,12 @@ namespace Rpc {
    * \ingroup Rpc_Scft_Module
    */
    template <int D>
-   class ScftThermo : public ScftReal<D, System<D> >
+   class ScftThermo : public ScftThermoTmpl<D, System<D> >
    {
    public:
 
       /// Alias for base class.
-      using Base = ScftReal<D, System<D> >;
+      using Base = ScftThermoTmpl<D, System<D> >;
 
       /**
       * Constructor.
@@ -62,9 +62,9 @@ namespace Rpc {
 
 namespace Prdc {
    // Suppress implicit instantiation of base class
-   extern template class ScftReal<1, Rpc::System<1> >;
-   extern template class ScftReal<2, Rpc::System<2> >;
-   extern template class ScftReal<3, Rpc::System<3> >;
+   extern template class ScftThermoTmpl<1, Rpc::System<1> >;
+   extern template class ScftThermoTmpl<2, Rpc::System<2> >;
+   extern template class ScftThermoTmpl<3, Rpc::System<3> >;
 } // namespace Rpc
 
 } // namespace Pscf

@@ -1,5 +1,5 @@
-#ifndef PRDC_DOMAIN_REAL_H
-#define PRDC_DOMAIN_REAL_H
+#ifndef PRDC_DOMAIN_TMPL_H
+#define PRDC_DOMAIN_TMPL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -32,7 +32,7 @@ namespace Prdc {
    /**
    * Spatial domain for a periodic structure with real fields.
    *
-   * A DomainReal template instance has:
+   * A DomainTmpl template instance has:
    *
    *  - a Mesh spatial discretization mesh
    *  - a UnitCell crystallographic unit cell
@@ -56,14 +56,14 @@ namespace Prdc {
    *   - WLT  : WaveList container type, e.g., WaveList<D>
    *   - FIT  : FieldIo class for field operations, e.g., FieldIo<D>
    *
-   * <b> Subclasses </b>: Partial specializations of the DomainReal class 
+   * <b> Subclasses </b>: Partial specializations of the DomainTmpl class 
    * template are used as base classes for classes Rpc::Domain \<D\> and
    * Rpg::Domain \<D\>.
    *
    * \ingroup Prdc_Field_Module
    */
    template <int D, class FFT, class WLT, class FIT>
-   class DomainReal : public ParamComposite
+   class DomainTmpl : public ParamComposite
    {
 
    public:
@@ -71,12 +71,12 @@ namespace Prdc {
       /**
       * Constructor.
       */
-      DomainReal();
+      DomainTmpl();
 
       /**
       * Destructor.
       */
-      ~DomainReal();
+      ~DomainTmpl();
 
       /// \name Initialization
       ///@{
@@ -287,7 +287,7 @@ namespace Prdc {
       std::string groupName_;
 
       /**
-      * Pointer to a Signal owned by this DomainReal.
+      * Pointer to a Signal owned by this DomainTmpl.
       */
       Signal<void>* signalPtr_;
 
@@ -302,7 +302,7 @@ namespace Prdc {
       bool hasGroup_;
 
       /**
-      * Has this DomainReal object been initialized?
+      * Has this DomainTmpl object been initialized?
       */
       bool isInitialized_;
 
@@ -325,89 +325,89 @@ namespace Prdc {
 
    // Get the UnitCell by non-const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline UnitCell<D>& DomainReal<D,FFT,WLT,FIT>::unitCell()
+   inline UnitCell<D>& DomainTmpl<D,FFT,WLT,FIT>::unitCell()
    {  return unitCell_; }
 
    // Get the UnitCell by const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline UnitCell<D> const & DomainReal<D,FFT,WLT,FIT>::unitCell() const
+   inline UnitCell<D> const & DomainTmpl<D,FFT,WLT,FIT>::unitCell() const
    {  return unitCell_; }
 
    // Get the Mesh by non-const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline Mesh<D>& DomainReal<D,FFT,WLT,FIT>::mesh()
+   inline Mesh<D>& DomainTmpl<D,FFT,WLT,FIT>::mesh()
    {  return mesh_; }
 
    // Get the Mesh by const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline Mesh<D> const & DomainReal<D,FFT,WLT,FIT>::mesh() const
+   inline Mesh<D> const & DomainTmpl<D,FFT,WLT,FIT>::mesh() const
    {  return mesh_; }
 
    // Get the SpaceGroup by const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline SpaceGroup<D> const & DomainReal<D,FFT,WLT,FIT>::group() const
+   inline SpaceGroup<D> const & DomainTmpl<D,FFT,WLT,FIT>::group() const
    {  return group_; }
 
    // Get the Basis by non-const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline Basis<D>& DomainReal<D,FFT,WLT,FIT>::basis()
+   inline Basis<D>& DomainTmpl<D,FFT,WLT,FIT>::basis()
    {  return basis_; }
 
    // Get the Basis by const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline Basis<D> const & DomainReal<D,FFT,WLT,FIT>::basis() const
+   inline Basis<D> const & DomainTmpl<D,FFT,WLT,FIT>::basis() const
    {  return basis_; }
 
    // Get the FFT by non-const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline FFT& DomainReal<D,FFT,WLT,FIT>::fft()
+   inline FFT& DomainTmpl<D,FFT,WLT,FIT>::fft()
    {  return fft_; }
 
    // Get the FFT by const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline FFT const & DomainReal<D,FFT,WLT,FIT>::fft() const
+   inline FFT const & DomainTmpl<D,FFT,WLT,FIT>::fft() const
    {  return fft_; }
 
    // Get the WaveList by non-const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline WLT& DomainReal<D,FFT,WLT,FIT>::waveList()
+   inline WLT& DomainTmpl<D,FFT,WLT,FIT>::waveList()
    {  return waveList_; }
 
    // Get the WaveList by const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline WLT const & DomainReal<D,FFT,WLT,FIT>::waveList() const
+   inline WLT const & DomainTmpl<D,FFT,WLT,FIT>::waveList() const
    {  return waveList_; }
 
    // Get the FieldIo by const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline FIT& DomainReal<D,FFT,WLT,FIT>::fieldIo()
+   inline FIT& DomainTmpl<D,FFT,WLT,FIT>::fieldIo()
    {  return fieldIo_; }
 
    // Get the FieldIo by const reference.
    template <int D, class FFT, class WLT, class FIT>
-   inline FIT const & DomainReal<D,FFT,WLT,FIT>::fieldIo() const
+   inline FIT const & DomainTmpl<D,FFT,WLT,FIT>::fieldIo() const
    {  return fieldIo_; }
 
    // Get the lattice system enumeration value
    template <int D, class FFT, class WLT, class FIT>
    inline 
-   typename UnitCell<D>::LatticeSystem DomainReal<D,FFT,WLT,FIT>::lattice() 
+   typename UnitCell<D>::LatticeSystem DomainTmpl<D,FFT,WLT,FIT>::lattice() 
    const
    {  return lattice_; }
 
    // Get the groupName string.
    template <int D, class FFT, class WLT, class FIT>
-   inline std::string DomainReal<D,FFT,WLT,FIT>::groupName() const
+   inline std::string DomainTmpl<D,FFT,WLT,FIT>::groupName() const
    {  return groupName_; }
 
    // Has a space group been identified?
    template <int D, class FFT, class WLT, class FIT>
-   inline bool DomainReal<D,FFT,WLT,FIT>::hasGroup() const
+   inline bool DomainTmpl<D,FFT,WLT,FIT>::hasGroup() const
    {  return hasGroup_; }
 
    // Has a symmetry-adapted Fourier basis been initialized ?
    template <int D, class FFT, class WLT, class FIT>
-   inline bool DomainReal<D,FFT,WLT,FIT>::hasBasis() const
+   inline bool DomainTmpl<D,FFT,WLT,FIT>::hasBasis() const
    {  return basis_.isInitialized(); }
 
 } // namespace Prdc

@@ -1,5 +1,5 @@
-#ifndef PRDC_SYSTEM_CONST_REF_REAL_H
-#define PRDC_SYSTEM_CONST_REF_REAL_H
+#ifndef PRDC_SYSTEM_CONST_REF_TMPL_H
+#define PRDC_SYSTEM_CONST_REF_TMPL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -21,7 +21,7 @@ namespace Prdc {
    /**
    * Const access to main components of an associated System.
    *
-   * A SystemConstRefReal holds read-only (const) pointers to an associated 
+   * A SystemConstRefTmpl holds read-only (const) pointers to an associated 
    * System object (type parameter ST) and several of its primary components, 
    * for a model with real fields and periodic boundary conditions. Accessor
    * functions return the system and its components as const references.
@@ -29,7 +29,7 @@ namespace Prdc {
    * \ingroup Pscf_Prdc_Module
    */
    template <class ST>
-   class SystemConstRefReal 
+   class SystemConstRefTmpl 
    {
 
    public:
@@ -49,17 +49,17 @@ namespace Prdc {
       /**
       * Default constructor.
       */
-      SystemConstRefReal();
+      SystemConstRefTmpl();
 
       /**
       * Constructor.
       */
-      SystemConstRefReal(SystemT const & system);
+      SystemConstRefTmpl(SystemT const & system);
 
       /**
       * Destructor.
       */
-      ~SystemConstRefReal();
+      ~SystemConstRefTmpl();
 
       /**
       * Create associations with a system and its components.

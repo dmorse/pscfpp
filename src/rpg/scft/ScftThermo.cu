@@ -6,15 +6,15 @@
 */
 
 #include "ScftThermo.h"
-#include <prdc/system/ScftReal.tpp>
+#include <prdc/system/ScftThermoTmpl.tpp>
 #include <prdc/cuda/Reduce.h>
 #include <pscf/inter/Interaction.h>
 
 namespace Pscf {
    namespace Prdc {
-      template class ScftReal<1, Rpg::System<1> >;
-      template class ScftReal<2, Rpg::System<2> >;
-      template class ScftReal<3, Rpg::System<3> >;
+      template class ScftThermoTmpl<1, Rpg::System<1> >;
+      template class ScftThermoTmpl<2, Rpg::System<2> >;
+      template class ScftThermoTmpl<3, Rpg::System<3> >;
    }
    namespace Rpg {
 

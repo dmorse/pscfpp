@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/FieldIoReal.h>     // base class template
+#include <prdc/field/FieldIoTmpl.h>     // base class template
 #include <prdc/cpu/RField.h>            // template parameter
 #include <prdc/cpu/RFieldDft.h>         // template parameter
 #include <prdc/cpu/FFT.h>               // template parameter
@@ -35,18 +35,18 @@ namespace Rpc {
    * File input/output operations and format conversions for fields.
    *
    * Please refer to the documentation of the base class template
-   * Prdc::FieldIoReal for complete API documentation. The public interface 
+   * Prdc::FieldIoTmpl for complete API documentation. The public interface 
    * of this class is identical to that of the base class.
    *
    * This class template is derived from a partial specialization of
-   * the template Prdc::FieldIoReal<D, RFT, KFT, FFT> using classes 
+   * the template Prdc::FieldIoTmpl<D, RFT, KFT, FFT> using classes 
    * RFT = RField<D>, KFT = RFieldDft<D>, and FFT = FFT<D> that are all 
    * defined in the Prdc::Cpu subspace, and that all use conventional 
    * CPU hardware.  An analogous class template named Rpg::FieldIo that 
    * is defined in the Pscf::Rpg namespace instead uses a GPU.
    *
    * The member functions defined in this class are all implementations of
-   * pure virtual functions declared in the base class, Prdc::FieldIoReal.
+   * pure virtual functions declared in the base class, Prdc::FieldIoTmpl.
    * These are all functions for which different implementations are 
    * required for the CPU and GPU variants, usually because the GPU
    * implementation requires data transfer between host and device.
@@ -55,7 +55,7 @@ namespace Rpc {
    */
    template <int D>
    class FieldIo 
-     : public  FieldIoReal< D, RField<D>, RFieldDft<D>, FFT<D> >
+     : public  FieldIoTmpl< D, RField<D>, RFieldDft<D>, FFT<D> >
    {
 
    public:
@@ -63,7 +63,7 @@ namespace Rpc {
       /**
       * Read array of RField objects (r-grid fields) from a stream.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param in  input file stream 
       * \param fields  array of RField fields (r-space grid)
@@ -77,7 +77,7 @@ namespace Rpc {
       /**
       * Read data for an array of r-grid fields, with no header section.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param in  input file stream
       * \param fields  array of RField fields (r-space grid)
@@ -90,7 +90,7 @@ namespace Rpc {
       /**
       * Read a single RField (field on an r-space grid) from a stream.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param in  input file stream 
       * \param field  fields defined on r-space grid
@@ -104,7 +104,7 @@ namespace Rpc {
       /**
       * Write array of RField objects (fields on r-space grid) to a stream.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField objects (fields on r-space grid)
@@ -123,7 +123,7 @@ namespace Rpc {
       /**
       * Write a single RField (field on an r-space grid) to a stream.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param out  output stream
       * \param field  field defined on r-space grid
@@ -141,7 +141,7 @@ namespace Rpc {
       /**
       * Read array of RFieldDft objects (k-space fields) from a stream.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param in  input stream (i.e., input file)
       * \param fields  array of RFieldDft fields (k-space grid)
@@ -155,7 +155,7 @@ namespace Rpc {
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RFieldDft fields
@@ -171,7 +171,7 @@ namespace Rpc {
       /**
       * Convert a field from symmetrized basis to Fourier grid (k-grid).
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param components  coefficients of in symmetry-adapted basis
       * \param dft  discrete Fourier transform of a real field
@@ -183,7 +183,7 @@ namespace Rpc {
       /**
       * Convert a field from Fourier (k-grid) to symmetrized basis form.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param in  discrete Fourier transform (k-grid) of a field
       * \param out  components of field in asymmetry-adapted Fourier basis
@@ -199,7 +199,7 @@ namespace Rpc {
       /**
       * Check if a k-grid field has the declared space group symmetry.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param in field in real space grid (r-grid) format
       * \param epsilon error threshold used to test for symmetry
@@ -227,7 +227,7 @@ namespace Rpc {
       /**
       * Rescale a single r-grid field by a scalar factor.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       * Multiplication is done in-place, and so modifies the input.
       *
       * \param field  real space (r-grid) field (in-out)
@@ -239,7 +239,7 @@ namespace Rpc {
       /**
       * Expand spatial dimension of an array of r-grid fields.
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param out  output file stream 
       * \param fields  input array of D-dimensional r-grid fields
@@ -258,7 +258,7 @@ namespace Rpc {
       /**
       * Write r-grid fields in a replicated unit cell to std::ostream.  
       *
-      * See documentation of analogous function in Prdc::FieldIoReal.
+      * See documentation of analogous function in Prdc::FieldIoTmpl.
       *
       * \param out  output file stream 
       * \param fields  array of RField (r-space) fields to be replicated
@@ -273,7 +273,7 @@ namespace Rpc {
       const override;
 
       /// Alias for base class
-      typedef FieldIoReal<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
+      typedef FieldIoTmpl<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
 
       // Inherited public member functions
       using Base::associate;
@@ -331,9 +331,9 @@ namespace Rpc {
 #ifndef RPC_FIELD_IO_TPP
 namespace Prdc {
    using namespace Cpu;
-   extern template class FieldIoReal<1, RField<1>, RFieldDft<1>, FFT<1>>;
-   extern template class FieldIoReal<2, RField<2>, RFieldDft<2>, FFT<2>>;
-   extern template class FieldIoReal<3, RField<3>, RFieldDft<3>, FFT<3>>;
+   extern template class FieldIoTmpl<1, RField<1>, RFieldDft<1>, FFT<1>>;
+   extern template class FieldIoTmpl<2, RField<2>, RFieldDft<2>, FFT<2>>;
+   extern template class FieldIoTmpl<3, RField<3>, RFieldDft<3>, FFT<3>>;
 } 
 #endif
 

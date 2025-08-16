@@ -9,7 +9,7 @@
 */
 
 #include "WFieldContainer.h"
-#include <prdc/field/WFieldsReal.tpp>
+#include <prdc/field/WFieldsTmpl.tpp>
 #include <prdc/cuda/VecOp.h>
 #include <pscf/cuda/DeviceArray.h>
 

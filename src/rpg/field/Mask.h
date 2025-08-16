@@ -10,7 +10,7 @@
 
 #include "FieldIo.h"              // parent class template parameter
 #include <prdc/cuda/RField.h>     // parent class template parameter
-#include <prdc/field/MaskReal.h>  // parent class
+#include <prdc/field/MaskTmpl.h>  // parent class
 
 namespace Pscf {
 namespace Rpg {
@@ -20,22 +20,22 @@ namespace Rpg {
    /**
    * A field to which the total monomer concentration is constrained.
    *
-   * Please refer to the documentation of the Prdc::MaskReal base class
+   * Please refer to the documentation of the Prdc::MaskTmpl base class
    * template for more complete API documentation for this class template.
    * The public interface of Rpg::Mask is identical to that of the base
-   * class template Prdc::MaskReal. 
+   * class template Prdc::MaskTmpl. 
    *
    * \ingroup Rpg_Field_Module
    */
    template <int D>
    class Mask 
-     : public Prdc::MaskReal< D, Prdc::Cuda::RField<D>, FieldIo<D> >
+     : public Prdc::MaskTmpl< D, Prdc::Cuda::RField<D>, FieldIo<D> >
    {
 
    public:
 
       /// Base class typedef
-      typedef Prdc::MaskReal< D, Prdc::Cuda::RField<D>, FieldIo<D> > Base;
+      typedef Prdc::MaskTmpl< D, Prdc::Cuda::RField<D>, FieldIo<D> > Base;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -79,9 +79,9 @@ namespace Rpg {
 
 #ifndef RPG_MASK_TPP
 namespace Prdc {
-   extern template class MaskReal< 1, Cuda::RField<1>, Rpg::FieldIo<1> >;
-   extern template class MaskReal< 2, Cuda::RField<2>, Rpg::FieldIo<2> >;
-   extern template class MaskReal< 3, Cuda::RField<3>, Rpg::FieldIo<3> >;
+   extern template class MaskTmpl< 1, Cuda::RField<1>, Rpg::FieldIo<1> >;
+   extern template class MaskTmpl< 2, Cuda::RField<2>, Rpg::FieldIo<2> >;
+   extern template class MaskTmpl< 3, Cuda::RField<3>, Rpg::FieldIo<3> >;
 } 
 #endif
 
