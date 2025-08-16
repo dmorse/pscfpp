@@ -16,9 +16,14 @@ namespace Pscf {
 namespace Prdc {
 
    /**
-   * Base class for SCFT thermodynamic property calculator.
+   * %Base class for SCFT thermodynamic property calculators.
    *
-   * \ingroup Pscf_Prdc_Module
+   * This class computes and stores values for the SCFT Helmholtz
+   * free energy and pressure, and free energy components (ideal,
+   * interaction, external). It is used as a base class for 
+   * classes named ScftThermo defined in Rpc and Rpg namespaces.
+   *
+   * \ingroup Prdc_System_Module
    */
    template <int D, class ST>
    class ScftThermoTmpl : protected SystemConstRefTmpl<ST>
@@ -145,7 +150,7 @@ namespace Prdc {
       using WFieldContainerT = typename Base::WFieldContainerT;
       using CFieldContainerT = typename Base::CFieldContainerT;
       using MaskT = typename Base::MaskT;
-      using FieldT = typename Base::FieldT;
+      using RFieldT = typename Base::RFieldT;
 
       // Protected inherited member functions
       using Base::system;
@@ -166,7 +171,7 @@ namespace Prdc {
       * \return inner product (sum of product A[i]*B[i] over mesh points)
       */
       virtual
-      double innerProduct(FieldT const & A, FieldT const & B) const
+      double innerProduct(RFieldT const & A, RFieldT const & B) const
       {  return 0.0; };
 
    private:

@@ -1,5 +1,5 @@
-#ifndef RPG_SYSTEM_CPP
-#define RPG_SYSTEM_CPP
+#ifndef RPG_SYSTEM_CU
+#define RPG_SYSTEM_CU
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -24,8 +24,8 @@
 #include <rpg/scft/sweep/Sweep.h>
 #include <rpg/scft/sweep/SweepFactory.h>
 
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/RFieldDft.h>
 #include <prdc/environment/Environment.h>
 
 #include <pscf/inter/Interaction.h>

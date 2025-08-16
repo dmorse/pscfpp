@@ -40,7 +40,7 @@ namespace Rpc {
    protected:
 
       /// Alias for r-grid field type.
-      using FieldT = typename Base::FieldT;
+      using RFieldT = typename Base::RFieldT;
  
       /**
       * Inner product of fields (sum of elements on a grid).
@@ -48,8 +48,8 @@ namespace Rpc {
       * \param A 1st field
       * \param B 2nd field
       */
-      double innerProduct(FieldT const & A,
-                          FieldT const & B) const override;
+      double innerProduct(RFieldT const & A,
+                          RFieldT const & B) const override;
 
    };
 

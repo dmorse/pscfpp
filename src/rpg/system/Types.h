@@ -56,7 +56,7 @@ namespace Rpg {
    /**
    * List of aliases for types used the in Rpg namespace.
    *
-   * \ingroup Pscf_Rpg_Module
+   * \ingroup Rpg_System_Module
    */
    template <int D>
    class Types

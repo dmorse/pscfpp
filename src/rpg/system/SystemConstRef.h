@@ -21,7 +21,7 @@ namespace Rpg {
    /**
    * Const access to a System<D>.
    *
-   * \ingroup Rpg_Field_Module
+   * \ingroup Rpg_System_Module
    */
    template <int D>
    class SystemConstRef : public SystemConstRefTmpl< System<D> >

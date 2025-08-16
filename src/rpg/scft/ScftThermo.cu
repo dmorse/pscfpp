@@ -30,8 +30,8 @@ namespace Pscf {
       * Inner product of r-grid fields.
       */
       template <int D>
-      double ScftThermo<D>::innerProduct(FieldT const & A, 
-                                         FieldT const & B) const
+      double ScftThermo<D>::innerProduct(RFieldT const & A, 
+                                         RFieldT const & B) const
       {  return Cuda::Reduce::innerProduct(A, B); };
 
       // Explicit instantiation

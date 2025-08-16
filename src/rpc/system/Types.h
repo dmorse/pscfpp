@@ -56,7 +56,7 @@ namespace Rpc {
    /**
    * List of aliases for types used the in Rpc namespace.
    *
-   * \ingroup Pscf_Rpc_Module
+   * \ingroup Rpc_System_Module
    */
    template <int D>
    class Types

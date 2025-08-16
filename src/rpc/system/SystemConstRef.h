@@ -24,7 +24,7 @@ namespace Rpc {
    * See documentation of the base class template Prdc::SystemConstRefTmpl
    * for documentation of the public interface.
    *
-   * \ingroup Rpc_Field_Module
+   * \ingroup Rpc_System_Module
    */
    template <int D>
    class SystemConstRef : public SystemConstRefTmpl< System<D> >

@@ -27,26 +27,64 @@ namespace Prdc {
    using namespace Util;
 
    /**
-   * Main class, representing one complete system.
+   * Base class template for classes that represent a complete system.
    *
-   * Template parameters:
+   * <b> Template parameters and typename aliases</b>:
    *
    *    D - integer dimensionality of space (D=1, 2, or 3)
-   *    T - "Types" class containing aliases for other required types
+   *    T - "Types" class collection of aliases for other classes
+   * 
+   * <b> Usage </b>: A specialization of SystemTmpl\<D, T\> is a base 
+   * class for each System\<D\> class defined in namespaces Rpc and Rpg, 
+   * for D=1, 2, or 3.  In this use, template parameter T is taken to be 
+   * an instance of a template \<int D\> class Types that is defined in 
+   * each of these two namespaces. For example, in namespace Rpc, for 
+   * each value of D, class Rpc::System\<D\> is derived from class
+   * Prdc::SystemTmpl\< D, Rpc::Types\<D\> >. For each such instance, 
+   * Types\<D\> defines a set of typename aliases for classes used in 
+   * the relevant namespace, for the specified value of D. For example,
+   * the typename Rpc::Types\<D\>::Mixture is an alias for the type 
+   * Rpc::Mixture<D> used to represent a mixture in the Rpc namespace 
+   * for systems of dimension D. See the definitions of Rpc::Types and 
+   * Rpg::Types for lists of all of the typenames defined in these two 
+   * class templates.
    *
-   * A SystemTmpl has (among other components):
+   * In the remainder of the documentation for this template, SystemTmpl, 
+   * unqualified names such as "Mixture", "Iterator", etc. are often used 
+   * as shorthand for typename aliases such as T::Mixture, T::Iterator 
+   * that are defined in class T (i.e., in Rpc::Types\<D\> or 
+   * Rpg::Types\<D\>)
+   *
+   * <b> Class Components </b>:
+   * A SystemTmpl object has (among other components):
    *
    *    - a Mixture (container for polymer and solvent solvers)
-   *    - an Interaction (list of binary interaction parameters)
+   *    - an %Interaction (list of binary interaction parameters)
    *    - a Domain (description of unit cell and discretization)
    *    - a WFieldContainer of monomer chemical potential (w) fields
    *    - a CFieldContainer of monomer concentration (c) fields
+   *    - a WFieldContainer of external (h) fields
+   *    - a Mask that describes inhomogeneous density constraint
    *
-   * A SystemTmpl may also optionally have Environment, Iterator, Sweep, and
-   * Simulator (BdSimulator or McSimulator) components. Iterator and Sweep
-   * objects are only used for SCFT calculations. A Simulator object is
-   * only used for PS-FTS calculations (i.e., field theoretic simulations
-   * that use a partial saddle-point approximation).
+   * The container of external fields and the Mask data structure are
+   * only used to described systems in inhomgeneous imposed environements
+   * (such as in thin films) and are otherwise left empty and unused. 
+   *
+   * A SystemTmpl may also optionally have:
+   *
+   *    - an %Environment
+   *    - an Iterator
+   *    - a Sweep,
+   *    - a Simulator
+   *
+   * Optional components are constructed when the parameter file is 
+   * read by inclusion of corresponding optional parameter file blocks.
+   * The %Environment is only used to generate external and mask fields 
+   * to describe inhomogeneos environments, and is omitted in standard 
+   * calculations of structures formed in a homogeneous environment. The 
+   * Iterator and Sweep objects are only used for SCFT calculations. A 
+   * Simulator is only used for PS-FTS calculations, for, i.e., field 
+   * theoretic simulations based on a partial saddle-point approximation. 
    *
    * See also:
    * <ul>
@@ -56,7 +94,7 @@ namespace Prdc {
    *  <li> \ref scft_command_pc_page "Command File Format" </li>
    * </ul>
    *
-   * \ingroup Pscf_Rpg_Module
+   * \ingroup Prdc_System_Module
    */
    template <int D, class T>
    class SystemTmpl : public ParamComposite
@@ -71,13 +109,24 @@ namespace Prdc {
       using WFieldContainerT = typename T::WFieldContainer;
       using CFieldContainerT = typename T::CFieldContainer;
       using MaskT = typename T::Mask;
-      using FieldT = typename T::RField;
+      using RFieldT = typename T::RField;
 
       /// \name Construction and Destruction
       ///@{
 
       /**
       * Constructor.
+      *
+      * When an instance of SystemTmpl<D,T> is used as a base class for a
+      * concrete system class, such as Rpc::System\<D\>, typename T::System 
+      * must be the name of this resulting subclass. In this usage, in the
+      * member initialization list of the T::System subclass constructor,  
+      * a reference to the subclass instance should be passed as "*this"
+      * to this SystemTmpl base class constructor. The address of the 
+      * instance of the T::System subclass is then retained in the
+      * SystemTmpl by private member variable of type T::System* . See
+      * definitions of constructors for the Rpc::System and Rpc::System 
+      * class templates for this usage.
       *
       * \param system  instance of System subclass
       */
@@ -88,13 +137,13 @@ namespace Prdc {
       */
       ~SystemTmpl();
 
-      // Suppress compiler generated operations
+      // Suppress compiler-generated member functions
       SystemTmpl() = delete;
-      //SystemTmpl(SystemTmpl<D,T> const &) = delete;
-      //SystemTmpl<D,T>& operator = (SystemTmpl<D,T> const & ) = delete;
+      SystemTmpl(SystemTmpl<D,T> const &) = delete;
+      SystemTmpl<D,T>& operator = (SystemTmpl<D,T> const & ) = delete;
 
       ///@}
-      /// \name Lifetime (Actions in Main Program)
+      /// \name Lifetime Actions 
       ///@{
 
       /**
@@ -165,8 +214,8 @@ namespace Prdc {
       * This function does not compute the canonical (Helmholtz) free
       * energy or grand-canonical free energy (i.e., pressure).
       *
-      * If argument needStress is true, then this function also calls
-      * computeStress() to compute the stress.
+      * This function also computes the stress, by calling computeStress(),
+      * if and only if the argument needStress is true. 
       *
       * \pre  w().hasData() == true
       * \post c().hasData() == true
@@ -180,11 +229,12 @@ namespace Prdc {
       * Compute SCFT stress.
       *
       * This function computes the standard definition of stress maintained
-      * by the Mixture class. If an Environment exists, it also allows the
-      * Environment to compute a modified definition of the stress.
+      * by the Mixture class. If an %Environment exists, it also allows the
+      * %Environment to compute a modified definition of the stress.
       *
       * \pre w().hasData() == true
       * \pre c().hasData() == true
+      * \post hasStress() == true
       */
       void computeStress();
 
@@ -216,7 +266,7 @@ namespace Prdc {
       *
       * This function uses a Sweep object that was initialized in the
       * parameter file to solve the SCFT problem at a sequence of points
-      * along a contour in parameter space. The nature of this sequence
+      * along a path in parameter space. The nature of this sequence
       * is determined by implementation of a subclass of Sweep and the
       * parameters passed to the sweep object in the parameter file.
       *
@@ -249,7 +299,7 @@ namespace Prdc {
       * solution of the modified diffusion equation are modified, including
       * the w fields, unit cell parameters, external fields, or mask. Upon
       * return, c().hasData(), scft().hasData(), and mixture().hasStress()
-      * all return false; if the system has an Environment,
+      * will all return false; if the system has an %Environment,
       * environment().needsUpdate() will return true.
       */
       void clearCFields();
@@ -262,12 +312,11 @@ namespace Prdc {
       * Set parameters of the associated unit cell.
       *
       * The lattice (i.e., lattice system type) set in the UnitCell<D>
-      * unitCell input parameter must agree with any lattice enum value
+      * unitCell input parameter must agree with the lattice enum value
       * that was set previously in the parameter file.
       *
-      * If a space group has been set but a basis has not yet been
-      * initialized, then this and the other setUnitCell member function
-      * will initialize a symmetry-adapted basis as a side effect.
+      * If a space group has been declared but a basis has not yet been
+      * initialized, then a symmetry-adapted basis will be constructed.
       *
       * \param unitCell  new UnitCell<D> (with new parameters)
       */
@@ -281,8 +330,8 @@ namespace Prdc {
       * array must match the expected number of parameters for the
       * current lattice type.
       *
-      * See documentation of setUnitCell(UnitCell<D> const &) regarding
-      * possible construction of a basis as a side effect.
+      * If a space group has been declared but a basis has not yet been
+      * initialized, then a symmetry-adapted basis will be constructed.
       *
       * \param parameters  array of new unit cell parameters
       */
@@ -294,7 +343,7 @@ namespace Prdc {
       * This function should be called whenever the unit cell parameters
       * are modified. It calls functions mixture().clearUnitCellData(),
       * domain().wavelist().clearUnitCellData(), clearCFields(), and, if
-      * an Environment exists, environment().reset().
+      * an %Environment exists, environment().reset().
       */
       void clearUnitCellData();
 
@@ -352,12 +401,12 @@ namespace Prdc {
       typename T::MixtureModifier& mixtureModifier();
 
       /**
-      * Get the Interaction (non-const).
+      * Get the %Interaction (non-const).
       */
       typename T::Interaction& interaction();
 
       /**
-      * Get the Interaction (const).
+      * Get the %Interaction (const).
       */
       typename T::Interaction const & interaction() const;
 
@@ -367,17 +416,17 @@ namespace Prdc {
       typename T::Domain const & domain() const;
 
       /**
-      * Does this system have an Environment?
+      * Does this system have an %Environment?
       */
       bool hasEnvironment() const;
 
       /**
-      * Get the Environment (non-const).
+      * Get the %Environment (non-const).
       */
       typename T::Environment& environment();
 
       /**
-      * Get the Environment (const).
+      * Get the %Environment (const).
       */
       typename T::Environment const & environment() const;
 
@@ -445,8 +494,8 @@ namespace Prdc {
       /**
       * Write partial parameter file to an ostream.
       *
-      * This function writes the Mixture, Interaction, and Domain blocks
-      * of a parameter file, as well as any Environment and Iterator
+      * This function writes the Mixture, %Interaction, and Domain blocks
+      * of a parameter file, as well as any %Environment and Iterator
       * blocks, but omits any Sweep or Simulator blocks. The intent is
       * to produce an output during an SCFT sweep that only refers to
       * parameters relevant to a single state point, in a form that could
@@ -541,17 +590,17 @@ namespace Prdc {
       typename T::MixtureModifier* mixtureModifierPtr_;
 
       /**
-      * Pointer to Interaction (excess free energy model).
+      * Pointer to %Interaction (excess free energy model).
       */
       typename T::Interaction* interactionPtr_;
 
       /**
-      * Pointer to an Environment.
+      * Pointer to an %Environment.
       */
       typename T::Environment* environmentPtr_;
 
       /**
-      * Pointer to an Environment factory object.
+      * Pointer to an %Environment factory object.
       */
       typename T::EnvironmentFactory* environmentFactoryPtr_;
 
@@ -670,7 +719,7 @@ namespace Prdc {
       return *mixtureModifierPtr_;
    }
 
-   // Get the Interaction (non-const).
+   // Get the %Interaction (non-const).
    template <int D, class T> inline 
    typename T::Interaction& SystemTmpl<D,T>::interaction()
    {
@@ -678,7 +727,7 @@ namespace Prdc {
       return *interactionPtr_;
    }
 
-   // Get the Interaction (const).
+   // Get the %Interaction (const).
    template <int D, class T> inline 
    typename T::Interaction const & SystemTmpl<D,T>::interaction() const
    {
@@ -691,12 +740,12 @@ namespace Prdc {
    typename T::Domain const & SystemTmpl<D,T>::domain() const
    {  return domain_; }
 
-   // Does this system have an Environment?
+   // Does this system have an %Environment?
    template <int D, class T> inline 
    bool SystemTmpl<D,T>::hasEnvironment() const
    {  return (environmentPtr_); }
 
-   // Get the Environment (non-const).
+   // Get the %Environment (non-const).
    template <int D, class T> inline 
    typename T::Environment & SystemTmpl<D,T>::environment()
    {
@@ -704,7 +753,7 @@ namespace Prdc {
       return *environmentPtr_;
    }
 
-   // Get the Environment (const).
+   // Get the %Environment (const).
    template <int D, class T> inline 
    typename T::Environment const & SystemTmpl<D,T>::environment() const
    {
@@ -820,6 +869,6 @@ namespace Prdc {
    typename T::Mask const & SystemTmpl<D,T>::mask() const
    {  return mask_; }
 
-} // namespace Rpg
+} // namespace Prdc
 } // namespace Pscf
 #endif

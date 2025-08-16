@@ -22,6 +22,7 @@ namespace Rpc {
 
    using namespace Util;
    using namespace Prdc;
+   using namespace Prdc::Cpu;
 
    /**
    * Main class, representing a complete physical system.
@@ -31,7 +32,7 @@ namespace Rpc {
    * its base class.  See the documentation of this base class template 
    * for details.
    *
-   * \ingroup Pscf_Rpc_Module
+   * \ingroup Rpc_System_Module
    */
    template <int D>
    class System : public SystemTmpl< D, Types<D> >
@@ -43,6 +44,7 @@ namespace Rpc {
       */
       System();
 
+      // Suppress compiler-generated member functions
       System(System<D> const &) = delete;
       System<D>& operator = (System<D> const &) = delete;
 

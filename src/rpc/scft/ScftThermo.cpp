@@ -29,8 +29,8 @@ namespace Pscf {
       * Inner product of r-grid fields.
       */
       template <int D>
-      double ScftThermo<D>::innerProduct(FieldT const & A, 
-                                         FieldT const & B) const
+      double ScftThermo<D>::innerProduct(RFieldT const & A, 
+                                         RFieldT const & B) const
       {
          const int meshSize = Base::domain().mesh().size();
          UTIL_CHECK(meshSize == A.capacity())

@@ -22,6 +22,7 @@ namespace Rpg {
 
    using namespace Util;
    using namespace Prdc;
+   using namespace Prdc::Cuda;
 
    /**
    * Main class, representing a complete physical system.
@@ -30,7 +31,7 @@ namespace Rpg {
    * template Prdc::SystemTmpl, and has the same public interface as the
    * base class. See the documentation of this template for details.
    *
-   * \ingroup Pscf_Rpg_Module
+   * \ingroup Rpg_System_Module
    */
    template <int D>
    class System : public SystemTmpl< D, Types<D> >
@@ -55,11 +56,11 @@ namespace Rpg {
       *
       * \param nThread  thread count (maximum per block). 
       */
-      virtual void setThreadCount(int nThread);
+      virtual void setThreadCount(int nThread) override;
 
    };
 
-   #ifndef RPG_SYSTEM_CPP
+   #ifndef RPG_SYSTEM_CU
    // Suppress implicit instantiation
    extern template class System<1>;
    extern template class System<2>;
@@ -69,7 +70,7 @@ namespace Rpg {
 } // namespace Rpg
 namespace Prdc {
 
-   #ifndef RPG_SYSTEM_CPP
+   #ifndef RPG_SYSTEM_CU
    // Suppress implicit instantiation of base class
    extern template class SystemTmpl<1, Rpg::Types<1> >;
    extern template class SystemTmpl<2, Rpg::Types<1> >;
