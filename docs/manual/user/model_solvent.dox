@@ -5,36 +5,37 @@
 <BR>
 
 PSCF allows user to model polymer solutions by optionally including one
-or more "solvent" species among the components of a mixture. Each solvent 
-molecule is treated as a mobile but structureless point-like particle that 
-occupies some specified volume within an incompressible mixture.  Solvent 
-species can be used to model either rigid small-molecule solvent molecules 
-or oligomeric chain molecules that are much smaller than any of the 
+or more "solvent" species among the components of a mixture. Each solvent
+molecule is treated as a mobile but structureless point-like particle that
+occupies some specified volume within an incompressible mixture.  Solvent
+species can be used to model either rigid small-molecule solvent molecules
+or oligomeric chain molecules that are much smaller than any of the
 larger "polymer" species present in the same system, and smaller than any
 spatial feature of interest.
 
-Each solvent species is assigned a monomer type that is selected from 
+Each solvent species is assigned a monomer type that is selected from
 the same list of monomer types as that used to construct polymer species.
-A solvent that has properties that are distinct from those of any of the 
-monomers used to construct the relevant polymer species can be assigned an 
-extra monomer type that is not also used as the monomer type for any polymer 
-block. Alternatively, a solvent species can be assigned a monomer type 
-that is also assigned to one or block polymer blocks to represent a 
-solvent that is a small oligomer of the specified monomer type, or another
-species with properties similar to those of such an oligomer. The input 
-file formats used by PSCF require that every monomer type be assigned a 
-statistical segment length. If a monomer type is only assigned to a 
-solvent species, however, that segment length value is simply never used.
+A solvent that has properties that are distinct from those of any of the
+monomers used to construct the polymer species in a mixture can be assigned
+a monomer type that is not used as the monomer type for any block of any
+polymer species. Alternatively, a solvent species can be assigned a monomer
+type that is also assigned to one or more block polymer blocks, in order to
+represent a solvent that is a small oligomer of the specified monomer type,
+or another species with properties similar to those of such an oligomer.
+The input file formats used by PSCF require that every monomer type be
+assigned a statistical segment length. If a particular monomer type is
+only assigned to a solvent species, the associated statistical segment
+length value is simply never used.
 
 Each solvent species is also assigned a steric volume. This volume is
-specified in the PSCF input files by a dimensionless parameter named
-"size".  The value of the size parameter is equal to the ratio of the 
-solvent volume to the monomer reference volume \f$ v \f$. The "size" 
-parameter for a solvent species is thus analogous to the "length" parameter 
-for a polymer block in a thread model, since both are defined as volumes 
-measured in units of the monomer reference volume.  The size parameter for 
-a solvent is always specified as a real (i.e., floating point) number, 
-whether the bead or thread model is used for polymer species. 
+specified in PSCF input files by a dimensionless parameter named
+"size".  The value of the size parameter is equal to the ratio of the
+solvent volume to the monomer reference volume \f$ v \f$. The "size"
+parameter for a solvent species is thus analogous to the "length" parameter
+for a polymer block in a thread model, since both are defined as occupied
+volumes measured in units of the monomer reference volume.  The size
+parameter for a solvent is always specified as a real (i.e., floating point)
+number, whether the bead or thread model is used for polymer species.
 
 <BR>
 \ref user_model_polymer_page      (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

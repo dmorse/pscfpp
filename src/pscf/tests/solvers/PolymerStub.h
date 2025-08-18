@@ -9,7 +9,7 @@
 */
 
 #include "BlockStub.h"
-#include <pscf/solvers/PolymerTmpl.h>
+#include <pscf/solvers/PolymerTmpl.tpp>
 
 namespace Pscf
 { 

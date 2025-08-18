@@ -10,7 +10,7 @@
 
 #include "PolymerStub.h"
 #include "SolventStub.h"
-#include <pscf/solvers/MixtureTmpl.h>
+#include <pscf/solvers/MixtureTmpl.tpp>
 
 namespace Pscf
 { 

@@ -3,22 +3,20 @@
 \ref developer_list_page  (Next)
 <BR>
 
-This page provides an introduction to the directory structure of the
-PSCF repository aimed at developers, as well as very brief introduction
-to the build system. The PSCF build system is discussed in greater
-detail in following pages.
-
-\section developer_directory_summary_sec PSCF root directory
+This page provides a description of the directory structure of the PSCF 
+repository, as well as a brief introduction to some aspects of the build 
+system.  The PSCF build system is discussed in greater detail in following 
+pages.
 
 A user's local copy of the PSCF repository is normally created by
-\ref source_getcode_sec "cloning project dmorse/pscfpp" from
-github.com, while using the --recursive option to load the contents 
-of two other github repositories into subdirectories as
-\ref source_submodules_sec "git submodules". By default, this creates
-a directory named pscfpp as a subdirectory of the directory from which
-the git clone command was issued. In what follows, we refer to the
-resulting directory, which contains the contents of the entire PSCF
-repository and its submodules, as the PSCF root directory.
+\ref source_getcode_sec "cloning project dmorse/pscfpp" from github.com. 
+The required git clone command should use use the --recursive option to 
+download and install the contents of two other github repositories into 
+subdirectories as \ref source_submodules_sec "git submodules". By default, 
+this operation creates a directory named pscfpp as a subdirectory of the 
+directory from which the git clone command was issued. In what follows, 
+we refer to the resulting directory, which contains the contents of the 
+entire PSCF repository, as the PSCF root directory.
 
 The PSCF root directory can be renamed or moved by the user after it is
 created. If a user does so, however, they must then run or rerun the
@@ -27,8 +25,17 @@ script to assign new values for some makefile variables that contains
 absolute paths to the PSCF root directory and some of its subdirectories,
 as discussed \ref developer_directory_dirvars_sec "below".
 
-The names and purposes of all of the top-level subdirectories of the 
-PSCF root directory are given briefly below:
+In what follows, we describe file name patterns and standard file
+extension using the \* (asterisk) symbol to represent a wildcard that can
+represent any string of characters.  For example, the pattern \*.h can
+represent any file name that ends in extension .h, which is a standard
+file name extension for C++ header files. We sometimes refer to file
+names that match such a pattern either as, for example, \*.h files.
+
+\section developer_directory_summary_sec PSCF root directory
+
+The names and purposes of all of the top-level subdirectories of the PSCF 
+root directory are given briefly below:
 
 <table>
 <tr>
@@ -71,13 +78,6 @@ PSCF root directory are given briefly below:
 
 The three most important top-level subdirectories are the first three
 listed above: src, bld and bin.
-
-In what follows, we describe file name patterns and standard file
-extension using the \* (asterisk) symbol to represent a wildcard that can
-represent any string of characters.  For example, the pattern \*.h can
-represent any file name that ends in extension .h, which is a standard
-file name extension for C++ header files. We sometimes refer to file
-names that match such a pattern either as, for example, \*.h files.
 
 \section developer_directory_blddir_sec Overview of build process
 
@@ -309,6 +309,11 @@ make run
 \endcode
 from within that subdirectory.
 
+\section developer_directory_filetypes_sec File Types
+
+The src directory contains several different types of file, as discussed
+below.
+
 * **Source code file types:**
 
 All C++ files associated with a given class or set of functions are
@@ -345,25 +350,23 @@ and CUDA C++ files:
 </table>
 Header files, with extension .h, may be included into other C++ files
 using a C/C++ \#include directive.  C++ and CUDA C++ source files, with
-extension .cpp or .cu, are compiled, and may never be included by other
-program files. Template implementation files, with extension .tpp, are
-generally included into either an associated \*.h header file or an
-associated \*.cpp or \*.cu source file with the same base name (as
-discussed in more detail developer_template_page "here"), and may not
-be directly included by other files.
+extension .cpp or .cu, are compiled, and are never be included by other
+program files. Template implementation files, with extension .tpp, are 
+often included into either an associated \*.h header file or an associated 
+\*.cpp or \*.cu source file with the same base name, as discussed in more 
+detail developer_template_page "here".
 
 Compilable source files that contain or include only standard C++ code
-should be given file extension .cpp. Compilable source files that
-contain or include any CUDA C++ code must instead use file extension
-.cu. Different makefile pattern rules are used to compile files with
-filename extension .cpp and .cu, using different compilers, using the
-NVIDIA nvcc compiler to compile files with file extension .cu.
+should be given file extension .cpp. Compilable source files that contain 
+or include any CUDA C++ code must instead use file extension .cu. 
+Different makefile pattern rules are used to compile files with filename 
+extension .cpp and .cu, using different compilers, using the NVIDIA nvcc 
+compiler to compile files with file extension .cu.
 
 * **Build system and documentation files types:**
 
-The following table explains the purposes of several other types of
-file that are the user will see in the src directory after running
-the configure script.
+The following table explains the name pattern and purposes of several 
+other types of file that are present in the src directory:
 <table>
    <tr>
      <th> Pattern </th>
@@ -386,29 +389,31 @@ the configure script.
      <td> doxygen documentation file (topic module) </td>
    </tr>
 </table>
-After the configure script is run, the bld directory will also
-contain several files named "makefile", but not either of the 
-types of documentation files listed above. 
+After the configure script is run, the namespace level subdirectories
+of the bld directory will also contain several files named "makefile", 
+which are copies of makefiles located in corresponding locations in 
+the src directory tree. 
 
-\section developer_directory_configmk_sec Configuration (config.mk) files 
+\anchor developer_directory_configmk_sub
+* **Configuration (config.mk) files:**
 
-After the configure script is run, the src and bld directory 
-will each contain a makefile fragment named config.mk. Each of
-this is the main configuration file used by the build system to 
-build in the directory that contains the configuration file. This
-file assigns values to a variety of makefile variables that are 
-needed throughout the build system. 
+After the configure script is run, the src and bld directory will 
+each contain a makefile fragment named config.mk that is created by
+the configure script. This is the main configuration file used by the 
+build system to build in the directory that contains the configuration 
+file. This file assigns values to a variety of makefile variables that 
+are needed throughout the build system, some of which need to be 
+assigned different values in different environments.
 
-The config.mk configuration file in each build directory (i.e., in 
-the src or bld directory) is included in every other makefile in 
-the same build directory tree. The config.mk file in the src 
-directory is thus included by all makefiles in the src directory 
-tree, but not those in the bld directory, and so only affects 
-in-source builds that are performed by calling make from within 
-the src directory.  Conversely, the config.mk file in the bld 
-directory is included by all makefiles in the bld directory tree, 
-but not those in the src directory, and so only affects 
-out-of-source builds.
+The config.mk configuration file in each build directory (i.e., in the 
+src or bld directory) is included in every other makefile in the same 
+build directory tree. The config.mk file in the src directory is thus 
+included by all makefiles in the src directory tree, but not those in 
+the bld directory, and so only affects in-source builds that are 
+performed by calling make from within the src directory.  Conversely, 
+the config.mk file in the bld directory is included by all makefiles 
+in the bld directory tree, but not those in the src directory, and so 
+only affects out-of-source builds.
 
 \section developer_directory_dirvars_sec Directory path variables
 
@@ -479,29 +484,24 @@ the config.mk file This configuration file thus declares the build
 directory BLD_DIR used during in-source-bld is the same as the
 src directory.
 
-If the name or location of the PSCF root directory is changed after
-the configure script has been run, users will need to rerun the 
-configure script to reset the value of the makefile variable ROOT_DIR 
-to the correct location.
+Users can, if desired, change the location in which executable files 
+are installed by using an text editor to change the value assigned to 
+BIN_DIR within either or both of these configuration files. The 
+executable files produced by PSCF are self-contained, however, and may 
+thus also simply be moved to a new location after they are created. 
 
-Users can, if desired, change the location in which executable
-files are installed by using an text editor to change the value
-assigned to BIN_DIR within either or both of these configuration
-files. The executable files produced by PSCF are self-contained
-and may be moved after they are created. Users may thus also simply 
-move the executable files to a new location after building PSCF.
-
-If the name or location of the PSCF root directory is changed after
-after executables have been created, however, users will need to rerun 
-the configure script and then rebuild PSCF to create new executables.  
-This is necessary because some of the PSCF executables contain a path 
-to the PSCF data directory that is used to access read-only data 
-files at run time.  Currently, the only files that are accessed in 
-this way are files in the directory data/groups that specify the
-symmetry elements for all standard crystallographic space groups.
-The files are accessed by the pscf_pc and pscf_pg programs. In order 
-for these programs to function correctly, the path to the data 
-directory cannot change after these executables are created.
+If the name or location of the PSCF root directory is changed after the 
+configure script has been run, users will need to rerun the configure 
+script. This is necessary to reset the value of the makefile variable 
+ROOT_DIR to the correct location. If the root directory is moved after 
+executables have been created, users will need to first rerun the 
+configure script and then also recompile PSCF. Recompilation is necessary 
+after the root directory is moved because some executables contain 
+hard-coded paths to data files that are located in within the PSCF 
+root directory tree. Specifically, the pscf_pc and pscf_pg executables
+access files in the directory data/groups that contain symmetry elements 
+for crystallographic space groups, and the path used for the data/
+directory is generated by the configure script.
 
 <BR>
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;

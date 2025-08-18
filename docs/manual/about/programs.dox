@@ -25,7 +25,7 @@ The pscf_pc program can perform both SCFT and PS-FTS calculations on
 systems with periodic boundary conditions in 1, 2 or 3 dimensions, using 
 conventional CPU hardware.  A pseudo-spectral algorithm is used to solve 
 the MDE. This program provides capabilities for SCFT analogous to those 
-of the older PSCF Fortran program.  The suffix "pc" stands for "periodic 
+of the older Fortran PSCF program.  The suffix "pc" stands for "periodic 
 CPU".
 
 <b>pscf_pg</b>:
@@ -33,9 +33,9 @@ CPU".
 The pscf_pg program is a GPU-accelerated sister of pscf_pc that can also 
 perform SCFT and PS-FTS calculations on systems with periodic boundary 
 conditions.  The pscf_pc and pscf_pg programs provide identical features
-and user interfaces, but pscf_pg provides much higher computational
-performance for problems involving a sufficiently large number of grid 
-points per unit cell.  The suffix "pg" stands for "periodic GPU".
+and user interfaces, but pscf_pg can provide much higher computational
+performance for problems involving a large number of grid points per 
+unit cell.  The suffix "pg" stands for "periodic GPU".
 
 <BR>
 \ref about_history_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

@@ -5,7 +5,6 @@
 #include <test/UnitTestRunner.h>
 
 #include "PolymerStub.h"
-#include <pscf/solvers/PolymerTmpl.h>
 #include <pscf/chem/PolymerSpecies.h>
 #include <pscf/chem/VertexIterator.h>
 #include <pscf/chem/EdgeIterator.h>
