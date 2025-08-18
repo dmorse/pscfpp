@@ -20,7 +20,7 @@ namespace R1d
    using namespace Util;
 
    /**
-   * Block within a branched polymer.
+   * Block within a block polymer.
    *
    * Derived from BlockTmpl<Propagator>. A BlockTmpl<Propagator> has two 
    * Propagator members and is derived from Edge.

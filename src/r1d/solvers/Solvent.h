@@ -18,7 +18,7 @@ namespace R1d {
    using namespace Util;
 
    /**
-   * Solver and descriptor for a solvent species.
+   * Solver and descriptor for a solvent species in a mixture.
    *
    * \ref user_param_solvent_sec "Parameter File Format"
    * \ingroup R1d_Solver_Module

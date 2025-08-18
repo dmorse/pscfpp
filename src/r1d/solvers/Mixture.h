@@ -8,32 +8,32 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+// Header file includes
 #include "Polymer.h"
 #include "Solvent.h"
 #include <pscf/solvers/MixtureTmpl.h>
-#include <pscf/inter/Interaction.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {
 namespace R1d
 {
 
+   // Forward declaration
    class Domain;
 
    /**
-   * Mixture of polymers and solvents.
+   * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A Mixture contains a list of Polymer and Solvent objects. Each
-   * such object can solve the single-molecule statistical mechanics 
-   * problem for an ideal gas of the associated species in a set of
-   * specified chemical potential fields, and thereby compute 
-   * concentrations and single-molecule partition functions. A
-   * Mixture is thus both a chemistry descriptor and an ideal-gas 
-   * solver.
+   * A Mixture contains arrays of Polymer and Solvent objects. Each such
+   * object can solve the single-molecule statistical mechanics problem 
+   * for an ideal gas of the associated species in a set of specified 
+   * chemical potential fields, and thereby compute concentrations for
+   * all monomer types and single-molecule partition functions for all
+   * molecular species. 
    *
-   * A Mixture is associated with a Domain object, which models a
-   * spatial domain and a spatial discretization. Knowledge of the
-   * domain and discretization is needed to solve the ideal-gas
+   * A Mixture is associated with a Domain object, which models a 1D
+   * spatial domain and a spatial discretization mesh. Knowledge of 
+   * the domain and discretization is needed to solve the ideal-gas
    * problem.
    *
    * \ref user_param_mixture_page "Parameter File Format"
@@ -66,9 +66,9 @@ namespace R1d
       /**
       * Read all parameters and initialize.
       *
-      * This function reads in a complete description of
-      * the chemical composition and structure of all species,
-      * as well as the target contour length step size ds.
+      * This function reads in a complete description of the chemical
+      * structure of all species and the composition of the mixture, as
+      * well as the target contour length step size ds.
       *
       * \param in input parameter stream
       */
@@ -77,9 +77,9 @@ namespace R1d
       /**
       * Create an association with the domain and allocate memory.
       * 
-      * The domain parameter must have already been initialized, 
-      * e.g., by reading its parameters from a file, so that the
-      * domain dimensions are known on entry.
+      * The function parameter domain must have already been initialized, 
+      * by reading its parameters from a file, so that the domain 
+      * dimensions and number of grid points are known on entry.
       *
       * \param domain associated Domain object (stores address).
       */
@@ -100,21 +100,20 @@ namespace R1d
       /**
       * Compute concentrations.
       *
-      * This function calls the compute function of every molecular
-      * species, and then adds the resulting block concentration
-      * fields for blocks of each type to compute a total monomer
-      * concentration (or volume fraction) for each monomer type.
+      * This function calls the compute function of every molecular species
+      * (polymers and solvents), species, and then adds the resulting block
+      * concentration fields for blocks of each type to compute a total 
+      * monomer concentration (or volume fraction) for each monomer type.
       * Upon return, values are set for volume fraction and chemical 
-      * potential (mu) members of each species, and for the 
-      * concentration fields for each Block and Solvent. The total
-      * concentration for each monomer type is returned in the
-      * cFields output parameter. 
+      * potential (mu) members of each species, and the concentration field
+      * for each Block and Solvent. The total concentration fields for all 
+      * monomer types are returned in the cFields output parameter. 
       *
-      * The arrays wFields and cFields must each have size nMonomer(),
+      * The arrays wFields and cFields must each have capacity nMonomer(), 
       * and contain fields that are indexed by monomer type index. 
       *
-      * \param wFields array of chemical potential fields (input)
-      * \param cFields array of monomer concentration fields (output)
+      * \param wFields  array of chemical potential fields (input)
+      * \param cFields  array of monomer concentration fields (output)
       */
       void 
       compute(DArray<FieldT> const & wFields, DArray<FieldT>& cFields);
@@ -133,7 +132,7 @@ namespace R1d
    protected:
 
       // Inherited protected member functions with non-dependent names
-      using MixtureTmpl< Polymer, Solvent >::setClassName;
+      using ParamComposite::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 
