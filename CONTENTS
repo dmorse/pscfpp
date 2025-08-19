@@ -3,14 +3,14 @@ file for basic instructions on usage and a link to the web manual.
 
 Subdirectories:
 
-  bin/       default installation directory for executable files
-  bld/       build directory for out-of-source builds 
-  data/      read-only data files (e.g., space group description files)
-  docs/      documentation, including web manual source files
-  examples/  input files for example SCFT and PS-FTS calculations
-  lib/       scripts written in python, matlab or other languages
-  make/      makefile fragments used by the configure script
-  src/       C++ and CUDA/C++ source code files
+  bin/      - default installation directory for executable files
+  bld/      - build directory for out-of-source builds 
+  data/     - read-only data files (e.g., space group description files)
+  docs/     - documentation, including web manual source files
+  examples/ - input files for example SCFT and PS-FTS calculations
+  lib/      - scripts written in python, matlab or other languages
+  make/     - makefile fragments used by the configure script
+  src/      - C++ and CUDA/C++ source code files
 
 Files: 
 

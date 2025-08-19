@@ -19,8 +19,8 @@ all: $(prdc_OBJS) $(prdc_LIB)
 clean:
 	rm -f $(prdc_OBJS) $(prdc_OBJS:.o=.d)
 	rm -f $(prdc_LIB)
-	rm -f *.o */*.o
-	rm -f *.d */*.d
+	rm -f *.o */*.o */*/*.o
+	rm -f *.d */*.d */*/*.d
 	cd tests; $(MAKE) clean
 
 veryclean:

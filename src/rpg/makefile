@@ -29,8 +29,8 @@ clean:
 	rm -f $(rpg_OBJS) $(rpg_OBJS:.o=.d)
 	rm -f $(rpg_LIB)
 	rm -f $(PSCF_PG).o $(PSCF_PG).d
-	rm -f *.o */*.o
-	rm -f *.d */*.d
+	rm -f *.o */*.o */*/*.o
+	rm -f *.d */*.d */*/*.d
 	cd tests; $(MAKE) clean
 
 veryclean:
