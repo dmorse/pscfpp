@@ -1,5 +1,5 @@
-#ifndef PRDC_MIXTURE_MODIFIER_REAL_TPP
-#define PRDC_MIXTURE_MODIFIER_REAL_TPP
+#ifndef PRDC_MIXTURE_MODIFIER_PRDC_TPP
+#define PRDC_MIXTURE_MODIFIER_PRDC_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MixtureModifierReal.h"
+#include "MixtureModifierPrdc.h"
 #include <pscf/chem/Monomer.h>
 
 namespace Pscf {
@@ -18,7 +18,7 @@ namespace Prdc {
    * Constructor
    */
    template <class MT>
-   MixtureModifierReal<MT>::MixtureModifierReal()
+   MixtureModifierPrdc<MT>::MixtureModifierPrdc()
     : mixturePtr_(nullptr)
    {}
 
@@ -26,14 +26,14 @@ namespace Prdc {
    * Destructor
    */
    template <class MT>
-   MixtureModifierReal<MT>::~MixtureModifierReal()
+   MixtureModifierPrdc<MT>::~MixtureModifierPrdc()
    {}
 
    /*
    * Create an association with a mixture.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::associate(MT& mixture)
+   void MixtureModifierPrdc<MT>::associate(MT& mixture)
    {
       UTIL_CHECK(!mixturePtr_);  
       mixturePtr_ = &mixture; 
@@ -45,14 +45,14 @@ namespace Prdc {
    * Set statistical segment length for one monomer type.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::setKuhn(int monomerId, double kuhn)
+   void MixtureModifierPrdc<MT>::setKuhn(int monomerId, double kuhn)
    {  mixture().setKuhn(monomerId, kuhn); }
 
    /*
    * Set volume fraction for a polymer.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::setPhiPolymer(int polymerId, 
+   void MixtureModifierPrdc<MT>::setPhiPolymer(int polymerId, 
                                                double phi)
    {  mixture().polymer(polymerId).setPhi(phi); }
 
@@ -60,7 +60,7 @@ namespace Prdc {
    * Set chemical potential for a polymer.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::setMuPolymer(int polymerId, 
+   void MixtureModifierPrdc<MT>::setMuPolymer(int polymerId, 
                                                double mu)
    {  mixture().polymer(polymerId).setMu(mu); }
 
@@ -68,7 +68,7 @@ namespace Prdc {
    * Set the length of a polymer block.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::setBlockLength(int polymerId, 
+   void MixtureModifierPrdc<MT>::setBlockLength(int polymerId, 
                                                 int blockId,
                                                 double length)
    {  mixture().polymer(polymerId).block(blockId).setLength(length); }
@@ -77,7 +77,7 @@ namespace Prdc {
    * Set the volume fraction for a solvent.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::setPhiSolvent(int solventId, 
+   void MixtureModifierPrdc<MT>::setPhiSolvent(int solventId, 
                                                double phi)
    {  mixture().solvent(solventId).setPhi(phi); }
 
@@ -85,7 +85,7 @@ namespace Prdc {
    * Set the chemical potential for a solvent species.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::setMuSolvent(int solventId, 
+   void MixtureModifierPrdc<MT>::setMuSolvent(int solventId, 
                                               double mu)
    {  mixture().solvent(solventId).setMu(mu); }
 
@@ -93,7 +93,7 @@ namespace Prdc {
    * Set the size of solvent species.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::setSolventSize(int solventId, 
+   void MixtureModifierPrdc<MT>::setSolventSize(int solventId, 
                                                 double size)
    {  mixture().solvent(solventId).setSize(size); }
 
@@ -101,7 +101,7 @@ namespace Prdc {
    * Set the monomer reference volume for the mixture.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::setVMonomer(double vMonomer)
+   void MixtureModifierPrdc<MT>::setVMonomer(double vMonomer)
    {  mixture().setVmonomer(vMonomer); }
 
    // Other public non-const functions
@@ -110,7 +110,7 @@ namespace Prdc {
    * Clear all data that depends on the unit cell parameters.
    */
    template <class MT>
-   void MixtureModifierReal<MT>::clearUnitCellData()
+   void MixtureModifierPrdc<MT>::clearUnitCellData()
    {  mixture().clearUnitCellData(); }
 
    // Private memmber function
@@ -119,7 +119,7 @@ namespace Prdc {
    * Get the associated mixture by reference
    */
    template <class MT>
-   MT& MixtureModifierReal<MT>::mixture()
+   MT& MixtureModifierPrdc<MT>::mixture()
    {
       UTIL_CHECK(mixturePtr_);
       return *mixturePtr_;  

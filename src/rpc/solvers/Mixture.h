@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/solvers/MixtureReal.h>     // base class template
+#include <prdc/solvers/MixturePrdc.h>     // base class template
 #include "Polymer.h"                      // base class parameter
 #include "Solvent.h"                      // base class parameter
 
@@ -19,43 +19,43 @@ namespace Rpc {
    * Solver and descriptor for a mixture of polymers and solvents.
    *
    * A Mixture is derived from a partial specialization of the template
-   * Prdc::MixtureReal, and has the same public interface as this base
+   * Prdc::MixturePrdc, and has the same public interface as this base
    * class template.
    *
    * \ref user_param_mixture_page "Manual Page"
    * \ingroup Rpc_Solver_Module
    */
    template <int D>
-   class Mixture : public MixtureReal<D, Polymer<D>, Solvent<D> >
+   class Mixture : public MixturePrdc<D, Polymer<D>, Solvent<D> >
    {
 
    public:
  
       /// Direct (parent) base class.
-      using MixtureRealT 
-         = typename Prdc::MixtureReal<D, Polymer<D>, Solvent<D> >;
+      using MixturePrdcT 
+         = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D> >;
 
       // Inherited public type name aliases 
-      using typename MixtureRealT::MixtureTmplT;
-      using typename MixtureRealT::PolymerT;
-      using typename MixtureRealT::SolventT;
-      using typename MixtureRealT::BlockT;
-      using typename MixtureRealT::PropagatorT;
-      using typename MixtureRealT::FieldT;
-      using typename MixtureRealT::FFTT;
-      using typename MixtureRealT::WaveListT;
+      using typename MixturePrdcT::MixtureTmplT;
+      using typename MixturePrdcT::PolymerT;
+      using typename MixturePrdcT::SolventT;
+      using typename MixturePrdcT::BlockT;
+      using typename MixturePrdcT::PropagatorT;
+      using typename MixturePrdcT::FieldT;
+      using typename MixturePrdcT::FFTT;
+      using typename MixturePrdcT::WaveListT;
 
       // Inherited public member functions
 
-      using MixtureRealT::readParameters;
-      using MixtureRealT::associate;
-      using MixtureRealT::allocate;
-      using MixtureRealT::clearUnitCellData;
-      using MixtureRealT::setKuhn;
-      using MixtureRealT::compute;
-      using MixtureRealT::computeStress;
-      using MixtureRealT::hasStress;
-      using MixtureRealT::createBlockCRGrid;
+      using MixturePrdcT::readParameters;
+      using MixturePrdcT::associate;
+      using MixturePrdcT::allocate;
+      using MixturePrdcT::clearUnitCellData;
+      using MixturePrdcT::setKuhn;
+      using MixturePrdcT::compute;
+      using MixturePrdcT::computeStress;
+      using MixturePrdcT::hasStress;
+      using MixturePrdcT::createBlockCRGrid;
 
       using MixtureTmplT::polymer;
       using MixtureTmplT::polymerSpecies;
@@ -72,8 +72,8 @@ namespace Rpc {
 
    protected:
 
-      using MixtureRealT::mesh;
-      using MixtureRealT::ds;
+      using MixturePrdcT::mesh;
+      using MixturePrdcT::ds;
 
    private:
 
@@ -108,9 +108,9 @@ namespace Rpc {
 } // namespace Rpc
 namespace Prdc {
    // Suppress implicit instantiation of base class 
-   extern template class MixtureReal<1, Rpc::Polymer<1>, Rpc::Solvent<1> >;
-   extern template class MixtureReal<2, Rpc::Polymer<2>, Rpc::Solvent<2> >;
-   extern template class MixtureReal<3, Rpc::Polymer<3>, Rpc::Solvent<3> >;
+   extern template class MixturePrdc<1, Rpc::Polymer<1>, Rpc::Solvent<1> >;
+   extern template class MixturePrdc<2, Rpc::Polymer<2>, Rpc::Solvent<2> >;
+   extern template class MixturePrdc<3, Rpc::Polymer<3>, Rpc::Solvent<3> >;
 } // namespace Prdc
 } // namespace Pscf
 #endif

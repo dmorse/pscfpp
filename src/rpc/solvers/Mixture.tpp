@@ -10,7 +10,7 @@
 
 #include "Mixture.h"
 #include <rpc/field/FieldIo.h>
-#include <prdc/solvers/MixtureReal.tpp>
+#include <prdc/solvers/MixturePrdc.tpp>
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/RField.h>
 

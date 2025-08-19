@@ -1,5 +1,5 @@
-#ifndef PRDC_MIXTURE_REAL_TPP
-#define PRDC_MIXTURE_REAL_TPP
+#ifndef PRDC_MIXTURE_PRDC_TPP
+#define PRDC_MIXTURE_PRDC_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MixtureReal.h"
+#include "MixturePrdc.h"
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/chem/Monomer.h>
@@ -20,11 +20,13 @@
 namespace Pscf {
 namespace Prdc {
 
+   // Construction, destruction, and initialization
+
    /*
    * Constructor
    */
    template <int D, class PT, class ST>
-   MixtureReal<D,PT,ST>::MixtureReal()
+   MixturePrdc<D,PT,ST>::MixturePrdc()
     : stress_(),
       ds_(-1.0),
       meshPtr_(nullptr),
@@ -39,14 +41,14 @@ namespace Prdc {
    * Destructor
    */
    template <int D, class PT, class ST>
-   MixtureReal<D,PT,ST>::~MixtureReal()
+   MixturePrdc<D,PT,ST>::~MixturePrdc()
    {}
 
    /*
    * Read all parameters and initialize.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::readParameters(std::istream& in)
+   void MixturePrdc<D,PT,ST>::readParameters(std::istream& in)
    {
       // Read standard data for a mixture
       MixtureTmpl< PolymerT, SolventT >::readParameters(in);
@@ -55,9 +57,11 @@ namespace Prdc {
 
       // Set ds_ parameter (only used in thread model)
       if (PolymerModel::isThread()) {
+         // Thread model (ds_ is a required parameter)
          read(in, "ds", ds_);
          UTIL_CHECK(ds_ > 0);
       } else {
+         // Bead model (set to 1.0, but unused)
          ds_ = 1.0;
       }
 
@@ -67,7 +71,7 @@ namespace Prdc {
    * Create associations with Mesh, FFT, UnitCell, and WaveList objects.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::associate(Mesh<D> const & mesh,
+   void MixturePrdc<D,PT,ST>::associate(Mesh<D> const & mesh,
                               FFTT const & fft,
                               UnitCell<D> const & cell,
                               WaveListT & waveList)
@@ -108,14 +112,14 @@ namespace Prdc {
    * Create an association with a FieldIo object, for file output.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::setFieldIo(FieldIoT const & fieldIo)
+   void MixturePrdc<D,PT,ST>::setFieldIo(FieldIoT const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Allocate internal data containers in all solvers.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::allocate()
+   void MixturePrdc<D,PT,ST>::allocate()
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
@@ -126,14 +130,6 @@ namespace Prdc {
       // Allocate memory for all Block objects
       if (nPolymer() > 0) {
          allocateBlocks();
-         #if 0
-         int i, j;
-         for (i = 0; i < nPolymer(); ++i) {
-            for (j = 0; j < polymer(i).nBlock(); ++j) {
-               polymer(i).block(j).allocate(ds_);
-            }
-         }
-         #endif
       }
 
       // Allocate memory for all Solvent objects
@@ -146,49 +142,13 @@ namespace Prdc {
       clearUnitCellData();
    }
 
-   /*
-   * Clear all data that depends on the unit cell parameters.
-   */
-   template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::clearUnitCellData()
-   {
-      if (nPolymer() > 0) {
-         for (int i = 0; i < nPolymer(); ++i) {
-            polymer(i).clearUnitCellData();
-         }
-      }
-      stress_.clear();
-      hasStress_ = false;
-   }
-
-   /*
-   * Reset statistical segment length for one monomer type.
-   */
-   template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::setKuhn(int monomerId, double kuhn)
-   {
-      // Set new Kuhn length for relevant Monomer object
-      monomer(monomerId).setKuhn(kuhn);
-
-      // Update kuhn length for all blocks of this monomer type
-      for (int i = 0; i < nPolymer(); ++i) {
-         for (int j =  0; j < polymer(i).nBlock(); ++j) {
-            BlockT& block = polymer(i).block(j);
-            if (monomerId == block.monomerId()) {
-               block.setKuhn(kuhn);
-            }
-         }
-      }
-      hasStress_ = false;
-   }
-
-   // Concentration field output
+   // Primary Computations
 
    /*
    * Compute concentrations (but not total free energy).
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::compute(DArray<FieldT> const & wFields,
+   void MixturePrdc<D,PT,ST>::compute(DArray<FieldT> const & wFields,
                                       DArray<FieldT> & cFields,
                                       double phiTot)
    {
@@ -259,14 +219,14 @@ namespace Prdc {
    * Set the isSymmetric boolean variable true or false.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::setIsSymmetric(bool isSymmetric)
+   void MixturePrdc<D,PT,ST>::setIsSymmetric(bool isSymmetric)
    {  isSymmetric_ = isSymmetric; }
 
    /*
    * Compute total SCFT stress for this mixture.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::computeStress(double phiTot)
+   void MixturePrdc<D,PT,ST>::computeStress(double phiTot)
    {
       UTIL_CHECK(nParam_ > 0);
       
@@ -306,13 +266,51 @@ namespace Prdc {
       hasStress_ = true;
    }
 
+   // Parameter Modification
+
+   /*
+   * Reset statistical segment length for one monomer type.
+   */
+   template <int D, class PT, class ST>
+   void MixturePrdc<D,PT,ST>::setKuhn(int monomerId, double kuhn)
+   {
+      // Set new Kuhn length for relevant Monomer object
+      monomer(monomerId).setKuhn(kuhn);
+
+      // Update kuhn length for all blocks of this monomer type
+      for (int i = 0; i < nPolymer(); ++i) {
+         for (int j =  0; j < polymer(i).nBlock(); ++j) {
+            BlockT& block = polymer(i).block(j);
+            if (monomerId == block.monomerId()) {
+               block.setKuhn(kuhn);
+            }
+         }
+      }
+      hasStress_ = false;
+   }
+
+   /*
+   * Clear all data that depends on the unit cell parameters.
+   */
+   template <int D, class PT, class ST>
+   void MixturePrdc<D,PT,ST>::clearUnitCellData()
+   {
+      if (nPolymer() > 0) {
+         for (int i = 0; i < nPolymer(); ++i) {
+            polymer(i).clearUnitCellData();
+         }
+      }
+      stress_.clear();
+      hasStress_ = false;
+   }
+
    // Concentration Field Output
 
    /*
    * Combine cFields for all blocks and solvents into one DArray
    */
-   template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::createBlockCRGrid(DArray<FieldT>& blockCFields)
+   template <int D, class PT, class ST> void 
+   MixturePrdc<D,PT,ST>::createBlockCRGrid(DArray<FieldT>& blockCFields)
    const
    {
       int np = nSolvent() + nBlock();
@@ -372,7 +370,7 @@ namespace Prdc {
    */
    template <int D, class PT, class ST>
    void 
-   MixtureReal<D,PT,ST>::writeBlockCRGrid(std::string const & filename) 
+   MixturePrdc<D,PT,ST>::writeBlockCRGrid(std::string const & filename) 
    const
    {
       UTIL_CHECK(fieldIoPtr_);
@@ -399,7 +397,7 @@ namespace Prdc {
    * Write a specified slice of the propagator in r-grid format.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::writeQSlice(
+   void MixturePrdc<D,PT,ST>::writeQSlice(
                                   std::string const & filename,
                                   int polymerId, 
                                   int blockId,
@@ -425,7 +423,7 @@ namespace Prdc {
    * Write the last (tail) slice of the propagator in r-grid format.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::writeQTail(
+   void MixturePrdc<D,PT,ST>::writeQTail(
                                   std::string const & filename,
                                   int polymerId, 
                                   int blockId, 
@@ -449,7 +447,7 @@ namespace Prdc {
    * Write the entire propagator for a specified block and direction.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::writeQ(
+   void MixturePrdc<D,PT,ST>::writeQ(
                                   std::string const & filename,
                                   int polymerId, 
                                   int blockId, 
@@ -493,7 +491,7 @@ namespace Prdc {
    * Write propagators for all blocks of all polymers to files.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::writeQAll(std::string const & basename)
+   void MixturePrdc<D,PT,ST>::writeQAll(std::string const & basename)
    {
       UTIL_CHECK(fieldIoPtr_);
       std::string filename;
@@ -517,11 +515,13 @@ namespace Prdc {
       }
    }
 
+   // Stress Output
+
    /*
    * Write stress to output stream.
    */
    template <int D, class PT, class ST>
-   void MixtureReal<D,PT,ST>::writeStress(std::ostream& out) const
+   void MixturePrdc<D,PT,ST>::writeStress(std::ostream& out) const
    {
       UTIL_CHECK(hasStress_);
 

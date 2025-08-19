@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/solvers/MixtureReal.h>         // method parameter
+#include <prdc/solvers/MixturePrdc.h>         // method parameter
 #include <pscf/environment/EnvironmentBase.h> // base class
 #include <util/containers/FSArray.h>          // container
 #include <iostream>
@@ -102,7 +102,7 @@ namespace Prdc {
       * \param flexibleParams  array indicating which stresses to compute
       */
       template <int D, class PT, class ST>
-      void computeStress(MixtureReal<D, PT, ST> const & mixture, 
+      void computeStress(MixturePrdc<D, PT, ST> const & mixture, 
                          FSArray<bool, 6> const & flexibleParams);
 
       /**
@@ -173,7 +173,7 @@ namespace Prdc {
    * be implicitly instantiated by the compiler wherever needed)
    */
    template <int D, class PT, class ST>
-   void Environment::computeStress(MixtureReal<D, PT, ST> const & mixture, 
+   void Environment::computeStress(MixturePrdc<D, PT, ST> const & mixture, 
                                    FSArray<bool, 6> const & flexibleParams)
    {
       if (hasStress_) return;

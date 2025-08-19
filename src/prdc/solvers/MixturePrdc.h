@@ -31,7 +31,7 @@ namespace Prdc {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A MixtureReal contains lists of Polymer (PT) and Solvent (ST) 
+   * A MixturePrdc contains lists of Polymer (PT) and Solvent (ST) 
    * objects. Each such object can solve statistical mechanics of a single 
    * molecule of the associated species in a set of specified chemical 
    * potential fields, and thereby compute concentrations and molecular 
@@ -44,10 +44,18 @@ namespace Prdc {
    * different monomer types an  input and yields an array of total
    * monomer concentration fields (c fields) as an output.
    *
+   * Note: Most class templates defined in the Pscf::Prdc namespace for 
+   * use as base classes for classes defined in Pscf::Rpc and Pscf::Rpg 
+   * have names that end in the suffix Tmpl. This template for mixtures 
+   * in periodic systems has been named MixturePrdc, however, because 
+   * Pscf::MixtureTmpl is the name of the more general template from 
+   * which it is derived, which can be used for systems tha are not
+   * periodic. 
+   *
    * \ref user_param_mixture_page "Manual Page"
    */
    template <int D, class PT, class ST>
-   class MixtureReal : public MixtureTmpl<PT, ST>
+   class MixturePrdc : public MixtureTmpl<PT, ST>
    {
 
    public:
@@ -89,12 +97,12 @@ namespace Prdc {
       /**
       * Constructor.
       */
-      MixtureReal();
+      MixturePrdc();
 
       /**
       * Destructor.
       */
-      ~MixtureReal();
+      ~MixturePrdc();
 
       /**
       * Read all parameters and initialize.
@@ -433,7 +441,7 @@ namespace Prdc {
       // Set true iff the w fields used in the MDE are symmetric
       bool isSymmetric_;
 
-      // Private member functions
+      // Private member functions (pure virtual)
 
       /**
       * Set all elements of a field to a common scalar: A[i] = s.
@@ -452,7 +460,7 @@ namespace Prdc {
       virtual void addEqV(FieldT& A, FieldT const & B) const = 0;
 
       /**
-      * Allocate blocks
+      * Allocate all blocks of all polymers.
       */
       virtual void allocateBlocks() = 0; 
 
@@ -461,22 +469,22 @@ namespace Prdc {
    // Public inline member functions
 
    /*
+   * Has the stress been computed for the current w fields?
+   */
+   template <int D, class PT, class ST>
+   inline bool MixturePrdc<D,PT,ST>::hasStress() const
+   {  return hasStress_; }
+
+   /*
    * Get derivative of free energy w/ respect to a unit cell parameter.
    */
    template <int D, class PT, class ST>
-   inline double MixtureReal<D,PT,ST>::stress(int parameterId) const
+   inline double MixturePrdc<D,PT,ST>::stress(int parameterId) const
    {
       UTIL_CHECK(hasStress_);
       UTIL_CHECK(parameterId < nParam_);
       return stress_[parameterId];
    }
-
-   /*
-   * Has the stress been computed for the current w fields?
-   */
-   template <int D, class PT, class ST>
-   inline bool MixtureReal<D,PT,ST>::hasStress() const
-   {  return hasStress_; }
 
 } // namespace Prdc
 } // namespace Pscf

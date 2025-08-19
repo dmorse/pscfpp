@@ -10,7 +10,7 @@
 
 #include "Mixture.h"
 #include <rpg/field/FieldIo.h>
-#include <prdc/solvers/MixtureReal.tpp>
+#include <prdc/solvers/MixturePrdc.tpp>
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
 
@@ -25,7 +25,7 @@ namespace Rpg {
    */
    template <int D>
    Mixture<D>::Mixture()
-    : MixtureRealT(),
+    : MixturePrdcT(),
       useBatchedFFT_(true)
    {}
 
@@ -35,7 +35,7 @@ namespace Rpg {
    template <int D>
    void Mixture<D>::readParameters(std::istream& in)
    {
-      MixtureRealT::readParameters(in);
+      MixturePrdcT::readParameters(in);
 
       // Optionally read useBatchedFFT boolean
       useBatchedFFT_ = true;

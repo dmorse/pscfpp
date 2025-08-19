@@ -10,9 +10,9 @@
 
 namespace Pscf {
    namespace Prdc { 
-      template class MixtureReal<1, Rpc::Polymer<1>, Rpc::Solvent<1> >;
-      template class MixtureReal<2, Rpc::Polymer<2>, Rpc::Solvent<2> >;
-      template class MixtureReal<3, Rpc::Polymer<3>, Rpc::Solvent<3> >;
+      template class MixturePrdc<1, Rpc::Polymer<1>, Rpc::Solvent<1> >;
+      template class MixturePrdc<2, Rpc::Polymer<2>, Rpc::Solvent<2> >;
+      template class MixturePrdc<3, Rpc::Polymer<3>, Rpc::Solvent<3> >;
    }
    namespace Rpc { 
       template class Mixture<1>;
