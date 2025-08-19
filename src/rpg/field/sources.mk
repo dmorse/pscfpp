@@ -1,6 +1,6 @@
 rpg_field_= \
   rpg/field/WFields.cu \
-  rpg/field/CFieldContainer.cu \
+  rpg/field/CFields.cu \
   rpg/field/Mask.cu \
   rpg/field/HostDArrayComplex.cu \
   rpg/field/FieldIo.cu \

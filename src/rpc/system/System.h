@@ -14,7 +14,7 @@
 #include <rpc/solvers/Mixture.h>         // member
 #include <rpc/field/Domain.h>            // member
 #include <rpc/field/WFields.h>   // member
-#include <rpc/field/CFieldContainer.h>   // member
+#include <rpc/field/CFields.h>   // member
 #include <rpc/field/Mask.h>              // member
 
 namespace Pscf {

@@ -61,14 +61,14 @@ namespace Prdc {
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an %Interaction (list of binary interaction parameters)
    *    - a Domain (description of unit cell and discretization)
-   *    - a WFields of monomer chemical potential (w) fields
-   *    - a CFieldContainer of monomer concentration (c) fields
-   *    - a WFields of external (h) fields
-   *    - a Mask that describes inhomogeneous density constraint
+   *    - a WFields container of monomer chemical potential (w) fields
+   *    - a CFields container of monomer concentration (c) fields
+   *    - a WFields container of external (h) fields
+   *    - a Mask field that defines an inhomogeneous density constraint
    *
-   * The container of external fields and the Mask data structure are
-   * only used to described systems in inhomgeneous imposed environements
-   * (such as in thin films) and are otherwise left empty and unused. 
+   * The container of external fields and the Mask are only needed to
+   * describe systems in inhomgeneous imposed environements (such as in 
+   * thin films) and are otherwise left empty and unused. 
    *
    * A SystemTmpl may also optionally have:
    *
@@ -77,13 +77,13 @@ namespace Prdc {
    *    - a Sweep,
    *    - a Simulator
    *
-   * Optional components are constructed when the parameter file is 
-   * read by inclusion of corresponding optional parameter file blocks.
+   * Optional components are constructed when the parameter file is read
+   * only if corresponding optional parameter file blocks are present.
    * The %Environment is only used to generate external and mask fields 
    * to describe inhomogeneos environments, and is omitted in standard 
-   * calculations of structures formed in a homogeneous environment. The 
-   * Iterator and Sweep objects are only used for SCFT calculations. A 
-   * Simulator is only used for PS-FTS calculations, for, i.e., field 
+   * calculations of structures formed in a homogeneous environment. 
+   * Iterator and Sweep objects are only used for SCFT calculations. 
+   * A Simulator is only used for PS-FTS calculations, for, i.e., field 
    * theoretic simulations based on a partial saddle-point approximation. 
    *
    * See also:
@@ -107,7 +107,7 @@ namespace Prdc {
       using InteractionT = typename T::Interaction;
       using DomainT = typename T::Domain;
       using WFieldsT = typename T::WFields;
-      using CFieldContainerT = typename T::CFieldContainer;
+      using CFieldsT = typename T::CFields;
       using MaskT = typename T::Mask;
       using RFieldT = typename T::RField;
 
@@ -121,11 +121,11 @@ namespace Prdc {
       * concrete system class, such as Rpc::System\<D\>, typename T::System 
       * must be the name of this resulting subclass. In this usage, in the
       * member initialization list of the T::System subclass constructor,  
-      * a reference to the subclass instance should be passed as "*this"
-      * to this SystemTmpl base class constructor. The address of the 
-      * instance of the T::System subclass is then retained in the
-      * SystemTmpl by private member variable of type T::System* . See
-      * definitions of constructors for the Rpc::System and Rpc::System 
+      * a reference to the subclass instance should be passed as "*this" to
+      * this SystemTmpl base class constructor. The address of the instance
+      * of the T::System subclass is then retained in the SystemTmpl by
+      * by private member variable of type T::System* (named systemPtr_). 
+      * See definitions of constructors for the Rpc::System and Rpc::System 
       * class templates for this usage.
       *
       * \param system  instance of System subclass
@@ -354,7 +354,7 @@ namespace Prdc {
       /**
       * Get the monomer concentration (c) fields (const).
       */
-      typename T::CFieldContainer const & c() const;
+      typename T::CFields const & c() const;
 
       /**
       * Get the chemical potential (w) fields (non-const).
@@ -570,7 +570,7 @@ namespace Prdc {
       /**
       * Monomer concentration / volume fraction fields.
       */
-      typename T::CFieldContainer c_;
+      typename T::CFields c_;
 
       /**
       * External potential fields.
@@ -836,7 +836,7 @@ namespace Prdc {
 
    // Get the container of c fields (const).
    template <int D, class T> inline
-   typename T::CFieldContainer const & SystemTmpl<D,T>::c() const
+   typename T::CFields const & SystemTmpl<D,T>::c() const
    {  return c_; }
 
    // Get the container of w fields (non-const).

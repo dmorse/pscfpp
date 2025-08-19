@@ -40,7 +40,7 @@ namespace Prdc {
       using MixtureT = typename SystemT::MixtureT;
       using InteractionT = typename SystemT::InteractionT;
       using DomainT = typename SystemT::DomainT;
-      using CFieldContainerT = typename SystemT::CFieldContainerT;
+      using CFieldsT = typename SystemT::CFieldsT;
       using WFieldsT = typename SystemT::WFieldsT;
       using MaskT = typename SystemT::MaskT;
       using RFieldT = typename SystemT::RFieldT;
@@ -84,7 +84,7 @@ namespace Prdc {
       {  return *domainPtr_; }
 
       /// Get the concentration (c) field container.
-      CFieldContainerT const & c() const
+      CFieldsT const & c() const
       {  return *cPtr_; }
 
       /// Get the chemical potential (w) field container.
@@ -118,7 +118,7 @@ namespace Prdc {
       DomainT const * domainPtr_;
 
       /// Pointer to c field container.
-      CFieldContainerT const * cPtr_;
+      CFieldsT const * cPtr_;
 
       /// Pointer to chemical potential (w) field container.
       WFieldsT const * wPtr_;

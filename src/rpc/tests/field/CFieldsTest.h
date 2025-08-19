@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/field/CFieldContainer.h>
+#include <rpc/field/CFields.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
 
@@ -31,7 +31,7 @@ using namespace Pscf::Rpc;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
 
-class CFieldContainerTest : public UnitTest 
+class CFieldsTest : public UnitTest 
 {
 
    std::ofstream logFile_;
@@ -138,7 +138,7 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      CFieldContainer<3> fields;
+      CFields<3> fields;
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
       TEST_ASSERT(fields.isAllocatedRGrid());
@@ -149,8 +149,8 @@ public:
 
 };
 
-TEST_BEGIN(CFieldContainerTest)
-TEST_ADD(CFieldContainerTest, testAllocate)
-TEST_END(CFieldContainerTest)
+TEST_BEGIN(CFieldsTest)
+TEST_ADD(CFieldsTest, testAllocate)
+TEST_END(CFieldsTest)
 
 #endif

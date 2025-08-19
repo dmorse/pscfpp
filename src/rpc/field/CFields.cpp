@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CFieldContainer.h"
+#include "CFields.h"
 #include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/field/CFieldsTmpl.tpp>
@@ -19,9 +19,9 @@ namespace Pscf {
    } 
    namespace Rpc {
       // Explicit instantiations of this class
-      template class CFieldContainer<1>;
-      template class CFieldContainer<2>;
-      template class CFieldContainer<3>;
+      template class CFields<1>;
+      template class CFields<2>;
+      template class CFields<3>;
    
    } 
 }
