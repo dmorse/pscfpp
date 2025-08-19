@@ -29,7 +29,7 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class WFieldContainer 
+   class WFields 
      : public WFieldsTmpl<D, Prdc::Cuda::RField<D>, Rpg::FieldIo<D> >
    {
 
@@ -92,9 +92,9 @@ namespace Rpg {
 
    #ifndef RPG_W_FIELD_CONTAINER_TPP
    // Suppress implicit instantiation
-   extern template class WFieldContainer<1>;
-   extern template class WFieldContainer<2>;
-   extern template class WFieldContainer<3>;
+   extern template class WFields<1>;
+   extern template class WFields<2>;
+   extern template class WFields<3>;
    #endif
 
 } // namespace Rpg

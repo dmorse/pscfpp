@@ -13,7 +13,7 @@
 #include <rpg/system/Types.h>            // base class template param
 #include <rpg/solvers/Mixture.h>         // member
 #include <rpg/field/Domain.h>            // member
-#include <rpg/field/WFieldContainer.h>   // member
+#include <rpg/field/WFields.h>   // member
 #include <rpg/field/CFieldContainer.h>   // member
 #include <rpg/field/Mask.h>              // member
 

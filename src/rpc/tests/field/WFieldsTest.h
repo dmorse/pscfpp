@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 
-#include <rpc/field/WFieldContainer.h>
+#include <rpc/field/WFields.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
 
@@ -32,7 +32,7 @@ using namespace Pscf::Rpc;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
 
-class WFieldContainerTest : public UnitTest 
+class WFieldsTest : public UnitTest 
 {
 
    std::ofstream logFile_;
@@ -160,7 +160,7 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      WFieldContainer<3> fields;
+      WFields<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -188,7 +188,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      WFieldContainer<3> fields;
+      WFields<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -228,7 +228,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
 
-      WFieldContainer<3> fields;
+      WFields<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -266,7 +266,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      WFieldContainer<3> fields;
+      WFields<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -300,7 +300,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      WFieldContainer<3> fields;
+      WFields<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -341,7 +341,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
 
-      WFieldContainer<3> fields;
+      WFields<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -381,7 +381,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      WFieldContainer<3> fields;
+      WFields<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -405,14 +405,14 @@ public:
    }
 };
 
-TEST_BEGIN(WFieldContainerTest)
-TEST_ADD(WFieldContainerTest, testAllocate_bcc)
-TEST_ADD(WFieldContainerTest, testSetBasis_bcc)
-TEST_ADD(WFieldContainerTest, testSetRGrid_1_bcc)
-TEST_ADD(WFieldContainerTest, testSetRGrid_2_bcc)
-TEST_ADD(WFieldContainerTest, testReadBasis_bcc)
-TEST_ADD(WFieldContainerTest, testReadRGrid_1_bcc)
-TEST_ADD(WFieldContainerTest, testReadRGrid_2_bcc)
-TEST_END(WFieldContainerTest)
+TEST_BEGIN(WFieldsTest)
+TEST_ADD(WFieldsTest, testAllocate_bcc)
+TEST_ADD(WFieldsTest, testSetBasis_bcc)
+TEST_ADD(WFieldsTest, testSetRGrid_1_bcc)
+TEST_ADD(WFieldsTest, testSetRGrid_2_bcc)
+TEST_ADD(WFieldsTest, testReadBasis_bcc)
+TEST_ADD(WFieldsTest, testReadRGrid_1_bcc)
+TEST_ADD(WFieldsTest, testReadRGrid_2_bcc)
+TEST_END(WFieldsTest)
 
 #endif

@@ -61,9 +61,9 @@ namespace Prdc {
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an %Interaction (list of binary interaction parameters)
    *    - a Domain (description of unit cell and discretization)
-   *    - a WFieldContainer of monomer chemical potential (w) fields
+   *    - a WFields of monomer chemical potential (w) fields
    *    - a CFieldContainer of monomer concentration (c) fields
-   *    - a WFieldContainer of external (h) fields
+   *    - a WFields of external (h) fields
    *    - a Mask that describes inhomogeneous density constraint
    *
    * The container of external fields and the Mask data structure are
@@ -106,7 +106,7 @@ namespace Prdc {
       using MixtureT = typename T::Mixture;
       using InteractionT = typename T::Interaction;
       using DomainT = typename T::Domain;
-      using WFieldContainerT = typename T::WFieldContainer;
+      using WFieldsT = typename T::WFields;
       using CFieldContainerT = typename T::CFieldContainer;
       using MaskT = typename T::Mask;
       using RFieldT = typename T::RField;
@@ -359,22 +359,22 @@ namespace Prdc {
       /**
       * Get the chemical potential (w) fields (non-const).
       */
-      typename T::WFieldContainer& w();
+      typename T::WFields& w();
 
       /**
       * Get the chemical potential (w) fields (const).
       */
-      typename T::WFieldContainer const & w() const;
+      typename T::WFields const & w() const;
 
       /**
       * Get the external potential (h) fields (non-const).
       */
-      typename T::WFieldContainer& h();
+      typename T::WFields& h();
 
       /**
       * Get the external potential (h) fields (const).
       */
-      typename T::WFieldContainer const & h() const;
+      typename T::WFields const & h() const;
 
       /**
       * Get the mask (non-const).
@@ -565,7 +565,7 @@ namespace Prdc {
       /**
       * Chemical potential fields.
       */
-      typename T::WFieldContainer w_;
+      typename T::WFields w_;
 
       /**
       * Monomer concentration / volume fraction fields.
@@ -575,7 +575,7 @@ namespace Prdc {
       /**
       * External potential fields.
       */
-      typename T::WFieldContainer h_;
+      typename T::WFields h_;
 
       /**
       * Field to which the total density is constrained.
@@ -841,22 +841,22 @@ namespace Prdc {
 
    // Get the container of w fields (non-const).
    template <int D, class T> inline
-   typename T::WFieldContainer& SystemTmpl<D,T>::w()
+   typename T::WFields& SystemTmpl<D,T>::w()
    {  return w_; }
 
    // Get the container of w fields (const).
    template <int D, class T> inline
-   typename T::WFieldContainer const & SystemTmpl<D,T>::w() const
+   typename T::WFields const & SystemTmpl<D,T>::w() const
    {  return w_; }
 
    // Get the container of external fields (non-const).
    template <int D, class T> inline 
-   typename T::WFieldContainer& SystemTmpl<D,T>::h()
+   typename T::WFields& SystemTmpl<D,T>::h()
    {  return h_; }
 
    // Get the container of external fields (const).
    template <int D, class T> inline 
-   typename T::WFieldContainer const & SystemTmpl<D,T>::h() const
+   typename T::WFields const & SystemTmpl<D,T>::h() const
    {  return h_; }
 
    // Get the mask field (non-const).

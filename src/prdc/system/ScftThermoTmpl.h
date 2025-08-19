@@ -147,7 +147,7 @@ namespace Prdc {
       using MixtureT = typename Base::MixtureT;
       using InteractionT = typename Base::InteractionT;
       using DomainT = typename Base::DomainT;
-      using WFieldContainerT = typename Base::WFieldContainerT;
+      using WFieldsT = typename Base::WFieldsT;
       using CFieldContainerT = typename Base::CFieldContainerT;
       using MaskT = typename Base::MaskT;
       using RFieldT = typename Base::RFieldT;

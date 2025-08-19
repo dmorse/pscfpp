@@ -65,15 +65,15 @@ namespace Prdc {
    * format exists.
    *
    * <b> Subclasses </b>: Partial specializations of WFieldsTmpl are
-   * used as base classes for classes Rpc::WFieldContainer \<D \> and 
-   * Rpg::WFieldContainer \<D\>:
+   * used as base classes for classes Rpc::WFields \<D \> and 
+   * Rpg::WFields \<D\>:
    *
-   *  - Subclass Rpc::WFieldContainer \<D\> is derived from a partial
+   *  - Subclass Rpc::WFields \<D\> is derived from a partial
    *    specialization of WFieldsTmpl with template parameters 
    *    RFT = Cpu::RFT \<D\> and FIT = Rpc::FIT \<D\> , and is used in
    *    the pscf_pc CPU program.
    *
-   *  - Subclass Rpg::WFieldContainer \<D\> is derived from a partial
+   *  - Subclass Rpg::WFields \<D\> is derived from a partial
    *    specialization of WFieldsTmpl with template parameters 
    *    RFT = Cuda::RFT \<D\> and FIT = Rpg::FIT \<D\> , and is used in
    *    the pscf_pg GPU accelerated program.

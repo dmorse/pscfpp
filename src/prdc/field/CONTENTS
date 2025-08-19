@@ -6,7 +6,7 @@ Classes:
 
   DomainTmpl  - base class template for (Rpc|Rpg)::Domain
   FieldIoTmpl - base class template for (Rpc|Rpg)::FieldIo
-  WFieldsTmpl - base class template for (Rpc|Rpg)::WFieldContainer 
+  WFieldsTmpl - base class template for (Rpc|Rpg)::WFields 
   CFieldsTmpl - base class template for (Rpc|Rpg)::CFieldContainer 
   MaskTmpl    - base class template for (Rpc|Rpg)::Mask
 

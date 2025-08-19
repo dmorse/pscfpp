@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFieldContainer.tpp"
+#include "WFields.tpp"
 
 namespace Pscf {
 namespace Prdc {
@@ -15,9 +15,9 @@ namespace Prdc {
 }
 namespace Rpc {
 
-   template class WFieldContainer<1>;
-   template class WFieldContainer<2>;
-   template class WFieldContainer<3>;
+   template class WFields<1>;
+   template class WFields<2>;
+   template class WFields<3>;
 
 } // namespace Rpc
 } // namespace Pscf

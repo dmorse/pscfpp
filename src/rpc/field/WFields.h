@@ -29,7 +29,7 @@ namespace Rpc {
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class WFieldContainer 
+   class WFields 
      : public WFieldsTmpl<D, Prdc::Cpu::RField<D>, Rpc::FieldIo<D> >
    {
    public:
@@ -79,9 +79,9 @@ namespace Rpc {
 
    #ifndef RPC_W_FIELD_CONTAINER_TPP
    // Suppress implicit instantiation
-   extern template class WFieldContainer<1>;
-   extern template class WFieldContainer<2>;
-   extern template class WFieldContainer<3>;
+   extern template class WFields<1>;
+   extern template class WFields<2>;
+   extern template class WFields<3>;
    #endif
 
 } // namespace Rpc

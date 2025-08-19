@@ -41,7 +41,7 @@ namespace Prdc {
       using InteractionT = typename SystemT::InteractionT;
       using DomainT = typename SystemT::DomainT;
       using CFieldContainerT = typename SystemT::CFieldContainerT;
-      using WFieldContainerT = typename SystemT::WFieldContainerT;
+      using WFieldsT = typename SystemT::WFieldsT;
       using MaskT = typename SystemT::MaskT;
       using RFieldT = typename SystemT::RFieldT;
 
@@ -88,11 +88,11 @@ namespace Prdc {
       {  return *cPtr_; }
 
       /// Get the chemical potential (w) field container.
-      WFieldContainerT const & w() const
+      WFieldsT const & w() const
       {  return *wPtr_; }
 
       /// Get the external potential (h) field container.
-      WFieldContainerT const & h() const
+      WFieldsT const & h() const
       {  return *hPtr_; }
 
       /// Get the mask.
@@ -121,10 +121,10 @@ namespace Prdc {
       CFieldContainerT const * cPtr_;
 
       /// Pointer to chemical potential (w) field container.
-      WFieldContainerT const * wPtr_;
+      WFieldsT const * wPtr_;
 
       /// Pointer to external potential (h)field container.
-      WFieldContainerT const * hPtr_;
+      WFieldsT const * hPtr_;
 
       /// Pointer to Mask .
       MaskT const * maskPtr_;

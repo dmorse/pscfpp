@@ -13,7 +13,7 @@
 #include <rpc/system/Types.h>            // base class template param
 #include <rpc/solvers/Mixture.h>         // member
 #include <rpc/field/Domain.h>            // member
-#include <rpc/field/WFieldContainer.h>   // member
+#include <rpc/field/WFields.h>   // member
 #include <rpc/field/CFieldContainer.h>   // member
 #include <rpc/field/Mask.h>              // member
 

@@ -32,7 +32,7 @@ namespace Pscf {
       template <int D> class Propagator;
       template <int D> class Domain;
       template <int D> class FieldIo;
-      template <int D> class WFieldContainer;
+      template <int D> class WFields;
       template <int D> class CFieldContainer;
       template <int D> class Mask;
       template <int D> class ScftThermo;
@@ -78,7 +78,7 @@ namespace Rpc {
       using FieldIo = Rpc::FieldIo<D>;
       using ScftThermo = Rpc::ScftThermo<D>;
 
-      using WFieldContainer = Rpc::WFieldContainer<D>;
+      using WFields = Rpc::WFields<D>;
       using CFieldContainer = Rpc::CFieldContainer<D>;
       using Mask = Rpc::Mask<D>;
 

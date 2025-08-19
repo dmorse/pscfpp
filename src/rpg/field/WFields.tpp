@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFieldContainer.h"
+#include "WFields.h"
 #include <prdc/field/WFieldsTmpl.tpp>
 #include <prdc/cuda/VecOp.h>
 #include <pscf/cuda/DeviceArray.h>
@@ -26,7 +26,7 @@ namespace Rpg {
    * Set new w-field values, using unfolded array of r-grid fields.
    */
    template <int D>
-   void WFieldContainer<D>::setRGrid(DeviceArray<cudaReal>& fields)
+   void WFields<D>::setRGrid(DeviceArray<cudaReal>& fields)
    {
       DArray< RField<D> > tmp;
       tmp.allocate(nMonomer());
@@ -41,7 +41,7 @@ namespace Rpg {
 
    template <int D>
    void 
-   WFieldContainer<D>::assignRField(RField<D>& lhs, RField<D> const & rhs) 
+   WFields<D>::assignRField(RField<D>& lhs, RField<D> const & rhs) 
    const
    {
       int n = rhs.capacity();
