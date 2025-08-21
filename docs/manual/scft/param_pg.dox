@@ -5,12 +5,14 @@
 <BR>
 
 The parameter file format for SCFT calculations using the pscf_pg
-GPU-accelerated program is almost identical to the parameter file 
-format for the \ref scft_param_pc_page "pscf_pc".
-The Mixture and Interaction blocks use the same format as that used
-by both pscf_1d and pscf_pc, and the Domain block and Environment
-blocks have the same formats as that used by pscf_pc. The only 
-differences between pscf_pc and pscf_pg parameter files are 
+GPU-accelerated program is almost identical to the parameter file
+format for \ref scft_param_pc_page "pscf_pc".  The Mixture block uses
+the same format as that used by both pscf_1d and pscf_pc, with the
+exception of a single optional added parameter (`useBatchedFFT`,
+outlined \ref scft_param_pg_batched_fft_sec "below"). The Interaction
+block also uses the same format as pscf_1d and pscf_pc, and the Domain
+and Environment blocks have the same format as that used by pscf_pc.
+The main differences between pscf_pc and pscf_pg parameter files are 
 differences in the available iterators.
 
 \section scft_param_pg_iterator_sec Iterators
@@ -65,6 +67,47 @@ can be enabled by including a block that starts either with the generic
 label Sweep or the specific label LinearSweep.  The required parameter 
 file format for a linear sweep is described 
 \ref scft_param_sweep_linear_sec "here". 
+
+\section scft_param_pg_batched_fft_sec useBatchedFFT
+
+To compute the stress values for a flexible unit cell, fast Fourier
+transforms (FFTs) need to be performed on the propagator at every step
+along the chain contour. This often means 100 or more independent FFTs
+at a time. By default, pscf_pg performs these FFTs in parallel, using
+a "batched" FFT algorithm provided by cuFFT that performs as many
+parallel FFTs as is needed to maximize GPU occupancy. This can greatly
+accelerate stress calculations when the grid size is modest. 
+
+However, batched FFTs require significant amounts of memory to be
+allocated on the GPU to store the Fourier transform of the propagator,
+which can be avoided when using non-batched FFTs. To be precise,
+batched FFTs nearly double the total on-chip memory usage of the whole
+program. We therefore provide an optional parameter, `useBatchedFFT`, 
+which allows users to toggle between batched and non-batched FFTs. 
+This parameter immediately follows `ds` in the Mixture block of the 
+parameter file. 
+
+Whether or not batched FFTs will cause a problem depends on both the
+GPU being used and the number of gridpoints in the system. Modern GPUs
+tend to have very large on-chip memories (for example, an A100 has
+40GB), so they are capable of handling the memory demand of batched
+FFTs in all but the very largest of calculations. Older GPUs, however,
+have smaller on-chip memories, meaning that users may encounter an
+"out of memory" error even when the calculation is not terribly
+large. 
+
+Furthermore, the computational benefit of batched FFTs shrinks as the
+number of gridpoints increases. For calculations with 100,000
+gridpoints on an A40 GPU, we have found that batched FFTs allow the
+stress to be calculated 10x faster than non-batched FFTs, while for
+calculations with 1,000,000 gridpoints, batched FFTs are only 1.16x
+faster. 
+
+Therefore, we recommend that users use non-batched FFTs for
+calculations that exceed one million gridpoints, or for smaller
+calculations when paired with older GPUs. If an "out of memory"
+error is encountered when using batched FFTs, using non-batched FFTs
+instead will likely remediate the error.
 
 \section scft_param_pg_seealso_sec See Also:
 <ul>
