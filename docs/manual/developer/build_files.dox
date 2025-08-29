@@ -1,0 +1,17 @@
+/*! \page developer_build_files_page Build System File Types
+
+\ref developer_build_add_page          (Prev) 
+&nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_list_page  (Next)
+<BR>
+
+Discuss the different types of makefile fragments used in the PSCF
+build system.
+
+
+<BR>
+\ref developer_build_add_page     (Pre) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_list_page    (Next)  
+
+*/

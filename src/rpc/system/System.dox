@@ -4,10 +4,14 @@ namespace Rpc{
 \page rpc_System_page System
 
 The main object in a pscf_pc or pscf_pg program is an instance of a class
-System<D>, in which the integer template parameter D is the dimension of 
-space specified by the argument of the "-d" command line option.  Closely 
-analogous class templates with this name are defined in the Pscf::Rpc and 
-Pscf::Rpg namespaces for use in pscf_pc and pscf_pg, respectively.
+named System<D>, in which the integer template parameter D is the dimension 
+of space. The value of D is specified by the argument of the "-d" command 
+line option of the main program.  Closely analogous class templates named 
+System are defined in the Pscf::Rpc and Pscf::Rpg namespaces for use in 
+pscf_pc and pscf_pg, respectively. Both of these analogous class templates 
+are derived from partial specializations of a class template named 
+Pscf::Prdc::SystemTmpl, which defines a skeleton parameter file format 
+that is used by both classes. 
 
 Class API Documentation:
 <ul> 
@@ -18,8 +22,8 @@ Class API Documentation:
 \section rpc_System_param_sec Parameter File format
 The outermost block of the parameter file for pscf_pc or pscf_pg, which 
 encloses all of the data in the file, is a block labelled "System". The 
-parameter block format for this file block (and thus for the entire 
-parameter file) is shown in skeleton form below:
+format for this parameter file block (and thus for the entire parameter 
+file) is shown in skeleton form below:
 \code
 System{
   polymerModel* enumeration ("thread" or "bead", "thread" by default)
@@ -32,15 +36,16 @@ System{
   Simulator#*{ ... }
 }
 \endcode
-Here, as elsewhere in this documentation, the suffixes # and * after a 
-name denote selectable and optional elements, respectively. Parameters
-and subblocks are described below:
+Here, as elsewhere in this documentation, the suffixes # and * after a
+label denote selectable and optional elements, respectively. All relevant
+parameters and enclosed blocks are described below:
 <table>
   <tr> 
     <td> polymerModel </td>
     <td> Specifies whether the continuous thread model (value "thread") 
     or the discrete bead model (value "bead") of polymer conformations 
-    will be used globally. (optional, "thread" by default) 
+    will be used for all polymer species throughout all calculations. 
+    (optional, "thread" by default) 
     </td>
   </tr>
   <tr>
@@ -54,18 +59,19 @@ and subblocks are described below:
   <tr>
     <td> Interaction </td>
     <td> 
-    The Interaction block for a system described by the "standard model" 
-    of an incompressible polymer mixture. This matrix-valued "chi" parameter
-    entry contains a list of nonzero Flory-Huggins chi parameters, as 
-    discussed \ref user_param_example_interaction "here". (required)
+    The Interaction block for a system described by the "standard model" of
+    an incompressible polymer mixture. The matrix-valued "chi" parameter
+    entry contains a list of distinct nonzero Flory-Huggins chi parameters, 
+    as discussed \ref user_param_example_interaction "here". (required)
     </td>
   </tr>
   <tr>
     <td> Domain </td>
     <td>
-    The Domain block contains information about the periodic unit cell 
-    and the computational mesh used to discretize fields in that cell, as 
-    described \ref rpc_Domain_page "here". (required)
+    The Domain block contains information about the periodic unit cell,
+    the computational mesh used to discretize fields in that cell, and space
+    group symmetry (if any), as described \ref rpc_Domain_page "here". 
+    (required)
   </tr>
   <tr>
     <td> Environment#* </td>
@@ -79,37 +85,42 @@ and subblocks are described below:
   <tr>
     <td> Iterator#* </td>
     <td>
-    An Iterator implements an iterative algorithm for solving the
-    self-consistent field equations. Available algorithms are listed
-    \ref scft_param_pc_iterator_sec "here". An Iterator is required
-    for any SCFT calculation. (optional and selectable)
+    An Iterator object implements an iterative algorithm for solving 
+    the self-consistent field equations for an SCFT calculation. 
+    Available iteration algorithms are listed on separate manual pages
+    \ref scft_param_pc_iterator_sec "pscf_pc" and for
+    \ref scft_param_pg_iterator_sec "pscf_pg". An Iterator is required
+    for any SCFT calculation, but is not needed for PS-FTS calculations 
+    (optional and selectable)
     </td>
   </tr>
   <tr>
     <td> Sweep#* </td>
     <td>
-    A Sweep performs a sequence of SCFT calculations along a 
+    A Sweep object performs a sequence of SCFT calculations along a 
     user-prescribed 1D path through parameter space, as described
-    \ref scft_param_sweep_page "here". The block is optional and
-    selectable, but the only option that is currently implemented is 
-    a LinearSweep (class Pscf::Rpc::LinearSweep). This is thus also 
-    the default choice obtained using the generic block name "Sweep". 
-    (optional and selectable)
+    \ref scft_param_sweep_page "here". A Sweep may only be added if 
+    an Iterator exists.  The Sweep block is optional and selectable, 
+    but the only option that is currently implemented for either 
+    pscf_pc or pscf_pg is a LinearSweep (class Rpc::LinearSweep or
+    (Rpg::LinearSweep). LinearSweep thus also the default choice 
+    obtained using the generic block name "Sweep".  (optional and 
+    selectable)
     </td>
   </tr>
   <tr>
     <td> Simulator#* </td>
     <td>
     The selectable \ref psfts_param_page "Simulator" block contains 
-    parameters for all of the objects and algorithms that required to 
-    perform a partial saddle-point field theoretic simulation (PS-FTS), 
-    but that are not required for SCFT.  Users may currently select 
-    either a \ref rpc_BdSimulator_page "BdSimulator" block (which 
-    creates an instance of class Pscf::Rpc::BdSimulator \<D\> ) to 
-    perform a field theoretic Brownian dynamics simulation or a 
-    \ref rpc_McSimulator_page McSimulator block (which creates an 
-    instance of class Pscf::Rpc::McSimulator \<D\>) to perform a 
-    field theoretic Monte-Carlo simulation.
+    parameters for all of the algorithms that used to perform and
+    analyze a partial saddle-point field theoretic simulation (PS-FTS), 
+    but that are not used for SCFT.  Users may currently select either 
+    a \ref rpc_BdSimulator_page "BdSimulator" block (which creates 
+    an instance of a class named BdSimulator \<D\>) to perform a 
+    Brownian dynamics PS-FTS or a \ref rpc_McSimulator_page McSimulator 
+    block (which creates an instance of a class named McSimulator \<D\>) 
+    to perform a field theoretic Monte-Carlo simulation.
+    (optional and selectable).
     </td>
   </tr>
 </table>

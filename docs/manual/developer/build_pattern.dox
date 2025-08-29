@@ -1,0 +1,146 @@
+/*! \page developer_build_pattern_page Pattern Rule (patterns.mk) Files
+
+\ref developer_makefile_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_abs_page (Next)
+<BR>
+
+Each namespace level subdirectory of the src/ directory has a makefile
+fragment named "patterns.mk". This file defines pattern rules for compiling 
+*.cpp and *.cu source files in that directory or namespace.  These pattern 
+rules have the same structure in all six namespace level directories. 
+
+The patterns.mk file in each namespace level source directory contains
+a pattern rule for compiling C++ source files with extension .cpp that 
+always looks like this:
+\code
+$(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
+        $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+ifdef MAKEDEP
+        $(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+endif
+\endcode
+In directories that contain CUDA C++ source files, indicated by an 
+extension *.cu, the patterns.mk file also contains an analogous pattern 
+rule for compiling these files, which uses the NVidia CUDA compiler 
+rather than a C++ compiler.
+Both of the patterns creates rules for creating an object file with 
+file extension *.o in a subdirectory of the build directory \$(BLD_DIR) 
+by compiling a *.cpp or *.cu source file with the same base name in 
+the corresponding subdirectory of the source directory \$(SRC_DIR). 
+
+In these pattern rules, the symbol \% is a wildcard that represents 
+a string that appears in the path for the target file that may also 
+appear in one or more pre-requisites.  The rule shown above thus 
+describes how to create a target object file in the build directory 
+with a path of the form \$(BLD_DIR)\%.o by compiling a corresponding 
+source file in the source directory with a path of the form 
+\$(SRC_DIR)/\%.cpp, in which \% represents the common part of the 
+two paths. The common part of these paths may include one or more
+directory separator symbols and the name or names of subdirectories
+of the src directory, as well as the base file name. In order for 
+this pattern rule to work correctly for out-of-source builds, the
+PSCF bld directory must have the same internal directory structure 
+as the src directory.
+ 
+The recipe for this rule contains two lines with different purposes.
+The first line of the recipe actually calls the compiler command, 
+represented by value of the variable \$(CXX), to compile the source file 
+and create the object file.  This second line calls a script whose name 
+is given by the variable \$(MAKEDEP) that creates a corresponding 
+dependency file with extension .d.  The second line is contained 
+within a makefile ifdef construct that executes the second line if and 
+only if the makefile variable MAKEDEP is defined (which it normally is). 
+Note that the dependency file associated with each target object file 
+is created as a side-effect of compilation, and so only exists after 
+the first time the object file is compiled.
+ 
+The following makefile variables are used in the first line of the 
+recipe to define a rule for compiling a source file:
+
+   - BLD_DIR: Absolute path to the build directory
+   - SRC_DIR: Absolute path to the pscfpp/src directory
+   - CXX: name of the C++ compiler executable
+   - CPPFLAGS: flags for the C preprocessor
+   - CXXFLAGS: general flags for the C++ compiler (optimization, warnings, 
+     etc.)
+   - INCLUDES: directories to search for C++ header files, using the -I 
+     compiler option
+   - DEFINES: String of any C++ preprocessor macro definitions
+
+Values for the variables BLD_DIR, SRC_DIR, CXX, CPPFLAGS, CXXFLAGS and
+INCLUDES are all defined in the main config.mk configuration file, 
+which is located in the root of the build directory. 
+
+The DEFINES variable, if not empty, contains a series of preprocessor
+macro definitions that are defined using the "-D" compiler option, 
+which can be used to control use of the C/C++ preprocessor to control 
+conditional compilation of some features. Thus, for example, if both 
+debugging and CUDA compilation are enabled, the value \$(DEFINES) 
+within the file src/pscf/patterns.mk might expand to
+\code
+$(DEFINES) => -DUTIL_DEBUG -DPSCF_CUDA
+\endcode
+The DEFINES variable is assigned a value in the patterns.mk files of 
+each namespace level subdirectory of src/, and is assigned slightly 
+different values in different directories.
+
+The variables MAKEDEP and MAKE_DEPS are used only in the second line of 
+this recipe, in order to construct a *.d dependency file.  The value of 
+MAKEDEP is the name of a script that is used to generate dependency 
+files. The value of this variable is assigned in the main config.mk 
+configuration file in the build directory, and is assigned a value 
+bin/makeDep by default. 
+
+The value of MAKE_DEPS is a list of build configuration files that
+the script that creates dependency files should list as additional
+pre-requisites for all object files in the relevant namespace. Each
+additional dependency in this list is preceded by the symbol "-A"
+which the MAKEDEP script recognizes as a label for an additional
+dependency. The value of this variable usually expands to a string
+\code
+MAKE_DEPS = -A$(BLD_DIR)/config.mk -A$(BLD_DIR)/util/config.mk
+\endcode
+that lists the config.mk configuration files in the build directory
+and in the util subdirectory of the build directory as additional
+pre-requisites. These files are listed as extra pre-requisites in
+the makefile rule for building an object file because they each 
+contain definitions of makefile variables that, if modified, can
+change the list of preprocessor macros that are passed to the 
+compiler via the DEFINES variable, and thereby change the assembly
+code that is produced by compilation.
+
+The definitions of DEFINES and MAKE_DEPS within the file 
+src/rpc/patterns.mk are shown below as an example:
+\code
+# C preprocessor macro definitions
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PRDC_DEFS) $(RPC_DEFS)
+
+# Dependencies of source files in src/rpc on makefile fragments
+MAKE_DEPS= -A$(BLD_DIR)/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/util/pscf.mk
+\endcode
+The DEFINES variable is constructing by concatenating variables 
+UTIL_DEFS, PSCF_DEFS that contain preprocessor definitions that are
+defined in this namespace-level directory (i.e., RPC_DEFS) and in 
+all namespaces-level directories upon which this one depends (i.e.,
+UTIL_DEFS, PSCF_DEFS, and PRDC_DEFS). The resulting string contains 
+all of the preprocessor definitions that are allowed to be used by 
+code in this directory.
+
+The MAKE_DEPS variable also contains a list of build configuration files 
+whose contents can effect compilation of source code in this namespace. 
+This list always contains the main config.mk file from the parent build
+directory and a config.mk file in the util/ subdirectory. These build 
+configuration files are added to the list of dependencies for every 
+object file because changes in these configuration files could change 
+values of a variety of variables that are used in the relevant pattern 
+rule, and and can thus also change the contents of the resulting object 
+files.
+
+<BR>
+\ref developer_build_makefile_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page          (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_standards_page      (Next)
+
+*/

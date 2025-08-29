@@ -1,0 +1,53 @@
+/*! \page developer_build_config_page Build Configuration (config.mk) Files
+
+\ref developer_build_dependency_page  (Prev)
+\ref developer_build_makefile_page  (Next)
+<BR>
+
+The PSCF src, bld and src/util directories each contain a file named 
+config.mk that we refer to as a build configuration file.  These are 
+files that define and assign values to a variety of makefile variables 
+that are needed throughout the build system, and that are included 
+verbatim by other makefiles. Default versions of these three build 
+configuration files are installed by the configure script. 
+Configuration may be modified by the user, either by manually editing 
+them or (more often) by using the setopt script 
+to enable, disable or modify definitions of specific variables from 
+the command line.
+
+The config.mk files in the srd and bld directories are nearly
+identical files that contain code to assign values to the same set 
+of variables, with equal default values for almost all variables.
+The only variable that is treated differently in these files by
+default is the variable BLD_DIR, which is assigned different values 
+in src/config.mk and bld/config.mk in order to enable users to 
+perform either out-of-source or in-source builds, as discussed 
+elsewhere).
+
+Most of the variables defined in the src/config.mk and bld/config.mk
+files fall into one of the following three categories:
+
+   - **Directory path variables:** The variables ROOT_DIR, SRC_DIR,
+     BLD_DIR, and BIN_DIR specify absolute paths to the PSCF root 
+     directory and several of its subdirectories, as discussed in 
+     a previous manual page.
+
+   - **Variables that enable optional features:** The variables
+     UITL_DEBUG and PSCF_CUDA control whether or not particular
+     optional features are enabled when PSCF is compiled, as
+     discussed here.
+
+   - **Variables used in pattern rules**: A variety of variables
+     such as CXX, CPP_FLAGS, CXX_FLAGS, LD_FLAGS are used in the
+     pattern rules for compilation of individual source files.
+
+The meaning and usage of many of the variables defined in the these 
+two very similar files is discussed in extensive comments with these 
+files, as well as in the discussion of pattern rules given below.
+
+<BR>
+\ref developer_build_dependency_page (Prev)
+\ref developer_build_page            (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_makefile_page (Next)
+
+*/

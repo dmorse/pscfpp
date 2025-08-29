@@ -110,7 +110,6 @@ The web manual for the most recent release of PSCF is available online at
   <li> \subpage developer_page
     <ol type="1">
     <li> \ref developer_directory_page </li>
-    <li> \ref developer_list_page </li>
     <li> \ref developer_build_page </li>
     <li> \ref developer_standards_page </li>
     <li> \ref developer_template_page </li>

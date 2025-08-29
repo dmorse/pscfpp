@@ -24,6 +24,7 @@ Directory Structure (see below)
 Source File Lists (Written)
 
 Build System (Needs to be rewritten)
+------------------------------------
 
    - Makefiles (Top Down)
 
@@ -43,9 +44,38 @@ Build System (Needs to be rewritten)
 
    - Makefile
 
+Build System (Proposed Revision)
+--------------------------------
+
+   - Overview 
+
+   - Basics: Compiling
+
+   - Basics: Adding Source Code Files
+
+   - Introduction to Make 
+
+   - Build system file types
+
+   - Source file list (sources.mk) files
+
+   - Dependency files
+
+   - Configuration (config.mk) files
+
+   - Pattern rule (pattern.mk) files
+
+   - Makefiles:
+
+       - Namespace level directories
+       - Program level directories
+       - Lower level directories
+       - Build directories (src/ and bld/)
+       - Root directories
+
 Coding Standards (complete)
 
-Use of C++ Templates (complete)
+C++ Templates (complete)
 
 Parameter File IO (needs to be edited)
 

@@ -1,0 +1,131 @@
+/*! \page developer_build_compile_page Basics: Compiling 
+
+\ref developer_build_make_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_add_page  (Next)
+<BR>
+
+The simplest way that developers use the PSCF makefile system is to
+compile source code files. This page gives a brief description of how 
+to compile either the entire package or a subset of the source code 
+files within PSCF that is aimed at developers.
+
+The PSCF build system can perform either in-source or out-of-source
+compilation. For in-source compilation, all intermediate files (i.e., 
+object, dependency and library files) are placed within the src directory 
+that also contains the source files. Specifically, for in-source 
+compilation, object (*.o) and dependency (*.d) files associated with 
+each compilable source (*.cpp or *.cu) file are placed in the same 
+directory as the corresponding source file, while the static library 
+(*lib.a) file associated with each namespace level directory is placed 
+in the root of that namespace level directory.  For out-of-source 
+compilation, all intermedate files are placed in analogous locations 
+within the bld directory tree, which has a structure of subdirectories 
+analogous to that of the src directory tree.
+
+To compile a set of PSCF source files, one generally must invoke the 
+command "make all" from a working directory within the src or bld 
+directory tree.  The choice of which source files will be compiled, 
+and whether they are compiled in-source or out-of-source, is determined 
+by the location of the working directory from which "make all" is 
+invoked.  
+
+The command "make", with no command arguments, is always equivalent 
+to "make all", because the "all" target is the default target of every 
+makefile in the PSCF repository.  In the remainder of this page, we 
+will usually describe the command as "make all", with the understanding 
+that the "make" command, with no command argument, can always be used 
+as a synonym for "make all".
+
+Invoking "make all" from within src directory tree results in in-source 
+compilation, while invoking make from within the build directory results 
+in out-of-source compilation.  Invoking "make all" from the root of the 
+src directory tree causes the build system to perform an in-source 
+build of the entire package.  Invoking "make all" from the root of the 
+bld directory tree instead causes the build system to perform an 
+out-source-build of the entire PSCF package. Invoking "make all" from
+the root directory of the pscfpp also causes out-of-source compilation
+of the entire package.
+
+The "make all" command can also be invoked from subdirectories of the 
+src directory in order to perform in-source compilation of a subset of 
+the PSCF source files.  Invoking "make all" from almost any subdirectory 
+of the src directory tree causes in-source compilation of all of the 
+*.cpp and *.cu source code files in the tree rooted at that directory. 
+The only exception to this is the src/test directory, which contains 
+header files for a unit test framework, and does not contain a makefile.  
+During work on PSCF, a developer can thus edit a few files in a lower 
+level subdirectory within the src directory tree, exit the editor, and 
+then invoke "make all" from within the same directory to re-create any 
+object files in that directory that depend on the files that were just 
+changed.  For reasons that are explained below, this usage will not 
+cause any unnecessary re-building of object files that were already 
+up to date, and can be used as an efficient workflow.
+
+Invoking "make all" from any namespace level subdirectory of the bld 
+directory causes out-of-source compilation of source code files in the 
+corresponding namespace level directory within the src directory tree. 
+The "make" command cannot, however, be invoked from lower-level 
+subdirectories of the bld directory tree, because these do not contain 
+makefiles.
+
+When "make all" is invoked from any namespace level directory of either 
+the src or bld directory, the static library (*lib.a) file associated 
+with that directory is also updated if necessary. The static library
+file associated with a namespace level directory contains the object
+code for all of the source code files in that directory.
+
+When working on PSCF, developers often go through a cycle in which they
+repeatedly edit one or two files, then invoke the compiler to compile 
+the resulting modified files, then go back to editing. Because of the
+way that the build system functions, repeatedly invoking "make all" 
+does not result in any redundant recompilation of files that are 
+already up to date.  When a "make" or "make all" command instructs the 
+build system to update an object file that already exists, the build 
+system will actually compile the associated source file if and only 
+if it determines that the object file has become outdated due to changes 
+in the C++ files from which it was created. If the object file is up to
+date, the build system will do nothing. The build system knows which 
+files an existing object file depends on (including any header files 
+that are directly or indirectly included by the assocated *.cpp or 
+*.cu file) because a list of these files is given by the list of 
+"pre-requisites" given in the associated *.d dependency file. Using
+this list, the decision about whether the object file is outdated can
+be made by comparing time stamps for the object file to those of all 
+of its pre-requisites. Similarly, a command to create or update a 
+library file actually causes the library to be rebuilt if and only if 
+one or more of the object files whose contents are incorporated into 
+the library is out of date, or has been modified since the last time 
+the library file was created. Use of the "make all" or "make" to 
+invoke the compiler thus can and should be used as a normal part of a
+development work flow, and does result in any unnecessary rebuilding
+of intermediate files. Part of the job of the build system is to decide 
+for you what intermediate files needs to be recompiles after you change 
+a few source code files.
+
+Some developers who have worked with makefile systems for other packages
+may be tempted to try to explicitly re-create a single object file by 
+giving the name of the object file as a target (i.e., command line 
+argument) of the "make" command. This will work as intended for PSCF 
+if and only if you give the path to the file as an absolute path, from 
+the root of the entire filesystem. For example, to compile just the 
+file src/pscf/Monomer.cpp from within a PSCF repository that is 
+installed in the pscfpp/ subdirectory of the user home directory of 
+a user named "smith" for which /users/smith is the absolute path to 
+the user home directory, one could type
+\code
+   make /users/smith/pscfpp/src/chem/Monomer.o
+\endcode
+Typing "make Monomer.o" from within the src/chem directory would, 
+however, not work.  The reason for this is that paths to files used by 
+the PSCF makefile system are all stored internally as absolute paths, 
+and the make utility cannot correctly recognize a base name such as 
+"Monomer.o" as a synonynm for the corresponding absolute path. We thus 
+recommend the consistent use of the command "make all", in part, to 
+avoid the need to type out verbose absolute paths.
+
+<BR>
+\ref developer_build_make_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page       (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_add_page   (Next)
+
+*/

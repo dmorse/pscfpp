@@ -5,9 +5,9 @@
 <BR>
 
 The first subblock of the main System block in every PSCF parameter file
-is required block that starts with a label "Mixture", and is referred to 
-as the Mixture block.  The Mixture block describes the chemical composition 
-of the system that is being simulated, and includes a description of the 
+is required block that starts with a label "Mixture", and is referred to
+as the Mixture block.  The Mixture block describes the chemical composition
+of the system that is being simulated, and includes a description of the
 chemical structure of each species in the mixture.
 
 PSCF programs are designed to treat a mixture that may contain one or
@@ -20,14 +20,14 @@ Each monomer type is assigned an integer index and a statistical segment
 length.  Each copolymer block and each solvent species is assigned an
 integer parameter named monomerId that specifies the type of monomer from
 which it is constructed.  The Mixture block contains information that
-specifies the structure of each polymer species within the mixture 
+specifies the structure of each polymer species within the mixture
 (including information about the length and connectivity of the blocks),
 the monomer type and volume of each solvent species, and the composition
 of the mixture.
 
 \section user_param_mixture_example_sec Example
 
-For reference, here is the Mixture block from the example parameter file 
+For reference, here is the Mixture block from the example parameter file
 shown \ref user_param_example_page "previously" :
 \code
   Mixture{
@@ -56,31 +56,37 @@ shown \ref user_param_example_page "previously" :
   }
 \endcode
 
-\section user_param_mixture_format_sec Format 
+\section user_param_mixture_format_sec Format
 
-The format for the mixture block in any PSCF parameter file, which has been
-shown previously, is also repeated below:
+All three PSCF programs use very similar format for the Mixture block.  The 
+pscf_1d and pscf_pc programs use identical formats for this block, which 
+was described on the \ref user_param_format_example2_sec "previous page"
+The format used by the pscf_pg program accepts one additional optional
+parameter named useBatchedFFT the end of the block. The format of the
+Mixture block used by pscf_pg is shown below
 \code
 Mixture{
   nMonomer   int
   monomers   Array [ real ]
   nPolymer   int
-  nSolvent*  int (0 by default)
+  nSolvent*   int (0 by default)
   Polymer{ ... }
     ...
   Solvent*{ ... }
     ...
   vMonomer*  real (1.0 by default)
   ds         real (only allowed for thread model)
+  useBatchedFFT*  bool (only valid for pscf_pg)
 }
 \endcode
-The asterisks after the nSolvent and vMonomer labels indicates that 
-these are optional parameters.  The ellipses after the Polymer and 
-Solvent blocks are used to indicate that the Mixture block may contain
-several subblocks of each type.  The number of Polymer subblocks must 
-equal nPolymer, and the number of Solvent subblocks must equal nSolvent.
-Because the optional parameter nSolvent is set to 0 by default, there 
-cannot be any Solvent subblocks if the nSolvent parameter is absent.
+The asterisks after nSolvent, Solvent, vMonomer and useFFTBatched labels
+indicates that these are optional parameters or subblocks.  The ellipses
+after the Polymer and Solvent blocks are used here to indicate that the
+Mixture block may contain several subblocks of each type.  The number of
+Polymer subblocks must equal nPolymer, and the number of Solvent subblocks
+must equal nSolvent. Because the optional parameter nSolvent is set to 0
+by default, no Solvent subblocks may be present if the nSolvent parameter
+is absent.
 
 The meanings of parameters and subblocks are described in the following
 table:
@@ -91,7 +97,7 @@ table:
   </tr>
   <tr>
     <td> nMonomer </td>
-    <td> 
+    <td>
       Number of distinct monomer types in the mixture (positive int)
     </td>
   </tr>
@@ -135,96 +141,108 @@ table:
           The ds parameter is only valid for the thread model.
           </td>
   </tr>
+  <tr>
+     <td> useBatchedFFT* </td>
+     <td> For pscf_pg, this boolean flag controls a computational detail
+          that is discussed \ref scft_param_pg_batched_fft_sec "here".
+          This parameter may only appear in pscf_pg parameter files
+          (optional, 1 or true by default)
+          </td>
+  </tr>
 </table>
+
+The format for the Mixture block used by pscf_pg has one additional optional
+algorithm parameter named usedBatchedFFT at end of the block, as discussed
+\ref scft_param_pg_batched_fft_sec "here".
 
 Comments:
 
   - Monomer types are implicitly assigned integer type identifiers in the
     order in which they appear in the monomers array, with indices that
-    start from 0. We thus assign an index 0 to the monomer type whose 
-    statistical segment length is given as the first element in this 
-    array, and index 1 to the second, and so on.  These integer monomer 
-    type indices are used to elsewhere in the parameter file identify the 
-    monomer types associated with each block of each block polymer and 
+    start from 0. We thus assign an index 0 to the monomer type whose
+    statistical segment length is given as the first element in this
+    array, and index 1 to the second, and so on.  These integer monomer
+    type indices are used to elsewhere in the parameter file identify the
+    monomer types associated with each block of each block polymer and
     with each solvent species type.
 
   - Polymer and solvent species are also assigned integer labels in the
     order in which Polymer and Solvent subblocks appear in the parameter
-    file.  The polymer species described by the first Polymer block in 
+    file.  The polymer species described by the first Polymer block in
     the parameter file is thus assigned an index 0, the polymer described
-    by the second block is assigned an index 1, etc.  Similarly, the 
-    solvent species described by the first Solvent subblock (if any) is 
+    by the second block is assigned an index 1, etc.  Similarly, the
+    solvent species described by the first Solvent subblock (if any) is
     assigned an index 0, etc.
 
-  - The parameter nSolvent (the number of solvent species) may be zero, 
-    and is set to zero by default if the parameter does not appear in 
-    the parameter file, as noted above. The parameter nPolymer must, 
+  - The parameter nSolvent (the number of solvent species) may be zero,
+    and is set to zero by default if the parameter does not appear in
+    the parameter file, as noted above. The parameter nPolymer must,
     however, be greater than zero.  Correspondingly, the Mixture block
-    must always contains one or more Polymer subblocks and zero or more 
-    Solvent subblocks. 
+    must always contains one or more Polymer subblocks and zero or more
+    Solvent subblocks.
 
   - The parameter vMonomer is an optional parameter, and is usually absent
     from parameter files for standard SCFT calculations. The reasons that
-    it may be neglected in such calculations have been briefly discussed 
-    \ref user_model_conventions_vMonomer_sec "elsewhere".  Users are 
-    nonetheless given the option of providing a value for vMonomer because 
-    an input value for vMonomer is required as an input for some optional 
-    outputs of the pscf_1d program (such as the total excess free energy 
-    of a spherical micelle). It is also included as an optional parameter 
-    because the value of vMonomer is a required input parameter for 
+    it may be neglected in such calculations have been briefly discussed
+    \ref user_model_conventions_vMonomer_sec "elsewhere".  Users are
+    nonetheless given the option of providing a value for vMonomer because
+    an input value for vMonomer is required as an input for some optional
+    outputs of the pscf_1d program (such as the total excess free energy
+    of a spherical micelle). It is also included as an optional parameter
+    because the value of vMonomer is a required input parameter for
     stochastic PS-FTS simulations.
 
-  - The parameter ds is required when the thread model is being used, 
+  - The parameter ds is required when the thread model is being used,
     but may not appear in a parameter file that uses a bead model. The
     pscf_1d program can only use the thread model, and so always requires
     a "ds" parameter. For the pscf_pc and pscf_pg programs, the choice of
     bead or thread model is determined by the value of the polymerModel
     parameter, which is the first (optional) element of the main System
-    block and appears before the Mixture block. 
+    block and appears before the Mixture block.
 
 <i> Technical comments (for users who examine the source code) </i>:
 
 The source code for PCSF is defined within a C++ namespace named Pscf.
 This top-level namespace contains several enclosed namespaces named
-Prdc, R1d, Rpc, and Rpg. Namespace Pscf::Prdc contains code relevant 
+Prdc, R1d, Rpc, and Rpg. Namespace Pscf::Prdc contains code relevant
 to problems involving periodic boundary conditions, which is used to
-construct both pscf_pc and pscf_pg.  The enclosed namespaces named R1d, 
-Rpc, and each contain code that is only used by one executable program 
-(e.g., pscf_1d, pscf_pc or pscf_pg, respectively).  
+construct both pscf_pc and pscf_pg.  The enclosed namespaces named R1d,
+Rpc, and each contain code that is only used by one executable program
+(e.g., pscf_1d, pscf_pc or pscf_pg, respectively).
 
 We refer to the enclosed namespaces R1d, Rpc, and Rpg throughout this
 documentation as implementation-level namespaces, because each contains
-contain associated with a single implementation of polymer field theory,
-corresponding to a different executable program. By convention, code
+contain files that are only used within a single implementation of polymer
+field theory, corresponding executable program. By convention, code
 defined in any implementation-level namespace may not use names defined
-in a different impelementation level namespace. The segregation of 
-code associated with different executables into separate namespaces
-allows identical names to be used for several analogous classes in 
-different implementation-level namespaces without causing name clashes
-or ambiguity.  
+in a different impelementation level namespace. The segregation of code
+associated with different executables into separate namespaces allows
+identical names to be used for several analogous classes in different
+implementation-level namespaces without causing name clashes or
+ambiguity.
 
-Each implementation-level namespace contains a class or class template 
+Each implementation-level namespace contains a class or class template
 named Mixture. The R1d namespace contains a class named Mixture. The
-Rpc and Rpg namespaces each contain a class template Mixture<int D>, in 
-which the integer dimensionality of space D is a template parameter. 
-The Mixture object used by the pscf_pc program to treat a 2D periodic 
-structure is thus an instance of class Pscf::Rpc::Mixture<2>, for which 
-the dimensionality of space is specified by the template parameter D=2.  
-All of the Mixture classes and class templates defined in implementation 
-level namespaces are derived from instances of a base class template 
-named Pscf::MixtureTmpl.  All of these Mixture classes use the same 
-parameter file format, which is described above. Most of this format 
-is defined in the member function Pscf::MixtureTmpl::readParameters of 
-the shared base class template. 
+Rpc and Rpg namespaces each contain a class template Mixture<int D>, in
+which the integer dimensionality of space D is a template parameter.
+The Mixture object used by the pscf_pc program to treat a 2D periodic
+structure is thus an instance of class Pscf::Rpc::Mixture<2>, for which
+the dimensionality of space is specified by the template parameter D=2.
+All of the Mixture classes and class templates defined in implementation
+level namespaces are derived from instances of a base class template
+named Pscf::MixtureTmpl.  All of these Mixture classes use very similar
+parameter file formats, as described above. Most elements of this format
+are defined in the member function Pscf::MixtureTmpl::readParameters of
+the shared base class template.
 
-The array "monomers" is implemented internally as an array of instances of 
+The array "monomers" is implemented internally as an array of instances of
 the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".
 
 \section user_param_polymer_sec Polymer
 
-The Mixture block always contains one or more Polymer blocks, each of
-which contains information about a specific polymer molecule species.
-The format for a polymer block is
+The Mixture block must contain one or more Polymer blocks, each of which
+contains information about a specific polymer molecule species.  The
+format for a polymer block is
 \code
   Polymer{
      type*  enumeration  ("linear" or "branched", linear by default)
@@ -242,8 +260,8 @@ The meaning of different parameters is summarized in the table below:
   </tr>
   <tr>
     <td> type* </td>
-    <td> enumeration with allowed values "linear" or "branched"
-         (optional,  "linear" by default).  </td>
+    <td> enumeration with allowed text representations "linear" or
+         "branched" (optional,  "linear" by default).  </td>
   </tr>
   <tr>
     <td> nBlock </td>
@@ -252,7 +270,7 @@ The meaning of different parameters is summarized in the table below:
   <tr>
     <td> blocks </td>
     <td> array in which each element contains a description of one
-         block, represented internally by an object of type "Block".
+         block of a block polymer
     </td>
   </tr>
   <tr>
@@ -277,21 +295,21 @@ Comments:
     contains a description of one block of a block polymer, listed in the
     order of increasing block index.  The description of each block is
     stored internally in an object of type "Block", as indicated by the
-    notation "Array [ Block ]" in the above format description. 
+    notation "Array [ Block ]" in the above format description.
 
   - The required text representation for each Block in the "blocks" array
     is different depending on whether the value of the type parameter for
     the polymer is \ref user_param_block_linear_sub "linear" (the default)
-    or \ref user_param_block_branched_sub "branched", as discussed 
+    or \ref user_param_block_branched_sub "branched", as discussed
     \ref user_param_block_sec "below" .
 
-  - The last parameter in a Polymer block must be either a value for phi, 
+  - The last parameter in a Polymer block must be either a value for phi,
     which is the volume fraction occupied by the polymer species, or a
-    value for mu, which is the chemical potential for that species.  The 
-    Polymer block must contain either a phi parameter or a mu parameter 
+    value for mu, which is the chemical potential for that species.  The
+    Polymer block must contain either a phi parameter or a mu parameter
     in this location, and may not contain both.
 
-  - When the volume fraction parameter phi is present, its value must lie 
+  - When the volume fraction parameter phi is present, its value must lie
     in the range [0,1].
 
 Descriptions of parameter file formats for individual blocks of linear and
@@ -300,8 +318,8 @@ branched polymers are discussed separately below.
 <i> Technical comment (for users who examine the source code)</i>:
 A class or class template named Polymer is defined in each
 implementation-level namespace of the top-level Pscf namespace (i.e., in
-the R1d, Rpc and Rpg sub-namespaces of Pscf). These Polymer classes all 
-use the same parameter file format, which is described above. Each of 
+the R1d, Rpc and Rpg sub-namespaces of Pscf). These Polymer classes all
+use the same parameter file format, which is described above. Each of
 these Polymer classes is a subclass of an instances of a common class
 template named Pscf::PolymerTmpl. The readParameters function of this
 base class template defines the common file format.
@@ -319,23 +337,23 @@ array in the order in which they appear along the polymer, starting from
 one end. In this case the data required in each line of the blocks array
 takes a slightly different form when using a thread model or a bead model.
 
-<b> Thread model</b>: For the thread model, each line of the blocks array 
-must have the form
+<b> Thread model</b>: For the thread model, each line of the blocks array
+for a linear polymer must have the form
 \code
     monomerId  length
 \endcode
 where monomerId is the monomer type index for monomers in the block,
 and length is a real number giving the contour length of the block.
 
-<b> Bead model </b>: For the bead model, each line of the block array has 
-the form
+<b> Bead model </b>: For the bead model, each line of the blocks array
+for a linear polymer has the form
 \code
     monomerId  nBead
 \endcode
 where monomerId is the monomer type index for every bead in the block
-and nBead is the integer number of beads in the block. 
+and nBead is the integer number of beads in the block.
 
-The meanings of these variable values are described in the following 
+The meanings of these variable values are described in the following
 table:
 <table>
   <tr>
@@ -359,54 +377,57 @@ table:
     <td> number of bead in the block (bead model) </td>
   </tr>
 </table>
+The only difference between formats used for thread and bead models
+is the use of a floating point number "length" or an integer "nBead"
+to specify the block length.
 
 \subsection user_param_block_branched_sub Branched polymers
 
-If the polymer type is branched, then the information in the "blocks" 
-array of a Polymer block must contain a description of the topology of 
-the polymer, as well as the monomer type and length of each block.  As 
-discussed \ref user_model_polymer_branched_sec "previously", a branched 
-polymer is described in PSCF as an acyclic graph consisting of a set of 
-labelled vertices connected by "edges", in which each edge corresponds 
-to a block, and each vertex is a junction or chain end. An acyclic 
-connected polymer with nBlock blocks always contains exactly nBlock + 1 
-vertices. To describe a branched polymer with nBlock blocks, the user 
-must assign each vertex a unique index in the range 0, ..., nBlock. Each 
-block connects a specific pair of vertices that may be identified by 
-their integer vertex indices. The parameter file format for a branched 
-polymer requires that the data for each block include the indices of 
-the two attached vertices.
+If the polymer type is branched, then the information in the "blocks"
+array of a Polymer block must contain a description of the topology of
+the polymer, as well as the monomer type and length of each block.  As
+discussed \ref user_model_polymer_branched_sec "previously", a branched
+polymer is described in PSCF as an acyclic graph consisting of a set of
+vertices with integer labels connected by "edges", in which each edge
+corresponds to a block, and each vertex is a junction or chain end. An
+acyclic connected polymer with nBlock blocks always contains exactly
+nBlock + 1 vertices. To describe a branched polymer with nBlock blocks, the
+user must assign each vertex a unique index in the range 0, ..., nBlock.
+Each block connects a specific pair of vertices that may be identified by
+their integer vertex indices. The parameter file format for a block in
+a branched polymer differs from that used for a linear polymer in that
+the data for each block must include the indices of the two attached
+vertices.
 
 <b> Thread model: </b>: In the thread model, the line associated with
-each block in the "blocks" array for a branched polymer must be of the 
+each block in the "blocks" array for a branched polymer must be of the
 form
 \code
     monomerId  length   vertexId0   vertexId1
 \endcode
-where monomerId and length are the integer monomer type index and 
-floating point length of the block, while vertexId0 and vertexId1 are 
-integer indices of the two vertices to which the block is attached. 
+where monomerId and length are the integer monomer type index and
+floating point length of the block, while vertexId0 and vertexId1 are
+integer indices of the two vertices to which the block is attached.
 
-<b> Bead model: </b>: In the bead model, each block in the "blocks" 
-array is of the form
+<b> Bead model: </b>: In the bead model, each line in the "blocks"
+array for a branched polymer is of the form
 \code
     monomerId  nBead vertexId0   vertexId1
 \endcode
 where nBead is the integer number of beads in the block, and the
-meaning of monomerId, vertexId0 and vertexId1 are the same as in
-the thread model. 
+meaning of monomerId, vertexId0 and vertexId1 are the same as for
+the thread model.
 
-<em> Example: </em> As a simple example of a branched polymer, consider 
-a pure melt of pure ABC star terpolymer that contains three chemically 
-distinct blocks connected at a central junction, for which nBlock = 3. 
-For simplicity, assume that the three blocks in this polymer have monomer
-types indices 0, 1 and 2.  Let vertices 0, 1, and 2 represent the free
-ends of the blocks with monomer types 0, 1, and 2, respectively, and let 
-vertex 3 be the central junction.  For simplicity, we use the thread 
-model and set the lengths of each block to 1.0.  
+<em> Example: </em> As a simple example of a branched polymer, consider
+a one-component melt containing an ABC star terpolymer that contains three
+chemically distinct blocks connected at a central junction. For simplicity,
+let the three blocks in this polymer have monomer types indices 0, 1 and 2.
+Let vertices 0, 1, and 2 represent the free ends of the blocks with
+monomers of types 0, 1, and 2, respectively, and let vertex 3 be the
+central junction.  As an example, we use the thread model and set the
+length of each block to 1.0.
 
-The Polymer block for such a star polymer within the parameter file 
-would look like this:
+The Polymer block for such a star polymer would look like this:
 \code
   Polymer{
     type branched
@@ -425,38 +446,38 @@ this example on the assumption that this is a one-component terpolymer
 melt, for which the volume fraction of this species must equal unity.
 
 In the bead model, a corresponding description of an ABC star terpolymer
-would differ from that given above only in that the length of each 
+would differ from that given above only in that the length of each
 block would have to be given as an integer number of beads. For example,
 for an ABC star polymer in which each block has 50 beads, the floating
-point length of 1.0 given in each line of the blocks array would be 
-replaced by an integer value of 50. 
+point length of 1.0 given in each line of the blocks array would be
+replaced by an integer value of 50.
 
 <i> Technical comment (for users who examine the source code)</i>:
-A class or class template named Block is also defined in every
-implementation-level namespace. Each such Block class is a subclasses
-of a base class named Pscf::Edge. The data for each line of the 
-"blocks" array is read in using an overloaded insertion (>>) operator 
-for an Edge, which defines the text representation of the data required 
-in a single line of the "blocks" array. The required text 
-representation depends both on whether the block is part of a linear 
-or branched polymer, and on whether the program is using the thread 
-or bead model. A mixture may contain some polymers that are branched
-and others that are linear, but all polymers in a system must be
-treated using either the thread model or the bead model.
+A class or class template named Block is defined in each
+implementation-level namespace. Each such Block class is a subclass of
+a base class named Pscf::Edge. The data for each line of the "blocks"
+array is read in using an overloaded insertion (>>) operator for an
+Edge, which defines the text representation of the data required in a
+single line of the "blocks" array. The required text representation
+depends both on whether the block is part of a linear or branched
+polymer, and on a globally accessible variable that determines whether
+the program is using the thread or bead model. A mixture may contain
+some polymers that are branched and others that are linear, but the
+polymers in a system must either all use the thread model, or all use
+the bead model.
 
 \section user_param_solvent_sec Solvent
 
-A mixture block may contain zero or more Solvent blocks, each of
-which describes a small-molecule solvent species. Solvent species 
-are treated in PSCF as point-like particles that occupy a specified 
-volume (or "size"). Interactions of solvents with polymers and 
-other solvents is described by assigning the solvent a monomer 
-type index.
+A mixture block may contain zero or more Solvent blocks, each of which
+describes a small-molecule solvent species. Solvent species are treated
+in PSCF as point-like particles that occupy a specified volume
+(or "size"). Interactions of solvents with polymers and other solvents
+is described by assigning the solvent a monomer type index.
 
 Solvent blocks should be present if and only if the optional parameter
-nSolvent is present and is assigned a positive value. When nSolvent
-is absent, it is set to 0 by default. If nSolvent > 0, then exactly
-nSolvent Solvent blocks must appear within the Mixture block
+nSolvent is present and is assigned a positive value. When nSolvent is
+absent, this parameter is set to 0 by default. If nSolvent > 0, then
+exactly nSolvent Solvent blocks must appear within the Mixture block
 immediately after the Polymer blocks.
 
 The format for a single solvent block is
