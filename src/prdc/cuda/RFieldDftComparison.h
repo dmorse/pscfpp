@@ -94,7 +94,7 @@ namespace Cuda {
    };
 
    #ifndef PRDC_CUDA_R_FIELD_DFT_COMPARISON_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class RFieldDftComparison<1>;
    extern template class RFieldDftComparison<2>;
    extern template class RFieldDftComparison<3>;

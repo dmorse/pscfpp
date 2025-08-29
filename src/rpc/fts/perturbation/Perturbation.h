@@ -197,12 +197,10 @@ namespace Rpc {
       return *systemPtr_; 
    }
 
-   #ifndef RPC_PERTURBATION_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Perturbation<1>;
    extern template class Perturbation<2>;
    extern template class Perturbation<3>;
-   #endif
 
 }
 }

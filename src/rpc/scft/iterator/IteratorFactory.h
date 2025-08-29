@@ -53,12 +53,10 @@ namespace Rpc {
 
    };
 
-   #ifndef RPC_ITERATOR_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class IteratorFactory<1>;
    extern template class IteratorFactory<2>;
    extern template class IteratorFactory<3>;
-   #endif
 
 }
 }

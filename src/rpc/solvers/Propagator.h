@@ -303,12 +303,10 @@ namespace Rpc {
       blockPtr_ = &block; 
    }
 
-   #ifndef RPC_PROPAGATOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Propagator<1>;
    extern template class Propagator<2>;
    extern template class Propagator<3>;
-   #endif
 
 }
 }

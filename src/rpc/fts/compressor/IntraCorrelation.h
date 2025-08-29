@@ -84,12 +84,10 @@ namespace Rpc {
    {  return *systemPtr_; }
 
    
-   #ifndef RPC_INTRACORRELATION_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class IntraCorrelation<1>;
    extern template class IntraCorrelation<2>;
    extern template class IntraCorrelation<3>;
-   #endif
 
 } // namespace Rpc
 } // namespace Pscf

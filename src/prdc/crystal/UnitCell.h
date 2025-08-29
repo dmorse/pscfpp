@@ -567,8 +567,7 @@ namespace Prdc {
       return out;
    }
 
-   #ifndef PRDC_UNIT_CELL_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
 
    extern template class UnitCell<1>;
    extern template class UnitCell<2>;
@@ -587,7 +586,6 @@ namespace Prdc {
                                 UnitCell<2>::LatticeSystem const& lattice);
    extern std::istream& operator >> (std::istream& in, 
                                 UnitCell<3>::LatticeSystem const& lattice);
-   #endif
 
 }
 }

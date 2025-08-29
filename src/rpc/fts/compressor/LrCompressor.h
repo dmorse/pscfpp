@@ -206,12 +206,10 @@ namespace Rpc {
 
    };
    
-   #ifndef RPC_LR_COMPRESSOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class LrCompressor<1>;
    extern template class LrCompressor<2>;
    extern template class LrCompressor<3>;
-   #endif
 
 } // namespace Rpc
 } // namespace Pscf

@@ -138,12 +138,10 @@ namespace Rpc {
    inline Simulator<D>& ConcentrationWriter<D>::simulator()
    {  return *simulatorPtr_; }
 
-   #ifndef RPC_CONCENTRATION_WRITER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class ConcentrationWriter<1>;
    extern template class ConcentrationWriter<2>;
    extern template class ConcentrationWriter<3>;
-   #endif
 
 }
 }

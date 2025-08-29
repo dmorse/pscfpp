@@ -72,12 +72,10 @@ namespace Rpc
 
    };
 
-   // Suppress implicit instantiation
-   #ifndef RPC_CHI_DERIVATIVE_TPP
+   // Explicit instantiation declarations
    extern template class ChiDerivative<1>;
    extern template class ChiDerivative<2>;
    extern template class ChiDerivative<3>;
-   #endif
 
 }
 }

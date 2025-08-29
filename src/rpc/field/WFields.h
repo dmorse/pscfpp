@@ -78,7 +78,7 @@ namespace Rpc {
    };
 
    #ifndef RPC_W_FIELD_CONTAINER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class WFields<1>;
    extern template class WFields<2>;
    extern template class WFields<3>;
@@ -88,7 +88,7 @@ namespace Rpc {
 
 #ifndef RPC_W_FIELD_CONTAINER_TPP
 namespace Prdc {
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class WFieldsTmpl<1, RField<1>, Rpc::FieldIo<1> >;
    extern template class WFieldsTmpl<2, RField<2>, Rpc::FieldIo<2> >;
    extern template class WFieldsTmpl<3, RField<3>, Rpc::FieldIo<3> >;

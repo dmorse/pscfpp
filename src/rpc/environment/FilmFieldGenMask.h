@@ -164,11 +164,10 @@ namespace Rpc {
    inline RealVec<D> FilmFieldGenMask<D>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
-   #ifndef RPC_MASK_GEN_FILM_TPP
+   // Explicit instantiation declarations
    extern template class FilmFieldGenMask<1>;
    extern template class FilmFieldGenMask<2>;
    extern template class FilmFieldGenMask<3>;
-   #endif
 
 } // namespace Rpc
 } // namespace Pscf

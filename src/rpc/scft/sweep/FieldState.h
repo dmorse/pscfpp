@@ -198,12 +198,10 @@ namespace Rpc
       return *systemPtr_; 
    }
 
-   #ifndef RPC_FIELD_STATE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FieldState< 1, DArray<double> >;
    extern template class FieldState< 2, DArray<double> >;
    extern template class FieldState< 3, DArray<double> >;
-   #endif
 
 } // namespace Rpc
 } // namespace Pscf

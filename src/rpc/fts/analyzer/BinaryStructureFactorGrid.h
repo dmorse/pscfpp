@@ -205,12 +205,10 @@ namespace Rpc {
    inline Simulator<D>& BinaryStructureFactorGrid<D>::simulator()
    {  return *simulatorPtr_; }
 
-   #ifndef RPC_BINARY_STRUCTURE_FACTOR_GRID_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class BinaryStructureFactorGrid<1>;
    extern template class BinaryStructureFactorGrid<2>;
    extern template class BinaryStructureFactorGrid<3>;
-   #endif
 
 }
 }

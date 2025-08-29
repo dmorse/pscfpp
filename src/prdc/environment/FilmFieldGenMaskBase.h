@@ -273,8 +273,8 @@ namespace Prdc {
    inline bool FilmFieldGenMaskBase<D>::hasFBulk() const
    {  return hasFBulk_; }
 
-   #ifndef PRDC_MASK_GEN_FILM_BASE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
+   #ifndef PRDC_FILM_MASK_FG_BASE_TPP
    extern template class FilmFieldGenMaskBase<1>;
    extern template class FilmFieldGenMaskBase<2>;
    extern template class FilmFieldGenMaskBase<3>;

@@ -898,11 +898,10 @@ namespace Prdc {
    inline bool Basis<D>::isInitialized() const
    {  return isInitialized_; }
 
-   #ifndef PRDC_BASIS_TPP
+   // Explicit instantiation declarations
    extern template class Basis<1>;
    extern template class Basis<2>;
    extern template class Basis<3>;
-   #endif
 
 } // namespace Prdc
 } // namespace Pscf

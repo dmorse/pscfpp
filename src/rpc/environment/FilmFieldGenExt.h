@@ -160,11 +160,10 @@ namespace Rpc {
    inline int FilmFieldGenExt<D>::systemNMonomer() const
    {  return system().mixture().nMonomer(); }
    
-   #ifndef RPC_EXT_GEN_FILM_TPP
+   // Explicit instantiation declarations
    extern template class FilmFieldGenExt<1>;
    extern template class FilmFieldGenExt<2>;
    extern template class FilmFieldGenExt<3>;
-   #endif
 
 } // namespace Rpc
 } // namespace Pscf

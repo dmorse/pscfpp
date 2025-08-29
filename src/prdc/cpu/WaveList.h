@@ -300,12 +300,10 @@ namespace Cpu {
       return implicitInverse_;
    }
 
-   #ifndef PRDC_CPU_WAVE_LIST_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class WaveList<1>;
    extern template class WaveList<2>;
    extern template class WaveList<3>;
-   #endif
 
 } // Cpu
 } // Prdc

@@ -98,12 +98,10 @@ namespace Rpc {
       double mobility_;   
    };
    
-   #ifndef RPC_PRED_CORR_BD_STEP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class PredCorrBdStep<1>;
    extern template class PredCorrBdStep<2>;
    extern template class PredCorrBdStep<3>;
-   #endif
 
 }
 }

@@ -275,7 +275,7 @@ namespace Cuda {
    }
 
    #ifndef PRDC_CUDA_FFT_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FFT<1>;
    extern template class FFT<2>;
    extern template class FFT<3>;

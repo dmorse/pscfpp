@@ -280,12 +280,10 @@ namespace Cpu {
       }
    }
 
-   #ifndef PRDC_CPU_FFT_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FFT<1>;
    extern template class FFT<2>;
    extern template class FFT<3>;
-   #endif
 
 } // namespace Pscf::Prdc::Cpu
 } // namespace Pscf::Prdc

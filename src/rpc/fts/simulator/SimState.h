@@ -122,12 +122,10 @@ namespace Rpc {
 
    };
 
-   #ifndef RPC_SIM_STATE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template struct SimState<1>;
    extern template struct SimState<2>;
    extern template struct SimState<3>;
-   #endif
 
 }
 }

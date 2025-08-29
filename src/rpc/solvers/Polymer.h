@@ -178,12 +178,10 @@ namespace Rpc {
    inline double Polymer<D>::stress(int n) const
    {  return stress_[n]; }
   
-   #ifndef RPC_POLYMER_TPP
-   // Supress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Polymer<1>;
    extern template class Polymer<2>;
    extern template class Polymer<3>;
-   #endif
 
 }
 }

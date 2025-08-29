@@ -88,12 +88,10 @@ namespace Rpc {
    inline System<D>& TrajectoryReader<D>::system()
    {  return *systemPtr_; }
 
-   #ifndef RPC_TRAJECTORY_READER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class TrajectoryReader<1>;
    extern template class TrajectoryReader<2>;
    extern template class TrajectoryReader<3>;
-   #endif
 
 }
 }

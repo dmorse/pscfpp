@@ -55,12 +55,10 @@ namespace Rpc {
 
    };
 
-   #ifndef RPC_MC_MOVE_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class McMoveFactory<1>;
    extern template class McMoveFactory<2>;
    extern template class McMoveFactory<3>;
-   #endif
 
 }
 }

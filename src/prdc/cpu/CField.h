@@ -138,11 +138,10 @@ namespace Cpu {
       ar & meshDimensions_;
    }
 
-   #ifndef PRDC_CPU_C_FIELD_TPP
+   // Explicit instantiation declarations
    extern template class CField<1>;
    extern template class CField<2>;
    extern template class CField<3>;
-   #endif
 
 }
 }

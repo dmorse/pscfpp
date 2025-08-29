@@ -100,14 +100,14 @@ namespace Rpc {
 
    };
 
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations for derived class
    extern template class Mixture<1>;
    extern template class Mixture<2>;
    extern template class Mixture<3>;
 
 } // namespace Rpc
 namespace Prdc {
-   // Suppress implicit instantiation of base class 
+   // Explicit instantiation declarations for base class
    extern template class MixturePrdc<1, Rpc::Polymer<1>, Rpc::Solvent<1> >;
    extern template class MixturePrdc<2, Rpc::Polymer<2>, Rpc::Solvent<2> >;
    extern template class MixturePrdc<3, Rpc::Polymer<3>, Rpc::Solvent<3> >;

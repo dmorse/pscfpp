@@ -324,7 +324,7 @@ namespace Cuda {
    }
 
    #ifndef PRDC_CUDA_WAVE_LIST_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class WaveList<1>;
    extern template class WaveList<2>;
    extern template class WaveList<3>;

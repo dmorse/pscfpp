@@ -162,12 +162,10 @@ namespace Cpu {
 
    };
 
-   #ifndef PRDC_CPU_FIELD_BASIS_CONVERTER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FieldBasisConverter<1>;
    extern template class FieldBasisConverter<2>;
    extern template class FieldBasisConverter<3>;
-   #endif
 
 } // namespace Pscf::Prdc::Cpu
 } // namespace Pscf::Prdc

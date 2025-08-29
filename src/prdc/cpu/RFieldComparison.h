@@ -27,11 +27,10 @@ namespace Cpu {
    class RFieldComparison : public FieldComparison< RField<D> >
    {};
 
-   #ifndef PRDC_GPU_R_FIELD_COMPARISON_CPP
+   // Explicit instantiation declarations
    extern template class RFieldComparison<1>;
    extern template class RFieldComparison<2>;
    extern template class RFieldComparison<3>;
-   #endif
 
 } // namespace Pscf::Prdc::Gpu
 } // namespace Pscf::Prdc

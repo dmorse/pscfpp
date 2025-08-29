@@ -113,12 +113,10 @@ namespace Rpc {
    inline RField<D> const & Solvent<D>::cField() const
    {  return cField_;  }
   
-   #ifndef RPC_SOLVENT_TPP
-   // Supress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Solvent<1>;
    extern template class Solvent<2>;
    extern template class Solvent<3>;
-   #endif
 
 }
 }

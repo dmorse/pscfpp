@@ -254,12 +254,10 @@ namespace Rpc {
    inline bool McSimulator<D>::needsDc()
    {  return state_.needsDc; }
       
-   #ifndef RPC_MC_SIMULATOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class McSimulator<1>;
    extern template class McSimulator<2>;
    extern template class McSimulator<3>;
-   #endif
 
 }
 }

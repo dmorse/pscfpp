@@ -186,11 +186,12 @@ namespace Prdc {
    { return elements_[i]; }
 
    #ifndef PRDC_SYMMETRY_GROUP_TPP
+   // Explicit instantiation declarations
    template <int D> class SpaceSymmetry;
    extern template class SymmetryGroup< SpaceSymmetry<1> >;
    extern template class SymmetryGroup< SpaceSymmetry<2> >;
    extern template class SymmetryGroup< SpaceSymmetry<3> >;
-   #endif 
+   #endif
 
 }
 }

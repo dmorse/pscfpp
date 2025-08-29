@@ -75,7 +75,7 @@ namespace Rpc {
    };
 
    #ifndef RPC_DOMAIN_TPP
-   // Suppress implicit instantiation of all relevant cases
+   // Explicit instantiation declarations of all relevant cases
    extern template class Domain<1>;
    extern template class Domain<2>;
    extern template class Domain<3>;
@@ -85,7 +85,7 @@ namespace Rpc {
 
 #ifndef RPC_DOMAIN_TPP
 namespace Prdc {
-   // Suppress implicit instantiation of base class template
+   // Explicit instantiation declarations of base class template
    using namespace Cpu;
    extern template 
    class DomainTmpl<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;

@@ -105,12 +105,10 @@ namespace Rpc {
       return *simulatorPtr_; 
    }
 
-   #ifndef RPC_RAMP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Ramp<1>;
    extern template class Ramp<2>;
    extern template class Ramp<3>;
-   #endif
 
 }
 }

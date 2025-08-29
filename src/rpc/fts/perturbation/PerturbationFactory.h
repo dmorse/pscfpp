@@ -54,12 +54,10 @@ namespace Rpc {
 
    };
 
-   #ifndef RPC_PERTURBATION_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class PerturbationFactory<1>;
    extern template class PerturbationFactory<2>;
    extern template class PerturbationFactory<3>;
-   #endif
 
 }
 }

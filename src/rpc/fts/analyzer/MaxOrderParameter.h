@@ -113,12 +113,10 @@ namespace Rpc {
 
    };
    
-   #ifndef RPC_MAX_ORDER_PARAMETER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class MaxOrderParameter<1>;
    extern template class MaxOrderParameter<2>;
    extern template class MaxOrderParameter<3>;
-   #endif
 
 }
 }

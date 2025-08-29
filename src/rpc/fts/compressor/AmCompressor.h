@@ -224,12 +224,10 @@ namespace Rpc
 
    };
 
-   #ifndef RPC_AM_COMPRESSOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class AmCompressor<1>;
    extern template class AmCompressor<2>;
    extern template class AmCompressor<3>;
-   #endif
 
 } // namespace Rpc
 } // namespace Pscf

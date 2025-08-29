@@ -59,12 +59,10 @@ namespace Rpc {
 
    };
 
-   #ifndef RPC_STEP_LOGGER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class StepLogger<1>;
    extern template class StepLogger<2>;
    extern template class StepLogger<3>;
-   #endif
 
 }
 }

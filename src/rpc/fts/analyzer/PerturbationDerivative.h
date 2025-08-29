@@ -71,12 +71,10 @@ namespace Rpc {
 
    };
 
-   // Suppress implicit instantiation
-   #ifndef RPC_PERTURBATION_DERIVATIVE_TPP
+   // Explicit instantiation declarations
    extern template class PerturbationDerivative<1>;
    extern template class PerturbationDerivative<2>;
    extern template class PerturbationDerivative<3>;
-   #endif
 
 }
 }

@@ -49,16 +49,15 @@ namespace Rpc {
 
    private:
 
+      // Pointer to parent system object.
       System<D>* systemPtr_;
 
    };
 
-   #ifndef RPC_SWEEP_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class SweepFactory<1>;
    extern template class SweepFactory<2>;
    extern template class SweepFactory<3>;
-   #endif
 
 }
 }

@@ -491,7 +491,8 @@ namespace Prdc {
       return in;
    }
 
-   // Define static members
+   // Static member definitions
+
    template<int D> 
    SpaceSymmetry<D> SpaceSymmetry<D>::identity_ = SpaceSymmetry<D>();
 
@@ -499,12 +500,10 @@ namespace Prdc {
    bool SpaceSymmetry<D>::hasIdentity_ = false;
 
 
-   #ifndef PRDC_SPACE_SYMMETRY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class SpaceSymmetry<1>;
    extern template class SpaceSymmetry<2>;
    extern template class SpaceSymmetry<3>;
-   #endif 
 
 }
 }

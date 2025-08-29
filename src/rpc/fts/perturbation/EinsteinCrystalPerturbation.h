@@ -137,12 +137,10 @@ namespace Rpc {
       
    };
 
-   #ifndef RPC_EINSTEIN_CRYSTAL_PERTURBATION_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class EinsteinCrystalPerturbation<1>;
    extern template class EinsteinCrystalPerturbation<2>;
    extern template class EinsteinCrystalPerturbation<3>;
-   #endif
 
 }
 }

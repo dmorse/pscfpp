@@ -93,12 +93,10 @@ namespace Cpu {
    
    };
 
-   #ifndef PRDC_CPU_C_FIELD_COMPARISON_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class CFieldComparison<1>;
    extern template class CFieldComparison<2>;
    extern template class CFieldComparison<3>;
-   #endif
 
 
 } // namespace Cpu

@@ -231,12 +231,10 @@ namespace Rpc {
       return *trajectoryReaderFactoryPtr_;
    }
 
-   #ifndef RPC_BD_SIMULATOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class BdSimulator<1>;
    extern template class BdSimulator<2>;
    extern template class BdSimulator<3>;
-   #endif
 
 }
 }

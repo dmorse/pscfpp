@@ -131,12 +131,10 @@ namespace Rpc {
 
    };
    
-   #ifndef RPC_LM_BD_STEP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class LMBdStep<1>;
    extern template class LMBdStep<2>;
    extern template class LMBdStep<3>;
-   #endif
 
 }
 }

@@ -52,12 +52,10 @@ namespace Rpc {
 
    };
 
-   #ifndef RPC_COMPRESSOR_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class CompressorFactory<1>;
    extern template class CompressorFactory<2>;
    extern template class CompressorFactory<3>;
-   #endif
 
 }
 }

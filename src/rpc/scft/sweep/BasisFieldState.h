@@ -87,12 +87,10 @@ namespace Rpc
 
    };
 
-   #ifndef RPC_BASIS_FIELD_STATE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class BasisFieldState<1>;
    extern template class BasisFieldState<2>;
    extern template class BasisFieldState<3>;
-   #endif
 
 } // namespace Rpc
 } // namespace Pscf

@@ -166,7 +166,7 @@ namespace Rpc {
    {  return nSamplePerOutput_; }
 
    #ifndef RPC_AVERAGE_ANALYZER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class AverageAnalyzer<1>;
    extern template class AverageAnalyzer<2>;
    extern template class AverageAnalyzer<3>;

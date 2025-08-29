@@ -79,7 +79,7 @@ namespace Rpc {
 
    };
 
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FilmEnvironment<1>;
    extern template class FilmEnvironment<2>;
    extern template class FilmEnvironment<3>;

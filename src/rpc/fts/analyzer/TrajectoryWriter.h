@@ -139,12 +139,10 @@ namespace Rpc {
    inline Simulator<D>& TrajectoryWriter<D>::simulator()
    {  return *simulatorPtr_; }
 
-   #ifndef RPC_TRAJECTORY_WRITER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class TrajectoryWriter<1>;
    extern template class TrajectoryWriter<2>;
    extern template class TrajectoryWriter<3>;
-   #endif
 
 }
 }

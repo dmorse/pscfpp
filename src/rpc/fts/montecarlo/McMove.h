@@ -316,12 +316,10 @@ namespace Rpc
    inline void McMove<D>::setProbability(double probability)
    {  probability_ = probability; }
 
-   #ifndef RPC_MC_MOVE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class McMove<1>;
    extern template class McMove<2>;
    extern template class McMove<3>;
-   #endif
 
 }
 }

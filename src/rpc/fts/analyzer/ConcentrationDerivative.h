@@ -72,12 +72,10 @@ namespace Rpc
       
    };
    
-   // Suppress implicit instantiation
-   #ifndef RPC_CONCENTRATION_DERIVATIVE_TPP
+   // Explicit instantiation declarations
    extern template class ConcentrationDerivative<1>;
    extern template class ConcentrationDerivative<2>;
    extern template class ConcentrationDerivative<3>;
-   #endif
 
 }
 }

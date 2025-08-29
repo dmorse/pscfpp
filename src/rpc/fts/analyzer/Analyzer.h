@@ -197,10 +197,9 @@ namespace Rpc {
    inline const std::string& Analyzer<D>::outputFileName() const
    {  return outputFileName_; }
 
-   // Method template
 
    #ifndef RPC_ANALYZER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Analyzer<1>;
    extern template class Analyzer<2>;
    extern template class Analyzer<3>;

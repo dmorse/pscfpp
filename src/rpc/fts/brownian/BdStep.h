@@ -159,12 +159,10 @@ namespace Rpc {
    inline Random& BdStep<D>::random()
    {  return *randomPtr_; }
 
-   #ifndef RPC_BD_STEP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class BdStep<1>;
    extern template class BdStep<2>;
    extern template class BdStep<3>;
-   #endif
 
 }
 }

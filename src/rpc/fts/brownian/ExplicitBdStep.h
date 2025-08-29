@@ -89,12 +89,10 @@ namespace Rpc {
       
    };
    
-   #ifndef RPC_EXPLICIT_BD_STEP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class ExplicitBdStep<1>;
    extern template class ExplicitBdStep<2>;
    extern template class ExplicitBdStep<3>;
-   #endif
 
 }
 }

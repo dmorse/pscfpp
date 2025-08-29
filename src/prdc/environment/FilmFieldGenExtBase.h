@@ -319,12 +319,10 @@ namespace Prdc {
    inline double FilmFieldGenExtBase<D>::excludedThickness() const
    {  return excludedThickness_; }
 
-   #ifndef PRDC_FILM_FIELD_GEN_EXT_BASE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FilmFieldGenExtBase<1>;
    extern template class FilmFieldGenExtBase<2>;
    extern template class FilmFieldGenExtBase<3>;
-   #endif
 
 }
 }

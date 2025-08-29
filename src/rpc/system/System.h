@@ -50,22 +50,18 @@ namespace Rpc {
 
    };
 
-   #ifndef RPC_SYSTEM_CPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class System<1>;
    extern template class System<2>;
    extern template class System<3>;
-   #endif
 
 } // namespace Rpc
 namespace Prdc {
 
-   #ifndef RPC_SYSTEM_CPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations for base class
    extern template class SystemTmpl<1, Rpc::Types<1> >;
    extern template class SystemTmpl<2, Rpc::Types<1> >;
    extern template class SystemTmpl<3, Rpc::Types<1> >;
-   #endif
 
 } // namespace Prdc 
 } // namespace Pscf

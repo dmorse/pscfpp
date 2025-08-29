@@ -80,12 +80,10 @@ namespace Rpc {
 
    };
   
-   #ifndef RPC_HAMILTONIAN_ANALYZER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class HamiltonianAnalyzer<1>;
    extern template class HamiltonianAnalyzer<2>;
    extern template class HamiltonianAnalyzer<3>;
-   #endif
 
 }
 }

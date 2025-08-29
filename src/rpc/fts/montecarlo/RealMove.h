@@ -107,12 +107,10 @@ namespace Rpc {
    
    };
       
-   #ifndef RPC_REAL_MOVE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class RealMove<1>;
    extern template class RealMove<2>;
    extern template class RealMove<3>;
-   #endif
 
 }
 }

@@ -478,12 +478,10 @@ namespace Rpc {
       return * fftPtr_;
    }
 
-   #ifndef RPC_BLOCK_TPP
-   // Suppresse implicit instantiation
+   // Explicit instantiation declarations
    extern template class Block<1>;
    extern template class Block<2>;
    extern template class Block<3>;
-   #endif
 
 }
 }

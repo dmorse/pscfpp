@@ -151,7 +151,7 @@ namespace Cuda {
    { return isSetup_; }
 
    #ifndef PRDC_CUDA_FFT_BATCHED_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FFTBatched<1>;
    extern template class FFTBatched<2>;
    extern template class FFTBatched<3>;

@@ -371,12 +371,10 @@ namespace Prdc {
    bool UnitCellBase<D>::isInitialized() const
    {  return isInitialized_; }
 
-   #ifndef PRDC_UNIT_CELL_BASE_TPP
-   // Suppress implicit instantiation of base class
+   // Explicit instantiation declaration
    extern template class UnitCellBase<1>;
    extern template class UnitCellBase<2>;
    extern template class UnitCellBase<3>;
-   #endif
 
 }
 }

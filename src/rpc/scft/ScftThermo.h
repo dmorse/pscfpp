@@ -53,7 +53,7 @@ namespace Rpc {
 
    };
 
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class ScftThermo<1>;
    extern template class ScftThermo<2>;
    extern template class ScftThermo<3>;
@@ -61,10 +61,12 @@ namespace Rpc {
 } // namespace Rpc
 
 namespace Prdc {
-   // Suppress implicit instantiation of base class
+
+   // Explicit instantiation declarations for base class
    extern template class ScftThermoTmpl<1, Rpc::System<1> >;
    extern template class ScftThermoTmpl<2, Rpc::System<2> >;
    extern template class ScftThermoTmpl<3, Rpc::System<3> >;
+
 } // namespace Rpc
 
 } // namespace Pscf

@@ -166,7 +166,7 @@ namespace Prdc {
    template <int D>
    void writeGroup(std::string filename, SpaceGroup<D> const & group);
 
-   #ifndef PRDC_SPACE_GROUP_TPP
+   // Explicit instantiation declarations
    extern template class SpaceGroup<1>;
    extern template class SpaceGroup<2>;
    extern template class SpaceGroup<3>;
@@ -176,7 +176,6 @@ namespace Prdc {
    extern template void writeGroup(std::string, SpaceGroup<1> const &);
    extern template void writeGroup(std::string, SpaceGroup<2> const &);
    extern template void writeGroup(std::string, SpaceGroup<3> const &);
-   #endif
 
 }
 }

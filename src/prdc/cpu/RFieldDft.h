@@ -183,11 +183,10 @@ namespace Cpu {
       ar & dftDimensions_;
    }
 
-   #ifndef PRDC_R_FIELD_DFT_TPP
+   // Explicit instantiation declarations
    extern template class RFieldDft<1>;
    extern template class RFieldDft<2>;
    extern template class RFieldDft<3>;
-   #endif
 
 }
 }
