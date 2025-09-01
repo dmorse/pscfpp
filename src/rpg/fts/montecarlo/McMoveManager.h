@@ -152,12 +152,10 @@ namespace Rpg {
       return probabilities_[i];
    }
 
-   #ifndef RPG_MC_MOVE_MANAGER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class McMoveManager<1>;
    extern template class McMoveManager<2>;
    extern template class McMoveManager<3>;
-   #endif
 
 }
 }

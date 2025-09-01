@@ -8,17 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Compressor.h"
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/RFieldDft.h>
-#include <util/containers/DArray.h>
-#include <util/containers/DMatrix.h>
-#include <util/misc/Timer.h>
-#include <rpg/fts/compressor/IntraCorrelation.h>  
+#include "Compressor.h"                           // base class
+#include <prdc/cuda/RField.h>                     // member
+#include <prdc/cuda/RFieldDft.h>                  // member
+#include <util/containers/DArray.h>               // member
+#include <util/misc/Timer.h>                      // member
+#include <rpg/fts/compressor/IntraCorrelation.h>  // member
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    template <int D> class System;
 
@@ -213,12 +211,10 @@ namespace Rpg
 
    };
    
-   #ifndef RPG_LR_COMPRESSOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class LrCompressor<1>;
    extern template class LrCompressor<2>;
    extern template class LrCompressor<3>;
-   #endif
 
 } // namespace Rpg
 } // namespace Pscf

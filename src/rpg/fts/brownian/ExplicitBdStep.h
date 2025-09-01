@@ -9,10 +9,9 @@
 */
 
 
-#include "BdStep.h"
-
-#include <prdc/cuda/RField.h>
-#include <util/containers/DArray.h>
+#include "BdStep.h"                    // base class
+#include <prdc/cuda/RField.h>          // member
+#include <util/containers/DArray.h>    // member
 
 namespace Pscf {
 namespace Rpg {
@@ -88,12 +87,10 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_EXPLICIT_BD_STEP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class ExplicitBdStep<1>;
    extern template class ExplicitBdStep<2>;
    extern template class ExplicitBdStep<3>;
-   #endif
 
 }
 }

@@ -495,12 +495,10 @@ namespace Rpg {
       return *fftPtr_;
    }
 
-   #ifndef RPG_BLOCK_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Block<1>;
    extern template class Block<2>;
    extern template class Block<3>;
-   #endif
 
 }
 }

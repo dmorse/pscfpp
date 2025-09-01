@@ -1,5 +1,5 @@
-#ifndef RPG_W_FIELD_CONTAINER_H
-#define RPG_W_FIELD_CONTAINER_H
+#ifndef RPG_W_FIELDS_H
+#define RPG_W_FIELDS_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -17,7 +17,7 @@ namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
+   //using namespace Pscf::Prdc::Cuda;
 
    /**
    * A container of fields stored in both basis and r-grid format.
@@ -29,8 +29,7 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class WFields 
-     : public WFieldsTmpl<D, Prdc::Cuda::RField<D>, Rpg::FieldIo<D> >
+   class WFields : public WFieldsTmpl<D, Cuda::RField<D>, FieldIo<D> >
    {
 
    public:
@@ -90,23 +89,19 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_W_FIELD_CONTAINER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class WFields<1>;
    extern template class WFields<2>;
    extern template class WFields<3>;
-   #endif
 
 } // namespace Rpg
 
-#ifndef RPG_W_FIELD_CONTAINER_TPP
 namespace Prdc {
-   // Suppress implicit instantiation
-   extern template class WFieldsTmpl<1, RField<1>, Rpg::FieldIo<1> >;
-   extern template class WFieldsTmpl<2, RField<2>, Rpg::FieldIo<2> >;
-   extern template class WFieldsTmpl<3, RField<3>, Rpg::FieldIo<3> >;
+   // Explicit instantiation declarations for base class
+   extern template class WFieldsTmpl<1, Cuda::RField<1>, Rpg::FieldIo<1> >;
+   extern template class WFieldsTmpl<2, Cuda::RField<2>, Rpg::FieldIo<2> >;
+   extern template class WFieldsTmpl<3, Cuda::RField<3>, Rpg::FieldIo<3> >;
 } // namespace Prdc
-#endif
 
 } // namespace Pscf
 #endif

@@ -12,6 +12,7 @@
 #include <rpg/solvers/Propagator.h>     // typedefs
 #include <prdc/cuda/RField.h>           // member variable
 
+// Forward declaration
 namespace Pscf {
    template <int D> class Mesh;
 }
@@ -82,27 +83,7 @@ namespace Rpg {
       * Get the monomer concentration field for this solvent.
       */
       RField<D> const & cField() const;
-  
-      // Inherited public accessor functions 
-      using Pscf::Species::phi;
-      using Pscf::Species::mu;
-      using Pscf::Species::q;
-      using Pscf::Species::ensemble;
-      using Pscf::SolventSpecies::monomerId;
-      using Pscf::SolventSpecies::size;
-
-   protected:
-
-      #if 0
-      // Inherited protected data members
-      using Pscf::Species::phi_;
-      using Pscf::Species::mu_;
-      using Pscf::Species::q_;
-      using Pscf::Species::ensemble_;
-      using Pscf::SolventSpecies::monomerId_;
-      using Pscf::SolventSpecies::size_;
-      #endif
-   
+ 
    private:
 
       /// Concentration field for this solvent

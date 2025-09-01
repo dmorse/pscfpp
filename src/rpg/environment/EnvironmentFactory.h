@@ -10,7 +10,6 @@
 
 #include <prdc/environment/Environment.h>
 #include <util/param/Factory.h>  
-
 #include <string>
 
 namespace Pscf {
@@ -54,12 +53,10 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_ENVIRONMENT_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class EnvironmentFactory<1>;
    extern template class EnvironmentFactory<2>;
    extern template class EnvironmentFactory<3>;
-   #endif
 
 }
 }

@@ -26,6 +26,8 @@ namespace Rpg {
 
    public:
 
+      // Public typdefs
+
       /**
       * Type of each element.
       */
@@ -76,6 +78,7 @@ namespace Rpg {
       */
       ~HostDArrayComplex();
 
+      // Inherited member functions
       using Base::allocate;
       using Base::deallocate;
       using Base::operator =;

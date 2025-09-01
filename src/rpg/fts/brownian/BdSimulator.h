@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/fts/simulator/Simulator.h>                 // base class
-#include <rpg/fts/analyzer/AnalyzerManager.h>  // member
-#include <util/param/Factory.h>                      // member template
+#include <rpg/fts/simulator/Simulator.h>           // base class
+#include <rpg/fts/analyzer/AnalyzerManager.h>      // member
+#include <util/param/Factory.h>                    // member template
 
 namespace Pscf {
 namespace Rpg {
@@ -214,36 +214,35 @@ namespace Rpg {
 
    };
 
+   // Inline member functions
+
    // Does this BdSimulator have a BdStep?
-   template <int D>
-   inline bool BdSimulator<D>::hasBdStep() const
+   template <int D> inline 
+   bool BdSimulator<D>::hasBdStep() const
    {  return (bool)bdStepPtr_; }
 
    // Get the BdStep (Brownian dynamics stepper) by reference.
-   template <int D>
-   inline BdStep<D>& BdSimulator<D>::stepper()
+   template <int D> inline 
+   BdStep<D>& BdSimulator<D>::stepper()
    {  return *bdStepPtr_; }
 
    // Get the analyzer manager.
-   template <int D>
-   inline AnalyzerManager<D>& BdSimulator<D>::analyzerManager()
+   template <int D> inline 
+   AnalyzerManager<D>& BdSimulator<D>::analyzerManager()
    {  return analyzerManager_; }
 
    // Get the TrajectoryReaderfactory
-   template <int D>
-   inline 
+   template <int D> inline 
    Factory<TrajectoryReader<D> >& BdSimulator<D>::trajectoryReaderFactory()
    {
       UTIL_ASSERT(trajectoryReaderFactoryPtr_);
       return *trajectoryReaderFactoryPtr_;
    }
 
-   #ifndef RPG_BD_SIMULATOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class BdSimulator<1>;
    extern template class BdSimulator<2>;
    extern template class BdSimulator<3>;
-   #endif
 
 }
 }

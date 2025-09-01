@@ -9,14 +9,11 @@
 */
 
 #include <util/param/ParamComposite.h>    
-#include <util/global.h>
 #include <iostream>
-#include <rpg/system/System.h>
 
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    template <int D> class System;
    using namespace Util;
@@ -88,19 +85,17 @@ namespace Rpg
       System<D>* systemPtr_;
 
 
-   }; // end class TrajectoryReader
+   }; 
 
    // Get the parent system.
-   template <int D>
-   inline System<D>& TrajectoryReader<D>::system()
+   template <int D> inline 
+   System<D>& TrajectoryReader<D>::system()
    {  return *systemPtr_; }
    
-   #ifndef RPG_TRAJECTORY_READER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class TrajectoryReader<1>;
    extern template class TrajectoryReader<2>;
    extern template class TrajectoryReader<3>;
-   #endif
 
 }
 }

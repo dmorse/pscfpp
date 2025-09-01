@@ -47,17 +47,19 @@ namespace Rpg {
 
    };
 
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class MixtureModifier<1>;
    extern template class MixtureModifier<2>;
    extern template class MixtureModifier<3>;
 
 } // namespace Rpg
+
 namespace Prdc {
-   // Suppress implicit instantiation of base class 
+   // Explicit instantiation declarations for base class 
    extern template class MixtureModifierPrdc< Rpg::Mixture<1> >;
    extern template class MixtureModifierPrdc< Rpg::Mixture<2> >;
    extern template class MixtureModifierPrdc< Rpg::Mixture<3> >;
 } // namespace Prdc
+
 } // namespace Pscf
 #endif

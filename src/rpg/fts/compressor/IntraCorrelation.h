@@ -79,12 +79,10 @@ namespace Rpg
    {  return *systemPtr_; }
 
    
-   #ifndef RPG_INTRACORRELATION_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class IntraCorrelation<1>;
    extern template class IntraCorrelation<2>;
    extern template class IntraCorrelation<3>;
-   #endif
 
 } // namespace Rpg
 } // namespace Pscf

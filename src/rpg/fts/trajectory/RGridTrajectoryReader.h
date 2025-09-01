@@ -8,19 +8,19 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "TrajectoryReader.h"
-#include <util/global.h>
+#include "TrajectoryReader.h"           // base class
+#include <prdc/cuda/RField.h>           // member
+#include <util/containers/DArray.h>     // member
 #include <iostream>
-#include <rpg/system/System.h>
-#include <prdc/cuda/RField.h>
-#include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    template <int D> class System;
+
    using namespace Util;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Trajectory file reader.
@@ -116,12 +116,10 @@ namespace Rpg
    inline System<D>& RGridTrajectoryReader<D>::system()
    {  return *systemPtr_; }
 
-   #ifndef RPG_RGRID_TRAJECTORY_READER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class RGridTrajectoryReader<1>;
    extern template class RGridTrajectoryReader<2>;
    extern template class RGridTrajectoryReader<3>;
-   #endif
    
 }
 }

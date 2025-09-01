@@ -8,8 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"
-#include <util/global.h>
+#include "Analyzer.h"       // base class template
 
 namespace Pscf {
 namespace Rpg {
@@ -57,12 +56,10 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_STEP_LOGGER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class StepLogger<1>;
    extern template class StepLogger<2>;
    extern template class StepLogger<3>;
-   #endif
 
 }
 }

@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/system/System.h>
+#include <util/param/Factory.h>  
 
 #include <string>
 
@@ -48,22 +48,21 @@ namespace Rpg {
       */
       Iterator<D>* factory(const std::string &className) const;
 
+      // Inherited member functions
       using Factory< Iterator<D> >::trySubfactories;
       using Factory< Iterator<D> >::readObjectOptional;
 
    private:
 
-      /// Pointer to the system object.
+      /// Pointer to the parent system object.
       System<D>* sysPtr_;
 
    };
 
-   #ifndef RPG_ITERATOR_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class IteratorFactory<1>;
    extern template class IteratorFactory<2>;
    extern template class IteratorFactory<3>;
-   #endif
 
 }
 }

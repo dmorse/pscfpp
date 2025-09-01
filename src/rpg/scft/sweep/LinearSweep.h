@@ -82,12 +82,10 @@ namespace Rpg {
        
    };
 
-   #ifndef RPG_LINEAR_SWEEP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class LinearSweep<1>;
    extern template class LinearSweep<2>;
    extern template class LinearSweep<3>;
-   #endif
 
 }
 }

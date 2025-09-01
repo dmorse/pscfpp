@@ -1,9 +1,9 @@
 #ifndef RPG_EINSTEIN_CRYSTAL_PERTURBATION_H
 #define RPG_EINSTEIN_CRYSTAL_PERTURBATION_H
 
-#include "Perturbation.h"      // base class
-#include <prdc/cuda/RField.h>
-#include <util/containers/DArray.h> 
+#include "Perturbation.h"            // base class
+#include <prdc/cuda/RField.h>        // member
+#include <util/containers/DArray.h>  // member
 
 namespace Pscf {
 namespace Rpg {
@@ -121,12 +121,10 @@ namespace Rpg {
       
    };
 
-   #ifndef RPG_EINSTEIN_CRYSTAL_PERTURBATION_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class EinsteinCrystalPerturbation<1>;
    extern template class EinsteinCrystalPerturbation<2>;
    extern template class EinsteinCrystalPerturbation<3>;
-   #endif
 
 }
 }

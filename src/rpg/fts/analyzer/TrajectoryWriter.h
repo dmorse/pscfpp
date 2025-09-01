@@ -9,19 +9,14 @@
 */
 
 #include "Analyzer.h"
-#include <util/global.h>
-#include <rpg/system/System.h>
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    template <int D> class System;
    template <int D> class Simulator;
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
    
    /**
    * Periodically write snapshots to a trajectory file
@@ -155,19 +150,6 @@ namespace Rpg
 
    };
 
-   #if 0
-   /*
-   * Serialize to/from an archive. 
-   */
-   template <class Archive>
-   void TrajectoryWriter<D>::serialize(Archive& ar, const unsigned int version)
-   {
-      Analyzer::serialize(ar, version);
-      ar & nSample_;
-   }
-   #endif
-   
-   
    // Get the parent system.
    template <int D>
    inline System<D>& TrajectoryWriter<D>::system()

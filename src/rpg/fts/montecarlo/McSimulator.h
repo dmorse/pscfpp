@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/fts/simulator/Simulator.h>                   // member
-#include <rpg/fts/montecarlo/McMoveManager.h>        // member
+#include <rpg/fts/simulator/Simulator.h>         // base class
+#include <rpg/fts/montecarlo/McMoveManager.h>    // member
 #include <rpg/fts/analyzer/AnalyzerManager.h>    // member
 
 namespace Pscf {
@@ -220,23 +220,22 @@ namespace Rpg {
    };
 
    // Does this McSimulator have any MC moves defined?
-   template <int D>
-   inline bool McSimulator<D>::hasMcMoves() const
+   template <int D> inline 
+   bool McSimulator<D>::hasMcMoves() const
    {  return (bool)(mcMoveManager_.size() > 0); }
 
    // Get the Monte-Carlo move manager.
-   template <int D>
-   inline McMoveManager<D>& McSimulator<D>::mcMoveManager()
+   template <int D> inline 
+   McMoveManager<D>& McSimulator<D>::mcMoveManager()
    {  return mcMoveManager_; }
 
    // Get the Monte-Carlo analyzer manager.
-   template <int D>
-   inline AnalyzerManager<D>& McSimulator<D>::analyzerManager()
+   template <int D> inline 
+   AnalyzerManager<D>& McSimulator<D>::analyzerManager()
    {  return analyzerManager_; }
 
    // Get the TrajectoryReaderfactory
-   template <int D>
-   inline 
+   template <int D> inline 
    Factory<TrajectoryReader<D> >& McSimulator<D>::trajectoryReaderFactory()
    {
       UTIL_ASSERT(trajectoryReaderFactoryPtr_);
@@ -244,25 +243,23 @@ namespace Rpg {
    }
    
    // Return the simulations whether needs to store Cc fields
-   template <int D>
-   inline bool McSimulator<D>::needsCc()
+   template <int D> inline 
+   bool McSimulator<D>::needsCc()
    {
       return state_.needsCc;
    }
    
    // Return the simulations whether needs to store Dc fields
-   template <int D>
-   inline bool McSimulator<D>::needsDc()
+   template <int D> inline 
+   bool McSimulator<D>::needsDc()
    {
       return state_.needsDc;
    }
 
-   #ifndef RPG_MC_SIMULATOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class McSimulator<1>;
    extern template class McSimulator<2>;
    extern template class McSimulator<3>;
-   #endif
 
 }
 }

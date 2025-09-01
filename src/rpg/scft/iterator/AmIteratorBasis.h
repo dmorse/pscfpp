@@ -190,12 +190,10 @@ namespace Rpg
 
    };
 
-   #ifndef RPG_AM_ITERATOR_BASIS_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class AmIteratorBasis<1>;
    extern template class AmIteratorBasis<2>;
    extern template class AmIteratorBasis<3>;
-   #endif
 
 } // namespace Rpg
 } // namespace Pscf

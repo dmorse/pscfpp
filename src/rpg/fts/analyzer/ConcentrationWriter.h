@@ -8,12 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"
-#include <util/global.h>
+#include "Analyzer.h"        // Base class template
 
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declarations
    template <int D> class System;
    template <int D> class Simulator;
 
@@ -124,6 +124,8 @@ namespace Rpg {
       Simulator<D>& simulator();
 
    };
+
+   // Inline member functions
    
    // Get the parent system.
    template <int D>
@@ -135,12 +137,10 @@ namespace Rpg {
    inline Simulator<D>& ConcentrationWriter<D>::simulator()
    {  return *simulatorPtr_; }
 
-   #ifndef RPG_CONCENTRATION_WRITER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class ConcentrationWriter<1>;
    extern template class ConcentrationWriter<2>;
    extern template class ConcentrationWriter<3>;
-   #endif
 
 }
 }

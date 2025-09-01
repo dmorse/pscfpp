@@ -72,18 +72,15 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_DOMAIN_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Domain<1>;
    extern template class Domain<2>;
    extern template class Domain<3>;
-   #endif
 
 } // namespace Rpg
 
-#ifndef RPG_DOMAIN_TPP
 namespace Prdc {
-   // Suppress implicit instantiation of base class template instances
+   // Explicit instantiation declarations for base class template
    using namespace Cuda;
    extern template 
    class DomainTmpl<1, FFT<1>, WaveList<1>, Rpg::FieldIo<1> >;
@@ -92,7 +89,6 @@ namespace Prdc {
    extern template 
    class DomainTmpl<3, FFT<3>, WaveList<3>, Rpg::FieldIo<3> >;
 } // namespace Prdc
-#endif
 
 } // namespace Pscf
 #endif

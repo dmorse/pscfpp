@@ -127,12 +127,10 @@ namespace Rpg {
 
    };
    
-   #ifndef RPG_FOURTH_ORDER_PARAMETER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FourthOrderParameter<1>;
    extern template class FourthOrderParameter<2>;
    extern template class FourthOrderParameter<3>;
-   #endif
 
 }
 }

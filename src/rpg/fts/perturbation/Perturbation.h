@@ -3,21 +3,20 @@
 
 #include <util/param/ParamComposite.h>      // base class
 
+// Forward declarations
 namespace Util {
    template <typename T> class DArray;
 }
+namespace Pscf {
+   namespace Prdc{
+      namespace Cuda{
+         template <int D> class RField;
+      }
+   }
+}
 
 namespace Pscf {
-namespace Prdc{
-namespace Cuda{
-   template <int D> class RField;
-}
-}
-}
-
-namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    using namespace Util;
    using namespace Prdc;
@@ -196,12 +195,10 @@ namespace Rpg
       return *systemPtr_; 
    }
 
-   #ifndef RPG_PERTURBATION_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Perturbation<1>;
    extern template class Perturbation<2>;
    extern template class Perturbation<3>;
-   #endif
 
 }
 }

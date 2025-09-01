@@ -89,6 +89,7 @@ namespace Rpg {
       * Get the System associated with this object by reference.
       */
       System<D> & system();
+
       /**
       * Get the System associated with this object by const reference.
       */
@@ -129,37 +130,35 @@ namespace Rpg {
    // Inline member functions
 
    // Get parent System by non-const reference.
-   template <int D>
+   template <int D> inline
    System<D>& FilmFieldGenExt<D>::system() 
    {  return *sysPtr_; }
 
    // Get parent System by const reference.
-   template <int D>
+   template <int D> inline
    System<D> const & FilmFieldGenExt<D>::system() const
    {  return *sysPtr_; }
 
    // Get space group name for this system.
-   template <int D>
-   inline std::string FilmFieldGenExt<D>::systemSpaceGroup() const
+   template <int D> inline 
+   std::string FilmFieldGenExt<D>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    // Get one of the lattice vectors for this system.
-   template <int D>
-   inline RealVec<D> FilmFieldGenExt<D>::systemLatticeVector(int id) const
+   template <int D> inline 
+   RealVec<D> FilmFieldGenExt<D>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    // Get the number of monomer species for this system.
-   template <int D>
-   inline int FilmFieldGenExt<D>::systemNMonomer() const
+   template <int D> inline 
+   int FilmFieldGenExt<D>::systemNMonomer() const
    {  return system().mixture().nMonomer(); }
 
-   #ifndef RPG_EXT_GEN_FILM_TPP
+   // Explicit instantiation declarations
    extern template class FilmFieldGenExt<1>;
    extern template class FilmFieldGenExt<2>;
    extern template class FilmFieldGenExt<3>;
-   #endif
 
 } // namespace Rpg
 } // namespace Pscf
-
 #endif

@@ -78,13 +78,10 @@ namespace Rpg {
 
    };
 
-
-   #ifndef RPG_LINEAR_RAMP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class LinearRamp<1>;
    extern template class LinearRamp<2>;
    extern template class LinearRamp<3>;
-   #endif
 
 }
 }

@@ -202,12 +202,10 @@ namespace Rpg
 
    };
 
-   #ifndef RPG_AM_ITERATOR_GRID_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class AmIteratorGrid<1>;
    extern template class AmIteratorGrid<2>;
    extern template class AmIteratorGrid<3>;
-   #endif
 
 } // namespace Rpg
 } // namespace Pscf

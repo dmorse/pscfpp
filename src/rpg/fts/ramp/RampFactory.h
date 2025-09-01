@@ -54,12 +54,10 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_RAMP_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class RampFactory<1>;
    extern template class RampFactory<2>;
    extern template class RampFactory<3>;
-   #endif
 
 }
 }

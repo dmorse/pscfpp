@@ -47,7 +47,7 @@ namespace Rpg {
 
    };
 
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class SystemConstRef<1>;
    extern template class SystemConstRef<2>;
    extern template class SystemConstRef<3>;
@@ -55,10 +55,12 @@ namespace Rpg {
 }
 
 namespace Prdc {
-   // Suppress implicit instantiation of base class
+
+   // Explicit instantiation declarations for base class
    extern template class SystemConstRefTmpl< Rpg::System<1> >;
    extern template class SystemConstRefTmpl< Rpg::System<2> >;
    extern template class SystemConstRefTmpl< Rpg::System<3> >;
+
 }
 
 } // namespace Pscf

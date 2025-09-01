@@ -59,12 +59,10 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_MC_MOVE_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class AnalyzerFactory<1>;
    extern template class AnalyzerFactory<2>;
    extern template class AnalyzerFactory<3>;
-   #endif
 
 }
 }

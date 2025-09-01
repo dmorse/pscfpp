@@ -11,7 +11,6 @@
 
 #include <util/param/ParamComposite.h>
 #include <pscf/cuda/CudaRandom.h>
-#include <util/global.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -151,12 +150,10 @@ namespace Rpg {
    inline CudaRandom& BdStep<D>::cudaRandom()
    {  return *cudaRandomPtr_; }
 
-   #ifndef RPG_BD_STEP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class BdStep<1>;
    extern template class BdStep<2>;
    extern template class BdStep<3>;
-   #endif
 
 }
 }

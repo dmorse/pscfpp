@@ -345,12 +345,10 @@ namespace Rpg {
    void Propagator<D>::setBlock(Block<D>& block)
    {  blockPtr_ = &block; }
 
-   #ifndef RPG_PROPAGATOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Propagator<1>;
    extern template class Propagator<2>;
    extern template class Propagator<3>;
-   #endif
 
 }
 }

@@ -8,12 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageListAnalyzer.h"
-#include <rpg/system/System.h>
-
-namespace Util{
-   class Average;
-}
+#include "AverageListAnalyzer.h"     // base class template
 
 namespace Pscf {
 namespace Rpg {
@@ -130,7 +125,7 @@ namespace Rpg {
    {  return *simulatorPtr_; }
 
    #ifndef RPG_HAMILTONIAN_ANALYZER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class HamiltonianAnalyzer<1>;
    extern template class HamiltonianAnalyzer<2>;
    extern template class HamiltonianAnalyzer<3>;

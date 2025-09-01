@@ -56,12 +56,10 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_SIMULATOR_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class SimulatorFactory<1>;
    extern template class SimulatorFactory<2>;
    extern template class SimulatorFactory<3>;
-   #endif
 
 }
 }

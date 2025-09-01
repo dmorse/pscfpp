@@ -16,8 +16,7 @@
 #include <util/containers/DArray.h>                 
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    template <int D> class System;
 
@@ -228,6 +227,11 @@ namespace Rpg
       
 
    };
+
+   // Explicit instantiation declarations
+   extern template class AmCompressor<1>;
+   extern template class AmCompressor<2>;
+   extern template class AmCompressor<3>;
    
 } // namespace Rpg
 } // namespace Pscf

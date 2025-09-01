@@ -1041,12 +1041,10 @@ namespace Rpg {
    inline long Simulator<D>::iTotalStep()
    {  return iTotalStep_; }
 
-   #ifndef RPG_SIMULATOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Simulator<1>;
    extern template class Simulator<2>;
    extern template class Simulator<3>;
-   #endif
 
 }
 }

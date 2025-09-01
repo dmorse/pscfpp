@@ -9,11 +9,8 @@
 */
 
 #include "McMove.h"                          // base class
-#include <prdc/cuda/RField.h>
-
-#include <util/param/ParamComposite.h>
-#include <util/containers/DArray.h>
-#include <util/global.h>
+#include <prdc/cuda/RField.h>                // member
+#include <util/containers/DArray.h>          // member
 
 namespace Pscf {
 namespace Rpg {
@@ -113,12 +110,10 @@ namespace Rpg {
       
    };
       
-   #ifndef RPG_REAL_MOVE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class RealMove<1>;
    extern template class RealMove<2>;
    extern template class RealMove<3>;
-   #endif
 
 }
 }

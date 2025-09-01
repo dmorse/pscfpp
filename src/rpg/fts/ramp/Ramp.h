@@ -6,9 +6,9 @@
 namespace Pscf {
 namespace Rpg {
 
-   using namespace Util;
-
    template <int D> class Simulator;
+
+   using namespace Util;
 
    /**
    * Class that varies parameters during a simulation (abstract).
@@ -103,12 +103,10 @@ namespace Rpg {
       return *simulatorPtr_; 
    }
 
-   #ifndef RPG_RAMP_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Ramp<1>;
    extern template class Ramp<2>;
    extern template class Ramp<3>;
-   #endif
 
 }
 }

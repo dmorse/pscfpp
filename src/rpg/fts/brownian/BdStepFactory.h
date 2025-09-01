@@ -11,8 +11,6 @@
 #include <util/param/Factory.h>  
 #include <rpg/fts/brownian/BdStep.h>
 
-#include <string>
-
 namespace Pscf {
 namespace Rpg {
 
@@ -55,12 +53,10 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_BD_STEP_FACTORY_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class BdStepFactory<1>;
    extern template class BdStepFactory<2>;
    extern template class BdStepFactory<3>;
-   #endif
 
 }
 }

@@ -8,19 +8,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/param/ParamComposite.h>    // base class
+
 #include <rpg/scft/sweep/Sweep.h>
 #include <prdc/environment/Environment.h>
 #include <pscf/cuda/DeviceArray.h>
-#include <util/param/ParamComposite.h>    // base class
-#include <util/containers/FSArray.h>
+#include <util/containers/FSArray.h>       // Class member
 #include <util/global.h>
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
-   template <int D>
-   class System;
+   template <int D> class System;
 
    using namespace Util;
 
@@ -167,6 +166,16 @@ namespace Rpg
    inline Iterator<D>::~Iterator()
    {}
 
+   // Return reference to parent system.
+   template<int D>
+   inline System<D>& Iterator<D>::system() 
+   {  return *sysPtr_; }
+
+   // Return const reference to parent system.
+   template<int D>
+   inline System<D> const & Iterator<D>::system() const
+   {  return *sysPtr_; }
+
    // Does this iterator use a symmetry-adapted Fourier basis?
    template<int D>
    inline bool Iterator<D>::isSymmetric() const
@@ -221,16 +230,6 @@ namespace Rpg
          return system().mixture().stress(paramId);
       }
    }
-
-   // Return reference to parent system.
-   template<int D>
-   inline System<D>& Iterator<D>::system() 
-   {  return *sysPtr_; }
-
-   // Return const reference to parent system.
-   template<int D>
-   inline System<D> const & Iterator<D>::system() const
-   {  return *sysPtr_; }
 
 } // namespace Rpg
 } // namespace Pscf

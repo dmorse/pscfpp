@@ -303,12 +303,10 @@ namespace Rpg
    inline System<D>& AverageListAnalyzer<D>::system()
    {  return *systemPtr_; }
 
-   #ifndef RPG_AVERAGE_LIST_ANALYZER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class AverageListAnalyzer<1>;
    extern template class AverageListAnalyzer<2>;
    extern template class AverageListAnalyzer<3>;
-   #endif
 
 }
 }

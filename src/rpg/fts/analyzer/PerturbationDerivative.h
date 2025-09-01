@@ -9,12 +9,9 @@
 */
 
 #include "AverageAnalyzer.h"
-#include <rpg/system/System.h>
-#include <rpg/fts/simulator/Simulator.h>
 
 namespace Pscf {
-namespace Rpg 
-{
+namespace Rpg {
 
    template <int D> class System;
    template <int D> class Simulator;
@@ -70,12 +67,10 @@ namespace Rpg
       
    };
    
-   // Suppress implicit instantiation
-   #ifndef RPG_PERTURBATION_DERIVATIVE_TPP
+   // Explicit instantiation declarations
    extern template class PerturbationDerivative<1>;
    extern template class PerturbationDerivative<2>;
    extern template class PerturbationDerivative<3>;
-   #endif
 
 }
 }

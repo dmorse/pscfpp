@@ -329,22 +329,19 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_FIELD_IO_TPP
+   // Explicit instantation declarations
    extern template class FieldIo<1>;
    extern template class FieldIo<2>;
    extern template class FieldIo<3>;
-   #endif
 
 } // namespace Rpg
 
-#ifndef RPG_FIELD_IO_TPP
 namespace Prdc {
-   using namespace Pscf::Prdc::Cuda;
+   using namespace Cuda;
    extern template class FieldIoTmpl<1, RField<1>, RFieldDft<1>, FFT<1>>;
    extern template class FieldIoTmpl<2, RField<2>, RFieldDft<2>, FFT<2>>;
    extern template class FieldIoTmpl<3, RField<3>, RFieldDft<3>, FFT<3>>;
 } 
-#endif
 
 } // namespace Pscf
 #endif

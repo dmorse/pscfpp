@@ -61,14 +61,14 @@ namespace Rpg {
 
    };
 
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class CFields<1>;
    extern template class CFields<2>;
    extern template class CFields<3>;
 
 } // namespace Rpg
 namespace Prdc {
-   // Suppress implicit instantiation of base class
+   // Explicit instantiation declarations for base class
    extern template class CFieldsTmpl<1, Cuda::RField<1>, Rpg::FieldIo<1> >;
    extern template class CFieldsTmpl<2, Cuda::RField<2>, Rpg::FieldIo<2> >;
    extern template class CFieldsTmpl<3, Cuda::RField<3>, Rpg::FieldIo<3> >;

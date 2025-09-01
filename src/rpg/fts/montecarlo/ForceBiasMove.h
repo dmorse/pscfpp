@@ -132,12 +132,10 @@ namespace Rpg {
    inline bool ForceBiasMove<D>::needsDc()
    {  return true; }
 
-   #ifndef RPG_FORCE_BIAS_MOVE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class ForceBiasMove<1>;
    extern template class ForceBiasMove<2>;
    extern template class ForceBiasMove<3>;
-   #endif
 
 }
 }

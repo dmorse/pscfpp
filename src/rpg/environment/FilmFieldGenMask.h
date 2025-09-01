@@ -157,11 +157,10 @@ namespace Rpg {
    inline RealVec<D> FilmFieldGenMask<D>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
-   #ifndef RPG_MASK_GEN_FILM_TPP
+   // Explicit instantiation declarations
    extern template class FilmFieldGenMask<1>;
    extern template class FilmFieldGenMask<2>;
    extern template class FilmFieldGenMask<3>;
-   #endif
 
 } // namespace Rpg
 } // namespace Pscf

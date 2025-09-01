@@ -8,9 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"
-#include <rpg/system/System.h>
-#include <rpg/fts/simulator/Simulator.h>
+#include "AverageAnalyzer.h"               // Base class template
 
 namespace Pscf {
 namespace Rpg {
@@ -69,12 +67,10 @@ namespace Rpg {
 
    };
 
-   // Suppress implicit instantiation
-   #ifndef RPG_CONCENTRATION_DERIVATIVE_TPP
+   // Explicit instantiation declarations
    extern template class ConcentrationDerivative<1>;
    extern template class ConcentrationDerivative<2>;
    extern template class ConcentrationDerivative<3>;
-   #endif
 
 }
 }

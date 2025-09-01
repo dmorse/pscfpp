@@ -9,13 +9,13 @@
 */
 
 // Header file includes
-#include <prdc/system/SystemTmpl.h>      // base class template
-#include <rpg/system/Types.h>            // base class template param
-#include <rpg/solvers/Mixture.h>         // member
-#include <rpg/field/Domain.h>            // member
-#include <rpg/field/WFields.h>   // member
-#include <rpg/field/CFields.h>   // member
-#include <rpg/field/Mask.h>              // member
+#include <prdc/system/SystemTmpl.h>    // base class template
+#include <rpg/system/Types.h>          // base class template param
+#include <rpg/solvers/Mixture.h>       // member
+#include <rpg/field/Domain.h>          // member
+#include <rpg/field/WFields.h>         // member
+#include <rpg/field/CFields.h>         // member
+#include <rpg/field/Mask.h>            // member
 
 namespace Pscf {
 namespace Rpg {
@@ -60,22 +60,18 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_SYSTEM_CU
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class System<1>;
    extern template class System<2>;
    extern template class System<3>;
-   #endif
 
 } // namespace Rpg
 namespace Prdc {
 
-   #ifndef RPG_SYSTEM_CU
-   // Suppress implicit instantiation of base class
+   // Explicit instantiation declarations of base class
    extern template class SystemTmpl<1, Rpg::Types<1> >;
    extern template class SystemTmpl<2, Rpg::Types<1> >;
    extern template class SystemTmpl<3, Rpg::Types<1> >;
-   #endif
 
 } // namespace Prdc 
 } // namespace Pscf

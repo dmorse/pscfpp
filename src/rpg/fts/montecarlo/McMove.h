@@ -8,21 +8,25 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/param/ParamComposite.h>    // base class
+#include <util/misc/Timer.h>              // member
 
-#include <util/param/ParamComposite.h>
-#include <util/random/Random.h>
-#include <pscf/cuda/CudaRandom.h>
-#include <util/global.h>
-#include <util/misc/Timer.h>
+// Forward declarations
+namespace Util { 
+   class Random; 
+}
+namespace Pscf { 
+   class CudaRandom; 
+   namespace Rpg { 
+      template <int D> class System;
+      template <int D> class McSimulator;
+   }
+}
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    using namespace Util;
-
-   template <int D> class System;
-   template <int D> class McSimulator;
 
    /**
    * McMove is an abstract base class for Monte Carlo moves.
@@ -332,12 +336,10 @@ namespace Rpg
    inline void McMove<D>::setProbability(double probability)
    {  probability_ = probability; }
 
-   #ifndef RPG_MC_MOVE_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class McMove<1>;
    extern template class McMove<2>;
    extern template class McMove<3>;
-   #endif
 
 }
 }

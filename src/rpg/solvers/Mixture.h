@@ -30,12 +30,12 @@ namespace Rpg {
    {
 
    public:
- 
+
       /// Direct (parent) base class.
-      using MixturePrdcT 
+      using MixturePrdcT
          = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D> >;
 
-      // Inherited public type name aliases 
+      // Inherited public type name aliases
       using typename MixturePrdcT::MixtureTmplT;
       using typename MixturePrdcT::PolymerT;
       using typename MixturePrdcT::SolventT;
@@ -46,7 +46,7 @@ namespace Rpg {
       using typename MixturePrdcT::WaveListT;
 
       // Public member functions
-      
+
       /**
       * Constructor.
       */
@@ -55,7 +55,7 @@ namespace Rpg {
       /**
       * Read all parameters and initialize.
       *
-      * \param in  input parameter stream 
+      * \param in  input parameter stream
       */
       void readParameters(std::istream& in) override;
 
@@ -92,12 +92,12 @@ namespace Rpg {
    private:
 
       // Private member data
-     
+
       /// Use batched FFTs to compute stress? (faster, but doubles memory)
       bool useBatchedFFT_;
 
       // Private member functions
-      
+
       /**
       * Set all elements of a field to a common scalar: A[i] = s.
       *
@@ -117,21 +117,25 @@ namespace Rpg {
       /**
       * Allocate memory for all blocks
       */
-      virtual void allocateBlocks() override;  
+      virtual void allocateBlocks() override;
 
    };
 
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Mixture<1>;
    extern template class Mixture<2>;
    extern template class Mixture<3>;
 
 } // namespace Rpg
+
 namespace Prdc {
-   // Suppress implicit instantiation of base class 
+
+   // Explicit instantiation declarations for base class
    extern template class MixturePrdc<1, Rpg::Polymer<1>, Rpg::Solvent<1> >;
    extern template class MixturePrdc<2, Rpg::Polymer<2>, Rpg::Solvent<2> >;
    extern template class MixturePrdc<3, Rpg::Polymer<3>, Rpg::Solvent<3> >;
+
 } // namespace Prdc
+
 } // namespace Pscf
 #endif

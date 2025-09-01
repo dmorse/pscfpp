@@ -177,16 +177,14 @@ namespace Rpg {
    };
 
    // Get stress component n.
-   template <int D>
+   template <int D> inline
    double Polymer<D>::stress(int n)
    {  return stress_[n]; }
 
-   #ifndef RPG_POLYMER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class Polymer<1>;
    extern template class Polymer<2>;
    extern template class Polymer<3>;
-   #endif
 
 }
 }

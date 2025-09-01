@@ -50,6 +50,9 @@ namespace Rpg {
 
    private:
 
+      /// Pointer to the associated system object.
+      System<D>* sysPtr_;
+
       /**
       * Create FieldGenerator objects for the mask & external field
       * 
@@ -65,12 +68,9 @@ namespace Rpg {
          MixAndMatchEnv::fieldGenPtr2_ = new FilmFieldGenExt<D>(*sysPtr_);
       }
 
-      /// Pointer to the associated system object.
-      System<D>* sysPtr_;
-
    };
 
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class FilmEnvironment<1>;
    extern template class FilmEnvironment<2>;
    extern template class FilmEnvironment<3>;

@@ -13,6 +13,8 @@
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/system/System.h>
+#include <pscf/cuda/CudaRandom.h>
+#include <util/random/Random.h>
 
 namespace Pscf {
 namespace Rpg {

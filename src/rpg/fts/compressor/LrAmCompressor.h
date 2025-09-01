@@ -1,5 +1,5 @@
-#ifndef RPG_LR_POST_AM_COMPRESSOR_H
-#define RPG_LR_POST_AM_COMPRESSOR_H
+#ifndef RPG_LR_AM_COMPRESSOR_H
+#define RPG_LR_AM_COMPRESSOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -262,12 +262,10 @@ namespace Rpg {
 
    };
    
-   #ifndef RPG_LR_POST_AM_COMPRESSOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class LrAmCompressor<1>;
    extern template class LrAmCompressor<2>;
    extern template class LrAmCompressor<3>;
-   #endif
 
 } // namespace Rpg
 } // namespace Pscf

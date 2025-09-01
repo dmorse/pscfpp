@@ -117,12 +117,10 @@ namespace Rpg {
 
    };
 
-   #ifndef RPG_ANALZYER_MANAGER_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class AnalyzerManager<1>;
    extern template class AnalyzerManager<2>;
    extern template class AnalyzerManager<3>;
-   #endif
 
 }
 }
