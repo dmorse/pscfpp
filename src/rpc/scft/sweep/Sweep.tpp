@@ -7,9 +7,10 @@
 */
 
 #include "Sweep.h"
-#include <rpc/system/System.h>
+
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/ScftThermo.h>
+#include <rpc/system/System.h>
 #include <prdc/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/SweepTmpl.tpp>

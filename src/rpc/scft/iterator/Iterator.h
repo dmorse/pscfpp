@@ -8,18 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/scft/sweep/Sweep.h>
-#include <prdc/environment/Environment.h>
 #include <util/param/ParamComposite.h>    // base class
-#include <util/containers/FSArray.h>
+#include <util/containers/FSArray.h>      // member
 #include <util/global.h>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
-   template <int D>
-   class System;
+   template <int D> class System;
 
    using namespace Util;
 
@@ -132,20 +128,12 @@ namespace Rpc
       /**
       * Get parent system by const reference.
       */
-      System<D> const & system() const
-      {
-         UTIL_CHECK(sysPtr_);  
-         return *sysPtr_; 
-      }
+      System<D> const & system() const;
 
       /**
       * Get parent system by non-const reference.
       */
-      System<D>& system() 
-      {  
-         UTIL_CHECK(sysPtr_);  
-         return *sysPtr_; 
-      }
+      System<D>& system();
 
    private:
 
@@ -156,65 +144,30 @@ namespace Rpc
 
    // Inline member functions
 
-   // Default constructor
-   template <int D>
-   inline Iterator<D>::Iterator()
-    : isSymmetric_(false),
-      isFlexible_(false),
-      sysPtr_(nullptr)
-   {  setClassName("Iterator"); }
-
-   // Constructor
-   template <int D>
-   Iterator<D>::Iterator(System<D>& system)
-    : isSymmetric_(false),
-      isFlexible_(false),
-      sysPtr_(&system)
-   {  setClassName("Iterator"); }
-
-   // Destructor
-   template <int D>
-   Iterator<D>::~Iterator()
-   {}
-
-   // Get the number of flexible lattice parameters
-   template <int D>
-   int Iterator<D>::nFlexibleParams() const
+   /**
+   * Get parent system by const reference.
+   */
+   template <int D> inline
+   System<D> const & Iterator<D>::system() const
    {
-      UTIL_CHECK(flexibleParams_.size() == 
-                                 system().domain().unitCell().nParameter());
-      int nFlexParams = 0;
-      for (int i = 0; i < flexibleParams_.size(); i++) {
-         if (flexibleParams_[i]) nFlexParams++;
-      }
-      return nFlexParams;
+      UTIL_CHECK(sysPtr_);  
+      return *sysPtr_; 
    }
 
-   // Set the array indicating which lattice parameters are flexible.
-   template <int D>
-   void Iterator<D>::setFlexibleParams(FSArray<bool,6> const & flexParams)
+   /**
+   * Get parent system by non-const reference.
+   */
+   template <int D> inline
+   System<D>& Iterator<D>::system() 
    {  
-      flexibleParams_ = flexParams; 
-      if (nFlexibleParams() == 0) {
-         isFlexible_ = false;
-      } else {
-         isFlexible_ = true;
-      }
+      UTIL_CHECK(sysPtr_);  
+      return *sysPtr_; 
    }
 
-   // Return the stress used by this Iterator, for one lattice parameter.
-   template <int D>
-   double Iterator<D>::stress(int paramId) const
-   {
-      // Parameter must be flexible to access the stress
-      UTIL_CHECK(flexibleParams_[paramId]);
-
-      if (system().hasEnvironment()) {
-         return system().environment().stress(paramId);
-      } else {
-         return system().mixture().stress(paramId);
-      }
-   }
+   // Explicit instantiation declarations
+   extern template class Iterator<1>;
+   extern template class Iterator<2>;
+   extern template class Iterator<3>;
 
 } // namespace Rpc
 } // namespace Pscf

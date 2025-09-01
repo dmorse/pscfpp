@@ -8,10 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/SweepTmpl.h>          // base class template
-#include <rpc/scft/sweep/BasisFieldState.h>    // base class template parameter
-#include "SweepParameter.h" // parameter class
-#include <util/global.h>
+#include <pscf/sweep/SweepTmpl.h>            // base class template
+#include <rpc/scft/sweep/BasisFieldState.h>  // base class argument
+#include <util/global.h>                     // inline functions
 
 namespace Pscf {
 namespace Rpc {
@@ -171,7 +170,7 @@ namespace Rpc {
       */
       bool writeWRGrid_;
 
-      // Protected member variables inherited from base classes
+      // Protected inherited member variables 
       using SweepTmpl< BasisFieldState<D> >::ns_;
       using SweepTmpl< BasisFieldState<D> >::baseFileName_;
       using SweepTmpl< BasisFieldState<D> >::initialize;

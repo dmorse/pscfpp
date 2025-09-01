@@ -15,6 +15,7 @@
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
+#include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 #include <cmath>
 
