@@ -1,4 +1,5 @@
 rpg_scft_iterator_= \
+  rpg/scft/iterator/Iterator.cu \
   rpg/scft/iterator/IteratorFactory.cu \
   rpg/scft/iterator/AmIteratorBasis.cu \
   rpg/scft/iterator/AmIteratorGrid.cu
