@@ -1,7 +1,7 @@
 /*! \page developer_build_pattern_page Pattern Rule (patterns.mk) Files
 
-\ref developer_makefile_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_abs_page (Next)
+\ref developer_build_dependency_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_include_page (Next)
 <BR>
 
 Each namespace level subdirectory of the src/ directory has a makefile
@@ -139,8 +139,8 @@ rule, and and can thus also change the contents of the resulting object
 files.
 
 <BR>
-\ref developer_build_makefile_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_page          (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_standards_page      (Next)
+\ref developer_build_dependency_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page            (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_include_page    (Next)
 
 */

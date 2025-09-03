@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------
-# Include makefiles
+# Include *.mk makefile fragments
 
 SRC_DIR_REL =../..
 include $(SRC_DIR_REL)/config.mk
@@ -16,4 +16,4 @@ clean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_OBJS:.o=.d)
+-include $(pscf_math_OBJS:.o=.d)

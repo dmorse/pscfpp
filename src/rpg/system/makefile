@@ -1,5 +1,5 @@
 #--------------------------------------------------------------------
-# Include makefiles
+# Include *.mk makefile fragments
 
 SRC_DIR_REL =../..
 include $(SRC_DIR_REL)/config.mk

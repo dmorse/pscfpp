@@ -1,7 +1,12 @@
 BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/rpc/include.mk
+include ../../../config.mk
+include $(SRC_DIR)/util/config.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/rpc/sources.mk
 include $(SRC_DIR)/rpc/tests/environment/sources.mk
+include $(SRC_DIR)/rpc/patterns.mk
 
 TEST=rpc/tests/environment/Test
 
@@ -37,4 +42,6 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(rpc_OBJS:.o=.d)
--include $(rpc_tests_environment_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)

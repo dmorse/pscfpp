@@ -1,6 +1,6 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
+include ../../../config.mk
 include $(SRC_DIR)/pscf/include.mk
+include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/tests/chem/sources.mk
 
 TEST=pscf/tests/chem/Test
@@ -28,4 +28,5 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(pscf_tests_chem_OBJS:.o=.d)
--include $(pscf_tests_chem_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)

@@ -1,7 +1,7 @@
 /*! \page developer_build_overview_page Build Process
 
 \ref developer_build_page       (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_make_page  (Next)
+\ref developer_build_compile_page  (Next)
 <BR>
 
 PSCF is compiled by the user using a system of unix makefiles.
@@ -90,6 +90,6 @@ bin directory.
 
 <BR>
 \ref developer_build_page         (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_make_page    (Next)  
+\ref developer_build_compile_page    (Next)  
 
 */

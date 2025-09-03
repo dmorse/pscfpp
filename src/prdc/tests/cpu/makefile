@@ -1,6 +1,8 @@
 BLD_DIR_REL =../../..
 include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/prdc/include.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/prdc/tests/cpu/sources.mk
 
 TEST=prdc/tests/cpu/Test
@@ -31,4 +33,6 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(prdc_tests_cpu_OBJS:.o=.d)
--include $(prdc_tests_cpu_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)

@@ -1,11 +1,19 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/rpc/include.mk
+# -------------------------------------------------------------------------
+# Include *.mk makefile fragments
+
+include ../../../config.mk
+include $(SRC_DIR)/util/config.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/rpc/sources.mk
 include $(SRC_DIR)/rpc/tests/field/sources.mk
+include $(SRC_DIR)/rpc/patterns.mk
+
+# -------------------------------------------------------------------------
+# Main targets
 
 TEST=rpc/tests/field/Test
-
-.PHONY: all includes defines libs run run-quiet clean-outputs clean
 
 all: $(rpc_tests_field_OBJS) $(BLD_DIR)/$(TEST)
 
@@ -35,5 +43,13 @@ clean:
 	rm -f $(rpc_tests_field_OBJS) $(rpc_tests_field_OBJS:.o=.d)
 	$(MAKE) clean-outputs
 
--include $(rpc_OBJS:.o=.d)
+.PHONY: all includes defines libs run run-quiet clean-outputs clean
+
+# -------------------------------------------------------------------------
+# Include dependency files
+
 -include $(rpc_tests_field_OBJS:.o=.d)
+-include $(rpc_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)

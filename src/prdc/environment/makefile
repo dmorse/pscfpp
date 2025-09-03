@@ -1,8 +1,7 @@
 #-----------------------------------------------------------------------
-# Include makefiles
+# Include *.mk makefile fragments
 
-SRC_DIR_REL =../..
-include $(SRC_DIR_REL)/config.mk
+include ../../config.mk
 include $(SRC_DIR)/prdc/include.mk
 
 #-----------------------------------------------------------------------
@@ -16,4 +15,4 @@ clean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(prdc_OBJS:.o=.d)
+-include $(prdc_environment_OBJS:.o=.d)

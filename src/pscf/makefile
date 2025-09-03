@@ -2,13 +2,12 @@
 # src/pscf/makefile
 #
 # The repository copy of this namespace level makefile is in the src/pscf
-# directory. This is copied verbatim by the configure script to create the 
-# identical copy in the bld/pscf directory.
+# directory. This is copied verbatim by the configure script to create a
+# identical file in the bld/pscf directory.
 #------------------------------------------------------------------------
-# Include makefile fragments
+# Include *.mk makefile fragments
 
-BLD_DIR_REL =..
-include $(BLD_DIR_REL)/config.mk
+include ../config.mk
 include $(SRC_DIR)/pscf/include.mk
 
 #-----------------------------------------------------------------------
@@ -35,4 +34,3 @@ endif
 # Include dependency files
 
 -include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)

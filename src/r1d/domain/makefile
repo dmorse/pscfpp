@@ -1,8 +1,7 @@
 #-----------------------------------------------------------------------
-# Include makefiles
+# Include *.mk makefile fragments
 
-SRC_DIR_REL =../..
-include $(SRC_DIR_REL)/config.mk
+include ../../config.mk
 include $(SRC_DIR)/r1d/include.mk
 
 #-----------------------------------------------------------------------
@@ -13,14 +12,9 @@ all: $(r1d_domain_OBJS)
 clean:
 	rm -f $(r1d_domain_OBJS) $(r1d_domain_OBJS:.o=.d)
 
-veryclean:
-	$(MAKE) clean
-	-rm -f *.o 
-	-rm -f *.d 
+.PHONY: all clean
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(r1d_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(r1d_domain_OBJS:.o=.d)

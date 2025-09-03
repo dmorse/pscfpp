@@ -1,6 +1,7 @@
-BLD_DIR_REL =../..
-include $(BLD_DIR_REL)/config.mk
+include ../../config.mk
 include $(SRC_DIR)/prdc/include.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/prdc/tests/sources.mk
 
 .PHONY: all objs list includes run run-quiet clean-outputs clean
@@ -47,3 +48,5 @@ clean:
 
 -include $(prdc_tests_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)

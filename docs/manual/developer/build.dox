@@ -9,16 +9,16 @@ and install executable files.
 
 <ol>
  <li> \subpage developer_build_overview_page </li>
- <li> \subpage developer_build_make_page </li>
  <li> \subpage developer_build_compile_page </li>
  <li> \subpage developer_build_add_page </li>
+ <li> \subpage developer_build_make_page </li>
  <li> \subpage developer_build_files_page </li>
- <li> \subpage developer_build_list_page </li>
- <li> \subpage developer_build_dependency_page </li>
  <li> \subpage developer_build_config_page </li>
- <li> \subpage developer_build_makefile_page </li>
+ <li> \subpage developer_build_source_page </li>
+ <li> \subpage developer_build_dependency_page </li>
  <li> \subpage developer_build_pattern_page </li>
- <li> \subpage developer_build_abs_page </li>
+ <li> \subpage developer_build_include_page </li>
+ <li> \subpage developer_build_makefile_page </li>
 </ol>
 
 <BR>

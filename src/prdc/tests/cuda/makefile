@@ -1,6 +1,8 @@
 BLD_DIR_REL =../../..
 include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/prdc/include.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/prdc/tests/cuda/sources.mk
 
 TEST=prdc/tests/cuda/Test
@@ -31,3 +33,6 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(prdc_tests_cuda_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)

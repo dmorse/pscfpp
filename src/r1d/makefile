@@ -3,13 +3,16 @@
 #
 # The repository copy of this namespace level makefile is in the src/r1d
 # directory. This is copied verbatim by the configure script to create 
-# the identical copy in the bld/r1d directory.
+# an identical file in the bld/r1d directory.
 #------------------------------------------------------------------------
-# Include makefile fragments
+# Include *.mk makefile fragments
 
-BLD_DIR_REL =..
-include $(BLD_DIR_REL)/config.mk
+include ../config.mk
 include $(SRC_DIR)/r1d/include.mk
+
+# Sources list files for other namespace-level directories 
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/util/sources.mk
 
 #-----------------------------------------------------------------------
 # Paths to pscf_1d program files
@@ -53,7 +56,7 @@ pscf_1d:
 #-----------------------------------------------------------------------
 # Include dependency files
 
+-include $(PSCF_1D).d 
 -include $(r1d_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_1D).d 

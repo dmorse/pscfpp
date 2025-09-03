@@ -2,6 +2,8 @@
 BLD_DIR_REL =../..
 include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/r1d/include.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/r1d/tests/sources.mk
 
 TEST=r1d/tests/Test
@@ -30,5 +32,7 @@ clean:
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
--include $(r1d_tests_OBJS:.o=.d)
 -include $(r1d_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(r1d_tests_OBJS:.o=.d)

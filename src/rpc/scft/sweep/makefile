@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------
-# Include makefiles
+# Include *.mk makefile fragments
 
 SRC_DIR_REL =../../..
 include $(SRC_DIR_REL)/config.mk
@@ -12,16 +12,9 @@ all: $(rpc_scft_sweep_OBJS)
 
 clean:
 	rm -f $(rpc_scft_sweep_OBJS) $(rpc_scft_sweep_OBJS:.o=.d)
-
-veryclean:
-	$(MAKE) clean
-	-rm -f *.o 
-	-rm -f *.d 
+	-rm -f *.o *.d
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rpc_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(rpc_scft_sweep_OBJS:.o=.d)

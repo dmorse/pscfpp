@@ -1,8 +1,7 @@
 #--------------------------------------------------------------------
-# Include makefiles
+# Include *.mk makefile fragments
 
-SRC_DIR_REL =../..
-include $(SRC_DIR_REL)/config.mk
+include ../../config.mk
 include $(SRC_DIR)/rpc/include.mk
 
 #--------------------------------------------------------------------
@@ -10,11 +9,10 @@ include $(SRC_DIR)/rpc/include.mk
 
 all: $(rpc_fts_OBJS) 
 
-includes:
-	echo $(INCLUDES)
-
 clean:
 	rm -f $(rpc_fts_OBJS) $(rpc_fts_OBJS:.o=.d) 
+
+.PHONY: all clean
 
 #--------------------------------------------------------------------
 # Include dependency files

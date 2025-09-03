@@ -1,17 +1,20 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/rpc/include.mk
+# -------------------------------------------------------------------------
+# Include *.mk makefile fragments
+
+include ../../../config.mk
+include $(SRC_DIR)/util/config.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/rpc/sources.mk
+include $(SRC_DIR)/rpc/patterns.mk
 include $(SRC_DIR)/rpc/tests/solvers/sources.mk
+
+# -------------------------------------------------------------------------
+# Main targets
 
 TEST=rpc/tests/solvers/Test
 
 all: $(rpc_tests_solvers_OBJS) $(BLD_DIR)/$(TEST)
-
-includes:
-	@echo $(INCLUDES)
-
-libs:
-	@echo $(LIBS)
 
 run: $(rpc_tests_solvers_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/rpc/tests/ 
@@ -30,5 +33,11 @@ clean:
 	rm -f $(rpc_tests_solvers_OBJS) $(rpc_tests_solvers_OBJS:.o=.d)
 	$(MAKE) clean-outputs
 
+# -------------------------------------------------------------------------
+# Main targets
+
 -include $(rpc_tests_solvers_OBJS:.o=.d)
--include $(rpc_tests_solvers_OBJS:.o=.d)
+-include $(rpc_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)

@@ -4,7 +4,7 @@
 # script to create the copies in those directories. Only the copy in
 # the src/ directory is stored in the repository.
 #-----------------------------------------------------------------------
-# Include makefiles
+# Include *.mk makefile fragments
 
 SRC_DIR_REL =../../..
 include $(SRC_DIR_REL)/config.mk

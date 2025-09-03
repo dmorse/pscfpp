@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------
-# Source files in src/rpg and corresponding object file targets
+# Source and object file lists for src/rpg 
 
+# Include source list files from subdirectories
 include $(SRC_DIR)/rpg/environment/sources.mk
 include $(SRC_DIR)/rpg/field/sources.mk
 include $(SRC_DIR)/rpg/solvers/sources.mk
@@ -22,7 +23,7 @@ rpg_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpg_:.cu=.o))
 
 #-----------------------------------------------------------------------
-# Path and makefile target for the librpg.a library file
+# Path and makefile target for the rpg/librpg.a library file
 
 rpg_LIBNAME=rpg
 rpg_LIB=$(BLD_DIR)/rpg/lib$(rpg_LIBNAME).a
@@ -30,3 +31,4 @@ rpg_LIB=$(BLD_DIR)/rpg/lib$(rpg_LIBNAME).a
 $(rpg_LIB): $(rpg_OBJS)
 	$(AR) rcs $(rpg_LIB) $(rpg_OBJS)
 
+#-----------------------------------------------------------------------

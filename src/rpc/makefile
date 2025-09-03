@@ -3,13 +3,17 @@
 #
 # The repository copy of this namespace level makefile is in the src/rpc
 # directory. This is copied verbatim by the configure script to create 
-# the identical copy in the bld/rpc directory.
+# an identical file in the bld/rpc directory.
 #------------------------------------------------------------------------
-# Include makefile fragments
+# Include *.mk makefile fragments
 
-BLD_DIR_REL =..
-include $(BLD_DIR_REL)/config.mk
+include ../config.mk
 include $(SRC_DIR)/rpc/include.mk
+
+# Source list files from other namespace level directories
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/util/sources.mk
 
 #-----------------------------------------------------------------------
 # Paths to pscf_pc program files
@@ -53,8 +57,8 @@ pscf_pc:
 #-----------------------------------------------------------------------
 # Include dependency files
 
+-include $(PSCF_PC).d 
 -include $(rpc_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_PC).d 

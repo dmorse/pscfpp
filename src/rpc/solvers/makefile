@@ -4,10 +4,9 @@
 # script to create the copies in those directories. Only the copy in
 # the src/ directory is stored in the repository.
 #-----------------------------------------------------------------------
-# Include makefiles
+# Include *.mk makefile fragments
 
-SRC_DIR_REL =../..
-include $(SRC_DIR_REL)/config.mk
+include ../../config.mk
 include $(SRC_DIR)/rpc/include.mk
 
 #-----------------------------------------------------------------------
@@ -18,15 +17,9 @@ all: $(rpc_solvers_OBJS)
 clean:
 	rm -f $(rpc_solvers_OBJS) $(rpc_solvers_OBJS:.o=.d)
 
-veryclean:
-	$(MAKE) clean
-	-rm -f *.o 
-	-rm -f *.d 
+.PHONY: all clean
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rpc_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(rpc_solvers_OBJS:.o=.d)

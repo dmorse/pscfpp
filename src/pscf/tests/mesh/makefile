@@ -1,6 +1,7 @@
 BLD_DIR_REL =../../..
 include $(BLD_DIR_REL)/config.mk
 include $(SRC_DIR)/pscf/include.mk
+include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/tests/mesh/sources.mk
 
 TEST=pscf/tests/mesh/Test
@@ -29,4 +30,5 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(pscf_tests_mesh_OBJS:.o=.d)
--include $(pscf_tests_mesh_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(util_OBJS:.o=.d)

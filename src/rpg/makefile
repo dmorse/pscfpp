@@ -5,7 +5,7 @@
 # directory. This is copied verbatim by the configure script to create 
 # the identical copy in in the bld/rpg directory.
 #------------------------------------------------------------------------
-# Include makefile fragments
+# Include *.mk makefile fragments
 
 BLD_DIR_REL =..
 include $(BLD_DIR_REL)/config.mk

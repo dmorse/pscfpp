@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------
-# Source files in src/pscf and associated object file targets
+# Source and object file lists for src/pscf 
 
-# CPP source directories
+# Include source list files from subdirectories
 include $(SRC_DIR)/pscf/chem/sources.mk
 include $(SRC_DIR)/pscf/inter/sources.mk
 include $(SRC_DIR)/pscf/math/sources.mk
@@ -11,7 +11,7 @@ include $(SRC_DIR)/pscf/environment/sources.mk
 include $(SRC_DIR)/pscf/iterator/sources.mk
 include $(SRC_DIR)/pscf/sweep/sources.mk
 
-# CPP source files
+# C++ source files
 
 pscf_CPP= \
   $(pscf_chem_) $(pscf_inter_) $(pscf_math_) \
@@ -24,6 +24,7 @@ pscf_CPP_OBJS=\
 pscf_OBJS = $(pscf_CPP_OBJS)
 
 # CUDA source files
+
 ifdef PSCF_CUDA
   include $(SRC_DIR)/pscf/cuda/sources.mk
   pscf_OBJS+=$(pscf_cuda_OBJS)
@@ -38,3 +39,4 @@ pscf_LIB=$(BLD_DIR)/pscf/lib$(pscf_LIBNAME).a
 $(pscf_LIB): $(pscf_OBJS)
 	$(AR) rcs $(pscf_LIB) $(pscf_OBJS) 
 
+#-----------------------------------------------------------------------

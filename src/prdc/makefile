@@ -3,12 +3,11 @@
 #
 # The repository copy of this namespace level makefile is in the src/prdc
 # directory. This file is copied verbatim by the configure script to 
-# create the identical copy in the bld/prdc directory.
+# create an identical file in the bld/prdc directory.
 #------------------------------------------------------------------------
-# Include makefile fragments
+# Include *.mk makefile fragments
 
-BLD_DIR_REL =..
-include $(BLD_DIR_REL)/config.mk
+include ../config.mk
 include $(SRC_DIR)/prdc/include.mk
 
 #-----------------------------------------------------------------------
@@ -32,5 +31,3 @@ veryclean:
 # Include dependency files
 
 -include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)

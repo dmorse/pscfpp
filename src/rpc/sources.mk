@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------
-# Source files in src/rpc and corresponding object files
+# Lists of source and object file targets for src/rpc 
 
+# Include source list files from subdirectories
 include $(SRC_DIR)/rpc/environment/sources.mk
 include $(SRC_DIR)/rpc/field/sources.mk
 include $(SRC_DIR)/rpc/solvers/sources.mk
@@ -22,7 +23,7 @@ rpc_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpc_:.cpp=.o))
 
 #-----------------------------------------------------------------------
-# Path and target rule for the librpc.a library 
+# Path and target rule for the rpc/librpc.a library 
 
 rpc_LIBNAME=rpc
 rpc_LIB=$(BLD_DIR)/rpc/lib$(rpc_LIBNAME).a

@@ -1,17 +1,118 @@
-/*! \page developer_build_files_page Build System File Types
+/*! \page developer_build_files_page PSCF Build System Files (Overview)
 
-\ref developer_build_add_page          (Prev) 
-&nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_list_page  (Next)
+\ref developer_build_make_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_config_page  (Next)
 <BR>
 
-Discuss the different types of makefile fragments used in the PSCF
-build system.
+This file briefly discusses the contents and purpose of different 
+types of makefiles and makefile fragments that are used by the PSCF 
+build system to control the build process.  Files with a filename 
+extension .mk are always makefile fragments that are included by 
+other makefiles.
 
+\section developer_build_files_dirs_sec File locations
+
+After the configure script is run, but before any source files are
+compiled, the following types of makefiles and makefile fragments 
+exist in different levels of the src directory tree:
+
+  - Almost every subdirectory of the src directory tree (with the
+    exception of directories named test/ or tests/) contains a 
+    makefile and a makefile fragment named sources.mk.
+
+  - Each of the namespace-level subdirectories of the src directory
+    tree has a makefile, and makefile fragments named sources.mk,
+    patterns.mk and include.mk.
+
+  - The root of the src directory contains a makefile and a file
+    named config.mk
+
+In the same state, the the following types of files exist in the bld 
+directory tree:
+
+  - Each namespace-level subdirectory of the bld directory contains
+    a makefile.
+
+  - The root of the bld directory contains a makefile and a file 
+    named config.mk
+
+The PSCF root directory also contains a makefile, which defines an 
+"all" target that performs an out-of-source build of the entire 
+package.
+
+The configure script installs the config.mk files in both the src
+and bld directory and all of the makefiles in the bld directory.
+
+Compilation leads to creation of additional intermediate object, 
+dependency and library files in either the src directory (for in-source
+compilation) or the bld directory (for out-of-source) compilation, as 
+discussed previously \ref developer_build_overview_page "elsewhere". The 
+dependency files are actually themselves makefile fragments that are 
+included into other makefiles, which use them to help keep track of 
+which existing object files are up-to-date.
+
+\section developer_build_files_types_sec Makefile fragment file types
+
+The names and contents of different types of makefile fragments used
+in the build system are summarized in the table below:
+
+ | Type        | Filename  | Contents                                     |
+ |-------------|-----------| ---------------------------------------------|
+ |configuration|config.mk  | configuration file, defines global variables |
+ |source list  |sources.mk | list source files and object file targets    |
+ |pattern rule |patterns.mk| pattern rules for object files targets       |
+ |include      |includes.mk| includes fragments needed by  makefiles      |
+ |dependency   | *.d       | list pre-requisites of a single *.o target   |
+
+Each of these types of file is described in a bit more detail below, 
+and then in greater detail in subsequent pages about particular file
+types:
+
+   - **Configuration files** : Makefile fragments named config.mk that
+     are installed in the bld and src directory are configuration files 
+     that assign values to makefile variables are used in other build 
+     system files, and that may need to be assigned different values on
+     different computer systems. Among these are variables whose values 
+     give paths to the PSCF root directory and some of its main 
+     subdirectories, variables that specify command line options for the 
+     compiler, or variables that enable or disable particular features. 
+
+   - **Source list files** : The makefile fragment named sources.mk 
+     in each directory in the src directory tree defines a pair of
+     makefile variables whose values are, respectively, a list of all 
+     of the compilable source files in that directory and all of its 
+     subdirectories, and a list of all of the corresponding object file 
+     targets.  
+
+   - **Pattern rule files** : The makefile fragment named patterns.mk 
+     in each namespace-level subdirectory contains pattern rules that
+     are used to compile all *.cpp and (in some cases) *.cu source files 
+     located in that namespace-level directory and its subdirectories.
+
+   - **Include files** : The makefile fragment named include.mk in 
+     each namespace-level subdirectory of src is a short file that 
+     simply includes a few makefile fragments that are needed by all 
+     makefiles in that namespace-level directory. The includes.mk file 
+     is then included by these makefiles. 
+
+   - **Dependency files** : The *.d dependency file that is created
+     whenever a *.o object file is created contains a single makefile 
+     rule that lists all of the required pre-requisites of the 
+     associated object file, with no associated recipe. This list 
+     includes the associated compilable *.cpp or *.cu source file 
+     and all of the *.h and *.tpp files from the PSCF package that 
+     are directly or indirectly included by that source file.
+
+Every makefile within a namespace-level subdirectory of the src 
+directory includes the src/config.mk file, the includes.mk file for 
+that namespace-level directory, and dependency files for all of the
+source files in that directory.  Inclusion of these files provides 
+all required information about makefile variable values, pattern rules, 
+object file target names, and the pre-requisites of each target.
 
 <BR>
-\ref developer_build_add_page     (Pre) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_list_page    (Next)  
+\ref developer_build_make_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_config_page  (Next)  
 
 */
