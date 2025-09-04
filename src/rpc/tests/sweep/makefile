@@ -7,8 +7,8 @@ include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/rpc/sources.mk
-include $(SRC_DIR)/rpc/patterns.mk
 include $(SRC_DIR)/rpc/tests/sweep/sources.mk
+include $(SRC_DIR)/rpc/patterns.mk
 
 # -------------------------------------------------------------------------
 # Main targets

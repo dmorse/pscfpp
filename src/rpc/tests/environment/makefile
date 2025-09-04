@@ -1,4 +1,3 @@
-BLD_DIR_REL =../../..
 include ../../../config.mk
 include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
@@ -13,15 +12,6 @@ TEST=rpc/tests/environment/Test
 .PHONY: all includes defines libs run run-quiet clean-outputs clean
 
 all: $(rpc_tests_environment_OBJS) $(BLD_DIR)/$(TEST)
-
-includes:
-	@echo $(INCLUDES)
-
-defines:
-	@echo $(DEFINES)
-
-libs:
-	@echo $(LIBS)
 
 run: $(rpc_tests_environment_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/rpc/tests/ 
@@ -41,6 +31,7 @@ clean:
 	rm -f $(rpc_tests_environment_OBJS) $(rpc_tests_environment_OBJS:.o=.d)
 	$(MAKE) clean-outputs
 
+-include $(TEST).d
 -include $(rpc_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)

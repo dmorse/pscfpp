@@ -1,7 +1,9 @@
 include ../../../config.mk
-include $(SRC_DIR)/pscf/include.mk
+include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/tests/floryHuggins/sources.mk
+include $(SRC_DIR)/pscf/patterns.mk
 
 TEST=pscf/tests/floryHuggins/Test
 

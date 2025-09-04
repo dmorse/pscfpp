@@ -1,9 +1,10 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/prdc/include.mk
+include ../../../config.mk
+include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/prdc/tests/crystal/sources.mk
+include $(SRC_DIR)/prdc/patterns.mk
 
 TEST=prdc/tests/crystal/Test
 

@@ -46,7 +46,6 @@ Makefile and makefile fragments:
 makefile     - main makefile for src/prdc directory tree
 sources.mk   - list of source files in src/prdc (makefile fragment)
 patterns.mk  - pattern rules for use in src/prdc (makefile fragment)
-include.mk   - makefile include statements (makefile fragment)
 
 Doxygen documentation file:
 ---------------------------

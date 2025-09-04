@@ -6,8 +6,8 @@ include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/rpc/sources.mk
-include $(SRC_DIR)/rpc/patterns.mk
 include $(SRC_DIR)/rpc/tests/solvers/sources.mk
+include $(SRC_DIR)/rpc/patterns.mk
 
 # -------------------------------------------------------------------------
 # Main targets

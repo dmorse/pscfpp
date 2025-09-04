@@ -31,7 +31,6 @@ Makefile and makefile fragments:
 makefile     - main makefile for src/pscf directory tree
 sources.mk   - list of source files in src/pscf (makefile fragment)
 patterns.mk  - pattern rules for use in src/pscf (makefile fragment)
-include.mk   - header of makefile file includes (makefile fragment)
 
 Doxygen documentation file:
 ---------------------------

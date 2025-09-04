@@ -2,7 +2,9 @@
 # Include *.mk makefile fragments
 
 include ../../config.mk
-include $(SRC_DIR)/r1d/include.mk
+include $(SRC_DIR)/util/config.mk
+include $(SRC_DIR)/r1d/sources.mk
+include $(SRC_DIR)/r1d/patterns.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
@@ -17,6 +19,4 @@ clean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(r1d_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(r1d_misc_OBJS:.o=.d)

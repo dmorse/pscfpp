@@ -1,8 +1,9 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/pscf/include.mk
+include ../../../config.mk
+include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/tests/mesh/sources.mk
+include $(SRC_DIR)/pscf/patterns.mk
 
 TEST=pscf/tests/mesh/Test
 

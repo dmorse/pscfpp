@@ -27,7 +27,6 @@ Makefile and makefile fragments:
 makefile     - main makefile for src/r1d directory tree
 source.mk    - list of source files (makefile fragment)
 patterns.mk  - pattern rules for src/r1d (makefile fragment)
-include.mk   - makefile include statements (makefile fragment)
 
 Doxygen documentation files:
 ----------------------------

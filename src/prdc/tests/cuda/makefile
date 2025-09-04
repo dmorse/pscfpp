@@ -1,19 +1,14 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/prdc/include.mk
+include ../../../config.mk
+include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/prdc/tests/cuda/sources.mk
+include $(SRC_DIR)/prdc/patterns.mk
 
 TEST=prdc/tests/cuda/Test
 
 all: $(prdc_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
-
-includes:
-	@echo $(INCLUDES)
-
-libs:
-	@echo $(LIBS)
 
 run: $(prdc_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/cuda/

@@ -2,7 +2,9 @@
 # Include *.mk makefile fragments
 
 include ../../config.mk
-include $(SRC_DIR)/prdc/include.mk
+include $(SRC_DIR)/util/config.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/prdc/patterns.mk
 
 #--------------------------------------------------------------------
 # Main targets 

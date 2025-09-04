@@ -17,15 +17,6 @@ TEST=rpc/tests/field/Test
 
 all: $(rpc_tests_field_OBJS) $(BLD_DIR)/$(TEST)
 
-includes:
-	@echo $(INCLUDES)
-
-defines:
-	@echo $(DEFINES)
-
-libs:
-	@echo $(LIBS)
-
 run: $(rpc_tests_field_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/rpc/tests/ 
 

@@ -1,7 +1,9 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/pscf/include.mk
+include ../../../config.mk
+include $(SRC_DIR)/util/config.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/tests/cuda/sources.mk
+include $(SRC_DIR)/pscf/patterns.mk
 
 TEST=pscf/tests/cuda/Test
 
@@ -28,4 +30,5 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(pscf_tests_cuda_OBJS:.o=.d)
--include $(pscf_tests_cuda_OBJS:.o=.d)
+-include $(pscf_util_OBJS:.o=.d)
+-include $(pscf_pscf_OBJS:.o=.d)

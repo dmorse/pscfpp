@@ -8,12 +8,12 @@
 # Include *.mk makefile fragments
 
 include ../config.mk
-include $(SRC_DIR)/rpc/include.mk
-
-# Source list files from other namespace level directories
-include $(SRC_DIR)/prdc/sources.mk
-include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/rpc/sources.mk
+include $(SRC_DIR)/rpc/patterns.mk
 
 #-----------------------------------------------------------------------
 # Paths to pscf_pc program files

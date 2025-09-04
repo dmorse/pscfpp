@@ -1,9 +1,10 @@
 #-----------------------------------------------------------------------
 # Include *.mk makefile fragments
 
-SRC_DIR_REL =../..
-include $(SRC_DIR_REL)/config.mk
-include $(SRC_DIR)/r1d/include.mk
+include ../../config.mk
+include $(SRC_DIR)/util/config.mk
+include $(SRC_DIR)/r1d/sources.mk
+include $(SRC_DIR)/r1d/patterns.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
