@@ -2,7 +2,6 @@
 # Include *.mk makefile fragments
 
 include ../../../config.mk
-include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/rpc/sources.mk
 include $(SRC_DIR)/rpc/patterns.mk
 
@@ -13,7 +12,8 @@ all: $(rpc_scft_sweep_OBJS)
 
 clean:
 	rm -f $(rpc_scft_sweep_OBJS) $(rpc_scft_sweep_OBJS:.o=.d)
-	-rm -f *.o *.d
+
+.PHONY: all clean
 
 #-----------------------------------------------------------------------
 # Include dependency files

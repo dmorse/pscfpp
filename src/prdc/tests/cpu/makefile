@@ -1,6 +1,4 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/util/config.mk
+include ../../../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
@@ -10,12 +8,6 @@ include $(SRC_DIR)/prdc/patterns.mk
 TEST=prdc/tests/cpu/Test
 
 all: $(prdc_tests_cpu_OBJS) $(BLD_DIR)/$(TEST)
-
-includes:
-	@echo $(INCLUDES)
-
-libs:
-	@echo $(LIBS)
 
 run: $(prdc_tests_cpu_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/ 
@@ -33,6 +25,8 @@ clean:
 	rm -f $(prdc_tests_cpu_OBJS) $(prdc_tests_cpu_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
+
+.PHONY: all run run-quiet clean-outputs clean
 
 -include $(prdc_tests_cpu_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)

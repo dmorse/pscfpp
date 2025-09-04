@@ -1,7 +1,5 @@
 
-BLD_DIR_REL =../..
 include ../../config.mk
-include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/r1d/sources.mk

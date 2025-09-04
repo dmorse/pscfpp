@@ -1,12 +1,9 @@
 include ../../config.mk
-include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/prdc/tests/sources.mk
 include $(SRC_DIR)/prdc/patterns.mk
-
-.PHONY: all objs list includes run run-quiet clean-outputs clean
 
 ifdef PSCF_CUDA
 TEST=prdc/tests/cudaTest
@@ -15,13 +12,6 @@ TEST=prdc/tests/cpuTest
 endif
 
 all: $(prdc_tests_OBJS) $(BLD_DIR)/$(TEST)
-
-list:
-	@echo $(prdc_tests_)
-	@echo $(prdc_tests_OBJS)
-
-includes:
-	@echo $(INCLUDES)
 
 run: $(BLD_DIR)/$(TEST)
 	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/ 
@@ -47,6 +37,8 @@ clean:
 	-cd $(SRC_DIR)/prdc/tests/crystal; $(MAKE) clean
 	-cd $(SRC_DIR)/prdc/tests/cpu; $(MAKE) clean
 	-cd $(SRC_DIR)/prdc/tests/cuda; $(MAKE) clean
+
+.PHONY: all run run-quiet clean-outputs clean
 
 -include $(prdc_tests_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)

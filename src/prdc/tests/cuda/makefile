@@ -1,5 +1,4 @@
 include ../../../config.mk
-include $(SRC_DIR)/util/config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
@@ -26,6 +25,8 @@ clean:
 	rm -f $(prdc_tests_cuda_OBJS) $(prdc_tests_cuda_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
+
+.PHONY: all run run-quiet clean-outputs clean
 
 -include $(prdc_tests_cuda_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)

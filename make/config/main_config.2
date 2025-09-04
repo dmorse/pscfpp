@@ -217,3 +217,9 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # that is located in the $(ROOT_DIR)/lib/python/pscfpp directory. For 
 # the python interpreter to find this, directory $(ROOT_DIR)/lib/python 
 # must be in the users PYTHON_PATH environment variable.
+
+#=======================================================================
+# Include util/config.mk - this is needed to define UTIL_DEFS
+
+include $(BLD_DIR)/util/config.mk
+ 
