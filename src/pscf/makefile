@@ -8,6 +8,7 @@
 # Include *.mk makefile fragments
 
 include ../config.mk
+include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
@@ -34,4 +35,5 @@ endif
 #-----------------------------------------------------------------------
 # Include dependency files
 
+-include $(util_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)

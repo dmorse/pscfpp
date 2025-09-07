@@ -43,21 +43,21 @@ veryclean:
 $(PSCF_PC_EXE): $(PSCF_PC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PC_EXE) $(PSCF_PC).o $(LIBS)
 
-# Note: In the rule for pcsf_pc, we include the list $(PSCF_LIBS) of 
-# PSCF static libraries as dependencies, but link to the list $(LIBS) 
-# of all libraries, which includes relevant external libraries.
-
 # Short phony target for executable file (for convenience)
 pscf_pc:
 	$(MAKE) $(PSCF_PC_EXE)
+
+# Note: In the rule for pscf_pc, we include the list $(PSCF_LIBS) of 
+# PSCF static libraries as prerequisites, but link to the list $(LIBS) 
+# that includes all relevant external libraries.
 
 .PHONY: all clean veryclean pscf_pc
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(PSCF_PC).d 
--include $(rpc_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
+-include $(rpc_OBJS:.o=.d)
+-include $(PSCF_PC).d 

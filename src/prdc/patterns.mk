@@ -4,8 +4,9 @@
 # This makefile contains the pattern rule used to compile all sources
 # files in the directory tree rooted at the src/prdc directory, which
 # contains all source code for the Pscf::Prdc namespace. It is included 
-# by all "makefile" files in this directory tree. 
+# by all "makefile" files in the src/prdc directory tree. 
 #-----------------------------------------------------------------------
+# Variable definitions used in pattern rules
 
 # Local pscf-specific libraries needed in src/prdc
 PRDC_LIBS=$(prdc_LIB) $(pscf_LIB) $(util_LIB)
@@ -27,33 +28,28 @@ ifdef PSCF_CUDA
   LIBS+=$(CUDA_LIB)
 endif
 
-# Preprocessor macro definitions needed in src/prdc
-# UTIL_DEFS is defined in src/util/config.mk
-# PSCF_DEFS is defined in src/config.mk
-DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) 
-
 # Arguments for MAKEDEP
-MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) $(DEFINES)
+MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES) 
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
 MAKEDEP_ARGS+= -B$(BLD_DIR)
 
-# Arguments for MAKEDEP for C++ only
-MAKEDEP_CXX_ARGS=$(MAKEDEP_ARGS)
+#-----------------------------------------------------------------------
+# Pattern rules
 
 # Pattern rule to compile *.cpp class source files in src/prdc
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+	@SDIR=$$(dirname "$@"); if [!-d"$$SDIR"]; then mkdir -p"$$SDIR"; fi
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
    ifdef MAKEDEP
-	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_CXX_ARGS) $<
+	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
    endif
 
 # Pattern rule to compile *.cu class source files in src/prdc
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
-	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) -c -o $@ $<
    ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
    endif

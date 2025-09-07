@@ -44,7 +44,7 @@
 CXX=g++
 
 # Flags for C/C++ preprocessor, including standard header search paths
-CPPFLAGS=-I/opt/homebrew/include
+CPPFLAGS=-I/opt/homebrew/include -D UTIL_CXX11
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11
@@ -77,7 +77,7 @@ CXXFLAGS_FAST= -Wall $(CXX_STD) -O3
 # Users who wish to use -ffast-math can comment/uncomment the above lines
 # accordingly, so that CXXFLAGS_FAST is defined to include -ffast-math.
 
-# Compiler flags used in unit tests
+# Compiler flags used for unit test program files
 TESTFLAGS= -Wall $(CXX_STD)
 
 # Compiler command used to generate dependencies
@@ -122,7 +122,7 @@ LDFLAGS=-L/opt/homebrew/lib
 GSL_INC=GSL_INC_AUTO
 GSL_LIB=GSL_LIB_AUTO
 
-# FFTW Fast Fourier transform library (as
+# FFTW Fast Fourier transform library 
 FFTW_INC=
 FFTW_LIB=-lfftw3
 
