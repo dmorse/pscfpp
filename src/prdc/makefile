@@ -8,8 +8,6 @@
 # Include *.mk makefile fragments
 
 include ../config.mk
-include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/prdc/patterns.mk
 
@@ -25,14 +23,9 @@ clean:
 	rm -f *.d */*.d */*/*.d
 	cd tests; $(MAKE) clean
 
-veryclean:
-	$(MAKE) clean
-
-.PHONY: all clean veryclean
+.PHONY: all clean
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(util_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
 -include $(prdc_OBJS:.o=.d)

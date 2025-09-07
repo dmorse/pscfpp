@@ -10,7 +10,6 @@
 include ../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/r1d/patterns.mk
 
 #-----------------------------------------------------------------------
@@ -35,9 +34,6 @@ clean:
 	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
 
-veryclean:
-	$(MAKE) clean
-
 # Executable pscf_1d file (linking)
 $(PSCF_1D_EXE): $(PSCF_1D).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_1D_EXE) $(PSCF_1D).o $(LIBS) 
@@ -50,15 +46,12 @@ pscf_1d:
 # PSCF-specific static libraries as prerequisiites, but link to the list 
 # $(LIBS) that also includes relevant external libraries.
 
-
-.PHONY: all clean veryclean pscf_1d
+.PHONY: all clean pscf_1d
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
 -include $(util_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
 -include $(r1d_OBJS:.o=.d)
 -include $(PSCF_1D).d
--include $(PSCF_1D).d 

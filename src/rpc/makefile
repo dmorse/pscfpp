@@ -36,9 +36,6 @@ clean:
 	rm -f *.d */*.d */*/*.d
 	cd tests; $(MAKE) clean
 
-veryclean:
-	$(MAKE) clean
-
 # Rule for pscf_pc executable file
 $(PSCF_PC_EXE): $(PSCF_PC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PC_EXE) $(PSCF_PC).o $(LIBS)
@@ -51,7 +48,7 @@ pscf_pc:
 # PSCF static libraries as prerequisites, but link to the list $(LIBS) 
 # that includes all relevant external libraries.
 
-.PHONY: all clean veryclean pscf_pc
+.PHONY: all clean pscf_pc
 
 #-----------------------------------------------------------------------
 # Include dependency files

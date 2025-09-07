@@ -33,22 +33,19 @@ clean:
 	rm -f *.d */*.d */*/*.d
 	cd tests; $(MAKE) clean
 
-veryclean:
-	$(MAKE) clean
-
 # Main pscf_pg executable file
 $(PSCF_PG_EXE): $(PSCF_PG).o $(PSCF_LIBS)
 	$(NVXX) $(LDFLAGS) -o $(PSCF_PG_EXE) $(PSCF_PG).o $(LIBS)
-
-# Note: In the linking rule for pscf_pg, we include the list $(PSCF_LIBS) 
-# of PSCF-specific libraries as a dependency but link to the list $(LIBS)
-# of libraries that includes relevant external libraries.
 
 # Short phony target for executable file (for convenience)
 pscf_pg:
 	$(MAKE) $(PSCF_PG_EXE)
 
-.PHONY: all clean veryclean pscf_pg
+# Note: In the linking rule for pscf_pg, we include the list $(PSCF_LIBS) 
+# of PSCF-specific libraries as pre-requisistes but link to the full list 
+# that includes relevant external libraries.
+
+.PHONY: all clean pscf_pg
 
 #-----------------------------------------------------------------------
 # Include dependency files
