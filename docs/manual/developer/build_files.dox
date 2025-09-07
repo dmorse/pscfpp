@@ -21,13 +21,14 @@ exist in different levels of the src directory tree:
     makefile and a makefile fragment named sources.mk.
 
   - Each of the namespace-level subdirectories of the src directory
-    tree has a makefile, and makefile fragments named sources.mk,
-    patterns.mk and include.mk.
+    tree has a makefile, and makefile fragments named sources.mk
+    and patterns.mk.
 
   - The root of the src directory contains a makefile and a file
     named config.mk
 
-In the same state, the the following types of files exist in the bld 
+After the configure script has been run, the the following types 
+of files exist in the bld 
 directory tree:
 
   - Each namespace-level subdirectory of the bld directory contains
@@ -41,7 +42,8 @@ The PSCF root directory also contains a makefile, which defines an
 package.
 
 The configure script installs the config.mk files in both the src
-and bld directory and all of the makefiles in the bld directory.
+and bld directory, and installs all of the makefiles in the bld 
+directory.
 
 Compilation leads to creation of additional intermediate object, 
 dependency and library files in either the src directory (for in-source
@@ -61,7 +63,6 @@ in the build system are summarized in the table below:
  |configuration|config.mk  | configuration file, defines global variables |
  |source list  |sources.mk | list source files and object file targets    |
  |pattern rule |patterns.mk| pattern rules for object files targets       |
- |include      |includes.mk| includes fragments needed by  makefiles      |
  |dependency   | *.d       | list pre-requisites of a single *.o target   |
 
 Each of these types of file is described in a bit more detail below, 
@@ -88,12 +89,6 @@ types:
      in each namespace-level subdirectory contains pattern rules that
      are used to compile all *.cpp and (in some cases) *.cu source files 
      located in that namespace-level directory and its subdirectories.
-
-   - **Include files** : The makefile fragment named include.mk in 
-     each namespace-level subdirectory of src is a short file that 
-     simply includes a few makefile fragments that are needed by all 
-     makefiles in that namespace-level directory. The includes.mk file 
-     is then included by these makefiles. 
 
    - **Dependency files** : The *.d dependency file that is created
      whenever a *.o object file is created contains a single makefile 

@@ -4,30 +4,32 @@
 \ref developer_build_make_page  (Next)
 <BR>
 
-In order to add a new feature to PSCF, a developer may need to to add a 
-new compilable source file to a subdirectory of the src directory. This 
-page briefly explains how to add such a new file to the list of files 
-that are compiled by the build system.
+In order to add new features to PSCF, developers often need to add new
+compilable source files to the src directory. This page briefly explains 
+how to add edit files used by the build system to tell the build system
+to compile any such new source files. 
 
-Almost every subdirectory of the src directory tree contain a file 
-named "sources.mk". This file is a makefile fragment that is included 
-into other makefile fragments and makefiles. The purpose of each such
-file is to maintain a list of all of the *.cpp or *.cu source files in 
-that directory that should be compiled when PSCF is built. The most
-important part of this file is a part near the top that sets the value 
-of a makefile variable whose name is a mangled form of the name of the 
-directory equal to a list of source files. To guarantee that a new 
-source file will be compiled, the name of new file simple needs to be 
-added to this list.
+Almost every subdirectory of the src directory tree contain a file named 
+"sources.mk". This file is a makefile fragment that is included into other 
+makefile fragments and makefiles. The purpose of each such file is to 
+maintain a list of all of the *.cpp or *.cu source files in that 
+directory that should be compiled when PSCF is built. The most important 
+part of this file is a statement near the top that assigns a makefile 
+variable a value that is a list of source files in the directory that 
+contains the sources.mk file. To guarantee that a new source file will 
+be compiled, the name of new file simply needs to be added to this list 
+in the sources.mk file within the directory that contains the new source 
+file. 
 
 For example, consider the sources.mk file in the directory r1d/iterator. 
 This directory contains source code files for several classes that 
 implement different SCFT iteration algorithms that can used by the 
-pscf_1d program. If one created a new SCFT iteration algorithm for use 
-by this program, the algorithm would need to be implemented as a new 
-class that would be placed in this directory. The relevant part of the 
-existing sources.mk file in this directory, which appears at the top of 
-the file, is a makefile statement that looks like this:
+pscf_1d program, as well as a few other related classses. If one created 
+a new SCFT iteration algorithm for use by this program, the algorithm 
+would need to be implemented as a new class that should also be placed in 
+this directory. The relevant part of the existing sources.mk file in this 
+directory, which appears at the top of the file, is a makefile statement 
+that looks like this:
 \code
 r1d_iterator_=\
   r1d/iterator/Iterator.cpp \
@@ -37,13 +39,13 @@ r1d_iterator_=\
   r1d/iterator/AmIterator.cpp \
 \endcode
 In this statement, the string r1d_iterator_ is the name of a makefile
-variable whose value expands to a space separated list of names of 
-compilable source files in the relevant directory r1d/iterator. The 
-name of the corresponding variable defined in the sources.mk in each 
+variable whose value is a space separated list of names of compilable 
+source files in the relevant directory r1d/iterator. The name of the 
+corresponding variable defined in the sources.mk in each 
 subdirectory of the src directory is given by mangled form of the path to 
 that subdirectory from the src directory, in which the slash characters 
-that separate directory names in the actual path are replaced by 
-understores, with an extra underscore appended at the end. In this
+that separate directory names in the actual directory path are replaced 
+by understores, with an extra underscore appended at the end. In this
 example, the path r1d/iterator of the relevant directory relative to
 the src directory is translated into a variable name r1d_iterator_. The 
 value of this variable must be a space-separated list containing paths 
@@ -54,14 +56,18 @@ example is formatted with one file per line, but the backslash at the
 end of each line is a symbol used by the make command to indicate
 continuation of a line.  The resulting string is thus equivalent to 
 the one we would obtain by writing all of these paths on single line,
-separated by spaces.  To add a new file to the list of files that 
-should be compiled, one would simply add a backslash line-continuation
-character to the end of the last line of the existing statement 
-(after the path r1d/iterator/AmIterator.cpp), and then add the
-required path to the new file as a new line. 
+separated by spaces.  
 
-This full syntax of such source code list files is discussed in more 
-detail on a \ref developer_build_source_page "separate page".
+To add a new source file to the list of files that should be compiled, one 
+would add a backslash line-continuation character to the end of the last 
+line of the existing statement (after the path r1d/iterator/AmIterator.cpp),
+and then add the path to the new source file as a new line. The path to 
+each new source file must be given as a path relative to the src 
+directory, as for the existing source files.
+
+The syntax of such sources.mk source list files, including elements 
+that are not shown here, is discussed more detail on a 
+\ref developer_build_source_page "separate page".
 
 <BR>
 \ref developer_build_compile_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
