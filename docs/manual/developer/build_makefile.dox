@@ -278,10 +278,6 @@ veryclean:
 $(PSCF_PC_EXE): $(PSCF_PC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PC_EXE) $(PSCF_PC).o $(LIBS)
 
-# Note: In the rule for pcsf_pc, we include the list $(PSCF_LIBS) of 
-# PSCF static libraries as dependencies, but link to the list $(LIBS) 
-# of all libraries, which includes relevant external libraries.
-
 # Short phony target for executable file (for convenience)
 pscf_pc:
 	$(MAKE) $(PSCF_PC_EXE)
@@ -309,14 +305,8 @@ the makefiles in the util, pscf, and prdc namespace level directories:
   - Definition of a variable PSCF_PC_EXE = $(BIN_DIR)/pscf_pc that gives 
     the absolute path to the resulting executable file.
 
-  - A rule to build the main program object file target $(PSCF_PC).o by 
-    compiling the main program source file $(SRC_DIR)/rpc/pscf_pc.cpp
-
   - A rule to build the executable file $(PSCF_EXE) by linking the main 
-    program object file $(PSCF_PC).o to static library files that are 
-    located in the util, pscf, prdc, and rpc subdirectories of the 
-    build directory.  All of these required static libraries are listed 
-    as prerequisites to this rule.
+    program object file $(PSCF_PC).o to all relevant library files.
 
   - The "all" target lists the main program executable $(PRDC_EXE) as 
     a prerequisite.
@@ -339,6 +329,32 @@ namespace level directories is **not** necessary in the makefiles
 located in the util, pscf, and prdc directories because these makefiles 
 do not define a rule that links static libraries from different 
 namespace-level directories to create an executable.
+
+The type of rule used here to create an executable main program file 
+is very similar to the pattern rule that is used create 
+\ref developer_build_pattern_test_sec "executable file for unit tests" .
+The pattern rule for unit test executables in a particular 
+namespace-level directory is defined in the corresponding
+\ref developer_build_pattern_page "patterns.mk" file. The rules for 
+main program executables and unit test executables both create an 
+executable file by using a compiler to link an object file to a list
+of libraries. Both also use variables PSCF_LIBS and LIBS that contain
+lists of libraries, which are both defined in the relevant patterns.mk 
+file.
+
+In this example, the object file $(PSCF_PC).o is created by compiling 
+the main program file h$(SRC_DIR)/rpc/pscf_pc.cpp. This object file is 
+created before the executable file because the object file is list as 
+a prerequisite of the executable.  This object file is created when
+needed using a standard pattern rule for compiling source files, which 
+also creates a dependency file as a side effect.  
+
+The main program object file is not included in the list of files that 
+are used to create an associated static library. For example, in the 
+rpc namespace level directory, the file $(PSCF_PC).o is not included 
+in the list $(rpc_OBJS) of object files that are collected into the
+library file $(BLD_DIR)/rpc/librpc.a . 
+
 
 \section developer_build_makefile_upper_sec Makefiles in src and bld directories
 

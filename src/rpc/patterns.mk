@@ -40,8 +40,6 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
    endif
 
-# Note: There are no *.cu files src/rpc, and thus no rule to compile them
-
 # Pattern rule to link executable Test programs in src/rpc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
@@ -49,3 +47,7 @@ $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
 # Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
 # of PSCF-specific libraries as prerequisites but link to the list 
 # $(LIBS) of libraries that includes external libraries
+
+# Note: There are no *.cu CUDA source files in src/rpc, and so no rule to 
+# compile them is defined in this directory.
+

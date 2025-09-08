@@ -13,7 +13,7 @@ endif
 
 # Initialize INCLUDE path for header files (must include SRC_DIR)
 # This initial value is added to in the patterns.mk file in each 
-# namespace level subdirectory of the src/ directory.
+# namespace-level subdirectory of the src/ directory.
 INCLUDES= -I$(SRC_DIR)
 
 #=======================================================================
@@ -31,9 +31,9 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # that is located in the $(ROOT_DIR)/lib/python/pscfpp directory. For 
 # the python interpreter to find this, directory $(ROOT_DIR)/lib/python 
 # must be in the users PYTHON_PATH environment variable.
-
+#
 # ======================================================================
-# Makefile Pattern Rules and Recipes
+# Makefile Rules 
 #
 # The makefile variables defined above are used in the makefile rules 
 # that control compilation of C++ files, creation of libraries, and
@@ -42,20 +42,20 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # defined above.
 #
 #-----------------------------------------------------------------------
-# Compiler Pattern Rules:
+# Compiler Pattern Rules (patterns.mk files):
 #
 # The top level subdirectories of src/ named util/, pscf/, prdc, r1d/, 
 # rpc/ and rpg/ each contain the source code defined in a particular
-# namespace, and are referred to here as namespace level directories.
+# namespace, and are referred to here as namespace-level directories.
 #
-# Each such namespace level directory contains makefile fragments named
+# Each such namespace-level directory contains makefile fragments named
 # sources.mk and patterns.mk. The purposes of these files are as follows:
 # 
 #    sources.mk  defines a list of source files in the directory
 #    patterns.mk defines pattern rules for compilation 
 # 
-# The makefile files within each namespace level directory includes the 
-# sources.mk and patterns.mk files from that namespace level directory,
+# The makefile files within each namespace-level directory includes the 
+# sources.mk and patterns.mk files from that namespace-level directory,
 # and the sources.mk files from any other namespace-level directories on
 # which this one depends.
 #
@@ -65,8 +65,8 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # identical pattern rules for C++ and CUDA C++ files are used in all
 # namespace-level directories.
 #
-# Compiling *.cpp C++ files:
-# --------------------------
+# Compiling standard C++ (*.cpp) source files
+# -------------------------------------------
 #
 # The compiler pattern rule for compiling C++ files for each namespace 
 # level subdirectory of src/ is of the form:
@@ -77,8 +77,8 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # This pattern compiles a *.cpp file in a subdirectory of the source
 # directory $(SRC_DIR) and creates a *.o object file in a corresponding
 # location in a subdirectory of the build directory, $(BLD_DIR). The 
-# $(SRC_DIR) and $(BLD_DIR) are the same in the case of in-source 
-# compilation. The variables used in this pattern are:
+# values $(SRC_DIR) and $(BLD_DIR) are equal in the case of in-source 
+# compilation. The variables used in this recipe line are:
 #
 # CXX         - C++ compiler executable command name 
 # CPPFLAGS    - options for the C/C++ preprocessor
@@ -87,30 +87,39 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #
 # Values for the variables $(CXX), $(CPPFLAGS) and $(CXXFLAGS) are
 # defined above in this main config.mk file.  The same values for these
-# variables are used in all namespace level directories.
+# variables are used in all namespace-level directories.
 #
 # The variable $(CPPFLAGS) defines flags that are used by the C/C++ 
-# preprocessor. The may include the use of the -L option to add any
-# directories that should always be searched for included header files.
+# preprocessor. This may include strings that use the -D option to pass
+# definitions of preprocessor variables to the compiler. This string
+# normally contains the string "-DUTIL_CXX11", which enables compilation
+# of code that uses features of the C++11 standard in the some files in
+# the src/util directory. When debuggin is enabled (i.e., when the
+# makefile variable UTIL_DEBUG is defined), it also contains a string
+# "-DUTIL_DEBUG", which defines a corresponding C preprocessor variable
+# named UTIL_DEBUG.
 #
-# The variable $(CXXFLAGS) specify additonal flags that are used during 
-# compilation of preprocessed code, and that are needed in all namespaces.
-# This string always contains the $(CXX_STD) string, and may contain
-# options that specify the optimization level and control warnings.
+# The variable $(CXXFLAGS) specifies additonal compiler options that are 
+# used during compilation of a preprocessed translation unit.  This string 
+# always contains the $(CXX_STD) string to specify which version of C++ 
+# should be used, and may contain options that specify the optimization 
+# level and the strictness of compiler warnings.
 #
-# The INCLUDES variable uses the -L option to list any additional paths 
-# for header files, beyond any listed in $(CPPFLAGS). This always 
-# includes the $(SRC_DIR) directory. 
-#
-# The INCLUDES variables is defined with the patterns.mk file in each
-# namespace level subdirectory of src.
+# The INCLUDES variable uses the -I option to list paths that the 
+# preprocessor should search for header files. The INCLUDES variable is 
+# initialized in this config.mk file with a default value "-I$(SRC_DIR)
+# that instructs the preprocessor to search the source directory, SRC_DIR, 
+# for header files that are part of the PSCF package. Additional paths to
+# specific libraries may then be appended to the value of this variable 
+# in the patterns.mk file in each namespace-level subdirectory of the src 
+# directory.
 # 
 # Compiling C++ CUDA (*.cu) source files:
 # ---------------------------------------
 #
-# Source files that contain CUDA code are indicated by a file extension
-# *.cu. In namespace level directories that contain such files, the
-# patterns.mk file contains a pattern rule for compiling a *.cu file to 
+# Source code files that contain or include CUDA code use a file name 
+# In namespace-level directories that contain such files, the patterns.mk 
+# pattern rule file contains a pattern rule for compiling a *.cu file to 
 # create a corresponding *.o file. The rule for compiling *.cu files is 
 # closely analogous to that used for *.cpp files, and is of the form:
 # 
@@ -127,43 +136,105 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # meanings and values as in the rule for *.cpp files. 
 #
 #-----------------------------------------------------------------------
-# Archiver Recipes:
+# Archiver rules for static libraries (sources.mk files):
 #
 # The PSCF build system creates a static library in each namespace-level
-# subdirectory of the build directory that contains object code create
-# by compiling all the class source files in that directory.  The makefile 
-# rule to compile this library is defined in the sources.mk file in the 
-# same directory. The rule for the Pscf::R1d namespace, as an example, 
+# subdirectory of the build directory. Each such library contains the 
+# the contents of all of the object code files created by compiling all 
+# of the source files in the corresponding namespace-level directory of 
+# the source directory tree.  The makefile rule used to construct this 
+# library is defined in the sources.mk file in the same directory. 
+#
+# As an example,the rule for rpc directory, defined in src/rpc/sources.mk,
 # is of the form
 #
-# $(AR) rcs $(r1d_LIB) $(r1d_OBJS)
+# $(prc_LIB): $(prc_OBJS)
+# 	$(AR) rcs $(prc_LIB) $(prc_OBJS)
 #
-# where $(AR) is the name of archiver command used to create a library,
-# $(r1d_LIB) is an absolute path for the resulting library file and 
-# $(r1d_OBJS) is a string that contains absolute paths for all of the
-# *.o object files created by compiling source files in the directory
-# src/r1d. Rules for other namespace level directories are analogous.
+# Meanings of the makefile variables used in this example are:
+#
+#     - $(AR) is the name of archiver command used to create a library
+#
+#     - $(prc_LIB) is an absolute path for the library file target
+#
+#     - $(r1d_OBJS) is a string that contains a list of absolute paths
+#       for *.o object files in directory $(BLD_DIR)/rpc
+#
+# The value of AR is defined in this config.mk file.  Rules for creating
+# libraries in other namespace-level directories are analogous.
 #
 #-----------------------------------------------------------------------
-# Linker recipes for executable file targets:
+# Linker rules for main PSCF executable files (makefiles):
 # 
-# Executable files are created by linking a compiled main program to a 
-# required set of libraries. Recipes for creating executables are defined
-# in namespace level makefiles. For example, the recipe for creating the 
-# pscf_pc executable is defined in the file rpc/makefile within the 
-# relevant build directory (bld/ or src/), and is of the form:
+# Each of the main PSCF executable files is created by linking an object 
+# file that was created by compiling a main program file to a list of 
+# libraries. Recipes for creating each executables is defined in a 
+# makefile in the associated program-level subdirectory of the build 
+# directory. 
 #
+# As an example, the recipe for creating the pscf_pc executable is defined 
+# in the file rpc/makefile within the relevant build directory (bld or 
+# src), and is of the form:
+#
+# $(PSCF_PC_EXE): $(PSCF_PC).o $(PSCF_LIBS) 
 #    $(CXX) $(LDFLAGS) -o $(PSCF_PC_EXE) $(PSCF_PC).o $(LIBS)
 #
-# Here $(PSCF_PC_EXE) is the path to the executable, which is a file
-# named pscf_pc in the $(BIN_DIR), $(PSCF_PC).o is the path to the object
-# file that is created by compiling the src/pscf/pscf_pc.cpp main program
-# program source file, and $(LIBS) is a variable that contains a list of 
-# compiler options to include required libraries using the -l compiler
-# option. Values for the paths to the executable file target and object
-# file are defined in the relevant makefile, while the value of $(LIBS)
-# is defined in the patterns.mk file in the same namespace-level 
-# directory.
+# Meanings of the variables used in this example are:
+#   
+#     - $(PSCF_PC_EXE) is the path to the executable target. Ih this
+#       example, this is given by $(BIN_DIR)/pscf_pc .
+#
+#     - $(PSCF_PC) is the path to the object file for the main program, 
+#       with no file name extension, so that $(PSCF_PC).o is the path to 
+#       the object file. In this example, $(PSCF_PC) is given by 
+#       $(BLD_DIR)/rpc/pscf_pc .
+#
+#     - $(PSCF_LIBS) is a list of options to add relevant static libraries 
+#       that are defined within the PSCF repository, in which each library 
+#       is added using the "-l" option. In this example, this is set to
+#       "-l$(RPC_LIB) -l$(PRDC_LIB) -l$(PSCF_LIB) -l$(UTIL_LIB)", where
+#       each $(..._LIB) variable is the path to a static library.
+#
+#     - $(LIBS) is a list of all relevant libraries, including those
+#       listed in $(PSCF_LIBS) and external libraries such as FFTW and
+#       GSL libraries.
+#
+#     - $(LDFLAGS) is a list of options that are passed to the linker.
+#
+# The value of $(LDFLAGS) is defined in this config.mk file, and is 
+# empty by default. Values of $(PSCF_LIBS) and $(LIBS) are defined in 
+# the relevant patterns.mk file. Values of $(PSCF_EXE) and $(PSCF_PC) 
+# are defined within the makefile that defines this rule. The value 
+# of the $(PSCF_LIB) variable defined in each patterns.mk file is 
+# constructed using values of variables that give paths to PSCF libararies
+# that are defined in sources.mk source list files. The value of $(LIBS)
+# is constructed by appending values of GSL_LIB, FFTW_LIB,  CUDA_LIB 
+# variables that are defined in this config.mk file to $(PSCF_LIB).
+# 
+# Note: The complete list $(LIBS) is used in the recipe while the shorter 
+# list $(PSCF_LIB) is listed as a pre-requisite so that the recipe links
+# all relevant libraries, but the build system is only responsbile for
+# rebuilding out-of-date libraries if they are in the PSCF repository.
+#-----------------------------------------------------------------------
+# Linker rules for unit test executables (patterns.mk files):
+#
+# The patterns.mk file in each namespace-level subdirectory of src defines
+# a pattern rule for creating executable files that run unit tests. By 
+# convention executable unit test files have names that end with suffix
+# "Test" (such as Test, CpuTest or CudaTest), and are created by compiling 
+# source code files with the same base name and suffix .cpp or .cu. 
+#
+# The pattern rule for compiling such files in directories that do not
+# contain any CUDA code generally looks something like this:
+#
+# $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
+# 	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
+#
+# The corresponding rule for directories that contain CUDA code is
+# modified when compilation of CUDA code is enabled to use to the 
+# NVIDIA $(NVXX) compiler rather than $(CXX) compiler. Aside from the 
+# use of a pattern for the names of the object and executable files,
+# this rule is similar to that used to create the main PSCF executable
+# file, and uses the $(LDFLAGS) variable defined in this config.mk file.
 #
 #=======================================================================
- 

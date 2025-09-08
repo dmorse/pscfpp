@@ -54,7 +54,7 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
    endif
 
-# Pattern rule to compile Test programs in src/prdc/tests
+# Pattern rule to create executable Test programs in src/prdc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)
 ifdef PSCF_CUDA
 	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)

@@ -21,7 +21,7 @@ is created. If a user does so, however, they must then run or rerun the
 \ref install_configure_page "configure" script in order to allow this
 script to assign new values for some makefile variables that contains
 absolute paths to the PSCF root directory and some of its subdirectories,
-as discussed \ref developer_directory_dirvars_sec "below".
+as discussed \ref developer_build_config_page "elsewhere".
 
 In what follows, we describe file name patterns and standard file
 extension using the \* (asterisk) symbol to represent a wildcard that can
