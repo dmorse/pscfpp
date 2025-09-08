@@ -21,7 +21,6 @@ LIBS+=$(GSL_LIB)
 # Arguments for MAKEDEP script
 MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES)
 MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
-MAKEDEP_ARGS+= -A$(BLD_DIR)/util/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
 MAKEDEP_ARGS+= -B$(BLD_DIR)
 
@@ -31,7 +30,7 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 # Pattern rule to compile *.cpp class source files in src/r1d
 # Note: Creates a *.d dependency file as a side effect
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@SDIR=$$(dirname "$@"); if [! -d"$$SDIR"]; then mkdir -p"$$SDIR"; fi
+	@SDIR=$$(dirname "$@"); if [ ! -d"$$SDIR" ]; then mkdir -p"$$SDIR"; fi
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
    ifdef MAKEDEP
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<

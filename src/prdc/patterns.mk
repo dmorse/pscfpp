@@ -22,10 +22,13 @@ LIBS+=$(GSL_LIB)
 INCLUDES+=$(FFTW_INC)
 LIBS+=$(FFTW_LIB) 
 
-# Add paths to CUDA FFT library
 ifdef PSCF_CUDA
+  # Add paths to CUDA FFT library
   INCLUDES+=$(CUDA_INC)
   LIBS+=$(CUDA_LIB)
+  CXXTEST = $(NVXX)
+else
+  CXXTEST = $(CXX)
 endif
 
 # Arguments for MAKEDEP
@@ -40,7 +43,7 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 # Pattern rule to compile *.cpp class source files in src/prdc
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
-	@SDIR=$$(dirname "$@"); if [!-d"$$SDIR"]; then mkdir -p"$$SDIR"; fi
+	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
    ifdef MAKEDEP
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
@@ -49,6 +52,7 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 # Pattern rule to compile *.cu class source files in src/prdc
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) -c -o $@ $<
    ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
@@ -56,12 +60,9 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 
 # Pattern rule to create executable Test programs in src/prdc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)
-ifdef PSCF_CUDA
-	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)
-else
-	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
-endif
+	$(CXXTEST) $(LDFLAGS) -o $@ $< $(LIBS)
 
-# Note: In the linking rule for tests, we include the list $(PRDC_LIBS) 
-# of PSCF-specific libraries as dependencies but link to the list $(LIBS) 
-# of libraries that includes relevant external libraries
+# Note: We use $(LIBS) in the recipe for unit test executables but
+# $(PSCF_LIBS) in the prerequisite list so that all libraries are
+# linked, but the build system is only responsible for updating those
+# that are part of PSCF.
