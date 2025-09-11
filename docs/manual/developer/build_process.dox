@@ -1,0 +1,105 @@
+/*! \page developer_build_process_page Build Process
+
+\ref developer_build_page       (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_compile_page  (Next)
+<BR>
+
+PSCF is compiled using a system of unix makefiles.  This page gives an
+overview of the build process, i.e., the process of compiling the PSCF
+source code and creating executable files. The discussion given here and in
+subsequent pages assumes familiarity with discussion of the PSCF directory
+structure given in a \ref developer_directory_page "previous page" .
+
+Compilation and installation of PSCF involves the following operations:
+
+  - Compiling all source files in the src directory
+
+  - Creating a static library files for each namespace-level subdirectory
+    of the src directory
+
+  - Creating the executable files pscf_1d, pscf_pc, and pscf_pg and
+    installing them (by default) in the bin directory
+
+All files in the PSCF repository that contain C++ or CUDA C++ code are
+located in the src directory tree.  Files with file name extension \*.cpp
+or \*.cu are compiled by the build system, and are referred to here as
+either compilable source files or simply source files.  When each such
+source file is compiled, the build system creates two associated files
+that we refer to as an object file and a dependency file:
+
+  - An object file is a file with file name extension .o that contains
+    the object code created by compiling the associated source file.
+
+  - A dependency file is a makefile fragment with file name extension .d
+    that contains a lists of all the the prerequisites of the associated
+    object file.
+
+The object and dependency file that are created by compiling a source
+file have the same base file name as the associated source file, with
+different file name extensions.
+
+Each dependency file contains a list of paths to files that are
+"prerequisites" of the corresponding object file. This list includes the 
+associated source file and all other C++ files (e.g., header files) that 
+are directly or indirectly included into the source file via preprocessor
+"include" statements. This list of prerequisites is used by the PSCF
+build system to keep track of when an existing object file has become
+out-of-date due to modifications of one or more prerequisite files.
+
+The PSCF build system also creates a static library with file name 
+extension .a in each namespace-level subdirectory of the src directory. 
+Each such library contains all of the object code this is created by 
+compiling the source files in the corresponding namespace-level
+subdirectory of src.  The name of each library file is given by a 
+prefix "lib", followed by the name of the associated namespace-level 
+directory, followed by a suffix ".a". For example, the file "librpc.a" 
+is a library file in the src/rpc directory that contains the contents 
+of all of the object files that are created by compiling source files 
+in the  src/rpc namespace level directory.
+
+The object (\*.o), dependency (\*.d), and library (\*.a) files that 
+are created during the build process are referred to collectively as 
+"intermediate" files.  The directory in which all such intermediate 
+files are placed is referred to as the build directory.
+
+The PSCF makefile system is designed to allow a user to perform either
+an "out-of-source" build or an "in-source" build. In an "out-of-source"
+build, all intermediate files are placed in a build directory that is 
+distinct from the src directory.  By default, PSCF uses the bld 
+subdirectory of the PSCF root directory as the build directory for 
+out-of-source builds.  In an "in-source" build, these intermediate 
+files are instead placed within the src directory.
+
+During an in-source build, the PSCF build system places the \*.o object
+file and the \*.d dependency file that are created by compiling each
+source file in the same subdirectory of src as the associated source
+(\*.cpp or \*.cu) file. During an out-of-source build, these two files 
+are instead placed in an analogous subdirectory of the bld directory 
+tree. To make this possible, the bld directory has an internal directory 
+structure analogous to that of the src directory.
+
+The library file that contains object code created by compiling all
+the source files in a namespace level directory of the src directory is 
+placed in the root of the corresponding namespace level directory of the 
+build directory. The file librpc.a is thus placed in the bld/rpc 
+directory during an out-of-source build or in src/rpc during an 
+in-source build.
+
+The three program-level subdirectories of the src directory (named r1d,
+rpc, and rpg) each have a source file that contains the main program 
+function for one of the three PSCF programs. The base name of this 
+file is the same as the name of the corresponding executable file. For 
+example, the main program source file in src/rpc is named pscf_pc.cpp, 
+which is used to create the executable file named pscf_pc. Whe the code 
+in one of these three program-level directories of the build directory 
+is compiled, the build system first compiles all the source files other 
+than the main program file, creates a static library containing the 
+resulting object files, then compiles the main program file, links it 
+to all relevant library files to create an executable, and (by default) 
+installs the resulting executable file in the PSCF bin directory.
+
+<BR>
+\ref developer_build_page         (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_compile_page    (Next)
+
+*/

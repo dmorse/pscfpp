@@ -145,6 +145,18 @@ all of the files in this list.  The dash ("-") that appears before the
 to quietly ignore failures that may occur if one or more of the more 
 dependency files in this list do not exist.
 
+Each dependency files is created as a side effect of a pattern rule that
+also creates an object file target. As a result, the dependency file 
+associated with an object file does not exist before the first time that 
+the object file is created.  When a file that is the target of a rule 
+does not exist, however, the target is always considered out-of-date. 
+As a result, a non-existent object file target will thus always be 
+built as needed, either if the rule to construct the target is invoked, 
+or if that file is needed as a pre-requisite for some other target. The 
+list of prerequisistes of an object file target is thus only needed after 
+the file is first created, to determine whether an <em>existing</em> 
+object file is out-of-date.
+
 \section developer_build_makefile_namespace_sec Makefiles in namespace-level directories (not program-level)
 
 As already discussed, the src/ and bld/ directories have analogous

@@ -23,10 +23,9 @@ r1d_OBJS=\
      $(addprefix $(BLD_DIR)/, $(r1d_:.cpp=.o))
 
 #-----------------------------------------------------------------------
-# Path and target rule for the r1d/libr1d.a library 
+# Path and rule for the r1d/libr1d.a library 
 
-r1d_LIBNAME=r1d
-r1d_LIB=$(BLD_DIR)/r1d/lib$(r1d_LIBNAME).a
+r1d_LIB=$(BLD_DIR)/r1d/libr1d.a
 
 $(r1d_LIB): $(r1d_OBJS)
 	$(AR) rcs $(r1d_LIB) $(r1d_OBJS)

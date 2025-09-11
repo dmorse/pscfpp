@@ -16,6 +16,22 @@ programs are affected by specific changes:
 Versions before v1.2 used program name pscf_fd and label fd for the 1D 
 finite difference SCFT code that is now called pscf_1d.
 
+Version 1.3.1 (9/12/2025)
+=========================================
+
+This updated version does not contain any new features or other changes 
+that are visible to users. The main changes involve improvements to the 
+code and documentation.
+
+Developer-visible changes
+-------------------------
+* Introduction of a shared template for Rpc and Rpg System classes
+* Clean-up and standardization of build system files
+
+Documentation
+-------------
+* Improved manual pages about the build system and use of C++ templates.
+
 
 Version 1.3.0 (8/15/2025)
 =========================================

@@ -4,11 +4,11 @@
 \ref developer_build_makefile_page (Next)
 <BR>
 
-Each namespace level subdirectory of the src/ directory has a makefile
+Each namespace-level subdirectory of the src/ directory has a makefile
 fragment named "patterns.mk". This file defines pattern rules for creating
 *.o object files by compiling source files, and a rule for creating 
 executable files that run unit tests. These pattern rules have the same
-structure in all size namespace level directories.
+structure in all namespace-level directories.
 
 
 \section developer_build_pattern_cpp_sec Compiling C++ source files
@@ -27,13 +27,13 @@ name in the corresponding subdirectory of the source directory \$(SRC_DIR).
 
 The pattern rule for compiling standard C++ source files (in slightly 
 simplified form) always looks something like this: 
-\code
+\verbatim
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
         $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
    ifdef $(MAKEDEP)
         $(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_CXX_ARGS) $<
    endif
-\endcode
+\endverbatim
 The pattern rule for compiling CUDA files is closely analogous, when one 
 exists, and will be discussed separately below. 
 
@@ -115,19 +115,19 @@ The value of MAKEDEP_ARGS is a string of other arguments required by the
 MAKEDEP script. The value of this variable is defined in the patterns.mk
 file. 
 
-\section developer_build_pattern_cuda_sec Compiling C++ CUDA source files
+\section developer_build_pattern_cuda_sec Compiling CUDA C++ source files
 
-In namespace level directories that contain CUDA code, the patterns.mk file
+In namespace-level directories that contain CUDA code, the patterns.mk file
 contains a separate pattern rule for compiling CUDA C++ source files with
 file name extension *.cu. A slightly simplified form of this rule always
 looks something like this
-\code
+\verbatim
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
         $(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) -c -o $@ $<
    ifdef $(MAKEDEP)
         $(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
    endif
-\endcode
+\endverbatim
 This pattern rule is closely analogous to that used to compile *.cpp files.
 The differences are:
 
@@ -135,14 +135,14 @@ The differences are:
      name extension .cu rather than .cpp
 
    - The name of the compiler is represented by a variable value 
-     $(NVXX), which gives the name nvxx of the NVIDA CUDA C++ compiler.
+     \$(NVXX), which gives the name of the NVIDA nvxx CUDA C++ compiler.
 
-   - The variable value $(NVXXFLAGS) contains a set of compiler flags
-     that are designed for the NVIDIA compiler, which may be different
-     from those used by the C++ compiler.
+   - The variable value \$(NVXXFLAGS) contains a set of compiler flags
+     that are designed for the NVIDIA compiler, which are generally
+     different from those used by the C++ compiler.
 
    - The rule for creating a dependency file uses different variables 
-     $(MAKEDEP_CUDA) and $(MAKEDEP_CUDA_CMD) to represent the name of 
+     \$(MAKEDEP_CUDA) and \$(MAKEDEP_CUDA_CMD) to represent the name of 
      the script that is used to create the dependency list and the name 
      of the compiler command that it calls internall, respectively.
      
@@ -151,7 +151,7 @@ Values of NVXX, NVXXFLAGS, MAKEDEP_CUDA and MAKEDEP_CUDA_CMD are all
 defined in the config.mk file, while the value of MAKE_DEP_ARGS is defined 
 in the patterns.mk file. 
 
-\section developer_build_pattern_test_sec Creating unit test executables
+\section developer_build_pattern_test_sec Making unit test executable files
 
 Every namespace-level subdirectory of the src directory has a subdirectory 
 named "tests" that contains code for unit tests. Within each such "tests" 
@@ -172,11 +172,11 @@ rule that is designed to create executable files by linking a
 corresponding object file to a list of relevant libraries. The rule 
 generally in a directory that contains only standard C++ files generally
 looks like this
-\code
+\verbatim
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)	
-\endcode
-The symbols $@ and $< refer to the target of the rule (the executable)
+\endverbatim
+The symbols \$\@ and \$< refer to the target of the rule (the executable)
 and the first prerequisite (the object file).  The meanings of the 
 variables used in this rule are:
 
@@ -203,9 +203,9 @@ The value of the PSCF_LIBS variable is a list of absolute paths for all
 relevant static libraries that are created by the PSCF build system. For 
 example in the patterns.mk file in the src/prc directory, this variable
 is set equal to
-\code
+\verbatim
    PSCF_LIBS = $(RPC_LIB) $(PRDC_LIB) $(PSCF_LIB) $(UTIL_LIB)
-\endcode
+\endverbatim
 The values of the variables RPC_LIB PRDC_LIB, PSCF_LIB and UTIL_LIB 
 are absolute paths to the static libraries located in the pscf, prdc, 
 pscf, and util subdirectories of the build directory. Each of these 
@@ -218,26 +218,26 @@ is created by starting with the value of PSCF_LIBS and appending compiler
 options that link to the FFTS, GSL and/or CUDA libraries, as needed. 
 For example, in the patterns.mk file in the src/rpc directory, LIBS is
 assigned a value equivalent to
-\code
+\verbatim
   LIBS=$(PSCF_LIBS) $(GSL_LIB) $(FFTW_LIB)
-\endcode
-The variables $(GSL_LIB) and $(FFTW_LIB) are assigned values in the
+\endverbatim
+The variables \$(GSL_LIB) and \$(FFTW_LIB) are assigned values in the
 config.mk file, each of which consists of the "-l" compiler option
 followed by a short version of the name of the required library file,
 without the lib prefix or a file name extension. For example, the
 variable FFTW_LIB that represents the FFTW library is assigned a
 value
-\code
+\verbatim
 FFT_LIB=-lfftw3
-\endcode
+\endverbatim
 by default on either a standard linux system or a Mac OS X system that
 used homebrew to install FFTW.  The "-l" option and short versions of 
 the library names can be used to link these external libraries because 
 they are dynamically linked libraries that use standard name conventions
 and are located in directories that can be found by the compiler.
 
-The makefile rule for unit test executables uses the value $(LIBS) in 
-the recipe but $(PSCF_LIBS) in the prerequisite list. This usage
+The makefile rule for unit test executables uses the value \$(LIBS) in 
+the recipe but \$(PSCF_LIBS) in the prerequisite list. This usage
 guarantees that all relevant libraries are linked by the linker recipe, 
 but that the PSCF makefile system is only responsible for updating 
 out-of-date libraries that its creates as part of the build process. 

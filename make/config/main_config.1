@@ -5,10 +5,10 @@
 # build system.  A copy of this file is included by all other makefiles. 
 # This file is installed by the "configure" script, and may be edited 
 # by the user if needed. Copies of this file are installed in the src/
-# directory and in the bld/ directory. The copy in the src/ directory
+# directory and in the bld directory. The copy in the src directory
 # controls in-source compilation, in which intermediate files are created
-# in the src/ directory tree, and the copy in the bld/ directory controls
-# out-of-source compilation in which these files are created in the bld/
+# in the src directory tree, and the copy in the bld directory controls
+# out-of-source compilation in which these files are created in the bld
 # directory.
 #
 # This file contains definitions of several types of makefile variables:
@@ -20,7 +20,8 @@
 #  - A variable UTIL_DEBUG that, if defined, enables conditional
 #    compilation of additional run-time validity checks
 #
-#  - A variable PSCF_CUDA that, if defined, enables building of CUDA code
+#  - A variable PSCF_CUDA that, if defined, enables compilation of 
+#    CUDA C++ source files
 #
 #  - Several variables that specify the names of the C++ and C++/CUDA 
 #    compilers, and command line options passed to both compilers.
@@ -31,7 +32,7 @@
 #=========================================================================
 # Variables that define absolute directory paths
 #
-# In the config.mk file installed in each build directory (src/ or bld/), 
+# In the config.mk file installed in each build directory (src or bld), 
 # values of these variables are set by the configure script, and should
 # usually not need to be modified by users. If the pscf root directory
 # is moved, rerun the configure script to reset these variables.

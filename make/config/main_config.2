@@ -148,16 +148,16 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # As an example,the rule for rpc directory, defined in src/rpc/sources.mk,
 # is of the form
 #
-# $(prc_LIB): $(prc_OBJS)
-# 	$(AR) rcs $(prc_LIB) $(prc_OBJS)
+# $(rpc_LIB): $(rpc_OBJS)
+# 	$(AR) rcs $(rpc_LIB) $(rpc_OBJS)
 #
 # Meanings of the makefile variables used in this example are:
 #
 #     - $(AR) is the name of archiver command used to create a library
 #
-#     - $(prc_LIB) is an absolute path for the library file target
+#     - $(rpc_LIB) is an absolute path for the library file target
 #
-#     - $(r1d_OBJS) is a string that contains a list of absolute paths
+#     - $(rpc_OBJS) is a string that contains a list of absolute paths
 #       for *.o object files in directory $(BLD_DIR)/rpc
 #
 # The value of AR is defined in this config.mk file.  Rules for creating
