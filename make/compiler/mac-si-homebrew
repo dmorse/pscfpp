@@ -24,23 +24,25 @@
 # on Mac silicon (e.g., the m1 or m2 ARM chip), using the homebrew package
 # manager to install the GSL and FFTW libraries. They assume that:
 #
-#   - The C++ compiler command g++ can be used by default 
-#   - Header files and libraries for FFTW are in a subdirectory of the
+#   - The Gnu C++ compiler command g++ can be used by default 
+#
+#   - Header files and libraries for FFTW are in subdirectories of the
 #     /opt/homebrew directory
+#
 #   - The gsl-config command can be used by the configure script to
 #     find the correct header and library paths for the Gnu Scientific
 #     Library (GSL)
 #
-# Note: The default compiler configuration file can be used to compile
-# on a Mac that uses an Intel CPU and the homebrew package manager, 
+# Note: The default linux compiler configuration file can be used for
+# older Macs that use the homebrew package manager but have Intel CPUs,
 # because of  a difference in how homebrew is configured machines that 
-# use intel and apple CPUss: Homebrew installs in /usr/local for Intel 
-# silicon and in /opt/homebrew for Apple silicon.
+# use Intel and Apple CPUs: Homebrew installs in /usr/local for Intel 
+# CPUs and in /opt/homebrew for Apple silicon.
 #-----------------------------------------------------------------------
 # C++ compiler and options (*.cpp files)
 
 # C++ Compiler Command name 
-# On OS X, g++ calls the Apple installed clang compiler
+# On OS X, the g++ command calls the Apple installed clang compiler
 CXX=g++
 
 # Flags for C/C++ preprocessor, including standard header search paths
@@ -86,6 +88,9 @@ MAKEDEP_CMD="-C$(CXX) -MM -MF"
 #-----------------------------------------------------------------------
 # CUDA compiler and options (*.cu files)
 
+# Note: These options are not usable on MAC OS X, because no Mac computer
+# uses an cuda-capable NVIDIA GPU.
+
 # CUDA compiler command
 NVXX=nvcc
 
@@ -97,12 +102,12 @@ NVXX=nvcc
 NVARCH=sm_70
 
 # Options passed to CUDA compiler
-NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH) -DPSCF_CUDA
+NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH)
 
 #-----------------------------------------------------------------------
 # Archiver
 
-# Archiver command (to create static libraries)
+# Archiver command (archive object files to create static libraries)
 AR=ar
 
 # Command line arguments passed to archiver

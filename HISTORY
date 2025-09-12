@@ -19,9 +19,9 @@ finite difference SCFT code that is now called pscf_1d.
 Version 1.3.1 (9/12/2025)
 =========================================
 
-This updated version does not contain any new features or other changes 
-that are visible to users. The main changes involve improvements to the 
-code and documentation.
+This version does not contain any new features or other changes that are 
+visible to users. The main changes involve improvements to the code and 
+documentation.
 
 Developer-visible changes
 -------------------------

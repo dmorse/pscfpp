@@ -6,9 +6,6 @@
 
 #include "crystal/CrystalTestComposite.h"
 #include "cpu/CpuTestComposite.h"
-#ifdef PSCF_CUDA
-#include "cuda/CudaTestComposite.h"
-#endif
 
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
@@ -16,9 +13,6 @@
 TEST_COMPOSITE_BEGIN(PrdcTestComposite)
 addChild(new CrystalTestComposite, "crystal/");
 addChild(new CpuTestComposite, "cpu/");
-#ifdef PSCF_CUDA
-addChild(new CudaTestComposite, "cuda/");
-#endif
 TEST_COMPOSITE_END
 
 using namespace Util;

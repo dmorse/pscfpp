@@ -10,9 +10,7 @@
 #include "inter/InterTestComposite.h"
 #include "floryHuggins/FloryHugginsTestComposite.h"
 #include "mesh/MeshTestComposite.h"
-#ifdef PSCF_CUDA
 #include "cuda/CudaTestComposite.h"
-#endif
 
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
@@ -24,9 +22,7 @@ addChild(new SolversTestComposite, "solvers/");
 addChild(new InterTestComposite, "inter/");
 addChild(new FloryHugginsTestComposite, "floryHuggins/");
 addChild(new MeshTestComposite, "mesh/");
-#ifdef PSCF_CUDA
 addChild(new CudaTestComposite, "cuda/");
-#endif
 TEST_COMPOSITE_END
 
 using namespace Pscf;

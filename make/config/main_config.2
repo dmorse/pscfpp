@@ -31,7 +31,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # that is located in the $(ROOT_DIR)/lib/python/pscfpp directory. For 
 # the python interpreter to find this, directory $(ROOT_DIR)/lib/python 
 # must be in the users PYTHON_PATH environment variable.
-#
+ 
 # ======================================================================
 # Makefile Rules 
 #
@@ -55,9 +55,9 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #    patterns.mk defines pattern rules for compilation 
 # 
 # The makefile files within each namespace-level directory includes the 
-# sources.mk and patterns.mk files from that namespace-level directory,
+# sources.mk and patterns.mk files from that namespace-level directory
 # and the sources.mk files from any other namespace-level directories on
-# which this one depends.
+# which that one depends.
 #
 # The use of a different patterns.mk rule in different namespace-level
 # directory allows for the possibility of slightly different pattern rules
@@ -85,8 +85,8 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # CXXFLAGS    - additional options used during compilation
 # INCLUDES    - added directories to search for header files
 #
-# Values for the variables $(CXX), $(CPPFLAGS) and $(CXXFLAGS) are
-# defined above in this main config.mk file.  The same values for these
+# Values for the variables $(CXX), $(CPPFLAGS) and $(CXXFLAGS) are defined
+# above in this config.mk configuration file.  The same values for these
 # variables are used in all namespace-level directories.
 #
 # The variable $(CPPFLAGS) defines flags that are used by the C/C++ 
@@ -96,7 +96,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # of code that uses features of the C++11 standard in the some files in
 # the src/util directory. When debuggin is enabled (i.e., when the
 # makefile variable UTIL_DEBUG is defined), it also contains a string
-# "-DUTIL_DEBUG", which defines a corresponding C preprocessor variable
+# "-DUTIL_DEBUG" that defines a corresponding C preprocessor variable
 # named UTIL_DEBUG.
 #
 # The variable $(CXXFLAGS) specifies additonal compiler options that are 
@@ -107,21 +107,21 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #
 # The INCLUDES variable uses the -I option to list paths that the 
 # preprocessor should search for header files. The INCLUDES variable is 
-# initialized in this config.mk file with a default value "-I$(SRC_DIR)
-# that instructs the preprocessor to search the source directory, SRC_DIR, 
+# initialized in this config.mk file with a default value "-I$(SRC_DIR) that
+# instructs the preprocessor to search the source directory, $(SRC_DIR), 
 # for header files that are part of the PSCF package. Additional paths to
-# specific libraries may then be appended to the value of this variable 
-# in the patterns.mk file in each namespace-level subdirectory of the src 
+# specific libraries may then be appended to the value of this variable in
+# the patterns.mk file in each namespace-level subdirectory of the src 
 # directory.
 # 
 # Compiling C++ CUDA (*.cu) source files:
 # ---------------------------------------
 #
 # Source code files that contain or include CUDA code use a file name 
-# In namespace-level directories that contain such files, the patterns.mk 
-# pattern rule file contains a pattern rule for compiling a *.cu file to 
-# create a corresponding *.o file. The rule for compiling *.cu files is 
-# closely analogous to that used for *.cpp files, and is of the form:
+# extension .cu.  In namespace-level directories that contain such files, 
+# the patterns.mk file contains a pattern rule for compiling a *.cu file 
+# to create a corresponding *.o file. The rule for compiling *.cu files 
+# is closely analogous to that used for *.cpp files, and is of the form:
 # 
 # $(BLD_DIR)/%.o: $(SRC_DIR)/%.cu
 #      $(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) -c -o $@ $<
@@ -140,10 +140,11 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #
 # The PSCF build system creates a static library in each namespace-level
 # subdirectory of the build directory. Each such library contains the 
-# the contents of all of the object code files created by compiling all 
-# of the source files in the corresponding namespace-level directory of 
-# the source directory tree.  The makefile rule used to construct this 
-# library is defined in the sources.mk file in the same directory. 
+# contents of all of the object code files created by compiling all of the
+# source files in the corresponding namespace-level directory of the src
+# directory tree.  The makefile rule used to construct this library is 
+3 defined in the sources.mk file located in the relevant namespace-level 
+# subdirectory of the src directory. 
 #
 # As an example,the rule for rpc directory, defined in src/rpc/sources.mk,
 # is of the form
