@@ -8,13 +8,13 @@
 #-----------------------------------------------------------------------
 # Variable definitions used in pattern rules
 
-# List of PSCF-specific libraries needed in src/pscf (the order matters)
+# List of PSCF libraries needed in src/pscf (the order matters)
 PSCF_LIBS=$(pscf_LIB) $(util_LIB)
 
 # All libraries needed by executables in src/pscf (includes external)
 LIBS=$(PSCF_LIBS)
 
-# Add paths to Gnu Scientific Library (GSL)
+# Add header include and library paths to Gnu Scientific Library (GSL)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
@@ -30,9 +30,6 @@ MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
 MAKEDEP_ARGS+= -B$(BLD_DIR)
 
-# Arguments for MAKEDEP for C++
-MAKEDEP_CXX_ARGS=$(MAKEDEP_ARGS)
-
 #-----------------------------------------------------------------------
 # Pattern rules
 
@@ -40,16 +37,16 @@ MAKEDEP_CXX_ARGS=$(MAKEDEP_ARGS)
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
    ifdef MAKEDEP
-	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_CXX_ARGS) $<
+	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
    endif
 
 # Pattern rule to compile *.cu CUDA source files in src/pscf
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cu
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
-	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) -c -o $@ $<
+	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
    ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
    endif
@@ -63,5 +60,5 @@ else
 endif
 
 # Note: In the linking rule for tests, we include the list $(PSCF_LIBS) of 
-# PSCF-specific libraries as dependencies but link to the list $(LIBS) 
-# that can include external libraries
+# PSCF-specific libraries as dependencies but link to the list $(LIBS) that
+# includes any required external libraries

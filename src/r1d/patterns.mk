@@ -31,7 +31,7 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 # Note: Creates a *.d dependency file as a side effect
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d"$$SDIR" ]; then mkdir -p"$$SDIR"; fi
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
    ifdef MAKEDEP
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
    endif

@@ -11,10 +11,11 @@ else
    CXXFLAGS=$(CXXFLAGS_FAST)
 endif
 
-# Initialize INCLUDE path for header files (must include SRC_DIR)
+# Initialize INCLUDES path for header files to an empty string.
 # This initial value is added to in the patterns.mk file in each 
-# namespace-level subdirectory of the src/ directory.
-INCLUDES= -I$(SRC_DIR)
+# namespace-level subdirectory of the src/ directory, giving a list
+# of any additional include directories needed in each context.
+INCLUDES=
 
 #=======================================================================
 # Automatic dependency generation.
@@ -72,7 +73,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # level subdirectory of src/ is of the form:
 # 
 # $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
-#      $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+#      $(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
 #
 # This pattern compiles a *.cpp file in a subdirectory of the source
 # directory $(SRC_DIR) and creates a *.o object file in a corresponding
@@ -81,13 +82,15 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # compilation. The variables used in this recipe line are:
 #
 # CXX         - C++ compiler executable command name 
-# CPPFLAGS    - options for the C/C++ preprocessor
-# CXXFLAGS    - additional options used during compilation
-# INCLUDES    - added directories to search for header files
+# CPPFLAGS    - standard options for the C/C++ preprocessor
+# INCLUDES    - additional directories to search for header files
+# CXXFLAGS    - options used during compilation
 #
 # Values for the variables $(CXX), $(CPPFLAGS) and $(CXXFLAGS) are defined
-# above in this config.mk configuration file.  The same values for these
-# variables are used in all namespace-level directories.
+# above in this config.mk configuration file, and so have the same value 
+# in all namespace-level directories. Values of $(INCLUDES) are defined
+# in the patterns.mk file in each namespace-level subdirectory of src, and
+# so may have different values in different namespace level directories.
 #
 # The variable $(CPPFLAGS) defines flags that are used by the C/C++ 
 # preprocessor. This may include strings that use the -D option to pass
@@ -124,7 +127,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # is closely analogous to that used for *.cpp files, and is of the form:
 # 
 # $(BLD_DIR)/%.o: $(SRC_DIR)/%.cu
-#      $(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) -c -o $@ $<
+#      $(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
 #
 # This contains the two new makefile variables that are analogous to 
 # CXX and CXXFLAGS:
@@ -143,7 +146,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # contents of all of the object code files created by compiling all of the
 # source files in the corresponding namespace-level directory of the src
 # directory tree.  The makefile rule used to construct this library is 
-3 defined in the sources.mk file located in the relevant namespace-level 
+# defined in the sources.mk file located in the relevant namespace-level 
 # subdirectory of the src directory. 
 #
 # As an example,the rule for rpc directory, defined in src/rpc/sources.mk,

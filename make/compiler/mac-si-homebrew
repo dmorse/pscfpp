@@ -46,7 +46,7 @@
 CXX=g++
 
 # Flags for C/C++ preprocessor, including standard header search paths
-CPPFLAGS=-I/opt/homebrew/include -D UTIL_CXX11
+CPPFLAGS= -I $(SRC_DIR) -I /opt/homebrew/include -D UTIL_CXX11
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11

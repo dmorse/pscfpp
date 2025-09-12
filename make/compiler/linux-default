@@ -47,7 +47,7 @@
 CXX=g++
 
 # Options for C/C++ preprocessor - includes standard header search paths
-CPPFLAGS= -D UTIL_CXX11
+CPPFLAGS= -I $(SRC_DIR) -D UTIL_CXX11
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11
