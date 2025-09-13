@@ -1,14 +1,14 @@
-BLD_DIR_REL =../..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/rpg/include.mk
+include ../../config.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/rpg/sources.mk
 include $(SRC_DIR)/rpg/tests/sources.mk
+include $(SRC_DIR)/rpg/patterns.mk
 
 TEST=rpg/tests/Test
 
 all: $(rpg_tests_OBJS) $(BLD_DIR)/$(TEST)
-
-includes:
-	echo $(INCLUDES)
 
 run: $(rpg_tests_OBJS) $(BLD_DIR)/$(TEST)
 	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/rpg/tests/ 
@@ -42,5 +42,10 @@ clean:
 	rm -f $(SRC_DIR)/rpg/tests/*.o $(SRC_DIR)/rpg/tests/*.d
 	rm -f $(SRC_DIR)/rpg/tests/*/*.o $(SRC_DIR)/rpg/tests/*/*.d
 
--include $(rpg_tests_OBJS:.o=.d)
+.PHONY: all run run-quiet clean-outputs clean
+
+-include $(util_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
 -include $(rpg_OBJS:.o=.d)
+-include $(rpg_tests_OBJS:.o=.d)

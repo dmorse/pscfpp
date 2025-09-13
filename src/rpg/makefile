@@ -7,9 +7,12 @@
 #------------------------------------------------------------------------
 # Include *.mk makefile fragments
 
-BLD_DIR_REL =..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/rpg/include.mk
+include ../config.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/rpg/sources.mk
+include $(SRC_DIR)/rpg/patterns.mk
 
 #-----------------------------------------------------------------------
 # Paths to pscf_pg program files
