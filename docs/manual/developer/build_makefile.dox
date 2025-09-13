@@ -372,41 +372,40 @@ pscf, and prdc directories because these makefiles do not define a rule
 that links static libraries from different namespace-level directories 
 to create an executable.
 
-The type of rule used here to create an executable main program file 
-is very similar to the pattern rule that is used create 
-\ref developer_build_pattern_test_sec "executable file for unit tests" .
+The type of rule used here to create an executable main program file is 
+very similar to the pattern rule that is used create 
+\ref developer_build_pattern_test_sub "executable files for unit tests" .
 The pattern rule for unit test executables in a particular 
 namespace-level directory is defined in the corresponding
 \ref developer_build_pattern_page "patterns.mk" file. The rules for 
 main program executables and unit test executables both create an 
 executable file by using a compiler to link an object file to a list
-of libraries. Both also use variables PSCF_LIBS and LIBS that contain
-lists of libraries, which are both defined in the relevant patterns.mk 
-file.
+of libraries represented by a variable \$(LIBS) that is defined in the
+patterns.mk file.
 
 In this example, the object file \$(PSCF_PC).o is created by compiling 
-the main program file h$(SRC_DIR)/rpc/pscf_pc.cpp. This object file is 
-created before the executable file because the object file is list as 
-a prerequisite of the executable.  This object file is created when
-needed using a standard pattern rule for compiling source files, which 
-also creates a dependency file as a side effect.  
+the main program file h$(SRC_DIR)/rpc/pscf_pc.cpp. This object file will
+be created before the executable file because the object file is list 
+as a prerequisite of the executable.  This main program object file is 
+created as needed using a standard pattern rule for compiling source 
+files, which also creates a corresponding dependency file \$(PSCF_PC).d
+as a side effect.  
 
 The main program object file is not included in the list of files that 
-are used to create an associated static library. For example, in the rpc 
-namespace-level directory, the file \$(PSCF_PC).o is not included in the 
-list \$(rpc_OBJS) of object files that are collected into the library 
-file \$(BLD_DIR)/rpc/librpc.a . 
+are archived to create an associated static library. For example, in the 
+rpc namespace-level directory, the file \$(PSCF_PC).o is not included in 
+the list \$(rpc_OBJS) of object files that are collected into the library 
+file \$(BLD_DIR)/rpc/librpc.a .
 
-Explicit inclusion \$(rpc_OBJS) and \$(rpc_LIB) as prerequisites of the
-"all" target is redundant, but are included to explicitly document the
+Explicit inclusion \$(rpc_OBJS) and \$(rpc_LIB) as prerequisites of the 
+"all" target is redundant, but these are included to help document the
 sequence of actions triggered by the "all" target.  Any required building 
 or re-building of these object and library file targets would in any case
 be triggered by a request to build the executable target \$(PSCF_PC_EXE), 
 because the rule for \$(PSCF_PC_EXE) lists \$(rpc_LIB) as a pre-requisite,
 and the rule for \$(prc_LIB) lists the files in the list \$(prc_OBJS) as
 prerequisites. A more concise version of this rule could thus list the
-the executable file target as the only prerequisite of "all" in a 
-program-level directory.
+the executable file target as the only required prerequisite of "all".
 
 \section developer_build_makefile_upper_sec Makefiles in src and bld directories
 

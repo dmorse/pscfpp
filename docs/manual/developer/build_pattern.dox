@@ -5,37 +5,197 @@
 <BR>
 
 Each namespace-level subdirectory of the src/ directory has a makefile
-fragment named "patterns.mk". This file defines pattern rules for creating
-*.o object files by compiling source files, and a rule for creating 
-executable files that run unit tests. These pattern rules have the same
-structure in all namespace-level directories.
+fragment named "patterns.mk". This file defines several pattern rules 
+used to create targets in the corresponding directory of the bld
+directory. 
 
 
-\section developer_build_pattern_cpp_sec Compiling C++ source files
+\section developer_build_pattern_example_sec Example
 
-We first consider the pattern rules for creating *.o object file targets
-by compiling source files.  The patterns.mk file in each namespace-level
-directory contains a rule for compiling a C++ source file with file name
-extension .cpp to create an object file with extension .o. In directories
-that contain CUDA C++ source files, indicated by an file name extension 
-.cu, the patterns.mk file also contains an separate pattern rule for 
-compiling these files, which uses the NVidia CUDA compiler rather than a 
-C++ compiler. Both of the patterns creates rules for creating an object 
-file with file extension *.o in a subdirectory of the build directory 
-\$(BLD_DIR) by compiling a *.cpp or *.cu source file with the same base 
-name in the corresponding subdirectory of the source directory \$(SRC_DIR). 
+As an example, here is the body of the file src/rpc/patterns.mk that 
+controls compilation of files located in the src/rpc namespace-level
+directory
+\verbatim
+#-----------------------------------------------------------------------
+# Variable definitions used in pattern rules
 
-The pattern rule for compiling standard C++ source files (in slightly 
-simplified form) always looks something like this: 
+# PSCF-specific static libraries needed in src/rpc (the order matters)
+# Variables $(rpc_LIB) etc. are defined in namespace config.mk files
+PSCF_LIBS= $(rpc_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB) 
+
+# All libraries needed by main program pscf_pc (including external libs)
+LIBS=$(PSCF_LIBS)
+
+# Add header include and library paths to Gnu scientific library
+INCLUDES+=$(GSL_INC)
+LIBS+=$(GSL_LIB) 
+
+# Add header and library paths to FFTW Fast Fourier transform library
+INCLUDES+=$(FFTW_INC)
+LIBS+=$(FFTW_LIB) 
+
+# Arguments for MAKEDEP
+MAKEDEP_ARGS=$(CPPFLAGS) $(INCLUDES)
+MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
+MAKEDEP_ARGS+= -S$(SRC_DIR)
+MAKEDEP_ARGS+= -B$(BLD_DIR)
+
+#-----------------------------------------------------------------------
+# Pattern rules
+
+# Pattern rule to compile *.cpp class source files in src/rpc
+# Note: Creates a *.d dependency file as a side effect
+$(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
+	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
+	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+   ifdef MAKEDEP
+	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
+   endif
+
+# Pattern rule to link executable Test programs in src/rpc/tests
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
+
+# Note: In the linking rule for tests, we include the list $(PSCF_LIBS) 
+# of PSCF-specific libraries as prerequisites but link to the list 
+# $(LIBS) of libraries that includes external libraries
+
+# Note: There are no *.cu CUDA source files in src/rpc, and so no rule to 
+# compile them is defined in this directory.
+
+\endverbatim
+This file is divded into two main sections. The first defines several
+makefile variables that are used in pattern rules, and second defines
+several pattern rules.
+
+\section developer_build_pattern_var_sec Makefile variable definitions
+
+The first part of this file defines several variables that are used in
+the actual pattern rules, some of which are also used in makefiles that
+include this pattern rule file. These are:
+
+   - PSCF_LIB : List of paths to relevant static libraries that are
+     created by the PSCF build system
+
+   - LIBS : A list of paths or names of all relevant libraries, including
+     those associated with any relevant external packages
+
+   - INCLUDES : A list of any additional paths to non-standard directories
+     containing header files for external libraries
+
+   - MAKEDEP_ARGS : A list of options that is passed to a python script
+     that is used to construct dependency files.
+
+Several of these variables are discussed in more detail below.
+
+<b> PSCF_LIB </b>: The variable PSCF_LIB is constructed by concatenating 
+values of variables such as \$(util_LIB), \$(pscf_LIB), etc. that 
+contain absolute paths to static library files that are created by the 
+PSCF build system. Each of these variables is defined in a sources.mk 
+file is located in the same namepace-level directory as the source files 
+that are compiled to create the relevant library. The value of 
+PSCF_LIBS constructed in the patterns.mk file in each namespace-level
+directory only includes libraries associated with that namespace-level
+directory and other such directories that it depends upon. In this 
+example, the value of PSCF_LIB thus contains paths to libraries 
+associated with the util, pscf, prdc, and rpc namespace-level 
+directories, but not with the r1d or rpg program-level directories. 
+
+<b> LIBS </b>: The variable LIBS is created by initializing its value 
+to PSCF_LIB, and then adding makefile variables that contain compiler 
+options to add names of external libraries that should also be linked 
+to create executable files. In the above example, the value of LIBS is 
+given by the concatenation
+\verbatim
+LIBS = $(PSCF_LIBS) $(GSL_LIB) $(FFTW_LIB)
+\endverbatim
+Here $(GSL_LIB) and $(FFTW_LIB) are compiler options that link to the GSL
+and FFTW libraries, respectively. Values of these variables are set in the
+config.mk file, and are usually constructed using the -l compiler option to 
+link to specific libraries, and the -L option to add additional directories
+in which to search for library files.  For example, the variable FFTW_LIB 
+is normally assigned a value
+\verbatim
+FFTW_LIB=-lfftw3
+\endverbatim
+by default on a standard linux system.
+
+<b> INCLUDES </b>: The variable INCLUDES may contains compiler options 
+that add paths to non-standard directories that should be searched for
+header files that are included into PSCF source code files via C 
+preprocessor \#include directives. Such additional search paths are 
+generally needed only to find header files for external libraries have 
+been installed in non-standard locations.  The INCLUDES variable is 
+initialized to an empty string in the config.mk file, and is then 
+completed within each patterns.mk file by adding variable values that 
+may contain options to add additional search paths for directories 
+containing header files for particular libraries.  In the above example, 
+the final value of INCLUDES is given by a concatenation
+\verbatim
+INCLUDES = $(GSL_INC) $(FFTW_INC)
+\endverbatim
+The value of each variable such as GSL_INC and FFTW_INC may be empty, 
+or may contain an option to add a non-standard directory that contains 
+the header for a particular library to the list of directories that 
+will be searched by the preprocessor. The value of each variable such 
+as GSL_INC and FFTW_INC is defined in the config.mk file, and is set 
+to an empty string for any library whose header file is installed in 
+a standard locations such as /usr/include or /usr/local/include that 
+the compiler searches by default. 
+
+For each library that installs a header file in a non-standard standard 
+location, the associated \*_INC variable may instead be set to a string 
+that starts with the "-I" compiler option, followed by the absolute path 
+to a directory containing any required header file.  For example, on a 
+particular Apple laptop on which the GSL library was installed by 
+homebrew, the value
+\verbatim
+GSL_INC=-I /opt/homebrew/Cellar/gsl/2.8/include
+\endverbatim
+was required to tell the compiler where to find header files for a
+particular version of GSL. 
+
+Use of GSL is simplified by the fact this package installs a utility 
+named gsl-config that reports where different types of file were 
+installed. This utility is used by the PSCF configure script to 
+automatically generate the required paths. Paths related to the GSL 
+package are thus usually set correctly in the config.mk files that 
+are installed by the configure script. 
+
+\section developer_build_pattern_rules_sec Pattern Rules
+
+Each patterns.mk file defines pattern rules for creating *.o object 
+files by compiling *.cpp and/or *.cu source files, and for creating 
+executable files that run unit tests. Analogous rules in different
+patterns.mk files have very similar structure.
+
+We first consider pattern rules for creating *.o object file targets.
+The patterns.mk file in each namespace-level directory that contains C++ 
+source files with file name extension .cpp contains a rule for compiling 
+such *.cpp file to create a *.o object file. In directories that contain 
+CUDA C++ source files with file name extension .cu, the patterns.mk file 
+will contain a pattern rule for compiling these files, which uses the 
+NVIDIA CUDA compiler rather than a C++ compiler. Both rules may exist
+in patterns.mk directories that contain both types of source file.  
+Both types of rule creating an object file with file name extension *.o 
+in a subdirectory of the build directory, \$(BLD_DIR), by compiling a 
+*.cpp or *.cu source file with the same base name in the corresponding 
+subdirectory of the source directory, \$(SRC_DIR). 
+
+\subsection developer_build_pattern_cpp_sub Compiling C++ source files
+
+A pattern rule for compiling standard C++ source files always looks
+something like this: 
 \verbatim
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
-        $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
+        $(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
    ifdef $(MAKEDEP)
-        $(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_CXX_ARGS) $<
+        $(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
    endif
 \endverbatim
-The pattern rule for compiling CUDA files is closely analogous, when one 
-exists, and will be discussed separately below. 
+Pattern rules for compiling CUDA files are closely analogous, and will
+be discussed separately below. 
 
 In this pattern rule, the symbol \% is a wildcard that represents a 
 string that appears in the path for the target file that may also appear 
@@ -46,60 +206,108 @@ directory with a path of the form \$(SRC_DIR)/\%.cpp, in which the symbol
 \% represents a string that appears in both paths. The shared part of 
 these paths may include one or more directory separator symbols and the 
 name or names of subdirectories of the src directory, as well as the base 
-file name.  The PSCF bld directory must have the same internal directory 
-structure as the src directory in order for this pattern rule to work
-correctly for out-of-source builds, 
+file name.  The PSCF bld directory is required to have the same internal 
+directory structure as the src directory in order to allow this pattern 
+rule to work correctly for out-of-source builds, 
  
-The recipe of the rule shown above contains two lines with different 
-purposes.  The first line of the recipe calls the compiler command, 
-represented by the value of the variable \$(CXX), to compile the source 
-file and create the object file.  This second line calls a script, 
+The recipe of the rule shown above contains three lines with different 
+purposes.  The first contains a set of shell commands that  checks if 
+the directory in which the target will be installed already exists, 
+and attempts to create it if it does not. This is a convenience, rather
+than a necessity, and is not an essential part of the rule.  The second 
+line of the recipe is a shell command that invokes the compiler command, 
+represented by the value \$(CXX), to actually compile the source file 
+and create the object file. The third line of the recipe calls a script, 
 whose name is given by the variable value \$(MAKEDEP), that creates a 
-corresponding dependency file with extension .d.  This second line is 
-enclosed in an ifdef statement that executes the second line if and 
-only if the variable MAKEDEP is defined, which is normally true.
+corresponding dependency file with extension .d.  This third line of 
+the recipe is enclosed in an ifdef statement that executes this line 
+if and only if the variable MAKEDEP is defined, which is normally true.
 
-Note that the dependency file associated with each target object file 
-is created as a side-effect of compilation, and thus only exists after 
-the first time the object file is compiled.
+The two essential actions taken by this rule are thus to compile the
+source file to create an object file, and to create a *.d dependency
+file as a side-effect of compilation. These two actions are discussed
+separately below.
 
-The example of a pattern rule shown above is a slightly simplified 
-version of corresponding rules given in patterns.mk files. The actual 
-pattern rules contain an additional recipe line that can create a 
-directory in the build directory if it does not already exist. This 
-line was omitted here because it is not essential to understanding 
-how the pattern rule works. 
+<b> Source file compilation </b>:
 
-\subsection developer_build_pattern_compile_sub Source file compilation
- 
-The following makefile variables are used in the first line of the 
-recipe to define a rule for compiling a source file:
+The line of the recipe that actually compiles the source file in this
+example is given by
+\verbatim
+        $(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+\endverbatim
+In this recipe, a standard makefile symbol \$\@ is used to represents 
+the target, which must match the pattern \$(BLD_DIR)%.o, while $< 
+represents the first prerequisite, which is a source file that must
+match the pattern \$(SRC_DIR)%.o.  The following additional makefile 
+variables are used in the second line of the recipe to define a rule 
+for compiling the source file:
 
-   - BLD_DIR: Absolute path to the build directory
-   - SRC_DIR: Absolute path to the src directory
-   - CXX: name of the C++ compiler executable
-   - CPPFLAGS: flags for the C preprocessor
+   - CXX: name of the C++ compiler command
+   - CPPFLAGS: standard flags for the C preprocessor
+   - INCLUDES: additional options to add directories to search for
+               included header files for external libraries (if any)
    - CXXFLAGS: flags for the C++ compiler (optimization, warnings, etc.)
-   - INCLUDES: directories to search for C++ header files, using the -I 
-     compiler option
 
 Values for the variables BLD_DIR, SRC_DIR, CXX, CPPFLAGS, and CXXFLAGS 
-are all defined in the main config.mk configuration file, which is 
-located in the root of the build directory. The value of the INCLUDES
-variable is initialized to a default value in the config.mk file and
-then completed within each patterns.mk file. 
+are all defined in the relevant config.mk configuration file. The value of
+the INCLUDES variable is initialized to an empty string in the config.mk
+file and then added to as needed within each patterns.mk file, as discussed 
+above.
 
-\subsection developer_build_pattern_depend_sub Dependency file creation
+Default values for some of these variables on a linux system, as assigned 
+by the file make/compiler/linux-default are:
+\verbatim
+   CXX = g++
+   CPPFLAGS = -I $(SRC_DIR) -D UTIL_CXX11
+   CXXFLAGS = -Wall --std=c++11 -O3
+\endverbatim
+The value of INCLUDES may be empty, or may contain options to add 
+non-standard directories to the search path for included files, as 
+discussed above. 
 
-The variables MAKEDEP, MAKEDEP_CMD, and MAKEDEP_CXX_ARGS are used only 
-in the second line of the example shown above, in order to construct a 
-*.d dependency file.
+The option -I \$(SRC_DIR) in the value of \$(CPP_FLAGS) instructs the 
+preprocessor to always search the PSCF src directory for header files. 
+The design of the PSCF source code assumes that this option will 
+always be present. This option allows the PSCF source code to use a 
+path that is defined relative to the src directory to include a header 
+file that is located anywhere in the PSCF src directory tree.
+
+The "-D" compiler option is used to define C/C++ preprocessor macros 
+when calling the compiler.  The option "-D UTIL_CXX11" option is 
+necessary because the src/util directory contains a few files that 
+optionally compile code that uses features of C++11 language standard 
+only if the preprocessor macro UTIL_CXX11 is defined. Most of the PSCF 
+source code is designed to use the C++11 language standard, but a few 
+older files in the util directory were designed to use C++99 by default 
+and to use new features of C++11 only if this macro is defined. 
+
+If the makefile variable UTIL_DEBUG is defined, then an additional 
+compiler option string "-D UTIL_DEBUG" will be appended to the end 
+of \$(CPPFLAGS) within the config.mk file, giving a modified value
+\verbatim
+   CPPFLAGS = -I $(SRC_DIR) -D UTIL_CXX11 -D UTIL_DEBUG
+\endverbatim
+This added option defines a C/C++ preprocessor macro named UTIL_DEBUG 
+that enables conditional compilation of additional run-time sanity checks, 
+such as run-time checks on the bounds of array indices. Note that the 
+makefile variable UTIL_DEBUG and the preprocessor macro UTIL_DEBUG have 
+the same name, and similar purposes (both enable additional run-time 
+checks) but are used in different contexts (i.e., in makefiles vs. in 
+C++ code).
+
+<b> Automatic generation of dependency files </b>:
+
+The variables MAKEDEP, MAKEDEP_CMD, and MAKEDEP_ARGS are used only in 
+the third line of the example shown above, in order to construct a *.d 
+dependency file. Values of MADEDEP and MAKEDEP_CMD are defined in the
+config.mk file, while the value of MAKEDEP_ARGS is defined in a 
+patterns.mk file.
 
 The value of MAKEDEP is the absolute path of an executable script that 
 is used to generate dependency files for C++ files. The value of this 
-variable is assigned in the config.mk file, where it is assigned a 
-value \$(BIN_DIR)/makeDepCpp by default. Generation of dependency files
-can be suppressed by commenting out the line that defines MAKEDEP.
+variable is assigned in the config.mk file, where it is assigned a value 
+\$(BIN_DIR)/makeDepCpp by default. Generation of dependency files can be 
+suppressed by commenting out the line that defines MAKEDEP.
 
 The value of MAKEDEP_CMD is the name of a compiler command and compiler 
 options required to use a compiler to generate a list of pre-requisites
@@ -115,7 +323,7 @@ The value of MAKEDEP_ARGS is a string of other arguments required by the
 MAKEDEP script. The value of this variable is defined in the patterns.mk
 file. 
 
-\section developer_build_pattern_cuda_sec Compiling CUDA C++ source files
+\subsection developer_build_pattern_cuda_sub Compiling CUDA C++ source files
 
 In namespace-level directories that contain CUDA code, the patterns.mk file
 contains a separate pattern rule for compiling CUDA C++ source files with
@@ -123,7 +331,7 @@ file name extension *.cu. A slightly simplified form of this rule always
 looks something like this
 \verbatim
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
-        $(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) -c -o $@ $<
+        $(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
    ifdef $(MAKEDEP)
         $(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
    endif
@@ -151,7 +359,7 @@ Values of NVXX, NVXXFLAGS, MAKEDEP_CUDA and MAKEDEP_CUDA_CMD are all
 defined in the config.mk file, while the value of MAKE_DEP_ARGS is defined 
 in the patterns.mk file. 
 
-\section developer_build_pattern_test_sec Making unit test executable files
+\section developer_build_pattern_test_sub Creating unit test executable files
 
 Every namespace-level subdirectory of the src directory has a subdirectory 
 named "tests" that contains code for unit tests. Within each such "tests" 
@@ -199,48 +407,12 @@ Values of the compiler name variable (CXX and NVXX) and LDFLAGS
 are defined in the config.mk file. Values of PSCF_LIBS and LIBS 
 are defined within the patterns.mk file. 
 
-The value of the PSCF_LIBS variable is a list of absolute paths for all 
-relevant static libraries that are created by the PSCF build system. For 
-example in the patterns.mk file in the src/prc directory, this variable
-is set equal to
-\verbatim
-   PSCF_LIBS = $(RPC_LIB) $(PRDC_LIB) $(PSCF_LIB) $(UTIL_LIB)
-\endverbatim
-The values of the variables RPC_LIB PRDC_LIB, PSCF_LIB and UTIL_LIB 
-are absolute paths to the static libraries located in the pscf, prdc, 
-pscf, and util subdirectories of the build directory. Each of these 
-variables is defined in the sources.mk file within the associated
-namespace-level subdirectory of the src directory. 
-
-The value of the LIBS variable contains a list of all relevant libraries,
-including those associated with external packages. The value of PSCF_LIBS
-is created by starting with the value of PSCF_LIBS and appending compiler 
-options that link to the FFTS, GSL and/or CUDA libraries, as needed. 
-For example, in the patterns.mk file in the src/rpc directory, LIBS is
-assigned a value equivalent to
-\verbatim
-  LIBS=$(PSCF_LIBS) $(GSL_LIB) $(FFTW_LIB)
-\endverbatim
-The variables \$(GSL_LIB) and \$(FFTW_LIB) are assigned values in the
-config.mk file, each of which consists of the "-l" compiler option
-followed by a short version of the name of the required library file,
-without the lib prefix or a file name extension. For example, the
-variable FFTW_LIB that represents the FFTW library is assigned a
-value
-\verbatim
-FFT_LIB=-lfftw3
-\endverbatim
-by default on either a standard linux system or a Mac OS X system that
-used homebrew to install FFTW.  The "-l" option and short versions of 
-the library names can be used to link these external libraries because 
-they are dynamically linked libraries that use standard name conventions
-and are located in directories that can be found by the compiler.
-
-The makefile rule for unit test executables uses the value \$(LIBS) in 
-the recipe but \$(PSCF_LIBS) in the prerequisite list. This usage
-guarantees that all relevant libraries are linked by the linker recipe, 
-but that the PSCF makefile system is only responsible for updating 
-out-of-date libraries that its creates as part of the build process. 
+Note that the makefile rule for unit test executables uses the value 
+\$(LIBS) in the recipe but \$(PSCF_LIBS) in the prerequisite list. This 
+usage guarantees that all relevant libraries are linked by the linker 
+recipe, including external libraries, but that the PSCF makefile system 
+is only responsible for updating out-of-date libraries that are part 
+of the PSCF package.
 
 <BR>
 \ref developer_build_dependency_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
