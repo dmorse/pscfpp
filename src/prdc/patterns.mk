@@ -50,18 +50,14 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
-   ifdef MAKEDEP
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
-   endif
 
 # Pattern rule to compile *.cu class source files in src/prdc
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
-   ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
-   endif
 
 # Pattern rule to create executable Test programs in src/prdc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)

@@ -33,18 +33,16 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 # Pattern rule to compile *.cpp C++ source files in src/rpg
 # Note: Creates a *.d dependency file as a side effect 
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
+	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
-   ifdef MAKEDEP
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
-   endif
 
 # Pattern rule to compile *.cu CUDA source files in src/rpg
 # Note: Creates a *.d dependency file as a side effect 
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
-   ifdef MAKEDEP_CUDA
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
-   endif
 
 # Pattern rule to link executable Test programs in src/rpg/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSCF_LIBS)

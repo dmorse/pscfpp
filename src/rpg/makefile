@@ -34,6 +34,7 @@ clean:
 	rm -f $(PSCF_PG).o $(PSCF_PG).d
 	rm -f *.o */*.o */*/*.o
 	rm -f *.d */*.d */*/*.d
+	rm -f lib*.a 
 	cd tests; $(MAKE) clean
 
 # Main pscf_pg executable file
@@ -53,8 +54,8 @@ pscf_pg:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
+-include $(rpg_OBJS:.o=.d)
 -include $(PSCF_PG).d 

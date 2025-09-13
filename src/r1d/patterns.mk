@@ -32,9 +32,7 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d"$$SDIR" ]; then mkdir -p"$$SDIR"; fi
 	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
-   ifdef MAKEDEP
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
-   endif
 
 # Pattern rule to link Test programs in src/r1d/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
