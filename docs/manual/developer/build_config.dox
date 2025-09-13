@@ -1,64 +1,58 @@
-/*! \page developer_build_config_page Build Configuration (config.mk) Files
+/*! \page developer_build_config_page Configuration (config.mk) Files
 
 \ref developer_build_files_page  (Prev)
 \ref developer_build_source_page  (Next)
 <BR>
 
-After the configure script is run, the src, bld, and util directory will 
-each contain a makefile fragment named config.mk that is created by the 
-configure script.  These are files that define and assign values to a 
-variety of makefile variables that are needed throughout the build 
-system, and that are included verbatim by other makefiles. Default 
-versions of these three build configuration files are installed by the 
-configure script.  Configuration may be modified by the user, either by 
-manually editing them or by using the setopt script to enable, disable 
-or modify definitions of specific variables from the command line.
-
-The config.mk files in the src and bld directories are nearly identical 
-files that contain code to assign values to the same set of variables, 
-with equal default values for most all variables.  One important 
-variable that is treated differently in these files by default is the 
-variable BLD_DIR, which is assigned different values in src/config.mk 
-and bld/config.mk in order to enable users to perform either 
-out-of-source or in-source builds.
-
-Most of the variables defined in the src/config.mk and bld/config.mk
-files fall into one of the following three categories:
-
-   - **Directory path variables:** The variables ROOT_DIR, SRC_DIR,
-     BLD_DIR, and BIN_DIR specify absolute paths to the PSCF root 
-     directory and several of its subdirectories, as discussed in 
-     a previous manual page.
-
-   - **Variables that enable optional features:** The variables
-     UITL_DEBUG and PSCF_CUDA control whether or not particular
-     optional features are enabled when PSCF is compiled, as
-     discussed here.
-
-   - **Variables used in pattern rules**: A variety of variables
-     such as CXX, CPP_FLAGS, CXX_FLAGS, LD_FLAGS are used in the
-     pattern rules for compilation of individual source files.
-
-The meaning and usage of many of the variables defined in the these 
-two very similar files is discussed in extensive comments within 
-these files, as well as in the discussion of pattern rules given below.
+After the configure script has been run, the src and bld directory will
+each contain a file named config.mk.  These are system configuration 
+files that that are included by other makefiles. These files assign 
+values to a variety of makefile variables that are used throughout the 
+build system.  Default versions of these two build configuration files 
+are installed by the configure script, but the variable definitions 
+given in these files may be modified by users as needed.
 
 The config.mk configuration file in each build directory (i.e., in the 
 src or bld directory) is included in every other makefile in the same 
 build directory tree. The config.mk file in the src directory is thus 
 included by all makefiles in the src directory tree, but not those in 
-the bld directory, and so only affects in-source builds that are 
-performed by calling make from within the src directory.  Conversely, 
-the config.mk file in the bld directory is included by all makefiles 
-in the bld directory tree, but not those in the src directory, and so 
-only affects out-of-source builds.
+the bld directory. As a result, the contents of the src/config.mk file 
+only affects in-source builds that are performed by calling make from 
+within the src directory. Conversely, the config.mk file in the bld 
+directory is included by all makefiles in the bld directory tree, but 
+not those in the src directory, and so only affects out-of-source builds.
 
-\section developer_directory_dirvars_sec Directory path variables
+Most of the variables defined in the src/config.mk and bld/config.mk 
+files fall into one of the following three categories, each of which is 
+discussed in more detail below:
 
-Among the variables defined in the config.mk file in each build 
-directory are makefile variables whose values give paths to the PSCF 
-root directory and several of its subdirectories. The names and 
-meanings of the most important such path variables are listed below:
+   - \ref developer_build_config_dirvars_sec :
+     The variables ROOT_DIR, SRC_DIR, BLD_DIR, and BIN_DIR give 
+     absolute paths to the PSCF root directory and several of its 
+     subdirectories.
+
+   - \ref developer_build_config_features_sec :
+     The variables UITL_DEBUG and PSCF_CUDA control whether or not 
+     particular optional features are enabled when PSCF is compiled.
+
+   - \ref developer_build_config_rules_sec : 
+     A variety of variables such as CXX, CPP_FLAGS, CXX_FLAGS, 
+     LD_FLAGS are used in the pattern rules for compilation of individual
+     source files and in rules for creation of libraries and executable 
+     files.
+
+The config.mk files contain extensive comments that explain the meaning 
+and usage of most of the variables that are defined in those files. 
+Users who are interested in understanding details of how the build system 
+works should thus skim the notes given in either of these config.mk files, 
+in addition to reading the relevant parts of this web manual. 
+
+\section developer_build_config_dirvars_sec Directory path variables
+
+Among the makefile variables defined in the config.mk file in each build 
+directory are several variables whose values give paths to the PSCF root 
+directory and several of its subdirectories. The names and meanings of 
+the most important such path variables are listed below:
 <table>
 <tr>
   <th> Name </th>
@@ -86,64 +80,131 @@ On any unix-like system, the first character of an absolute path
 is a backslash ("/") character that represents the root of the 
 computer filesystem.  The value of the ROOT_DIR variable is set by 
 the configure script to be the absolute path to the root directory 
-as identified by this script at the time that the configure script 
-was run.  Values of other variables are defined using the value of 
-ROOT_DIR, as discussed below.
+as of the time that the configure script was run.  Values of other 
+variables are using knowldedge of ROOT_DIR, as discussed below.
+
+The config.mk files that are created by the configure script in the src 
+and bld directories are identical except for the value of the variable 
+BLD_DIR, which gives the path to the build directory in which intermediate 
+files will be placed. In each of these configuration files, BLD_DIR is 
+assigned a value is which the absolute path to directory that contains the 
+configuration file, i.e., the absolute path of the bld directory in the 
+file bld/config.mk file or the absolute path of the src directory within 
+the file src/config.mk. In other parts of the build system, the value 
+\$(BLD_DIR) is used as a prefix to construct absolute paths for all
+intermediate file targets. The use of different values for BLD_DIR in
+these two files thus allows the system to perform in-source builds when 
+make is invoked from within the src directory and out-of-source builds 
+when make is invoked from within the bld directory.
 
 As an example, suppose that a user with user name smith has a home
-directory /users/smith, and suppose that this user has installed
-the PSCF root directory as a subdirectory of their home directory,
-as /users/smith/pscfpp. In this case, the part of the config.mk file
-that is located in the users bld directory that defines these
-path variables would look like this after the configure script has
-been run:
+directory /users/smith, and suppose that this user has installed the 
+PSCF root directory as a subdirectory of their home directory, as 
+/users/smith/pscfpp. In this case, the relevant part of the config.mk 
+in the bld directory file would look like this after the configure 
+script has been run:
 \code
 ROOT_DIR=/users/smith/pscfpp
 SRC_DIR=$(ROOT_DIR)/src
 BLD_DIR=$(ROOT_DIR)/bld
 BIN_DIR=$(ROOT_DIR)/bin
 \endcode
-The symbol $(ROOT_DIR) represents the value of the makefile variable
-ROOT_DIR, which is given here by the string /usrs/smith/pscfpp.
-The config.mk file in the bld directory is only included by
-makefiles in the bld directory, and is only used during an
-out-of-source build that is performed by invoking make from within
-the PSCF root directory or the bld directory. This configuration
-file thus declares $(ROOT_DIR)/bld to be the build directory in
-which all intermediate files should be placed.
+The symbol \$(ROOT_DIR) represents the value of the makefile variable
+ROOT_DIR, which is given here by /usrs/smith/pscfpp.  The config.mk 
+file in the bld directory is only included by makefiles in the bld 
+directory, and is only used during an out-of-source build. This file
+file thus declares \$(ROOT_DIR)/bld to be the build directory in which 
+all intermediate files should be placed.
 
 The corresponding variable definitions in the config.mk file in the
 src directory in this example would be almost identical to those
 shown above, *except* for the value assigned to the variable BLD_DIR: 
 In the file src/config.mk, BLD_DIR would be assigned a value 
-$(ROOT_DIR)/src rather than $(ROOT_DIR)/bld. In both cases, the
-value of BLD_DIR is an absolute path to the directory that contains
-the config.mk file This configuration file thus declares the build 
-directory BLD_DIR used during in-source-bld is the same as the
-src directory.
+\code
+BLD_DIR=$(ROOT_DIR)/src
+\endcode
+rather than \$(ROOT_DIR)/bld.  The config.mk file in the src directory
+is used only for in-source compilation, and so it declares that the 
+src directory should be used as the build directory.
 
-Users can, if desired, change the location in which executable files 
-are installed by using an text editor to change the value assigned to 
-BIN_DIR within either or both of these configuration files. The 
-executable files produced by PSCF are self-contained, however, and may 
-thus also simply be moved to a new location after they are created. 
+The main executable files named pscf_1d, pscf_pc, and pscf_pg are 
+created within the BIN_DIR.  Users can, if desired, change the location 
+in which these files are created by using a text editor to change the 
+value assigned to BIN_DIR within either or both of the config.mk files. 
+The executable files produced by PSCF are self-contained and moveable, 
+however, and so these files may also simply be moved to a new location 
+after they are created. 
 
-If the name or location of the PSCF root directory is changed after the 
-configure script has been run, users will need to rerun the configure 
-script. This is necessary to reset the value of the makefile variable 
-ROOT_DIR to the correct location. If the root directory is moved after 
-executables have been created, users will need to first rerun the 
-configure script and then also recompile PSCF. Recompilation is necessary 
-after the root directory is moved because some executables contain 
-hard-coded paths to data files that are located in within the PSCF 
-root directory tree. Specifically, the pscf_pc and pscf_pg executables
-access files in the directory data/groups that contain symmetry elements 
-for crystallographic space groups, and the path used for the data/
-directory is generated by the configure script.
+The value of the variable ROOT_DIR is set by the configure script. To
+do so, the script uses shell commands to identify the absolute path of 
+the directory that contains the configure script, which is located in
+the root directory of the PSCF repository.  If the PSCF root directory 
+is moved or renamed after the configure script has been run, users will 
+need to rerun the configure script to reset the value of this variable, 
+and then rebuild the package. Recompilation is necessary if the PSCF
+root directory is moved because some executables contain hard-coded 
+paths to data files that are located in within the PSCF directory tree. 
+Specifically, the pscf_pc and pscf_pg executables access files in the 
+data subdirectory of the PSCF root directory, and the absolute path to 
+this data directory is set by the configure script by modifying a C++ 
+header file named src/pscf/paths.h that is included by other C++ files. 
+
+\section developer_build_config_features_sec Variables that enable optional features
+
+The variables UTIL_DEBUG and PSCF_CUDA are each used to control whether
+a specific feature is enabled or disabled when PSCF is compiled. 
+Specifically:
+
+  - Defining UTIL_DEBUG enables a set of optional run-time checks 
+    that are useful for finding or analyzing errors, at a slight cost 
+    in execution speed.  
+
+  - Defining PSCF_CUDA enables compilation of code that uses an NVIDIA 
+    GPU, and creation of the pscf_pg executable.
+
+The config.mk code contains two statements that can each be used to 
+define one of these variables, in order to enable the associated feature, 
+or that can be commented out in order disable the associated feature. 
+The lines that define these two variables are commented out by default, 
+by placing a point (\#) symbol at the beginning of each line, so both 
+of these features are disabled by default. For example, in the default
+state of either of the config.mk files created by the configure script,
+the line that defines UTIL_DEBUG looks like
+\verbatim
+#UTIL_DEBUG = 1
+\endverbatim
+Either feature may enabled by removing the \# symbol at the beginning 
+of the relevant line, to enable the definition of the corresponding 
+makefile variable. Both of these variables are assigned default values
+of 1, but the value is irrelevant - the behavior of the makefile system
+only depends on whether these variables are defined or not, and does
+not depend on the value assigned to either.
+
+The debugging and CUDA features of PSCF may also be enabled or disabled 
+by using the -d or -c options of the setopts script, respectively. The 
+setopts script actually functions by using a stream editor to uncomment 
+or comment out the relevant line or lines of the appropriate config.mk 
+file. Invoking the setopts script in the scr directory modifies the file 
+src/config.mk, while invoking the corresponding script in the bld 
+directory modifies the file bld/config.mk.
+
+\section developer_build_config_rules_sec Variables used in makefile rules
+
+A variety of other makefiles variables defined in the config.mk file are 
+designed to be used in different types of makefile rules that provide 
+instructions for compiling source files to create object files, creating 
+static libraries, and creating executable files. The names and purposes 
+of all such variables are described in comments within each config.mk 
+file, as well as in the discussion in subsequent manual pages of various 
+types of makefile rules that are defined in 
+\ref developer_build_pattern_page "pattern rule files", 
+\ref developer_build_source_page "source list files", or
+\ref developer_build_makefile_page "makefiles".
+
 
 <BR>
-\ref developer_build_files_page (Prev)
-\ref developer_build_page            (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_source_page (Next)
+\ref developer_build_files_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_source_page  (Next)
 
 */

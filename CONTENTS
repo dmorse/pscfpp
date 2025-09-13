@@ -8,14 +8,14 @@ Subdirectories:
   data/     - read-only data files (e.g., space group description files)
   docs/     - documentation, including web manual source files
   examples/ - input files for example SCFT and PS-FTS calculations
-  lib/      - scripts written in python, matlab or other languages
+  lib/      - scripts written in python or bash
   make/     - makefile fragments used by the configure script
-  src/      - C++ and CUDA/C++ source code files
+  src/      - C++ and CUDA C++ source code files
 
 Files: 
 
   CONTENTS  - this file
-  HISTORY   - summary package version development
+  HISTORY   - summary of package version development
   LICENSE   - GNU GPL v3 license
   README.md - brief intro to package (as displayed on github page)
   configure - shell script for initial set up of the build system 

@@ -23,10 +23,7 @@ clean:
 	rm -f *.d */*.d */*/*.d
 	cd tests; $(MAKE) clean
 
-veryclean:
-	$(MAKE) clean
-
-.PHONY: all clean veryclean
+.PHONY: all clean
 
 #-----------------------------------------------------------------------
 # Include dependency files

@@ -4,11 +4,11 @@
 \ref developer_standards_page  (Next)
 <BR>
 
-The pages linked below discuss system used by PSCF to compile source code 
-and install executable files.
+The pages linked below discuss the system of makefiles that is used by 
+PSCF to compile source code and create executable files.
 
 <ol>
- <li> \subpage developer_build_overview_page </li>
+ <li> \subpage developer_build_process_page </li>
  <li> \subpage developer_build_compile_page </li>
  <li> \subpage developer_build_add_page </li>
  <li> \subpage developer_build_make_page </li>
@@ -17,7 +17,6 @@ and install executable files.
  <li> \subpage developer_build_source_page </li>
  <li> \subpage developer_build_dependency_page </li>
  <li> \subpage developer_build_pattern_page </li>
- <li> \subpage developer_build_include_page </li>
  <li> \subpage developer_build_makefile_page </li>
 </ol>
 

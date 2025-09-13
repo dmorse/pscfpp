@@ -2,8 +2,8 @@
 #
 # Compiler configuration file section:
 #
-# The block of variable definitions that follows this explanation is 
-# initialized by the configure script by copying the contents of a 
+# The block of variable definitions that follows this explanation is
+# initialized by the configure script by copying the contents of a
 # compiler configuration file found in the make/compiler director into
 # the main config.mk files in the src/ and bld/ directories. The file
 # "make/compiler/default" is used by default.  Users may add files to
@@ -14,42 +14,40 @@
 # configuration file and copied into the main config.mk files.
 #
 # Variables defined in this block define the names of commands used to
-# to invoke compilers and linkers, some of the standard command line 
-# options passed to the compiler, and search paths for header files and 
-# libraries files for required external libraries.  See the section of 
-# this file entitled "Makefile Patterns and Recipes" below for a 
+# to invoke compilers and linkers, some of the standard command line
+# options passed to the compiler, and search paths for header files and
+# libraries files for required external libraries.  See the section of
+# this file entitled "Makefile Patterns and Recipes" below for a
 # discussion of how these variables are used.
 #
-# The definitions given in make/compiler/default are designed to work on 
+# The definitions given in make/compiler/default are designed to work on
 # most linux systems. They assume that:
 #
 #   - The command g++ is used to invoke the C++ compiler.
 #
 #   - The command nvcc is used to invoke the nvidia CUDA compiler (if any)
 #
-#   - Header files and libraries for the GSL, FFTW, and CUDA libraries 
+#   - Header files and libraries for the GSL, FFTW, and CUDA libraries
 #     are in directories within standard compiler search paths.
 #
 #   - The gsl-config command can be used by the configure script to find
 #     the header and library paths for the Gnu Scientific Library (GSL).
 #
 # These definitions also work for Mac OSX environments with an Intel CPU
-# and unix command line tools installed (for which the g++ command invokes 
-# the clang compiler) when the homebrew package manager was used to install 
-# the GSL and FFTW libraries. The file locations used by homebrew on older
-# Macs with Intel CPUs are consistent with those used by linux, while
-# the locations used by Homebrew on a Mac with Apple Si ARM CPUs are not.
+# and unix command line tools installed (for which the g++ command invokes
+# the clang compiler) when the homebrew package manager was used to install
+# the GSL and FFTW libraries. The header and library file locations used by 
+# homebrew on older Macs with Intel CPUs are consistent with those used by 
+# linux, while the locations used by Homebrew on Macs with Apple silicon 
+# ARM CPUs are not.
 #-----------------------------------------------------------------------
 # C++ compiler and options (for *.cpp files)
 
 # C++ compiler command name
 CXX=g++
 
-# Compiler option to specify ANSI C++ 2011 standard (required)
-CXX_STD = --std=c++11
-
 # Options for C/C++ preprocessor - includes standard header search paths
-CPPFLAGS=
+CPPFLAGS= -I $(SRC_DIR) -D UTIL_CXX11
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11
@@ -58,16 +56,16 @@ CXX_STD = --std=c++11
 CXXFLAGS_DEBUG= -Wall $(CXX_STD)
 
 # C++ compiler options used when debugging is disabled (fast)
-#CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math 
-CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 
+#CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math
+CXXFLAGS_FAST= -Wall $(CXX_STD) -O3
 
 # NOTE: Two options are provided above for compiling "fast", which differ
 # by the inclusion of the -ffast-math flag. This flag permits the compiler
 # to take several shortcuts that accelerate floating-point arithmetic, at
 # the expense of some numerical precision. Most notably, -ffast-math
 # assumes that floating-point numbers will never have a value of NaN or
-# Inf, and the program will therefore have undefined behavior if such a 
-# number does appear. 
+# Inf, and the program will therefore have undefined behavior if such a
+# number does appear.
 #
 # In our experience, -ffast-math reduces the runtime of a pscfpp
 # calculation by 1-4%, and the lower numerical accuracy does not
@@ -77,12 +75,12 @@ CXXFLAGS_FAST= -Wall $(CXX_STD) -O3
 # program may encounter an error value of NaN or Inf, but will not properly
 # handle that value. We have found that this often leads the program to
 # mistakenly assert that the calculation converged, when in reality it
-# diverged. 
+# diverged.
 #
 # Users who wish to use -ffast-math can comment/uncomment the above lines
 # accordingly, so that CXXFLAGS_FAST is defined to include -ffast-math.
 
-# Compiler flags used in unit tests
+# Compiler flags used for unit test program files
 TESTFLAGS= -Wall $(CXX_STD)
 
 # Compiler command used to generate dependencies (in double quotes)
@@ -94,11 +92,11 @@ MAKEDEP_CMD="-C$(CXX) -MM -MF"
 # NVIDIA CUDA compiler command
 NVXX=nvcc
 
-# NVCC architecture identifier, argument of -arch compiler option.
-# Use sm_xx, where xx denotes a numerical code for a CUDA compute 
-# capability, without the dot between major and minor version. For
-# example, use sm_70 for compute capability 7.0 (e.g., for a V100
-# NVIDIA GPU)
+# NVCC architecture identifier, argument of the -arch compiler option.
+# Use sm_xx, where xx denotes a numerical code for a CUDA compute
+# capability (CC), without the dot between major and minor version.
+# For example, use sm_70 for compute capability 7.0 (e.g., for a 
+# V100 NVIDIA GPU)
 NVARCH=sm_70
 
 # Compute capabilities for GPUs (https://developer.nvidia.com/cuda-gpus)
@@ -110,7 +108,7 @@ NVARCH=sm_70
 # A40  8.6
 
 # Flags always passed to cuda compiler
-NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH) -DPSCF_CUDA
+NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH)
 
 # Compiler command used to generate dependencies for CUDA
 MAKEDEP_CUDA_CMD="-C$(NVXX) -M"
@@ -125,7 +123,7 @@ AR=ar
 ARFLAGS=rcs
 
 #-----------------------------------------------------------------------
-# Linker / Loader 
+# Linker / Loader
 
 # Flags passed to compiler for linking and loading
 LDFLAGS=
@@ -133,8 +131,13 @@ LDFLAGS=
 #-----------------------------------------------------------------------
 # Paths and flags associated with external libraries
 
+# The following variables are used to construct the INCLUDES and LIBS
+# variables that are defined in the patterns.mk file in each namespace-level
+# subdirectory of src.
+
 # Gnu Scientific Library
-# Note: Paths may be automatically generated by configure using gsl-config 
+# Note: Paths are automatically generated by the configure script, by
+# calling the gsl-config script that is distributed with the GSL package.
 GSL_INC=GSL_INC_AUTO
 GSL_LIB=GSL_LIB_AUTO
 

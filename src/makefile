@@ -129,10 +129,10 @@ clean-tests:
 veryclean:
 	cd util; $(MAKE) veryclean
 	cd pscf; $(MAKE) veryclean
-	cd prdc; $(MAKE) veryclean
-	cd r1d; $(MAKE) veryclean
-	cd rpc; $(MAKE) veryclean
-	cd rpg; $(MAKE) veryclean
+	cd prdc; $(MAKE) clean
+	cd r1d; $(MAKE) clean
+	cd rpc; $(MAKE) clean
+	cd rpg; $(MAKE) clean
 	rm -f util/config.mk
 ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/makefile

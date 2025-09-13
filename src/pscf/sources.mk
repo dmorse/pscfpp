@@ -31,10 +31,9 @@ ifdef PSCF_CUDA
 endif
 
 #-----------------------------------------------------------------------
-# Path and makefile target for libpscf.a library 
+# Path and rule for libpscf.a library 
 
-pscf_LIBNAME=pscf
-pscf_LIB=$(BLD_DIR)/pscf/lib$(pscf_LIBNAME).a
+pscf_LIB=$(BLD_DIR)/pscf/libpscf.a
 
 $(pscf_LIB): $(pscf_OBJS)
 	$(AR) rcs $(pscf_LIB) $(pscf_OBJS) 

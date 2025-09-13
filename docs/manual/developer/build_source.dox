@@ -1,0 +1,265 @@
+/*! \page developer_build_source_page Source List (sources.mk) Files
+
+\ref developer_build_config_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_dependency_page  (Next)
+<BR>
+
+Almost every subdirectory of the  src/ directory tree contain a source
+list file named "sources.mk". This file is a makefile fragment that is 
+included into other makefiles. The primary purpose of each such file is 
+to maintain a list of all of the compilable source files in that 
+directory. Source list files in namespace-level directories also define 
+a makefile rule for constructing an associated static library.
+
+\section developer_build_list_sources_sec Source and object file lists
+
+Every sources.mk source list file defines a makefile variable whose 
+value is a list of all of the compilable source files that are located 
+in that directory and all of its subdirectories.  The name of variable 
+is always a string of the form
+\verbatim
+[directory]_
+\endverbatim
+in which the symbol "[directory]" represents a mangled form of the name 
+of the subdirectory of src that contains the source list file.  Specifically, 
+the [directory] string in each such variable name is constructed by taking 
+the relative path from the src/ directory to a subdirectory of interest 
+and replacing each "/" directory separator in this path an underscore 
+("_").  As an example, the file src/pscf/chem/sources.mk defines a variable
+named
+\verbatim
+   pscf_chem_
+\endverbatim
+Here, the directory path pscf/chem defined relative to the src directory
+has been converted into the variable name pscf_chem_ . The value of this 
+variable is a list of paths to all compilable source files that are located 
+in the directory tree rooted at the directory that contains this sources.mk
+file. Each path in this list must be given as a relative path, defined 
+relative to the src directory.
+
+Every sources.mk file also defines a second makefile variable with a name 
+of the form [directory]_OBJS that contains a list of paths to corresponding
+\*.o object file targets.  For example, the file src/pscf/chem/sources.mk 
+defines a variable named
+\verbatim
+pscf_chem_OBJS
+\endverbatim
+The value of this variable is a list of paths to all of the object file 
+targets that are created by compiling source files listed in the list 
+corresponding source file list.  Every path in this list must be an
+absolute path, defined relative to the root of the entire file system.
+
+In what follows, we refer to the [directory]_ variable in each such
+file as a source file list, and the [directory]_OBJS variable as an
+object file list. The source file list must be maintained by developers.  
+The object file list is created automatically by applying some simple 
+text manipulation operations to the source file list, as shown below.
+
+In the remainder of this page, we discuss examples of sources.mk source list 
+files located at three different levels of the src directory tree:
+
+   - Directories that are not namespace-level directories, and have no 
+     enclosed subdirectories
+
+   - Directories that are not namespace-level directories, and have 
+     enclosed subdirectories
+
+   - Namepace-level subdirectories of the src directory
+
+\section developer_build_list_example1_sec Directories with no enclosed subdirectories (not namespace-level)
+
+The simplest type of sources.mk files occur in directories that are are 
+not namespace level directories, but that that contain source files, and 
+do not contain any enclosed subdirectories.
+
+<b> Example </b>: As an example of this case, the contents of the file
+src/pscf/chem/sources.mk is shown below:
+\verbatim
+pscf_chem_= \
+  pscf/chem/Monomer.cpp \
+  pscf/chem/Vertex.cpp \
+  pscf/chem/Edge.cpp \
+  pscf/chem/Species.cpp \
+  pscf/chem/SolventSpecies.cpp \
+  pscf/chem/PolymerSpecies.cpp \
+  pscf/chem/PolymerType.cpp \
+  pscf/chem/PolymerModel.cpp \
+  pscf/chem/MixtureBase.cpp \
+  pscf/chem/Deby.cpp \
+  pscf/chem/VertexIterator.cpp \
+  pscf/chem/EdgeIterator.cpp
+
+pscf_chem_OBJS=\
+     $(addprefix $(BLD_DIR)/, $(pscf_chem_:.cpp=.o))
+
+\endverbatim
+The value assigned to pscf_chem_ in this example uses a makefile syntax
+in which a backslash (\\) character is used to continue a statement to the 
+next line. Lines 2 - 12 of this example thus assign a value to pscf_chem 
+that is simply a list of file paths separated by spaces.
+
+The value assigned to pscf_chem_ in this example is a list of all of the 
+compilable source files in the relevant subdirectory, src/pscf/chem.  All 
+paths in this list must be given as relative paths, defined relative to 
+the src/ directory. In this example, these source files are all standard 
+C++ source files with a file name extension .cpp. Source file lists in 
+other directories may, however, also contain CUDA C++ files with file 
+name extension *.cu.
+
+The object file list variable pscf_chem_OBJS_ is constructed in the last 
+two lines of this example.  The value that is assigned to pscf_chem_OBJS 
+is a corresponding list of absolute paths for object files, with 
+filename extension *.o.  This list is constructed here by applying two 
+makefile text manipulation functions to the value of the source file
+list pscf_chem_. First, the ":" operator is used in the expression 
+\$(pscf_chem_:.cpp=.o) to replace the .cpp extension with .o in each of 
+the relative paths in \$(pscf_chem_).  The built in "addprefix" function 
+is then used to add the value $(BLD_DIR)/ as a common prefix to every 
+name in the list. Here, $(BLD_DIR) is the absolute path to the build
+directory, which is defined in the relevant config.mk configuration 
+file. These manipulations yield a list of absolute paths to all of
+the *.o object files that should be created by compiling the files 
+in the source file list.
+
+\section developer_build_list_example2_sec Directories with subdirectories (not namespace-level)
+
+We now consider sources.mk file for a subdirectory of src/ that is not 
+a namespace-level directory, but that contains one or more enclosed  
+subdirectories.  In this case, the value of the source file list variable 
+[directory]_ must be a list of paths for all of the source files in the 
+directory tree rooted at the directory that contains the source.mk file.
+This list is created by including source.mk files in enclosed 
+subdirectories and concatenating values of the source file list variables 
+that are defined in those subdirectories.
+
+<b> Example </b>:
+Here is the content of the file src/rpc/fts//sources.mk in a directory 
+src/rpc/fts that contains several subirectories, but that is not a 
+namespace-level directory:
+
+\verbatim
+# Include source list files from subdirectories
+include $(SRC_DIR)/rpc/fts/simulator/sources.mk
+include $(SRC_DIR)/rpc/fts/compressor/sources.mk
+include $(SRC_DIR)/rpc/fts/montecarlo/sources.mk
+include $(SRC_DIR)/rpc/fts/brownian/sources.mk
+include $(SRC_DIR)/rpc/fts/perturbation/sources.mk
+include $(SRC_DIR)/rpc/fts/ramp/sources.mk
+include $(SRC_DIR)/rpc/fts/analyzer/sources.mk
+include $(SRC_DIR)/rpc/fts/trajectory/sources.mk
+
+# List of source files in src/rpc/fts
+rpc_fts_= \
+  $(rpc_fts_simulator_) \
+  $(rpc_fts_compressor_) \
+  $(rpc_fts_montecarlo_) \
+  $(rpc_fts_brownian_) \
+  $(rpc_fts_perturbation_) \
+  $(rpc_fts_ramp_) \
+  $(rpc_fts_analyzer_) \
+  $(rpc_fts_trajectory_)
+
+# List of object files in src/rpc/fts
+rpc_fts_OBJS=\
+     $(addprefix $(BLD_DIR)/, $(rpc_fts_:.cpp=.o))
+
+\endverbatim
+The first section of this file is a set of include directives that
+instruct make to include the contents of the sources.mk files from all
+subdirectories of src/rpc/fts. The make "include" directive is analogous 
+to the C/C++ \#include preprocessor command, and simply instructs make 
+to paste the contents of another file into the current file, verbatim, 
+before parsing the current file.
+
+The next section of this file assigns a value to the source file list
+variable rpc_fts_ by simply concatenating the values of the corresponding
+source file list variables defined in the enclosed subdirectories.  For
+example, the file scf/rpc/fts/brownian/sources.mk defines a variable
+rpc_fts_brownian_ whose value is a list of all of the source files in
+subdirectory src/rpc/fts/brownian. The concatenation of values of these
+subdirectory source list variables yields a list of paths to all of the
+source files in the tree rooted at the relevant directory, in which all 
+paths are expressed relative to the src directory.
+
+The statement that defines r1d_OBJS creates a corresponding object file
+list by processing the source file list, using the same text processing
+operations as those used in the simpler example given above for a
+directory with no subdirectories.
+
+\section developer_build_list_example3_sec Namespace-level directories
+
+The source list file in each the namespace-level subdirectory of src
+contains a rule for constructing an associated static library, in 
+addition to code that constructs source and object file lists.
+
+<b> Example </b> : Here is the content of the file src/rpc/sources.mk 
+located in the src/rpc namespace-level directory
+
+\verbatim
+#-----------------------------------------------------------------------
+# Source and object file lists for src/rpc
+
+# Include source list files from subdirectories
+include $(SRC_DIR)/rpc/environment/sources.mk
+include $(SRC_DIR)/rpc/field/sources.mk
+include $(SRC_DIR)/rpc/solvers/sources.mk
+include $(SRC_DIR)/rpc/scft/sources.mk
+include $(SRC_DIR)/rpc/fts/sources.mk
+include $(SRC_DIR)/rpc/system/sources.mk
+
+# List of source files in src/rpc
+rpc_= \
+  $(rpc_environment_) \
+  $(rpc_field_) \
+  $(rpc_solvers_) \
+  $(rpc_scft_) \
+  $(rpc_fts_) \
+  $(rpc_system_)
+
+# List of object file targets
+rpc_OBJS=\
+     $(addprefix $(BLD_DIR)/, $(rpc_:.cpp=.o))
+
+#-----------------------------------------------------------------------
+# Path and target rule for the librpc.a library
+
+rpc_LIBNAME=rpc
+rpc_LIB=$(BLD_DIR)/rpc/lib$(rpc_LIBNAME).a
+
+$(rpc_LIB): $(rpc_OBJS)
+	$(AR) rcs $(rpc_LIB) $(rpc_OBJS)
+
+#-----------------------------------------------------------------------
+\endverbatim
+
+The first part of this file, which defines values for rpc_ and rpc_OBJS,
+is similar to shown in the previous example of a directory that contains 
+subdirectories but is not a namespace-level directory.  The only new 
+feature in this example is the section at the end that defines a rule
+to construct a static library.
+
+The path to the static library file is given by the value of the variable
+$(rpc_LIB). This is assigned a value \$(BLD_DIR)/rpc/librpc.a that gives
+the absolute path to a file named librpc.a in the rpc subdirectory of the
+relevant build directory.
+
+The rule to construct the library constructs the target file \$(rpc_LIB)
+by archiving the contents of all of the object files in the src/rpc
+directory tree. The recipe of this rule variable \$(AR) to represent the 
+name of the archiver program that is used for this purpose. The value of AR
+is defined in the config.mk file in the build directory, and is set to
+"ar" by default.  The resulting library incorporates the contents of all 
+of the object files in the list \$(rpc_OBJS).
+
+The sources.mk file in every other namespace-level directory of src
+defines an analogous rule for constructing a library file. A makefile
+that includes a sources.mk file located in a namespace-level directory
+has access to the object file list for that directory, the name of the
+associated library file, and a rule to construct that library. 
+
+<BR>
+\ref developer_build_config_page      (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page            (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_dependency_page (Next)
+
+*/

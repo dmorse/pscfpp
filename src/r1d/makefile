@@ -35,27 +35,24 @@ clean:
 	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
 
-veryclean:
-	$(MAKE) clean
-
 # Executable pscf_1d file (linking)
 $(PSCF_1D_EXE): $(PSCF_1D).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_1D_EXE) $(PSCF_1D).o $(LIBS) 
-
-# Note: In the rule for pcsf_1d, we include the list $(PSCF_LIBS) of 
-# PSCF-specific static libraries as dependencies, but link to the list 
-# $(LIBS) of all libraries, which includes relevant external libraries.
 
 # Short phony target for pscf_1d executable file (for convenience)
 pscf_1d:
 	$(MAKE) $(PSCF_1D_EXE)
 
-.PHONY: all clean veryclean pscf_1d
+# Note: In the rule for pcsf_1d, we include the list $(PSCF_LIBS) of 
+# PSCF-specific static libraries as prerequisiites, but link to the list 
+# $(LIBS) that also includes relevant external libraries.
+
+.PHONY: all clean pscf_1d
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(PSCF_1D).d 
--include $(r1d_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(r1d_OBJS:.o=.d)
+-include $(PSCF_1D).d

@@ -10,56 +10,57 @@ root and namespace-level directories of the bld directory tree. Each of
 these makefiles contains a rule for a default target named "all" that 
 constructs all of the targets for which that makefile has responsibility.
 
-The basic structure of most PSCF makefiles is similar, but there are 
-slight differences in the targets created by makefiles in different 
-locations within the src and bld directories, creating corresponding
-differences in the contents of the makefiles. Different types of 
-makefiles are found in the following locations:
+Many PSCF makefiles share a similar structure, but there are differences
+in the contents and structure of makefiles located at different levels
+of the PSCF directory tree. Different types of makefiles are found in the 
+following locations:
 
-   - **Lower level subdirectories of src** : These 
-     are makefiles that are located within subdirectories of one of 
-     the namespace-level subdirectories of the src directory tree. The
-     "all" target of each such makefile creates a set of object target
-     files by compiling all of the source files that are located in 
-     the tree rooted at the directory containing the makefile (i.e.,
-     in that directory and any subdirectories).
+   - **Low level subdirectories of src** : These are makefiles that are 
+     located within subdirectories of one of the namespace-level directory
+     trees within the src directory. The "all" target of each such makefile
+     creates a set of object target files by compiling all of the source 
+     files that are located in the tree rooted at the directory containing 
+     the makefile (i.e., in that directory and any enclosed subdirectories).
 
-   - **Namespace level subdirectories of src or bld**:
-     The "all" target for each of these makefiles creates a static 
-     library library, in addition to creating object files from all 
-     of the source files in the namespace level directory tree. In 
-     the case of the program-level directories (r1d, rpc, rpg), the 
-     "all" target also creates an executable file that is installed 
-     in the bin directory.
+   - **Namespace-level (not program-level) subdirectories of src or bld**:
+     The "all" target of makefiles in the util, pscf, and prdc 
+     namespace-level directories of either src or bld each creates a 
+     static library file, in addition to creating a set of object files 
+     by compiling all the source files in that namespace-level directory 
+     tree. 
 
-   - **Root of src or bld directories** : The "all" target 
-     for a makefile that is located in the root of the src or bld 
-     directory tree compiles the entire PSCF package to produce
-     several executable files. These makefiles accomplish this by 
-     recursively calling "make all" from within each of the namespace 
-     level directories.
+   - **Program-level subdirectories of src or bld (not program level)**:
+     The "all" target of makefiles in the r1d, rpc, and rpg program-level 
+     directories of either src or bld directory each creates a single
+     executable file (pscf_1d, pscf_pc, or pscf_pg), in addition to making 
+     a static library and compiling all of the source files in the 
+     associated directory tree.
+
+   - **src and bld directories** : The "all" target of a makefile located 
+     in the root of either the src or bld directory tree compiles the 
+     entire PSCF package to produce several executable files. 
 
    - **PSCF root directory** : The "all" target of the master makefile 
-     in the PSCF root directory simply recursively calls "make all" 
-     from within the root of the bld directory tree to perform an 
-     out-of-source build. 
+     in the PSCF root directory performs an out-of-source build of the 
+     entire package. 
     
-Each of these types is discussed below, starting with the simplest. 
+Each of these types is discussed below, starting with makefiles in the
+lowest level of the directory tree, and working our way up.
 
 \section developer_build_makefile_srcsub_sec Makefiles in lower level subdirectories of src
 
-The simplest type of PSCF makefile is one that is located in a 
-subdirectory of one of the namespace-level directories within the src 
-directory tree. As an example, the contents of the makefile in the
+The simplest PSCF makefiles are those that that are located in 
+subdirectories of one of the namespace-level directories within the 
+src directory tree. As an example, the contents of the makefile in the
 directory src/rpc/fields is shown below:
 
-\code
+\verbatim
 #--------------------------------------------------------------------
 # Include *.mk makefile fragments
 
-SRC_DIR_REL =../..
-include $(SRC_DIR_REL)/config.mk
-include $(SRC_DIR)/rpc/include.mk
+include ../../config.mk
+include $(SRC_DIR)/rpc/sources.mk
+include $(SRC_DIR)/rpc/patterns.mk
 
 #--------------------------------------------------------------------
 # Main targets 
@@ -72,12 +73,9 @@ clean:
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(rpc_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(rpc_field_OBJS:.o=.d)
 
-\endcode
+\endverbatim
 
 This makefile has three main sections that are separated by horizontal
 lines and labelled by comments. Makefile lines that start with \# 
@@ -85,347 +83,213 @@ character are comments, which are ignored by the make command parser.
 
 <b> Including *.mk makefile fragments: </b>:
 
-The first section of this file contains two "include" directives that
-directly or indirectly include several makefile fragments containing
-information that are needed in the rest of the file. The effect of 
-these directives is to directly include the src/config.mk file and
-indirectly include several other makefile fragments by including 
-the src/include.mk file. 
+The first section of this file contains three "include" directives that
+include makefile fragments that are needed in the rest of the file. 
 
-The directive "#include $(SRC_DIR_REL)/config.mk" includes the
-src/config.mk configuration file in the src directory. The line before 
-this directive, sets the variable SRC_DIR_REL to the relative path for 
-the src directory from the current working directory (the directory
-src/rpc/field that contains this makefile), which is given here using 
-the symbol ".." to refer to a parent directory.  A relative path must 
-be used to include the config.mk file because the makefile variable
-SRC_DIR that provides and absolute path to the src/ directory is 
-initialized within the config.mk file, and thus cannot be used until
-after this file is included. 
+The directive "../../config.mk" includes the src/config.mk configuration 
+file in the src directory.  The path for this file is given here using
+a relative path in which the symbol ".." refers to a parent directory.
+The path "../.." thus refers to the parent of the parent of the current
+working directory. In this example, the make command would use this 
+makefile only if were invoked from the directory \$(ROOT_DIR)/src/rpc/field 
+that contains this makefile.  The path "../.." is thus the relative 
+path to the PSCF src directory from the current directory in which 
+make was invoked.
 
-The directive "#include $(SRC_DIR)/include.mk" includes the file
-src/include.mk. The path to this file is given as an absolute path 
-that is constructed using the value of the SRC_DIR variable that 
-is provided in the config.mk file. The effect of inclusion of this
-include.mk is to indirectly include the configuration file 
-util/config.mk, the src/rpc/patterns.mk pattern rule file, and 
-the source list files for the src/rpc namespace level and the three 
-other namespace level directories that it depends upon (i.e., the 
-sources.mk files located in src/rpc, src/prdc, src/pscf, and src/util). 
+A relative path must be used to include the relevant config.mk file 
+in every PSCF makefile because the makefile variables SRC_BLD that 
+provides absolute paths to the src directory and the build directory
+are defined in config.mk file. These variables thus cannot be used
+until after this file is included. Note that later include directives 
+for the required sources.mk and patterns.mk files can and do use 
+values of these variables to specify the locations of these files.
+
+The directive "#include \$(SRC_DIR)/rpc/sources.mk" includes the 
+sources.mk file in the src/rpc/field directory. This file includes the
+definition of the variable src_field_OBJS that is used in the rest 
+of this makefile. This variable is assigned a value in the file 
+src/rpc/field/sources.mk, which is then included by src/rpc/sources.mk
+
+The directive "#include \$(SRC_DIR)/rpc/patterns.mk" includes the 
+src/rpc/patterns.mk file that contains the relevant pattern rule for 
+compiling *.cpp and *.cu files with the src/rpc directory tree.
 
 <b> The "all" target: </b>:
 
 The makefile rule for the "all" target is given by the line
-\code
+\verbatim
 all: $(rpc_field_OBJS) 
-\endcode
-The variable value $(rpc_field_OBJS) expands to a list of absolute
+\endverbatim
+The variable value \$(rpc_field_OBJS) expands to a list of absolute
 paths to all of the object file targets associated with source files 
 in the subdirectory src/rpc/field that contains this makefile. 
-By including all of these object files as pre-requisites, the rule
-for the "all" target forces make to check on the status of all of
-these object files, and update any of them that do not exist or are 
-out of date.  A pattern rule defined in the file src/rpc/patterns.mk 
-is used to create each object file from an associated source file. 
+
+By listing all of these object file targets as pre-requisites, the 
+rule for the "all" target forces make to check on the status of all 
+of these object files, and update any of them that do not exist or 
+are out-of-date.  A pattern rule for defining *.cpp sources files 
+that is defined in the file src/rpc/patterns.mk is used to create 
+or recreate each required object file pre-requisite, as needed.
 
 <b> Including dependency files </b>:
 
 In order to check whether particular object files are out-of-date, make 
 needs access to the dependency file associated with that object file.
 The last part of this example file includes dependency files associated 
-with all of the object file targets in the src/rpc, src/prdc, src/pscf 
-and src/util directories. The resulting set of included files includes
-all of the dependency files associated the object files listed in the 
-$(rpc_field_OBJS) variable that is used in the "all" target, as well 
-as many others.
+with all of the object file targets in the src/rpc/field directory. 
+This is accomplished by the directive
+\verbatim
+-include $(rpc_field_OBJS:.o=.d)
+\endverbatim
+The purpose of this directive to include all existing *.d dependency 
+files that are associated with object files located in the src/rpc/field
+directory.  The variable value \$(rpc_field_OBJS:o=.d) is obtained by 
+using a built-in substitution operator to the list rpc_field_OBJS of 
+absolute paths for all object file targets in the src/rpc/field 
+directory, and replacing the .o suffix of each file name by a .d suffix. 
+The resulting value is thus a list of all of the associated *.d dependency 
+files. This include directive instructs the system to attempt to include 
+all of the files in this list.  The dash ("-") that appears before the 
+"include" keyword is a special symbol that instructs the make command 
+to quietly ignore failures that may occur if one or more of the more 
+dependency files in this list do not exist.
 
-As an example of the syntax of these include statements, consider the
-include directive
-\code
--include $(rpc_OBJS:.o=.d)
-\endcode
-The purpose of this directive to include all existing *.d dependency files 
-that are associated with object files located in the src/rpc directory. 
-The variable value $(rpc_OBJS:o=.d) is obtained by applying a built-in
-substitution operator to the list rpc_OBJS of absolute paths for all 
-object file targets in the src/rpc directory, in which the .o suffix 
-of each file name is replaced by a .d suffix. The resulting value is
-thus a list of all of the associated *.d dependency files. This include
-directive instructs the system to attempt to include all of these files.
-The dash ("-") that appears before the "include" keyword is a special
-symbol that instructs the make command to quietly ignore failures that 
-may occur if one or more of the more dependency files in this list do 
-not yet exist.
+Each dependency files is created as a side effect of a pattern rule that
+also creates an object file target. As a result, the dependency file 
+associated with an object file does not exist before the first time that 
+the object file is created.  When a file that is the target of a rule 
+does not exist, however, the target is always considered out-of-date. 
+As a result, a non-existent object file target will thus always be 
+built as needed, either if the rule to construct the target is invoked, 
+or if that file is needed as a pre-requisite for some other target. The 
+list of prerequisistes of an object file target is thus only needed after 
+the file is first created, to determine whether an <em>existing</em> 
+object file is out-of-date.
 
-Each dependency files contains a single makefile rule that lists all 
-of the pre-requisites of the associated object file, but that does not 
-contain a recipe. When make finds a rule for file target that does not 
-contain a recipe, make searches for an implicit rule to construct the
-target, which can be either a user-defined pattern rule or a built-in 
-implicit rule for particular file name extensions. In this type of PSCF 
-makefile, make finds and uses one of the pattern rules defined in the
-included pattern.mk file.
-
-\section developer_build_makefile_namespace_sec Makefiles in namespace-level directories
+\section developer_build_makefile_namespace_sec Makefiles in namespace-level directories (not program-level)
 
 As already discussed, the src/ and bld/ directories have analogous
-internal structures, and either can be used as the "build" directory
-for, respectively, out-of-source or in-source builds.
-The src/ and bld/ directories each contain 6 subdirectories named
-named util/, pscf/, prdc/ r1d/, rpc/, rpg/ that we refer to as namespace 
-level directories, because each contains the source code defined in a 
-particular C++ namespace.  Each namespace level subdirectory of src/ 
-and bld/ contains a makefile that controls compilation of source files 
-located in the corresponding
-subdirectory of src/.
+internal structures, and either can be used as the "build" directory 
+for, respectively, out-of-source or in-source builds.  The src and bld
+directories each contain 6 subdirectories named named util/, pscf/, 
+prdc/ r1d/, rpc/, rpg/ that we refer to as namespace-level directories, 
+because each contains the source code defined in a particular C++ 
+namespace. The 6 namespace-level subdirectories of the bld/ directory 
+contain makefiles that are identical to those in corresponding 
+subdirectories of the src/ directory.
 
-\subsection developer_build_makefile_namespace_all_sub The "all" target
+The three namespace-level directories named r1d/, rpc/, and rpg/ are 
+distinguished by the fact that each of these directories contains a 
+source file that defines the main function for an executable program.
+We refer to these three directories as program-level directories. 
+Makefiles in the program-level directories are different from the other
+namespace-level directories because they define additional rules to 
+compile this main program file and link it to create an executable.
+In the remainder of this section, we consider the makefiles in the three 
+namespace-level directories named util/, pscf/ and prdc/ that are 
+**not** also program-level directories.
 
-The makefile in each namespace level subdirectory of src/ or bld/ contains 
-a rule with a phony target named "all".  Invoking "make"
-or "make all" from a namespace level directory invokes the "all"
-rule, and causes make to perform the following actions:
+The main difference between the makefiles in the util/, pscf/ and prdc/ 
+directories and those found in lower level subdirectories of the src 
+directory is that the all target in these namespace-level makefiles 
+makes a static library file. The rule to create the static library 
+file is defined in sources.mk file in each of these namespace level 
+directories, rather than in the corresponding makefile.
 
-  - The "all" rule compiles all of the source files in the corresponding
-    namespace level subdirectory of src/, and places the resulting
-    object and dependency files within the namespace level subdirectory
-    from which make was invoked.
+As an example, the body of the makefile in the src/prdc directory is 
+shown below. The makefile variable value \$(prdc_LIB) is defined in 
+the included file \$(SRC_DIR)/prdc/sources.mk file, and gives the path 
+\$(BLD_DIR)/prdc/libprdc.a to the static library file target in the 
+prdc namespace-level directory of the build directory. 
 
-  - The "all" rule creates a static library files that contains the
-    contents of the resulting object files, and places that file
-    in the root of the namespace level directory from which make
-    was invoked.
+\verbatim
+#------------------------------------------------------------------------
+# Include *.mk makefile fragments
 
-  - When invoked from the r1d/, rpc/ or rpg/ namespace level
-    subdirectory of src/ or bld/, the "all" rule also creates an
-    executable program file named pscf_1d, pscf_pc, or pscf_pg,
-    respectively, and installs that file in the PSCF bin/
-    directory.
-
-Each of these processes is described in a bit more detail below.
-
-The object and dependency files that are created by compiling a source
-file both have the same base name as the corresponding source file,
-with different file name extensions.  This object and dependency file
-are both placed either in the same directory as the source file, in
-the case of an in-source build, or in an analogous directory within
-the bld/ directory, in the case of an out-of-source build.
-
-The library file that is created by the "all" rule of a namespace
-level has a name of the form lib[namespace].a, in which [namespace]
-denotes the name of the relevant namespacel level directory. For
-example, the library that is created by invoking "make" or "make all"
-from the bld/prdc/ directory is named bld/prdc/libprdc.a. This
-library is an archive that contains the contents of object files
-created by compiling all source files in the src/prdc directory.
-
-The program-leve subdirectories r1d/, rpc/, and rpg/ each contain a 
-single source file named pscf_1d.cpp, pscf_pc.cpp, or pscf_pg.cu, 
-respectively, that implements the main function for one of the executable 
-programs created by PSCF. We refer to these as program source files.  
-Invoking "make" or "make all" from within the r1d/, rpc/, or rpg/ 
-namespace level directory of either bld/ or src/ will cause this file 
-to be compiled and linked to library files in order to create a
-corresponding executable file that, by default, is installed in the 
-PSCF bin/ directory. For example, invoking "make all" from
-either src/rpc or bld/rpc causes the creation of the executable
-file bin/pscf_pc.
-
-\subsection developer_build_makefile_namespace_mkfiles_sub Makefile fragments
-
-In addition to a makefile, each namespace level subdirectory of the
-src/ directory contains 3 makefile fragments that are included by
-other makefiles.  The names and contents of these three makefile
-fragments are summarized below:
-
-  | Filename    | Contents                                         |
-  | ----------- | ------------------------------------------------ |
-  | sources.mk  | Lists of object file targets, rule for library   |
-  | patterns.mk | Pattern rules for source file compilation        |
-  | includes.mk | List of files to be included by makefiles        |
-
-Each of these types of file is described in more detail below.
-
-* **Source list files (sources.mk)**
-
-As discussed in a previous \ref developer_build_source_page "manual page", 
-the sources.mk file in each namespace level directory defines a makefile
-variable whose value is a list of the object files that should be
-created by compiling source files in that directory.  The name of this
-variable is a string of the form [namespace]_OBJS, in which [namespace]
-represents the name of the relevant namespace level directory. For
-example, the file src/prdc/sources.mk file defines a variable of this
-kind that is named prdc_OBJS. Every file listed in the value of this
-variable is given as an absolute path to a file in the relevant build
-directory with a name that ends with file extension .o.
-
-Each sources.mk file also defines variable whose value is the path
-to the associated library, and a makefile rule for constructing that
-library. The variable contains the path to the library has a name of
-the form [namespace]_LIB, where [namespace] represents the name of
-the namespace level directory.  As an example, the relevant part of
-the file src/prdc/sources.mk file is shown below:
-\code
-prdc_LIBNAME=prdc
-prdc_LIB=$(BLD_DIR)/prdc/$(prdc_LIBNAME).a
-
-prdc_LIB: $(rpg_OBJS)
-	$(AR) $(prdc_LIB) $(prdc_OBJS)
-\endcode
-The first two lines of this makefile snippet assign prdc_LIB a
-value that is the absolute path to a file named libprdc.a in the
-prdc/ subdirectory of the relevant build directory (i.e., bld/
-or src/). The absolute path to the build directory is given in
-the definition of prdc_LIB by the value of the makefile variable
-BLD_DIR.
-
-* **Include list files (includes.mk):**
-
-The includes.mk file in each namespace level directory is a short
-makefile fragment that contains "include" statements that include
-makefile fragments that are required by all makefiles in the same
-directory and its subdirectories.
-
-As example, the src/prdc/include.mk file contains the following
-include statements:
-\code
-include $(BLD_DIR)/util/config.mk
-
-include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/pscf/sources.mk
+include ../config.mk
 include $(SRC_DIR)/prdc/sources.mk
-
 include $(SRC_DIR)/prdc/patterns.mk
-\endcode
-Comments:
 
-  - This file includes not only the patterns.mk and sources.mk
-    file from the same prdc/ namespace level subdirectory of
-    src/, but also sources.mk files from two other namespace
-    level directories (util/ and pscf/) that contain code that
-    are used within the prdc/ directory.
+#-----------------------------------------------------------------------
+# Main targets 
+ 
+all: $(prdc_OBJS) $(prdc_LIB) 
 
-  - This file also includes the config.mk build configuration
-    file from the util/ subdirectory of the build directory,
-    because this build configuration file contains a some makefile
-    variable definitions that are needed elsewhere.
+clean:
+	rm -f $(prdc_OBJS) $(prdc_OBJS:.o=.d)
+	rm -f $(prdc_LIB)
+	rm -f *.o */*.o */*/*.o
+	rm -f *.d */*.d */*/*.d
+	cd tests; $(MAKE) clean
 
-  - This include.mk file does not include the main build
-    configuration file located at $(BLD_DIR)/config.mk, for
-    reasons that are explained below.
+very-clean:
+	$(MAKE) clean
 
-\subsection developer_build_makefile_namespace_makefile_1_sub Example: namespace level makefile, with no program file
+.PHONY: all clean veryclean
 
-We are now in a position to explain the essential components of a
-makefile in a namespace-level subdirectory of bld/ or src/.
-We first consider the structure of a makefile in a namspace level
-directory such as pscf/ or prdc/ that does not contain a program
-file. As an example, the following code snippet shows the essential
-elements of the file bld/prdc/makefile that are necessary to execute 
-the "all" rule defined in this file:
-
-\code
-# -------------------------------------------------------------
-# Include makefile fragments
-
-BLD_DIR_REL =..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/prdc/include.mk
-
-# -------------------------------------------------------------
-# Main targets
-
-all: $(prdc_OBJS) $(prdc_LIB)
-
-   .
-   .
-   .
-
-# -------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Include dependency files
 
 -include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
-\endcode
+\endverbatim
 
-In this example, the three vertical dots below the makefile rule with
-the target "all" are used to indicate a section of the file that has
-been omitted for clarity. The omitted section of this file contains
-rules with targets named "clean" and "veryclean" that we do not need
-to consider in order to understand the implementation of the "all"
-rule.
+The key difference between the structure of this file and that of the 
+makefiles in lower-level subdirectories of src is that, in this case, 
+the rule for the "all" target contains the path \$(PRDC_LIB) to a static 
+library file target as an extra pre-requisite, in addition to the variable 
+\$(prdc_OBJS) that lists all of the associated object files. Because make 
+updates all pre-requisites of phony rules, this forces the makefile to 
+build both the object files and the library file. 
 
-This makefile has three sections that are marked by comments and
-horizontal separators.
+The use of a relative path ../config.mk in the directive that includes 
+the configuration file allows make to include the bld/config.mk when
+make is invoked from a namespace-level subdirectory of bld directory
+but to include src/config.mk when make is invoked from a namespace-level
+subdirectory of the src directory. The makefiles in namespace-level 
+subdirectories of src and bld are thus identical, but they included
+different configuration files when make is invoked from within different
+directory trees.
 
-The first section contains directives that includes several related
-makefile fragments, as indicated by the associated comment. In the
-first line of this section, the variable BLD_DIR_REL is assigned a
-value ".." that gives the relative path from the directory bld/prdc
-that contains this file to the build directory bld/, which is
-the parent directory. The string ".." is standard notation for
-the path to a parent directory in a unix filesystem.  The
-following line then includes the build configuration file
-bld/config.mk in this parent directory.  The last line of
-this section includes the file src/prdc/include.mk fle,
-which thus indirectly includes the required patterns.mk file
-and several other makefile fragments, as discussed above.
+The explicit inclusion \$(prdc_OBJS) in the prerequisite list for the 
+"all" target is actually redundant, but does no harm.  The rule to build 
+the library \$(prdc_LIB) that is defined in the file src/prdc/sources.mk 
+gives the list of object file targets \$(prdc_OBJS) as a prerequisite. 
+Any attempt to build this library file would thus trigger creation or 
+recreation of any out-of-date object files in the list \$(prdc_OBJS), as 
+needed, even they were not listed explicitly as a prerequisite of the
+"all" target. A more concise version of the phony "all" rule could thus 
+list the library file as its only prerequisite. The list of object file 
+targets is included for clarity, to explicitly document the normal 
+sequence of operations triggered by this target.
 
-Note that the directive that includes the configuration file
-bld/config.mk uses a relative path to refer to the bld/ directory,
-rather than referencing the variable BLD_DIR to indicate this
-directory as done in most other places in the build system.
-This is necesssary because the variable BLD_DIR is defined
-in this config.mk configuration file, and so cannot be used
-until after this file has been included.
+\section developer_build_makefile_program_sec Makefiles in program-level directories 
 
-The second section of this makefile file lists several main makefile
-rules. All of these have been omitted here except for the rule with
-the target "all", which is the focus of this discussion.  The list
-of prerequisites for the "all" rule contains all of the files in
-the list $(prdc_OBJS) of object files in the relevant namespace-level
-directory, plus the associated library file $(prdc_LIB).
-(Recall that prdc_OBJS and prdc_LIB are both defined in the file
-src/prdc/sources.mk that is indirectly included via the include.mk
-file). Invocation of the "all" rule thus causes any of the files
-in this list that are non-existent or out-of-date to be created or
-re-created.
+We now consider makefiles located in the r1d, rpc, and rpg program-level 
+subdirectories of the src or bld directories. These makefiles each define 
+two additional rules that do not exist in makefiles located in the util, 
+pscf, or prdc namespace-level directories. The first additional rule gives 
+instructions to create an object file by compiling a file that contains a 
+main function for a complete program. The second additional rule gives 
+instructions to create an executable file by linking this main program
+object file to several library files.  Because the executable file is 
+created by a rule that links library files that are located in other 
+namespace-level directories, the makefile in each of these program-level 
+directories must include source list (sources.mk) and dependency files 
+(*.d) files from these other namespace-level directories, as well as those
+from the program-level directory that contains the makefile.
 
-The last section of this makefile uses the "include" directive to 
-automatically include several long lists of dependency files into 
-this makefile. Each of the included *.d dependency file contains 
-a makefile rule that lists the prerequisites for a corresponding 
-object file, and thus provides the information necessary for make 
-to decide when a particular object file that already exists needs 
-to be rebuilt because one or more of its prerequisites has been 
-modified or become out-of-date.
-
-\subsection developer_build_makefile_namespace_makefile_2_sub Example: Program-level makefile, with a program file
-
-Makefiles for the r1d/, rpc/, rpg/ namespace-level directories are
-slightly more complicated than the example given above because they
-each contain an additional rule to create an executable file.
-
-As an example, we consider the makefile in directory src/rpc, which
-contains source code for pscf_pc program. This directory contains a
-file src/rpc/pscf_pc.cpp that defines the main function for the
-pscf_pc executable, which we refer to as the program source file. 
-The object file that is created by compiling the program source file 
-is listed as a pre-requisite of the corresponding executable file,
-which is created by the "all" rule because the executable file is 
-listed as a pre-requisite of the "all" target.  
-
-The essential elements of the makefile in the src/rpc directory are 
-shown below, with a few sections omitted for clarity:
-
-\code
+As an example, here is the body of the makefile in rpc program-level
+directory:
+\verbatim
 #------------------------------------------------------------------------
-# Include makefile fragments
+# Include *.mk makefile fragments
 
-BLD_DIR_REL =..
-include $(BLD_DIR_REL)/config.mk
-include $(SRC_DIR)/rpc/include.mk
+include ../config.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/rpc/sources.mk
+include $(SRC_DIR)/rpc/patterns.mk
 
 #-----------------------------------------------------------------------
 # Paths to pscf_pc program files
@@ -441,136 +305,198 @@ PSCF_PC_EXE=$(BIN_DIR)/pscf_pc
 
 all: $(rpc_OBJS) $(rpc_LIB) $(PSCF_PC_EXE)
 
-  .
-  .
-  .
+clean:
+	rm -f $(rpc_OBJS) $(rpc_OBJS:.o=.d)
+	rm -f $(rpc_LIB)
+	rm -f $(PSCF_PC).o $(PSCF_PC).d
+	rm -f *.o */*.o */*/*.o
+	rm -f *.d */*.d */*/*.d
+	cd tests; $(MAKE) clean
 
 # Rule for pscf_pc executable file
 $(PSCF_PC_EXE): $(PSCF_PC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PC_EXE) $(PSCF_PC).o $(LIBS)
 
-  .
-  .
-  .
-  
+# Short phony target for executable file (for convenience)
+pscf_pc:
+	$(MAKE) $(PSCF_PC_EXE)
+
+.PHONY: all clean pscf_pc
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rpc_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
+-include $(prdc_OBJS:.o=.d)
+-include $(rpc_OBJS:.o=.d)
 -include $(PSCF_PC).d 
-\endcode
-As in the first example, we use vertical dots to indicate sections
-of the file that have been ommitted for clarity.
+\endverbatim
 
-The following new elements are present this makefile, but do not
-exist in a namespace-level makefile for a directory that does not 
-contain a program source file:
+Note the following elements of this file that are not present in the 
+makefiles in the util, pscf, and prdc namespace-level directories:
 
-  - Definition of a variable PSCF_PC gives the shared part of the 
-    paths for the object and dependency file that will be created by 
-    compiling the program source file src/pscf_pc.cpp, without the 
-    .o and .d file name extensions. 
+  - Definition of a variable PSCF_PC = \$(BLD_DIR)/rpc/pscf_pc that gives 
+    the shared part of the paths for the object and dependency file that 
+    are created by compiling the program source file src/rpc/pscf_pc.cpp, 
+    without the .o and .d file name extensions. 
 
-  - Definition of a variable PSCF_PC_EXE gives the path to the 
-    resulting executable file, $(BIN_DIR)/pscf_pc.
+  - Definition of a variable PSCF_PC_EXE = \$(BIN_DIR)/pscf_pc that gives 
+    the absolute path to the resulting executable file.
 
-  - The executable file $(PSCF_PC_EXE) is listed as an additional
-    pre-requisite of the "all" target.
+  - A rule to build the executable file \$(PSCF_PC_EXE) by linking the main 
+    program object file \$(PSCF_PC).o to all relevant library files.
 
-  - This makefile contains an additional rule to construct the
-    executable by linking the object file $(PSCF_PC).o to a list 
-    of libraries given by the value of the variable $(LIBS)
+  - The "all" target lists the main program executable \$(PSCF_PC_EXE) as 
+    a prerequisite.
 
-  - The dependency file $(PSCF_PC).d that is created by compiling
-    the program source file is included in the last line of the 
-    makefile
+  - Include directives to source.mk files and dependency files that are 
+    located in the util, pscf, and prdc namespace-level directories, as 
+    well as those located in the rpc directory that contains this makefile.
 
-Invoking the "all" rule for this makefile builds all of the object 
-files in the list $(rpc_OBJS), builds the resulting library 
-$(rpc_LIB), and also constructs the executable $(PSCF_PC_EXE).
+  - An include directive to include the dependency file \$(PSCF_PC).d
+    associated with the main program source file, which contains a rule 
+    for the corresponding object file target that lists its prerequisites.
 
-In a namespace-level directory that contains a program source file, 
-the object file that is created by compiling the program source file 
-is added to the object file list for that directory, and so is not 
-added to the associated static library. This object file is instead 
-created by the "all" rule because it is listed as a pre-requisite 
-of the executable, and thus must be created in order to create the 
-executable.
+Inclusion of sources.mk and dependency files from other namespace level 
+directories is necessary in this case to allow the make command to check 
+whether the libraries located in other directories are up to date before
+linking them to create an executable, and to build or rebuild any that
+are found to be out-of-date.  The rules to build the static library in 
+each relevant namespace-level directory is defined in the sources.mk file 
+in that directory, which is then included by this makefile.
 
-\section developer_build_makefile_upper_sec Makefiles in upper-level directories (root, bld/ and src/ directories)
+Inclusion of source list and dependency files from other namespace-level 
+directories is **not** necessary in the makefiles located in the util, 
+pscf, and prdc directories because these makefiles do not define a rule 
+that links static libraries from different namespace-level directories 
+to create an executable.
 
-Complete instructions for users for how to compile and build PSCF are
-given in a \ref install_overview_page "another section" of this manual.
-From the point of view of a user, the key step is simply to invoke
-"make"  or (equivalently) "make all" from within any of three possible
-locations: Invoking make from either the PSCF root directory or the
-build directory performs an out-of-source build, while invoking make
-from the src/ directory performs an in-source build.
+The type of rule used here to create an executable main program file is 
+very similar to the pattern rule that is used create 
+\ref developer_build_pattern_test_sub "executable files for unit tests" .
+The pattern rule for unit test executables in a particular 
+namespace-level directory is defined in the corresponding
+\ref developer_build_pattern_page "patterns.mk" file. The rules for 
+main program executables and unit test executables both create an 
+executable file by using a compiler to link an object file to a list
+of libraries represented by a variable \$(LIBS) that is defined in the
+patterns.mk file.
 
-The recipes for the "all" target of the makefiles in the root, bld/
-and src/ directories are all simply wrappers for make commands in
-lower-level subdirectories.
+In this example, the object file \$(PSCF_PC).o is created by compiling 
+the main program file h$(SRC_DIR)/rpc/pscf_pc.cpp. This object file will
+be created before the executable file because the object file is list 
+as a prerequisite of the executable.  This main program object file is 
+created as needed using a standard pattern rule for compiling source 
+files, which also creates a corresponding dependency file \$(PSCF_PC).d
+as a side effect.  
 
-The rule for the "all" target for the makefile in the PSCF root
+The main program object file is not included in the list of files that 
+are archived to create an associated static library. For example, in the 
+rpc namespace-level directory, the file \$(PSCF_PC).o is not included in 
+the list \$(rpc_OBJS) of object files that are collected into the library 
+file \$(BLD_DIR)/rpc/librpc.a .
+
+Explicit inclusion \$(rpc_OBJS) and \$(rpc_LIB) as prerequisites of the 
+"all" target is redundant, but these are included to help document the
+sequence of actions triggered by the "all" target.  Any required building 
+or re-building of these object and library file targets would in any case
+be triggered by a request to build the executable target \$(PSCF_PC_EXE), 
+because the rule for \$(PSCF_PC_EXE) lists \$(rpc_LIB) as a pre-requisite,
+and the rule for \$(prc_LIB) lists the files in the list \$(prc_OBJS) as
+prerequisites. A more concise version of this rule could thus list the
+the executable file target as the only required prerequisite of "all".
+
+\section developer_build_makefile_upper_sec Makefiles in src and bld directories
+
+The makefiles in src and bld directories, which are identical, each contain
+an "all" target that operates by recursively invoking make from within
+namespace-level directories. Below, we show the essential parts of these 
+makefiles that are necessary to see how the "all" target is implemented:
+\verbatim
+include config.mk
+
+# ======================================================================
+# Main build targets
+
+# Build all CPU and GPU programs
+all:
+	$(MAKE) all-cpu
+ifdef PSCF_CUDA
+	cd rpg; $(MAKE) all
+endif
+
+# Build all programs that uses exclusively CPU hardware
+all-cpu: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+	cd r1d; $(MAKE) all
+	cd prdc; $(MAKE) all
+	cd rpc; $(MAKE) all
+
+   .
+   .
+   .
+
+# ======================================================================
+\endverbatim
+
+Here \$(MAKE) is the value of a standard variable that represents the
+name of the unix make command. The two target shown here both contain 
+recipes that instruct the system to repeatedly descend into a namespace
+level directories. The "all-cpu" target is designed to build only the 
+two programs that use standard CPU hardware, pscf_1d and pscf_pc. The
+"all" target is designed to also create the pscf_pg executable if
+compilation of CUDA code has been enabled by defining the PSCF_CUDA
+makefile variable. 
+
+The phony "all-cpu" target simply invokes make all within 5 of the 
+6 namespace-level subdirectories, including the two program-level
+subdirectories r1d and rpc that build the CPU programs pscf_1d and 
+pscf_pc, but excluding subdirectory rpg that contains CUDA C++ code 
+for pscf_pg.
+
+The "all" target first invokes cpu-all and then conditionally invokes 
+"make all" from within the rpg subdirectory if and only if the makefile 
+variable PSCF_CUDA is defined. The variable PSCF_CUDA is undefined by
+default, and is defined if and only if the user has explicitly enabled 
+compilation of CUDA code. The "all" target thus compiles code in the rpg 
+directory and creates the pscf_pg executable only if CUDA compilation 
+has been enabled.  Compilation of CUDA code can be enabled either by 
+using the setopts script, using the -c option with argument 1, or by 
+manually uncommenting the definition of the variable PSCF_CUDA in the 
+relevant config.mk configuration file. 
+
+The "all" target is the first target in the identical makefiles located 
+in the src and bld directory, and is the default target. Invoking "make"
+with no target from either of these directories is thus equivalent
+to invoking "make all" from the same location.
+
+The remainder of this makefile defines a number of other targets that 
+enable the user to compile only part of the package, to run unit tests, 
+and to clean up after compilation. The purposes of these other targets
+are explained by comments in the makefile, and are also generally 
+rather self-explanatory. 
+
+\section developer_build_makefile_root_sec Makefile in the PSCF root directory
+
+The rule for the "all" target in the makefile located in the PSCF root
 directory is given by:
-\code
+\verbatim
 all:
 	cd bld ; $(MAKE)
-\endcode
-Here, $(MAKE) is a standard variable that represents the name of the
-make command, so this recipe is equivalent to
-\code
-	cd bld ; make
-\endcode
-This recipe instructs make to change directory to the bld/ directory
-and then invoke from there.  Invoking make in the root directory is thus
-completely equivalent to invoking it from bld/. Invoking make from
-either of these locations performs an out-of-source build in which
-intermediate files are installed in the bld/ directory.
+\endverbatim
+Invoking this rule from the root directory is thus equivalent to invoking 
+"make all" from within the bld directory. The effect in either case is to 
+perform an out-of-source build of the entire package. 
 
-The makefiles in the bld/ and src/ directories each include the
-"config.mk" file located in the same directory.  The "all" target in
-each of these two makefiles is given by:
-\code
-all:
-	all-cpu
-ifdef PSCF_CUDA
-	cd rpg; make
-endif
-\endcode
-In this rule, "all-cpu" refers to the phony target of a related
-rule
-\code
-all-cpu:
-	cd util; $(MAKE)
-	cd pscf; $(MAKE)
-	cd prdc; $(MAKE)
-	cd r1d; $(MAKE)
-	cd rpc; $(MAKE)
-\endcode
-The recipe for the all-cpu target, which is invoked by the recipe for
-all, instructs make to simply cd into 5 of the 6 namespace level
-directories of src/ or bld/ and invoke make from within each of them.
-The 5 namespace directories that appear in the reciple for the all-cpu
-rule contain all of the code required to build the CPU programs pscf_1d
-and pscf_pc, but not that required to build the GPU program pscf_pg.
-The remaining line of the recipe for the "all" rule, contains the pair
-of commands "cd rpg; $(MAKE)$" that cause make to cd into rpg and
-call make from there in order to compile the code required to build
-the pscf_pg GPU program. This last line is surrounded by a makefile
-"ifdef ... if" block, however, that allows it to be executed if and
-only if compilation of CUDA code has been enabled by defining the
-variable PSCF_CUDA in the associated config.mk file.
-
-Recipes for the "all" targets in these upper level makefiles thus
-simply instruct make to descent into to namespace level subdirectories
-of bld/ or src/ and recursively invoke itself from within these
-directories. Most of the nontrivial makefile code required to build
-PSCF thus appears within makefiles in the namespace level directories.
+A variety of other targets are defined in the makefile in the root
+directory, but not discussed here. Purposes of these other targets are
+explained by comments in this makefile. The recipes for most targets
+in this makefile are simply wrappers that recursively invoke make from
+within the bld, bld and src or docs directory, like the recipe for the 
+"all" target. Rather than repeating brief descriptions that are given 
+in the makefile, we recommend that users take a look at this makefile.
 
 <BR>
 \ref developer_build_pattern_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

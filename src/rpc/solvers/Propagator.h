@@ -298,10 +298,7 @@ namespace Rpc {
    */
    template <int D>
    inline void Propagator<D>::setBlock(Block<D>& block)
-   {
-      UTIL_ASSERT(blockPtr_);  
-      blockPtr_ = &block; 
-   }
+   {  blockPtr_ = &block; }
 
    // Explicit instantiation declarations
    extern template class Propagator<1>;

@@ -27,8 +27,8 @@ of the following three categories:
     a template parameter, denoted by D.
 
   - <b> C. Templates as base classes </b> : 
-    Some class templates are used only as common base classes for 
-    closely analogous derived classes used by different programs
+    Specializations of some class templates are used as base classes 
+    for closely analogous derived classes used by different programs
     (pscf_1d, pscf_pc, and pscf_pg), to reduce code duplication.
 
 Each of these uses is discussed in more detail below.

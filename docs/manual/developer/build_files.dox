@@ -1,118 +1,108 @@
-/*! \page developer_build_files_page PSCF Build System Files (Overview)
+/*! \page developer_build_files_page Build System Files (Overview)
 
-\ref developer_build_make_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_make_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_build_config_page  (Next)
 <BR>
 
-This file briefly discusses the contents and purpose of different 
-types of makefiles and makefile fragments that are used by the PSCF 
-build system to control the build process.  Files with a filename 
-extension .mk are always makefile fragments that are included by 
-other makefiles.
+This file briefly discusses the contents and purpose of different
+types of makefiles and makefile fragments that are used in the PSCF
+build system.  All files with a filename extension .mk are makefile
+fragments that are included into makefiles via the make
+\ref developer_build_make_include_sec "include directive".
 
 \section developer_build_files_dirs_sec File locations
 
 After the configure script is run, but before any source files are
-compiled, the following types of makefiles and makefile fragments 
+compiled, the following types of makefiles and makefile fragments
 exist in different levels of the src directory tree:
-
-  - Almost every subdirectory of the src directory tree (with the
-    exception of directories named test/ or tests/) contains a 
-    makefile and a makefile fragment named sources.mk.
-
-  - Each of the namespace-level subdirectories of the src directory
-    tree has a makefile, and makefile fragments named sources.mk,
-    patterns.mk and include.mk.
 
   - The root of the src directory contains a makefile and a file
     named config.mk
 
-In the same state, the the following types of files exist in the bld 
-directory tree:
+  - Each namespace-level subdirectory of the src directory tree contains
+    a makefile and files named sources.mk and patterns.mk
 
-  - Each namespace-level subdirectory of the bld directory contains
-    a makefile.
+  - Every subdirectory of the src directory tree that contains compilable
+    source files contains a makefile and a file named sources.mk
 
-  - The root of the bld directory contains a makefile and a file 
-    named config.mk
+In addition, PSCF root directory contains a makefile at this point.
 
-The PSCF root directory also contains a makefile, which defines an 
-"all" target that performs an out-of-source build of the entire 
-package.
+Before the configure script is run, there are not any makefiles or
+makefile fragments in the bld directory.  After the configure script
+is run, the following types of files will exist in the bld directory
+tree:
 
-The configure script installs the config.mk files in both the src
-and bld directory and all of the makefiles in the bld directory.
+  - The root of the bld directory tree will contains a makefile and a
+    file named config.mk
 
-Compilation leads to creation of additional intermediate object, 
+  - Each namespace-level subdirectory of the bld directory will
+    contains a makefile
+
+The configure script installs the config.mk files in both the src and
+bld directory, and installs all of the makefiles in the bld directory.
+The configure script also installs a bash script named "setopts" in the
+bld directory, by copying the corresponding script in the src directory.
+
+Compilation leads to creation of additional intermediate object,
 dependency and library files in either the src directory (for in-source
-compilation) or the bld directory (for out-of-source) compilation, as 
-discussed previously \ref developer_build_overview_page "elsewhere". The 
-dependency files are actually themselves makefile fragments that are 
-included into other makefiles, which use them to help keep track of 
-which existing object files are up-to-date.
+compilation) or the bld directory (for out-of-source) compilation, as
+discussed \ref developer_build_process_page "previously". Each
+dependency files is a short makefile fragments that can be included
+into makefiles.
 
 \section developer_build_files_types_sec Makefile fragment file types
 
-The names and contents of different types of makefile fragments used
-in the build system are summarized in the table below:
+The names and contents of different types of makefile fragments used in the
+build system are summarized in the table below:
 
  | Type        | Filename  | Contents                                     |
  |-------------|-----------| ---------------------------------------------|
  |configuration|config.mk  | configuration file, defines global variables |
  |source list  |sources.mk | list source files and object file targets    |
  |pattern rule |patterns.mk| pattern rules for object files targets       |
- |include      |includes.mk| includes fragments needed by  makefiles      |
- |dependency   | *.d       | list pre-requisites of a single *.o target   |
+ |dependency   | *.d       | list prerequisites of a single *.o target   |
 
-Each of these types of file is described in a bit more detail below, 
-and then in greater detail in subsequent pages about particular file
-types:
+Each of these types of file is described in a bit more detail below, and
+then in greater detail in subsequent pages about different types of file:
 
-   - **Configuration files** : Makefile fragments named config.mk that
-     are installed in the bld and src directory are configuration files 
-     that assign values to makefile variables are used in other build 
-     system files, and that may need to be assigned different values on
-     different computer systems. Among these are variables whose values 
-     give paths to the PSCF root directory and some of its main 
-     subdirectories, variables that specify command line options for the 
-     compiler, or variables that enable or disable particular features. 
+   - \ref developer_build_config_page :
+     Makefile fragments named config.mk that are installed in the bld and 
+     src directory are configuration files that assign values to makefile 
+     variables that are used in other build system files.  Among these are 
+     variables whose values give paths to the PSCF root directory and 
+     some of its main subdirectories, variables that specify command line 
+     options for the compiler, and variables that enable or disable 
+     particular features.
 
-   - **Source list files** : The makefile fragment named sources.mk 
-     in each directory in the src directory tree defines a pair of
-     makefile variables whose values are, respectively, a list of all 
-     of the compilable source files in that directory and all of its 
-     subdirectories, and a list of all of the corresponding object file 
-     targets.  
+   - \ref developer_build_source_page :
+     The makefile fragment named sources.mk in each directory in the src 
+     directory tree defines a pair of makefile variables whose values 
+     are, respectively, a list of all of the compilable source files 
+     in that directory and all of its subdirectories, and a list of all 
+     of the corresponding object file targets. Each source list file in 
+     a namespace-level directories also defines a rule to construct a 
+     static library.
 
-   - **Pattern rule files** : The makefile fragment named patterns.mk 
-     in each namespace-level subdirectory contains pattern rules that
-     are used to compile all *.cpp and (in some cases) *.cu source files 
-     located in that namespace-level directory and its subdirectories.
+   - \ref developer_build_pattern_page :
+     The makefile fragment named patterns.mk in each namespace-level 
+     subdirectory of src contains pattern rules that are used to compile 
+     all *.cpp and *.cu source files located in that directory and its
+     subdirectories.
 
-   - **Include files** : The makefile fragment named include.mk in 
-     each namespace-level subdirectory of src is a short file that 
-     simply includes a few makefile fragments that are needed by all 
-     makefiles in that namespace-level directory. The includes.mk file 
-     is then included by these makefiles. 
+   - \ref developer_build_dependency_page :
+     The *.d dependency file that is created whenever a source file is 
+     compiled contains a single makefile rule that lists all of the 
+     required prerequisites of the associated object file, with no
+     associated recipe. 
 
-   - **Dependency files** : The *.d dependency file that is created
-     whenever a *.o object file is created contains a single makefile 
-     rule that lists all of the required pre-requisites of the 
-     associated object file, with no associated recipe. This list 
-     includes the associated compilable *.cpp or *.cu source file 
-     and all of the *.h and *.tpp files from the PSCF package that 
-     are directly or indirectly included by that source file.
-
-Every makefile within a namespace-level subdirectory of the src 
-directory includes the src/config.mk file, the includes.mk file for 
-that namespace-level directory, and dependency files for all of the
-source files in that directory.  Inclusion of these files provides 
-all required information about makefile variable values, pattern rules, 
-object file target names, and the pre-requisites of each target.
+Every makefile within a namespace-level subdirectory of the src or bld
+directory includes a single config.mk configuration file, a single
+patterns.mk pattern rule file, one or more sources.mk source list files, 
+and multiple *.d dependency files.
 
 <BR>
-\ref developer_build_make_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_config_page  (Next)  
+\ref developer_build_make_page   (Prev)&nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page        (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_config_page (Next)
 
 */
