@@ -7,23 +7,25 @@
 This file documents programming and formatting conventions that should be 
 used throughout the source code of PSCF:
 
-\section file_section File Names
+\section file_section File names
 
   - Header files that may be included in other files use file extension \*.h
 
+  - Files that contain definitions of member functions for class templates 
+    are often separated from the header file and given names that end in an 
+    extension \*.tpp. 
+
   - Compilable C++ source files use extension \*.cpp
 
-  - Files that contain definitions of member functions for class templates 
-    are often separated from the header file and given names that end 
-    in an extension \*.tpp
+  - Compilable CUDA C++ source files use extension \*.cu
 
   - One class per file: Avoid including definitions or definitions 
     involving more than one public class in a single file. 
 
-  - Use the same base name for e header and implementation for the same 
-    class: The header and source files for a class named MyClass should 
-    be MyClass.h and MyClass.cpp. If MyClass is class template, some of 
-    the implementatiom may be defined in a file MyClass.tpp.
+  - Use the same base name for the header and implementation for the same 
+    class: The header and source files for a class named MyClass should be 
+    MyClass.h and MyClass.cpp. If MyClass is class template, some of the 
+    implementatiom may be defined in a file MyClass.tpp.
 
   - Place the header and implementation files for each class or class 
     template in the same directory within the src/ directory tree. An
@@ -31,7 +33,11 @@ used throughout the source code of PSCF:
 
   - Use header guards in all header (\*.h) files.
 
-\section name_section Symbol Names
+  - See the page about \ref developer_template_page "C++ templates" 
+    for a detailed discussion of different usage patterns for 
+    templates in PSCF.
+
+\section name_section Symbol names
 
   - Names of functions and variables are lower case camel, as in 
     "myVariable" or "myData".
@@ -87,8 +93,8 @@ used throughout the source code of PSCF:
     returns a non-public member variable by value or by reference should 
     simply be the name of the member variable, without any trailing 
     underscore. PSCF thus does NOT use the convention of appending a 
-    prefix "get" to the names of accessor functions. The same name 
-    convention is use for accessors that return by value, const reference, 
+    prefix "get" to the names of accessor functions. This same name 
+    convention is used for accessors that return by value, const reference, 
     or non-const reference. Thus, for example:
 \code
 
@@ -106,8 +112,8 @@ used throughout the source code of PSCF:
 
 \endcode
 
-  - The name of the preprocessor macro used in a header guard should be 
-    the name of the namespace followed by the file name, in upper case 
+  - The name of the preprocessor macro used in a header guard should be the 
+    name of a parent namespace followed by the file name, in upper case, 
     with underscores between words. A header file named "SillyClass.h" 
     that contains a class Util::SillyClass in namespace Util should be 
     enclosed with header guards like this:
@@ -127,7 +133,7 @@ namespace Util
 #endif
 \endverbatim
 
-\section format_section Code Formatting:
+\section format_section Code formatting
 
   - Indent exactly 3 spaces per level. Do NOT ever use tabs for
     indentation.
@@ -168,7 +174,7 @@ namespace Util
   - Set off the operators  =, ==, <, >, +, and - by one space on either 
     side, with occasional exceptions.  Multipication (\*) and division 
     (/) operators may or may not be set off by white space. Allow some 
-    exceptions when doing so avoids a line wraps.
+    exceptions when doing so can avoid a line wrap.
 
   - Use one space to separate keywords, parentheseses, and opening 
     braces in conditional statements. Use one space after each 
@@ -184,7 +190,10 @@ namespace Util
 
   - Break lines at less than 75 characters per line whenever possible, 
     to preserve readability in printouts and small laptop terminal 
-    screens.
+    screens. Much of the code has been written using the vi editor
+    with line number turned on with the command "set nu" on a screen
+    with a total of 80 columns, and should fit within the remaining
+    columns without line wraps when displayed in this way. 
 
   - Wrap every source file in the src/ directory in a namespace block. 
     Start the namespace declaration in the first column.
@@ -263,7 +272,7 @@ namespace Util
 #endif
 \endverbatim
 
-\section Dox_section Documentation (via doxygen):
+\section Dox_section Documentation (via doxygen)
 
 PSCF uses the doxygen (www.doxygen.org) utility to create html 
 documentation from documentations blocks that are extracted from the 
@@ -346,8 +355,8 @@ Example:
 
   - Do not use doxygen-style comments for the function definitions 
     that are given outside the class definition. Use a conventional C/C++ 
-    comment format (with one asterisk or two slashes) above each such
-    function definition, like this:
+    comment format (with one asterisk) above each such function 
+    definition, like this:
 \verbatim
 
    /*
@@ -360,14 +369,161 @@ Example:
 
 \endverbatim
 
-\section interface_section Interface Design
+\section using_section Use of names from other namespaces
+
+Code in each namespace-level subdirectory of the src directory of 
+PSCF may only use names of classes, functions, and other entities that 
+are defined in the same namespace-level directory or in a specific set
+of other namespace-level directories. This relationship is described
+by saying that each namespace-level directory 
+\ref developer_directory_page "depend" of others. By convention PSCF 
+also names from namespace level directories that are related in this 
+way to be used without explicit namespace qualifiers, as explained
+below:
+
+  - If a namespace-level subdirectory of src named "b" that defines 
+    symbol names in namespace B depends on a namespace-level directory 
+    named "a" that defines symbols in namespace A, then symbols defined
+    in namespace A may be used without an explicit namespace qualifier 
+    A:: throughout files in subdirectory "b", and throughout namespace 
+    "B". For example, names defined in directory src/util and namespace 
+    Util may be used without the qualifier Util:: in any other 
+    namespace-level subdirectory of src, and thus throughout namespace 
+    Pscf and all of its enclosed subnamespaces.  Similarly, symbols 
+    defined in files in subdirectory src/prdc (or namespace Pscf::Prdc) 
+    can be used without any explicit namespace qualifier throughout 
+    files in subdirectories src/rpc and src/rpg (or namespaces Pscf::Rpc 
+    and Pscf::Rpg) but not in subdirectories src/util, src/pscf, or 
+    src/r1d.
+
+  - To make this convention possible, in the situation described above,
+    any C++ files in subdirectory "src/b" may contain "using namespace A" 
+    declarations within namespace B, in any header or source files, as 
+    needed to avoid the need for explicit namespace qualifiers of names
+    from namespace A. For example header files for classes defined in 
+    src/pscf often contain "using namespace Util" declarations.
+
+This usage of "using namespace" declarations is illustrated in the 
+following example:
+
+\verbatim
+#ifndef PSCF_THING_H
+#define PSCF_THING_H
+
+#include <src/util/DArray.h>
+#include <src/param/ParamComposite.h>
+#include <string>
+
+namespace Pscf {
+
+   using namespace Util:
+
+   /**
+   * A really useful thing.
+   */
+   class Thing : public ParamComposite 
+   {
+
+   public:
+
+      /**
+      * Some action.
+      */
+      void doSomething();
+
+   private:
+
+      /// An array of integers.
+      DArray<int> array_;
+
+      /// A name string.
+      std::string name_;
+
+   };
+
+}
+#endif PSCF_THING_H
+\endverbatim
+This header file defines a class named Thing in namespace Pscf that uses 
+definitions of a class named ParamComposite and a class template named
+DArray that are both defined in namespace Util. These two names from 
+namespace Util are defined in header files src/util/param/ParamComposite.h 
+and src/util/containers/DArray.h, respectively, both of which are included
+into this header file. Note that ParamComposite is used as a base class 
+for class Thing, and the class template name DArray is used to define the 
+type of a member variable named array_, which is of type DArray<int>. Both 
+of these names are, however, used here without any explicit Util:: qualifiers. 
+This is possible because the "using namespace Util;" declaration that 
+appears before the class definition puts the entire Util namespace in scope 
+throughout the remainder of the A namespace, both in this header file and
+in any file that directly or indirectly includes this file.
+
+Names defined in the C++ standard library namespace should, however, usually
+be referred to using an explicit std:: qualifier. Specifically,
+
+  - Explicitly qualified names must be used for all standard library symbols 
+    such as std::string that appear in *.h header files and *.tpp class 
+    template implementation files.
+
+  - NEVER use a "using namespace std" statement to load the entire C++ 
+    standard library namespace into any C++ file.
+
+This convention is also illustrated in the above example, in which the 
+type of the member variable Thing::name_ is given as std::string, using the 
+explicit std:: qualifier to refer to the C++ standard library namespace.
+
+\section header_section Header file includes
+
+  - Files that are define in the PSCF src directory tree may be included
+    by giving the path relative to the src directory within angle brackets.
+    For example, to include the header file src/util/param/ParamComposite.h,
+    one could us an include directive
+    \code
+    #include <util/param/ParamComposite.h>
+    \endcode
+    This is possible because the PSCF build system add the PSCF src directory
+    to the list of directories that the preprocessor should search for 
+    included files.
+
+  - In header files, prefer forward class declarations over inclusion of
+    class headers whenever possible.  Forward declarations are sufficient 
+    for classes or class templates that used in a header file only in 
+    function declarations (as parameter or return types) or in the 
+    declaration of types for pointer member variables. 
+
+  - Inclusion of header files is generally necessary in header files only 
+    for headers that define base classes or member objects, and for classes
+    that are used in the implementation of inline functions.
+
+  - Header files that are needed in definitions of non-inline class member 
+    functions but that are not needed in the class definition or inline member 
+    functions should usually be included in the class or class template 
+    implementation file that contains definitions of the member functions, 
+    rather than in the class or class template header file.
+
+  - Header files that provide information that is required in a C++ file 
+    should normally be included explicitly, even if it is known that they 
+    would be indirectly included via another included header file. Reliance 
+    on indirect inclusion is fragile, and explicit inclusion helps document 
+    the dependency. Exceptions are:
+    <ul>
+       <li> A class implementation file MyClass.cpp may rely on indirect 
+inclusion of header files that are included by the corresponding header 
+file MyClass.h </li>
+       <li> A derived class may sometimes rely on indirect inclusion of 
+header files that are included by a base class. </li>
+       <li> The Exception.h header is should always be included indirectly 
+by inclusion of src/util/global.h. </li>
+    </ul>
+
+\section interface_section Interface design guidelines
 
   - Make all nonstatic class member variables private or (less frequently)
     protected.
 
   - Pass and return primitive C/C++ data types by value.  Pass primitive 
     data types to functions by non-const reference only when they must be 
-     modified within the function.
+    modified within the function.
 
   - Pass objects (class instances) to functions by reference, not by 
     value. Pass by const reference if the object is not modified.
@@ -380,20 +536,36 @@ Example:
   - Prefer references over pointers as function return values. Return a 
     pointer only if a null pointer is a meaningful possibility.
 
-  - Practice strict "const correctness".  Mark function parameters and class 
-    member functions as const whenever possible.
+  - Practice strict "const correctness".  Mark function parameters and 
+    class member functions as const whenever possible.
 
+  - Class member functions should be marked const if they do not change
+    the logical state of the object. 
+
+  - If a member function does not modify the logical state of an object 
+    in a manner that is detectable from outside the class, but modifies 
+    an private member variable that is being used as, e.g., work space 
+    or an internal bookkeeping device, it may sometimes be appropriate
+    to declare that private variable to be "mutable"  in order to be 
+    able to declare the member function to be "const". 
+    
   - Read-only access to a member variable of a primitive C/C++ type should 
     be provided (when needed) by an accessor function that returns the 
-    member variable by value.  Read-only access to an object (class 
-    instance) that is owned by a class may be provided by an accessor 
-    function that returns the object by const reference. Read-write access 
-    to an object may be provided by an accessor that returns the object by 
-    non-const reference.  Simple accessors that return by value or const 
-    references should be declared as const functions.  For example, if a 
-    class has an int member variable data_ and a member object_ that is 
-    an instance of class Object, you might consider providing any or 
-    (none) of the following member accessor functions:
+    member variable by value.  Read-only access to an object that is an
+    instance of a class may be provided by an accessor function that 
+    returns the object by const reference. 
+
+  - Read-write access to a member of a class may be provided by an 
+    accessor that returns the object by non-const reference. Such 
+    accessors should not be marked const, since they provide access
+    that can modify the state of a member variable. 
+
+  - Simple read-only accessors that return a member variable by value 
+    or by const reference should be declared as const functions.  For 
+    example, if a class has an int member variable data_ and a member 
+    object_ that is an instance of class Object, you might consider 
+    providing any or (none) of the following member accessor functions:
+
 \code
 
    /**
@@ -416,10 +588,10 @@ Example:
 
 \endcode
 
-  - Providing an accessor function that returns a non-const reference to a 
-    member object is equivalent to making the member public, and should be 
-    used when this is the desired behavior. Do not instead simply make the 
-    data member a public member.
+  - Providing an non-const accessor function that returns a non-const 
+    reference to a member object is equivalent to making the member 
+    public, and should be used when this is the desired behavior. Do 
+    not instead simply make the data member a public member.
 
   - Accessors that return non-const references provide pseudo-public 
     access to data members (i.e., variables or objects).  The advantages 
@@ -442,12 +614,12 @@ remove sanity checks for debugging, such as checks that pointers are not
 null.
     </ul>
 
-  - Write access to a class instance may sometimes be provided by an
-    explicit "set" function. The use of a set function allows the
+  - Write access to a class instance may also sometimes be provided by 
+    an explicit "set" function. The use of a set function allows the
     inclusion of code to check preconditions or carry out operations
     necessary to guarantee data validity.
 
-\section data_section Data Structures
+\section data_section Data structures
 
   - Use the C++ iostream classes for all file IO. For consistency, avoid 
     the C fscan() and fprint() methods. Use the wrapper classes in the 
@@ -456,72 +628,82 @@ null.
 
   - Use std::string to represent character strings whenever possible.
 
-  - Prefer the array container templates in src/util/containers over bare 
-    C arrays and STL containers. STL containers such as std::vector should 
+  - Prefer the array container templates in src/util/containers over 
+    bare C arrays and STL containers. STL containers such as std::vector 
     should be used only when there is not an equivalent home-brewed 
     container, or when use of std library container simplifies access to
     standard library algorithms (e.g., the sorting algorithm). This
     preference for the home-brewed containers is based on the fact that:
     <ul>
+
     <li> Our home-brewed containers provide optional bounds checking, 
-    which is enabled only when NDEBUG is not defined. </li>
+    which is enabled only when UTIL_DEBUG is defined. </li>
+
+    <li> Most of our home-brewed array containers treat allocation as 
+    a step that is separate from both construction and from addition 
+    of an element. This is similar to the behavior of dynamic arrays
+    in modern Fortran and is usually the most convenient interface 
+    for scientific computations involving large arrays that retain
+    a fixed size after a single allocation event. </li>
+
     <li> Unlike std::vector, the most commonly used home-brewed array 
-    template DArray is not automatically resizable, and so will never 
-    be silently moved to a new location in memory.
+    template, DArray, is not automatically resizable, and so will 
+    never be silently moved to a new location in memory. Addresses 
+    of objects that are constructed as elements of an array thus
+    cannot change for mysterious reasons during program execution.
     </ul>
 
-\section header_section Header File Includes
+\section template_section Use of C++ templates
 
-  - In header files, prefer forward class declarations over inclusion of
-    class headers when possible.  Forward declarations are sufficient for 
-    classes or class templates that used in the header file only in 
-    function declarations (as parameter or return types) or in the 
-    declaration of types for pointer member variables. Header files 
-    inclusion is generally necessary for base classes, member objects, 
-    and classes that are used in the implementation of inline functions.
+  - In code for periodic systems defined in namespaces Pscf::Prdc,
+    Pscf::Rpc and Pscf::Rpg, the dimension D of space is always treated
+    as a template parameter. As a result, almost all of the files in 
+    the corresponding namespace-level directories src/prdc, src/rpc,
+    and src/rpg define class templates, rather than classes. 
 
-  - Header files that provide information required in another C++ file 
-    should normally be included explicitly, even if it is known that they 
-    would be indirectly included via another included header file. Reliance 
-    on indirect inclusion is fragile, and explicit inclusion helps document 
-    the dependency. Exceptions are:
-    <ul>
-       <li> A class implementation file MyClass.cpp may rely on indirect 
-inclusion of header files that are included by the corresponding header 
-file MyClass.h </li>
-       <li> A derived class may sometimes rely on indirect inclusion of 
-header files that are included by a base class. </li>
-       <li> The Exception.h header is should always be included indirectly 
-by inclusion of src/util/global.h. </li>
-    </ul>
+  - Specializations of templates in which the dimension D of space is 
+    the only template parameter should be explicitly instantiated for
+    the three possible values of D=1, 2, or 3. More generally, if a
+    class template has only a very small number of possible valid
+    specializations, those specializations should be explicitly 
+    instantiated. 
 
-  - Use explicitly qualified names for standard library symbols such as 
-    std::string in function parameter lists and return values. Use this 
-    convention both in function declarations and functions definitions.
+  - Definitions of member functions for class templates are often
+    placed in a "template implementation file" with filename 
+    extension .tpp. This file can be included into the *.h 
+    header file for standard templates that are designed to be
+    implicitly instantiated or can be included into a compilable
+    source file that instantiates all valid specializations for
+    a class template that is designed to be compiled by explicit
+    instantiation of all valid specializations.
 
-  - NEVER use a "using std" statement to load the entire C++ standard 
-    library namespace any C++ file.
+  - See the \ref developer_template_page "next page" about the use of 
+    C++ templates in PSCF for a more in-depth discussion of several 
+    use cases.
 
-\section error_section Error Handling
+\section error_section Error handling
 
   - Include the file <util/global.h> in all files that use C assert() 
     statements or that can throw exceptions. This automatically includes 
     the "Exception.h" and "Log.h" header files, defines the UTIL_THROW(..) 
-    macro that is used to throw exceptions, and enables assert() 
-    statements if UTIL_DEBUG is defined,
+    and UTIL_CHECK(...) macro that can be used to throw exceptions, and 
+    enables assert() and UTIL_ASSERT(..) statements if UTIL_DEBUG is 
+    defined,
 
   - For checks that are intended only for debugging, use C assert() 
-    statements or enclose the test in a ifndef UTIL_DEBUG .... endif 
-    conditional compilation block.
+    statements or UTIL_ASSERT() macros, or enclose the entire test in 
+    an ifndef UTIL_DEBUG .... endif conditional compilation block.
 
-  - Use the UTIL_THROW macro defined in src/util/global.h to throw 
-    Exception objects for all errors, except those caught in debugging 
-    mode by C assert() statements.  Like the standard assert() macro, 
-    this macro prints a message and showing the file and line number 
-    from which an Exception is thrown, as an aid to debugging.
+  - Use the UTIL_THROW or UTIL_CHECK macros defined in src/util/global.h 
+    to throw Exception objects for all errors, except those caught in 
+    debugging mode by C assert() statements or the UTIL_ASSERT() macro.  
+    Like the standard assert() macro, the macros defined in this file
+    all print a message and show the file and line number from which 
+    an Exception is thrown, as an aid to debugging.
 
-  - Do not Exceptions for control flow. Exceptions should be used only 
-    for errors, and should normally cause the program to terminate.
+  - Do not use Exceptions for control flow. Exceptions should be used 
+    only for actual errors, and should usually cause the program to 
+    terminate.
 
 <BR>
 \ref developer_build_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;

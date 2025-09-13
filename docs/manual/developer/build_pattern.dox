@@ -45,12 +45,10 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 
 # Pattern rule to compile *.cpp class source files in src/rpc
 # Note: Creates a *.d dependency file as a side effect
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
+$(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
-   ifdef MAKEDEP
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
-   endif
 
 # Pattern rule to link executable Test programs in src/rpc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
@@ -64,8 +62,8 @@ $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
 # compile them is defined in this directory.
 
 \endverbatim
-This file is divded into two main sections. The first defines several
-makefile variables that are used in pattern rules, and second defines
+This file is divded into two main sections. The first section defines 
+several variables that are used in pattern rules, and the second defines 
 several pattern rules.
 
 \section developer_build_pattern_var_sec Makefile variable definitions
@@ -182,17 +180,15 @@ in a subdirectory of the build directory, \$(BLD_DIR), by compiling a
 *.cpp or *.cu source file with the same base name in the corresponding 
 subdirectory of the source directory, \$(SRC_DIR). 
 
-\subsection developer_build_pattern_cpp_sub Compiling C++ source files
+\subsection developer_build_pattern_cpp_sub Rule: Compiling C++ source files
 
 A pattern rule for compiling standard C++ source files always looks
 something like this: 
 \verbatim
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
-	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
-        $(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
-   ifdef $(MAKEDEP)
-        $(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
-   endif
+$(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
+    @SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
+    $(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+    $(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
 \endverbatim
 Pattern rules for compiling CUDA files are closely analogous, and will
 be discussed separately below. 
@@ -211,34 +207,33 @@ directory structure as the src directory in order to allow this pattern
 rule to work correctly for out-of-source builds, 
  
 The recipe of the rule shown above contains three lines with different 
-purposes.  The first contains a set of shell commands that  checks if 
-the directory in which the target will be installed already exists, 
-and attempts to create it if it does not. This is a convenience, rather
-than a necessity, and is not an essential part of the rule.  The second 
-line of the recipe is a shell command that invokes the compiler command, 
-represented by the value \$(CXX), to actually compile the source file 
-and create the object file. The third line of the recipe calls a script, 
-whose name is given by the variable value \$(MAKEDEP), that creates a 
-corresponding dependency file with extension .d.  This third line of 
-the recipe is enclosed in an ifdef statement that executes this line 
-if and only if the variable MAKEDEP is defined, which is normally true.
+purposes.  The first defines a sequence of shell command that checks if 
+the directory in which the target should be installed exists, and attempts 
+to create it if that directory does not yet exist. This part of the recipe 
+is a convenience, and is not an essential part of the rule.  The second 
+line of the recipe is the heart of the matter: This line is a shell command
+that invokes the compiler command, given by the makefile variable value 
+\$(CXX), in order to compile the source file and create the object file 
+target. The third line of the recipe calls a script, whose name is given 
+by the variable value \$(MAKEDEP), that creates a corresponding 
+dependency file with extension .d.  
 
-The two essential actions taken by this rule are thus to compile the
-source file to create an object file, and to create a *.d dependency
-file as a side-effect of compilation. These two actions are discussed
-separately below.
+The two essential actions taken by this pattern rule are thus to compile 
+the source file to create an *.o object file, and to create a *.d 
+dependency file as a side-effect of compilation. These two actions are 
+discussed separately below.
 
 <b> Source file compilation </b>:
 
 The line of the recipe that actually compiles the source file in this
 example is given by
 \verbatim
-        $(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+    $(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
 \endverbatim
 In this recipe, a standard makefile symbol \$\@ is used to represents 
-the target, which must match the pattern \$(BLD_DIR)%.o, while $< 
+the target, which must match the pattern \$(BLD_DIR)/%.o, while $< 
 represents the first prerequisite, which is a source file that must
-match the pattern \$(SRC_DIR)%.o.  The following additional makefile 
+match the pattern \$(SRC_DIR)/%.o.  The following additional makefile 
 variables are used in the second line of the recipe to define a rule 
 for compiling the source file:
 
@@ -257,9 +252,9 @@ above.
 Default values for some of these variables on a linux system, as assigned 
 by the file make/compiler/linux-default are:
 \verbatim
-   CXX = g++
-   CPPFLAGS = -I $(SRC_DIR) -D UTIL_CXX11
-   CXXFLAGS = -Wall --std=c++11 -O3
+  CXX = g++
+  CPPFLAGS = -I $(SRC_DIR) -D UTIL_CXX11
+  CXXFLAGS = -Wall --std=c++11 -O3
 \endverbatim
 The value of INCLUDES may be empty, or may contain options to add 
 non-standard directories to the search path for included files, as 
@@ -295,7 +290,7 @@ the same name, and similar purposes (both enable additional run-time
 checks) but are used in different contexts (i.e., in makefiles vs. in 
 C++ code).
 
-<b> Automatic generation of dependency files </b>:
+<b> Automatic generation of a dependency file </b>:
 
 The variables MAKEDEP, MAKEDEP_CMD, and MAKEDEP_ARGS are used only in 
 the third line of the example shown above, in order to construct a *.d 
@@ -323,18 +318,16 @@ The value of MAKEDEP_ARGS is a string of other arguments required by the
 MAKEDEP script. The value of this variable is defined in the patterns.mk
 file. 
 
-\subsection developer_build_pattern_cuda_sub Compiling CUDA C++ source files
+\subsection developer_build_pattern_cuda_sub Rule: Compiling CUDA C++ source files
 
 In namespace-level directories that contain CUDA code, the patterns.mk file
 contains a separate pattern rule for compiling CUDA C++ source files with
-file name extension *.cu. A slightly simplified form of this rule always
-looks something like this
+file name extension *.cu. Such a rule always looks like this:
 \verbatim
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
-        $(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
-   ifdef $(MAKEDEP)
-        $(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
-   endif
+$(BLD_DIR)/%.o: $(SRC_DIR)/%.cu
+    @SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
+    $(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
+    $(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 \endverbatim
 This pattern rule is closely analogous to that used to compile *.cpp files.
 The differences are:
@@ -359,7 +352,7 @@ Values of NVXX, NVXXFLAGS, MAKEDEP_CUDA and MAKEDEP_CUDA_CMD are all
 defined in the config.mk file, while the value of MAKE_DEP_ARGS is defined 
 in the patterns.mk file. 
 
-\section developer_build_pattern_test_sub Creating unit test executable files
+\subsection developer_build_pattern_test_sub Rule: Creating unit test executable files
 
 Every namespace-level subdirectory of the src directory has a subdirectory 
 named "tests" that contains code for unit tests. Within each such "tests" 
@@ -382,7 +375,7 @@ generally in a directory that contains only standard C++ files generally
 looks like this
 \verbatim
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)	
+    $(CXX) $(LDFLAGS) -o $@ $< $(LIBS)	
 \endverbatim
 The symbols \$\@ and \$< refer to the target of the rule (the executable)
 and the first prerequisite (the object file).  The meanings of the 
