@@ -1,18 +1,18 @@
 /*! 
-\page rpc_ExplicitBdStep_page Rpc::ExplicitBdStep
+\page rpc_ExplicitBdStep_page ExplicitBdStep
 
 The ExplictBdStep classes used by both the pscf_pc and pscf_pg programs 
-implements a simple explicit Euler Brownian dynamics step algorithm.
+both implement a simple explicit Euler Brownian dynamics step algorithm.
 
 Two closely analogous classes named Pscf::Rpc::ExplicitBdStep and 
 Pscf::Rpg::ExplicitBdStep that have the same class name but that are 
-defined in different namespaces are used to implement this the same
-step algorithm for different programs. The ExplicitBdStep class 
-defined in the Rpc namespace is used in the pscf_pc program (using 
-CPU hardware) and the class defined in the Rpg namespace is used in
-the pscf_pg program (using GPU acceleration). These two analogous 
-classes implement the same step algorithm and use the same parameter 
-file format, which are documented below.
+defined in different namespaces are used to implement this step 
+algorithm for different programs. The ExplicitBdStep class defined 
+in the Rpc namespace is used in the pscf_pc program (using CPU hardware) 
+and the class defined in the Rpg namespace is used in the pscf_pg 
+program (using GPU acceleration). These two analogous classes 
+implement the same step algorithm and use the same parameter file 
+format, as documented below.
 
 \section rpc_ExplicitBdStep_algorithm_sec Step Algorithm
 
@@ -21,20 +21,20 @@ is given \ref psfts_algorithm_page "here".
 
 The explicit Euler BD step algorithm for the common case of a 
 standard AB system with two types of monomer is described by an update 
-scheme for the field \f$ \omega_{0}({\bf r}) = \omega_{-}({\bf r}) \f$ 
+scheme for the field \f$ W_{0}({\bf r}) = W_{-}({\bf r}) \f$ 
 at grid point location \f$ {\bf r} \f$ and time step \f$ n \f$ that is 
 given by
 \f[
-  \omega_{-}^{(n+1)}({\bf r}) =
-  \omega_{-}^{(n)}({\bf r}) 
-  - \gamma \frac{\delta H}{\delta \omega_{-}({\bf r})}
+  W_{-}^{(n+1)}({\bf r}) =
+  W_{-}^{(n)}({\bf r}) 
+  - \gamma \frac{\delta H}{\delta W_{-}({\bf r})}
   + g^{(n)}({\bf r})
 \f]
 where \f$ \gamma \f$ is the BD mobility parameter,
 \f[
-  \frac{\delta H}{\delta \omega_{-}({\bf r})}
+  \frac{\delta H}{\delta W_{-}({\bf r})}
   = \frac{1}{v} \left [
-    \frac{2\omega_{-}({\bf r})}{\chi_{b}}
+    \frac{2W_{-}({\bf r})}{\chi_{b}}
     - \Phi_{-}({\bf r}) \right ]
 \f]
 is the generalized force evaluated using the field configuration at time 
@@ -53,14 +53,14 @@ system volume and \f$ G \f$ is the number of grid points on the mesh.
 This algorithm can be generalized to a system with \f$ M \f$ monomer 
 types for which the first \f$ L \f$ eigenvalues of the projected chi 
 matrix are negative, with \f$ L \leq M - 1 \f$. 
-In this case, each field component \f$ \omega_{i}({\bf r}) \f$ 
+In this case, each field component \f$ W_{i}({\bf r}) \f$ 
 associated with eigenvalue \f$ \lambda_{i} < 0 \f$ of the projected 
 \f$ \chi \f$ matrix, for \f$ i = 0, \ldots, L - 1 \f$, is updated 
 via a scheme
 \f[
-  \omega_{i}^{(n+1)}({\bf r}) =
-  \omega_{i}^{(n)}({\bf r}) 
-  - \gamma \frac{\delta H}{\delta \omega_{i}({\bf r})}
+  W_{i}^{(n+1)}({\bf r}) =
+  W_{i}^{(n)}({\bf r}) 
+  - \gamma \frac{\delta H}{\delta W_{i}({\bf r})}
   + g_{i}^{(n)}({\bf r}) \quad.
 \f]
 with a separate random noise components for each such field component.

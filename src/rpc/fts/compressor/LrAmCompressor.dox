@@ -1,10 +1,8 @@
 /*! 
-\page rpc_LrAmCompressor_page Rpc::LrAmCompressor
+\page rpc_LrAmCompressor_page LrAmCompressor
 
 The LrAmCompressor classes used by both the pscf_pc and pscf_pg programs 
-implements a linear-response Anderson mixing (LRAM) algorithm as described
-in this publication.
-
+implements a linear-response Anderson mixing (LRAM) algorithm.
 Two closely analogous classes named Pscf::Rpc::LrAmCompressor and 
 Pscf::Rpg::LrAmCompressor implement this algorithm for the pscf_pc CPU and
 program and the pscf_pg GPU-accelerated program, respectively. These two 
@@ -14,21 +12,24 @@ format, which are documented below.
 \section rpc_LrAmCompressor_algorithm_sec Step Algorithm
 
 A general discussion of compressor algorithms for PS-FTS is given 
-\ref psfts_algorithm_page "here".
-
-The LrAmCompressor algorithm ...
+\ref psfts_algorithm_page "here".  The LrAm compressor algorithm is described 
+in the article: <a href="https://doi.org/10.1063/5.0264036">
+"Improved algorithm for identifying partial saddle-points in polymer
+field theoretic simulations", K. Chen and D.C. Morse, 
+<em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>.
 
 \section rpc_LrAmCompressor_parameter_sec Parameter File
 
 The only parameter needed by this algorithm are the error threshhold
-"epsilon"
+"epsilon". A minimal version of the required parameter block might
+thus look like this:
 \code
   LrAmCompressor{
     epsilon      1.0E-4
   }
 \endcode
-The full parameter file format, including all optional parameters, is shown
-below:
+The full parameter file format, including all optional parameters, is 
+shown below:
 \code
 LrAmCompressor{
   epsilon           float

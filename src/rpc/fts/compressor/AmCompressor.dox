@@ -1,34 +1,36 @@
 /*! 
-\page rpc_AmCompressor_page Rpc::AmCompressor
+\page rpc_AmCompressor_page AmCompressor
 
 The AmCompressor classes used by both the pscf_pc and pscf_pg programs 
-implements a linear-response Anderson mixing (LRAM) algorithm as described
-in this publication.
-
+each implement a Anderson mixing compressor algorithm.
 Two closely analogous classes named Pscf::Rpc::AmCompressor and 
-Pscf::Rpg::AmCompressor implement this algorithm for the pscf_pc CPU and
-program and the pscf_pg GPU-accelerated program, respectively. These two 
-classes implement the same step algorithm and use the same parameter file
-format, which are documented below.
+Pscf::Rpg::AmCompressor implement this algorithm for the pscf_pc CPU
+program and the pscf_pg GPU-accelerated program, respectively. These 
+two classes implement the same step algorithm and use the same parameter 
+file format, as documented below.
 
 \section rpc_AmCompressor_algorithm_sec Step Algorithm
 
 A general discussion of compressor algorithms for PS-FTS is given 
-\ref psfts_algorithm_page "here".
-
-The AmCompressor algorithm ...
+\ref psfts_algorithm_page "here". The implementation of the AM mixing
+algorithm used in PSCF is discussed in the article:
+ <a href="https://doi.org/10.1063/5.0264036">
+"Improved algorithm for identifying partial saddle-points in polymer
+field theoretic simulations", K. Chen and D.C. Morse, 
+<em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>,
 
 \section rpc_AmCompressor_parameter_sec Parameter File
 
 The only required parameter for this algorithm is the error threshhold
-"epsilon"
+"epsilon". A minimal parameter file block could thus look something like
+this:
 \code
   AmCompressor{
     epsilon      1.0E-4
   }
 \endcode
-The full parameter file format, including all optional parameters, is shown
-below:
+The full parameter file format, including all optional parameters, is 
+shown below:
 \code
 AmCompressor{
   epsilon           float

@@ -29,6 +29,8 @@ the free energy density. The treatment of unit cell parameters depends
 on the values of the "isFlexible" and "flexibleParams" parameters, as 
 described below. 
 
+\sa \ref pscf_AmIteratorTmpl_page
+
 \section rpc_AmIteratorBasis_parameter_sec Parameter File
 
 A typical example of the parameter file format for this iterator is shown

@@ -1,5 +1,5 @@
 /*! 
-\page rpc_LrCompressor_page Rpc::LrCompressor
+\page rpc_LrCompressor_page LrCompressor
 
 The LrCompressor classes used by both the pscf_pc and pscf_pg programs 
 implements a linear-response Anderson mixing (LRAM) algorithm as described
@@ -14,27 +14,38 @@ format, which are documented below.
 \section rpc_LrCompressor_algorithm_sec Step Algorithm
 
 A general discussion of compressor algorithms for PS-FTS is given 
-\ref psfts_algorithm_page "here".
-
-The LrCompressor algorithm ...
+\ref psfts_algorithm_page "here". Each LrCompressor class implements 
+the linear response (LR) algorithm that is presented in the following 
+publication: <a href="https://doi.org/10.1063/5.0264036">
+"Improved algorithm for identifying partial saddle-points in polymer
+field theoretic simulations", K. Chen and D.C. Morse,
+<em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>.
+This is a quasi-Newton algorithm in which linear response of an 
+inhomogeneous ideal gas to an infinitesimal change in the pressure-like 
+field \f$ W_{+}({\bf r}) \f$ is approximated by the analytically 
+calculable response of a hypothetical homogeneous state of the same 
+fluid.
 
 \section rpc_LrCompressor_parameter_sec Parameter File
 
-The only parameter needed by this algorithm are the error threshhold
-"epsilon"
+The LR algorithm does not require an adjustable parameters that effect 
+the progress of iteratoin towards a solution.  The only required 
+parameter for this algorithm is an error threshhold "epsilon".  The
+iteration loop exits when a scalar definition of error is less than 
+epsilon.  A minimal block could thus looks something like this:
 \code
   LrCompressor{
     epsilon      1.0E-4
   }
 \endcode
-The full parameter file format, including all optional parameters, is shown
-below:
+The full parameter block format, including several optional parameters, is 
+shown below:
 \code
 LrCompressor{
-  epsilon           float
-  maxItr*           int     (default 200)
-  verbose           int     (default 0)
-  errorType*        string  ("norm", "rms", "max", or "relNorm")
+  epsilon       float
+  maxItr*       int     (default 200)
+  verbose       int     (default 0)
+  errorType*    string  ("norm", "rms", "max", or "relNorm")
 }
 \endcode
 Meanings of all parameters are described briefly below:
@@ -44,8 +55,8 @@ Meanings of all parameters are described briefly below:
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> epsilon </td>
-    <td> error threshhold </td>
+    <td>  epsilon </td>
+    <td>  error threshhold </td>
   </tr>
   <tr>
     <td>  maxItr* </td>
@@ -57,9 +68,8 @@ Meanings of all parameters are described briefly below:
   </tr>
   <tr>
     <td>  errorType* </td>
-    <td>  ???? </td>
+    <td>  Type of norm used to define the scalar error </td>
   </tr>
 </table>
-
 
 */

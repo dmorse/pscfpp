@@ -20,7 +20,11 @@ namespace Rpc {
 
    using namespace Util;
 
-   // Constructor
+   // Public member functions
+
+   /*
+   * Constructor.
+   */
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
     : Iterator<D>(system)
@@ -29,12 +33,16 @@ namespace Rpc {
       setClassName("AmIteratorBasis"); 
    }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    AmIteratorBasis<D>::~AmIteratorBasis()
    {  }
 
-   // Read parameters from file
+   /*
+   * Read parameters from file.
+   */
    template <int D>
    void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
@@ -78,7 +86,9 @@ namespace Rpc {
       readOptional(in, "scaleStress", scaleStress_);
    }
 
-   // Output timing results to log file.
+   /*
+   * Output timing results to log file.
+   */
    template<int D>
    void AmIteratorBasis<D>::outputTimers(std::ostream& out) const
    {
@@ -98,15 +108,19 @@ namespace Rpc {
       interaction_.update(system().interaction());
    }
 
-   // Private virtual functions used to implement AM algorithm
+   // Private virtual functions for vector math.
 
-   // Assign one array to another
+   /*
+   * Assign one array to another.
+   */
    template <int D>
    void AmIteratorBasis<D>::setEqual(DArray<double>& a, 
                                      DArray<double> const & b)
    {  a = b; }
 
-   // Compute and return inner product of two vectors.
+   /*
+   * Compute and return inner product of two vectors.
+   */
    template <int D>
    double AmIteratorBasis<D>::dotProduct(DArray<double> const & a, 
                                     DArray<double> const & b)
@@ -125,7 +139,9 @@ namespace Rpc {
       return product;
    }
 
-   // Compute and return maximum element of a vector.
+   /*
+   * Compute and return maximum element of a vector.
+   */
    template <int D>
    double AmIteratorBasis<D>::maxAbs(DArray<double> const & a)
    {
@@ -145,7 +161,11 @@ namespace Rpc {
       return max;
    }
 
-   // Update basis
+   // Private virtual functions for AM algorithm operations.
+
+   /*
+   * Update basis.
+   */
    template <int D>
    void 
    AmIteratorBasis<D>::updateBasis(RingBuffer< DArray<double> > & basis,
@@ -165,7 +185,9 @@ namespace Rpc {
       basis.append(newbasis);
    }
 
-   // Add linear combination of basis vectors to trial field.
+   /*
+   * Add linear combination of basis vectors to trial field.
+   */
    template <int D>
    void
    AmIteratorBasis<D>::addHistories(DArray<double>& trial,
@@ -182,7 +204,9 @@ namespace Rpc {
       }
    }
 
-   // Add predicted error to field trial.
+   /*
+   * Add predicted error to field trial.
+   */
    template <int D>
    void AmIteratorBasis<D>::addPredictedError(DArray<double>& fieldTrial,
                                               DArray<double> const & resTrial,
@@ -196,12 +220,16 @@ namespace Rpc {
 
    // Private virtual functions to exchange data with parent system
 
-   // Does the system have an initial field guess?
+   /*
+   * Does the system have an initial field guess?
+   */
    template <int D>
    bool AmIteratorBasis<D>::hasInitialGuess()
    {  return system().w().hasData(); }
 
-   // Compute and return number of elements in a residual vector
+   /*
+   * Compute and return number of elements in a residual vector.
+   */
    template <int D>
    int AmIteratorBasis<D>::nElements()
    {
@@ -216,7 +244,9 @@ namespace Rpc {
       return nEle;
    }
 
-   // Get the current w fields and lattice parameters
+   /*
+   * Get the current field vector (w fields and lattice parameters).
+   */
    template <int D>
    void AmIteratorBasis<D>::getCurrent(DArray<double>& curr)
    {
@@ -248,7 +278,9 @@ namespace Rpc {
 
    }
 
-   // Perform the main system computation (solve the MDE)
+   /*
+   * Perform the main system computation (solve the MDE).
+   */
    template <int D>
    void AmIteratorBasis<D>::evaluate()
    {
@@ -257,7 +289,9 @@ namespace Rpc {
       system().compute(isFlexible_);
    }
 
-   // Compute the residual for the current system state
+   /*
+   * Compute the residual for the current system state.
+   */
    template <int D>
    void AmIteratorBasis<D>::getResidual(DArray<double>& resid)
    {
@@ -352,7 +386,9 @@ namespace Rpc {
 
    }
 
-   // Update the current system field coordinates
+   /*
+   * Update the current system field vector.
+   */
    template <int D>
    void AmIteratorBasis<D>::update(DArray<double>& newGuess)
    {
@@ -411,7 +447,9 @@ namespace Rpc {
       }
    }
 
-   // Output relevant system details to the iteration log.
+   /*
+   * Output relevant system details to the iteration log.
+   */
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {

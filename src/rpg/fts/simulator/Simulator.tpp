@@ -731,7 +731,7 @@ namespace Rpg {
    }
 
    /*
-   * Read the required Compressor parameter file block.
+   * Optionally read a Compressor parameter file block.
    */
    template<int D>
    void Simulator<D>::readCompressor(std::istream& in, bool& isEnd)

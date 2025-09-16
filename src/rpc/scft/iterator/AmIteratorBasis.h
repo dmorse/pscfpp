@@ -53,14 +53,14 @@ namespace Rpc
       *
       * \param in input filestream
       */
-      void readParameters(std::istream& in);
+      void readParameters(std::istream& in) override;
 
       /**
       * Output timing results to log file.
       *
       * \param out  output stream for timer report
       */
-      void outputTimers(std::ostream& out) const;
+      void outputTimers(std::ostream& out) const override;
 
       // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
@@ -74,10 +74,10 @@ namespace Rpc
    protected:
 
       // Inherited protected members
+      using ParamComposite::setClassName;
       using ParamComposite::readOptional;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptionalFSArray;
-      using ParamComposite::setClassName;
       using AmIteratorTmpl< Iterator<D>, DArray<double> >::verbose;
       using AmIteratorTmpl< Iterator<D>, DArray<double> >::residual;
       using Iterator<D>::system;
@@ -90,33 +90,45 @@ namespace Rpc
       *
       * \param isContinuation Is this a continuation within a sweep?
       */
-      void setup(bool isContinuation);
+      void setup(bool isContinuation) override;
 
    private:
 
-      /// Local copy of interaction, adapted for use AMBD residual definition
+      /// Local copy of interaction, adapted for AMBD residual definition
       AmbdInteraction interaction_;
 
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
 
+      // --- Overridden pure virtual functions for vector math --- //
+
       /**
-      * Assign one field to another.
+      * Assign one field to another (a = b).
       *
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
+      void setEqual(DArray<double>& a, DArray<double> const & b) override;
 
       /**
-      * Compute the inner product of two vectors
+      * Compute the inner product of two vectors.
+      *
+      * \param a  first input vector
+      * \param b  second input vector
+      * \return value of dot product
       */
-      double dotProduct(DArray<double> const & a, DArray<double> const & b);
+      double 
+      dotProduct(DArray<double> const & a, DArray<double> const & b)
+      override;
 
       /**
       * Find the maximum magnitude element of a residual vector.
+      *
+      * \param hist  current residual vector
       */
-      double maxAbs(DArray<double> const & hist);
+      double maxAbs(DArray<double> const & hist) override;
+
+      // --- Overridden pure virtual functions for AM operations ---- //
 
       /**
       * Update the basis for residual or field vectors.
@@ -124,8 +136,9 @@ namespace Rpc
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<DArray<double> > & basis,
-                       RingBuffer<DArray<double> > const & hists);
+      void 
+      updateBasis(RingBuffer< DArray<double> > & basis,
+                  RingBuffer< DArray<double> > const & hists) override;
 
       /**
       * Add linear combination of basis vectors to trial field.
@@ -138,7 +151,7 @@ namespace Rpc
       void addHistories(DArray<double>& trial,
                         RingBuffer<DArray<double> > const & basis,
                         DArray<double> coeffs,
-                        int nHist);
+                        int nHist) override;
 
       /**
       * Add predicted error to field trial.
@@ -149,26 +162,28 @@ namespace Rpc
       */
       void addPredictedError(DArray<double>& fieldTrial,
                              DArray<double> const & resTrial,
-                             double lambda);
+                             double lambda) override;
+
+      // - Overridden pure virtual functions, communication with parent --//
 
       /**
       * Does the system has an initial guess for the field?
       */
-      bool hasInitialGuess();
+      bool hasInitialGuess() override;
 
       /**
       * Compute and returns the number of elements in field vector.
       *
       * Called during allocation and then stored.
       */
-      int nElements();
+      int nElements() override;
 
       /**
       * Get the current w fields and lattice parameters.
       *
       * \param curr current field vector
       */
-      void getCurrent(DArray<double>& curr);
+      void getCurrent(DArray<double>& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -176,26 +191,26 @@ namespace Rpc
       * Solves the modified diffusion equations, computes concentrations,
       * and optionally computes stress components.
       */
-      void evaluate();
+      void evaluate() override;
 
       /**
       * Compute the residual vector.
       *
       * \param resid current residual vector value
       */
-      void getResidual(DArray<double>& resid);
+      void getResidual(DArray<double>& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DArray<double>& newGuess);
+      void update(DArray<double>& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.
       */
-      void outputToLog();
+      void outputToLog() override;
 
    };
 

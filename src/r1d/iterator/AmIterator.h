@@ -34,7 +34,7 @@ namespace R1d
       /**
       * Constructor.
       *
-      * \param system System object associated with this iterator.
+      * \param system  parent System 
       */
       AmIterator(System& system);
 
@@ -48,7 +48,7 @@ namespace R1d
       *
       * \param in input filestream
       */
-      void readParameters(std::istream& in);
+      void readParameters(std::istream& in) override;
 
       // Inherited public member functions
       using AmIteratorTmpl<Iterator,DArray<double> >::solve;
@@ -64,11 +64,11 @@ namespace R1d
       *
       * \param isContinuation Is this a continuation within a sweep?
       */
-      void setup(bool isContinuation);
+      void setup(bool isContinuation) override;
 
    private:
 
-      // Local copy of interaction, adapted for use AMBD residual definition
+      /// Local copy of interaction, adapted for use AMBD residual definition
       AmbdInteraction interaction_;
 
       // -- Virtual functions used to implement AM algorithm -- //
@@ -79,18 +79,19 @@ namespace R1d
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
+      void setEqual(DArray<double>& a, DArray<double> const & b) override;
 
       /**
       * Find L2 norm of a residual vector.
       */
       double
-      dotProduct(DArray<double> const & a, DArray<double> const & b);
+      dotProduct(DArray<double> const & a, DArray<double> const & b) 
+      override;
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double maxAbs(DArray<double> const & hist);
+      double maxAbs(DArray<double> const & hist) override;
 
       /**
       * Update the basis for residual or field vectors.
@@ -98,8 +99,9 @@ namespace R1d
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<DArray<double> > & basis,
-                       RingBuffer<DArray<double> > const & hists);
+      void 
+      updateBasis(RingBuffer<DArray<double> > & basis,
+                  RingBuffer<DArray<double> > const & hists) override;
 
       /**
       * Add linear combination of basis vectors to trial field.
@@ -112,7 +114,7 @@ namespace R1d
       void addHistories(DArray<double>& trial,
                         RingBuffer<DArray<double> > const & basis,
                         DArray<double> coeffs,
-                        int nHist);
+                        int nHist) override;
 
       /**
       * Add predicted error to field trial.
@@ -123,28 +125,28 @@ namespace R1d
       */
       void addPredictedError(DArray<double>& fieldTrial,
                              DArray<double> const & resTrial,
-                             double lambda);
+                             double lambda) override;
 
-      // -- Virtual funtions to exchange data with parent System -- //
+      // -- Pure virtual functions to exchange data with parent System -- //
 
       /**
       * Checks if the system has an initial guess.
       */
-      bool hasInitialGuess();
+      bool hasInitialGuess() override;
 
       /**
       * Compute and returns the number residuals and unknowns.
       *
       * Called during allocation and then stored.
       */
-      int nElements();
+      int nElements() override;
 
       /**
       * Gets the current field vector from the system.
       *
       * \param curr current field vector
       */
-      void getCurrent(DArray<double>& curr);
+      void getCurrent(DArray<double>& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -152,26 +154,28 @@ namespace R1d
       * Solves the modified diffusion equations, computes concentrations,
       * and optionally computes stress components.
       */
-      void evaluate();
+      void evaluate() override;
 
       /**
       * Compute the residual vector.
       *
       * \param resid current residual vector value
       */
-      void getResidual(DArray<double>& resid);
+      void getResidual(DArray<double>& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DArray<double>& newGuess);
+      void update(DArray<double>& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.
       */
-      void outputToLog();
+      void outputToLog() override;
+
+      // Non-virtual private function
 
       /**
       * Return true iff all species are treated in closed ensemble.

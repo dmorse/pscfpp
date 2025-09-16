@@ -74,7 +74,7 @@ namespace Rpc {
       // Optionally read a random seed value
       readRandomSeed(in);
    
-      // Optionally read a BdStep 
+      // Optionally read a BdStep block
       bool isEnd = false;
       std::string className;
       bdStepPtr_ =
@@ -85,13 +85,13 @@ namespace Rpc {
          Log::file() << indent() << "  BdStep{ [absent] }\n";
       }
 
-      // Optionally read Compressor, Perturbation and/or Ramp blocks
+      // Optionally read Compressor block
       readCompressor(in, isEnd);
       if (hasBdStep()) {
          UTIL_CHECK(hasCompressor());
       }
 
-      // Optionally Perturbation and/or Ramp blocks
+      // Optionally read Perturbation and/or Ramp blocks
       readPerturbation(in, isEnd);
       if (hasBdStep()) {
          readRamp(in, isEnd);

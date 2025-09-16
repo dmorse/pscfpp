@@ -130,11 +130,12 @@ The BD and MC algorithms currently provided PSCF can perform simulations
 of systems with \f$ M \geq 2 \f$ if and only if the projected chi matrix 
 has no positive eigenvalues. This statement applies both to the actual BD 
 and MC algorithms used to generate random changes in exchange fields and 
-to the \ref psfts_algorithm_compressor_sec ``compressor" algorithms used 
+to the \ref psfts_algorithm_compressor_sec "compressor" algorithms used 
 to identify partial saddle points. For ABC systems, this requirement 
-imposes a constraint on the allowed range of values of the chi parameters, 
-as discussed in the article by Morse, Yong and Chen
-(<https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636>).
+imposes several constraints on the allowed ranges of values of the chi 
+parameters, as discussed in the article by
+<a href="https://pubs.acs.org/doi/10.1021/acs.macromol.4c02636">
+Morse, Yong and Chen </a>.
 
 Some of the data analysis algorithms provided in the current version of 
 PSCF were, however, designed specifically for systems with \f$ M = 2 \f$ 

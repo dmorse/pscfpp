@@ -574,7 +574,7 @@ namespace Rpc {
       CompressorFactory<D>& compressorFactory();
 
       /**
-      * Read the compressor block of the parameter file. 
+      * Optionally read a Compressor parameter file block.
       *
       * If isEnd it true on entry, the function returns immediately. 
       *
@@ -589,7 +589,7 @@ namespace Rpc {
       PerturbationFactory<D>& perturbationFactory();
 
       /**
-      * Optionally read an associated perturbation.
+      * Optionally read a Perturbation parameter file block.
       *
       * If isEnd it true on entry, this function returns immediately. 
       *
@@ -599,7 +599,7 @@ namespace Rpc {
       void readPerturbation(std::istream& in, bool& isEnd);
 
       /**
-      * Set the associated perturbation.
+      * Set the associated Perturbation.
       *
       * \param ptr pointer to a new Perturbation<D> object.
       */
@@ -611,7 +611,7 @@ namespace Rpc {
       RampFactory<D>& rampFactory();
 
       /**
-      * Optionally read an associated ramp.
+      * Optionally read a Ramp parameter file block.
       *
       * If isEnd it true on entry, this function returns immediately. 
       *
@@ -856,7 +856,7 @@ namespace Rpc {
    template <int D>
    inline Compressor<D>& Simulator<D>::compressor()
    {
-      UTIL_CHECK(hasCompressor());
+      UTIL_CHECK(compressorPtr_);
       return *compressorPtr_;
    }
 
@@ -864,7 +864,7 @@ namespace Rpc {
    template <int D>
    inline Compressor<D> const& Simulator<D>::compressor() const
    {
-      UTIL_CHECK(hasCompressor());
+      UTIL_CHECK(compressorPtr_);
       return *compressorPtr_;
    }
 

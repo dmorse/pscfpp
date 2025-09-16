@@ -80,16 +80,24 @@ namespace Rpg {
       std::string className;
       UTIL_CHECK(!hasBdStep());
       UTIL_CHECK(bdStepFactoryPtr_);
-      bdStepPtr_ = bdStepFactoryPtr_->readObjectOptional(in, *this,
-                                                         className, isEnd);
+      bdStepPtr_ 
+         = bdStepFactoryPtr_->readObjectOptional(in, *this,
+                                                 className, isEnd);
 
-      // Attempt to read the optional Compressor, Perturbation and Ramp blocks
+      // Optionally read a Compressor block.
       readCompressor(in, isEnd);
-      readPerturbation(in, isEnd);
       if (hasBdStep()) {
          UTIL_CHECK(hasCompressor());
+      }
+
+      // Optionally read a Perturbation block.
+      readPerturbation(in, isEnd);
+
+      // Optionally read a Ramp block.
+      if (hasBdStep()) {
          readRamp(in, isEnd);
       }
+
       // Compressor is required if a BdStep exists
       // A Ramp is allowed only if a BdStep exists
 

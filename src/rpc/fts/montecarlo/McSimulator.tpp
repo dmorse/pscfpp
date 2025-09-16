@@ -67,15 +67,20 @@ namespace Rpc {
       // Read optional random seed value
       readRandomSeed(in);
 
-      // Read McMoveManager block
+      // Read optional McMoveManager block
       readParamCompositeOptional(in, mcMoveManager_);
 
-      // Read optional Compressor, Perturbation and Ramp blocks
       bool isEnd = false;
+
+      // Read optionally Compressor block
       readCompressor(in, isEnd);
-      readPerturbation(in, isEnd);
       if (hasMcMoves()) {
          UTIL_CHECK(hasCompressor());
+      }
+
+      // Read optional Perturbation and/or Ramp blocks
+      readPerturbation(in, isEnd);
+      if (hasMcMoves()) {
          readRamp(in, isEnd);
       }
 

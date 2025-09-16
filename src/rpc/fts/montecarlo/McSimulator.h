@@ -107,12 +107,12 @@ namespace Rpc {
       ///@{
 
       /**
-      * Get McMoveManger
+      * Get the McMoveManger.
       */
       McMoveManager<D>& mcMoveManager();
 
       /**
-      * Get AnalyzerManger
+      * Get the AnalyzerManger.
       */
       AnalyzerManager<D>& analyzerManager();
 
@@ -225,7 +225,7 @@ namespace Rpc {
    inline McMoveManager<D>& McSimulator<D>::mcMoveManager()
    {  return mcMoveManager_; }
 
-   // Get the Monte-Carlo analyzer manager.
+   // Get the analyzer manager.
    template <int D>
    inline AnalyzerManager<D>& McSimulator<D>::analyzerManager()
    {  return analyzerManager_; }

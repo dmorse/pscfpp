@@ -21,26 +21,28 @@ by the National Science Foundation program for Cyberinfrastructure for
 Sustained Scientific Development (CSSI) under Grant No. 2103627.
 
 <h2>Manual Organization:</h2>
-This web manual is designed to provide both usage information for users
-who may never look at the source code and complete developer documentation
-for those who do.
+This web manual is designed to provide both thorough usage information 
+for users who may never look at the source code, and complete aplication 
+programming interface (API) documentation for those who do.
 
-Information for users about how to install and use PSCF is provided in
-chapters 1-5 of the web manual, as outlined below. Additional general
-information aimed at developers is given in chapter 6,
+Information for users about how to install and run PSCF is provided in
+chapters 1-5 of the web manual that is outlined below. Some additional 
+general information aimed at developers is given in chapter 6,
 \ref developer_page "Developer Information".
 
-Detailed programming interface documentation aimed at developers is
-accessible via the "Topics", "Namespaces", "Classes", and "Files" tabs
-that appear at the top of every web manual page.  The "Topics" page
-provides a hierarchical list of classes and functions, organized into
-C++ namespaces and, within each namespace, into groups of functionally
-related classes.
+Detailed API documentation that is extracted from comments in the source 
+code is instead accessible via the "Topics", "Namespaces", "Classes", and 
+"Files" tabs that appear at the top of every web manual page.  Clicking 
+on a highlighted name of a function, class or class template anywhere in 
+this web manual also links you to the technical API documentation for 
+that entity.  The "Topics" tab provides a hierarchical list of C++ 
+classes and functions, organized by C++ namespace and, within each 
+namespace, into named groups of functionally related classes. 
 
 The web manual for the most recent release of PSCF is available online at
 <a ref=https://dmorse.github.io/pscfpp-man/> https://dmorse.github.io/pscfpp-man </a>.
 
-<h2>Manual Contents:</h2>
+<h2>Manual outline:</h2>
 
 <ol type="1">
  <li> \subpage about_page

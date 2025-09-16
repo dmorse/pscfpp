@@ -1,5 +1,5 @@
 /*! 
-\page rpc_PredCorrBdStep_page Rpc::PredCorrBdStep
+\page rpc_PredCorrBdStep_page PredCorrBdStep
 
 The PredCorrBdStep classes used by both the pscf_pc and pscf_pg programs 
 implements a predictor corrector Brownian dynamics step algorithm.
@@ -9,7 +9,7 @@ Pscf::Rpg::PredCorrBdStep are used to implement this algorithm for the
 pscf_pc program (using a standard CPU) and for the pscf_pg program
 (using GPU acceleration), respectively  These classes implement the 
 same algorithm and use the same parameter file format, as documented 
-below for both.
+below.
 
 \section rpc_PredCorrBdStep_algorithm_sec Step Algorithm
 

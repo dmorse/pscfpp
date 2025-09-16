@@ -19,24 +19,26 @@ file format, which are documented below.
 
 \section rpc_RealMove_algorithm_sec Step Algorithm
 
-A general discussion of MC move algorithms for PS-FTS is given 
-\ref psfts_algorithm_page "here". As discussed there, each move consists 
-of an unconstrained change in the fields, followed by application of a 
-compressor to re-impose the incompressibility constraint. The decision 
-about whether to accept or reject the move is based on the value of the 
-Hamiltonian after incompressibility has been restored. 
+A general discussion of MC move algorithms for PS-FTS is given on a 
+\ref psfts_algorithm_MC_sec "separate page". As discussed there, each 
+attempted MC move consists of an unconstrained change in the fields, 
+followed by application of a compressor to re-impose the 
+incompressibility constraint. The decision about whether to accept 
+or reject the move is based on the value of the Hamiltonian after 
+incompressibility has been restored by adjusting the pressure-like
+field.
 
-The RealMove algorithm takes one parameter, denoted by sigma in the 
-parameter file. The unconstrained move changes each monomer field 
-component by a random amount chosen from the Gaussian distribution 
-with zero mean and a standard deviation of a sigma. 
+The RealMove algorithm takes one parameter, denoted by sigma. The
+unconstrained move each monomer field component at each grid point
+by a random amount chosen from the Gaussian distribution with zero 
+mean and a standard deviation of a sigma. 
 
 \section rpc_RealMove_parameter_sec Parameter File
 
 The only parameter needed by this algorithm are the "probability" 
 parameter, which determines the probability that a move of this type 
-will be chosen on any step, and a required parameter named sigma, 
-as described above.  A typical example of the contents of this is 
+will be chosen on any step, and a required parameter named sigma, as 
+described above.  A typical example of the contents of this is 
 shown below.
 \code
   RealMove{

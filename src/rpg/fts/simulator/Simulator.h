@@ -562,7 +562,7 @@ namespace Rpg {
       CompressorFactory<D>& compressorFactory();
 
       /**
-      * Read the compressor block of the parameter file.
+      * Optionally read a Compressor parameter file block.
       *
       * If isEnd is true on entry, this function returns without
       * attempting to read the Compressor block.
@@ -578,7 +578,7 @@ namespace Rpg {
       PerturbationFactory<D>& perturbationFactory();
 
       /**
-      * Optionally read an associated perturbation.
+      * Optionally read a Perturbation parameter file block.
       *
       * If isEnd is true on entry, this function returns without
       * attempting to read the Perturbation block.
@@ -601,7 +601,7 @@ namespace Rpg {
       RampFactory<D>& rampFactory();
 
       /**
-      * Optionally read an associated ramp.
+      * Optionally read a Ramp parameter file block.
       *
       * If isEnd is true on entry, this function returns without
       * attempting to read the Ramp block.

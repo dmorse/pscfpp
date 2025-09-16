@@ -152,11 +152,18 @@ mesh.  Other authors have sometimes referred to what we call a "mobility"
 as a time step, sometimes indicated by a symbol such \f$ \Delta t \f$ or
 \f$ \delta t \f$.
 
-The mobility parameter has an analogous meaning in more sophisticated
-BD step algorithms. It always appears as a prefactor of the "force"
-(or functional derivative) \f$ \delta H/\delta W_{-}({\bf r}) \f$ in
-expressions for changes in \f$ W_{-}({\bf r}) \f$ over a single time
-step.
+After this random in \f$ W_{-} \f$, the chosen compressor algorithm is 
+applied to adjust the pressure-like field \f$$ W_{+} \f$ until the
+partial saddle-point condition is again satisfied, completing the BD
+move.
+
+The meaning of the mobility parameter in other BD step algorithms is
+analogous to its meaning in the explicit Euler algorithm described above:
+The mobility always appears as a prefactor of the "force" (or functional 
+derivative) \f$ -\delta H/\delta W_{-}({\bf r}) \f$ in expressions for 
+changes in \f$ W_{-}({\bf r}) \f$ over a single time step. A mobility
+parameter is the only required parameter for any of the available BD 
+step algorithms.
 
 PSCF currently allows users to choose from among three BD step
 algorithms, which are labelled below by the names of the C++ classes
@@ -173,8 +180,8 @@ that implement them:
 More details about each of these algorithms can be obtained by clicking
 on the associated link.
 
-We recommend the Leimkuhler-Matthews (LM) algorithm for general use
-in all BD simulations.  The LM step algorithm is found to provide much
+We recommend the Leimkuhler-Matthews (LM) algorithm for general use in 
+all BD simulations.  The LM step algorithm is found to provide much
 more accurate results than the competing predictor-corrector algorithm,
 allowing the use of larger time steps.  The explicit Euler algorithm is
 signficantly less accurate than the other two alternatives.
@@ -191,11 +198,11 @@ simulation is thus as follows:
    - Choose a type of MC move at random from among a set of choices
      specified in the parameter file.
 
-   - Use the chosen MC move to generate a random change in \f$ W_{-} \f$.
+   - Use the chosen MC move to generate a random change in the fields.
 
-   - Use the chosen compressor algorithm to adjust the real pressure-like
-     field \f$ W_{+}({\bf r}) \f$ so as to satisfy the partial saddle-point
-     condition.
+   - Apply the chosen compressor algorithm to adjust the real pressure-like
+     field \f$ W_{+}({\bf r}) \f$ so as to again satisfy the partial 
+     saddle-point (i.e., SCF incompressibility) condition.
 
    - Evaluate the Hamiltonian in the new partial saddle point state.
 
@@ -203,7 +210,7 @@ simulation is thus as follows:
      balance to decide whether to accept or reject the move.
 
    - If the move is rejected, restore the field configuration that
-     existed at the beginning of the attempted move.
+     existed before the beginning of the attempted move.
 
 The block of the parameter file for an MC simulation that contains
 information about MC moves, which is labelled "McMoveManager", contains
@@ -286,12 +293,12 @@ parameter file block.
         An Anderson-mixing algorithm </li>
 </ul>
 The LrAmCompressor is the default choice, and is recommended for general
-use.
+use. 
 
-The AmCompressor algorithm is similar to the Anderson mixing
-algorithm used in most previously published PS-FTS calculations.
-This algorithm uses information from previous iterations to guide the
-choice of a new field configuration during each iteration after the first.
+The AmCompressor algorithm is similar to the Anderson mixing algorithm 
+used in most previously published PS-FTS calculations.  This algorithm 
+uses information from previous iterations to guide the choice of a new 
+field configuration during each iteration after the first.
 
 The LrAmCompressor and LrCompressor algorithms both use a quasi-Newton
 approximation that uses the analytically calculated linear response of
@@ -302,6 +309,14 @@ straightforward quasi-Newton algorithm based on this approximation.
 The LrAm uses this quasi-Newton step as one stage of a modified
 Anderson mixing algorithm, which also uses information from previous
 steps.
+
+All three of the compressor algorithms listed above are described and
+compared in the following reference:
+
+<a href="https://doi.org/10.1063/5.0264036">
+"Improved algorithm for identifying partial saddle-points in polymer
+field theoretic simulations", K. Chen and D.C. Morse, 
+<em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>,
 
 \section psfts_algorithm_analyzer_sec Analyzer Algorithms
 

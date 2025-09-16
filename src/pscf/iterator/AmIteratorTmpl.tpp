@@ -8,13 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "NanException.h"
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/LuSolver.h>
-#include "NanException.h"
 #include <util/format/Dbl.h>
 #include <util/format/Int.h>
 #include <util/misc/Timer.h>
 #include <util/misc/FileMaster.h>
+
 #include <cmath>
 
 namespace Pscf

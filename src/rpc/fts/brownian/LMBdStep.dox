@@ -1,18 +1,18 @@
 /*! 
-\page rpc_LMBdStep_page Rpc::LMBdStep
+\page rpc_LMBdStep_page LMBdStep
 
 The LMBdStep classes used by both the pscf_pc and pscf_pg programs 
-implements the Leimkuhler Matthews Brownian dynamics step algorithm.
+implement the Leimkuhler-Matthews Brownian dynamics step algorithm.
 
 Two closely analogous classes named Pscf::Rpc::LMBdStep and 
 Pscf::Rpg::LMBdStep that have the same class name but that are 
-defined in different namespaces are used to implement this the same
-step algorithm for different programs. The LMBdStep class 
-defined in the Rpc namespace is used in the pscf_pc program (using 
-CPU hardware) and the class defined in the Rpg namespace is used in
-the pscf_pg program (using GPU acceleration). These two analogous 
-classes implement the same step algorithm and use the same parameter 
-file format, which are documented below.
+defined in different namespaces are used to implement this step 
+algorithm for different programs. The LMBdStep class defined in the 
+Rpc namespace is used in the pscf_pc program (using CPU hardware) 
+and the class defined in the Rpg namespace is used in the pscf_pg 
+program (using GPU acceleration). These two analogous classes 
+implement the same step algorithm and use the same parameter file 
+format, as documented below.
 
 \section rpc_LMBdStep_algorithm_sec Step Algorithm
 
@@ -101,7 +101,7 @@ in the above equations.  A typical example of the contents of the block
 is shown below:
 \code
   LMBdStep{
-    mobility     1e-3
+    mobility     1.0e-2
   }
 \endcode
 The format of this block is simply
@@ -110,6 +110,6 @@ LMBdStep{
    mobility      float
 }
 \endcode
-The mobility parameter is requred.
+The mobility parameter is required.
 
 */

@@ -4,12 +4,12 @@ namespace Rpc{
 \page rpc_BdSimulator_page BdSimulator
 
 An instance of the class BdSimulator<D> in namespace Pscf::Rpc (for pscf_pc)
-or Pscf::Rpg (for pscf_pg) contains all of the algorithms and parameters 
-that are needed to enable a partial saddle-point field theoretic simulation 
+or Pscf::Rpg (for pscf_pg) provides a set of data structures and algorithms 
+that are needed to enable partial saddle-point field theoretic simulation 
 (PS-FTS) using Brownian dynamic sampling, but that are not needed for 
 self-consistent field (SCFT) calculation. The associated parameter file 
-block is one of two possible options (BdSimulator or McSimulator) for 
-the optional, selectable "Simulator" subblock of the main 
+block is one of two possible options (BdSimulator or McSimulator) for the 
+optional, selectable "Simulator" subblock of the main 
 \ref rpc_System_page "System" block of the parameter file. 
 
 \section rpc_BdSimulator_parameter_page Parameter File
@@ -55,7 +55,7 @@ below:
     A Compressor is an iterative solver that adjusts the pressure-like
     chemical potential field component in order to satisfy the mean-field
     incompressibility constraint, thus satisfying the partial-saddle point 
-    criterion. (selectable and optional)
+    criterion. (selectable and optional, with conditions)
     </td>
   </tr>
   <tr>
@@ -88,17 +88,17 @@ below:
     </td>
   </tr>
 </table>
-Relationships among subblocks of BdSimulator:
+A BdStep and Compressor block are both required in order to perform a 
+BD simulation, but are treated as optional because neither is necessary
+to postprocess a trajectory file.
 
-  - The BdStep and Compressor blocks must both be present in order to
-    perform a BD simulation (command SIMULATE). Both of these elements
-    may be omitted, however, from a parameter file that is used to 
-    initialize postprocessing of a field trajectory file. 
+Logical relationships among subblocks of BdSimulator:
 
   - If a BdStep is present, the Compressor block is required.
 
   - A Ramp is allowed only if a BdStep and Compressor are present,
-    since these are algorithms that are only used during a simulation.
+    since a Ramp is only used during a simulation, and not during
+    postprocessing.
 
   - The AnalyzerManager block must be present in order to postprocess
     a trajectory file (command ANALYZE).

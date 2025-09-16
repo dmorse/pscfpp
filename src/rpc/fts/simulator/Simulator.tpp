@@ -142,13 +142,13 @@ namespace Rpc {
 
       bool isEnd = false;
 
-      // Read required Compressor block
+      // Read optional Compressor block
       readCompressor(in, isEnd);
 
-      // Optionally read a Perturbation
+      // Read optional Perturbation block
       readPerturbation(in, isEnd);
 
-      // Optionally read a Ramp
+      // Read optional Ramp block
       readRamp(in, isEnd);
    }
 
@@ -739,7 +739,7 @@ namespace Rpc {
    }
 
    /*
-   * Optionally read the Compressor parameter file block.
+   * Optionally read a Compressor parameter file block.
    */
    template<int D>
    void Simulator<D>::readCompressor(std::istream& in, bool& isEnd)
@@ -747,8 +747,8 @@ namespace Rpc {
       if (isEnd) return;
       UTIL_CHECK(compressorFactoryPtr_);
       UTIL_CHECK(!hasCompressor());
-      std::string className;
-      compressorPtr_ =
+      std::string className; 
+      compressorPtr_ = 
          compressorFactory().readObjectOptional(in, *this, 
                                                 className, isEnd);
       if (!compressorPtr_ && ParamComponent::echo()) {
@@ -789,7 +789,7 @@ namespace Rpc {
    // Functions associated with associated Ramp
 
    /*
-   * Optionally read a parameter file block for an associated Ramp.
+   * Optionally read a Ramp parameter file block.
    */
    template<int D>
    void Simulator<D>::readRamp(std::istream& in, bool& isEnd)
