@@ -258,25 +258,28 @@ periodic phases.
 
 \section scft_param_pc_iterator_sec Iterators
 
-The default Iterator for the pscf_pc and pscf_pg programs is based on
-an algorithm that uses an Anderson-Mixing (AM) iterator algorithm, and 
-that imposes a specified space group symmetry.  This default iterator can 
-be invoked in pscf_pc using either the generic label "Iterator" or the 
-specific label "AmIteratorBasis". This is currently the only iterator 
-available in pscf_pc.  A description of the parameter file format for 
-this iterator is given \subpage rpc_AmIteratorBasis_page "here".
+The default Iterator for the pscf_pc and pscf_pg programs is based on an 
+algorithm that uses an \ref pscf_AmIteratorTmpl_page "Anderson mixing" (AM)
+iterator algorithm, and is designed to maintain a specified space group 
+symmetry.  This default iterator can be invoked in pscf_pc using either 
+the generic label "Iterator" or the specific label "AmIteratorBasis". 
+This is currently the only iterator available in pscf_pc.  A description 
+of the parameter file format for this iterator is given 
+\subpage rpc_AmIteratorBasis_page "here".
 
-The AmIteratorBasis is designed to search for a solution with a specified
-space group symmetry, and can only be used with a parameter file that
-contains a valid groupName parameter. The pscf_pg program, however, 
-also provides an Anderson-Mixing algorithm named AmIteratorGrid that 
-does not impose any space-group symmetry, and that can be used with a 
-parameter file that does not contain a groupName string. 
+The \ref rpc_AmIteratorBasis_page "AmIteratorBasis" iterator is designed 
+to search for a solution with a specified space group symmetry, and can 
+only be used with a parameter file that contains a groupName parameter.
+The pscf_pg program provides an analogous symmetry-preserving iterator, 
+also named \ref rpg_AmIteratorBasis_page "AmIteratorBasis", but also 
+provides a second Anderson-Mixing algorithm named 
+\ref rpg_AmIteratorGrid_page "AmIteratorGrid" that does not impose any 
+space-group symmetry.
 
-The Iterator block of the parameter file is formally optional (i.e., 
-the program will finish reading the parameter file if it is omitted), 
-but is required to enable SCFT calculations. An Iterator block is
-not needed to peform a field theoretic simulation.
+The Iterator block of the parameter file is formally optional (i.e., the 
+program will finish reading the parameter file if it is omitted), but is 
+required to enable SCFT calculations. An Iterator block is not needed to 
+peform a field theoretic simulation.
 
 \section scft_param_pc_sweep_sec Sweep
 

@@ -4,14 +4,16 @@ namespace R1d{
 \page r1d_NrIterator_page R1d::NrIterator
 
 A Pscf::R1d::NrIterator<D> object is an iterator that solves the SCFT 
-equations using the Newton-Raphson method.  The only user-defined parameters 
-are the max number of iterations (maxItr) and the error tolerance (epsilon).
+equations using the Newton-Raphson method.  The only user-defined 
+parameters are the the error tolerance (epsilon) and the max number of 
+iterations (maxItr).
 
-The cost of the NR algorithm used here increases rapidly with the number of 
-grid points, and becomes inefficient for problems with greater than roughly
-1000 grid points. The algorithm converges in very few iterations from a 
-good initial guess, but has a high computational cost per iteration, and 
-is not particularly robust in the face of a poor initial guess.
+The cost of the NR algorithm used here increases rapidly with the number 
+of grid points, and becomes inefficient for problems with greater than 
+roughly 1000 grid points. The algorithm converges in very few iterations 
+from a good initial guess, but has a high computational cost per 
+iteration, and is not particularly robust in the face of a poor initial 
+guess.
 
 \section r1d_NrIterator_param_sec Parameter File 
 

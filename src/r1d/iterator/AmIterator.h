@@ -22,7 +22,10 @@ namespace R1d
    using namespace Util;
 
    /**
-   * Anderson-Mixing iterator.
+   * Anderson-Mixing iterator for 1D SCFT.
+   *
+   * \see \ref r1d_AmIterator_page      "Manual Page"
+   * \see \ref pscf_AmIteratorTmpl_page "AM Iterator Algorithm"
    *
    * \ingroup R1d_Iterator_Module
    */

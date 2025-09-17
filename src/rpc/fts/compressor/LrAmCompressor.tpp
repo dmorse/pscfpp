@@ -176,9 +176,8 @@ namespace Rpc{
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
 
-      const int n = hists[0].capacity();
-
       // New basis vector is difference between two most recent states
+      const int n = hists[0].capacity();
       for (int i = 0; i < n; i++) {
          newBasis_[i] = hists[0][i] - hists[1][i];
       }
@@ -218,8 +217,8 @@ namespace Rpc{
    template <int D>
    void
    LrAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
-                                            DArray<double> const & resTrial,
-                                            double lambda)
+                                        DArray<double> const & resTrial,
+                                        double lambda)
    {
       // Local constants
       const int n = fieldTrial.capacity();

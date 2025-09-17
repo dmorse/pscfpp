@@ -1,10 +1,12 @@
 namespace Pscf{
 namespace R1d{
+
 /*! 
 \page r1d_AmIterator_page R1d::AmIterator
 
 An R1d::AmIterator<D> object is an iterator that solves the 1D SCFT 
-equations using an Anderson-Mixing algorithm.
+equations using a \ref pscf_AmIteratorTmpl_page "Anderson-Mixing" 
+algorithm.
 
 \section r1d_AmIterator_param_sec Parameter File 
 
@@ -31,8 +33,10 @@ The format of this block is described more formally below:
   
 }
 \endcode
-Here, as elsewhere, labels followed by an asterisk (*) represent optional 
-parameters. The meaning of the various parameters are described below:
+Here, as elsewhere, labels followed by an asterisk (*) represent 
+optional parameters. The meaning of various parameters are described 
+below, and also as part of a more general discussion of 
+\ref pscf_AmIteratorTmpl_page "Anderson-Mixing" algorithms:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -40,40 +44,40 @@ parameters. The meaning of the various parameters are described below:
   </tr>
   <tr>
     <td> epsilon </td>
-    <td> Desired tolerance for convergence - iteration stops if 
-         the magnitude of the error drops below epsilon  </td>
+    <td> Desired tolerance for convergence - iteration stops if the 
+         magnitude of the error drops below epsilon (Required) </td>
   </tr>
   <tr>
     <td> maxItr* </td>
     <td> Maximum number of iterations that will be attempted
-         (200 by default) </td>
+         (Optional, 200 by default) </td>
   </tr>
   <tr>
     <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
          retained in memory for use by the AM algorithm 
-         (50 by default) </td>
+         (Optional, 50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>
-    <td> Optional integer with allowed values 0-2 for the level of 
+    <td> Integer with allowed values 0-2 for the level of 
          verbosity of output to log file during iteration.  
-         Set to 0 (concise) by default.
+         (Optional, 0 by default).
     </td>
   </tr>
   <tr>
     <td> showTime* </td>
     <td> Optional boolean (0 or 1). Set true (1) to output a report of 
-         components of wall clock time during iteration, or (0) to skip.
-         Set false (0) by default. 
+         components of wall clock time during iteration, or false (0) 
+         to skip.  Optional, and false by default. 
     </td>
   </tr>
   <tr>
     <td> errorType* </td>
     <td> Identifer for the type of scalar error compared to epsilon to
          test convergence.  Allowed values are "norm", "rms", "max" and 
-         "relNorm", as discussed below. Optional, and set to "relNorm" by 
-         default. </td>
+         "relNorm", as discussed \ref pscf_AmIteratorTmpl_page "here". 
+         Optional, and equal to "relNorm" by default. </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reached maxItr 

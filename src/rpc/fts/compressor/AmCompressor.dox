@@ -2,18 +2,18 @@
 \page rpc_AmCompressor_page AmCompressor
 
 The AmCompressor classes used by both the pscf_pc and pscf_pg programs 
-each implement a Anderson mixing compressor algorithm.
-Two closely analogous classes named Pscf::Rpc::AmCompressor and 
-Pscf::Rpg::AmCompressor implement this algorithm for the pscf_pc CPU
-program and the pscf_pg GPU-accelerated program, respectively. These 
-two classes implement the same step algorithm and use the same parameter 
-file format, as documented below.
+each implement a \ref pscf_AmIteratorTmpl_page "Anderson mixing" 
+compressor algorithm.  Two closely analogous classes named 
+Pscf::Rpc::AmCompressor and Pscf::Rpg::AmCompressor implement this 
+algorithm for the pscf_pc CPU program and the pscf_pg GPU-accelerated 
+program, respectively. These two classes implement the same step 
+algorithm and use the same parameter file format, as documented below.
 
 \section rpc_AmCompressor_algorithm_sec Step Algorithm
 
 A general discussion of compressor algorithms for PS-FTS is given 
-\ref psfts_algorithm_page "here". The implementation of the AM mixing
-algorithm used in PSCF is discussed in the article:
+\ref psfts_algorithm_page "here". The implementation of the AM 
+mixing algorithm used in PSCF is discussed in the article:
  <a href="https://doi.org/10.1063/5.0264036">
 "Improved algorithm for identifying partial saddle-points in polymer
 field theoretic simulations", K. Chen and D.C. Morse, 
@@ -49,24 +49,49 @@ Meanings of all parameters are described briefly below:
   </tr>
   <tr>
     <td> epsilon </td>
-    <td> error threshhold </td>
+    <td> error tolerance (Required) </td>
   </tr>
   <tr>
     <td>  maxItr* </td>
-    <td>  maximum number of iterations to attempt before declaring failure </td>
+    <td>  
+    maximum number of iterations to attempt before declaring failure 
+    (optional, 50 by default)
+    </td>
   </tr>
   <tr>
     <td>  maxHist* </td>
-    <td>  maximum number of previous states to retain in history </td>
+    <td>  
+   maximum number of previous states to retain in history 
+    (optional, 200 by default)
+    </td>
   </tr>
   <tr>
     <td>  verbose* </td>
-    <td>  verbosity level (lower values are less verbose. Default level = 0) </td>
+    <td>  verbosity level 0, 1, or 2. Lower values are less verbose. 
+          (Optional, 0 by default)
+    </td>
   </tr>
   <tr>
-    <td>  errorType* </td>
-    <td>  ???? </td>
+    <td> errorType* </td>
+    <td> Identifer for the choice of a definition for the scalar error . 
+         Meaning of the allowed values are "norm", "rms" "max", and 
+         "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here".
+         (Optional, and equal to "relNorm" by default) </td>
   </tr>
 </table>
+
+\section rpc_AmCompressor_residual_sec Residual Definition
+
+The residual vector for the AmCompressor is defined in real space, as 
+an array in which each element is associated with one node of a regular 
+computational grid. The value \f$R({\bf r}) \f$ of the residual element 
+associated with a grid point located at position \f$ {\bf r} \f$ is 
+given by
+\f[
+    R({\bf r}) = -1 + \sum_{i=1}^{M} \phi_{i}({\bf r}) 
+\f]
+where \f$ \phi_{i}({\bf r}) \f$ is the volume fraction of monomer type 
+\f$ i \f$ at that grid point, and \f$ M \f$ is the number of monomer
+types, also known as nMonomer.
 
 */

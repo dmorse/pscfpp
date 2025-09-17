@@ -22,8 +22,10 @@ namespace R1d
    using namespace Util;
 
    /**
-   * Newton-Raphson Iterator for SCF equations.
+   * Newton-Raphson Iterator for 1D SCFT.
    *
+   * \see \ref r1d_NrIterator_page "Manual Page"
+   * 
    * \ingroup R1d_Iterator_Module
    */
    class NrIterator : public Iterator

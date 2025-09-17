@@ -12,7 +12,8 @@ format, which are documented below.
 \section rpc_LrAmCompressor_algorithm_sec Step Algorithm
 
 A general discussion of compressor algorithms for PS-FTS is given 
-\ref psfts_algorithm_page "here".  The LrAm compressor algorithm is described 
+\ref psfts_algorithm_page "here".  The LrAm compressor algorithm is 
+described 
 in the article: <a href="https://doi.org/10.1063/5.0264036">
 "Improved algorithm for identifying partial saddle-points in polymer
 field theoretic simulations", K. Chen and D.C. Morse, 
@@ -52,21 +53,32 @@ Meanings of all parameters are described briefly below:
   </tr>
   <tr>
     <td>  maxItr* </td>
-    <td>  maximum number of iterations to attempt before declaring failure </td>
+    <td>  
+       maximum number of iterations to attempt before declaring failure 
+    </td>
   </tr>
   <tr>
     <td>  maxHist* </td>
-    <td>  maximum number of previous states to retain in history </td>
+    <td>  
+       maximum number of previous states to retain in history 
+    </td>
   </tr>
   <tr>
     <td>  verbose* </td>
-    <td>  verbosity level (lower values are less verbose. Default level = 0) </td>
+    <td>  
+      verbosity level. lower values are less verbose
+      (Optional, 0 by default) 
+    </td>
   </tr>
   <tr>
-    <td>  errorType* </td>
-    <td>  ???? </td>
+    <td> errorType* </td>
+    <td> 
+      Identifer for the choice of a definition for the scalar error. 
+      Meaning of the allowed values are "norm", "rms" "max", and 
+      "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here"
+      (optional, and equal to "relNorm" by default).
+    </td>
   </tr>
 </table>
-
 
 */

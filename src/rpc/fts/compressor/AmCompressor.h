@@ -16,8 +16,8 @@ namespace Pscf {
 namespace Rpc
 {
 
-   template <int D>
-   class System;
+   // Forward declaration
+   template <int D> class System;
 
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
@@ -29,7 +29,7 @@ namespace Rpc
    */
    template <int D>
    class AmCompressor
-         : public AmIteratorTmpl<Compressor<D>, DArray<double> >
+      : public AmIteratorTmpl<Compressor<D>, DArray<double> >
    {
 
    public:
@@ -51,7 +51,7 @@ namespace Rpc
       *
       * \param in input filestream
       */
-      void readParameters(std::istream& in);
+      void readParameters(std::istream& in) override;
 
       /**
       * Initialize just before entry to iterative loop.
@@ -62,29 +62,29 @@ namespace Rpc
       *
       * \param isContinuation true iff continuation within a sweep
       */
-      void setup(bool isContinuation);
+      void setup(bool isContinuation) override;
 
       /**
       * Compress to obtain partial saddle point w+
       *
       * \return 0 for convergence, 1 for failure
       */
-      int compress();
+      int compress() override;
 
       /**
       * Compute mixing parameter lambda
       */
-      double computeLambda(double r);
+      double computeLambda(double r) override;
 
       /**
       * Return compressor times contributions.
       */
-      void outputTimers(std::ostream& out) const;
+      void outputTimers(std::ostream& out) const override;
 
       /**
       * Clear all timers (reset accumulated time to zero).
       */
-      void clearTimers();
+      void clearTimers() override;
 
       // Inherited public member functions
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
@@ -128,17 +128,19 @@ namespace Rpc
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
+      void setEqual(DArray<double>& a, DArray<double> const & b) override;
 
       /**
       * Compute the inner product of two vectors
       */
-      double dotProduct(DArray<double> const & a, DArray<double> const & b);
+      double 
+      dotProduct(DArray<double> const & a, DArray<double> const & b)
+      override;
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double maxAbs(DArray<double> const & hist);
+      double maxAbs(DArray<double> const & hist) override;
 
       /**
       * Update the basis for residual or field vectors.
@@ -147,7 +149,7 @@ namespace Rpc
       * \param hists RingBuffer of past residual or field vectors
       */
       void updateBasis(RingBuffer<DArray<double> > & basis,
-                       RingBuffer<DArray<double> > const & hists);
+                       RingBuffer<DArray<double> > const & hists) override;
 
       /**
       * Add linear combination of basis vectors to trial field.
@@ -160,7 +162,7 @@ namespace Rpc
       void addHistories(DArray<double>& trial,
                         RingBuffer<DArray<double> > const & basis,
                         DArray<double> coeffs,
-                        int nHist);
+                        int nHist) override;
 
       /**
       * Add predicted error to field trial.
@@ -171,26 +173,26 @@ namespace Rpc
       */
       void addPredictedError(DArray<double>& fieldTrial,
                              DArray<double> const & resTrial,
-                             double lambda);
-
-      /**
-      * Does the system has an initial guess for the field?
-      */
-      bool hasInitialGuess();
+                             double lambda) override;
 
       /**
       * Compute and returns the number of elements in field vector.
       *
       * Called during allocation and then stored.
       */
-      int nElements();
+      int nElements() override;
+
+      /**
+      * Does the system has an initial guess for the field?
+      */
+      bool hasInitialGuess() override;
 
       /**
       * Gets the current field vector from the system.
       *
       * \param curr current field vector
       */
-      void getCurrent(DArray<double>& curr);
+      void getCurrent(DArray<double>& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -198,26 +200,26 @@ namespace Rpc
       * Solves the modified diffusion equations, computes concentrations,
       * and optionally computes stress components.
       */
-      void evaluate();
+      void evaluate() override;
 
       /**
       * Compute the residual vector.
       *
       * \param resid current residual vector value
       */
-      void getResidual(DArray<double>& resid);
+      void getResidual(DArray<double>& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DArray<double>& newGuess);
+      void update(DArray<double>& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.
       */
-      void outputToLog();
+      void outputToLog() override;
 
       // Inherited private members
       using Compressor<D>::system;

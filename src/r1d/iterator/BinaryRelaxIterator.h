@@ -23,7 +23,7 @@ namespace R1d
    using namespace Util;
 
    /**
-   * Relaxation iterator for SCF equations for two-monomer system.
+   * Relaxation iterator for 1D SCFT of two-monomer (AB) systems.
    *
    * This class implements the simple Picard-type relaxation iterator 
    * for systems with two monomer types that was introduced by Drolet and 
@@ -31,6 +31,8 @@ namespace R1d
    * 
    * Reference:
    * F. Drolet & G.H. Fredrickson, Phys. Rev. Lett. vol. 83, 4317 (1999).
+   *
+   * \see \ref r1d_BinaryRelaxIterator_page "Manual Page"
    *
    * \ingroup R1d_Iterator_Module
    */

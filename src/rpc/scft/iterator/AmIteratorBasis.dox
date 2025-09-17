@@ -66,17 +66,17 @@ parameters. The meaning of the various parameters are described below:
   </tr>
   <tr>
     <td> epsilon </td>
-    <td> Desired tolerance for convergence - iteration stops if 
-         the magnitude of the error drops below epsilon.  </td>
+    <td> Error tolerance - iteration stops if the magnitude of the error 
+         becomes less than epsilon.  </td>
   </tr>
   <tr>
     <td> maxItr* </td>
-    <td> Maximum number of iterations that will be attempted 
-         (200 by default) </td>
+    <td> Maximum number of iterations that will be attempted before
+         terminating (200 by default) </td>
   </tr>
   <tr>
     <td> maxHist* </td>
-    <td> Maximum number of previous trial solultions that will be 
+    <td> Maximum number of previous trial solulions that will be 
          retained in memory for used by the AM algorithm 
          (50 by default) </td>
   </tr>
@@ -87,31 +87,31 @@ parameters. The meaning of the various parameters are described below:
   </tr>
   <tr>
     <td> showTime* </td>
-    <td> Set to 1 (true) to report wall clock time components in log file. 
-         Optional, and 0 (false) by default. </td>
+    <td> Boolean flag set to 1 (true) to report wall clock time components 
+         in the log file. Optional, and 0 (false) by default. </td>
   </tr>
   <tr>
     <td> errorType* </td>
-    <td> Identifer for the type of variable used to define scalar
-         error . The only allowed values are "norm", "rms" "max", and 
-         "relNorm", as discussed below. Optional, and equal to "relNorm" 
-         by default. </td>
+    <td> Identifer for the choice of a definition for the scalar error . 
+         Meaning of the allowed values are "norm", "rms" "max", and 
+         "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here".
+         Optional, and equal to "relNorm" by default. </td>
   </tr>
   <tr>
     <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
-         optimization of unit cell parameters so as to minimize the 
-         free energy density. Optional and true by default.  </td>
+         optimization of unit cell parameters so as to minimize the free 
+         energy density. Optional and true by default.  </td>
   </tr>
   <tr>
     <td> flexibleParams* </td>
     <td> Use flexibleParams to declare only *some* lattice parameters
-         as flexible. **This optional entry is allowed only if isFlexible 
-         is true.** This array must contain one entry for each lattice 
-         parameter, with a value 1 (true) if the parameter is flexible
-         or 0 (false) if the parameter value is fixed.
+         as flexible. **This optional entry is allowed only if the 
+         isFlexible parameter is true.** This array must contain one entry 
+         for each lattice parameter, with a value 1 (true) if the parameter 
+         is flexible or 0 (false) if the parameter value is fixed.
          If isFlexible is true but flexibleParams is absent, then all
-         all lattice parameters will be flexible. </td>
+         lattice parameters will be flexible. </td>
   </tr>
   <tr>
     <td> scaleStress* </td>

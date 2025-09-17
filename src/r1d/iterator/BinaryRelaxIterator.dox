@@ -3,10 +3,10 @@ namespace R1d{
 /*! 
 \page r1d_BinaryRelaxIterator_page R1d::BinaryRelaxIterator
 
-An BinaryRelaxIterator solves is an iterator that uses the simple relaxation 
-method presented by F. Drolet and G.H. Fredrickson to solve the SCFT 
-equations of a 1D problem with only two monomer types, such as an AB 
-block copolymer or A/B polymer blend. The iteration algorithm will
+An BinaryRelaxIterator solves is an iterator that uses the simple 
+relaxation method presented by F. Drolet and G.H. Fredrickson to solve 
+the SCFT equations of a 1D problem with only two monomer types, such as 
+an AB block copolymer or A/B polymer blend. The iteration algorithm will
 halt if applied to a system with more than two types of monomer.
 
 \section r1d_BinaryRelaxIterator_parameter_sec Parameter File

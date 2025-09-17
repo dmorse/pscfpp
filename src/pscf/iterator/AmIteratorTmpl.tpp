@@ -549,8 +549,8 @@ namespace Pscf
    template <typename Iterator, typename T>
    void
    AmIteratorTmpl<Iterator, T> ::updateU(DMatrix<double> & U,
-                            RingBuffer<T> const & resBasis,
-                            int nHist)
+                                         RingBuffer<T> const & resBasis,
+                                         int nHist)
    {
       // Update matrix U by shifting elements diagonally
       int maxHist = U.capacity1();
@@ -563,9 +563,14 @@ namespace Pscf
       // Compute U matrix's new row 0 and col 0
       for (int m = 0; m < nHist; ++m) {
          double dotprod = dotProduct(resBasis[0],resBasis[m]);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
+         if (m == 0) {
+            U(0,0) = dotprod;
+         } else {
+            U(m,0) = dotprod;
+            U(0,m) = dotprod;
+         }
       }
+
    }
 
    template <typename Iterator, typename T>
@@ -581,9 +586,11 @@ namespace Pscf
    }
 
    template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::computeError(T&residTrial, T&fieldTrial,
-                                                   std::string errorType,
-                                                   int verbose)
+   double 
+   AmIteratorTmpl<Iterator,T>::computeError(T&residTrial, 
+                                            T&fieldTrial,
+                                            std::string errorType,
+                                            int verbose)
    {
       double error = 0.0;
 

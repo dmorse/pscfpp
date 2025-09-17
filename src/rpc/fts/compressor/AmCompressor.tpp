@@ -17,19 +17,25 @@ namespace Rpc{
 
    using namespace Util;
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
     : Compressor<D>(system),
       isAllocated_(false)
    {  setClassName("AmCompressor"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    AmCompressor<D>::~AmCompressor()
    {}
 
-   // Read parameters from file
+   /*
+   * Read parameters from file.
+   */
    template <int D>
    void AmCompressor<D>::readParameters(std::istream& in)
    {
@@ -38,7 +44,9 @@ namespace Rpc{
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
    }
 
-   // Initialize just before entry to iterative loop.
+   /*
+   * Initialize just before entry to iterative loop.
+   */
    template <int D>
    void AmCompressor<D>::setup(bool isContinuation)
    {
@@ -68,6 +76,9 @@ namespace Rpc{
       }
    }
 
+   /*
+   * Main function - identify partial saddle-point state.
+   */
    template <int D>
    int AmCompressor<D>::compress()
    {
@@ -76,12 +87,18 @@ namespace Rpc{
       return solve;
    }
 
-   // Assign one array to another
+   // Functions to define mathematical operations
+
+   /*
+   * Assign one array to another.
+   */
    template <int D>
    void AmCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
    {  a = b; }
 
-   // Compute and return inner product of two vectors.
+   /*
+   * Compute and return inner product of two vectors.
+   */
    template <int D>
    double AmCompressor<D>::dotProduct(DArray<double> const & a,
                                     DArray<double> const & b)
@@ -99,7 +116,9 @@ namespace Rpc{
       return product;
    }
 
-   // Compute and return maximum element of a vector.
+   /*
+   * Compute and return maximum element of an array.
+   */
    template <int D>
    double AmCompressor<D>::maxAbs(DArray<double> const & a)
    {
@@ -137,6 +156,9 @@ namespace Rpc{
       basis.append(newBasis_);
    }
 
+   /**
+   * Complete projection step.
+   */
    template <int D>
    void
    AmCompressor<D>::addHistories(DArray<double>& trial,
@@ -153,10 +175,13 @@ namespace Rpc{
       }
    }
 
+   /*
+   * Correction step.
+   */
    template <int D>
    void AmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
-                                         DArray<double> const & resTrial,
-                                         double lambda)
+                                           DArray<double> const & resTrial,
+                                           double lambda)
    {
       int n = fieldTrial.capacity();
       for (int i = 0; i < n; i++) {
@@ -164,17 +189,25 @@ namespace Rpc{
       }
    }
 
-   // Does the system have an initial field guess?
+   // Functions that interact with parent system
+
+   /*
+   * Does the system have an initial field guess?
+   */
    template <int D>
    bool AmCompressor<D>::hasInitialGuess()
    {  return system().w().hasData(); }
 
-   // Compute and return the number of elements in a field vector
+   /*
+   * Compute and return the number of elements in a field vector.
+   */
    template <int D>
    int AmCompressor<D>::nElements()
    {  return system().domain().mesh().size(); }
 
-   // Get the current field from the system
+   /*
+   * Get the current field from the system.
+   */
    template <int D>
    void AmCompressor<D>::getCurrent(DArray<double>& curr)
    {
@@ -185,7 +218,8 @@ namespace Rpc{
       /*
       * The field that we are adjusting is the Langrange multiplier field
       * with number of grid pts components.The current value is the difference
-      * between w and w0_ for the first monomer (any monomer should give the same answer)
+      * between w and w0_ for the first monomer (any monomer should give the 
+      * same answer)
       */
       for (int i = 0; i < meshSize; i++){
          curr[i] = (*currSys)[0][i] - w0_[0][i];
@@ -193,7 +227,9 @@ namespace Rpc{
 
    }
 
-   // Perform the main system computation (solve the MDE)
+   /*
+   * Perform the main system computation (solve the MDE).
+   */
    template <int D>
    void AmCompressor<D>::evaluate()
    {
@@ -201,7 +237,9 @@ namespace Rpc{
       ++mdeCounter_;
    }
 
-   // Compute the residual for the current system state
+   /*
+   * Compute the residual for the current system state.
+   */
    template <int D>
    void AmCompressor<D>::getResidual(DArray<double>& resid)
    {
@@ -223,7 +261,9 @@ namespace Rpc{
 
    }
 
-   // Update the current system field coordinates
+   /*
+   * Update the current system field coordinates.
+   */
    template <int D>
    void AmCompressor<D>::update(DArray<double>& newGuess)
    {
@@ -240,16 +280,25 @@ namespace Rpc{
       system().w().setRGrid(wFieldTmp_);
    }
 
+   /*
+   * Set lambda = 1.0.
+   */
    template<int D>
    double AmCompressor<D>::computeLambda(double r)
    {
       return 1.0;
    }
 
+   /*
+   * Do-nothing output function.
+   */
    template<int D>
    void AmCompressor<D>::outputToLog()
    {}
 
+   /*
+   * Output timer information, if requested.
+   */
    template<int D>
    void AmCompressor<D>::outputTimers(std::ostream& out) const
    {
@@ -259,7 +308,9 @@ namespace Rpc{
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
 
-   // Clear timers and MDE counter
+   /*
+   * Clear timers and MDE counter.
+   */
    template<int D>
    void AmCompressor<D>::clearTimers()
    {

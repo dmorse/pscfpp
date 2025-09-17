@@ -21,7 +21,7 @@ AmIteratorBasis{
    verbose*       int (0-2, 0 by default)
    outputTime*    bool (false by default)
    errorType*     string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
-   isFlexible*    bool (0 or 1, 1/true by default)   
+   isFlexible*    bool (0 or 1, 1 by default)   
    scaleStress*   real (10.0 by default)
 }
 \endcode
@@ -34,48 +34,50 @@ parameters. The meaning of the various parameters are described below:
   </tr>
   <tr>
     <td> epsilon </td>
-    <td> Desired tolerance for convergence - iteration stops if 
-         the magnitude of the error drops below epsilon.  </td>
+    <td> Error tolerance for convergence - iteration stops if the
+         magnitude of the scalar error becomes less than epsilon
+         (Required)  </td>
   </tr>
   <tr>
     <td> maxItr* </td>
     <td> Maximum number of iterations that will be attempted 
-         (200 by default) </td>
+         (Optional, 200 by default) </td>
   </tr>
   <tr>
     <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
          retained in memory for used by the AM algorithm
-         (50 by default) </td>
+         (Optional, 50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>
     <td> Integer level 0, 1, 2 for verbosity of log output during iteration.
-         Optional, and 0 (concise) by default. </td>
+         Lower values are more concise.
+         (Optional, 0 by default) </td>
   </tr>
   <tr>
     <td> showTime* </td>
-    <td> Set to 1 (true) to report wall clock time components in log file. 
-         Optional, and 0 (false) by default. </td>
+    <td> Set to 1 (true) to report wall clock time components in log file
+         (Optional, false by default) </td>
   </tr>
   <tr>
     <td> errorType* </td>
-    <td> Identifer for the type of variable used to define scalar
-         error . The allowed values are "norm", "rms", "max", and "relNorm".
-         Optional, and set to "relNorm" by default. </td>
+    <td> Identifer for the type of residual norm used to define scalar error. 
+         The allowed values are "norm", "rms", "max", and "relNorm", as 
+         discussed \ref pscf_AmIteratorTmpl_page "here". 
+         (Optional, and equal to "relNorm" by default) </td>
   </tr>
   <tr>
     <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
          optimization of the unit cell parameters so as to minimize the 
-         free energy.  
-         Optional and true by default.  </td>
+         free energy. (Optional, true by default)  </td>
   </tr>
   <tr>
     <td> scaleStress* </td>
     <td> Constant factor by which stress components are multipled in
          the definition of the residual  attempted if isFlexible is
-         true (optional). </td>
+         true (optional, 10.0 by default). </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reaches
