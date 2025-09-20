@@ -423,11 +423,14 @@ namespace Pscf
 
       UTIL_CHECK(nBasis_ > 0);
 
-      // Update v_ vector
-      updateV(v_, resHists_[0], resBasis_, nBasis_);
+      // Update v_ vector (dot product of basis vectors and residual)
+      computeV(v_, resHists_[0], resBasis_, nBasis_);
 
-      // Solve matrix equation problem to compute coefficients
-      // that minmize the L2 norm of the residual vector.
+      // Solution of the matrix problem U coeffs_ = -v yields a coeff
+      // vector that minimizes the norm of the residual. Below, we:
+      //    1. Solve matrix equation: U coeffs_ = v
+      //    2. Flip the sign of the resulting coeffs_ vector
+
       if (nBasis_ == 1) {
          // Solve explicitly for coefficient
          coeffs_[0] = v_[0] / U_(0,0);
@@ -452,7 +455,7 @@ namespace Pscf
          LuSolver solver;
          solver.allocate(nBasis_);
          solver.computeLU(tempU);
-         solver.solve(tempv,tempcoeffs);
+         solver.solve(tempv, tempcoeffs);
 
          // Transfer solution to full-sized member variable
          for (int i = 0; i < nBasis_; ++i) {
@@ -465,6 +468,11 @@ namespace Pscf
          solver.allocate(maxHist_);
          solver.computeLU(U_);
          solver.solve(v_, coeffs_);
+      }
+
+      // Flip the sign of the coeffs_ vector (see comment above)
+      for (int i = 0; i < nBasis_; ++i) {
+         coeffs_[i] *= -1.0;
       }
 
       return;
@@ -590,12 +598,16 @@ namespace Pscf
 
    }
 
+   /* 
+   * Compute v vector (dot products of residual and basis vectors).
+   */
    template <typename Iterator, typename T>
    void
-   AmIteratorTmpl<Iterator, T>::updateV(DArray<double> & v,
-                                        T const & resCurrent,
-                                        RingBuffer<T> const & resBasis,
-                                        int nHist)
+   AmIteratorTmpl<Iterator, T>::computeV(
+                                   DArray<double> & v,
+                                   T const & resCurrent,
+                                   RingBuffer<T> const & resBasis,
+                                   int nHist)
    {
       for (int m = 0; m < nHist; ++m) {
          v[m] = dotProduct(resCurrent, resBasis[m]);
@@ -652,6 +664,9 @@ namespace Pscf
       return error;
    }
 
+   /*
+   * Compute error (use current residual, errorType).
+   */
    template <typename Iterator, typename T>
    double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
    {
@@ -692,7 +707,7 @@ namespace Pscf
                                             int nHist)
    {
       for (int i = 0; i < nHist; i++) {
-         addEqVc(trial, basis[i], -1.0 * coeffs[i]);
+         addEqVc(trial, basis[i], coeffs[i]);
       }
    }
 

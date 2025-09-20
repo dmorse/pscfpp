@@ -338,7 +338,7 @@ namespace Pscf {
       int testCounter{0};
       #endif
 
-      // --- Private non-virtual functions (implemented here) -- //
+      // Private non-virtual functions used in AM algorithm
 
       /**
       * Compute optimal coefficients of residual basis vectors.
@@ -368,14 +368,14 @@ namespace Pscf {
                    int nHist);
 
       /**
-      * Update the v vector.
+      * Compute the v vector.
       *
       * \param v v vector
       * \param resCurrent  current residual vector
       * \param resBasis RingBuffer of residual basis vectors.
       * \param nHist number of histories stored at this iteration
       */
-      void updateV(DArray<double> & v, 
+      void computeV(DArray<double> & v, 
                    T const & resCurrent,
                    RingBuffer<T> const & resBasis, 
                    int nHist);
