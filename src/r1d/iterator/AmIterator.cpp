@@ -16,17 +16,25 @@ namespace R1d{
 
    using namespace Util;
 
-   // Constructor
+   // Public member functions
+
+   /*
+   * Constructor.
+   */
    AmIterator::AmIterator(System& system)
    : Iterator(system),
      interaction_()
    {  setClassName("AmIterator"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    AmIterator::~AmIterator()
    {}
 
-   // Read parameters from file
+   /*
+   * Read parameters from file.
+   */
    void AmIterator::readParameters(std::istream& in)
    {
       // Call parent class readParameters and readErrorType functions
@@ -37,99 +45,18 @@ namespace R1d{
       interaction_.setNMonomer(nMonomer);
    }
 
-   // Setup before entering iteration loop
+   // Protected member function
+
+   /*
+   * Setup before entering iteration loop.
+   */
    void AmIterator::setup(bool isContinuation)
    {
       AmIteratorTmpl<Iterator, DArray<double> >::setup(isContinuation);
       interaction_.update(system().interaction());
    }
 
-   // Assign one vector to another: a = b
-   void AmIterator::setEqual(DArray<double>& a, DArray<double> const & b)
-   {  a = b; }
-
-   // Compute and return inner product of two vectors 
-   double AmIterator::dotProduct(DArray<double> const & a, 
-                                 DArray<double> const & b)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      double product = 0.0;
-      for (int i = 0; i < n; i++) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) { 
-            throw NanException("AmIterator::dotProduct",__FILE__,__LINE__,0);
-         }
-         product += a[i] * b[i];
-      }
-      return product;
-   }
-
-   // Compute and return maximum element of residual vector.
-   double AmIterator::maxAbs(DArray<double> const & hist)
-   {
-      const int n = hist.capacity();
-      double maxRes = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = hist[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmIterator::dotProduct",__FILE__,__LINE__,0);
-         }
-         if (fabs(value) > maxRes)
-            maxRes = fabs(value);
-      }
-      return maxRes;
-   }
-
-   // Update basis
-   void AmIterator::updateBasis(RingBuffer<DArray<double> > & basis,
-                                RingBuffer<DArray<double> > const & hists)
-   {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      const int n = hists[0].capacity();
-      DArray<double> newbasis;
-      newbasis.allocate(n);
-
-      // Basis vector is different of last to vectors
-      for (int i = 0; i < n; i++) {
-         newbasis[i] = hists[0][i] - hists[1][i];
-      }
-
-      basis.append(newbasis);
-   }
-
-   // Add linear combination of basis vector to current trial state
-   void AmIterator::addHistories(DArray<double>& trial,
-                                 RingBuffer< DArray<double> > const& basis,
-                                 DArray<double> coeffs,
-                                 int nHist)
-   {
-      int n = trial.capacity();
-      for (int i = 0; i < nHist; i++) {
-         for (int j = 0; j < n; j++) {
-            trial[j] += coeffs[i] * -1 * basis[i][j];
-         }
-      }
-   }
-
-   void AmIterator::addPredictedError(DArray<double>& fieldTrial,
-                                      DArray<double> const & resTrial,
-                                      double lambda)
-   {
-      int n = fieldTrial.capacity();
-      for (int i = 0; i < n; i++) {
-         fieldTrial[i] += lambda * resTrial[i];
-      }
-   }
-
-   bool AmIterator::hasInitialGuess()
-   {
-      // R1d::System doesn't hav a hasFields() function
-      return true;
-   }
+   // Private virtual member functions
 
    // Compute and return the number of elements in a field vector
    int AmIterator::nElements()
@@ -137,6 +64,12 @@ namespace R1d{
       const int nm = system().mixture().nMonomer(); // # of monomers
       const int nx = domain().nx();                 // # of grid points
       return nm*nx;
+   }
+
+   bool AmIterator::hasInitialGuess()
+   {
+      // R1d::System doesn't have an appropriate query function
+      return true;
    }
 
    // Get the current fields from the system as a 1D array
@@ -154,14 +87,15 @@ namespace R1d{
       }
    }
 
-   // Solve the MDEs for the current system w fields
+   /*
+   * Solve the MDEs for the current system w fields.
+   */
    void AmIterator::evaluate()
-   {
-      mixture().compute(system().wFields(), system().cFields());
-   }
+   {  mixture().compute(system().wFields(), system().cFields()); }
 
-
-   // Check whether Canonical ensemble
+   /*
+   * Check whether this is canonical ensemble.
+   */
    bool AmIterator::isCanonical()
    {
       Species::Ensemble ensemble;

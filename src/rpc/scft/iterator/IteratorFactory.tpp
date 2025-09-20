@@ -33,7 +33,7 @@ namespace Rpc {
  
       // Try to match classname
       if (className == "Iterator" || className == "AmIteratorBasis" 
-                                  || className == "AmIterator" ) {
+          || className == "AmIterator" ) {
          ptr = new AmIteratorBasis<D>(*sysPtr_);
       }
 

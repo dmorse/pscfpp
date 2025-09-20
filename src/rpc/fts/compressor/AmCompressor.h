@@ -19,6 +19,7 @@ namespace Rpc
    // Forward declaration
    template <int D> class System;
 
+   // Namespaces from which names can be used without qualification
    using namespace Util;
    using namespace Pscf::Prdc::Cpu;
 
@@ -72,11 +73,6 @@ namespace Rpc
       int compress() override;
 
       /**
-      * Compute mixing parameter lambda
-      */
-      double computeLambda(double r) override;
-
-      /**
       * Return compressor times contributions.
       */
       void outputTimers(std::ostream& out) const override;
@@ -122,26 +118,7 @@ namespace Rpc
       */
       DArray<double> newBasis_;
 
-      /**
-      * Assign one field to another.
-      *
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field for it to be set to (rhs of assigment)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b) override;
-
-      /**
-      * Compute the inner product of two vectors
-      */
-      double 
-      dotProduct(DArray<double> const & a, DArray<double> const & b)
-      override;
-
-      /**
-      * Find the maximum magnitude element of a residual vector.
-      */
-      double maxAbs(DArray<double> const & hist) override;
-
+      #if 0
       /**
       * Update the basis for residual or field vectors.
       *
@@ -174,6 +151,14 @@ namespace Rpc
       void addPredictedError(DArray<double>& fieldTrial,
                              DArray<double> const & resTrial,
                              double lambda) override;
+      #endif
+
+      /**
+      * Compute mixing parameter lambda
+      */
+      double computeLambda(double r) override;
+
+      // Private virtual functions that interact with parent system
 
       /**
       * Compute and returns the number of elements in field vector.

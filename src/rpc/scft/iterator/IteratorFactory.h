@@ -32,17 +32,22 @@ namespace Rpc {
 
    public:
 
-      /// Constructor
+      /**
+      * Constructor.
+      *
+      * \param system  parent System
+      */
       IteratorFactory(System<D>& system);
 
       /**
       * Method to create any Iterator supplied with PSCF.
       *
-      * \param className name of the Iterator subclass
-      * \return Iterator* pointer to new instance of className
+      * \param className  name of the Iterator<D> subclass
+      * \return  pointer to new instance of className
       */
       Iterator<D>* factory(const std::string &className) const;
 
+      // Inherited member functions
       using Factory< Iterator<D> >::trySubfactories;
       using Factory< Iterator<D> >::readObjectOptional;
 

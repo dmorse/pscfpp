@@ -17,6 +17,8 @@ namespace Rpc{
 
    using namespace Util;
 
+   // Public member functions
+
    /*
    * Constructor.
    */
@@ -87,61 +89,38 @@ namespace Rpc{
       return solve;
    }
 
-   // Functions to define mathematical operations
-
    /*
-   * Assign one array to another.
+   * Output timer information, if requested.
    */
-   template <int D>
-   void AmCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
-   {  a = b; }
-
-   /*
-   * Compute and return inner product of two vectors.
-   */
-   template <int D>
-   double AmCompressor<D>::dotProduct(DArray<double> const & a,
-                                    DArray<double> const & b)
+   template<int D>
+   void AmCompressor<D>::outputTimers(std::ostream& out) const
    {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = 0.0;
-      for (int i = 0; i < n; i++) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) {
-            throw NanException("AmCompressor::dotProduct",__FILE__,__LINE__,0);
-         }
-         product += a[i] * b[i];
-      }
-      return product;
+      // Output timing results, if requested.
+      out << "\n";
+      out << "AmCompressor time contributions:\n";
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
 
    /*
-   * Compute and return maximum element of an array.
+   * Clear timers and MDE counter.
    */
-   template <int D>
-   double AmCompressor<D>::maxAbs(DArray<double> const & a)
+   template<int D>
+   void AmCompressor<D>::clearTimers()
    {
-      const int n = a.capacity();
-      double max = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = a[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmCompressor::dotProduct",__FILE__,__LINE__,0);
-         }
-         if (fabs(value) > max) {
-            max = fabs(value);
-         }
-      }
-      return max;
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
+      mdeCounter_ = 0;
    }
 
-   // Update basis
+   // AM algorithm operations
+
+   #if 0
+   /*
+   * Update basis.
+   */
    template <int D>
    void
    AmCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
-                              RingBuffer< DArray<double> > const & hists)
+                                RingBuffer< DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -156,15 +135,15 @@ namespace Rpc{
       basis.append(newBasis_);
    }
 
-   /**
+   /*
    * Complete projection step.
    */
    template <int D>
    void
    AmCompressor<D>::addHistories(DArray<double>& trial,
-                               RingBuffer<DArray<double> > const & basis,
-                               DArray<double> coeffs,
-                               int nHist)
+                                 RingBuffer<DArray<double> > const& basis,
+                                 DArray<double> coeffs,
+                                 int nHist)
    {
       int n = trial.capacity();
       for (int i = 0; i < nHist; i++) {
@@ -188,6 +167,7 @@ namespace Rpc{
          fieldTrial[i] += lambda * resTrial[i];
       }
    }
+   #endif
 
    // Functions that interact with parent system
 
@@ -216,10 +196,10 @@ namespace Rpc{
       const DArray< RField<D> > * currSys = &system().w().rgrid();
 
       /*
-      * The field that we are adjusting is the Langrange multiplier field
-      * with number of grid pts components.The current value is the difference
-      * between w and w0_ for the first monomer (any monomer should give the 
-      * same answer)
+      * The field that we are adjusting is the Langrange multiplier 
+      * field.  The current value is the difference between w and w0_ 
+      * for the first monomer type, but any monomer type would give
+      * the same answer.
       */
       for (int i = 0; i < meshSize; i++){
          curr[i] = (*currSys)[0][i] - w0_[0][i];
@@ -271,7 +251,7 @@ namespace Rpc{
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
 
-      //New field is the w0_ + the newGuess for the Lagrange multiplier field
+      // New field is the w0_ + newGuess for the pressure field
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
             wFieldTmp_[i][k] = w0_[i][k] + newGuess[k];
@@ -295,28 +275,6 @@ namespace Rpc{
    template<int D>
    void AmCompressor<D>::outputToLog()
    {}
-
-   /*
-   * Output timer information, if requested.
-   */
-   template<int D>
-   void AmCompressor<D>::outputTimers(std::ostream& out) const
-   {
-      // Output timing results, if requested.
-      out << "\n";
-      out << "AmCompressor time contributions:\n";
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
-   }
-
-   /*
-   * Clear timers and MDE counter.
-   */
-   template<int D>
-   void AmCompressor<D>::clearTimers()
-   {
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
-      mdeCounter_ = 0;
-   }
 
 }
 }

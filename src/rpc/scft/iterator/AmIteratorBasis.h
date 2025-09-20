@@ -37,6 +37,8 @@ namespace Rpc
 
    public:
 
+      using Base = AmIteratorTmpl< Iterator<D>, DArray<double> >;
+
       /**
       * Constructor.
       *
@@ -64,8 +66,8 @@ namespace Rpc
       void outputTimers(std::ostream& out) const override;
 
       // Inherited public member functions
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::clearTimers;
+      using Base::solve;
+      using Base::clearTimers;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
@@ -79,8 +81,8 @@ namespace Rpc
       using ParamComposite::readOptional;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptionalFSArray;
-      using AmIteratorTmpl< Iterator<D>, DArray<double> >::verbose;
-      using AmIteratorTmpl< Iterator<D>, DArray<double> >::residual;
+      using Base::verbose;
+      using Base::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
@@ -101,36 +103,9 @@ namespace Rpc
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
 
-      // --- Overridden pure virtual functions for vector math --- //
+      // --- Private virtual functions for AM operations ---- //
 
-      /**
-      * Assign one field to another (a = b).
-      *
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field for it to be set to (rhs of assigment)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b) override;
-
-      /**
-      * Compute the inner product of two vectors.
-      *
-      * \param a  first input vector
-      * \param b  second input vector
-      * \return value of dot product
-      */
-      double 
-      dotProduct(DArray<double> const & a, DArray<double> const & b)
-      override;
-
-      /**
-      * Find the maximum magnitude element of a residual vector.
-      *
-      * \param hist  current residual vector
-      */
-      double maxAbs(DArray<double> const & hist) override;
-
-      // --- Overridden pure virtual functions for AM operations ---- //
-
+      #if 0
       /**
       * Update the basis for residual or field vectors.
       *
@@ -164,8 +139,9 @@ namespace Rpc
       void addPredictedError(DArray<double>& fieldTrial,
                              DArray<double> const & resTrial,
                              double lambda) override;
+      #endif
 
-      // - Overridden pure virtual functions, communication with parent --//
+      // - Private virtual functions, interact with parent system --//
 
       /**
       * Does the system has an initial guess for the field?

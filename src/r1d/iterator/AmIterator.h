@@ -71,31 +71,12 @@ namespace R1d
 
    private:
 
-      /// Local copy of interaction, adapted for use AMBD residual definition
+      /// Local copy of interaction, for use with AMBD residual definition
       AmbdInteraction interaction_;
 
       // -- Virtual functions used to implement AM algorithm -- //
 
-      /**
-      * Assign one field to another.
-      *
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field for it to be set to (rhs of assigment)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b) override;
-
-      /**
-      * Find L2 norm of a residual vector.
-      */
-      double
-      dotProduct(DArray<double> const & a, DArray<double> const & b) 
-      override;
-
-      /**
-      * Find the maximum magnitude element of a residual vector.
-      */
-      double maxAbs(DArray<double> const & hist) override;
-
+      #if 0
       /**
       * Update the basis for residual or field vectors.
       *
@@ -129,6 +110,7 @@ namespace R1d
       void addPredictedError(DArray<double>& fieldTrial,
                              DArray<double> const & resTrial,
                              double lambda) override;
+      #endif
 
       // -- Pure virtual functions to exchange data with parent System -- //
 

@@ -1,5 +1,5 @@
-#ifndef RPC_LR_POST_AM_COMPRESSOR_TPP
-#define RPC_LR_POST_AM_COMPRESSOR_TPP
+#ifndef RPC_LR_AM_COMPRESSOR_TPP
+#define RPC_LR_AM_COMPRESSOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -17,6 +17,8 @@ namespace Pscf {
 namespace Rpc{
 
    using namespace Util;
+
+   // Public member functions
 
    /*
    * Constructor.
@@ -113,57 +115,30 @@ namespace Rpc{
    }
 
    /*
-   * Assign one array to another.
+   * Output timing results to an output stream (file)
    */
-   template <int D>
-   void LrAmCompressor<D>::setEqual(DArray<double>& a,
-                                        DArray<double> const & b)
-   {  a = b; }
-
-   /*
-   * Compute and return inner product of two vectors.
-   */
-   template <int D>
-   double
-   LrAmCompressor<D>::dotProduct(DArray<double> const & a,
-                                     DArray<double> const & b)
+   template<int D>
+   void LrAmCompressor<D>::outputTimers(std::ostream& out) const
    {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = 0.0;
-      for (int i = 0; i < n; i++) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) {
-            throw NanException("LrAmCompressor::dotProduct",
-                               __FILE__,__LINE__,0);
-         }
-         product += a[i] * b[i];
-      }
-      return product;
+      // Output timing results, if requested.
+      out << "\n";
+      out << "LrAmCompressor time contributions:\n";
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
    }
 
    /*
-   * Compute and return the maximum element of a vector.
+   * Clear all timers and the MDE counter
    */
-   template <int D>
-   double LrAmCompressor<D>::maxAbs(DArray<double> const & a)
+   template<int D>
+   void LrAmCompressor<D>::clearTimers()
    {
-      const int n = a.capacity();
-      double max = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = a[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("LrAmCompressor::dotProduct",
-                               __FILE__, __LINE__, 0);
-         }
-         if (fabs(value) > max) {
-            max = fabs(value);
-         }
-      }
-      return max;
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
+      mdeCounter_ = 0;
    }
 
+   // Private overridden virtual functions
+
+   #if 0
    /*
    * Update basis by adding one new basis vector.
    */
@@ -200,6 +175,7 @@ namespace Rpc{
          }
       }
    }
+   #endif
 
    /*
    * Returns mixing value parameter lambda = 1.0
@@ -254,12 +230,7 @@ namespace Rpc{
       }
    }
 
-   /*
-   * Does the associated system have initialized w fields?
-   */
-   template <int D>
-   bool LrAmCompressor<D>::hasInitialGuess()
-   {  return system().w().hasData(); }
+   // Private virtual functions that interact with parent System
 
    /*
    * Compute and return the number of elements in a field vector.
@@ -267,6 +238,13 @@ namespace Rpc{
    template <int D>
    int LrAmCompressor<D>::nElements()
    {  return system().domain().mesh().size(); }
+
+   /*
+   * Does the associated system have initialized w fields?
+   */
+   template <int D>
+   bool LrAmCompressor<D>::hasInitialGuess()
+   {  return system().w().hasData(); }
 
    /*
    * Get the current field variable from the system.
@@ -355,28 +333,6 @@ namespace Rpc{
    template<int D>
    void LrAmCompressor<D>::outputToLog()
    {}
-
-   /*
-   * Output timing results to an output stream (file)
-   */
-   template<int D>
-   void LrAmCompressor<D>::outputTimers(std::ostream& out) const
-   {
-      // Output timing results, if requested.
-      out << "\n";
-      out << "LrAmCompressor time contributions:\n";
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
-   }
-
-   /*
-   * Clear all timers and the MDE counter
-   */
-   template<int D>
-   void LrAmCompressor<D>::clearTimers()
-   {
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
-      mdeCounter_ = 0;
-   }
 
 }
 }

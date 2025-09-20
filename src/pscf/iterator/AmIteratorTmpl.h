@@ -82,40 +82,36 @@ namespace Pscf {
       */
       void clearTimers();
 
-      /**
-      * Obtain error type
-      */
-      std::string errorType() const;
-
    protected:
+
+      /**
+      * Error tolerance.
+      */
+      double epsilon_;
+
+      /**
+      * Maximum number of iterations to attempt.
+      */
+      int maxItr_;
+
+      /**
+      * Maximum number of basis vectors in AM algorithm.
+      */
+      int maxHist_;
+
+      /**
+      * Verbosity level.
+      */
+      int verbose_;
 
       /**
       * Type of error criterion used to test convergence.
       */
       std::string errorType_;
 
-      /**
-      * Set value of maxItr.
-      *
-      * Provided to allow subclasses to set a modified default value
-      * before calling readParameters, in which maxItr is optional.
-      * Global default, set in constructor, is maxItr = 200.
-      *
-      * \param maxItr  maximum number of iterations attempted
-      */
-      void setMaxItr(int maxItr);
+      // Parameter initialization
 
-      /**
-      * Set value of maxHist (number of retained previous states)
-      *
-      * Provided to allow subclasses to set a modified default value
-      * before calling readParameters, in which maxItr is optional.
-      * Global default, set in constructor, is maxHist = 50.
-      *
-      * \param maxHist  maximum number of retained previous states
-      */
-      void setMaxHist(int maxHist);
-
+      #if 0
       /**
       * Set and validate value of errorType string.
       *
@@ -126,6 +122,7 @@ namespace Pscf {
       * \param errorType error type string
       */
       void setErrorType(std::string errorType);
+      #endif
 
       /**
       * Read and validate the optional errorType string parameter.
@@ -143,15 +140,7 @@ namespace Pscf {
       */
       virtual bool isValidErrorType();
 
-      /**
-      * Find the L2 norm of a vector.
-      *
-      * The default implementation calls dotProduct internally.
-      * Virtual to allow more optimized versions.
-      *
-      * \param hist residual vector
-      */
-      virtual double norm(T const & hist);
+      // Protected AM mixing operations
 
       /**
       * Allocate memory required by AM algorithm, if necessary.
@@ -160,6 +149,11 @@ namespace Pscf {
       * function does nothing and returns.
       */
       void allocateAM();
+
+      /**
+      * Have data structures required by the AM algorithm been allocated?
+      */
+      bool isAllocatedAM() const;
 
       /**
       * Clear information about history.
@@ -198,7 +192,7 @@ namespace Pscf {
       * Compute and return error used to test for convergence.
       *
       * \param verbose  verbosity level of output report
-      * \return error  measure used to test for convergence.
+      * \return error  error value used to test for convergence.
       */
       double computeError(int verbose);
 
@@ -209,6 +203,18 @@ namespace Pscf {
       * \return lambda mixing parameter.
       */
       virtual double computeLambda(double r);
+
+      // Protected accessors for member variables
+
+      /**
+      * Verbosity level, allowed values 0, 1, or 2.
+      */
+      int verbose() const;
+
+      /**
+      * Obtain error type
+      */
+      std::string errorType() const;
 
       /**
       * Return the current residual vector by const reference.
@@ -221,14 +227,11 @@ namespace Pscf {
       T const & field() const;
 
       /**
-      * Verbosity level, allowed values 0, 1, or 2.
-      */
-      int verbose() const;
-
-      /**
       * Return the total number of iterations needed to converge.
       */
       int totalItr();
+
+      // --- Timer value accessors --- //
 
       /**
       * Get total time.
@@ -265,10 +268,60 @@ namespace Pscf {
       */
       double timerOmega();
 
+      // --- Protected virtual functions for vector math --- //
+
       /**
-      * Have data structures required by the AM algorithm been allocated?
+      * Assignment for vectors of type T.
+      *
+      * This function must perform an assignment a = b.
+      *
+      * \param a  vector to be set (lhs of assignment)
+      * \param b  vector value to assign (rhs of assignment)
       */
-      bool isAllocatedAM() const;
+      virtual void setEqual(T& a, T const & b);
+
+      /**
+      * Compute the inner product of two vectors.
+      *
+      * \param a first vector
+      * \param b second vector
+      */
+      virtual double dotProduct(T const & a, T const & b);
+
+      /**
+      * Find the L2 norm of a vector.
+      *
+      * The default implementation calls dotProduct internally.
+      * Virtual to allow more optimized versions.
+      *
+      * \param hist residual vector
+      */
+      virtual double norm(T const & hist);
+
+      /**
+      * Return the maximum magnitude element of a vector.
+      *
+      * \param hist  input vector
+      */
+      virtual double maxAbs(T const & hist);
+
+      /**
+      * Compute the difference a = b - c for vectors a, b and c.
+      *
+      * \param a result vector (LHS)
+      * \param b first vector (RHS)
+      * \param c second vector (RHS)
+      */
+      virtual void subVV(T& a, T const & b, T const & c);
+
+      /**
+      * Compute a += c*b for vectors a and b and scalar c.
+      *
+      * \param a result vector (LHS)
+      * \param b input vector (RHS)
+      * \param c scalar coefficient (RHS)
+      */
+      virtual void addEqVc(T& a, T const & b, double c);
 
       // Inherited members of parent classes with non-dependent names
       using ParamComposite::setClassName;
@@ -279,23 +332,14 @@ namespace Pscf {
 
       // Private member variables
 
-      /// Error
+      /// Current scalar error.
       double error_;
-
-      /// Error tolerance.
-      double epsilon_;
 
       /// Free parameter for minimization.
       double lambda_;
 
       /// Ramp parameter for correction step.
       double r_;
-
-      /// Maximum number of iterations to attempt.
-      int maxItr_;
-
-      /// Maximum number of basis vectors
-      int maxHist_;
 
       /// Number of basis vectors defined as differences.
       int nBasis_;
@@ -308,9 +352,6 @@ namespace Pscf {
 
       /// Number of elements in field or residual vectors.
       int nElem_;
-
-      /// Verbosity level.
-      int verbose_;
 
       /// Has the allocateAM function been called.
       bool isAllocatedAM_;
@@ -364,7 +405,7 @@ namespace Pscf {
       int testCounter{0};
       #endif
 
-      // --- Private non-virtual private functions (implemented here) -- //
+      // --- Private non-virtual functions (implemented here) -- //
 
       /**
       * Compute optimal coefficients of residual basis vectors.
@@ -391,8 +432,10 @@ namespace Pscf {
       * \param resBasis RingBuffer of residual basis vectors.
       * \param nHist number of histories stored at this iteration
       */
-      virtual void updateU(DMatrix<double> & U,
-                           RingBuffer<T> const & resBasis, int nHist);
+      virtual 
+      void updateU(DMatrix<double> & U,
+                   RingBuffer<T> const & resBasis, 
+                   int nHist);
 
       /**
       * Update the v vector.
@@ -402,50 +445,24 @@ namespace Pscf {
       * \param resBasis RingBuffer of residual basis vectors.
       * \param nHist number of histories stored at this iteration
       */
-      virtual void updateV(DArray<double> & v, T const & resCurrent,
-                           RingBuffer<T> const & resBasis, int nHist);
-
-      // --- Pure virtual functions for vector math --- //
-
-      /**
-      * Assignment for vectors of type T.
-      *
-      * This function must perform an assignment a = b.
-      *
-      * \param a  vector to be set (lhs of assignment)
-      * \param b  vector value to assign (rhs of assignment)
-      */
-      virtual void setEqual(T& a, T const & b) = 0;
-
-      /**
-      * Compute the inner product of two vectors.
-      *
-      * \param a first vector
-      * \param b second vector
-      */
-      virtual double dotProduct(T const & a, T const & b) = 0;
-
-      /**
-      * Return the maximum magnitude element of a vector.
-      *
-      * \param hist  input vector
-      */
-      virtual double maxAbs(T const & hist) = 0;
-
-      // -- Pure virtual functions for AM iterator operations -- //
+      virtual 
+      void updateV(DArray<double> & v, 
+                   T const & resCurrent,
+                   RingBuffer<T> const & resBasis, 
+                   int nHist);
 
       /**
       * Update a basis that spans sequential differences of past vectors.
       *
-      * This function is applied to update bases for both residual
-      * vectors and field vectors.
+      * This function is applied to update bases for both field vectors
+      * and residual vectors.
       *
-      * \param basis RingBuffer of residual basis vectors
-      * \param hists RingBuffer of history of residual vectors
+      * \param basis RingBuffer of basis vectors
+      * \param hists RingBuffer of history of prior vectors
       */
-      virtual
+      virtual 
       void updateBasis(RingBuffer<T> & basis,
-                       RingBuffer<T> const & hists) = 0;
+                       RingBuffer<T> const & hists);
 
       /**
       * Add linear combination of field basis vectors to the trial field.
@@ -459,7 +476,7 @@ namespace Pscf {
       void addHistories(T& trial,
                         RingBuffer<T> const & basis,
                         DArray<double> coeffs,
-                        int nHist) = 0;
+                        int nHist);
 
       /**
       * Remove predicted error from trial in attempt to correct for it.
@@ -469,15 +486,11 @@ namespace Pscf {
       * \param lambda Anderson-Mixing parameter for mixing in histories
       */
       virtual
-      void addPredictedError(T& fieldTrial, T const & resTrial,
-                             double lambda) = 0;
+      void addPredictedError(T& fieldTrial, 
+                             T const & resTrial,
+                             double lambda);
 
-      // -- Pure virtual functions to exchange data with parent system -- //
-
-      /**
-      * Does the system have an initial guess?
-      */
-      virtual bool hasInitialGuess() = 0;
+      // -- Pure virtual functions that interact with parent system -- //
 
       /**
       * Compute and return the number of residual or field vector elements.
@@ -487,6 +500,11 @@ namespace Pscf {
       * the residual and field vectors.
       */
       virtual int nElements() = 0;
+
+      /**
+      * Does the system have an initial guess?
+      */
+      virtual bool hasInitialGuess() = 0;
 
       /**
       * Get the current field vector from the system.
@@ -526,11 +544,18 @@ namespace Pscf {
    };
 
    /*
-   * Return the current residual vector by const reference.
+   * Return integer level for verbosity of the log output (0-2).
    */
    template <typename Iterator, typename T>
-   T const & AmIteratorTmpl<Iterator,T>::residual() const
-   {  return resHists_[0]; }
+   int AmIteratorTmpl<Iterator,T>::verbose() const
+   {  return verbose_; }
+
+   /*
+   * Return error type string.
+   */
+   template <typename Iterator, typename T>
+   std::string AmIteratorTmpl<Iterator,T>::errorType() const
+   {  return errorType_; }
 
    /*
    * Return the current field/state vector by const reference.
@@ -540,11 +565,11 @@ namespace Pscf {
    {  return fieldHists_[0]; }
 
    /*
-   * Return integer level for verbosity of the log output (0-2).
+   * Return the current residual vector by const reference.
    */
    template <typename Iterator, typename T>
-   int AmIteratorTmpl<Iterator,T>::verbose() const
-   {  return verbose_; }
+   T const & AmIteratorTmpl<Iterator,T>::residual() const
+   {  return resHists_[0]; }
 
    /*
    * Has memory required by AM algorithm been allocated?
@@ -552,13 +577,6 @@ namespace Pscf {
    template <typename Iterator, typename T>
    bool AmIteratorTmpl<Iterator,T>::isAllocatedAM() const
    {  return isAllocatedAM_; }
-
-   /*
-   * Return error type string.
-   */
-   template <typename Iterator, typename T>
-   std::string AmIteratorTmpl<Iterator,T>::errorType() const
-   {  return errorType_; }
 
    /*
    * Return total iteration counter.

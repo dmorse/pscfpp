@@ -1,5 +1,5 @@
-#ifndef RPC_LR_POST_AM_COMPRESSOR_H
-#define RPC_LR_POST_AM_COMPRESSOR_H
+#ifndef RPC_LR_AM_COMPRESSOR_H
+#define RPC_LR_AM_COMPRESSOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,10 +9,10 @@
 */
 
 #include "Compressor.h"
-#include <rpc/fts/compressor/IntraCorrelation.h> 
+#include <rpc/fts/compressor/IntraCorrelation.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
-#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include <pscf/iterator/AmIteratorTmpl.h>
 
 namespace Pscf {
 namespace Rpc {
@@ -26,25 +26,27 @@ namespace Rpc {
    /**
    * Anderson Mixing compressor with linear-response mixing step.
    *
-   * Class LrAmCompressor implements an Anderson mixing algorithm 
-   * which modifies the second mixing step, estimating Jacobian by linear 
-   * response of homogenous liquid instead of unity. The residual is a 
-   * vector in which each that represents a deviations 
+   * Class LrAmCompressor implements an Anderson mixing algorithm
+   * which modifies the second mixing step, estimating Jacobian by linear
+   * response of homogenous liquid instead of unity. The residual is a
+   * vector in which each that represents a deviations
    * in the sum of volume fractions from unity.
    *
    * \ingroup Rpc_Fts_Compressor_Module
    */
    template <int D>
-   class LrAmCompressor 
-         : public AmIteratorTmpl<Compressor<D>, DArray<double> >
+   class LrAmCompressor
+    : public AmIteratorTmpl<Compressor<D>, DArray<double> >
    {
 
    public:
 
+      using Base = AmIteratorTmpl<Compressor<D>, DArray<double> >;
+
       /**
       * Constructor.
-      * 
-      * \param system System object associated with this compressor.
+      *
+      * \param system  parent System<D> object 
       */
       LrAmCompressor(System<D>& system);
 
@@ -56,7 +58,7 @@ namespace Rpc {
       /**
       * Read all parameters and initialize.
       *
-      * \param in input filestream
+      * \param in  input filestream
       */
       void readParameters(std::istream& in);
 
@@ -64,23 +66,25 @@ namespace Rpc {
       * Initialize just before entry to iterative loop.
       *
       * This function is called by the solve function before entering the
-      * loop over iterations. Store the current values of the fields at the 
+      * loop over iterations. Store the current values of the fields at the
       * beginning of iteration
       *
       * \param isContinuation true iff continuation within a sweep
-      */ 
-      void setup(bool isContinuation);      
-      
-      
+      */
+      void setup(bool isContinuation);
+
+
       /**
       * Compress to obtain partial saddle point w+
       *
       * \return 0 for convergence, 1 for failure
       */
-      int compress();    
-      
+      int compress();
+
       /**
       * Return compressor times contributions.
+      *   
+      * \param out  output stream
       */
       void outputTimers(std::ostream& out) const;
 
@@ -88,115 +92,114 @@ namespace Rpc {
       * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers();
-      
-      // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
-      
+
    protected:
-  
-      // Inherited protected members 
+
+      // Inherited protected members
+      using ParamComposite::setClassName;
       using ParamComposite::readOptional;
       using Compressor<D>::mdeCounter_;
 
    private:
-   
+
       /**
-      * How many times MDE has been solved for each mc move 
+      * How many times MDE has been solved for each move ?
       */
       int itr_;
-      
+
       /**
       * Current values of the fields
       */
-      DArray< RField<D> > w0_;  
-      
+      DArray< RField<D> > w0_;
+
       /**
       * Template w Field used in update function
       */
       DArray< RField<D> > wFieldTmp_;
-      
+
       /**
-      * New Basis variable used in updateBasis function 
+      * New Basis variable used in updateBasis function
       */
       DArray<double> newBasis_;
-      
+
       /**
       * Residual in real space used for linear response anderson mixing.
       */
       RField<D> resid_;
-      
+
       /**
       * Residual in Fourier space used for linear response anderson mixing.
       */
       RFieldDft<D> residK_;
-     
+
       /**
       * IntraCorrelation in fourier space calculated by IntraCorrlation class
       */
       RField<D> intraCorrelationK_;
-      
+
       /**
       * Dimensions of wavevector mesh in real-to-complex transform
-      */ 
+      */
       IntVec<D> kMeshDimensions_;
 
       /**
-      * Assign one field to another.
-      * 
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field for it to be set to (rhs of assigment)
+      * IntraCorrelation object
       */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
+      IntraCorrelation<D> intra_;
 
       /**
-      * Compute the inner product of two vectors
+      * Has the IntraCorrelation been calculated?
       */
-      double dotProduct(DArray<double> const & a, DArray<double> const & b);
+      bool isIntraCalculated_;
 
       /**
-      * Find the maximum magnitude element of a residual vector.
+      * Has the variable been allocated?
       */
-      double maxAbs(DArray<double> const & hist);
+      bool isAllocated_;
 
+      #if 0
       /**
       * Update the basis for residual or field vectors.
-      * 
+      *
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<DArray<double> > & basis, 
+      void updateBasis(RingBuffer<DArray<double> > & basis,
                        RingBuffer<DArray<double> > const & hists);
 
       /**
       * Add linear combination of basis vectors to trial field.
-      * 
+      *
       * \param trial trial vector (input-output)
       * \param basis RingBuffer of basis vectors
       * \param coeffs array of coefficients of basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void addHistories(DArray<double>& trial, 
-                        RingBuffer<DArray<double> > const & basis, 
-                        DArray<double> coeffs, 
+      void addHistories(DArray<double>& trial,
+                        RingBuffer<DArray<double> > const & basis,
+                        DArray<double> coeffs,
                         int nHist);
+      #endif
 
       /**
       * Add predicted error to field trial.
-      * 
+      *
       * \param fieldTrial trial field (in-out)
       * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing 
+      * \param lambda Anderson-Mixing mixing
       */
-      void addPredictedError(DArray<double>& fieldTrial, 
-                             DArray<double> const & resTrial, 
+      void addPredictedError(DArray<double>& fieldTrial,
+                             DArray<double> const & resTrial,
                              double lambda);
 
       /**
-      * Does the system has an initial guess for the field?
+      * Compute mixing parameter lambda
       */
-      bool hasInitialGuess();
-     
-      /** 
+      double computeLambda(double r);;
+
+      // Private virtual functions that interact with parent System
+
+      /**
       * Compute and returns the number of elements in field vector.
       *
       * Called during allocation and then stored.
@@ -204,10 +207,15 @@ namespace Rpc {
       int nElements();
 
       /**
+      * Does the system has an initial guess for the field?
+      */
+      bool hasInitialGuess();
+
+      /**
       * Gets the current field vector from the system.
-      * 
+      *
       * \param curr current field vector
-      */ 
+      */
       void getCurrent(DArray<double>& curr);
 
       /**
@@ -236,32 +244,12 @@ namespace Rpc {
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-      
-      /**
-      * Compute mixing parameter lambda
-      */
-      double computeLambda(double r);;
-      
-      /**
-      * IntraCorrelation object
-      */
-      IntraCorrelation<D> intra_;
-      
-      /**
-      * Has the IntraCorrelation been calculated?
-      */
-      bool isIntraCalculated_;
-      
-      /**
-      * Has the variable been allocated?
-      */
-      bool isAllocated_;
-      
-      // Inherited private members 
+
+      // Inherited private members
       using Compressor<D>::system;
 
    };
-   
+
    // Explicit instantiation declarations
    extern template class LrAmCompressor<1>;
    extern template class LrAmCompressor<2>;

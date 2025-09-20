@@ -30,16 +30,18 @@ namespace Pscf
    */
    template <typename Iterator, typename T>
    AmIteratorTmpl<Iterator,T>::AmIteratorTmpl()
-    : errorType_("relNormResid"),
-      epsilon_(0),
-      lambda_(0),
-      r_(0.9),
+    : epsilon_(0),
       maxItr_(200),
       maxHist_(50),
+      verbose_(1),
+      errorType_("relNormResid"),
+      error_(0.0),
+      lambda_(0),
+      r_(0.9),
       nBasis_(0),
+      itr_(0),
       totalItr_(0),
       nElem_(0),
-      verbose_(1),
       isAllocatedAM_(false)
    {  setClassName("AmIteratorTmpl"); }
 
@@ -60,11 +62,11 @@ namespace Pscf
       read(in, "epsilon", epsilon_);
 
       // Maximum number of iterations (optional parameter)
-      // Default set in constructor (200) or by prior call to setMaxItr
+      // Default set in constructor (200) 
       readOptional(in, "maxItr", maxItr_);
 
       // Maximum number of previous states in history (optional)
-      // Default set in constructor (50) or by prior call to setMaxHist
+      // Default set in constructor (50) 
       readOptional(in, "maxHist", maxHist_);
 
       // Verbosity level of error reporting, values 0-3 (optional)
@@ -221,22 +223,66 @@ namespace Pscf
 
    }
 
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::outputTimers(std::ostream& out) const
+   {
+      // Output timing results, if requested.
+      double total = timerTotal_.time();
+      out << "\n";
+      out << "                          ";
+      out << "Total" << std::setw(22)<< "Per Iteration"
+          << std::setw(9) << "Fraction" << "\n";
+      out << "MDE solution:             "
+          << Dbl(timerMDE_.time(), 9, 3)  << " s,  "
+          << Dbl(timerMDE_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerMDE_.time()/total, 9, 3) << "\n";
+      out << "residual computation:     "
+          << Dbl(timerResid_.time(), 9, 3)  << " s,  "
+          << Dbl(timerResid_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerResid_.time()/total, 9, 3) << "\n";
+      out << "mixing coefficients:      "
+          << Dbl(timerCoeff_.time(), 9, 3)  << " s,  "
+          << Dbl(timerCoeff_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerCoeff_.time()/total, 9, 3) << "\n";
+      out << "checking convergence:     "
+          << Dbl(timerError_.time(), 9, 3)  << " s,  "
+          << Dbl(timerError_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerError_.time()/total, 9, 3) << "\n";
+      out << "updating guess:           "
+          << Dbl(timerOmega_.time(), 9, 3)  << " s,  "
+          << Dbl(timerOmega_.time()/totalItr_, 9, 3)  << " s,  "
+          << Dbl(timerOmega_.time()/total, 9, 3)<< "\n";
+      out << "total time:               "
+          << Dbl(total, 9, 3) <<  " s,  "
+          << Dbl(total/totalItr_, 9, 3) << " s  \n";
+      out << "\n";
+
+      #ifdef PSCF_AM_TEST
+      if (hasAmTest_){
+         out << "Average Projection Step Reduction Ratio:     "
+             << Dbl(projectionRatio_/testCounter, 3, 3)<< "\n";
+         out << "Average Correction Step Reduction Ratio:     "
+             << Dbl(correctionRatio_/testCounter, 3, 3)<< "\n";
+      }
+      #endif
+   }
+
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::clearTimers()
+   {
+      timerMDE_.clear();
+      timerResid_.clear();
+      timerError_.clear();
+      timerCoeff_.clear();
+      timerOmega_.clear();
+      timerAM_.clear();
+      timerTotal_.clear();
+      totalItr_ = 0;
+   }
+
    // Protected member functions
 
-   /*
-   * Set value of maxItr.
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setMaxItr(int maxItr)
-   {  maxItr_ = maxItr; }
-
-   /*
-   * Set value of maxHist (number of retained previous states)
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setMaxHist(int maxHist)
-   {  maxHist_ = maxHist; }
-
+   #if 0
    /*
    * Set and validate value of error type string.
    */
@@ -256,6 +302,7 @@ namespace Pscf
          UTIL_THROW(msg.c_str());
       }
    }
+   #endif
 
    /*
    * Read and validate optional errorType string parameter.
@@ -353,6 +400,98 @@ namespace Pscf
       fieldBasis_.clear();
 
       return;
+   }
+
+   // Protected virtual vector math functions
+
+   /* 
+   * Assign one vector to another: a = b.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setEqual(T& a, T const & b)
+   {  a = b; }
+
+   /*
+   * Compute and return inner product of two vectors 
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::dotProduct(T const & a, 
+                                                 T const & b)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      double product = 0.0;
+      for (int i = 0; i < n; i++) {
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+            throw NanException("AmIteratorTmpl<Iterator,T>::dotProduct",
+                               __FILE__,__LINE__,0);
+         }
+         product += a[i] * b[i];
+      }
+      return product;
+   }
+
+   /*
+   * Compute L2 norm of a vector.
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::norm(T const & a)
+   {
+      double normSq = dotProduct(a, a);
+      return sqrt(normSq);
+   }
+
+   /*
+   * Compute and return maximum element of residual vector.
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::maxAbs(T const & a)
+   {
+      const int n = a.capacity();
+      double max = 0.0;
+      double value;
+      for (int i = 0; i < n; i++) {
+         value = a[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmIteratorTmpl<Iterator,T>::dotProduct",
+                                __FILE__,__LINE__,0);
+         }
+         if (fabs(value) > max)
+            max = fabs(value);
+      }
+      return max;
+   }
+
+   /*
+   * Compute difference of two vectors.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::subVV(T& a,
+                                          T const & b,
+                                          T const & c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      UTIL_CHECK(n == c.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] = b[i] - c[i];
+      }
+   }
+
+   /*
+   * Compute and return inner product of two vectors 
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::addEqVc(T& a,
+                                            T const & b,
+                                            double c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] += c*b[i];
+      }
    }
 
    // Private non-virtual member functions
@@ -520,7 +659,7 @@ namespace Pscf
    }
 
    /**
-   * Compute mixing parameter for mixing step of an Anderson mixing algorithm.
+   * Compute ramped mixing parameter for Anderson mixing algorithm.
    * (virtual)
    */
    template <typename Iterator, typename T>
@@ -536,16 +675,8 @@ namespace Pscf
    }
 
    /*
-   * Compute L2 norm of a vector.
+   * Update entire U matrix.
    */
-   template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::norm(T const & a)
-   {
-      double normSq = dotProduct(a, a);
-      return sqrt(normSq);
-   }
-
-   // Update entire U matrix
    template <typename Iterator, typename T>
    void
    AmIteratorTmpl<Iterator, T> ::updateU(DMatrix<double> & U,
@@ -638,64 +769,57 @@ namespace Pscf
    template <typename Iterator, typename T>
    double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
    {
-      return computeError(resHists_[0], fieldHists_[0], errorType_, verbose);
+      return computeError(resHists_[0], fieldHists_[0], 
+                          errorType_, verbose);
    }
 
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::outputTimers(std::ostream& out) const
-   {
-      // Output timing results, if requested.
-      double total = timerTotal_.time();
-      out << "\n";
-      out << "                          ";
-      out << "Total" << std::setw(22)<< "Per Iteration"
-          << std::setw(9) << "Fraction" << "\n";
-      out << "MDE solution:             "
-          << Dbl(timerMDE_.time(), 9, 3)  << " s,  "
-          << Dbl(timerMDE_.time()/totalItr_, 9, 3)  << " s,  "
-          << Dbl(timerMDE_.time()/total, 9, 3) << "\n";
-      out << "residual computation:     "
-          << Dbl(timerResid_.time(), 9, 3)  << " s,  "
-          << Dbl(timerResid_.time()/totalItr_, 9, 3)  << " s,  "
-          << Dbl(timerResid_.time()/total, 9, 3) << "\n";
-      out << "mixing coefficients:      "
-          << Dbl(timerCoeff_.time(), 9, 3)  << " s,  "
-          << Dbl(timerCoeff_.time()/totalItr_, 9, 3)  << " s,  "
-          << Dbl(timerCoeff_.time()/total, 9, 3) << "\n";
-      out << "checking convergence:     "
-          << Dbl(timerError_.time(), 9, 3)  << " s,  "
-          << Dbl(timerError_.time()/totalItr_, 9, 3)  << " s,  "
-          << Dbl(timerError_.time()/total, 9, 3) << "\n";
-      out << "updating guess:           "
-          << Dbl(timerOmega_.time(), 9, 3)  << " s,  "
-          << Dbl(timerOmega_.time()/totalItr_, 9, 3)  << " s,  "
-          << Dbl(timerOmega_.time()/total, 9, 3)<< "\n";
-      out << "total time:               "
-          << Dbl(total, 9, 3) <<  " s,  "
-          << Dbl(total/totalItr_, 9, 3) << " s  \n";
-      out << "\n";
 
-      #ifdef PSCF_AM_TEST
-      if (hasAmTest_){
-         out << "Average Projection Step Reduction Ratio:     "
-             << Dbl(projectionRatio_/testCounter, 3, 3)<< "\n";
-         out << "Average Correction Step Reduction Ratio:     "
-             << Dbl(correctionRatio_/testCounter, 3, 3)<< "\n";
+   // Update the series of residual vectors.
+   template <typename Iterator, typename T>
+   void 
+   AmIteratorTmpl<Iterator,T>::updateBasis(RingBuffer<T> & basis, 
+                                           RingBuffer<T> const & hists)
+   {
+      // Make sure at least two histories are stored
+      UTIL_CHECK(hists.size() >= 2);
+
+      // Set up array to store new basis
+      basis.advance();
+      if (basis[0].isAllocated()) {
+         UTIL_CHECK(basis[0].capacity() == hists[0].capacity());
+      } else {
+         basis[0].allocate(hists[0].capacity());
       }
-      #endif
+
+      // New basis vector is difference between two most recent states
+      subVV(basis[0], hists[0], hists[1]);
    }
 
+   /*
+   * Compute trial field so as to minimize L2 norm of residual.
+   */
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::clearTimers()
+   void 
+   AmIteratorTmpl<Iterator,T>::addHistories(T& trial, 
+                                            RingBuffer<T> const & basis, 
+                                            DArray<double> coeffs, 
+                                            int nHist)
    {
-      timerMDE_.clear();
-      timerResid_.clear();
-      timerError_.clear();
-      timerCoeff_.clear();
-      timerOmega_.clear();
-      timerAM_.clear();
-      timerTotal_.clear();
-      totalItr_ = 0;
+      for (int i = 0; i < nHist; i++) {
+         addEqVc(trial, basis[i], -1.0 * coeffs[i]);
+      }
+   }
+
+   /*
+   * Add predicted error to the trial field.
+   */
+   template <typename Iterator, typename T>
+   void 
+   AmIteratorTmpl<Iterator,T>::addPredictedError(T& fieldTrial, 
+                                                 T const & resTrial, 
+                                                 double lambda)
+   {
+      addEqVc(fieldTrial, resTrial, lambda);
    }
 
 }

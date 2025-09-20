@@ -47,8 +47,8 @@ namespace Rpc {
    void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::readParameters(in);
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::readErrorType(in);
+      Base::readParameters(in);
+      Base::readErrorType(in);
 
       // Allocate local modified copy of Interaction class
       interaction_.setNMonomer(system().mixture().nMonomer());
@@ -95,7 +95,7 @@ namespace Rpc {
       // Output timing results, if requested.
       out << "\n";
       out << "Iterator times contributions:\n";
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
+      Base::outputTimers(out);
    }
 
    // Protected virtual function
@@ -104,72 +104,21 @@ namespace Rpc {
    template <int D>
    void AmIteratorBasis<D>::setup(bool isContinuation)
    {
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
+      Base::setup(isContinuation);
       interaction_.update(system().interaction());
-   }
-
-   // Private virtual functions for vector math.
-
-   /*
-   * Assign one array to another.
-   */
-   template <int D>
-   void AmIteratorBasis<D>::setEqual(DArray<double>& a, 
-                                     DArray<double> const & b)
-   {  a = b; }
-
-   /*
-   * Compute and return inner product of two vectors.
-   */
-   template <int D>
-   double AmIteratorBasis<D>::dotProduct(DArray<double> const & a, 
-                                    DArray<double> const & b)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = 0.0;
-      for (int i = 0; i < n; i++) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) { 
-            throw NanException("AmIteratorBasis::dotProduct", __FILE__, 
-                               __LINE__, 0);
-         }
-         product += a[i] * b[i];
-      }
-      return product;
-   }
-
-   /*
-   * Compute and return maximum element of a vector.
-   */
-   template <int D>
-   double AmIteratorBasis<D>::maxAbs(DArray<double> const & a)
-   {
-      const int n = a.capacity();
-      double max = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = a[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmIteratorBasis::dotProduct", __FILE__, 
-                               __LINE__, 0);
-         }
-         if (fabs(value) > max) {
-            max = fabs(value);
-         }
-      }
-      return max;
    }
 
    // Private virtual functions for AM algorithm operations.
 
+   #if 0
    /*
    * Update basis.
    */
    template <int D>
    void 
-   AmIteratorBasis<D>::updateBasis(RingBuffer< DArray<double> > & basis,
-                              RingBuffer< DArray<double> > const & hists)
+   AmIteratorBasis<D>::updateBasis(
+                            RingBuffer< DArray<double> > & basis,
+                            RingBuffer< DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -190,10 +139,11 @@ namespace Rpc {
    */
    template <int D>
    void
-   AmIteratorBasis<D>::addHistories(DArray<double>& trial,
-                                    RingBuffer<DArray<double> > const & basis,
-                                    DArray<double> coeffs,
-                                    int nHist)
+   AmIteratorBasis<D>::addHistories(
+                             DArray<double>& trial,
+                             RingBuffer<DArray<double> > const & basis,
+                             DArray<double> coeffs,
+                             int nHist)
    {
       int n = trial.capacity();
       for (int i = 0; i < nHist; i++) {
@@ -208,15 +158,17 @@ namespace Rpc {
    * Add predicted error to field trial.
    */
    template <int D>
-   void AmIteratorBasis<D>::addPredictedError(DArray<double>& fieldTrial,
-                                              DArray<double> const & resTrial,
-                                              double lambda)
+   void 
+   AmIteratorBasis<D>::addPredictedError(DArray<double>& fieldTrial,
+                                         DArray<double> const & resTrial,
+                                         double lambda)
    {
       int n = fieldTrial.capacity();
       for (int i = 0; i < n; i++) {
          fieldTrial[i] += lambda * resTrial[i];
       }
    }
+   #endif
 
    // Private virtual functions to exchange data with parent system
 
