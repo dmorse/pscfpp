@@ -98,7 +98,50 @@ namespace Rpg
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
 
-      // Virtual functions used to implement AM algorithm
+      // Private virtual functions that interact with parent system
+
+      /** 
+      * Compute the number of elements in the residual vector.
+      */
+      int nElements() override;
+
+      /**
+      * Check if the system has an initial guess.
+      */
+      bool hasInitialGuess() override;
+     
+      /**
+      * Get the current w fields and lattice parameters.
+      *
+      * \param curr current field vector (output)
+      */
+      void getCurrent(FieldCUDA& curr) override;
+
+      /**
+      * Solve MDE for current state of system.
+      */
+      void evaluate() override;
+
+      /**
+      * Gets the residual vector from system.
+      *  
+      * \param resid  current residual vector (output)
+      */
+      void getResidual(FieldCUDA& resid) override;
+
+      /**
+      * Update the system with a new trial field vector.
+      *
+      * \param newGuess  trial field configuration (output)
+      */
+      void update(FieldCUDA& newGuess) override;
+
+      /**
+      * Output relevant system details to the iteration log file.
+      */
+      void outputToLog() override;
+
+      // Private virtual functions for vector math
       
       /**
       * Set vector a equal to vector b (a = b).
@@ -106,92 +149,43 @@ namespace Rpg
       * \param a the field to be set (LHS, result)
       * \param b the field for it to be set to (RHS, input)
       */
-      void setEqual(FieldCUDA& a, FieldCUDA const & b);
+      void setEqual(FieldCUDA& a, FieldCUDA const & b) override;
 
       /**
       * Compute and return inner product of two real fields.
       */
-      double dotProduct(FieldCUDA const & a, FieldCUDA const & b);
+      double dotProduct(FieldCUDA const & a, 
+                        FieldCUDA const & b) override;
 
       /**
       * Find the maximum magnitude element of a residual vector.
       *  
       * \param a input vector
       */
-      double maxAbs(FieldCUDA const & a);
+      double maxAbs(FieldCUDA const & a) override;
 
       /**
-      * Update the series of residual vectors.
-      * 
-      * \param basis RingBuffer of basis vectors.
-      * \param hists RingBuffer of previous vectors.
-      */
-      void updateBasis(RingBuffer<FieldCUDA> & basis, 
-                       RingBuffer<FieldCUDA> const & hists);
-
-      /**
-      * Compute trial field so as to minimize L2 norm of residual.
-      * 
-      * \param trial resulting trial field (output)
-      * \param basis RingBuffer of residual basis vectors.
-      * \param coeffs coefficients of basis vectors
-      * \param nHist number of prior states stored
-      */
-      void addHistories(FieldCUDA& trial, 
-                        RingBuffer<FieldCUDA> const & basis, 
-                        DArray<double> coeffs, int nHist);
-
-      /**
-      * Add predicted error to the trial field.
-      * 
-      * \param fieldTrial trial field (input/output)
-      * \param resTrial predicted error for current trial field
-      * \param lambda Anderson-Mixing mixing parameter 
-      */
-      void addPredictedError(FieldCUDA& fieldTrial, 
-                             FieldCUDA const & resTrial, 
-                             double lambda);
-
-      /// Checks if the system has an initial guess
-      bool hasInitialGuess();
-     
-      /** 
-      * Compute the number of elements in the residual vector.
-      */
-      int nElements();
-
-      /**
-      * Get the current w fields and lattice parameters.
+      * Compute the difference a = b - c for vectors a, b and c.
       *
-      * \param curr current field vector (output)
+      * \param a result vector (LHS)
+      * \param b first vector (RHS)
+      * \param c second vector (RHS)
       */
-      void getCurrent(FieldCUDA& curr);
+      void subVV(FieldCUDA& a, 
+                 FieldCUDA const & b, 
+		 FieldCUDA const & c) override;
 
       /**
-      * Solve MDE for current state of system.
-      */
-      void evaluate();
-
-      /**
-      * Gets the residual vector from system.
-      *  
-      * \param resid current residual vector (output)
-      */
-      void getResidual(FieldCUDA& resid);
-
-      /**
-      * Update the system with a new trial field vector.
+      * Compute a += c*b for vectors a and b and scalar c.
       *
-      * \param newGuess trial field configuration
+      * \param a result vector (LHS)
+      * \param b input vector (RHS)
+      * \param c scalar coefficient (RHS)
       */
-      void update(FieldCUDA& newGuess);
+      void addEqVc(FieldCUDA& a, 
+		   FieldCUDA const & b, double c) override;
 
-      /**
-      * Output relevant system details to the iteration log file.
-      */
-      void outputToLog();
-
-      // --- Private member functions specific to this implementation --- 
+      // --- Private member function specific to this implementation --- 
       
       /**
       * Calculate the average value of an array.

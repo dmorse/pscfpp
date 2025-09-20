@@ -71,22 +71,6 @@ namespace Rpg{
 
       FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
 
-      #if 0
-      for (int i = 0; i < D; ++i) {
-         if (i < D - 1) {
-            kMeshDimensions_[i] = dimensions[i];
-         } else {
-            kMeshDimensions_[i] = dimensions[i]/2 + 1;
-         }
-      }
-      
-      // Compute number of points in k-space grid
-      kSize_ = 1;
-      for (int i = 0; i < D; ++i) {
-         kSize_ *= kMeshDimensions_[i];
-      }
-      #endif
-      
       // Allocate memory required by AM algorithm if not done earlier.
       if (!isAllocated_){
          resid_.allocate(dimensions);

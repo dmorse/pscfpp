@@ -261,6 +261,13 @@ namespace Rpc{
    }
 
    /*
+   * Do-nothing output function.
+   */
+   template<int D>
+   void AmCompressor<D>::outputToLog()
+   {}
+
+   /*
    * Set lambda = 1.0.
    */
    template<int D>
@@ -269,12 +276,88 @@ namespace Rpc{
       return 1.0;
    }
 
+   // Virtual vector math functions
+
    /*
-   * Do-nothing output function.
+   * Vector assignment, a = b.
    */
-   template<int D>
-   void AmCompressor<D>::outputToLog()
-   {}
+   template <int D>
+   void AmCompressor<D>::setEqual(DArray<double>& a, 
+                                  DArray<double> const & b)
+   {  a = b; }
+
+   /*
+   * Compute and return the inner product of two vectors
+   */
+   template <int D>
+   double AmCompressor<D>::dotProduct(DArray<double> const & a,
+                                      DArray<double> const & b)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      double product = 0.0;
+      for (int i = 0; i < n; i++) {
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) {
+            throw NanException("AmCompressor<D>::dotProduct",
+                               __FILE__,__LINE__,0);
+         }
+         product += a[i] * b[i];
+      }
+      return product;
+   }
+
+   /*
+   * Compute and return the maximum magnitude element of a vector.
+   */
+   template <int D>
+   double AmCompressor<D>::maxAbs(DArray<double> const & a)
+   {
+      const int n = a.capacity();
+      double max = 0.0;
+      double value;
+      for (int i = 0; i < n; i++) {
+         value = a[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmCompressor<D>::dotProduct",
+                                __FILE__,__LINE__,0);
+         }
+         if (fabs(value) > max)
+            max = fabs(value);
+      }
+      return max;
+   }
+
+   /*
+   * Compute the vector difference a = b - c 
+   */
+   template <int D>
+   void AmCompressor<D>::subVV(DArray<double>& a,
+                               DArray<double> const & b,
+                               DArray<double> const & c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      UTIL_CHECK(n == c.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] = b[i] - c[i];
+      }
+   }
+
+   /*
+   * Composite a += b*c for vectors a and b, scalar c
+   */
+   template <int D>
+   void AmCompressor<D>::addEqVc(DArray<double>& a,
+                                 DArray<double> const & b,
+                                 double c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] += c*b[i];
+      }
+   }
 
 }
 }

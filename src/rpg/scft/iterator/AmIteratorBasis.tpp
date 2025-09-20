@@ -10,13 +10,10 @@
 
 #include "AmIteratorBasis.h"
 #include <rpg/system/System.h>
-
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
-
 #include <pscf/inter/Interaction.h>
 #include <pscf/iterator/NanException.h>
-
 #include <util/global.h>
 #include <cmath>
 
@@ -26,25 +23,33 @@ namespace Rpg {
    using namespace Util;
    using namespace Prdc;
 
-   // Constructor
+   // Public member functions
+
+   /*
+   * Constructor.
+   */
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
     : Iterator<D>(system)
    {
-      isSymmetric_ = true;  
-      setClassName("AmIteratorBasis"); 
+      isSymmetric_ = true;
+      setClassName("AmIteratorBasis");
    }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    AmIteratorBasis<D>::~AmIteratorBasis()
    {}
 
-   // Read parameter file block
+   /*
+   * Read parameter file block.
+   */
    template <int D>
    void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters 
+      // Call parent class readParameters
       AmIteratorTmpl<Iterator<D>,DArray<double> >::readParameters(in);
       AmIteratorTmpl<Iterator<D>,DArray<double> >::readErrorType(in);
 
@@ -58,7 +63,8 @@ namespace Rpg {
       int np = system().domain().unitCell().nParameter();
       UTIL_CHECK(np > 0);
       UTIL_CHECK(np <= 6);
-      UTIL_CHECK(system().domain().unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(system().domain().unitCell().lattice() 
+                  != UnitCell<D>::Null);
 
       // Read in optional isFlexible value
       readOptional(in, "isFlexible", isFlexible_);
@@ -84,7 +90,9 @@ namespace Rpg {
       readOptional(in, "scaleStress", scaleStress_);
    }
 
-   // Output timing results to log file.
+   /*
+   * Output timing results to log file.
+   */
    template<int D>
    void AmIteratorBasis<D>::outputTimers(std::ostream& out) const
    {
@@ -94,7 +102,7 @@ namespace Rpg {
       AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
    }
 
-   // -- Protected virtual function -- //
+   // Protected virtual function
 
    // Setup before entering iteration loop
    template <int D>
@@ -107,111 +115,11 @@ namespace Rpg {
       interaction_.update(system().interaction());
    }
 
+   // Private virtual functions that interact with parent system
 
-   // -- Private virtual functions used to implement AM algorithm --  //
-
-   // Set a vector equal to another (assign a = b)
-   template <int D>
-   void AmIteratorBasis<D>::setEqual(DArray<double>& a, 
-                                     DArray<double> const & b)
-   {  a = b; }
-
-   // Compute the inner product of two real vectors.
-   template <int D>
-   double AmIteratorBasis<D>::dotProduct(DArray<double> const & a,
-                                         DArray<double> const & b) 
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = 0.0;
-      for (int i=0; i < n; ++i) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) { 
-            throw NanException("AmIteratorBasis::dotProduct", __FILE__,
-                               __LINE__, 0);
-         }
-         product += a[i] * b[i];
-      } 
-      return product;
-   }
-
-   // Compute and return maximum element of residual vector.
-   template <int D>
-   double AmIteratorBasis<D>::maxAbs(DArray<double> const & a)
-   {
-      const int n = a.capacity();
-      double max = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = a[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmIteratorBasis::dotProduct", __FILE__,
-                               __LINE__, 0);
-         }
-         if (fabs(value) > max)
-            max = fabs(value);
-      }
-      return max;
-   }
-
-   // Update the series of residual vectors.
-   template <int D>
-   void 
-   AmIteratorBasis<D>::updateBasis(RingBuffer<DArray<double> > & basis,
-                                   RingBuffer<DArray<double> > const& hists)
-   {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      const int n = hists[0].capacity();
-      DArray<double> newbasis;
-      newbasis.allocate(n);
-
-      // New basis vector is difference between two most recent states
-      for (int i = 0; i < n; i++) {
-         newbasis[i] = hists[0][i] - hists[1][i]; 
-      }
-
-      basis.append(newbasis);
-   }
-
-   // Compute trial field so as to minimize L2 norm of residual.
-   template <int D>
-   void
-   AmIteratorBasis<D>::addHistories(DArray<double>& trial,
-                                    RingBuffer<DArray<double> > const & basis,
-                                    DArray<double> coeffs,
-                                    int nHist)
-   {
-      int n = trial.capacity();
-      for (int i = 0; i < nHist; i++) {
-         for (int j = 0; j < n; j++) {
-            // Not clear on the origin of the -1 factor
-            trial[j] += coeffs[i] * -1 * basis[i][j];
-         }
-      }
-   }
-
-   // Add predicted error to the trial field.
-   template <int D>
-   void AmIteratorBasis<D>::addPredictedError(DArray<double>& fieldTrial,
-                                              DArray<double> const & resTrial,
-                                              double lambda)
-   {
-      int n = fieldTrial.capacity();
-      for (int i = 0; i < n; i++) {
-         fieldTrial[i] += lambda * resTrial[i];
-      }
-   }
-
-   // Does the system have an initial field guess?
-   template <int D>
-   bool AmIteratorBasis<D>::hasInitialGuess()
-   {
-      return system().w().hasData();
-   }
-
-   // Compute the number of elements in the residual vector.
+   /*
+   * Compute the number of elements in the residual vector.
+   */
    template <int D>
    int AmIteratorBasis<D>::nElements()
    {
@@ -220,14 +128,23 @@ namespace Rpg {
 
       int nEle = nMonomer*nBasis;
 
-      if (isFlexible_) { 
+      if (isFlexible_) {
          nEle += nFlexibleParams();
       }
 
       return nEle;
    }
 
-   // Get the current w fields and lattice parameters
+   /*
+   * Does the system have an initial field guess?
+   */
+   template <int D>
+   bool AmIteratorBasis<D>::hasInitialGuess()
+   {  return system().w().hasData(); }
+
+   /*
+   * Get the current w fields and lattice parameters.
+   */
    template <int D>
    void AmIteratorBasis<D>::getCurrent(DArray<double>& curr)
    {
@@ -247,7 +164,7 @@ namespace Rpg {
          const int begin = nMonomer*nBasis;
          const int nParam = system().domain().unitCell().nParameter();
          FSArray<double,6> const & parameters
-                                  = system().domain().unitCell().parameters();
+                               = system().domain().unitCell().parameters();
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -260,7 +177,9 @@ namespace Rpg {
 
    }
 
-   // Perform the main system computation (solve the MDE)
+   /*
+   * Perform the main system computation (solve the MDE).
+   */
    template <int D>
    void AmIteratorBasis<D>::evaluate()
    {
@@ -269,7 +188,9 @@ namespace Rpg {
       system().compute(isFlexible_);
    }
 
-   // Compute the residual for the current system state
+   /*
+   * Compute the residual for the current system state.
+   */
    template <int D>
    void AmIteratorBasis<D>::getResidual(DArray<double>& resid)
    {
@@ -309,7 +230,7 @@ namespace Rpg {
          }
       }
 
-      // If iterator has external fields, account for them in the values 
+      // If iterator has external fields, account for them in the values
       // of the residuals
       if (system().h().hasData()) {
          for (int i = 0; i < nMonomer; ++i) {
@@ -340,7 +261,7 @@ namespace Rpg {
       if (isFlexible_) {
          const int nParam = system().domain().unitCell().nParameter();
 
-         //  Note: 
+         //  Note:
          //  Combined -1 factor and stress scaling here.  This is okay:
          //  - Residuals only show up as dot products (U, v, norm)
          //    or with their absolute value taken (max), so the
@@ -364,7 +285,9 @@ namespace Rpg {
 
    }
 
-   // Update the current system field coordinates
+   /*
+   * Update the current system field coordinates.
+   */
    template <int D>
    void AmIteratorBasis<D>::update(DArray<double>& newGuess)
    {
@@ -393,7 +316,7 @@ namespace Rpg {
                wField[i][0] += chi * system().c().basis(j)[0];
             }
          }
-         // If iterator has external fields, include them in homogeneous field
+         // If system has external fields, include them in homogeneous part
          if (system().h().hasData()) {
             for (int i = 0; i < nMonomer; ++i) {
                wField[i][0] += system().h().basis(i)[0];
@@ -423,7 +346,9 @@ namespace Rpg {
       }
    }
 
-   // Output relevant system details to the iteration log file.
+   /*
+   * Output relevant system details to the iteration log file.
+   */
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {
@@ -436,15 +361,98 @@ namespace Rpg {
             if (flexibleParams_[i]) {
                double str = residual()[nMonomer*nBasis + counter] /
                             (-1.0 * scaleStress_);
-               Log::file() 
-                      << " Cell Param  " << i << " = "
-                      << Dbl(system().domain().unitCell().parameters()[i], 15)
-                      << " , stress = " 
-                      << Dbl(str, 15)
-                      << "\n";
+               Log::file()
+                   << " Cell Param  " << i << " = "
+                   << Dbl(system().domain().unitCell().parameters()[i], 15)
+                   << " , stress = "
+                   << Dbl(str, 15)
+                   << "\n";
                counter++;
             }
          }
+      }
+   }
+
+   // Private virtual functions for vector math
+
+   /*
+   * Set a vector equal to another (assign a = b).
+   */
+   template <int D>
+   void AmIteratorBasis<D>::setEqual(DArray<double>& a,
+                                     DArray<double> const & b)
+   {  a = b; }
+
+   /*
+   * Compute the inner product of two real vectors.
+   */
+   template <int D>
+   double AmIteratorBasis<D>::dotProduct(DArray<double> const & a,
+                                         DArray<double> const & b)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(b.capacity() == n);
+      double product = 0.0;
+      for (int i=0; i < n; ++i) {
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) {
+            throw NanException("AmIteratorBasis::dotProduct", __FILE__,
+                               __LINE__, 0);
+         }
+         product += a[i] * b[i];
+      }
+      return product;
+   }
+
+   /*
+   * Compute and return maximum element of residual vector.
+   */
+   template <int D>
+   double AmIteratorBasis<D>::maxAbs(DArray<double> const & a)
+   {
+      const int n = a.capacity();
+      double max = 0.0;
+      double value;
+      for (int i = 0; i < n; i++) {
+         value = a[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmIteratorBasis::dotProduct", __FILE__,
+                               __LINE__, 0);
+         }
+         if (fabs(value) > max)
+            max = fabs(value);
+      }
+      return max;
+   }
+
+   /*
+   * Compute the vector difference a = b - c
+   */
+   template <int D>
+   void AmIteratorBasis<D>::subVV(DArray<double>& a,
+                                  DArray<double> const & b,
+                                  DArray<double> const & c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      UTIL_CHECK(n == c.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] = b[i] - c[i];
+      }
+   }
+
+   /*
+   * Composite a += b*c for vectors a and b, scalar c
+   */
+   template <int D>
+   void AmIteratorBasis<D>::addEqVc(DArray<double>& a,
+                                    DArray<double> const & b,
+                                    double c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] += c*b[i];
       }
    }
 

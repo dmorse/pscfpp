@@ -282,28 +282,6 @@ namespace Pscf
 
    // Protected member functions
 
-   #if 0
-   /*
-   * Set and validate value of error type string.
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setErrorType(std::string errorType)
-   {
-      errorType_ = errorType;
-
-      // Check validity, normalize to standard form
-      bool isValid = isValidErrorType();
-
-      // If not valid, throw Exception with error message
-      if (!isValid) {
-         std::string msg = "Invalid iterator error type [";
-         msg += errorType;
-         msg += "] input in AmIteratorTmpl::setErrorType";
-         UTIL_THROW(msg.c_str());
-      }
-   }
-   #endif
-
    /*
    * Read and validate optional errorType string parameter.
    */
@@ -351,7 +329,7 @@ namespace Pscf
    }
 
    /*
-   * Allocate memory required by the Anderson-Mixing algorithm, if needed.
+   * Allocate memory required by the AM algorithm, if needed.
    * (protected, non-virtual)
    */
    template <typename Iterator, typename T>
@@ -400,98 +378,6 @@ namespace Pscf
       fieldBasis_.clear();
 
       return;
-   }
-
-   // Protected virtual vector math functions
-
-   /* 
-   * Assign one vector to another: a = b.
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setEqual(T& a, T const & b)
-   {  a = b; }
-
-   /*
-   * Compute and return inner product of two vectors 
-   */
-   template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::dotProduct(T const & a, 
-                                                 T const & b)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      double product = 0.0;
-      for (int i = 0; i < n; i++) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) { 
-            throw NanException("AmIteratorTmpl<Iterator,T>::dotProduct",
-                               __FILE__,__LINE__,0);
-         }
-         product += a[i] * b[i];
-      }
-      return product;
-   }
-
-   /*
-   * Compute L2 norm of a vector.
-   */
-   template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::norm(T const & a)
-   {
-      double normSq = dotProduct(a, a);
-      return sqrt(normSq);
-   }
-
-   /*
-   * Compute and return maximum element of residual vector.
-   */
-   template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::maxAbs(T const & a)
-   {
-      const int n = a.capacity();
-      double max = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = a[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmIteratorTmpl<Iterator,T>::dotProduct",
-                                __FILE__,__LINE__,0);
-         }
-         if (fabs(value) > max)
-            max = fabs(value);
-      }
-      return max;
-   }
-
-   /*
-   * Compute difference of two vectors.
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::subVV(T& a,
-                                          T const & b,
-                                          T const & c)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      UTIL_CHECK(n == c.capacity());
-      for (int i = 0; i < n; i++) {
-         a[i] = b[i] - c[i];
-      }
-   }
-
-   /*
-   * Compute and return inner product of two vectors 
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::addEqVc(T& a,
-                                            T const & b,
-                                            double c)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      for (int i = 0; i < n; i++) {
-         a[i] += c*b[i];
-      }
    }
 
    // Private non-virtual member functions
@@ -821,6 +707,100 @@ namespace Pscf
    {
       addEqVc(fieldTrial, resTrial, lambda);
    }
+
+   // Private virtual vector math functions
+
+   /*
+   * Compute L2 norm of a vector.
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::norm(T const & a)
+   {
+      double normSq = dotProduct(a, a);
+      return sqrt(normSq);
+   }
+
+   #if 0
+   /* 
+   * Assign one vector to another: a = b.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setEqual(T& a, T const & b)
+   {  a = b; }
+
+   /*
+   * Compute and return inner product of two vectors 
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::dotProduct(T const & a, 
+                                                 T const & b)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      double product = 0.0;
+      for (int i = 0; i < n; i++) {
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+            throw NanException("AmIteratorTmpl<Iterator,T>::dotProduct",
+                               __FILE__,__LINE__,0);
+         }
+         product += a[i] * b[i];
+      }
+      return product;
+   }
+
+   /*
+   * Compute and return maximum element of residual vector.
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::maxAbs(T const & a)
+   {
+      const int n = a.capacity();
+      double max = 0.0;
+      double value;
+      for (int i = 0; i < n; i++) {
+         value = a[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmIteratorTmpl<Iterator,T>::dotProduct",
+                                __FILE__,__LINE__,0);
+         }
+         if (fabs(value) > max)
+            max = fabs(value);
+      }
+      return max;
+   }
+
+   /*
+   * Compute difference of two vectors.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::subVV(T& a,
+                                          T const & b,
+                                          T const & c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      UTIL_CHECK(n == c.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] = b[i] - c[i];
+      }
+   }
+
+   /*
+   * Compute and return inner product of two vectors 
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::addEqVc(T& a,
+                                            T const & b,
+                                            double c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] += c*b[i];
+      }
+   }
+   #endif
 
 }
 #endif

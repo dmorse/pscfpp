@@ -74,50 +74,14 @@ namespace R1d
       /// Local copy of interaction, for use with AMBD residual definition
       AmbdInteraction interaction_;
 
-      // -- Virtual functions used to implement AM algorithm -- //
-
-      #if 0
-      /**
-      * Update the basis for residual or field vectors.
-      *
-      * \param basis RingBuffer of residual or field basis vectors
-      * \param hists RingBuffer of past residual or field vectors
-      */
-      void 
-      updateBasis(RingBuffer<DArray<double> > & basis,
-                  RingBuffer<DArray<double> > const & hists) override;
+      // Non-virtual private function
 
       /**
-      * Add linear combination of basis vectors to trial field.
-      *
-      * \param trial trial vector (input-output)
-      * \param basis RingBuffer of basis vectors
-      * \param coeffs array of coefficients of basis vectors
-      * \param nHist number of histories stored at this iteration
+      * Return true iff all species are treated in closed ensemble.
       */
-      void addHistories(DArray<double>& trial,
-                        RingBuffer<DArray<double> > const & basis,
-                        DArray<double> coeffs,
-                        int nHist) override;
+      bool isCanonical();
 
-      /**
-      * Add predicted error to field trial.
-      *
-      * \param fieldTrial trial field (in-out)
-      * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing
-      */
-      void addPredictedError(DArray<double>& fieldTrial,
-                             DArray<double> const & resTrial,
-                             double lambda) override;
-      #endif
-
-      // -- Pure virtual functions to exchange data with parent System -- //
-
-      /**
-      * Checks if the system has an initial guess.
-      */
-      bool hasInitialGuess() override;
+      // -- Private virtual functions that interact with parent System -- //
 
       /**
       * Compute and returns the number residuals and unknowns.
@@ -125,6 +89,11 @@ namespace R1d
       * Called during allocation and then stored.
       */
       int nElements() override;
+
+      /**
+      * Checks if the system has an initial guess.
+      */
+      bool hasInitialGuess() override;
 
       /**
       * Gets the current field vector from the system.
@@ -160,12 +129,57 @@ namespace R1d
       */
       void outputToLog() override;
 
-      // Non-virtual private function
+      // --- Private virtual functions for vector math --- //
 
       /**
-      * Return true iff all species are treated in closed ensemble.
+      * Assignment for vectors of type T.
+      *
+      * This function must perform an assignment a = b.
+      *
+      * \param a  vector to be set (lhs of assignment)
+      * \param b  vector value to assign (rhs of assignment)
       */
-      bool isCanonical();
+      void setEqual(DArray<double>& a, DArray<double> const & b) 
+      override;
+
+      /**
+      * Compute the inner product of two vectors.
+      *
+      * \param a first vector
+      * \param b second vector
+      */
+      double dotProduct(DArray<double> const & a, DArray<double> const & b) 
+      override;
+
+      /**
+      * Return the maximum magnitude element of a vector.
+      *
+      * \param hist  input vector
+      */
+      double maxAbs(DArray<double> const & hist) 
+      override;
+
+      /**
+      * Compute the difference a = b - c for vectors a, b and c.
+      *
+      * \param a result vector (LHS)
+      * \param b first vector (RHS)
+      * \param c second vector (RHS)
+      */
+      void subVV(DArray<double>& a, 
+                 DArray<double> const & b, 
+		 DArray<double> const & c) 
+      override;
+
+      /**
+      * Compute a += c*b for vectors a and b and scalar c.
+      *
+      * \param a result vector (LHS)
+      * \param b input vector (RHS)
+      * \param c scalar coefficient (RHS)
+      */
+      void addEqVc(DArray<double>& a, DArray<double> const & b, double c) 
+      override;
 
    };
 

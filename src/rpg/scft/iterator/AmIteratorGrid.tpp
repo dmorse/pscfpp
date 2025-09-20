@@ -14,7 +14,6 @@
 #include <prdc/cuda/resources.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/iterator/NanException.h>
-
 #include <util/global.h>
 #include <cmath>
 
@@ -25,25 +24,31 @@ namespace Rpg {
    using namespace Prdc;
    using namespace Prdc::Cuda;
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    template <int D>
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
     : Iterator<D>(system)
    {
       setClassName("AmIteratorGrid");
-      isSymmetric_ = false; 
+      isSymmetric_ = false;
    }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    AmIteratorGrid<D>::~AmIteratorGrid()
    {}
 
-   // Read parameter file block 
+   /*
+   * Read parameter file block.
+   */
    template <int D>
    void AmIteratorGrid<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters 
+      // Call parent class readParameters
       AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters(in);
       AmIteratorTmpl<Iterator<D>,FieldCUDA>::readErrorType(in);
 
@@ -57,7 +62,8 @@ namespace Rpg {
       int np = system().domain().unitCell().nParameter();
       UTIL_CHECK(np > 0);
       UTIL_CHECK(np <= 6);
-      UTIL_CHECK(system().domain().unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(system().domain().unitCell().lattice() 
+                  != UnitCell<D>::Null);
 
       // Read in optional isFlexible value
       readOptional(in, "isFlexible", isFlexible_);
@@ -83,7 +89,9 @@ namespace Rpg {
       readOptional(in, "scaleStress", scaleStress_);
    }
 
-   // Output timing results to log file.
+   /*
+   * Output timing results to log file.
+   */
    template<int D>
    void AmIteratorGrid<D>::outputTimers(std::ostream& out) const
    {
@@ -95,7 +103,9 @@ namespace Rpg {
 
    // Protected virtual function
 
-   // Setup before entering iteration loop
+   /*
+   * Setup before entering iteration loop.
+   */
    template <int D>
    void AmIteratorGrid<D>::setup(bool isContinuation)
    {
@@ -103,83 +113,9 @@ namespace Rpg {
       interaction_.update(system().interaction());
    }
 
-   // Private virtual functions used to implement AM algorithm
-
-   // Set vector a equal to vector b (a = b).
-   template <int D>
-   void AmIteratorGrid<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
-   {
-      UTIL_CHECK(b.capacity() == a.capacity());
-      VecOp::eqV(a, b);
-   }
-
-   // Compute and return inner product of two real fields.
-   template <int D>
-   double AmIteratorGrid<D>::dotProduct(FieldCUDA const & a, 
-                                        FieldCUDA const & b) 
-   {
-      UTIL_CHECK(a.capacity() == b.capacity());
-      double val = Reduce::innerProduct(a, b);
-      if (std::isnan(val)) { // if value is NaN, throw NanException
-         throw NanException("AmIteratorGrid::dotProduct", __FILE__, 
-                            __LINE__, 0);
-      }
-      return val;
-   }
-
-   // Find the maximum magnitude element of a residual vector.
-   template <int D>
-   double AmIteratorGrid<D>::maxAbs(FieldCUDA const & a)
-   {
-      double val = Reduce::maxAbs(a);
-      if (std::isnan(val)) { // if value is NaN, throw NanException
-         throw NanException("AmIteratorGrid::maxAbs", __FILE__, __LINE__, 0);
-      }
-      return val;
-   }
-
-   // Update the series of residual vectors.
-   template <int D>
-   void AmIteratorGrid<D>::updateBasis(RingBuffer<FieldCUDA> & basis, 
-                                       RingBuffer<FieldCUDA> const & hists)
-   {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      // Set up array to store new basis
-      basis.advance();
-      if (basis[0].isAllocated()) {
-         UTIL_CHECK(basis[0].capacity() == hists[0].capacity());
-      } else {
-         basis[0].allocate(hists[0].capacity());
-      }
-
-      // New basis vector is difference between two most recent states
-      VecOp::subVV(basis[0], hists[0], hists[1]);
-   }
-
-   // Compute trial field so as to minimize L2 norm of residual.
-   template <int D>
-   void 
-   AmIteratorGrid<D>::addHistories(FieldCUDA& trial, 
-                                   RingBuffer<FieldCUDA> const & basis, 
-                                   DArray<double> coeffs, int nHist)
-   {
-      for (int i = 0; i < nHist; i++) {
-         VecOp::addEqVc(trial, basis[i], -1.0 * coeffs[i]);
-      }
-   }
-
-   // Add predicted error to the trial field.
-   template <int D>
-   void AmIteratorGrid<D>::addPredictedError(FieldCUDA& fieldTrial, 
-                                             FieldCUDA const & resTrial, 
-                                             double lambda)
-   {
-      VecOp::addEqVc(fieldTrial, resTrial, lambda);
-   }
-
-   // Checks if the system has an initial guess
+   /*
+   * Checks if the system has an initial guess.
+   */
    template <int D>
    bool AmIteratorGrid<D>::hasInitialGuess()
    { return system().w().hasData(); }
@@ -200,7 +136,9 @@ namespace Rpg {
       return nEle;
    }
 
-   // Get the current w fields and lattice parameters.
+   /*
+   * Get the current w fields and lattice parameters.
+   */
    template <int D>
    void AmIteratorGrid<D>::getCurrent(FieldCUDA& curr)
    {
@@ -230,7 +168,7 @@ namespace Rpg {
             }
          }
          UTIL_CHECK(counter == tempH.capacity());
-         
+
          // Copy parameters to the end of the curr array
          FieldCUDA tempD;
          tempD.associate(curr, nMonomer*nMesh, tempH.capacity());
@@ -238,7 +176,9 @@ namespace Rpg {
       }
    }
 
-   // Solve MDE for current state of system.
+   /*
+   * Solve MDE for current state of system.
+   */
    template <int D>
    void AmIteratorGrid<D>::evaluate()
    {
@@ -246,7 +186,9 @@ namespace Rpg {
       system().compute(isFlexible_);
    }
 
-   // Gets the residual vector from system.
+   /*
+   * Gets the residual vector from system.
+   */
    template <int D>
    void AmIteratorGrid<D>::getResidual(FieldCUDA& resid)
    {
@@ -269,7 +211,7 @@ namespace Rpg {
       // Compute SCF residuals
       for (int i = 0; i < nMonomer; i++) {
          for (int j = 0; j < nMonomer; j++) {
-            VecOp::addVcVcVc(residSlices[i], residSlices[i], 1.0, 
+            VecOp::addVcVcVc(residSlices[i], residSlices[i], 1.0,
                              system().c().rgrid(j), interaction_.chi(i, j),
                              system().w().rgrid(j), -interaction_.p(i, j));
          }
@@ -283,7 +225,7 @@ namespace Rpg {
          }
       }
 
-      // If iterator has external fields, account for them in the values 
+      // If iterator has external fields, account for them in the values
       // of the residuals
       if (system().h().hasData()) {
          for (int i = 0; i < nMonomer; ++i) {
@@ -294,13 +236,13 @@ namespace Rpg {
          }
       }
 
-      // If ensemble is not canonical, account for incompressibility. 
+      // If ensemble is not canonical, account for incompressibility.
       if (!system().mixture().isCanonical()) {
          cudaReal factor = 1.0 / interaction_.sumChiInverse();
          VecOp::subEqS(resid, factor, 0, nMonomer*nMesh);
       } else {
          for (int i = 0; i < nMonomer; i++) {
-            // Find current average 
+            // Find current average
             cudaReal average = findAverage(residSlices[i]);
             // subtract out average to set residual average to zero
             VecOp::subEqS(residSlices[i], average);
@@ -328,14 +270,16 @@ namespace Rpg {
       }
    }
 
-   // Update the system with a new trial field vector.
+   /*
+   * Update the system with a new trial field vector.
+   */
    template <int D>
    void AmIteratorGrid<D>::update(FieldCUDA& newGuess)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
 
-      // If canonical, explicitly set homogeneous field components 
+      // If canonical, explicitly set homogeneous field components
       if (system().mixture().isCanonical()) {
          cudaReal average, wAverage, cAverage;
          for (int i = 0; i < nMonomer; i++) {
@@ -345,10 +289,10 @@ namespace Rpg {
 
             // Find current spatial average
             average = findAverage(ngSlice);
-            
+
             // Subtract average from field, setting average to zero
             VecOp::subEqS(ngSlice, average);
-            
+
             // Compute the new average omega value
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
@@ -380,7 +324,7 @@ namespace Rpg {
       system().w().setRGrid(newGuess);
       system().w().symmetrize();
 
-      // If flexible unit cell, update cell parameters 
+      // If flexible unit cell, update cell parameters
       if (isFlexible_) {
          FSArray<double,6> parameters;
          parameters = system().domain().unitCell().parameters();
@@ -404,7 +348,9 @@ namespace Rpg {
       }
    }
 
-   // Output relevant system details to the iteration log file.
+   /*
+   * Output relevant system details to the iteration log file.
+   */
    template<int D>
    void AmIteratorGrid<D>::outputToLog()
    {
@@ -421,10 +367,10 @@ namespace Rpg {
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
                double str = tempH[counter] / (-1.0 * scaleStress_);
-               Log::file() 
+               Log::file()
                    << " Cell Param  " << i << " = "
                    << Dbl(system().domain().unitCell().parameters()[i], 15)
-                   << " , stress = " 
+                   << " , stress = "
                    << Dbl(str, 15)
                    << "\n";
                counter++;
@@ -433,14 +379,74 @@ namespace Rpg {
       }
    }
 
-   // --- Private member functions specific to this implementation --- 
+   // Private virtual functions for vector math
+
+   /*
+   * Set vector a equal to vector b (a = b).
+   */
+   template <int D>
+   void AmIteratorGrid<D>::setEqual(FieldCUDA& a,
+                                    FieldCUDA const & b)
+   {
+      UTIL_CHECK(b.capacity() == a.capacity());
+      VecOp::eqV(a, b);
+   }
+
+   /*
+   * Compute and return inner product of two real fields.
+   */
+   template <int D>
+   double AmIteratorGrid<D>::dotProduct(FieldCUDA const & a,
+                                        FieldCUDA const & b)
+   {
+      UTIL_CHECK(a.capacity() == b.capacity());
+      double val = Reduce::innerProduct(a, b);
+      if (std::isnan(val)) { // if value is NaN, throw NanException
+         throw NanException("AmIteratorGrid::dotProduct",
+                            __FILE__, __LINE__, 0);
+      }
+      return val;
+   }
+
+   /*
+   * Find the maximum magnitude element of a residual vector.
+   */
+   template <int D>
+   double AmIteratorGrid<D>::maxAbs(FieldCUDA const & a)
+   {
+      double val = Reduce::maxAbs(a);
+      if (std::isnan(val)) { // if value is NaN, throw NanException
+         throw NanException("AmIteratorGrid::maxAbs",
+                             __FILE__, __LINE__, 0);
+      }
+      return val;
+   }
+
+   /*
+   * Compute the vector difference a = b - c
+   */
+   template <int D>
+   void AmIteratorGrid<D>::subVV(FieldCUDA& a,
+                                 FieldCUDA const & b,
+                                 FieldCUDA const & c)
+   {  VecOp::subVV(a, b, c); }
+
+   /*
+   * Composite a += b*c for vectors a and b, scalar c
+   */
+   template <int D>
+   void AmIteratorGrid<D>::addEqVc(FieldCUDA& a,
+                                   FieldCUDA const & b,
+                                   double c)
+   {  VecOp::addEqVc(a, b, c); }
+
+
+   // Private member functions specific to this implementation
 
    // Calculate the average value of an array.
-   template<int D> 
-   cudaReal AmIteratorGrid<D>::findAverage(FieldCUDA const & field) 
-   {
-      return Reduce::sum(field) / field.capacity();
-   }
+   template<int D>
+   cudaReal AmIteratorGrid<D>::findAverage(FieldCUDA const & field)
+   {  return Reduce::sum(field) / (double) field.capacity(); }
 
 }
 }

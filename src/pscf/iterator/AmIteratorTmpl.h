@@ -111,19 +111,6 @@ namespace Pscf {
 
       // Parameter initialization
 
-      #if 0
-      /**
-      * Set and validate value of errorType string.
-      *
-      * Provided to allow subclasses to set a modified default value
-      * before calling readParameters, in which errorType is optional.
-      * Global default, set in constructor, is relNormResid = 50.
-      *
-      * \param errorType error type string
-      */
-      void setErrorType(std::string errorType);
-      #endif
-
       /**
       * Read and validate the optional errorType string parameter.
       *
@@ -134,7 +121,8 @@ namespace Pscf {
       /**
       * Checks if a string is a valid error type.
       *
-      * Virtual to allow extension of allowed error type string values.
+      * Virtual to allow extension of allowed error type string 
+      * values.
       *
       * \return true  if type is valid, false otherwise.
       */
@@ -268,61 +256,6 @@ namespace Pscf {
       */
       double timerOmega();
 
-      // --- Protected virtual functions for vector math --- //
-
-      /**
-      * Assignment for vectors of type T.
-      *
-      * This function must perform an assignment a = b.
-      *
-      * \param a  vector to be set (lhs of assignment)
-      * \param b  vector value to assign (rhs of assignment)
-      */
-      virtual void setEqual(T& a, T const & b);
-
-      /**
-      * Compute the inner product of two vectors.
-      *
-      * \param a first vector
-      * \param b second vector
-      */
-      virtual double dotProduct(T const & a, T const & b);
-
-      /**
-      * Find the L2 norm of a vector.
-      *
-      * The default implementation calls dotProduct internally.
-      * Virtual to allow more optimized versions.
-      *
-      * \param hist residual vector
-      */
-      virtual double norm(T const & hist);
-
-      /**
-      * Return the maximum magnitude element of a vector.
-      *
-      * \param hist  input vector
-      */
-      virtual double maxAbs(T const & hist);
-
-      /**
-      * Compute the difference a = b - c for vectors a, b and c.
-      *
-      * \param a result vector (LHS)
-      * \param b first vector (RHS)
-      * \param c second vector (RHS)
-      */
-      virtual void subVV(T& a, T const & b, T const & c);
-
-      /**
-      * Compute a += c*b for vectors a and b and scalar c.
-      *
-      * \param a result vector (LHS)
-      * \param b input vector (RHS)
-      * \param c scalar coefficient (RHS)
-      */
-      virtual void addEqVc(T& a, T const & b, double c);
-
       // Inherited members of parent classes with non-dependent names
       using ParamComposite::setClassName;
       using ParamComposite::read;
@@ -423,8 +356,6 @@ namespace Pscf {
       */
       void updateGuess();
 
-      // --- Private virtual functions with default implementations --- //
-
       /**
       * Update the U matrix.
       *
@@ -432,7 +363,6 @@ namespace Pscf {
       * \param resBasis RingBuffer of residual basis vectors.
       * \param nHist number of histories stored at this iteration
       */
-      virtual 
       void updateU(DMatrix<double> & U,
                    RingBuffer<T> const & resBasis, 
                    int nHist);
@@ -445,7 +375,6 @@ namespace Pscf {
       * \param resBasis RingBuffer of residual basis vectors.
       * \param nHist number of histories stored at this iteration
       */
-      virtual 
       void updateV(DArray<double> & v, 
                    T const & resCurrent,
                    RingBuffer<T> const & resBasis, 
@@ -460,7 +389,6 @@ namespace Pscf {
       * \param basis RingBuffer of basis vectors
       * \param hists RingBuffer of history of prior vectors
       */
-      virtual 
       void updateBasis(RingBuffer<T> & basis,
                        RingBuffer<T> const & hists);
 
@@ -472,11 +400,12 @@ namespace Pscf {
       * \param coeffs list of coefficients of basis vectors
       * \param nHist  current number of prior states
       */
-      virtual
       void addHistories(T& trial,
                         RingBuffer<T> const & basis,
                         DArray<double> coeffs,
                         int nHist);
+
+      // Private virtual functions with a default implementation 
 
       /**
       * Remove predicted error from trial in attempt to correct for it.
@@ -490,7 +419,7 @@ namespace Pscf {
                              T const & resTrial,
                              double lambda);
 
-      // -- Pure virtual functions that interact with parent system -- //
+      // Private pure virtual functions that interact with parent system
 
       /**
       * Compute and return the number of residual or field vector elements.
@@ -540,6 +469,60 @@ namespace Pscf {
       * Output relevant system details to the iteration log.
       */
       virtual void outputToLog() = 0;
+
+      // Private functions for vector math
+
+      /**
+      * Assignment for vectors of type T.
+      *
+      * This function must perform an assignment a = b.
+      *
+      * \param a  vector to be set (lhs of assignment)
+      * \param b  vector value to assign (rhs of assignment)
+      */
+      virtual void setEqual(T& a, T const & b) = 0;
+
+      /**
+      * Compute the inner product of two vectors.
+      *
+      * \param a first vector
+      * \param b second vector
+      */
+      virtual double dotProduct(T const & a, T const & b) = 0;
+
+      /**
+      * Find the L2 norm of a vector.
+      *
+      * The default implementation calls dotProduct internally.
+      *
+      * \param hist residual vector
+      */
+      double norm(T const & hist);
+
+      /**
+      * Return the maximum magnitude element of a vector.
+      *
+      * \param hist  input vector
+      */
+      virtual double maxAbs(T const & hist) = 0;
+
+      /**
+      * Compute the difference a = b - c for vectors a, b and c.
+      *
+      * \param a result vector (LHS)
+      * \param b first vector (RHS)
+      * \param c second vector (RHS)
+      */
+      virtual void subVV(T& a, T const & b, T const & c) = 0;
+
+      /**
+      * Compute a += c*b for vectors a and b and scalar c.
+      *
+      * \param a result vector (LHS)
+      * \param b input vector (RHS)
+      * \param c scalar coefficient (RHS)
+      */
+      virtual void addEqVc(T& a, T const & b, double c) = 0;
 
    };
 

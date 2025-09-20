@@ -9,11 +9,11 @@
 */
 
 #include "Compressor.h"
-#include <prdc/cuda/RField.h>         
+#include <prdc/cuda/RField.h>
 #include <pscf/cuda/DeviceArray.h>
-#include <pscf/iterator/AmIteratorTmpl.h>     
+#include <pscf/iterator/AmIteratorTmpl.h>
 
-#include <util/containers/DArray.h>                 
+#include <util/containers/DArray.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -30,15 +30,17 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Compressor_Module
    */
    template <int D>
-   class AmCompressor : public AmIteratorTmpl<Compressor<D>, 
+   class AmCompressor : public AmIteratorTmpl<Compressor<D>,
                                DeviceArray<cudaReal> >
    {
 
    public:
 
+      using Base =  AmIteratorTmpl< Compressor<D>, DeviceArray<cudaReal> >;
+
       /**
       * Constructor.
-      * 
+      *
       * \param system System object associated with this compressor.
       */
       AmCompressor(System<D>& system);
@@ -59,48 +61,48 @@ namespace Rpg {
       * Initialize just before entry to iterative loop.
       *
       * This function is called by the solve function before entering the
-      * loop over iterations. Store the current values of the fields at the 
+      * loop over iterations. Store the current values of the fields at the
       * beginning of iteration
       *
       * \param isContinuation true iff continuation within a sweep
-      */ 
-      void setup(bool isContinuation);      
-      
-      
+      */
+      void setup(bool isContinuation);
+
+
       /**
       * Compress to obtain partial saddle point w+
       *
       * \return 0 for convergence, 1 for failure
       */
-      int compress();    
-      
+      int compress();
+
       /**
       * Compute mixing parameter lambda
       */
-      double computeLambda(double r);  
-      
+      double computeLambda(double r);
+
       /**
       * Return how many times MDE has been solved.
       */
-      int mdeCounter(); 
-      
+      int mdeCounter();
+
       /**
       * Return compressor times contributions.
       */
       void outputTimers(std::ostream& out) const;
-      
+
       /**
       * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers();
-      
+
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, 
+      using AmIteratorTmpl<Compressor<D>,
                            DeviceArray<cudaReal> >::setClassName;
 
    protected:
-  
-      // Inherited protected members 
+
+      // Inherited protected members
       using ParamComposite::readOptional;
       using Compressor<D>::system;
       using Compressor<D>::mdeCounter_;
@@ -110,93 +112,42 @@ namespace Rpg {
       * Count how many times MDE has been solved.
       */
       int counter_;
-      
+
       /**
       * Current values of the fields
       */
-      DArray< RField<D> > w0_;  
+      DArray< RField<D> > w0_;
 
       /**
       * Has the variable been allocated?
       */
       bool isAllocated_;
-      
+
       /**
       * Template w Field used in update function
       */
       DArray< RField<D> > wFieldTmp_;
 
-      /**
-      * Assign one field to another.
-      * 
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field for it to be set to (rhs of assigment)
-      */
-      void setEqual(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b);
+      // Private virtual functions that interact with parent System
 
       /**
-      * Compute the inner product of two vectors
-      */
-      double dotProduct(DeviceArray<cudaReal> const & a, 
-                        DeviceArray<cudaReal> const & b);
-
-      /**
-      * Find the maximum magnitude element of a residual vector.
-      */
-      double maxAbs(DeviceArray<cudaReal> const & hist);
-
-      /**
-      * Update the basis for residual or field vectors.
-      * 
-      * \param basis RingBuffer of residual or field basis vectors
-      * \param hists RingBuffer of past residual or field vectors
-      */
-      void updateBasis(RingBuffer<DeviceArray<cudaReal> > & basis, 
-                       RingBuffer<DeviceArray<cudaReal> > const & hists);
-
-      /**
-      * Add linear combination of basis vectors to trial field.
-      * 
-      * \param trial trial vector (input-output)
-      * \param basis RingBuffer of basis vectors
-      * \param coeffs array of coefficients of basis vectors
-      * \param nHist number of histories stored at this iteration
-      */
-      void addHistories(DeviceArray<cudaReal>& trial, 
-                        RingBuffer<DeviceArray<cudaReal> > const & basis, 
-                        DArray<double> coeffs, 
-                        int nHist);
-
-      /**
-      * Add predicted error to field trial.
-      * 
-      * \param fieldTrial trial field (in-out)
-      * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing 
-      */
-      void addPredictedError(DeviceArray<cudaReal>& fieldTrial, 
-                             DeviceArray<cudaReal> const & resTrial, 
-                             double lambda);
-
-      /**
-      * Does the system has an initial guess for the field?
-      */
-      bool hasInitialGuess();
-     
-      /** 
       * Compute and returns the number of elements in field vector.
       *
       * Called during allocation and then stored.
       */
-      int nElements();
+      int nElements() override;
+
+      /**
+      * Does the system has an initial guess for the field?
+      */
+      bool hasInitialGuess() override;
 
       /**
       * Gets the current field vector from the system.
-      * 
+      *
       * \param curr current field vector
-      */ 
-      void getCurrent(DeviceArray<cudaReal>& curr);
+      */
+      void getCurrent(DeviceArray<cudaReal>& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -204,27 +155,70 @@ namespace Rpg {
       * Solves the modified diffusion equations, computes concentrations,
       * and optionally computes stress components.
       */
-      void evaluate();
+      void evaluate() override;
 
       /**
       * Compute the residual vector.
       *
       * \param resid current residual vector value
       */
-      void getResidual(DeviceArray<cudaReal>& resid);
+      void getResidual(DeviceArray<cudaReal>& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DeviceArray<cudaReal>& newGuess);
+      void update(DeviceArray<cudaReal>& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.
       */
-      void outputToLog();
-      
+      void outputToLog() override;
+
+      // Private virtual functions for vector math
+
+      /**
+      * Assign one field to another.
+      *
+      * \param a the field to be set (lhs of assignment)
+      * \param b the field for it to be set to (rhs of assigment)
+      */
+      void setEqual(DeviceArray<cudaReal>& a,
+                    DeviceArray<cudaReal> const & b) override;
+
+      /**
+      * Compute the inner product of two vectors
+      */
+      double dotProduct(DeviceArray<cudaReal> const & a,
+                        DeviceArray<cudaReal> const & b) override;
+
+      /**
+      * Find the maximum magnitude element of a residual vector.
+      */
+      double maxAbs(DeviceArray<cudaReal> const & hist) override;
+
+      /**
+      * Compute the difference a = b - c for vectors a, b and c.
+      *
+      * \param a result vector (LHS)
+      * \param b first vector (RHS)
+      * \param c second vector (RHS)
+      */
+      void subVV(DeviceArray<cudaReal>& a, 
+                 DeviceArray<cudaReal> const & b, 
+		 DeviceArray<cudaReal> const & c) override;
+
+      /**
+      * Compute a += c*b for vectors a and b and scalar c.
+      *
+      * \param a result vector (LHS)
+      * \param b input vector (RHS)
+      * \param c scalar coefficient (RHS)
+      */
+      void addEqVc(DeviceArray<cudaReal>& a, 
+		   DeviceArray<cudaReal> const & b, 
+		   double c) override;
 
    };
 
@@ -232,7 +226,7 @@ namespace Rpg {
    extern template class AmCompressor<1>;
    extern template class AmCompressor<2>;
    extern template class AmCompressor<3>;
-   
+
 } // namespace Rpg
 } // namespace Pscf
 #endif

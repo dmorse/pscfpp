@@ -206,6 +206,56 @@ namespace Rpc
       */
       void outputToLog() override;
 
+      // Private virtual functions for vector math 
+
+      /**
+      * Vector assignment, a = b.
+      *
+      * This function must perform an assignment a = b.
+      *
+      * \param a  vector to be set (LHS)
+      * \param b  vector value to assign (RHS)
+      */
+      void setEqual(DArray<double>& a, DArray<double> const & b) 
+      override;
+
+      /**
+      * Compute and return the inner product of two vectors.
+      *
+      * \param a first vector
+      * \param b second vector
+      */
+      double dotProduct(DArray<double> const & a, 
+                        DArray<double> const & b) override;
+
+      /**
+      * Return the maximum magnitude element of a vector.
+      *
+      * \param hist  input vector
+      */
+      virtual double maxAbs(DArray<double> const & hist) override;
+
+      /**
+      * Compute the difference a = b - c for vectors a, b and c.
+      *
+      * \param a result vector (LHS)
+      * \param b first vector (RHS)
+      * \param c second vector (RHS)
+      */
+      void subVV(DArray<double>& a, 
+                 DArray<double> const & b, 
+		 DArray<double> const & c) override;
+
+      /**
+      * Compute a += c*b for vectors a and b and scalar c.
+      *
+      * \param a result vector (LHS)
+      * \param b input vector (RHS)
+      * \param c scalar coefficient (RHS)
+      */
+      void addEqVc(DArray<double>& a, 
+		   DArray<double> const & b, double c) override;
+
       // Inherited private members
       using Compressor<D>::system;
 

@@ -103,45 +103,7 @@ namespace Rpc
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
 
-      // --- Private virtual functions for AM operations ---- //
-
-      #if 0
-      /**
-      * Update the basis for residual or field vectors.
-      *
-      * \param basis RingBuffer of residual or field basis vectors
-      * \param hists RingBuffer of past residual or field vectors
-      */
-      void 
-      updateBasis(RingBuffer< DArray<double> > & basis,
-                  RingBuffer< DArray<double> > const & hists) override;
-
-      /**
-      * Add linear combination of basis vectors to trial field.
-      *
-      * \param trial trial vector (input-output)
-      * \param basis RingBuffer of basis vectors
-      * \param coeffs array of coefficients of basis vectors
-      * \param nHist number of histories stored at this iteration
-      */
-      void addHistories(DArray<double>& trial,
-                        RingBuffer<DArray<double> > const & basis,
-                        DArray<double> coeffs,
-                        int nHist) override;
-
-      /**
-      * Add predicted error to field trial.
-      *
-      * \param fieldTrial trial field (in-out)
-      * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing
-      */
-      void addPredictedError(DArray<double>& fieldTrial,
-                             DArray<double> const & resTrial,
-                             double lambda) override;
-      #endif
-
-      // - Private virtual functions, interact with parent system --//
+      // Private virtual functions that interact with parent system
 
       /**
       * Does the system has an initial guess for the field?
@@ -188,6 +150,59 @@ namespace Rpc
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
+
+      // Private virtual functions for vector math
+
+      /**
+      * Vector assignment, a = b.
+      *
+      * This function must perform an assignment a = b.
+      *
+      * \param a  vector to be set (LHS)
+      * \param b  vector value to assign (RHS)
+      */
+      void setEqual(DArray<double>& a, DArray<double> const & b) 
+      override;
+
+      /**
+      * Compute and return the inner product of two vectors.
+      *
+      * \param a first vector
+      * \param b second vector
+      */
+      double dotProduct(DArray<double> const & a, 
+                        DArray<double> const & b) 
+      override;
+
+      /**
+      * Return the maximum magnitude element of a vector.
+      *
+      * \param hist  input vector
+      */
+      virtual double maxAbs(DArray<double> const & hist) override;
+
+      /**
+      * Compute the difference a = b - c for vectors a, b and c.
+      *
+      * \param a result vector (LHS)
+      * \param b first vector (RHS)
+      * \param c second vector (RHS)
+      */
+      void subVV(DArray<double>& a, 
+                 DArray<double> const & b, 
+		 DArray<double> const & c) 
+      override;
+
+      /**
+      * Compute a += c*b for vectors a and b and scalar c.
+      *
+      * \param a result vector (LHS)
+      * \param b input vector (RHS)
+      * \param c scalar coefficient (RHS)
+      */
+      void addEqVc(DArray<double>& a, 
+		   DArray<double> const & b, double c) 
+      override;
 
    };
 

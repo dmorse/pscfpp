@@ -56,7 +56,7 @@ namespace R1d{
       interaction_.update(system().interaction());
    }
 
-   // Private virtual member functions
+   // Private virtual functions that interact with parent System
 
    // Compute and return the number of elements in a field vector
    int AmIterator::nElements()
@@ -183,6 +183,83 @@ namespace R1d{
 
    void AmIterator::outputToLog()
    {}
+
+   // Private virtual vector math functions
+
+   /*
+   * Assign one vector to another: a = b.
+   */
+   void AmIterator::setEqual(DArray<double>& a, DArray<double> const & b)
+   {  a = b; }
+
+   /*
+   * Compute and return inner product of two vectors
+   */
+   double AmIterator::dotProduct(DArray<double> const & a,
+                                 DArray<double> const & b)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      double product = 0.0;
+      for (int i = 0; i < n; i++) {
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) {
+            throw NanException("AmIterator::dotProduct",
+                               __FILE__,__LINE__,0);
+         }
+         product += a[i] * b[i];
+      }
+      return product;
+   }
+
+   /*
+   * Compute and return maximum element of a vector.
+   */
+   double AmIterator::maxAbs(DArray<double> const & a)
+   {
+      const int n = a.capacity();
+      double max = 0.0;
+      double value;
+      for (int i = 0; i < n; i++) {
+         value = a[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmIterator::dotProduct",
+                                __FILE__,__LINE__,0);
+         }
+         if (fabs(value) > max)
+            max = fabs(value);
+      }
+      return max;
+   }
+
+   /*
+   * Compute difference of two vectors.
+   */
+   void AmIterator::subVV(DArray<double>& a,
+                          DArray<double> const & b,
+                          DArray<double> const & c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      UTIL_CHECK(n == c.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] = b[i] - c[i];
+      }
+   }
+
+   /*
+   * Composite addition of vector * scalar.
+   */
+   void AmIterator::addEqVc(DArray<double>& a,
+                            DArray<double> const & b,
+                            double c)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      for (int i = 0; i < n; i++) {
+         a[i] += c*b[i];
+      }
+   }
 
 }
 }

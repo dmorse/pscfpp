@@ -93,100 +93,98 @@ namespace Rpg
 
    private:
 
-      /// Local copy of interaction, adapted for use AMBD residual definition
+      /// Local copy of interaction, for use with AMBD residual definition
       AmbdInteraction interaction_;
 
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
 
-      /**
-      * Set a vector equal to another (assign a = b)
-      * 
-      * \param a the field to be set (LHS, result)
-      * \param b the field for it to be set to (RHS, input)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
-
-      /**
-      * Compute the inner product of two real vectors.
-      */
-      double dotProduct(DArray<double> const & a, DArray<double> const & b);
-
-      /**
-      * Find the maximum magnitude element of a vector.
-      */
-      double maxAbs(DArray<double> const & hist);
-
-      /**
-      * Update the series of residual vectors.
-      * 
-      * \param basis RingBuffer of residual or field basis vectors
-      * \param hists RingBuffer of pase residual or field vectors
-      */
-      void updateBasis(RingBuffer< DArray<double> > & basis, 
-                       RingBuffer< DArray<double> > const & hists);
-
-      /**
-      * Compute trial field so as to minimize L2 norm of residual.
-      * 
-      * \param trial resulting trial field (output)
-      * \param basis RingBuffer of residual basis vectors.
-      * \param coeffs coefficients of basis vectors
-      * \param nHist number of prior states stored
-      */
-      void addHistories(DArray<double>& trial, 
-                        RingBuffer<DArray<double> > const & basis, 
-                        DArray<double> coeffs, int nHist);
-
-      /**
-      * Add predicted error to the trial field.
-      * 
-      * \param fieldTrial trial field (input/output)
-      * \param resTrial predicted error for current trial field
-      * \param lambda Anderson-Mixing mixing parameter 
-      */
-      void addPredictedError(DArray<double>& fieldTrial, 
-                             DArray<double> const & resTrial, 
-                             double lambda);
-
-      /// Checks if the system has an initial guess
-      bool hasInitialGuess();
-     
+      // Private virtual functions that interact with parent System.
+      
       /** 
       * Compute the number of elements in the residual vector.
       */
-      int nElements();
+      int nElements() override;
 
+      /**
+      * Check if the system has an initial guess.
+      */
+      bool hasInitialGuess() override;
+     
       /**
       * Get the current w fields and lattice parameters.
       *
       * \param curr current field vector (output)
       */
-      void getCurrent(DArray<double>& curr);
+      void getCurrent(DArray<double>& curr) override;
 
       /**
       * Solve MDE for current state of system.
       */
-      void evaluate();
+      void evaluate() override;
 
       /**
       * Gets the residual vector from system.
       *  
       * \param resid current residual vector (output)
       */
-      void getResidual(DArray<double>& resid);
+      void getResidual(DArray<double>& resid) override;
 
       /**
       * Update the system with a new trial field vector.
       *
       * \param newGuess trial field configuration
       */
-      void update(DArray<double>& newGuess);
+      void update(DArray<double>& newGuess) override;
 
       /**
       * Output relevant system details to the iteration log file.
       */
-      void outputToLog();
+      void outputToLog() override;
+
+      // Private virtual functions for vector math
+      
+      /**
+      * Set a vector equal to another (assign a = b)
+      * 
+      * \param a the field to be set (LHS, result)
+      * \param b the field for it to be set to (RHS, input)
+      */
+      void setEqual(DArray<double>& a, 
+                    DArray<double> const & b) override;
+
+      /**
+      * Compute the inner product of two real vectors.
+      */
+      double dotProduct(DArray<double> const & a, 
+                        DArray<double> const & b) override;
+
+      /**
+      * Find the maximum magnitude element of a vector.
+      */
+      double maxAbs(DArray<double> const & hist) override;
+
+      /**
+      * Compute the difference a = b - c for vectors a, b and c.
+      *
+      * \param a result vector (LHS)
+      * \param b first vector (RHS)
+      * \param c second vector (RHS)
+      */
+      void subVV(DArray<double>& a, 
+                 DArray<double> const & b, 
+		 DArray<double> const & c) override;
+
+      /**
+      * Compute a += c*b for vectors a and b and scalar c.
+      *
+      * \param a result vector (LHS)
+      * \param b input vector (RHS)
+      * \param c scalar coefficient (RHS)
+      */
+      void addEqVc(DArray<double>& a, 
+		   DArray<double> const & b, double c) override;
+
 
    };
 
