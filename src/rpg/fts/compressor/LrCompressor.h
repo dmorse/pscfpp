@@ -14,6 +14,7 @@
 #include <util/containers/DArray.h>               // member
 #include <util/misc/Timer.h>                      // member
 #include <rpg/fts/compressor/IntraCorrelation.h>  // member
+#include <iostream>
 
 namespace Pscf {
 namespace Rpg {

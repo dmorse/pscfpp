@@ -16,23 +16,29 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Rpg{
+namespace Rpg {
 
    using namespace Util;
 
-   // Constructor
+   /*
+   * Constructor.
+   */
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
     : Compressor<D>(system),
      isAllocated_(false)
    { ParamComposite::setClassName("AmCompressor"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <int D>
    AmCompressor<D>::~AmCompressor()
    {}
 
-   // Read parameters from file
+   /*
+   * Read parameters from file.
+   */
    template <int D>
    void AmCompressor<D>::readParameters(std::istream& in)
    {
@@ -43,8 +49,9 @@ namespace Rpg{
                      DeviceArray<cudaReal> >::readErrorType(in);
    }
 
-
-   // Initialize just before entry to iterative loop.
+   /*
+   * Initialize just before entry to iterative loop.
+   */
    template <int D>
    void AmCompressor<D>::setup(bool isContinuation)
    {
@@ -73,6 +80,9 @@ namespace Rpg{
       }
    }
 
+   /*
+   * Main compressor function.
+   */
    template <int D>
    int AmCompressor<D>::compress()
    {
@@ -81,11 +91,12 @@ namespace Rpg{
       return solve;
    }
 
+   /*
+   * Compute AM mixing parameter.
+   */
    template<int D>
    double AmCompressor<D>::computeLambda(double r)
-   {
-      return 1.0;
-   }
+   {  return 1.0; }
 
    // Private virtual functions that interact with the parent System
 
@@ -110,10 +121,10 @@ namespace Rpg{
    void AmCompressor<D>::getCurrent(DeviceArray<cudaReal>& curr)
    {
       /*
-      * The field that we are adjusting is the Langrange multiplier field
-      * with number of grid pts components.The current value is the difference
-      * between w and w0_ for the first monomer (any monomer should give the
-      * same answer)
+      * The field that we are adjusting is the Langrange multiplier field 
+      * with number of grid pts components. The current value is the 
+      * difference between w and w0_ for the first monomer (any monomer 
+      * should give the same answer)
       */
       VecOp::subVV(curr, system().w().rgrid(0), w0_[0]);
    }
@@ -163,6 +174,9 @@ namespace Rpg{
       system().w().setRGrid(wFieldTmp_);
    }
 
+   /*
+   * Do nothing output function.
+   */
    template<int D>
    void AmCompressor<D>::outputToLog()
    {}
@@ -221,9 +235,7 @@ namespace Rpg{
    void AmCompressor<D>::subVV(DeviceArray<cudaReal>& a,
                                DeviceArray<cudaReal> const & b,
                                DeviceArray<cudaReal> const & c)
-   {
-      VecOp::subVV(a, b, c);
-   }
+   {  VecOp::subVV(a, b, c); }
 
    /*
    * Composite a += b*c for vectors a and b, scalar c

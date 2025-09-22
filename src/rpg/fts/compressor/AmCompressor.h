@@ -8,16 +8,19 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Compressor.h"
-#include <prdc/cuda/RField.h>
-#include <pscf/cuda/DeviceArray.h>
-#include <pscf/iterator/AmIteratorTmpl.h>
+#include "Compressor.h"                    // base class argument
+#include <pscf/cuda/DeviceArray.h>         // base class argument
+#include <pscf/iterator/AmIteratorTmpl.h>  // base class template
 
-#include <util/containers/DArray.h>
+#include <prdc/cuda/RField.h>              // member
+#include <util/containers/DArray.h>        // member
+
+#include <iostream>
 
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declaration
    template <int D> class System;
 
    using namespace Util;
@@ -25,7 +28,7 @@ namespace Rpg {
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Rpg implementation of the Anderson Mixing compressor.
+   * Anderson Mixing compressor.
    *
    * \ingroup Rpg_Fts_Compressor_Module
    */
@@ -68,7 +71,6 @@ namespace Rpg {
       * \param isContinuation true iff continuation within a sweep
       */
       void setup(bool isContinuation);
-
 
       /**
       * Compress to obtain partial saddle point w+

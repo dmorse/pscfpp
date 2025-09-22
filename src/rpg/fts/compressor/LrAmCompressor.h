@@ -8,16 +8,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Compressor.h"
-#include <rpg/fts/compressor/IntraCorrelation.h> 
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
-#include <pscf/cuda/DeviceArray.h>
-#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include "Compressor.h"                          // base class argument
+#include <pscf/cuda/DeviceArray.h>               // base class argument
+#include <pscf/iterator/AmIteratorTmpl.h>        // base class template
+
+#include <rpg/fts/compressor/IntraCorrelation.h> // member
+#include <prdc/cpu/RField.h>                     // member
+#include <prdc/cpu/RFieldDft.h>                  // member
+#include <util/containers/DArray.h>              // member
+
+#include <iostream>                 
 
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declaration
    template <int D> class System;
 
    using namespace Util;
