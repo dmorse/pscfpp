@@ -43,7 +43,7 @@ namespace Pscf
       totalItr_(0),
       nElem_(0),
       isAllocatedAM_(false)
-   {  setClassName("AmIteratorTmpl"); }
+   {  ParamComposite::setClassName("AmIteratorTmpl"); }
 
    /*
    * Destructor
@@ -58,10 +58,11 @@ namespace Pscf
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::readParameters(std::istream& in)
    {
+
       // Error tolerance for scalar error. Stop when error < epsilon.
       read(in, "epsilon", epsilon_);
 
-      // Maximum number of iterations (optional parameter)
+      // Maximum number of iterations (optional)
       // Default set in constructor (200) 
       readOptional(in, "maxItr", maxItr_);
 

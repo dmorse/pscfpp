@@ -30,12 +30,13 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Compressor_Module
    */
    template <int D>
-   class AmCompressor : public AmIteratorTmpl<Compressor<D>,
-                               DeviceArray<cudaReal> >
+   class AmCompressor 
+     : public AmIteratorTmpl< Compressor<D>, DeviceArray<cudaReal> >
    {
 
    public:
 
+      // Alias for base class
       using Base =  AmIteratorTmpl< Compressor<D>, DeviceArray<cudaReal> >;
 
       /**
@@ -96,18 +97,15 @@ namespace Rpg {
       */
       void clearTimers();
 
-      // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>,
-                           DeviceArray<cudaReal> >::setClassName;
-
    protected:
 
       // Inherited protected members
-      using ParamComposite::readOptional;
-      using Compressor<D>::system;
       using Compressor<D>::mdeCounter_;
+      using Compressor<D>::system;
+      using ParamComposite::readOptional;
 
    private:
+
       /**
       * Count how many times MDE has been solved.
       */

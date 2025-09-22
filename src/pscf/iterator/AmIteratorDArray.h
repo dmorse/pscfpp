@@ -23,6 +23,17 @@ namespace Pscf {
    class AmIteratorDArray 
     : public AmIteratorTmpl<Iterator, DArray<double> >
    {
+   public:
+
+      /**
+      * Constructor.
+      */
+      AmIteratorDArray() = default;
+
+      /**
+      * Destructor.
+      */
+      ~AmIteratorDArray() = default;
 
    private:
 

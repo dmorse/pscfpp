@@ -31,6 +31,11 @@ namespace Rpc
    public:
 
       /**
+      * Default constructor.
+      */
+      Compressor();
+
+      /**
       * Constructor.
       *
       * \param system parent System object
@@ -100,7 +105,14 @@ namespace Rpc
 
    // Member functions
 
-   // Constructor
+   // Default constructor.
+   template <int D>
+   Compressor<D>::Compressor()
+    : mdeCounter_(0),
+      sysPtr_(nullptr)
+   {  setClassName("Compressor"); }
+
+   // Constructor.
    template <int D>
    Compressor<D>::Compressor(System<D>& system)
     : mdeCounter_(0),

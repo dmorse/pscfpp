@@ -23,7 +23,7 @@ namespace Rpg {
    using namespace Prdc;
    using namespace Prdc::Cuda;
 
-   typedef DeviceArray<cudaReal> FieldCUDA;
+   using FieldCUDA = DeviceArray<cudaReal>;
 
    /**
    * Base class for iterative solvers for SCF equations.

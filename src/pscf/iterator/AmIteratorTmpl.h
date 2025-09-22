@@ -257,7 +257,6 @@ namespace Pscf {
       double timerOmega();
 
       // Inherited members of parent classes with non-dependent names
-      using ParamComposite::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 

@@ -29,12 +29,10 @@ namespace Rpg {
 
    public:
 
-      #if 0
       /**
       * Default constructor.
       */
       Compressor();
-      #endif
 
       /**
       * Constructor.

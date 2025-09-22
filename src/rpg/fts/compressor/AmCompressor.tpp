@@ -23,9 +23,9 @@ namespace Rpg{
    // Constructor
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
-   : Compressor<D>(system),
+    : Compressor<D>(system),
      isAllocated_(false)
-   { setClassName("AmCompressor"); }
+   { ParamComposite::setClassName("AmCompressor"); }
 
    // Destructor
    template <int D>
