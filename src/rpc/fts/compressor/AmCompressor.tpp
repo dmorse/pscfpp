@@ -52,15 +52,15 @@ namespace Rpc{
    template <int D>
    void AmCompressor<D>::setup(bool isContinuation)
    {
-      const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
-      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       // Allocate memory required by AM algorithm if not done earlier.
       AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
 
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+
       // Allocate memory required by compressor if not done earlier.
       if (!isAllocated_){
-         newBasis_.allocate(meshSize);
          w0_.allocate(nMonomer);
          wFieldTmp_.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
@@ -85,7 +85,6 @@ namespace Rpc{
    int AmCompressor<D>::compress()
    {
       int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
-      //mdeCounter_ = AmIteratorTmpl<Compressor<D>,DArray<double>>::totalItr();
       return solve;
    }
 
@@ -111,65 +110,7 @@ namespace Rpc{
       mdeCounter_ = 0;
    }
 
-   // AM algorithm operations
-
-   #if 0
-   /*
-   * Update basis.
-   */
-   template <int D>
-   void
-   AmCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
-                                RingBuffer< DArray<double> > const & hists)
-   {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      const int n = hists[0].capacity();
-
-      // New basis vector is difference between two most recent states
-      for (int i = 0; i < n; i++) {
-         newBasis_[i] = hists[0][i] - hists[1][i];
-      }
-
-      basis.append(newBasis_);
-   }
-
-   /*
-   * Complete projection step.
-   */
-   template <int D>
-   void
-   AmCompressor<D>::addHistories(DArray<double>& trial,
-                                 RingBuffer<DArray<double> > const& basis,
-                                 DArray<double> coeffs,
-                                 int nHist)
-   {
-      int n = trial.capacity();
-      for (int i = 0; i < nHist; i++) {
-         for (int j = 0; j < n; j++) {
-            // Not clear on the origin of the -1 factor
-            trial[j] += coeffs[i] * -1 * basis[i][j];
-         }
-      }
-   }
-
-   /*
-   * Correction step.
-   */
-   template <int D>
-   void AmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
-                                           DArray<double> const & resTrial,
-                                           double lambda)
-   {
-      int n = fieldTrial.capacity();
-      for (int i = 0; i < n; i++) {
-         fieldTrial[i] += lambda * resTrial[i];
-      }
-   }
-   #endif
-
-   // Functions that interact with parent system
+   // Private virtual functions that interact with parent system
 
    /*
    * Does the system have an initial field guess?
@@ -218,7 +159,7 @@ namespace Rpc{
    }
 
    /*
-   * Compute the residual for the current system state.
+   * Compute the residual vector for the current system state.
    */
    template <int D>
    void AmCompressor<D>::getResidual(DArray<double>& resid)

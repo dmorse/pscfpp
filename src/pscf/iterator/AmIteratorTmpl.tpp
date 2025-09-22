@@ -413,18 +413,17 @@ namespace Pscf
          // Update basis spanning differences of past residual vectors
          updateBasis(resBasis_, resHists_);
 
-         // Update nBasis_
-         nBasis_ = fieldBasis_.size();
-         UTIL_CHECK(fieldBasis_.size() == nBasis_);
-
          // Update the U matrix and v vector.
-         updateU(U_, resBasis_, nBasis_);
+         updateU(U_, resBasis_);
       }
 
+      // Update nBasis_
+      nBasis_ = resBasis_.size();
       UTIL_CHECK(nBasis_ > 0);
+      UTIL_CHECK(fieldBasis_.size() == nBasis_);
 
       // Update v_ vector (dot product of basis vectors and residual)
-      computeV(v_, resHists_[0], resBasis_, nBasis_);
+      computeV(v_, resHists_[0], resBasis_);
 
       // Solution of the matrix problem U coeffs_ = -v yields a coeff
       // vector that minimizes the norm of the residual. Below, we:
@@ -490,8 +489,8 @@ namespace Pscf
       if (nBasis_ > 0) {
 
          // Combine basis vectors into trial guess and predicted residual
-         addHistories(fieldTrial_, fieldBasis_, coeffs_, nBasis_);
-         addHistories(resTrial_, resBasis_, coeffs_, nBasis_);
+         addHistories(fieldTrial_, fieldBasis_, coeffs_);
+         addHistories(resTrial_, resBasis_, coeffs_);
 
       }
 
@@ -574,19 +573,21 @@ namespace Pscf
    template <typename Iterator, typename T>
    void
    AmIteratorTmpl<Iterator, T> ::updateU(DMatrix<double> & U,
-                                         RingBuffer<T> const & resBasis,
-                                         int nHist)
+                                         RingBuffer<T> const & resBasis)
    {
-      // Update matrix U by shifting elements diagonally
+      int nBasis = resBasis.size();
       int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
+      UTIL_CHECK(maxHist >= nBasis);
+
+      // Update matrix U by shifting elements diagonally
+      for (int m = maxHist - 1; m > 0; --m) {
          for (int n = maxHist-1; n > 0; --n) {
             U(m,n) = U(m-1,n-1);
          }
       }
 
       // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
+      for (int m = 0; m < nBasis; ++m) {
          double dotprod = dotProduct(resBasis[0],resBasis[m]);
          if (m == 0) {
             U(0,0) = dotprod;
@@ -602,18 +603,21 @@ namespace Pscf
    * Compute v vector (dot products of residual and basis vectors).
    */
    template <typename Iterator, typename T>
-   void
-   AmIteratorTmpl<Iterator, T>::computeV(
-                                   DArray<double> & v,
-                                   T const & resCurrent,
-                                   RingBuffer<T> const & resBasis,
-                                   int nHist)
+   void AmIteratorTmpl<Iterator, T>::computeV(
+                                        DArray<double> & v,
+                                        T const & resCurrent,
+                                        RingBuffer<T> const & resBasis)
    {
-      for (int m = 0; m < nHist; ++m) {
+      int nBasis = resBasis.size();
+      UTIL_CHECK(v.capacity() >= nBasis);
+      for (int m = 0; m < nBasis; ++m) {
          v[m] = dotProduct(resCurrent, resBasis[m]);
       }
    }
 
+   /*
+   * Compute scalar error, possibly output to log.
+   */
    template <typename Iterator, typename T>
    double 
    AmIteratorTmpl<Iterator,T>::computeError(T&residTrial, 
@@ -675,25 +679,27 @@ namespace Pscf
    }
 
 
-   // Update the series of residual vectors.
+   /*
+   * Update a list of basis vectors.
+   */
    template <typename Iterator, typename T>
    void 
    AmIteratorTmpl<Iterator,T>::updateBasis(RingBuffer<T> & basis, 
-                                           RingBuffer<T> const & hists)
+                                           RingBuffer<T> const & history)
    {
       // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
+      UTIL_CHECK(history.size() >= 2);
 
       // Set up array to store new basis
       basis.advance();
       if (basis[0].isAllocated()) {
-         UTIL_CHECK(basis[0].capacity() == hists[0].capacity());
+         UTIL_CHECK(basis[0].capacity() == history[0].capacity());
       } else {
-         basis[0].allocate(hists[0].capacity());
+         basis[0].allocate(history[0].capacity());
       }
 
       // New basis vector is difference between two most recent states
-      subVV(basis[0], hists[0], hists[1]);
+      subVV(basis[0], history[0], history[1]);
    }
 
    /*
@@ -703,10 +709,11 @@ namespace Pscf
    void 
    AmIteratorTmpl<Iterator,T>::addHistories(T& trial, 
                                             RingBuffer<T> const & basis, 
-                                            DArray<double> coeffs, 
-                                            int nHist)
+                                            DArray<double> coeffs)
    {
-      for (int i = 0; i < nHist; i++) {
+      int nBasis = basis.size();
+      UTIL_CHECK(coeffs.capacity() >= nBasis);
+      for (int i = 0; i < nBasis; i++) {
          addEqVc(trial, basis[i], coeffs[i]);
       }
    }

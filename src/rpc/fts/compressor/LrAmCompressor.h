@@ -60,7 +60,7 @@ namespace Rpc {
       *
       * \param in  input filestream
       */
-      void readParameters(std::istream& in);
+      void readParameters(std::istream& in) override;
 
       /**
       * Initialize just before entry to iterative loop.
@@ -71,7 +71,7 @@ namespace Rpc {
       *
       * \param isContinuation true iff continuation within a sweep
       */
-      void setup(bool isContinuation);
+      void setup(bool isContinuation) override;
 
 
       /**
@@ -79,19 +79,19 @@ namespace Rpc {
       *
       * \return 0 for convergence, 1 for failure
       */
-      int compress();
+      int compress() override;
 
       /**
       * Return compressor times contributions.
       *   
       * \param out  output stream
       */
-      void outputTimers(std::ostream& out) const;
+      void outputTimers(std::ostream& out) const override;
 
       /**
       * Clear all timers (reset accumulated time to zero).
       */
-      void clearTimers();
+      void clearTimers() override;
 
    protected:
 
@@ -190,12 +190,12 @@ namespace Rpc {
       */
       void addPredictedError(DArray<double>& fieldTrial,
                              DArray<double> const & resTrial,
-                             double lambda);
+                             double lambda) override;
 
       /**
       * Compute mixing parameter lambda
       */
-      double computeLambda(double r);;
+      double computeLambda(double r) override;
 
       // Private virtual functions that interact with parent System
 
@@ -204,19 +204,19 @@ namespace Rpc {
       *
       * Called during allocation and then stored.
       */
-      int nElements();
+      int nElements() override;
 
       /**
       * Does the system has an initial guess for the field?
       */
-      bool hasInitialGuess();
+      bool hasInitialGuess() override;
 
       /**
       * Gets the current field vector from the system.
       *
       * \param curr current field vector
       */
-      void getCurrent(DArray<double>& curr);
+      void getCurrent(DArray<double>& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -224,26 +224,26 @@ namespace Rpc {
       * Solves the modified diffusion equations, computes concentrations,
       * and optionally computes stress components.
       */
-      void evaluate();
+      void evaluate() override;
 
       /**
       * Compute the residual vector.
       *
       * \param resid current residual vector value
       */
-      void getResidual(DArray<double>& resid);
+      void getResidual(DArray<double>& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DArray<double>& newGuess);
+      void update(DArray<double>& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.
       */
-      void outputToLog();
+      void outputToLog() override;
 
       // Virtual functions for vector math 
 

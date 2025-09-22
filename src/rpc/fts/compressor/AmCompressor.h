@@ -82,12 +82,10 @@ namespace Rpc
       */
       void clearTimers() override;
 
-      // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
-
    protected:
 
       // Inherited protected members
+      using ParamComposite::setClassName;
       using ParamComposite::readOptional;
       using Compressor<D>::mdeCounter_;
 
@@ -112,46 +110,6 @@ namespace Rpc
       * Temporary w field used in update function
       */
       DArray< RField<D> > wFieldTmp_;
-
-      /**
-      * New Basis variable used in updateBasis function
-      */
-      DArray<double> newBasis_;
-
-      #if 0
-      /**
-      * Update the basis for residual or field vectors.
-      *
-      * \param basis RingBuffer of residual or field basis vectors
-      * \param hists RingBuffer of past residual or field vectors
-      */
-      void updateBasis(RingBuffer<DArray<double> > & basis,
-                       RingBuffer<DArray<double> > const & hists) override;
-
-      /**
-      * Add linear combination of basis vectors to trial field.
-      *
-      * \param trial trial vector (input-output)
-      * \param basis RingBuffer of basis vectors
-      * \param coeffs array of coefficients of basis vectors
-      * \param nHist number of histories stored at this iteration
-      */
-      void addHistories(DArray<double>& trial,
-                        RingBuffer<DArray<double> > const & basis,
-                        DArray<double> coeffs,
-                        int nHist) override;
-
-      /**
-      * Add predicted error to field trial.
-      *
-      * \param fieldTrial trial field (in-out)
-      * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing
-      */
-      void addPredictedError(DArray<double>& fieldTrial,
-                             DArray<double> const & resTrial,
-                             double lambda) override;
-      #endif
 
       /**
       * Compute mixing parameter lambda

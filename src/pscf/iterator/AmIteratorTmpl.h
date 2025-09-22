@@ -357,53 +357,47 @@ namespace Pscf {
       void updateGuess();
 
       /**
-      * Update the U matrix.
-      *
-      * \param U U matrix
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param nHist number of histories stored at this iteration
-      */
-      void updateU(DMatrix<double> & U,
-                   RingBuffer<T> const & resBasis, 
-                   int nHist);
-
-      /**
-      * Compute the v vector.
-      *
-      * \param v v vector
-      * \param resCurrent  current residual vector
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param nHist number of histories stored at this iteration
-      */
-      void computeV(DArray<double> & v, 
-                   T const & resCurrent,
-                   RingBuffer<T> const & resBasis, 
-                   int nHist);
-
-      /**
       * Update a basis that spans sequential differences of past vectors.
       *
       * This function is applied to update bases for both field vectors
       * and residual vectors.
       *
-      * \param basis RingBuffer of basis vectors
-      * \param hists RingBuffer of history of prior vectors
+      * \param basis  RingBuffer of basis vectors
+      * \param history  RingBuffer of history of prior vectors
       */
       void updateBasis(RingBuffer<T> & basis,
-                       RingBuffer<T> const & hists);
+                       RingBuffer<T> const & history);
+
+      /**
+      * Update the U matrix.
+      *
+      * \param U U matrix
+      * \param resBasis RingBuffer of residual basis vectors.
+      */
+      void updateU(DMatrix<double> & U,
+                   RingBuffer<T> const & resBasis);
+
+      /**
+      * Compute the v vector.
+      *
+      * \param v  v vector
+      * \param resCurrent  current residual vector
+      * \param resBasis  RingBuffer of residual basis vectors.
+      */
+      void computeV(DArray<double> & v, 
+                   T const & resCurrent,
+                   RingBuffer<T> const & resBasis);
 
       /**
       * Add linear combination of field basis vectors to the trial field.
       *
       * \param trial  resulting linear combination (output)
       * \param basis  list of history basis vectors
-      * \param coeffs list of coefficients of basis vectors
-      * \param nHist  current number of prior states
+      * \param coeffs  list of coefficients of basis vectors
       */
       void addHistories(T& trial,
                         RingBuffer<T> const & basis,
-                        DArray<double> coeffs,
-                        int nHist);
+                        DArray<double> coeffs);
 
       // Private virtual functions with a default implementation 
 
