@@ -8,13 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Compressor.h"
-#include <prdc/cpu/RField.h>
-#include <pscf/iterator/AmIteratorTmpl.h>
+#include "Compressor.h"                     // base class template argument
+#include <prdc/cpu/RField.h>                // member
+#include <pscf/iterator/AmIteratorDArray.h> // base class template
+#include <util/containers/DArray.h>         // member
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
    // Forward declaration
    template <int D> class System;
@@ -24,13 +24,13 @@ namespace Rpc
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * Anderson Mixing compressor.
+   * Anderson mixing compressor.
    *
    * \ingroup Rpc_Fts_Compressor_Module
    */
    template <int D>
    class AmCompressor
-      : public AmIteratorTmpl<Compressor<D>, DArray<double> >
+      : public AmIteratorDArray< Compressor<D> >
    {
 
    public:
@@ -85,9 +85,9 @@ namespace Rpc
    protected:
 
       // Inherited protected members
+      using Compressor<D>::mdeCounter_;
       using ParamComposite::setClassName;
       using ParamComposite::readOptional;
-      using Compressor<D>::mdeCounter_;
 
    private:
 
@@ -163,56 +163,6 @@ namespace Rpc
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
-
-      // Private virtual functions for vector math 
-
-      /**
-      * Vector assignment, a = b.
-      *
-      * This function must perform an assignment a = b.
-      *
-      * \param a  vector to be set (LHS)
-      * \param b  vector value to assign (RHS)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b) 
-      override;
-
-      /**
-      * Compute and return the inner product of two vectors.
-      *
-      * \param a first vector
-      * \param b second vector
-      */
-      double dotProduct(DArray<double> const & a, 
-                        DArray<double> const & b) override;
-
-      /**
-      * Return the maximum magnitude element of a vector.
-      *
-      * \param hist  input vector
-      */
-      virtual double maxAbs(DArray<double> const & hist) override;
-
-      /**
-      * Compute the difference a = b - c for vectors a, b and c.
-      *
-      * \param a result vector (LHS)
-      * \param b first vector (RHS)
-      * \param c second vector (RHS)
-      */
-      void subVV(DArray<double>& a, 
-                 DArray<double> const & b, 
-		 DArray<double> const & c) override;
-
-      /**
-      * Compute a += c*b for vectors a and b and scalar c.
-      *
-      * \param a result vector (LHS)
-      * \param b input vector (RHS)
-      * \param c scalar coefficient (RHS)
-      */
-      void addEqVc(DArray<double>& a, 
-		   DArray<double> const & b, double c) override;
 
       // Inherited private members
       using Compressor<D>::system;

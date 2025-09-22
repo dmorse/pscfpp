@@ -9,21 +9,21 @@
 */
 
 #include "Iterator.h"                            // base class argument
-#include <pscf/iterator/AmIteratorTmpl.h>        // base class template
+#include <pscf/iterator/AmIteratorDArray.h>      // base class template
 #include <pscf/iterator/AmbdInteraction.h>       // member variable
-#include <util/containers/DArray.h>              // base class argument
-#include <util/containers/RingBuffer.h>          // method input variable
+#include <util/containers/DArray.h>              // function parameter
+#include <util/containers/RingBuffer.h>          // function parameter
+#include <iostream>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
    template <int D> class System;
 
    using namespace Util;
 
    /**
-   * Rpc implementation of the Anderson Mixing iterator with symmetry.
+   * Anderson Mixing iterator with imposed space-group symmetry.
    * 
    * \see \ref rpc_AmIteratorBasis_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
@@ -31,13 +31,13 @@ namespace Rpc
    * \ingroup Rpc_Scft_Iterator_Module
    */
    template <int D>
-   class AmIteratorBasis
-      : public AmIteratorTmpl< Iterator<D>, DArray<double> >
+   class AmIteratorBasis : public AmIteratorDArray< Iterator<D> >
    {
 
    public:
 
-      using Base = AmIteratorTmpl< Iterator<D>, DArray<double> >;
+      /// Alias for base class.
+      using Base = AmIteratorDArray< Iterator<D> >;
 
       /**
       * Constructor.
@@ -66,8 +66,6 @@ namespace Rpc
       void outputTimers(std::ostream& out) const override;
 
       // Inherited public member functions
-      using Base::solve;
-      using Base::clearTimers;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
@@ -77,16 +75,15 @@ namespace Rpc
    protected:
 
       // Inherited protected members
-      using ParamComposite::setClassName;
-      using ParamComposite::readOptional;
-      using ParamComposite::readParamCompositeOptional;
-      using ParamComposite::readOptionalFSArray;
       using Base::verbose;
       using Base::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
+      using ParamComposite::readOptional;
+      using ParamComposite::readParamCompositeOptional;
+      using ParamComposite::readOptionalFSArray;
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -150,59 +147,6 @@ namespace Rpc
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
-
-      // Private virtual functions for vector math
-
-      /**
-      * Vector assignment, a = b.
-      *
-      * This function must perform an assignment a = b.
-      *
-      * \param a  vector to be set (LHS)
-      * \param b  vector value to assign (RHS)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b) 
-      override;
-
-      /**
-      * Compute and return the inner product of two vectors.
-      *
-      * \param a first vector
-      * \param b second vector
-      */
-      double dotProduct(DArray<double> const & a, 
-                        DArray<double> const & b) 
-      override;
-
-      /**
-      * Return the maximum magnitude element of a vector.
-      *
-      * \param hist  input vector
-      */
-      virtual double maxAbs(DArray<double> const & hist) override;
-
-      /**
-      * Compute the difference a = b - c for vectors a, b and c.
-      *
-      * \param a result vector (LHS)
-      * \param b first vector (RHS)
-      * \param c second vector (RHS)
-      */
-      void subVV(DArray<double>& a, 
-                 DArray<double> const & b, 
-		 DArray<double> const & c) 
-      override;
-
-      /**
-      * Compute a += c*b for vectors a and b and scalar c.
-      *
-      * \param a result vector (LHS)
-      * \param b input vector (RHS)
-      * \param c scalar coefficient (RHS)
-      */
-      void addEqVc(DArray<double>& a, 
-		   DArray<double> const & b, double c) 
-      override;
 
    };
 

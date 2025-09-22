@@ -8,15 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.h"
-#include <r1d/solvers/Mixture.h>
-#include <pscf/iterator/AmbdInteraction.h>
-#include <pscf/iterator/AmIteratorTmpl.h>
+#include <pscf/iterator/AmIteratorDArray.h>  // base class template
+#include "Iterator.h"                        // base class template param
+#include <pscf/iterator/AmbdInteraction.h>   // member
 
 namespace Pscf {
-namespace R1d
-{
+namespace R1d {
 
+   // Forward declaration
    class System;
 
    using namespace Util;
@@ -29,7 +28,7 @@ namespace R1d
    *
    * \ingroup R1d_Iterator_Module
    */
-   class AmIterator : public AmIteratorTmpl<Iterator, DArray<double> >
+   class AmIterator : public AmIteratorDArray<Iterator>
    {
 
    public:
@@ -53,14 +52,10 @@ namespace R1d
       */
       void readParameters(std::istream& in) override;
 
-      // Inherited public member functions
-      using AmIteratorTmpl<Iterator,DArray<double> >::solve;
-      using AmIteratorTmpl<Iterator,DArray<double> >::setClassName;
-
    protected:
 
       // Inherited protected members
-      using Iterator::system;
+      // using Iterator::system;
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -128,58 +123,6 @@ namespace R1d
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
-
-      // --- Private virtual functions for vector math --- //
-
-      /**
-      * Assignment for vectors of type T.
-      *
-      * This function must perform an assignment a = b.
-      *
-      * \param a  vector to be set (lhs of assignment)
-      * \param b  vector value to assign (rhs of assignment)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b) 
-      override;
-
-      /**
-      * Compute the inner product of two vectors.
-      *
-      * \param a first vector
-      * \param b second vector
-      */
-      double dotProduct(DArray<double> const & a, DArray<double> const & b) 
-      override;
-
-      /**
-      * Return the maximum magnitude element of a vector.
-      *
-      * \param hist  input vector
-      */
-      double maxAbs(DArray<double> const & hist) 
-      override;
-
-      /**
-      * Compute the difference a = b - c for vectors a, b and c.
-      *
-      * \param a result vector (LHS)
-      * \param b first vector (RHS)
-      * \param c second vector (RHS)
-      */
-      void subVV(DArray<double>& a, 
-                 DArray<double> const & b, 
-		 DArray<double> const & c) 
-      override;
-
-      /**
-      * Compute a += c*b for vectors a and b and scalar c.
-      *
-      * \param a result vector (LHS)
-      * \param b input vector (RHS)
-      * \param c scalar coefficient (RHS)
-      */
-      void addEqVc(DArray<double>& a, DArray<double> const & b, double c) 
-      override;
 
    };
 

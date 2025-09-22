@@ -33,7 +33,7 @@ namespace Rpg {
     : Iterator<D>(system)
    {
       isSymmetric_ = true;
-      setClassName("AmIteratorBasis");
+      ParamComposite::setClassName("AmIteratorBasis");
    }
 
    /*
@@ -373,6 +373,7 @@ namespace Rpg {
       }
    }
 
+   #if 0
    // Private virtual functions for vector math
 
    /*
@@ -455,6 +456,7 @@ namespace Rpg {
          a[i] += c*b[i];
       }
    }
+   #endif
 
 }
 }

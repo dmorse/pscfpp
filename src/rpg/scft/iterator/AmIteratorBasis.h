@@ -9,28 +9,27 @@
 */
 
 #include "Iterator.h"                        // base class argument
-#include <pscf/iterator/AmIteratorTmpl.h>    // base class template
+#include <pscf/iterator/AmIteratorDArray.h>  // base class template
 #include <pscf/iterator/AmbdInteraction.h>   // member variable
-#include <util/containers/DArray.h>          // base class argument
-#include <util/containers/RingBuffer.h>      // method input variable
+#include <util/containers/DArray.h>          // function argument
+#include <util/containers/RingBuffer.h>      // function argument
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
-   template <int D>
-   class System;
+   // Forward declaration
+   template <int D> class System;
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
-   * Rpg implementation of the Anderson Mixing iterator.
+   * Anderson Mixing iterator with imposed space-group symmetry.
    *
    * \ingroup Rpg_Scft_Iterator_Module
    */
    template <int D>
-   class AmIteratorBasis
-      : public AmIteratorTmpl< Iterator<D>, DArray<double> >
+   class AmIteratorBasis : public AmIteratorDArray< Iterator<D> >
    {
 
    public:
@@ -73,16 +72,16 @@ namespace Rpg
    protected:
 
       // Inherited protected members
-      using ParamComposite::readOptional;
-      using ParamComposite::readParamCompositeOptional;
-      using ParamComposite::readOptionalFSArray;
-      using ParamComposite::setClassName;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::verbose;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
+      using ParamComposite::readOptional;
+      using ParamComposite::readParamCompositeOptional;
+      using ParamComposite::readOptionalFSArray;
+      using ParamComposite::setClassName;
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -142,6 +141,7 @@ namespace Rpg
       */
       void outputToLog() override;
 
+      #if 0
       // Private virtual functions for vector math
       
       /**
@@ -184,6 +184,7 @@ namespace Rpg
       */
       void addEqVc(DArray<double>& a, 
 		   DArray<double> const & b, double c) override;
+      #endif
 
 
    };

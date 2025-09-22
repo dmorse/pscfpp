@@ -136,46 +136,8 @@ namespace Rpc{
       mdeCounter_ = 0;
    }
 
-   // Private overridden virtual functions
 
-   #if 0
-   /*
-   * Update basis by adding one new basis vector.
-   */
-   template <int D>
-   void
-   LrAmCompressor<D>::updateBasis(
-                            RingBuffer< DArray<double> > & basis,
-                            RingBuffer< DArray<double> > const & hists)
-   {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      // New basis vector is difference between two most recent states
-      const int n = hists[0].capacity();
-      for (int i = 0; i < n; i++) {
-         newBasis_[i] = hists[0][i] - hists[1][i];
-      }
-
-      basis.append(newBasis_);
-   }
-
-   template <int D>
-   void
-   LrAmCompressor<D>::addHistories(DArray<double>& trial,
-                               RingBuffer<DArray<double> > const & basis,
-                               DArray<double> coeffs,
-                               int nHist)
-   {
-      int n = trial.capacity();
-      for (int i = 0; i < nHist; i++) {
-         for (int j = 0; j < n; j++) {
-            // Not clear on the origin of the -1 factor
-            trial[j] += coeffs[i] * -1 * basis[i][j];
-         }
-      }
-   }
-   #endif
+   // Private virtual function that interact with parent system
 
    /*
    * Returns mixing value parameter lambda = 1.0
@@ -333,89 +295,6 @@ namespace Rpc{
    template<int D>
    void LrAmCompressor<D>::outputToLog()
    {}
-
-   // Virtual vector math functions
-
-   /*
-   * Vector assignment, a = b.
-   */
-   template <int D>
-   void LrAmCompressor<D>::setEqual(DArray<double>& a, 
-                                    DArray<double> const & b)
-   {  a = b; }
-
-   /*
-   * Compute and return the inner product of two vectors
-   */
-   template <int D>
-   double LrAmCompressor<D>::dotProduct(DArray<double> const & a,
-                                        DArray<double> const & b)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      double product = 0.0;
-      for (int i = 0; i < n; i++) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) {
-            throw NanException("LrAmCompressor<D>::dotProduct",
-                               __FILE__,__LINE__,0);
-         }
-         product += a[i] * b[i];
-      }
-      return product;
-   }
-
-   /*
-   * Compute and return the maximum magnitude element of a vector.
-   */
-   template <int D>
-   double LrAmCompressor<D>::maxAbs(DArray<double> const & a)
-   {
-      const int n = a.capacity();
-      double max = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = a[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("LrAmCompressor<D>::dotProduct",
-                                __FILE__,__LINE__,0);
-         }
-         if (fabs(value) > max)
-            max = fabs(value);
-      }
-      return max;
-   }
-
-   /*
-   * Compute the vector difference a = b - c 
-   */
-   template <int D>
-   void LrAmCompressor<D>::subVV(DArray<double>& a,
-                                 DArray<double> const & b,
-                                 DArray<double> const & c)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      UTIL_CHECK(n == c.capacity());
-      for (int i = 0; i < n; i++) {
-         a[i] = b[i] - c[i];
-      }
-   }
-
-   /*
-   * Composite a += b*c for vectors a and b, scalar c
-   */
-   template <int D>
-   void LrAmCompressor<D>::addEqVc(DArray<double>& a,
-                                   DArray<double> const & b,
-                                   double c)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      for (int i = 0; i < n; i++) {
-         a[i] += c*b[i];
-      }
-   }
 
 }
 }
