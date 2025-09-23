@@ -9,21 +9,15 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-
-#include <prdc/cuda/types.h>              // typedef
-#include <pscf/cuda/DeviceArray.h>        // typedef
 #include <util/containers/FSArray.h>      // member
 
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declaration
    template <int D> class System;
 
    using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cuda;
-
-   using FieldCUDA = DeviceArray<cudaReal>;
 
    /**
    * Base class for iterative solvers for SCF equations.

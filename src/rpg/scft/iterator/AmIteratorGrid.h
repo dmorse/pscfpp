@@ -8,20 +8,23 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.h"                        // base class
+#include "Iterator.h"                        // base class argument
+#include <prdc/cuda/types.h>                 // base class argument
+#include <pscf/cuda/DeviceArray.h>           // base class argument
 #include <pscf/iterator/AmIteratorTmpl.h>    // base class template
+
 #include <pscf/iterator/AmbdInteraction.h>   // member variable
 #include <util/containers/DArray.h>          // base class argument
 #include <util/containers/RingBuffer.h>      // method input variable
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
-   template <int D>
-   class System;
+   template <int D> class System;
 
    using namespace Util;
+   using namespace Prdc;
+   using namespace Prdc::Cuda;
 
    /**
    * Rpg implementation of the Anderson Mixing iterator.
@@ -29,10 +32,14 @@ namespace Rpg
    * \ingroup Rpg_Scft_Iterator_Module
    */
    template <int D>
-   class AmIteratorGrid : public AmIteratorTmpl<Iterator<D>, FieldCUDA>
+   class AmIteratorGrid 
+     : public AmIteratorTmpl<Iterator<D>, DeviceArray<cudaReal> >
    {
 
    public:
+
+      using VectorT = DeviceArray<cudaReal>;
+      using Base = AmIteratorTmpl<Iterator<D>, VectorT >;
 
       /**
       * Constructor.
@@ -61,8 +68,8 @@ namespace Rpg
       void outputTimers(std::ostream& out) const;
 
       // Inherited public member functions
-      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::solve;
-      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::clearTimers;
+      using Base::solve;
+      using Base::clearTimers;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
@@ -72,16 +79,16 @@ namespace Rpg
    protected:
 
       // Inherited protected members
-      using ParamComposite::readOptional;
-      using ParamComposite::readParamCompositeOptional;
-      using ParamComposite::readOptionalFSArray;
-      using ParamComposite::setClassName;
-      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::verbose;
-      using AmIteratorTmpl<Iterator<D>, FieldCUDA>::residual;
+      using Base::verbose;
+      using Base::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
+      using ParamComposite::readOptional;
+      using ParamComposite::readParamCompositeOptional;
+      using ParamComposite::readOptionalFSArray;
+      using ParamComposite::setClassName;
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -115,7 +122,7 @@ namespace Rpg
       *
       * \param curr current field vector (output)
       */
-      void getCurrent(FieldCUDA& curr) override;
+      void getCurrent(VectorT& curr) override;
 
       /**
       * Solve MDE for current state of system.
@@ -127,14 +134,14 @@ namespace Rpg
       *  
       * \param resid  current residual vector (output)
       */
-      void getResidual(FieldCUDA& resid) override;
+      void getResidual(VectorT& resid) override;
 
       /**
       * Update the system with a new trial field vector.
       *
       * \param newGuess  trial field configuration (output)
       */
-      void update(FieldCUDA& newGuess) override;
+      void update(VectorT& newGuess) override;
 
       /**
       * Output relevant system details to the iteration log file.
@@ -149,20 +156,20 @@ namespace Rpg
       * \param a the field to be set (LHS, result)
       * \param b the field for it to be set to (RHS, input)
       */
-      void setEqual(FieldCUDA& a, FieldCUDA const & b) override;
+      void setEqual(VectorT& a, VectorT const & b) override;
 
       /**
       * Compute and return inner product of two real fields.
       */
-      double dotProduct(FieldCUDA const & a, 
-                        FieldCUDA const & b) override;
+      double dotProduct(VectorT const & a, 
+                        VectorT const & b) override;
 
       /**
       * Find the maximum magnitude element of a residual vector.
       *  
       * \param a input vector
       */
-      double maxAbs(FieldCUDA const & a) override;
+      double maxAbs(VectorT const & a) override;
 
       /**
       * Compute the difference a = b - c for vectors a, b and c.
@@ -171,9 +178,9 @@ namespace Rpg
       * \param b first vector (RHS)
       * \param c second vector (RHS)
       */
-      void subVV(FieldCUDA& a, 
-                 FieldCUDA const & b, 
-		 FieldCUDA const & c) override;
+      void subVV(VectorT& a, 
+                 VectorT const & b, 
+		 VectorT const & c) override;
 
       /**
       * Compute a += c*b for vectors a and b and scalar c.
@@ -182,8 +189,8 @@ namespace Rpg
       * \param b input vector (RHS)
       * \param c scalar coefficient (RHS)
       */
-      void addEqVc(FieldCUDA& a, 
-		   FieldCUDA const & b, double c) override;
+      void addEqVc(VectorT& a, 
+		   VectorT const & b, double c) override;
 
       // --- Private member function specific to this implementation --- 
       
@@ -192,7 +199,7 @@ namespace Rpg
       * 
       * \param field  input array
       */
-      cudaReal findAverage(FieldCUDA const & field);
+      cudaReal findAverage(VectorT const & field);
 
    };
 

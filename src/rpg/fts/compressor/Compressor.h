@@ -71,6 +71,11 @@ namespace Rpg {
    protected:
 
       /**
+      * Count how many times MDE has been solved.
+      */
+      int mdeCounter_;
+
+      /**
       * Return const reference to parent system.
       */
       System<D> const & system() const
@@ -82,11 +87,6 @@ namespace Rpg {
       System<D>& system() 
       {  return *sysPtr_;}
       
-      /**
-      * Count how many times MDE has been solved.
-      */
-      int mdeCounter_;
-
    private:
 
       /// Pointer to the associated system object.

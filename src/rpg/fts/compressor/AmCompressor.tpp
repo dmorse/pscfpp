@@ -10,6 +10,8 @@
 
 #include "AmCompressor.h"
 #include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/math/IntVec.h>
@@ -26,7 +28,7 @@ namespace Rpg {
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
     : Compressor<D>(system),
-     isAllocated_(false)
+      isAllocated_(false)
    { ParamComposite::setClassName("AmCompressor"); }
 
    /*
@@ -43,10 +45,8 @@ namespace Rpg {
    void AmCompressor<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmIteratorTmpl<Compressor<D>,
-                     DeviceArray<cudaReal> >::readParameters(in);
-      AmIteratorTmpl<Compressor<D>,
-                     DeviceArray<cudaReal> >::readErrorType(in);
+      Base::readParameters(in);
+      Base::readErrorType(in);
    }
 
    /*
@@ -60,8 +60,7 @@ namespace Rpg {
       const IntVec<D> dimensions = system().domain().mesh().dimensions();
 
       // Allocate memory required by AM algorithm if not done earlier.
-      AmIteratorTmpl<Compressor<D>,
-                     DeviceArray<cudaReal> >::setup(isContinuation);
+      Base::setup(isContinuation);
 
       // Allocate memory required by compressor if not done earlier.
       if (!isAllocated_) {
@@ -118,7 +117,7 @@ namespace Rpg {
    * Get the current field from the system.
    */
    template <int D>
-   void AmCompressor<D>::getCurrent(DeviceArray<cudaReal>& curr)
+   void AmCompressor<D>::getCurrent(VectorT& curr)
    {
       /*
       * The field that we are adjusting is the Langrange multiplier field 
@@ -143,7 +142,7 @@ namespace Rpg {
    * Compute the residual for the current system state.
    */
    template <int D>
-   void AmCompressor<D>::getResidual(DeviceArray<cudaReal>& resid)
+   void AmCompressor<D>::getResidual(VectorT& resid)
    {
       const int nMonomer = system().mixture().nMonomer();
 
@@ -160,7 +159,7 @@ namespace Rpg {
    * Update the current system field coordinates.
    */
    template <int D>
-   void AmCompressor<D>::update(DeviceArray<cudaReal>& newGuess)
+   void AmCompressor<D>::update(VectorT& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
@@ -203,8 +202,8 @@ namespace Rpg {
    * Assign one array to another.
    */
    template <int D>
-   void AmCompressor<D>::setEqual(DeviceArray<cudaReal>& a,
-                                  DeviceArray<cudaReal> const & b)
+   void AmCompressor<D>::setEqual(VectorT& a,
+                                  VectorT const & b)
    {
       UTIL_CHECK(b.capacity() == a.capacity());
       VecOp::eqV(a, b);
@@ -214,8 +213,8 @@ namespace Rpg {
    * Compute and return inner product of two vectors.
    */
    template <int D>
-   double AmCompressor<D>::dotProduct(DeviceArray<cudaReal> const & a,
-                                      DeviceArray<cudaReal> const & b)
+   double AmCompressor<D>::dotProduct(VectorT const & a,
+                                      VectorT const & b)
    {
       UTIL_CHECK(a.capacity() == b.capacity());
       return Reduce::innerProduct(a, b);
@@ -225,24 +224,24 @@ namespace Rpg {
    * Compute and return maximum element of a vector.
    */
    template <int D>
-   double AmCompressor<D>::maxAbs(DeviceArray<cudaReal> const & a)
+   double AmCompressor<D>::maxAbs(VectorT const & a)
    {  return Reduce::maxAbs(a); }
 
    /*
    * Compute the vector difference a = b - c
    */
    template <int D>
-   void AmCompressor<D>::subVV(DeviceArray<cudaReal>& a,
-                               DeviceArray<cudaReal> const & b,
-                               DeviceArray<cudaReal> const & c)
+   void AmCompressor<D>::subVV(VectorT& a,
+                               VectorT const & b,
+                               VectorT const & c)
    {  VecOp::subVV(a, b, c); }
 
    /*
    * Composite a += b*c for vectors a and b, scalar c
    */
    template <int D>
-   void AmCompressor<D>::addEqVc(DeviceArray<cudaReal>& a,
-                                 DeviceArray<cudaReal> const & b,
+   void AmCompressor<D>::addEqVc(VectorT& a,
+                                 VectorT const & b,
                                  double c)
    {
       UTIL_CHECK(a.capacity() == b.capacity());

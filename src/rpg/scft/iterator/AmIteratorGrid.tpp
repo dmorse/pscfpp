@@ -10,6 +10,8 @@
 
 #include "AmIteratorGrid.h"
 #include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/inter/Interaction.h>
@@ -48,9 +50,9 @@ namespace Rpg {
    template <int D>
    void AmIteratorGrid<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
-      AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters(in);
-      AmIteratorTmpl<Iterator<D>,FieldCUDA>::readErrorType(in);
+      // Read param file format for base class
+      Base::readParameters(in);
+      Base::readErrorType(in);
 
       // Allocate local modified copy of Interaction class
       interaction_.setNMonomer(system().mixture().nMonomer());
@@ -98,7 +100,7 @@ namespace Rpg {
       // Output timing results, if requested.
       out << "\n";
       out << "Iterator times contributions:\n";
-      AmIteratorTmpl<Iterator<D>, FieldCUDA >::outputTimers(out);
+      Base::outputTimers(out);
    }
 
    // Protected virtual function
@@ -109,7 +111,7 @@ namespace Rpg {
    template <int D>
    void AmIteratorGrid<D>::setup(bool isContinuation)
    {
-      AmIteratorTmpl<Iterator<D>, FieldCUDA>::setup(isContinuation);
+      AmIteratorTmpl<Iterator<D>, VectorT>::setup(isContinuation);
       interaction_.update(system().interaction());
    }
 
@@ -140,7 +142,7 @@ namespace Rpg {
    * Get the current w fields and lattice parameters.
    */
    template <int D>
-   void AmIteratorGrid<D>::getCurrent(FieldCUDA& curr)
+   void AmIteratorGrid<D>::getCurrent(VectorT& curr)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
@@ -170,7 +172,7 @@ namespace Rpg {
          UTIL_CHECK(counter == tempH.capacity());
 
          // Copy parameters to the end of the curr array
-         FieldCUDA tempD;
+         VectorT tempD;
          tempD.associate(curr, nMonomer*nMesh, tempH.capacity());
          tempD = tempH; // copy from host to device
       }
@@ -190,7 +192,7 @@ namespace Rpg {
    * Gets the residual vector from system.
    */
    template <int D>
-   void AmIteratorGrid<D>::getResidual(FieldCUDA& resid)
+   void AmIteratorGrid<D>::getResidual(VectorT& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -200,9 +202,9 @@ namespace Rpg {
       // additional elements (n vs nMesh).
       VecOp::eqS(resid, 0.0);
 
-      // Array of FieldCUDA arrays associated with slices of resid.
-      // one FieldCUDA array per monomer species, each of size nMesh.
-      DArray<FieldCUDA> residSlices;
+      // Array of VectorT arrays associated with slices of resid.
+      // one VectorT array per monomer species, each of size nMesh.
+      DArray<VectorT> residSlices;
       residSlices.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
          residSlices[i].associate(resid, i*nMesh, nMesh);
@@ -264,7 +266,7 @@ namespace Rpg {
          }
          UTIL_CHECK(counter == stressH.capacity());
 
-         FieldCUDA stressD;
+         VectorT stressD;
          stressD.associate(resid, nMonomer*nMesh, stressH.capacity());
          stressD = stressH; // copy from host to device
       }
@@ -274,7 +276,7 @@ namespace Rpg {
    * Update the system with a new trial field vector.
    */
    template <int D>
-   void AmIteratorGrid<D>::update(FieldCUDA& newGuess)
+   void AmIteratorGrid<D>::update(VectorT& newGuess)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
@@ -284,7 +286,7 @@ namespace Rpg {
          cudaReal average, wAverage, cAverage;
          for (int i = 0; i < nMonomer; i++) {
             // Define array associated with a slice of newGuess
-            FieldCUDA ngSlice;
+            VectorT ngSlice;
             ngSlice.associate(newGuess, i*nMesh, nMesh);
 
             // Find current spatial average
@@ -385,8 +387,8 @@ namespace Rpg {
    * Set vector a equal to vector b (a = b).
    */
    template <int D>
-   void AmIteratorGrid<D>::setEqual(FieldCUDA& a,
-                                    FieldCUDA const & b)
+   void AmIteratorGrid<D>::setEqual(VectorT& a,
+                                    VectorT const & b)
    {
       UTIL_CHECK(b.capacity() == a.capacity());
       VecOp::eqV(a, b);
@@ -396,8 +398,8 @@ namespace Rpg {
    * Compute and return inner product of two real fields.
    */
    template <int D>
-   double AmIteratorGrid<D>::dotProduct(FieldCUDA const & a,
-                                        FieldCUDA const & b)
+   double AmIteratorGrid<D>::dotProduct(VectorT const & a,
+                                        VectorT const & b)
    {
       UTIL_CHECK(a.capacity() == b.capacity());
       double val = Reduce::innerProduct(a, b);
@@ -412,7 +414,7 @@ namespace Rpg {
    * Find the maximum magnitude element of a residual vector.
    */
    template <int D>
-   double AmIteratorGrid<D>::maxAbs(FieldCUDA const & a)
+   double AmIteratorGrid<D>::maxAbs(VectorT const & a)
    {
       double val = Reduce::maxAbs(a);
       if (std::isnan(val)) { // if value is NaN, throw NanException
@@ -426,17 +428,17 @@ namespace Rpg {
    * Compute the vector difference a = b - c
    */
    template <int D>
-   void AmIteratorGrid<D>::subVV(FieldCUDA& a,
-                                 FieldCUDA const & b,
-                                 FieldCUDA const & c)
+   void AmIteratorGrid<D>::subVV(VectorT& a,
+                                 VectorT const & b,
+                                 VectorT const & c)
    {  VecOp::subVV(a, b, c); }
 
    /*
    * Composite a += b*c for vectors a and b, scalar c
    */
    template <int D>
-   void AmIteratorGrid<D>::addEqVc(FieldCUDA& a,
-                                   FieldCUDA const & b,
+   void AmIteratorGrid<D>::addEqVc(VectorT& a,
+                                   VectorT const & b,
                                    double c)
    {  VecOp::addEqVc(a, b, c); }
 
@@ -445,7 +447,7 @@ namespace Rpg {
 
    // Calculate the average value of an array.
    template<int D>
-   cudaReal AmIteratorGrid<D>::findAverage(FieldCUDA const & field)
+   cudaReal AmIteratorGrid<D>::findAverage(VectorT const & field)
    {  return Reduce::sum(field) / (double) field.capacity(); }
 
 }

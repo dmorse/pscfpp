@@ -32,12 +32,12 @@ namespace Rpg{
       itr_(0),
       maxItr_(0),
       totalItr_(0),
-      errorType_("rmsResid"),
       verbose_(0),
+      errorType_("rmsResid"),
       intra_(system),
       isIntraCalculated_(false),
       isAllocated_(false)
-   { setClassName("LrCompressor"); }
+   {  setClassName("LrCompressor"); }
 
    /*
    * Destructor.
@@ -52,9 +52,8 @@ namespace Rpg{
    template <int D>
    void LrCompressor<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
-      maxItr_ = 60;
       read(in, "epsilon", epsilon_);
+      maxItr_ = 60;
       readOptional(in, "maxItr", maxItr_);
       readOptional(in, "verbose", verbose_);
       readOptional(in, "errorType", errorType_);

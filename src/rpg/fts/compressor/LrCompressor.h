@@ -109,26 +109,31 @@ namespace Rpg {
       // Total iteration counter.
       int totalItr_;
 
-      // Timers for analyzing performance.
-      Timer timerTotal_;
-      Timer timerMDE_;
+      // Verbosity level.
+      int verbose_;
 
       // Type of error criterion used to test convergence
       std::string errorType_;
 
-      // Verbosity level.
-      int verbose_;
+      // Timers for analyzing performance.
+      Timer timerTotal_;
+      Timer timerMDE_;
 
-      /**
-      * Dimensions of wavevector mesh in real-to-complex transform
-      */
-      IntVec<D> kMeshDimensions_;
-      
       /**
       * Number of points in k-space grid
       */
       int kSize_;
 
+      /**
+      * IntraCorrelation object
+      */
+      IntraCorrelation<D> intra_;
+      
+      /**
+      * Dimensions of wavevector mesh in real-to-complex transform
+      */
+      IntVec<D> kMeshDimensions_;
+      
       /**
       * IntraCorrelation in fourier space calculated by IntraCorrlation class.
       */
@@ -149,6 +154,18 @@ namespace Rpg {
       */
       DArray< RField<D> > wFieldTmp_;
 
+      /**
+      * Has the IntraCorrelation been calculated?
+      */
+      bool isIntraCalculated_;
+      
+      /**
+      * Has memory been allocated?
+      */
+      bool isAllocated_;
+
+      // Private functions
+      
       /**
       * Compute the residual vector.
       *
@@ -191,21 +208,6 @@ namespace Rpg {
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-      
-      /**
-      * IntraCorrelation object
-      */
-      IntraCorrelation<D> intra_;
-      
-      /**
-      * Has the IntraCorrelation been calculated?
-      */
-      bool isIntraCalculated_;
-      
-      /**
-      * Has the variable been allocated?
-      */
-      bool isAllocated_;
       
       // Private inherited members
       using Compressor<D>::system;

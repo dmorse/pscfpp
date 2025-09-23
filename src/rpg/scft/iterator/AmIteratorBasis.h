@@ -21,7 +21,7 @@ namespace Rpg {
    template <int D> class System;
 
    using namespace Util;
-   using namespace Prdc;
+   //using namespace Prdc;
 
    /**
    * Anderson Mixing iterator with imposed space-group symmetry.

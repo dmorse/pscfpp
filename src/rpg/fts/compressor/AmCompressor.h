@@ -9,6 +9,7 @@
 */
 
 #include "Compressor.h"                    // base class argument
+#include <prdc/cuda/types.h>               // base class argument
 #include <pscf/cuda/DeviceArray.h>         // base class argument
 #include <pscf/iterator/AmIteratorTmpl.h>  // base class template
 
@@ -39,8 +40,11 @@ namespace Rpg {
 
    public:
 
-      // Alias for base class
-      using Base =  AmIteratorTmpl< Compressor<D>, DeviceArray<cudaReal> >;
+      /// Type for state and residual vectors
+      using VectorT = DeviceArray<cudaReal>;
+
+      /// Alias for base class
+      using Base =  AmIteratorTmpl< Compressor<D>, VectorT >;
 
       /**
       * Constructor.
@@ -147,7 +151,7 @@ namespace Rpg {
       *
       * \param curr current field vector
       */
-      void getCurrent(DeviceArray<cudaReal>& curr) override;
+      void getCurrent(VectorT& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -162,14 +166,14 @@ namespace Rpg {
       *
       * \param resid current residual vector value
       */
-      void getResidual(DeviceArray<cudaReal>& resid) override;
+      void getResidual(VectorT& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DeviceArray<cudaReal>& newGuess) override;
+      void update(VectorT& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.
@@ -184,19 +188,19 @@ namespace Rpg {
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(DeviceArray<cudaReal>& a,
-                    DeviceArray<cudaReal> const & b) override;
+      void setEqual(VectorT& a,
+                    VectorT const & b) override;
 
       /**
       * Compute the inner product of two vectors
       */
-      double dotProduct(DeviceArray<cudaReal> const & a,
-                        DeviceArray<cudaReal> const & b) override;
+      double dotProduct(VectorT const & a,
+                        VectorT const & b) override;
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double maxAbs(DeviceArray<cudaReal> const & hist) override;
+      double maxAbs(VectorT const & hist) override;
 
       /**
       * Compute the difference a = b - c for vectors a, b and c.
@@ -205,9 +209,9 @@ namespace Rpg {
       * \param b first vector (RHS)
       * \param c second vector (RHS)
       */
-      void subVV(DeviceArray<cudaReal>& a, 
-                 DeviceArray<cudaReal> const & b, 
-		 DeviceArray<cudaReal> const & c) override;
+      void subVV(VectorT& a, 
+                 VectorT const & b, 
+		 VectorT const & c) override;
 
       /**
       * Compute a += c*b for vectors a and b and scalar c.
@@ -216,8 +220,8 @@ namespace Rpg {
       * \param b input vector (RHS)
       * \param c scalar coefficient (RHS)
       */
-      void addEqVc(DeviceArray<cudaReal>& a, 
-		   DeviceArray<cudaReal> const & b, 
+      void addEqVc(VectorT& a, 
+		   VectorT const & b, 
 		   double c) override;
 
    };
