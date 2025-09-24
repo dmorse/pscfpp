@@ -147,8 +147,8 @@ namespace Rpc{
    */
    template <int D>
    void
-   LrAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
-                                        DArray<double> const & resTrial)
+   LrAmCompressor<D>::addCorrection(DArray<double>& fieldTrial,
+                                    DArray<double> const & resTrial)
    {
       // Local constants
       const int n = fieldTrial.capacity();

@@ -74,8 +74,8 @@ namespace Rpg {
    protected:
 
       // Inherited protected members
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::verbose;
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::residual;
+      using AmTmpl::verbose;
+      using AmTmpl::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
@@ -83,7 +83,6 @@ namespace Rpg {
       using ParamComposite::readOptional;
       using ParamComposite::readParamCompositeOptional;
       using ParamComposite::readOptionalFSArray;
-      using ParamComposite::setClassName;
 
       /**
       * Setup iterator just before entering iteration loop.

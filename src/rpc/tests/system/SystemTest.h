@@ -863,7 +863,7 @@ public:
       System<1> system;
       double wMaxDiff, cMaxDiff;
       testIterate(system,
-                  "in/blend/lam/param",
+                  "in/blend/lam/param.open",
                   "in/blend/lam/w.bf",
                   "lam_open_blend",
                   wMaxDiff,

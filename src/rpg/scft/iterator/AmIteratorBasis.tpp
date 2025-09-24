@@ -50,10 +50,10 @@ namespace Rpg {
    void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmIteratorTmpl<Iterator<D>,DArray<double> >::readParameters(in);
-      AmIteratorTmpl<Iterator<D>,DArray<double> >::readErrorType(in);
+      AmTmpl::readParameters(in);
+      AmTmpl::readErrorType(in);
 
-      // Read in optional isFlexible value
+      // Read optional isFlexible value
       isFlexible_ = 1; // default value
       readOptional(in, "isFlexible", isFlexible_);
 
@@ -86,11 +86,13 @@ namespace Rpg {
       readOptional(in, "scaleStress", scaleStress_);
 
       // Optionally read mixing parameters (lambda, useLambdaRamp, r)
-      AmIteratorTmpl<Iterator<D>,DArray<double> >::readErrorType(in);
+      AmTmpl::readErrorType(in);
+
+      // Optionally read mixing parameters (lambda, useLambdaRamp, r)
+      AmTmpl::readMixingParameters(in);
 
       // Allocate local modified copy of Interaction class
       interaction_.setNMonomer(system().mixture().nMonomer());
-
    }
 
    /*
@@ -102,7 +104,7 @@ namespace Rpg {
       // Output timing results, if requested.
       out << "\n";
       out << "Iterator times contributions:\n";
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::outputTimers(out);
+      AmTmpl::outputTimers(out);
    }
 
    // Protected virtual function
@@ -112,7 +114,7 @@ namespace Rpg {
    void AmIteratorBasis<D>::setup(bool isContinuation)
    {
       // Call parent setup method
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
+      AmTmpl::setup(isContinuation);
 
       // Update chi matrix and related properties in member interaction_
       interaction_.update(system().interaction());

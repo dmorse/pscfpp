@@ -86,7 +86,6 @@ namespace Rpc {
 
       // Inherited protected members
       using Compressor<D>::mdeCounter_;
-      using ParamComposite::setClassName;
       using ParamComposite::readOptional;
 
    private:

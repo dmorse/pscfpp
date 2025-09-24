@@ -50,10 +50,6 @@ namespace Rpc {
       // Use base class methods to read parameters
       AmTmpl::readParameters(in);
       AmTmpl::readErrorType(in);
-      AmTmpl::readMixingParameters(in);
-
-      // Allocate local modified copy of Interaction class
-      interaction_.setNMonomer(system().mixture().nMonomer());
 
       // Default parameter values
       isFlexible_ = 1; 
@@ -86,6 +82,14 @@ namespace Rpc {
 
       // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
+
+      // Read option mixing parameters (lambda, useLambdaRamp, and r)
+      AmTmpl::readMixingParameters(in);
+
+      // Allocate local modified copy of Interaction class
+      const int nMonomer = system().mixture().nMonomer();
+      interaction_.setNMonomer(nMonomer);
+
    }
 
    /*

@@ -167,8 +167,8 @@ namespace Rpc {
       * \param fieldTrial trial field (in-out)
       * \param resTrial predicted error for current trial
       */
-      void addPredictedError(DArray<double>& fieldTrial,
-                             DArray<double> const & resTrial) override;
+      void addCorrection(DArray<double>& fieldTrial,
+                         DArray<double> const & resTrial) override;
 
       // Private virtual functions that interact with parent System
 

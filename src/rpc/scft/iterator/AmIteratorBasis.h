@@ -36,9 +36,6 @@ namespace Rpc {
 
    public:
 
-      /// Alias for indirect base (grandparent) class.
-      using AmTmpl = AmIteratorTmpl< Iterator<D>, DArray<double> >;
-
       /**
       * Constructor.
       *
@@ -64,6 +61,9 @@ namespace Rpc {
       * \param out  output stream for timer report
       */
       void outputTimers(std::ostream& out) const override;
+
+      /// Alias for indirect base (grandparent) class.
+      using AmTmpl = AmIteratorTmpl< Iterator<D>, DArray<double> >;
 
       // Inherited public member functions
       using Iterator<D>::isFlexible;
