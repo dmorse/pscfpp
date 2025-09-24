@@ -113,12 +113,12 @@ namespace Pscf
       timerMDE_.stop();
 
       // Iterative loop
-      nBasis_ = fieldBasis_.size();
+      nBasis_ = stateBasis_.size();
       for (itr_ = 0; itr_ < maxItr_; ++itr_) {
 
-         // Append current field to fieldHistory_ ringbuffer
+         // Append current state to stateHistory_ ringbuffer
          getCurrent(temp_);
-         fieldHistory_.append(temp_);
+         stateHistory_.append(temp_);
 
          timerAM_.start();
 
@@ -134,8 +134,8 @@ namespace Pscf
          timerResid_.start();
          getResidual(temp_);
 
-         // Append current residual to resHistory_ ring buffer
-         resHistory_.append(temp_);
+         // Append current residual to residualHistory_ ring buffer
+         residualHistory_.append(temp_);
          timerResid_.stop();
 
          // Compute scalar error used to test convergence
@@ -202,15 +202,15 @@ namespace Pscf
             computeTrialCoeff();
             timerCoeff_.stop();
 
-            // Compute updated trial field and residual vectors
+            // Compute updated trial state and residual vectors
             timerOmega_.start();
             updateTrial();
 
             // Correction (or "mixing") step
-            addCorrection(fieldTrial_, resTrial_);
+            addCorrection(stateTrial_, residualTrial_);
 
-            // Update the parent system using new trial field
-            update(fieldTrial_);
+            // Update the parent system using new trial state
+            update(stateTrial_);
 
             timerOmega_.stop();
             timerAM_.stop();
@@ -368,14 +368,14 @@ namespace Pscf
       nElem_ = nElements();
 
       // Allocate ring buffers
-      fieldHistory_.allocate(maxHist_+1);
-      resHistory_.allocate(maxHist_+1);
-      fieldBasis_.allocate(maxHist_);
-      resBasis_.allocate(maxHist_);
+      stateHistory_.allocate(maxHist_+1);
+      residualHistory_.allocate(maxHist_+1);
+      stateBasis_.allocate(maxHist_);
+      residualBasis_.allocate(maxHist_);
 
       // Allocate arrays used in iteration
-      fieldTrial_.allocate(nElem_);
-      resTrial_.allocate(nElem_);
+      stateTrial_.allocate(nElem_);
+      residualTrial_.allocate(nElem_);
       temp_.allocate(nElem_);
 
       // Allocate arrays/matrices used in coefficient calculation
@@ -396,13 +396,13 @@ namespace Pscf
       if (!isAllocatedAM()) {
          allocateAM();
       } else {
-         // Clear residual and field history buffers
-         resHistory_.clear();
-         fieldHistory_.clear();
+         // Clear residual and state history buffers
+         residualHistory_.clear();
+         stateHistory_.clear();
          if (!isContinuation) {
             // Clear bases iff not a continuation
-            resBasis_.clear();
-            fieldBasis_.clear();
+            residualBasis_.clear();
+            stateBasis_.clear();
          }
       }
    }
@@ -414,10 +414,10 @@ namespace Pscf
    void AmIteratorTmpl<Iterator,T>::clear()
    {
       UTIL_CHECK(isAllocatedAM_);
-      resHistory_.clear();
-      fieldHistory_.clear();
-      resBasis_.clear();
-      fieldBasis_.clear();
+      residualHistory_.clear();
+      stateHistory_.clear();
+      residualBasis_.clear();
+      stateBasis_.clear();
    }
 
    // Private non-virtual member functions
@@ -445,27 +445,27 @@ namespace Pscf
       // Do nothing else on first iteration
       if (itr_ == 0) return;
 
-      // Update fieldBasis_, resBasis_, U_ matrix and v_ vector
-      if (fieldHistory_.size() > 1) {
+      // Update stateBasis_, residualBasis_, U_ matrix and v_ vector
+      if (stateHistory_.size() > 1) {
 
-         // Update basis spanning differences of past field vectors
-         updateBasis(fieldBasis_, fieldHistory_);
+         // Update basis spanning differences of past state vectors
+         updateBasis(stateBasis_, stateHistory_);
 
          // Update basis spanning differences of past residual vectors
-         updateBasis(resBasis_, resHistory_);
+         updateBasis(residualBasis_, residualHistory_);
 
          // Update the U matrix and v vector.
-         updateU(U_, resBasis_);
+         updateU(U_, residualBasis_);
 
       }
 
       // Update nBasis_
-      nBasis_ = resBasis_.size();
+      nBasis_ = residualBasis_.size();
       UTIL_CHECK(nBasis_ > 0);
-      UTIL_CHECK(fieldBasis_.size() == nBasis_);
+      UTIL_CHECK(stateBasis_.size() == nBasis_);
 
       // Update v_ vector (dot product of basis vectors and residual)
-      computeV(v_, resHistory_[0], resBasis_);
+      computeV(v_, residualHistory_[0], residualBasis_);
 
       // Solution of the matrix problem U coeffs_ = -v yields a coeff
       // vector that minimizes the norm of the residual. Below, we:
@@ -525,16 +525,16 @@ namespace Pscf
    void AmIteratorTmpl<Iterator,T>::updateTrial()
    {
 
-      // Set field and residual trial vectors to current values
-      setEqual(fieldTrial_, fieldHistory_[0]);
-      setEqual(resTrial_, resHistory_[0]);
+      // Set state and residual trial vectors to current values
+      setEqual(stateTrial_, stateHistory_[0]);
+      setEqual(residualTrial_, residualHistory_[0]);
 
-      // Add linear combinations of field and residual basis vectors
+      // Add linear combinations of state and residual basis vectors
       if (nBasis_ > 0) {
 
          // Combine basis vectors into trial guess and predicted residual
-         addEqVectors(fieldTrial_, fieldBasis_, coeffs_);
-         addEqVectors(resTrial_, resBasis_, coeffs_);
+         addEqVectors(stateTrial_, stateBasis_, coeffs_);
+         addEqVectors(residualTrial_, residualBasis_, coeffs_);
 
       }
 
@@ -545,7 +545,7 @@ namespace Pscf
 
          // Additional MDE solution
          timerMDE_.start();
-         update(fieldTrial_);
+         update(stateTrial_);
          evaluate();
          timerMDE_.stop();
 
@@ -556,7 +556,7 @@ namespace Pscf
 
          // Compute error after projection
          timerError_.start();
-         projectionError_ = computeError(temp_, fieldTrial_, errorType_, 0);
+         projectionError_ = computeError(temp_, stateTrial_, errorType_, 0);
          timerError_.stop();
          timerOmega_.start();
       }
@@ -585,10 +585,11 @@ namespace Pscf
    */
    template <typename Iterator, typename T>
    void
-   AmIteratorTmpl<Iterator, T> ::updateU(DMatrix<double> & U,
-                                         RingBuffer<T> const & resBasis)
+   AmIteratorTmpl<Iterator, T> ::updateU(
+                                 DMatrix<double> & U,
+                                 RingBuffer<T> const & residualBasis)
    {
-      int nBasis = resBasis.size();
+      int nBasis = residualBasis.size();
       int maxHist = U.capacity1();
       UTIL_CHECK(maxHist >= nBasis);
 
@@ -601,7 +602,7 @@ namespace Pscf
 
       // Compute U matrix's new row 0 and col 0
       for (int m = 0; m < nBasis; ++m) {
-         double dotprod = dotProduct(resBasis[0],resBasis[m]);
+         double dotprod = dotProduct(residualBasis[0],residualBasis[m]);
          if (m == 0) {
             U(0,0) = dotprod;
          } else {
@@ -617,14 +618,14 @@ namespace Pscf
    */
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator, T>::computeV(
-                                        DArray<double> & v,
-                                        T const & resCurrent,
-                                        RingBuffer<T> const & resBasis)
+                                   DArray<double> & v,
+                                   T const & resCurrent,
+                                   RingBuffer<T> const & residualBasis)
    {
-      int nBasis = resBasis.size();
+      int nBasis = residualBasis.size();
       UTIL_CHECK(v.capacity() >= nBasis);
       for (int m = 0; m < nBasis; ++m) {
-         v[m] = dotProduct(resCurrent, resBasis[m]);
+         v[m] = dotProduct(resCurrent, residualBasis[m]);
       }
    }
 
@@ -634,7 +635,7 @@ namespace Pscf
    template <typename Iterator, typename T>
    double 
    AmIteratorTmpl<Iterator,T>::computeError(T&residTrial, 
-                                            T&fieldTrial,
+                                            T&stateTrial,
                                             std::string errorType,
                                             int verbose)
    {
@@ -652,8 +653,8 @@ namespace Pscf
       // Find root-mean-squared residual element value
       double rmsRes = normRes/sqrt(nElements());
 
-      // Find norm of residual vector relative to field
-      double normField = norm(fieldTrial);
+      // Find norm of residual vector relative to state
+      double normField = norm(stateTrial);
       double relNormRes = normRes/normField;
 
       // Set error value
@@ -687,7 +688,7 @@ namespace Pscf
    template <typename Iterator, typename T>
    double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
    {
-      return computeError(resHistory_[0], fieldHistory_[0], 
+      return computeError(residualHistory_[0], stateHistory_[0], 
                           errorType_, verbose);
    }
 
@@ -736,11 +737,11 @@ namespace Pscf
    */
    template <typename Iterator, typename T>
    void 
-   AmIteratorTmpl<Iterator,T>::addCorrection(T& fieldTrial, 
-                                             T const & resTrial)
+   AmIteratorTmpl<Iterator,T>::addCorrection(T& stateTrial, 
+                                             T const & residualTrial)
    {
       double lambda = computeLambda();
-      addEqVc(fieldTrial, resTrial, lambda);
+      addEqVc(stateTrial, residualTrial, lambda);
    }
 
    // Private virtual vector math functions

@@ -6,7 +6,7 @@ namespace R1d{
 
 An R1d::AmIterator<D> object is an iterator that solves the 1D SCFT 
 equations using a \ref pscf_AmIteratorTmpl_page "Anderson-Mixing" 
-algorithm.
+algorithm. 
 
 \section r1d_AmIterator_param_sec Parameter File 
 
@@ -23,20 +23,22 @@ An example of the parameter file format for this iterator is shown below:
 The format of this block is described more formally below:
 \code
  AmIterator{
-   epsilon       real 
-   maxItr*       int (200 by default)
-   maxHist*      int (50 by default)
-   verbose*      int (0-2, 0 by default)
-   outputTime*   bool (false by default)
-   errorType*    string ("norm", "rms", "max", or "relNorm".
-                    "relNorm" by default)
-  
+   epsilon        real 
+   maxItr*        int (200 by default)
+   maxHist*       int (50 by default)
+   verbose*       int (0-2, 0 by default)
+   outputTime*    bool (false by default)
+   errorType*     string ("norm", "rms", "max", or "relNorm".
+                     "relNorm" by default)
+   lambda*        real (1.0 by default)
+   useLambdaRamp  bool (true by default)
+   r              real (0.9 by default)
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent 
 optional parameters. The meaning of various parameters are described 
-below, and also as part of a more general discussion of 
-\ref pscf_AmIteratorTmpl_page "Anderson-Mixing" algorithms:
+below, and most are also discussed as part of a more general discussion 
+of \ref pscf_AmIteratorTmpl_page "Anderson-Mixing" algorithms:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -54,7 +56,7 @@ below, and also as part of a more general discussion of
   </tr>
   <tr>
     <td> maxHist* </td>
-    <td> Maximum number of previous trial solultions that will be 
+    <td> Maximum number of previous trial solutions that will be 
          retained in memory for use by the AM algorithm 
          (Optional, 50 by default) </td>
   </tr>
@@ -78,6 +80,22 @@ below, and also as part of a more general discussion of
          test convergence.  Allowed values are "norm", "rms", "max" and 
          "relNorm", as discussed \ref pscf_AmIteratorTmpl_page "here". 
          Optional, and equal to "relNorm" by default. </td>
+  </tr>
+  <tr>
+    <td> lambda* </td>
+    <td> Mixing parameter in standard mixing correction step for an
+         \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithm"
+         </td>
+  </tr>
+  <tr>
+    <td> useLambdaRamp* </td>
+    <td> If true, use slow turn-on of mixing parameter, as discussed
+         \ref pscf_AmIteratorTmpl_page "here". </td>
+  </tr>
+  <tr>
+    <td> r* </td>
+    <td> Ratio used in formula for slow turn-on of mixing parameter, 
+         as discussed \ref pscf_AmIteratorTmpl_page "here". </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reached maxItr 

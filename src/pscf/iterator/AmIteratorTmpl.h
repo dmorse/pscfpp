@@ -27,18 +27,19 @@ namespace Pscf {
    * Anderson mixing is an algorithm for solving a system of N nonlinear
    * equations of the form R{i}(X) = 0 for i = 0, ..., N-1, where X
    * denotes a vector or array of N unknown coordinate values. A vector
-   * of array of unknowns is referred here as the "field" vector, while 
+   * of array of unknowns is referred here as the state vector, while 
    * a vector or array of values of the errors R{0} ,..., R{N-1} is
    * referred to as the residual vector.
    *
    * The template type parameter Iterator is a base class that must 
-   * be derived from Util::ParamComposite. The Iterator class may
-   * either declare a virtual solve() function with the same interface 
-   * as that declared here, or may define a different function that
-   * calls the solve function declared here.
+   * be derived from Util::ParamComposite. In applications to SCFT 
+   * iterators, the Iterator class may declare a virtual solve function
+   * that is overridden by the solve() function defined by this template.
    *
-   * The template type parameter T is the type of the data structure
-   * used to store both field and residual vectors.
+   * The template type parameter T is the type of data structure that is 
+   * used to represent state and residual vectors.
+   *
+   * \sa \ref pscf_AmIteratorTmpl_page
    *
    * \ingroup Pscf_Iterator_Module
    */
@@ -182,13 +183,13 @@ namespace Pscf {
       * Compute and return error used to test for convergence.
       *
       * \param residTrial  current residual vector
-      * \param fieldTrial  current field vector
+      * \param stateTrial  current state vector
       * \param errorType  type of error
       * \param verbose  verbosity level of output report.
       * \return error  measure used to test for convergence.
       */
       virtual 
-      double computeError(T& residTrial, T& fieldTrial,
+      double computeError(T& residTrial, T& stateTrial,
                           std::string errorType, int verbose);
 
       /**
@@ -235,9 +236,9 @@ namespace Pscf {
       T const & residual() const;
 
       /**
-      * Return the current field vector by const reference.
+      * Return the current state vector by const reference.
       */
-      T const & field() const;
+      T const & state() const;
 
       /**
       * Return the total number of iterations needed to converge.
@@ -277,7 +278,7 @@ namespace Pscf {
       double timerCoeff();
 
       /**
-      * Get time spent updating w fields.
+      * Get time spent updating w states.
       */
       double timerOmega();
 
@@ -301,7 +302,7 @@ namespace Pscf {
       /// Total iteration counter.
       int totalItr_;
 
-      /// Number of elements in field or residual vectors.
+      /// Number of elements in state or residual vectors.
       int nElem_;
 
       /// Mixing coefficient for standard AM mixing / correction step.
@@ -316,19 +317,19 @@ namespace Pscf {
       /// Has the allocateAM function been called?
       bool isAllocatedAM_;
 
-      /// History of previous field vectors.
-      RingBuffer<T> fieldHistory_;
+      /// History of previous state vectors.
+      RingBuffer<T> stateHistory_;
 
-      /// Basis vectors for field (differences of field vectors).
-      RingBuffer<T> fieldBasis_;
+      /// Basis vectors for state (differences of state vectors).
+      RingBuffer<T> stateBasis_;
 
       /// History of previous residual vectors.
-      RingBuffer<T> resHistory_;
+      RingBuffer<T> residualHistory_;
 
       /// Basis vectors for residuals (differences of residual vectors).
-      RingBuffer<T> resBasis_;
+      RingBuffer<T> residualBasis_;
 
-      /// Matrix containing the dot products of vectors in resBasis_
+      /// Matrix containing the dot products of vectors in residualBasis_
       DMatrix<double> U_;
 
       /// Dot products of current residual with residual basis vectors.
@@ -337,11 +338,11 @@ namespace Pscf {
       /// Coefficients of basis vectors that minimize predicted residual.
       DArray<double> coeffs_;
 
-      /// New trial field (created by updateTrial)
-      T fieldTrial_;
+      /// New trial state vector (first created by updateTrial)
+      T stateTrial_;
 
-      /// Predicted residual for trial field (created by updateTrial)
-      T resTrial_;
+      /// Predicted residual for trial state (created by updateTrial)
+      T residualTrial_;
 
       /// Workspace for calculations
       T temp_;
@@ -370,7 +371,7 @@ namespace Pscf {
       /**
       * Update a basis that spans sequential differences of past vectors.
       *
-      * This function is applied to update bases for both field vectors
+      * This function is applied to update bases for both state vectors
       * and residual vectors.
       *
       * \param basis  RingBuffer of basis vectors
@@ -415,8 +416,8 @@ namespace Pscf {
       * computed by the computeTrialCoeff() functions to the current 
       * state vector and residual vector to obtain a trial state vector 
       * and a corresponding predicted trial residual vector. Resulting
-      * vectors are stored in private member variables fieldTrial_ and 
-      * resTrial_.
+      * vectors are stored in private member variables stateTrial_ and 
+      * residualTrial_.
       */
       void updateTrial();
 
@@ -442,36 +443,36 @@ namespace Pscf {
       *
       * This is the second "correction" stage of an Anderson mixing
       * algorithm. The default implementation simply adds a correction 
-      * proportional to the predicted residual vector, resTrial, 
+      * proportional to the predicted residual vector, residualTrial, 
       * multiplied by the coefficient given by the computeLambda() 
       * function.
       *
-      * \param fieldTrial  field vector (in/out)
-      * \param resTrial  predicted residual for trial state vector (in)
+      * \param stateTrial  trial state vector (in/out)
+      * \param residualTrial  predicted residual for trial state (in)
       */
       virtual 
-      void addCorrection(T& fieldTrial, T const & resTrial);
+      void addCorrection(T& stateTrial, T const & residualTrial);
 
       // Private pure virtual functions that interact with parent system
 
       /**
-      * Compute and return the number of residual or field vector elements.
+      * Compute and return the number of residual or state vector elements.
       *
       * The private variable nElem_ is assigned the return value of this
       * function on entry to allocateAM to set the number of elements of
-      * the residual and field vectors.
+      * the residual and state vectors.
       */
       virtual int nElements() = 0;
 
       /**
-      * Does the system have an initial guess?
+      * Does the system have an initial guess for the state vector?
       */
       virtual bool hasInitialGuess() = 0;
 
       /**
-      * Get the current field vector from the system.
+      * Get the current state vector from the system.
       *
-      * \param curr current field vector (output)
+      * \param curr  current state vector (output)
       */
       virtual void getCurrent(T& curr) = 0;
 
@@ -479,7 +480,7 @@ namespace Pscf {
       * Run a calculation to update the system state.
       *
       * This function normally solves the modified diffusion equations,
-      * calculates monomer concentration fields, and computes stresses
+      * calculates monomer concentration states, and computes stresses
       * if appropriate.
       */
       virtual void evaluate() = 0;
@@ -492,9 +493,9 @@ namespace Pscf {
       virtual void getResidual(T& resid) = 0;
 
       /**
-      * Update the system with a passed in trial field vector.
+      * Update the system with a passed in trial state vector.
       *
-      * \param newGuess new field vector (input)
+      * \param newGuess new state vector (input)
       */
       virtual void update(T& newGuess) = 0;
 
@@ -575,18 +576,18 @@ namespace Pscf {
    {  return errorType_; }
 
    /*
-   * Return the current field/state vector by const reference.
+   * Return the current state vector by const reference.
    */
    template <typename Iterator, typename T>
-   T const & AmIteratorTmpl<Iterator,T>::field() const
-   {  return fieldHistory_[0]; }
+   T const & AmIteratorTmpl<Iterator,T>::state() const
+   {  return stateHistory_[0]; }
 
    /*
    * Return the current residual vector by const reference.
    */
    template <typename Iterator, typename T>
    T const & AmIteratorTmpl<Iterator,T>::residual() const
-   {  return resHistory_[0]; }
+   {  return residualHistory_[0]; }
 
    /*
    * Has memory required by the AM algorithm been allocated?

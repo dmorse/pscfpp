@@ -9,7 +9,7 @@ Anderson mixing (AM) is a general stategy for iteratively solving a
 nonlinear system of equations by taking advantage of information obtained 
 during several previous iterations. PSCF C++ classes that use this 
 strategy are all derived from a class template named Pscf::AmIteratorTmpl
-that provides data structures and algorithms required in any variant of
+that provides data structures and algorithms required in all variants of
 this strategy. 
 
 \section pscf_AmIteratorTmpl_problem_sec Problem Statement and Notation
@@ -50,61 +50,66 @@ We projection step uses information from previous states, and relies on
 and that the initial state vector is close enough to a solution that the 
 function \f${\bf R}({\bf X}) \f$ is nearly linear. For each iteration 
 \f$ k > 1 \f$, the projection step uses stored values of values of 
-\f$ {\bf X}^{k} \f$ and \f${\bf R}^{k} \f$ at the current states and 
-\f$ P-1 \f$ previous states to construct an intermediate state vector
-\f$ \underline{{\bf X}}^{k} \f$ as a linear superposition of the form
+\f$ {\bf X}^{k} \f$ and \f${\bf R}^{k} \f$ at the current state and 
+at \f$ K \f$ previous states to construct an intermediate trial state 
+vector \f$ \underline{{\bf X}}^{k} \f$ as a linear superposition 
+of the form
 \f[
-  \underline{{\bf X}}^{k} = {\bf X}^{k-1} + 
-  \sum_{j=1}^{P-1} 
+  \underline{{\bf X}}^{k+1} = {\bf X}^{k} + 
+  \sum_{j=0}^{K-1} 
   C_j ( {\bf X}^{k-j} - {\bf X}^{k-j-1} ) \quad,
 \f]
-in which \f$ C_{1}, \ldots, C_{P-1} \f$ are real coefficients that 
-will be optimized to minimize the norm an estimate of the resulting
-residual vector.  The parameter \f$ P \f$ is set equal to the smaller 
-of \f$ k \f$ and a user-defined integer parameter \f$N_{\rm h} \f$ that 
-gives the maximum number of stored states.  A predicted value of the 
-residual vector in this state, denoted by \f$ \underline{{\bf R}}^{k} \f$, 
-is obtained by assuming linearity, giving a predicted residual 
-vector
+in which \f$ C_{0}, \ldots, C_{K-1} \f$ are real coefficients that will 
+be optimized to minimize the norm an estimate of the resulting residual 
+vector.  The parameter \f$ K \f$ grows by 1 after each iteration after
+the first until it reaches a user-defined integer parameter 
+\f$N_{\rm h} \f$ that gives the maximum allowable number of previous 
+states. A predicted value of the residual vector in this trial state, 
+denoted by \f$ \underline{{\bf R}}^{k} \f$, is obtained by assuming 
+linearity, giving a predicted residual vector
 \f[
-  \underline{{\bf R}}^{k} ={\bf R}^{k-1} + 
-  \sum_{j=1}^{P-1} C_j ({\bf R}^{k-j} -{\bf R}^{k-j-1} ) \quad,
+  \underline{{\bf R}}^{k+1} ={\bf R}^{k} + 
+  \sum_{j=0}^{K-1} C_j ({\bf R}^{k-j} - {\bf R}^{k-j-1} ) \quad,
 \f]
 that is given by a corresponding linear superposition of previous
 residual vector values. The values of the coefficients 
-\f$ C_{1}, \ldots, C_{P-1} \f$ are chosen so as to minimize the
-\f$ l^{2} \f$ norm of the predicted residual \f$ \underline{{\bf R}}^{k} \f$.
+\f$ C_{1}, \ldots, C_{K-1} \f$ are chosen so as to minimize the
+\f$ l^{2} \f$ norm of the predicted residual 
+\f$ \underline{{\bf R}}^{k} \f$.
 This corresponds to minimization of the linearized residual within 
-a \f$ P - 1 \f$ dimensional subspace for the difference
-\f$ \underline{{\bf R }}^{k} -{\bf R}^{k-1} \f$ that is spanned by a basis of
-\f$ P - 1 \f$ differences between values of \f$ {\bf X} \f$ in previous 
+a \f$ K \f$ dimensional subspace for the difference
+\f$ \underline{{\bf R }}^{k+1} -{\bf R}^{k} \f$ that is spanned by a 
+basis of
+\f$ K \f$ differences between values of \f$ {\bf X} \f$ in previous 
 states.  We refer to this as "projection" because it yields a change 
 in the state vector that has been projected into this relatively low 
 dimensional subspace.
 
-The resulting optimization problem yields a straightforward exercise in 
-linear algebra.  For this purpose, it is convenient to define basis
-vectors
+<b> Linear Least-Squares Problem </b>:
+The calculation of the coefficients that minimize the predicted residual
+is a linear least-squares problem that yields a linear algebra problem.
+For this purpose, it is convenient to define basis vectors
 \f[ 
    {\bf B}_{j} \equiv {\bf R}^{k-j} - {\bf R})^{k-j-1}
 \f]
-for \f$ j = 1, \ldots, P - 1 \f$, and to express 
-\f$\underline{\bf R}^{k}\f$ as a sum
+for \f$ j = 0, \ldots, K - 1 \f$, and to express 
+\f$\underline{\bf R}^{k+1}\f$ as a sum
 \f[
-  \underline{{\bf R}}^{k} 
-  = {\bf R}^{k-1} + 
-  \sum_{j=1}^{P-1} C_j ({\bf B}_{j} \quad.
-   
+  \underline{{\bf R}}^{k+1} 
+  = {\bf R}^{k} + 
+  \sum_{j=0}^{K-1} C_j ({\bf B}_{j} \quad.
 \f]
 The optimal vector of coefficients minimize 
-\f$|\underline{\bf R}^{k}|^{2}\f$, and thus satisfy
+\f$|\underline{\bf R}^{k+1}|^{2}\f$, and thus satisfy
 \f[
   0 = \frac{\partial |\underline{\bf R}^{k}|^{2}}{\partial C_{i}}
+    = 2 {\bf B}_{i} \cdot \underline{{\bf R}}^{k} 
 \f]
-for all \f$i = 1, \ldots, P-1 \f$.
-Evaluating the required derivative yields a system of equations
+for all \f$i = 0, \ldots, K - 1 \f$.
+Expanding the resulting expressions yields a linear system of 
+equations of the form
 \f[
-   \sum_{j=1}^{P-1} U_{ij}C_{j} = -V_{i}
+   \sum_{j=1}^{K-1} U_{ij}C_{j} = -V_{i}
 \f]
 in which we have defined a square matrix $U$ and vector $V$ with elements
 \f[
@@ -112,57 +117,69 @@ in which we have defined a square matrix $U$ and vector $V$ with elements
    \quad\quad
    V_{i} = {\bf Y}_{i} \cdot {\bf R}^{k-1}
 \f]
-for \f$ i, j = 1, \ldots, P-1 \f$. The coefficients that solve this 
-problem yields a optimal value of \f$ \underline{{\bf R}}^{k} \f$ 
-that is orthogonal to the \f$ P -1 \f$ dimensional subspace spanned 
-by \f$ {\bf V}_{1}, \ldots {\bf V}_{P-1} \f$. 
+for \f$ i, j = 0, \ldots, K-1 \f$. The coefficients that solve this 
+problem yields a optimal value of \f$ \underline{{\bf R}}^{k+1} \f$ 
+that is orthogonal to the \f$ K \f$ dimensional subspace spanned 
+by \f$ {\bf B}_{0}, \ldots {\bf B}_{K-1} \f$. 
 
 <b> Correction step </b>:
 
 The correction step adds an additional correction vector, denoted by 
 \f$ {\bf D}^{k} \f$, to obtain a new state
 \f[
-   {\bf X}^{k} = \underline{{\bf X}}^{k} + {\bf D}^{k}
+   {\bf X}^{k+1} = \underline{{\bf X}}^{k+1} + {\bf D}^{k}
 \f]
 The value of the correction vector \f$ D^{k} \f$ generally depends upon 
-the residual vector \f$ \underline{{\bf R } }^{k} \f$ that is predicted 
+the residual vector \f$ \underline{{\bf R } }^{k+1} \f$ that is predicted 
 to remain after the projection step. The projection vector generally 
 does not lie within within the \f$ P - 1 \f$ dimensional subpace in 
 which the projection step attempts to minimize the residual.
 
-The simplest version of AM mixing use a correction vector that is 
-simply to the predicted residual, giving
+The correction vector used in the original Anderson mixing algorithm
+is simply proportional to the predicted residual, giving
 \f[
    {\bf D}^{k} = \pm \lambda \underline{{\bf R }}^{k}
 \f]
-Here, \f$ \lambda \f$ is an adjustable non-negative "mixing" parameter, 
-and the sign of the correction depends upon the how the residual vector 
-is defined (i.e., whether changes in the residual vector are more nearly 
-parallel or anti-parallel to changes in the state vector). 
-Some variants of the algorithm used in polymer field theory have also
-used a mixing parameter \f$ \lambda \f$ that depends on the iteration 
-index index \f$ k \f$, and that starts out very low and increases for 
-the first few iterations. 
+where \f$ \lambda \f$ is user specified non-negative "mixing" parameter.
+By default, the Pscf::AmIteratorTmpl class template uses a correction of
+the form
+\f[
+   {\bf D}^{k} = \pm \lambda F \underline{{\bf R }}^{k}
+   \lambda = 
+\f]
+in which $F$ is a dimensionless factor that increases over the 
+first few steps and approaches \f$ 1 \f$ after an initial ramp-up 
+period. This quantity is given by
+\f[
+    F = 1 - r^{K+1}
+\f]
+where \f$ r \f$ is another adjustable parameter, and \f$ K \f$ is 
+the current number of basis vectors.  The Pscf::AmIteratorTmpl uses
+default values of 
+\f[
+   \lambda = 1  \quad\quad r = 0.9
+\f]
+if the user does not set values for these parameters. 
 
 <b> Variations on a theme </b>:
 
-The descriptions of the problem statement and the AM algorithm given above 
-are intentionally quite general.  In PSCF, classes that are derived from 
-the Pscf::AmIteratorTmpl class template are used to implement both SCFT 
-iteration algorithms and PS-FTS compressor algorithms.  SCFT iterators 
-for periodic systems can be used either to solve the SCF equations in a 
-fixed unit cell (which requires adjust of a set of w fields associated 
-with different monomer types) or to simultaneously solve the SCF equations 
-and optimize the unit cell parameters. PS-FTS compressor algorithms adjust 
-a single pressure-like chemical potential field so as to satisfy a 
-self-consistent field incompressibility constraint. These different types 
-of problem require different definitions of the residual and state vectors, 
-with different numbers of elements.
+The descriptions of the problem statement and the AM algorithm given 
+above are intentionally quite general.  In PSCF, classes that are derived 
+from the Pscf::AmIteratorTmpl class template are used to implement both 
+SCFT iteration algorithms and PS-FTS compressor algorithms.  SCFT 
+iterators for periodic systems can be used either to solve the SCF 
+equations in a fixed unit cell (which requires adjust of a set of w fields 
+associated with different monomer types) or to simultaneously solve the 
+SCF equations and optimize the unit cell parameters. PS-FTS compressor 
+algorithms adjust a single pressure-like chemical potential field so as 
+to satisfy a self-consistent field incompressibility constraint. These 
+different types of problem require different definitions of the residual 
+and state vectors, with different numbers of elements.
 
-Different algorithms for solving the same problem may evern define the 
+Different algorithms for solving the same problem may also define the 
 residual vector different ways. The field equations that must be solved
 in a SCFT problem can be written in a variety of equivalent ways that
-correspond to different was of defining a residual vector.  Iterator 
+correspond to different was of defining a residual vector. Iterator 
 algorithms for periodic structures may also define elements of the 
 residual vector either in real space, by associating each element with 
 a specific node on a computational grid, or in Fourier space, by 
@@ -174,18 +191,18 @@ specify:
 
    - The definition of the residual vector \f$ {\bf R}({\bf X}) \f$
 
-   - The choice of the vector \f$ {\bf D} \f$ that is added to the
-     solution during the update step of the algorithm.
+   - The choice of the correction vector \f$ {\bf D}^{k} \f$ that is 
+     added during the correction step of the algorithm.
 
 The design of the AmIteratorTmpl class template separates general and 
 specific aspects of an AM algorithm, in part, by giving responsibility 
 for operations that depend on the nature of the problem to a set of
 pure virtual functions that must be implemented by subclasses. Among
-these are a virtual function that computes the value of the residual 
-vector, and another virtual function that defines the correction vector 
-\f$ D \f$ used during the update step.
+these are a virtual functions that computes the value of the residual 
+vector, and another that defines the correction vector \f$ D \f$ used 
+during the update step.
 
-\section pscf_AmIteratorTmpl_Error_sec Stopping Criterion
+\section pscf_AmIteratorTmpl_Error_sec Stopping Criteria
 
 The AM iteration loop defined by the AmIteratorTmpl template terminates 
 either: (1) when the number of iterations reaches some user-specified 
@@ -199,15 +216,16 @@ Users may usually choose from among several possible definitions of the
 erorr \f$ e \f$ by assigning one of several corresponding allowed values 
 to a string parameter named "errorType", as discussed below:
 
-  - If errorType == "norm", then the scalar error is take to be the L2 
-    norm of the residual vector \f$ {\bf R} \f$, i.e.,
+  - If errorType == "norm", then the scalar error is take to be the 
+    \f$ l_2 \f$ norm of the residual vector \f$ {\bf R} \f$, i.e.,
     \f[
        e = |{\bf R}| = \left ( \sum_{i=0}^{N-1} R_{i}^{2} \right)^{1/2}
     \f]
 
   - If errorType == "rms", then the scalar error is take to be the 
-    root-mean-square magnitude of elements of the residual vector (the 
-    L2 norm divided by the square root of the number of elements),
+    root-mean-square magnitude of elements of the residual vector (i.e.,
+    the \f$ l_2 \f$ norm divided by the square root of the number of 
+    elements),
     \f[
        e = \frac{|{\bf R}|}{\sqrt{N} }
          = \left ( \frac{1}{N}\sum_{i=0}^{N-1} R_{i}^{2} \right)^{1/2}
@@ -218,20 +236,18 @@ to a string parameter named "errorType", as discussed below:
     (i.e., the \f$ l_{\infty} \f$ norm of the residual vector).
 
   - If errorType == relNorm, then the scalar error is take to be the 
-    ratio of the L2 norm of the residual vector to the L2 norm of the 
+    ratio of the \f l_{2} \f$ norms of the residual vector and the 
     state vector,
     \f[
        e = |{\bf R}|/|{\bf X}|
     \f]
     as in Stasiak and Matsen, Eur. Phys. J. E <b> 34 </b>, 110 (2011).
 
-An iteration algorithm successfully convergence if it terminates when
-\f$ e({\bf R}) < \epsilon\f$, rather than terminating in a state with 
-\f$ e({\bf R}) > \epsilon \f$ because it has reached the maximum allowed 
-number of iterations. The choice of an appopriate value for the error 
-threshhold \f$ \epsilon \f$ (or "epsilon") may depends on both the 
-choice of an error type, and the way that the residual vector is 
-defined. 
+An iteration algorithm successfully converges if it terminates with
+\f$ e({\bf R}) < \epsilon\f$ in less than the maximum allowed number
+of iterations.  The choice of an appopriate value for the error 
+threshhold \f$ \epsilon \f$ (or "epsilon") may depends on both the way 
+that the residual vector is defined and the choice of an error type.
 
 \section pscf_AmIteratorTmpl_Param_sec Algorithmic Parameters
 
@@ -241,52 +257,74 @@ values for the following parameters, possibly among others:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
+    <td> <b> Type </b>  </td>
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
     <td> epsilon </td>
+    <td> real </td>
     <td> Desired tolerance for convergence - iteration stops if the
          magnitude \f$ e \f$ of the error becomes less than 
          epsilon. (Required) </td>
   </tr>
   <tr>
     <td> maxItr* </td>
+    <td> int </td>
     <td> Maximum number of iterations that will be attempted .
          (Optional, 200 by default) </td>
   </tr>
   <tr>
     <td> maxHist* </td>
-    <td> Maximum number of previous trial solultions that will be 
-         retained in memory for use by the AM algorithm .
+    <td> int </td>
+    <td> Maximum number of previous trial solutions (N_h) that 
+         will be retained in memory for use by the AM algorithm .
          (Optional, 50 by default) 
     </td>
   </tr>
   <tr>
     <td> verbose* </td>
+    <td> int </td>
     <td> Integer level 0, 1, 2 for verbosity of log output during 
          iteration, with 0 being most concise. (Optional, and 0 by 
          default) 
     </td>
   </tr>
   <tr>
-    <td> showTime* </td>
-    <td> Optional boolean (0 or 1). Set true (1) to output a report of 
-         components of wall clock time during iteration, or false (0) 
-         to skip.  (Optional, false by default)
-    </td>
-  </tr>
-  <tr>
     <td> errorType* </td>
+    <td> string </td>
     <td> Identifer for the type of variable used to define scalar
          error . The only allowed values are "norm", "rms" "max", and 
          "relNorm", as discussed below. (Optional, equal to "relNorm" 
-         by default) 
-    </td>
+         by default) </td>
+  </tr>
+  <tr>
+    <td> lambda* </td>
+    <td> real </td>
+    <td> Mixing parameter in the standard Anderson mixing correction
+         step.  (Optional, 1.0 by default) </td>
+  </tr>
+  <tr>
+    <td> useLambdaRamp* </td>
+    <td> bool </td>
+    <td> If true, use the ramp factor \f$ F = 1 - r^{K+1} \f$ while
+         K < maxHist. Otherwise set \f$ F = 1 \f$. 
+         (Optional, true by default.  </td>
+  </tr>
+  <tr>
+    <td> r* </td>
+    <td> Ratio r used to compute factor F = 1 - r^{K+1} in early step,
+         while K < maxHist.  (Optional, 0.9 by default) </td>
   </tr>
 </table>
 The error tolerance parameter "epsilon" is usually the only required 
-parameter, as indicated in the above table. Default values for other 
-parameters given above are those defined by the AmIteratorTmpl class 
+parameter, as indicated in the above table. 
+
+<b> Mixing parameters <\b>:
+The parameters lambda, useLambdaRamp, and r are only valid for subclasses
+that use the standard "mixing" correction step. For such classes, the 
+parameter r may appear only if useLambaRamp is true. 
+
+Default given above are those defined by the AmIteratorTmpl class 
 template, which may be modified by subclasses. 
 
 */
