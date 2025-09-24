@@ -47,8 +47,6 @@ namespace Rpg {
 
    public:
 
-      using Base = AmIteratorTmpl< Compressor<D>, DeviceArray<cudaReal> >;
-
       /**
       * Constructor.
       * 
@@ -96,9 +94,9 @@ namespace Rpg {
       */
       void clearTimers();
       
-      // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::setClassName;
-      
+      /// Typename alias for base class.
+      using Base = AmIteratorTmpl< Compressor<D>, DeviceArray<cudaReal> >;
+
    protected:
   
       // Inherited protected members 
@@ -173,14 +171,16 @@ namespace Rpg {
       */
       void addPredictedError(DeviceArray<cudaReal>& fieldTrial, 
                              DeviceArray<cudaReal> const & resTrial, 
-                             double lambda);
+                             double lambda) override;
 
+      #if 0
       /**
       * Compute mixing parameter lambda
       *
       * \param r  ratio in ramp 
       */
       double computeLambda(double r);
+      #endif
       
       // Private virtual that interact with the parent System
       
@@ -239,7 +239,7 @@ namespace Rpg {
       * \param b the field for it to be set to (rhs of assigment)
       */
       void setEqual(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b);
+                    DeviceArray<cudaReal> const & b) override;
 
       /**
       * Compute the inner product of two vectors
@@ -248,12 +248,12 @@ namespace Rpg {
       * \param a  second input vector
       */
       double dotProduct(DeviceArray<cudaReal> const & a, 
-                        DeviceArray<cudaReal> const & b);
+                        DeviceArray<cudaReal> const & b) override;
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double maxAbs(DeviceArray<cudaReal> const & hist);
+      double maxAbs(DeviceArray<cudaReal> const & hist) override;
 
       /**
       * Compute the difference a = b - c for vectors a, b and c.

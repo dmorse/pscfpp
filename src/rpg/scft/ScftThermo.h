@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/system/ScftThermoTmpl.h>   // base class template
-#include <rpg/system/System.h>             // template parameter
+#include <prdc/system/ScftThermoTmpl.h>  // base class template
+#include <rpg/system/System.h>           // base class template argument
 
 namespace Pscf {
 namespace Rpg {

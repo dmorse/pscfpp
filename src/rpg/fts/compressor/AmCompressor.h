@@ -40,10 +40,10 @@ namespace Rpg {
 
    public:
 
-      /// Type for state and residual vectors
+      /// Typename for state and residual vectors.
       using VectorT = DeviceArray<cudaReal>;
 
-      /// Alias for base class
+      /// Typename alias for base class.
       using Base =  AmIteratorTmpl< Compressor<D>, VectorT >;
 
       /**
@@ -83,10 +83,12 @@ namespace Rpg {
       */
       int compress();
 
+      #if 0
       /**
       * Compute mixing parameter lambda
       */
       double computeLambda(double r);
+      #endif
 
       /**
       * Return how many times MDE has been solved.

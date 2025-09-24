@@ -53,21 +53,16 @@ namespace Rpg {
       AmIteratorTmpl<Iterator<D>,DArray<double> >::readParameters(in);
       AmIteratorTmpl<Iterator<D>,DArray<double> >::readErrorType(in);
 
-      // Allocate local modified copy of Interaction class
-      interaction_.setNMonomer(system().mixture().nMonomer());
+      // Read in optional isFlexible value
+      isFlexible_ = 1; // default value
+      readOptional(in, "isFlexible", isFlexible_);
 
-      // Default parameter values
-      isFlexible_ = 1;
-      scaleStress_ = 10.0;
-
+      // Get and check the number of unit cell parameters
       int np = system().domain().unitCell().nParameter();
       UTIL_CHECK(np > 0);
       UTIL_CHECK(np <= 6);
       UTIL_CHECK(system().domain().unitCell().lattice() 
                   != UnitCell<D>::Null);
-
-      // Read in optional isFlexible value
-      readOptional(in, "isFlexible", isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
       // then optionally overwrite with user input from param file
@@ -87,7 +82,15 @@ namespace Rpg {
       }
 
       // Read optional scaleStress value
+      scaleStress_ = 10.0;  // default value
       readOptional(in, "scaleStress", scaleStress_);
+
+      // Optionally read mixing parameters (lambda, useLambdaRamp, r)
+      AmIteratorTmpl<Iterator<D>,DArray<double> >::readErrorType(in);
+
+      // Allocate local modified copy of Interaction class
+      interaction_.setNMonomer(system().mixture().nMonomer());
+
    }
 
    /*

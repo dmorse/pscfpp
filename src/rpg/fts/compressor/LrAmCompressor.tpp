@@ -44,9 +44,8 @@ namespace Rpg {
    template <int D>
    void LrAmCompressor<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
-      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::readParameters(in);
-      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::readErrorType(in);
+      Base::readParameters(in);
+      Base::readErrorType(in);
    }
 
    /*
@@ -60,7 +59,7 @@ namespace Rpg {
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
 
       // Allocate memory required by AM algorithm if not done earlier.
-      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::setup(isContinuation);
+      Base::setup(isContinuation);
 
       FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
 
@@ -118,7 +117,7 @@ namespace Rpg {
       return solve;
    }
 
-   // AM algorithm operations
+   // Protected virtual function for AM algorithm operation
 
    template <int D>
    void
@@ -146,23 +145,31 @@ namespace Rpg {
       VecOp::addEqVc(fieldTrial, resid_, lambda);
    }
 
+   #if 0
    template<int D>
    double LrAmCompressor<D>::computeLambda(double r)
    {  return 1.0; }
+   #endif
 
    // Private virtual functions that interact with parent System
 
-   // Does the system have an initial field guess?
-   template <int D>
-   bool LrAmCompressor<D>::hasInitialGuess()
-   {  return system().w().hasData(); }
-
-   // Compute and return the number of elements in a field vector
+   /*
+   * Get the number of elements in a field vector.
+   */
    template <int D>
    int LrAmCompressor<D>::nElements()
    {  return system().domain().mesh().size(); }
 
-   // Get the current field from the system
+   /*
+   * Does the system have an initial field guess?
+   */
+   template <int D>
+   bool LrAmCompressor<D>::hasInitialGuess()
+   {  return system().w().hasData(); }
+
+   /*
+   * Get the current field from the system.
+   */
    template <int D>
    void LrAmCompressor<D>::getCurrent(DeviceArray<cudaReal>& curr)
    {
@@ -175,7 +182,9 @@ namespace Rpg {
       VecOp::subVV(curr, system().w().rgrid(0), w0_[0]);
    }
 
-   // Perform the main system computation (solve the MDE)
+   /*
+   * Perform the main system computation (solve the MDE).
+   */
    template <int D>
    void LrAmCompressor<D>::evaluate()
    {
@@ -183,7 +192,9 @@ namespace Rpg {
       ++mdeCounter_;
    }
 
-   // Compute the residual for the current system state
+   /*
+   * Compute the residual for the current system state.
+   */
    template <int D>
    void LrAmCompressor<D>::getResidual(DeviceArray<cudaReal>& resid)
    {
@@ -198,7 +209,9 @@ namespace Rpg {
       }
    }
 
-   // Update the current system field coordinates
+   /*
+   * Update the current system field coordinates.
+   */
    template <int D>
    void LrAmCompressor<D>::update(DeviceArray<cudaReal>& newGuess)
    {
@@ -214,24 +227,32 @@ namespace Rpg {
       system().w().setRGrid(wFieldTmp_);
    }
 
+   /*
+   * Do nothing output function.
+   */
    template<int D>
    void LrAmCompressor<D>::outputToLog()
    {}
 
+   /*
+   * Output timer results.
+   */
    template<int D>
    void LrAmCompressor<D>::outputTimers(std::ostream& out) const
    {
       // Output timing results, if requested.
       out << "\n";
       out << "LrAmCompressor time contributions:\n";
-      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::outputTimers(out);
+      Base::outputTimers(out);
    }
 
-   // Clear timers and MDE counter
+   /*
+   * Clear timers and MDE counter.
+   */
    template<int D>
    void LrAmCompressor<D>::clearTimers()
    {
-      AmIteratorTmpl<Compressor<D>, DeviceArray<cudaReal> >::clearTimers();
+      Base::clearTimers();
       mdeCounter_ = 0;
    }
 

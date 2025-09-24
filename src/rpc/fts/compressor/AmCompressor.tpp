@@ -43,9 +43,12 @@ namespace Rpc {
    template <int D>
    void AmCompressor<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
+      using AmTmpl = AmIteratorTmpl<Compressor<D>, DArray<double> >;
+      bool useLambdaRamp = false;  // Default value
+
+      AmTmpl::readParameters(in);
+      AmTmpl::readErrorType(in);
+      AmTmpl::readMixingParameters(in, useLambdaRamp);
    }
 
    /*
@@ -210,6 +213,7 @@ namespace Rpc {
    void AmCompressor<D>::outputToLog()
    {}
 
+   #if 0
    /*
    * Set lambda = 1.0.
    */
@@ -218,6 +222,7 @@ namespace Rpc {
    {
       return 1.0;
    }
+   #endif
 
 }
 }

@@ -54,9 +54,6 @@ namespace R1d {
 
    protected:
 
-      // Inherited protected members
-      // using Iterator::system;
-
       /**
       * Setup iterator just before entering iteration loop.
       *
@@ -76,7 +73,7 @@ namespace R1d {
       */
       bool isCanonical();
 
-      // -- Private virtual functions that interact with parent System -- //
+      // Private virtual functions that interact with parent System 
 
       /**
       * Compute and returns the number residuals and unknowns.

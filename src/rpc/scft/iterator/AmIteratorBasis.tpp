@@ -39,7 +39,7 @@ namespace Rpc {
    */
    template <int D>
    AmIteratorBasis<D>::~AmIteratorBasis()
-   {  }
+   { }
 
    /*
    * Read parameters from file.
@@ -47,9 +47,10 @@ namespace Rpc {
    template <int D>
    void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
-      Base::readParameters(in);
-      Base::readErrorType(in);
+      // Use base class methods to read parameters
+      AmTmpl::readParameters(in);
+      AmTmpl::readErrorType(in);
+      AmTmpl::readMixingParameters(in);
 
       // Allocate local modified copy of Interaction class
       interaction_.setNMonomer(system().mixture().nMonomer());
@@ -96,7 +97,7 @@ namespace Rpc {
       // Output timing results, if requested.
       out << "\n";
       out << "Iterator times contributions:\n";
-      Base::outputTimers(out);
+      AmTmpl::outputTimers(out);
    }
 
    // Protected virtual function
@@ -105,7 +106,7 @@ namespace Rpc {
    template <int D>
    void AmIteratorBasis<D>::setup(bool isContinuation)
    {
-      Base::setup(isContinuation);
+      AmTmpl::setup(isContinuation);
       interaction_.update(system().interaction());
    }
 

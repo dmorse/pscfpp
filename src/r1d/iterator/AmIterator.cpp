@@ -38,22 +38,23 @@ namespace R1d{
    */
    void AmIterator::readParameters(std::istream& in)
    {
-      // Call parent class readParameters and readErrorType functions
-      AmIteratorTmpl<Iterator, DArray<double> >::readParameters(in);
-      AmIteratorTmpl<Iterator, DArray<double> >::readErrorType(in);
+      using AmTmpl = AmIteratorTmpl< Iterator, DArray<double> >;
+      AmTmpl::readParameters(in);
+      AmTmpl::readErrorType(in);
+      AmTmpl::readMixingParameters(in);
 
       const int nMonomer = system().mixture().nMonomer(); 
       interaction_.setNMonomer(nMonomer);
    }
 
-   // Protected member function
+   // Protected virtual function
 
    /*
    * Setup before entering iteration loop.
    */
    void AmIterator::setup(bool isContinuation)
    {
-      AmIteratorTmpl<Iterator, DArray<double> >::setup(isContinuation);
+      AmIteratorTmpl< Iterator, DArray<double> >::setup(isContinuation);
       interaction_.update(system().interaction());
    }
 

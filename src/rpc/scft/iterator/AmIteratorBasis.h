@@ -36,8 +36,8 @@ namespace Rpc {
 
    public:
 
-      /// Alias for base class.
-      using Base = AmIteratorDArray< Iterator<D> >;
+      /// Alias for indirect base (grandparent) class.
+      using AmTmpl = AmIteratorTmpl< Iterator<D>, DArray<double> >;
 
       /**
       * Constructor.
@@ -75,8 +75,8 @@ namespace Rpc {
    protected:
 
       // Inherited protected members
-      using Base::verbose;
-      using Base::residual;
+      using AmTmpl::verbose;
+      using AmTmpl::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;

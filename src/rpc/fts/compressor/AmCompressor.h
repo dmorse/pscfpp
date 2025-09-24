@@ -111,10 +111,12 @@ namespace Rpc {
       */
       DArray< RField<D> > wFieldTmp_;
 
+      #if 0
       /**
       * Compute mixing parameter lambda
       */
       double computeLambda(double r) override;
+      #endif
 
       // Private virtual functions that interact with parent system
 

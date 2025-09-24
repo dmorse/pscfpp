@@ -54,9 +54,6 @@ namespace Rpg {
       Base::readParameters(in);
       Base::readErrorType(in);
 
-      // Allocate local modified copy of Interaction class
-      interaction_.setNMonomer(system().mixture().nMonomer());
-
       // Default parameter values
       isFlexible_ = 1;
       scaleStress_ = 10.0;
@@ -89,6 +86,13 @@ namespace Rpg {
 
       // Read optional scaleStress value
       readOptional(in, "scaleStress", scaleStress_);
+
+      // Read optional mixing parameters (lambda, useLambdaRamp, r)
+      Base::readMixingParameters(in);
+
+      // Allocate local modified copy of Interaction class
+      interaction_.setNMonomer(system().mixture().nMonomer());
+
    }
 
    /*

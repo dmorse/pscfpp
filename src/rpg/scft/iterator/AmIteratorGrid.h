@@ -38,8 +38,15 @@ namespace Rpg {
 
    public:
 
+      // Public typename aliases.
+
+      /// Typename for state and residual vectors.
       using VectorT = DeviceArray<cudaReal>;
+
+      /// Aliase for base class.
       using Base = AmIteratorTmpl<Iterator<D>, VectorT >;
+
+      // Public member functions
 
       /**
       * Constructor.
@@ -95,7 +102,7 @@ namespace Rpg {
       *
       * \param isContinuation Is this a continuation within a sweep?
       */
-      void setup(bool isContinuation);
+      void setup(bool isContinuation) override;
 
    private:
 

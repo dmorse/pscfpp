@@ -35,6 +35,11 @@ namespace Pscf {
       */
       ~AmIteratorDArray() = default;
 
+      /**
+      * Alias for base class template.
+      */
+      using AmTmpl = AmIteratorTmpl<Iterator, DArray<double> >;
+
    private:
 
       /**

@@ -36,12 +36,13 @@ namespace Pscf
       verbose_(1),
       errorType_("relNormResid"),
       error_(0.0),
-      lambda_(0),
-      r_(0.9),
       nBasis_(0),
       itr_(0),
       totalItr_(0),
       nElem_(0),
+      lambda_(0),
+      r_(0.9),
+      useLambdaRamp_(true),
       isAllocatedAM_(false)
    {  ParamComposite::setClassName("AmIteratorTmpl"); }
 
@@ -78,9 +79,11 @@ namespace Pscf
       // verbose_ = 3 => report all error measures every iteration
       readOptional(in, "verbose", verbose_);
 
+      #if 0
       // Ramping parameter for correction step
-      // Default set to 0.9. lambda = 1 - r_^Nh for Nh < maxHist
-      readOptional(in, "correctionRamp", r_);
+      // Default set to 0.9. lambda = 1 - r_^nBasis for nBasis < maxHist
+      readOptional(in, "r", r_);
+      #endif
 
       #ifdef PSCF_AM_TEST
       // Default set to be false
@@ -113,9 +116,9 @@ namespace Pscf
       nBasis_ = fieldBasis_.size();
       for (itr_ = 0; itr_ < maxItr_; ++itr_) {
 
-         // Append current field to fieldHists_ ringbuffer
+         // Append current field to fieldHistory_ ringbuffer
          getCurrent(temp_);
-         fieldHists_.append(temp_);
+         fieldHistory_.append(temp_);
 
          timerAM_.start();
 
@@ -133,8 +136,8 @@ namespace Pscf
          timerResid_.start();
          getResidual(temp_);
 
-         // Append current residual to resHists_ ring buffer
-         resHists_.append(temp_);
+         // Append current residual to resHistory_ ring buffer
+         resHistory_.append(temp_);
          timerResid_.stop();
 
          // Compute scalar error used to test convergence
@@ -204,6 +207,13 @@ namespace Pscf
             // Compute updated field and update the system
             timerOmega_.start();
             updateGuess();
+
+            // Correction (or "mixing") step
+            addPredictedError(fieldTrial_, resTrial_, lambda_);
+
+            // Update system using new trial field
+            update(fieldTrial_);
+
             timerOmega_.stop();
 
             timerAM_.stop();
@@ -281,7 +291,7 @@ namespace Pscf
       totalItr_ = 0;
    }
 
-   // Protected member functions
+   // Protected member functions - Initialization
 
    /*
    * Read and validate optional errorType string parameter.
@@ -304,7 +314,6 @@ namespace Pscf
          msg += "] in parameter file";
          UTIL_THROW(msg.c_str());
       }
-
    }
 
    /*
@@ -330,6 +339,25 @@ namespace Pscf
    }
 
    /*
+   * Read and validate optional errorType string parameter.
+   */
+   template <typename Iterator, typename T>
+   void 
+   AmIteratorTmpl<Iterator,T>::readMixingParameters(std::istream& in,
+                                                    bool useLambdaRamp)
+   {
+      // Set default parameter for useLambdaRamp_
+      useLambdaRamp_ = useLambdaRamp;
+
+      // Optionally read mixing parameters
+      readOptional(in, "lambda", lambda_); 
+      readOptional(in, "useLambdaRamp", useLambdaRamp_); 
+      if (useLambdaRamp_) {
+         readOptional(in, "r", r_);
+      }
+   }
+
+   /*
    * Allocate memory required by the AM algorithm, if needed.
    * (protected, non-virtual)
    */
@@ -343,8 +371,8 @@ namespace Pscf
       nElem_ = nElements();
 
       // Allocate ring buffers
-      fieldHists_.allocate(maxHist_+1);
-      resHists_.allocate(maxHist_+1);
+      fieldHistory_.allocate(maxHist_+1);
+      resHistory_.allocate(maxHist_+1);
       fieldBasis_.allocate(maxHist_);
       resBasis_.allocate(maxHist_);
 
@@ -362,6 +390,27 @@ namespace Pscf
    }
 
    /*
+   * Initialize just before entry to iterative loop.
+   * (virtual)
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setup(bool isContinuation)
+   {
+      if (!isAllocatedAM()) {
+         allocateAM();
+      } else {
+         // Clear residual and field history buffers
+         resHistory_.clear();
+         fieldHistory_.clear();
+         if (!isContinuation) {
+            // Clear bases iff not a continuation
+            resBasis_.clear();
+            fieldBasis_.clear();
+         }
+      }
+   }
+
+   /*
    * Clear all history and basis vector data.
    */
    template <typename Iterator, typename T>
@@ -373,8 +422,8 @@ namespace Pscf
       if (verbose_ > 0) {
          Log::file() << "Clearing AM field history and basis vectors.\n";
       }
-      resHists_.clear();
-      fieldHists_.clear();
+      resHistory_.clear();
+      fieldHistory_.clear();
       resBasis_.clear();
       fieldBasis_.clear();
 
@@ -406,13 +455,13 @@ namespace Pscf
       if (itr_ == 0) return;
 
       // Update fieldBasis_, resBasis_, U_ matrix and v_ vector
-      if (fieldHists_.size() > 1) {
+      if (fieldHistory_.size() > 1) {
 
          // Update basis spanning differences of past field vectors
-         updateBasis(fieldBasis_, fieldHists_);
+         updateBasis(fieldBasis_, fieldHistory_);
 
          // Update basis spanning differences of past residual vectors
-         updateBasis(resBasis_, resHists_);
+         updateBasis(resBasis_, resHistory_);
 
          // Update the U matrix and v vector.
          updateU(U_, resBasis_);
@@ -424,7 +473,7 @@ namespace Pscf
       UTIL_CHECK(fieldBasis_.size() == nBasis_);
 
       // Update v_ vector (dot product of basis vectors and residual)
-      computeV(v_, resHists_[0], resBasis_);
+      computeV(v_, resHistory_[0], resBasis_);
 
       // Solution of the matrix problem U coeffs_ = -v yields a coeff
       // vector that minimizes the norm of the residual. Below, we:
@@ -438,9 +487,9 @@ namespace Pscf
       if (nBasis_ < maxHist_) {
 
          // Create temporary smaller version of U_, v_, coeffs_ .
-         // This is done to avoid reallocating U_ with each iteration.
+         // This avoids reallocation of U_ with each iteration.
          DMatrix<double> tempU;
-         DArray<double> tempv,tempcoeffs;
+         DArray<double> tempv, tempcoeffs;
          tempU.allocate(nBasis_,nBasis_);
          tempv.allocate(nBasis_);
          tempcoeffs.allocate(nBasis_);
@@ -464,10 +513,12 @@ namespace Pscf
 
       } else
       if (nBasis_ == maxHist_) {
+
          LuSolver solver;
          solver.allocate(maxHist_);
          solver.computeLU(U_);
          solver.solve(v_, coeffs_);
+
       }
 
       // Flip the sign of the coeffs_ vector (see comment above)
@@ -483,8 +534,8 @@ namespace Pscf
    {
 
       // Set field and residual trial vectors to current values
-      setEqual(fieldTrial_, fieldHists_[0]);
-      setEqual(resTrial_, resHists_[0]);
+      setEqual(fieldTrial_, fieldHistory_[0]);
+      setEqual(resTrial_, resHistory_[0]);
 
       // Add linear combinations of field and residual basis vectors
       if (nBasis_ > 0) {
@@ -519,38 +570,9 @@ namespace Pscf
       }
       #endif
 
-      // Correction (or "mixing") step
-      addPredictedError(fieldTrial_, resTrial_,lambda_);
-
-      // Update system using new trial field
-      update(fieldTrial_);
-
-
-      return;
    }
 
    // Private virtual member functions
-
-   /*
-   * Initialize just before entry to iterative loop.
-   * (virtual)
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setup(bool isContinuation)
-   {
-      if (!isAllocatedAM()) {
-         allocateAM();
-      } else {
-         // Clear residual and field history buffers
-         resHists_.clear();
-         fieldHists_.clear();
-         if (!isContinuation) {
-            // Clear bases iff not a continuation
-            resBasis_.clear();
-            fieldBasis_.clear();
-         }
-      }
-   }
 
    /**
    * Compute ramped mixing parameter for Anderson mixing algorithm.
@@ -559,13 +581,29 @@ namespace Pscf
    template <typename Iterator, typename T>
    double AmIteratorTmpl<Iterator,T>::computeLambda(double r)
    {
-      double lambda;
-      if (nBasis_ < maxHist_) {
-         lambda = 1.0 - pow(r, nBasis_ + 1);
+      double factor;
+      if (useLambdaRamp_ && (nBasis_ < maxHist_)) {
+         factor = 1.0 - pow(r, nBasis_ + 1);
       } else {
-         lambda = 1.0;
+         factor = 1.0;
       }
-      return lambda;
+      return factor;
+   }
+
+   /**
+   * Compute ramped mixing parameter for Anderson mixing algorithm.
+   * (virtual)
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::lambdaRampFactor()
+   {
+      double factor;
+      if (nBasis_ < maxHist_) {
+         factor = 1.0 - pow(r_, nBasis_);
+      } else {
+         factor = 1.0;
+      }
+      return factor;
    }
 
    /*
@@ -675,7 +713,7 @@ namespace Pscf
    template <typename Iterator, typename T>
    double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
    {
-      return computeError(resHists_[0], fieldHists_[0], 
+      return computeError(resHistory_[0], fieldHistory_[0], 
                           errorType_, verbose);
    }
 
@@ -742,88 +780,6 @@ namespace Pscf
       double normSq = dotProduct(a, a);
       return sqrt(normSq);
    }
-
-   #if 0
-   /* 
-   * Assign one vector to another: a = b.
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setEqual(T& a, T const & b)
-   {  a = b; }
-
-   /*
-   * Compute and return inner product of two vectors 
-   */
-   template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::dotProduct(T const & a, 
-                                                 T const & b)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      double product = 0.0;
-      for (int i = 0; i < n; i++) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) { 
-            throw NanException("AmIteratorTmpl<Iterator,T>::dotProduct",
-                               __FILE__,__LINE__,0);
-         }
-         product += a[i] * b[i];
-      }
-      return product;
-   }
-
-   /*
-   * Compute and return maximum element of residual vector.
-   */
-   template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::maxAbs(T const & a)
-   {
-      const int n = a.capacity();
-      double max = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = a[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmIteratorTmpl<Iterator,T>::dotProduct",
-                                __FILE__,__LINE__,0);
-         }
-         if (fabs(value) > max)
-            max = fabs(value);
-      }
-      return max;
-   }
-
-   /*
-   * Compute difference of two vectors.
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::subVV(T& a,
-                                          T const & b,
-                                          T const & c)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      UTIL_CHECK(n == c.capacity());
-      for (int i = 0; i < n; i++) {
-         a[i] = b[i] - c[i];
-      }
-   }
-
-   /*
-   * Compute and return inner product of two vectors 
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::addEqVc(T& a,
-                                            T const & b,
-                                            double c)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      for (int i = 0; i < n; i++) {
-         a[i] += c*b[i];
-      }
-   }
-   #endif
 
 }
 #endif

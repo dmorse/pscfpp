@@ -21,7 +21,6 @@ namespace Rpg {
    template <int D> class System;
 
    using namespace Util;
-   //using namespace Prdc;
 
    /**
    * Anderson Mixing iterator with imposed space-group symmetry.
@@ -60,9 +59,12 @@ namespace Rpg {
       */
       void outputTimers(std::ostream& out) const;
 
+      /// Alias for indirect base (grandparent) class.
+      using AmTmpl = AmIteratorTmpl<Iterator<D>, DArray<double> >;
+
       // Inherited public member functions
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::clearTimers;
+      using AmTmpl::solve;
+      using AmTmpl::clearTimers;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;

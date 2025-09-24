@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>     // member template
-#include <util/containers/DMatrix.h>    // member template
-#include <util/containers/RingBuffer.h> // member template
-#include <util/accumulators/Average.h>  // member template
-#include <util/misc/Timer.h>            // member
+#include <util/containers/DArray.h>       // member template
+#include <util/containers/DMatrix.h>      // member template
+#include <util/containers/RingBuffer.h>   // member template
+#include <util/accumulators/Average.h>    // member template
+#include <util/misc/Timer.h>              // member
 
 // Uncomment to test details of Anderson-Mixing algorithm performance
 //#define PSCF_AM_TEST
@@ -25,15 +25,17 @@ namespace Pscf {
    * Template for Anderson mixing iterator algorithm.
    *
    * Anderson mixing is an algorithm for solving a system of N nonlinear
-   * equations of the form r_{i}(x) = 0 for i = 0, ..., N-1, where x
-   * denotes a vector or array of unknown coordinate values. A vector
-   * of array of unknowns is referred here the "field" vector, while a
-   * vector or array of values of the errors r_{0},..., r_{N-1} is
+   * equations of the form R{i}(X) = 0 for i = 0, ..., N-1, where X
+   * denotes a vector or array of N unknown coordinate values. A vector
+   * of array of unknowns is referred here as the "field" vector, while 
+   * a vector or array of values of the errors R{0} ,..., R{N-1} is
    * referred to as the residual vector.
    *
    * The template type parameter Iterator is a base class that must 
-   * be derived from Util::ParamComposite, and must declare a virtual
-   * solve() function with the same interface as that declared here.
+   * be derived from Util::ParamComposite. The Iterator class may
+   * either declare a virtual solve() function with the same interface 
+   * as that declared here, or may define a different function that
+   * calls the solve function declared here.
    *
    * The template type parameter T is the type of the data structure
    * used to store both field and residual vectors.
@@ -121,12 +123,24 @@ namespace Pscf {
       /**
       * Checks if a string is a valid error type.
       *
-      * Virtual to allow extension of allowed error type string 
-      * values.
+      * Virtual to allow extension of allowed error type string values.
       *
       * \return true  if type is valid, false otherwise.
       */
       virtual bool isValidErrorType();
+
+      /**
+      * Read optional parameters used in default correction algorithm.
+      *
+      * Sets a default value for useLambdaRamp, and then optionally
+      * reads lambda, useLambdaRamp, and (if useLambdaRamp == true)
+      * the ratio r used in the ramp.
+      *
+      * \param in  input filestream
+      * \param useLambdaRamp  default value for useLambdaRamp
+      */
+      void readMixingParameters(std::istream& in, 
+                                bool useLambdaRamp = true);
 
       // Protected AM mixing operations
 
@@ -185,6 +199,13 @@ namespace Pscf {
       double computeError(int verbose);
 
       /**
+      * Compute ramped prefactor of mixing parameter lambda.
+      *
+      * \return prefactor 1 - r^{nBasis} multiplying lambda.
+      */
+      double lambdaRampFactor();
+
+      /**
       * Compute mixing parameter for correction step of Anderson mixing.
       *
       * \param r  ramping parameter: lambda = 1 - r^Nh for Nh < maxHist.
@@ -200,17 +221,17 @@ namespace Pscf {
       int verbose() const;
 
       /**
-      * Obtain error type
+      * Get error type string.
       */
       std::string errorType() const;
 
       /**
-      * Return the current residual vector by const reference.
+      * Get the current residual vector by const reference.
       */
       T const & residual() const;
 
       /**
-      * Return the current field or state vector by const reference.
+      * Return the current field vector by const reference.
       */
       T const & field() const;
 
@@ -267,12 +288,6 @@ namespace Pscf {
       /// Current scalar error.
       double error_;
 
-      /// Free parameter for minimization.
-      double lambda_;
-
-      /// Ramp parameter for correction step.
-      double r_;
-
       /// Number of basis vectors defined as differences.
       int nBasis_;
 
@@ -285,19 +300,28 @@ namespace Pscf {
       /// Number of elements in field or residual vectors.
       int nElem_;
 
+      /// Mixing coefficient for standard AM mixing / correction step.
+      double lambda_;
+
+      /// Ramp parameter for ramped AM mixing / correction step.
+      double r_;
+
+      /// Should the AM mixing coefficient lambda be ramped up ?
+      bool useLambdaRamp_;
+
       /// Has the allocateAM function been called.
       bool isAllocatedAM_;
 
       /// History of previous field vectors.
-      RingBuffer<T> fieldHists_;
+      RingBuffer<T> fieldHistory_;
 
       /// Basis vectors of field histories (differences of fields).
       RingBuffer<T> fieldBasis_;
 
       /// History of residual vectors.
-      RingBuffer<T> resHists_;
+      RingBuffer<T> resHistory_;
 
-      /// Basis vectors of residual histories (differences of residuals)
+      /// Basis vectors of residual histories (differences of residuals).
       RingBuffer<T> resBasis_;
 
       /// Matrix containing the dot products of vectors in resBasis_
@@ -340,22 +364,6 @@ namespace Pscf {
       // Private non-virtual functions used in AM algorithm
 
       /**
-      * Compute optimal coefficients of residual basis vectors.
-      */
-      void computeResidCoeff();
-
-      /**
-      * Compute the trial field and set in the system.
-      *
-      * This implements a two-step process:
-      *   - Correct the current state and predicted residual by adding
-      *     linear combination of state and residual basis vectors.
-      *   - Call addPredictedError to attempt to correct predicted
-      *     residual
-      */
-      void updateGuess();
-
-      /**
       * Update a basis that spans sequential differences of past vectors.
       *
       * This function is applied to update bases for both field vectors
@@ -388,11 +396,21 @@ namespace Pscf {
                    RingBuffer<T> const & resBasis);
 
       /**
+      * Compute coefficients that minimize the predicted residual.
+      */
+      void computeResidCoeff();
+
+      /**
+      * Compute the optimized trial field vector.
+      */
+      void updateGuess();
+
+      /**
       * Add linear combination of field basis vectors to the trial field.
       *
       * \param trial  resulting linear combination (output)
-      * \param basis  list of history basis vectors
-      * \param coeffs  list of coefficients of basis vectors
+      * \param basis  list of history basis vectors (input)
+      * \param coeffs  list of coefficients of basis vectors (input)
       */
       void addHistories(T& trial,
                         RingBuffer<T> const & basis,
@@ -538,17 +556,17 @@ namespace Pscf {
    */
    template <typename Iterator, typename T>
    T const & AmIteratorTmpl<Iterator,T>::field() const
-   {  return fieldHists_[0]; }
+   {  return fieldHistory_[0]; }
 
    /*
    * Return the current residual vector by const reference.
    */
    template <typename Iterator, typename T>
    T const & AmIteratorTmpl<Iterator,T>::residual() const
-   {  return resHists_[0]; }
+   {  return resHistory_[0]; }
 
    /*
-   * Has memory required by AM algorithm been allocated?
+   * Has memory required by the AM algorithm been allocated?
    */
    template <typename Iterator, typename T>
    bool AmIteratorTmpl<Iterator,T>::isAllocatedAM() const

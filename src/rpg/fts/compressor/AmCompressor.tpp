@@ -29,7 +29,7 @@ namespace Rpg {
    AmCompressor<D>::AmCompressor(System<D>& system)
     : Compressor<D>(system),
       isAllocated_(false)
-   { ParamComposite::setClassName("AmCompressor"); }
+   {  ParamComposite::setClassName("AmCompressor"); }
 
    /*
    * Destructor.
@@ -47,6 +47,8 @@ namespace Rpg {
       // Call parent class readParameters
       Base::readParameters(in);
       Base::readErrorType(in);
+      bool useLambdaRamp = false; // default
+      Base::readMixingParameters(in, useLambdaRamp);
    }
 
    /*
@@ -86,16 +88,17 @@ namespace Rpg {
    int AmCompressor<D>::compress()
    {
       int solve = Base::solve();
-      //mdeCounter_ = Base::totalItr();
       return solve;
    }
 
+   #if 0
    /*
    * Compute AM mixing parameter.
    */
    template<int D>
    double AmCompressor<D>::computeLambda(double r)
    {  return 1.0; }
+   #endif
 
    // Private virtual functions that interact with the parent System
 
