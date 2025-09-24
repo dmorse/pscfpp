@@ -121,10 +121,9 @@ namespace Rpg {
 
    template <int D>
    void
-   LrAmCompressor<D>::addPredictedError(
+   LrAmCompressor<D>::addCorrection(
                                  DeviceArray<cudaReal>& fieldTrial,
-                                 DeviceArray<cudaReal> const & resTrial,
-                                 double lambda)
+                                 DeviceArray<cudaReal> const & resTrial)
    {
       int n = fieldTrial.capacity();
       const double vMonomer = system().mixture().vMonomer();
@@ -141,15 +140,9 @@ namespace Rpg {
       // Convert back to real space (destroys residK_)
       system().domain().fft().inverseTransformUnsafe(residK_, resid_);
 
-      // fieldTrial += resid_ * lambda
-      VecOp::addEqVc(fieldTrial, resid_, lambda);
+      // fieldTrial += resid_ 
+      VecOp::addEqVc(fieldTrial, resid_, 1.0);
    }
-
-   #if 0
-   template<int D>
-   double LrAmCompressor<D>::computeLambda(double r)
-   {  return 1.0; }
-   #endif
 
    // Private virtual functions that interact with parent System
 
@@ -193,7 +186,7 @@ namespace Rpg {
    }
 
    /*
-   * Compute the residual for the current system state.
+   * Compute the residual vector for the current system state.
    */
    template <int D>
    void LrAmCompressor<D>::getResidual(DeviceArray<cudaReal>& resid)
@@ -210,7 +203,7 @@ namespace Rpg {
    }
 
    /*
-   * Update the current system field coordinates.
+   * Update the system state to reflect new state vector.
    */
    template <int D>
    void LrAmCompressor<D>::update(DeviceArray<cudaReal>& newGuess)
@@ -228,7 +221,7 @@ namespace Rpg {
    }
 
    /*
-   * Do nothing output function.
+   * Do-nothing output function.
    */
    template<int D>
    void LrAmCompressor<D>::outputToLog()
@@ -240,7 +233,6 @@ namespace Rpg {
    template<int D>
    void LrAmCompressor<D>::outputTimers(std::ostream& out) const
    {
-      // Output timing results, if requested.
       out << "\n";
       out << "LrAmCompressor time contributions:\n";
       Base::outputTimers(out);

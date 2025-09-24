@@ -213,17 +213,6 @@ namespace Rpc {
    void AmCompressor<D>::outputToLog()
    {}
 
-   #if 0
-   /*
-   * Set lambda = 1.0.
-   */
-   template<int D>
-   double AmCompressor<D>::computeLambda(double r)
-   {
-      return 1.0;
-   }
-   #endif
-
 }
 }
 #endif

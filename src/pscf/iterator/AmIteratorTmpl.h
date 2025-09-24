@@ -158,24 +158,25 @@ namespace Pscf {
       bool isAllocatedAM() const;
 
       /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve function before entering the
+      * loop over iterations. The default implementation calls allocateAM()
+      * if isAllocatedAM() is false, and clears state and residual 
+      * histories. If isContinuation is false, it also clears state and
+      * residual basis vector lists. 
+      *
+      * \param isContinuation  true iff continuation within a sweep
+      */
+      virtual void setup(bool isContinuation);
+
+      /**
       * Clear information about history.
       *
       * This function clears the the history and basis vector ring
       * buffer containers.
       */
       virtual void clear();
-
-      /**
-      * Initialize just before entry to iterative loop.
-      *
-      * This function is called by the solve function before entering the
-      * loop over iterations. The default functions calls allocateAM()
-      * if isAllocatedAM() is false, and otherwise calls clear() if
-      * isContinuation is false.
-      *
-      * \param isContinuation  true iff continuation within a sweep
-      */
-      virtual void setup(bool isContinuation);
 
       /**
       * Compute and return error used to test for convergence.
@@ -208,10 +209,13 @@ namespace Pscf {
       /**
       * Compute mixing parameter for correction step of Anderson mixing.
       *
-      * \param r  ramping parameter: lambda = 1 - r^Nh for Nh < maxHist.
-      * \return lambda mixing parameter.
+      * If useLambdaRamp_ == true and nBasis_ < maxHist_, then return the
+      * ramped parameter lambda_ * ( 1 - r_^(nBasis) ). Otherwise, return
+      * the parameter lambda_.
+      *
+      * \return lambda mixing parameter
       */
-      virtual double computeLambda(double r);
+      virtual double computeLambda();
 
       // Protected accessors for member variables
 
@@ -309,34 +313,34 @@ namespace Pscf {
       /// Should the AM mixing coefficient lambda be ramped up ?
       bool useLambdaRamp_;
 
-      /// Has the allocateAM function been called.
+      /// Has the allocateAM function been called?
       bool isAllocatedAM_;
 
       /// History of previous field vectors.
       RingBuffer<T> fieldHistory_;
 
-      /// Basis vectors of field histories (differences of fields).
+      /// Basis vectors for field (differences of field vectors).
       RingBuffer<T> fieldBasis_;
 
-      /// History of residual vectors.
+      /// History of previous residual vectors.
       RingBuffer<T> resHistory_;
 
-      /// Basis vectors of residual histories (differences of residuals).
+      /// Basis vectors for residuals (differences of residual vectors).
       RingBuffer<T> resBasis_;
 
       /// Matrix containing the dot products of vectors in resBasis_
       DMatrix<double> U_;
 
-      /// Coefficients for mixing previous states.
-      DArray<double> coeffs_;
-
       /// Dot products of current residual with residual basis vectors.
       DArray<double> v_;
 
-      /// New trial field (big W in Arora et al. 2017)
+      /// Coefficients of basis vectors that minimize predicted residual.
+      DArray<double> coeffs_;
+
+      /// New trial field (created by updateTrial)
       T fieldTrial_;
 
-      /// Predicted field residual for trial state (big D)
+      /// Predicted residual for trial field (created by updateTrial)
       T resTrial_;
 
       /// Workspace for calculations
@@ -396,39 +400,57 @@ namespace Pscf {
                    RingBuffer<T> const & resBasis);
 
       /**
-      * Compute coefficients that minimize the predicted residual.
-      */
-      void computeResidCoeff();
-
-      /**
-      * Compute the optimized trial field vector.
-      */
-      void updateGuess();
-
-      /**
-      * Add linear combination of field basis vectors to the trial field.
+      * Compute coefficients for the trial state vector.
       *
-      * \param trial  resulting linear combination (output)
-      * \param basis  list of history basis vectors (input)
+      * Computes coefficients of basis vectors chosen to minimize the l2
+      * norm of the predicted residual vector. Resulting coefficients are
+      * stored in the private member variable coeffs_
+      */
+      void computeTrialCoeff();
+
+      /**
+      * Compute trial state and predicted trial residual vectors.
+      * 
+      * Adds linear combinations of basis vectors with coefficients 
+      * computed by the computeTrialCoeff() functions to the current 
+      * state vector and residual vector to obtain a trial state vector 
+      * and a corresponding predicted trial residual vector. Resulting
+      * vectors are stored in private member variables fieldTrial_ and 
+      * resTrial_.
+      */
+      void updateTrial();
+
+      /**
+      * Add linear combination of basis vectors to a vector.
+      *
+      * This function is used within updateTrial to update both state 
+      * and residual vectors, using different bases but the same list 
+      * of coefficients.
+      *
+      * \param v  vector to be modified (input / output)
+      * \param basis  list of basis vectors (input)
       * \param coeffs  list of coefficients of basis vectors (input)
       */
-      void addHistories(T& trial,
+      void addEqVectors(T& v,
                         RingBuffer<T> const & basis,
                         DArray<double> coeffs);
 
       // Private virtual functions with a default implementation 
 
       /**
-      * Remove predicted error from trial in attempt to correct for it.
+      * Add correction based on the residual vector. 
       *
-      * \param fieldTrial field for calculation results to be stored in
-      * \param resTrial predicted error for current mixing of histories
-      * \param lambda Anderson-Mixing parameter for mixing in histories
+      * This is the second "correction" stage of an Anderson mixing
+      * algorithm. The default implementation simply adds a correction 
+      * proportional to the predicted residual vector, resTrial, 
+      * multiplied by the coefficient given by the computeLambda() 
+      * function.
+      *
+      * \param fieldTrial  field vector (in/out)
+      * \param resTrial  predicted residual for trial state vector (in)
       */
-      virtual
-      void addPredictedError(T& fieldTrial, 
-                             T const & resTrial,
-                             double lambda);
+      virtual 
+      void addCorrection(T& fieldTrial, T const & resTrial);
 
       // Private pure virtual functions that interact with parent system
 
@@ -504,18 +526,19 @@ namespace Pscf {
       /**
       * Find the L2 norm of a vector.
       *
-      * The default implementation calls dotProduct internally.
+      * This calls dotProduct internally, returning the square root of 
+      * dotProduct(a, a).
       *
-      * \param hist residual vector
+      * \param a residual vector
       */
-      double norm(T const & hist);
+      double norm(T const & a);
 
       /**
       * Return the maximum magnitude element of a vector.
       *
-      * \param hist  input vector
+      * \param a  input vector
       */
-      virtual double maxAbs(T const & hist) = 0;
+      virtual double maxAbs(T const & a) = 0;
 
       /**
       * Compute the difference a = b - c for vectors a, b and c.

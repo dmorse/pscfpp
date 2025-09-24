@@ -82,27 +82,6 @@ namespace Rpc {
       }
    }
 
-   #if 0
-   /*
-   * Read instructions for creating objects from file.
-   */
-   template <int D>
-   void AnalyzerManager<D>::loadParameters(Serializable::IArchive &ar)
-   {
-      loadParameter<long>(ar, "baseInterval", Analyzer<D>::baseInterval);
-      Manager< Analyzer<D> >::loadParameters(ar);
-   }
-
-   /*
-   * Read instructions for creating objects from file.
-   */
-   void AnalyzerManager<D>::save(Serializable::OArchive &ar)
-   {
-      ar << Analyzer<D>::baseInterval;
-      Manager< Analyzer<D> >::save(ar);
-   }
-   #endif
-
 }
 }
 #endif

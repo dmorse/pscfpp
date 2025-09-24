@@ -93,7 +93,10 @@ namespace Rpg {
       * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers();
-      
+
+      /// Typename for field and residual vectors.
+      using VectorT = DeviceArray<cudaReal>;
+
       /// Typename alias for base class.
       using Base = AmIteratorTmpl< Compressor<D>, DeviceArray<cudaReal> >;
 
@@ -163,24 +166,14 @@ namespace Rpg {
       // AM algorithm operations
     
       /**
-      * Add predicted error to field trial.
+      * Add a correction based on the predicted residual. 
       * 
-      * \param fieldTrial trial field (in-out)
-      * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing 
+      * \param fieldTrial trial field (in/out)
+      * \param resTrial predicted residual for current trial (in)
       */
-      void addPredictedError(DeviceArray<cudaReal>& fieldTrial, 
-                             DeviceArray<cudaReal> const & resTrial, 
-                             double lambda) override;
+      void addCorrection(DeviceArray<cudaReal>& fieldTrial, 
+                         DeviceArray<cudaReal> const & resTrial) override;
 
-      #if 0
-      /**
-      * Compute mixing parameter lambda
-      *
-      * \param r  ratio in ramp 
-      */
-      double computeLambda(double r);
-      #endif
       
       // Private virtual that interact with the parent System
       

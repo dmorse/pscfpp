@@ -40,7 +40,7 @@ namespace Pscf
       itr_(0),
       totalItr_(0),
       nElem_(0),
-      lambda_(0),
+      lambda_(1.0),
       r_(0.9),
       useLambdaRamp_(true),
       isAllocatedAM_(false)
@@ -67,7 +67,7 @@ namespace Pscf
       // Default set in constructor (200) 
       readOptional(in, "maxItr", maxItr_);
 
-      // Maximum number of previous states in history (optional)
+      // Maximum number of previous vectors in history (optional)
       // Default set in constructor (50) 
       readOptional(in, "maxHist", maxHist_);
 
@@ -129,8 +129,6 @@ namespace Pscf
          if (verbose_ > 0){
             Log::file() << " Iteration " << Int(itr_,5);
          }
-
-         lambda_ = computeLambda(r_);
 
          // Compute current residual vector, store in temp_
          timerResid_.start();
@@ -201,21 +199,20 @@ namespace Pscf
 
             // Compute optimal coefficients for basis vectors
             timerCoeff_.start();
-            computeResidCoeff();
+            computeTrialCoeff();
             timerCoeff_.stop();
 
-            // Compute updated field and update the system
+            // Compute updated trial field and residual vectors
             timerOmega_.start();
-            updateGuess();
+            updateTrial();
 
             // Correction (or "mixing") step
-            addPredictedError(fieldTrial_, resTrial_, lambda_);
+            addCorrection(fieldTrial_, resTrial_);
 
-            // Update system using new trial field
+            // Update the parent system using new trial field
             update(fieldTrial_);
 
             timerOmega_.stop();
-
             timerAM_.stop();
 
             // Perform the main calculation of the parent system -
@@ -416,18 +413,11 @@ namespace Pscf
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::clear()
    {
-      if (!isAllocatedAM_) return;
-
-      // Clear histories and bases (ring buffers)
-      if (verbose_ > 0) {
-         Log::file() << "Clearing AM field history and basis vectors.\n";
-      }
+      UTIL_CHECK(isAllocatedAM_);
       resHistory_.clear();
       fieldHistory_.clear();
       resBasis_.clear();
       fieldBasis_.clear();
-
-      return;
    }
 
    // Private non-virtual member functions
@@ -436,9 +426,9 @@ namespace Pscf
    * Compute optimal coefficients of basis vectors.
    */
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::computeResidCoeff()
+   void AmIteratorTmpl<Iterator,T>::computeTrialCoeff()
    {
-      // If first iteration and history is empty
+      // If first iteration and bases are empty
       // then initialize U, v and coeff arrays
       if (itr_ == 0 && nBasis_ == 0) {
          int m, n;
@@ -449,6 +439,7 @@ namespace Pscf
                U_(m, n) = 0.0;
             }
          }
+         return;
       }
 
       // Do nothing else on first iteration
@@ -465,6 +456,7 @@ namespace Pscf
 
          // Update the U matrix and v vector.
          updateU(U_, resBasis_);
+
       }
 
       // Update nBasis_
@@ -530,7 +522,7 @@ namespace Pscf
    }
 
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::updateGuess()
+   void AmIteratorTmpl<Iterator,T>::updateTrial()
    {
 
       // Set field and residual trial vectors to current values
@@ -541,8 +533,8 @@ namespace Pscf
       if (nBasis_ > 0) {
 
          // Combine basis vectors into trial guess and predicted residual
-         addHistories(fieldTrial_, fieldBasis_, coeffs_);
-         addHistories(resTrial_, resBasis_, coeffs_);
+         addEqVectors(fieldTrial_, fieldBasis_, coeffs_);
+         addEqVectors(resTrial_, resBasis_, coeffs_);
 
       }
 
@@ -574,36 +566,18 @@ namespace Pscf
 
    // Private virtual member functions
 
-   /**
+   /*
    * Compute ramped mixing parameter for Anderson mixing algorithm.
-   * (virtual)
    */
    template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::computeLambda(double r)
+   double AmIteratorTmpl<Iterator,T>::computeLambda()
    {
-      double factor;
       if (useLambdaRamp_ && (nBasis_ < maxHist_)) {
-         factor = 1.0 - pow(r, nBasis_ + 1);
+         double factor = 1.0 - pow(r_, nBasis_ + 1);
+         return factor*lambda_;
       } else {
-         factor = 1.0;
+         return lambda_;
       }
-      return factor;
-   }
-
-   /**
-   * Compute ramped mixing parameter for Anderson mixing algorithm.
-   * (virtual)
-   */
-   template <typename Iterator, typename T>
-   double AmIteratorTmpl<Iterator,T>::lambdaRampFactor()
-   {
-      double factor;
-      if (nBasis_ < maxHist_) {
-         factor = 1.0 - pow(r_, nBasis_);
-      } else {
-         factor = 1.0;
-      }
-      return factor;
    }
 
    /*
@@ -737,35 +711,35 @@ namespace Pscf
          basis[0].allocate(history[0].capacity());
       }
 
-      // New basis vector is difference between two most recent states
+      // New basis vector is difference between two most recent vectors
       subVV(basis[0], history[0], history[1]);
    }
 
    /*
-   * Compute trial field so as to minimize L2 norm of residual.
+   * Add a linear combination of basis vectors to a vector v. 
    */
    template <typename Iterator, typename T>
    void 
-   AmIteratorTmpl<Iterator,T>::addHistories(T& trial, 
+   AmIteratorTmpl<Iterator,T>::addEqVectors(T& v, 
                                             RingBuffer<T> const & basis, 
                                             DArray<double> coeffs)
    {
       int nBasis = basis.size();
       UTIL_CHECK(coeffs.capacity() >= nBasis);
       for (int i = 0; i < nBasis; i++) {
-         addEqVc(trial, basis[i], coeffs[i]);
+         addEqVc(v, basis[i], coeffs[i]);
       }
    }
 
    /*
-   * Add predicted error to the trial field.
+   * Add a correction based on the predicted remaining residual. 
    */
    template <typename Iterator, typename T>
    void 
-   AmIteratorTmpl<Iterator,T>::addPredictedError(T& fieldTrial, 
-                                                 T const & resTrial, 
-                                                 double lambda)
+   AmIteratorTmpl<Iterator,T>::addCorrection(T& fieldTrial, 
+                                             T const & resTrial)
    {
+      double lambda = computeLambda();
       addEqVc(fieldTrial, resTrial, lambda);
    }
 

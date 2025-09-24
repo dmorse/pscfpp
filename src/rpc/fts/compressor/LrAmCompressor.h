@@ -166,16 +166,9 @@ namespace Rpc {
       *
       * \param fieldTrial trial field (in-out)
       * \param resTrial predicted error for current trial
-      * \param lambda Anderson-Mixing mixing
       */
       void addPredictedError(DArray<double>& fieldTrial,
-                             DArray<double> const & resTrial,
-                             double lambda) override;
-
-      /**
-      * Compute mixing parameter lambda
-      */
-      double computeLambda(double r) override;
+                             DArray<double> const & resTrial) override;
 
       // Private virtual functions that interact with parent System
 

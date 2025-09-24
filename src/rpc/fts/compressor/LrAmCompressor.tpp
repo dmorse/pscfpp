@@ -140,13 +140,6 @@ namespace Rpc{
    // Private virtual function that interact with parent system
 
    /*
-   * Returns mixing value parameter lambda = 1.0
-   */
-   template<int D>
-   double LrAmCompressor<D>::computeLambda(double r)
-   {  return 1.0; }
-
-   /*
    * Correction step (second step of Anderson mixing)
    *
    * This LrAM algorithm uses a quasi-Newton correction step with an
@@ -155,8 +148,7 @@ namespace Rpc{
    template <int D>
    void
    LrAmCompressor<D>::addPredictedError(DArray<double>& fieldTrial,
-                                        DArray<double> const & resTrial,
-                                        double lambda)
+                                        DArray<double> const & resTrial)
    {
       // Local constants
       const int n = fieldTrial.capacity();
@@ -188,7 +180,7 @@ namespace Rpc{
 
       // Add update to obtain new fieldTrial
       for (int i = 0; i < n; i++) {
-         fieldTrial[i] += lambda * resid_[i];
+         fieldTrial[i] += resid_[i];
       }
    }
 
