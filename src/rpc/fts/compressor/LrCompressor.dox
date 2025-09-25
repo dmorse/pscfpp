@@ -72,4 +72,19 @@ Meanings of all parameters are described briefly below:
   </tr>
 </table>
 
+\section rpc_LrCompressor_residual_sec Residual definition
+
+The residual vector for the LrCompressor is defined in real space, as 
+an array in which each element is associated with one node of a regular 
+computational grid. The value \f$ R({\bf r}) \f$ of the residual element 
+associated with a grid point located at position \f$ {\bf r} \f$ is 
+given by
+\f[
+    R({\bf r}) = -1 + \sum_{i=1}^{N_{\rm m}} \phi_{i}({\bf r}) 
+\f]
+where \f$ \phi_{i}({\bf r}) \f$ is the volume fraction of monomer type 
+\f$ i \f$ at that grid point, and \f$ N_{\rm m} \f$ is the number of 
+monomer types, also known as nMonomer.
+
+*/
 */

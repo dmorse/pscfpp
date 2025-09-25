@@ -37,11 +37,15 @@ AmCompressor{
   maxItr*           int     (default 200)
   maxHist           int     (default 50)
   verbose           int     (default 0)
-  correctionRamp*   float   (default 0.9)
   errorType*        string  ("norm", "rms", "max", or "relNorm")
+  lambda*           real    (1.0 by default)
+  useLambdaRamp*    bool    (true by default)
+  r*                real    (0.9 by default)
 }
 \endcode
-Meanings of all parameters are described briefly below:
+Meanings of all parameters are described briefly below, as well as in 
+the general discussion of 
+\ref pscf_AmIteratorTmpl_page "Anderson mixing algorithms" :
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -78,20 +82,40 @@ Meanings of all parameters are described briefly below:
          "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here".
          (Optional, and equal to "relNorm" by default) </td>
   </tr>
+  <tr>
+    <td> lambda* </td>
+    <td> Mixing parameter \f$ \lambda \f$ in a standard mixing 
+         \ref pscf_AmIteratorTmpl_algo_correct_sub "correction step" for 
+         an \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithm".
+         (1.0 by default) </td>
+  </tr>
+  <tr>
+    <td> useLambdaRamp* </td>
+    <td> If true, use slow ramp-up of mixing parameter, as discussed
+         \ref pscf_AmIteratorTmpl_algo_correct_sub "here". (true by
+         default) </td>
+  </tr>
+  <tr>
+    <td> r* </td>
+    <td> Ratio \f$ r \f$ used in formula for ramp factor \f$ \alpha \f$ 
+         that multiplies the mixing parameter, as discussed 
+         \ref pscf_AmIteratorTmpl_algo_correct_sub "here". 
+         (0.9 by default, only valid if useLambdaRamp is true) </td>
+  </tr>
 </table>
 
-\section rpc_AmCompressor_residual_sec Residual Definition
+\section rpc_AmCompressor_residual_sec Residual definition
 
 The residual vector for the AmCompressor is defined in real space, as 
 an array in which each element is associated with one node of a regular 
-computational grid. The value \f$R({\bf r}) \f$ of the residual element 
+computational grid. The value \f$ R({\bf r}) \f$ of the residual element 
 associated with a grid point located at position \f$ {\bf r} \f$ is 
 given by
 \f[
-    R({\bf r}) = -1 + \sum_{i=1}^{M} \phi_{i}({\bf r}) 
+    R({\bf r}) = -1 + \sum_{i=1}^{N_{\rm m}} \phi_{i}({\bf r}) 
 \f]
 where \f$ \phi_{i}({\bf r}) \f$ is the volume fraction of monomer type 
-\f$ i \f$ at that grid point, and \f$ M \f$ is the number of monomer
-types, also known as nMonomer.
+\f$ i \f$ at that grid point, and \f$ N_{\rm m} \f$ is the number of 
+monomer types, also known as nMonomer.
 
 */

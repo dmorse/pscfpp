@@ -14,14 +14,14 @@ Class API documentation:
 
 \section rpc_AmIteratorBasis_algorithm_sec Algorithm
 
-The variant of Anderson mixing algorithm implemented in PSCF is almost 
-identical to that described in the paper by Arora et al. 
+The variant of Anderson mixing implemented by the AmIteratorBasis 
+classes is very similar to that described in a paper by Arora et al.  
 [Arora, Morse, Bates, and Dorfman, J. Chem.  Phys. vol. 146, 244902 (2017)], 
-which was written as a description of an algorithm used in the earlier 
+which was written as a description of an algorithm used in the older
 Fortran version of PSCF.  The version of this algorithm used by 
 AmIteratorBasis adjusts the fields by adjusting the compoments of each 
-field in a basis of symmetry adapated basis functions, thus preserving 
-the space-group symmetry of the fields throughout the iteration process. 
+field in a basis of symmetry adapated basis functions, thereby preserving 
+the space-group symmetry of the fields throughout the iteration.
 The algorithm can be used to either solve the SCFT equations for a rigid 
 unit cell or to solve the SCFT equations and also optimize some or all 
 of the unit cell parameters of a flexible unit cell so as to minimize 
@@ -50,11 +50,14 @@ AmIteratorBasis{
    maxItr*          int (200 by default)
    maxHist*         int (50 by default)
    verbose*         int (0-2, 0 by default)
-   outputTime*      bool (false by default)
    errorType*       string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
    isFlexible*      bool (0 or 1, 1/true by default)
    flexibleParams*  Array [ bool ] (nParameters elements)
    scaleStress*     real (10.0 by default)
+   lambda*          real (1.0 by default)
+   useLambdaRamp    bool (true by default)
+   r                real (0.9 by default)
+
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent optional 
@@ -83,25 +86,20 @@ parameters. The meaning of the various parameters are described below:
   <tr>
     <td> verbose* </td>
     <td> Integer level 0, 1, 2 for verbosity of log output during iteration.
-         Optional, and 0 (concise) by default. </td>
-  </tr>
-  <tr>
-    <td> showTime* </td>
-    <td> Boolean flag set to 1 (true) to report wall clock time components 
-         in the log file. Optional, and 0 (false) by default. </td>
+         (0 by default) </td>
   </tr>
   <tr>
     <td> errorType* </td>
     <td> Identifer for the choice of a definition for the scalar error . 
          Meaning of the allowed values are "norm", "rms" "max", and 
          "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here".
-         Optional, and equal to "relNorm" by default. </td>
+         ("relNorm" by default) </td>
   </tr>
   <tr>
     <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
          optimization of unit cell parameters so as to minimize the free 
-         energy density. Optional and true by default.  </td>
+         energy density. (true by default) </td>
   </tr>
   <tr>
     <td> flexibleParams* </td>
@@ -117,33 +115,29 @@ parameters. The meaning of the various parameters are described below:
     <td> scaleStress* </td>
     <td> Constant factor by which stress components are multiplied in
          the definition of the residual attempted if isFlexible is
-         true (optional). </td>
+         true (10.0 by default). </td>
+  </tr>
+  <tr>
+    <td> lambda* </td>
+    <td> Mixing parameter in standard mixing correction step for an
+         \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithm".
+         (1.0 by default) </td>
+  </tr>
+  <tr>
+    <td> useLambdaRamp* </td>
+    <td> If true, use ramp-up of mixing parameter, as discussed
+         \ref pscf_AmIteratorTmpl_algo_correct_sub "here". 
+         (true by default) </td>
+  </tr>
+  <tr>
+    <td> r* </td>
+    <td> Ratio used in formula for slow ramp-up of mixing parameter, 
+         as discussed \ref pscf_AmIteratorTmpl_algo_correct_sub "here". 
+         (0.9 by default) </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reached maxItr 
 or if the magnitude of the scalar error drops below epsilon. 
-
-<b> errorType </b>: Several different definitions may be used for 
-the scalar error, depending on the value of the identifier errorType.  
-All of them ar based on computation of different types of norm of the
-residual vector, as discussed 
-\ref rpc_AmIteratorBasis_residual_sec "below".
-
-  - If errorType == norm, then the scalar error is take to be the L2 
-    norm of the residual vector (square-root of sum of squares of the
-    elements) of the residual vector as defined below. 
-
-  - If errorType == rms, then the scalar error is take to be the 
-    root-mean-square magnitude of elements of the residual vector (the 
-    L2 norm divided by the square root of the number of elements).
-
-  - If errorType == max, then the scalar error is take to be the
-    maximum of the absolute magnitude of the elements of the 
-    residual vector (the L infinity norm of the residual vector).
-
-  - If errorType == relNorm, then the scalar error is take to be the ratio
-    of the L2 norm of the residual vector to the L2 norm of the w field,
-    as in Stasiak and Matsen, Eur. Phys. J. E <b> 34 </b>, 110 (2011).
 
 <b> scaleStress </b>: If isFlexible is true, the choice of a value for 
 the parameter scaleStress determines how strongly the definition of the 

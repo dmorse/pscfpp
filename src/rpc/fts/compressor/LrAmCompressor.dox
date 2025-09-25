@@ -67,7 +67,7 @@ Meanings of all parameters are described briefly below:
     <td>  verbose* </td>
     <td>  
       verbosity level. lower values are less verbose
-      (Optional, 0 by default) 
+      (0 by default) 
     </td>
   </tr>
   <tr>
@@ -76,9 +76,25 @@ Meanings of all parameters are described briefly below:
       Identifer for the choice of a definition for the scalar error. 
       Meaning of the allowed values are "norm", "rms" "max", and 
       "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here"
-      (optional, and equal to "relNorm" by default).
+      ("relNorm" by default).
     </td>
   </tr>
 </table>
+
+\section rpc_LrAmCompressor_residual_sec Residual definition
+
+The residual vector for the LrAmCompressor is defined in real space, as 
+an array in which each element is associated with one node of a regular 
+computational grid. The value \f$ R({\bf r}) \f$ of the residual element 
+associated with a grid point located at position \f$ {\bf r} \f$ is 
+given by
+\f[
+    R({\bf r}) = -1 + \sum_{i=1}^{N_{\rm m}} \phi_{i}({\bf r}) 
+\f]
+where \f$ \phi_{i}({\bf r}) \f$ is the volume fraction of monomer type 
+\f$ i \f$ at that grid point, and \f$ N_{\rm m} \f$ is the number of 
+monomer types, also known as nMonomer.
+
+*/
 
 */

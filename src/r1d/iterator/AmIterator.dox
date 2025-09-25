@@ -23,16 +23,15 @@ An example of the parameter file format for this iterator is shown below:
 The format of this block is described more formally below:
 \code
  AmIterator{
-   epsilon        real 
-   maxItr*        int (200 by default)
-   maxHist*       int (50 by default)
-   verbose*       int (0-2, 0 by default)
-   outputTime*    bool (false by default)
-   errorType*     string ("norm", "rms", "max", or "relNorm".
-                     "relNorm" by default)
-   lambda*        real (1.0 by default)
-   useLambdaRamp  bool (true by default)
-   r              real (0.9 by default)
+   epsilon         real 
+   maxItr*         int (200 by default)
+   maxHist*        int (50 by default)
+   verbose*        int (0-2, 0 by default)
+   outputTime*     bool (false by default)
+   errorType*      string ("norm", "rms", "max", or "relNorm".  "relNorm" by default)
+   lambda*         real (1.0 by default)
+   useLambdaRamp*  bool (true by default)
+   r*              real (0.9 by default)
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent 
@@ -47,31 +46,31 @@ of \ref pscf_AmIteratorTmpl_page "Anderson-Mixing" algorithms:
   <tr>
     <td> epsilon </td>
     <td> Desired tolerance for convergence - iteration stops if the 
-         magnitude of the error drops below epsilon (Required) </td>
+         magnitude of the error drops below epsilon. </td>
   </tr>
   <tr>
     <td> maxItr* </td>
     <td> Maximum number of iterations that will be attempted
-         (Optional, 200 by default) </td>
+         (200 by default) </td>
   </tr>
   <tr>
     <td> maxHist* </td>
     <td> Maximum number of previous trial solutions that will be 
          retained in memory for use by the AM algorithm 
-         (Optional, 50 by default) </td>
+         (50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>
     <td> Integer with allowed values 0-2 for the level of 
          verbosity of output to log file during iteration.  
-         (Optional, 0 by default).
+         (0 by default).
     </td>
   </tr>
   <tr>
     <td> showTime* </td>
     <td> Optional boolean (0 or 1). Set true (1) to output a report of 
          components of wall clock time during iteration, or false (0) 
-         to skip.  Optional, and false by default. 
+         to skip. (false by default.) 
     </td>
   </tr>
   <tr>
@@ -79,23 +78,26 @@ of \ref pscf_AmIteratorTmpl_page "Anderson-Mixing" algorithms:
     <td> Identifer for the type of scalar error compared to epsilon to
          test convergence.  Allowed values are "norm", "rms", "max" and 
          "relNorm", as discussed \ref pscf_AmIteratorTmpl_page "here". 
-         Optional, and equal to "relNorm" by default. </td>
+         ("relNorm" by default). </td>
   </tr>
   <tr>
     <td> lambda* </td>
-    <td> Mixing parameter in standard mixing correction step for an
-         \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithm"
-         </td>
+    <td> Mixing parameter \f$ \lambda \f$ in standard mixing
+         \ref pscf_AmIteratorTmpl_algo_correct_sub "correction step" for an
+         \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithm".
+         (1.0 by default) </td>
   </tr>
   <tr>
     <td> useLambdaRamp* </td>
-    <td> If true, use slow turn-on of mixing parameter, as discussed
-         \ref pscf_AmIteratorTmpl_page "here". </td>
+    <td> If true, ramp-up the mixing parameter during first few iterations,
+         as discussed \ref pscf_AmIteratorTmpl_algo_correct_sub "here". 
+         (true by default) </td>
   </tr>
   <tr>
     <td> r* </td>
-    <td> Ratio used in formula for slow turn-on of mixing parameter, 
-         as discussed \ref pscf_AmIteratorTmpl_page "here". </td>
+    <td> Ratio \f$ r \f$ used in formula for mixing parameter ramp factor,
+         as discussed \ref pscf_AmIteratorTmpl_algo_correct_sub "here". 
+         (0.9 by default) </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reached maxItr 
@@ -120,7 +122,7 @@ the scalar error, depending on the value of the identifier errorType.
     of the L2 norm of the residual vector to the L2 norm of the w field, 
     as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
 
-\section r1d_AmIterator_residual_sec Residual Definition
+\section r1d_AmIterator_residual_sec Residual definition
 
 The algorithm is designed to reduce the values of the elements of a 
 vector of residuals (i.e., errors) until they are zero to within some
@@ -164,7 +166,7 @@ and \f$\epsilon\f$ is a \f$ N_{m} \f$-component column vector with
 elements given by \f$ \epsilon_{i} = 1 \f$ for all 
 \f$ i = 0, \ldots, N_{m}-1 \f$.
 
-\section r1d_AmIterator_closed_sec Closed Systems (Canonical Ensemble)
+\section r1d_AmIterator_closed_sec Closed systems (canonical ensemble)
 
 A slight modification of the residual definition is required in the case
 when a value of phi rather than mu is specified for every molecular 

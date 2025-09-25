@@ -56,11 +56,6 @@ parameters. The meaning of the various parameters are described below:
          (Optional, 0 by default) </td>
   </tr>
   <tr>
-    <td> showTime* </td>
-    <td> Set to 1 (true) to report wall clock time components in log file
-         (Optional, false by default) </td>
-  </tr>
-  <tr>
     <td> errorType* </td>
     <td> Identifer for the type of residual norm used to define scalar error. 
          The allowed values are "norm", "rms", "max", and "relNorm", as 

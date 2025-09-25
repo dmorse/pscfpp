@@ -9,18 +9,22 @@ a rigid unit cell or to solve the SCFT equations and also optimize the
 unit cell parameters of a flexible unit cell so as to minimize the free 
 energy density.
 
+\section rpg_AmIteratorGrid_param_sec Parameters
+
 The format of the associated parameter block is identical to that used
 by AmIteratorBasis, as described below:
 \code
 AmIterator{
-   epsilon        real 
-   maxItr*        int (200 by default)
-   maxHist*       int (50 by default0
-   verbose*       int (0-2, 0 by default)
-   outputTime*    bool (false by default)
-   errorType*     string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
-   isFlexible*    bool (0 or 1, 0/false by default)   
-   scaleStress*   real (10.0 by default)
+   epsilon         real 
+   maxItr*         int (200 by default)
+   maxHist*        int (50 by default0
+   verbose*        int (0-2, 0 by default)
+   errorType*      string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
+   isFlexible*     bool (0 or 1, 0/false by default)   
+   scaleStress*    real (10.0 by default)
+   lambda*         real (1.0 by default)
+   useLambdaRamp*  bool (true by default)
+   r*              real (0.9 by default)
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent optional 
@@ -52,11 +56,6 @@ parameters. The meaning of the various parameters are described below:
          Optional, and 0 (concise) by default. </td>
   </tr>
   <tr>
-    <td> showTime* </td>
-    <td> Set to 1 (true) to report wall clock time components in log file. 
-         Optional, and 0 (false) by default. </td>
-  </tr>
-  <tr>
     <td> errorType* </td>
     <td> String identifer for the type of variable used to define scalar
          error . The only allowed values are "norm", "rms", "max", and
@@ -74,21 +73,81 @@ parameters. The meaning of the various parameters are described below:
          the definition of the residual vector if isFlexible is true 
          (10.0 by default). </td>
   </tr>
+  <tr>
+    <td> lambda* </td>
+    <td> Mixing parameter \f$ \lambda \f$ in a standard mixing 
+         \ref pscf_AmIteratorTmpl_algo_correct_sub "correction step" for an
+         \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithm".
+         (1.0 by default) </td>
+  </tr>
+  <tr>
+    <td> useLambdaRamp* </td>
+    <td> If true, use slow ramp-up of mixing parameter, as discussed
+         \ref pscf_AmIteratorTmpl_algo_correct_sub "here". (true by
+         default) </td>
+  </tr>
+  <tr>
+    <td> r* </td>
+    <td> Ratio \f$ r \f$ used in formula for ramp factor \f$ \alpha \f$ 
+         that multiplies the mixing parameter, as discussed 
+         \ref pscf_AmIteratorTmpl_algo_correct_sub "here". 
+         (only allowed if useLambdaRamp is true, 0.9 by default) </td>
+  </tr>
 </table>
 The iterative loop exits if the number of iterations has reaches
 maxItr or if the magnitude of the scalar error drops below epsilon. 
 
+\section rpg_AmIteratorGrid_residual_sec Residual Vector
+
 The Rpg::AmIteratorGrid uses a definition of the residual vector that 
 analogous to that used by Rpg::AmIteratorBasis and Rpc::AmIterator, 
 except that residal components associated with errors in the SCF
-equations are defined as components of the relevant difference in
-fields at particular grid points, rather than components of these
-differences in a Fourier-adapated Fourier series. One result of 
-this difference is that the magnitude of erors obtained for 
-corresponding states with the same errorType flag will generally be 
-different (sometimes very different) for the AmIteratorGrid and 
-AmIteratorBasis programs. See the documentation for the Rpc
-\ref rpc_AmIteratorBasis_page "kAmIteratorBasis" algorithm for the 
-definition fo the residual field and some other details.
+equations are associated with grid points, rather than with basis
+functions in a symmetry-adapted Fourier series.  The vector of 
+residuals is thus a real-space version of that described by Eqs. 
+(10-13) of the article by Arora et al.  (J. Chem. Phys. 2017).  
+In what follows, we use zero based indexing for monomer types, and 
+use \f$ N_{\rm m} \f$ to denote the number of monomer types (referred 
+to elsewhere as nMonomer).
+
+Let \f$ w_{i}({\bf r}) \f$ and \f$ \phi_{i}({\bf r)} \f$ denote 
+values of the chemical potential field and volume fraction for 
+monomer type i at a grid point located at position \f$ {\bf r} \f$.
+The residual component \f$ R_{i}({\bf r})\f$ associated with grid
+point \f$ {\bf r} \f$ and monomer type i is given by
+\f[
+  R_{i}({\bf r}) 
+  = \sum_{j=0}^{N_{\rm m}-1} 
+           \left ( \chi_{ij} \phi_{j}({\bf r}) 
+           - P_{ij}w_{j}({\bf r}) \right ) 
+  \quad.
+\f]
+Here, \f$ P_{ij} \f$ is an element of an idempotent 
+\f$ N_{\rm m} \times N_{\rm m} \f$ matrix \f$  P \f$ that can be 
+expressed in matrix notation as
+\f[
+  P  = I
+  - \frac{\epsilon \epsilon^{T} \chi^{-1} }
+        { \epsilon^{T} \chi^{-1} \epsilon }
+ \quad.
+\f]
+where \f$ \chi^{-1} \f$ is the matrix inverse of the symmetric
+\f$ \chi \f$ matrix, and \f$\epsilon\f$ is a \f$ N_{m} \f$-component 
+column vector with elements given by \f$ \epsilon_{i} = 1 \f$ for 
+all \f$ i = 0, \ldots, N_{\rm m}-1 \f$.
+
+The vector of residuals for a calculation with a flexible unit 
+cell (with isFleixble set true) has one additional stress residual 
+associated with each flexible unit cell parameter. The residual
+\f$ R_{m} \f$ associated with flexible unit cell parameter 
+\f$ \theta_{m} \f$ is given by
+\f[
+    R_{m} = -S\frac{\partial f}{\partial \theta_{m}}
+\f]
+where \f$ f \f$ is the free energy per monomer (i.e., the free 
+energy density times the monomer reference volume) in units in 
+which \f$ kT = 1 \f$, while \f$S\f$ is an arbitrary prefactor 
+whose value is given by the parameter scaleStress. (The factor
+\f$S\f$ is set to 10.0 by default).
 
 */
