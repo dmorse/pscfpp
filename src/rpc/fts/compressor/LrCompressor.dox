@@ -11,8 +11,6 @@ program and the pscf_pg GPU-accelerated program, respectively. These two
 classes implement the same step algorithm and use the same parameter file
 format, which are documented below.
 
-\section rpc_LrCompressor_algorithm_sec Step Algorithm
-
 A general discussion of compressor algorithms for PS-FTS is given 
 \ref psfts_algorithm_page "here". Each LrCompressor class implements 
 the linear response (LR) algorithm that is presented in the following 
@@ -26,10 +24,10 @@ field \f$ W_{+}({\bf r}) \f$ is approximated by the analytically
 calculable response of a hypothetical homogeneous state of the same 
 fluid.
 
-\section rpc_LrCompressor_parameter_sec Parameter File
+\section rpc_LrCompressor_parameter_sec Parameter file
 
-The LR algorithm does not require an adjustable parameters that effect 
-the progress of iteratoin towards a solution.  The only required 
+The LR algorithm does not require any adjustable parameters that 
+affect the progress of iteration towards a solution.  The only required 
 parameter for this algorithm is an error threshhold "epsilon".  The
 iteration loop exits when a scalar definition of error is less than 
 epsilon.  A minimal block could thus looks something like this:
@@ -38,14 +36,14 @@ epsilon.  A minimal block could thus looks something like this:
     epsilon      1.0E-4
   }
 \endcode
-The full parameter block format, including several optional parameters, is 
-shown below:
+The full parameter block format, including several optional parameters, 
+is shown below:
 \code
 LrCompressor{
   epsilon       float
-  maxItr*       int     (default 200)
-  verbose       int     (default 0)
-  errorType*    string  ("norm", "rms", "max", or "relNorm")
+  maxItr*       int     (100 by default)
+  verbose*      int     (0 by default)
+  errorType*    string  ("rms", "norm" or "max". "rms" by default)
 }
 \endcode
 Meanings of all parameters are described briefly below:
@@ -60,15 +58,18 @@ Meanings of all parameters are described briefly below:
   </tr>
   <tr>
     <td>  maxItr* </td>
-    <td>  maximum number of iterations to attempt before declaring failure </td>
+    <td>  maximum number of iterations to attempt before declaring failure 
+          (100 by default)
+    </td>
   </tr>
   <tr>
     <td>  verbose* </td>
-    <td>  verbosity level (lower values are less verbose. Default level = 0) </td>
+    <td>  verbosity level. Lower values are less verbose. (0 by default) </td>
   </tr>
   <tr>
     <td>  errorType* </td>
-    <td>  Type of norm used to define the scalar error </td>
+    <td>  Type of norm used to define the scalar error, as discussed
+          \ref rpc_LrCompressor_error_sec "below". ("rms" by default) </td>
   </tr>
 </table>
 
@@ -86,5 +87,40 @@ where \f$ \phi_{i}({\bf r}) \f$ is the volume fraction of monomer type
 \f$ i \f$ at that grid point, and \f$ N_{\rm m} \f$ is the number of 
 monomer types, also known as nMonomer.
 
-*/
+\section rpc_LrCompressor_error_sec Error type
+
+The LrCompressor algorithm terminates either: (1) when the number of 
+iterations reaches the maximum allowed value maxItr, or (2) when the 
+value of a scalar error \f$ e({\bf R}) \f$ becomes less than a 
+user-specified error tolerance \f$ \epsilon \f$ (or "epsilon"). 
+
+Users may usually choose from among several possible definitions of the 
+error \f$ e \f$ by assigning one of the following allowed values to a 
+string parameter named "errorType":
+
+  - If errorType == "rms", then the scalar error is take to be the 
+    root-mean-square magnitude of elements of the residual vector (i.e.,
+    the \f$ l_2 \f$ norm divided by the square root of the number of 
+    elements),
+    \f[
+       e = \frac{|{\bf R}|}{\sqrt{N} }
+         = \left ( \frac{1}{N}\sum_{i=0}^{N-1} R_{i}^{2} \right)^{1/2}
+    \f]
+
+  - If errorType == "norm", then the scalar error is take to be the 
+    \f$ l_2 \f$ norm of the residual vector \f$ {\bf R} \f$, i.e.,
+    \f[
+       e = |{\bf R}| = \left ( \sum_{i=0}^{N-1} R_{i}^{2} \right)^{1/2}
+    \f]
+
+  - If errorType == "max", then the scalar error is take to be 
+    maximum absolute magnitude of any element in the residual vector 
+    (i.e., the \f$ l_{\infty} \f$ norm of the residual vector).
+
+An iteration algorithm successfully converges if it terminates with
+\f$ e({\bf R}) < \epsilon \f$ in fewer than maxItr iterations.  
+Different error types require different choises for the error 
+threshhold \f$ \epsilon \f$ (or "epsilon") to obtain comparable
+accuracy. 
+
 */

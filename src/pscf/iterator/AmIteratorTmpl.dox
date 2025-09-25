@@ -12,7 +12,7 @@ strategy are all derived from a class template named Pscf::AmIteratorTmpl
 that provides data structures and algorithms required in all variants of
 this strategy. 
 
-\section pscf_AmIteratorTmpl_problem_sec Problem Statement and Notation
+\section pscf_AmIteratorTmpl_problem_sec Problem statement 
 
 Consider a system of \f$ N \f$ nonlinear equations that must be solved 
 for \f$ N \f$ variables. Let \f$ {\bf X} \f$ denote a vector of unknown 
@@ -34,7 +34,7 @@ state vector and residual vector, respectively, at the end of iteration
 step \f$ k \f$, for \f$ k = 1, 2, \ldots \f$. Let \f$ {\bf X}^{0} \f$ 
 and \f$ {\bf R}^{0} \f$ denote initial values, before the first iteration.
 
-\section pscf_AmIteratorTmpl_algo_sec Anderson Mixing Algorithm
+\section pscf_AmIteratorTmpl_algo_sec Anderson mixing algorithm
 
 Each iteration of an AM algorithm consists of two steps, which we refer to 
 as projection and correction. The projection step uses information from
@@ -174,7 +174,7 @@ use of the ramp parameter (thus setting \f$ \alpha = 1 \f$ for
 every iteration), by setting a bool parameter named useLambdaRamp 
 to false (or 0).
 
-\section pscf_AmIteratorTmpl_algo_vary_sub Variations on a theme 
+\subsection pscf_AmIteratorTmpl_algo_vary_sub Variations on a theme 
 
 The descriptions of the problem statement and the AM algorithm given 
 above are intentionally quite general.  In PSCF, classes that are derived 
@@ -215,7 +215,7 @@ these are a virtual functions that computes the value of the residual
 vector, and another that defines the correction vector \f$ D \f$ used 
 during the update step.
 
-\section pscf_AmIteratorTmpl_Error_sec Stopping Criteria
+\section pscf_AmIteratorTmpl_Error_sec Stopping criteria
 
 The AM iteration loop defined by the AmIteratorTmpl template terminates 
 either: (1) when the number of iterations reaches some user-specified 
@@ -262,7 +262,7 @@ of iterations.  The choice of an appopriate value for the error
 threshhold \f$ \epsilon \f$ (or "epsilon") may depends on both the way 
 that the residual vector is defined and the choice of an error type.
 
-\section pscf_AmIteratorTmpl_Param_sec Algorithmic Parameters
+\section pscf_AmIteratorTmpl_Param_sec Algorithmic parameters
 
 The parameter file formats for Iterator and compressor classes that 
 are derived from the Pscf::AmIteratorTmp class template usually accept 

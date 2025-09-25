@@ -34,18 +34,18 @@ shown below:
 \code
 AmCompressor{
   epsilon           float
-  maxItr*           int     (default 200)
-  maxHist           int     (default 50)
-  verbose           int     (default 0)
-  errorType*        string  ("norm", "rms", "max", or "relNorm")
+  maxItr*           int     (100 by default)
+  maxHist           int     (50 by default)
+  verbose           int     (0 by default)
+  errorType*        string  ("norm", "rms", "max", or "relNorm". "rms" by default)
   lambda*           real    (1.0 by default)
   useLambdaRamp*    bool    (true by default)
   r*                real    (0.9 by default)
 }
 \endcode
-Meanings of all parameters are described briefly below, as well as in 
-the general discussion of 
-\ref pscf_AmIteratorTmpl_page "Anderson mixing algorithms" :
+Meanings of all parameters are explained in the general discussion of 
+\ref pscf_AmIteratorTmpl_page "Anderson mixing algorithms", and more
+briefly summarized below:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -59,20 +59,20 @@ the general discussion of
     <td>  maxItr* </td>
     <td>  
     maximum number of iterations to attempt before declaring failure 
-    (optional, 50 by default)
+    (100 by default)
     </td>
   </tr>
   <tr>
     <td>  maxHist* </td>
     <td>  
    maximum number of previous states to retain in history 
-    (optional, 200 by default)
+    (50 by default)
     </td>
   </tr>
   <tr>
     <td>  verbose* </td>
     <td>  verbosity level 0, 1, or 2. Lower values are less verbose. 
-          (Optional, 0 by default)
+          (0 by default)
     </td>
   </tr>
   <tr>
@@ -80,7 +80,7 @@ the general discussion of
     <td> Identifer for the choice of a definition for the scalar error . 
          Meaning of the allowed values are "norm", "rms" "max", and 
          "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here".
-         (Optional, and equal to "relNorm" by default) </td>
+         ("rms" by default) </td>
   </tr>
   <tr>
     <td> lambda* </td>

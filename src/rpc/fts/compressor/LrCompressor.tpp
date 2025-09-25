@@ -28,14 +28,14 @@ namespace Rpc{
     : Compressor<D>(system),
       epsilon_(0.0),
       itr_(0),
-      maxItr_(0),
+      maxItr_(100),
       totalItr_(0),
-      errorType_("rmsResid"),
+      errorType_("rms"),
       verbose_(0),
       intra_(system),
       isIntraCalculated_(false),
       isAllocated_(false)
-   { setClassName("LrCompressor"); }
+   {  setClassName("LrCompressor"); }
 
    // Destructor
    template <int D>
@@ -46,7 +46,10 @@ namespace Rpc{
    template <int D>
    void LrCompressor<D>::readParameters(std::istream& in)
    {
-      maxItr_ = 60;
+      // Default values
+      maxItr_ = 100;
+      errorType = "rms";
+
       read(in, "epsilon", epsilon_);
       readOptional(in, "maxItr", maxItr_);
       readOptional(in, "verbose", verbose_);
@@ -300,7 +303,7 @@ namespace Rpc{
    double LrCompressor<D>::computeError(int verbose)
    {
       const int meshSize = system().domain().mesh().size();
-      double error = 0;
+      double error = 0.0;
 
       // Find max residual vector element
       double maxRes  = maxAbs(resid_);
@@ -308,11 +311,11 @@ namespace Rpc{
       double normRes = norm(resid_);
       // Find root-mean-squared residual element value
       double rmsRes = normRes/sqrt(meshSize);
-      if (errorType_ == "maxResid") {
+      if (errorType_ == "max") {
          error = maxRes;
-      } else if (errorType_ == "normResid") {
+      } else if (errorType_ == "norm") {
          error = normRes;
-      } else if (errorType_ == "rmsResid") {
+      } else if (errorType_ == "rms") {
          error = rmsRes;
       } else {
          UTIL_THROW("Invalid iterator error type in parameter file.");

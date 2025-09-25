@@ -9,17 +9,14 @@ program and the pscf_pg GPU-accelerated program, respectively. These two
 classes implement the same step algorithm and use the same parameter file
 format, which are documented below.
 
-\section rpc_LrAmCompressor_algorithm_sec Step Algorithm
-
 A general discussion of compressor algorithms for PS-FTS is given 
 \ref psfts_algorithm_page "here".  The LrAm compressor algorithm is 
-described 
-in the article: <a href="https://doi.org/10.1063/5.0264036">
+described in the article: <a href="https://doi.org/10.1063/5.0264036">
 "Improved algorithm for identifying partial saddle-points in polymer
 field theoretic simulations", K. Chen and D.C. Morse, 
 <em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>.
 
-\section rpc_LrAmCompressor_parameter_sec Parameter File
+\section rpc_LrAmCompressor_parameter_sec Parameter file
 
 The only parameter needed by this algorithm are the error threshhold
 "epsilon". A minimal version of the required parameter block might
@@ -34,11 +31,10 @@ shown below:
 \code
 LrAmCompressor{
   epsilon           float
-  maxItr*           int     (default 200)
+  maxItr*           int     (default 100)
   maxHist           int     (default 50)
   verbose           int     (default 0)
-  correctionRamp*   float   (default 0.9)
-  errorType*        string  ("norm", "rms", "max", or "relNorm")
+  errorType*        string  ("norm", "rms", "max", or "relNorm". "rms" by default")
 }
 \endcode
 Meanings of all parameters are described briefly below:
@@ -55,12 +51,14 @@ Meanings of all parameters are described briefly below:
     <td>  maxItr* </td>
     <td>  
        maximum number of iterations to attempt before declaring failure 
+       (100 by default)
     </td>
   </tr>
   <tr>
     <td>  maxHist* </td>
     <td>  
        maximum number of previous states to retain in history 
+       (50 by default)
     </td>
   </tr>
   <tr>
@@ -76,7 +74,7 @@ Meanings of all parameters are described briefly below:
       Identifer for the choice of a definition for the scalar error. 
       Meaning of the allowed values are "norm", "rms" "max", and 
       "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here"
-      ("relNorm" by default).
+      ("rms" by default).
     </td>
   </tr>
 </table>
@@ -94,7 +92,5 @@ given by
 where \f$ \phi_{i}({\bf r}) \f$ is the volume fraction of monomer type 
 \f$ i \f$ at that grid point, and \f$ N_{\rm m} \f$ is the number of 
 monomer types, also known as nMonomer.
-
-*/
 
 */

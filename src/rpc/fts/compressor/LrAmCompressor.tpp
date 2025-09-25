@@ -44,7 +44,12 @@ namespace Rpc{
    template <int D>
    void LrAmCompressor<D>::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
+      // Default values
+      maxItr_ = 100;
+      verbose_ = 0;
+      errorType_ = "rms";
+
+      // Call parent read methods
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
    
@@ -120,7 +125,6 @@ namespace Rpc{
    template<int D>
    void LrAmCompressor<D>::outputTimers(std::ostream& out) const
    {
-      // Output timing results, if requested.
       out << "\n";
       out << "LrAmCompressor time contributions:\n";
       AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);

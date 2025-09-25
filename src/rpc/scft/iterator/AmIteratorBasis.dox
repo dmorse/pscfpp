@@ -31,7 +31,7 @@ described below.
 
 \sa \ref pscf_AmIteratorTmpl_page
 
-\section rpc_AmIteratorBasis_parameter_sec Parameter File
+\section rpc_AmIteratorBasis_parameter_sec Parameter file
 
 A typical example of the parameter file format for this iterator is shown
 below:
@@ -147,7 +147,7 @@ arising from errors in the SCFT equations for the w fields in a fixed
 unit cell. This variable is irrelevant if isFlexible is false, and should 
 normally be ommitted in this case. 
 
-\section rpc_AmIteratorBasis_residual_sec Residual Definition
+\section rpc_AmIteratorBasis_residual_sec Residual definition
 
 The vector of residuals used in this algorithm is described by Eqs. 
 (10-13) of the article by Arora et al. (J. Chem. Phys. 2017).  To 
@@ -200,7 +200,7 @@ which \f$ kT = 1 \f$, while \f$S\f$ is an arbitrary prefactor
 whose value is given by the parameter scaleStress. (The factor
 \f$S\f$ is set to 10.0 by default).
 
-\section rpc_AmIteratorBasis_closed_sec Closed Systems (Canonical Ensemble)
+\section rpc_AmIteratorBasis_closed_sec Closed systems (canonical ensemble)
 
 A slight modification of the residual definition is required in the case 
 case when a value of phi rather than mu is specified for every molecular 

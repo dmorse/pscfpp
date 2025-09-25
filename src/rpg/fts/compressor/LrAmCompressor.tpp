@@ -44,6 +44,12 @@ namespace Rpg {
    template <int D>
    void LrAmCompressor<D>::readParameters(std::istream& in)
    {
+      // Default values
+      maxItr_ = 100;
+      verbose_ = 0;
+      errorType_ = "rms";
+   
+      // Call base class read methods 
       Base::readParameters(in);
       Base::readErrorType(in);
    }

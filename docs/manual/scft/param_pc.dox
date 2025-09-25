@@ -267,19 +267,27 @@ This is currently the only iterator available in pscf_pc.  A description
 of the parameter file format for this iterator is given 
 \subpage rpc_AmIteratorBasis_page "here".
 
-The \ref rpc_AmIteratorBasis_page "AmIteratorBasis" iterator is designed 
-to search for a solution with a specified space group symmetry, and can 
-only be used with a parameter file that contains a groupName parameter.
-The pscf_pg program provides an analogous symmetry-preserving iterator, 
-also named \ref rpg_AmIteratorBasis_page "AmIteratorBasis", but also 
-provides a second Anderson-Mixing algorithm named 
-\ref rpg_AmIteratorGrid_page "AmIteratorGrid" that does not impose any 
-space-group symmetry.
+The pscf_pg program currently provides two iterator algorithms, named 
+\ref rpc_AmIteratorBasis_page "AmIteratorBasis" and
+\ref rpg_AmIteratorGrid_page "AmIteratorGrid":
+
+The \ref rpc_AmIteratorBasis_page "AmIteratorBasis" iterator used by 
+pscf_pg program is a symmetry-preserving Anderson mixing algorithm that
+is functionally equivalent to the algorithm of the same name used by 
+pscf_pc, and has the same parameter file format. This is the default 
+iterator for pscf_pg, and so can also be invoked in a pscf_pg parameter 
+file using either "Iterator" or "AmIteratorBasis" as a block label.
+
+The \ref rpg_AmIteratorGrid_page "AmIteratorGrid" used by pscf_pg is an
+Anderson mixing iterator that uses representations of all fields that do
+not assume the existence of any space group symmetry, and that does not
+automatically preserve space group symmetry during iteration.
 
 The Iterator block of the parameter file is formally optional (i.e., the 
-program will finish reading the parameter file if it is omitted), but is 
-required to enable SCFT calculations. An Iterator block is not needed to 
-peform a field theoretic simulation.
+program will finish reading the parameter file if it is omitted), but 
+must be present to perform a SCFT calculation. The block is treated as
+optional because an Iterator block is not needed to peform a field 
+theoretic simulation.
 
 \section scft_param_pc_sweep_sec Sweep
 

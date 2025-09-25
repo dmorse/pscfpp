@@ -33,7 +33,7 @@ namespace Rpg{
       maxItr_(0),
       totalItr_(0),
       verbose_(0),
-      errorType_("rmsResid"),
+      errorType_("rms"),
       intra_(system),
       isIntraCalculated_(false),
       isAllocated_(false)
@@ -52,8 +52,13 @@ namespace Rpg{
    template <int D>
    void LrCompressor<D>::readParameters(std::istream& in)
    {
+      // Default values
+      maxItr_ = 100;
+      verbose_ = 0;
+      errorType_ = "rms";
+
+      // Read parameters
       read(in, "epsilon", epsilon_);
-      maxItr_ = 60;
       readOptional(in, "maxItr", maxItr_);
       readOptional(in, "verbose", verbose_);
       readOptional(in, "errorType", errorType_);
@@ -299,11 +304,11 @@ namespace Rpg{
       double normRes = norm(resid_);
       // Find root-mean-squared residual element value
       double rmsRes = normRes/sqrt(meshSize);
-      if (errorType_ == "maxResid") {
+      if (errorType_ == "max") {
          error = maxRes;
-      } else if (errorType_ == "normResid") {
+      } else if (errorType_ == "norm") {
          error = normRes;
-      } else if (errorType_ == "rmsResid") {
+      } else if (errorType_ == "rms") {
          error = rmsRes;
       } else {
          UTIL_THROW("Invalid iterator error type in parameter file.");

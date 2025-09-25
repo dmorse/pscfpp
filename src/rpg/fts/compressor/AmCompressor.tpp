@@ -44,10 +44,14 @@ namespace Rpg {
    template <int D>
    void AmCompressor<D>::readParameters(std::istream& in)
    {
+      // Default values
+      maxItr_ = 100;
+      verbose_ = 0;
+      bool useLambdaRamp = false; // default
+
       // Call parent class readParameters
       Base::readParameters(in);
       Base::readErrorType(in);
-      bool useLambdaRamp = false; // default
       Base::readMixingParameters(in, useLambdaRamp);
    }
 

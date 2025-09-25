@@ -9,12 +9,13 @@ a rigid unit cell or to solve the SCFT equations and also optimize the
 unit cell parameters of a flexible unit cell so as to minimize the free 
 energy density.
 
-\section rpg_AmIteratorGrid_param_sec Parameters
+\sa \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithms"
 
-The format of the associated parameter block is identical to that used
-by AmIteratorBasis, as described below:
+\section rpg_AmIteratorGrid_param_sec Parameter file
+
+The format of the AmIteratorGrid parameter block is described below:
 \code
-AmIterator{
+AmIteratorGrid{
    epsilon         real 
    maxItr*         int (200 by default)
    maxHist*        int (50 by default0
@@ -28,7 +29,10 @@ AmIterator{
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent optional 
-parameters. The meaning of the various parameters are described below:
+parameters. The only required parmeter is the error tolerance, epsilon.
+The meaning of most of the other parameters is explained in a general discussion 
+of \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithms", and summarized 
+below:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -36,8 +40,8 @@ parameters. The meaning of the various parameters are described below:
   </tr>
   <tr>
     <td> epsilon </td>
-    <td> Desired tolerance for convergence - iteration stops if 
-         the magnitude of the error drops below epsilon.  </td>
+    <td> error tolerance - iteration stops if the magnitude of the 
+         scalar error becomes less than epsilon.  </td>
   </tr>
   <tr>
     <td> maxItr* </td>
@@ -53,19 +57,19 @@ parameters. The meaning of the various parameters are described below:
   <tr>
     <td> verbose* </td>
     <td> Integer level 0-2 for verbosity of log output during iteration.
-         Optional, and 0 (concise) by default. </td>
+         (0 by default) </td>
   </tr>
   <tr>
     <td> errorType* </td>
     <td> String identifer for the type of variable used to define scalar
          error . The only allowed values are "norm", "rms", "max", and
-         "relNorm". Optional, set to "relNorm" by default. </td>
+         "relNorm". ("relNorm" by default) </td>
   </tr>
   <tr>
     <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
          optimization of the unit cell parameters so as to minimize the
-         free energy. Optional and set 1/true by default.</td>
+         free energy. (True by default)</td>
   </tr>
   <tr>
     <td> scaleStress* </td>
@@ -97,15 +101,14 @@ parameters. The meaning of the various parameters are described below:
 The iterative loop exits if the number of iterations has reaches
 maxItr or if the magnitude of the scalar error drops below epsilon. 
 
-\section rpg_AmIteratorGrid_residual_sec Residual Vector
+\section rpg_AmIteratorGrid_residual_sec Residual definition
 
-The Rpg::AmIteratorGrid uses a definition of the residual vector that 
-analogous to that used by Rpg::AmIteratorBasis and Rpc::AmIterator, 
-except that residal components associated with errors in the SCF
-equations are associated with grid points, rather than with basis
-functions in a symmetry-adapted Fourier series.  The vector of 
-residuals is thus a real-space version of that described by Eqs. 
-(10-13) of the article by Arora et al.  (J. Chem. Phys. 2017).  
+The AmIteratorGrid iterator uses a definition of the residual vector 
+that is analogous to that used by AmIteratorBasis, except that residal 
+elements are associated with grid points, rather than with coefficients
+of basis functions in a symmetry-adapted Fourier series.  The residual
+vector is thus a real-space version of that described by Eqs.  (10-13) 
+of the article by Arora et al.  (J. Chem. Phys. 2017).  
 In what follows, we use zero based indexing for monomer types, and 
 use \f$ N_{\rm m} \f$ to denote the number of monomer types (referred 
 to elsewhere as nMonomer).

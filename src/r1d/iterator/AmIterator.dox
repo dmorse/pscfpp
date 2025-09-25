@@ -8,7 +8,7 @@ An R1d::AmIterator<D> object is an iterator that solves the 1D SCFT
 equations using a \ref pscf_AmIteratorTmpl_page "Anderson-Mixing" 
 algorithm. 
 
-\section r1d_AmIterator_param_sec Parameter File 
+\section r1d_AmIterator_param_sec Parameter file 
 
 An example of the parameter file format for this iterator is shown below:
 \code
