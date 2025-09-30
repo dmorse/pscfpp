@@ -20,6 +20,7 @@ namespace Reduce {
    double max(Array<double> const & in)
    {
       int n = in.capacity();
+      UTIL_CHECK(n > 0);
       double max = in[0];
       for (int i = 1; i < n; i++) {
          if (in[i] > max) max = in[i];
@@ -33,6 +34,7 @@ namespace Reduce {
    double maxAbs(Array<double> const & in)
    {
       int n = in.capacity();
+      UTIL_CHECK(n > 0);
       double val;
       double max = std::abs(in[0]);
       for (int i = 1; i < n; i++) {
@@ -48,6 +50,7 @@ namespace Reduce {
    double min(Array<double> const & in)
    {
       int n = in.capacity();
+      UTIL_CHECK(n > 0);
       double min = in[0];
       for (int i = 1; i < n; i++) {
          if (in[i] < min) min = in[i];
@@ -61,6 +64,7 @@ namespace Reduce {
    double minAbs(Array<double> const & in)
    {
       int n = in.capacity();
+      UTIL_CHECK(n > 0);
       double val;
       double min = std::abs(in[0]);
       for (int i = 1; i < n; i++) {
@@ -76,6 +80,7 @@ namespace Reduce {
    double sum(Array<double> const & in)
    {
       int n = in.capacity();
+      UTIL_CHECK(n > 0);
       double sum = 0.0;
       for (int i = 0; i < n; i++) {
          sum += in[i];
@@ -90,6 +95,7 @@ namespace Reduce {
                        Array<double> const & b)
    {
       int n = a.capacity();
+      UTIL_CHECK(n > 0);
       UTIL_CHECK(b.capacity() == n);
       double sum = 0.0;
       for (int i = 0; i < n; i++) {

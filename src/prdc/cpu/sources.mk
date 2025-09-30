@@ -1,5 +1,4 @@
 prdc_cpu_= \
-  prdc/cpu/complex.cpp \
   prdc/cpu/RField.cpp \
   prdc/cpu/RFieldDft.cpp \
   prdc/cpu/CField.cpp \
@@ -10,6 +9,7 @@ prdc_cpu_= \
   prdc/cpu/FieldBasisConverter.cpp \
   prdc/cpu/WaveList.cpp \
   prdc/cpu/Reduce.cpp \
+  prdc/cpu/VecOp.cpp \
   prdc/cpu/complex.cpp
 
 prdc_cpu_OBJS=\
