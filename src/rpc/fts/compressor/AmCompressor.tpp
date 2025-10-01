@@ -44,11 +44,11 @@ namespace Rpc {
    void AmCompressor<D>::readParameters(std::istream& in)
    {
       // Default values
-      maxItr_ = 100;
-      errorType_ = "rms";
+      AmTmpl::maxItr_ = 100;
+      AmTmpl::verbose_ = 0;
+      AmTmpl::errorType_ = "rms";
       bool useLambdaRamp = false; 
 
-      using AmTmpl = AmIteratorTmpl<Compressor<D>, DArray<double> >;
       AmTmpl::readParameters(in);
       AmTmpl::readErrorType(in);
       AmTmpl::readMixingParameters(in, useLambdaRamp);
@@ -61,7 +61,7 @@ namespace Rpc {
    void AmCompressor<D>::setup(bool isContinuation)
    {
       // Allocate memory required by AM algorithm if not done earlier.
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
+      AmTmpl::setup(isContinuation);
 
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
@@ -92,7 +92,7 @@ namespace Rpc {
    template <int D>
    int AmCompressor<D>::compress()
    {
-      int solve = AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
+      int solve = AmTmpl::solve();
       return solve;
    }
 
@@ -102,10 +102,9 @@ namespace Rpc {
    template<int D>
    void AmCompressor<D>::outputTimers(std::ostream& out) const
    {
-      // Output timing results, if requested.
       out << "\n";
       out << "AmCompressor time contributions:\n";
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
+      AmTmpl::outputTimers(out);
    }
 
    /*
@@ -114,8 +113,8 @@ namespace Rpc {
    template<int D>
    void AmCompressor<D>::clearTimers()
    {
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
-      mdeCounter_ = 0;
+      AmTmpl::clearTimers();
+      Compressor<D>::mdeCounter_ = 0;
    }
 
    // Private virtual functions that interact with parent system
@@ -163,7 +162,7 @@ namespace Rpc {
    void AmCompressor<D>::evaluate()
    {
       system().compute();
-      ++mdeCounter_;
+      ++(Compressor<D>::mdeCounter_);
    }
 
    /*

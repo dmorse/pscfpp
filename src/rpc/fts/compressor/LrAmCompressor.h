@@ -45,7 +45,6 @@ namespace Rpc {
 
    public:
 
-      using Base = AmIteratorDArray< Compressor<D> >;
 
       /**
       * Constructor.
@@ -96,13 +95,6 @@ namespace Rpc {
       * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers() override;
-
-   protected:
-
-      // Inherited protected members
-      using ParamComposite::setClassName;
-      using ParamComposite::readOptional;
-      using Compressor<D>::mdeCounter_;
 
    private:
 
@@ -217,6 +209,9 @@ namespace Rpc {
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
+
+      // Indirect (grandparent) base class.
+      using AmTmpl = AmIteratorTmpl<Compressor<D>, DArray<double> >;
 
       // Inherited private members
       using Compressor<D>::system;

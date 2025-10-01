@@ -17,7 +17,7 @@ McSimulator{
       maxItr       200
       maxHist      30     
       verbose	   0
-      errorType    normResid
+      errorType    norm
    }
    AnalyzerManager{
       baseInterval    10

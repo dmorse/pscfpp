@@ -48,7 +48,7 @@ namespace Rpc{
    {
       // Default values
       maxItr_ = 100;
-      errorType = "rms";
+      errorType_ = "rms";
 
       read(in, "epsilon", epsilon_);
       readOptional(in, "maxItr", maxItr_);

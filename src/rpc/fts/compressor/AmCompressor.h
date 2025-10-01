@@ -82,12 +82,6 @@ namespace Rpc {
       */
       void clearTimers() override;
 
-   protected:
-
-      // Inherited protected members
-      using Compressor<D>::mdeCounter_;
-      using ParamComposite::readOptional;
-
    private:
 
       /**
@@ -160,6 +154,9 @@ namespace Rpc {
 
       // Inherited private members
       using Compressor<D>::system;
+
+      // Indirect (grandparent) base class.
+      using AmTmpl = AmIteratorTmpl< Compressor<D>, DArray<double> >;
 
    };
 

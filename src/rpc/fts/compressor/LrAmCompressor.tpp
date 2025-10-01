@@ -29,7 +29,7 @@ namespace Rpc{
       intra_(system),
       isIntraCalculated_(false),
       isAllocated_(false)
-   {  setClassName("LrAmCompressor"); }
+   {  ParamComposite::setClassName("LrAmCompressor"); }
 
    /*
    * Destructor.
@@ -45,13 +45,13 @@ namespace Rpc{
    void LrAmCompressor<D>::readParameters(std::istream& in)
    {
       // Default values
-      maxItr_ = 100;
-      verbose_ = 0;
-      errorType_ = "rms";
+      AmTmpl::maxItr_ = 100;
+      AmTmpl::verbose_ = 0;
+      AmTmpl::errorType_ = "rms";
 
       // Call parent read methods
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
+      AmTmpl::readParameters(in);
+      AmTmpl::readErrorType(in);
    
    }
 
@@ -127,7 +127,7 @@ namespace Rpc{
    {
       out << "\n";
       out << "LrAmCompressor time contributions:\n";
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::outputTimers(out);
+      AmTmpl::outputTimers(out);
    }
 
    /*
@@ -136,10 +136,9 @@ namespace Rpc{
    template<int D>
    void LrAmCompressor<D>::clearTimers()
    {
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::clearTimers();
-      mdeCounter_ = 0;
+      AmTmpl::clearTimers();
+      Compressor<D>::mdeCounter_ = 0;
    }
-
 
    // Private virtual function that interact with parent system
 
@@ -236,7 +235,7 @@ namespace Rpc{
    void LrAmCompressor<D>::evaluate()
    {
       system().compute();
-      ++mdeCounter_;
+      ++(Compressor<D>::mdeCounter_);
    }
 
    /*
