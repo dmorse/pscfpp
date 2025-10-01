@@ -1,5 +1,5 @@
-#ifndef RPC_AM_ITERATOR_BASIS_TPP
-#define RPC_AM_ITERATOR_BASIS_TPP
+#ifndef RPC_AM_ITERATOR_GRID_TPP
+#define RPC_AM_ITERATOR_GRID_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,13 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorBasis.h"
+#include "AmIteratorGrid.h"
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cpu/Reduce.h>
+#include <prdc/cpu/VecOp.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/iterator/NanException.h>
+#include <util/containers/RingBuffer.h>
 #include <util/containers/DArray.h>
 #include <util/global.h>
 #include <cmath>
@@ -24,6 +27,7 @@ namespace Rpc {
 
    using namespace Util;
    using namespace Prdc;
+   using namespace Prdc::Cpu;
 
    // Public member functions
 
@@ -31,26 +35,27 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
+   AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
     : Iterator<D>(system)
    {
       isSymmetric_ = true;  
-      ParamComposite::setClassName("AmIteratorBasis"); 
+      ParamComposite::setClassName("AmIteratorGrid"); 
    }
 
    /*
    * Destructor.
    */
    template <int D>
-   AmIteratorBasis<D>::~AmIteratorBasis()
+   AmIteratorGrid<D>::~AmIteratorGrid()
    { }
 
    /*
    * Read parameters from file.
    */
    template <int D>
-   void AmIteratorBasis<D>::readParameters(std::istream& in)
+   void AmIteratorGrid<D>::readParameters(std::istream& in)
    {
+
       // Use base class methods to read parameters
       AmTmpl::readParameters(in);
       AmTmpl::readErrorType(in);
@@ -59,10 +64,11 @@ namespace Rpc {
       isFlexible_ = 1; 
       scaleStress_ = 10.0;
 
-      int np = system().domain().unitCell().nParameter();
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
+      int np = unitCell.nParameter();
       UTIL_CHECK(np > 0);
       UTIL_CHECK(np <= 6);
-      UTIL_CHECK(system().domain().unitCell().lattice() != UnitCell<D>::Null);
 
       // Read optional isFlexible boolean (true by default)
       readOptional(in, "isFlexible", isFlexible_);
@@ -76,7 +82,9 @@ namespace Rpc {
          }
          // Read optional flexibleParams_ array to overwrite current array
          readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
-         if (nFlexibleParams() == 0) isFlexible_ = false;
+         if (nFlexibleParams() == 0) {
+            isFlexible_ = false;
+         }
       } else { // isFlexible_ = false
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
@@ -100,7 +108,7 @@ namespace Rpc {
    * Output timing results to log file.
    */
    template<int D>
-   void AmIteratorBasis<D>::outputTimers(std::ostream& out) const
+   void AmIteratorGrid<D>::outputTimers(std::ostream& out) const
    {
       // Output timing results, if requested.
       out << "\n";
@@ -112,7 +120,7 @@ namespace Rpc {
 
    // Setup before entering iteration loop
    template <int D>
-   void AmIteratorBasis<D>::setup(bool isContinuation)
+   void AmIteratorGrid<D>::setup(bool isContinuation)
    {
       AmTmpl::setup(isContinuation);
       interaction_.update(system().interaction());
@@ -124,20 +132,22 @@ namespace Rpc {
    * Does the system have an initial field guess?
    */
    template <int D>
-   bool AmIteratorBasis<D>::hasInitialGuess()
+   bool AmIteratorGrid<D>::hasInitialGuess()
    {  return system().w().hasData(); }
 
+
    /*
-   * Compute and return number of elements in a residual vector.
+   * Compute the number of elements in the residual vector.
    */
    template <int D>
-   int AmIteratorBasis<D>::nElements()
+   int AmIteratorGrid<D>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().domain().basis().nBasis();
+      const int nMesh = system().domain().mesh().size();
 
-      int nEle = nMonomer*nBasis;
-      if (isFlexible()) {
+      int nEle = nMonomer*nMesh;
+
+      if (isFlexible_) {
          nEle += nFlexibleParams();
       }
 
@@ -148,28 +158,32 @@ namespace Rpc {
    * Get the current field vector (w fields and lattice parameters).
    */
    template <int D>
-   void AmIteratorBasis<D>::getCurrent(DArray<double>& curr)
+   void AmIteratorGrid<D>::getCurrent(DArray<double>& curr)
    {
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().domain().basis().nBasis();
-      const DArray< DArray<double> > & currSys = system().w().basis();
+      const int nMesh = system().domain().mesh().size();
+      const int nEle = nElements();
+      UTIL_CHECK(curr.capacity() == nEle);
 
-      // Straighten out fields into linear arrays
+      // Copy w-fields into a linear array
       for (int i = 0; i < nMonomer; i++) {
-         for (int k = 0; k < nBasis; k++) {
-            curr[i*nBasis+k] = currSys[i][k];
+         const RField<D>& field = system().w().rgrid(i);
+         const int begin = i*nMesh;
+         for (int k = 0; k < nMesh; k++) {
+            curr[begin + k] = field[k];
          }
       }
 
       // Add elements associated with unit cell parameters (if any)
       if (isFlexible()) {
-         const int nParam = system().domain().unitCell().nParameter();
-         const FSArray<double,6> currParam 
-                                  = system().domain().unitCell().parameters();
+         UnitCell<D> const & unitCell = system().domain().unitCell();
+         FSArray<double, 6> const & parameters = unitCell.parameters();
+         const int nParam = unitCell.nParameter();
+         const int begin = nMonomer*nMesh;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               curr[nMonomer*nBasis + counter] = scaleStress_*currParam[i];
+               curr[begin + counter] = scaleStress_ * parameters[i];
                counter++;
             }
          }
@@ -182,86 +196,87 @@ namespace Rpc {
    * Perform the main system computation (solve the MDE).
    */
    template <int D>
-   void AmIteratorBasis<D>::evaluate()
-   {
-      // Solve MDEs for current omega field
-      // (computes stress if isFlexible_ == true)
-      system().compute(isFlexible_);
-   }
+   void AmIteratorGrid<D>::evaluate()
+   {  system().compute(isFlexible_); }
 
    /*
    * Compute the residual for the current system state.
    */
    template <int D>
-   void AmIteratorBasis<D>::getResidual(DArray<double>& resid)
+   void AmIteratorGrid<D>::getResidual(DArray<double>& resid)
    {
-      const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().domain().basis().nBasis();
+      const int nMesh = system().domain().mesh().size();
+      const int n = nElements();
+      UTIL_CHECK(resid.capacity() == n);
+
+      // Local index variables
+      int i, j, k, begin;
 
       // Initialize residual vector to zero
-      for (int i = 0 ; i < n; ++i) {
+      for (i = 0 ; i < n; ++i) {
          resid[i] = 0.0;
       }
 
       // Compute SCF residual vector elements
-      for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < nMonomer; ++j) {
+      for (i = 0; i < nMonomer; ++i) {
+         begin = i*nMesh;
+         for (j = 0; j < nMonomer; ++j) {
             double chi = interaction_.chi(i,j);
             double p = interaction_.p(i,j);
-            DArray<double> const & c = system().c().basis(j);
-            DArray<double> const & w = system().w().basis(j);
-            for (int k = 0; k < nBasis; ++k) {
-               int idx = i*nBasis + k;
-               resid[idx] += chi*c[k] - p*w[k];
-            }
-         }
-      }
-
-      // If iterator has mask, account for it in residual values
-      if (system().mask().hasData()) {
-         DArray<double> const & mask = system().mask().basis();
-         double sumChiInv = interaction_.sumChiInverse();
-         for (int i = 0; i < nMonomer; ++i) {
-            for (int k = 0; k < nBasis; ++k) {
-               int idx = i*nBasis + k;
-               resid[idx] -= mask[k] / sumChiInv;
-            }
-         }
-      }
-
-      // If iterator has external fields, account for them in the values 
-      // of the residuals
-      if (system().h().hasData()) {
-         for (int i = 0; i < nMonomer; ++i) {
-            for (int j = 0; j < nMonomer; ++j) {
-               double p = interaction_.p(i,j);
-               DArray<double> const & h = system().h().basis(j);
-               for (int k = 0; k < nBasis; ++k) {
-                  int idx = i*nBasis + k;
-                  resid[idx] += p * h[k];
+            RField<D> const & c = system().c().rgrid(j);
+            RField<D> const & w = system().w().rgrid(j);
+            if (system().h().hasData()) {
+               RField<D> const & h = system().h().rgrid(j);
+               for (k = 0; k < nMesh; ++k) {
+                  resid[begin + k] += chi*c[k] + p*(h[k] - w[k]) ;
+               }
+            } else {
+               for (k = 0; k < nMesh; ++k) {
+                  resid[begin + k] += chi*c[k] - p*w[k];
                }
             }
          }
       }
 
-      // If not canonical, account for incompressibility
-      if (!system().mixture().isCanonical()) {
-         if (!system().mask().hasData()) {
-            for (int i = 0; i < nMonomer; ++i) {
-               resid[i*nBasis] -= 1.0 / interaction_.sumChiInverse();
+      // Add term proportional to mask (or homogeneous if no mask exists)
+      if (system().mask().hasData()) {
+         RField<D> const & mask = system().mask().rgrid();
+         double coeff = -1.0 / interaction_.sumChiInverse();
+         for (i = 0; i < nMonomer; ++i) {
+            begin = i*nMesh;
+            for (k = 0; k < nMesh; ++k) {
+               resid[begin + k] += coeff*mask[k];
             }
          }
       } else {
-         // Explicitly set homogeneous residual components
-         for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] = 0.0;
+         double coeff = -1.0 / interaction_.sumChiInverse();
+         for (i = 0; i < nMonomer; ++i) {
+            begin = i*nMesh;
+            for (k = 0; k < nMesh; ++k) {
+               resid[begin + k] += coeff;
+            }
+         }
+      }
+
+      // If system is canonical, set all spatial averages to zero
+      if (system().mixture().isCanonical()) {
+         double average;
+         for (i = 0; i < nMonomer; ++i) {
+            begin = i*nMesh;
+            average = 0.0;
+            for (k = 0; k < nMesh; ++k) {
+               average += resid[begin + k];
+            }
+            average /= double(nMesh);
+            for (k = 0; k < nMesh; ++k) {
+               resid[begin + k] -= average;
+            }
          }
       }
 
       // If variable unit cell, compute stress residuals
       if (isFlexible()) {
-         const int nParam = system().domain().unitCell().nParameter();
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -272,12 +287,13 @@ namespace Rpc {
          //   storage, so that updating is done on the same scale,
          //   and then undone right before passing to the unit cell.
 
+         const double coeff = -1.0 * scaleStress_;
+         const int nParam = system().domain().unitCell().nParameter();
+         begin = nMonomer*nMesh;
          int counter = 0;
-         for (int i = 0; i < nParam ; i++) {
+         for (i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               double str = stress(i);
-
-               resid[nMonomer*nBasis + counter] = -1 * scaleStress_ * str;
+               resid[begin + counter] = coeff * stress(i);
                counter++;
             }
          }
@@ -290,49 +306,81 @@ namespace Rpc {
    * Update the current system field vector.
    */
    template <int D>
-   void AmIteratorBasis<D>::update(DArray<double>& newGuess)
+   void AmIteratorGrid<D>::update(DArray<double>& newGuess)
    {
+      Domain<D> const & domain = system().domain();
+      Mesh<D> const & mesh = domain.mesh();
+      IntVec<D> const & meshDimensions = mesh.dimensions();
+
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().domain().basis().nBasis();
+      const int nMesh = mesh.size();
 
-      DArray< DArray<double> > wField;
-      wField.allocate(nMonomer);
-
-      // Restructure in format of monomers, basis functions
+      // Allocate wFields container
+      DArray< RField<D> > wFields;
+      wFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
-         wField[i].allocate(nBasis);
-         for (int k = 0; k < nBasis; k++)
-         {
-            wField[i][k] = newGuess[i*nBasis + k];
+         wFields[i].allocate(meshDimensions);
+      }
+
+      // Copy trial fields from state vector to wFields
+      for (int i = 0; i < nMonomer; i++) {
+         for (int k = 0; k < nMesh; k++) {
+            wFields[i][k] = newGuess[i*nMesh + k];
          }
       }
+
       // If canonical, explicitly set homogeneous field components
       if (system().mixture().isCanonical()) {
-         double chi;
+
+         // Subtract spatial average from each w field
+         double wAve;
          for (int i = 0; i < nMonomer; ++i) {
-            wField[i][0] = 0.0; // initialize to 0
+            wAve = Reduce::sum(wFields[i]);
+            wAve /= double(nMesh);
+            VecOp::subEqS(wFields[i], wAve);
+         }
+
+         // Compute spatial averages of all concentration fields
+         DArray<double> cAve;
+         cAve.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            cAve[i] = Reduce::sum(system().c().rgrid(i));
+            cAve[i] /= double(nMesh);
+         }
+        
+         // Add average value arising from interactions 
+         double chi, shift;
+         for (int i = 0; i < nMonomer; ++i) {
+            shift = 0.0; 
             for (int j = 0; j < nMonomer; ++j) {
                chi = interaction_.chi(i,j);
-               wField[i][0] += chi * system().c().basis(j)[0];
+               shift += chi * cAve[j];
             }
+            VecOp::addEqS(wFields[i], shift);
          }
-         // If iterator has external fields, include them in homogeneous field
+
+         // If external fields exist, add their spatial averages
          if (system().h().hasData()) {
+            double hAve; 
             for (int i = 0; i < nMonomer; ++i) {
-               wField[i][0] += system().h().basis(i)[0];
+               hAve = Reduce::sum(system().h().rgrid(i));
+               hAve /= double(nMesh);
+               VecOp::addEqS(wFields[i], hAve);
             }
          }
       }
-      system().w().setBasis(wField);
 
+      // Update fields in system WContainer
+      system().w().setRGrid(wFields);
+
+      // If fleixble, update unit cell parameters
       if (isFlexible()) {
+
          const int nParam = system().domain().unitCell().nParameter();
-         const int begin = nMonomer*nBasis;
+         const int begin = nMonomer*nMesh;
 
-         FSArray<double,6> parameters;
-         parameters = system().domain().unitCell().parameters();
-
+         FSArray<double, 6> parameters;
          double coeff = 1.0 / scaleStress_;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
@@ -343,31 +391,35 @@ namespace Rpc {
          }
          UTIL_CHECK(counter == nFlexibleParams());
 
+         // Update system unit cell parameters
          system().setUnitCell(parameters);
       }
+
    }
 
    /*
    * Output relevant system details to the iteration log.
    */
    template<int D>
-   void AmIteratorBasis<D>::outputToLog()
+   void AmIteratorGrid<D>::outputToLog()
    {
       if (isFlexible() && verbose() > 1) {
          const int nParam = system().domain().unitCell().nParameter();
          const int nMonomer = system().mixture().nMonomer();
-         const int nBasis = system().domain().basis().nBasis();
+         const int nMesh = system().domain().mesh().size();
+         const int begin = nMonomer*nMesh;
+         const UnitCell<D>& unitCell = system().domain().unitCell();
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               double str = residual()[nMonomer*nBasis + counter] /
+               double str = residual()[begin + counter] /
                             (-1.0 * scaleStress_);
                Log::file() 
-                      << " Cell Param  " << i << " = "
-                      << Dbl(system().domain().unitCell().parameters()[i], 15)
-                      << " , stress = " 
-                      << Dbl(str, 15)
-                      << "\n";
+                  << " Cell Param  " << i << " = "
+                  << Dbl(unitCell.parameters()[i], 15)
+                  << " , stress = " 
+                  << Dbl(str, 15)
+                  << "\n";
                counter++;
             }
          }

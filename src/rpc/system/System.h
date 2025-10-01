@@ -9,20 +9,19 @@
 */
 
 // Header file includes
-#include <prdc/system/SystemTmpl.h>      // base class template
-#include <rpc/system/Types.h>            // base class template param
-#include <rpc/solvers/Mixture.h>         // member
-#include <rpc/field/Domain.h>            // member
-#include <rpc/field/WFields.h>   // member
-#include <rpc/field/CFields.h>   // member
-#include <rpc/field/Mask.h>              // member
+#include <prdc/system/SystemTmpl.h>    // base class template
+#include <rpc/system/Types.h>          // base class template param
+#include <rpc/solvers/Mixture.h>       // member
+#include <rpc/field/Domain.h>          // member
+#include <rpc/field/WFields.h>         // member
+#include <rpc/field/CFields.h>         // member
+#include <rpc/field/Mask.h>            // member
 
 namespace Pscf {
 namespace Rpc {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
 
    /**
    * Main class, representing a complete physical system.
@@ -44,8 +43,10 @@ namespace Rpc {
       */
       System();
 
-      // Suppress compiler-generated member functions
+      /// Copy constructor.
       System(System<D> const &) = delete;
+
+      /// Assignment
       System<D>& operator = (System<D> const &) = delete;
 
    };
@@ -58,7 +59,7 @@ namespace Rpc {
 } // namespace Rpc
 namespace Prdc {
 
-   // Explicit instantiation declarations for base class
+   // Explicit instantiation declarations for base class template
    extern template class SystemTmpl<1, Rpc::Types<1> >;
    extern template class SystemTmpl<2, Rpc::Types<1> >;
    extern template class SystemTmpl<3, Rpc::Types<1> >;

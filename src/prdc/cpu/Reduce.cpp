@@ -11,7 +11,7 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
+namespace Cpu {
 namespace Reduce {
 
    /*

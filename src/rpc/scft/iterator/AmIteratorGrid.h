@@ -1,5 +1,5 @@
-#ifndef RPC_AM_ITERATOR_BASIS_H
-#define RPC_AM_ITERATOR_BASIS_H
+#ifndef RPC_AM_ITERATOR_GRID_H
+#define RPC_AM_ITERATOR_GRID_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,18 +8,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.h"                          // base class argument
-#include <pscf/iterator/AmIteratorDArray.h>    // base class template
-#include <pscf/iterator/AmbdInteraction.h>     // member 
+#include "Iterator.h"                            // base class argument
+#include <pscf/iterator/AmIteratorDArray.h>      // base class template
+#include <pscf/iterator/AmbdInteraction.h>       // member 
 
 // Forward declarations
 namespace Util {
    template <typename T> class DArray;
 }
 namespace Pscf {
-   namespace Rpc {
-      template <int D> class System;
-   }
+  namespace Rpc {
+     template <int D> class System;
+  }
 }
 
 namespace Pscf {
@@ -28,15 +28,15 @@ namespace Rpc {
    using namespace Util;
 
    /**
-   * Anderson Mixing iterator with imposed space-group symmetry.
+   * Anderson Mixing iterator on grid (no space-group symmetry).
    * 
-   * \see \ref rpc_AmIteratorBasis_page "Manual Page"
+   * \see \ref rpc_AmIteratorGrid_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
    *
    * \ingroup Rpc_Scft_Iterator_Module
    */
    template <int D>
-   class AmIteratorBasis : public AmIteratorDArray< Iterator<D> >
+   class AmIteratorGrid : public AmIteratorDArray< Iterator<D> >
    {
 
    public:
@@ -46,12 +46,12 @@ namespace Rpc {
       *
       * \param system System object associated with this iterator.
       */
-      AmIteratorBasis(System<D>& system);
+      AmIteratorGrid(System<D>& system);
 
       /**
       * Destructor.
       */
-      ~AmIteratorBasis();
+      ~AmIteratorGrid();
 
       /**
       * Read all parameters and initialize.
@@ -102,7 +102,7 @@ namespace Rpc {
       /// Local copy of interaction, adapted for AMBD residual definition
       AmbdInteraction interaction_;
 
-      /// How are stress residuals scaled in error calculation?
+      /// Scale factor for stress residual elements.
       double scaleStress_;
 
       // Private virtual functions that interact with parent system
@@ -156,9 +156,9 @@ namespace Rpc {
    };
 
    // Explicit instantiation declarations
-   extern template class AmIteratorBasis<1>;
-   extern template class AmIteratorBasis<2>;
-   extern template class AmIteratorBasis<3>;
+   extern template class AmIteratorGrid<1>;
+   extern template class AmIteratorGrid<2>;
+   extern template class AmIteratorGrid<3>;
 
 } // namespace Rpc
 } // namespace Pscf

@@ -19,6 +19,7 @@
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/simulator/SimulatorFactory.h>
 #include <rpc/fts/compressor/Compressor.h>
+#include <rpc/fts/compressor/CompressorFactory.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/iterator/IteratorFactory.h>
 #include <rpc/scft/sweep/Sweep.h>
@@ -31,14 +32,14 @@
 #include <pscf/inter/Interaction.h>
 
 namespace Pscf {
-
    namespace Prdc {
+
       // Explicit instantiation of base class template
       template class SystemTmpl< 1, Rpc::Types<1> >;
       template class SystemTmpl< 2, Rpc::Types<2> >;
       template class SystemTmpl< 3, Rpc::Types<3> >;
-   }
 
+   }
    namespace Rpc {
 
       /*
@@ -53,6 +54,7 @@ namespace Pscf {
       template class System<1>;
       template class System<2>;
       template class System<3>;
+
    }
 } 
 #endif

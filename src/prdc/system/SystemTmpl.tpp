@@ -326,7 +326,7 @@ namespace Prdc {
       // Allocate memory for field containers in r-grid form
       allocateFieldsGrid();
 
-      // Optionally construct an Environment object
+      // Optionally read and construct an Environment
       std::string className;
       bool isEnd;
       environmentPtr_ =
@@ -339,7 +339,7 @@ namespace Prdc {
          environment().setNParams(domain_.unitCell().nParameter());
       }
 
-      // Optionally construct an Iterator object
+      // Optionally read and construct an Iterator
       if (!isEnd) {
          iteratorPtr_ =
             iteratorFactoryPtr_->readObjectOptional(in, *this, 
@@ -349,7 +349,7 @@ namespace Prdc {
          }
       }
 
-      // Optionally construct a Sweep object (if an iterator exists)
+      // Optionally read and construct a Sweep (if an iterator exists)
       if (hasIterator() && !isEnd) {
          sweepPtr_ =
             sweepFactoryPtr_->readObjectOptional(in, *this,
@@ -359,7 +359,7 @@ namespace Prdc {
          }
       }
 
-      // Optionally construct a Simulator object
+      // Optionally read and construct a Simulator 
       if (!isEnd) {
          simulatorPtr_ =
             simulatorFactoryPtr_->readObjectOptional(in, *this,

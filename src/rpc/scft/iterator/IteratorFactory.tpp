@@ -5,6 +5,7 @@
 
 // Subclasses of Iterator 
 #include "AmIteratorBasis.h"
+#include "AmIteratorGrid.h"
 
 namespace Pscf {
 namespace Rpc {
@@ -23,9 +24,10 @@ namespace Rpc {
    * Return a pointer to a instance of Iterator subclass className.
    */
    template <int D>
-   Iterator<D>* IteratorFactory<D>::factory(const std::string &className) const
+   Iterator<D>* IteratorFactory<D>::factory(const std::string &className) 
+   const
    {
-      Iterator<D>* ptr = 0;
+      Iterator<D>* ptr = nullptr;
 
       // Try subfactories first
       ptr = trySubfactories(className);
@@ -35,6 +37,9 @@ namespace Rpc {
       if (className == "Iterator" || className == "AmIteratorBasis" 
           || className == "AmIterator" ) {
          ptr = new AmIteratorBasis<D>(*sysPtr_);
+      } else 
+      if (className == "AmIteratorGrid") {
+         ptr = new AmIteratorGrid<D>(*sysPtr_);
       }
 
       return ptr;
