@@ -47,6 +47,9 @@ namespace Rpg {
 
    public:
 
+      /// Typename for field and residual vectors.
+      using VectorT = DeviceArray<cudaReal>;
+
       /**
       * Constructor.
       * 
@@ -93,18 +96,6 @@ namespace Rpg {
       * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers();
-
-      /// Typename for field and residual vectors.
-      using VectorT = DeviceArray<cudaReal>;
-
-      /// Typename alias for base class.
-      using Base = AmIteratorTmpl< Compressor<D>, DeviceArray<cudaReal> >;
-
-   protected:
-  
-      // Inherited protected members 
-      using ParamComposite::readOptional;
-      using Compressor<D>::mdeCounter_;
 
    private:
    
@@ -171,8 +162,8 @@ namespace Rpg {
       * \param fieldTrial trial field (in/out)
       * \param resTrial predicted residual for current trial (in)
       */
-      void addCorrection(DeviceArray<cudaReal>& fieldTrial, 
-                         DeviceArray<cudaReal> const & resTrial) override;
+      void addCorrection(VectorT& fieldTrial, 
+                         VectorT const & resTrial) override;
 
       
       // Private virtual that interact with the parent System
@@ -194,7 +185,7 @@ namespace Rpg {
       * 
       * \param curr current field vector
       */ 
-      void getCurrent(DeviceArray<cudaReal>& curr) override;
+      void getCurrent(VectorT& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -209,14 +200,14 @@ namespace Rpg {
       *
       * \param resid current residual vector value
       */
-      void getResidual(DeviceArray<cudaReal>& resid) override;
+      void getResidual(VectorT& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DeviceArray<cudaReal>& newGuess) override;
+      void update(VectorT& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.
@@ -231,8 +222,8 @@ namespace Rpg {
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b) override;
+      void setEqual(VectorT& a, 
+                    VectorT const & b) override;
 
       /**
       * Compute the inner product of two vectors
@@ -240,13 +231,13 @@ namespace Rpg {
       * \param a  first input vector
       * \param a  second input vector
       */
-      double dotProduct(DeviceArray<cudaReal> const & a, 
-                        DeviceArray<cudaReal> const & b) override;
+      double dotProduct(VectorT const & a, 
+                        VectorT const & b) override;
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double maxAbs(DeviceArray<cudaReal> const & hist) override;
+      double maxAbs(VectorT const & hist) override;
 
       /**
       * Compute the difference a = b - c for vectors a, b and c.
@@ -255,9 +246,9 @@ namespace Rpg {
       * \param b first vector (RHS)
       * \param c second vector (RHS)
       */
-      void subVV(DeviceArray<cudaReal>& a, 
-                 DeviceArray<cudaReal> const & b, 
-		 DeviceArray<cudaReal> const & c) override;
+      void subVV(VectorT& a, 
+                 VectorT const & b, 
+		 VectorT const & c) override;
 
       /**
       * Compute a += c*b for vectors a and b and scalar c.
@@ -266,13 +257,15 @@ namespace Rpg {
       * \param b input vector (RHS)
       * \param c scalar coefficient (RHS)
       */
-      void addEqVc(DeviceArray<cudaReal>& a, 
-		   DeviceArray<cudaReal> const & b, 
+      void addEqVc(VectorT& a, 
+		   VectorT const & b, 
                    double c) override;
 
       // Inherited private member
       using Compressor<D>::system;
 
+      /// Typename alias for base class.
+      using Base = AmIteratorTmpl< Compressor<D>, VectorT >;
    };
    
    // Explicit instantiation declarations

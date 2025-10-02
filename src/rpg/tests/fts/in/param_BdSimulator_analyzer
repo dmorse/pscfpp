@@ -7,7 +7,7 @@ BdSimulator{
       maxItr       200
       maxHist      30
       verbose	   0
-      errorType    rmsResid
+      errorType    rms
    }
    AnalyzerManager{
       baseInterval    1

@@ -8,6 +8,7 @@
 
 #include "VecOp.h"
 #include <util/containers/Array.h> 
+#include <cmath> 
 
 namespace Pscf {
 namespace Prdc {

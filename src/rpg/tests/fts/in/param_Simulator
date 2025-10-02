@@ -45,8 +45,8 @@ System{
       epsilon      1.0e-4
       maxItr       200
       maxHist      30     
-      verbose	 0
-      errorType    rmsResid
+      verbose	   0
+      errorType    rms
     }
     AnalyzerManager{
       baseInterval    1

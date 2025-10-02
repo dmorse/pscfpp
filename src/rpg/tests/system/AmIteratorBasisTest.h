@@ -75,7 +75,7 @@ public:
    }
 
    /*
-   * Read basis fields into an array.
+   * Compare basis fields.
    */
    double compareBasis(DArray< DArray<double> > const & fields1,
                        DArray< DArray<double> > const & fields2,
@@ -179,7 +179,7 @@ public:
 
       // Write final fields
       system.w().writeBasis(outFileRoot + "_w.bf");
-      system.c().writeBasis(outFileRoot + "_w.bf");
+      system.c().writeBasis(outFileRoot + "_c.bf");
    }
 
    /*
