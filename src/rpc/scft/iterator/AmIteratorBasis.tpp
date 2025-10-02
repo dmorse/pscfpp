@@ -131,7 +131,6 @@ namespace Rpc {
       if (isFlexible()) {
          nEle += nFlexibleParams();
       }
-
       return nEle;
    }
 
@@ -167,8 +166,8 @@ namespace Rpc {
       if (isFlexible()) {
          UTIL_CHECK(nFlexibleParams() > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
-         const int nParam = unitCell.nParameter();
          FSArray<double,6> const & parameters = unitCell.parameters();
+         const int nParam = unitCell.nParameter();
          begin = nMonomer*nBasis;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
@@ -308,14 +307,25 @@ namespace Rpc {
 
       // If canonical, explicitly set homogeneous field components
       if (system().mixture().isCanonical()) {
-         double chi;
+
+         // Set homogeneous components of all w fields to zero
          for (int i = 0; i < nMonomer; ++i) {
-            wFields[i][0] = 0.0; // initialize to 0
+            wFields[i][0] = 0.0;
+         }
+
+         // Add average values arising from interactions
+         double chi, wAve, cAve;
+         for (int i = 0; i < nMonomer; ++i) {
+            wAve = 0.0;
             for (int j = 0; j < nMonomer; ++j) {
                chi = interaction_.chi(i,j);
-               wFields[i][0] += chi * system().c().basis(j)[0];
+               cAve = system().c().basis(j)[0];
+               wAve += chi * cAve;
             }
+            wFields[i][0] = wAve;
          }
+
+         // If external fields exist, add their spatial averages
          if (system().h().hasData()) {
             for (int i = 0; i < nMonomer; ++i) {
                wFields[i][0] += system().h().basis(i)[0];
@@ -326,9 +336,14 @@ namespace Rpc {
       // Set fields in system w container
       system().w().setBasis(wFields);
 
+      // If flexible, update unit cell parameters
       if (isFlexible()) {
+
+         // Initialize parameters array with current values
          FSArray<double, 6> parameters;
          parameters = system().domain().unitCell().parameters();
+
+         // Reset any parameters that are flexible
          const double coeff = 1.0 / scaleStress_;
          const int nParam = system().domain().unitCell().nParameter();
          const int begin = nMonomer*nBasis;

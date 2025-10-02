@@ -55,7 +55,6 @@ namespace Rpc {
    template <int D>
    void AmIteratorGrid<D>::readParameters(std::istream& in)
    {
-
       // Use base class methods to read parameters
       AmTmpl::readParameters(in);
       AmTmpl::readErrorType(in);
@@ -135,11 +134,9 @@ namespace Rpc {
       const int nMesh = system().domain().mesh().size();
 
       int nEle = nMonomer*nMesh;
-
       if (isFlexible_) {
          nEle += nFlexibleParams();
       }
-
       return nEle;
    }
 
@@ -321,6 +318,7 @@ namespace Rpc {
       wFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
          wFields[i].allocate(meshDimensions);
+         UTIL_CHECK(wFields[i].capacity() == nMesh);
       }
 
       // Copy new fields from newState vector to wFields container
@@ -373,14 +371,17 @@ namespace Rpc {
          }
       }
 
-      // Update fields in system WContainer
+      // Set fields in system w container
       system().w().setRGrid(wFields);
 
-      // If fleixble, update unit cell parameters
+      // If flexible, update unit cell parameters
       if (isFlexible()) {
 
+         // Initialize parameters array with current values
          FSArray<double, 6> parameters;
          parameters = domain.unitCell().parameters();
+
+         // Reset any parameters that are flexible
          const int nParam = domain.unitCell().nParameter();
          double coeff = 1.0 / scaleStress_;
          const int begin = nMonomer*nMesh;
