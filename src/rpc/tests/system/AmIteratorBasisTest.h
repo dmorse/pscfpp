@@ -227,7 +227,7 @@ public:
                     bool compareCFields = true)
    {
       std::string outFileRoot;
-      outFileRoot = makeFileRoot("out/testIterate", outSuffix, D);
+      outFileRoot = makeFileRoot("out/testIterateBasis", outSuffix, D);
 
       openLogFile(outFileRoot + ".log");
 
@@ -342,12 +342,6 @@ public:
       FSArray<double, 6> stress = computeStress(system);
       TEST_ASSERT(std::abs(stress[0]) < 1.0E-8);
 
-      #if 0
-      system.scaleFieldsBasis("out/testIterate1D_lam_flex_w.bf",
-                              "out/testIterate1D_lam_flex_w_scaled.bf",
-                              0.01);
-      #endif
-
       // v1.1 test used omega.in as input, compared to omega.ref
    }
 
@@ -357,7 +351,7 @@ public:
       //setVerbose(1);
 
       std::string outFileRoot;
-      outFileRoot = makeFileRoot("out/testIterate", "lam_stress", 1);
+      outFileRoot = makeFileRoot("out/testIterateBasis", "lam_stress", 1);
       openLogFile(outFileRoot + ".log");
 
       // Initialize, read reference solution
@@ -453,7 +447,7 @@ public:
       //setVerbose(1);
 
       std::string outFileRoot;
-      outFileRoot = makeFileRoot("out/testIterate", "lam_bead_stress", 1);
+      outFileRoot = makeFileRoot("out/testIterateBasis", "lam_bead_stress", 1);
       openLogFile(outFileRoot + ".log");
 
       // Initialize, read reference solution
@@ -752,8 +746,8 @@ public:
       // v1.1 test used omega.in as input, compared to omega.ref
 
       FieldIo<2> const & fieldIo = system.domain().fieldIo();
-      fieldIo.scaleFieldsBasis("out/testIterate2D_hex_flex_w.bf",
-                              "out/testIterate2D_hex_flex_w_scaled.bf",
+      fieldIo.scaleFieldsBasis("out/testIterateBasis2D_hex_flex_w.bf",
+                               "out/testIterateBasis2D_hex_flex_w_scaled.bf",
                                0.01);
    }
 
@@ -763,7 +757,7 @@ public:
       //setVerbose(1);
 
       std::string outFileRoot;
-      outFileRoot = makeFileRoot("out/testIterate", "hex_stress", 2);
+      outFileRoot = makeFileRoot("out/testIterateBasis", "hex_stress", 2);
       openLogFile(outFileRoot + ".log");
 
       // Initialize, read reference solution
@@ -854,7 +848,7 @@ public:
       //setVerbose(1);
 
       std::string outFileRoot;
-      outFileRoot = makeFileRoot("out/testIterate", "hex_bead_stress", 2);
+      outFileRoot = makeFileRoot("out/testIterateBasis", "hex_bead_stress", 2);
       openLogFile(outFileRoot + ".log");
 
       // Initialize, read reference solution
@@ -988,7 +982,7 @@ public:
       //setVerbose(1);
 
       std::string outFileRoot;
-      outFileRoot = makeFileRoot("out/testIterate", "bcc_stress", 3);
+      outFileRoot = makeFileRoot("out/testIterateBasis", "bcc_stress", 3);
       openLogFile(outFileRoot + ".log");
 
       System<3> system;
