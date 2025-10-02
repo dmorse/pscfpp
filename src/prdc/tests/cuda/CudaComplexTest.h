@@ -25,9 +25,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaComplex b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 0.25;
@@ -44,9 +44,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaReal b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
@@ -62,9 +62,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaComplex b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 0.25;
@@ -83,9 +83,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaReal b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
@@ -103,9 +103,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaComplex b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 0.25;
@@ -122,9 +122,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex a;
-         cudaReal b;
-         cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaReal b;
+         Cuda::cudaComplex z;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
@@ -140,9 +140,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaComplex b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 0.25;
@@ -161,9 +161,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaReal b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
@@ -181,9 +181,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaComplex b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 3.0;
@@ -204,9 +204,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaReal b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
@@ -226,9 +226,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaComplex b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 3.0;
@@ -247,9 +247,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaReal b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
@@ -267,9 +267,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaComplex b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 3.0;
@@ -278,7 +278,7 @@ public:
          TEST_ASSERT(eq(z.x, a.x * b.x - a.y * b.y));
          TEST_ASSERT(eq(z.y, a.y * b.x + a.x * b.y));
  
-         cudaComplex x;
+         Cuda::cudaComplex x;
          div(x, z, b);
          TEST_ASSERT(eq(x.x, a.x));
          TEST_ASSERT(eq(x.y, a.y));
@@ -289,9 +289,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaReal b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;
@@ -299,7 +299,7 @@ public:
          TEST_ASSERT(eq(z.x, a.x * b));
          TEST_ASSERT(eq(z.y, a.y * b));
 
-         cudaComplex x;
+         Cuda::cudaComplex x;
          div(x, z, b);
          TEST_ASSERT(eq(x.x, a.x));
          TEST_ASSERT(eq(x.y, a.y));
@@ -310,9 +310,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaComplex b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaComplex b;
          a.x = 2.0;
          a.y = 0.5;
          b.x = 3.0;
@@ -333,9 +333,9 @@ public:
    {
       printMethod(TEST_FUNC);
       {
-         cudaComplex z;
-         cudaComplex a;
-         cudaReal b;
+         Cuda::cudaComplex z;
+         Cuda::cudaComplex a;
+         Cuda::cudaReal b;
          a.x = 2.0;
          a.y = 0.5;
          b = 0.25;

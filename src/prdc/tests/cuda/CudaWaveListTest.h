@@ -28,10 +28,10 @@ private:
 
    // Error tolerance for array equality
    #ifdef SINGLE_PRECISION
-   constexpr static cudaReal tolerance_ = 1E-5;
+   constexpr static Cuda::cudaReal tolerance_ = 1E-5;
    #else
    #ifdef DOUBLE_PRECISION
-   constexpr static cudaReal tolerance_ = 1E-10;
+   constexpr static Cuda::cudaReal tolerance_ = 1E-10;
    #endif
    #endif
 
@@ -98,17 +98,17 @@ public:
 
       using namespace Pscf::Prdc::Cuda;
 
-      WaveList<1> wavelist1;
+      Cuda::WaveList<1> wavelist1;
       wavelist1.allocate(mesh1, cell1);
       TEST_ASSERT(wavelist1.isAllocated());
       TEST_ASSERT(!wavelist1.hasMinImages());
 
-      WaveList<2> wavelist2;
+      Cuda::WaveList<2> wavelist2;
       wavelist2.allocate(mesh2, cell2);
       TEST_ASSERT(wavelist2.isAllocated());
       TEST_ASSERT(!wavelist2.hasMinImages());
 
-      WaveList<3> wavelist3;
+      Cuda::WaveList<3> wavelist3;
       wavelist3.allocate(mesh3, cell3);
       TEST_ASSERT(wavelist3.isAllocated());
       TEST_ASSERT(!wavelist3.hasMinImages());
@@ -120,12 +120,12 @@ public:
       using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // compute minimum images (and ksq) on device, transfer to host
       HostDArray<int> minImages_h;
-      HostDArray<cudaReal> ksq_h;
+      HostDArray<Cuda::cudaReal> ksq_h;
       wavelist.computeMinimumImages(); 
       minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
@@ -133,7 +133,7 @@ public:
       // compute minimum images (and ksq) on host and compare
       IntVec<1> temp, vec;
       MeshIterator<1> iter;
-      cudaReal ksq;
+      Cuda::cudaReal ksq;
       iter.setDimensions(kMeshDims1);
       for (iter.begin(); !iter.atEnd(); ++iter) {
          temp = iter.position();
@@ -151,12 +151,12 @@ public:
       using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      WaveList<2> wavelist;
+      Cuda::WaveList<2> wavelist;
       wavelist.allocate(mesh2, cell2);
 
       // compute minimum images (and ksq) on device, transfer to host
       HostDArray<int> minImages_h;
-      HostDArray<cudaReal> ksq_h;
+      HostDArray<Cuda::cudaReal> ksq_h;
       wavelist.computeMinimumImages(); 
       minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
@@ -164,7 +164,7 @@ public:
       // compute minimum images (and ksq) on host and compare
       IntVec<2> temp, vec;
       MeshIterator<2> iter;
-      cudaReal ksq;
+      Cuda::cudaReal ksq;
       iter.setDimensions(kMeshDims2);
       for (iter.begin(); !iter.atEnd(); ++iter) {
          temp = iter.position();
@@ -183,12 +183,12 @@ public:
       using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      WaveList<3> wavelist;
+      Cuda::WaveList<3> wavelist;
       wavelist.allocate(mesh3, cell3);
 
       // compute minimum images (and ksq) on device, transfer to host
       HostDArray<int> minImages_h;
-      HostDArray<cudaReal> ksq_h;
+      HostDArray<Cuda::cudaReal> ksq_h;
       wavelist.computeMinimumImages(); 
       minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
@@ -196,7 +196,7 @@ public:
       // compute minimum images (and ksq) on host and compare
       IntVec<3> temp, vec;
       MeshIterator<3> iter;
-      cudaReal ksq;
+      Cuda::cudaReal ksq;
       iter.setDimensions(kMeshDims3);
       for (iter.begin(); !iter.atEnd(); ++iter) {
          temp = iter.position();
@@ -216,11 +216,11 @@ public:
       using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // compute kSq on device two different ways, transfer to host
-      HostDArray<cudaReal> ksq_h, ksq_h2;
+      HostDArray<Cuda::cudaReal> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
@@ -229,7 +229,7 @@ public:
 
       // compute kSq on host and compare
       IntVec<1> temp, vec;
-      cudaReal ksq;
+      Cuda::cudaReal ksq;
       MeshIterator<1> iter;
       iter.setDimensions(kMeshDims1);
       for (iter.begin(); !iter.atEnd(); ++iter) {
@@ -256,11 +256,11 @@ public:
       in >> cell;
 
       // set up wavelist object
-      WaveList<2> wavelist;
+      Cuda::WaveList<2> wavelist;
       wavelist.allocate(mesh2, cell);
 
       // compute kSq on device two different ways, transfer to host
-      HostDArray<cudaReal> ksq_h, ksq_h2;
+      HostDArray<Cuda::cudaReal> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
@@ -269,7 +269,7 @@ public:
 
       // compute kSq on host and compare
       IntVec<2> temp, vec;
-      cudaReal ksq;
+      Cuda::cudaReal ksq;
       MeshIterator<2> iter;
       iter.setDimensions(kMeshDims2);
       for (iter.begin(); !iter.atEnd(); ++iter) {
@@ -296,11 +296,11 @@ public:
       in >> cell;
 
       // set up wavelist object
-      WaveList<3> wavelist;
+      Cuda::WaveList<3> wavelist;
       wavelist.allocate(mesh3, cell);
 
       // compute kSq on device two different ways, transfer to host
-      HostDArray<cudaReal> ksq_h, ksq_h2;
+      HostDArray<Cuda::cudaReal> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
@@ -309,7 +309,7 @@ public:
 
       // compute kSq on host and compare
       IntVec<3> temp, vec;
-      cudaReal ksq;
+      Cuda::cudaReal ksq;
       MeshIterator<3> iter;
       iter.setDimensions(kMeshDims3);
       for (iter.begin(); !iter.atEnd(); ++iter) {
@@ -328,17 +328,17 @@ public:
       using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      HostDArray<cudaReal> dksq_h;
+      HostDArray<Cuda::cudaReal> dksq_h;
       dksq_h = wavelist.dKSq(0);
 
       // compute dKSq on host and compare
       IntVec<1> temp, vec;
-      cudaReal dksq;
+      Cuda::cudaReal dksq;
       MeshIterator<1> iter;
       iter.setDimensions(kMeshDims1);
       for (iter.begin(); !iter.atEnd(); ++iter) {
@@ -358,12 +358,12 @@ public:
       using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      WaveList<2> wavelist;
+      Cuda::WaveList<2> wavelist;
       wavelist.allocate(mesh2, cell2);
 
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      DArray< HostDArray<cudaReal> > dksq_h;
+      DArray< HostDArray<Cuda::cudaReal> > dksq_h;
       dksq_h.allocate(cell2.nParameter());
       for (int n = 0; n < cell2.nParameter() ; ++n) {
         dksq_h[n] = wavelist.dKSq(n);
@@ -371,7 +371,7 @@ public:
 
       // compute dKSq on host and compare
       IntVec<2> temp, vec;
-      cudaReal dksq;
+      Cuda::cudaReal dksq;
       MeshIterator<2> iter;
       iter.setDimensions(kMeshDims2);
       for (int n = 0; n < cell2.nParameter() ; ++n) {
@@ -395,12 +395,12 @@ public:
       using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      WaveList<3> wavelist;
+      Cuda::WaveList<3> wavelist;
       wavelist.allocate(mesh3, cell3);
 
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      DArray< HostDArray<cudaReal> > dksq_h;
+      DArray< HostDArray<Cuda::cudaReal> > dksq_h;
       dksq_h.allocate(cell3.nParameter());
       for (int n = 0; n < cell3.nParameter() ; ++n) {
         dksq_h[n] = wavelist.dKSq(n);
@@ -408,7 +408,7 @@ public:
 
       // compute dKSq on host and compare
       IntVec<3> temp, vec;
-      cudaReal dksq;
+      Cuda::cudaReal dksq;
       MeshIterator<3> iter;
       iter.setDimensions(kMeshDims3);
       for (int n = 0; n < cell3.nParameter() ; ++n) {
@@ -430,7 +430,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      WaveList<3> wavelist(false);
+      Cuda::WaveList<3> wavelist(false);
       wavelist.allocate(mesh3, cell3);
       wavelist.computedKSq(); // computes min images, ksq, and dksq
 
@@ -438,10 +438,10 @@ public:
       HostDArray<int> minImages_h;
       minImages_h = wavelist.minImages_d();
 
-      HostDArray<cudaReal> ksq_h;
+      HostDArray<Cuda::cudaReal> ksq_h;
       ksq_h = wavelist.kSq();
 
-      DArray< HostDArray<cudaReal> > dksq_h;
+      DArray< HostDArray<Cuda::cudaReal> > dksq_h;
       dksq_h.allocate(cell3.nParameter());
       for (int n = 0; n < cell3.nParameter() ; ++n) {
         dksq_h[n] = wavelist.dKSq(n);
