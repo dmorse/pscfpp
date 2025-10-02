@@ -43,9 +43,6 @@ namespace Rpg {
       /// Typename for state and residual vectors.
       using VectorT = DeviceArray<cudaReal>;
 
-      /// Typename alias for base class.
-      using Base =  AmIteratorTmpl< Compressor<D>, VectorT >;
-
       /**
       * Constructor.
       *
@@ -104,13 +101,6 @@ namespace Rpg {
       * Clear all timers (reset accumulated time to zero).
       */
       void clearTimers();
-
-   protected:
-
-      // Inherited protected members
-      using Compressor<D>::mdeCounter_;
-      using Compressor<D>::system;
-      using ParamComposite::readOptional;
 
    private:
 
@@ -225,6 +215,12 @@ namespace Rpg {
       void addEqVc(VectorT& a, 
 		   VectorT const & b, 
 		   double c) override;
+
+      // Inherited protected member
+      using Compressor<D>::system;
+
+      /// Typename alias for base class.
+      using Base =  AmIteratorTmpl< Compressor<D>, VectorT >;
 
    };
 

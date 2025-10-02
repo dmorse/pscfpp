@@ -3,5 +3,5 @@ AmCompressor{
      maxItr       200
      maxHist      30
      verbose	  1
-     errorType    rmsResid
+     errorType    rms
 }

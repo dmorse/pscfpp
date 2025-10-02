@@ -45,8 +45,9 @@ namespace Rpg {
    void AmCompressor<D>::readParameters(std::istream& in)
    {
       // Default values
-      maxItr_ = 100;
-      verbose_ = 0;
+      Base::maxItr_ = 100;
+      Base::verbose_ = 0;
+      Base::errorType_ = "rms";
       bool useLambdaRamp = false; // default
 
       // Call parent class readParameters
@@ -142,7 +143,7 @@ namespace Rpg {
    void AmCompressor<D>::evaluate()
    {
       system().compute();
-      ++mdeCounter_;
+      ++(Compressor<D>::mdeCounter_);
    }
 
    /*
@@ -187,10 +188,12 @@ namespace Rpg {
    void AmCompressor<D>::outputToLog()
    {}
 
+   /*
+   * Write timing results to output stream
+   */
    template<int D>
    void AmCompressor<D>::outputTimers(std::ostream& out) const
    {
-      // Output timing results, if requested.
       out << "\n";
       out << "Compressor times contributions:\n";
       Base::outputTimers(out);
@@ -200,7 +203,7 @@ namespace Rpg {
    void AmCompressor<D>::clearTimers()
    {
       Base::clearTimers();
-      mdeCounter_ = 0;
+      Compressor<D>::mdeCounter_ = 0;
    }
 
    // Private virtual functions for vector math

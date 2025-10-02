@@ -45,9 +45,9 @@ namespace Rpg {
    void LrAmCompressor<D>::readParameters(std::istream& in)
    {
       // Default values
-      maxItr_ = 100;
-      verbose_ = 0;
-      errorType_ = "rms";
+      Base::maxItr_ = 100;
+      Base::verbose_ = 0;
+      Base::errorType_ = "rms";
    
       // Call base class read methods 
       Base::readParameters(in);
@@ -119,7 +119,6 @@ namespace Rpg {
    int LrAmCompressor<D>::compress()
    {
       int solve = Base::solve();
-      //mdeCounter_ = Base::totalItr();
       return solve;
    }
 
@@ -128,8 +127,8 @@ namespace Rpg {
    template <int D>
    void
    LrAmCompressor<D>::addCorrection(
-                                 DeviceArray<cudaReal>& fieldTrial,
-                                 DeviceArray<cudaReal> const & resTrial)
+                                 VectorT& fieldTrial,
+                                 VectorT const & resTrial)
    {
       int n = fieldTrial.capacity();
       const double vMonomer = system().mixture().vMonomer();
@@ -170,7 +169,7 @@ namespace Rpg {
    * Get the current field from the system.
    */
    template <int D>
-   void LrAmCompressor<D>::getCurrent(DeviceArray<cudaReal>& curr)
+   void LrAmCompressor<D>::getCurrent(VectorT& curr)
    {
       /*
       * The field that we are adjusting is the Langrange multiplier field
@@ -188,14 +187,14 @@ namespace Rpg {
    void LrAmCompressor<D>::evaluate()
    {
       system().compute();
-      ++mdeCounter_;
+      ++(Compressor<D>::mdeCounter_);
    }
 
    /*
    * Compute the residual vector for the current system state.
    */
    template <int D>
-   void LrAmCompressor<D>::getResidual(DeviceArray<cudaReal>& resid)
+   void LrAmCompressor<D>::getResidual(VectorT& resid)
    {
       const int nMonomer = system().mixture().nMonomer();
 
@@ -212,12 +211,12 @@ namespace Rpg {
    * Update the system state to reflect new state vector.
    */
    template <int D>
-   void LrAmCompressor<D>::update(DeviceArray<cudaReal>& newGuess)
+   void LrAmCompressor<D>::update(VectorT& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
 
-      // New field is the w0_ + the newGuess for the Lagrange multiplier field
+      // New field is w0_[i] + newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++) {
          VecOp::addVV(wFieldTmp_[i], w0_[i], newGuess);
       }
@@ -251,7 +250,7 @@ namespace Rpg {
    void LrAmCompressor<D>::clearTimers()
    {
       Base::clearTimers();
-      mdeCounter_ = 0;
+      Compressor<D>::mdeCounter_ = 0;
    }
 
    // Private virtual functions for vector math
@@ -260,8 +259,8 @@ namespace Rpg {
    * Vector assignment, a = b.
    */
    template <int D>
-   void LrAmCompressor<D>::setEqual(DeviceArray<cudaReal>& a,
-                                    DeviceArray<cudaReal> const & b)
+   void LrAmCompressor<D>::setEqual(VectorT& a,
+                                    VectorT const & b)
    {
       UTIL_CHECK(b.capacity() == a.capacity());
       VecOp::eqV(a, b);
@@ -271,8 +270,8 @@ namespace Rpg {
    * Compute and return inner product of two vectors.
    */
    template <int D>
-   double LrAmCompressor<D>::dotProduct(DeviceArray<cudaReal> const & a,
-                                        DeviceArray<cudaReal> const & b)
+   double LrAmCompressor<D>::dotProduct(VectorT const & a,
+                                        VectorT const & b)
    {
       UTIL_CHECK(a.capacity() == b.capacity());
       return Reduce::innerProduct(a, b);
@@ -282,24 +281,24 @@ namespace Rpg {
    * Compute and return maximum element of a vector.
    */
    template <int D>
-   double LrAmCompressor<D>::maxAbs(DeviceArray<cudaReal> const & a)
+   double LrAmCompressor<D>::maxAbs(VectorT const & a)
    {  return Reduce::maxAbs(a); }
 
    /*
    * Compute the vector difference a = b - c
    */
    template <int D>
-   void LrAmCompressor<D>::subVV(DeviceArray<cudaReal>& a,
-                                 DeviceArray<cudaReal> const & b,
-                                 DeviceArray<cudaReal> const & c)
+   void LrAmCompressor<D>::subVV(VectorT& a,
+                                 VectorT const & b,
+                                 VectorT const & c)
    {  VecOp::subVV(a, b, c); }
 
    /*
    * Compute a += b*c for vectors a and b, scalar c
    */
    template <int D>
-   void LrAmCompressor<D>::addEqVc(DeviceArray<cudaReal>& a,
-                                   DeviceArray<cudaReal> const & b,
+   void LrAmCompressor<D>::addEqVc(VectorT& a,
+                                   VectorT const & b,
                                    double c)
    {  VecOp::addEqVc(a, b, c); }
 
