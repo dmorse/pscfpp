@@ -38,8 +38,8 @@ namespace Rpc {
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
     : Iterator<D>(system)
    {
-      isSymmetric_ = true;  
-      ParamComposite::setClassName("AmIteratorGrid"); 
+      isSymmetric_ = true;
+      ParamComposite::setClassName("AmIteratorGrid");
    }
 
    /*
@@ -47,7 +47,7 @@ namespace Rpc {
    */
    template <int D>
    AmIteratorGrid<D>::~AmIteratorGrid()
-   { }
+   {}
 
    /*
    * Read parameters from file.
@@ -60,10 +60,6 @@ namespace Rpc {
       AmTmpl::readParameters(in);
       AmTmpl::readErrorType(in);
 
-      // Default parameter values
-      isFlexible_ = 1; 
-      scaleStress_ = 10.0;
-
       UnitCell<D> const & unitCell = system().domain().unitCell();
       UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
       int np = unitCell.nParameter();
@@ -71,6 +67,7 @@ namespace Rpc {
       UTIL_CHECK(np <= 6);
 
       // Read optional isFlexible boolean (true by default)
+      isFlexible_ = 1;  // Default
       readOptional(in, "isFlexible", isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
@@ -93,6 +90,7 @@ namespace Rpc {
       }
 
       // Read optional scaleStress value
+      scaleStress_ = 10.0; // Default
       readOptional(in, "scaleStress", scaleStress_);
 
       // Read option mixing parameters (lambda, useLambdaRamp, and r)
@@ -110,7 +108,6 @@ namespace Rpc {
    template<int D>
    void AmIteratorGrid<D>::outputTimers(std::ostream& out) const
    {
-      // Output timing results, if requested.
       out << "\n";
       out << "Iterator times contributions:\n";
       AmTmpl::outputTimers(out);
@@ -127,14 +124,6 @@ namespace Rpc {
    }
 
    // Private virtual functions to exchange data with parent system
-
-   /*
-   * Does the system have an initial field guess?
-   */
-   template <int D>
-   bool AmIteratorGrid<D>::hasInitialGuess()
-   {  return system().w().hasData(); }
-
 
    /*
    * Compute the number of elements in the residual vector.
@@ -155,35 +144,44 @@ namespace Rpc {
    }
 
    /*
+   * Does the system have an initial field guess?
+   */
+   template <int D>
+   bool AmIteratorGrid<D>::hasInitialGuess()
+   {  return system().w().hasData(); }
+
+   /*
    * Get the current field vector (w fields and lattice parameters).
    */
    template <int D>
-   void AmIteratorGrid<D>::getCurrent(DArray<double>& curr)
+   void AmIteratorGrid<D>::getCurrent(DArray<double>& state)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
       const int nEle = nElements();
-      UTIL_CHECK(curr.capacity() == nEle);
+      UTIL_CHECK(state.capacity() == nEle);
 
       // Copy w-fields into a linear array
+      int begin;
       for (int i = 0; i < nMonomer; i++) {
          const RField<D>& field = system().w().rgrid(i);
-         const int begin = i*nMesh;
+         begin = i*nMesh;
          for (int k = 0; k < nMesh; k++) {
-            curr[begin + k] = field[k];
+            state[begin + k] = field[k];
          }
       }
 
       // Add elements associated with unit cell parameters (if any)
       if (isFlexible()) {
+         UTIL_CHECK(nFlexibleParams() > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
-         const int begin = nMonomer*nMesh;
+         begin = nMonomer*nMesh;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               curr[begin + counter] = scaleStress_ * parameters[i];
+               state[begin + counter] = scaleStress_ * parameters[i];
                counter++;
             }
          }
@@ -210,7 +208,8 @@ namespace Rpc {
       const int n = nElements();
       UTIL_CHECK(resid.capacity() == n);
 
-      // Local index variables
+      // Local variables
+      double chi, p;
       int i, j, k, begin;
 
       // Initialize residual vector to zero
@@ -222,8 +221,8 @@ namespace Rpc {
       for (i = 0; i < nMonomer; ++i) {
          begin = i*nMesh;
          for (j = 0; j < nMonomer; ++j) {
-            double chi = interaction_.chi(i,j);
-            double p = interaction_.p(i,j);
+            chi = interaction_.chi(i,j);
+            p = interaction_.p(i,j);
             RField<D> const & c = system().c().rgrid(j);
             RField<D> const & w = system().w().rgrid(j);
             if (system().h().hasData()) {
@@ -239,22 +238,21 @@ namespace Rpc {
          }
       }
 
-      // Add term proportional to mask (or homogeneous if no mask exists)
+      // Add term proportional to sum of all concentrations
+      double shift = -1.0 / interaction_.sumChiInverse();
       if (system().mask().hasData()) {
          RField<D> const & mask = system().mask().rgrid();
-         double coeff = -1.0 / interaction_.sumChiInverse();
          for (i = 0; i < nMonomer; ++i) {
             begin = i*nMesh;
             for (k = 0; k < nMesh; ++k) {
-               resid[begin + k] += coeff*mask[k];
+               resid[begin + k] += shift*mask[k];
             }
          }
       } else {
-         double coeff = -1.0 / interaction_.sumChiInverse();
          for (i = 0; i < nMonomer; ++i) {
             begin = i*nMesh;
             for (k = 0; k < nMesh; ++k) {
-               resid[begin + k] += coeff;
+               resid[begin + k] += shift;
             }
          }
       }
@@ -275,7 +273,7 @@ namespace Rpc {
          }
       }
 
-      // If variable unit cell, compute stress residuals
+      // If flexible unit cell, then compute stress residuals
       if (isFlexible()) {
 
          // Combined -1 factor and stress scaling here. This is okay:
@@ -306,13 +304,15 @@ namespace Rpc {
    * Update the current system field vector.
    */
    template <int D>
-   void AmIteratorGrid<D>::update(DArray<double>& newGuess)
+   void AmIteratorGrid<D>::update(DArray<double>& newState)
    {
+
+      // References to system components
       Domain<D> const & domain = system().domain();
       Mesh<D> const & mesh = domain.mesh();
       IntVec<D> const & meshDimensions = mesh.dimensions();
 
-      // Convert back to field format
+      // Constants
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = mesh.size();
 
@@ -323,10 +323,12 @@ namespace Rpc {
          wFields[i].allocate(meshDimensions);
       }
 
-      // Copy trial fields from state vector to wFields
+      // Copy new fields from newState vector to wFields container
+      int begin;
       for (int i = 0; i < nMonomer; i++) {
+         begin = i*nMesh;
          for (int k = 0; k < nMesh; k++) {
-            wFields[i][k] = newGuess[i*nMesh + k];
+            wFields[i][k] = newState[begin + k];
          }
       }
 
@@ -348,21 +350,21 @@ namespace Rpc {
             cAve[i] = Reduce::sum(system().c().rgrid(i));
             cAve[i] /= double(nMesh);
          }
-        
-         // Add average value arising from interactions 
-         double chi, shift;
+
+         // Add average value arising from interactions
+         double chi;
          for (int i = 0; i < nMonomer; ++i) {
-            shift = 0.0; 
+            wAve = 0.0;
             for (int j = 0; j < nMonomer; ++j) {
                chi = interaction_.chi(i,j);
-               shift += chi * cAve[j];
+               wAve += chi * cAve[j];
             }
-            VecOp::addEqS(wFields[i], shift);
+            VecOp::addEqS(wFields[i], wAve);
          }
 
          // If external fields exist, add their spatial averages
          if (system().h().hasData()) {
-            double hAve; 
+            double hAve;
             for (int i = 0; i < nMonomer; ++i) {
                hAve = Reduce::sum(system().h().rgrid(i));
                hAve /= double(nMesh);
@@ -377,21 +379,21 @@ namespace Rpc {
       // If fleixble, update unit cell parameters
       if (isFlexible()) {
 
-         const int nParam = system().domain().unitCell().nParameter();
-         const int begin = nMonomer*nMesh;
-
          FSArray<double, 6> parameters;
+         parameters = domain.unitCell().parameters();
+         const int nParam = domain.unitCell().nParameter();
          double coeff = 1.0 / scaleStress_;
+         const int begin = nMonomer*nMesh;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               parameters[i] = coeff * newGuess[begin + counter];
+               parameters[i] = coeff * newState[begin + counter];
                counter++;
             }
          }
          UTIL_CHECK(counter == nFlexibleParams());
 
-         // Update system unit cell parameters
+         // Set system unit cell parameters
          system().setUnitCell(parameters);
       }
 
@@ -404,20 +406,20 @@ namespace Rpc {
    void AmIteratorGrid<D>::outputToLog()
    {
       if (isFlexible() && verbose() > 1) {
-         const int nParam = system().domain().unitCell().nParameter();
+         double str;
+         UnitCell<D> const & unitCell = system().domain().unitCell();
+         const int nParam = unitCell.nParameter();
          const int nMonomer = system().mixture().nMonomer();
          const int nMesh = system().domain().mesh().size();
          const int begin = nMonomer*nMesh;
-         const UnitCell<D>& unitCell = system().domain().unitCell();
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               double str = residual()[begin + counter] /
-                            (-1.0 * scaleStress_);
-               Log::file() 
+               str = - 1.0 * residual()[begin + counter] / scaleStress_;
+               Log::file()
                   << " Cell Param  " << i << " = "
                   << Dbl(unitCell.parameters()[i], 15)
-                  << " , stress = " 
+                  << " , stress = "
                   << Dbl(str, 15)
                   << "\n";
                counter++;
