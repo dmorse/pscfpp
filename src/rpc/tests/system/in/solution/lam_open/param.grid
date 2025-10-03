@@ -1,0 +1,43 @@
+System{
+  Mixture{
+     nMonomer  3
+     monomers  6.07
+               6.07
+               6.07
+     nPolymer  1
+     nSolvent  1
+     Polymer{
+        type      linear
+        nBlock    2
+        blocks[
+                  0   0.35
+                  1   0.65
+        ]
+        mu        2.74031671639e+01
+     }
+     Solvent{
+        monomerId  2
+        size       0.02
+        mu         -3.51022037737e-01
+     }
+     ds   0.01
+  }
+  Interaction{
+     chi( 
+          1   0   30.0
+          2   0   30.0
+          2   1   100.0
+     )
+  }
+  Domain{
+     mesh        100
+     lattice     lamellar  
+     groupName   P_-1
+  }
+  AmIteratorGrid{
+    epsilon      5.0e-11
+    maxItr       1000
+    maxHist      30
+    isFlexible   1
+  }
+}
