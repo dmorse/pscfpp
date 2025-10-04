@@ -26,6 +26,8 @@ namespace Rpg {
    * Base class for a sweep in parameter space where parameters change
    * linearly with the sweep variable. 
    * 
+   * \sa \ref scft_sweep_linear_sec "Parameter file format"
+   *
    * \ingroup Rpg_Scft_Sweep_Module
    */
    template <int D>

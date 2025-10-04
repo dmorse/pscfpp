@@ -87,11 +87,10 @@ parameters and enclosed blocks are described below:
     <td>
     An Iterator object implements an iterative algorithm for solving 
     the self-consistent field equations for an SCFT calculation. 
-    Available iteration algorithms are listed on separate manual pages
-    \ref scft_param_pc_iterator_sec "pscf_pc" and for
-    \ref scft_param_pg_iterator_sec "pscf_pg". An Iterator is required
-    for any SCFT calculation, but is not needed for PS-FTS calculations 
-    (optional and selectable)
+    Available iteration algorithms are listed on the manual page
+    for \ref scft_param_pc_iterator_sec "pscf_pc".  An Iterator is 
+    required for any SCFT calculation, but is not needed for PS-FTS 
+    calculations (optional and selectable)
     </td>
   </tr>
   <tr>
@@ -99,7 +98,7 @@ parameters and enclosed blocks are described below:
     <td>
     A Sweep object performs a sequence of SCFT calculations along a 
     user-prescribed 1D path through parameter space, as described
-    \ref scft_param_sweep_page "here". A Sweep may only be added if 
+    \ref scft_sweep_page "here". A Sweep may only be added if 
     an Iterator exists.  The Sweep block is optional and selectable, 
     but the only option that is currently implemented for either 
     pscf_pc or pscf_pg is a LinearSweep (class Rpc::LinearSweep or
@@ -133,8 +132,8 @@ parameters and enclosed blocks are described below:
   <li> \ref scft_environment_page "Environment" </li>
   <li> \ref scft_param_pc_iterator_sec "Iterator" </li>
      <ul> <li> \ref rpc_AmIteratorBasis_page </li></ul>
-  <li> \ref scft_param_sweep_page "Sweep" </li>
-     <ul> <li> \ref scft_param_sweep_linear_sec "LinearSweep" </li></ul>
+  <li> \ref scft_sweep_page "Sweep" </li>
+     <ul> <li> \ref scft_sweep_linear_sec "LinearSweep" </li></ul>
   <li> \ref psfts_param_page "Simulator" </li>
   <ul>
      <li> \ref rpc_BdSimulator_page "BdSimulator" </li>

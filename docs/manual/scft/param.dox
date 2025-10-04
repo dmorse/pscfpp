@@ -1,6 +1,6 @@
 /*! \page scft_param_page Parameter Files
 
-\ref scft_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref scft_field_page (Next) 
 <BR>
 
@@ -10,14 +10,13 @@ including SCFT parameters sweeps.
 
 <h2> Contents:</h2>
    <ol>
-     <li> \subpage scft_param_sweep_page    "Parameter Sweeps" </li>
      <li> \subpage scft_param_1d_page </li>
      <li> \subpage scft_param_pc_page </li>
      <li> \subpage scft_param_pg_page </li>
    </ol>
 <BR>
-\ref scft_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_field_page (Next) 
+\ref scft_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_page        (Up)  &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_field_page  (Next) 
 
 */

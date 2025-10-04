@@ -1,6 +1,6 @@
 /*! \page scft_param_1d_page Parameter File - pscf_1d
 
-\ref scft_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_param_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref scft_param_pc_page     (Next)
 <BR>
 
@@ -197,58 +197,19 @@ the 3D gradient vector is continuous at the origin.
 \section scft_param_1d_iterator_sec Iterators
 
 The Iterator block provides data required by the iterator used to solve 
-the nonlinear self-consistent field (SCF) equations.  
-
-The default iterator for pscf_1d is an Anderson-mixing algorithm that is
-implemented by a class named AmIterator.  Because this is the default 
-iterator, it may be chosen by including an iterator block in which the 
-first line contains either the generic label "Iterator" or the specific 
-class name "AmIterator".
-
-The NrIterator class implements a Newton-Raphson iterator. Under favorable 
-conditions, this may converge in only a few steps, but the cost for step 
-is high, and grows rapidly with increasing number of grid points. This 
-iterator is thus not efficient for large problems (more than approximately 
-1000 grid points). 
-
-The BinaryRelaxiterator class implements a simple relaxation iterator for 
-AB systems with only two types of monomer, as described by F. Drolet and 
-G.H. Fredrickson (Phys. Rev. Lett, vol 83, 4317, 1999). 
-
-More detailed documentation of the input format for each available 
-pscf_1d iterator is given in the links in the table below:
-
-<table>
-<tr>
-<td> <b> Class </b> </td>
-<td> <b> Description </b> </td>
-</tr>
-<tr>
-<td> \subpage r1d_AmIterator_page "AmIterator" </td>
-<td> Anderson-Mixing iterator (default) </td>
-</tr>
-<tr>
-<td> \subpage r1d_NrIterator_page "NrIterator" </td>
-<td> Newton-Raphson iterator </td>
-</tr>
-<tr>
-<td> \subpage r1d_BinaryRelaxIterator_page "BinaryRelaxIterator" </td>
-<td> Simple relaxation algorithm for AB (two monomer) systems, as 
-     described by Drolet and Fredrickson. </td>
-</tr>
-</table>
-</table>
+the nonlinear self-consistent field (SCF) equations.  The pscf_pc program 
+allows the user to choose from among three SCFT iteration algorithms, as 
+has been discussed \ref scft_iterator_page "here". 
 
 \section scft_param_1d_sweep_sec Sweep
 
 The default sweep for pscf_1d is a linear sweep algorithm that can be
 invoked using a block that starts either with the generic label Sweep
 or the specific label LinearSweep. The required parameter file format
-has been described \ref scft_param_sweep_linear_sec "here". 
+has been described \ref scft_sweep_linear_sec "here". 
 
 <BR>
-\ref scft_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_param_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_param_pc_page     (Next)
+\ref scft_param_page     (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref scft_param_pc_page  (Next)
 
 */

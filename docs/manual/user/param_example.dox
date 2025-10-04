@@ -161,7 +161,7 @@ type of calculation would generally be somewhat different than shown here,
 and could include other types of block.  For example, a parameter file 
 used to initialize an SCFT parameter sweep (rather than a single SCFT 
 calculation) would contain an additional "Sweep" block at the end to
-describe the desired \ref scft_param_sweep_page "sequence of states". 
+describe the desired \ref scft_sweep_page "sequence of states". 
 A parameter file that is used to initialize a PS-FTS simulation would 
 normally not contain an Iterator or Sweep block, but would instead 
 contain a large block that contains information needed to initialize 

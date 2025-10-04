@@ -23,7 +23,7 @@ generic label "Ramp" in the appropriate location within a
 \section rpc_LinearRamp_param_sec Parameter File Format
 
 The parameter file format for a LinearRamp is closely analogous to that
-used for SCFT calculations by the \ref scft_param_sweep_page "LinearSweep" 
+used for SCFT calculations by the \ref scft_sweep_page "LinearSweep" 
 class.  
 
 A simple example of the parameter file block for a LinearRamp is shown 

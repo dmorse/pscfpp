@@ -1,7 +1,7 @@
 /*! \page scft_theory_page Self-Consistent Field Theory
 
-\ref scft_page        (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_param_page  (Next)
+\ref scft_page           (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_iterator_page  (Next)
 <BR>
 
 Below, we summarize a few of the working equations underlying the
@@ -107,7 +107,7 @@ equations and the incompressibility constraint.
 
 
 <BR>
-\ref scft_page        (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_param_page  (Next)
+\ref scft_page           (Prev, Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_iterator_page  (Next)
 
 */

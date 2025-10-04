@@ -1,19 +1,26 @@
 /*! 
-\page rpg_AmIteratorGrid_page Rpg::AmIteratorGrid
+\page rpc_AmIteratorGrid_page AmIteratorGrid
 
-The AmIteratorGrid iterator used by the pscf_pg programs uses an 
-Anderson mixing algorithm in which residual equations and field updates
-are formulated using values defined on the nodes of a regular spatial
-grid. The algorithm can be used to either solve the SCFT equations for 
-a rigid unit cell or to solve the SCFT equations and also optimize the 
+The AmIteratorGrid algorithm available to the pscf_pc or pscf_pg programs
+uses an Anderson mixing algorithm in which residual equations and field 
+updates are formulated using values defined on the nodes of a regular 
+spatial grid. The algorithm can be used to either solve the SCFT equations 
+for a rigid unit cell or to solve the SCFT equations and also optimize the 
 unit cell parameters of a flexible unit cell so as to minimize the free 
-energy density.
+energy density. Closely analogous classes to implement this algorithm are
+defined in the Pscf::Rpc and Pscf::Rpg namespaces.
+
+Class API documentation:
+<ul>
+   <li> Pscf::Rpc::AmIteratorBasis </li>
+   <li> Pscf::Rpg::AmIteratorBasis </li>
+</ul>
 
 \sa \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithms"
 
 \section rpg_AmIteratorGrid_param_sec Parameter file
 
-The format of the AmIteratorGrid parameter block is described below:
+The full format of an AmIteratorGrid parameter block is described below:
 \code
 AmIteratorGrid{
    epsilon         real 
@@ -29,8 +36,8 @@ AmIteratorGrid{
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent optional 
-parameters. The only required parmeter is the error tolerance, epsilon.
-The meaning of most of the other parameters is explained in a general discussion 
+parameters. The only required parmeter is the error tolerance, epsilon. The 
+meaning of most of the other parameters is explained in a general discussion 
 of \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithms", and summarized 
 below:
 <table>
@@ -103,21 +110,20 @@ maxItr or if the magnitude of the scalar error drops below epsilon.
 
 \section rpg_AmIteratorGrid_residual_sec Residual definition
 
-The AmIteratorGrid iterator uses a definition of the residual vector 
-that is analogous to that used by AmIteratorBasis, except that residal 
-elements are associated with grid points, rather than with coefficients
-of basis functions in a symmetry-adapted Fourier series.  The residual
-vector is thus a real-space version of that described by Eqs.  (10-13) 
-of the article by Arora et al.  (J. Chem. Phys. 2017).  
-In what follows, we use zero based indexing for monomer types, and 
-use \f$ N_{\rm m} \f$ to denote the number of monomer types (referred 
-to elsewhere as nMonomer).
+The AmIteratorGrid iterator uses a definition of the residual vector that 
+is analogous to that used by AmIteratorBasis, except that residal elements 
+are associated with grid points, rather than with coefficients of basis 
+functions in a symmetry-adapted Fourier series.  The residual vector is 
+thus a real-space version of that described by Eqs.  (10-13) of the 
+article by Arora et al.  (J. Chem. Phys. 2017).  In what follows, we use 
+zero based indexing for monomer types, and use \f$ N_{\rm m} \f$ to denote 
+the number of monomer types (i.e., the parameter nMonomer).
 
-Let \f$ w_{i}({\bf r}) \f$ and \f$ \phi_{i}({\bf r)} \f$ denote 
-values of the chemical potential field and volume fraction for 
-monomer type i at a grid point located at position \f$ {\bf r} \f$.
-The residual component \f$ R_{i}({\bf r})\f$ associated with grid
-point \f$ {\bf r} \f$ and monomer type i is given by
+Let \f$ w_{i}({\bf r}) \f$ and \f$ \phi_{i}({\bf r)} \f$ denote values of 
+the chemical potential field and volume fraction for monomer type i at a 
+grid point located at position \f$ {\bf r} \f$.  The residual component 
+\f$ R_{i}({\bf r})\f$ associated with grid point \f$ {\bf r} \f$ and 
+monomer type i is given by
 \f[
   R_{i}({\bf r}) 
   = \sum_{j=0}^{N_{\rm m}-1} 
@@ -136,21 +142,19 @@ expressed in matrix notation as
 \f]
 where \f$ \chi^{-1} \f$ is the matrix inverse of the symmetric
 \f$ \chi \f$ matrix, and \f$\epsilon\f$ is a \f$ N_{m} \f$-component 
-column vector with elements given by \f$ \epsilon_{i} = 1 \f$ for 
-all \f$ i = 0, \ldots, N_{\rm m}-1 \f$.
+column vector with elements given by \f$ \epsilon_{i} = 1 \f$ for all 
+\f$ i = 0, \ldots, N_{\rm m}-1 \f$.
 
-The vector of residuals for a calculation with a flexible unit 
-cell (with isFleixble set true) has one additional stress residual 
-associated with each flexible unit cell parameter. The residual
-\f$ R_{m} \f$ associated with flexible unit cell parameter 
-\f$ \theta_{m} \f$ is given by
+The vector of residuals for a calculation with a flexible unit cell 
+(when parameter isFleixble set true) has one additional stress residual 
+associated with each flexible unit cell parameter. The residual \f$ R_{m} \f$ 
+associated with flexible unit cell parameter \f$ \theta_{m} \f$ is given by
 \f[
     R_{m} = -S\frac{\partial f}{\partial \theta_{m}}
 \f]
-where \f$ f \f$ is the free energy per monomer (i.e., the free 
-energy density times the monomer reference volume) in units in 
-which \f$ kT = 1 \f$, while \f$S\f$ is an arbitrary prefactor 
-whose value is given by the parameter scaleStress. (The factor
-\f$S\f$ is set to 10.0 by default).
+where \f$ f \f$ is the free energy per monomer (i.e., the free energy 
+density times the monomer reference volume) in units in which 
+\f$ kT = 1 \f$, while \f$S\f$ is an arbitrary prefactor whose value is 
+given by the parameter scaleStress, which is set to 10.0 by default.
 
 */

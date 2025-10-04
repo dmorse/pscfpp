@@ -12,9 +12,10 @@ information about PS-FTS calculations.
 <h2> Contents:</h2>
    <ol>
    <li> \subpage scft_theory_page  </li>
+   <li> \subpage scft_iterator_page </li>
+   <li> \subpage scft_sweep_page </li>
    <li> \subpage scft_param_page     
      <ul>
-       <li> \ref scft_param_sweep_page    "Parameter Sweeps" </li>
        <li> \ref scft_param_1d_page </li>
        <li> \ref scft_param_pc_page </li>
        <li> \ref scft_param_pg_page </li>

@@ -55,8 +55,6 @@ System{
   }
   Iterator{
     epsilon      1e-10
-    maxItr       100
-    maxHist      50
     isFlexible   1
   }
 }
@@ -256,63 +254,50 @@ a confined environment such as that experienced by a
 This block is not needed for standard SCFT calculations involving bulk 
 periodic phases.
 
+
 \section scft_param_pc_iterator_sec Iterators
 
-The default Iterator for the pscf_pc and pscf_pg programs is based on an 
-algorithm that uses an \ref pscf_AmIteratorTmpl_page "Anderson mixing" (AM)
-iterator algorithm, and is designed to maintain a specified space group 
-symmetry.  This default iterator can be invoked in pscf_pc using either 
-the generic label "Iterator" or the specific label "AmIteratorBasis". 
-This is currently the only iterator available in pscf_pc.  A description 
-of the parameter file format for this iterator is given 
-\subpage rpc_AmIteratorBasis_page "here".
+The pscf_pc and pscf_pg programs each provide two SCFT iterator 
+algorithms named AmIteratorBasis and AmIteratorGrid, as discussed 
+\ref scft_iterator_periodic_sec "here". The above example uses the generic 
+label "Iterator" to invoke the default AmIteratorBasis algorithm, which
+is an Anderson mixing algorithm that preserves space-group symmetry.
 
-The pscf_pg program currently provides two iterator algorithms, named 
-\ref rpc_AmIteratorBasis_page "AmIteratorBasis" and
-\ref rpg_AmIteratorGrid_page "AmIteratorGrid":
-
-The \ref rpc_AmIteratorBasis_page "AmIteratorBasis" iterator used by 
-pscf_pg program is a symmetry-preserving Anderson mixing algorithm that
-is functionally equivalent to the algorithm of the same name used by 
-pscf_pc, and has the same parameter file format. This is the default 
-iterator for pscf_pg, and so can also be invoked in a pscf_pg parameter 
-file using either "Iterator" or "AmIteratorBasis" as a block label.
-
-The \ref rpg_AmIteratorGrid_page "AmIteratorGrid" used by pscf_pg is an
-Anderson mixing iterator that uses representations of all fields that do
-not assume the existence of any space group symmetry, and that does not
-automatically preserve space group symmetry during iteration.
-
-The Iterator block of the parameter file is formally optional (i.e., the 
-program will finish reading the parameter file if it is omitted), but 
-must be present to perform a SCFT calculation. The block is treated as
-optional because an Iterator block is not needed to peform a field 
-theoretic simulation.
+The Iterator block of the parameter file is formally optional in the
+parameter file format for pscf_pc and pscf_pg. As a result, either program 
+can successfully finish reading the parameter file if this block is 
+absent.  A Iterator must exist, however, to actually perform a SCFT 
+calculation.  The Iterator block is treated as optional element in 
+programs that can also perform PS-FTS calculations because an Iterator 
+is not needed for such simulations.
 
 \section scft_param_pc_sweep_sec Sweep
 
-The Sweep block is another a block that (like the Iterator block for 
-pscf_pc) has been programmed as a selectable block, but for which there is 
-currently only one available algorithm.  The only sweep algorithm that is 
-currently available for use with either pscf_pc or pscf_pg is a general 
-linear sweep algorithm, which is also the default algorithm.  Such a 
-linear sweep can thus be enabled by including a block that starts either 
-with the generic label "Sweep" (as done in any examples shown here that 
-include a sweep block) or the specific label "LinearSweep". The format 
-of the associated parameter file block is described 
-\ref scft_param_sweep_linear_sec "here".
+The Sweep block is optional block that has been programmed as a selectable
+block, but for which there is currently only one available algorithm.  
+The only sweep algorithm that is currently available for use with either 
+pscf_pc or pscf_pg is a general linear sweep algorithm, which is also the 
+default algorithm.  This linear sweep algorithm can thus be enabled by 
+including a block that starts either with the generic label "Sweep" or
+the specific label "LinearSweep".  The format of the associated parameter 
+file block is described \ref scft_sweep_linear_sec "here".  A Sweep block 
+is allowed only if an Iterator block exists.  
 
 \section scft_param_pc_seealso_sec See Also:
 
 <ul>
- <li> \subpage rpc_System_page "System"  </li>
+ <li> \subpage rpc_System_page "(Rpc|Rpg)::System"  </li>
  <li> \ref user_param_mixture_page "Mixture"  </li>
  <li> \ref user_param_example_interaction "Interaction"  </li>
  <li> \subpage rpc_Domain_page "Domain" </li>
  <li> \subpage scft_environment_page "Environment" </li>
- <li> \subpage rpc_AmIteratorBasis_page "AmIteratorBasis" </li>
- <li> \ref scft_param_sweep_page "Sweep" </li>
- <ul> <li> \ref scft_param_sweep_linear_sec "LinearSweep" </li> </ul>
+ <li> \ref scft_iterator_page "Iterator" </li>
+ <ul>
+    <li> \subpage rpc_AmIteratorBasis_page "AmIteratorBasis" </li>
+    <li> \subpage rpc_AmIteratorGrid_page  "AmIteratorGrid" </li>
+ </ul>
+ <li> \ref scft_sweep_page "Sweep" </li>
+ <ul> <li> \ref scft_sweep_linear_sec "LinearSweep" </li> </ul>
 </ul>
 
 <BR>

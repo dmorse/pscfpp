@@ -20,7 +20,7 @@ namespace Rpc {
    /**
    * Solve a sequence of SCFT problems along a line in parameter space.
    *
-   * See also: \ref scft_param_sweep_page "Manual page"
+   * See also: \ref scft_sweep_page "Manual page"
    */
    template <int D>
    class Sweep : public SweepTmpl< BasisFieldState<D> >

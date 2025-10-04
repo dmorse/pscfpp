@@ -81,6 +81,8 @@ The web manual for the most recent release of PSCF is available online at
   <li> \subpage scft_page
     <ol type="1">
     <li> \ref scft_theory_page  </li>
+    <li> \ref scft_iterator_page  </li>
+    <li> \ref scft_sweep_page  </li>
     <li> \ref scft_param_page  </li>
     <li> \ref scft_field_page  </li>
     <li> \ref scft_command_page  </li>
