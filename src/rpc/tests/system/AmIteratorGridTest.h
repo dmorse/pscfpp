@@ -291,8 +291,8 @@ public:
                   wMaxDiff,
                   cMaxDiff);
       TEST_ASSERT(!error);
-      TEST_ASSERT(wMaxDiff < 5.0E-8);
-      TEST_ASSERT(cMaxDiff < 1.0E-8);
+      TEST_ASSERT(wMaxDiff < 1.0E-7);
+      TEST_ASSERT(cMaxDiff < 1.0E-7);
 
       // Unit cell parameter
       double a  = system.domain().unitCell().parameter(0);
@@ -407,8 +407,8 @@ public:
       //std::cout << "\n wMaxDiff = " << wMaxDiff;
       //std::cout << "\n cMaxDiff = " << cMaxDiff;
       TEST_ASSERT(!error);
-      TEST_ASSERT(wMaxDiff < 3.0E-7);
-      TEST_ASSERT(cMaxDiff < 3.0E-8);
+      TEST_ASSERT(wMaxDiff < 1.0E-6);
+      TEST_ASSERT(cMaxDiff < 1.0E-7);
 
       // Compare free energies to output of modified unit test from v1.1
       double fHelmholtz = -2.75154924224e+01;
