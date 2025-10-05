@@ -96,7 +96,7 @@ to perform an SCFT calculation.  The Sweep block is only needed if one
 intends to peform an SCFT parameter sweep. 
 
 Formats of the Mixture and Interaction blocks are the same for all PSCF 
-programs, and have thus been discussed previously. Below, we discuss the 
+programs, and have been discussed previously. Below, we discuss the 
 contents of the Domain, Iterator, and Sweep blocks.
 
 \section scft_param_pc_domain_sec Domain block
@@ -104,144 +104,8 @@ contents of the Domain, Iterator, and Sweep blocks.
 The Domain block contains information required to describe the unit cell 
 of a periodic structure, the regular mesh that is used to discretize 
 fields within each unit cell, and (optionally) an identifier for the space 
-group of the desired solution.  The parameter file format is discussed 
-below, as well as in separate page \subpage rpc_Domain_page "here".
-
-An example of the format of this block is shown below:
-\code
-  Domain{
-    mesh        32  32  32
-    lattice     cubic
-    groupName   I_m_-3_m
-  }
-\endcode
-The format for this block is
-\code
-Domain{
-   mesh        [int(D)] (D integer elements)
-   lattice     string
-   groupName*  string
-}
-\endcode
-The groupName parameter is optional, but must be included to enable
-SCFT calculations that seek a solution of specified space group symmetry. 
-The mesh and groupName parameter lines are discussed separately below.
-
-<b> mesh  </b>
-
-The value of the variable "mesh" is a vector of integers on a single
-line that specify the number of grid points along each direction of the 
-uniform spatial mesh used to discretize fields within each unit cell of 
-the crystal.  The number of integers is equal to the dimensionality D 
-of the periodic unit cell.  The format is
-\code
-   mesh   N[0] .... N[D-1]
-\endcode
-where N[i] is the number of grid points along axis number i, for
-i = 0 ,..., D-1.
-
-The dimensions N[0], ... , N[D-1] of the spatial mesh are initialized to
-in the parameter file and are immutable thereafter. The only way to run
-simulations with different mesh sizes is to run pscf_pc and pscf_pg 
-multiple times using different parameters files with different values 
-for the mesh parameter.
-
-<b> lattice </b>
-
-The value of the parameter "lattice" is given by string that specifies the
-desired crystal system type.  The set of allowed values for this string
-depends on the dimensionality of space.  There are 7 allowed values of
-the lattice string for a 3D structure, corresponding to the 7 types of
-3D crystal system, with names given by the strings "cubic", "tetragonal",
-"orthorhombic", "hexagonal", "rhombohedral", "monoclinic", and "triclinic".
-The allowed values for a 2D system include "square", "rectangular",
-"hexagonal" "rhombic" and "oblique".  There is only one allowed lattice
-system for a 1D crystal, which is referred to as  "lamellar". A more 
-detailed discussion of each of the possible lattice systems is given in 
-a separate page that documents conventions for
-\ref scft_unitcell_page "unit cells".
-
-The lattice system parameter is initialized by the parameter file and
-is immutable thereafter.
-
-<b> groupName </b>
-
-The "spaceGroup" is an optional string parameter that, if present,
-identifies the crystallographic space group for the structure of 
-interest.  Each allowed value of the groupName string corresponds 
-to a modified version of the name of a space group, as listed in 
-the international tables of crystallography. In the above example, 
-the groupName string I_m_-3_m is a modified form of the name
-\f$Im\overline{3}m\f$ for the space group for a BCC lattice. PSCF
-uses a set of conventions for converting an international table 
-symbol for a space group into a text string that involve insertion
-of underbars between logical elements and the use of - sign to 
-represent an overbar, among other conventions. Allowed identifiers 
-for crystallographic space groups are listed and discussed in more
-detail \ref scft_groups_page "here".
-
-If groupName identifer is present, it is used construct a space group
-(i.e., a set of symmetry operations) and a symmetry-adapted Fourier
-basis. A symmetry-adapted Fourier basis is a set of functions of 
-position that are all eigenfunctions of the Laplacian and are all 
-invariant under all symmetry operations in the specified space group,
-which can be used as a basis for expanding functions with the specified
-symmetry. The algorithm used to construct such a basis requires 
-knowledge of a set of initial values for the unit cell parameters. 
-This symmetry-adapted basis is thus normally constructed immediately 
-after the first time unit cell parameters are initialized, e.g., by 
-reading the values given in a file that contains a description of a 
-field.
-
-If a groupName parameter is present in the parameter file, it is
-immutable after the parameter file is processed. Simulations of 
-structures with different space groups must be performed separately,
-by running pscf_pc or pscf_pg multiple times with different parameter
-files. 
-
-<b> Unit cell parameters (absence from parameter file) </b>
-
-To completely describe the Bravais lattice for a crystal with a known 
-crystal system, one must assign values to a list of unit cell parameters 
-that give the lengths of the edges of the unit cell and, for some lattice 
-systems, angles between some of these edges.  The number of unit cell 
-parameters required to describe a unit cell is different for different 
-lattice system. For example, a 3D cubic crystal can be described using 
-a single parameter that gives the length of any edge of a simple cubic 
-unit cell. Three parameters are required to describe an orthorhombic 
-unit cell, to specify lengths of three orthogonal Bravais basis vectors, 
-while 6 parameters are required for a triclinic unit cell, to specify 3 
-independent unit cell lengths and 3 angles. The unit cell parameters for 
-each unit cell type are stored internally in an array that lists the 
-required parameters in some pre-specified order. Conventions for the 
-meaning of the required parameters and the order in which they are 
-listed are described for each crystal system in a separate page of 
-documentation about \ref scft_unitcell_page "unit cells".
-
-Values for unit cell parameters are specified within the header section 
-of files that describe periodic chemical potential fields (w-fields) or 
-monomer concentration fields (c-cields). Values for these parameters 
-are not, however, provided in the parameter file.  Unit cell parameters 
-are thus normally first assigned values during execution of the first 
-command in the command file that causes the program to set the chemical 
-potential fields for the program, by reading these fields from a file.
-Unit cell parameters can also be set explicitly using a command named
-SET_UNIT_CELL users may invoke to manually set or reset the unit cell 
-parameter values at any point during processing of a command file. 
-
-If the Domain block of the parameter file contains a space group name, 
-a symmetry-adapted Fourier basis for that space group is constructed 
-immediately after the first time that unit cell parameters are assigned 
-initial values by either mechanism, e.g., either the first time that
-the w-fields are set by reading these fields from a file or the 
-SET_UNIT_CELL command is invoked). 
-
-Unit cell parameters for a crystal are changed many times during SCFT 
-calculations for systems with flexible unit cells, in which the unit 
-cell parameters are adjusted so as to minimize the free energy density. 
-At the end of such a calculation, converged values for the optimal 
-unit cell parameters are normally output within the header of a file 
-that contains the converged w-fields.
+group of an SCFT solution.  The parameter file format is discussed in
+detail on a \ref user_param_domain_pc_page "separate page".
 
 \section scft_param_pc_environment_sec Environment
 
@@ -254,8 +118,7 @@ a confined environment such as that experienced by a
 This block is not needed for standard SCFT calculations involving bulk 
 periodic phases.
 
-
-\section scft_param_pc_iterator_sec Iterators
+\section scft_param_pc_iterator_sec Iterator
 
 The pscf_pc and pscf_pg programs each provide two SCFT iterator 
 algorithms named AmIteratorBasis and AmIteratorGrid, as discussed 
@@ -264,24 +127,25 @@ label "Iterator" to invoke the default AmIteratorBasis algorithm, which
 is an Anderson mixing algorithm that preserves space-group symmetry.
 
 The Iterator block of the parameter file is formally optional in the
-parameter file format for pscf_pc and pscf_pg. As a result, either program 
-can successfully finish reading the parameter file if this block is 
-absent.  A Iterator must exist, however, to actually perform a SCFT 
-calculation.  The Iterator block is treated as optional element in 
-programs that can also perform PS-FTS calculations because an Iterator 
-is not needed for such simulations.
+parameter file format for pscf_pc and pscf_pg. Either program can thus
+successfully finish reading the parameter file if this block is absent. 
+A valid Iterator block must exist, however, to actually perform a SCFT 
+calculation.  The Iterator block is treated as optional element of 
+pscf_pc and pscf_pg parameter files because these programs can perform
+PS-FTS calculations, as well as SCFT, and an Iterator is not needed for 
+such simulations.
 
 \section scft_param_pc_sweep_sec Sweep
 
 The Sweep block is optional block that has been programmed as a selectable
-block, but for which there is currently only one available algorithm.  
-The only sweep algorithm that is currently available for use with either 
-pscf_pc or pscf_pg is a general linear sweep algorithm, which is also the 
-default algorithm.  This linear sweep algorithm can thus be enabled by 
-including a block that starts either with the generic label "Sweep" or
-the specific label "LinearSweep".  The format of the associated parameter 
-file block is described \ref scft_sweep_linear_sec "here".  A Sweep block 
-is allowed only if an Iterator block exists.  
+block, but there is currently only one available algorithm.  The only sweep 
+algorithm that is currently available for use with either pscf_pc or pscf_pg 
+is a general linear sweep algorithm that is implemented by a class named
+LinearSweep. Because this is also the default sweep algorithm, it may be 
+enabled by including a Sweep block that starts either with the generic label 
+"Sweep" or the specific label "LinearSweep".  The format of the associated 
+parameter file block is described \ref scft_sweep_linear_sec "here".  A 
+Sweep block is allowed only if an Iterator block exists.  
 
 \section scft_param_pc_seealso_sec See Also:
 
@@ -289,7 +153,7 @@ is allowed only if an Iterator block exists.
  <li> \subpage rpc_System_page "(Rpc|Rpg)::System"  </li>
  <li> \ref user_param_mixture_page "Mixture"  </li>
  <li> \ref user_param_example_interaction "Interaction"  </li>
- <li> \subpage rpc_Domain_page "Domain" </li>
+ <li> \subpage user_param_domain_pc_page "Domain" </li>
  <li> \subpage scft_environment_page "Environment" </li>
  <li> \ref scft_iterator_page "Iterator" </li>
  <ul>

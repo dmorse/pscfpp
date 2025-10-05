@@ -1,7 +1,7 @@
 /*! \page user_param_mixture_page Parameter File - Mixture Block
 
 \ref user_param_format_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_command_page    (Next)
+\ref user_param_domain_page    (Next)
 <BR>
 
 The first subblock of the main System block in every PSCF parameter file
@@ -509,6 +509,6 @@ described above.
 <BR>
 \ref user_param_format_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_command_page      (Next)
+\ref user_param_domain_page (Next)
 
 */

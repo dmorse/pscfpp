@@ -20,6 +20,11 @@ calculations are given in the following two chapters.
      <li> \subpage user_param_syntax_page   "Syntax" </li>
      <li> \subpage user_param_format_page   "Format Descriptions" </li>
      <li> \subpage user_param_mixture_page  "Mixture Block" </li>
+     <li> \subpage user_param_domain_page   "Domain Block" </li>
+     <ol>
+        <li> \ref user_param_domain_1d_page  "1D Domains" </li>
+        <li> \ref user_param_domain_pc_page  "Periodic Domains" </li>
+     </ol>
    </ol>
 <BR>
 \ref user_calculation_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

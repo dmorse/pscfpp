@@ -68,9 +68,10 @@ parameters and enclosed blocks are described below:
   <tr>
     <td> Domain </td>
     <td>
-    The Domain block contains information about the periodic unit cell,
-    the computational mesh used to discretize fields in that cell, and space
-    group symmetry (if any), as described \ref rpc_Domain_page "here". 
+    The Domain block contains information about the periodic unit cell, 
+    the computational mesh used to discretize fields in that cell, and 
+    space group group symmetry (if any), as described 
+    \ref user_param_domain_pc_page "here". 
     (required)
   </tr>
   <tr>
@@ -86,11 +87,11 @@ parameters and enclosed blocks are described below:
     <td> Iterator#* </td>
     <td>
     An Iterator object implements an iterative algorithm for solving 
-    the self-consistent field equations for an SCFT calculation. 
-    Available iteration algorithms are listed on the manual page
-    for \ref scft_param_pc_iterator_sec "pscf_pc".  An Iterator is 
-    required for any SCFT calculation, but is not needed for PS-FTS 
-    calculations (optional and selectable)
+    the self-consistent field equations for an SCFT calculation.  
+    Available iteration algorithms are listed 
+    \ref scft_iterator_periodic_sec "elsewhere".
+    An Iterator is required for SCFT calculation, but is not needed for 
+    PS-FTS calculations (optional and selectable)
     </td>
   </tr>
   <tr>
@@ -124,14 +125,16 @@ parameters and enclosed blocks are described below:
   </tr>
 </table>
 
-\see
+\section rpc_System_seealso_sec See also:
+
 <ul>
   <li> \ref user_param_mixture_page "Mixture" </li>
   <li> \ref user_param_example_interaction "Interaction" </li>
-  <li> \ref rpc_Domain_page "Domain" </li>
+  <li> \ref user_param_domain_pc_page "Domain" </li>
   <li> \ref scft_environment_page "Environment" </li>
-  <li> \ref scft_param_pc_iterator_sec "Iterator" </li>
+  <li> \ref scft_iterator_page "Iterator" </li>
      <ul> <li> \ref rpc_AmIteratorBasis_page </li></ul>
+     <ul> <li> \ref rpc_AmIteratorGrid_page </li></ul>
   <li> \ref scft_sweep_page "Sweep" </li>
      <ul> <li> \ref scft_sweep_linear_sec "LinearSweep" </li></ul>
   <li> \ref psfts_param_page "Simulator" </li>

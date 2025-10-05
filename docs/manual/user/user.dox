@@ -22,6 +22,11 @@
        <li> \ref user_param_syntax_page   "Syntax" </li>
        <li> \ref user_param_format_page   "Format Descriptions" </li>
        <li> \ref user_param_mixture_page  "Mixture Block" </li>
+       <li> \ref user_param_domain_page   "Domain Block" </li>
+       <ul>
+           <li> \ref user_param_domain_1d_page   "1D Domains" </li>
+           <li> \ref user_param_domain_pc_page   "Periodic Domains" </li>
+       </ul>
      </ul>
    </li>
    <li> \subpage user_command_page   </li>

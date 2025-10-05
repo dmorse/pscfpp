@@ -1,0 +1,183 @@
+namespace Pscf {
+
+/*! \page user_param_domain_pc_page Periodic domains (pscf_pc and pscf_pg)
+
+\ref user_param_domain_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_command_page  (Next)
+<BR>
+
+The Domain block of the parameter file for pscf_pc or pscf_pg contains 
+information about the periodic unit cell and discretization mesh for a 
+D-dimensional periodic structure. Here D is the dimension of space
+specified by the argument of the "-d" command line option used to 
+invoked pscf_pc or pscf_pg.
+
+\section user_param_domain_pc_example_sec Example
+
+An example of a Domain block used for an SCFT calculation for a three 
+dimensional (D=3) gyroid structure is shown below:
+\code
+  Domain{
+    mesh        32  32  32
+    lattice     cubic
+    groupName   I_m_-3_m
+  }
+\endcode
+The groupName parameter is an optional, as discussed below.
+
+\section user_param_domain_pc_format_sec Parameter file format
+
+The format for the Domain block used by these programs is
+\code
+Domain{
+   mesh        [int(D)] (D integer elements)
+   lattice     string
+   groupName*  string
+}
+\endcode
+Values for all of the parameters in the Domain block are immutable after
+the parameter file block has been read. 
+
+<b> mesh  </b>
+
+The value of the variable "mesh" is a vector of integers on a single
+line that specify the number of grid points along each direction of the 
+uniform spatial mesh used to discretize fields within each unit cell of 
+the crystal.  The number of integers is equal to the dimensionality D 
+of the periodic unit cell.  The format is
+\code
+   mesh   N[0] .... N[D-1]
+\endcode
+where N[i] is the number of grid points along axis number i, for
+i = 0 ,..., D-1.
+
+The dimensions N[0], ... , N[D-1] of the spatial mesh are initialized to
+in the parameter file and are immutable thereafter. The only way to run
+simulations with different mesh sizes is to run pscf_pc and pscf_pg 
+multiple times using different parameters files with different values 
+for the mesh parameter.
+
+<b> lattice </b>
+
+The value of the parameter "lattice" is given by string that specifies the
+desired crystal system type.  The set of allowed values for this string
+depends on the dimensionality of space.  There are 7 allowed values of
+the lattice string for a 3D structure, corresponding to the 7 types of
+3D crystal system, with names given by the strings "cubic", "tetragonal",
+"orthorhombic", "hexagonal", "rhombohedral", "monoclinic", and "triclinic".
+The allowed values for a 2D system include "square", "rectangular",
+"hexagonal" "rhombic" and "oblique".  There is only one allowed lattice
+system for a 1D crystal, which is referred to as  "lamellar". A more 
+detailed discussion of each of the possible lattice systems is given in 
+a separate page that documents conventions for
+\ref scft_unitcell_page "unit cells".
+
+The required lattice system parameter is initialized by the parameter 
+file and is immutable thereafter.
+
+<b> groupName </b>
+
+The "spaceGroup" is an optional string parameter that, if present,
+identifies the crystallographic space group for the structure of 
+interest.  Each allowed value of the groupName string corresponds 
+to a modified version of the name of a space group, as listed in 
+the international tables of crystallography. In the above example, 
+the groupName string I_m_-3_m is a modified form of the name
+\f$Im\overline{3}m\f$ for the space group for a BCC lattice. PSCF
+uses a set of conventions for converting an international table 
+symbol for a space group into a text string that involve insertion
+of underbars between logical elements and the use of - sign to 
+represent an overbar, among other conventions. 
+
+Allowed identifiers for crystallographic space groups are listed 
+and discussed in more detail \ref scft_groups_page "here".
+
+The space group identifier may not be initialized or modified after 
+the PSCF parameter file is read.  SCFT calculations for structures 
+with different space groups must thus be performed by invoking 
+pscf_pc or pscf_pg with different parameter files. 
+
+\section user_param_domain_pc_spacegroup_sec Space groups and symmetry-adapted bases
+
+If the optional groupName identifer is present, it is used construct a 
+space group (i.e., a set of symmetry operations) and a symmetry-adapted 
+Fourier basis. A symmetry-adapted Fourier basis is a set of functions 
+of position that are all eigenfunctions of the Laplacian and are all 
+invariant under all symmetry operations in the specified space group.
+This basis can be used to expand functions that are required to
+exhibit a specified space group symmetry. 
+
+The groupName parameter should only be used for SCFT calculations, to 
+search for a solution of specified space group symmetry. This parameter 
+must be present to enable reading or writing of fields in a symmetry 
+adapted basis format, and to enable use of any SCFT iteration algorithm 
+that imposes a space group symmetry, such as the AmIteratorBasis that
+is used by default by both pscf_pc and pscf_pg. 
+
+The groupName parameter should be omitted from parameter files that 
+are used to initialize stochastic field theoretic simulations. The 
+fields generated during the course of such a simulation generally do 
+not exactly preserve any nontrivial symmetry.  
+
+\section user_param_domain_pc_parameters_sec Unit cell parameters
+
+To completely describe the Bravais lattice for a crystal with a known 
+crystal system, one must assign values to a list of unit cell parameters 
+that give the lengths of the edges of the unit cell and (for some lattice 
+systems) sometimes angles between some of these edges.  The number of 
+unit cell parameters required to describe a unit cell is different for 
+different lattice system. For example, a 3D cubic crystal can be described 
+using a single parameter that gives the length of any edge of a simple cubic 
+unit cell. Three parameters are required to describe an orthorhombic unit 
+cell, to specify lengths of three orthogonal Bravais basis vectors, while 
+6 parameters are required for a triclinic unit cell, to specify 3 
+independent unit cell lengths and 3 angles. The unit cell parameters for 
+each unit cell type are stored internally in an array that lists the 
+required parameters in some pre-specified order. Conventions for the 
+meaning of the required parameters and the order in which they are 
+listed are described for each crystal system in a separate page of 
+documentation about \ref scft_unitcell_page "unit cells".
+
+Values for unit cell parameters are specified within the header section 
+of files that describe periodic chemical potential fields (w-fields) or 
+monomer concentration fields (c-cields). Values for these parameters 
+are not, however, provided in the parameter file.  Unit cell parameters 
+are thus normally first assigned values during execution of the first 
+command in the command file that causes the program to set the chemical 
+potential fields for the program, by reading these fields from a file.
+Unit cell parameters can also be set explicitly using a command named
+SET_UNIT_CELL users may invoke to manually set or reset the unit cell 
+parameter values at any point during processing of a command file. 
+
+Unit cell parameters for a crystal are changed many times during SCFT 
+calculations for systems with flexible unit cells, in which the unit 
+cell parameters are adjusted so as to minimize the free energy density. 
+At the end of such a calculation, converged values for the optimal 
+unit cell parameters are normally output within the header of a file 
+that contains the converged w-fields.
+
+The algorithm used by PSCF to construct a symmetry-adapted Four basis 
+requires knowledge of a set of initial values for the unit cell 
+parameters.  If the Domain block of the parameter file contains a space 
+group name, a symmetry-adapted Fourier basis for that space group will
+be constructed immediately after the first time that unit cell 
+parameters are assigned values. This may occur either the first time 
+that the w-fields are set by reading these fields from a field file or 
+the first time the SET_UNIT_CELL command is invoked, whichever occurs 
+first.
+
+\section user_param_domain_pc_sa_sec See also:
+
+<ul>
+  <li> \ref scft_unitcell_page "Lattice systems" </li>
+  <li> \ref scft_groups_page   "Space groups" </li>
+</ul>
+
+<BR>
+\ref user_param_domain_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_domain_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_command_page  (Next)
+
+*/
+
+}
