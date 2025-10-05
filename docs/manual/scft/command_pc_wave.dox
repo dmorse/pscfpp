@@ -1,6 +1,6 @@
 /*! \page scft_command_pc_wave_page Command for pscf_pc: WRITE_WAVES
 \ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_command_pg_page  (Next) 
+\ref scft_thermo_page      (Next) 
 <BR>
 
 THE WRITE_WAVES command accepted by pscf_pc and pscf_pg programs writes a 
@@ -220,5 +220,5 @@ N_wave
 
 <BR>
 \ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_command_pg_page  (Next) 
+\ref scft_thermo_page      (Next) 
 */

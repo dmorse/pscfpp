@@ -4,35 +4,29 @@
 \ref scft_sweep_page     (Next)
 <BR>
 
-SCFT problems are solved by using an iterative algorithm that is often
-referred to here as an "iterator".  The parameter file format used in
-any of the PSCF programs allows the user to choose from among several
-algorithms. Different algorithms are available for use in the pscf_1d
-program for one dimension problems, and for the pscf_pc and pscf_pg
-programs for systems with periodic boundary conditions. 
+The self-consistent field equations are non-linear equations that must
+be solved by an iterative method. The algorithm used for this purpose
+is referred to throughout the PSCF source code and documentation as an
+"iterator".  The parameter file format for each PSCF program allows a 
+user to use a selectable "Iterator" block of the parameer file to 
+choose from among several available iterator algorithms.  
+
+Several of the iterator algorithms provided by PSCF rely on some variant
+of the Anderson mixing (AM) algorithm. General aspects of this algorithm
+are discussed on a \ref pscf_AmIteratorTmpl_page "separate page". 
+
+Different sets of algorithms are available for use with pscf_1d for 
+one-dimension problems, and for the pscf_pc and pscf_pg programs for 
+periodic systems, as described below:
 
 \section scft_iterator_1d_sec One-dimensional problems (pscf_1d)
 
-The pscf_1d program allows a user to choosen from among 3 SCFT iterators.
-
-The default iterator for pscf_1d is an Anderson-mixing algorithm that is
-implemented by a class named AmIterator.  Because this is the default 
-choice, it may be chosen by including an iterator block in which the 
-first line contains either the generic label "Iterator" or the specific 
-class name "AmIterator".
-
-The NrIterator class implements a Newton-Raphson iterator. Under favorable 
-conditions, this may converge in only a few steps, but the cost for step 
-is high, and grows rapidly with increasing number of grid points. This 
-iterator is thus not efficient for large problems (more than approximately 
-1000 grid points). 
-
-The BinaryRelaxiterator class implements a simple relaxation iterator for 
-AB systems with only two types of monomer, as described by F. Drolet and 
-G.H. Fredrickson (Phys. Rev. Lett, vol 83, 4317, 1999). 
-
-More detailed documentation of the input format for each available pscf_1d 
-iterator is given in the links in the table below:
+Users of pscf_1d may choose from among 3 SCFT iterators, named 
+\ref r1d_AmIterator_page "AmIterator", 
+\ref r1d_NrIterator_page "NrIterator", and
+\ref r1d_BinaryRelaxIterator_page "BinaryRelaxiterator".
+More detailed documentation of the input format for each available 
+pscf_1d iterator is given in the links in the table below:
 
 <table>
 <tr>
@@ -54,39 +48,31 @@ iterator is given in the links in the table below:
 </tr>
 </table>
 
+The default iterator for pscf_1d is an Anderson-mixing algorithm that is 
+implemented by a class named AmIterator.  Because this is the default
+choice, it may be invoked by including an iterator block in the parameter 
+file in which the first line contains either the generic label "Iterator" 
+or the specific class name "AmIterator".
+
+The NrIterator class implements a Newton-Raphson iterator. Under favorable 
+conditions, this may converge in only a few steps, but the cost for each
+step is high, and grows rapidly with increasing number of grid points. 
+This iterator is thus not efficient for large problems (more than 
+approximately 1000 grid points). 
+
+The BinaryRelaxiterator class implements a simple relaxation iterator for 
+AB systems with only two types of monomer, as described by F. Drolet and 
+G.H. Fredrickson (Phys. Rev. Lett, vol 83, page 4317, 1999). 
+
 \section scft_iterator_periodic_sec Periodic systems (pscf_pc and pscf_pg)
 
 The pscf_pc and pscf_pg programs each provide two Anderson mixing iterator 
-algorithms named AmIteratorBasis and AmIteratorGrid, respectively.  The 
+algorithms named \ref rpc_AmIteratorBasis_page "AmIteratorBasis" and
+\ref rpc_AmIteratorGrid_page "AmIteratorGrid", respectively.  The 
 AmIteratorBasis algorithm is the default iterator algorithm for either 
 program, and so may be invoked by a block that starts with either the 
 generic label "Iterator" or with a block that uses the specific label 
 "AmIteratorBasis".
-
-These two iteration algorithms are both based on a Anderson-mixing (AM) 
-algorithm, but differ in their treatment of space-group symmetry. 
-
-The implementation of the \ref rpc_AmIteratorBasis_page "AmIteratorBasis" 
-algorithm uses an expansion of the chemical potential fields and the 
-residual vector as arrays with elements that represent coefficients in 
-symmetry-adapted Fourier expansions of the corresponding fields. This
-expansion can only represent fields that are invariant under all symmetrys 
-operations of the declared space-group, this algorithm searches for a 
-solution the specified space-group symmetry, which is automatically
-maintained throughout the iteration to a solution.  This algorithm can
-only be used with a parameter file that contains a groupName parameter, 
-and requires an initial guess for the w-fields that was input in 
-symmetry-adapted basis format for that space group.
-
-The AmIteratorGrid is an Anderson-mixing algorithm that does not
-require that either the initial guess or the solution satisfy any
-set of space group symmetries.  The implementation of AmIteratorGrid
-uses representations of the w fields and residual as arrays whose 
-elements represent values of fields on the nodes of a regular spatial 
-grid.  This iterator is invoked using the label AmIteratorGrid in the 
-parameter file, and may be used with a parameter file that does not 
-contain a groupName parameter, and may use an initial guess that is
-input in r-grid format.
 
 Descriptions of the parameter file formats for these two types of
 iterator may be found by following the links in the table below:
@@ -107,6 +93,30 @@ iterator may be found by following the links in the table below:
   </tr>
 </table>
 
+These two iteration algorithms are both based on Anderson-mixing (AM) 
+algorithms, but differ in their treatment of space-group symmetry. 
+
+The implementation of the \ref rpc_AmIteratorBasis_page "AmIteratorBasis" 
+algorithm uses an expansion of the chemical potential fields and the 
+residual vector as arrays with elements that represent coefficients in 
+symmetry-adapted Fourier expansions of the corresponding fields. This
+expansion can only represent fields that are invariant under all symmetry
+operations of the declared space-group. This algorithm thus searches for 
+a solution with the specified space-group symmetry, which is automatically
+maintained throughout the iteration process.  This algorithm can only 
+be used with a parameter file that contains a groupName parameter, and 
+requires an initial guess for the w-fields that was input in 
+symmetry-adapted basis field file format.
+
+The AmIteratorGrid is an Anderson-mixing algorithm that does not impose
+any space group symmetry on either the initial guess or the solution.
+The implementation of AmIteratorGrid uses an internal representations of 
+the w fields and residual vector as arrays whose elements represent 
+values of fields on the nodes of a regular spatial grid.  This iterator 
+is invoked using the label AmIteratorGrid in the parameter file. It 
+may be used with a parameter file that does not contain a groupName 
+parameter, and may use an initial guess that was input in either r-grid 
+or basis format.
 
 <BR>
 \ref scft_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

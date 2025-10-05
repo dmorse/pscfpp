@@ -1,6 +1,6 @@
 /*! \page scft_command_pc_star_page Command for pscf_pc: WRITE_STARS
 \ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_command_pg_page  (Next) 
+\ref scft_thermo_page      (Next) 
 <BR>
 
 THE WRITE_STARS command accepted by pscf_pc and pscf_pg programs writes
@@ -236,5 +236,5 @@ N_basis
 
 <BR>
 \ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_command_pg_page  (Next) 
+\ref scft_thermo_page      (Next) 
 */

@@ -1,6 +1,6 @@
 /*! \page scft_command_pc_group_page Command for pscf_pc: WRITE_STARS
 \ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_command_pg_page  (Next) 
+\ref scft_thermo_page  (Next) 
 <BR>
 
 THE WRITE_GROUP command accepted by pscf_pc and pscf_pg programs writes
@@ -599,5 +599,5 @@ size 96
 
 <BR>
 \ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_command_pg_page  (Next) 
+\ref scft_thermo_page  (Next) 
 */

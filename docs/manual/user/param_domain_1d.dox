@@ -109,27 +109,25 @@ is omitted.  In cylindrical or spherical mode, omitting xMin defines a
 simply connected circular or spherical domain of radius equal to xMax that 
 includes the origin.  In cylindrical or spherical model, if the parameter 
 xMin is present and is assigned a positive value, such that 
-\f$ 0 < xMin < xMax \f$, the problem will instead be solved within a 
-cylindrical or spherical annular region of inner radius xMin and outer 
-radius xMax.
+0 < xMin < xMax, the problem will instead be solved within a cylindrical 
+or spherical annular region of inner radius xMin and outer radius xMax.
 
 <b> nx </b>:
 The parameter nx specifies the number of equally spaced grid points that 
 will be used to discretize the spatial domain. Because the value of nx
 includes both end-points, the number of grid points is one greater than 
-the number of spatial steps. The distance between grid points in the 
-underlying finite difference discretization, denoteed by dx, is thus 
-given by dx = (xMax - xMin)/(nx-1). 
+the number of spatial steps. The distance between evenly spaced grid 
+points, denoted by dx, is thus dx = (xMax - xMin)/(nx-1). 
 
 \section user_param_domain_1d_bc_sec Boundary conditions
 
 The pscf_1d program solves the modified diffusion equation subject to 
-von Neumann boundary "no flux" conditions that require derivatives of the 
-propagators and concentration fields with respect to the relevant Cartesian 
-or radial normal coordinate to vanish must vanish the lower and upper bounds, 
-xMin and xMax. 
+von Neumann boundary "no flux" conditions that require that derivatives 
+of the propagators and concentration fields with respect to the relevant 
+Cartesian or radial normal coordinate must vanish at the lower and upper 
+bounds, xMin and xMax. 
 
-In the special case of a cylindrical or spherical geometry that includes 
+In the special case of a cylindrical or spherical domain that includes 
 the origin, for which xMin = 0.0, the requirement of a vanishing radial 
 derivative at x=0 is necessary to guarantee that the gradient vector is 
 actually continuous at the origin.

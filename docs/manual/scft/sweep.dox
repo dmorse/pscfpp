@@ -4,9 +4,9 @@
 \ref scft_param_page     (Next)
 <BR>
 
-Every PSCF programs can perform a sequence of SCFT simulations at slightly 
-different conditions, corresponding to points on a line through the space of 
-possible input parameter values. We refer to this kind of calculation as a 
+Every PSCF programs can perform a sequence of SCFT simulations at a sequence
+of different conditions that correspond to points on a line through the space 
+of possible input parameter values. We refer to this kind of calculation as a 
 parameter "sweep".  
 
 \section scft_sweep_concept_sec Sweep concept
@@ -15,8 +15,8 @@ To perform a sweep, the program attempts to solve a sequence of SCFT problems
 for choices of input parameters (e.g., block lengths, chi parameters, species
 volume fractions, etc.) that lie along a line through the space of possible 
 values for these parameters. During a sweep, the resulting SCFT problems are 
-solved in the sequence that they appear along this line. An initial guess for 
-the vector of unknown variables for every point after the first one is 
+solved in the sequence that they appear along this line. An initial guess 
+for the vector of unknown variables for every point after the first one is 
 obtained by extrapolating from solutions obtained at one or more immediately 
 preceding points along this line.
 
@@ -36,7 +36,7 @@ initial and final value.
 
 A general linear sweep is one in which several input parameters may be
 varied simultaneously, and in which each of the affected parameters is a
-linear functions of s.  Every pscfp program can perform a general linear
+linear functions of s.  Every PSCF program can perform a general linear
 sweep of this type.
 
 \section scft_sweep_param_sec Parameter file format
@@ -45,7 +45,7 @@ The parameter file for a calculation in which a sweep will be performed
 must include an optional block that describes the nature of the sweep.
 This block, when present, must appear after the block that specifies the
 iterator algorithm. The minimal skeleton structure for a paramater file 
-for a calculation that includes a sweep is shown below:
+for a calculation that performs a sweep is shown below:
 \code
 System{
   Mixture{
@@ -57,22 +57,22 @@ System{
   Domain{
      ...
   }
-  Iterator*#{
+  Iterator#*{
      ...
   }
-  Sweep*#{
+  Sweep#*{
      ...
   }
 }
 \endcode
-In this description, the Iterator and Sweep blocks include a *# suffix
+In this description, the Iterator and Sweep blocks include a #* suffix
 to indicate that these are both optional selectable blocks. Different 
 options for the Sweep block can define different types of paths through
 parameter space.
 
 Below, we show an example of a pscf_1d parameter file that extends the
-example parameter file shown \ref user_param_example_page "previously"
-by appending a Sweep parameter file block to the end of the main System
+example parameter file shown \ref user_param_example_page "previously" by 
+appending a Sweep parameter file block to the end of the main System
 block, using the default algorithm.
 \code
 System{
@@ -131,13 +131,12 @@ below.
 
 \section scft_sweep_command_sec SWEEP command
 
-A sweep is actually performed by including a command named "SWEEP" in
-the command file. The SWEEP command does not take any parameters, and
-performs the sequence of calculations described in the Sweep block of
-the parameter file. The SWEEP block must appear after a command that
-initializes the w files with an initial guess for the solution of the
-first point of the sweep, e.g., by reading an initial guess from a
-file.
+A sweep is actually performed by including a command named "SWEEP" in the 
+command file. The SWEEP command does not take any parameters, and performs 
+the sequence of calculations described in the Sweep block of the parameter 
+file. The SWEEP block must appear after a command that initializes the w 
+files with an initial guess for the solution of the first point of the 
+sweep, e.g., by reading an initial guess from a file.
 
 \section scft_sweep_linear_sec Class LinearSweep
 
@@ -194,17 +193,18 @@ explained below:
   <tr>
     <td> baseFileName </td>
     <td>
-    string that is added as a prefix to the names of all files
-    output during the sweep. </td>
+    string that is added as a prefix to the names of all files output
+    during the sweep. </td>
   </tr>
   <tr>
     <td> historyCapacity* </td>
     <td>
-    integer that gives the maximum number of previous states to use
-    to compute initial guesses by extrapolation.  Optional, and
-    equal to 3 by default. Set to 1 to use zeroth-order extrapolation,
-    in which the fields from the previous state along the sweep are 
-    used as the initial guess for the next sweep step.</td>
+    integer that gives the maximum number of previous states to use to
+    compute initial guesses by extrapolation.  Optional, and equal to 3 
+    by default. Set to 1 to use zeroth-order extrapolation, in which the 
+    fields from the previous state along the sweep are used as the initial 
+    guess for the next step, or 2 for linear linar extrapolation from the 
+    previous two states.</td>
   </tr>
   <tr>
     <td> reuseState* </td>
@@ -212,7 +212,7 @@ explained below:
     boolean, set to 1 (true) to re-use information about linear
     response to perturbations acquired during iteration at the
     previoius state within a sweep, or 0 (false) to always restart
-    the history.  Optional, and true default. </td>
+    the history.  Optional, and true by default. </td>
   </tr>
   <tr>
     <td> writeCRGrid* </td>
@@ -242,7 +242,7 @@ explained below:
   </tr>
   <tr>
     <td> parameter </td>
-    <td> array in which each element specifies the magnitude of
+    <td> Array in which each element specifies the magnitude of
          the change in one modified parameter over the course of
          the sweep. </td>
   </tr>
@@ -398,10 +398,10 @@ The uid index for a cell_parameter is a zero based integer index
 that identifies which parameter in such a list is being varied.
 
 The chi_top and chi_bottom parameters are only applicable to
-simulations of thin films performed with pscf_pc program, as discussed
-\ref scft_thin_films_page "here". These are used to vary the effective
-interaction parameters for interactions of a specific monomer type
-with the top or bottom surface of a thin film.
+simulations of thin films performed with thepscf_pc or pscf_pg program, 
+as discussed \ref scft_thin_films_page "here". These are used to vary the 
+effective interaction parameters for interactions of a specific monomer 
+type with the top or bottom surface of a thin film.
 
 \section scft_sweep_output_sec Output files
 

@@ -37,7 +37,6 @@ information about PS-FTS calculations.
      <ul>
        <li> \ref scft_command_1d_page </li>
        <li> \ref scft_command_pc_page </li>
-       <li> \ref scft_command_pg_page </li>
      </ul>
    </li>
    <li> \subpage scft_thermo_page         </li>

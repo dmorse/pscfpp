@@ -1,27 +1,27 @@
-/*! \page scft_command_pc_page Commands - pscf_pc
+/*! \page scft_command_pc_page Commands - pscf_pc and pscf_pg
 
  \ref scft_command_1d_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref scft_command_pg_page (Next)
+ \ref scft_thermo_page (Next)
 <BR>
 
-The pscf_pc program accepts a larger set of commands than the simpler
-pscf_1d program, though the basic commands are similar. The number of
-commands is larger in part as a result of the fact that pscf_pc can 
-use several different formats to read and write field files.  By
-convention, the names of commands that read or write a field file in
-symmetry-adapted basis format end with a suffix _BASIS, while names
-of commands that read or write files in read-space grid (r-grid) format
-end with a suffic _RGRID. The pscf_pc program also accept a set of
-commands that can be used convert between different possible field
-file formats.
+The pscf_pc and pscf_pg programs accept identical set of commands, 
+which are described on this page. These programs for periodic systems
+accept a larger set of commands than the simpler pscf_1d program, 
+though many basic commands are similar. The number of available commands 
+is larger, in part, as a result of the fact that pscf_pc and pscf_pg can 
+read and write several different formats for field files.  By convention, 
+the names of commands that read or write a field file in symmetry-adapted 
+basis format end with a suffix _BASIS, while names of commands that read 
+or write files in read-space grid (r-grid) format end with a suffic 
+_RGRID.  The pscf_pc and pscf_pg programs also accept a set of commands 
+that can be used convert between different possible field file formats.
 
 \section scft_command_pc_scft_sec Example: SCFT calculation
 
 Below is an example of a simple command file for using pscf_pc to
-perform a single SCFT calculation. Note that the names of the pscf_pc 
-commands that read or write field files include a string "BASIS", 
-"RGRID" or "KGRID" that specifies which of the three available field 
-formats should be use:
+perform a single SCFT calculation, using field files and an iterator 
+algorithm that impose a specified space group symmetry that must be
+declared in the parameter file. 
 \code
 READ_W_BASIS    in/w.bf
 ITERATE
@@ -35,11 +35,12 @@ FINISH
 The command "READ_W_BASIS in/w.bf" reads an initial guess for the
 chemical potentials fields from the file in/w.bf, which must contain
 the components of the fields in "basis" format, as coefficients in an
-expansion in a symmetry-adapted Fourier basis functions.  The ITERATE
-command attempts to iteratively solve the SCFT equations starting from
-this initial guess.  The command "WRITE_W_BASIS out/w.bf" writes the
-resulting converged set of chemical potential fields to file out/w.bf
-in symmetry-adapted basis format. The command "WRITE_C_BASIS out/c.bf"
+expansion in a symmetry-adapted Fourier basis.  The ITERATE command 
+attempts to iteratively solve the SCFT equations starting from this 
+initial guess, using the iterator algorithm specified in the parameter
+file. The command "WRITE_W_BASIS out/w.bf" writes the resulting 
+converged set of chemical potential fields to file out/w.bf in 
+symmetry-adapted basis format. The command "WRITE_C_BASIS out/c.bf"
 writes the corresponding monomer volume fraction fields to the file
 out/c.bf in the same format, while "WRITE_C_RGRID out/c.rf" writes the
 volume fraction fields in r-grid format, which can be used for subsequent
@@ -60,33 +61,33 @@ FINISH
 \endcode
 The command "READ_W_BASIS in/w.bf" reads an initial guess for the
 chemical potentials fields at the initial state of the sweep (the
-state s=0) from the file in/w.bf.  The SWEEP command actually
-executes a sweep operation. The FINISH command halts execution
-of the main program. 
+state s=0) from the file in/w.bf.  The SWEEP command actually performs
+a parameter sweep.  The FINISH command halts execution of the main 
+program. 
 
-The parameter file for a program run that performs a parameter 
-sweep must contain an Iterator block and a Sweep block. The 
-Sweep block defines the desired sequence of state points (i.e.,
-choices of parameter values), while the Iterator block 
-determines the behavior of the iteration algorithm used to
-solve the SCF equations at each state point.
+The parameter file used to initialize a parameter sweep must contain 
+an Iterator block and a Sweep block. The Sweep block defines the 
+desired sequence of state points (i.e., choices of parameter values), 
+while the Iterator block determines the behavior of the iteration 
+algorithm used to solve the SCF equations at each state point.
 
-The minimal command file required for a sweep is somewhat simpler 
-than the corresponding command file for single SCFT calculation 
-because the former does not contain any commands to output data
-associated with the converged solution. This is possible because 
-the required data output operations are programmed to occur 
-automatically for each state in the sweep.
+The minimal command file required for a sweep is somewhat simpler than 
+the corresponding command file for single SCFT calculation because the 
+former does not contain any commands to output data associated with the 
+converged solution. This is possible because the required data output 
+operations are programmed to occur automatically at the end of each
+step in the sweep.
 
 \section scft_command_pc_commands_sec Commands
 
-The following table shows a list of available commands for pscf_pc
-that are relevant to SCFT calculations. A few additional commands 
-that are only relevant to PS-FTS calculations are discussed on a
-\ref psfts_command_page "separate page". 
+The following table shows a list of available commands for pscf_pc or
+pscf_pg that are relevant to SCFT calculations. A few additional 
+commands that are only relevant to PS-FTS calculations are discussed on 
+a \ref psfts_command_page "separate page" within the manual chapter
+that discusses such simulations.
 
-Each clickable command name links to a more detailed discussion of 
-that command or a group of closely related commands.
+Each clickable command name links to a more detailed discussion of a 
+command or a group of closely related commands.
 
 <table>
   <tr>
@@ -1162,7 +1163,7 @@ referred to above in the discussion of the corresponding command.
 </ol>
 
 <BR>
- \ref scft_command_1d_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref scft_command_page      (Up) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref scft_command_pg_page   (Next)
+ \ref scft_command_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_command_page     (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_thermo_page      (Next)
 */
