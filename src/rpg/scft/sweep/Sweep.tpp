@@ -296,8 +296,13 @@ namespace Rpg {
       outFileName = baseFileName_;
       outFileName += indexString;
       outFileName += "_w";
-      outFileName += ".bf";
-      system().w().writeBasis(outFileName);
+      if (system().w().isSymmetric()) {
+         outFileName += ".bf";
+         system().w().writeBasis(outFileName);
+      } else {
+         outFileName += ".rf";
+         system().w().writeRGrid(outFileName);
+      }
 
       // Optionally write c rgrid files
       if (writeCRGrid_) {
@@ -309,7 +314,7 @@ namespace Rpg {
       }
 
       // Optionally write c basis files
-      if (writeCBasis_) {
+      if (writeCBasis_ && system().c().isSymmetric()) {
          outFileName = baseFileName_;
          outFileName += indexString;
          outFileName += "_c";
@@ -318,13 +323,14 @@ namespace Rpg {
       }
 
       // Optionally write w rgrid files
-      if (writeWRGrid_) {
+      if (writeWRGrid_ && system().w().isSymmetric()) {
         outFileName = baseFileName_;
         outFileName += indexString;
         outFileName += "_w";
         outFileName += ".rf";
         system().w().writeRGrid(outFileName);
       }
+
    }
 
    template <int D>

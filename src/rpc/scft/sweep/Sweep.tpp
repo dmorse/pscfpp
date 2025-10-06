@@ -11,6 +11,8 @@
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/system/System.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
 #include <prdc/environment/Environment.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
@@ -285,49 +287,49 @@ namespace Rpc {
       system().scft().write(out);
       out.close();
 
-      FieldIo<D> const & fieldIo = system().domain().fieldIo();
-      UnitCell<D> const & unitCell = system().domain().unitCell();
+      // FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      // UnitCell<D> const & unitCell = system().domain().unitCell();
 
       // Write w fields
+      UTIL_CHECK(system().w().hasData());
       outFileName = baseFileName_;
       outFileName += indexString;
       outFileName += "_w";
-      outFileName += ".bf";
-      UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(system().w().isSymmetric());
-      fieldIo.writeFieldsBasis(outFileName,
-                               system().w().basis(), unitCell);
+      if (system().w().isSymmetric()) {
+         outFileName += ".bf";
+         system().w().writeBasis(outFileName);
+      } else {
+         outFileName += ".rf";
+         system().w().writeRGrid(outFileName);
+      }
 
       // Optionally write c rgrid files
       if (writeCRGrid_) {
+         UTIL_CHECK(system().c().hasData());
          outFileName = baseFileName_;
          outFileName += indexString;
          outFileName += "_c";
          outFileName += ".rf";
-         fieldIo.writeFieldsRGrid(outFileName,
-                                  system().c().rgrid(), unitCell);
+         system().c().writeRGrid(outFileName);
       }
 
        // Optionally write c basis files
-      if (writeCBasis_) {
+      if (writeCBasis_ && system().c().isSymmetric()) {
+         UTIL_CHECK(system().c().hasData());
          outFileName = baseFileName_;
          outFileName += indexString;
          outFileName += "_c";
          outFileName += ".bf";
-         UTIL_CHECK(system().c().hasData());
-         fieldIo.writeFieldsBasis(outFileName,
-                                  system().c().basis(), unitCell);
-
+         system().c().writeBasis(outFileName);
       }
 
-      // Optionally write w rgrid files
-      if (writeWRGrid_) {
+      // Optionally write w rgrid files if is symmetric
+      if (writeWRGrid_ && system().c().isSymmetric()) {
          outFileName = baseFileName_;
          outFileName += indexString;
          outFileName += "_w";
          outFileName += ".rf";
-         fieldIo.writeFieldsRGrid(outFileName,
-                                  system().w().rgrid(), unitCell);
+         system().w().writeRGrid(outFileName);
       }
 
    }

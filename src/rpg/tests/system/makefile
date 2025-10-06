@@ -1,5 +1,4 @@
-BLD_DIR_REL =../../..
-include $(BLD_DIR_REL)/config.mk
+include ../../../config.mk
 include $(SRC_DIR)/rpg/include.mk
 include $(SRC_DIR)/rpg/tests/system/sources.mk
 
