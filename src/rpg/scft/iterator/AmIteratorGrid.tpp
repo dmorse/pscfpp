@@ -289,6 +289,7 @@ namespace Rpg {
       if (system().mixture().isCanonical()) {
          cudaReal average, wAverage, cAverage;
          for (int i = 0; i < nMonomer; i++) {
+
             // Define array associated with a slice of newGuess
             VectorT ngSlice;
             ngSlice.associate(newGuess, i*nMesh, nMesh);
@@ -299,27 +300,16 @@ namespace Rpg {
             // Subtract average from field, setting average to zero
             VecOp::subEqS(ngSlice, average);
 
-            // Compute the new average omega value
-            wAverage = 0;
+            // Compute the average omega(i) due to interactions
+            wAverage = 0.0;
             for (int j = 0; j < nMonomer; j++) {
-               // Find average concentration for j monomers
-               if (system().w().isSymmetric()) { // c().basis() has data
-                  UTIL_CHECK(system().c().isAllocatedBasis());
-                  cAverage = system().c().basis(j)[0];
-               } else { // average must be calculated
-                  cAverage = findAverage(system().c().rgrid(j));
-               }
+               cAverage = findAverage(system().c().rgrid(j));
                wAverage += interaction_.chi(i,j) * cAverage;
             }
 
-            // If system has external fields, include them in homogeneous field
+            // If external fields exist, add them to wAverage
             if (system().h().hasData()) {
-               if (system().h().isSymmetric()) { // h().basis() has data
-                  UTIL_CHECK(system().h().isAllocatedBasis());
-                  wAverage += system().h().basis(i)[0];
-               } else { // average must be calculated
-                  wAverage += findAverage(system().h().rgrid(i));
-               }
+               wAverage += findAverage(system().h().rgrid(i));
             }
 
             // Add new average omega value to the field
@@ -327,8 +317,8 @@ namespace Rpg {
          }
       }
 
+      // Set w fields in system w container
       system().w().setRGrid(newGuess);
-      system().w().symmetrize();
 
       // If flexible unit cell, update cell parameters
       if (isFlexible_) {
@@ -361,11 +351,12 @@ namespace Rpg {
    void AmIteratorGrid<D>::outputToLog()
    {
       if (isFlexible_ && verbose() > 1) {
-         const int nParam = system().domain().unitCell().nParameter();
+         UnitCell<D> const & unitCell = system().domain().unitCell();
+         const int nParam = unitCell.nParameter();
          const int nMonomer = system().mixture().nMonomer();
          const int nMesh = system().domain().mesh().size();
 
-         // transfer stress residuals from device to host
+         // Transfer stress residuals from device to host
          HostDArray<cudaReal> tempH(nFlexibleParams());
          tempH.copySlice(residual(), nMonomer*nMesh);
 
@@ -375,7 +366,7 @@ namespace Rpg {
                double str = tempH[counter] / (-1.0 * scaleStress_);
                Log::file()
                    << " Cell Param  " << i << " = "
-                   << Dbl(system().domain().unitCell().parameters()[i], 15)
+                   << Dbl(unitCell.parameters()[i], 15)
                    << " , stress = "
                    << Dbl(str, 15)
                    << "\n";
