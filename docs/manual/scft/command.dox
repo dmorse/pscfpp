@@ -9,8 +9,8 @@ The following subpages gives more detailed information about
 commands available for each of the PSCF programs:
 
 <ol>
- <li> \subpage scft_command_1d_page </li>
- <li> \subpage scft_command_pc_page </li>
+ <li> \subpage scft_command_1d_page "One-dimensional systems (pscf_1d) </li>
+ <li> \subpage scft_command_pc_page "Periodic systems (pscf_pc and pscf_pg) </li>
 </ol>
 
  <BR>

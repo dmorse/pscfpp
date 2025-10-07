@@ -16,14 +16,14 @@ information about PS-FTS calculations.
    <li> \subpage scft_sweep_page </li>
    <li> \subpage scft_param_page     
      <ul>
-       <li> \ref scft_param_1d_page </li>
-       <li> \ref scft_param_pc_page </li>
-       <li> \ref scft_param_pg_page </li>
+       <li> \ref scft_param_1d_page "One-dimensional systems (pscf_1d) </li>
+       <li> \ref scft_param_1d_page "Periodic systems (pscf_pc and pscf_pg) 
+            </li>
      </ul>
    </li>
    <li> \subpage scft_field_page     
      <ul>
-       <li> \ref scft_field_r1d_page "1D Fields (pscf_1d)"  </li>
+       <li> \ref scft_field_r1d_page "One-dimensional Fields (pscf_1d)"  </li>
        <li> \ref scft_field_periodic_page "Periodic Fields (pscf_pc and pscf_pg)" 
          <ul>
            <li> \ref scft_field_basis_page "Basis Format" </li>
@@ -35,8 +35,9 @@ information about PS-FTS calculations.
    </li>
    <li> \subpage scft_command_page   
      <ul>
-       <li> \ref scft_command_1d_page </li>
-       <li> \ref scft_command_pc_page </li>
+       <li> \ref scft_command_1d_page "One-dimensional systems (pscf_1d)" </li>
+       <li> \ref scft_command_pc_page "Periodic systems (pscf_pc and pscf_pg) 
+            </li>
      </ul>
    </li>
    <li> \subpage scft_thermo_page         </li>

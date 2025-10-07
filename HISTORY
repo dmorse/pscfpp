@@ -16,6 +16,25 @@ programs are affected by specific changes:
 Versions before v1.2 used program name pscf_fd and label fd for the 1D 
 finite difference SCFT code that is now called pscf_1d.
 
+Version 1.3.2 (10/07/2025)
+=========================================
+
+Minor / bug-fix revision: 
+
+User visible feature and changes
+---------------------------------
+* Add Rpc::AmIteratorGrid SCFT iterator for pscf_pc
+* Allow adjustment of mixing parameter in Anderson mixing algorithms
+
+Bug fixes:
+----------
+* Rpg::AmIteratorGrid class (fields were being symmetrized))
+* Sweep classes (assumed symmetric fields)
+
+Documentation
+-------------
+* Re-organization of documentation of Iterator and Sweep classes
+
 Version 1.3.1 (9/13/2025)
 =========================================
 
@@ -38,7 +57,7 @@ Version 1.3.0 (8/15/2025)
 
 User-visible features
 ---------------------
-* Choice of discrete bead or continuous thread model for polymers (pc, pg)
+* Choice of discrete bead or continuous thread polymer models (pc, pg)
 
 User-visible changes
 --------------------
@@ -56,7 +75,7 @@ Developer-visible changes
 Version 1.2.0 (4/14/2025)
 =========================================
 
-First version to provide PS-FTS calculations
+First version to provide tools for PS-FTS calculations
 
 User-visible features
 ---------------------

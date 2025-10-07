@@ -1,26 +1,24 @@
 namespace Pscf {
 namespace Rpc {
 
-/*! \page scft_param_pc_page Parameter File - pscf_pc 
+/*! \page scft_param_pc_page Parameter File - pscf_pc and pscf_pg
 
 \ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_param_pg_page  (Next)
+\ref scft_field_page  (Next)
 <BR>
 
 The pscf_pc and pscf_pg programs for periodic systems use nearly identical
 parameter file formats, and so are discussed together here. The description
-given here only covers required and optional elements relevant to SCFT
+given here only discusses parameter file elements that are relevant to SCFT
 calculations. A complete description of the parameter file format for either
 of these programs, including optional elements that not relevant to SCFT, is 
-given \ref rpc_System_page "here". 
+given \ref rpc_System_page "here".
 
 \section scft_param_pc_example_sec Example
 
-The example show below is a typical parameter file for using pscf_pc to 
-perform a SCFT calculation for a 3D perodic structure of known space group 
-symmetry of a diblock copolymer melt. This example would also be accepted 
-by the pscf_pg program, which would perform the same calculation while
-offloading some parts of the calculation to a GPU.
+The example show below is a typical parameter file for using either pscf_pc
+or pscf_pg to perform a single SCFT calculation for a 3D structure of a 
+diblock copolymer melt using a known space group.
 
 \code
 System{
@@ -60,18 +58,21 @@ System{
 }
 \endcode
 This parameter file is designed to initialize a single SCFT calculation
-for a BCC phase of a single-component diblock copolymer melt.  A parameter 
-file for SCFT calculation of a mixture could contain more than one 
-"Polymer" blocks and/or one or more "Solvent" blocks. A parameter file to 
-initialize a parameter Sweep would contain an additional "Sweep" block. 
+for a BCC phase of a single-component diblock copolymer melt, using a
+flexible unit cell.  The Domain block of this file contains an optional 
+groupName parameter that gives the identifier for the space group of a 
+BCC phase. A parameter file for SCFT calculation of a mixture could 
+contain more than one "Polymer" blocks and/or one or more "Solvent" 
+blocks. A parameter file that is used to initialize a SCFT parameter 
+sweep would also contain an additional "Sweep" block.
 
 \section scft_param_pc_system_sec File format
 
-The format of a parameter file used by pscf_pc or pscf_pg to perform a
-an SCFT calculation is shown in skeleton from below:
+The elements of a parameter file used by pscf_pc or pscf_pg to perform a 
+SCFT or an SCFT parameter sweep are shown in skeleton from below:
 \code
 System{
-  polymerModel*   enumeration  ("thread" or "bead", "thread" by default)
+  polymerModel*  string  ("thread" or "bead", "thread" by default)
   Mixture{ ...  }
   Interaction{ ...  }
   Domain{ ...  }
@@ -80,72 +81,84 @@ System{
   Sweep#*{ ... }
 }
 \endcode
-The above skeleton includes only blocks that are relevant for SCFT 
-calculations, and excludes optional elements that are only relevant to 
-PS-FTS calculations. A complete description of the format for the main 
-System block is given \ref rpc_System_page "here". 
+The above skeleton only includes blocks that are relevant to SCFT 
+calculations. It does not include an optional "Simulation" block that is
+only used for a PS-FTS calculation. A complete description of all allowed 
+elements of the main System block is given \ref rpc_System_page "here". 
 
-<b> polymerModel </b>: The polymerModel entry is an optional enumeration
-parameter with allowed values of "Thread" and "Bead" that specify global 
-use of either the continuous thread or discrete bead model.  If this 
-parameter is omitted, the thread model is used by default. 
+Parameter file formats of the Mixture and Interaction blocks are the same 
+(or nearly so) for all PSCF programs, and have been discussed previously. 
+The other elements of this file format are discussed below:
 
-<b> Iterator and Sweep </b>: The Iterator and Sweep blocks are both 
-optional and selectable, but an Iterator block must be present in order 
-to perform an SCFT calculation.  The Sweep block is only needed if one 
-intends to peform an SCFT parameter sweep. 
+\section scft_param_pc_model_sec PolymerModel parameter
 
-Formats of the Mixture and Interaction blocks are the same for all PSCF 
-programs, and have been discussed previously. Below, we discuss the 
-contents of the Domain, Iterator, and Sweep blocks.
+The optional polymerModel is a string parameter with allowed values of 
+"thread" and "bead". These values specify global use of either the 
+continuous thread ("thread") or discrete bead ("bead") model, respectively  
+The polymerModel parameter is the first entry in the System block for a
+pscf_pc or pscf_pg parameter file, which must appear before the Mixture 
+block. If the polymerModel parameter is omitted, the thread model is 
+used by default. 
+
+This parameter may not be used in the parameter file for pscf_1d because
+this program only allows use of the thread model.
 
 \section scft_param_pc_domain_sec Domain block
 
 The Domain block contains information required to describe the unit cell 
 of a periodic structure, the regular mesh that is used to discretize 
 fields within each unit cell, and (optionally) an identifier for the space 
-group of an SCFT solution.  The parameter file format is discussed in
-detail on a \ref user_param_domain_pc_page "separate page".
+group of an SCFT solution.  The format of this block has been discussed 
+in detail on a \ref user_param_domain_pc_page "previous page".
 
 \section scft_param_pc_environment_sec Environment
 
 The Environment block is an optional selectable block that can be used
 to define a mask and/or external potential fields in order to define 
-an inhomogeneous externally imposed environment, as described in detail
-\ref scft_environment_page "here". An environment can be used to describe 
-a confined environment such as that experienced by a 
-\ref scft_thin_films_page "thin film".
-This block is not needed for standard SCFT calculations involving bulk 
-periodic phases.
+an inhomogeneous externally imposed environment, as discussed in detail
+\ref scft_environment_page "here". An environment can be used to 
+describe a confined environment such as that experienced by a 
+\ref scft_thin_films_page "thin film".  
+
+An Environment block is not needed for standard SCFT calculations 
+involving bulk periodic phases, and so does not appear in the above
+example.
 
 \section scft_param_pc_iterator_sec Iterator
 
 The pscf_pc and pscf_pg programs each provide two SCFT iterator 
-algorithms named AmIteratorBasis and AmIteratorGrid, as discussed 
-\ref scft_iterator_periodic_sec "here". The above example uses the generic 
-label "Iterator" to invoke the default AmIteratorBasis algorithm, which
-is an Anderson mixing algorithm that preserves space-group symmetry.
+algorithms named \ref rpc_AmIteratorBasis_page "AmIteratorBasis" and 
+\ref rpc_AmIteratorGrid_page "AmIteratorGrid", as discussed on a
+\ref scft_iterator_periodic_sec "previous page". 
+
+AmIteratorBasis is the default iterator algorithm for both pscf_pc and
+pscf_pg.  The above example uses the generic "Iterator" block label 
+to invoke this algorithm, which is an Anderson mixing algorithm that 
+preserves the space-group symmetry specified in the Domain block. 
 
 The Iterator block of the parameter file is formally optional in the
 parameter file format for pscf_pc and pscf_pg. Either program can thus
 successfully finish reading the parameter file if this block is absent. 
-A valid Iterator block must exist, however, to actually perform a SCFT 
-calculation.  The Iterator block is treated as optional element of 
-pscf_pc and pscf_pg parameter files because these programs can perform
-PS-FTS calculations, as well as SCFT, and an Iterator is not needed for 
-such simulations.
+A valid Iterator block must be present, however, to actually perform a 
+SCFT calculation.  The Iterator block is treated as optional element of 
+pscf_pc and pscf_pg parameter files because both of these programs can 
+also perform PS-FTS calculations, as well as SCFT, and an Iterator is 
+not needed for such simulations.
 
 \section scft_param_pc_sweep_sec Sweep
 
-The Sweep block is optional block that has been programmed as a selectable
-block, but there is currently only one available algorithm.  The only sweep 
-algorithm that is currently available for use with either pscf_pc or pscf_pg 
-is a general linear sweep algorithm that is implemented by a class named
-LinearSweep. Because this is also the default sweep algorithm, it may be 
-enabled by including a Sweep block that starts either with the generic label 
-"Sweep" or the specific label "LinearSweep".  The format of the associated 
-parameter file block is described \ref scft_sweep_linear_sec "here".  A 
-Sweep block is allowed only if an Iterator block exists.  
+The Sweep block is optional block that is used to program a SCFT 
+parameter sweep. It has been programmed as a selectable block, but there 
+is currently only one available sweep algorithm for either pscf_pc or 
+pscf_pg, which is a general linear sweep algorithm that is implemented 
+by a class named LinearSweep. Because this is also the default sweep 
+algorithm, it may be enabled by including a Sweep block that starts with
+either with the generic label "Sweep" or the specific label "LinearSweep".
+The format of the required parameter file block has been described on a 
+\ref scft_sweep_linear_sec "previous page". A Sweep block is allowed 
+only if an Iterator block is present.  
+
+The above example does not contains a Sweep block. 
 
 \section scft_param_pc_seealso_sec See Also:
 
@@ -161,15 +174,16 @@ Sweep block is allowed only if an Iterator block exists.
     <li> \subpage rpc_AmIteratorGrid_page  "AmIteratorGrid" </li>
  </ul>
  <li> \ref scft_sweep_page "Sweep" </li>
- <ul> <li> \ref scft_sweep_linear_sec "LinearSweep" </li> </ul>
+ <ul> 
+     <li> \ref scft_sweep_linear_sec "LinearSweep" </li> 
+ </ul>
 </ul>
 
 <BR>
 \ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_param_pg_page  (Next)
+\ref scft_field_page  (Next)
 
 */
-
 }
 }

@@ -436,23 +436,27 @@ output in the \ref scft_field_r1d_page "1D field file" used by
 pscf_1d. Names for these files end with filename extension ".w" for 
 chemical potential fields and ".c" for monomer concentration fields.
 
-In the case of the pscf_pc and pscf_pg programs, only the chemical
-potential fields are output by default, using
-\ref scft_field_basis_page "basis format". Names for these files
-end with a postfix string "_w.bf", are thus of the form "0_w.bf", 
-"1_w.bf", etc.  Chemical potential fields in rgrid format and/or monomer 
-concentration fields in basis or rgrid format can be output at each state 
-point by adding the optional boolean input parameters writeWRGrid, 
-writeCBasis, and writeCRGrid with values of 1, as described
-\ref scft_sweep_linear_param_sub "above". Names for these files,
-when they are created, end with postfixes "_w.rf", "_c.bf" and "_c.rf",
-respectively, where "_w" or "_c" is used to indicate a chemical potential
-(w) or monomer concentration (c) field, while ".bf" or ".rf" is used to
-indicate a basis or rgrid field file format.
+In the case of the pscf_pc and pscf_pg programs, only the converged 
+chemical potential fields are output by default. If these converged 
+fields were obtained using an iterator that preserves space group 
+symmetry, such as AmIteratorBasis, they are output in 
+\ref scft_field_basis_page "basis format", to files with names that 
+begin with an integer state index end with a suffix "_w.bf", such as
+"0_w.bf", "1_w.bf", etc. Otherwise, the w fields are output in 
+\ref scft_field_rgrid_page "r-rgrid format" to files with names that 
+end in a suffix "_w.rf".  Chemical potential fields in rgrid format 
+and/or monomer concentration fields in basis or rgrid format can also
+be output at each state point by adding the optional boolean input 
+parameters writeWRGrid, writeCBasis, and writeCRGrid with values of 1, 
+as described \ref scft_sweep_linear_param_sub "above". Names for these 
+files, when they are created, end with postfixes "_w.rf", "_c.bf" and 
+"_c.rf", respectively, where "_w" or "_c" is used to indicate a 
+chemical potential (w) or monomer concentration (c) field, while 
+".bf" or ".rf" is used to indicate a basis or rgrid field file format.
 
 In addition to files that are output for each state, a sweep command
 creates a single log file named "sweep.log" that contains a small table 
-of with one row for each state point in the sweep. Each row in this file
+with one row for each state point in the sweep. Each row in this file
 contains an integer index for a state point, the fractional position
 along the parameter sweep (denoted "ds"), the Helmholtz free energy and 
 the non-dimensionalized pressure. Values for the Helmholtz free energy 
@@ -460,12 +464,14 @@ and pressure are reported using the same conventions as those used for
 the variables "fHelmholtz" and "pressure" reported in the
 \ref scft_thermo_page "thermo file block" of a state file.
 
-After a sweep is completed, the Python class pscfpp.output.sweep can be 
-used to parse all of the state files produced by a sweep and produce 
-Python lists or tables of data that contain any combination of input 
-and output variables that the user wishes. See the manual page on 
+The PSCF package includes a set of Python data analysis tools that are
+particularly useful for analysis of parameter sweeps.  After a sweep 
+is completed, the Python class pscfpp.output.sweep can be used to parse 
+all of the state files produced by a sweep and produce Python lists or 
+tables of data that contain any combination of input and output 
+variables that the user wishes. See the manual page on 
 \ref scft_python_page "Python Tools" for an overview of this and other
-Python postprocessing tools, in addition to the documentation for this 
+Python postprocessing tools, including the documentation for this 
 specific class. 
 
 <BR>

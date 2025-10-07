@@ -8,9 +8,10 @@
 
 \section psfts_ramp_concept_sec Ramp Concept
 
-The "ramp" is an optional feature of PSCF allows a user to perform a FTS
-in which one or more of the parameters of the model vary continuously over 
-the course of the simulation.  The main uses for parameter ramps are:
+A "ramp" is an optional feature of PSCF that allows a user to perform 
+a PS-FTS in which one or more of the parameters of the Hamiltonian 
+vary continuously over the course of the simulation.  The main uses for 
+parameter ramps are:
 
   - To approximately identify the location of an equilibrium phase 
     transition, such as an order-disorder transition, by inducing a 
@@ -32,29 +33,30 @@ current version of PSCF, as discussed below.
 
 \section psfts_ramp_linear_sec Linear Ramp 
 
-The only type ramp that is currently available is a linear ramp 
-algorithm that is implemented by class LinearRamp.  The LinearRamp class 
-allows a user to perform a simulation in which almost any physical 
-parameter of the Hamiltonian that is represented by a real number, or 
-any set of these parameters, can be chosen to vary linearly with the 
-number of simulation steps completed since the beginning of the 
-simulation. The design and interface of the LinearRamp class are closely 
-analogous to those of the LinearSweep class, which is used to program 
-SCFT parameter sweeps.  Because the LinearRamp class is the default Ramp 
-algorithm (since it is currently the only one), the opening line of a
-parameter block for this class may contain either the generic block 
-label "Ramp" (thereby choosing the default) or the specific class name 
-"LinearRamp". 
+The only type ramp that is currently available for either pscf_pc 
+or pscf_pg is a linear ramp algorithm that is implemented by a class 
+named LinearRamp.  The LinearRamp class allows a user to perform a 
+simulation in which almost any physical parameter of the Hamiltonian 
+that is represented by a real number, or any set of such parameters, 
+can be chosen to vary linearly with the number of simulation steps 
+completed since the beginning of the simulation. 
 
-A full description of the parameter file format for a LinearRamp block is 
-given in a \ref rpc_LinearRamp_page "separate page" . As already noted, 
-the required format is closely analogous to that of the LinearSweep class. 
-The parameter block contains an 1D array in which each line contains an 
-identifier for a parameter that should ramped and a parameter value that 
-indicates how much that parameter should be changed. This more detailed 
-description includes a complete list of the string labels that are used 
-to specify different types of parameters that should be varied during 
-such a ramp.
+Because the LinearRamp class is the default Ramp algorithm (since it 
+is currently the only one), the opening line of a parameter block for 
+this class may contain either the generic block label "Ramp" (thereby 
+choosing the default) or the specific class name "LinearRamp". 
+
+A full description of the parameter file format for a LinearRamp block 
+is given in a \ref rpc_LinearRamp_page "separate page" . The parameter
+file format for the LinearRamp class is very closely analogous to that 
+of the LinearSweep class, which implements an analogous linear SCFT 
+parameter sweep.  The "parameter" array valued parameter contains a 1D 
+array in which each line contains an identifier for a parameter that 
+should ramped and a floating point value that indicates how much that 
+parameter should be changed over the course of a simulation. This more 
+detailed description includes a complete list of the string labels that 
+are used to specify different types of parameters that can be varied 
+during such a ramp.
 
 The initial value of each parameter that is varied by a LinearRamp is 
 equal to the value that would have been used in the simulation if the 
@@ -66,9 +68,9 @@ must be read before beginning a simulation.  The final value at the
 end of a simulation is given by the sum of that initial value and the 
 change specified in the Ramp block.  The change per step required to 
 accomplish this is computed for each ramped parameter just before 
-beginning a simulation, based on the planned number of steps for the 
-simulation The number of BD or MC steps is given as a parameter to 
-the SIMULATE command in the command file. 
+beginning a simulation, based on the planned number of BD or attempted
+MC steps given as a parameter to the SIMULATE command in the command 
+file. 
 
 \see
 \subpage rpc_LinearRamp_page "LinearRamp (manual page)" 

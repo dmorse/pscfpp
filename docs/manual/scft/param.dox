@@ -1,18 +1,18 @@
 /*! \page scft_param_page Parameter Files
 
 \ref scft_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_field_page (Next) 
+\ref scft_field_page  (Next) 
 <BR>
 
-This section describes the parameter files elements used by PSCF 
-programs to perform self-consistent field (SCFT) calculations, 
-including SCFT parameters sweeps. 
+This section describes the parameter files elements used by PSCF programs 
+to perform self-consistent field (SCFT) calculations and SCFT parameter
+sweeps.
 
 <h2> Contents:</h2>
    <ol>
-     <li> \subpage scft_param_1d_page </li>
-     <li> \subpage scft_param_pc_page </li>
-     <li> \subpage scft_param_pg_page </li>
+   <li> \subpage scft_param_1d_page "One-dimensional systems (pscf_1d)" </li>
+   <li> \subpage scft_param_pc_page "Periodic systems (pscf_pc and pscf_pg)" 
+        </li>
    </ol>
 <BR>
 \ref scft_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

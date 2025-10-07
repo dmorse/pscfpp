@@ -1,0 +1,61 @@
+/*! \page user_param_mixture_batchedFFT_page Batched FFT usage
+
+\ref user_param_mixture_page  (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_domain_page   (Next)
+<BR>
+
+The format of the Mixture block in parameter files used by pscf_pg 
+differs from that of pscf_pc and pscf_1d in that the format for pscf_pg 
+allows an additional optional boolean parameter named "useBatchedFFT".  
+This extra parameter appears at the end of the Mixture block, immediately 
+after `ds`, and is equal to 1 (or true) by default.  The purpose of this 
+parameter is explained below.
+
+To compute the stress values for a flexible unit cell, fast Fourier
+transforms (FFTs) need to be performed on both the forward and 
+backward propagator of every polymer block at every monomer or step 
+along the block contour. This stress calculation is performed after 
+solution of the modified diffusion equation for all blocks and 
+directions, and often requires several hundred additional FFTs that 
+are not needed for other purposes.  By default, pscf_pg performs 
+these FFTs in parallel using a "batched" FFT algorithm provided by 
+cuFFT, which performs parallel FFTs in a manner that maximizes GPU 
+occupancy. Use of this option can signficantly accelerate stress 
+calculations when the grid size is modest. 
+
+However, batched FFTs require significant additional amounts of 
+memory to be allocated on the GPU to store the Fourier transforms of
+multiple slices of each block, which can be avoided using non-batched 
+FFTs. Because storage of propagators dominates overall memory usage,
+use of batched FFTs can almost double the total on-chip memory usage 
+of the whole program. PSCF therefore provides an optional parameter, 
+`useBatchedFFT`, that allows users to either enable use of batched 
+FFTs to save computation time at a cost in memory usage (the default) 
+or to disable batched FFTs to save memory.  
+
+Whether or not batched FFTs will exhaust available global GPU memory
+depends on both the GPU being used and the number of gridpoints in 
+the system.  Modern GPUs have large on-chip memories that are capable
+of handling the memory demand of batched FFTs in all but the very 
+largest of calculations. For example, an A100 has 40GB of global GPU
+memory.  Older GPUs, however, have smaller on-chip memories, meaning 
+that users could encounter an "out of memory" error even when the 
+calculation is not terribly large. 
+
+The computational benefit of batched FFTs also shrinks as the number 
+of gridpoints increases. For calculations with 100,000 gridpoints on 
+an A40 GPU, we have found that batched FFTs allow the stress to be 
+calculated 10x faster than non-batched FFTs, while for calculations 
+with 1,000,000 gridpoints, batched FFTs are only 1.16x faster. 
+
+Therefore, we recommend that users use non-batched FFTs for calculations 
+that use more than approximately one million gridpoints, or for smaller 
+calculations on older GPUs. If an "out of memory" error is encountered 
+when using batched FFTs, users should try using non-batched FFTs to see 
+if the resulting reduction in memory usage is enough to solve the problem. 
+
+<BR>
+\ref user_param_mixture_page  (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_domain_page   (Next)
+
+*/
