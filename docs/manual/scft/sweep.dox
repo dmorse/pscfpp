@@ -464,15 +464,14 @@ and pressure are reported using the same conventions as those used for
 the variables "fHelmholtz" and "pressure" reported in the
 \ref scft_thermo_page "thermo file block" of a state file.
 
-The PSCF package includes a set of Python data analysis tools that are
-particularly useful for analysis of parameter sweeps.  After a sweep 
-is completed, the Python class pscfpp.output.sweep can be used to parse 
-all of the state files produced by a sweep and produce Python lists or 
-tables of data that contain any combination of input and output 
-variables that the user wishes. See the manual page on 
-\ref scft_python_page "Python Tools" for an overview of this and other
-Python postprocessing tools, including the documentation for this 
-specific class. 
+The PSCF package includes a set of Python data analysis tools that 
+are particularly useful for analysis of parameter sweeps. After a 
+sweep is completed, the Python class pscfpp.output.sweep can be used 
+to parse all of the state files produced by a sweep and produce 
+Python lists or tables of data that contain any combination of input 
+and output variables that the user wishes. See the manual page on 
+\ref analysis_python_page "Python Tools" for documentation of this 
+and other Python postprocessing tools.
 
 <BR>
 \ref scft_iterator_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp; 

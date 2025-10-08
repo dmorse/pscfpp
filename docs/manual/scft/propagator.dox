@@ -1,6 +1,6 @@
 /*! \page scft_propagator_page Appendix: Modified Diffusion Equations
 
-\ref scft_python_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_fourier_page  (Next)
 <BR>
 
@@ -897,8 +897,8 @@ under development as a planned addition to PSCF.
 
 
 <BR>
-\ref scft_python_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_fourier_page  (Next)
+\ref scft_thin_films_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_page            (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_fourier_page    (Next)
 
 */

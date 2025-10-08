@@ -964,6 +964,7 @@ INPUT                  = manual/main.dox \
                          manual/user \
                          manual/scft \
                          manual/psfts \
+                         manual/analysis \
                          manual/developer \
                          ../src/programs.mod \
                          ../src/util \

@@ -45,8 +45,6 @@ information about PS-FTS calculations.
    <li> \subpage scft_groups_page         </li>
    <li> \subpage scft_environment_page    </li>
    <li> \subpage scft_thin_films_page     </li>
-   <li> \subpage scft_visualize_page      </li>
-   <li> \subpage scft_python_page         </li>
    <li> \subpage scft_propagator_page     </li>
    <li> \subpage scft_fourier_page        </li>
    <li> \subpage scft_symmetry_page       </li>

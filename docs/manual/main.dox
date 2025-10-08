@@ -26,8 +26,8 @@ for users who may never look at the source code, and complete aplication
 programming interface (API) documentation for those who do.
 
 Information for users about how to install and run PSCF is provided in
-chapters 1-5 of the web manual that is outlined below. Some additional 
-general information aimed at developers is given in chapter 6,
+chapters 1-6 of the web manual that is outlined below. Some additional 
+general information aimed at developers is given in chapter 7,
 \ref developer_page "Developer Information".
 
 Detailed API documentation that is extracted from comments in the source 
@@ -91,8 +91,6 @@ The web manual for the most recent release of PSCF is available online at
     <li> \ref scft_groups_page  </li>
     <li> \ref scft_environment_page  </li>
     <li> \ref scft_thin_films_page  </li>
-    <li> \ref scft_visualize_page  </li>
-    <li> \ref scft_python_page  </li>
     <li> \ref scft_propagator_page  </li>
     <li> \ref scft_fourier_page  </li>
     <li> \ref scft_symmetry_page  </li>
@@ -109,6 +107,12 @@ The web manual for the most recent release of PSCF is available online at
     <li> \ref psfts_analysis_page  </li>
     <li> \ref psfts_ramp_page   </li>
     <li> \ref psfts_perturb_page  </li>
+    </ol>
+  </li>
+  <li> \subpage analysis_page
+    <ol type="1">
+    <li> \ref analysis_visualize_page  </li>
+    <li> \ref analysis_python_page  </li>
     </ol>
   </li>
   <li> \subpage developer_page

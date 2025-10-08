@@ -1,7 +1,7 @@
 /*! \page scft_thin_films_page Thin-Film Confinement
 
  \ref scft_environment_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_visualize_page   (Next) 
+ \ref scft_propagator_page   (Next) 
 <BR>
 
 Thin-film confinement can be imposed on the PSCF unit cell by including a
@@ -608,5 +608,6 @@ PSCF calculation for the corresponding bulk phase.
 
 <BR>
  \ref scft_environment_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_visualize_page   (Next) 
+ \ref scft_page              (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_propagator_page   (Next) 
 */
