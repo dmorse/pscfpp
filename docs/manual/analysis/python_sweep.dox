@@ -1,0 +1,139 @@
+/*! \page analysis_python_sweep_page Parameter Sweeps
+
+\ref analysis_python_state_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_command_page (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Class Sweep (pscfpp.output.Sweep) is different from the other pscfpp
+parser classes in that it is designed to parse and store the contents 
+of multiple data files, rather than a single file or file block.  This 
+class is designed to parse all of the state files created by an SCFT
+parameter sweep, and store their contents in a Python list in which 
+each element is an instance of class State (pscfpp.output.State). Each 
+State object in this list contains all of the data contained in an 
+associated state file that describes one physical state (i.e., one 
+choice of input parameters) within a path through parameter space that 
+was traversed by the sweep.  The Sweep class is among the most useful 
+of the parser classes, because it enormously simplifies analyses that
+would otherwise require manual inspection of the multiple output files 
+produced by a sweep.
+
+<b> Reading state files: </b>
+
+In what follows, we consider the following situation as an example:
+Suppose you used a PSCF program to perfom a parameter sweep.  Suppose
+that the 'baseFileName' parameter within the Sweep block of the
+associated parameter file was assigned a value 'out/', so that all
+output files produced by the sweep were created in the 'out/'
+subdirectory of the directory from which the executable was invoked.
+In this case, the SWEEP command will have created a set of numbered
+state files with file extension *.stt in the out/ directory, giving
+files named
+\code
+   0.stt
+   1.stt
+   2.stt
+    .
+    .
+    .
+\endcode
+Each of these state files contain the input parameters and output
+variables for an SCFT calculation peformed at a single state along
+the specified path through parameter space. We assume in what 
+follows that a Python interpreter was launched from the parent
+directory of the directory 'out/' that contains these state files.
+
+To parse and store the contents of all of the numbered state files 
+produced by such a sweep, one could enter the Python commands
+\code
+    from pscfpp.output import *
+    s = Sweep('out/')
+\endcode
+Here, we assign the resulting Sweep object to a variable named s. 
+The Sweep constructor takes a single string argument, which is a
+prefix string that appended to all of the output state files 
+created by the sweep, which is used here to specify files in the
+'out/' directory. The constructor reads and stores the contents 
+of files with names given by this prefix, followed by an integer,
+followed by the file extension '.stt'. 
+
+<b> Accessing State Objects and Variable Values: </b>
+
+After successful construction of a Sweep object, the resulting object
+stores the contents of each state file in a State object.  These State
+objects are stored internally in a Python list, in the order in which
+states were treated within the sweep.  The Sweep class overloads the
+square bracket index operator to allow access to the elements of this
+list.  The State objects associated with a Sweep object named 's' are
+thus given by the quantities
+\code
+    s[0]
+    s[1]
+     .
+     .
+     .
+    s[n-1]
+\endcode
+where n is the number of State objects contained in the parent Sweep.
+The integer index used to access each State object corresponds to the 
+integer that appears the name of the corresponding state file.
+
+The syntax for accessing variables stored with a State object can then
+be applied to any state within a sweep via access to the param and
+thermo data attributes. In this example, the quantity
+\code
+    s[1].thermo.fHelmholtz
+\endcode
+is thus the Helmholtz free energy per monomer for state 1 (the second
+state) within a sweep. Similarly,
+\code
+    s[1].param.Interaction.chi[0][1]
+\endcode
+is the chi parameter for interactions between monomer types 0 and 1 
+in the same state. Values of other input and output variables can be
+accessed similarly.
+
+<b> Generating a Summary Report: </b>
+
+The methods 'summary' and 'summaryString' of class Sweep can be 
+used to generate summary reports that contain a list of values for
+selected variables at each state point of a sweep. Both of these
+functions takes a list of strings as an argument, in which each string
+in the list gives the name of a input or output variable using the
+syntax for accessing variables stored in a State function. The two
+methods differ in the form in which the resulting data is returned:
+The summary method returns the resulting report as a list of lists,
+while the summaryString method returns the report as a multi-line 
+string suitable for printing.
+
+* *Table of values*: In our example, the expression
+\code
+   table = s.summary(['param.Mixture.polymer[0].phi', 'thermo.fHelmholtz'])
+\endcode
+uses the summary method to create a variable 'table' that is a list of
+lists in which each element of the outer list is a list of the values
+at a single state of the variables whose names are given as elements of
+the function argument. Specifically, here, each element of list table
+is a list of two elements containing values for the volume fraction of
+polymer and the Helmholtz free energy fHelmholtz. The quantities
+table[4][0] and table[4][1] would then be the volume fraction phi and
+free energy fHelmholtz associated with state 4, respectively.
+
+* *Formatted string*: The expression
+\code
+   report = s.summaryString(['param.Mixture.polymer[0].phi', 'thermo.fHelmholtz'])
+\endcode
+uses method summaryString to create a string variable named report that
+contains the same data in a multi-line string formatted in a manner
+suitable for printing. This string can then be printed to the screen using
+\code
+   print(report)
+\endcode
+or written to a file.
+
+<BR>
+\ref analysis_python_state_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

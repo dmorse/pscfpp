@@ -1,0 +1,57 @@
+/*! \page analysis_python_state_page State Files
+
+\ref analysis_python_thermo_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_sweep_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+\ref scft_thermo_state_sec "State files" are designed to contain values
+of both input parameters and output variables for an SCFT calculation.
+The file format for a state file consists of a parameter file block
+followed by a thermo file block. The parameter file block contains input
+variables and has the nested curly-bracket format of a parameter file. The
+thermo section contains output variables and has the format of a thermo
+file block.
+
+Each instance of class State (or pscfpp.output.State) is used to store the
+contents of such a state file. Each State object has two data attributes
+named param and thermo that are used to store the contents of these two
+sections of the corresponding file. The data attribute named 'param' is
+a param.Composite object that contains the contents of the parameter
+block of the state file. A second attribute named 'thermo' is a Thermo
+object that that contains the contains of the thermo block of the state
+file.
+
+To parse a state file named 'input' that was produced by an SCFT
+calculation, one may enter the commands
+\code
+   from pscfpp.output import *
+   state = State('input')
+\endcode
+The constructor for class State opens and parses the specified file
+and returns an object that contains the contents of this file. The
+resulting object is assigned here to a variable named state.
+
+After construction, values of individual input and output variables
+can be obtained by using the dot syntax for attributes of the
+param.Composite and Thermo data attributes. In the case described
+above, the quantity
+\code
+    state.param.Mixture.nMonomer
+\endcode
+is the number of monomer types in the system of interest.
+Similarly,
+\code
+    state.thermo.polymers[1].mu
+\endcode
+is the chemical potential of polymer 1 (the second polymer) in a
+mixture that contains two or more polymer species. Values for any
+other variable can be accessed through state.param or state.thermo
+using the dot syntax for accessing data stored in a param.Composite
+or Thermo object, as described above for these two classes.
+
+<BR>
+\ref analysis_python_thermo_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_sweep_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

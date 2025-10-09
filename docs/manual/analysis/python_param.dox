@@ -1,0 +1,165 @@
+/*! \page analysis_python_param_page Parameter Files
+
+\ref analysis_python_overview_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_thermo_page    (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+The class param.Composite (or pscfpp.param.Composite) is designed to
+parse a parameter file block that is delimited opening and closing curly
+brackets.  The C++ class that is used in PSCF to parse such a file block
+is named Util::ParamComposite, and the name of the corresponding Python
+class was chosen to be analogous.  An instance of this class can be used
+to parse either an entire parameter file, which normally consists of a
+single parameter file block that begins with the block label 'System',
+or to parse any nested subblock within this main block.
+
+To parse a PSCF parameter file with a file name 'input', one could enter
+the commands
+\code
+  import pscfpp.param as param
+  system = param.Composite('input')
+\endcode
+from within a interactive Python interpreter or a Python script.  The
+constructor method for class param.Composite opens the file whose name
+is passed as a parameter, parses its contents, and returns an instance
+of this class that contains a parsed version of the file contents. The
+resulting object is assigned here to a Python variable named 'system'.
+
+<b> Accessing Parameter Values: </b>
+
+After a parameter file has been parsed, as described above, every
+parameter file block that is delimited by curly brackets is represented
+internally by an instance of param.Composite.  Every sub-element (i.e.,
+sub-block or parameter) within such a block can be accessed using the
+dot notation used to access attributes of a Python object, using the
+label of the child item as an attribute name. Each nested sub-block
+within such a parameter file block is represented by a nested instance
+of param.Composite with a name given by the label of the sub-block.
+Each parameter within such a block is instead represented by either an
+instance of a primitive Python data type (an int, float, or string) or
+a Python list, depending on the type of variable and the nature of its
+value.
+
+In all of the following examples, we assume that the object 'system'
+is an instance of class param.Composite that contains the contents of
+the main 'System' block of a PSCF parameter file. The data attributes
+named system.Mixture and system.Interaction are param.Composite objects
+that contain the contents of the Mixture and Interaction sub-blocks of
+the parameter file, respectively. Some attributes of these nested
+param.Composite objects then refer to values of individual parameters.
+
+* *Simple parameters:* For example, the expression
+\code
+   system.Mixture.nMonomer
+\endcode
+returns an integer attribute that contains the value of the parameter
+nMonomer, which appears within the Mixture block of the corresponding
+parameter file.
+
+* *Array-valued parameters:* Array-valued parameters are stored as Python
+lists, in which each element of the list stores the value of one element
+of the associated array. For example,
+\code
+    system.Mixture.monomers
+\endcode
+is a list that contains the contents of the array-valued parameter
+named 'monomers' that appears in the Mixture block. The expression
+\code
+    system.Mixture.monomers[0]
+\endcode
+is instead a floating point number that contains the value of element
+0 of the monomers array. This element gives the statistical segment
+length for monomer type 0.
+
+* *Sub-blocks with non-unique labels:*
+If a parameter file block contains several sub-blocks with the same
+label, then the attribute with a name given by this shared label is
+is a list in which each element is a param.Composite object
+corresponding to one of these subblocks.  This situation can arise
+for Polymer or Solvent subblocks of a Mixture block that represents
+a mixture containing two or more polymer or solvent species. For
+example, for a mixture that contains two or more polymer species,
+\code
+   system.Mixture.Polymer[1]
+\endcode
+is an instance of system.Composite that contains the contents of the
+second Polymer sub-block within the Mixture block.
+
+* *Parameters with multiple values on a single line:*
+If the text representation of the value of either a single parameter
+(i.e., a variable represented by a parameter label and value on a single
+line), or of a single element of an array-valued parameter, is given in
+the parameter file as two or more strings separated by spaces on a single
+line, then the value of this parameter or array element will be stored
+as a Python list of values.  This situation occurs, for example, for
+elements of the blocks array within each Polymer block of a parameter
+file. The value of each element of this array is given as a list of
+two or more values that specify (at a minimum) the monomer type and
+block length. In the case of a branched polymer, each element of this
+array also contains integer labels for the two attached vertices, to
+describe the polymer topology. For example, in the case discussed
+above, the quantity
+\code
+   system.Mixture.Polymer[1].blocks[0]
+\endcode
+is a Python list containing values of variables associated with the
+first block of the second polymer species within a mixture.  If this
+polymer uses the default parameter file format for a linear chain,
+then this list contains a monomer type index and a block length. In
+this case, the quantity
+\code
+   system.Mixture.Polymer[1].blocks[0][1]
+\endcode
+is a floating point number equal to the length of block 0 of polymer
+1 (the second polymer in a mixture), while Polymer[1].blocks[0][0] is
+the integer monomer type index for that block.
+
+* *Matrix-valued parameters:*
+The value of a matrix-valued parameter is stored as a list of lists.
+Specifically, the quantity
+\code
+   system.Interaction.chi
+\endcode
+is a list of lists that stores values of element of the chi matrix.
+Values of individual elements may be accessed using two subscripts.
+For example,
+\code
+   system.Interaction.chi[0][1]
+\endcode
+is the interaction parameter between monomer types 0 and 1.
+
+* *Parameter value data types:*
+The data type associated with each parameter value is inferred from
+its text representation when the parameter file is parsed. To do so,
+the parser stores any value that can be interpreted as a valid
+integer as an int value, stores any other value that can be
+interpreted as valid floating point number as a float, and stores
+any value that is not an int or float verbatim as a string.
+
+<b> String Representation </b>
+
+The string representation of a param.Composite object is a multi-line
+string that is formatted in the curly bracket notation used in parameter
+files, with line breaks and indentation. The string representation of such
+an object is thus syntactically equivalent to the parameter file block
+from which it was created, aside from syntactically irrelevant differences
+in use of white space.  The string representation of param.Composite
+object named param is given by the expression
+\code
+   str(param)
+\endcode
+This string can also be printed to screen in multi-line form by the
+command print(param).
+
+An instance of class param.Composite can be used to programmatically
+modify the values of parameters in a parameter file.  To do so, one
+would parse an existing parameter file, modify one or more of the
+parameter values, and then write the string representation of the
+modified object to a file.
+
+<BR>
+\ref analysis_python_overview_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_page           (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_thermo_page    (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

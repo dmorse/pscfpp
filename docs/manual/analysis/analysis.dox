@@ -13,6 +13,15 @@ formats used by PSCF.
    <ol>
    <li> \subpage analysis_visualize_page   </li>
    <li> \subpage analysis_python_page      </li>
+      <ol>
+      <li> \subpage analysis_python_overview_page </li>
+      <li> \subpage analysis_python_param_page </li>
+      <li> \subpage analysis_python_thermo_page </li>
+      <li> \subpage analysis_python_state_page </li>
+      <li> \subpage analysis_python_sweep_page </li>
+      <li> \subpage analysis_python_command_page </li>
+      <li> \subpage analysis_python_field_page </li>
+      </ol>
    </ol>
 
 <BR>

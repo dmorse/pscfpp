@@ -1,0 +1,101 @@
+/*! \page analysis_python_overview_page Overview
+
+\ref analysis_python_page       (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_param_page (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+All Python source code files that are provided with PSCF are located
+within the lib/python/pscfpp directory of the repository directory tree.  
+Every Python file in in this directory defines a module that belongs to 
+a Python package named 'pscfpp'. The full name of each such module thus 
+begins with a package name prefix 'pscfpp' followed by the dot and the
+base name of the source file.  For example, to use a class or function 
+that that is defined in the file 'lib/python/pscfpp/param.py', one must 
+import the contents of module pscfpp.param from within a Python 
+interpreter.
+
+\section analysis_python_parser_sec Parser classes 
+
+The pscfpp package contains a set of class that are each designed to read
+and parse one of the file formats used by PSCF for input or output files.  
+Python classes have been created to parse the following data file formats:
+
+   - Parameter files (class pscfpp.param.Composite)
+   - SCFT thermo file blocks (class pscfpp.output.Thermo)
+   - SCFT state files (param + thermo) (class pscfpp.output.State)
+   - SCFT sweep output files (class pscfpp.output.Sweep)
+   - Command scripts (class pscfpp.command.Script)
+   - Field files (class pscfpp.field.Field)
+
+The fully qualified name of each parser class is given in parentheses in
+the above list.  To streamline discussion, we will refer to these classes
+primarily by short names in the remainder of this section of the manual. 
+These short class names are constructed by dropping the common pscfpp 
+package prefix and dropping the module name in all but one case. In the 
+remainder of the discussion, we refer to these parser classes by the 
+following short names:
+
+   - \ref analysis_python_param_page "param.Composite"
+   - \ref analysis_python_thermo_page "Thermo"
+   - \ref analysis_python_state_page "State"
+   - \ref analysis_python_sweep_page "Sweep"
+   - \ref analysis_python_command_page "Script"
+   - \ref analysis_python_field_page  "Field"
+
+We retain the module name "param" in the short name param.Composite 
+because we regard the module name param as an informative part of 
+the class name in this case.
+
+\section analysis_python_overview_usage_sec Usage
+
+To use any of the Python modules provided with PSCF, one must open a
+Python 3 interpreter. To open an interactive interpreter, one can enter
+either the command
+\code
+   > python
+\endcode
+on a system in which Python version 3 is the default, or the command
+python3 on a system in which Python 2.7 is still the default (which is
+becoming increasingly rare).
+
+Rather than opening a interactive interpreter, one can write a python
+script that imports and uses one or more modules from the pscfpp package, 
+and then execute that script by passing it as an argument to the "python" 
+or "python3" command.
+
+The \ref install_environment_page 
+"instructions for compiling the PSCF C++/CUDA code" require each user 
+to add the directory pscfpp/lib/python to their Python module search 
+path (i.e., to their PYTHONPATH environment variable). As long as this 
+directory is in the Python path, a Python interpreter should be able to 
+find any module in the pscfpp package.
+
+\section analysis_python_overview_doc_sec Python API documentation
+
+Detailed API documentation for all Python modules that are distributed
+with PSCF can be accessed within the PSCF web manual by opening the
+'Namespaces' tab on the main page, and then clicking on the label for
+namespace 'pscfpp'.  Within the web manual, the pscfpp namespace
+refers to the pscfpp Python package, rather than to a C++ namespace.
+The web page for the pscfpp package (or namespace) contains a link to
+documentation of each Python module in the package, each of which
+corresponds to a Python file in directory pscfpp/lib/python/pscfpp.
+The web page for each Python module contains links to a documentation
+page for every class and function defined in that module.
+
+* *Comment*: The fact that the Pscf and Util C++ namespaces and the
+pscfpp Python package are all listed together under the Namespaces
+browser tab of the PSCF web manual is a result of the fact that the
+<a href=http://www.doxygen.org> doxygen </a> documentation utility
+that was used to generate this manual treats C++ namespaces and Python
+packages as equivalent concepts. Doxygen seems to have been designed
+primarily to document software in which all of the code was written
+in a single programming language, and does not provide a better way
+to separate documentation of source code files that were written in
+different languages but distributed as part of the same package.
+
+<BR>
+\ref analysis_python_page        (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_param_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

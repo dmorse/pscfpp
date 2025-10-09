@@ -1,0 +1,51 @@
+/*! \page analysis_python_command_page Command Files
+
+\ref analysis_python_sweep_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_field_page (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+An instance of class Script (or pscfpp.command.Script) can be used to parse
+and store the contents of a PSCF command script file.  Each single-line
+command in such a file is stored as an instance of a class Command
+(or pscfpp.command.Command) that contains a list of the space separated
+strings that make up such a command.  The first string in each command,
+which is the command name, is stored in the 'label' attribute of the
+resulting Command object.
+
+To parse and store the contents of a command file named 'input', one could
+enter:
+\code
+    from pscfpp.command import *
+    s = Script('input')
+\endcode
+Individual Command objects within a Script object can be accessed using
+the square bracket subscript operator using the either an integer index
+or the name of the command (a string) as a key:
+
+  - *Access by command index:* Command objects may be accessed using
+    square bracket subscript notation with an integer index that is
+    the position of the command within the script, numbered from 0.
+    For example, if s is a command Script, then s[2] is an instance
+    of class Command that represents the 3rd command in the script
+    file.
+
+  - *Access by command name:* Commands may also be accessed using
+    square bracket notation by using the command name (or label)
+    string as a key. If a command name is unique within the script,
+    the corresponding Command object is returned.  If the script
+    contains several commands with the specified name, the return
+    value is a list of Command objects containing all commands
+    with the specified name, indexed in the order in which they
+    appear in the command file.
+
+Values of arguments of individual Command objects be accessed or
+modified using the param and setParam methods of class Command.
+A Script may be converted to a multi-line string using the str()
+function.
+
+<BR>
+\ref analysis_python_sweep_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_field_page (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

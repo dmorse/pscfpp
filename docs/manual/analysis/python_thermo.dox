@@ -1,0 +1,100 @@
+/*! \page analysis_python_thermo_page Thermo Files
+
+\ref analysis_python_param_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_state_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+\ref scft_thermo_page "Thermo file" blocks contain output variables 
+that are computed during an SCFT calculation. Such blocks may appear 
+either as standalone files, which can be created by the WRITE_THERMO 
+command, or as sections of other file types.
+
+Suppose that a file named 'input' contains a thermo file block that
+is the only data in this file.  One may parse this file by entering
+the Python commands
+\code
+   from pscfpp.output import *
+   thermo = Thermo('input')
+\endcode
+In this case, the Thermo constructor opens and parses the contents of
+the file whose name is passed as an argument, and returns an instance
+of class Thermo that contains the contents of that file. Here, the
+resulting object is assigned to a variable named 'thermo'. This name
+is used in all of the following examples to represent a Thermo object
+that contains the contents of a thermo file block.
+
+The values of output variables that are reported in a thermo file block
+can be accessed using the dot syntax for the attributes of the Thermo
+object similar to that used for the Param object. For example
+\code
+    thermo.fHelmholtz
+\endcode
+is the value of the variable 'fHelmholtz' reported in the thermo file
+block, which is the Helmholtz free energy per monomer in thermal
+energy units. A similar syntax is used to access the attributes
+'pressure', 'fIdeal' and 'fInter', each of which is stored as a
+corresponding floating point data attribute of object thermo.
+
+A Thermo object may have attributes named 'polymers', 'solvents',
+'cellParams', 'stress', and/or 'environmentStress' if the thermo file 
+block contains the corresponding elements. Each of these attributes, 
+when present, is a Python list, with elements that can be accessed 
+using the square bracket syntax.  For example, if thermo contains the 
+contents of the thermo block produced by a pscf_pc or pscf_pg 
+simulation of a periodic system, the quantity
+\code
+   thermo.cellParams[0]
+\endcode
+is equal to the final value of the first cell parameter for the
+crystal system of interest.
+
+Attributes of a Thermo object named polymers or solvents are lists in
+which each element is an instance of a class pscfpp.output.Species that
+has float attributes phi (volume fraction) and mu (chemical potential).
+The quantity
+\code
+   thermo.polymers[0].phi
+\endcode
+is thus the volume fraction of the first polymer species in a mixture,
+while
+\code
+   thermo.polymers[0].mu
+\endcode
+is the corresponding chemical potential. In systems that contain one
+or more solvent species, an analogous syntax is used for solvent
+species as elements of a list thermo.solvents
+
+The string representation of a Thermo object is a multi-line string
+formatted like the thermo file block from which the object was created.
+This string representation of Thermo object named thermo is given by the
+expression str(thermo), and can be printed to screen using print(thermo).
+
+<b> Homogeneous comparison </b>
+
+In r1d, one can use the \ref scft_command_1d_homo_page
+"COMPARE_HOMOGENEOUS" command to write data to a thermo file that 
+compares the results to a corresponding homogeneous phase. This block
+of the thermo file is read into a Thermo object in the form of two 
+attributes: thermo.homogeneous and thermo.homogeneousSpecies. The former
+is a Python dictionary containing the first block of homogeneous data,
+where each value is stored with a key equal to the name of the property 
+as written in the PSCF output. For example, the property labeled 'f (homo)'
+can be accessed by 
+\code
+   thermo.homogeneous['f (homo)']
+\endcode
+The attribute thermo.homogeneousSpecies is a list of dictionaries, one for
+each species, where each member of the list corresponds to a single species
+and the data values for each species are stored with keys that match the
+name given in the thermo output. For example, the 'deltaV' property of 
+species 0 can be accessed by
+\code
+   thermo.homogeneousSpecies[0]['deltaV']
+\endcode
+
+<BR>
+\ref analysis_python_param_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_state_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

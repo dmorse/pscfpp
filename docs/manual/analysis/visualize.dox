@@ -6,24 +6,25 @@
 
 An external matlab package named 
 <a href="https://github.com/kdorfmanUMN/polymer_visual">Polymer Visual</a>
-is available for visualization and plotting of periodic microstructures.
-This package is designed to allow users of PSCF to generate figures that 
-characterize the kinds of periodic structures predicted by using pscf_pc 
-or pscf_pg to perform SCFT calculations. Polymer Visual can read files 
-containing the monomer concentration fields written in the 
-\ref scft_field_rgrid_page "r-grid" field file format used by pscf_pc 
-and pscf_pg, and can generate several different types of color plots. 
-Among the possible outputs are plots that show monomer volume fractions 
-along one- and two-dimensional cuts through a structure, and 
-three-dimensional perspective plots that show isosurfaces of monomer
-volume fraction fields.
+has been created to allow visualization of periodic microstructures created
+by PSCF calculations.  Specifically, this package was designed to allow users 
+of PSCF to generate figures that characterize the kinds of periodic structures 
+predicted by using pscf_pc or pscf_pg to perform SCFT calculations. 
 
-Polymer Visual is written as a package of MATLAB functions. It may 
-either be cloned or downloaded as a zip file from the github repository 
-<a href="https://github.com/kdorfmanUMN/polymer_visual"> github.com/kdorfmanUMN/polymer_visual </a>.
-The main web page of that repository provides a complete user manual, 
-which includes examples of the different types of plots that can be 
-generated.
+The Polymer Visual can read files containing the monomer concentration fields 
+written in the \ref scft_field_rgrid_page "r-grid" field file format used by 
+pscf_pc and pscf_pg, and can generate several different types of color plots. 
+Among the possible outputs are plots that show monomer volume fractions along 
+one- and two-dimensional cuts through a structure, and three-dimensional 
+perspective plots that show isosurfaces of monomer concentration fields.
+
+Polymer Visual is written as a package of MATLAB functions. It may either be 
+cloned or downloaded as a zip file from the github repository 
+
+ - <a href="https://github.com/kdorfmanUMN/polymer_visual"> github.com/kdorfmanUMN/polymer_visual </a>
+
+The main web page of that repository provides a complete user manual, which 
+includes examples of the different types of plots that can be generated.
 
 <BR>
 \ref analysis_page (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp; 

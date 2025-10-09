@@ -1,0 +1,46 @@
+/*! \page analysis_python_field_page Field Files
+
+\ref analysis_python_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page               (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+An instance of class Field (or pscfpp.field.Field) can be used to parse
+and store the contents of a field file written in any of the formats used 
+by different PSCF programs. Specifically, an instance of this class can 
+store the contents of any of the 3 file formats used by the pscf_pc and 
+pscf_pg programs for fields in periodic systems, as well as the simpler 
+field file format used for one-dimensional systems by the pscf_1d 
+program. The type of field file is inferred during parsing from the 
+file format.  Parsing can be performed by the constructor for this 
+class, by passing the constructor a filename argument, as for the other 
+Python parser classes described above.
+
+A Field object has three attributes named 'header', 'data', and 'type'. 
+The 'header' attribute is a dictionary that contains the contents of 
+the header section, using the variable names or labels as dictionary 
+keys. The 'data' attribute is a list of lists in which each element 
+of the outer list corresponds to one row of the data section in the 
+field file. When accessing elements of the data attribute using two 
+subscripts, the first subscript (the row index) is thus an index for 
+a spatial degree of freedom (i.e., a grid point, wavevector, or basis 
+function) and the second (the column index) is an index for a column 
+that may contain a field component associated with a specific monomer 
+type, a row index, or information about a basis function, depending on 
+the type of field file being parsed and the column. The 'type' 
+attribute is a string identifier for the field file type, which has 
+allowed values "r1d", "basis", "rgrid", and "kgrid". 
+
+The Field class provides several methods that can change the format of 
+the data table, including methods to add a new column (to allow for
+addition of a new monomer type), delete a column, or change the order
+of columns. 
+
+Please consult the pscfpp.field.Field class documentation for further 
+details.
+
+<BR>
+\ref analysis_python_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_python_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page               (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/
