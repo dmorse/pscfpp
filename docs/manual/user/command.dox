@@ -1,7 +1,7 @@
 /*! \page user_command_page Command Files
 
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_example_page (Next) 
+ \ref user_field_page (Next) 
 <BR>
 
 For any PSCF simulation program, the parameter file is read first, followed 
@@ -117,5 +117,5 @@ and -o command line options.
  <BR>
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_example_page (Next) 
+ \ref user_field_page (Next) 
 */

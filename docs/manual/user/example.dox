@@ -1,7 +1,7 @@
 /*! \page user_example_page Examples
 
-\ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_page (Next)
+\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page        (Next) 
 <BR>
 
 A good way to become familiar with PSCF is to run a few of example 
@@ -99,8 +99,8 @@ files are created in the out/ directory, so this script usually
 removes all files in this directory.
 
 <BR>
-\ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_page          (Next)
+\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page              (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page        (Next) 
 
 */

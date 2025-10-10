@@ -132,7 +132,7 @@ namespace Prdc {
    * t = (1/2, 1/2, 1/2), or as a point group using a set of three 
    * non-orthogonal basis vectors for the primitive unit cell. 
    *
-   * \sa \ref scft_symmetry_page
+   * \sa \ref user_symmetry_page
    * \ingroup Prdc_Crystal_Module
    */
    template <int D>

@@ -1,7 +1,7 @@
 /*! \page scft_param_page Parameter Files
 
 \ref scft_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_field_page  (Next) 
+\ref user_field_page  (Next) 
 <BR>
 
 This section describes the parameter files elements used by PSCF programs 
@@ -17,6 +17,6 @@ sweeps.
 <BR>
 \ref scft_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref scft_page        (Up)  &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_field_page  (Next) 
+\ref user_field_page  (Next) 
 
 */

@@ -1,6 +1,6 @@
 /*! \page scft_command_page Command Files
 
- \ref scft_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_thermo_page (Next) 
 <BR>
 
@@ -14,7 +14,7 @@ commands available for each of the PSCF programs:
 </ol>
 
  <BR>
- \ref scft_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_thermo_page  (Next) 
 */

@@ -21,18 +21,6 @@ information about PS-FTS calculations.
             </li>
      </ul>
    </li>
-   <li> \subpage scft_field_page     
-     <ul>
-       <li> \ref scft_field_r1d_page "One-dimensional Fields (pscf_1d)"  </li>
-       <li> \ref scft_field_periodic_page "Periodic Fields (pscf_pc and pscf_pg)" 
-         <ul>
-           <li> \ref scft_field_basis_page "Basis Format" </li>
-           <li> \ref scft_field_rgrid_page "R-Grid Format" </li>
-           <li> \ref scft_field_kgrid_page "K-Grid Format" </li>
-         </ul>
-       </li>
-     </ul>
-   </li>
    <li> \subpage scft_command_page   
      <ul>
        <li> \ref scft_command_1d_page "One-dimensional systems (pscf_1d)" </li>
@@ -41,14 +29,9 @@ information about PS-FTS calculations.
      </ul>
    </li>
    <li> \subpage scft_thermo_page         </li>
-   <li> \subpage scft_unitcell_page       </li>
-   <li> \subpage scft_groups_page         </li>
    <li> \subpage scft_environment_page    </li>
    <li> \subpage scft_thin_films_page     </li>
    <li> \subpage scft_propagator_page     </li>
-   <li> \subpage scft_fourier_page        </li>
-   <li> \subpage scft_symmetry_page       </li>
-   <li> \subpage scft_basis_page          </li>
    </ol>
 
 <BR>

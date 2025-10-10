@@ -1,7 +1,7 @@
 /*! \page scft_propagator_page Appendix: Modified Diffusion Equations
 
 \ref scft_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_fourier_page  (Next)
+\ref psfts_page  (Next)
 <BR>
 
 Below, we describe the self-consistent field theory (SCFT) equations
@@ -899,6 +899,6 @@ under development as a planned addition to PSCF.
 <BR>
 \ref scft_thin_films_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_page            (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_fourier_page    (Next)
+\ref psfts_page           (Next)
 
 */

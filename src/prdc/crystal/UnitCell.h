@@ -29,7 +29,7 @@ namespace Prdc {
    * (<<) and extractor (>>) operators are defined for each
    * UnitCell<D>::LatticeSystem enumeration. These operators define a 
    * standard text representation of each allowed unit cell type, as
-   * described \ref scft_unitcell_page "here".
+   * described \ref user_unitcell_page "here".
    *
    * Each explicit specialization UnitCell<D> has a member variable of 
    * type UnitCell<D>::LatticeSystem, the value of which is returned by
@@ -47,7 +47,7 @@ namespace Prdc {
    * variable. The text representation for a UnitCell<D> contains a text
    * representation of the LatticeSystem<D> enumeration (i.e., the unit
    * cell type) and a list of one or more unit cell parameters (lengths
-   * and angles), as described \ref scft_unitcell_page "here".
+   * and angles), as described \ref user_unitcell_page "here".
    *
    * \ingroup Prdc_Crystal_Module
    */

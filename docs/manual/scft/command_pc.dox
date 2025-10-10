@@ -591,7 +591,7 @@ values (one or more lengths, and sometimes angles). The lattice type
 string argument must match the lattice parameter given in the Domain 
 section of the parameter file. The number and interpretation of the 
 unit cell parameter values depends on the lattice type, as discussed 
-\ref scft_unitcell_page "elsewhere". 
+\ref user_unitcell_page "elsewhere". 
 
 \section scft_command_pc_compute_sec SCFT Computations
 
@@ -682,7 +682,7 @@ cell. Results are derivatives of the Helmholtz free energy per monomer
 (as output by the WRITE_THERMO command) with respect to unit cell 
 parameters. These derivatives are listed the conventional order of
 the unit cell parameters for the relevant lattice type, as described 
-\ref scft_unitcell_page "here".
+\ref user_unitcell_page "here".
 
 In a system that contains an \ref scft_environment_page "Environment",
 the environment-modified stresses are also written, if they were 

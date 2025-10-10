@@ -12,7 +12,7 @@ of PSCF to generate figures that characterize the kinds of periodic structures
 predicted by using pscf_pc or pscf_pg to perform SCFT calculations. 
 
 The Polymer Visual can read files containing the monomer concentration fields 
-written in the \ref scft_field_rgrid_page "r-grid" field file format used by 
+written in the \ref user_field_rgrid_page "r-grid" field file format used by 
 pscf_pc and pscf_pg, and can generate several different types of color plots. 
 Among the possible outputs are plots that show monomer volume fractions along 
 one- and two-dimensional cuts through a structure, and three-dimensional 

@@ -70,7 +70,7 @@ The allowed values for a 2D system include "square", "rectangular",
 system for a 1D crystal, which is referred to as  "lamellar". A more 
 detailed discussion of each of the possible lattice systems is given in 
 a separate page that documents conventions for
-\ref scft_unitcell_page "unit cells".
+\ref user_unitcell_page "unit cells".
 
 The required lattice system parameter is initialized by the parameter 
 file and is immutable thereafter.
@@ -90,7 +90,7 @@ of underbars between logical elements and the use of - sign to
 represent an overbar, among other conventions. 
 
 Allowed identifiers for crystallographic space groups are listed 
-and discussed in more detail \ref scft_groups_page "here".
+and discussed in more detail \ref user_groups_page "here".
 
 The space group identifier may not be initialized or modified after 
 the PSCF parameter file is read.  SCFT calculations for structures 
@@ -136,7 +136,7 @@ each unit cell type are stored internally in an array that lists the
 required parameters in some pre-specified order. Conventions for the 
 meaning of the required parameters and the order in which they are 
 listed are described for each crystal system in a separate page of 
-documentation about \ref scft_unitcell_page "unit cells".
+documentation about \ref user_unitcell_page "unit cells".
 
 Values for unit cell parameters are specified within the header section 
 of files that describe periodic chemical potential fields (w-fields) or 
@@ -169,8 +169,8 @@ first.
 \section user_param_domain_pc_sa_sec See also:
 
 <ul>
-  <li> \ref scft_unitcell_page "Lattice systems" </li>
-  <li> \ref scft_groups_page   "Space groups" </li>
+  <li> \ref user_unitcell_page "Lattice systems" </li>
+  <li> \ref user_groups_page   "Space groups" </li>
 </ul>
 
 <BR>

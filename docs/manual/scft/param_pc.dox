@@ -4,7 +4,7 @@ namespace Rpc {
 /*! \page scft_param_pc_page Parameter File - pscf_pc and pscf_pg
 
 \ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_field_page  (Next)
+\ref user_field_page  (Next)
 <BR>
 
 The pscf_pc and pscf_pg programs for periodic systems use nearly identical
@@ -182,7 +182,7 @@ The above example does not contains a Sweep block.
 <BR>
 \ref scft_param_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref scft_field_page  (Next)
+\ref user_field_page  (Next)
 
 */
 }

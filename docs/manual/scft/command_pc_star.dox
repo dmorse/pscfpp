@@ -14,11 +14,11 @@ command.
 description of the output of the WRITE_STARS, we strongly recommend
 that users read the discussion of the relationships between "stars" 
 and basis functions given in the documentation of the 
-\ref scft_field_basis_page "basis file format". 
+\ref user_field_basis_page "basis file format". 
 Users who would like a more complete discussion can also consult 
 appendices that discuss crystallographic space group 
-\ref scft_symmetry_page "symmetry operations" and 
-\ref scft_basis_page "symmetry-adapted bases".
+\ref user_symmetry_page "symmetry operations" and 
+\ref user_basis_page "symmetry-adapted bases".
 
 <em> For users who examine the source code </em>:
 The format of this report is defined by the outputStars function of 

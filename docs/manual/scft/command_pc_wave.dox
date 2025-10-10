@@ -12,11 +12,11 @@ Closely related information about the basis is also provided by the
 description of the output of the WRTIE_WAVES command, we strongly recommend
 that users read the discussion of the relationships between "stars" and 
 basis functions given in the documentation of the 
-\ref scft_field_basis_page "basis file format". 
+\ref user_field_basis_page "basis file format". 
 Users who seek a more complete discussion can also consult appendices 
 that discuss crystallographic space group
-\ref scft_symmetry_page "symmetry operations" and
-\ref scft_basis_page "symmetry-adapted bases".
+\ref user_symmetry_page "symmetry operations" and
+\ref user_basis_page "symmetry-adapted bases".
 
 The type of symmetry-adapated Fourier basis used by the pscf_pc and
 pscf_pg programs is constructed by grouping all of the reciprocal lattice
@@ -24,11 +24,11 @@ wavevectors used in a discrete Fourier transform of periodic functions
 into subsets of wavevectors that are related to one another by space 
 group symmetry operations. 
 We refer to each such subset of symmetry-related wavevectors as a 
-\ref scft_field_basis_star_sec "star" of wavevectors.
+\ref user_field_basis_star_sec "star" of wavevectors.
 A basis function that is invariant under all operations of the space group, 
-known as a \ref scft_field_basis_starfunc_defn "star function", is created 
+known as a \ref user_field_basis_starfunc_defn "star function", is created 
 as a linear superposition of waves with wavevectors that belong to each 
-\ref scft_field_basis_uncancelled_sub "uncancelled" star. 
+\ref user_field_basis_uncancelled_sub "uncancelled" star. 
 The report created by the WRITE_WAVES command writes a list of all of 
 wavevectors that belong to uncancelled stars, in which the row associated 
 with each wavevector gives integer indices for the wavevector, the integer 
@@ -49,7 +49,7 @@ is the total number of wavevectors listed in the data section.
 
 The data section contains one row for each reciprocal lattice wavevector 
 that belongs to an uncancelled star. 
-Wavevectors that belong to \ref scft_field_basis_cancelled_sub "cancelled"
+Wavevectors that belong to \ref user_field_basis_cancelled_sub "cancelled"
 stars are omitted.
 Waves that belong to the same star are are assigned a continuous block of 
 values for the index waveId, and are listed as a consecutive block within 
