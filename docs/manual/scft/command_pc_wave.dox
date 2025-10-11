@@ -15,8 +15,8 @@ basis functions given in the documentation of the
 \ref user_field_basis_page "basis file format". 
 Users who seek a more complete discussion can also consult appendices 
 that discuss crystallographic space group
-\ref user_symmetry_page "symmetry operations" and
-\ref user_basis_page "symmetry-adapted bases".
+\ref prdc_symmetry_page "symmetry operations" and
+\ref prdc_basis_page "symmetry-adapted bases".
 
 The type of symmetry-adapated Fourier basis used by the pscf_pc and
 pscf_pg programs is constructed by grouping all of the reciprocal lattice

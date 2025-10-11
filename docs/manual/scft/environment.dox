@@ -1,6 +1,6 @@
 /*! \page scft_environment_page Environments -- Confinement and External Fields
 
- \ref user_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref prdc_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_thin_films_page   (Next) 
 <BR>
 
@@ -271,7 +271,7 @@ describe systems in the absence of imposed fields
      integral used to define \f$ Q_i \f$ in a system with a mask.
 
 <BR>
- \ref user_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref prdc_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref scft_thin_films_page   (Next) 
 */

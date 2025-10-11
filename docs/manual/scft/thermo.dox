@@ -1,7 +1,7 @@
 /*! \page scft_thermo_page Thermodynamic Properties
 
 \ref scft_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_unitcell_page (Next)
+\ref prdc_unitcell_page (Next)
 <BR>
 
 The thermodynamic properties obtained for a converged SCFT solution are output
@@ -240,6 +240,6 @@ cellParams:
 <BR>
 \ref scft_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_unitcell_page (Next)
+\ref prdc_unitcell_page (Next)
 
 */

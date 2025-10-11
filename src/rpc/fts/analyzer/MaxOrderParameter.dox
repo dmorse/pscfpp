@@ -23,7 +23,7 @@ where \f$ \Psi_{\text{max}} \f$ denotes max order parameter,\f$ W_{-}(\bf G)\f$
 denotes the Fourier components of the exchange field, and \f$\bf G\f$
 denotes the Fourier wavevector. Note, since \f$ W_{-} \f$ is 
 real-valued function, \f$ W_{-}(\mathbf {G}) = W_{-}(-\mathbf{G}) \f$. The 
-Fourier transformation is defined in \ref user_fourier_page.
+Fourier transformation is defined in \ref prdc_fourier_page.
 
 \section rpc_MaxOrderParameter_parameter_sec Parameter File
 

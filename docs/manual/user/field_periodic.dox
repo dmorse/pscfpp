@@ -111,7 +111,7 @@ of the web documentation.
 <b> crystal_system </b>:
 The parameter crystal_system is a string identifer for the crystal system,
 i.e., the type of Bravais lattice. Allowed values of this string for each
-value of dim are listed \ref user_unitcell_page "here".
+value of dim are listed \ref prdc_unitcell_page "here".
 
 <b> N_cell_param </b>:
 The parameter N_cell_param is a positive integer that gives the number of
@@ -126,13 +126,13 @@ to describe the unit cell, separated by spaces. These parameters generally
 specify lengths of Bravais basis vectors or unit cell edges and (when
 required) angles between those vectors.  The number, order, and the
 meaning of those parameters depends upon the value of the crystal_system
-identifier, as discussed \ref user_unitcell_page "here".
+identifier, as discussed \ref prdc_unitcell_page "here".
 
 <b> group_name </b>:
 The parameter group_name is a string identifier for a crystallographic
 space group.  Allowed values of this identifier string for each
 combination of values for dim and crystal_system are listed
-\ref user_groups_page "here". The group_name parameter is a required
+\ref prdc_groups_page "here". The group_name parameter is a required
 part of the header for a file basis format, but is an optional element 
 for files written in r-grid or k-grid formats.
 

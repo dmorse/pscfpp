@@ -77,11 +77,6 @@ The web manual for the most recent release of PSCF is available online at
     <li> \ref user_param_page  </li>
     <li> \ref user_command_page  </li>
     <li> \ref user_field_page  </li>
-    <li> \ref user_unitcell_page  </li>
-    <li> \ref user_groups_page  </li>
-    <li> \ref user_fourier_page  </li>
-    <li> \ref user_symmetry_page  </li>
-    <li> \ref user_basis_page  </li>
     </ol>
   </li>
   <li> \subpage scft_page
@@ -113,6 +108,15 @@ The web manual for the most recent release of PSCF is available online at
     <ol type="1">
     <li> \ref analysis_visualize_page  </li>
     <li> \ref analysis_python_page  </li>
+    </ol>
+  </li>
+  <li> \subpage prdc_page
+    <ol type="1">
+    <li> \ref prdc_unitcell_page  </li>
+    <li> \ref prdc_groups_page  </li>
+    <li> \ref prdc_fourier_page  </li>
+    <li> \ref prdc_symmetry_page  </li>
+    <li> \ref prdc_basis_page  </li>
     </ol>
   </li>
   <li> \subpage developer_page

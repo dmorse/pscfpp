@@ -1,7 +1,7 @@
 /*! \page analysis_python_field_page Field Files
 
 \ref analysis_python_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page               (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref prdc_page                    (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 An instance of class Field (or pscfpp.field.Field) can be used to parse
@@ -41,6 +41,6 @@ details.
 <BR>
 \ref analysis_python_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref analysis_python_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page               (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref prdc_page                    (Next)
 
 */

@@ -1,7 +1,7 @@
 /*! \page user_field_page Field Files
 
 \ref user_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_unitcell_page  (Next) 
+\ref scft_page  (Next) 
 <BR>
 
 Among the commands that can be issued from the command file for any 
@@ -113,7 +113,7 @@ obtained, the resulting converged w and c fields are usually written to
 output files.
 
 <BR>
- \ref user_command_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_page            (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_unitcell_page   (Next) 
+ \ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref scft_page     (Next) 
 */

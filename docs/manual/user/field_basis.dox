@@ -276,7 +276,7 @@ wavenumbers (in 1D) or wavevectors (in 2D or 3D) for which the indices
 associated with a particular direction differ by integer multiples of 
 the number of grid points along each that direction are aliases of one
 another, and thus equivalent for this purpose, as discussed in more 
-detail in \ref user_fourier_dft_alias_sub "appendix".  Waves that are 
+detail in \ref prdc_fourier_dft_alias_sub "appendix".  Waves that are 
 aliases of one another in this sense are counted as equivalent by the 
 algorithm that constructs basis functions for functions that are 
 defined on a lattice.
@@ -414,7 +414,7 @@ The remainder of this section summarizes the relationship between
 stars and symmetry-adapted basis functions in a form sufficient to
 allow users to understand the basis file format for field files.
 A more detailed discussion of the underlying mathematics is given 
-as an \ref user_basis_page "appendix". That appendix provides more 
+as an \ref prdc_basis_page "appendix". That appendix provides more 
 precise notation and definitions, and includes proofs of variety 
 of assertions about mathematical facts that are made here without 
 proof.
@@ -453,7 +453,7 @@ a space group can be expressed as a a set of homogeneous linear equation
 that relate the coefficients \f$ c_{0}, \ldots, c_{M-1} \f$ of different
 waves in the above expansion.
 These relationships among coefficients are discussed in detail in the
-associated \ref user_basis_page "appendix".
+associated \ref prdc_basis_page "appendix".
 The form of these equations can be shown to require that these coefficients
 all have equal absolute magnitude
 \f[
@@ -546,7 +546,7 @@ Uncancelled stars may be either closed or open under inversion:
      is not in \f$ T \f$.
 
 The following theorems about uncancelled stars and star functions are
-proved in an \ref user_basis_page "appendix":
+proved in an \ref prdc_basis_page "appendix":
 
    - Every wavevector belongs to exactly one star.
 

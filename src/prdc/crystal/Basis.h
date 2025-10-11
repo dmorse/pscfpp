@@ -33,9 +33,9 @@ namespace Prdc {
    /**
    * Symmetry-adapted Fourier basis for pseudo-spectral SCFT.
    *
-   * \sa \ref user_fourier_page
-   * \sa \ref user_symmetry_page
-   * \sa \ref user_basis_page
+   * \sa \ref prdc_fourier_page
+   * \sa \ref prdc_symmetry_page
+   * \sa \ref prdc_basis_page
    *
    * <b> %Basis Functions, Waves, and Stars </b>:
    *
@@ -164,7 +164,7 @@ namespace Prdc {
    * using the BZ indices of each wavevector, giving the square norm of 
    * a minimal image.
    *
-   * See also: \ref user_fourier_page
+   * See also: \ref prdc_fourier_page
    *
    * <b> Space Group Symmetry </b>:
    *
@@ -236,8 +236,8 @@ namespace Prdc {
    * (e.g., 1/4, 1/3, 1/2, etc.) in the range [0,1].
    *
    * See also: 
-   *    - \ref user_symmetry_page
-   *    - \ref user_basis_page
+   *    - \ref prdc_symmetry_page
+   *    - \ref prdc_basis_page
    * 
    * <b> Cancelled Stars </b>
    *
@@ -274,7 +274,7 @@ namespace Prdc {
    * star may also be accessed by its basisId using the function 
    * Basis::basisFunction(int basisId).
    *
-   * See also: \ref user_basis_page
+   * See also: \ref prdc_basis_page
    *
    * <b> Open and Closed Stars </b>
    *
@@ -311,7 +311,7 @@ namespace Prdc {
    * wave is taken to be the negation of the characteristic wave of
    * its partner, which is the previous star.
    *
-   * See also: \ref user_basis_page
+   * See also: \ref prdc_basis_page
    *
    * <b> Phase Conventions for %Basis Functions </b>
    *

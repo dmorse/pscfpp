@@ -1,44 +1,65 @@
-/*! \page user_groups_page Space Groups
+/*! \page prdc_groups_page Space Groups
 
- \ref user_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_fourier_page   (Next) 
+ \ref prdc_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref prdc_fourier_page   (Next) 
 <BR>
 
-The PSCF programs that are designed to simulate periodic structures use
-algorithms that constrain the chemical potential fields to be symmetric
-under all operations of a specified crystallographic space group. Each
-possible space group is identified in PSCF by a unique identifer string.
+The pscf_pc and pscf_pg programs can input and output field files in a
+format that constrains the fields to be symmetric under all symmetry
+operations of a specified crystallographic space group. Both of these
+programs can also perform SCFT calculations that search for a solution
+of a specified space group symmetry.  Each possible crystallographic 
+space group is identified in PSCF by a unique identifer string.
 
-\section user_groups_identifier_sec Space group identifier strings 
+\section prdc_groups_identifier_sec Space group identifier strings 
 
 The space group identifiers used in PSCF are ASCII strings with no white
 space that are constructed as mangled forms of the Hermann Mauguin space
 group names that are used in the international tables of crystallography.
 Each PSCF space group identifier is also the name of a file that contain 
-a description of the space group.  The international symbols cannot be used 
-for this purpose because they contain typset elements such as subscripts 
-and overbars that cannot be represented using an ascii character set. The 
-following rules are used to convert Hermann Mauguin names into PSCF ascii 
-space group identifiers:
+a description of the space group.  The use of identifiers that are ascii 
+strings with no white space allows the PSCF space group identifiers is
+convenient because it allows them to read from the parameter file as 
+single words with standard stream IO operations, and also allows the 
+same strings to be used as file names.  The international symbols cannot 
+be used for these purposes because they contain typset elements such as 
+subscripts and overbars that cannot be represented using an ascii character 
+set. 
+
+The following rules are used to convert each Hermann Mauguin space group
+symbol into a corresponding ascii string identifier:
 <ul>
 <li>
-Logical elements of the Hermann Mauguin space group name are separated by underbars (_). For example, I_m_m_a is the PSCF identifier for space group \f$Imma\f$.
+Logical elements of the Hermann Mauguin space group symbol are separated by 
+underbars (_). For example, I_m_m_a is the PSCF identifier for space group 
+\f$Imma\f$.
 </li>
 <li>
-Each overbar symbol in the Hermann Mauguin name is replaced by a "-" that appears as prefix to the overbarred symbol. 
-For example, I_a_-3_d is the PSCF identifier for space group \f$Ia\overline{3}d\f$, which is the space group of the double gyroid phase of a diblock copolymer.
+Each overbar symbol in the Hermann Mauguin symbol is replaced by a "-" that 
+appears as prefix to the overbarred symbol.  For example, I_a_-3_d is the 
+PSCF identifier for space group \f$Ia\overline{3}d\f$, which is the space 
+group of the double gyroid phase of a diblock copolymer.
 </li>
 <li>
-Elements in which a single digit number appears as a subcript to another such number are listed as pairs of numbers with no intervening space, in which the second number in the pair is the subcript. For example, P_43_2_2 is the PSCF identifier for space group \f$P4_{3}22\f$.
+Elements in which a single digit number appears as a subcript to another 
+such number are listed as pairs of numbers with no intervening space, in 
+which the second number in the pair is the subcript. For example, P_43_2_2 
+is the PSCF identifier for space group \f$P4_{3}22\f$.
 </li>
 <li>
-Each slash ("/") in a Hermann Mauguin name is replaced by a percent sign ("%") symbol. For example P_4\%m_m_m is the PSCF identifier for space group \f$P4/mmm\f$.
+Each slash ("/") in a Hermann Mauguin name is replaced by a percent sign ("%") symbol. 
+For example P_4\%m_m_m is the PSCF identifier for space group \f$P4/mmm\f$.
 </li>
 <li>
-Different possible settings of a space group (e.g., due to different choices of origin) are indicated by a a colon (":") followed by a single digit or letter at the end of the space group name. 
-For example F_d_-3_m:2 is the PSCF identifier for setting 2 of space group \f$Fd\overline{3}m\f$, which has two settings labelled "1" and "2". 
-Some space groups for crystals in the trigonal crystal system can be represented using either a hexagonal or rhombohedral Bravais lattice, which are identified with names that end in suffixes ":H" or ":R", respectively.
-Such setting labels are only used for space groups for which two or more setting are listed in the international tables.
+Different possible settings of a space group (i.e., representations that use a 
+different choice of origin) are indicated by a a colon (":") followed by a single 
+digit or letter at the end of the space group name.  For example F_d_-3_m:2 is the 
+PSCF identifier for setting 2 of space group \f$Fd\overline{3}m\f$, which has two 
+settings labelled "1" and "2".  Some space groups for crystals in the trigonal crystal 
+system can be represented using either a hexagonal or rhombohedral Bravais lattice, 
+which are identified with names that end in suffixes ":H" or ":R", respectively. Such 
+setting suffixes are only used for space groups for which two or more setting are 
+listed in the international tables.
 </li>
 </ul>
 
@@ -58,7 +79,7 @@ A vector with elements given by rational numbers (fractions) is used to represen
 
 Identifier strings for all of the standard 1D, 2D and 3D space groups are listed below:
 
-\section user_groups_1D_sec 1D space groups 
+\section prdc_groups_1D_sec 1D space groups 
 
 There are only two possible symmetry groups for one-dimensionally periodic
 structures: Space group \c P_-1 has an inversion center at the origin, 
@@ -72,7 +93,7 @@ Group identifiers:
 | 2      | \c P_1  | No symmetry |
 
 
-\section user_groups_2D_sec 2D space groups 
+\section prdc_groups_2D_sec 2D space groups 
 
 There are 17 possible 2D symmetry groups, also known as plane groups.
 
@@ -98,7 +119,7 @@ Group identifiers:
 | 17     | \c p_6_m_m | hexagonal |
 
 
-\section user_groups_3D_sec 3D space groups 
+\section prdc_groups_3D_sec 3D space groups 
 
 There are 230 possible 3D space groups. The international crystallographic 
 tables lists 2 "settings" for some space groups, which differ in the 
@@ -374,7 +395,7 @@ Group identifiers:
 | 230    | <tt> I a_-3_d </tt>     | Cubic |
 
 <BR>
- \ref user_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_fourier_page   (Next) 
+ \ref prdc_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref prdc_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref prdc_fourier_page   (Next) 
 */

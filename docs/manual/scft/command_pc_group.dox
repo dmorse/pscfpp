@@ -6,7 +6,7 @@
 THE WRITE_GROUP command accepted by pscf_pc and pscf_pg programs writes
 a file containing a list of all the symmetry operations of the current 
 space group. A discussion of symmetry operations and their representation
-is given as an \ref user_symmetry_page "appendix". A shorter overview is
+is given as an \ref prdc_symmetry_page "appendix". A shorter overview is
 given here in a form sufficient to allow a user to understand the format
 of the file created by the WRITE_GROUP operation. The format used by
 the WRITE_GROUP command is the same as that used in the group files that 

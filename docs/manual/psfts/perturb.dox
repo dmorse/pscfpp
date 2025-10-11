@@ -1,7 +1,7 @@
 /*! \page psfts_perturb_page Perturbations 
 
 \ref psfts_ramp_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page      (Next)
+\ref analysis_page     (Next)
 <BR>
 
 A perturbation is an optional feature that allows a user to define a 
@@ -272,8 +272,8 @@ information about the time average.
 </ul>
 
 <BR>
-\ref psfts_ramp_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page    (Next)
+\ref psfts_ramp_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page       (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref analysis_page    (Next)
 
 */

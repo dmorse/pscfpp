@@ -1,0 +1,26 @@
+/*! \page prdc_page Periodic Systems
+
+\ref analysis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref developer_page (Next)
+<BR>
+
+This chapter combines some general theoretical background about 
+crystallography and periodic functions with more specific 
+information about the conventions used by PSCF for crystal unit
+cells, space groups, and symmetry-adapted bases.
+
+<h2> Contents:</h2>
+   <ol>
+   <li> \subpage prdc_unitcell_page       </li>
+   <li> \subpage prdc_groups_page         </li>
+   <li> \subpage prdc_fourier_page        </li>
+   <li> \subpage prdc_symmetry_page       </li>
+   <li> \subpage prdc_basis_page          </li>
+   </ol>
+
+<BR>
+\ref analysis_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref index "Main Page" (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page    (Next)
+
+*/

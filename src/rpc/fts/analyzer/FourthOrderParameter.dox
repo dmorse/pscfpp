@@ -22,7 +22,7 @@ parameter is a finite value.
 where \f$ \Psi_{\text{fourth}}\f$ denotes fourth order parameter,
 \f$ W_{-}(\bf G)\f$ denotes the Fourier components of the exchange field, 
 and \f$\bf G\f$ denotes the Fourier wavevector. The Fourier 
-transformation is defined in \ref user_fourier_page.
+transformation is defined in \ref prdc_fourier_page.
 
 \section rpc_FourthOrderParameter_parameter_sec Parameter File
 

@@ -23,8 +23,8 @@ namespace Prdc {
    /**
    * Crystallographic space group.
    *
-   * \sa \ref user_groups_page
-   * \sa \ref user_symmetry_page
+   * \sa \ref prdc_groups_page
+   * \sa \ref prdc_symmetry_page
    * \ingroup Prdc_Crystal_Module
    */
    template <int D>
