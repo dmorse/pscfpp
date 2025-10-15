@@ -3,7 +3,7 @@ Goal: Create a system that makes it convenient to perform any of
 
     - SCFT with an imposed space group
     - SCFT with no imposed space group (iteration on a grid)
-    - FTMC with no imposed space group
+    - PS-FTS with no imposed space group
 
 Behaviors:
 
@@ -16,9 +16,9 @@ file and then change the choice of space group after initialization.
 
 2) If you want to use a space group for any purpose you have to declare a
 group name in the parameter file. If the group name parameter is absent, 
-you can perform field theoretic Monte Carlo and other operations that don't
-assume the existence of symmetry, but you cannot use an SCFT iterature that
-imposes symmetry. 
+you can perform field theoretic simulation and other operations that don't
+assume the existence of symmetry, but you cannot use an SCFT iterature 
+that imposes symmetry. 
 
 3) If Domain::hasGroup is true (if the parameter file has a space group name):
 
@@ -64,13 +64,13 @@ or impose automatic double checks.
 space group will be written to the header if and only if the field is known 
 to be symmetric (i.e., if isSymmetric == true for the associated w field). 
 This implies, among other things, that header files for outputs of field 
-theoretic Monte Carlo (FTMC) trajectory and configuration output files will 
-never contain a space group name. 
+theoretic simulation (PS-FTS) trajectory and configuration output files 
+will never contain a space group name. 
 
-9) Normal usage for FTMC simulations will be that there is no space group 
+9) Normal usage for PS-FTS simulations will be that there is no space group 
 name in either the parameter file or in the header of any input or output 
-field file. FTMC and symmetric SCFT simulations will not normally be 
-performed in the same command file. 
+field file. We assume that PS-FTS and symmetric SCFT simulations will not 
+normally be performed in the same command file. 
 
 9) The Rpc::Iterator and Rpg::Iterator bases classes have a protected
 boolean variable isSymmetric_ and a public function isSymmetric() that

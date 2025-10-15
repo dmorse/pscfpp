@@ -1,44 +1,52 @@
 ------------------------------------------------------------------------
-v1.3
+Docs:
 
-1) Pseudospectral bead model for Rpc and Rpg
+  - Improve developer documentation for parameter IO
 
-2) "Environment" member to encapsulate imposed fields in Rpc and Rpg
+  - Write a first draft of a latex theory and algorithms manual section, 
+    or publish as an article in a computational science oriented journal.
 
-3) Generalized partial-saddle approximation and Anderson mixing
-
-4) Back-tracking in Anderson Mixing ?
-
-5) LrAM iterator for SCFT ?
-
-
-Pscf
------
-
-1) Change treatment of phases in Basis to explicitly store and 
-manipulate Rational number phases, compute floating point coefficients 
-only at the very end.
-
-2) Introduce a convention in Basis in which pairs of related open 
-stars are always listed in the same order (this helps complete the 
-basis field API).
-
-3) Introducing new v2.0 field file formats for basis and rgrid. 
-Basis would contain the mesh. Rgrid would be output in convention C 
-order.
-
-Docs
------
-
-1) Documentation for building on Windows Subsystem for Linux (WSL)
-
-2) Improve developer documentation for build system, Parameter IO
-
-3) Write a first draft of a latex algorithms and theory manual, or 
-publish as an article in a computational science oriented journal.
+  - Documentation for building on Windows Subsystem for Linux (WSL)
 
 ------------------------------------------------------------------------
-v1.4
+Crystallography and Field Files:
 
-Field theoretic simulation with complex fields (FTS-C)
+  - Change treatment of phases in Basis to explicitly store and 
+    manipulate Rational number phases, compute floating point 
+    coefficients only at the very end.
 
+  - Introduce a convention in Basis in which pairs of related open stars
+    are always listed in the same order (this helps complete the basis 
+    field API).
+
+  - Introducing new v2.0 field file formats for basis and rgrid. 
+    Basis would contain the mesh. Rgrid mesh nodes would be output in 
+    conventional C order.
+
+------------------------------------------------------------------------
+SCFT:
+
+  - Back tracking in Anderson Mixing  ?
+
+  - LrAm iterator for SCFT ?
+
+  - Consider introducing non-locality and compressibility
+
+------------------------------------------------------------------------
+PS-FTS:
+
+  - Allow for eigenvalues of projected chi matrix of both signs
+
+  - Move "Interaction" into program level subspaces.
+
+  - Introduce smooth cutoff "damping" function for interactions
+
+  - For simplicity, don't introduce compressibility into PS-FTS.
+ 
+------------------------------------------------------------------------
+CL-FTS:
+
+  - Complex Langevin field theoretic simulation (CL-FTS)
+
+  - Design Interaction with chi matrix plus compression modulus, with
+    same damping function for all interactions.

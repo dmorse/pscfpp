@@ -344,8 +344,14 @@ namespace Prdc {
          iteratorPtr_ =
             iteratorFactoryPtr_->readObjectOptional(in, *this, 
                                                     className, isEnd);
-         if (!iteratorPtr_ && ParamComponent::echo()) {
-            Log::file() << indent() << "  Iterator{ [absent] }\n";
+         if (iteratorPtr_) {
+            if (iteratorPtr_->isSymmetric()) {
+               UTIL_CHECK(domain_.hasGroup()); 
+            }
+         } else {
+            if (ParamComponent::echo()) {
+               Log::file() << indent() << "  Iterator{ [absent] }\n";
+            }
          }
       }
 
@@ -369,8 +375,13 @@ namespace Prdc {
          }
       }
 
-      // Check that the polymer model was not reset after initialization
+      // Check that the polymer model was not modified after initialization
       UTIL_CHECK(PolymerModel::nSet() == nSetPolymerModel);
+
+      // Note: The main pscf_pc or pscf_pg program can irreversibly lock the
+      // global polymer model after reading the parameter file, to also prohibit 
+      // later changes. The model is not locked here to allow repeated calls to
+      // this function during unit testing.
    }
 
    /*
@@ -503,12 +514,12 @@ namespace Prdc {
          if (command == "WRITE_STRESS") {
             readEcho(in, filename);
             std::ofstream file;
-            if (!mixture().hasStress()) {
+            if (!mixture_.hasStress()) {
                computeStress();
             }
             fileMaster_.openOutputFile(filename, file,
                                        std::ios_base::app);
-            mixture().writeStress(file);
+            mixture_.writeStress(file);
             if (hasEnvironment()) {
                environment().writeStress(file);
             }
@@ -833,7 +844,7 @@ namespace Prdc {
       // If necessary, compute and store Environment stress
       if (hasEnvironment()) {
          if (!environment().hasStress()) {
-            environment().computeStress(mixture(),
+            environment().computeStress(mixture_,
                                         iterator().flexibleParams());
          }
       }
@@ -873,10 +884,10 @@ namespace Prdc {
          scft().compute();
          scft().write(Log::file());
          if (!iterator().isFlexible()) {
-            if (!mixture().hasStress()) {
+            if (!mixture_.hasStress()) {
                computeStress();
             }
-            mixture().writeStress(Log::file());
+            mixture_.writeStress(Log::file());
             if (hasEnvironment()) {
                environment().writeStress(Log::file());
             }
@@ -943,7 +954,7 @@ namespace Prdc {
       UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(domain_.lattice() == unitCell.lattice());
 
-      // Set system unit cell
+      // Set system unit cell, using UnitCell<D> assignment operator
       domain_.unitCell() = unitCell;
 
       // If necessary, make basis

@@ -28,12 +28,13 @@ Directory pscf/chem:
 
    class VertexIterator - unchanged
 
-   class Species: Make a template of type WType, default to double
+   class Species: Make this a template of type WType, default to double
 
       - Make member variables q_, phi_, and mu_ type WType
 
       - Create a new private variable double phiMu_, read this
-        in Species::readParameters.
+        in Species::readParameters. The input parameter is real,
+        but is converted to WType.
   
         bool hasPhi = readOptional(in, "phi", inputPhiMu_).isActive();
         if (hasPhi) { 

@@ -1,0 +1,91 @@
+Generalizing Interaction class:
+
+Observation: Existing codes are based on a simple common model of
+interactions for an incompressible systemw with a local excess free
+energy described by a Flory-Huggins form.
+
+Implementation of complex Langevin simulations (CL-FTS) and 
+generalizations of PS-FTS require non-local interactions and
+(for CL-FTS) compressibility.
+
+Proposal: 
+
+- Move the existing Pscf::Interaction class to Pscf::R1d::Interaction.
+
+- Also copy the Pscf::Interaction class to Pscf::Prdc::Interaction, and
+  start modifying to allow wavenumber depends of elements of chi matrix
+  in PS-FTS.
+
+- Modify WaveList to list value of the smearing function for each 
+  wavevector
+
+- Later, create namespaces Pscf::Rf for programs that use real fields 
+  (pscf_pc and pscf_pg) for SCFT and PS-PFTS and Pscf::Cf for CL code 
+  that uses complex fields. Templates that have been created for 
+  System, Domain, WFields, CFields, FieldIo etc.  could be moved into 
+  Pscf::Rf.
+
+Interaction model for PS-FTS (still incompressible):
+
+   Member variables:
+
+     Matrix<double> chi_
+     bool isLocal_ (default true)
+
+     double qc_;
+
+     double alpha_;
+
+     int n_
+
+
+   Public function:
+
+     // Smearing function (non-locality)
+     double f(double q);
+
+   Comments (why not make the model compressible?): 
+
+      - Introducing compressiblity and nonlocality into PS-FTS would be
+        a significant complication, because current code is built around 
+        the idea of a projected chi matrix. To do this correctly, we 
+        would have to diagonalize U = chi + B e e^{T} instead. 
+
+      - I don't think that allowing compressiblity in PS-FTS would give
+        yield significant new physical insight. It would just complicate 
+        interpretation of simulations in terms of effective parameters
+        by making the effective chi parameter depend on yet another 
+        microscopic parameter.
+
+      - Introduction of compressiblity in SCFT would make more sense,
+        but would require a rethinking of the residual vector currently
+        used in Anderson-mixing algorithms. 
+
+      - Conclusion: Keep PS-FTS and SCFT incompressible for now.
+        Consider later introduction of compressiblity in SCFT, but
+        probabably not in PS-FTS.
+
+Interaction model for complex Langevin simulations:
+
+   Member variables:
+
+      Matrix<double> chi_
+
+      bool isLocal_
+
+      bool isCompressible_
+
+      double modulus_
+
+   Member variables:
+
+     double f(double q) -> damping function
+
+   Comments:
+
+      Damping function is used only if isLocal_ == false.
+
+      If isCompressible_ and !isLocal_, then damping function applies 
+      to all elements of U, including those arising from the compression 
+      modulus.
+
