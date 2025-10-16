@@ -10,10 +10,11 @@
 #include <r1d/domain/Domain.h>
 #include <r1d/solvers/Mixture.h>
 #include <r1d/solvers/Polymer.h>
+#include <r1d/solvers/Solvent.h>
+#include <r1d/solvers/Block.h>
 
 #include <pscf/chem/Vertex.h>
 #include <pscf/floryHuggins/Clump.h>
-//#include <pscf/inter/Interaction.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/format/Str.h>

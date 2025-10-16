@@ -6,22 +6,40 @@
 */
 
 #include "Mixture.h"
+#include "Polymer.h"
+#include "Solvent.h"
+#include "Block.h"
+#include "Propagator.h"
 #include <r1d/domain/Domain.h>
+#include <pscf/solvers/MixtureTmpl.tpp>
 
 #include <cmath>
 
+// Explicit instantiation of base class
 namespace Pscf { 
-namespace R1d
-{ 
+   template class MixtureTmpl<R1d::Polymer, R1d::Solvent>;
+}
 
+namespace Pscf { 
+namespace R1d { 
+
+   /*
+   * Constructor.
+   */
    Mixture::Mixture()
     : ds_(-1.0),
       domainPtr_(0)
    {  setClassName("Mixture"); }
 
+   /*
+   * Destructor.
+   */
    Mixture::~Mixture()
    {}
 
+   /*
+   * Read parameter file block. 
+   */
    void Mixture::readParameters(std::istream& in)
    {
       MixtureTmpl<Polymer, Solvent>::readParameters(in);
@@ -34,6 +52,9 @@ namespace R1d
       UTIL_CHECK(ds_ > 0);
    }
 
+   /*
+   * Create association with domain, set spatial discretization.
+   */
    void Mixture::setDomain(Domain const& domain)
    {
       UTIL_CHECK(nMonomer() > 0);

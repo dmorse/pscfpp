@@ -5,6 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <r1d/solvers/Mixture.h>
+#include <r1d/solvers/Polymer.h>
+#include <r1d/solvers/Propagator.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>

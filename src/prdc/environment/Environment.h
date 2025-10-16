@@ -101,8 +101,8 @@ namespace Prdc {
       * \param mixture  const reference to Mixture object with stress
       * \param flexibleParams  array indicating which stresses to compute
       */
-      template <int D, class PT, class ST>
-      void computeStress(MixturePrdc<D, PT, ST> const & mixture, 
+      template <int D, class PT, class ST, class TT>
+      void computeStress(MixturePrdc<D, PT, ST, TT> const & mixture, 
                          FSArray<bool, 6> const & flexibleParams);
 
       /**
@@ -172,8 +172,8 @@ namespace Prdc {
    * (Note: this definition is included in header file so that it can 
    * be implicitly instantiated by the compiler wherever needed)
    */
-   template <int D, class PT, class ST>
-   void Environment::computeStress(MixturePrdc<D, PT, ST> const & mixture, 
+   template <int D, class PT, class ST, class TT>
+   void Environment::computeStress(MixturePrdc<D, PT, ST, TT> const & mixture, 
                                    FSArray<bool, 6> const & flexibleParams)
    {
       if (hasStress_) return;

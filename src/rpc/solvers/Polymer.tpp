@@ -9,17 +9,26 @@
 */
 
 #include "Polymer.h"
+#include "Block.h"
+#include "Propagator.h"
+#include <pscf/solvers/PolymerTmpl.tpp>
 #include <prdc/cpu/RField.h>
 
 namespace Pscf {
 namespace Rpc { 
 
+   /*
+   * Constructor.
+   */
    template <int D>
    Polymer<D>::Polymer()
     : stress_(),
       nParam_(0)
    {  ParamComposite::setClassName("Polymer");}
 
+   /*
+   * Destructor.
+   */
    template <int D>
    Polymer<D>::~Polymer()
    {}

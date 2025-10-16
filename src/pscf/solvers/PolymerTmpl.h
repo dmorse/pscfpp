@@ -14,12 +14,7 @@
 #include <util/containers/Pair.h>        // member template
 #include <util/containers/DArray.h>      // member template
 
-#include <pscf/chem/Vertex.h>
-#include <pscf/chem/PolymerType.h>
-#include <pscf/chem/PolymerModel.h>
-
-namespace Pscf
-{
+namespace Pscf {
 
    class Edge;
    using namespace Util;
@@ -45,7 +40,7 @@ namespace Pscf
    *
    * \ingroup Pscf_Solver_Module
    */
-   template <class BT>
+   template <class BT, class PT>
    class PolymerTmpl : public PolymerSpecies
    {
 
@@ -61,7 +56,7 @@ namespace Pscf
       /**
       * Modified diffusion equation solver for one block, in one direction.
       */
-      using PropagatorT = typename BT::PropagatorT;
+      using PropagatorT = PT;
 
       // Public member functions
 
@@ -95,10 +90,10 @@ namespace Pscf
       * field.
       *
       * Each implementation-level namespace defines a concrete subclass 
-      * of PolymerTmpl<BT> that is named Polymer by convention. Each such 
+      * of PolymerTmpl<BT,PT> that is named Polymer by convention. Each such 
       * Polymer class defines a function named "compute" that takes an 
       * array of chemical fields (w-fields) as an argument, and that calls
-      * PolymerTmpl<BT>::solve internally.  Before calling the solve()
+      * PolymerTmpl<BT,PT>::solve internally.  Before calling the solve()
       * function declared here, the Polymer::compute() function must pass
       * pass the w-fields and any other required mutable data to all Block
       * objects in order to set up the MDE solver for each block. After
@@ -161,7 +156,7 @@ namespace Pscf
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
       */
-      PropagatorT& propagator(int blockId, int directionId);
+      PT& propagator(int blockId, int directionId);
 
       /**
       * Get the propagator for a specific block and direction (const).
@@ -169,7 +164,7 @@ namespace Pscf
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
       */
-      PropagatorT const & propagator(int blockId, int directionId) const;
+      PT const & propagator(int blockId, int directionId) const;
 
       /**
       * Get a propagator indexed in order of computation (non-const).
@@ -178,7 +173,7 @@ namespace Pscf
       *
       * \param id  propagator index, in order of computation plan
       */
-      PropagatorT& propagator(int id);
+      PT& propagator(int id);
 
       ///@}
 
@@ -216,7 +211,7 @@ namespace Pscf
    private:
 
       /// Array of Block objects in this polymer.
-      DArray<BlockT> blocks_;
+      DArray<BT> blocks_;
 
       /**
       * Check validity of internal data structures set by readParameters.
@@ -232,64 +227,34 @@ namespace Pscf
    /*
    * Get a specified Edge (block descriptor) by non-const reference.
    */
-   template <class BT>
+   template <class BT, class PT>
    inline
-   Edge& PolymerTmpl<BT>::edge(int id)
+   Edge& PolymerTmpl<BT,PT>::edge(int id)
    {  return blocks_[id]; }
 
    /*
    * Get a specified Edge (block descriptor) by const reference.
    */
-   template <class BT>
+   template <class BT, class PT>
    inline
-   Edge const & PolymerTmpl<BT>::edge(int id) const
+   Edge const & PolymerTmpl<BT,PT>::edge(int id) const
    {  return blocks_[id]; }
 
    /*
    * Get a specified Block solver by non-const reference.
    */
-   template <class BT>
+   template <class BT, class PT>
    inline
-   BT& PolymerTmpl<BT>::block(int id)
+   BT& PolymerTmpl<BT,PT>::block(int id)
    {  return blocks_[id]; }
 
    /*
    * Get a specified Block solver by const reference.
    */
-   template <class BT>
+   template <class BT, class PT>
    inline
-   BT const & PolymerTmpl<BT>::block(int id) const
+   BT const & PolymerTmpl<BT,PT>::block(int id) const
    {  return blocks_[id]; }
 
-   /*
-   * Get a propagator, indexed by block and direction ids (non-const).
-   */
-   template <class BT>
-   inline
-   typename BT::PropagatorT&
-   PolymerTmpl<BT>::propagator(int blockId, int directionId)
-   {  return block(blockId).propagator(directionId); }
-
-   /*
-   * Get a propagator, indexed by block and direction ids (const).
-   */
-   template <class BT>
-   inline
-   typename BT::PropagatorT const &
-   PolymerTmpl<BT>::propagator(int blockId, int directionId) const
-   {  return block(blockId).propagator(directionId); }
-
-   /*
-   * Get a propagator, indexed in order of computation.
-   */
-   template <class BT>
-   inline
-   typename BT::PropagatorT& PolymerTmpl<BT>::propagator(int id)
-   {
-      Pair<int> propId = propagatorId(id);
-      return propagator(propId[0], propId[1]);
-   }
-
 }
-#include "PolymerTmpl.tpp"
 #endif

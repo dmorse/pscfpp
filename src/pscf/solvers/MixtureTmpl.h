@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/MixtureBase.h>
-#include <util/param/ParamComposite.h>
-#include <util/containers/DArray.h>
+#include <pscf/chem/MixtureBase.h>       // base class
+#include <util/param/ParamComposite.h>   // base class
+#include <util/containers/DArray.h>      // member template
 
 namespace Pscf
 {
@@ -38,16 +38,6 @@ namespace Pscf
       * Polymer species solver type.
       */
       using PolymerT = PT;
-
-      /**
-      * Block polymer block type.
-      */
-      using BlockT = typename PT::BlockT;
-
-      /**
-      * Polymer block propagator type.
-      */
-      using PropagatorT = typename BlockT::PropagatorT;
 
       // Public member functions
 
@@ -189,5 +179,4 @@ namespace Pscf
    }
 
 }
-#include "MixtureTmpl.tpp"
 #endif

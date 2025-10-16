@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MixtureTmpl.h"                   // base class
+#include "MixtureTmpl.h"
 
 namespace Pscf
 {
@@ -36,7 +36,7 @@ namespace Pscf
    */
    template <class PT, class ST>
    PolymerSpecies const & MixtureTmpl<PT,ST>::polymerSpecies(int id) const
-   {  
+   {
       UTIL_CHECK(id < nPolymer_);
       return polymers_[id];
    }
@@ -46,9 +46,9 @@ namespace Pscf
    */
    template <class PT, class ST>
    SolventSpecies const & MixtureTmpl<PT,ST>::solventSpecies(int id) const
-   {  
+   {
       UTIL_CHECK(id < nSolvent_);
-      return solvents_[id]; 
+      return solvents_[id];
    }
 
    /*
@@ -89,7 +89,7 @@ namespace Pscf
             readParamComposite(in, polymer(i));
             nBlock_ = nBlock_ + polymer(i).nBlock();
          }
-   
+
          // Set statistical segment lengths for all blocks
          double kuhn;
          int monomerId;

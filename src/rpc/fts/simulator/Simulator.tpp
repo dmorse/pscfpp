@@ -12,6 +12,8 @@
 
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Solvent.h>
 #include <rpc/field/Domain.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/CompressorFactory.h>

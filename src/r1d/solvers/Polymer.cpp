@@ -6,10 +6,17 @@
 */
 
 #include "Polymer.h"
+#include "Block.h"
+#include "Propagator.h"
+#include <pscf/solvers/PolymerTmpl.tpp>
+
+// Explicit instantiation of base class
+namespace Pscf {
+   template class PolymerTmpl<R1d::Block, R1d::Propagator>;
+}
 
 namespace Pscf {
-namespace R1d 
-{ 
+namespace R1d { 
 
    /*
    * Constructor

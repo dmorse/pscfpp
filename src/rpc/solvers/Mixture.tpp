@@ -9,6 +9,10 @@
 */
 
 #include "Mixture.h"
+#include "Polymer.h"
+#include "Solvent.h"
+#include "Block.h"
+#include "Propagator.h"
 #include <rpc/field/FieldIo.h>
 #include <prdc/solvers/MixturePrdc.tpp>
 #include <prdc/cpu/FFT.h>

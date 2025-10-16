@@ -9,7 +9,15 @@
 */
 
 #include <pscf/solvers/PolymerTmpl.h>   // Base class template
-#include "Block.h"                      // Base class template parameter
+
+// Forward declarations
+namespace Pscf {
+   namespace R1d {
+      class Block;
+      class Propagator;
+   }
+   extern template class PolymerTmpl<R1d::Block, R1d::Propagator>;
+}
 
 namespace Pscf {
 namespace R1d {
@@ -34,7 +42,7 @@ namespace R1d {
    * \ref user_param_polymer_sec "Parameter File Format"
    * \ingroup R1d_Solver_Module
    */
-   class Polymer : public PolymerTmpl<Block>
+   class Polymer : public PolymerTmpl<Block, Propagator>
    {
 
    public:
@@ -63,7 +71,7 @@ namespace R1d {
    private:
 
       // Restrict access
-      using PolymerTmpl<Block>::solve;
+      using PolymerTmpl<Block, Propagator>::solve;
 
    };
 

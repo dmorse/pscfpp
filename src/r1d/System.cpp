@@ -6,6 +6,8 @@
 */
 
 #include "System.h"
+#include <r1d/solvers/Polymer.h>
+#include <r1d/solvers/Solvent.h>
 
 #include <r1d/iterator/Iterator.h>
 #include <r1d/iterator/IteratorFactory.h>

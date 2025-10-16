@@ -8,18 +8,23 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-// Header file includes
-#include "Polymer.h"
-#include "Solvent.h"
-#include <pscf/solvers/MixtureTmpl.h>
-#include <util/containers/DArray.h>
+#include <pscf/solvers/MixtureTmpl.h>         // base class
+
+// Forward declarations
+namespace Util {
+   template <typename T> class DArray;
+}
+namespace Pscf {
+   namespace R1d {
+      class Domain;
+      class Polymer;
+      class Solvent;
+   }
+   extern template class MixtureTmpl<R1d::Polymer, R1d::Solvent>;
+}
 
 namespace Pscf {
-namespace R1d
-{
-
-   // Forward declaration
-   class Domain;
+namespace R1d {
 
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
@@ -49,7 +54,7 @@ namespace R1d
       /**
       * Field type.
       */
-      typedef Propagator::FieldT FieldT;
+      using FieldT = DArray<double>;
 
       // Public member functions
 

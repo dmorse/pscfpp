@@ -8,13 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
+#include "Propagator.h"                   // base class argument
+
 #include <pscf/math/TridiagonalSolver.h>  // member
+#include <util/containers/DArray.h>       // member
 
 namespace Pscf { 
-namespace R1d 
-{ 
+namespace R1d { 
 
    class Domain;
    using namespace Util;

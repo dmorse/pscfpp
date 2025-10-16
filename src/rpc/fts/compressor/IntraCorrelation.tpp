@@ -12,6 +12,8 @@
 
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Solvent.h>
 #include <rpc/field/Domain.h>
 
 #include <prdc/cpu/FFT.h>
@@ -21,6 +23,7 @@
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/PolymerSpecies.h>
+#include <pscf/chem/SolventSpecies.h>
 #include <pscf/chem/Edge.h>
 #include <pscf/chem/Debye.h>
 #include <pscf/chem/EdgeIterator.h>
@@ -230,7 +233,7 @@ namespace Rpc{
       if (nSolvent > 0) {
          double size, dcorr;
          for (int i = 0; i < nSolvent; i++){
-            Solvent<D> const & solvent = mixture.solvent(i);
+            SolventSpecies const & solvent = mixture.solventSpecies(i);
             phi = solvent.phi();
             size = solvent.size();
             dcorr = phi*size/vMonomer;

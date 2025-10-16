@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>     // base class
+#include <util/param/ParamComposite.h>    // base class
 #include <r1d/misc/FieldIo.h>             // member
 #include <r1d/solvers/Mixture.h>          // member
 #include <r1d/domain/Domain.h>            // member
-#include <pscf/floryHuggins/Mixture.h>      // member
-#include <util/misc/FileMaster.h>          // member
-#include <util/containers/DArray.h>        // member template
-#include <util/containers/Array.h>         // function parameter
+#include <pscf/floryHuggins/Mixture.h>    // member
+#include <util/misc/FileMaster.h>         // member
+#include <util/containers/DArray.h>       // member template
+#include <util/containers/Array.h>        // function parameter
 
 namespace Pscf {
 

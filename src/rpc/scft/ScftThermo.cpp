@@ -7,6 +7,8 @@
 
 #include "ScftThermo.h"
 #include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Solvent.h>
 #include <rpc/field/Domain.h>
 #include <prdc/system/ScftThermoTmpl.tpp>
 #include <pscf/inter/Interaction.h>

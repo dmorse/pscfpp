@@ -54,7 +54,7 @@ namespace Prdc {
    *
    * \ref user_param_mixture_page "Manual Page"
    */
-   template <int D, class PT, class ST>
+   template <int D, class PT, class ST, class TT>
    class MixturePrdc : public MixtureTmpl<PT, ST>
    {
 
@@ -71,23 +71,23 @@ namespace Prdc {
       /// Polymer object type: PolymerT = PT (inherited).
       using typename MixtureTmplT::PolymerT;
 
-      /// Block type, for a block in a block polymer (inherited).
-      using typename MixtureTmplT::BlockT;
+      /// Block type, for a block in a block polymer.
+      using BlockT = typename TT::Block;
 
-      /// Propagator type, for one direction within a block (inherited).
-      using typename MixtureTmplT::PropagatorT;
+      /// Propagator type, for one direction within a block.
+      using PropagatorT = typename TT::Propagator;
 
       /// Field type, for data defined on a real-space grid.
-      using FieldT = typename PropagatorT::FieldT;
+      using FieldT = typename TT::RField;
 
       /// WaveList type.
-      using FFTT = typename BlockT::FFTT;
+      using FFTT = typename TT::FFT;
 
       /// WaveList type.
-      using WaveListT = typename BlockT::WaveListT;
+      using WaveListT = typename TT::WaveList;
 
       /// FieldIo type.
-      using FieldIoT = typename BlockT::FieldIoT;
+      using FieldIoT = typename TT::FieldIo;
 
       // Public member functions
 
@@ -471,15 +471,15 @@ namespace Prdc {
    /*
    * Has the stress been computed for the current w fields?
    */
-   template <int D, class PT, class ST>
-   inline bool MixturePrdc<D,PT,ST>::hasStress() const
+   template <int D, class PT, class ST, class TT>
+   inline bool MixturePrdc<D,PT,ST,TT>::hasStress() const
    {  return hasStress_; }
 
    /*
    * Get derivative of free energy w/ respect to a unit cell parameter.
    */
-   template <int D, class PT, class ST>
-   inline double MixturePrdc<D,PT,ST>::stress(int parameterId) const
+   template <int D, class PT, class ST, class TT>
+   inline double MixturePrdc<D,PT,ST,TT>::stress(int parameterId) const
    {
       UTIL_CHECK(hasStress_);
       UTIL_CHECK(parameterId < nParam_);

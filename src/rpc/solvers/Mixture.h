@@ -9,11 +9,14 @@
 */
 
 #include <prdc/solvers/MixturePrdc.h>     // base class template
-#include "Polymer.h"                      // template argument
-#include "Solvent.h"                      // template argument
+#include <rpc/system/Types.h>             // template argument
 
 namespace Pscf {
 namespace Rpc {
+
+   // Forward declarations
+   template <int D> class Polymer;
+   template <int D> class Solvent;
 
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
@@ -26,14 +29,14 @@ namespace Rpc {
    * \ingroup Rpc_Solver_Module
    */
    template <int D>
-   class Mixture : public MixturePrdc<D, Polymer<D>, Solvent<D> >
+   class Mixture : public MixturePrdc<D, Polymer<D>, Solvent<D>, Types<D> >
    {
 
    public:
 
       /// Direct (parent) base class.
       using MixturePrdcT
-         = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D> >;
+         = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D>, Types<D> >;
 
       // Inherited public type name aliases
 
@@ -110,9 +113,9 @@ namespace Rpc {
 namespace Prdc {
 
    // Explicit instantiation declarations for base class
-   extern template class MixturePrdc<1, Rpc::Polymer<1>, Rpc::Solvent<1> >;
-   extern template class MixturePrdc<2, Rpc::Polymer<2>, Rpc::Solvent<2> >;
-   extern template class MixturePrdc<3, Rpc::Polymer<3>, Rpc::Solvent<3> >;
+   extern template class MixturePrdc<1, Rpc::Polymer<1>, Rpc::Solvent<1>, Rpc::Types<1> >;
+   extern template class MixturePrdc<2, Rpc::Polymer<2>, Rpc::Solvent<2>, Rpc::Types<2> >;
+   extern template class MixturePrdc<3, Rpc::Polymer<3>, Rpc::Solvent<3>, Rpc::Types<3> >;
 
 } // namespace Prdc
 } // namespace Pscf

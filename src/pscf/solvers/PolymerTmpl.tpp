@@ -8,10 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "PolymerTmpl.h"                   // base class
+#include "PolymerTmpl.h"                   
 
-namespace Pscf
-{
+namespace Pscf {
 
    class Edge;
    using namespace Util;
@@ -19,8 +18,8 @@ namespace Pscf
    /*
    * Constructor.
    */
-   template <class BT>
-   PolymerTmpl<BT>::PolymerTmpl()
+   template <class BT, class PT>
+   PolymerTmpl<BT,PT>::PolymerTmpl()
     : PolymerSpecies(),
       blocks_()
    {  setClassName("PolymerTmpl"); }
@@ -28,29 +27,29 @@ namespace Pscf
    /*
    * Destructor.
    */
-   template <class BT>
-   PolymerTmpl<BT>::~PolymerTmpl()
+   template <class BT, class PT>
+   PolymerTmpl<BT,PT>::~PolymerTmpl()
    {}
 
    /*
    * Allocate blocks array.
    */
-   template <class BT>
-   void PolymerTmpl<BT>::allocateBlocks()
+   template <class BT, class PT>
+   void PolymerTmpl<BT,PT>::allocateBlocks()
    {  blocks_.allocate(nBlock()); }
 
    /*
    * Read blocks array from parameter file.
    */
-   template <class BT>
-   void PolymerTmpl<BT>::readBlocks(std::istream& in)
+   template <class BT, class PT>
+   void PolymerTmpl<BT,PT>::readBlocks(std::istream& in)
    {  readDArray<BT>(in, "blocks", blocks_, nBlock()); }
 
    /*
    * Read parameter file block.
    */
-   template <class BT>
-   void PolymerTmpl<BT>::readParameters(std::istream& in)
+   template <class BT, class PT>
+   void PolymerTmpl<BT,PT>::readParameters(std::istream& in)
    {
 
       // Call PoymerSpecies base class member function
@@ -60,8 +59,8 @@ namespace Pscf
       // The remainder of this function sets and validates immutable
       // information about graph topology that is stored by propagators.
 
-      PropagatorT * propagatorPtr = nullptr;
-      PropagatorT const * sourcePtr = nullptr;
+      PT * propagatorPtr = nullptr;
+      PT const * sourcePtr = nullptr;
       Vertex const * headPtr = nullptr;
       Vertex const * tailPtr = nullptr;
       Pair<int> propId;
@@ -113,18 +112,18 @@ namespace Pscf
    * Checks validity of propagator data set in readParameters.
    *
    * This function only checks validity of propagator source and end flag
-   * member data that is set in PolymerTmpl<BT>::readParameters. It 
+   * member data that is set in PolymerTmpl<BT,PT>::readParameters. It 
    * does not check validity of members of PolymerSpecies, Edge, and Vertex
    * that are set and validated within the PolymerSpecies::readParameters 
    * base class member function. 
    */
-   template <class BT>
-   void PolymerTmpl<BT>::isValid()
+   template <class BT, class PT>
+   void PolymerTmpl<BT,PT>::isValid()
    {
       Vertex const * v0Ptr = nullptr;
       Vertex const * v1Ptr = nullptr;
-      PropagatorT const * p0Ptr = nullptr;
-      PropagatorT const * p1Ptr = nullptr;
+      PT const * p0Ptr = nullptr;
+      PT const * p1Ptr = nullptr;
       int bId, v0Id, v1Id;
 
       // Loop over blocks
@@ -150,8 +149,8 @@ namespace Pscf
    /*
    * Solve the MDE for all blocks of this polymer.
    */
-   template <class BT>
-   void PolymerTmpl<BT>::solve(double phiTot)
+   template <class BT, class PT>
+   void PolymerTmpl<BT,PT>::solve(double phiTot)
    {
 
       // Clear all propagators
@@ -169,13 +168,38 @@ namespace Pscf
       // Compute molecular partition function Q
       double Q = block(0).propagator(0).computeQ();
 
-      // The PropagatorT::computeQ function returns a spatial average.
+      // The PT::computeQ function returns a spatial average.
       // Correct for partial occupation of the unit cell.
       Q = Q/phiTot;
 
       // Set q and compute phi or mu, depending on the ensemble
       Species::setQ(Q);
 
+   }
+
+   /*
+   * Get a propagator, indexed by block and direction ids (non-const).
+   */
+   template <class BT, class PT>
+   PT& PolymerTmpl<BT,PT>::propagator(int blockId, int directionId)
+   {  return block(blockId).propagator(directionId); }
+
+   /*
+   * Get a propagator, indexed by block and direction ids (const).
+   */
+   template <class BT, class PT>
+   PT const & 
+   PolymerTmpl<BT,PT>::propagator(int blockId, int directionId) const
+   {  return block(blockId).propagator(directionId); }
+
+   /*
+   * Get a propagator, indexed in order of computation.
+   */
+   template <class BT, class PT>
+   PT& PolymerTmpl<BT,PT>::propagator(int id)
+   {
+      Pair<int> propId = propagatorId(id);
+      return propagator(propId[0], propId[1]);
    }
 
 }

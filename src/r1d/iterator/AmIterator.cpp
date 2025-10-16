@@ -8,6 +8,8 @@
 #include "AmIterator.h"
 #include <r1d/System.h>
 #include <r1d/solvers/Mixture.h>
+#include <r1d/solvers/Polymer.h>
+#include <r1d/solvers/Solvent.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/iterator/NanException.h>
 #include <util/global.h>

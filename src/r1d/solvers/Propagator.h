@@ -12,8 +12,7 @@
 #include <util/containers/DArray.h>      // member template
 
 namespace Pscf { 
-namespace R1d
-{ 
+namespace R1d { 
 
    class Block;
    using namespace Util;
@@ -33,12 +32,7 @@ namespace R1d
       /**
       * Generic field (function of position).
       */
-      typedef DArray<double> FieldT;
-
-      /**
-      * Propagator q-field type.
-      */
-      typedef DArray<double> QFieldT;
+      using FieldT = DArray<double>;
 
       // Member functions
 
@@ -103,7 +97,7 @@ namespace R1d
       *
       * \param head initial condition of q-field at head of block
       */
-      void solve(const QFieldT& head);
+      void solve(const FieldT& head);
  
       /**
       * Compute and return partition function for the molecule.
@@ -120,17 +114,17 @@ namespace R1d
       *
       * \param i step index
       */
-      QFieldT const & q(int i) const;
+      FieldT const & q(int i) const;
 
       /**
       * Return q-field at beginning of block (initial condition).
       */
-      QFieldT const & head() const;
+      FieldT const & head() const;
 
       /**
       * Return q-field at end of block.
       */
-      QFieldT const & tail() const;
+      FieldT const & tail() const;
       
       /**
       * Number of values of s (or slices), including head and tail.
@@ -150,10 +144,10 @@ namespace R1d
    private:
      
       /// Array of statistical weight fields 
-      DArray<QFieldT> qFields_;
+      DArray<FieldT> qFields_;
 
       /// Workspace
-      QFieldT work_;
+      FieldT work_;
 
       /// Pointer to associated Block.
       Block* blockPtr_;
@@ -184,19 +178,19 @@ namespace R1d
    /*
    * Return q-field at beginning of block.
    */
-   inline Propagator::QFieldT const& Propagator::head() const
+   inline Propagator::FieldT const& Propagator::head() const
    {  return qFields_[0]; }
 
    /*
    * Return q-field at end of block, after solution.
    */
-   inline Propagator::QFieldT const& Propagator::tail() const
+   inline Propagator::FieldT const& Propagator::tail() const
    {  return qFields_[ns_-1]; }
 
    /*
    * Return q-field at specified step.
    */
-   inline Propagator::QFieldT const& Propagator::q(int i) const
+   inline Propagator::FieldT const& Propagator::q(int i) const
    {  return qFields_[i]; }
 
    /*

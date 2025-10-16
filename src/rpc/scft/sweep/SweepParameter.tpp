@@ -13,6 +13,7 @@
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/MixtureModifier.h>
 #include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Solvent.h>
 #include <rpc/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/inter/Interaction.h>

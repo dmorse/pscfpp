@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Block.h"                       // base class template parameter
+//#include "Block.h"                       // base class template parameter
 #include <pscf/solvers/PolymerTmpl.h>    // base class template
 #include <util/containers/FSArray.h>     // member template
 
@@ -17,11 +17,18 @@ namespace Util {
    template <typename T> class DArray;
 }
 namespace Pscf { 
+   namespace Rpc {
+      template <int D> class Block;
+      template <int D> class Propagator;
+   }
    namespace Prdc { 
       namespace Cpu { 
          template <int D> class RField;
       }
    }
+   extern template class PolymerTmpl< Rpc::Block<1>, Rpc::Propagator<1> >;
+   extern template class PolymerTmpl< Rpc::Block<2>, Rpc::Propagator<2> >;
+   extern template class PolymerTmpl< Rpc::Block<3>, Rpc::Propagator<3> >;
 }
 
 namespace Pscf { 
@@ -51,7 +58,7 @@ namespace Rpc {
    * \ingroup Rpc_Solver_Module
    */
    template <int D>
-   class Polymer : public PolymerTmpl< Block<D> >
+   class Polymer : public PolymerTmpl< Block<D>, Propagator<D> >
    {
 
    public:
@@ -59,13 +66,13 @@ namespace Rpc {
       // Public type name aliases
 
       /// Base class, partial template specialization.
-      using Base = PolymerTmpl< Block<D> >;
+      using Base = PolymerTmpl< Block<D>, Propagator<D> >;
 
       /// Block type, for a block within a block polymer.
       using BlockT = Block<D>;
 
       /// Propagator type, for one direction within a block.
-      using PropagatorT = typename BlockT::PropagatorT;
+      using PropagatorT = Propagator<D>;
 
       // Public member functions
 
