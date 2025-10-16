@@ -9,6 +9,8 @@
 */
 
 #include "LrCompressor.h"
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <rpg/system/System.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/cuda/resources.h>

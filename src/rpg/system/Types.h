@@ -52,6 +52,7 @@ namespace Rpg {
    // Namespaces that may be used implicitly
    using namespace Util;
    using namespace Prdc;
+   using namespace Prdc::Cuda;
 
    /**
    * List of aliases for types used the in Rpg namespace.

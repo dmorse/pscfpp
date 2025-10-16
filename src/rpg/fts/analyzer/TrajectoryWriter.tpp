@@ -10,9 +10,10 @@
 #include "TrajectoryWriter.h"
 #include "Analyzer.h"
 #include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <util/misc/FileMaster.h>
-//#include <util/archives/Serializable_includes.h>
 #include <util/misc/ioUtil.h>
 #include <sstream>
 

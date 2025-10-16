@@ -10,8 +10,10 @@
 
 #include "ChiDerivative.h"
 
-#include <rpg/system/System.h>
 #include <rpg/fts/simulator/Simulator.h>
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <pscf/inter/Interaction.h>
 
 namespace Pscf {

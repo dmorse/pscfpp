@@ -11,12 +11,14 @@
 #include "RealMove.h"
 #include "McMove.h" 
 #include <rpg/fts/montecarlo/McSimulator.h>
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <rpg/fts/VecOpFts.h>
 #include <prdc/cuda/VecOp.h>
 #include <pscf/math/IntVec.h>
-#include <util/param/ParamComposite.h>
-#include <rpg/system/System.h>
 #include <pscf/cuda/CudaRandom.h>
+#include <util/param/ParamComposite.h>
 
 namespace Pscf {
 namespace Rpg {

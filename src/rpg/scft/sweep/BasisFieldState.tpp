@@ -11,6 +11,8 @@
 #include "BasisFieldState.h"
 #include "FieldState.tpp"
 #include <rpg/system/System.h> 
+#include <rpg/solvers/Mixture.h> 
+#include <rpg/field/Domain.h> 
 #include <prdc/crystal/Basis.h> 
 #include <util/global.h>
 

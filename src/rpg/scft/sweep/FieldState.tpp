@@ -11,18 +11,13 @@
 #include "FieldState.h"
 
 #include <rpg/system/System.h>                   
-#include <prdc/cuda/FFT.h>                
 #include <prdc/crystal/Basis.h>           
 #include <pscf/mesh/Mesh.h>                
+#include <prdc/cuda/FFT.h>                
 #include <util/misc/FileMaster.h>       
 
-// #include <util/format/Str.h>
-// #include <util/format/Int.h>
-// #include <util/format/Dbl.h>
-
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -34,7 +29,7 @@ namespace Rpg
    FieldState<D, FT>::FieldState()
     : fields_(),
       unitCell_(),
-      systemPtr_(0)
+      systemPtr_(nullptr)
    {}
   
    /*

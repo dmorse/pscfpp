@@ -9,8 +9,7 @@
 */
 
 #include <pscf/chem/SolventSpecies.h>   // base class
-#include <rpg/solvers/Propagator.h>     // typedefs
-#include <prdc/cuda/RField.h>           // member variable
+#include <prdc/cuda/RField.h>           // member
 
 // Forward declaration
 namespace Pscf {
@@ -21,12 +20,13 @@ namespace Pscf {
 namespace Rpg { 
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
+   using namespace Prdc;
+   using namespace Prdc::Cuda;
 
    /**
    * Solver and descriptor for a solvent species.
    *
+   * \ref user_param_solvent_sec "Manual Page"
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
@@ -120,6 +120,11 @@ namespace Rpg {
    template <int D>
    inline RField<D> const & Solvent<D>::cField() const
    {  return cField_;  }
+
+   // Explicit instantiation declarations
+   extern template class Solvent<1>;
+   extern template class Solvent<2>;
+   extern template class Solvent<3>;
 
 }
 } 

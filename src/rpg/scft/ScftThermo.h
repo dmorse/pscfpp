@@ -9,7 +9,7 @@
 */
 
 #include <prdc/system/ScftThermoTmpl.h>  // base class template
-#include <rpg/system/System.h>           // base class template argument
+#include <rpg/system/System.h>           // template argument
 
 namespace Pscf {
 namespace Rpg {
@@ -68,7 +68,7 @@ namespace Prdc {
    extern template class ScftThermoTmpl<2, Rpg::System<2> >;
    extern template class ScftThermoTmpl<3, Rpg::System<3> >;
 
-}
+} 
 
 } // namespace Pscf
 #endif

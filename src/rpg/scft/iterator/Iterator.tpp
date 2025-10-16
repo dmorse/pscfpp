@@ -10,8 +10,10 @@
 
 #include "Iterator.h"
 
-#include <rpg/system/System.h>
 #include <prdc/environment/Environment.h>
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 
 namespace Pscf {
 namespace Rpg {

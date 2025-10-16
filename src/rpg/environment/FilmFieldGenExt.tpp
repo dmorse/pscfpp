@@ -9,8 +9,10 @@
 */
 
 #include "FilmFieldGenExt.h"
-#include <rpg/field/FieldIo.h>
 #include <rpg/scft/iterator/Iterator.h>
+#include <rpg/field/FieldIo.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <prdc/cuda/resources.h>

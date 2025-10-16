@@ -8,19 +8,23 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/RField.h>            // member array
-#include <pscf/cuda/DeviceArray.h>       // member array
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
+
+#include <prdc/cuda/RField.h>            // member
+#include <pscf/cuda/DeviceArray.h>       // member 
 #include <util/containers/DArray.h>      // member array
 
 
-namespace Pscf { template <int D> class Mesh; }
+// Forward declarations
+namespace Pscf { 
+   template <int D> class Mesh; 
+   namespace Rpg {
+      template <int D> class Block;
+   }
+}
 
 namespace Pscf {
 namespace Rpg {
-
-   // Forward declaration
-   template <int D> class Block;
 
    using namespace Util;
    using namespace Pscf::Prdc;

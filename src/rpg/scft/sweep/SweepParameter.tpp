@@ -13,9 +13,8 @@
 #include <rpg/solvers/MixtureModifier.h>
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Block.h>
-
+#include <rpg/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
-
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/ParameterModifier.h>
 #include <util/containers/FSArray.h>

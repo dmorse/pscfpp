@@ -5,6 +5,8 @@
 
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>

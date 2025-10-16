@@ -9,9 +9,11 @@
 */
 
 #include "FilmFieldGenMask.h"
-#include <rpg/field/FieldIo.h>
-#include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/ScftThermo.h>
+#include <rpg/scft/iterator/Iterator.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
@@ -20,16 +22,13 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
-   // CUDA kernels: 
-   // (defined in anonymous namespace, used only in this file)
-
+   // CUDA kernels (anonymous namespace - used only in this file)
    namespace {
 
       /*

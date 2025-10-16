@@ -11,6 +11,8 @@
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/ScftThermo.h>
 #include <prdc/environment/Environment.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>

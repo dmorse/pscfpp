@@ -10,7 +10,6 @@
 
 #include "Simulator.h"
 
-#include <rpg/system/System.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/compressor/CompressorFactory.h>
 #include <rpg/fts/perturbation/Perturbation.h>
@@ -18,6 +17,9 @@
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/ramp/RampFactory.h>
 #include <rpg/fts/VecOpFts.h>
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 
 #include <prdc/cuda/resources.h>
 

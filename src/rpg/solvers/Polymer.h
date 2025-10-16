@@ -8,11 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/solvers/PolymerTmpl.h>      // base class template
-#include <rpg/solvers/Block.h>             // base class argument
+#include <pscf/solvers/PolymerTmpl.h>     // base class template
+#include <rpg/solvers/Block.h>            // template argument
 
-//#include <prdc/cuda/RField.h>
-#include <util/containers/FSArray.h> 
+#include <util/containers/FSArray.h>      // member
 
 // Forward declarations
 namespace Util {

@@ -10,6 +10,8 @@
 
 #include "LrAmCompressor.h"
 #include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/mesh/MeshIterator.h>

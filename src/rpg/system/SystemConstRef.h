@@ -8,15 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/system/SystemConstRefTmpl.h>   // base class template
-#include <rpg/system/System.h>                       // template parameter
+#include <prdc/system/SystemConstRefTmpl.h>  // base class template
+#include <rpg/system/System.h>               // template parameter
 
 namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Const access to a System<D>.

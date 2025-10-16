@@ -11,18 +11,20 @@
 #include "System.h"
 #include <prdc/system/SystemTmpl.tpp>
 
-#include <rpg/solvers/MixtureModifier.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/scft/ScftThermo.h>
 #include <rpg/environment/EnvironmentFactory.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/simulator/SimulatorFactory.h>
 #include <rpg/fts/compressor/Compressor.h>
+#include <rpg/scft/ScftThermo.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/iterator/IteratorFactory.h>
 #include <rpg/scft/sweep/Sweep.h>
 #include <rpg/scft/sweep/SweepFactory.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/solvers/MixtureModifier.h>
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
+#include <rpg/field/Domain.h>
 
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldDft.h>

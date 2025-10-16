@@ -6,16 +6,21 @@
 */
 
 #include "ScftThermo.h"
-#include <prdc/system/ScftThermoTmpl.tpp>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 #include <prdc/cuda/Reduce.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/system/ScftThermoTmpl.tpp>
 #include <pscf/inter/Interaction.h>
 
 namespace Pscf {
+
    namespace Prdc {
       template class ScftThermoTmpl<1, Rpg::System<1> >;
       template class ScftThermoTmpl<2, Rpg::System<2> >;
       template class ScftThermoTmpl<3, Rpg::System<3> >;
    }
+
    namespace Rpg {
 
       /*

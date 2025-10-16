@@ -8,17 +8,22 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
 #include <util/param/ParamComposite.h>
-#include <pscf/cuda/CudaRandom.h>
+//#include <pscf/cuda/CudaRandom.h>
+
+namespace Pscf {
+   class CudaRandom;
+   namespace Rpg {
+      template <int D> class System;
+      template <int D> class BdSimulator;
+   }
+}
 
 namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
 
-   template <int D> class System;
-   template <int D> class BdSimulator;
 
    /**
    * BdStep is an abstract base class for Brownian dynamics steps.

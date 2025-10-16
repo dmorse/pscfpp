@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/system/ScftThermoTmpl.h>    // base class template
-#include <rpc/system/System.h>       // template parameter
+#include <prdc/system/ScftThermoTmpl.h>   // base class template
+#include <rpc/system/System.h>            // template argument
 
 namespace Pscf {
 namespace Rpc {
@@ -58,7 +58,7 @@ namespace Rpc {
    extern template class ScftThermo<2>;
    extern template class ScftThermo<3>;
 
-} // namespace Rpc
+} 
 
 namespace Prdc {
 
@@ -67,7 +67,7 @@ namespace Prdc {
    extern template class ScftThermoTmpl<2, Rpc::System<2> >;
    extern template class ScftThermoTmpl<3, Rpc::System<3> >;
 
-} // namespace Rpc
+}
 
 } // namespace Pscf
 #endif

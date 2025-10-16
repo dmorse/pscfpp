@@ -9,10 +9,11 @@
 */
 
 #include "ConcentrationDerivative.h"
-
-#include <rpg/system/System.h>
-#include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/perturbation/Perturbation.h>
+#include <rpg/fts/simulator/Simulator.h>
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
 
 namespace Pscf {
 namespace Rpg {
