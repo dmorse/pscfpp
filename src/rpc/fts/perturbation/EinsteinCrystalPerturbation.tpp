@@ -4,6 +4,8 @@
 #include "EinsteinCrystalPerturbation.h"
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <prdc/cpu/RField.h>
 #include <util/containers/DArray.h>
 #include <util/global.h>

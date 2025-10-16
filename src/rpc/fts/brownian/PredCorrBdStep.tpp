@@ -9,7 +9,8 @@
 */
 
 #include "PredCorrBdStep.h"
-
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <rpc/fts/brownian/BdSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/system/System.h>

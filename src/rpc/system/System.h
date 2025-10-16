@@ -11,8 +11,6 @@
 // Header file includes
 #include <prdc/system/SystemTmpl.h>    // base class template
 #include <rpc/system/Types.h>          // base class template param
-#include <rpc/solvers/Mixture.h>       // member
-#include <rpc/field/Domain.h>          // member
 #include <rpc/field/WFields.h>         // member
 #include <rpc/field/CFields.h>         // member
 #include <rpc/field/Mask.h>            // member

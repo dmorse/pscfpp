@@ -11,6 +11,8 @@
 #include "Iterator.h"
 
 #include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <prdc/environment/Environment.h>
 
 namespace Pscf {

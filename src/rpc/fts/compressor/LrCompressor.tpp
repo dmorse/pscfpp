@@ -10,6 +10,8 @@
 
 #include "LrCompressor.h"
 #include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/iterator/NanException.h>

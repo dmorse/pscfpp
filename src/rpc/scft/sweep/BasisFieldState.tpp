@@ -10,6 +10,8 @@
 
 #include "BasisFieldState.h"
 #include "FieldState.tpp"
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <util/global.h>
 
 namespace Pscf {

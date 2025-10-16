@@ -10,6 +10,8 @@
 
 #include "LrAmCompressor.h"
 #include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/global.h>
 

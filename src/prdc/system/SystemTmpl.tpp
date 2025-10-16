@@ -10,6 +10,8 @@
 
 #include "SystemTmpl.h"
 
+#include <prdc/crystal/UnitCell.h>
+
 #include <pscf/math/IntVec.h>
 
 #include <util/containers/DArray.h>
@@ -21,6 +23,7 @@
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 #include <util/misc/ioUtil.h>
+#include <util/misc/FileMaster.h>
 
 #include <string>
 #include <unistd.h>
@@ -35,14 +38,14 @@ namespace Prdc {
    */
    template <int D, class T>
    SystemTmpl<D,T>::SystemTmpl(typename T::System& system)
-    : mixture_(),
-      domain_(),
-      fileMaster_(),
-      w_(),
+    : w_(),
       c_(),
       h_(),
       mask_(),
+      systemPtr_(&system),
+      mixturePtr_(nullptr),
       mixtureModifierPtr_(nullptr),
+      domainPtr_(nullptr),
       interactionPtr_(nullptr),
       environmentPtr_(nullptr),
       environmentFactoryPtr_(nullptr),
@@ -53,7 +56,8 @@ namespace Prdc {
       sweepFactoryPtr_(nullptr),
       simulatorPtr_(nullptr),
       simulatorFactoryPtr_(nullptr),
-      systemPtr_(&system),
+      fileMasterPtr_(nullptr),
+      tmpUnitCellPtr_(nullptr),
       polymerModel_(PolymerModel::Thread),
       isAllocatedGrid_(false),
       isAllocatedBasis_(false),
@@ -63,37 +67,41 @@ namespace Prdc {
       BracketPolicy::set(BracketPolicy::Optional);
 
       // Create dynamically allocated objects owned by this SystemTmpl
+      mixturePtr_ = new typename T::Mixture();
       mixtureModifierPtr_ = new typename T::MixtureModifier();
       interactionPtr_ = new typename T::Interaction();
+      domainPtr_ = new typename T::Domain();
       scftPtr_ = new typename T::ScftThermo(*systemPtr_);
       environmentFactoryPtr_ 
          = new typename T::EnvironmentFactory(*systemPtr_);
       iteratorFactoryPtr_ = new typename T::IteratorFactory(*systemPtr_);
       sweepFactoryPtr_ = new typename T::SweepFactory(*systemPtr_);
       simulatorFactoryPtr_ = new typename T::SimulatorFactory(*systemPtr_);
+      fileMasterPtr_ = new FileMaster();
+      tmpUnitCellPtr_ = new UnitCell<D>();
 
       // Create associations among class members
-      mixtureModifier().associate(mixture_);
-      domain_.setFileMaster(fileMaster_);
-      w_.setFieldIo(domain_.fieldIo());
-      w_.setReadUnitCell(domain_.unitCell());
-      w_.setWriteUnitCell(domain_.unitCell());
-      h_.setFieldIo(domain_.fieldIo());
-      h_.setReadUnitCell(tmpUnitCell_);
-      h_.setWriteUnitCell(domain_.unitCell());
-      mask_.setFieldIo(domain_.fieldIo());
-      mask_.setReadUnitCell(tmpUnitCell_);
-      mask_.setWriteUnitCell(domain_.unitCell());
-      c_.setFieldIo(domain_.fieldIo());
-      c_.setWriteUnitCell(domain_.unitCell());
+      mixtureModifier().associate(mixture_());
+      domain_().setFileMaster(*fileMasterPtr_);
+      w_.setFieldIo(domain_().fieldIo());
+      w_.setReadUnitCell(domain_().unitCell());
+      w_.setWriteUnitCell(domain_().unitCell());
+      h_.setFieldIo(domain_().fieldIo());
+      h_.setReadUnitCell(*tmpUnitCellPtr_);
+      h_.setWriteUnitCell(domain_().unitCell());
+      mask_.setFieldIo(domain_().fieldIo());
+      mask_.setReadUnitCell(*tmpUnitCellPtr_);
+      mask_.setWriteUnitCell(domain_().unitCell());
+      c_.setFieldIo(domain_().fieldIo());
+      c_.setWriteUnitCell(domain_().unitCell());
 
       // Note the arguments of setReadUnitCell functions used above:
       // When w_ is read from a file in basis or r-grid format, the
-      // parameters of the system unit cell, domain_.unitCell(), are
+      // parameters of the system unit cell, domain_().unitCell(), are
       // reset to those in the field file header. When imposed fields h_
       // and mask_ are read from a file, however, unit cell parameters
       // from the field file header are read into a mutable workspace
-      // object, tmpUnitCell_, and ultimately discarded.
+      // object, *tmpUnitCellPtr_, and ultimately discarded.
 
       // Use of "signals" to maintain data relationships:
       // Signals are instances of Unit::Signal<void> that are used to
@@ -111,11 +119,11 @@ namespace Prdc {
       // Addition of observers to signals
 
       // Signal triggered by unit cell modification
-      Signal<void>& cellSignal = domain_.unitCell().signal();
+      Signal<void>& cellSignal = domain_().unitCell().signal();
       cellSignal.addObserver(*this, &SystemTmpl<D,T>::clearUnitCellData);
 
       // Signal triggered by basis construction
-      Signal<void>& basisSignal = domain_.basis().signal();
+      Signal<void>& basisSignal = domain_().basis().signal();
       basisSignal.addObserver(*this, &SystemTmpl<D,T>::allocateFieldsBasis);
 
       // Signal triggered by w-field modification
@@ -237,14 +245,14 @@ namespace Prdc {
 
       // Check required option -p, set parameter file name
       if (pFlag) {
-         fileMaster_.setParamFileName(std::string(pArg));
+         fileMaster().setParamFileName(std::string(pArg));
       } else {
          UTIL_THROW("Missing required -p option - no parameter file");
       }
 
       // Check required option -c, set command file name
       if (cFlag) {
-         fileMaster_.setCommandFileName(std::string(cArg));
+         fileMaster().setCommandFileName(std::string(cArg));
       } else {
          UTIL_THROW("Missing required -c option - no command file");
       }
@@ -256,12 +264,12 @@ namespace Prdc {
 
       // If option -i, set path prefix for input files
       if (iFlag) {
-         fileMaster_.setInputPrefix(std::string(iArg));
+         fileMaster().setInputPrefix(std::string(iArg));
       }
 
       // If option -o, set path prefix for output files
       if (oFlag) {
-         fileMaster_.setOutputPrefix(std::string(oArg));
+         fileMaster().setOutputPrefix(std::string(oArg));
       }
 
       // If option -t, process the thread count
@@ -295,12 +303,12 @@ namespace Prdc {
       int nSetPolymerModel = PolymerModel::nSet();
 
       // Read the Mixture{ ... } block
-      readParamComposite(in, mixture_);
+      readParamComposite(in, mixture_());
       hasMixture_ = true;
 
-      int nm = mixture_.nMonomer();
-      int np = mixture_.nPolymer();
-      int ns = mixture_.nSolvent();
+      int nm = mixture_().nMonomer();
+      int np = mixture_().nPolymer();
+      int ns = mixture_().nSolvent();
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(np >= 0);
       UTIL_CHECK(ns >= 0);
@@ -311,17 +319,17 @@ namespace Prdc {
       readParamComposite(in, interaction());
 
       // Read the Domain{ ... } block
-      readParamComposite(in, domain_);
-      UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
-      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
-      domain_.fieldIo().setNMonomer(nm);
+      readParamComposite(in, domain_());
+      UTIL_CHECK(domain_().mesh().size() > 0);
+      UTIL_CHECK(domain_().unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_().unitCell().lattice() != UnitCell<D>::Null);
+      domain_().fieldIo().setNMonomer(nm);
 
       // Setup the mixture
-      mixture_.associate(domain_.mesh(), domain_.fft(),
-                         domain_.unitCell(), domain_.waveList());
-      mixture_.setFieldIo(domain_.fieldIo());
-      mixture_.allocate();
+      mixture_().associate(domain_().mesh(), domain_().fft(),
+                         domain_().unitCell(), domain_().waveList());
+      mixture_().setFieldIo(domain_().fieldIo());
+      mixture_().allocate();
 
       // Allocate memory for field containers in r-grid form
       allocateFieldsGrid();
@@ -336,7 +344,7 @@ namespace Prdc {
          Log::file() << indent() << "  Environment{ [absent] }\n";
       }
       if (environmentPtr_) {
-         environment().setNParams(domain_.unitCell().nParameter());
+         environment().setNParams(domain_().unitCell().nParameter());
       }
 
       // Optionally read and construct an Iterator
@@ -346,7 +354,7 @@ namespace Prdc {
                                                     className, isEnd);
          if (iteratorPtr_) {
             if (iteratorPtr_->isSymmetric()) {
-               UTIL_CHECK(domain_.hasGroup()); 
+               UTIL_CHECK(domain_().hasGroup()); 
             }
          } else {
             if (ParamComponent::echo()) {
@@ -400,7 +408,7 @@ namespace Prdc {
    */
    template <int D, class T>
    void SystemTmpl<D,T>::readParam()
-   {  readParam(fileMaster_.paramFile()); }
+   {  readParam(fileMaster().paramFile()); }
 
    /*
    * Read and execute commands from a specified command file.
@@ -410,7 +418,7 @@ namespace Prdc {
    {
       UTIL_CHECK(isAllocatedGrid_);
       std::string command, filename, inFileName, outFileName;
-      typename T::FieldIo const & fieldIo = domain_.fieldIo();
+      typename T::FieldIo const & fieldIo = domain_().fieldIo();
 
       bool readNext = true;
       while (readNext) {
@@ -430,9 +438,9 @@ namespace Prdc {
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
             w().readBasis(filename);
-            UTIL_CHECK(domain_.unitCell().isInitialized());
-            UTIL_CHECK(domain_.basis().isInitialized());
-            UTIL_CHECK(!domain_.waveList().hasKSq());
+            UTIL_CHECK(domain_().unitCell().isInitialized());
+            UTIL_CHECK(domain_().basis().isInitialized());
+            UTIL_CHECK(!domain_().waveList().hasKSq());
             UTIL_CHECK(isAllocatedBasis_);
             UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!scft().hasData());
@@ -440,8 +448,8 @@ namespace Prdc {
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
             w().readRGrid(filename);
-            UTIL_CHECK(domain_.unitCell().isInitialized());
-            UTIL_CHECK(!domain_.waveList().hasKSq());
+            UTIL_CHECK(domain_().unitCell().isInitialized());
+            UTIL_CHECK(!domain_().waveList().hasKSq());
             UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!scft().hasData());
          } else
@@ -450,8 +458,8 @@ namespace Prdc {
             in >> unitCell;
             Log::file() << "   " << unitCell << std::endl;
             setUnitCell(unitCell);
-            UTIL_CHECK(domain_.unitCell().isInitialized());
-            UTIL_CHECK(!domain_.waveList().hasKSq());
+            UTIL_CHECK(domain_().unitCell().isInitialized());
+            UTIL_CHECK(!domain_().waveList().hasKSq());
             UTIL_CHECK(!c_.hasData());
             UTIL_CHECK(!scft().hasData());
          } else
@@ -499,14 +507,14 @@ namespace Prdc {
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
             std::ofstream file;
-            fileMaster_.openOutputFile(filename, file);
+            fileMaster().openOutputFile(filename, file);
             writeParamNoSweep(file);
             file.close();
          } else
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
             std::ofstream file;
-            fileMaster_.openOutputFile(filename, file,
+            fileMaster().openOutputFile(filename, file,
                                        std::ios_base::app);
             scft().write(file);
             file.close();
@@ -514,12 +522,12 @@ namespace Prdc {
          if (command == "WRITE_STRESS") {
             readEcho(in, filename);
             std::ofstream file;
-            if (!mixture_.hasStress()) {
+            if (!mixture_().hasStress()) {
                computeStress();
             }
-            fileMaster_.openOutputFile(filename, file,
+            fileMaster().openOutputFile(filename, file,
                                        std::ios_base::app);
-            mixture_.writeStress(file);
+            mixture_().writeStress(file);
             if (hasEnvironment()) {
                environment().writeStress(file);
             }
@@ -543,7 +551,7 @@ namespace Prdc {
          } else
          if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
-            mixture_.writeBlockCRGrid(filename);
+            mixture_().writeBlockCRGrid(filename);
          } else
          if (command == "WRITE_Q_SLICE") {
             int polymerId, blockId, directionId, segmentId;
@@ -558,7 +566,7 @@ namespace Prdc {
                         << "\n"
                         << Str("segment ID  ", 21) << segmentId
                         << std::endl;
-            mixture_.writeQSlice(filename, polymerId, blockId,
+            mixture_().writeQSlice(filename, polymerId, blockId,
                                  directionId, segmentId);
          } else
          if (command == "WRITE_Q_TAIL") {
@@ -571,7 +579,7 @@ namespace Prdc {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
-            mixture_.writeQTail(filename, polymerId, blockId, directionId);
+            mixture_().writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
             readEcho(in, filename);
@@ -583,23 +591,23 @@ namespace Prdc {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
-            mixture_.writeQ(filename, polymerId, blockId, directionId);
+            mixture_().writeQ(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q_ALL") {
             readEcho(in, filename);
-            mixture_.writeQAll(filename);
+            mixture_().writeQAll(filename);
          } else
          if (command == "WRITE_STARS") {
             readEcho(in, filename);
-            domain_.writeStars(filename);
+            domain_().writeStars(filename);
          } else
          if (command == "WRITE_WAVES") {
             readEcho(in, filename);
-            domain_.writeWaves(filename);
+            domain_().writeWaves(filename);
          } else
          if (command == "WRITE_GROUP") {
             readEcho(in, filename);
-            domain_.writeGroup(filename);
+            domain_().writeGroup(filename);
          } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -762,7 +770,7 @@ namespace Prdc {
          if (command == "WRITE_TIMERS") {
             readEcho(in, filename);
             std::ofstream file;
-            fileMaster_.openOutputFile(filename, file);
+            fileMaster().openOutputFile(filename, file);
             writeTimers(file);
             file.close();
          } else
@@ -782,10 +790,10 @@ namespace Prdc {
    template <int D, class T>
    void SystemTmpl<D,T>::readCommands()
    {
-      if (fileMaster_.commandFileName().empty()) {
+      if (fileMaster().commandFileName().empty()) {
          UTIL_THROW("Empty command file name");
       }
-      readCommands(fileMaster_.commandFile());
+      readCommands(fileMaster().commandFile());
    }
 
    // Primary Field Theory Computations
@@ -811,15 +819,15 @@ namespace Prdc {
       }
 
       // Solve the modified diffusion equation (without iteration)
-      mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
-      mixture_.setIsSymmetric(w_.isSymmetric());
+      mixture_().compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
+      mixture_().setIsSymmetric(w_.isSymmetric());
       c_.setHasData(true);
       scft().clear();
 
       // If w fields are symmetric, compute basis components for c fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
-         domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
+         domain_().fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
                                                false);
          c_.setIsSymmetric(true);
       }
@@ -837,14 +845,14 @@ namespace Prdc {
    void SystemTmpl<D,T>::computeStress()
    {
       // Compute and store standard Mixture stress
-      if (!mixture_.hasStress()) {
-         mixture_.computeStress(mask().phiTot());
+      if (!mixture_().hasStress()) {
+         mixture_().computeStress(mask().phiTot());
       }
 
       // If necessary, compute and store Environment stress
       if (hasEnvironment()) {
          if (!environment().hasStress()) {
-            environment().computeStress(mixture_,
+            environment().computeStress(mixture_(),
                                         iterator().flexibleParams());
          }
       }
@@ -884,10 +892,10 @@ namespace Prdc {
          scft().compute();
          scft().write(Log::file());
          if (!iterator().isFlexible()) {
-            if (!mixture_.hasStress()) {
+            if (!mixture_().hasStress()) {
                computeStress();
             }
-            mixture_.writeStress(Log::file());
+            mixture_().writeStress(Log::file());
             if (hasEnvironment()) {
                environment().writeStress(Log::file());
             }
@@ -951,25 +959,25 @@ namespace Prdc {
    void SystemTmpl<D,T>::setUnitCell(UnitCell<D> const & unitCell)
    {
       // Preconditions
-      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain_.lattice() == unitCell.lattice());
+      UTIL_CHECK(domain_().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_().lattice() == unitCell.lattice());
 
       // Set system unit cell, using UnitCell<D> assignment operator
-      domain_.unitCell() = unitCell;
+      domain_().unitCell() = unitCell;
 
       // If necessary, make basis
-      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
-         domain_.makeBasis();
+      if (domain_().hasGroup() && !domain_().basis().isInitialized()) {
+         domain_().makeBasis();
       }
 
       // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
-      if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(domain_().unitCell().isInitialized());
+      UTIL_CHECK(domain_().unitCell().lattice() == domain_().lattice());
+      if (domain_().hasGroup()) {
+         UTIL_CHECK(domain_().basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(!domain_.waveList().hasKSq());
+      UTIL_CHECK(!domain_().waveList().hasKSq());
    }
 
    /*
@@ -979,28 +987,28 @@ namespace Prdc {
    void SystemTmpl<D,T>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       // Precondition
-      UTIL_CHECK(domain_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_().lattice() != UnitCell<D>::Null);
 
       // Set system unit cell
-      if (domain_.unitCell().lattice() == UnitCell<D>::Null) {
-         domain_.unitCell().set(domain_.lattice(), parameters);
+      if (domain_().unitCell().lattice() == UnitCell<D>::Null) {
+         domain_().unitCell().set(domain_().lattice(), parameters);
       } else {
-         domain_.unitCell().setParameters(parameters);
+         domain_().unitCell().setParameters(parameters);
       }
 
       // If necessary, make basis
-      if (domain_.hasGroup() && !domain_.basis().isInitialized()) {
-         domain_.makeBasis();
+      if (domain_().hasGroup() && !domain_().basis().isInitialized()) {
+         domain_().makeBasis();
       }
 
       // Postconditions
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.unitCell().lattice() == domain_.lattice());
-      if (domain_.hasGroup()) {
-         UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(domain_().unitCell().isInitialized());
+      UTIL_CHECK(domain_().unitCell().lattice() == domain_().lattice());
+      if (domain_().hasGroup()) {
+         UTIL_CHECK(domain_().basis().isInitialized());
          UTIL_CHECK(isAllocatedBasis_);
       }
-      UTIL_CHECK(!domain_.waveList().hasKSq());
+      UTIL_CHECK(!domain_().waveList().hasKSq());
    }
 
    /*
@@ -1010,8 +1018,8 @@ namespace Prdc {
    void SystemTmpl<D,T>::clearUnitCellData()
    {
       clearCFields();
-      mixture_.clearUnitCellData();
-      domain_.waveList().clearUnitCellData();
+      mixture_().clearUnitCellData();
+      domain_().waveList().clearUnitCellData();
       if (hasEnvironment()) {
          environment().reset();
       }
@@ -1026,9 +1034,9 @@ namespace Prdc {
    void SystemTmpl<D,T>::writeParamNoSweep(std::ostream& out) const
    {
       out << "SystemTmpl{" << std::endl;
-      mixture_.writeParam(out);
+      mixture().writeParam(out);
       interaction().writeParam(out);
-      domain_.writeParam(out);
+      domain().writeParam(out);
       if (hasEnvironment()) {
          environment().writeParam(out);
       }
@@ -1080,13 +1088,13 @@ namespace Prdc {
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      int nMonomer = mixture_.nMonomer();
+      int nMonomer = mixture_().nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(domain_().mesh().size() > 0);
       UTIL_CHECK(!isAllocatedGrid_);
 
       // Alias for mesh dimensions
-      IntVec<D> const & dimensions = domain_.mesh().dimensions();
+      IntVec<D> const & dimensions = domain_().mesh().dimensions();
 
       // Allocate w (chemical potential) fields
       w_.setNMonomer(nMonomer);
@@ -1120,12 +1128,12 @@ namespace Prdc {
    {
       // Preconditions and constants
       UTIL_CHECK(hasMixture_);
-      const int nMonomer = mixture_.nMonomer();
+      const int nMonomer = mixture_().nMonomer();
       UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(domain_.hasGroup());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      const int nBasis = domain_.basis().nBasis();
+      UTIL_CHECK(domain_().mesh().size() > 0);
+      UTIL_CHECK(domain_().hasGroup());
+      UTIL_CHECK(domain_().basis().isInitialized());
+      const int nBasis = domain_().basis().nBasis();
       UTIL_CHECK(nBasis > 0);
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);

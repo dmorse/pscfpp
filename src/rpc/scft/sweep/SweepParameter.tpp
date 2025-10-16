@@ -8,11 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rpc/system/System.h>
 #include <rpc/solvers/Block.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/MixtureModifier.h>
 #include <rpc/solvers/Polymer.h>
-#include <rpc/system/System.h>
+#include <rpc/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/ParameterModifier.h>

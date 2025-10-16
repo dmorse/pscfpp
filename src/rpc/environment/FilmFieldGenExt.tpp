@@ -9,6 +9,8 @@
 */
 
 #include "FilmFieldGenExt.h"
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <prdc/cpu/RField.h>
@@ -225,6 +227,27 @@ namespace Rpc
       // Pass h into the System
       system().h().setRGrid(hRGrid, system().iterator().isSymmetric());
    }
+
+   /*
+   * Get space group name for this system.
+   */
+   template <int D>
+   std::string FilmFieldGenExt<D>::systemSpaceGroup() const
+   {  return system().domain().groupName(); }
+
+   /*
+   * Get one of the lattice vectors for this system.
+   */
+   template <int D>
+   RealVec<D> FilmFieldGenExt<D>::systemLatticeVector(int id) const
+   {  return system().domain().unitCell().rBasis(id); }
+
+   /*
+   * Get the number of monomer species for this system.
+   */
+   template <int D>
+   int FilmFieldGenExt<D>::systemNMonomer() const
+   {  return system().mixture().nMonomer(); }
 
 }
 }

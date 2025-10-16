@@ -9,8 +9,10 @@
 */
 
 #include "FilmFieldGenMask.h"
+#include <rpc/solvers/Mixture.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/ScftThermo.h>
+#include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>

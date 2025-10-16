@@ -145,21 +145,6 @@ namespace Rpc {
       return *sysPtr_; 
    }
 
-   // Get space group name for this system.
-   template <int D>
-   inline std::string FilmFieldGenExt<D>::systemSpaceGroup() const
-   {  return system().domain().groupName(); }
-
-   // Get one of the lattice vectors for this system.
-   template <int D>
-   inline RealVec<D> FilmFieldGenExt<D>::systemLatticeVector(int id) const
-   {  return system().domain().unitCell().rBasis(id); }
-
-   // Get the number of monomer species for this system.
-   template <int D>
-   inline int FilmFieldGenExt<D>::systemNMonomer() const
-   {  return system().mixture().nMonomer(); }
-   
    // Explicit instantiation declarations
    extern template class FilmFieldGenExt<1>;
    extern template class FilmFieldGenExt<2>;

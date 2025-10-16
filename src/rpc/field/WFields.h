@@ -34,7 +34,7 @@ namespace Rpc {
    {
    public:
 
-      /// Alias for base class
+      /// Alias for base class.
       typedef WFieldsTmpl<D, RField<D>, FieldIo<D> >  Base;
 
       // Inherited public member functions

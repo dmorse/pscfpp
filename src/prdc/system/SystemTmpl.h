@@ -8,16 +8,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-// Header file includes
 #include <util/param/ParamComposite.h>   // base class
-
-#include <prdc/crystal/UnitCell.h>       // member
 #include <pscf/chem/PolymerModel.h>      // member
-#include <util/misc/FileMaster.h>        // member
 
 // Forward declarations
 namespace Util {
+   class FileMaster;
    template <typename E, int N> class FSArray;
+}
+namespace Pscf {
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
 }
 
 namespace Pscf {
@@ -548,21 +550,6 @@ namespace Prdc {
       // Component objects
 
       /**
-      * Mixture object (solves MDE for all species).
-      */
-      typename T::Mixture mixture_;
-
-      /**
-      * Domain object (unit cell, mesh, fft, space group, and basis).
-      */
-      typename T::Domain domain_;
-
-      /**
-      * Filemaster (holds path prefixes for input and output files).
-      */
-      FileMaster fileMaster_;
-
-      /**
       * Chemical potential fields.
       */
       typename T::WFields w_;
@@ -582,12 +569,27 @@ namespace Prdc {
       */
       typename T::Mask mask_;
 
-      // Pointers to dynamic objects owned by this SystemTmpl
+      // Pointers to associated objects
 
       /**
-      * Pointer to MixtureModifier (non-const interface for Mixture).
+      * Pointer to enclosing instance of System subclass.
+      */
+      typename T::System* systemPtr_;
+
+      /**
+      * Pointer to Mixture object (solves MDE for all species).
+      */
+      typename T::Mixture* mixturePtr_;
+
+      /**
+      * Pointer to MixtureModifier (public non-const interface for Mixture).
       */
       typename T::MixtureModifier* mixtureModifierPtr_;
+
+      /**
+      * Pointer to Domain object (unit cell, mesh, fft, group, basis).
+      */
+      typename T::Domain* domainPtr_;
 
       /**
       * Pointer to %Interaction (excess free energy model).
@@ -640,9 +642,14 @@ namespace Prdc {
       typename T::SimulatorFactory* simulatorFactoryPtr_;
 
       /**
-      * Pointer to enclosing instance of System subclass.
+      * Filemaster (holds path prefixes for input and output files).
       */
-      typename T::System* systemPtr_;
+      FileMaster* fileMasterPtr_;
+
+      /**
+      * Pointer to mutable unit cell (work space).
+      */
+      UnitCell<D>* tmpUnitCellPtr_;
 
       /**
       * Polymer model enumeration (thread or bead), read from file.
@@ -666,11 +673,23 @@ namespace Prdc {
       */
       bool hasMixture_;
 
+      #if 0
       // Mutable work space
 
       mutable UnitCell<D> tmpUnitCell_;
+      #endif
 
       // Private member functions
+
+      /**
+      * Get the Mixture by non-const reference (private interface).
+      */
+      typename T::Mixture & mixture_();
+
+      /**
+      * Get the Domain by non-const reference (private interface).
+      */
+      typename T::Domain& domain_();
 
       /**
       * Allocate memory for fields in grid formats (private).
@@ -709,7 +728,7 @@ namespace Prdc {
    // Get the Mixture (const).
    template <int D, class T> inline 
    typename T::Mixture const & SystemTmpl<D,T>::mixture() const
-   {  return mixture_; }
+   {  return *mixturePtr_; }
 
    // Get the MixtureModifier (non-const).
    template <int D, class T> inline 
@@ -738,7 +757,7 @@ namespace Prdc {
    // Get the Domain (const).
    template <int D, class T> inline 
    typename T::Domain const & SystemTmpl<D,T>::domain() const
-   {  return domain_; }
+   {  return *domainPtr_; }
 
    // Does this system have an %Environment?
    template <int D, class T> inline 
@@ -827,12 +846,12 @@ namespace Prdc {
    // Get the FileMaster (non-const).
    template <int D, class T> inline 
    FileMaster& SystemTmpl<D,T>::fileMaster()
-   {  return fileMaster_; }
+   {  return *fileMasterPtr_; }
 
    // Get the FileMaster (const).
    template <int D, class T> inline 
    FileMaster const & SystemTmpl<D,T>::fileMaster() const
-   {  return fileMaster_; }
+   {  return *fileMasterPtr_; }
 
    // Get the container of c fields (const).
    template <int D, class T> inline
@@ -868,6 +887,18 @@ namespace Prdc {
    template <int D, class T> inline 
    typename T::Mask const & SystemTmpl<D,T>::mask() const
    {  return mask_; }
+
+   // Private inline functions:
+
+   // Get the Mixture (non-const).
+   template <int D, class T> inline 
+   typename T::Mixture & SystemTmpl<D,T>::mixture_() 
+   {  return *mixturePtr_; }
+
+   // Get the Domain (non-const).
+   template <int D, class T> inline 
+   typename T::Domain & SystemTmpl<D,T>::domain_() 
+   {  return *domainPtr_; }
 
 } // namespace Prdc
 } // namespace Pscf

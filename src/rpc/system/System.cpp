@@ -11,19 +11,19 @@
 #include "System.h"
 #include <prdc/system/SystemTmpl.tpp>
 
-#include <rpc/solvers/MixtureModifier.h>
-#include <rpc/solvers/Polymer.h>
-#include <rpc/solvers/Solvent.h>
-#include <rpc/scft/ScftThermo.h>
 #include <rpc/environment/EnvironmentFactory.h>
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/simulator/SimulatorFactory.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/CompressorFactory.h>
+#include <rpc/scft/ScftThermo.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/iterator/IteratorFactory.h>
 #include <rpc/scft/sweep/Sweep.h>
 #include <rpc/scft/sweep/SweepFactory.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/MixtureModifier.h>
+#include <rpc/field/Domain.h>
 
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>

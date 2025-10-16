@@ -11,8 +11,11 @@
 #include "RGridTrajectoryReader.h"
 
 #include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/misc/ioUtil.h>
+#include <util/misc/FileMaster.h>
 
 #include <sstream>
 #include <iostream>
