@@ -25,9 +25,7 @@ namespace Rpg {
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cuda;
 
-   // CUDA kernels:
-   // (defined in anonymous namespace, used only in this file)
-
+   // CUDA kernels (anonymous namespace - only used in this file)
    namespace {
 
       /*

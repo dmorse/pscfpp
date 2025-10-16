@@ -11,13 +11,13 @@
 #include <pscf/chem/SolventSpecies.h>   // base class
 #include <prdc/cpu/RField.h>            // member
 
-// Forward declarations
+// Forward declaration
 namespace Pscf {
    template <int D> class Mesh;
 }
 
 namespace Pscf {
-namespace Rpc { 
+namespace Rpc {
 
    using namespace Util;
    using namespace Prdc;
@@ -39,12 +39,12 @@ namespace Rpc {
       * Constructor.
       */
       Solvent();
-   
+
       /**
       * Destructor.
       */
       ~Solvent();
-  
+
       /**
       * Create an association with the mesh.
       *
@@ -61,15 +61,15 @@ namespace Rpc {
       * Compute monomer concentration field, q and phi and/or mu.
       *
       * Computes monomer concentration field cField, partition function
-      * q, and either the solvent volume fraction phi or solvent chemical 
+      * q, and either the solvent volume fraction phi or solvent chemical
       * potential mu, depending on ensemble. The function takes the
-      * chemical potential field wField for the relevant monomer type as 
+      * chemical potential field wField for the relevant monomer type as
       * its only input argument.
       *
-      * The optional parameter phiTot is only relevant to problems such 
-      * as thin films in which the material is excluded from part of the 
-      * unit cell by imposing an inhomogeneous constraint on the sum of 
-      * monomer concentrations (i.e., a "mask"). 
+      * The optional parameter phiTot is only relevant to problems such
+      * as thin films in which the material is excluded from part of the
+      * unit cell by imposing an inhomogeneous constraint on the sum of
+      * monomer concentrations (i.e., a "mask").
       *
       * \param wField  monomer chemical potential field of relevant type.
       * \param phiTot  volume fraction of unit cell occupied by material
@@ -80,8 +80,8 @@ namespace Rpc {
       * Get the monomer concentration field for this solvent.
       */
       RField<D> const & cField() const;
- 
-      // Inherited accessor functions 
+
+      // Inherited accessor functions
       using Pscf::Species::phi;
       using Pscf::Species::mu;
       using Pscf::Species::q;
@@ -93,17 +93,17 @@ namespace Rpc {
 
       // Inherited protected functions
       using Pscf::Species::setQ;
-      
+
    private:
 
       /// Concentration field for this solvent.
       RField<D> cField_;
- 
+
       /// Pointer to associated mesh.
       Mesh<D> const *  meshPtr_;
 
    };
-   
+
    // Inline member function
 
    /*
@@ -112,7 +112,7 @@ namespace Rpc {
    template <int D>
    inline RField<D> const & Solvent<D>::cField() const
    {  return cField_;  }
-  
+
    // Explicit instantiation declarations
    extern template class Solvent<1>;
    extern template class Solvent<2>;
@@ -120,4 +120,4 @@ namespace Rpc {
 
 }
 }
-#endif 
+#endif

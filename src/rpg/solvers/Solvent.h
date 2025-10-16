@@ -16,8 +16,8 @@ namespace Pscf {
    template <int D> class Mesh;
 }
 
-namespace Pscf { 
-namespace Rpg { 
+namespace Pscf {
+namespace Rpg {
 
    using namespace Util;
    using namespace Prdc;
@@ -38,7 +38,7 @@ namespace Rpg {
       * Constructor.
       */
       Solvent();
-   
+
       /**
       * Destructor.
       */
@@ -46,7 +46,7 @@ namespace Rpg {
 
       /**
       * Associate this object with a mesh.
-      * 
+      *
       * Must be called before allocate().
       *
       * \param mesh  Mesh<D> object - spatial discretization mesh
@@ -54,25 +54,25 @@ namespace Rpg {
       void associate(Mesh<D> const & mesh);
 
       /**
-      * Allocate internal data containers. 
-      * 
+      * Allocate internal data containers.
+      *
       * associate() must have been called first.
       */
       void allocate();
-   
+
       /**
       * Compute monomer concentration field, q and phi and/or mu.
       *
       * Computes monomer concentration field cField, partition function
-      * q, and either the solvent volume fraction phi or solvent chemical 
+      * q, and either the solvent volume fraction phi or solvent chemical
       * potential mu, depending on ensemble. The function takes the
-      * chemical potential field wField for the relevant monomer type as 
+      * chemical potential field wField for the relevant monomer type as
       * its only input argument.
       *
-      * The optional parameter phiTot is only relevant to problems such 
-      * as thin films in which the material is excluded from part of the 
-      * unit cell by imposing an inhomogeneous constraint on the sum of 
-      * monomer concentrations (i.e., a "mask"). 
+      * The optional parameter phiTot is only relevant to problems such
+      * as thin films in which the material is excluded from part of the
+      * unit cell by imposing an inhomogeneous constraint on the sum of
+      * monomer concentrations (i.e., a "mask").
       *
       * \param wField  monomer chemical potential field of relevant type.
       * \param phiTot  volume fraction of unit cell occupied by material
@@ -83,12 +83,12 @@ namespace Rpg {
       * Get the monomer concentration field for this solvent.
       */
       RField<D> const & cField() const;
- 
+
    private:
 
       /// Concentration field for this solvent
       RField<D> cField_;
- 
+
       /// Pointer to associated mesh
       Mesh<D> const *  meshPtr_;
 
@@ -105,13 +105,13 @@ namespace Rpg {
    }
 
    /*
-   * Allocate internal data containers. 
+   * Allocate internal data containers.
    */
    template <int D>
    inline void Solvent<D>::allocate()
-   {  
+   {
       UTIL_CHECK(meshPtr_);
-      cField_.allocate(meshPtr_->dimensions()); 
+      cField_.allocate(meshPtr_->dimensions());
    }
 
    /*
@@ -127,5 +127,5 @@ namespace Rpg {
    extern template class Solvent<3>;
 
 }
-} 
-#endif 
+}
+#endif

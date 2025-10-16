@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>      // base class template
-#include "Propagator.h"                  // base class argument
+#include "Propagator.h"                  // template argument
 
 #include <prdc/cuda/RField.h>            // member
 #include <prdc/cuda/RFieldDft.h>         // member
@@ -17,7 +17,7 @@
 #include <pscf/cuda/DeviceArray.h>       // member
 #include <util/containers/FSArray.h>     // member
 
-#include <prdc/cuda/resources.h>        
+#include <prdc/cuda/resources.h>
 
 // Forward declarations
 namespace Pscf {
@@ -45,8 +45,8 @@ namespace Rpg {
    /**
    * Block within a branched polymer.
    *
-   * Derived from BlockTmpl<Propagator<D>>. A BlockTmpl<Propagator<D>>
-   * has two Propagator<D> members and is derived from Edge.
+   * Derived from BlockTmpl <Propagator<D> >. A BlockTmpl<Propagator<D>>
+   * has two Propagator<D> members and is indirectly derived from Edge.
    *
    * \ingroup Rpg_Solver_Module
    */
@@ -88,7 +88,7 @@ namespace Rpg {
       /**
       * Create permanent associations with related objects.
       *
-      * This function creates associations of this block with the Mesh, 
+      * This function creates associations of this block with the Mesh,
       * FFT, UnitCell, and WaveList objects by storing their addresses.
       * It must be called before allocate().
       *
@@ -97,13 +97,13 @@ namespace Rpg {
       * \param cell  UnitCell<D> object - crystallographic unit cell
       * \param wavelist  WaveList<D> object - properties of wavevectors
       */
-      void associate(Mesh<D> const & mesh, 
-                     FFT<D> const & fft, 
-                     UnitCell<D> const & cell, 
+      void associate(Mesh<D> const & mesh,
+                     FFT<D> const & fft,
+                     UnitCell<D> const & cell,
                      WaveList<D>& wavelist);
 
       /**
-      * Allocate memory and set contour step size for thread model. 
+      * Allocate memory and set contour step size for thread model.
       *
       * This function choses a value for the number ns of contour
       * variable grid points for this block, sets the step size, and
@@ -131,10 +131,10 @@ namespace Rpg {
 
       /**
       * Clear all internal data that depends on lattice parameters.
-      * 
-      * This method changes the internal hasExpKsq_ flag to false, so 
-      * that the expKsq arrays will need to be recalculated before 
-      * a step function can be called. 
+      *
+      * This method changes the internal hasExpKsq_ flag to false, so
+      * that the expKsq arrays will need to be recalculated before
+      * a step function can be called.
       */
       void clearUnitCellData();
 
@@ -156,7 +156,7 @@ namespace Rpg {
 
       /**
       * Set solver for this block.
-      *       
+      *
       * This should be called once after every change in w fields, the
       * unit cell parameters, the block length or kuhn length, before
       * entering the loop used to solve the MDE for either propagator.
@@ -168,7 +168,7 @@ namespace Rpg {
 
       /**
       * Compute step of integration loop, from i to i+1.
-      * 
+      *
       * This function is called internally by the Propagator::solve
       * function within a loop over steps. It is implemented in the
       * Block class because the same private data structures are needed
@@ -186,7 +186,7 @@ namespace Rpg {
       * function within a loop over steps. It is implemented in the
       * Block class because the same private data structures are needed
       * for the two propagators associated with a Block.
-      *  
+      *
       * \param qin  slice i of propagator q (input)
       * \param qout  slice i+1 of propagator q (output)
       */
@@ -196,7 +196,7 @@ namespace Rpg {
       * Apply the exponential field operator for the bead model.
       *
       * This function applies exp( -w(r)) in-place, where w(r) is the w-field
-      * for the monomer type of this block. 
+      * for the monomer type of this block.
       *
       * \param q  slice of propagator q, modified in placde
       */
@@ -223,7 +223,7 @@ namespace Rpg {
       *
       * \param qin  slice i of propagator q (input)
       * \param qout  slice i+1 of propagator q (output)
-      */ 
+      */
       void stepHalfBondBead(RField<D> const & qin, RField<D>& qout);
 
       /**
@@ -378,27 +378,27 @@ namespace Rpg {
 
       /**
       * Workspace array containing two r-grid fields, stored on the device.
-      * 
-      * These workspace fields are stored contiguously in a single array to 
-      * allow batched FFTs to be performed on both fields simultaneously, 
+      *
+      * These workspace fields are stored contiguously in a single array to
+      * allow batched FFTs to be performed on both fields simultaneously,
       * which occurs in stepThread().
       */
       DeviceArray<cudaReal> qrPair_;
 
       /**
       * Workspace array containing two k-grid fields, stored on the device.
-      * 
-      * These workspace fields are stored contiguously in a single array to 
-      * allow batched FFTs to be performed on both fields simultaneously, 
+      *
+      * These workspace fields are stored contiguously in a single array to
+      * allow batched FFTs to be performed on both fields simultaneously,
       * which occurs in stepThread().
       */
       DeviceArray<cudaComplex> qkPair_;
 
       // R-grid work space (used in productAverage)
-      RField<D> qr_; 
+      RField<D> qr_;
 
       // K-grid work space (used for FFT of q in stepBondBead)
-      RFieldDft<D> qk_; 
+      RFieldDft<D> qk_;
 
       /// Container for batched FFTs of q0 (forward) in contiguous memory
       DeviceArray<cudaComplex> q0kBatched_;
@@ -407,7 +407,7 @@ namespace Rpg {
       DeviceArray<cudaComplex> q1kBatched_;
 
       // Slices of forward and reverse propagator on a k-grid (for stress)
-      RFieldDft<D> q0k_; 
+      RFieldDft<D> q0k_;
       RFieldDft<D> q1k_;
 
       /// Const pointer to associated Mesh<D> object.

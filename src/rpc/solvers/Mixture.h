@@ -9,8 +9,8 @@
 */
 
 #include <prdc/solvers/MixturePrdc.h>     // base class template
-#include "Polymer.h"                      // base class parameter
-#include "Solvent.h"                      // base class parameter
+#include "Polymer.h"                      // template argument
+#include "Solvent.h"                      // template argument
 
 namespace Pscf {
 namespace Rpc {
@@ -30,12 +30,13 @@ namespace Rpc {
    {
 
    public:
- 
+
       /// Direct (parent) base class.
-      using MixturePrdcT 
+      using MixturePrdcT
          = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D> >;
 
-      // Inherited public type name aliases 
+      // Inherited public type name aliases
+
       using typename MixturePrdcT::MixtureTmplT;
       using typename MixturePrdcT::PolymerT;
       using typename MixturePrdcT::SolventT;
@@ -96,7 +97,7 @@ namespace Rpc {
       /**
       * Allocate memory for all blocks
       */
-      void allocateBlocks() override; 
+      void allocateBlocks() override;
 
    };
 
@@ -107,10 +108,12 @@ namespace Rpc {
 
 } // namespace Rpc
 namespace Prdc {
+
    // Explicit instantiation declarations for base class
    extern template class MixturePrdc<1, Rpc::Polymer<1>, Rpc::Solvent<1> >;
    extern template class MixturePrdc<2, Rpc::Polymer<2>, Rpc::Solvent<2> >;
    extern template class MixturePrdc<3, Rpc::Polymer<3>, Rpc::Solvent<3> >;
+
 } // namespace Prdc
 } // namespace Pscf
 #endif

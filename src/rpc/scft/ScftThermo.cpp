@@ -14,9 +14,12 @@
 namespace Pscf {
 
    namespace Prdc {
+
+      // Explicit instantiation of base class template
       template class ScftThermoTmpl<1, Rpc::System<1> >;
       template class ScftThermoTmpl<2, Rpc::System<2> >;
       template class ScftThermoTmpl<3, Rpc::System<3> >;
+
    }
 
    namespace Rpc {
@@ -33,7 +36,7 @@ namespace Pscf {
       * Inner product of r-grid fields.
       */
       template <int D>
-      double ScftThermo<D>::innerProduct(RFieldT const & A, 
+      double ScftThermo<D>::innerProduct(RFieldT const & A,
                                          RFieldT const & B) const
       {
          const int meshSize = Base::domain().mesh().size();
@@ -50,5 +53,6 @@ namespace Pscf {
       template class ScftThermo<1>;
       template class ScftThermo<2>;
       template class ScftThermo<3>;
+
    }
 }

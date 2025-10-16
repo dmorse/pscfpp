@@ -41,10 +41,10 @@ namespace Rpc {
 
       /// Alias for r-grid field type.
       using RFieldT = typename Base::RFieldT;
- 
+
       /**
       * Inner product of fields (sum of elements on a grid).
-      * 
+      *
       * \param A 1st field
       * \param B 2nd field
       */
@@ -58,7 +58,7 @@ namespace Rpc {
    extern template class ScftThermo<2>;
    extern template class ScftThermo<3>;
 
-} 
+}
 
 namespace Prdc {
 

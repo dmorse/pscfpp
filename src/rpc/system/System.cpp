@@ -32,6 +32,7 @@
 #include <pscf/inter/Interaction.h>
 
 namespace Pscf {
+
    namespace Prdc {
 
       // Explicit instantiation of base class template
@@ -40,6 +41,7 @@ namespace Pscf {
       template class SystemTmpl< 3, Rpc::Types<3> >;
 
    }
+
    namespace Rpc {
 
       /*
@@ -56,5 +58,5 @@ namespace Pscf {
       template class System<3>;
 
    }
-} 
+}
 #endif

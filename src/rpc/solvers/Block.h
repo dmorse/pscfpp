@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <rpc/solvers/Propagator.h>       // base class template argument
+#include <rpc/solvers/Propagator.h>       // template argument
 
 #include <prdc/cpu/RField.h>              // member
 #include <prdc/cpu/RFieldDft.h>           // member
@@ -20,14 +20,14 @@
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc{
-     template <int D> class UnitCell;
-     namespace Cpu {
-        template <int D> class FFT;
-        template <int D> class WaveList;
-     }
+      template <int D> class UnitCell;
+      namespace Cpu {
+         template <int D> class FFT;
+         template <int D> class WaveList;
+      }
    }
    namespace Rpc{
-     template <int D> class FieldIo;
+      template <int D> class FieldIo;
    }
 }
 

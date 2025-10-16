@@ -9,8 +9,8 @@
 */
 
 #include <prdc/solvers/MixturePrdc.h>     // base class template
-#include "Polymer.h"                      // base class parameter
-#include "Solvent.h"                      // base class parameter
+#include "Polymer.h"                      // template argument
+#include "Solvent.h"                      // template argument
 
 namespace Pscf {
 namespace Rpg {
@@ -36,6 +36,7 @@ namespace Rpg {
          = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D> >;
 
       // Inherited public type name aliases
+
       using typename MixturePrdcT::MixtureTmplT;
       using typename MixturePrdcT::PolymerT;
       using typename MixturePrdcT::SolventT;
