@@ -380,7 +380,7 @@ namespace Rpg {
    template <int D>
    void Block<D>::setKuhn(double kuhn)
    {
-      BlockTmpl< Propagator<D> >::setKuhn(kuhn);
+      Base::setKuhn(kuhn);
       hasExpKsq_ = false;
    }
 

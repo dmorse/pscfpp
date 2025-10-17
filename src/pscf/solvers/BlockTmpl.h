@@ -8,35 +8,35 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Edge.h>         // base class
-#include <util/containers/Pair.h>   // member template
-
-#include <cmath>
+#include <pscf/chem/Edge.h>           // base class
+#include <util/containers/DArray.h>   // member
 
 namespace Pscf
-{ 
+{
 
    using namespace Util;
 
    /**
    * Class template for a block solver in a block copolymer.
    *
-   * Class template argument QT is a concrete propagator class. A 
-   * BlockTmpl<QT> object has:
+   * Class template argument QT is a concrete propagator class, while
+   * argument FT is a field type.  A BlockTmpl<QT,FT> object has:
    *
    *   - two QT propagator objects, one per direction
-   *   - a monomer concentration field for the block
+   *   - a FT monomer concentration field for the block
    *   - a kuhn length
-   * 
+   *
+   * in addition to the members of the Edge base class.
+   *
    * Each implementation of SCFT and/or FTS is defined in a different
    * enclosed namespace of Pscf. Each such implementation defines a
    * concrete propagator class and a concrete block class. By convention,
-   * these are named Propagator and Block, respectively. The Block class 
-   * in each implementation is derived from BlockTmpl<Propagator>, using 
+   * these are named Propagator and Block, respectively. The Block class
+   * in each implementation is derived from BlockTmpl<Propagator>, using
    * the following syntax:
    * \code
-   *  
-   *    class Block : public BlockTmpl<Propagator>
+   *
+   *    class Block : public BlockTmpl<Propagator, Field>
    *    {
    *      ....
    *    }
@@ -46,63 +46,63 @@ namespace Pscf
    * Design notes:
    *
    * The Block class of a polymer field theory implementation has member
-   * variables that specify all the data that is needed to describe the 
+   * variables that specify all the data that is needed to describe the
    * block. This includes but is not limited to the monomer type id and
    * block length (defined by the Edge base class) and the kuhn length
    * (defined by this class template). In addition, each such Block class
-   * may define a variety of member variables that define the numerical 
-   * discretization of the block and any related parameters needed by 
-   * the algorithm that solves the modified diffusion equation. 
-   *   
+   * may define a variety of member variables that define the numerical
+   * discretization of the block and any related parameters needed by
+   * the algorithm that solves the modified diffusion equation.
+   *
    * The Block class will normally define one or more public functions
    * that can be called repeatedly by the Propagator::solve() function in
    * order to implement individual steps of the stepping algorithm used to
-   * solve the MDE. 
-   *  
-   * The Block class also normally provides a void function named 
+   * solve the MDE.
+   *
+   * The Block class also normally provides a void function named
    * computeConcentration() that integrates the product of the two
    * associated propagators with respect to contour length in order
    * to compute the monomer concentration field associated with the
    * block.  This is normally called within the implementation of
-   * solve() function of the associated Polymer class, within a loop 
-   * over all blocks of the molecule that is called after solution of 
+   * solve() function of the associated Polymer class, within a loop
+   * over all blocks of the molecule that is called after solution of
    * the modified diffusion equation for all propagators.
-   *  
+   *
    * Here is an example of a simple interface of the Block class for an
    * implementation that is designed for self-consistent field theory:
    * \code
    *
-   *   
+   *
    *   // -------------------------------------------------------------
    *   // One step of integration of the modified diffusion equation.
    *   //
    *   // \param in   input q-field from previous step
    *   // \param out  output q-field at next step
    *   // -------------------------------------------------------------
-   *   void step(Propagator::FieldT const & in, Propagator::FieldT& out);
+   *   void step(FT const & in, FT& out);
    *
    *   // -------------------------------------------------------------
    *   // Compute monomer concentration field for this block.
-   *   // 
+   *   //
    *   // \param prefactor  numerical prefactor of phi/(Q*length)
    *   // -------------------------------------------------------------
    *   void computeConcentration(double prefactor);
    *
    * \endcode
    *
-   * The step and computeConcentration functions in this example can both 
-   * use private variables that depend on the monomer type and contour 
-   * length of a particular block, and that apply to both of the two 
-   * associated propagators.  Parameters that depend upon the step size 
-   * used to discretize the MDE for a particular block generally cannot, 
-   * however, be re-used by other blocks, because the MDE solver algorithm 
-   * for a thread model may use slightly different step sizes in different 
-   * blocks in order to divide each block into an even integer number of 
-   * steps of equal length. 
-   * 
+   * The step and computeConcentration functions in this example can both
+   * use private variables that depend on the monomer type and contour
+   * length of a particular block, and that apply to both of the two
+   * associated propagators.  Parameters that depend upon the step size
+   * used to discretize the MDE for a particular block generally cannot,
+   * however, be re-used by other blocks, because the MDE solver algorithm
+   * for a thread model may use slightly different step sizes in different
+   * blocks in order to divide each block into an even integer number of
+   * steps of equal length.
+   *
    * \ingroup Pscf_Solver_Module
    */
-   template <class QT>
+   template <class QT, class FT>
    class BlockTmpl : public Edge
    {
 
@@ -115,13 +115,18 @@ namespace Pscf
       */
       using PropagatorT = QT;
 
+      /**
+      * Field type.
+      */
+      using FieldT = FT;
+
       // Public member functions
 
       /**
       * Constructor.
       */
       BlockTmpl();
- 
+
       /**
       * Destructor.
       */
@@ -144,7 +149,7 @@ namespace Pscf
       * \param directionId integer index for direction (0 or 1)
       */
       QT& propagator(int directionId);
-   
+
       /**
       * Get a const Propagator for a specified direction.
       *
@@ -153,29 +158,29 @@ namespace Pscf
       * \param directionId integer index for direction (0 or 1)
       */
       QT const & propagator(int directionId) const;
-   
+
       /**
       * Get the associated monomer concentration field.
       */
-      typename QT::FieldT& cField();
+      FT& cField();
 
       /**
       * Get the associated const monomer concentration field.
       */
-      typename QT::FieldT const & cField() const;
-   
+      FT const & cField() const;
+
       /**
       * Get monomer statistical segment length.
       */
       double kuhn() const;
-  
+
    private:
 
       /// Pair of Propagator objects (one for each direction).
-      Pair<PropagatorT> propagators_;
+      DArray<QT> propagators_;
 
       /// Monomer concentration field.
-      typename QT::FieldT cField_;
+      FT cField_;
 
       /// Monomer statistical segment length.
       double kuhn_;
@@ -187,40 +192,38 @@ namespace Pscf
    /*
    * Get a Propagator indexed by direction.
    */
-   template <class QT>
-   inline 
-   QT& BlockTmpl<QT>::propagator(int directionId)
+   template <class QT, class FT>
+   inline
+   QT& BlockTmpl<QT,FT>::propagator(int directionId)
    {  return propagators_[directionId]; }
 
    /*
    * Get a const Propagator indexed by direction.
    */
-   template <class QT>
-   inline 
-   QT const & BlockTmpl<QT>::propagator(int directionId) const
+   template <class QT, class FT>
+   inline
+   QT const & BlockTmpl<QT,FT>::propagator(int directionId) const
    {  return propagators_[directionId]; }
 
    /*
    * Get the monomer concentration field.
    */
-   template <class QT>
-   inline
-   typename QT::FieldT& BlockTmpl<QT>::cField()
+   template <class QT, class FT> inline
+   FT& BlockTmpl<QT,FT>::cField()
    {  return cField_; }
 
    /*
    * Get the const monomer concentration field.
    */
-   template <class QT>
-   inline
-   typename QT::FieldT const & BlockTmpl<QT>::cField() const
+   template <class QT, class FT> inline
+   FT const & BlockTmpl<QT,FT>::cField() const
    {  return cField_; }
 
    /*
-   * Get the monomer statistical segment length. 
+   * Get the monomer statistical segment length.
    */
-   template <class QT>
-   inline double BlockTmpl<QT>::kuhn() const
+   template <class QT, class FT> inline
+   double BlockTmpl<QT,FT>::kuhn() const
    {  return kuhn_; }
 
    // Non-inline functions
@@ -228,12 +231,13 @@ namespace Pscf
    /*
    * Constructor.
    */
-   template <class QT>
-   BlockTmpl<QT>::BlockTmpl()
+   template <class QT, class FT>
+   BlockTmpl<QT,FT>::BlockTmpl()
     : propagators_(),
       cField_(),
       kuhn_(0.0)
    {
+      propagators_.allocate(2);
       propagator(0).setDirectionId(0);
       propagator(1).setDirectionId(1);
       propagator(0).setPartner(propagator(1));
@@ -243,15 +247,15 @@ namespace Pscf
    /*
    * Destructor.
    */
-   template <class QT>
-   BlockTmpl<QT>::~BlockTmpl()
+   template <class QT, class FT>
+   BlockTmpl<QT,FT>::~BlockTmpl()
    {}
 
    /*
    * Set the monomer statistical segment length.
    */
-   template <class QT>
-   void BlockTmpl<QT>::setKuhn(double kuhn)
+   template <class QT, class FT>
+   void BlockTmpl<QT,FT>::setKuhn(double kuhn)
    {  kuhn_ = kuhn; }
 
 }

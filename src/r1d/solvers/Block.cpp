@@ -9,9 +9,12 @@
 #include <r1d/domain/Domain.h>
 #include <r1d/domain/GeometryMode.h>
 
+namespace Pscf {
+   template class BlockTmpl< R1d::Propagator, DArray<double> >;
+}
+
 namespace Pscf { 
-namespace R1d
-{
+namespace R1d {
 
    using namespace Util;
 

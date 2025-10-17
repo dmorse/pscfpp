@@ -23,12 +23,13 @@ namespace R1d {
    /**
    * Block within a block polymer.
    *
-   * Derived from BlockTmpl<Propagator>. A BlockTmpl<Propagator> has two 
-   * Propagator members and is derived from Edge.
+   * Derived directly from BlockTmpl<Propagator, DArray<double> >, and 
+   * indirectry form Pscf::Edge. A Block has two Propagator members and a
+   * monomer concentration field. 
    *
    * \ingroup R1d_Solver_Module
    */
-   class Block : public BlockTmpl<Propagator>
+   class Block : public BlockTmpl<Propagator, DArray<double> >
    {
 
    public:
@@ -155,6 +156,11 @@ namespace R1d {
    inline int Block::ns() const
    {  return ns_; }
 
-}
+} // namespace R1d
+} // namespace Pscf
+
+// Explicit instantiation declaration for base class
+namespace Pscf { 
+   extern template class BlockTmpl<R1d::Propagator, DArray<double> >;
 }
 #endif

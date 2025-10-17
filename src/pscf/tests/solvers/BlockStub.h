@@ -10,11 +10,12 @@
 
 #include "PropagatorStub.h"
 #include <pscf/solvers/BlockTmpl.h>
+#include <util/containers/DArray.h>
 
 namespace Pscf
 { 
 
-   class BlockStub : public BlockTmpl<PropagatorStub>
+   class BlockStub : public BlockTmpl<PropagatorStub, DArray<double> >
    {
 
    public:

@@ -8,11 +8,14 @@
 #include "Block.tpp"
 
 namespace Pscf { 
-namespace Rpc {
 
-   template class Block<1>;
-   template class Block<2>;
-   template class Block<3>;
+   template class BlockTmpl< Rpc::Propagator<1>, Prdc::Cpu::RField<1> >;
+   template class BlockTmpl< Rpc::Propagator<2>, Prdc::Cpu::RField<2> >;
+   template class BlockTmpl< Rpc::Propagator<3>, Prdc::Cpu::RField<3> >;
 
-}
+   namespace Rpc {
+      template class Block<1>;
+      template class Block<2>;
+      template class Block<3>;
+   }
 }

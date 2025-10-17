@@ -18,6 +18,7 @@
 
 // Forward declarations
 namespace Pscf {
+
    template <int D> class Mesh;
    namespace Prdc{
       template <int D> class UnitCell;
@@ -29,6 +30,15 @@ namespace Pscf {
    namespace Rpc{
       template <int D> class FieldIo;
    }
+
+   // Explicit instantiation declarations for base classes
+   extern template 
+   class BlockTmpl< Rpc::Propagator<1>, Prdc::Cpu::RField<1> >;
+   extern template 
+   class BlockTmpl< Rpc::Propagator<2>, Prdc::Cpu::RField<2> >;
+   extern template 
+   class BlockTmpl< Rpc::Propagator<3>, Prdc::Cpu::RField<3> >;
+
 }
 
 namespace Pscf {
@@ -41,14 +51,14 @@ namespace Rpc {
    /**
    * Block within a linear or branched block polymer.
    *
-   * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> >
-   * has two Propagator<D> members, and is derived from class Pscf::Edge.
+   * A Block has two Propagator<D> members, and a RField<D> concentration 
+   * field.
    *
    * \ref user_param_block_sec "Manual Page"
    * \ingroup Rpc_Solver_Module
    */
    template <int D>
-   class Block : public BlockTmpl< Propagator<D> >
+   class Block : public BlockTmpl< Propagator<D>, RField<D> >
    {
 
    public:
@@ -56,7 +66,7 @@ namespace Rpc {
       // Public type name aliases
 
       /// Base class.
-      using Base = BlockTmpl< Propagator<D> >;
+      using Base = BlockTmpl< Propagator<D>, RField<D> >;
 
       /// Propagator type.
       using PropagatorT = Propagator<D>;
@@ -483,6 +493,6 @@ namespace Rpc {
    extern template class Block<2>;
    extern template class Block<3>;
 
-}
-}
+} // R1d
+} // Pscf
 #endif

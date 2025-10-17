@@ -45,13 +45,13 @@ namespace Rpg {
    /**
    * Block within a branched polymer.
    *
-   * Derived from BlockTmpl <Propagator<D> >. A BlockTmpl<Propagator<D>>
-   * has two Propagator<D> members and is indirectly derived from Edge.
+   * A Block has two Propagator<D> members and a RField<D> concentraiton 
+   * field. Block indirectly derived from Edge.
    *
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Block : public BlockTmpl< Propagator<D> >
+   class Block : public BlockTmpl< Propagator<D>, RField<D> >
    {
 
    public:
@@ -59,7 +59,7 @@ namespace Rpg {
       // Public type name aliases
 
       /// Base class.
-      using Base = BlockTmpl< Propagator<D> > ;
+      using Base = BlockTmpl< Propagator<D>, RField<D> > ;
 
       /// Propagator type.
       using PropagatorT = Propagator<D>;
@@ -330,11 +330,11 @@ namespace Rpg {
       */
       int ns() const;
 
-      // Functions with non-dependent names from BlockTmpl<Propagator<D>>
-      using BlockTmpl< Pscf::Rpg::Propagator<D> >::setKuhn;
-      using BlockTmpl< Pscf::Rpg::Propagator<D> >::propagator;
-      using BlockTmpl< Pscf::Rpg::Propagator<D> >::cField;
-      using BlockTmpl< Pscf::Rpg::Propagator<D> >::kuhn;
+      // Functions with non-dependent names from direct base.
+      using Base::setKuhn;
+      using Base::propagator;
+      using Base::cField;
+      using Base::kuhn;
 
       // Functions with non-dependent names from Edge
       using Edge::setId;
