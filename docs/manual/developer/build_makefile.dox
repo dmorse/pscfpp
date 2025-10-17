@@ -339,7 +339,7 @@ makefiles in the util, pscf, and prdc namespace-level directories:
   - Definition of a variable PSCF_PC = \$(BLD_DIR)/rpc/pscf_pc that gives 
     the shared part of the paths for the object and dependency file that 
     are created by compiling the program source file src/rpc/pscf_pc.cpp, 
-    without the .o and .d file name extensions. 
+    without the .o and .d file name suffixes. 
 
   - Definition of a variable PSCF_PC_EXE = \$(BIN_DIR)/pscf_pc that gives 
     the absolute path to the resulting executable file.

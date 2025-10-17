@@ -1,0 +1,159 @@
+/*! \page developer_filetypes_page File Types
+
+\ref developer_directory_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page  (Next)
+<BR>
+
+
+The PSCF directory contains a variety of different types of files with
+distinct file name suffixes.
+
+\section developer_filetypes_source_sec Source code files
+
+All C++ code files associated with a given class or set of functions are
+placed in the same directory and have the same base name, with different
+file name suffixes.  The name of a file that contains C++ code for a
+single class or class template almost always has a base name that is the
+same as the class name, with a file name suffix that indicates the file
+type. All namespace and class names upper space camel capitalization, in
+which the first letter of each word in a name is capitalized.
+
+PSCF uses the following file name suffixes for C++ and CUDA C++ files:
+
+<table>
+   <tr>
+     <th> Pattern </th>
+     <th> Purpose </th>
+   </tr>
+   <tr>
+     <td> \*.h </td>
+     <td> C++ header file </td>
+   </tr>
+   <tr>
+     <td> \*.tpp </td>
+     <td> implementation of a class template </td>
+   </tr>
+   <tr>
+     <td> \*.cpp </td>
+     <td> compilable C++ source file </td>
+   </tr>
+   <tr>
+     <td> \*.cu </td>
+     <td> compilable CUDA C++ source file </td>
+   </tr>
+</table>
+Header files, with suffix .h, may be included into other C++ files
+using a C/C++ preprocessor \#include directive.  C++ and CUDA C++ source
+files with suffix .cpp or .cu are compiled, and may never be included
+by other program files.
+
+Template implementation files, with suffix .tpp, usually contain
+definitions of non-inline member functions of a class template, much
+like the compilable source file for a non-template class. These files
+are usually included either into an associated \*.h header file (for
+standard class templates that rely on implicit instantiation) or into
+an associated \*.cpp or \*.cu source file with the same base name (for
+class templates that are compiled by explicit instantiation). Usage
+patterns and file conventions for class templates in PSCF are discussed
+in developer_template_page "here".
+
+Compilable source files that contain or include only standard C++ code
+may be given file suffix .cpp. Compilable source files that contain
+or include any CUDA C++ code must instead use file suffix .cu.
+Different makefile pattern rules are used to compile files with filename
+suffix .cpp and .cu, using different compilers, using the NVIDIA nvcc
+compiler to compile files with file suffix .cu.
+
+\section developer_filetypes_build_sec Build system files
+
+The PSCF build system is based on the unix "make" command, and uses
+several types of file that are placed in the src and bld directories.
+The following table list two types of file that are part of this
+build system:
+<table>
+   <tr>
+     <th> Pattern </th>
+     <th> Purpose </th>
+   </tr>
+   <tr>
+     <td> makefile </td>
+     <td> makefile (instructions for the make command)</td>
+   </tr>
+   <tr>
+     <td> \*.mk </td>
+     <td> makefile fragment (included by other makefiles)</td>
+   </tr>
+</table>
+Immediately after the PSCF repository is cloned, almost every
+subdirectory of the src directory will contain both a makefile and a
+makefile fragment named sources.mk. The sources.mk file defines a list
+of all of compilable *.cpp and/or *.cu source files in that directory.
+Each namespace-level directories of src will also contain an additional
+makefile fragments named patterns.mk that defines pattern rules for
+compilation of source files in that directory.
+
+After the configure script has been run, the src and bld directory will
+each contain an additional makefile fragment named config.mk, while the
+bld directory and each namespace-level subdirectory of the bld directory
+will contain a makefile.
+
+The PSCF build system is discussed in detail on the
+\ref developer_build_page "following page".
+
+\section developer_filetypes_doc_sec Documentation files
+
+The PSCF web manual is constructed using the doxgen documentation utility.
+This utility extracts API documentation from source code files, and also
+incorporates manual pages that are constructed from separate files.
+
+Files that contain the contents of a web manual page have file names that
+end with file name suffix .dox.  The main manual pages are \*.dox
+files that are located in the docs/manual directory. Some other files
+that are used by doxygen also appear in the src/ directory alongside
+the source code files.
+
+The following two file name suffixes are used for files that are used
+by doxygen to construct a web manual:
+<table>
+   <tr>
+     <th> Pattern </th>
+     <th> Purpose </th>
+   </tr>
+   <tr>
+     <td> \*.dox </td>
+     <td> doxygen web manual page </td>
+   </tr>
+   <tr>
+     <td> \*.mod </td>
+     <td> doxygen topic module definition </td>
+   </tr>
+</table>
+Each files with file name suffix .mod defines one of the
+doxygen "Topic" modules that is used to create the hierarchical
+presentation of class API documentation that is accessible via
+the "Topics" tab at the top of every web manual page.
+
+Most of the \*.dox files that appear in the src directory contain the
+contents manual pages that provide additional information for users
+about a particular class or class template.  The name of a file that
+contains the content of such a manual page usually has a prefix that
+is the same the name of the class or class template (which is also
+used as a prefix for the associated source code files) followed by a
+suffix .dox.  Each such web manual page usually describe the syntax
+of the parameter file block associated with a class, and may also
+provide information about algorithm or mathematical conventions that
+a user would need to understand in order to write the parameter file
+block and choose appropriate values for parameters.  The resulting
+user-oriented web manual pages do not contain the API documentation
+that is extracted from comments in the source code, which doxygen uses
+to create a separate API documentation page for each class or class
+template.  The user documentation page and the API documentation
+page for each class or class template are usually accessible to one
+another via html links.
+
+<BR>
+\ref developer_directory_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page     (Next)
+
+*/

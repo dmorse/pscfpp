@@ -6,7 +6,7 @@
 
 This file briefly discusses the contents and purpose of different
 types of makefiles and makefile fragments that are used in the PSCF
-build system.  All files with a filename extension .mk are makefile
+build system.  All files with a file name suffix .mk are makefile
 fragments that are included into makefiles via the make
 \ref developer_build_make_include_sec "include directive".
 

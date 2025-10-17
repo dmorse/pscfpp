@@ -4,17 +4,17 @@
 \ref developer_build_pattern_page (Next)
 <BR>
 
-The pattern rules used by PSCF to compile a source file create both
-an object file with file extension .o and a corresponding dependency
-file with file extension \*.d.  The resulting dependency file defines
-a makefile rule that lists all of the files that are prerequisites
-of the resulting object file.  The pre-requisites of an object file
-are the files that are combined by the C preprocessor to create the
-translation unit that is compiled to create that object file.  These
-prerequisites include both the associated \*.cpp or \*.cu source file
-and all of the header files and (in some cases) template implementation
-files that are directly or indirectly included into the source file
-via preprocessor \#include directives.
+The pattern rules used by PSCF to compile a source file create both an
+object file with file name suffix .o and a corresponding dependency
+file with file suffix \*.d.  The resulting dependency file defines a 
+makefile rule that lists all of the files that are prerequisites of the 
+resulting object file.  The pre-requisites of an object file are the 
+files that are combined by the C preprocessor to create the translation 
+unit that is compiled to create that object file.  These prerequisites 
+include both the associated \*.cpp or \*.cu source file and all of the 
+header files and (in some cases) template implementation files that are 
+directly or indirectly included into the source file via preprocessor 
+\#include directives.
 
 The dependency file associated with an object file named Class.o defines
 a makefile rule that, is simplified form, might look something like this:

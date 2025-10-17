@@ -102,17 +102,17 @@ The value assigned to pscf_chem_ in this example is a list of all of the
 compilable source files in the relevant subdirectory, src/pscf/chem.  All 
 paths in this list must be given as relative paths, defined relative to 
 the src/ directory. In this example, these source files are all standard 
-C++ source files with a file name extension .cpp. Source file lists in 
+C++ source files with a file name suffix .cpp. Source file lists in 
 other directories may, however, also contain CUDA C++ files with file 
-name extension *.cu.
+name suffix *.cu.
 
 The object file list variable pscf_chem_OBJS_ is constructed in the last 
 two lines of this example.  The value that is assigned to pscf_chem_OBJS 
 is a corresponding list of absolute paths for object files, with 
-filename extension *.o.  This list is constructed here by applying two 
+filename suffix *.o.  This list is constructed here by applying two 
 makefile text manipulation functions to the value of the source file
 list pscf_chem_. First, the ":" operator is used in the expression 
-\$(pscf_chem_:.cpp=.o) to replace the .cpp extension with .o in each of 
+\$(pscf_chem_:.cpp=.o) to replace the .cpp suffix with .o in each of 
 the relative paths in \$(pscf_chem_).  The built in "addprefix" function 
 is then used to add the value $(BLD_DIR)/ as a common prefix to every 
 name in the list. Here, $(BLD_DIR) is the absolute path to the build

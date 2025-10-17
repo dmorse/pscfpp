@@ -169,13 +169,13 @@ patterns.mk files have very similar structure.
 
 We first consider pattern rules for creating *.o object file targets.
 The patterns.mk file in each namespace-level directory that contains C++ 
-source files with file name extension .cpp contains a rule for compiling 
+source files with file name suffix .cpp contains a rule for compiling 
 such *.cpp file to create a *.o object file. In directories that contain 
-CUDA C++ source files with file name extension .cu, the patterns.mk file 
+CUDA C++ source files with file name suffix .cu, the patterns.mk file 
 will contain a pattern rule for compiling these files, which uses the 
 NVIDIA CUDA compiler rather than a C++ compiler. Both rules may exist
 in patterns.mk directories that contain both types of source file.  
-Both types of rule creating an object file with file name extension *.o 
+Both types of rule creating an object file with file name suffix *.o 
 in a subdirectory of the build directory, \$(BLD_DIR), by compiling a 
 *.cpp or *.cu source file with the same base name in the corresponding 
 subdirectory of the source directory, \$(SRC_DIR). 
@@ -216,7 +216,7 @@ that invokes the compiler command, given by the makefile variable value
 \$(CXX), in order to compile the source file and create the object file 
 target. The third line of the recipe calls a script, whose name is given 
 by the variable value \$(MAKEDEP), that creates a corresponding 
-dependency file with extension .d.  
+dependency file with file name suffix .d.  
 
 The two essential actions taken by this pattern rule are thus to compile 
 the source file to create an *.o object file, and to create a *.d 
@@ -322,7 +322,7 @@ file.
 
 In namespace-level directories that contain CUDA code, the patterns.mk file
 contains a separate pattern rule for compiling CUDA C++ source files with
-file name extension *.cu. Such a rule always looks like this:
+file name suffix *.cu. Such a rule always looks like this:
 \verbatim
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cu
     @SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
@@ -333,7 +333,7 @@ This pattern rule is closely analogous to that used to compile *.cpp files.
 The differences are:
 
    - The file name pattern for the source file prerequisite uses a file 
-     name extension .cu rather than .cpp
+     name suffix .cu rather than .cpp
 
    - The name of the compiler is represented by a variable value 
      \$(NVXX), which gives the name of the NVIDA nvxx CUDA C++ compiler.
@@ -361,7 +361,7 @@ create executables that run unit tests. By convention, such files are
 compiled and linked to create executable files with names that end in
 Test (e.g., Test, cpuTest or cudaTest). The name of the object file used
 to create each such executable is given by the name of the executable
-followed by a .o filename extension. Each tests directory may contain 
+followed by a .o filename suffix. Each tests directory may contain 
 multiple source files for unit tests, some which may be located in 
 subdirectories of the "tests" directory, each of which is designed to
 run a different subset of the available unit tests. Because there may be

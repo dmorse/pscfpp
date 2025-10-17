@@ -104,6 +104,7 @@ online at
   <li> \subpage developer_page
     <ol type="1">
     <li> \ref developer_directory_page </li>
+    <li> \ref developer_filetypes_page </li>
     <li> \ref developer_build_page </li>
     <li> \ref developer_standards_page </li>
     <li> \ref developer_template_page </li>
@@ -119,18 +120,20 @@ This web manual is designed to provide both thorough usage information
 for users who may never look at the source code, and aplication 
 programming interface (API) documentation for those who do.
 
-Information for users about how to install and run PSCF is provided in
-chapters 1-7 of the web manual, as outlined above. Additional general 
-information aimed at developers is given in chapter 8,
-\ref developer_page "Developer Information".
+<b>Users</b>: Information for users about how to install and run PSCF is 
+provided in chapters 1-7 of the web manual, as outlined above, and via
+links that are accessible there.
 
-Detailed API documentation that is extracted from comments in the source 
-code is instead accessible via the "Topics", "Namespaces", "Classes", and 
-"Files" tabs that appear at the top of every web manual page.  Clicking 
-on a highlighted name of a function, class or class template anywhere in 
-this web manual usually also links you to the API documentation for that 
-entity.  The "Topics" tab provides a hierarchical list of C++ classes and 
-functions, organized by C++ namespace and, within each namespace, 
-organized into named groups of functionally related classes. 
+<b>Developers </b>: General information about the package for developers 
+and others who inspect the source code is given in chapter 8 of the web
+manul, entitled \ref developer_page "Developer Information".  Detailed API 
+documentation that is extracted from comments in the source code is also
+accessible via the "Topics", "Namespaces", "Classes", and "Files" tabs 
+that appear at the top of every web manual page.  The "Topics" tab 
+provides a hierarchical grouping of C++ classes and functions, organized 
+by C++ namespace and then, within each namespace, into groups of closely
+related classes.  Clicking on a highlighted name of a class, class 
+template, or function anywhere in the web manual normally links you to 
+the API documentation for that entity.  
 
 */

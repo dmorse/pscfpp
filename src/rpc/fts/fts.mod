@@ -5,8 +5,7 @@ namespace Rpc{
    /**
    * \defgroup Rpc_Fts_Module Field Theoretic Simulation (FTS)
    *
-   * Classes for performing field theoretic simulations in a partial
-   * saddle-point approximation (PS-FTS).
+   * Classes for partial saddle-point field theoretic simulations (PS-FTS).
    *
    * \ingroup Pscf_Rpc_Module
    */
