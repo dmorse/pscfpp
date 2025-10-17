@@ -11,8 +11,7 @@
 #include <pscf/chem/Edge.h>           // base class
 #include <util/containers/DArray.h>   // member
 
-namespace Pscf
-{
+namespace Pscf {
 
    using namespace Util;
 
@@ -22,18 +21,18 @@ namespace Pscf
    * Class template argument QT is a concrete propagator class, while
    * argument FT is a field type.  A BlockTmpl<QT,FT> object has:
    *
-   *   - two QT propagator objects, one per direction
+   *   - an array of two QT propagator objects, one per direction
    *   - a FT monomer concentration field for the block
    *   - a kuhn length
    *
-   * in addition to the members of the Edge base class.
+   * These are in addition to the members of the Edge base class.
    *
    * Each implementation of SCFT and/or FTS is defined in a different
    * enclosed namespace of Pscf. Each such implementation defines a
-   * concrete propagator class and a concrete block class. By convention,
-   * these are named Propagator and Block, respectively. The Block class
-   * in each implementation is derived from BlockTmpl<Propagator>, using
-   * the following syntax:
+   * concrete propagator class and a concrete block class. By 
+   * convention, these are named Propagator and Block, respectively. 
+   * The Block class in each implementation is derived from 
+   * BlockTmpl<Propagator, Field>, using the following syntax:
    * \code
    *
    *    class Block : public BlockTmpl<Propagator, Field>
@@ -42,6 +41,7 @@ namespace Pscf
    *    }
    *
    * \endcode
+   * where Field denotes the relevant field data type.
    *
    * Design notes:
    *
@@ -225,38 +225,6 @@ namespace Pscf
    template <class QT, class FT> inline
    double BlockTmpl<QT,FT>::kuhn() const
    {  return kuhn_; }
-
-   // Non-inline functions
-
-   /*
-   * Constructor.
-   */
-   template <class QT, class FT>
-   BlockTmpl<QT,FT>::BlockTmpl()
-    : propagators_(),
-      cField_(),
-      kuhn_(0.0)
-   {
-      propagators_.allocate(2);
-      propagator(0).setDirectionId(0);
-      propagator(1).setDirectionId(1);
-      propagator(0).setPartner(propagator(1));
-      propagator(1).setPartner(propagator(0));
-   }
-
-   /*
-   * Destructor.
-   */
-   template <class QT, class FT>
-   BlockTmpl<QT,FT>::~BlockTmpl()
-   {}
-
-   /*
-   * Set the monomer statistical segment length.
-   */
-   template <class QT, class FT>
-   void BlockTmpl<QT,FT>::setKuhn(double kuhn)
-   {  kuhn_ = kuhn; }
 
 }
 #endif

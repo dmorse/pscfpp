@@ -8,14 +8,15 @@
 #include "Block.tpp"
 
 namespace Pscf {
-namespace Rpg {
 
-   using namespace Util;
+   template class BlockTmpl< Rpg::Propagator<1>, Prdc::Cuda::RField<1> >;
+   template class BlockTmpl< Rpg::Propagator<2>, Prdc::Cuda::RField<2> >;
+   template class BlockTmpl< Rpg::Propagator<3>, Prdc::Cuda::RField<3> >;
 
-   // Explicit instantiation of relevant class instances
-   template class Block<1>;
-   template class Block<2>;
-   template class Block<3>;
+   namespace Rpg {
+      template class Block<1>;
+      template class Block<2>;
+      template class Block<3>;
+   }
 
-}
 }

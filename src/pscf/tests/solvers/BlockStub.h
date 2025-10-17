@@ -9,7 +9,7 @@
 */
 
 #include "PropagatorStub.h"
-#include <pscf/solvers/BlockTmpl.h>
+#include <pscf/solvers/BlockTmpl.tpp>
 #include <util/containers/DArray.h>
 
 namespace Pscf

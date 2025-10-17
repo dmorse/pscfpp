@@ -9,6 +9,7 @@
 */
 
 #include "Block.h"
+#include "Propagator.h"
 
 #include <prdc/cuda/WaveList.h>
 #include <prdc/cuda/FFT.h>
@@ -17,6 +18,7 @@
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/solvers/BlockTmpl.tpp>
 
 namespace Pscf {
 namespace Rpg {

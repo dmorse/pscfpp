@@ -17,9 +17,7 @@ namespace Util {
 }
 namespace Pscf { 
    namespace Prdc {
-      template <int D> class UnitCell;
       namespace Cuda {
-         template <int D> class WaveList;
          template <int D> class RField;
       }
    }
@@ -27,6 +25,10 @@ namespace Pscf {
       template <int D> class Block;
       template <int D> class Propagator;
    }
+}
+
+// Explicit instantiation declarations for base classes
+namespace Pscf { 
    extern template class PolymerTmpl< Rpg::Block<1>, Rpg::Propagator<1> >;
    extern template class PolymerTmpl< Rpg::Block<2>, Rpg::Propagator<2> >;
    extern template class PolymerTmpl< Rpg::Block<3>, Rpg::Propagator<3> >;

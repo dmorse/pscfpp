@@ -9,7 +9,6 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>      // base class template
-#include "Propagator.h"                  // template argument
 
 #include <prdc/cuda/RField.h>            // member
 #include <prdc/cuda/RFieldDft.h>         // member
@@ -19,8 +18,9 @@
 
 #include <prdc/cuda/resources.h>
 
-// Forward declarations
 namespace Pscf {
+
+   // Forward declarations
    template <int D> class Mesh;
    namespace Prdc {
       template <int D> class UnitCell;
@@ -30,13 +30,21 @@ namespace Pscf {
       }
    }
    namespace Rpg {
-      template <int D> class FieldIo;
+      template <int D> class Propagator;
    }
+
+   // Explicit instantiation declarations for base classes
+   extern template 
+   class BlockTmpl< Rpg::Propagator<1>, Prdc::Cuda::RField<1> >;
+   extern template 
+   class BlockTmpl< Rpg::Propagator<2>, Prdc::Cuda::RField<2> >;
+   extern template 
+   class BlockTmpl< Rpg::Propagator<3>, Prdc::Cuda::RField<3> >;
+
 }
 
 namespace Pscf {
 namespace Rpg {
-
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -61,17 +69,17 @@ namespace Rpg {
       /// Base class.
       using Base = BlockTmpl< Propagator<D>, RField<D> > ;
 
-      /// Propagator type.
-      using PropagatorT = Propagator<D>;
+      /// Propagator type (inherited).
+      using Base::PropagatorT;
+
+      /// Field type (inherited).
+      using Base::FieldT;
 
       /// Fast Fourier Transform (FFT) type.
       using FFTT = FFT<D>;
 
       /// Wavelist type.
       using WaveListT = WaveList<D>;
-
-      /// FieldIo type.
-      using FieldIoT = FieldIo<D>;
 
       // Public member functions
 

@@ -9,6 +9,7 @@
 */
 
 #include "Block.h"
+#include "Propagator.h"
 
 #include <prdc/cpu/WaveList.h>
 #include <prdc/cpu/FFT.h>
@@ -19,6 +20,7 @@
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/solvers/BlockTmpl.tpp>
 
 #include <util/containers/DMatrix.h>
 #include <util/containers/DArray.h>

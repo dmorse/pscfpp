@@ -32,14 +32,15 @@ namespace Rpg {
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Mixture : public MixturePrdc<D, Polymer<D>, Solvent<D>, Types<D> >
+   class Mixture 
+     : public MixturePrdc<D, Polymer<D>, Solvent<D>, Types<D> >
    {
 
    public:
 
       /// Direct (parent) base class.
       using MixturePrdcT
-         = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D>, Types<D> >;
+       = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D>, Types<D> >;
 
       // Inherited public type name aliases
 
@@ -134,8 +135,8 @@ namespace Rpg {
    extern template class Mixture<3>;
 
 } // namespace Rpg
-namespace Prdc {
 
+namespace Prdc {
    // Explicit instantiation declarations for base class
    extern template 
    class MixturePrdc<1, Rpg::Polymer<1>, Rpg::Solvent<1>, Rpg::Types<1> >;
@@ -145,5 +146,6 @@ namespace Prdc {
    class MixturePrdc<3, Rpg::Polymer<3>, Rpg::Solvent<3>, Rpg::Types<3> >;
 
 } // namespace Prdc
+
 } // namespace Pscf
 #endif
