@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-//#include "Block.h"                       // base class template parameter
 #include <pscf/solvers/PolymerTmpl.h>    // base class template
 #include <util/containers/FSArray.h>     // member template
 

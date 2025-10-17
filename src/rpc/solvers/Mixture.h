@@ -18,6 +18,9 @@ namespace Rpc {
    template <int D> class Polymer;
    template <int D> class Solvent;
 
+   using namespace Util;
+   using namespace Prdc;
+
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
@@ -113,9 +116,12 @@ namespace Rpc {
 namespace Prdc {
 
    // Explicit instantiation declarations for base class
-   extern template class MixturePrdc<1, Rpc::Polymer<1>, Rpc::Solvent<1>, Rpc::Types<1> >;
-   extern template class MixturePrdc<2, Rpc::Polymer<2>, Rpc::Solvent<2>, Rpc::Types<2> >;
-   extern template class MixturePrdc<3, Rpc::Polymer<3>, Rpc::Solvent<3>, Rpc::Types<3> >;
+   extern template 
+   class MixturePrdc<1, Rpc::Polymer<1>, Rpc::Solvent<1>, Rpc::Types<1> >;
+   extern template 
+   class MixturePrdc<2, Rpc::Polymer<2>, Rpc::Solvent<2>, Rpc::Types<2> >;
+   extern template 
+   class MixturePrdc<3, Rpc::Polymer<3>, Rpc::Solvent<3>, Rpc::Types<3> >;
 
 } // namespace Prdc
 } // namespace Pscf
