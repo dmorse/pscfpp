@@ -13,16 +13,17 @@
 #include <rpc/fts/perturbation/Perturbation.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/MixtureModifier.h>
-#include <rpc/solvers/Block.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
+#include <rpc/solvers/Block.h>
 #include <rpc/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
+#include <pscf/chem/Monomer.h>
 #include <pscf/inter/Interaction.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
+
 #include <algorithm>
-#include <iomanip>
 
 namespace Pscf {
 namespace Rpc {
