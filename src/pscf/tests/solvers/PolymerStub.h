@@ -9,12 +9,13 @@
 */
 
 #include "BlockStub.h"
+#include "PropagatorStub.h"
 #include <pscf/solvers/PolymerTmpl.tpp>
 
 namespace Pscf
 { 
 
-   class PolymerStub : public PolymerTmpl<BlockStub>
+   class PolymerStub : public PolymerTmpl<BlockStub, PropagatorStub>
    {
 
    public:

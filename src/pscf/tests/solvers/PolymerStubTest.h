@@ -111,6 +111,9 @@ public:
       iter.begin(sourceId, targetId);
       int nEdge = 1;
       int edgeId, dirId, vertexId, vpId, vnId;
+      vertexId = -1;
+      vpId = -1;
+      vnId = -1;
       while (iter.notEnd()) {
          edgeId = iter.currentEdgeId();
          dirId = iter.currentDirectionId();
@@ -121,6 +124,8 @@ public:
          if (dirId == 1) {
             vpId = p.edge(edgeId).vertexId(1);
             vnId = p.edge(edgeId).vertexId(0);
+         } else {
+            TEST_ASSERT(false);
          }
          if (nEdge > 1) {
             TEST_ASSERT(vpId == vertexId);
