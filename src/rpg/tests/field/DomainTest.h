@@ -6,9 +6,10 @@
 
 #include <rpg/field/Domain.h>
 #include <rpg/field/FieldIo.h>
-#include <prdc/cuda/FFT.h>
 
+#include <prdc/cuda/FFT.h>
 #include <prdc/crystal/Basis.h>
+#include <prdc/crystal/SpaceGroup.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
@@ -63,6 +64,7 @@ public:
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
       TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.group().size() == 96);
       if (domain.basis().isInitialized()) {
          TEST_ASSERT(domain.basis().nBasis() == 489);
       }
@@ -80,6 +82,8 @@ public:
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
       TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.group().size() == 96);
+      TEST_ASSERT(domain.basis().isInitialized());
       TEST_ASSERT(domain.basis().nBasis() == 489);
       TEST_ASSERT(nMonomer_ == 2);
 

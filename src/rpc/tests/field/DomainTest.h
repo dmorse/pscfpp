@@ -11,6 +11,7 @@
 #include <prdc/cpu/RFieldDft.h>
 #include <prdc/cpu/FFT.h>
 #include <prdc/crystal/Basis.h>
+#include <prdc/crystal/SpaceGroup.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
