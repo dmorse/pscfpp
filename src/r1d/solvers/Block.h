@@ -9,7 +9,6 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include "Propagator.h"                   // base class argument
 
 #include <pscf/math/TridiagonalSolver.h>  // member
 #include <util/containers/DArray.h>       // member
@@ -17,7 +16,10 @@
 namespace Pscf { 
 namespace R1d { 
 
+   // Forward declarations
    class Domain;
+   class Propagator;
+
    using namespace Util;
 
    /**
@@ -161,6 +163,7 @@ namespace R1d {
 
 // Explicit instantiation declaration for base class
 namespace Pscf { 
-   extern template class BlockTmpl<R1d::Propagator, DArray<double> >;
+   extern template 
+   class BlockTmpl<R1d::Propagator, Util::DArray<double> >;
 }
 #endif

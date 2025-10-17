@@ -6,11 +6,13 @@
 */
 
 #include "Block.h"
+#include "Propagator.h"
 #include <r1d/domain/Domain.h>
 #include <r1d/domain/GeometryMode.h>
+#include <pscf/solvers/BlockTmpl.tpp>
 
 namespace Pscf {
-   template class BlockTmpl< R1d::Propagator, DArray<double> >;
+   template class BlockTmpl< R1d::Propagator, Util::DArray<double> >;
 }
 
 namespace Pscf { 
