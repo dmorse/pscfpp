@@ -9,15 +9,16 @@ used throughout the source code of PSCF:
 
 \section file_section File names
 
-  - Header files that may be included in other files use file extension \*.h
+  - Header files that may be included in other files use file name
+    suffix \*.h
 
   - Files that contain definitions of member functions for class templates 
     are often separated from the header file and given names that end in an 
-    extension \*.tpp. 
+    suffix \*.tpp. 
 
-  - Compilable C++ source files use extension \*.cpp
+  - Compilable C++ source files use file name suffix \*.cpp
 
-  - Compilable CUDA C++ source files use extension \*.cu
+  - Compilable CUDA C++ source files use file name suffix \*.cu
 
   - One class per file: Avoid including definitions or definitions 
     involving more than one public class in a single file. 
@@ -668,14 +669,13 @@ null.
     specializations, those specializations should be explicitly 
     instantiated. 
 
-  - Definitions of member functions for class templates are often
-    placed in a "template implementation file" with filename 
-    extension .tpp. This file can be included into the *.h 
-    header file for standard templates that are designed to be
-    implicitly instantiated or can be included into a compilable
-    source file that instantiates all valid specializations for
-    a class template that is designed to be compiled by explicit
-    instantiation of all valid specializations.
+  - Definitions of member functions for class templates are often placed 
+    in a "template implementation file" with file name suffix .tpp. 
+    This file can be included into the *.h header file for standard 
+    templates that are designed to be implicitly instantiated or can 
+    be included into a compilable source file that instantiates all 
+    valid specializations for a class template that is designed to be 
+    compiled by explicit instantiation of all valid specializations.
 
   - See the \ref developer_template_page "next page" about the use of 
     C++ templates in PSCF for a more in-depth discussion of several 

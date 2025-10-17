@@ -5,7 +5,7 @@ namespace Rpc{
    /**
    * \defgroup Rpc_Environment_Module Environment
    *
-   * Classes for imposing masks and external fields in periodic systems (CPU).
+   * Classes for imposing masks and external fields in periodic systems.
    *
    * \ingroup Pscf_Rpc_Module
    */

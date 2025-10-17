@@ -1,6 +1,6 @@
 /*! \page developer_directory_page Directory Structure
 
-\ref developer_build_page  (Next)
+\ref developer_filetypes_page  (Next)
 <BR>
 
 This page provides a description of the directory structure of the PSCF 
@@ -159,26 +159,26 @@ a library file named libprdc.a in the src/prdc directory.
 * **Program-level namespaces and directories:**
 
 The Pscf::R1d, Pscf::Rpc and Pscf::Rpg namespaces and the corresponding
-r1d, rpc and rpg subdirectories of src each contain code is only used to 
-construct one executable program.  These three namespaces and corresponding 
-directories are referred to hereafter as program-level namespaces and 
-program-level directories, respectively. Subdirectory r1d contains code 
-that is only used by pscf_1d, rpc contains code that is only used by 
-pscf_pc, and rpg contains code that is only used by pscf_pg.  By 
-convention, code defined in one program-level PSCF namespace may not use 
-entities such classes or functions that are defined in any other 
-namespace-level namespace.
+r1d, rpc and rpg subdirectories of src each contain code is only used 
+within one associated executable program.  These three namespaces and 
+corresponding directories are referred to hereafter as program-level 
+namespaces and program-level directories, respectively. Subdirectory r1d 
+contains code that is only used by pscf_1d, rpc contains code that is 
+only used by pscf_pc, and rpg contains code that is only used by pscf_pg.  
+By convention, code within in one program-level PSCF namespace may not 
+use entities such classes or functions that are defined in any other 
+program-level namespace.
 
-Each of these three program-level directories contains a program file 
-that defines the main function for the associated program. The base name 
-of each such file is the same as the executable name, followed by a 
+Each of these three program-level directories contains a main program 
+file that defines the main function for the associated program. The base 
+name of each such file is the same as the executable name, followed by a 
 suffix .cpp or .cu. For example, the main function for program pscf_1d 
 is defined in the file src/r1d/pscf_1d.cpp. 
 
-Subdirectories util, pscf and prdc are namespace-level directories that
+Subdirectories util, pscf and prdc are namespace-level directories but
 are not program-level directories. These contain code for classes and 
-functions that can be used in more than program, and do not contain 
-any program files.
+functions that can be used in more than program, and do not contain any
+main program files.
 
 * **Dependencies among namespace level directories:**
 
@@ -187,8 +187,8 @@ level directories. A namespace level directory named A is said to **depend**
 on another such directory named B if source code files in directory A are 
 allowed to use named entities (i.e., classes, class templates, functions,
 etc.) that are defined by files in directory B.  The following table lists 
-the directories that each of the namespace level directories depend upon 
-in this sense:
+the other directories that each namespace level directory depends upon in 
+this sense:
 <table>
 <tr>
   <th>Subdirectory</th>
@@ -232,8 +232,8 @@ rpg) depends on any other program-level directories
 
 In addition to these namespace level subdirectories, the src directory
 has one additional top-level subdirectory named "test". This directory
-contains files that define a C++ unit test framework used throughout 
-PSCF to construct unit tests. This framework is defined using only 
+contains files that define a C++ unit test framework that is used 
+throughout PSCF to construct unit tests. This framework contains only 
 header (\*.h) files, and thus does not need to be compiled or linked.
 The unit test framework used by PSCF is maintained on github in a
 separate repository (dmorse/test) and is imported into the src/test
@@ -242,8 +242,8 @@ directory of the PSCF repository as a submodule.
 Each of the six namespace level subdirectories of the src directory 
 also contains a subdirectory named "tests" that contains unit tests for
 classes and functions defined in the associated namespace. These unit
-tests are not automatically compiled or run by the makefile targets 
-that build the PSCF executable programs. 
+tests are not automatically compiled or run by the makefile targets that 
+build the PSCF executable programs. 
 
 All of the PSCF unit tests can be compiled and run by changing directory 
 to the desired build directory (src or bld) and entering the command
@@ -251,167 +251,18 @@ to the desired build directory (src or bld) and entering the command
 make test
 \endcode
 All of the tests associated with any single namespace level directory
-can be compiled and run by changing directory to the corresponding tests 
-subdirectory within that namespace directory in the relevant build 
-directory (i.e., within a namespace level subdirectory of the bld 
-directory for an out-of source build, or within a namespace level 
+can be compiled and run by changing directory to the corresponding 
+tests subdirectory within that namespace directory in the relevant 
+build directory (i.e., within a namespace level subdirectory of the 
+bld directory for an out-of source build, or within a namespace level 
 subdirectory of src for an in-source-build) and entering 
 \code
 make run
 \endcode
 from within that subdirectory.
 
-\section developer_directory_filetypes_sec File Types
-
-The src directory contains several different types of file, as discussed
-below.
-
-* **Source code file types:**
-
-All C++ code files associated with a given class or set of functions are 
-placed in the same directory and have the same base name, with different
-file name extensions.  The name of a file that contains C++ code for a 
-single class or class template almost always has a base name that is 
-same as the class name, with a file name extension that indicates the file 
-type.  All namespace and class names upper space camel capitalization, in 
-which the first letter of each word in a name is capitalized.
-
-PSCF uses the following file name extensions for C++ and CUDA C++ files:
-
-<table>
-   <tr>
-     <th> Pattern </th>
-     <th> Purpose </th>
-   </tr>
-   <tr>
-     <td> \*.h </td>
-     <td> C++ header file </td>
-   </tr>
-   <tr>
-     <td> \*.tpp </td>
-     <td> implementation of a class template </td>
-   </tr>
-   <tr>
-     <td> \*.cpp </td>
-     <td> compilable C++ source file </td>
-   </tr>
-   <tr>
-     <td> \*.cu </td>
-     <td> compilable CUDA C++ source file </td>
-   </tr>
-</table>
-Header files, with extension .h, may be included into other C++ files
-using a C/C++ preprocessor \#include directive.  C++ and CUDA C++ source 
-files with extension .cpp or .cu are compiled, and may never be included 
-by other program files. 
-
-Template implementation files, with extension .tpp, usually contain 
-definitions of non-inline member functions of a class template, much
-like the compilable source file for a non-template class. These files
-are almost always included either into an associated \*.h header file 
-(for standard class templates that rely on implicit instantiation) or
-into an associated \*.cpp or \*.cu source file with the same base name
-(for class templates that are compiled by explicit instantiation), as 
-discussed in detail developer_template_page "here". Template 
-implementation files should generally not be directly included into 
-other source code files. 
-
-Compilable source files that contain or include only standard C++ code
-may be given file extension .cpp. Compilable source files that contain 
-or include any CUDA C++ code must instead use file extension .cu. 
-Different makefile pattern rules are used to compile files with filename 
-extension .cpp and .cu, using different compilers, using the NVIDIA nvcc 
-compiler to compile files with file extension .cu.
-
-* **Build system files types:**
-
-The PSCF build system is based on the unix make command, and uses 
-several types of file that are placed in the src directory. 
-The following table list two types of file that are part of this
-build system:
-<table>
-   <tr>
-     <th> Pattern </th>
-     <th> Purpose </th>
-   </tr>
-   <tr>
-     <td> makefile </td>
-     <td> makefile (instructions for the make command)</td>
-   </tr>
-   <tr>
-     <td> \*.mk </td>
-     <td> makefile fragment (included by other makefiles)</td>
-   </tr>
-</table>
-Immediately after the PSCF repository is cloned, almost every 
-subdirectory of the src directory will contain a makefile and a
-makefile fragment named sources.mk. Each namespace-level directories 
-of src will also contain several additional makefile fragments named 
-patterns.mk and include.mk. 
-
-After the configure script is run, the src and bld directory will
-each contain an additional makefile fragment named config.mk, and
-the bld directory and each namespace-level subdirectory of the 
-build directory will also contain a makefile. 
-
-The PSCF build system is discussed in detail on the 
-\ref developer_build_page "following page".
-
-* **Documentation files types:**
-
-The web manual for PSCF is constructed using the 
-doxgen documentation utility.
-This utility extracts API documentation from source code files,
-but also incorporates manual pages that are placed in separate
-files. 
-
-Files that contain the contents of a web manual page have file names that 
-end with file name extension .dox.  The main manual pages are \*.dox 
-files that are located in the docs/manual directory. Some other files 
-that are used by doxygen also appear in the src/ directory alongside 
-the source code files.
-
-The following two file name extensions are used for files that are 
-used by doxygen to construct a web manual:
-<table>
-   <tr>
-     <th> Pattern </th>
-     <th> Purpose </th>
-   </tr>
-   <tr>
-     <td> \*.dox </td>
-     <td> doxygen web manual page </td>
-   </tr>
-   <tr>
-     <td> \*.mod </td>
-     <td> doxygen topic module definition </td>
-   </tr>
-</table>
-Each files with file name extension .mod defines one of the 
-doxygen "Topic" modules that is used to create the hierarchical 
-presentation of class API documentation that is accessible via
-the "Topics" tab at the top of every web manual page.
-
-Most of the \*.dox files that appear in the src directory contain the
-contents manual pages that provide additional information for users
-about a particular class or class template.  The name of a file that 
-contains the content of such a manual page usually has a prefix that 
-is the same the name of the class or class template (which is also 
-used as a prefix for the associated source code files) followed by a 
-suffix .dox.  Each such web manual page usually describe the syntax 
-of the parameter file block associated with a class, and may also
-provide information about algorithm or mathematical conventions that 
-a user would need to understand in order to write the parameter file 
-block and choose appropriate values for parameters.  The resulting 
-user-oriented web manual pages do not contain the API documentation
-that is extracted from comments in the source code, which doxygen uses 
-to create a separate API documentation page for each class or class 
-template.  The user documentation page and the API documentation 
-page for each class or class template are usually accessible to one 
-another via html links.
-
 <BR>
-\ref developer_page       (Up / Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_page (Next)
+\ref developer_page           (Up / Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_filetypes_page (Next)
 
 */

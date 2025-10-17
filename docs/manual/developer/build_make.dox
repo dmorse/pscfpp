@@ -88,7 +88,7 @@ target:
 
    - **File pattern targets**, for which the target is given by a
      filename pattern that, for example, might match any filename
-     with a specified file name extension.
+     with a specified file name suffix.
 
    - **Phony targets**, for which in which the target is a label such
      as "clean" or "all" but that is neither a file name nor a file
@@ -190,12 +190,12 @@ of other rules.
 \section developer_build_make_pattern_sec Pattern rules
 
 A pattern rule is typically used to specify a general procedure for
-creating any target file with a specific file extension by applying
+creating any target file with a specific file suffix by applying
 a specific recipe to any corresponding files with the same base name
-but a different file name extension. For example, a simple pattern
+but a different file name suffix. For example, a simple pattern
 rule might tell the build system how to compile any object file with
-file name extension .o by compiling a corresponding C++ source file 
-with file name extension *.cpp. 
+file name suffix .o by compiling a corresponding C++ source file 
+with file name suffix *.cpp. 
 
 The target of a pattern rule must contain exactly one instance of the 
 wildcard symbol \%, which may be matched by any continuous string of 

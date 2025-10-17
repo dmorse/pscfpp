@@ -21,22 +21,22 @@ Compilation and installation of PSCF involves the following operations:
     installing them (by default) in the bin directory
 
 All files in the PSCF repository that contain C++ or CUDA C++ code are
-located in the src directory tree.  Files with file name extension \*.cpp
+located in the src directory tree.  Files with file name suffix \*.cpp
 or \*.cu are compiled by the build system, and are referred to here as
 either compilable source files or simply source files.  When each such
 source file is compiled, the build system creates two associated files
 that we refer to as an object file and a dependency file:
 
-  - An object file is a file with file name extension .o that contains
+  - An object file is a file with file name suffix .o that contains
     the object code created by compiling the associated source file.
 
-  - A dependency file is a makefile fragment with file name extension .d
+  - A dependency file is a makefile fragment with file name suffix .d
     that contains a lists of all the the prerequisites of the associated
     object file.
 
 The object and dependency file that are created by compiling a source
 file have the same base file name as the associated source file, with
-different file name extensions.
+different file name suffixs.
 
 Each dependency file contains a list of paths to files that are
 "prerequisites" of the corresponding object file. This list includes the 
@@ -47,7 +47,7 @@ build system to keep track of when an existing object file has become
 out-of-date due to modifications of one or more prerequisite files.
 
 The PSCF build system also creates a static library with file name 
-extension .a in each namespace-level subdirectory of the src directory. 
+suffix .a in each namespace-level subdirectory of the src directory. 
 Each such library contains all of the object code this is created by 
 compiling the source files in the corresponding namespace-level
 subdirectory of src.  The name of each library file is given by a 
