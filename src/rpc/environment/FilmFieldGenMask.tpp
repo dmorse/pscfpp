@@ -16,6 +16,7 @@
 #include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>

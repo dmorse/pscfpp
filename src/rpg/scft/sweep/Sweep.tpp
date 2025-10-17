@@ -1,4 +1,6 @@
 #ifndef RPG_SWEEP_TPP
+#define RPG_SWEEP_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field
 *
@@ -13,6 +15,8 @@
 #include <prdc/environment/Environment.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
+#include <prdc/crystal/Basis.h>
+#include <prdc/crystal/UnitCell.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>

@@ -9,9 +9,32 @@
 */
 
 #include <prdc/field/DomainTmpl.h>        // base class template
-#include <rpg/field/FieldIo.h>            // member
-#include <prdc/cuda/WaveList.h>           // member
-#include <prdc/cuda/FFT.h>                // member
+
+// Forward declarations
+namespace Pscf {
+   namespace Prdc {
+      namespace Cuda {
+         template <int D> class FFT;
+         template <int D> class WaveList;
+      }
+   }
+   namespace Rpg {
+      template <int D> class FieldIo;
+   }
+}
+
+// Explicit instantiation declarations for base class template
+namespace Pscf {
+   namespace Prdc {
+      using namespace Cuda;
+      extern template 
+      class DomainTmpl<1, FFT<1>, WaveList<1>, Rpg::FieldIo<1> >;
+      extern template 
+      class DomainTmpl<2, FFT<2>, WaveList<2>, Rpg::FieldIo<2> >;
+      extern template 
+      class DomainTmpl<3, FFT<3>, WaveList<3>, Rpg::FieldIo<3> >;
+   }
+}
 
 namespace Pscf {
 namespace Rpg {
@@ -46,8 +69,8 @@ namespace Rpg {
       */
       Domain();
 
-      /// Typedef for base class
-      typedef DomainTmpl< D, FFT<D>, WaveList<D>, FieldIo<D> > Base;
+      /// Typename alias base class
+      using Base = DomainTmpl< D, FFT<D>, WaveList<D>, FieldIo<D> >;
 
       // Inherited pubic member functions
 
@@ -78,17 +101,5 @@ namespace Rpg {
    extern template class Domain<3>;
 
 } // namespace Rpg
-
-namespace Prdc {
-   // Explicit instantiation declarations for base class template
-   using namespace Cuda;
-   extern template 
-   class DomainTmpl<1, FFT<1>, WaveList<1>, Rpg::FieldIo<1> >;
-   extern template 
-   class DomainTmpl<2, FFT<2>, WaveList<2>, Rpg::FieldIo<2> >;
-   extern template 
-   class DomainTmpl<3, FFT<3>, WaveList<3>, Rpg::FieldIo<3> >;
-} // namespace Prdc
-
 } // namespace Pscf
 #endif

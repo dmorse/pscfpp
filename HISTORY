@@ -16,6 +16,20 @@ programs are affected by specific changes:
 Versions before v1.2 used program name pscf_fd and label fd for the 1D 
 finite difference SCFT code that is now called pscf_1d.
 
+Version 1.3.3 (10/17/2025)
+=========================================
+
+Minor revision
+
+Developer-visible changes
+-------------------------
+* Modified solver and Domain classes to reduce avoidable header includes
+
+Documentation
+-------------
+* Reorganized manual - new chapters on analysis tools, periodic fields
+
+
 Version 1.3.2 (10/07/2025)
 =========================================
 
@@ -34,6 +48,7 @@ Bug fixes:
 Documentation
 -------------
 * Re-organization of documentation of Iterator and Sweep classes
+
 
 Version 1.3.1 (9/13/2025)
 =========================================

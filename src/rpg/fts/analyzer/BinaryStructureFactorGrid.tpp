@@ -9,6 +9,7 @@
 #include <rpg/field/Domain.h>
 
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/cuda/WaveList.h>
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/resources.h>
 #include <prdc/cuda/complex.h>

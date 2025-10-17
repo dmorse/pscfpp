@@ -16,6 +16,8 @@
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
 #include <prdc/environment/Environment.h>
+#include <prdc/crystal/Basis.h>
+#include <prdc/crystal/UnitCell.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>

@@ -11,6 +11,10 @@
 #include "Domain.h"
 #include <prdc/field/DomainTmpl.tpp>
 
+#include <rpc/field/FieldIo.tpp>
+#include <prdc/cpu/WaveList.h>
+#include <prdc/cpu/FFT.h>
+
 namespace Pscf {
 namespace Rpc {
 
@@ -18,6 +22,9 @@ namespace Rpc {
    using namespace Pscf::Prdc;
    using namespace Pscf::Prdc::Cpu;
 
+   /*
+   * Constructor.
+   */
    template <int D>
    Domain<D>::Domain()
     : DomainTmpl<D, FFT<D>, WaveList<D>, FieldIo<D> >()

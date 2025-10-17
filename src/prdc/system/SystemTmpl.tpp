@@ -10,6 +10,7 @@
 
 #include "SystemTmpl.h"
 
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/math/IntVec.h>

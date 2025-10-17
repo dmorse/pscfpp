@@ -10,6 +10,7 @@
 
 #include "DomainTmpl.h"
 #include <prdc/crystal/SpaceGroup.h>
+#include <prdc/crystal/Basis.h>
 #include <prdc/field/fieldIoUtil.h>
 #include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>
@@ -251,6 +252,13 @@ namespace Prdc {
       file << group();
       file.close();
    }
+
+   /*
+   * Has a symmetry-adapted Fourier basis been initialized ?
+   */
+   template <int D, class FFT, class WLT, class FIT>
+   bool DomainTmpl<D,FFT,WLT,FIT>::hasBasis() const
+   {  return basis().isInitialized(); }
 
 } // namespace Prdc
 } // namespace Pscf

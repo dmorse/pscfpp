@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>    // base class
 
-#include <prdc/crystal/Basis.h>           // member
+//#include <prdc/crystal/Basis.h>           // member
 #include <prdc/crystal/UnitCell.h>        // member
 #include <pscf/mesh/Mesh.h>               // member
 #include <string>                         // member (groupName)
@@ -24,6 +24,7 @@ namespace Util {
 namespace Pscf {
    namespace Prdc {
       template <int D> class SpaceGroup;
+      template <int D> class Basis;
    }
 }
 
@@ -440,10 +441,12 @@ namespace Prdc {
    inline bool DomainTmpl<D,FFT,WLT,FIT>::hasGroup() const
    {  return hasGroup_; }
 
+   #if 0
    // Has a symmetry-adapted Fourier basis been initialized ?
    template <int D, class FFT, class WLT, class FIT>
    inline bool DomainTmpl<D,FFT,WLT,FIT>::hasBasis() const
    {  return basis().isInitialized(); }
+   #endif
 
 } // namespace Prdc
 } // namespace Pscf

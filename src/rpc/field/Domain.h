@@ -9,9 +9,32 @@
 */
 
 #include <prdc/field/DomainTmpl.h>        // base class template
-#include <rpc/field/FieldIo.h>            // member
-#include <prdc/cpu/WaveList.h>            // member
-#include <prdc/cpu/FFT.h>                 // member
+
+// Forward declarations
+namespace Pscf {
+   namespace Prdc {
+      namespace Cpu {
+         template <int D> class WaveList;
+         template <int D> class FFT;
+      }
+   }
+   namespace Rpc {
+      template <int D> class FieldIo;
+   }
+}
+
+// Explicit instantiation declarations of base class template
+namespace Pscf {
+   namespace Prdc {
+      using namespace Cpu;
+      extern template 
+      class DomainTmpl<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;
+      extern template 
+      class DomainTmpl<2, FFT<2>, WaveList<2>, Rpc::FieldIo<2> >;
+      extern template 
+      class DomainTmpl<3, FFT<3>, WaveList<3>, Rpc::FieldIo<3> >;
+   } 
+}
 
 namespace Pscf {
 namespace Rpc {
@@ -74,27 +97,11 @@ namespace Rpc {
 
    };
 
-   #ifndef RPC_DOMAIN_TPP
    // Explicit instantiation declarations of all relevant cases
    extern template class Domain<1>;
    extern template class Domain<2>;
    extern template class Domain<3>;
-   #endif
 
 } // namespace Rpc
-
-#ifndef RPC_DOMAIN_TPP
-namespace Prdc {
-   // Explicit instantiation declarations of base class template
-   using namespace Cpu;
-   extern template 
-   class DomainTmpl<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;
-   extern template 
-   class DomainTmpl<2, FFT<2>, WaveList<2>, Rpc::FieldIo<2> >;
-   extern template 
-   class DomainTmpl<3, FFT<3>, WaveList<3>, Rpc::FieldIo<3> >;
-} // namespace Prdc
-#endif
-
 } // namespace Pscf
 #endif

@@ -25,6 +25,8 @@
 #include <rpc/solvers/MixtureModifier.h>
 #include <rpc/field/Domain.h>
 
+#include <prdc/cpu/WaveList.h>
+#include <prdc/cpu/FFT.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
 #include <prdc/environment/Environment.h>

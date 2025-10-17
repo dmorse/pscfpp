@@ -10,6 +10,7 @@
 
 #include "System.h"
 #include <prdc/system/SystemTmpl.tpp>
+#include <prdc/cuda/WaveList.h>
 
 #include <rpg/environment/EnvironmentFactory.h>
 #include <rpg/fts/simulator/Simulator.h>

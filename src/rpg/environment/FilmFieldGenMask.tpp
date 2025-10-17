@@ -15,6 +15,7 @@
 #include <rpg/field/Domain.h>
 #include <rpg/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <prdc/cuda/resources.h>

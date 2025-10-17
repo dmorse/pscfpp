@@ -8,9 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/scft/sweep/BasisFieldState.h>  // base class template parameter
 #include <pscf/sweep/SweepTmpl.h>            // base class template
-#include <util/global.h>
+#include <rpg/scft/sweep/BasisFieldState.h>  // template argument
 
 namespace Pscf {
 namespace Rpg {
