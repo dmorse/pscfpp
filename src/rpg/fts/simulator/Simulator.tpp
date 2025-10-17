@@ -10,6 +10,11 @@
 
 #include "Simulator.h"
 
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
+#include <rpg/field/Domain.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/compressor/CompressorFactory.h>
 #include <rpg/fts/perturbation/Perturbation.h>
@@ -17,9 +22,6 @@
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/ramp/RampFactory.h>
 #include <rpg/fts/VecOpFts.h>
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
 
 #include <prdc/cuda/resources.h>
 
@@ -27,8 +29,8 @@
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/IntVec.h>
 
-#include <util/random/Random.h>
 #include <util/misc/Timer.h>
+#include <util/random/Random.h>
 #include <util/global.h>
 
 #include <gsl/gsl_eigen.h>

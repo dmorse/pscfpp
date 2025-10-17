@@ -9,9 +9,7 @@
 */
 
 #include <pscf/solvers/PolymerTmpl.h>     // base class template
-#include <rpg/solvers/Block.h>            // template argument
-
-#include <util/containers/FSArray.h>      // member
+#include <util/containers/FSArray.h>      // member template
 
 // Forward declarations
 namespace Util {
@@ -25,6 +23,13 @@ namespace Pscf {
          template <int D> class RField;
       }
    }
+   namespace Rpg {
+      template <int D> class Block;
+      template <int D> class Propagator;
+   }
+   extern template class PolymerTmpl< Rpg::Block<1>, Rpg::Propagator<1> >;
+   extern template class PolymerTmpl< Rpg::Block<2>, Rpg::Propagator<2> >;
+   extern template class PolymerTmpl< Rpg::Block<3>, Rpg::Propagator<3> >;
 }
 
 namespace Pscf { 
@@ -50,10 +55,11 @@ namespace Rpg {
    * the most recent call of the compute function. These can be accessed
    * using the Block<D>::cField() function.
    *
+   * \ref user_param_polymer_sec "Manual Page"
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Polymer : public PolymerTmpl< Block<D> >
+   class Polymer : public PolymerTmpl< Block<D>, Propagator<D> >
    {
 
    public:
@@ -61,13 +67,13 @@ namespace Rpg {
       // Public type name aliases
 
       /// Base class, partial template specialization.
-      using Base = PolymerTmpl< Block<D> >;
+      using Base = PolymerTmpl< Block<D>, Propagator<D> >;
 
       /// Block type, for a block within a block polymer.
       using BlockT = Block<D>;
 
       /// Propagator type, for one direction within a block. 
-      using PropagatorT = typename BlockT::PropagatorT;
+      using PropagatorT = Propagator<D>;
 
       // Public member functions
 
@@ -167,7 +173,7 @@ namespace Rpg {
       FSArray<double, 6> stress_;
      
       /// Number of unit cell parameters. 
-      int nParams_;
+      int nParam_;
 
       // Restrict access to inherited functions
       using Base::solve;

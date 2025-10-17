@@ -10,7 +10,9 @@
 
 #include "Polymer.h"
 #include <rpg/solvers/Block.h>
+#include <rpg/solvers/Propagator.h>
 #include <prdc/cuda/RField.h>
+#include <pscf/solvers/PolymerTmpl.tpp>
 #include <pscf/chem/PolymerModel.h>
 
 namespace Pscf {
@@ -21,7 +23,7 @@ namespace Rpg {
    */
    template <int D>
    Polymer<D>::Polymer()
-    : nParams_(0)
+    : nParam_(0)
    {  ParamComposite::setClassName("Polymer"); }
 
    /*
@@ -36,7 +38,7 @@ namespace Rpg {
    */ 
    template <int D>
    void Polymer<D>::setNParams(int nParams)
-   {  nParams_ = nParams; }
+   {  nParam_ = nParams; }
 
    /*
    * Clear all data that depends on unit cell dimensions.
@@ -90,7 +92,7 @@ namespace Rpg {
    template <int D>
    void Polymer<D>::computeStress()
    {
-      UTIL_CHECK(nParams_ > 0);
+      UTIL_CHECK(nParam_ > 0);
       
       // Compute stress contributions for all blocks
       double prefactor;
@@ -108,13 +110,13 @@ namespace Rpg {
 
       // Initialize all stress_ elements to zero
       stress_.clear();
-      for (int i = 0; i < nParams_; ++i) {
+      for (int i = 0; i < nParam_; ++i) {
         stress_.append(0.0);
       }
 
       // Sum over all block stress contributions
       for (int i = 0; i < nBlock(); ++i) {
-         for (int j=0; j < nParams_; ++j){
+         for (int j=0; j < nParam_; ++j){
             stress_[j] += block(i).stress(j);
          }
       }

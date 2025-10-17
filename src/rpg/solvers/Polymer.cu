@@ -8,14 +8,15 @@
 #include "Polymer.tpp"
 
 namespace Pscf {
-namespace Rpg {
 
-   using namespace Util;
+   template class PolymerTmpl< Rpg::Block<1>, Rpg::Propagator<1> >;
+   template class PolymerTmpl< Rpg::Block<2>, Rpg::Propagator<2> >;
+   template class PolymerTmpl< Rpg::Block<3>, Rpg::Propagator<3> >;
 
-   // Explicit instantiation of relevant class instances
-   template class Polymer<1>;
-   template class Polymer<2>;
-   template class Polymer<3>;
+   namespace Rpg {
+      template class Polymer<1>;
+      template class Polymer<2>;
+      template class Polymer<3>;
+   }
 
-}
 }

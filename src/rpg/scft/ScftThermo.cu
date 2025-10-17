@@ -7,6 +7,8 @@
 
 #include "ScftThermo.h"
 #include <rpg/solvers/Mixture.h>
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
 #include <rpg/field/Domain.h>
 #include <prdc/cuda/Reduce.h>
 #include <prdc/cuda/RField.h>

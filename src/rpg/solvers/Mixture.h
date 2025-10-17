@@ -9,31 +9,37 @@
 */
 
 #include <prdc/solvers/MixturePrdc.h>     // base class template
-#include "Polymer.h"                      // template argument
-#include "Solvent.h"                      // template argument
+#include <rpg/system/Types.h>             // template argument
 
 namespace Pscf {
 namespace Rpg {
+
+   // Forward declarations
+   template <int D> class Polymer;
+   template <int D> class Solvent;
+
+   using namespace Util;
+   using namespace Prdc;
 
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
    * A Mixture is derived from a partial specialization of the template
    * Prdc::MixturePrdc, and has the same public interface as this base
-   * class. See the documentation of this base class template for details.
+   * class template. 
    *
    * \ref user_param_mixture_page "Manual Page"
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Mixture : public MixturePrdc<D, Polymer<D>, Solvent<D> >
+   class Mixture : public MixturePrdc<D, Polymer<D>, Solvent<D>, Types<D> >
    {
 
    public:
 
       /// Direct (parent) base class.
       using MixturePrdcT
-         = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D> >;
+         = typename Prdc::MixturePrdc<D, Polymer<D>, Solvent<D>, Types<D> >;
 
       // Inherited public type name aliases
 
@@ -128,15 +134,16 @@ namespace Rpg {
    extern template class Mixture<3>;
 
 } // namespace Rpg
-
 namespace Prdc {
 
    // Explicit instantiation declarations for base class
-   extern template class MixturePrdc<1, Rpg::Polymer<1>, Rpg::Solvent<1> >;
-   extern template class MixturePrdc<2, Rpg::Polymer<2>, Rpg::Solvent<2> >;
-   extern template class MixturePrdc<3, Rpg::Polymer<3>, Rpg::Solvent<3> >;
+   extern template 
+   class MixturePrdc<1, Rpg::Polymer<1>, Rpg::Solvent<1>, Rpg::Types<1> >;
+   extern template 
+   class MixturePrdc<2, Rpg::Polymer<2>, Rpg::Solvent<2>, Rpg::Types<2> >;
+   extern template 
+   class MixturePrdc<3, Rpg::Polymer<3>, Rpg::Solvent<3>, Rpg::Types<3> >;
 
 } // namespace Prdc
-
 } // namespace Pscf
 #endif

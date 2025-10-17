@@ -13,15 +13,22 @@
 #include <rpg/system/System.h>
 #include <rpg/field/Domain.h>
 #include <rpg/solvers/Mixture.h>
+#include <rpg/solvers/Solvent.h>
+#include <rpg/field/Domain.h>
 
 #include <prdc/cuda/FFT.h>
-#include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
+#include <prdc/crystal/UnitCell.h>
 
+#include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <pscf/chem/PolymerSpecies.h>
+#include <pscf/chem/SolventSpecies.h>
+#include <pscf/chem/Edge.h>
 #include <pscf/chem/Debye.h>
 #include <pscf/chem/EdgeIterator.h>
-#include <pscf/chem/PolymerType.h>
+//#include <pscf/chem/PolymerType.h>
 #include <pscf/cuda/HostDArray.h>
 
 #include <util/global.h>
@@ -226,7 +233,7 @@ namespace Rpg{
       if (nSolvent > 0) {
          double size, dcorr;
          for (int i = 0; i < nSolvent; i++){
-            Solvent<D> const & solvent = mixture.solvent(i);
+            SolventSpecies const & solvent = mixture.solventSpecies(i);
             phi = solvent.phi();
             size = solvent.size();
             dcorr = phi*size/vMonomer;

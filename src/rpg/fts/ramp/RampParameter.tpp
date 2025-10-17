@@ -13,10 +13,12 @@
 #include <rpg/fts/perturbation/Perturbation.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/solvers/MixtureModifier.h>
-#include <rpg/solvers/Block.h>
 #include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
+#include <rpg/solvers/Block.h>
 #include <rpg/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
+#include <pscf/chem/Monomer.h>
 #include <pscf/inter/Interaction.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>

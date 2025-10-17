@@ -12,6 +12,7 @@
 #include <rpg/solvers/Mixture.h>
 #include <rpg/solvers/MixtureModifier.h>
 #include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
 #include <rpg/solvers/Block.h>
 #include <rpg/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
