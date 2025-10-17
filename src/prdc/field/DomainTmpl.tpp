@@ -9,6 +9,7 @@
 */
 
 #include "DomainTmpl.h"
+#include <prdc/crystal/SpaceGroup.h>
 #include <prdc/field/fieldIoUtil.h>
 #include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>
@@ -25,24 +26,31 @@ namespace Prdc {
    DomainTmpl<D,FFT,WLT,FIT>::DomainTmpl()
     : mesh_(),
       unitCell_(),
-      group_(),
-      basis_(),
-      fft_(),
-      waveList_(),
-      fieldIo_(),
       lattice_(UnitCell<D>::Null),
       groupName_(""),
+      groupPtr_(nullptr),
+      basisPtr_(nullptr),
+      fftPtr_(nullptr),
+      waveListPtr_(nullptr),
+      fieldIoPtr_(nullptr),
       signalPtr_(nullptr),
       fileMasterPtr_(nullptr),
       hasGroup_(false),
       isInitialized_(false)
    {
       setClassName("DomainTmpl");
-      fieldIo_.associate(mesh_, fft_, lattice_,
-                         hasGroup_, groupName_, group_, basis_);
 
-      // Create Signal used by UnitCell, triggered by modification
+      // Construct associated objects
+      groupPtr_ = new SpaceGroup<D>();
+      basisPtr_ = new Basis<D>();
+      fftPtr_ = new FFT();
+      waveListPtr_ = new WLT();
+      fieldIoPtr_ = new FIT();
       signalPtr_ = new Signal<void>();
+
+      // Create associations between objects
+      fieldIo().associate(mesh_, fft(), lattice_,
+                         hasGroup_, groupName_, group(), basis());
       unitCell_.setSignal(*signalPtr_);
    }
 
@@ -52,6 +60,10 @@ namespace Prdc {
    template <int D, class FFT, class WLT, class FIT>
    DomainTmpl<D,FFT,WLT,FIT>::~DomainTmpl()
    {
+      delete basisPtr_;
+      delete fftPtr_;
+      delete waveListPtr_;
+      delete fieldIoPtr_;
       delete signalPtr_;
    }
 
@@ -62,7 +74,7 @@ namespace Prdc {
    void DomainTmpl<D,FFT,WLT,FIT>::setFileMaster(FileMaster& fileMaster)
    {
       fileMasterPtr_ = &fileMaster;
-      fieldIo_.setFileMaster(fileMaster);
+      fieldIo().setFileMaster(fileMaster);
    }
 
    /*
@@ -78,7 +90,7 @@ namespace Prdc {
       // Read computational mesh dimensions (required)
       read(in, "mesh", mesh_);
       UTIL_CHECK(mesh_.size() > 0);
-      fft_.setup(mesh_.dimensions());
+      fft().setup(mesh_.dimensions());
 
       // Read lattice system enumeration value (required)
       read(in, "lattice", lattice_);
@@ -87,18 +99,18 @@ namespace Prdc {
       UTIL_CHECK(unitCell_.nParameter() > 0);
 
       // Allocate memory for WaveList
-      waveList_.allocate(mesh_, unitCell_);
+      waveList().allocate(mesh_, unitCell_);
 
       // Optionally read groupName_ (string identifier for space group)
       hasGroup_ = false;
       bool hasGroupName = false;
       hasGroupName = readOptional(in, "groupName", groupName_).isActive();
 
-      // If groupName_ exists, read and construct group_ (space group)
+      // If groupName_ exists, read and construct group (space group)
       if (hasGroupName) {
          // Read group symmetry operations from file
          // An Exception is thrown if groupName_ string is not recognized
-         readGroup(groupName_, group_);
+         readGroup(groupName_, *groupPtr_);
          hasGroup_ = true;
       }
 
@@ -149,19 +161,19 @@ namespace Prdc {
       // Initialize mesh and fft
       if (mesh_.size() == 0) {
          mesh_.setDimensions(nGrid);
-         fft_.setup(mesh_.dimensions());
+         fft().setup(mesh_.dimensions());
       }
 
       // Allocate waveList
-      if (!waveList_.isAllocated()) {
-         waveList_.allocate(mesh_, unitCell_);
+      if (!waveList().isAllocated()) {
+         waveList().allocate(mesh_, unitCell_);
       }
 
       // If groupName is present, construct group and basis
       if (groupName_ != "") {
-         readGroup(groupName_, group_);
+         readGroup(groupName_, *groupPtr_);
          hasGroup_ = true;
-         basis_.makeBasis(mesh_, unitCell_, group_);
+         basis().makeBasis(mesh_, unitCell_, group());
       }
 
       isInitialized_ = true;
@@ -179,10 +191,10 @@ namespace Prdc {
       UTIL_CHECK(hasGroup_);
 
       // Check basis, construct if not initialized
-      if (!basis_.isInitialized()) {
-         basis_.makeBasis(mesh_, unitCell_, group_);
+      if (!basis().isInitialized()) {
+         basis().makeBasis(mesh_, unitCell_, group());
       }
-      UTIL_CHECK(basis_.isInitialized());
+      UTIL_CHECK(basis().isInitialized());
    }
 
    // Crystallographic Data Output
@@ -196,13 +208,13 @@ namespace Prdc {
    const
    {
       UTIL_CHECK(hasGroup());
-      UTIL_CHECK(basis_.isInitialized());
+      UTIL_CHECK(basis().isInitialized());
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
       bool isSymmetric = true;
       int nMonomer = 0;
-      fieldIo_.writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
-      basis_.outputStars(file);
+      fieldIo().writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
+      basis().outputStars(file);
       file.close();
    }
 
@@ -215,13 +227,13 @@ namespace Prdc {
    const
    {
       UTIL_CHECK(hasGroup());
-      UTIL_CHECK(basis_.isInitialized());
+      UTIL_CHECK(basis().isInitialized());
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
       bool isSymmetric = true;
       int nMonomer = 0;
-      fieldIo_.writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
-      basis_.outputWaves(file);
+      fieldIo().writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
+      basis().outputWaves(file);
       file.close();
    }
 
@@ -236,7 +248,7 @@ namespace Prdc {
       UTIL_CHECK(hasGroup());
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      file << group_;
+      file << group();
       file.close();
    }
 

@@ -67,16 +67,10 @@ namespace Rpc {
       using Base = BlockTmpl< Propagator<D>, RField<D> >;
 
       /// Propagator type (inherited).
-      using Base::PropagatorT;
+      using typename Base::PropagatorT;
 
       /// Field type (inherited).
-      using Base::FieldT;
-
-      /// Fast Fourier Transform type.
-      using FFTT = FFT<D>;
-
-      /// WaveList type.
-      using WaveListT = WaveList<D>;
+      using typename Base::FieldT;
 
       // Public member functions
 

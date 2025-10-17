@@ -11,16 +11,20 @@
 #include <util/param/ParamComposite.h>    // base class
 
 #include <prdc/crystal/Basis.h>           // member
-#include <prdc/crystal/SpaceGroup.h>      // member
 #include <prdc/crystal/UnitCell.h>        // member
 #include <pscf/mesh/Mesh.h>               // member
 #include <string>                         // member (groupName)
 
 // Forward declaration
-namespace Util{
+namespace Util {
    class FileMaster;
    template <typename T> class Signal;
    template <> class Signal<void>;
+}
+namespace Pscf {
+   namespace Prdc {
+      template <int D> class SpaceGroup;
+   }
 }
 
 namespace Pscf {
@@ -251,6 +255,7 @@ namespace Prdc {
       */
       UnitCell<D> unitCell_;
 
+      #if 0
       /**
       * SpaceGroup object
       */
@@ -275,6 +280,7 @@ namespace Prdc {
       * FieldIo object for field input/output operations
       */
       FIT fieldIo_;
+      #endif
 
       /**
       * Lattice system (enumeration value).
@@ -285,6 +291,33 @@ namespace Prdc {
       * Group name.
       */
       std::string groupName_;
+
+      // Pointers to associated objects
+
+      /**
+      * Pointer to a SpaceGroup object
+      */
+      SpaceGroup<D>* groupPtr_;
+
+      /**
+      * Pointer to a Basis object (symmetry-adapted Fourier basis).
+      */
+      Basis<D>* basisPtr_;
+
+      /**
+      * Pointer to a FFT (Fast Fourier Transform) object.
+      */
+      FFT* fftPtr_;
+
+      /**
+      * Pointer to a FieldIo object for field input/output operations.
+      */
+      WLT* waveListPtr_;
+
+      /**
+      * Pointer to a FieldIo object for field input/output operations.
+      */
+      FIT* fieldIoPtr_;
 
       /**
       * Pointer to a Signal owned by this DomainTmpl.
@@ -305,6 +338,8 @@ namespace Prdc {
       * Has this DomainTmpl object been initialized?
       */
       bool isInitialized_;
+
+      // Private member function
 
       /*
       * Get FileMaster as const reference.
@@ -346,47 +381,47 @@ namespace Prdc {
    // Get the SpaceGroup by const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline SpaceGroup<D> const & DomainTmpl<D,FFT,WLT,FIT>::group() const
-   {  return group_; }
+   {  return *groupPtr_; }
 
    // Get the Basis by non-const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline Basis<D>& DomainTmpl<D,FFT,WLT,FIT>::basis()
-   {  return basis_; }
+   {  return *basisPtr_; }
 
    // Get the Basis by const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline Basis<D> const & DomainTmpl<D,FFT,WLT,FIT>::basis() const
-   {  return basis_; }
+   {  return *basisPtr_; }
 
    // Get the FFT by non-const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline FFT& DomainTmpl<D,FFT,WLT,FIT>::fft()
-   {  return fft_; }
+   {  return *fftPtr_; }
 
    // Get the FFT by const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline FFT const & DomainTmpl<D,FFT,WLT,FIT>::fft() const
-   {  return fft_; }
+   {  return *fftPtr_; }
 
    // Get the WaveList by non-const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline WLT& DomainTmpl<D,FFT,WLT,FIT>::waveList()
-   {  return waveList_; }
+   {  return *waveListPtr_; }
 
    // Get the WaveList by const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline WLT const & DomainTmpl<D,FFT,WLT,FIT>::waveList() const
-   {  return waveList_; }
+   {  return *waveListPtr_; }
 
    // Get the FieldIo by const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline FIT& DomainTmpl<D,FFT,WLT,FIT>::fieldIo()
-   {  return fieldIo_; }
+   {  return *fieldIoPtr_; }
 
    // Get the FieldIo by const reference.
    template <int D, class FFT, class WLT, class FIT>
    inline FIT const & DomainTmpl<D,FFT,WLT,FIT>::fieldIo() const
-   {  return fieldIo_; }
+   {  return *fieldIoPtr_; }
 
    // Get the lattice system enumeration value
    template <int D, class FFT, class WLT, class FIT>
@@ -408,7 +443,7 @@ namespace Prdc {
    // Has a symmetry-adapted Fourier basis been initialized ?
    template <int D, class FFT, class WLT, class FIT>
    inline bool DomainTmpl<D,FFT,WLT,FIT>::hasBasis() const
-   {  return basis_.isInitialized(); }
+   {  return basis().isInitialized(); }
 
 } // namespace Prdc
 } // namespace Pscf
