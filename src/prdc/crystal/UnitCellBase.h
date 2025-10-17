@@ -43,7 +43,7 @@ namespace Prdc {
       /**
       * Destructor.
       */
-      ~UnitCellBase();
+      virtual ~UnitCellBase();
 
       /// \name Unit Cell Parameters
       ///@{

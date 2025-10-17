@@ -10,12 +10,11 @@
 
 #include <util/param/ParamComposite.h>    // base class
 
-//#include <prdc/crystal/Basis.h>           // member
 #include <prdc/crystal/UnitCell.h>        // member
 #include <pscf/mesh/Mesh.h>               // member
 #include <string>                         // member (groupName)
 
-// Forward declaration
+// Forward declarations
 namespace Util {
    class FileMaster;
    template <typename T> class Signal;
@@ -49,9 +48,9 @@ namespace Prdc {
    *  - a lattice system enum (type Prdc::UnitCell\<D\>::LatticeSystem)
    *  - a groupName string
    *
-   * Note: Class names Pscf::Mesh, Prdc::UnitCell, etc. mentioned above are
-   * actually class templates with an integer template parameter D. Actual 
-   * class names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2, 
+   * Note: Class names Pscf::Mesh, Prdc::UnitCell, etc. mentioned above
+   * refer to class templates with an integer template parameter D. Actual
+   * class names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2,
    * or 3.
    *
    * <b> Template Parameters </b>:
@@ -61,7 +60,7 @@ namespace Prdc {
    *   - WLT  : WaveList container type, e.g., WaveList<D>
    *   - FIT  : FieldIo class for field operations, e.g., FieldIo<D>
    *
-   * <b> Subclasses </b>: Partial specializations of the DomainTmpl class 
+   * <b> Subclasses </b>: Partial specializations of the DomainTmpl class
    * template are used as base classes for classes Rpc::Domain \<D\> and
    * Rpg::Domain \<D\>.
    *
@@ -103,7 +102,7 @@ namespace Prdc {
       /**
       * Read initialization data from header of an r-grid field file.
       *
-      * This is an alternative to reading the parameter file that is only 
+      * This is an alternative to reading the parameter file that is only
       * used for unit testing.
       *
       * \param in  input parameter stream
@@ -189,24 +188,24 @@ namespace Prdc {
       /// \name Accessors (return by value)
       ///@{
 
-      /** 
+      /**
       * Get the lattice system (enumeration value).
-      */  
+      */
       typename UnitCell<D>::LatticeSystem lattice() const;
 
-      /** 
+      /**
       * Get the group name.
-      */  
+      */
       std::string groupName() const;
 
       /**
       * Has a space group been declared?
-      */ 
+      */
       bool hasGroup() const;
 
       /**
       * Has a symmetry-adapted Fourier basis been initialized?
-      */ 
+      */
       bool hasBasis() const;
 
       ///@}
@@ -256,33 +255,6 @@ namespace Prdc {
       */
       UnitCell<D> unitCell_;
 
-      #if 0
-      /**
-      * SpaceGroup object
-      */
-      SpaceGroup<D> group_;
-
-      /**
-      * Basis object.
-      */
-      Basis<D> basis_;
-
-      /**
-      * FFT object to be used by solvers.
-      */
-      FFT fft_;
-
-      /**
-      * WaveList object.
-      */
-      WLT waveList_;
-
-      /**
-      * FieldIo object for field input/output operations
-      */
-      FIT fieldIo_;
-      #endif
-
       /**
       * Lattice system (enumeration value).
       */
@@ -293,35 +265,35 @@ namespace Prdc {
       */
       std::string groupName_;
 
-      // Pointers to associated objects
+      // Pointers to owned and associated objects
 
       /**
-      * Pointer to a SpaceGroup object
+      * Pointer to a SpaceGroup object (owned).
       */
       SpaceGroup<D>* groupPtr_;
 
       /**
-      * Pointer to a Basis object (symmetry-adapted Fourier basis).
+      * Pointer to a Basis object (owned).
       */
       Basis<D>* basisPtr_;
 
       /**
-      * Pointer to a FFT (Fast Fourier Transform) object.
+      * Pointer to a FFT (Fast Fourier Transform) object (owned).
       */
       FFT* fftPtr_;
 
       /**
-      * Pointer to a FieldIo object for field input/output operations.
+      * Pointer to a WaveList object (owned).
       */
       WLT* waveListPtr_;
 
       /**
-      * Pointer to a FieldIo object for field input/output operations.
+      * Pointer to a FieldIo object (owned).
       */
       FIT* fieldIoPtr_;
 
       /**
-      * Pointer to a Signal owned by this DomainTmpl.
+      * Pointer to a Signal object (owned).
       */
       Signal<void>* signalPtr_;
 
@@ -329,6 +301,8 @@ namespace Prdc {
       * Pointer to associated FileMaster.
       */
       FileMaster* fileMasterPtr_;
+
+      // Boolean flags
 
       /**
       * Has a space group been indentified?
@@ -424,14 +398,14 @@ namespace Prdc {
    inline FIT const & DomainTmpl<D,FFT,WLT,FIT>::fieldIo() const
    {  return *fieldIoPtr_; }
 
-   // Get the lattice system enumeration value
+   // Get the lattice system enumeration value.
    template <int D, class FFT, class WLT, class FIT>
-   inline 
-   typename UnitCell<D>::LatticeSystem DomainTmpl<D,FFT,WLT,FIT>::lattice() 
+   inline
+   typename UnitCell<D>::LatticeSystem DomainTmpl<D,FFT,WLT,FIT>::lattice()
    const
    {  return lattice_; }
 
-   // Get the groupName string.
+   // Get the groupName string identifier.
    template <int D, class FFT, class WLT, class FIT>
    inline std::string DomainTmpl<D,FFT,WLT,FIT>::groupName() const
    {  return groupName_; }
@@ -440,13 +414,6 @@ namespace Prdc {
    template <int D, class FFT, class WLT, class FIT>
    inline bool DomainTmpl<D,FFT,WLT,FIT>::hasGroup() const
    {  return hasGroup_; }
-
-   #if 0
-   // Has a symmetry-adapted Fourier basis been initialized ?
-   template <int D, class FFT, class WLT, class FIT>
-   inline bool DomainTmpl<D,FFT,WLT,FIT>::hasBasis() const
-   {  return basis().isInitialized(); }
-   #endif
 
 } // namespace Prdc
 } // namespace Pscf

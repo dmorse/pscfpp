@@ -143,35 +143,28 @@ namespace Prdc {
    template <int D, class T>
    SystemTmpl<D,T>::~SystemTmpl()
    {
-      if (interactionPtr_) {
-         delete interactionPtr_;
-      }
+      delete mixturePtr_;
+      delete mixtureModifierPtr_;
+      delete interactionPtr_;
+      delete domainPtr_;
+      delete scftPtr_;
+      delete environmentFactoryPtr_;
+      delete iteratorFactoryPtr_;
+      delete sweepFactoryPtr_;
+      delete simulatorFactoryPtr_;
+      delete fileMasterPtr_;
+      delete tmpUnitCellPtr_;
       if (environmentPtr_) {
          delete environmentPtr_;
-      }
-      if (environmentFactoryPtr_) {
-         delete environmentFactoryPtr_;
-      }
-      if (scftPtr_) {
-         delete scftPtr_;
       }
       if (iteratorPtr_) {
          delete iteratorPtr_;
       }
-      if (iteratorFactoryPtr_) {
-         delete iteratorFactoryPtr_;
-      }
       if (sweepPtr_) {
          delete sweepPtr_;
       }
-      if (sweepFactoryPtr_) {
-         delete sweepFactoryPtr_;
-      }
       if (simulatorPtr_) {
          delete simulatorPtr_;
-      }
-      if (simulatorFactoryPtr_) {
-         delete simulatorFactoryPtr_;
       }
    }
 
