@@ -33,6 +33,7 @@
    <li> \subpage user_command_page   </li>
    <li> \subpage user_field_page     
      <ul>
+       <li> \ref user_field_types_page </li>
        <li> \ref user_field_r1d_page "One-dimensional Fields (pscf_1d)"  </li>
        <li> \ref user_field_periodic_page "Periodic Fields (pscf_pc and pscf_pg)" 
          <ul>

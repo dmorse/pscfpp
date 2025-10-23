@@ -1,0 +1,116 @@
+/*! \page install_external_page Installing Dependencies: GSL and FFTW
+
+\ref install_require_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_source_page  (Next)
+<BR>
+
+This page contains instructions for installing or loading the Gnu
+Scientific Library (GSL) and FFTW packages in several common unix
+environments.  The GSL is required by all of the PSCF programs, while
+FFTW is required only by pscf_pc.
+
+Instructions for installing the doxygen documentation generator utility
+are also given below.  Installing doxygen is not necessary to compile
+any of the PSCF programs, but is required to allow a user generate a
+local copy of this web manual.
+
+\section install_require_ubuntu Ubuntu and other Debian-based linux systems
+
+The GSL and FFTW packages may be installed on Ubuntu or other Debian based
+linux distribution later on version 16.0 or later using the commands:
+\code
+sudo apt install libfftw3-dev
+sudo apt install libgsl-dev
+\endcode
+To install doxygen, use the command
+\code
+sudo apt install doxygen
+\endcode
+On older Debian-based systems, or as a lower level alternative, one may
+use the "apt-get" command rather than "apt" with the same arguments.
+
+\section install_require_mac  Mac OS X
+
+We recommend using a package manager to install GSL and FFTW on Mac OS X.
+If you are not already using a package manager for managing unix programs
+on Max OS X, we recommend that you install the <a href="https://brew.sh/">
+Homebrew </a> package manager, following instructions given on the Homebrew
+web site. Possible alternatives include the older MacPorts or Fink package
+managers, or compiling the required packages directly from source files
+obtained from package home pages.
+
+Using Homebrew, you may install the GSL and FFTW packages with the commands
+\code
+brew install gsl
+brew install fftw
+\endcode
+To also install doxygen, issue the command
+\code
+brew install doxygen
+\endcode
+
+Mac users should be aware that Homebrew installs files in different
+locations on newer Macs that use Apple silicon (e.g., an M1 or M2 chip)
+than the file locations used by Homebrew on older Macs that use an Intel
+CPU.
+
+On Macs with an Intel CPU, Homebrew installed links to required header
+and library files in subdirectories of the /usr/local directory. Because
+/usr/local is  one of the standard directories in which a unix shell
+normally looks for such files, PSCF can be installed on such machines
+using a default configuration for the makefile system that is the same
+as the default used on linux machines.
+
+On Macs with Apple silicon, Homebrew instead installs all files in
+/opt/homebrew.  This requires users to add paths to this directory and/or
+some of its subdirectories to the search paths used by the compiler to
+find header and library files.  A compiler configuration file that
+modifies these search paths is provided as part of PSCF, as discussed
+\ref install_configure_compiler_file_sec "here".
+
+\section install_require_module Linux software modules
+
+At the University of Minnesota, PSCF is often run on a cluster provided
+by the Minnesota Supercomputer Institute (MSI). The computer clusters at
+MSI, at at many similar multi-user facilities, use the linux "module"
+command to allow users to load particular software packages, including
+particular choices of compiler. The module command is the user interface
+to the "Modules" package, which is a system for automating changes in a
+users unix shell environment that are required in order to use particular
+software packages.
+
+On a multi-user system that uses linux modules, the command
+\code
+module avail
+\endcode
+should give a listing of all software modules available for use on a
+particular system. The syntax for the command to load a particular
+module is
+\code
+module load  module-name
+\endcode
+where module-name represents the name of a particular software module, as
+listed by the "module avail" command.
+
+On the computer cluster at MSI, we currently normally set up the
+compilation environment by invoking
+\code
+module load fftw/3.3.6-double-gnu-7.2.0
+module load cuda
+\endcode
+before compiling PSCF. We use a version of fftw that was compiled with
+GCC version 7.2.0, rather than the most recent version, because the
+current version of CUDA (v10.0) isn't compatible with GCC versions with
+primary version numbers greater than 7.
+
+These module load commands can be either be entered manually from the
+command line by the user after logging in, or they can be configured to
+be entered automatically on login by adding them to the users .profile
+or .bash_profile script.
+
+<BR>
+\ref install_require_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_source_page  (Next)
+
+*/

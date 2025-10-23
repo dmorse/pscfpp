@@ -4,10 +4,10 @@
 \ref user_files_page   (Next)
 <BR>
 
-The manual pages linked below discuss the physical models used by PSCF 
+The manual pages linked below discuss the physical models used by PSCF
 for either SCFT or PS-FTS calculations, with an emphasis on explaining
-the physical information that the user must provide. Details of input 
-file formats are discussed separately in subsequent pages.
+the physical information that a user must provide. Discussion of file
+formats for input files is deferred to subsequent pages.
 
 <h2> Contents:</h2>
 

@@ -1,15 +1,16 @@
 /*! \page install_page Installation
 
-\ref about_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref about_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page (Next)
 <BR>
 
-This chapter provides instructions for obtaining, configuring and 
+This chapter provides instructions for obtaining, configuring and
 compiling the PSCF source code.
 
 <h2> Contents:</h2>
   <ol>
   <li> \subpage install_require_page </li>
+  <li> \subpage install_external_page </li>
   <li> \subpage install_source_page </li>
   <li> \subpage install_overview_page </li>
   <li> \subpage install_environment_page </li>
@@ -21,7 +22,7 @@ compiling the PSCF source code.
   </ol>
 
 <BR>
-\ref about_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref about_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref index "Main Page" (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_page (Next)
 

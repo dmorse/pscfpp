@@ -19,7 +19,7 @@ command name 'FINISH' on a line by itself.
 Full descriptions of all of the commands recognized by all three PSCF
 programs are given \ref scft_command_page "here". 
 
-\section user_command_example_sec Example: SCFT calculation, periodic structure
+\section user_command_example_sec Example: SCFT calculation
 
 Suppose that pscf_pc is used to perform an SCFT calculation periodic 
 structure of known space group symmetry, and is invoked from a directory 
@@ -46,7 +46,7 @@ This command file instructs the program to perform the following
 actions:
 
 - READ_W_BASIS: Read in an initial set of chemical potential fields 
-  (w-fields) from the file in/w.rf in symmetry-adapted Fourier basis 
+  (w-fields) from the file in/w.bf in symmetry-adapted Fourier basis 
   format.
 
 - ITERATE: Iteratively solve the SCFT problem, using the iterator 
@@ -74,14 +74,14 @@ WRITE_C_RGRID. Use of r-grid format for the c fields allows the
 resulting file to be used as an input to the POLYMER VISUAL program to 
 allow visualization of the structure.
 
-\section user_command_path_sec Interpretation of file names
+\section user_command_path_sec Use of file name prefixes
+
 Many commands require the names of input or output files as arguments.
 By default, file names are interpreted as paths that are defined relative 
 to the current working directory, i.e., relative to the directory from 
-which the program executable was invoked. File name paths may that 
-appear in the command file may include names of subdirectories of this 
-directory and path separator slash characters, as done in the above 
-example.  
+which the program executable was invoked. File name paths that appear 
+in the command file may include names of subdirectories of this directory 
+and path separator slash characters, as done in the above example.  
 
 This default behavior may, however, be modified by using the "-i" 
 and "-o" \ref user_usage_page "command line options" to automatically 
@@ -102,17 +102,20 @@ WRITE_W_BASIS   w.bf
 WRITE_C_RGRID   c.rf
 FINISH
 \endcode
-in which the names of the input and output files that appear in the 
-command file do not include explicit "in/" and "out/" directory 
-names. In this case, the prefix "in/" is instead automatically prepended 
-to the name given for any input file in the parameter or command file, 
-while the prefix "out/" is prepended to the name of any output file. 
-Note that, if a prefix is used to specify a subdirectory in which files
-are located, as in this example, then the prefix string must include a
-trailing backlash character. The input and output prefixes defined by
-the -i and -o command line options are not, however, applied to the
-names of the parameter and command file that are specified by the -p
-and -o command line options.
+In this modified version, the names of the input and output files that 
+appear in the command file do not include explicit "in/" and "out/" 
+subdirectory names. Instead, the prefix "in/" that was given as an argument
+to the "-i" command line option is automatically prepended to the name 
+given for any input file in the parameter or command file, while the 
+prefix "out/" is prepended to the name of any output file. 
+
+Note that, if a prefix is used to specify a subdirectory path for
+input or output files, as in this example, then the prefix string must 
+include a trailing backlash character, as done for the string "in/" 
+and "out/" in the above example. Also note that input and output 
+prefixes defined by the -i and -o command line options are not applied 
+to the names of the parameter and command file that are specified as
+arguments of the -p and -o command line options.
 
  <BR>
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

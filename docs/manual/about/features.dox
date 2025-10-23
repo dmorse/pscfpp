@@ -35,11 +35,12 @@ the computational methods and programs to which they apply:
     states along a path in parameter space, with continuation of solutions
 
 All features listed below are specific to the pscf_pc and pscf_pg
-programs. Both of these programs are designed for systems with periodic
-boundary conditions and can perform either SCFT or PS-FTS calculations.
-In SCFT, the periodic computational unit cell is usually chosen so as
-to represent a single crystallographic unit cell, whereas in FTS it may
-represent a larger region.
+programs, which provide identical features using different hardware.
+Both of these programs are designed for systems with periodic boundary
+conditions and can perform either SCFT or PS-FTS calculations. In SCFT,
+the periodic computational unit cell is usually chosen so as to represent
+a single crystallographic unit cell, whereas in PS-FTS calculations the
+computational unit often represents a larger region.
 
 * **Features for SCFT or PS-FTS on periodic systems (pscf_pc and pscf_pg):**
 
@@ -47,7 +48,7 @@ represent a larger region.
     chains
 
   - High accuracy pseudo-spectral solution of the modified diffusion
-    equation for the continuous thread model.
+    equation for the continuous thread model
 
   - Periodic unit cells with 1, 2 or 3 dimensional periodicity
 
@@ -56,7 +57,7 @@ represent a larger region.
 
   - A companion matlab package
     [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
-    for visualization of structures with periodic boundary conditions
+    for visualization of periodic c-fields or w-fields
 
 * **Features for SCFT on periodic systems (pscf_pc and pscf_pg):**
 
@@ -65,11 +66,11 @@ represent a larger region.
   - Imposition of any user-selected space-group symmetry on SCFT solutions
 
   - Built-in database of symmetry operations for all 230 3D space groups
-    and 17 2D plane groups.
+    and 17 2D plane groups
 
   - Inhomogeneous density constraint (a "mask")
 
-  - External fields
+  - Inhomogeneous selective external fields
 
   - Thin polymer films (implemented using a mask and external fields)
 
@@ -77,8 +78,8 @@ represent a larger region.
 
   - Brownian dynamics (BD) and Monte Carlo (MC) sampling algorithms
 
-  - BD algorithms: Leimkuhler-Matthews and predictor-corrector step
-    algorithms
+  - BD algorithms: Leimkuhler-Matthews, predictor-corrector and
+    explicit Euler step algorithms
 
   - MC algorithms: real-space and "smart"/force-bias MC moves
 
@@ -93,12 +94,12 @@ represent a larger region.
 
   - Analysis tools to compute quantities of interest, including the
     structure factor, order parameters used to identify phase
-    transitions, and derivatives of the Hamiltonian needed for
-    thermodynamic integration calculations
+    transitions, and averages of derivatives of the Hamiltonian that
+    are needed for thermodynamic integration calculations
 
-  - Analysis tools can applied either during a simulation or by
-    postprocessing of field trajectory files that are written during
-    an earlier simulation
+  - Statistical analyses can be performed either during a simulation or
+    by postprocessing of field trajectory files that are created during
+    a simulation
 
 <BR>
 \ref about_programs_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

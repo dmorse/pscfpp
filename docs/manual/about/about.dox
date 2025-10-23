@@ -16,10 +16,6 @@ stochastic field theoretic simulation (FTS).
 
    <ol>
    <li> \subpage about_methods_page     </li>
-     <ul>
-       <li> \ref about_methods_scft_sec  "SCFT" </li>
-       <li> \ref about_methods_fts_sec  "FTS" </li>
-     </ul>
    <li> \subpage about_history_page     </li>
    <li> \subpage about_programs_page     </li>
    <li> \subpage about_features_page     </li>

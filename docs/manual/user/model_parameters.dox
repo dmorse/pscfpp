@@ -6,24 +6,24 @@
 
 \section user_model_model_sec Physical model
 
-All programs in the PSCF package are designed to treat an incompressible
-liquid mixture that may contain one or more polymer species and any number
-of small-molecule solvent species.  Each polymer species in such a mixture
+All programs in PSCF are designed to treat an incompressible liquid
+mixture that may contain one or more polymer species and any number of
+small-molecule solvent species.  Each polymer species in such a mixture
 may be either a linear block polymer or an acyclic branched block polymer.
 Hompolymers are treated as a special case of a block polymer with only one
 block. Solvent species, if present, are treated as point-like particles
 that occupy a specified volume per molecule.
 
-In the pscf_pc and pscf_pg programs for periodic domains, conformations of
-individual polymers may be modelled using either a continuous "thread"
-model or a discrete "bead" model. The thread model idealizes blocks within
-a block polymer as continuous random walks. The bead model instead
-represents each block as a sequence of a finite number of discrete beads
-connected by harmonic springs. The pscf_1d program for one-dimensional
-SCFT problems can only use the continuous thread model.
+In the pscf_pc and pscf_pg programs for periodic domains, conformations
+of individual polymers may be modelled using either a continuous "thread"
+model or a discrete "bead" model. The thread model idealizes blocks
+within a block polymer as continuous random walks. The bead model instead
+represents each block as a sequence of discrete beads connected by
+harmonic springs. The pscf_1d program for one-dimensional SCFT problems
+can only use the continuous thread model.
 
 Each polymer species is constructed from chemically homogeneous blocks
-that each contain monomers of a specific type.  Each block within a block
+that each contain monomers of a specified type.  Each block within a block
 polymer is thus assigned a monomer type (identified by an integer index)
 and a block length.  The block length is given by a real (i.e., floating
 point) number in the continuous thread model and by an integer number of
@@ -100,8 +100,8 @@ input and output files as a value of the ratio \f$ \mu / k_{B}T \f$.
 \section user_model_parameters_length_sec Length units
 
 PSCF allows the user to use any unit of length they wish, as long as the
-same choice of unit is used for all input parameters. Users are not required
-to explicitly declare their choice of a unit of length, but are instead
+same choice of unit is used for all input parameters. Users are not
+required to explicitly declare their choice of a unit of length, but are
 responsible for providing input parameter values that have been defined
 using some consistent but unspecified choice for a unit of length.
 
@@ -115,12 +115,15 @@ denoted by \f$ v \f$, which has units of volume, or length cubed.
 Users may initialize a calculation using input files in which values of
 these parameters are all defined either using some standard microscopic
 length unit, such as Angstroms or nanometers, or may use units in which
-values for these quantities are specified using some user-defined system of
-non-dimensional units, e.g., by defining the unperturbed root-mean-squared
-of a specific linear polymer species to be equal to unity. In the
-continuous chain model, conventions for units of length are related to a
-separate arbitrary choice regarding how much polymer backbone corresponds
-to one "monomer", or to one unit of contour length. Some common choices of
+values for these quantities are specified using some user-defined system
+of non-dimensional units. For example, a user may define the unperturbed
+root-mean-squared of a specific linear polymer species to be equal to
+unity, by convention, and then provide values for other lengths that as
+ratios relative to that reference length. In the continuous chain model,
+conventions for properties of a monomer (i.e., the statistical segment
+length and monomer volume) are also affected by a separate arbitrary
+choice regarding how much polymer backbone corresponds to one "monomer"
+or (equivalently) to one unit of contour length. Some common choices of
 conventions for units of physical length and polymer contour length are
 discussed in detail on a \ref user_model_conventions_page "separate page".
 

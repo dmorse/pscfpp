@@ -501,7 +501,10 @@ Copyright 2015-2025, The Regents of the University of Minnesota.
 
 ## Support
 
-Development of PSCF is currently supported by the National Science
-Foundation program for Cyberinfrastructure for Sustained Scientific
-Development (CSSI) under Grant No. 2103627.
+Development of PSCF has been supported by the National Science 
+Foundation (NSF) program for Cyberinfrastructure for Sustained 
+Scientific Development (CSSI) Grant No. 2103627, and by earlier
+NSF Division of Materials Research (DMR) grants DMR-1725272, 
+DMR-1333669, and DMR-1310436.
+
 

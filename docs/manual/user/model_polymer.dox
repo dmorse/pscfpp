@@ -8,9 +8,9 @@ This page discusses models of polymeric species in more detail.
 
 \section user_model_polymer_model_sec Continuous vs discrete chain models
 
-The pscf_pc and pscf_pg programs for systems with periodic boundary 
-conditions can treat polymer conformations using either of two slightly 
-different mathematical models, which we refer to as the continuous 
+The pscf_pc and pscf_pg programs for systems with periodic boundary
+conditions can treat polymer conformations using either of two slightly
+different mathematical models, which we refer to as the continuous
 "thread" model and the discrete "bead" model.
 
 <ul>
@@ -26,35 +26,34 @@ block of a block polymer as a sequence of discrete point particles, or
 </li>
 
 </ul>
-The pscf_pc and pscf_pg programs can both perform either SCFT or PS-FTS 
-calculations, and can both use either the thread or bead model for either 
-type of calculation.  In both of these programs, the choice of bead or 
-thread model is global - the same model (bead or thread) must be used 
+The pscf_pc and pscf_pg programs can both perform either SCFT or PS-FTS
+calculations, and can both use either the thread or bead model for either
+type of calculation.  In both of these programs, the choice of bead or
+thread model is global - the same model (bead or thread) must be used
 for all blocks of all polymer species in the system throughout program
-execution. 
-
-The pscf_1d program for one-dimensional systems can only use the thread
-model, and can only perform SCFT calculations.
+execution.
 
 Calculations that use the thread model use numerical algorithms that
-that discretize the contour length of each block into steps of some 
+that discretize the contour length of each block into steps of some
 small length \f$ ds \f$ for numerical purposes. In this model, however,
-users input values for block lengths and \f$ ds \f$ separately, and
 \f$ ds \f$ is understood to be a purely algorithmic parameter, rather
 than a physical parameter.  Numerical algorithms used for the thread
-model are designed to converge rapidly to the continuus thread limit 
-as the contour length step size \f$ ds \f$ and the mesh resolution are
-both decreased while block lengths and other parameters are held fixed.  
-Algorithms used for the bead model are instead designed to accurately
-reproduce the properties of a discrete model in which the number of
-beads in each block is viewed as a physical parameter.
+model are designed to converge rapidly to the continuus thread limit as
+the contour length step size \f$ ds \f$ and the spatial mesh resolution
+are both decreased while block lengths and other parameters are held
+fixed.  Algorithms used for the bead model are instead designed to
+reproduce the properties of a discrete model with a specified integer
+number of beads in each block, and to converge to the exact solution for
+this model in the limit of infinitely fine spatial mesh resolution.
 
 We generally recommend the use of the thread model in pscf_pc and
 pscf_pg for SCFT calculations, because it provides more universal
-results that can characterized using a smaller number of physical
-parameters.  Both bead and thread models have been used in recent work 
-on PS-FTS calculations, which is why PSCF provides a choice of either
-model in programs that can perform such calculations.
+results that depend on a smaller number of physical model parameters.
+Both bead and thread models have been used in recent published work
+on PS-FTS calculations.
+
+The pscf_1d program for one-dimensional systems can only use the thread
+model, and can only perform SCFT calculations.
 
 \subsection user_model_polymer_continuous_sub Continuous "thread" model
 
@@ -64,9 +63,10 @@ by a continous space arc \f$ \textbf{R}(s) \f$ that gives the position
 \f$ {\bf R} \f$ of a point along the polymer as a function of a
 dimensionless contour coordinate \f$ s \f$, for \f$ s \in [0, L] \f$.
 
-In this model, a chain segment of between points with contour coordinates
-\f$ s \f$ and \f$ s' \f$ within a block of monomer type \f$ \alpha \f$
-in a homogeneous gas of non-interacting polymers is given by
+In this model, the mean-squared end-to-end length of a chain segment that
+connects points with contour coordinates \f$ s \f$ and \f$ s' \f$ within
+a block of monomer type \f$ \alpha \f$ within a homogeneous gas of
+non-interacting polymers is given by
 \f[
     \langle |{\bf R}(s) - {\bf R}(s')|^{2} \rangle
     = |s-s'| b_{\alpha}^{2} \quad,
@@ -74,21 +74,20 @@ in a homogeneous gas of non-interacting polymers is given by
 in which \f$ b_{\alpha} \f$ is a statistical segment length for chain
 segments of type \f$ \alpha \f$. Here, \f$ \langle \cdots \rangle \f$
 denotes a statistical average over random-walk configurations within a
-homogeneous mixture. Each such chain segment is also taken to occupy
-a volume \f$ V(s,s') \f$ within an incompressible mixture that is 
-given by
+homogeneous gas of non-interacting polymers. Each such chain segment is 
+also taken to occupy a volume \f$ V(s,s') \f$ within an incompressible 
+liquid, which is given by
 \f[
-    V(s,s') = v|s-s'| \quad,
+    V(s,s') = v|s-s'| \quad.
 \f]
-where \f$ v \f$ is the so-called monomer reference volume. In the thread
-model, in which there are actually no discrete monomers, the parameter 
-\f$ v \f$ is best understood to represent a steric volume per unit polymer 
-contour length. 
+Here, \f$ v \f$ is the so-called monomer reference volume. In the thread
+model, because there are no discrete monomers, the parameter \f$ v \f$
+is best understood to represent a volume per unit polymer contour length.
 
-By convention, PSCF requires that contour lengths within blocks of 
-different types be defined such that \f$ v \f$ has the same value 
-for all monomer types. This convention entails no loss of generality, as 
-long as monomers of different types can be assigned different values 
+By convention, PSCF requires that contour lengths within blocks of
+different types be defined such that \f$ v \f$ has the same value for
+all monomer types. This convention entails no loss of generality, as
+long as monomers of different types can be assigned different values
 for statistical segment lengths.
 
 \subsection user_model_polymer_bead_sub Discrete "bead" model
@@ -102,14 +101,14 @@ Suppose the beads in a block containing \f$ N \f$ beads are labelled
 sequentially by an integer index \f$ s = 0, \ldots, N-1 \f$. Let
 \f$ {\bf R}(s) \f$ denote the position of bead number s.  In this model,
 a chain segment connecting beads with indices \f$ s \f$ and \f$ s' \f$
-within a block of monomer type \f$ \alpha \f$ within a homogeneous ideal
-gas would exhibit a mean-squared end-to-end length given by
+within a block of monomer type \f$ \alpha \f$ within a homogeneous
+liquid would exhibit a mean-squared end-to-end length given by
 \f[
     \langle |{\bf R}(s) - {\bf R}(s')|^{2} \rangle_{0}
     =  |s-s'| b_{\alpha}^{2} \quad,
 \f]
-in which \f$ b_{\alpha} \f$ is the statistical segment length for a 
-bond that connects two monomers of type \f$ \alpha \f$. In this model, 
+in which \f$ b_{\alpha} \f$ is the statistical segment length for a
+bond that connects two monomers of type \f$ \alpha \f$. In this model,
 neighboring beads within a block of monomer type \f$ \alpha \f$ are
 connected by harmonic springs with a spring constant
 \f$ 3 kT / b_{\alpha}^{2} \f$, and \f$ b_{\alpha}^{2} \f$ is the
@@ -129,17 +128,16 @@ data structures used within the PSCF source code are designed for the
 general case of an acyclic branched polymer. Because linear block polymers
 are a very common simple case, however, the PSCF parameter file format
 allows the user to declare each species to be either linear or branched,
-and allows use of a simplified file format to describe linear polymer
-species.
+and allows use of a simplified file format to describe linear polymers.
 
-\subsection user_polymer_branched_graph_sub Branched polymers 
+\subsection user_polymer_branched_graph_sub Branched polymers
 
 A branched block polymer is described in PSCF using the language of graph
 theory. The connectivity of each polymer is described as a connected
 acyclic graph consisting of a set of vertices connected by edges.  Each
-"edge" in this graph corresponds to one block of the polymer.  Each vertex 
-corresponds to either a free chain end or a junction at which two or more 
-blocks meet. Every edge (or block) terminates at two distinct vertices. 
+"edge" in this graph corresponds to one block of the polymer.  Each vertex
+corresponds to either a free chain end or a junction at which two or more
+blocks meet. Every edge (or block) terminates at two distinct vertices.
 
 The number of edges that terminate at a vertex is known as the degree of
 that vertex. Each chain end is vertex of degree 1. Each junction in a
@@ -151,14 +149,14 @@ of edges connecting any two vertices in the graph. A connected graph is
 "acyclic", or a "tree", if there exists only a single path connecting any
 two distinct vertices.  A standard theorem of graph theory states that any
 connected acyclic graph with N edges must contain exactly N + 1 vertices.
-For example, a linear block polymer with N blocks contains two chain ends 
-and N - 1 two-fold junctions, giving N + 1 vertices.  Similarly, a star 
-with N edges that are connected at a single central junction has N chain 
-ends and one junction of degree N, again giving N + 1 vertices. An H 
+For example, a linear block polymer with N blocks contains two chain ends
+and N - 1 two-fold junctions, giving N + 1 vertices.  Similarly, a star
+with N edges that are connected at a single central junction has N chain
+ends and one junction of degree N, again giving N + 1 vertices. An H
 polymer with N=5 edges has 4 chain ends and two vertices of degree three,
 giving N+1=6 vertices.
 
-As a result of this thereom, we know that any acyclic block polymer 
+As a result of this thereom, we know that any acyclic block polymer
 with N blocks has exactly N + 1 vertices.  In the description of polymer
 structure used by PSCF, each block in a polymer with N blocks is assigned
 a unique block index in the range [0, N-1], while each vertex is assigned
@@ -173,66 +171,66 @@ index, and providing the following information about each block:
    - a block length
    - the indices of the two attached vertices
 
-The only difference between the information required in the thread and 
-bead model is that each block length is given as a real number in the 
+The only difference between the information required in the thread and
+bead model is that each block length is given as a real number in the
 thread model and as an integer number of beads in the bead model.
 
 \subsection user_model_polymer_branched_linear_sub Linear polymers
 
-PSCF allows a user to specify declare explicitly that a polymer species 
-is a linear, and can use this information to define relationships among 
-block and vertex indices. Blocks in a linear polymer are numbered 
-sequentially, starting from one end of the chain. By convention, block i 
-of a linear block polymer with N blocks terminates at vertices with 
+PSCF allows a user to specify declare explicitly that a polymer species
+is a linear, and can use this information to define relationships among
+block and vertex indices. Blocks in a linear polymer are numbered
+sequentially, starting from one end of the chain. By convention, block i
+of a linear block polymer with N blocks terminates at vertices with
 indices i and i+1.  This convention allows PSCF to use a simplified file
-format for information about blocks in a linear block copolymer, in which 
-values of the indices of the attached vertices do not need to be 
+format for information about blocks in a linear block copolymer, in which
+values of the indices of the attached vertices do not need to be
 explicitly entered by the user.
 
 \section user_model_bead_vertex_sec Vertices in the bead model
 
-A complete definition of the bead model requires the introduction of an
-additional convention for the treatment of bonds that are connected to 
-vertices of degree greater than 1, i.e., to junction or branch vertices.
-The bead model used by PSCF treats each such vertex as a "phantom" bead
-that does not interact with any chemical potential field, like a bead 
-with a monomer type that occupies no volume and has vanishing 
-Flory-Huggins interaction parameters with all other monomer types. 
-Any bond that connects such a phantom vertex bead to a terminal (first 
-or last) real bead of a block of monomers of type i is taken have a 
-statistical segment length, denoted by \f$ a_{i} \f$, that satisfies
+To completely define a bead model, one must introduce an additional
+convention for the treatment of bonds that are connected to junction
+and branch vertices (i.e., vertices of degree greater than 1). The
+bead model used by PSCF treats each such vertex as a "phantom" bead
+that occupies no volume and has vanishing Flory-Huggins interaction
+parameters with all other monomer types. Each bond that connects such
+a phantom vertex bead to a terminal (first or last) real bead of an
+attached block containing monomers of type i is taken have a
+statistical segment length, denoted here by \f$ a_{i} \f$, that
+satisfies
 \f[
    a_{i}^{2} = b_{i}^{2}/2 \quad,
 \f]
-where \f$ b_{i} \f$ is the segment length for a standard bond that 
-connects any two beads of type \f$ i \f$.  If we think of each standard 
-bond between two beads of type \f$ i \f$ as corresponding to a contour 
-length s = 1 of an underlying continuous chain, then a bond that connects 
-the terminal bead of an \f$ i \f$ block to a vertex thus corresponds in 
-this model to a "half bond" of contour length s = 1/2.  
+where \f$ b_{i} \f$ is the segment length for a standard bond
+between any two beads of type \f$ i \f$.  If we think of each standard
+bond between two beads of type \f$ i \f$ as corresponding to a contour
+length s = 1 of an underlying continuous chain, then a bond that connects
+the terminal bead of an \f$ i \f$ block to a vertex thus corresponds in
+this model to a "half bond" of contour length s = 1/2.
 
-Consider application of this rule to a junction vertex of degree 2 that 
-connects two blocks of types A and B within a linear block polymer. A 
-model that connects the terminal beads of the A and B blocks to a shared 
-phantom vertex by two such "half bonds" is equivalent to a model that 
-directly connects these two terminal beads with a bond that has an 
-effective statistical segment length \f$ b_{AB} \f$, with
+Consider application of this rule to a junction vertex of degree 2 that
+connects two blocks of types A and B within a linear block polymer. A
+model that connects the terminal beads of the A and B blocks to a shared
+phantom vertex by two such "half bonds" is equivalent to a model that
+directly connects these two terminal beads with a bond that has an
+effective statistical segment length \f$ b_{AB} \f$, such that
 \f[
    b_{AB}^{2} =
    ( b_{A}^{2} + b_{B}^{2} )/2 \quad,
 \f]
-where \f$ b_{A} \f$ and \f$ b_{B} \f$ are statistical segment lengths 
-of standard bonds of type A and B, respectively. In the case of equal 
-statistical segment lengths, \f$ b_{A} = b_{B} \f$, this rule yields a 
-connecting bond for which \f$ b_{AB} = b_{A} = b_{B} \f$, thus yielding 
+where \f$ b_{A} \f$ and \f$ b_{B} \f$ are statistical segment lengths
+of standard bonds of type A and B, respectively. In the case of equal
+statistical segment lengths, \f$ b_{A} = b_{B} \f$, this rule yields a
+connecting bond for which \f$ b_{AB} = b_{A} = b_{B} \f$, thus yielding
 a conformationally homogeneous chain in this simple case.
 
-This convention was chosen primarily for simplicity. Its main virtues are 
+This convention was chosen primarily for simplicity. Its main virtues are
 that it yields conformationally homogeneous behavior for the simple case
-discussed above, and that it does not require the user to input any more 
+discussed above, and that it does not require the user to input any more
 information than that required by the thread model.
 
-No such special rule for the treatment of junctions and branch points is 
+No such special rule for the treatment of junctions and branch points is
 required for the continuous thread model.
 
 <BR>

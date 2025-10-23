@@ -1,6 +1,6 @@
 /*! \page user_field_r1d_page Field File - 1D Fields (pscf_1d)
 
- \ref user_field_page (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_types_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_periodic_page (Next) 
 <BR>
 
@@ -74,7 +74,7 @@ convention is why a value of 0.0000 is shown for the last column of the
 last row in the above example.
 
 <BR>
- \ref user_field_kgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_types_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_page           (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_periodic_page  (Next) 
 */

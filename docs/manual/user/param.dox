@@ -1,17 +1,17 @@
-/*! \page user_param_page Parameter Files 
+/*! \page user_param_page Parameter Files
 
-\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page      (Next) 
+\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_command_page      (Next)
 <BR>
 
-This manual section describes the format and contents of the parameter 
-files used by all of the PSCF programs.  The parameter files required by 
-the three different PSCF programs exhibit a very similar structure and 
-syntax, but differ in some details. The discussion given here focuses on 
-general syntactical features that are common to all PSCF parameter files. 
-For simplicity, however, the examples given in this chapter only contain 
-elements required for SCFT calculations. More complete discussions of 
-parameter files elements required to initialize either SCFT or PS-FTS 
+This manual section describes the format and contents of the parameter
+files used by all of the PSCF programs.  The parameter files used by the
+three different PSCF programs exhibit a similar structure and syntax,
+but differ in some details. The discussion given here focuses on general
+features that are common to all PSCF parameter files.  For simplicity,
+however, the examples given in this section only contain elements
+required for relatively simple SCFT calculations. More complete
+discussions of parameter file elements needed for either SCFT or PS-FTS
 calculations are given in the following two chapters.
 
 <h2> Contents:</h2>
@@ -27,8 +27,8 @@ calculations are given in the following two chapters.
      </ol>
    </ol>
 <BR>
-\ref user_calculation_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_page             (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page     (Next) 
+\ref user_calculation_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page             (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_command_page     (Next)
 
 */

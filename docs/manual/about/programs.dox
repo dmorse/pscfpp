@@ -17,13 +17,13 @@ finite difference spatial discretization is used to solve the underlying
 modified diffusion equation (MDE). This program is useful for SCFT problems 
 involving flat or curved interfaces, and for simulating spherical or 
 cylindrical micelles.  The pscf_1d program cannot perform stochastic field 
-theoretic simulation.
+theoretic simulations.
 
 <b>pscf_pc</b>:
 
 The pscf_pc program can perform both SCFT and PS-FTS calculations on 
 systems with periodic boundary conditions in 1, 2 or 3 dimensions, using 
-conventional CPU hardware.  A pseudo-spectral algorithm is used to solve 
+conventional CPU hardware. A pseudo-spectral algorithm is used to solve 
 the MDE. This program provides capabilities for SCFT analogous to those 
 of the older Fortran PSCF program.  The suffix "pc" stands for "periodic 
 CPU".

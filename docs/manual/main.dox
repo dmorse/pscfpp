@@ -1,24 +1,23 @@
 /*! \mainpage PSCF - Polymer Self-Consistent Field
 
 PSCF is a software package for field-theoretic simulation of inhomogeneous
-equilibrium structures formed by polymer liquids with constituents that
-tend to phase separate. The current version of PSCF can perform either
-self-consistent field theory calculations or stochastic field theoretic
-simulations that use a partial saddle-point approximation.
+equilibrium structures formed by polymer liquids with constituents that 
+tend to phase separate, including block polymer materials. The current 
+version of PSCF can perform either self-consistent field theory (SCFT)
+calculations or stochastic field theoretic simulation (FTS) calculations 
+that use a partial saddle-point approximation.
 
 PSCF is written primarily in C++, supplemented by CUDA to use a NVIDIA
 graphics processing unit if one is available.  The package is only
 distributed in source code form, and so must be compiled by the user.
-PSCF is designed for a unix-like environment, and is regularly tested on
-Linux and Mac OS X operating systems.
+PSCF is designed for a unix-like environment, and is regularly tested 
+on Linux and Mac OS X operating systems.
 
 PSCF is free, open source software. It is distributed under the terms of
 the GNU General Public License as (GPL) published by the Free Software
 Foundation, either version 3 of the License or (at your option) any later
 version. See the LICENSE file or the <a href=http://www.gnu.org/licenses/>
-gnu web page</a> for details.  Development of PSCF is currently supported
-by the National Science Foundation program for Cyberinfrastructure for
-Sustained Scientific Development (CSSI) under Grant No. 2103627.
+gnu web page</a> for details.  
 
 The web manual for the most recent tagged release of PSCF is available 
 online at
@@ -39,6 +38,7 @@ online at
  <li> \subpage install_page
     <ol type="1">
     <li> \ref install_require_page  </li>
+    <li> \ref install_external_page  </li>
     <li> \ref install_source_page  </li>
     <li> \ref install_overview_page  </li>
     <li> \ref install_environment_page  </li>
@@ -116,9 +116,9 @@ online at
 
 <h2>Manual Organization:</h2>
 
-This web manual is designed to provide both thorough usage information 
-for users who may never look at the source code, and aplication 
-programming interface (API) documentation for those who do.
+This web manual is designed to provide both a user manual for users who 
+may never look at the source code, and complete technical documentation 
+aimed at developers.
 
 <b>Users</b>: Information for users about how to install and run PSCF is 
 provided in chapters 1-7 of the web manual, as outlined above, and via
@@ -126,14 +126,15 @@ links that are accessible there.
 
 <b>Developers </b>: General information about the package for developers 
 and others who inspect the source code is given in chapter 8 of the web
-manul, entitled \ref developer_page "Developer Information".  Detailed API 
-documentation that is extracted from comments in the source code is also
-accessible via the "Topics", "Namespaces", "Classes", and "Files" tabs 
-that appear at the top of every web manual page.  The "Topics" tab 
-provides a hierarchical grouping of C++ classes and functions, organized 
-by C++ namespace and then, within each namespace, into groups of closely
-related classes.  Clicking on a highlighted name of a class, class 
-template, or function anywhere in the web manual normally links you to 
-the API documentation for that entity.  
+manual, entitled \ref developer_page "Developer Information".  Detailed 
+application programming interface (API) documentation that is extracted 
+from formatted comments in the source code is accessible via the "Topics", 
+"Namespaces", "Classes", and "Files" tabs that appear at the top of every 
+web manual page.  The "Topics" tab provides a hierarchical grouping of 
+C++ classes and functions, organized by C++ namespace and then, within 
+each namespace, into groups of closely related classes.  Clicking on a 
+highlighted name of a class, class template, or other named entity 
+anywhere in the web manual normally opens a page of API documentation 
+for that entity.  
 
 */
