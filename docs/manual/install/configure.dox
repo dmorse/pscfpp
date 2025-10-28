@@ -7,30 +7,25 @@
 Users must run a bash script named "configure" after installing all required
 dependencies and before attempting to compile any code in the PSCF package.
 This script is located in the PSCF root directory, which is named pscfpp
-by default.  It is usually only necessary to invoke the configure script
+by default.  It is normally only necessary to invoke the configure script
 once, before the first time you compile any code.
 
 \section install_configure_purpose_sec Purpose
 
-The configure script installs several files that are needed to compile
-PSCF but that are not installed by cloning the github repository. Most
-of the files installed by this script are files that the user may need to
-modify in order to customize or extend the package. These include
-configuration files that a user may need to modify in order to adapt the
-PSCF build system to a particular environment or to enable optional
-features.
+The configure script creates several files that are needed to compile
+PSCF but that are not created by cloning the github repository.
 
 The most important type of file created by the configure script is a file
-named config.mk that is installed in the root directory of both the bld
-and src directory trees. This is a makefile fragment that acts as the main
-configuration file for compilation. It assigns values to makefile variables
-that define the compiler executable names for C++ and CUDA code, command
-line options passed to the compilers, paths to various directories used by
-the package during compilation or execution (e.g., paths to source code,
-build, installation and data directories), and paths for required external
-libraries.
+named config.mk that is installed in both the bld and src directories.
+This is a makefile fragment that acts as the main configuration file for
+compilation. It assigns values to makefile variables that define the
+compiler executable names for C++ and CUDA code, command line options
+passed to the compilers, paths to various directories used by the
+package during compilation or execution (e.g., paths to source code,
+build, installation and data directories), and paths for required
+external libraries.
 
-The copy of the config.mk file that is installed in the the PSCF bld/
+The copy of the config.mk file that is installed in the the PSCF bld
 directory is used as the main configuration file for an out-of-source
 build, in which intermediate files are created in the bld directory
 tree. The copy in the src directory is the main configuration file for
@@ -41,20 +36,20 @@ out-of-source build.
 \section install_configure_default_sec Default configuration
 
 To run the configure script with default settings, change directory (cd)
-to the PSCF root directory (i.e., the pscfpp directory), and then enter:
+to the PSCF root directory, and then enter:
 \code
 ./configure
 \endcode
-Note the dot and slash ("./") before the name of the script.  These two
-characters should be included to tell the unix shell to look for an
-executable file named configure in the current working directory, rather
-than searching the directories listed in the PATH environment variable
-for an executable with this name.
+Note the dot and slash ("./") before the name of the script.  These
+two characters must be included to tell the unix shell to look for an
+executable file named "configure" in the current working directory,
+rather than searching the directories listed in the PATH environment
+variable.
 
 When the configure script is invoked with no command line arguments, as
 shown above, the script examines the operating system and environment,
 and attempts to choose settings appropriate to the detected environment.
-In our experience, this normally works for standard linux environments,
+In our experience, this normally works for common linux environments,
 and for Apple Mac computers on which the
 <a href="https://brew.sh/"> Homebrew </a> package manager has been
 used to install GSL and FFTW.
@@ -72,9 +67,9 @@ created by the configure script or created by compiling PSCF.
 
 The configure script creates the main config.mk files that are installed
 in the pscfpp/bld and pscfpp/src directories. To do so, it chooses a
-so-called "compiler configuration file" from among several such files
-in the make/compiler directory and copies the contents of that file
-into a middle section of each of the config.mk files.  For example, the
+so-called "compiler configuration file" from among several such files in
+the make/compiler directory and copies the contents of that file into a
+middle section of each of the two config.mk files. For example, the
 compiler configuration file used for most linux environment is named
 make/compiler/linux-default.  The compiler configuration file is a
 relatively short makefile fragment that defines all of the makefile
@@ -105,8 +100,8 @@ standard subdirectories of /usr/local.
 
 The configure script instead uses the file make/compiler/mac-si-homebrew
 if it detects a Mac OS X operating system and an installation of the
-homebrew package manager that is installed in the location used by
-homebrew for Macs with Apple Si M(X) CPU chips.
+homebrew package manager in the location used by the homebrew package
+manager on Macs with Apple Si M(X) CPU chips.
 
 <b> Relevance of CPU hardware on Apple Macs that use homebrew: </b>
 
@@ -146,7 +141,7 @@ or choose an appropriate file.
 
 The only compiler configuration files that are currently distributed as
 part of the PSCF package are the files linux-default and mac-si-homebrew.
-If neither of these files proves sufficient, a user can create an new
+If neither of these files proves sufficient, a user can create a new
 customized compiler configuration file in the make/compiler directory
 to adapt the compiler options and paths to their computer environment.
 
@@ -165,12 +160,13 @@ In order to create a customized compiler configuration file, a user will
 need to understand the meanings of the variables defined in such files.
 Towards that end, we recommend that any such user first read the comments
 in the file make/compiler/linux-default that explain the meaning and use
-of each of the basic makefile variables. The user should then run the
-configure script with no argument and inspect the file bld/config.mk and/or
-src/config.mk that will be created by the configure script.  Upon comparing
-the contents of the files bld/config.mk and make/compiler/linux-default,
-one should see that the contents of the linux-default file have been
-copied verbatim into the middle section of both config.mk files.
+of each of the makefile variables defined there. The user should then run
+the configure script with no argument and inspect the file bld/config.mk
+and/or src/config.mk that will be created by the configure script.  Upon
+comparing the contents of the files bld/config.mk and
+ make/compiler/linux-default, one should see that the contents of the
+linux-default file have been copied verbatim into a middle section of
+both config.mk files.
 
 For most users, the first step in creating a customized compiler
 configuration file should be to copy either the linux-default or
@@ -221,14 +217,19 @@ By creating a customized compiler configuration file, users can thus store
 required changes in a form that can survive possible repeated cycles of
 "make veryclean" and "./configure" commands.
 
-\section install_configure_moving_sec Reconfigure after moving the root directory
+\section install_configure_moving_sec Reconfigure and rebuild after moving the root directory
 
 Users can move or rename the root directory of their local PSCF repository
-at any time after the repository is created.  To do so after having run
-the configure script, one should first run "make veryclean" from the old
-root directory location, move or rename the root repository, rerun the
-configure script from the new location, and finally compile or recompile
-the entire package.
+at after the repository is created.  No special procedures are required
+if the root repository is moved immediately after it is created by cloning
+the github repository, and before running the configure script.
+
+To move the root directory after having already run the configure script,
+one should first run "make veryclean" from the old root directory
+location, move or rename the root repository, then rerun the configure
+script from the new location. In addition, if PSCF has been compiled
+before the root directory is moved, the entire package should be
+recompiled after running the configure from the new location.
 
 <em>Rationale</em>: The configure script queries the operating system
 to identify the absolute path to the PSCF root directory, which is the
@@ -237,19 +238,22 @@ prefix to construct values for makefile variables that represent absolute
 paths to several subdirectories of the root directory, such as the src,
 bld, data, and bin directories. Values of these makefile variables are
 used in pattern rules that are used by the makefile system to build
-intermediate and executable files. The configure script thus must be
-rerun after the root directory is moved or renamed in order to update
-values of these path variables.
+intermediate and executable files. In order for the build system to
+function properly, the configure script thus must be rerun after the
+root directory is moved or renamed in order to update values of these
+path variables.
 
-The PSCF package also needs to recompiled after the root directory is
-moved because one of the C++ files that is used by pscf_pc and pscf_pg
-(the file src/pscf/paths.h) contains a hard-coded path to the PSCF data
-directory that is generated by the configure script. This path is used
-at run time to search for data files that contain information about
-crystallographic space groups. This type of search for a data files will
-fail if the PSCF root directory is moved after the package is compiled,
-unless the package is recompiled after re-running the configure script
-from the new directory location.
+The PSCF package also needs to be recompiled if the root directory is
+moved after compilation. This is because one of the C++ files that is
+used by pscf_pc and pscf_pg, the file src/pscf/paths.h, contains a
+path to the PSCF data directory that is generated by the configure
+script. This path is then hard-coded into the resulting pscf_pc and
+pscf_pg executable files when the package is compiled, and is used at
+run time during some SCFT calculations to search for data files that
+contain information about crystallographic space groups.  Such a
+search for a space group data file will fail if the PSCF root
+directory is moved after the configure script has been run and the
+package has been compiled in a previous location.
 
 <BR>
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

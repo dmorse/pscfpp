@@ -54,7 +54,7 @@ The CUDA Toolkit is a development environment that provides the
 nvcc C++/CUDA compiler and a variety of GPU-accelerated libraries,
 including the cuFFT fast Fourier transform library.
 
-Users who wish to generate a local copy of this web manual as a set of
+Users who wish to generate a local copy of this web manual, as a set of
 html pages that reside on the user's computer, will also need to install
 the "doxygen" documentation utility.
 
@@ -65,19 +65,20 @@ system must first be configured to provide a unix command-line development
 environment. This can be done by installing the Mac Command Line Tools
 package for XCode.  In recent versions of Mac OS X, it is not necessary
 to install the large XCode integrated development environment (IDE) to
-obtain just the much smaller set of command line tools. The command line
-tools package is necessary and sufficient compile and use PSCF.
+obtain just the much smaller set of command line tools. The full XCode
+environment is not needed to compile and use PSCF.
 
 To install just the command line tools, follow the instructions given
 <a href= https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/>
 here</a>.
 Briefly, the instructions are to:
 
-   - Launch the Terminal application, found in Applications/Utilities
+   - Launch the Terminal application, found in the Applications/Utilities
+     folder
 
    - From a terminal, type the command string: "xcode-select --install"
 
-This will a cause a software update window that contains the following
+This will a open a software update window that contains the following
 text: "The xcode-select command requires the command line developer
 tools.  Would you like to install the tools now?" Confirm by clicking
 the "Install" button on this window. When prompted, also agree to the
@@ -85,7 +86,7 @@ Terms of Service.  The package will then download and install.
 
 If you choose to install the full XCode package from the Apple App store,
 installation of the Command Line Tools is offered as an option during the
-installation process.
+installation process, which you should accept.
 
 To use PSCF on a Mac, you must type commands from a terminal window, as
 in a traditional unix command line environment. Mac users may thus want
@@ -102,27 +103,28 @@ on systems on which the g++ command invokes a C++ compiler, invoking
 \code
 command -v g++
 \endcode
-from a command line will normally return a path such as "/usr/bin/g++",
-which is the path to the "g++" executable file, if one is found. The
+from a command line will normally return a path such as "/usr/bin/g++".
+This is the full path to the "g++" executable file, if one is found. The
 unix shell searches for executable files in a list of directories that
 are listed by the PATH environment variable. If the operating system
 cannot find a command of the specified name in this list of directories,
 then "command -v" instead returns nothing.
 
 The "which" command is another utility that is essentially equivalent
-to "command -v", and that is also available on most unix systems. If 
+to "command -v", and that is also available on most unix systems. If
 the "which" command exists, one could invoke
 \code
 which g++
 \endcode
 as an alternate way to search for the g++ executable file. Like
-"command -v", this command returns a path to an executable file with 
-a specified base name if one is found, and nothing otherwise.
+"command -v", this command returns a path to an executable file with
+a specified base name (e.g., "g++") if one is found, and returns
+nothing if no matching file is found.
 
-We suggest use of "command -v" in this manual primarily because it 
-is required to exist by the POSIX portability standard for unix 
-operating systems, while the "which" command is not required by
-POSIX. In practice, both commands exist on many unix systems, while 
+We suggest use of "command -v" in this manual primarily because this
+command is required to exist by the POSIX portability standard for
+unix operating systems, while the "which" command is not required by
+POSIX. In practice, both commands exist on many unix systems, while
 a few variants of unix have one but not the other.
 
 \section require_git_section Git client
@@ -134,9 +136,9 @@ a separate github repository, as project dmorse/pscf.
 
 The source code of the current version of PSCF should be obtained
 by using the git version control manager to clone the public
-<a href=https://github.com/dmorse/pscfpp>git repository</a>, as
-described in detail \ref install_source_page "elsewhere".  To get
-the source code in this way, a git client must be installed on 
+<a href=https://github.com/dmorse/pscfpp>git repository</a>, as will
+be described in detail \ref install_source_page "elsewhere".  To get
+the source code in this way, a git client must be installed on
 your computer.
 
 One can check whether the git package is already installed by entering
@@ -145,7 +147,6 @@ git --version
 \endcode
 from the unix command line. If git is installed and functional, this
 should return a git version number, such as "git version 2.30.1".
-
 One can also check that the shell can find an exectuable named "git" by
 entering
 \code
@@ -154,8 +155,8 @@ command -v git
 and checking if this returns a valid path, such as /usr/bin/git .
 
 Instructions for installing git on different platforms are given on the
- <a href=http://git-scm.com/install>git web page</a>, and in chapter 1.5 
-of the <a href=https://git-scm.com/book/en/v2>Pro Git book </a> by Scott 
+ <a href=http://git-scm.com/install>git web page</a>, and in chapter 1.5
+of the <a href=https://git-scm.com/book/en/v2>Pro Git book </a> by Scott
 Chacon, which is available to be read for free online.
 If you are using linux, and git is not already installed, you should use
 the preferred package manager on your linux distribution to install a git
@@ -165,14 +166,14 @@ PSCF for other purposes.
 
 \section install_require_python Python interpeter
 
-The system used to compile and install PSCF requires access to a Python 3 
-interpreter.  One can check if a python interpreter is accessible by 
+The system used to compile and install PSCF requires access to a Python 3
+interpreter.  One can check if a python interpreter is accessible by
 issuing the command
 \code
 python3 --version
 \endcode
-confirming that the command works, and confirming that it returns a 
-version number 3.0 or greater. Alternatively, one can issue the command
+confirming that the command works, and confirming that it returns a
+version number 3.0 or greater. In addition, one can issue the command
 \code
 command -v python3
 \endcode
@@ -182,13 +183,13 @@ We recommend using the command "python3" rather than "python" to make
 sure that you access a python 3 interpreter on any system in which a
 Python 2 interpreter may still also be installed. A Python 3 interpeter
 should be available from the command line by default in any common linux
-distribution (e.g., Ubuntu or Fedora), and should be installed on a 
+distribution (e.g., Ubuntu or Fedora), and should be installed on a
 Mac OS X as part of the XCode command line tools package.
 
 \section install_require_compiler_cpp C++ compiler
 
 By default, the PSCF build system invokes a C++ compiler using the
-compiler commnd name "g++". On linux systems, this command normally
+compiler command name "g++". On linux systems, this command normally
 invokes the GNU compiler collection (GCC) C++ compiler. On an Apple
 computer running Mac OS X that is configured for unix C++ development
 (see above), the "g++" command is normally a link to the Clang compiler,
@@ -203,7 +204,7 @@ discussed \ref install_configure_page "here".  Even when a different
 compiler command is used to compile source code, however, the PSCF build
 system will still invoke the "g++" command with appropriate options to
 analyse dependencies among source files. The PSCF makefile system thus
-always requires that the "g++" command be available to the build system.
+always requires that the "g++" command be available.
 
 One can check if the "g++" command exists by entering "command -v g++",
 as described above.
@@ -217,7 +218,7 @@ is described in more detail \ref install_configure_page "here".
 \section install_require_compiler_cuda CUDA compiler
 
 To compile the GPU-accelerated pscf_pg program, the system must have
-an appropriate NVIDIA GPU and a CUDA development package installed. The
+an appropriate NVIDIA GPU and a CUDA development toolkit installed. The
 NVIDIA nvcc C++/CUDA compiler is designed to integrate with the GNU g++
 compiler, so we recommend using the GNU compiler to compile C++ source
 files if you are planning to compile CUDA code for use on the same

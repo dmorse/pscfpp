@@ -99,11 +99,20 @@ while getopts "a:c:d:qh" opt; do
       else
          echo "-d OFF    - debugging" >&2
       fi
+      HASCUDA=""
       if [ `grep "^ *PSCF_CUDA *= *1" config.mk` ]; then
          echo "-c ON     - CUDA compilation" >&2
+         HASCUDA=1
       else
          echo "-c OFF    - CUDA compilation" >&2
       fi
+      if [ -n "$HASCUDA" ]; then
+         ARCH=`grep "^ *NVARCH *=" config.mk | sed "s/^ *NVARCH *= *"//g`
+         ARCH="${ARCH// /}"
+         echo "$ARCH     - CUDA architecture identifier" >&2
+         unset ARCH
+      fi
+      unset HASCUDA
       ;;
     h)
       echo " "

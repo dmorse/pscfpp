@@ -300,8 +300,6 @@ namespace VecOp {
       }
    }
 
-/** @} */
-
 } // namespace VecOp
 } // namespace Cpu
 } // namespace Prdc

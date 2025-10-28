@@ -5,7 +5,7 @@
 <BR>
 
 The following people have contributed directly to the development of the
-current C++ version of PSCF and associated data processing tools:
+current C++/CUDA version of PSCF and associated data processing tools:
 
   - David Morse
   - Guo Kang Cheong
@@ -15,18 +15,18 @@ current C++ version of PSCF and associated data processing tools:
   - Kexin Chen
   - Ying Zheng
 
-The following people contributed to the legacy Fortran version, and have 
-helped develop algorithms that are now used in both versions:
+The following people contributed to the legacy Fortran version, and have
+all helped develop algorithms that are now used in both versions:
 
   - Chris Tyler
   - Jian Qin
   - Amit Ranjan
   - Akash Arora
 
-Development of PSCF has been financially supported by the National 
-Science Foundation (NSF) program for Cyberinfrastructure for Sustained 
+Development of PSCF has been financially supported by the National
+Science Foundation (NSF) program for Cyberinfrastructure for Sustained
 Scientific Development (CSSI) under Grant No. 2103627, and by earlier
-NSF Division of Materials Research (DMR) grants DMR-1725272, 
+NSF Division of Materials Research (DMR) grants DMR-1725272,
 DMR-1333669, and DMR-1310436.
 
 <BR>

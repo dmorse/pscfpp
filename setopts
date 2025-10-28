@@ -78,10 +78,12 @@ while getopts "a:c:d:m:qh" opt; do
 
   if [[ "$opt" != "?" ]]; then
     if [[ "$opt" != "h" ]]; then
+       echo ""
        cd $ROOT
        cd bld/;
        echo "In build directory $PWD":
        ./setopts -"$opt" "$OPTARG"
+       echo ""
        cd $ROOT
        cd src/;
        echo "In build directory $PWD":

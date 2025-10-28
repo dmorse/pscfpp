@@ -181,7 +181,7 @@ Optional elements are identified using the following conventions:
 
 \section user_param_format_selectable_sec Selectable subblocks
 
-Selectable subbblocks (such as the Iterator block) are described using 
+Selectable subbblocks (such as the Iterator block) are described using
 the following rules:
 
  - <b> Selectable subblocks </b>: Selectable subblocks are indicated by

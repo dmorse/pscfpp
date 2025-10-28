@@ -6,13 +6,14 @@
 <BR>
 
 PSCF is a package of several programs that are designed to predict
-equilibrium properties of inhomogeneous states in polymer liquids.
-PSCF is designed primarily to predict structures and free energies of
-inhomogeneous equilibrium states of polymer liquids in which inhomogeneity
-is driven by a tendency of different constituents to to phase separate.
-The current version of PSCF can be used to perform either self-consistent
-field theory calculations or stochastic field-theoretic simulations that
-rely on a partial-saddle point approximation, as discussed below.
+equilibrium properties of inhomogeneous states in polymer liquids,
+including block polymer materials. PSCF is designed primarily to describe
+materials that contain flexible polymers in which the formation of
+inhomogeneous states is driven by a tendency of constituents to phase
+separate.  The current version of PSCF can be used to perform either
+self-consistent field theory calculations or stochastic field-theoretic
+simulations that rely on a partial-saddle point approximation, as
+discussed below.
 
 All PSCF programs currently use a coarse-grained model that treats polymer
 conformations as flexible random walks, and that treats the polymer
@@ -27,7 +28,7 @@ structureless particles that occupy a specified volume per molecule.
 Each polymeric species may have a linear or acyclic branched structure.
 Interactions among different types of monomer are described by binary
 Flory-Huggins interaction parameters. The model and parameters are
-described in greater detail \ref user_model_page "elsewhere" in this 
+described in greater detail \ref user_model_page "elsewhere" in this
 manual.
 
 \section about_methods_scft_sec Self-consistent field theory (SCFT)
@@ -77,19 +78,19 @@ history).
 
 \section about_methods_fts_sec Field-theoretic simulation (FTS)
 
-Field-theoretic simulation (FTS) methods are a family of closely related
-stochastic simulation methods that sample an equilibrium ensemble of
-possible configurations of a set of fluctuating chemical potential fields,
-or w fields. This is in contrast to SCFT, which instead uses an iterative
-algorithm to identify a single optimal field configuration. The theory
-underlying FTS methods is based upon a formally exact transformation of
-the partition function for a system of interacting particles from an
-integral over particle positions into a functional integral over all
-possible configurations of a set of fluctuating auxiliary w fields.
-There exist two distinct classes of FTS methods, which we refer to here
-as fully fluctuating (FF-FTS) and partial-saddle point (PS-FTS) field
-theoretic simulations. Both are discussed below for context, but only
-the PS-FTS method is implemented in the current version of PSCF.
+Field-theoretic simulation (FTS) methods are stochastic simulation methods
+that sample an equilibrium ensemble of possible configurations of a set
+of fluctuating chemical potential fields, or w fields. This is in contrast
+to SCFT, which instead uses an iterative algorithm to identify a single
+optimal field configuration. The theory underlying FTS methods is based
+upon an exact transformation of the partition function for a system of
+interacting particles from an integral over particle positions into a
+functional integral over all possible configurations of a set of
+fluctuating auxiliary w fields.  There exist two distinct classes of
+FTS methods, which we refer to here as fully fluctuating (FF-FTS) and
+partial-saddle point (PS-FTS) field theoretic simulation methods. Both
+are discussed briefly below for context, but only the PS-FTS method is
+implemented in the current version of PSCF.
 
 <b> Fully-fluctuating field theoretic simulation (FF-FTS): </b>
 
@@ -145,15 +146,15 @@ simulation (PS-FTS).
 
 When the partial saddle-point approximation is applicable, it leads to
 an expression for the partition function as a functional integral in
-which the fields and statistical weights are have real (rather than
-complex) values.  PSCF implements several Brownian dynamics and
+which the fields and statistical weights are are real, rather than
+complex-valued.  PSCF implements several Brownian dynamics and
 Monte-Carlo algorithms for sampling the ensemble defined by the partial
 saddle-point approximation. The Brownian dynamics method is generally
 more efficient that Monte-Carlo for large systems, and is recommended
-for most applications. Brownian dynamics PS-FTS simulations are generally
-more stable and efficient than complex Langevin simulations, at a modest
-cost in accuracy when used to simulate liquids of sufficiently long,
-strongly overlapping polymers.
+for most applications. Brownian dynamics PS-FTS simulations are also
+generally more stable and efficient than complex Langevin simulations,
+at a modest cost in accuracy when used to simulate liquids of sufficiently
+long, strongly overlapping polymers.
 
 The PS-FTS method cannot be applied to as wide a range of different
 types of systems as the complex Langevin method.  At the time of writing,

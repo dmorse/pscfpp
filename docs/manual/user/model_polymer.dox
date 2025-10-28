@@ -74,8 +74,8 @@ non-interacting polymers is given by
 in which \f$ b_{\alpha} \f$ is a statistical segment length for chain
 segments of type \f$ \alpha \f$. Here, \f$ \langle \cdots \rangle \f$
 denotes a statistical average over random-walk configurations within a
-homogeneous gas of non-interacting polymers. Each such chain segment is 
-also taken to occupy a volume \f$ V(s,s') \f$ within an incompressible 
+homogeneous gas of non-interacting polymers. Each such chain segment is
+also taken to occupy a volume \f$ V(s,s') \f$ within an incompressible
 liquid, which is given by
 \f[
     V(s,s') = v|s-s'| \quad.

@@ -59,7 +59,7 @@ shown \ref user_param_example_page "previously" :
 \section user_param_mixture_format_sec Format
 
 All three PSCF programs use very similar format for the Mixture block. The
-pscf_1d and pscf_pc programs use identical formats for this block, which 
+pscf_1d and pscf_pc programs use identical formats for this block, which
 was discussed on the \ref user_param_format_example2_sec "previous page" .
 The format used by the pscf_pg program accepts one additional optional
 parameter named useBatchedFFT the end of the block. The format of the
@@ -143,8 +143,8 @@ table:
   </tr>
   <tr>
      <td> useBatchedFFT* </td>
-     <td> For pscf_pg, this boolean flag controls a purely 
-          computational option that is discussed on a 
+     <td> For pscf_pg, this boolean flag controls a purely
+          computational option that is discussed on a
           \ref user_param_mixture_batchedFFT_page "separate page".
           This parameter may only appear in pscf_pg parameter files
           (optional, 1 or true by default)
@@ -172,20 +172,20 @@ Comments:
     assigned an index 0, etc.
 
   - The parameter nPolymer (the number of polymer species) must be a
-    positive integer.  The parameter nSolvent (the number of solvent species) 
+    positive integer.  The parameter nSolvent (the number of solvent species)
     may, however, be zero, and is set to zero by default if the nSolvent
-    parameter is absent. Correspondingly, the Mixture block must always 
-    contains one or more Polymer subblocks and zero or more Solvent 
+    parameter is absent. Correspondingly, the Mixture block must always
+    contains one or more Polymer subblocks and zero or more Solvent
     subblocks.
 
   - The parameter vMonomer is an optional parameter, and is usually absent
     from parameter files for standard SCFT calculations. The reasons that
     it may be neglected in such calculations have been briefly discussed
     \ref user_model_conventions_vMonomer_sec "elsewhere".  A value for
-    vMonomer is, however, normally needed as an input parameter for 
-    stochastic PF-FTS calculations. A value of vMonomer is also needed as 
-    an input in the calculation of some optional outputs of the pscf_1d 
-    program, such as the total excess free energy of a spherical micelle. 
+    vMonomer is, however, normally needed as an input parameter for
+    stochastic PF-FTS calculations. A value of vMonomer is also needed as
+    an input in the calculation of some optional outputs of the pscf_1d
+    program, such as the total excess free energy of a spherical micelle.
 
   - The parameter ds is required when the thread model is being used,
     but may not appear in a parameter file that uses a bead model. The
@@ -195,12 +195,12 @@ Comments:
     parameter, which is the first (optional) element of the main System
     block, which appears before the Mixture block.
 
-  - The format for the Mixture block used by pscf_pg has one additional 
-    optional algorithm parameter named usedBatchedFFT at end of the 
-    block. The meaning of this parameter discussed in detail on a 
+  - The format for the Mixture block used by pscf_pg has one additional
+    optional algorithm parameter named usedBatchedFFT at end of the
+    block. The meaning of this parameter discussed in detail on a
     \subpage user_param_mixture_batchedFFT_page "separate page".
-    Use of the default value of 1 (or true) saves a bit of computational 
-    time at the cost of additional memory usage, and is appropriate on 
+    Use of the default value of 1 (or true) saves a bit of computational
+    time at the cost of additional memory usage, and is appropriate on
     modern GPUs on all but the largest problems.
 
 <i> Technical comments (for users who examine the source code) </i>:
@@ -214,29 +214,29 @@ Rpc, and each contain code that is only used by one executable program
 (e.g., pscf_1d, pscf_pc or pscf_pg, respectively).
 
 We refer to the enclosed namespaces R1d, Rpc, and Rpg throughout this
-documentation as program-level namespaces, because each contains files 
-that are only used within a single executable program. By convention, 
-code defined in a program-level namespace may not use names defined in 
-any other program-level namespace. The segregation of code associated 
+documentation as program-level namespaces, because each contains files
+that are only used within a single executable program. By convention,
+code defined in a program-level namespace may not use names defined in
+any other program-level namespace. The segregation of code associated
 with different executable programs into separate namespaces allows
 identical names to be used for several analogous classes in different
 program-level namespaces without causing name clashes or ambiguity.
 
-Each program-level namespace contains a class or class template named 
-Mixture. The R1d namespace contains a class named Mixture. The Rpc and 
-Rpg namespaces each contain a class template Mixture<int D>, for which 
+Each program-level namespace contains a class or class template named
+Mixture. The R1d namespace contains a class named Mixture. The Rpc and
+Rpg namespaces each contain a class template Mixture<int D>, for which
 the integer dimensionality of space D is a template parameter.
 The Mixture object used by the pscf_pc program to treat a 2D periodic
 structure is thus a instance of class Pscf::Rpc::Mixture<2>, for which
 the dimensionality of space is specified by the template parameter D=2.
 All of the Mixture classes and class templates defined in program-level
-namespaces are derived from instances of a base class template named 
+namespaces are derived from instances of a base class template named
 Pscf::MixtureTmpl.  All of these Mixture classes use very similar
 parameter file formats, as described above. Most elements of this format
 are defined in the member function Pscf::MixtureTmpl::readParameters of
 the shared base class template.
 
-The array "monomers" is implemented internally as an array of instances of 
+The array "monomers" is implemented internally as an array of instances of
 the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".
 
 \section user_param_polymer_sec Polymer
@@ -447,10 +447,10 @@ this example on the assumption that this is a one-component terpolymer
 melt, for which the volume fraction of this species must equal unity.
 
 In the bead model, a corresponding description of an ABC star terpolymer
-would differ from that given above only in that the length of each block 
-would have to be given as an integer number of beads. For example, for 
-an ABC star polymer in which each block has 50 beads, the floating point 
-length of 1.0 given in each line of the blocks array would be replaced by 
+would differ from that given above only in that the length of each block
+would have to be given as an integer number of beads. For example, for
+an ABC star polymer in which each block has 50 beads, the floating point
+length of 1.0 given in each line of the blocks array would be replaced by
 an integer value of 50.
 
 <i> Technical comment (for users who examine the source code)</i>:

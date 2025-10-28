@@ -13,7 +13,7 @@ the computational methods and programs to which they apply:
     homopolymer, and solvent molecular species
 
   - Ability to treat acyclic branched block polymers, as well as linear
-    block polymers
+    polymers
 
   - Ability to use canonical, grand-canonical or mixed statistical
     ensembles
@@ -34,13 +34,14 @@ the computational methods and programs to which they apply:
   - Efficient "parameter sweeps": SCFT calculations for a sequence of
     states along a path in parameter space, with continuation of solutions
 
-All features listed below are specific to the pscf_pc and pscf_pg
-programs, which provide identical features using different hardware.
-Both of these programs are designed for systems with periodic boundary
-conditions and can perform either SCFT or PS-FTS calculations. In SCFT,
-the periodic computational unit cell is usually chosen so as to represent
-a single crystallographic unit cell, whereas in PS-FTS calculations the
-computational unit often represents a larger region.
+All remaining features listed below are specific to the pscf_pc and
+pscf_pg programs, which provide identical features using different
+hardware.  Both of these programs are designed for systems with periodic
+boundary conditions, and can both perform either SCFT or PS-FTS
+calculations.  In SCFT, the periodic unit cell is often chosen so as to
+represent a single crystallographic unit cell of a periodic structure.
+In PS-FTS calculations, the periodic computational unit cell usually
+represents a larger region.
 
 * **Features for SCFT or PS-FTS on periodic systems (pscf_pc and pscf_pg):**
 
@@ -56,7 +57,7 @@ computational unit often represents a larger region.
     (i.e., cubic, orthorhombic, monoclinic, etc.)
 
   - A companion matlab package
-    [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
+    ([Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
     for visualization of periodic c-fields or w-fields
 
 * **Features for SCFT on periodic systems (pscf_pc and pscf_pg):**
@@ -86,7 +87,7 @@ computational unit often represents a larger region.
   - Efficient algorithms for adjusting the pressure field so as to
     find a partial saddle-point (i.e., to impose incompressibility)
 
-  - Tools for calculating free energy differences by thermodynamic
+  - Tools to calculate free energy differences by thermodynamic
     integration, including the Einstein-crystal method
 
   - Parameter "ramps" in which one or more parameters change continuously
@@ -97,7 +98,7 @@ computational unit often represents a larger region.
     transitions, and averages of derivatives of the Hamiltonian that
     are needed for thermodynamic integration calculations
 
-  - Statistical analyses can be performed either during a simulation or
+  - Statistical analysis can be performed either during a simulation or
     by postprocessing of field trajectory files that are created during
     a simulation
 

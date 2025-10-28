@@ -1,40 +1,40 @@
 /*! \page user_field_kgrid_page Field File - K-Grid (Periodic)
 
- \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_page              (Next) 
+ \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_page              (Next)
 <BR>
 
-The pscf_pc and pscf_gp programs for periodic systems can also read 
+The pscf_pc and pscf_gp programs for periodic systems can also read
 and write files in format that gives the unsymmetrized discrete
 Fourier transform of the field associated with each monomer type.
-The required file format is very similar to that used for the 
-coordinate space grid. The file consists of a header and a data 
-section. The format of the header is identical to that used for 
-the coordinate grid format, and includes a list of the number of 
+The required file format is very similar to that used for the
+coordinate space grid. The file consists of a header and a data
+section. The format of the header is identical to that used for
+the coordinate grid format, and includes a list of the number of
 grid points used in each direction, denoted by mesh.
 
-The data section contains the Fourier coefficients obtained by a 
+The data section contains the Fourier coefficients obtained by a
 discrete Fourier transform of each field at wavevectors given by
 \f[
     \textbf{k}(n_1, \ldots, n_{D}) = \sum_{i=0}^{\textrm{D}-1}
     n_{i}\textbf{b}_{i}
 \f]
 where \f$D\f$ is the dimensionality of the crystal (i.e., dim
-in the header file), \f$\textbf{b}_{i}\f$ is a reciprocal lattice 
-basis vector, \f$N_{i}\f$ is the number of grid points along 
-direction \f$i\f$, and \f$n_{i}\f$ is an integer in the range 
-\f$0 \leq n_{D-1} \leq N_{1}/2\f$ for the last index and 
-\f$0 \leq n_{i} \leq N_{i} - 1\f$ for indices \f$i < D-1\f$. 
-The number of rows in the data section is equal to the total 
-number of such wavevectors, and each row contains values of 
-Fourier coefficients associated with a single wavevector, with 
-coefficients for fields associated with different monomer types 
-in different columnns. 
+in the header file), \f$\textbf{b}_{i}\f$ is a reciprocal lattice
+basis vector, \f$N_{i}\f$ is the number of grid points along
+direction \f$i\f$, and \f$n_{i}\f$ is an integer in the range
+\f$0 \leq n_{D-1} \leq N_{1}/2\f$ for the last index and
+\f$0 \leq n_{i} \leq N_{i} - 1\f$ for indices \f$i < D-1\f$.
+The number of rows in the data section is equal to the total
+number of such wavevectors, and each row contains values of
+Fourier coefficients associated with a single wavevector, with
+coefficients for fields associated with different monomer types
+in different columnns.
 
 Coefficients for different wavevectors are output in sequential
-order, using the last index (e.g., \f$n_{2}\f$ for a 3D crystal) 
+order, using the last index (e.g., \f$n_{2}\f$ for a 3D crystal)
 as the most rapidly varying (inner-most) loop index. Reading or
-writing of the data section for a 3D field performed by a loop 
+writing of the data section for a 3D field performed by a loop
 of the form:
 \code
    for (n0 = 0; n0 < N0; ++n0) {
@@ -45,18 +45,18 @@ of the form:
       }
    }
 \endcode
-where N0, N1, N2 are the number of grid points in directions 
-0, ..., 2. 
+where N0, N1, N2 are the number of grid points in directions
+0, ..., 2.
 
 **Note**: The format of the data section of a k-grid file, as
 described above, is different from the format used in the older
-Fortran version of PSCF. In the Fortran version, the number of 
+Fortran version of PSCF. In the Fortran version, the number of
 gridpoints is halved in the first index (`n0` in the code above)
 rather than the last index, as is the case here. The two programs
-thus use incompatiable formats for k-grid field files. 
+thus use incompatiable formats for k-grid field files.
 
 <BR>
- \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_page      (Next) 
+ \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_field_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_page              (Next)
 */

@@ -7,12 +7,12 @@ namespace Pscf {
 <BR>
 
 Every PSCF parameter file contains a block labelled "Domain" that
-contains information about the spatial domain within which a SCFT 
-or PS-FTS calculation will be performed. This block always appears 
+contains information about the spatial domain within which a SCFT
+or PS-FTS calculation will be performed. This block always appears
 after the Mixture and Interaction blocks. Different formats are
-are used for this block to describe the one-dimensional domains 
-treated by pscf_1d and the periodic domains treated by pscf_pc and 
-pscf_pg. These parameter block formats are described in the two pages 
+are used for this block to describe the one-dimensional domains
+treated by pscf_1d and the periodic domains treated by pscf_pc and
+pscf_pg. These parameter block formats are described in the two pages
 linked below:
 
 <ol>

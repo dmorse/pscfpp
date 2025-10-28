@@ -27,54 +27,43 @@ The following steps must be taken before attempting to compile any
 part of the PSCF package. The first two steps have been described
 in previous pages:
 
-   - **Install dependencies:** This was previously discussed
-     \ref install_require_page "here"
+   - **Check environment for C++ compiler, python and git:** This was
+     previously discussed \ref install_require_page "here"
+
+   - **Install GSL and FFTW dependencies:** This was previously discussed
+     \ref install_external_page "here"
 
    - **Clone source code repository:** This was previously discussed
      \ref install_source_page "here"
 
-   - **Set environment variables:**
-     Modify the users PATH and PYTHONPATH unix environment variables
-     so as to include PSCF bin/ directory (i.e., the bin/ subdiretory
-     of the PSCF root directory) in the PATH (the unix shell command
-     search path) and so as to include PSCF lib/python directory in
-     the PYTHONPATH (the Python module search path). This is discussed
-     in greater detail \ref install_environment_page "here".
-
-   - **Navigate to root directory:**
-     Change directory (cd) to the PSCF root directory.
+   - **Modify environment variables:**
+     Modify the users PATH unix environment variable so as to include
+     the PSCF bin/ directory, and modify the PYTHONPATH variable so as
+     to include the PSCF lib/python directory.  This is discussed in
+     detail \ref install_environment_page "here".
 
    - **Configure:**
      Invoke the "configure" script from the PSCF root directory.  To
      configure the build system with default compiler options appropriate
-     to most linux or Mac OS X systems, enter the command
-     \code
-     ./configure
-     \endcode
-     from the root directory. Note the use of the prefix "./" before
-     the name of the script, which indicates that the operating system
-     should look for this script in the present working directory.
-
-     To customize compiler options, one may also invoke the configure
-     script with a filename argument that is the name of a user-defined
-     compiler configuration file.  The creation and use of such a
-     custom configuration file is discussed in detail
-     \ref install_configure_page "here".
+     to most linux or Mac OS X systems, simply change directory (cd) to
+     the PSCF root directory, and enter the command "./configure" from
+     within that directory. The purpose and use of the configure script
+     is discussed in detail \ref install_configure_page "here".
 
 \section install_overview_CPU_sec Compiling C++ code (CPU hardware)
 
-We recommend that users first attempt to compile only the pscf_1d and
-pscf_pc CPU programs, leaving compilation of the GPU-enabled pscf_pg
-program as a separate step.
+We recommend that users first compile only the pscf_1d and pscf_pc CPU
+programs, leaving compilation of the GPU-enabled pscf_pg program to a
+separate step.
 
 Compilation of GPU-enabled code is disabled by default.  To compile only
 the pscf_1d and pscf_pc CPU programs, you may simply enter
 \code
     make all
 \endcode
-from the PSCF directory immediately after running the configure
-script.  If successful, this will install executables named "pscf_1d"
-and "pscf_pc" in the PSCF bin/ directory.
+from the PSCF directory immediately after running the configure script.
+If successful, this will install executables named "pscf_1d" and
+"pscf_pc" in the PSCF bin/ directory.
 
 Compiling all the PSCF C++ code using "make all" takes a bit of time
 (e.g., 2 to 3 minutes on a 2020 Mac air laptop with an M1 chip). This
@@ -151,17 +140,21 @@ already completed the preliminary steps described above.
      an argument of the -a option, however, uses a string of the form
      sm_IJ that drops the dot between the major and minor version.
 
-     For example, an NVIDIA V100 GPU has a compute capability of 70. To
-     set this as the target architecture, one would enter
+     For example, an NVIDIA A100 GPU has a compute capability of 8.0.
+     To set this as the target architecture, one would enter
      \code
-     ./setopts -a sm_70
+     ./setopts -a sm_80
      \endcode
-     from the PSCF root directory, using "sm_70" as the architecture id.
+     from the PSCF root directory, using "sm_80" as the architecture id.
+
+     By default, the target architecture is set to compute capability
+     7.0 , or sm_70, which is the appropriate level for a slightly older
+     V100 GPU.
 
    - **Compile all programs (including pscf_pg):**
      After enabling CUDA compilation and setting the appropriate
-     architecture, you can compile all programs, including pscf_pg,
-     by simply re-entering
+     architecture, you can compile all programs, including pscf_pg, by
+     simply re-entering
      \code
      make all
      \endcode
@@ -170,8 +163,9 @@ already completed the preliminary steps described above.
      "make -jn all", where "n" is the number of CPU cores to be used.
 
 If successful, the "make all" command will install an executable file
-named pscf_pg in the PSCF bin/ directory in addition to the files
-named pscf_1d and pscf_pc that are created by compiling only C++ code.
+named pscf_pg in the PSCF bin/ directory in addition to the executable
+files named pscf_1d and pscf_pc that are created by compiling only C++
+code.
 
 Several of the above steps are discussed in more detail in subsequent
 pages.

@@ -18,12 +18,12 @@ the same list of monomer types as that used to construct polymer species.
 A solvent that has properties that are distinct from those of any of the
 monomers used to construct the polymer species in a mixture can be assigned
 a monomer type that is only used as the type for the solvent species.
-Alternatively, a solvent species can instead be assigned a monomer type 
+Alternatively, a solvent species can instead be assigned a monomer type
 that is also assigned to one or more block polymer blocks, as would be
-appropriate for a solvent that is a small oligomer of the specified 
-monomer type, The input file formats used by PSCF require that every 
-monomer type be assigned a statistical segment length. If a particular 
-monomer type is only assigned to a solvent species, the associated 
+appropriate for a solvent that is a small oligomer of the specified
+monomer type, The input file formats used by PSCF require that every
+monomer type be assigned a statistical segment length. If a particular
+monomer type is only assigned to a solvent species, the associated
 statistical segment length value is simply never used.
 
 Each solvent species is also assigned a steric volume. This volume is
@@ -33,7 +33,7 @@ solvent volume to the monomer reference volume \f$ v \f$. The "size"
 parameter for a solvent species is thus analogous to the "length" parameter
 for a polymer block in a thread model, since both are defined as occupied
 volumes measured in units of the monomer reference volume.  The size
-parameter for a solvent is always specified as a real (i.e., floating 
+parameter for a solvent is always specified as a real (i.e., floating
 point) number, whether the bead or thread model is used for polymer
 species.
 

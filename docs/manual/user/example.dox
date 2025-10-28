@@ -1,41 +1,41 @@
 /*! \page user_example_page Examples
 
-\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_page        (Next) 
+\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_page        (Next)
 <BR>
 
-A good way to become familiar with PSCF is to run a few of example 
-calculation that are provided with the package and examine the associated 
-input and output files.  A set of examples containing input files for 
-various types of calculation are provided in the pscfpp/examples 
+A good way to become familiar with PSCF is to run a few of example
+calculation that are provided with the package and examine the associated
+input and output files.  A set of examples containing input files for
+various types of calculation are provided in the pscfpp/examples
 directory of the repository.
 
-Each top level subdirectory of the examples/ directory contains examples 
+Each top level subdirectory of the examples/ directory contains examples
 of calculations performed using one of the three available PSCF programs.
-For example, the pc/ directory contains examples that use the pscf_pc 
+For example, the pc/ directory contains examples that use the pscf_pc
 CPU program for systems with periodic boundary conditiobs.  Lower levels
 in this directory tree organizes examples by the type of calculation
-(SCFT or PS-FTS) and the type of physical system.  For example, the 
-pc/scft/diblock/ subdirectory contains examples of SCFT calculations 
-involving periodic structures of diblock copolymer melts. Lower level 
-subdirectories such as pc/scf/diblock/gyroid each contain input files 
+(SCFT or PS-FTS) and the type of physical system.  For example, the
+pc/scft/diblock/ subdirectory contains examples of SCFT calculations
+involving periodic structures of diblock copolymer melts. Lower level
+subdirectories such as pc/scf/diblock/gyroid each contain input files
 for one or more example computations for a specific crystal structure.
 Many directories in this directory tree contain a file named CONTENTS
 that explains the organization of examples in that directory.
 
 \section examples_layout_sec Input files
 
-The input files for each example are in a separate directory, which we 
-will refer to as an example directory.  Each example directory contains 
-a set of input files that include at least one parameter file, at least 
-one command file and an input chemical potential file.  In the simplest 
-and most common case, there is a single parameter file named "param" 
-and a single command file is named "command".  Some example directories 
+The input files for each example are in a separate directory, which we
+will refer to as an example directory.  Each example directory contains
+a set of input files that include at least one parameter file, at least
+one command file and an input chemical potential file.  In the simplest
+and most common case, there is a single parameter file named "param"
+and a single command file is named "command".  Some example directories
 that contain input files for two or more closely related examples also
-contain a file named README or CONTENTS that further explains the 
+contain a file named README or CONTENTS that further explains the
 contents of the directory.
 
-A typical example directory contains files and subdirectories with the 
+A typical example directory contains files and subdirectories with the
 following names:
 \code
     param
@@ -46,18 +46,18 @@ following names:
        w.bf
     out/
 \endcode
-Here, in/ and out/ are names of subdirectories. The file in/w.bf is the 
-input chemical potential field.  The out/ subdirectory is initially empty. 
-The files named "run" and "clean" are unix shell scripts that users may 
+Here, in/ and out/ are names of subdirectories. The file in/w.bf is the
+input chemical potential field.  The out/ subdirectory is initially empty.
+The files named "run" and "clean" are unix shell scripts that users may
 execute to run the simulation and clean up afterwards, respectively.
 
 \section examples_simulate_sec Running an example
 
-Users may run example simulations either by executing the "run" script 
-that is provided in most example directories, or by invoking the relevant 
-simulation program from the command line. The run script is a bash script 
-that contains a line that gives the required executable command name and 
-arguments, so it is useful for users to examine this script in order to 
+Users may run example simulations either by executing the "run" script
+that is provided in most example directories, or by invoking the relevant
+simulation program from the command line. The run script is a bash script
+that contains a line that gives the required executable command name and
+arguments, so it is useful for users to examine this script in order to
 see an example of the relevant command.
 
 To use a "run" script, simply issue the command
@@ -66,25 +66,25 @@ To use a "run" script, simply issue the command
 \endcode
 from within the directory containing the example and the "run" script
 file. Note the use of the prefix "./" before the script name, which is
-used to tell the unix shell to look for the script in the current 
+used to tell the unix shell to look for the script in the current
 directory.
 
-To use pscf_pc to run a simple example computation with the above 
+To use pscf_pc to run a simple example computation with the above
 directory structure, one could change directory (cd) to the relevant
 example directory and then issue a command such as
 \code
- pscf_pc -d 3 -e -p param -c command 
+ pscf_pc -d 3 -e -p param -c command
 \endcode
-for a three dimensional periodic structure.  This command would send 
-log output to the terminal.  The "run" script simply issues this 
-command or something very similar to it for you. To run the calculation 
-in background and redirect the log output to a file out/log, one could 
+for a three dimensional periodic structure.  This command would send
+log output to the terminal.  The "run" script simply issues this
+command or something very similar to it for you. To run the calculation
+in background and redirect the log output to a file out/log, one could
 instead enter
 \code
  pscf_pc -d 3 -e -p param -c command > out/log &
 \endcode
-A command to execute a different PSCF program would have a similar 
-syntax except for the use of a different executable name, such as 
+A command to execute a different PSCF program would have a similar
+syntax except for the use of a different executable name, such as
 pscf_1d or pscf_pg.
 
 \section examples_clean_sec Cleaning up
@@ -93,14 +93,14 @@ After running an example, you may run the command
 \code
  ./clean
 \endcode
-from within the example directory in order to execute a script that 
-removes any output data files created by the example. Most output 
-files are created in the out/ directory, so this script usually 
+from within the example directory in order to execute a script that
+removes any output data files created by the example. Most output
+files are created in the out/ directory, so this script usually
 removes all files in this directory.
 
 <BR>
-\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_page              (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_page        (Next) 
+\ref user_calculation_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page              (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_page        (Next)
 
 */

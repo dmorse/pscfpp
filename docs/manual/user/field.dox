@@ -1,27 +1,27 @@
 /*! \page user_field_page Field Files
 
-\ref user_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref scft_page  (Next) 
+\ref user_command_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref scft_page  (Next)
 <BR>
 
-Among the commands that can be issued from the command file for any 
+Among the commands that can be issued from the command file for any
 PSCF program are several commands to read and write files that specify
-local concentrations or volume fractions of different types of monomer 
-(referred to as "c fields") or corresponding monomer chemical potential 
-fields (referred to as "w" fields). 
+local concentrations or volume fractions of different types of monomer
+(referred to as "c fields") or corresponding monomer chemical potential
+fields (referred to as "w" fields).
 
 Every PSCF program can read and write w and c fields using one or more
 file formats designed for field files. Each program uses the same file
-format or formats for w and c fields.  In each such file format, a 
-single file contains a description of the w or c fields associated with 
-all of the different types of monomer present in a system.  
+format or formats for w and c fields.  In each such file format, a
+single file contains a description of the w or c fields associated with
+all of the different types of monomer present in a system.
 
 Different field file formats are used by different programs.
-The r1d program for one-dimensional problems uses a simple format that 
-lists values of fields on the nodes of a one-dimensional grid. 
-The pscf_pc and pscf_pg programs, which both treat periodic structures, 
-use the same set of three different formats to describe periodic fields. 
-File formats used by different programs are described in more detail 
+The r1d program for one-dimensional problems uses a simple format that
+lists values of fields on the nodes of a one-dimensional grid.
+The pscf_pc and pscf_pg programs, which both treat periodic structures,
+use the same set of three different formats to describe periodic fields.
+File formats used by different programs are described in more detail
 in several of the sub-pages linked below.
 
 <h2> Contents :</h2>
@@ -29,7 +29,7 @@ in several of the sub-pages linked below.
 <ol>
   <li> \subpage user_field_types_page  </li>
   <li> \subpage user_field_r1d_page "One-dimensional Fields (pscf_1d)"  </li>
-  <li> \subpage user_field_periodic_page "Periodic Fields (pscf_pc and pscf_pg)" 
+  <li> \subpage user_field_periodic_page "Periodic Fields (pscf_pc and pscf_pg)"
     <ul>
       <li> \ref user_field_basis_page "Basis Format" </li>
       <li> \ref user_field_rgrid_page "R-Grid Format" </li>
@@ -39,7 +39,7 @@ in several of the sub-pages linked below.
 </ol>
 
 <BR>
- \ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref scft_page     (Next) 
+ \ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_page     (Next)
 */

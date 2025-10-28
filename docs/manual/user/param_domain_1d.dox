@@ -6,21 +6,22 @@ namespace Pscf {
 \ref user_param_domain_pc_page  (Next)
 <BR>
 
-The pscf_1d program solves a self-consistent field problem in which all fields
-are functions of a single coordinate, in Cartesian, cylindrical, or spherical
-coordinates. This coordinate could thus be either a single Cartesian coordinate, 
-to describe a system with a planar geometry, or a single radial coordinate, to 
-describe a system with cylindrical or spherical symmetry.  The domain block for 
-the pscf_1d program specifies the range of values of this coordinate over which 
-the SCFT equations should be solved, and the number of nodes of a regular mesh 
-that is used to discretize that domain. 
+The pscf_1d program solves a self-consistent field problem in which all
+fields are functions of a single coordinate, in Cartesian, cylindrical,
+or spherical coordinates. This coordinate could thus be either a single
+Cartesian coordinate, to describe a system with a planar geometry, or a
+single radial coordinate, to describe a system with cylindrical or
+spherical symmetry.  The domain block for the pscf_1d program specifies
+the range of values of this coordinate over which the SCFT equations
+should be solved, and the number of nodes of a regular mesh that is used
+to discretize that domain.
 
 See also: \subpage r1d_Domain_page
 
 \section user_param_domain_1d_example_sec Examples
 
-Here is an example of the Domain block of a parameter file for a problem with a 
-1D planar geometry:
+Here is an example of the Domain block of a parameter file for a problem
+with a 1D planar geometry:
 \code
   Domain{
      mode     planar
@@ -30,7 +31,7 @@ Here is an example of the Domain block of a parameter file for a problem with a
   }
 }
 \endcode
-Here is an Domain block that might be used for a simulation of a 
+Here is an Domain block that might be used for a simulation of a
 spherical geometry, such as that used to simulate a spherical micelle:
 \code
   Domain{
@@ -39,10 +40,10 @@ spherical geometry, such as that used to simulate a spherical micelle:
     nx     201
   }
 \endcode
-This example omits an optional parameter xMin that, if present, would 
-appear immediately before xMax. When xMin is omitted, it is set to 0.0 by 
-default. Omitting the xMin parameter in a calculation that is performed 
-using a spherical or radial coordinate system creates a spherical or 
+This example omits an optional parameter xMin that, if present, would
+appear immediately before xMax. When xMin is omitted, it is set to 0.0 by
+default. Omitting the xMin parameter in a calculation that is performed
+using a spherical or radial coordinate system creates a spherical or
 cylindrical domain that includes the origin.
 
 \section user_param_domain_1d_format_sec Parameter file format
@@ -69,7 +70,7 @@ The meanings of the parameters are given in tabular form below.
   </tr>
   <tr>
     <td> xMin* </td>
-    <td> 
+    <td>
     Lower bound of coordinate. Optional and 0.0 by default.  </td>
   </tr>
   <tr>
@@ -85,51 +86,51 @@ The meanings of the parameters are given in tabular form below.
 Each parameter is discussed in more detail below:
 
 <b> mode </b>:
-The value of the optional "mode" parameter is an string that specifies 
+The value of the optional "mode" parameter is an string that specifies
 the coordinate system.  The allowed input values for this parameter are the
-strings "planar", "cylindrical" or "spherical". Mode "planar" indicates a 
-Cartesian coordinate system appropriate to membrane or thin film, in which 
-the coordinate is measured normal to the film. Mode "cylindrical" indicates 
+strings "planar", "cylindrical" or "spherical". Mode "planar" indicates a
+Cartesian coordinate system appropriate to membrane or thin film, in which
+the coordinate is measured normal to the film. Mode "cylindrical" indicates
 a cylindrical coordinate system for a system with cylindrical rotational
 symmetry, in which the 1D coordinate represents distance from an axis of
-rotation. Mode "spherical" indicates a spherical coordinate system for a 
-system with spherical symmetry, in which the coordinate represents distance 
-from the origin. 
+rotation. Mode "spherical" indicates a spherical coordinate system for a
+system with spherical symmetry, in which the coordinate represents distance
+from the origin.
 
 <b> xMin and xMax </b>:
 The parameters xMin and xMax specify the minimum and maximum values of
-the relevant spatial coordinate.  In "planar" mode, xMin and xMax are the 
-minimum and maximum values of a Cartesian coordinate, defining a slit 
-bounded bounded by constant values of this coordinate. In "cylindrical" 
-and "spherical" mode, these are minimum and maximum values of a radial 
-coordinate. 
+the relevant spatial coordinate.  In "planar" mode, xMin and xMax are the
+minimum and maximum values of a Cartesian coordinate, defining a slit
+bounded bounded by constant values of this coordinate. In "cylindrical"
+and "spherical" mode, these are minimum and maximum values of a radial
+coordinate.
 
-The parameter xMin is optional, and is set to 0.0 default if the parameter 
-is omitted.  In cylindrical or spherical mode, omitting xMin defines a 
-simply connected circular or spherical domain of radius equal to xMax that 
-includes the origin.  In cylindrical or spherical model, if the parameter 
-xMin is present and is assigned a positive value, such that 
-0 < xMin < xMax, the problem will instead be solved within a cylindrical 
+The parameter xMin is optional, and is set to 0.0 default if the parameter
+is omitted.  In cylindrical or spherical mode, omitting xMin defines a
+simply connected circular or spherical domain of radius equal to xMax that
+includes the origin.  In cylindrical or spherical model, if the parameter
+xMin is present and is assigned a positive value, such that
+0 < xMin < xMax, the problem will instead be solved within a cylindrical
 or spherical annular region of inner radius xMin and outer radius xMax.
 
 <b> nx </b>:
-The parameter nx specifies the number of equally spaced grid points that 
+The parameter nx specifies the number of equally spaced grid points that
 will be used to discretize the spatial domain. Because the value of nx
-includes both end-points, the number of grid points is one greater than 
-the number of spatial steps. The distance between evenly spaced grid 
-points, denoted by dx, is thus dx = (xMax - xMin)/(nx-1). 
+includes both end-points, the number of grid points is one greater than
+the number of spatial steps. The distance between evenly spaced grid
+points, denoted by dx, is thus dx = (xMax - xMin)/(nx-1).
 
 \section user_param_domain_1d_bc_sec Boundary conditions
 
-The pscf_1d program solves the modified diffusion equation subject to 
-von Neumann boundary "no flux" conditions that require that derivatives 
-of the propagators and concentration fields with respect to the relevant 
-Cartesian or radial normal coordinate must vanish at the lower and upper 
-bounds, xMin and xMax. 
+The pscf_1d program solves the modified diffusion equation subject to
+von Neumann boundary "no flux" conditions that require that derivatives
+of the propagators and concentration fields with respect to the relevant
+Cartesian or radial normal coordinate must vanish at the lower and upper
+bounds, xMin and xMax.
 
-In the special case of a cylindrical or spherical domain that includes 
-the origin, for which xMin = 0.0, the requirement of a vanishing radial 
-derivative at x=0 is necessary to guarantee that the gradient vector is 
+In the special case of a cylindrical or spherical domain that includes
+the origin, for which xMin = 0.0, the requirement of a vanishing radial
+derivative at x=0 is necessary to guarantee that the gradient vector is
 actually continuous at the origin.
 
 <BR>

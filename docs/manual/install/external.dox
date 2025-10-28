@@ -72,11 +72,11 @@ modifies these search paths is provided as part of PSCF, as discussed
 
 At the University of Minnesota, PSCF is often run on a cluster provided
 by the Minnesota Supercomputer Institute (MSI). The computer clusters at
-MSI, at at many similar multi-user facilities, use the linux "module"
-command to allow users to load particular software packages, including
-particular choices of compiler. The module command is the user interface
-to the "Modules" package, which is a system for automating changes in a
-users unix shell environment that are required in order to use particular
+MSI, and at many similar multi-user facilities, use the linux "module"
+command to allow users to load particular software packages, or particular
+choices of compiler. The module command is the user interface to the
+"Modules" package, which is a system for automating changes in a users
+unix shell environment that are required in order to use particular
 software packages.
 
 On a multi-user system that uses linux modules, the command

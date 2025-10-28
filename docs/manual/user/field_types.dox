@@ -1,6 +1,6 @@
 /*! \page user_field_types_page Field Types
 
-\ref user_field_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_field_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_field_r1d_page  (Next)
 <BR>
 
@@ -10,32 +10,32 @@ below.
 
 \section user_field_c_sec Monomer concentration / volume fraction fields (c fields)
 
-Because PSCF uses a continuous chain model in which there are not 
-actually any discrete monomers, we use the word "monomer" in what 
-follows to refer to the amount of material that corresponds to one unit 
+Because PSCF uses a continuous chain model in which there are not
+actually any discrete monomers, we use the word "monomer" in what
+follows to refer to the amount of material that corresponds to one unit
 of contour length within a block of a block polymer. This is equivalent
-to the length of chain that occupies a volume within an incompressible 
-liquid equal to one monomer reference volume \f$ v\f$. 
+to the length of chain that occupies a volume within an incompressible
+liquid equal to one monomer reference volume \f$ v\f$.
 
-The average volume fraction of monomers of type \f$ \alpha \f$ at any 
-position \f$ {\bf r} \f$ within an incompressible mixture is denoted by 
-\f$ \phi_{\alpha}({\bf r}) \f$. This volume fraction is related to the 
-average concentration of such monomers, denoted by 
+The average volume fraction of monomers of type \f$ \alpha \f$ at any
+position \f$ {\bf r} \f$ within an incompressible mixture is denoted by
+\f$ \phi_{\alpha}({\bf r}) \f$. This volume fraction is related to the
+average concentration of such monomers, denoted by
 \f$ \langle c_{\alpha}({\bf r}) \rangle \f$, by the relation
 \f[
-   \phi_{\alpha}({\bf r}) = v \, \langle c_{\alpha}({\bf r}) \rangle 
+   \phi_{\alpha}({\bf r}) = v \, \langle c_{\alpha}({\bf r}) \rangle
    \quad,
 \f]
-in which \f$ v \f$ is the monomer reference volume. Monomer volume 
+in which \f$ v \f$ is the monomer reference volume. Monomer volume
 fractions are thus equivalent to monomer concentrations that have been
-non-dimensionalized by a monomer volume \f$ v \f$.  Reflecting this 
-relationship, volume fraction fields are referred to throughout the 
-PSCF source code and in some command names as "c fields", where "c" 
+non-dimensionalized by a monomer volume \f$ v \f$.  Reflecting this
+relationship, volume fraction fields are referred to throughout the
+PSCF source code and in some command names as "c fields", where "c"
 denotes concentration.
 
-A converged solution to an SCFT problem for an incompressible system 
-must have average monomer concentrations for different monomer types 
-that add to  a total local concentration \f$ c_{0} \equiv 1/v \f$, so 
+A converged solution to an SCFT problem for an incompressible system
+must have average monomer concentrations for different monomer types
+that add to  a total local concentration \f$ c_{0} \equiv 1/v \f$, so
 as to obtain volume fractions that satisfy a constraint
 \anchor user_field_incompressible_eqn
 \f[
@@ -45,41 +45,41 @@ at every point in the system.
 
 \section user_field_types_sec Monomer chemical potential fields (w fields)
 
-Self-consistent field theory is based on a physical approximation in 
-which monomer concentrations and thermodynamic properties are computed 
-by considering a hypothetical reference system of non-interacting 
-molecules that are subjected to a set of inhomogeneous chemical 
+Self-consistent field theory is based on a physical approximation in
+which monomer concentrations and thermodynamic properties are computed
+by considering a hypothetical reference system of non-interacting
+molecules that are subjected to a set of inhomogeneous chemical
 potential fields. In this ideal gas reference system, every monomer
 of type \f$ \alpha \f$ is subjected to a chemical potential field
 \f$ k_{B}T w_{\alpha}({\bf r})\f$ that is mean-field representation
 of the effect of interactions with other monomers.
 The dimensionless monomer fields denoted by \f$ w_{\alpha}({\bf r}) \f$
 are referred to throughout the PSCF source and in the names of some
-commands as "w fields". 
+commands as "w fields".
 
-The volume fraction and chemical potential fields in any solution of an 
+The volume fraction and chemical potential fields in any solution of an
 incompressible SCFT problem are related by a self-consistency condition
 \anchor user_field_scf_eqn
 \f[
-   w_{\alpha}({\bf r}) 
+   w_{\alpha}({\bf r})
    = \sum_{\beta=0}^{C-1} \chi_{\alpha \beta} \phi_{\beta}({\bf r})
       + \xi({\bf r}) \quad.
 \f]
 Here, \f$\chi_{\alpha\beta}\f$ is a Flory-Huggins interaction parameter
-for interactions between monomers of types \f$\alpha\f$ and \f$\beta\f$, 
+for interactions between monomers of types \f$\alpha\f$ and \f$\beta\f$,
 while \f$\xi({\bf r})\f$ is a Langrange-multiplier field that is chosen
-so as to yield volume fraction fields that satisfy the incompressibility 
+so as to yield volume fraction fields that satisfy the incompressibility
 constraint given \ref user_field_incompressible_eqn "above" (i.e., for
-which the sum of the local monomer volume fractions is equal to 1 at 
+which the sum of the local monomer volume fractions is equal to 1 at
 every point in the system).
 
 Before attempting to solve an SCFT problem, each PSCF program must read
 a set of physical parameters from a parameter file and read in an initial
-guess for the w fields from an input field file.  After a solution is 
-obtained, the resulting converged w and c fields are usually written to 
+guess for the w fields from an input field file.  After a solution is
+obtained, the resulting converged w and c fields are usually written to
 output files.
 
 <BR>
-\ref user_field_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_field_r1d_page  (Next) 
+\ref user_field_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_field_r1d_page  (Next)
 */
