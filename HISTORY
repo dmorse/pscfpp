@@ -16,7 +16,7 @@ programs are affected by specific changes:
 Versions before v1.2 used program name pscf_fd and label fd for the 1D 
 finite difference SCFT code that is now called pscf_1d.
 
-Version 1.3.3 (10/28/2025)
+Version 1.3.3 (10/29/2025)
 =========================================
 
 Minor revision

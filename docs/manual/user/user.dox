@@ -37,9 +37,10 @@
        <li> \ref user_field_r1d_page "One-dimensional Fields (pscf_1d)"  </li>
        <li> \ref user_field_periodic_page "Periodic Fields (pscf_pc and pscf_pg)"
          <ul>
-           <li> \ref user_field_basis_page "Basis Format" </li>
-           <li> \ref user_field_rgrid_page "R-Grid Format" </li>
-           <li> \ref user_field_kgrid_page "K-Grid Format" </li>
+           <li> \ref user_field_header_page "Header Format" </li>
+           <li> \ref user_field_basis_page "Basis Data Format" </li>
+           <li> \ref user_field_rgrid_page "R-Grid Data Format" </li>
+           <li> \ref user_field_kgrid_page "K-Grid Data Format" </li>
          </ul>
        </li>
      </ul>

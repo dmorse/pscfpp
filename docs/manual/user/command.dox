@@ -4,36 +4,37 @@
  \ref user_field_page (Next)
 <BR>
 
-For any PSCF simulation program, the parameter file is read first, 
-followed by a command file.  The name of the command file is specified 
+For any PSCF simulation program, the parameter file is read first,
+followed by a command file.  The name of the command file is specified
 when the program is invoked as the argument of the -c command line option.
 The command file contains a sequence of commands that are read and
 executed in the order in which they appear in the file. Each command
 begins with a command name that is given in upper case letters.  Some
 commands take one or more parameters, which must appear after the
-command name on the same line, separated by whitespace.  The program 
-stops execution and returns control to the operating system when it 
+command name on the same line, separated by whitespace.  The program
+stops execution and returns control to the operating system when it
 encounters the command name 'FINISH' on a line by itself.
 
-Full descriptions of all of the commands used by different PSCF programs 
+Full descriptions of all of the commands used by different PSCF programs
 that are relevant to SCFT calculations given \ref scft_command_page "here".
-Additional commands that are only relevant to PS-FTS calculations are 
+Additional commands that are only relevant to PS-FTS calculations are
 described on a \ref psfts_command_page "separate page".
 
-\section user_command_example_sec Example: SCFT calculation
+\section user_command_example_sec Example
 
 Suppose that pscf_pc is used to perform an SCFT calculation, and is
-invoked from a directory that contains a parameter file named "param" 
+invoked from a directory that contains a parameter file named "param"
 and a command file named "command", using the command
 \code
    pscf_pc -e -p param -c command > log
 \endcode
-Suppose also that the working directory has subdirectories named "in" 
-and "out", such that the "in" directory contains an initial w-field file 
-named w.bf that is written in symmetry-adapted basis format, while all
-output files are written to the "out" directory.  An example of a minimal 
-command file for a SCFT calculation of a structure of specified space 
-group symmetry is shown below:
+Also suppose that the current working directory has subdirectories named 
+"in" and "out", such that the "in" directory contains an initial w-field 
+file named w.bf that is written in symmetry-adapted basis format, while 
+all output files are written to the "out" directory.  
+
+An example of a minimal command file for a SCFT calculation of a structure 
+with a specified space group symmetry is shown below:
 \code
 READ_W_BASIS    in/w.bf
 ITERATE
@@ -41,10 +42,10 @@ WRITE_W_BASIS   out/w.bf
 WRITE_C_RGRID   out/c.rf
 FINISH
 \endcode
-This file would work equally well as input to the GPU accelerated
-pscf_pg program, which accepts the same set of commands as pscf_pc.
-This command file instructs the program to perform the following
-actions:
+This command file could also be used by the GPU accelerated pscf_pg 
+program, which accepts the same set of commands and input file formats
+as scf_pc.  This command file instructs the program to perform the 
+following actions:
 
 - READ_W_BASIS: Read in an initial set of chemical potential fields
   (w-fields) from the file in/w.bf in symmetry-adapted Fourier basis
@@ -71,9 +72,8 @@ using the commands READ_W_BASIS_and WRITE_W_BASIS. This is typical for
 SCFT calculations that are performed on a single unit cell of a structure
 of specified space group symmetry. The final monomer concentration
 fields have, however, been written in r-grid format, using the command
-WRITE_C_RGRID. Use of r-grid format for the c fields allows the such
-files to be used as inputs to the POLYMER VISUAL program to be
-visualized.
+WRITE_C_RGRID. Use of r-grid format for a c fields file allows the file
+to be processed by the POLYMER VISUAL program for visualization.
 
 \section user_command_path_sec Use of file name prefixes
 
@@ -95,7 +95,12 @@ been invoked using these options to specify prefixes of "in/" and "out/",
 e.g., as \code
  > pscf_pc -d 3 -p param -c command -i in/ -o out/ -e > log
 \endcode
-The corresponding command file would then have been written in a form
+Note that, if a prefix is used to specify a subdirectory path for
+input or output files, as in this example, then that prefix string must
+include a trailing backlash character, as done for the strings "in/"
+and "out/" in the above example. If the program were invoked using
+these prefix values, the corresponding command file could then have
+been modified to read as follows:
 \code
 READ_W_BASIS    w.bf
 ITERATE
@@ -105,20 +110,20 @@ FINISH
 \endcode
 In this modified version, the names of the input and output files that
 appear in the command file do not include explicit "in/" and "out/"
-subdirectory names. Instead, the prefix "in/" that was given as an argument
-to the "-i" command line option is automatically prepended to the name
-given for any input file in the parameter or command file, while the
-prefix "out/" is prepended to the name of any output file.
+subdirectory names. Instead, the prefix "in/" that was given as an
+argument to the "-i" command line option is automatically prepended
+to the name given for any input file, such as in/w.bf, while the
+prefix "out/" is prepended to the name of any output file, such as
+out/w.bf and out/c.rf.
 
-Note that, if a prefix is used to specify a subdirectory path for
-input or output files, as in this example, then the prefix string must
-include a trailing backlash character, as done for the string "in/"
-and "out/" in the above example. Also note that input and output
-prefixes defined by the -i and -o command line options are not applied
-to the names of the parameter and command file that are specified as
-arguments of the -p and -o command line options.
+Input and output file prefixes that are given as arguments of the 
+-i and -o options are automatically applied to the names of input 
+and output files that are specified either in the command file or 
+in the parameter file. The input prefix is not, however, applied 
+to the parameter and command file names that are given as arguments 
+of the -p and -o command line options.
 
- <BR>
+<BR>
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref user_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref user_field_page (Next)

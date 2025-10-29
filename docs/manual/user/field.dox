@@ -16,13 +16,13 @@ format or formats for w and c fields.  In each such file format, a
 single file contains a description of the w or c fields associated with
 all of the different types of monomer present in a system.
 
-Different field file formats are used by different programs.
-The r1d program for one-dimensional problems uses a simple format that
-lists values of fields on the nodes of a one-dimensional grid.
-The pscf_pc and pscf_pg programs, which both treat periodic structures,
-use the same set of three different formats to describe periodic fields.
-File formats used by different programs are described in more detail
-in several of the sub-pages linked below.
+Different field file formats are used by different programs.  The r1d
+program for one-dimensional problems uses a simple format that lists
+values of fields on the nodes of a one-dimensional grid.  The pscf_pc
+and pscf_pg programs, which both treat periodic structures, use the
+same set of three different formats to describe periodic fields.  File
+formats used by different programs are described in more detail in
+several of the sub-pages linked below.
 
 <h2> Contents :</h2>
 
@@ -31,9 +31,10 @@ in several of the sub-pages linked below.
   <li> \subpage user_field_r1d_page "One-dimensional Fields (pscf_1d)"  </li>
   <li> \subpage user_field_periodic_page "Periodic Fields (pscf_pc and pscf_pg)"
     <ul>
-      <li> \ref user_field_basis_page "Basis Format" </li>
-      <li> \ref user_field_rgrid_page "R-Grid Format" </li>
-      <li> \ref user_field_kgrid_page "K-Grid Format" </li>
+      <li> \ref user_field_header_page "Field File Header" </li>
+      <li> \ref user_field_basis_page  "Basis Data Format" </li>
+      <li> \ref user_field_rgrid_page  "R-Grid Data Format" </li>
+      <li> \ref user_field_kgrid_page  "K-Grid Data Format" </li>
     </ul>
   </li>
 </ol>

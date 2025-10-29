@@ -1,0 +1,185 @@
+/*! \page user_field_header_page Field File Header (Periodic)
+
+ \ref user_field_periodic_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_field_basis_page     (Next)
+<BR>
+
+The pscf_pc and pscf_pg programs can use any of three different file
+formats for field files, which we refer to as basis, r-grid and k-grid
+formats. In each of these formats, a field file contains a header section
+followed by a field data section. The header section has nearly identical
+form in all three file formats, and contains information about the
+dimensionality of space, the crystallographic unit cell, space group
+symmetry (if any), and the mesh or basis used to represent the fields.
+The format of the header section is backwards-compatible with a format
+used by the older Fortran PSCF program.
+
+\section user_field_header_gyroid_sec Example
+
+Below, we show an example of the header section of an r-grid field file that
+might be used as an output of an SCFT calculation of a double gyroid phase
+of a diblock copolymer melt (space group \f$ Ia\overline{3}d \f$) that was
+calculated on a mesh with 32 grid points along each of 3 orthogonal
+directions.
+\code
+    format  1  0
+   dim
+                      3
+   crystal_system
+                  cubic
+   N_cell_param
+                      1
+   cell_param
+       3.6735414146E+00
+   group_name
+              I_ a_-3_d
+   N_monomer
+                      2
+   mesh
+           32   32   32
+\endcode
+values in
+The first line of every header specifies a file format version number
+(file format version 1.0).
+The rest of the header contains a sequence of parameter entries, each
+of which is given with a parameter label on one line and its value on
+the next.
+
+A header such as that shown above appears at the top of every field file
+used by pscf_pc or pscf_pg. The remainder of each field file is a field
+data section that may use any of three different formats (basis, r-grid,
+or k-grid).
+
+\section user_field_header_format_sec Header Format
+
+The header section of a field file may contain the following entries:
+
+label          | description
+---------------|---------------------------------------------------------
+format         | file format version identifier (e.g., version 1.0)
+dim            | integer dimension of space (also known as D)
+crystal_system | crystal lattice system identifier string
+N_cell_param   | integer number of required unit cell parameters
+cell_param     | list of N_cell_param unit cell parameter values
+group_name     | space group identifier string
+N_monomer      | integer number of monomer types
+mesh           | computational mesh dimensions, vector of integers
+N_basis        | number of basis functions used in symmetry-adapted basis
+
+Every entry after the file format version identifier occupies two lines,
+with a label on one line and a value on the next.  Most entries are
+required for all three file formats, with the following exceptions:
+
+   - The group_name parameter is required for basis field files (i.e.,
+     files that use a symmetry-adapted basis format), and optional for
+     r-grid or k-grid field files.
+
+   - The mesh parameter is required for r-grid and k-grid field files but
+     prohibited for basis field files.
+
+   - The N_basis parameter is required for basis field files, but
+     prohibited for r-grid and k-grid files.
+
+Different entries are discussed in more detail below.
+
+<b>File format version identifier </b>: The first line of the header
+simply identify a version number for the file format, with a format
+\code
+  format m n
+\endcode
+in which m and n are integers that indicate major and minor version
+numbers. The "format 1 0" thus indicates use of file format version
+1.0.  This line was included in the field file format that was
+originally designed for the Fortran version of PSCF to allow for the
+possibility of later changes in file formats.  In fact, all field files
+still use version 1.0.
+
+<b> dim </b>:
+The dim parameter, denoted by D elsewhere in the documentation and
+source code, gives the dimension of space in which the fields are
+defined. For SCFT solutions, this is the number of axes along which
+the fields are periodic. This value must match the value given as an
+argument of the required -d command line option used when pscf_pc or
+pscf_pg was invoked.
+
+<b> crystal_system </b>:
+The value of crystal_system is a string identifer for a lattice
+crystal system, such as "cubic", "orthorhombic" etc.  This string must
+match the value given for the required "lattice" parameter in the Domain
+block of the parameter file, and so must also be one of the allowed
+values listed \ref prdc_unitcell_page "here" for each value of the
+dimension of space.
+
+<b> N_cell_param </b>:
+The value of N_cell_param is a positive integer that gives the number
+of cell parameters required to describe a unit cell for the specified
+crystal system. In the above example, the value N_cell_param = 1
+indicates that only parameter is required to described a cubic crystal.
+
+<b> cell_param </b>:
+The value of cell_param is a list of N_cell_param space separated real
+numbers required to completely define the unit cell. These parameters
+generally specify lengths of Bravais lattice basis vectors or unit
+cell edges and (when required) angles between those vectors. The number,
+order, and meaning of those parameters depends upon the dimension of
+space and the value of the crystal_system identifier, as discussed
+\ref prdc_unitcell_page "here".  of N_cell_param. Only one value is
+listed in the example because a cubic crystal requires only one cell
+parameter, which is the length of any edge of a simple cubic unit cell.
+
+<b> group_name </b>:
+The value of group_name is a string identifier for a crystallographic
+space group.  This parameter is only allowed if the parameter file
+also contains a groupName parameter. If a field file header contains
+a group_name parameter, its value must match the value given for the
+groupName parameter in the parameter file. Allowed values for this
+identifier for each combination of values of dim and crystal_system
+are listed \ref prdc_groups_page "here". The group_name parameter is
+required for files written in basis format, but optional for files
+written in r-grid or k-grid format. Inclusion of a group_name in an
+r-grid or k-grid field file may be used to indicate that the field is
+known to exhibit a specific space group symmetry, evern though these
+file formats do not require or assume the existence of any symmetry.
+
+<b> N_monomer </b>: The value of N_monomer gives the number of monomer
+types for which fields are listed in the data section. When a field
+file is used to read or write a full set of w-fields or c-fields, the
+value of this parameter in the field file header must match that value
+of the parameter nMonomer that appears in the Mixture section of the
+parameter file. Field files with N_monomer = 1 are, however, used for
+files that contain only a single field, such as files that contain
+mask fields or propagator slices.
+
+<b> mesh </b>: The mesh parameter is a vector of dim positive integers
+that give the dimensions of the computational mesh used by the program
+that wrote the file, i.e., the number of grid points in each direction
+of a mesh that covers a single unit cell. A label "ngrid" will also be
+accepted as a synonym for "mesh", to preserve backwards compatibility
+with the label used by the older Fortran PSCF program. The mesh parameter
+appears as the last parameter of the header in fields that are written
+in r-grid and k-grid file formats, but does not appear in files that are
+written in basis format.
+
+<b> N_basis </b>: The parameter N_basis gives the number of basis
+functions used in a symmetry-adapted Fourier series expansion of the
+fields. The label "N_star" will be accepted as a synonym for N_basis",
+to preserve backwards compatibility with the label used by the older
+Fortran PSCF program. The N_basis parameter only appears in the header
+of files that are written in basis format.
+
+Several parameters in the field file header are required to have values
+that are identical to the values of corresponding parameters given either
+in the parameter file or as a command line parameter. Such parameters are
+included in the field file header to document the state of the system that
+wrote a field file, and to allow simple validity checks to be applied
+before the data section of a field file is read. The labels used for
+several such parameters are different than those used in the parameter
+file and in the PSCF C++ source code (e.g., dim vs. D, crystal_system
+vs. lattice, and N_monomer vs nMonomer). This is a result of the use of
+different conventions in the Fortran and C++ versions of PSCF, and the
+decision to use a backwards compatible format for field file headers.
+
+<BR>
+ \ref user_field_periodic_page (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_field_basis_page    (Next)
+*/
