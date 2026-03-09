@@ -150,50 +150,6 @@ namespace Rpg {
       */
       void outputToLog() override;
 
-      // Private virtual functions for vector math
-      
-      /**
-      * Set vector a equal to vector b (a = b).
-      * 
-      * \param a the field to be set (LHS, result)
-      * \param b the field for it to be set to (RHS, input)
-      */
-      void setEqual(VectorT& a, VectorT const & b) override;
-
-      /**
-      * Compute and return inner product of two real fields.
-      */
-      double dotProduct(VectorT const & a, 
-                        VectorT const & b) override;
-
-      /**
-      * Find the maximum magnitude element of a residual vector.
-      *  
-      * \param a input vector
-      */
-      double maxAbs(VectorT const & a) override;
-
-      /**
-      * Compute the difference a = b - c for vectors a, b and c.
-      *
-      * \param a result vector (LHS)
-      * \param b first vector (RHS)
-      * \param c second vector (RHS)
-      */
-      void subVV(VectorT& a, 
-                 VectorT const & b, 
-		 VectorT const & c) override;
-
-      /**
-      * Compute a += c*b for vectors a and b and scalar c.
-      *
-      * \param a result vector (LHS)
-      * \param b input vector (RHS)
-      * \param c scalar coefficient (RHS)
-      */
-      void addEqVc(VectorT& a, 
-		   VectorT const & b, double c) override;
-
       // --- Private member function specific to this implementation --- 
       
       /**

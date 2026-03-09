@@ -14,8 +14,8 @@
 #include <rpg/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/cuda/RField.h>
-#include <prdc/cuda/VecOp.h>
-#include <prdc/cuda/Reduce.h>
+#include <pscf/cuda/VecOp.h>
+#include <pscf/cuda/Reduce.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/iterator/NanException.h>
@@ -57,8 +57,8 @@ namespace Rpg {
    {
       // Preconditions on unit cell
       UnitCell<D> const & unitCell = system().domain().unitCell();
-      UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
-      int np = system().domain().unitCell().nParameter();
+      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
+      int np = unitCell.nParameter();
       UTIL_CHECK(np > 0);
       UTIL_CHECK(np <= 6);
 
@@ -395,68 +395,6 @@ namespace Rpg {
          }
       }
    }
-
-   // Private virtual functions for vector math
-
-   /*
-   * Set vector a equal to vector b (a = b).
-   */
-   template <int D>
-   void AmIteratorGrid<D>::setEqual(VectorT& a,
-                                    VectorT const & b)
-   {
-      UTIL_CHECK(b.capacity() == a.capacity());
-      VecOp::eqV(a, b);
-   }
-
-   /*
-   * Compute and return inner product of two real fields.
-   */
-   template <int D>
-   double AmIteratorGrid<D>::dotProduct(VectorT const & a,
-                                        VectorT const & b)
-   {
-      UTIL_CHECK(a.capacity() == b.capacity());
-      double val = Reduce::innerProduct(a, b);
-      if (std::isnan(val)) { // if value is NaN, throw NanException
-         throw NanException("AmIteratorGrid::dotProduct",
-                            __FILE__, __LINE__, 0);
-      }
-      return val;
-   }
-
-   /*
-   * Find the maximum magnitude element of a residual vector.
-   */
-   template <int D>
-   double AmIteratorGrid<D>::maxAbs(VectorT const & a)
-   {
-      double val = Reduce::maxAbs(a);
-      if (std::isnan(val)) { // if value is NaN, throw NanException
-         throw NanException("AmIteratorGrid::maxAbs",
-                             __FILE__, __LINE__, 0);
-      }
-      return val;
-   }
-
-   /*
-   * Compute the vector difference a = b - c
-   */
-   template <int D>
-   void AmIteratorGrid<D>::subVV(VectorT& a,
-                                 VectorT const & b,
-                                 VectorT const & c)
-   {  VecOp::subVV(a, b, c); }
-
-   /*
-   * Composite a += b*c for vectors a and b, scalar c
-   */
-   template <int D>
-   void AmIteratorGrid<D>::addEqVc(VectorT& a,
-                                   VectorT const & b,
-                                   double c)
-   {  VecOp::addEqVc(a, b, c); }
-
 
    // Private member functions specific to this implementation
 
