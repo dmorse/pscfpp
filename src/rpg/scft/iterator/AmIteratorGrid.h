@@ -33,11 +33,11 @@ namespace Rpg {
 
       // Public typename aliases.
 
-      /// Typename for state and residual vectors.
+      /// Typename for type of state and residual vectors.
       using VectorT = DeviceArray<cudaReal>;
 
-      /// Aliase for base class.
-      using Base = AmIteratorTmpl<Iterator<D>, VectorT >;
+      /// Alias for base class.
+      using AmIterTmplT = AmIteratorTmpl<Iterator<D>, VectorT >;
 
       // Public member functions
 
@@ -68,8 +68,8 @@ namespace Rpg {
       void outputTimers(std::ostream& out) const;
 
       // Inherited public member functions
-      using Base::solve;
-      using Base::clearTimers;
+      using AmIterTmplT::solve;
+      using AmIterTmplT::clearTimers;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
@@ -79,8 +79,8 @@ namespace Rpg {
    protected:
 
       // Inherited protected members
-      using Base::verbose;
-      using Base::residual;
+      using AmIterTmplT::verbose;
+      using AmIterTmplT::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
@@ -99,28 +99,30 @@ namespace Rpg {
 
    private:
 
-      /// Local copy of interaction, adapted for use AMBD residual definition
+      /// Local copy of interaction, adapted for AMBD residual definition
       AmbdInteraction interaction_;
 
-      /// How are stress residuals scaled in error calculation?
+      /// Scale factor for stress residual elements
       double scaleStress_;
 
       // Private virtual functions that interact with parent system
 
       /** 
-      * Compute the number of elements in the residual vector.
+      * Compute and return the number of elements in the residual vector.
+      *
+      * Called during allocation and then stored.
       */
       int nElements() override;
 
       /**
-      * Check if the system has an initial guess.
+      * Does the system have an initial guess for state vector?
       */
       bool hasInitialGuess() override;
      
       /**
-      * Get the current w fields and lattice parameters.
+      * Get the current state vector (w fields and lattice parameters).
       *
-      * \param curr current field vector (output)
+      * \param curr current state vector (output)
       */
       void getCurrent(VectorT& curr) override;
 

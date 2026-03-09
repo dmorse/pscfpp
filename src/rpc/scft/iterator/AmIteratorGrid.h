@@ -33,6 +33,12 @@ namespace Rpc {
 
    public:
 
+      /// Alias for type of state and residual vectors.
+      using VectorT = DArray<double>;
+
+      /// Alias for base class.
+      using AmIterTmplT = AmIteratorTmpl< Iterator<D>, VectorT >;
+
       /**
       * Constructor.
       *
@@ -59,9 +65,6 @@ namespace Rpc {
       */
       void outputTimers(std::ostream& out) const override;
 
-      /// Alias for indirect base (grandparent) class.
-      using AmTmpl = AmIteratorTmpl< Iterator<D>, DArray<double> >;
-
       // Inherited public member functions
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
@@ -72,8 +75,8 @@ namespace Rpc {
    protected:
 
       // Inherited protected members
-      using AmTmpl::verbose;
-      using AmTmpl::residual;
+      using AmIterTmplT::verbose;
+      using AmIterTmplT::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
@@ -100,23 +103,23 @@ namespace Rpc {
       // Private virtual functions that interact with parent system
 
       /**
-      * Does the system has an initial guess for the field?
-      */
-      bool hasInitialGuess() override;
-
-      /**
-      * Compute and returns the number of elements in field vector.
+      * Compute and return the number of elements in the residual vector.
       *
       * Called during allocation and then stored.
       */
       int nElements() override;
 
       /**
-      * Get the current w fields and lattice parameters.
-      *
-      * \param curr current field vector
+      * Does the system have an initial guess for the state vector?
       */
-      void getCurrent(DArray<double>& curr) override;
+      bool hasInitialGuess() override;
+
+      /**
+      * Get the current state vector (w fields and lattice parameters).
+      *
+      * \param curr current state vector
+      */
+      void getCurrent(VectorT& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -131,14 +134,14 @@ namespace Rpc {
       *
       * \param resid current residual vector value
       */
-      void getResidual(DArray<double>& resid) override;
+      void getResidual(VectorT& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DArray<double>& newGuess) override;
+      void update(VectorT& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.

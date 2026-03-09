@@ -13,16 +13,14 @@
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
-#include <prdc/cpu/FftwDArray.h>
 #include <prdc/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/iterator/NanException.h>
-#include <util/containers/RingBuffer.h>
-#include <util/containers/DArray.h>
 #include <util/global.h>
 #include <cmath>
+
 
 namespace Pscf {
 namespace Rpc {
@@ -40,8 +38,8 @@ namespace Rpc {
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
     : Iterator<D>(system)
    {
-      isSymmetric_ = true;
       ParamComposite::setClassName("AmIteratorGrid");
+      isSymmetric_ = true;
    }
 
    /*
@@ -52,23 +50,24 @@ namespace Rpc {
    {}
 
    /*
-   * Read parameters from file.
+   * Read parameter file block.
    */
    template <int D>
    void AmIteratorGrid<D>::readParameters(std::istream& in)
    {
-      // Use base class methods to read parameters
-      AmTmpl::readParameters(in);
-      AmTmpl::readErrorType(in);
-
+      // Preconditions on unit cell
       UnitCell<D> const & unitCell = system().domain().unitCell();
       UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
       int np = unitCell.nParameter();
       UTIL_CHECK(np > 0);
       UTIL_CHECK(np <= 6);
 
+      // Read param file format for base class
+      AmIterTmplT::readParameters(in);
+      AmIterTmplT::readErrorType(in);
+
       // Read optional isFlexible boolean (true by default)
-      isFlexible_ = 1;  // Default
+      isFlexible_ = 1;
       readOptional(in, "isFlexible", isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
@@ -91,16 +90,14 @@ namespace Rpc {
       }
 
       // Read optional scaleStress value
-      scaleStress_ = 10.0; // Default
+      scaleStress_ = 10.0;  // default
       readOptional(in, "scaleStress", scaleStress_);
 
-      // Read option mixing parameters (lambda, useLambdaRamp, and r)
-      AmTmpl::readMixingParameters(in);
+      // Read option mixing parameters (lambda, useLambdaRamp, r)
+      AmIterTmplT::readMixingParameters(in);
 
       // Allocate local modified copy of Interaction class
-      const int nMonomer = system().mixture().nMonomer();
-      interaction_.setNMonomer(nMonomer);
-
+      interaction_.setNMonomer(system().mixture().nMonomer());
    }
 
    /*
@@ -111,20 +108,22 @@ namespace Rpc {
    {
       out << "\n";
       out << "Iterator times contributions:\n";
-      AmTmpl::outputTimers(out);
+      AmIterTmplT::outputTimers(out);
    }
 
    // Protected virtual function
 
-   // Setup before entering iteration loop
+   /*
+   * Setup before entering iteration loop.
+   */
    template <int D>
    void AmIteratorGrid<D>::setup(bool isContinuation)
    {
-      AmTmpl::setup(isContinuation);
+      AmIterTmplT::setup(isContinuation);
       interaction_.update(system().interaction());
    }
 
-   // Private virtual functions to exchange data with parent system
+   // Private virtual functions
 
    /*
    * Compute the number of elements in the residual vector.
@@ -143,7 +142,7 @@ namespace Rpc {
    }
 
    /*
-   * Does the system have an initial field guess?
+   * Check if the system has an initial field guess.
    */
    template <int D>
    bool AmIteratorGrid<D>::hasInitialGuess()
@@ -153,7 +152,7 @@ namespace Rpc {
    * Get the current field vector (w fields and lattice parameters).
    */
    template <int D>
-   void AmIteratorGrid<D>::getCurrent(DArray<double>& state)
+   void AmIteratorGrid<D>::getCurrent(VectorT& state)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
@@ -200,7 +199,7 @@ namespace Rpc {
    * Compute the residual for the current system state.
    */
    template <int D>
-   void AmIteratorGrid<D>::getResidual(DArray<double>& resid)
+   void AmIteratorGrid<D>::getResidual(VectorT& resid)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
@@ -303,7 +302,7 @@ namespace Rpc {
    * Update the current system field vector.
    */
    template <int D>
-   void AmIteratorGrid<D>::update(DArray<double>& newState)
+   void AmIteratorGrid<D>::update(VectorT& newState)
    {
 
       // References to system components
@@ -344,7 +343,7 @@ namespace Rpc {
          }
 
          // Compute spatial averages of all concentration fields
-         DArray<double> cAve;
+         VectorT cAve;
          cAve.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
             cAve[i] = Reduce::sum(system().c().rgrid(i));
