@@ -13,6 +13,9 @@
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/VecOp.h>
+#include <prdc/cuda/Reduce.h>
 #include <prdc/cuda/resources.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/iterator/NanException.h>
@@ -26,6 +29,8 @@ namespace Rpg {
    using namespace Prdc;
    using namespace Prdc::Cuda;
 
+   // Public member functions
+
    /*
    * Constructor.
    */
@@ -33,7 +38,7 @@ namespace Rpg {
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
     : Iterator<D>(system)
    {
-      setClassName("AmIteratorGrid");
+      ParamComposite::setClassName("AmIteratorGrid");
       isSymmetric_ = false;
    }
 
@@ -50,21 +55,19 @@ namespace Rpg {
    template <int D>
    void AmIteratorGrid<D>::readParameters(std::istream& in)
    {
-      // Read param file format for base class
-      Base::readParameters(in);
-      Base::readErrorType(in);
-
-      // Default parameter values
-      isFlexible_ = 1;
-      scaleStress_ = 10.0;
-
+      // Preconditions on unit cell
+      UnitCell<D> const & unitCell = system().domain().unitCell();
+      UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
       int np = system().domain().unitCell().nParameter();
       UTIL_CHECK(np > 0);
       UTIL_CHECK(np <= 6);
-      UTIL_CHECK(system().domain().unitCell().lattice() 
-                  != UnitCell<D>::Null);
 
-      // Read in optional isFlexible value
+      // Read param file format for base class
+      AmIterTmplT::readParameters(in);
+      AmIterTmplT::readErrorType(in);
+
+      // Read optional isFlexible boolean (true by default)
+      isFlexible_ = 1;
       readOptional(in, "isFlexible", isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
@@ -76,7 +79,9 @@ namespace Rpg {
          }
          // Read optional flexibleParams_ array to overwrite current array
          readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
-         if (nFlexibleParams() == 0) isFlexible_ = false;
+         if (nFlexibleParams() == 0) {
+            isFlexible_ = false;
+         }
       } else { // isFlexible_ = false
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
@@ -85,14 +90,14 @@ namespace Rpg {
       }
 
       // Read optional scaleStress value
+      scaleStress_ = 10.0;  // default
       readOptional(in, "scaleStress", scaleStress_);
 
       // Read optional mixing parameters (lambda, useLambdaRamp, r)
-      Base::readMixingParameters(in);
+      AmIterTmplT::readMixingParameters(in);
 
       // Allocate local modified copy of Interaction class
       interaction_.setNMonomer(system().mixture().nMonomer());
-
    }
 
    /*
@@ -101,10 +106,9 @@ namespace Rpg {
    template<int D>
    void AmIteratorGrid<D>::outputTimers(std::ostream& out) const
    {
-      // Output timing results, if requested.
       out << "\n";
       out << "Iterator times contributions:\n";
-      Base::outputTimers(out);
+      AmIterTmplT::outputTimers(out);
    }
 
    // Protected virtual function
@@ -115,18 +119,15 @@ namespace Rpg {
    template <int D>
    void AmIteratorGrid<D>::setup(bool isContinuation)
    {
-      AmIteratorTmpl<Iterator<D>, VectorT>::setup(isContinuation);
+      AmIterTmplT::setup(isContinuation);
       interaction_.update(system().interaction());
    }
 
-   /*
-   * Checks if the system has an initial guess.
-   */
-   template <int D>
-   bool AmIteratorGrid<D>::hasInitialGuess()
-   { return system().w().hasData(); }
+   // Private virtual functions
 
-   // Compute the number of elements in the residual vector.
+   /*
+   * Compute the number of elements in the residual vector.
+   */
    template <int D>
    int AmIteratorGrid<D>::nElements()
    {
@@ -141,6 +142,13 @@ namespace Rpg {
 
       return nEle;
    }
+
+   /*
+   * Check if the system has an initial guess.
+   */
+   template <int D>
+   bool AmIteratorGrid<D>::hasInitialGuess()
+   { return system().w().hasData(); }
 
    /*
    * Get the current w fields and lattice parameters.
