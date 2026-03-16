@@ -211,11 +211,6 @@ namespace Rpc {
 
       // Initialize residual vector to zero
       VecOp::eqS(resid, 0.0);
-      #if 0
-      for (i = 0 ; i < n; ++i) {
-         resid[i] = 0.0;
-      }
-      #endif
 
       // Compute SCF residual vector elements
       for (i = 0; i < nMonomer; ++i) {

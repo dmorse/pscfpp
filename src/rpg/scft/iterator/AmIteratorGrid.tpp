@@ -159,9 +159,13 @@ namespace Rpg {
       const int n = nElements();
       UTIL_CHECK(state.capacity() == n);
 
-      // Copy all system fields into a linear array
+      // Copy all system w-fields into a linear array
+      VectorT slice;
       for (int i = 0; i < nMonomer; i++) {
-         VecOp::eqV(state, system().w().rgrid(i), i*nMesh, 0, nMesh);
+         slice.associate(state, i*nMesh, nMesh);
+         //VecOp::eqV(state, system().w().rgrid(i), i*nMesh, 0, nMesh);
+         VecOp::eqV(slice, system().w().rgrid(i));
+         slice.dissociate();
       }
 
       // If flexible unit cell, also store unit cell parameters
@@ -170,7 +174,7 @@ namespace Rpg {
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
-         HostDArray<cudaReal> tempH(nFlexibleParams());
+         DArray<cudaReal> tempH(nFlexibleParams());
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {

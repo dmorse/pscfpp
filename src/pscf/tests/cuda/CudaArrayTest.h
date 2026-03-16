@@ -90,7 +90,8 @@ public:
       DeviceArray<double> d2(nx);
 
       // Host arrays
-      HostDArray<double> in(nx);
+      DArray<double> in;
+      in.allocate(nx);
       HostDArray<double> out1(nx);
       HostDArray<double> out2(nx);
       HostDArray<double> out3(nx);
