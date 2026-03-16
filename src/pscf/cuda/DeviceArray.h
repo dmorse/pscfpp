@@ -11,11 +11,15 @@
 #include <util/misc/ReferenceCounter.h>   // member
 #include <util/misc/CountedReference.h>   // member
 
+// Forward declarations
+namespace Util {
+   template <typename Data> class DArray;
+}
 namespace Pscf {
-
-   // Forward declarations
-   template <typename Data> class HostDArray;
    class DeviceMemory;
+}
+
+namespace Pscf {
 
    using namespace Util;
 
@@ -30,66 +34,60 @@ namespace Pscf {
    * A DeviceArray can be in any of three states:
    *
    *   (1) Unallocated: In this state, there is no associated memory,
-   *   so capacity() returns zero, while isAllocated(), isOwner() and
-   *   isAssociated() return false. 
-   * 
-   *   (2) Data owner: In this case, this object owns a block of memory that
-   *   it is responsible for allocating and de-allocating. In this state, 
-   *   capacity returns a positive value, isAllocated() and isOwner() 
+   *   so capacity() returns 0, while isAllocated(), isOwner() and
+   *   isAssociated() all return false.
+   *
+   *   (2) A data owner: In this case, this object owns a block of memory
+   *   that it is responsible for de-allocating. In this state, capacity()
+   *   returns a positive integer value, isAllocated() and isOwner()
    *   return true, and isAssociated() returns false.
    *
-   *   (3) Data user: In this case, this object wraps a C array via
-   *   a pointer to data that is owned by a different container. We
-   *   described this by saying this DeviceArray is a data user that
-   *   is "associated" with memory owned by another container that is 
-   *   the data owner.  In this state, capacity() returns a positive 
-   *   value, isAllocated() and isAssociated() return true, and 
-   *   isOwner() returns false. 
-   *  
-   * When a DeviceArray is a data user but not an owner (case 3), it 
-   * is not responsible for allocation or deallocation of the underlying 
-   * C array, and merely acts as a reference to the section of data owned 
-   * by another container.  Memory that is owned by a DeviceArray may be 
-   * allocated and deallocated by calling the allocate and deallocate 
-   * member functions.  Memory owned by a DeviceArray is also dellocated 
-   * when the DeviceArray is destroyed. 
+   *   (3) A data user: In this case, this object has a pointer to a block
+   *   of device memory that is owned by a different container. We describe
+   *   this by saying this DeviceArray (the data user) is "associated"
+   *   with or "references" memory owned by another container (the data
+   *   owner). In this state, capacity() returns a positive
+   *   value, isAllocated() and isAssociated() return true, and
+   *   isOwner() returns false.
+   *
+   * Memory that is owned by a DeviceArray may be allocated and
+   * deallocated by the allocate() and deallocate() member functions.
+   * Memory owned by a DeviceArray is also dellocated when the
+   * DeviceArray is destroyed.
    *
    * A DeviceArray<Data> object may be associated as a data user with:
    *
-   *   - A slice of an array of Data objects owned by another 
+   *   - A slice of an array of Data objects owned by another
    *     DeviceArray<Data>, or
    *
    *   - A block of bare memory owned by a DeviceMemory container
    *
-   * Associations with either type of data owner can be created and 
-   * destroyed by calling the associate and dissociate member functions 
+   * Associations with either type of data owner can be created and
+   * destroyed by calling the associate and dissociate member functions
    * of the data user. Attempts to create an association cause an
-   * Exception to be thrown if the requested slice of shared data 
+   * Exception to be thrown if the requested slice of shared data
    * would exceed the bounds of the block owned by the data owner.
    *
    * A DeviceArray<Data> that serves as an owner of data that is used
    * by one or more other associated DeviceArray<Data> objects maintains
    * a count of how many associated objects refer to its data. This
-   * counter is incremented when an association is created by a user
-   * and decremented when the user destroys the association.
+   * counter is incremented when an association is created by a data
+   * user and decremented when the user destroys the association.
    *
    * When a DeviceArray<Data> object is destroyed, any data that it
-   * owns is automatically deallocated, and any associations with 
-   * external data are destroyed. 
+   * owns is automatically deallocated, and any association with
+   * external data is destroyed.
    *
-   * It is an error to deallocate memory owned by a DeviceArray or 
-   * DeviceMemory container that is still referred to by one or more 
+   * It is an error to deallocate memory owned by a DeviceArray or
+   * DeviceMemory container that is still referred to by one or more
    * associated DeviceArray data users. Doing so is illegal because it
-   * creates dangling pointers. Attempts to prematurely deallocate 
-   * such a shared memory block are detected by the owner, and cause an 
-   * Exception to be thrown if it occurs with a deallocate function,
-   * or cause an error message to be written to a log file if the 
-   * error occurs during destruction of the data owner.  Programmers 
-   * must thus take care to ensure that all DeviceArray objects that 
-   * act as date users associated with a block of shared memory either 
-   * explicitly delete the association (by calling the dissociate 
-   * member function) or are destroyed before the container that owns 
-   * the shared memory deallocates the memory or is destroyed. 
+   * creates dangling pointers. Attempts to prematurely deallocate such
+   * a shared memory block either cause an Exception to be thrown, if
+   * it occurs within the deallocate function, or cause an error message
+   * to be written to std::cout if the error occurs in the DeviceArray
+   * destructor function. All references to such a shared data block
+   * must thus be released, by calling the dissociate() member function
+   * of each data user, before the data owner can be safely destroyed.
    *
    * \ingroup Pscf_Cuda_Containers_Module
    */
@@ -222,20 +220,21 @@ namespace Pscf {
       DeviceArray<Data>& operator = (const DeviceArray<Data>& other);
 
       /**
-      * Assignment operator, assignment from HostDArray<Data> host array.
+      * Assignment operator, assignment from Util::DArray<Data> host array.
       *
-      * Performs a deep copy from a RHS HostDArray<Data> host array to
-      * this LHS DeviceArray<Data> device array, by copying underlying
-      * C array from host memory to device memory.
+      * Performs a deep copy from a RHS DArray<Data> host array to this 
+      * LHS DeviceArray<Data>, by copying underlying C array from host 
+      * memory to device memory.
       *
-      * This function will allocate memory if this (LHS)
-      * DeviceArray<Data> is not allocated.  If this is allocated, it
-      * must have the same dimensions as the RHS HostDArray<Data>.
+      * If this (LHS) DeviceArray<Data> is not allocated on entry, required
+      * memory will be allocated before data is copied.  If this LHS object
+      * is already allocated, it must have the same capacity as the RHS 
+      * DArray<Data>.
       *
-      * \param other HostDArray<Data> on RHS of assignent (input)
+      * \param other  DArray<Data> on RHS of assignent (input)
       */
       virtual
-      DeviceArray<Data>& operator = (const HostDArray<Data>& other);
+      DeviceArray<Data>& operator = (const DArray<Data>& other);
 
       /**
       * Return array capacity.
@@ -248,8 +247,8 @@ namespace Pscf {
       * Return true if the array has allocated data, false otherwise.
       *
       * A DeviceArray is considered allocated if it has non-null pointer
-      * to an data block, which may either be a block that it owns or
-      * a block owned by another associated container.
+      * to an data block, which may either be a block that it owns or a
+      * block owned by another container.
       */
       bool isAllocated() const;
 
@@ -298,36 +297,36 @@ namespace Pscf {
    /*
    * Return array capacity.
    */
-   template <typename Data> inline 
+   template <typename Data> inline
    int DeviceArray<Data>::capacity() const
    {  return capacity_; }
 
    /*
    * Return true if this object has access to a memory block.
    */
-   template <typename Data> inline 
+   template <typename Data> inline
    bool DeviceArray<Data>::isAllocated() const
    {  return (bool) dataPtr_; }
 
    /*
    * Does this object own data?
    */
-   template <typename Data> inline 
+   template <typename Data> inline
    bool DeviceArray<Data>::isOwner() const
    {  return ((bool) dataPtr_ && !ref_.isAssociated()); }
 
    /*
    * Is this object associated with data it does not own?
    */
-   template <typename Data> inline 
+   template <typename Data> inline
    bool DeviceArray<Data>::isAssociated() const
    {  return ((bool) dataPtr_ && ref_.isAssociated()); }
 
 }
 
 #include "DeviceMemory.h"
-#include "HostDArray.h"
 #include "cudaErrorCheck.h"
+#include <util/containers/DArray.h>
 #include <util/global.h>
 #include <cuda_runtime.h>
 
@@ -392,7 +391,7 @@ namespace Pscf {
    }
 
    /*
-   * Allocate the underlying C array.
+   * Allocate device memory, with this object then owns.
    */
    template <typename Data>
    void DeviceArray<Data>::allocate(int capacity)
@@ -413,7 +412,7 @@ namespace Pscf {
    }
 
    /*
-   * Deallocate the underlying C array, if possible.
+   * Deallocate device memory owned by this object, if any.
    */
    template <typename Data>
    void DeviceArray<Data>::deallocate()
@@ -427,11 +426,11 @@ namespace Pscf {
    }
 
    /*
-   * Associate this object with a slice of a different DeviceArray.
+   * Associate this object with memory owned by a different DeviceArray.
    */
    template <typename Data>
-   void DeviceArray<Data>::associate(DeviceArray<Data>& arr, int beginId,
-                                     int capacity)
+   void DeviceArray<Data>::associate(DeviceArray<Data>& arr,
+                                     int beginId, int capacity)
    {
       UTIL_CHECK(arr.isAllocated());
       UTIL_CHECK(arr.isOwner());
@@ -445,7 +444,7 @@ namespace Pscf {
       dataPtr_ = arr.cArray() + beginId;
       capacity_ = capacity;
 
-      // Associate ref_ member with reference counter of data owner 
+      // Associate ref_ member with reference counter of data owner
       arr.addReference(ref_);
    }
 
@@ -470,9 +469,7 @@ namespace Pscf {
    }
 
    /*
-   * Dissociate this object from external memory
-   *
-   * Throw Exception if this is not associated with external memory
+   * Dissociate this object from external device memory
    */
    template <typename Data>
    void DeviceArray<Data>::dissociate()
@@ -530,15 +527,15 @@ namespace Pscf {
    }
 
    /*
-   * Assignment of LHS DeviceArray<Data> from RHS HostDArray<Data>.
+   * Assignment from RHS Util::DArray<Data>.
    */
    template <typename Data>
    DeviceArray<Data>&
-   DeviceArray<Data>::operator = (const HostDArray<Data>& other)
+   DeviceArray<Data>::operator = (const Util::DArray<Data>& other)
    {
       // Precondition
       if (!other.isAllocated()) {
-         UTIL_THROW("RHS HostDArray<Data> must be allocated.");
+         UTIL_THROW("RHS DArray<Data> must be allocated.");
       }
 
       // Allocate this if necessary

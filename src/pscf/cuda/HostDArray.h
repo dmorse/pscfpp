@@ -21,15 +21,14 @@ namespace Pscf {
    * Template for dynamic array stored in host CPU memory.
    *
    * This class is provided as a convenience to allow the use of 
-   * assigment (=) operators to copy data between corresponding 
-   * containers that store array data in device vs. host memory. A 
-   * HostDArray<Data> stores data in a dynamically allocated array in 
-   * host CPU memory, whereas a DeviceArray<Data> stores analogous 
+   * assigment (=) operators to copy data from device to host memory.
+   * A HostDArray<Data> stores data in a dynamically allocated array 
+   * in host CPU memory, whereas a DeviceArray<Data> stores analogous 
    * data in global GPU device memory. Each of these classes defines  
    * an assignment operation that allows assignment from the other, 
    * which silently copies the underlying arrays between device and 
    * host memory. Additionally, a method HostDArray::copySlice is
-   * provided, which populates the HostDArray with a slice of the 
+   * provided, which populates a HostDArray with a slice of the 
    * data from a larger DeviceArray.
    *
    * Otherwise, this class is identical to Util::DArray, with the
@@ -77,21 +76,22 @@ namespace Pscf {
       virtual ~HostDArray();
 
       /**
-      * Assignment operator, assign from DeviceArray<Data> device array.
+      * Assignment operator, assign from a DeviceArray<Data>.
       *
-      * Performs a deep copy from a RHS DeviceArray<Data> device array 
-      * to this LHS HostDArray<D> host array, by copying the underlying 
-      * C array from device memory to host memory.
+      * Performs a deep copy from a RHS DeviceArray<Data> to this LHS
+      * HostDArray<D>, by copying the underlying data from device memory
+      * to host memory.
       *
-      * The RHS DeviceArray<Data> object must be allocated.  If this LHS 
-      * HostDArray<D> is not allocated, the correct size block of memory 
-      * will be allocated. Otherwise, if this LHS object is allocated on
-      * entry, capacity values for LHS and RHS objects must be equal. 
+      * Preconditions: The RHS DeviceArray<Data> object must be allocated.  
+      * If this LHS HostDArray<D> is not allocated, the required memory
+      * will be allocated before values are copied. Otherwise, if this LHS 
+      * array is allocated on entry, capacites for LHS and RHS objects 
+      * must be equal. 
       *
-      * Exceptions are thrown if the RHS array is not allocated or if
-      * both arrays are allocated but have unequal capacities.
+      * \throw Exception if the RHS array is not allocated on entry
+      * \throw Exception if LHS and RHS have unequal nonzero capacities
       *
-      * \param other DeviceArray<Data> array on RHS of assignment (input)
+      * \param other DeviceArray<Data>  array on RHS of assignment (input)
       */
       virtual 
       HostDArray<Data>& operator = (DeviceArray<Data> const & other);
@@ -102,13 +102,13 @@ namespace Pscf {
       * This method will populate this HostDArray with data from a slice
       * of a DeviceArray. The size of the slice is the capacity of this
       * HostDArray (i.e., this entire array will be populated), and the
-      * position of the slice within the DeviceArray is indicated by 
-      * the input parameter beginId. 
+      * position of the slice within the DeviceArray is indicated by the
+      * input parameter beginId. 
       * 
-      * Therefore, the capacity of the DeviceArray must be >= the 
-      * capacity of this HostDArray plus beginId.
+      * The capacity of the RHS DeviceArray must thus be greater than or
+      * equal to the sum of beginId and the capacity of this HostDArray.
       * 
-      * \param other DeviceArray<Data> object from which to copy slice
+      * \param other DeviceArray<Data>  object from which to copy slice
       * \param beginId  index of other array at which slice begins
       */
       void copySlice(DeviceArray<Data> const & other, int beginId);

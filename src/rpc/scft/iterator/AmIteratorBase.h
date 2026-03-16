@@ -9,7 +9,7 @@
 */
 
 /*
-* Ddeclarations of explicit instantations of AmIteratorTmpl used as base 
+* Declarations of explicit instantations of AmIteratorTmpl used as base 
 * classes for class templates Rpc::AmIteratorBasis and Rpc::AmIteratorGrid.
 */
 
@@ -17,6 +17,7 @@
 #include <rpc/scft/iterator/Iterator.h>     // base class argument
 #include <util/containers/DRArray.h>        // base class argument
 
+// Explicit instantiation declarations
 namespace Pscf {
    extern template 
    class AmIteratorTmpl< Rpc::Iterator<1>, DRArray<double> >;
