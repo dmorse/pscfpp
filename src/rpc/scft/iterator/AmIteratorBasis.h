@@ -29,10 +29,16 @@ namespace Rpc {
    */
    template <int D>
    class AmIteratorBasis 
-    : public AmIteratorTmpl< Iterator<D>, DArray<double> >
+    : public AmIteratorTmpl< Iterator<D>, DRArray<double> >
    {
 
    public:
+
+      /// Alias for type of residual and state vectors
+      using VectorT = DRArray<double>;
+
+      /// Alias for base class.
+      using AmIterTmplT = AmIteratorTmpl< Iterator<D>, VectorT >;
 
       /**
       * Constructor.
@@ -60,9 +66,6 @@ namespace Rpc {
       */
       void outputTimers(std::ostream& out) const override;
 
-      /// Alias for indirect base (grandparent) class.
-      using AmTmpl = AmIteratorTmpl< Iterator<D>, DArray<double> >;
-
       // Inherited public member functions
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
@@ -73,15 +76,15 @@ namespace Rpc {
    protected:
 
       // Inherited protected members
-      using AmTmpl::verbose;
-      using AmTmpl::residual;
+      //using AmIterTmplT::verbose;
+      //using AmIterTmplT::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
-      using ParamComposite::readOptional;
-      using ParamComposite::readParamCompositeOptional;
-      using ParamComposite::readOptionalFSArray;
+      //using ParamComposite::readOptional;
+      //using ParamComposite::readParamCompositeOptional;
+      //using ParamComposite::readOptionalFSArray;
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -117,7 +120,7 @@ namespace Rpc {
       *
       * \param curr current field vector
       */
-      void getCurrent(DArray<double>& curr) override;
+      void getCurrent(VectorT& curr) override;
 
       /**
       * Have the system perform a computation using new field.
@@ -132,14 +135,14 @@ namespace Rpc {
       *
       * \param resid current residual vector value
       */
-      void getResidual(DArray<double>& resid) override;
+      void getResidual(VectorT& resid) override;
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(DArray<double>& newGuess) override;
+      void update(VectorT& newGuess) override;
 
       /**
       * Outputs relevant system details to the iteration log.

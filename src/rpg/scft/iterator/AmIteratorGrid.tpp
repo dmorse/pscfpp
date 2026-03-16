@@ -135,11 +135,9 @@ namespace Rpg {
       const int nMesh = system().domain().mesh().size();
 
       int nEle = nMonomer*nMesh;
-
       if (isFlexible_) {
          nEle += nFlexibleParams();
       }
-
       return nEle;
    }
 
@@ -148,31 +146,30 @@ namespace Rpg {
    */
    template <int D>
    bool AmIteratorGrid<D>::hasInitialGuess()
-   { return system().w().hasData(); }
+   {  return system().w().hasData(); }
 
    /*
    * Get the current w fields and lattice parameters.
    */
    template <int D>
-   void AmIteratorGrid<D>::getCurrent(VectorT& curr)
+   void AmIteratorGrid<D>::getCurrent(VectorT& state)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
       const int n = nElements();
-      UTIL_CHECK(curr.capacity() == n);
+      UTIL_CHECK(state.capacity() == n);
 
-      // Loop to unfold the system fields and store them in one long array
+      // Copy all system fields into a linear array
       for (int i = 0; i < nMonomer; i++) {
-         VecOp::eqV(curr, system().w().rgrid(i), i*nMesh, 0, nMesh);
+         VecOp::eqV(state, system().w().rgrid(i), i*nMesh, 0, nMesh);
       }
 
       // If flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
-         const int nParam = system().domain().unitCell().nParameter();
-         FSArray<double,6> const & parameters
-                              = system().domain().unitCell().parameters();
-
-         // convert into a cudaReal array
+         UTIL_CHECK(nFlexibleParams() > 0);
+         UnitCell<D> const & unitCell = system().domain().unitCell();
+         FSArray<double, 6> const & parameters = unitCell.parameters();
+         const int nParam = unitCell.nParameter();
          HostDArray<cudaReal> tempH(nFlexibleParams());
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
@@ -183,9 +180,9 @@ namespace Rpg {
          }
          UTIL_CHECK(counter == tempH.capacity());
 
-         // Copy parameters to the end of the curr array
+         // Copy parameters to the end of the state array
          VectorT tempD;
-         tempD.associate(curr, nMonomer*nMesh, tempH.capacity());
+         tempD.associate(state, nMonomer*nMesh, tempH.capacity());
          tempD = tempH; // copy from host to device
          UTIL_CHECK(tempD.isAssociated());
          tempD.dissociate();
@@ -193,27 +190,24 @@ namespace Rpg {
    }
 
    /*
-   * Solve MDE for current state of system.
+   * Perform the main system computation (solve the MDE).
    */
    template <int D>
    void AmIteratorGrid<D>::evaluate()
-   {
-      // Solve MDEs for current omega field
-      system().compute(isFlexible_);
-   }
+   {  system().compute(isFlexible_); }
 
    /*
-   * Gets the residual vector from system.
+   * Compute the residual for the current system state.
    */
    template <int D>
    void AmIteratorGrid<D>::getResidual(VectorT& resid)
    {
-      const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
+      const int n = nElements();
+      UTIL_CHECK(resid.capacity() == n);
 
-      // Initialize residuals to zero. Kernel will take care of potential
-      // additional elements (n vs nMesh).
+      // Initialize residual vector to zero. 
       VecOp::eqS(resid, 0.0);
 
       // Array of VectorT arrays associated with slices of resid.

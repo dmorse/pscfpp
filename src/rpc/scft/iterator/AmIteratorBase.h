@@ -15,14 +15,14 @@
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rpc/scft/iterator/Iterator.h>     // base class argument
-#include <util/containers/DArray.h>         // base class argument
+#include <util/containers/DRArray.h>        // base class argument
 
 namespace Pscf {
    extern template 
-   class AmIteratorTmpl< Rpc::Iterator<1>, DArray<double> >;
+   class AmIteratorTmpl< Rpc::Iterator<1>, DRArray<double> >;
    extern template 
-   class AmIteratorTmpl< Rpc::Iterator<2>, DArray<double> >;
+   class AmIteratorTmpl< Rpc::Iterator<2>, DRArray<double> >;
    extern template 
-   class AmIteratorTmpl< Rpc::Iterator<3>, DArray<double> >;
+   class AmIteratorTmpl< Rpc::Iterator<3>, DRArray<double> >;
 }
 #endif

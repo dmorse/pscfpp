@@ -53,8 +53,8 @@ namespace Rpc {
    void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
       // Use base class methods to read parameters
-      AmTmpl::readParameters(in);
-      AmTmpl::readErrorType(in);
+      AmIterTmplT::readParameters(in);
+      AmIterTmplT::readErrorType(in);
 
       UnitCell<D> const & unitCell = system().domain().unitCell();
       UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
@@ -64,7 +64,7 @@ namespace Rpc {
 
       // Read optional isFlexible boolean (true by default)
       isFlexible_ = 1;  // Default
-      readOptional(in, "isFlexible", isFlexible_);
+      ParamComposite::readOptional(in, "isFlexible", isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
       // then optionally overwrite with user input from param file
@@ -74,7 +74,8 @@ namespace Rpc {
             flexibleParams_.append(true); // Set all values to true
          }
          // Read optional flexibleParams_ array to overwrite current array
-         readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
+         ParamComposite::readOptionalFSArray(in, "flexibleParams", 
+                                             flexibleParams_, np);
          if (nFlexibleParams() == 0) isFlexible_ = false;
       } else { // isFlexible_ = false
          flexibleParams_.clear();
@@ -85,10 +86,10 @@ namespace Rpc {
 
       // Read optional scaleStress value
       scaleStress_ = 10.0; // Default value
-      readOptional(in, "scaleStress", scaleStress_);
+      ParamComposite::readOptional(in, "scaleStress", scaleStress_);
 
       // Read option mixing parameters (lambda, useLambdaRamp, and r)
-      AmTmpl::readMixingParameters(in);
+      AmIterTmplT::readMixingParameters(in);
 
       // Allocate local modified copy of Interaction class
       const int nMonomer = system().mixture().nMonomer();
@@ -104,7 +105,7 @@ namespace Rpc {
    {
       out << "\n";
       out << "Iterator times contributions:\n";
-      AmTmpl::outputTimers(out);
+      AmIterTmplT::outputTimers(out);
    }
 
    // Protected virtual function
@@ -113,7 +114,7 @@ namespace Rpc {
    template <int D>
    void AmIteratorBasis<D>::setup(bool isContinuation)
    {
-      AmTmpl::setup(isContinuation);
+      AmIterTmplT::setup(isContinuation);
       interaction_.update(system().interaction());
    }
 
@@ -129,8 +130,8 @@ namespace Rpc {
       const int nBasis = system().domain().basis().nBasis();
 
       int nEle = nMonomer*nBasis;
-      if (isFlexible()) {
-         nEle += nFlexibleParams();
+      if (Iterator<D>::isFlexible()) {
+         nEle += Iterator<D>::nFlexibleParams();
       }
       return nEle;
    }
@@ -146,7 +147,7 @@ namespace Rpc {
    * Get the current field vector (w fields and lattice parameters).
    */
    template <int D>
-   void AmIteratorBasis<D>::getCurrent(DArray<double>& state)
+   void AmIteratorBasis<D>::getCurrent(VectorT& state)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
@@ -164,7 +165,7 @@ namespace Rpc {
       }
 
       // Add elements associated with unit cell parameters (if any)
-      if (isFlexible()) {
+      if (Iterator<D>::isFlexible()) {
          UTIL_CHECK(nFlexibleParams() > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double,6> const & parameters = unitCell.parameters();
@@ -193,7 +194,7 @@ namespace Rpc {
    * Compute the residual for the current system state.
    */
    template <int D>
-   void AmIteratorBasis<D>::getResidual(DArray<double>& resid)
+   void AmIteratorBasis<D>::getResidual(VectorT& resid)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
@@ -254,7 +255,7 @@ namespace Rpc {
       }
 
       // If flexible unit cell, then compute stress residuals
-      if (isFlexible()) {
+      if (Iterator<D>::isFlexible()) {
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -284,7 +285,7 @@ namespace Rpc {
    * Update the current system field vector.
    */
    template <int D>
-   void AmIteratorBasis<D>::update(DArray<double>& newState)
+   void AmIteratorBasis<D>::update(VectorT& newState)
    {
       // Constants
       const int nMonomer = system().mixture().nMonomer();
@@ -338,7 +339,7 @@ namespace Rpc {
       system().w().setBasis(wFields);
 
       // If flexible, update unit cell parameters
-      if (isFlexible()) {
+      if (Iterator<D>::isFlexible()) {
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
@@ -368,8 +369,8 @@ namespace Rpc {
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {
-      if (isFlexible() && verbose() > 1) {
-         double str;
+      if (Iterator<D>::isFlexible() && AmIterTmplT::verbose() > 1) {
+         double res, str;
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
          const int nMonomer = system().mixture().nMonomer();
@@ -378,7 +379,8 @@ namespace Rpc {
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               str = -1.0 * residual()[begin + counter] / scaleStress_;
+               res = AmIterTmplT::residual()[begin + counter];
+               str = -1.0 * res / scaleStress_;
                Log::file() 
                   << " Cell Param  " << i << " = "
                   << Dbl(unitCell.parameters()[i], 15)

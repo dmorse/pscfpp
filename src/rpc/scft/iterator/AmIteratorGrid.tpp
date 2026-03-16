@@ -39,7 +39,7 @@ namespace Rpc {
     : Iterator<D>(system)
    {
       ParamComposite::setClassName("AmIteratorGrid");
-      isSymmetric_ = true;
+      Iterator<D>::isSymmetric_ = true;
    }
 
    /*
@@ -68,7 +68,7 @@ namespace Rpc {
 
       // Read optional isFlexible boolean (true by default)
       isFlexible_ = 1;
-      readOptional(in, "isFlexible", isFlexible_);
+      ParamComposite::readOptional(in, "isFlexible", isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
       // then optionally overwrite with user input from param file
@@ -78,7 +78,8 @@ namespace Rpc {
             flexibleParams_.append(true); // Set all values to true
          }
          // Read optional flexibleParams_ array to overwrite current array
-         readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
+         ParamComposite::readOptionalFSArray(in, "flexibleParams", 
+                                             flexibleParams_, np);
          if (nFlexibleParams() == 0) {
             isFlexible_ = false;
          }
@@ -91,7 +92,7 @@ namespace Rpc {
 
       // Read optional scaleStress value
       scaleStress_ = 10.0;  // default
-      readOptional(in, "scaleStress", scaleStress_);
+      ParamComposite::readOptional(in, "scaleStress", scaleStress_);
 
       // Read option mixing parameters (lambda, useLambdaRamp, r)
       AmIterTmplT::readMixingParameters(in);
@@ -160,22 +161,20 @@ namespace Rpc {
       UTIL_CHECK(state.capacity() == nEle);
 
       // Copy w-fields into a linear array
-      int begin;
+      VectorT slice;
       for (int i = 0; i < nMonomer; i++) {
-         const RField<D>& field = system().w().rgrid(i);
-         begin = i*nMesh;
-         for (int k = 0; k < nMesh; k++) {
-            state[begin + k] = field[k];
-         }
+         slice.associate(state, i*nMesh, nMesh);
+         VecOp::eqV(slice, system().w().rgrid(i));
+         slice.dissociate();
       }
 
-      // Add elements associated with unit cell parameters (if any)
-      if (isFlexible()) {
+      // If flexible unit cell, also store unit cell parameters
+      if (isFlexible_) {
          UTIL_CHECK(nFlexibleParams() > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
-         begin = nMonomer*nMesh;
+         int begin = nMonomer*nMesh;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -211,9 +210,12 @@ namespace Rpc {
       int i, j, k, begin;
 
       // Initialize residual vector to zero
+      VecOp::eqS(resid, 0.0);
+      #if 0
       for (i = 0 ; i < n; ++i) {
          resid[i] = 0.0;
       }
+      #endif
 
       // Compute SCF residual vector elements
       for (i = 0; i < nMonomer; ++i) {
@@ -272,7 +274,7 @@ namespace Rpc {
       }
 
       // If flexible unit cell, then compute stress residuals
-      if (isFlexible()) {
+      if (isFlexible_) {
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -289,7 +291,7 @@ namespace Rpc {
          int counter = 0;
          for (i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               resid[begin + counter] = coeff * stress(i);
+               resid[begin + counter] = coeff * Iterator<D>::stress(i);
                counter++;
             }
          }
@@ -376,7 +378,7 @@ namespace Rpc {
       system().w().setRGrid(wFields);
 
       // If flexible, update unit cell parameters
-      if (isFlexible()) {
+      if (isFlexible_) {
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
@@ -407,8 +409,8 @@ namespace Rpc {
    template<int D>
    void AmIteratorGrid<D>::outputToLog()
    {
-      if (isFlexible() && verbose() > 1) {
-         double str;
+      if (isFlexible_ && AmIterTmplT::verbose() > 1) {
+         double res, str;
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
          const int nMonomer = system().mixture().nMonomer();
@@ -417,7 +419,8 @@ namespace Rpc {
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               str = - 1.0 * residual()[begin + counter] / scaleStress_;
+               res = AmIterTmplT::residual()[begin + counter];
+               str = - 1.0 * res / scaleStress_;
                Log::file()
                   << " Cell Param  " << i << " = "
                   << Dbl(unitCell.parameters()[i], 15)

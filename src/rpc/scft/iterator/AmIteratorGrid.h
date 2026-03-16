@@ -28,13 +28,13 @@ namespace Rpc {
    */
    template <int D>
    class AmIteratorGrid 
-    : public AmIteratorTmpl< Iterator<D>, DArray<double> >
+    : public AmIteratorTmpl< Iterator<D>, DRArray<double> >
    {
 
    public:
 
       /// Alias for type of state and residual vectors.
-      using VectorT = DArray<double>;
+      using VectorT = DRArray<double>;
 
       /// Alias for base class.
       using AmIterTmplT = AmIteratorTmpl< Iterator<D>, VectorT >;
@@ -66,24 +66,15 @@ namespace Rpc {
       void outputTimers(std::ostream& out) const override;
 
       // Inherited public member functions
-      using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
-      using Iterator<D>::setFlexibleParams;
       using Iterator<D>::nFlexibleParams;
-      using Iterator<D>::stress;
 
    protected:
 
       // Inherited protected members
-      using AmIterTmplT::verbose;
-      using AmIterTmplT::residual;
       using Iterator<D>::system;
-      using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
-      using ParamComposite::readOptional;
-      using ParamComposite::readParamCompositeOptional;
-      using ParamComposite::readOptionalFSArray;
 
       /**
       * Setup iterator just before entering iteration loop.
