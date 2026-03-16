@@ -139,6 +139,15 @@ namespace Rpc {
       */
       void outputToLog() override;
 
+      // Private convenience function
+
+      /**
+      * Compute the average value of an array.
+      *
+      * \param field  input array
+      */
+      double computeAverage(VectorT const & field) const;
+
    };
 
    // Explicit instantiation declarations

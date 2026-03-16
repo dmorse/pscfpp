@@ -39,7 +39,7 @@ namespace Rpg {
     : Iterator<D>(system)
    {
       ParamComposite::setClassName("AmIteratorGrid");
-      isSymmetric_ = false;
+      Iterator<D>::isSymmetric_ = false;
    }
 
    /*
@@ -68,17 +68,18 @@ namespace Rpg {
 
       // Read optional isFlexible boolean (true by default)
       isFlexible_ = 1;
-      readOptional(in, "isFlexible", isFlexible_);
+      ParamComposite::readOptional(in, "isFlexible", isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
       // then optionally overwrite with user input from param file
       if (isFlexible_) {
          flexibleParams_.clear();
-         for (int i = 0; i < np; i++) {
+         for (int i = 0; i < np; ++i) {
             flexibleParams_.append(true); // Set all values to true
          }
          // Read optional flexibleParams_ array to overwrite current array
-         readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
+         ParamComposite::readOptionalFSArray(in, "flexibleParams",
+                                             flexibleParams_, np);
          if (nFlexibleParams() == 0) {
             isFlexible_ = false;
          }
@@ -91,7 +92,7 @@ namespace Rpg {
 
       // Read optional scaleStress value
       scaleStress_ = 10.0;  // default
-      readOptional(in, "scaleStress", scaleStress_);
+      ParamComposite::readOptional(in, "scaleStress", scaleStress_);
 
       // Read optional mixing parameters (lambda, useLambdaRamp, r)
       AmIterTmplT::readMixingParameters(in);
@@ -163,7 +164,6 @@ namespace Rpg {
       VectorT slice;
       for (int i = 0; i < nMonomer; i++) {
          slice.associate(state, i*nMesh, nMesh);
-         //VecOp::eqV(state, system().w().rgrid(i), i*nMesh, 0, nMesh);
          VecOp::eqV(slice, system().w().rgrid(i));
          slice.dissociate();
       }
@@ -174,22 +174,20 @@ namespace Rpg {
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
-         DArray<cudaReal> tempH(nFlexibleParams());
+         DArray<cudaReal> paramsTmp(nFlexibleParams());
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               tempH[counter] = scaleStress_ * parameters[i];
+               paramsTmp[counter] = scaleStress_ * parameters[i];
                counter++;
             }
          }
-         UTIL_CHECK(counter == tempH.capacity());
+         UTIL_CHECK(counter == paramsTmp.capacity());
 
-         // Copy parameters to the end of the state array
-         VectorT tempD;
-         tempD.associate(state, nMonomer*nMesh, tempH.capacity());
-         tempD = tempH; // copy from host to device
-         UTIL_CHECK(tempD.isAssociated());
-         tempD.dissociate();
+         // Copy unit cell parameters to the end of the state array
+         slice.associate(state, nMonomer*nMesh, paramsTmp.capacity());
+         slice = paramsTmp; // copy from host to device, for GPU code
+         slice.dissociate();
       }
    }
 
@@ -211,7 +209,7 @@ namespace Rpg {
       const int n = nElements();
       UTIL_CHECK(resid.capacity() == n);
 
-      // Initialize residual vector to zero. 
+      // Initialize residual vector to zero.
       VecOp::eqS(resid, 0.0);
 
       // Array of VectorT arrays associated with slices of resid.
@@ -235,7 +233,8 @@ namespace Rpg {
       if (system().mask().hasData()) {
          double coeff = -1.0 / interaction_.sumChiInverse();
          for (int i = 0; i < nMonomer; ++i) {
-            VecOp::addEqVc(residSlices[i], system().mask().rgrid(), coeff);
+            VecOp::addEqVc(residSlices[i], system().mask().rgrid(), 
+                           coeff);
          }
       }
 
@@ -265,14 +264,23 @@ namespace Rpg {
 
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
+
+         // Combined -1 factor and stress scaling here. This is okay:
+         // - residuals only show up as dot products (U, v, norm)
+         //   or with their absolute value taken (max), so the
+         //   sign on a given residual vector element is not relevant
+         //   as long as it is consistent across all vectors
+         // - The scaling is applied here and to the unit cell param
+         //   storage, so that updating is done on the same scale,
+         //   and then undone right before passing to the unit cell.
+
+         const double coeff = -1.0 * scaleStress_;
          const int nParam = system().domain().unitCell().nParameter();
          HostDArray<cudaReal> stressH(nFlexibleParams());
-
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               double str = stress(i);
-               stressH[counter] = -1 * scaleStress_ * str;
+               stressH[counter] = coeff * Iterator<D>::stress(i);
                counter++;
             }
          }
