@@ -13,6 +13,7 @@
 // Forward declarations
 namespace Util {
    template <typename T> class Array;
+   template <typename T> class DArray;
 }
 namespace Pscf {
    class Interaction;
@@ -168,8 +169,11 @@ namespace Rpc {
       using WaveList = Prdc::Cpu::WaveList<D>;
 
       using VecRandom = CpuVecRandom;
-      using RealArray = Array<double>;
-      using CmplxArray = Array<fftw_complex>;
+      // using RealArray = Array<double>;
+      // using CmplxArray = Array<fftw_complex>;
+
+      using Real = double;
+      template <typename T> using HostArray = Util::DArray<T>;
 
    };
 

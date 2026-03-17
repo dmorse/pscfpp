@@ -15,6 +15,7 @@ namespace Pscf {
    class Interaction;
    class CudaVecRandom;
    template <typename T> class DeviceArray;
+   template <typename T> class HostDArray;
    namespace Prdc {
       class Environment;
       namespace Cuda {
@@ -154,10 +155,11 @@ namespace Rpg {
       using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;
       using WaveList = Prdc::Cuda::WaveList<D>;
 
-      using VecRandom = CudaVecRandom;
-      using RealArray = DeviceArray<cudaReal>;
-      using CmplxArray = DeviceArray<cudaComplex>;
+      using VecRandom = Pscf::CudaVecRandom;
 
+      using Real = Pscf::cudaReal;
+
+      template <typename T> using HostArray = Pscf::HostDArray<T>;
 
    };
 
