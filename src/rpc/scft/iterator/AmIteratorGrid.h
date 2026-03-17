@@ -138,6 +138,10 @@ namespace Rpc {
       */
       void outputToLog() override;
 
+      // Private type aliases
+      using RealT = double;
+      template <typename T> using HostArrayT = DArray<T>;
+
    };
 
    // Explicit instantiation declarations

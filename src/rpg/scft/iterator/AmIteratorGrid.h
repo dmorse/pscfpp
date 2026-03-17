@@ -105,7 +105,7 @@ namespace Rpg {
       /// Scale factor for stress residual elements
       double scaleStress_;
 
-      // Private virtual functions that interact with parent system
+      // Private overridden virtual functions 
 
       /** 
       * Compute and return the number of elements in the residual vector.
@@ -150,8 +150,11 @@ namespace Rpg {
       */
       void outputToLog() override;
 
-      // --- Private member function specific to this implementation --- 
-      
+      // Private non-inherited members 
+ 
+      using RealT = cudaReal;
+      // template <typename T> using HostArrayT = HostDArray<T>;
+
       /**
       * Calculate the average value of an array.
       * 

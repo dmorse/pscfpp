@@ -175,7 +175,7 @@ namespace Rpc {
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
-         DArray<double> paramsTmp(nFlex);
+         HostArrayT<RealT> paramsTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -205,12 +205,14 @@ namespace Rpc {
    template <int D>
    void AmIteratorGrid<D>::getResidual(VectorT& resid)
    {
-      // Constants
+      // Precondition 
       const int n = nElements();
       UTIL_CHECK(resid.capacity() == n);
+
+      // Constants
+      const RealT shift = -1.0 / interaction_.sumChiInverse();
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
-      const double shift = -1.0 / interaction_.sumChiInverse();
       const bool hasHext = system().h().hasData();
       const bool hasMask = system().mask().hasData();
       const bool isCanonical = system().mixture().isCanonical();
@@ -220,7 +222,7 @@ namespace Rpc {
 
       // Compute field residual elements
       VectorT slice;
-      double chi, p, average;
+      RealT chi, p, average;
       for (int i = 0; i < nMonomer; ++i) {
          slice.associate(resid, i*nMesh, nMesh);
 
@@ -247,7 +249,7 @@ namespace Rpc {
          // If canonical ensemble, subtract average from residual slice
          if (isCanonical) {
             average = Reduce::sum(slice);
-            average /= double(nMesh);
+            average /= RealT(nMesh);
             VecOp::subEqS(slice, average);
          }
 
@@ -266,10 +268,10 @@ namespace Rpc {
          //   storage, so that updating is done on the same scale,
          //   and then undone right before passing to the unit cell.
 
-         const double scale = -1.0 * scaleStress_;
+         const RealT scale = -1.0 * scaleStress_;
          const int nParam = system().domain().unitCell().nParameter();
          const int nFlex = Iterator<D>::nFlexibleParams();
-         DArray<double> stressTmp(nFlex);
+         HostArrayT<RealT> stressTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
@@ -320,23 +322,23 @@ namespace Rpc {
       if (system().mixture().isCanonical()) {
 
          // Subtract spatial average from each w field
-         double wAve;
+         RealT wAve;
          for (int i = 0; i < nMonomer; ++i) {
             wAve = Reduce::sum(wFields[i]);
-            wAve /= double(nMesh);
+            wAve /= RealT(nMesh);
             VecOp::subEqS(wFields[i], wAve);
          }
 
          // Compute spatial averages of all concentration fields
-         DArray<double> cAve;
+         DArray<RealT> cAve;
          cAve.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
             cAve[i] = Reduce::sum(system().c().rgrid(i));
-            cAve[i] /= double(nMesh);
+            cAve[i] /= RealT(nMesh);
          }
 
          // Add average values arising from interactions
-         double chi;
+         RealT chi;
          for (int i = 0; i < nMonomer; ++i) {
             wAve = 0.0;
             for (int j = 0; j < nMonomer; ++j) {
@@ -348,10 +350,10 @@ namespace Rpc {
 
          // If external fields exist, add their spatial averages
          if (system().h().hasData()) {
-            double hAve;
+            RealT hAve;
             for (int i = 0; i < nMonomer; ++i) {
                hAve = Reduce::sum(system().h().rgrid(i));
-               hAve /= double(nMesh);
+               hAve /= RealT(nMesh);
                VecOp::addEqS(wFields[i], hAve);
             }
          }
@@ -370,18 +372,16 @@ namespace Rpc {
          parameters = domain.unitCell().parameters();
 
          // Copy parameter entries from newState to a local array
-         DArray<double> paramTmp(nFlex);
+         HostArrayT<RealT> paramTmp(nFlex);
          slice.associate(newState, nMonomer*nMesh, nFlex);
          paramTmp = slice;
          slice.dissociate();
 
          // Reset any parameters that are flexible
-         double scale = 1.0 / scaleStress_;
-         //const int begin = nMonomer*nMesh;
+         RealT scale = 1.0 / scaleStress_;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               //parameters[i] = scale * newState[begin + counter];
                parameters[i] = scale * paramTmp[counter];
                counter++;
             }
@@ -401,7 +401,7 @@ namespace Rpc {
    void AmIteratorGrid<D>::outputToLog()
    {
       if (isFlexible_ && AmIterTmplT::verbose() > 1) {
-         double res, str;
+         RealT res, str;
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
          const int nMonomer = system().mixture().nMonomer();
