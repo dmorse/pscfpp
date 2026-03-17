@@ -67,7 +67,6 @@ namespace Rpc {
 
       // Inherited public member functions
       using Iterator<D>::flexibleParams;
-      using Iterator<D>::nFlexibleParams;
 
    protected:
 
@@ -138,15 +137,6 @@ namespace Rpc {
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
-
-      // Private convenience function
-
-      /**
-      * Compute the average value of an array.
-      *
-      * \param field  input array
-      */
-      double computeAverage(VectorT const & field) const;
 
    };
 

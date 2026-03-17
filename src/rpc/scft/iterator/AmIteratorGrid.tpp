@@ -80,7 +80,7 @@ namespace Rpc {
          // Read optional flexibleParams_ array to overwrite current array
          ParamComposite::readOptionalFSArray(in, "flexibleParams",
                                              flexibleParams_, np);
-         if (nFlexibleParams() == 0) {
+         if (Iterator<D>::nFlexibleParams() == 0) {
             isFlexible_ = false;
          }
       } else { // isFlexible_ = false
@@ -137,7 +137,7 @@ namespace Rpc {
 
       int nEle = nMonomer*nMesh;
       if (isFlexible_) {
-         nEle += nFlexibleParams();
+         nEle += Iterator<D>::nFlexibleParams();
       }
       return nEle;
    }
@@ -170,11 +170,12 @@ namespace Rpc {
 
       // If flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
-         UTIL_CHECK(nFlexibleParams() > 0);
+         int nFlex = Iterator<D>::nFlexibleParams();
+         UTIL_CHECK(nFlex > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
-         DArray<double> paramsTmp(nFlexibleParams());
+         DArray<double> paramsTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -204,104 +205,53 @@ namespace Rpc {
    template <int D>
    void AmIteratorGrid<D>::getResidual(VectorT& resid)
    {
-      const int nMonomer = system().mixture().nMonomer();
-      const int nMesh = system().domain().mesh().size();
+      // Constants
       const int n = nElements();
       UTIL_CHECK(resid.capacity() == n);
-
-      // Local variables
+      const int nMonomer = system().mixture().nMonomer();
+      const int nMesh = system().domain().mesh().size();
+      const double shift = -1.0 / interaction_.sumChiInverse();
+      const bool hasHext = system().h().hasData();
+      const bool hasMask = system().mask().hasData();
+      const bool isCanonical = system().mixture().isCanonical();
 
       // Initialize residual vector to zero
       VecOp::eqS(resid, 0.0);
 
-      // Array of VectorT arrays associated with slices of resid
-      DArray<VectorT> residSlices;
-      residSlices.allocate(nMonomer);
+      // Compute field residual elements
+      VectorT slice;
+      double chi, p, average;
       for (int i = 0; i < nMonomer; ++i) {
-        residSlices[i].associate(resid, i*nMesh, nMesh);
-      }
+         slice.associate(resid, i*nMesh, nMesh);
 
-      // Compute SCF residual vector elements
-      double chi, p;
-      int begin;
-      //int k;
-      for (int i = 0; i < nMonomer; ++i) {
-         //begin = i*nMesh;
+         // Matrix products
          for (int j = 0; j < nMonomer; ++j) {
-
-            RField<D> const & c = system().c().rgrid(j);
             chi = interaction_.chi(i,j);
-            VecOp::addEqVc(residSlices[i], c, chi);
-
-            RField<D> const & w = system().w().rgrid(j);
             p = interaction_.p(i,j);
-            VecOp::addEqVc(residSlices[i], w, -1.0*p);
-
-            if (system().h().hasData()) {
-               RField<D> const & h = system().h().rgrid(j);
-               VecOp::addEqVc(residSlices[i], h, p);
+            VecOp::addEqVc(slice, system().c().rgrid(j), chi);
+            VecOp::addEqVc(slice, system().w().rgrid(j), -1.0*p);
+            if (hasHext) {
+               VecOp::addEqVc(slice, system().h().rgrid(j), p);
             }
-
-            #if 0
-            if (system().h().hasData()) {
-               RField<D> const & h = system().h().rgrid(j);
-               for (k = 0; k < nMesh; ++k) {
-                  resid[begin + k] += chi*c[k] + p*(h[k] - w[k]) ;
-               }
-            } else {
-               for (k = 0; k < nMesh; ++k) {
-                  resid[begin + k] += chi*c[k] - p*w[k];
-               }
-            }
-            #endif
          }
-      }
 
-      // Add term proportional to sum of all concentrations
-      double shift = -1.0 / interaction_.sumChiInverse();
-      if (system().mask().hasData()) {
-         RField<D> const & mask = system().mask().rgrid();
-         for (int i = 0; i < nMonomer; ++i) {
-            VecOp::addEqVc(residSlices[i], mask, shift);
-            #if 0
-            begin = i*nMesh;
-            for (k = 0; k < nMesh; ++k) {
-               resid[begin + k] += shift*mask[k];
+         // Term proportional to required sum of concentrations
+         if (hasMask) {
+            VecOp::addEqVc(slice, system().mask().rgrid(), shift);
+         } else {
+            if (!isCanonical) {
+               VecOp::addEqS(slice, shift);
             }
-            #endif
          }
-      } else {
-         for (int i = 0; i < nMonomer; ++i) {
-            VecOp::addEqS(residSlices[i], shift);
-            #if 0
-            begin = i*nMesh;
-            for (k = 0; k < nMesh; ++k) {
-               resid[begin + k] += shift;
-            }
-            #endif
-         }
-      }
 
-      // If system is canonical, set all spatial averages to zero
-      if (system().mixture().isCanonical()) {
-         double average;
-         for (int i = 0; i < nMonomer; ++i) {
-
-            average = computeAverage(residSlices[i]);
-            VecOp::subEqS(residSlices[i], average);
-
-            #if 0
-            begin = i*nMesh;
-            average = 0.0;
-            for (k = 0; k < nMesh; ++k) {
-               average += resid[begin + k];
-            }
+         // If canonical ensemble, subtract average from residual slice
+         if (isCanonical) {
+            average = Reduce::sum(slice);
             average /= double(nMesh);
-            for (k = 0; k < nMesh; ++k) {
-               resid[begin + k] -= average;
-            }
-            #endif
+            VecOp::subEqS(slice, average);
          }
+
+         slice.dissociate();
       }
 
       // If flexible unit cell, then compute stress residuals
@@ -316,17 +266,24 @@ namespace Rpc {
          //   storage, so that updating is done on the same scale,
          //   and then undone right before passing to the unit cell.
 
-         const double coeff = -1.0 * scaleStress_;
+         const double scale = -1.0 * scaleStress_;
          const int nParam = system().domain().unitCell().nParameter();
-         begin = nMonomer*nMesh;
+         const int nFlex = Iterator<D>::nFlexibleParams();
+         DArray<double> stressTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               resid[begin + counter] = coeff * Iterator<D>::stress(i);
+               stressTmp[counter] = scale * Iterator<D>::stress(i);
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlexibleParams());
+         UTIL_CHECK(counter == nFlex);
+         UTIL_CHECK(resid.capacity() == (nMonomer * nMesh) + nFlex);
+
+         // Copy stress residuals to the end of the resid array
+         slice.associate(resid, nMonomer * nMesh, nFlex);
+         slice = stressTmp; // copy from host to device, for GPU code
+         slice.dissociate();
       }
 
    }
@@ -337,13 +294,9 @@ namespace Rpc {
    template <int D>
    void AmIteratorGrid<D>::update(VectorT& newState)
    {
-
-      // References to system components
+      // Constants and references to system components
       Domain<D> const & domain = system().domain();
       Mesh<D> const & mesh = domain.mesh();
-      IntVec<D> const & meshDimensions = mesh.dimensions();
-
-      // Constants
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = mesh.size();
 
@@ -351,17 +304,16 @@ namespace Rpc {
       DArray< RField<D> > wFields;
       wFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
-         wFields[i].allocate(meshDimensions);
+         wFields[i].allocate(mesh.dimensions());
          UTIL_CHECK(wFields[i].capacity() == nMesh);
       }
 
       // Copy new fields from newState vector to wFields container
-      int begin;
+      VectorT slice;
       for (int i = 0; i < nMonomer; i++) {
-         begin = i*nMesh;
-         for (int k = 0; k < nMesh; k++) {
-            wFields[i][k] = newState[begin + k];
-         }
+         slice.associate(newState, i*nMesh, nMesh);
+         VecOp::eqV(wFields[i], slice);
+         slice.dissociate();
       }
 
       // If canonical, explicitly set homogeneous field components
@@ -376,14 +328,14 @@ namespace Rpc {
          }
 
          // Compute spatial averages of all concentration fields
-         VectorT cAve;
+         DArray<double> cAve;
          cAve.allocate(nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
             cAve[i] = Reduce::sum(system().c().rgrid(i));
             cAve[i] /= double(nMesh);
          }
 
-         // Add average value arising from interactions
+         // Add average values arising from interactions
          double chi;
          for (int i = 0; i < nMonomer; ++i) {
             wAve = 0.0;
@@ -410,23 +362,31 @@ namespace Rpc {
 
       // If flexible, update unit cell parameters
       if (isFlexible_) {
+         const int nParam = domain.unitCell().nParameter();
+         const int nFlex = Iterator<D>::nFlexibleParams();
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
          parameters = domain.unitCell().parameters();
 
+         // Copy parameter entries from newState to a local array
+         DArray<double> paramTmp(nFlex);
+         slice.associate(newState, nMonomer*nMesh, nFlex);
+         paramTmp = slice;
+         slice.dissociate();
+
          // Reset any parameters that are flexible
-         const int nParam = domain.unitCell().nParameter();
-         double coeff = 1.0 / scaleStress_;
-         const int begin = nMonomer*nMesh;
+         double scale = 1.0 / scaleStress_;
+         //const int begin = nMonomer*nMesh;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               parameters[i] = coeff * newState[begin + counter];
+               //parameters[i] = scale * newState[begin + counter];
+               parameters[i] = scale * paramTmp[counter];
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlexibleParams());
+         UTIL_CHECK(counter == nFlex);
 
          // Set system unit cell parameters
          system().setUnitCell(parameters);
@@ -463,12 +423,6 @@ namespace Rpc {
          }
       }
    }
-
-   // Private member function
-
-   template <int D>
-   double AmIteratorGrid<D>::computeAverage(VectorT const & field) const
-   {  return Reduce::sum(field) / double(field.capacity()); }
 
 }
 }
