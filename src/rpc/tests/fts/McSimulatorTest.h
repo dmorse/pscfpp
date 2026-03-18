@@ -122,17 +122,45 @@ public:
 
    }
 
+   void testMcSimulateBdMoveDiblocks()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testMcSimulateBdMoveDiblocks.log");
+      
+      System<3> system;
+      initSystem(system, "in/param_system_disordered");
+      
+      McSimulator<3> simulator(system);
+      initSimulator(simulator, "in/param_McSimulator_BdMove");
+      
+      system.w().readRGrid("in/w_dis.rf");
+      simulator.compressor().compress();
+      simulator.simulate(50);
+      system.w().writeRGrid("out/w_mc_diblock_bdMove.rf");
+
+      // Read reference field
+      DArray< RField<3> > rf_0;
+      UnitCell<3> unitCell;
+      readRGridFields(system,"in/w_mc_diblock_bdMove_ref.rf", rf_0, unitCell);
+
+      // Compare with reference fields
+      RFieldComparison<3> comparison;
+      comparison.compare(rf_0, system.w().rgrid());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
+
+   }
+
    void testMcSimulateShiftDiblocks()
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateShiftDiblocks.log");
-
+      
       System<3> system;
       initSystem(system, "in/param_system_disordered");
-
+      
       McSimulator<3> simulator(system);
-      initSimulator(simulator, "in/param_McSimulator_Shift");
-
+      initSimulator(simulator, "in/param_McSimulator_ShiftMove");
+      
       system.w().readRGrid("in/w_dis.rf");
       simulator.compressor().compress();
       simulator.simulate(50);
@@ -182,7 +210,8 @@ public:
 TEST_BEGIN(McSimulatorTest)
 TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
-//TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
+TEST_ADD(McSimulatorTest, testMcSimulateBdMoveDiblocks)
+TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
 TEST_END(McSimulatorTest)
 
 #endif
