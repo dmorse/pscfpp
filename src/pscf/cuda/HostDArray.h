@@ -28,8 +28,8 @@ namespace Pscf {
    * an assignment operation that allows assignment from the other, 
    * which silently copies the underlying arrays between device and 
    * host memory. Additionally, a method HostDArray::copySlice is
-   * provided, which populates a HostDArray with a slice of the 
-   * data from a larger DeviceArray.
+   * provided, which populates a HostDArray with a slice of a larger
+   * DeviceArray.
    *
    * Otherwise, this class is identical to Util::DArray, with the
    * addition of an allocating constructor.

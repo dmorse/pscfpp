@@ -16,11 +16,11 @@
 #include <prdc/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
-#include <prdc/cuda/resources.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/iterator/NanException.h>
 #include <util/global.h>
 #include <cmath>
+
 
 namespace Pscf {
 namespace Rpg {
@@ -150,7 +150,7 @@ namespace Rpg {
    {  return system().w().hasData(); }
 
    /*
-   * Get the current w fields and lattice parameters.
+   * Get the current state vector (w fields and lattice parameters).
    */
    template <int D>
    void AmIteratorGrid<D>::getCurrent(VectorT& state)
@@ -170,11 +170,12 @@ namespace Rpg {
 
       // If flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
-         UTIL_CHECK(nFlexibleParams() > 0);
+         int nFlex = Iterator<D>::nFlexibleParams();
+         UTIL_CHECK(nFlex > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
-         DArray<cudaReal> paramsTmp(nFlexibleParams());
+         DArray<cudaReal> paramsTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -182,7 +183,7 @@ namespace Rpg {
                counter++;
             }
          }
-         UTIL_CHECK(counter == paramsTmp.capacity());
+         UTIL_CHECK(counter == nFlex);
 
          // Copy unit cell parameters to the end of the state array
          slice.associate(state, nMonomer*nMesh, paramsTmp.capacity());
@@ -289,111 +290,6 @@ namespace Rpg {
 
    }
 
-   #if 0
-   /*
-   * Compute the residual for the current system state.
-   */
-   template <int D>
-   void AmIteratorGrid<D>::getResidual(VectorT& resid)
-   {
-      const int nMonomer = system().mixture().nMonomer();
-      const int nMesh = system().domain().mesh().size();
-      const int n = nElements();
-      UTIL_CHECK(resid.capacity() == n);
-
-      // Initialize residual vector to zero.
-      VecOp::eqS(resid, 0.0);
-
-      // Array of VectorT arrays associated with slices of resid.
-      // one VectorT array per monomer species, each of size nMesh.
-      DArray<VectorT> residSlices;
-      residSlices.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; i++) {
-         residSlices[i].associate(resid, i*nMesh, nMesh);
-      }
-
-      // Compute SCF residuals
-      for (int i = 0; i < nMonomer; i++) {
-         for (int j = 0; j < nMonomer; j++) {
-            VecOp::addVcVcVc(residSlices[i], residSlices[i], 1.0,
-                             system().c().rgrid(j), interaction_.chi(i, j),
-                             system().w().rgrid(j), -interaction_.p(i, j));
-         }
-      }
-
-      // If iterator has mask, account for it in residual values
-      if (system().mask().hasData()) {
-         double coeff = -1.0 / interaction_.sumChiInverse();
-         for (int i = 0; i < nMonomer; ++i) {
-            VecOp::addEqVc(residSlices[i], system().mask().rgrid(), 
-                           coeff);
-         }
-      }
-
-      // If iterator has external fields, account for them in the values
-      // of the residuals
-      if (system().h().hasData()) {
-         for (int i = 0; i < nMonomer; ++i) {
-            for (int j = 0; j < nMonomer; ++j) {
-               double p = interaction_.p(i,j);
-               VecOp::addEqVc(residSlices[i], system().h().rgrid(j), p);
-            }
-         }
-      }
-
-      // If ensemble is not canonical, account for incompressibility.
-      if (!system().mixture().isCanonical()) {
-         cudaReal factor = 1.0 / interaction_.sumChiInverse();
-         VecOp::subEqS(resid, factor, 0, nMonomer*nMesh);
-      } else {
-         for (int i = 0; i < nMonomer; i++) {
-            // Find current average
-            cudaReal average = findAverage(residSlices[i]);
-            // subtract out average to set residual average to zero
-            VecOp::subEqS(residSlices[i], average);
-         }
-      }
-
-      // If variable unit cell, compute stress residuals
-      if (isFlexible_) {
-
-         // Combined -1 factor and stress scaling here. This is okay:
-         // - residuals only show up as dot products (U, v, norm)
-         //   or with their absolute value taken (max), so the
-         //   sign on a given residual vector element is not relevant
-         //   as long as it is consistent across all vectors
-         // - The scaling is applied here and to the unit cell param
-         //   storage, so that updating is done on the same scale,
-         //   and then undone right before passing to the unit cell.
-
-         const double coeff = -1.0 * scaleStress_;
-         const int nParam = system().domain().unitCell().nParameter();
-         HostDArray<cudaReal> stressH(nFlexibleParams());
-         int counter = 0;
-         for (int i = 0; i < nParam; i++) {
-            if (flexibleParams_[i]) {
-               stressH[counter] = coeff * Iterator<D>::stress(i);
-               counter++;
-            }
-         }
-         UTIL_CHECK(counter == stressH.capacity());
-
-         VectorT stressD;
-         stressD.associate(resid, nMonomer*nMesh, stressH.capacity());
-         stressD = stressH; // copy from host to device
-         UTIL_CHECK(stressD.isAssociated());
-         stressD.dissociate();
-      }
-
-      // Dissociate elements of residSlices from resid array
-      for (int i = 0; i < nMonomer; i++) {
-         UTIL_CHECK(residSlices[i].isAssociated());
-         residSlices[i].dissociate();
-      }
-
-   }
-   #endif
-
    /*
    * Update the current system field vector.
    */
@@ -498,6 +394,149 @@ namespace Rpg {
 
    }
 
+   /*
+   * Output relevant system details to the iteration log file.
+   */
+   template<int D>
+   void AmIteratorGrid<D>::outputToLog()
+   {
+      if (isFlexible_ && AmIterTmplT::verbose() > 1) {
+         UnitCell<D> const & unitCell = system().domain().unitCell();
+         const int nParam = unitCell.nParameter();
+         const int nFlex = Iterator<D>::nFlexibleParams();
+         const int nMonomer = system().mixture().nMonomer();
+         const int nMesh = system().domain().mesh().size();
+
+         // Transfer stress residuals from device to host
+         HostDArray<cudaReal> stressTmp(nFlex);
+         stressTmp.copySlice(residual(), nMonomer*nMesh);
+
+         int counter = 0;
+         for (int i = 0; i < nParam; i++) {
+            if (flexibleParams_[i]) {
+               double str = stressTmp[counter] / (-1.0 * scaleStress_);
+               Log::file()
+                   << " Cell Param  " << i << " = "
+                   << Dbl(unitCell.parameters()[i], 15)
+                   << " , stress = "
+                   << Dbl(str, 15)
+                   << "\n";
+               counter++;
+            }
+         }
+      }
+   }
+
+   // Private member functions specific to this implementation
+
+   // Calculate the average value of an array.
+   template<int D>
+   cudaReal AmIteratorGrid<D>::findAverage(VectorT const & field)
+   {  return Reduce::sum(field) / (double) field.capacity(); }
+
+   #if 0
+   /*
+   * Compute the residual for the current system state.
+   */
+   template <int D>
+   void AmIteratorGrid<D>::getResidual(VectorT& resid)
+   {
+      const int nMonomer = system().mixture().nMonomer();
+      const int nMesh = system().domain().mesh().size();
+      const int n = nElements();
+      UTIL_CHECK(resid.capacity() == n);
+
+      // Initialize residual vector to zero.
+      VecOp::eqS(resid, 0.0);
+
+      // Array of VectorT arrays associated with slices of resid.
+      // one VectorT array per monomer species, each of size nMesh.
+      DArray<VectorT> residSlices;
+      residSlices.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; i++) {
+         residSlices[i].associate(resid, i*nMesh, nMesh);
+      }
+
+      // Compute SCF residuals
+      for (int i = 0; i < nMonomer; i++) {
+         for (int j = 0; j < nMonomer; j++) {
+            VecOp::addVcVcVc(residSlices[i], residSlices[i], 1.0,
+                             system().c().rgrid(j), interaction_.chi(i, j),
+                             system().w().rgrid(j), -interaction_.p(i, j));
+         }
+      }
+
+      // If iterator has mask, account for it in residual values
+      if (system().mask().hasData()) {
+         double coeff = -1.0 / interaction_.sumChiInverse();
+         for (int i = 0; i < nMonomer; ++i) {
+            VecOp::addEqVc(residSlices[i], system().mask().rgrid(), 
+                           coeff);
+         }
+      }
+
+      // If iterator has external fields, account for them in the values
+      // of the residuals
+      if (system().h().hasData()) {
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int j = 0; j < nMonomer; ++j) {
+               double p = interaction_.p(i,j);
+               VecOp::addEqVc(residSlices[i], system().h().rgrid(j), p);
+            }
+         }
+      }
+
+      // If ensemble is not canonical, account for incompressibility.
+      if (!system().mixture().isCanonical()) {
+         cudaReal factor = 1.0 / interaction_.sumChiInverse();
+         VecOp::subEqS(resid, factor, 0, nMonomer*nMesh);
+      } else {
+         for (int i = 0; i < nMonomer; i++) {
+            cudaReal average = findAverage(residSlices[i]);
+            VecOp::subEqS(residSlices[i], average);
+         }
+      }
+
+      // If variable unit cell, compute stress residuals
+      if (isFlexible_) {
+
+         // Combined -1 factor and stress scaling here. This is okay:
+         // - residuals only show up as dot products (U, v, norm)
+         //   or with their absolute value taken (max), so the
+         //   sign on a given residual vector element is not relevant
+         //   as long as it is consistent across all vectors
+         // - The scaling is applied here and to the unit cell param
+         //   storage, so that updating is done on the same scale,
+         //   and then undone right before passing to the unit cell.
+
+         const double coeff = -1.0 * scaleStress_;
+         const int nParam = system().domain().unitCell().nParameter();
+         HostDArray<cudaReal> stressH(nFlexibleParams());
+         int counter = 0;
+         for (int i = 0; i < nParam; i++) {
+            if (flexibleParams_[i]) {
+               stressH[counter] = coeff * Iterator<D>::stress(i);
+               counter++;
+            }
+         }
+         UTIL_CHECK(counter == stressH.capacity());
+
+         VectorT stressD;
+         stressD.associate(resid, nMonomer*nMesh, stressH.capacity());
+         stressD = stressH; // copy from host to device
+         UTIL_CHECK(stressD.isAssociated());
+         stressD.dissociate();
+      }
+
+      // Dissociate elements of residSlices from resid array
+      for (int i = 0; i < nMonomer; i++) {
+         UTIL_CHECK(residSlices[i].isAssociated());
+         residSlices[i].dissociate();
+      }
+
+   }
+   #endif
+
    #if 0
    /*
    * Update the system with a new trial field vector.
@@ -568,45 +607,6 @@ namespace Rpg {
       }
    }
    #endif
-
-   /*
-   * Output relevant system details to the iteration log file.
-   */
-   template<int D>
-   void AmIteratorGrid<D>::outputToLog()
-   {
-      if (isFlexible_ && verbose() > 1) {
-         UnitCell<D> const & unitCell = system().domain().unitCell();
-         const int nParam = unitCell.nParameter();
-         const int nMonomer = system().mixture().nMonomer();
-         const int nMesh = system().domain().mesh().size();
-
-         // Transfer stress residuals from device to host
-         HostDArray<cudaReal> tempH(nFlexibleParams());
-         tempH.copySlice(residual(), nMonomer*nMesh);
-
-         int counter = 0;
-         for (int i = 0; i < nParam; i++) {
-            if (flexibleParams_[i]) {
-               double str = tempH[counter] / (-1.0 * scaleStress_);
-               Log::file()
-                   << " Cell Param  " << i << " = "
-                   << Dbl(unitCell.parameters()[i], 15)
-                   << " , stress = "
-                   << Dbl(str, 15)
-                   << "\n";
-               counter++;
-            }
-         }
-      }
-   }
-
-   // Private member functions specific to this implementation
-
-   // Calculate the average value of an array.
-   template<int D>
-   cudaReal AmIteratorGrid<D>::findAverage(VectorT const & field)
-   {  return Reduce::sum(field) / (double) field.capacity(); }
 
 }
 }
