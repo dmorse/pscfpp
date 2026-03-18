@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/system/System.h>
+#include <rpg/field/Domain.h>
 #include <rpg/scft/ScftThermo.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>

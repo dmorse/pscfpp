@@ -10,9 +10,10 @@
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
-
+#include <rpc/field/Domain.h>
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
+#include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
 
 #include <util/tests/LogFileUnitTest.h>

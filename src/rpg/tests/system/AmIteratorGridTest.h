@@ -5,8 +5,14 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/system/System.h>
+#include <rpg/scft/ScftThermo.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
+#include <rpg/field/CFields.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldComparison.h>
+#include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>

@@ -160,7 +160,7 @@ namespace Rpg {
       * 
       * \param field  input array
       */
-      cudaReal findAverage(VectorT const & field);
+      RealT findAverage(VectorT const & field);
 
    };
 
