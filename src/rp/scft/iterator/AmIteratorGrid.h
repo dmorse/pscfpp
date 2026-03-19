@@ -1,5 +1,5 @@
-#ifndef RPG_AM_ITERATOR_GRID_H
-#define RPG_AM_ITERATOR_GRID_H
+#ifndef RP_AM_ITERATOR_GRID_H
+#define RP_AM_ITERATOR_GRID_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,13 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorDev.h"                   // base class
+#include <pscf/iterator/AmIteratorTmpl.h>    // base class
 #include <pscf/iterator/AmbdInteraction.h>   // member
+#include <iostream>
 
 namespace Pscf {
-namespace Rpg {
-
-   template <int D> class System;
+namespace Rp {
 
    using namespace Util;
 
@@ -23,27 +22,27 @@ namespace Rpg {
    *
    * \see \ref rp_AmIteratorGrid_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
-   * \ingroup Rpg_Scft_Iterator_Module
+   * \ingroup Rp_Scft_Iterator_Module
    */
-   template <int D>
+   template <int D, class T>
    class AmIteratorGrid
-    : public AmIteratorTmpl<Iterator<D>, DeviceArray<cudaReal> >
+    : public AmIteratorTmpl< IteratorT, T::DRArray<T::Real> >
    {
 
    public:
 
       /// Alias for type of state and residual vectors.
-      using VectorT = DeviceArray<cudaReal>;
+      using VectorT = DRArray<double>;
 
       /// Alias for base class.
-      using AmIterTmplT = AmIteratorTmpl< Iterator<D>, VectorT >;
+      using AmIterTmplT = AmIteratorTmpl< T::Iterator, T::DRArray<T::Real> >
 
       /**
       * Constructor.
       *
       * \param system  parent system object
       */
-      AmIteratorGrid(System<D>& system);
+      AmIteratorGrid(typename T::System& system);
 
       /**
       * Destructor.
@@ -67,9 +66,10 @@ namespace Rpg {
    protected:
 
       // Inherited protected members
-      using Iterator<D>::system;
-      using Iterator<D>::isFlexible_;
-      using Iterator<D>::flexibleParams_;
+      using IteratorT = typename T::Iterator;
+      using IteratorT::system;
+      using IteratorT::isFlexible_;
+      using IteratorT::flexibleParams_;
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -134,27 +134,12 @@ namespace Rpg {
       */
       void outputToLog() override;
 
-      // Private non-inherited members
-
-      using RealT = cudaReal;
-      // template <typename T> using HostArrayT = HostDArray<T>;
-
-      #if 0
-      /**
-      * Calculate the average value of an array.
-      *
-      * \param field  input array
-      */
-      RealT findAverage(VectorT const & field);
-      #endif
+      // Private type aliases
+      using RealT = double;
+      template <typename T> using HostArrayT = T::HostDArray;
 
    };
 
-   // Explicit instantiation declarations
-   extern template class AmIteratorGrid<1>;
-   extern template class AmIteratorGrid<2>;
-   extern template class AmIteratorGrid<3>;
-
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 #endif

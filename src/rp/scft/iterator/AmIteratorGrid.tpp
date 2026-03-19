@@ -1,5 +1,5 @@
-#ifndef RPC_AM_ITERATOR_GRID_TPP
-#define RPC_AM_ITERATOR_GRID_TPP
+#ifndef RP_AM_ITERATOR_GRID_TPP
+#define RP_AM_ITERATOR_GRID_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,50 +9,51 @@
 */
 
 #include "AmIteratorGrid.h"
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
+//#include <rpc/system/System.h>
+//#include <rpc/solvers/Mixture.h>
+//#include <rpc/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
-#include <prdc/cpu/RField.h>
-#include <pscf/cpu/VecOp.h>
-#include <pscf/cpu/Reduce.h>
+//#include <prdc/cpu/RField.h>
+//#include <pscf/cpu/VecOp.h>
+//#include <pscf/cpu/Reduce.h>
+#include <pscf/mesh/Mesh.h>
 #include <pscf/interaction/Interaction.h>
-//#include <pscf/iterator/NanException.h>
+#include <util/containers/DArray.h>
+#include <util/containers/FSArray.h>
 #include <util/global.h>
 #include <cmath>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
 
    // Public member functions
 
    /*
    * Constructor.
    */
-   template <int D>
-   AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
-    : Iterator<D>(system)
+   template <int D, class T>
+   AmIteratorGrid<D,T>::AmIteratorGrid(typename T::System& system)
+    : IteratorT(system)
    {
       ParamComposite::setClassName("AmIteratorGrid");
-      Iterator<D>::isSymmetric_ = false;
+      IteratorT::isSymmetric_ = false;
    }
 
    /*
    * Destructor.
    */
-   template <int D>
-   AmIteratorGrid<D>::~AmIteratorGrid()
+   template <int D, class T>
+   AmIteratorGrid<D,T>::~AmIteratorGrid()
    {}
 
    /*
    * Read parameter file block.
    */
-   template <int D>
-   void AmIteratorGrid<D>::readParameters(std::istream& in)
+   template <int D, class T>
+   void AmIteratorGrid<D,T>::readParameters(std::istream& in)
    {
       // Preconditions on unit cell
       UnitCell<D> const & unitCell = system().domain().unitCell();
@@ -79,7 +80,7 @@ namespace Rpc {
          // Read optional flexibleParams_ array to overwrite current array
          ParamComposite::readOptionalFSArray(in, "flexibleParams",
                                              flexibleParams_, np);
-         if (Iterator<D>::nFlexibleParams() == 0) {
+         if (IteratorT::nFlexibleParams() == 0) {
             isFlexible_ = false;
          }
       } else { // isFlexible_ = false
@@ -103,8 +104,8 @@ namespace Rpc {
    /*
    * Output timing results to log file.
    */
-   template <int D>
-   void AmIteratorGrid<D>::outputTimers(std::ostream& out) const
+   template <int D, class T>
+   void AmIteratorGrid<D,T>::outputTimers(std::ostream& out) const
    {
       out << "\n";
       out << "Iterator times contributions:\n";
@@ -116,8 +117,8 @@ namespace Rpc {
    /*
    * Setup before entering iteration loop.
    */
-   template <int D>
-   void AmIteratorGrid<D>::setup(bool isContinuation)
+   template <int D, class T>
+   void AmIteratorGrid<D,T>::setup(bool isContinuation)
    {
       AmIterTmplT::setup(isContinuation);
       interaction_.update(system().interaction());
@@ -128,15 +129,15 @@ namespace Rpc {
    /*
    * Compute the number of elements in the residual vector.
    */
-   template <int D>
-   int AmIteratorGrid<D>::nElements()
+   template <int D, class T>
+   int AmIteratorGrid<D,T>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
 
       int nEle = nMonomer*nMesh;
       if (isFlexible_) {
-         nEle += Iterator<D>::nFlexibleParams();
+         nEle += IteratorT::nFlexibleParams();
       }
       return nEle;
    }
@@ -144,15 +145,15 @@ namespace Rpc {
    /*
    * Check if the system has an initial guess.
    */
-   template <int D>
-   bool AmIteratorGrid<D>::hasInitialGuess()
+   template <int D, class T>
+   bool AmIteratorGrid<D,T>::hasInitialGuess()
    {  return system().w().hasData(); }
 
    /*
    * Get the current state vector (w fields and lattice parameters).
    */
-   template <int D>
-   void AmIteratorGrid<D>::getCurrent(VectorT& state)
+   template <int D, class T>
+   void AmIteratorGrid<D,T>::getCurrent(VectorT& state)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().domain().mesh().size();
@@ -169,7 +170,7 @@ namespace Rpc {
 
       // If flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
-         int nFlex = Iterator<D>::nFlexibleParams();
+         int nFlex = IteratorT::nFlexibleParams();
          UTIL_CHECK(nFlex > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
@@ -185,6 +186,7 @@ namespace Rpc {
          UTIL_CHECK(counter == nFlex);
 
          // Copy unit cell parameters to the end of the state array
+         //VecOp::eqV(state, paramsTmp, nMonomer*nMesh, 0, nFlex);
          slice.associate(state, nMonomer*nMesh, paramsTmp.capacity());
          slice = paramsTmp; // copy from host to device, for GPU code
          slice.dissociate();
@@ -194,15 +196,15 @@ namespace Rpc {
    /*
    * Perform the main system computation (solve the MDE).
    */
-   template <int D>
-   void AmIteratorGrid<D>::evaluate()
+   template <int D, class T>
+   void AmIteratorGrid<D,T>::evaluate()
    {  system().compute(isFlexible_); }
 
    /*
    * Compute the residual for the current system state.
    */
-   template <int D>
-   void AmIteratorGrid<D>::getResidual(VectorT& resid)
+   template <int D, class T>
+   void AmIteratorGrid<D,T>::getResidual(VectorT& resid)
    {
       // Precondition
       const int n = nElements();
@@ -269,12 +271,12 @@ namespace Rpc {
 
          const RealT scale = -1.0 * scaleStress_;
          const int nParam = system().domain().unitCell().nParameter();
-         const int nFlex = Iterator<D>::nFlexibleParams();
+         const int nFlex = IteratorT::nFlexibleParams();
          HostArrayT<RealT> stressTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               stressTmp[counter] = scale * Iterator<D>::stress(i);
+               stressTmp[counter] = scale * IteratorT::stress(i);
                counter++;
             }
          }
@@ -293,17 +295,17 @@ namespace Rpc {
    /*
    * Update the current system field vector.
    */
-   template <int D>
-   void AmIteratorGrid<D>::update(VectorT& newState)
+   template <int D, class T>
+   void AmIteratorGrid<D,T>::update(VectorT& newState)
    {
       // Constants and references to system components
-      Domain<D> const & domain = system().domain();
+      typename T::Domain const & domain = system().domain();
       Mesh<D> const & mesh = domain.mesh();
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = mesh.size();
 
       // Allocate wFields container
-      DArray< RField<D> > wFields;
+      DArray< RFieldT > wFields;
       wFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
          wFields[i].allocate(mesh.dimensions());
@@ -365,7 +367,7 @@ namespace Rpc {
       // If flexible, update unit cell parameters
       if (isFlexible_) {
          const int nParam = domain.unitCell().nParameter();
-         const int nFlex = Iterator<D>::nFlexibleParams();
+         const int nFlex = IteratorT::nFlexibleParams();
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
@@ -398,13 +400,13 @@ namespace Rpc {
    /*
    * Output relevant system details to the iteration log file.
    */
-   template <int D>
-   void AmIteratorGrid<D>::outputToLog()
+   template <int D, class T>
+   void AmIteratorGrid<D,T>::outputToLog()
    {
       if (isFlexible_ && AmIterTmplT::verbose() > 1) {
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
-         const int nFlex = Iterator<D>::nFlexibleParams();
+         const int nFlex = IteratorT::nFlexibleParams();
          const int nMonomer = system().mixture().nMonomer();
          const int nMesh = system().domain().mesh().size();
          const int begin = nMonomer*nMesh;

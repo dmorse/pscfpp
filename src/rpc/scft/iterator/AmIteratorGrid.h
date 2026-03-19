@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorBase.h"                      // base class
-#include <pscf/iterator/AmbdInteraction.h>       // member 
+#include "AmIteratorBase.h"                  // base class
+#include <pscf/iterator/AmbdInteraction.h>   // member
 
 namespace Pscf {
 namespace Rpc {
@@ -20,14 +20,13 @@ namespace Rpc {
 
    /**
    * Anderson Mixing iterator on grid (no space-group symmetry).
-   * 
-   * \see \ref rpc_AmIteratorGrid_page "Manual Page"
-   * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
    *
+   * \see \ref rp_AmIteratorGrid_page "Manual Page"
+   * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
    * \ingroup Rpc_Scft_Iterator_Module
    */
    template <int D>
-   class AmIteratorGrid 
+   class AmIteratorGrid
     : public AmIteratorTmpl< Iterator<D>, DRArray<double> >
    {
 
@@ -42,7 +41,7 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param system System object associated with this iterator.
+      * \param system  parent system object
       */
       AmIteratorGrid(System<D>& system);
 
@@ -65,9 +64,6 @@ namespace Rpc {
       */
       void outputTimers(std::ostream& out) const override;
 
-      // Inherited public member functions
-      using Iterator<D>::flexibleParams;
-
    protected:
 
       // Inherited protected members
@@ -87,10 +83,10 @@ namespace Rpc {
       /// Local copy of interaction, adapted for AMBD residual definition
       AmbdInteraction interaction_;
 
-      /// Scale factor for stress residual elements.
+      /// Scale factor for stress residual elements
       double scaleStress_;
 
-      // Private virtual functions that interact with parent system
+      // Private overridden virtual functions
 
       /**
       * Compute and return the number of elements in the residual vector.
@@ -107,14 +103,14 @@ namespace Rpc {
       /**
       * Get the current state vector (w fields and lattice parameters).
       *
-      * \param curr current state vector
+      * \param curr  current state vector (output)
       */
       void getCurrent(VectorT& curr) override;
 
       /**
-      * Have the system perform a computation using new field.
+      * Have the system perform a computation using new state.
       *
-      * Solves the modified diffusion equations, computes concentrations,
+      * Solves the modified diffusion equation, computes concentrations,
       * and optionally computes stress components.
       */
       void evaluate() override;
@@ -122,19 +118,19 @@ namespace Rpc {
       /**
       * Compute the residual vector.
       *
-      * \param resid current residual vector value
+      * \param resid  current residual vector (output)
       */
       void getResidual(VectorT& resid) override;
 
       /**
-      * Updates the system field with the new trial field.
+      * Update the system with a new state vector.
       *
-      * \param newGuess trial field vector
+      * \param newGuess  new state vector (input)
       */
       void update(VectorT& newGuess) override;
 
       /**
-      * Outputs relevant system details to the iteration log.
+      * Output relevant system details to the iteration log file.
       */
       void outputToLog() override;
 

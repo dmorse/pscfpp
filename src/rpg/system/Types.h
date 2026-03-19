@@ -157,9 +157,9 @@ namespace Rpg {
 
       using VecRandom = Pscf::CudaVecRandom;
 
-      using Real = Pscf::cudaReal;
-
+      template <typename T> using DRArray = Pscf::DeviceArray<T>;
       template <typename T> using HostArray = Pscf::HostDArray<T>;
+      using Real = Pscf::cudaReal;
 
    };
 

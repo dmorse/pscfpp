@@ -17,10 +17,9 @@
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 #include <pscf/interaction/Interaction.h>
-#include <pscf/iterator/NanException.h>
+//#include <pscf/iterator/NanException.h>
 #include <util/global.h>
 #include <cmath>
-
 
 namespace Pscf {
 namespace Rpg {
@@ -80,7 +79,7 @@ namespace Rpg {
          // Read optional flexibleParams_ array to overwrite current array
          ParamComposite::readOptionalFSArray(in, "flexibleParams",
                                              flexibleParams_, np);
-         if (nFlexibleParams() == 0) {
+         if (Iterator<D>::nFlexibleParams() == 0) {
             isFlexible_ = false;
          }
       } else { // isFlexible_ = false
@@ -104,7 +103,7 @@ namespace Rpg {
    /*
    * Output timing results to log file.
    */
-   template<int D>
+   template <int D>
    void AmIteratorGrid<D>::outputTimers(std::ostream& out) const
    {
       out << "\n";
@@ -137,7 +136,7 @@ namespace Rpg {
 
       int nEle = nMonomer*nMesh;
       if (isFlexible_) {
-         nEle += nFlexibleParams();
+         nEle += Iterator<D>::nFlexibleParams();
       }
       return nEle;
    }
@@ -175,7 +174,7 @@ namespace Rpg {
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
-         DArray<cudaReal> paramsTmp(nFlex);
+         DArray<RealT> paramsTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -205,7 +204,7 @@ namespace Rpg {
    template <int D>
    void AmIteratorGrid<D>::getResidual(VectorT& resid)
    {
-      // Precondition 
+      // Precondition
       const int n = nElements();
       UTIL_CHECK(resid.capacity() == n);
 
@@ -283,6 +282,7 @@ namespace Rpg {
          UTIL_CHECK(resid.capacity() == (nMonomer * nMesh) + nFlex);
 
          // Copy stress residuals to the end of the resid array
+         //VecOp::eqV(resid, stressTmp, nMonomer*nMesh, 0, nFlex);
          slice.associate(resid, nMonomer * nMesh, nFlex);
          slice = stressTmp; // copy from host to device, for GPU code
          slice.dissociate();
@@ -373,6 +373,7 @@ namespace Rpg {
 
          // Copy parameter entries from newState to a local array
          HostDArray<RealT> paramTmp(nFlex);
+         //VecOp::eqV(paramTmp, newState, 0, nMonomer*nMesh, nFlex);
          slice.associate(newState, nMonomer*nMesh, nFlex);
          paramTmp = slice;
          slice.dissociate();
@@ -397,7 +398,7 @@ namespace Rpg {
    /*
    * Output relevant system details to the iteration log file.
    */
-   template<int D>
+   template <int D>
    void AmIteratorGrid<D>::outputToLog()
    {
       if (isFlexible_ && AmIterTmplT::verbose() > 1) {
@@ -409,10 +410,10 @@ namespace Rpg {
          const int begin = nMonomer*nMesh;
 
          // Copy stress residuals to local array
-         DArray<cudaReal> stressTmp(nFlex);
+         DArray<RealT> stressTmp(nFlex);
          VecOp::eqV(stressTmp, AmIterTmplT::residual(), 0, begin, nFlex);
 
-         double res, str;
+         RealT res, str;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -431,12 +432,14 @@ namespace Rpg {
       }
    }
 
+   #if 0
    // Private member functions specific to this implementation
 
    // Calculate the average value of an array.
-   template<int D>
+   template <int D>
    cudaReal AmIteratorGrid<D>::findAverage(VectorT const & field)
    {  return Reduce::sum(field) / (double) field.capacity(); }
+   #endif
 
    #if 0
    /*
@@ -474,7 +477,7 @@ namespace Rpg {
       if (system().mask().hasData()) {
          double coeff = -1.0 / interaction_.sumChiInverse();
          for (int i = 0; i < nMonomer; ++i) {
-            VecOp::addEqVc(residSlices[i], system().mask().rgrid(), 
+            VecOp::addEqVc(residSlices[i], system().mask().rgrid(),
                            coeff);
          }
       }
