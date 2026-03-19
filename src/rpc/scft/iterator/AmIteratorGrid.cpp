@@ -5,14 +5,41 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorGrid.tpp"
+#include "AmIteratorGrid.h"
+#include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
+#include <prdc/cpu/RField.h>
+#include <pscf/cpu/VecOp.h>
+#include <pscf/cpu/Reduce.h>
 
+#include <rp/scft/iterator/AmIteratorGrid.tpp>
+
+// Constructor definition
 namespace Pscf {
-namespace Rpc {
+   namespace Rpc {
+  
+      template <int D>
+      AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
+       : Rp::AmIteratorGrid<D, Types<D> >(system)
+      {}
 
-   template class AmIteratorGrid<1>;
-   template class AmIteratorGrid<2>;
-   template class AmIteratorGrid<3>;
-
+   }
 }
+
+// Explicit instantiation definitions
+namespace Pscf {
+   template class AmIteratorTmpl< Rpc::Iterator<1>, DRArray<double> >;
+   template class AmIteratorTmpl< Rpc::Iterator<2>, DRArray<double> >;
+   template class AmIteratorTmpl< Rpc::Iterator<3>, DRArray<double> >;
+   namespace Rp {
+      template class AmIteratorGrid<1, Rpc::Types<1> >;
+      template class AmIteratorGrid<2, Rpc::Types<2> >;
+      template class AmIteratorGrid<3, Rpc::Types<3> >;
+   }
+   namespace Rpc {
+      template class AmIteratorGrid<1>;
+      template class AmIteratorGrid<2>;
+      template class AmIteratorGrid<3>;
+   }
 }

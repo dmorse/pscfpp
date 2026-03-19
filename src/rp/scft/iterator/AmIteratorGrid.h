@@ -26,16 +26,19 @@ namespace Rp {
    */
    template <int D, class T>
    class AmIteratorGrid
-    : public AmIteratorTmpl< IteratorT, T::DRArray<T::Real> >
+    : public AmIteratorTmpl< typename T::Iterator, typename T::Vector >
    {
 
    public:
 
+      /// Alias for Iterator type.
+      using IteratorT = typename T::Iterator;
+
       /// Alias for type of state and residual vectors.
-      using VectorT = DRArray<double>;
+      using VectorT = typename T::Vector;
 
       /// Alias for base class.
-      using AmIterTmplT = AmIteratorTmpl< T::Iterator, T::DRArray<T::Real> >
+      using AmIterTmplT = AmIteratorTmpl< IteratorT, VectorT >;
 
       /**
       * Constructor.
@@ -66,7 +69,6 @@ namespace Rp {
    protected:
 
       // Inherited protected members
-      using IteratorT = typename T::Iterator;
       using IteratorT::system;
       using IteratorT::isFlexible_;
       using IteratorT::flexibleParams_;
@@ -136,7 +138,10 @@ namespace Rp {
 
       // Private type aliases
       using RealT = double;
-      template <typename T> using HostArrayT = T::HostDArray;
+      using RFieldT = typename T::RField;
+
+      //template <typename Data> 
+      //using HostArrayT = (typename T::HostDArray)<Data>;
 
    };
 

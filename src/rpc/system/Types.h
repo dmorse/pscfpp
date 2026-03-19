@@ -171,8 +171,8 @@ namespace Rpc {
 
       using VecRandom = CpuVecRandom;
 
-      template <typename T> using DRArray = Util::DRArray<T>;
-      template <typename T> using HostArray = Util::DArray<T>;
+      template <typename Data> using HostArray = Util::DArray<Data>;
+      using Vector = Util::DRArray<double>;
       using Real = double;
 
    };
