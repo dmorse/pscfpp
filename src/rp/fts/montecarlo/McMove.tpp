@@ -140,7 +140,11 @@ namespace Rp {
          decisionTimer_.start();
          bool accept = false;
          double weight = exp(-(newHamiltonian - oldHamiltonian));
-         accept = random().metropolis(weight);
+         if (newHamiltonian - oldHamiltonian <= 1e-10){
+            accept = true;
+         } else{
+            accept = random().metropolis(weight);
+         }
          if (accept) {
             incrementNAccept();
             simulator().clearState();

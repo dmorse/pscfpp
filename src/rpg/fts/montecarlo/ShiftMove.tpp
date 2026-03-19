@@ -102,7 +102,7 @@ namespace Rpg {
       Mesh<D> mesh(meshDimensions);
       MeshIterator<D> iter(meshDimensions);
       for (int i = 0; i < D; i++){
-         shift[i] = simulator().random().uniformInt(-maxShift_, maxShift_);
+         shift[i] = simulator().random().uniformInt(-maxShift_, maxShift_ + 1);
       }
 
       for (int j = 0; j< nMonomer; ++j){
