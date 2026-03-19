@@ -122,7 +122,7 @@ public:
    void tearDown()
    {}
 
-   void checkEqualReal(HostDArray<cudaReal>& a, DArray<numType>& b)
+   void checkEqualReal(Array<cudaReal>& a, Array<numType>& b)
    {
       int n = a.capacity();
       TEST_ASSERT(b.capacity() == n);
@@ -213,6 +213,17 @@ public:
          refOutComplex[i+(n/4)] = refScalarComplex * 2.0;
       }
       checkEqualComplex(hOutComplex, refOutComplex);
+   }
+
+   void testEqHostDevice()
+   {
+      printMethod(TEST_FUNC);
+
+      // ~~~ Test eqV (host <-> device)
+      VecOp::eqV(dOutReal, hInReal);
+      VecOp::eqV(hOutReal, dOutReal);
+      checkEqualReal(hOutReal, hInReal);
+
    }
 
    // Test VecOp::addVV and VecOp::addVS
@@ -1394,6 +1405,7 @@ public:
 
 TEST_BEGIN(CudaVecOpTest)
 TEST_ADD(CudaVecOpTest, testEq)
+TEST_ADD(CudaVecOpTest, testEqHostDevice)
 TEST_ADD(CudaVecOpTest, testAdd)
 TEST_ADD(CudaVecOpTest, testSub)
 TEST_ADD(CudaVecOpTest, testMul)

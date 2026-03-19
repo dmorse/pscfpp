@@ -111,6 +111,62 @@ namespace Pscf {
       {  eqV(a, b, 0, 0, a.capacity()); }
 
       /**
+      * Vector-vector assignment, a[i] = b[i], (real, device to host).
+      *
+      * \ingroup Pscf_Cuda_VecOp_Module
+      *
+      * \param a  real array (LHS)
+      * \param b  real array (RHS)
+      * \param beginIdA  index of first element in a slice of array a
+      * \param beginIdB  index of first element in a slice of array b
+      * \param n  number of elements in the slice
+      */
+      void eqV(Array<cudaReal>& a,
+               DeviceArray<cudaReal> const & b,
+               const int beginIdA, const int beginIdB, const int n);
+
+      /**
+      * Vector-vector assignment, a[i] = b[i], (real, device to host).
+      *
+      * \ingroup Pscf_Cuda_VecOp_Module
+      *
+      * \param a  real array (LHS)
+      * \param b  real array (RHS)
+      */
+      inline
+      void eqV(Array<cudaReal>& a,
+               DeviceArray<cudaReal> const & b)
+      {  eqV(a, b, 0, 0, a.capacity()); }
+
+      /**
+      * Vector-vector assignment, a[i] = b[i], (real, host to device).
+      *
+      * \ingroup Pscf_Cuda_VecOp_Module
+      *
+      * \param a  real array (LHS)
+      * \param b  real array (RHS)
+      * \param beginIdA  index of first element in a slice of array a
+      * \param beginIdB  index of first element in a slice of array b
+      * \param n  number of elements in the slice
+      */
+      void eqV(DeviceArray<cudaReal>& a,
+               Array<cudaReal> const & b,
+               const int beginIdA, const int beginIdB, const int n);
+
+      /**
+      * Vector-vector assignment, a[i] = b[i], (real, host to device).
+      *
+      * \ingroup Pscf_Cuda_VecOp_Module
+      *
+      * \param a  real array (LHS)
+      * \param b  real array (RHS)
+      */
+      inline
+      void eqV(DeviceArray<cudaReal>& a,
+               Array<cudaReal> const & b)
+      {  eqV(a, b, 0, 0, a.capacity()); }
+
+      /**
       * Vector-vector assignment, a[i] = b[i], (complex).
       *
       * \ingroup Pscf_Cuda_VecOp_Module
