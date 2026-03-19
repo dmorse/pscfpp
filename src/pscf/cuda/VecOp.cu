@@ -18,6 +18,7 @@ namespace VecOp {
 
 namespace {
 
+      #if 0
       /*
       * Vector assignment, a[i] = b[i] (real).
       *
@@ -34,6 +35,7 @@ namespace {
             a[i] = b[i];
          }
       }
+      #endif
 
       /*
       * Vector assignment, a[i] = b[i] (complex).
@@ -1237,10 +1239,63 @@ namespace {
       int nBlocks, nThreads;
       ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
 
+      #if 0
       // Launch kernel
       _eqV<<<nBlocks, nThreads>>>(a.cArray()+beginIdA,
                                   b.cArray()+beginIdB, n);
       cudaErrorCheck( cudaGetLastError() );
+      #endif
+
+      // Copy all elements
+      cudaErrorCheck( cudaMemcpy(a.cArray() + beginIdA, 
+			         b.cArray() + beginIdB, 
+                                 n * sizeof(cudaReal), 
+                                 cudaMemcpyDeviceToDevice) );
+
+   }
+
+   /*
+   * Vector assignment, a[i] = b[i] (real, device to host).
+   */
+   void eqV(Array<cudaReal>& a,
+            DeviceArray<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n)
+   {
+      UTIL_CHECK(a.capacity() >= n + beginIdA);
+      UTIL_CHECK(b.capacity() >= n + beginIdB);
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
+
+      // Copy all elements
+      cudaErrorCheck( cudaMemcpy(a.cArray() + beginIdA, 
+			         b.cArray() + beginIdB, 
+                                 n * sizeof(cudaReal), 
+                                 cudaMemcpyDeviceToHost) );
+
+   }
+
+   /*
+   * Vector assignment, a[i] = b[i] (real, device to host).
+   */
+   void eqV(DeviceArray<cudaReal>& a,
+            Array<cudaReal> const & b,
+            const int beginIdA, const int beginIdB, const int n)
+   {
+      UTIL_CHECK(a.capacity() >= n + beginIdA);
+      UTIL_CHECK(b.capacity() >= n + beginIdB);
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadArray::setThreadsLogical(n, nBlocks, nThreads);
+
+      // Copy all elements
+      cudaErrorCheck( cudaMemcpy(a.cArray() + beginIdA, 
+			         b.cArray() + beginIdB, 
+                                 n * sizeof(cudaReal), 
+                                 cudaMemcpyHostToDevice) );
+
    }
 
    /*
