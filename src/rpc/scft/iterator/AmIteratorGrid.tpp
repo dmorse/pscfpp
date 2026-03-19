@@ -404,13 +404,20 @@ namespace Rpc {
          RealT res, str;
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
+         const int nFlex = Iterator<D>::nFlexibleParams();
          const int nMonomer = system().mixture().nMonomer();
          const int nMesh = system().domain().mesh().size();
          const int begin = nMonomer*nMesh;
+
+         // Copy stress residuals to a local array
+         DArray<RealT> stressTmp(nFlex);
+         VecOp::eqV(stressTmp, AmIterTmplT::residual(), 0, begin, nFlex);
+
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               res = AmIterTmplT::residual()[begin + counter];
+               //res = AmIterTmplT::residual()[begin + counter];
+               res = stressTmp[counter];
                str = - 1.0 * res / scaleStress_;
                Log::file()
                   << " Cell Param  " << i << " = "

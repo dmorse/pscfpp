@@ -16,6 +16,22 @@ namespace VecOp {
    // Assignment
 
    /*
+   * Vector-vector assignment, a[i] = b[i] (real, slice).
+   */
+   void eqV(Array<double>& a, Array<double> const & b,
+            const int beginIdA, const int beginIdB, const int n)
+   {
+      UTIL_CHECK(beginIdA >= 0);
+      UTIL_CHECK(beginIdB >= 0);
+      UTIL_CHECK(n > 0);
+      UTIL_CHECK(a.capacity() >= beginIdA + n);
+      UTIL_CHECK(b.capacity() >= beginIdB + n);
+      for (int i = 0; i < n; ++i) {
+         a[i + beginIdA] = b[i + beginIdB];
+      }
+   }
+
+   /*
    * Vector-vector assignment, a[i] = b[i] (real).
    */
    void eqV(Array<double>& a, Array<double> const & b)

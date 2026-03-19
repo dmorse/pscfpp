@@ -72,6 +72,20 @@ namespace Pscf {
       // Assignment
 
       /**
+      * Vector assignment, a[i] = b[i] (real, slice).
+      *
+      * \ingroup Pscf_Cpu_VecOp_Module
+      *
+      * \param a  real array (LHS)
+      * \param b  real array (RHS)
+      * \param beginIdA  index of first element in slice of array a (HHS)
+      * \param beginIdB  index of first element in slice of array b (RHS)
+      * \param n  number of elements in the slice
+      */
+      void eqV(Array<double>& a, Array<double> const & b,
+               const int beginIdA, const int beginIdB, const int n);
+
+      /**
       * Vector assignment, a[i] = b[i] (real).
       *
       * \ingroup Pscf_Cpu_VecOp_Module

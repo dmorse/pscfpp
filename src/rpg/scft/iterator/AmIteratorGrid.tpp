@@ -406,15 +406,18 @@ namespace Rpg {
          const int nFlex = Iterator<D>::nFlexibleParams();
          const int nMonomer = system().mixture().nMonomer();
          const int nMesh = system().domain().mesh().size();
+         const int begin = nMonomer*nMesh;
 
-         // Transfer stress residuals from device to host
-         HostDArray<cudaReal> stressTmp(nFlex);
-         stressTmp.copySlice(residual(), nMonomer*nMesh);
+         // Copy stress residuals to local array
+         DArray<cudaReal> stressTmp(nFlex);
+         VecOp::eqV(stressTmp, AmIterTmplT::residual(), 0, begin, nFlex);
 
+         double res, str;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               double str = stressTmp[counter] / (-1.0 * scaleStress_);
+               res = stressTmp[counter];
+               str = -1.0 * res / scaleStress_;
                Log::file()
                    << " Cell Param  " << i << " = "
                    << Dbl(unitCell.parameters()[i], 15)
@@ -424,6 +427,7 @@ namespace Rpg {
                counter++;
             }
          }
+         UTIL_CHECK(counter == nFlex);
       }
    }
 
