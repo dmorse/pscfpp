@@ -10,38 +10,6 @@
 
 #include <rp/field/Mask.tpp>    // base class template implementation
 
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Prdc;
-
-   /*
-   * Return volume fraction of the unit cell occupied by the
-   * polymers/solvents.
-   */
-   template <int D>
-   double Mask<D>::rGridAverage() const
-   {
-      RField<D> const & rg = Rp::Mask< D, RField<D>, FieldIo<D> >::rgrid();
-
-      // Sum up elements of r-grid mask field.
-      // Use Kahan summation to reduce accumulation of error
-      double sum(0.0), err(0.0), tempVal, tempSum;
-      int n = rg.capacity();
-      for (int i = 0; i < n; ++i) {
-         tempVal = rg[i] - err;
-         tempSum = sum + tempVal;
-         err = tempSum - sum - tempVal;
-         sum = tempSum;
-      }
-
-      return (sum / ((double)rg.capacity()));
-   }
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {

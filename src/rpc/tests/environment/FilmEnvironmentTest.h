@@ -6,6 +6,7 @@
 
 #include <rpc/system/System.h>
 #include <rpc/scft/ScftThermo.h>
+#include <rpc/field/Domain.h>
 #include <rpc/environment/FilmEnvironment.h>
 
 #include <prdc/crystal/BFieldComparison.h>

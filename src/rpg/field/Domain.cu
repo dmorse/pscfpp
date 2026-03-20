@@ -5,8 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Domain.tpp"
+#include "Domain.h"               // class header
+#include <rpg/field/FieldIo.h>
+#include <prdc/cuda/WaveList.h>
+#include <prdc/cuda/FFT.h>
 
+#include <rp/field/Domain.tpp>    // base class template implementation
+
+// Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       using namespace Prdc::Cuda;

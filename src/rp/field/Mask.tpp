@@ -325,19 +325,10 @@ namespace Rp {
          // system does not have a mask
          return 1.0;
       } else { // Data is only available in r-grid format
-         //return rGridAverage();
          double ave = Reduce::sum(rgrid());
          ave /= double(meshSize_);
          return ave;
       }
-   }
-
-   template <int D, class RFT, class FIT>
-   double Mask<D,RFT,FIT>::rGridAverage() const
-   {
-      double ave = Reduce::sum(rgrid());
-      ave /= double(meshSize_);
-      return ave;
    }
 
    // Field output to file
