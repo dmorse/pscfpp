@@ -37,9 +37,6 @@ namespace Rpg {
 
    public:
 
-      // Alias for base class.
-      using Base = Rp::WFields<D, RField<D>, FieldIo<D> >;
-
       /**
       * Set new w fields, in unfolded real-space (r-grid) format.
       *
@@ -50,6 +47,10 @@ namespace Rpg {
       */
       void setRGrid(DeviceArray<cudaReal>& fields);
 
+      // Alias for base class.
+      using Base = Rp::WFields<D, RField<D>, FieldIo<D> >;
+
+      // Declaration to prevent base class method from being hidden
       using Base::setRGrid;
 
    };
@@ -60,10 +61,10 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc;
-      extern template class WFields<1, Cuda::RField<1>, Rpg::FieldIo<1> >;
-      extern template class WFields<2, Cuda::RField<2>, Rpg::FieldIo<2> >;
-      extern template class WFields<3, Cuda::RField<3>, Rpg::FieldIo<3> >;
+      using namespace Prdc::Cuda;
+      extern template class WFields<1, RField<1>, Rpg::FieldIo<1> >;
+      extern template class WFields<2, RField<2>, Rpg::FieldIo<2> >;
+      extern template class WFields<3, RField<3>, Rpg::FieldIo<3> >;
    }
    namespace Rpg {
       extern template class WFields<1>;

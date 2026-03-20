@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo.h"          // class header
+#include "FieldIo.h"             // class header
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
@@ -17,9 +17,8 @@
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
 
-// Templates that require declarations from cpu/complex.h
-#include <rp/field/FieldIo.tpp>   // base class template implementation
 #include <prdc/field/rFieldIo.h>
+#include <rp/field/FieldIo.tpp>  // base class template implementation
 
 namespace Pscf {
 namespace Rpc {

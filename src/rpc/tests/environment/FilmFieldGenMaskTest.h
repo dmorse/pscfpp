@@ -4,14 +4,16 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/environment/FilmFieldGenMask.h>
-#include <rpc/scft/iterator/Iterator.h>
 #include <rpc/system/System.h>
+#include <rpc/scft/iterator/Iterator.h>
+#include <rpc/field/Domain.h>
+#include <rpc/environment/FilmFieldGenMask.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>
 
+#include <util/misc/FileMaster.h>
 #include <util/misc/Exception.h>
 
 #include <fstream>

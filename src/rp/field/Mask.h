@@ -399,14 +399,6 @@ namespace Rp {
          return *fieldIoPtr_;
       }
 
-      /**
-      * Calculate the average value of the rgrid_ member.
-      *
-      * Must be implemented by subclasses, because this calculation
-      * depends on the specific implementation of the RFT type.
-      */
-      virtual double rGridAverage() const = 0;
-
    private:
 
       /**

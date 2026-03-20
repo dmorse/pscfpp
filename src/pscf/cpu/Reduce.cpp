@@ -21,10 +21,26 @@ namespace Reduce {
    {
       int n = in.capacity();
       UTIL_CHECK(n > 0);
+
+      // Kahan summation - to reduce accumulation of error
+      double sum = 0.0;
+      double err = 0.0;
+      double tempVal, tempSum;
+      for (int i = 0; i < n; ++i) {
+         tempVal = in[i] - err;
+         tempSum = sum + tempVal;
+         err = tempSum - sum - tempVal;
+         sum = tempSum;
+      }
+
+      #if 0
+      // Simple summation
       double sum = 0.0;
       for (int i = 0; i < n; i++) {
          sum += in[i];
       }
+      #endif
+
       return sum;
    }
 
@@ -37,10 +53,26 @@ namespace Reduce {
       UTIL_CHECK(n > 0);
       UTIL_CHECK(begin >= 0);
       UTIL_CHECK(end <= n);
+
+      // Kahan summation - to reduce accumulation of error
+      double sum = 0.0;
+      double err = 0.0;
+      double tempVal, tempSum;
+      for (int i = begin; i < end; ++i) {
+         tempVal = in[i] - err;
+         tempSum = sum + tempVal;
+         err = tempSum - sum - tempVal;
+         sum = tempSum;
+      }
+
+      #if 0
+      // Simple summation
       double sum = 0.0;
       for (int i = begin; i < end; i++) {
          sum += in[i];
       }
+      #endif
+
       return sum;
    }
 
@@ -51,12 +83,29 @@ namespace Reduce {
    {
       int n = in.capacity();
       UTIL_CHECK(n > 0);
+
+      // Kahan summation - to reduce accumulation of error
+      double sum = 0.0;
+      double err = 0.0;
+      double x, tempVal, tempSum;
+      for (int i = 0; i < n; ++i) {
+         x = in[i];
+         tempVal = x*x - err;
+         tempSum = sum + tempVal;
+         err = tempSum - sum - tempVal;
+         sum = tempSum;
+      }
+
+      #if 0
+      // Simple summation
       double val;
       double sum = 0.0;
       for (int i = 0; i < n; i++) {
          val = in[i];
          sum += val*val;
       }
+      #endif
+
       return sum;
    }
 
@@ -71,10 +120,26 @@ namespace Reduce {
       int n = a.capacity();
       UTIL_CHECK(n > 0);
       UTIL_CHECK(b.capacity() == n);
+
+      // Kahan summation - to reduce accumulation of error
+      double sum = 0.0;
+      double err = 0.0;
+      double tempVal, tempSum;
+      for (int i = 0; i < n; ++i) {
+         tempVal = a[i]*b[i] - err;
+         tempSum = sum + tempVal;
+         err = tempSum - sum - tempVal;
+         sum = tempSum;
+      }
+
+      #if 0
+      // Simple summation
       double sum = 0.0;
       for (int i = 0; i < n; i++) {
          sum += a[i]*b[i];
       }
+      #endif
+
       return sum;
    }
 
