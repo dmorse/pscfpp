@@ -9,19 +9,15 @@
 */
 
 #include "AmIteratorGrid.h"
-//#include <rpc/system/System.h>
-//#include <rpc/solvers/Mixture.h>
-//#include <rpc/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
-//#include <prdc/cpu/RField.h>
-//#include <pscf/cpu/VecOp.h>
-//#include <pscf/cpu/Reduce.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/interaction/Interaction.h>
 #include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
 #include <cmath>
+
+#include <pscf/iterator/AmIteratorTmpl.tpp>
 
 namespace Pscf {
 namespace Rp {
@@ -272,7 +268,8 @@ namespace Rp {
          const RealT scale = -1.0 * scaleStress_;
          const int nParam = system().domain().unitCell().nParameter();
          const int nFlex = IteratorT::nFlexibleParams();
-         HostArrayT<RealT> stressTmp(nFlex);
+         DArray<RealT> stressTmp(nFlex);
+         //HostArrayT<RealT> stressTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
@@ -284,10 +281,10 @@ namespace Rp {
          UTIL_CHECK(resid.capacity() == (nMonomer * nMesh) + nFlex);
 
          // Copy stress residuals to the end of the resid array
-         //VecOp::eqV(resid, stressTmp, nMonomer*nMesh, 0, nFlex);
-         slice.associate(resid, nMonomer * nMesh, nFlex);
-         slice = stressTmp; // copy from host to device, for GPU code
-         slice.dissociate();
+         VecOp::eqV(resid, stressTmp, nMonomer*nMesh, 0, nFlex);
+         //slice.associate(resid, nMonomer * nMesh, nFlex);
+         //slice = stressTmp; // copy from host to device, for GPU code
+         //slice.dissociate();
       }
 
    }
@@ -374,11 +371,12 @@ namespace Rp {
          parameters = domain.unitCell().parameters();
 
          // Copy parameter entries from newState to a local array
-         HostArrayT<RealT> paramTmp(nFlex);
-         //VecOp::eqV(paramTmp, newState, 0, nMonomer*nMesh, nFlex);
-         slice.associate(newState, nMonomer*nMesh, nFlex);
-         paramTmp = slice;
-         slice.dissociate();
+         DArray<RealT> paramTmp(nFlex);
+         VecOp::eqV(paramTmp, newState, 0, nMonomer*nMesh, nFlex);
+         //HostArrayT<RealT> paramTmp(nFlex);
+         //slice.associate(newState, nMonomer*nMesh, nFlex);
+         //paramTmp = slice;
+         //slice.dissociate();
 
          // Reset any parameters that are flexible
          RealT scale = 1.0 / scaleStress_;
