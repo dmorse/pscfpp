@@ -61,23 +61,18 @@ namespace Rpg {
       */
       void outputTimers(std::ostream& out) const;
 
-      /// Alias for indirect base (grandparent) class.
-      using AmTmpl = AmIteratorTmpl<Iterator<D>, DArray<double> >;
+      /// Alias for direct base class.
+      using AmIteratorTmplT = AmIteratorTmpl<Iterator<D>, DArray<double> >;
 
       // Inherited public member functions
-      using AmTmpl::solve;
-      using AmTmpl::clearTimers;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
-      using Iterator<D>::setFlexibleParams;
       using Iterator<D>::nFlexibleParams;
-      using Iterator<D>::stress;
 
    protected:
 
       // Inherited protected members
-      using AmTmpl::verbose;
-      using AmTmpl::residual;
+      using AmIteratorTmplT::residual;
       using Iterator<D>::system;
       using Iterator<D>::isSymmetric_;
       using Iterator<D>::isFlexible_;

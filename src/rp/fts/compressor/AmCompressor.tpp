@@ -28,8 +28,8 @@ namespace Rp {
    AmCompressor<D,T,V>::AmCompressor(typename T::System& system)
     : isAllocated_(false)
    {  
-      ParamComposite::setClassName("AmCompressor"); 
       CompressorT::setSystem(system);
+      ParamComposite::setClassName("AmCompressor"); 
    }
 
    /*

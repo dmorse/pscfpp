@@ -32,9 +32,12 @@ namespace Rpg {
    */
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
-    : Iterator<D>(system)
+    : AmIteratorTmplT(),
+      interaction_(),
+      scaleStress_(1.0)
    {
-      isSymmetric_ = true;
+      Iterator<D>::setSystem(system);
+      Iterator<D>::isSymmetric_ = true;
       ParamComposite::setClassName("AmIteratorBasis");
    }
 
@@ -52,12 +55,12 @@ namespace Rpg {
    void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmTmpl::readParameters(in);
-      AmTmpl::readErrorType(in);
+      AmIteratorTmplT::readParameters(in);
+      AmIteratorTmplT::readErrorType(in);
 
       // Read optional isFlexible value
-      isFlexible_ = 1; // default value
-      readOptional(in, "isFlexible", isFlexible_);
+      Iterator<D>::isFlexible_ = 1; // default value
+      readOptional(in, "isFlexible", Iterator<D>::isFlexible_);
 
       // Get and check the number of unit cell parameters
       int np = system().domain().unitCell().nParameter();
@@ -68,14 +71,16 @@ namespace Rpg {
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
       // then optionally overwrite with user input from param file
-      if (isFlexible_) {
+      if (Iterator<D>::isFlexible_) {
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
             flexibleParams_.append(true); // Set all values to true
          }
          // Read optional flexibleParams_ array to overwrite current array
          readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
-         if (nFlexibleParams() == 0) isFlexible_ = false;
+         if (Iterator<D>::nFlexibleParams() == 0) {
+            Iterator<D>::isFlexible_ = false;
+         }
       } else { // isFlexible_ = false
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
@@ -88,10 +93,10 @@ namespace Rpg {
       readOptional(in, "scaleStress", scaleStress_);
 
       // Optionally read mixing parameters (lambda, useLambdaRamp, r)
-      AmTmpl::readErrorType(in);
+      AmIteratorTmplT::readErrorType(in);
 
       // Optionally read mixing parameters (lambda, useLambdaRamp, r)
-      AmTmpl::readMixingParameters(in);
+      AmIteratorTmplT::readMixingParameters(in);
 
       // Allocate local modified copy of Interaction class
       interaction_.setNMonomer(system().mixture().nMonomer());
@@ -106,7 +111,7 @@ namespace Rpg {
       // Output timing results, if requested.
       out << "\n";
       out << "Iterator times contributions:\n";
-      AmTmpl::outputTimers(out);
+      AmIteratorTmplT::outputTimers(out);
    }
 
    // Protected virtual function
@@ -116,7 +121,7 @@ namespace Rpg {
    void AmIteratorBasis<D>::setup(bool isContinuation)
    {
       // Call parent setup method
-      AmTmpl::setup(isContinuation);
+      AmIteratorTmplT::setup(isContinuation);
 
       // Update chi matrix and related properties in member interaction_
       interaction_.update(system().interaction());
@@ -135,8 +140,8 @@ namespace Rpg {
 
       int nEle = nMonomer*nBasis;
 
-      if (isFlexible_) {
-         nEle += nFlexibleParams();
+      if (Iterator<D>::isFlexible_) {
+         nEle += Iterator<D>::nFlexibleParams();
       }
 
       return nEle;
@@ -167,7 +172,7 @@ namespace Rpg {
          }
       }
 
-      if (isFlexible_) {
+      if (Iterator<D>::isFlexible_) {
          const int begin = nMonomer*nBasis;
          const int nParam = system().domain().unitCell().nParameter();
          FSArray<double,6> const & parameters
@@ -179,7 +184,7 @@ namespace Rpg {
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlexibleParams());
+         UTIL_CHECK(counter == Iterator<D>::nFlexibleParams());
       }
 
    }
@@ -192,7 +197,7 @@ namespace Rpg {
    {
       // Solve MDEs for current omega field
       // (computes stress if isFlexible_ == true)
-      system().compute(isFlexible_);
+      system().compute(Iterator<D>::isFlexible_);
    }
 
    /*
@@ -265,7 +270,7 @@ namespace Rpg {
       }
 
       // If variable unit cell, compute stress residuals
-      if (isFlexible_) {
+      if (Iterator<D>::isFlexible_) {
          const int nParam = system().domain().unitCell().nParameter();
 
          //  Note:
@@ -281,13 +286,12 @@ namespace Rpg {
          int counter = 0;
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               double str = stress(i);
-
+               double str = Iterator<D>::stress(i);
                resid[nMonomer*nBasis + counter] = -1 * scaleStress_ * str;
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlexibleParams());
+         UTIL_CHECK(counter == Iterator<D>::nFlexibleParams());
       }
 
    }
@@ -332,7 +336,7 @@ namespace Rpg {
       }
       system().w().setBasis(wField);
 
-      if (isFlexible_) {
+      if (Iterator<D>::isFlexible_) {
          const int nParam = system().domain().unitCell().nParameter();
          const int begin = nMonomer*nBasis;
 
@@ -347,7 +351,7 @@ namespace Rpg {
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlexibleParams());
+         UTIL_CHECK(counter == Iterator<D>::nFlexibleParams());
 
          system().setUnitCell(parameters);
       }
@@ -359,15 +363,16 @@ namespace Rpg {
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {
-      if (isFlexible_ && verbose() > 1) {
+      if (Iterator<D>::isFlexible_ && AmIteratorTmplT::verbose() > 1) {
          const int nParam = system().domain().unitCell().nParameter();
          const int nMonomer = system().mixture().nMonomer();
          const int nBasis = system().domain().basis().nBasis();
+         double res, str;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               double str = residual()[nMonomer*nBasis + counter] /
-                            (-1.0 * scaleStress_);
+               res = AmIteratorTmplT::residual()[nMonomer*nBasis + counter];
+               str = -1.0 * res / scaleStress_;
                Log::file()
                    << " Cell Param  " << i << " = "
                    << Dbl(system().domain().unitCell().parameters()[i], 15)
@@ -379,91 +384,6 @@ namespace Rpg {
          }
       }
    }
-
-   #if 0
-   // Private virtual functions for vector math
-
-   /*
-   * Set a vector equal to another (assign a = b).
-   */
-   template <int D>
-   void AmIteratorBasis<D>::setEqual(DArray<double>& a,
-                                     DArray<double> const & b)
-   {  a = b; }
-
-   /*
-   * Compute the inner product of two real vectors.
-   */
-   template <int D>
-   double AmIteratorBasis<D>::dotProduct(DArray<double> const & a,
-                                         DArray<double> const & b)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(b.capacity() == n);
-      double product = 0.0;
-      for (int i=0; i < n; ++i) {
-         // if either value is NaN, throw NanException
-         if (std::isnan(a[i]) || std::isnan(b[i])) {
-            throw NanException("AmIteratorBasis::dotProduct", __FILE__,
-                               __LINE__, 0);
-         }
-         product += a[i] * b[i];
-      }
-      return product;
-   }
-
-   /*
-   * Compute and return maximum element of residual vector.
-   */
-   template <int D>
-   double AmIteratorBasis<D>::maxAbs(DArray<double> const & a)
-   {
-      const int n = a.capacity();
-      double max = 0.0;
-      double value;
-      for (int i = 0; i < n; i++) {
-         value = a[i];
-         if (std::isnan(value)) { // if value is NaN, throw NanException
-            throw NanException("AmIteratorBasis::dotProduct", __FILE__,
-                               __LINE__, 0);
-         }
-         if (fabs(value) > max)
-            max = fabs(value);
-      }
-      return max;
-   }
-
-   /*
-   * Compute the vector difference a = b - c
-   */
-   template <int D>
-   void AmIteratorBasis<D>::subVV(DArray<double>& a,
-                                  DArray<double> const & b,
-                                  DArray<double> const & c)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      UTIL_CHECK(n == c.capacity());
-      for (int i = 0; i < n; i++) {
-         a[i] = b[i] - c[i];
-      }
-   }
-
-   /*
-   * Composite a += b*c for vectors a and b, scalar c
-   */
-   template <int D>
-   void AmIteratorBasis<D>::addEqVc(DArray<double>& a,
-                                    DArray<double> const & b,
-                                    double c)
-   {
-      const int n = a.capacity();
-      UTIL_CHECK(n == b.capacity());
-      for (int i = 0; i < n; i++) {
-         a[i] += c*b[i];
-      }
-   }
-   #endif
 
 }
 }

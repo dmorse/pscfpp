@@ -133,6 +133,13 @@ namespace Rp {
       FSArray<bool,6> flexibleParams_;
 
       /**
+      * Set parent system.
+      *
+      * \param system  parent System object
+      */
+      void setSystem(ST& system);
+
+      /**
       * Get parent system by const reference.
       */
       ST const & system() const;

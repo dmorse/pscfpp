@@ -151,18 +151,23 @@ namespace Rpg {
    {}
 
    /*
+   * Get number of times MDE has been solved.
+   */
+   template <int D>
+   int Compressor<D>::mdeCounter() const
+   {  return mdeCounter_; }
+
+   // Protected function
+  
+   /*
    * Create association with the parent system.
    */
    template <int D>
    void Compressor<D>::setSystem(System<D>& system)
-   {  sysPtr_ = &system; }
-
-   /*
-   * Get number of times MDE has been solved.
-   */
-   template <int D>
-   inline int Compressor<D>::mdeCounter() const
-   {  return mdeCounter_; }
+   {
+      UTIL_CHECK(!sysPtr_);
+      sysPtr_ = &system; 
+   }
 
 } // namespace Rpg
 } // namespace Pscf

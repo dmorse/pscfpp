@@ -32,8 +32,11 @@ namespace Rp {
    */
    template <int D, class T>
    AmIteratorGrid<D,T>::AmIteratorGrid(typename T::System& system)
-    : IteratorT(system)
+    : AmIterTmplT(),
+      interaction_(),
+      scaleStress_(1.0)
    {
+      IteratorT::setSystem(system);
       ParamComposite::setClassName("AmIteratorGrid");
       IteratorT::isSymmetric_ = false;
    }

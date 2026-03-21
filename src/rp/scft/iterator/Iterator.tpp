@@ -15,6 +15,8 @@ namespace Rp {
 
    using namespace Util;
 
+   // Public functions
+
    /*
    * Default constructor.
    */
@@ -48,6 +50,7 @@ namespace Rp {
    template <int D, class ST>
    int Iterator<D,ST>::nFlexibleParams() const
    {
+      UTIL_CHECK(sysPtr_);
       UTIL_CHECK(flexibleParams_.size() == 
                                  system().domain().unitCell().nParameter());
       int nFlexParams = 0;
@@ -63,6 +66,7 @@ namespace Rp {
    template <int D, class ST>
    void Iterator<D,ST>::setFlexibleParams(FSArray<bool,6> const & flexParams)
    {  
+      UTIL_CHECK(sysPtr_);
       flexibleParams_ = flexParams; 
       if (nFlexibleParams() == 0) {
          isFlexible_ = false;
@@ -78,6 +82,7 @@ namespace Rp {
    double Iterator<D,ST>::stress(int paramId) const
    {
       // Parameter must be flexible to access the stress
+      UTIL_CHECK(sysPtr_);
       UTIL_CHECK(flexibleParams_[paramId]);
 
       if (system().hasEnvironment()) {
@@ -85,6 +90,18 @@ namespace Rp {
       } else {
          return system().mixture().stress(paramId);
       }
+   }
+
+   // Protected function
+
+   /*
+   * Set system.
+   */
+   template <int D, class ST>
+   void Iterator<D,ST>::setSystem(ST& system)
+   {
+      UTIL_CHECK(!sysPtr_);  
+      sysPtr_ = &system; 
    }
 
 } // namespace Rp

@@ -33,9 +33,12 @@ namespace Rpc {
    */
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
-    : Iterator<D>(system)
+    : AmIterTmplT(),
+      interaction_(),
+      scaleStress_(1.0)
    {
-      isSymmetric_ = true;  
+      Iterator<D>::setSystem(system);
+      Iterator<D>::isSymmetric_ = true;  
       ParamComposite::setClassName("AmIteratorBasis"); 
    }
 
@@ -63,12 +66,13 @@ namespace Rpc {
       UTIL_CHECK(np <= 6);
 
       // Read optional isFlexible boolean (true by default)
-      isFlexible_ = 1;  // Default
-      ParamComposite::readOptional(in, "isFlexible", isFlexible_);
+      Iterator<D>::isFlexible_ = 1;  // Default
+      ParamComposite::readOptional(in, "isFlexible", 
+                                   Iterator<D>::isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
       // then optionally overwrite with user input from param file
-      if (isFlexible_) {
+      if (Iterator<D>::isFlexible_) {
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
             flexibleParams_.append(true); // Set all values to true
@@ -76,7 +80,9 @@ namespace Rpc {
          // Read optional flexibleParams_ array to overwrite current array
          ParamComposite::readOptionalFSArray(in, "flexibleParams", 
                                              flexibleParams_, np);
-         if (nFlexibleParams() == 0) isFlexible_ = false;
+         if (Iterator<D>::nFlexibleParams() == 0) {
+            Iterator<D>::isFlexible_ = false;
+         }
       } else { // isFlexible_ = false
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
@@ -130,7 +136,7 @@ namespace Rpc {
       const int nBasis = system().domain().basis().nBasis();
 
       int nEle = nMonomer*nBasis;
-      if (Iterator<D>::isFlexible()) {
+      if (Iterator<D>::isFlexible_) {
          nEle += Iterator<D>::nFlexibleParams();
       }
       return nEle;
@@ -165,8 +171,8 @@ namespace Rpc {
       }
 
       // Add elements associated with unit cell parameters (if any)
-      if (Iterator<D>::isFlexible()) {
-         UTIL_CHECK(nFlexibleParams() > 0);
+      if (Iterator<D>::isFlexible_) {
+         UTIL_CHECK(Iterator<D>::nFlexibleParams() > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double,6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
@@ -178,7 +184,7 @@ namespace Rpc {
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlexibleParams());
+         UTIL_CHECK(counter == Iterator<D>::nFlexibleParams());
       }
 
    }
@@ -188,7 +194,7 @@ namespace Rpc {
    */
    template <int D>
    void AmIteratorBasis<D>::evaluate()
-   {  system().compute(isFlexible_); }
+   {  system().compute(Iterator<D>::isFlexible_); }
 
    /*
    * Compute the residual for the current system state.
@@ -255,7 +261,7 @@ namespace Rpc {
       }
 
       // If flexible unit cell, then compute stress residuals
-      if (Iterator<D>::isFlexible()) {
+      if (Iterator<D>::isFlexible_) {
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -272,11 +278,11 @@ namespace Rpc {
          int counter = 0;
          for (i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               resid[begin + counter] = coeff * stress(i);
+               resid[begin + counter] = coeff * Iterator<D>::stress(i);
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlexibleParams());
+         UTIL_CHECK(counter == Iterator<D>::nFlexibleParams());
       }
 
    }
@@ -339,7 +345,7 @@ namespace Rpc {
       system().w().setBasis(wFields);
 
       // If flexible, update unit cell parameters
-      if (Iterator<D>::isFlexible()) {
+      if (Iterator<D>::isFlexible_) {
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
@@ -356,7 +362,7 @@ namespace Rpc {
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlexibleParams());
+         UTIL_CHECK(counter == Iterator<D>::nFlexibleParams());
 
          // Set system unit cell parameters
          system().setUnitCell(parameters);
@@ -369,7 +375,7 @@ namespace Rpc {
    template<int D>
    void AmIteratorBasis<D>::outputToLog()
    {
-      if (Iterator<D>::isFlexible() && AmIterTmplT::verbose() > 1) {
+      if (Iterator<D>::isFlexible_ && AmIterTmplT::verbose() > 1) {
          double res, str;
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
