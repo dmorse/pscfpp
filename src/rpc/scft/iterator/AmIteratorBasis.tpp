@@ -347,7 +347,7 @@ namespace Rpc {
       // If flexible, update unit cell parameters
       if (Iterator<D>::isFlexible_) {
          const int nParam = system().domain().unitCell().nParameter();
-         const int nFlex = Iterator<D>::.nFlexibleParams();
+         const int nFlex = Iterator<D>::nFlexibleParams();
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;

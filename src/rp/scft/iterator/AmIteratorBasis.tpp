@@ -67,34 +67,35 @@ namespace Rpc {
       ParamComposite::readOptional(in, "isFlexible", 
                                    IteratorT::isFlexible_);
 
-      // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
-      // then optionally overwrite with user input from param file
+      // Populate flexibleParams_ bool array
       if (IteratorT::isFlexible_) {
          flexibleParams_.clear();
+         // Set all flexibleParams_ values to true by default
          for (int i = 0; i < np; i++) {
-            flexibleParams_.append(true); // Set all values to true
+            flexibleParams_.append(true); 
          }
-         // Read optional flexibleParams_ array to overwrite current array
+         // Optionally read flexibleParams_ array
          ParamComposite::readOptionalFSArray(in, "flexibleParams", 
                                              flexibleParams_, np);
          if (IteratorT::nFlexibleParams() == 0) {
             IteratorT::isFlexible_ = false;
          }
-      } else { // isFlexible_ = false
+      } else { // If isFlexible_ == false
+         // Set all flexibleParams_ values to false
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
-            flexibleParams_.append(false); // Set all values to false
+            flexibleParams_.append(false);
          }
       }
 
-      // Read optional scaleStress value
+      // Optionally read scaleStress value
       scaleStress_ = 10.0; // Default value
       ParamComposite::readOptional(in, "scaleStress", scaleStress_);
 
-      // Read option mixing parameters (lambda, useLambdaRamp, and r)
+      // Read optional mixing parameters (lambda, useLambdaRamp, and r)
       AmIterTmplT::readMixingParameters(in);
 
-      // Allocate local modified copy of Interaction class
+      // Allocate local AmbdInteraction class
       const int nMonomer = system().mixture().nMonomer();
       interaction_.setNMonomer(nMonomer);
 
@@ -343,16 +344,15 @@ namespace Rpc {
 
       // If flexible, update unit cell parameters
       if (IteratorT::isFlexible_) {
-         const int nParam = system().domain().unitCell().nParameter();
-         const int nFlex = IteratorT::.nFlexibleParams();
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
          parameters = system().domain().unitCell().parameters();
 
          // Reset any parameters that are flexible
-         const double scale = 1.0 / scaleStress_;
+         const int nParam = system().domain().unitCell().nParameter();
          const int begin = nMonomer*nBasis;
+         const double scale = 1.0 / scaleStress_;
          int counter = 0;
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
@@ -360,7 +360,7 @@ namespace Rpc {
                counter++;
             }
          }
-         UTIL_CHECK(counter == nFlex);
+         UTIL_CHECK(counter == IteratorT::nFlexibleParams());
 
          // Set system unit cell parameters
          system().setUnitCell(parameters);
@@ -374,6 +374,7 @@ namespace Rpc {
    void AmIteratorBasis<D,T>::outputToLog()
    {
       if (IteratorT::isFlexible_ && AmIterTmplT::verbose() > 1) {
+
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
          const int nMonomer = system().mixture().nMonomer();

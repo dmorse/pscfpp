@@ -66,37 +66,39 @@ namespace Rp {
       AmIterTmplT::readErrorType(in);
 
       // Read optional isFlexible boolean (true by default)
-      isFlexible_ = 1;
-      ParamComposite::readOptional(in, "isFlexible", isFlexible_);
+      IteratorT::isFlexible_ = 1;
+      ParamComposite::readOptional(in, "isFlexible", 
+                                   IteratorT::isFlexible_);
 
-      // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
-      // then optionally overwrite with user input from param file
-      if (isFlexible_) {
+      // Populate flexibleParams_ bool array, based on isFlexible_ 
+      if (IteratorT::isFlexible_) {
+         // Initialize to all true by default
          flexibleParams_.clear();
          for (int i = 0; i < np; ++i) {
-            flexibleParams_.append(true); // Set all values to true
+            flexibleParams_.append(true); 
          }
-         // Read optional flexibleParams_ array to overwrite current array
+         // Optionally read flexibleParams_ array (overwrites default)
          ParamComposite::readOptionalFSArray(in, "flexibleParams",
                                              flexibleParams_, np);
          if (IteratorT::nFlexibleParams() == 0) {
-            isFlexible_ = false;
+            IteratorT::isFlexible_ = false;
          }
-      } else { // isFlexible_ = false
+      } else { //  if isFlexible_ == false
+         // Set all elements of flexibleParams_ to false
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
-            flexibleParams_.append(false); // Set all values to false
+            flexibleParams_.append(false); 
          }
       }
 
-      // Read optional scaleStress value
+      // Optionally read scaleStress value
       scaleStress_ = 10.0;  // default
       ParamComposite::readOptional(in, "scaleStress", scaleStress_);
 
       // Read optional mixing parameters (lambda, useLambdaRamp, r)
       AmIterTmplT::readMixingParameters(in);
 
-      // Allocate local modified copy of Interaction class
+      // Allocate member instance of AmbdInteraction 
       interaction_.setNMonomer(system().mixture().nMonomer());
    }
 
@@ -135,7 +137,7 @@ namespace Rp {
       const int nMesh = system().domain().mesh().size();
 
       int nEle = nMonomer*nMesh;
-      if (isFlexible_) {
+      if (IteratorT::isFlexible_) {
          nEle += IteratorT::nFlexibleParams();
       }
       return nEle;
@@ -168,7 +170,7 @@ namespace Rp {
       }
 
       // If flexible unit cell, also store unit cell parameters
-      if (isFlexible_) {
+      if (IteratorT::isFlexible_) {
          int nFlex = IteratorT::nFlexibleParams();
          UTIL_CHECK(nFlex > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
@@ -197,7 +199,7 @@ namespace Rp {
    */
    template <int D, class T>
    void AmIteratorGrid<D,T>::evaluate()
-   {  system().compute(isFlexible_); }
+   {  system().compute(IteratorT::isFlexible_); }
 
    /*
    * Compute the residual for the current system state.
@@ -257,7 +259,7 @@ namespace Rp {
       }
 
       // If flexible unit cell, then compute stress residuals
-      if (isFlexible_) {
+      if (IteratorT::isFlexible_) {
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -365,7 +367,7 @@ namespace Rp {
       system().w().setRGrid(wFields);
 
       // If flexible, update unit cell parameters
-      if (isFlexible_) {
+      if (IteratorT::isFlexible_) {
          const int nParam = domain.unitCell().nParameter();
          const int nFlex = IteratorT::nFlexibleParams();
 
@@ -404,7 +406,7 @@ namespace Rp {
    template <int D, class T>
    void AmIteratorGrid<D,T>::outputToLog()
    {
-      if (isFlexible_ && AmIterTmplT::verbose() > 1) {
+      if (IteratorT::isFlexible_ && AmIterTmplT::verbose() > 1) {
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
          const int nFlex = IteratorT::nFlexibleParams();

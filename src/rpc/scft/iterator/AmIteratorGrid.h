@@ -21,6 +21,12 @@ namespace Rpc {
    /**
    * Anderson Mixing iterator on grid (no space-group symmetry).
    *
+   * Instantiations of this template with D=1, 2, and 3 are derived from
+   * instantiations of the base class template Rp::AmIteratorGrid, and
+   * inherit their public interface and almost all of their source code
+   * from this base class.  
+   *
+   * \see Rp::AmIteratorGrid
    * \see \ref rp_AmIteratorGrid_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
    * \ingroup Rpc_Scft_Iterator_Module
@@ -57,5 +63,5 @@ namespace Pscf {
       extern template class AmIteratorGrid<2>;
       extern template class AmIteratorGrid<3>;
    } 
-} 
+}
 #endif

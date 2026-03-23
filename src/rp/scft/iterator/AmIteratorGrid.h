@@ -18,7 +18,25 @@ namespace Rp {
    using namespace Util;
 
    /**
-   * Anderson Mixing iterator on grid (no space-group symmetry).
+   * Anderson mixing iterator on grid (no space-group symmetry).
+   *
+   * This variant of the Anderson mixing algorithm uses a regular 
+   * computational mesh to represent all fields, with no imposed symmetry.
+   * Instantiations of this class template are used as base classes for 
+   * two closely analogous class templates, also named AmIteratorGrid,
+   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
+   * and pscf_rpg programs, respectively.
+   *
+   * Template parameters:
+   *
+   *   - D : dimension
+   *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
+   *
+   * Typename T::Vector must be Util::DArray<double> for use in the
+   * Rpc namespace and Pscf::DevArray<cudaReal> for use in the Rpg
+   * namespace. Both classes allow the same container to either own
+   * data or be associated with a slice of data that is owned by 
+   * another instance of the same class.
    *
    * \see \ref rp_AmIteratorGrid_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
@@ -70,7 +88,6 @@ namespace Rp {
 
       // Inherited protected members
       using IteratorT::system;
-      using IteratorT::isFlexible_;
       using IteratorT::flexibleParams_;
 
       /**
