@@ -1,5 +1,5 @@
-#ifndef RPC_AM_ITERATOR_BASIS_TPP
-#define RPC_AM_ITERATOR_BASIS_TPP
+#ifndef RP_AM_ITERATOR_BASIS_TPP
+#define RP_AM_ITERATOR_BASIS_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,9 +9,6 @@
 */
 
 #include "AmIteratorBasis.h"
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/interaction/Interaction.h>
@@ -31,29 +28,29 @@ namespace Rpc {
    /*
    * Constructor.
    */
-   template <int D>
-   AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
+   template <int D, class T>
+   AmIteratorBasis<D,T>::AmIteratorBasis(typename T::System& system)
     : AmIterTmplT(),
       interaction_(),
       scaleStress_(10.0)
    {
-      Iterator<D>::setSystem(system);
-      Iterator<D>::isSymmetric_ = true;  
+      IteratorT::setSystem(system);
+      IteratorT::isSymmetric_ = true;  
       ParamComposite::setClassName("AmIteratorBasis"); 
    }
 
    /*
    * Destructor.
    */
-   template <int D>
-   AmIteratorBasis<D>::~AmIteratorBasis()
+   template <int D, class T>
+   AmIteratorBasis<D,T>::~AmIteratorBasis()
    {}
 
    /*
    * Read parameters from file.
    */
-   template <int D>
-   void AmIteratorBasis<D>::readParameters(std::istream& in)
+   template <int D, class T>
+   void AmIteratorBasis<D,T>::readParameters(std::istream& in)
    {
       // Use base class methods to read parameters
       AmIterTmplT::readParameters(in);
@@ -66,13 +63,13 @@ namespace Rpc {
       UTIL_CHECK(np <= 6);
 
       // Read optional isFlexible boolean (true by default)
-      Iterator<D>::isFlexible_ = 1;  // Default
+      IteratorT::isFlexible_ = 1;  // Default
       ParamComposite::readOptional(in, "isFlexible", 
-                                   Iterator<D>::isFlexible_);
+                                   IteratorT::isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
       // then optionally overwrite with user input from param file
-      if (Iterator<D>::isFlexible_) {
+      if (IteratorT::isFlexible_) {
          flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
             flexibleParams_.append(true); // Set all values to true
@@ -80,8 +77,8 @@ namespace Rpc {
          // Read optional flexibleParams_ array to overwrite current array
          ParamComposite::readOptionalFSArray(in, "flexibleParams", 
                                              flexibleParams_, np);
-         if (Iterator<D>::nFlexibleParams() == 0) {
-            Iterator<D>::isFlexible_ = false;
+         if (IteratorT::nFlexibleParams() == 0) {
+            IteratorT::isFlexible_ = false;
          }
       } else { // isFlexible_ = false
          flexibleParams_.clear();
@@ -106,8 +103,8 @@ namespace Rpc {
    /*
    * Output timing results to log file.
    */
-   template<int D>
-   void AmIteratorBasis<D>::outputTimers(std::ostream& out) const
+   template <int D, class T>
+   void AmIteratorBasis<D,T>::outputTimers(std::ostream& out) const
    {
       out << "\n";
       out << "Iterator times contributions:\n";
@@ -117,8 +114,8 @@ namespace Rpc {
    // Protected virtual function
 
    // Setup before entering iteration loop
-   template <int D>
-   void AmIteratorBasis<D>::setup(bool isContinuation)
+   template <int D, class T>
+   void AmIteratorBasis<D,T>::setup(bool isContinuation)
    {
       AmIterTmplT::setup(isContinuation);
       interaction_.update(system().interaction());
@@ -129,15 +126,15 @@ namespace Rpc {
    /*
    * Compute and return number of elements in a residual vector.
    */
-   template <int D>
-   int AmIteratorBasis<D>::nElements()
+   template <int D, class T>
+   int AmIteratorBasis<D,T>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
 
       int nEle = nMonomer*nBasis;
-      if (Iterator<D>::isFlexible_) {
-         nEle += Iterator<D>::nFlexibleParams();
+      if (IteratorT::isFlexible_) {
+         nEle += IteratorT::nFlexibleParams();
       }
       return nEle;
    }
@@ -145,15 +142,15 @@ namespace Rpc {
    /*
    * Does the system have an initial field guess?
    */
-   template <int D>
-   bool AmIteratorBasis<D>::hasInitialGuess()
+   template <int D, class T>
+   bool AmIteratorBasis<D,T>::hasInitialGuess()
    {  return system().w().hasData(); }
 
    /*
    * Get the current state (w fields and lattice parameters).
    */
-   template <int D>
-   void AmIteratorBasis<D>::getCurrent(VectorT& state)
+   template <int D, class T>
+   void AmIteratorBasis<D,T>::getCurrent(VectorT& state)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
@@ -171,8 +168,8 @@ namespace Rpc {
       }
 
       // Add elements associated with unit cell parameters (if any)
-      if (Iterator<D>::isFlexible_) {
-         UTIL_CHECK(Iterator<D>::nFlexibleParams() > 0);
+      if (IteratorT::isFlexible_) {
+         UTIL_CHECK(IteratorT::nFlexibleParams() > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double,6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
@@ -184,7 +181,7 @@ namespace Rpc {
                counter++;
             }
          }
-         UTIL_CHECK(counter == Iterator<D>::nFlexibleParams());
+         UTIL_CHECK(counter == IteratorT::nFlexibleParams());
       }
 
    }
@@ -192,15 +189,15 @@ namespace Rpc {
    /*
    * Perform the main system computation (solve the MDE).
    */
-   template <int D>
-   void AmIteratorBasis<D>::evaluate()
-   {  system().compute(Iterator<D>::isFlexible_); }
+   template <int D, class T>
+   void AmIteratorBasis<D,T>::evaluate()
+   {  system().compute(IteratorT::isFlexible_); }
 
    /*
    * Compute the residual for the current system state.
    */
-   template <int D>
-   void AmIteratorBasis<D>::getResidual(VectorT& resid)
+   template <int D, class T>
+   void AmIteratorBasis<D,T>::getResidual(VectorT& resid)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
@@ -261,7 +258,7 @@ namespace Rpc {
       }
 
       // If flexible unit cell, then compute stress residuals
-      if (Iterator<D>::isFlexible_) {
+      if (IteratorT::isFlexible_) {
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -278,11 +275,11 @@ namespace Rpc {
          int counter = 0;
          for (i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               resid[begin + counter] = coeff * Iterator<D>::stress(i);
+               resid[begin + counter] = coeff * IteratorT::stress(i);
                counter++;
             }
          }
-         UTIL_CHECK(counter == Iterator<D>::nFlexibleParams());
+         UTIL_CHECK(counter == IteratorT::nFlexibleParams());
       }
 
    }
@@ -290,8 +287,8 @@ namespace Rpc {
    /*
    * Update the current system field vector.
    */
-   template <int D>
-   void AmIteratorBasis<D>::update(VectorT& newState)
+   template <int D, class T>
+   void AmIteratorBasis<D,T>::update(VectorT& newState)
    {
       // Constants
       const int nMonomer = system().mixture().nMonomer();
@@ -345,9 +342,9 @@ namespace Rpc {
       system().w().setBasis(wFields);
 
       // If flexible, update unit cell parameters
-      if (Iterator<D>::isFlexible_) {
+      if (IteratorT::isFlexible_) {
          const int nParam = system().domain().unitCell().nParameter();
-         const int nFlex = Iterator<D>::.nFlexibleParams();
+         const int nFlex = IteratorT::.nFlexibleParams();
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
@@ -373,10 +370,10 @@ namespace Rpc {
    /*
    * Output relevant system details to the iteration log file.
    */
-   template<int D>
-   void AmIteratorBasis<D>::outputToLog()
+   template <int D, class T>
+   void AmIteratorBasis<D,T>::outputToLog()
    {
-      if (Iterator<D>::isFlexible_ && AmIterTmplT::verbose() > 1) {
+      if (IteratorT::isFlexible_ && AmIterTmplT::verbose() > 1) {
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
          const int nMonomer = system().mixture().nMonomer();

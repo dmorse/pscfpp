@@ -1,9 +1,9 @@
-namespace Pscf{
+namespace Pscf {
 
    /**
    * Class templates for real-valued periodic fields.
    */ 
-   namespace Rp{
+   namespace Rp {
    
       /**
       * \defgroup Pscf_Rp_Module Pscf::Rp - Real Periodic Fields (templates)

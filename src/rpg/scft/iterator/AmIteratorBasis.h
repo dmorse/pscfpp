@@ -22,10 +22,9 @@ namespace Rpg {
    using namespace Util;
 
    /**
-   * Anderson Mixing iterator with imposed space-group symmetry.
+   * Anderson mixing iterator with imposed space-group symmetry.
    *
-   * \sa \ref rpc_AmIteratorBasis_page
-   *
+   * \see \ref rp_AmIteratorBasis_page
    * \ingroup Rpg_Scft_Iterator_Module
    */
    template <int D>

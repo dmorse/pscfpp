@@ -134,8 +134,8 @@ parameters and enclosed blocks are described below:
   <li> \ref user_param_domain_pc_page "Domain" </li>
   <li> \ref scft_environment_page "Environment" </li>
   <li> \ref scft_iterator_page "Iterator" </li>
-     <ul> <li> \ref rpc_AmIteratorBasis_page </li></ul>
-     <ul> <li> \ref rpc_AmIteratorGrid_page </li></ul>
+     <ul> <li> \ref rp_AmIteratorBasis_page </li></ul>
+     <ul> <li> \ref rp_AmIteratorGrid_page </li></ul>
   <li> \ref scft_sweep_page "Sweep" </li>
      <ul> <li> \ref scft_sweep_linear_sec "LinearSweep" </li></ul>
   <li> \ref psfts_param_page "Simulator" </li>

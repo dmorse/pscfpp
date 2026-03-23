@@ -67,8 +67,8 @@ G.H. Fredrickson (Phys. Rev. Lett, vol 83, page 4317, 1999).
 \section scft_iterator_periodic_sec Periodic systems (pscf_rpc and pscf_rpg)
 
 The pscf_rpc and pscf_rpg programs each provide two Anderson mixing iterator
-algorithms named \ref rpc_AmIteratorBasis_page "AmIteratorBasis" and
-\ref rpc_AmIteratorGrid_page "AmIteratorGrid", respectively.
+algorithms named \ref rp_AmIteratorBasis_page "AmIteratorBasis" and
+\ref rp_AmIteratorGrid_page "AmIteratorGrid", respectively.
 The AmIteratorBasis algorithm is the default iterator algorithm for either
 program, and so may be invoked by a block that starts with either the
 generic label "Iterator" or with a block that uses the specific label
@@ -82,12 +82,12 @@ iterator may be found by following the links in the table below:
     <td> <b> Description </b> </td>
   </tr>
   <tr>
-    <td> \subpage rpc_AmIteratorBasis_page "AmIteratorBasis" </td>
+    <td> \subpage rp_AmIteratorBasis_page "AmIteratorBasis" </td>
     <td> Anderson Mixing iterator for periodic structures,
          formulated using a symmetry-adapted basis (default)  </td>
   </tr>
   <tr>
-    <td> \subpage rpc_AmIteratorGrid_page "AmIteratorGrid" </td>
+    <td> \subpage rp_AmIteratorGrid_page "AmIteratorGrid" </td>
     <td> Anderson Mixing iterator for periodic structures,
          formulated using values defined on a spatial grid  </td>
   </tr>
@@ -103,7 +103,7 @@ true (i.e., flexible unit cell) by default.
 Both of these iteration algorithms are both based on Anderson-mixing (AM)
 algorithms, but differ in their treatment of space-group symmetry:
 
-The implementation of the \ref rpc_AmIteratorBasis_page "AmIteratorBasis"
+The implementation of the \ref rp_AmIteratorBasis_page "AmIteratorBasis"
 algorithm uses an expansion of both chemical potential fields and the
 residual vector as arrays with elements that represent coefficients in
 symmetry-adapted Fourier expansions of the corresponding fields. This

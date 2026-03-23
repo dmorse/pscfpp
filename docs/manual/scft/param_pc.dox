@@ -127,8 +127,8 @@ example.
 \section scft_param_pc_iterator_sec Iterator
 
 The pscf_rpc and pscf_rpg programs each provide two SCFT iterator
-algorithms named \ref rpc_AmIteratorBasis_page "AmIteratorBasis" and
-\ref rpc_AmIteratorGrid_page "AmIteratorGrid", as discussed on a
+algorithms named \ref rp_AmIteratorBasis_page "AmIteratorBasis" and
+\ref rp_AmIteratorGrid_page "AmIteratorGrid", as discussed on a
 \ref scft_iterator_periodic_sec "previous page".
 
 AmIteratorBasis is the default iterator algorithm for both pscf_rpc and
@@ -170,8 +170,8 @@ The above example does not contains a Sweep block.
  <li> \subpage scft_environment_page "Environment" </li>
  <li> \ref scft_iterator_page "Iterator" </li>
  <ul>
-    <li> \subpage rpc_AmIteratorBasis_page "AmIteratorBasis" </li>
-    <li> \subpage rpc_AmIteratorGrid_page  "AmIteratorGrid" </li>
+    <li> \subpage rp_AmIteratorBasis_page "AmIteratorBasis" </li>
+    <li> \subpage rp_AmIteratorGrid_page  "AmIteratorGrid" </li>
  </ul>
  <li> \ref scft_sweep_page "Sweep" </li>
  <ul>

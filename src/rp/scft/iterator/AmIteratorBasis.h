@@ -1,5 +1,5 @@
-#ifndef RPC_AM_ITERATOR_BASIS_H
-#define RPC_AM_ITERATOR_BASIS_H
+#ifndef RP_AM_ITERATOR_BASIS_H
+#define RP_AM_ITERATOR_BASIS_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,14 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorBase.h"                    // base class
-#include <pscf/iterator/AmbdInteraction.h>     // member 
+#include <pscf/iterator/AmIteratorTmpl.h"    // base class
+#include <pscf/iterator/AmbdInteraction.h>   // member 
 
 namespace Pscf {
-namespace Rpc {
-
-   // Forward declaration
-   template <int D> class System;
+namespace Rp {
 
    using namespace Util;
 
@@ -25,27 +22,30 @@ namespace Rpc {
    * \see \ref rp_AmIteratorBasis_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
    *
-   * \ingroup Rpc_Scft_Iterator_Module
+   * \ingroup Rp_Scft_Iterator_Module
    */
-   template <int D>
+   template <int D, class Types>
    class AmIteratorBasis 
-    : public AmIteratorTmpl< Iterator<D>, DRArray<double> >
+    : public AmIteratorTmpl<typename T::Iterator, DRArray<double> >
    {
 
    public:
+
+      /// Alias for iterator type.
+      using IteratorT = typename T::Iterator;
 
       /// Alias for type of residual and state vectors
       using VectorT = DRArray<double>;
 
       /// Alias for base class.
-      using AmIterTmplT = AmIteratorTmpl< Iterator<D>, VectorT >;
+      using AmIterTmplT = AmIteratorTmpl< IteratorT, VectorT >;
 
       /**
       * Constructor.
       *
       * \param system System object associated with this iterator.
       */
-      AmIteratorBasis(System<D>& system);
+      AmIteratorBasis(typename T::System& system);
 
       /**
       * Destructor.
@@ -67,13 +67,13 @@ namespace Rpc {
       void outputTimers(std::ostream& out) const override;
 
       // Inherited public member functions
-      using Iterator<D>::flexibleParams;
+      using IteratorT::flexibleParams;
 
    protected:
 
       // Inherited protected members
-      using Iterator<D>::system;
-      using Iterator<D>::flexibleParams_;
+      using IteratorT::system;
+      using IteratorT::flexibleParams_;
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -140,11 +140,6 @@ namespace Rpc {
 
    };
 
-   // Explicit instantiation declarations
-   extern template class AmIteratorBasis<1>;
-   extern template class AmIteratorBasis<2>;
-   extern template class AmIteratorBasis<3>;
-
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 #endif
