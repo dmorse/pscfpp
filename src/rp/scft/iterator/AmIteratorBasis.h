@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h"    // base class
-#include <pscf/iterator/AmbdInteraction.h>   // member 
+#include <pscf/iterator/AmIteratorTmpl.h>    // base class
+#include <pscf/iterator/AmbdInteraction.h>   // direct base member 
+#include <util/containers/DArray.h>          // indirect base member
 
 namespace Pscf {
 namespace Rp {
@@ -37,9 +38,9 @@ namespace Rp {
    *
    * \ingroup Rp_Scft_Iterator_Module
    */
-   template <int D, class Types>
+   template <int D, class T>
    class AmIteratorBasis 
-    : public AmIteratorTmpl<typename T::Iterator, DRArray<double> >
+    : public AmIteratorTmpl<typename T::Iterator, DArray<double> >
    {
 
    public:
@@ -48,7 +49,7 @@ namespace Rp {
       using IteratorT = typename T::Iterator;
 
       /// Alias for type of residual and state vectors
-      using VectorT = DRArray<double>;
+      using VectorT = DArray<double>;
 
       /// Alias for base class.
       using AmIterTmplT = AmIteratorTmpl< IteratorT, VectorT >;

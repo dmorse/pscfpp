@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorBase.h"                    // base class
-#include <pscf/iterator/AmbdInteraction.h>     // member 
+#include <rp/scft/iterator/AmIteratorBasis.h>  // direct base class 
+#include <rpc/system/Types.h>                  // direct base argument
+#include <rpc/scft/iterator/Iterator.h>        // indirect base argument
+#include <util/containers/DArray.h>            // indirect base argument
 
 namespace Pscf {
 namespace Rpc {
@@ -20,131 +22,49 @@ namespace Rpc {
    using namespace Util;
 
    /**
-   * Anderson Mixing iterator with imposed space-group symmetry.
-   * 
+   * Anderson mixing iterator with imposed space-group symmetry).
+   *
+   * Instantiations of this template with D=1, 2, and 3 are derived from
+   * instantiations of the base class template Rp::AmIteratorBasis, and
+   * inherit their public interface and almost all of their source code
+   * from this base class.  
+   *
+   * \see Rp::AmIteratorBasis
    * \see \ref rp_AmIteratorBasis_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
-   *
    * \ingroup Rpc_Scft_Iterator_Module
    */
    template <int D>
-   class AmIteratorBasis 
-    : public AmIteratorTmpl< Iterator<D>, DRArray<double> >
+   class AmIteratorBasis : public Rp::AmIteratorBasis< D, Types<D> > 
    {
-
    public:
-
-      /// Alias for type of residual and state vectors
-      using VectorT = DRArray<double>;
-
-      /// Alias for base class.
-      using AmIterTmplT = AmIteratorTmpl< Iterator<D>, VectorT >;
 
       /**
       * Constructor.
       *
-      * \param system System object associated with this iterator.
+      * \param system  parent system
       */
       AmIteratorBasis(System<D>& system);
 
-      /**
-      * Destructor.
-      */
-      ~AmIteratorBasis();
-
-      /**
-      * Read all parameters and initialize.
-      *
-      * \param in input filestream
-      */
-      void readParameters(std::istream& in) override;
-
-      /**
-      * Output timing results to log file.
-      *
-      * \param out  output stream for timer report
-      */
-      void outputTimers(std::ostream& out) const override;
-
-      // Inherited public member functions
-      using Iterator<D>::flexibleParams;
-
-   protected:
-
-      // Inherited protected members
-      using Iterator<D>::system;
-      using Iterator<D>::flexibleParams_;
-
-      /**
-      * Setup iterator just before entering iteration loop.
-      *
-      * \param isContinuation Is this a continuation within a sweep?
-      */
-      void setup(bool isContinuation) override;
-
-   private:
-
-      /// Local copy of interaction, adapted for AMBD residual definition
-      AmbdInteraction interaction_;
-
-      /// How are stress residuals scaled in error calculation?
-      double scaleStress_;
-
-      // Private virtual functions that interact with parent system
-
-      /**
-      * Does the system has an initial guess for the field?
-      */
-      bool hasInitialGuess() override;
-
-      /**
-      * Compute and returns the number of elements in field vector.
-      *
-      * Called during allocation and then stored.
-      */
-      int nElements() override;
-
-      /**
-      * Get the current w fields and lattice parameters.
-      *
-      * \param curr current field vector
-      */
-      void getCurrent(VectorT& curr) override;
-
-      /**
-      * Have the system perform a computation using new field.
-      *
-      * Solves the modified diffusion equations, computes concentrations,
-      * and optionally computes stress components.
-      */
-      void evaluate() override;
-
-      /**
-      * Compute the residual vector.
-      *
-      * \param resid current residual vector value
-      */
-      void getResidual(VectorT& resid) override;
-
-      /**
-      * Updates the system field with the new trial field.
-      *
-      * \param newGuess trial field vector
-      */
-      void update(VectorT& newGuess) override;
-
-      /**
-      * Outputs relevant system details to the iteration log.
-      */
-      void outputToLog() override;
-
    };
 
-   // Explicit instantiation declarations
-   extern template class AmIteratorBasis<1>;
-   extern template class AmIteratorBasis<2>;
-   extern template class AmIteratorBasis<3>;
+}
+}
 
-} // namespace Rpc
-} // namespace Pscf
+// Explicit instantiation declarations
+namespace Pscf {
+   extern template class AmIteratorTmpl<Rpc::Iterator<1>, DArray<double> >;
+   extern template class AmIteratorTmpl<Rpc::Iterator<2>, DArray<double> >;
+   extern template class AmIteratorTmpl<Rpc::Iterator<3>, DArray<double> >;
+   namespace Rp {
+      extern template class AmIteratorBasis<1, Rpc::Types<1> >;
+      extern template class AmIteratorBasis<2, Rpc::Types<2> >;
+      extern template class AmIteratorBasis<3, Rpc::Types<3> >;
+   } 
+   namespace Rpc {
+      extern template class AmIteratorBasis<1>;
+      extern template class AmIteratorBasis<2>;
+      extern template class AmIteratorBasis<3>;
+   } 
+}
 #endif

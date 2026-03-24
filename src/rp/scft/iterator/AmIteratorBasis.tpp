@@ -17,8 +17,10 @@
 #include <util/global.h>
 #include <cmath>
 
+#include <pscf/iterator/AmIteratorTmpl.tpp>
+
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
