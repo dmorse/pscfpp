@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/scft/iterator/AmIteratorHost.h>  // base class template
-#include <pscf/iterator/AmbdInteraction.h>     // member variable
-#include <util/containers/DArray.h>            // function argument
-#include <util/containers/RingBuffer.h>        // function argument
+#include <rp/scft/iterator/AmIteratorBasis.h>  // direct base class 
+#include <rpg/system/Types.h>                  // direct base argument
+#include <rpg/scft/iterator/Iterator.h>        // indirect base argument
+#include <util/containers/DArray.h>            // indirect base argument
 
 namespace Pscf {
 namespace Rpg {
@@ -22,175 +22,49 @@ namespace Rpg {
    using namespace Util;
 
    /**
-   * Anderson mixing iterator with imposed space-group symmetry.
+   * Anderson mixing iterator with imposed space-group symmetry).
    *
-   * \see \ref rp_AmIteratorBasis_page
+   * Instantiations of this template with D=1, 2, and 3 are derived from
+   * instantiations of the base class template Rp::AmIteratorBasis, and
+   * inherit their public interface and almost all of their source code
+   * from this base class.  
+   *
+   * \see Rp::AmIteratorBasis
+   * \see \ref rp_AmIteratorBasis_page "Manual Page"
+   * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
    * \ingroup Rpg_Scft_Iterator_Module
    */
    template <int D>
-   class AmIteratorBasis 
-     : public AmIteratorTmpl< Iterator<D>, DArray<double> >
+   class AmIteratorBasis : public Rp::AmIteratorBasis< D, Types<D> > 
    {
-
    public:
 
       /**
       * Constructor.
-      *   
-      * \param system parent system object
+      *
+      * \param system  parent system
       */
       AmIteratorBasis(System<D>& system);
 
-      /**
-      * Destructor.
-      */ 
-      ~AmIteratorBasis();
-
-      /**
-      * Read all parameters and initialize.
-      *
-      * \param in input filestream
-      */
-      void readParameters(std::istream& in);
-
-      /**
-      * Output timing results to log file.
-      *
-      * \param out  output stream for timer report
-      */
-      void outputTimers(std::ostream& out) const;
-
-      /// Alias for direct base class.
-      using AmIteratorTmplT = AmIteratorTmpl<Iterator<D>, DArray<double> >;
-
-      // Inherited public member functions
-      using Iterator<D>::isFlexible;
-      using Iterator<D>::flexibleParams;
-      using Iterator<D>::nFlexibleParams;
-
-   protected:
-
-      // Inherited protected members
-      using AmIteratorTmplT::residual;
-      using Iterator<D>::system;
-      using Iterator<D>::isSymmetric_;
-      using Iterator<D>::isFlexible_;
-      using Iterator<D>::flexibleParams_;
-      using ParamComposite::readOptional;
-      using ParamComposite::readParamCompositeOptional;
-      using ParamComposite::readOptionalFSArray;
-
-      /**
-      * Setup iterator just before entering iteration loop.
-      *
-      * \param isContinuation Is this a continuation within a sweep?
-      */
-      void setup(bool isContinuation);
-
-   private:
-
-      /// Local copy of interaction, for use with AMBD residual definition
-      AmbdInteraction interaction_;
-
-      /// How are stress residuals scaled in error calculation?
-      double scaleStress_;
-
-      // Private virtual functions that interact with parent System.
-      
-      /** 
-      * Compute the number of elements in the residual vector.
-      */
-      int nElements() override;
-
-      /**
-      * Check if the system has an initial guess.
-      */
-      bool hasInitialGuess() override;
-     
-      /**
-      * Get the current w fields and lattice parameters.
-      *
-      * \param curr current field vector (output)
-      */
-      void getCurrent(DArray<double>& curr) override;
-
-      /**
-      * Solve MDE for current state of system.
-      */
-      void evaluate() override;
-
-      /**
-      * Gets the residual vector from system.
-      *  
-      * \param resid current residual vector (output)
-      */
-      void getResidual(DArray<double>& resid) override;
-
-      /**
-      * Update the system with a new trial field vector.
-      *
-      * \param newGuess trial field configuration
-      */
-      void update(DArray<double>& newGuess) override;
-
-      /**
-      * Output relevant system details to the iteration log file.
-      */
-      void outputToLog() override;
-
-      #if 0
-      // Private virtual functions for vector math
-      
-      /**
-      * Set a vector equal to another (assign a = b)
-      * 
-      * \param a the field to be set (LHS, result)
-      * \param b the field for it to be set to (RHS, input)
-      */
-      void setEqual(DArray<double>& a, 
-                    DArray<double> const & b) override;
-
-      /**
-      * Compute the inner product of two real vectors.
-      */
-      double dotProduct(DArray<double> const & a, 
-                        DArray<double> const & b) override;
-
-      /**
-      * Find the maximum magnitude element of a vector.
-      */
-      double maxAbs(DArray<double> const & hist) override;
-
-      /**
-      * Compute the difference a = b - c for vectors a, b and c.
-      *
-      * \param a result vector (LHS)
-      * \param b first vector (RHS)
-      * \param c second vector (RHS)
-      */
-      void subVV(DArray<double>& a, 
-                 DArray<double> const & b, 
-		 DArray<double> const & c) override;
-
-      /**
-      * Compute a += c*b for vectors a and b and scalar c.
-      *
-      * \param a result vector (LHS)
-      * \param b input vector (RHS)
-      * \param c scalar coefficient (RHS)
-      */
-      void addEqVc(DArray<double>& a, 
-		   DArray<double> const & b, double c) override;
-      #endif
-
-
    };
 
-   // Explicit instantiation declarations
-   extern template class AmIteratorBasis<1>;
-   extern template class AmIteratorBasis<2>;
-   extern template class AmIteratorBasis<3>;
+}
+}
 
-} // namespace Rpg
-} // namespace Pscf
+// Explicit instantiation declarations
+namespace Pscf {
+   extern template class AmIteratorTmpl<Rpg::Iterator<1>, DArray<double> >;
+   extern template class AmIteratorTmpl<Rpg::Iterator<2>, DArray<double> >;
+   extern template class AmIteratorTmpl<Rpg::Iterator<3>, DArray<double> >;
+   namespace Rp {
+      extern template class AmIteratorBasis<1, Rpg::Types<1> >;
+      extern template class AmIteratorBasis<2, Rpg::Types<2> >;
+      extern template class AmIteratorBasis<3, Rpg::Types<3> >;
+   } 
+   namespace Rpg {
+      extern template class AmIteratorBasis<1>;
+      extern template class AmIteratorBasis<2>;
+      extern template class AmIteratorBasis<3>;
+   } 
+}
 #endif
