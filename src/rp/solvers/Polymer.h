@@ -27,7 +27,7 @@ namespace Rp {
    * \ref user_param_polymer_sec "Manual Page"
    *
    * This template adds functions required for periodic systems to an
-   * appropriate instantiation of the Pscf::PolymerTmpl base class 
+   * appropriate specialization of the Pscf::PolymerTmpl base class 
    * template.
    *
    * Specializations of this class template are used as base classes for 
@@ -57,13 +57,13 @@ namespace Rp {
       /// Propagator type, for one direction within a block.
       using PropagatorT = typename T::Propagator;
 
-      /// Direct base class, instantiation of PolymerTmpl.
+      /// Direct base class, specialization of PolymerTmpl class template.
       using PolymerTmplT = PolymerTmpl<BlockT, PropagatorT, double>;
 
-      /// Indirect base, instantiation of PolymerSpecies (inherited).
+      /// Indirect base, specialization of PolymerSpecies (inherited).
       using typename PolymerTmplT::PolymerSpeciesT;
 
-      /// Indirect base, instantiation of Species (inherited).
+      /// Indirect base, specialization of Species (inherited).
       using typename PolymerTmplT::SpeciesT;
 
       // Public member functions

@@ -1,30 +1,30 @@
 
 This directory contains a set of class templates that are defined in 
 namespace Pscf::Rp and used in the program-level namespaces Pscf::Rpc 
-and Rpg. Instantiations of each class template in namespace Pscf::Rp 
-are used as base classes for corresponding instantiations of two closely 
-analogous class templates defined in Pscf::Rpc and Pscf::Rpg. Generally, 
-the base class template in Pscf::Rp and the derived class templates in 
-Pscf::Rpc and Rpg::Rpg all share the same name. For example, each 
-instantiation of the template <int D> class Pscf::Rpc::System with an 
-integer value D=1, 2, or 3 is derived from an instantiation of a class 
-template defined in the Pscf::Rp namespace that is also named "System". 
+and Rpg. Instantiated specializations of each class template in namespace 
+Pscf::Rp are used as base classes for corresponding specializations of 
+two closely analogous class templates defined in Pscf::Rpc and Pscf::Rpg. 
+Generally, the base class template in Pscf::Rp and the derived class 
+templates in Pscf::Rpc and Rpg::Rpg all share the same name. For example, 
+each specialization of the template <int D> class Pscf::Rpc::System with 
+an integer argument D=1, 2, or 3 is derived from a corresponding
+specialization of a class template defined in the Pscf::Rp namespace 
+that is also named "System". 
 
 Types classes:
 
 All of the templates defined in namespace Pscf::Rp take the dimension D of 
 space as an integer template parameter. Most also take a class parameter 
-named "T" as an additional parameter. In instantiations of such templates,
-the argument associated with parameter T should either be a class template
-instantiation Pscf::Rpc::Types<D> of the template defined in file 
-src/rpc/system/Types.h, for instantiations used in namespace Pscf::Rpc, 
-or an instantiation Pscf::Rpg::Types<D> of the template defined in file 
-src/rpg/system/Types.h, for instantiations used in namespace Pscf::Rpg.  
-The "Types" class templates defined in the Pscf::Rpc and Pscf::Rpg 
-program-level namespaces each take the spatial dimension D as a single
-template parameter, and define a set of typename aliases for classes used 
-only in the enclosing program-level namespace for the specified value of 
-D. 
+named "T" as an additional parameter. In specializations of such templates,
+the argument associated with parameter T should either be a specialization
+Rpc::Types<D> defined of the template defined in src/rpc/system/Types.h, 
+for specializations used used in namespace Pscf::Rpc, or a specialization 
+Pscf::Rpg::Types<D> of the template defined in file src/rpg/system/Types.h, 
+for specializations used in namespace Pscf::Rpg. The "Types" class templates 
+defined in the Pscf::Rpc and Pscf::Rpg program-level namespaces each take 
+the spatial dimension D as a single template parameter, and define a set 
+of typename aliases for classes used only in the enclosing program-level 
+namespace for the specified value of D. 
 
 Typename aliases defined in each such "Types" class are used in class
 templates defined in Pscf::Rp to create generic class definitions that 
@@ -32,10 +32,10 @@ can be adapted for use in either pscf_rpc or pscf_rpg by simply using
 a different "Types" class as a template argument. As an example, consider 
 the class Pscf::Rpc::System<3>, which is the type of the main system 
 object used in the pscf_rpc CPU program for problems involving 
-three-dimensional fields. This class is an instantiation of the class
+three-dimensional fields. This class is a specialization of the class
 template Pscf::Rpc::System<int D>, and is a subclass of a template
-instantiation Pscf::Rp::System<3, Pscf::Rpc::Types<3> > of the System 
-class template defined in namespace Rp, using an argument 
+specialization Pscf::Rp::System<3, Pscf::Rpc::Types<3> > of the 
+System class template defined in namespace Rp, using an argument 
 T = Pscf::Rpc::Types<3> that contains type definitions appropriate for
 use in namespace Pscf::Rpc.
 

@@ -20,7 +20,7 @@ namespace Rpg {
    /**
    * Monte Carlo simulator for PS-FTS.
    *
-   * This class is basically a named instantiation of the base class 
+   * This class is basically a named specialization of the base class 
    * template Rp::McSimulator, using aliases defined in Rpg::Types<D> to 
    * specialize to types used in the Rpg namespace. See documentation 
    * of the base class for details.

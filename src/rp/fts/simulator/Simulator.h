@@ -52,7 +52,7 @@ namespace Rp {
    * a suffix "c" refer to components of multi-component fields that are
    * defined using this eigenvector basis.
    *
-   * <b> Usage </b>: An instantiation of Rp::Simulator\<D, T\> serves 
+   * <b> Usage </b>: A specialization of Rp::Simulator\<D, T\> serves 
    * as a base class for for each Simulation\<D\> class defined in 
    * namespaces Rpc and Rpg, for D=1, 2 and 3. In this usage, template 
    * parameter T is an instance of a template \<int D\> class Types that

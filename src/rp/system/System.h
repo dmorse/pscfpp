@@ -37,14 +37,14 @@ namespace Rp {
    *    D - integer dimensionality of space (D=1, 2, or 3)
    *    T - "Types" class collection of aliases for other classes
    * 
-   * <b> Usage </b>: An instantiation of Rp::System\<D, T\> is used as a
+   * <b> Usage </b>: A specialization of Rp::System\<D, T\> is used as a
    * base class for each System\<D\> class defined in namespaces Rpc and 
    * Rpg, for D=1, 2, or 3.  In this use, template parameter T is taken 
    * to be an instance of a class template named Types that is defined in 
    * each of these two program-level namespaces. For example, in the Rpc 
    * namespace, for each value of D, class Rpc::System\<D\> is derived 
    * from the class Prdc::System\< D, Rpc::Types\<D\> >. For each such 
-   * instantiation, class Types\<D\> defines a set of typename aliases 
+   * specialization, class Types\<D\> defines a set of typename aliases 
    * for classes used in the relevant program-level namespace, for the 
    * specified value of D.  For example, for each value of D, the typename 
    * Rpc::Types\<D\>::Mixture is an alias for the type Rpc::Mixture<D>
