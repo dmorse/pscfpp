@@ -107,16 +107,21 @@ namespace Rp {
    void BdMove<D,T>::bdSetup()
    {
       UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(system().c().hasData());
-
+      
       // Compute field components as needed
       if (!simulator().hasWc()) {
          simulator().computeWc();
       }
       if (!simulator().hasCc()) {
+         if (!system().c().hasData()){
+            system().compute();
+         }
          simulator().computeCc();
       }
       if (!simulator().hasDc()) {
+         if (!system().c().hasData()){
+            system().compute();
+         }
          simulator().computeDc();
       }
 
@@ -147,7 +152,6 @@ namespace Rp {
    {
       // Preconditions
       UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(system().c().hasData());
       UTIL_CHECK(simulator().hasWc());
       UTIL_CHECK(simulator().hasCc());
       UTIL_CHECK(simulator().hasDc());
