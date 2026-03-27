@@ -73,16 +73,16 @@ namespace Rp {
    * objects and indicate a zero-parameter member function of each
    * observer that will be called whenever the fields are modified.
    *
-   * <b> Subclasses </b>: Instantiations of Rp::WFields are used as base
-   * for classes Rpc::WFields \<D \> and Rpg::WFields \<D\>:
+   * <b> Subclasses </b>: Specializations of Rp::WFields are used as base
+   * for specializations of Rpc::WFields \<D \> and Rpg::WFields \<D\>:
    *
-   *  - Instantiations of Rpc::WFields \<D\> with D=1, 2, and 3 are
-   *    derived from instantiations of Rp::WFields with template arguments
+   *  - Specializations of Rpc::WFields \<D\> with D=1, 2, and 3 are
+   *    derived from specializations of Rp::WFields with template arguments
    *    RFT = Cpu::RFT \<D\> and FIT = Rpc::FIT \<D\> , and are used in
    *    the pscf_rpc CPU program.
    *
-   *  - Instantiations of Rpg::WFields \<D\> with D=1, 2 and 3 are
-   *    derived from instantiations of Rp::WFields with template arguments
+   *  - Specializations of Rpg::WFields \<D\> with D=1, 2 and 3 are
+   *    derived from specializations of Rp::WFields with template arguments
    *    RFT = Cuda::RFT \<D\> and FIT = Rpg::FIT \<D\> , and are used in
    *    the pscf_rpg GPU accelerated program.
    *

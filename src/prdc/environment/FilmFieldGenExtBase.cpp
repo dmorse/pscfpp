@@ -7,12 +7,11 @@
 
 #include "FilmFieldGenExtBase.tpp"
 
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Prdc {
-
-   // Explicit class instantiations
-   template class FilmFieldGenExtBase<1>;
-   template class FilmFieldGenExtBase<2>;
-   template class FilmFieldGenExtBase<3>;
-}
+   namespace Prdc {
+      template class FilmFieldGenExtBase<1>;
+      template class FilmFieldGenExtBase<2>;
+      template class FilmFieldGenExtBase<3>;
+   }
 }

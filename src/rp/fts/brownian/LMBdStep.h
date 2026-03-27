@@ -34,7 +34,7 @@ namespace Rp {
    *  - B. Leimkuhler and C. Matthews, J. Chemical Physics,
    *    vol. 138, 174102 (2013) [ https://doi.org/10.1063/1.4802990 ]
    *
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, both also named LmBdStep, 
    * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
    * and pscf_rpg programs, respectively.

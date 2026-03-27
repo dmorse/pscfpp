@@ -25,8 +25,8 @@ namespace Rp {
    *    - D  dimension of space
    *    - ST system class (Rpc::System<D> or Rpg::System<D>)
    *
-   * Instantiations of this template are used as base classes for
-   * instantiations of the class templates Rpc::Iterator<in D> and
+   * Specializations of this template are used as base classes for
+   * specializations of the class templates Rpc::Iterator<in D> and
    * Rpg::Iterator<int D>.
    *
    * \ingroup Rp_Scft_Module

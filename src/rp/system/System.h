@@ -131,7 +131,7 @@ namespace Rp {
       /**
       * Constructor.
       *
-      * When an instantiation of System<D,T> is used as a base class for 
+      * When a specialization of System<D,T> is used as a base class for 
       * a subclass defined in the Rpc or Rpg program-level namespace,
       * such as Rpc::System\<D\>, the typename T::System is an alias for 
       * the name of the subclass defined in Rpc or Rpg. In the constructor

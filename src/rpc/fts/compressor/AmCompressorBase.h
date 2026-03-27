@@ -9,8 +9,9 @@
 */
 
 /*
-* Declarations of explicit instantiations used as base classes for 
-* class templates Rpc::AmCompressor and Rpc::LrAmCompressor.
+* Instantiatied class template specializations used as base classes 
+* for specializations of the class templates Rpc::AmCompressor and 
+* Rpc::LrAmCompressor.
 */
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template

@@ -282,7 +282,7 @@ namespace Rpg {
       ar & change_;
    }
 
-   // Definitions of operators, with no explicit instantiations. 
+   // Definitions of operators, with no explicit specializations. 
 
    /**
    * Inserter for reading a SweepParameter from an istream.

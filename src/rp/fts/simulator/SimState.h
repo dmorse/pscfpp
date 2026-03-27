@@ -27,7 +27,7 @@ namespace Rp {
    * algorithm (the search for a partial saddle point) fails to converge 
    * after an attempted unconstrained BD step.
    * 
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, also named SimState, that
    * are defined in Rpc and Rpg namespaces and used in the pscf_rpc and
    * pscf_rpg programs, respectively.

@@ -39,7 +39,7 @@ namespace Rpg {
    * to solve the MDE repeatedly calls step functions provided by the
    * parent Block.
    *
-   * Each instantiations of this template is derived from an instantiation
+   * Each instantiation of this template is derived from a specialization
    * of the base class template Rp::Propagator, and inherits most of its
    * public interface from this base class. Only a few functions that 
    * involve memory allocation on the GPU are defined or re-defined here.

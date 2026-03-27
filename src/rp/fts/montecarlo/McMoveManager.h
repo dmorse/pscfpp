@@ -22,7 +22,7 @@ namespace Rp {
    /**
    * Manager for a set of McMove objects.
    *
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, both also named McMoveManager,
    * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
    * and pscf_rpg programs, respectively.

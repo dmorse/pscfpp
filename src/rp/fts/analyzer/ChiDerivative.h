@@ -16,7 +16,7 @@ namespace Rp {
    /**
    * Evaluate the derivative of H with respect to chi.
    *
-   * Instantiations of this template are used as base classes for two
+   * Specializations of this template are used as base classes for two
    * closely analogous class templates, also named ChiDerivative, that 
    * are defined in the Rpc and Rpg namespaces for use in the pscf_rpc
    * and pscf_rpg programs, respectively.

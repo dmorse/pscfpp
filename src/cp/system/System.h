@@ -89,7 +89,7 @@ namespace Cp {
       /**
       * Constructor.
       *
-      * When an instantiation of System<D,T> is used as a base class for 
+      * When a specialization of System<D,T> is used as a base class for 
       * a concrete System class, such as Cpc::System\<D\>, the typename 
       * T::System must be an alias for the name of the subclass. In 
       * this usage, in the member initialization list of the T::System 

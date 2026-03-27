@@ -23,7 +23,7 @@ namespace Rp {
    *
    * \ref user_param_solvent_sec "Manual Page"
    *
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, Rpc::Solvent and Rpg::Solvent,
    * that are used in the pscf_rpc and pscf_rpg programs, respectively. 
    *

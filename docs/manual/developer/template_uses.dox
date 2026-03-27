@@ -1,18 +1,19 @@
 /*! \page developer_template_uses_page Use Cases
 
-\ref developer_template_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page     (Next)
+\ref developer_template_page           (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_concepts_page  (Next)
 <BR>
 
 \section developer_template_uses_cases_sec Overview
 
-Use cases for C++ class templates in PSCF generally fall into one or 
-more of the following categories:
+Most uses of C++ class templates in PSCF fit one or more of the 
+following cases:
+
 <ol type="A">
     <li>
     <b> Container templates </b> : Arrays and other containers are
-    defined as specializations of class templates in which the type
-    of each element is a template parameter. 
+    defined as specializations of class templates in which the type of 
+    each element is a template parameter. 
     </li>
 
     <li>
@@ -38,12 +39,12 @@ more of the following categories:
     </li>
 </ol>
 
-These cases are not mutually exclusive. Specifically, cases C and D
-often both apply to the same template: A skeleton version of an 
-algorithm may be implemented in a class template that is used to 
-define base classes for more specialized subclasses.
+These cases are not mutually exclusive. Specifically, cases C and D often 
+both apply to a single template: A skeleton version of an algorithm may 
+be implemented in a class template that is used to define base classes 
+for more specialized subclasses.
 
-Each of these use cases is discussed in more detail below.
+Each of these cases is discussed in more detail below.
 
 \subsection developer_template_uses_container_sub A. Container templates
 
@@ -127,126 +128,92 @@ programs or contexts are implemented as class templates. The use of a
 template allows the use of different class types with analogous 
 interfaces to be used in different instantiations of such a template.
 
-The Pscf::AmIteratorTmpl class template is an important example of 
-this sort of template. This template implements a skeleton version of the 
-Anderson mixing algorithm for iteratively solving a system of nonlinear 
-equations. Classes that are derived from instantiations of this template 
-are used to implement Anderson mixing SCFT iteration algorithms in all 
-three PSCF programs, and are also used in the the pscf_rpc and pscf_rpc 
-programs to implement "compressor" algorithms that are used in PS-FTS 
-simulations find field configurations that satisfy a partial saddle-point
-condition. Every instantiation of the AmIteratorTmpl class template is a 
-subclass of a base class that is specified by a template parameter. The 
-argument assigned to this parameter is normally taken to be an SCFT 
-"Iterator" or PS-FTS "Compressor" base class that is defined in a 
-particular program-level namespace.  The AmIteratorTmpl template also 
-has a second template parameter which is the type of the array container 
-used to represent residual vector (the vector of errors) and state 
-vectors (the vector of unknown variables) that are used in the algorithm. 
-Instantiations of the template that are designed to use a GPU may use an 
-argument for this template parameter that is a container that allocates
-memory in global GPU memory, while instantiations that are used in CPU
-programs use a container that uses CPU memory. The AmIteratorTmpl 
-template delegates the computation of the residual vector, retrieval 
-of the state vector, and modification of the state vector to pure 
-virtual functions that must be implemented by subclasses.
+For example, the Pscf::AmIteratorTmpl class template implements a skeleton 
+version of the Anderson mixing algorithm for iteratively solving a system 
+of nonlinear equations. Classes that are derived from instantiations of 
+this template are used to implement Anderson mixing SCFT iteration 
+algorithms in all three of the PSCF programs, and are also used in the 
+pscf_rpc and pscf_rpc programs to implement some of the "compressor" 
+algorithms that are used in PS-FTS simulations find field configurations 
+that satisfy a partial saddle-point condition. Every instantiation of the 
+AmIteratorTmpl class template is a subclass of a base class that is 
+specified by a template parameter. The argument assigned to this 
+template parameter is taken to be an "Iterator" base class in 
+instantiations that are used as SCFT iterators, and as a "Compressor"
+base class in instantiations used to solve the partial saddle-point
+equations for PS-FTS.  The AmIteratorTmpl template also has a second 
+template parameter which is the type of the array container used to 
+represent a residual vector (the vector of errors) and state vector 
+(the vector of unknown variables) that are used in the algorithm. 
+Some instantiations of the template that are designed to use a GPU 
+use an argument for this template parameter that is a container that 
+allocates memory in global GPU memory, while other instantiations use
+an array container that uses CPU memory. The AmIteratorTmpl template 
+delegates the computation of the residual vector, retrieval of the 
+state vector, and modification of the state vector to pure virtual 
+functions that must be implemented by subclasses.
 
-The directory src/pscf/solvers also contains a set of class templates
-named "PropagatorTmpl", "BlockTmpl", "PolymerTmpl" and "MixtureTmpl" 
-that are designed to be used as base classes for classes that are used 
-to solve the modified diffusion equation in each of the PSCF programs. 
+\subsection developer_template_uses_base_sub D. Templates for analogous
+classes used in different programs
 
-\subsection developer_template_uses_base_sub D. Base classes for analogous
-classes used by different programs
+PSCF currently contains code for three programs (pscf_1d, pscf_rpc and 
+pscf_rpg, respectively) that are constructing using source code from 
+three corresonding program-level namespaces (Pscf:R1d, Pscf::Rpc, and 
+Pscf::Rpg, respectively).  Many of the data structures and algorithms 
+used in different PSCF programs are closely analogous, but are 
+implemented in analogous classes defined in different program level 
+namespaces. Analogous classes defined in different program-level 
+namespaces are generally given the same name. Name clashes are avoided 
+because, by convention, classes and function that are defined in one 
+program-level namespace may not use classes and functions that are 
+defined in a different program level namespace. 
 
-The C++ version of PSCF was designed as package that could contain code
-for several different executable programs.  Currently, PSCF contains code 
-for three programs (pscf_1d, pscf_rpc and pscf_rpg, respectively) that are 
-constructed from source code defined in three corresonding program-level 
-namespaces (Pscf:R1d, Pscf::Rpc, and Pscf::Rpg, respectively). These three 
-programs differ because they are either designed for different types of 
-spatial domain and boundary conditions (1D vs. periodic) or use different 
-hardware (CPU vs. GPU). 
+For example, each of the three program-level namespaces uses a class or 
+class template named Polymer that represents one polymer species within 
+a system that may contain a mixture of species. The executable pscf_1d 
+uses a class named Polymer that is defined in namespace Pscf::R1d, while 
+pscf_rpc uses a class template named Polymer that is defined namespaces 
+Pscf::Rpc, which takes D as a single template parameter.  Each of the 
+program-level namespaces also contain classes or class templates named 
+Propagator, Block, Mixture, Solvent, System, among other common names.
+Each program-level namespaces thus contains a set of classes and class
+that may be closely analogous to some or all of those defined in other 
+program-level.
 
-By convention, named entitites (classes, class templates, or functions) 
-that are defined in any one any one program-level namespace are used in 
-only one executable file, and may not use entities defined another program 
-level namespace. Classes and other entitites that can be used in two or 
-more executable must instead be defined in the Util, Pscf or Pscf::Prdc 
-namespace, which may be accessed in any of the program-level namespaces.
+The analogies between classes defined in the Rpc and Rpg namespaces
+for use in the pscf_rpc and pscf_rpg are particularly close. These two
+programs are designed to solve the same class of problems, and provide
+exactly the same features, but differ simply because on of them 
+(pscf_rpg) is designed to use a GPU, while the other is (pscf_rpc) is
+not. This difference in hardware causes these classes to use different
+types of classes to represent fields (functions of position): The
+pscf_rpc program uses a class template Rpg::Field<D> that wraps a
+block of memory that is allocated in CPU memory, while the program
+pscf_rpg uses an analogous template Rpg::Field<D> that wraps a block
+of memory that is allocated in global GPU memory. The use of different
+classes to represent fields necessarily effects the design of other
+classes that compute or manipulate fields, forcing a design in which
+these two programs are based on distinct but very closely analogous 
+sets of class definitions.
 
-Many of the basic data structures and algorithms used in the three
-different PSCF programs are closely analogous, but are implemented using
-different classes for analogous purposes. Closely analogous classes
-used in different executables are generally given the same class name
-but are defined in different program-level namespaces. For example, each
-of the three program-level namespaces uses a class or class template
-named Block that represents one block within a block polymer. The
-executable pscf_1d uses a class named Block that is defined in namespace
-Pscf::R1d, while pscf_rpc uses a class template named Block that is
-defined namespaces Pscf::Rpc, which takes D as a template parameter.
-The convention that prohibits code in one program-level namespace from
-using names defined in another allows names to be re-used in this way
-without causing name clashes.
-
-Many of the differences between analogous classes used by different
-executables arise from the fact that different executables use different
-classes to represent functions of position, also known as fields.
-Throughout the code in namespace Pscf::R1d that is used to construct
-pscf_1d, fields are represented using a simple 1D DArray<double>
-container in which each element represents the value of a real field
-on a node of a regular 1D grid. Within code in namespace Rpc that is
-used to construct pscf_rpc, real-valued fields for systems that are
-periodic in D dimensions are represented by a template specialization
-RField\<D\> of a class template RField that is defined in namespace
-Pscf::Prdc::Cpu, for which D is the only template parameter. Within code
-in namespace Rpg that is used to construct pscf_rpg, each such real-valued
-field in D-dimensional space is instead represented by a specialization
-RField\<D\> of another class template named RField that is defined in
-namespace Pscf::Prdc::Cuda.  The class templates Pscf::Prdc::Cuda::RField
-and Pscf::Prdc::Cpu::RField are closely analogous **except** for the fact
-that the block of contiguous memory that actually contains the field data
-stored by a class Pscf::Prdc::Cuda::RField\<D\> is allocated in global GPU
-memory, while the memory used by Pscf::Cpu::RField\<D\> is allocated in CPU
-memory. As one consequence of this difference, individual elements of an
-Pscf::Prdc::Cuda::RField\<D\> container are not directly accessible from
-the CPU via the subscript operator. This difference necessarily causes
-other differences in code that use these two classes. Because many other
-classes used by each program directly or indirectly own multiple instances
-of the class that represents a field, the use of different data types to
-represent fields ended up infecting the definitions of many other classes,
-forcing a design in which different programs are based on distinct but
-analogous sets of class definitions.
-
-The source code for analogous classes used by different executable
-programs is often itself closely analogous, except for their use of
-distinct data types for analogous purposes.  These analogies are
-particularly strong between the code defined in Pscf::Rpc and
-Pscf::Ppg, because the corresponding pscf_rpc and pscf_rpg programs are
-designed to solve the same problem using different hardware, and to
-provide identical features to the user. To avoid unnecessary code
-duplication, analogous classes defined in these two program-level
-namespaces are sometimes derived from different specializations of
-a single class template that is defined in Pscf or Pscf::Prdc, in which
-the base class template contains template code for data structures and
-algorithms that appear in both implementations.
-
-Class templates that are designed to be used as base classes appear in the
-following locations:
+Class templates that are designed to be used as base classes for
+analogous classes used in different programs appear in the following 
+locations:
 
    - The directory src/pscf/solvers contains a set of class templates
      named PropagatorTmpl, BlockTmpl, PolymerTmpl, and MixtureTmpl that
-     are used as base classes for classes that are used to solve the
-     ideal gas problems in every PSCF program.
+     are used as base classes for classes that are used to compute
+     properties of an ideal gas reference system, which are used in
+     every PSCF program. 
 
-   - The directories src/prdc/field, src/prdc/solvers, and src/prdc/system
-     contain templates for a variety of class templates that are each
-     designed to be used as base classes for a pair of closely analogous
-     classes used in pscf_rpc and pscf_rpg, respectively, to treat problems
-     with periodic boundary conditions.
+   - The directory src/prdc/rp contains a set of templates that each 
+     are designed to be used as base classes for a pair of closely
+     analogous classes used in pscf_rpc and pscf_rpg, respectively, 
+     to treat problems with periodic boundary conditions.
 
 <BR>
-\ref developer_template_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page     (Next)
+\ref developer_template_page          (Prev/Up)  
+                                      &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_concepts_page (Next)
 
 */

@@ -80,7 +80,7 @@ namespace Rp {
    *   - RFT : real field type (Rpc::RField<D> or Rpg::RField<D>)
    *   - FIT : FieldIo type (Rpc::FieldIo<D> or Rpg::FieldIo<D>)
    *
-   * <b> Subclasses </b>: Instantiations of the class template
+   * <b> Subclasses </b>: Specializations of the class template
    * Mask \<D, RFT, FIT\> are used as base classes for the class
    * templates Rpc::Mask \<D \> and Rpg::Mask \<D\> that are used by
    * the pscf_rpc and pscf_rpg programs, respectively.

@@ -32,8 +32,8 @@ namespace Rp {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * Instantiations of the  Rp::Mixture template are used as base classes
-   * for instantiations of the Rpc::Mixture<D> and Rpg::Mixture<D> class
+   * Specializations of the  Rp::Mixture template are used as base classes
+   * for specializations of the Rpc::Mixture<D> and Rpg::Mixture<D> class
    * template. The template parameters of R::Mixture<int D, class T> 
    * are the dimension of space, D, and a class T = Rpc::Types<D> or
    * T = Rpg::Types<D> that contains a collection of class name aliases 

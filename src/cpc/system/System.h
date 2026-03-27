@@ -23,7 +23,7 @@ namespace Cpc {
    /**
    * Main class for CL-FTS, representing a complete physical system.
    *
-   * This class is derived from an instantiation of the class template
+   * This class is derived from a specialization of the class template
    * Cp::System, and has the same public interface as this base 
    * class.  See the documentation of this base class template for 
    * details.

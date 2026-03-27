@@ -14,7 +14,7 @@ namespace Rp {
    /**
    * Base class for additive perturbations of standard FTS Hamiltonian.
    *
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, also named Perturbation, that
    * are defined in Rpc and Rpg namespaces for use in the pscf_rpc and
    * pscf_rpg programs, respectively.

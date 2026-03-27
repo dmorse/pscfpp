@@ -33,9 +33,9 @@ namespace Rpc {
    /**
    * Spatial domain for a periodic structure with real fields, on a CPU.
    *
-   * Instantiations of this template with D =1, 2, and 3 are derived from
-   * instantiations of the class template Rp::Domain<D, FFT, WLT, FIT>,
-   * defined using template type parameters FFT = Prdc::Cpu::FFT\<D\>, 
+   * Specializations of this template with D =1, 2, and 3 are derived from
+   * specializations of the class template Rp::Domain<D, FFT, WLT, FIT>,
+   * defined using template type arguments FFT = Prdc::Cpu::FFT\<D\>, 
    * WLT = Prdc::Cpu::WaveList\<D\>, and FIT = Rpc::FieldIo\<D\> that are
    * designed to use standard CPU hardware. The entire public interface 
    * and all of the source code are inherited from this base class. See

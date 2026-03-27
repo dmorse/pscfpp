@@ -22,8 +22,8 @@ namespace Rpc {
    /**
    * Brownian dynamics simulator for PS-FTS.
    *
-   * Instantiations of this template with D=1, 2, and 3 are derived from
-   * instantiations of the base class template Rp::BdSimulator, and 
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the base class template Rp::BdSimulator, and 
    * inherit their entire public interface and almost all of their source 
    * code from this base class.  See the documentation of this base class 
    * template for details. 

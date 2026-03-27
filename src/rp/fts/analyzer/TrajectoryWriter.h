@@ -17,7 +17,7 @@ namespace Rp {
    /**
    * Periodically write field frames (snapshots) to a trajectory file.
    *
-   * Instantiations of this template are used as base classes for two
+   * Specializations of this template are used as base classes for two
    * closely analogous class templates, also named TrajectoryWriter, that
    * are defined in the Rpc and Rpg namespaces for use in the pscf_rpc and 
    * pscf_rpg programs, respectively.

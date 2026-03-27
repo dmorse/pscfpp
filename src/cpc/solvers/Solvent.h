@@ -39,10 +39,10 @@ namespace Cpc {
 
       // Typename aliases
 
-      /// Direct base class, an instantiation of Pscf::SolventSpecies.
+      /// Direct base class, a specialization of Pscf::SolventSpecies.
       using Base = SolventSpecies< std::complex<double> >;
 
-      /// Indirect base, an instantiation of Pscf::Species.
+      /// Indirect base, a specialization of Pscf::Species.
       using SpeciesT = SolventSpecies< std::complex<double> >;
 
       // Member functions

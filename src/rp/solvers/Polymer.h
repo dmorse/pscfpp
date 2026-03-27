@@ -30,7 +30,7 @@ namespace Rp {
    * appropriate instantiation of the Pscf::PolymerTmpl base class 
    * template.
    *
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, also named Polymer, that are
    * defined in the Rpc and Rpg program-level name spaces for use in the
    * pscf_rpc and pscf_rpg programs, respectively. 

@@ -1,17 +1,37 @@
 /*! \page developer_template_impexp_page Implicit vs. Explicit Instantiation
 
-\ref developer_template_uses_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_page       (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_concepts_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_param_page          (Next)
 <BR>
 
 \section developer_template_impexp_concepts_sec Template Concepts
 
 This section reviews some basic concepts and definitions involving C++ 
-class templates, for reference.
+class templates, for reference. These comments focus primarily on class
+templates, rather than function templates.
 
 A C++ class template defines a recipe for defining a class, rather than 
-a complete class definition. A concrete class is defined when a compiler 
+a complete class definition. A template definition includes one or more
+template parameters, each of which may represent either a value of a
+some specified type (e.g., and integer-valued parameter) or the name of
+a type. 
+
+The syntax for defining a class template starts with the keyword "template"
+followed by a list of parameter declarations. As an example, consider the
+class template FArray in the Util namespace, which is a template for an
+array container of fixed size. This template takes an integer parameter
+N that gives the number of elements in the array and a typename parameter
+T that gives the type of each element, and is defined using the syntax
+\code
+   template <int N, typename T>
+   class FArray {
+      ....
+   };
+\endcode
+where the ellipses indicate the actual class definition, which is not
+shown. The symbols N and T are the template parameters. 
+
+A concrete class definition is constructed when a compiler 
 "instantiates" a class template with a particular list of template 
 parameter arguments. When a class template is instantiated, the compiler 
 generates object code for the resulting class. 
@@ -673,8 +693,8 @@ or src/rpg/field/FieldIo.h). This usage is safe because these header
 files contain all of the required "extern template" declarations.
 
 <BR>
-\ref developer_template_uses_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_page     (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page         (Next)
+\ref developer_template_concepts_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page          (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page             (Next)
 
 */

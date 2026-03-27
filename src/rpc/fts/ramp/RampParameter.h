@@ -22,8 +22,8 @@ namespace Rpc {
    /**
    * Class for storing data about an individual ramp parameter.
    *
-   * Instantiations of this template with D=1, 2, and 3 are derived from
-   * instantiations of the base class template Rp::RampParameter, and
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the base class template Rp::RampParameter, and
    * inherit their public interface and almost all of their source code
    * from this base class.  See the documentation of this base class 
    * template for details. 

@@ -14,6 +14,7 @@ used for templates that are designed to be explicitly instantiated.
 
 <ol>
  <li> \subpage developer_template_uses_page </li>
+ <li> \subpage developer_template_concepts_page </li>
  <li> \subpage developer_template_impexp_page </li>
 </ol>
 

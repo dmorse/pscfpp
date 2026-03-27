@@ -27,7 +27,7 @@ namespace Rp {
    * vector in which each element represents the deviation of the
    * sum of volume fractions from unity.
    *
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, also named LrAmCompressor,
    * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
    * and pscf_rpg programs, respectively.

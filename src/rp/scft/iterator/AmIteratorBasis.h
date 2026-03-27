@@ -23,7 +23,7 @@ namespace Rp {
    * This variant of the Anderson mixing algorithm uses an expansion in
    * symmetry-adapted Fourier basis functions to represent all fields,
    * thus automatically imposing a user-specified space group symmetry.
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, also named AmIteratorBasis,
    * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
    * and pscf_rpg programs, respectively. 

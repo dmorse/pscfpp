@@ -22,7 +22,7 @@ namespace Rp {
    *
    * This variant of the Anderson mixing algorithm uses a regular 
    * computational mesh to represent all fields, with no imposed symmetry.
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, also named AmIteratorGrid,
    * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
    * and pscf_rpg programs, respectively.

@@ -40,7 +40,7 @@ namespace Pscf
    * subclass of SolventSpecies.  
    * 
    * The Mixture class in each such program-level namespace is a 
-   * subclass of an instantiation Pscf::PolymerTmpl<Polymer, Solvent> of 
+   * subclass of a specialization Pscf::PolymerTmpl<Polymer, Solvent> of 
    * the class template Pscf::PolymerTmpl. This template is derived 
    * directly from MixtureBase. A PolymerTmpl<Polymer, Solvent> object has 
    * two member private variables that are arrays of Polymer and Solvent 

@@ -13,7 +13,7 @@ namespace Cpu {
 
    using namespace Util;
 
-   // Explicit class instantiations
+   // Explicit instantiation definitions
    template class FieldBasisConverter<1>;
    template class FieldBasisConverter<2>;
    template class FieldBasisConverter<3>;

@@ -45,7 +45,7 @@ namespace Cp {
    * <b> Subclasses </b>: Partial specializations of WFields are used as
    * base classes for classes Cpc::WFields \<D \> and Rpg::WFields \<D\>:
    *
-   *  - Subclass Cpc::WFields \<D\> is derived from an instantiation of 
+   *  - Subclass Cpc::WFields \<D\> is derived from a specialization of 
    *    this template with template arguments CFT = Cpu::CField \<D\> 
    *    and FIT = Cpc::FieldIo \<D\> , and is used in the pscf_cpc CPU 
    *    CL-FTS program.

@@ -29,7 +29,7 @@ namespace Rp {
    * that is a multiple of the static member Analyzer::baseInterval, which
    * is set to 1 by default.
    *
-   * Instantiations of this class template are used as base classes for
+   * Specializations of this class template are used as base classes for
    * two closely analogous classes, also named Analyzer, that are defined 
    * in the Rpc and Rpg namespaces for use in pscf_rpc and pscf_rpg.
    *

@@ -23,7 +23,7 @@ namespace Rpc {
    /**
    * Compute averages and output block averages of Hamiltonian components.
    *
-   * Instantiations of this template are derived from instantiations of the
+   * Specializations of this template are derived from specializations of the
    * base class template Rp::HamiltonianAnalyzer, and inherit their entire 
    * public interface and almost all of their source code from this base
    * class. 

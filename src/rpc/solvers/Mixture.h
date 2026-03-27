@@ -24,7 +24,7 @@ namespace Rpc {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A Mixture is derived from an instantiation of the class template
+   * A Mixture is derived from a specialization of the class template
    * Rp::Mixture, and has the same public interface as this base class
    * class template. Please see documentation for this base class
    * template for details. 

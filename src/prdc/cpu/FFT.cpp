@@ -13,13 +13,7 @@ namespace Cpu {
 
    using namespace Util;
 
-   // Explicit class instantiations
-
-   template class FFT<1>;
-   template class FFT<2>;
-   template class FFT<3>;
-
-   // Planning functions, explicit specializations.
+   // Planning member functions, explicit specializations.
 
    template <>
    void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField, 
@@ -73,6 +67,11 @@ namespace Cpu {
       cciPlan_ = fftw_plan_dft_3d(n0, n1, n2,
                                   &cFieldIn[0], &cFieldOut[0], sign, flags);
    }
+
+   // Explicit class instantiation definitions
+   template class FFT<1>;
+   template class FFT<2>;
+   template class FFT<3>;
 
 }
 }

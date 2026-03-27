@@ -23,7 +23,7 @@ namespace Rpc {
    /**
    * Evaluate the derivative of H with respect to chi.
    *
-   * Instantiations of this class template are derived from instantiations 
+   * Specializations of this class template are derived from specializations 
    * of the base class template Rp::ChiDerivative, and inherit their public 
    * interface and almost all of their source code from this base class.
    *

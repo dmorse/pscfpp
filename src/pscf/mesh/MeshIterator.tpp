@@ -69,7 +69,7 @@ namespace Pscf
    /*
    * Increment this iterator to the next mesh point (default templ.).
    *
-   * Note: Explicit instantiations are defined for D = 1, 2 and 3.
+   * Note: Explicit specializations are defined for D = 1, 2 and 3.
    * This default implementation should thus not normally be used.
    */
    template <int D>

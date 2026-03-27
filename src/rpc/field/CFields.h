@@ -24,12 +24,12 @@ namespace Rpc {
    /**
    * A container for c fields stored in both basis and r-grid format.
    *
-   * Instantiations of this template with D =1, 2, and 3 are derived
-   * from instantiations of the base class template Rp::CFields, and
+   * Specializations of this template with D =1, 2, and 3 are derived
+   * from specializations of the base class template Rp::CFields, and
    * inherit their public interface and all of their source code from
-   * this base class. See the documentation for this base class
-   * template for details.
+   * this base class. 
    *
+   * \see Rp::CFields
    * \ingroup Rpc_Field_Module
    */
    template <int D>

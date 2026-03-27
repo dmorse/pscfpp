@@ -272,7 +272,7 @@ namespace Rpc {
       ar & change_;
    }
 
-   // Definitions of operators, with no explicit instantiations.
+   // Definitions of operator templates
 
    /*
    * Inserter for reading a SweepParameter from an istream.

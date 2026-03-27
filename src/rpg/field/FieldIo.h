@@ -38,7 +38,7 @@ namespace Rpg {
    * for more complete API documentation for this class template, for
    * reasons discussed below.
    *
-   * Class template Rpg::FieldIo<int D> is derived from an instantiation
+   * Class template Rpg::FieldIo<int D> is derived from a specialization
    * of the base class template Rp::FieldIo<D, RFT, KFT, FFT> that is
    * implemented using arguments RFT = RField<D>, KFT = RFieldDft<D>,
    * and FFT = FFT<D> that are all defined in the Prdc::Cuda namespace,

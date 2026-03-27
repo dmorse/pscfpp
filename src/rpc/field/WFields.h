@@ -24,8 +24,8 @@ namespace Rpc {
    /**
    * A container of fields stored in both basis and r-grid format.
    *
-   * Instantiations of this template with D =1, 2, and 3 are derived
-   * from instantiations of the base class template Rp::WFields, and
+   * Specializations of this template with D =1, 2, and 3 are derived
+   * from specializations of the base class template Rp::WFields, and
    * inherit their public interface and all of their source code
    * from this base class. See the documentation for this base class
    * template for details.

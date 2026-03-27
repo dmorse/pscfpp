@@ -33,7 +33,7 @@ namespace Rp {
    * \f]
    * where \f$W_({\bf G})\f$ is a Fourier mode of fluctuating field.
    *
-   * Instantiations of this template are used as base classes for two
+   * Specializations of this template are used as base classes for two
    * closely analogous class templates, also named FourthOrderParameter, 
    * that are defined in the Rpc and Rpg namespaces for use in the 
    * pscf_rpc and pscf_rpg programs, respectively.

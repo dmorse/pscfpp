@@ -38,7 +38,7 @@ namespace Rpc {
    * Rp::FieldIo for complete API documentation. The public 
    * interface of this class is identical to that of the base class.
    *
-   * This class template is derived from an instantiation of the class
+   * This class template is derived from a specialization of the class
    * template Rp::FieldIo<D, RFT, KFT, FFT> using class arguments
    * RFT = RField<D>, KFT = RFieldDft<D>, and FFT = FFT<D> that are all 
    * defined in the Prdc::Cpu subspace, and that all use conventional 

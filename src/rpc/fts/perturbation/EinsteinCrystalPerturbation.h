@@ -15,8 +15,8 @@ namespace Rpc {
    /**
    * Perturbation for Einstein crystal thermodynamic integration.
    *
-   * Instantiations of this template with D=1, 2, and 3 are derived from
-   * instantiations of the template Rp::EinsteinCrystalPerturbation, and
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the template Rp::EinsteinCrystalPerturbation, and
    * inherit their public interface and almost all of their source code
    * from this base class.  
    *

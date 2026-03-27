@@ -6,8 +6,8 @@
 */
 
 /*
-* Declarations of explicit instantiations of AmIteratorTmpl used as base
-* classes for class templates Rpg::AmCompressor and Rpg::LrAmCompressor.
+* Instantiated specializations of AmIteratorTmpl used as base classes 
+* for specializations of Rpg::AmCompressor and Rpg::LrAmCompressor.
 */
 
 #include "AmCompressorBase.h"

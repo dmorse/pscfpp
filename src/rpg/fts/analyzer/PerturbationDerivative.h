@@ -23,7 +23,7 @@ namespace Rpg {
    /**
    * Evaluate derivative of H w/ respect to perturbation parameter lambda.
    *
-   * Instantiations of this template are derived from instantiations of 
+   * Specializations of this template are derived from specializations of 
    * the base class template Rp::PerturbationDerivative, and inherit their
    * entire public interface and almost all of their source code from this
    * base class. 

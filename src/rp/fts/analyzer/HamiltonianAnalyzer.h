@@ -21,7 +21,7 @@ namespace Rp {
    * Field contribution (HW)) as well as for the total, and
    * periodically outputs block averages of each to a file.
    *
-   * Instantiations of this template are used as base classes for two
+   * Specializations of this template are used as base classes for two
    * closely analogous class templates, also named HamiltonianAnalyzer, 
    * that are defined in the Rpc and Rpg namespaces for use in the 
    * pscf_rpc and pscf_rpg programs, respectively.

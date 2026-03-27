@@ -492,7 +492,6 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
 
-   // BlockTmpl base class instantiations
    extern template
    class BlockTmpl< Rpc::Propagator<1>, Prdc::Cpu::RField<1> >;
    extern template

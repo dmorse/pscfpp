@@ -30,7 +30,7 @@ namespace Rp {
    * the pressure-like field to re-establish a homogeneous total monomer
    * concentration.
    *
-   * Instantiations of this template serve as base classes for BdStep<D>
+   * Specializations of this template serve as base classes for BdStep<D>
    * base classes defined in the program-level Rpc and Rpg namespace, for 
    * all D = 1, 2, and 3. 
    *

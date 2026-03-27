@@ -22,8 +22,8 @@ namespace Rpc {
    /**
    * Manager for a list of Analyzer objects.
    *
-   * Instantiations of this template with D=1, 2, and 3 are derived from
-   * instantiations of the base class template Rp::AnalyzerManager, and
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the base class template Rp::AnalyzerManager, and
    * inherit their public interface and almost all of their source code
    * from this base class.
    *

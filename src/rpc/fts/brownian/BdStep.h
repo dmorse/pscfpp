@@ -22,8 +22,8 @@ namespace Rpc {
    *
    * The virtual step() method must generate a single step.
    *
-   * Instantiations of this template with D=1, 2, and 3 are derived from
-   * instantiations of the base class template Rp::BdStep, and inherit
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the base class template Rp::BdStep, and inherit
    * their entire public interface and almost all of their source code
    * from this base class.  
    *

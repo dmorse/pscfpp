@@ -25,8 +25,8 @@ namespace Rpg {
    * simulation.  It is intended for use as a base class for any Analyzer
    * that computes and evaluates an average for a single physical variable.
    *
-   * Instantiations of this template with D=1, 2, and 3 are derived from
-   * instantiations of the base class template Rp::AverageAnalyzer, and
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the base class template Rp::AverageAnalyzer, and
    * inherit their public interface and almost all of their source code
    * from this base class.  
    *

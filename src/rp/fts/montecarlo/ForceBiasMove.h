@@ -28,7 +28,7 @@ namespace Rp {
    * the move() function must take into account the ratio of generation
    * probabilities.
    *
-   * Instantiations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for 
    * two closely analogous class templates, both also named ForceBiaseMove,
    * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
    * and pscf_rpg programs, respectively.
