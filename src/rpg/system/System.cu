@@ -8,8 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "System.h"              // class header
-#include <rp/system/System.tpp>  // base class template implementation
+#include "System.h"               // class header
 
 #include <rpg/environment/EnvironmentFactory.h>
 #include <rpg/fts/simulator/Simulator.h>
@@ -35,15 +34,9 @@
 #include <pscf/cuda/ThreadArray.h>
 #include <pscf/cuda/ThreadMesh.h>
 
+#include <rp/system/System.tpp>   // base class template implementation
+
 namespace Pscf {
-
-   namespace Rp {
-      // Explicit instantiation definitions for base class
-      template class System< 1, Rpg::Types<1> >;
-      template class System< 2, Rpg::Types<2> >;
-      template class System< 3, Rpg::Types<3> >;
-   }
-
    namespace Rpg {
 
       /*
@@ -66,12 +59,20 @@ namespace Pscf {
          ThreadArray::setThreadsPerBlock(nThread);
          ThreadMesh::setThreadsPerBlock(nThread);
       }
+   }
+}
 
-      // Explicit instantiation definitions
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class System< 1, Rpg::Types<1> >;
+      template class System< 2, Rpg::Types<2> >;
+      template class System< 3, Rpg::Types<3> >;
+   }
+   namespace Rpg {
       template class System<1>;
       template class System<2>;
       template class System<3>;
-
    }
 }
 #endif

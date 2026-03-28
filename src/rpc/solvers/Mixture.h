@@ -27,7 +27,7 @@ namespace Rpc {
    * A Mixture is derived from a specialization of the class template
    * Rp::Mixture, and has the same public interface as this base class
    * class template. Please see documentation for this base class
-   * template for details. 
+   * template for details.
    *
    * \ref user_param_mixture_page "Manual Page"
    * \ingroup Rpc_Solver_Module
@@ -58,7 +58,7 @@ namespace Rpc {
 } // namespace Rpc
 } // namespace Pscf
 
-// Explicit instantiation declarations for derived and base classes
+// Explicit instantiation declarations
 namespace Pscf {
    extern template class MixtureTmpl< Rpc::Polymer<1>, Rpc::Solvent<1> >;
    extern template class MixtureTmpl< Rpc::Polymer<2>, Rpc::Solvent<2> >;
@@ -73,5 +73,5 @@ namespace Pscf {
       extern template class Mixture<2>;
       extern template class Mixture<3>;
    }
-} 
+}
 #endif

@@ -98,8 +98,7 @@ namespace Prdc {
       return A;
    }
 
-   // Explicit instantiation of required class instances
-   
+   // Explicit instantiation definitions 
    template class SpaceSymmetry<1>;
    template class SpaceSymmetry<2>;
    template class SpaceSymmetry<3>;

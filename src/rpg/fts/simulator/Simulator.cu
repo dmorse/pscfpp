@@ -41,6 +41,9 @@ namespace Rpg {
     : Base(system, *this)
    {}
 
+   /*
+   * Initialize the GPU vector random number generator.
+   */
    template <int D>
    void Simulator<D>::initializeVecRandom()
    {  Base::vecRandom().setSeed(Base::seed_); }
@@ -48,6 +51,7 @@ namespace Rpg {
 }
 }
 
+// Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class Simulator<1, Rpg::Types<1> >;

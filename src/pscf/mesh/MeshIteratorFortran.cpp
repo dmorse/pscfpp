@@ -7,8 +7,8 @@
 
 #include "MeshIteratorFortran.tpp"
 
-namespace Pscf 
-{
+// Explicit instantiation definitions
+namespace Pscf {
    template class MeshIteratorFortran<1>;
    template class MeshIteratorFortran<2>;
    template class MeshIteratorFortran<3>;

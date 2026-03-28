@@ -21,11 +21,12 @@ namespace Rpg {
    * to accept or reject it, and update the associated System fields if
    * it is accepted.
    *
-   * This class is basically a named instantiation of the base class 
-   * template Rp::McMove, using aliases defined in Rpg::Types<D> to 
-   * specialize to types used in the Rpg namespace. See documentation 
-   * of the base class for details.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::McMove, and
+   * inherit their public interface and almost all of their source code
+   * from this base class.  
    *
+   * \see Rp::McMove
    * \ingroup Rpg_Fts_MonteCarlo_Module
    */
    template <int D>

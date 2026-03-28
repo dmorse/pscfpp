@@ -49,19 +49,20 @@ namespace Cpc {
 
    };
 
-   // Explicit instantiation declarations
-   extern template class System<1>;
-   extern template class System<2>;
-   extern template class System<3>;
-
 } // namespace Cpc
-namespace Cp {
-
-   // Explicit instantiation declarations for base class template
-   extern template class System<1, Cpc::Types<1> >;
-   extern template class System<2, Cpc::Types<1> >;
-   extern template class System<3, Cpc::Types<1> >;
-
-} // namespace Prdc 
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Cp {
+      extern template class System<1, Cpc::Types<1> >;
+      extern template class System<2, Cpc::Types<1> >;
+      extern template class System<3, Cpc::Types<1> >;
+   }
+   namespace Cpc {
+      extern template class System<1>;
+      extern template class System<2>;
+      extern template class System<3>;
+   }
+}
 #endif

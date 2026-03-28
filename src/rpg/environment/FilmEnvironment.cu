@@ -7,13 +7,11 @@
 
 #include "FilmEnvironment.h"
 
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Rpg {
-
-   // FilmEnvironment instantiation
-   template class FilmEnvironment<1>;
-   template class FilmEnvironment<2>;
-   template class FilmEnvironment<3>;
-
-}
+   namespace Rpg {
+      template class FilmEnvironment<1>;
+      template class FilmEnvironment<2>;
+      template class FilmEnvironment<3>;
+   }
 }

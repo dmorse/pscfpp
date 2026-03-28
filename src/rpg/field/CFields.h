@@ -22,59 +22,31 @@ namespace Rpg {
    /**
    * A list of c fields stored in both basis and r-grid format.
    *
-   * This class is simply a named partial instantiation of the base 
-   * class template Rp::CFields, designed for use with a GPU. Please see
-   * documentation of this base class template for API documentation.
+   * This class template is simply a named partial specialization of
+   * the base class template Rp::CFields, designed for use with a GPU.
    *
+   * \see Rp::CFields
    * \ingroup Rpg_Field_Module
    */
    template <int D>
    class CFields : public Rp::CFields<D, RField<D>, FieldIo<D> >
-   {
-
-   public:
-
-      /// Alias for base class
-      typedef Rp::CFields<D, RField<D>, FieldIo<D> >  Base;
-
-      // Inherited public member functions
-      using Base::setFieldIo;
-      using Base::setWriteUnitCell;
-      using Base::setNMonomer;
-      using Base::allocateRGrid;
-      using Base::allocateBasis;
-      using Base::allocate;
-      using Base::basis;
-      using Base::rgrid;
-      using Base::writeBasis;
-      using Base::writeRGrid;
-      using Base::isAllocatedRGrid;
-      using Base::isAllocatedBasis;
-      using Base::hasData;
-      using Base::isSymmetric;
-      using Base::setHasData;
-      using Base::setIsSymmetric;
-
-   protected:
-
-      using Base::fieldIo;
-
-   };
-
-   // Explicit instantiation declarations
-   extern template class CFields<1>;
-   extern template class CFields<2>;
-   extern template class CFields<3>;
+   {};
 
 } // namespace Rpg
-
-namespace Rp {
-   // Explicit instantiation declarations for base class
-   using namespace Prdc::Cuda;
-   extern template class Rp::CFields<1, RField<1>, Rpg::FieldIo<1> >;
-   extern template class Rp::CFields<2, RField<2>, Rpg::FieldIo<2> >;
-   extern template class Rp::CFields<3, RField<3>, Rpg::FieldIo<3> >;
-}
-
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      using namespace Prdc::Cuda;
+      extern template class Rp::CFields<1, RField<1>, Rpg::FieldIo<1> >;
+      extern template class Rp::CFields<2, RField<2>, Rpg::FieldIo<2> >;
+      extern template class Rp::CFields<3, RField<3>, Rpg::FieldIo<3> >;
+   }
+   namespace Rpg {
+      extern template class CFields<1>;
+      extern template class CFields<2>;
+      extern template class CFields<3>;
+   }
+}
 #endif

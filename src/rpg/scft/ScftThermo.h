@@ -35,19 +35,20 @@ namespace Rpg {
 
    };
 
-   // Explicit instantiation declarations
-   extern template class ScftThermo<1>;
-   extern template class ScftThermo<2>;
-   extern template class ScftThermo<3>;
-
-}
-
-namespace Rp {
-   // Explicit instantiation declarations for base class
-   extern template class ScftThermo<1, Rpg::System<1> >;
-   extern template class ScftThermo<2, Rpg::System<2> >;
-   extern template class ScftThermo<3, Rpg::System<3> >;
-} 
-
+} // namespace Rpg
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class ScftThermo<1, Rpg::System<1> >;
+      extern template class ScftThermo<2, Rpg::System<2> >;
+      extern template class ScftThermo<3, Rpg::System<3> >;
+   }
+   namespace Rpg {
+      extern template class ScftThermo<1>;
+      extern template class ScftThermo<2>;
+      extern template class ScftThermo<3>;
+   }
+}
 #endif

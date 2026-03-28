@@ -7,8 +7,8 @@
 
 #include "MeshIterator.tpp"
 
-namespace Pscf 
-{
+// Explicit instantiation definitions
+namespace Pscf {
    template class MeshIterator<1>;
    template class MeshIterator<2>;
    template class MeshIterator<3>;

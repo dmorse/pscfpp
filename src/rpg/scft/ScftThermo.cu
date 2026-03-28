@@ -18,25 +18,25 @@
 #include <rp/scft/ScftThermo.tpp>  // base class template implementation
 
 namespace Pscf {
-
-   namespace Rp {
-      // Explicit instantiation definitions for base class
-      template class ScftThermo<1, Rpg::System<1> >;
-      template class ScftThermo<2, Rpg::System<2> >;
-      template class ScftThermo<3, Rpg::System<3> >;
-   }
-
    namespace Rpg {
 
-      /*
-      * Constructor
-      */
+      // Constructor
       template <int D>
       ScftThermo<D>::ScftThermo(System<D> const & system)
        : Rp::ScftThermo<D, System<D> >(system)
       {};
 
-      // Explicit instantiation definitions for this class
+   }
+}
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class ScftThermo<1, Rpg::System<1> >;
+      template class ScftThermo<2, Rpg::System<2> >;
+      template class ScftThermo<3, Rpg::System<3> >;
+   }
+   namespace Rpg {
       template class ScftThermo<1>;
       template class ScftThermo<2>;
       template class ScftThermo<3>;

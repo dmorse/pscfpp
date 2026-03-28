@@ -22,18 +22,18 @@ namespace Pscf {
    /**
    * Template for an MDE solver and descriptor for a block polymer.
    *
-   * Class template argument BT is an alias for a class that represents a
-   * block of a block polymer. By convention, this is a class named Block
-   * defined in each program-level sub-namespace of Pscf.  Each such 
-   * namespace contains a class named Block that is a subclass of 
-   * Pscf::Edge, and a class named Polymer that is a subclass of an
-   * instantiation of PolymerTmpl<Block, Propagator, WT>.
+   * Class template argument BT is an alias for a class that represents 
+   * a block of a block polymer. By convention, this is a class named 
+   * Block defined in each program-level sub-namespace of Pscf.  Each 
+   * such namespace contains a class named Block that is a subclass of 
+   * Pscf::Edge, and a class named Polymer that is a subclass of a
+   * specialization of PolymerTmpl<Block, Propagator, WT>.
    *
    * Class template PT is an alias for the class that represents a
    * propagator, which holds the solution of the modified diffusion
    * equation for one block, in one direction.
    *
-   * Class template WT is a typename for the type of the value of a
+   * Class template WT is an alias for the type of the value of a
    * chemical potential field defined at a grid point, which can be
    * either a real (e.g., double) or complex data type.
    * 

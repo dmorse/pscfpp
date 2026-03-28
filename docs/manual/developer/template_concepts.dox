@@ -1,7 +1,7 @@
 /*! \page developer_template_concepts_page Template Concepts
 
 \ref developer_template_uses_page   (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_impexp_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_div_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 
@@ -19,27 +19,37 @@ name of a type or a value of some specified type.
 The syntax for defining a class template starts with the keyword "template"
 followed by a list of parameter declarations. As an example, consider the
 class template FArray in the Util namespace, which is a template for an
-array container of fixed size. This template takes an integer parameter
-N that gives the number of elements in the array and a typename parameter
-T that gives the type of each element, and is defined using the syntax
+array container of fixed size. This template takes a type parameter named 
+Data that gives the type of each element and an integer parameter named
+Capacity that gives the number of elements. This template is defined using
+the syntax
 \code
-   template <int N, typename T>
+   template <typename Data, int Capacity>
    class FArray {
       ....
    };
 \endcode
 where the ellipses indicate the actual class definition, which is not
-shown. The symbols N and T are the template parameters. 
+shown. The symbols Data and Capacity are the template parameters. 
+
+Member functions of class templates may be defined outside the class
+definition, as for non-templated classes. The syntax for class template 
+member function definition also begins with the template keyword 
+followed by a list of parameter identifiers, and is otherwise similar 
+to a function definition for any other class member function.  As an 
+example, consider the capacity() member function of the FArray 
+template, which returns the value of the Capacity parameter. The 
+definition of this member function is show below:
+\code
+   template <typename Data, int Capacity> 
+   inline int FArray<Data, Capacity>::size() const
+   {  return Capacity; }
+\endcode
+The "inline" qualifier used in this example encourages the compiler 
+to inline this very small function, but this qualifier would be
+omitted in definitions of most longer functions.
 
 \section developer_template_concepts_instantiation_sec Template Instantiation
-
-A concrete class definition is constructed when a compiler **instantiates**
-a class template with a particular list of template parameter values. The 
-actuql types and values assigned to template parameters when a template is
-instantiated are referred to as **template arguments**.  When a class 
-template is instantiated with a specific list of arguments, the compiler 
-generates object code for the resulting class for the memory layout of the
-class and for all of its member functions.
 
 A **specialization** of a class template is a class whose name is given by 
 the name of a class template name followed by a valid list of template
@@ -51,9 +61,19 @@ is the name of a specialization of the template FArray with arguments "10"
 and "double".  Each instance of this class is a 10 element array of double 
 precision real numbers.  
 
+A concrete class definition may be constructed by **instantiating** a 
+class template with a particular list of template parameter values. The 
+actuql types and values assigned to template parameters when a template is
+instantiated are referred to as **template arguments**.  When a class 
+template is instantiated with a specific list of arguments, the compiler 
+generates object code for the resulting class for the memory layout of the
+class and for all of its member functions.
+
 A specialization of a class template may be created either by instantiating 
-the template or by defining an **explicit specialization** that redefines 
-or specializes the behavior of the template for a specific list of arguments. 
+the template or by defining an **explicit specialization**. An explicit
+specialization is a redefinition of the class template that is specialized
+to apply to a particular set of template arguments for which the general
+template definition is not applicable.  
 An **instantiated class template specialization** is a class template 
 specializaiton that is created by instantiating a general template, rather
 than by explicit explicit specialization.
@@ -66,10 +86,10 @@ specialization of a template. The syntax for an explicit class template
 instantiation definition starts with the keywords "template class" followed 
 by the name of the required template specialization. For example, the statement
 \code
-   template class FArray<10,double>;
+   template class FArray<double, 10>;
 \endcode
 is an explicit instantiation definition for the class template specialization
-FArray<10,double>.
+FArray<double, 10>.
 
 A class template may be instantiated by either explicit or implicit instantiation.
 
@@ -77,7 +97,7 @@ Explicit instantiation occurs when instantiation of a template is triggered by
 an explicit instantiation definition.
 
 Implicit instantiation occurs when a C++ compiler instantiates a class 
-template the first time that it encounters the name of a specialization in 
+template as needed because it encounters the name of a specialization in 
 a context that requires the creation or use of an instance of that class, 
 rather than as a result of an explicit instantiation definition.  Implicit 
 instantiation of a class template may be triggered by a declaration of a 
@@ -87,22 +107,24 @@ class template specialization.
 
 \section developer_template_concepts_declare_sec Explicit Instantiation Declarations
 
-By default, a C++ compiler will immediately attempt to compile a class
-template instantiation the first time it is required to construct or use 
-an instance of that instantiation during processing of a translation unit
+By default, a C++ compiler will attempt to implicit instantiation of a class 
+template specialization the first time it is required to construct or use an 
+instance of that specialization during processing of a translation unit 
 (i.e., the file that is created by the preprocessor by combining a source
 file with all of the other files that it directly or indirectly includes
-via preprocessor include directives. The object code for the class that
-is created by this process can be re-used throughout the remainder of 
-the translation unit but, by default, is not accessible to be re-used
-in other translation units. 
+via preprocessor include directives.) Only the first usage of a template
+specialization within a translation unit triggers implicit instantiation:
+If the same specialization appears more than once in the same translation
+unit, the object that is generated the first time that it is encountered
+can be re-used throughout the remainder of the enclosing translation unit.
 
 This default behavior can be altered by the use of  "explicit instantiation 
 declaration". This is a language feature that was introduced in the 2011 
 update of the C++ language (C++11), which substantially expanded the
-possibilities for valid ways of workng with templates in C++. The syntax 
-for an explicit instantiation declaration starts with the keyword "extern" 
-followed by syntax for a corresponding explicit instantiation definition. 
+possibilities for ways of workng with templates in C++. The syntactical
+pattern for an explicit instantiation declaration starts with the keyword 
+"extern" followed by the pattern for a corresponding explicit instantiation 
+definition. 
 
 As an example, consider the class template Basis, which is defined in the
 Pscf::Prdc namespace. Like many templates used in PSCF, this is a template
@@ -127,19 +149,17 @@ Note that the syntax for the explicit instantiation declaration is the
 same as that for the explicit instantiation definition, except for the
 addition of the keyword "extern" at the beginning of the declaration.
 
-The appearance of an explicit instantiation declaration is an intruction
-to the compiler to disable implicit instantation of a specified template
-instantiation for the remainder of the relevant translation unit, and to 
-instead look for object code for that instantiation during linking.
-An explicit instantiation declaration thus instructs the compiler to 
-treat a class that is created by instantiation a class template much 
-like it would usually treat a non-template class, for which it would
-look for object code for the class definition during a separate 
-linking process that will occur after compilation. Such a declaration
-thus also contains an implied promise to the compiler that a 
-corresponding explicit instantiation definition exists somewhere else
-that resulting object code will be accessible to the compiler during 
-linking.
+An explicit instantiation declaration is an instruction to the compiler 
+to disable implicit instantation of the specified template specialization
+for the remainder of the relevant translation unit, and to enable the
+linker to look for object code for that specialization during the 
+later linking process. An explicit instantiation declaration thus 
+instructs the compiler to treat a class that is created by instantiation 
+a class template much like usually used for non-template classes.
+Such a declaration contains an implied promise to the compiler that a 
+corresponding explicit instantiation definition exists somewhere else,
+and that the object code for that template specialization will be 
+accessible to the compiler during linking.
 
 \section developer_template_concepts_file_sec Template File Organization
 
@@ -174,6 +194,6 @@ the next page.
 <BR>
 \ref developer_template_uses_page   (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_template_page        (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_impexp_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_div_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

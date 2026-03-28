@@ -21,9 +21,12 @@ namespace Rpc {
    /**
    * Const access to a System<D>.
    *
-   * See documentation of the base class template Rp::SystemConstRef
-   * for documentation of the public interface.
+   * Specializations of this template with D=1, 2, and 3 are derived
+   * from corresponding specializations of base class template
+   * Rp::SystemConstRef, and inherit their public interface and almost
+   * all of their source code from this base class.
    *
+   * \see Rp::SystemConstRef
    * \ingroup Rpc_System_Module
    */
    template <int D>
@@ -31,41 +34,38 @@ namespace Rpc {
    {
    public:
 
-      /// Alias for base class
-      using Base = Rp::SystemConstRef< System<D> >;
-
       /**
       * Default constructor.
       */
       SystemConstRef()
-       : Base()
+       : Rp::SystemConstRef< System<D> > ()
       {};
 
       /**
       * Constructor.
-      * 
+      *
       * \param system  System<D> object to which this refers.
       */
       SystemConstRef(System<D> const & system)
-       : Base(system)
+       : Rp::SystemConstRef< System<D> > (system)
       {};
 
    };
 
-   // Explicit instantiation declarations
-   extern template class SystemConstRef<1>;
-   extern template class SystemConstRef<2>;
-   extern template class SystemConstRef<3>;
-
 } // namespace Rpc
-
-namespace Rp {
-   // Explicit instantiation declarations for base class template
-   extern template class SystemConstRef< Rpc::System<1> >;
-   extern template class SystemConstRef< Rpc::System<2> >;
-   extern template class SystemConstRef< Rpc::System<3> >;
-
-} // namespace Rp
-
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class SystemConstRef< Rpc::System<1> >;
+      extern template class SystemConstRef< Rpc::System<2> >;
+      extern template class SystemConstRef< Rpc::System<3> >;
+   }
+   namespace Rpc {
+      extern template class SystemConstRef<1>;
+      extern template class SystemConstRef<2>;
+      extern template class SystemConstRef<3>;
+   }
+}
 #endif

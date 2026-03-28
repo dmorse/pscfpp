@@ -12,15 +12,14 @@
 #include <rpg/solvers/Solvent.h>
 #include <rpg/solvers/Block.h>
 
+// Explicit instantiation definitions
 namespace Pscf {
    namespace Rp { 
-      // Explicit instantiation definitions for base class
       template class MixtureModifier< Rpg::Mixture<1> >;
       template class MixtureModifier< Rpg::Mixture<2> >;
       template class MixtureModifier< Rpg::Mixture<3> >;
    }
    namespace Rpg { 
-      // Explicit instantiation definitions for this class
       template class MixtureModifier<1>;
       template class MixtureModifier<2>;
       template class MixtureModifier<3>;

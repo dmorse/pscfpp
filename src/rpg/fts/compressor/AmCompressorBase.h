@@ -1,5 +1,5 @@
-#ifndef RPG_AM_COMP_BASE_H
-#define RPG_AM_COMP_BASE_H
+#ifndef RPG_AM_COMPRESSOR_BASE_H
+#define RPG_AM_COMPRESSOR_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

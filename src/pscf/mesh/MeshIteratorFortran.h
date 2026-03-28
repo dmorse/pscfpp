@@ -172,12 +172,10 @@ namespace Pscf
    inline IntVec<D> const& MeshIteratorFortran<D>::offsets() const
    {  return offsets_; }
 
-   #ifndef PSCF_MESH_ITERATOR_FORTRAN_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class MeshIteratorFortran<1>;
    extern template class MeshIteratorFortran<2>;
    extern template class MeshIteratorFortran<3>;
-   #endif
 
 }
 #endif

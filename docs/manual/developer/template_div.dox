@@ -1,129 +1,13 @@
-/*! \page developer_template_impexp_page Implicit vs. Explicit Instantiation
+/*! \page developer_template_div_page Standard vs. Divided Templates
 
 \ref developer_template_concepts_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_param_page          (Next)
 <BR>
 
-\section developer_template_impexp_concepts_sec Template Concepts
-
-This section reviews some basic concepts and definitions involving C++ 
-class templates, for reference. These comments focus primarily on class
-templates, rather than function templates.
-
-A C++ class template defines a recipe for defining a class, rather than 
-a complete class definition. A template definition includes one or more
-template parameters, each of which may represent either a value of a
-some specified type (e.g., and integer-valued parameter) or the name of
-a type. 
-
-The syntax for defining a class template starts with the keyword "template"
-followed by a list of parameter declarations. As an example, consider the
-class template FArray in the Util namespace, which is a template for an
-array container of fixed size. This template takes an integer parameter
-N that gives the number of elements in the array and a typename parameter
-T that gives the type of each element, and is defined using the syntax
-\code
-   template <int N, typename T>
-   class FArray {
-      ....
-   };
-\endcode
-where the ellipses indicate the actual class definition, which is not
-shown. The symbols N and T are the template parameters. 
-
-A concrete class definition is constructed when a compiler 
-"instantiates" a class template with a particular list of template 
-parameter arguments. When a class template is instantiated, the compiler 
-generates object code for the resulting class. 
-
-A class that is created by instantiating a class template is referred 
-to as an "instantiation" of that template. The name of a class template 
-instantiation is given the name of the class template followed by a 
-list of template arguments enclosed by angle brackets.  For example, 
-Pscf::Prdc::Basis is the fully qualified name of a class template 
-that takes an integer D as its only template parameter, while 
-Pscf::Prdc::Basis<3> is the name of a class that is an instantiation 
-of that template. 
-
-Somewhat confusingly the C++ standard thus uses the word "instantiation"
-to refer both to the process of creating a concrete class definition
-from a template, and the result of that process.
-
-A C++ template may be either explicitly or implicitly instantiated.
-
-Explicit instantiation occurs when a template is instantiated in 
-response to an  explicit instantiation definition. 
-An explicit instantiation definition is a type of C++ statement whose 
-only effect is to instruct the compiler to instantiate (i.e., compile) 
-a specified template instantiation.  The syntax for an explicit 
-template instantiation definition for a class template starts with the 
-keywords "template class" followed by the name of the required 
-template instantiation. For example, the statement
-\code
-   template class Basis<3>;
-\endcode
-located within the Pscf::Prdc namespace scope is an explicit 
-instantiation definition for a class named Basis<3> that is also 
-defined in that namespace.
-
-Implicit instantiation occurs when a C++ compiler automatically generates 
-object code for a particular template instantiation the first time that
-it encounters the name of that instantiation within a file, if that name
-appears in an expression that is not an explicit instantiation definition
-(see below). Implicit instantiation is usually triggered by a declaration 
-of a variable, pointer or function parameter that uses the name of a 
-particular template instantiation, or by declaration of a class template 
-instantiation as a base class in the definition of a derived class. 
-
-By default, a C++ compiler will immediately attempt to compile a class
-template instantiation the first time it is required to create or use an 
-instance of that instantiation during processing of a source file. This 
-default behavior can be altered by an "explicit instantiation declaration", 
-which is a language feature that was introduced in the 2011 update of 
-the C++ language (C++11).  The syntax for an explicit instantiation 
-declaration starts with the keyword "extern" followed by syntax for 
-a corresponding explicit instantiation definition.  Thus, for example, 
-the expression 
-\code
-   extern template class Basis<3>;
-\endcode
-within namespace Pscf::Prdc is is an explicit instantiation declaration 
-for the instantiation Basis<3>.  Such a declaration suppresses the use 
-of implicit instantiation for the specified class instantiation throughout 
-the remainder of the relevant translation unit (i.e., the source file 
-passed to the compiler and any files that it directly or indirectly 
-includes), and instructs the compiler to instead look for object code for
-that instantiation during linking, as is normally done for non-templated 
-classes. Such an explicit instantiation declaration contains an implied 
-promise to the compiler that a corresponding explicit instantiation 
-definition exists in a file that will be accessible to the compiler 
-during linking.
-
-When a class template is instantiated, the compiler must have access 
-to both the class definition (which contains declarations of interfaces
-for all member functions) and the definitions of all class member 
-functions. To guarantee that this requirement is always met, the 
-standard advice in textbooks and online discussions of C++ templates is 
-that definitions of member functions for a class template should always 
-be placed either within the header file that contains the class template 
-definition, or in a separate file that is included at the end of the 
-class header file. These options are equivalent from the point of view 
-of the compiler, since both guarantee that definitions for all member 
-functions will be accessible in any file that includes the class 
-header file.  In the 1999 version of C++ (C++99), this was the only 
-safe way to organize files involving templates.  The introduction of
-explicit instantiation  declarations to the language in C++11 has,
-however, made it practical for class member functions for some types 
-of class templates in a separate file that is not included by the 
-header file. This usage is employed heavily in PSCF, as discussed 
-below in detail. 
-
-\section developer_template_impexp_categories_sec Standard vs. Divided Templates
-
-The PSCF source code contains two different types of templates, which
-we refer to as "standard" and "divided" templates. They differ in how
-files are organized, and in how they are treated by the compiler and
-build system:
+The PSCF source code contains two different types of class templates, 
+which we refer to as "standard" and "divided" templates. They differ 
+in how files are organized, and in how they are treated by the compiler 
+and build system:
 
 <ol type="A">
    <li>
@@ -143,12 +27,12 @@ build system:
 
 </ol>
 
-The use of divided class template is only practical for classes for 
-which there exist only a small set of possible instantiations, and for 
-which all relevant instantiations can thus be compiled by explicit 
+The use of a divided class template is only feasible for classes for 
+which there exist only a small set of possible specializations, and 
+for which all relevant specializations can thus be compiled by explicit 
 instantiation.  In PSCF standard class templates are used throughout 
 the Util namespace, which contains all of the container class templates,
-while divided class templates are used for most of the templates 
+while divided class templates are used for most of the class templates 
 defined in the Prdc, Rp, Rpc and Rpg subnamespaces of the Pscf 
 namespace for classes that are used to simulate systems with periodic 
 boundary conditions.
@@ -169,7 +53,7 @@ linked, it also tends to simplify debugging of errors during development,
 and often allows the compiler to generate more easily interpretable error 
 messages in response to syntax errors.
 
-\section developer_template_impexp_standard_sec Standard templates
+\section developer_template_div_standard_sec Standard templates
 
 Standard class templates are designed to rely on the use of implicit
 instantiation of class template specializations whenever they are used in
@@ -201,7 +85,7 @@ In this usage, the \*.tpp implementation file is treated by the compiler
 as a part of the header file, and the separation into two files is provided
 solely as convenience to human readers.
 
-\section developer_template_impexp_divided_sec Divided class templates
+\section developer_template_div_divided_sec Divided class templates
 
 The source code for the PSCF programs for periodic functions contains many 
 class templates for which there exist only a few valid choices of values 
@@ -209,7 +93,7 @@ for the template parameters, and thus only a few possible instantiations.
 Most such classes are written as divided class templates, and compiled by 
 explicit instantiation. 
 
-\subsection developer_template_impexp_divided_files_sub File Organization 
+\subsection developer_template_div_divided_files_sub File Organization 
 
 Use of a divided class template generally involves the following four 
 components:
@@ -283,7 +167,7 @@ instantiation will be disabled for all relevant values of D in any
 file that includes the class template header in order to use an 
 instantiation of that template.
 
-The second case, in which instantations of a template are only used 
+The second case, in which specializations of a template are only used 
 as base classes, is safe if and only we are certain that the header 
 file for the base class template is only directly included by header 
 files for a small number of derived classes, and is never directly 
@@ -293,7 +177,7 @@ disabled in any file that includes the header file for the derived
 class.
 
 
-\subsection developer_template_impexp_divided_D_sub Templates in which D is the only parameter
+\subsection developer_template_div_divided_D_sub Templates in which D is the only parameter
 
 Class templates for which the dimension of space D is the only template
 parameter appear throughout the source code for periodic system that is
@@ -373,7 +257,7 @@ into a static library file named prdclib.a. The resulting library then
 contains object code for three separate instantiations of the Basis
 template with D=1, 2 and 3.
 
-\subsection developer_template_impexp_divided_base_sub Base Classes
+\subsection developer_template_div_divided_base_sub Base Classes
 
 Many class templates that are are defined to be used only as base classes
 for a small number of derived class templates are compiled by explicit

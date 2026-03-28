@@ -262,13 +262,10 @@ namespace Pscf
       return out;
    }
 
-   #ifndef PSCF_MESH_TPP
-   // Suppress implicit instantiation
+   // Implicit instantiation declarations
    extern template class Mesh<1>;
    extern template class Mesh<2>;
    extern template class Mesh<3>;
-   #endif
 
 }
-//#include "Mesh.tpp"
 #endif

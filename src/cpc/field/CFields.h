@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <cp/field/CFields.h>          // base class template
+#include <cp/field/CFields.h>    // base class template
 #include <prdc/cpu/CField.h>     // base class template argument
 #include <cpc/field/FieldIo.h>   // base class template argument
 
@@ -55,23 +55,23 @@ namespace Cpc {
 
    };
 
-   // Explicit instantiation declarations
-   extern template class CFields<1>;
-   extern template class CFields<2>;
-   extern template class CFields<3>;
-
 } // namespace Cpc
 } // namespace Pscf
 
+// Explicit instantiation declarations
 namespace Pscf {
-namespace Cp {
-   // Explicit instantiation declarations for base class
-   extern template 
-   class CFields<1, Prdc::Cpu::CField<1>, Cpc::FieldIo<1> >;
-   extern template 
-   class CFields<2, Prdc::Cpu::CField<2>, Cpc::FieldIo<2> >;
-   extern template 
-   class CFields<3, Prdc::Cpu::CField<3>, Cpc::FieldIo<3> >;
-} 
-} // namespace Pscf
+   namespace Cp {
+      extern template 
+      class CFields<1, Prdc::Cpu::CField<1>, Cpc::FieldIo<1> >;
+      extern template 
+      class CFields<2, Prdc::Cpu::CField<2>, Cpc::FieldIo<2> >;
+      extern template 
+      class CFields<3, Prdc::Cpu::CField<3>, Cpc::FieldIo<3> >;
+   } 
+   namespace Cpc {
+      extern template class CFields<1>;
+      extern template class CFields<2>;
+      extern template class CFields<3>;
+   }
+}
 #endif

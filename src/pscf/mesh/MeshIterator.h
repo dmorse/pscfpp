@@ -175,12 +175,10 @@ namespace Pscf
       rank_++;
    }
 
-   #ifndef PSCF_MESH_ITERATOR_TPP
-   // Suppress implicit instantiation
+   // Explicit instantiation declarations
    extern template class MeshIterator<1>;
    extern template class MeshIterator<2>;
    extern template class MeshIterator<3>;
-   #endif
 
 }
 #endif

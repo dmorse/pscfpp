@@ -20,10 +20,11 @@ namespace Rpg {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A Mixture is derived from a specialization of the class template
+   * A Mixture<D> is derived from a specialization of the class template
    * Rp::Mixture, and has the same public interface as this base class
-   * template. See documentation of the base class for details.
+   * template.
    *
+   * \see Rp::Mixture
    * \ref user_param_mixture_page "Manual Page"
    * \ingroup Rpg_Solver_Module
    */
@@ -33,13 +34,12 @@ namespace Rpg {
 
    public:
 
-      /// Direct (parent) base class.
+      /// Base class type aliases
       using RpMixtureT = typename Rp::Mixture<D, Types<D> >;
-
-      // Inherited public names (for use in member functions)
       using typename RpMixtureT::MixtureTmplT;
       using typename RpMixtureT::MixtureBaseT;
       using typename RpMixtureT::FieldT;
+
       using MixtureTmplT::polymer;
 
       // Public member functions
@@ -71,7 +71,7 @@ namespace Rpg {
 } // namespace Rpg
 } // namespace Pscf
 
-// Explicit instantiation declarations for derived and base classes
+// Explicit instantiation declarations
 namespace Pscf {
    extern template class MixtureTmpl< Rpg::Polymer<1>, Rpg::Solvent<1> >;
    extern template class MixtureTmpl< Rpg::Polymer<2>, Rpg::Solvent<2> >;

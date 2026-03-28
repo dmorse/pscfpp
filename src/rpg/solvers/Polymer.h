@@ -20,10 +20,12 @@ namespace Rpg {
    /**
    * Descriptor and solver for one polymer species.
    *
-   * This class is simply a named instantiation of the base class 
-   * template Rp::Polymer that is designed for use with a GPU. Please 
-   * see documentation of the base class for details.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::Polymer, 
+   * and inherit their public interface and all of their source code
+   * from this base class.  
    *
+   * \see Rp::Polymer
    * \ref user_param_polymer_sec "Manual Page"
    *
    * \ingroup Rpg_Solver_Module
@@ -35,7 +37,7 @@ namespace Rpg {
 } 
 } 
 
-// Explicit instantiation declarations for derived and base classes
+// Explicit instantiation declarations
 namespace Pscf {
    extern template class PolymerTmpl< Rpg::Block<1>, Rpg::Propagator<1> >; 
    extern template class PolymerTmpl< Rpg::Block<2>, Rpg::Propagator<2> >;

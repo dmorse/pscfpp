@@ -38,43 +38,16 @@ namespace Cpc {
 
    public:
 
-      /// Direct base class, instantiation of Cp::Mixture template.
+      /// Base classes
       using CpMixtureT
          = typename Cp::Mixture<D, Polymer<D>, Solvent<D>, Types<D> >;
-
-      // Inherited public type name aliases
-
       using typename CpMixtureT::MixtureTmplT;
       using typename CpMixtureT::MixtureBaseT;
-      using typename CpMixtureT::PolymerT;
-      using typename CpMixtureT::SolventT;
-      using typename CpMixtureT::BlockT;
-      using typename CpMixtureT::PropagatorT;
+
       using typename CpMixtureT::FieldT;
-      using typename CpMixtureT::FFTT;
-      using typename CpMixtureT::WaveListT;
-
-      // Inherited public member functions
-
-      using CpMixtureT::readParameters;
-      using CpMixtureT::associate;
-      using CpMixtureT::allocate;
-      using CpMixtureT::clearUnitCellData;
-      using CpMixtureT::setKuhn;
-      using CpMixtureT::compute;
 
       using MixtureTmplT::polymer;
-      using MixtureTmplT::polymerSpecies;
-      using MixtureTmplT::solvent;
-      using MixtureTmplT::solventSpecies;
-
-      using MixtureBaseT::nMonomer;
-      using MixtureBaseT::monomer;
       using MixtureBaseT::nPolymer;
-      using MixtureBaseT::nSolvent;
-      using MixtureBaseT::nBlock;
-      using MixtureBaseT::vMonomer;
-      using MixtureBaseT::isCanonical;
 
    protected:
 
@@ -106,22 +79,23 @@ namespace Cpc {
 
    };
 
-   // Explicit instantiation declarations for derived class
-   extern template class Mixture<1>;
-   extern template class Mixture<2>;
-   extern template class Mixture<3>;
-
 } // namespace Cpc
-namespace Cp {
-
-   // Explicit instantiation declarations for base class
-   extern template 
-   class Mixture<1, Cpc::Polymer<1>, Cpc::Solvent<1>, Cpc::Types<1> >;
-   extern template 
-   class Mixture<2, Cpc::Polymer<2>, Cpc::Solvent<2>, Cpc::Types<2> >;
-   extern template 
-   class Mixture<3, Cpc::Polymer<3>, Cpc::Solvent<3>, Cpc::Types<3> >;
-
-} // namespace Prdc
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Cp {
+      extern template 
+      class Mixture<1, Cpc::Polymer<1>, Cpc::Solvent<1>, Cpc::Types<1> >;
+      extern template 
+      class Mixture<2, Cpc::Polymer<2>, Cpc::Solvent<2>, Cpc::Types<2> >;
+      extern template 
+      class Mixture<3, Cpc::Polymer<3>, Cpc::Solvent<3>, Cpc::Types<3> >;
+   }
+   namespace Cpc {
+      extern template class Mixture<1>;
+      extern template class Mixture<2>;
+      extern template class Mixture<3>;
+   }
+}
 #endif

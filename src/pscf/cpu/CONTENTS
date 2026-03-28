@@ -4,10 +4,11 @@ use different hardware: All code defined in this directory is written in
 standard C++ and uses standard CPU hardware, whereas analogous code in 
 the pscf/cuda directory uses C++/CUDA code to perform some computations 
 in parallel on a GPU. All functions defined here that take standard CPU
-arrays as parameters, defined as instantiations of Util::Cuda<Data>, are 
+arrays as parameters, defined as specializations of Util::Array<Data>, are 
 analogous to corresponding functions defined in pscf/cuda that instead 
-take Pscf::DeviceArray<Data> parameters, for which data resides in global 
-GPU memory. Classes and functions with analogous interfaces defined in
-these two directories are intended to be used interchangeably in function 
-templates that are used to create pairs of closely analogous programs 
-(e.g., pscf_rpc and pscf_rpg) that use CPU vs. GPU hardware.
+take specializations of Pscf::DeviceArray<Data> parameters, for which 
+data is allocated in global GPU memory. Classes and functions with 
+analogous interfaces defined in these two directories are intended to be 
+used interchangeably in function templates that are used to create pairs 
+of closely analogous programs (e.g., pscf_rpc and pscf_rpg) that use CPU 
+vs. GPU hardware.

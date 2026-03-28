@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ScftThermo.h"            // class header
+#include "ScftThermo.h"                     // class header
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
@@ -13,31 +13,30 @@
 #include <pscf/interaction/Interaction.h>
 #include <pscf/cpu/Reduce.h>
 
-#include <rp/scft/ScftThermo.tpp>  // base class implementation
+#include <rp/scft/ScftThermo.tpp>           // base class implementation
 
 namespace Pscf {
-
-   namespace Rp {
-      // Explicit instantiation of base class template
-      template class ScftThermo<1, Rpc::System<1> >;
-      template class ScftThermo<2, Rpc::System<2> >;
-      template class ScftThermo<3, Rpc::System<3> >;
-   }
-
    namespace Rpc {
 
-      /*
-      * Constructor
-      */
+      // Constructor
       template <int D>
       ScftThermo<D>::ScftThermo(System<D> const & system)
        : Rp::ScftThermo<D, System<D> >(system)
       {};
 
-      // Explicit instantiation
+   }
+}
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class ScftThermo<1, Rpc::System<1> >;
+      template class ScftThermo<2, Rpc::System<2> >;
+      template class ScftThermo<3, Rpc::System<3> >;
+   }
+   namespace Rpc {
       template class ScftThermo<1>;
       template class ScftThermo<2>;
       template class ScftThermo<3>;
-
    }
 }

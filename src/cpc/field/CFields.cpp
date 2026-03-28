@@ -8,15 +8,14 @@
 #include "CFields.h"             // class header
 #include <cp/field/CFields.tpp>  // base class template implementation
 
+// Explicit instantiation definitions
 namespace Pscf {
    namespace Cp {
-      // Explicit instantiation definitions for base class
       template class CFields<1, Prdc::Cpu::CField<1>, Cpc::FieldIo<1> >;
       template class CFields<2, Prdc::Cpu::CField<2>, Cpc::FieldIo<2> >;
       template class CFields<3, Prdc::Cpu::CField<3>, Cpc::FieldIo<3> >;
    }
    namespace Cpc {
-      // Explicit instantiation definitions
       template class CFields<1>;
       template class CFields<2>;
       template class CFields<3>;

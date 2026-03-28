@@ -23,7 +23,7 @@ namespace Pscf {
    }
 }
 
-// Explicit instantiation declarations of base class
+// Explicit instantiation declarations for base class
 namespace Pscf {
    namespace Cp {
       using namespace Prdc::Cpu;
@@ -88,7 +88,7 @@ namespace Cpc {
 
    };
 
-   // Explicit instantiation declarations of all relevant cases
+   // Explicit instantiation declarations
    extern template class Domain<1>;
    extern template class Domain<2>;
    extern template class Domain<3>;

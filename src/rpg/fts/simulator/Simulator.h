@@ -25,7 +25,7 @@ namespace Rpg {
    * Specializations of this template with D=1, 2, and 3 are derived from
    * specializations of the base class template Rp::Simulator, and inherit
    * their entire public interface and almost all of their source code
-   * from this base class.  See the documentation of this base class.
+   * from this base class.  
    *
    * \see Rp::Simulator
    * \ingroup Rpg_Fts_Simulator_Module
@@ -54,20 +54,20 @@ namespace Rpg {
 
    };
 
-   // Explicit instantiation declarations
-   extern template class Simulator<1>;
-   extern template class Simulator<2>;
-   extern template class Simulator<3>;
-
 } // namespace Rpg
 } // namespace Pscf
 
+// Explicit instantiation declarations
 namespace Pscf {
-namespace Rp {
-   // Explicit instantiation declarations for base class template
-   extern template class Simulator<1, Rpg::Types<1> >;
-   extern template class Simulator<2, Rpg::Types<2> >;
-   extern template class Simulator<3, Rpg::Types<3> >;
-}
+   namespace Rp {
+      extern template class Simulator<1, Rpg::Types<1> >;
+      extern template class Simulator<2, Rpg::Types<2> >;
+      extern template class Simulator<3, Rpg::Types<3> >;
+   }
+   namespace Rpg {
+      extern template class Simulator<1>;
+      extern template class Simulator<2>;
+      extern template class Simulator<3>;
+   }
 }
 #endif

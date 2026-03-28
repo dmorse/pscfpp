@@ -6,13 +6,10 @@
 */
 
 #include "Mesh.tpp"
-#include <util/global.h>
 
-namespace Pscf
-{
+namespace Pscf {
 
-   using namespace Util;
-
+   // Explicit instantiation definitions
    template class Mesh<1>;
    template class Mesh<2>;
    template class Mesh<3>;

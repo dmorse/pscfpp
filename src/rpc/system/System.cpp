@@ -1,6 +1,3 @@
-#ifndef RPC_SYSTEM_CPP
-#define RPC_SYSTEM_CPP
-
 /*
 * PSCF - Polymer Self-Consistent Field
 *
@@ -9,7 +6,6 @@
 */
 
 #include "System.h"
-#include <rp/system/System.tpp>
 
 #include <rpc/environment/EnvironmentFactory.h>
 #include <rpc/fts/simulator/Simulator.h>
@@ -33,13 +29,9 @@
 
 #include <pscf/interaction/Interaction.h>
 
+#include <rp/system/System.tpp>
+
 namespace Pscf {
-   namespace Rp {
-      // Explicit instantiation of base class template
-      template class System< 1, Rpc::Types<1> >;
-      template class System< 2, Rpc::Types<2> >;
-      template class System< 3, Rpc::Types<3> >;
-   }
    namespace Rpc {
 
       // Constructor.
@@ -48,11 +40,19 @@ namespace Pscf {
        : Rp::System<D, Types<D> >(*this)
       {  ParamComposite::setClassName("System"); }
 
-      // Explicit instantiation definitions
+   }
+}
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class System< 1, Rpc::Types<1> >;
+      template class System< 2, Rpc::Types<2> >;
+      template class System< 3, Rpc::Types<3> >;
+   }
+   namespace Rpc {
       template class System<1>;
       template class System<2>;
       template class System<3>;
-
    }
 }
-#endif

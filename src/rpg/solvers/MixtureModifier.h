@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/MixtureModifier.h> // base class template
-#include "Mixture.h"                    // base class argument
+#include <rp/solvers/MixtureModifier.h>  // base class template
+#include "Mixture.h"                     // base class template argument
 
 namespace Pscf {
 namespace Rpg {
@@ -19,49 +19,32 @@ namespace Rpg {
    /**
    * Parameter modifier for an associated Mixture.
    *
-   * Class MixtureModifier<D> is derived from the class template 
-   * instantiation Rp::MixtureModifier< Rpg::Mixture<D> >, and has the 
-   * same public interface as its base class. See documentation of the 
-   * base class template Rp::MixtureModifier for details.
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from corresponding specializations of the base class template 
+   * Rp::MixtureModifier, and inherit their public interface and almost 
+   * all of their source code from this base class.  
    *
+   * \see Rp::MixtureModifier
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
    class MixtureModifier : public Rp::MixtureModifier< Mixture<D> >
-   {
-
-   public:
- 
-      /// Direct base class.
-      using Base = typename Rp::MixtureModifier< Mixture<D> >;
-
-      // Inherited public member functions
-
-      using Base::associate;
-      using Base::setKuhn;
-      using Base::setPhiPolymer;
-      using Base::setMuPolymer;
-      using Base::setBlockLength;
-      using Base::setPhiSolvent;
-      using Base::setMuSolvent;
-      using Base::setSolventSize;
-      using Base::setVMonomer;
-
-   };
-
-   // Explicit instantiation declarations
-   extern template class MixtureModifier<1>;
-   extern template class MixtureModifier<2>;
-   extern template class MixtureModifier<3>;
+   { };
 
 } // namespace Rpg
-
-namespace Rp {
-   // Explicit instantiation declarations for base class 
-   extern template class MixtureModifier< Rpg::Mixture<1> >;
-   extern template class MixtureModifier< Rpg::Mixture<2> >;
-   extern template class MixtureModifier< Rpg::Mixture<3> >;
-} // namespace Prdc
-
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class MixtureModifier< Rpg::Mixture<1> >;
+      extern template class MixtureModifier< Rpg::Mixture<2> >;
+      extern template class MixtureModifier< Rpg::Mixture<3> >;
+   } 
+   namespace Rp {
+      extern template class MixtureModifier<1>;
+      extern template class MixtureModifier<2>;
+      extern template class MixtureModifier<3>;
+   } 
+}
 #endif

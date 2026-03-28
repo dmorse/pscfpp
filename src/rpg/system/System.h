@@ -25,10 +25,12 @@ namespace Rpg {
    /**
    * Main class, representing a complete physical system.
    *
-   * This class is derived from a partial specialization of the base class
-   * template Rp::System, and has the same public interface as the
-   * base class. See the documentation of this template for details.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specialization of the base class template Rp::System, 
+   * and inherit their entire public interface and almost all of their
+   * source code from this base class.
    *
+   * \see Rp::System
    * \ingroup Rpg_System_Module
    */
    template <int D>
@@ -58,19 +60,20 @@ namespace Rpg {
 
    };
 
-   // Explicit instantiation declarations
-   extern template class System<1>;
-   extern template class System<2>;
-   extern template class System<3>;
-
 } // namespace Rpg
-
-namespace Rp {
-   // Explicit instantiation declarations of base class
-   extern template class Rp::System<1, Rpg::Types<1> >;
-   extern template class Rp::System<2, Rpg::Types<1> >;
-   extern template class Rp::System<3, Rpg::Types<1> >;
-}
-
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class Rp::System<1, Rpg::Types<1> >;
+      extern template class Rp::System<2, Rpg::Types<1> >;
+      extern template class Rp::System<3, Rpg::Types<1> >;
+   }
+   namespace Rpg {
+      extern template class System<1>;
+      extern template class System<2>;
+      extern template class System<3>;
+   }
+}
 #endif

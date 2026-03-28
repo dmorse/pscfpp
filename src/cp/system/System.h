@@ -37,10 +37,10 @@ namespace Cp {
    *    D - integer dimensionality of space (D=1, 2, or 3)
    *    T - "Types" class collection of aliases for related classes
    * 
-   * <b> Usage </b>: An instantiation of System\<D, T\> is used as a base 
-   * class for System\<D\> classes defined in namespaces Cpc and Cpg, for
-   * D=1, 2, or 3.  In this usage, template parameter T must be an 
-   * instantiation named Types<D> of a template \<int D\> class Types that
+   * <b> Usage </b>: A specialization of System\<D, T\> is used as a base 
+   * class for System\<D\> classes defined in namespaces Cpc and Cpg, 
+   * for D=1, 2, or 3.  In this usage, template parameter T must be a
+   * specialization named Types<D> of a template \<int D\> class Types that
    * is defined in each of these two namespaces. For example, in namespace
    * Cpc, for each value of D, class Cpc::System\<D\> is derived from the
    * class Prdc::System\< D, Cpc::Types\<D\> >. For each such program

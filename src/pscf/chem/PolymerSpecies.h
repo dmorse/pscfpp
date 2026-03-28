@@ -44,26 +44,26 @@ namespace Pscf
    * for a single block within a block polymer.
    *
    * The Polymer class in each program-level namespace is derived 
-   * directly from an template instantiation Pscf::PolymerTmpl<Block> of 
+   * directly from an template specialization Pscf::PolymerTmpl<Block> of 
    * the class template Pscf::PolymerTmpl, while PolymerTmpl<Block> is 
    * derived directly from PolymerSpecies. A PolymerTmpl<Block> has a 
    * private member variable that is an array of Block solver objects. 
-   * The PolymerTmpl template defines implementations of edge(int id) 
-   * functions that are declared as pure virtual functions of 
-   * PolymerSpecies, each of which which returns a specific Block solver 
-   * object as a reference to an Edge.
+   * The PolymerTmpl template must defines implementations of edge(int id) 
+   * functions, which are declared as pure virtual functions of 
+   * PolymerSpecies. Each such function must return a specific Block 
+   * solver object as a reference to an Edge.
    *
    * The PolymerSpecies class provides a generic description of polymer
    * structure that only uses names of generic descriptor types (such as
    * as Edge and Vertex) that are defined directly in the Pscf namespace.
    * The PolymerSpecies interface does not use any of the specialized 
-   * solver classes that are defined in each implementation level 
-   * sub-namespaces of Pscf, such as the different Block and Polymer 
-   * classes defined in different sub-namespaces for use in different 
-   * implementations. A reference to such a specialized Polymer solver
-   * object as a generic PolymerSpecies can thus be used as an argument
-   * to a generic function that requires a description of the polymer
-   * molecular structure, but that does not actually solve the MDE.
+   * MDE solver classes that are defined in each program-level enclosed
+   * namespace of Pscf, such as the different Block and Polymer classes 
+   * defined in different program-level namespaces for use in different 
+   * programs. A reference to such a specialized Polymer solver object
+   * as a PolymerSpecies can thus be used as an argument to a function
+   * that requires a description of the polymer molecular structure, but 
+   * that does not actually need to solve the MDE.
    * 
    * \ingroup Pscf_Chem_Module
    */

@@ -34,7 +34,6 @@ namespace Cpc {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Cp {
-      // Explicit instantiation definitions for base class
       template class WFields<1, Prdc::Cpu::CField<1>, Cpc::FieldIo<1> >;
       template class WFields<2, Prdc::Cpu::CField<2>, Cpc::FieldIo<2> >;
       template class WFields<3, Prdc::Cpu::CField<3>, Cpc::FieldIo<3> >;
