@@ -41,7 +41,7 @@ namespace Pscf {
       extern template class MixtureModifier< Rpg::Mixture<2> >;
       extern template class MixtureModifier< Rpg::Mixture<3> >;
    } 
-   namespace Rp {
+   namespace Rpg {
       extern template class MixtureModifier<1>;
       extern template class MixtureModifier<2>;
       extern template class MixtureModifier<3>;

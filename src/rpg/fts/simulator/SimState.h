@@ -1,5 +1,5 @@
-#ifndefRPG_SIM_STATE_H
-#defineRPG_SIM_STATE_H
+#ifndef RPG_SIM_STATE_H
+#define RPG_SIM_STATE_H
 
 /*
 *PSCF - Polymer Self-Consistent Field
@@ -11,8 +11,8 @@
 #include<rp/fts/simulator/SimState.h>   // base class template
 #include<prdc/cuda/RField.h>            // base class template argument
 
-namespacePscf {
-namespaceRpg {
+namespace Pscf {
+namespace Rpg {
 
    using namespace Util;
    
@@ -38,7 +38,7 @@ namespaceRpg {
 }
 
 //Explicit instantiation declarations
-namespacePscf {
+namespace Pscf {
    namespace Rp {
       extern template struct SimState<1, Prdc::Cuda::RField<1> >;
       extern template struct SimState<2, Prdc::Cuda::RField<2> >;
