@@ -1,7 +1,7 @@
 /*! \page developer_template_uses_page Use Cases
 
 \ref developer_template_page           (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_concepts_page  (Next)
+\ref developer_template_defs_page  (Next)
 <BR>
 
 \section developer_template_uses_cases_sec Overview
@@ -42,7 +42,7 @@ following cases:
 These cases are not mutually exclusive. Specifically, cases C and D often 
 both apply to a single template: A skeleton version of an algorithm may 
 be implemented in a class template that is used to define base classes 
-for more specialized subclasses.
+for more specialized subclasses used by different programs.
 
 Each of these cases is discussed in more detail below.
 
@@ -212,8 +212,7 @@ locations:
      to treat problems with periodic boundary conditions.
 
 <BR>
-\ref developer_template_page          (Prev/Up)  
-                                      &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_concepts_page (Next)
+\ref developer_template_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_defs_page (Next)
 
 */

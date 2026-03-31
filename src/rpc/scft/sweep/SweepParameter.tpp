@@ -9,17 +9,18 @@
 */
 
 #include <rpc/system/System.h>
-#include <rpc/solvers/Block.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/MixtureModifier.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
+#include <rpc/solvers/Block.h>
 #include <rpc/field/Domain.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/sweep/ParameterModifier.h>
-#include <util/global.h>
 #include <util/containers/FSArray.h>
+#include <util/global.h>
+
 #include <algorithm>
 #include <iomanip>
 
@@ -81,22 +82,22 @@ namespace Rpc {
          nId_ = 1; // monomer type identifier
       } else if (buffer == "phi_polymer") {
          type_ = Phi_Polymer;
-         nId_ = 1; // species identifier.
+         nId_ = 1; // species identifier
       } else if (buffer == "phi_solvent") {
          type_ = Phi_Solvent;
-         nId_ = 1; // species identifier.
+         nId_ = 1; // species identifier
       } else if (buffer == "mu_polymer") {
          type_ = Mu_Polymer;
-         nId_ = 1; // species identifier.
+         nId_ = 1; // species identifier
       } else if (buffer == "mu_solvent") {
          type_ = Mu_Solvent;
-         nId_ = 1; // species identifier.
+         nId_ = 1; // species identifier
       } else if (buffer == "solvent" || buffer == "solvent_size") {
          type_ = Solvent;
-         nId_ = 1; // species identifier.
+         nId_ = 1; // species identifier
       } else if (buffer == "cell_param") {
          type_ = Cell_Param;
-         nId_ = 1; // lattice parameter identifier.
+         nId_ = 1; // lattice parameter identifier
       } else {
          // Search in parameterTypes array for this sweep parameter
          bool found = false;
@@ -125,32 +126,32 @@ namespace Rpc {
    }
 
    /*
-   * Write type enum value
+   * Write type enum value.
    */
    template <int D>
    void SweepParameter<D>::writeParamType(std::ostream& out) const
    {  out << type(); }
 
    /*
-   * Get the ParameterType object for a specialized sweep parameter
+   * Get the ParameterType object for a specialized sweep parameter.
    */
    template <int D>
    ParameterType& SweepParameter<D>::parameterType() const
-   {  
+   {
       UTIL_CHECK(parameterTypesPtr_);
       UTIL_CHECK(isSpecialized());
-      return (*parameterTypesPtr_)[parameterTypeId_]; 
+      return (*parameterTypesPtr_)[parameterTypeId_];
    }
 
    /*
-   * Get initial (current) values of swept parameters from parent system.
+   * Get and store initial (current) value from the parent system.
    */
    template <int D>
    void SweepParameter<D>::getInitial()
    {  initial_ = get_(); }
 
    /*
-   * Set new values of swept parameters in the parent system.
+   * Set a new parameter value in the parent system.
    */
    template <int D>
    void SweepParameter<D>::update(double newVal)
@@ -225,29 +226,22 @@ namespace Rpc {
       if (type_ == Chi) {
          systemPtr_->interaction().setChi(id(0), id(1), newVal);
       } else if (type_ == Kuhn) {
-         //systemPtr_->mixture().setKuhn(id(0), newVal);
          systemPtr_->mixtureModifier().setKuhn(id(0), newVal);
       } else if (type_ == Phi_Polymer) {
-         //systemPtr_->mixture().polymer(id(0)).setPhi(newVal);
          systemPtr_->mixtureModifier().setPhiPolymer(id(0), newVal);
       } else if (type_ == Mu_Polymer) {
-         //systemPtr_->mixture().polymer(id(0)).setMu(newVal);
          systemPtr_->mixtureModifier().setMuPolymer(id(0), newVal);
       } else if (type_ == Block) {
-         //systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);
          systemPtr_->mixtureModifier().setBlockLength(id(0), id(1), newVal);
       } else if (type_ == Phi_Solvent) {
-         //systemPtr_->mixture().solvent(id(0)).setPhi(newVal);
          systemPtr_->mixtureModifier().setPhiSolvent(id(0), newVal);
       } else if (type_ == Mu_Solvent) {
-         //systemPtr_->mixture().solvent(id(0)).setMu(newVal);
          systemPtr_->mixtureModifier().setMuSolvent(id(0), newVal);
       } else if (type_ == Solvent) {
-         //systemPtr_->mixture().solvent(id(0)).setSize(newVal);
          systemPtr_->mixtureModifier().setSolventSize(id(0), newVal);
       } else if (type_ == Cell_Param) {
-         FSArray<double,6> params 
-                             = systemPtr_->domain().unitCell().parameters();
+         FSArray<double,6> params
+                           = systemPtr_->domain().unitCell().parameters();
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
       } else if (type_ == Special) {
@@ -272,7 +266,7 @@ namespace Rpc {
       ar & change_;
    }
 
-   // Definitions of operator templates
+   // Definitions of IO operator templates
 
    /*
    * Inserter for reading a SweepParameter from an istream.
@@ -314,5 +308,4 @@ namespace Rpc {
 
 }
 }
-
 #endif

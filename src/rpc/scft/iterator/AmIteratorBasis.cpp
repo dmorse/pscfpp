@@ -14,10 +14,10 @@
 
 #include <rp/scft/iterator/AmIteratorBasis.tpp>     // base class implementation
 
-// Constructor definition
 namespace Pscf {
    namespace Rpc {
   
+      // Constructor
       template <int D>
       AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
        : Rp::AmIteratorBasis<D, Types<D> >(system)

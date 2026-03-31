@@ -275,11 +275,7 @@ namespace Rpc {
       /// Alias for base class
       typedef Rp::FieldIo<D, RField<D>, RFieldDft<D>, FFT<D> > Base;
 
-      // Inherited public member functions
-      using Base::associate;
-      using Base::setFileMaster;
-      using Base::readFieldsBasis;
-      using Base::readFieldBasis;
+      // Inherited public member functions (to avoid hiding)
       using Base::writeFieldBasis;
       using Base::writeFieldsBasis;
       using Base::readFieldsRGrid;
@@ -289,51 +285,34 @@ namespace Rpc {
       using Base::writeFieldRGrid;
       using Base::readFieldsKGrid;
       using Base::writeFieldsKGrid;
-      using Base::convertBasisToKGrid;
-      using Base::convertKGridToBasis;
-      using Base::convertBasisToRGrid;
-      using Base::convertRGridToBasis;
-      using Base::convertKGridToRGrid;
-      using Base::convertRGridToKGrid;
-      using Base::hasSymmetry;
-      using Base::compareFieldsBasis;
-      using Base::compareFieldsRGrid;
-      using Base::scaleFieldsBasis;
-      using Base::scaleFieldsRGrid;
-      using Base::estimateWBasis;
       using Base::replicateUnitCell;
       using Base::expandRGridDimension;
-      using Base::readFieldHeader;
-      using Base::writeFieldHeader;
-      using Base::mesh;
-      using Base::basis;
-      using Base::fileMaster;
-
-   protected:
-
-      // Inherited protected member functions
-      using Base::lattice;
-      using Base::hasGroup;
-      using Base::groupName;
-      using Base::group;
-      using Base::fft;
+      using Base::convertBasisToKGrid;
+      using Base::convertKGridToBasis;
+      using Base::hasSymmetry;
+      using Base::compareFieldsRGrid;
+      using Base::scaleFieldsRGrid;
 
    };
 
-   // Explicit instantiation declarations 
-   extern template class FieldIo<1>;
-   extern template class FieldIo<2>;
-   extern template class FieldIo<3>;
-
 } // namespace Rpc
+} // namespace Pscf 
 
-namespace Rp {
-   // Explicit instantiation declarations for base class
-   using namespace Prdc::Cpu;
-   extern template class Rp::FieldIo<1, RField<1>, RFieldDft<1>, FFT<1>>;
-   extern template class Rp::FieldIo<2, RField<2>, RFieldDft<2>, FFT<2>>;
-   extern template class Rp::FieldIo<3, RField<3>, RFieldDft<3>, FFT<3>>;
-}
-
-} // namespace Pscf
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      using namespace Prdc;
+      extern template 
+      class Rp::FieldIo<1, Cpu::RField<1>, Cpu::RFieldDft<1>, Cpu::FFT<1>>;
+      extern template 
+      class Rp::FieldIo<2, Cpu::RField<2>, Cpu::RFieldDft<2>, Cpu::FFT<2>>;
+      extern template 
+      class Rp::FieldIo<3, Cpu::RField<3>, Cpu::RFieldDft<3>, Cpu::FFT<3>>;
+   }
+   namespace Rpc {
+      extern template class FieldIo<1>;
+      extern template class FieldIo<2>;
+      extern template class FieldIo<3>;
+   }
+} 
 #endif

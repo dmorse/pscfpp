@@ -1,5 +1,5 @@
-#ifndef RPC_SWEEP_PARAMETER_H
-#define RPC_SWEEP_PARAMETER_H
+#ifndef RP_SWEEP_PARAMETER_H
+#define RP_SWEEP_PARAMETER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -14,14 +14,10 @@
 #include <string>
 
 namespace Pscf {
-namespace Rpc {
-
-   // Forward declaration
-   template <int D> class System;
+namespace Rp {
 
    using namespace Util;
    // using namespace Prdc;
-   // using namespace Prdc::Cpu;
 
    /**
    * Class for storing data about an individual sweep parameter.
@@ -102,9 +98,9 @@ namespace Rpc {
    * also be a subclass of ParameterModifier so that it can add sweepable
    * parameters at run time.
    *
-   * \ingroup Rpc_Scft_Sweep_Module
+   * \ingroup Rp_Scft_Sweep_Module
    */
-   template <int D>
+   template <int D, class T>
    class SweepParameter
    {
 
@@ -120,7 +116,7 @@ namespace Rpc {
       *
       * \param system  parent system
       */
-      SweepParameter(System<D>& system);
+      SweepParameter(typename T::System& system);
 
       /**
       * Set the system associated with this object.
@@ -130,7 +126,7 @@ namespace Rpc {
       *
       * \param system  parent system
       */
-      void setSystem(System<D>& system)
+      void setSystem(typename T::System& system)
       {  systemPtr_ = &system; }
 
       /**
@@ -264,7 +260,7 @@ namespace Rpc {
       double change_;
 
       /// Pointer to the parent system.
-      System<D>* systemPtr_;
+      typename T::System* systemPtr_;
 
       /// Pointer to the parameterTypes_ array of the Sweep base class.
       GArray<ParameterType>* parameterTypesPtr_;

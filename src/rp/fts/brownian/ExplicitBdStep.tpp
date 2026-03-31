@@ -109,12 +109,12 @@ namespace Rp {
          vecRandom().normal(gaussianField_, stddev, mean);
 
          // Compute change dwc_
-         RField<D> const & dc = simulator().dc(j);
+         typename T::RField const & dc = simulator().dc(j);
          VecOp::addVcVc(dwc_, dc, a, gaussianField_, b);
 
          // Loop over monomer types
          for (i = 0; i < nMonomer; ++i) {
-            RField<D> & w = w_[i];
+            typename T::RField & w = w_[i];
             evec = simulator().chiEvecs(j,i);
             VecOp::addEqVc(w, dwc_, evec);
          }

@@ -1,5 +1,5 @@
-#ifndef RPG_SWEEP_PARAMETER_TPP
-#define RPG_SWEEP_PARAMETER_TPP
+#ifndef RP_SWEEP_PARAMETER_TPP
+#define RP_SWEEP_PARAMETER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,13 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/solvers/MixtureModifier.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/solvers/Block.h>
-#include <rpg/field/Domain.h>
+#if 0
+#include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/MixtureModifier.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Solvent.h>
+#include <rpc/solvers/Block.h>
+#include <rpc/field/Domain.h>
+#endif
+
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/sweep/ParameterModifier.h>
@@ -25,10 +28,10 @@
 #include <iomanip>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
+   using namespace Prdc;
 
    /*
    * Default constructor.
@@ -49,7 +52,7 @@ namespace Rpg {
    * Constructor, creates association with system.
    */
    template <int D>
-   SweepParameter<D>::SweepParameter(System<D>& system)
+   SweepParameter<D>::SweepParameter(typename T::System& system)
     : type_(SweepParameter<D>::Null),
       nId_(0),
       id_(),
@@ -277,6 +280,7 @@ namespace Rpg {
    {
       // Read the parameter type identifier string
       param.readParamType(in);
+
       // Read the identifiers associated with this parameter type.
       for (int i = 0; i < param.nId_; ++i) {
          in >> param.id_[i];
