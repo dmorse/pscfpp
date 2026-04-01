@@ -12,18 +12,18 @@
 #include <string>
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
+
+   template <int D> class System;
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
+   using namespace Prdc;
 
    /**
    * FieldState for fields in symmetry-adapted basis format.
    */
    template <int D>
-   class BasisFieldState : public FieldState<D, DArray<double> >
+   class BasisFieldState : public FieldState<D, DArray<double>, System<D> >
    {
    public:
 
@@ -75,25 +75,34 @@ namespace Rpg
       /**
       * Set the state of the associated system to this state.
       *
-      * \param newCellParams update system unit cell iff newCellParams == true.
+      * \param newCellParams  Should unit cell parameters be updated? 
       */
       void setSystemState(bool newCellParams);
 
       // Inherited member functions
-      using FieldState<D, DArray<double> >::fields;
-      using FieldState<D, DArray<double> >::field;
-      using FieldState<D, DArray<double> >::unitCell;
-      using FieldState<D, DArray<double> >::system;
-      using FieldState<D, DArray<double> >::hasSystem;
-      using FieldState<D, DArray<double> >::setSystem;
+      using FieldStateT = FieldState<D, DArray<double>, System<D> >;
+      using FieldStateT::fields;
+      using FieldStateT::field;
+      using FieldStateT::unitCell;
+      using FieldStateT::system;
 
    };
 
-   // Explicit instantiation declarations
-   extern template class BasisFieldState<1>;
-   extern template class BasisFieldState<2>;
-   extern template class BasisFieldState<3>;
-
 } // namespace Rpg
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rpg {
+      extern template 
+      class FieldState< 1, DArray<double>, Rpg::System<1> >;
+      extern template 
+      class FieldState< 2, DArray<double>, Rpg::System<2> >;
+      extern template 
+      class FieldState< 3, DArray<double>, Rpg::System<3> >;
+      extern template class BasisFieldState<1>;
+      extern template class BasisFieldState<2>;
+      extern template class BasisFieldState<3>;
+   }
+}
 #endif

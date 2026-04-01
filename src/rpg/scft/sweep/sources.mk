@@ -1,5 +1,4 @@
 rpg_scft_sweep_= \
-  rpg/scft/sweep/FieldState.cu \
   rpg/scft/sweep/BasisFieldState.cu \
   rpg/scft/sweep/Sweep.cu \
   rpg/scft/sweep/LinearSweep.cu \

@@ -8,44 +8,48 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/UnitCell.h>         // member
-#include <rpg/field/FieldIo.h>            // member
-#include <util/containers/DArray.h>        // member template
+#include <prdc/crystal/UnitCell.h>        // member
+#include <util/containers/DArray.h>       // member template
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rpg {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
-
-   template <int D> class System;
+   using namespace Prdc;
 
    /**
-   * Record of a state of a System (fields + unit cell).
+   * Record of a state of a periodic system (fields + unit cell).
+   * 
+   * Template parameters:
+   *   
+   *    - D : dimensions of space
+   *    - FT : a field or array type
+   *    - ST : a system type
+   *
+   * A FieldState<D, FT, ST> has:
    *
    *    - An array of field objects of class FT
    *    - a UnitCell<D> object
+   *    - a pointer to a system of class ST
+   * 
+   * Specializations of FieldState can be used to store either chemical 
+   * potential or concentration fields, along with an associated unit
+   * cell. Different choices for class FT can be used to store fields 
+   * in symmetry-adapted basis function, r-grid or k-grid format.
    *
-   * The template parameter D is the dimension of space, while
-   * parameter FT is a field type.
-   *
-   * A FieldState can be used to store either chemical potential or
-   * concentration fields, along with an associated UnitCell<D>. 
-   * Different choices for class FT can be used to store fields in
-   * symmetry-adapted basis function, r-grid or k-grid format.
+   * FieldState is a standard class template, in which all member
+   * function definitions are located in this header file.
    *
    * \ingroup Rpg_Scft_Sweep_Module
    */
-   template <int D, class FT>
+   template <int D, class FT, class ST>
    class FieldState 
    {
 
    public:
 
       /// \name Construction and Destruction
-      //@{
+      ///@{
 
       /**
       * Default constructor.
@@ -57,9 +61,9 @@ namespace Rpg
       *
       * Equivalent to default construction followed by setSystem(system).
       *
-      * \param system associated parent System<D> object.
+      * \param system associated parent ST object.
       */
-      FieldState(System<D>& system);
+      FieldState(ST& system);
 
       /**
       * Destructor.
@@ -69,13 +73,13 @@ namespace Rpg
       /**
       * Set association with System, after default construction.
       *
-      * \param system associated parent System<D> object.
+      * \param system associated parent ST object.
       */
-      void setSystem(System<D>& system);
+      void setSystem(ST& system);
 
-      //@}
+      ///@}
       /// \name Accessors
-      //@{
+      ///@{
 
       /**
       * Get array of all fields by const reference.
@@ -115,7 +119,7 @@ namespace Rpg
       */
       UnitCell<D>& unitCell();
 
-      //@}
+      ///@}
 
    protected:
 
@@ -127,7 +131,7 @@ namespace Rpg
       /**
       * Get associated System by reference.
       */
-      System<D>& system();
+      ST& system();
 
    private:
 
@@ -144,68 +148,98 @@ namespace Rpg
       /**
       * Pointer to associated system.
       */
-      System<D>* systemPtr_;
+      ST* systemPtr_;
 
    };
 
    // Public inline member functions
 
    // Get an array of all fields (const reference)
-   template <int D, class FT>
-   inline
-   const DArray<FT>& FieldState<D,FT>::fields() const
+   template <int D, class FT, class ST> inline
+   const DArray<FT>& FieldState<D,FT,ST>::fields() const
    {  return fields_; }
 
    // Get an array of all fields (non-const reference)
-   template <int D, class FT>
-   inline
-   DArray<FT>& FieldState<D,FT>::fields()
+   template <int D, class FT, class ST> inline
+   DArray<FT>& FieldState<D,FT,ST>::fields()
    {  return fields_; }
 
    // Get field for monomer type id (const reference)
-   template <int D, class FT>
-   inline
-   FT const & FieldState<D,FT>::field(int id) const
+   template <int D, class FT, class ST> inline
+   const FT& FieldState<D,FT,ST>::field(int id) const
    {  return fields_[id]; }
 
    // Get field for monomer type id (non-const reference)
-   template <int D, class FT>
-   inline FT& FieldState<D,FT>::field(int id)
+   template <int D, class FT, class ST> inline 
+   FT& FieldState<D,FT,ST>::field(int id)
    {  return fields_[id]; }
 
    // Get the internal Unitcell (const reference)
-   template <int D, class FT>
-   inline 
-   UnitCell<D> const & FieldState<D,FT>::unitCell() const
-   {  return unitCell_; }
+   template <int D, class FT, class ST> inline 
+   const UnitCell<D>& FieldState<D,FT,ST>::unitCell() const
+   { return unitCell_; }
 
    // Get the internal Unitcell (non-const reference)
-   template <int D, class FT>
-   inline 
-   UnitCell<D>& FieldState<D,FT>::unitCell()
-   {  return unitCell_; }
+   template <int D, class FT, class ST> inline 
+   UnitCell<D>& FieldState<D,FT,ST>::unitCell()
+   { return unitCell_; }
 
    // Protected inline member functions
 
    // Has the system been set?
-   template <int D, class FT>
-   inline 
-   bool FieldState<D,FT>::hasSystem()
+   template <int D, class FT, class ST> inline 
+   bool FieldState<D,FT,ST>::hasSystem()
    {  return (systemPtr_ != 0); }
    
-   // Get the associated System<D> object.
-   template <int D, class FT>
-   inline 
-   System<D>& FieldState<D,FT>::system()
+   // Get the associated ST object.
+   template <int D, class FT, class ST> inline 
+   ST& FieldState<D,FT,ST>::system()
    {
-      assert(systemPtr_ != 0);  
+      assert(systemPtr_);  
       return *systemPtr_; 
    }
 
-   // Explicit instantiation declarations
-   extern template class FieldState< 1, DArray<double> >;
-   extern template class FieldState< 2, DArray<double> >;
-   extern template class FieldState< 3, DArray<double> >;
+   // Noninline public member functions
+
+   /*
+   * Constructor.
+   */
+   template <int D, class FT, class ST>
+   FieldState<D,FT,ST>::FieldState()
+    : fields_(),
+      unitCell_(),
+      systemPtr_(nullptr)
+   {}
+  
+   /*
+   * Constructor.
+   */
+   template <int D, class FT, class ST>
+   FieldState<D,FT,ST>::FieldState(ST& system)
+    : fields_(),
+      unitCell_(),
+      systemPtr_(nullptr)
+   {  setSystem(system); }
+
+   /*
+   * Destructor.
+   */
+   template <int D, class FT, class ST>
+   FieldState<D,FT,ST>::~FieldState()
+   {}
+
+   /*
+   * Set association with system, after default construction.
+   */
+   template <int D, class FT, class ST>
+   void FieldState<D,FT,ST>::setSystem(ST& system)
+   {
+      if (hasSystem()) {
+         UTIL_CHECK(systemPtr_ == &system);
+      } else {
+         systemPtr_ = &system;
+      }
+   }
 
 } // namespace Rpg
 } // namespace Pscf

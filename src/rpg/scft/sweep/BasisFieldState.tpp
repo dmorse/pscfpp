@@ -9,7 +9,7 @@
 */
 
 #include "BasisFieldState.h"
-#include "FieldState.tpp"
+
 #include <rpg/system/System.h> 
 #include <rpg/solvers/Mixture.h> 
 #include <rpg/field/Domain.h> 
@@ -28,7 +28,7 @@ namespace Rpg
    */
    template <int D>
    BasisFieldState<D>::BasisFieldState()
-    : FieldState<D, DArray<double> >()
+    : FieldState<D, DArray<double>, System<D> >()
    {}
   
    /*
@@ -36,7 +36,7 @@ namespace Rpg
    */
    template <int D>
    BasisFieldState<D>::BasisFieldState(System<D>& system)
-    : FieldState<D, DArray<double> >(system)
+    : FieldState<D, DArray<double>, System<D> >(system)
    {}
 
    /*
@@ -53,7 +53,7 @@ namespace Rpg
    void BasisFieldState<D>::allocate()
    {
       // Precondition
-      UTIL_CHECK(hasSystem());
+      UTIL_CHECK(FieldStateT::hasSystem());
 
       int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer > 0);
