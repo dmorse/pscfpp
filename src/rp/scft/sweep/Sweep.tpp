@@ -8,17 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Sweep.h"
-
-#if 0
-#include <rpc/system/System.h>
-#include <rpc/scft/iterator/Iterator.h>
-#include <rpc/scft/ScftThermo.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/CFields.h>
-#endif
+#include "Sweep.h"                   // class template header
 
 #include <prdc/environment/Environment.h>
 #include <prdc/crystal/Basis.h>
@@ -27,7 +17,7 @@
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 
-#include <pscf/sweep/SweepTmpl.tpp>
+#include <pscf/sweep/SweepTmpl.tpp>  // base class template implementation
 
 namespace Pscf {
 namespace Rp {

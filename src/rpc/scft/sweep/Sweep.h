@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/SweepTmpl.h>            // base class template
-#include <rpc/scft/sweep/BasisFieldState.h>  // base class argument
-#include <util/global.h>                     // inline functions
+#include <rp/scft/sweep/Sweep.h>             // base class template
+#include <rpc/system/Types.h>                // base class argument
+#include <rpc/scft/sweep/BasisFieldState.h>  // indirect base argument
 
 namespace Pscf {
 namespace Rpc {
@@ -18,16 +18,21 @@ namespace Rpc {
    template <int D> class System;
 
    using namespace Util;
-   using namespace Prdc;
-
 
    /**
    * Solve a sequence of SCFT problems along a line in parameter space.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of the base class template Rp::Sweep, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
+   *
+   * \see Rp::Sweep
    * \see \ref scft_sweep_page "Manual page"
+   * \ingroup Rpc_Scft_Sweep_Module
    */
    template <int D>
-   class Sweep : public SweepTmpl< BasisFieldState<D> >
+   class Sweep : public Rp::Sweep<D, Types<D> >
    {
 
    public:
@@ -44,163 +49,22 @@ namespace Rpc {
       */
       Sweep(System<D>& system);
 
-      /**
-      * Destructor.
-      */
-      ~Sweep();
-
-      /**
-      * Set association with parent system.
-      *
-      * Call for objects created with default constructor.
-      *
-      * \param system  parent system
-      */
-      void setSystem(System<D>& system);
-
-      /**
-      * Read parameters from param file.
-      *
-      * \param in  parameter file input stream
-      */
-      virtual void readParameters(std::istream& in);
-
-      // Public members inherited from base class template SweepTmpl
-      using SweepTmpl< BasisFieldState<D> >::addParameterTypes;
-      using SweepTmpl< BasisFieldState<D> >::addParameterType;
-      using SweepTmpl< BasisFieldState<D> >::historyCapacity;
-      using SweepTmpl< BasisFieldState<D> >::historySize;
-      using SweepTmpl< BasisFieldState<D> >::nAccept;
-      using SweepTmpl< BasisFieldState<D> >::state;
-      using SweepTmpl< BasisFieldState<D> >::s;
-      using SweepTmpl< BasisFieldState<D> >::c;
-
-   protected:
-
-      /**
-      * Check allocation of fields in one state, allocate if necessary.
-      *
-      * \param state  stored state of the system
-      */
-      virtual void checkAllocation(BasisFieldState<D>& state);
-
-      /**
-      * Setup operation at the beginning of a sweep.
-      */
-      virtual void setup();
-
-      /**
-      * Set system parameters to new values.
-      *
-      * \param sNew contour variable value for new trial solution.
-      */
-      virtual void setParameters(double sNew) = 0;
-
-      /**
-      * Create a guess for adjustable variables by continuation.
-      *
-      * The "adjustable variables" in a standard SCFT problem are w field
-      * values and adjustable unit cell parameters, i.e., variables that
-      * are adjusted by the iterator.
-      *
-      * \param sNew  contour variable value for new trial solution.
-      */
-      virtual void extrapolate(double sNew);
-
-      /**
-      * Call current iterator to solve SCFT problem.
-      *
-      * \param isContinuation  true iff is continuation in a sweep
-      * \return 0 for sucessful solution, 1 on failure to converge
-      */
-      virtual int solve(bool isContinuation);
-
-      /**
-      * Reset system to previous solution after iterature failure.
-      *
-      * The implementation of this function should reset the system state
-      * to correspond to that stored in state(0), i.e., the previous
-      * converged solution.
-      */
-      virtual void reset();
-
-      /**
-      * Update state(0) and output data after successful convergence
-      *
-      * The implementation of this function should copy the current
-      * system state into state(0) and output any desired information
-      * about the current converged solution.
-      */
-      virtual void getSolution();
-
-      /**
-      * Cleanup operation at the beginning of a sweep.
-      */
-      virtual void cleanup();
-
-      /**
-      * Does an association with the parent system exist?
-      */
-      bool hasSystem()
-      {  return (bool)(systemPtr_); }
-
-      /**
-      * Return the parent system by reference.
-      */
-      System<D>& system()
-      {
-         UTIL_CHECK(systemPtr_);
-         return *systemPtr_;
-      }
-
-      // Protected variables writeCGrid_, writeCBasis_, and writeWGrid_
-      // control which converged fields will be written to files after
-      // solution of each SCFT problem within a sweep.
-
-      /**
-      * Should concentration fields be written to file in r-grid format?
-      */
-      bool writeCRGrid_;
-
-      /**
-      * Should concentration fields be written to file in basis format?
-      */
-      bool writeCBasis_;
-
-      /**
-      * Should converged w fields be written to file in r-grid format?
-      */
-      bool writeWRGrid_;
-
-      // Protected inherited member variables
-      using SweepTmpl< BasisFieldState<D> >::ns_;
-      using SweepTmpl< BasisFieldState<D> >::baseFileName_;
-      using SweepTmpl< BasisFieldState<D> >::initialize;
-      using SweepTmpl< BasisFieldState<D> >::setCoefficients;
-      using ParamComposite::readOptional;
-
-   private:
-
-      /// Trial state (produced by continuation in setGuess)
-      BasisFieldState<D> trial_;
-
-      /// Unit cell parameters for trial state
-      FSArray<double, 6> unitCellParameters_;
-
-      /// Log file for summary output
-      std::ofstream logFile_;
-
-      /// Pointer to parent system
-      System<D>* systemPtr_;
-
-      /// Output data to several files after convergence.
-      void outputSolution();
-
-      /// Output summary of thermodynamic properties.
-      void outputSummary(std::ostream&);
-
    };
 
 } // namespace Rpc
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class Sweep<1, Rpc::Types<1> >;
+      extern template class Sweep<2, Rpc::Types<2> >;
+      extern template class Sweep<3, Rpc::Types<3> >;
+   }
+   namespace Rpc {
+      extern template class Sweep<1>;
+      extern template class Sweep<2>;
+      extern template class Sweep<3>;
+   }
+}
 #endif

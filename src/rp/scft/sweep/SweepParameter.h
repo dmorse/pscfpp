@@ -20,7 +20,17 @@ namespace Rp {
    using namespace Util;
 
    /**
-   * Class for storing data about an individual sweep parameter.
+   * Class template for storing data about an individual sweep parameter.
+   *
+   * Specializations of this class template are used as base classes for 
+   * two closely analogous class templates, also named SweepParameter,
+   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
+   * and pscf_rpg programs, respectively.
+   *
+   * Template parameters:
+   *
+   *   - D : dimension
+   *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
    *
    * This class stores the information required to sweep a single
    * parameter value of any of several types.  The type of parameter
@@ -29,14 +39,15 @@ namespace Rp {
    * Each parameter is also identified by one or two associated index
    * values, denoted here by id(0) and id(1), that specify the index
    * or indices for a subobject or array element with which the
-   * parameter is associated applied. Allowed string representations
-   * and meanings of parameter types are given below, along with the
-   * meaning of any associated index value or pair of values.
-   * To indicate the meaning of index values, we use mId to denote
-   * a monomer type index, pId to denote a polymer species index,
-   * bId to denote the index of a block within a polymer, sId to
-   * denote a solvent species index, and lId to denote a lattice
-   * parameter index.
+   * parameter is associated applied. 
+   *
+   * Allowed string representations and meanings of parameter types are 
+   * shown in the table below, along with the meaning of any associated 
+   * index value or pair of values.  To indicate the meaning of index 
+   * values, we use mId to denote a monomer type index, pId to denote a 
+   * polymer species index, bId to denote the index of a block within a 
+   * polymer, sId to denote a solvent species index, and lId to denote 
+   * a lattice parameter index.
    * \code
    *  | Type        | Meaning                     | id(0) | id(1)
    *  | ----------- | --------------------------- | ----- | -----
@@ -53,7 +64,7 @@ namespace Rp {
    * The two indices for a Flory-Huggins chi parameter refer to indices
    * in the chi matrix maintained by Interaction. Changes to element
    * chi(i, j) automatically also update chi(j, i) for i !\ j, thus
-   * maintaining the symmetry of the matrix.
+   * maintaining the symmetry of the chi matrix.
    *
    * Each SweepParameter also has a "change" value that gives the
    * intended difference between the final and initial value of the
@@ -317,10 +328,10 @@ namespace Rp {
    }
 
    /**
-   * Inserter for reading a SweepParameter<D> from an istream.
+   * Inserter for reading a SweepParameter<D,T> from an istream.
    *
    * \param in  input stream
-   * \param param  SweepParameter<D> object to read
+   * \param param  SweepParameter<D,T> object to read
    */
    template <int D, class T>
    std::istream& operator >> (std::istream& in,
@@ -340,15 +351,11 @@ namespace Rp {
    }
 
    /**
-   * Extractor for writing a SweepParameter<D> to an ostream.
+   * Extractor for writing a SweepParameter<D,T> to an ostream.
    *
    * \param out  output stream
-   * \param param  SweepParameter<D> object to write
+   * \param param  SweepParameter<D,T> object to write
    */
-   template <int D,class T>
-   std::ostream& operator << (std::ostream& out,
-                              SweepParameter<D,T> const & param);
-
    template <int D, class T>
    std::ostream& operator << (std::ostream& out,
                               SweepParameter<D,T> const & param)

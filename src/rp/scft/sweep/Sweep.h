@@ -8,20 +8,32 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/SweepTmpl.h>            // base class template
-#include <util/global.h>                     // inline functions
+#include <pscf/sweep/SweepTmpl.h>          // base class template
+#include <util/containers/FSArray.h>       // member
+#include <util/global.h>                   // inline functions
+
+#include <fstream>
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
-
 
    /**
    * Solve a sequence of SCFT problems along a line in parameter space.
    *
+   * Instantiations of this class template are used as base classes for 
+   * two closely analogous class templates, also named Sweep, that are
+   * defined in Rpc and Rpg namespaces and used in the pscf_rpc and 
+   * pscf_rpg programs, respectively.
+   *
+   * Template parameters:
+   *
+   *   - D : dimension
+   *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
+   *
    * \see \ref scft_sweep_page "Manual page"
+   * \ingroup Rp_Scft_Sweep_Module
    */
    template <int D, class T>
    class Sweep : public SweepTmpl< typename T::BasisFieldState >
