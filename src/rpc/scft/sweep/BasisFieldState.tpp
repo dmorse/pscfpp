@@ -9,14 +9,15 @@
 */
 
 #include "BasisFieldState.h"
-#include "FieldState.tpp"
+
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/FieldIo.h>
+#include <prdc/crystal/Basis.h>
 #include <util/global.h>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
    using namespace Util;
 
@@ -25,7 +26,7 @@ namespace Rpc
    */
    template <int D>
    BasisFieldState<D>::BasisFieldState()
-    : FieldState<D, DArray<double> >()
+    : FieldStateT()
    {}
   
    /*
@@ -33,7 +34,7 @@ namespace Rpc
    */
    template <int D>
    BasisFieldState<D>::BasisFieldState(System<D>& system)
-    : FieldState<D, DArray<double> >(system)
+    : FieldStateT(system)
    {}
 
    /*
@@ -50,7 +51,7 @@ namespace Rpc
    void BasisFieldState<D>::allocate()
    {
       // Precondition
-      UTIL_CHECK(hasSystem());
+      UTIL_CHECK(FieldStateT::hasSystem());
 
       int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer > 0);
@@ -80,9 +81,7 @@ namespace Rpc
    {
       allocate();
       FieldIo<D> const & fieldIo = system().domain().fieldIo();
-      fieldIo.readFieldsBasis(filename, 
-                                                    fields(), 
-                                                    unitCell());
+      fieldIo.readFieldsBasis(filename, fields(), unitCell());
    }
 
    /**

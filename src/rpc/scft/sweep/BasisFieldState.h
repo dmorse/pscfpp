@@ -12,8 +12,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
    using namespace Util;
 
@@ -21,7 +20,8 @@ namespace Rpc
    * FieldState for fields in symmetry-adapted basis format.
    */
    template <int D>
-   class BasisFieldState : public FieldState<D, DArray<double> >
+   class BasisFieldState 
+    : public FieldState<D, DArray<double>, System<D> >
    {
    public:
 
@@ -78,20 +78,29 @@ namespace Rpc
       void setSystemState(bool isFlexible);
 
       // Inherited member functions
-      using FieldState<D, DArray<double> >::fields;
-      using FieldState<D, DArray<double> >::field;
-      using FieldState<D, DArray<double> >::unitCell;
-      using FieldState<D, DArray<double> >::system;
-      using FieldState<D, DArray<double> >::hasSystem;
-      using FieldState<D, DArray<double> >::setSystem;
+      using FieldStateT = FieldState<D, DArray<double>, System<D> >;
+      using FieldStateT::fields;
+      using FieldStateT::field;
+      using FieldStateT::unitCell;
+      using FieldStateT::system;
 
    };
 
-   // Explicit instantiation declarations
-   extern template class BasisFieldState<1>;
-   extern template class BasisFieldState<2>;
-   extern template class BasisFieldState<3>;
-
 } // namespace Rpc
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rpc {
+      extern template 
+      class FieldState< 1, DArray<double>, Rpc::System<1> >;
+      extern template 
+      class FieldState< 2, DArray<double>, Rpc::System<2> >;
+      extern template 
+      class FieldState< 3, DArray<double>, Rpc::System<3> >;
+      extern template class BasisFieldState<1>;
+      extern template class BasisFieldState<2>;
+      extern template class BasisFieldState<3>;
+   }
+}
 #endif

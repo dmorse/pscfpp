@@ -1,5 +1,4 @@
 rpc_scft_sweep_= \
-  rpc/scft/sweep/FieldState.cpp \
   rpc/scft/sweep/BasisFieldState.cpp \
   rpc/scft/sweep/Sweep.cpp \
   rpc/scft/sweep/SweepParameter.cpp \
