@@ -8,13 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldState.h"
+#include <prdc/field/FieldState.h>
 #include <string>
 
 namespace Pscf {
 namespace Rpc {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * FieldState for fields in symmetry-adapted basis format.
@@ -91,13 +92,15 @@ namespace Rpc {
 
 // Explicit instantiation declarations
 namespace Pscf {
-   namespace Rpc {
+   namespace Prdc {
       extern template 
       class FieldState< 1, DArray<double>, Rpc::System<1> >;
       extern template 
       class FieldState< 2, DArray<double>, Rpc::System<2> >;
       extern template 
       class FieldState< 3, DArray<double>, Rpc::System<3> >;
+   }
+   namespace Rpc {
       extern template class BasisFieldState<1>;
       extern template class BasisFieldState<2>;
       extern template class BasisFieldState<3>;

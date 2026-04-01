@@ -1,5 +1,5 @@
-#ifndef RPG_FIELD_STATE_H
-#define RPG_FIELD_STATE_H
+#ifndef PRDC_FIELD_STATE_H
+#define PRDC_FIELD_STATE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -12,7 +12,7 @@
 #include <util/containers/DArray.h>       // member template
 
 namespace Pscf {
-namespace Rpg {
+namespace Prdc {
 
    using namespace Util;
    using namespace Prdc;
@@ -40,7 +40,7 @@ namespace Rpg {
    * FieldState is a standard class template, in which all member
    * function definitions are located in this header file.
    *
-   * \ingroup Rpg_Scft_Sweep_Module
+   * \ingroup Prdc_Scft_Sweep_Module
    */
    template <int D, class FT, class ST>
    class FieldState 
@@ -241,6 +241,6 @@ namespace Rpg {
       }
    }
 
-} // namespace Rpg
+} // namespace Prdc
 } // namespace Pscf
 #endif

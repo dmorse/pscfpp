@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldState.h"
+#include <prdc/field/FieldState.h>
 #include <string>
 
 namespace Pscf {
@@ -93,13 +93,15 @@ namespace Rpg {
 
 // Explicit instantiation declarations
 namespace Pscf {
-   namespace Rpg {
+   namespace Prdc {
       extern template 
       class FieldState< 1, DArray<double>, Rpg::System<1> >;
       extern template 
       class FieldState< 2, DArray<double>, Rpg::System<2> >;
       extern template 
       class FieldState< 3, DArray<double>, Rpg::System<3> >;
+   }
+   namespace Rpg {
       extern template class BasisFieldState<1>;
       extern template class BasisFieldState<2>;
       extern template class BasisFieldState<3>;

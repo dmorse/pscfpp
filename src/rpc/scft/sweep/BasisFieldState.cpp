@@ -10,10 +10,12 @@
 
 // Explicit instantiation declarations
 namespace Pscf {
+   namespace Prdc {
+      template class FieldState< 1, DArray<double>, Rpc::System<1> >;
+      template class FieldState< 2, DArray<double>, Rpc::System<2> >;
+      template class FieldState< 3, DArray<double>, Rpc::System<3> >;
+   }
    namespace Rpc {
-      template class FieldState< 1, DArray<double>, System<1> >;
-      template class FieldState< 2, DArray<double>, System<2> >;
-      template class FieldState< 3, DArray<double>, System<3> >;
       template class BasisFieldState<1>;
       template class BasisFieldState<2>;
       template class BasisFieldState<3>;

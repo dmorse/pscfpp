@@ -20,6 +20,7 @@ namespace Pscf {
 namespace Rpc {
 
    using namespace Util;
+   using namespace Prdc;
 
    /*
    * Default constructor.
