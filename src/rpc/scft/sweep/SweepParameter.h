@@ -8,10 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/ParameterType.h>
-#include <util/containers/GArray.h>
-#include <iostream>
-#include <string>
+#include <rp/scft/sweep/SweepParameter.h>
+#include <rpc/system/Types.h>
 
 namespace Pscf {
 namespace Rpc {
@@ -20,92 +18,20 @@ namespace Rpc {
    template <int D> class System;
 
    using namespace Util;
-   // using namespace Prdc;
-   // using namespace Prdc::Cpu;
 
    /**
    * Class for storing data about an individual sweep parameter.
    *
-   * This class stores the information required to sweep a single
-   * parameter value of any of several types.  The type of parameter
-   * is indicated in the public interface and parameter file format
-   * by a string identifier with any of several allowed values.
-   * Each parameter is also identified by one or two associated index
-   * values, denoted here by id(0) and id(1), that specify the index
-   * or indices for a subobject or array element with which the
-   * parameter is associated applied. Allowed string representations
-   * and meanings of parameter types are given below, along with the
-   * meaning of any associated index value or pair of values.
-   * To indicate the meaning of index values, we use mId to denote
-   * a monomer type index, pId to denote a polymer species index,
-   * bId to denote the index of a block within a polymer, sId to
-   * denote a solvent species index, and lId to denote a lattice
-   * parameter index.
-   * \code
-   *  | Type        | Meaning                     | id(0) | id(1)
-   *  | ----------- | --------------------------- | ----- | -----
-   *  | kuhn        | monomer segment length      | mId   |
-   *  | chi         | Flory-Huggins parameter     | mId   | mId
-   *  | block       | block length                | pId   | bId
-   *  | solvent     | solvent size                | sId   |
-   *  | phi_polymer | polymer volume fraction     | pId   |
-   *  | mu_polymer  | polymer chemical potential  | pId   |
-   *  | phi_solvent | solvent volume fraction     | sId   |
-   *  | mu_solvent  | solvent chemical potential  | sId   |
-   *  | cell_param  | lattice parameter           | lId   |
-   * \endcode
-   * The two indices for a Flory-Huggins chi parameter refer to indices
-   * in the chi matrix maintained by Interaction. Changes to element
-   * chi(i, j) automatically also update chi(j, i) for i !\ j, thus
-   * maintaining the symmetry of the matrix.
-   *
-   * Each SweepParameter also has a "change" value that gives the
-   * intended difference between the final and initial value of the
-   * parameter over the course of a sweep, corresponding to a change
-   * sweep parameter s over the range [0,1]. The initial value of each
-   * parameter is obtained from a query of the state of the parent
-   * system at the beginning of a sweep, and thus does not need to
-   * be supplied as part of the text format for a SweepParameter.
-   *
-   * A SweepParameter<D> object is initialized by reading the parameter
-   * type, index or index and change value from a parameter file as a
-   * a single line.  An overloaded >> operator is defined that allows
-   * a SweepParameter<D> object named "parameter" to be read from an
-   * istream named "in" using the syntax "in >> parameter".
-   *
-   * The text format for a parameter of a type that requires a single
-   * index id(0) is:
-   *
-   *    type id(0) change
-   *
-   * where type indicates a type string, id(0) is an integer index value,
-   * and change is the a floating point value for the change in parameter
-   * value. The corresponding format for a parameter that requires two
-   * indices (e.g., block or chi) is instead: "type id(0) id(1) change".
-   *
-   * All of the parameter types in the table above are hard-coded into
-   * this class, but certain classes can also add "specialized"
-   * parameters to the list SweepTmpl::parameterTypes_ by using the
-   * function SweepTmpl::addParameterTypes. This list of specialized
-   * parameters is then consulted if the user-specified parameter type is
-   * not found in the list of hard-coded parameter names. In order to add
-   * parameters to SweepTmpl::parameterTypes_, a class must be a subclass
-   * of ParameterModifier.
-   *
-   * Currently, the only classes that can add parameters to
-   * parameterTypes_ are Iterators. The Iterator for a given calculation
-   * is determined via a Factory, so the type of Iterator is not known
-   * until run time. Therefore, Iterators can add sweepable parameters
-   * to parameterTypes_ as necessary at run time, depending on the type of
-   * Iterator used in that calculation. As a design principle, an object
-   * that is created by a Factory and used for SCFT calculations should
-   * also be a subclass of ParameterModifier so that it can add sweepable
-   * parameters at run time.
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from corresponding specializations of base class template 
+   * Rp::SweepParameter, and inherit their public interface and almost 
+   * all of their source code from this base class.  
    *
    * \ingroup Rpc_Scft_Sweep_Module
    */
    template <int D>
    class SweepParameter
+    : public Rp::SweepParameter<D, Types<D> >
    {
 
    public:
@@ -116,214 +42,29 @@ namespace Rpc {
       SweepParameter();
 
       /**
-      * Constructor that stores a pointer to parent system.
+      * Constructor that stores a pointer to the parent system.
       *
       * \param system  parent system
       */
       SweepParameter(System<D>& system);
 
-      /**
-      * Set the system associated with this object.
-      *
-      * Invoke this function on objects created with the default
-      * constructor to create an association with a parent system.
-      *
-      * \param system  parent system
-      */
-      void setSystem(System<D>& system)
-      {  systemPtr_ = &system; }
-
-      /**
-      * Set the pointer to the array of specialized sweep parameter types.
-      *
-      * \param array  array of specialized parameter types
-      */
-      void setParameterTypesArray(GArray<ParameterType>& array)
-      {  parameterTypesPtr_ = &array; }
-
-      /**
-      * Get the ParameterType object for a specialized sweep parameter.
-      *
-      * An error will result if this SweepParameter is not specialized
-      * and this function is called.
-      */
-      ParameterType& parameterType() const;
-
-      /**
-      * Get the array index for the specialized sweep parameter.
-      */
-      int parameterTypeId() const
-      {  return parameterTypeId_; }
-
-      /**
-      * Is this SweepParameter a specialized parameter type?
-      */
-      bool isSpecialized() const
-      {  return (parameterTypeId_ != -1); }
-
-      /**
-      * Get initial value of this parameter.
-      *
-      * This function is called before a sweep begins, and simply gets
-      * current values of this parameter.
-      */
-      void getInitial();
-
-      /**
-      * Update the corresponding parameter value in the system.
-      *
-      * \param newVal  new value for this parameter (input)
-      */
-      void update(double newVal);
-
-      /**
-      * Return a string representation of the parameter type.
-      */
-      std::string type() const;
-
-      /**
-      * Write the parameter type to an output stream.
-      *
-      * \param out  output file stream
-      */
-      void writeParamType(std::ostream& out) const;
-
-      /**
-      * Get id for a sub-object or element to which this is applied.
-      *
-      * This function returns a value from the id_ array. Elements of
-      * this array store indices associating the parameter with a
-      * particular subobject or array element. Different types of
-      * parameters require either 1 or 2 such identifiers. The number
-      * of required identifiers is returned by the function nId().
-      *
-      * \param i  array index to access
-      */
-      int id(int i) const
-      {
-         UTIL_CHECK(i >= 0);
-         UTIL_CHECK(i < nId_);
-         return id_[i];
-      }
-
-      /**
-      * Number of indices associated with this parameter.
-      *
-      * See documentation of id(int).
-      */
-      int nId() const
-      {  return nId_; }
-
-      /**
-      * Get the current system parameter value.
-      */
-      double current()
-      {  return get_(); }
-
-      /**
-      * Get the initial system parameter value.
-      */
-      double initial() const
-      {  return initial_; }
-
-      /**
-      * Get the total change planned for this parameter during sweep.
-      */
-      double change() const
-      {  return change_; }
-
-      /**
-      * Serialize to or from an archive.
-      *
-      * \param ar Archive object
-      * \param version archive format version index
-      */
-      template <class Archive>
-      void serialize(Archive ar, const unsigned int version);
-
-   private:
-
-      /// Enumeration of allowed parameter types.
-      enum ParamType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
-                       Mu_Polymer, Mu_Solvent, Solvent, Cell_Param,
-                       Special, Null};
-
-      /// Type of this parameter.
-      ParamType type_;
-
-      /// Number of identifier indices for this parameter.
-      int nId_;
-
-      /// Identifier indices.
-      DArray<int> id_;
-
-      /// Initial parameter value, retrieved from system at start of sweep.
-      double initial_;
-
-      /// Planned change in parameter over course of sweep.
-      double change_;
-
-      /// Pointer to the parent system.
-      System<D>* systemPtr_;
-
-      /// Pointer to the parameterTypes_ array of the Sweep base class.
-      GArray<ParameterType>* parameterTypesPtr_;
-
-      /// Index of parameter type within parameterTypes_ array, if any.
-      int parameterTypeId_;
-
-      /**
-      * Read type of parameter being swept, and set number of identifiers.
-      *
-      * \param in  input stream from param file.
-      */
-      void readParamType(std::istream& in);
-
-      /**
-      * Get the current system parameter value.
-      */
-      double get_();
-
-      /**
-      * Set the new system parameter value.
-      *
-      * \param newVal  new value for this parameter
-      */
-      void set_(double newVal);
-
-   // friends:
-
-      template <int U>
-      friend
-      std::istream& operator >> (std::istream&, SweepParameter<U>&);
-
-      template <int U>
-      friend
-      std::ostream& operator << (std::ostream&, SweepParameter<U> const&);
-
    };
 
-   /**
-   * Inserter for reading a SweepParameter<D> from an istream.
-   *
-   * \param in  input stream
-   * \param param  SweepParameter<D> object to read
-   */
-   template <int D>
-   std::istream& operator >> (std::istream& in,
-                              SweepParameter<D>& param);
-
-   /**
-   * Extractor for writing a SweepParameter<D> to an ostream.
-   *
-   * \param out  output stream
-   * \param param  SweepParameter<D> object to write
-   */
-   template <int D>
-   std::ostream& operator << (std::ostream& out,
-                              SweepParameter<D> const & param);
-
 }
 }
-#include "SweepParameter.tpp"
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class SweepParameter<1, Rpc::Types<1> >;
+      extern template class SweepParameter<2, Rpc::Types<2> >;
+      extern template class SweepParameter<3, Rpc::Types<3> >;
+      
+   }
+   namespace Rpc {
+      extern template class SweepParameter<1>;
+      extern template class SweepParameter<2>;
+      extern template class SweepParameter<3>;
+   }
+}
 #endif

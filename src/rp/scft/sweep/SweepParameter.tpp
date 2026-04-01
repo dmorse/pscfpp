@@ -8,15 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#if 0
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/solvers/MixtureModifier.h>
-#include <rpc/solvers/Polymer.h>
-#include <rpc/solvers/Solvent.h>
-#include <rpc/solvers/Block.h>
-#include <rpc/field/Domain.h>
-#endif
+#include <rp/scft/sweep/SweepParameter.h>
 
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/interaction/Interaction.h>
@@ -256,6 +248,7 @@ namespace Rp {
       }
    }
 
+   #if 0
    template <int D, class T>
    template <class Archive>
    void SweepParameter<D,T>::serialize(Archive ar, const unsigned int version)
@@ -308,6 +301,7 @@ namespace Rp {
 
       return out;
    }
+   #endif
 
 }
 }

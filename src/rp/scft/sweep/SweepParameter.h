@@ -9,6 +9,7 @@
 */
 
 #include <pscf/sweep/ParameterType.h>
+#include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
 #include <iostream>
 #include <string>
@@ -288,15 +289,32 @@ namespace Rp {
 
    // friends:
 
-      template <int U>
-      friend
-      std::istream& operator >> (std::istream&, SweepParameter<U>&);
+      template <int DT, class TT>
+      friend std::istream& 
+      operator >> (std::istream&, SweepParameter<DT,TT>&);
 
-      template <int U>
-      friend
-      std::ostream& operator << (std::ostream&, SweepParameter<U> const&);
+      template <int DT, class TT>
+      friend std::ostream& 
+      operator << (std::ostream&, SweepParameter<DT,TT> const&);
 
    };
+
+   /*
+   * Serialize member function.
+   */
+   template <int D, class T>
+   template <class Archive>
+   void SweepParameter<D,T>::serialize(Archive ar, 
+                                       const unsigned int version)
+   {
+      serializeEnum(ar, type_, version);
+      ar & nId_;
+      for (int i = 0; i < nId_; ++i) {
+         ar & id_[i];
+      }
+      ar & initial_;
+      ar & change_;
+   }
 
    /**
    * Inserter for reading a SweepParameter<D> from an istream.
@@ -304,9 +322,22 @@ namespace Rp {
    * \param in  input stream
    * \param param  SweepParameter<D> object to read
    */
-   template <int D>
+   template <int D, class T>
    std::istream& operator >> (std::istream& in,
-                              SweepParameter<D>& param);
+                              SweepParameter<D,T>& param)
+   {
+      // Read the parameter type identifier string
+      param.readParamType(in);
+
+      // Read the identifiers associated with this parameter type.
+      for (int i = 0; i < param.nId_; ++i) {
+         in >> param.id_[i];
+      }
+      // Read in the range in the parameter to sweep over
+      in >> param.change_;
+
+      return in;
+   }
 
    /**
    * Extractor for writing a SweepParameter<D> to an ostream.
@@ -314,11 +345,25 @@ namespace Rp {
    * \param out  output stream
    * \param param  SweepParameter<D> object to write
    */
-   template <int D>
+   template <int D,class T>
    std::ostream& operator << (std::ostream& out,
-                              SweepParameter<D> const & param);
+                              SweepParameter<D,T> const & param);
+
+   template <int D, class T>
+   std::ostream& operator << (std::ostream& out,
+                              SweepParameter<D,T> const & param)
+   {
+      param.writeParamType(out);
+      out << "  ";
+      for (int i = 0; i < param.nId_; ++i) {
+         out << param.id(i);
+         out << " ";
+      }
+      out << param.change_;
+
+      return out;
+   }
 
 }
 }
-#include "SweepParameter.tpp"
 #endif
