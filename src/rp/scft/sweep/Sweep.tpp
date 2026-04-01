@@ -1,5 +1,5 @@
-#ifndef RPC_SWEEP_TPP
-#define RPC_SWEEP_TPP
+#ifndef RP_SWEEP_TPP
+#define RP_SWEEP_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -10,6 +10,7 @@
 
 #include "Sweep.h"
 
+#if 0
 #include <rpc/system/System.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/ScftThermo.h>
@@ -17,6 +18,8 @@
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
+#endif
+
 #include <prdc/environment/Environment.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
@@ -27,19 +30,19 @@
 #include <pscf/sweep/SweepTmpl.tpp>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
 
    // Maximum number of previous states = order of continuation + 1
-   #define RPC_HISTORY_CAPACITY 3
+   #define RP_HISTORY_CAPACITY 3
 
    /*
    * Default constructor (for unit testing).
    */
-   template <int D>
-   Sweep<D>::Sweep()
-    : SweepTmpl< BasisFieldState<D> >(RPC_HISTORY_CAPACITY),
+   template <int D, class T>
+   Sweep<D,T>::Sweep()
+    : SweepTmplT(RP_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),
@@ -49,9 +52,9 @@ namespace Rpc {
    /*
    * Constructor, creates association with parent system.
    */
-   template <int D>
-   Sweep<D>::Sweep(System<D> & sys)
-    : SweepTmpl< BasisFieldState<D> >(RPC_HISTORY_CAPACITY),
+   template <int D, class T>
+   Sweep<D,T>::Sweep(typename T::System & sys)
+    : SweepTmplT(RP_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),
@@ -66,25 +69,25 @@ namespace Rpc {
    /*
    * Destructor.
    */
-   template <int D>
-   Sweep<D>::~Sweep()
+   template <int D, class T>
+   Sweep<D,T>::~Sweep()
    {}
 
    /*
    * Set association with a parent system (for unit testing).
    */
-   template <int D>
-   void Sweep<D>::setSystem(System<D>& system)
+   template <int D, class T>
+   void Sweep<D,T>::setSystem(typename T::System& system)
    {  systemPtr_ = &system; }
 
    /*
    * Read parameters.
    */
-   template <int D>
-   void Sweep<D>::readParameters(std::istream& in)
+   template <int D, class T>
+   void Sweep<D,T>::readParameters(std::istream& in)
    {
       // Call the base class's readParameters function.
-      SweepTmpl< BasisFieldState<D> >::readParameters(in);
+      SweepTmplT::readParameters(in);
 
       // Read optional flags indicating which field types to output
       readOptional(in, "writeCRGrid", writeCRGrid_);
@@ -95,8 +98,8 @@ namespace Rpc {
    /*
    * Check allocation of one state object, allocate if necessary.
    */
-   template <int D>
-   void Sweep<D>::checkAllocation(BasisFieldState<D>& state)
+   template <int D, class T>
+   void Sweep<D,T>::checkAllocation(typename T::BasisFieldState& state)
    {
       UTIL_CHECK(hasSystem());
       state.setSystem(system());
@@ -107,8 +110,8 @@ namespace Rpc {
    /*
    * Setup operations at the beginning of a sweep.
    */
-   template <int D>
-   void Sweep<D>::setup()
+   template <int D, class T>
+   void Sweep<D,T>::setup()
    {
       initialize();
       checkAllocation(trial_);
@@ -126,8 +129,8 @@ namespace Rpc {
    *
    * \param s path length coordinate, in range [0,1]
    */
-   template <int D>
-   void Sweep<D>::setParameters(double s)
+   template <int D, class T>
+   void Sweep<D,T>::setParameters(double s)
    {
       // Empty default implementation allows Sweep<D> to be compiled.
       UTIL_THROW("Calling unimplemented function Sweep::setParameters");
@@ -136,8 +139,8 @@ namespace Rpc {
    /*
    * Create guess for adjustable variables by polynomial extrapolation.
    */
-   template <int D>
-   void Sweep<D>::extrapolate(double sNew)
+   template <int D, class T>
+   void Sweep<D,T>::extrapolate(double sNew)
    {
       UTIL_CHECK(historySize() > 0);
 
@@ -236,8 +239,8 @@ namespace Rpc {
    *
    * Return 0 for sucessful solution, 1 on failure to converge.
    */
-   template <int D>
-   int Sweep<D>::solve(bool isContinuation)
+   template <int D, class T>
+   int Sweep<D,T>::solve(bool isContinuation)
    {  return system().iterate(isContinuation); };
 
    /*
@@ -246,8 +249,8 @@ namespace Rpc {
    * The implementation of this function should reset the system state
    * to correspond to that stored in state(0).
    */
-   template <int D>
-   void Sweep<D>::reset()
+   template <int D, class T>
+   void Sweep<D,T>::reset()
    {
       bool isFlexible = system().iterator().isFlexible();
       state(0).setSystemState(isFlexible);
@@ -260,8 +263,8 @@ namespace Rpc {
    * system state into state(0) and output any desired information
    * about the current converged solution.
    */
-   template <int D>
-   void Sweep<D>::getSolution()
+   template <int D, class T>
+   void Sweep<D,T>::getSolution()
    {
       state(0).setSystem(system());
       state(0).getSystemState();
@@ -274,8 +277,8 @@ namespace Rpc {
 
    };
 
-   template <int D>
-   void Sweep<D>::outputSolution()
+   template <int D, class T>
+   void Sweep<D,T>::outputSolution()
    {
       std::ofstream out;
       std::string outFileName;
@@ -337,8 +340,8 @@ namespace Rpc {
 
    }
 
-   template <int D>
-   void Sweep<D>::outputSummary(std::ostream& out)
+   template <int D, class T>
+   void Sweep<D,T>::outputSummary(std::ostream& out)
    {
       int i = nAccept() - 1;
       double sNew = s(0);
@@ -349,10 +352,10 @@ namespace Rpc {
       out << std::endl;
    }
 
-   template <int D>
-   void Sweep<D>::cleanup()
+   template <int D, class T>
+   void Sweep<D,T>::cleanup()
    {  logFile_.close(); }
 
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 #endif

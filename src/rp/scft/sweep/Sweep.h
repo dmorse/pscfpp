@@ -1,5 +1,5 @@
-#ifndef RPC_SWEEP_H
-#define RPC_SWEEP_H
+#ifndef RP_SWEEP_H
+#define RP_SWEEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,13 +9,10 @@
 */
 
 #include <pscf/sweep/SweepTmpl.h>            // base class template
-#include <rpc/scft/sweep/BasisFieldState.h>  // base class argument
 #include <util/global.h>                     // inline functions
 
 namespace Pscf {
-namespace Rpc {
-
-   template <int D> class System;
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -26,8 +23,8 @@ namespace Rpc {
    *
    * \see \ref scft_sweep_page "Manual page"
    */
-   template <int D>
-   class Sweep : public SweepTmpl< BasisFieldState<D> >
+   template <int D, class T>
+   class Sweep : public SweepTmpl< typename T::BasisFieldState >
    {
 
    public:
@@ -42,7 +39,7 @@ namespace Rpc {
       *
       * \param system  parent system
       */
-      Sweep(System<D>& system);
+      Sweep(typename T::System& system);
 
       /**
       * Destructor.
@@ -56,7 +53,7 @@ namespace Rpc {
       *
       * \param system  parent system
       */
-      void setSystem(System<D>& system);
+      void setSystem(typename T::System& system);
 
       /**
       * Read parameters from param file.
@@ -66,14 +63,14 @@ namespace Rpc {
       virtual void readParameters(std::istream& in);
 
       // Public members inherited from base class template SweepTmpl
-      using SweepTmpl< BasisFieldState<D> >::addParameterTypes;
-      using SweepTmpl< BasisFieldState<D> >::addParameterType;
-      using SweepTmpl< BasisFieldState<D> >::historyCapacity;
-      using SweepTmpl< BasisFieldState<D> >::historySize;
-      using SweepTmpl< BasisFieldState<D> >::nAccept;
-      using SweepTmpl< BasisFieldState<D> >::state;
-      using SweepTmpl< BasisFieldState<D> >::s;
-      using SweepTmpl< BasisFieldState<D> >::c;
+      using SweepTmpl< typename T::BasisFieldState >::addParameterTypes;
+      using SweepTmpl< typename T::BasisFieldState >::addParameterType;
+      using SweepTmpl< typename T::BasisFieldState >::historyCapacity;
+      using SweepTmpl< typename T::BasisFieldState >::historySize;
+      using SweepTmpl< typename T::BasisFieldState >::nAccept;
+      using SweepTmpl< typename T::BasisFieldState >::state;
+      using SweepTmpl< typename T::BasisFieldState >::s;
+      using SweepTmpl< typename T::BasisFieldState >::c;
 
    protected:
 
@@ -82,7 +79,7 @@ namespace Rpc {
       *
       * \param state  stored state of the system
       */
-      virtual void checkAllocation(BasisFieldState<D>& state);
+      virtual void checkAllocation(typename T::BasisFieldState& state);
 
       /**
       * Setup operation at the beginning of a sweep.
@@ -147,7 +144,7 @@ namespace Rpc {
       /**
       * Return the parent system by reference.
       */
-      System<D>& system()
+      typename T::System& system()
       {
          UTIL_CHECK(systemPtr_);
          return *systemPtr_;
@@ -173,16 +170,17 @@ namespace Rpc {
       bool writeWRGrid_;
 
       // Protected inherited member variables
-      using SweepTmpl< BasisFieldState<D> >::ns_;
-      using SweepTmpl< BasisFieldState<D> >::baseFileName_;
-      using SweepTmpl< BasisFieldState<D> >::initialize;
-      using SweepTmpl< BasisFieldState<D> >::setCoefficients;
+      using SweepTmplT = SweepTmpl< typename T::BasisFieldState >;
+      using SweepTmplT::ns_;
+      using SweepTmplT::baseFileName_;
+      using SweepTmplT::initialize;
+      using SweepTmplT::setCoefficients;
       using ParamComposite::readOptional;
 
    private:
 
       /// Trial state (produced by continuation in setGuess)
-      BasisFieldState<D> trial_;
+      typename T::BasisFieldState trial_;
 
       /// Unit cell parameters for trial state
       FSArray<double, 6> unitCellParameters_;
@@ -191,7 +189,7 @@ namespace Rpc {
       std::ofstream logFile_;
 
       /// Pointer to parent system
-      System<D>* systemPtr_;
+      typename T::System* systemPtr_;
 
       /// Output data to several files after convergence.
       void outputSolution();
@@ -201,6 +199,6 @@ namespace Rpc {
 
    };
 
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 #endif

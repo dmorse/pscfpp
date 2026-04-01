@@ -36,9 +36,9 @@ namespace Rp {
    /*
    * Default constructor.
    */
-   template <int D>
-   SweepParameter<D>::SweepParameter()
-    : type_(SweepParameter<D>::Null),
+   template <int D, class T>
+   SweepParameter<D,T>::SweepParameter()
+    : type_(SweepParameter<D,T>::Null),
       nId_(0),
       id_(),
       initial_(0.0),
@@ -51,9 +51,9 @@ namespace Rp {
    /*
    * Constructor, creates association with system.
    */
-   template <int D>
-   SweepParameter<D>::SweepParameter(typename T::System& system)
-    : type_(SweepParameter<D>::Null),
+   template <int D, class T>
+   SweepParameter<D,T>::SweepParameter(typename T::System& system)
+    : type_(SweepParameter<D,T>::Null),
       nId_(0),
       id_(),
       initial_(0.0),
@@ -66,8 +66,8 @@ namespace Rp {
    /*
    * Read type, set nId and allocate id_ array.
    */
-   template <int D>
-   void SweepParameter<D>::readParamType(std::istream& in)
+   template <int D, class T>
+   void SweepParameter<D,T>::readParamType(std::istream& in)
    {
       std::string buffer;
       in >> buffer;
@@ -131,15 +131,15 @@ namespace Rp {
    /*
    * Write type enum value.
    */
-   template <int D>
-   void SweepParameter<D>::writeParamType(std::ostream& out) const
+   template <int D, class T>
+   void SweepParameter<D,T>::writeParamType(std::ostream& out) const
    {  out << type(); }
 
    /*
    * Get the ParameterType object for a specialized sweep parameter.
    */
-   template <int D>
-   ParameterType& SweepParameter<D>::parameterType() const
+   template <int D, class T>
+   ParameterType& SweepParameter<D,T>::parameterType() const
    {
       UTIL_CHECK(parameterTypesPtr_);
       UTIL_CHECK(isSpecialized());
@@ -149,22 +149,22 @@ namespace Rp {
    /*
    * Get and store initial (current) value from the parent system.
    */
-   template <int D>
-   void SweepParameter<D>::getInitial()
+   template <int D, class T>
+   void SweepParameter<D,T>::getInitial()
    {  initial_ = get_(); }
 
    /*
    * Set a new parameter value in the parent system.
    */
-   template <int D>
-   void SweepParameter<D>::update(double newVal)
+   template <int D, class T>
+   void SweepParameter<D,T>::update(double newVal)
    {  set_(newVal); }
 
    /*
    * Get string representation of type enum value.
    */
-   template <int D>
-   std::string SweepParameter<D>::type() const
+   template <int D, class T>
+   std::string SweepParameter<D,T>::type() const
    {
       if (type_ == Block) {
          return "block";
@@ -191,8 +191,8 @@ namespace Rp {
       }
    }
 
-   template <int D>
-   double SweepParameter<D>::get_()
+   template <int D, class T>
+   double SweepParameter<D,T>::get_()
    {
       UTIL_CHECK(systemPtr_);
       if (type_ == Chi) {
@@ -222,8 +222,8 @@ namespace Rp {
       }
    }
 
-   template <int D>
-   void SweepParameter<D>::set_(double newVal)
+   template <int D, class T>
+   void SweepParameter<D,T>::set_(double newVal)
    {
       UTIL_CHECK(systemPtr_);
       if (type_ == Chi) {
@@ -256,9 +256,9 @@ namespace Rp {
       }
    }
 
-   template <int D>
+   template <int D, class T>
    template <class Archive>
-   void SweepParameter<D>::serialize(Archive ar, const unsigned int version)
+   void SweepParameter<D,T>::serialize(Archive ar, const unsigned int version)
    {
       serializeEnum(ar, type_, version);
       ar & nId_;
@@ -274,9 +274,9 @@ namespace Rp {
    /*
    * Inserter for reading a SweepParameter from an istream.
    */
-   template <int D>
+   template <int D, class T>
    std::istream& operator >> (std::istream& in,
-                              SweepParameter<D>& param)
+                              SweepParameter<D,T>& param)
    {
       // Read the parameter type identifier string
       param.readParamType(in);
@@ -294,9 +294,9 @@ namespace Rp {
    /*
    * Extractor for writing a SweepParameter to ostream.
    */
-   template <int D>
+   template <int D, class T>
    std::ostream& operator << (std::ostream& out,
-                              SweepParameter<D> const & param)
+                              SweepParameter<D,T> const & param)
    {
       param.writeParamType(out);
       out << "  ";

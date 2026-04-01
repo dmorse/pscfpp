@@ -17,7 +17,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   // using namespace Prdc;
 
    /**
    * Class for storing data about an individual sweep parameter.

@@ -9,18 +9,22 @@
 */
 
 #include "Sweep.h"
+
 #include <rpg/system/System.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/ScftThermo.h>
-#include <prdc/environment/Environment.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
+#include <rpg/field/CFields.h>
+#include <prdc/environment/Environment.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/interaction/Interaction.h>
-#include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
+
+#include <pscf/sweep/SweepTmpl.tpp>
 
 namespace Pscf {
 namespace Rpg {
@@ -31,29 +35,29 @@ namespace Rpg {
    #define RPG_HISTORY_CAPACITY 3
 
    /*
-   * Default constructor.
+   * Default constructor (for unit testing).
    */
    template <int D>
-   Sweep<D>::Sweep() 
+   Sweep<D>::Sweep()
     : SweepTmpl< BasisFieldState<D> >(RPG_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),
-      systemPtr_(0)
+      systemPtr_(nullptr)
    {}
 
    /*
    * Constructor, creates association with parent system.
    */
    template <int D>
-   Sweep<D>::Sweep(System<D> & sys) 
+   Sweep<D>::Sweep(System<D> & sys)
     : SweepTmpl< BasisFieldState<D> >(RPG_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
       writeWRGrid_(false),
       systemPtr_(&sys)
    {
-      // Get specialized sweep parameters from Iterator
+      // Get specialized sweep parameters from Environment
       if (system().hasEnvironment()) {
          addParameterTypes(system().environment().getParameterTypes());
       }
@@ -63,25 +67,25 @@ namespace Rpg {
    * Destructor.
    */
    template <int D>
-   Sweep<D>::~Sweep() 
+   Sweep<D>::~Sweep()
    {}
 
    /*
-   * Set association with a parent system.
+   * Set association with a parent system (for unit testing).
    */
    template <int D>
-   void Sweep<D>::setSystem(System<D>& system) 
+   void Sweep<D>::setSystem(System<D>& system)
    {  systemPtr_ = &system; }
 
    /*
-   * Read parameters
+   * Read parameters.
    */
    template <int D>
    void Sweep<D>::readParameters(std::istream& in)
    {
       // Call the base class's readParameters function.
       SweepTmpl< BasisFieldState<D> >::readParameters(in);
-      
+
       // Read optional flags indicating which field types to output
       readOptional(in, "writeCRGrid", writeCRGrid_);
       readOptional(in, "writeCBasis", writeCBasis_);
@@ -92,11 +96,11 @@ namespace Rpg {
    * Check allocation of one state object, allocate if necessary.
    */
    template <int D>
-   void Sweep<D>::checkAllocation(BasisFieldState<D>& state) 
-   { 
-      UTIL_CHECK(hasSystem()); 
+   void Sweep<D>::checkAllocation(BasisFieldState<D>& state)
+   {
+      UTIL_CHECK(hasSystem());
       state.setSystem(system());
-      state.allocate(); 
+      state.allocate();
       state.unitCell() = system().domain().unitCell();
    }
 
@@ -104,7 +108,7 @@ namespace Rpg {
    * Setup operations at the beginning of a sweep.
    */
    template <int D>
-   void Sweep<D>::setup() 
+   void Sweep<D>::setup()
    {
       initialize();
       checkAllocation(trial_);
@@ -113,6 +117,8 @@ namespace Rpg {
       std::string fileName = baseFileName_;
       fileName += "sweep.log";
       system().fileMaster().openOutputFile(fileName, logFile_);
+      logFile_ << " step             ds     free_energy        pressure"
+               << std::endl;
    };
 
    /*
@@ -121,7 +127,7 @@ namespace Rpg {
    * \param s path length coordinate, in range [0,1]
    */
    template <int D>
-   void Sweep<D>::setParameters(double s) 
+   void Sweep<D>::setParameters(double s)
    {
       // Empty default implementation allows Sweep<D> to be compiled.
       UTIL_THROW("Calling unimplemented function Sweep::setParameters");
@@ -131,13 +137,13 @@ namespace Rpg {
    * Create guess for adjustable variables by polynomial extrapolation.
    */
    template <int D>
-   void Sweep<D>::extrapolate(double sNew) 
+   void Sweep<D>::extrapolate(double sNew)
    {
       UTIL_CHECK(historySize() > 0);
 
       // If historySize() == 1, do nothing: Use previous system state
       // as trial for the new state.
-      
+
       if (historySize() > 1) {
          UTIL_CHECK(historySize() <= historyCapacity());
 
@@ -147,12 +153,12 @@ namespace Rpg {
          // Compute coefficients of polynomial extrapolation to sNew
          setCoefficients(sNew);
 
-         // Set extrapolated trial w fields 
+         // Set extrapolated trial w fields
          double coeff;
          int nMonomer = system().mixture().nMonomer();
          int nBasis = system().domain().basis().nBasis();
          DArray<double>* newFieldPtr;
-         DArray<double>* oldFieldPtr; 
+         DArray<double>* oldFieldPtr;
          int i, j, k;
          for (i=0; i < nMonomer; ++i) {
             newFieldPtr = &(trial_.field(i));
@@ -180,39 +186,28 @@ namespace Rpg {
          FSArray<double, 6> oldParameters = unitCellParameters_;
          unitCellParameters_ = system().domain().unitCell().parameters();
 
-         // If isFlexible, then extrapolate the flexible unit cell parameters
+         // If isFlexible, extrapolate the flexible unit cell parameters
          if (isFlexible) {
 
             double coeff;
             double parameter;
-           
-            #if 0 
-            const FSArray<int,6> indices = system().iterator().flexibleParams();
-            const int nParameter = indices.size();
+            const FSArray<bool,6> flexParams =
+                              system().iterator().flexibleParams();
+            const int nParameter
+                             = system().domain().unitCell().nParameter();
+            UTIL_CHECK(flexParams.size() == nParameter);
 
             // Add contributions from all previous states
             for (k = 0; k < historySize(); ++k) {
                coeff = c(k);
                for (int i = 0; i < nParameter; ++i) {
-                  if (k == 0) {
-                     unitCellParameters_[indices[i]] = 0;
+                  if (flexParams[i]) {
+                     if (k == 0) {
+                        unitCellParameters_[i] = 0.0;
+                     }
+                     parameter = state(k).unitCell().parameter(i);
+                     unitCellParameters_[i] += coeff*parameter;
                   }
-                  parameter = state(k).unitCell().parameter(indices[i]);
-                  unitCellParameters_[indices[i]] += coeff*parameter;
-               }
-            }
-            #endif
-
-            // Add contributions from all previous states
-            const int nParameter = unitCellParameters_.size();
-            for (k = 0; k < historySize(); ++k) {
-               coeff = c(k);
-               for (int i = 0; i < nParameter; ++i) {
-                  if (k == 0) {
-                     unitCellParameters_[i] = 0.0;
-                  }
-                  parameter = state(k).unitCell().parameter(i);
-                  unitCellParameters_[i] += coeff*parameter;
                }
             }
 
@@ -230,10 +225,10 @@ namespace Rpg {
             }
          }
 
-         // Transfer data from trial_ state to parent system         
+         // Transfer data from trial_ state to parent system
          trial_.setSystemState(newCellParams);
       }
-    
+
    };
 
    /*
@@ -253,23 +248,23 @@ namespace Rpg {
    */
    template <int D>
    void Sweep<D>::reset()
-   {  
+   {
       bool isFlexible = system().iterator().isFlexible();
-      state(0).setSystemState(isFlexible); 
+      state(0).setSystemState(isFlexible);
    }
 
    /*
    * Update state(0) and output data after successful convergence
    *
-   * The implementation of this function should copy the current 
+   * The implementation of this function should copy the current
    * system state into state(0) and output any desired information
    * about the current converged solution.
    */
    template <int D>
-   void Sweep<D>::getSolution() 
-   { 
+   void Sweep<D>::getSolution()
+   {
       state(0).setSystem(system());
-      state(0).getSystemState(); 
+      state(0).getSystemState();
 
       // Output converged solution to several files
       outputSolution();
@@ -299,6 +294,7 @@ namespace Rpg {
       out.close();
 
       // Write w fields
+      UTIL_CHECK(system().w().hasData());
       outFileName = baseFileName_;
       outFileName += indexString;
       outFileName += "_w";
@@ -312,15 +308,17 @@ namespace Rpg {
 
       // Optionally write c rgrid files
       if (writeCRGrid_) {
-        outFileName = baseFileName_;
-        outFileName += indexString;
-        outFileName += "_c";
-        outFileName += ".rf";
-        system().c().writeRGrid(outFileName);
+         UTIL_CHECK(system().c().hasData());
+         outFileName = baseFileName_;
+         outFileName += indexString;
+         outFileName += "_c";
+         outFileName += ".rf";
+         system().c().writeRGrid(outFileName);
       }
 
       // Optionally write c basis files
       if (writeCBasis_ && system().c().isSymmetric()) {
+         UTIL_CHECK(system().c().hasData());
          outFileName = baseFileName_;
          outFileName += indexString;
          outFileName += "_c";
@@ -330,11 +328,11 @@ namespace Rpg {
 
       // Optionally write w rgrid files
       if (writeWRGrid_ && system().w().isSymmetric()) {
-        outFileName = baseFileName_;
-        outFileName += indexString;
-        outFileName += "_w";
-        outFileName += ".rf";
-        system().w().writeRGrid(outFileName);
+         outFileName = baseFileName_;
+         outFileName += indexString;
+         outFileName += "_w";
+         outFileName += ".rf";
+         system().w().writeRGrid(outFileName);
       }
 
    }
@@ -344,6 +342,7 @@ namespace Rpg {
    {
       int i = nAccept() - 1;
       double sNew = s(0);
+      if (!system().scft().hasData()) system().scft().compute();
       out << Int(i,5) << Dbl(sNew)
           << Dbl(system().scft().fHelmholtz(),16)
           << Dbl(system().scft().pressure(),16);
@@ -351,7 +350,7 @@ namespace Rpg {
    }
 
    template <int D>
-   void Sweep<D>::cleanup() 
+   void Sweep<D>::cleanup()
    {  logFile_.close(); }
 
 } // namespace Rpg
