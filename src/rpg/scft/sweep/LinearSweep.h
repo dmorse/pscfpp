@@ -19,15 +19,11 @@ namespace Rpg {
    template <int D> class System;
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Base class for a sweep in parameter space where parameters change
-   * linearly with the sweep variable. 
+   * Sweep in which parameters vary linearly with sweep variable s.
    * 
-   * \sa \ref scft_sweep_linear_sec "Parameter file format"
-   *
+   * \see \ref scft_sweep_linear_sec "Manual page"
    * \ingroup Rpg_Scft_Sweep_Module
    */
    template <int D>
@@ -37,28 +33,31 @@ namespace Rpg {
 
       /** 
       * Constructor.
-      * \param system parent System object
+      *
+      * \param system  parent system object
       */
       LinearSweep(System<D>& system);
 
       /**
       * Read parameters from param file.
       * 
-      * \param in Input stream from param file.
+      * \param in  parameter file input stream
       */
       void readParameters(std::istream& in);
 
       /**
-      * Setup operation at the beginning of a sweep. Gets initial 
-      * values of individual parameters.
+      * Setup operation at the beginning of a sweep. 
+      *
+      * Gets and stores initial values of individual swept parameters.
       */
-       void setup();
+      void setup();
 
       /**
-      * Set the state before an iteration. Called with each new iteration 
-      * in SweepTempl::sweep()
+      * Set state parameters before solving an SCFT problem.
       *
-      * \param s path length coordinate, in [0,1]
+      * Called by SweepTmpl::sweep() for each state in a sweep.
+      *
+      * \param s  path length coordinate, in [0,1]
       */    
       void setParameters(double s);
 
@@ -71,11 +70,13 @@ namespace Rpg {
 
    protected:
 
+      // Inherited protected members
       using Sweep<D>::system;
       using Sweep<D>::hasSystem;
       using SweepTmpl< BasisFieldState<D> >::parameterTypes_;
    
    private:
+
       /// Number of parameters being swept. 
       int nParameter_; 
 

@@ -4,11 +4,19 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/system/System.h>
 #include <rpc/scft/sweep/BasisFieldState.h>
+#include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Block.h>
+#include <rpc/field/Domain.h>
 
 #include <prdc/crystal/BFieldComparison.h>
+#include <prdc/crystal/Basis.h>
 
+#include <pscf/interaction/Interaction.h>
+
+#include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>

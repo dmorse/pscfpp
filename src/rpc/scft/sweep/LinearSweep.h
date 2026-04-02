@@ -23,8 +23,7 @@ namespace Rpc {
    /**
    * Sweep in which parameters vary linearly with sweep variable s.
    *
-   * See also: \ref scft_sweep_linear_sec "Parameter file format"
-   *
+   * \see \ref scft_sweep_linear_sec "Manual page"
    * \ingroup Rpc_Scft_Sweep_Module
    */
    template <int D>
@@ -35,7 +34,7 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param system  parent System object
+      * \param system  parent system object
       */
       LinearSweep(System<D>& system);
 
@@ -56,7 +55,7 @@ namespace Rpc {
       /**
       * Set state parameters before solving an SCFT problem.
       *
-      * Called by SweepTempl::sweep() for each new state in sweep.
+      * Called by SweepTempl::sweep() for each state in a sweep.
       *
       * \param s  path length coordinate, in [0,1]
       */

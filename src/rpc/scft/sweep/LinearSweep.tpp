@@ -28,7 +28,7 @@ namespace Rpc {
       Sweep<D>::readParameters(in);
       
       // Read the number of sweep parameters, allocate parameters_ array
-      read(in, "nParameter", nParameter_);
+      ParamComposite::read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
 
       // Set the pointer to the array of specialized parameter types for 
@@ -39,7 +39,7 @@ namespace Rpc {
       }
 
       // Read array of SweepParameters, calling << operator for each
-      readDArray(in, "parameters", parameters_, nParameter_);
+      ParamComposite::readDArray(in, "parameters", parameters_,nParameter_);
 
       // Verify net zero change in volume fractions, if these are swept
       double sum = 0.0;
