@@ -1,5 +1,5 @@
-#ifndef RPG_BASIS_FIELD_STATE_TPP
-#define RPG_BASIS_FIELD_STATE_TPP
+#ifndef RP_BASIS_FIELD_STATE_TPP
+#define RP_BASIS_FIELD_STATE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -10,15 +10,18 @@
 
 #include "BasisFieldState.h"
 
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/FieldIo.h>
+#if 0
+#include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
+#include <rpc/field/FieldIo.h>
+#endif
+
 #include <prdc/crystal/Basis.h>
 #include <util/global.h>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -26,31 +29,31 @@ namespace Rpg {
    /*
    * Default constructor.
    */
-   template <int D>
-   BasisFieldState<D>::BasisFieldState()
+   template <int D, class T>
+   BasisFieldState<D,T>::BasisFieldState()
     : FieldStateT()
    {}
 
    /*
    * Constructor.
    */
-   template <int D>
-   BasisFieldState<D>::BasisFieldState(System<D>& system)
+   template <int D, class T>
+   BasisFieldState<D,T>::BasisFieldState(typename T::System& system)
     : FieldStateT(system)
    {}
 
    /*
    * Destructor.
    */
-   template <int D>
-   BasisFieldState<D>::~BasisFieldState()
+   template <int D, class T>
+   BasisFieldState<D,T>::~BasisFieldState()
    {}
 
    /*
    * Allocate all fields.
    */
-   template <int D>
-   void BasisFieldState<D>::allocate()
+   template <int D, class T>
+   void BasisFieldState<D,T>::allocate()
    {
       // Precondition
       UTIL_CHECK(FieldStateT::hasSystem());
@@ -78,29 +81,29 @@ namespace Rpg {
    /*
    * Read fields in symmetry-adapted basis format.
    */
-   template <int D>
-   void BasisFieldState<D>::read(const std::string & filename)
+   template <int D, class T>
+   void BasisFieldState<D,T>::read(const std::string & filename)
    {
       allocate();
-      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      FieldIoT const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsBasis(filename, fields(), unitCell());
    }
 
    /*
    * Write fields in symmetry-adapted basis format.
    */
-   template <int D>
-   void BasisFieldState<D>::write(const std::string & filename)
+   template <int D, class T>
+   void BasisFieldState<D,T>::write(const std::string & filename)
    {
-      FieldIo<D> const & fieldIo = system().domain().fieldIo();
+      FieldIoT const & fieldIo = system().domain().fieldIo();
       fieldIo.writeFieldsBasis(filename, fields(), unitCell());
    }
 
    /*
    * Get current state of associated System.
    */
-   template <int D>
-   void BasisFieldState<D>::getSystemState()
+   template <int D, class T>
+   void BasisFieldState<D,T>::getSystemState()
    {
       // Get system wFields
       allocate();
@@ -122,17 +125,15 @@ namespace Rpg {
    /*
    * Set System state to current state of the BasisFieldState object.
    */
-   template <int D>
-   void BasisFieldState<D>::setSystemState(bool newCellParams)
+   template <int D, class T>
+   void BasisFieldState<D,T>::setSystemState(bool newCellParams)
    {
       system().w().setBasis(fields());
-
       if (newCellParams) {
          system().setUnitCell(unitCell());
       }
-
    }
 
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 #endif

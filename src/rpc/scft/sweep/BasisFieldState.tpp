@@ -10,6 +10,7 @@
 
 #include "BasisFieldState.h"
 
+#include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
@@ -29,7 +30,7 @@ namespace Rpc {
    BasisFieldState<D>::BasisFieldState()
     : FieldStateT()
    {}
-  
+
    /*
    * Constructor.
    */
@@ -73,9 +74,9 @@ namespace Rpc {
       }
 
    }
- 
+
    /*
-   * Read fields in symmetry-adapted basis format. 
+   * Read fields in symmetry-adapted basis format.
    */
    template <int D>
    void BasisFieldState<D>::read(const std::string & filename)
@@ -85,8 +86,8 @@ namespace Rpc {
       fieldIo.readFieldsBasis(filename, fields(), unitCell());
    }
 
-   /**
-   * Write fields in symmetry-adapted basis format. 
+   /*
+   * Write fields in symmetry-adapted basis format.
    */
    template <int D>
    void BasisFieldState<D>::write(const std::string & filename)
@@ -96,7 +97,7 @@ namespace Rpc {
    }
 
    /*
-   * Gjt current state of associated System.
+   * Get current state of associated System.
    */
    template <int D>
    void BasisFieldState<D>::getSystemState()
@@ -122,10 +123,10 @@ namespace Rpc {
    * Set System state to current state of the BasisFieldState object.
    */
    template <int D>
-   void BasisFieldState<D>::setSystemState(bool isFlexible)
+   void BasisFieldState<D>::setSystemState(bool newCellParams)
    {
       system().w().setBasis(fields());
-      if (isFlexible) {
+      if (newCellParams) {
          system().setUnitCell(unitCell());
       }
    }

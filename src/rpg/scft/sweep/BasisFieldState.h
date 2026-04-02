@@ -14,6 +14,7 @@
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declaration
    template <int D> class System;
 
    using namespace Util;
@@ -23,7 +24,8 @@ namespace Rpg {
    * FieldState for fields in symmetry-adapted basis format.
    */
    template <int D>
-   class BasisFieldState : public FieldState<D, DArray<double>, System<D> >
+   class BasisFieldState
+    : public FieldState<D, DArray<double>, System<D> >
    {
    public:
 
@@ -54,19 +56,19 @@ namespace Rpg {
       /**
       * Read state from file.
       *
-      * \param filename name of input w-field file in symmetry-adapted format.
+      * \param filename  name of input w-field file, in basis format
       */
       void read(const std::string & filename);
-   
+
       /**
       * Write state to file.
       *
-      * \param filename name of output file, in symmetry-adapated format.
+      * \param filename  name of output w-field file, in basis format
       */
       void write(const std::string & filename);
 
       /**
-      * Copy the current state of the associated system.
+      * Store the current state of the associated system.
       *
       * Copy the fields and the unit cell.
       */
@@ -75,7 +77,7 @@ namespace Rpg {
       /**
       * Set the state of the associated system to this state.
       *
-      * \param newCellParams  Should unit cell parameters be updated? 
+      * \param newCellParams  update unit cell parameters iff true
       */
       void setSystemState(bool newCellParams);
 
@@ -94,11 +96,11 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Prdc {
-      extern template 
+      extern template
       class FieldState< 1, DArray<double>, Rpg::System<1> >;
-      extern template 
+      extern template
       class FieldState< 2, DArray<double>, Rpg::System<2> >;
-      extern template 
+      extern template
       class FieldState< 3, DArray<double>, Rpg::System<3> >;
    }
    namespace Rpg {

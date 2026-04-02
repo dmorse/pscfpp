@@ -1,5 +1,5 @@
-#ifndef RPC_BASIS_FIELD_STATE_H
-#define RPC_BASIS_FIELD_STATE_H
+#ifndef RP_BASIS_FIELD_STATE_H
+#define RP_BASIS_FIELD_STATE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -12,10 +12,7 @@
 #include <string>
 
 namespace Pscf {
-namespace Rpc {
-
-   // Forward declaration
-   template <int D> class System;
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -23,9 +20,9 @@ namespace Rpc {
    /**
    * FieldState for fields in symmetry-adapted basis format.
    */
-   template <int D>
+   template <int D, class T>
    class BasisFieldState
-    : public FieldState<D, DArray<double>, System<D> >
+    : public FieldState<D, DArray<double>, typename T::System>
    {
    public:
 
@@ -39,7 +36,7 @@ namespace Rpc {
       *
       * \param system associated parent system
       */
-      BasisFieldState(System<D>& system);
+      BasisFieldState(typename T::System& system);
 
       /**
       * Destructor.
@@ -82,31 +79,19 @@ namespace Rpc {
       void setSystemState(bool newCellParams);
 
       // Inherited member functions
-      using FieldStateT = FieldState<D, DArray<double>, System<D> >;
+      using FieldStateT = FieldState<D, DArray<double>, typename T::System>;
       using FieldStateT::fields;
       using FieldStateT::field;
       using FieldStateT::unitCell;
       using FieldStateT::system;
 
+   private:
+
+      using FieldIoT = typename T::FieldIo;
+
    };
 
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 
-// Explicit instantiation declarations
-namespace Pscf {
-   namespace Prdc {
-      extern template
-      class FieldState< 1, DArray<double>, Rpc::System<1> >;
-      extern template
-      class FieldState< 2, DArray<double>, Rpc::System<2> >;
-      extern template
-      class FieldState< 3, DArray<double>, Rpc::System<3> >;
-   }
-   namespace Rpc {
-      extern template class BasisFieldState<1>;
-      extern template class BasisFieldState<2>;
-      extern template class BasisFieldState<3>;
-   }
-}
 #endif
