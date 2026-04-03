@@ -1,5 +1,5 @@
-#ifndef RPG_LINEAR_SWEEP_TPP
-#define RPG_LINEAR_SWEEP_TPP
+#ifndef RP_LINEAR_SWEEP_TPP
+#define RP_LINEAR_SWEEP_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,23 +9,22 @@
 */
 
 #include "LinearSweep.h"
-#include <rpg/system/System.h>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
 
-   template <int D>
-   LinearSweep<D>::LinearSweep(System<D>& system)
-   : Sweep<D>(system)
+   template <int D, class T>
+   LinearSweep<D,T>::LinearSweep(typename T::System& system)
+    : SweepT(system)
    {}
 
-   template <int D>
-   void LinearSweep<D>::readParameters(std::istream& in)
+   template <int D, class T>
+   void LinearSweep<D,T>::readParameters(std::istream& in)
    {
       // Call the base class's readParameters function
-      Sweep<D>::readParameters(in);
+      SweepT::readParameters(in);
 
       // Read the number of sweep parameters, allocate parameters_ array
       ParamComposite::read(in, "nParameter", nParameter_);
@@ -34,8 +33,7 @@ namespace Rpg {
       // Set the pointer to the array of specialized parameter types for
       // each SweepParameter object
       for (int i = 0; i < nParameter_; ++i) {
-         parameters_[i].setParameterTypesArray(
-                        SweepTmpl< BasisFieldState<D> >::parameterTypes_);
+         parameters_[i].setParameterTypesArray(SweepTmplT::parameterTypes_);
       }
 
       // Read array of SweepParameters, calling << operator for each
@@ -52,14 +50,14 @@ namespace Rpg {
       UTIL_CHECK(sum < 0.000001);
    }
 
-   template <int D>
-   void LinearSweep<D>::setup()
+   template <int D, class T>
+   void LinearSweep<D,T>::setup()
    {
       // Verify that the LinearSweep has a pointer to parent System
       UTIL_CHECK(hasSystem());
 
       // Call base class setup function
-      Sweep<D>::setup();
+      SweepT::setup();
 
       // Set system pointer and initial value for each parameter object
       for (int i = 0; i < nParameter_; ++i) {
@@ -68,8 +66,8 @@ namespace Rpg {
       }
    }
 
-   template <int D>
-   void LinearSweep<D>::setParameters(double s)
+   template <int D, class T>
+   void LinearSweep<D,T>::setParameters(double s)
    {
       // Update the system parameter values
       double newVal;
@@ -79,8 +77,8 @@ namespace Rpg {
       }
    }
 
-   template <int D>
-   void LinearSweep<D>::outputSummary(std::ostream& out)
+   template <int D, class T>
+   void LinearSweep<D,T>::outputSummary(std::ostream& out)
    {}
 
 }

@@ -1,5 +1,5 @@
-#ifndef RPC_LINEAR_SWEEP_H
-#define RPC_LINEAR_SWEEP_H
+#ifndef RP_LINEAR_SWEEP_H
+#define RP_LINEAR_SWEEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,13 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Sweep.h"            // base class
-#include "SweepParameter.h"   // member
+#include "Sweep.h"                   // base class
+#include "SweepParameter.h"          // member
+#include <util/containers/DArray.h>  // member
 #include <util/global.h>
 #include <iostream>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    template <int D> class System;
 
@@ -24,10 +25,10 @@ namespace Rpc {
    * Sweep in which parameters vary linearly with sweep variable s.
    *
    * \see \ref scft_sweep_linear_sec "Manual page"
-   * \ingroup Rpc_Scft_Sweep_Module
+   * \ingroup Rp_Scft_Sweep_Module
    */
-   template <int D>
-   class LinearSweep : public Sweep<D>
+   template <int D, class T>
+   class LinearSweep : public T::Sweep
    {
    public:
 
@@ -36,7 +37,7 @@ namespace Rpc {
       *
       * \param system  parent system object
       */
-      LinearSweep(System<D>& system);
+      LinearSweep(typename T::System& system);
 
       /**
       * Read parameters from param file.
@@ -70,10 +71,15 @@ namespace Rpc {
 
    protected:
 
+      using SweepT = typename T::Sweep;
+      using SweepParameterT = typename T::SweepParameter;
+      using BasisFieldStateT = typename T::BasisFieldState;
+      using SweepTemplT = SweepTmpl< BasisFieldStateT >;
+
       // Inherited protected members
-      using Sweep<D>::system;
-      using Sweep<D>::hasSystem;
-      using SweepTmpl< BasisFieldState<D> >::parameterTypes_;
+      using SweepT::system;
+      using SweepT::hasSystem;
+      using SweepTmplT::parameterTypes_;
 
    private:
 
@@ -81,14 +87,9 @@ namespace Rpc {
       int nParameter_;
 
       /// Array of SweepParameter objects.
-      DArray< SweepParameter<D> > parameters_;
+      DArray< SweepParameterT > parameters_;
 
    };
-
-   // Explicit instantiation declarations
-   extern template class LinearSweep<1>;
-   extern template class LinearSweep<2>;
-   extern template class LinearSweep<3>;
 
 }
 }
