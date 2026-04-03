@@ -8,26 +8,31 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Sweep.h"            // base class
-#include "SweepParameter.h"   // member
-#include <util/global.h>
-#include <iostream>
+#include <rp/scft/sweep/LinearSweep.h>      // direct base class template
+#include <rpg/system/Types.h>               // base class argument
+#include <rpg/scft/sweep/Sweep.h>           // indirect base class
+#include <rpg/scft/sweep/SweepParameter.h>  // indirect base member
 
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declaration
    template <int D> class System;
-
-   using namespace Util;
 
    /**
    * Sweep in which parameters vary linearly with sweep variable s.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::LinearSweep, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
+   *
+   * \see Rp::LinearSweep
    * \see \ref scft_sweep_linear_sec "Manual page"
    * \ingroup Rpg_Scft_Sweep_Module
    */
    template <int D>
-   class LinearSweep : public Sweep<D>
+   class LinearSweep : public Rp::LinearSweep<D, Types<D> >
    {
    public:
 
@@ -38,58 +43,22 @@ namespace Rpg {
       */
       LinearSweep(System<D>& system);
 
-      /**
-      * Read parameters from param file.
-      *
-      * \param in  parameter file input stream
-      */
-      void readParameters(std::istream& in);
-
-      /**
-      * Setup operation at the beginning of a sweep.
-      *
-      * Gets and stores initial values of individual swept parameters.
-      */
-      void setup();
-
-      /**
-      * Set state parameters before solving an SCFT problem.
-      *
-      * Called by SweepTempl::sweep() for each state in a sweep.
-      *
-      * \param s  path length coordinate, in [0,1]
-      */
-      void setParameters(double s);
-
-      /**
-      * Output data to a running summary.
-      *
-      * \param out  output file, open for writing
-      */
-      void outputSummary(std::ostream& out);
-
-   protected:
-
-      // Inherited protected members
-      using Sweep<D>::system;
-      using Sweep<D>::hasSystem;
-      using SweepTmpl< BasisFieldState<D> >::parameterTypes_;
-
-   private:
-
-      /// Number of parameters being swept.
-      int nParameter_;
-
-      /// Array of SweepParameter objects.
-      DArray< SweepParameter<D> > parameters_;
-
    };
 
-   // Explicit instantiation declarations
-   extern template class LinearSweep<1>;
-   extern template class LinearSweep<2>;
-   extern template class LinearSweep<3>;
-
 }
+}
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class LinearSweep<1, Rpg::Types<1> >;
+      extern template class LinearSweep<2, Rpg::Types<2> >;
+      extern template class LinearSweep<3, Rpg::Types<3> >;
+   }
+   namespace Rpg {
+      extern template class LinearSweep<1>;
+      extern template class LinearSweep<2>;
+      extern template class LinearSweep<3>;
+   }
 }
 #endif

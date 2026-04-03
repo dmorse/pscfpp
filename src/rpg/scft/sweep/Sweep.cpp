@@ -39,6 +39,9 @@ namespace Rpg {
 
 // Explicit instantiation definitions
 namespace Pscf {
+   template class SweepTmpl< Rpg::BasisFieldState<1> >;
+   template class SweepTmpl< Rpg::BasisFieldState<2> >;
+   template class SweepTmpl< Rpg::BasisFieldState<3> >;
    namespace Rp {
       template class Sweep<1, Rpg::Types<1> >;
       template class Sweep<2, Rpg::Types<2> >;

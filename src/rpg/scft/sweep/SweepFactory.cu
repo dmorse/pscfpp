@@ -5,15 +5,51 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SweepFactory.tpp"
+#include "SweepFactory.h"
 
-namespace Pscf {
-   namespace Rpg
+#include "LinearSweep.h"
+
+namespace Pscf{
+namespace Rpg{
+
+   using namespace Util;
+
+   /*
+   * Constructor.
+   */
+   template <int D>
+   SweepFactory<D>::SweepFactory(System<D>& system)
+    : systemPtr_(&system)
+   {}
+
+   /*
+   * Return a pointer to a Sweep subclass with name className
+   */
+   template <int D>
+   Sweep<D>* SweepFactory<D>::factory(std::string const & className) const
    {
+       Sweep<D> *ptr = 0;
 
+       // First check if name is known by any subfactories
+       ptr = trySubfactories(className);
+       if (ptr) return ptr;
+
+       // Explicit class names
+       if (className == "Sweep" || className == "LinearSweep") {
+           ptr = new LinearSweep<D>(*systemPtr_);
+       }
+
+       return ptr;
+   }
+
+} // namespace Rpg
+} // namespace Pscf
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rpg {
       template class SweepFactory<1>;
       template class SweepFactory<2>;
       template class SweepFactory<3>;
-
-   } // namespace Rpg
-} // namespace Pscf
+   }
+}
