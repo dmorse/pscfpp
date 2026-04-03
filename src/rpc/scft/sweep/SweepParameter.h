@@ -27,6 +27,7 @@ namespace Rpc {
    * Rp::SweepParameter, and inherit their public interface and almost 
    * all of their source code from this base class.  
    *
+   * \see Rp::SweepParameter
    * \ingroup Rpc_Scft_Sweep_Module
    */
    template <int D>

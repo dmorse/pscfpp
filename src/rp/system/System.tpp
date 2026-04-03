@@ -13,6 +13,8 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/interaction/Interaction.h>
+#include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
 
 #include <util/containers/DArray.h>

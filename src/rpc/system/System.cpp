@@ -27,9 +27,7 @@
 #include <prdc/cpu/RFieldDft.h>
 #include <prdc/environment/Environment.h>
 
-#include <pscf/interaction/Interaction.h>
-
-#include <rp/system/System.tpp>
+#include <rp/system/System.tpp>  // base class template implementation
 
 namespace Pscf {
    namespace Rpc {

@@ -39,6 +39,9 @@ namespace Rpc {
 
 // Explicit instantiation definitions
 namespace Pscf {
+   template class SweepTmpl< Rpc::BasisFieldState<1> >;
+   template class SweepTmpl< Rpc::BasisFieldState<2> >;
+   template class SweepTmpl< Rpc::BasisFieldState<3> >;
    namespace Rp {
       template class Sweep<1, Rpc::Types<1> >;
       template class Sweep<2, Rpc::Types<2> >;

@@ -54,7 +54,7 @@ namespace Rp {
    void LinearSweep<D,T>::setup()
    {
       // Verify that the LinearSweep has a pointer to parent System
-      UTIL_CHECK(hasSystem());
+      UTIL_CHECK(SweepT::hasSystem());
 
       // Call base class setup function
       SweepT::setup();

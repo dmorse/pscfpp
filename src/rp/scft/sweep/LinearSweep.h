@@ -17,8 +17,6 @@
 namespace Pscf {
 namespace Rp {
 
-   template <int D> class System;
-
    using namespace Util;
 
    /**
@@ -56,7 +54,7 @@ namespace Rp {
       /**
       * Set state parameters before solving an SCFT problem.
       *
-      * Called by SweepTempl::sweep() for each state in a sweep.
+      * Called by SweepTmpl::sweep() for each state in a sweep.
       *
       * \param s  path length coordinate, in [0,1]
       */
@@ -71,17 +69,16 @@ namespace Rp {
 
    protected:
 
-      using SweepT = typename T::Sweep;
-      using SweepParameterT = typename T::SweepParameter;
-      using BasisFieldStateT = typename T::BasisFieldState;
-      using SweepTemplT = SweepTmpl< BasisFieldStateT >;
-
       // Inherited protected members
+      using SweepT = typename T::Sweep;
       using SweepT::system;
-      using SweepT::hasSystem;
-      using SweepTmplT::parameterTypes_;
 
    private:
+
+      // Typename aliases
+      using SweepParameterT = typename T::SweepParameter;
+      using BasisFieldStateT = typename T::BasisFieldState;
+      using SweepTmplT = SweepTmpl< BasisFieldStateT >;
 
       /// Number of parameters being swept.
       int nParameter_;
