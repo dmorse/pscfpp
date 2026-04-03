@@ -8,14 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/FieldState.h>
-#include <string>
+#include <rp/scft/sweep/BasisFieldState.h>
+#include <rpg/system/Types.h>
 
 namespace Pscf {
 namespace Rpg {
-
-   // Forward declaration
-   template <int D> class System;
 
    using namespace Util;
    using namespace Prdc;
@@ -25,7 +22,7 @@ namespace Rpg {
    */
    template <int D>
    class BasisFieldState
-    : public FieldState<D, DArray<double>, System<D> >
+    : public Rp::BasisFieldState<D, Types<D> >
    {
    public:
 
@@ -41,53 +38,6 @@ namespace Rpg {
       */
       BasisFieldState(System<D>& system);
 
-      /**
-      * Destructor.
-      */
-      ~BasisFieldState();
-
-      /**
-      * Allocate all fields.
-      *
-      * Precondition: hasSystem() == true
-      */
-      void allocate();
-
-      /**
-      * Read state from file.
-      *
-      * \param filename  name of input w-field file, in basis format
-      */
-      void read(const std::string & filename);
-
-      /**
-      * Write state to file.
-      *
-      * \param filename  name of output w-field file, in basis format
-      */
-      void write(const std::string & filename);
-
-      /**
-      * Store the current state of the associated system.
-      *
-      * Copy the fields and the unit cell.
-      */
-      void getSystemState();
-
-      /**
-      * Set the state of the associated system to this state.
-      *
-      * \param newCellParams  update unit cell parameters iff true
-      */
-      void setSystemState(bool newCellParams);
-
-      // Inherited member functions
-      using FieldStateT = FieldState<D, DArray<double>, System<D> >;
-      using FieldStateT::fields;
-      using FieldStateT::field;
-      using FieldStateT::unitCell;
-      using FieldStateT::system;
-
    };
 
 } // namespace Rpg
@@ -95,13 +45,10 @@ namespace Rpg {
 
 // Explicit instantiation declarations
 namespace Pscf {
-   namespace Prdc {
-      extern template
-      class FieldState< 1, DArray<double>, Rpg::System<1> >;
-      extern template
-      class FieldState< 2, DArray<double>, Rpg::System<2> >;
-      extern template
-      class FieldState< 3, DArray<double>, Rpg::System<3> >;
+   namespace Rp {
+      extern template class BasisFieldState< 1, Rpg::Types<1> >;
+      extern template class BasisFieldState< 2, Rpg::Types<2> >;
+      extern template class BasisFieldState< 3, Rpg::Types<3> >;
    }
    namespace Rpg {
       extern template class BasisFieldState<1>;

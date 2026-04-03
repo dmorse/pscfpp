@@ -10,7 +10,6 @@
 
 #include "LinearSweep.h"
 #include <rpg/system/System.h>
-#include <cstdio>
 
 namespace Pscf {
 namespace Rpg {
@@ -27,27 +26,27 @@ namespace Rpg {
    {
       // Call the base class's readParameters function.
       Sweep<D>::readParameters(in);
-      
+
       // Read in the number of sweep parameters and allocate.
-      this->read(in, "nParameter", nParameter_);
+      ParamComposite::read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
-      
-      // Set the pointer to the array of specialized parameter types for 
+
+      // Set the pointer to the array of specialized parameter types for
       // each SweepParameter object
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i].setParameterTypesArray(
                         SweepTmpl< BasisFieldState<D> >::parameterTypes_);
       }
-      
+
       // Read in array of SweepParameters, calling << for each
-      this->template readDArray< SweepParameter<D> >(in, "parameters", parameters_, nParameter_);
+      ParamComposite::readDArray(in, "parameters", parameters_,nParameter_);
 
       // Verify net zero change in volume fractions if being swept
       double sum = 0.0;
       for (int i = 0; i < nParameter_; ++i) {
-         if (parameters_[i].type() == "phi_polymer" || parameters_[i].type() == "phi_solvent") {
-            sum += parameters_[i].change();
-         }
+         if (parameters_[i].type() == "phi_polymer" ||
+             parameters_[i].type() == "phi_solvent")
+         {  sum += parameters_[i].change(); }
       }
       UTIL_CHECK(sum > -0.000001);
       UTIL_CHECK(sum < 0.000001);
@@ -61,7 +60,7 @@ namespace Rpg {
 
       // Call base class's setup function
       Sweep<D>::setup();
-      
+
       // Set system pointer and initial value for each parameter object
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i].setSystem(system());
@@ -86,5 +85,4 @@ namespace Rpg {
 
 }
 }
-
 #endif
