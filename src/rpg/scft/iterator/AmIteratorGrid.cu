@@ -15,10 +15,10 @@
 
 #include <rp/scft/iterator/AmIteratorGrid.tpp>
 
-// Constructor definition
 namespace Pscf {
    namespace Rpg {
   
+      // Constructor.
       template <int D>
       AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
        : Rp::AmIteratorGrid<D, Types<D> >(system)
