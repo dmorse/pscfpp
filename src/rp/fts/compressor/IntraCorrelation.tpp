@@ -1,5 +1,5 @@
-#ifndef RPC_INTRACORRELATION_TPP
-#define RPC_INTRACORRELATION_TPP
+#ifndef RP_INTRACORRELATION_TPP
+#define RP_INTRACORRELATION_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -10,12 +10,6 @@
 
 #include "IntraCorrelation.h"
 
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 
@@ -26,7 +20,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Rpc{
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -34,29 +28,30 @@ namespace Rpc{
    /*
    * Constructor.
    */
-   template <int D>
-   IntraCorrelation<D>::IntraCorrelation(System<D> const & system)
+   template <int D, class T>
+   IntraCorrelation<D,T>::IntraCorrelation(
+                                     typename T::System const & system)
     : systemPtr_(&system),
       correlationMixturePtr_(nullptr),
       kSize_(-1)
    {
       correlationMixturePtr_
-          = new Pscf::Correlation::Mixture<double>(system.mixture());
+          = new Pscf::Correlation::Mixture<RealT>(system.mixture());
    }
 
    /*
    * Destructor.
    */
-   template <int D>
-   IntraCorrelation<D>::~IntraCorrelation()
+   template <int D, class T>
+   IntraCorrelation<D,T>::~IntraCorrelation()
    {  delete correlationMixturePtr_; }
 
    /*
    * Compute k-space array of intramolecular correlation functions.
    */
-   template<int D>
+   template <int D, class T>
    void
-   IntraCorrelation<D>::computeOmegaTotal(RField<D>& correlations)
+   IntraCorrelation<D,T>::computeOmegaTotal(Array<RealT>& correlations)
    {
       computeMeshProperties();
 
@@ -73,15 +68,15 @@ namespace Rpc{
    /*
    * Compute k-grid mesh dimensions and Gsq.
    */
-   template<int D>
-   void IntraCorrelation<D>::computeMeshProperties()
+   template <int D, class T>
+   void IntraCorrelation<D,T>::computeMeshProperties()
    {
       // Local copies of domain properties
       UnitCell<D> const & unitCell = system().domain().unitCell();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
 
       // Compute k-space mesh dimensions kMeshDimensions_ and size Size_
-      FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+      typename T::FFT:computeKMesh(dimensions, kMeshDimensions_, kSize_);
 
       // Check allocation of Gsq_ (k-space array of square wavenumbers)
       if (!Gsq_.isAllocated()) {

@@ -6,13 +6,15 @@
 */
 
 #include "IntraCorrelation.tpp"
+#include <pscf/correlation/Mixture.tpp>
 
 namespace Pscf {
-namespace Rpc {
-
-   template class IntraCorrelation<1>;
-   template class IntraCorrelation<2>;
-   template class IntraCorrelation<3>;
-
-}
+   namespace Correlation {
+      template class Mixture<double>;
+   }
+   namespace Rpc {
+      template class IntraCorrelation<1>;
+      template class IntraCorrelation<2>;
+      template class IntraCorrelation<3>;
+   }
 }

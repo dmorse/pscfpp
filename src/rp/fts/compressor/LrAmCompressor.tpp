@@ -85,7 +85,7 @@ namespace Rp {
 
       // Compute intraCorrelationK_
       if (!isIntraCalculated_){
-         intra_.computeIntraCorrelations(intraCorrelationK_);
+         intra_.computeOmegaTotal(intraCorrelationK_);
          isIntraCalculated_ = true;
       }
 

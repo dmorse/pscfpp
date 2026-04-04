@@ -11,6 +11,8 @@
 #include <pscf/math/IntVec.h>         // memmber variable type
 #include <util/containers/DArray.h>   // memmber variable type
 
+
+
 // Forward declarations
 namespace Pscf {
    namespace Correlation {
@@ -26,14 +28,15 @@ namespace Pscf {
    }
 }
 
-
 namespace Pscf {
 namespace Rpc {
 
-   using namespace Pscf::Prdc::Cpu;
+   using namespace Util;
+   using namespace Prdc;
+   using namespace Prdc::Cpu;
 
    /**
-   * Intramolecular correlation analysis for LR compressors.
+   * Intramolecular correlation analyzer.
    *
    * \ingroup Rpc_Fts_Compressor_Module
    */
@@ -46,9 +49,9 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param system parent System object
+      * \param system  parent system object
       */
-      IntraCorrelation(System<D>& system);
+      IntraCorrelation(System<D> const & system);
 
       /**
       * Destructor.
@@ -56,48 +59,63 @@ namespace Rpc {
       ~IntraCorrelation();
 
       /**
-      * Compute and modify intramolecular correlations.
+      * Compute total intramolecular correlation function (all blocks).
       *
-      * \param correlations  k-space grid of omega values
+      * \param correlations  omega values on a k-space mesh
       */
-      void computeIntraCorrelations(RField<D>& correlations);
+      void computeOmegaTotal(RField<D>& correlations);
 
    protected:
 
       /**
-      * Return reference to parent system.
+      * Compute k-grid mesh dimensions and array of squared wavevectors.
+      *
+      * Results are stored in private member variables for later use.
       */
-      System<D> const & system();
+      void computeMeshProperties();
+
+      /**
+      * Get the parent system by const ref.
+      */
+      System<D> const & system() const;
 
    private:
 
-      /// Pointer to a parent system object.
+      /// Pointer to parent system object.
       System<D> const * systemPtr_;
 
-      /// Pointer to a child Correlation::Mixture object.
+      /// Pointer to child Correlation::Mixture object.
       Correlation::Mixture<double>* correlationMixturePtr_;
 
-      /// Array of squared magnitudes for reciprocal wavevectors.
+      /// Array of square magnitudes for wavevectors on a k-grid.
       DArray<double> Gsq_;
 
-      /// Dimensions of Fourier grid for DFT of a real function.
+      /// Dimensions of k-space mesh for DFT of a real function.
       IntVec<D> kMeshDimensions_;
 
-      /// Number of elements in the Fourier grid.
+      /// Number of wavevectors in the k-space mesh.
       int kSize_;
 
    };
 
    // Get the parent system by const reference.
-   template <int D>
-   inline System<D> const & IntraCorrelation<D>::system()
+   template <int D> inline
+   System<D> const & IntraCorrelation<D>::system() const
    {  return *systemPtr_; }
-
-   // Explicit instantiation declarations
-   extern template class IntraCorrelation<1>;
-   extern template class IntraCorrelation<2>;
-   extern template class IntraCorrelation<3>;
 
 } // namespace Rpc
 } // namespace Pscf
+
+// Explicit instantiation declarations
+#include <pscf/correlation/Mixture.h>
+namespace Pscf {
+   namespace Correlation {
+      extern template class Mixture<double>;
+   }
+   namespace Rpc {
+      extern template class IntraCorrelation<1>;
+      extern template class IntraCorrelation<2>;
+      extern template class IntraCorrelation<3>;
+   }
+}
 #endif
