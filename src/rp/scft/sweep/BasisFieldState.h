@@ -19,6 +19,18 @@ namespace Rp {
 
    /**
    * FieldState for fields in symmetry-adapted basis format.
+   *
+   * Instantiations of this class template are used as base classes for 
+   * two closely analogous class templates, also named BasisFieldState,
+   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
+   * and pscf_rpg programs, respectively.
+   *
+   * Template parameters:
+   *
+   *   - D : dimension of space (1, 2, or 3)
+   *   - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
+   *
+   * \ingroup Rp_Scft_Sweep_Module
    */
    template <int D, class T>
    class BasisFieldState

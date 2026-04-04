@@ -20,8 +20,7 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
