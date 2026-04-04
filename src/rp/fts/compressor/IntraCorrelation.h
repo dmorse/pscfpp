@@ -86,11 +86,13 @@ namespace Rp {
       /// Number of wavevectors in the k-space mesh.
       int kSize_;
 
+      using FFTT = typename T::FFT;
+
    };
 
    // Get the parent system by const reference.
-   template <int D> inline
-   typename T::System const & IntraCorrelation<D>::system() const
+   template <int D, class T> inline
+   typename T::System const & IntraCorrelation<D,T>::system() const
    {  return *systemPtr_; }
 
 } // namespace Rp

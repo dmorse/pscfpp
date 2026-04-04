@@ -114,7 +114,7 @@ public:
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
       IntraCorrelation<1> intra_(system);
-      intra_.computeIntraCorrelations(intraCorrelationK);
+      intra_.computeOmegaTotal(intraCorrelationK);
       
       // Compute analytical dphi using Intra
       RField<1> analyticalError;
@@ -195,7 +195,7 @@ public:
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
       IntraCorrelation<1> intra(system);
-      intra.computeIntraCorrelations(intraCorrelationK);
+      intra.computeOmegaTotal(intraCorrelationK);
       
       // The intracorrelation function of conformational homo
       System<1> systemHomo; 
@@ -204,7 +204,7 @@ public:
       RField<1> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
       IntraCorrelation<1> intraHomo(systemHomo);
-      intraHomo.computeIntraCorrelations(intraCorrelationKHomo);
+      intraHomo.computeOmegaTotal(intraCorrelationKHomo);
       
       RFieldComparison<1> comparison;
       comparison.compare(intraCorrelationK, intraCorrelationKHomo);
@@ -230,7 +230,7 @@ public:
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
       IntraCorrelation<1> intra(system);
-      intra.computeIntraCorrelations(intraCorrelationK);
+      intra.computeOmegaTotal(intraCorrelationK);
       
       // The intracorrelation function of conformational homo
       System<1> systemHomo; 
@@ -239,7 +239,7 @@ public:
       RField<1> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
       IntraCorrelation<1> intraHomo(systemHomo);
-      intraHomo.computeIntraCorrelations(intraCorrelationKHomo);
+      intraHomo.computeOmegaTotal(intraCorrelationKHomo);
       
       RFieldComparison<1> comparison;
       comparison.compare(intraCorrelationK, intraCorrelationKHomo);

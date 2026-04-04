@@ -76,7 +76,7 @@ namespace Rp {
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
 
       // Compute k-space mesh dimensions kMeshDimensions_ and size Size_
-      typename T::FFT:computeKMesh(dimensions, kMeshDimensions_, kSize_);
+      FFTT::computeKMesh(dimensions, kMeshDimensions_, kSize_);
 
       // Check allocation of Gsq_ (k-space array of square wavenumbers)
       if (!Gsq_.isAllocated()) {

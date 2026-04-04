@@ -156,6 +156,7 @@ namespace Correlation {
    bool Mixture<WT>::isAllocated() const
    {  return polymers_.isAllocated(); }
 
+   // Explicit instantiation declaration
    extern template class Mixture<double>;
 
 } // namespace Correlation

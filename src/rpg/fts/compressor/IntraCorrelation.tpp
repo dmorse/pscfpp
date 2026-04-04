@@ -56,33 +56,6 @@ namespace Rpg{
    void
    IntraCorrelation<D>::computeOmegaTotal(RField<D>& correlations)
    {
-      #if 0
-      // Local copies of system properties
-      Mixture<D> const & mixture = system().mixture();
-      UnitCell<D> const & unitCell = system().domain().unitCell();
-      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-
-      // Compute k-space mesh dimensions kMeshDimensions_ & size kSize_
-      FFT<D>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
-      UTIL_CHECK(correlations.capacity() == kSize_);
-
-      // Check allocation of Gsq_ (k-space array of square wavenumber)
-      if (!Gsq_.isAllocated()) {
-         Gsq_.allocate(kSize_);
-      }
-      UTIL_CHECK(Gsq_.capacity() == kSize_);
-
-      // Compute Gsq_
-      IntVec<D> G, Gmin;
-      MeshIterator<D> iter;
-      iter.setDimensions(kMeshDimensions_);
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         G = iter.position();
-         Gmin = shiftToMinimum(G, dimensions, unitCell);
-         Gsq_[iter.rank()] = unitCell.ksq(Gmin);
-      }
-      #endif
-
       computeMeshProperties();
 
       // Check allocation of HostDArray<double> correlations_

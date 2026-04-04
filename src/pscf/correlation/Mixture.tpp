@@ -13,6 +13,8 @@
 
 #include <util/global.h>
 
+#include "Polymer.tpp"
+
 namespace Pscf {
 namespace Correlation {
 
