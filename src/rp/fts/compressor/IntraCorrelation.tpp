@@ -53,30 +53,38 @@ namespace Rp {
    void
    IntraCorrelation<D,T>::computeOmegaTotal(Array<RealT>& correlations)
    {
-      computeMeshProperties();
-
-      // Compute total intramolecular correlation function
+      getMeshDimensions();
       UTIL_CHECK(correlations.capacity() == kSize_);
+      computeGsq();
       if (!correlationMixturePtr_->isAllocated()) {
          correlationMixturePtr_->allocate();
       }
       correlationMixturePtr_->setup();
       correlationMixturePtr_->computeOmegaTotal(Gsq_, correlations);
-
    }
 
    /*
    * Compute k-grid mesh dimensions and Gsq.
    */
    template <int D, class T>
-   void IntraCorrelation<D,T>::computeMeshProperties()
+   void IntraCorrelation<D,T>::getMeshDimensions()
    {
-      // Local copies of domain properties
-      UnitCell<D> const & unitCell = system().domain().unitCell();
-      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+      meshDimensions_ = system().domain().mesh().dimensions();
 
       // Compute k-space mesh dimensions kMeshDimensions_ and size Size_
-      FFTT::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+      FFTT::computeKMesh(meshDimensions_, kMeshDimensions_, kSize_);
+   }
+
+   /*
+   * Construct array of squared wavevector values.
+   */
+   template <int D, class T>
+   void IntraCorrelation<D,T>::computeGsq()
+   {
+      // Get mesh dimensions if not done previously
+      if (kSize_ <= 0) {
+         getMeshDimensions();
+      }
 
       // Check allocation of Gsq_ (k-space array of square wavenumbers)
       if (!Gsq_.isAllocated()) {
@@ -85,12 +93,13 @@ namespace Rp {
       UTIL_CHECK(Gsq_.capacity() == kSize_);
 
       // Compute Gsq_
+      UnitCell<D> const & unitCell = system().domain().unitCell();
       IntVec<D> G, Gmin;
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
       for (iter.begin(); !iter.atEnd(); ++iter) {
          G = iter.position();
-         Gmin = shiftToMinimum(G, dimensions, unitCell);
+         Gmin = shiftToMinimum(G, meshDimensions_, unitCell);
          Gsq_[iter.rank()] = unitCell.ksq(Gmin);
       }
    }

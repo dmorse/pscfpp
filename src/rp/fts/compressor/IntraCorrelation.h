@@ -58,11 +58,23 @@ namespace Rp {
    protected:
 
       /**
-      * Compute k-grid mesh dimensions and array of squared wavevectors.
+      * Get and store r-grid and kgrid-mesh dimensions.
       *
       * Results are stored in private member variables for later use.
       */
-      void computeMeshProperties();
+      void getMeshDimensions();
+
+      /**
+      * Compute array of squared wavevectors.
+      *
+      * Results are stored in a private member variable.
+      */
+      void computeGsq();
+
+      /*
+      * Get the size of the k-space mesh. 
+      */
+      int kSize() const;
 
       /**
       * Get the parent system by const ref.
@@ -80,6 +92,9 @@ namespace Rp {
       /// Array of square magnitudes for wavevectors on a k-grid.
       DArray<RealT> Gsq_;
 
+      /// Dimensions of r-space mesh.
+      IntVec<D> meshDimensions_;
+
       /// Dimensions of k-space mesh for DFT of a real function.
       IntVec<D> kMeshDimensions_;
 
@@ -89,6 +104,11 @@ namespace Rp {
       using FFTT = typename T::FFT;
 
    };
+
+   // Get the number of wavevectors in the k-space mesh.
+   template <int D, class T> inline
+   int IntraCorrelation<D,T>::kSize() const
+   {  return kSize_; }
 
    // Get the parent system by const reference.
    template <int D, class T> inline

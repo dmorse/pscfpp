@@ -5,12 +5,64 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "IntraCorrelation.tpp"
-#include <pscf/correlation/Mixture.tpp>
+#include "IntraCorrelation.h"
+
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
+
+#include <prdc/cuda/FFT.h>
+#include <prdc/cuda/RField.h>
+
+#include <rp/fts/compressor/IntraCorrelation.tpp>
 
 namespace Pscf {
-   namespace Correlation {
-      template class Mixture<cudaReal>;
+namespace Rpg {
+
+   using namespace Util;
+   using namespace Prdc;
+
+   /*
+   * Constructor.
+   */
+   template <int D>
+   IntraCorrelation<D>::IntraCorrelation(System<D> const & system)
+    : Rp::IntraCorrelation<D, Types<D> >(system)
+   {}
+
+   /*
+   * Compute k-space array of intramolecular correlation functions.
+   */
+   template<int D>
+   void
+   IntraCorrelation<D>::computeOmegaTotal(RField<D>& correlations)
+   {
+      RpIntraCorrelation::getMeshDimensions();
+      int nk = RpIntraCorrelation::kSize();
+      UTIL_CHECK(correlations.capacity() == nk);
+
+      // Check allocation of host array correlations_
+      if (!correlations_.isAllocated()) {
+         correlations_.allocate(nk);
+      }
+      UTIL_CHECK(correlations_.capacity() == nk);
+
+      RpIntraCorrelation::computeOmegaTotal(correlations_);
+
+      // Copy host array to device array 
+      correlations = correlations_;
+
+   }
+
+}
+}
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class IntraCorrelation<1, Rpg::Types<1> >;
+      template class IntraCorrelation<2, Rpg::Types<2> >;
+      template class IntraCorrelation<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class IntraCorrelation<1>;

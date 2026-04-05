@@ -8,16 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>             // member
-#include <pscf/cuda/cudaTypes.h>          // member
-#include <pscf/cuda/HostDArray.h>         // member
-#include <util/containers/DArray.h>       // member
+#include <rp/fts/compressor/IntraCorrelation.h>
+#include <rpg/system/Types.h>
+#include <pscf/cuda/cudaTypes.h>
+#include <pscf/cuda/HostDArray.h>
 
-// Forward references
+// Forward declarations
 namespace Pscf {
-   namespace Correlation {
-      template <typename WT> class Mixture;
-   }
    namespace Prdc {
       namespace Cuda {
          template <int D> class RField;
@@ -38,13 +35,22 @@ namespace Rpg {
    /**
    * Intramolecular correlation analyzer.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from corresponding specializations of the base class template 
+   * Rp::IntraCorrelation, and inherit most of their source code from
+   * this base class.  
+   *
+   * \see Rp::IntraCorrelation
    * \ingroup Rpg_Fts_Compressor_Module
    */
    template <int D>
-   class IntraCorrelation
+   class IntraCorrelation : public Rp::IntraCorrelation< D, Types<D> >
    {
 
    public:
+
+      // Alias for base class
+      using RpIntraCorrelation = Rp::IntraCorrelation<D,Types<D> >;
 
       /**
       * Constructor.
@@ -54,66 +60,31 @@ namespace Rpg {
       IntraCorrelation(System<D> const & system);
 
       /**
-      * Destructor.
-      */
-      ~IntraCorrelation();
-
-      /**
       * Compute total intramolecular correlation function (all blocks).
       *
       * \param correlations  omega values on a k-space mesh
       */
       void computeOmegaTotal(RField<D>& correlations);
 
-   protected:
-
-      /**
-      * Compute k-grid mesh dimensions and array of squared wavevectors.
-      *
-      * Results are stored in private member variables for later use.
-      */
-      void computeMeshProperties();
-
-      /**
-      * Get the parent system by const ref.
-      */
-      System<D> const & system() const;
+      // Using declaration to avoid hiding name from base class.
+      using RpIntraCorrelation::computeOmegaTotal;
 
    private:
-
-      /// Pointer to parent system object.
-      System<D> const * systemPtr_;
-
-      /// Pointer to child Correlation::Mixture object.
-      Correlation::Mixture<cudaReal>* correlationMixturePtr_;
-
-      /// Array of square magnitudes for wavevectors on a k-grid.
-      DArray<double> Gsq_;
-
-      /// Dimensions of k-space mesh for DFT of a real function.
-      IntVec<D> kMeshDimensions_;
-
-      /// Number of wavevectors in the k-space mesh.
-      int kSize_;
 
       /// Host array of square magnitudes for wavevectors on a k-grid.
       HostDArray<cudaReal> correlations_;
 
    };
 
-   // Get the parent system by const reference.
-   template <int D> inline
-   System<D> const & IntraCorrelation<D>::system() const
-   {  return *systemPtr_; }
-
 } // namespace Rpg
 } // namespace Pscf
 
 // Explicit instantiation declarations
-#include <pscf/correlation/Mixture.h>
 namespace Pscf {
-   namespace Correlation {
-      extern template class Mixture<cudaReal>;
+   namespace Rp {
+      extern template class IntraCorrelation<1, Rpg::Types<1> >;
+      extern template class IntraCorrelation<2, Rpg::Types<2> >;
+      extern template class IntraCorrelation<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       extern template class IntraCorrelation<1>;
