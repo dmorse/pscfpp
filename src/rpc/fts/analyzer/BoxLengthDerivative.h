@@ -49,7 +49,7 @@ namespace Rpc
       * Compute and return the derivative of H w/ respect to L.
       */
       virtual double compute();
-      
+
       /**
       * Output a sampled or block average value.
       *

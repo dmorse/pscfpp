@@ -1,5 +1,5 @@
-#ifndef RPG_BOX_LENGTH_DERIVATIVE_TPP
-#define RPG_BOX_LENGTH_DERIVATIVE_TPP
+#ifndef RP_BOX_LENGTH_DERIVATIVE_TPP
+#define RP_BOX_LENGTH_DERIVATIVE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,33 +9,28 @@
 */
 
 #include "BoxLengthDerivative.h"
-
-#include <rpg/system/System.h>
-#include <rpg/fts/simulator/Simulator.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <prdc/cuda/resources.h>
-#include <util/param/ParamComposite.h>
+#include <util/global.h>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
 
    /*
    * Constructor.
    */
-   template <int D>
-   BoxLengthDerivative<D>::BoxLengthDerivative(Simulator<D>& simulator,
-                                               System<D>& system)
+   template <int D, class T>
+   BoxLengthDerivative<D,T>::BoxLengthDerivative(
+                                      typename T::Simulator& simulator,
+                                      typename T::System& system)
     : AverageAnalyzerT(simulator, system)
    {  ParamComposite::setClassName("BoxLengthDerivative"); }
 
    /*
    * Compute and return required derivative.
    */
-   template <int D>
-   double BoxLengthDerivative<D>::compute()
+   template <int D, class T>
+   double BoxLengthDerivative<D,T>::compute()
    {
       UTIL_CHECK(system().w().hasData());
 
@@ -91,8 +86,8 @@ namespace Rpg {
       return dFdL;
    }
 
-   template <int D>
-   void BoxLengthDerivative<D>::outputValue(int step, double value)
+   template <int D, class T>
+   void BoxLengthDerivative<D,T>::outputValue(int step, double value)
    {
       if (simulator().hasRamp()
           && AverageAnalyzerT::nSamplePerOutput() == 1)
