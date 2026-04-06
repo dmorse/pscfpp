@@ -11,8 +11,6 @@
 namespace Pscf {
 namespace Rp {
 
-   using namespace Util;
-
    /**
    * Evaluate the derivative of H with respect to cubic box length L.
    *

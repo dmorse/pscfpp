@@ -8,27 +8,33 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"
-#include <rpc/system/System.h>
-#include <rpc/fts/simulator/Simulator.h>
+#include <rp/fts/analyzer/BoxLengthDerivative.h>
+#include <rpc/system/Types.h>
+#include <rpc/fts/analyzer/AverageAnalyzer.h>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rpc {
 
    template <int D> class System;
    template <int D> class Simulator;
 
-   using namespace Util;
-
    /**
-   * Evaluate the derivative of H with respect to chi.
+   * Evaluate the derivative of H with respect to cubic box length.
    *
+   * This class is designed specifically for use with a cubic unit cell.
+   *
+   * Specializations of this template with D=1, 2 and 3 are derived from
+   * specializations of the base class template Rp::BoxLengthDerivative,
+   * and inherit their public interface and almost all of their source
+   * code from this base class.
+   *
+   * \see Rp::BoxLengthDerivative
    * \see \ref rp_BoxLengthDerivative_page "Manual Page"
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class BoxLengthDerivative : public AverageAnalyzer<D>
+   class BoxLengthDerivative
+     : public Rp::BoxLengthDerivative< D, Types<D> >
    {
 
    public:
@@ -38,33 +44,23 @@ namespace Rpc
       */
       BoxLengthDerivative(Simulator<D>& simulator, System<D>& system);
 
-   protected:
-
-      using AverageAnalyzerT = AverageAnalyzer<D>;
-      using AverageAnalyzer<D>::simulator;
-      using AverageAnalyzer<D>::system;
-      using AverageAnalyzer<D>::outputFile_;
-
-      /**
-      * Compute and return the derivative of H w/ respect to L.
-      */
-      virtual double compute();
-
-      /**
-      * Output a sampled or block average value.
-      *
-      * \param step  value for step counter
-      * \param value  value of physical observable
-      */
-      virtual void outputValue(int step, double value);
-
    };
 
-   // Explicit instantiation declarations
-   extern template class BoxLengthDerivative<1>;
-   extern template class BoxLengthDerivative<2>;
-   extern template class BoxLengthDerivative<3>;
 
 }
+}
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class BoxLengthDerivative<1, Rpc::Types<1> >;
+      extern template class BoxLengthDerivative<2, Rpc::Types<2> >;
+      extern template class BoxLengthDerivative<3, Rpc::Types<3> >;
+   }
+   namespace Rpc {
+      extern template class BoxLengthDerivative<1>;
+      extern template class BoxLengthDerivative<2>;
+      extern template class BoxLengthDerivative<3>;
+   }
 }
 #endif
