@@ -48,7 +48,7 @@ namespace Rp {
 
       // Set mesh dimensions
       meshDimensions_ = system().domain().mesh().dimensions();
-      FFT<D>::computeKMesh(meshDimensions_, kMeshDimensions_, kSize_);
+      FFTT::computeKMesh(meshDimensions_, kMeshDimensions_, kSize_);
 
       // Allocate variables
       if (!isInitialized_){

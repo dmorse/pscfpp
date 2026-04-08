@@ -19,14 +19,15 @@ namespace Rp {
    using namespace Util;
 
    /**
-   * MaxOrderParameter is used to detect an order-disorder transition.
+   * Evaluate max of square magnitude of Fourier modes for exchange field.
    *
-   * This class evalutaes maximum of the squared Fourier mode amplitude
-   * for the fluctuating field.
+   * This class evaluates an average for the maximum of the squared Fourier 
+   * mode amplitude for the fluctuating exchange field W_{-}(r) for an AB
+   * system (nMonomer == 2).
    *
-   * The order parameter is defined as
+   * The quantity of interest is defined as
    * \f[
-   *     \psi(k)  = \max [ |W_{-}({\bf k})|^{2} ]
+   *     \Psi  = \max [ |W_{-}({\bf k})|^{2} ]
    * \f]
    * where \f$ W_{-}({\bf k})\f$ is fluctuating field component with
    * wavevector \f$ {\bf k} \f$.
@@ -54,11 +55,6 @@ namespace Rp {
    protected:
 
       /**
-      * Compute and return the max order parameter.
-      */
-      double compute() override;
-
-      /**
       * Output a sampled or block average value.
       *
       * \param step  value for step counter
@@ -66,7 +62,7 @@ namespace Rp {
       */
       void outputValue(int step, double value) override;
 
-      using AverageAnalyerT = T::AverageAnalyzer;
+      using AverageAnalyzerT = typename T::AverageAnalyzer;
       using AverageAnalyzerT::simulator;
       using AverageAnalyzerT::system;
 
@@ -113,6 +109,8 @@ namespace Rp {
 
       /// Has setup been completed?
       bool isInitialized_;
+
+      using FFTT = typename T::FFT;
 
    };
 
