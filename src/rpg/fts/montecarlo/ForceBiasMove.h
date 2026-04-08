@@ -36,6 +36,12 @@ namespace Rpg {
    * the move() function must take into account the ratio of generation
    * probabilities.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from specializations of the base class template Rp::ForceBiasMove, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
+   *
+   * \see Rp::ForceBiasMove
    * \see \ref rp_ForceBiasMove_page "Manual Page"
    * \ingroup Rpg_Fts_MonteCarlo_Module
    */

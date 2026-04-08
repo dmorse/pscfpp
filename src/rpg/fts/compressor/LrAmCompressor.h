@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/fts/compressor/AmCompressorBase.h> // indirect base 
 #include <rp/fts/compressor/LrAmCompressor.h>    // direct base template
 #include <rpg/system/Types.h>                    // direct base argument
+#include <rpg/fts/compressor/AmCompressorBase.h> // indirect base class
 #include <rpg/fts/compressor/IntraCorrelation.h> // direct base member
 #include <prdc/cuda/RField.h>                    // direct base member
 #include <prdc/cuda/RFieldDft.h>                 // direct base member
@@ -29,6 +29,12 @@ namespace Rpg {
    /**
    * Linear-response Anderson mixing compressor.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from specializations of the base class template Rp::LrAmCompressor, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
+   *
+   * \see Rp::LrAmCompressor
    * \see \ref rp_LrAmCompressor_page "Manual Page"
    * \ingroup Rpg_Fts_Compressor_Module
    */

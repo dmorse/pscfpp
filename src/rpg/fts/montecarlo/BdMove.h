@@ -26,6 +26,12 @@ namespace Rpg {
    /**
    * Brownian dynamics Monte-Carlo move.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of the base class template Rp::BdMove, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
+   *
+   * \see Rp::BdMove
    * \see \ref rp_BdMove_page "Manual Page"
    * \ingroup Rpg_Fts_MonteCarlo_Module
    */

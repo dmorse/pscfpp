@@ -23,11 +23,12 @@ namespace Rpg {
    /**
    * Compute averages and output block averages of Hamiltonian components.
    *
-   * Specializations of this template are derived from specializations of 
-   * the base class template Rp::HamiltonianAnalyzer , and inherit their 
-   * entire public interface and almost all of their source code from this 
-   * base class. 
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the base class template Rp::HamiltonianAnalyzer, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
    *
+   * \see Rp::HamiltonianAnalyzer
    * \see \ref rp_HamiltonianAnalyzer_page "Manual Page"
    * \ingroup Rpg_Fts_Analyzer_Module
    */

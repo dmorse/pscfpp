@@ -23,10 +23,10 @@ namespace Rpg {
    /**
    * Periodically write c-field snapshots to a trajectory file.
    *
-   * Specializations of this template are derived from specializations of 
-   * the base class template Rp::ConcentrationWriter, and inherit their 
-   * entire public interface and almost all of their source code from this
-   * base class. 
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the base class template Rp::ConcentrationWriter, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
    *
    * \see Rp::ConcentrationWriter
    * \see \ref rp_ConcentrationWriter_page "Manual Page"

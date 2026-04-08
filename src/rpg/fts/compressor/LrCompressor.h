@@ -29,6 +29,12 @@ namespace Rpg {
    /**
    * Linear-response Anderson mixing compressor.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::LrCompressor, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
+   *
+   * \see Rp::LrCompressor
    * \see \ref rp_LrCompressor_page "Manual Page"
    * \ingroup Rpg_Fts_Compressor_Module
    */

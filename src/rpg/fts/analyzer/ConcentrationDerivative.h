@@ -8,25 +8,26 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"
-#include <rp/fts/analyzer/ConcentrationDerivative.h>
-#include <rpg/system/Types.h>
+#include <rp/fts/analyzer/ConcentrationDerivative.h> // base class template
+#include <rpg/system/Types.h>                        // base argument
+#include <rpg/fts/analyzer/AverageAnalyzer.h>        // indirect base
 
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declarations
    template <int D> class System;
    template <int D> class Simulator;
 
    using namespace Util;
 
    /**
-   * Evaluate the derivative of H with respect to chi.
+   * Evaluate and average the derivative of H with respect to chi.
    *
-   * Specializations of this template are derived from specializations of the
-   * base class template Rp::ConcentrationDerivative, and inherit their
-   * entire public interface and almost all of their source code from this
-   * base class. 
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of base class template Rp::ConcentrationDerivative, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
    *
    * \see Rp::ConcentrationDerivative
    * \see \ref rp_ConcentrationDerivative_page "Manual Page"

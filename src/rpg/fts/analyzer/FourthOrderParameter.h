@@ -26,13 +26,10 @@ namespace Rpg {
    /**
    * FourthOrderParameter is used to detect an order-disorder transition.
    *
-   * This class evaluates the sum of fourth power of the Fourier mode 
-   * amplitude of fluctuating fields.
-   *
-   * Specializations of this template are derived from specializations of 
-   * the base class template Rp::FourthOrderDerivative, and inherit their 
-   * entire public interface and almost all of their source code from this 
-   * base class. 
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * specializations of the base class template Rp:FourthOrderParameter, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
    *
    * \see Rp::FourthOrderDerivative
    * \see \ref rp_FourthOrderParameter_page "Manual Page"

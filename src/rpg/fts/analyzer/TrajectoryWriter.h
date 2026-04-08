@@ -15,18 +15,19 @@
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declarations
    template <int D> class System;
    template <int D> class Simulator;
 
    using namespace Util;
 
    /**
-   * Evaluate the derivative of H with respect to chi.
+   * Periodically write the field configuration to a trajectory file.
    *
-   * Specializations of this template are derived from specializations of 
-   * the base class template Rp::TrajectoryWriter, and inherit their 
-   * entire public interface and almost all of their source code from 
-   * this base class. 
+   * Specializations of this template with D=1, 2, and 3 are derived
+   * from specializations of base class template Rp::TrajectoryWriter,
+   * and inherit their public interface and almost all of their source
+   * code from this base class.
    *
    * \see Rp::TrajectoryWriter
    * \see \ref rp_TrajectoryWriter_page "Manual Page"

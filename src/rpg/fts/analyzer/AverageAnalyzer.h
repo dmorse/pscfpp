@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"                         // grandparent base class
-#include <rp/fts/analyzer/AverageAnalyzer.h>  // base class template
-#include <rpg/system/Types.h>                 // class template argument
+#include "Analyzer.h"                         // indirect base class
+#include <rp/fts/analyzer/AverageAnalyzer.h>  // direct base template
+#include <rpg/system/Types.h>                 // base template argument
 
 namespace Pscf {
 namespace Rpg {
@@ -28,9 +28,9 @@ namespace Rpg {
    * Specializations of this template with D=1, 2, and 3 are derived from
    * specializations of the base class template Rp::AverageAnalyzer, and
    * inherit their public interface and almost all of their source code
-   * from this base class.  
+   * from this base class.
    *
-   * \see Rp::Class
+   * \see Rp::AverageAnalyzer
    * \ingroup Rpg_Fts_Analyzer_Module
    */
    template <int D>

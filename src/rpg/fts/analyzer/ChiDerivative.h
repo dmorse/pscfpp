@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"                // indirect base class
-#include <rp/fts/analyzer/ChiDerivative.h>  // base class template
-#include <rpg/system/Types.h>               // base template argument
+#include <rp/fts/analyzer/ChiDerivative.h>     // direct base template
+#include <rpg/system/Types.h>                  // direct base argument
+#include <rpg/fts/analyzer/AverageAnalyzer.h>  // indirect base class
 
 namespace Pscf {
 namespace Rpg {
@@ -23,10 +23,10 @@ namespace Rpg {
    /**
    * Evaluate the derivative of H with respect to chi.
    *
-   * Specializations of this template are derived from specializations of
-   * the base class template Rp::ChiDerivative, and inherit their entire
-   * public interface and almost all of their source code from this base
-   * class.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of the base template Rp::ChiDerivative, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
    *
    * \see Rp::ChiDerivative
    * \see \ref rp_ChiDerivative_page "Manual Page"

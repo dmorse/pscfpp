@@ -8,13 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"                    // indirect base
 #include <rp/fts/analyzer/StepLogger.h>  // base class template
 #include <rpg/system/Types.h>            // base class argument
+#include <rpg/fts/analyzer/Analyzer.h>   // indirect base
 
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declarations
    template <int D> class Simulator;
    template <int D> class System;
 
@@ -26,7 +27,7 @@ namespace Rpg {
    * Specializations of this template are derived from specializations of
    * the base class template Rp::StepLogger, and inherit their entire
    * public interface and almost all of their source code from this base
-   * class. 
+   * class.
    *
    * \see Rp::StepLogger
    * \see \ref rp_StepLogger_page "Manual Page"

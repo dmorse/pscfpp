@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/BoxLengthDerivative.h>
-#include <rpg/system/Types.h>
-#include <rpg/fts/analyzer/AverageAnalyzer.h>
+#include <rp/fts/analyzer/BoxLengthDerivative.h>  // direct base template
+#include <rpg/system/Types.h>                     // direct base argument
+#include <rpg/fts/analyzer/AverageAnalyzer.h>     // indirect base class
 
 namespace Pscf {
 namespace Rpg {

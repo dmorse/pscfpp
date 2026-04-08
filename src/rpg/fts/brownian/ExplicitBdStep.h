@@ -25,12 +25,12 @@ namespace Rpg {
    /**
    * Explicit Euler-Maruyama Brownian dynamics step.
    *
-   * Specializations of this template are derived from specializations of
-   * the base class template Rp:: , and inherit their entire 
-   * public interface and almost all of their source code from this 
-   * base class. See the documentation for this base class template for
-   * details. 
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from specializations of the base class template Rp::ExplicitBdStep, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
    *
+   * \see Rp::ExplicitBdStep
    * \see \ref rp_ExplicitBdStep_page "Manual Page"
    * \ingroup Rpg_Fts_Brownian_Module
    */

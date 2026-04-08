@@ -30,6 +30,7 @@ namespace Rpg {
    * base class.  See the documentation of this base class template for 
    * details. 
    *
+   * \see Rp:RealMove
    * \see \ref rp_RealMove_page "Manual Page"
    * \ingroup Rpg_Fts_MonteCarlo_Module
    */

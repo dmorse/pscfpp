@@ -25,8 +25,7 @@ namespace Rpg {
    * Specializations of this template with D=1, 2, and 3 are derived from
    * specializations of the base class template Rp::PredCorrBdStep, and
    * inherit their public interface and almost all of their source code
-   * from this base class.  See the documentation of this base class 
-   * template for details. 
+   * from this base class.  
    *
    * \see Rp::PredCorrBdStep
    * \see \ref rp_PredCorrBdStep_page "Manual Page"
