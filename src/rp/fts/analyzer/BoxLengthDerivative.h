@@ -39,8 +39,9 @@ namespace Rp {
       /**
       * Compute and return the derivative of H w/ respect to L.
       */
-      virtual double compute();
+      double compute() override;
 
+      #if 0
       /**
       * Output a sampled or block average value.
       *
@@ -48,6 +49,7 @@ namespace Rp {
       * \param value  value of physical observable
       */
       virtual void outputValue(int step, double value);
+      #endif
 
    };
 

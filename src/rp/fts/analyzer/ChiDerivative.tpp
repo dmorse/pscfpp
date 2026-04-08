@@ -25,13 +25,10 @@ namespace Rp {
     : AverageAnalyzerT(simulator, system)
    {  ParamComposite::setClassName("ChiDerivative"); }
 
-   /*
-   * Destructor.
-   */
-   template <int D, class T>
-   ChiDerivative<D,T>::~ChiDerivative()
-   {}
 
+   /*
+   * Compute and return derivative w/ respect to chi.
+   */
    template <int D, class T>
    double ChiDerivative<D,T>::compute()
    {
@@ -75,6 +72,7 @@ namespace Rp {
       return dfdchi;
    }
 
+   #if 0
    template <int D, class T>
    void ChiDerivative<D,T>::outputValue(int step, double value)
    {
@@ -90,6 +88,7 @@ namespace Rp {
          AverageAnalyzerT::outputValue(step, value);
       }
    }
+   #endif
 
 }
 }

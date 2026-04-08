@@ -34,13 +34,6 @@ namespace Rp {
    {  AnalyzerT::setFileMaster(system.fileMaster()); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   AverageListAnalyzer<D,T>::~AverageListAnalyzer()
-   {}
-
-   /*
    * Read interval and outputFileName.
    */
    template <int D, class T>

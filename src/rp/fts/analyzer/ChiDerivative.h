@@ -44,11 +44,6 @@ namespace Rp {
       ChiDerivative(typename T::Simulator& simulator, 
                     typename T::System& system);
 
-      /**
-      * Destructor.
-      */
-      virtual ~ChiDerivative();
-
    protected:
 
       /**
@@ -56,6 +51,7 @@ namespace Rp {
       */
       double compute() override;
 
+      #if 0
       /**
       * Output a sampled or block average value.
       *
@@ -63,12 +59,12 @@ namespace Rp {
       * \param value  value of physical observable
       */
       void outputValue(int step, double value) override;
+      #endif
 
       using AnalyzerT = typename T::Analyzer;
       using AverageAnalyzerT = typename T::AverageAnalyzer;
       using AnalyzerT::simulator;
       using AnalyzerT::system;
-      //using AverageAnalyzerT::outputFile_;
 
    };
 

@@ -62,6 +62,7 @@ namespace Rp {
       return dfdc;
    }
 
+   #if 0
    /*
    * Output the current value to the output file. 
    */
@@ -81,6 +82,7 @@ namespace Rp {
          AverageAnalyzerT::outputValue(step, value);
        }
    }
+   #endif
 
 }
 }

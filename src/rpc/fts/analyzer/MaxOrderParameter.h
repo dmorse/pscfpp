@@ -9,6 +9,7 @@
 */
 
 #include "AverageAnalyzer.h"                      // base class
+#include <prdc/cpu/RField.h>                      // member
 #include <prdc/cpu/RFieldDft.h>                   // member
 #include <util/containers/DArray.h>               // member
 #include <iostream>
@@ -25,8 +26,8 @@ namespace Rpc {
    /**
    * MaxOrderParameter is used to detect an order-disorder transition.
    *
-   * This class evalutaes maximum amplitude of the second power of the
-   * Fourier mode amplitude of fluctuating fields.
+   * This class evalutaes maximum of the squared Fourier mode amplitude
+   * for the fluctuating field.
    *
    * The order parameter is defined as
    * \f[
@@ -36,7 +37,6 @@ namespace Rpc {
    * wavevector \f$ {\bf k} \f$.
    *
    * \see \ref rp_MaxOrderParameter_page "Manual Page"
-   *
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
@@ -50,22 +50,17 @@ namespace Rpc {
       */
       MaxOrderParameter(Simulator<D>& simulator, System<D>& system);
 
-      /**	
-      * Destructor.
-      */
-      virtual ~MaxOrderParameter();
-
       /**
       * Setup before simulation loop.
       */
-      virtual void setup();
+      void setup() override;
 
    protected:
 
       /**
       * Compute and return the max order parameter.
       */
-      virtual double compute();
+      double compute() override;
 
       /**
       * Output a sampled or block average value.
@@ -73,23 +68,47 @@ namespace Rpc {
       * \param step  value for step counter
       * \param value  value of physical observable
       */
-      virtual void outputValue(int step, double value);
+      void outputValue(int step, double value) override;
 
       using AverageAnalyzer<D>::simulator;
       using AverageAnalyzer<D>::system;
 
+   protected:
+
+      /// Square magnitude |W_|^2 in Fourier space.
+      RField<D> psi_;
+
+      /// Maximum square magnitude (value of maximum element of psi_).
+      double maxPsi_;
+
+      /// Indices of wavevector with maximum magnitude.
+      IntVec<D> Gmax_;
+
+      /**
+      * Compute the psi_ array of squared Fourier coefficients.
+      */
+      void computePsi();
+
+      /**
+      * Find the wavevector of maximum Fourier magnitude.
+      *
+      * Results for the maximum square magnitude and the indices
+      * of the wavevector for which this occured are stored in
+      * maxPsi_ and Gmax_, respectively.
+      *
+      * \param psi  array of squared Fourier coefficients
+      */
+      void findMaximum(Array<double> const & psi);
+
    private:
 
-      /// W_ in Fourier mode
+      /// Fourier transform of W_ field
       RFieldDft<D> wK_;
 
-      /// Max order parameter
-      double maxOrderParameter_;
+      /// Dimensions of r-grid mesh
+      IntVec<D> meshDimensions_;
 
-      /// q*
-      IntVec<D> GminStar_;
-
-      /// Dimensions of Fourier space (k-grid) mesh for a real field.
+      /// Dimensions of Fourier space (k-grid) mesh for a real field
       IntVec<D> kMeshDimensions_;
 
       /// Number of wavevectors in Fourier space (k-grid) mesh.

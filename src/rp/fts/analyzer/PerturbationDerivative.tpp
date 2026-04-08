@@ -26,12 +26,8 @@ namespace Rp {
    {  ParamComposite::setClassName("PerturbationDerivative"); }
 
    /*
-   * Destructor.
+   * Compute and return derivative df.
    */
-   template <int D, class T>
-   PerturbationDerivative<D,T>::~PerturbationDerivative()
-   {}
-
    template <int D, class T>
    double PerturbationDerivative<D,T>::compute()
    {
@@ -51,6 +47,7 @@ namespace Rp {
       return simulator().perturbation().df();
    }
 
+   #if 0
    template <int D, class T>
    void PerturbationDerivative<D,T>::outputValue(int step, double value)
    {
@@ -67,6 +64,7 @@ namespace Rp {
          AverageAnalyzerT::outputValue(step, value);
       }
    }
+   #endif
 
 } // namespace Rp
 } // namespace Pscf

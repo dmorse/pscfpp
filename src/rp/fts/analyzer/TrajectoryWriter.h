@@ -43,12 +43,6 @@ namespace Rp {
                        typename T::System& system);
 
       /**
-      * Destructor.
-      */
-      virtual ~TrajectoryWriter()
-      {}
-
-      /**
       * Read interval and output file name.
       *
       * \param in input parameter file

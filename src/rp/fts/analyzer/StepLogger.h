@@ -45,12 +45,6 @@ namespace Rp {
                  typename T::System& system);
 
       /**
-      * Destructor.
-      */
-      virtual ~StepLogger()
-      {}
-
-      /**
       * Read interval.
       *
       * \param in input parameter file

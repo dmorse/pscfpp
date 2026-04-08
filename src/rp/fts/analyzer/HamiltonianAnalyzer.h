@@ -50,24 +50,18 @@ namespace Rp {
                           typename T::System& system);
 
       /**
-      * Destructor.
-      */
-      virtual ~HamiltonianAnalyzer()
-      {}
-
-      /**
       * Read interval and output file name.
       *
       * \param in  input parameter file
       */
-      virtual void readParameters(std::istream& in);
+      void readParameters(std::istream& in) override;
 
    protected:
 
       /**
       * Compute and store values of Hamiltonian components.
       */
-      void compute();
+      void compute() override;
 
       using AverageListAnalyzerT = typename T::AverageListAnalyzer;
       using AnalyzerT = typename T::Analyzer;

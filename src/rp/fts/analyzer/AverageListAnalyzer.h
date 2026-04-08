@@ -53,11 +53,6 @@ namespace Rp {
                           typename T::System& system);
 
       /**
-      * Destructor.
-      */
-      ~AverageListAnalyzer() override;
-
-      /**
       * Read interval, outputFileName and (optionally) nSamplePerOutput.
       *
       * The optional variable nSamplePerOutput defaults to 0, which

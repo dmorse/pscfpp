@@ -47,15 +47,17 @@ namespace Rp {
       /**
       * Compute and return the derivative of H w/ respect to concentration.
       */
-      virtual double compute();
+      double compute() override;
 
+      #if 0
       /**
       * Output a sampled or block average value.
       *
       * \param step  value for step counter
       * \param value  value of physical observable
       */
-      virtual void outputValue(int step, double value);
+      void outputValue(int step, double value) override;
+      #endif
 
       using AnalyzerT = typename T::Analyzer;
       using AverageAnalyzerT = typename T::AverageAnalyzer;

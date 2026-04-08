@@ -31,13 +31,6 @@ namespace Rp {
    {  AnalyzerT::setFileMaster(system.fileMaster()); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   AverageAnalyzer<D,T>::~AverageAnalyzer()
-   {}
-
-   /*
    * Read interval, outputFileName, and nSamplePerOutput.
    */
    template <int D, class T>
@@ -78,8 +71,11 @@ namespace Rp {
       double value = compute();
       accumulator_.sample(value);
 
-      // Output block averages
+      // Output value or block average
       if (nSamplePerOutput_ > 0) {
+         if (nSamplePerOutput_ == 1) {
+            outputValue(iStep, value);
+         } else 
          if (accumulator_.isBlockComplete()) {
             int interval = AnalyzerT::interval();
             int beginStep = iStep - (nSamplePerOutput_ - 1)*interval;

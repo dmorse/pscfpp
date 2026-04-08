@@ -62,11 +62,6 @@ namespace Rp {
                            typename T::System& system);
 
       /**
-      * Destructor.
-      */
-      virtual ~FourthOrderParameter();
-
-      /**
       * Setup before the main loop.
       */
       void setup() override;
@@ -84,6 +79,7 @@ namespace Rp {
       */
       double compute() override;
 
+      #if 0
       /**
       * Output a sampled or block average value.
       *
@@ -91,6 +87,7 @@ namespace Rp {
       * \param value  value of physical observable
       */
       void outputValue(int step, double value) override;
+      #endif
 
       /**
       * Compute prefactor for each Fourier wavevector.

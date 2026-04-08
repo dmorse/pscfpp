@@ -52,11 +52,6 @@ namespace Rp {
                       typename T::System& system);
 
       /**
-      * Destructor.
-      */
-      virtual ~AverageAnalyzer();
-
-      /**
       * Read interval, outputFileName and (optionally) nSamplePerOutput.
       *
       * The optional variable nSamplePerOutput defaults to 1, which

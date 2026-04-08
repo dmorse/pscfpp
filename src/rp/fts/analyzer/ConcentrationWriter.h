@@ -46,34 +46,28 @@ namespace Rp {
                           typename T::System& system);
 
       /**
-      * Destructor.
-      */
-      virtual ~ConcentrationWriter()
-      {}
-
-      /**
       * Read interval and output file name.
       *
       * \param in  input parameter file
       */
-      virtual void readParameters(std::istream& in);
+      void readParameters(std::istream& in) override;
 
       /**
       * Initialize before main simulation loop.
       */
-      virtual void setup();
+      void setup() override;
 
       /**
       * Write a frame/snapshot to trajectory file.
       *
       * \param iStep  step index
       */
-      virtual void sample(long iStep);
+      void sample(long iStep) override;
 
       /**
       * Close trajectory file after run.
       */
-      virtual void output();
+      void output() override;
 
       using AnalyzerT = typename T::Analyzer;
       using AnalyzerT::simulator;

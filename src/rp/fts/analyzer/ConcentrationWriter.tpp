@@ -73,6 +73,9 @@ namespace Rp {
       out << "\n";
    }
 
+   /*
+   * Write field file header.
+   */
    template <int D, class T>
    void ConcentrationWriter<D,T>::writeHeader(std::ofstream& out)
    {

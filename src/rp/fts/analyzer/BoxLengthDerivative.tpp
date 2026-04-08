@@ -86,6 +86,7 @@ namespace Rp {
       return dFdL;
    }
 
+   #if 0
    template <int D, class T>
    void BoxLengthDerivative<D,T>::outputValue(int step, double value)
    {
@@ -103,6 +104,7 @@ namespace Rp {
          AverageAnalyzerT::outputValue(step, value);
       }
    }
+   #endif
 
 }
 }

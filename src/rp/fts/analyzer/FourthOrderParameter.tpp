@@ -36,13 +36,6 @@ namespace Rp {
    {  ParamComposite::setClassName("FourthOrderParameter"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   FourthOrderParameter<D,T>::~FourthOrderParameter()
-   {}
-
-   /*
    * Setup before the main loop.
    */
    template <int D, class T>
@@ -99,6 +92,7 @@ namespace Rp {
       return orderParameter;
    }
 
+   #if 0
    /*
    * Output a sampled or block average value.
    */
@@ -118,6 +112,7 @@ namespace Rp {
          AverageAnalyzerT::outputValue(step, value);
       }
    }
+   #endif
 
    /*
    * Compute prefactors for all wavevectors.
