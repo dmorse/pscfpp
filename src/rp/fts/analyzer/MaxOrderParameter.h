@@ -77,6 +77,12 @@ namespace Rp {
       /// Indices of wavevector with maximum magnitude.
       IntVec<D> Gmax_;
 
+      /// Number of wavevectors in Fourier space (k-grid) mesh.
+      int  kSize_;
+
+      /// Real type used in field containers.
+      using RealT = typename T::Real;
+
       /**
       * Compute the psi_ array of squared Fourier coefficients.
       */
@@ -91,7 +97,7 @@ namespace Rp {
       *
       * \param psi  array of squared Fourier coefficients
       */
-      void findMaximum(Array<double> const & psi);
+      void findMaximum(Array<RealT> const & psi);
 
    private:
 
@@ -104,14 +110,7 @@ namespace Rp {
       /// Dimensions of Fourier space (k-grid) mesh for a real field
       IntVec<D> kMeshDimensions_;
 
-      /// Number of wavevectors in Fourier space (k-grid) mesh.
-      int  kSize_;
-
-      /// Has setup been completed?
-      bool isInitialized_;
-
       using FFTT = typename T::FFT;
-
    };
 
 }

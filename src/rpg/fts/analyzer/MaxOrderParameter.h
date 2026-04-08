@@ -8,10 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"                     // base class
-#include <prdc/cuda/RField.h>                    // member
-#include <prdc/cuda/RFieldDft.h>                 // member
-#include <pscf/math/IntVec.h>                    // member
+#include <rp/fts/analyzer/MaxOrderParameter.h>   // direct base template
+#include <rpg/system/Types.h>                    // base class argument
+#include <rpg/fts/analyzer/AverageAnalyzer.h>    // indirect base
+#include <prdc/cuda/RField.h>                    // direct base member
+#include <prdc/cuda/RFieldDft.h>                 // direct base member
+#include <pscf/cuda/HostDArray.h>                // member
+#include <pscf/cuda/cudaTypes.h>                 // member
 
 namespace Pscf {
 namespace Rpg {
@@ -20,101 +23,70 @@ namespace Rpg {
    template <int D> class Simulator;
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
+   using namespace Prdc;
 
    /**
-   * MaxOrderParameter is used to detect an order-disorder transition.
+   * Evaluates maximum squared Fourier amplitude for W_{-} field
    *
-   * This class evalutaes maximum amplitude of the second power of the
-   * Fourier mode amplitude of fluctuating fields.
-   * 
-   * The order parameter is defined as
-   * \f[
-   *     \psi(k)  = \max [ |W_{-}({\bf k})|^{2} ]
-   * \f]
-   * where \f$ W_{-}({\bf k})\f$ is fluctuating field component with
-   * wavevector \f$ {\bf k} \f$.
-   * 
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base template Rp::MaxOrderParameter, 
+   * and inherit their public interface and almost all of their source code
+   * from this base class.  
+   *
+   * \see Rp::MaxOrderParameter
+   * \see \ref rp_MaxOrderParameter_page "Manual Page"
    * \ingroup Rpg_Fts_Analyzer_Module
    */
    template <int D>
-   class MaxOrderParameter : public AverageAnalyzer<D>
+   class MaxOrderParameter 
+    : public Rp::MaxOrderParameter<D, Types<D> >
    {
 
    public:
 
       /**
       * Constructor.
+      *
+      * \param simulator  parent simulator object
+      * \param system  parent system object
       */
       MaxOrderParameter(Simulator<D>& simulator, System<D>& system);
 
       /**
-      * Destructor.
+      * Setup before the start of simulation.
       */
-      virtual ~MaxOrderParameter();
-   
-      /** 
-      * Setup before simulation loop.
-      */
-      void setup();
-      
+      void setup() override;
+
+   protected:
+
       /**
       * Compute and return the max order parameter.
       */
-      virtual double compute();
-      
-      /**
-      * Output a sampled or block average value.
-      *
-      * \param step  value for step counter
-      * \param value  value of physical observable
-      */
-      virtual void outputValue(int step, double value);
-      
-      using AverageAnalyzer<D>::readParameters;
-      using AverageAnalyzer<D>::nSamplePerOutput;
-      using AverageAnalyzer<D>::setup;
-      using AverageAnalyzer<D>::sample;
-      using AverageAnalyzer<D>::output;
-   
-   protected:
-
-      using AverageAnalyzer<D>::simulator;
-      using AverageAnalyzer<D>::system;
-      using AverageAnalyzer<D>::outputFile_;
-      using ParamComposite::setClassName;
+      double compute() override;
 
    private:
-      
-      /// Number of wavevectors in fourier mode.
-      int  kSize_;
-      
-      /// Dimensions of fourier space 
-      IntVec<D> kMeshDimensions_;
-   
-      /// Has readParam been called?
-      bool isInitialized_;
-      
-      /// W_ in Fourier mode
-      RFieldDft<D> wK_;
-      
-      /// W_ in Real space
-      RField<D> wc0_;
-      
-      /// Max order parameter
-      double maxOrderParameter_;
 
-      /// Peak indices
-      IntVec<D> GminStar_;
+      HostDArray<cudaReal> psiHost_;
+
+      /// Alias for base class.
+      using RpMaxOrderParameter = Rp::MaxOrderParameter<D, Types<D> >;
 
    };
-   
-   // Explicit instantiation declarations
-   extern template class MaxOrderParameter<1>;
-   extern template class MaxOrderParameter<2>;
-   extern template class MaxOrderParameter<3>;
 
 }
+}
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class MaxOrderParameter<1, Rpg::Types<1> >;
+      extern template class MaxOrderParameter<2, Rpg::Types<2> >;
+      extern template class MaxOrderParameter<3, Rpg::Types<3> >;
+   }
+   namespace Rpg {
+      extern template class MaxOrderParameter<1>;
+      extern template class MaxOrderParameter<2>;
+      extern template class MaxOrderParameter<3>;
+   }
 }
 #endif

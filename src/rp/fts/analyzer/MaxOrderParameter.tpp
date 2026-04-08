@@ -30,8 +30,7 @@ namespace Rp {
                                      typename T::Simulator& simulator,
                                      typename T::System& system)
     : AverageAnalyzerT(simulator, system),
-      kSize_(-11),
-      isInitialized_(false)
+      kSize_(-1)
    {  ParamComposite::setClassName("MaxOrderParameter"); }
 
    /*
@@ -51,14 +50,13 @@ namespace Rp {
       FFTT::computeKMesh(meshDimensions_, kMeshDimensions_, kSize_);
 
       // Allocate variables
-      if (!isInitialized_){
+      if (!wK_.isAllocated()){
+         UTIL_CHECK(!psi_.isAllocated());
          wK_.allocate(meshDimensions_);
          psi_.allocate(kMeshDimensions_);
       }
       UTIL_CHECK(wK_.capacity() == kSize_);
       UTIL_CHECK(psi_.capacity() == kSize_);
-
-      isInitialized_ = true;
    }
 
    /*
@@ -79,7 +77,7 @@ namespace Rp {
    * Search for and return maximum Fourier amplitude.
    */
    template <int D, class T>
-   void MaxOrderParameter<D,T>::findMaximum(Array<double> const & psi)
+   void MaxOrderParameter<D,T>::findMaximum(Array<RealT> const & psi)
    {
       // Identify index of maximum element of array psi
       maxPsi_ = psi[1];
