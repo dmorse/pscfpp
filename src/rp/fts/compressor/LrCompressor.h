@@ -24,7 +24,18 @@ namespace Rp {
    * method in which the Jacobian is approximated by the analytically
    * calculated linear response of a homogeneous liquid with the same
    * composition as the system of interest.
+
+   * Specializations of this class template are used as base classes for 
+   * two closely analogous class templates, also both named LrCompressor,
+   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
+   * and pscf_rpg programs, respectively.
    *
+   * Template parameters:
+   *
+   *   - D : dimension of space (D=1, 2, or 3)
+   *   - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
+   *
+   * \see \ref rp_LrCompressor_page
    * \ingroup Rp_Fts_Compressor_Module
    */
    template <int D, class T>

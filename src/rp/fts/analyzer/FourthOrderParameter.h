@@ -23,8 +23,9 @@ namespace Rp {
    /**
    * FourthOrderParameter is used to detect an order-disorder transition.
    *
-   * This class evaluates the sum of fourth power of the
-   * Fourier mode amplitude of fluctuating fields.
+   * This class evaluates and averages the sum of fourth power of the
+   * magnitude of the Fourier mode amplitudes of a fluctuating exchange
+   * field for a binary system.
    *
    * The order parameter is defined as
    * \f[

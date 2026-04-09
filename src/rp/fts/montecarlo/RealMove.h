@@ -45,11 +45,6 @@ namespace Rp {
       RealMove(typename T::McSimulator& simulator);
 
       /**
-      * Destructor.
-      */
-      ~RealMove();
-
-      /**
       * Read body of parameter file block.
       *
       * \param in  input parameter stream
@@ -60,13 +55,6 @@ namespace Rp {
       * Setup before the simulation loop.
       */
       void setup() override;
-
-      /**
-      * Output time contributions.
-      *
-      * \param out  output stream
-      */
-      void outputTimers(std::ostream& out) override;
 
    protected:
 

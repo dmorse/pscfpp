@@ -29,13 +29,6 @@ namespace Rp {
    {  ParamComposite::setClassName("McMoveManager"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   McMoveManager<D,T>::~McMoveManager()
-   {}
-
-   /*
    * Return a pointer to a new McMoveFactory object.
    */
    template <int D, class T>

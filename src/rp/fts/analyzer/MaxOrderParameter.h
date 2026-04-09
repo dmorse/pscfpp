@@ -32,6 +32,16 @@ namespace Rp {
    * where \f$ W_{-}({\bf k})\f$ is fluctuating field component with
    * wavevector \f$ {\bf k} \f$.
    *
+   * Specializations of this class template are used as base classes for 
+   * two closely analogous class templates, also named MaxOrderParameter,
+   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
+   * and pscf_rpg programs, respectively.
+   *
+   * Template parameters:
+   *
+   *   - D : dimension of space (D=1, 2, or 3)
+   *   - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
+   *
    * \see \ref rp_MaxOrderParameter_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module
    */

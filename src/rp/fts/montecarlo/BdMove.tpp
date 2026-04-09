@@ -34,13 +34,6 @@ namespace Rp {
    {  ParamComposite::setClassName("BdMove"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   BdMove<D,T>::~BdMove()
-   {}
-
-   /*
    * Read body of parameter file block and allocate memory.
    */
    template <int D, class T>

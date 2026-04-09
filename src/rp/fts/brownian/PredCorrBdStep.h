@@ -46,12 +46,7 @@ namespace Rp {
       PredCorrBdStep(typename T::BdSimulator& simulator);
 
       /**
-      * Destructor.
-      */
-      virtual ~PredCorrBdStep();
-
-      /**
-      * Read body of parameter file block and initialize.
+      * Read body of parameter file block and allocate memory.
       *
       * \param in  input parameter file stream
       */

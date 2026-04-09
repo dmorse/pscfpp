@@ -34,13 +34,6 @@ namespace Rp {
    {  ParamComposite::setClassName("LmBdStep"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   LMBdStep<D,T>::~LMBdStep()
-   {}
-
-   /*
    * Read body of parameter file block and allocate memory.
    */
    template <int D, class T>

@@ -30,9 +30,16 @@ namespace Rp {
    * the pressure-like field to re-establish a homogeneous total monomer
    * concentration.
    *
-   * Specializations of this template serve as base classes for BdStep<D>
-   * base classes defined in the program-level Rpc and Rpg namespace, for 
-   * all D = 1, 2, and 3. 
+   * Specializations of this class template are used as base classes 
+   * for two closely analogous class templates, both also named BdStep,
+   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
+   * and pscf_rpg programs, respectively.
+   *
+   * Template parameters:
+   *
+   *   - D : dimension of space (D=1, 2, or 3)
+   *   - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
+   *
    *
    * Template parameters:
    *   - D  dimension of space (1, 2, or 3)
@@ -103,7 +110,9 @@ namespace Rp {
       {  return true; }
       
       /**
-      * Output timing results to ostream.
+      * Output any timing results to ostream.
+      *
+      * Default implementation does nothing.
       *
       * \param out output stream
       */
@@ -111,11 +120,15 @@ namespace Rp {
       
       /**
       * Clear timers. 
+      *
+      * Default implementation does nothing.
       */
       virtual void clearTimers();
       
       /**
-      * Output statistics for this move (at the end of simulation)
+      * Output statistics for this stepper (after end of simulation).
+      *
+      * Default implementation does nothing.
       */
       virtual void output();
 

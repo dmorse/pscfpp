@@ -50,11 +50,6 @@ namespace Rp {
       BdMove(typename T::McSimulator& simulator);
 
       /**
-      * Destructor.
-      */
-      virtual ~BdMove();
-
-      /**
       * Read body of parameter file block.
       *
       * \param in  input parameter stream

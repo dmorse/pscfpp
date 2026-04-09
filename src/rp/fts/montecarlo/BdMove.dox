@@ -10,7 +10,7 @@ accepts the result.
 
 Two closely analogous class templates named Pscf::Rp::BdMove and 
 Pscf::Rpg::BdMove are used to perform this type of move in the
-pscf_rpc and pscf_rpg programs, respectively. Instantiations of 
+pscf_rpc and pscf_rpg programs, respectively. Specializations of 
 these templates are derived from specializations of the base class 
 template Pscf::Rp::BdMove, which defines the implementation of the
 move in a generic form.

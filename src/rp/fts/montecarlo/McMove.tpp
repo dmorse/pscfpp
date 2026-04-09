@@ -172,6 +172,18 @@ namespace Rp {
    template<int D, class T>
    void McMove<D,T>::outputTimers(std::ostream& out)
    {
+      out << "\n";
+      out << className();
+      out << " time contributions:\n";
+      outputTimerData(out);
+   }
+
+   /*
+   * Output raw timing information, with class name label.
+   */
+   template<int D, class T>
+   void McMove<D,T>::outputTimerData(std::ostream& out)
+   {
       // Output timing results, if requested.
       double total = totalTimer_.time();
       out << "                          " << "Total" 

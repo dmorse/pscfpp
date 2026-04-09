@@ -125,7 +125,9 @@ namespace Rp {
       {  return false; }
 
       /**
-      * Log output timing results
+      * Write timing results to a file.
+      *
+      * \param out  output stream
       */
       virtual void outputTimers(std::ostream& out);
 
@@ -179,14 +181,31 @@ namespace Rp {
       void incrementNFail();
 
       /**
-      * Get parent System object.
+      * Write timing data to a file, without a class label.
+      *
+      * \param out  output stream
+      */
+      void outputTimerData(std::ostream& out);
+
+      /**
+      * Get parent System object (non-const ref).
       */
       typename T::System& system();
 
       /**
-      * Get parent McSimulator object.
+      * Get parent System object (const ref)
+      */
+      typename T::System const & system() const;
+
+      /**
+      * Get parent McSimulator object (non-const ref).
       */
       typename T::McSimulator& simulator();
+
+      /**
+      * Get parent McSimulator object (const ref)
+      */
+      typename T::McSimulator const & simulator() const;
 
       /**
       * Get the scalar random number generator.
@@ -299,17 +318,31 @@ namespace Rp {
    {  ++nFail_; }
 
    /*
-   * Get parent System object.
+   * Get parent System object (non-const ref).
    */
    template <int D, class T> inline
    typename T::System& McMove<D,T>::system()
    {  return *systemPtr_; }
 
    /*
-   * Get parent McSimulator object.
+   * Get parent System object (const ref).
+   */
+   template <int D, class T> inline
+   typename T::System const & McMove<D,T>::system() const
+   {  return *systemPtr_; }
+
+   /*
+   * Get parent McSimulator object (non-const ref).
    */
    template <int D, class T> inline
    typename T::McSimulator& McMove<D,T>::simulator()
+   {  return *simulatorPtr_; }
+
+   /*
+   * Get parent McSimulator object (const ref).
+   */
+   template <int D, class T> inline
+   typename T::McSimulator const & McMove<D,T>::simulator() const
    {  return *simulatorPtr_; }
 
    /*

@@ -1,5 +1,5 @@
-#ifndef RPC_SHIFT_MOVE_H
-#define RPC_SHIFT_MOVE_H
+#ifndef RP_SHIFT_MOVE_H
+#define RP_SHIFT_MOVE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,24 +9,36 @@
 */
 
 #include "McMove.h"                          // base class
-#include <prdc/cpu/RField.h>                 // member
 #include <util/containers/DArray.h>          // member
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /**
-   * ShiftMove shifts field.
+   * ShiftMove rigidly translates the field.
+   * 
+   * An attempted ShiftMove rigidly translates all w fields by a random 
+   * rigid translation, shifting each coordinate by an integer number of 
+   * grid points in each direction.
+   *
+   * Specializations of this class template are used as base classes for 
+   * two closely analogous class templates, also both named ShiftMove,
+   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
+   * and pscf_rpg programs, respectively.
+   *
+   * Template parameters:
+   *
+   *   - D : dimension
+   *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
    *
    * \see \ref rp_ShiftMove_page "Manual Page".
-   * \ingroup Rpc_Fts_MonteCarlo_Module
+   * \ingroup Rp_Fts_MonteCarlo_Module
    */
-   template <int D>
-   class ShiftMove : public McMove<D>
+   template <int D, class T>
+   class ShiftMove : public T::McMove
    {
 
    public:
@@ -39,53 +51,39 @@ namespace Rpc {
       ShiftMove(McSimulator<D>& simulator);
 
       /**
-      * Read required parameters from file.
+      * Read body of parameter file block.
       *
-      * \param in input stream
+      * \param in  input parameter file stream
       */
       void readParameters(std::istream &in) override;
-
-      /**
-      * Output statistics for this move (at the end of simulation)
-      */
-      void output() override;
 
       /**
       * Setup before the beginning of each simulation run
       */
       void setup() override;
 
-      /**
-      * Return field shift move times contributions.
-      */
-      void outputTimers(std::ostream& out) override;
-
    protected:
 
-      using McMove<D>::system;
-      using McMove<D>::simulator;
-      using McMove<D>::random;
+      using McMoveT = typename T::McMove;
+      using McMoveT::system;
+      using McMoveT::simulator;
 
       /**
-      *  Attempt shift field move.
-      *
-      *  This function should shift the system w fields in r-grid
-      *  format, as returned by system().w().rgrid()
-      *
+      *  Attempt move that translates all w fields.
       */
       void attemptMove() override;
 
    protected:
     
-      /*
+      /**
       * Compute and store shifted w fields.
       *
       * On return, shifted values of fields obtained from system().w()
-      * are stored in the w_ member array.
+      * for all monomer types are stored in the w_ member array.
       *
-      * \param shift  vector of integer shift values
+      * \param shift  vector of integer shift values (# of grid points)
       */ 
-      void shiftFields(IntVec<D> const & shift);
+      void shiftFields(IntVec<D> const & shift) = 0;
 
       /**
       * Compute a shifted version of a field.
@@ -102,21 +100,16 @@ namespace Rpc {
 
    private:
 
-      // Shifted field values.
-      mutable DArray< RField<D> > w_;
+      // Shifted field configurations
+      mutable DArray< typename T::RField > w_;
 
-      // Maximum absolute value of shift components.
+      // Maximum absolute value of shift components
       int maxShift_;
 
-      // Has the variable been allocated?
+      // Has private memory been allocated?
       bool isAllocated_;
 
    };
-
-   // Explicit instantiation declarations
-   extern template class ShiftMove<1>;
-   extern template class ShiftMove<2>;
-   extern template class ShiftMove<3>;
 
 }
 }

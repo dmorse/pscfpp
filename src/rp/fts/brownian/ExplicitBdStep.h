@@ -45,11 +45,6 @@ namespace Rp {
       ExplicitBdStep(typename T::BdSimulator& simulator);
 
       /**
-      * Destructor.
-      */
-      virtual ~ExplicitBdStep();
-
-      /**
       * Read body of parameter file block.
       *
       * \param in  input parameter stream

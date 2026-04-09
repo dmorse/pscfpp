@@ -35,9 +35,9 @@ namespace Rp {
    *    vol. 138, 174102 (2013) [ https://doi.org/10.1063/1.4802990 ]
    *
    * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, both also named LmBdStep, 
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
-   * and pscf_rpg programs, respectively.
+   * two closely analogous class templates, both also named LmBdStep, that
+   * are defined in Rpc and Rpg namespaces and used in the pscf_rpc and
+   * pscf_rpg programs, respectively.
    *
    * Template parameters:
    *
@@ -59,11 +59,6 @@ namespace Rp {
       * \param simulator  parent BdSimulator object
       */
       LMBdStep(typename T::BdSimulator& simulator);
-
-      /**
-      * Destructor.
-      */
-      virtual ~LMBdStep();
 
       /**
       * Read body of parameter file block.

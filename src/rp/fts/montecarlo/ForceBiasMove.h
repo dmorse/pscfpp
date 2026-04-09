@@ -29,14 +29,14 @@ namespace Rp {
    * probabilities.
    *
    * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, both also named ForceBiaseMove,
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
+   * two closely analogous class templates, both also named ForceBiasMove,
+   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
    * and pscf_rpg programs, respectively.
    *
    * Template parameters:
    *
-   *    - D : dimension
-   *    - T : Types class, Rpc::Types<D> or Rpg::Types<D>
+   *    - D : dimension of space (D=1, 2, or 3)
+   *    - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * \see \ref rp_ForceBiasMove_page "Manual Page"
    * \ingroup Rp_Fts_MonteCarlo_Module
@@ -53,11 +53,6 @@ namespace Rp {
       * \param simulator  parent McSimulator
       */
       ForceBiasMove(typename T::McSimulator& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~ForceBiasMove();
 
       /**
       * Read body of parameter file block and allocate memory.
@@ -82,11 +77,6 @@ namespace Rp {
       * Output statistics for this move (at the end of simulation)
       */
       void output() override;
-
-      /**
-      * Return move time contributions.
-      */
-      void outputTimers(std::ostream& out) override;
 
       /**
       * Specify if dc fields need to be saved (returns true).

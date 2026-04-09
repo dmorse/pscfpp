@@ -29,13 +29,6 @@ namespace Rp {
    {  ParamComposite::setClassName("RealMove"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   RealMove<D,T>::~RealMove()
-   {}
-
-   /*
    * Read body of parameter file block.
    */
    template <int D, class T>
@@ -96,17 +89,6 @@ namespace Rp {
 
       // Update w-fields of parent system
       system().w().setRGrid(w_);
-   }
-
-   /*
-   * Output time contributions.
-   */
-   template <int D, class T>
-   void RealMove<D,T>::outputTimers(std::ostream& out)
-   {
-      out << "\n";
-      out << "RealMove time contributions:\n";
-      McMoveT::outputTimers(out);
    }
 
 }

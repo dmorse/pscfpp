@@ -30,13 +30,6 @@ namespace Rp {
    {  ParamComposite::setClassName("ExplicitBdStep"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   ExplicitBdStep<D,T>::~ExplicitBdStep()
-   {}
-
-   /*
    * Read body of parameter file block and allocate memory.
    */
    template <int D, class T>

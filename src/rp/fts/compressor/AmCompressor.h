@@ -27,8 +27,9 @@ namespace Rp {
    *
    * Template parameters:
    *
-   *    - D : dimension
-   *    - Types : class that contains type aliases, e.g., Rpc::Types<D>
+   *    - D : dimension of space (D=1, 2, or 3)
+   *    - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
+   *    - V : 1D array type used for state and residual vectors
    *
    * \see \ref rp_AmCompressor_page "Manual Page"
    * \ingroup Rp_Fts_Compressor_Module

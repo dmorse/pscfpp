@@ -29,13 +29,14 @@ namespace Rpc {
    *
    * This class implements a Monte Carlo move in which the unconstrained
    * attempted move is created by an explicit Euler-Maruyama Brownian
-   * dynamics step.
+   * dynamics step. 
    *
-   * Because the probability of attempting a move is not equal to that
-   * of generating the reverse move, the acceptance criterion used in
-   * the move() function must take into account the ratio of generation
-   * probabilities.
+   * Specializations of this template with D=1, 2, and 3 are derived
+   * from specializations of base class template Rp::ForceBiasMove,
+   * and inherit their public interface and almost all of their source
+   * code from this base class.
    *
+   * \see Rp::ForceBiasMove
    * \see \ref rp_ForceBiasMove_page "Manual Page"
    * \ingroup Rpc_Fts_MonteCarlo_Module
    */

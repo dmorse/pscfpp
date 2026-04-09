@@ -31,13 +31,6 @@ namespace Rp {
    {  ParamComposite::setClassName("ForceBiasMove"); }
 
    /*
-   * Destructor, empty default implementation.
-   */
-   template <int D, class T>
-   ForceBiasMove<D,T>::~ForceBiasMove()
-   {}
-
-   /*
    * Read body of parameter file block and allocate memory.
    */
    template <int D, class T>
@@ -220,17 +213,6 @@ namespace Rp {
    template <int D, class T>
    void ForceBiasMove<D,T>::output()
    {}
-
-   /*
-   * Output timing results to a file.
-   */
-   template <int D, class T>
-   void ForceBiasMove<D,T>::outputTimers(std::ostream& out)
-   {
-      out << "\n";
-      out << "ForceBiasMove time contributions:\n";
-      McMoveT::outputTimers(out);
-   }
 
 }
 }

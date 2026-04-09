@@ -53,11 +53,6 @@ namespace Rp {
                     typename T::System& system);
 
       /**
-      * Destructor.
-      */
-      ~McMoveManager();
-
-      /**
       * Read instructions for creating McMove objects.
       *
       * \param in input parameter stream
@@ -92,12 +87,14 @@ namespace Rp {
       double probability(int i) const;
 
       /**
-      * Log output timing results
+      * Write timing results to an output stream
+      *
+      * \param out  output stream (i.e., file) 
       */
       void outputTimers(std::ostream& out) const;
 
       /**
-      * Clear timers
+      * Clear timers.
       */
       void clearTimers();
 

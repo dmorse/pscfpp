@@ -31,14 +31,7 @@ namespace Rp {
    {  ParamComposite::setClassName("PredCorrBdStep"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   PredCorrBdStep<D,T>::~PredCorrBdStep()
-   {}
-
-   /*
-   * Read body of parameter file block and initialize.
+   * Read body of parameter file block and allocate memory.
    */
    template <int D, class T>
    void PredCorrBdStep<D,T>::readParameters(std::istream &in)
