@@ -11,7 +11,6 @@
 #include "ShiftMove.h"
 
 #include <pscf/mesh/Mesh.h>
-#include <pscf/math/IntVec.h>
 #include <util/containers/Array.h>
 #include <util/random/Random.h>
 
@@ -90,22 +89,6 @@ namespace Rp {
       // Update w-fields in parent system
       system().w().setRGrid(w_);
    }
-
-   #if 0
-   /*
-   * Compute and store array w_ of shifted fields.
-   */
-   template <int D, class T>
-   void ShiftMove<D,T>::shiftFields(IntVec<D> const & shift)
-   {
-      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-      const int nMonomer = system().mixture().nMonomer();
-      for (int j = 0; j< nMonomer; ++j) {
-         typename T::RField const & w0 = system().w().rgrid(j);
-         shiftField(w_[j], w0, shift, dimensions);
-      }
-   }
-   #endif
 
    /*
    * Shift a single field.

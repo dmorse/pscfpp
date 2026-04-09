@@ -10,12 +10,17 @@
 
 #include "McMove.h"                          // base class
 #include <util/containers/DArray.h>          // member
+#include <pscf/math/IntVec.h> 
+
+// Forward declarations
+namespace Util {
+   template <typename Data> class Array;
+}
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * ShiftMove rigidly translates the field.
@@ -48,7 +53,7 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator
       */
-      ShiftMove(McSimulator<D>& simulator);
+      ShiftMove(typename T::McSimulator& simulator);
 
       /**
       * Read body of parameter file block.
@@ -83,10 +88,12 @@ namespace Rp {
       *
       * \param shift  vector of integer shift values (# of grid points)
       */ 
-      void shiftFields(IntVec<D> const & shift) = 0;
+      virtual void shiftFields(IntVec<D> const & shift) = 0;
 
       /**
       * Compute a shifted version of a field.
+      *
+      * This operation is carried out on the CPU.
       * 
       * \param out  shifted field (output)
       * \param in   original field (input)
@@ -98,10 +105,12 @@ namespace Rp {
                       IntVec<D> shift, 
                       IntVec<D> dimensions) const;
 
-   private:
+   protected:
 
       // Shifted field configurations
       mutable DArray< typename T::RField > w_;
+
+   private:
 
       // Maximum absolute value of shift components
       int maxShift_;

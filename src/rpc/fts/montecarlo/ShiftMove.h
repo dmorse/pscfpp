@@ -8,16 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                          // base class
-#include <prdc/cpu/RField.h>                 // member
-#include <util/containers/DArray.h>          // member
+#include <rp/fts/montecarlo/ShiftMove.h>     // base class template
+#include <rpc/system/Types.h>                // base class argument
+#include <rpc/fts/montecarlo/McMove.h>       // indirect base class
+#include <prdc/cpu/RField.h>                 // base class member
 
 namespace Pscf {
 namespace Rpc {
 
+   // Forward declarations
+   template <int D> class McSimulator;
+   template <int D> class System;
+
    using namespace Util;
    using namespace Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /**
    * ShiftMove shifts field.
@@ -26,7 +30,7 @@ namespace Rpc {
    * \ingroup Rpc_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ShiftMove : public McMove<D>
+   class ShiftMove : public Rp::ShiftMove<D, Types<D> >
    {
 
    public:
@@ -38,42 +42,11 @@ namespace Rpc {
       */
       ShiftMove(McSimulator<D>& simulator);
 
-      /**
-      * Read required parameters from file.
-      *
-      * \param in input stream
-      */
-      void readParameters(std::istream &in) override;
-
-      /**
-      * Output statistics for this move (at the end of simulation)
-      */
-      void output() override;
-
-      /**
-      * Setup before the beginning of each simulation run
-      */
-      void setup() override;
-
-      /**
-      * Return field shift move times contributions.
-      */
-      void outputTimers(std::ostream& out) override;
-
    protected:
 
       using McMove<D>::system;
       using McMove<D>::simulator;
       using McMove<D>::random;
-
-      /**
-      *  Attempt shift field move.
-      *
-      *  This function should shift the system w fields in r-grid
-      *  format, as returned by system().w().rgrid()
-      *
-      */
-      void attemptMove() override;
 
    protected:
     
@@ -87,37 +60,25 @@ namespace Rpc {
       */ 
       void shiftFields(IntVec<D> const & shift);
 
-      /**
-      * Compute a shifted version of a field.
-      * 
-      * \param out  shifted field (output)
-      * \param in   original field (input)
-      * \param shift  vector of integer shift values
-      * \param dimensions  dimensions of computational mesh
-      */ 
-      void shiftField(Array<double>& out, 
-                      Array<double> const & in,
-                      IntVec<D> shift, 
-                      IntVec<D> dimensions) const;
-
-   private:
-
-      // Shifted field values.
-      mutable DArray< RField<D> > w_;
-
-      // Maximum absolute value of shift components.
-      int maxShift_;
-
-      // Has the variable been allocated?
-      bool isAllocated_;
+      using RpShiftMove = Rp::ShiftMove<D, Types<D> >;
 
    };
 
-   // Explicit instantiation declarations
-   extern template class ShiftMove<1>;
-   extern template class ShiftMove<2>;
-   extern template class ShiftMove<3>;
 
 }
+}
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class Rp::ShiftMove<1, Rpc::Types<1> >;
+      extern template class Rp::ShiftMove<2, Rpc::Types<2> >;
+      extern template class Rp::ShiftMove<3, Rpc::Types<3> >;
+   }
+   namespace Rpc {
+      extern template class ShiftMove<1>;
+      extern template class ShiftMove<2>;
+      extern template class ShiftMove<3>;
+   }
 }
 #endif
