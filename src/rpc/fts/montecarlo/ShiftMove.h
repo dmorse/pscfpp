@@ -45,8 +45,6 @@ namespace Rpc {
    protected:
 
       using McMove<D>::system;
-      using McMove<D>::simulator;
-      using McMove<D>::random;
 
    protected:
     

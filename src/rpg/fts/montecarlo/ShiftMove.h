@@ -8,26 +8,31 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                          // base class
-#include <prdc/cpu/RField.h>                 // member
-#include <util/containers/DArray.h>          // member
+#include <rp/fts/montecarlo/ShiftMove.h>     // base class template
+#include <rpg/system/Types.h>                // base class argument
+#include <rpg/fts/montecarlo/McMove.h>       // indirect base class
+#include <prdc/cuda/RField.h>                // base class member
+#include <pscf/cuda/HostDArray.h>            // member
+#include <pscf/cuda/cudaTypes.h>             // member
 
 namespace Pscf {
 namespace Rpg {
 
+   // Forward declarations
+   template <int D> class McSimulator;
+   template <int D> class System;
+
    using namespace Util;
-   using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
+   using namespace Prdc;
 
    /**
    * ShiftMove shifts field.
    *
-   * \see \ref rp_ShiftMove_page "Manual Page". 
-   *
+   * \see \ref rp_ShiftMove_page "Manual Page".
    * \ingroup Rpg_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ShiftMove : public McMove<D>
+   class ShiftMove : public Rp::ShiftMove<D, Types<D> >
    {
 
    public:
@@ -35,82 +40,57 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param simulator parent McSimulator
+      * \param simulator  parent McSimulator
       */
       ShiftMove(McSimulator<D>& simulator);
 
       /**
-      * Destructor.
-      *
-      * Empty default implementation.
+      * Setup before simulation.
       */
-      ~ShiftMove();
-
-      /**
-      * Read required parameters from file.
-      *
-      * \param in input stream
-      */
-      void readParameters(std::istream &in);
-      
-      /**
-      * Output statistics for this move (at the end of simulation)
-      */
-      void output();
-      
-      /**
-      * Setup before the beginning of each simulation run
-      */
-      void setup();
-      
-      /**
-      * Return field shift move times contributions.
-      */
-      void outputTimers(std::ostream& out);
-      
-      // Inherited public member function
-      using McMove<D>::move;
-      using McMove<D>::readProbability;
-      using McMove<D>::clearTimers;
-      using ParamComposite::read;
-      using ParamComposite::setClassName;
+      void setup() override;
 
    protected:
-      
-      using McMove<D>::system;
-      using McMove<D>::simulator;
-      using McMove<D>::random;
 
+      using McMove<D>::system;
+
+    
       /**
-      *  Attempt shift field move.
+      * Compute and store shifted w fields.
       *
-      *  This function should shift the system w fields in r-grid
-      *  format, as returned by system().w().rgrid()
+      * On return, shifted values of fields obtained from system().w()
+      * are stored in the w_ member array.
       *
-      */
-      void attemptMove();
+      * \param shift  vector of integer shift values
+      */ 
+      void shiftFields(IntVec<D> const & shift) override;
 
    private:
-      
-      // Initial field values
-      DArray< RField<D> > w0_;
 
-      // New field values after shift
-      DArray< RField<D> > w_;
-      
-      // The shift range
-      int maxShift_;
-      
-      // Has the variable been allocated?
-      bool isAllocated_;
-   
+      // Work space on CPU for unshifted field
+      HostDArray<cudaReal> wOld_;
+
+      // Work space on CPU for a shifted field
+      HostDArray<cudaReal> wNew_;
+
+      using RpShiftMove = Rp::ShiftMove<D, Types<D> >;
+
    };
-      
-   // Explicit instantiation declarations
-   extern template class ShiftMove<1>;
-   extern template class ShiftMove<2>;
-   extern template class ShiftMove<3>;
+
 
 }
+}
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class Rp::ShiftMove<1, Rpg::Types<1> >;
+      extern template class Rp::ShiftMove<2, Rpg::Types<2> >;
+      extern template class Rp::ShiftMove<3, Rpg::Types<3> >;
+   }
+   namespace Rpg {
+      extern template class ShiftMove<1>;
+      extern template class ShiftMove<2>;
+      extern template class ShiftMove<3>;
+   }
 }
 #endif
