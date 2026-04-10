@@ -13,23 +13,25 @@
 #include <prdc/cpu/RField.h>       // member of base class
 
 namespace Pscf {
-   namespace Rpc {
+namespace Rpc {
 
-      /**
-      * Solver and descriptor for a solvent species.
-      *
-      * Class Rpc::Solvent<D> is simply a named instantiaton of the class
-      * template Rp::Solvent, designed for use with CPU hardware.  See
-      * the documentation of this base class template for details.
-      *
-      * \ref user_param_solvent_sec "Manual Page"
-      * \ingroup Rpc_Solver_Module
-      */
-      template <int D>
-      class Solvent : public Rp::Solvent<D, Rpc::Types<D> >
-      {};
+   /**
+   * Solver and descriptor for a solvent species.
+   *
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::Solvent, 
+   * and inherit their public interface and all of their source code from
+   * from this base class.  
+   *
+   * \see Rp::Solvent
+   * \ref user_param_solvent_sec "Manual Page"
+   * \ingroup Rpc_Solver_Module
+   */
+   template <int D>
+   class Solvent : public Rp::Solvent<D, Rpc::Types<D> >
+   {};
 
-   }
+}
 }
 
 // Explicit instantiation declarations

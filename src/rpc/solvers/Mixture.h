@@ -24,11 +24,12 @@ namespace Rpc {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A Mixture is derived from a specialization of the class template
-   * Rp::Mixture, and has the same public interface as this base class
-   * class template. Please see documentation for this base class
-   * template for details.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of the base class template Rp::Mixture,
+   * and inherit their public interface and almost all of their source
+   * code from this base class.
    *
+   * \see Rp::Mixture
    * \ref user_param_mixture_page "Manual Page"
    * \ingroup Rpc_Solver_Module
    */
@@ -37,7 +38,7 @@ namespace Rpc {
    {
    public:
 
-      /// Direct (parent) base class.
+      /// Direct base class
       using RpMixtureT = typename Rp::Mixture< D, Types<D> >;
 
       // Inherited names

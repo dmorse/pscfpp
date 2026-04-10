@@ -29,9 +29,9 @@ namespace Rp {
    *
    * <b> Template parameters </b>: The template parameters represent:
    *
-   *   - D   : integer dimensionality of space, D=1,2, or 3
-   *   - RFT : field type for r-grid data (e.g., RField<D>)
-   *   - FIT : FieldIo type for field io operations (e.g., FieldIo<D>)
+   *   - D   : integer dimensionality of space (D=1, 2, or 3)
+   *   - RFT : r-grid field type (e.g., Prdc::Cpu::RField<D>)
+   *   - FIT : class for field IO operations (e.g., Rpc::FieldIo<D>)
    *
    * <b> Field Representations </b>: A CFields container has a list of
    * nMonomer fields that are each associated with a monomer type. The
@@ -46,25 +46,22 @@ namespace Rp {
    *    format). This is accessed by the basis() and basis(int) member
    *    functions.
    *
-   * The CFields container provides public non-const access to both field
-   * representations, and does not automatically update one of these
-   * field representations when the other is modified. Maintenance of the
-   * intended relationship between the two data representations is instead
-   * left as the responsibility of an object that owns this container.
+   * The CFields container provides public non-const (read/write) access 
+   * to both field representations, and does not automatically update one 
+   * of these field representations when the other is modified. 
    *
-   * <b> Subclasses </b>: Partial specializations of CFields are
-   * used as base classes for classes Prdc::CFields \<D \> and
-   * Rpg::CFields \<D\>:
+   * <b> Subclasses </b>: Specializations of this class template are used
+   * as base classes for two closely analogous class templates, also named 
+   * CFields, that are defined in Rpc and Rpg namespaces for use in the 
+   * pscf_rpc and pscf_rpg programs, respectively.
    *
-   *  - Subclass Prdc::CFields \<D\> is derived from a partial
-   *    specialization of CFields with template parameters
-   *    RFT = Cpu::RField\<D\> and FIT = Prdc::FieldIo\<D\> , and is
-   *    used in the pscf_rpc CPU program.
+   *  - Each class Rpc::CFields \<D\> is derived from a specialization
+   *    of this class template with template parameters D = 1, 2, or 3,
+   *    RFT = Cpu::RField\<D\> and FIT = Prdc::FieldIo\<D\> .
    *
-   *  - Subclass Rpg::CFields \<D\> is derived from a partial
-   *    specialization of CFields with template parameters
-   *    RFT = Cuda::RField \<D\> and FIT = Rpg::FieldIo \<D\> , and
-   *    is used in the pscf_rpg GPU accelerated program.
+   *  - Each class Rpg::CFields \<D\> is derived from a specialization
+   *    of this class template with template parameters D = 1, 2, or 3,
+   *    RFT = Cuda::RField \<D\> and FIT = Rpg::FieldIo \<D\> .
    *
    * \ingroup Rp_Field_Module
    */

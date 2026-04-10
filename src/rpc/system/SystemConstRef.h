@@ -22,7 +22,7 @@ namespace Rpc {
    * Const access to a System<D>.
    *
    * Specializations of this template with D=1, 2, and 3 are derived
-   * from corresponding specializations of base class template
+   * from corresponding specializations of the base class template
    * Rp::SystemConstRef, and inherit their public interface and almost
    * all of their source code from this base class.
    *

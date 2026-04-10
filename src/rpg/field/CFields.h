@@ -22,8 +22,10 @@ namespace Rpg {
    /**
    * A list of c fields stored in both basis and r-grid format.
    *
-   * This class template is simply a named partial specialization of
-   * the base class template Rp::CFields, designed for use with a GPU.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::CFields, 
+   * and inherit their public interface and entire implementation from 
+   * this base class.  
    *
    * \see Rp::CFields
    * \ingroup Rpg_Field_Module

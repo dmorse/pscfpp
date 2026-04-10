@@ -83,7 +83,7 @@ namespace Rpg {
    using namespace Prdc;
 
    /**
-   * List of aliases for types used the in Rpg namespace.
+   * List of aliases for types used in the Rpg program-level namespace.
    *
    * \ingroup Rpg_System_Module
    */

@@ -35,10 +35,10 @@ namespace Rp {
    * <b> Template parameters </b>: The template parameters represent:
    *
    *     - D   : integer dimensionality of space, D=1,2, or 3
-   *     - RFT : field type for r-grid data (e.g., RField<D>)
-   *     - FIT : FieldIo type for field io operations (e.g., FieldIo<D>)
+   *     - RFT : r-grid field type (e.g., Prdc::Cpu::RField<D>)
+   *     - FIT : class for field IO operations (e.g., Rpc:: FieldIo<D>)
    *
-   * <b> Field Representations </b>: A WFields contains a list of
+   * <b> Field Representations </b>: A WFields object contains a list of
    * nMonomer chemical potential (w) fields that are each associated with
    * a monomer type. The fields may be stored in two different formats:
    *
@@ -52,7 +52,7 @@ namespace Rp {
    *    functions.
    *
    * A WFields is designed to automatically update one of these
-   * representations when the other is modified, when appropriate. A
+   * representations when the other is modified, as appropriate. A
    * pointer to an associated FIT object is used for these conversions.
    *
    * The setBasis and readBasis functions allow the user to input new
@@ -65,7 +65,7 @@ namespace Rp {
    * whether the current field is symmetric, and thus whether the basis
    * format exists.
    *
-   * <b> Signal </b>: A WFields owns an instance of class
+   * <b> Signal </b>: A WFields object owns an instance of class
    * Util::Signal<void> that notifies all observers whenever the fields
    * owned by the WFields are modified. This signal object may be
    * accessed by reference using the signal() member function. The
@@ -74,17 +74,17 @@ namespace Rp {
    * observer that will be called whenever the fields are modified.
    *
    * <b> Subclasses </b>: Specializations of Rp::WFields are used as base
-   * for specializations of Rpc::WFields \<D \> and Rpg::WFields \<D\>:
+   * for specializations of Rpc::WFields and Rpg::WFields :
    *
-   *  - Specializations of Rpc::WFields \<D\> with D=1, 2, and 3 are
-   *    derived from specializations of Rp::WFields with template arguments
-   *    RFT = Cpu::RFT \<D\> and FIT = Rpc::FIT \<D\> , and are used in
+   *  - Each specialization Rpc::WFields \<D\> with D=1, 2, or 3 is derived 
+   *    from a specialization of Rp::WFields with template arguments D,
+   *    RFT = Cpu::RFT \<D\> and FIT = Rpc::FIT \<D\> , and is used in
    *    the pscf_rpc CPU program.
    *
-   *  - Specializations of Rpg::WFields \<D\> with D=1, 2 and 3 are
-   *    derived from specializations of Rp::WFields with template arguments
-   *    RFT = Cuda::RFT \<D\> and FIT = Rpg::FIT \<D\> , and are used in
-   *    the pscf_rpg GPU accelerated program.
+   *  - Each specialization Rpg::WFields \<D\> with D=1, 2 or 3 is derived
+   *    from specializations of Rp::WFields with template arguments D,
+   *    RFT = Cuda::RFT \<D\> and FIT = Rpg::FIT \<D\> , and is used in
+   *    the pscf_rpg GPU program.
    *
    * \ingroup Rp_Field_Module
    */

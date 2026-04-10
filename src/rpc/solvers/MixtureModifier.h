@@ -20,9 +20,10 @@ namespace Rpc {
    /**
    * Parameter modifier for an associated Mixture.
    *
-   * Each specialization of this template is simply a named instantation 
-   * of the base class template Rp::MixtureModifier and has the same public
-   * interface as this base class. 
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from specializations of base class template Rp::MixtureModifier, 
+   * and inherit their public interface and all of their source code
+   * from this base class.  
    *
    * \see Rp::MixtureModifier
    * \ingroup Rpc_Solver_Module

@@ -35,7 +35,7 @@ namespace Rp {
    /**
    * Spatial domain for a periodic structure with real fields.
    *
-   * A Domain template instance has:
+   * A Domain instance has:
    *
    *  - a Mesh spatial discretization mesh
    *  - a UnitCell crystallographic unit cell

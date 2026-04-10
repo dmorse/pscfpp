@@ -20,16 +20,20 @@ namespace Rpc {
    /**
    * MDE solver for one direction of one block.
    *
-   * Most of the functionality of this class is inherited from the base
-   * class Rp::Propagator<D, Rpc::Types<D> >, in which Types<D> is a
-   * class that contains a set of typename aliases for use in the Rpc
-   * program level namespace. See the documentation of the Rp::Propagator 
-   * class template for details. 
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::Propagator, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class. Specializations of this template are also
+   * indirectly derived from specializations of the Pscf::PropagatorTmpl
+   * template.
    *
    * Virtual allocate() and reallocate() functions are defined here and 
-   * in the analogous class Rpg::Propagator<D> because the CPU ad GPU
-   * versions of this class use different strategies for memory allocation.
+   * in the analogous Rpg::Propagator class template because the CPU and 
+   * GPU versions of this class use different strategies for memory 
+   * allocation.
    *
+   * \see Rp::Propagator
+   * \see Pscf::PropagatorTmpl
    * \ingroup Rpc_Solver_Module
    */
    template <int D>

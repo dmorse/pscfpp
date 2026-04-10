@@ -33,13 +33,13 @@ namespace Rpg {
    /**
    * Spatial domain for a periodic structure with real fields, on a GPU.
    *
-   * See the interface of the Rp::Domain base class template for
-   * complete API documentation. The Rpg::Domain class template is
-   * simply a named partial specialization of the base class template,
-   * defined using template type parameters FFT = Prdc::Cuda::FFT<D>,
-   * WLT = Prdc::Cuda::WaveList<D>, and FIT = Rpg::FieldIo<D> . The
-   * public interface is identical to that of the base class.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::Domain, and
+   * inherit their public interface and all of their source code from
+   * this base class.  
    *
+   * \see Rp::Domain
+   * \see \ref user_param_domain_page "Manual Page"
    * \ingroup Rpg_Field_Module
    */
    template <int D>

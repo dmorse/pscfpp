@@ -21,31 +21,14 @@ namespace Rpg {
    /**
    * MDE solver for one direction of one block.
    *
-   * A fully initialized Propagator<D> has an associations with a Block<D>
-   * object that owns this propagator and its partner, and with a partner
-   * Propagator<D> that solves the MDE within the same block in the
-   * opposite direction. It also has an association with a Mesh<D> that
-   * describes a spatial grid, and associations with zero or more source
-   * Propagator<D> objects that are used to compute an initial condition
-   * for this propagator at the head vertex.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::Propagator, 
+   * and inherit most of their public interface from this base class.  
+   * Only a few functions that involve memory allocation on the GPU are 
+   * defined or re-defined in this template
    *
-   * The associated Block<D> stores information required to numerically
-   * solve the modified diffusion equation (MDE), including quantities
-   * that depend upon the w-field associated with this block, the unit
-   * cell parameters and (in the thread model) the contour step size.
-   * These quantities are set and stored by the block because their values
-   * are the same for the two propagators owned by each block, but may be
-   * different for different blocks.  The algorithm used by a Propagator
-   * to solve the MDE repeatedly calls step functions provided by the
-   * parent Block.
-   *
-   * Each specialization of this template is derived from a specialization
-   * of the base class template Rp::Propagator, and inherits most of its
-   * public interface from this base class. Only a few functions that 
-   * involve memory allocation on the GPU are defined or re-defined here.
-   * See the documentation of the base class templates Pscf::Rp::Propagator 
-   * and Pscf::PolymerTmpl for information about most of the API.
-   *
+   * \see Rp::Propagator
+   * \see Pscf::PropagatorTmpl
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
@@ -102,9 +85,7 @@ namespace Rpg {
 
    protected:
 
-      /**
-      * Direct (parent) base class.
-      */
+      /// Direct base class.
       using RpPropagatorT = Rp::Propagator<D, Types<D> >;
 
       // Inherited typename alias

@@ -21,20 +21,19 @@ namespace Rpg {
    * Descriptor and solver for one polymer species.
    *
    * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::Polymer, 
-   * and inherit their public interface and all of their source code
-   * from this base class.  
+   * corresponding specializations of base class template Rp::Polymer,
+   * and inherit their public interface and all of their source code from
+   * this base class.  
    *
    * \see Rp::Polymer
    * \ref user_param_polymer_sec "Manual Page"
-   *
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
    class Polymer : public Rp::Polymer<D, Types<D> >
    {};
 
-} 
+}
 } 
 
 // Explicit instantiation declarations

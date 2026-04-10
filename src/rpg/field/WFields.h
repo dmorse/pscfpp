@@ -24,10 +24,12 @@ namespace Rpg {
    /**
    * A container of fields stored in both basis and r-grid format.
    *
-   * Almost all of the implementation of this class is defined by the base
-   * class template Prdc::WFieldsTmpl . See documentation of that base
-   * class template for documentation of most member functions.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::Class, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
    *
+   * \see Rp::WFields
    * \ingroup Rpg_Field_Module
    */
    template <int D>

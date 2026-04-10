@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/Mixture.h>    // base class template
-#include <rpg/system/Types.h>      // base class template argument
+#include <rpg/system/Types.h>      // base class argument
 
 namespace Pscf {
 namespace Rpg {
@@ -20,9 +20,10 @@ namespace Rpg {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * A Mixture<D> is derived from a specialization of the class template
-   * Rp::Mixture, and has the same public interface as this base class
-   * template.
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from specializations of base class template Rp::Mixture, and
+   * inherit their public interface and almost all of their source 
+   * code from this base class.
    *
    * \see Rp::Mixture
    * \ref user_param_mixture_page "Manual Page"
@@ -50,7 +51,7 @@ namespace Rpg {
       Mixture();
 
       /**
-      * Read all parameters and initialize.
+      * Read body of parameter file block and initialize.
       *
       * \param in  input parameter stream
       */
@@ -58,7 +59,7 @@ namespace Rpg {
 
    private:
 
-      /// Use batched FFTs to compute stress? (faster, but doubles memory)
+      /// Use batched FFTs to compute stress? (faster, but 2x memory)
       bool useBatchedFFT_;
 
       /**

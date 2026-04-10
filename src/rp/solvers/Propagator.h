@@ -25,15 +25,15 @@ namespace Rp {
    /**
    * MDE solver for one direction of one block.
    *
-   * A fully initialized Propagator has an associations with a Block
-   * object that owns this propagator, and with a partner Propagator
-   * that solves the MDE within the same block in the opposite direction.
-   * It also has an association with a Mesh<D> that describes a spatial 
-   * grid, and associations with zero or more source Propagator objects 
-   * that are used to compute an initial condition for this propagator 
-   * at its head vertex.
+   * A fully initialized Propagator has associations with a parent Block 
+   * object that owns this propagator, and with a partner Propagator that 
+   * solves the MDE within the same block in the opposite direction. It 
+   * also has an association with a Mesh<D> that describes a spatial grid, 
+   * and associations with zero or more source Propagator objects that 
+   * are used to compute an initial condition for this propagator at its 
+   * head vertex.
    *
-   * The associated Block stores information required to numerically
+   * The parent Block stores information required to numerically
    * solve the modified diffusion equation (MDE), including quantities
    * that depend upon the w-field associated with this block, the unit
    * cell parameters and (in the thread model) the contour step size.
@@ -60,9 +60,6 @@ namespace Rp {
    {
 
    public:
-
-
-      // Member functions
 
       /**
       * Constructor.

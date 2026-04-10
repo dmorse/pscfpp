@@ -22,11 +22,12 @@ namespace Rpg {
    /**
    * A field to which the total monomer concentration is constrained.
    *
-   * Please refer to the documentation of the Rp::Mask base class
-   * template for more complete API documentation for this class template.
-   * The public interface of Rpg::Mask is identical to that of the base
-   * class template Rp::Mask.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::Mask, and
+   * inherit their public interface and all of their source code from
+   * this base class.  
    *
+   * \see Rp::Mask
    * \ingroup Rpg_Field_Module
    */
    template <int D>

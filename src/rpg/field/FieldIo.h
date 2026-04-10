@@ -34,27 +34,17 @@ namespace Rpg {
    /**
    * File input/output operations and format conversions for fields.
    *
-   * Please refer to the documentation of the base class Rp::FieldIo
-   * for more complete API documentation for this class template, for
-   * reasons discussed below.
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::Class, 
+   * and inherit their public interface from this base class.  
    *
-   * Class template Rpg::FieldIo<int D> is derived from a specialization
-   * of the base class template Rp::FieldIo<D, RFT, KFT, FFT> that is
-   * implemented using arguments RFT = RField<D>, KFT = RFieldDft<D>,
-   * and FFT = FFT<D> that are all defined in the Prdc::Cuda namespace,
-   * and that use GPU hardware. Rpg::FieldIo is thus a specialization of
-   * the Rp::FieldIo template with GPU acceleration. An analogous class
-   * named Rpc::FieldIo that is designed for standard CPU hardware is
-   * defined in the Pscf::Rpc namespace
+   * All member functions defined in this template are implementations 
+   * of pure virtual functions declared in Rp::FieldIo for which 
+   * different implementations are required for the CPU and GPU variants.
+   * Such differences are often required because the GPU version must
+   * must transfer data between the CPU host and the GPU device.
    *
-   * The public interface of Rpg::FieldIo is identical to that of the
-   * base class template Rp::FieldIo. All member functions defined
-   * in this Rpg::FieldIo are implementations of pure virtual functions
-   * declared in Rp::FieldIo. These are all functions for which
-   * different implementations are required for the CPU and GPU variants,
-   * usually because the GPU variant requires data transfer between the
-   * CPU host and the GPU device.
-   *
+   * \see Rp::FieldIo
    * \ingroup Rpg_Field_Module
    */
    template <int D>

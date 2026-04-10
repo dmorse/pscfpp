@@ -29,8 +29,8 @@ namespace Rp {
    *
    * <b> Template parameters </b>:
    *
-   *   - D : dimension of space
-   *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
+   *   - D : dimension of space (1, 2, or 3)
+   *   - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * \ingroup Rp_Solver_Module
    */
@@ -44,7 +44,7 @@ namespace Rp {
       using SolventSpeciesT = SolventSpecies<double>;
 
       /// Alias for indirect (grandparent) base class.
-      using SpeciesT = SolventSpecies<double>;
+      using SpeciesT = Species<double>;
 
       // Public member functions
 

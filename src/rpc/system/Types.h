@@ -91,7 +91,7 @@ namespace Rpc {
    using namespace Prdc;
 
    /**
-   * Aliases for types used the in Rpc program-level namespace.
+   * Aliases for types used in the Rpc program-level namespace.
    *
    * \ingroup Rpc_System_Module
    */
