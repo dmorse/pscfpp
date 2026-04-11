@@ -12,6 +12,7 @@
 
 #include <rp/solvers/Solvent.tpp>
 
+// Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class Solvent<1, Rpg::Types<1> >;

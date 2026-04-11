@@ -44,7 +44,11 @@ namespace Rpg {
    * Block within a branched polymer.
    *
    * A Block has two Propagator<D> members and a RField<D> concentraiton
-   * field. Block indirectly derived from Edge.
+   * field. 
+   *
+   * Specializations of Rpg::Block with D=1, 2, and 3 are directly derived 
+   * from corresponding specializations of Pscf::BlockTmpl, and indirectly
+   * derived from Pscf::Edge.
    *
    * \ingroup Rpg_Solver_Module
    */
@@ -490,7 +494,6 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
 
-   // Declarations for base classes
    extern template
    class BlockTmpl< Rpg::Propagator<1>, Prdc::Cuda::RField<1> >;
    extern template
@@ -499,11 +502,9 @@ namespace Pscf {
    class BlockTmpl< Rpg::Propagator<3>, Prdc::Cuda::RField<3> >;
 
    namespace Rpg {
-
       extern template class Block<1>;
       extern template class Block<2>;
       extern template class Block<3>;
-
    }
 }
 #endif

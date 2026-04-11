@@ -13,23 +13,25 @@
 #include <prdc/cuda/RField.h>      // member of base class
 
 namespace Pscf {
-   namespace Rpg {
+namespace Rpg {
 
-      /**
-      * Solver and descriptor for a solvent species.
-      *
-      * Class Rpg::Solvent<D> is simply a named instantiaton of the class
-      * template Rp::Solvent designed for use with a GPU. See the
-      * documentation of this base class template for details.
-      *
-      * \ref user_param_solvent_sec "Manual Page"
-      * \ingroup Rpg_Solver_Module
-      */
-      template <int D>
-      class Solvent : public Rp::Solvent<D, Rpg::Types<D> >
-      {};
+   /**
+   * Solver and descriptor for a solvent species.
+   *
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of the base class template Rp::Solvent,
+   * and inherit their public interface and their entire implementation
+   * from this base class.
+   *
+   * \see Rp::Solvent
+   * \ref user_param_solvent_sec "Manual Page"
+   * \ingroup Rpg_Solver_Module
+   */
+   template <int D>
+   class Solvent : public Rp::Solvent<D, Rpg::Types<D> >
+   {};
 
-   }
+}
 }
 
 // Explicit instantiation declarations

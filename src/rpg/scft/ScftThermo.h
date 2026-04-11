@@ -19,6 +19,12 @@ namespace Rpg {
    /**
    * Computes SCFT free energies.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::ScftThermo, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
+   *
+   * \see Rp::ScftThermo
    * \ingroup Rpg_Field_Module
    */
    template <int D>

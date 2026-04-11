@@ -433,6 +433,8 @@ each MC move can be obtained by clicking on the associated link.
 <ul>
   <li> \ref rp_ForceBiasMove_page "ForceBiasMove" </li>
   <li> \ref rp_RealMove_page "RealMove" </li>
+  <li> \ref rp_ShiftMove_page "ShiftMove" </li>
+  <li> \ref rp_BdMove_page "BdMove" </li>
 </ul>
 
 \section psfts_param_compressor_sec Compressor Block

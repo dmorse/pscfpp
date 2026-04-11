@@ -13,7 +13,7 @@ namespace Pscf{
       * Namespace Pscf::Cp contains class templates designed to be used 
       * only in namespace Pscf::Cpc and Pscf::Cpg, for complex Langevin 
       * field theoretic simulations (CL-FTS) that use complex-valued 
-      * periodic fields.  Instantiations of class templates defined in 
+      * periodic fields.  Specializations of class templates defined in 
       * Pscf::Cp are used as base classes for corresponding analogous 
       * classes of the same names that are defined in namespaces 
       * Pscf::Cpc and Pscf::Cpg, which are specialized to use CPU and

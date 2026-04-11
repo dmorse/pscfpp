@@ -26,16 +26,21 @@ namespace Rpg {
    template <int D>
    void WFields<D>::setRGrid(DeviceArray<cudaReal>& fields)
    {
-      int nMonomer = Base::nMonomer();
-      int meshSize = Base::meshSize();
+      // Create DArray tmp with RField<D> elements
       DArray< RField<D> > tmp;
+      const int nMonomer = RpWFields::nMonomer();
       tmp.allocate(nMonomer);
+
+      // Associate each RField<D> with a slice of the unfolded array
+      IntVec<D> const & meshDimensions = RpWFields::meshDimensions();
+      const int meshSize = RpWFields::meshSize();
       for (int i = 0; i < nMonomer; i++) {
-         tmp[i].associate(fields, i * meshSize, Base::meshDimensions());
+         tmp[i].associate(fields, i*meshSize, meshDimensions);
       }
 
+      // Use tmp array to set w-fields for all monomer types
       bool isSymmetric = false;
-      Base::setRGrid(tmp, isSymmetric);
+      RpWFields::setRGrid(tmp, isSymmetric);
    }
 
 }
@@ -53,5 +58,5 @@ namespace Pscf {
       template class WFields<1>;
       template class WFields<2>;
       template class WFields<3>;
-   } 
-} 
+   }
+}

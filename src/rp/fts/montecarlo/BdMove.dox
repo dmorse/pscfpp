@@ -6,7 +6,17 @@ namespace Rp {
 
 The BdMove classes used by both the pscf_rpc and pscf_rpg programs 
 implements a MC move that performs a short BD simulation, and always
-accepts the result.
+accepts the result. Unlike other MC moves, this move does not exactly
+satisfy detailed balance, and incurs the same sorts of systematic 
+errors as those found in BD simulations. 
+
+The BdMove class is provided to allow users to mix BD and MC 
+sampling strategies. For large systems, BD simulation is generally 
+more efficient than MC simulation, at the cost of the existence of 
+a systematic error that decreases with decreasing time step. By
+combining a BdMove with a one or more more specialized MC move, a 
+user may combine the efficiency of BD simulation with specialized
+capabilities provided by another type of MC move. 
 
 Two closely analogous class templates named Pscf::Rp::BdMove and 
 Pscf::Rpg::BdMove are used to perform this type of move in the
@@ -19,7 +29,8 @@ move in a generic form.
 
 \section rp_BdMove_algorithm_sec Step Algorithm
 
-To be written (if any)
+Each step of the BdMove algorithm runs a short BD simulation, using
+the Leimkuler-Matthews BD step algorithm. 
 
 
 \section rp_BdMove_parameter_sec Parameter File
@@ -27,10 +38,10 @@ To be written (if any)
 The only parameters needed by this algorithm are the "probability" 
 parameter, which determines the probability that a move of this type
 will be attempted, a required parameter "nStep" that gives the number
-of BD steps that should be taken within a single MC move, 
-and a required parameter named "mobility", which
-is the mobility parameter of the explicit BD step.  A typical example 
-of an associated parameter file block is shown below.
+of BD steps that should be taken within a single MC move, and a 
+required parameter named "mobility", which is the mobility parameter 
+of the BD step algorithm.  A typical example of an associated parameter 
+file block is shown below.
 \code
   BdMove{
     probability   0.5

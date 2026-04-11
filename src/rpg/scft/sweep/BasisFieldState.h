@@ -19,6 +19,14 @@ namespace Rpg {
 
    /**
    * FieldState for fields in symmetry-adapted basis format.
+   *
+   * Specializations of this template with D=1, 2, and 3 are derived 
+   * from specializations of base class template Rp::BasisFieldState, 
+   * and inherit their public interface and almost all of their source 
+   * code from this base class.  
+   *
+   * \see Rp::BasisFieldState
+   * \ingroup Rpg_Scft_Sweep_Module
    */
    template <int D>
    class BasisFieldState

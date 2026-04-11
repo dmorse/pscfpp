@@ -23,7 +23,7 @@ namespace Rpg {
    * Specializations of this template with D=1, 2, and 3 are derived from
    * corresponding specializations of base class template Rp::Polymer,
    * and inherit their public interface and all of their source code from
-   * this base class.  
+   * this base class.
    *
    * \see Rp::Polymer
    * \ref user_param_polymer_sec "Manual Page"
@@ -34,22 +34,22 @@ namespace Rpg {
    {};
 
 }
-} 
+}
 
 // Explicit instantiation declarations
 namespace Pscf {
-   extern template class PolymerTmpl< Rpg::Block<1>, Rpg::Propagator<1> >; 
+   extern template class PolymerTmpl< Rpg::Block<1>, Rpg::Propagator<1> >;
    extern template class PolymerTmpl< Rpg::Block<2>, Rpg::Propagator<2> >;
    extern template class PolymerTmpl< Rpg::Block<3>, Rpg::Propagator<3> >;
    namespace Rp {
       extern template class Polymer<1, Rpg::Types<1> >;
       extern template class Polymer<2, Rpg::Types<2> >;
       extern template class Polymer<3, Rpg::Types<3> >;
-   } 
+   }
    namespace Rpg {
       extern template class Polymer<1>;
       extern template class Polymer<2>;
       extern template class Polymer<3>;
-   } 
+   }
 }
 #endif

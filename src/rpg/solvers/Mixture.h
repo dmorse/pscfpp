@@ -20,9 +20,9 @@ namespace Rpg {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * Specializations of this template with D=1, 2, and 3 are derived 
+   * Specializations of this template with D=1, 2, and 3 are derived
    * from specializations of base class template Rp::Mixture, and
-   * inherit their public interface and almost all of their source 
+   * inherit their public interface and almost all of their source
    * code from this base class.
    *
    * \see Rp::Mixture

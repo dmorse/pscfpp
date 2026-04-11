@@ -8,6 +8,7 @@
 #include "SystemConstRef.h"
 #include <rp/system/SystemConstRef.tpp>
 
+// Explicit instantiations definitions
 namespace Pscf {
    namespace Rp {
       template class SystemConstRef< Rpg::System<1> >;

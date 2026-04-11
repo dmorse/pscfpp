@@ -37,29 +37,30 @@
 #include <rp/system/System.tpp>   // base class template implementation
 
 namespace Pscf {
-   namespace Rpg {
+namespace Rpg {
 
-      /*
-      * Constructor.
-      */
-      template <int D>
-      System<D>::System()
-       : Rp::System<D, Types<D> >(*this)
-      {
-         ParamComposite::setClassName("System");
-         ThreadArray::init();
-      }
-
-      /*
-      * Set thread count.
-      */
-      template <int D>
-      void System<D>::setThreadCount(int nThread)
-      {
-         ThreadArray::setThreadsPerBlock(nThread);
-         ThreadMesh::setThreadsPerBlock(nThread);
-      }
+   /*
+   * Constructor.
+   */
+   template <int D>
+   System<D>::System()
+    : Rp::System<D, Types<D> >(*this)
+   {
+      ParamComposite::setClassName("System");
+      ThreadArray::init();
    }
+
+   /*
+   * Set thread count.
+   */
+   template <int D>
+   void System<D>::setThreadCount(int nThread)
+   {
+      ThreadArray::setThreadsPerBlock(nThread);
+      ThreadMesh::setThreadsPerBlock(nThread);
+   }
+
+}
 }
 
 // Explicit instantiation definitions

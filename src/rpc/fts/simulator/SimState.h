@@ -19,12 +19,15 @@ namespace Rpc {
    /**
    * SimState stores the state used by an FTS simulation.
    *
-   * This class is used to restore the state of FTS simulation after 
-   * an attempted move or step that is rejected or fails to converge. 
-   * The version defined here is simply a named instantiation of the
-   * Rp::SimState base class template. See documentation of that base 
-   * class for further details. 
+   * This class is used to restore the state of FTS simulation after
+   * an attempted move or step that is rejected or fails to converge.
    *
+   * Specializations of this template with D=1, 2, and 3 are derived from
+   * corresponding specializations of base class template Rp::SimState,
+   * and inherit their public interface and all of their source code
+   * from this base class.
+   *
+   * \see Rp::SimState
    * \ingroup Rpc_Fts_Simulator_Module
    */
    template <int D>

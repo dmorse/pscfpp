@@ -2,18 +2,18 @@
 # PSCF - Polymer Self-Consistent Field (C++/CUDA)
 
 PSCF is a software package for field-theoretic analysis of inhomogeneous 
-equilibrium states of polymerc materials. It is designed to treat 
-electrically neutral polymer materials in which inhomogeneous states form 
-due to the tendency of some constituents to phase separate, and can be 
-used to describe interfaces, micelles, and periodic ordered structures.
-PSCF can be used to perform both self-consistent field theory (SCFT) 
-calculations and stochastic field-theoretic simulation (FTS) calculations
-that rely on a partial-saddle-point approximation. 
+equilibrium states of polymerc materials. It is designed to treat materials 
+containing block polymers and/or homopolymers in which inhomogeneities
+form as the result of a tendency of some constituents to phase separate.
+It can be used to describe periodic ordered structures, interfaces, and 
+micelles. PSCF can be used to perform both self-consistent field theory 
+(SCFT) calculations and stochastic field-theoretic simulation (FTS) 
+calculations that rely on a partial-saddle-point approximation. 
 
-This version of PSCF is written primarily in C++, supplemented by CUDA 
-to enable the use of an NVIDIA graphics processing unit (GPU). PSCF is 
-distributed only in source code form, and so must be compiled by the 
-user. 
+PSCF is written primarily in C++, supplemented by CUDA to enable the 
+use of an NVIDIA graphics processing unit (GPU) when available. PSCF 
+is distributed only in source code form, and so must be compiled by 
+the user. 
 
 ## Methods: SCFT and FTS
 
@@ -21,49 +21,50 @@ PSCF was originally designed for SCFT calculations, and provides an
 extensive set of tools for this purpose .  The acronym PSCF stands for 
 Polymer Self-Consistent Field, reflecting this origin.
 
-PSCF now also provides a reasonably complete set of tools for field 
-theoretic simulation calculations that rely on a partial saddle-point 
+PSCF now also provides a complete set of tools for field theoretic 
+simulation calculations that rely on a partial saddle-point 
 approximation (PS-FTS). Such simulations can be performed using ether 
 Brownian dynamics (BD) or Monte-Carlo (MC) sampling techniques. 
 
-This current version of PSCF does not yet provide tools for
+The current version of PSCF does not yet provide tools for
 fully-fluctuating complex Langevin field theoretic simulations 
 (CL-FTS), which is planned for a future release. The source code 
 of the current version does, however, contain some of the basic 
-building blocks that will be needed CL-FTS, on which work is ongoing.
+building blocks for CL-FTS, on which work is ongoing.
 
 The partial saddle-point approximation for FTS used in the current 
-version of PSCF is an approximation for incompressible models in which a 
-Langrange multiplier pressure-like field that imposes a constraint on the 
-total monomer density is approximated at a mean-field (or saddle-point) 
-level, while fields that couple to composition fluctuations are allowed 
-to fluctuate. The resulting approximation yields a theory that involves 
-only real-valued fields, and that requires many of the same computational
-building blocks as those used in SCFT.
+version is an approximation for incompressible models in which a 
+pressure-like field that imposes a constraint on the total monomer 
+density is approximated at a mean-field (or saddle-point) level, 
+while fields that couple to composition fluctuations are allowed 
+to fluctuate. The resulting approximation yields a theory that 
+involves only real-valued fields, and that requires many of the 
+same computational building blocks as SCFT.
 
 ## History
 
-The current C++/CUDA version of PSCF originated as a completely rewritten
-version of an older Fortran SCFT program of the same name. The older
-Fortran PSCF package builds a single program that was designed for SCFT 
-analysis of systems that can contain mixtures of linear block polymers and 
-small molecule solvents in a domain with periodic boundary conditions. 
-The current C++/CUDA version is intended to supersede the Fortran version, 
-which is no longer being developed or actively maintained. The Fortran 
-PSCF package is still available in a separate github.com repository at 
-https://github.com/dmorse/pscf.  The current C++/CUDA version provides 
-almost all of the capabilities of the Fortran PSCF program, and many
-important new capabilities, as discussed below.
+The current C++/CUDA version of PSCF originated as a completely rewritten 
+version of an older Fortran SCFT program of the same name.  The older 
+Fortran PSCF package built a single program that was designed for SCFT 
+on systems that can contain mixtures of linear block polymers and small 
+molecule solvents in a domain with periodic boundary conditions.  The 
+current C++/CUDA version of PSCF is intended to supersede the Fortran 
+version, which is no longer being developed or actively maintained. 
+The Fortran PSCF package is still available in a separate github.com 
+repository at https://github.com/dmorse/pscf.  The current C++/CUDA 
+version provides almost all of the capabilities of the Fortran PSCF 
+program, and many important new capabilities, as discussed below.
 
 Functional differences between the current C++/CUDA version of PSCF and 
 the legacy Fortran version include the following:
 
    - The current version is an extensible package of several programs
      that are designed for different types of spatial domain and/or 
-     different types of hardware, implemented within a common framework.
+     different types of hardware, implemented within a common 
+     framework.
 
-   - The current version can perform stochastic PS-FTS calculations as
-     well as SCFT.
+   - The current version can perform stochastic PS-FTS calculations,
+     in addition to SCFT.
 
    - The current version can treat systems that contain acyclic branched 
      polymers, while the Fortran program was designed for linear polymers.
@@ -88,15 +89,15 @@ PSCF provides source code for the following three executable programs:
      spatial dimensions, using standard CPU hardware. A pseudo-spectral 
      algorithm is used to solve the MDE. This program provides capabilities
      for SCFT calculations analogous to those of the older Fortran PSCF 
-     program, as well as tools for PS-FTS calculations.  The suffix "rpc" 
-     stands for "real periodic CPU".
+     program, as well as tools for PS-FTS calculations.  The suffix 
+     "rpc" stands for "real periodic CPU".
 
-   - **pscf_rpg** : The pscf_rpg program is a GPU-accelerated version
-     of pscf_rpc that can also perform SCFT and PS-FTS calculations for
-     periodic systems. The pscf_rpc and pscf_rpg are based on analogous
-     algorithms and provide identical features, but pscf_rpg provides
-     higher performance for calculations performed on a large spatial
-     mesh. The suffix "rpg" stands for "real periodic GPU".
+   - **pscf_rpg** : The pscf_rpg program is a GPU-accelerated version of
+     pscf_rpc that can also perform SCFT and PS-FTS calculations for
+     periodic systems. The pscf_rpc and pscf_rpg programs use identical 
+     algorithms and provide identical features. They only difference is 
+     that pscf_rpg uses a GPU, and provides much higher performance for
+     some calculations. The suffix "rpg" stands for "real periodic GPU".
 
 ## Features
 
@@ -135,8 +136,8 @@ Features for SCFT or PS-FTS for periodic systems (pscf_rpc and pscf_rpg):
 
   - Pseudo-spectral solution of the modified diffusion equation
 
-  - Choice of a continuous chain or a discrete bead-spring model for
-    polymer conformations.
+  - Choice of a continuous random walk (Wiener process) or a discrete 
+    bead-spring models for polymer conformations.
 
   - Periodic boundary conditions with 1, 2 or 3 dimensional periodicity
 
@@ -151,7 +152,8 @@ Features for SCFT on periodic systems (pscf_rpc and pscf_rpg):
   - Automatic optimization of unit cell parameters so as to minimize the 
     SCFT free energy density
 
-  - Imposition of any user-selected space-group symmetry on SCFT solutions
+  - Optional imposition of any user-selected space-group symmetry on 
+    SCFT solutions
 
   - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups 
@@ -171,13 +173,13 @@ Features for PS-FTS (pscf_rpc and pscf_rpg):
   - BD algorithms: Leimkuhler-Matthews and predictor-corrector BD step
     algorithms
 
-  - MC algorithms: real-space and "smart"/force-bias MC moves 
+  - MC algorithms: real-space and "smart"/force-bias MC moves
 
   - Efficient new algorithms for adjusting the pressure field so as to 
     find partial saddle-point states (i.e., to impose incompressibility)
 
   - Tools for calculation of free energy differences by thermodynamic 
-    integration, including the Einstein-crystal method
+    integration (TI), including the Einstein-crystal TI method
 
   - Parameter "ramps" in which one or more parameters change continuously
     during a simulation
@@ -194,8 +196,8 @@ Features for PS-FTS (pscf_rpc and pscf_rpg):
 Non-features (provided by the Fortran program but not the current version):
 
   - The only capability of the older Fortran PSCF program that is *not* 
-    provided by the current version is the ability to perform SCFT linear 
-    susceptibility calculations for periodic ordered phases
+    provided by the current version is the ability to perform SCFT 
+    linear susceptibility calculations for periodic ordered phases
     [A. Ranjan, J. Qin, and D. Morse, *Macromolecules* **41**, 942 (2008)].
 
 ## Getting the source code
@@ -279,14 +281,14 @@ web manual.
 
 ## Compiling
 
-The PSCF source code is written using C++ as the primary language, with
-CUDA used in pscf_rpg for GPU acceleration. PSCF is only provided in source 
-code format, and so must be compiled from source.
+The PSCF source code is written using C++ as the primary language, 
+with CUDA used in pscf_rpg for GPU acceleration. PSCF is only provided 
+in-source code format, and so must be compiled from source.
 
-The build system used to compile and install PSCF uses the unix "make"
+The build system used to compile and install PSCF uses the unix "make" 
 utility, which is available in any unix-like command-line environment.
 The build system also uses some Python modules that are provided within 
-the package, and so requires access to a Python 3 interpreter.  To compile 
+the package, and so requires access to a Python 3 interpreter. To compile 
 and run this or other unix software on Mac OS X, the user must first 
 install the Mac OS X unix command line tools.
 
@@ -312,9 +314,9 @@ the pscfpp git repository and installing all of the required dependencies
      [web manual](<https://dmorse.github.io/pscfpp-man>) for more
      information about this script.
 
-   - To compile and install only the CPU-based programs on a computer that
-     does not have an appropriate NVIDA GPU, simply enter "make" from the
-     pscfpp root directory immediately after running the configure script.
+   - To compile and install only the CPU-based programs (pscf_rpc and
+     and pscf_rpc), simply enter "make" from the pscfpp root directory 
+     immediately after running the configure script.
 
    - Some further configuration is required to compile the GPU-enabled
      pscf_rpg program. Compilation of pscf_rpg is only possible on a 
@@ -326,49 +328,50 @@ the pscfpp git repository and installing all of the required dependencies
      one would enter "./setopts -a sm_70". Instructions for choosing the 
      correct string parameter for the -a option for a particular GPU can 
      be obtained by entering "./setopts -h", or by consulting the 
-     installation section of the web manual.  After taking these steps to 
-     enable CUDA compilation, re-enter "make" to re-compile.
+     installation section of the web manual.  
+
+   - After taking these steps to enable CUDA compilation, re-enter 
+     "make" from the root directory to re-compile.
 
 The procedure described above for building PSCF is somewhat similar to the 
 standard "configure; make; make install" procedure used for GNU software.  
 One difference is that PSCF does not require a separate "make install" 
-command. The PSCF "make" command creates executables in the bin 
-subdirectory of the pscfpp directory tree that also contains source
-files.  The above instructions assume that this is the intended final 
-destination of the executable files, rather than a standard unix system 
-directory such as /user/local in which the unix shell would look for
-executable files by default. If the pscfpp directory is created within 
-a user's home directory, the above instructions thus do not require the 
-use of special sudo or adminstrator permission in order to comple and
-install the package. This procedure, however, instead requires the user 
-to modify their PATH environment variable to allow the unix shell to find 
-executable files that have been placed in a non-standard location.
+command. By default, the PSCF "make" command creates executables in the 
+pscfpp/bin subdirectory of the pscfpp directory tree that also contains 
+source files. The above instructions assume that this is the intended 
+final destination of the executable files, rather than a standard unix 
+system directory such as /user/local in which the unix shell would look 
+for executable files by default. Because this location is not standard,
+however, this procedure instead requires the user to modify their PATH 
+environment variable to allow the unix shell to find executable files. 
 
 ## Command line usage
 
 The PSCF package provides three executable programs (pscf_1d, pscf_rpc,
 and pscf_rpg) with different capabilities but very similar command line 
-interfaces. To perform a calculation, each PSCF program must read two files,
-which we refer to as a parameter file and a command file. The parameter 
-file, which is processed first, is a fixed format file that contains 
-physical and algorithmic parameters required to describe the system of 
-interest and initialize the program.  The command file, which is processed 
-after the parameter file, is a script that contains a sequence of commands 
-that are interpreted and executed in the order that they appear. Contents 
-and syntax for PSCF parameter and command files are discussed in Secs. 3-5 
+interfaces. To perform a calculation, each PSCF program must read at 
+least two files, which we refer to as a parameter file and a command 
+file. The parameter file, which is processed first, is a fixed format 
+file that contains physical and algorithmic parameters required to 
+describe the system of interest and initialize the program.  The command 
+file, which is processed after the parameter file, is a script that 
+contains a sequence of commands that are interpreted and executed in 
+the order that they appear. Contents and syntax for PSCF parameter 
+and command files are discussed in Secs. 3-5 
 of the web manual.
 
-A PSCF command file normally contains the names of several input and 
-output data files as arguments to commands that read or write these files.
-Specifically, a command file to perform either a SCFT or PS-FTS calculation
-normally contains a command to read an input file that contains an initial 
-set of monomer chemical potential fields.  This initial state may be used
-in SCFT as an initial guess for an iterative solver, or in PS-FTS as the
-first state of a Markov chain.  A command file for either an SCFT or FTS 
-calculation also often contains commands to output final chemical potential
-and monomer concentration fields to output files (i.e., either a converged 
-solution for a SCFT calculation or the fields obtained after the last step 
-of a stochastic simulation).
+A PSCF command file normally contains commands to read and write several
+field data files. The names of these field files are provided as arguments 
+to these commands.  Specifically, a command file to perform either a SCFT 
+or PS-FTS calculation normally contains a command to read an input file 
+that contains an initial set of monomer chemical potential fields.  This 
+initial state may be used in SCFT as an initial guess for an iterative 
+SCFT solver, or in PS-FTS as the first state of a Markov chain.  A 
+command file for either an SCFT or FTS calculation also often contains 
+commands to output final chemical potential and monomer concentration 
+fields to output files (i.e., either a converged solution for a SCFT 
+calculation or the fields obtained after the last step of a stochastic 
+simulation).
 
 Command line usage for different programs is described below, starting 
 with the simple case of the pscf_1d program for one-dimensional SCFT
@@ -439,8 +442,8 @@ pscf_1d, pscf_rpc, and pscf_rpg.
 Subdirectory examples/1d contains examples of SCFT calculations for the 
 1D finite-difference program pscf_1d. Top level subdirectories of the 
 directory examples/1d contain examples for planar, cylindrical and 
-spherical geometries, as indicated by the subdirectory names. One or more 
-example is given for each geometry.
+spherical geometries, as indicated by the subdirectory names. One or
+more example is given for each geometry.
 
 Subdirectory examples/pc contains examples for the pscf_rpc CPU program. 
 Top level subdirectories of examples/pc named scf and fts contain examples

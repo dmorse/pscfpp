@@ -25,9 +25,9 @@ namespace Rpg {
    * A container of fields stored in both basis and r-grid format.
    *
    * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::Class, 
-   * and inherit their public interface and almost all of their source 
-   * code from this base class.  
+   * corresponding specializations of base class template Rp::Class, and
+   * inherit their public interface and almost all of their source code
+   * from this base class.
    *
    * \see Rp::WFields
    * \ingroup Rpg_Field_Module
@@ -42,18 +42,18 @@ namespace Rpg {
       /**
       * Set new w fields, in unfolded real-space (r-grid) format.
       *
-      * The array fields is an unfolded array that contains fields for
-      * all monomer types, with the field for monomer 0 first, etc.
+      * The input array fields is an unfolded array that contains fields 
+      * for all monomer types, with the field for monomer 0 first, etc.
       *
-      * \param fields  unfolded array of new w (chemical potential) fields
+      * \param fields  unfolded array of new w fields (input)
       */
       void setRGrid(DeviceArray<cudaReal>& fields);
 
-      // Alias for base class.
-      using Base = Rp::WFields<D, RField<D>, FieldIo<D> >;
+      /// Alias for base class.
+      using RpWFields = Rp::WFields<D, RField<D>, FieldIo<D> >;
 
-      // Declaration to prevent base class method from being hidden
-      using Base::setRGrid;
+      // Declaration to avoid hiding overloaded base class method 
+      using RpWFields::setRGrid;
 
    };
 

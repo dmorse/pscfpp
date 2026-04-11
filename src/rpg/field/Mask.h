@@ -25,7 +25,7 @@ namespace Rpg {
    * Specializations of this template with D=1, 2, and 3 are derived from
    * corresponding specializations of base class template Rp::Mask, and
    * inherit their public interface and all of their source code from
-   * this base class.  
+   * this base class.
    *
    * \see Rp::Mask
    * \ingroup Rpg_Field_Module
@@ -51,5 +51,5 @@ namespace Pscf {
       extern template class Mask<2>;
       extern template class Mask<3>;
    }
-} 
+}
 #endif

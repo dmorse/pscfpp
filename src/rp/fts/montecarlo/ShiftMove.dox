@@ -26,7 +26,7 @@ An example of the associated parameter file block is shown below.
 \code
   ShiftMove{
     probability   0.5
-    maxShift         2
+    maxShift        2
   }
 \endcode
 The format for this block is thus:

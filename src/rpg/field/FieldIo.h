@@ -38,11 +38,11 @@ namespace Rpg {
    * corresponding specializations of base class template Rp::Class, 
    * and inherit their public interface from this base class.  
    *
-   * All member functions defined in this template are implementations 
+   * Member functions defined in this template are all implementations 
    * of pure virtual functions declared in Rp::FieldIo for which 
    * different implementations are required for the CPU and GPU variants.
-   * Such differences are often required because the GPU version must
-   * must transfer data between the CPU host and the GPU device.
+   * Such differences are usually required because the GPU version must
+   * transfer r-grid field data between the GPU device and the CPU host.
    *
    * \see Rp::FieldIo
    * \ingroup Rpg_Field_Module

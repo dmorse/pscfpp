@@ -26,7 +26,7 @@ namespace Rpg {
    * Main class, representing a complete physical system.
    *
    * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specialization of the base class template Rp::System, 
+   * corresponding specialization of the base class template Rp::System,
    * and inherit their entire public interface and almost all of their
    * source code from this base class.
    *

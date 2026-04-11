@@ -16,15 +16,14 @@ namespace Rpg {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cuda;
 
    /**
    * Const access to a System<D>.
    *
-   * Specializations of this template with D=1, 2, and 3 are derived 
-   * from specializations of base class template Rp::SystemConstRef, 
-   * and inherit their public interface and almost all of their source 
-   * code from this base class.  
+   * Specializations of this template with D=1, 2, and 3 are derived
+   * from specializations of base class template Rp::SystemConstRef,
+   * and inherit their public interface and almost all of their source
+   * code from this base class.
    *
    * \see Rp::SystemConstRef
    * \ingroup Rpg_System_Module
@@ -34,38 +33,41 @@ namespace Rpg {
    {
    public:
 
-      /// Alias for base class
-      using Base = Rp::SystemConstRef< System<D> >;
+      /// Alias for base class.
+      using RpSystemConstRef = Rp::SystemConstRef< System<D> >;
 
       /**
       * Default constructor.
       */
       SystemConstRef()
-       : Base()
+       : RpSystemConstRef()
       {};
 
       /**
-      * Constructor.
+      * Constructor (creates association with parent System).
+      *
+      * \param system  parent system
       */
       SystemConstRef(System<D> const & system)
-       : Base(system)
+       : RpSystemConstRef(system)
       {};
 
    };
 
-   // Explicit instantiation declarations
-   extern template class SystemConstRef<1>;
-   extern template class SystemConstRef<2>;
-   extern template class SystemConstRef<3>;
-
-}
-
-namespace Rp {
-   // Explicit instantiation declarations for base class
-   extern template class SystemConstRef< Rpg::System<1> >;
-   extern template class SystemConstRef< Rpg::System<2> >;
-   extern template class SystemConstRef< Rpg::System<3> >;
-}
-
+} // namespace Rpg
 } // namespace Pscf
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class SystemConstRef< Rpg::System<1> >;
+      extern template class SystemConstRef< Rpg::System<2> >;
+      extern template class SystemConstRef< Rpg::System<3> >;
+   }
+   namespace Rpg {
+      extern template class SystemConstRef<1>;
+      extern template class SystemConstRef<2>;
+      extern template class SystemConstRef<3>;
+   }
+}
 #endif

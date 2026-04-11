@@ -8,13 +8,35 @@ for this project is in the dmorse/pscfpp github.com repository.
 The following labels are used below to indicate which programs or sets of
 programs are affected by specific changes:
 
-  pc  - CPU code for periodic structures (pscf_pc)
-  pg  - GPU code for periodic structures (pscf_pg)
-  1d  - CPU finite difference code for 1D problems (pscf_1d)
-  all - all programs (1d, pc, and pg)
+  rpc  - CPU code for periodic structures (pscf_pc)
+  rpg  - GPU code for periodic structures (pscf_pg)
+  r1d  - CPU finite difference code for 1D problems (pscf_1d)
+  all - all programs (rpc, rpg, and r1d)
 
+In version 1.2, the program names were still pscf_pc, pscf_pg and pscf_1d.  
 Versions before v1.2 used program name pscf_fd and label fd for the 1D 
-finite difference SCFT code that is now called pscf_1d.
+finite difference SCFT code that is now called pscf_r1d.
+
+Version 1.4.0 (5/01/2026)
+=========================================
+
+Signficant code reorganization, and a few new features.
+
+User visible feature and changes
+---------------------------------
+* Added new PS-FTS ShiftMove and BdMove MC moves (rpc and rpg)
+* Added BoxLengthDerivative PS-FTS analyzer
+
+Developer-visible changes:
+--------------------------
+* Creation of src/rp directory for templates used by src/rpc and src/rpg
+* Added template base classes for almost all classes in rpc and rpg
+* Removed duplication of code shared by pscf_rpc and pscf_rpg
+
+Documentation
+-------------
+* Improved manual page on use of C++ templates 
+
 
 Version 1.3.3 (10/29/2025)
 =========================================
@@ -37,7 +59,7 @@ Minor / bug-fix revision:
 
 User visible feature and changes
 ---------------------------------
-* Add Rpc::AmIteratorGrid SCFT iterator for pscf_pc
+* Add Rpc::AmIteratorGrid SCFT iterator for pscf_rpc
 * Allow adjustment of mixing parameter in Anderson mixing algorithms
 
 Bug fixes:
@@ -64,7 +86,7 @@ Developer-visible changes
 
 Documentation
 -------------
-* Improved manual pages about the build system and use of C++ templates.
+* Improved manual pages about the build system and C++ templates.
 
 
 Version 1.3.0 (8/15/2025)
@@ -72,19 +94,20 @@ Version 1.3.0 (8/15/2025)
 
 User-visible features
 ---------------------
-* Choice of discrete bead or continuous thread polymer models (pc, pg)
+* Choice of discrete bead or continuous thread polymer models (rpc, rpg)
+* Program names changed to pscf_r1d, pscf_rpc, and pscf_rpg
 
 User-visible changes
 --------------------
-* Optional Environment block in parameter file for imposed fields (pc, pg)
+* Optional Environment block in parameter file for imposed fields (rpc, rpg)
 
 Developer-visible changes
 -------------------------
-* Generation of imposed fields moved into new Environment class (pc, pg)
-* Use of signals (Util::Signal) to coordinate object states (pc, pg)
-* Reduced code duplication between Rpc, Rpg namespaces (pc, pg)
-* Moved functions from main System class into component objects (pc, pg)
-* Added WaveList class to pscf_pc, by analogy to pscf_pg (pc)
+* Generation of imposed fields moved into new Environment class (rpc, rpg)
+* Use of signals (Util::Signal) to coordinate object states (rpc, rpg)
+* Reduced code duplication between Rpc, Rpg namespaces (rpc, rpg)
+* Moved functions from main System class into component objects (rpc, rpg)
+* Added WaveList class to pscf_pc, by analogy to pscf_rpg (rpc)
 
 
 Version 1.2.0 (4/14/2025)
