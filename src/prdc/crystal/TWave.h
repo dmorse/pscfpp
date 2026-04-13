@@ -25,8 +25,8 @@ namespace Prdc {
    {
       double sqNorm;
       double phase;
-      IntVec<D> indicesDft;
-      IntVec<D> indicesBz;
+      IntVec<D> indicesStd;
+      IntVec<D> indicesMin;
    };
 
    /**
@@ -48,38 +48,38 @@ namespace Prdc {
    };
 
    /**
-   * Comparator for TWave objects, based on TWave::indicesDft.
+   * Comparator for TWave objects, based on TWave::indicesStd.
    *
-   * Used to sort set of unique waves in ascending order of dft indices.
+   * Used to sort set of unique waves in ascending order of std indices.
    *
    * \ingroup Prdc_Crystal_Module
    */
    template <int D>
-   struct TWaveDftComp {
+   struct TWaveStdComp {
 
       /**
-      * Function (a, b) returns true iff a.indicesDft < b.indicesDft
+      * Function (a, b) returns true iff a.indicesStd < b.indicesStd
       */
       bool operator() (const TWave<D>& a, const TWave<D>& b) const
-      {  return (a.indicesDft < b.indicesDft); }
+      {  return (a.indicesStd < b.indicesStd); }
 
    };
 
    /**
-   * Comparator for TWave objects, based on TWave::indicesBz.
+   * Comparator for TWave objects, based on TWave::indicesMin.
    *
-   * Used to sort in descending order of Bz (Brillouin zone) indices.
+   * Used to sort in descending order of minimal indices.
    *
    * \ingroup Prdc_Crystal_Module
    */
    template <int D>
-   struct TWaveBzComp {
+   struct TWaveMinComp {
 
       /**
-      * Function (a, b) returns true iff a.indicesBz > b.indicesBz
+      * Function (a, b) returns true iff a.indicesMin > b.indicesMin
       */
       bool operator() (const TWave<D>& a, const TWave<D>& b) const
-      {  return (a.indicesBz > b.indicesBz); }
+      {  return (a.indicesMin > b.indicesMin); }
 
    };
 

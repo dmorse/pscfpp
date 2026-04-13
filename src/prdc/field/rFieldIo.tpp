@@ -273,7 +273,7 @@ namespace Prdc {
       int waveId, waveId2;
 
       std::complex<double> coeff, phasor;
-      IntVec<D> waveBz, waveDft;
+      IntVec<D> waveMin, waveDft;
       int nReversedPair = 0;
       bool waveExists, sizeMatches;
 
@@ -294,8 +294,8 @@ namespace Prdc {
          waveExists = false;
 
          // Check if wavevector waveIn is a minimum image
-         waveBz = shiftToMinimum(waveIn, mesh.dimensions(), unitCell);
-         waveExists = (waveIn == waveBz);
+         waveMin = shiftToMinimum(waveIn, mesh.dimensions(), unitCell);
+         waveExists = (waveIn == waveMin);
 
          if (waveExists) {
 
@@ -326,7 +326,7 @@ namespace Prdc {
 
             if (starPtr->invertFlag == 0) {
 
-               if (starPtr->waveBz == waveIn) {
+               if (starPtr->waveMin == waveIn) {
 
                   // Copy components of closed star to fields array
                   for (int j = 0; j < nMonomer; ++j) {
@@ -339,7 +339,7 @@ namespace Prdc {
                      <<  "Inconsistent wave of closed star on input\n"
                      <<  "wave from file = " << waveIn  << "\n"
                      <<  "starId of wave = " << starId  << "\n"
-                     <<  "waveBz of star = " << starPtr->waveBz
+                     <<  "waveMin of star = " << starPtr->waveMin
                      << "\n";
 
                }
@@ -356,9 +356,9 @@ namespace Prdc {
                ++i;
 
                // Check that waveIn2 is also in the 1st BZ
-               waveBz =
+               waveMin =
                   shiftToMinimum(waveIn2, mesh.dimensions(), unitCell);
-               UTIL_CHECK(waveIn2 == waveBz);
+               UTIL_CHECK(waveIn2 == waveMin);
 
                // Identify the star containing waveIn2
                waveDft = waveIn2;
@@ -378,8 +378,8 @@ namespace Prdc {
                   UTIL_CHECK(starPtr2->invertFlag == -1);
                   UTIL_CHECK(starId2 = starId + 1);
                   UTIL_CHECK(basisId2 = basisId + 1);
-                  UTIL_CHECK(starPtr->waveBz == waveIn);
-                  UTIL_CHECK(starPtr2->waveBz == waveIn2);
+                  UTIL_CHECK(starPtr->waveMin == waveIn);
+                  UTIL_CHECK(starPtr2->waveMin == waveIn2);
 
                   // Copy components for both stars into fields array
                   for (int j = 0; j < nMonomer; ++j) {
@@ -532,7 +532,7 @@ namespace Prdc {
             }
             out << "   ";
             for (int j = 0; j < D; ++j) {
-               out << Int(basis.star(i).waveBz[j], 5);
+               out << Int(basis.star(i).waveMin[j], 5);
             }
             out << Int(basis.star(i).size, 5) << std::endl;
             ++ib;
@@ -615,7 +615,7 @@ namespace Prdc {
                wavePtr = &basis.wave(iw);
                if (!wavePtr->implicit) {
                   coeff = component*(wavePtr->coeff);
-                  indices = wavePtr->indicesDft;
+                  indices = wavePtr->indicesStd;
                   rank = dftMesh.rank(indices);
                   //out[rank][0] = coeff.real();
                   //out[rank][1] = coeff.imag();
@@ -635,7 +635,7 @@ namespace Prdc {
                wavePtr = &basis.wave(iw);
                if (!(wavePtr->implicit)) {
                   coeff = component*(wavePtr->coeff);
-                  indices = wavePtr->indicesDft;
+                  indices = wavePtr->indicesStd;
                   rank = dftMesh.rank(indices);
                   //out[rank][0] = coeff.real();
                   //out[rank][1] = coeff.imag();
@@ -652,7 +652,7 @@ namespace Prdc {
                wavePtr = &basis.wave(iw);
                if (!(wavePtr->implicit)) {
                   coeff = component*(wavePtr->coeff);
-                  indices = wavePtr->indicesDft;
+                  indices = wavePtr->indicesStd;
                   rank = dftMesh.rank(indices);
                   //out[rank][0] = coeff.real();
                   //out[rank][1] = coeff.imag();
@@ -747,7 +747,7 @@ namespace Prdc {
             UTIL_CHECK(wavePtr->starId == is);
 
             // Compute component value
-            rank = dftMesh.rank(wavePtr->indicesDft);
+            rank = dftMesh.rank(wavePtr->indicesStd);
             //component = std::complex<double>(in[rank][0], in[rank][1]);
             assign(component, in[rank]);
             component /= wavePtr->coeff;
@@ -770,7 +770,7 @@ namespace Prdc {
                UTIL_CHECK(!(wavePtr->implicit));
                UTIL_CHECK(wavePtr->starId == is+1);
             }
-            rank = dftMesh.rank(wavePtr->indicesDft);
+            rank = dftMesh.rank(wavePtr->indicesStd);
             //component = std::complex<double>(in[rank][0], in[rank][1]);
             assign(component, in[rank]); 
             UTIL_CHECK(std::abs(wavePtr->coeff) > 1.0E-8);
@@ -836,7 +836,7 @@ namespace Prdc {
             for (iw = beginId; iw < endId; ++iw) {
                wavePtr = &basis.wave(iw);
                if (!wavePtr->implicit) {
-                  rank = dftMesh.rank(wavePtr->indicesDft);
+                  rank = dftMesh.rank(wavePtr->indicesStd);
                   //waveCoeff 
                   //   = std::complex<double>(in[rank][0], in[rank][1]);
                   assign(waveCoeff, in[rank]);
@@ -858,9 +858,7 @@ namespace Prdc {
             for (iw = beginId; iw < endId; ++iw) {
                wavePtr = &basis.wave(iw);
                if (!(wavePtr->implicit)) {
-                  rank = dftMesh.rank(wavePtr->indicesDft);
-                  //waveCoeff 
-                  //   = std::complex<double>(in[rank][0], in[rank][1]);
+                  rank = dftMesh.rank(wavePtr->indicesStd);
                   assign(waveCoeff, in[rank]);
                   waveCoeff /= wavePtr->coeff;
                   if (hasRoot) {

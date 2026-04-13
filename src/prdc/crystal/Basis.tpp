@@ -115,7 +115,7 @@ namespace Prdc {
    *
    * On exit:
    *  - Array waves_ contains list of waves ordered by sqNorm.
-   *  - Each wave has indicesDft, indicesBz and sqNorm set.
+   *  - Each wave has indicesStd, indicesMin and sqNorm set.
    *  - Array stars_  is still empty.
    */
    template <int D>
@@ -125,14 +125,14 @@ namespace Prdc {
       std::vector< TWave<D> > twaves;
       twaves.reserve(nWave_);
 
-      // Loop over dft mesh to generate all waves, add to twaves
+      // Loop over k-grid mesh to generate all waves, add to twaves
       TWave<D> w;
       IntVec<D> v;
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
-         w.indicesDft = itr.position();
-         v = shiftToMinimum(w.indicesDft, meshDimensions, *unitCellPtr_);
-         w.indicesBz = v;
+         w.indicesStd = itr.position();
+         v = shiftToMinimum(w.indicesStd, meshDimensions, *unitCellPtr_);
+         w.indicesMin = v;
          w.sqNorm = unitCell().ksq(v);
          twaves.push_back(w);
       }
@@ -144,8 +144,8 @@ namespace Prdc {
       // Copy temporary array twaves into member variable waves_
       for (int i = 0; i < nWave_; ++i) {
          waves_[i].sqNorm = twaves[i].sqNorm;
-         waves_[i].indicesDft = twaves[i].indicesDft;
-         waves_[i].indicesBz = twaves[i].indicesBz;
+         waves_[i].indicesStd = twaves[i].indicesStd;
+         waves_[i].indicesMin = twaves[i].indicesMin;
       }
 
    }
@@ -173,7 +173,7 @@ namespace Prdc {
       *
       *   list - a std::set of waves of equal norm (a "list")
       *   star - a std::set of symmetry-related waves (a "star")
-      *   tempStar - a sorted star, sorted by descending indicesBz
+      *   tempStar - a sorted star, sorted by descending indicesMin
       *   tempList - a sorted list, with contiguous sorted stars
       *
       * Reasons for choice of some C++ standard lib container types:
@@ -182,12 +182,12 @@ namespace Prdc {
       */
 
       // Local TWave<D> containers and associated iterators
-      std::set< TWave<D>, TWaveDftComp<D> > list;
-      std::set< TWave<D>, TWaveDftComp<D> > star;
+      std::set< TWave<D>, TWaveStdComp<D> > list;
+      std::set< TWave<D>, TWaveStdComp<D> > star;
       std::vector< TWave<D> > tempStar;
       GArray< TWave<D> > tempList;
-      typename std::set< TWave<D>, TWaveDftComp<D> >::iterator rootItr;
-      typename std::set< TWave<D>, TWaveDftComp<D> >::iterator setItr;
+      typename std::set< TWave<D>, TWaveStdComp<D> >::iterator rootItr;
+      typename std::set< TWave<D>, TWaveStdComp<D> >::iterator setItr;
 
       // Local variables
       TWave<D> wave;
@@ -199,8 +199,8 @@ namespace Prdc {
       const double twoPi = 2.0*Constants::Pi;
       const double epsilon = 1.0E-8;
       IntVec<D> meshDimensions = mesh().dimensions();
-      IntVec<D> rootVecBz;   // BZ indices for root of this star
-      IntVec<D> rootVecDft;  // DFT indices for root of this star
+      IntVec<D> rootVecMin;  // BZ indices for root of this star
+      IntVec<D> rootVecStd;  // DFT indices for root of this star
       IntVec<D> vec;         // Indices of temporary wavevector
       IntVec<D> nVec;        // Indices of inverse of a wavevector
       int listBegin = 0;     // id of first wave in this list
@@ -237,15 +237,15 @@ namespace Prdc {
       *       // To generate a star from a root wave rootItr,
       *       // loop over symmetry operations of space group.
       *       For each symmetry operation group[j] {
-      *         Compute vec = (rootItr->indicesBz)*group[j]
-      *         Set phase = rootItr->indicesBz .dot. (group[j].t)
+      *         Compute vec = (rootItr->indicesMin)*group[j]
+      *         Set phase = rootItr->indicesMin .dot. (group[j].t)
       *         Check for cancellation of the star, set "cancel" flag
       *         Add wave to std::set<TWave> star if not added before
       *         // Here, use of a std::set simplifies test of uniqueness
       *       }
       *
       *       Copy all waves from star to std::vector<TWave> tempStar
-      *       Sort tempStar by indicesBz, in descending order
+      *       Sort tempStar by indicesMin, in descending order
       *       // Here, use of a std::vector for tempStar allows sorting
       *
       *       // Add waves in star to tempList and remove from list
@@ -286,7 +286,7 @@ namespace Prdc {
       *     // At this point, tempList contains the contents of the
       *     // waves_ array occupying the range [beginId, endId-1],
       *     // grouped by stars, with waves within each star sorted
-      *     // by indexBz.
+      *     // by minimal indices.
       *
       *     // Overwrite the block of array waves_ with indices in the
       *     // range [beginId, endId-1] with the contents of tempList.
@@ -383,8 +383,8 @@ namespace Prdc {
             list.clear();
             tempList.clear();
             for (j = listBegin; j < listEnd; ++j) {
-               wave.indicesDft = waves_[j].indicesDft;
-               wave.indicesBz = waves_[j].indicesBz;
+               wave.indicesStd = waves_[j].indicesStd;
+               wave.indicesMin = waves_[j].indicesMin;
                wave.sqNorm = waves_[j].sqNorm;
                if (j > listBegin) {
                   UTIL_CHECK( std::abs(wave.sqNorm-waves_[j].sqNorm)
@@ -412,8 +412,8 @@ namespace Prdc {
 
             while (list.size() > 0) {
 
-               rootVecBz = rootItr->indicesBz;
-               rootVecDft = rootItr->indicesDft;
+               rootVecMin = rootItr->indicesMin;
+               rootVecStd = rootItr->indicesStd;
                Gsq = rootItr->sqNorm;
                cancel = false;
                star.clear();
@@ -424,23 +424,23 @@ namespace Prdc {
 
                   // Apply symmetry (i.e., multiply by rotation matrix)
                   // vec = rotated wavevector.
-                  vec = rootVecBz*group[j];
+                  vec = rootVecMin*group[j];
 
                   // Check that rotated vector has same norm as root.
                   UTIL_CHECK(std::abs(Gsq - unitCell().ksq(vec)) < epsilon);
 
                   // Initialize TWave object associated with rotated wave
                   wave.sqNorm = Gsq;
-                  wave.indicesBz = shiftToMinimum(vec, meshDimensions,
+                  wave.indicesMin = shiftToMinimum(vec, meshDimensions,
                                                   *unitCellPtr_);
-                  wave.indicesDft = vec;
-                  mesh().shift(wave.indicesDft);
+                  wave.indicesStd = vec;
+                  mesh().shift(wave.indicesStd);
 
                   // Compute phase for coeff. of wave in basis function.
                   // Convention -pi < phase <= pi.
                   wave.phase = 0.0;
                   for (k = 0; k < D; ++k) {
-                     wave.phase += rootVecBz[k]*(group[j].t(k));
+                     wave.phase += rootVecMin[k]*(group[j].t(k));
                   }
                   while (wave.phase > 0.5) {
                      wave.phase -= 1.0;
@@ -456,7 +456,7 @@ namespace Prdc {
                   // vector equivalent to the root vector but with a
                   // nonzero phase, creating a contradiction.
 
-                  if (wave.indicesDft == rootVecDft) {
+                  if (wave.indicesStd == rootVecStd) {
                      if (std::abs(wave.phase) > 1.0E-6) {
                         cancel = true;
                      }
@@ -500,9 +500,9 @@ namespace Prdc {
                   tempStar.push_back(*setItr);
                }
 
-               // Sort tempStar, in descending order by indicesBz.
-               TWaveBzComp<D> waveBzComp;
-               std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
+               // Sort tempStar, in descending order by indicesMin.
+               TWaveMinComp<D> waveMinComp;
+               std::sort(tempStar.begin(), tempStar.end(), waveMinComp);
 
                // Append contents of tempStar to tempList, erase from list
                int tempStarSize = tempStar.size();
@@ -543,7 +543,7 @@ namespace Prdc {
                   // then determine if it is closed under inversion.
 
                   // Compute inverse nVec of root vector in FBZ
-                  nVec.negate(rootVecBz);
+                  nVec.negate(rootVecMin);
 
                   // Shift inverse nVec to the DFT mesh
                   (*meshPtr_).shift(nVec);
@@ -552,7 +552,7 @@ namespace Prdc {
                   bool inverseFound = false;
                   setItr = star.begin();
                   for ( ; setItr != star.end(); ++setItr) {
-                     if (nVec == setItr->indicesDft) {
+                     if (nVec == setItr->indicesStd) {
                         inverseFound = true;
                         break;
                      }
@@ -581,24 +581,24 @@ namespace Prdc {
 
                      setItr = list.begin();
                      for ( ; setItr != list.end(); ++setItr) {
-                        if (nVec == setItr->indicesDft) {
+                        if (nVec == setItr->indicesStd) {
                            inverseFound = true;
                            rootItr = setItr;
                            break;
                         }
                      }
-                     // If inverseFound, then rootVecDft = nVec
+                     // If inverseFound, then rootVecStd = nVec
 
                      // Failure to find the inverse here is an error:
                      // It must be either in this star or remaining list
 
                      if (!inverseFound) {
                         std::cout << "Inverse not found for: " << "\n";
-                        std::cout << " vec (ft):"
-                                  << rootVecDft <<"\n";
-                        std::cout << " vec (bz):"
-                                  << rootVecBz <<"\n";
-                        std::cout << "-vec (dft):" << nVec << "\n";
+                        std::cout << " vec (std):"
+                                  << rootVecStd <<"\n";
+                        std::cout << " vec (min):"
+                                  << rootVecMin <<"\n";
+                        std::cout << "-vec (std):" << nVec << "\n";
                         UTIL_CHECK(inverseFound);
                      }
 
@@ -620,8 +620,8 @@ namespace Prdc {
             // Compute a complex coefficient of unit norm for each wave.
             for (j = 0; j < tempList.size(); ++j) {
                k = j + listBegin;
-               waves_[k].indicesDft = tempList[j].indicesDft;
-               waves_[k].indicesBz = tempList[j].indicesBz;
+               waves_[k].indicesStd = tempList[j].indicesStd;
+               waves_[k].indicesMin = tempList[j].indicesMin;
                waves_[k].sqNorm = tempList[j].sqNorm;
                coeff = std::complex<double>(0.0, tempList[j].phase);
                coeff = exp(coeff);
@@ -677,7 +677,7 @@ namespace Prdc {
                if (waves_[j].inverseId < 0) { // if inverseId is unassigned
 
                   // Compute nVec = inverse of root, shifted to DFT mesh
-                  nVec.negate(waves_[j].indicesBz);
+                  nVec.negate(waves_[j].indicesMin);
                   (*meshPtr_).shift(nVec);
 
                   // Find inverse
@@ -685,7 +685,7 @@ namespace Prdc {
                   // Check in the position that the inverse is
                   // expected to be located for a typical star
                   k = stars_[i].endId - 1 - (j - stars_[i].beginId);
-                  if (nVec == waves_[k].indicesDft) {
+                  if (nVec == waves_[k].indicesStd) {
                      waves_[j].inverseId = k;
                      waves_[k].inverseId = j;
                   } else {
@@ -693,7 +693,7 @@ namespace Prdc {
                      // (this usually occurs for stars on the edge of the
                      // Brillouin zone)
                      for (k = j; k < stars_[i].endId; ++k) {
-                        if (nVec == waves_[k].indicesDft) {
+                        if (nVec == waves_[k].indicesStd) {
                            waves_[j].inverseId = k;
                            waves_[k].inverseId = j;
                            break;
@@ -707,13 +707,13 @@ namespace Prdc {
                      std::cout << "\n";
                      std::cout << "Inverse not found in closed star"
                               << std::endl;
-                     std::cout << "G = " << waves_[j].indicesBz
+                     std::cout << "G = " << waves_[j].indicesMin
                                << ", coeff = " << waves_[j].coeff
                                << std::endl;
                      std::cout << "All waves in star " << i
                                << std::endl;
                      for (k=stars_[i].beginId; k < stars_[i].endId; ++k) {
-                        std::cout << waves_[k].indicesBz << "  "
+                        std::cout << waves_[k].indicesMin << "  "
                                  << waves_[k].coeff << std::endl;
                      }
                      UTIL_CHECK(waves_[j].inverseId >= 0);
@@ -726,7 +726,7 @@ namespace Prdc {
             // Set the root to be the first wave in the star
 
             rootId = stars_[i].beginId;
-            stars_[i].waveBz = waves_[rootId].indicesBz;
+            stars_[i].waveMin = waves_[rootId].indicesMin;
 
             if (stars_[i].cancel) {
 
@@ -790,7 +790,7 @@ namespace Prdc {
                if (waves_[j].inverseId < 0) { // if inverseId is unassigned
 
                   // Compute nVec = inverse of root, shifted to DFT mesh
-                  nVec.negate(waves_[j].indicesBz);
+                  nVec.negate(waves_[j].indicesMin);
                   (*meshPtr_).shift(nVec);
 
                   // Find inverse
@@ -798,7 +798,7 @@ namespace Prdc {
                   // Check in the position that the inverse is expected
                   // to be located for a typical pair of stars
                   k = stars_[i+1].endId - 1 - (j - stars_[i].beginId);
-                  if (nVec == waves_[k].indicesDft) {
+                  if (nVec == waves_[k].indicesStd) {
                      waves_[j].inverseId = k;
                      waves_[k].inverseId = j;
                   } else {
@@ -807,7 +807,7 @@ namespace Prdc {
                      // Brillouin zone)
                      k = stars_[i+1].beginId;
                      for ( ; k < stars_[i+1].endId; ++k) {
-                        if (nVec == waves_[k].indicesDft) {
+                        if (nVec == waves_[k].indicesStd) {
                            waves_[j].inverseId = k;
                            waves_[k].inverseId = j;
                            break;
@@ -831,12 +831,12 @@ namespace Prdc {
             // Identify root of this star (star i)
             // Set the root to be the first wave in the star
             rootId = stars_[i].beginId;
-            stars_[i].waveBz = waves_[rootId].indicesBz;
+            stars_[i].waveMin = waves_[rootId].indicesMin;
 
             // Identify root of the next star (star i+1)
             // Set the root to be the inverse of the root of star i
             partId = waves_[rootId].inverseId;
-            stars_[i+1].waveBz = waves_[partId].indicesBz;
+            stars_[i+1].waveMin = waves_[partId].indicesMin;
 
             if (stars_[i].cancel) {
 
@@ -894,9 +894,9 @@ namespace Prdc {
 
       // For each wave, set implicit attribute and add to look-up table
       for (i = 0; i < nWave_; ++i) {
-         vec = waves_[i].indicesDft;
+         vec = waves_[i].indicesStd;
 
-         // Validity check - check that vec is in dft mesh
+         // Validity check - check that vec is in standard k-grid mesh
          for (j = 0; j < D; ++j) {
             UTIL_CHECK(vec[j] >= 0);
             UTIL_CHECK(vec[j] < meshDimensions[j]);
@@ -954,7 +954,7 @@ namespace Prdc {
             out << Int(k, 8);
             out << Int(i, 8);
             for (j = 0; j < D; ++j) {
-               out << Int(waves_[i].indicesBz[j], 5);
+               out << Int(waves_[i].indicesMin[j], 5);
             }
             out << Int(waves_[i].starId, 6);
             out << "  " << Dbl(waves_[i].coeff.real(), 15);
@@ -992,7 +992,7 @@ namespace Prdc {
                out << Int(stars_[i].cancel, 4);
             }
             for (j = 0; j < D; ++j) {
-               out << Int(stars_[i].waveBz[j], 6);
+               out << Int(stars_[i].waveMin[j], 6);
             }
             out << std::endl;
          }
@@ -1012,13 +1012,13 @@ namespace Prdc {
          return false;
       }
 
-      // Loop over dft mesh to check consistency of waveIds_ and waves_
+      // Loop over k-grid mesh to check consistency of waveIds_ and waves_
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          v = itr.position();
          iw = waveId(v);
-         if (wave(iw).indicesDft != v) {
-            std::cout << "Inconsistent waveId and Wave::indicesDft"
+         if (wave(iw).indicesStd != v) {
+            std::cout << "Inconsistent waveId and Wave::indicesStd"
                       << std::endl;
             return false;
          }
@@ -1028,22 +1028,22 @@ namespace Prdc {
       for (iw = 0; iw < nWave_; ++iw) {
 
          // Check sqNorm
-         v = waves_[iw].indicesBz;
+         v = waves_[iw].indicesMin;
          Gsq = unitCell().ksq(v);
          if (std::abs(Gsq - waves_[iw].sqNorm) > 1.0E-8) {
             std::cout << "\n";
             std::cout << "Incorrect sqNorm:" << "\n"
-                      << "wave.indicesBz = " << "\n"
+                      << "wave.indicesMin = " << "\n"
                       << "wave.sqNorm    = " << waves_[iw].sqNorm << "\n"
                       << "|v|^{2}        = " << Gsq << "\n";
             return false;
          }
 
-         // Check that wave indicesBz is an image of indicesDft
+         // Check that wave indicesMin is an image of indicesStd
          mesh().shift(v);
-         if (v != waves_[iw].indicesDft) {
+         if (v != waves_[iw].indicesStd) {
             std::cout << "\n";
-            std::cout << "shift(indicesBz) != indicesDft" << std::endl;
+            std::cout << "shift(indicesMin) != indicesStd" << std::endl;
             return false;
          }
 
@@ -1064,20 +1064,20 @@ namespace Prdc {
          if (waves_[iw].inverseId < 0) {
             std::cout << "\n";
             std::cout << "Wave::inverseId not assigned\n";
-            std::cout << "G = " << waves_[iw].indicesBz << std::endl;
+            std::cout << "G = " << waves_[iw].indicesMin << std::endl;
             return false;
          }
 
          // Check that inverseId points to the correct wave
-         v.negate(waves_[iw].indicesBz);
+         v.negate(waves_[iw].indicesMin);
          mesh().shift(v);
          iwp = waves_[iw].inverseId;
-         if (waves_[iwp].indicesDft != v) {
+         if (waves_[iwp].indicesStd != v) {
             std::cout << "\n";
             std::cout << "Wave::inverseId is not inverse" << std::endl;
-            std::cout << "G = " << waves_[iw].indicesBz << std::endl;
+            std::cout << "G = " << waves_[iw].indicesMin << std::endl;
             std::cout << "-G (from inverseId) = "
-                      << waves_[iwp].indicesBz << std::endl;
+                      << waves_[iwp].indicesMin << std::endl;
             return false;
          }
 
@@ -1085,8 +1085,8 @@ namespace Prdc {
          if (waves_[iwp].inverseId != iw) {
             std::cout << "\n";
             std::cout << "Wave::inverseId values do not agree\n";
-            std::cout << "+G = " << waves_[iw].indicesBz << std::endl;
-            std::cout << "-G = " << waves_[iwp].indicesBz << std::endl;
+            std::cout << "+G = " << waves_[iw].indicesMin << std::endl;
+            std::cout << "-G = " << waves_[iwp].indicesMin << std::endl;
             return false;
          }
 
@@ -1095,8 +1095,8 @@ namespace Prdc {
          {
             std::cout << "\n";
             std::cout << "Wave and its inverse are both implicit";
-            std::cout << "+G = " << waves_[iw].indicesBz << std::endl;
-            std::cout << "-G = " << waves_[iwp].indicesBz << std::endl;
+            std::cout << "+G = " << waves_[iw].indicesMin << std::endl;
+            std::cout << "-G = " << waves_[iwp].indicesMin << std::endl;
             return false;
          }
       }
@@ -1129,28 +1129,28 @@ namespace Prdc {
             }
          }
 
-         // Check waveBz indices of star
+         // Check waveMin indices of star
          if (stars_[is].invertFlag == -1) {
-            v.negate(stars_[is-1].waveBz);
+            v.negate(stars_[is-1].waveMin);
             v = shiftToMinimum(v, mesh().dimensions(), *unitCellPtr_);
-            if (stars_[is].waveBz != v) {
+            if (stars_[is].waveMin != v) {
                std::cout << "\n";
-               std::cout << "waveBz of star is not inverse of waveBz "
+               std::cout << "waveMin of star is not inverse of waveMin "
                          << "of previous star" << std::endl;
                std::cout << "star id " << is << std::endl;
-               std::cout << "waveBz  " << stars_[is].waveBz << std::endl;
-               std::cout << "waveBz (previous star) "
-                         << stars_[is-1].waveBz << std::endl;
+               std::cout << "waveMin  " << stars_[is].waveMin << std::endl;
+               std::cout << "waveMin (previous star) "
+                         << stars_[is-1].waveMin << std::endl;
                return false;
             }
          } else {
-            v = waves_[stars_[is].beginId].indicesBz;
-            if (stars_[is].waveBz != v) {
+            v = waves_[stars_[is].beginId].indicesMin;
+            if (stars_[is].waveMin != v) {
                std::cout << "\n";
-               std::cout << "waveBz of star != first wave of star"
+               std::cout << "waveMin of star != first wave of star"
                          << std::endl;
                std::cout << "star id    " << is << std::endl;
-               std::cout << "waveBz     " << stars_[is].waveBz
+               std::cout << "waveMin    " << stars_[is].waveMin
                          << std::endl;
                std::cout << "first wave " << v << std::endl;
                return false;
@@ -1202,15 +1202,15 @@ namespace Prdc {
 
          // Check ordering of waves in star
          for (iw = stars_[is].beginId + 1; iw < stars_[is].endId; ++iw) {
-            if (waves_[iw].indicesBz > waves_[iw-1].indicesBz) {
+            if (waves_[iw].indicesMin > waves_[iw-1].indicesMin) {
                std::cout << "\n";
                std::cout << "Failure of ordering by indicesB within star"
                          << std::endl;
                return false;
             }
-            if (waves_[iw].indicesBz == waves_[iw-1].indicesBz) {
+            if (waves_[iw].indicesMin == waves_[iw-1].indicesMin) {
                std::cout << "\n";
-               std::cout << "Equal values of indicesBz within star"
+               std::cout << "Equal values of indicesMin within star"
                          << std::endl;
                return false;
             }
@@ -1224,7 +1224,7 @@ namespace Prdc {
                   std::cout << "\n";
                   std::cout << "Nonzero coefficient in a cancelled star"
                               << "\n";
-                  std::cout << "G = " << waves_[iw].indicesBz
+                  std::cout << "G = " << waves_[iw].indicesMin
                               << "  coeff = " << waves_[iw].coeff
                               << "\n";
                   return false;
@@ -1265,12 +1265,12 @@ namespace Prdc {
                   std::cout << "\n";
                   std::cout << "Inverse not found in closed star"
                             << std::endl;
-                  std::cout << "G = " << waves_[iw].indicesBz
+                  std::cout << "G = " << waves_[iw].indicesMin
                             << "coeff = " << waves_[iw].coeff
                             << std::endl;
                   std::cout << "All waves in star " << is << "\n";
                   for (j=begin; j < end; ++j) {
-                     std::cout << waves_[j].indicesBz << "  "
+                     std::cout << waves_[j].indicesMin << "  "
                                << waves_[j].coeff << "\n";
                   }
                   return false;
@@ -1282,17 +1282,17 @@ namespace Prdc {
                      std::cout << "\n";
                      std::cout << "Function for closed star is not real:"
                               << "\n";
-                     std::cout << "+G = " << waves_[iw].indicesBz
+                     std::cout << "+G = " << waves_[iw].indicesMin
                               << "  coeff = " << waves_[iw].coeff
                               << "\n";
-                     std::cout << "-G = " << waves_[iwp].indicesBz
+                     std::cout << "-G = " << waves_[iwp].indicesMin
                               << "  coeff = " << waves_[iwp].coeff
                               << "\n";
                      std::cout << "Coefficients are not conjugates."
                                << "\n";
                      std::cout << "All waves in star " << is << "\n";
                      for (j=begin; j < end; ++j) {
-                        std::cout << waves_[j].indicesBz << "  "
+                        std::cout << waves_[j].indicesMin << "  "
                                  << waves_[j].coeff << "\n";
                      }
                      return false;
@@ -1346,19 +1346,19 @@ namespace Prdc {
                   std::cout << "Inverse not found for G in open star"
                             << std::endl;
                   std::cout << "First star id = " << is << std::endl;
-                  std::cout << "+G = " << waves_[iw].indicesBz
+                  std::cout << "+G = " << waves_[iw].indicesMin
                             << "coeff = " << waves_[iw].coeff
                             << std::endl;
                   std::cout << "Waves in star " << is
                             << "  (starInvert ==1):" << "\n";
                   for (j = begin1; j < end1; ++j) {
-                     std::cout << waves_[j].indicesBz  << "  "
+                     std::cout << waves_[j].indicesMin  << "  "
                                << waves_[j].coeff << "\n";
                   }
                   std::cout << "Waves in star " << is+1
                             << "  (starInvert == -1):" << "\n";
                   for (j=begin2; j < end2; ++j) {
-                     std::cout << waves_[j].indicesBz  << "  "
+                     std::cout << waves_[j].indicesMin  << "  "
                                << waves_[j].coeff << "\n";
                   }
                   return false;
@@ -1371,25 +1371,25 @@ namespace Prdc {
                      std::cout << "Error of coefficients in open stars:"
                               << "\n";
                      std::cout << "First star id = " << is << std::endl;
-                     std::cout << "+G = " << waves_[iw].indicesBz
+                     std::cout << "+G = " << waves_[iw].indicesMin
                               << "  coeff = " << waves_[iw].coeff
                               << "\n";
-                     std::cout << "-G = " << waves_[iwp].indicesBz
+                     std::cout << "-G = " << waves_[iwp].indicesMin
                               << "  coeff = " << waves_[iwp].coeff
                               << "\n";
                      std::cout << "Coefficients are not conjugates."
-                              << "\n";
+                               << "\n";
                      std::cout << "Waves in star " << is
-                              << "  (starInvert ==1):" << "\n";
+                               << "  (starInvert ==1):" << "\n";
                      for (j = begin1; j < end1; ++j) {
-                        std::cout << waves_[j].indicesBz  << "  "
-                                 << waves_[j].coeff << "\n";
+                        std::cout << waves_[j].indicesMin  << "  "
+                                  << waves_[j].coeff << "\n";
                      }
                      std::cout << "Waves in star " << is+1
-                              << "  (starInvert == -1):" << "\n";
+                               << "  (starInvert == -1):" << "\n";
                      for (j=begin2; j < end2; ++j) {
-                        std::cout << waves_[j].indicesBz  << "  "
-                                 << waves_[j].coeff << "\n";
+                        std::cout << waves_[j].indicesMin  << "  "
+                                  << waves_[j].coeff << "\n";
                      }
                      return false;
                   }

@@ -91,7 +91,7 @@ namespace Prdc {
    * wavevector magnitude, with wavevectors in the same star listed as
    * sequentially within a continuous block. Wavevectors within each star 
    * are listed in order of decreasing order as determined by the integer
-   * indices, as defined by the member function Wave::indicesBz, with more
+   * indices, as defined by the member function Wave::indicesMin, with more
    * signficant digits on the left. For example, the waves of the {111}
    * star of a cubic structure with full cubic symmetry will be listed
    * in the order:
@@ -136,33 +136,33 @@ namespace Prdc {
    * of one another. Two different schemes are used in here to assign a 
    * a unique list of indices for each distinct wavevector.
    *
-   *   - The "DFT" (discrete Fourier transform) indices of a wavevector
-   *     is the choice of a list of indices such that the index associated
-   *     with direction i, denoted by m_i, is in the range 0 <= m_i < N_i.
+   *   - The "standard" (Std) indices of a wavevector is the list of
+   *     indices such that the index associated with direction i, denoted
+   *     by m_i, is in the range 0 <= m_i < N_i.
    *
-   *   - The "BZ" (Brillouin zone) indices of a wavevector is a list of
-   *     indices of the wavevector or one of its aliases chosen such that 
-   *     the norm of the associated Euclidean wavevector is less than or 
-   *     equal to the norm of any other alias of the wavevector. 
+   *   - The "minimal" (Min) indices of a wavevector is a list of indices
+   *     of the wavevector or one of its aliases chosen such that the norm
+   *     of the associated Euclidean wavevector is less than or  equal to 
+   *     the norm of any other alias of the wavevector. 
    *
-   * The wavevector norm that is used to identify the BZ indices is 
+   * The wavevector norm that is used to identify the minimal indices is 
    * defined as the usual Euclidean norm of the vector constructed as a 
    * superposition of reciprocal lattice basis vectors with integer index
    * coefficients. In cases in which a set of two or more aliases of a 
-   * wavevector have equal norms, the BZ indices are chosen to be those 
-   * of the member of the set for which the indices are "largest" when 
-   * lists of indices are compared by treating earlier indices are more 
-   * signficant, as done in the ordering of waves within a star in the 
-   * waves array.
+   * wavevector have equal norms, the minimal indices are chosen to be 
+   * the indices of the member of the set for which the indices are 
+   * "largest" when lists of indices are compared by treating earlier 
+   * indices are more signficant, as done in the ordering of waves within 
+   * a star in the waves array.
    *
    * The number of distinct waves in the waves array is exactly equal to 
    * the number of grid points in the corresponding spatial mesh. Each 
-   * wave has a unique list of DFT indices and also a unique list of BZ
-   * indices. These are given by the "indicesDft" and "indicesBz"
+   * wave has a unique list of standard indices and also a unique list of 
+   * minimal indices. These are given by the "indicesStd" and "indicesMin"
    * IntVec\<D\> members of the Basis\<D\>::Wave class, respectively. 
    * Values of the square magnitude of wavevectors are always computed 
-   * using the BZ indices of each wavevector, giving the square norm of 
-   * a minimal image.
+   * using the minimal indices of each wavevector, giving the square norm 
+   * of a minimal image.
    *
    * See also: \ref prdc_fourier_page
    *
@@ -189,7 +189,7 @@ namespace Prdc {
    * denoted by R by a matrix. When applying symmetry operations to
    * wavevectors defined using a discrete Fourier transform, the equation
    * G' = G.R is interpreted using the representation of wavevectors
-   * G and G' using their BZ (Brillouin zone) indices.
+   * G and G' using their minimal indices.
    *
    * The plane waves in a star all have the same Cartesian magnitude,
    * as a result of the fact that the linear transformation represented
@@ -282,7 +282,8 @@ namespace Prdc {
    * inversion operation. A star is said to be closed under inversion if, 
    * for every wavevector G in the star, the negation -G is in the same
    * star.  The negation of a wavevector is defined by inverting all of
-   * its BZ indices. A star that is not closed under inversion, is "open".
+   * its minimal indices. A star that is not closed under inversion, is 
+   * "open".
    *
    * In a basis for a crystal contains an inversion center, for which
    * which the space group includes a symmetry operation r -> -r + t,
@@ -302,14 +303,14 @@ namespace Prdc {
    * of open stars that are related by inversion, and -1 if it is the
    * second member of such a pair of stars.
    *
-   * Each star is assigned a unique characteristic wave that can be
+   * Each star is assigned a unique characteristic wave that can be 
    * used as a unique identifier for the star.  Local class Star has an
-   * IntVec\<D\> member named waveBz that lists the BZ indices of the
-   * characteristic wave of the star. The characteristic wave is taken
+   * IntVec\<D\> member named waveMin that lists the minimal indices of 
+   * the characteristic wave of the star. The characteristic wave is taken
    * to be the first wave in the star for stars with starInvert = 0 or
    * starInvert = 1. In stars with startInvert = -1, the characteristic
-   * wave is taken to be the negation of the characteristic wave of
-   * its partner, which is the previous star.
+   * wave is taken to be the negation of the characteristic wave of its
+   * partner, which is the previous star.
    *
    * See also: \ref prdc_basis_page
    *
@@ -404,22 +405,22 @@ namespace Prdc {
          * the range [0, meshDimension(i) - 1], where meshDimension(i) is
          * the number of grid points.
          */
-         IntVec<D> indicesDft;
+         IntVec<D> indicesStd;
 
          /**
          * Integer indices of wave, in first Brillouin zone.
          *
          * Components of this IntVec\<D\> may be negative or positive, and
-         * differ from corresponding components of indicesDft by integer
-         * multiples of a corresponding mesh dimension, so that indicesBz
-         * and indicesDft correspond to equivalent aliased wavevectors
+         * differ from corresponding components of indicesStd by integer
+         * multiples of a corresponding mesh dimension, so that indicesMin
+         * and indicesStd correspond to equivalent aliased wavevectors
          * for functions evaluated on nodes of the discretization mesh.
-         * The shifts relative to indicesDft are chosen so as to minimize
+         * The shifts relative to indicesStd are chosen so as to minimize
          * the norm of the Cartesian wavevector constructed by taking a
          * linear combination of Bravais lattice basis vectors multiplied
-         * by components of indicesBz.
+         * by components of indicesMin.
          */
-         IntVec<D> indicesBz;
+         IntVec<D> indicesMin;
 
          /**
          * Index of the star that contains this wavevector.
@@ -451,8 +452,8 @@ namespace Prdc {
          */
          Wave()
           : coeff(0.0),
-            indicesDft(0),
-            indicesBz(0),
+            indicesStd(0),
+            indicesMin(0),
             starId(0),
             inverseId(-1),
             implicit(false),
@@ -476,7 +477,7 @@ namespace Prdc {
       * The wavevectors in a star form a continuous block within the array
       * waves defined by the Basis classes.  Within this block, waves are
       * listed in descending lexigraphical order of their integer (ijk)
-      * indices as given by Basis::Wave::indicesBz.
+      * indices as given by Basis::Wave::indicesMin.
       */
       class Star
       {
@@ -531,17 +532,17 @@ namespace Prdc {
          int invertFlag;
 
          /**
-         * Integer indices indicesBz of a characteristic wave of this star.
+         * Integer indices indicesMin of a characteristic wave of this star.
          *
-         * Wave given here is the value of indicesBz for a characteristic
+         * Wave given here is the value of indicesMin for a characteristic
          * wave for the star.  For invertFlag = 0 or 1, the characteristic
          * wave is the first wave in the star.  For invertFlag = -1, this
-         * is the negation of the waveBz of the partner star for which
+         * is the negation of the waveMin of the partner star for which
          * invertFlag = 1.
          *
-         * The coefficient of wave waveBz is always real and positive.
+         * The coefficient of wave waveMin is always real and positive.
          */
-         IntVec<D> waveBz;
+         IntVec<D> waveMin;
 
          /**
          * Index of this star in ordered array of all stars.
@@ -585,7 +586,7 @@ namespace Prdc {
             beginId(0),
             endId(0),
             invertFlag(0),
-            waveBz(0),
+            waveMin(0),
             starId(0),
             basisId(0),
             cancel(false)
