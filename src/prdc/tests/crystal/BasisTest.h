@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <prdc/crystal/Basis.h>
-#include <prdc/crystal/TWave.h>
+#include <prdc/crystal/BWave.h>
 #include <prdc/crystal/groupFile.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>

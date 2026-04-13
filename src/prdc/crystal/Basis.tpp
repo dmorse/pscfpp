@@ -9,7 +9,7 @@
 */
 
 #include "Basis.h"
-#include "TWave.h"
+#include "BWave.h"
 #include "groupFile.h"
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/SpaceGroup.h>
@@ -122,11 +122,11 @@ namespace Prdc {
    void Basis<D>::makeWaves()
    {
       IntVec<D> meshDimensions = mesh().dimensions();
-      std::vector< TWave<D> > twaves;
+      std::vector< BWave<D> > twaves;
       twaves.reserve(nWave_);
 
       // Loop over k-grid mesh to generate all waves, add to twaves
-      TWave<D> w;
+      BWave<D> w;
       IntVec<D> v;
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
@@ -138,7 +138,7 @@ namespace Prdc {
       }
 
       // Sort temporary array twaves
-      TWaveNormComp<D> comp;
+      BWaveNormComp<D> comp;
       std::sort(twaves.begin(), twaves.end(), comp);
 
       // Copy temporary array twaves into member variable waves_
@@ -168,7 +168,7 @@ namespace Prdc {
       * are identified as an intermediate step in identification of stars.
       *
       * During initial processing, wavevectors are temporarily stored in 
-      * TWave<D> objects.  The following local containers of TWave<D> 
+      * BWave<D> objects.  The following local containers of BWave<D> 
       * objects are used:
       *
       *   list - a std::set of waves of equal norm (a "list")
@@ -181,16 +181,16 @@ namespace Prdc {
       *  std::vector for tempStar allows use of std::sort 
       */
 
-      // Local TWave<D> containers and associated iterators
-      std::set< TWave<D>, TWaveStdComp<D> > list;
-      std::set< TWave<D>, TWaveStdComp<D> > star;
-      std::vector< TWave<D> > tempStar;
-      GArray< TWave<D> > tempList;
-      typename std::set< TWave<D>, TWaveStdComp<D> >::iterator rootItr;
-      typename std::set< TWave<D>, TWaveStdComp<D> >::iterator setItr;
+      // Local BWave<D> containers and associated iterators
+      std::set< BWave<D>, BWaveStdComp<D> > list;
+      std::set< BWave<D>, BWaveStdComp<D> > star;
+      std::vector< BWave<D> > tempStar;
+      GArray< BWave<D> > tempList;
+      typename std::set< BWave<D>, BWaveStdComp<D> >::iterator rootItr;
+      typename std::set< BWave<D>, BWaveStdComp<D> >::iterator setItr;
 
       // Local variables
-      TWave<D> wave;
+      BWave<D> wave;
       Basis<D>::Star newStar;
       std::complex<double> coeff;
       double Gsq;
@@ -240,18 +240,18 @@ namespace Prdc {
       *         Compute vec = (rootItr->indicesMin)*group[j]
       *         Set phase = rootItr->indicesMin .dot. (group[j].t)
       *         Check for cancellation of the star, set "cancel" flag
-      *         Add wave to std::set<TWave> star if not added before
+      *         Add wave to std::set<BWave> star if not added before
       *         // Here, use of a std::set simplifies test of uniqueness
       *       }
       *
-      *       Copy all waves from star to std::vector<TWave> tempStar
+      *       Copy all waves from star to std::vector<BWave> tempStar
       *       Sort tempStar by indicesMin, in descending order
       *       // Here, use of a std::vector for tempStar allows sorting
       *
       *       // Add waves in star to tempList and remove from list
       *       For each wave in tempStar {
-      *         Append the wave to GArray<TWave> tempList
-      *         Erase the wave from std::set<TWave> list
+      *         Append the wave to GArray<BWave> tempList
+      *         Erase the wave from std::set<BWave> list
       *         // Here, use of a std::set for list simplifies erasure
       *       }
       *
@@ -291,7 +291,7 @@ namespace Prdc {
       *     // Overwrite the block of array waves_ with indices in the
       *     // range [beginId, endId-1] with the contents of tempList.
       *     For each wave in tempList {
-      *       Copy a TWave in tempList to a Basis:Wave in  waves_
+      *       Copy a BWave in tempList to a Basis:Wave in  waves_
       *       Assign a complex coefficient of unit norm to the Wave
       *     }
       *
@@ -429,7 +429,7 @@ namespace Prdc {
                   // Check that rotated vector has same norm as root.
                   UTIL_CHECK(std::abs(Gsq - unitCell().ksq(vec)) < epsilon);
 
-                  // Initialize TWave object associated with rotated wave
+                  // Initialize BWave object associated with rotated wave
                   wave.sqNorm = Gsq;
                   wave.indicesMin = shiftToMinimum(vec, meshDimensions,
                                                   *unitCellPtr_);
@@ -501,7 +501,7 @@ namespace Prdc {
                }
 
                // Sort tempStar, in descending order by indicesMin.
-               TWaveMinComp<D> waveMinComp;
+               BWaveMinComp<D> waveMinComp;
                std::sort(tempStar.begin(), tempStar.end(), waveMinComp);
 
                // Append contents of tempStar to tempList, erase from list
