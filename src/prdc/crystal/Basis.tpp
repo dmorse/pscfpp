@@ -114,9 +114,9 @@ namespace Prdc {
    * Construct ordered list of waves.
    *
    * On exit:
-   *  - Array waves_ contains list of waves ordered by sqNorm.
+   *  - Member array waves_ contains list of waves ordered by sqNorm.
    *  - Each wave has indicesStd, indicesMin and sqNorm set.
-   *  - Array stars_  is still empty.
+   *  - Member array stars_  is still empty.
    */
    template <int D>
    void Basis<D>::makeWaves()
@@ -161,31 +161,35 @@ namespace Prdc {
       /*
       * Conceptual definitions:
       *
-      *   - A "list" is a set of wavevectors of equal magnitude.
-      *   - A "star" is a set of wavevectors that are related by symmetry.
+      *  - A "bunch" is a set of wavevectors of equal magnitude.
+      *  - A "star" is a set of wavevectors that are related by symmetry.
       *
-      * Each list may contain one or more complete stars. Complete lists 
-      * are identified as an intermediate step in identification of stars.
+      * Each bunch contains one or more complete stars. Bunches are
+      * identified as an intermediate step in identification of stars.
       *
       * During initial processing, wavevectors are temporarily stored in 
       * BWave<D> objects.  The following local containers of BWave<D> 
       * objects are used:
       *
-      *   list - a std::set of waves of equal norm (a "list")
-      *   star - a std::set of symmetry-related waves (a "star")
-      *   tempStar - a sorted star, sorted by descending indicesMin
-      *   tempList - a sorted list, with contiguous sorted stars
+      *   bunch - a set of waves of equal norm 
+      *   star - a set of symmetry-related waves
+      *   starList - a sorted star, sorted by descending indicesMin
+      *   bunchList - a sorted bunch, with contiguous sorted stars
       *
-      * Reasons for choice of some C++ standard lib container types:
-      *  std::set for "list", "star" prevents duplicates, allows removal
-      *  std::vector for tempStar allows use of std::sort 
+      * The bunch and star containers are std::set< BWave<D> > objects. 
+      * The starList container is a std::vector< BWave<D> > objects. 
+      * The use of std::set simplifies addition of waves, by allowing
+      * easy identification of duplicates, as well as later removal.
+      * The use of std::vector for the starList allows the use of the 
+      * C++ std::sort algorithm to sort stars by standard wavevector 
+      * indices.
       */
 
       // Local BWave<D> containers and associated iterators
-      std::set< BWave<D>, BWaveStdComp<D> > list;
+      std::set< BWave<D>, BWaveStdComp<D> > bunch;
       std::set< BWave<D>, BWaveStdComp<D> > star;
-      std::vector< BWave<D> > tempStar;
-      GArray< BWave<D> > tempList;
+      std::vector< BWave<D> > starList;
+      GArray< BWave<D> > bunchList;
       typename std::set< BWave<D>, BWaveStdComp<D> >::iterator rootItr;
       typename std::set< BWave<D>, BWaveStdComp<D> >::iterator setItr;
 
@@ -199,13 +203,13 @@ namespace Prdc {
       const double twoPi = 2.0*Constants::Pi;
       const double epsilon = 1.0E-8;
       IntVec<D> meshDimensions = mesh().dimensions();
-      IntVec<D> rootVecMin;  // BZ indices for root of this star
-      IntVec<D> rootVecStd;  // DFT indices for root of this star
+      IntVec<D> rootVecMin;  // Min indices for root of this star
+      IntVec<D> rootVecStd;  // Std indices for root of this star
       IntVec<D> vec;         // Indices of temporary wavevector
       IntVec<D> nVec;        // Indices of inverse of a wavevector
-      int listBegin = 0;     // id of first wave in this list
-      int listEnd = 0;       // (id of last wave in this list) + 1
-      int listSize;          // listEnd - listBegin
+      int bunchBegin = 0;    // id of first wave in this bunch 
+      int bunchEnd = 0;      // (id of last wave in this bunch) + 1
+      int bunchSize;         // bunchEnd - bunchBegin
       int starBegin = 0;     // id of first wave in this star
       int i, j, k;
       bool cancel;
@@ -218,24 +222,26 @@ namespace Prdc {
       *
       * Loop over index i of array waves_ {
       *
-      *   Search for end of a "list" (i.e., contiguous block of waves
-      *   of equal magnitude) by identifying changes in magnitude.
-      *   The resulting list has indices [listBegin,listEnd-1].
+      *   Search for end of a "bunch" (i.e., contiguous block of waves
+      *   of equal magnitude) by identifying changes in magnitude. The
+      *   resulting bunch has indices bunchBegin, ... , bunchEnd-1 .
       *   Set newList true.
       *
-      *   // Each list may contain one or more stars.
-      *   // Process the newly identified list to identify stars
+      *   // Each bunch may contain one or more stars.
+      *   // Process the newly identified bunch to identify stars.
+      *
       *   If (newList) {
       *
-      *     Copy all waves in the range into std::set list
+      *     Copy all waves in the range into std::set bunch
       *
-      *     Set rootItr to the first wave in the list
+      *     Set rootItr to the first wave in the bunch
       *
-      *     // Loop over stars within the list
-      *     while (list.size() > 0) {
+      *     // Loop over stars within the bunch
+      *     while (bunch.size() > 0) {
       *
       *       // To generate a star from a root wave rootItr,
       *       // loop over symmetry operations of space group.
+      *
       *       For each symmetry operation group[j] {
       *         Compute vec = (rootItr->indicesMin)*group[j]
       *         Set phase = rootItr->indicesMin .dot. (group[j].t)
@@ -244,35 +250,37 @@ namespace Prdc {
       *         // Here, use of a std::set simplifies test of uniqueness
       *       }
       *
-      *       Copy all waves from star to std::vector<BWave> tempStar
-      *       Sort tempStar by indicesMin, in descending order
-      *       // Here, use of a std::vector for tempStar allows sorting
+      *       Copy all waves from star to std::vector<BWave> starList
+      *       Sort starList by indicesMin, in descending order
+      *       // Here, use of a std::vector for starList allows sorting
       *
-      *       // Add waves in star to tempList and remove from list
-      *       For each wave in tempStar {
-      *         Append the wave to GArray<BWave> tempList
-      *         Erase the wave from std::set<BWave> list
-      *         // Here, use of a std::set for list simplifies erasure
+      *       // Add waves in star to bunchList and remove from bunch
+      *       For each wave in starList {
+      *         Append the wave to GArray<BWave<D> > bunchList
+      *         Erase the wave from std::set<BWave<D> > bunch
+      *         // Here, use of a std::set for bunch simplifies erasure
       *       }
       *
       *       Initialize a Star object named newStar
       *       Assign values to members beginId, endId, size, cancel
       *
-      *       // Assign values of newStar.invertFlag, rootItr, nextInvert
+      *       // Assign values of newStar.invertFlag, nextInvert, rootItr
       *       if (nextInvert == -1) {
       *          // This is the second star in pair
       *          newStar.invertFlag = -1;
       *          nextInvert = 1;
-      *          Set rootItr to the first wave in remaining list
+      *          Set rootItr to the first wave in remaining bunch
       *       } else {
       *          Search for inverse of rootItr in this star
       *          if inverse is in this star {
+      *             // This is a closed star
       *             newStar.invertFlag = 0
       *             nextInvert = 1;
-      *             Set rootItr to the first wave in remaining list
+      *             Set rootItr to the first wave in remaining bunch
       *          } else
-      *          Search for inverse of rootItr in this remaining list
-      *          if the inverse is in the remaining list {
+      *          Search for inverse of rootItr in this remaining bunch
+      *          if the inverse is in the remaining bunch {
+      *             // This is the first open star in a pair
       *             newStar.invertFlag = 1
       *             nextInvert = -1;
       *             set rootItr to inverse of current root
@@ -281,25 +289,25 @@ namespace Prdc {
       *
       *       Append newStar object to GArray<Star> stars_
       *
-      *     } // end loop over stars in a single list
+      *     } // end loop over stars in a single bunch
       *
-      *     // At this point, tempList contains the contents of the
+      *     // At this point, bunchList contains the contents of the
       *     // waves_ array occupying the range [beginId, endId-1],
       *     // grouped by stars, with waves within each star sorted
       *     // by minimal indices.
       *
       *     // Overwrite the block of array waves_ with indices in the
-      *     // range [beginId, endId-1] with the contents of tempList.
-      *     For each wave in tempList {
-      *       Copy a BWave in tempList to a Basis:Wave in  waves_
-      *       Assign a complex coefficient of unit norm to the Wave
+      *     // range [beginId, endId-1] with the contents of bunchList.
+      *     For each wave in bunchList {
+      *        Copy a BWave in bunchList to a Basis:Wave in  waves_
+      *        Assign a complex coefficient of unit norm to the Wave
       *     }
       *
       *     // At this point, coefficients of waves have unit magnitude
       *     // and correct relative phases within each star, but not the
       *     // final absolute phases or magnitude.
       *
-      *   } // finish processing of one list (waves of equal norm)
+      *   } // finish processing of one bunch (waves of equal norm)
       *
       * } // End initial processing of all waves and stars
       *
@@ -360,57 +368,57 @@ namespace Prdc {
       Gsq_max = waves_[0].sqNorm;
       for (i = 1; i <= nWave_; ++i) {
 
-         // Determine if this wave begins a new list
+         // Determine if this wave begins a new bunch
          bool newList = false;
          if (i == nWave_) {
-            listEnd = i;
-            listSize = listEnd - listBegin;
+            bunchEnd = i;
+            bunchSize = bunchEnd - bunchBegin;
             newList = true;
          } else {
             Gsq = waves_[i].sqNorm;
             if (Gsq > Gsq_max + epsilon) {
                Gsq_max = Gsq;
-               listEnd = i;
-               listSize = listEnd - listBegin;
+               bunchEnd = i;
+               bunchSize = bunchEnd - bunchBegin;
                newList = true;
             }
          }
 
-         // Process completed list of wavectors of equal norm
+         // Process completed bunch of wavectors of equal norm
          if (newList) {
 
-            // Copy waves of equal norm into std::set "list"
-            list.clear();
-            tempList.clear();
-            for (j = listBegin; j < listEnd; ++j) {
+            // Copy waves of equal norm into std::set "bunch"
+            bunch.clear();
+            bunchList.clear();
+            for (j = bunchBegin; j < bunchEnd; ++j) {
                wave.indicesStd = waves_[j].indicesStd;
                wave.indicesMin = waves_[j].indicesMin;
                wave.sqNorm = waves_[j].sqNorm;
-               if (j > listBegin) {
+               if (j > bunchBegin) {
                   UTIL_CHECK( std::abs(wave.sqNorm-waves_[j].sqNorm)
                                  < 2.0*epsilon );
                }
-               list.insert(wave);
+               bunch.insert(wave);
             }
 
             // On entry to each iteration of the loop over stars,
             // rootItr and nextInvert are known. The iterator rootItr
-            // points to the wave in the remaining list that will be
+            // points to the wave in the remaining bunch that will be
             // used as the root of the next star. The flag nextInvert
             // is equal to -1 iff the previous star was the first of
             // a pair that are open under inversion, and is equal
             // to + 1 otherwise.
 
-            // Initial values for first star in this list
-            rootItr = list.begin();
+            // Initial values for first star in this bunch
+            rootItr = bunch.begin();
             int nextInvert = 1;
 
-            // Loop over stars with a list of waves of equal norm,
-            // removing each star from the list as it is identified.
+            // Loop over stars with a bunch of waves of equal norm,
+            // removing each star from set bunch as it is identified.
             // The root of the next star must have been chosen on
             // entry to each iteration of this loop.
 
-            while (list.size() > 0) {
+            while (bunch.size() > 0) {
 
                rootVecMin = rootItr->indicesMin;
                rootVecStd = rootItr->indicesStd;
@@ -463,7 +471,7 @@ namespace Prdc {
                   }
 
                   // Search for an equivalent wave already in the star.
-                  // Note: Equivalent waves have equal DFT indices.
+                  // Note: Equivalent waves have equal standard indices.
                   setItr = star.find(wave);
 
                   if (setItr == star.end()) {
@@ -493,24 +501,24 @@ namespace Prdc {
 
                }
 
-               // Copy all waves from std::set star to std::vector tempStar
-               tempStar.clear();
+               // Copy waves from std::set star to std::vector starList
+               starList.clear();
                setItr = star.begin();
                for ( ; setItr != star.end(); ++setItr) {
-                  tempStar.push_back(*setItr);
+                  starList.push_back(*setItr);
                }
 
-               // Sort tempStar, in descending order by indicesMin.
+               // Sort starList, in descending order by indicesMin.
                BWaveMinComp<D> waveMinComp;
-               std::sort(tempStar.begin(), tempStar.end(), waveMinComp);
+               std::sort(starList.begin(), starList.end(), waveMinComp);
 
-               // Append contents of tempStar to tempList, erase from list
-               int tempStarSize = tempStar.size();
-               for (j = 0; j < tempStarSize; ++j) {
-                  list.erase(tempStar[j]);
-                  tempList.append(tempStar[j]);
+               // Append starList to bunchList, erase from set bunch
+               int starListSize = starList.size();
+               for (j = 0; j < starListSize; ++j) {
+                  bunch.erase(starList[j]);
+                  bunchList.append(starList[j]);
                }
-               UTIL_CHECK((int)(tempList.size()+list.size()) == listSize);
+               UTIL_CHECK(int(bunchList.size()+bunch.size())==bunchSize);
 
                // If this star is not cancelled, increment the number of
                // basis functions (nBasis_) & waves in basis (nBasisWave_)
@@ -531,10 +539,11 @@ namespace Prdc {
                if (nextInvert == -1) {
 
                   // If this star is 2nd of a pair related by inversion,
-                  // set root for next star to 1st wave of remaining list.
+                  // set root for next star to 1st wave of remaining 
+                  // bunch.
 
                   newStar.invertFlag = -1;
-                  rootItr = list.begin();
+                  rootItr = bunch.begin();
                   nextInvert = 1;
 
                } else {
@@ -542,10 +551,10 @@ namespace Prdc {
                   // If this star is not the 2nd of a pair of partners,
                   // then determine if it is closed under inversion.
 
-                  // Compute inverse nVec of root vector in FBZ
+                  // Compute negation nVec of root vector
                   nVec.negate(rootVecMin);
 
-                  // Shift inverse nVec to the DFT mesh
+                  // Shift nVec to the standard mesh
                   (*meshPtr_).shift(nVec);
 
                   // Search for inverse of root vector within this star
@@ -560,11 +569,12 @@ namespace Prdc {
 
                   if (inverseFound) {
 
-                     // If this star is closed under inversion, the root
-                     // of next star is the 1st vector of remaining list.
+                     // If this star is closed under inversion, the root 
+                     // of the next star is the 1st vector of remaining 
+                     // bunch.
 
                      newStar.invertFlag = 0;
-                     rootItr = list.begin();
+                     rootItr = bunch.begin();
                      nextInvert = 1;
 
                   } else {
@@ -576,11 +586,11 @@ namespace Prdc {
                      nextInvert = -1;
 
                      // Find inverse of the root of this star in the
-                     // remaining list, and use this inverse as the
+                     // remaining bunch, and use this inverse as the
                      // root of the next star.
 
-                     setItr = list.begin();
-                     for ( ; setItr != list.end(); ++setItr) {
+                     setItr = bunch.begin();
+                     for ( ; setItr != bunch.end(); ++setItr) {
                         if (nVec == setItr->indicesStd) {
                            inverseFound = true;
                            rootItr = setItr;
@@ -590,7 +600,7 @@ namespace Prdc {
                      // If inverseFound, then rootVecStd = nVec
 
                      // Failure to find the inverse here is an error:
-                     // It must be either in this star or remaining list
+                     // It must be either in this star or remaining bunch
 
                      if (!inverseFound) {
                         std::cout << "Inverse not found for: " << "\n";
@@ -610,20 +620,20 @@ namespace Prdc {
                starBegin = newStar.endId;
 
             }
-            // End loop over stars within a list.
+            // End loop over stars within a bunch.
 
-            UTIL_CHECK(list.size() == 0);
-            UTIL_CHECK(tempList.size() == listEnd - listBegin);
+            UTIL_CHECK(bunch.size() == 0);
+            UTIL_CHECK(bunchList.size() == bunchEnd - bunchBegin);
 
-            // Copy tempList into corresponding section of waves_,
-            // overwriting the section of waves_ used to create the list.
+            // Copy bunchList into corresponding section of waves_,
+            // overwriting the section of waves_ used to create the bunch.
             // Compute a complex coefficient of unit norm for each wave.
-            for (j = 0; j < tempList.size(); ++j) {
-               k = j + listBegin;
-               waves_[k].indicesStd = tempList[j].indicesStd;
-               waves_[k].indicesMin = tempList[j].indicesMin;
-               waves_[k].sqNorm = tempList[j].sqNorm;
-               coeff = std::complex<double>(0.0, tempList[j].phase);
+            for (j = 0; j < bunchList.size(); ++j) {
+               k = j + bunchBegin;
+               waves_[k].indicesStd = bunchList[j].indicesStd;
+               waves_[k].indicesMin = bunchList[j].indicesMin;
+               waves_[k].sqNorm = bunchList[j].sqNorm;
+               coeff = std::complex<double>(0.0, bunchList[j].phase);
                coeff = exp(coeff);
                if (std::abs(imag(coeff)) < 1.0E-6) {
                   coeff = std::complex<double>(real(coeff), 0.0);
@@ -634,19 +644,19 @@ namespace Prdc {
                waves_[k].coeff = coeff;
             }
 
-            // Processing of list is now complete.
+            // Processing of this bunch is now complete.
             // Here, waves_[k].coeff has unit absolute magnitude, and
-            // correct relative phases for waves within a star, but
-            // the coeff may not be unity for the first or last wave in
-            // the star.
+            // correct relative phases for waves within a star, but 
+            // the coeff may not be unity for the first or last wave
+            // in the star.
 
-            listBegin = listEnd;
+            bunchBegin = bunchEnd;
          }
-         // Finished processing a list of waves of equal norm
+         // Finished processing a bunch of waves of equal norm
 
       } // End loop over all waves
       nStar_ = stars_.size();
-      // Complete initial processing of all lists and stars
+      // Complete initial processing of all bunches and stars
 
       /*
       * Conventions for phases of wave coefficients (imposed below):
@@ -676,7 +686,7 @@ namespace Prdc {
             for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
                if (waves_[j].inverseId < 0) { // if inverseId is unassigned
 
-                  // Compute nVec = inverse of root, shifted to DFT mesh
+                  // Compute nVec = inverse of root, shifted to std mesh
                   nVec.negate(waves_[j].indicesMin);
                   (*meshPtr_).shift(nVec);
 
@@ -789,7 +799,7 @@ namespace Prdc {
             for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
                if (waves_[j].inverseId < 0) { // if inverseId is unassigned
 
-                  // Compute nVec = inverse of root, shifted to DFT mesh
+                  // Compute nVec = inverse of root, shifted to std mesh
                   nVec.negate(waves_[j].indicesMin);
                   (*meshPtr_).shift(nVec);
 

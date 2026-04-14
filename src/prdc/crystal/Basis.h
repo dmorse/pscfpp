@@ -556,8 +556,8 @@ namespace Prdc {
          *
          * If this star is not cancelled (cancel == false), then basisId
          * is set equal to the index of the associated basis function in
-         * in a list of nonzero basis functions or (equivalently) in a
-         * list of non-cancelled stars.
+         * a list of nonzero basis functions or (equivalently) in a list
+         * of non-cancelled stars.
          *
          * If this star is cancelled (cancel == true), then basisId = -1.
          */
