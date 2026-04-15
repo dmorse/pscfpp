@@ -55,9 +55,9 @@ namespace Pscf {
       {  return (a.value < b.value); }
 
       /**
-      * Sort a std::vector of Item<T> objects.
+      * Sort a std::vector< Item<T> > by ascending item value.
       *
-      * On return, array "items" is sorted in order of ascending value.
+      * On return, array "items" is sorted with non-descending values.
       *
       * \param items  array of comparable items
       * \ingroup Pscf_Math_Sort_Module
@@ -68,25 +68,28 @@ namespace Pscf {
       /**
       * Identify "bunches" of equal values within a sorted vector.
       *
-      * Precondition: Array "items" must be sorted on entry.
+      * On entry, array "items" must be sorted on entry. The sort
+      * function must thus normally be called before this.
       *
-      * \param items  array of comparable items
-      * \param bunchs  array of slices of equal items
+      * \param items  sorted array of items
+      * \param bunches  array of slices of items with equal value
       * \param epsilon  tolerance
       * \ingroup Pscf_Math_Sort_Module
       */
       template <typename T>
       void findBunches(std::vector< Item<T> > const & items,
-                       std::vector< Slice >& slices,
+                       std::vector< Slice >& bunches,
                        T epsilon);
 
 
       // Explicit instantiation declarations
 
+      extern template void sort<double>(std::vector< Item<double> >& );
+      extern template void sort<float>(std::vector< Item<float> >& );
+
       extern template
       void findBunches<double>(std::vector< Item<double> > const &,
-                               std::vector< Slice >&,
-                               double);
+                               std::vector< Slice >&, double);
 
       extern template
       void findBunches<float>(std::vector< Item<float> > const &,

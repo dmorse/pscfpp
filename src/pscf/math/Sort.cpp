@@ -44,19 +44,24 @@ namespace Sort {
             UTIL_CHECK(newVal > oldVal - epsilon);
             if (newVal > oldVal + epsilon) {
                bunch.end = i;
+               UTIL_CHECK(bunch.end > bunch.begin);
                bunches.push_back(bunch);
-               oldVal = newVal;
                bunch.begin = i;
                bunch.end = i;
+               oldVal = newVal;
             }
          }
       }
       UTIL_CHECK(bunch.begin < size);
       bunch.end = size;
+      UTIL_CHECK(bunch.end > bunch.begin);
       bunches.push_back(bunch);
    }
 
    // Explicit instantiation definitions
+
+   template void sort<double>(std::vector< Item<double> >& );
+   template void sort<float>(std::vector< Item<float> >& );
 
    template
    void findBunches<double>(std::vector< Item<double> > const &,
