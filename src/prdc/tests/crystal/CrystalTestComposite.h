@@ -7,12 +7,14 @@
 #include "SpaceSymmetryTest.h"
 #include "SpaceGroupTest.h"
 #include "BasisTest.h"
+#include "MiscTest.h"
 
 TEST_COMPOSITE_BEGIN(CrystalTestComposite)
 TEST_COMPOSITE_ADD_UNIT(UnitCellTest);
 TEST_COMPOSITE_ADD_UNIT(SpaceSymmetryTest);
 TEST_COMPOSITE_ADD_UNIT(SpaceGroupTest);
 TEST_COMPOSITE_ADD_UNIT(BasisTest);
+TEST_COMPOSITE_ADD_UNIT(MiscTest);
 TEST_COMPOSITE_END
 
 #endif
