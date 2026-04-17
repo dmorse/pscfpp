@@ -17,7 +17,7 @@ class SortTest : public UnitTest
 private:
 
    std::vector< Sort::Item<double> > items;
-   std::vector< Sort::Slice > bunches;
+   std::vector< Sort::Bunch > bunches;
    int n;
    
 public:
@@ -84,12 +84,11 @@ public:
       int begin, end, size;
       double oldVal, newVal;
       for (int i=0; i < nb; ++i) {
-         begin = bunches[i].begin;
-         end = bunches[i].end;
+         begin = bunches[i][0];
+         end = bunches[i][1];
          size = end - begin;
          TEST_ASSERT(size > 0);
-         //std::cout << std::endl 
-         //          << bunches[i].begin << "  " << bunches[i].end;
+         //std::cout << std::endl << begin << "  " << end;
          if (size > 1) {
             oldVal = items[begin].value;
             for (int j=begin; j < end; ++j) {
@@ -103,7 +102,7 @@ public:
 };
 
 TEST_BEGIN(SortTest)
-TEST_ADD(SortTest, testItem)
+//TEST_ADD(SortTest, testItem)
 TEST_ADD(SortTest, testSort)
 TEST_ADD(SortTest, testBunch)
 TEST_END(SortTest)

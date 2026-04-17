@@ -27,15 +27,15 @@ namespace Sort {
    */
    template <typename T>
    void findBunches(std::vector< Item<T> > const & items,
-                    std::vector< Slice >& bunches,
+                    std::vector< Bunch >& bunches,
                     T epsilon)
    {
       int size = items.size();
       UTIL_CHECK(size > 0);
       bunches.clear();
-      Slice bunch;
-      bunch.begin = 0;
-      bunch.end = 0;
+      Bunch bunch;
+      bunch[0] = 0;
+      bunch[1] = 0;
       T newVal = items[0].value;
       T oldVal = newVal;
       if (size > 1) {
@@ -43,18 +43,18 @@ namespace Sort {
             newVal = items[i].value;
             UTIL_CHECK(newVal > oldVal - epsilon);
             if (newVal > oldVal + epsilon) {
-               bunch.end = i;
-               UTIL_CHECK(bunch.end > bunch.begin);
+               bunch[1] = i;
+               UTIL_CHECK(bunch[1] > bunch[0]);
                bunches.push_back(bunch);
-               bunch.begin = i;
-               bunch.end = i;
+               bunch[0] = i;
+               bunch[1] = i;
                oldVal = newVal;
             }
          }
       }
-      UTIL_CHECK(bunch.begin < size);
-      bunch.end = size;
-      UTIL_CHECK(bunch.end > bunch.begin);
+      UTIL_CHECK(bunch[0] < size);
+      bunch[1] = size;
+      UTIL_CHECK(bunch[1] > bunch[0]);
       bunches.push_back(bunch);
    }
 
@@ -65,11 +65,11 @@ namespace Sort {
 
    template
    void findBunches<double>(std::vector< Item<double> > const &,
-                            std::vector< Slice >&, double);
+                            std::vector< Bunch >&, double);
 
    template
    void findBunches<float>(std::vector< Item<float> > const &,
-                           std::vector< Slice >&, float);
+                           std::vector< Bunch >&, float);
 
 } // namespace Sort
 } // namespace Pscf

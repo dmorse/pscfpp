@@ -17,6 +17,7 @@
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
+#include <pscf/math/Sort.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -28,13 +29,16 @@ namespace Cpu {
    template <int D>
    WaveList<D>::WaveList(bool isRealField)
     : kSize_(0),
+      nBunch_(0),
       isAllocated_(false),
       hasMinImages_(false),
       hasKSq_(false),
       hasdKSq_(false),
+      isSorted_(false),
+      isRealField_(isRealField),
       unitCellPtr_(nullptr),
       meshPtr_(nullptr)
-   {  isRealField_ = isRealField; }
+   {}
 
    /*
    * Destructor.
@@ -104,6 +108,9 @@ namespace Cpu {
    {
       hasKSq_ = false;
       hasdKSq_ = false;
+      if (unitCell().nParameter() > 1) {
+         isSorted_ = false;
+      }
       if (hasVariableAngle<D>(unitCell().lattice())) {
          hasMinImages_ = false;
       }
@@ -203,6 +210,65 @@ namespace Cpu {
       }
       
       hasdKSq_ = true;
+   }
+
+   /*
+   * Sort waves by magnitude.
+   */
+   template <int D>
+   void WaveList<D>::sortWaves()
+   {
+      UTIL_CHECK(isAllocated_);
+      if (!hasKSq_) {
+         computeKSq();
+      }
+
+      std::vector< Sort::Item<double> > items;
+      std::vector< Sort::Bunch > bunches;
+
+      // Sort wavevector items by magnitude
+      Sort::Item<double> item;
+      for (int i = 0; i < kSize_; ++i) {
+         item.value = kSq_[i];
+         item.id = i;
+         items.push_back(item);
+      }
+      UTIL_CHECK(items.size() == kSize_);
+      Sort::sort(items);
+
+      // Fill sortedIds_ array with ids
+      if (!sortedIds_.isAllocated()) {
+         sortedIds_.allocate(kSize_);
+      }
+      UTIL_CHECK(sortedIds_.capacity() == kSize_);
+      for (int i = 0; i < kSize_; ++i) {
+         sortedIds_[i] = items[i].id;
+      }
+
+      // Identify bunches of waves with equal magnitude
+      double epsilon = 1.0E-8;
+      bunches.clear();
+      Sort::findBunches(items, bunches, epsilon);
+
+      // Fill bunchIds_ array
+      nBunch_ = bunches.size();
+      UTIL_CHECK(nBunch_ > 0);
+      if (!bunchIds_.isAllocated()) {
+         bunchIds_.allocate(kSize_);
+      }
+      UTIL_CHECK(bunchIds_.capacity() == kSize_);
+      int begin, end, ib, iw;
+      for (ib = 0; ib < nBunch_; ++ib) {
+         begin = bunches[ib][0];
+         end = bunches[ib][1];
+         UTIL_CHECK(end > begin);
+         for (iw = begin; iw < end; ++iw) {
+            bunchIds_[sortedIds_[iw]] = ib;
+         }
+      }
+      UTIL_CHECK(end == kSize_);
+
+      isSorted_ = true;
    }
 
 }

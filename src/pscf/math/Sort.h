@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/containers/Pair.h>
 #include <vector>
 
 namespace Pscf {
@@ -23,6 +24,10 @@ namespace Pscf {
       /**
       * Struct with value and index, to keep track of permutation.
       *
+      * The sort function sorts Item objects in ascending order of
+      * the "value" member variable. The id member variable is an
+      * immutable integer identifier that is unchanged by sorting.
+      *
       * \ingroup Pscf_Math_Sort_Module
       */
       template <typename T>
@@ -31,15 +36,19 @@ namespace Pscf {
          int id;
       };
 
-      /**
-      * Bounds of a contiguous array slice.
+      /*
+      * A Bunch represents a slice of the sorted array of items.
+      *
+      * A Bunch is used to represent a contiguous slice of the sorted
+      * array of items produced by the Sort::sort function within which
+      * values are equal to within some tolerance. If x is a Bunch, then
+      * x[0] is the array index of the first element in a slice, and
+      * x[1] an integer is one greater than the index of the last element
+      * in that slice.
       *
       * \ingroup Pscf_Math_Sort_Module
       */
-      struct Slice {
-         int begin;
-         int end;
-      };
+      using Bunch = Util::Pair<int>;
 
       /**
       * Less than comparator for Item<T> objects.
@@ -71,14 +80,21 @@ namespace Pscf {
       * On entry, array "items" must be sorted on entry. The sort
       * function must thus normally be called before this.
       *
+      * On return, each element of array "bunches" contains the begin
+      * and end indices delimiting a "bunch" of contiguous items in 
+      * the sorted "items" array with equal value. Each item belongs 
+      * to one bunch, and each bunch contains one or more items. 
+      * Bunches are listed in order increasing beginning index, and 
+      * span the entire array.
+      *
       * \param items  sorted array of items
-      * \param bunches  array of slices of items with equal value
+      * \param bunches  array of bunches of items with equal value
       * \param epsilon  tolerance
       * \ingroup Pscf_Math_Sort_Module
       */
       template <typename T>
       void findBunches(std::vector< Item<T> > const & items,
-                       std::vector< Slice >& bunches,
+                       std::vector< Bunch >& bunches,
                        T epsilon);
 
 
@@ -89,11 +105,11 @@ namespace Pscf {
 
       extern template
       void findBunches<double>(std::vector< Item<double> > const &,
-                               std::vector< Slice >&, double);
+                               std::vector< Bunch >&, double);
 
       extern template
       void findBunches<float>(std::vector< Item<float> > const &,
-                              std::vector< Slice >&, float);
+                              std::vector< Bunch >&, float);
 
    } // namespace Sort
 

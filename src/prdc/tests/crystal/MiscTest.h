@@ -53,7 +53,7 @@ public:
       Mesh<3> kMesh(kDimensions);
 
       std::vector< Sort::Item<double> > items;
-      std::vector< Sort::Slice > bunches;
+      std::vector< Sort::Bunch > bunches;
       double epsilon = 1.0E-8;
       bool isRealField = true;
       sortWaves(cell, dimensions, items, bunches, epsilon, isRealField);
@@ -67,10 +67,10 @@ public:
       IntVec<3> position;
       itot = 0; 
       for (ib = 0; ib < nb; ++ib) {
-         begin = bunches[ib].begin;
-         end = bunches[ib].end;
+         begin = bunches[ib][0];
+         end = bunches[ib][1];
          if (ib > 0) {
-           TEST_ASSERT(begin == bunches[ib-1].end);
+           TEST_ASSERT(begin == bunches[ib-1][1]);
          }
          oldVal = items[begin].value;
          for (iw = begin; iw < end; ++iw) {
@@ -121,7 +121,7 @@ public:
       Mesh<3> kMesh(kDimensions);
 
       std::vector< Sort::Item<double> > items;
-      std::vector< Sort::Slice > bunches;
+      std::vector< Sort::Bunch > bunches;
       double epsilon = 1.0E-8;
       bool isRealField = false;
       sortWaves(cell, dimensions, items, bunches, epsilon, isRealField);
@@ -135,10 +135,10 @@ public:
       IntVec<3> position;
       itot = 0; 
       for (ib = 0; ib < nb; ++ib) {
-         begin = bunches[ib].begin;
-         end = bunches[ib].end;
+         begin = bunches[ib][0];
+         end = bunches[ib][1];
          if (ib > 0) {
-           TEST_ASSERT(begin == bunches[ib-1].end);
+           TEST_ASSERT(begin == bunches[ib-1][1]);
          }
          oldVal = items[begin].value;
          for (iw = begin; iw < end; ++iw) {

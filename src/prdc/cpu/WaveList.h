@@ -11,6 +11,7 @@
 #include <prdc/cpu/RField.h>           // member
 #include <pscf/math/IntVec.h>          // member
 #include <util/containers/DArray.h>    // member
+#include <util/containers/Pair.h>      // member
 
 // Forward declarations
 namespace Pscf {
@@ -129,6 +130,13 @@ namespace Cpu {
       */
       void computedKSq();
 
+      /**
+      * Sort waves in order of ascending wavevector norm.
+      *
+      * This function updates the sortedIds and bunchIds arrays.
+      */
+      void sortWaves();
+
       ///@}
       /// \name Data Access
       ///@{
@@ -196,6 +204,20 @@ namespace Cpu {
       DArray<bool> const & implicitInverse() const;
 
       /**
+      * Get the sortedIds array by reference.
+      *
+      * This method will throw an Exception if isSorted == false.
+      */
+      DArray<int> const & sortedIds() const;
+
+      /**
+      * Get the bunchIds array by reference.
+      *
+      * This method will throw an Exception if isSorted == false.
+      */
+      DArray<int> const & bunchIds() const;
+
+      /**
       * Return the dimensions of the k-grid mesh.
       * 
       * If isRealField() == true, the reciprocal-space grid is smaller 
@@ -212,6 +234,15 @@ namespace Cpu {
       */
       int kSize() const
       {  return kSize_; }
+
+      /**
+      * Return the number of bunches of sorted waves.
+      */
+      int nBunch() const
+      {
+         UTIL_CHECK(isSorted_);  
+         return nBunch_; 
+      }
 
       ///@}
       /// \name Boolean Queries
@@ -242,6 +273,12 @@ namespace Cpu {
       {  return hasdKSq_; }
 
       /**
+      * Are waves sorted ?
+      */
+      bool isSorted() const
+      {  return isSorted_; }
+
+      /**
       * Does this WaveList correspond to real-valued fields?
       */
       bool isRealField() const
@@ -251,17 +288,50 @@ namespace Cpu {
 
    private:
 
-      // Array containing minimum images for each wave.
+      /*
+      * Array indices for arrays minImages_, kSq_, dKSq_ implicitInverse_,
+      * and bunchIds_ correspond to ranks with the mesh with dimensions
+      * given by kMeshDimensions_.
+      */
+
+      /**
+      * Array of minimum images for each wave, indexed by wave rank.
+      */
       DArray< IntVec<D> > minImages_;
 
-      /// Values of square-magnitude of wavevectors.
+      /**
+      * Array of square-magnitude values for wavevectors.
+      */
       RField<D> kSq_;
 
-      /// Derivatives of kSq_ with respect to lattice parameters.
+      /**
+      * Derivatives of kSq_ with respect to lattice parameters.
+      *
+      * Element kSq_[i][j] is the derivative of kSq_[j] with respect to
+      * lattice parameter i. 
+      */
       DArray< RField<D> > dKSq_;
 
-      /// Array indicating whether a given gridpoint has an implicit partner
+      /**
+      * Array indicating whether a given gridpoint has an implicit partner.
+      * 
+      * This array is allocated and used only if isRealField == true.
+      */
       DArray<bool> implicitInverse_;
+
+      /**
+      * Wavevector ranks, sorted in ascending wavevector magnitude.
+      *
+      * For i > j, kSq_[sortedIds_[i]] >= kSq_[sortedIds_[j]]. 
+      */
+      DArray<int> sortedIds_;
+
+      /**
+      * Array of indices of bunches to which each wave belongs.
+      *
+      * If bunchIds_[i] == bunchIds_[j], then kSq_[i] == kSq_[j].
+      */
+      DArray<int> bunchIds_;
 
       /**
       * Dimensions of the mesh in reciprocal space.
@@ -281,6 +351,11 @@ namespace Cpu {
       */
       int kSize_;
 
+      /**
+      * Number of distinct wavevector magnitudes.
+      */
+      int nBunch_;
+
       /// Has memory been allocated for arrays?
       bool isAllocated_;
 
@@ -292,6 +367,9 @@ namespace Cpu {
 
       /// Has the dKSq array been computed?
       bool hasdKSq_;
+
+      /// Have the waves been sorted by magnitude?
+      bool isSorted_;
 
       /// Will this WaveList be used for real-valued fields?
       bool isRealField_;
@@ -339,7 +417,7 @@ namespace Cpu {
       return dKSq_[i];
    }
 
-   // Get entire dKSq container.
+   // Get entire dKSq container by const reference.
    template <int D>
    inline
    DArray< RField<D> > const & WaveList<D>::dKSq() const
@@ -348,7 +426,7 @@ namespace Cpu {
       return dKSq_;
    }
 
-   // Get the implicitInverse array by reference.
+   // Get the implicitInverse array by const reference.
    template <int D>
    inline
    DArray<bool> const & WaveList<D>::implicitInverse() const
@@ -356,6 +434,26 @@ namespace Cpu {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);
       return implicitInverse_;
+   }
+
+   // Get the sortedIds array by const reference.
+   template <int D>
+   inline
+   DArray<int> const & WaveList<D>::sortedIds() const
+   {
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(isSorted_);
+      return sortedIds_;
+   }
+
+   // Get the bunchIds array by const reference.
+   template <int D>
+   inline
+   DArray<int> const & WaveList<D>::bunchIds() const
+   {
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(isSorted_);
+      return bunchIds_;
    }
 
    // Explicit instantiation declarations

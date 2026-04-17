@@ -42,9 +42,9 @@ namespace Prdc {
    * while these items are now sorted in order of increasing wavevector
    * norm.
    *
-   * Element i of array "bunches" is a Sort::Slice objects for which 
-   * elements of the items array with indices between bunches[i].begin 
-   * and (bunches[i].end - 1) have equal norms. Every bunch has one or
+   * Element i of array "bunches" is a Sort::Bunch objects for which 
+   * elements of the items array with indices between bunches[i][0]
+   * and (bunches[i][1] - 1) have equal norms. Every bunch has one or
    * more associated wavevectors, and every wavevector belongs to a
    * unique bunch. 
    *
@@ -61,7 +61,7 @@ namespace Prdc {
    void sortWaves(UnitCell<D> const & cell,
                   IntVec<D> const & dimensions,
                   std::vector< Sort::Item<double> >& items,
-                  std::vector< Sort::Slice >& bunches,
+                  std::vector< Sort::Bunch >& bunches,
                   double epsilon,
                   bool isRealField = true);
 
@@ -69,17 +69,17 @@ namespace Prdc {
    extern template 
    void sortWaves<1>(UnitCell<1> const &, IntVec<1> const &, 
                      std::vector< Sort::Item<double> >& , 
-                     std::vector< Sort::Slice >& , double, bool);
+                     std::vector< Sort::Bunch >& , double, bool);
 
    extern template 
    void sortWaves<2>(UnitCell<2> const &, IntVec<2> const &, 
                      std::vector< Sort::Item<double> >& , 
-                     std::vector< Sort::Slice >& , double, bool);
+                     std::vector< Sort::Bunch >& , double, bool);
 
    extern template 
    void sortWaves<3>(UnitCell<3> const &, IntVec<3> const &, 
                      std::vector< Sort::Item<double> >& , 
-                     std::vector< Sort::Slice >& , double, bool);
+                     std::vector< Sort::Bunch >& , double, bool);
 
 }
 }

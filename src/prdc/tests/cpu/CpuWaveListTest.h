@@ -425,6 +425,61 @@ public:
       }
    }
 
+   void testSortWaves3D()
+   {
+      printMethod(TEST_FUNC);
+
+      // Set up unit cell with no flexible angles
+      // (if there are flexible angles, computeKSq never gets to run,
+      //  because computeMinimumImages is always called instead.)
+      UnitCell<3> cell;
+      std::ifstream in;
+      openInputFile("in/Hexagonal", in);
+      in >> cell;
+
+      // Set up wavelist object
+      Cpu::WaveList<3> wavelist;
+      wavelist.allocate(mesh3, cell);
+
+      // Compute kSq 
+      wavelist.computeMinimumImages(); 
+      wavelist.computeKSq(); 
+      Cpu::RField<3> const & ksq = wavelist.kSq();
+      int kSize = wavelist.kSize();
+      TEST_ASSERT(kSize > 0);
+
+      wavelist.sortWaves();
+      int nBunch = wavelist.nBunch(); 
+     
+      // Test sortedIds 
+      DArray<int> const & sortedIds = wavelist.sortedIds();
+      for (int i = 1; i < kSize; ++i) {
+         TEST_ASSERT(ksq[sortedIds[i]] >= ksq[sortedIds[i-1]]);
+      }
+
+      // Test bunchIds
+      TEST_ASSERT(nBunch > 0);
+      DArray<int> const & bunchIds = wavelist.bunchIds();
+      TEST_ASSERT(bunchIds.capacity() == kSize);
+      DArray<double> oldVal(nBunch);
+      DArray<bool> found(nBunch);
+      int ib, iw;
+      double newVal;
+      for (ib = 0; ib < nBunch; ++ib) {
+         found[ib] = false;
+      }
+      for (iw = 0; iw < kSize; ++iw) {
+         newVal = ksq[iw];
+         ib = bunchIds[iw];
+         if (!found[ib]) {
+            oldVal[ib] = newVal;
+            found[ib] = true;
+         } else {
+            TEST_ASSERT(std::abs(newVal - oldVal[ib]) < 2.0E-8);
+         }
+      }
+   }
+
    void testComplex()
    {
       printMethod(TEST_FUNC);
@@ -478,6 +533,7 @@ TEST_ADD(CpuWaveListTest, testComputeKSq3D)
 TEST_ADD(CpuWaveListTest, testComputedKSq1D)
 TEST_ADD(CpuWaveListTest, testComputedKSq2D)
 TEST_ADD(CpuWaveListTest, testComputedKSq3D)
+TEST_ADD(CpuWaveListTest, testSortWaves3D)
 TEST_ADD(CpuWaveListTest, testComplex)
 TEST_END(CpuWaveListTest)
 
