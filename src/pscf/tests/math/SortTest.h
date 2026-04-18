@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/math/Sort.h>
+#include <util/containers/GArray.h>
 
 #include <vector>
 #include <iostream>
@@ -17,7 +18,7 @@ class SortTest : public UnitTest
 private:
 
    std::vector< Sort::Item<double> > items;
-   std::vector< Sort::Bunch > bunches;
+   GArray< Sort::Bunch > bunches;
    int n;
    
 public:
