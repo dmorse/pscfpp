@@ -9,9 +9,12 @@
 */
 
 #include <util/containers/Pair.h>
+#include <util/containers/GArray.h>
 #include <vector>
 
 namespace Pscf {
+
+   using namespace Util;
 
    /**
    * Utilities for sorting real values.
@@ -48,7 +51,7 @@ namespace Pscf {
       *
       * \ingroup Pscf_Math_Sort_Module
       */
-      using Bunch = Util::Pair<int>;
+      using Bunch = Pair<int>;
 
       /**
       * Less than comparator for Item<T> objects.
@@ -77,8 +80,8 @@ namespace Pscf {
       /**
       * Identify "bunches" of equal values within a sorted vector.
       *
-      * On entry, array "items" must be sorted on entry. The sort
-      * function must thus normally be called before this.
+      * The array "items" must be sorted on entry to this function. 
+      * The "sort" function is thus called before this.
       *
       * On return, each element of array "bunches" contains the begin
       * and end indices delimiting a "bunch" of contiguous items in 
@@ -97,6 +100,29 @@ namespace Pscf {
                        std::vector< Bunch >& bunches,
                        T epsilon);
 
+      /**
+      * Identify "bunches" of equal values within a sorted vector.
+      *
+      * The array "items" must be sorted on entry to this function. 
+      * The "sort" function is thus called before this.
+      *
+      * On return, each element of array "bunches" contains the begin
+      * and end indices delimiting a "bunch" of contiguous items in 
+      * the sorted "items" array with equal value. Each item belongs 
+      * to one bunch, and each bunch contains one or more items. 
+      * Bunches are listed in order increasing beginning index, and 
+      * span the entire array.
+      *
+      * \param items  sorted array of items
+      * \param bunches  array of bunches of items with equal value
+      * \param epsilon  tolerance
+      * \ingroup Pscf_Math_Sort_Module
+      */
+      template <typename T>
+      void findBunches(std::vector< Item<T> > const & items,
+                       GArray< Bunch >& bunches,
+                       T epsilon);
+
 
       // Explicit instantiation declarations
 
@@ -110,6 +136,14 @@ namespace Pscf {
       extern template
       void findBunches<float>(std::vector< Item<float> > const &,
                               std::vector< Bunch >&, float);
+
+      extern template
+      void findBunches<double>(std::vector< Item<double> > const &,
+                               GArray< Bunch >&, double);
+
+      extern template
+      void findBunches<float>(std::vector< Item<float> > const &,
+                              GArray< Bunch >&, float);
 
    } // namespace Sort
 

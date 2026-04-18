@@ -110,6 +110,8 @@ namespace Cpu {
       hasdKSq_ = false;
       if (unitCell().nParameter() > 1) {
          isSorted_ = false;
+         sortedBunches_.clear();
+         nBunch_ = 0;
       }
       if (hasVariableAngle<D>(unitCell().lattice())) {
          hasMinImages_ = false;
@@ -223,10 +225,8 @@ namespace Cpu {
          computeKSq();
       }
 
+      // Construct sorted array of items 
       std::vector< Sort::Item<double> > items;
-      std::vector< Sort::Bunch > bunches;
-
-      // Sort wavevector items by magnitude
       Sort::Item<double> item;
       for (int i = 0; i < kSize_; ++i) {
          item.value = kSq_[i];
@@ -245,13 +245,13 @@ namespace Cpu {
          sortedIds_[i] = items[i].id;
       }
 
-      // Identify bunches of waves with equal magnitude
+      // Construct sortedBunches_ array and set nBunch_
       double epsilon = 1.0E-8;
-      bunches.clear();
-      Sort::findBunches(items, bunches, epsilon);
+      sortedBunches_.clear();
+      Sort::findBunches(items, sortedBunches_, epsilon);
+      nBunch_ = sortedBunches_.size();
 
       // Fill bunchIds_ array
-      nBunch_ = bunches.size();
       UTIL_CHECK(nBunch_ > 0);
       if (!bunchIds_.isAllocated()) {
          bunchIds_.allocate(kSize_);
@@ -259,8 +259,8 @@ namespace Cpu {
       UTIL_CHECK(bunchIds_.capacity() == kSize_);
       int begin, end, ib, iw;
       for (ib = 0; ib < nBunch_; ++ib) {
-         begin = bunches[ib][0];
-         end = bunches[ib][1];
+         begin = sortedBunches_[ib][0];
+         end = sortedBunches_[ib][1];
          UTIL_CHECK(end > begin);
          for (iw = begin; iw < end; ++iw) {
             bunchIds_[sortedIds_[iw]] = ib;

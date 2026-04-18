@@ -457,13 +457,34 @@ public:
          TEST_ASSERT(ksq[sortedIds[i]] >= ksq[sortedIds[i-1]]);
       }
 
+      // Test sortedBunches
+      double epsilon = 1.0E-8;
+      double value, beginValue;
+      int begin, end, size, ib, iw;
+      GArray< Pair<int> > const & sortedBunches = wavelist.sortedBunches();
+      for (ib = 0; ib < nBunch; ++ib) {
+         begin = sortedBunches[ib][0];
+         end = sortedBunches[ib][1];
+         size = end - begin;
+         value = ksq[sortedIds[begin]];
+         if (ib > 0) {
+            TEST_ASSERT(std::abs(value - beginValue) > epsilon);
+         }
+         beginValue = value;
+         if (size > 1) {
+            for (iw = begin + 1; iw < end; ++iw) {
+               value = ksq[sortedIds[iw]];
+               TEST_ASSERT(std::abs(value - beginValue) < 2.0*epsilon);
+            }
+         }
+      }
+
       // Test bunchIds
       TEST_ASSERT(nBunch > 0);
       DArray<int> const & bunchIds = wavelist.bunchIds();
       TEST_ASSERT(bunchIds.capacity() == kSize);
       DArray<double> oldVal(nBunch);
       DArray<bool> found(nBunch);
-      int ib, iw;
       double newVal;
       for (ib = 0; ib < nBunch; ++ib) {
          found[ib] = false;
