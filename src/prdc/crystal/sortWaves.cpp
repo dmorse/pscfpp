@@ -27,7 +27,7 @@ namespace Prdc {
    void sortWaves(UnitCell<D> const & cell,
                   IntVec<D> const & meshDimensions,
                   std::vector< Sort::Item<double> >& items,
-                  std::vector< Sort::Bunch >& bunches,
+                  GArray< Sort::Bunch >& bunches,
                   double epsilon,
                   bool isRealField)
    {
@@ -71,15 +71,15 @@ namespace Prdc {
    template
    void sortWaves<1>(UnitCell<1> const &, IntVec<1> const &,
                      std::vector< Sort::Item<double> >&,
-                     std::vector< Sort::Bunch >&, double, bool);
+                     GArray< Sort::Bunch >&, double, bool);
    template
    void sortWaves<2>(UnitCell<2> const &, IntVec<2> const &,
                      std::vector< Sort::Item<double> >&,
-                     std::vector< Sort::Bunch >&, double, bool);
+                     GArray< Sort::Bunch >&, double, bool);
    template
    void sortWaves<3>(UnitCell<3> const &, IntVec<3> const &,
                      std::vector< Sort::Item<double> >&,
-                     std::vector< Sort::Bunch >&, double, bool);
+                     GArray< Sort::Bunch >&, double, bool);
 
 }
 }

@@ -97,29 +97,6 @@ namespace Pscf {
       */
       template <typename T>
       void findBunches(std::vector< Item<T> > const & items,
-                       std::vector< Bunch >& bunches,
-                       T epsilon);
-
-      /**
-      * Identify "bunches" of equal values within a sorted vector.
-      *
-      * The array "items" must be sorted on entry to this function. 
-      * The "sort" function is thus called before this.
-      *
-      * On return, each element of array "bunches" contains the begin
-      * and end indices delimiting a "bunch" of contiguous items in 
-      * the sorted "items" array with equal value. Each item belongs 
-      * to one bunch, and each bunch contains one or more items. 
-      * Bunches are listed in order increasing beginning index, and 
-      * span the entire array.
-      *
-      * \param items  sorted array of items
-      * \param bunches  array of bunches of items with equal value
-      * \param epsilon  tolerance
-      * \ingroup Pscf_Math_Sort_Module
-      */
-      template <typename T>
-      void findBunches(std::vector< Item<T> > const & items,
                        GArray< Bunch >& bunches,
                        T epsilon);
 
@@ -128,14 +105,6 @@ namespace Pscf {
 
       extern template void sort<double>(std::vector< Item<double> >& );
       extern template void sort<float>(std::vector< Item<float> >& );
-
-      extern template
-      void findBunches<double>(std::vector< Item<double> > const &,
-                               std::vector< Bunch >&, double);
-
-      extern template
-      void findBunches<float>(std::vector< Item<float> > const &,
-                              std::vector< Bunch >&, float);
 
       extern template
       void findBunches<double>(std::vector< Item<double> > const &,

@@ -53,7 +53,7 @@ public:
       Mesh<3> kMesh(kDimensions);
 
       std::vector< Sort::Item<double> > items;
-      std::vector< Sort::Bunch > bunches;
+      GArray< Sort::Bunch > bunches;
       double epsilon = 1.0E-8;
       bool isRealField = true;
       sortWaves(cell, dimensions, items, bunches, epsilon, isRealField);
@@ -121,7 +121,7 @@ public:
       Mesh<3> kMesh(kDimensions);
 
       std::vector< Sort::Item<double> > items;
-      std::vector< Sort::Bunch > bunches;
+      GArray< Sort::Bunch > bunches;
       double epsilon = 1.0E-8;
       bool isRealField = false;
       sortWaves(cell, dimensions, items, bunches, epsilon, isRealField);
