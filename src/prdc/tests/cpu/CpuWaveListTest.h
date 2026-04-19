@@ -459,7 +459,8 @@ public:
 
       // Test sortedBunches
       double epsilon = 1.0E-8;
-      double value, beginValue;
+      double value = 0.0;
+      double beginValue = 0.0;
       int begin, end, size, ib, iw;
       GArray< Pair<int> > const & sortedBunches = wavelist.sortedBunches();
       for (ib = 0; ib < nBunch; ++ib) {

@@ -112,16 +112,23 @@ namespace Pscf {
       *
       * This function calls allocate(capacity) internally.
       *
-      * \param capacity number of elements to allocate
+      * \param capacity  number of elements to allocate
       */
       DeviceArray(int capacity);
 
       /**
       * Copy constructor.
       *
-      * \param other DeviceArray<Data> to be copied (input)
+      * \param other  DeviceArray<Data> to be copied (input)
       */
       DeviceArray(DeviceArray<Data> const & other);
+
+      /**
+      * Copy constructor, deep copy DArray<Data> from host to device.
+      *
+      * \param other  DArray<Data> to be copied (input)
+      */
+      DeviceArray(DArray<Data> const & other);
 
       /**
       * Destructor.
@@ -135,7 +142,7 @@ namespace Pscf {
       *
       * \throw Exception if the array is already allocated.
       *
-      * \param capacity number of elements to allocate.
+      * \param capacity  number of elements to allocate.
       */
       void allocate(int capacity);
 
@@ -368,6 +375,26 @@ namespace Pscf {
       cudaErrorCheck( cudaMemcpy(dataPtr_, other.cArray(),
                                  capacity_ * sizeof(Data),
                                  cudaMemcpyDeviceToDevice) );
+   }
+
+   /*
+   * Copy constructor, deep copy from host DArray<Data>
+   *
+   * Allocates new memory and copies all elements by value.
+   */
+   template <typename Data>
+   DeviceArray<Data>::DeviceArray(const DArray<Data>& other)
+    : dataPtr_(nullptr),
+      capacity_(0)
+   {
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other array must be allocated.");
+      }
+
+      allocate(other.capacity());
+      cudaErrorCheck( cudaMemcpy(dataPtr_, other.cArray(),
+                                 capacity_ * sizeof(Data),
+                                 cudaMemcpyHostToDevice) );
    }
 
    /*

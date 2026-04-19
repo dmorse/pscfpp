@@ -233,7 +233,7 @@ namespace Cpu {
          item.id = i;
          items.push_back(item);
       }
-      UTIL_CHECK(items.size() == kSize_);
+      UTIL_CHECK((int)items.size() == kSize_);
       Sort::sort(items);
 
       // Fill sortedIds_ array with ids

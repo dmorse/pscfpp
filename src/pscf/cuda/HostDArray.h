@@ -61,12 +61,14 @@ namespace Pscf {
       */
       HostDArray(int capacity);
 
+      HostDArray(HostDArray<Data> const & other) = default;
+
       /**
-      * Copy constructor. (Copies from any DArray or HostDArray).
+      * Copy constructor (copies from device to host).
       * 
-      * \param other DArray<Data> to be copied (input)
+      * \param other DeviceArray<Data> to be copied (input)
       */
-      HostDArray(DArray<Data> const & other);
+      HostDArray(DeviceArray<Data> const & other);
 
       /**
       * Destructor.
@@ -74,6 +76,8 @@ namespace Pscf {
       * Deletes underlying C array, if allocated previously.
       */
       virtual ~HostDArray();
+
+      HostDArray<Data>& operator = (HostDArray<Data> const & other) = default;
 
       /**
       * Assignment operator, assign from a DeviceArray<Data>.
@@ -93,7 +97,6 @@ namespace Pscf {
       *
       * \param other DeviceArray<Data>  array on RHS of assignment (input)
       */
-      virtual 
       HostDArray<Data>& operator = (DeviceArray<Data> const & other);
 
       /**
@@ -141,12 +144,22 @@ namespace Pscf {
    {  DArray<Data>::allocate(capacity); }
 
    /*
-   * Copy constructor. (Copies from any DArray or HostDArray).
+   * Copy constructor - deep copy DeviceArray from device to host.
    */
    template <typename Data>
-   HostDArray<Data>::HostDArray(const DArray<Data>& other)
-    : DArray<Data>(other) // Use DArray base class copy constructor
-   {}
+   HostDArray<Data>::HostDArray(const DeviceArray<Data>& other)
+    : DArray<Data>() 
+   {  
+      // Precondition - RHS array must be allocated
+      if (!other.isAllocated()) {
+         UTIL_THROW("RHS DeviceArray<Data> must be allocated.");
+      }
+
+      DArray<Data>::allocate(other.capacity());
+      cudaErrorCheck( cudaMemcpy(DArray<Data>::cArray(), other.cArray(), 
+                                 DArray<Data>::capacity() * sizeof(Data), 
+                                 cudaMemcpyDeviceToHost) );
+   }
 
    /*
    * Destructor.

@@ -9,7 +9,6 @@ include $(SRC_DIR)/rpg/fts/trajectory/sources.mk
 include $(SRC_DIR)/rpg/fts/analyzer/sources.mk
 
 rpg_fts_= \
-  rpg/fts/VecOpFts.cu \
   $(rpg_fts_simulator_) \
   $(rpg_fts_compressor_) \
   $(rpg_fts_montecarlo_) \

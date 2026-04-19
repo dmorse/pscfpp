@@ -426,6 +426,83 @@ public:
       }
    }
 
+   void testSortWaves3D()
+   {
+      printMethod(TEST_FUNC);
+
+      // Set up unit cell with no flexible angles
+      // (if there are flexible angles, computeKSq never gets to run,
+      //  because computeMinimumImages is always called instead.)
+      UnitCell<3> cell;
+      std::ifstream in;
+      openInputFile("in/Hexagonal", in);
+      in >> cell;
+
+      // Set up wavelist object
+      Cuda::WaveList<3> wavelist;
+      wavelist.allocate(mesh3, cell);
+
+      // Compute kSq 
+      wavelist.computeMinimumImages(); 
+      wavelist.computeKSq(); 
+      int kSize = wavelist.kSize();
+      TEST_ASSERT(kSize > 0);
+      HostDArray<cudaReal> const & ksq = wavelist.kSq();
+
+      wavelist.sortWaves();
+      int nBunch = wavelist.nBunch(); 
+     
+      // Test sortedIds 
+      DArray<int> const & sortedIds = wavelist.sortedIds();
+      for (int i = 1; i < kSize; ++i) {
+         TEST_ASSERT(ksq[sortedIds[i]] >= ksq[sortedIds[i-1]]);
+      }
+
+      // Test sortedBunches
+      double epsilon = 1.0E-8;
+      double value = 0.0;
+      double beginValue = 0.0;
+      int begin, end, size, ib, iw;
+      GArray< Pair<int> > const & sortedBunches = wavelist.sortedBunches();
+      for (ib = 0; ib < nBunch; ++ib) {
+         begin = sortedBunches[ib][0];
+         end = sortedBunches[ib][1];
+         size = end - begin;
+         value = ksq[sortedIds[begin]];
+         if (ib > 0) {
+            TEST_ASSERT(std::abs(value - beginValue) > epsilon);
+         }
+         beginValue = value;
+         if (size > 1) {
+            for (iw = begin + 1; iw < end; ++iw) {
+               value = ksq[sortedIds[iw]];
+               TEST_ASSERT(std::abs(value - beginValue) < 2.0*epsilon);
+            }
+         }
+      }
+
+      // Test bunchIds
+      TEST_ASSERT(nBunch > 0);
+      DArray<int> const & bunchIds = wavelist.bunchIds();
+      TEST_ASSERT(bunchIds.capacity() == kSize);
+      DArray<double> oldVal(nBunch);
+      DArray<bool> found(nBunch);
+      double newVal;
+      for (ib = 0; ib < nBunch; ++ib) {
+         found[ib] = false;
+      }
+      for (iw = 0; iw < kSize; ++iw) {
+         newVal = ksq[iw];
+         ib = bunchIds[iw];
+         if (!found[ib]) {
+            oldVal[ib] = newVal;
+            found[ib] = true;
+         } else {
+            TEST_ASSERT(std::abs(newVal - oldVal[ib]) < 2.0E-8);
+         }
+      }
+   }
+
    void testComplex()
    {
       printMethod(TEST_FUNC);
@@ -490,6 +567,7 @@ TEST_ADD(CudaWaveListTest, testComputeKSq3D)
 TEST_ADD(CudaWaveListTest, testComputedKSq1D)
 TEST_ADD(CudaWaveListTest, testComputedKSq2D)
 TEST_ADD(CudaWaveListTest, testComputedKSq3D)
+TEST_ADD(CudaWaveListTest, testSortWaves3D)
 TEST_ADD(CudaWaveListTest, testComplex)
 TEST_END(CudaWaveListTest)
 

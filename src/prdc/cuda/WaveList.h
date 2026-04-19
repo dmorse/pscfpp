@@ -13,6 +13,8 @@
 #include <pscf/cuda/HostDArray.h>    // member
 #include <pscf/math/IntVec.h>        // member
 #include <util/containers/DArray.h>  // member
+#include <util/containers/GArray.h>  // member
+#include <util/containers/Pair.h>    // member
 
 // Forward declarations
 namespace Pscf {
@@ -31,24 +33,34 @@ namespace Cuda {
    /**
    * Class to compute and store properties associated with wavevectors.
    *
-   * A WaveList computes and stores minimum images of wavevectors,
-   * square norms of wavevectors (kSq), and derivatives of the square
-   * norms with respect to the unit cell parameters (dKSq).
-   *
-   * Any time the lattice parameters change the clearUnitCellData() method
-   * should be called. This function sets internal flags that mark some
-   * properties as outdated, indicating that they should be recalculated
-   * before the next use. 
+   * A WaveList computes and stores minimum images of wavevectors, square
+   * norms of wavevectors (kSq), and derivatives of the square norms with
+   * respect to the unit cell parameters (dKSq). A WaveList can also be 
+   * used to sort wavevectors in order of increasing wavevector norm.
    *
    * A WaveList computes these properties for a mesh of grid points in
-   * k-space. If a calculation only involves real-valued fields, PSCF
-   * uses a reduced-size k-space mesh, as output by cuFFT for the
-   * result of a real-to-complex discrete Fourier transform. However, a
-   * full-sized k-space mesh (the same size as the real-space mesh) is
-   * necessary when dealing with complex-valued fields. The choice of
-   * which k-space mesh is used by a WaveList object is determined by 
-   * the bool parameter isRealField that is passed to the constructor, 
-   * which cannot be changed after construction.
+   * k-space. Different dimensions are used for this mesh depending on the
+   * value of the parameter isRealField that is passed to constructor. This
+   * parameter specifies whether this class will use a k-space mesh designed
+   * for real or complex fields throughout the lifetime of this WaveList 
+   * object. If isRealField == true, this class uses the k-space mesh used 
+   * by FFTW for the result of a real-to-complex discrete Fourier transform, 
+   * which is contains slightly more than half the number of grid points as 
+   * the corresponding real-space mesh. If isRealField == true, this class 
+   * uses a k-space mesh with dimensions that are the same as those of the 
+   * associated real-space mesh. The dimensions of this k-space mesh are
+   * returned as an IntVec<D> by member function kMeshDimensions().
+   *
+   * In most of the arrays constructed by this class, each element 
+   * corresponds to a wavevector in the associated k-space mesh, and the
+   * index of each element correspond to the rank of the associated 
+   * wavevector within that mesh. This applies to the arrays returned by
+   * the functions minImages(), kSq(), dkSq(int i), and bunchIds().
+   *
+   * Any time the lattice parameters change, the clearUnitCellData() method
+   * should be called. This function sets internal flags that mark some
+   * properties as being outdated, indicating that they are outdated and 
+   * thus must be recalculated before the next use.
    *
    * \ingroup Prdc_Cuda_Module
    */
@@ -131,6 +143,15 @@ namespace Cuda {
       */
       void computedKSq();
 
+      /**
+      * Sort waves in order of ascending wavevector norm.
+      *
+      * This function computes the sortedIds, sortedBunches, and bunchIds 
+      * arrays. Values of kSq are updated before sorting waves if hasKSq()
+      * is false on entry.
+      */
+      void sortWaves();
+
       ///@}
       /// \name Data Access
       ///@{ 
@@ -201,6 +222,42 @@ namespace Cuda {
       DeviceArray<bool> const & implicitInverse() const;
 
       /**
+      * Get the sortedIds array by reference.
+      *
+      * The array returned by this function contains k-grid rank indices
+      * of wavevectors sorted in order of increasing wavevector magnitude.
+      *
+      * This method throws an Exception if isSorted == false.
+      */
+      DArray<int> const & sortedIds() const;
+
+      /**
+      * Get the sortedBunches array by reference.
+      *
+      * Each element in this array contains a Pair<int> of two integers 
+      * that give upper and lower index bounds of a contiguous slice
+      * (a "bunch") that contains ids of wavevectors of equal magnitude.
+      * The first value in such a pair is the array index in sortIds_ of 
+      * the first element of such bunch, and the second is one greater 
+      * than the index of the last element in that bunch.
+      *
+      * This method throws an Exception if isSorted == false.
+      */
+      GArray< Pair<int> > const & sortedBunches() const;
+
+      /**
+      * Get the bunchIds array by reference.
+      *
+      * This function returns an array, indexed by wave rank, in which
+      * the value is the integer identifier of a bunch to which the wave
+      * belongs. Each such value corresponds to an array index of the
+      * corresponding bunch in the sortedBunches array.
+      *
+      * This method throws an Exception if isSorted == false.
+      */
+      DArray<int> const & bunchIds() const;
+
+      /**
       * Return the dimensions of the k-space mesh.
       *
       * If isRealField() == true, the reciprocal-space grid is smaller
@@ -218,6 +275,15 @@ namespace Cuda {
       */
       int kSize() const
       {  return kSize_; }
+
+      /**
+      * Return the number of bunches of sorted waves.
+      */
+      int nBunch() const
+      {
+         UTIL_CHECK(isSorted_);  
+         return nBunch_; 
+      }
 
       ///@}
       /// \name Boolean Queries
@@ -246,6 +312,12 @@ namespace Cuda {
       */
       bool hasdKSq() const
       {  return hasdKSq_; }
+
+      /**
+      * Are waves sorted ?
+      */
+      bool isSorted() const
+      {  return isSorted_; }
 
       /**
       * Does this WaveList correspond to real-valued fields?
@@ -324,6 +396,36 @@ namespace Cuda {
       DeviceArray<bool> implicitInverse_;
 
       /**
+      * Wavevector ranks, sorted in ascending wavevector magnitude.
+      *
+      * For i > j, kSq_[sortedIds_[i]] >= kSq_[sortedIds_[j]]. 
+      */
+      DArray<int> sortedIds_;
+
+      /**
+      * Bounds of "bunches" of wavevectors of equal norm in sortedIds_.
+      *
+      * Each element contains a pair of integers that give bounds of a
+      * slice of the array sortedIds_ that contains ids for wavevectors
+      * of equal magnitude. The first value in each pair is the index
+      * within sortedIds_ of the first element in such a "bunch" and 
+      * the second is one greater than the index of the last element 
+      * in that bunch.
+      */
+      GArray< Pair<int> > sortedBunches_;
+
+      /**
+      * Array containing ids of bunches to which each wave belongs.
+      *
+      * The value of element j is the integer identifier of a "bunch"
+      * to which wave j belongs. Each such value corresponds to the
+      * array index of that bunch in the sortedBunches_ array.
+      *
+      * If bunchIds_[i] == bunchIds_[j], then kSq_[i] == kSq_[j].
+      */
+      DArray<int> bunchIds_;
+
+      /**
       * Dimensions of the mesh in reciprocal space.
       *
       * If isRealField_ is true, kMeshDimensions_ is equal to the vector
@@ -347,6 +449,11 @@ namespace Cuda {
       */
       int kSize_;
 
+      /**
+      * Number of distinct wavevector magnitudes.
+      */
+      int nBunch_;
+
       /// Has memory been allocated for private member arrays?
       bool isAllocated_;
 
@@ -362,6 +469,9 @@ namespace Cuda {
 
       /// Do valid values of dKSq_ exist ?
       bool hasdKSq_;
+
+      /// Have the waves been sorted by magnitude?
+      bool isSorted_;
 
       /// Will this WaveList be used for real-valued fields?
       bool isRealField_;
@@ -415,6 +525,33 @@ namespace Cuda {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);
       return implicitInverse_;
+   }
+
+   // Get the sortedIds array by const reference.
+   template <int D>
+   inline
+   DArray<int> const & WaveList<D>::sortedIds() const
+   {
+      UTIL_CHECK(isSorted_);
+      return sortedIds_;
+   }
+
+   // Get the sortedBunches array by const reference.
+   template <int D>
+   inline
+   GArray< Pair<int> > const & WaveList<D>::sortedBunches() const
+   {
+      UTIL_CHECK(isSorted_);
+      return sortedBunches_;
+   }
+
+   // Get the bunchIds array by const reference.
+   template <int D>
+   inline
+   DArray<int> const & WaveList<D>::bunchIds() const
+   {
+      UTIL_CHECK(isSorted_);
+      return bunchIds_;
    }
 
    #ifndef PRDC_CUDA_WAVE_LIST_TPP
