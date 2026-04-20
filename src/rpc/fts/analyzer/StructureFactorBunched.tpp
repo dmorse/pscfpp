@@ -17,7 +17,6 @@
 
 #include <util/param/ParamComposite.h>
 #include <util/misc/FileMaster.h>
-//#include <util/misc/ioUtil.h>
 #include <util/format/Dbl.h>
 #include <util/global.h>
 
@@ -33,15 +32,19 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   StructureFactorBunched<D>::StructureFactorBunched(Simulator<D>& simulator,
-                                         System<D>& system)
+   StructureFactorBunched<D>::StructureFactorBunched(
+                                       Simulator<D>& simulator,
+                                       System<D>& system)
     : Analyzer<D>(simulator, system),
       kMeshDimensions_(0),
       kSize_(0),
       nBunch_(0),
       nSamplePerBlock_(1),
       isInitialized_(false)
-   {  ParamComposite::setClassName("StructureFactorBunched"); }
+   {  
+      ParamComposite::setClassName("StructureFactorBunched"); 
+      AnalyzerT::setFileMaster(system.fileMaster());
+   }
 
    /*
    * Read parameters from file, and allocate memory.
@@ -66,51 +69,59 @@ namespace Rpc {
    {
       UTIL_CHECK(isInitialized_);
 
-      // Compute Fourier space kMeshDimensions_ and kSize_
+      // Store and/or compute mesh dimensions
       IntVec<D> const & rMeshDimensions = system().domain().mesh().dimensions();
+      int const & rSize = system().domain().mesh().size();
       FFT<D>::computeKMesh(rMeshDimensions, kMeshDimensions_, kSize_);
 
-      // If needed, allocate arrays indexed by wave id
+      // As needed, allocate arrays indexed by wave id
       if (!wm_.isAllocated()){
          wm_.allocate(rMeshDimensions);
          wk_.allocate(rMeshDimensions);
          bunchIds_.allocate(kSize_);
          weights_.allocate(kSize_);
-         values_.allocate(kSize_);
       }
-      UTIL_CHECK(wm_.capacity() == kSize_);
+      UTIL_CHECK(wm_.capacity() == rSize);
       UTIL_CHECK(wk_.capacity() == kSize_);
       UTIL_CHECK(bunchIds_.capacity() == kSize_);
       UTIL_CHECK(weights_.capacity() == kSize_);
-      UTIL_CHECK(values_.capacity() == kSize_);
 
       // Sort waves and set nBunch
       system().waveList().sortWaves();
       nBunch_ = system().waveList().nBunch();
 
-      // If needed, allocate arrays indexed by bunch id
+      // As needed, allocate arrays indexed by bunch id
       if (accumulators_.isAllocated()) {
-         UTIL_CHECK(accumulators_.capacity() == wavenumbers_.capacity());
+         int const m = accumulators_.capacity();
+         UTIL_CHECK(wavenumbers_.capacity() == m);
+         UTIL_CHECK(values_.capacity() == m);
          if (accumulators_.capacity() < nBunch_) {
             accumulators_.deallocate();
             wavenumbers_.deallocate();
+            values_.deallocate();
          }
       }
       if (!accumulators_.isAllocated()) {
          UTIL_CHECK(!wavenumbers_.isAllocated());
          accumulators_.allocate(nBunch_);
          wavenumbers_.allocate(nBunch_);
+         values_.allocate(nBunch_);
       }
       int n = accumulators_.capacity();
       UTIL_CHECK(wavenumbers_.capacity() == n);
+      UTIL_CHECK(values_.capacity() == n);
       UTIL_CHECK(n >= nBunch_);
 
-      // Initialize accumulators
+      // Initialize arrays
       int ib;
       for (ib = 0; ib < n; ++ib) {
          accumulators_[ib].setNSamplePerBlock(nSamplePerBlock_);
          accumulators_[ib].clear();
          wavenumbers_[ib] = 0.0;
+      }
+      int iw;
+      for (iw = 0; iw < kSize_; ++iw) {
+         weights_[iw] = 0.0;
       }
 
       // Initialize bunchIds_, weights_, and wavenumbers_
@@ -120,13 +131,17 @@ namespace Rpc {
       GArray< Pair<int> > const & bunches = waveList.sortedBunches();
       Array<bool> const & implicit = waveList.implicitInverse();
       double wavenumberSq, count, sum, tot;
-      int begin, end, iw, k;
+      int begin, end, k;
       for (ib = 0; ib < nBunch_; ++ib) {
          begin = bunches[ib][0];
          end = bunches[ib][1];
-         wavenumberSq = kSq[begin];
+         iw = sortedIds[begin];
+         wavenumberSq = kSq[iw];
          UTIL_CHECK(wavenumberSq >= 0.0);       
          wavenumbers_[ib] = std::sqrt(wavenumberSq);
+         //std::cout << std::endl << Int(ib)  << "  "
+         //          << Dbl(wavenumbers_[ib])
+         //          << Dbl(wavenumberSq);
          sum = 0.0;
          for (k = begin; k < end; ++k) {
             iw = sortedIds[k];
@@ -138,6 +153,8 @@ namespace Rpc {
             }
             weights_[iw] = count;
             sum += count;
+            //std::cout << std::endl << waveList.minImages()[iw]
+            //          << Dbl(kSq[iw]);
          }
          tot = 0.0;
          for (k = begin; k < end; ++k) {
@@ -145,7 +162,7 @@ namespace Rpc {
             weights_[iw] /= sum;
             tot += weights_[iw];
          }
-         UTIL_CHECK(std::abs(tot - 1.0) < 1.0E-6);
+         UTIL_CHECK(std::abs(tot - 1.0) < 1.0E-8);
       }
 
    }
@@ -184,18 +201,20 @@ namespace Rpc {
          double chi = system().interaction().chi(0,1);
          double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
          double b_ = 0.5 / (chi * vMonomer);
+         // double q;
 
-         // Pass square magnitudes of Fourier components to accumulators
-         double wr, wi, value;
+         // Compute structure factors
+         double wRl, wIm, value;
          for (int iw = 0; iw < kSize_; iw++) {
-            wr = wk_[iw][0];
-            wi = wk_[iw][1];
-            value = a_ * ( wr*wr + wi*wi ) - b_;
+            wRl = wk_[iw][0];
+            wIm = wk_[iw][1];
+            value = a_ * ( wRl*wRl + wIm*wIm );
+            value -= b_;
             ib = bunchIds_[iw];
             values_[ib] += weights_[iw] * value;
          }
 
-         // Pass bunch average values to accumulators
+         // Pass spherically averaged values to accumulators
          for (ib = 0; ib < nBunch_; ++ib) {
             accumulators_[ib].sample(values_[ib]);
          }

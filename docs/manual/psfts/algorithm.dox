@@ -356,6 +356,10 @@ on the class name.
   <li> \subpage rp_BinaryStructureFactorGrid_page "BinaryStructureFactorGrid":
        Compute the structure factor of a system with two monomer types.
        </li>
+  <li> \subpage rp_StructureFactorBunched_page "StructureFactorBunched":
+       Compute the spherically averaged structure factor of a system with 
+       two monomer types.
+       </li>
   <li> \subpage rp_MaxOrderParameter_page "MaxOrderParameter" :
        Compute an order parameter that is useful for identifying
        spontaneous phase transitions. </li>
