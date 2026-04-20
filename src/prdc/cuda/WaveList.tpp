@@ -483,7 +483,7 @@ namespace Cuda {
    * Allocate memory.
    *
    * This function allocates and construct implicitInverse_ if and
-   * only if isRealField.
+   * only if isRealField_ == true.
    */
    template <int D>
    void WaveList<D>::allocate(Mesh<D> const & m, UnitCell<D> const & c)
@@ -755,12 +755,16 @@ namespace Cuda {
    template <int D>
    void WaveList<D>::sortWaves()
    {
-      UTIL_CHECK(isAllocated_);
+      // If waves are already sorted, return immediately
+      if (isSorted_) return;
 
-      // Get values of kSq on host
+      // Compute wavenumbers if necessary
+      UTIL_CHECK(isAllocated_);
       if (!hasKSq_) {
          computeKSq();
       }
+
+      // Copy values of kSq to host
       HostDArray<cudaReal> kSq_h = kSq_;
 
       // Construct Sort::Item objects with value = kSq, id = wave id
@@ -791,7 +795,7 @@ namespace Cuda {
       Sort::findBunches(items, sortedBunches_, epsilon);
       nBunch_ = sortedBunches_.size();
 
-      // Fill bunchIds_ array
+      // Construct bunchIds_ array
       UTIL_CHECK(nBunch_ > 0);
       if (!bunchIds_.isAllocated()) {
          bunchIds_.allocate(kSize_);

@@ -27,7 +27,7 @@ namespace Rp {
 
    // Namespaces that may be used implicitly
    using namespace Util;
-   using namespace Pscf::Prdc; 
+   using namespace Pscf::Prdc;
 
    /**
    * Base class template for classes that represent a complete system.
@@ -36,27 +36,27 @@ namespace Rp {
    *
    *    D - integer dimensionality of space (D=1, 2, or 3)
    *    T - "Types" class collection of aliases for other classes
-   * 
+   *
    * <b> Usage </b>: A specialization of Rp::System\<D, T\> is used as a
-   * base class for each System\<D\> class defined in namespaces Rpc and 
-   * Rpg, for D=1, 2, or 3.  In this use, template parameter T is taken 
-   * to be an instance of a class template named Types that is defined in 
-   * each of these two program-level namespaces. For example, in the Rpc 
-   * namespace, for each value of D, class Rpc::System\<D\> is derived 
-   * from the class Prdc::System\< D, Rpc::Types\<D\> >. For each such 
-   * specialization, class Types\<D\> defines a set of typename aliases 
-   * for classes used in the relevant program-level namespace, for the 
-   * specified value of D.  For example, for each value of D, the typename 
+   * base class for each System\<D\> class defined in namespaces Rpc and
+   * Rpg, for D=1, 2, or 3.  In this use, template parameter T is taken
+   * to be an instance of a class template named Types that is defined in
+   * each of these two program-level namespaces. For example, in the Rpc
+   * namespace, for each value of D, class Rpc::System\<D\> is derived
+   * from the class Prdc::System\< D, Rpc::Types\<D\> >. For each such
+   * specialization, class Types\<D\> defines a set of typename aliases
+   * for classes used in the relevant program-level namespace, for the
+   * specified value of D.  For example, for each value of D, the typename
    * Rpc::Types\<D\>::Mixture is an alias for the type Rpc::Mixture<D>
-   * used to represent a mixture in the Rpc namespace for systems of 
+   * used to represent a mixture in the Rpc namespace for systems of
    * dimension D. See the definitions of Rpc::Types and Rpg::Types (files
-   * src/rpc/system/Types.h and src/rpg/system/Types.h) for lists of all 
+   * src/rpc/system/Types.h and src/rpg/system/Types.h) for lists of all
    * of the typenames defined in each these class templates.
    *
-   * In the remainder of this documentation for the Rp::System template, 
-   * unqualified names such as "Mixture", "Iterator", etc. are used 
-   * as shorthand for typename aliases such as T::Mixture or T::Iterator 
-   * that are defined in the types class T (i.e., in Rpc::Types\<D\> or 
+   * In the remainder of this documentation for the Rp::System template,
+   * unqualified names such as "Mixture", "Iterator", etc. are used
+   * as shorthand for typename aliases such as T::Mixture or T::Iterator
+   * that are defined in the types class T (i.e., in Rpc::Types\<D\> or
    * Rpg::Types\<D\>), which are aliases for class names such as
    * Rpc::Mixture<D> or Rpg::Iterator<D>.
    *
@@ -71,9 +71,9 @@ namespace Rp {
    *    - a WFields container of external (h) fields
    *    - a Mask field that defines an inhomogeneous density constraint
    *
-   * The container of external fields and the Mask are only needed 
-   * to describe systems that are subjected to inhomgeneous imposed 
-   * environments (such as in thin films) and are otherwise left empty 
+   * The container of external fields and the Mask are only needed
+   * to describe systems that are subjected to inhomgeneous imposed
+   * environments (such as in thin films) and are otherwise left empty
    * and unused. The bool h().hasData() and mask().hasData() functions
    * may be queried to determine if these components are in use.
    *
@@ -87,17 +87,17 @@ namespace Rp {
    * Each optional component is constructed if and only if the parameter
    * file contains a corresponding optional parameter file block. The
    * %Environment is only used to generate external and mask fields to
-   * describe inhomogeneous environments, and is omitted in standard 
-   * calculations for structures formed in a homogeneous environment. 
+   * describe inhomogeneous environments, and is omitted in standard
+   * calculations for structures formed in a homogeneous environment.
    * An Iterator is only used for SCFT calculations. A Sweep is only
    * used for "sweep" calculations that solve a sequence of SCFT problems
-   * along a path through parameter space.  A Simulator is only used for 
-   * PS-FTS calculations, for, i.e., field theoretic simulations based on 
+   * along a path through parameter space.  A Simulator is only used for
+   * PS-FTS calculations, for, i.e., field theoretic simulations based on
    * a partial saddle-point approximation. The Iterator and Sweep objects
    * may thus be omitted for PS-FTS calculations, while the Simulator
-   * object may be omitted for SCFT calculations. The hasEnvironment(), 
-   * hasIterator(), hasSweep(), and hasSimulator() member functions may 
-   * be queried after processing of the parameter file to determine 
+   * object may be omitted for SCFT calculations. The hasEnvironment(),
+   * hasIterator(), hasSweep(), and hasSimulator() member functions may
+   * be queried after processing of the parameter file to determine
    * which of these optional components have been constructed.
    *
    * See also:
@@ -131,17 +131,17 @@ namespace Rp {
       /**
       * Constructor.
       *
-      * When a specialization of System<D,T> is used as a base class for 
+      * When a specialization of System<D,T> is used as a base class for
       * a subclass defined in the Rpc or Rpg program-level namespace,
-      * such as Rpc::System\<D\>, the typename T::System is an alias for 
+      * such as Rpc::System\<D\>, the typename T::System is an alias for
       * the name of the subclass defined in Rpc or Rpg. In the constructor
       * for such a subclass, the associated instance of the subclass must
       * be passed to the Rp::System<D,T> base class constructor as *this,
-      * and the address of this T::System subclass instance is retained in 
-      * the Rp::System base class instance by a private member variable 
-      * named systemPtr_ that is of type T::System*.  See definitions of 
-      * the constructors for the Rpc::System and Rpc::System class 
-      * templates for examples of this usage. 
+      * and the address of this T::System subclass instance is retained in
+      * the Rp::System base class instance by a private member variable
+      * named systemPtr_ that is of type T::System*.  See definitions of
+      * the constructors for the Rpc::System and Rpc::System class
+      * templates for examples of this usage.
       *
       * \param system  instance of System subclass
       */
@@ -158,7 +158,7 @@ namespace Rp {
       System<D,T>& operator = (System<D,T> const & ) = delete;
 
       ///@}
-      /// \name Lifetime Actions 
+      /// \name Lifetime Actions
       ///@{
 
       /**
@@ -230,7 +230,7 @@ namespace Rp {
       * energy or grand-canonical free energy (i.e., pressure).
       *
       * This function also computes the stress, by calling computeStress(),
-      * if and only if the argument needStress is true. 
+      * if and only if the argument needStress is true.
       *
       * \pre  w().hasData() == true
       * \post c().hasData() == true
@@ -357,8 +357,8 @@ namespace Rp {
       *
       * This function should be called whenever the unit cell parameters
       * are modified. It calls functions mixture().clearUnitCellData(),
-      * domain().wavelist().clearUnitCellData(), clearCFields(), and, if
-      * an %Environment exists, environment().reset().
+      * wavelist().clearUnitCellData(), clearCFields(), and, if an
+      * %Environment exists, environment().reset().
       */
       void clearUnitCellData();
 
@@ -416,19 +416,31 @@ namespace Rp {
       typename T::MixtureModifier& mixtureModifier();
 
       /**
-      * Get the %Interaction (non-const).
-      */
-      typename T::Interaction& interaction();
-
-      /**
       * Get the %Interaction (const).
       */
       typename T::Interaction const & interaction() const;
 
       /**
+      * Get the %Interaction (non-const).
+      */
+      typename T::Interaction& interaction();
+
+      /**
       * Get the Domain (const).
       */
       typename T::Domain const & domain() const;
+
+      /**
+      * Get the WaveList (non-const).
+      *
+      * This function provides direct non-const access to the WaveList.
+      * The WaveList is owned by the Domain, and const (i.e., read-only)
+      * access is also provided via the domain() member function. This
+      * function exists to allow access to non-const member functions
+      * that update data structures that are maintained by the WaveList
+      * via a reference to the parent system.
+      */
+      typename T::WaveList & waveList();
 
       /**
       * Does this system have an %Environment?
@@ -461,14 +473,14 @@ namespace Rp {
       bool hasIterator() const;
 
       /**
-      * Get the Iterator (non-const).
-      */
-      typename T::Iterator& iterator();
-
-      /**
       * Get the Iterator (const).
       */
       typename T::Iterator const & iterator() const;
+
+      /**
+      * Get the Iterator (non-const).
+      */
+      typename T::Iterator& iterator();
 
       /**
       * Does this system have a Sweep?
@@ -481,14 +493,19 @@ namespace Rp {
       bool hasSimulator() const;
 
       /**
+      * Get the Simulator (const).
+      */
+      typename T::Simulator const & simulator() const;
+
+      /**
       * Get the Simulator (non-const).
       */
       typename T::Simulator& simulator();
 
       /**
-      * Get the Simulator (const).
+      * Get the FileMaster (const).
       */
-      typename T::Simulator const & simulator() const;
+      FileMaster const & fileMaster() const;
 
       /**
       * Get the FileMaster (non-const).
@@ -496,11 +513,6 @@ namespace Rp {
       * Access (non-const) is used in some unit tests.
       */
       FileMaster& fileMaster();
-
-      /**
-      * Get the FileMaster (const).
-      */
-      FileMaster const & fileMaster() const;
 
       ///@}
       /// \name Property Output
@@ -544,14 +556,14 @@ namespace Rp {
       * Set the number of threads given as a command line argument.
       *
       * This function is called in the setOpts function that processes
-      * command line arguments. The argument nThread may be passed to the 
+      * command line arguments. The argument nThread may be passed to the
       * main program as the argument of the -t option. This value gives
       * the number of threads in a threaded CPU implementation or an
-      * explicit choice for the maximum number of threads per block in 
-      * GPU code. 
+      * explicit choice for the maximum number of threads per block in
+      * GPU code.
       *
       * The do-nothing default implementation is used by CPU code that
-      * has not implemented threading (the current status). 
+      * has not implemented threading (the current status).
       *
       * \param nThread  thread count
       */
@@ -686,12 +698,6 @@ namespace Rp {
       */
       bool hasMixture_;
 
-      #if 0
-      // Mutable work space
-
-      mutable UnitCell<D> tmpUnitCell_;
-      #endif
-
       // Private member functions
 
       /**
@@ -739,131 +745,136 @@ namespace Rp {
    // Inline member functions
 
    // Get the Mixture (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::Mixture const & System<D,T>::mixture() const
    {  return *mixturePtr_; }
 
    // Get the MixtureModifier (non-const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::MixtureModifier& System<D,T>::mixtureModifier()
    {
       UTIL_ASSERT(mixtureModifierPtr_);
       return *mixtureModifierPtr_;
    }
 
-   // Get the %Interaction (non-const).
-   template <int D, class T> inline 
-   typename T::Interaction& System<D,T>::interaction()
-   {
-      UTIL_ASSERT(interactionPtr_);
-      return *interactionPtr_;
-   }
-
    // Get the %Interaction (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::Interaction const & System<D,T>::interaction() const
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
    }
 
+   // Get the %Interaction (non-const).
+   template <int D, class T> inline
+   typename T::Interaction& System<D,T>::interaction()
+   {
+      UTIL_ASSERT(interactionPtr_);
+      return *interactionPtr_;
+   }
+
    // Get the Domain (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::Domain const & System<D,T>::domain() const
    {  return *domainPtr_; }
 
+   // Get the WaveList (non-const).
+   template <int D, class T> inline
+   typename T::WaveList& System<D,T>::waveList()
+   {  return domainPtr_->waveList(); }
+
    // Does this system have an %Environment?
-   template <int D, class T> inline 
+   template <int D, class T> inline
    bool System<D,T>::hasEnvironment() const
    {  return (environmentPtr_); }
 
-   // Get the %Environment (non-const).
-   template <int D, class T> inline 
-   typename T::Environment & System<D,T>::environment()
-   {
-      UTIL_ASSERT(environmentPtr_);
-      return *environmentPtr_;
-   }
-
    // Get the %Environment (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::Environment const & System<D,T>::environment() const
    {
       UTIL_ASSERT(environmentPtr_);
       return *environmentPtr_;
    }
 
-   // Get the Scft calculator (non-const).
-   template <int D, class T> inline 
-   typename T::ScftThermo & System<D,T>::scft()
+   // Get the %Environment (non-const).
+   template <int D, class T> inline
+   typename T::Environment & System<D,T>::environment()
    {
-      UTIL_ASSERT(scftPtr_);
-      return *scftPtr_;
+      UTIL_ASSERT(environmentPtr_);
+      return *environmentPtr_;
    }
 
    // Get the Scft calculator (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::ScftThermo const & System<D,T>::scft() const
    {
       UTIL_ASSERT(scftPtr_);
       return *scftPtr_;
    }
 
+   // Get the Scft calculator (non-const).
+   template <int D, class T> inline
+   typename T::ScftThermo & System<D,T>::scft()
+   {
+      UTIL_ASSERT(scftPtr_);
+      return *scftPtr_;
+   }
+
    // Does this system have an Iterator?
-   template <int D, class T> inline 
+   template <int D, class T> inline
    bool System<D,T>::hasIterator() const
    {  return (iteratorPtr_); }
 
-   // Get the Iterator (non-const).
-   template <int D, class T> inline 
-   typename T::Iterator& System<D,T>::iterator()
-   {
-      UTIL_ASSERT(iteratorPtr_);
-      return *iteratorPtr_;
-   }
-
    // Get the Iterator (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::Iterator const & System<D,T>::iterator() const
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
    }
 
+   // Get the Iterator (non-const).
+   template <int D, class T> inline
+   typename T::Iterator& System<D,T>::iterator()
+   {
+      UTIL_ASSERT(iteratorPtr_);
+      return *iteratorPtr_;
+   }
+
    // Does this system have a Sweep?
-   template <int D, class T> inline 
+   template <int D, class T> inline
    bool System<D,T>::hasSweep() const
    {  return (sweepPtr_); }
 
    // Does this system have a Simulator?
-   template <int D, class T> inline 
+   template <int D, class T> inline
    bool System<D,T>::hasSimulator() const
    {  return (simulatorPtr_); }
 
-   // Get the Simulator (non-const).
-   template <int D, class T> inline 
-   typename T::Simulator& System<D,T>::simulator()
-   {
-      UTIL_ASSERT(simulatorPtr_);
-      return *simulatorPtr_;
-   }
-
    // Get the Simulator (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::Simulator const & System<D,T>::simulator() const
    {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
    }
 
-   // Get the FileMaster (non-const).
-   template <int D, class T> inline 
-   FileMaster& System<D,T>::fileMaster()
-   {  return *fileMasterPtr_; }
+   // Get the Simulator (non-const).
+   template <int D, class T> inline
+   typename T::Simulator& System<D,T>::simulator()
+   {
+      UTIL_ASSERT(simulatorPtr_);
+      return *simulatorPtr_;
+   }
 
    // Get the FileMaster (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    FileMaster const & System<D,T>::fileMaster() const
+   {  return *fileMasterPtr_; }
+
+   // Get the FileMaster (non-const).
+   template <int D, class T> inline
+   FileMaster& System<D,T>::fileMaster()
    {  return *fileMasterPtr_; }
 
    // Get the container of c fields (const).
@@ -871,46 +882,46 @@ namespace Rp {
    typename T::CFields const & System<D,T>::c() const
    {  return c_; }
 
-   // Get the container of w fields (non-const).
-   template <int D, class T> inline
-   typename T::WFields& System<D,T>::w()
-   {  return w_; }
-
    // Get the container of w fields (const).
    template <int D, class T> inline
    typename T::WFields const & System<D,T>::w() const
    {  return w_; }
 
-   // Get the container of external fields (non-const).
-   template <int D, class T> inline 
-   typename T::WFields& System<D,T>::h()
-   {  return h_; }
+   // Get the container of w fields (non-const).
+   template <int D, class T> inline
+   typename T::WFields& System<D,T>::w()
+   {  return w_; }
 
    // Get the container of external fields (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::WFields const & System<D,T>::h() const
    {  return h_; }
 
-   // Get the mask field (non-const).
-   template <int D, class T> inline 
-   typename T::Mask& System<D,T>::mask()
-   {  return mask_; }
+   // Get the container of external fields (non-const).
+   template <int D, class T> inline
+   typename T::WFields& System<D,T>::h()
+   {  return h_; }
 
    // Get the mask field (const).
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::Mask const & System<D,T>::mask() const
+   {  return mask_; }
+
+   // Get the mask field (non-const).
+   template <int D, class T> inline
+   typename T::Mask& System<D,T>::mask()
    {  return mask_; }
 
    // Private inline functions:
 
    // Get the Mixture (non-const).
-   template <int D, class T> inline 
-   typename T::Mixture & System<D,T>::mixture_() 
+   template <int D, class T> inline
+   typename T::Mixture & System<D,T>::mixture_()
    {  return *mixturePtr_; }
 
    // Get the Domain (non-const).
-   template <int D, class T> inline 
-   typename T::Domain & System<D,T>::domain_() 
+   template <int D, class T> inline
+   typename T::Domain & System<D,T>::domain_()
    {  return *domainPtr_; }
 
 } // namespace Rp

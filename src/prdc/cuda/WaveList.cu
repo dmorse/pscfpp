@@ -11,40 +11,6 @@ namespace Pscf {
 namespace Prdc { 
 namespace Cuda { 
 
-   using namespace Util;
-
-   #if 0
-   // Explicit specializations
-   template <>
-   bool WaveList<1>::hasVariableAngle() const
-   {  return false; }
-
-   template <>
-   bool WaveList<2>::hasVariableAngle() const
-   {
-      UTIL_CHECK(unitCell().lattice() != UnitCell<2>::Null);
-      if ((unitCell().lattice() == UnitCell<2>::Oblique) ||
-          (unitCell().lattice() == UnitCell<2>::Rhombic)) {
-         return true;
-      } else {
-         return false;
-      }
-   }
-
-   template <>
-   bool WaveList<3>::hasVariableAngle() const
-   {
-      UTIL_CHECK(unitCell().lattice() != UnitCell<3>::Null);
-      if ((unitCell().lattice() == UnitCell<3>::Monoclinic) ||
-          (unitCell().lattice() == UnitCell<3>::Triclinic)  ||
-          (unitCell().lattice() == UnitCell<3>::Rhombohedral)) {
-         return true;
-      } else {
-         return false;
-      }
-   }
-   #endif
-
    template class WaveList<1>;
    template class WaveList<2>;
    template class WaveList<3>;

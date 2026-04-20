@@ -19,6 +19,7 @@
 #include "MaxOrderParameter.h"
 #include "FourthOrderParameter.h"
 #include "BoxLengthDerivative.h"
+#include "StructureFactorBunched.h"
 
 namespace Pscf {
 namespace Rpc {
@@ -72,6 +73,8 @@ namespace Rpc {
          ptr = new FourthOrderParameter<D>(*simPtr_, *sysPtr_);
       } else if (className == "BoxLengthDerivative") {
          ptr = new BoxLengthDerivative<D>(*simPtr_, *sysPtr_);
+      } else if (className == "StructureFactorBunched") {
+         ptr = new StructureFactorBunched<D>(*simPtr_, *sysPtr_);
       }
 
       return ptr;

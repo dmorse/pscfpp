@@ -14,7 +14,8 @@ rpc_fts_analyzer_= \
   rpc/fts/analyzer/ConcentrationDerivative.cpp \
   rpc/fts/analyzer/MaxOrderParameter.cpp \
   rpc/fts/analyzer/FourthOrderParameter.cpp \
-  rpc/fts/analyzer/BoxLengthDerivative.cpp
+  rpc/fts/analyzer/BoxLengthDerivative.cpp \
+  rpc/fts/analyzer/StructureFactorBunched.cpp
   
   
 rpc_fts_analyzer_OBJS=\

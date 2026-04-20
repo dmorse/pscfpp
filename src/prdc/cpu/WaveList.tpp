@@ -220,6 +220,9 @@ namespace Cpu {
    template <int D>
    void WaveList<D>::sortWaves()
    {
+      if (isSorted_) return;
+
+      // Compute wavenumbers if needed
       UTIL_CHECK(isAllocated_);
       if (!hasKSq_) {
          computeKSq();
