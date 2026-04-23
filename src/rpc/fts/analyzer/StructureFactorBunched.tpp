@@ -12,12 +12,14 @@
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/WaveList.h>
 
+#include <pscf/cpu/complex.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/math/IntVec.h>
 
 #include <util/param/ParamComposite.h>
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
+#include <util/format/Int.h>
 #include <util/global.h>
 
 #include <iostream>
@@ -70,8 +72,9 @@ namespace Rpc {
       UTIL_CHECK(isInitialized_);
 
       // Store and/or compute mesh dimensions
-      IntVec<D> const & rMeshDimensions = system().domain().mesh().dimensions();
-      int const & rSize = system().domain().mesh().size();
+      Mesh<D> const & mesh = system().domain().mesh();
+      IntVec<D> const & rMeshDimensions = mesh.dimensions();
+      int const & rSize = mesh.size();
       FFT<D>::computeKMesh(rMeshDimensions, kMeshDimensions_, kSize_);
 
       // As needed, allocate arrays indexed by wave id
@@ -139,9 +142,6 @@ namespace Rpc {
          wavenumberSq = kSq[iw];
          UTIL_CHECK(wavenumberSq >= 0.0);       
          wavenumbers_[ib] = std::sqrt(wavenumberSq);
-         //std::cout << std::endl << Int(ib)  << "  "
-         //          << Dbl(wavenumbers_[ib])
-         //          << Dbl(wavenumberSq);
          sum = 0.0;
          for (k = begin; k < end; ++k) {
             iw = sortedIds[k];
@@ -153,14 +153,22 @@ namespace Rpc {
             }
             weights_[iw] = count;
             sum += count;
-            //std::cout << std::endl << waveList.minImages()[iw]
-            //          << Dbl(kSq[iw]);
          }
+         //std::cout << std::endl << Int(ib)  << "  "
+         //          << Dbl(wavenumbers_[ib])
+         //          << Dbl(wavenumberSq) << Dbl(sum);
          tot = 0.0;
          for (k = begin; k < end; ++k) {
             iw = sortedIds[k];
             weights_[iw] /= sum;
             tot += weights_[iw];
+            //IntVec<D> const & minImage = waveList.minImages()[iw];
+            //IntVec<D> stdImage = minImage;
+            //mesh.shift(stdImage);
+            //std::cout << std::endl 
+            //          << stdImage
+            //          << minImage
+            //          << Dbl(kSq[iw]) << Dbl(weights_[iw]*sum);
          }
          UTIL_CHECK(std::abs(tot - 1.0) < 1.0E-8);
       }
@@ -204,11 +212,9 @@ namespace Rpc {
          // double q;
 
          // Compute structure factors
-         double wRl, wIm, value;
+         double value;
          for (int iw = 0; iw < kSize_; iw++) {
-            wRl = wk_[iw][0];
-            wIm = wk_[iw][1];
-            value = a_ * ( wRl*wRl + wIm*wIm );
+            value = a_ * absSq( wk_[iw] );
             value -= b_;
             ib = bunchIds_[iw];
             values_[ib] += weights_[iw] * value;

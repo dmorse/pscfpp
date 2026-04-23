@@ -86,26 +86,6 @@ namespace Rp {
       return dFdL;
    }
 
-   #if 0
-   template <int D, class T>
-   void BoxLengthDerivative<D,T>::outputValue(int step, double value)
-   {
-      if (simulator().hasRamp()
-          && AverageAnalyzerT::nSamplePerOutput() == 1)
-      {
-         double l = system().domain().unitCell().parameter(0);
-
-         UTIL_CHECK(outputFile_.is_open());
-         outputFile_ << Int(step);
-         outputFile_ << Dbl(l);
-         outputFile_ << Dbl(value);
-         outputFile_ << "\n";
-      } else {
-         AverageAnalyzerT::outputValue(step, value);
-      }
-   }
-   #endif
-
 }
 }
 #endif
