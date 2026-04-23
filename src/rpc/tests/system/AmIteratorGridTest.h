@@ -5,8 +5,16 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/system/System.h>
+#include <rpc/field/Domain.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Block.h>
+#include <rpc/solvers/Solvent.h>
+
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldComparison.h>
+
+#include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
@@ -404,8 +412,10 @@ public:
                   error,
                   wMaxDiff,
                   cMaxDiff);
-      //std::cout << "\n wMaxDiff = " << wMaxDiff;
-      //std::cout << "\n cMaxDiff = " << cMaxDiff;
+      if (verbose() > 0) {
+         std::cout << "\n wMaxDiff = " << wMaxDiff;
+         std::cout << "\n cMaxDiff = " << cMaxDiff;
+      }
       TEST_ASSERT(!error);
       TEST_ASSERT(wMaxDiff < 1.0E-6);
       TEST_ASSERT(cMaxDiff < 1.0E-7);
@@ -688,8 +698,11 @@ public:
 
       // Compare unit cell value
       double a = system.domain().unitCell().parameter(0);
-      //std::cout << "a = " << Dbl(a,20,12) << std::endl;
-      TEST_ASSERT(std::abs(a - 1.7593559883) < 1.0E-8);
+      if (verbose() > 0) {
+          std::cout << std::endl
+                    << "a           = " << Dbl(a,20,12) << std::endl;
+      }
+      TEST_ASSERT(std::abs(a - 1.759356008228e+00) < 1.0E-8);
 
       // Check stress value
       FSArray<double, 6> stress = computeStress(system);

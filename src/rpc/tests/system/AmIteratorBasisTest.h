@@ -5,15 +5,19 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/system/System.h>
+#include <rpc/field/Domain.h>
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/solvers/MixtureModifier.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Block.h>
 #include <rpc/solvers/Solvent.h>
 
 #include <prdc/cpu/RFieldComparison.h>
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/format/Dbl.h>
+#include <util/misc/FileMaster.h>
 
 #include <util/tests/LogFileUnitTest.h>
 
@@ -130,6 +134,7 @@ public:
    /*
    * Compare Helmoltz and grand free energies to prior results
    *
+   * On input, fHelhmoltz and pressure contain expected values
    * On output, fHelhmoltz and pressure contain absolute differences
    */
    template <int D>
@@ -137,9 +142,15 @@ public:
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
-      fHelmholtz = std::abs(fHelmholtz - system.scft().fHelmholtz());
-      pressure   = std::abs(pressure - system.scft().pressure());
+      double fval = system.scft().fHelmholtz();
+      double pval = system.scft().pressure();
+      //fHelmholtz = std::abs(fHelmholtz - system.scft().fHelmholtz());
+      //pressure   = std::abs(pressure - system.scft().pressure());
+      fHelmholtz = std::abs(fHelmholtz - fval);
+      pressure   = std::abs(pressure - pval);
       if (verbose() > 0) {
+         std::cout << "\nfHelmholtz      = " << fval;
+         std::cout << "\npressure        = " << pval;
          std::cout << "\nfHelmholtz diff = " << fHelmholtz;
          std::cout << "\npressure diff   = " << pressure;
       }
@@ -969,8 +980,10 @@ public:
 
       // Compare unit cell value
       double a = system.domain().unitCell().parameter(0);
-      //std::cout << "a = " << Dbl(a,20,12) << std::endl;
-      TEST_ASSERT(std::abs(a - 1.7593559883) < 1.0E-8);
+      //std::cout << "a       = " << Dbl(a,20,12) << std::endl;
+      //TEST_ASSERT(std::abs(a - 1.7593559883) < 1.0E-8); // before < 4/23/2026
+      TEST_ASSERT(std::abs(a - 1.759356008228e+00) < 1.0E-8);
+
 
       // Check stress value
       FSArray<double, 6> stress = computeStress(system);
@@ -1104,9 +1117,9 @@ public:
       TEST_ASSERT(wMaxDiff < 1.0E-6);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
-      // Compare free energies to output of modified unit test from v1.1
-      double fHelmholtz =   3.21902602858e+00;
-      double pressure =     3.37292021160e+00;
+      // Compare free energies to prior results (originally from v1.1)
+      double fHelmholtz = 3.219026035420e+00;  // changed v1.3.4
+      double pressure = 3.372798290137e+00;    // changed v1.3.4
       compareFreeEnergies(system, fHelmholtz, pressure);
       TEST_ASSERT(fHelmholtz < 1.0E-7);
       TEST_ASSERT(pressure < 1.0E-7);

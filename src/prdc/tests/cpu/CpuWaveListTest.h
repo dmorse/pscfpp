@@ -359,7 +359,7 @@ public:
          vec = shiftToMinimum(pos, mesh1.dimensions(), cell1);
          val = cell1.dksq(vec, 0);
          if (pos[0] != 0) {
-            if (mesh1.dimension(0) - pos[0] > mesh1.dimension(0)/2 + 1) {
+            if (mesh1.dimension(0) - pos[0] > mesh1.dimension(0)/2) {
                val *= 2.0;
             }
          }
@@ -387,7 +387,7 @@ public:
             vec = shiftToMinimum(pos, mesh2.dimensions(), cell2);
             val = cell2.dksq(vec, n);
             if (pos[1] != 0) {
-               if (mesh2.dimension(1)-pos[1] > mesh2.dimension(1)/2 + 1){
+               if (mesh2.dimension(1) - pos[1] > mesh2.dimension(1)/2){
                   val *= 2.0;
                }
             }
@@ -416,7 +416,7 @@ public:
             vec = shiftToMinimum(pos, mesh3.dimensions(), cell3);
             val = cell3.dksq(vec, n);
             if (pos[2] != 0) {
-               if (mesh3.dimension(2)-pos[2] > mesh3.dimension(2)/2 + 1){
+               if (mesh3.dimension(2) - pos[2] > mesh3.dimension(2)/2){
                   val *= 2.0;
                }
             }
