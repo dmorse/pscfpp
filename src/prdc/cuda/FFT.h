@@ -177,11 +177,11 @@ namespace Cuda {
                         int & kSize );
 
       /**
-      * Does a wavevector have an implicit inverse in DFT for real data?
+      * Does a wavevector have an implicit inverse in DFT mesh for real data?
       *
-      * The inverse of a wavevector within the DFT mesh used for a DFT of
-      * real data is "implicit" if its inverse is not equivalent to any
-      * wavevector in this k-mesh.  
+      * The inverse of a wavevector within the k-mesh used for a DFT of
+      * real-valued field is "implicit" if its inverse is not equivalent 
+      * to any wavevector in this k-mesh.  
       *
       * To compute a Fourier sum using the DFT of real r-space data, for
       * any summand that has inversion symmetry (i.e., the same value
@@ -267,19 +267,18 @@ namespace Cuda {
    {
       int i = wavevector[D-1];
       int d = meshDimensions[D-1];
-      if ((i != 0) && (d - i > d/2 + 1)) {
+      UTIL_CHECK(i >= 0 && i < D);
+      if ( (i != 0) && (d - i > d / 2) ) {
          return true;
       } else {
          return false;
       }
    }
 
-   #ifndef PRDC_CUDA_FFT_TPP
    // Explicit instantiation declarations
    extern template class FFT<1>;
    extern template class FFT<2>;
    extern template class FFT<3>;
-   #endif
 
 } // Cuda
 } // Prdc

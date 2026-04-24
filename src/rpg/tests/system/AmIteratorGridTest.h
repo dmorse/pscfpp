@@ -5,8 +5,15 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/system/System.h>
+#include <rpg/field/Domain.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Block.h>
+#include <rpg/solvers/Solvent.h>
+
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldComparison.h>
+#include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
@@ -690,8 +697,13 @@ public:
 
       // Compare unit cell value
       double a = system.domain().unitCell().parameter(0);
-      //std::cout << "a = " << Dbl(a,20,12) << std::endl;
-      TEST_ASSERT(std::abs(a - 1.7593559883) < 1.0E-8);
+      double diff = std::abs(a - 1.759356008228e+00);
+      if (verbose() > 0) {
+         std::cout << "\na    = " << Dbl(a,20,12);
+         std::cout << "\ndiff = " << Dbl(diff,20,12);
+      }
+      //TEST_ASSERT(std::abs(a - 1.7593559883) < 1.0E-8);
+      TEST_ASSERT(std::abs(a - 1.759356008228e+00) < 1.0E-8); // changed
 
       // Check stress value
       FSArray<double, 6> stress = computeStress(system);

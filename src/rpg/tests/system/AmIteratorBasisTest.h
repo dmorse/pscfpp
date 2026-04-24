@@ -5,9 +5,19 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/system/System.h>
+#include <rpg/field/Domain.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Block.h>
+#include <rpg/solvers/Solvent.h>
+
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>
+
+#include <util/misc/FileMaster.h>
+
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
@@ -1147,8 +1157,10 @@ public:
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
       // Compare free energies to output of modified unit test from v1.1
-      double fHelmholtz =   3.21902602858e+00;
-      double pressure =     3.37292021160e+00;
+      // double fHelmholtz =   3.21902602858e+00;
+      // double pressure =     3.37292021160e+00;
+      double fHelmholtz =    3.219026035420e+00; // changed v1.3.4
+      double pressure   =    3.372798290137e+00; // changed v1.3.4
       compareFreeEnergies(system, fHelmholtz, pressure);
       TEST_ASSERT(fHelmholtz < 1.0E-7);
       TEST_ASSERT(pressure < 1.0E-7);

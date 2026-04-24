@@ -483,7 +483,7 @@ namespace Cuda {
             } else {
                inverseId = mesh().dimension(D-1) - kItr.position(D-1);
             }
-            if (inverseId > kMeshDimensions_[D-1]) {
+            if (inverseId >= kMeshDimensions_[D-1]) {
                implicitInverse_h[kItr.rank()] = true;
             } else {
                implicitInverse_h[kItr.rank()] = false;
