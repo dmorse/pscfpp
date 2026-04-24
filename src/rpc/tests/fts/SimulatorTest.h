@@ -7,6 +7,7 @@
 #include <rpc/system/System.h>
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/scft/ScftThermo.h>
+#include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
 

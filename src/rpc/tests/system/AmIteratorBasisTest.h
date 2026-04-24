@@ -35,7 +35,7 @@ class AmIteratorBasisTest : public LogFileUnitTest
 public:
 
    void setUp()
-   {  setVerbose(1); }
+   {  setVerbose(0); }
 
    void tearDown()
    {

@@ -7,14 +7,20 @@
 #include <rpc/system/System.h>
 #include <rpc/scft/sweep/SweepFactory.h>
 #include <rpc/scft/sweep/LinearSweep.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
 
 #include <prdc/crystal/BFieldComparison.h>
 
 #include <pscf/sweep/ParameterType.h>
+#include <pscf/inter/Interaction.h>
 
-#include <util/tests/LogFileUnitTest.h>
-#include <util/format/Dbl.h>
+#include <util/misc/FileMaster.h>
 #include <util/containers/GArray.h>
+#include <util/format/Dbl.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 #include <sstream>

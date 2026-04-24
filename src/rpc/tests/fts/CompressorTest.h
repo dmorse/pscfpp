@@ -12,11 +12,18 @@
 #include <rpc/fts/compressor/LrCompressor.h>
 //#include <rpc/fts/compressor/LrAmPreCompressor.h>
 #include <rpc/fts/compressor/LrAmCompressor.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
 
 #include <prdc/cpu/RFieldComparison.h>
 
-#include <util/tests/LogFileUnitTest.h>
+#include <pscf/mesh/Mesh.h>
+
+#include <util/misc/FileMaster.h> 
 #include <util/random/Random.h> 
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 

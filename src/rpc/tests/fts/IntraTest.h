@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/brownian/BdSimulator.h>
 #include <rpc/fts/compressor/IntraCorrelation.h>
