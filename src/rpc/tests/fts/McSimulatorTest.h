@@ -8,7 +8,11 @@
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/montecarlo/McSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
+#include <rpc/solvers/Mixture.h>
+#include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
 
+#include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>

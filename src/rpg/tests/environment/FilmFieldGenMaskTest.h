@@ -8,7 +8,10 @@
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/system/System.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
+#include <rpg/field/FieldIo.h>
 
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>

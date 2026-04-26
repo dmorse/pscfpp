@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpc/system/System.h>
+#include <rpc/field/Domain.h>
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/solvers/MixtureModifier.h>
 #include <rpc/solvers/Mixture.h>
@@ -15,6 +16,7 @@
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
+#include <util/misc/FileMaster.h>
 
 #include <util/tests/LogFileUnitTest.h>
 

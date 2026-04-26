@@ -2,6 +2,7 @@
 # PSCF - Polymer Self-Consistent Field (C++/CUDA)
 
 PSCF is a software package for field-theoretic analysis of inhomogeneous 
+<<<<<<< HEAD
 equilibrium states of polymerc materials. It is designed to treat materials 
 containing block polymers and/or homopolymers in which inhomogeneities
 form as the result of a tendency of some constituents to phase separate.
@@ -14,11 +15,21 @@ PSCF is written primarily in C++, supplemented by CUDA to enable the
 use of an NVIDIA graphics processing unit (GPU) when available. PSCF 
 is distributed only in source code form, and so must be compiled by 
 the user. 
+=======
+equilibrium states formed by polymeric materials with constituents that 
+tend to phase separate.  PSCF can be used to perform either self-consistent 
+field theory (SCFT) calculations or stochastic field-theoretic simulation 
+(FTS) calculations.
+
+The current version of PSCF is written primarily in C++, supplemented by 
+CUDA to enable the use of a graphics processing unit (GPU) when one is
+available. PSCF is distributed only in source code form, and so must be 
+compiled by the user. 
 
 ## Methods: SCFT and FTS
 
-PSCF was originally designed for SCFT calculations, and provides an
-extensive set of tools for this purpose .  The acronym PSCF stands for 
+PSCF was originally designed for SCFT calculations, and provides a
+complete set of tools for this purpose . The acronym PSCF stands for 
 Polymer Self-Consistent Field, reflecting this origin.
 
 PSCF now also provides a complete set of tools for field theoretic 
@@ -43,7 +54,7 @@ same computational building blocks as SCFT.
 
 ## History
 
-The current C++/CUDA version of PSCF originated as a completely rewritten 
+The current C++/CUDA version of PSCF originated as a rewritten
 version of an older Fortran SCFT program of the same name.  The older 
 Fortran PSCF package built a single program that was designed for SCFT 
 on systems that can contain mixtures of linear block polymers and small 
@@ -53,18 +64,13 @@ version, which is no longer being developed or actively maintained.
 The Fortran PSCF package is still available in a separate github.com 
 repository at https://github.com/dmorse/pscf.  The current C++/CUDA 
 version provides almost all of the capabilities of the Fortran PSCF 
-program, and many important new capabilities, as discussed below.
+program, and several important new capabilities, as discussed below.
 
 Functional differences between the current C++/CUDA version of PSCF and 
 the legacy Fortran version include the following:
 
-   - The current version is an extensible package of several programs
-     that are designed for different types of spatial domain and/or 
-     different types of hardware, implemented within a common 
-     framework.
-
-   - The current version can perform stochastic PS-FTS calculations,
-     in addition to SCFT.
+   - The current version can perform stochastic PS-FTS calculations as
+     well as SCFT.
 
    - The current version can treat systems that contain acyclic branched 
      polymers, while the Fortran program was designed for linear polymers.
@@ -76,7 +82,7 @@ the legacy Fortran version include the following:
 
 PSCF provides source code for the following three executable programs:
 
-   - **pscf_1d** : The pscf_1d program is is designed to perform SCFT
+   - **pscf_r1d** : The pscf_1d program is is designed to perform SCFT
      calculations for one-dimensional (1D) problems in Cartesian,
      cylindrical or spherical coordinates. A finite difference spatial
      discretization is used to solve the underlying partial differential 

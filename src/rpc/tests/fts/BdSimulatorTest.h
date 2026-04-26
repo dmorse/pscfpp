@@ -4,17 +4,19 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/system/System.h>
-#include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/brownian/BdSimulator.h>
+#include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/brownian/ExplicitBdStep.h>
 #include <rpc/fts/brownian/PredCorrBdStep.h>
 #include <rpc/fts/brownian/LMBdStep.h>
 #include <rpc/fts/compressor/Compressor.h>
+#include <rpc/system/System.h>
+#include <rpc/field/WFields.h>
 
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldComparison.h>
 
+#include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>

@@ -4,11 +4,14 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/system/System.h>
-#include <rpc/scft/iterator/Iterator.h>
-#include <rpc/field/Domain.h>
 #include <rpc/environment/FilmFieldGenMask.h>
+#include <rpc/system/System.h>
+#include <rpc/field/Domain.h>
+#include <rpc/scft/iterator/Iterator.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/Mask.h>
 
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>
@@ -422,3 +425,4 @@ TEST_ADD(FilmFieldGenMaskTest, testModifyStress)
 TEST_END(FilmFieldGenMaskTest)
 
 #endif
+

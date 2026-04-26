@@ -345,8 +345,8 @@ public:
          temp = iter.position();
          vec = shiftToMinimum(temp, mesh1.dimensions(), cell1);
          dksq = cell1.dksq(vec, 0);
-         if (mesh1.dimension(0) - temp[0] > mesh1.dimension(0)/2 + 1) {
-            dksq *= 2;
+         if (mesh1.dimension(0) - temp[0] > mesh1.dimension(0)/2) {
+            dksq *= 2.0;
          }
          TEST_ASSERT(abs(dksq - dksq_h[iter.rank()]) < tolerance_);
       }
@@ -380,8 +380,8 @@ public:
             vec = shiftToMinimum(temp, mesh2.dimensions(), cell2);
             dksq = cell2.dksq(vec, n);
             if (temp[1] != 0) {
-               if (mesh2.dimension(1) - temp[1] > mesh2.dimension(1)/2 + 1) {
-                  dksq *= 2;
+               if ( mesh2.dimension(1) - temp[1] > mesh2.dimension(1)/2 ) {
+                  dksq *= 2.0;
                }
             }
             TEST_ASSERT(abs(dksq - dksq_h[n][iter.rank()]) < tolerance_);
@@ -417,8 +417,8 @@ public:
             vec = shiftToMinimum(temp, mesh3.dimensions(), cell3);
             dksq = cell3.dksq(vec, n);
             if (temp[2] != 0) {
-               if (mesh3.dimension(2) - temp[2] > mesh3.dimension(2)/2 + 1) {
-                  dksq *= 2;
+               if ( mesh3.dimension(2) - temp[2] > mesh3.dimension(2)/2 ) {
+                  dksq *= 2.0;
                }
             }
             TEST_ASSERT(abs(dksq - dksq_h[n][iter.rank()]) < tolerance_);

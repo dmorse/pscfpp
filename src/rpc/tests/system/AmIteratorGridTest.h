@@ -7,11 +7,16 @@
 #include <rpc/system/System.h>
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Block.h>
+#include <rpc/solvers/Solvent.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
+
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldComparison.h>
+
 #include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
@@ -215,9 +220,13 @@ public:
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
-      fHelmholtz = std::abs(fHelmholtz - system.scft().fHelmholtz());
-      pressure   = std::abs(pressure - system.scft().pressure());
+      double fVal = system.scft().fHelmholtz();
+      double pVal = system.scft().pressure();
+      fHelmholtz = std::abs(fHelmholtz - fVal);
+      pressure   = std::abs(pressure - pVal);
       if (verbose() > 0) {
+         std::cout << "\nfHelmholtz val = " << fVal;
+         std::cout << "\npressure val   = " << pVal;
          std::cout << "\nfHelmholtz diff = " << fHelmholtz;
          std::cout << "\npressure diff   = " << pressure;
       }
@@ -410,8 +419,10 @@ public:
                   error,
                   wMaxDiff,
                   cMaxDiff);
-      //std::cout << "\n wMaxDiff = " << wMaxDiff;
-      //std::cout << "\n cMaxDiff = " << cMaxDiff;
+      if (verbose() > 0) {
+         std::cout << "\n wMaxDiff = " << wMaxDiff;
+         std::cout << "\n cMaxDiff = " << cMaxDiff;
+      }
       TEST_ASSERT(!error);
       TEST_ASSERT(wMaxDiff < 1.0E-6);
       TEST_ASSERT(cMaxDiff < 1.0E-7);
@@ -623,9 +634,11 @@ public:
       TEST_ASSERT(wMaxDiff < 2.0E-7);
       TEST_ASSERT(cMaxDiff < 2.0E-7);
 
-      // Compare free energies to output of modified unit test from v1.1
-      double fHelmholtz = 2.80048919599e-02;
-      double pressure =  3.19132478045e-02;
+      // Compare free energies
+      double fHelmholtz = 2.800489196496e-02;   // changed v1.3.4
+      //double fHelmholtz = 2.80048919599e-02;  // old, from v1.1
+      double pressure = 3.191324773972e-02;     // changed v1.3.4
+      //double pressure =  3.19132478045e-02;   // old, from v1.1
       compareFreeEnergies(system, fHelmholtz, pressure);
       TEST_ASSERT(fHelmholtz < 1.0E-7);
       TEST_ASSERT(pressure < 1.0E-7);
@@ -694,8 +707,10 @@ public:
 
       // Compare unit cell value
       double a = system.domain().unitCell().parameter(0);
-      //std::cout << "a = " << Dbl(a,20,12) << std::endl;
-      TEST_ASSERT(std::abs(a - 1.7593559883) < 1.0E-8);
+      if (verbose() > 0) {
+          std::cout << "\na           = " << Dbl(a,20,12);
+      }
+      TEST_ASSERT(std::abs(a - 1.759356008228e+00) < 1.0E-8);
 
       // Check stress value
       FSArray<double, 6> stress = computeStress(system);
@@ -734,23 +749,24 @@ public:
       // Compare Helmoltz free energies
       if (!system.scft().hasData()) system.scft().compute();
       double fHelmholtz = system.scft().fHelmholtz();
-      double fHelmholtzRef = 3.9642295402;     // from PSCF Fortran
+      double fHelmholtzRef = 3.964229588966e+00; // changed v1.3.4
+      //double fHelmholtzRef = 3.9642295402;     // from PSCF Fortran
       double fDiff = fHelmholtz - fHelmholtzRef;
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "fHelmholtz diff = " << fDiff;
+         std::cout << "\nfHelmholtz      = " << fHelmholtz;
+         std::cout << "\nfHelmholtz diff = " << fDiff;
       }
       TEST_ASSERT(std::abs(fDiff) < 1.0E-7);
 
       // Compare relaxed unit cell parameters
       double cellParam = system.domain().unitCell().parameter(0);
       double cellParamRef = 2.2348701424;     // from PSCF Fortran
-      double cellDiff = cellParam - cellParamRef;
+      double cellDiff = std::abs(cellParam - cellParamRef);
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "Cell param diff = " << cellDiff;
+         std::cout << "\nCell param      = " << cellParam;
+         std::cout << "\nCell param diff = " << cellDiff;
       }
-      TEST_ASSERT(std::abs(cellDiff) < 1.0E-7);
+      TEST_ASSERT(cellDiff < 1.0E-7);
    }
 
 };

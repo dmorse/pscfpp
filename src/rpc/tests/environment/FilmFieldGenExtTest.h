@@ -4,14 +4,19 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+#include <rpc/environment/FilmFieldGenExt.h>
 #include <rpc/system/System.h>
 #include <rpc/field/Domain.h>
-#include <rpc/environment/FilmFieldGenExt.h>
+#include <rpc/field/WFields.h>
 
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>
 
+#include <pscf/mesh/Mesh.h>
+
+#include <util/misc/FileMaster.h>
 #include <util/misc/Exception.h>
 #include <util/misc/FileMaster.h>
 

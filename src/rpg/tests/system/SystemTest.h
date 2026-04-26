@@ -7,6 +7,7 @@
 #include <rpg/system/System.h>
 #include <rpg/field/Domain.h>
 #include <rpg/scft/ScftThermo.h>
+#include <rpg/field/Domain.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/resources.h>
 #include <prdc/crystal/BFieldComparison.h>

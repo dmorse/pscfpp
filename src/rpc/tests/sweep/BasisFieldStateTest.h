@@ -10,7 +10,9 @@
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Block.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
 
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/crystal/Basis.h>
 

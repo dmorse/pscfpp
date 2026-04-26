@@ -4,9 +4,6 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/brownian/BdSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
@@ -14,14 +11,20 @@
 #include <rpg/fts/compressor/LrCompressor.h>
 #include <rpg/fts/compressor/LrAmCompressor.h>
 
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
+
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/cuda/resources.h>
 
 #include <pscf/cuda/VecOp.h> 
 #include <pscf/cuda/CudaVecRandom.h> 
 
-#include <util/tests/LogFileUnitTest.h>
+#include <util/misc/FileMaster.h> 
 #include <util/random/Random.h> 
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 

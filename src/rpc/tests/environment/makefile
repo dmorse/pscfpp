@@ -8,7 +8,7 @@ include $(SRC_DIR)/rpc/patterns.mk
 
 TEST=rpc/tests/environment/Test
 
-.PHONY: all includes defines libs run run-quiet clean-outputs clean
+.PHONY: all run run-quiet clean-outputs clean
 
 all: $(rpc_tests_environment_OBJS) $(BLD_DIR)/$(TEST)
 

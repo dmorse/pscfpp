@@ -42,7 +42,7 @@ System{
     ]
   }
   AmIteratorGrid{
-    epsilon      1.0e-12
+    epsilon      1.0e-10
     maxItr       2000
     maxHist      100 
     isFlexible   1

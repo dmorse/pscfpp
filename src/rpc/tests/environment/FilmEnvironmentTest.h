@@ -4,11 +4,15 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+#include <rpc/environment/FilmEnvironment.h>
+
 #include <rpc/system/System.h>
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/field/Domain.h>
-#include <rpc/environment/FilmEnvironment.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/Mask.h>
 
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>
 
@@ -28,15 +32,14 @@ public:
    std::ofstream logFile_;
 
    void setUp()
-   {  
-      setVerbose(0); 
-   }
+   {  setVerbose(0); }
 
    void tearDown()
    {
       if (logFile_.is_open()) {
          logFile_.close();
       }
+      setVerbose(0);
    }
 
    void openLogFile(char const * filename)
@@ -249,8 +252,15 @@ public:
       system.iterate();
       
       // Check that the right film thickness was found
-      double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
-      TEST_ASSERT(std::abs(paramErr) < 1e-5);
+      double paramVal = system.domain().unitCell().parameter(0);
+      double paramRef = 2.06121822708647739475e+00;
+      double paramErr = std::abs(paramVal - paramRef);
+      //double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
+      if (verbose() > 0) {
+         std::cout << "\nCell parameter value = " << Dbl(paramVal, 12, 20);
+         std::cout << "\nCell parameter diff  = " << Dbl(paramErr, 12, 20);
+      }
+      TEST_ASSERT(paramErr < 1.0e-5);
       TEST_ASSERT(std::abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
 
       // Check converged field is correct by comparing to ref files in in/
