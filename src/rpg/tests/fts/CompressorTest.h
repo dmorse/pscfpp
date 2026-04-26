@@ -12,14 +12,18 @@
 #include <rpg/fts/compressor/LrCompressor.h>
 #include <rpg/fts/compressor/LrAmCompressor.h>
 #include <rpg/fts/VecOpFts.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
 
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/cuda/resources.h>
 
 #include <pscf/cuda/CudaRandom.h> 
 
-#include <util/tests/LogFileUnitTest.h>
+#include <util/misc/FileMaster.h> 
 #include <util/random/Random.h> 
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 

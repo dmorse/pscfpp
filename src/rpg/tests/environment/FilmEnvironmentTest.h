@@ -7,10 +7,15 @@
 #include <rpg/environment/FilmEnvironment.h>
 #include <rpg/system/System.h>
 #include <rpg/scft/ScftThermo.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/FieldIo.h>
+#include <rpg/field/WFields.h>
 
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>
+
+#include <util/misc/FileMaster.h>
 
 #include <fstream>
 
@@ -28,9 +33,7 @@ public:
    std::ofstream logFile_;
 
    void setUp()
-   {  
-      setVerbose(0); 
-   }
+   {  setVerbose(0); }
 
    void tearDown()
    {
@@ -107,16 +110,16 @@ public:
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       if (verbose() > 0) {
-         std::cout << "\nMax error = " << rComparison.maxDiff() << "\n";
+         std::cout << "\nMax error = " << rComparison.maxDiff();
       }
       TEST_ASSERT(rComparison.maxDiff() < 1.0E-4);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "Free energy error = " 
-                   << (system.scft().fHelmholtz() - 3.87784944222) << "\n";
-         std::cout << "Pressure error = " 
-                   << (system.scft().pressure() + 12.1117881919) << "\n";
+         std::cout << "\nFree energy error = " 
+                   << (system.scft().fHelmholtz() - 3.87784944222);
+         std::cout << "\nPressure error = " 
+                   << (system.scft().pressure() + 12.1117881919);
       }
       TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.87784944222) < 1e-5);
       TEST_ASSERT(abs(system.scft().pressure() + 12.1117881919) < 1e-4);
@@ -156,17 +159,16 @@ public:
       double diff = rComparison.maxDiff();
 
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max field error = " << diff << "\n";
+         std::cout << "\nMax field error = " << diff;
       }
       TEST_ASSERT(diff < epsilon);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "Free energy error = " 
-                   << (system.scft().fHelmholtz() - 3.91037539514) << "\n";
-         std::cout << "Pressure error = " 
-                   << (system.scft().pressure() + 12.8397354494) << "\n";
+         std::cout << "\nFree energy error = " 
+                   << (system.scft().fHelmholtz() - 3.91037539514);
+         std::cout << "\nPressure error = " 
+                   << (system.scft().pressure() + 12.8397354494);
       }
       TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.91037539514) < 1e-5);
       TEST_ASSERT(abs(system.scft().pressure() + 12.8397354494) < 1e-4);
@@ -200,17 +202,16 @@ public:
 
       double epsilon = 1.0E-4; 
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max field error = " << diff << "\n";
+         std::cout << "\nMax field error = " << diff;
       }
       TEST_ASSERT(diff < epsilon);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "Free Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.87318676998) << "\n";
-         std::cout << "Pressure error = " 
-                   << (system.scft().pressure() + 12.0498211637) << "\n";
+         std::cout << "\nFree Energy error = " 
+                   << (system.scft().fHelmholtz() - 3.87318676998);
+         std::cout << "\nPressure error = " 
+                   << (system.scft().pressure() + 12.0498211637);
       }
       TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.87318676998) < 1e-5);
       TEST_ASSERT(abs(system.scft().pressure() + 12.0498211637) < 1e-4);
@@ -233,12 +234,16 @@ public:
       system.iterate();
       
       // Check that the right film thickness was found
-      double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
+      double param = system.domain().unitCell().parameter(0);
+      //double paramRef = 2.061207269;  // old value
+      double paramRef = 2.06121822708647739475e+00; // changed v1.3.4
+      double paramErr = std::abs(param - paramRef);
       if (verbose() > 0) {
-         std::cout << "\nFilm thickness error = " << paramErr << "\n";
+         std::cout << "\nFilm thickness       = " << Dbl(param, 20, 12);
+         std::cout << "\nFilm thickness error = " << Dbl(paramErr, 20, 12) ;
       }
-      TEST_ASSERT(abs(paramErr) < 1e-5);
-      TEST_ASSERT(abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
+      TEST_ASSERT(paramErr < 1.0e-5);
+      TEST_ASSERT(abs(system.mask().phiTot() - 0.8059299672) < 1.0e-5);
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
@@ -249,16 +254,16 @@ public:
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       double diff = rComparison.maxDiff();
       if (verbose() > 0) {
-         std::cout << "Max field error = " << diff << "\n";
+         std::cout << "\nMax field error = " << diff;
       }
       TEST_ASSERT(diff < 1.0E-4);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "Free Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.80033554388) << "\n";
-         std::cout << "Pressure error = " 
-                   << (system.scft().pressure() + 12.9408830685) << "\n";
+         std::cout << "\nFree Energy error = " 
+                   << (system.scft().fHelmholtz() - 3.80033554388);
+         std::cout << "\nPressure error = " 
+                   << (system.scft().pressure() + 12.9408830685);
       }
       TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1e-5);
       TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1e-4);
@@ -289,16 +294,16 @@ public:
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       if (verbose() > 0) {
-         std::cout << "\nMax error = " << rComparison.maxDiff() << "\n";
+         std::cout << "\nMax error = " << rComparison.maxDiff();
       }
       TEST_ASSERT(rComparison.maxDiff() < 1.0E-4);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "Free Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.87784944222) << "\n";
-         std::cout << "Pressure error = " 
-                   << (system.scft().pressure() + 12.1117881919) << "\n";
+         std::cout << "\nFree Energy error = " 
+                   << (system.scft().fHelmholtz() - 3.87784944222);
+         std::cout << "\nPressure error = " 
+                   << (system.scft().pressure() + 12.1117881919);
       }
       TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.87784944222) < 1e-5);
       TEST_ASSERT(abs(system.scft().pressure() + 12.1117881919) < 1e-4);
@@ -338,17 +343,16 @@ public:
       double diff = rComparison.maxDiff();
 
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max field error = " << diff << "\n";
+         std::cout << "\nMax field error = " << diff;
       }
       TEST_ASSERT(diff < epsilon);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "Free Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.91037539514) << "\n";
-         std::cout << "Pressure error = " 
-                   << (system.scft().pressure() + 12.8397354494) << "\n";
+         std::cout << "\nFree Energy error = " 
+                   << (system.scft().fHelmholtz() - 3.91037539514);
+         std::cout << "\nPressure error = " 
+                   << (system.scft().pressure() + 12.8397354494);
       }
       TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.91037539514) < 1e-5);
       TEST_ASSERT(abs(system.scft().pressure() + 12.8397354494) < 1e-4);
@@ -383,18 +387,17 @@ public:
 
       double epsilon = 1.0E-4; 
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max field error = " << diff << "\n";
+         std::cout << "\nMax field error = " << diff;
       }
       TEST_ASSERT(diff < epsilon);
       #endif
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "Free Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.87318676998) << "\n";
-         std::cout << "Pressure error = " 
-                   << (system.scft().pressure() + 12.0498211637) << "\n";
+         std::cout << "\nFree Energy error = " 
+                   << (system.scft().fHelmholtz() - 3.87318676998);
+         std::cout << "\nPressure error = " 
+                   << (system.scft().pressure() + 12.0498211637);
       }
       TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.87318676998) < 1e-5);
       TEST_ASSERT(abs(system.scft().pressure() + 12.0498211637) < 1e-4);
@@ -417,9 +420,14 @@ public:
       system.iterate();
       
       // Check that the right film thickness was found
-      double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
+      double param = system.domain().unitCell().parameter(0);
+      //double paramRef = 2.061207269; // old reference value
+      double paramRef = 2.06121822708647739475e+00; // changed v1.3.4
+      //double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
+      double paramErr = param - paramRef;
       if (verbose() > 0) {
-         std::cout << "\nFilm thickness error = " << paramErr << "\n";
+         std::cout << "\nFilm thickness       = " << Dbl(param, 20, 12);
+         std::cout << "\nFilm thickness error = " << Dbl(paramErr, 20, 12);
       }
       TEST_ASSERT(abs(paramErr) < 1e-5);
       TEST_ASSERT(abs(system.mask().phiTot() - 0.8059299672) < 1e-5);
@@ -433,19 +441,19 @@ public:
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       double diff = rComparison.maxDiff();
       if (verbose() > 0) {
-         std::cout << "Max field error = " << diff << "\n";
+         std::cout << "\nMax field error = " << diff;
       }
       TEST_ASSERT(diff < 1.0E-4);
 
       // Check thermo parameters
       if (verbose() > 0) {
-         std::cout << "Free Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.80033554388) << "\n";
-         std::cout << "Pressure error = " 
-                   << (system.scft().pressure() + 12.9408830685) << "\n";
+         std::cout << "\nFree Energy error = " 
+                   << (system.scft().fHelmholtz() - 3.80033554388);
+         std::cout << "\nPressure error = " 
+                   << (system.scft().pressure() + 12.9408830685);
       }
-      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1e-5);
-      TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1.0e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1.0e-4);
    }
 
    // Read parameter file to create a System object

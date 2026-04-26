@@ -6,9 +6,12 @@
 
 #include <rpg/system/System.h>
 #include <rpg/scft/sweep/BasisFieldState.h>
+#include <rpg/field/WFields.h>
 
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>
 
+#include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>

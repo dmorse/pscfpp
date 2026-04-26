@@ -2,25 +2,25 @@
 # PSCF - Polymer Self-Consistent Field (C++/CUDA)
 
 PSCF is a software package for field-theoretic analysis of inhomogeneous 
-equilibrium states of polymerc materials with constituents that tend to 
-phase separate.  PSCF can be used to perform either self-consistent field 
-theory (SCFT) calculations or some types of stochastic field-theoretic 
-simulation (FTS) calculations.
+equilibrium states formed by polymeric materials with constituents that 
+tend to phase separate.  PSCF can be used to perform either self-consistent 
+field theory (SCFT) calculations or stochastic field-theoretic simulation 
+(FTS) calculations.
 
 The current version of PSCF is written primarily in C++, supplemented by 
-CUDA to enable the use of a graphics processing unit (GPU). PSCF is 
-distributed only in source code form, and so must be compiled by the 
-user. 
+CUDA to enable the use of a graphics processing unit (GPU) when one is
+available. PSCF is distributed only in source code form, and so must be 
+compiled by the user. 
 
 ## Methods: SCFT and PS-FTS
 
-PSCF was originally designed for SCFT calculations, and provides an
-extensive set of tools for this purpose .  The acronym PSCF stands for 
+PSCF was originally designed for SCFT calculations, and provides a
+complete set of tools for this purpose . The acronym PSCF stands for 
 Polymer Self-Consistent Field, reflecting this origin.
 
 PSCF can now also perform field theoretic simulation (FTS) calculations
 that rely on a partial saddle-point approximation (PS-FTS). Such 
-simulations can be performed using ether Brownian dynamics (BD) or 
+simulations can be performed using either Brownian dynamics (BD) or 
 Monte-Carlo (MC) sampling techniques. 
 
 The fully-fluctuating formulation of polymer field theory (which is not 
@@ -35,24 +35,20 @@ involves only real-valued fields.
 
 ## History
 
-The current C++/CUDA version of PSCF originated as a completely rewritten
-version of an older Fortran SCFT program of the same name. The Fortran 
-PSCF version builds a single program that was designed for SCFT analysis 
-of systems that can contain mixtures of linear block polymers and small
+The current C++/CUDA version of PSCF originated as a rewritten version
+of an older Fortran SCFT program of the same name. The Fortran PSCF
+package builds a single program that was designed for SCFT analysis of 
+systems that can contain mixtures of linear block polymers and small
 molecule solvents in a domain with periodic boundary conditions.  The 
 current C++/CUDA version is intended to supersede the Fortran version, 
 which is no longer being developed or actively maintained. The Fortran 
-PSCF program is still available in a separate github.com repository at 
+PSCF package is still available in a separate github.com repository at 
 https://github.com/dmorse/pscf.  The current C++/CUDA version provides 
-almost all of the capabilities of the Fortran PSCF program, and many
+almost all of the capabilities of the Fortran PSCF version, and several
 important new capabilities, as discussed below.
 
 Functional differences between the current C++/CUDA version of PSCF and 
 the legacy Fortran version include the following:
-
-   - The current version is an extensible package of several programs
-     that are designed for different types of spatial domain and/or 
-     different types of hardware, implemented within a common framework.
 
    - The current version can perform stochastic PS-FTS calculations as
      well as SCFT.
@@ -72,22 +68,22 @@ PSCF provides source code for the following three executable programs:
      cylindrical or spherical coordinates. A finite difference method is
      used to solve the underlying partial differential equation, known
      as the modified diffusion equation (MDE). This program can be used
-     to treat problems involving flat and curved interfaces, as well as
-     cylindrical and spherical micelles.
+     to treat problems involving flat and curved interfaces, and to 
+     model cylindrical and spherical micelles.
 
-   - **pscf_pc** : The pscf_pc program can be used to perform SCFT and
+   - **pscf_rpc** : The pscf_pc program can be used to perform SCFT and
      PS-FTS calculations for systems that are periodic in 1, 2 or 3 
      spatial dimensions, using standard CPU hardware. A pseudo-spectral 
      algorithm is used to solve the MDE. This program provides capabilities
      for SCFT calculations analogous to those of the older Fortran PSCF 
-     program, as well as tools for PS-FTS calculations.  The suffix "pc" 
+     program, as well as tools for PS-FTS calculations.  The suffix "rpc" 
      stands for "periodic CPU".
 
    - **pscf_pg** : The pscf_pg program is a GPU-accelerated version
      of pscf_pc that can also perform SCFT and PS-FTS calculations for
      periodic systems. It is based on algorithms analogous to those used 
      in pscf_pc and provides almost identical features, but provides 
-     higher performance for large systems. The suffix "pg" stands for 
+     higher performance for large systems. The suffix "rpg" stands for 
      "periodic GPU".
 
 ## Features

@@ -5,16 +5,23 @@
 #include <test/UnitTestRunner.h>
 
 #include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/solvers/Polymer.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
 #include <rpg/scft/sweep/SweepFactory.h>
 #include <rpg/scft/sweep/LinearSweep.h>
 
+#include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>
 
+#include <pscf/chem/Monomer.h>
 #include <pscf/sweep/ParameterType.h>
 
-#include <util/tests/LogFileUnitTest.h>
+#include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
 #include <util/containers/GArray.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 #include <sstream>

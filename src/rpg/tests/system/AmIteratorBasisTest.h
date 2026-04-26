@@ -174,23 +174,24 @@ public:
       return outFileRoot;
    }
 
+   #if 0
    /*
    * Iterate and output final fields.
    */
    template <int D>
-   void iterate(System<D>& system,
+   int iterate(System<D>& system,
                 std::string const & outFileRoot)
    {
       // Iterate
       int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
+      if (!error) {
+         // Write final fields
+         system.w().writeBasis(outFileRoot + "_w.bf");
+         system.c().writeBasis(outFileRoot + "_c.bf");
       }
-
-      // Write final fields
-      system.w().writeBasis(outFileRoot + "_w.bf");
-      system.c().writeBasis(outFileRoot + "_c.bf");
+      return error;
    }
+   #endif
 
    /*
    * Template for an iteration test, with regression testing.
@@ -200,6 +201,7 @@ public:
                     std::string paramFileName,
                     std::string wFileName,
                     std::string outSuffix,
+		    int& error,
                     double& wMaxDiff,
                     double& cMaxDiff,
                     bool compareCFields = true)
@@ -212,14 +214,23 @@ public:
 
       initSystem(system, paramFileName, wFileName);
 
-      iterate(system, outFileRoot);
+      error = system.iterate();
 
-      std::string refFileRoot;
-      refFileRoot = makeFileRoot("ref/testIterate", outSuffix, D);
-   
-      wMaxDiff = readCompareWBasis(system, refFileRoot + "_w.bf");
-      if (compareCFields) {
-         cMaxDiff = readCompareCBasis(system, refFileRoot + "_c.bf");
+      if (error) {
+         TEST_THROW("Iterator failed to converge");
+      } else {
+
+         // Write final fields
+         system.w().writeBasis(outFileRoot + "_w.bf");
+         system.c().writeBasis(outFileRoot + "_c.bf");
+
+         // Compare to reference solutions
+         std::string refFileRoot;
+         refFileRoot = makeFileRoot("ref/testIterate", outSuffix, D);
+         wMaxDiff = readCompareWBasis(system, refFileRoot + "_w.bf");
+         if (compareCFields) {
+            cMaxDiff = readCompareCBasis(system, refFileRoot + "_c.bf");
+         }
       }
 
    }
@@ -234,9 +245,15 @@ public:
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
-      fHelmholtz = std::abs(fHelmholtz - system.scft().fHelmholtz());
-      pressure   = std::abs(pressure - system.scft().pressure());
+      double fVal = system.scft().fHelmholtz();
+      double pVal = system.scft().pressure();
+      //fHelmholtz = std::abs(fHelmholtz - system.scft().fHelmholtz());
+      //pressure   = std::abs(pressure - system.scft().pressure());
+      fHelmholtz = std::abs(fHelmholtz - fVal);
+      pressure   = std::abs(pressure - pVal);
       if (verbose() > 0) {
+         std::cout << "\nfHelmholtz val  = " << fVal;
+         std::cout << "\npressure val    = " << pVal;
          std::cout << "\nfHelmholtz diff = " << fHelmholtz;
          std::cout << "\npressure diff   = " << pressure;
       }
@@ -270,12 +287,11 @@ public:
 
       System<1> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/diblock/lam/param.rigid",
                   "in/diblock/lam/omega.ref",
-                  "lam_rigid",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "lam_rigid", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -303,12 +319,11 @@ public:
 
       System<1> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/diblock/lam/param.flex",
                   "in/diblock/lam/omega.in",
-                  "lam_flex",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "lam_flex", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -441,21 +456,22 @@ public:
 
       System<1> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/diblock/lam_bead/param.flex",
                   "in/diblock/lam_bead/w.bf",
-                  "lam_bead_flex",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "lam_bead_flex", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
       // Unit cell parameter
       double a  = system.domain().unitCell().parameter(0);
+      double aDiff = std::abs(a - 1.51567153218);
       if (verbose() > 0) {
          std::cout << "\na = " << Dbl(a, 20, 12);
       }
-      TEST_ASSERT(std::abs(a - 1.51567153218) < 1.0E-8);
+      TEST_ASSERT(aDiff < 1.0E-8);
+      //TEST_ASSERT(std::abs(a - 1.51567153218) < 1.0E-8);
 
       // Compare free energies to output of modified unit test from v1.1
       double fHelmholtz = 2.42834917413e-02;
@@ -536,12 +552,11 @@ public:
 
       System<1> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/solution/lam/param",
                   "in/solution/lam/w.bf",
-                  "lam_soln",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "lam_soln", error, wMaxDiff, cMaxDiff);
       //std::cout << "\n wMaxDiff = " << wMaxDiff;
       //std::cout << "\n cMaxDiff = " << cMaxDiff;
       TEST_ASSERT(wMaxDiff < 5.0E-8);
@@ -613,12 +628,11 @@ public:
 
       System<1> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/solution/lam_open/param",
                   "in/solution/lam_open/w.bf",
-                  "lam_open_soln",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "lam_open_soln", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 5.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -640,12 +654,11 @@ public:
 
       System<1> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/blend/lam/param.open",
                   "in/blend/lam/w.bf",
-                  "lam_open_blend",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "lam_open_blend", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -666,10 +679,11 @@ public:
 
       System<2> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/diblock/hex/param.rigid",
                   "in/diblock/hex/omega.ref",
-                  "hex_rigid", wMaxDiff, cMaxDiff);
+                  "hex_rigid", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -698,10 +712,11 @@ public:
 
       System<2> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/diblock/hex/param.flex",
                   "in/diblock/hex/omega.in",
-                  "hex_flex", wMaxDiff, cMaxDiff);
+                  "hex_flex", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-6);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -796,12 +811,11 @@ public:
 
       double wMaxDiff, cMaxDiff;
       System<2> system;
+      int error;
       testIterate(system,
                   "in/diblock/hex_bead/param.flex",
                   "in/diblock/hex_bead/w.bf",
-                  "hex_bead_flex",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "hex_bead_flex", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -934,10 +948,11 @@ public:
 
       System<3> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/diblock/bcc/param.rigid",
                   "in/diblock/bcc/omega.ref",
-                  "bcc_rigid", wMaxDiff, cMaxDiff);
+                  "bcc_rigid", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 5.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-7);
 
@@ -965,10 +980,11 @@ public:
 
       System<3> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/diblock/bcc/param.flex", 
 		  "in/diblock/bcc/omega.in",
-                  "bcc_flex", wMaxDiff, cMaxDiff);
+                  "bcc_flex", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 5.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -1098,12 +1114,11 @@ public:
 
       System<3> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/triblock/altGyr/param",
                   "in/triblock/altGyr/w.bf",
-                  "altGyr_flex",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "altGyr_flex", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -1136,6 +1151,7 @@ public:
       double cellDiff = cellParam - cellParamRef;
       if (verbose() > 0) {
          std::cout << "\n";
+         std::cout << "Cell param      = " << cellParam;
          std::cout << "Cell param diff = " << cellDiff;
       }
       TEST_ASSERT(std::abs(cellDiff) < 1.0E-7);
@@ -1147,18 +1163,15 @@ public:
 
       System<3> system;
       double wMaxDiff, cMaxDiff;
+      int error;
       testIterate(system,
                   "in/diblock/c15_1/param.flex",
                   "in/diblock/c15_1/w_in.bf",
-                  "c15_1_flex",
-                  wMaxDiff,
-                  cMaxDiff);
+                  "c15_1_flex", error, wMaxDiff, cMaxDiff);
       TEST_ASSERT(wMaxDiff < 1.0E-6);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
       // Compare free energies to output of modified unit test from v1.1
-      // double fHelmholtz =   3.21902602858e+00;
-      // double pressure =     3.37292021160e+00;
       double fHelmholtz =    3.219026035420e+00; // changed v1.3.4
       double pressure   =    3.372798290137e+00; // changed v1.3.4
       compareFreeEnergies(system, fHelmholtz, pressure);
