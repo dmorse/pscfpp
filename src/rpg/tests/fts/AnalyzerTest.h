@@ -83,13 +83,19 @@ public:
       
       // Obtain the average value of fourthOrder parameter
       std::string line;
-      double fourthorder;
+      double value;
       std::string x;
       std::getline(file, line);
       std::istringstream iss(line);
-      iss >> x  >> x >> fourthorder;
+      iss >> x  >> x >> value;
       
-      double diff = fabs(3.5756726e-01 - fourthorder);
+      double ref = 3.5756726e-01;
+      //double diff = fabs(3.5756726e-01 - value);
+      double diff = fabs(ref - value);
+      if (verbose() > 0) {
+         std::cout << "\nAverage value = " << Dbl(value, 20, 12);
+         std::cout << "\nAverage diff  = " << Dbl(diff, 20, 12);
+      }
       TEST_ASSERT(diff < 1.0E-4);
    }
    
@@ -102,20 +108,26 @@ public:
       std::string filename = filePrefix() + "out/maxOrder_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/maxOrder_analyzer.ave" 
-                  << std::endl;
+        std::cout << "Error: Could not open file "
+                  << filename << std::endl;
 
       }
       
       // Obtain the average value of maxOrder parameter
       std::string line;
-      double maxorder;
+      double value;
       std::string x;
       std::getline(file, line);
       std::istringstream iss(line);
-      iss >> x  >> x >> maxorder;
+      iss >> x  >> x >> value;
       
-      double diff = fabs(2.6173130e-02 - maxorder);
+      double ref = 2.6173130e-02;
+      //double diff = fabs(2.6173130e-02 - value);
+      double diff = fabs(ref - value);
+      if (verbose() > 0) {
+         std::cout << "\nAverage value = " << Dbl(value, 20, 12);
+         std::cout << "\nAverage diff  = " << Dbl(diff, 20, 12);
+      }
       TEST_ASSERT(diff < 1.0E-4);
    }
 
@@ -125,11 +137,11 @@ public:
       openLogFile("out/testPerturbationDerivative.log");
       analyzeTrajectory();
 
-      std::string filename = filePrefix() + "out/perturbationDerivative_analyzer.ave";
+      std::string filename = filePrefix() 
+                           + "out/perturbationDerivative_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/perturbationDerivative_analyzer.ave" 
-                  << std::endl;
+        std::cout << "Error: Could not open file" << filename << std::endl;
 
       }
       
@@ -141,7 +153,13 @@ public:
       std::istringstream iss(line);
       iss >> x  >> x >> value;
       
-      double diff = fabs(4.3812680e+03 - value);
+      double ref = 4.3812680e+03;
+      //double diff = fabs(4.3812680e+03 - value);
+      double diff = fabs(ref - value);
+      if (verbose() > 0) {
+         std::cout << "\nAverage value = " << Dbl(value, 20, 12);
+         std::cout << "\nAverage diff  = " << Dbl(diff, 20, 12);
+      }
       TEST_ASSERT(diff < 1.0E-4);
    }
 
@@ -151,12 +169,11 @@ public:
       openLogFile("out/testConcentrationDerivative.log");
       analyzeTrajectory();
 
-      std::string filename = filePrefix() + "out/concentrationDerivative_analyzer.ave";
+      std::string filename = filePrefix() 
+                           + "out/concentrationDerivative_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/concentrationDerivative_analyzer.ave" 
-                  << std::endl;
-
+        std::cout << "Error: Could not open file " << filename << std::endl;
       }
       
       // Obtain the average value of parameter
@@ -167,7 +184,13 @@ public:
       std::istringstream iss(line);
       iss >> x  >> x >> value;
       
-      double diff = fabs(1.7407118e+01 - value);
+      double ref = 1.7407118e+01;
+      double diff = fabs(ref - value);
+      //double diff = fabs(1.7407118e+01 - value);
+      if (verbose() > 0) {
+         std::cout << "\nAverage value = " << Dbl(value, 20, 12);
+         std::cout << "\nAverage diff  = " << Dbl(diff, 20, 12);
+      }
       TEST_ASSERT(diff < 1.0E-4);
    }
 
@@ -177,12 +200,12 @@ public:
       openLogFile("out/testChiDerivative.log");
       analyzeTrajectory();
 
-      std::string filename = filePrefix() + "out/chiDerivative_analyzer.ave";
+      std::string filename = filePrefix() 
+                           + "out/chiDerivative_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/chiDerivative_analyzer.ave" 
-                  << std::endl;
-
+         std::cout << "Error: Could not open file " 
+                   << filename << std::endl;
       }
       
       // Obtain the average value of parameter
@@ -193,7 +216,13 @@ public:
       std::istringstream iss(line);
       iss >> x  >> x >> value;
       
-      double diff = fabs(8.2574275e+02 - value);
+      double ref = 8.2574275e+02;
+      double diff = fabs(ref - value);
+      //double diff = fabs(8.2574275e+02 - value);
+      if (verbose() > 0) {
+         std::cout << "\nAverage value = " << Dbl(value, 20, 12);
+         std::cout << "\nAverage diff  = " << Dbl(diff, 20, 12);
+      }
       TEST_ASSERT(diff < 1.0E-4);
    }
 
@@ -207,8 +236,8 @@ public:
       std::string filename = filePrefix() + "out/hamiltonian_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/hamiltonian_analyzer.ave" 
-                  << std::endl;
+        std::cout << "Error: Could not open file " 
+                  << filename << std::endl;
 
       }
       
@@ -242,11 +271,12 @@ public:
       openLogFile("out/testBinaryStructureFactorGrid.log");
       analyzeTrajectory();
 
-      std::string filename = filePrefix() + "out/binaryStructureFactorGrid_analyzer";
+      std::string filename = filePrefix() 
+                           + "out/binaryStructureFactorGrid_analyzer";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/binaryStructureFactorGrid_analyzer" 
-                  << std::endl;
+        std::cout << "Error: Could not open file "
+                   << filename << std::endl;
 
       }
       
@@ -287,11 +317,12 @@ public:
       openLogFile("out/testBoxLengthDerivative.log");
       analyzeTrajectory();
 
-      std::string filename = filePrefix() + "out/boxLengthDerivative_analyzer.ave";
+      std::string filename = filePrefix() 
+                           + "out/boxLengthDerivative_analyzer.ave";
       std::ifstream file(filename);
       if (!file.is_open()) {
-        std::cout << "Error: Could not open file out/boxLengthDerivative_analyzer.ave" 
-                  << std::endl;
+         std::cout << "Error: Could not open file "
+                    << filename << std::endl;
 
       }
       
@@ -303,7 +334,14 @@ public:
       std::istringstream iss(line);
       iss >> x  >> x >> value;
       
-      double diff = fabs(4.2481444e+03 - value);
+      //double ref = 4.2481444e+03; // old, < v1.3.4
+      double ref = 4.234712800000e+03; // new in v1.3.4
+      double diff = fabs(ref - value);
+      //double diff = fabs(4.2481444e+03 - value);
+      if (verbose() > 0) {
+         std::cout << "\nAverage value = " << Dbl(value, 20, 12);
+         std::cout << "\nAverage diff  = " << Dbl(diff, 20, 12);
+      }
       TEST_ASSERT(diff < 1.0E-4);
    }
 
