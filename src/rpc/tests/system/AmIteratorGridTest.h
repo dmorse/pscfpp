@@ -99,7 +99,7 @@ public:
       double maxDiff = comparison.maxDiff();
       if (verbose() > 0) {
          std::cout << "\n";
-         std::cout << message << maxDiff;
+         std::cout << message << Dbl(maxDiff, 20, 12);
       }
       return maxDiff;
    }
@@ -225,10 +225,10 @@ public:
       fHelmholtz = std::abs(fHelmholtz - fVal);
       pressure   = std::abs(pressure - pVal);
       if (verbose() > 0) {
-         std::cout << "\nfHelmholtz val = " << fVal;
-         std::cout << "\npressure val   = " << pVal;
-         std::cout << "\nfHelmholtz diff = " << fHelmholtz;
-         std::cout << "\npressure diff   = " << pressure;
+         std::cout << "\nfHelmholtz val = " << Dbl(fVal, 20, 12);
+         std::cout << "\npressure val   = " << Dbl(pVal, 20, 12);
+         std::cout << "\nfHelmholtz diff = " << Dbl(fHelmholtz, 20, 12);
+         std::cout << "\npressure diff   = " << Dbl(pressure, 20, 12);
       }
    }
 

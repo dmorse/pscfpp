@@ -102,7 +102,7 @@ public:
       double maxDiff = comparison.maxDiff();
       if (verbose() > 0) {
          std::cout << "\n";
-         std::cout << message << maxDiff;
+         std::cout << message << Dbl(maxDiff, 20, 12);
       }
       return maxDiff;
    }
@@ -153,10 +153,10 @@ public:
       fHelmholtz = std::abs(fHelmholtz - fval);
       pressure   = std::abs(pressure - pval);
       if (verbose() > 0) {
-         std::cout << "\nfHelmholtz      = " << fval;
-         std::cout << "\npressure        = " << pval;
-         std::cout << "\nfHelmholtz diff = " << fHelmholtz;
-         std::cout << "\npressure diff   = " << pressure;
+         std::cout << "\nfHelmholtz      = " << Dbl(fval, 20, 12);
+         std::cout << "\npressure        = " << Dbl(pval, 20, 12);
+         std::cout << "\nfHelmholtz diff = " << Dbl(fHelmholtz, 20, 12);
+         std::cout << "\npressure diff   = " << Dbl(pressure, 20, 12);
       }
    }
 
@@ -237,6 +237,17 @@ public:
          if (compareCFields) {
             cMaxDiff = readCompareCBasis(system, refFileRoot + "_c.bf");
          }
+
+         #if 0
+         // If verbose, output errors
+         if (verbose() > 0) {
+            std::cout << "\nwMaxDiff = " << wMaxDiff;
+            if (compareCFields) {
+               std::cout << "\ncMaxDiff = " << cMaxDiff;
+            }
+         }
+         #endif
+
       }
    }
 
@@ -414,7 +425,6 @@ public:
    void testIterate1D_lam_bead_flex()
    {
       printMethod(TEST_FUNC);
-      //setVerbose(1);
 
       System<1> system;
       double wMaxDiff, cMaxDiff;
@@ -528,10 +538,6 @@ public:
                   wMaxDiff,
                   cMaxDiff);
       TEST_ASSERT(!error);
-      if (verbose() > 0) {
-         std::cout << "\n wMaxDiff = " << wMaxDiff;
-         std::cout << "\n cMaxDiff = " << cMaxDiff;
-      }
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -567,8 +573,6 @@ public:
                   error,
                   wMaxDiff,
                   cMaxDiff);
-      //std::cout << "\n wMaxDiff = " << wMaxDiff;
-      //std::cout << "\n cMaxDiff = " << cMaxDiff;
       TEST_ASSERT(wMaxDiff < 1.0E-7);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -866,7 +870,6 @@ public:
    void testIterate2D_hex_bead_stress()
    {
       printMethod(TEST_FUNC);
-      //setVerbose(1);
 
       std::string outFileRoot;
       outFileRoot = makeFileRoot("out/testIterateBasis", "hex_bead_stress", 2);
@@ -975,8 +978,6 @@ public:
                   error,
                   wMaxDiff,
                   cMaxDiff);
-      //std::cout << "\n wMaxDiff = " << wMaxDiff;
-      //std::cout << "\n cMaxDiff = " << cMaxDiff;
       TEST_ASSERT(wMaxDiff < 1.0E-6);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
