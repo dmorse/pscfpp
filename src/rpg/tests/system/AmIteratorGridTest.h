@@ -98,8 +98,7 @@ public:
       comparison.compare(fields1, fields2);
       double maxDiff = comparison.maxDiff();
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << message << maxDiff;
+         std::cout << "\n" << message << Dbl(maxDiff, 20, 12);
       }
       return maxDiff;
    }
@@ -246,10 +245,9 @@ public:
          stress.append(system.mixture().stress(i));
       }
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "stress =" ;
+         std::cout << "\nstress =" ;
          for (int i = 0; i < nParameter; ++i) {
-            std::cout << "  " << stress[i];
+            std::cout << "  " << Dbl(stress[i], 20, 12);
          }
       }
       return stress;
@@ -385,10 +383,6 @@ public:
                   wMaxDiff,
                   cMaxDiff);
       TEST_ASSERT(!error);
-      if (verbose() > 0) {
-         std::cout << "\n wMaxDiff = " << wMaxDiff;
-         std::cout << "\n cMaxDiff = " << cMaxDiff;
-      }
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
