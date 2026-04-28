@@ -97,8 +97,7 @@ public:
       comparison.compare(fields1, fields2);
       double maxDiff = comparison.maxDiff();
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << message << maxDiff;
+         std::cout << "\n" << message << Dbl(maxDiff, 20, 12);
       }
       return maxDiff;
    }
@@ -254,10 +253,10 @@ public:
       fHelmholtz = std::abs(fHelmholtz - fVal);
       pressure   = std::abs(pressure - pVal);
       if (verbose() > 0) {
-         std::cout << "\nfHelmholtz val  = " << fVal;
-         std::cout << "\npressure val    = " << pVal;
-         std::cout << "\nfHelmholtz diff = " << fHelmholtz;
-         std::cout << "\npressure diff   = " << pressure;
+         std::cout << "\nfHelmholtz val  = " << Dbl(fVal, 20, 12);
+         std::cout << "\npressure val    = " << Dbl(pVal, 20, 12);
+         std::cout << "\nfHelmholtz diff = " << Dbl(fHelmholtz, 20, 12);
+         std::cout << "\npressure diff   = " << Dbl(pressure, 20, 12);
       }
    }
 
@@ -272,10 +271,9 @@ public:
          stress.append(system.mixture().stress(i));
       }
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "stress =" ;
+         std::cout << "\nstress =" ;
          for (int i = 0; i < nParameter; ++i) {
-            std::cout << "  " << stress[i];
+            std::cout << "  " << Dbl(stress[i], 20, 12);
          }
       }
       return stress;
@@ -407,7 +405,7 @@ public:
       system.iterate();
       double ar  = system.domain().unitCell().parameter(0);
       if (verbose() > 0) {
-         std::cout << "\na = " << Dbl(ar,20, 12);
+         std::cout << "\na = " << Dbl(ar, 20, 12);
       }
 
       // Unit cell size values
@@ -559,8 +557,6 @@ public:
                   "in/solution/lam/param",
                   "in/solution/lam/w.bf",
                   "lam_soln", error, wMaxDiff, cMaxDiff);
-      //std::cout << "\n wMaxDiff = " << wMaxDiff;
-      //std::cout << "\n cMaxDiff = " << cMaxDiff;
       TEST_ASSERT(wMaxDiff < 5.0E-8);
       TEST_ASSERT(cMaxDiff < 1.0E-8);
 
@@ -851,7 +847,7 @@ public:
       system.iterate(); 
       double ar  = system.domain().unitCell().parameter(0);
       if (verbose() > 0) {
-         std::cout << "\na = " << Dbl(ar,20, 12);
+         std::cout << "\na = " << Dbl(ar, 20, 12);
       }
 
       // Unit cell size values
@@ -1080,8 +1076,8 @@ public:
       double s0 = system.mixture().stress(0);
       double diff = std::fabs((s0 - 8.0561073E-2)/s0);
       if (verbose() > 0) {
-	  std::cout << "\nstress  = " << s0;
-	  std::cout << "\ndiff    = " << s0;
+	  std::cout << "\nstress  = " << Dbl(s0, 20, 12);
+	  std::cout << "\ndiff    = " << Dbl(s0, 20, 12);
       }
       TEST_ASSERT(diff < 1.0E-5);
 
@@ -1142,8 +1138,8 @@ public:
       double fHelmholtzRef = 3.9642295402;     // from PSCF Fortran
       double fDiff = fHelmholtz - fHelmholtzRef;
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "fHelmholtz diff = " << fDiff;
+         std::cout << "\nfHelmholtz      = " << Dbl(fHelmholtz, 20, 12);
+         std::cout << "\nfHelmholtz diff = " << Dbl(fDiff, 20, 12);
       }
       TEST_ASSERT(std::abs(fDiff) < 1.0E-7);
 
@@ -1152,9 +1148,8 @@ public:
       double cellParamRef = 2.2348701424;     // from PSCF Fortran
       double cellDiff = cellParam - cellParamRef;
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "Cell param      = " << cellParam;
-         std::cout << "Cell param diff = " << cellDiff;
+         std::cout << "\nCell param      = " << Dbl(cellParam, 20, 12);
+         std::cout << "\nCell param diff = " << Dbl(cellDiff, 20, 12);
       }
       TEST_ASSERT(std::abs(cellDiff) < 1.0E-7);
    }
@@ -1235,9 +1230,8 @@ public:
       double diff = bComparison.maxDiff();
       double epsilon = 1.0E-5;
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "diff    = " << diff << "\n";
-         std::cout << "epsilon = " << epsilon << "\n";
+         std::cout << "\ndiff    = " << Dbl(diff, 20, 12);
+         std::cout << "\nepsilon = " << Dbl(epsilon, 20, 12);
       }
       TEST_ASSERT(diff < epsilon);
    }
