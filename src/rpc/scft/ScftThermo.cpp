@@ -10,6 +10,9 @@
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/CFields.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/Mask.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/cpu/Reduce.h>
 
@@ -18,10 +21,12 @@
 namespace Pscf {
    namespace Rpc {
 
-      // Constructor
+      /*
+      * Constructor.
+      */
       template <int D>
       ScftThermo<D>::ScftThermo(System<D> const & system)
-       : Rp::ScftThermo<D, System<D> >(system)
+       : Rp::ScftThermo<D, Types<D> >(system)
       {};
 
    }
@@ -30,9 +35,9 @@ namespace Pscf {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class ScftThermo<1, Rpc::System<1> >;
-      template class ScftThermo<2, Rpc::System<2> >;
-      template class ScftThermo<3, Rpc::System<3> >;
+      template class ScftThermo<1, Rpc::Types<1> >;
+      template class ScftThermo<2, Rpc::Types<2> >;
+      template class ScftThermo<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       template class ScftThermo<1>;

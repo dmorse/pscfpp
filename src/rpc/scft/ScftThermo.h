@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/scft/ScftThermo.h>    // base class template
-#include <rpc/system/System.h>     // template argument
+#include <rp/scft/ScftThermo.h>         // base class template
+#include <rpc/system/SystemConstRef.h>  // template argument
 
 namespace Pscf {
 namespace Rpc {
@@ -29,7 +29,7 @@ namespace Rpc {
    * \ingroup Rpc_Scft_Module
    */
    template <int D>
-   class ScftThermo : public Rp::ScftThermo<D, System<D> >
+   class ScftThermo : public Rp::ScftThermo<D, Types<D> >
    {
    public:
 
@@ -48,9 +48,9 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Rp::ScftThermo<1, Rpc::System<1> >;
-      extern template class Rp::ScftThermo<2, Rpc::System<2> >;
-      extern template class Rp::ScftThermo<3, Rpc::System<3> >;
+      extern template class Rp::ScftThermo<1, Rpc::Types<1> >;
+      extern template class Rp::ScftThermo<2, Rpc::Types<2> >;
+      extern template class Rp::ScftThermo<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       extern template class ScftThermo<1>;

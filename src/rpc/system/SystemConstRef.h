@@ -9,7 +9,7 @@
 */
 
 #include <rp/system/SystemConstRef.h>   // base class template
-#include <rpc/system/System.h>          // template parameter
+#include <rpc/system/Types.h>           // base class parameter
 
 namespace Pscf {
 namespace Rpc {
@@ -19,7 +19,7 @@ namespace Rpc {
    using namespace Prdc::Cpu;
 
    /**
-   * Const access to a System<D>.
+   * Const access to a System.
    *
    * Specializations of this template with D=1, 2, and 3 are derived
    * from corresponding specializations of the base class template
@@ -30,7 +30,7 @@ namespace Rpc {
    * \ingroup Rpc_System_Module
    */
    template <int D>
-   class SystemConstRef : public Rp::SystemConstRef< System<D> >
+   class SystemConstRef : public Rp::SystemConstRef<D, Types<D> >
    {
    public:
 
@@ -38,7 +38,7 @@ namespace Rpc {
       * Default constructor.
       */
       SystemConstRef()
-       : Rp::SystemConstRef< System<D> > ()
+       : Rp::SystemConstRef< D, Types<D> > ()
       {};
 
       /**
@@ -47,7 +47,7 @@ namespace Rpc {
       * \param system  System<D> object to which this refers.
       */
       SystemConstRef(System<D> const & system)
-       : Rp::SystemConstRef< System<D> > (system)
+       : Rp::SystemConstRef<D, Types<D> > (system)
       {};
 
    };
@@ -58,9 +58,9 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class SystemConstRef< Rpc::System<1> >;
-      extern template class SystemConstRef< Rpc::System<2> >;
-      extern template class SystemConstRef< Rpc::System<3> >;
+      extern template class SystemConstRef<1, Rpc::Types<1> >;
+      extern template class SystemConstRef<2, Rpc::Types<2> >;
+      extern template class SystemConstRef<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       extern template class SystemConstRef<1>;

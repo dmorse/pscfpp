@@ -6,14 +6,16 @@
 */
 
 #include "SystemConstRef.h"
+#include <rpg/system/System.h>
+
 #include <rp/system/SystemConstRef.tpp>
 
-// Explicit instantiations definitions
+// Explicit initialization definitions
 namespace Pscf {
    namespace Rp {
-      template class SystemConstRef< Rpg::System<1> >;
-      template class SystemConstRef< Rpg::System<2> >;
-      template class SystemConstRef< Rpg::System<3> >;
+      template class SystemConstRef<1, Rpg::Types<1> >;
+      template class SystemConstRef<2, Rpg::Types<2> >;
+      template class SystemConstRef<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class SystemConstRef<1>;

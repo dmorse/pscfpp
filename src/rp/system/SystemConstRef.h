@@ -22,28 +22,28 @@ namespace Rp {
    * Base class template for const access to an associated System.
    *
    * A SystemConstRef holds read-only (const) pointers to an associated 
-   * System object (type parameter ST) and several of its primary 
-   * components, for a model with real fields and periodic boundary 
-   * conditions. Accessor functions return the system and its components 
-   * as const references.
+   * System object (type T::System) and several of its primary components,
+   * for a model with real fields and periodic boundary conditions. 
+   * Accessor functions return the system and its components as const 
+   * references.
    *
    * \ingroup Rp_System_Module
    */
-   template <class ST>
+   template <int D, class T>
    class SystemConstRef 
    {
 
    public:
 
       // Public type name aliases
-      using SystemT = ST;
-      using MixtureT = typename SystemT::MixtureT;
-      using InteractionT = typename SystemT::InteractionT;
-      using DomainT = typename SystemT::DomainT;
-      using CFieldsT = typename SystemT::CFieldsT;
-      using WFieldsT = typename SystemT::WFieldsT;
-      using MaskT = typename SystemT::MaskT;
-      using RFieldT = typename SystemT::RFieldT;
+      using SystemT = typename T::System;
+      using MixtureT = typename T::Mixture;
+      using InteractionT = typename T::Interaction;
+      using DomainT = typename T::Domain;
+      using CFieldsT = typename T::CFields;
+      using WFieldsT = typename T::WFields;
+      using MaskT = typename T::Mask;
+      using RFieldT = typename T::RField;
 
       // Public member functions
 
@@ -60,7 +60,7 @@ namespace Rp {
       * 
       * \param system  parent system object
       */
-      SystemConstRef(SystemT const & system);
+      SystemConstRef(typename T::System const & system);
 
       /**
       * Destructor.
@@ -72,55 +72,54 @@ namespace Rp {
       * 
       * \param system  parent system object
       */
-      void associate(SystemT const & system);
+      void associate(typename T::System const & system);
 
       /**
       * Get the associated System.
       */
-      SystemT const & system() const
+      typename T::System const & system() const
       {  return *systemPtr_; }
 
       /**
       * Get the Mixture.
       */
-      MixtureT const & mixture() const
+      typename T::Mixture const & mixture() const
       {  return *mixturePtr_; }
 
       /**
       * Get the Interaction.
       */
-      InteractionT const & interaction() const
+      typename T::Interaction const & interaction() const
       {  return *interactionPtr_; }
 
       /**
       * Get the Domain.
       */
-      DomainT const & domain() const
+      typename T::Domain const & domain() const
       {  return *domainPtr_; }
 
       /**
       * Get the concentration (c) field container.
       */
-      CFieldsT const & c() const
+      typename T::CFields const & c() const
       {  return *cPtr_; }
 
       /**
       * Get the chemical potential (w) field container.
       */
-      WFieldsT const & w() const
+      typename T::WFields const & w() const
       {  return *wPtr_; }
 
       /**
       * Get the external potential (h) field container (if any).
       */
-      WFieldsT const & h() const
+      typename T::WFields const & h() const
       {  return *hPtr_; }
-
      
       /** 
       * Get the mask (if any).
       */
-      MaskT const & mask() const
+      typename T::Mask const & mask() const
       {  return *maskPtr_; }
 
       /**
@@ -132,28 +131,28 @@ namespace Rp {
    private:
 
       /// Pointer to System.
-      SystemT const * systemPtr_;
+      typename T::System const * systemPtr_;
 
       /// Pointer to Mixture.
-      MixtureT const * mixturePtr_;
+      typename T::Mixture const * mixturePtr_;
 
       /// Pointer to Interaction.
-      InteractionT const * interactionPtr_;
+      typename T::Interaction const * interactionPtr_;
 
       /// Pointer to Domain.
-      DomainT const * domainPtr_;
+      typename T::Domain const * domainPtr_;
 
       /// Pointer to monomer concentration (c) field container.
-      CFieldsT const * cPtr_;
+      typename T::CFields const * cPtr_;
 
       /// Pointer to chemical potential (w) field container.
-      WFieldsT const * wPtr_;
+      typename T::WFields const * wPtr_;
 
       /// Pointer to external potential (h) field container.
-      WFieldsT const * hPtr_;
+      typename T::WFields const * hPtr_;
 
       /// Pointer to Mask.
-      MaskT const * maskPtr_;
+      typename T::Mask const * maskPtr_;
 
       /// Pointer to FileMaster .
       FileMaster const * fileMasterPtr_;

@@ -37,25 +37,26 @@ namespace Rp {
    *    D - integer dimensionality of space (D=1, 2, or 3)
    *    T - "Types" class collection of aliases for other classes
    *
-   * <b> Usage </b>: A specialization of Rp::System\<D, T\> is used as a
-   * base class for each System\<D\> class defined in namespaces Rpc and
-   * Rpg, for D=1, 2, or 3.  In this use, template parameter T is taken
-   * to be an instance of a class template named Types that is defined in
-   * each of these two program-level namespaces. For example, in the Rpc
-   * namespace, for each value of D, class Rpc::System\<D\> is derived
-   * from the class Prdc::System\< D, Rpc::Types\<D\> >. For each such
-   * specialization, class Types\<D\> defines a set of typename aliases
-   * for classes used in the relevant program-level namespace, for the
-   * specified value of D.  For example, for each value of D, the typename
-   * Rpc::Types\<D\>::Mixture is an alias for the type Rpc::Mixture<D>
-   * used to represent a mixture in the Rpc namespace for systems of
-   * dimension D. See the definitions of Rpc::Types and Rpg::Types (files
-   * src/rpc/system/Types.h and src/rpg/system/Types.h) for lists of all
-   * of the typenames defined in each these class templates.
+   * <b> Usage </b>: A specialization of Rp::System\<D, T\> is used as 
+   * a base class for each System\<D\> class defined in the Rpc and Rpg
+   * program-level namespaces, for D=1, 2, or 3.  In this usage, template 
+   * parameter T is an instance of a class template named Types that 
+   * is defined in each of these two namespaces.  For example, in the 
+   * Pscf::Rpc namespace, for each value of D, class Rpc::System\<D\> 
+   * is derived from the class Prdc::System\< D, Rpc::Types\<D\> >. 
+   *
+   * For each such specialization, class T = Types\<D\> defines a set 
+   * of typename aliases for classes used in the relevant program-level 
+   * namespace, for the specified value of D.  For example, for each value 
+   * of D, the typename Rpc::Types\<D\>::Mixture is an alias for the type 
+   * Rpc::Mixture<D> that used to represent a mixture in the Rpc namespace 
+   * for systems of spatial dimension D. See the definitions of Rpc::Types 
+   * and Rpg::Types (src/rpc/system/Types.h and src/rpg/system/Types.h) 
+   * for lists of all of the typenames defined in these class templates.
    *
    * In the remainder of this documentation for the Rp::System template,
-   * unqualified names such as "Mixture", "Iterator", etc. are used
-   * as shorthand for typename aliases such as T::Mixture or T::Iterator
+   * unqualified names such as "Mixture", "Iterator", etc. are used as
+   * shorthand for typename aliases such as T::Mixture or T::Iterator
    * that are defined in the types class T (i.e., in Rpc::Types\<D\> or
    * Rpg::Types\<D\>), which are aliases for class names such as
    * Rpc::Mixture<D> or Rpg::Iterator<D>.
@@ -71,11 +72,12 @@ namespace Rp {
    *    - a WFields container of external (h) fields
    *    - a Mask field that defines an inhomogeneous density constraint
    *
-   * The container of external fields and the Mask are only needed
-   * to describe systems that are subjected to inhomgeneous imposed
+   * The container of external fields and the Mask are only needed 
+   * to describe systems that are subjected to inhomogeneous imposed
    * environments (such as in thin films) and are otherwise left empty
-   * and unused. The bool h().hasData() and mask().hasData() functions
-   * may be queried to determine if these components are in use.
+   * and unused. The h().hasData() and mask().hasData() bool functions
+   * may be queried to determine if these components are actually in 
+   * use.
    *
    * A System may also optionally have:
    *
@@ -85,20 +87,20 @@ namespace Rp {
    *    - a Simulator
    *
    * Each optional component is constructed if and only if the parameter
-   * file contains a corresponding optional parameter file block. The
-   * %Environment is only used to generate external and mask fields to
-   * describe inhomogeneous environments, and is omitted in standard
-   * calculations for structures formed in a homogeneous environment.
-   * An Iterator is only used for SCFT calculations. A Sweep is only
-   * used for "sweep" calculations that solve a sequence of SCFT problems
-   * along a path through parameter space.  A Simulator is only used for
-   * PS-FTS calculations, for, i.e., field theoretic simulations based on
-   * a partial saddle-point approximation. The Iterator and Sweep objects
-   * may thus be omitted for PS-FTS calculations, while the Simulator
-   * object may be omitted for SCFT calculations. The hasEnvironment(),
-   * hasIterator(), hasSweep(), and hasSimulator() member functions may
-   * be queried after processing of the parameter file to determine
-   * which of these optional components have been constructed.
+   * file that is used to initialize the System contains a corresponding 
+   * optional parameter file block. An %Environment is used to generate 
+   * external and mask fields to describe inhomogeneous environments, and 
+   * is omitted in standard calculations for structures formed in a 
+   * homogeneous environment.  An Iterator is used for SCFT calculations. 
+   * A Sweep is used for "sweep" calculations that solve a sequence of 
+   * SCFT problems along a path through parameter space.  A Simulator is 
+   * only used for PS-FTS calculations,  i.e., field theoretic simulations
+   * based on a partial saddle-point approximation. The Iterator and Sweep 
+   * objects is thus normally omitted for PS-FTS calculations, while the 
+   * Simulator object is normally omitted for SCFT calculations. The 
+   * hasEnvironment(), hasIterator(), hasSweep(), and hasSimulator() bool
+   * member functions may be queried after processing of the parameter 
+   * file to determine which of these optional components exist.
    *
    * See also:
    * <ul>
@@ -131,13 +133,13 @@ namespace Rp {
       /**
       * Constructor.
       *
-      * When a specialization of System<D,T> is used as a base class for
-      * a subclass defined in the Rpc or Rpg program-level namespace,
+      * When a specialization of System\<D,T\> is used as a base class 
+      * for a subclass defined in the Rpc or Rpg program-level namespace,
       * such as Rpc::System\<D\>, the typename T::System is an alias for
       * the name of the subclass defined in Rpc or Rpg. In the constructor
       * for such a subclass, the associated instance of the subclass must
-      * be passed to the Rp::System<D,T> base class constructor as *this,
-      * and the address of this T::System subclass instance is retained in
+      * be passed to the Rp::System<D,T> base class constructor as \*this.
+      * The address of this T::System subclass instance is retained in
       * the Rp::System base class instance by a private member variable
       * named systemPtr_ that is of type T::System*.  See definitions of
       * the constructors for the Rpc::System and Rpc::System class
@@ -314,7 +316,7 @@ namespace Rp {
       * solution of the modified diffusion equation are modified, including
       * the w fields, unit cell parameters, external fields, or mask. Upon
       * return, c().hasData(), scft().hasData(), and mixture().hasStress()
-      * will all return false. If the system has an %Environment,
+      * will all return false. If the system has an %Environment, then
       * environment().needsUpdate() will also return true.
       */
       void clearCFields();
@@ -448,24 +450,24 @@ namespace Rp {
       bool hasEnvironment() const;
 
       /**
-      * Get the %Environment (non-const).
-      */
-      typename T::Environment& environment();
-
-      /**
       * Get the %Environment (const).
       */
       typename T::Environment const & environment() const;
 
       /**
-      * Get the ScftThermo object (non-const).
+      * Get the %Environment (non-const).
       */
-      typename T::ScftThermo& scft();
+      typename T::Environment& environment();
 
       /**
       * Get the ScftThermo object (const).
       */
       typename T::ScftThermo const & scft() const;
+
+      /**
+      * Get the ScftThermo object (non-const).
+      */
+      typename T::ScftThermo& scft();
 
       /**
       * Does this system have an Iterator?
@@ -544,7 +546,7 @@ namespace Rp {
       void writeTimers(std::ostream& out) const;
 
       /**
-      * Clear timers
+      * Clear all timers.
       */
       void clearTimers();
 

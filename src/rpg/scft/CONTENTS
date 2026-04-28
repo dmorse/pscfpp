@@ -9,16 +9,16 @@ sweep/       - classes to peform a sweep through parameter space
 C++/CUDA source files:
 ----------------------
 
-ScftThermo.*  - Computes SCFT thermodynamic properties
+ScftThermo.* - Computes SCFT thermodynamic properties
 
 Makefile and makefile fragments:
 --------------------------------
 
-makefile      - makefile for rpg/scft directory tree
-sources.mk    - list of source files in rpg/scft (makefile fragment)
+makefile     - makefile for rpg/scft directory tree
+sources.mk   - list of source files in rpg/scft (makefile fragment)
 
 Doxygen documentation files:
 ----------------------------
 
-scft.mod      - defintion of the Rpg_Scft_Module doxygen module
+scft.mod     - definition of the Rpg_Scft_Module doxygen module
 

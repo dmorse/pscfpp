@@ -5,25 +5,28 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ScftThermo.h"            // class header
-
+#include "ScftThermo.h"                     // class header
 #include <rpg/solvers/Mixture.h>
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Solvent.h>
 #include <rpg/field/Domain.h>
-#include <pscf/cuda/Reduce.h>
-#include <prdc/cuda/RField.h>
+#include <rpg/field/CFields.h>
+#include <rpg/field/WFields.h>
+#include <rpg/field/Mask.h>
 #include <pscf/interaction/Interaction.h>
+#include <pscf/cpu/Reduce.h>
 
-#include <rp/scft/ScftThermo.tpp>  // base class template implementation
+#include <rp/scft/ScftThermo.tpp>           // base class implementation
 
 namespace Pscf {
    namespace Rpg {
 
-      // Constructor
+      /*
+      * Constructor.
+      */
       template <int D>
       ScftThermo<D>::ScftThermo(System<D> const & system)
-       : Rp::ScftThermo<D, System<D> >(system)
+       : Rp::ScftThermo<D, Types<D> >(system)
       {};
 
    }
@@ -32,14 +35,13 @@ namespace Pscf {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class ScftThermo<1, Rpg::System<1> >;
-      template class ScftThermo<2, Rpg::System<2> >;
-      template class ScftThermo<3, Rpg::System<3> >;
+      template class ScftThermo<1, Rpg::Types<1> >;
+      template class ScftThermo<2, Rpg::Types<2> >;
+      template class ScftThermo<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class ScftThermo<1>;
       template class ScftThermo<2>;
       template class ScftThermo<3>;
-
    }
 }

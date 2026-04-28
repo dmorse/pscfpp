@@ -27,9 +27,9 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class ST>
-   ScftThermo<D,ST>::ScftThermo(SystemT const & system)
-    : Rp::SystemConstRef<ST>(system),
+   template <int D, class T>
+   ScftThermo<D,T>::ScftThermo(SystemT const & system)
+    : SystemConstRefT(system),
       fHelmholtz_(0.0),
       fIdeal_(0.0),
       fInter_(0.0),
@@ -41,15 +41,15 @@ namespace Rp {
    /*
    * Destructor.
    */
-   template <int D, class ST>
-   ScftThermo<D,ST>::~ScftThermo()
+   template <int D, class T>
+   ScftThermo<D,T>::~ScftThermo()
    {}
 
    /*
    * Compute Helmholtz free energy and pressure.
    */
-   template <int D, class ST>
-   void ScftThermo<D,ST>::compute()
+   template <int D, class T>
+   void ScftThermo<D,T>::compute()
    {
       if (hasData_) return;
 
@@ -250,15 +250,15 @@ namespace Rp {
    /*
    * Clear stored values of thermodynamic properties.
    */
-   template <int D, class ST>
-   void ScftThermo<D, ST>::clear()
+   template <int D, class T>
+   void ScftThermo<D,T>::clear()
    {  hasData_ = false; }
 
    /*
    * Write thermodynamic properties to file.
    */
-   template <int D, class ST>
-   void ScftThermo<D, ST>::write(std::ostream& out)
+   template <int D, class T>
+   void ScftThermo<D,T>::write(std::ostream& out)
    {
       if (!hasData_) {
          compute();

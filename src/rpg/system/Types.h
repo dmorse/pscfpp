@@ -29,6 +29,7 @@ namespace Pscf {
    }
    namespace Rpg {
       template <int D> class System;
+      template <int D> class SystemConstRef;
       template <int D> class Mixture;
       template <int D> class MixtureModifier;
       template <int D> class Polymer;
@@ -93,6 +94,7 @@ namespace Rpg {
    public:
 
       using System = Rpg::System<D>;
+      using SystemConstRef = Rpg::SystemConstRef<D>;
 
       using Mixture = Rpg::Mixture<D>;
       using MixtureModifier = Rpg::MixtureModifier<D>;

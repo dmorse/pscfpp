@@ -28,22 +28,22 @@ namespace Rp {
    *
    * Template parameters:
    *
-   *   - D   dimension of space
-   *   - ST  System class type (Rpc::System<D> or Rpg::System<D>)
+   *   - D : dimension of space
+   *   - T : "Types" class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * \ingroup Rp_Scft_Module
    */
-   template <int D, class ST>
-   class ScftThermo : protected Rp::SystemConstRef<ST>
+   template <int D, class T>
+   class ScftThermo : protected T::SystemConstRef
    {
 
    public:
 
       /// Base class type name alias.
-      using SystemConstRefT = Rp::SystemConstRef<ST>;
+      using SystemConstRefT = typename T::SystemConstRef;
 
       /// Parent System type name alias.
-      using SystemT = typename SystemConstRefT::SystemT;
+      using SystemT = typename T::System;
 
       // Public member functions
 
@@ -134,8 +134,8 @@ namespace Rp {
       * (in units of kT per monomer volume), the volume fraction and
       * chemical potential of each species, and all unit cell parameters.
       *
-      * If data is not available (i.e,. if hasData() == false), this function 
-      * calls compute() on entry.
+      * If data is not available (i.e,. if hasData() == false), this 
+      * function calls compute() on entry.
       *
       * If parameter "out" is a file that already exists, this function
       * will append to the end of that file, rather than overwriting it.
@@ -152,13 +152,13 @@ namespace Rp {
    protected:
 
       // Protected inherited type name aliases.
-      using MixtureT = typename SystemConstRefT::MixtureT;
-      using InteractionT = typename SystemConstRefT::InteractionT;
-      using DomainT = typename SystemConstRefT::DomainT;
-      using WFieldsT = typename SystemConstRefT::WFieldsT;
-      using CFieldsT = typename SystemConstRefT::CFieldsT;
-      using MaskT = typename SystemConstRefT::MaskT;
-      using RFieldT = typename SystemConstRefT::RFieldT;
+      using MixtureT = typename T::Mixture;
+      using InteractionT = typename T::Interaction;
+      using DomainT = typename T::Domain;
+      using WFieldsT = typename T::WFields;
+      using CFieldsT = typename T::CFields;
+      using MaskT = typename T::Mask;
+      using RFieldT = typename T::RField;
 
       // Protected inherited member functions
       using SystemConstRefT::system;
@@ -217,48 +217,48 @@ namespace Rp {
    // Inline member functions
 
    // Get the Helmholtz free energy per monomer / kT.
-   template <int D, class ST>
-   inline double ScftThermo<D,ST>::fHelmholtz() const
+   template <int D, class T>
+   inline double ScftThermo<D,T>::fHelmholtz() const
    {
       UTIL_CHECK(hasData_);
       return fHelmholtz_;
    }
 
    // Get the ideal gas contribution to fHelmholtz.
-   template <int D, class ST>
-   inline double ScftThermo<D,ST>::fIdeal() const
+   template <int D, class T>
+   inline double ScftThermo<D,T>::fIdeal() const
    {
       UTIL_CHECK(hasData_);
       return fIdeal_;
    }
 
    // Get the interaction contribution to fHelmholtz.
-   template <int D, class ST>
-   inline double ScftThermo<D,ST>::fInter() const
+   template <int D, class T>
+   inline double ScftThermo<D,T>::fInter() const
    {
       UTIL_CHECK(hasData_);
       return fInter_;
    }
 
    // Get the external field contribution to fHelmholtz.
-   template <int D, class ST>
-   inline double ScftThermo<D,ST>::fExt() const
+   template <int D, class T>
+   inline double ScftThermo<D,T>::fExt() const
    {
       UTIL_CHECK(hasData_);
       return fExt_;
    }
 
    // Get the precomputed pressure (units of kT / monomer volume).
-   template <int D, class ST>
-   inline double ScftThermo<D,ST>::pressure() const
+   template <int D, class T>
+   inline double ScftThermo<D,T>::pressure() const
    {
       UTIL_CHECK(hasData_);
       return pressure_;
    }
 
    // Have free energies and pressure been computed?
-   template <int D, class ST>
-   inline bool ScftThermo<D,ST>::hasData() const
+   template <int D, class T>
+   inline bool ScftThermo<D,T>::hasData() const
    {  return hasData_; }
 
 } // namespace Rp

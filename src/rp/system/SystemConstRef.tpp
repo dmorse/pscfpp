@@ -16,8 +16,8 @@ namespace Rp {
    /*
    * Default constructor.
    */
-   template <class ST>
-   SystemConstRef<ST>::SystemConstRef()
+   template <int D, class T>
+   SystemConstRef<D,T>::SystemConstRef()
     : systemPtr_(nullptr),
       mixturePtr_(nullptr),
       interactionPtr_(nullptr),
@@ -32,8 +32,8 @@ namespace Rp {
    /*
    * Constructor (creates associations).
    */
-   template <class ST>
-   SystemConstRef<ST>::SystemConstRef(SystemT const & system)
+   template <int D, class T>
+   SystemConstRef<D,T>::SystemConstRef(typename T::System const & system)
     : systemPtr_(nullptr),
       mixturePtr_(nullptr),
       interactionPtr_(nullptr),
@@ -48,12 +48,12 @@ namespace Rp {
    /*
    * Destructor.
    */
-   template <class ST>
-   SystemConstRef<ST>::~SystemConstRef()
+   template <int D, class T>
+   SystemConstRef<D,T>::~SystemConstRef()
    {}
 
-   template <class ST>
-   void SystemConstRef<ST>::associate(SystemT const & system)
+   template <int D, class T>
+   void SystemConstRef<D,T>::associate(typename T::System const & system)
    {
       systemPtr_ = &system;
       mixturePtr_ = &(system.mixture());
