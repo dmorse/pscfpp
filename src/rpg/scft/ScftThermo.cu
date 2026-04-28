@@ -14,7 +14,7 @@
 #include <rpg/field/WFields.h>
 #include <rpg/field/Mask.h>
 #include <pscf/interaction/Interaction.h>
-#include <pscf/cpu/Reduce.h>
+#include <pscf/cuda/Reduce.h>
 
 #include <rp/scft/ScftThermo.tpp>           // base class implementation
 

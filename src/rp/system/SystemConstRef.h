@@ -35,25 +35,13 @@ namespace Rp {
 
    public:
 
-      // Public type name aliases
-      using SystemT = typename T::System;
-      using MixtureT = typename T::Mixture;
-      using InteractionT = typename T::Interaction;
-      using DomainT = typename T::Domain;
-      using CFieldsT = typename T::CFields;
-      using WFieldsT = typename T::WFields;
-      using MaskT = typename T::Mask;
-      using RFieldT = typename T::RField;
-
-      // Public member functions
-
       /**
       * Default constructor.
       */
       SystemConstRef();
 
       /**
-      * Constructor that creates associations.
+      * Constructor - creates associations.
       * 
       * Using of this constructor is equivalent to using the default
       * constructor and then invoking the associate() function.
@@ -65,7 +53,7 @@ namespace Rp {
       /**
       * Destructor.
       */
-      ~SystemConstRef();
+      virtual ~SystemConstRef();
 
       /**
       * Create associations with a system and its components.

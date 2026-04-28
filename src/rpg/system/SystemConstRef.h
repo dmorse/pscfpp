@@ -16,7 +16,7 @@ namespace Rpg {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
+   using namespace Prdc::Cuda;
 
    /**
    * Const access to a System.
