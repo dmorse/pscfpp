@@ -34,14 +34,7 @@ namespace Rp {
    {}
 
    /*
-   * Destructor, empty default implementation.
-   */
-   template <int D, class T>
-   McMove<D,T>::~McMove()
-   {}
-
-   /*
-   * ReadParameters, empty default implementation.
+   * Read parameters - empty default implementation.
    */
    template <int D, class T>
    void McMove<D,T>::readParameters(std::istream &in)

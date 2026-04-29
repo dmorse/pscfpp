@@ -72,24 +72,6 @@ namespace Rp {
       return dfdchi;
    }
 
-   #if 0
-   template <int D, class T>
-   void ChiDerivative<D,T>::outputValue(int step, double value)
-   {
-      int nSamplePerOutput = AverageAnalyzerT::nSamplePerOutput();
-      if (simulator().hasRamp() && nSamplePerOutput == 1) {
-         std::ofstream& outputFile = AverageAnalyzerT::outputFile_;
-         UTIL_CHECK(outputFile.is_open());
-         double chi = system().interaction().chi(0,1);
-         outputFile << Int(step);
-         outputFile << Dbl(chi);
-         outputFile << Dbl(value) << "\n";
-      } else {
-         AverageAnalyzerT::outputValue(step, value);
-      }
-   }
-   #endif
-
 }
 }
 #endif

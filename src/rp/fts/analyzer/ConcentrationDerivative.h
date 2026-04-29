@@ -31,7 +31,7 @@ namespace Rp {
    class ConcentrationDerivative : public T::AverageAnalyzer
    {
 
-   public:
+   protected:
 
       /**
       * Constructor.
@@ -42,25 +42,21 @@ namespace Rp {
       ConcentrationDerivative(typename T::Simulator& simulator,
                               typename T::System& system);
 
-   protected:
+      /**
+      * Destructor.
+      */
+      ~ConcentrationDerivative() = default;
 
       /**
       * Compute and return the derivative of H w/ respect to concentration.
       */
       double compute() override;
 
-      #if 0
-      /**
-      * Output a sampled or block average value.
-      *
-      * \param step  value for step counter
-      * \param value  value of physical observable
-      */
-      void outputValue(int step, double value) override;
-      #endif
-
+      // Aliases for base classes.
       using AnalyzerT = typename T::Analyzer;
       using AverageAnalyzerT = typename T::AverageAnalyzer;
+
+      // Inherited protected member functions (selected).
       using AnalyzerT::simulator;
       using AnalyzerT::system;
 

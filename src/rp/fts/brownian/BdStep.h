@@ -51,8 +51,13 @@ namespace Rp {
    template <int D, class T>
    class BdStep : public ParamComposite
    {
-
    public:
+
+      // Protected constructor and destructor (see below).
+
+      // Not copyable or assignable.
+      BdStep(BdStep<D,T> const &) = delete;
+      BdStep<D,T>& operator = (BdStep<D,T> const &) = delete;
 
       /**
       * Read required parameters from file.

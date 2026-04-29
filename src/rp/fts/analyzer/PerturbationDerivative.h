@@ -31,7 +31,7 @@ namespace Rp {
    class PerturbationDerivative : public T::AverageAnalyzer
    {
 
-   public:
+   protected:
 
       /**
       * Constructor.
@@ -42,28 +42,21 @@ namespace Rp {
       PerturbationDerivative(typename T::Simulator& simulator, 
                              typename T::System& system);
 
-   protected:
+      /**
+      * Destructor.
+      */
+      ~PerturbationDerivative() = default;
 
       /**
       * Compute and return the derivative of H w/ respect to lambda.
       */
       double compute() override;
 
-      #if 0
-      /**
-      * Output a sampled or block average value.
-      *
-      * \param step  value for step counter
-      * \param value  value of physical observable
-      */
-      void outputValue(int step, double value) override;
-      #endif
-
-      // Aliases for base classes
+      // Aliases for base classes.
       using AnalyzerT = typename T::Analyzer;
       using AverageAnalyzerT = typename T::AverageAnalyzer;
 
-      // Inherited protected member functions
+      // Inherited protected member functions (selected).
       using AnalyzerT::simulator;
       using AnalyzerT::system;
 

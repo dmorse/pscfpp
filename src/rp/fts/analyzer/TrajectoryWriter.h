@@ -37,12 +37,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      */
-      TrajectoryWriter(typename T::Simulator& simulator, 
-                       typename T::System& system);
-
-      /**
       * Read interval and output file name.
       *
       * \param in input parameter file
@@ -69,9 +63,23 @@ namespace Rp {
    protected:
 
       /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      TrajectoryWriter(typename T::Simulator& simulator, 
+                       typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~TrajectoryWriter() = default;
+
+      /**
       * Write data that should appear once, at beginning of the file.
       *
-      * \param out output file stream
+      * \param out  output file stream
       */
       void writeHeader(std::ofstream& out);
 
@@ -83,7 +91,10 @@ namespace Rp {
       */
       void writeFrame(std::ofstream& out, long iStep);
 
+      // Alias for base class.
       using AnalyzerT = typename T::Analyzer;
+
+      // Inherited protected member functions (selected).
       using AnalyzerT::simulator;
       using AnalyzerT::system;
 

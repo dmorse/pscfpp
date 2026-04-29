@@ -42,12 +42,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator object
-      */
-      BdMove(typename T::McSimulator& simulator);
+      // Protected constructor and destrutor (see below)
 
       /**
       * Read body of parameter file block.
@@ -72,6 +67,18 @@ namespace Rp {
       {  return true; }
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator object
+      */
+      BdMove(typename T::McSimulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~BdMove() = default;
 
       /**
       * Setup before simulation loop.

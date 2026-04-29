@@ -32,13 +32,6 @@ namespace Rp {
    {}
 
    /*
-   * Destructor.
-   */
-   template <int D, class FT>
-   SimState<D,FT>::~SimState() 
-   {}
-
-   /*
    * Allocate memory for w fields.
    */ 
    template <int D, class FT>

@@ -26,13 +26,6 @@ namespace Rp {
    {}
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   Perturbation<D,T>::~Perturbation()
-   {}
-
-   /*
    * Read parameters from stream, empty default implementation.
    */
    template <int D, class T>

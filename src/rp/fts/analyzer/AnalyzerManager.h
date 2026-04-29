@@ -34,19 +34,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator
-      * \param system  parent System
-      */
-      AnalyzerManager(typename T::Simulator& simulator, 
-                      typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~AnalyzerManager();
+      // Protected constructor and destructor (see below). 
 
       /**
       * Read body of parameter file block.
@@ -84,6 +72,22 @@ namespace Rp {
       */
       void output();
 
+   protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator
+      * \param system  parent System
+      */
+      AnalyzerManager(typename T::Simulator& simulator, 
+                      typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~AnalyzerManager() = default;
+
    private:
 
       using AnalyzerT = typename T::Analyzer;
@@ -103,7 +107,7 @@ namespace Rp {
       /**
       * Return pointer to a new AnalyzerFactory.
       */
-      Factory<typename T::Analyzer>* newDefaultFactory() const override;
+      Factory<AnalyzerT>* newDefaultFactory() const override;
 
    };
 

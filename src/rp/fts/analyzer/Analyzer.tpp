@@ -38,13 +38,6 @@ namespace Rp {
    {}
 
    /*
-   * Destructor.
-   */
-   template <int D, class SimT, class SysT>
-   Analyzer<D,SimT,SysT>::~Analyzer()
-   {}
-
-   /*
    * Read parameters from stream, default implementation.
    */
    template <int D, class SimT, class SysT>

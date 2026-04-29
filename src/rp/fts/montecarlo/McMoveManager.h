@@ -40,17 +40,7 @@ namespace Rp {
 
    public:
 
-      using McMoveT = typename T::McMove;
-      using Base = Manager< McMoveT >;
-
-      /**
-      * Constructor.
-      *
-      * \param simulator parent McSimulator
-      * \param system parent System
-      */
-      McMoveManager(typename T::McSimulator& simulator, 
-                    typename T::System& system);
+      // Protected constructor and destructor (see below).
 
       /**
       * Read instructions for creating McMove objects.
@@ -108,9 +98,26 @@ namespace Rp {
       */
       bool needsDc();
 
-      using Base::size;
+   protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator parent McSimulator
+      * \param system parent System
+      */
+      McMoveManager(typename T::McSimulator& simulator, 
+                    typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~McMoveManager() = default;
 
    private:
+
+      using McMoveT = typename T::McMove;
+      using Base = Manager< McMoveT >;
 
       // Private data members
 
@@ -152,7 +159,7 @@ namespace Rp {
    double McMoveManager<D,T>::probability(int i) const
    {
       assert(i >= 0);
-      assert(i < size());
+      assert(i < Base::size());
       return probabilities_[i];
    }
 

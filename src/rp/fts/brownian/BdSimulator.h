@@ -39,22 +39,14 @@ namespace Rp {
    * \ingroup Rp_Fts_Brownian_Module
    */
    template <int D, class T>
-   class BdSimulator : public T::Simulator
+   class BdSimulator : public T::Simulator 
    {
 
    public:
 
-      /// Alias for System class in program-level namespace.
-      using SystemT = typename T::System;
+      // Protected constructor and destructor (see below).
 
-      /// Alias for Simulator class in program-level namespace.
-      using SimulatorT = typename T::Simulator;
-
-      /// Alias for BdSimulator class in program-level namespace.
-      using BdSimulatorT = typename T::BdSimulator;
-
-      // Suprress automatically generated functions
-      BdSimulator() = delete;
+      // Not copyable or assignable.
       BdSimulator(BdSimulator<D,T> const &) = delete;
       BdSimulator<D,T>& operator = (BdSimulator<D,T> const &) = delete;
 
@@ -126,6 +118,15 @@ namespace Rp {
       ///@}
 
    protected:
+
+      /// Alias for System class in program-level namespace.
+      using SystemT = typename T::System;
+
+      /// Alias for Simulator class in program-level namespace.
+      using SimulatorT = typename T::Simulator;
+
+      /// Alias for BdSimulator class in program-level namespace.
+      using BdSimulatorT = typename T::BdSimulator;
 
       /**
       * Constructor.

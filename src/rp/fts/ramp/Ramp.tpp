@@ -20,13 +20,6 @@ namespace Rp {
    {}
    
    /* 
-   * Destructor.
-   */
-   template <int D, class T>
-   Ramp<D,T>::~Ramp()
-   {}
-
-   /* 
    * Setup before simulation - sets the nStep member variable. 
    */
    template <int D, class T>

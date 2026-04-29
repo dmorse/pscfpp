@@ -47,20 +47,6 @@ namespace Rp {
 
    public:
 
-      /// Alias for System class in program-level namespace.
-      using SystemT = typename T::System;
-
-      /// Alias for Simulator class in program-level namespace.
-      using SimulatorT = typename T::Simulator;
-
-      /// Alias for McSimulator class in program-level namespace.
-      using McSimulatorT = typename T::McSimulator;
-
-      // Suppressing implicitly generated functions
-      McSimulator() = delete;
-      McSimulator(McSimulator<D,T> const &) = delete;
-      McSimulator<D,T>& operator = (McSimulator<D,T> const &) = delete;
-
       /// \name Initialization
       ///@{
 
@@ -160,6 +146,15 @@ namespace Rp {
 
    protected:
 
+      /// Alias for System class in program-level namespace.
+      using SystemT = typename T::System;
+
+      /// Alias for Simulator class in program-level namespace.
+      using SimulatorT = typename T::Simulator;
+
+      /// Alias for McSimulator class in program-level namespace.
+      using McSimulatorT = typename T::McSimulator;
+
       /**
       * Constructor.
       *
@@ -173,10 +168,14 @@ namespace Rp {
       */
       ~McSimulator();
 
-      // Inherited protected function (selected)
+      // Prohibit copying and assignment. 
+      McSimulator(McSimulator<D,T> const &) = delete;
+      McSimulator<D,T>& operator = (McSimulator<D,T> const &) = delete;
+
+      // Inherited protected member function (selected).
       using SimulatorT::state;
 
-      // Inherited protected data members (selected)
+      // Inherited protected data members (selected).
       using SimulatorT::iStep_;
       using SimulatorT::iTotalStep_;
 
@@ -210,6 +209,8 @@ namespace Rp {
       void setup(int nStep);
 
    };
+
+   // Inline member function definitions
 
    // Get the Monte-Carlo move manager.
    template <int D, class T> inline

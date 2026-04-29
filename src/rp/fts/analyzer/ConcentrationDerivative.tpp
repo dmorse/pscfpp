@@ -62,28 +62,6 @@ namespace Rp {
       return dfdc;
    }
 
-   #if 0
-   /*
-   * Output the current value to the output file. 
-   */
-   template <int D, class T>
-   void ConcentrationDerivative<D,T>::outputValue(int step, double value)
-   {
-      int nSamplePerOutput = AverageAnalyzerT::nSamplePerOutput();
-      if (simulator().hasRamp() && nSamplePerOutput == 1) {
-         std::ofstream& outputFile = AverageAnalyzerT::outputFile_;
-         UTIL_CHECK(outputFile.is_open());
-         double vMonomer = system().mixture().vMonomer();
-         outputFile << Int(step);
-         outputFile << Dbl(vMonomer);
-         outputFile << Dbl(value);
-         outputFile << "\n";
-       } else {
-         AverageAnalyzerT::outputValue(step, value);
-       }
-   }
-   #endif
-
 }
 }
 #endif

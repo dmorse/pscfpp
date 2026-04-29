@@ -33,13 +33,6 @@ namespace Rp {
    }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T, class V>
-   LrAmCompressor<D,T,V>::~LrAmCompressor()
-   {}
-
-   /*
    * Read body of parameter file block and initialize.
    */
    template <int D, class T, class V>

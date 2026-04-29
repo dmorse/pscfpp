@@ -38,6 +38,8 @@ namespace Rp {
 
    public:
 
+      // Protected constructor and destructor (see below).
+
       /**
       * Read body of parameter file block and allocate memory.
       *

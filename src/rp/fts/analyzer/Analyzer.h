@@ -18,6 +18,10 @@ namespace Rp {
    /**
    * Abstract base for periodic output and/or analysis actions.
    *
+   * Specializations of this class template are used as base classes for
+   * two closely analogous classes, also named Analyzer, that are defined 
+   * in the Rpc and Rpg namespaces for use in pscf_rpc and pscf_rpg.
+   *
    * The periodic action associated with an Analyzer may involve retrieval
    * or computation of a physical property value, adding it to a statistical
    * accumulator, and/or outputting it to file. This periodic action must
@@ -28,10 +32,6 @@ namespace Rp {
    * parameter. The interval of each Analyzer must be a positive integer
    * that is a multiple of the static member Analyzer::baseInterval, which
    * is set to 1 by default.
-   *
-   * Specializations of this class template are used as base classes for
-   * two closely analogous classes, also named Analyzer, that are defined 
-   * in the Rpc and Rpg namespaces for use in pscf_rpc and pscf_rpg.
    *
    * Template parameters:
    *
@@ -47,18 +47,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      Analyzer(SimT& simulator, SysT& system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~Analyzer();
+      // Protected constructor and destructor (see below).
 
       /**
       * Read parameters from archive.
@@ -127,6 +116,19 @@ namespace Rp {
       static void initStatic();
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      Analyzer(SimT& simulator, SysT& system);
+
+      /**
+      * Destructor.
+      */
+      ~Analyzer() = default;
 
       /**
       * Set the FileMaster to use to open files.

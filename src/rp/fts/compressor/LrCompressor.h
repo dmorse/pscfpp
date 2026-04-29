@@ -91,7 +91,7 @@ namespace Rp {
       /**
       * Destructor.
       */
-      ~LrCompressor();
+      ~LrCompressor() = default;
 
       // Inherited protected members
       using CompressorT = typename T::Compressor;

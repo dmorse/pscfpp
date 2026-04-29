@@ -93,7 +93,7 @@ namespace Rp {
       /**
       * Destructor.
       */
-      ~AmCompressor();
+      ~AmCompressor() = default;
 
       /// Compressor type.
       using CompressorT = typename T::Compressor;

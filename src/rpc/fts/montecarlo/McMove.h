@@ -43,7 +43,13 @@ namespace Rpc {
       */
       McMove(McSimulator<D>& simulator);
 
-      McMove() = delete;
+      /**
+      * Destructor
+      */
+      virtual ~McMove()
+      {}
+
+      // Not copyable.
       McMove(McMove<D> const &) = delete;
 
    };

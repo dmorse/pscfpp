@@ -41,15 +41,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      HamiltonianAnalyzer(typename T::Simulator& simulator, 
-                          typename T::System& system);
-
-      /**
       * Read interval and output file name.
       *
       * \param in  input parameter file
@@ -59,12 +50,29 @@ namespace Rp {
    protected:
 
       /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      HamiltonianAnalyzer(typename T::Simulator& simulator, 
+                          typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~HamiltonianAnalyzer() = default;
+     
+      /**
       * Compute and store values of Hamiltonian components.
       */
       void compute() override;
 
+      // Aliases for base classes.
       using AverageListAnalyzerT = typename T::AverageListAnalyzer;
       using AnalyzerT = typename T::Analyzer;
+
+      // Inherited protected member functions (selected).
       using AnalyzerT::simulator;
       using AnalyzerT::system;
 

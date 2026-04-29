@@ -160,10 +160,8 @@ namespace Rp {
 
       /**
       * Destructor.
-      *
-      * Empty default implementation.
       */
-      ~McMove();
+      ~McMove() = default;
 
       /**
       * Increment the number of attempted moves.

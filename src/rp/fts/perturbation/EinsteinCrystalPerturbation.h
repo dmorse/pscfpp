@@ -32,17 +32,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      */
-      EinsteinCrystalPerturbation(typename T::Simulator& simulator);
-
-      /**
-      * Destructor.
-      */
-      virtual ~EinsteinCrystalPerturbation();
+      // Protected constructor and destructor (see below).
 
       /**
       * Read body of parameter file block and initialize.
@@ -87,9 +77,22 @@ namespace Rp {
 
    protected:
 
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      */
+      EinsteinCrystalPerturbation(typename T::Simulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~EinsteinCrystalPerturbation() = default;
+
+      // Alias for base class.
       using PerturbationT = typename T::Perturbation;
 
-      // Inherited protected members
+      // Inherited protected members (selected).
       using PerturbationT::lambda_;
       using PerturbationT::simulator;
       using PerturbationT::system;

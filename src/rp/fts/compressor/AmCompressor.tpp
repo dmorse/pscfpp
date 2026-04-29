@@ -33,13 +33,6 @@ namespace Rp {
    }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T, class V>
-   AmCompressor<D,T,V>::~AmCompressor()
-   {}
-
-   /*
    * Read parameters from file.
    */
    template <int D, class T, class V>

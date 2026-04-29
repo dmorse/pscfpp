@@ -50,8 +50,9 @@ namespace Rp {
    template <int D, class T>
    class LMBdStep : public T::BdStep
    {
-
    public:
+
+      // Protected constructor and destructor (see below).
 
       /**
       * Read body of parameter file block.
@@ -81,7 +82,12 @@ namespace Rp {
       */
       LMBdStep(typename T::BdSimulator& simulator);
 
+      ~LMBdStep() = default;
+
+      // Alias for base class.
       using BdStepT = typename T::BdStep;
+
+      // Inherited functions (selected)
       using BdStepT::system;
       using BdStepT::simulator;
       using BdStepT::vecRandom;

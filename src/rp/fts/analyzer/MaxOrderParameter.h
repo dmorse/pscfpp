@@ -52,29 +52,11 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      */
-      MaxOrderParameter(typename T::Simulator& simulator, 
-                        typename T::System& system);
-
-      /**
       * Setup before simulation loop.
       */
       void setup() override;
 
    protected:
-
-      /**
-      * Output a sampled or block average value.
-      *
-      * \param step  value for step counter
-      * \param value  value of physical observable
-      */
-      void outputValue(int step, double value) override;
-
-      using AverageAnalyzerT = typename T::AverageAnalyzer;
-      using AverageAnalyzerT::simulator;
-      using AverageAnalyzerT::system;
 
    protected:
 
@@ -90,8 +72,27 @@ namespace Rp {
       /// Number of wavevectors in Fourier space (k-grid) mesh.
       int  kSize_;
 
-      /// Real type used in field containers.
-      using RealT = typename T::Real;
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      MaxOrderParameter(typename T::Simulator& simulator, 
+                        typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~MaxOrderParameter() = default;
+
+      /**
+      * Output a sampled or block average value.
+      *
+      * \param step  value for step counter
+      * \param value  value of physical observable
+      */
+      void outputValue(int step, double value) override;
 
       /**
       * Compute the psi_ array of squared Fourier coefficients.
@@ -107,7 +108,14 @@ namespace Rp {
       *
       * \param psi  array of squared Fourier coefficients
       */
-      void findMaximum(Array<RealT> const & psi);
+      void findMaximum(Array<typename T::Real> const & psi);
+
+      // Alias for base class.
+      using AverageAnalyzerT = typename T::AverageAnalyzer;
+
+      // Inherited protected member variables (selected).
+      using AverageAnalyzerT::simulator;
+      using AverageAnalyzerT::system;
 
    private:
 
