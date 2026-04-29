@@ -11,6 +11,8 @@
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
 #include <pscf/cpu/CpuVecRandom.h>
 #include <pscf/cpu/VecOp.h>
 

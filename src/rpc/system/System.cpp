@@ -20,6 +20,9 @@
 #include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/MixtureModifier.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
+#include <rpc/field/Mask.h>
 
 #include <prdc/cpu/WaveList.h>
 #include <prdc/cpu/FFT.h>

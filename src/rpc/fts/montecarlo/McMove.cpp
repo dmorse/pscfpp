@@ -9,6 +9,9 @@
 #include <rpc/fts/montecarlo/McSimulator.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/system/System.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
+
 #include <rp/fts/montecarlo/McMove.tpp>     // base class implementation
 
 namespace Pscf {

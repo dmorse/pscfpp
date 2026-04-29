@@ -11,10 +11,15 @@
 // Header file includes
 #include <rp/system/System.h>      // base class template
 #include <rpc/system/Types.h>      // base class template argument
-#include <rpc/field/WFields.h>     // member
-#include <rpc/field/CFields.h>     // member
-#include <rpc/field/Mask.h>        // member
 
+// Forward declarations
+namespace Pscf {
+   namespace Rpc {
+      template <int D> class WFields;
+      template <int D> class CFields;
+      template <int D> class Mask;
+   }
+}
 namespace Pscf {
 namespace Rpc {
 
@@ -22,7 +27,7 @@ namespace Rpc {
    using namespace Prdc;
 
    /**
-   * Main class, representing a complete physical system.
+   * A complete physical system.
    *
    * Specializations of this template with D=1, 2 or 3 are derived from
    * corresponding specializations of the base class template Rp::System,

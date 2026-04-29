@@ -12,6 +12,8 @@
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
 #include <rpc/fts/simulator/SimState.h>
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/CompressorFactory.h>

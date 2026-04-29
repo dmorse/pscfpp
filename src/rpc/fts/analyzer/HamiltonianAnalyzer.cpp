@@ -6,8 +6,11 @@
 */
 
 #include "HamiltonianAnalyzer.h"                    // header
-#include <rpc/system/System.h>
 #include <rpc/fts/simulator/Simulator.h>
+#include <rpc/system/System.h>
+#include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
 #include <rp/fts/analyzer/HamiltonianAnalyzer.tpp>  // implementation
 
 namespace Pscf {

@@ -11,6 +11,7 @@
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
+#include <rpc/field/WFields.h>
 
 #include <rp/scft/sweep/BasisFieldState.tpp>
 

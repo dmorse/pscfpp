@@ -5,14 +5,44 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BasisFieldState.tpp"
+#include "BasisFieldState.h"
 
-// Explicit instantiation declarations
+#include <rpg/system/System.h>
+#include <rpg/solvers/Mixture.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/FieldIo.h>
+#include <rpg/field/WFields.h>
+
+#include <rp/scft/sweep/BasisFieldState.tpp>
+
 namespace Pscf {
-   namespace Prdc {
-      template class FieldState< 1, DArray<double>, Rpg::System<1> >;
-      template class FieldState< 2, DArray<double>, Rpg::System<2> >;
-      template class FieldState< 3, DArray<double>, Rpg::System<3> >;
+namespace Rpg {
+
+   using namespace Util;
+   using namespace Prdc;
+
+   // Default constructor.
+   template <int D>
+   BasisFieldState<D>::BasisFieldState()
+    : Rp::BasisFieldState<D, Types<D> > ()
+   {}
+
+   // Constructor - creates association with parent system.
+   template <int D>
+   BasisFieldState<D>::BasisFieldState(System<D>& system)
+    : Rp::BasisFieldState<D, Types<D> > (system)
+   {}
+
+
+} // namespace Rpg
+} // namespace Pscf
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class BasisFieldState< 1, Rpg::Types<1> >;
+      template class BasisFieldState< 2, Rpg::Types<2> >;
+      template class BasisFieldState< 3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class BasisFieldState<1>;

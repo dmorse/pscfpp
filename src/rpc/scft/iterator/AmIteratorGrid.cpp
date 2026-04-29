@@ -9,6 +9,9 @@
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/CFields.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/Mask.h>
 #include <prdc/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>

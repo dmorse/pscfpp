@@ -90,8 +90,9 @@ namespace Rp {
       */
       void setSystemState(bool newCellParams);
 
-      // Inherited member functions
       using FieldStateT = FieldState<D, DArray<double>, typename T::System>;
+
+      // Inherited member functions
       using FieldStateT::fields;
       using FieldStateT::field;
       using FieldStateT::unitCell;

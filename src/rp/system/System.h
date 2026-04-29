@@ -365,19 +365,14 @@ namespace Rp {
       typename T::CFields const & c() const;
 
       /**
-      * Get the chemical potential (w) fields (non-const).
-      */
-      typename T::WFields& w();
-
-      /**
       * Get the chemical potential (w) fields (const).
       */
       typename T::WFields const & w() const;
 
       /**
-      * Get the external potential (h) fields (non-const).
+      * Get the chemical potential (w) fields (non-const).
       */
-      typename T::WFields& h();
+      typename T::WFields& w();
 
       /**
       * Get the external potential (h) fields (const).
@@ -385,14 +380,19 @@ namespace Rp {
       typename T::WFields const & h() const;
 
       /**
-      * Get the mask (non-const).
+      * Get the external potential (h) fields (non-const).
       */
-      typename T::Mask& mask();
+      typename T::WFields& h();
 
       /**
       * Get the mask (const).
       */
       typename T::Mask const & mask() const;
+
+      /**
+      * Get the mask (non-const).
+      */
+      typename T::Mask& mask();
 
       ///@}
       /// \name Component Object Accessors
@@ -565,34 +565,32 @@ namespace Rp {
 
    private:
 
-      // Component objects
-
-      /**
-      * Chemical potential fields.
-      */
-      typename T::WFields w_;
-
-      /**
-      * Monomer concentration / volume fraction fields.
-      */
-      typename T::CFields c_;
-
-      /**
-      * External potential fields.
-      */
-      typename T::WFields h_;
-
-      /**
-      * Field to which the total density is constrained.
-      */
-      typename T::Mask mask_;
-
-      // Pointers to associated objects
-
       /**
       * Pointer to enclosing instance of System subclass.
       */
       typename T::System* systemPtr_;
+
+      // Pointers to associated sub-objects (owned by System)
+
+      /**
+      * Monomer concentration / volume fraction fields.
+      */
+      typename T::CFields* cPtr_;
+
+      /**
+      * Chemical potential fields.
+      */
+      typename T::WFields* wPtr_;
+
+      /**
+      * External potential fields.
+      */
+      typename T::WFields* hPtr_;
+
+      /**
+      * Field to which the total density is constrained.
+      */
+      typename T::Mask* maskPtr_;
 
       /**
       * Pointer to Mixture object (solves MDE for all species).
@@ -615,6 +613,11 @@ namespace Rp {
       typename T::Interaction* interactionPtr_;
 
       /**
+      * Pointer to SCFT property calculator.
+      */
+      typename T::ScftThermo* scftPtr_;
+
+      /**
       * Pointer to an %Environment.
       */
       typename T::Environment* environmentPtr_;
@@ -623,11 +626,6 @@ namespace Rp {
       * Pointer to an %Environment factory object.
       */
       typename T::EnvironmentFactory* environmentFactoryPtr_;
-
-      /**
-      * Pointer to SCFT property calculator.
-      */
-      typename T::ScftThermo* scftPtr_;
 
       /**
       * Pointer to an SCFT Iterator.
@@ -669,12 +667,12 @@ namespace Rp {
       */
       UnitCell<D>* tmpUnitCellPtr_;
 
+      // Boolean and enum state variables
+
       /**
       * Polymer model enumeration (thread or bead), read from file.
       */
       PolymerModel::Type polymerModel_;
-
-      // Boolean state variables
 
       /**
       * Has memory been allocated for fields in FFT grid formats?
@@ -694,14 +692,19 @@ namespace Rp {
       // Private member functions
 
       /**
-      * Get the Mixture by non-const reference (private interface).
+      * Get the Mixture by non-const reference (private).
       */
       typename T::Mixture & mixture_();
 
       /**
-      * Get the Domain by non-const reference (private interface).
+      * Get the Domain by non-const reference (private).
       */
       typename T::Domain& domain_();
+
+      /**
+      * Get the concentration (c) fields by non-const reference (private).
+      */
+      typename T::CFields& c_();
 
       /**
       * Allocate memory for fields in grid formats (private).
@@ -775,6 +778,45 @@ namespace Rp {
    template <int D, class T> inline
    typename T::WaveList& System<D,T>::waveList()
    {  return domainPtr_->waveList(); }
+
+   // Accessors for field containers
+
+   // Get the container of c fields (const).
+   template <int D, class T> inline
+   typename T::CFields const & System<D,T>::c() const
+   {  return *cPtr_; }
+
+   // Get the container of w fields (const).
+   template <int D, class T> inline
+   typename T::WFields const & System<D,T>::w() const
+   {  return *wPtr_; }
+
+   // Get the container of w fields (non-const).
+   template <int D, class T> inline
+   typename T::WFields& System<D,T>::w()
+   {  return *wPtr_; }
+
+   // Get the container of external fields (const).
+   template <int D, class T> inline
+   typename T::WFields const & System<D,T>::h() const
+   {  return *hPtr_; }
+
+   // Get the container of external fields (non-const).
+   template <int D, class T> inline
+   typename T::WFields& System<D,T>::h()
+   {  return *hPtr_; }
+
+   // Get the mask field (const).
+   template <int D, class T> inline
+   typename T::Mask const & System<D,T>::mask() const
+   {  return *maskPtr_; }
+
+   // Get the mask field (non-const).
+   template <int D, class T> inline
+   typename T::Mask& System<D,T>::mask()
+   {  return *maskPtr_; }
+
+   // Accessors for optional elements
 
    // Does this system have an %Environment?
    template <int D, class T> inline
@@ -870,41 +912,6 @@ namespace Rp {
    FileMaster& System<D,T>::fileMaster()
    {  return *fileMasterPtr_; }
 
-   // Get the container of c fields (const).
-   template <int D, class T> inline
-   typename T::CFields const & System<D,T>::c() const
-   {  return c_; }
-
-   // Get the container of w fields (const).
-   template <int D, class T> inline
-   typename T::WFields const & System<D,T>::w() const
-   {  return w_; }
-
-   // Get the container of w fields (non-const).
-   template <int D, class T> inline
-   typename T::WFields& System<D,T>::w()
-   {  return w_; }
-
-   // Get the container of external fields (const).
-   template <int D, class T> inline
-   typename T::WFields const & System<D,T>::h() const
-   {  return h_; }
-
-   // Get the container of external fields (non-const).
-   template <int D, class T> inline
-   typename T::WFields& System<D,T>::h()
-   {  return h_; }
-
-   // Get the mask field (const).
-   template <int D, class T> inline
-   typename T::Mask const & System<D,T>::mask() const
-   {  return mask_; }
-
-   // Get the mask field (non-const).
-   template <int D, class T> inline
-   typename T::Mask& System<D,T>::mask()
-   {  return mask_; }
-
    // Private inline functions:
 
    // Get the Mixture (non-const).
@@ -916,6 +923,11 @@ namespace Rp {
    template <int D, class T> inline
    typename T::Domain & System<D,T>::domain_()
    {  return *domainPtr_; }
+
+   // Get the CFields container (non-const).
+   template <int D, class T> inline
+   typename T::CFields & System<D,T>::c_()
+   {  return *cPtr_; }
 
 } // namespace Rp
 } // namespace Pscf

@@ -10,6 +10,7 @@
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
 
 #include <rp/fts/montecarlo/ShiftMove.tpp>
 

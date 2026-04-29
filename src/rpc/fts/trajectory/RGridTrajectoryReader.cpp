@@ -9,6 +9,9 @@
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/FieldIo.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
 //#include <util/misc/ioUtil.h>
 //#include <util/misc/FileMaster.h>
 

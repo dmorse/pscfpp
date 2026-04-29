@@ -14,6 +14,10 @@
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
+#include <rpc/field/Mask.h>
+
 #include <prdc/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>

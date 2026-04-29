@@ -11,6 +11,8 @@
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
 #include <prdc/cpu/FFT.h>
 #include <pscf/cpu/VecOpCx.h>
 #include <pscf/cpu/ReduceCx.h>

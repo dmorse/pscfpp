@@ -42,18 +42,18 @@ namespace Rp {
    */
    template <int D, class T>
    System<D,T>::System(typename T::System& system)
-    : w_(),
-      c_(),
-      h_(),
-      mask_(),
-      systemPtr_(&system),
+    : systemPtr_(&system),
+      cPtr_(nullptr),
+      wPtr_(nullptr),
+      hPtr_(nullptr),
+      maskPtr_(nullptr),
       mixturePtr_(nullptr),
       mixtureModifierPtr_(nullptr),
       domainPtr_(nullptr),
       interactionPtr_(nullptr),
+      scftPtr_(nullptr),
       environmentPtr_(nullptr),
       environmentFactoryPtr_(nullptr),
-      scftPtr_(nullptr),
       iteratorPtr_(nullptr),
       iteratorFactoryPtr_(nullptr),
       sweepPtr_(nullptr),
@@ -70,40 +70,48 @@ namespace Rp {
       setClassName("System");  // Set block label in parameter file
       BracketPolicy::set(BracketPolicy::Optional);
 
-      // Create dynamically allocated objects owned by this System
+      // Create field containers
+      cPtr_ = new typename T::CFields();
+      wPtr_ = new typename T::WFields();
+      hPtr_ = new typename T::WFields();
+      maskPtr_ = new typename T::Mask();
+
+      // Create non-optional components
       mixturePtr_ = new typename T::Mixture();
       mixtureModifierPtr_ = new typename T::MixtureModifier();
       interactionPtr_ = new typename T::Interaction();
       domainPtr_ = new typename T::Domain();
       scftPtr_ = new typename T::ScftThermo(*systemPtr_);
+      fileMasterPtr_ = new FileMaster();
+      tmpUnitCellPtr_ = new UnitCell<D>();
+
+      // Create Factories for optional components
       environmentFactoryPtr_ 
          = new typename T::EnvironmentFactory(*systemPtr_);
       iteratorFactoryPtr_ = new typename T::IteratorFactory(*systemPtr_);
       sweepFactoryPtr_ = new typename T::SweepFactory(*systemPtr_);
       simulatorFactoryPtr_ = new typename T::SimulatorFactory(*systemPtr_);
-      fileMasterPtr_ = new FileMaster();
-      tmpUnitCellPtr_ = new UnitCell<D>();
 
       // Create associations among class members
       mixtureModifier().associate(mixture_());
       domain_().setFileMaster(*fileMasterPtr_);
-      w_.setFieldIo(domain_().fieldIo());
-      w_.setReadUnitCell(domain_().unitCell());
-      w_.setWriteUnitCell(domain_().unitCell());
-      h_.setFieldIo(domain_().fieldIo());
-      h_.setReadUnitCell(*tmpUnitCellPtr_);
-      h_.setWriteUnitCell(domain_().unitCell());
-      mask_.setFieldIo(domain_().fieldIo());
-      mask_.setReadUnitCell(*tmpUnitCellPtr_);
-      mask_.setWriteUnitCell(domain_().unitCell());
-      c_.setFieldIo(domain_().fieldIo());
-      c_.setWriteUnitCell(domain_().unitCell());
+      w().setFieldIo(domain_().fieldIo());
+      w().setReadUnitCell(domain_().unitCell());
+      w().setWriteUnitCell(domain_().unitCell());
+      h().setFieldIo(domain_().fieldIo());
+      h().setReadUnitCell(*tmpUnitCellPtr_);
+      h().setWriteUnitCell(domain_().unitCell());
+      mask().setFieldIo(domain_().fieldIo());
+      mask().setReadUnitCell(*tmpUnitCellPtr_);
+      mask().setWriteUnitCell(domain_().unitCell());
+      c_().setFieldIo(domain_().fieldIo());
+      c_().setWriteUnitCell(domain_().unitCell());
 
       // Note the arguments of setReadUnitCell functions used above:
-      // When w_ is read from a file in basis or r-grid format, the
+      // When w is read from a file in basis or r-grid format, the
       // parameters of the system unit cell, domain_().unitCell(), are
-      // reset to those in the field file header. When imposed fields h_
-      // and mask_ are read from a file, however, unit cell parameters
+      // reset to those in the field file header. When imposed fields h()
+      // and mask() are read from a file, however, unit cell parameters
       // from the field file header are read into a mutable workspace
       // object, *tmpUnitCellPtr_, and ultimately discarded.
 
@@ -131,13 +139,13 @@ namespace Rp {
       basisSignal.addObserver(*this, &System<D,T>::allocateFieldsBasis);
 
       // Signal triggered by w-field modification
-      w_.signal().addObserver(*this, &System<D,T>::clearCFields);
+      w().signal().addObserver(*this, &System<D,T>::clearCFields);
 
       // Signal triggered by h-field modification
-      h_.signal().addObserver(*this, &System<D,T>::clearCFields);
+      h().signal().addObserver(*this, &System<D,T>::clearCFields);
 
       // Signal triggered by mask modification
-      mask_.signal().addObserver(*this, &System<D,T>::clearCFields);
+      mask().signal().addObserver(*this, &System<D,T>::clearCFields);
    }
 
    /*
@@ -146,17 +154,7 @@ namespace Rp {
    template <int D, class T>
    System<D,T>::~System()
    {
-      delete mixturePtr_;
-      delete mixtureModifierPtr_;
-      delete interactionPtr_;
-      delete domainPtr_;
-      delete scftPtr_;
-      delete environmentFactoryPtr_;
-      delete iteratorFactoryPtr_;
-      delete sweepFactoryPtr_;
-      delete simulatorFactoryPtr_;
-      delete fileMasterPtr_;
-      delete tmpUnitCellPtr_;
+      // Delete optional elements
       if (environmentPtr_) {
          delete environmentPtr_;
       }
@@ -169,6 +167,27 @@ namespace Rp {
       if (simulatorPtr_) {
          delete simulatorPtr_;
       }
+
+      // Delete factories
+      delete environmentFactoryPtr_;
+      delete iteratorFactoryPtr_;
+      delete sweepFactoryPtr_;
+      delete simulatorFactoryPtr_;
+
+      // Delete other non-optional components
+      delete mixturePtr_;
+      delete mixtureModifierPtr_;
+      delete interactionPtr_;
+      delete domainPtr_;
+      delete scftPtr_;
+      delete fileMasterPtr_;
+      delete tmpUnitCellPtr_;
+
+      // Delete field containers
+      delete maskPtr_;
+      delete hPtr_;
+      delete wPtr_;
+      delete cPtr_;
    }
 
    // Lifetime (called in main program)
@@ -439,7 +458,7 @@ namespace Rp {
             UTIL_CHECK(domain_().basis().isInitialized());
             UTIL_CHECK(!domain_().waveList().hasKSq());
             UTIL_CHECK(isAllocatedBasis_);
-            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(!c().hasData());
             UTIL_CHECK(!scft().hasData());
          } else
          if (command == "READ_W_RGRID") {
@@ -447,7 +466,7 @@ namespace Rp {
             w().readRGrid(filename);
             UTIL_CHECK(domain_().unitCell().isInitialized());
             UTIL_CHECK(!domain_().waveList().hasKSq());
-            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(!c().hasData());
             UTIL_CHECK(!scft().hasData());
          } else
          if (command == "SET_UNIT_CELL") {
@@ -457,7 +476,7 @@ namespace Rp {
             setUnitCell(unitCell);
             UTIL_CHECK(domain_().unitCell().isInitialized());
             UTIL_CHECK(!domain_().waveList().hasKSq());
-            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(!c().hasData());
             UTIL_CHECK(!scft().hasData());
          } else
          if (command == "COMPUTE") {
@@ -733,12 +752,12 @@ namespace Rp {
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
             h().readBasis(filename);
-            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(!c().hasData());
          } else
          if (command == "READ_H_RGRID") {
             readEcho(in, filename);
             h().readRGrid(filename);
-            UTIL_CHECK(!c_.hasData());
+            UTIL_CHECK(!c().hasData());
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
@@ -803,9 +822,9 @@ namespace Rp {
    {
       // Preconditions
       UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(w_.isAllocatedRGrid());
-      UTIL_CHECK(c_.isAllocatedRGrid());
-      UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(w().isAllocatedRGrid());
+      UTIL_CHECK(c().isAllocatedRGrid());
+      UTIL_CHECK(w().hasData());
       clearCFields();
 
       // Make sure Environment is up-to-date
@@ -816,17 +835,17 @@ namespace Rp {
       }
 
       // Solve the modified diffusion equation (without iteration)
-      mixture_().compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
-      mixture_().setIsSymmetric(w_.isSymmetric());
-      c_.setHasData(true);
+      mixture_().compute(w().rgrid(), c_().rgrid(), mask().phiTot());
+      mixture_().setIsSymmetric(w().isSymmetric());
+      c_().setHasData(true);
       scft().clear();
 
       // If w fields are symmetric, compute basis components for c fields
-      if (w_.isSymmetric()) {
-         UTIL_CHECK(c_.isAllocatedBasis());
-         domain_().fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(),
+      if (w().isSymmetric()) {
+         UTIL_CHECK(c().isAllocatedBasis());
+         domain_().fieldIo().convertRGridToBasis(c().rgrid(), c_().basis(),
                                                false);
-         c_.setIsSymmetric(true);
+         c_().setIsSymmetric(true);
       }
 
       // Compute stress if needed
@@ -863,10 +882,10 @@ namespace Rp {
    {
       // Preconditions
       UTIL_CHECK(hasIterator());
-      UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(w().hasData());
       if (iterator().isSymmetric()) {
          UTIL_CHECK(isAllocatedBasis_);
-         UTIL_CHECK(w_.isSymmetric());
+         UTIL_CHECK(w().isSymmetric());
       }
       clearCFields();
 
@@ -882,7 +901,7 @@ namespace Rp {
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      UTIL_CHECK(c_.hasData());
+      UTIL_CHECK(c().hasData());
 
       // If converged, compute related thermodynamic properties
       if (!error) {
@@ -911,10 +930,10 @@ namespace Rp {
       // Preconditions
       UTIL_CHECK(hasIterator());
       UTIL_CHECK(hasSweep());
-      UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(w().hasData());
       if (iterator().isSymmetric()) {
          UTIL_CHECK(isAllocatedBasis_);
-         UTIL_CHECK(w_.isSymmetric());
+         UTIL_CHECK(w().isSymmetric());
       }
 
       Log::file() << std::endl;
@@ -943,7 +962,7 @@ namespace Rp {
    template <int D, class T>
    void System<D,T>::clearCFields()
    {
-      c_.setHasData(false);
+      c_().setHasData(false);
       scft().clear();
    }
 
@@ -1094,23 +1113,23 @@ namespace Rp {
       IntVec<D> const & dimensions = domain_().mesh().dimensions();
 
       // Allocate w (chemical potential) fields
-      w_.setNMonomer(nMonomer);
-      w_.allocateRGrid(dimensions);
+      w().setNMonomer(nMonomer);
+      w().allocateRGrid(dimensions);
 
       // Allocate c (monomer concentration) fields
-      c_.setNMonomer(nMonomer);
-      c_.allocateRGrid(dimensions);
+      c_().setNMonomer(nMonomer);
+      c_().allocateRGrid(dimensions);
 
       // Set nMonomer for external field container
-      h_.setNMonomer(nMonomer);
+      h().setNMonomer(nMonomer);
 
       // If hasEnvironment(), allocate mask and h fields
       if (hasEnvironment()) {
          if (environment().generatesMask()) {
-            mask_.allocateRGrid(dimensions);
+            mask().allocateRGrid(dimensions);
          }
          if (environment().generatesExternalFields()) {
-            h_.allocateRGrid(dimensions);
+            h().allocateRGrid(dimensions);
          }
       }
 
@@ -1136,16 +1155,16 @@ namespace Rp {
       UTIL_CHECK(!isAllocatedBasis_);
 
       // Allocate basis fields in w and c field containers
-      w_.allocateBasis(nBasis);
-      c_.allocateBasis(nBasis);
+      w().allocateBasis(nBasis);
+      c_().allocateBasis(nBasis);
 
       // If hasEnvironment(), allocate mask and h fields
       if (hasEnvironment()) {
          if (environment().generatesMask()) {
-            mask_.allocateBasis(nBasis);
+            mask().allocateBasis(nBasis);
          }
          if (environment().generatesExternalFields()) {
-            h_.allocateBasis(nBasis);
+            h().allocateBasis(nBasis);
          }
       }
 
