@@ -78,27 +78,13 @@ namespace Rp {
       /// Container for a real-valued periodic field
       using RFieldT = typename T::RField;
 
-      // Suppress automatically generated constructors
+      // Suppress automatically generated functions
       Simulator() = delete;
       Simulator(Simulator<D,T> const &) = delete;
       Simulator<D,T>& operator = (Simulator<D,T> const &) = delete;
 
-      /// \name Construction, Destruction and Initialization
+      /// \name Initialization
       ///@{
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System
-      * \param simulator  enclosing instance of a subclass
-      */
-      Simulator(typename T::System& system, 
-                typename T::Simulator& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~Simulator();
 
       /**
       * Read parameters for a simulation.
@@ -578,6 +564,20 @@ namespace Rp {
    protected:
 
       // Protected member functions
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System
+      * \param simulator  enclosing instance of a subclass
+      */
+      Simulator(typename T::System& system, 
+                typename T::Simulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~Simulator();
 
       /**
       * Optionally read a random seed and initialize RNGs.

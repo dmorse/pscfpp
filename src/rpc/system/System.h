@@ -12,14 +12,6 @@
 #include <rp/system/System.h>      // base class template
 #include <rpc/system/Types.h>      // base class template argument
 
-// Forward declarations
-namespace Pscf {
-   namespace Rpc {
-      template <int D> class WFields;
-      template <int D> class CFields;
-      template <int D> class Mask;
-   }
-}
 namespace Pscf {
 namespace Rpc {
 

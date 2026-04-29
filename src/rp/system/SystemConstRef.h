@@ -36,33 +36,6 @@ namespace Rp {
    public:
 
       /**
-      * Default constructor.
-      */
-      SystemConstRef();
-
-      /**
-      * Constructor - creates associations.
-      * 
-      * Using of this constructor is equivalent to using the default
-      * constructor and then invoking the associate() function.
-      * 
-      * \param system  parent system object
-      */
-      SystemConstRef(typename T::System const & system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~SystemConstRef();
-
-      /**
-      * Create associations with a system and its components.
-      * 
-      * \param system  parent system object
-      */
-      void associate(typename T::System const & system);
-
-      /**
       * Get the associated System.
       */
       typename T::System const & system() const
@@ -115,6 +88,35 @@ namespace Rp {
       */
       FileMaster const & fileMaster() const
       {  return *fileMasterPtr_; }
+
+   protected:
+
+      /**
+      * Default constructor.
+      */
+      SystemConstRef();
+
+      /**
+      * Constructor - creates associations.
+      * 
+      * Using of this constructor is equivalent to using the default
+      * constructor and then invoking the associate() function.
+      * 
+      * \param system  parent system object
+      */
+      SystemConstRef(typename T::System const & system);
+
+      /**
+      * Destructor.
+      */
+      ~SystemConstRef();
+
+      /**
+      * Create associations with a system and its components.
+      * 
+      * \param system  parent system object
+      */
+      void associate(typename T::System const & system);
 
    private:
 

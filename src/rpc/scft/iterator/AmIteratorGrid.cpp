@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorGrid.h"
+#include "AmIteratorGrid.h"                    // class header
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
@@ -16,7 +16,7 @@
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
-#include <rp/scft/iterator/AmIteratorGrid.tpp>
+#include <rp/scft/iterator/AmIteratorGrid.tpp> // base class implementation
 
 namespace Pscf {
    namespace Rpc {

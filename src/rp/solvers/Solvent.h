@@ -49,16 +49,6 @@ namespace Rp {
       // Public member functions
 
       /**
-      * Constructor.
-      */
-      Solvent();
-
-      /**
-      * Destructor.
-      */
-      ~Solvent();
-
-      /**
       * Create an association with a Mesh.
       *
       * Must be called before allocate().
@@ -106,6 +96,18 @@ namespace Rp {
       * compute() function.
       */
       typename T::RField const & cField() const;
+
+   protected:
+
+      /**
+      * Constructor.
+      */
+      Solvent();
+
+      /**
+      * Destructor.
+      */
+      ~Solvent();
 
    private:
 

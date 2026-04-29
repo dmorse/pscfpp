@@ -45,18 +45,6 @@ namespace Rp {
       using VectorT = V;
 
       /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      AmCompressor(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      ~AmCompressor();
-
-      /**
       * Read all parameters and initialize.
       *
       * \param in  input parameter file stream
@@ -94,6 +82,18 @@ namespace Rp {
       void clearTimers() override;
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      AmCompressor(typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~AmCompressor();
 
       /// Compressor type.
       using CompressorT = typename T::Compressor;

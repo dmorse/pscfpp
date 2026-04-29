@@ -44,16 +44,6 @@ namespace Rp {
       ///@{
 
       /**
-      * Constructor.
-      */
-      MixtureModifier();
-
-      /**
-      * Destructor.
-      */
-      ~MixtureModifier();
-
-      /**
       * Create associations with a Mixture.
       *
       * \param mixture  associated Mixture object
@@ -148,15 +138,27 @@ namespace Rp {
       */
       void clearUnitCellData();
 
-   private:
+   protected:
 
       /**
-      * Get the mixture by reference.
+      * Constructor.
       */
-      MT& mixture();
+      MixtureModifier();
+
+      /**
+      * Destructor.
+      */
+      ~MixtureModifier();
+
+   private:
 
       /// Pointer to the asssociated mixture.
       MT* mixturePtr_;
+
+      /**
+      * Get the mixture by non-const reference.
+      */
+      MT& mixture();
 
    };
 

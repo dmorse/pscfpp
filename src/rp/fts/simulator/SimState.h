@@ -110,6 +110,16 @@ namespace Rp {
       // Public member functions
 
       /**
+      * Allocate memory for stored fields.
+      *
+      * \param nMonomer  number of monomer types
+      * \param dimensions  dimensions of discretization grid
+      */ 
+      void allocate(int nMonomer, IntVec<D> const & dimensions);
+
+   protected:
+ 
+      /**
       * Constructor.
       */
       SimState();
@@ -119,14 +129,6 @@ namespace Rp {
       */
       ~SimState();
 
-      /**
-      * Allocate memory for stored fields.
-      *
-      * \param nMonomer  number of monomer types
-      * \param dimensions  dimensions of discretization grid
-      */ 
-      void allocate(int nMonomer, IntVec<D> const & dimensions);
- 
    };
 
 }

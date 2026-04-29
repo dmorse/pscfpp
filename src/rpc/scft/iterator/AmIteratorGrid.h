@@ -10,7 +10,8 @@
 
 #include <rp/scft/iterator/AmIteratorGrid.h>  // direct base class 
 #include <rpc/system/Types.h>                 // direct base argument
-#include <rpc/scft/iterator/Iterator.h>       // indirect base argument
+#include <rpc/scft/iterator/Iterator.h>       // tertiary base class
+#include <pscf/iterator/AmIteratorTmpl.h>     // secondary base class
 #include <util/containers/DRArray.h>          // indirect base argument
 
 namespace Pscf {

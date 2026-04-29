@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/scft/ScftThermo.h>         // base class template
-#include <rpc/system/SystemConstRef.h>  // template argument
+#include <rp/scft/ScftThermo.h>          // base class template
+#include <rpc/system/Types.h>            // template argument
+#include <rpc/system/SystemConstRef.h>   // indirect base
 
 namespace Pscf {
 namespace Rpc {

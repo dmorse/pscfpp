@@ -94,16 +94,6 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      */
-      WFields();
-
-      /**
-      * Destructor.
-      */
-      ~WFields();
-
       /// \name Initialization and Memory Management
       ///@{
 
@@ -415,6 +405,16 @@ namespace Rp {
       ///@}
 
    protected:
+
+      /**
+      * Constructor.
+      */
+      WFields();
+
+      /**
+      * Destructor.
+      */
+      ~WFields();
 
       /**
       * Get mesh dimensions in each direction, set on r-grid allocation.

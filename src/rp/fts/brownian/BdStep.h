@@ -55,20 +55,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent BdSimulator object
-      */
-      BdStep(typename T::BdSimulator& simulator);
-
-      /**
-      * Destructor.
-      *
-      * Empty default implementation.
-      */
-      virtual ~BdStep();
-
-      /**
       * Read required parameters from file.
       *
       * Empty default implementation.
@@ -134,6 +120,15 @@ namespace Rp {
 
    protected:
       
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent BdSimulator object
+      */
+      BdStep(typename T::BdSimulator& simulator);
+
+      ~BdStep() = default;
+
       /**
       * Get parent System object.
       */

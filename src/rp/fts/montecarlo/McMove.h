@@ -46,20 +46,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator object
-      */
-      McMove(typename T::McSimulator& simulator);
-
-      /**
-      * Destructor.
-      *
-      * Empty default implementation.
-      */
-      virtual ~McMove();
-
-      /**
       * Read required parameters from file.
       *
       * Empty default implementation.
@@ -164,6 +150,20 @@ namespace Rp {
       virtual void output();
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator object
+      */
+      McMove(typename T::McSimulator& simulator);
+
+      /**
+      * Destructor.
+      *
+      * Empty default implementation.
+      */
+      ~McMove();
 
       /**
       * Increment the number of attempted moves.

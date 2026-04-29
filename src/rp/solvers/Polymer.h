@@ -69,16 +69,6 @@ namespace Rp {
       // Public member functions
 
       /**
-      * Constructor.
-      */
-      Polymer();
-
-      /**
-      * Destructor.
-      */
-      ~Polymer();
-
-      /**
       * Set the number of unit cell parameters.
       *
       * \param nParam  the number of unit cell parameters
@@ -156,6 +146,18 @@ namespace Rp {
       using SpeciesT::ensemble;
       using SpeciesT::setPhi;
       using SpeciesT::setMu;
+
+   protected:
+
+      /**
+      * Constructor.
+      */
+      Polymer();
+
+      /**
+      * Destructor.
+      */
+      ~Polymer();
 
    private:
 

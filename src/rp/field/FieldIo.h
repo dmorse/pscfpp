@@ -85,18 +85,8 @@ namespace Rp {
 
    public:
 
-      /// \name Construction, Initialization and Destruction
+      /// \name Initialization
       ///@{
-
-      /**
-      * Constructor.
-      */
-      FieldIo();
-
-      /**
-      * Destructor.
-      */
-      virtual ~FieldIo();
 
       /**
       * Create associations with other members of the parent Domain.
@@ -1273,6 +1263,16 @@ namespace Rp {
       ///@}
 
    protected:
+
+      /**
+      * Constructor.
+      */
+      FieldIo();
+
+      /**
+      * Destructor.
+      */
+      ~FieldIo();
 
       /**
       * Get the lattice type enum value by const reference.

@@ -51,18 +51,6 @@ namespace Rp {
       using VectorT = V;
 
       /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      LrAmCompressor(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      ~LrAmCompressor();
-
-      /**
       * Read body of parameter file block and initialize.
       *
       * \param in  input parameter file stream
@@ -101,9 +89,22 @@ namespace Rp {
 
    protected:
 
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      LrAmCompressor(typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~LrAmCompressor();
+
+      // Alias for base class.
       using CompressorT = typename T::Compressor;
 
-      // Inherited member function
+      // Inherited member function.
       using CompressorT::system;
 
    private:

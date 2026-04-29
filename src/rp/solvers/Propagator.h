@@ -62,16 +62,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      */
-      Propagator();
-
-      /**
-      * Destructor.
-      */
-      virtual ~Propagator();
-
-      /**
       * Associate this propagator with a block.
       *
       * \param block associated Block object
@@ -205,6 +195,16 @@ namespace Rp {
 
       /// Is this propagator allocated?
       bool isAllocated_;
+
+      /**
+      * Constructor.
+      */
+      Propagator();
+
+      /**
+      * Destructor.
+      */
+      ~Propagator();
 
       /**
       * Compute initial q-field at the head vertex.

@@ -55,18 +55,6 @@ namespace Rp {
       using AmIterTmplT = AmIteratorTmpl< IteratorT, VectorT >;
 
       /**
-      * Constructor.
-      *
-      * \param system System object associated with this iterator.
-      */
-      AmIteratorBasis(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      ~AmIteratorBasis();
-
-      /**
       * Read all parameters and initialize.
       *
       * \param in input filestream
@@ -82,9 +70,17 @@ namespace Rp {
 
    protected:
 
-      // Inherited protected members
-      using IteratorT::system;
-      using IteratorT::flexibleParams_;
+      /**
+      * Constructor.
+      *
+      * \param system System object associated with this iterator.
+      */
+      AmIteratorBasis(typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      virtual ~AmIteratorBasis();
 
       /**
       * Setup iterator just before entering iteration loop.
@@ -92,6 +88,10 @@ namespace Rp {
       * \param isContinuation Is this a continuation within a sweep?
       */
       void setup(bool isContinuation) override;
+
+      // Inherited protected members
+      using IteratorT::system;
+      using IteratorT::flexibleParams_;
 
    private:
 

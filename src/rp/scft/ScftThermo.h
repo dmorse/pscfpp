@@ -39,26 +39,6 @@ namespace Rp {
 
    public:
 
-      /// Base class type name alias.
-      using SystemConstRefT = typename T::SystemConstRef;
-
-      /// Parent System type name alias.
-      using SystemT = typename T::System;
-
-      // Public member functions
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      ScftThermo(SystemT const & system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~ScftThermo();
-
       /// \name State modifiers
       ///@{
 
@@ -151,6 +131,12 @@ namespace Rp {
 
    protected:
 
+      /// Base class type name alias.
+      using SystemConstRefT = typename T::SystemConstRef;
+
+      /// Parent System type name alias.
+      using SystemT = typename T::System;
+
       // Protected inherited type name aliases.
       using MixtureT = typename T::Mixture;
       using InteractionT = typename T::Interaction;
@@ -159,6 +145,18 @@ namespace Rp {
       using CFieldsT = typename T::CFields;
       using MaskT = typename T::Mask;
       using RFieldT = typename T::RField;
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      ScftThermo(SystemT const & system);
+
+      /**
+      * Destructor.
+      */
+      ~ScftThermo();
 
       // Protected inherited member functions
       using SystemConstRefT::system;

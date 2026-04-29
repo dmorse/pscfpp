@@ -39,13 +39,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent BdSimulator object
-      */
-      PredCorrBdStep(typename T::BdSimulator& simulator);
-
-      /**
       * Read body of parameter file block and allocate memory.
       *
       * \param in  input parameter file stream
@@ -66,6 +59,16 @@ namespace Rp {
 
    protected:
 
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent BdSimulator object
+      */
+      PredCorrBdStep(typename T::BdSimulator& simulator);
+
+      ~PredCorrBdStep() = default;
+
+      // Alias for base class.
       using BdStepT = typename T::BdStep;
 
       // Protected inherited member functions

@@ -61,21 +61,8 @@ namespace Rp {
       McSimulator(McSimulator<D,T> const &) = delete;
       McSimulator<D,T>& operator = (McSimulator<D,T> const &) = delete;
 
-      /// \name Lifetime: Construction, Destruction and Initialization
+      /// \name Initialization
       ///@{
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System
-      * \param mcSimulator  instance of enclosing McSimulator subclass
-      */
-      McSimulator(SystemT& system, McSimulatorT& mcSimulator);
-
-      /**
-      * Destructor.
-      */
-      ~McSimulator();
 
       /**
       * Read parameter file block.
@@ -172,6 +159,19 @@ namespace Rp {
       ///@}
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System
+      * \param mcSimulator  instance of enclosing McSimulator subclass
+      */
+      McSimulator(SystemT& system, McSimulatorT& mcSimulator);
+
+      /**
+      * Destructor.
+      */
+      ~McSimulator();
 
       // Inherited protected function (selected)
       using SimulatorT::state;

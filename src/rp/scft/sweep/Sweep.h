@@ -42,23 +42,6 @@ namespace Rp {
    public:
 
       /**
-      * Default Constructor.
-      */
-      Sweep();
-
-      /**
-      * Constructor, creates assocation with parent system.
-      *
-      * \param system  parent system
-      */
-      Sweep(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      ~Sweep();
-
-      /**
       * Set association with parent system.
       *
       * Call for objects created with default constructor.
@@ -85,6 +68,23 @@ namespace Rp {
       using SweepTmpl< typename T::BasisFieldState >::c;
 
    protected:
+
+      /**
+      * Default constructor.
+      */
+      Sweep();
+
+      /**
+      * Constructor, creates assocation with parent system.
+      *
+      * \param system  parent system
+      */
+      Sweep(typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~Sweep();
 
       /**
       * Check allocation of fields in one state, allocate if necessary.

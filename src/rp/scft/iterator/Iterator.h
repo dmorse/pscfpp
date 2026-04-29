@@ -38,23 +38,6 @@ namespace Rp {
    public:
 
       /**
-      * Default constructor.
-      */
-      Iterator();
-
-      /**
-      * Constructor.
-      *
-      * \param system parent System object
-      */
-      Iterator(ST& system);
-
-      /**
-      * Destructor.
-      */
-      ~Iterator();
-
-      /**
       * Iterate to solution.
       *
       * \param isContinuation true iff a continuation within a sweep
@@ -131,6 +114,25 @@ namespace Rp {
       * Array of indices of the lattice parameters that are flexible.
       */
       FSArray<bool,6> flexibleParams_;
+
+      // Protected member functions
+
+      /**
+      * Default constructor.
+      */
+      Iterator();
+
+      /**
+      * Constructor.
+      *
+      * \param system parent System object
+      */
+      Iterator(ST& system);
+
+      /**
+      * Destructor.
+      */
+      ~Iterator();
 
       /**
       * Set parent system.

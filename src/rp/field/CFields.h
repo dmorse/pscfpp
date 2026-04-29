@@ -71,16 +71,6 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      */
-      CFields();
-
-      /**
-      * Destructor.
-      */
-      ~CFields();
-
       /// \name Initialization and Memory Management
       ///@{
 
@@ -277,6 +267,16 @@ namespace Rp {
       ///@}
 
    protected:
+
+      /**
+      * Constructor.
+      */
+      CFields();
+
+      /**
+      * Destructor.
+      */
+      ~CFields();
 
       /**
       * Get associated FieldIo object (const reference).

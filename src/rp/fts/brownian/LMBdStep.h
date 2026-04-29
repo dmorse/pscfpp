@@ -54,13 +54,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent BdSimulator object
-      */
-      LMBdStep(typename T::BdSimulator& simulator);
-
-      /**
       * Read body of parameter file block.
       *
       * \param in  input parameter stream
@@ -80,6 +73,13 @@ namespace Rp {
       bool step() override;
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent BdSimulator object
+      */
+      LMBdStep(typename T::BdSimulator& simulator);
 
       using BdStepT = typename T::BdStep;
       using BdStepT::system;

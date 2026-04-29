@@ -96,18 +96,8 @@ namespace Rp {
 
       // Public member functions
 
-      /// \name Construction, Initialization and Destruction
+      /// \name Initialization
       ///@{
-
-      /**
-      * Constructor.
-      */
-      Mixture();
-
-      /**
-      * Destructor.
-      */
-      ~Mixture();
 
       /**
       * Read all parameters and initialize.
@@ -396,6 +386,16 @@ namespace Rp {
       using MixtureBaseT::isCanonical;
 
    protected:
+
+      /**
+      * Constructor.
+      */
+      Mixture();
+
+      /**
+      * Destructor.
+      */
+      ~Mixture();
 
       /// Return associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const

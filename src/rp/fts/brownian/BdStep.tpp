@@ -28,14 +28,7 @@ namespace Rp {
    {}
 
    /*
-   * Destructor, empty default implementation.
-   */
-   template <int D, class T>
-   BdStep<D,T>::~BdStep()
-   {}
-
-   /*
-   * ReadParameters, empty default implementation.
+   * readParameters, empty default implementation.
    */
    template <int D, class T>
    void BdStep<D,T>::readParameters(std::istream &in)

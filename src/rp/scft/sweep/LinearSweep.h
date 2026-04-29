@@ -31,13 +31,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param system  parent system object
-      */
-      LinearSweep(typename T::System& system);
-
-      /**
       * Read parameters from param file.
       *
       * \param in  parameter file input stream
@@ -68,6 +61,15 @@ namespace Rp {
       void outputSummary(std::ostream& out);
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent system object
+      */
+      LinearSweep(typename T::System& system);
+
+      ~LinearSweep() = default;
 
       // Inherited protected members
       using SweepT = typename T::Sweep;

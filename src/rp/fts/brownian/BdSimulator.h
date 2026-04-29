@@ -58,21 +58,8 @@ namespace Rp {
       BdSimulator(BdSimulator<D,T> const &) = delete;
       BdSimulator<D,T>& operator = (BdSimulator<D,T> const &) = delete;
 
-      /// \name Lifetime: Construction, Destruction and Initialization
+      /// \name Initialization
       ///@{
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System
-      * \param bdSimulator  instance of enclosing subclass
-      */
-      BdSimulator(SystemT& system, BdSimulatorT& bdSimulator);
-
-      /**
-      * Destructor.
-      */
-      ~BdSimulator();
 
       /**
       * Read parameter file block.
@@ -139,6 +126,19 @@ namespace Rp {
       ///@}
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System
+      * \param bdSimulator  instance of enclosing subclass
+      */
+      BdSimulator(SystemT& system, BdSimulatorT& bdSimulator);
+
+      /**
+      * Destructor.
+      */
+      ~BdSimulator();
 
       // Inherited protected function (selected)
       using SimulatorT::state;

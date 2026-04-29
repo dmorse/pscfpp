@@ -43,13 +43,6 @@ namespace Rp {
    {}
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   BasisFieldState<D,T>::~BasisFieldState()
-   {}
-
-   /*
    * Allocate all fields.
    */
    template <int D, class T>

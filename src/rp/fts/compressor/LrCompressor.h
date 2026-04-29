@@ -45,18 +45,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      LrCompressor(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      ~LrCompressor();
-
-      /**
       * Read all parameters and initialize.
       *
       * \param in  input parameter file stream
@@ -92,6 +80,18 @@ namespace Rp {
       void clearTimers();
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      LrCompressor(typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~LrCompressor();
 
       // Inherited protected members
       using CompressorT = typename T::Compressor;
