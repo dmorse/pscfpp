@@ -48,10 +48,14 @@ namespace Rpc {
       */
       Simulator(System<D>& system);
 
-      // Suppress automatically generated functions
-      Simulator() = delete;
+      /**
+      * Destructor.
+      */
+      virtual ~Simulator() = default;
+
+      // Prohibit copying and assignment.
       Simulator(Simulator<D> const &) = delete;
-      Simulator<D>& operator=(Simulator<D> const &) = delete;
+      Simulator<D>& operator = (Simulator<D> const &) = delete;
 
    private:
 

@@ -44,6 +44,11 @@ namespace Rpg {
       */
       Ramp(Simulator<D>& simulator);
 
+      /**
+      * Destructor.
+      */
+      virtual ~Ramp() = default;
+
    };
 
 }

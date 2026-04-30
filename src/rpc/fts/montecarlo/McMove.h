@@ -46,11 +46,11 @@ namespace Rpc {
       /**
       * Destructor
       */
-      virtual ~McMove()
-      {}
+      virtual ~McMove() = default;
 
-      // Not copyable.
+      // Not copyable or assignable.
       McMove(McMove<D> const &) = delete;
+      McMove<D>& operator = (McMove<D> const &) = delete;
 
    };
 

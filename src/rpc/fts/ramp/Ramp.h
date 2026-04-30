@@ -45,6 +45,11 @@ namespace Rpc {
       */
       Ramp(Simulator<D>& simulator);
 
+      /**
+      * Destructor.
+      */
+      virtual ~Ramp() = default;
+
    };
 
 }

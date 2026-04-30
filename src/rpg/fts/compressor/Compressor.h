@@ -44,7 +44,7 @@ namespace Rpg {
       /**
       * Destructor.
       */
-      ~Compressor();
+      virtual ~Compressor() = default;
 
       /**
       * Iterate Langrange multiplier field.
@@ -142,13 +142,6 @@ namespace Rpg {
     : mdeCounter_(0),
       sysPtr_(&system)
    {  setClassName("Compressor"); }
-
-   /*
-   * Destructor.
-   */
-   template <int D>
-   Compressor<D>::~Compressor()
-   {}
 
    /*
    * Get number of times MDE has been solved.

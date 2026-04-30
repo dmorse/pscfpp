@@ -41,6 +41,11 @@ namespace Rpc {
       */
       Iterator(System<D>& system);
 
+      /**
+      * Destructor.
+      */
+      virtual ~Iterator() = default;
+
    };
 
 } // namespace Rpc

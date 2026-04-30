@@ -50,6 +50,8 @@ namespace Rpg {
 
       /// Alias for base class
       using AnalyzerT = typename Types<D>::Analyzer;
+
+      // Inherited protected member functions (selected).
       using AnalyzerT::simulator;
       using AnalyzerT::system;
 

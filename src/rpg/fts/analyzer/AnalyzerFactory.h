@@ -31,7 +31,7 @@ namespace Rpg {
 
    public:
 
-       /**
+      /**
       * Constructor.
       *
       * \param simulator  parent Simulator<D> object

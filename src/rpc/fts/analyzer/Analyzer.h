@@ -42,6 +42,11 @@ namespace Rpc {
       */
       Analyzer(Simulator<D>& simulator, System<D>& system);
 
+      /**
+      * Destructor.
+      */
+      virtual ~Analyzer() = default;
+
       Analyzer() = delete;
       Analyzer(Analyzer<D> const &) = delete;
 

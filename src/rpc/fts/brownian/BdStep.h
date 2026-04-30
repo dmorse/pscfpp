@@ -43,6 +43,11 @@ namespace Rpc {
       */
       BdStep(BdSimulator<D>& simulator);
 
+      /**
+      * Destructor.
+      */
+      virtual ~BdStep() = default;
+
    };
 
 }

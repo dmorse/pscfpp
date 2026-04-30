@@ -50,6 +50,11 @@ namespace Rpc {
        : Rp::SystemConstRef<D, Types<D> > (system)
       {};
 
+      /**
+      * Destructor.
+      */
+      virtual ~SystemConstRef() = default;
+
    };
 
 } // namespace Rpc

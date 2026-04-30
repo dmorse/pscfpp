@@ -41,7 +41,6 @@ namespace Rpg {
    class AverageListAnalyzer
      : public Rp::AverageListAnalyzer< D, Types<D> >
    {
-
    public:
 
       /**

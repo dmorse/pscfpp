@@ -43,6 +43,11 @@ namespace Rpc {
       */
       Perturbation(Simulator<D>& simulator);
 
+      /**
+      * Destructor.
+      */
+      virtual ~Perturbation() = default;
+
    };
 
 }

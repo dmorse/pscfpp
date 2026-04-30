@@ -42,6 +42,11 @@ namespace Rpg {
       */
       BdStep(BdSimulator<D>& simulator);
 
+      /**
+      * Destructor.
+      */
+      virtual ~BdStep() = default;
+
    };
 
 }

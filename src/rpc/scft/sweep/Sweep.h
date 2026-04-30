@@ -49,6 +49,11 @@ namespace Rpc {
       */
       Sweep(System<D>& system);
 
+      /**
+      * Destructor.
+      */
+      virtual ~Sweep() = default;
+
    };
 
 } // namespace Rpc

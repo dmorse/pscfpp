@@ -45,6 +45,11 @@ namespace Rpg {
       */
       Simulator(typename Types<D>::System& system);
 
+      /**
+      * Destructor.
+      */
+      virtual ~Simulator() = default;
+
    protected:
 
       /**

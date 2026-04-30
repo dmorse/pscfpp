@@ -45,7 +45,7 @@ namespace Rpc
       /**
       * Destructor.
       */
-      ~Compressor();
+      virtual ~Compressor() = default;
 
       /**
       * Iterate Langrange multiplier field.
@@ -143,13 +143,6 @@ namespace Rpc
     : mdeCounter_(0),
       sysPtr_(&system)
    {  setClassName("Compressor"); }
-
-   /*
-   * Destructor.
-   */
-   template <int D>
-   Compressor<D>::~Compressor()
-   {}
 
    /*
    * Create association with the parent system.

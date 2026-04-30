@@ -42,11 +42,12 @@ namespace Rpg {
       */
       McMove(McSimulator<D>& simulator);
 
-      McMove() = delete;
-      McMove(McMove<D> const &) = delete;
+      /**
+      * Destructor.
+      */
+      virtual ~McMove() = default;
 
    };
-
 
 }
 }

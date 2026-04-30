@@ -41,6 +41,11 @@ namespace Rpg {
       */
       TrajectoryReader<D>(System<D>& system);
 
+      /**
+      * Destructor.
+      */
+      virtual ~TrajectoryReader() = default;
+
    };
 
 }

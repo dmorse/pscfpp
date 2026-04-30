@@ -39,6 +39,5 @@ patterns.mk  - pattern rules for use in src/rpc (makefile fragment)
 Doxygen documentation files:
 ----------------------------
 
-pscf_rpc.dox - command line interface for pscf_pc executable
+pscf_rpc.dox - command line interface for pscf_rpc executable
 rpc.mod      - definition of Pscf_Rpc_Module doxygen topics module 
-

@@ -43,6 +43,11 @@ namespace Rpg {
       */
       Perturbation(Simulator<D>& simulator);
 
+      /**
+      * Destructor.
+      */
+      virtual ~Perturbation() = default;
+
    };
 
 }
