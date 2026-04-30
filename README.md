@@ -2,24 +2,13 @@
 # PSCF - Polymer Self-Consistent Field (C++/CUDA)
 
 PSCF is a software package for field-theoretic analysis of inhomogeneous 
-<<<<<<< HEAD
-equilibrium states of polymerc materials. It is designed to treat materials 
-containing block polymers and/or homopolymers in which inhomogeneities
-form as the result of a tendency of some constituents to phase separate.
-It can be used to describe periodic ordered structures, interfaces, and 
-micelles. PSCF can be used to perform both self-consistent field theory 
-(SCFT) calculations and stochastic field-theoretic simulation (FTS) 
-calculations that rely on a partial-saddle-point approximation. 
-
-PSCF is written primarily in C++, supplemented by CUDA to enable the 
-use of an NVIDIA graphics processing unit (GPU) when available. PSCF 
-is distributed only in source code form, and so must be compiled by 
-the user. 
-=======
-equilibrium states formed by polymeric materials with constituents that 
-tend to phase separate.  PSCF can be used to perform either self-consistent 
-field theory (SCFT) calculations or stochastic field-theoretic simulation 
-(FTS) calculations.
+equilibrium states of polymeric materials. It is designed to treat 
+materials containing block polymers and/or homopolymers in which 
+inhomogeneities form as the result of a tendency of some constituents 
+to phase separate.  It can be used to model periodic ordered structures, 
+interfaces, and micelles. PSCF can be used to perform both self-consistent 
+field theory (SCFT) calculations and stochastic field-theoretic simulation 
+(FTS) calculations that rely on a partial-saddle-point approximation. 
 
 The current version of PSCF is written primarily in C++, supplemented by 
 CUDA to enable the use of a graphics processing unit (GPU) when one is
@@ -28,20 +17,15 @@ compiled by the user.
 
 ## Methods: SCFT and FTS
 
-PSCF was originally designed for SCFT calculations, and provides a
-complete set of tools for this purpose . The acronym PSCF stands for 
+PSCF was originally designed for SCFT calculations, and provides an
+extensive set of tools for this purpose . The acronym PSCF stands for 
 Polymer Self-Consistent Field, reflecting this origin.
 
-PSCF now also provides a complete set of tools for field theoretic 
-simulation calculations that rely on a partial saddle-point 
-approximation (PS-FTS). Such simulations can be performed using ether 
-Brownian dynamics (BD) or Monte-Carlo (MC) sampling techniques. 
-
-The current version of PSCF does not yet provide tools for
-fully-fluctuating complex Langevin field theoretic simulations 
-(CL-FTS), which is planned for a future release. The source code 
-of the current version does, however, contain some of the basic 
-building blocks for CL-FTS, on which work is ongoing.
+PSCF now also provides tools for stochastic field theoretic simulation 
+(FTS). Specifically, PSCF can now be used to perform field theoretic
+simulations that rely on a partial saddle-point approximation (PS-FTS). 
+Such simulations can be performed using ether Brownian dynamics (BD) 
+or Monte-Carlo (MC) sampling techniques. 
 
 The partial saddle-point approximation for FTS used in the current 
 version is an approximation for incompressible models in which a 
@@ -52,12 +36,16 @@ to fluctuate. The resulting approximation yields a theory that
 involves only real-valued fields, and that requires many of the 
 same computational building blocks as SCFT.
 
+The current version of PSCF does not provide tools for complex 
+Langevin field theoretic simulations (CL-FTS). Work on development of
+CL-FTS is ongoing. 
+
 ## History
 
-The current C++/CUDA version of PSCF originated as a rewritten
-version of an older Fortran SCFT program of the same name.  The older 
-Fortran PSCF package built a single program that was designed for SCFT 
-on systems that can contain mixtures of linear block polymers and small 
+The current C++/CUDA version of PSCF originated as a rewritten version of
+an older Fortran SCFT program of the same name.  This older Fortran PSCF
+package built a single program that was designed for SCFT calculations on 
+systems that may contain mixtures of linear block polymers and small 
 molecule solvents in a domain with periodic boundary conditions.  The 
 current C++/CUDA version of PSCF is intended to supersede the Fortran 
 version, which is no longer being developed or actively maintained. 
@@ -82,7 +70,7 @@ the legacy Fortran version include the following:
 
 PSCF provides source code for the following three executable programs:
 
-   - **pscf_r1d** : The pscf_1d program is is designed to perform SCFT
+   - **pscf_r1d** : The pscf_r1d program is is designed to perform SCFT
      calculations for one-dimensional (1D) problems in Cartesian,
      cylindrical or spherical coordinates. A finite difference spatial
      discretization is used to solve the underlying partial differential 
@@ -108,7 +96,7 @@ PSCF provides source code for the following three executable programs:
 ## Features
 
 All three PSCF programs are designed to treat an incompressible mixture
-containing any number of block polymer, homopolymer and small molecule
+containing any number of block polymers, homopolymer and small molecule
 (point-like) solvent molecular species. Polymer species may be modelled
 using either the standard Gaussian model of polymer conformations as 
 continuous random walks or (in pscf_rpc and pscf_rpg) using a discrete 
@@ -142,8 +130,8 @@ Features for SCFT or PS-FTS for periodic systems (pscf_rpc and pscf_rpg):
 
   - Pseudo-spectral solution of the modified diffusion equation
 
-  - Choice of a continuous random walk (Wiener process) or a discrete 
-    bead-spring models for polymer conformations.
+  - Choice of a continuous random walk or a discrete bead-spring model 
+    for polymer conformations.
 
   - Periodic boundary conditions with 1, 2 or 3 dimensional periodicity
 
@@ -240,7 +228,7 @@ the manual for the most recent numbered release is available online at
   <https://dmorse.github.io/pscfpp-man>
 
 All information given in this README file is also given in the web manual,
-often in much greater detail. 
+in greater detail. 
 
 If desired, users can use the [doxygen](<https://www.doxygen.nl/index.html>)
 documentation generation program to generate a local copy of the web manual.
@@ -271,11 +259,11 @@ libraries:
   - [FFTW](<https://www.fftw.org/>) Fast Fourier Transform library
 
 The pscf_1d one-dimensional program pscf_1d requires only GSL, while
-the pscf_rpc program relies on both GSL and FFTW.
+the pscf_rpc program used both GSL and FFTW.
 
 The GPU-accelerated pscf_rpg program can only be compiled and run on a
 computer with an appropriate Nvidia GPU and an Nvidia CUDA development
-kit. Some GPU-accelerated libraries used by pscf_rpg, such as the FFT
+kit. All GPU-accelerated libraries used by pscf_rpg, such as the FFT
 library cuFFT, are provided as part of this kit. The pscf_rpg program 
 cannot be run on Mac OS X, because no Apple computer uses the required 
 type of GPU.
@@ -289,7 +277,7 @@ web manual.
 
 The PSCF source code is written using C++ as the primary language, 
 with CUDA used in pscf_rpg for GPU acceleration. PSCF is only provided 
-in-source code format, and so must be compiled from source.
+in source code format, and so must be compiled by the user.
 
 The build system used to compile and install PSCF uses the unix "make" 
 utility, which is available in any unix-like command-line environment.
@@ -305,8 +293,8 @@ the pscfpp git repository and installing all of the required dependencies
 (i.e., GSL and FFTW) in a linux or Mac OS X environment.
 
    - Add the absolute path to the directory pscfpp/bin to your unix 
-     command search PATH environment variable. This is where executable
-     files will be installed by default. 
+     command search PATH environment variable. By default, executable
+     files will be installed in this directory.
 
    - Add the absolute path to the pscfpp/lib/python to your PYTHONPATH
      environment variable. This allows a python interpreter to find python 
