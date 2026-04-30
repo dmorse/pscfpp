@@ -32,7 +32,11 @@ namespace Rpg {
    */
    template <int D>
    class CFields : public Rp::CFields<D, RField<D>, FieldIo<D> >
-   {};
+   {
+   public:
+      CFields() = default;
+      virtual ~CFields() = default;
+   };
 
 } // namespace Rpg
 } // namespace Pscf

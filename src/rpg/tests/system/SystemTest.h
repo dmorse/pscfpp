@@ -6,6 +6,8 @@
 
 #include <rpg/system/System.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
+#include <rpg/field/CFields.h>
 #include <rpg/scft/ScftThermo.h>
 #include <rpg/field/Domain.h>
 #include <prdc/cuda/RField.h>

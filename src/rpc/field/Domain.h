@@ -46,7 +46,11 @@ namespace Rpc {
    template <int D>
    class Domain 
     : public Rp::Domain< D, FFT<D>, WaveList<D>, FieldIo<D> >
-   {};
+   {
+   public:
+      Domain() = default;
+      virtual ~Domain() = default;
+   };
 
 } // namespace Rpc
 } // namespace Pscf

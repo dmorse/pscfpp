@@ -276,7 +276,7 @@ namespace Rp {
       /**
       * Destructor.
       */
-      ~CFields();
+      ~CFields() = default;
 
       /**
       * Get associated FieldIo object (const reference).

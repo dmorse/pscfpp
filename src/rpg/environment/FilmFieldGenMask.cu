@@ -6,6 +6,10 @@
 */
 
 #include "FilmFieldGenMask.tpp"
+#include <rpg/field/Domain.h>
+#include <rpg/field/CFields.h>
+#include <rpg/field/WFields.h>
+#include <rpg/field/Mask.h>
 
 namespace Pscf {
 namespace Rpg {

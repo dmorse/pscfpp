@@ -34,13 +34,6 @@ namespace Rp {
    {}
 
    /*
-   * Destructor.
-   */
-   template <int D, class RFT, class FIT>
-   CFields<D,RFT,FIT>::~CFields()
-   {}
-
-   /*
    * Create an association with a FIT object.
    */
    template <int D, class RFT, class FIT>

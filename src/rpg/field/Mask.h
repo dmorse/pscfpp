@@ -31,9 +31,12 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class Mask
-     : public Rp::Mask< D, RField<D>, FieldIo<D> >
-   {};
+   class Mask : public Rp::Mask< D, RField<D>, FieldIo<D> >
+   {
+   public:
+      Mask() = default;
+      virtual ~Mask() = default;
+   };
 
 }
 }

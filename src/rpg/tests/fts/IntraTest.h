@@ -4,9 +4,12 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/system/System.h>
-#include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/compressor/IntraCorrelation.h>
+#include <rpg/fts/simulator/Simulator.h>
+#include <rpg/system/System.h>
+#include <rpg/field/CFields.h>
+
+#include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldDft.h>
 #include <prdc/cuda/RFieldComparison.h>

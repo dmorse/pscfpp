@@ -59,13 +59,6 @@ namespace Rp {
       isAllocatedKGrid_(false)
    {}
 
-   /*
-   * Destructor.
-   */
-   template <int D, class RFT, class KFT, class FFT>
-   FieldIo<D,RFT,KFT,FFT>::~FieldIo()
-   {}
-
    // Initialization functions
 
    /*

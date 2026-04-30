@@ -6,6 +6,7 @@
 */
 
 #include "BinaryStructureFactorGrid.tpp"
+#include <rpg/field/WFields.h>
 
 namespace Pscf {
 namespace Rpg {

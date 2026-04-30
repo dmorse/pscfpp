@@ -1272,7 +1272,7 @@ namespace Rp {
       /**
       * Destructor.
       */
-      ~FieldIo();
+      ~FieldIo() = default;
 
       /**
       * Get the lattice type enum value by const reference.

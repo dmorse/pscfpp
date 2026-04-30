@@ -13,6 +13,8 @@
 #include <rpg/field/Domain.h>
 #include <rpg/field/FieldIo.h>
 #include <rpg/field/CFields.h>
+#include <rpg/field/WFields.h>
+
 #include <prdc/cuda/RField.h>
 
 #include <rp/fts/analyzer/ConcentrationWriter.tpp>

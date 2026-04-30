@@ -6,6 +6,10 @@
 */
 
 #include "FilmFieldGenExt.tpp"
+#include <rpg/field/Domain.cu>
+#include <rpg/field/CFields.cu>
+#include <rpg/field/WFields.cu>
+#include <rpg/field/Mask.cu>
 
 namespace Pscf {
 namespace Rpg {

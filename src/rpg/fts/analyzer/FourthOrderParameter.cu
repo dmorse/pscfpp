@@ -11,6 +11,7 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
 #include <prdc/cuda/FFT.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>

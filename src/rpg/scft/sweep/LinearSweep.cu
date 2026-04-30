@@ -5,15 +5,33 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "LinearSweep.tpp"
+#include "LinearSweep.h"
+#include <rpg/system/System.h>
+
+#include <rp/scft/sweep/LinearSweep.tpp>
 
 namespace Pscf {
-   namespace Rpg
-   {
+namespace Rpg {
 
+   // Constructor
+   template <int D>
+   LinearSweep<D>::LinearSweep(System<D>& system)
+    : Rp::LinearSweep<D, Types<D> >(system)
+   {}
+
+}
+}
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class LinearSweep< 1, Rpg::Types<1> >;
+      template class LinearSweep< 2, Rpg::Types<2> >;
+      template class LinearSweep< 3, Rpg::Types<3> >;
+   }
+   namespace Rpg {
       template class LinearSweep<1>;
       template class LinearSweep<2>;
       template class LinearSweep<3>;
-
-   } // namespace Rpg
-} // namespace Pscf
+   }
+}

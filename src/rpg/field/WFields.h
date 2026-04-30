@@ -39,6 +39,9 @@ namespace Rpg {
 
    public:
 
+      WFields() = default;
+      virtual ~WFields() = default;
+
       /**
       * Set new w fields, in unfolded real-space (r-grid) format.
       *

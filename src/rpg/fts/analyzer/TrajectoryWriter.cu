@@ -6,10 +6,14 @@
 */
 
 #include "TrajectoryWriter.h"                    // header
+
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/FieldIo.h>
+#include <rpg/field/WFields.h>
+
 #include <rp/fts/analyzer/TrajectoryWriter.tpp>  // implementation
 
 namespace Pscf {

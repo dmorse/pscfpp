@@ -60,6 +60,9 @@ namespace Rpc {
 
    public:
 
+      FieldIo() = default;
+      virtual ~FieldIo() = default;
+
       /**
       * Read array of RField objects (r-grid fields) from a stream.
       *

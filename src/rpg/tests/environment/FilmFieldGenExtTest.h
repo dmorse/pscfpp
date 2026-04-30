@@ -9,6 +9,7 @@
 #include <rpg/field/Domain.h>
 #include <rpg/field/FieldIo.h>
 #include <rpg/field/WFields.h>
+#include <rpg/field/Mask.h>
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>

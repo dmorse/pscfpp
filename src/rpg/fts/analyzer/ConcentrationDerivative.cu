@@ -10,6 +10,8 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/CFields.h>
+#include <rpg/field/WFields.h>
 
 #include <rp/fts/analyzer/ConcentrationDerivative.tpp>  // implementation
 

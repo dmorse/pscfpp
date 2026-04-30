@@ -9,6 +9,10 @@
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/fts/compressor/Compressor.h>
 #include <rpg/system/System.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/CFields.h>
+#include <rpg/field/WFields.h>
+
 #include <rp/fts/montecarlo/McMove.tpp>     // base class implementation
 
 namespace Pscf {

@@ -11,6 +11,9 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/CFields.h>
+#include <rpg/field/WFields.h>
+
 #include <pscf/cuda/Reduce.h>
 
 #include <rp/fts/analyzer/BoxLengthDerivative.tpp>

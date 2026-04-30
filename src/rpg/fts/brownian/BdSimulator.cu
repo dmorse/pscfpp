@@ -18,6 +18,10 @@
 #include <rpg/fts/perturbation/Perturbation.h>
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/system/System.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/WFields.h>
+#include <rpg/field/CFields.h>
+
 #include <prdc/cuda/RField.h>
 #include <pscf/cuda/CudaVecRandom.h>
 

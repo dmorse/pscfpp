@@ -51,8 +51,10 @@ namespace Rpg {
    class FieldIo
      : public  Rp::FieldIo< D, RField<D>, RFieldDft<D>, FFT<D> >
    {
-
    public:
+
+      FieldIo() = default;
+      virtual ~FieldIo() = default;
 
       /**
       * Read array of RField objects (r-grid fields) from a stream.

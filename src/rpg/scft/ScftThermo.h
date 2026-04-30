@@ -41,6 +41,11 @@ namespace Rpg {
       */
       ScftThermo(System<D> const & system);
 
+      /**
+      * Destructor.
+      */
+      virtual ~ScftThermo() = default;
+
    };
 
 } // namespace Rpg

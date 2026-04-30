@@ -9,6 +9,9 @@
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/CFields.h>
+#include <rpg/field/WFields.h>
+#include <rpg/field/Mask.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 

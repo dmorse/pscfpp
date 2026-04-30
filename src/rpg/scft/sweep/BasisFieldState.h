@@ -46,6 +46,8 @@ namespace Rpg {
       */
       BasisFieldState(System<D>& system);
 
+      virtual ~BasisFieldState() = default;
+
    };
 
 } // namespace Rpg

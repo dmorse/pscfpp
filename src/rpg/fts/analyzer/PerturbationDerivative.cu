@@ -6,10 +6,13 @@
 */
 
 #include "PerturbationDerivative.h"
-#include <rpg/system/System.h>
-#include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/perturbation/Perturbation.h>
 #include <rp/fts/analyzer/PerturbationDerivative.tpp>
+#include <rpg/fts/simulator/Simulator.h>
+#include <rpg/system/System.h>
+#include <rpg/field/Domain.h>
+#include <rpg/field/CFields.h>
+#include <rpg/field/WFields.h>
 
 namespace Pscf {
 namespace Rpg {
