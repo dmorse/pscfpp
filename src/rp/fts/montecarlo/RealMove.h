@@ -38,13 +38,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator object
-      */
-      RealMove(typename T::McSimulator& simulator);
-
-      /**
       * Read body of parameter file block.
       *
       * \param in  input parameter stream
@@ -58,18 +51,34 @@ namespace Rp {
 
    protected:
 
-      using McMoveT = typename T::McMove;
-      using RFieldT = typename T::RField;
-      using McMoveT::system;
-      using McMoveT::simulator;
-      using McMoveT::vecRandom;
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator object
+      */
+      RealMove(typename T::McSimulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~RealMove() = default;
 
       /**
       * Attempt unconstrained move.
       */
       void attemptMove() override;
 
+      // Alias for McMove base class.
+      using McMoveT = typename T::McMove;
+
+      // Inherited protected member functions (selected).
+      using McMoveT::system;
+      using McMoveT::simulator;
+      using McMoveT::vecRandom;
+
    private:
+
+      using RFieldT = typename T::RField;
 
       /// New field values, indexed by monomer type.
       DArray< RFieldT > w_;

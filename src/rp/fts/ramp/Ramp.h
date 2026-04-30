@@ -30,17 +30,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator parent Simulator
-      */
-      Ramp(typename T::Simulator& simulator);
-
-      /**
-      * Destructor.
-      */
-      virtual ~Ramp();
+      // Protected constructor and destructor (see below).
 
       /**
       * Final setup before simulation loop, set value of nStep.
@@ -80,6 +70,18 @@ namespace Rp {
    protected:
 
       /**
+      * Constructor.
+      *
+      * \param simulator parent Simulator
+      */
+      Ramp(typename T::Simulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~Ramp() = default;
+
+      /**
       * Get parent typename T::Simulator by non-const reference.
       */
       typename T::Simulator& simulator();
@@ -89,7 +91,7 @@ namespace Rp {
 
    private:
 
-      /// Pointer to parent Simulator.
+      /// Pointer to parent Simulator (not owned by this).
       typename T::Simulator* simulatorPtr_;
 
    };

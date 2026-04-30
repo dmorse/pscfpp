@@ -54,15 +54,6 @@ namespace Rp {
    public:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      FourthOrderParameter(typename T::Simulator& simulator, 
-                           typename T::System& system);
-
-      /**
       * Setup before the main loop.
       */
       void setup() override;
@@ -76,19 +67,23 @@ namespace Rp {
       int  kSize_;
 
       /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      FourthOrderParameter(typename T::Simulator& simulator, 
+                           typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~FourthOrderParameter() = default;
+
+      /**
       * Compute and return the order parameter.
       */
       double compute() override;
-
-      #if 0
-      /**
-      * Output a sampled or block average value.
-      *
-      * \param step  value for step counter
-      * \param value  value of physical observable
-      */
-      void outputValue(int step, double value) override;
-      #endif
 
       /**
       * Compute prefactor for each Fourier wavevector.
@@ -106,7 +101,7 @@ namespace Rp {
       // Alias for base class
       using AverageAnalyzerT = typename T::AverageAnalyzer;
 
-      // Inherited protected member functions
+      // Inherited protected member functions (selected).
       using AverageAnalyzerT::simulator;
       using AverageAnalyzerT::system;
 

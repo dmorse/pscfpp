@@ -33,17 +33,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      */
-      Perturbation(typename T::Simulator& simulator);
-
-      /**
-      * Destructor.
-      */
-      virtual ~Perturbation();
+      // Protected constructor and destructor (see below).
 
       /**
       * Read parameters from archive.
@@ -134,6 +124,18 @@ namespace Rp {
       void setLambda(double lambda);
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      */
+      Perturbation(typename T::Simulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      virtual ~Perturbation() = default;
 
       /**
       * Get parent Simulator by non-const reference.

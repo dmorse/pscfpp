@@ -47,25 +47,6 @@ namespace Rp {
       return simulator().perturbation().df();
    }
 
-   #if 0
-   template <int D, class T>
-   void PerturbationDerivative<D,T>::outputValue(int step, double value)
-   {
-      int nSamplePerOutput = AverageAnalyzerT::nSamplePerOutput();
-      if (simulator().hasRamp() && nSamplePerOutput == 1) {
-         std::ofstream& outputFile = AverageAnalyzerT::outputFile_;
-         UTIL_CHECK(outputFile.is_open());
-         double lambda = simulator().perturbation().lambda();
-         outputFile << Int(step);
-         outputFile << Dbl(lambda);
-         outputFile << Dbl(value);
-         outputFile << "\n";
-      } else {
-         AverageAnalyzerT::outputValue(step, value);
-      }
-   }
-   #endif
-
 } // namespace Rp
 } // namespace Pscf
 #endif

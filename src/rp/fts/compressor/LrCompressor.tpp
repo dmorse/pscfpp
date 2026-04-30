@@ -38,13 +38,6 @@ namespace Rp {
    {  ParamComposite::setClassName("LrCompressor"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   LrCompressor<D,T>::~LrCompressor()
-   {}
-
-   /*
    * Read parameters from file.
    */
    template <int D, class T>

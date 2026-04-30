@@ -34,22 +34,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      TrajectoryReader(typename T::System& system)
-       : systemPtr_(&system)
-      {}
-
-      /**
-      * Destructor.
-      *
-      * Empty default implementation.
-      */
-      virtual ~TrajectoryReader()
-      {};
+      // Protected constructor and destructor (see below). 
 
       /**
       * Open trajectory file and allocate memory if necessary.
@@ -89,6 +74,20 @@ namespace Rp {
    protected:
 
       /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      TrajectoryReader(typename T::System& system)
+       : systemPtr_(&system)
+      {}
+
+      /**
+      * Destructor.
+      */
+      ~TrajectoryReader() = default;
+
+      /**
       * Return reference to parent system.
       */
       typename T::System& system()
@@ -97,7 +96,7 @@ namespace Rp {
    private:
 
       /**
-      * Pointer to the parent system.
+      * Pointer to the parent system (not owned by this).
       */
       typename T::System* systemPtr_;
 

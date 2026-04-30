@@ -17,13 +17,6 @@ namespace Rp {
     : RampT(simulator)
    {  ParamComposite::setClassName("LinearRamp"); }
 
-   /*
-   * Destructor.
-   */
-   template <int D, class T>
-   LinearRamp<D,T>::~LinearRamp()
-   {}
-
    template <int D, class T>
    void LinearRamp<D,T>::readParameters(std::istream& in)
    {

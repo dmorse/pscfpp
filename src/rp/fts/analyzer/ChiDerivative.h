@@ -14,7 +14,7 @@ namespace Pscf {
 namespace Rp {
 
    /**
-   * Evaluate the derivative of H with respect to chi.
+   * Evaluate derivative of H with respect to chi for binary system.
    *
    * Specializations of this template are used as base classes for two
    * closely analogous class templates, also named ChiDerivative, that 
@@ -33,7 +33,7 @@ namespace Rp {
    class ChiDerivative : public T::AverageAnalyzer
    {
 
-   public:
+   protected:
 
       /**
       * Constructor.
@@ -44,25 +44,21 @@ namespace Rp {
       ChiDerivative(typename T::Simulator& simulator, 
                     typename T::System& system);
 
-   protected:
+      /**
+      * Destructor.
+      */
+      ~ChiDerivative() = default;
 
       /**
       * Compute and return the derivative of H w/ respect to chi.
       */
       double compute() override;
 
-      #if 0
-      /**
-      * Output a sampled or block average value.
-      *
-      * \param step  value for step counter
-      * \param value  value of physical observable
-      */
-      void outputValue(int step, double value) override;
-      #endif
-
+      // Aliases for base classes.
       using AnalyzerT = typename T::Analyzer;
       using AverageAnalyzerT = typename T::AverageAnalyzer;
+
+      // Inherited protected member functions (selected).
       using AnalyzerT::simulator;
       using AnalyzerT::system;
 

@@ -92,33 +92,12 @@ namespace Rp {
       return orderParameter;
    }
 
-   #if 0
-   /*
-   * Output a sampled or block average value.
-   */
-   template <int D, class T>
-   void FourthOrderParameter<D,T>::outputValue(int step, double value)
-   {
-      int nSamplePerOutput = AverageAnalyzerT::nSamplePerOutput();
-      if (simulator().hasRamp() && nSamplePerOutput == 1) {
-         std::ofstream& file = AverageAnalyzerT::outputFile_;
-         UTIL_CHECK(file.is_open());
-         double chi = system().interaction().chi(0,1);
-         file << Int(step);
-         file << Dbl(chi);
-         file << Dbl(value);
-         file << "\n";
-      } else {
-         AverageAnalyzerT::outputValue(step, value);
-      }
-   }
-   #endif
-
    /*
    * Compute prefactors for all wavevectors.
    */
    template <int D, class T>
-   void FourthOrderParameter<D,T>::computePrefactor(Array<double>& prefactor)
+   void 
+   FourthOrderParameter<D,T>::computePrefactor(Array<double>& prefactor)
    {
       IntVec<D> G;
       IntVec<D> Gmin;

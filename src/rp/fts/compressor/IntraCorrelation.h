@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>         // memmber
-#include <util/containers/DArray.h>   // memmber
+#include <pscf/math/IntVec.h>         // member
+#include <util/containers/DArray.h>   // member
 
 // Forward declaration
 namespace Pscf {
@@ -34,7 +34,14 @@ namespace Rp {
 
    public:
 
-      using RealT = typename T::Real;
+      /**
+      * Compute total intramolecular correlation function (all blocks).
+      *
+      * \param correlations  omega values on a k-space mesh
+      */
+      void computeOmegaTotal(Array<typename T::Real>& correlations);
+
+   protected:
 
       /**
       * Constructor.
@@ -47,15 +54,6 @@ namespace Rp {
       * Destructor.
       */
       ~IntraCorrelation();
-
-      /**
-      * Compute total intramolecular correlation function (all blocks).
-      *
-      * \param correlations  omega values on a k-space mesh
-      */
-      void computeOmegaTotal(Array<RealT>& correlations);
-
-   protected:
 
       /**
       * Get and store r-grid and kgrid-mesh dimensions.
@@ -82,6 +80,8 @@ namespace Rp {
       typename T::System const & system() const;
 
    private:
+
+      using RealT = typename T::Real;
 
       /// Pointer to parent system object.
       typename T::System const * systemPtr_;

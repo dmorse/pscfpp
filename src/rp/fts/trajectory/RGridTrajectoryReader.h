@@ -40,17 +40,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      RGridTrajectoryReader(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~RGridTrajectoryReader(){};
+      // Protected constructor and destructor (see below).
 
       /**
       * Open trajectory file and read header, if any.
@@ -82,6 +72,18 @@ namespace Rp {
       void close() override;
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      RGridTrajectoryReader(typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~RGridTrajectoryReader() = default;
 
       using TrajectoryReaderT = typename T::TrajectoryReader;
       using TrajectoryReaderT::system;

@@ -107,7 +107,7 @@ namespace Rp {
       /// Has memory been allocated for the fields?
       bool isAllocated;
 
-      // Public member functions
+      // Public member function
 
       /**
       * Allocate memory for stored fields.
@@ -127,7 +127,7 @@ namespace Rp {
       /**
       * Destructor.
       */
-      ~SimState();
+      ~SimState() = default;
 
    };
 

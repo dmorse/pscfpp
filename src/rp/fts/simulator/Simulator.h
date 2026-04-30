@@ -78,10 +78,7 @@ namespace Rp {
       /// Container for a real-valued periodic field
       using RFieldT = typename T::RField;
 
-      // Suppress automatically generated functions
-      Simulator() = delete;
-      Simulator(Simulator<D,T> const &) = delete;
-      Simulator<D,T>& operator = (Simulator<D,T> const &) = delete;
+      // Protected constructor and destructor (see below).
 
       /// \name Initialization
       ///@{
@@ -578,6 +575,10 @@ namespace Rp {
       * Destructor.
       */
       ~Simulator();
+
+      // Prohibit copying and assignment.
+      Simulator(Simulator<D,T> const &) = delete;
+      Simulator<D,T>& operator = (Simulator<D,T> const &) = delete;
 
       /**
       * Optionally read a random seed and initialize RNGs.

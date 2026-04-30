@@ -22,13 +22,6 @@ namespace Rp {
    {  ParamComposite::setClassName("AnalyzerManager"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   AnalyzerManager<D,T>::~AnalyzerManager()
-   {}
-
-   /*
    * Return a pointer to a new AnalyzerFactory object.
    */
    template <int D, class T>

@@ -33,13 +33,6 @@ namespace Rp {
    {  ParamComposite::setClassName("EinsteinCrystalPerturbation"); }
 
    /*
-   * Destructor.
-   */
-   template <int D, class T>
-   EinsteinCrystalPerturbation<D,T>::~EinsteinCrystalPerturbation()
-   {}
-
-   /*
    * Read parameters from stream, empty default implementation.
    */
    template <int D, class T>

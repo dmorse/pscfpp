@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                          // base class
-#include <util/containers/DArray.h>          // member
-#include <pscf/math/IntVec.h> 
+#include "McMove.h"                    // base class
+#include <util/containers/DArray.h>    // member
+#include <pscf/math/IntVec.h>          // template with defaults
 
-// Forward declarations
+// Forward declaration
 namespace Util {
    template <typename Data> class Array;
 }
@@ -48,12 +48,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator
-      */
-      ShiftMove(typename T::McSimulator& simulator);
+      // Protected constructor and destructor (see below).
 
       /**
       * Read body of parameter file block.
@@ -69,17 +64,23 @@ namespace Rp {
 
    protected:
 
-      using McMoveT = typename T::McMove;
-      using McMoveT::system;
-      using McMoveT::simulator;
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator
+      */
+      ShiftMove(typename T::McSimulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~ShiftMove() = default;
 
       /**
       *  Attempt move that translates all w fields.
       */
       void attemptMove() override;
 
-   protected:
-    
       /**
       * Compute and store shifted w fields.
       *
@@ -105,17 +106,22 @@ namespace Rp {
                       IntVec<D> shift, 
                       IntVec<D> dimensions) const;
 
-   protected:
-
-      // Shifted field configurations
+      /// Shifted field configurations.
       mutable DArray< typename T::RField > w_;
+
+      // Alias for McMove base class.
+      using McMoveT = typename T::McMove;
+
+      // Inherited protected member functions (selected).
+      using McMoveT::system;
+      using McMoveT::simulator;
 
    private:
 
-      // Maximum absolute value of shift components
+      /// Maximum absolute value of shift components.
       int maxShift_;
 
-      // Has private memory been allocated?
+      /// Has private memory been allocated?
       bool isAllocated_;
 
    };

@@ -47,12 +47,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator
-      */
-      ForceBiasMove(typename T::McSimulator& simulator);
+      // Protected constructor and destructor (see below).
 
       /**
       * Read body of parameter file block and allocate memory.
@@ -85,10 +80,22 @@ namespace Rp {
 
    protected:
 
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator
+      */
+      ForceBiasMove(typename T::McSimulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~ForceBiasMove() = default;
+
       /// Alias for McMove base class.
       using McMoveT = typename T::McMove;
 
-      // Protected inherited member functions
+      // Protected inherited member functions (selected).
       using McMoveT::system;
       using McMoveT::simulator;
 

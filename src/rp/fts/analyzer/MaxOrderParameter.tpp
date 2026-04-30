@@ -77,7 +77,8 @@ namespace Rp {
    * Search for and return maximum Fourier amplitude.
    */
    template <int D, class T>
-   void MaxOrderParameter<D,T>::findMaximum(Array<RealT> const & psi)
+   void 
+   MaxOrderParameter<D,T>::findMaximum(Array<typename T::Real> const & psi)
    {
       // Identify index of maximum element of array psi
       maxPsi_ = psi[1];

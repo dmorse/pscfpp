@@ -21,7 +21,7 @@ namespace Rp {
    class BoxLengthDerivative : public T::AverageAnalyzer
    {
 
-   public:
+   protected:
 
       /**
       * Constructor.
@@ -29,17 +29,20 @@ namespace Rp {
       BoxLengthDerivative(typename T::Simulator& simulator, 
                           typename T::System& system);
 
-   protected:
-
-      using AverageAnalyzerT = typename T::AverageAnalyzer;
-      using AverageAnalyzerT::simulator;
-      using AverageAnalyzerT::system;
-      using AverageAnalyzerT::outputFile_;
+      /**
+      * Destructor.
+      */
+      ~BoxLengthDerivative() = default;
 
       /**
       * Compute and return the derivative of H w/ respect to L.
       */
       double compute() override;
+
+      using AverageAnalyzerT = typename T::AverageAnalyzer;
+      using AverageAnalyzerT::simulator;
+      using AverageAnalyzerT::system;
+      using AverageAnalyzerT::outputFile_;
 
    };
 

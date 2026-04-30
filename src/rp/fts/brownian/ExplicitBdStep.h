@@ -37,6 +37,12 @@ namespace Rp {
 
    public:
 
+      // Protected constructor and destructor (see below).
+
+      // Not copyable or assignable
+      ExplicitBdStep(ExplicitBdStep<D,T> const & ) = delete;
+      ExplicitBdStep<D,T>& operator= (ExplicitBdStep<D,T> const &) = delete;
+
       /**
       * Read body of parameter file block.
       *

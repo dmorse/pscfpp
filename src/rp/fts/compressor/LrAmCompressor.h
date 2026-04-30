@@ -99,7 +99,7 @@ namespace Rp {
       /**
       * Destructor.
       */
-      ~LrAmCompressor();
+      ~LrAmCompressor() = default;
 
       // Alias for base class.
       using CompressorT = typename T::Compressor;

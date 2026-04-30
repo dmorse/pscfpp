@@ -42,14 +42,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      AverageAnalyzer(typename T::Simulator& simulator, 
-                      typename T::System& system);
+      // Protected constructor and destructor (see below).
 
       /**
       * Read interval, outputFileName and (optionally) nSamplePerOutput.
@@ -104,6 +97,22 @@ namespace Rp {
 
       /// Average object.
       Average accumulator_;
+
+      // Protected member functions
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      AverageAnalyzer(typename T::Simulator& simulator, 
+                      typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~AverageAnalyzer() = default;
 
       /**
       * Compute value of sampled quantity.

@@ -41,6 +41,10 @@ namespace Rpc {
       */
       TrajectoryReader<D>(System<D>& system);
 
+      /**
+      * Destructor.
+      */
+      virtual ~TrajectoryReader<D>() = default;
    };
 
 }

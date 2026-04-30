@@ -10,7 +10,7 @@
 
 #include <rp/fts/montecarlo/ForceBiasMove.h> // direct base class template
 #include <rpc/system/Types.h>                // direct base argument
-#include <prdc/cpu/RField.h>                // direct base member
+#include <prdc/cpu/RField.h>                 // direct base member
 #include <util/containers/DArray.h>          // direct base member
 #include "McMove.h"                          // indirect base class
 

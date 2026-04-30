@@ -35,14 +35,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      StepLogger(typename T::Simulator& simulator, 
-                 typename T::System& system);
+      // Protected constructor and destructor (see below).
 
       /**
       * Read interval.
@@ -58,8 +51,25 @@ namespace Rp {
       */
       void sample(long iStep) override;
 
+   protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      StepLogger(typename T::Simulator& simulator, 
+                 typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~StepLogger() = default;
+
    private:
 
+      // Private alias for base class.
       using AnalyzerT = typename T::Analyzer;
 
    };

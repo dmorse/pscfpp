@@ -32,17 +32,7 @@ namespace Rp {
 
    public:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      */
-      LinearRamp(typename T::Simulator& simulator);
-
-      /**
-      * Destructor.
-      */
-      virtual ~LinearRamp();
+      // Protected constructor and destructor (see below).
 
       /**
       * Read parameters from parameter file input stream.
@@ -74,6 +64,18 @@ namespace Rp {
       void output() override;
 
    protected:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      */
+      LinearRamp(typename T::Simulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~LinearRamp() = default;
 
       using RampT = typename T::Ramp;
       using RampParameterT = typename T::RampParameter;
