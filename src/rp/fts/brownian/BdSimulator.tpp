@@ -26,12 +26,14 @@ namespace Rp {
    template <int D, class T>
    BdSimulator<D,T>::BdSimulator(SystemT& system, BdSimulatorT& bdSimulator)
     : SimulatorT(system),
-      analyzerManager_(bdSimulator, system),
+      analyzerManagerPtr_(nullptr),
       bdStepPtr_(nullptr),
       bdStepFactoryPtr_(nullptr),
       trajectoryReaderFactoryPtr_(nullptr)
    {
       ParamComposite::setClassName("BdSimulator");
+      analyzerManagerPtr_ 
+             = new typename T::AnalyzerManager(bdSimulator, system),
       bdStepFactoryPtr_ = new typename T::BdStepFactory(bdSimulator);
       trajectoryReaderFactoryPtr_
              = new typename T::TrajectoryReaderFactory(system);
@@ -44,6 +46,7 @@ namespace Rp {
    template <int D, class T>
    BdSimulator<D,T>::~BdSimulator()
    {
+      delete analyzerManagerPtr_;
       if (bdStepFactoryPtr_) {
          delete bdStepFactoryPtr_;
       }

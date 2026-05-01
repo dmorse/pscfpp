@@ -106,9 +106,14 @@ namespace Rp {
       typename T::BdStep& bdStep();
 
       /**
-      * Get the AnalyzerManager by non-const reference.
+      * Get the AnalyzerManager (const).
       */
       typename T::AnalyzerManager& analyzerManager();
+
+      /**
+      * Get the AnalyzerManager (non-const).
+      */
+      typename T::AnalyzerManager const& analyzerManager() const;
 
       /**
       * Get the trajectory reader factory by reference.
@@ -156,7 +161,7 @@ namespace Rp {
       /**
       * Manager for Analyzer.
       */
-      typename T::AnalyzerManager analyzerManager_;
+      typename T::AnalyzerManager* analyzerManagerPtr_;
 
       /**
       * Pointer to Brownian dynamics step algorithm.
@@ -199,10 +204,16 @@ namespace Rp {
       return *bdStepPtr_;
    }
 
-   // Get the AnalyzerManager.
+   // Get the AnalyzerManager (const).
+   template <int D, class T> inline
+   typename T::AnalyzerManager const& 
+   BdSimulator<D,T>::analyzerManager() const
+   {  return *analyzerManagerPtr_; }
+
+   // Get the AnalyzerManager (non-const).
    template <int D, class T> inline
    typename T::AnalyzerManager& BdSimulator<D,T>::analyzerManager()
-   {  return analyzerManager_; }
+   {  return *analyzerManagerPtr_; }
 
 }
 }

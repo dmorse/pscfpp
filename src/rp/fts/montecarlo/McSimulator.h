@@ -102,12 +102,22 @@ namespace Rp {
       ///@{
 
       /**
-      * Get the McMoveManager.
+      * Get the McMoveManager (const).
+      */
+      typename T::McMoveManager const& mcMoveManager() const;
+
+      /**
+      * Get the McMoveManager (non-const).
       */
       typename T::McMoveManager& mcMoveManager();
 
       /**
-      * Get the AnalyzerManager.
+      * Get the AnalyzerManager (const).
+      */
+      typename T::AnalyzerManager const & analyzerManager() const;
+
+      /**
+      * Get the AnalyzerManager (non-const).
       */
       typename T::AnalyzerManager& analyzerManager();
 
@@ -185,14 +195,14 @@ namespace Rp {
       using AnalyzerT = typename T::Analyzer;
 
       /**
-      * Manager for Monte Carlo moves.
+      * Pointer to Manager for Monte Carlo moves.
       */
-      typename T::McMoveManager mcMoveManager_;
+      typename T::McMoveManager* mcMoveManagerPtr_;
 
       /**
-      * Manager for analyzers.
+      * Pointer to Manager for analyzers.
       */
-      typename T::AnalyzerManager analyzerManager_;
+      typename T::AnalyzerManager* analyzerManagerPtr_;
 
       /**
       * Pointer to a trajectory reader factory.
@@ -212,15 +222,38 @@ namespace Rp {
 
    // Inline member function definitions
 
-   // Get the Monte-Carlo move manager.
+   // Get the Monte-Carlo move manager (const)
+   template <int D, class T> inline
+   typename T::McMoveManager const& McSimulator<D,T>::mcMoveManager() const
+   {  
+      UTIL_ASSERT(mcMoveManagerPtr_);
+      return *mcMoveManagerPtr_; 
+   }
+
+   // Get the Monte-Carlo move manager (non-const).
    template <int D, class T> inline
    typename T::McMoveManager& McSimulator<D,T>::mcMoveManager()
-   {  return mcMoveManager_; }
+   {  
+      UTIL_ASSERT(mcMoveManagerPtr_);
+      return *mcMoveManagerPtr_; 
+   }
+
+   // Get the Analyzer manager (const).
+   template <int D, class T> inline
+   typename T::AnalyzerManager const& McSimulator<D,T>::analyzerManager() 
+   const
+   {  
+      UTIL_ASSERT(analyzerManagerPtr_);
+      return *analyzerManagerPtr_; 
+   }
 
    // Get the Analyzer manager.
    template <int D, class T> inline
    typename T::AnalyzerManager& McSimulator<D,T>::analyzerManager()
-   {  return analyzerManager_; }
+   {  
+      UTIL_ASSERT(analyzerManagerPtr_);
+      return *analyzerManagerPtr_; 
+   }
 
    // Get the TrajectoryReader factory.
    template <int D, class T> inline
@@ -234,7 +267,7 @@ namespace Rp {
    // Have any MC moves been defined?
    template <int D, class T> inline
    bool McSimulator<D,T>::hasMcMoves() const
-   {  return (bool)(mcMoveManager_.size() > 0); }
+   {  return (bool)(mcMoveManager().size() > 0); }
 
    // Does the stored state need to include Cc fields?
    template <int D, class T> inline

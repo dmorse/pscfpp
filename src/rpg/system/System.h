@@ -40,6 +40,12 @@ namespace Rpg {
       */
       System();
 
+      /**
+      * Destructor.
+      */
+      virtual ~System() = default;
+
+      // Prohibit copying and assignment.
       System(System<D> const &) = delete;
       System<D>& operator = (System<D> const &) = delete;
 

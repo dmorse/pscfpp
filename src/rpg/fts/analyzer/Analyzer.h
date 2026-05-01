@@ -44,7 +44,7 @@ namespace Rpg {
       /**
       * Destructor.
       */
-      virtual ~Analyzer() = default
+      virtual ~Analyzer() = default;
 
       using Rp::Analyzer<D, Simulator<D>, System<D> >::baseInterval;
 

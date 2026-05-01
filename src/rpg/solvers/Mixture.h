@@ -35,14 +35,6 @@ namespace Rpg {
 
    public:
 
-      /// Base class type aliases
-      using RpMixtureT = typename Rp::Mixture<D, Types<D> >;
-      using typename RpMixtureT::MixtureTmplT;
-      using typename RpMixtureT::MixtureBaseT;
-      using typename RpMixtureT::FieldT;
-
-      using MixtureTmplT::polymer;
-
       // Public member functions
 
       /**
@@ -51,11 +43,24 @@ namespace Rpg {
       Mixture();
 
       /**
+      * Destructor.
+      */
+      virtual ~Mixture() = default;
+
+      /**
       * Read body of parameter file block and initialize.
       *
       * \param in  input parameter stream
       */
       void readParameters(std::istream& in) override;
+
+      /// Base class type aliases
+      using RpMixtureT = typename Rp::Mixture<D, Types<D> >;
+      using typename RpMixtureT::MixtureTmplT;
+      using typename RpMixtureT::MixtureBaseT;
+      using typename RpMixtureT::FieldT;
+
+      using MixtureTmplT::polymer;
 
    private:
 

@@ -6,11 +6,12 @@
 */
 
 #include "MixtureModifier.h"
-#include <rp/solvers/MixtureModifier.tpp>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Solvent.h>
 #include <rpg/solvers/Block.h>
+
+#include <rp/solvers/MixtureModifier.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {

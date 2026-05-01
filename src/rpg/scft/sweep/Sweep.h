@@ -38,7 +38,7 @@ namespace Rpg {
    public:
 
       /**
-      * Default Constructor.
+      * Default constructor.
       */
       Sweep();
 
@@ -48,6 +48,11 @@ namespace Rpg {
       * \param system  parent system
       */
       Sweep(System<D>& system);
+
+      /**
+      * Destructor.
+      */
+      virtual ~Sweep() = default;
 
    };
 

@@ -28,13 +28,17 @@ namespace Rp {
    template <int D, class T>
    McSimulator<D,T>::McSimulator(SystemT& system, McSimulatorT& mcSimulator)
     : SimulatorT(system),
-      mcMoveManager_(mcSimulator, system),
-      analyzerManager_(mcSimulator, system),
+      mcMoveManagerPtr_(nullptr),
+      analyzerManagerPtr_(nullptr),
       trajectoryReaderFactoryPtr_(nullptr)
    {
       ParamComposite::setClassName("McSimulator");
+      mcMoveManagerPtr_ 
+            = new typename T::McMoveManager(mcSimulator, system),
+      analyzerManagerPtr_
+            = new typename T::AnalyzerManager(mcSimulator, system),
       trajectoryReaderFactoryPtr_
-             = new typename T::TrajectoryReaderFactory(system);
+            = new typename T::TrajectoryReaderFactory(system);
       AnalyzerT::initStatic();
    }
 
@@ -44,6 +48,8 @@ namespace Rp {
    template <int D, class T>
    McSimulator<D,T>::~McSimulator()
    {
+      delete mcMoveManagerPtr_;
+      delete analyzerManagerPtr_;
       if (trajectoryReaderFactoryPtr_) {
          delete trajectoryReaderFactoryPtr_;
       }
@@ -59,7 +65,7 @@ namespace Rp {
       SimulatorT::readRandomSeed(in);
 
       // Optionally read McMoveManager block
-      ParamComposite::readParamCompositeOptional(in, mcMoveManager_);
+      ParamComposite::readParamCompositeOptional(in, mcMoveManager());
 
       // Optionally read Compressor block
       bool isEnd = false;
@@ -79,16 +85,16 @@ namespace Rp {
 
       // Optionally read AnalyzerManager block
       AnalyzerT::baseInterval = 0; // default value
-      ParamComposite::readParamCompositeOptional(in, analyzerManager_);
+      ParamComposite::readParamCompositeOptional(in, analyzerManager());
 
       // Figure out what needs to be saved in stored state
       state().needsCc = false;
       state().needsDc = false;
       state().needsHamiltonian = true;
-      if (mcMoveManager_.needsCc()){
+      if (mcMoveManager().needsCc()){
          state().needsCc = true;
       }
-      if (mcMoveManager_.needsDc()){
+      if (mcMoveManager().needsDc()){
          state().needsDc = true;
       }
 
@@ -136,12 +142,12 @@ namespace Rp {
 
       // Setup MC moves (if any)
       if (hasMcMoves()) {
-         mcMoveManager_.setup();
+         mcMoveManager().setup();
       }
 
       // Setup analyzers (if any)
-      if (analyzerManager_.size() > 0){
-         analyzerManager_.setup();
+      if (analyzerManager().size() > 0){
+         analyzerManager().setup();
       }
 
    }
@@ -171,7 +177,7 @@ namespace Rp {
 
       // Analyze initial step
       analyzerTimer.start();
-      analyzerManager_.sample(iStep_);
+      analyzerManager().sample(iStep_);
       analyzerTimer.stop();
 
       // Main Monte Carlo loop
@@ -179,7 +185,7 @@ namespace Rp {
 
          // Choose and attempt an McMove
          bool converged;
-         converged = mcMoveManager_.chooseMove().move();
+         converged = mcMoveManager().chooseMove().move();
 
          if (converged){
             iStep_++;
@@ -192,8 +198,8 @@ namespace Rp {
             analyzerTimer.start();
             if (analyzerBaseInterval != 0) {
                if (iStep_ % analyzerBaseInterval == 0) {
-                  if (analyzerManager_.size() > 0) {
-                     analyzerManager_.sample(iStep_);
+                  if (analyzerManager().size() > 0) {
+                     analyzerManager().sample(iStep_);
                   }
                }
             }
@@ -209,9 +215,9 @@ namespace Rp {
       double analyzerTime = analyzerTimer.time();
 
       // Output move statistics and final analysis results
-      mcMoveManager_.output();
+      mcMoveManager().output();
       if (analyzerBaseInterval != 0){
-         analyzerManager_.output();
+         analyzerManager().output();
       }
 
       // Final output from ramp (if any)
@@ -251,13 +257,13 @@ namespace Rp {
            << setw(10) << right << "Failed"
            << setw(13) << right << "FailRate"
            << endl;
-      int nMove = mcMoveManager_.size();
+      int nMove = mcMoveManager().size();
       for (int iMove = 0; iMove < nMove; ++iMove) {
-         attempt = mcMoveManager_[iMove].nAttempt();
-         accept  = mcMoveManager_[iMove].nAccept();
-         fail  = mcMoveManager_[iMove].nFail();
+         attempt = mcMoveManager()[iMove].nAttempt();
+         accept  = mcMoveManager()[iMove].nAccept();
+         fail  = mcMoveManager()[iMove].nFail();
          Log::file() << setw(20) << left
-              << mcMoveManager_[iMove].className()
+              << mcMoveManager()[iMove].className()
               << setw(10) << right << attempt
               << setw(10) << accept
               << setw(13) << fixed << setprecision(5)
@@ -283,7 +289,7 @@ namespace Rp {
       UTIL_CHECK(min >= 0);
       UTIL_CHECK(max >= min);
       UTIL_CHECK(AnalyzerT::baseInterval > 0);
-      UTIL_CHECK(analyzerManager_.size() > 0);
+      UTIL_CHECK(analyzerManager().size() > 0);
 
       // Construct TrajectoryReader
       typename T::TrajectoryReader* trajectoryReaderPtr;
@@ -314,7 +320,7 @@ namespace Rp {
 
             // Sample property values only for iStep >= min
             if (iStep_ >= min) {
-               analyzerManager_.sample(iStep_);
+               analyzerManager().sample(iStep_);
             }
          }
 
@@ -327,7 +333,7 @@ namespace Rp {
       delete trajectoryReaderPtr;
 
       // Output results of all analyzers to output files
-      analyzerManager_.output();
+      analyzerManager().output();
 
       // Output number of frames and times
       Log::file() << std::endl;
@@ -349,7 +355,7 @@ namespace Rp {
       SimulatorT::compressor().outputTimers(out);
       out << "\n";
       out << "MC move time contributions:\n";
-      mcMoveManager_.outputTimers(out);
+      mcMoveManager().outputTimers(out);
    }
 
    /*
@@ -357,7 +363,7 @@ namespace Rp {
    */
    template <int D, class T>
    void McSimulator<D,T>::clearTimers()
-   {  mcMoveManager_.clearTimers(); }
+   {  mcMoveManager().clearTimers(); }
 
 }
 }

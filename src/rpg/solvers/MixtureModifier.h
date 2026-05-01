@@ -29,7 +29,13 @@ namespace Rpg {
    */
    template <int D>
    class MixtureModifier : public Rp::MixtureModifier< Mixture<D> >
-   { };
+   { 
+   public:
+
+      MixtureModifier() = default;
+
+      virtual ~MixtureModifier() = default;
+   };
 
 } // namespace Rpg
 } // namespace Pscf
