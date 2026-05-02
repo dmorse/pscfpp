@@ -10,6 +10,7 @@
 
 #include "PolymerTmpl.h"                   
 #include <pscf/math/arithmetic.h>
+#include <util/containers/Pair.h>
 
 namespace Pscf {
 
@@ -21,30 +22,26 @@ namespace Pscf {
    */
    template <class BT, class PT, typename WT>
    PolymerTmpl<BT,PT,WT>::PolymerTmpl()
-    : PolymerSpecies<WT>(),
+    : PolymerSpeciesT(),
       blocks_()
    {  ParamComposite::setClassName("PolymerTmpl"); }
-
-   /*
-   * Destructor.
-   */
-   template <class BT, class PT, typename WT>
-   PolymerTmpl<BT,PT,WT>::~PolymerTmpl()
-   {}
 
    /*
    * Allocate blocks array.
    */
    template <class BT, class PT, typename WT>
    void PolymerTmpl<BT,PT,WT>::allocateBlocks()
-   {  blocks_.allocate(nBlock()); }
+   {  blocks_.allocate(PolymerSpeciesT::nBlock()); }
 
    /*
    * Read blocks array from parameter file.
    */
    template <class BT, class PT, typename WT>
    void PolymerTmpl<BT,PT,WT>::readBlocks(std::istream& in)
-   {  ParamComposite::readDArray<BT>(in, "blocks", blocks_, nBlock()); }
+   {
+      const int nBlock = PolymerSpeciesT::nBlock();  
+      ParamComposite::readDArray<BT>(in, "blocks", blocks_, nBlock); 
+   }
 
    /*
    * Read parameter file block.
@@ -55,7 +52,7 @@ namespace Pscf {
 
       // Call PoymerSpecies base class member function
       // Initializes PolymerSpecies, and Edge and Vertex components
-      PolymerSpecies<WT>::readParameters(in);
+      PolymerSpeciesT::readParameters(in);
 
       // The remainder of this function sets and validates immutable
       // information about graph topology that is stored by propagators.
@@ -66,10 +63,11 @@ namespace Pscf {
       Vertex const * tailPtr = nullptr;
       Pair<int> propId;
       int blockId, forwardId, reverseId, headId, tailId, i;
+      const int nBlock = PolymerSpeciesT::nBlock();
       bool isHeadEnd, isTailEnd;
 
       // Set sources and end flags for all propagators
-      for (blockId = 0; blockId < nBlock(); ++blockId) {
+      for (blockId = 0; blockId < nBlock; ++blockId) {
          for (forwardId = 0; forwardId < 2; ++forwardId) {
 
             propagatorPtr = &block(blockId).propagator(forwardId);
@@ -82,8 +80,8 @@ namespace Pscf {
             }
             headId = block(blockId).vertexId(forwardId);
             tailId = block(blockId).vertexId(reverseId);
-            headPtr = &vertex(headId);  // pointer to head vertex
-            tailPtr = &vertex(tailId);  // pointer to tail vertex
+            headPtr = &PolymerSpeciesT::vertex(headId);  // head vertex
+            tailPtr = &PolymerSpeciesT::vertex(tailId);  // tail vertex
 
             // Add pointers to source propagators
             for (i = 0; i < headPtr->size(); ++i) {
@@ -126,16 +124,18 @@ namespace Pscf {
       PT const * p0Ptr = nullptr;
       PT const * p1Ptr = nullptr;
       int bId, v0Id, v1Id;
+      const int nVertex = PolymerSpeciesT::nVertex();
+      const int nBlock = PolymerSpeciesT::nBlock();
 
       // Loop over blocks
-      for (bId = 0; bId < nBlock(); ++bId) {
+      for (bId = 0; bId < nBlock; ++bId) {
          v0Id = block(bId).vertexId(0);
          v1Id = block(bId).vertexId(1);
-         UTIL_CHECK(v0Id >= 0 && v0Id < nVertex());
-         UTIL_CHECK(v1Id >= 0 && v1Id < nVertex());
+         UTIL_CHECK(v0Id >= 0 && v0Id < nVertex);
+         UTIL_CHECK(v1Id >= 0 && v1Id < nVertex);
          UTIL_CHECK(v0Id != v1Id);
-         v0Ptr = &vertex(v0Id);
-         v1Ptr = &vertex(v1Id);
+         v0Ptr = &PolymerSpeciesT::vertex(v0Id);
+         v1Ptr = &PolymerSpeciesT::vertex(v1Id);
          p0Ptr = &(block(bId).propagator(0));
          p1Ptr = &(block(bId).propagator(1));
          UTIL_CHECK(v0Ptr->size() >= 1);
@@ -156,15 +156,16 @@ namespace Pscf {
    template <class BT, class PT, typename WT>
    void PolymerTmpl<BT,PT,WT>::solve(double phiTot)
    {
+      const int nPropagator = PolymerSpeciesT::nPropagator();
 
       // Clear all propagators
-      for (int j = 0; j < nPropagator(); ++j) {
+      for (int j = 0; j < nPropagator; ++j) {
          propagator(j).setIsSolved(false);
       }
 
       // Solve modified diffusion equation for all propagators in
       // the order specified by function makePlan.
-      for (int j = 0; j < nPropagator(); ++j) {
+      for (int j = 0; j < nPropagator; ++j) {
          UTIL_CHECK(propagator(j).isReady());
          propagator(j).solve();
       }
@@ -173,13 +174,12 @@ namespace Pscf {
       WT Q;
       block(0).propagator(0).computeQ(Q);
 
-      // The PT::computeQ function returns a spatial average.
-      // Correct for partial occupation of the unit cell.
+      // The PT::computeQ function returns an overall spatial average.
+      // Correct for possible partial occupation of the unit cell.
       divEq(Q, phiTot);
-      // Q = Q/phiTot;
 
       // Set q and compute phi or mu, depending on the ensemble
-      Species<WT>::setQ(Q);
+      SpeciesT::setQ(Q);
 
    }
 
@@ -204,7 +204,7 @@ namespace Pscf {
    template <class BT, class PT, typename WT>
    PT& PolymerTmpl<BT,PT,WT>::propagator(int id)
    {
-      Pair<int> propId = propagatorId(id);
+      Pair<int> propId = PolymerSpeciesT::propagatorId(id);
       return propagator(propId[0], propId[1]);
    }
 

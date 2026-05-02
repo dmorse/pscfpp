@@ -20,13 +20,6 @@ namespace Pscf {
    {  ParamComposite::setClassName("SolventSpecies"); }
 
    /*
-   * Destructor
-   */
-   template <typename WT>
-   SolventSpecies<WT>::~SolventSpecies()
-   {}
-
-   /*
    * Read contents of parameter file block
    */
    template <typename WT>

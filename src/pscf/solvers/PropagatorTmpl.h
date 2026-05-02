@@ -95,10 +95,7 @@ namespace Pscf
 
    public:
 
-      /**
-      * Constructor.
-      */ 
-      PropagatorTmpl();
+      // Protected constructor and destructor (see below).
 
       /// \name Mutators
       ///@{
@@ -200,6 +197,15 @@ namespace Pscf
       bool isReady() const;
  
       ///@}
+
+   protected:
+
+      /**
+      * Constructor.
+      */ 
+      PropagatorTmpl();
+
+      ~PropagatorTmpl() = default;
 
    private:
   

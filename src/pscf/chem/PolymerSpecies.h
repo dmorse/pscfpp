@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Species.h>           // base class
+#include <pscf/chem/Species.h>           // base class template
 
 #include <pscf/chem/Vertex.h>            // member
 #include <pscf/chem/PolymerType.h>       // member
@@ -81,7 +81,7 @@ namespace Pscf
       /**
       * Destructor.
       */
-      ~PolymerSpecies();
+      virtual ~PolymerSpecies() = default;
 
       /**
       * Read parameters and initialize.

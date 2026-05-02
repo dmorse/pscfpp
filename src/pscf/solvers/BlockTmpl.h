@@ -108,7 +108,7 @@ namespace Pscf {
 
    public:
 
-      // Public typename alias
+      // Public typename aliases
 
       /**
       * Modified diffusion equation solver (propagator) type.
@@ -122,15 +122,7 @@ namespace Pscf {
 
       // Public member functions
 
-      /**
-      * Constructor.
-      */
-      BlockTmpl();
-
-      /**
-      * Destructor.
-      */
-      virtual ~BlockTmpl();
+      // Protected constructor and destructor (see below).
 
       /**
       * Set monomer statistical segment length.
@@ -173,6 +165,18 @@ namespace Pscf {
       * Get monomer statistical segment length.
       */
       double kuhn() const;
+
+   protected:
+
+      /**
+      * Constructor.
+      */
+      BlockTmpl();
+
+      /**
+      * Destructor.
+      */
+      ~BlockTmpl() = default;
 
    private:
 

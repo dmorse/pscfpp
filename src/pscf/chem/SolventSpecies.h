@@ -42,9 +42,9 @@ namespace Pscf {
       SolventSpecies();
 
       /**
-      * Constructor.
+      * Destructor.
       */
-      ~SolventSpecies();
+      virtual ~SolventSpecies() = default;
 
       /**
       * Read parameters and initialize.

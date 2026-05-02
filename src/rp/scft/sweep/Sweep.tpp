@@ -52,7 +52,8 @@ namespace Rp {
    {
       // Get specialized sweep parameters from Environment
       if (system().hasEnvironment()) {
-         addParameterTypes(system().environment().getParameterTypes());
+         SweepTmplT::addParameterTypes(
+                              system().environment().getParameterTypes());
       }
    }
 
@@ -80,9 +81,9 @@ namespace Rp {
       SweepTmplT::readParameters(in);
 
       // Read optional flags indicating which field types to output
-      readOptional(in, "writeCRGrid", writeCRGrid_);
-      readOptional(in, "writeCBasis", writeCBasis_);
-      readOptional(in, "writeWRGrid", writeWRGrid_);
+      ParamComposite::readOptional(in, "writeCRGrid", writeCRGrid_);
+      ParamComposite::readOptional(in, "writeCBasis", writeCBasis_);
+      ParamComposite::readOptional(in, "writeWRGrid", writeWRGrid_);
    }
 
    /*
@@ -103,11 +104,11 @@ namespace Rp {
    template <int D, class T>
    void Sweep<D,T>::setup()
    {
-      initialize();
+      SweepTmplT::initialize();
       checkAllocation(trial_);
 
       // Open log summary file
-      std::string fileName = baseFileName_;
+      std::string fileName = SweepTmplT::baseFileName_;
       fileName += "sweep.log";
       system().fileMaster().openOutputFile(fileName, logFile_);
       logFile_ << " step             ds     free_energy        pressure"
@@ -132,19 +133,20 @@ namespace Rp {
    template <int D, class T>
    void Sweep<D,T>::extrapolate(double sNew)
    {
-      UTIL_CHECK(historySize() > 0);
+      const int historySize = SweepTmplT::historySize();
+      UTIL_CHECK(historySize > 0);
 
-      // If historySize() == 1, do nothing: Use previous system state
+      // If historySize == 1, do nothing: Use previous system state
       // as trial for the new state.
 
-      if (historySize() > 1) {
-         UTIL_CHECK(historySize() <= historyCapacity());
+      if (historySize > 1) {
+         UTIL_CHECK(historySize <= SweepTmplT::historyCapacity());
 
          // Does the iterator allow a flexible unit cell ?
          bool isFlexible = system().iterator().isFlexible();
 
          // Compute coefficients of polynomial extrapolation to sNew
-         setCoefficients(sNew);
+         SweepTmplT::setCoefficients(sNew);
 
          // Set extrapolated trial w fields
          double coeff;
@@ -157,16 +159,16 @@ namespace Rp {
             newFieldPtr = &(trial_.field(i));
 
             // Previous state k = 0 (most recent)
-            oldFieldPtr = &state(0).field(i);
-            coeff = c(0);
+            oldFieldPtr = &SweepTmplT::state(0).field(i);
+            coeff = SweepTmplT::c(0);
             for (j=0; j < nBasis; ++j) {
                (*newFieldPtr)[j] = coeff*(*oldFieldPtr)[j];
             }
 
             // Previous states k >= 1 (older)
-            for (k = 1; k < historySize(); ++k) {
-               oldFieldPtr = &state(k).field(i);
-               coeff = c(k);
+            for (k = 1; k < historySize; ++k) {
+               oldFieldPtr = &SweepTmplT::state(k).field(i);
+               coeff = SweepTmplT::c(k);
                for (j=0; j < nBasis; ++j) {
                   (*newFieldPtr)[j] += coeff*(*oldFieldPtr)[j];
                }
@@ -184,21 +186,22 @@ namespace Rp {
 
             double coeff;
             double parameter;
-            const FSArray<bool,6> flexParams =
-                              system().iterator().flexibleParams();
+            const FSArray<bool,6> flexParams 
+                            = system().iterator().flexibleParams();
             const int nParameter
-                             = system().domain().unitCell().nParameter();
+                            = system().domain().unitCell().nParameter();
             UTIL_CHECK(flexParams.size() == nParameter);
 
             // Add contributions from all previous states
-            for (k = 0; k < historySize(); ++k) {
-               coeff = c(k);
+            for (k = 0; k < historySize; ++k) {
+               coeff = SweepTmplT::c(k);
                for (int i = 0; i < nParameter; ++i) {
                   if (flexParams[i]) {
                      if (k == 0) {
                         unitCellParameters_[i] = 0.0;
                      }
-                     parameter = state(k).unitCell().parameter(i);
+                     parameter 
+                          = SweepTmplT::state(k).unitCell().parameter(i);
                      unitCellParameters_[i] += coeff*parameter;
                   }
                }
@@ -243,7 +246,7 @@ namespace Rp {
    void Sweep<D,T>::reset()
    {
       bool isFlexible = system().iterator().isFlexible();
-      state(0).setSystemState(isFlexible);
+      SweepTmplT::state(0).setSystemState(isFlexible);
    }
 
    /*
@@ -256,8 +259,8 @@ namespace Rp {
    template <int D, class T>
    void Sweep<D,T>::getSolution()
    {
-      state(0).setSystem(system());
-      state(0).getSystemState();
+      SweepTmplT::state(0).setSystem(system());
+      SweepTmplT::state(0).getSystemState();
 
       // Output converged solution to several files
       outputSolution();
@@ -272,10 +275,10 @@ namespace Rp {
    {
       std::ofstream out;
       std::string outFileName;
-      std::string indexString = toString(nAccept() - 1);
+      std::string indexString = toString(SweepTmplT::nAccept() - 1);
 
       // Open parameter file, with thermodynamic properties at end
-      outFileName = baseFileName_;
+      outFileName = SweepTmplT::baseFileName_;
       outFileName += indexString;
       outFileName += ".stt";
       system().fileMaster().openOutputFile(outFileName, out);
@@ -288,7 +291,7 @@ namespace Rp {
 
       // Write w fields
       UTIL_CHECK(system().w().hasData());
-      outFileName = baseFileName_;
+      outFileName = SweepTmplT::baseFileName_;
       outFileName += indexString;
       outFileName += "_w";
       if (system().w().isSymmetric()) {
@@ -302,7 +305,7 @@ namespace Rp {
       // Optionally write c rgrid files
       if (writeCRGrid_) {
          UTIL_CHECK(system().c().hasData());
-         outFileName = baseFileName_;
+         outFileName = SweepTmplT::baseFileName_;
          outFileName += indexString;
          outFileName += "_c";
          outFileName += ".rf";
@@ -312,7 +315,7 @@ namespace Rp {
       // Optionally write c basis files
       if (writeCBasis_ && system().c().isSymmetric()) {
          UTIL_CHECK(system().c().hasData());
-         outFileName = baseFileName_;
+         outFileName = SweepTmplT::baseFileName_;
          outFileName += indexString;
          outFileName += "_c";
          outFileName += ".bf";
@@ -321,7 +324,7 @@ namespace Rp {
 
       // Optionally write w rgrid files
       if (writeWRGrid_ && system().w().isSymmetric()) {
-         outFileName = baseFileName_;
+         outFileName = SweepTmplT::baseFileName_;
          outFileName += indexString;
          outFileName += "_w";
          outFileName += ".rf";
@@ -333,8 +336,8 @@ namespace Rp {
    template <int D, class T>
    void Sweep<D,T>::outputSummary(std::ostream& out)
    {
-      int i = nAccept() - 1;
-      double sNew = s(0);
+      int i = SweepTmplT::nAccept() - 1;
+      double sNew = SweepTmplT::s(0);
       if (!system().scft().hasData()) system().scft().compute();
       out << Int(i,5) << Dbl(sNew)
           << Dbl(system().scft().fHelmholtz(),16)

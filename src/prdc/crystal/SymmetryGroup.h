@@ -53,7 +53,7 @@ namespace Prdc {
       /**
       * Destructor.
       */
-      ~SymmetryGroup();
+      virtual ~SymmetryGroup() = default;
 
       /**
       * Assignment operator.

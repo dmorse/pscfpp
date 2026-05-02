@@ -27,12 +27,6 @@ namespace Pscf
    }
 
    /*
-   * Destructor (virtual)
-   */
-   Edge::~Edge()
-   {}
-
-   /*
    * Set the id for this block.
    */
    void Edge::setId(int id)

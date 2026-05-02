@@ -25,13 +25,6 @@ namespace Pscf
    {}
 
    /*
-   * Destructor.
-   */
-   template <class PT, class ST, typename WT>
-   MixtureTmpl<PT,ST,WT>::~MixtureTmpl()
-   {}
-
-   /*
    * Get a PolymerSpecies descriptor by non-const reference.
    */
    template <class PT, class ST, typename WT>

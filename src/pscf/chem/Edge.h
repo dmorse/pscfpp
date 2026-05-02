@@ -67,7 +67,7 @@ namespace Pscf
       /**
       * Destructor.
       */
-      virtual ~Edge();
+      virtual ~Edge() = default;
 
       /**
       * Serialize to/from archive.

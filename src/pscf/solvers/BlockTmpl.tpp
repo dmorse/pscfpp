@@ -29,13 +29,6 @@ namespace Pscf {
    }
 
    /*
-   * Destructor.
-   */
-   template <class QT, class FT>
-   BlockTmpl<QT,FT>::~BlockTmpl()
-   {}
-
-   /*
    * Set the monomer statistical segment length.
    */
    template <class QT, class FT>

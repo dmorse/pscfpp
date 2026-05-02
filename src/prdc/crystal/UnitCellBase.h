@@ -35,15 +35,7 @@ namespace Prdc {
    {
    public:
 
-      /**
-      * Constructor.
-      */
-      UnitCellBase();
-
-      /**
-      * Destructor.
-      */
-      virtual ~UnitCellBase();
+      // Protected constructor and destructor (see below)
 
       /// \name Unit Cell Parameters
       ///@{
@@ -184,6 +176,33 @@ namespace Prdc {
 
    protected:
 
+      // Protected member functions
+
+      /**
+      * Constructor.
+      */
+      UnitCellBase();
+
+      /**
+      * Destructor.
+      */
+      virtual ~UnitCellBase() = default;
+
+      /**
+      * Compute all protected data, given latticeSystem and parameters.
+      *
+      * All functions that reset unit cell parameters must call this 
+      * function to reset depenent data, including stream insertion 
+      * operators.
+      *
+      * Calls initializeToZero, setBasis, & computeDerivatives functions
+      * internally. Also sets isInitialized flag true and notifies any 
+      * observers.
+      */
+      void setLattice();
+
+      // Protected member variables
+
       /**
       * Array of Bravais lattice basis vectors.
       */
@@ -242,19 +261,6 @@ namespace Prdc {
       * Has this unit cell been fully initialized?
       */
       bool isInitialized_;
-
-      /**
-      * Compute all protected data, given latticeSystem and parameters.
-      *
-      * All functions that reset unit cell parameters must call this 
-      * function to reset depenent data, including stream insertion 
-      * operators.
-      *
-      * Calls initializeToZero, setBasis, & computeDerivatives functions
-      * internally. Also sets isInitialized flag true and notifies any 
-      * observers.
-      */
-      void setLattice();
 
    private:
 

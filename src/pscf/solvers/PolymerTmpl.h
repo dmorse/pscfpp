@@ -8,34 +8,44 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/PolymerSpecies.h>    // base class
-#include <util/param/ParamComposite.h>   // base class
-
-#include <util/containers/Pair.h>        // member template
-#include <util/containers/DArray.h>      // member template
+#include <pscf/chem/PolymerSpecies.h>    // base class template
+#include <util/containers/DArray.h>      // member
 
 namespace Pscf {
 
+   // Forward declaration
    class Edge;
+
    using namespace Util;
 
    /**
-   * Template for an MDE solver and descriptor for a block polymer.
+   * Descriptor and MDE solver for a block polymer.
+   * 
+   * Specializations of this template are used as base classes for classes
+   * named "Polymer" that are defined in each program-level namespace. 
+   * Each such program-level Polymer class is both a subclass of 
+   * PolymerSpecies, which provides a description of polymer structure, 
+   * and a modified diffusion equation solver. The PolymerTmpl template 
+   * provides templates for several data structures and algorithms that 
+   * are needed by all such Polymer classes. Specializations of this 
+   * template should only be used within instances of derived classes,
+   * The constructor and destructor are protected to document this intent.
    *
    * Class template argument BT is an alias for a class that represents 
    * a block of a block polymer. By convention, this is a class named 
-   * Block defined in each program-level sub-namespace of Pscf.  Each 
-   * such namespace contains a class named Block that is a subclass of 
-   * Pscf::Edge, and a class named Polymer that is a subclass of a
-   * specialization of PolymerTmpl<Block, Propagator, WT>.
+   * Block defined in each program-level sub-namespace of Pscf.  
    *
    * Class template PT is an alias for the class that represents a
    * propagator, which holds the solution of the modified diffusion
-   * equation for one block, in one direction.
+   * equation for one block, in one direction. By convention, this is a
+   * class named Propagator defined in each program-level sub-namespace
+   * of Pscf.
    *
-   * Class template WT is an alias for the type of the value of a
-   * chemical potential field defined at a grid point, which can be
-   * either a real (e.g., double) or complex data type.
+   * Class template WT is an alias for the data type of the value of 
+   * a chemical potential field defined at a grid point, which can be
+   * either a real (e.g., double) or complex data type. This type is 
+   * also the type used to store several thermodynamic properties 
+   * stored as members of the Species<WT> base class.
    * 
    * A PolymerTmpl<Block, Propagator, WT> object has an array of Block 
    * objects, as well as an array of Vertex objects inherited from the 
@@ -43,8 +53,8 @@ namespace Pscf {
    * objects associated with the two directions along each block.
    *
    * The solve() member function solves the modified diffusion equation
-   * (MDE) for all propagators in the molecule (i.e., all blocks, in both
-   * directions) in a pre-defined order.
+   * (MDE) for all propagators in the molecule (i.e., all blocks, in 
+   * both directions) in a pre-defined order.
    *
    * \ingroup Pscf_Solver_Module
    */
@@ -54,75 +64,47 @@ namespace Pscf {
 
    public:
 
-      // Public typename aliases
-
-      /**
-      * Block of a block polymer.
-      */
-      using BlockT = BT;
-
-      /**
-      * Modified diffusion equation solver for one block, in one 
-      * direction.
-      */
-      using PropagatorT = PT;
-
-      /**
-      * Direct (parent) base class.
-      */
-      using PolymerSpeciesT = PolymerSpecies<WT>;
-
-      /**
-      * Indirect (grandparent) base class.
-      */
-      using SpeciesT = Species<WT>;
-
       // Public member functions
-
-      /**
-      * Constructor.
-      */
-      PolymerTmpl();
-
-      /**
-      * Destructor.
-      */
-      ~PolymerTmpl();
 
       /**
       * Read and initialize.
       *
       * \param in input parameter stream
       */
-      virtual void readParameters(std::istream& in);
+      void readParameters(std::istream& in) override;
 
       /**
       * Solve modified diffusion equation for all propagators.
       *
-      * Upon return, all propagators for all blocks, molecular partition
-      * function q, phi and mu are all set.  The implementation of
-      * PolymerTmpl::solve() the calls the solve() function for all
-      * propagators in the molecule in a predeternined order, then
-      * computes q, and finally computes mu from phi or phi from mu,
-      * depending on the ensemble (open or closed) for this species.
-      * This solve() function does not compute monomer concentration
-      * field.
+      * Upon return, solutions are stored for both propagators of all
+      * blocks, and values are set for the molecular partition function
+      * q, and phi or mu.  This function calls the solve() function for 
+      * all propagators in the molecule in a predeternined order, then 
+      * computes q, and finally computes mu from phi or phi from mu, 
+      * depending on the ensemble (open or closed) for this polymer 
+      * species. The order in which propgator solutions are computed is
+      * determined by a plan that is defined by the PolymerSpecies base
+      * class. This function does not compute monomer concentration 
+      * fields.
       *
-      * Each program-level namespace defines a concrete subclass of
-      * PolymerTmpl<BT,PT,WT> that is named Polymer by convention. Each such 
-      * Polymer class defines a function named "compute" that takes an 
-      * array of chemical fields (w-fields) as an argument, and that calls
-      * PolymerTmpl<BT,PT,WT>::solve internally.  Before calling the solve()
-      * function declared here, the Polymer::compute() function must pass
-      * pass the w-fields and any other required mutable data to all Block
-      * objects in order to set up the MDE solver for each block. After
-      * calling the solve() function, the Polymer::compute function must
-      * also compute monomer concentrations for all blocks, each of which
-      * is stored in a field container owned by the associated Block.
+      * Each program-level namespace defines a class or class template
+      * named Polymer that is derived from a specialization of PolymerTmpl.
+      * Each such program-level Polymer class defines a member function
+      * named "compute" that takes an array of chemical fields (w-fields) 
+      * as an argument, and that calls PolymerTmpl<BT,PT,WT>::solve 
+      * internally.  Before calling the PolymerTmpl::solve() function,
+      * the Polymer::compute() function must also pass the w-fields and 
+      * any other required mutable data to all Block objects in order to 
+      * set up the MDE solver for each block. After calling this solve() 
+      * function, the Polymer::compute function must also compute monomer
+      * concentrations for all blocks, each of which is stored in a field 
+      * container owned by the associated Block.
       *
       * The optional parameter phiTot is only relevant to problems 
-      * involving a Mask that excludes material from part of the unit cell,
-      * as done to define thin film problems.
+      * involving a Mask that excludes material from part of the unit 
+      * cell, as done to define thin film problems. In problems that do
+      * not use such a mask, the default parameter value of phiTot = 1.0 
+      * should be used.
       *
       * \param phiTot  fraction of unit cell volume occupied by material
       */
@@ -134,9 +116,10 @@ namespace Pscf {
       /**
       * Get a specified Edge (block descriptor) by non-const reference.
       *
-      * The edge member functions implements pure virtual functions
-      * defined by the PolymerSpecies base class, and provide access to
-      * each Block as a reference to an Edge (a block descriptor).
+      * The edge member function implements a pure virtual function
+      * defined by the PolymerSpecies base class, and provides access to
+      * a specific Block as a reference to an Edge (a block descriptor),
+      * which is a base class of the Block (BT) class.
       *
       * \param id block index, 0 <= id < nBlock
       */
@@ -196,24 +179,29 @@ namespace Pscf {
 
       ///@}
 
-      // Inherited public members
+      // Public typename aliases
 
-      using PolymerSpecies<WT>::vertex;
-      using PolymerSpecies<WT>::propagatorId;
-      using PolymerSpecies<WT>::path;
-      using PolymerSpecies<WT>::nBlock;
-      using PolymerSpecies<WT>::nVertex;
-      using PolymerSpecies<WT>::nPropagator;
-      using PolymerSpecies<WT>::length;
-      using PolymerSpecies<WT>::nBead;
-      using PolymerSpecies<WT>::type;
+      /**
+      * Block of a block polymer.
+      */
+      using BlockT = BT;
 
-      using Species<WT>::phi;
-      using Species<WT>::mu;
-      using Species<WT>::q;
-      using Species<WT>::ensemble;
+      /**
+      * Modified diffusion equation solution (propagator).
+      */
+      using PropagatorT = PT;
 
    protected:
+
+      /**
+      * Constructor.
+      */
+      PolymerTmpl();
+
+      /**
+      * Destructor.
+      */
+      ~PolymerTmpl() override = default;
 
       /**
       * Allocate array of Block objects.
@@ -226,6 +214,18 @@ namespace Pscf {
       * \param in parameter input stream
       */
       void readBlocks(std::istream& in) final;
+
+      // Protected typename aliases (base classes)
+
+      /**
+      * Indirect (grandparent) base class.
+      */
+      using SpeciesT = Species<WT>;
+
+      /**
+      * Direct (parent) base class.
+      */
+      using PolymerSpeciesT = PolymerSpecies<WT>;
 
    private:
 

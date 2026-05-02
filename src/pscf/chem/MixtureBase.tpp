@@ -26,12 +26,8 @@ namespace Pscf
    {}
 
    /*
-   * Destructor.
+   * Set the monomer volume value.
    */
-   template <typename WT>
-   MixtureBase<WT>::~MixtureBase()
-   {}
-
    template <typename WT>
    void MixtureBase<WT>::setVmonomer(double vMonomer)
    {
@@ -40,7 +36,7 @@ namespace Pscf
    }
 
    /*
-   * Is the ensemble closed for every species.
+   * Is the ensemble closed for all species?
    */
    template <typename WT>
    bool MixtureBase<WT>::isCanonical() const

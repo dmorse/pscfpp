@@ -39,32 +39,7 @@ namespace Pscf
       */
       using PolymerT = PT;
 
-      /**
-      * Alias for base class.
-      */
-      using  MixtureBaseT = MixtureBase<WT>;
-
       // Public member functions
-
-      /**
-      * Constructor.
-      */
-      MixtureTmpl();
-
-      /**
-      * Destructor.
-      */
-      ~MixtureTmpl();
-
-      /**
-      * Read parameters from file and initialize.
-      *
-      * \param in  input parameter file
-      */
-      virtual void readParameters(std::istream& in);
-
-      /// \name Accessors 
-      ///@{
 
       /*
       * Public member functions inherited from MixtureBase:
@@ -78,6 +53,16 @@ namespace Pscf
       *
       *   void setVmonomer(double);
       */
+
+      /**
+      * Read parameters from file and initialize.
+      *
+      * \param in  input parameter file
+      */
+      void readParameters(std::istream& in) override;
+
+      /// \name Accessors 
+      ///@{
 
       /**
       * Get a polymer solver object by non-const reference.
@@ -126,6 +111,23 @@ namespace Pscf
       SolventSpecies<WT> const & solventSpecies(int id) const final;
 
       ///@}
+
+   protected:
+
+      /**
+      * Constructor.
+      */
+      MixtureTmpl();
+
+      /**
+      * Destructor.
+      */
+      ~MixtureTmpl() override = default;
+
+      /**
+      * Alias for base class.
+      */
+      using  MixtureBaseT = MixtureBase<WT>;
 
    private:
 

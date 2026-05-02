@@ -34,12 +34,8 @@ namespace Rpc {
    */
    template <int D>
    class WFields
-     : public Rp::WFields<D, RField<D>, FieldIo<D> >
-   {
-   public:
-      WFields() = default;
-      virtual ~WFields() = default;
-   };
+    : public Rp::WFields<D, RField<D>, FieldIo<D> >
+   {};
 
 } // namespace Rpc
 } // namespace Pscf

@@ -33,13 +33,6 @@ namespace Pscf
    {  ParamComposite::setClassName("PolymerSpecies"); }
 
    /*
-   * Destructor.
-   */
-   template <typename WT>
-   PolymerSpecies<WT>::~PolymerSpecies()
-   {}
-
-   /*
    * Read parameter file block.
    */
    template <typename WT>

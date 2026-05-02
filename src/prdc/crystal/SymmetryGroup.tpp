@@ -42,13 +42,6 @@ namespace Prdc {
    }
 
    /*
-   * Destructor
-   */
-   template <class Symmetry>
-   SymmetryGroup<Symmetry>::~SymmetryGroup()
-   {}
-
-   /*
    * Assignment operator.
    */
    template <class Symmetry>

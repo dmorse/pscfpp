@@ -57,16 +57,6 @@ namespace Rp {
       */
       virtual void readParameters(std::istream& in);
 
-      // Public members inherited from base class template SweepTmpl
-      using SweepTmpl< typename T::BasisFieldState >::addParameterTypes;
-      using SweepTmpl< typename T::BasisFieldState >::addParameterType;
-      using SweepTmpl< typename T::BasisFieldState >::historyCapacity;
-      using SweepTmpl< typename T::BasisFieldState >::historySize;
-      using SweepTmpl< typename T::BasisFieldState >::nAccept;
-      using SweepTmpl< typename T::BasisFieldState >::state;
-      using SweepTmpl< typename T::BasisFieldState >::s;
-      using SweepTmpl< typename T::BasisFieldState >::c;
-
    protected:
 
       /**
@@ -181,14 +171,6 @@ namespace Rp {
       */
       bool writeWRGrid_;
 
-      // Protected inherited member variables
-      using SweepTmplT = SweepTmpl< typename T::BasisFieldState >;
-      using SweepTmplT::ns_;
-      using SweepTmplT::baseFileName_;
-      using SweepTmplT::initialize;
-      using SweepTmplT::setCoefficients;
-      using ParamComposite::readOptional;
-
    private:
 
       /// Trial state (produced by continuation in setGuess)
@@ -208,6 +190,9 @@ namespace Rp {
 
       /// Output summary of thermodynamic properties.
       void outputSummary(std::ostream&);
+
+      // Private alias for base class.
+      using SweepTmplT = SweepTmpl< typename T::BasisFieldState >;
 
    };
 

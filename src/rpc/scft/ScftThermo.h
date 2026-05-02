@@ -41,11 +41,6 @@ namespace Rpc {
       */
       ScftThermo(System<D> const & system);
 
-      /**
-      * Destructor.
-      */
-      virtual ~ScftThermo() = default;
-
    };
 
 } // namespace Rpc

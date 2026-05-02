@@ -67,7 +67,7 @@ namespace Pscf
       /**
       * Destructor.
       */
-      ~MixtureBase();
+      virtual ~MixtureBase() = default;
 
       /**
       * Set new vMonomer value.

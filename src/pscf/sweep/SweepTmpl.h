@@ -29,12 +29,7 @@ namespace Pscf {
 
    public:
 
-      // Constructor is protected (see below).
-
-      /**
-      * Destructor.
-      */
-      ~SweepTmpl();
+      // Constructor and destructor are protected (see below).
 
       /**
       * Read ns and baseFileName parameters.
@@ -84,26 +79,6 @@ namespace Pscf {
 
    protected:
 
-      /// Number of steps. 
-      int ns_;
-
-      /// Base name for output files.
-      std::string baseFileName_;
-
-      /**
-      * Array of specialized parameter types.
-      * 
-      * This list allows other objects to add custom sweepable parameters 
-      * to this object at run time, referred to as "specialized" parameter
-      * types. The method addParameterType is used to add to this list.
-      * 
-      * As a general design principle, any object whose class is 
-      * determined at run time using a Factory object should use this list
-      * to add any sweepable parameters. In order to do this, the object
-      * must be a subclass of ParameterModifier.
-      */
-      GArray<ParameterType> parameterTypes_;
-
       /**
       * Constructor (protected).
       *
@@ -116,6 +91,11 @@ namespace Pscf {
       * \param historyCapacity default maximum number of stored states
       */
       SweepTmpl(int historyCapacity);
+
+      /**
+      * Destructor.
+      */
+      ~SweepTmpl();
 
       /**
       * Get reference to a stored state, with i=0 being most recent.
@@ -307,6 +287,28 @@ namespace Pscf {
       * Empty default implementation.
       */
       virtual void cleanup();
+
+      // Protected member variables
+
+      /// Number of steps. 
+      int ns_;
+
+      /// Base name for output files.
+      std::string baseFileName_;
+
+      /**
+      * Array of specialized parameter types.
+      * 
+      * This list allows other objects to add custom sweepable parameters 
+      * to this object at run time, referred to as "specialized" parameter
+      * types. The method addParameterType is used to add to this list.
+      * 
+      * As a general design principle, any object whose class is 
+      * determined at run time using a Factory object should use this list
+      * to add any sweepable parameters. In order to do this, the object
+      * must be a subclass of ParameterModifier.
+      */
+      GArray<ParameterType> parameterTypes_;
 
    private:
 

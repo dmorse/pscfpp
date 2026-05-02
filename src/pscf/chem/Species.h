@@ -36,9 +36,14 @@ namespace Pscf {
    public:
 
       /**
-      * Default constructor.
+      * Constructor.
       */
       Species();
+
+      /**
+      * Destructor.
+      */
+      virtual ~Species() = default;
 
       /**
       * Read phi or mu (but not both) and set ensemble accordingly.

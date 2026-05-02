@@ -20,7 +20,7 @@ namespace Prdc {
    using namespace Util;
 
    /*
-   * Constructor.
+   * Constructor (protected).
    */
    template <int D>
    UnitCellBase<D>::UnitCellBase()
@@ -28,13 +28,6 @@ namespace Prdc {
       isInitialized_(false),
       signalPtr_(nullptr)
    {  initializeToZero(); }
-
-   /*
-   * Destructor.
-   */
-   template <int D>
-   UnitCellBase<D>::~UnitCellBase()
-   {}
 
    /*
    * Set all the unit cell parameters.
