@@ -1,5 +1,5 @@
-#ifndef RPC_STRUCTURE_FACTOR_BUNCHED_H
-#define RPC_STRUCTURE_FACTOR_BUNCHED_H
+#ifndef RPC_BINARY_STRUCTURE_FACTOR_H
+#define RPC_BINARY_STRUCTURE_FACTOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -29,7 +29,7 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * StructureFactorBunched computes structure factors for a two-monomer system.
+   * BinaryStructureFactor computes structure factors for a two-monomer system.
    *
    * This class evaluates the structures factors for all wavevectors within the
    * Fourier space grid, while grouping averages for wavevectors of equal norm.
@@ -42,11 +42,11 @@ namespace Rpc {
    * where, V is system volume, and \f$W_(k)\f$ is a Fourier mode of the
    * fluctuating exchange field
    *
-   * \see \ref rp_StructureFactorBunched_page "Manual Page"
+   * \see \ref rp_BinaryStructureFactor_page "Manual Page"
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class StructureFactorBunched : public Analyzer<D>
+   class BinaryStructureFactor : public Analyzer<D>
    {
 
    public:
@@ -57,12 +57,12 @@ namespace Rpc {
       * \param simulator  parent simulator object
       * \param system  parent system object
       */
-      StructureFactorBunched(Simulator<D>& simulator, System<D>& system);
+      BinaryStructureFactor(Simulator<D>& simulator, System<D>& system);
 
       /**	
       * Destructor.
       */
-      ~StructureFactorBunched(){};
+      ~BinaryStructureFactor(){};
 
       /**
       * Read parameters from file.
@@ -147,9 +147,9 @@ namespace Rpc {
    };
 
    // Explicit instantiation declarations
-   extern template class StructureFactorBunched<1>;
-   extern template class StructureFactorBunched<2>;
-   extern template class StructureFactorBunched<3>;
+   extern template class BinaryStructureFactor<1>;
+   extern template class BinaryStructureFactor<2>;
+   extern template class BinaryStructureFactor<3>;
 
 } // namespace Rpc
 } // namespace Pscf

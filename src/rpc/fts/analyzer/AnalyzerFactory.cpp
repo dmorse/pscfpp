@@ -12,6 +12,7 @@
 #include "ConcentrationWriter.h"
 #include "HamiltonianAnalyzer.h"
 #include "BinaryStructureFactorGrid.h"
+#include "BinaryStructureFactor.h"
 #include "StepLogger.h"
 #include "PerturbationDerivative.h"
 #include "ChiDerivative.h"
@@ -19,7 +20,6 @@
 #include "MaxOrderParameter.h"
 #include "FourthOrderParameter.h"
 #include "BoxLengthDerivative.h"
-#include "StructureFactorBunched.h"
 
 namespace Pscf {
 namespace Rpc {
@@ -59,6 +59,8 @@ namespace Rpc {
          ptr = new HamiltonianAnalyzer<D>(*simPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactorGrid") {
          ptr = new BinaryStructureFactorGrid<D>(*simPtr_, *sysPtr_);
+      } else if (className == "BinaryStructureFactor") {
+         ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
       } else if (className == "StepLogger") {
          ptr = new StepLogger<D>(*simPtr_, *sysPtr_);
       } else if (className == "PerturbationDerivative") {
@@ -73,8 +75,6 @@ namespace Rpc {
          ptr = new FourthOrderParameter<D>(*simPtr_, *sysPtr_);
       } else if (className == "BoxLengthDerivative") {
          ptr = new BoxLengthDerivative<D>(*simPtr_, *sysPtr_);
-      } else if (className == "StructureFactorBunched") {
-         ptr = new StructureFactorBunched<D>(*simPtr_, *sysPtr_);
       }
 
       return ptr;

@@ -1,7 +1,7 @@
-#ifndef RPC_STRUCTURE_FACTOR_BUNCHED_TPP
-#define RPC_STRUCTURE_FACTOR_BUNCHED_TPP
+#ifndef RPC_BINARY_STRUCTURE_FACTOR_TPP
+#define RPC_BINARY_STRUCTURE_FACTOR_TPP
 
-#include "StructureFactorBunched.h"
+#include "BinaryStructureFactor.h"
 
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/system/System.h>
@@ -36,7 +36,7 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   StructureFactorBunched<D>::StructureFactorBunched(
+   BinaryStructureFactor<D>::BinaryStructureFactor(
                                        Simulator<D>& simulator,
                                        System<D>& system)
     : Analyzer<D>(simulator, system),
@@ -46,7 +46,7 @@ namespace Rpc {
       nSamplePerBlock_(1),
       isInitialized_(false)
    {  
-      ParamComposite::setClassName("StructureFactorBunched"); 
+      ParamComposite::setClassName("BinaryStructureFactor"); 
       AnalyzerT::setFileMaster(system.fileMaster());
    }
 
@@ -54,7 +54,7 @@ namespace Rpc {
    * Read parameters from file, and allocate memory.
    */
    template <int D>
-   void StructureFactorBunched<D>::readParameters(std::istream& in)
+   void BinaryStructureFactor<D>::readParameters(std::istream& in)
    {
       // Precondition: Require that the system has two monomer types
       UTIL_CHECK(system().mixture().nMonomer() == 2);
@@ -66,10 +66,10 @@ namespace Rpc {
    }
 
    /*
-   * StructureFactorBunched setup
+   * BinaryStructureFactor setup
    */
    template <int D>
-   void StructureFactorBunched<D>::setup()
+   void BinaryStructureFactor<D>::setup()
    {
       UTIL_CHECK(isInitialized_);
 
@@ -181,7 +181,7 @@ namespace Rpc {
    * Increment structure factors for all wavevectors and modes.
    */
    template <int D>
-   void StructureFactorBunched<D>::sample(long iStep)
+   void BinaryStructureFactor<D>::sample(long iStep)
    {
       // Preconditions
       UTIL_CHECK(isInitialized_);
@@ -211,7 +211,6 @@ namespace Rpc {
          double chi = system().interaction().chi(0,1);
          double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
          double b_ = 0.5 / (chi * vMonomer);
-         // double q;
 
          // Compute structure factors
          double value;
@@ -232,7 +231,7 @@ namespace Rpc {
 
    #if 0
    template <int D>
-   void StructureFactorBunched<D>::computeStructureFactor()
+   void BinaryStructureFactor<D>::computeStructureFactor()
    {
       const double vSystem  = system().domain().unitCell().volume();
       const double vMonomer = system().mixture().vMonomer();
@@ -254,7 +253,7 @@ namespace Rpc {
    * Output final results to output file.
    */
    template <int D>
-   void StructureFactorBunched<D>::output()
+   void BinaryStructureFactor<D>::output()
    {
       std::string const & outputFileName = AnalyzerT::outputFileName();
       AnalyzerT::fileMaster().openOutputFile(outputFileName, outputFile_);

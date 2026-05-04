@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "StructureFactorBunched.tpp"
+#include "BinaryStructureFactor.tpp"
 
 namespace Pscf {
 namespace Rpc {
-   template class StructureFactorBunched<1>;
-   template class StructureFactorBunched<2>;
-   template class StructureFactorBunched<3>;
+   template class BinaryStructureFactor<1>;
+   template class BinaryStructureFactor<2>;
+   template class BinaryStructureFactor<3>;
 }
 }
