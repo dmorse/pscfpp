@@ -43,9 +43,9 @@ BdSimulator{
          interval        1
          outputFileName  out/binaryStructureFactorGrid_analyzer
       }
-      StructureFactorBunched{
+      BinaryStructureFactor{
          interval        1
-         outputFileName  out/StructureFactorBunched_analyzer
+         outputFileName  out/BinaryStructureFactor_analyzer
       }
       HamiltonianAnalyzer{
          interval        1

@@ -11,6 +11,8 @@
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
+#include <rpc/field/CFields.h>
+#include <rpc/field/WFields.h>
 
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
