@@ -1,35 +1,47 @@
 
 =======================================================================
-Overview and Critique of current design:
+Overview current design:
 
-   - The Pscf::SweepTmpl class takes the type of data structure
-     that stores a "State" as a template parameter.
+   - The Pscf::SweepTmpl class template takes the typename of a data 
+     structure that stores a "State" (fields and possibly unit cell 
+     parameters) as a template parameter. 
 
-   - The Sweep class in each program-level namespace is derived
-     from a specialization of Pscf::SweepTmpl with a specific 
-     choice of data type for a State. This forces the choice of 
-     a single type of State class for any Sweep in a specified 
-     program-level namespace.
+   - The Pscf::SweepTmpl template does not take the System type as a 
+     template parameer, and so cannot define code for any operation 
+     that involves communication with the System, and cannot pass 
+     the system as a parameter to any functions.
 
-   - This usage makes it impossible to create Sweep classes for
-     periodic systems that are designed for use with either a 
-     symmetry-preserving iterator, for which states should be 
-     stored in symmetry-adapted basis format, or non-symmetry
-     preserving iterators, for which the state should be stored
-     using values on a grid.
+   - The Sweep class in each program-level namespace is derived from 
+     a specialization of Pscf::SweepTmpl with a specific choice of 
+     data type for a State.
+
+=======================================================================
+Critique of current design:
+
+   - This design forces the use of the same State class by all
+     subclasses of Sweep in any program-level namespace.
+     This makes it impossible to create different Sweep classes for 
+     periodic systems that are designed for use with, respectively, 
+     symmetry-preserving iterators, for which states are stored in 
+     symmetry-adapted basis format, or a non-symmetry preserving 
+     iterators, for which states should be stored using values on 
+     a grid.
 
    - This pattern encourages coding of implementation details that
-     depend on the choice of State class into the program-level
-     Sweep class, since is the highest level class that "knows" 
-     about the choice of a specific State class type. 
+     depend on the choice of State class into the program-level Sweep 
+     class, since is the highest level class that "knows" about the 
+     choice of a specific State class type. 
  
-   - Ideally, the the program-level Sweep class should only define 
-     an public interface and perhaps some protected functions for
-     operations that are guaranteed to be the same for all types 
-     of Sweep subclasses. The SweepTmpl class that provide parts of
-     an implementation for a specific type of state should be a
-     subclass of the program-level "Sweep" class, rather than the
-     reverse.
+   - Each program-level Sweep class should only define a public 
+     interface and perhaps some protected members for data and
+     operations that are expected to be the same for all types of 
+     Sweep subclasses. It should not specify a type for the state
+     class.
+
+    - A specialization of the SweepTmpl class (which provide a 
+     skeleton implementation for a specific type of state) should 
+     be a subclass of the program-level "Sweep" class, rather than 
+     the reverse.
 
    - The Pscf::SweepTmpl class now provides code for two logically 
      separate purposes:
@@ -41,33 +53,40 @@ Overview and Critique of current design:
      for parameters that are not part of the standard list. 
 
      There is no overlap in data structures or functions used for
-     these two purposes, and it seems clear that they really should
-     be implemented in separate classes that are used by composition
-     rather than inheritance.
+     these two purposes. In retrospect, it seems clear that should
+     be implemented in separate classes, and perhaps should be used 
+     by composition rather than inheritance.
+
+   - The SweepTmpl template cannot provide the code to extrapolate
+     states because there is no standardized interface for the
+     linear algebra operations required to construct linear 
+     superpositions of states.
 
 =======================================================================
 Current design (details):
 
 Pscf::ParameterModifer 
 
-    -> base class for classes that can modify a specialized parameter.
+   Base class for classes that can modify a specialized parameter.
+   Provides an interface for getting and setting parameter values.
+   Lists of associated integer ids are represented as arrays.
 
 Pscf::ParameterType
 
-    -> Variable parameter
-      has identifier (name) string and nId (# of required int ids)
-      has pointer to an associated ParameterModifier
+   Type of parameter that can be varied or swept.
+   Has name identifier string, and nId (# of required int ids).
+   Has a pointer to an associated ParameterModifier.
 
 Pscf::SweepTmpl:
 
    public:
 
-     // Interface for list of ParameterType objects
-     addParameterType (overloaded)
-     addParameterTypes
-
+      // Interface for list of ParameterType objects
+      addParameterType (overloaded)
+      addParameterTypes
+ 
    protected:
-
+ 
       // Interface for Lagrange state extrapolation
       state(int i)
       s(int i)
@@ -75,19 +94,20 @@ Pscf::SweepTmpl:
       historySize()
       historyCapacity();
       setCoefficients();
-      extrapolate();
-
+      (also extrapolate and accept)
+ 
       // Interface for sweep
-      void solve() => skeleton algorithm
-
-      setParameters();
+      void solve() => defines a skeleton algorithm
+ 
+      setParameters(double sNew) = 0;
+      extrapolate(double sNew) = 0;
       void getSolution() = 0; (called by accept)
       void reset() = 0;
 
    private:
 
       accept():
-       -> Updates state and history
+       -> Updates extrapolator state and history
        -> Calls getSolution
   
 Pscf::Rp::Sweep
@@ -98,8 +118,8 @@ Pscf::Rp::Sweep
 
    void extrapolate():
       Implements this function
-      Associate lin al operations with state
-      Proposal: Move to SweepTmpl subclass.
+      Creates a linear superposition of states.
+      Proposal: Move to SweepTmpl subclass, or below.
 
    void setParameters() override (empty function - for testing only)
       Comment: Actually implemented in LinearSweep subclass
@@ -137,70 +157,83 @@ Pscf::Rp::Sweep
 Proposal:
 ---------
 
-
 namespace Pscf {
 
-   class ParameterModifier (unchanged)
    class ParameterType (unchanged)
 
-   class ParameterTypeList -> new
-       The ParameterTypeList would be used by classes
+   class ParameterModifier (mostly unchanged)
 
-   template <class ST>
-   class LagrangeStateExtrapolator {
-       States
-       Coordinates
-       Coefficients
-       extrapolate
+   class ParameterTypeList -> new class
+
+       Extracted from part of current SweepTmpl
+       The ParameterTypeList would be used by Sweep classes
+
+   template <class State>
+   class LagrangePolynomial {
+       (Extracted from part of current SweepTmpl)
+
+   Data access:
+
+      States
+      Coordinates
+      Coefficients
+
+   Main functions:
+
+      // Add a state to the history
+      append(State const &, double s);
+
+      // Extrapolate to create a new trial state
+      extrapolate(State&, double sNew);
+
+      void computeCoefficients();
    }
 
    template <class Sweep, class State>
    class SweepTmpl : public Sweep
    {
 
-      void setup() override;
-      void sweep() override;
+      void setup() override; // Skeleton of setup
 
-   protected:
-
-      virtual void outputSolution(int i, double s) = 0;
-      virtual void outputSummary(int i, double s) = 0;
+      void sweep() override; // Skeleton of sweep
 
    private:
 
-      StateExtrapolator<State> extrapolator_;
+      LagrangeExtrapolator<State> extrapolator_;
       ParamTypeList typeList_;
+
+      virtual void getSystemState(State&) = 0;
+
+      virtual void setSystemState(System const &) = 0;
+
+      virtual void mulVS(State&, State const &, double) = 0;
+
+      virtual void addEqVc(State&, State const &, double) = 0;
     
-   }
+   };
 
 }
 
-namespace Rp {
-  
-   Change FieldState to use FSArray<6,double> rather than UnitCell
- 
+namespace Prdc {
+
    template <class FT (field type)> 
    class FieldState {
    }
 
-   // Define functions for linear algebra on states with interface
-   // compatible with that used for an Array
+   template <typename RT = double>
+   class BasisFieldState : public FieldState< DArray<RT> > {
+   }
 
-   template <class State>
-   void mulVS(State a, State b, double s)
-
-   template <class State>
-   void eqAddVc(State a, State b, double s)
+}
+namespace Rp {
+  
+   template <int D, class RGrid>
+   class GridFieldState :
+   {
+   }
 
    // Define global functions for getting and setting system states
-   // Only used public functions of System.
-   void setSystemState(State const&, System&);
-
-   void getSystemState(State const&, System const&);
-
-   // Advantage of global functions over member functions - allows use 
-   // of DArray type for state.  Alternative: Define R1d::State subclass 
-   // of DArray.
+   // Can only uses public functions of System.
 
    template <int D, class Types>
    class Sweep {
@@ -215,21 +248,37 @@ namespace Rp {
     
    }
 
+   template <type
+   LinearSweep {
+   }
+
 }
 
 =======================================================================
-Transformation Process:
+Transformation Plan.
 
-1) Go through classes defined in Sweep class, and move definitions 
-   that depend on choice of State class into SweepTmpl or a subclass
-   thereof.  Requires going through all member functions, one by one
-   for both Rp and R1d namespaces.
+1) In Prdc::FieldState, replace use of UnitCell by use of FSArray<6, double>
+   Adapt algorithms that get and set these parameters.
 
-2) Add Sweep as a parameter and base class for SweepTmpl, and reverse
-   order of inheritances (Sweep becones a base of SweepTnpl, rather
-   than the reverse).
+2) Define virtual functions for mulVS and addEqVc operations for linear 
+   algebra operations on State classes. Use wrappers around existing 
+   VecOp functions for DArray.
 
-3) Reimplement state extrapolation using vecOp funtions for states.
+3) Reimplement state extrapolation using vecOp functions for states.
 
-4) Create StateExtrapolator and ParameterTypeList classes. Make them
-   components of SweepTmpl.
+4) Add Sweep as a parameter and base class for SweepTmpl, and reverse
+   order of inheritances (Sweep becones a base of SweepTmpl, rather
+   than the reverse). 
+
+   As part of this, go through functions currently defined in Sweep
+   class that depend on knowledge of the State, and move them down
+   into the SweepTmpl. Specifically:
+         Move extrapolate to the SweepTmpl
+         Move reset to SweepTmpl
+         Break up getSolution
+
+5) Create Rp::BasisSweep and implement getSystemState and setSystemState
+   functions in that class.
+
+6) Create separate LagrangeExtrapolator and ParameterTypeList classes.
+   Make them components of SweepTmpl.

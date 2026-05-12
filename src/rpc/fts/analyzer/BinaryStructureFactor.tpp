@@ -14,6 +14,7 @@
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/WaveList.h>
 
+#include <pscf/cpu/VecOpCx.h>
 #include <pscf/cpu/complex.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/math/IntVec.h>
@@ -45,8 +46,8 @@ namespace Rpc {
       nBunch_(0),
       nSamplePerBlock_(1),
       isInitialized_(false)
-   {  
-      ParamComposite::setClassName("BinaryStructureFactor"); 
+   {
+      ParamComposite::setClassName("BinaryStructureFactor");
       AnalyzerT::setFileMaster(system.fileMaster());
    }
 
@@ -81,6 +82,9 @@ namespace Rpc {
 
       // As needed, allocate arrays indexed by wave id
       if (!wm_.isAllocated()){
+         UTIL_CHECK(!wk_.isAllocated());
+         UTIL_CHECK(!bunchIds_.isAllocated());
+         UTIL_CHECK(!weights_.isAllocated());
          wm_.allocate(rMeshDimensions);
          wk_.allocate(rMeshDimensions);
          bunchIds_.allocate(kSize_);
@@ -92,8 +96,12 @@ namespace Rpc {
       UTIL_CHECK(weights_.capacity() == kSize_);
 
       // Sort waves and set nBunch
-      system().waveList().sortWaves();
-      nBunch_ = system().waveList().nBunch();
+      WaveList<D>& waveList = system().waveList();
+      if (!waveList.hasKSq()) {
+         waveList.computeKSq();
+      }
+      waveList.sortWaves();
+      nBunch_ = waveList.nBunch();
 
       // As needed, allocate arrays indexed by bunch id
       if (accumulators_.isAllocated()) {
@@ -108,29 +116,30 @@ namespace Rpc {
       }
       if (!accumulators_.isAllocated()) {
          UTIL_CHECK(!wavenumbers_.isAllocated());
+         UTIL_CHECK(!values_.isAllocated());
          accumulators_.allocate(nBunch_);
          wavenumbers_.allocate(nBunch_);
          values_.allocate(nBunch_);
       }
       int n = accumulators_.capacity();
+      UTIL_CHECK(n >= nBunch_);
       UTIL_CHECK(wavenumbers_.capacity() == n);
       UTIL_CHECK(values_.capacity() == n);
-      UTIL_CHECK(n >= nBunch_);
 
-      // Initialize arrays
+      // Initialize empty arrays
       int ib;
       for (ib = 0; ib < n; ++ib) {
          accumulators_[ib].setNSamplePerBlock(nSamplePerBlock_);
          accumulators_[ib].clear();
          wavenumbers_[ib] = 0.0;
+         values_[ib] = 0.0;
       }
       int iw;
       for (iw = 0; iw < kSize_; ++iw) {
          weights_[iw] = 0.0;
       }
 
-      // Initialize bunchIds_, weights_, and wavenumbers_
-      WaveList<D> const & waveList = system().domain().waveList();
+      // Set values for wavenumbers_, bunchIds_, and weights_
       Array< double > const & kSq = waveList.kSq();
       Array< int > const & sortedIds = waveList.sortedIds();
       GArray< Pair<int> > const & bunches = waveList.sortedBunches();
@@ -141,9 +150,13 @@ namespace Rpc {
          begin = bunches[ib][0];
          end = bunches[ib][1];
          iw = sortedIds[begin];
+
+         // Set wavenumber for this bunch
          wavenumberSq = kSq[iw];
-         UTIL_CHECK(wavenumberSq >= 0.0);       
+         UTIL_CHECK(wavenumberSq >= 0.0);
          wavenumbers_[ib] = std::sqrt(wavenumberSq);
+
+         // Set bunchIds and unnormalized weights for waves in this bunch
          sum = 0.0;
          for (k = begin; k < end; ++k) {
             iw = sortedIds[k];
@@ -156,21 +169,27 @@ namespace Rpc {
             weights_[iw] = count;
             sum += count;
          }
-         //std::cout << std::endl << Int(ib)  << "  "
-         //          << Dbl(wavenumbers_[ib])
-         //          << Dbl(wavenumberSq) << Dbl(sum);
+         #if 0
+         std::cout << std::endl << Int(ib)  << "  "
+                   << Dbl(wavenumbers_[ib])
+                   << Dbl(wavenumberSq) << Dbl(sum);
+         #endif
+
+         // Normalize weights for waves in this bunch
          tot = 0.0;
          for (k = begin; k < end; ++k) {
             iw = sortedIds[k];
             weights_[iw] /= sum;
             tot += weights_[iw];
-            //IntVec<D> const & minImage = waveList.minImages()[iw];
-            //IntVec<D> stdImage = minImage;
-            //mesh.shift(stdImage);
-            //std::cout << std::endl 
-            //          << stdImage
-            //          << minImage
-            //          << Dbl(kSq[iw]) << Dbl(weights_[iw]*sum);
+            #if 0
+            IntVec<D> const & minImage = waveList.minImages()[iw];
+            IntVec<D> stdImage = minImage;
+            mesh.shift(stdImage);
+            std::cout << std::endl
+                      << stdImage
+                      << minImage
+                      << Dbl(kSq[iw]) << Dbl(weights_[iw]*sum);
+            #endif
          }
          UTIL_CHECK(std::abs(tot - 1.0) < 1.0E-8);
       }
@@ -178,7 +197,7 @@ namespace Rpc {
    }
 
    /*
-   * Increment structure factors for all wavevectors and modes.
+   * Compute structure factors for all wavevectors and bunches.
    */
    template <int D>
    void BinaryStructureFactor<D>::sample(long iStep)
@@ -190,11 +209,12 @@ namespace Rpc {
       if (AnalyzerT::isAtInterval(iStep)) {
 
          // Compute W_{-}(r)
-         double wa, wb;
+         RField<D> const & wa = system().w().rgrid(0);
+         RField<D> const & wb = system().w().rgrid(1);
+         //VecOp::subVV(wm_, wa, wb);
+         //VecOp::mulEqS(wm_, 0.5);
          for (int i = 0; i < kSize_; ++i) {
-             wa = system().w().rgrid(0)[i];
-             wb = system().w().rgrid(1)[i];
-             wm_[i] = 0.5 * ( wa - wb );
+             wm_[i] = 0.5 * ( wa[i] - wb[i] );
          }
 
          // Fourier transform W_{-}(r)
@@ -212,7 +232,7 @@ namespace Rpc {
          double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
          double b_ = 0.5 / (chi * vMonomer);
 
-         // Compute structure factors
+         // Compute structure factors, add to values_ array
          double value;
          for (int iw = 0; iw < kSize_; iw++) {
             value = a_ * absSq( wk_[iw] );
@@ -228,26 +248,6 @@ namespace Rpc {
 
       }
    }
-
-   #if 0
-   template <int D>
-   void BinaryStructureFactor<D>::computeStructureFactor()
-   {
-      const double vSystem  = system().domain().unitCell().volume();
-      const double vMonomer = system().mixture().vMonomer();
-      double n = vSystem / vMonomer;
-      double chi= system().interaction().chi(0,1);
-      MeshIterator<D> itr;
-      itr.setDimensions(wKGrid_[0].dftDimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         // Compute vS(q)
-         structureFactors_[itr.rank()] = n / (chi * chi) * accumulators_[itr.rank()].average() - 1.0/(2.0*chi);
-         
-         // Compute S(q)
-         structureFactors_[itr.rank()] /= vMonomer;
-      }
-   }
-   #endif
 
    /*
    * Output final results to output file.

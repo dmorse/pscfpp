@@ -29,18 +29,20 @@ namespace Rpc {
    using namespace Pscf::Prdc::Cpu;
 
    /**
-   * BinaryStructureFactor computes structure factors for a two-monomer system.
+   * Spherically averaged structure factor for a two-monomer system.
    *
-   * This class evaluates the structures factors for all wavevectors within the
-   * Fourier space grid, while grouping averages for wavevectors of equal norm.
+   * This class evaluates the structures factors for all wavevectors 
+   * within the Fourier space grid, while grouping averages for 
+   * wavevectors of equal norm.
    *
-   * A structure factor for a wavevector k for AB diblock defined as an
-   * expectation value
+   * A structure factor for a wavevector k for a system with two types
+   * monomer is given by an expectation value
    * \f[
-   *     S(k)  = n/(V \chi N)^2 <W_(k)W_(-k)> - 1/(2 \chi N)
+   *     S(k) = 1/(v \chi )^2 <W_(k)W_(-k)>/V - 1/(2 \chi v)
    * \f]
-   * where, V is system volume, and \f$W_(k)\f$ is a Fourier mode of the
-   * fluctuating exchange field
+   * where, V is system volume, v is monomer volume, and \f$W_(k)\f$ is 
+   * a Fourier transform of the fluctuating exchange field 
+   * \f$ W_{-} = (w_{A} - w_{B})/2 \f$.
    *
    * \see \ref rp_BinaryStructureFactor_page "Manual Page"
    * \ingroup Rpc_Fts_Analyzer_Module
@@ -58,11 +60,6 @@ namespace Rpc {
       * \param system  parent system object
       */
       BinaryStructureFactor(Simulator<D>& simulator, System<D>& system);
-
-      /**	
-      * Destructor.
-      */
-      ~BinaryStructureFactor(){};
 
       /**
       * Read parameters from file.
@@ -96,7 +93,10 @@ namespace Rpc {
 
    protected:
 
+      // Alias for base class.
       using AnalyzerT = Analyzer<D>;
+
+      // Inherited protected member functions (selected).
       using AnalyzerT::system;
       using AnalyzerT::simulator;
 
@@ -108,25 +108,25 @@ namespace Rpc {
       /// Discrete Fourier transform (DFT) of wm_  .
       RFieldDft<D> wk_;
 
-      /// Array of bunchIds for waves, indexed by wave id.
+      /// Bunch ids for waves, indexed by wave id.
       DArray<int> bunchIds_;
 
-      /// Weights of S(q) for individual waves, indexed by wave id.
+      /// Weights of waves in bunch averages, indexed by wave id.
       DArray<double> weights_;
 
-      /// Array of wavenumber values for wave bunches, indexed by bunchId.
+      /// Wavenumber values for wave bunches, indexed by bunch id.
       DArray<double> wavenumbers_;
 
-      /// Storage for structure factor values, indexed by bunchId.
+      /// Storage for averaged S(q) values, indexed by bunch id.
       DArray<double> values_;
 
-      /// Array of Average accumulators, indexed by bunchId.
+      /// Average accumulators for S(q), indexed by bunch id.
       DArray<Average> accumulators_;
 
       /// Constants used in S(q) calculation.
       double a_, b_;
 
-      /// Dimensions of wavevector mesh for real-to-complex transform.
+      /// Dimensions of wavevector mesh for real-to-complex DFT.
       IntVec<D> kMeshDimensions_;
 
       /// Number of wavevectors in wavevector mesh.

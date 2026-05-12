@@ -141,7 +141,7 @@ public:
       printMethod(TEST_FUNC);
       double A = 1e-3;
       double f = 1.0;
-      testIntra(A, f, "in/param_system_1D_diblcok_thread",
+      testIntra(A, f, "in/param_system_1D_diblock_thread",
                "in/w_diblock_homogenous.rf",
                "out/testIntraDiblockThread.log");
 
@@ -153,7 +153,7 @@ public:
       printMethod(TEST_FUNC);
       double A = 1e-3;
       double f = 1.0;
-      testIntra(A, f, "in/param_system_1D_triblcok_thread",
+      testIntra(A, f, "in/param_system_1D_triblock_thread",
                "in/w_triblock_homogenous.rf",
                "out/testIntraTriblockThread.log");
 
@@ -164,7 +164,7 @@ public:
       printMethod(TEST_FUNC);
       double A = 1e-3;
       double f = 1.0;
-      testIntra(A, f, "in/param_system_1D_diblcok_bead",
+      testIntra(A, f, "in/param_system_1D_diblock_bead",
                "in/w_diblock_homogenous.rf",
                "out/testIntraDiblockThread.log");
 
@@ -175,7 +175,7 @@ public:
       printMethod(TEST_FUNC);
       double A = 1e-3;
       double f = 1.0;
-      testIntra(A, f, "in/param_system_1D_triblcok_bead",
+      testIntra(A, f, "in/param_system_1D_triblock_bead",
                "in/w_triblock_homogenous.rf",
                "out/testIntraTriblockBead.log");
 
@@ -188,7 +188,7 @@ public:
 
       openLogFile("out/testIntraHomoThread.log");
       System<1> system;
-      initSystem(system, "in/param_system_1D_diblcok_thread");
+      initSystem(system, "in/param_system_1D_diblock_thread");
       system.w().readRGrid("in/w_diblock_homogenous.rf");
 
       IntVec<1> const & dimensions = system.domain().mesh().dimensions();
@@ -223,7 +223,7 @@ public:
 
       openLogFile("out/testIntraHomoBead.log");
       System<1> system;
-      initSystem(system, "in/param_system_1D_diblcok_bead");
+      initSystem(system, "in/param_system_1D_diblock_bead");
       system.w().readRGrid("in/w_diblock_homogenous.rf");
 
       IntVec<1> const & dimensions = system.domain().mesh().dimensions();

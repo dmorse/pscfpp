@@ -17,7 +17,6 @@ rpc_fts_analyzer_= \
   rpc/fts/analyzer/FourthOrderParameter.cpp \
   rpc/fts/analyzer/BoxLengthDerivative.cpp 
   
-  
 rpc_fts_analyzer_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpc_fts_analyzer_:.cpp=.o))
 
