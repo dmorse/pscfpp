@@ -62,12 +62,12 @@ namespace Rpc {
 
       AnalyzerT::readInterval(in);
       AnalyzerT::readOutputFileName(in);
-      ParamComposite::readOptional(in,"nSamplePerBlock", nSamplePerBlock_);
+      ParamComposite::readOptional(in, "nSamplePerBlock", nSamplePerBlock_);
       isInitialized_ = true;
    }
 
    /*
-   * BinaryStructureFactor setup
+   * Setup before entering main loop.
    */
    template <int D>
    void BinaryStructureFactor<D>::setup()
@@ -155,6 +155,9 @@ namespace Rpc {
          wavenumberSq = kSq[iw];
          UTIL_CHECK(wavenumberSq >= 0.0);
          wavenumbers_[ib] = std::sqrt(wavenumberSq);
+         if (ib > 0) {
+            UTIL_CHECK(wavenumbers_[ib] - wavenumbers_[ib-1] > 1.0E-8);
+         }
 
          // Set bunchIds and unnormalized weights for waves in this bunch
          sum = 0.0;
@@ -168,6 +171,7 @@ namespace Rpc {
             }
             weights_[iw] = count;
             sum += count;
+            UTIL_CHECK(std::abs(kSq[iw] - wavenumberSq) < 1.0E-8);
          }
          #if 0
          std::cout << std::endl << Int(ib)  << "  "
@@ -226,8 +230,8 @@ namespace Rpc {
             values_[ib] = 0.0;
          }
 
-         const double vSystem  = system().domain().unitCell().volume();
-         const double vMonomer = system().mixture().vMonomer();
+         double const vSystem  = system().domain().unitCell().volume();
+         double const vMonomer = system().mixture().vMonomer();
          double chi = system().interaction().chi(0,1);
          double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
          double b_ = 0.5 / (chi * vMonomer);

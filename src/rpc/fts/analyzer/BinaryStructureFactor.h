@@ -33,16 +33,19 @@ namespace Rpc {
    *
    * This class evaluates the structures factors for all wavevectors 
    * within the Fourier space grid, while grouping averages for 
-   * wavevectors of equal norm.
+   * wavevectors of equal norm. Sets of wavevectors of equal norm are
+   * referred to here as "bunches". 
    *
    * A structure factor for a wavevector k for a system with two types
    * monomer is given by an expectation value
    * \f[
    *     S(k) = 1/(v \chi )^2 <W_(k)W_(-k)>/V - 1/(2 \chi v)
    * \f]
-   * where, V is system volume, v is monomer volume, and \f$W_(k)\f$ is 
-   * a Fourier transform of the fluctuating exchange field 
-   * \f$ W_{-} = (w_{A} - w_{B})/2 \f$.
+   * where, V is system volume, v is monomer volume, and \f$W_(k)\f$ 
+   * is a Fourier transform of the fluctuating exchange field 
+   * \f$ W_{-} = (w_{A} - w_{B})/2 \f$. This analyzer outputs the 
+   * average value of this quantity for each bunch (or wavenumber
+   * value), averaged over waves in a "bunch".
    *
    * \see \ref rp_BinaryStructureFactor_page "Manual Page"
    * \ingroup Rpc_Fts_Analyzer_Module
@@ -75,7 +78,10 @@ namespace Rpc {
       void readParameters(std::istream& in);
 
       /**
-      * Setup immediately before a simulation.
+      * Setup immediately before the main loop.
+      *
+      * Allocates any private data structures that were not allocated
+      * previously.
       */
       void setup();
 
@@ -93,22 +99,22 @@ namespace Rpc {
 
    protected:
 
-      // Alias for base class.
+      // Alias for base class
       using AnalyzerT = Analyzer<D>;
 
-      // Inherited protected member functions (selected).
+      // Inherited protected member functions (selected)
       using AnalyzerT::system;
       using AnalyzerT::simulator;
 
    private:
 
-      /// Exchange field W_(r):  wm = (wa-wb)/2 ].
+      /// Exchange field W_(r):  wm = (wa-wb)/2  .
       RField<D> wm_;
 
-      /// Discrete Fourier transform (DFT) of wm_  .
+      /// Discrete Fourier transform (DFT) of wm_ . 
       RFieldDft<D> wk_;
 
-      /// Bunch ids for waves, indexed by wave id.
+      /// Bunch ids, indexed by wave id (id of bunch containing a wave).
       DArray<int> bunchIds_;
 
       /// Weights of waves in bunch averages, indexed by wave id.
@@ -135,7 +141,7 @@ namespace Rpc {
       /// Number of wavevector bunches (sets of wavevectors of equal norm).
       int nBunch_;
 
-      /// Number of samples per block average output.
+      /// Number of samples per block average output (zero -> no output).
       int nSamplePerBlock_;
 
       /// Has readParam been called?
