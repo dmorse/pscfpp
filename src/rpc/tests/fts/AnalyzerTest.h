@@ -103,27 +103,27 @@ public:
       std::string filename;
       double ref;
 
-      filename = "out/fourthOrder_analyzer.ave";
+      filename = "out/fourthOrder.ave";
       ref = 3.5756726e-01;
       TEST_ASSERT(checkAverage(filename, ref));
 
-      filename = "out/maxOrder_analyzer.ave";
+      filename = "out/maxOrder.ave";
       ref = 2.6173130e-02;
       TEST_ASSERT(checkAverage(filename, ref));
 
-      filename = "out/perturbationDerivative_analyzer.ave";
+      filename = "out/perturbationDerivative.ave";
       ref = 4.3812680e+03;
       TEST_ASSERT(checkAverage(filename, ref));
 
-      filename = "out/concentrationDerivative_analyzer.ave";
+      filename = "out/concentrationDerivative.ave";
       ref = 1.7407118e+01;
       TEST_ASSERT(checkAverage(filename, ref));
 
-      filename = "out/chiDerivative_analyzer.ave";
+      filename = "out/chiDerivative.ave";
       ref = 8.2574275e+02;
       TEST_ASSERT(checkAverage(filename, ref));
 
-      filename = "out/boxLengthDerivative_analyzer.ave";
+      filename = "out/boxLengthDerivative.ave";
       //ref = 4.2481444e+03; // old, < v1.3.4
       ref = 4.234712800000e+03; // new in v1.3.4
       TEST_ASSERT(checkAverage(filename, ref));
@@ -135,7 +135,7 @@ public:
    void checkHamiltonianAnalyzer()
    {
       // Open data file
-      std::string filename = "out/hamiltonian_analyzer.ave";
+      std::string filename = "out/hamiltonian.ave";
       std::ifstream file;
       openInputFile(filename, file);
 
@@ -160,7 +160,7 @@ public:
    void checkBinaryStructureFactorGrid()
    {
       // Open data file
-      std::string filename = "out/binaryStructureFactorGrid_analyzer";
+      std::string filename = "out/binaryStructureFactorGrid";
       std::ifstream file;
       openInputFile(filename, file);
 

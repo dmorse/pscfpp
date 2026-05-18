@@ -115,36 +115,36 @@ namespace Rpc {
       RFieldDft<D> wk_;
 
       /// Bunch ids, indexed by wave id (id of bunch containing a wave).
-      DArray<int> bunchIds_;
+      DArray<int> waveBunchIds_;
 
       /// Weights of waves in bunch averages, indexed by wave id.
-      DArray<double> weights_;
+      DArray<double> waveWeights_;
 
       /// Wavenumber values for wave bunches, indexed by bunch id.
-      DArray<double> wavenumbers_;
+      DArray<double> bunchWavenumbers_;
 
       /// Storage for averaged S(q) values, indexed by bunch id.
-      DArray<double> values_;
+      DArray<double> bunchValues_;
 
-      /// Average accumulators for S(q), indexed by bunch id.
-      DArray<Average> accumulators_;
+      /// Accumulators for bunch S(q) values, indexed by bunch id.
+      DArray<Average> bunchAccumulators_;
+
+      /// Accumulators for wavevector S(q) values, indexed by wave id.
+      DArray<Average> waveAccumulators_;
 
       /// Constants used in S(q) calculation.
       double a_, b_;
 
-      /// Dimensions of wavevector mesh for real-to-complex DFT.
+      /// Dimensions of k-space mesh for DFT of real field.
       IntVec<D> kMeshDimensions_;
 
       /// Number of wavevectors in wavevector mesh.
-      int kSize_;
+      int nWave_;
 
       /// Number of wavevector bunches (sets of wavevectors of equal norm).
       int nBunch_;
 
-      /// Number of samples per block average output (zero -> no output).
-      int nSamplePerBlock_;
-
-      /// Has readParam been called?
+      /// Has readParameters been called?
       bool isInitialized_;
 
       /// File used for output.

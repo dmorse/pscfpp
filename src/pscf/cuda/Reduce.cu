@@ -29,19 +29,19 @@ namespace Reduce {
    * Reduction functions defined here use device-wide algorithms defined
    * in the CUB library. The CUB library is part of the CUDA Core Compute
    * Library collection that is distributed with the CUDA development kit.
-   * 
+   *
    * The CUB reduction functions require the user to provide workspace.
    * To minimize time spent repeatedly allocating this workspace, the
    * reduceSpace static variable is used as a memory block that grows as
    * needed, but that can be re-used for operations that require a work
    * space of size less than or equal to that of the largest previous
-   * required work space. 
+   * required work space.
    *
    * The static variable transformSpace is used as a memory block to
    * store the results of vector operations (such as taking the absolute
    * magnitude or square of all elements) that are sometimes applied
    * before applying a reduction operation.
-   * 
+   *
    * Both memory pools may be de-allocated by Reduce::freeWorkSpace(),
    * but otherwise persist in memory for use as needed.
    */
@@ -76,11 +76,11 @@ namespace Reduce {
       cudaReal sum(cudaReal* inPtr, const int n)
       {
          UTIL_CHECK(n > 0);
-   
+
          // Create output pointer
          DeviceArray<cudaReal> out(1);
          cudaReal* outPtr = out.cArray();
-   
+
          // Determine size of required workspace, allocate if needed
          size_t workSize = 0;
          cudaError_t error;
@@ -89,12 +89,12 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
          reduceSpace_.resize(workSize);
          UTIL_CHECK(reduceSpace_.capacity() >= workSize);
-   
+
          // Perform reduction
          error = cub::DeviceReduce::Sum(reduceSpace_.cArray(), workSize,
                                         inPtr, outPtr, n);
          UTIL_CHECK(error == cudaSuccess);
-   
+
          // Copy to host and return value
          HostDArray<cudaReal> out_h;
          out_h.allocate(1);
@@ -110,11 +110,11 @@ namespace Reduce {
       std::complex<cudaReal> sum(cudaComplex* inPtr, const int n)
       {
          UTIL_CHECK(n > 0);
-   
+
          // Create output pointer
          DeviceArray<cudaComplex> out(1);
          cudaComplex* outPtr = out.cArray();
-   
+
          // Determine size of required workspace and allocate if necessary
          size_t workSize = 0;
          cudaError_t error;
@@ -124,12 +124,12 @@ namespace Reduce {
                                            inPtr, outPtr, n, op, init);
          UTIL_CHECK(error == cudaSuccess);
          reduceSpace_.resize(workSize);
-   
+
          // Perform reduction
          error = cub::DeviceReduce::Reduce(reduceSpace_.cArray(), workSize,
                                            inPtr, outPtr, n, op, init);
          UTIL_CHECK(error == cudaSuccess);
-   
+
          // Copy to host and return value
          HostDArray<cudaComplex> out_h(1);
          out_h = out;
@@ -142,11 +142,11 @@ namespace Reduce {
       cudaReal max(cudaReal* inPtr, const int n)
       {
          UTIL_CHECK(n > 0);
-   
-         // Create input and output pointers 
+
+         // Create input and output pointers
          DeviceArray<cudaReal> out(1);
          cudaReal* outPtr = out.cArray();
-   
+
          // Determine size of required workspace, allocated if needed
          size_t workSize = 0;
          cudaError_t error;
@@ -154,12 +154,12 @@ namespace Reduce {
                                         inPtr, outPtr, n);
          UTIL_CHECK(error == cudaSuccess);
          reduceSpace_.resize(workSize);
-   
+
          // Perform reduction
          error = cub::DeviceReduce::Max(reduceSpace_.cArray(), workSize,
                                         inPtr, outPtr, n);
          UTIL_CHECK(error == cudaSuccess);
-   
+
          // Copy to host and return value
          HostDArray<cudaReal> out_h(1);
          out_h = out;
@@ -172,11 +172,11 @@ namespace Reduce {
       cudaReal min(cudaReal* inPtr, const int n)
       {
          UTIL_CHECK(n > 0);
-   
+
          // Create output pointer
          DeviceArray<cudaReal> out(1);
          cudaReal* outPtr = out.cArray();
-   
+
          // Determine size of required workspace, allocated if needed
          size_t workSize = 0;
          cudaError_t error;
@@ -184,12 +184,12 @@ namespace Reduce {
                                         inPtr, outPtr, n);
          UTIL_CHECK(error == cudaSuccess);
          reduceSpace_.resize(workSize);
-   
+
          // Perform reduction
          error = cub::DeviceReduce::Min(reduceSpace_.cArray(), workSize,
                                         inPtr, outPtr, n);
          UTIL_CHECK(error == cudaSuccess);
-   
+
          // Copy to host and return value
          HostDArray<cudaReal> out_h(1);
          out_h = out;
@@ -201,7 +201,7 @@ namespace Reduce {
    // Memory management
 
    void freeWorkSpace()
-   { 
+   {
       reduceSpace_.deallocate();
       transformSpace_.deallocate();
    }
@@ -261,8 +261,8 @@ namespace Reduce {
    *
    * This implementation uses Nvidia CUB Library functions.
    */
-   std::complex<cudaReal> sum(DeviceArray<cudaComplex> const & a, 
-		              int begin, int end)
+   std::complex<cudaReal> sum(DeviceArray<cudaComplex> const & a,
+                              int begin, int end)
    {
       UTIL_CHECK(a.isAllocated());
       UTIL_CHECK(begin >= 0);
@@ -396,7 +396,7 @@ namespace Reduce {
       UTIL_CHECK(a.isAllocated());
       UTIL_CHECK(begin >= 0);
       UTIL_CHECK(end <= a.capacity());
-      const int n = end - begin; 
+      const int n = end - begin;
       UTIL_CHECK(n > 0);
 
       cudaReal* inPtr = const_cast<cudaReal*>( a.cArray() );
@@ -451,7 +451,7 @@ namespace Reduce {
       UTIL_CHECK(a.isAllocated());
       UTIL_CHECK(begin >= 0);
       UTIL_CHECK(end <= a.capacity());
-      const int n = end - begin; 
+      const int n = end - begin;
       UTIL_CHECK(n > 0);
 
       cudaReal* inPtr = const_cast<cudaReal*>( a.cArray() );

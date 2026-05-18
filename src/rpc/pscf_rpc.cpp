@@ -8,6 +8,9 @@
 #include <rpc/system/System.h>
 #include <prdc/crystal/getDimension.h>
 #include <pscf/chem/PolymerModel.h>
+#include <util/format/Int.h>
+#include <util/misc/Log.h>
+#include <util/misc/Memory.h>
 
 #include <iostream>
 
@@ -52,21 +55,33 @@ namespace Rpc {
 int main(int argc, char **argv)
 {
 
+   using namespace Util;
+   using namespace Pscf;
+
    // Extract the dimension of space from argument of -d option
    int D = Pscf::Prdc::getDimension(argc, argv);
    std::cout << "dimension   " << D << std::endl;
 
+   // Run relevant template specialization
    if (1 == D) {
-      Pscf::Rpc::run<1>(argc, argv);
+      Rpc::run<1>(argc, argv);
    } else
    if (2 == D) {
-      Pscf::Rpc::run<2>(argc, argv);
+      Rpc::run<2>(argc, argv);
    } else
    if (3 == D) {
-      Pscf::Rpc::run<3>(argc, argv);
+      Rpc::run<3>(argc, argv);
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
    }
+
+   // Report memory usage
+   Log::file() << "\nCPU heap array memory usage:";
+   Log::file() << "\n  Maximum array memory = " 
+               << Int(Memory::max(), 12) << " bytes";
+   Log::file() << "\n  Final array memory   = " 
+               << Int(Memory::total(), 12) << " bytes";
+   Log::file() << std::endl;
 
    fftw_cleanup();
 }

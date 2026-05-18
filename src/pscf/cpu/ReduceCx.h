@@ -24,7 +24,7 @@ namespace Pscf {
    /*
    * Functions that perform reductions on fftw_complex arrays.
    *
-   * A reduction is any operation that involves reducing all of 
+   * A reduction is any operation that involves reducing all of
    * the elements of one or more array to a single scalar, such as
    * a summation or inner product. Complex reduction results are
    * returned as values of type std::complex<double> because the
@@ -55,7 +55,7 @@ namespace Pscf {
       * \return sum of elements with indices [begin, end-1]
       */
       std::complex<double> sum(Array<fftw_complex> const & a,
-		               int begin, int end);
+                               int begin, int end);
 
       /**
       * Compute sum of squares of elements of a complex array.
@@ -63,7 +63,7 @@ namespace Pscf {
       * \ingroup Pscf_Cpu_Reduce_Module
       *
       * \param a  input array
-      * \return complex sum of squares of elements of a 
+      * \return complex sum of squares of elements of array a
       */
       std::complex<double> sumSq(Array<fftw_complex> const & a);
 

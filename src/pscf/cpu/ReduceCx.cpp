@@ -25,15 +25,14 @@ namespace Reduce {
          sum[0] += a[i][0];
          sum[1] += a[i][1];
       }
-      std::complex<double> out(sum[0], sum[1]);
-      return out;
+      return std::complex<double>(sum[0], sum[1]);
    }
 
    /*
    * Compute sum of elements in a complex array slice.
    */
-   std::complex<double> sum(Array<fftw_complex> const & a, 
-		            int begin, int end)
+   std::complex<double> sum(Array<fftw_complex> const & a,
+                            int begin, int end)
    {
       int n = a.capacity();
       UTIL_CHECK(n > 0);
@@ -47,8 +46,7 @@ namespace Reduce {
          sum[0] += a[i][0];
          sum[1] += a[i][1];
       }
-      std::complex<double> out(sum[0], sum[1]);
-      return out;
+      return std::complex<double>(sum[0], sum[1]);
    }
 
    /*
@@ -68,8 +66,7 @@ namespace Reduce {
          sum[0] += ar*ar - ai*ai;
          sum[1] += 2.0 * ar * ai;
       }
-      std::complex<double> out(sum[0], sum[1]);
-      return out;
+      return std::complex<double>(sum[0], sum[1]);
    }
 
    /*
