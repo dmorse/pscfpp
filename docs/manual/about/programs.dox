@@ -24,8 +24,8 @@ theoretic simulations.
 The pscf_rpc program can perform both SCFT and PS-FTS calculations on
 systems with periodic boundary conditions in 1, 2 or 3 dimensions, using
 conventional CPU hardware.  This program provides capabilities for SCFT
-analogous to those of the older Fortran PSCF program.  The suffix "pc"
-stands for "periodic CPU".
+analogous to those of the older Fortran PSCF program.  The suffix "rpc"
+stands for "real periodic, CPU".
 
 <b>pscf_rpg</b>:
 
@@ -33,8 +33,8 @@ The pscf_rpg program is a GPU-accelerated sister of pscf_rpc that can also
 perform SCFT and PS-FTS calculations on systems with periodic boundary
 conditions.  The pscf_rpc and pscf_rpg programs provide identical features
 and user interfaces, but pscf_rpg provide higher performance for problems
-involving a large number of grid points per unit cell.  The suffix "pg"
-stands for "periodic GPU".
+involving a large number of grid points per unit cell.  The suffix "rpg"
+stands for "real periodic, GPU".
 
 <BR>
 \ref about_history_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
