@@ -40,7 +40,7 @@ namespace Prdc {
    * FieldState is a standard class template, in which all member
    * function definitions are located in this header file.
    *
-   * \ingroup Prdc_Scft_Sweep_Module
+   * \ingroup Prdc_Field_Module
    */
    template <int D, class FT, class ST>
    class FieldState 

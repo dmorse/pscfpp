@@ -1,0 +1,605 @@
+/*! \page developer_template_div_page Implicit vs. Explicit Templates
+
+\ref developer_template_defs_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page          (Next)
+<BR>
+
+The PSCF source code contains two different types of class templates,
+which we refer to as "implicit" and "explicit" templates. They differ 
+in how files are organized, and in how they are treated by the compiler
+and build system:
+
+<ol type="A">
+   <li>
+   <b> Implicit class templates </b> : These are C++ class templates 
+   for which the source code is organized so as to allow the compiler
+   to perform implicit instantiation of the template as needed when 
+   processing other files. This is the usual recommended way of writing 
+   C++ class templates, as described in most textbooks. </li>
+
+   <li>
+   <b> Explicit class templates </b>: These are class templates that 
+   are designed to be use by explicitly instantiating all required 
+   specializations, and then later linking to the resulting object code. 
+   </li>
+
+</ol>
+The use of an "explicit" class template is generally feasible only for 
+class templates that are designed to only be used with only a small, 
+foreseeable set of choices of template parameters. It is only in this
+case that is may be practical to explicitly instantiate all required 
+specializations. In the PSCF code base, implicit class templates are 
+used throughout the Util namespace, while explicit templates are used 
+for many of the class templates defined in the Pscf namespace.
+
+For a standard "implicit" template, a preprocessor directive that 
+includes the header file for that template must include definitions 
+for all of its member functions. This can be accomplished either by 
+placing all such definitions in the class header file, or by having 
+the header file include a template implementation (.tpp) file that 
+contains some or all of these function definitions. 
+
+For an "explicit" class template, however, the template header file 
+generally does not contain or include definitions of all member 
+functions. In this case, definitions of non-inline member functions 
+are instead placed in a separate file that is not included by the 
+header file, much like the division of class definition and member
+function definitions into separate files that is usually used for
+non-templated classes.
+
+The simplest use of explicit class templates in PSCF is for classes
+that are designed for systems with periodic boundary conditions, and
+for which the the dimension of space D is the only template parameter.
+Three specializations of such class template with D=1, 2 and 3 are 
+compiled by explicit instantiation and later linked to create 
+executables.
+
+By allowing template instantiations to be treated much like non-template
+classes, the use of explicit class templates in PSCF avoids some of the
+most common disadvantages of templates in C++.  This usage can reduce
+compilation times of template heavy code base, because it reduces the 
+amount of source code that must be included files that include the 
+header for each class template. It also tends to simplify
+debugging of errors during development, because it breaks the build
+process into smaller steps, often allows the compiler to generate more
+easily interpretable error messages in response to syntax errors. 
+The main costs are the need for a bit more thought about what files 
+need to be included by others, and about where to place explicit 
+instantiation declarations that are required to suppress implicit
+instantiation.
+
+\section developer_template_div_standard_sec A. Implicit templates
+
+Implicit class templates are designed allow the safe use of implicit
+instantiation.  All of the container class templates that are defined
+in the src/util/containers directory, such as DArray and FSArray, are
+standard implicit templates.
+
+The class definition for each implicit class template is contained in a
+header file that ends with file suffix .h. A preprocessor directive to
+include this header file must also automatically include definitions 
+of all class member functions. This requirement can be satisfied by 
+organizing the code for an implicit class template in either of two ways:
+<ol>
+
+   <li> Definitions of all class member functions may be placed in the
+   class template header file. </li>
+
+   <li> Definitions of non-inline class member functions may be placed 
+   in a separate template implementation file with file name suffix 
+   .tpp, but this file must then be included by the header file. </li>
+</ol>
+Case 1 is the most common way of organizing files for a template, 
+as described in most C++ textbooks and other instructional material.  
+
+In case 2, the header file must contain a C/C++ preprocessor "#include" 
+directive that includes the .tpp file, which is placed at or near the 
+end of the header file. The effect is to guarantee that inclusion of 
+the header file also indirectly includes the implemtentation file, thus 
+creating a translation unit equivalent to that created in case 1.
+In case 2, the .tpp implementation file for such an implicit template 
+may never be directly included by any file other than the associated 
+header file. 
+
+\section developer_template_div_explicit_sec B. Explicit class templates
+
+The source code for the PSCF programs for periodic functions contains many
+class templates for which there exist only a few valid choices of values
+for the template parameters, and thus only a few possible valid template
+specializations. Many such classes are written as explicit class templates.
+
+Code required to use an explicit class template generally involves the
+following components:
+
+  - A class template definition, which includes declarations for all
+    member functions. 
+
+  - Definitions of any inlined class template member functions
+
+  - Definitions of all non-inlined class template member functions
+
+  - Explicit instantiations declarations for all required specializations
+
+  - Explicit instantiation definitions for all required specializations
+
+The class template definition is always placed in a header file with 
+a base name given by the name of the class template, followed by the
+file name suffix .h. This header file must also contain definitions of
+any member functions that are declared "inline". 
+
+Explicit instantiation definitions for a class template are always 
+placed in a compilable source file with a file name suffix .cpp (for 
+pure C++ code) or .cu (for C++ / CUDA code).  This file is compiled 
+by the build system to create object code for the specified 
+template specializations. 
+
+To avoid compiler or linker errors, the organization of source code
+for such a class template must satisfy the following requirements:
+
+  - A C++ translation unit that is created by preprocessing a .cpp or
+    .cu file that contains explicit instantiation definitions for 
+    one or more specializations of such a class template must contain 
+    both the class template definition and definitions for all class 
+    template member functions. 
+
+  - A C++ translation unit that is created by preprocessing any 
+    other file that uses a valid specialization of an explicit class 
+    template must contain both the class template definition and an 
+    explicit instantiation declaration for that template 
+    specialization.
+
+Explicit instantiation declarations are required to instruct the 
+compiler to **not** attempt to implicitly instantiate a particular
+specialization whenever an instance of that specialization is 
+encountered, and to instead wait and search for object code for 
+that specialization during linking. In simple cases, explicit 
+specialization declarations for all valid specializations may be
+placed in the header file for an explicit class template, near
+the end of the file. 
+
+A compilable .cpp or .cu source file that contains explicit 
+instantiation definitions for one or more specializations of a class 
+template must either:
+
+   - Contain definitions of all non-inlined class member functions,
+     which must appear before explicit instantiation definitions
+     for all allowable specializations.
+
+   - Include a .tpp template implementation file that contains
+     definitions of all non-inlined member functions.
+
+In the latter case, the include directive for the relevant 
+implementation (.tpp) file should normally be placed after all 
+include directives for header files. This ordering is designed to 
+allow for the possibility that the function definitions in the 
+template implementation file may use class types that are defined 
+in preceding header files.
+
+Explicit instantiation declarations may be placed in different
+locations depending on the nature of the class template.  In PSCF,
+there are two primary cases:
+<ol>
+    <li>
+    <b> Templates for which D is the only parameter </b>:
+    If the only parameter of a class template is the integer
+    dimension D of space, then the class template header file will
+    contain explicit instantiation declarlations for the three
+    physically relevant cases of D=1, D=2, and D=3.
+    </li>
+
+    <li>
+    <b> Templates used only as base classes </b>:
+    Suppose that an explicit class template is designed to only 
+    used be used to define base classes for a small number of 
+    subclasses, and different subclasses are derived from different 
+    specializations of the base class template. In this case, 
+    explicit instantiation declarations for relevant 
+    specializations of a base class template may sometimes be 
+    placed in header files for a subclasses that are derived 
+    from those specialization.
+    </li>
+</ol>
+Case 1 is safe because the explicit instantiation declarations for
+all relevant specializations of that template will be included into
+any file that includes the header file.
+Case 2 is safe if and only if we know that specializations of the
+base class template are never instantiated in any context except
+as base classes for a small number number of derived classes, and
+each such derived classes is defined in a header file that contains 
+explicit instantiation declarations for the specialization from 
+which it is derived. 
+
+\subsection developer_template_div_explicit_D_sub B.1: Templates for which D is the only parameter
+
+Class templates for which the dimension of space D is the only template
+parameter appear throughout the source code for periodic system that is
+located in subdirectories src/prdc, src/rpc, and src/prg.  Many of the
+simplest cases occur in the src/prdc directory.
+
+As an example, consider the source code files associated with the class
+template Pscf::Prdc::Basis, for which the only template parameter is 
+the spatial dimension D.
+
+The header file src/prdc/crystal/Basis.h contains a definition of
+class template Pscf::Prdc::Basis, but does not contain definitions
+of any non-inline member functions.  The key contents of this file,
+in skeleton form, look like this:
+\code
+#ifndef PRDC_BASIS_H
+#define PRDC_BASIS_H
+
+namespace Pscf {
+namespace Rp {
+
+   // Class definition
+   template <int D>
+   class Basis {
+      ...
+   }
+
+   // Inline member function definitions
+   ...
+
+   // External instantiation declarations
+   extern template class Basis<1>;
+   extern template class Basis<2>;
+   extern template class Basis<3>;
+
+}
+}
+#endif
+\endcode
+Note that the header file contains explicit instantiation declarations
+for the only three possible valid specializations.
+
+An associated template implementation file, src/rp/crystal/Basis.tpp,
+contains definitions of all non-inline member functions for the Basis 
+class template. A skeleton version of this file looks something like 
+this:
+\code
+
+#include "Basis.h"
+
+namespace Pscf {
+namespace Rp {
+
+   // Non-inline member function definitions
+   ....
+
+}
+}
+\endcode
+Note that this implementation file includes the header file. The
+usage pattern for an implicit class template would instead require
+the header file to include the implementation file. 
+
+The compilable source file src/rp/crystal/Basis.cpp includes
+Basis.tpp and explicit instantiation definitions for D=1, D=2, and
+D=3:
+\code
+#include "Basis.tpp"
+
+namespace Pscf {
+namespace Rp {
+
+   template class Basis<1>;
+   template class Basis<2>;
+   template class Basis<3>;
+
+}
+}
+\endcode
+Note that this file explicitly includes the implementation file 
+(Basis.tpp), and thereby also indirectly includes the header file 
+(Basis.h).
+
+The PSCF build system compiles the file src/rp/crystal/Basis.cpp, 
+places the resulting object code for the three valid specializations 
+in a file named Basis.o, and later incorporates the contents of this 
+object file into a static library file named rplib.a. The resulting 
+library then contains object code for three separate instantiations 
+of the Basis template with D=1, 2 and 3.
+
+In the example discussed above, definitions of non-inlined member
+functions have been placed in a separate .tpp implementation file
+that is included into the compilable source file. This results in
+a file organization in which code for this class template is spread 
+over three files: a header, an implementation file, and a compilable 
+source file. Code for some other explicit class templates for which 
+D is the only template parameter may place member functions directly 
+in the compilable source file, resulting only two files: a header
+file and a compilable source file. Either organization is allowed.
+
+\subsection developer_template_div_explicit_base_sub B.2. Templates used only as base classes
+
+Class templates that are designed to be used only to construct base
+classes for a small number of derived classes appear in several locations
+within the PSCF source code:
+
+   - **Solver templates**: Several class templates that are defined in
+     the src/pscf/solvers directory are used to construct base classes for
+     **solver** classes that are defined in each program-level directory.
+
+   - **AM Iterator template**: The Pscf::AmIteratorTmpl defined in the
+     src/pscf/iterators directory is used as a base class for classes
+     that use some variant of the Anderson mixing algorithm to solve
+     either the self-consistent field (saddle-point) equations or the
+     partial saddle-point equations used in PS-FTS calculations.
+
+   - **Templates for CPU and GPU class implementations**: Every class
+     in the Pscf::Rp namespace, or in directory src/rp, is designed to
+     be used as a base class for two closely analogous classes defined 
+     in the Pscf::Rpc and Pscf::Rpg namespaces and used in the pscf_rpc
+     CPU program and the pscf_rpg GPU program, respectively.
+
+In each of these case, templates are used to avoid duplication of code
+for analogous data structures and algorithms that are needed in different 
+programs or in different contexts within a program.
+
+In each of the cases described above, a base class template that is used
+in more than one program is defined in a namespace that is accessible to
+multiple programs (e.g., Pscf or Pscf::Rp). Also, in most such cases, 
+specializations of this base class template that are used in different
+program-level namespace end up using classes that are defined within the 
+same program-level namespace as base class template arguments. 
+By convention, in PSCF, names that are defined with a program-level 
+namespace may not be used or referred to outside of that namespace. 
+This convention prohibits us from providing explicit instantiation 
+declarations in the header file for a base class template that is
+defined outside of any program level namespace that uses template 
+arguments that are defined within a program-level namespace. Instead, 
+in these cases, an explicit instantiation declarations for any 
+specializations that uses template arguments that are defined in 
+a program-level level namespace are placed in a header file for a 
+derived class that is derived from this specialization. This usage 
+is illustrated below with an example.
+
+As an example, we consider the base class template Pscf::Rp::WFields .
+Specializations of this template are used as base classes for
+corresponding specializations of two derived class templates, both 
+also named WFieldsi, that are defined in the Pscf::Rpc and Pscf::Rpc 
+program-level namespaces.  Each of the WFields class templates that 
+is defined in a program-level namespace has the integer D as its only 
+template parameter. Within each of these two program-level namespaces, 
+specializations of WFields\<D\> with D=1, 2, or 3 are used as containers 
+for the chemical potential fields (w-fields).
+
+<b> Base class template (Pscf::Rp::WFields) </b>
+
+The Pscf::Rp::WFields base class template takes 3 template parameters
+named D, RFT, and FIT. As always, D represents the dimension of space.
+The parameters RFT and FIT are class name parameters whose purposes 
+are discussed below.  The definition of Rp::Rp::WFields, as given in 
+the file src/rp/field/WFields.h, is shown in skeleton form below:
+\code
+#ifndef RP_W_FIELDS_H
+#define RP_W_FIELDS_H
+
+// Header file includes
+// Forward declarations
+
+namespace Pscf {
+namespace Rp {
+
+   using namespace Util;
+   using namespace Prdc;
+
+   template <int D, class RFT, class FIT>
+   class WFields
+   {
+      // Body of class definition
+
+   };
+
+   // Inline member functions
+
+} // namespace Rp
+} // namespace Pscf
+#endif
+\endcode
+Within this template, the parameters RFT and FIT are aliases for names 
+of classes that represent, respectively:
+
+   -  RFT: a class that contains a real field defined on a mesh 
+   -  FIT: a class that provides tools for field input and output
+
+These two class names are treated as template parameters because
+different classes are used for these purposes by pscf_rpc and pscf_rpg,
+which differ in whether or not they use a GPU.
+
+The argument of the RFT parameter must be a specialization of a class 
+template named RField that is defined in the Pscf::Prdc::Cpu or 
+Pscf::Prdc::Cuda namespace, and takes the dimension D of space as its 
+only parameter, with D=1,2, or 3. A class template specialization 
+RFT = Pscf::Prdc::Cpu::RField\<D\> is used in the definition of 
+Pscf::Rpc::WFields\<D\>, which uses CPU memory, while a specialization 
+RFT = Pscf::Prdc::Cuda::RField\<D\> is used in the definition of 
+Pscf::Rpg::WFields\<D\>. which uses GPU memory.
+
+The argument of the FIT parameter must be a specialization of a class
+template named FieldIo that is defined in the Pscf::Rpc or Pscf::Rpg
+namespace, and that takes the dimension D of space as its only parameter.
+A template specialization FIT = Pscf::Rpc::FieldIo\<D\> is used in 
+the definition of Pscf::Rpc::WFields\<D\>, while a specialization 
+FIT = Pscf::Rpg::FieldIo\<D\> is used in the definition of 
+Pscf::Rpg::WFields\<D\>, for D=1, 2 and 3.
+
+Note that the header for the Rp::WFields base class template does not
+contain any explicit instantiation declarations.  Declarations for all
+required specializations of this template are instead placed in header
+files for derived class templates, as shown below.
+
+The Pscf::Rp::WFields template has an associated template implementation
+(.tpp) file. The contents of this file are shown in skeleton form below:
+\code
+#ifndef RP_W_FIELDS_TPP
+#define RP_W_FIELDS_TPP
+
+#include "WFields.h"
+
+// Include directives for other header files
+
+namespace Pscf {
+namespace Rp {
+
+   // Definitions of non-inline member functions
+
+}
+}
+#endif
+\endcode
+Note that this implementation (.tpp) file includes the associated
+header file.
+
+<b> Derived class template (Pscf::Rpc::WFields) </b>
+
+As an example of one of the two corresponding derived class templates, we
+consider the template Pscf::Rpc::WFields, which is designed to use standard
+CPU hardware. This is a class template for which the integer D is the only
+template parameter. For each valid value of D=1, 2 or 3, a class template
+specialization Pscf::Rpc::WFields\<D\> is derived from a specialization
+of the base class template Pscf::Rp::WFields with the same value for
+the integer parameter D, and additional class name template arguments:
+\code
+   RFT = Pscf::Prdc::Cpu::RField<D>
+   FIT = Pscf::Rpc::FieldIo<D>
+\endcode
+The header file for the Pscf::Rpc::WFields derived class template is
+shown in skeleton form below:
+\code
+#ifndef RPC_W_FIELDS_H
+#define RPC_W_FIELDS_H
+
+#include <rp/field/WFields.h>    // base class template header
+#include <prdc/cpu/RField.h>     // base class member
+
+namespace Pscf {
+namespace Rpc {
+
+   // Forward declaration
+   template <int D> class FieldIo;
+
+   using namespace Util;
+   using namespace Prdc;
+   using namespace Prdc::Cpu;
+
+   // Class template definition
+   template <int D>
+   class WFields
+     : public Rp::WFields<D, RField<D>, FieldIo<D> >
+   {};
+
+}
+}
+
+namespace Pscf {
+   namespace Rp {
+      // Explicit instantiation declarations - base class specializations
+      using namespace Prdc;
+      extern template class WFields<1, Cpu::RField<1>, Rpc::FieldIo<1> >;
+      extern template class WFields<2, Cpu::RField<2>, Rpc::FieldIo<2> >;
+      extern template class WFields<3, Cpu::RField<3>, Rpc::FieldIo<3> >;
+   }
+   namespace Rpc {
+      // Explicit instantiation declarations - derived class specializations
+      extern template class WFields<1>;
+      extern template class WFields<2>;
+      extern template class WFields<3>;
+   }
+}
+#endif
+\endcode
+
+As shown in the above example, the header file for each derived class
+template (e.g., Pscf::Rpc::WFields) includes explicit instantiation
+declarations not only for the three valid specializations of the derived
+class template (e.g., of Rpc::WFields\<D\> with D=1,2, and 3), but also
+for the three corresponding specializations of the base class template
+(e.g., of Rp::FieldIo). The declarations of relevant specializations of
+the base class template are necessary to suppress implicit instantiation
+of member functions that are defined by the base class template and
+inherited by the derived class. Without them, the compiler would
+attempt to implicitly instantiate any such inherited functions when 
+compiling any file in which they appear.
+
+The header file for the class template Pscf::Rpg::FieldIo that is used
+by the pscf_rpg program is very similar, except that it uses analogous
+RField and FieldIo template specializations that are defined in namespaces 
+Pscf::Prdc::Cuda and Pscf::Rpg, and are designed to use a GPU.
+
+The Pscf::Rpc::WFields template also has an associated source file 
+named src/rpc/field/WFields.cpp, which is compiled by the build system.
+This file contains explicit instantiations definitions for relevant
+specializations of both the derived class template Pscf::Rpc::WFields
+and the base class template Pscf::Rp::WFields. The main elements of 
+this file looks like this:
+\code
+#include "WFields.h"               // derived class header
+#include <rpc/field/FieldIo.tpp>
+#include <pscf/cpu/VecOp.h>
+
+#include <rp/field/WFields.tpp>    // base class implementation
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      using namespace Prdc;
+      template class Rp::WFields<1, Cpu::RField<1>, Rpc::FieldIo<1> >;
+      template class Rp::WFields<2, Cpu::RField<2>, Rpc::FieldIo<2> >;
+      template class Rp::WFields<3, Cpu::RField<3>, Rpc::FieldIo<3> >;
+   }
+   namespace Rpc {
+      template class WFields<1>;
+      template class WFields<2>;
+      template class WFields<3>;
+   }
+}
+\endcode
+Note that the implementation file for the Rp::WFields base class
+template, referred to here as <rp/field/WFields.tpp>, must be included
+in this source file because the compiler needs access to definitions of
+all member functions to instantiate the three relevant specializations
+of the base class template.
+
+The source files src/rpc/field/WFields.h and src/rpc/fields/WFields.tpp 
+that are shown above contains preprocessor include directives for several 
+files that are needed in the CPU version of this class but not in the GPU 
+version. Specifically, these two files include the files prdc/cpu/RField.h, 
+rpc/field/FieldIo.h and pscf/cpu/VecOp.h. The analogous header and 
+implementation files for the Pscf::Rpg::WFields template include header 
+files for an analogous set of classes and functions that allow the use 
+of GPU hardware.  Header files for classes that are used by all valid 
+specializations of the Rp::WFields class template are all included into 
+the .h and .tpp files for the base class template. 
+
+The derived class template Pscf::Rpc::WFields that is used here as an 
+example has associated header (.h) and source (.cpp) files, but no 
+template implementation (.tpp) file. This organization is typical for class
+templates in the Pscf::Rpg and Pscf::Rpc namespace that are derived from
+specializations of class templates defined in the Pscf::Rp namespace, and 
+that do define or override any member classes other than very simple 
+contructor functions. A separate .tpp implementation file does exist for 
+a few such derived classes that define or override several nontrivial 
+member functions. For example, such .tpp files do exist for the class 
+templates Pscf::Rpc::FieldIo and Pscf::Rpg::FieldIo.
+
+<b> Restrictions on usage </b>
+
+The usage pattern described above assumes that specializations of this 
+type of explicit base class template (e.g., of Pscf::Rp::WFields) will
+never be used directly in other files in any context other than as base 
+classes for a limited number of derived classes (e.g,.  as base classes 
+for specializations Pscf::Rpc::WFields and Pscf::Rpg::WFields). 
+Attempts to use such a base class template in any other manner are 
+unlikely to compile, because the header file for such a base class 
+template does not contain either definitions of non-inlined member 
+functions (as are required for implicit instantiation) or explicit 
+instantiation declarations (as required to suppress implicit 
+instantiation).
+
+<BR>
+\ref developer_template_defs_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page       (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page          (Next)
+
+*/

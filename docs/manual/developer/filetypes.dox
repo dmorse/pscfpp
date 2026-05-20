@@ -42,27 +42,52 @@ PSCF uses the following file name suffixes for C++ and CUDA C++ files:
      <td> compilable CUDA C++ source file </td>
    </tr>
 </table>
+These different types of file are discussed in more detail below.
+
+*Header Files*:
 Header files, with suffix .h, may be included into other C++ files
-using a C/C++ preprocessor \#include directive.  C++ and CUDA C++ source
-files with suffix .cpp or .cu are compiled, and may never be included
-by other program files.
+using a C/C++ preprocessor \#include directive, and are never directly
+compiled by the build system. 
 
-Template implementation files, with suffix .tpp, usually contain
-definitions of non-inline member functions of a class template, much
-like the compilable source file for a non-template class. These files
-are usually included either into an associated \*.h header file (for
-standard class templates that rely on implicit instantiation) or into
-an associated \*.cpp or \*.cu source file with the same base name (for
-class templates that are compiled by explicit instantiation). Usage
-patterns and file conventions for class templates in PSCF are discussed
-in developer_template_page "here".
-
-Compilable source files that contain or include only standard C++ code
-may be given file suffix .cpp. Compilable source files that contain
-or include any CUDA C++ code must instead use file suffix .cu.
+*Compilable Source Files*: 
+Files with file name suffix *.cpp and *.cu are compiled and linked by
+the build system, and may never be included into other files. 
+Compilable source files that contain and include only standard C++ code
+may be given file suffix .cpp. Compilable source files that contain or 
+include any CUDA C++ code must instead use file suffix .cu.
 Different makefile pattern rules are used to compile files with filename
 suffix .cpp and .cu, using different compilers, using the NVIDIA nvcc
 compiler to compile files with file suffix .cu.
+
+Compilable *.cpp and *.cu source files usually contain definitions of 
+non-inlined functions that are declared in header file with the same 
+base name. A compilable source file whose base name is the same as a
+class name normally contains definitions of non-inline member functions 
+of that class.
+
+*Template implementation files:*
+Files with suffix .tpp, known as template implementation files, 
+normally contain either the member functions of a class template
+or definitions of set of global function templates. There are two
+different types of class templates, for which the associated
+template implementation files are treated somewhat differently 
+by the build system:
+
+  - "Standard" or "Implicit" class templates are designed to rely 
+    on the usual mechanism of implicit instantiation. Any *.tpp 
+    template implementation file associated with a implicit class 
+    template must be included into the associated header file 
+    near the end of the header file.
+
+  - "Explicit" class templates are templates for which all required 
+    specializations must be explicitly instantiated.  Any *.tpp 
+    template implementation file for such an "explicit" template
+    must be include the associated *.h header file and must be 
+    included into one or more associated *.cpp or *.cu files that
+    contain explicit instantiation definitions. 
+
+Usage patterns and file conventions for class templates in PSCF are 
+discussed in more detail \ref developer_template_page "elsewhere".
 
 \section developer_filetypes_build_sec Build system files
 

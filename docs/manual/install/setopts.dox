@@ -4,29 +4,21 @@
 \ref install_targets_page (Next)
 <BR>
 
-The PSCF build system provides a set of scripts named "setopts" that allow
-the users to set some optional compile-time features of the package to be
-enabled or disabled when it is compiled, and to set some parameters that
-are passed to the compiler.
+Users of PSCF may modify several settings before compiling the package to
+control whether particular features are enabled or disabled when the package
+is later compiled, and to set some parameters that are passed to the compiler. 
+A set of bash scripts named "setopts" is provided to simplify the process of
+modifying these compile-time options. 
 
 \section install_setopts_setopts The "setopts" scripts
 
 The PSCF src and bld directories are used as build directories for
 in-source and out-of source compilation, respectively. After the configure
 script has been run, each of these two standard build directories will
-contain an exectuable shell script named "setopts". A setopts script can
-be used to modify configuration files that control what features are
-enabled when code is compiled.
-
-The setopts script in each build directory (i.e., in the src or bld
-directory) may be invoked from within that directory to modify which
-features will be enabled and disabled in code that is subsequently
-compiled in that build directory.
-
-The PSCF root directory also contains an analogous setopts script. That
-"global" setopts script can be invoked to apply identical changes in
-compile-time features to the configuration files in both the src and
-bld directories.
+contain an exectuable shell script named "setopts".  The setopts script 
+in each build directory (i.e., in src or bld) may be invoked from within 
+that directory to modify which features will be enabled or disabled in 
+code that is subsequently compiled in that build directory. 
 
 Each setopts script changes settings by editing build configuration files
 that are used by the makefile system to define what actions should be
@@ -36,27 +28,37 @@ directories. To change which features are enabled when PSCF is compiled,
 the setopts script must thus be invoked after running the configure
 script, but before compiling.
 
+The PSCF root directory also contains an analogous setopts script, which
+we refer to as the "global" setopts script. The global setopts script 
+can be invoked to apply identical changes in compile-time features to 
+the configuration files in both the src and bld directories.
+
 \subsection install_setopts_debug_sub Enabling or disabling debugging
 
 The "debugging" feature of PSCF can be enabled to add additional run-time
-sanity checks (such as run-time checking of array index bounds) at a slight
-cost in performance.  The "debugging" feature is enabled or disabled by
-invoking setopts script before compiling the package with the "-d" option,
-using an option parameter "1" to enable debugging or "0" to disable it.
-The debugging feature is disabled by default. To enable these additional
-run-time checks, one would enter
+sanity checks, at a slight cost in performance.  One important additional 
+type of check enabled by this feature is run-time checking of array index
+bounds in the code used to access elements of the collection of array 
+containers used throughout PSCF. The debugging feature is disabled by 
+default, for efficiency, but we recommend that developers enable it at
+times during debugging and testing of new code.
+
+The "debugging" feature is enabled or disabled by invoking a setopts 
+script with the "-d" option before compiling the package. Invoking the 
+"-d" with an optiona parameter "1" enables debugging, while an option
+parameter "0" disables debuggin.  One could thus enter
 \code
 ./setopts -d1
 \endcode
-To instead disable debugging before compiling, one would enter
+to enable the debugging feature, or
 \code
 ./setopts -d0
 \endcode
-Entering setopts with the -c option from the pscpp root directory
-enables or disables debugging checks for both in-source and out-of-source
-compilation, while entering the same commands from the src or bld
-directory enables or disables this feature only for in-source or
-out-of-source compilation, respectively.
+to disable debugging.  Entering setopts with the -d option from the PSCF
+root directory enables or disables debugging checks for both in-source 
+and out-of-source compilation, while entering the same commands from the 
+src or bld directory enables or disables this feature only for in-source 
+or out-of-source compilation, respectively.
 
 \subsection install_setopts_cuda_sub Enabling or disabling CUDA compilation
 
@@ -65,17 +67,16 @@ that have an appropriate nVidia GPU and a CUDA development kit. Compilation
 of CUDA code is disabled by default.  Compilation of CUDA code can be
 enabled or disabled by invoking a setopts script with the "-c" option,
 with an option parameter "1" to enable CUDA compilation or "0" to disable
-CUDA compilation.
-
-To enable compilation of CUDA source files, one could thus enter
+CUDA compilation. One could thus enter
 \code
 ./setopts -c1
 \endcode
-To disable CUDA compilation, one instead enters
+to enable CUDA compilation, or 
 \code
 ./setopts -c0
 \endcode
-Executing the setopts script with the -c option from the pscpp root
+to disable it.
+Executing the setopts script with the -c option from the PSCF root
 directory enables or disables CUDA compilation for both in-source and
 out-of-source compilation, while entering the same commands from within
 the src or bld directory enables or disables CUDA compilation only for
@@ -146,16 +147,19 @@ produces a list of all command line options accepted by the script.
 
 All mutable attributes of the PSCF build system are defined by the
 contents of a pair of files named "config.mk" that are installed in the
-src and bld directories by the configure script.  These two files, which
-we refer to as build configuration files, are makefile fragments that
-are included by other makefiles during the build process.  The file
-bld/config.mk defines the configuration used for out-of-source
-compilation, while src/config.mk defines the configuration for in-source
-compilation.  The setopts scripts work by editing one or both of these
-build configuration files. Users may also edit the config.mk files
-directly if they are comfortable doing so.  These configuration files
-contain comments that explain the meaning and usage of all of the
-makefile variables defined there.
+src and bld directories by the configure script. We refer to these two
+"config.mk" files as build configuration files. The build configuraiton
+files are makefile fragments that contain definitions of makefile variables,
+and that are included by other makefiles during the build process. The file 
+bld/config.mk defines the configuration used for out-of-source compilation, 
+while src/config.mk defines the configuration for in-source compilation.  
+
+The setopts scripts use standard unix utilities (such as the "sed" stream 
+editor) to make required modifications of these build configuration files. 
+Users may instead use a text editor to modify the config.mk files directly, 
+rather than by using the setopts scripts, if they are comfortable doing so. 
+The configuration files contain extensive comments that explain the meaning 
+and usage of all of the makefile variables defined in those files.
 
 <BR>
 \ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

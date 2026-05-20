@@ -60,7 +60,7 @@ namespace Prdc {
    */
    template <int D>
    void sortWaves(UnitCell<D> const & cell,
-                  IntVec<D> const & dimensions,
+                  IntVec<D> const & meshDimensions,
                   std::vector< Sort::Item<double> >& items,
                   GArray< Sort::Bunch >& bunches,
                   double epsilon,

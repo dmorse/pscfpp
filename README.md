@@ -486,30 +486,31 @@ the relevant example directory (and again note the use of the required
 
 ## Citation
 
-If you use PSCF in published work, we would appreciate it if you indicate
-the github repository URL and cite one or more of the following papers:
+If you use PSCF in published work, we would appreciate it if you would
+give the github repository URL and cite one or more of the following 
+journal articles:
 
-A. Arora, J. Qin, D.C. Morse, K.T. Delaney, G.H. Fredrickson, F.S. Bates 
-and K.D. Dorfman, "Broadly accessible self consistent field theory for 
-block polymer materials discovery," Macromolecules 49, 4675-4690 (2016).
+  - A. Arora, J. Qin, D.C. Morse, K.T. Delaney, G.H. Fredrickson, F.S. Bates and K.D. Dorfman,
+    <a target="_blank" href="https://doi.org/10.1021/acs.macromol.6b00107"> "Broadly accessible self consistent field theory for block polymer materials discovery" </a>,
+    <em>Macromolecules</em> **49**, 4675-4690 (2016).
 
-G.K. Cheong, A. Chawla, D. C. Morse and K.D. Dorfman,  
-"Open-source code for self-consistent field theory calculations of block 
-polymer phase behavior on graphics processing units." 
-European Physical Journal E 43, 15 (2020).
+  - G.K. Cheong, A. Chawla, D. C. Morse and K.D. Dorfman,
+    <a target="_blank" href="https://doi.org/10.1140/epje/i2020-11938-y"> "Open-source code for self-consistent field theory calculations of block polymer phase behavior on graphics processing units." </a>,
+    <em>European Physical Journal E</em> **43**, 15 (2020).
 
-K. Chen and D.C. Morse, "Improved algorithm for identifying partial 
-saddle-points in polymer field theoretic simulations",
-J. Chem. Phys. 162, 234901 162, 234901 (2025).
+  - K. Chen and D.C. Morse,
+    <a target= "_blank" href="https://doi.org/10.1063/5.0264036"> "Improved algorithm for identifying partial saddle-points in polymer field theoretic simulations" </a>,
+    <em>J. Chem. Phys.</em> **162**, 234901 (2025).
 
-The first two papers listed above focus on SCFT.  The 2016 Macromolecules 
-paper discusses the the older Fortran version of PSCF, but nonetheless 
-correctly describes most SCFT algorithms used by the pscf_rpc and pscf_pg 
-programs of the current version. The 2020 European Physics Journal paper 
-provides the first report of the C++ version of PSCF, and documents the 
-performance of GPU-accelerated SCFT calculations. The last paper listed
-above discusses algorithms by PSCF in PS-FTS simulations to rapidly 
-find partial saddle-point field configurations.
+The first two articles listed above focus on SCFT.  The 2016
+<em>Macromolecules</em> article actually discusses the the older Fortran 
+version of PSCF, but nonetheless correctly describes most SCFT algorithms 
+used in the pscf_rpc and pscf_pg programs of the current version. The 2020 
+<em>European Physics Journal</em> article gives the first report of the 
+C++ version of PSCF, and documents the performance of GPU-accelerated SCFT 
+calculations. The last paper listed above announces the implementation of 
+PS-FTS in PSCF, and discusses algorithms used by PSCF to efficiently find 
+partial saddle-point field configurations in PS-FTS simulations.
 
 ## Contributors
 

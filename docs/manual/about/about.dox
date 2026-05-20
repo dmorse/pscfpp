@@ -15,11 +15,12 @@ stochastic field theoretic simulation (FTS).
 <h2> Contents:</h2>
 
    <ol>
-   <li> \subpage about_methods_page     </li>
-   <li> \subpage about_history_page     </li>
+   <li> \subpage about_methods_page      </li>
+   <li> \subpage about_history_page      </li>
    <li> \subpage about_programs_page     </li>
    <li> \subpage about_features_page     </li>
-   <li> \subpage about_contributors_page     </li>
+   <li> \subpage about_contributors_page </li>
+   <li> \subpage about_citation_page     </li>
    </ol>
 
 

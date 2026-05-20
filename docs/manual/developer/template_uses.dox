@@ -17,32 +17,35 @@ following cases:
     </li>
 
     <li>
-    <b> Templatizing the dimension of space </b> :
+    <b> Dimension of space </b> :
     In code for periodic systems, the dimension of space is always 
     treated as a template parameter, denoted by D. 
     </li>
 
     <li>
     <b> Algorithm templates </b> : Algorithms that are used in two or
-    more PSCF programs are sometimes implemented in skeleton form by 
-    a class template.
+    more PSCF programs are sometimes implemented in skeleton form by a 
+    class template.
     
     </li>
     <li>
-    <b> Base classes for analogous classes used in different programs </b>:
-    The Rpc and Rpg namespaces contain many pairs of closely analogous
-    classes that play analogous roles in the implementation of the 
-    pscf_rpc CPU program and pscf_rpg GPU-accelerated program for
-    periodic systems. To reduce code duplication, both classes in such 
-    pairs are often derived from instantiations of a shared base class 
-    template that is defined in directory src/rp. 
+    <b> Bases for analogous classes for different programs </b>:
+    Different programs built by PSCF often define closely analogous 
+    classes that are defined in different program-level namespaces. 
+    Such classes often use analogous data structures and algorithms, but
+    differ primarily because of the use of different class types for a 
+    few basic data structures, such as the class used to represents a 
+    scalar field). To reduce code duplication, such analogous classes 
+    are sometimes derived from different specializations of a shared 
+    base class template.
     </li>
 </ol>
 
-These cases are not mutually exclusive. Specifically, cases C and D often 
-both apply to a single template: A skeleton version of an algorithm may 
-be implemented in a class template that is used to define base classes 
-for more specialized subclasses used by different programs.
+The cases described above are not mutually exclusive. Specifically, cases 
+C and D may both apply to a single template: A skeleton version of an 
+algorithm may be implemented in a class template, and specializations of 
+that class template may be used as base classes for more specialized 
+subclasses used by different programs.
 
 Each of these cases is discussed in more detail below.
 
@@ -110,50 +113,34 @@ the fluctuations that are sampled in such stochastic simulations can depend
 on all three physical coordinates, even if the average field configuration 
 exhibits a periodic dependence on only one or two coordinates.
 
-The decision to treat D as a template parameter in PSCF was made to 
-simplify design and improve performance of parts of the code that deal 
-with unit cells, crystallography, and periodic fields. Treating D as a 
-template parameter allows algorithms that involve description of unit 
-cells, reciprocal lattice vectors, symmetry operations, space groups, 
-and mesh dimensions to be implemented using data structures that 
-represent D-dimensional vectors and D \f$ \times \f$ D matrices using 
-memory blocks whose sizes are known at compile time, and that can thus 
-be created on the stack, rather than allocating memory for these small 
-data structures on the heap at run time. 
+The decision to treat D as a template parameter in PSCF was originally 
+made to simplify design and improve performance of parts of the code that 
+deal with unit cells, crystallography, and periodic fields. Treating D as 
+a template parameter allows algorithms that involve description of unit 
+cells, reciprocal lattice vectors, symmetry operations, space groups, and 
+mesh dimensions to be implemented using data structures that represent 
+D-dimensional vectors and D \f$ \times \f$ D matrices using memory blocks 
+whose sizes are known at compile time, and that can thus be created on 
+the stack, rather than allocating memory for these small data structures 
+on the heap at run time. 
 
 \subsection developer_template_uses_algorithm_sub C. Algorithm Templates
 
-Some algorithms and data structures that are used in several different 
-programs or contexts are implemented as class templates. The use of a 
-template allows the use of different class types with analogous 
+Some algorithms and data structures that are used in two or more 
+different programs or contexts are implemented as class templates. The 
+use of a template allows the use of different class types with analogous 
 interfaces to be used in different instantiations of such a template.
 
 For example, the Pscf::AmIteratorTmpl class template implements a skeleton 
 version of the Anderson mixing algorithm for iteratively solving a system 
 of nonlinear equations. Classes that are derived from instantiations of 
 this template are used to implement Anderson mixing SCFT iteration 
-algorithms in all three of the PSCF programs, and are also used in the 
-pscf_rpc and pscf_rpc programs to implement some of the "compressor" 
-algorithms that are used in PS-FTS simulations find field configurations 
-that satisfy a partial saddle-point condition. Every instantiation of the 
-AmIteratorTmpl class template is a subclass of a base class that is 
-specified by a template parameter. The argument assigned to this 
-template parameter is taken to be an "Iterator" base class in 
-instantiations that are used as SCFT iterators, and as a "Compressor"
-base class in instantiations used to solve the partial saddle-point
-equations for PS-FTS.  The AmIteratorTmpl template also has a second 
-template parameter which is the type of the array container used to 
-represent a residual vector (the vector of errors) and state vector 
-(the vector of unknown variables) that are used in the algorithm. 
-Some instantiations of the template that are designed to use a GPU 
-use an argument for this template parameter that is a container that 
-allocates memory in global GPU memory, while other instantiations use
-an array container that uses CPU memory. The AmIteratorTmpl template 
-delegates the computation of the residual vector, retrieval of the 
-state vector, and modification of the state vector to pure virtual 
-functions that must be implemented by subclasses.
+algorithms in all three of the PSCF programs. The same template is also
+used in the pscf_rpc and pscf_rpc programs to implement some of the 
+"compressor" algorithms that are used in PS-FTS simulations find field 
+configurations that satisfy a partial saddle-point condition. 
 
-\subsection developer_template_uses_base_sub D. Templates for analogous
+\subsection developer_template_uses_base_sub D. Base classes for analogous 
 classes used in different programs
 
 PSCF currently contains code for three programs (pscf_1d, pscf_rpc and 
@@ -206,8 +193,9 @@ locations:
      properties of an ideal gas reference system, which are used in
      every PSCF program. 
 
-   - The directory src/prdc/rp contains a set of templates that each 
-     are designed to be used as base classes for a pair of closely
+   - The directory src/rp and namespace Pscf::Rp contain a set of 
+     class templates that designed so that specializations of each
+     template can be used as base classes for a pair of closely
      analogous classes used in pscf_rpc and pscf_rpg, respectively, 
      to treat problems with periodic boundary conditions.
 
