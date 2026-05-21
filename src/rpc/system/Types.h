@@ -179,7 +179,9 @@ namespace Rpc {
 
       template <typename Data> using HostArray = Util::DArray<Data>;
       using Vector = Util::DRArray<double>;
+
       using Real = double;
+      using Complex = fftw_complex;
 
    };
 

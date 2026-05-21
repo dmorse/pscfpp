@@ -165,7 +165,9 @@ namespace Rpg {
 
       template <typename T> using HostArray = Pscf::HostDArray<T>;
       using Vector = Pscf::DeviceArray<Pscf::cudaReal>;
+
       using Real = Pscf::cudaReal;
+      using Complex = Pscf::cudaComplex;
 
    };
 
