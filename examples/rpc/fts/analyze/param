@@ -38,8 +38,13 @@ System{
 
       BinaryStructureFactorGrid{
         interval        1
+        outputFileName  out/structureFactorGrid
+      }
+
+      BinaryStructureFactor{
+        interval        1
         outputFileName  out/structureFactor
-        nSamplePerBlock 2
+        keepWaveData    1
       }
 
     }

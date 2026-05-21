@@ -14,6 +14,7 @@
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/WaveList.h>
 
+#include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/VecOpCx.h>
 #include <pscf/cpu/complex.h>
 #include <pscf/interaction/Interaction.h>
@@ -28,6 +29,7 @@
 #include <util/global.h>
 
 #include <iostream>
+#include <complex>
 
 namespace Pscf {
 namespace Rpc {
@@ -46,6 +48,7 @@ namespace Rpc {
       kMeshDimensions_(),
       nWave_(0),
       nBunch_(0),
+      keepWaveData_(false),
       isInitialized_(false)
    {
       ParamComposite::setClassName("BinaryStructureFactor");
@@ -63,6 +66,9 @@ namespace Rpc {
 
       AnalyzerT::readInterval(in);
       AnalyzerT::readOutputFileName(in);
+      keepWaveData_ = false;
+      ParamComposite::readOptional<bool>(in, "keepWaveData", 
+                                         keepWaveData_);
       isInitialized_ = true;
    }
 
@@ -84,18 +90,22 @@ namespace Rpc {
          UTIL_CHECK(!wk_.isAllocated());
          UTIL_CHECK(!waveBunchIds_.isAllocated());
          UTIL_CHECK(!waveWeights_.isAllocated());
-         UTIL_CHECK(!waveAccumulators_.isAllocated());
          wm_.allocate(rMeshDimensions);
          wk_.allocate(rMeshDimensions);
          waveBunchIds_.allocate(nWave_);
          waveWeights_.allocate(nWave_);
-         waveAccumulators_.allocate(nWave_);
+         if (keepWaveData_) {
+            UTIL_CHECK(!waveAccumulators_.isAllocated());
+            waveAccumulators_.allocate(nWave_);
+         }
       }
       UTIL_CHECK(wm_.capacity() == mesh.size());
       UTIL_CHECK(wk_.capacity() == nWave_);
       UTIL_CHECK(waveBunchIds_.capacity() == nWave_);
       UTIL_CHECK(waveWeights_.capacity() == nWave_);
-      UTIL_CHECK(waveAccumulators_.capacity() == nWave_);
+      if (keepWaveData_) {
+         UTIL_CHECK(waveAccumulators_.capacity() == nWave_);
+      }
 
       // Sort waves and set nBunch
       WaveList<D>& waveList = system().waveList();
@@ -138,7 +148,11 @@ namespace Rpc {
       for (int iw = 0; iw < nWave_; ++iw) {
          waveBunchIds_[iw] = -1;
          waveWeights_[iw] = 0.0;
-         waveAccumulators_[iw].clear();
+      }
+      if (keepWaveData_) {
+         for (int iw = 0; iw < nWave_; ++iw) {
+            waveAccumulators_[iw].clear();
+         }
       }
 
       // Define references to WaveList data structures
@@ -188,11 +202,6 @@ namespace Rpc {
             sum += count;
             UTIL_CHECK(std::abs(kSq[iw] - wavenumberSq) < 1.0E-8);
          }
-         #if 0
-         std::cout << std::endl << Int(ib)  << "  "
-                   << Dbl(bunchWavenumbers_[ib])
-                   << Dbl(wavenumberSq) << Dbl(sum);
-         #endif
 
          // Normalize weights for all waves in this bunch
          tot = 0.0;
@@ -201,15 +210,6 @@ namespace Rpc {
             waveWeights_[iw] /= sum;
             tot += waveWeights_[iw];
             ++nw;
-            #if 0
-            IntVec<D> const & minImage = waveList.minImages()[iw];
-            IntVec<D> stdImage = minImage;
-            mesh.shift(stdImage);
-            std::cout << std::endl
-                      << stdImage
-                      << minImage
-                      << Dbl(kSq[iw]) << Dbl(waveWeights_[iw]*sum);
-            #endif
          }
          UTIL_CHECK(std::abs(tot - 1.0) < 1.0E-8);
 
@@ -230,21 +230,21 @@ namespace Rpc {
          UTIL_CHECK(isInitialized_);
          UTIL_CHECK(nWave_ > 0);
          UTIL_CHECK(nBunch_ > 0);
+         UTIL_CHECK(nWave_ >= nBunch_);
          UTIL_CHECK(wk_.capacity() == nWave_);
          UTIL_CHECK(waveBunchIds_.capacity() == nWave_);
          UTIL_CHECK(waveWeights_.capacity() == nWave_);
-         UTIL_CHECK(bunchWavenumbers_.capacity() >= nBunch_);
-         UTIL_CHECK(bunchValues_.capacity() >= nBunch_);
+         int m = bunchAccumulators_.capacity();
+         UTIL_CHECK(m >= nBunch_);
+         UTIL_CHECK(bunchWavenumbers_.capacity() >= m);
+         UTIL_CHECK(bunchValues_.capacity() >= m);
          UTIL_CHECK(system().w().hasData());
 
          // Compute W_{-}(r)
          RField<D> const & wa = system().w().rgrid(0);
          RField<D> const & wb = system().w().rgrid(1);
-         //VecOp::subVV(wm_, wa, wb);
-         //VecOp::mulEqS(wm_, 0.5);
-         for (int iw = 0; iw < nWave_; ++iw) {
-             wm_[iw] = 0.5 * ( wa[iw] - wb[iw] );
-         }
+         VecOp::subVV(wm_, wa, wb);
+         VecOp::mulEqS(wm_, 0.5);
 
          // Fourier transform W_{-}(r)
          system().domain().fft().forwardTransform(wm_, wk_);
@@ -262,13 +262,14 @@ namespace Rpc {
          double b_ = 0.5 / (chi * vMonomer);
 
          // Compute structure factors for all waves, add to bunchValues_ 
-         double absSqWk, value;
+         double value;
          int ib;
          for (int iw = 0; iw < nWave_; ++iw) {
-            absSqWk = absSq( wk_[iw] );
-            value = a_ * absSqWk;
+            value = a_ * absSq( wk_[iw] );
             value -= b_;
-            waveAccumulators_[iw].sample(value);
+            if (keepWaveData_) {
+               waveAccumulators_[iw].sample(value);
+            }
             ib = waveBunchIds_[iw];
             bunchValues_[ib] += waveWeights_[iw] * value;
          }
@@ -287,34 +288,44 @@ namespace Rpc {
    template <int D>
    void BinaryStructureFactor<D>::output()
    {
-      // Output average values for bunches
-      std::string outputFileName = AnalyzerT::outputFileName();
-      outputFileName += "_bunch";
+      std::string outputFileName;
+      std::ofstream outputFile_;
+
+      // Output spherical average values of S(q) for bunches
+      outputFileName = AnalyzerT::outputFileName();
+      if (keepWaveData_) {
+         outputFileName += "_ave";
+      }
       AnalyzerT::fileMaster().openOutputFile(outputFileName, outputFile_);
-      outputFile_ << "\t" << "q";
-      outputFile_ << "\t" <<"\t" <<"S(q)";
       for (int i = 0; i < nBunch_; ++i) {
-         outputFile_ << std::endl;
          outputFile_ << Dbl(bunchWavenumbers_[i], 18, 8);
          outputFile_ << Dbl(bunchAccumulators_[i].average(), 18, 8);
+         outputFile_ << std::endl;
       }
       outputFile_.close();
 
-      #if 1
-      // Output average values for waves
-      outputFileName = AnalyzerT::outputFileName();
-      outputFileName += "_wave";
-      AnalyzerT::fileMaster().openOutputFile(outputFileName, outputFile_);
-      MeshIterator<D> iter(kMeshDimensions_);
-      int iw;
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         iw = iter.rank(); 
-         outputFile_ << Int(iw) << iter.position()
-                     << Dbl(waveAccumulators_[iw].average(), 18, 8)
-                     << std::endl;
+      // Optionally output S(q) values for individual waves
+      if (keepWaveData_) {
+         outputFileName = AnalyzerT::outputFileName();
+         outputFileName += "_wave";
+         AnalyzerT::fileMaster().openOutputFile(outputFileName, 
+                                                outputFile_);
+         MeshIterator<D> iter(kMeshDimensions_);
+         IntVec<D> p; 
+         int iw, j;
+         for (iter.begin(); !iter.atEnd(); ++iter) {
+            iw = iter.rank();
+            p = iter.position();
+            outputFile_ << Int(iw)
+                        << Dbl(waveAccumulators_[iw].average(), 18, 8);
+            for (j = 0; j < D; ++j) {
+               outputFile_ << Int(p[j], 5);
+            }
+            outputFile_ << std::endl;
+         }
+         outputFile_.close();
       }
-      outputFile_.close();
-      #endif
+
    }
 
 }

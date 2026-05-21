@@ -144,11 +144,11 @@ namespace Rpc {
       /// Number of wavevector bunches (sets of wavevectors of equal norm).
       int nBunch_;
 
+      /// Should S(q) data be retained for individual waves?
+      bool keepWaveData_;
+
       /// Has readParameters been called?
       bool isInitialized_;
-
-      /// File used for output.
-      std::ofstream outputFile_;
 
    };
 
