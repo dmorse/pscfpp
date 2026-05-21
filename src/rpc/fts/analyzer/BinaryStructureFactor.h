@@ -106,6 +106,18 @@ namespace Rpc {
       using AnalyzerT::system;
       using AnalyzerT::simulator;
 
+   protected:
+
+      /**
+      * Compute member variables wm_ and wk_.
+      */
+      void computeW();
+
+      /**
+      * Complete calculation of current structure factors.
+      */
+      void computeS(Array<fftw_complex> const & wk);
+
    private:
 
       /// Exchange field W_(r):  wm = (wa-wb)/2  .

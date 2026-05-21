@@ -44,7 +44,7 @@ namespace Rpc {
    BinaryStructureFactor<D>::BinaryStructureFactor(
                                        Simulator<D>& simulator,
                                        System<D>& system)
-    : Analyzer<D>(simulator, system),
+    : AnalyzerT(simulator, system),
       kMeshDimensions_(),
       nWave_(0),
       nBunch_(0),
@@ -189,7 +189,7 @@ namespace Rpc {
          sum = 0.0;
          for (k = begin; k < end; ++k) {
             iw = sortedIds[k];
-            // Check that each wave is treated only once
+            // Check that each wave is only processed once
             UTIL_CHECK(waveBunchIds_[iw] == -1);
             UTIL_CHECK(std::abs(waveWeights_[iw]) < 1.0E-8);
             waveBunchIds_[iw] = ib;
@@ -198,6 +198,7 @@ namespace Rpc {
             } else {
                count = 1.0;
             }
+            count = 1.0;
             waveWeights_[iw] = count;
             sum += count;
             UTIL_CHECK(std::abs(kSq[iw] - wavenumberSq) < 1.0E-8);
@@ -225,7 +226,6 @@ namespace Rpc {
    void BinaryStructureFactor<D>::sample(long iStep)
    {
       if (AnalyzerT::isAtInterval(iStep)) {
-
          // Preconditions
          UTIL_CHECK(isInitialized_);
          UTIL_CHECK(nWave_ > 0);
@@ -240,46 +240,67 @@ namespace Rpc {
          UTIL_CHECK(bunchValues_.capacity() >= m);
          UTIL_CHECK(system().w().hasData());
 
-         // Compute W_{-}(r)
-         RField<D> const & wa = system().w().rgrid(0);
-         RField<D> const & wb = system().w().rgrid(1);
-         VecOp::subVV(wm_, wa, wb);
-         VecOp::mulEqS(wm_, 0.5);
-
-         // Fourier transform W_{-}(r)
-         system().domain().fft().forwardTransform(wm_, wk_);
-
-         // Initialize bunch average values to zero
-         for (int ib = 0; ib < nBunch_; ++ib) {
-            bunchValues_[ib] = 0.0;
-         }
-
-         // Set constant coefficients
-         double const vSystem  = system().domain().unitCell().volume();
-         double const vMonomer = system().mixture().vMonomer();
-         double const chi = system().interaction().chi(0,1);
-         double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
-         double b_ = 0.5 / (chi * vMonomer);
-
-         // Compute structure factors for all waves, add to bunchValues_ 
-         double value;
-         int ib;
-         for (int iw = 0; iw < nWave_; ++iw) {
-            value = a_ * absSq( wk_[iw] );
-            value -= b_;
-            if (keepWaveData_) {
-               waveAccumulators_[iw].sample(value);
-            }
-            ib = waveBunchIds_[iw];
-            bunchValues_[ib] += waveWeights_[iw] * value;
-         }
-
-         // Pass spherically averaged values to bunchAccumulators_
-         for (ib = 0; ib < nBunch_; ++ib) {
-            bunchAccumulators_[ib].sample(bunchValues_[ib]);
-         }
-
+         // Computation
+         computeW();
+         computeS(wk_);
       }
+   }
+
+   /*
+   * Compute W_{-} and it Fourier transform.
+   */
+   template <int D>
+   void BinaryStructureFactor<D>::computeW()
+   {
+      // Compute W_{-}(r)
+      RField<D> const & wa = system().w().rgrid(0);
+      RField<D> const & wb = system().w().rgrid(1);
+      VecOp::subVV(wm_, wa, wb);
+      VecOp::mulEqS(wm_, 0.5);
+
+      // Fourier transform W_{-}(r)
+      system().domain().fft().forwardTransform(wm_, wk_);
+   }
+
+   /*
+   * Compute structure factors for all wavevectors and bunches.
+   */
+   template <int D>
+   void BinaryStructureFactor<D>::computeS(Array<fftw_complex> const & wk)
+   {
+      // Precondition
+      UTIL_CHECK(wk.capacity() == nWave_);
+
+      // Initialize bunch average values to zero
+      for (int ib = 0; ib < nBunch_; ++ib) {
+         bunchValues_[ib] = 0.0;
+      }
+
+      // Set coefficients a_ and b_
+      double const vSystem  = system().domain().unitCell().volume();
+      double const vMonomer = system().mixture().vMonomer();
+      double const chi = system().interaction().chi(0,1);
+      double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
+      double b_ = 0.5 / (chi * vMonomer);
+
+      // Compute structure factors for all waves, add to bunchValues_
+      double value;
+      int ib;
+      for (int iw = 0; iw < nWave_; ++iw) {
+         value = a_ * absSq( wk[iw] );
+         value -= b_;
+         if (keepWaveData_) {
+            waveAccumulators_[iw].sample(value);
+         }
+         ib = waveBunchIds_[iw];
+         bunchValues_[ib] += waveWeights_[iw] * value;
+      }
+
+      // Pass bunchValues_ to bunchAccumulators_
+      for (ib = 0; ib < nBunch_; ++ib) {
+         bunchAccumulators_[ib].sample(bunchValues_[ib]);
+      }
+
    }
 
    /*
