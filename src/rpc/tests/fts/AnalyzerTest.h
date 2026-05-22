@@ -14,6 +14,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -130,6 +131,7 @@ public:
 
       checkHamiltonianAnalyzer();
       checkBinaryStructureFactorGrid();
+      checkBinaryStructureFactor();
    }
 
    void checkHamiltonianAnalyzer()
@@ -187,6 +189,41 @@ public:
       qDiff = fabs(2.70084069e+00 - q);
       TEST_ASSERT(qDiff < 1.0E-4);
       SqDiff = fabs(2.32910285e+00 - Sq);
+      TEST_ASSERT(SqDiff < 1.0E-4);
+
+      file.close();
+   }
+
+   void checkBinaryStructureFactor()
+   {
+      // Open data file
+      std::string filename = "out/binaryStructureFactor_ave";
+      std::ifstream file;
+      openInputFile(filename, file);
+
+      // Read and discard line with column labels
+      // std::string line;
+      // std::getline(file, line);
+
+      // Obtain the first three lines of q and S(q)
+      double q, Sq;
+
+      file >> q >> Sq;
+      double qDiff = std::abs(0.0 - q);
+      TEST_ASSERT(qDiff < 1.0E-4);
+      double SqDiff = std::abs(-1.13103186e+00 - Sq);
+      TEST_ASSERT(SqDiff < 1.0E-4);
+
+      file >> q >> Sq;
+      qDiff = std::abs(1.90978277e+00 - q);
+      TEST_ASSERT(qDiff < 1.0E-4);
+      SqDiff = std::abs(-1.31782364E-01 - Sq);
+      TEST_ASSERT(SqDiff < 1.0E-4);
+
+      file >> q >> Sq;
+      qDiff = std::abs(2.70084069e+00 - q);
+      TEST_ASSERT(qDiff < 1.0E-4);
+      SqDiff = std::abs(2.76882867e+00 - Sq);
       TEST_ASSERT(SqDiff < 1.0E-4);
 
       file.close();

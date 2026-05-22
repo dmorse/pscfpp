@@ -9,6 +9,7 @@
 #include <pscf/math/IntVec.h>
 
 #include <util/param/ParamComposite.h>
+#include <util/containers/Array.h>
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
 #include <util/format/Int.h>
@@ -69,7 +70,7 @@ namespace Rp {
       // Compute and compute mesh dimensions
       Mesh<D> const & mesh = system().domain().mesh();
       IntVec<D> const & rMeshDimensions = mesh.dimensions();
-      typename T::FFT::computeKMesh(rMeshDimensions, kMeshDimensions_, nWave_);
+      FFTT::computeKMesh(rMeshDimensions, kMeshDimensions_, nWave_);
 
       // If needed, allocate arrays indexed by wave id
       if (!wm_.isAllocated()){
@@ -184,7 +185,7 @@ namespace Rp {
             } else {
                count = 1.0;
             }
-            count = 1.0;
+            // count = 1.0;   // Uncomment to weight waves equally
             waveWeights_[iw] = count;
             sum += count;
             UTIL_CHECK(std::abs(kSq[iw] - wavenumberSq) < 1.0E-8);
@@ -206,38 +207,16 @@ namespace Rp {
    }
 
    /*
-   * Compute structure factors for all wavevectors and bunches.
-   */
-   template <int D, class T>
-   void BinaryStructureFactor<D,T>::sample(long iStep)
-   {
-      if (AnalyzerT::isAtInterval(iStep)) {
-         // Preconditions
-         UTIL_CHECK(isInitialized_);
-         UTIL_CHECK(nWave_ > 0);
-         UTIL_CHECK(nBunch_ > 0);
-         UTIL_CHECK(nWave_ >= nBunch_);
-         UTIL_CHECK(wk_.capacity() == nWave_);
-         UTIL_CHECK(waveBunchIds_.capacity() == nWave_);
-         UTIL_CHECK(waveWeights_.capacity() == nWave_);
-         int m = bunchAccumulators_.capacity();
-         UTIL_CHECK(m >= nBunch_);
-         UTIL_CHECK(bunchWavenumbers_.capacity() >= m);
-         UTIL_CHECK(bunchValues_.capacity() >= m);
-         UTIL_CHECK(system().w().hasData());
-
-         // Computation
-         computeW();
-         computeS(wk_);
-      }
-   }
-
-   /*
    * Compute W_{-} and it Fourier transform.
    */
    template <int D, class T>
    void BinaryStructureFactor<D,T>::computeW()
    {
+      // Preconditions
+      UTIL_CHECK(isInitialized_);
+      UTIL_CHECK(nWave_ > 0);
+      UTIL_CHECK(wk_.capacity() == nWave_);
+
       // Compute W_{-}(r)
       typename T::RField const & wa = system().w().rgrid(0);
       typename T::RField const & wb = system().w().rgrid(1);
@@ -252,9 +231,19 @@ namespace Rp {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::computeS(Array<fftw_complex> const & wk)
+   void BinaryStructureFactor<D,T>::computeS(
+                                    Array<typename T::Complex> const & wk)
    {
-      // Precondition
+      // Preconditions
+      UTIL_CHECK(isInitialized_);
+      UTIL_CHECK(nBunch_ > 0);
+      UTIL_CHECK(nWave_ >= nBunch_);
+      int m = bunchAccumulators_.capacity();
+      UTIL_CHECK(m >= nBunch_);
+      UTIL_CHECK(bunchWavenumbers_.capacity() >= m);
+      UTIL_CHECK(bunchValues_.capacity() >= m);
+      UTIL_CHECK(waveBunchIds_.capacity() == nWave_);
+      UTIL_CHECK(waveWeights_.capacity() == nWave_);
       UTIL_CHECK(wk.capacity() == nWave_);
 
       // Initialize bunch average values to zero

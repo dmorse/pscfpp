@@ -8,10 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/math/IntVec.h>                     // member
 #include <util/accumulators/Average.h>            // member
 #include <util/containers/DArray.h>               // member
 
 #include <iostream>
+
+// Forward declaration
+namespace Util {
+   template <typename T> class Array;
+}
 
 namespace Pscf {
 namespace Rp {
@@ -58,15 +64,12 @@ namespace Rp {
       /**
       * Read parameters from file.
       *
-      * Input format:
-      *
-      *   - int        interval          sampling interval
-      *   - string     outputFileName    output file base name
-      *   - int        nSamplePerBlock   output file base name
+      * For parameter file format see
+      * \ref rp_BinaryStructureFactor_page "Manual Page"
       *
       * \param in input parameter stream
       */
-      void readParameters(std::istream& in);
+      void readParameters(std::istream& in) override;
 
       /**
       * Setup immediately before the main loop.
@@ -74,28 +77,18 @@ namespace Rp {
       * Allocates any private data structures that were not allocated
       * previously.
       */
-      void setup();
+      void setup() override;
 
-      /**
-      * Compute structure factors and add to accumulators.
-      *
-      * \param iStep step counter
-      */
-      void sample(long iStep);
+      // Virual sample function is implemented by a subclass
 
       /**
       * Output results to predefined output file.
+      *
+      * For output files and file format, see
+      * \ref rp_BinaryStructureFactor_page "Manual Page"
+      *
       */
-      void output();
-
-   protected:
-
-      // Alias for base class
-      using AnalyzerT = typename T::Analyzer;
-
-      // Inherited protected member functions (selected)
-      using AnalyzerT::system;
-      using AnalyzerT::simulator;
+      void output() override;
 
    protected:
 
@@ -109,13 +102,20 @@ namespace Rp {
       */
       void computeS(Array<typename T::Complex> const & wk);
 
+      /// Discrete Fourier transform (DFT) of wm_ . 
+      typename T::RFieldDft wk_;
+
+      // Alias for base class
+      using AnalyzerT = typename T::Analyzer;
+
+      // Inherited protected member functions (selected)
+      using AnalyzerT::system;
+      using AnalyzerT::simulator;
+
    private:
 
       /// Exchange field W_(r):  wm = (wa-wb)/2  .
       typename T::RField wm_;
-
-      /// Discrete Fourier transform (DFT) of wm_ . 
-      typename T::RFieldDft wk_;
 
       /// Bunch ids, indexed by wave id (id of bunch containing a wave).
       DArray<int> waveBunchIds_;
@@ -153,12 +153,10 @@ namespace Rp {
       /// Has readParameters been called?
       bool isInitialized_;
 
-   };
+      // Alias for FFT wrapper class
+      using FFTT = typename T::FFT;
 
-   // Explicit instantiation declarations
-   extern template class BinaryStructureFactor<1>;
-   extern template class BinaryStructureFactor<2>;
-   extern template class BinaryStructureFactor<3>;
+   };
 
 } // namespace Rp
 } // namespace Pscf
