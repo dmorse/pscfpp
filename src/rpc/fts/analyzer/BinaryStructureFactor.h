@@ -49,6 +49,11 @@ namespace Rpc {
       BinaryStructureFactor(Simulator<D>& simulator, System<D>& system);
 
       /**
+      * Setup before the main loop.
+      */
+      void setup() override;
+
+      /**
       * Compute structure factors and add to accumulators.
       *
       * \param iStep step counter
@@ -62,6 +67,8 @@ namespace Rpc {
       using typename RpBinaryStructureFactor::AnalyzerT;
 
       using RpBinaryStructureFactor::wk_;
+      using RpBinaryStructureFactor::allocate;
+      using RpBinaryStructureFactor::findWaveBunches;
       using RpBinaryStructureFactor::computeW;
       using RpBinaryStructureFactor::computeS;
 

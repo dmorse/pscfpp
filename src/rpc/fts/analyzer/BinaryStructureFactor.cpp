@@ -39,6 +39,17 @@ namespace Rpc {
    {}
 
    /*
+   * Setup before entering main loop.
+   */
+   template <int D>
+   void BinaryStructureFactor<D>::setup()
+   {
+      allocate();
+      Cpu::WaveList<D> const & waveList = AnalyzerT::system().waveList();
+      findWaveBunches(waveList.kSq(), waveList.implicitInverse());
+   }
+
+   /*
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D>

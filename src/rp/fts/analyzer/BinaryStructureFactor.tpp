@@ -54,16 +54,15 @@ namespace Rp {
       AnalyzerT::readInterval(in);
       AnalyzerT::readOutputFileName(in);
       keepWaveData_ = false;
-      ParamComposite::readOptional<bool>(in, "keepWaveData", 
-                                         keepWaveData_);
+      ParamComposite::readOptional(in, "keepWaveData", keepWaveData_);
       isInitialized_ = true;
    }
 
    /*
-   * Setup before entering main loop.
+   * Allocate memory arrays with dimensions that depend only on mesh.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::setup()
+   void BinaryStructureFactor<D,T>::allocate()
    {
       UTIL_CHECK(isInitialized_);
 
@@ -93,6 +92,18 @@ namespace Rp {
       if (keepWaveData_) {
          UTIL_CHECK(waveAccumulators_.capacity() == nWave_);
       }
+   }
+
+   /*
+   * Allocate and initialize data structures that involve wave bunches.
+   */
+   template <int D, class T>
+   void BinaryStructureFactor<D,T>::findWaveBunches(
+                                  Array<double> const & kSq,
+                                  Array<bool> const & implicit)
+   {
+      UTIL_CHECK(kSq.capacity() == nWave_);
+      UTIL_CHECK(implicit.capacity() == nWave_);
 
       // Sort waves and set nBunch
       typename T::WaveList& waveList = system().waveList();
@@ -143,13 +154,9 @@ namespace Rp {
       }
 
       // Define references to WaveList data structures
-      Array< double > const & kSq = waveList.kSq();
       Array< int > const & sortedIds = waveList.sortedIds();
-      Array<bool> const & implicit = waveList.implicitInverse();
       GArray< Pair<int> > const & bunches = waveList.sortedBunches();
-      UTIL_CHECK(kSq.capacity() == nWave_);
       UTIL_CHECK(sortedIds.capacity() == nWave_);
-      UTIL_CHECK(implicit.capacity() == nWave_);
       UTIL_CHECK(bunches.size() == nBunch_);
 
       // Set bunchWavenumbers_, waveBunchIds_, and waveWeights_

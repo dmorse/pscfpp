@@ -49,8 +49,8 @@ namespace Rpg {
       */
       BinaryStructureFactor(Simulator<D>& simulator, System<D>& system);
 
-      /*
-      * Setup before main simulation loop
+      /**
+      * Setup before the main loop.
       */
       void setup() override;
 
@@ -67,14 +67,17 @@ namespace Rpg {
                       = typename Rp::BinaryStructureFactor<D, Types<D> >;
       using typename RpBinaryStructureFactor::AnalyzerT;
 
-      using RpBinaryStructureFactor::wk_;
+      using RpBinaryStructureFactor::allocate;
+      using RpBinaryStructureFactor::findWaveBunches;
       using RpBinaryStructureFactor::computeW;
       using RpBinaryStructureFactor::computeS;
+
+      using RpBinaryStructureFactor::wk_;
 
    private:
 
       // Copy of wk_ on host CPU
-      HostDArray<cudaComplex> wkHost_
+      HostDArray<cudaComplex> wkHost_;
 
    };
 

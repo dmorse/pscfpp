@@ -17,7 +17,6 @@
 #include <prdc/cuda/WaveList.h>
 
 #include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/VecOpCx.h>
 #include <pscf/cuda/complex.h>
 
 #include <rp/fts/analyzer/BinaryStructureFactor.tpp>
@@ -44,11 +43,16 @@ namespace Rpg {
    template <int D>
    void BinaryStructureFactor<D>::setup()
    {
-      RpBinaryStructureFactor::setup();
+      allocate();
       UTIL_CHECK(wk_.isAllocated());
       if (!wkHost_.isAllocated()) {
          wkHost_.allocate(wk_.capacity());
       }
+
+      Cuda::WaveList<D> const & waveList = AnalyzerT::system().waveList();
+      HostDArray<double> kSq = waveList.kSq();
+      HostDArray<bool> implicit = waveList.implicitInverse();
+      findWaveBunches(kSq, implicit);
    }
 
    /*
@@ -59,7 +63,7 @@ namespace Rpg {
    {
       if (AnalyzerT::isAtInterval(iStep)) {
          computeW();
-         wkHost_ = wk_;
+         wkHost_ = wk_;  // Copy wk_ from device to host
          computeS(wkHost_);
       }
    }

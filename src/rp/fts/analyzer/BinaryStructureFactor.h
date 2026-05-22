@@ -71,15 +71,7 @@ namespace Rp {
       */
       void readParameters(std::istream& in) override;
 
-      /**
-      * Setup immediately before the main loop.
-      *
-      * Allocates any private data structures that were not allocated
-      * previously.
-      */
-      void setup() override;
-
-      // Virual sample function is implemented by a subclass
+      // Virual setup and sample functions are implemented by subclasses
 
       /**
       * Output results to predefined output file.
@@ -91,6 +83,21 @@ namespace Rp {
       void output() override;
 
    protected:
+
+      /**
+      * Allocate member arrays with dimensions that depend only on mesh.
+      */
+      void allocate();
+
+      /**
+      * Allocate and initialize data structures involving wave bunches.
+      * 
+      * \param kSq  values of square wavenumbers
+      * \param implicit  bools indicating existence of implicit inverse
+      */
+      void findWaveBunches(
+		 Array<double> const & kSq,
+		 Array<bool> const & implicit);
 
       /**
       * Compute member variables wm_ and wk_.
