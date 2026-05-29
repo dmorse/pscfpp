@@ -353,7 +353,7 @@ on the class name.
   <li> \subpage rp_HamiltonianAnalyzer_page "HamiltonianAnalyzer" :
        Compute average value of the field theoretic Hamiltonian, and
        optionally output Hamiltonian values. </li>
-  <li> \subpage rp_BinaryStructureFactorGrid_page "BinaryStructureFactorGrid":
+  <li> \subpage rp_BinaryStructureFactor_page "BinaryStructureFactor":
        Compute the structure factor of a system with two monomer types.
        </li>
   <li> \subpage rp_StructureFactorBunched_page "StructureFactorBunched":

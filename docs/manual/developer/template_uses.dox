@@ -6,7 +6,7 @@
 
 \section developer_template_uses_cases_sec Overview
 
-Most uses of C++ class templates in PSCF fit one or more of the 
+Most uses of C++ class templates in PSCF fall into one or more of the 
 following cases:
 
 <ol type="A">
@@ -32,20 +32,16 @@ following cases:
     <b> Bases for analogous classes for different programs </b>:
     Different programs built by PSCF often define closely analogous 
     classes that are defined in different program-level namespaces. 
-    Such classes often use analogous data structures and algorithms, but
-    differ primarily because of the use of different class types for a 
-    few basic data structures, such as the class used to represents a 
-    scalar field). To reduce code duplication, such analogous classes 
-    are sometimes derived from different specializations of a shared 
-    base class template.
+    To reduce code duplication, such analogous classes are sometimes 
+    derived from different specializations of a shared base class 
+    template.
     </li>
 </ol>
 
-The cases described above are not mutually exclusive. Specifically, cases 
-C and D may both apply to a single template: A skeleton version of an 
-algorithm may be implemented in a class template, and specializations of 
-that class template may be used as base classes for more specialized 
-subclasses used by different programs.
+The cases described above are not mutually exclusive. Specifically, 
+cases C and D may overlap: An algorithm may be implemented in a class 
+template, and specializations of that  template may be used as base 
+classes for more specialized subclasses used by different programs.
 
 Each of these cases is discussed in more detail below.
 
@@ -59,11 +55,11 @@ however, PSCF relies primarily on a set of container templates that are
 distributed with the package.
 
 For example, most one-dimensional arrays used in PSCF are defined as
-instantiations of a class template named Util::DArray. This template takes 
-the data type of a single element as a template parameter, so that
-Util::DArray<double> is an array of double precision real numbers. The 
-source code for DArray and other container templates used in PSCF is 
-located in directory src/util/containers.
+specializations of a class template named Util::DArray. This template takes 
+the type name of a single array element as a template parameter. Thus,
+for example, Util::DArray<double> is an array of double precision real 
+numbers. The source code for DArray and other container templates used 
+in PSCF is located in directory src/util/containers.
 
 The DArray class template defines a simple dynamically allocated array
 that allows individual elements to be access via an overloaded subscript
@@ -79,24 +75,23 @@ a std::vector (which is a dynamic array whose size can grow at any time
 by pushing elements to the end of the array) or by std::array (for which 
 the array size must be known at compile time). The container classes used 
 by PSCF also provide a mechanism to either enable run-time checking of 
-array bounds, to facilitate debugging of errors, or disable these 
-additional checks to maximize performance in production code.
+array bounds, to facilitate debugging, or disable these additional checks 
+to maximize performance in production code.
 
 \subsection developer_template_uses_D_sub B. Dimension of space
 
 Throughout the code for systems with periodic boundary conditions, the
-the dimension of space, denoted by D, is treated as a template parameter.  
+dimension of space, denoted by D, is treated as a template parameter.  
 Almost all of the classes used defined namespaces Prdc, Rpc and Rpg are 
-defined as instantiations of class templates in which D is a template 
-parameter, and often the only template parameter.  For example, classes 
-used by pscf_rpc to represent a block within a block polymer and an entire 
-polymer are defined as instantiations of templates that are declared within 
-namespace Pscf::Rpc
-as "template <int D> class Block" and "template <int D> class Polymer",
-respectively. For each class template for which D is the only template
-parameter, the PSCF build system actually explicitly instantiates (i.e.,
-compiles code for) three specializations corresponding to the three
-possible values of D = 1, 2, and 3.
+defined as specializations of class templates in which D is a template 
+parameter, often the only template parameter.  For example, classes used 
+by pscf_rpc to represent a block within a block polymer and an entire 
+polymer are defined as specializations of templates that are declared 
+within namespace Pscf::Rpc as "template <int D> class Block" and 
+"template <int D> class Polymer", respectively. For each class template 
+for which D is the only template parameter, the PSCF build system actually 
+explicitly instantiates (i.e., compiles code for) three specializations 
+corresponding to the three possible values of D = 1, 2, and 3.
 
 The ability to use different values for the spatial dimension D is
 primarily relevant to SCFT calculations of periodic structures. In this
@@ -120,52 +115,51 @@ a template parameter allows algorithms that involve description of unit
 cells, reciprocal lattice vectors, symmetry operations, space groups, and 
 mesh dimensions to be implemented using data structures that represent 
 D-dimensional vectors and D \f$ \times \f$ D matrices using memory blocks 
-whose sizes are known at compile time, and that can thus be created on 
-the stack, rather than allocating memory for these small data structures 
-on the heap at run time. 
+whose sizes are known at compile time, and that can thus be created on
+the stack, rather than needing to dynamically allocate memory for all 
+such small data structures on the heap at run time. 
 
 \subsection developer_template_uses_algorithm_sub C. Algorithm Templates
 
 Some algorithms and data structures that are used in two or more 
 different programs or contexts are implemented as class templates. The 
 use of a template allows the use of different class types with analogous 
-interfaces to be used in different instantiations of such a template.
+purposes to be declared as template type name parameters.
 
 For example, the Pscf::AmIteratorTmpl class template implements a skeleton 
 version of the Anderson mixing algorithm for iteratively solving a system 
-of nonlinear equations. Classes that are derived from instantiations of 
+of nonlinear equations. Classes that are derived from specializations of 
 this template are used to implement Anderson mixing SCFT iteration 
 algorithms in all three of the PSCF programs. The same template is also
 used in the pscf_rpc and pscf_rpc programs to implement some of the 
 "compressor" algorithms that are used in PS-FTS simulations find field 
-configurations that satisfy a partial saddle-point condition. 
+configurations that satisfy a partial saddle-point condition. Different
+specializations of this template may, however, use different data types
+to represent residual vectors and solution vectors.
 
 \subsection developer_template_uses_base_sub D. Base classes for analogous 
 classes used in different programs
 
 PSCF currently contains code for three programs (pscf_1d, pscf_rpc and 
-pscf_rpg, respectively) that are constructing using source code from 
-three corresonding program-level namespaces (Pscf:R1d, Pscf::Rpc, and 
-Pscf::Rpg, respectively).  Many of the data structures and algorithms 
+pscf_rpg, respectively) that are constructed using source code from 
+three corresonding program-level namespaces named Pscf:R1d, Pscf::Rpc, 
+and Pscf::Rpg, respectively. Many of the data structures and algorithms 
 used in different PSCF programs are closely analogous, but are 
-implemented in analogous classes defined in different program level 
-namespaces. Analogous classes defined in different program-level 
-namespaces are generally given the same name. Name clashes are avoided 
-because, by convention, classes and function that are defined in one 
-program-level namespace may not use classes and functions that are 
-defined in a different program level namespace. 
+implemented as distinct but analogous classes defined in different program 
+level namespaces. Analogous classes defined in different program-level 
+namespaces are generally given the same name. Name clashes are prevented
+by a convention requiring that classes and function that are defined in 
+one program-level PSCF namespace may never use or refer to classes or 
+functions that are defined in a different program-level namespace. 
 
 For example, each of the three program-level namespaces uses a class or 
-class template named Polymer that represents one polymer species within 
-a system that may contain a mixture of species. The executable pscf_1d 
-uses a class named Polymer that is defined in namespace Pscf::R1d, while 
-pscf_rpc uses a class template named Polymer that is defined namespaces 
-Pscf::Rpc, which takes D as a single template parameter.  Each of the 
-program-level namespaces also contain classes or class templates named 
-Propagator, Block, Mixture, Solvent, System, among other common names.
-Each program-level namespaces thus contains a set of classes and class
-that may be closely analogous to some or all of those defined in other 
-program-level.
+class template named Polymer that represents one block polymer species.
+The executable pscf_1d uses a class named Polymer that is defined in 
+namespace Pscf::R1d, while pscf_rpc uses a class template named Polymer 
+that is defined namespaces Pscf::Rpc, which takes D as a single template 
+parameter.  Each of the program-level namespaces also contain classes or 
+class templates named Propagator, Block, Mixture, Solvent, System, among 
+other common names. 
 
 The analogies between classes defined in the Rpc and Rpg namespaces
 for use in the pscf_rpc and pscf_rpg are particularly close. These two
@@ -185,19 +179,20 @@ sets of class definitions.
 
 Class templates that are designed to be used as base classes for
 analogous classes used in different programs appear in the following 
-locations:
+directories:
 
    - The directory src/pscf/solvers contains a set of class templates
      named PropagatorTmpl, BlockTmpl, PolymerTmpl, and MixtureTmpl that
-     are used as base classes for classes that are used to compute
-     properties of an ideal gas reference system, which are used in
-     every PSCF program. 
+     are used as base classes for classes that are used to solve the
+     modified diffusion equation (MDE) and thereby compute properties
+     of an ideal gas reference system, which are used in every PSCF 
+     program. 
 
    - The directory src/rp and namespace Pscf::Rp contain a set of 
      class templates that designed so that specializations of each
-     template can be used as base classes for a pair of closely
-     analogous classes used in pscf_rpc and pscf_rpg, respectively, 
-     to treat problems with periodic boundary conditions.
+     template can be used as a base class for a pair of closely
+     analogous classes of the same name that are defined in the
+     Rpc and Prg namespaces for used in pscf_rpc and pscf_rpg.
 
 <BR>
 \ref developer_template_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;

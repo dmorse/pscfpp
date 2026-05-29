@@ -35,7 +35,7 @@ namespace Rp {
       kMeshDimensions_(),
       nWave_(0),
       nBunch_(0),
-      keepWaveData_(false),
+      writeWaveData_(false),
       isInitialized_(false)
    {
       ParamComposite::setClassName("BinaryStructureFactor");
@@ -53,8 +53,8 @@ namespace Rp {
 
       AnalyzerT::readInterval(in);
       AnalyzerT::readOutputFileName(in);
-      keepWaveData_ = false;
-      ParamComposite::readOptional(in, "keepWaveData", keepWaveData_);
+      writeWaveData_ = false;
+      ParamComposite::readOptional(in, "writeWaveData", writeWaveData_);
       isInitialized_ = true;
    }
 
@@ -80,7 +80,7 @@ namespace Rp {
          wk_.allocate(rMeshDimensions);
          waveBunchIds_.allocate(nWave_);
          waveWeights_.allocate(nWave_);
-         if (keepWaveData_) {
+         if (writeWaveData_) {
             UTIL_CHECK(!waveAccumulators_.isAllocated());
             waveAccumulators_.allocate(nWave_);
          }
@@ -89,7 +89,7 @@ namespace Rp {
       UTIL_CHECK(wk_.capacity() == nWave_);
       UTIL_CHECK(waveBunchIds_.capacity() == nWave_);
       UTIL_CHECK(waveWeights_.capacity() == nWave_);
-      if (keepWaveData_) {
+      if (writeWaveData_) {
          UTIL_CHECK(waveAccumulators_.capacity() == nWave_);
       }
    }
@@ -137,7 +137,7 @@ namespace Rp {
       UTIL_CHECK(bunchWavenumbers_.capacity() == m);
       UTIL_CHECK(bunchValues_.capacity() == m);
 
-      // Initialize empty arrays
+      // Initialize all arrays
       for (int ib = 0; ib < m; ++ib) {
          bunchWavenumbers_[ib] = 0.0;
          bunchValues_[ib] = 0.0;
@@ -147,7 +147,7 @@ namespace Rp {
          waveBunchIds_[iw] = -1;
          waveWeights_[iw] = 0.0;
       }
-      if (keepWaveData_) {
+      if (writeWaveData_) {
          for (int iw = 0; iw < nWave_; ++iw) {
             waveAccumulators_[iw].clear();
          }
@@ -271,7 +271,7 @@ namespace Rp {
       for (int iw = 0; iw < nWave_; ++iw) {
          value = a_ * absSq( wk[iw] );
          value -= b_;
-         if (keepWaveData_) {
+         if (writeWaveData_) {
             waveAccumulators_[iw].sample(value);
          }
          ib = waveBunchIds_[iw];
@@ -291,42 +291,40 @@ namespace Rp {
    template <int D, class T>
    void BinaryStructureFactor<D,T>::output()
    {
-      std::string outputFileName;
-      std::ofstream outputFile_;
+      std::string filename;
+      std::ofstream file;
 
-      // Output spherical average values of S(q) for bunches
-      outputFileName = AnalyzerT::outputFileName();
-      if (keepWaveData_) {
-         outputFileName += "_ave";
+      // Output spherical average values of S(q) for wavector bunches
+      filename = AnalyzerT::outputFileName();
+      if (writeWaveData_) {
+         filename += "_ave";
       }
-      AnalyzerT::fileMaster().openOutputFile(outputFileName, outputFile_);
+      AnalyzerT::fileMaster().openOutputFile(filename, file);
       for (int i = 0; i < nBunch_; ++i) {
-         outputFile_ << Dbl(bunchWavenumbers_[i], 18, 8);
-         outputFile_ << Dbl(bunchAccumulators_[i].average(), 18, 8);
-         outputFile_ << std::endl;
+         file << Dbl(bunchWavenumbers_[i], 18, 8);
+         file << Dbl(bunchAccumulators_[i].average(), 18, 8);
+         file << std::endl;
       }
-      outputFile_.close();
+      file.close();
 
       // Optionally output S(q) values for individual waves
-      if (keepWaveData_) {
-         outputFileName = AnalyzerT::outputFileName();
-         outputFileName += "_wave";
-         AnalyzerT::fileMaster().openOutputFile(outputFileName, 
-                                                outputFile_);
+      if (writeWaveData_) {
+         filename = AnalyzerT::outputFileName();
+         filename += "_wave";
+         AnalyzerT::fileMaster().openOutputFile(filename, file);
          MeshIterator<D> iter(kMeshDimensions_);
          IntVec<D> p; 
          int iw, j;
          for (iter.begin(); !iter.atEnd(); ++iter) {
             iw = iter.rank();
             p = iter.position();
-            outputFile_ << Int(iw)
-                        << Dbl(waveAccumulators_[iw].average(), 18, 8);
             for (j = 0; j < D; ++j) {
-               outputFile_ << Int(p[j], 5);
+               file << Int(p[j], 5);
             }
-            outputFile_ << std::endl;
+            file << Dbl(waveAccumulators_[iw].average(), 18, 8);
+            file << std::endl;
          }
-         outputFile_.close();
+         file.close();
       }
 
    }

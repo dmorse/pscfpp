@@ -1,7 +1,7 @@
 /*! \page developer_template_defs_page Concepts and Definitions
 
 \ref developer_template_uses_page   (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_div_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_explicit_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 
@@ -16,7 +16,7 @@ rather than a concrete class definition. A template definition uses one
 or more **template parameters**. Template parameters that represent the
 name of a built-in or user-defined type are known as **type parameter**.
 Other **non-type parameters** may be used to represent a value of some 
-specified type, such as an integer constant.
+specific type, such as an integer constant.
 
 The syntax for defining a class template starts with the keyword "template"
 followed by a list of parameter declarations enclosed in angle brackets. 
@@ -46,13 +46,13 @@ member function of the FArray class template. This function simply
 returns the value of the Capacity parameter. The complete definition is 
 show below:
 \code
-   template <typename Data, int Capacity> 
-   inline int FArray<Data, Capacity>::size() const
+   template <typename Data, int Capacity> inline 
+   int FArray<Data, Capacity>::size() const
    {  return Capacity; }
 \endcode
-The "inline" qualifier used in this example encourages the compiler 
-to inline this very small function, and would normally not be used
-in definitions of longer functions.
+The "inline" qualifier used in this example encourages the compiler to 
+inline this very small function, and does not appear in definitions of
+most longer functions.
 
 \section developer_template_defs_instantiation_sec Template Specializations
 
@@ -66,13 +66,13 @@ is the name of a specialization of the template FArray with
 arguments Data = double and Capacity = 10. Each instance of the class 
 FArray<double, 10> is an array of 10 double precision real numbers.  
 
-A concrete class definition may be constructed by **instantiating** a 
+A complete class definition may be constructed by **instantiating** a 
 class template with a specific list of template arguments. The actual 
 type names and values assigned to template parameters in this process 
 are referred to as template **arguments**.  When a class template is 
 instantiated with a specific list of arguments, the compiler generates 
 object code for the resulting class for the memory layout of the class 
-and for all of its member functions.
+and for its member functions.
 
 A class template specialization may be created either by instantiating 
 the primary template or by defining an **explicit specialization**. 
@@ -82,7 +82,7 @@ specialization that is created by instantiating the primary template
 definition.
 
 An **explicit specialization** (also sometimes called a complete 
-specialization) is a complete redefinition of a class template so
+specialization) is a complete redefinition of a class template so 
 as to apply to a specific list of template arguments.  Explicit 
 specialization is used when the primary template is does not yield
 the desired behavior for a specific list of arguments.  The explicit 
@@ -94,8 +94,8 @@ which arguments are specified for a subset of the parameters of the
 primary template, while others are left as unspecified parameters.
 This generally results in a template with fewer unspecified parameters 
 than the primary template. Like an explicit specialization, a partial
-specialization is a complete redefinition of the class and all of 
-its member functions so as to apply to a particular set of possible
+specialization is a complete redefinition of the class and all of its 
+member functions so as to apply to a particular set of possible
 template parameter lists.
 
 \section developer_template_defs_impexp_sec Explicit and Implicit Instantiation
@@ -218,8 +218,8 @@ included by the header file. This alternate pattern is used heavily in
 the PSCF source code, and discussed in detail on the next page.
 
 <BR>
-\ref developer_template_uses_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_page      (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_div_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_uses_page      (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page           (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_explicit_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

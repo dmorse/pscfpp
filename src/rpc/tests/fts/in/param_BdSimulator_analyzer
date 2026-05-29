@@ -46,7 +46,7 @@ BdSimulator{
       BinaryStructureFactor{
          interval        1
          outputFileName  out/binaryStructureFactor
-         keepWaveData    1
+         writeWaveData   1
       }
       HamiltonianAnalyzer{
          interval        1

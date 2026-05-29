@@ -188,7 +188,7 @@ System{
         outputFileName  out/hamiltonian
       }
 
-      BinaryStructureFactorGrid{
+      BinaryStructureFactor{
         outputFileName  out/structureFactor
       }
 
@@ -203,7 +203,7 @@ System{
 Note that we have omitted the interval parameter from the primary
 analyzers in order to use the default value of interval = 1, and
 thus analyze every frame in the trajectory file, but have chosen
-to use the StepLogger to output the counter to standard output
+to use the StepLogger to output the step counter to standard output
 only every 10 frames.
 
 A corresponding minimal command file is shown below for a trajectory

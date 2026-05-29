@@ -1,7 +1,7 @@
-/*! \page developer_template_div_page Implicit vs. Explicit Templates
+/*! \page developer_template_explicit_page Implicit vs. Explicit Templates
 
 \ref developer_template_defs_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page          (Next)
+\ref developer_periodic_page          (Next)
 <BR>
 
 The PSCF source code contains two different types of class templates,
@@ -106,17 +106,18 @@ header file.
 The source code for the PSCF programs for periodic functions contains many
 class templates for which there exist only a few valid choices of values
 for the template parameters, and thus only a few possible valid template
-specializations. Many such classes are written as explicit class templates.
+specializations. Many such classes are written as whas we call "explicit" 
+class templates.
 
-Code required to use an explicit class template generally involves the
+The code required to use an explicit class template generally involves the
 following components:
 
   - A class template definition, which includes declarations for all
     member functions. 
 
-  - Definitions of any inlined class template member functions
+  - Definitions of inlined class template member functions
 
-  - Definitions of all non-inlined class template member functions
+  - Definitions of non-inlined class template member functions
 
   - Explicit instantiations declarations for all required specializations
 
@@ -129,7 +130,7 @@ any member functions that are declared "inline".
 
 Explicit instantiation definitions for a class template are always 
 placed in a compilable source file with a file name suffix .cpp (for 
-pure C++ code) or .cu (for C++ / CUDA code).  This file is compiled 
+pure C++ code) or .cu (for CUDA C++ code).  This file is compiled 
 by the build system to create object code for the specified 
 template specializations. 
 
@@ -147,15 +148,6 @@ for such a class template must satisfy the following requirements:
     template must contain both the class template definition and an 
     explicit instantiation declaration for that template 
     specialization.
-
-Explicit instantiation declarations are required to instruct the 
-compiler to **not** attempt to implicitly instantiate a particular
-specialization whenever an instance of that specialization is 
-encountered, and to instead wait and search for object code for 
-that specialization during linking. In simple cases, explicit 
-specialization declarations for all valid specializations may be
-placed in the header file for an explicit class template, near
-the end of the file. 
 
 A compilable .cpp or .cu source file that contains explicit 
 instantiation definitions for one or more specializations of a class 
@@ -175,6 +167,14 @@ allow for the possibility that the function definitions in the
 template implementation file may use class types that are defined 
 in preceding header files.
 
+Explicit instantiation declarations are required in code that uses
+a template instantiation to suppress implicit instantiation, which
+is the default behavior of C++. A declaration for a particular
+specialization instructs the compiler to **not** immediately compile 
+code that specialization the first time it is encountered in a 
+translation unit, and instead wait and look for object code for 
+that specialization during the linking state. 
+
 Explicit instantiation declarations may be placed in different
 locations depending on the nature of the class template.  In PSCF,
 there are two primary cases:
@@ -193,10 +193,10 @@ there are two primary cases:
     used be used to define base classes for a small number of 
     subclasses, and different subclasses are derived from different 
     specializations of the base class template. In this case, 
-    explicit instantiation declarations for relevant 
-    specializations of a base class template may sometimes be 
-    placed in header files for a subclasses that are derived 
-    from those specialization.
+    explicit instantiation declarations for a required
+    specialization of a base class template may sometimes be 
+    placed in a header files for a subclass that is derived 
+    from that specialization.
     </li>
 </ol>
 Case 1 is safe because the explicit instantiation declarations for
@@ -208,6 +208,8 @@ as base classes for a small number number of derived classes, and
 each such derived classes is defined in a header file that contains 
 explicit instantiation declarations for the specialization from 
 which it is derived. 
+
+These two cases are discussed in more detail below.
 
 \subsection developer_template_div_explicit_D_sub B.1: Templates for which D is the only parameter
 
@@ -312,9 +314,10 @@ file and a compilable source file. Either organization is allowed.
 
 \subsection developer_template_div_explicit_base_sub B.2. Templates used only as base classes
 
-Class templates that are designed to be used only to construct base
-classes for a small number of derived classes appear in several locations
-within the PSCF source code:
+PSCF contains many class templates are designed such that
+specializations of the template can be used as base classes for a 
+small number of derived classes. Such classes appear in several 
+locations within the PSCF source code:
 
    - **Solver templates**: Several class templates that are defined in
      the src/pscf/solvers directory are used to construct base classes for
@@ -598,8 +601,8 @@ instantiation declarations (as required to suppress implicit
 instantiation).
 
 <BR>
-\ref developer_template_defs_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_page       (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page          (Next)
+\ref developer_template_defs_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page      (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_periodic_page      (Next)
 
 */

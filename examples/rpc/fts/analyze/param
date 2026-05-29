@@ -36,15 +36,10 @@ System{
         outputFileName  out/hamiltonian
       }
 
-      BinaryStructureFactorGrid{
-        interval        1
-        outputFileName  out/structureFactorGrid
-      }
-
       BinaryStructureFactor{
         interval        1
         outputFileName  out/structureFactor
-        keepWaveData    1
+        writeWaveData   1
       }
 
     }

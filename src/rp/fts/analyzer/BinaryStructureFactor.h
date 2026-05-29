@@ -154,8 +154,8 @@ namespace Rp {
       /// Number of wavevector bunches (sets of wavevectors of equal norm).
       int nBunch_;
 
-      /// Should S(q) data be retained for individual waves?
-      bool keepWaveData_;
+      /// Should S(q) data be outuput for all individual waves?
+      bool writeWaveData_;
 
       /// Has readParameters been called?
       bool isInitialized_;

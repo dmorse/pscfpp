@@ -22,20 +22,26 @@ Version 1.4.0 (5/01/2026)
 
 Signficant code reorganization, and a few new features.
 
-User visible feature and changes
+User visible features and changes
 ---------------------------------
-* Added new PS-FTS ShiftMove and BdMove MC moves (rpc and rpg)
-* Added BoxLengthDerivative PS-FTS analyzer
+* Added new PS-FTS ShiftMove and BdMove MC moves (rpc, rpg)
+* Added BoxLengthDerivative PS-FTS analyzer (rpc, rpg)
+* Renamed and re-wrote BinaryStructureFactor analyzer (rpc, rpg)
 
-Developer-visible changes:
+Developer-visible changes
 --------------------------
-* Creation of src/rp directory for templates used by src/rpc and src/rpg
-* Added template base classes for almost all classes in rpc and rpg
-* Removed duplication of code shared by pscf_rpc and pscf_rpg
+Reduced duplication of code between src/rpc and src/rpg:
+* Created Rp namespace, directory src/rp, for base class templates 
+* Created shared template base classes for most classes in Rpc and Rpg
 
 Documentation
 -------------
 * Improved manual page on use of C++ templates 
+
+Bug fix:
+----------
+* Fixed calculation of WaveList::implicitInverse, which caused small 
+  errors in derivatives of free energy w/ respect to unit cell parameters.
 
 
 Version 1.3.3 (10/29/2025)
@@ -81,7 +87,7 @@ and documentation.
 
 Developer-visible changes
 -------------------------
-* Introduction of a shared template for Rpc and Rpg System classes
+* Created shared base class template for Rpc and Rpg System classes
 * Clean-up and standardization of build system files
 
 Documentation
@@ -150,7 +156,7 @@ User-visible changes
 
 Documentation
 -------------
-* User documentation for PS-FTS (new manual section)
+* Added user documentation for PS-FTS (new manual section)
 
 Developer-visible changes
 -------------------------

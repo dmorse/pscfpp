@@ -1,0 +1,428 @@
+/*! \page developer_periodic_page Periodic Systems: CPU vs. GPU 
+
+\ref developer_template_page (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page    (Next)
+<BR>
+
+The pscf_rpc and pscf_rpg programs are both designed to treat problems 
+involving real fields and periodic boundary conditions.  Both programs 
+provide identical features and interfaces to a user. The differences
+between them arise from the fact that they are designed to use different
+hardware: The pscf_rpg program is designed to perform all computationally 
+expensive operations on a GPU, whereas pscf_rpc only uses a conventional 
+CPU. Named entities (e.g., classes, class templates and functions) that 
+are only accessible for use in one the two analogous programs are 
+defined within one of two separate program-level namespaces, named 
+Pscf::Rpc and Pscf::Rpg. 
+
+The remainder of this page discusses organization of code used by the 
+pscf_rpc and pscf_rpg programs, with an emphasis on classes for which 
+there exist distinct CPU and GPU variants, and on techniques used to 
+minimize code duplication. 
+
+\section developer_periodic_field_sec Field and FFT classes
+
+The most important data structures used by PSCF programs for periodic
+systems are arrays that store periodic fields (i.e., functions of 
+position) that are defined on the nodes of a regular periodic mesh, 
+and arrays that store discrete Fourier transforms of such periodic 
+fields. The Prdc::Cpu and Pscf::Cuda namespaces (directories pscf/cpu 
+and pscf/cuda) each contain a set of class templates are used to store 
+and manipulate such fields, but that are designed to use different 
+hardware.  Class templates defined in these two namespaces all take
+the dimension of space, denoted D, as the only template parameter. 
+
+Analogous class templates defined in these two namespaces differ in 
+where the underlying data is allocated: Class templates defined in 
+namespace Prdc::Cpu (directory pscf/cpu) allocate all underlying C 
+arrays in CPU main memory, and are used throughout pscf_rpc. Analogous 
+class templates defined in Prdc::Cuda (directory pscf/cuda) instead 
+store field data in global CPU memory, and are used only by pscf_rpg. 
+
+The Pscf::Cpu and Pscf::Cuda namespaces each define four basic class 
+templates named RField, RFieldDft, CField, and FFT to store and 
+manipulate periodic fields. Each of these four class templates takes 
+the dimension of space, D, as its only template parameter. In both 
+Prdc::Cpu and Prdc::Cuda, for values of D=1, 2, or 3:
+
+   - An RField \<D\> object contains values of a real-valued periodic 
+     field on the nodes of a regular periodic D-dimensional mesh.
+
+   - An RFieldDft \<D\> object contains values of the complex-valued 
+     discrete Fourier transform (DFT) of a real-valued periodic field.
+
+   - A CField \<D\> can contain values of complex-valued field on
+     the nodes of a D-dimensional periodic mesh, or the DFT of such
+     a field. 
+
+   - FFT \<D\> is a wrapper around a fast Fourier transform library
+     that can transform a RField \<D\> to or from an RFieldDft \<D\>, 
+     or that can apply a forward or reverse complex-to-complex 
+     Fourier transform to a CField \<D\> object.
+
+Each of these class templates store the dimensions of a mesh on which 
+data is defined. Different data types are used to store the DFT of 
+real- and complex-valued fields because the number of complex Fourier 
+amplitudes required to specify the DFT of a real-valued field is equal 
+to slightly more than half the number of grid points in the associated 
+real-space mesh, while the number of complex amplitudes required to
+specify the DFT of a complex valued field is equal to the number of
+grid points.
+
+The RField, RFieldDft, and CField class templates defined in the 
+Pscf::Cpu namespace are wrappers around C arrays that are allocated 
+in CPU memory. Corresponding class templates defined in the Pscf::Cuda 
+namespace are wrappers around arrays that are allocated in global GPU 
+memory.
+
+The FFT class templates defined in these two namespaces use different
+underlying FFT libraries. An instance of Pscf::Cpu::FFT \<D\> is a 
+wrapper for the open-source FFTW library, and uses only CPU hardware.
+An instance of Pscf::Cuda::FFT \<D\> is instead a wrapper around the 
+NVIDIA cuFFT library, which performs FFT operations on a GPU. These
+two class templates provide similar interfaces for D-dimensional
+real-to-complex, complex-to-real, and complex-to-complex transforms. 
+The use of similar interfaces makes it possible for these FFT classes 
+to be used interchangeably in some C++ templates, as discussed in
+more detail below.
+
+\section developer_periodic_complex_sec Complex number types
+
+The different FFT libraries used by pscf_rpc and pscf_rpg use 
+different, incompatible data types to represent complex numbers.
+
+The FFTW library uses a type named fftw_complex, that is defined
+in the "fftw3.h" FFTW header file. This typename is an alias for 
+a two-element array, type double[2], in which the real and 
+imaginary parts are stored in elements 0 and 1, respectively.  
+
+The cuFFT library instead uses a struct to represent complex numbers, 
+in which the real and imaginary parts are stored as member variables 
+named x and y, respectively.  The struct type used by cuFFT for this 
+purpose is referred to throughout the source code for PSCF by an 
+alias named "cudaComplex", which defined in the file 
+src/pscf/cuda/cudaTypes.h.  
+
+For each library, the same complex data type is used to represent 
+the the value of a complex-valued field on the node of a mesh and
+value of a Fourier amplitude in the DFT of either a real- or
+complex-valued field. 
+
+To accomodate these differences, the RFieldDft and CField class 
+templates defined in the Pscf::Cpu and Pscf::Cuda namespaces 
+each use the same complex data type as the FFT library used in
+that namespace.  The Prdc::Cpu::RFieldDft and Prdc::Cpu::CField 
+class templates are both wrappers around bare arrays of 
+fftw_complex elements that are allocated in CPU memory, for
+compatability with the FFTW library. The Prdc::Cuda::RFieldDft 
+and Prdc::Cuda::CField templates are instead wrappers around 
+arrays of cudaComplex elements that are allocated in global GPU 
+memory, for compatability with the cuFFT library.
+
+\section developer_periodic_programs_sec Program-level namespaces (Rpc and Rpg)
+
+The Pscf::Rpc and Pscf::Rpg program-level namespaces contain two 
+distinct but closely analogous sets of classes and class templates for 
+use in pscf_rpc and pscf_rpg, respectively. Every class template in
+these two namespaces takes the dimension of space, denoted by D, as
+a template parameter. Specializations of each such class template with 
+each of the allowed values of D=1, 2 and 3 are explicitly instantiated
+by the build system, thus generating object code for three 
+specializations of each template.
+
+Analogous class templates in these two program-level namespaces always 
+have the same name. For example, the Pscf:: Rpc and Pscf::Rpg namespaces
+each define a class template named Polymer, such that an instance of
+class Polymer\<D\> with D=1, 2 or 3 defined in either namespaces represents 
+a polymer species within a system with D-dimensional periodic boundary
+conditions. Name conflicts are prevented by the convention that 
+prohibits code that is defined within in any program-level PSCF
+namespace from referring to named entities (e.g., classes or functions) 
+that are defined in another such namespace.
+
+The differences between analogous classes used by the pscf_rpc and 
+pscf_rpg programs arise primarily from the fact that pscf_rpc uses 
+only CPU memory, but that pscf_rpg stores most large data arrays 
+in GPU memory. Storing key arrays in global GPU memory allows them 
+to be directly accessed by CUDA kernels, and minimizes the need for 
+costly data transfers between the CPU and GPU.  
+
+\section developer_periodic_duplication_sec Ownership hierarchies and code duplication
+
+Each of executable programs constructed by the PSCF package is designed 
+using a hierarchical system of object ownership. Almost every object 
+used in a PSCF program is a "child" that is owned by an instance of 
+some higher-level "parent" class.  In this system, each "child" object 
+is either a member variable of its parent, or is a dynamically allocated 
+object that is accessed through a pointer that is a member of the parent 
+object, which the parent is responsible for creating and destroying the 
+child. The top of this ownership hierarchy for pscf_rpc and pscf_rpc is 
+a class template named System\<D\> that directly or indirectly owns every 
+object used by the program. 
+
+In this type of design, the decision to use distinct class templates 
+and classes for a represent a few relatively low-level data types 
+used by pscf_rpc and pscf_rpg, such as those which represent periodic 
+fields, has the potential to lead to a great deal of code duplication.
+The use of distinct classes to represent such low-level data types also 
+requires these two programs to define different data types to 
+represent "parent" objects that own instances of these lower-level 
+types. This is so because such parent classes must define a member 
+variables for each child (i.e., either a member object or a pointer 
+to an object) that has a declared type compatible with that of the
+child.  As a result, the use of distinct data types for a few 
+lower-level array class types that represent data stored on CPU vs. 
+GPU ends up infecting the entire ownership heirarchy for each program. 
+This thus ultimately requires the creation of two entirely distinct 
+but closely analogous sets of classes for pscf_rpc and pscf_rpg, 
+which are defined in the distinct namespaces Pscf:Rpc and Pscf::Rpg. 
+
+The design described above has the potential to lead to a great deal 
+of duplication of identical or nearly identical bits of code in
+definitions of analogous classes used by pscf_rpc and pscf_rpg.  
+Historically, this is exactly what occurred after initial 
+development of the GPU enabled code that is now called pscf_rpg.  
+The CPU version of the C++ code for periodic systems (now called 
+pscf_rpc) was written first, starting in 2015, using the older 
+Fortran PSCF code as a starting point. A University of Minnesota 
+named G.K. Cheong, who was advised by Kevin Dorfman, later created 
+the first GPU-enabled version by copying the program-level directory
+associated with the CPU code for periodic systems, wrapping all code
+in a new namespace name, and modifying as necessary to allow 
+efficient use of a GPU. The resulting GPU-enabled code was then 
+merged back into the PSCF repository, and first appeared in tagged 
+version 0.7. In tagged versions 0.7 - 1.3, the program-level 
+namespaces associated with the CPU and GPU programs for real
+periodic fields did indeed contain a great deal of duplicated code.
+
+Most of this code duplication was been removed in v1.3 and v1.4 
+of PSCF through the introduction of "Types" classes and shared 
+base class templates. These techniques are discussed below.
+
+\section developer_periodic_types_sec Types classes
+
+The Pscf::Rpc and Pscf::Rpg namespaces now each contain a class 
+template named "Types" that takes the dimension of space, D, as its 
+only template parameter. Neither of these two class templates actually 
+contains any member variables or member functions. Each of the two
+class templates instead contains a set of alias declarations that 
+define aliases for types used in the enclosing program-level namespace. 
+The Pscf::Rpc::Types class template defines aliases to classes that
+are defined in the Pscf::Rpc and Pscf::Cpu namespaces and used by 
+pscf_rpc, while the Pscf::Rpg::Types defines aliases to classes that
+are defined in the Pscf::Rpg and Pscf::Cuda namespaces and used by
+pscf_rpg.
+
+As an example, we show part of the the definition of the 
+Pscf::Rpc::Types class below, including a few of the many alias 
+declarations it contains:
+\code
+
+namespace Pscf {
+namespace Rpc {
+
+   template <int D>
+   class Types {
+  
+      using System = System<D>;
+      using Mixture = Mixture<D>;
+      using Polymer = Polymer<D>;
+      using Block = Block<D>;
+             .
+             .
+             .
+      
+      using RField = Cpu::RField<D>;
+      using RFieldDft = Cpu::RFieldDft<D>;
+      using FFT = Cpu::FFT<D>;
+
+   };
+
+}
+}
+\endcode
+The complete definition of this template is given in the file
+src/rpc/system/Types.h. In this template, many class names that appear
+with no namespace qualifier, such as System\<D\> or Mixture\<D\>, refer
+to specializations of class templates that are defined within the 
+enclosing Pscf::Rpc namespace.  The "Cpu" qualifier used to qualify
+names of some other classes refers to the Pscf::Cpu namespace.
+
+The code for the corresponding Pscf::Rpg::Types class template is defined 
+in the file src/rpg/system/Types.h, and looks very similar. The key 
+difference is that the Pscf::Rpg::Types tenplate defines analogous 
+aliases for classes that are defined in the Pscf::Rpg and Pscf:Cuda 
+namespaces, rather than in the Pscf::Rpc and Pscf::Prdc::Cpu namespaces. 
+For example, Pscf::Rpg::Types template contains a declaration defining
+"using FFT = Cuda::FFT\<D\>", which defines an alias for the name of a
+GPU-enabled FFT class.
+
+The Pscf::Rpc::Types and Pscf::Rpg::Types class templates use the 
+same alias name for each pair of analogous classes used in different 
+program-level namespaces.  For example, the name RField is defined 
+to be an alias for Pscf::Cpu::RField\<D\> within the class 
+Pscf::Rpc::Types\<D\>, as shown above, but is defined to be an alias 
+for Pscf::Cuda::RField\<D\> within the class Pscf::Rpg::RField\<D\>, 
+for any value of D = 1, 2, or 3.  A valid specialization of either 
+of these two Types class templates thus provides a complete set of 
+aliases for specialized types that are needed within only one of 
+these two program-level (i.e., Pscf::Rpc or Pscf::Rpg) for each 
+specified value of D, using identical alias names for analogous 
+classes.
+
+Specializations of the two Types class templates used as template
+arguments for other templates that define code that can be adapted
+for use in either context. This usage is described below.
+
+\section developer_periodic_templates_sec Base class templates (namespace Rp)
+
+Namespace Pscf::Rp (or directory src/rp) contains a set of class 
+templates that each defines a generic version of two closely analogous 
+class templates used in namespaces Pscf::Rpc and Pscf::Rpg.  
+Specializations of the class templates defined in namespace Rp are used as 
+base classes for classes defined in Pscf::Rpc and Pscf::Rpg, thus making 
+the member variables and functions defined in the base class template 
+accessible via inheritance. Analogous classes in Pscf::Rpc and Pscf::Rpg 
+are generally defined to be subclasses of different specializations of a 
+shared base class template defined in namespace Rp. Each such base class 
+template from in namespace Pscf::Rp and two corresponding class templates 
+defined in Pscf::Rpc and Pscf::Rpg share a base name.  There are, for 
+example, three class templates named Polymer defined in the Pscf::Rp, 
+Pscf::Rpc and Pscf::Rpc namespaces, each of which takes the dimension 
+of space D as template parameter. For each valid value of D=1, 2, or 3, 
+classes named Pscf::Rpc::Polymer\<D\> and Pscf::Rpg::Polymer\<D\> are 
+derived from different specializations of the shared base class template 
+Pscf::Rp::Polymer. 
+
+Almost all of the class templates in the Rp namespace take two 
+template parameters, denoted by D and T. Parameter D denotes the integer 
+dimension of space, while parameter T is an alias for the name of a 
+\ref developer_periodic_types_sec "Types" class. Part of the declaration
+the Pscf::Rp::Domain class template is shown below as an example:
+\code
+namespace Pscf {
+namespace Rp {
+
+   template <int D, class T>
+   class Domain : public ParamComposite 
+   {
+
+       \\ Omitted body of class template definition
+
+   };
+
+}
+}
+\endcode
+In all valid specializations of this template, parameter D must be 
+assigned an argument D=1, 2, or 3, while T must be assigned a class
+name argument of either Rpc::Types\<D\> or Rpg::Types\<D\>.  
+
+Almost every class defined in the Pscf::Rpc and Pscf::Rpg namespaces 
+is a subclasses of a specializations of a corresponding template 
+defined in the Rp namespaces, in which the base class template takes 
+a specialization of the Types class template defined in the enclosing 
+program-level namespace as its second template argument. For example, 
+the class template Pscf::Rpc::Domain is defined in part as shown below:
+\code
+namespace Pscf {
+namespace Rpc {
+
+   template <int D>
+   class Domain : public Rp::Domain<D, Types<D> >
+   {
+   
+       \\ Omitted body of class template definition
+
+   };
+
+}
+}
+\endcode
+Note the need for the use of the Rp namespace qualifier in the 
+name of the base class Rp::Domain \< D, Types\<D\> \>. Also note that
+that the name Types\<D\> implicitly refers within this context to 
+the class Pscf::Rpc::Types\<D\> that is defined in the namespace
+Pscf::Rpc that contains the definition of this class template. 
+The fully qualified name of the base class for a specified value
+of D,, with full qualified template argument names is thus of the
+form Pscf::Rp::Domain\<D, Pscf::Rpc::Types\<D\> \> .
+
+Within the source code for class templates in the Rp namespace, 
+names of specialized classes that are used within only one of the two 
+associated program-level namespaces (i.e., Pscf::Rpc or Pscf::Rpg) can 
+be referred to via aliases defined within the Types class associated 
+with template parameter T. Within the scope of any class template that 
+has a template parameter T that refers to a Types class, the name of 
+an FFT class can, for example, be referred to using the alias 
+"typename T::FFT".  Similarly, the name of a WaveList class can be 
+referred using the alias "typename T::WaveList". This type of alias 
+can be used both within the definition of a class template, to specify 
+types for member variables and types used in member function interface 
+declarations, and within the definitions of member functions. Note, 
+however, that references to aliases that are defined within a Types 
+class must usually be preceded by the C++ "typename" qualifier in 
+these contexts, to inform the compiler that these are type names 
+rather than member variables of class "T".
+
+Most class templates defined in the Pscf::Rpc and Pscf::Rpg 
+program-level namespaces inherit all or almost all of their interface
+and implementation from a base class defined in namespace Rp. As a 
+result, the body of the definitions of most of the class templates 
+defined in Pscf::Rpc and Pscf::Rpg are nearly empty.
+The most important exception to this is the the need to explicitly
+define any non-default constructors needed for these derived classes, 
+because constructor functions cannot be inherited. 
+
+The class templates defined in the Pscf::Rp, Pscf::Rpc and Pscf::Rpg 
+namespaces are what we call \ref developer_template_explicit_page 
+"explicit" templates, which are designed to be compiled by explicit 
+instantiation. As discussed in detail 
+\ref developer_template_explicit_page "elsewhere", this usage 
+requires the header (.h) file and source (.cpp or .cu) files associated 
+with each derived class template in the Rpc and Rpg namespaces to 
+contain explicit explicit instantiation declarations (in header files) 
+and explicit instantiation definitions (in source files) for both the 
+base classes and subclasses for cases with D = 1, 2 and 3. 
+
+The compilable source code (\*.cpp or \*.cu) file associated with 
+a class template defined in Pscf::Rpc or Pscf::Rpg must generally 
+contain a set of include directives for required header files that
+contain definitions of types that are used in one of these two 
+namespaces but not the other. These include directives must be
+supplied for all required types for which an alias is given in the 
+relevant "Types" class, most of which are located in src/prdc/cpu, 
+src/prdc/cuda, src/rpc or src/rpg directories. Header files for
+types that are used in both program-level namespaces are usually
+already included in the header or implementation file for the 
+shared base class template defined in namespace Rp.
+
+The compilable source code (\*.cpp or \*.cu) file associated with 
+a class template defined in Pscf::Rpc or Pscf::Rpg generally must
+also contain an include directive for the template implementation
+(\*.tpp) file associated with the base class template from namespace
+Rp. The include statement for this file should usually be placed 
+after include statements for all other required header files, so
+that the compiler has access to definitions of specialized types
+when parsing definitions of member functions of the base class.
+
+The template-based design that is described above has succeeded in
+removing almost all duplication of code between the Pscf::Rpc and 
+Pscf::Rpg namespaces. Disadvantages of this strategy include:
+
+   - The need for some repetitive boilerplate code throughout files 
+     in the src/rpc and and src/rpg directories, including explicit 
+     instantiation declarations and definitions.
+
+   - Some additional time and effort required by new developers to
+     understand this somewhat complex use of templates. 
+
+Our experience thus far suggests that the design is straightforward 
+to extend and maintain once it is understood.
+
+<BR>
+\ref developer_template_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page    (Next)
+
+*/

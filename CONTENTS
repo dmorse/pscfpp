@@ -7,7 +7,7 @@ Subdirectories:
   bld/      - build directory for out-of-source builds 
   data/     - read-only data files (e.g., space group description files)
   docs/     - documentation, including web manual source files
-  examples/ - input files for example SCFT and PS-FTS calculations
+  examples/ - input files for example calculations
   lib/      - scripts written in python or bash
   make/     - makefile fragments used by the configure script
   src/      - C++ and CUDA C++ source code files
