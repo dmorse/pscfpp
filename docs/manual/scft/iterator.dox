@@ -15,18 +15,18 @@ Several of the iterator algorithms provided by PSCF rely on some variant
 of the Anderson mixing (AM) algorithm. General aspects of this algorithm
 are discussed on a \ref pscf_AmIteratorTmpl_page "separate page".
 
-Different sets of algorithms are available for use with pscf_1d for
+Different sets of algorithms are available for use with pscf_r1d for
 one-dimension problems, and for the pscf_rpc and pscf_rpg programs for
 periodic systems, as described below:
 
-\section scft_iterator_1d_sec One-dimensional systems (pscf_1d)
+\section scft_iterator_1d_sec One-dimensional systems (pscf_r1d)
 
-Users of pscf_1d may choose from among 3 SCFT iterators, named
+Users of pscf_r1d may choose from among 3 SCFT iterators, named
 \ref r1d_AmIterator_page "AmIterator",
 \ref r1d_NrIterator_page "NrIterator", and
 \ref r1d_BinaryRelaxIterator_page "BinaryRelaxiterator".
 More detailed documentation of the input format for each available
-pscf_1d iterator is given in the links in the table below:
+pscf_r1d iterator is given in the links in the table below:
 
 <table>
 <tr>
@@ -48,7 +48,7 @@ pscf_1d iterator is given in the links in the table below:
 </tr>
 </table>
 
-The default iterator for pscf_1d is an Anderson-mixing algorithm that is
+The default iterator for pscf_r1d is an Anderson-mixing algorithm that is
 implemented by a class named AmIterator.  Because this is the default
 choice, it may be invoked by including an iterator block in the parameter
 file in which the first line contains either the generic label "Iterator"

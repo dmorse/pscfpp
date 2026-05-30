@@ -1,17 +1,17 @@
 namespace Pscf {
 
-/*! \page user_param_domain_1d_page One dimension domains (pscf_1d)
+/*! \page user_param_domain_1d_page One dimension domains (pscf_r1d)
 
 \ref user_param_domain_page  (Prev/up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_domain_pc_page  (Next)
 <BR>
 
-The pscf_1d program solves a self-consistent field problem in which all
+The pscf_r1d program solves a self-consistent field problem in which all
 fields are functions of a single coordinate, in Cartesian, cylindrical,
 or spherical coordinates. This coordinate could thus be either a single
 Cartesian coordinate, to describe a system with a planar geometry, or a
 single radial coordinate, to describe a system with cylindrical or
-spherical symmetry.  The domain block for the pscf_1d program specifies
+spherical symmetry.  The domain block for the pscf_r1d program specifies
 the range of values of this coordinate over which the SCFT equations
 should be solved, and the number of nodes of a regular mesh that is used
 to discretize that domain.
@@ -48,7 +48,7 @@ cylindrical domain that includes the origin.
 
 \section user_param_domain_1d_format_sec Parameter file format
 
-The full format for the pscf_1d Domain block is
+The full format for the pscf_r1d Domain block is
 \code
   Domain{
     mode*  string ("planar", "cylindrical" or "spherical", "planar" by default)
@@ -122,7 +122,7 @@ points, denoted by dx, is thus dx = (xMax - xMin)/(nx-1).
 
 \section user_param_domain_1d_bc_sec Boundary conditions
 
-The pscf_1d program solves the modified diffusion equation subject to
+The pscf_r1d program solves the modified diffusion equation subject to
 von Neumann boundary "no flux" conditions that require that derivatives
 of the propagators and concentration fields with respect to the relevant
 Cartesian or radial normal coordinate must vanish at the lower and upper

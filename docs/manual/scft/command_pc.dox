@@ -6,7 +6,7 @@
 
 The pscf_rpc and pscf_rpg programs accept identical set of commands,
 which are described on this page. These programs for periodic systems
-accept a larger set of commands than the simpler pscf_1d program,
+accept a larger set of commands than the simpler pscf_r1d program,
 though many basic commands are similar. The number of available commands
 is larger, in part, as a result of the fact that pscf_rpc and pscf_rpg can
 read and write several different formats for field files.  By convention,
@@ -597,7 +597,7 @@ unit cell parameter values depends on the lattice type, as discussed
 
 The COMPUTE, ITERATE and SWEEP commands perform the primary computations
 involved in a self-consistent field calculation.  Each performs the
-same operation as the analogous command for the pscf_1d program. Each
+same operation as the analogous command for the pscf_r1d program. Each
 of these commands requires an initialized set of w fields and unit cell
 parameters as an input, which must have been initialized by a previous
 call to READ_W_BASIS or READ_W_RGRID.
@@ -734,7 +734,7 @@ fields (c-fields) for all blocks of all polymers and for all solvent
 species r-grid format as separate fields within a single file. The
 resulting file has a data section analogous to that produced by the
 \ref scft_command_pc_writeblockc_sub "WRITE_BLOCK_C" command of
-the pscf_1d program.  The resulting file contains a header section
+the pscf_r1d program.  The resulting file contains a header section
 identical to that contained in any r-grid field file, followed by a
 data section.  The format of the data section is similar to that of
 an r-grid field file that contain one field per monomer type, except
@@ -743,7 +743,7 @@ monomer type, and thus output in a separate column of the data
 section.  Blocks and solvent species are output in the order in which
 they appear within the parameter file, as in the output of the
 \ref scft_command_1d_writeblockc_sub "WRITE_BLOCK_C" command of the
-pscf_1d program.
+pscf_r1d program.
 
 \section scft_command_pc_qout_sec Propagator output
 

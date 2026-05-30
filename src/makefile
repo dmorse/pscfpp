@@ -37,8 +37,8 @@ prdc:
 	cd pscf; $(MAKE) all
 	cd prdc; $(MAKE) all
 
-# Build pscf_1d 1D finite difference SCFT program (install in BIN_DIR)
-pscf_1d: 
+# Build pscf_r1d 1D finite difference SCFT program (install in BIN_DIR)
+pscf_r1d: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd r1d; $(MAKE) all

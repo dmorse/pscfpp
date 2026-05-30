@@ -19,7 +19,7 @@ of individual polymers may be modelled using either a continuous "thread"
 model or a discrete "bead" model. The thread model idealizes blocks
 within a block polymer as continuous random walks. The bead model instead
 represents each block as a sequence of discrete beads connected by
-harmonic springs. The pscf_1d program for one-dimensional SCFT problems
+harmonic springs. The pscf_r1d program for one-dimensional SCFT problems
 can only use the continuous thread model.
 
 Each polymer species is constructed from chemically homogeneous blocks

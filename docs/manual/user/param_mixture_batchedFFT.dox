@@ -5,7 +5,7 @@
 <BR>
 
 The format of the Mixture block in parameter files used by pscf_rpg
-differs from that of pscf_rpc and pscf_1d in that the format for pscf_rpg
+differs from that of pscf_rpc and pscf_r1d in that the format for pscf_rpg
 allows an additional optional boolean parameter named "useBatchedFFT".
 This extra parameter appears at the end of the Mixture block, immediately
 after `ds`, and is equal to 1 (or true) by default.  The purpose of this

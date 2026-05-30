@@ -58,7 +58,7 @@ namespace R1d {
    *      system.readCommands();
    *   }
    * \endcode
-   * The actual main program is given in the file pscf_1d.cpp.
+   * The actual main program is given in the file pscf_r1d.cpp.
    *
    * \ref scft_param_1d_page "Parameter File Format"
    * \ingroup R1d_System_Module

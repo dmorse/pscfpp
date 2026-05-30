@@ -61,12 +61,6 @@ System{
         nSamplePerOutput 1
       }
 
-      BinaryStructureFactorGrid{
-        interval         1000
-        outputFileName   out/structureFactor
-        nSamplePerBlock  2
-      }
-
     }
 
   }

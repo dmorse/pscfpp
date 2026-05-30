@@ -32,7 +32,7 @@ following locations:
    - **Program-level subdirectories of src or bld (not program level)**:
      The "all" target of makefiles in the r1d, rpc, and rpg program-level
      directories of either src or bld directory each creates a single
-     executable file (pscf_1d, pscf_rpc, or pscf_rpg), in addition to making
+     executable file (pscf_r1d, pscf_rpc, or pscf_rpg), in addition to making
      a static library and compiling all of the source files in the
      associated directory tree.
 
@@ -445,14 +445,14 @@ Here \$(MAKE) is the value of a standard variable that represents the
 name of the unix make command. The two target shown here both contain
 recipes that instruct the system to repeatedly descend into a namespace
 level directories. The "all-cpu" target is designed to build only the
-two programs that use standard CPU hardware, pscf_1d and pscf_rpc. The
+two programs that use standard CPU hardware, pscf_r1d and pscf_rpc. The
 "all" target is designed to also create the pscf_rpg executable if
 compilation of CUDA code has been enabled by defining the PSCF_CUDA
 makefile variable.
 
 The phony "all-cpu" target simply invokes make all within 5 of the
 6 namespace-level subdirectories, including the two program-level
-subdirectories r1d and rpc that build the CPU programs pscf_1d and
+subdirectories r1d and rpc that build the CPU programs pscf_r1d and
 pscf_rpc, but excluding subdirectory rpg that contains CUDA C++ code
 for pscf_rpg.
 

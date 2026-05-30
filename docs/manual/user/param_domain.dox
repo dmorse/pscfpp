@@ -11,7 +11,7 @@ always appears after the Mixture and Interaction Blocks. This block
 contains information about the spatial domain within which a SCFT or
 PS-FTS calculation will be performed.  Different formats are used for
 the Domain block to describe the one-dimensional coordinate domains
-used by pscf_1d and the periodic unit cells used by pscf_rpc and pscf_rpg.
+used by pscf_r1d and the periodic unit cells used by pscf_rpc and pscf_rpg.
 These two parameter block formats are described in the two pages
 linked below:
 

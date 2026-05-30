@@ -140,7 +140,7 @@ to represent residual vectors and solution vectors.
 \subsection developer_template_uses_base_sub D. Base classes for analogous 
 classes used in different programs
 
-PSCF currently contains code for three programs (pscf_1d, pscf_rpc and 
+PSCF currently contains code for three programs (pscf_r1d, pscf_rpc and 
 pscf_rpg, respectively) that are constructed using source code from 
 three corresonding program-level namespaces named Pscf:R1d, Pscf::Rpc, 
 and Pscf::Rpg, respectively. Many of the data structures and algorithms 
@@ -154,7 +154,7 @@ functions that are defined in a different program-level namespace.
 
 For example, each of the three program-level namespaces uses a class or 
 class template named Polymer that represents one block polymer species.
-The executable pscf_1d uses a class named Polymer that is defined in 
+The executable pscf_r1d uses a class named Polymer that is defined in 
 namespace Pscf::R1d, while pscf_rpc uses a class template named Polymer 
 that is defined namespaces Pscf::Rpc, which takes D as a single template 
 parameter.  Each of the program-level namespaces also contain classes or 

@@ -52,7 +52,7 @@ results that depend on a smaller number of physical model parameters.
 Both bead and thread models have been used in recent published work
 on PS-FTS calculations.
 
-The pscf_1d program for one-dimensional systems can only use the thread
+The pscf_r1d program for one-dimensional systems can only use the thread
 model, and can only perform SCFT calculations.
 
 \subsection user_model_polymer_continuous_sub Continuous "thread" model

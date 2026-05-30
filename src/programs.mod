@@ -8,7 +8,7 @@
 * \page programs_page Executable Programs - Usage
 *  
 *   <ul style="list-style: none;">
-*   <li> \subpage pscf_1d_page </li>
+*   <li> \subpage pscf_r1d_page </li>
 *   <li> \subpage pscf_rpc_page </li>
 *   <li> \subpage pscf_rpg_page </li>
 *   </ul>

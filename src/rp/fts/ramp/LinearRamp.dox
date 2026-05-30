@@ -121,7 +121,7 @@ The table shown below gives all allowed values for the parameter type
 string identifer for a LinearRamp for a periodic microstructure with
 with the number and meaning of any associated index or indices. All
 but one of these types of parameter are also valid in a linear ramp
-performed by pscf_1d one-dimensional finite difference program, as
+performed by pscf_r1d one-dimensional finite difference program, as
 discussed below.  To indicate the meaning of each index in this table,
 we use the following notation:
 

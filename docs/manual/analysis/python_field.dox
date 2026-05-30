@@ -9,7 +9,7 @@ and store the contents of a field file written in any of the formats used
 by different PSCF programs. Specifically, an instance of this class can
 store the contents of any of the 3 file formats used by the pscf_rpc and
 pscf_rpg programs for fields in periodic systems, as well as the simpler
-field file format used for one-dimensional systems by the pscf_1d
+field file format used for one-dimensional systems by the pscf_r1d
 program. The type of field file is inferred during parsing from the
 file format.  Parsing can be performed by the constructor for this
 class, by passing the constructor a filename argument, as for the other

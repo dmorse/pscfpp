@@ -127,7 +127,7 @@ These namespace-level subdirectories are listed below:
 <tr>
   <td> r1d </td>
   <td> Pscf::R1d </td>
-  <td> Code used only by the pscf_1d program </td>
+  <td> Code used only by the pscf_r1d program </td>
 </tr>
 <tr>
   <td> prdc </td>
@@ -198,7 +198,7 @@ subdirectories of src each contain code is only used within one
 associated executable program.  These five namespaces and corresponding 
 directories are referred to hereafter as program-level namespaces and 
 program-level directories, respectively. Subdirectory r1d contains code 
-that is only used by the pscf_1d program. Subdirectories rpc and rpg 
+that is only used by the pscf_r1d program. Subdirectories rpc and rpg 
 contains code that is only used by the pscf_rpc and pscf_rpg programs, 
 respectively. Subdirectories cpc and cpg contain code that will only 
 be used by the the pscf_cpc and pscf_cpg CL-FTS programs, though these

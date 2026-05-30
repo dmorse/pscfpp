@@ -28,7 +28,7 @@ several of the sub-pages linked below.
 
 <ol>
   <li> \subpage user_field_types_page  </li>
-  <li> \subpage user_field_r1d_page "One-dimensional Fields (pscf_1d)"  </li>
+  <li> \subpage user_field_r1d_page "One-dimensional Fields (pscf_r1d)"  </li>
   <li> \subpage user_field_periodic_page "Periodic Fields (pscf_rpc and pscf_rpg)"
     <ul>
       <li> \ref user_field_header_page "Field File Header" </li>

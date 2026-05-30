@@ -10,7 +10,7 @@
 #include <r1d/system/System.h>
 
 /**
-* Main function for pscf_1d program.
+* Main function for pscf_r1d program.
 *
 * \ingroup Pscf_R1d_Module
 *

@@ -34,9 +34,12 @@ System{
       }
 
       HamiltonianAnalyzer{
-        outputFileName    out/mcHamiltonian
+        outputFileName    out/hamiltonian
       }
 
+      BinaryStructureFactor{
+        outputFileName    out/structureFactor
+      }
     }
   }
 }

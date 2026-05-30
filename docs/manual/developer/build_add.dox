@@ -22,7 +22,7 @@ contains the new source file.
 
 For example, consider the sources.mk file in the directory src/r1d/iterator.
 This directory contains source code files for several classes that
-implement different SCFT iteration algorithms that can used by the pscf_1d
+implement different SCFT iteration algorithms that can used by the pscf_r1d
 program, and a few related classses.  The relevant part of in this
 directory, which appears at the top of the file, is a makefile statement
 that looks like this:

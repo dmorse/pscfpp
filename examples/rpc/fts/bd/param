@@ -55,8 +55,3 @@ System{
   }
 }
 
-      TrajectoryWriter{
-        interval        10
-        outputFileName  out/trajectory
-      }
-

@@ -8,16 +8,18 @@ for this project is in the dmorse/pscfpp github.com repository.
 The following labels are used below to indicate which programs or sets of
 programs are affected by specific changes:
 
-  rpc  - CPU code for periodic structures (pscf_pc)
-  rpg  - GPU code for periodic structures (pscf_pg)
-  r1d  - CPU finite difference code for 1D problems (pscf_1d)
+  rpc  - CPU code for periodic structures (pscf_rpc)
+  rpg  - GPU code for periodic structures (pscf_rpg)
+  r1d  - CPU finite difference code for 1D problems (pscf_r1d)
   all - all programs (rpc, rpg, and r1d)
 
-In version 1.2, the program names were still pscf_pc, pscf_pg and pscf_1d.  
-Versions before v1.2 used program name pscf_fd and label fd for the 1D 
-finite difference SCFT code that is now called pscf_r1d.
+Executable program names have changed over time.  In version 1.2, the 
+program names were scf_pc, pscf_pg and pscf_1d.  The 1D finite-difference
+SCFT program that is now called pscf_r1d was called pscf_fd before version
+1.2, and pscf_1d in versions 1.2 and 1.3.
 
-Version 1.4.0 (5/01/2026)
+
+Version 1.4.0 (6/01/2026)
 =========================================
 
 Signficant code reorganization, and a few new features.
@@ -26,22 +28,29 @@ User visible features and changes
 ---------------------------------
 * Added new PS-FTS ShiftMove and BdMove MC moves (rpc, rpg)
 * Added BoxLengthDerivative PS-FTS analyzer (rpc, rpg)
+
+User visible changes
+--------------------
 * Renamed and re-wrote BinaryStructureFactor analyzer (rpc, rpg)
+* Renamed pscf_1d program to pscf_r1d
 
 Developer-visible changes
 --------------------------
-Reduced duplication of code between src/rpc and src/rpg:
-* Created Rp namespace, directory src/rp, for base class templates 
-* Created shared template base classes for most classes in Rpc and Rpg
+* Removed almost all duplication of code between src/rpc and src/rpg:
+ - Created Rp namespace, directory src/rp, for base class templates 
+ - Created shared template base classes for most classes in Rpc and Rpg
+* Add sorting of waves by magnitude to WaveList classes
 
 Documentation
 -------------
-* Improved manual page on use of C++ templates 
+* Improved manual pages on usage patterns for C++ templates 
+* Added manual page about base class templates in the Rp namespace
 
-Bug fix:
+Bug fixes:
 ----------
-* Fixed calculation of WaveList::implicitInverse, which caused small 
-  errors in derivatives of free energy w/ respect to unit cell parameters.
+* Fixed bug in calculation of WaveList::implicitInverse, which caused 
+  small errors in derivatives of free energy w/ respect to unit cell 
+  parameters.
 
 
 Version 1.3.3 (10/29/2025)
@@ -98,20 +107,22 @@ Documentation
 Version 1.3.0 (8/15/2025)
 =========================================
 
+Added option of using discrete chain model .
+
 User-visible features
 ---------------------
 * Choice of discrete bead or continuous thread polymer models (rpc, rpg)
-* Program names changed to pscf_r1d, pscf_rpc, and pscf_rpg
 
 User-visible changes
 --------------------
 * Optional Environment block in parameter file for imposed fields (rpc, rpg)
+* Program names changed to pscf_1d, pscf_rpc, and pscf_rpg
 
 Developer-visible changes
 -------------------------
 * Generation of imposed fields moved into new Environment class (rpc, rpg)
 * Use of signals (Util::Signal) to coordinate object states (rpc, rpg)
-* Reduced code duplication between Rpc, Rpg namespaces (rpc, rpg)
+* Reduced some code duplication between Rpc, Rpg namespaces (rpc, rpg)
 * Moved functions from main System class into component objects (rpc, rpg)
 * Added WaveList class to pscf_pc, by analogy to pscf_rpg (rpc)
 

@@ -55,7 +55,7 @@ make all
 The behavior of this command depends on whether CUDA compilation has
 been enabled. If CUDA compilation is disabled (which is the default
 behavior), then the "make all" command only compiles the CPU programs
-pscf_1d and pscf_rpc. If CUDA compilation has been enabled, this
+pscf_r1d and pscf_rpc. If CUDA compilation has been enabled, this
 command also compiles the GPU-enabled pscf_rpg program.
 
 CUDA compilation can be enabled or disabled by using the -c option of
@@ -66,11 +66,11 @@ disabled, "make all" is equivalent to "make all-cpu". When CUDA
 compilation is enabled, "make all" equivalent to calling "make all-cpu"
 followed by "make pscf_rpg".
 
-<h2> pscf_1d: </h2>
+<h2> pscf_r1d: </h2>
 
-To compile only the pscf_1d program, simply enter:
+To compile only the pscf_r1d program, simply enter:
 \code
-make pscf_1d
+make pscf_r1d
 \endcode
 If entered before compiling any other code, this command will:
 
@@ -84,8 +84,8 @@ If entered before compiling any other code, this command will:
   - Create a static library (with file extension \*.a) in each of these
     three namespace-level subdirectories of the build directory.
 
-  - Compile and link the main program file src/r1d/pscf_1d.cpp and
-    install an executable file named pscf_1d in the PSCF bin/
+  - Compile and link the main program file src/r1d/pscf_r1d.cpp and
+    install an executable file named pscf_r1d in the PSCF bin/
     directory.
 
 To recompile these programs after making any changes to configuration
@@ -115,12 +115,12 @@ This command will cause the system to:
 
 <h2> all-cpu: </h2>
 
-To explicitly build the pscf_1d and pscf_rpc CPU programs, but not the
+To explicitly build the pscf_r1d and pscf_rpc CPU programs, but not the
 GPU-enable pscf_rpg program, enter
 \code
 make all-cpu
 \endcode
-This is equivalent to entering "make pscf_1d" followed by "make pscf_rpc".
+This is equivalent to entering "make pscf_r1d" followed by "make pscf_rpc".
 
 <h2> pscf_rpg: </h2>
 
@@ -242,7 +242,7 @@ In addition, invoking "make all" from the r1d, rpc or rpg "program-level"
 subdirectories of src will also compile, link and install an executable
 program for which the source code is located in that directory. For
 example, entering "make all" from src/r1d directory will create a static
-library named src/r1d/libr1d.a, and install an executable named pscf_1d
+library named src/r1d/libr1d.a, and install an executable named pscf_r1d
 in the bin directory.
 
 <em> Rationale </em>: The ability to invoke "make all" from a

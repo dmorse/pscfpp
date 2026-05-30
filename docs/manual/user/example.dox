@@ -85,7 +85,7 @@ instead enter
 \endcode
 A command to execute a different PSCF program would have a similar
 syntax except for the use of a different executable name, such as
-pscf_1d or pscf_rpg.
+pscf_r1d or pscf_rpg.
 
 \section examples_clean_sec Cleaning up
 

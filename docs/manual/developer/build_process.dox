@@ -18,7 +18,7 @@ Compilation and installation of PSCF involves the following operations:
   - Creating a static library file in each namespace-level subdirectory
     of the src directory
 
-  - Creating the executable files (pscf_1d, pscf_rpc, and optionally
+  - Creating the executable files (pscf_r1d, pscf_rpc, and optionally
     pscf_rpg) and installing them in the bin directory by default
 
 Various types of file involved in this process are described below.

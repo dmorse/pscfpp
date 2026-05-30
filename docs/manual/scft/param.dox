@@ -10,7 +10,7 @@ sweeps.
 
 <h2> Contents:</h2>
    <ol>
-   <li> \subpage scft_param_1d_page "One-dimensional systems (pscf_1d)" </li>
+   <li> \subpage scft_param_1d_page "One-dimensional systems (pscf_r1d)" </li>
    <li> \subpage scft_param_pc_page "Periodic systems (pscf_rpc and pscf_rpg)"
         </li>
    </ol>

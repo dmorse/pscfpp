@@ -74,7 +74,7 @@ file as command parameters.
 Several different field file formats are used by PSCF programs.  For
 each program, the same file format or set of file formats are used for
 both w-fields and c-cfields.  The pscf_rpc and pscf_rpg programs use
-identical sets of field file formats, while pscf_1d uses a somewhat
+identical sets of field file formats, while pscf_r1d uses a somewhat
 different format.
 
 <b> pscf_rpc and pscf_rpg </b>:
@@ -103,13 +103,13 @@ sampling methods generally to not exhibit any exact space group symmetries.
 Monomer concentration fields may be output in either format, and are often
 output in r-grid format for purposes of visualization.
 
-<b> pscf_1d </b>:
+<b> pscf_r1d </b>:
 
-The pscf_1d command uses a single field file format for all w- and c-
+The pscf_r1d command uses a single field file format for all w- and c-
 fields.  This file format simply lists values of fields on the nodes of
 a regular 1D grid, much like the r-grid format used pscf_rpc and pscf_rpg.
 Because this program only uses this single field file format, the names
-of commands used by pscf_1d to read and write field files do not contain
+of commands used by pscf_r1d to read and write field files do not contain
 suffixes that specify a file format.
 
 <BR>

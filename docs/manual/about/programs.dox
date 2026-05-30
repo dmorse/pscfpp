@@ -6,17 +6,17 @@
 <BR>
 
 The PSCF package currently contains source code for three executable
-programs named pscf_1d, pscf_rpc and pscf_rpg. The purpose and
+programs named pscf_r1d, pscf_rpc and pscf_rpg. The purpose and
 capabilties of each are summarized below;
 
-<b>pscf_1d</b>:
+<b>pscf_r1d</b>:
 
-The pscf_1d program is designed for SCFT calculations for one-dimensional
+The pscf_r1d program is designed for SCFT calculations for one-dimensional
 problems in Cartesian, cylindrical or spherical coordinates. A simple
 finite difference spatial discretization is used to solve the underlying
 modified diffusion equation (MDE). This program is useful for SCFT problems
 involving flat or curved interfaces, and for simulating spherical or
-cylindrical micelles.  The pscf_1d program cannot perform stochastic field
+cylindrical micelles.  The pscf_r1d program cannot perform stochastic field
 theoretic simulations.
 
 <b>pscf_rpc</b>:

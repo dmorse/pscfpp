@@ -100,7 +100,7 @@ pscf_rpc or pscf_rpg parameter file, which must appear before the Mixture
 block. If the polymerModel parameter is omitted, the thread model is
 used by default.
 
-This parameter may not be used in the parameter file for pscf_1d because
+This parameter may not be used in the parameter file for pscf_r1d because
 this program only allows use of the thread model.
 
 \section scft_param_pc_domain_sec Domain block

@@ -127,7 +127,7 @@ rather than \$(ROOT_DIR)/bld.  The config.mk file in the src directory
 is used only for in-source compilation, and so it declares that the
 src directory should be used as the build directory.
 
-The main executable files named pscf_1d, pscf_rpc, and pscf_rpg are
+The main executable files named pscf_r1d, pscf_rpc, and pscf_rpg are
 created within the BIN_DIR.  Users can, if desired, change the location
 in which these files are created by using a text editor to change the
 value assigned to BIN_DIR within either or both of the config.mk files.

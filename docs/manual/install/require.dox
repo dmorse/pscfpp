@@ -17,7 +17,7 @@ hardware.  Compilation is controlled by a system of unix makefiles.
 \section require_overview_section Overview
 
 PSCF currently contains code for two programs that are designed to run on
-a conventional CPU (pscf_1d and pscf_rpg), and one that is designed to use
+a conventional CPU (pscf_r1d and pscf_rpg), and one that is designed to use
 an NVIDIA GPU (pscf_rpg). We distinguish these in what follows by referring
 to CPU programs and a GPU-enabled program.
 

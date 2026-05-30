@@ -59,7 +59,7 @@ shown \ref user_param_example_page "previously" :
 \section user_param_mixture_format_sec Format
 
 All three PSCF programs use very similar format for the Mixture block. The
-pscf_1d and pscf_rpc programs use identical formats for this block, which
+pscf_r1d and pscf_rpc programs use identical formats for this block, which
 was discussed on the \ref user_param_format_example2_sec "previous page" .
 The format used by the pscf_rpg program accepts one additional optional
 parameter named useBatchedFFT the end of the block. The format of the
@@ -184,11 +184,11 @@ Comments:
     \ref user_model_conventions_vMonomer_sec "elsewhere".  A value for
     vMonomer is, however, normally needed as an input parameter for
     stochastic PF-FTS calculations. A value of vMonomer is also needed as
-    an input in the calculation of some optional outputs of the pscf_1d
+    an input in the calculation of some optional outputs of the pscf_r1d
     program, such as the total excess free energy of a spherical micelle.
 
   - The parameter ds is required when the thread model is being used,
-    but may not appear when the bead model is being used. The pscf_1d
+    but may not appear when the bead model is being used. The pscf_r1d
     program can only use the thread model, and so always requires a
     "ds" parameter. For the pscf_rpc and pscf_rpg programs, the choice of
     bead or thread model is determined by the value of the polymerModel
@@ -222,7 +222,7 @@ Prdc, R1d, Rpc, and Rpg. Namespace Pscf::Prdc contains code relevant
 to problems involving periodic boundary conditions, which is used to
 construct both pscf_rpc and pscf_rpg.  The enclosed namespaces named R1d,
 Rpc, and each contain code that is only used by one executable program
-(e.g., pscf_1d, pscf_rpc or pscf_rpg, respectively).
+(e.g., pscf_r1d, pscf_rpc or pscf_rpg, respectively).
 
 We refer to the enclosed namespaces R1d, Rpc, and Rpg throughout this
 documentation as program-level namespaces, because each contains files

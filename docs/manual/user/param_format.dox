@@ -52,7 +52,7 @@ given \ref rp_System_page "here".
 Every PSCF parameter file contains a Mixture block, which is always a
 required element of the System block. Different PSCF programs use a
 Mixture block with very similar file formats. The format used by both
-pscf_1d and pscf_rpc can be described compactly as follows:
+pscf_r1d and pscf_rpc can be described compactly as follows:
 \code
 Mixture{
   nMonomer   int

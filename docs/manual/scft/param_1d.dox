@@ -1,10 +1,10 @@
-/*! \page scft_param_1d_page Parameter File - pscf_1d
+/*! \page scft_param_1d_page Parameter File - pscf_r1d
 
 \ref scft_param_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_param_pc_page     (Next)
 <BR>
 
-The pscf_1d program allows the solution of the SCFT field equations for
+The pscf_r1d program allows the solution of the SCFT field equations for
 problems in which all fields depend only on a single coordinate in a
 planar planar (Cartesian), cylindrical or spherical geometry.  This
 program may be used to treat a flat interface or thin film by using a
@@ -15,7 +15,7 @@ using a cylindrical or spherical geometry.
 \section scft_param_1d_example_sec Example
 
 The text shown below is a complete parameter file for a simple 1D SCFT
-calculation performed using the pscf_1d program:
+calculation performed using the pscf_r1d program:
 
 \code
 System{
@@ -65,7 +65,7 @@ A in a one-dimensional planar geometry.
 
 \section scft_param_1d_format_sec File format
 
-The overall format for a pscf_1d parameter file is shown below in
+The overall format for a pscf_r1d parameter file is shown below in
 skeleton form:
 \code
 System{
@@ -78,8 +78,8 @@ System{
 \endcode
 The overall structure is similar to that of the example pscf_rpc parameter
 file shown \ref user_param_example_page "previously" as an example, with
-one important difference: The System block of a pscf_1d parameter file does
-not contain a polymerModel parameter because the pscf_1d program does not
+one important difference: The System block of a pscf_r1d parameter file does
+not contain a polymerModel parameter because the pscf_r1d program does not
 offer a choice of bead or thread models, and instead always uses a thread
 model.
 
@@ -91,7 +91,7 @@ below on the contents of the remaining Domain, Iterator, and Sweep blocks.
 
 \section scft_param_1d_domain_section Domain block
 
-The domain block for pscf_1d describes the 1D spatial domain over which
+The domain block for pscf_r1d describes the 1D spatial domain over which
 the SCFT equations should be solved, and the mesh used to discretize
 that domain. The parameter file syntax is described in detail here
 \ref user_param_domain_1d_page "here".
@@ -105,7 +105,7 @@ has been discussed \ref scft_iterator_page "here".
 
 \section scft_param_1d_sweep_sec Sweep
 
-The default sweep for pscf_1d is a linear sweep algorithm that can be
+The default sweep for pscf_r1d is a linear sweep algorithm that can be
 invoked using a block that starts either with the generic label Sweep
 or the specific label LinearSweep. The required parameter file format
 has been described \ref scft_sweep_linear_sec "here".

@@ -17,12 +17,12 @@ We recommend that users first attempt to compile only the CPU programs,
 leaving compilation of the GPU-enabled programs to a separate step.
 
 Compilation of GPU-enabled code is disabled by default.  To compile only
-the pscf_1d and pscf_rpc CPU programs, you may simply enter
+the pscf_r1d and pscf_rpc CPU programs, you may simply enter
 \code
     make all
 \endcode
 from the PSCF directory immediately after running the configure script.
-If successful, this will install executables named "pscf_1d" and
+If successful, this will install executables named "pscf_r1d" and
 "pscf_rpc" in the PSCF bin/ directory.
 
 Compiling all the PSCF C++ code using "make all" takes a bit of time
@@ -124,7 +124,7 @@ already completed the preliminary steps described above.
 
 If successful, the "make all" command will install an executable file
 named pscf_rpg in the PSCF bin/ directory in addition to the executable
-files named pscf_1d and pscf_rpc that are created by compiling only C++
+files named pscf_r1d and pscf_rpc that are created by compiling only C++
 code.
 
 Several of the above steps are discussed in more detail in subsequent
