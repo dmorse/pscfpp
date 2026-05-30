@@ -36,10 +36,6 @@ BdSimulator{
          interval        1
          outputFileName  out/chiDerivative
       }
-      BinaryStructureFactorGrid{
-         interval        1
-         outputFileName  out/binaryStructureFactorGrid
-      }
       HamiltonianAnalyzer{
          interval        1
          outputFileName  out/hamiltonian

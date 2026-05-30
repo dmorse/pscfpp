@@ -11,7 +11,6 @@
 #include "TrajectoryWriter.h"
 #include "ConcentrationWriter.h"
 #include "HamiltonianAnalyzer.h"
-#include "BinaryStructureFactorGrid.h"
 #include "BinaryStructureFactor.h"
 #include "StepLogger.h"
 #include "PerturbationDerivative.h"
@@ -57,8 +56,6 @@ namespace Rpc {
          ptr = new ConcentrationWriter<D>(*simPtr_, *sysPtr_);
       } else if (className == "HamiltonianAnalyzer") {
          ptr = new HamiltonianAnalyzer<D>(*simPtr_, *sysPtr_);
-      } else if (className == "BinaryStructureFactorGrid") {
-         ptr = new BinaryStructureFactorGrid<D>(*simPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactor") {
          ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
       } else if (className == "StepLogger") {

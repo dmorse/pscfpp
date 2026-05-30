@@ -8,7 +8,6 @@ rpg_fts_analyzer_= \
   rpg/fts/analyzer/ConcentrationWriter.cu \
   rpg/fts/analyzer/StepLogger.cu \
   rpg/fts/analyzer/HamiltonianAnalyzer.cu \
-  rpg/fts/analyzer/BinaryStructureFactorGrid.cu \
   rpg/fts/analyzer/BinaryStructureFactor.cu \
   rpg/fts/analyzer/MaxOrderParameter.cu \
   rpg/fts/analyzer/FourthOrderParameter.cu \
