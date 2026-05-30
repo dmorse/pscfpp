@@ -313,13 +313,13 @@ namespace Cpu {
       {  return hasdKSq_; }
 
       /**
-      * Are waves sorted ?
+      * Have the waves been sorted by magnitude ?
       */
       bool isSorted() const
       {  return isSorted_; }
 
       /**
-      * Does this WaveList correspond to real-valued fields?
+      * Is this WaveList set up for use with real-valued fields?
       */
       bool isRealField() const
       {  return isRealField_; }
@@ -392,9 +392,8 @@ namespace Cpu {
       /**
       * Dimensions of the mesh in reciprocal space.
       *
-      * If isRealField_, the reciprocal-space grid is smaller 
-      * than the real-space grid, as output by FFTW. Otherwise, the two 
-      * grids are identical.
+      * If isRealField_, the reciprocal-space grid is smaller than the
+      * real-space grid. Otherwise, the two grids have equal dimensions.
       */
       IntVec<D> kMeshDimensions_;
 
@@ -402,13 +401,12 @@ namespace Cpu {
       * Number of grid points in reciprocal space.
       *
       * If isRealField_, the reciprocal-space grid is smaller than the
-      * real-space grid, as output by cuFFT. Otherwise, the two grids
-      * are the same size.
+      * real-space grid. Otherwise, the two grids have equal sizes.
       */
       int kSize_;
 
       /**
-      * Number of distinct wavevector magnitudes.
+      * Number of distinct wavenumbers (i.e., wavevector magnitudes).
       */
       int nBunch_;
 
@@ -447,8 +445,7 @@ namespace Cpu {
    };
 
    // Get the array of minimum images on the device by reference.
-   template <int D>
-   inline
+   template <int D> inline
    DArray< IntVec<D> > const & WaveList<D>::minImages() const
    {
       UTIL_CHECK(hasMinImages_);
@@ -456,8 +453,7 @@ namespace Cpu {
    }
 
    // Get the kSq array on the device by reference.
-   template <int D>
-   inline
+   template <int D> inline
    RField<D> const & WaveList<D>::kSq() const
    {
       UTIL_CHECK(hasKSq_);
@@ -465,8 +461,7 @@ namespace Cpu {
    }
 
    // Get dKSq for unit cell parameter array i.
-   template <int D>
-   inline
+   template <int D> inline
    RField<D> const & WaveList<D>::dKSq(int i) const
    {
       UTIL_CHECK(hasdKSq_);
@@ -474,8 +469,7 @@ namespace Cpu {
    }
 
    // Get entire dKSq container by const reference.
-   template <int D>
-   inline
+   template <int D> inline
    DArray< RField<D> > const & WaveList<D>::dKSq() const
    {
       UTIL_CHECK(hasdKSq_);
@@ -483,8 +477,7 @@ namespace Cpu {
    }
 
    // Get the implicitInverse array by const reference.
-   template <int D>
-   inline
+   template <int D> inline
    DArray<bool> const & WaveList<D>::implicitInverse() const
    {
       UTIL_CHECK(isAllocated_);
@@ -493,8 +486,7 @@ namespace Cpu {
    }
 
    // Get the sortedIds array by const reference.
-   template <int D>
-   inline
+   template <int D> inline
    DArray<int> const & WaveList<D>::sortedIds() const
    {
       UTIL_CHECK(isSorted_);
@@ -502,8 +494,7 @@ namespace Cpu {
    }
 
    // Get the sortedBunches array by const reference.
-   template <int D>
-   inline
+   template <int D> inline
    GArray< Pair<int> > const & WaveList<D>::sortedBunches() const
    {
       UTIL_CHECK(isSorted_);
@@ -511,8 +502,7 @@ namespace Cpu {
    }
 
    // Get the bunchIds array by const reference.
-   template <int D>
-   inline
+   template <int D> inline
    DArray<int> const & WaveList<D>::bunchIds() const
    {
       UTIL_CHECK(isSorted_);

@@ -440,14 +440,17 @@ namespace Cuda {
    template <int D>
    WaveList<D>::WaveList(bool isRealField)
     : kSize_(0),
+      nBunch_(0),
       isAllocated_(false),
       hasMinImages_(false),
       hasMinImages_h_(false),
       hasKSq_(false),
       hasdKSq_(false),
+      isSorted_(false),
+      isRealField_(isRealField),
       unitCellPtr_(nullptr),
       meshPtr_(nullptr)
-   {  isRealField_ = isRealField; }
+   {}
 
    /*
    * Destructor.

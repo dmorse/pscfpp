@@ -17,40 +17,45 @@ BdSimulator{
       baseInterval    1
       BoxLengthDerivative{
          interval        1
-         outputFileName  out/boxLengthDerivative_analyzer
+         outputFileName  out/boxLengthDerivative
       }
       PerturbationDerivative{
          interval        1
-         outputFileName  out/perturbationDerivative_analyzer
+         outputFileName  out/perturbationDerivative
       }
       MaxOrderParameter{
          interval        1
-         outputFileName  out/maxOrder_analyzer
+         outputFileName  out/maxOrder
       }
       FourthOrderParameter{
          interval        1
-         outputFileName  out/fourthOrder_analyzer
+         outputFileName  out/fourthOrder
       }
       ConcentrationDerivative{
          interval        1
-         outputFileName  out/concentrationDerivative_analyzer
+         outputFileName  out/concentrationDerivative
       }
       ChiDerivative{
          interval        1
-         outputFileName  out/chiDerivative_analyzer
+         outputFileName  out/chiDerivative
       }
       BinaryStructureFactorGrid{
          interval        1
-         outputFileName  out/binaryStructureFactorGrid_analyzer
+         outputFileName  out/binaryStructureFactorGrid
+      }
+      BinaryStructureFactor{
+         interval        1
+         outputFileName  out/binaryStructureFactor
+         writeWaveData   1
       }
       HamiltonianAnalyzer{
          interval        1
-         outputFileName  out/hamiltonian_analyzer
+         outputFileName  out/hamiltonian
          nSamplePerOutput 1
       }
       TrajectoryWriter{
          interval        1
-         outputFileName  out/trajectory_analyzer
+         outputFileName  out/trajectory
       }
       StepLogger{
          interval        5

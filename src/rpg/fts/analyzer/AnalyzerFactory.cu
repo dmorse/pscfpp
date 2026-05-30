@@ -12,6 +12,7 @@
 #include "ConcentrationWriter.h"
 #include "HamiltonianAnalyzer.h"
 #include "BinaryStructureFactorGrid.h"
+#include "BinaryStructureFactor.h"
 #include "StepLogger.h"
 #include "PerturbationDerivative.h"
 #include "ChiDerivative.h"
@@ -57,8 +58,9 @@ namespace Rpg {
            new HamiltonianAnalyzer<D>(*simPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactorGrid") {
          ptr = 
-           new BinaryStructureFactorGrid<D>(*simPtr_, 
-                                            *sysPtr_);
+           new BinaryStructureFactorGrid<D>(*simPtr_, *sysPtr_);
+      } else if (className == "BinaryStructureFactor") {
+         ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
       } else if (className == "StepLogger") {
          ptr = new StepLogger<D>(*simPtr_, *sysPtr_);
       } else if (className == "PerturbationDerivative") {

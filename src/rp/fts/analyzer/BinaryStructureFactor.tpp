@@ -105,11 +105,13 @@ namespace Rp {
       UTIL_CHECK(kSq.capacity() == nWave_);
       UTIL_CHECK(implicit.capacity() == nWave_);
 
-      // Sort waves and set nBunch
+      // Sort waves in WaveList and set nBunch_
       typename T::WaveList& waveList = system().waveList();
+      UTIL_CHECK(waveList.isRealField());
       if (!waveList.hasKSq()) {
          waveList.computeKSq();
       }
+      UTIL_CHECK(waveList.kSize() == nWave_);
       waveList.sortWaves();
       nBunch_ = waveList.nBunch();
       UTIL_CHECK(nBunch_ > 0);
@@ -119,7 +121,7 @@ namespace Rp {
          int const m = bunchAccumulators_.capacity();
          UTIL_CHECK(bunchWavenumbers_.capacity() == m);
          UTIL_CHECK(bunchValues_.capacity() == m);
-         if (bunchAccumulators_.capacity() < nBunch_) {
+         if (m < nBunch_) {
             bunchAccumulators_.deallocate();
             bunchWavenumbers_.deallocate();
             bunchValues_.deallocate();
@@ -139,9 +141,9 @@ namespace Rp {
 
       // Initialize all arrays
       for (int ib = 0; ib < m; ++ib) {
+         bunchAccumulators_[ib].clear();
          bunchWavenumbers_[ib] = 0.0;
          bunchValues_[ib] = 0.0;
-         bunchAccumulators_[ib].clear();
       }
       for (int iw = 0; iw < nWave_; ++iw) {
          waveBunchIds_[iw] = -1;
@@ -155,8 +157,8 @@ namespace Rp {
 
       // Define references to WaveList data structures
       Array< int > const & sortedIds = waveList.sortedIds();
-      GArray< Pair<int> > const & bunches = waveList.sortedBunches();
       UTIL_CHECK(sortedIds.capacity() == nWave_);
+      GArray< Pair<int> > const & bunches = waveList.sortedBunches();
       UTIL_CHECK(bunches.size() == nBunch_);
 
       // Set bunchWavenumbers_, waveBunchIds_, and waveWeights_

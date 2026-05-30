@@ -173,25 +173,25 @@ namespace Cuda {
       *
       * This function returns an array of kSize elements in which each
       * element is an IntVec<D> containing the integer coordinates of 
-      * the minimum image of one wavevector in the k-space mesh used
-      * for discrete Fourier transforms.
+      * the minimum image of one wavevector in the k-space mesh used for
+      * discrete Fourier transforms.
       */
       HostDArray< IntVec<D> > const & minImages_h() const;
 
       /**
       * Get the kSq array on the device by reference.
       *
-      * This method returns an RField in which each element is the square
-      * magnitude |k|^2 of a wavevector k in the k-space mesh used for the
-      * DFT. If isRealField is true, this k-space mesh is smaller than the
-      * real-space mesh. Otherwise, it is the same size.
+      * This method returns an RField<D> in which each element is the 
+      * square magnitude |k|^2 of a wavevector k in the k-space mesh used 
+      * for a DFT. If isRealField is true, this k-space mesh is smaller 
+      * than the real-space mesh. Otherwise, it is the same size.
       */
       RField<D> const & kSq() const;
 
       /**
       * Get derivatives of |k|^2 with respect to lattice parameter i.
       *
-      * This method returns an RField in which each element is the
+      * This method returns an RField<D> in which each element is the
       * derivative of the square-wavevector with respect to unit cell
       * parameter i, multiplied by a prefactor. The prefactor is 2.0 for
       * waves that have an implicit inverse and 1.0 otherwise. The choice
@@ -212,7 +212,7 @@ namespace Cuda {
       * Get the implicitInverse array by reference.
       *
       * This array is defined on a k-grid mesh, with a boolean value for
-      * each gridpoint. The boolean represents whether the inverse of the
+      * each wavevector. The boolean represents whether the inverse of the
       * wave at the given gridpoint is an implicit wave. Implicit here is
       * used to mean any wave that is outside the bounds of the k-grid.
       *
@@ -314,13 +314,13 @@ namespace Cuda {
       {  return hasdKSq_; }
 
       /**
-      * Are waves sorted ?
+      * Have the waves been sorted by magnitude ?
       */
       bool isSorted() const
       {  return isSorted_; }
 
       /**
-      * Does this WaveList correspond to real-valued fields?
+      * Is this WaveList set up for use with real-valued fields?
       */
       bool isRealField() const
       {  return isRealField_; }
@@ -332,7 +332,7 @@ namespace Cuda {
       // Private member variables
 
       /**
-      * Array containing minimum images for each wave, stored on device.
+      * Array containing minimum images for all waves, stored on device.
       *
       * The array has size kSize_ * D, where kSize_ is the number of grid
       * points in reciprocal space. The array is unwrapped into a linear
@@ -345,7 +345,7 @@ namespace Cuda {
       DeviceArray<int> minImages_;
 
       /**
-      * Array of IntVec<D> minimum images, stored on the host.
+      * Array of IntVec<D> minimum images for waves, stored on the host.
       *
       * Each element of minImageVecs_ contains all D coordinates of the
       * minimum image for a single wavevector, stored on the host as an
@@ -537,8 +537,7 @@ namespace Cuda {
    }
 
    // Get the sortedBunches array by const reference.
-   template <int D>
-   inline
+   template <int D> inline
    GArray< Pair<int> > const & WaveList<D>::sortedBunches() const
    {
       UTIL_CHECK(isSorted_);
@@ -546,22 +545,19 @@ namespace Cuda {
    }
 
    // Get the bunchIds array by const reference.
-   template <int D>
-   inline
+   template <int D> inline
    DArray<int> const & WaveList<D>::bunchIds() const
    {
       UTIL_CHECK(isSorted_);
       return bunchIds_;
    }
 
-   #ifndef PRDC_CUDA_WAVE_LIST_TPP
    // Explicit instantiation declarations
    extern template class WaveList<1>;
    extern template class WaveList<2>;
    extern template class WaveList<3>;
-   #endif
 
-} // Cuda
-} // Prdc
-} // Pscf
+} // namespace Cuda
+} // namespace Prdc
+} // namespace Pscf
 #endif
