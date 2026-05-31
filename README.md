@@ -11,14 +11,14 @@ field theory (SCFT) calculations and stochastic field-theoretic simulation
 (FTS) calculations that rely on a partial-saddle-point approximation.
 
 The current version of PSCF is written primarily in C++, supplemented by
-CUDA to enable the use of a graphics processing unit (GPU) when one is
+CUDA to enable the use of an NVIDIA graphics processing unit (GPU) when 
 available. PSCF is distributed only in source code form, and must be
 compiled by the user.
 
 ## Methods: SCFT and FTS
 
 PSCF was originally designed for SCFT calculations, and provides an
-extensive set of tools for this purpose . The acronym PSCF stands for
+extensive set of tools for this purpose. The acronym PSCF stands for
 Polymer Self-Consistent Field, reflecting this origin.
 
 PSCF now also provides tools for stochastic field theoretic simulation
@@ -27,22 +27,22 @@ field theoretic simulation (PS-FTS) calculations. Such simulations can be
 performed using ether Brownian dynamics (BD) or Monte-Carlo (MC) sampling 
 methods.
 
-The partial saddle-point approximation for FTS used in the current 
-version of PSCF is an approximation for incompressible models in which 
-a pressure-like field that imposes a constraint on the total monomer
+The partial saddle-point approximation for FTS that is currently 
+used in PSCF is an approximation for incompressible models in which a 
+pressure-like field that imposes a constraint on the total monomer
 concentration is approximated at a mean-field (or saddle-point) level,
 while fields that couple to composition fluctuations are allowed to 
 fluctuate. The resulting approximation yields a theory that involves 
-only real-valued fields, and that requires many of the same 
-computational building blocks as SCFT.
+only real-valued fields, and that requires many of the same computational 
+building blocks as SCFT.
 
 PSCF does not yet provide tools for complex Langevin field theoretic 
 simulations (CL-FTS). 
 
 ## History
 
-The current C++/CUDA version of PSCF originated as a rewritten version of
-an older Fortran SCFT program of the same name.  This older Fortran PSCF
+The current C++/CUDA version of PSCF originated as a rewrite of an 
+older Fortran SCFT program of the same name.  This older Fortran PSCF
 package built a single program that was designed for SCFT calculations 
 on systems that may contain mixtures of linear block polymers and small
 molecule solvents in a domain with periodic boundary conditions.  The
