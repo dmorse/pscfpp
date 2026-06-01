@@ -15,9 +15,9 @@ BdSimulator{
    }
    AnalyzerManager{
       baseInterval    1
-      BoxLengthDerivative{
+      CubicLengthDerivative{
          interval        1
-         outputFileName  out/boxLengthDerivative
+         outputFileName  out/cubicLengthDerivative
       }
       PerturbationDerivative{
          interval        1
