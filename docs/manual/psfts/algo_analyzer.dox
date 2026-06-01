@@ -55,7 +55,7 @@ on the class name.
   <li> \subpage rp_ChiDerivative_page "ChiDerivative":
        Compute the derivative of free energy with respect to changes in 
        a chi parameter.  </li>
-  <li> \subpage rp_BoxLengthDerivative_page "BoxLengthDerivative"
+  <li> \subpage rp_CubicLengthDerivative_page "CubicLengthDerivative"
        Compute the derivative of total free energy with respect to the 
        length of one edge of a cubic box.  </li>
   <li> \subpage rp_ConcentrationDerivative_page "ConcentrationDerivative"
@@ -82,7 +82,7 @@ parameter ramp that is designed to induce a spontaneous disorder-to-order
 (crystallization) or order-to-disorder (melting) transition.
 
 <em> Free Energy Derivatives </em>:
-The last four analyzers listed above (ChiDerivative, BoxLengthDerivative,
+The last four analyzers listed above (ChiDerivative, CubicLengthDerivative,
 ConcentrationDerivative, and PerturbationDerivative) all have names that 
 end with the suffix "Derivative", and are all designed to compute 
 derivatives of the free energy with respect to a model parameter, for 

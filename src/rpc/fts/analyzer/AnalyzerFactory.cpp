@@ -8,17 +8,17 @@
 #include "AnalyzerFactory.h"
 
 // Subclasses of Analyzer
+#include "StepLogger.h"
 #include "TrajectoryWriter.h"
 #include "ConcentrationWriter.h"
 #include "HamiltonianAnalyzer.h"
 #include "BinaryStructureFactor.h"
-#include "StepLogger.h"
-#include "PerturbationDerivative.h"
-#include "ChiDerivative.h"
-#include "ConcentrationDerivative.h"
 #include "MaxOrderParameter.h"
 #include "FourthOrderParameter.h"
-#include "BoxLengthDerivative.h"
+#include "ChiDerivative.h"
+#include "CubicLengthDerivative.h"
+#include "ConcentrationDerivative.h"
+#include "PerturbationDerivative.h"
 
 namespace Pscf {
 namespace Rpc {
@@ -50,7 +50,9 @@ namespace Rpc {
 
 
       // Try to match classname
-      if (className == "TrajectoryWriter") {
+      if (className == "StepLogger") {
+         ptr = new StepLogger<D>(*simPtr_, *sysPtr_);
+      } else if (className == "TrajectoryWriter") {
          ptr = new TrajectoryWriter<D>(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationWriter") {
          ptr = new ConcentrationWriter<D>(*simPtr_, *sysPtr_);
@@ -58,20 +60,18 @@ namespace Rpc {
          ptr = new HamiltonianAnalyzer<D>(*simPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactor") {
          ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
-      } else if (className == "StepLogger") {
-         ptr = new StepLogger<D>(*simPtr_, *sysPtr_);
       } else if (className == "PerturbationDerivative") {
          ptr = new PerturbationDerivative<D>(*simPtr_, *sysPtr_);
       } else if (className == "ChiDerivative") {
          ptr = new ChiDerivative<D>(*simPtr_, *sysPtr_);
+      } else if (className == "CubicLengthDerivative") {
+         ptr = new CubicLengthDerivative<D>(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationDerivative") {
          ptr = new ConcentrationDerivative<D>(*simPtr_, *sysPtr_);
       } else if (className == "MaxOrderParameter") {
          ptr = new MaxOrderParameter<D>(*simPtr_, *sysPtr_);
       } else if (className == "FourthOrderParameter") {
          ptr = new FourthOrderParameter<D>(*simPtr_, *sysPtr_);
-      } else if (className == "BoxLengthDerivative") {
-         ptr = new BoxLengthDerivative<D>(*simPtr_, *sysPtr_);
       }
 
       return ptr;

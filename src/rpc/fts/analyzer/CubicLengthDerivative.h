@@ -1,5 +1,5 @@
-#ifndef RPC_BOX_LENGTH_DERIVATIVE_H
-#define RPC_BOX_LENGTH_DERIVATIVE_H
+#ifndef RPC_CUBIC_LENGTH_DERIVATIVE_H
+#define RPC_CUBIC_LENGTH_DERIVATIVE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,13 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/BoxLengthDerivative.h>
+#include <rp/fts/analyzer/CubicLengthDerivative.h>
 #include <rpc/system/Types.h>
 #include <rpc/fts/analyzer/AverageAnalyzer.h>
 
 namespace Pscf {
 namespace Rpc {
 
+   // Forward declarations
    template <int D> class System;
    template <int D> class Simulator;
 
@@ -24,25 +25,28 @@ namespace Rpc {
    * This class is designed specifically for use with a cubic unit cell.
    *
    * Specializations of this template with D=1, 2 and 3 are derived from
-   * specializations of the base class template Rp::BoxLengthDerivative,
+   * specializations of the base class template Rp::CubicLengthDerivative,
    * and inherit their public interface and almost all of their source
    * code from this base class.
    *
-   * \see Rp::BoxLengthDerivative
-   * \see \ref rp_BoxLengthDerivative_page "Manual Page"
+   * \see Rp::CubicLengthDerivative
+   * \see \ref rp_CubicLengthDerivative_page "Manual Page"
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class BoxLengthDerivative
-     : public Rp::BoxLengthDerivative< D, Types<D> >
+   class CubicLengthDerivative
+     : public Rp::CubicLengthDerivative< D, Types<D> >
    {
 
    public:
 
       /**
       * Constructor.
+      *
+      * \param simulator  parent Simulator
+      * \param system  parent System
       */
-      BoxLengthDerivative(Simulator<D>& simulator, System<D>& system);
+      CubicLengthDerivative(Simulator<D>& simulator, System<D>& system);
 
    };
 
@@ -53,14 +57,14 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BoxLengthDerivative<1, Rpc::Types<1> >;
-      extern template class BoxLengthDerivative<2, Rpc::Types<2> >;
-      extern template class BoxLengthDerivative<3, Rpc::Types<3> >;
+      extern template class CubicLengthDerivative<1, Rpc::Types<1> >;
+      extern template class CubicLengthDerivative<2, Rpc::Types<2> >;
+      extern template class CubicLengthDerivative<3, Rpc::Types<3> >;
    }
    namespace Rpc {
-      extern template class BoxLengthDerivative<1>;
-      extern template class BoxLengthDerivative<2>;
-      extern template class BoxLengthDerivative<3>;
+      extern template class CubicLengthDerivative<1>;
+      extern template class CubicLengthDerivative<2>;
+      extern template class CubicLengthDerivative<3>;
    }
 }
 #endif

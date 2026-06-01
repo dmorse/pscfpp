@@ -14,7 +14,7 @@ rpg_fts_analyzer_= \
   rpg/fts/analyzer/ChiDerivative.cu \
   rpg/fts/analyzer/ConcentrationDerivative.cu \
   rpg/fts/analyzer/PerturbationDerivative.cu \
-  rpg/fts/analyzer/BoxLengthDerivative.cu
+  rpg/fts/analyzer/CubicLengthDerivative.cu
   
 rpg_fts_analyzer_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpg_fts_analyzer_:.cu=.o))

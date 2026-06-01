@@ -1,5 +1,5 @@
-#ifndef RP_BOX_LENGTH_DERIVATIVE_TPP
-#define RP_BOX_LENGTH_DERIVATIVE_TPP
+#ifndef RP_CUBIC_LENGTH_DERIVATIVE_TPP
+#define RP_CUBIC_LENGTH_DERIVATIVE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BoxLengthDerivative.h"
+#include "CubicLengthDerivative.h"
 #include <util/global.h>
 
 namespace Pscf {
@@ -20,17 +20,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   BoxLengthDerivative<D,T>::BoxLengthDerivative(
+   CubicLengthDerivative<D,T>::CubicLengthDerivative(
                                       typename T::Simulator& simulator,
                                       typename T::System& system)
     : AverageAnalyzerT(simulator, system)
-   {  ParamComposite::setClassName("BoxLengthDerivative"); }
+   {  ParamComposite::setClassName("CubicLengthDerivative"); }
 
    /*
    * Compute and return required derivative.
    */
    template <int D, class T>
-   double BoxLengthDerivative<D,T>::compute()
+   double CubicLengthDerivative<D,T>::compute()
    {
       UTIL_CHECK(system().w().hasData());
 

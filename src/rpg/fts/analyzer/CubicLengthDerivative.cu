@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BoxLengthDerivative.h"
+#include "CubicLengthDerivative.h"
 
 #include <rpg/system/System.h>
 #include <rpg/fts/simulator/Simulator.h>
@@ -16,20 +16,19 @@
 
 #include <pscf/cuda/Reduce.h>
 
-#include <rp/fts/analyzer/BoxLengthDerivative.tpp>
+#include <rp/fts/analyzer/CubicLengthDerivative.tpp>
 
 namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
 
-   /*
-   * Constructor.
-   */
+   // Constructor.
    template <int D>
-   BoxLengthDerivative<D>::BoxLengthDerivative(Simulator<D>& simulator,
+   CubicLengthDerivative<D>::CubicLengthDerivative(
+                                               Simulator<D>& simulator,
                                                System<D>& system)
-    : Rp::BoxLengthDerivative<D, Types<D> >(simulator, system)
+    : Rp::CubicLengthDerivative<D, Types<D> >(simulator, system)
    {}
 
 }
@@ -38,13 +37,13 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class BoxLengthDerivative<1, Rpg::Types<1> >;
-      template class BoxLengthDerivative<2, Rpg::Types<2> >;
-      template class BoxLengthDerivative<3, Rpg::Types<3> >;
+      template class CubicLengthDerivative<1, Rpg::Types<1> >;
+      template class CubicLengthDerivative<2, Rpg::Types<2> >;
+      template class CubicLengthDerivative<3, Rpg::Types<3> >;
    }
    namespace Rpg {
-      template class BoxLengthDerivative<1>;
-      template class BoxLengthDerivative<2>;
-      template class BoxLengthDerivative<3>;
+      template class CubicLengthDerivative<1>;
+      template class CubicLengthDerivative<2>;
+      template class CubicLengthDerivative<3>;
    }
 }

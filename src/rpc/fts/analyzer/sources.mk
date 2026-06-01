@@ -14,7 +14,7 @@ rpc_fts_analyzer_= \
   rpc/fts/analyzer/ConcentrationDerivative.cpp \
   rpc/fts/analyzer/MaxOrderParameter.cpp \
   rpc/fts/analyzer/FourthOrderParameter.cpp \
-  rpc/fts/analyzer/BoxLengthDerivative.cpp 
+  rpc/fts/analyzer/CubicLengthDerivative.cpp 
   
 rpc_fts_analyzer_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpc_fts_analyzer_:.cpp=.o))

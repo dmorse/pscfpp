@@ -124,7 +124,7 @@ public:
       ref = 8.2574275e+02;
       TEST_ASSERT(checkAverage(filename, ref));
 
-      filename = "out/boxLengthDerivative.ave";
+      filename = "out/cubicLengthDerivative.ave";
       //ref = 4.2481444e+03; // old, < v1.3.4
       ref = 4.234712800000e+03; // new in v1.3.4
       TEST_ASSERT(checkAverage(filename, ref));

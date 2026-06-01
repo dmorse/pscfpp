@@ -1,5 +1,5 @@
-#ifndef RP_BOX_LENGTH_DERIVATIVE_H
-#define RP_BOX_LENGTH_DERIVATIVE_H
+#ifndef RP_CUBIC_LENGTH_DERIVATIVE_H
+#define RP_CUBIC_LENGTH_DERIVATIVE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -14,11 +14,11 @@ namespace Rp {
    /**
    * Evaluate the derivative of H with respect to cubic box length L.
    *
-   * \see \ref rp_BoxLengthDerivative_page "Manual Page"
+   * \see \ref rp_CubicLengthDerivative_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class BoxLengthDerivative : public T::AverageAnalyzer
+   class CubicLengthDerivative : public T::AverageAnalyzer
    {
 
    protected:
@@ -26,13 +26,13 @@ namespace Rp {
       /**
       * Constructor.
       */
-      BoxLengthDerivative(typename T::Simulator& simulator, 
+      CubicLengthDerivative(typename T::Simulator& simulator, 
                           typename T::System& system);
 
       /**
       * Destructor.
       */
-      ~BoxLengthDerivative() = default;
+      ~CubicLengthDerivative() = default;
 
       /**
       * Compute and return the derivative of H w/ respect to L.
