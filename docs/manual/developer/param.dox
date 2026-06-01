@@ -154,20 +154,23 @@ Class A has an int member variable var1_, and a double precision
 real member variable var2_. Suppose that values of both var1_ and 
 var2_ need to be read from a parameter file block, and that the 
 desired parameter block format for a block associated with class A 
-is as shown below:
+is as shown below: 
 \verbatim
 A{
-  var1     [int]
-  var2*    [double]
+  var1     int
+  var2*    double
 }
 \endverbatim
-Here, var1 and var2 represent literal parameter labels, the square 
-brackets surrounding typenames indicate the types of parameter values, 
-and the asterisk after var2 is used to indicate that var2 is an 
-\ref user_param_format_page "optional" double precision parameter.  
+This parameter file format is shown in a 
+\ref user_param_format_page "standard form", in which the strings 
+var1 and var2 represent literal parameter label strings, the 
+typenames int and double indicate the required types of the 
+corresponding parameter values, and the asterisk after the var2 label 
+indicates that var2 is an \ref user_param_format_page "optional" 
+double precision parameter.  
 
 Minimal implementations of the constructor and readParameters member
-functions required to parse this file block format are show below:
+functions required to parse this parameter block format are show below:
 \code
 
    A::A()
@@ -239,9 +242,9 @@ Util::ParamComposite class for more complete information.
 
 The ParamComposite class also provides two protected inherited
 functions named readParamComposite and readOptionalParamComposite
-that are used to read required and optional nested subblocks.
+that may be used by subclasses to read nested subblocks.
 Slightly simplified versions of interfaces for these functions 
-(omitting an optional parameter that rarely used) are
+(omitting an optional parameter that is rarely used) are
 \code
 void readParamComposite(std::istream in, ParamComposite &child)
 \endcode
@@ -249,15 +252,19 @@ and
 \code
 void readParamCompositeOptional(std::istream in, ParamComposite &child)
 \endcode
-Here, parameter in is an input parameter file stream, and child
-is a reference to an instance of a class that is another subclass
-of ParamComposite which must read a nested subblock. 
+Here, "parameter" in is an input parameter file stream, while 
+"child" is a reference to an instance of a class that is another 
+subclass of ParamComposite which must read a nested subblock. Both
+functions are designed to read a nested subblock associated with
+a member of another subclass that of ParamComposite.  The function 
+readParamComposite is used for required subblocks, while 
+readParamCompositeOptional is used for optional subblocks. 
 
 <b> Example </b>:
 To see how this works, we consider  slightly more complicated
-version of the class named A defined above. We suppose for this
-purpose that A has a third member variable that holds an instance 
-of another class named B, as shown below:
+version of the class named A that is defined above. We suppose for 
+this purpose that A has a third member variable that holds an 
+instance of another class named B, as shown below:
 below:
 \code
 
@@ -283,7 +290,7 @@ below:
       B      varB_;
    }
 \endcode
-We also suppose that B is itself subclass of ParamComposite, 
+We also suppose that B is itself a subclass of ParamComposite, 
 and that the parameter file format for class A includes a nested
 subblock that is associated with the variable varB_ of type B, 
 giving the following parameter file format:
@@ -291,13 +298,15 @@ giving the following parameter file format:
 A{
   var1    [int]
   var2*   [double]
-  B{
-     ...
+  B{ 
+    ...  
   }
 }
 \endverbatim
-Here, ellipses represented the omitted body of the required 
-nested parameter file block for variable varB_.
+Here, ellipses (...) are used to indicate the omitted indented body 
+of a nested parameter file subblock associated with variable varB_.
+In this example, var1 and the B block are required, while var2 is
+optional.  
 
 A minimal version of the readParameters function required to read
 this modified format is shown below
@@ -315,11 +324,13 @@ The readParamCompositeOptional function would have been used to
 read the nest block associatd with varB_ if that block was 
 optional rather than required. 
 
-Note that no label string is required as an argument for the 
-readParamComposite or readParamCompositeOptional functions. This is 
-because each subclass of ParamComposite must instead use the inherited 
-"setClassName" function to define the class name label that should 
-appear in the opening line of an associated parameter file block. 
+Note that the readParamComposite or readParamCompositeOptional 
+functions do not require a label string as an input parameter. This 
+is because each subclass of ParamComposite must instead use the 
+inherited "setClassName" function to define the class name label 
+that should appear in the opening line of an associated parameter 
+file block. In this example, all constructors of class B are 
+thus assumed to contain the statement setClassName("B").
 
 <BR>
 \ref developer_periodic_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;

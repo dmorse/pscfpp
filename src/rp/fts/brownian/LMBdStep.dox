@@ -44,19 +44,19 @@ As a result, random displacements at neighboring steps are correlated.
 
 <b> Standard AB System </b>: First consider the common case of a 
 standard AB system with two types of monomer. The LM algorithm for the 
-change of the field \f$ \omega_{0}({\bf r}) = \omega_{-}({\bf r}) \f$ at 
-grid point location \f$ {\bf r} \f$ and time step \f$ n \f$ is given by
+change of the field \f$ W_{0}({\bf r}) = W_{-}({\bf r}) \f$ at grid 
+point location \f$ {\bf r} \f$ and time step \f$ n \f$ is given by
 \f[
-  \omega_{-}^{(n+1)}({\bf r}) =
-  \omega_{-}^{(n)}({\bf r}) 
-  - \gamma \frac{\delta H}{\delta \omega_{-}({\bf r})}
+  W_{-}^{(n+1)}({\bf r}) =
+  W_{-}^{(n)}({\bf r}) 
+  - \gamma \frac{\delta H}{\delta W_{-}({\bf r})}
   + \frac{1}{2} \left [ g^{(n)}({\bf r}) + g^{(n-1)}({\bf r}) \right ]
 \f]
 where \f$ \gamma \f$ is the BD mobility parameter,
 \f[
-  \frac{\delta H}{\delta \omega_{-}({\bf r})}
+  \frac{\delta H}{\delta W_{-}({\bf r})}
   = \frac{1}{v} \left [
-    \frac{2\omega_{-}({\bf r})}{\chi_{b}}
+    \frac{2 W_{-}({\bf r})}{\chi_{b}}
     - \Phi_{-}({\bf r}) \right ]
 \f]
 is the generalized force evaluated using the field configuration at time 
@@ -76,13 +76,13 @@ system volume and \f$ G \f$ is the number of grid points on the mesh.
 We now consider the general algorithm for a system with \f$ M \f$ 
 monomer types for which the first \f$ L \f$ eigenvalues of the projected 
 chi matrix are negative, with \f$ L \leq M - 1 \f$.  In this case, each 
-field component \f$ \omega_{i}({\bf r}) \f$ associated with eigenvalue 
+field component \f$ W_{i}({\bf r}) \f$ associated with eigenvalue 
 \f$ \lambda_{i} < 0 \f$ of the projected \f$ \chi \f$ matrix, for 
 \f$ i = 0, \ldots, L - 1 \f$, is updated via a scheme
 \f[
-  \omega_{i}^{(n+1)}({\bf r}) =
-  \omega_{i}^{(n)}({\bf r}) 
-  - \gamma \frac{\delta H}{\delta \omega_{i}({\bf r})}
+  W_{i}^{(n+1)}({\bf r}) =
+  W_{i}^{(n)}({\bf r}) 
+  - \gamma \frac{\delta H}{\delta W_{i}({\bf r})}
   + \frac{1}{2} \left [ g^{(n)}({\bf r}) + g^{(n-1)}({\bf r}) \right ]
   \quad,
 \f]

@@ -1,42 +1,42 @@
-/*! 
+/*!
 \page rp_LrCompressor_page LrCompressor
 
-The LrCompressor classes used by both the pscf_rpc and pscf_rpg programs 
+The LrCompressor classes used by both the pscf_rpc and pscf_rpg programs
 implements a linear-response Anderson mixing (LRAM) algorithm as described
 in this publication.
 
-Two closely analogous classes named Pscf::Rpc::LrCompressor and 
+Two closely analogous classes named Pscf::Rpc::LrCompressor and
 Pscf::Rpg::LrCompressor implement this algorithm for the pscf_rpc CPU and
-program and the pscf_rpg GPU-accelerated program, respectively. These two 
+program and the pscf_rpg GPU-accelerated program, respectively. These two
 classes implement the same step algorithm and use the same parameter file
 format, which are documented below.
 
-A general discussion of compressor algorithms for PS-FTS is given 
-\ref psfts_algorithm_page "here". Each LrCompressor class implements 
-the linear response (LR) algorithm that is presented in the following 
+A general discussion of compressor algorithms for PS-FTS is given
+\ref psfts_algorithm_page "here". Each LrCompressor class implements
+the linear response (LR) algorithm that is presented in the following
 publication: <a href="https://doi.org/10.1063/5.0264036">
 "Improved algorithm for identifying partial saddle-points in polymer
 field theoretic simulations", K. Chen and D.C. Morse,
 <em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>.
-This is a quasi-Newton algorithm in which linear response of an 
-inhomogeneous ideal gas to an infinitesimal change in the pressure-like 
-field \f$ W_{+}({\bf r}) \f$ is approximated by the analytically 
-calculable response of a hypothetical homogeneous state of the same 
+This is a quasi-Newton algorithm in which linear response of an
+inhomogeneous ideal gas to an infinitesimal change in the pressure-like
+field \f$ W_{+}({\bf r}) \f$ is approximated by the analytically
+calculable response of a hypothetical homogeneous state of the same
 fluid.
 
 \section rp_LrCompressor_parameter_sec Parameter file
 
-The LR algorithm does not require any adjustable parameters that 
-affect the progress of iteration towards a solution.  The only required 
+The LR algorithm does not require any adjustable parameters that
+affect the progress of iteration towards a solution.  The only required
 parameter for this algorithm is an error threshhold "epsilon".  The
-iteration loop exits when a scalar definition of error is less than 
+iteration loop exits when a scalar definition of error is less than
 epsilon.  A minimal block could thus looks something like this:
 \code
   LrCompressor{
     epsilon      1.0E-4
   }
 \endcode
-The full parameter block format, including several optional parameters, 
+The full parameter block format, including several optional parameters,
 is shown below:
 \code
 LrCompressor{
@@ -58,7 +58,7 @@ Meanings of all parameters are described briefly below:
   </tr>
   <tr>
     <td>  maxItr* </td>
-    <td>  maximum number of iterations to attempt before declaring failure 
+    <td>  maximum number of iterations to attempt before declaring failure
           (100 by default)
     </td>
   </tr>
@@ -75,52 +75,52 @@ Meanings of all parameters are described briefly below:
 
 \section rp_LrCompressor_residual_sec Residual definition
 
-The residual vector for the LrCompressor is defined in real space, as 
-an array in which each element is associated with one node of a regular 
-computational grid. The value \f$ R({\bf r}) \f$ of the residual element 
-associated with a grid point located at position \f$ {\bf r} \f$ is 
+The residual vector for the LrCompressor is defined in real space, as
+an array in which each element is associated with one node of a regular
+computational grid. The value \f$ R({\bf r}) \f$ of the residual element
+associated with a grid point located at position \f$ {\bf r} \f$ is
 given by
 \f[
-    R({\bf r}) = -1 + \sum_{i=1}^{N_{\rm m}} \phi_{i}({\bf r}) 
+    R({\bf r}) = -1 + \sum_{i=1}^{N_{\rm m}} \phi_{i}({\bf r})
 \f]
-where \f$ \phi_{i}({\bf r}) \f$ is the volume fraction of monomer type 
-\f$ i \f$ at that grid point, and \f$ N_{\rm m} \f$ is the number of 
+where \f$ \phi_{i}({\bf r}) \f$ is the volume fraction of monomer type
+\f$ i \f$ at that grid point, and \f$ N_{\rm m} \f$ is the number of
 monomer types, also known as nMonomer.
 
 \section rp_LrCompressor_error_sec Error type
 
-The LrCompressor algorithm terminates either: (1) when the number of 
-iterations reaches the maximum allowed value maxItr, or (2) when the 
-value of a scalar error \f$ e({\bf R}) \f$ becomes less than a 
-user-specified error tolerance \f$ \epsilon \f$ (or "epsilon"). 
+The LrCompressor algorithm terminates either: (1) when the number of
+iterations reaches the maximum allowed value maxItr, or (2) when the
+value of a scalar error \f$ e({\bf R}) \f$ becomes less than a
+user-specified error tolerance \f$ \epsilon \f$ (or "epsilon").
 
-Users may usually choose from among several possible definitions of the 
-error \f$ e \f$ by assigning one of the following allowed values to a 
+Users may usually choose from among several possible definitions of the
+error \f$ e \f$ by assigning one of the following allowed values to a
 string parameter named "errorType":
 
-  - If errorType == "rms", then the scalar error is take to be the 
+  - If errorType == "rms", then the scalar error is take to be the
     root-mean-square magnitude of elements of the residual vector (i.e.,
-    the \f$ l_2 \f$ norm divided by the square root of the number of 
+    the \f$ l_2 \f$ norm divided by the square root of the number of
     elements),
     \f[
        e = \frac{|{\bf R}|}{\sqrt{N} }
          = \left ( \frac{1}{N}\sum_{i=0}^{N-1} R_{i}^{2} \right)^{1/2}
     \f]
 
-  - If errorType == "norm", then the scalar error is take to be the 
+  - If errorType == "norm", then the scalar error is take to be the
     \f$ l_2 \f$ norm of the residual vector \f$ {\bf R} \f$, i.e.,
     \f[
        e = |{\bf R}| = \left ( \sum_{i=0}^{N-1} R_{i}^{2} \right)^{1/2}
     \f]
 
-  - If errorType == "max", then the scalar error is take to be 
-    maximum absolute magnitude of any element in the residual vector 
+  - If errorType == "max", then the scalar error is take to be
+    maximum absolute magnitude of any element in the residual vector
     (i.e., the \f$ l_{\infty} \f$ norm of the residual vector).
 
 An iteration algorithm successfully converges if it terminates with
-\f$ e({\bf R}) < \epsilon \f$ in fewer than maxItr iterations.  
-Different error types require different choises for the error 
+\f$ e({\bf R}) < \epsilon \f$ in fewer than maxItr iterations.
+Different error types require different choises for the error
 threshhold \f$ \epsilon \f$ (or "epsilon") to obtain comparable
-accuracy. 
+accuracy.
 
 */

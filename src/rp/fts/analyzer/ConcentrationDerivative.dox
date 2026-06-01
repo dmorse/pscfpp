@@ -27,10 +27,11 @@ system.
 
 \f[
   \frac{\partial \ln N}{\partial \chi_b}
-  = - \frac{\text{MeshSize}}{2 c_0}
+  = - \frac{G}{2 c_0}
 \f]
 where \f$ v \f$ denote the monomer reference volume and 
-\f$\text{MeshSize} \f$ denotes the total number of mesh size. 
+\f$ G \f$ denotes the total number of grid points in the 
+computational mesh used in this simulation.
 
 \section rp_ConcentrationDerivative_parameter_sec Parameter File
 

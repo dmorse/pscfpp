@@ -30,7 +30,7 @@ given by
   - \gamma \frac{\delta H}{\delta W_{-}({\bf r})}
   + g^{(n)}({\bf r})
 \f]
-where \f$ \gamma \f$ is the BD mobility parameter,
+where \f$ \gamma \f$ is the BD mobility parameter, while
 \f[
   \frac{\delta H}{\delta W_{-}({\bf r})}
   = \frac{1}{v} \left [

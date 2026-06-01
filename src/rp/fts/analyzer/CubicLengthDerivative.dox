@@ -4,19 +4,68 @@ namespace Rp {
 /*! 
 \page rp_CubicLengthDerivative_page CubicLengthDerivative
 
-This analyzer calculates the derivative of free energy with respect 
-to the unit cell size of a cubic unit cell. 
+This analyzer calculates the derivative of free energy with respect to 
+the unit cell size of a cubic unit cell. 
 
 \see CubicLengthDerivative (class API)
 
 \section rp_CubicLengthDerivative_algorithm_sec Mathematical Formula
 
-To be added
+Consider a system containing in a periodic cubic simulation cell of 
+volume \f$ V = L^3 \f$, where \f$ L \f$ is the cubic cell length.
+Let \f$ F \f$ denote the total free energy of the system contained
+in one such a cell, in thermal energy units for which \f$ kT = 1 \f$. 
+The CubicLengthDerivative analyzer computes the derivative 
+\f[
+    F' = \frac{\partial F}{\partial L} \quad,
+\f]
+where the derivative is evaluated at constant monomer volume (or 
+total monomer concentration), constant volume fraction for each 
+species, and constant values of all other input parameters.  
+
+Let \f$ f_{\rm id}' \f$ denote the SCFT prediction for the 
+derivative of the non-dimensional free energy per monomer, 
+normalized by \f$ kT \f$, as returned by the Rp::Mixture::stress 
+function for parameter index 0 of a cubic unit cell.  This quantity 
+is given mathematically by 
+\f[
+    f_{\rm id}' 
+    = -\sum_{\alpha} \frac{\phi_{\alpha}}{N_{\alpha}}
+       \frac{\partial \ln Q_{\alpha}}{\partial L}
+\f]
+Here, 
+\f$ \alpha \f$ is an index for polymeric species, and 
+\f$ \phi_{\alpha} \f$, \f$ N_{\alpha} \f$, and \f$Q_{\alpha}\f$ are 
+the volume fraction, total number of monomers and normalized single 
+chain partitition for species \f$ \alpha \f$, respectively. This sum 
+over species in this expression includes all polymeric species, but
+exclude any point-particle solvent species.
+
+The derivative \f$ F' \f$ is computed as a sum
+\f[
+  F' = \frac{V}{v}f_{\rm id}' + \frac{3V}{L} H_{\rm f}
+     +  \frac{3G}{2L}
+\f]
+where\f$ v \f$ is monomer volume,
+\f$ G \f$ is the number of grid points in the computational mesh, 
+and \f$ H_{\rm f} \f$ is the value of the quadratic field contribution 
+to the \ref psfts_theory_page "field theoretic Hamiltonian", as returned
+by the function Simulator::fieldHamiltonian(). In systems with two 
+monomer types, \f$ H_{\rm f} \f$ is given by an integral
+\f[
+  H_{\rm f} =
+  \int \! d{\bf r} \; \left \{
+  \frac{W_{-}^{2}({\bf r}) }{v \chi}
+  - W_{+}^{*}({\bf r}) c_{0}
+  + \frac{\chi}{4v} \right \}
+\f]
+where \f$ W_{+}^{*}({\bf r}) \f$ denotes a saddle-point configuration
+of the pressure field and \f$ c_{0} = 1/v \f$. 
 
 \section rp_CubicLengthDerivative_parameter_sec Parameter File
 
-The full parameter file format, including all optional parameters, 
-is shown below:
+The full parameter file format, including all optional parameters, is 
+shown below:
 \code
 CubicLengthDerivative{
   interval           int
@@ -41,7 +90,7 @@ Meanings of the parameters are described briefly below:
   </tr>
   <tr>
      <td>hasAverage</td>
-     <td>whether the average and error analysis are needed?</td>
+     <td>Should the average value and error analysis be output? </td>
   </tr>
   <tr>
      <td>nSamplePerOutput</td>
@@ -50,16 +99,13 @@ Meanings of the parameters are described briefly below:
 </table>
 
 \section rp_CubicLengthDerivative_output_sec Output
-Values of the derivative \f$  \frac{\partial F}{\partial L}  \f$ are
-computed every interval simulation steps. 
+Values of the derivative \f$  F'  \f$ are computed every "interval" 
+simulation steps. 
 
-By default, block averages of nSamplerPerOutput sequential sampled 
-values are output every interval*nSamplerPerOutput time steps.
-
-In the special case in which a ramp is enabled and 
-nSamplePerOutput == 1, then \f$ L \f$ and a corresponding sampled 
-value of \f$  \frac{\partial F}{\partial L}  \f$ are output to the 
-file {outputFileName} every interval simulation steps.
+By default, block averages of nSamplerPerOutput sequential computed
+values are output every interval * nSamplerPerOutput time steps. Output 
+of block averages may be suppressed by setting nSamplerPerOutput to
+zero.
 
 If hasAverage is true, then at the end of the simulation:
   - average info and error analysis are output to {outputFileName}.ave
