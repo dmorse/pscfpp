@@ -14,8 +14,7 @@ namespace Pscf{
    /**
    * \defgroup Pscf_Base_Module Pscf - Base Module
    *
-   * Names defined in subdirectory src/pscf that may be used throughout
-   * the Pscf namespace.
+   * Classes and functions accessible throughout PSCF.
    *
    * \ingroup Pscf_NS_Module
    */

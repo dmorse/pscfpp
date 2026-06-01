@@ -5,7 +5,7 @@ namespace Rpg{
    /**
    * \defgroup Rpg_Field_Module Fields
    *
-   * Field containers, FieldIo and Domain classes.
+   * Field containers, field I/O and spatial domain.
    *
    * \ingroup Pscf_Rpg_Module
    */

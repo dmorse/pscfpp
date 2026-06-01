@@ -1,11 +1,11 @@
 
-namespace Pscf{
-namespace Rpc{
+namespace Pscf {
+namespace Rpc {
 
    /**
    * \defgroup Rpc_Field_Module Fields
    *
-   * Field containers, FieldIo and Domain classes.
+   * Field containers, field I/O and spatial domain.
    *
    * \ingroup Pscf_Rpc_Module
    */

@@ -27,6 +27,7 @@ namespace Rpg {
    * from this base class.  
    *
    * \see Rp::McMove
+   * \see psfts_algo_montecarlo_page "Monte Carlo"
    * \ingroup Rpg_Fts_MonteCarlo_Module
    */
    template <int D>

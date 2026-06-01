@@ -4,8 +4,7 @@ namespace Pscf{
    /**
    * \defgroup Pscf_Solver_Module Solver Templates
    *
-   * Templates for "solver" classes that compute statistical mechanical 
-   * properties of a gas of non-interacting molecules. 
+   * Templates for modified diffusion equation "solver" classes.
    *
    * The templates defined in this module are designed to be used as base
    * classes for solver classes used in several different implementations

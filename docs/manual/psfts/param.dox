@@ -442,7 +442,7 @@ each MC move can be obtained by clicking on the associated link.
 In the parameter file block for either a BdSimulator or an McSimulator,
 the sub-block that describes the sampling algorithm (i.e., the BdStep
 or McMoveManager block) is followed by a selectable
-\ref psfts_algorithm_compressor_sec "Compressor" block. Users may choose
+\ref psfts_algo_compressor_page "Compressor" block. Users may choose
 from among several available compressor algorithms, the name of which is
 always given by the first line in the associated block.
 
@@ -523,8 +523,8 @@ of set of files to which results will be written. Different analyzers
 write results to different files or sets of files.
 
 A list of all of the available analyzers, including links to detailed
-documentation, was given in earlier the discussion of
-\ref psfts_algorithm_analyzer_sec "algorithms" .
+documentation, was given in earlier the discussion of these
+\ref psfts_algo_analyzer_page "algorithms" .
 
 \section psfts_param_seealso_sec See Also:
 

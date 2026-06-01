@@ -1,0 +1,29 @@
+/*! \page psfts_algo_ramp_page  Ramp
+
+\ref psfts_algo_thermoint_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_perturb_page      (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+
+A "ramp" is an optional feature for FTS that allows a user to continuously
+vary one or more model parameters during a simulation.  Parameter ramps 
+are discussed in more detail on a \ref psfts_ramp_page "separate page".
+
+The only ramp algorithm currently provided by PSCF is the linear ramp
+algorithm, linked below:
+
+  - \subpage rp_LinearRamp_page "LinearRamp"
+
+The LinearRamp algorithm performs a ramp in which one or more of the 
+parameters of a model are taken to vary linearly with the BD or MC 
+simulation step counter over the course of a simulation.  The interface 
+for a LinearRamp is closely analogous to that of the LinearSweep class 
+that is used for SCFT sweep calculations, which is discussed
+\ref rp_LinearRamp_page "here".
+
+<BR>
+\ref psfts_algo_thermoint_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_perturb_page       (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

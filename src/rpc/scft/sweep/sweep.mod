@@ -5,7 +5,7 @@ namespace Rpc{
    /**
    * \defgroup Rpc_Scft_Sweep_Module Sweep
    *
-   * Classes for performing SCFT sweeps in parameter space. 
+   * SCFT sweeps through parameter space. 
    *
    * \ingroup Rpc_Scft_Module
    */

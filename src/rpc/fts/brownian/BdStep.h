@@ -27,7 +27,7 @@ namespace Rpc {
    * their entire public interface and almost all of their source code
    * from this base class.  
    *
-   * \see \ref psfts_algorithm_BD_sec "Manual Page"
+   * \see \ref psfts_algo_brownian_page "Manual Page"
    * \ingroup Rpc_Fts_Brownian_Module
    */
    template <int D>

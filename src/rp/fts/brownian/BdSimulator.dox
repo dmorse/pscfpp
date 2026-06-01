@@ -105,13 +105,13 @@ Logical relationships among subblocks of BdSimulator:
 
 \see
 <ul>
-  <li> \ref psfts_algorithm_BD_sec "BdStep algorithms" </li>
-  <li> \ref psfts_algorithm_compressor_sec "Compressor algorithms" </li>
+  <li> \ref psfts_algo_brownian_page "BdStep algorithms" </li>
+  <li> \ref psfts_algo_compressor_page "Compressor algorithms" </li>
   <li> \ref psfts_perturb_page "Perturbations" </li>
      <ul> <li> \ref rp_EinsteinCrystalPerturbation_page </li> </ul>
   <li> \ref psfts_ramp_page "Parameter Ramps" </li>
      <ul> <li> \ref rp_LinearRamp_page </li> </ul>
-  <li> \ref psfts_algorithm_analyzer_sec "Analyzer algorithms" </li>
+  <li> \ref psfts_algo_analyzer_page "Analyzer algorithms" </li>
 </ul>
 
 */

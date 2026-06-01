@@ -45,7 +45,7 @@ namespace Rp {
    *   - D  dimension of space (1, 2, or 3)
    *   - T  Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
-   * \see \ref psfts_algorithm_BD_sec "Manual Page"
+   * \see \ref psfts_algo_brownian_page "Manual Page"
    * \ingroup Rp_Fts_Brownian_Module
    */
    template <int D, class T>

@@ -1,0 +1,55 @@
+/*! \page psfts_algo_thermoint_page  Thermodynamic Integration
+
+\ref psfts_algo_analyzer_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_ramp_page      (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Thermodynamic integration is a technique for computing a difference in
+values of the free energy in two states characterized by different values
+of a parameter. This free energy difference is computed by numerically
+integrating the derivative of the free energy \f$ F \f$ with respect to
+the relevant model parameter. Suppose \f$ \lambda \f$ is a parameter that
+appears in the field theoretic Hamiltonian \f$ H \f$. The method is based
+on a theorem which states that the derivative of free energy \f$ F \f$
+with respect to \f$ \lambda \f$ is given by an equilibrium average value
+\f[
+   \frac{\partial F}{\partial \lambda}
+   = \left \langle \frac{\partial H}{\partial \lambda} \right \rangle
+  \quad,
+\f]
+where \f$ \partial H/\partial \lambda \f$ is a derivative evaluated in
+a fixed field configuration, and \f$ \langle \cdots \rangle \f$ denotes
+an equilibrium ensemble average evaluated using the specified value of
+\f$ \lambda \f$.
+
+The change in \f$ F \f$ associated with a change in \f$ \lambda \f$ from
+an initial value \f$ \lambda_{0} \f$ to a final value \f$ \lambda_{1} \f$
+is obtained by integrating the derivative
+\f$ \partial F/ \partial \lambda \f$ over this range. This sort of
+integral can be computed by either of two methods:
+
+  - **Separate simulations** : Equilibrium simulations can be performed
+    at a set of values of \f$ \lambda \f$ within the range of interest,
+    each of which yields a value of \f$ \partial F/\partial \lambda \f$
+    at a single value as an ensemble average. The required integral is
+    then approximated by numerical integration of the resulting sequence
+    of values.
+
+  - **Continuous integration** : The integral may be computed by using a
+    \ref psfts_algo_ramp_page "ramp" to continuously vary the parameter
+    of interest over the course of a simulation.
+
+Continuous integration may be used either to compute the change in free
+energy associated with a change in a parameter of the standard field
+theoretic Hamiltonian (such as an interaction parameter or the monomer
+concentration) or as change in free energy associated with changes in
+the strength of a \ref psfts_algo_perturb_page "perturbation"
+that modifies the form of the Hamiltonian (as done in Einstein crystal
+integration).
+
+<BR>
+\ref psfts_algo_analyzer_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_ramp_page       (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

@@ -1,0 +1,120 @@
+/*! \page psfts_algo_montecarlo_page  Monte Carlo
+
+\ref psfts_algo_brownian_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_compressor_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+The PSCF implementation of MC sampling allows the user to specify a set
+of Monte Carlo move types to be used during an MC simulation. When more
+than one type of move is specified, one of the move types is chosen at
+random at the beginning of each step, using probabilities that are
+specified by the user.  
+
+\section psfts_algo_montecarlo_overview_sec  Overview
+
+The general algorithm for each attempted step of a PSCF MC simulation 
+is thus as follows:
+
+   - Choose a type of MC move at random from among a set of choices
+     specified in the parameter file.
+
+   - Use the chosen MC move to generate a random change in the fields.
+
+   - Apply the chosen compressor algorithm to adjust the real pressure-like
+     field \f$ W_{+}({\bf r}) \f$ so as to again satisfy the partial
+     saddle-point (i.e., SCF incompressibility) condition.
+
+   - Evaluate the Hamiltonian in the new partial saddle point state.
+
+   - Use a Metropolis criterion that is designed to satisfy detailed
+     balance to decide whether to accept or reject the move.
+
+   - If the move is rejected, restore the field configuration that
+     existed before the beginning of the attempted move.
+
+The block of the parameter file for an MC simulation that contains
+information about MC moves, which is labelled "McMoveManager", contains
+one or more subblocks that are associated with different types of move.
+The parameter file block associated with each such MC move type contains
+a parameter named "probability" that specifies the probability of that
+type of move being chosen at the start of each step.
+
+\section psfts_algo_montecarlo_available_sec  Algorithms
+
+PSCF currently provides the following MC step algorithms:
+<ul>
+  <li> \subpage rp_RealMove_page "RealMcMove" : A simple MC move that
+  generates statistically independent random changes of
+  \f$ W_{-} \f$ all grid points </li>
+  <li> \subpage rp_ForceBiasMove_page "ForceBiasMove": A "smart MC" 
+  or "force bias" MC move that uses an explicit Euler BD step to
+  generate a proposed MC move. </li>
+  <li> \subpage rp_ShiftMove_page "ShiftMove": This move generates
+  a proposed MC move by applying a rigid translation of the entire
+  current field configuration.
+  <li> \subpage rp_BdMove_page "BdMove": A BD move simply runs a 
+  short BD simulation of a specified number of steps, and always 
+  accepts the result. This move does not satisfy detailed balance.
+</ul>
+We recommend the ForceBiasMove as the workhorse method for MC 
+sampling, among moves that satisfy the detailed balance condition.
+The BdMove (which does not obey detailed balance) is provided to 
+allow users to mix BD and MC sampling techniques, by combining a 
+BdMove with one or more other more specialized MC moves.
+
+\section psfts_algo_montecarlo_mcbd_sec  MC vs. BD
+
+Acceptance rates for "global" MC moves that satisfy detailed 
+balance generally decrease rapidly with increasing system size.  
+The decrease of acceptance rates with increasing system size is 
+particularly severe with the simple real-space move (RealMcMove), 
+but also occurs to a lesser degree for the force-bias (ForceBiasMoveMove). 
+Because BD simulation does not suffer from any analogous problem, 
+this phenomena causes MC to generally become rapidly less efficient 
+than BD for sufficiently large systems. We thus generally recommend 
+the use of BD or hybrid simulations rather than true MC simulation 
+for 3D systems with roughly \f$ 10^{4} \f$ or more grid points. 
+The BdMove algorithm is provided to allow implementation of 
+hybrid BD/MC simulations for large systems in special situations 
+in which occasional application of a specialized MC move can speed 
+up BD sampling.
+
+Monte Carlo move used in molecular systems are usually spatially
+local moves, often involving only a single molecule, for which the 
+resulting change in energy can be rapidly evaluated by analyzing
+only a small part of the simulated system.  Unfortunately, the 
+dependence of the field-theoretic Hamiltonian functional on the 
+fields is inherently non-local. As a result, in order to evaluate 
+the change in the Hamiltonian induced by any change in the fields
+one generally must solve the modified diffusion equation for the
+entire system. This non-locality is what makes it difficult to
+implement efficient MC algorithms for field theoretic simulations
+of large systems.
+
+One advantage of MC over BD simulation is that, because proper 
+MC algorithms satisfy a detailed balance condition, MC simulations
+generally do no exhibit any systematic sampling error. An infinitely 
+long MC simulation would, in in the absence of round-off error, yield 
+exact results for any average value obtained from a particular model 
+on a specified computational mesh.  The most important class of errors 
+in MC simulations are thus usually true statistical errors arising 
+from the finite length of a simulation, which can be quantified by 
+standard methods of analyzing time sequences.
+
+BD simulations instead exhibit a systematic error arising from
+discretization of a time-like coordinate in a diffusion model. The
+magnitude of this error increases with increases in the mobility 
+parameter, but is not particularly sensitive to changes in system
+size. Results of MC simulations of small systems can sometimes be 
+useful for comparison when testing new BD algorithms, and when 
+evaluating systematic errors in BD algorithms. Systematic errors 
+in BD simulations of large systems can also be estimated by running 
+and comparing simulations with several different values of the 
+mobility parameter.
+
+<BR>
+\ref psfts_algo_brownian_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_compressor_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

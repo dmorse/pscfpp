@@ -5,7 +5,7 @@ namespace Rpc{
    /**
    * \defgroup Rpc_Scft_Iterator_Module Iterators
    *
-   * Iterators for solving the nonlinear SCFT self-consistency equations.
+   * Iterative SCFT solvers.
    *
    * \ingroup Rpc_Scft_Module
    */

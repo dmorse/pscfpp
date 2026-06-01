@@ -1,0 +1,94 @@
+/*! \page psfts_algo_brownian_page  Brownian Dynamics
+
+\ref psfts_algo_overview_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_montecarlo_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+A Brownian dynamics (BD) algorithm for a particle based simulation is
+usually based on discretization of a stochastic differential equation
+that generates diffusive dynamics. In the context of a field theoretic
+simulation, however, there is no natural way to define dynamics or units
+of time, since the BD algorithm is simply being used as a way to sample
+an equilibrium distribution. The description of BD step algorithms used 
+to define parameters in PSCF is thus based on units in which the 
+fictitious "time" is thus measured in units of BD steps, while energy 
+is measured in thermal units, in which \f$ kT = 1 \f$.  The magnitude 
+of changes in the exchange field(s) per time step is controlled by a 
+parameter that is denoted by the label "mobility" in the parameter 
+file, and denoted by the symbol \f$ \gamma \f$ in these notes.
+
+\section psfts_algo_brownian_overview_sec Overview
+
+As an example, consider the explicit Euler BD step algorithm for a
+standard AB system. This algorithm yields a change
+\f$ \Delta W_{-}({\bf r}) \f$ per time step in the exchange field
+\f$ W_{-}({\bf r}) \f$ at grid point \f$ {\bf r} \f$ that is given by
+\f[
+  \Delta W_{-}({\bf r}) =
+  - \gamma \frac{\delta H}{\delta W_{-}({\bf r})}
+  + g({\bf r})
+\f]
+where \f$ \gamma \f$ is the BD mobility parameter, \f$ g({\bf r}) \f$ is
+a random field displacement, and
+\f[
+  \frac{\delta H}{\delta W_{-}({\bf r})}
+  = \frac{1}{v} \left [
+    \frac{2 W_{-}({\bf r})}{\chi_{b}}
+    - \Phi_{-}({\bf r}) \right ]
+    \quad.
+\f]
+The random displacement \f$ g({\bf r}) \f$ is chosen independently at
+each node of the computational mesh and each BD step from a Gaussian
+distribution with a vanishing mean value, \f$ \overline{g({\bf r})} = 0\f$,
+and with a variance
+\f[
+  \overline{g^{2}({\bf r})} = \gamma \Delta V \quad.
+\f]
+Here, \f$ \Delta V \f$ is the volume per node (or grid point) of the
+computational mesh, given by \f$ \Delta V = V/G \f$, where \f$ V \f$ is
+the total system volume and \f$ G \f$ is the total number of nodes in the
+mesh.  Other authors have sometimes referred to what we call a "mobility"
+as a time step, sometimes indicated by a symbol such \f$ \Delta t \f$ or
+\f$ \delta t \f$.
+
+After this random in \f$ W_{-} \f$, the chosen compressor algorithm is
+applied to adjust the pressure-like field \f$$ W_{+} \f$ until the
+partial saddle-point condition is again satisfied, completing the BD
+move.
+
+The meaning of the mobility parameter in other BD step algorithms is
+analogous to its meaning in the explicit Euler algorithm described above:
+The mobility always appears as a prefactor of the "force" (or functional
+derivative) \f$ -\delta H/\delta W_{-}({\bf r}) \f$ in expressions for
+the changes in \f$ W_{-}({\bf r}) \f$ over a single time step. A mobility
+parameter is the only required parameter for any of the available BD
+step algorithms.
+
+\section psfts_algo_brownian_available_sec Algorithms
+
+PSCF currently allows users to choose from among three BD step
+algorithms, which are labelled below by the names of the C++ classes
+that implement them:
+<ul>
+  <li> \subpage rp_LMBdStep_page "LMBdStep" : A "Leimkuhler-Matthews" (LM)
+  BD step algorithm </li>
+  <li> \subpage rp_PredCorrBdStep_page "PredCorrBdStep": A predictor
+  corrector algorithm,
+  </li>
+  <li> \subpage rp_ExplicitBdStep_page "ExplicitBdStep" : An explicit
+  Euler algorithm like that described above,  </li>
+</ul>
+More details about each of these algorithms can be obtained by clicking
+on the associated link.
+
+We recommend the Leimkuhler-Matthews (LM) algorithm for general use in
+all BD simulations.  The LM step algorithm is found to provide much
+more accurate results than the competing predictor-corrector algorithm,
+allowing the use of larger time steps.  The explicit Euler algorithm is
+signficantly less accurate than the other two alternatives.
+
+<BR>
+\ref psfts_algo_overview_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_montecarlo_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+*/

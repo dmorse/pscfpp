@@ -1,0 +1,26 @@
+/*! \page psfts_algo_perturb_page  Perturbation
+
+\ref psfts_algo_ramp_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_param_page       (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+A "perturbation" is an optional feature that allows a user to modify the
+form of the field theoretic Hamiltonian by an additional functional of 
+the fields, or "perturbation", to the standard Hamiltonian functional. 
+Perturbations are discussed on a \ref psfts_perturb_page "separate page".
+
+The only type of perturbation that is available in the current version
+of PSCF is implemented by the algorithm:
+
+  - \subpage rp_EinsteinCrystalPerturbation_page "EinsteinCrystalPerturbation"
+
+The EinsteinCrystalPerturbation algorithm is designed to enable the
+Einstein crystal thermodynamic integation method for computing absolute 
+free energies. 
+
+<BR>
+\ref psfts_algo_ramp_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_param_page      (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

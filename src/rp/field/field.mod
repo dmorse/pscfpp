@@ -5,7 +5,7 @@ namespace Rp {
    /**
    * \defgroup Rp_Field_Module Fields
    *
-   * Templates for field containers, FieldIo and Domain classes.
+   * Field containers, field I/O and spatial domain.
    *
    * \ingroup Pscf_Rp_Module
    */

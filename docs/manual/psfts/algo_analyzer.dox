@@ -1,0 +1,99 @@
+/*! \page psfts_algo_analyzer_page  Analyzer
+
+\ref psfts_algo_compressor_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_thermoint_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+PSCF provides an extensible set of C++ classes for analysis of field
+theoretic simulations. These are referred to here as analyzers classes,
+or simply analyzers.  
+
+\section psfts_aglo_analyzer_overview_sec Overview
+
+Each PSCF analyzer class performs a specified analysis and/or file IO 
+operation at some regular interval during a simulation (e.g., every 10 
+or 100 simulation steps). Analyzer classes can be designed to periodically 
+compute physical quantities of interest, output data to file, or compute 
+statistical properties such as averages and variances, or any combination 
+of these types of operation. The PSCF
+parameter file format allows the user to enables a set of zero or more
+analyzers in order to specify which such operations should be performed
+during a simulation that is run with the SIMULATE command, and how often
+each should be performed. The same set of analyzer classes may also be
+used during a postprocessing operation that is performed by the ANALYZE
+command, as discussed in more detail \ref psfts_analysis_page "here".
+
+\section psfts_aglo_analyzer_choices_sec Algorithms
+
+All of the analyzer classes that are provided with the current version
+of PSCF are listed below.  A brief description of the purpose of each
+class is provided below, and further details can be obtained by clicking
+on the class name.
+<ul>
+  <li> \subpage rp_StepLogger_page "StepLogger": Record progress of a
+        simulation by periodically writing the number of completed BD
+        or MC steps to standard output (e.g., the screen).  </li>
+  <li> \subpage rp_TrajectoryWriter_page "TrajectoryWriter" : Periodically
+       write the current configuration of monomer chemical potential fields
+       (w-fields) to field trajectory file in r-grid format, for later
+       postprocessing. </li>
+  <li> \subpage rp_ConcentrationWriter_page "ConcentrationWriter" :
+       Periodically write all monomer concentration fields (c-fields) to
+       a file, in r-grid format. </li>
+  <li> \subpage rp_HamiltonianAnalyzer_page "HamiltonianAnalyzer" :
+       Compute average value of the field theoretic Hamiltonian, and
+       optionally output Hamiltonian values. </li>
+  <li> \subpage rp_BinaryStructureFactor_page "BinaryStructureFactor":
+       Compute the structure factor of a system with two monomer types.
+       </li>
+  <li> \subpage rp_MaxOrderParameter_page "MaxOrderParameter" :
+       Compute an order parameter that is useful for identifying
+       spontaneous phase transitions. </li>
+  <li> \subpage rp_FourthOrderParameter_page "FourthOrderParameter":
+       Compute another order parameter that is useful for identifying
+       spontaneous phase transitions. </li>
+  <li> \subpage rp_ChiDerivative_page "ChiDerivative":
+       Compute the derivative of free energy with respect to changes in 
+       a chi parameter.  </li>
+  <li> \subpage rp_BoxLengthDerivative_page "BoxLengthDerivative"
+       Compute the derivative of total free energy with respect to the 
+       length of one edge of a cubic box.  </li>
+  <li> \subpage rp_ConcentrationDerivative_page "ConcentrationDerivative"
+       Compute the derivative of total free energy with respect to changes 
+       in total monomer concentation (the inverse of vMonomer).  </li>
+  <li> \subpage rp_PerturbationDerivative_page "PerturbationDerivative":
+       Compute the derivative of free energy with respect to the strength
+       of a perturbation (the lambda parameter).  </li>
+</ul>
+
+Notable categories:
+
+<em> Data Output </em>:
+The first three classes listed above (StepLogger,
+TrajectoryWriter, and ConcentrationWriter) simply write readily available
+information to a file or standard output (e.g., the screen) at regular
+intervals, rather than doing any nontrivial data analysis.
+
+<em> Identifying Phase Transitions </em>:
+The analyzers named MaxOrderParameter and FourthOrderParameter) are
+designed specifically as tools for identifying spontaneous phase
+transitions. Specifically, these analyzers may be used to analyze a
+parameter ramp that is designed to induce a spontaneous disorder-to-order
+(crystallization) or order-to-disorder (melting) transition.
+
+<em> Free Energy Derivatives </em>:
+The last four analyzers listed above (ChiDerivative, BoxLengthDerivative,
+ConcentrationDerivative, and PerturbationDerivative) all have names that 
+end with the suffix "Derivative", and are all designed to compute 
+derivatives of the free energy with respect to a model parameter, for 
+use in \ref psfts_algo_thermoint_page "thermodynamic integration"
+calculations of free energy differences. Specifically, the
+PerturbationDerivative analyzer can be be used to implement 
+\ref psfts_perturb_page "Einstein crystal" free energy calculations.
+
+<BR>
+\ref psfts_algo_compressor_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_thermoint_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

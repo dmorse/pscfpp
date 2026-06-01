@@ -3,13 +3,13 @@ namespace Pscf {
    /**
    * \defgroup Pscf_Cuda_Module CUDA Utilities
    *
-   * Utility functions and classes for CUDA programs.
+   * Utilities for CUDA programming.
    *
    * \ingroup Pscf_Base_Module
    */
 
    /**
-   * Device and host containers for use with CUDA programs.
+   * Containers for use with CUDA programs.
    *
    * \defgroup Pscf_Cuda_Containers_Module Containers (GPU)
    * \ingroup Pscf_Cuda_Module

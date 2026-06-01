@@ -22,12 +22,12 @@ parameter file format, which are documented below.
 \section rp_ForceBiasMove_algorithm_sec Step Algorithm
 
 A general discussion of MC move algorithms for PS-FTS is given on a
-\ref psfts_algorithm_MC_sec "separate page". As discussed there, each 
-move consists of an unconstrained change in the fields, followed by 
-application of a compressor to re-impose the incompressibility 
-constraint. The decision about whether to accept or reject the
-move is based on the value of the Hamiltonian after incompressibility
-has been restored. 
+\ref psfts_algo_montecarlo_page "separate page". As discussed there, 
+each move consists of an unconstrained change in the fields, followed 
+by application of a compressor to re-impose the incompressibility 
+constraint. The decision about whether to accept or reject the move 
+is based on the value of the Hamiltonian after incompressibility has 
+been restored. 
 
 The ForceBiasMove uses an explicit Euler Brownian dynamics (BD) step as 
 an unconstrained move. The explicit Euler BD move is identical to the 

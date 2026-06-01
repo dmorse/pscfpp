@@ -1,0 +1,76 @@
+/*! \page psfts_algo_compressor_page  Compressor
+
+\ref psfts_algo_montecarlo_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_analyzer_page    (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+The PSCF paramater file format allows the user to choose from among several
+"compressor" algorithms. 
+
+\section psfts_algo_compressor_overview_sec Overview
+
+As noted \ref psfts_algo_overview_page "previously", a compressor is an 
+iterative algorithm that adjusts the pressure-like field \f$ W_{+} \f$ 
+field so as to satisfy a partial saddle-point condition. The compressor 
+algorithm must applied at least once per BD or MC stochastic step, after 
+each change in remaining field or fields that couple to composition 
+flucuations.  PSCF users may choose a compressor algorithm independently 
+of their choice for a BD step or MC move algorithms: Any compressor 
+algorithm may be used in the context of any BD or MC step algorithm.
+
+Solution of the saddle-point condition normally requires multiple
+iterations of \f$ W_{+} \f$. Each iteration normally involves a proposed
+adjustment of \f$ W_{+} \f$ followed by solution of the modified diffusion
+equation (MDE) in the resulting state and evaluation of the remaining 
+error. Because repeated solution of the MDE is the most expensive 
+operation in a FTS, and the compressor algorithm requires multiple 
+solutions of the MDE for each BD or MC step, almost all of the 
+computational time of a PS-FTS calculation is actually spent within the
+iterative loop of a compressor algorithm.
+
+\section psfts_algo_compressor_choices_sec Algorithms
+
+The available compressor algorithms are listed below. Users may click on
+the link associated with each algorithm label to access more a detailed
+description of each algorithm, and of the format of the associated
+parameter file block.
+<ul>
+  <li> \subpage rp_LrAmCompressor_page "LrAmCompressor":
+        A linear-response Anderson mixing algorithm </li>
+  <li> \subpage rp_LrCompressor_page "LrCompressor":
+        A simple linear-response algorithm </li>
+  <li> \subpage rp_AmCompressor_page "AmCompressor":
+        An Anderson-mixing algorithm </li>
+</ul>
+The LrAmCompressor is the default choice, and is recommended for general
+use.
+
+The AmCompressor algorithm is similar to the Anderson mixing algorithm
+used in most previously published PS-FTS calculations.  This algorithm
+uses information from previous iterations to guide the choice of a new
+field configuration during each iteration after the first.
+
+The LrAmCompressor and LrCompressor algorithms both use a quasi-Newton
+approximation that uses the analytically calculated linear response of
+a hypothetical homogeneous state as an approximation to the actual
+linear response of the monomer concentration in an inhomgeneous state
+to small changes in the pressure-like field. The Lr algorithm is a
+straightforward quasi-Newton algorithm based on this approximation.
+The LrAm uses this quasi-Newton step as one stage of a modified
+Anderson mixing algorithm, which also uses information from previous
+steps.
+
+All three of the compressor algorithms listed above are described and
+compared in the following reference:
+
+<a href="https://doi.org/10.1063/5.0264036">
+"Improved algorithm for identifying partial saddle-points in polymer
+field theoretic simulations", K. Chen and D.C. Morse,
+<em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>,
+
+<BR>
+\ref psfts_algo_montecarlo_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_analyzer_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

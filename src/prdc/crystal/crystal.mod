@@ -5,7 +5,7 @@ namespace Prdc{
    /**
    * \defgroup Prdc_Crystal_Module Crystallography
    *
-   * Classes that describe crystallographic information.
+   * Unit cells, symmetries and symmetry-adapted basis.
    *
    * \ingroup Pscf_Prdc_Module
    */

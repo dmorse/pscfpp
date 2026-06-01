@@ -44,15 +44,20 @@ In a field-theoretic simulation, this is computed using the identity
 where \f$ v \f$ is monomer volume, \f$ \chi_{b} \f$ is the bare 
 Flory-Huggins parameter, and
 \f[
-  \hat{W}_{-}({\bf q}) = \int \! d{\bf r} \; e^{-i{\bf q}\cdot {\bf r}} 
-  W_{-}({\bf r}) 
+  \hat{W}_{-}({\bf q}) = \int \! d{\bf r} 
+  \; e^{-i{\bf q}\cdot {\bf r}} 
+  [ w_{0}({\bf r}) - w_{1}({\bf r})]/2 
 \f]
 is the transform of the exchange field 
-\f$ W_{-}({\bf r}) = [w_{0}({\bf r}) - w_{1}({\bf r})]/2 \f$.
-The Fourier transform \f$ \hat{W}_{-}({\bf q}) \f$ defined above as an 
-integral is approximated internally by \f$ V \f$ times the normalized 
-discrete Fourier transform (DFT) of \f$ W_{-}({\bf r}) \f$ as computed 
-by the function FFT::forwardTransform.
+\f$ W_{-}({\bf r}) = [ w_{0}({\bf r}) - w_{1}({\bf r})]/2 \f$.
+
+<em> Technical note </em>:
+The Fourier transform \f$ \hat{W}_{-}({\bf q}) \f$ that is defined above 
+as an integral is approximated internally by the product of the system 
+volume \f$ V \f$ and the normalized discrete Fourier transform (DFT) of 
+\f$ W_{-}({\bf r}) \f$ that is computed by either 
+Prdc::Cpu::FFT::forwardTransform or
+Prdc::Cuda::FFT::forwardTransform .
 
 \section rp_BinaryStructureFactor_parameter_sec Parameter File
 
@@ -81,7 +86,7 @@ Meanings of the parameters are described briefly below:
   </tr>
   <tr>
      <td> writeWaveData* </td>
-     <td> should \f$ S({bf q})\f$ be reported for individual waves? </td>
+     <td> should \f$ S({\bf q})\f$ be reported for individual waves? </td>
   </tr>
 </table>
 Note that the writeWaveData parameter is optional, and set to false (or 0) 

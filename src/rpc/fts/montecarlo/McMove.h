@@ -27,7 +27,7 @@ namespace Rpc {
    * code from this base class.  
    *
    * \see Rp::McMove
-   * \see \ref psfts_algorithm_MC_sec "Manual Page"
+   * \see \ref psfts_algo_montecarlo_page "Manual Page"
    * \ingroup Rpc_Fts_MonteCarlo_Module
    */
    template <int D>

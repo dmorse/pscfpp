@@ -1,0 +1,110 @@
+/*! \page psfts_algo_overview_page Overview
+
+\ref psfts_algorithm_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_brownian_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+This page gives a brief overview of all of the different types of 
+specialized algorithm that are used to perform and analyze PS-FTS 
+calculations, excluding basic algorithms that are also needed for 
+SCFT calculations.  
+
+\section psfts_algo_overview_operations_sec Required Operations
+
+The pscf_rpc and pscf_rpg programs can perform PS-FTS calculations
+using either a Brownian dynamics (BD) or Monte Carlo (MC) method to
+stochastically sample a fluctuating field or fields.  BD and MC sampling
+algorithms for PS-FTS have a similar structure.  A single BD step or MC
+move generally involves generation of a random change in one or more
+exchange fields, followed by use of an iterative algorithm to identify
+a new partial-saddle point field configuration. Throughout the PSCF
+documentation and source code, iterative algorithms that are used to
+identify partial saddle-point configurations, and thus satisfy the
+mean-field incompressibility constraint, are referred to as "compressor"
+algorithms.
+
+For example, consider a PS-FTS simulation of a standard AB system with
+two monomer types and a positive Flory-Huggins interaction parameter.
+Such a system has a real exchange field
+\f$ W_{-}({\bf r}) = \omega_{-}({\bf r}) \f$ that undergoes random
+fluctuations and a real pressure-like field
+\f$ W_{+}({\bf r}) = i \omega_{+}({\bf r})\f$ that must be chosen to
+satisfy the partial saddle-point condition. At the beginning of either a
+BD step or MC move for such as system, a small random change is added to
+the exchange field \f$ W_{-} \f$.  Next, an iterative compressor algorithm
+is used to adjust the presssure-like field \f$ W_{+}({\bf r}) \f$ so as
+to satisfy the partial saddle-point condition, thus imposing
+incompressibility at a mean-field level.  Finally, for an MC simulation,
+a decision is made about whether to accept or reject the resulting MC
+move, based on the value of the Hamiltonian in the new partial
+saddle-point configuration.
+
+PSCF also provides tools for analysis of simulation data. Users may
+use the parameter file to enable one or more of a set classes that can
+periodically compute specific physical quantitites, output data to a
+file, and/or perform statistical analyses during a simulation. We
+refer to C++ classes that perform these sorts of periodic data output
+and analysis operations "analyzer" classes.
+
+\section psfts_algo_overview_types_sec Types of Algorithm
+
+The parameter file for a typical PS-FTS calculation will thus normally
+contain a choice of algorithms for the following three purposes:
+
+   - **Sampling** :  A BD step algorithm or a set of MC step algorithms
+     that is used to update the fluctuating field components.
+
+   - **Compressor** :  A compressor algorithm that is used to adjust
+     the pressure-like field \f$ W_{+} \f$ so as to always satisfy the
+     partial saddle-point condition.
+
+   - **Analyzers** :  File IO and/or data analysis operations that
+     are performed at regular intervals during a simulation.
+
+In addition to these basic building blocks, users may also enable two
+other types of optional elements:
+
+   - **Ramp** : A "ramp" is a optional feature that allows a user to
+     perform a simulation in which one or more parameters of the
+     simulation model are varied continuously over the course of a
+     simulation.
+
+   - **Perturbation** : A "perturbation" is an optional feature that
+     allows the user to modify the form of the field theoretic
+     Hamiltonian by adding a perturbation to the standard form
+
+\section psfts_algo_overview_classes_sec Class Inheritance
+
+In the source code of PSCF, different algorithms of the same type are
+generally implemented by C++ classes that are subclasses of a common
+base class. The generic names that we use in this documentation to
+describe different types of algorithm generally correspond to the names 
+of the corresponding base class or base class template. Specifically,
+within each relevant program level namespace (Pscf::Rpc or Pscf::Rpg):
+
+   - Brownian dynamics step algorithms are implemented by subclasses of 
+     a class named BdStep
+
+   - Monte Carlo moves are implemented by subclasses of McMove
+
+   - File Io and data analysis operations are implemented by subclasses
+     of Analyzer.
+
+   - Algorithms for continuous variation of parameters are implemented by
+     subclasses of Ramp
+
+   - Classes that define additive changes to the field theoretic
+     Hamiltonian are subclasses of a base class named Perturbation
+
+The PSCF parameter file format uses selectable parameter file blocks 
+to allow a user to either choose one algorithm from a set of different 
+algorithms of the same type (as is appropriate for BdStep or Compressor 
+algorithms) or to choose a set one or more algorithms from among a list 
+of available algorithms of the same type (as is appropriate for McMove 
+and Analyzer algorithms).
+
+<BR>
+\ref psfts_algorithm_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_brownian_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

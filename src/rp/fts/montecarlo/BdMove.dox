@@ -30,18 +30,18 @@ move in a generic form.
 \section rp_BdMove_algorithm_sec Step Algorithm
 
 Each step of the BdMove algorithm runs a short BD simulation, using
-the Leimkuler-Matthews BD step algorithm. 
-
+the Leimkuler-Matthews BD step algorithm that is also used by the
+\ref rp_LMBdStep_page BD step algorithm.
 
 \section rp_BdMove_parameter_sec Parameter File
 
 The only parameters needed by this algorithm are the "probability" 
 parameter, which determines the probability that a move of this type
-will be attempted, a required parameter "nStep" that gives the number
-of BD steps that should be taken within a single MC move, and a 
-required parameter named "mobility", which is the mobility parameter 
-of the BD step algorithm.  A typical example of an associated parameter 
-file block is shown below.
+will be attempted, a "mobility" parameter, which is the mobility 
+parameter of the BD step algorithm, and parameter "nStep", which
+specifieds the number of BD steps that should be taken per MC move
+of this type.  All three parameters are required. A typical example 
+of an associated parameter file block is shown below.
 \code
   BdMove{
     probability   0.5
@@ -57,7 +57,7 @@ The format for this block is thus:
     nStep        int
   }
 \endcode
-The meanings of both parameter are summarized briefly below:
+The meanings of all parameters are also summarized briefly below:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -69,7 +69,7 @@ The meanings of both parameter are summarized briefly below:
   </tr>
   <tr>
     <td> mobility </td>
-    <td> Mobility parameter of underlying attempted BD step </td>
+    <td> Mobility parameter of the underlying BD step algorith </td>
   </tr>
   <tr>
     <td> nStep </td>

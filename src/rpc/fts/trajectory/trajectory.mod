@@ -5,8 +5,7 @@ namespace Rpc{
    /**
    * \defgroup Rpc_Fts_Trajectory_Module Trajectory Readers
    *
-   * Classes that read trajectory files in various file formats for
-   * post-process statistical analysis. 
+   * Trajectory file readers.
    *
    * \ingroup Rpc_Fts_Module
    */

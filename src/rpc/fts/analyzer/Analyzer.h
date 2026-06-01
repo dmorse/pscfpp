@@ -25,7 +25,7 @@ namespace Rpc {
    * from this base class.  
    *
    * \see Rp::Analyzer
-   * \see \ref psfts_algorithm_analyzer_sec "Analyzers"
+   * \see \ref psfts_algo_analyzer_page "Analyzers"
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>

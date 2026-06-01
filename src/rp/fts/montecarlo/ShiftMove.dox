@@ -7,8 +7,9 @@ namespace Rp {
 The ShiftMove performs a Monte Carlo move that rigidly translates the
 current fields by a random displacement. It is designed to be used 
 to speed up sampling in Einstein crystal thermodynamic integration 
-simulations under conditions in which the bias introduced by the
-perturbation is almost turned off. 
+simulations under conditions in which the fraction of the Einstein
+crystal Hamiltonian used to define the overall Hamiltonian is very
+small. 
 
 \see Rp::ShiftMove (class API)
 
@@ -17,8 +18,8 @@ perturbation is almost turned off.
 The shift move translates the field by displacement that corresponds
 to a shift by an integer number of grid points in each direction. 
 The parameter maxShift is an integer that gives the maximum allowed 
-displacement in each direction. Displacements are chosen uniformly
-from the range between -maxShift and +maxShift.
+displacement in each direction. Displacements in each direction are 
+chosen uniformly from the range between -maxShift and +maxShift.
 
 \section rp_ShiftMove_parameter_sec Parameter File
 
