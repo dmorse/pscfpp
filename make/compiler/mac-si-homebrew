@@ -97,9 +97,9 @@ NVXX=nvcc
 # NVCC architecture identifier, argument of -arch compiler option.
 # Use sm_xx, where xx denotes a numerical code for a CUDA compute 
 # capability, without the dot between major and minor version. For
-# example, use sm_35 for compute capability 3.5 (e.g., for a K40 
-# NVIDIA GPU)
-NVARCH=sm_70
+# example, use sm_80 for compute capability 8.0 (e.g., for an A100
+# NVIDIA GPU).
+NVARCH=sm_80
 
 # Options passed to CUDA compiler
 NVXXFLAGS= $(CXX_STD) -O3 -arch=$(NVARCH)
