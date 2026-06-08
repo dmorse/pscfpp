@@ -9,7 +9,7 @@ This section reviews some basic concepts and definitions involving C++
 class templates, for reference. These comments focus primarily on class
 templates, rather than function templates.
 
-\section developer_template_defs_defs_sec Class Templates
+\section developer_template_defs_defs_sec Class templates
 
 A C++ class template definition provides a recipe for defining a class, 
 rather than a concrete class definition. A template definition uses one
@@ -54,7 +54,7 @@ The "inline" qualifier used in this example encourages the compiler to
 inline this very small function, and does not appear in definitions of
 most longer functions.
 
-\section developer_template_defs_instantiation_sec Template Specializations
+\section developer_template_defs_instantiation_sec Class template specializations
 
 A **specialization** of a class template is a class whose name is
 given by the name of a class template name followed by a valid list of 
@@ -98,7 +98,7 @@ specialization is a complete redefinition of the class and all of its
 member functions so as to apply to a particular set of possible
 template parameter lists.
 
-\section developer_template_defs_impexp_sec Explicit and Implicit Instantiation
+\section developer_template_defs_explicit_sec Explicit instantiation definitions
 
 An **explicit instantiation definition** is a type of C++ statement 
 that instructs the compiler to instantiate a specific specialization 
@@ -111,11 +111,13 @@ name of the required template specialization. For example, the statement
 is an explicit instantiation definition for the class template specialization
 FArray<double, 10>.
 
-A class template may be instantiated by either explicit or implicit 
+\section developer_template_defs_impexp_sec Inplicit vs. explicit instantiation 
+
+A class template may be instantiated by either **explicit** or **implicit**
 instantiation.
 
-Explicit instantiation occurs when instantiation of a template is triggered 
-by an explicit instantiation definition.
+Explicit instantiation occurs when instantiation of a template specialization
+is triggered by an explicit instantiation definition.
 
 Implicit instantiation instead occurs when a C++ compiler instantiates a 
 class template as needed when it encounters the name of a specialization 
@@ -123,10 +125,10 @@ in a context that requires the construction or use of an instance of that
 class, and that is not part of an explicit instantiation definition. 
 Implicit instantiation of a class template may be triggered by a declaration 
 of a variable or function parameter that is an instance of a template 
-specialization, or by instantiation of a class that is derived from a 
-class template specialization. 
+specialization, or by instantiation of a class that is derived from a class 
+template specialization. 
 
-\section developer_template_defs_declare_sec Explicit Instantiation Declarations
+\section developer_template_defs_declare_sec Explicit instantiation declarations (C++11)
 
 By default, a C++ compiler will attempt implicit instantiation of a class 
 template specialization the first time it is required to construct or use 
@@ -186,7 +188,7 @@ in a different file, and that the object code for the resulting
 template specialization will be made accessible during the linking 
 process.
 
-\section developer_template_defs_file_sec Template File Organization
+\section developer_template_defs_file_sec Template file organization
 
 When a class template is instantiated, the compiler must have access 
 to both the class definition (which contains declarations of all 

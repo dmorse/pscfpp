@@ -5,8 +5,10 @@ namespace Rp {
 \page rp_TrajectoryWriter_page TrajectoryWriter
 
 This analyzer periodically writes the w-field configuration to
-frames of a trajectory file.  The resulting file can be read and 
-postprocessed using the ANALYZE command of pscf_rpc or pscf_rpg.
+a trajectory file during a simulation, appending an additional
+frame to file for each such configuration.  The resulting file 
+can be read and analyzed after a simulation is completed by 
+invoking the ANALYZE command.
 
 \see TrajectoryWriter (class API)
 
@@ -15,24 +17,24 @@ postprocessed using the ANALYZE command of pscf_rpc or pscf_rpg.
 The parameter file format for the associated block is shown below:
 \code
 TrajectoryWriter{
-  interval           int
-  outputFileName     string
+  interval*        int     (1 by default)
+  outputFileName   string
 }
 \endcode
-Both parameters are required. The interval must be positive
-Meanings of the parameters are described briefly below:
+Meanings of the parameters are described briefly 
+below:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
-    <td> number of steps between data samples </td>
+    <td> interval* </td>
+    <td> number of steps between consecutive frames </td>
   </tr>
     <tr>
      <td> outputFileName </td>
-     <td> name of output file </td>
+     <td> name of output trajectory file </td>
   </tr>
 </table>
 
@@ -42,9 +44,10 @@ During the simulation, the w-field configuration is output to file
 {outputFileName} every interval simulation steps.
 
 The resulting file contains a header section followed by a sequence
-of frames. The format of the header is the same as that used for an
-r-grid field file, and each frame uses the same format as that used
-for the data section of an r-grid field file. 
+of frames. The header has the same format as the header of an r-grid 
+field file that holds a single field configuration. Each frame in a
+trajectory file uses the same format as that used for the data 
+section of an r-grid field file. 
 
 */
 

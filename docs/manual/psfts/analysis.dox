@@ -41,16 +41,16 @@ postprocessing field trajectory files.
 
 \section psfts_algorith_trajectory_sec Creating a Field Trajectory File
 
-A trajectory file can be created by the TrajectoryWriter analyzer class.
-To generate a trajectory file during a BD or MC simulation, one must
-thus include a TrajectoryWriter subblock within the AnalyzerManager
-block of the parameter file that is used to initialize the simulation.
-The "interval" parameter of the TrajectoryWriter block gives the number
-of BD steps or atttempted MC steps between frames of the trajectory
-file.  Because the state changes rather little after each step, and
-frames take up significant disk space, trajectory file frames are
-usually written somewhat infrequently, with a typical interval of 10
-to 100 steps between frames.
+A trajectory file can be created during a simulation by the 
+TrajectoryWriter analyzer class.  To generate a trajectory file during 
+a BD or MC simulation, one must thus include a TrajectoryWriter subblock 
+within the AnalyzerManager block of the parameter file used to initialize 
+the simulation.  The "interval" parameter of the TrajectoryWriter block 
+gives the number of BD steps or atttempted MC steps between frames of the 
+trajectory file. Because the state changes rather little after each step, 
+and frames take up significant disk space, trajectory file frames are
+usually written somewhat infrequently, with a typical interval of 100
+steps or so between frames.
 
 The file format used by the TrajectoryWriter class contains a header,
 followed by a sequence of frames. The header contains information that
@@ -61,10 +61,10 @@ frame is similar to that of the data section of an r-grid field file.
 
 The current version of PSCF only supports one file format for
 trajectory files, which is written by a class named TrajectoryWriter
-and read by a class named TrajectoryReader. The file formats used for
-the parameter and command file are, however, designed to make it
-relatively simple for users to define other formats in the future
-if needed.
+and read by a class named TrajectoryReader. The file formats used 
+for the parameter and command file are, however, designed to make it
+relatively simple for users to create and select additional classes 
+that can read and write other formats as needed.
 
 \see \ref rp_TrajectoryWriter_page (manual page)
 

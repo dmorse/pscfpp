@@ -31,6 +31,7 @@ offer identical capabilities and interfaces for such calculations.
    <ol>
    <li> \subpage psfts_theory_page      </li>
    <li> \subpage psfts_psa_page         </li>
+   <li> \subpage psfts_thermoint_page    </li>
    <li> \subpage psfts_algorithm_page   </li>
    <ul>
      <li> \ref psfts_algo_overview_page     </li>
@@ -38,7 +39,6 @@ offer identical capabilities and interfaces for such calculations.
      <li> \ref psfts_algo_montecarlo_page   </li>
      <li> \ref psfts_algo_compressor_page   </li>
      <li> \ref psfts_algo_analyzer_page     </li>
-     <li> \ref psfts_algo_thermoint_page    </li>
      <li> \ref psfts_algo_ramp_page        </li>
      <li> \ref psfts_algo_perturb_page     </li>
    </ul>

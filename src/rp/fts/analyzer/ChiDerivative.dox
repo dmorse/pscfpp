@@ -1,81 +1,107 @@
 namespace Pscf {
 namespace Rp {
 
-/*! 
+/*!
 \page rp_ChiDerivative_page ChiDerivative
 
-This analyzer calculates the derivative of free energy with 
-respect to parameter \f$\chi_b N \f$ at fixed united cell, fixed
-polymer volume fraction, and fixed invariant degree of polymerization
-for AB diblock copolymer system. 
+This analyzer computes the partial derivative of the total Helmholtz
+free energy with respect to the chi parameter of a AB system, with 
+two monomers types, for a system of fixed composition and fixed unit 
+cell.
 
 \see ChiDerivative (class API)
 
 \section rp_ChiDerivative_algorithm_sec Mathematical Formula
 
+Consider a system with two monomer types with a Flory-Huggins parameter 
+\f$ \chi \f$ and a total Helmholtz free energy \f$ F = -\ln Z \f$. This 
+analyzer computes the derivative \f$ \partial F / \partial \chi \f$, 
+which is given by an ensemble average
 \f[
-  \frac{\partial F}{\partial \chi_b} 
-  = -\frac{\partial \ln Z}{\partial \chi_b}
-  = \left\langle \frac{\partial H}{\partial \chi_b} \right\rangle
-  + \frac{\partial \ln N}{\partial \chi_b}
+  \frac{\partial F}{\partial \chi} = \langle \Psi \rangle 
+  \quad\quad\quad\quad
+  \Psi \equiv
+  \frac{\partial H}{\partial \chi} 
+  + \frac{\partial \ln N}{\partial \chi} \quad,
 \f]
-
+in which
 \f[
-  \frac{\partial H}{\partial \chi_b} 
+  \frac{\partial H}{\partial \chi}
   = \frac{1}{v} \int \mathrm{d} \mathbf{r}
-  \left\langle
-  - \frac{W_{-}(\mathbf{r})^2}{\chi_b^2} 
-  + \frac{1}{4}
-  \right\rangle
+    \left (
+    - \frac{W_{-}^2(\mathbf{r})}{\chi^2}
+    + \frac{1}{4}
+    \right )
 \f]
-
+and
 \f[
-  \frac{\partial \ln N}{\partial \chi_b}
-  = \frac{\text{MeshSize}}{2\chi_b}
+  \frac{\partial \ln N}{\partial \chi}
+  = \frac{G}{2\chi} \quad.
 \f]
-where \f$ v \f$ denote the monomer reference volume and 
-\f$\text{MeshSize} \f$ denotes the total number of mesh size. 
+Here, \f$ v \f$ is the monomer reference volume and \f$ G \f$ 
+is the total number of nodes in the computational mesh.
 
 \section rp_ChiDerivative_parameter_sec Parameter File
 
-The full parameter file format, including all optional parameters, 
-is shown below:
+Parameter file format:
 \code
 ChiDerivative{
-  interval           int
+  interval*          int  (1 by default)
   outputFileName     string
-  hasAverage*        bool     (default true)
+  nSamplePerOutput*  int  (1 by default)
 }
 \endcode
-Meanings of the parameters are described briefly below:
+Meanings of the parameters:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
+    <td> interval* </td>
     <td> number of steps between data samples </td>
   </tr>
     <tr>
      <td> outputFileName </td>
-     <td> name of output file </td>
+     <td> base name of all output files </td>
   </tr>
   <tr>
-     <td>hasAverage</td>
-     <td>whether the average and error analysis are needed?</td>
+     <td>nSamplePerOutput *</td>
+     <td>Number of sampled values per block average output to file</td>
   </tr>
 </table>
 
 \section rp_ChiDerivative_output_sec Output
-During the simulation, \f$\chi_b N \f$ and corresponding
-\f$  \frac{\partial F}{\partial \chi_b}  \f$
-are output to the file {outputFileName} every interval
-simulation steps.
 
-At the end of the simulation, if hasAverage is true:
-  - average info and error analysis are output to {outputFileName}.ave
-  - error analysis info are output to {outputFileName}.aer
+In the following, the symbol {outputFileName} is used to represent 
+the string value of the outputFileName parameter within descriptions 
+of output file names.
+
+<b> Output during a simulation or trajectory file analysis </b>:
+
+If nSamplePerOutput > 1, then block average values of \f$ \Psi \f$, 
+averaged over blocks of nSamplePerOutput sequential samples are output 
+to the file {outputFileName}.dat every interval \* nSamplerPerBlock 
+simulation steps or trajectory file frames.
+
+If nSamplePerOutput == 1 (or if this optional parameter is omitted), 
+then instantaneous values of \f$ \Psi \f$ are output every interval 
+time steps or trajectory file frames, with no block averaging.
+
+If nSamplerPerBlock = 0, then {outputFileName}.dat data file is not
+created.
+
+<b> Final output </b>:
+
+At the end of a simulation or trajectory file analysis:
+
+  - The sequence average of \f$ \Psi \f$ and estimated error on this average 
+    are output to the file {outputFileName}.ave
+
+  - Details of the error analysis are output to the file {outputFileName}.aer
+
+See the discussion of \ref psfts_algo_analyzer_error_sec "error analysis"
+for details.
 
 */
 

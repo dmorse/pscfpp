@@ -140,46 +140,54 @@ System{
 \endcode
 Formats of the various blocks within these skeletons are discussed below.
 
-\section psfts_param_Mixture_sec Mixture, Interaction and Domain Blocks
+\section psfts_param_Mixture_sec Required Elements: Mixture, Interaction and Domain Blocks
 
-The Mixture, Interaction, and Domain blocks of a parameter file for a
-PS-FTS calculation are nearly identical to the corresponding blocks of
-an SCFT parameter file. The required format for the Interaction block
-is identical to that used for an SCFT calculation. The only differences
-in the Mixture and Domain blocks are noted below:
+The Mixture, Interaction, and Domain blocks are all required elements of 
+the parameter file for both SCFT and PS-FTS calculations. These three 
+blocks use the same formal block format for either type of calculation.  
+The Interaction block contains values for chi parameters, exactly as for 
+an SCFT calculation.  Two small but important differences between the 
+content of the Mixture and Domain blocks typicall used for SCFT and 
+PS-FTS calculations are discussed below:
 
 <ul>
 
 <li>
 <b> vMonomer (presence) </b> : The Mixture block used for a PS-FTS
-calculation must include a value for a parameter named vMonomer, which
+calculation must include a value for a parameter named vMonomer. This 
 gives the monomer reference volume in an incompressible system, also
 denoted in mathematical formalus by \f$ v \f$ .  This is an optional
 parameter that is not needed for most SCFT calculations, and so is
-usually omitted from SCFT parameter files.  In a FTS, however, the
-value of \f$ v \f$ (or vMonomer) controls the magnitude of field
-fluctuations about a saddle-point configuration, which become small
-in the limit \f$ v \rightarrow 0 \f$. In a simulation of a melt of
-block polymers of length \f$ N \f$ in which all monomers have a common
-statistical segment length \f$ b \f$, the value of vMonomer determines
-the so-called invariant degree of polymerization
+usually omitted from SCFT parameter files.  In a PS-FTS calculation, 
+however, the value of \f$ v \f$ (or vMonomer) controls the magnitude 
+of field fluctuations about a saddle-point configuration, which vanish
+in the limit \f$ v \rightarrow 0 \f$.  The vMonomer parameter appears 
+immediately after the Polymer blocks and Solvent blocks (if any) that 
+describe the chemical constituents of the system.  If the vMonomer 
+parameter is omitted, it is set to vMonomer = 1.0 by default, which is 
+usually not what one wants.
+
+In a simulation of a one-component melt of block polymers of total 
+length \f$ N \f$ in which all monomers have a common statistical 
+segment length \f$ b \f$, the value of vMonomer (or \f$ v \f$) 
+determines the so-called invariant degree of polymerization
 \f[
    \overline{N} = N (b^{3}/v)^{2} \quad,
 \f]
 which is a dimensionless parameter that controls the magnitude of
-deviations from SCFT.  The vMonomer parameter appears immediately
-after the Polymer blocks and Solvent blocks (if any) that describe
-the chemical constituents of the system.  If the vMonomer parameter
-is omitted, it is set to vMonomer = 1.0 by default, which is usually
-not what one wants.
+deviations from SCFT. In such simulations, users should generally
+choose a value of \f$ v \f$ so as to obtain a desired value for
+\f$ overline{N} \f$.
+
 </li>
 
 <li>
-<b> Space group (absence)</b> : For FTS, one may not assume the existence
-of any space group symmetry for the fields, because stochastic field
-fluctuations do not preserve any of the space group symmetries
-characteristic of many SCFT solutions.  The optional spaceGroup parameter
-of the Domain block thus must be omitted from an FTS parameter file.
+<b> Space group (absence)</b> : In a field theoretic simulation, one 
+may not assume the existence of any space group symmetry for the fields, 
+because fluctuating fields do not exactly preserve any of the space 
+group symmetries characteristic of many SCFT solutions.  The optional 
+spaceGroup parameter of the Domain block thus must be omitted from any 
+FTS parameter file.
 </li>
 
 </ul>
@@ -413,7 +421,14 @@ The first parameter in each subblock is the "probability" parameter,
 which is given a value of 0.75 for the ForceBiasMove and 0.25 for the
 RealMove.  In this example, a ForceBiasMove is thus chosen with 75\%
 probability at the beginning of each step, and a RealMove is chosen with
-25\% probability.
+25\% probability. 
+
+The sum of the probabilities entered by the user for all MC moves must 
+be very close to 1.0. If this sum differs from 1.0 by more than a fixed
+tolerance (1.0E-4), then an error message will be printed and execution
+will halt.  Otherwise, if this validation test passes, probabilities 
+are normalized internally so that the modified values used to choose MC 
+moves add to 1.0 to within round-off error.
 
 Other parameters of each MC move are required to specify the typical
 magnitude of random changes in field values.  The "mobility" parameter

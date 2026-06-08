@@ -118,7 +118,7 @@ System{
   Sweep{
      ns               10
      baseFileName     out/
-     nParameters      2
+     nParameter       2
      parameters[
         chi            0     1    5.0
         block          1     0    0.3
@@ -241,7 +241,7 @@ explained below:
     <td> number of parameters that are modified during the sweep </td>
   </tr>
   <tr>
-    <td> parameter </td>
+    <td> parameters </td>
     <td> Array in which each element specifies the magnitude of
          the change in one modified parameter over the course of
          the sweep. </td>

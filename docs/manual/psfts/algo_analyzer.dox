@@ -1,99 +1,194 @@
 /*! \page psfts_algo_analyzer_page  Analyzer
 
 \ref psfts_algo_compressor_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_algo_thermoint_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_ramp_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 PSCF provides an extensible set of C++ classes for analysis of field
 theoretic simulations. These are referred to here as analyzers classes,
-or simply analyzers.  
+or simply analyzers.
 
-\section psfts_aglo_analyzer_overview_sec Overview
+\section psfts_algo_analyzer_overview_sec Overview
 
-Each PSCF analyzer class performs a specified analysis and/or file IO 
-operation at some regular interval during a simulation (e.g., every 10 
-or 100 simulation steps). Analyzer classes can be designed to periodically 
-compute physical quantities of interest, output data to file, or compute 
-statistical properties such as averages and variances, or any combination 
-of these types of operation. The PSCF
-parameter file format allows the user to enables a set of zero or more
-analyzers in order to specify which such operations should be performed
-during a simulation that is run with the SIMULATE command, and how often
-each should be performed. The same set of analyzer classes may also be
-used during a postprocessing operation that is performed by the ANALYZE
-command, as discussed in more detail \ref psfts_analysis_page "here".
+Each PSCF analyzer class performs a specified analysis and/or data output
+operation at some regular interval during a simulation (e.g., every 10 or
+100 simulation steps). Analyzer classes can be designed to periodically
+compute physical quantities of interest, output data to file, or compute
+statistical properties such as averages and variances, or any combination
+of these types of operation. The PSCF parameter file format allows the user
+to enable a set of zero or more analyzers in order to specify which such
+operations should be performed during a BD or MC simulation, and how often
+each should be performed.
 
-\section psfts_aglo_analyzer_choices_sec Algorithms
+The same set of analyzer classes may also be used during a separate
+postprocess analysis operation that may be performed using the ANALYZE
+command. Postprocess analysis of field trajectory files is discussed in
+more detail on a \ref psfts_analysis_page "separate page".
+
+\section psfts_algo_analyzer_choices_sec Analysis Algorithms
 
 All of the analyzer classes that are provided with the current version
-of PSCF are listed below.  A brief description of the purpose of each
-class is provided below, and further details can be obtained by clicking
-on the class name.
+of PSCF are listed below, along with a brief description of the purpose
+of each class.  Further details can be obtained by clicking on the link
+provided for each such class:
 <ul>
   <li> \subpage rp_StepLogger_page "StepLogger": Record progress of a
-        simulation by periodically writing the number of completed BD
-        or MC steps to standard output (e.g., the screen).  </li>
+        simulation by periodically writing the number of completed
+        BD or MC steps to standard output (e.g., the screen).  </li>
   <li> \subpage rp_TrajectoryWriter_page "TrajectoryWriter" : Periodically
        write the current configuration of monomer chemical potential fields
-       (w-fields) to field trajectory file in r-grid format, for later
-       postprocessing. </li>
+       (w-fields), in r-grid format, as one frame of a field trajectory
+       file. </li>
   <li> \subpage rp_ConcentrationWriter_page "ConcentrationWriter" :
-       Periodically write all monomer concentration fields (c-fields) to
-       a file, in r-grid format. </li>
+       Periodically write all monomer concentration fields (c-fields)
+       to a concentration trajectory file, in r-grid format. </li>
   <li> \subpage rp_HamiltonianAnalyzer_page "HamiltonianAnalyzer" :
-       Compute average value of the field theoretic Hamiltonian, and
-       optionally output Hamiltonian values. </li>
+       Compute the field theoretic Hamiltonian \f$ H \f$ and its
+       components \f$ H_{\rm id} \f$ and \f$ H_{\rm f} \f$. </li>
   <li> \subpage rp_BinaryStructureFactor_page "BinaryStructureFactor":
        Compute the structure factor of a system with two monomer types.
        </li>
   <li> \subpage rp_MaxOrderParameter_page "MaxOrderParameter" :
-       Compute an order parameter that is useful for identifying
-       spontaneous phase transitions. </li>
+       Identify the Fourier coefficient of maximum absolute value, for
+       use in identifying spontaneous phase transitions. </li>
   <li> \subpage rp_FourthOrderParameter_page "FourthOrderParameter":
-       Compute another order parameter that is useful for identifying
-       spontaneous phase transitions. </li>
+       Compute an alternative order parameter that is useful for
+       identifying spontaneous phase transitions. </li>
   <li> \subpage rp_ChiDerivative_page "ChiDerivative":
-       Compute the derivative of free energy with respect to changes in 
-       a chi parameter.  </li>
+       Compute the derivative of free energy with respect to changes in
+       the chi parameter of an AB (two-monomer) system.  </li>
   <li> \subpage rp_CubicLengthDerivative_page "CubicLengthDerivative"
-       Compute the derivative of total free energy with respect to the 
+       Compute the derivative of total free energy with respect to the
        length of one edge of a cubic box.  </li>
   <li> \subpage rp_ConcentrationDerivative_page "ConcentrationDerivative"
-       Compute the derivative of total free energy with respect to changes 
+       Compute the derivative of total free energy with respect to changes
        in total monomer concentation (the inverse of vMonomer).  </li>
   <li> \subpage rp_PerturbationDerivative_page "PerturbationDerivative":
        Compute the derivative of free energy with respect to the strength
        of a perturbation (the lambda parameter).  </li>
 </ul>
 
-Notable categories:
+Categories:
 
 <em> Data Output </em>:
-The first three classes listed above (StepLogger,
-TrajectoryWriter, and ConcentrationWriter) simply write readily available
-information to a file or standard output (e.g., the screen) at regular
-intervals, rather than doing any nontrivial data analysis.
+The first three classes listed above (StepLogger, TrajectoryWriter, and
+ConcentrationWriter) simply write readily available information to a file
+or standard output (e.g., the screen) at regular intervals, rather than
+doing any nontrivial data analysis.
+
+<em> Thermodynamics and Structure </em>:
+The HamiltonianAnalyzer and BinaryStructureFactor classes compute and
+evaluate average values for two basic thermodynamic and structural
+properties.
 
 <em> Identifying Phase Transitions </em>:
-The analyzers named MaxOrderParameter and FourthOrderParameter) are
-designed specifically as tools for identifying spontaneous phase
-transitions. Specifically, these analyzers may be used to analyze a
-parameter ramp that is designed to induce a spontaneous disorder-to-order
-(crystallization) or order-to-disorder (melting) transition.
+The MaxOrderParameter and FourthOrderParameter) classes are designed
+specifically as tools for identifying spontaneous phase transitions.
+Specifically, they are useful for identifying spontaneous
+disorder-to-order (crystallization) or order-to-disorder (melting)
+transition that occur during a simulation.
 
 <em> Free Energy Derivatives </em>:
 The last four analyzers listed above (ChiDerivative, CubicLengthDerivative,
-ConcentrationDerivative, and PerturbationDerivative) all have names that 
-end with the suffix "Derivative", and are all designed to compute 
-derivatives of the free energy with respect to a model parameter, for 
-use in \ref psfts_algo_thermoint_page "thermodynamic integration"
-calculations of free energy differences. Specifically, the
-PerturbationDerivative analyzer can be be used to implement 
-\ref psfts_perturb_page "Einstein crystal" free energy calculations.
+ConcentrationDerivative, and PerturbationDerivative) all have names that
+end with the suffix "Derivative", and are all designed to compute
+derivatives of the free energy with respect to a model parameter, for use
+in \ref psfts_thermoint_page "thermodynamic integration" calculations of 
+free energy differences. The PerturbationDerivative analyzer can be be
+used to implement \ref psfts_perturb_page "Einstein crystal" free energy
+calculations.
+
+\section psfts_algo_analyzer_files_sec Output Files
+
+Most analyzer classes that compute a single physical quantity or a
+small number of related quantities provide information in two forms:
+
+   - Averages of a sequence of values are computed during a simulation
+     or postprocess analysis and reported at the end of the simulation
+     or analysis operation, along with an estimate of the error on the
+     average. The average and error are often reported in a file with
+     file name suffix .ave. Further details of the error analysis are
+     are reported in a file with file name sufix .aer, as discussed
+     \ref psfts_algo_analyzer_error_sec "below".
+
+   - A sequence of values may optionally be output to a file that can
+     contain values of individual sampled values or block averages
+     (i.e., values of the average over "blocks" containing some a
+     user-specified number of consecutive sampled values).  The name
+     of this file usually ends with a file name suffix .dat.
+
+The option to output sequences of block averages rather than all
+sampled values is provided to allow a user to reduce the number of
+file output operations required for quantities that are computed
+frequently. The number of sampled values per block average output to
+a .dat file is usually given by a parameter named nSamplePerOutput.
+Setting nSamplerPerOutput = 1 yields individual sampled outputs.
+Setting nSamplePerOutput = 0 suppresses creation of the .dat file.
+
+<em> For users who examine source code </em>:
+Class templates for analyzer classes that compute a sequence average for
+a single physical quantity are usually derived from a specialization of
+the Rp::AverageAnalyzer class template.  This template defines
+conventions for parameter and output files for such classes, in which
+the shared base name for all output files produced by a given analyzer
+is given by a parameter named "outputFileName".
+Classes that compute sequence averages for several related quantities
+(such as HamiltonianAnalyzer) may instead be derived from specializations
+of Rp::AverageListAnalyzer.
+
+\section psfts_algo_analyzer_error_sec Statistical Error Analysis
+
+Classes that compute sequence averages of one or more physical
+quantities generally report an estimate of the statistical error on each 
+such average. The reported error is as a estimate of the standard deviation 
+of the probability distribution for the sequence average. To estimate 
+this quantity, one must into account the fact that nearby values in the 
+underlying time sequence are often strongly correlated, rather than 
+independent trials. Estimates of errors on sequence averages reported 
+by PSCF are computed using a method introduced by 
+H. Flyvbjerg and H.G. Petersen [J. Chem. Phys 91, 461 (1989)],
+which is based on the analysis of sequences of block-averaged values.
+The version of this algorithm used in PSCF is implemented by the 
+Util::AverageState and Util::Average classes.
+
+In this algorithm, one divides a long sequence of \f$ N \f$ sampled
+values of physical variables into blocks that each contain \f$ L \f$
+consecutive sampled values, for multiple different choices of value
+for the block length \f$ L \f$.  The implementation used by PSCF
+uses values of \f$ L = 2^{n} \f$ for all integer values of
+\f$ n = 0, 1, 2, \ldots \f$ for which \f$ L \f$.  For each value
+of \f$ L \f$, we construct a sequence of approximately \f$ L / N \f$
+block averages, in which each value in the resulting sequence is the 
+average of values within one block. For each such block-averaged
+sequence, we compute a naive estimate of the error on the average by
+analyzing the sequence as if block averaged values were uncorrelated.
+The assumption that block average values are uncorrelated is generally
+incorrect for short block lengths (small \f$ n \f$), but is expected
+to become approximately correct for sufficiently long blocks within a 
+sufficiently long primary sequence. Estimates of the error on the
+average obtained using different values of \f$ L \f$ that are all 
+long enough to yield uncorrelated block averages are expected to 
+give equivalent error estimates in the limit of an infinite
+sequence. In practice, for a long but finite sequence, if estimates 
+of the error on the average obtained from different values of \f$ n \f$ 
+exhibit a "plateau" in which consistent estimates are obtained from 
+several different levels, then this plateau value is expected to 
+provides a reliable estimate of the true error. This strategy is 
+implemented in PSCF by the Util::Average::blockingError function, 
+which compares naive estimates obtained with different values of 
+\f$ n \f$ for which \f$ L \leq N / 16 \f$ and attempts to automatically 
+identify and estimate a plateau value.
+
+Analyzers that report sequence averages at the end of a simulation 
+or postprocess analysis generally report just sequence averages and 
+an associated error estimates in a file with file name suffix .ave.
+More detailed information about the naive error estimates obtained 
+from different levels of block-averaging is usually written to a 
+file with a file name suffix .aer.
 
 <BR>
 \ref psfts_algo_compressor_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_algorithm_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_algo_thermoint_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_ramp_page         (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

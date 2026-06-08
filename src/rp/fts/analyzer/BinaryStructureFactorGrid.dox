@@ -54,9 +54,9 @@ The full parameter file format, including all optional parameters,
 is shown below:
 \code
 BinaryStructureFactorGrid{
-  interval           int
+  interval*          int   (1 by default)
   outputFileName     string
-  nSamplePerBlock*   int      (default 1)
+  nSamplePerBlock*   int   (1 by default)
 }
 \endcode
 Meanings of the parameters are described briefly below:

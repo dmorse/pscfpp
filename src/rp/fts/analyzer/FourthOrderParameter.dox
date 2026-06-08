@@ -5,7 +5,7 @@ namespace Rp {
 \page rp_FourthOrderParameter_page FourthOrderParameter
 
 This analyzer calculates the sum of fourth power of Fourier 
-amplitudes for the exchange field \f$ W_{-}({\br r} \f$, referred
+amplitudes for the exchange field \f$ W_{-}({\bf r}) \f$, referred
 to as the fourth order parameter. Changes in this quantity may be 
 used to identify spontaneous order-disorder transitions (ODT) that
 occur during a simulation. 
@@ -14,9 +14,10 @@ occur during a simulation.
 
 \section rp_FourthOrderParameter_algorithm_sec Mathematical Definition
 
-Let \f$ \Psi_{\text{fourth}}\f$ denotes the fourth order parameter,
+Let \f$ \Psi\f$ denotes the fourth order parameter,
 \f[
-   \Psi_{\text{fourth}} \equiv \left[ \sum W_{-}(\bf G)^4 \right] ^{\frac{1}{4}}
+   \Psi \equiv 
+   \left[ \sum_{{\bf G}} |W_{-}(\bf G)|^4 \right]^{1/4}
 \f]
 in which \f$ W_{-}(\bf G)\f$ denotes a Fourier components of the 
 exchange field associated with wavevector \f$\bf G\f$. The Fourier 
@@ -28,10 +29,9 @@ The full parameter file format, including all optional parameters, is shown
 below:
 \code
 FourthOrderParameter{
-  interval           int
+  interval*          int      (1 by default)
   outputFileName     string
-  hasAverage*        bool     (default true)
-  nSamplePerBlock*   int      (default 1)
+  nSamplePerBlock*   int      (1 by default 1)
 }
 \endcode
 Meanings of the parameters are described briefly below:
@@ -41,7 +41,7 @@ Meanings of the parameters are described briefly below:
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
+    <td> interval* </td>
     <td> number of steps between data samples </td>
   </tr>
     <tr>
@@ -49,25 +49,44 @@ Meanings of the parameters are described briefly below:
      <td> name of output file </td>
   </tr>
   <tr>
-     <td>hasAverage</td>
-     <td>whether the average and error analysis are needed?</td>
-  </tr>
-  <tr>
-     <td>nSamplePerBlock</td>
-     <td>number of samples per block average</td>
+     <td>nSamplePerBlock*</td>
+     <td>number of samples per block average output to file</td>
   </tr>
 </table>
 
 \section rp_FourthOrderParameter_output_sec Output
 
-During the simulation, \f$\chi_b N \f$ and fourth order
-parameter are output to the file {outputFileName} every interval 
-simulation steps.
+In the following, the symbol "{outputFileName}" is used to represent 
+the string value of the outputFileName parameter within descriptions 
+of output file names.
 
-At the end of the simulation, if hasAverage is true:
-  - average and error analysis info are output to log file.
+<b> Output during a simulation or trajectory file analysis </b>:
 
-*/
+If nSamplePerOutput > 1, then block average values of \f$ \Psi \f$, 
+averaged over blocks of nSamplePerOutput sequential samples, are output 
+to the file {outputFileName}.dat every interval \* nSamplerPerBlock 
+simulation steps or trajectory file frames.  
 
+If nSamplePerOutput == 1 (or if this optional parameter is omitted),
+then values of \f$ \Psi \f$ are output every interval time steps, 
+with no block averaging.
+
+If nSamplerPerBlock = 0, then {outputFileName}.dat data file is not
+created.
+
+<b> Final output </b>:
+
+At the end of a simulation or trajectory file analysis:
+
+  - The sequence average of \f$ \Psi \f$ and an estimated error on 
+    this average are output to the file {outputFileName}.ave
+
+  - Details of the error analysis are output to the file 
+    {outputFileName}.aer
+
+See the discussion of \ref psfts_algo_analyzer_error_sec "error analysis"
+for further details.
+
+*/ 
 }
 }

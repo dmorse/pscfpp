@@ -4,34 +4,59 @@ namespace Rp {
 /*! 
 \page rp_PerturbationDerivative_page PerturbationDerivative
 
-This analyzer calculates the derivative of free energy with 
-respect to the perturbation parameter \f$\lambda \f$.
+This class is designed to be used in conjuction with a 
+\ref psfts_perturb_page "Perturbation" that is used during a 
+simulation.  
+
+The PerturbationDerivative class calculates the derivative 
+\f$ \partial F/ \partial \lambda \f$ of total free energy 
+\f$ F \f$ with respect to the parameter \f$ \lambda \f$ that 
+controls the strength of the associated "perturbation". 
+This quantity is given by the average
+\f[
+   \frac{\partial F}{\partial \lambda} = \langle \Psi \rangle
+\f]
+in which
+\f[ 
+    \Psi \equiv \frac{\partial H}{\partial \lambda}
+\f]
+is the partial derivative of the perturbed Hamiltonian with 
+respect to the perturbation parameter \f$ \lambda \f$, evaluated 
+with a fixed field configuration and fixed values for all other 
+parameters.
+
+The design of the PerturbationDerivative class template 
+relies on the fact any subclass of a Perturbation base class 
+is required to implement a virtual function that returns the 
+value of the derivative \f$ \Psi \f$ defined above.  The 
+PerturbationDerivative class template thus simply calls this 
+virtual function to compute this quantity, and evaluates the 
+average of this quantity over a sequence. The design of the
+PerturbationDerivative class is thus independent of the 
+nature of the perturbation.  See the discussion of 
+\ref psfts_perturb_page "perturbations" for further details. 
 
 \see PerturbationDerivative (class API)
-
-\section rp_PerturbationDerivative_algorithm_sec Mathematical Formula
-The mathematical formula can be found in the documentation of
-the perturbation class for different types of perturbation. 
+\see \ref psfts_perturb_page 
 
 \section rp_PerturbationDerivative_parameter_sec Parameter File
 
-The full parameter file format, including all optional parameters, 
-is shown below:
+Parameter file format:
 \code
 PerturbationDerivative{
-  interval           int
-  outputFileName     string
-  hasAverage*        bool     (default true)
+  interval*           int     (1 by default)
+  outputFileName      string
+  nSamplerPerOutput*  int     (1 by default)
 }
 \endcode
-Meanings of the parameters are described briefly below:
+Meanings of the parameters:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
+    <td> interval* </td>
     <td> number of steps between data samples </td>
   </tr>
     <tr>
@@ -39,20 +64,43 @@ Meanings of the parameters are described briefly below:
      <td> name of output file </td>
   </tr>
   <tr>
-     <td>hasAverage</td>
-     <td>whether the average and error analysis are needed?</td>
+     <td>nSamplePerOutput* </td>
+     <td>number of sampled values per block average output to file</td>
   </tr>
 </table>
 
 \section rp_PerturbationDerivative_output_sec Output
-During the simulation, the parameter \f$\lambda \f$ and 
-corresponding \f$  \frac{\partial F}{\partial \lambda}  \f$
-are output to the file {outputFileName} every interval
-simulation steps.
 
-At the end of the simulation, if hasAverage is true:
-  - average info and error analysis are output to {outputFileName}.ave
-  - error analysis info are output to {outputFileName}.aer
+In the following, the symbol "{outputFileName}" is used to represent 
+the string value of the outputFileName parameter within descriptions 
+of output file names.
+
+<b> Output during a simulation or trajectory file analysis </b>:
+
+If nSamplePerOutput > 1, then block average values \f$ \Psi \f$, averaged
+over blocks of nSamplePerOutput sequential samples, are output to the 
+file {outputFileName}.dat every interval \* nSamplerPerBlock simulation 
+steps or trajectory file frames.  
+
+If nSamplePerOutput == 1, (or if this optional parameter is omitted), 
+then values of \f$ \Psi \f$ are output every interval simulation steps 
+or frames, with no block averaging.
+
+If nSamplerPerBlock = 0, then {outputFileName}.dat data file is not
+created.
+
+<b> Final output </b>:
+
+At the end of a simulation or trajectory file analysis:
+
+  - The sequence average of \f$ \Psi \f$ and an estimated error on this 
+    average are output to the file {outputFileName}.ave
+
+  - Details of the error analysis are output to the file 
+    {outputFileName}.aer
+
+See the discussion of \ref psfts_algo_analyzer_error_sec "error analysis"
+for further details.
 
 */
 

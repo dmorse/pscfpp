@@ -10,7 +10,6 @@
 #include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/AmCompressor.h>
 #include <rpc/fts/compressor/LrCompressor.h>
-//#include <rpc/fts/compressor/LrAmPreCompressor.h>
 #include <rpc/fts/compressor/LrAmCompressor.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
@@ -41,6 +40,9 @@ class CompressorTest : public LogFileUnitTest
 public:
    
    void setUp()
+   {  setVerbose(0); }
+   
+   void tearDown()
    {  setVerbose(0); }
    
    template <int D>

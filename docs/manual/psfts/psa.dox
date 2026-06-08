@@ -1,7 +1,7 @@
 /*! \page psfts_psa_page  Partial Saddle-Point Approximation
 
 \ref psfts_theory_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_algorithm_page  (Next)
+\ref psfts_thermoint_page  (Next)
 <BR>
 
 In a field theoretic treatment of an incompressible system, the
@@ -156,8 +156,8 @@ is not implemented in the current version of PSCF, in which the PSA is
 currently only applied to \f$ W_{M} \f$.
 
 <BR>
-\ref psfts_theory_page         (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_theory_page      (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_page             (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_algorithm_page   (Next)
+\ref psfts_thermoint_page   (Next)
 
 */

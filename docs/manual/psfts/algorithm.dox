@@ -1,7 +1,7 @@
 /*! \page psfts_algorithm_page  Algorithms
 
-\ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_param_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_thermoint_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_param_page      (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 The pages linked below discuss several different types of algorithm
@@ -26,13 +26,12 @@ sections that specify choices for each type of algorithm.
    <li> \subpage psfts_algo_montecarlo_page   </li>
    <li> \subpage psfts_algo_compressor_page   </li>
    <li> \subpage psfts_algo_analyzer_page     </li>
-   <li> \subpage psfts_algo_thermoint_page    </li>
    <li> \subpage psfts_algo_ramp_page        </li>
    <li> \subpage psfts_algo_perturb_page     </li>
    </ol>
 
 <BR>
-\ref psfts_psa_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_thermoint_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_param_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 

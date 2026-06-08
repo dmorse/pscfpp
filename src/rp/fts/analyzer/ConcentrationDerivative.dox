@@ -4,47 +4,45 @@ namespace Rp {
 /*! 
 \page rp_ConcentrationDerivative_page ConcentrationDerivative
 
-This analyzer calculates the derivative of free energy with 
-respect to parameter \f$c_0 = 1/v \f$ at fixed united cell, fixed
-polymer volume fraction, and fixed \f$ \chi_b \f$ for AB diblock copolymer 
-system. 
+This analyzer calculates the derivative of total free energy 
+\f$ F \f$ with respect to parameter \f$c_0 = 1/v \f$ in a 
+fixed unit cell, for a system of fixed system composition, 
+and fixed values of all other model parameters. 
 
 \see ConcentrationDerivative (Class API)
 
 \section rp_ConcentrationDerivative_algorithm_sec Mathematical Formula
 
+The required thermodynamic derivative is given by an ensemble average
 \f[
   \frac{\partial F}{\partial c_0} 
-  = -\frac{\partial \ln Z}{\partial c_0}
-  = \left\langle \frac{\partial H}{\partial \chi_b} \right\rangle
-  + \frac{\partial \ln N}{\partial c_0}
+  = \langle \Psi \rangle 
+ \quad\quad\quad\quad
+  \Psi
+  =  \frac{\partial H}{\partial c_{0}} 
+  + \frac{\partial \ln N}{\partial c_0} \quad,
 \f]
-
+in which
 \f[
   \frac{\partial H}{\partial c_0} 
-  = \left\langle \frac{H}{c_0} \right\rangle
+  = \frac{H}{c_0}  \quad\quad
+  \frac{\partial \ln N}{\partial c_{0}}
+  = - \frac{G}{2 c_0} \quad.
 \f]
-
-\f[
-  \frac{\partial \ln N}{\partial \chi_b}
-  = - \frac{G}{2 c_0}
-\f]
-where \f$ v \f$ denote the monomer reference volume and 
-\f$ G \f$ denotes the total number of grid points in the 
-computational mesh used in this simulation.
+Here, \f$ G \f$ is the total number of grid points in the 
+computational mesh.
 
 \section rp_ConcentrationDerivative_parameter_sec Parameter File
 
-The full parameter file format, including all optional parameters, is 
-shown below:
+Parameter file format:
 \code
 ConcentrationDerivative{
-  interval           int
+  interval*          int    (1 by default)
   outputFileName     string
-  hasAverage*        bool     (default true)
+  nSamplePerOutput*  int    (1 by default)
 }
 \endcode
-Meanings of the parameters are described briefly below:
+Meanings of the parameters:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -59,20 +57,46 @@ Meanings of the parameters are described briefly below:
      <td> name of output file </td>
   </tr>
   <tr>
-     <td>hasAverage</td>
-     <td>whether the average and error analysis are needed?</td>
+     <td>nSamplePerOutput*</td>
+     <td>Number of sampled values per block average output to file</td>
   </tr>
 </table>
 
-\section rp_ConcentrationDerivative_output_sec Output
-During the simulation, \f$ c_0 \f$ and corresponding
-\f$  \frac{\partial F}{\partial c_0}  \f$
-are output to the file {outputFileName} every interval
-simulation steps.
 
-At the end of the simulation, if hasAverage is true:
-  - average info and error analysis are output to {outputFileName}.ave
-  - error analysis info are output to {outputFileName}.aer
+\section rp_ConcentrationDerivative_output_sec Output
+
+In the following, {outputFileName} is used within descriptions of 
+file names to represent the string value of the outputFileName 
+parameter, to which different suffixes are added.
+
+<b> Output during a simulation or trajectory file analysis </b>:
+
+If nSamplePerOutput > 1, then block average values \f$ H' \f$, averaged
+over blocks of nSamplePerOutput sequential samples, are output to the 
+file {outputFileName}.dat every interval \* nSamplerPerBlock simulation 
+steps or trajectory file frames.
+
+If nSamplePerOutput = (or if this optional parameter is omitted), then 
+values of \f$ H' \f$ will output every interval simulation steps, with 
+no block averaging.
+
+If nSamplerPerBlock = 0, then {outputFileName}.dat data file is not
+created.
+
+<b> Final output </b>:
+
+At the end of a simulation or analysis operation:
+
+  - The sequence average of \f$ H' \f$ and estimated error on this 
+    average are output to the file {outputFileName}.ave
+
+  - Details of the error analysis are output to the file 
+    {outputFileName}.aer
+
+See the discussion of \ref psfts_algo_analyzer_error_sec "error analysis"
+for further details.
+
+
 
 */
 

@@ -5,9 +5,10 @@ namespace Rp {
 \page rp_ConcentrationWriter_page ConcentrationWriter
 
 This analyzer periodically writes the composition configuration 
-for each component to file. The output is analogous to that of a 
-TrajectoryWriter, except that it outputs frames containing monomer
-monomer concentration / volume fraction fields (c-fields) for all 
+for each component to file. The output is analogous to that of a
+trajectory filed produced by the \ref rp_TrajectoryWriter_page
+analyzer, except that it outputs frames containing monomer
+ concentration (or volume fraction) fields (c-fields) for all 
 monomer types at regular intervals, rather than monomer chemical
 potential fields (w-fields).
 
@@ -18,7 +19,7 @@ potential fields (w-fields).
 The full parameter file format is shown below:
 \code
 ConcentrationWriter{
-  interval           int
+  interval*          int     (1 by default)
   outputFileName     string
 }
 \endcode
@@ -29,8 +30,8 @@ Meanings of the parameters are described briefly below:
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
-    <td> number of steps between data samples </td>
+    <td> interval* </td>
+    <td> number of steps between c-field configurations output to file</td>
   </tr>
     <tr>
      <td> outputFileName </td>
@@ -41,12 +42,13 @@ Meanings of the parameters are described briefly below:
 \section rp_ConcentrationWriter_output_sec Output
 
 During the simulation, frames containing the monomer concentration
-fields (c-fields0 for all monomer types are output the to file 
-{outputFileName} every interval simulation steps. The format of the
-resulting file is analogous to that of a w-field trajectory file:
-It contains a header with the same format as that used for an r-grid
-field file, following by a sequence frames, in which each frame uses
-the format of the data section of an r-grid field file. 
+fields (i.e., c-fields) for all monomer types are output to the file 
+named outputFileName every interval simulation steps. The format of 
+the resulting file is analogous to that of a w-field trajectory file:
+It contains a header with the same format as that used for the header
+of an r-grid field file, following by a sequence frames, in which 
+each frame uses the same format as the data section of an r-grid 
+field file. 
 
 */
 }

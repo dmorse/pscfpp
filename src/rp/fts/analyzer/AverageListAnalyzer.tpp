@@ -43,6 +43,7 @@ namespace Rp {
       nSamplePerOutput_ = 1;
       ParamComposite::readOptional(in,"nSamplePerOutput",
                                    nSamplePerOutput_);
+      UTIL_CHECK(nSamplePerOutput_ >= 0);
       if (nSamplePerOutput() > 0) {
          std::string fileName = AnalyzerT::outputFileName(".dat");
          system().fileMaster().openOutputFile(fileName, outputFile_);

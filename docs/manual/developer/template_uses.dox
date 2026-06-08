@@ -119,7 +119,7 @@ whose sizes are known at compile time, and that can thus be created on
 the stack, rather than needing to dynamically allocate memory for all 
 such small data structures on the heap at run time. 
 
-\subsection developer_template_uses_algorithm_sub C. Algorithm Templates
+\subsection developer_template_uses_algorithm_sub C. Algorithm templates
 
 Some algorithms and data structures that are used in two or more 
 different programs or contexts are implemented as class templates. The 
@@ -137,8 +137,7 @@ configurations that satisfy a partial saddle-point condition. Different
 specializations of this template may, however, use different data types
 to represent residual vectors and solution vectors.
 
-\subsection developer_template_uses_base_sub D. Base classes for analogous 
-classes used in different programs
+\subsection developer_template_uses_base_sub D. Base class templates
 
 PSCF currently contains code for three programs (pscf_r1d, pscf_rpc and 
 pscf_rpg, respectively) that are constructed using source code from 

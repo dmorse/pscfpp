@@ -6,45 +6,42 @@ namespace Rp {
 
 This analyzer calculates the maximum amplitude of the 
 second power of Fourier modes of exchange fields, referred
-to as the max order parameter. This analyzer is commonly used 
-to identify order-disorder transition (ODT) in systems where
-the spontaneous phase transitions occur. In disordered phase, 
-the max order parameter approaches to 0. In ordered phase, 
-the max order parameter is a finite value.
+to as the max order parameter. This analyzer is commonly 
+used to identify order-disorder transition (ODT) that occur 
+spontaneously during a transition, and to help classify 
+states as ordered or disordered.
 
 \see MaxOrderParameter (class API)
 
 \section rp_MaxOrderParameter_algorithm_sec Mathematical Formula
 
+Let \f$ \Psi\f$ denote the maximum square-magnitude of the 
+Fourier coefficients of \f$ W_{-} \f$, such that
 \f[
-   \Psi_{\text{max}} \equiv \max_{\bf G} \left[ W_{-}(\mathbf{G}) W_{-}(-\mathbf{G}) \right]
+   \Psi 
+   \equiv \max_{\bf G} \left[ |W_{-}(\mathbf{G})|^{2} \right]
 \f]
-where \f$ \Psi_{\text{max}} \f$ denotes max order parameter,\f$ W_{-}(\bf G)\f$ 
-denotes the Fourier components of the exchange field, and \f$\bf G\f$
-denotes the Fourier wavevector. Note, since \f$ W_{-} \f$ is 
-real-valued function, \f$ W_{-}(\mathbf {G}) = W_{-}(-\mathbf{G}) \f$. The 
-Fourier transformation is defined in \ref prdc_fourier_page.
+where \f$ \bf G \f$ denotes a wavevector used to compute a DFT,
+and the maximum is over all wavevectors.  
 
 \section rp_MaxOrderParameter_parameter_sec Parameter File
 
-The full parameter file format, including all optional parameters, is shown
-below:
+Parameter file format:
 \code
 MaxOrderParameter{
-  interval           int
+  interval*          int      (1 by default)
   outputFileName     string
-  hasAverage*        bool     (default true)
-  nSamplePerBlock*   int      (default 1)
+  nSamplePerBlock*   int      (1 by default)
 }
 \endcode
-Meanings of the parameters are described briefly below:
+Meanings of the parameters:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
+    <td> interval* </td>
     <td> number of steps between data samples </td>
   </tr>
     <tr>
@@ -52,23 +49,45 @@ Meanings of the parameters are described briefly below:
      <td> name of output file </td>
   </tr>
   <tr>
-     <td>hasAverage</td>
-     <td>whether the average and error analysis are needed?</td>
-  </tr>
-  <tr>
-     <td>nSamplePerBlock</td>
-     <td>number of samples per block average</td>
+     <td>nSamplePerBlock* </td>
+     <td>number of samples per block average output to file </td>
   </tr>
 </table>
 
 \section rp_MaxOrderParameter_output_sec Output
 
-During the simulation, the step index, the highest peak indicies, 
-and max order parameter are output to the file {outputFileName} 
-every interval simulation steps.
+In what follows, the symbol "{outputFileName}" is used to represent 
+the string value of the outputFileName parameter within descriptions 
+of output file names.
 
-At the end of the simulation, if hasAverage is true:
-  - average and error analysis info are output to log file.
+<b> Output during a simulation</b>:
+
+If nSamplePerOutput > 1, then block average values 
+\f$ \Psi \f$, averaged over blocks of nSamplePerOutput 
+sequential samples, are output to the file {outputFileName}.dat every 
+interval \* nSamplerPerBlock simulation steps or trajectory frames.
+
+If nSamplePerOutput == 1, or if this optional parameter is omitted, 
+then the indices of the wavevector associated with the maximum 
+Fourier amplitude are output along with corresponding value of 
+\f$ \Psi \f$ every interval time steps or trajectory frames, with 
+no block averaging.
+
+If nSamplerPerBlock = 0, then {outputFileName}.dat data file is not
+created.
+
+<b> Final output </b>:
+
+At the end of the simulation or trajectory file analysis:
+
+  - The sequence average of \f$ \Psi \f$ and an estimated 
+    error on this average are output to the file {outputFileName}.ave
+
+  - Details of the error analysis are output to the file 
+    {outputFileName}.aer
+
+See the discussion of \ref psfts_algo_analyzer_error_sec "error analysis"
+for further details.
 
 */
 

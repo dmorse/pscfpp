@@ -32,26 +32,17 @@ namespace Rp {
    template <int D, class T>
    double CubicLengthDerivative<D,T>::compute()
    {
-      UTIL_CHECK(system().w().hasData());
-
-      // For AB diblock
-      const int nMonomer = system().mixture().nMonomer();
-      UTIL_CHECK(nMonomer == 2);
-
-      // Simulations for cubic box
+      // Preconditions
       UTIL_CHECK(D == 3);
-
-      int nParameter = system().domain().unitCell().nParameter();
-      UTIL_CHECK(nParameter == 1);
-
-      const double vSystem  = system().domain().unitCell().volume();
-      const double vMonomer = system().mixture().vMonomer();
-      const double nMonomerSystem = vSystem / vMonomer;
-      const int meshSize = system().domain().mesh().size();
+      UTIL_CHECK(system().domain().unitCell().nParameter() == 1);
+      UTIL_CHECK(system().w().hasData());
 
       // Compute field Hamiltonian per monomer.
       if (!system().c().hasData()) {
          system().compute();
+      }
+      if (!system().mixture().hasStress()) {
+         system().computeStress();
       }
       if (!simulator().hasWc()){
          simulator().computeWc();
@@ -60,28 +51,22 @@ namespace Rp {
          simulator().computeHamiltonian();
       }
 
-      // Box length
+      // Length of cubic box
       double l = system().domain().unitCell().parameter(0);
 
-      // Obtain fieldHamiltonian
-      double HW = simulator().fieldHamiltonian();
+      // Term extensive in Hamiltonian
+      double const hamiltonian = simulator().hamiltonian();
+      double dFdL = hamiltonian * (3.0 / l);
 
-      // The fieldHamiltonian contribution to the derivative
-      double dFdL = HW/vSystem * 3.0 * l * l;
+      // "Stress" term arising from changes in ln Q
+      double const stress = system().mixture().stress(0);
+      double const vSystem  = system().domain().unitCell().volume();
+      double const vMonomer = system().mixture().vMonomer();
+      dFdL += stress * vSystem / vMonomer;
 
-      // Obtain ideal gas Hamiltonian - n[lnQ_id + W_{+}/M]
-      double nlnQ= simulator().idealHamiltonian();
-      dFdL += 3.0/l * nlnQ;
-
-      // Obtain stress -1/Q dQdl per monomer
-      if (!system().mixture().hasStress()) {
-         system().computeStress();
-      }
-      double stress = system().mixture().stress(0);
-      dFdL += stress * nMonomerSystem;
-
-      // With N term
-      dFdL -= 3.0 * double(meshSize)/(2.0 * l);
+      // Term arising from ln N
+      int const meshSize = system().domain().mesh().size();
+      dFdL -= 3.0 * double(meshSize) / (2.0 * l);
 
       return dFdL;
    }

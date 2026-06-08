@@ -1,6 +1,6 @@
 /*! \page psfts_algo_ramp_page  Ramp
 
-\ref psfts_algo_thermoint_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_analyzer_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_algo_perturb_page      (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
@@ -22,8 +22,8 @@ that is used for SCFT sweep calculations, which is discussed
 \ref rp_LinearRamp_page "here".
 
 <BR>
-\ref psfts_algo_thermoint_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_analyzer_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref psfts_algorithm_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref psfts_algo_perturb_page       (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algo_perturb_page      (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

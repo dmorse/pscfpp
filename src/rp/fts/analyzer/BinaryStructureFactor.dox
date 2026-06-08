@@ -17,7 +17,7 @@ output structure factors for all individual wavevectors.
 
 This class computes the structure factor \f$ S({\bf q}) \f$ for an 
 incompressible system containing two monomer types, for all values
-of the wavevector \f$ {\bf q}) \f$. Let the two monomer types be denoted
+of the wavevector \f$ {\bf q} \f$. Let the two monomer types be denoted
 by subscripts 0 and 1. The structure factor computed here is defined 
 as
 \f[
@@ -33,22 +33,21 @@ where \f$ V \f$ is total system volume, and
 \f]
 Here, \f$ c_{i}({\bf r}) \f$ is the local concentration of monomers of 
 type i, for i = 0 and i =1.
-
 In a field-theoretic simulation, this is computed using the identity
 \f[
   S(\mathbf{q}) = 
-  \frac{1}{v^2\chi_{b}^2} \frac{1}{V}
+  \frac{1}{v^2\chi^2} \frac{1}{V}
   \left\langle |\hat{W}_{-}(\mathbf {q})|^{2} \right\rangle
-   - \frac{1}{2v \chi_b} 
+   - \frac{1}{2v \chi} 
 \f]
-where \f$ v \f$ is monomer volume, \f$ \chi_{b} \f$ is the bare 
-Flory-Huggins parameter, and
+where \f$ v \f$ is monomer volume, \f$ \chi \f$ is the bare Flory-Huggins 
+parameter \f$ \chi = \chi_{12} - (\chi_{11} + \chi_{22})/2  \f$, and
 \f[
   \hat{W}_{-}({\bf q}) = \int \! d{\bf r} 
   \; e^{-i{\bf q}\cdot {\bf r}} 
   [ w_{0}({\bf r}) - w_{1}({\bf r})]/2 
 \f]
-is the transform of the exchange field 
+is the Fourier transform of the exchange field 
 \f$ W_{-}({\bf r}) = [ w_{0}({\bf r}) - w_{1}({\bf r})]/2 \f$.
 
 <em> Technical note </em>:
@@ -61,38 +60,43 @@ Prdc::Cuda::FFT::forwardTransform .
 
 \section rp_BinaryStructureFactor_parameter_sec Parameter File
 
-The full parameter file format, including all optional parameters, 
-is shown below:
+Parameter file format:
 \code
 BinaryStructureFactor{
-  interval           int
+  interval*          int   (1 by default)
   outputFileName     string
-  writeWaveData*     bool     (default false)
+  writeWaveData*     bool  (false by default)
 }
 \endcode
-Meanings of the parameters are described briefly below:
+Meanings of the parameters:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
+    <td> interval* </td>
     <td> number of steps between data samples </td>
   </tr>
   <tr>
      <td> outputFileName </td>
-     <td> name of output file </td>
+     <td> base name of output files </td>
   </tr>
   <tr>
      <td> writeWaveData* </td>
-     <td> should \f$ S({\bf q})\f$ be reported for individual waves? </td>
+     <td> Should \f$ S({\bf q})\f$ be reported for individual waves? </td>
   </tr>
 </table>
 Note that the writeWaveData parameter is optional, and set to false (or 0) 
 by default. 
 
 \section rp_BinaryStructureFactor_output_sec Output Files
+
+This class does not output any data during the course of a simulation
+or trajectory file analysis, but instead outputs accumulated results 
+at the end.
+
+<b> Spherically-averaged structure factor </b>:
 At the end of the simulation, this class outputs a file containing 
 spherically-averaged values of \f$ S({\bf q}) \f$, averaged over time 
 and over groups of wavevectors of the same magnitude. If writeWaveData 
@@ -105,14 +109,15 @@ ordered list of values of wavenumber \f$ q \f$, and the second column
 contains a corresponding list of values of the spherically averaged 
 structure factor \f$ S(q) \f$. 
 
+<b> Structure factor for individual wavevectors </b>:
 If writeWaveData is true, the class also outputs a second file containing
-values of S(q) for individual wavevectors. The name of this file is
-obtained by adding a suffix "_wave" to the end of the outputFileName
-string parameter.  The first D columns of this file contain integer 
-indices for individual waves, using a standard DFT grid representation
-in which all indices non-negative. These D columns are followed by a 
-column containing the time averaged value of \f$ S({\bf q}) \f$ for 
-each wavevector.
+values of S(q) for individual wavevectors at the end of a simulation. 
+The name of this file is obtained by adding a suffix "_wave" to the 
+end of the outputFileName string parameter.  The first D columns of 
+this file contain integer indices for individual waves, using a 
+standard DFT grid representation in which all indices are non-negative.
+These D columns are followed by a column containing the time averaged 
+value of \f$ S({\bf q}) \f$ for each wavevector.
 
 */
 

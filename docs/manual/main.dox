@@ -80,6 +80,7 @@ online at
     <ol type="1">
     <li> \ref psfts_theory_page  </li>
     <li> \ref psfts_psa_page  </li>
+    <li> \ref psfts_thermoint_page  </li>
     <li> \ref psfts_algorithm_page  </li>
     <li> \ref psfts_param_page  </li>
     <li> \ref psfts_command_page  </li>

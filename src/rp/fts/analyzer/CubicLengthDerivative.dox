@@ -13,65 +13,79 @@ the unit cell size of a cubic unit cell.
 
 Consider a system containing in a periodic cubic simulation cell of 
 volume \f$ V = L^3 \f$, where \f$ L \f$ is the cubic cell length.
-Let \f$ F \f$ denote the total free energy of the system contained
-in one such a cell, in thermal energy units for which \f$ kT = 1 \f$. 
-The CubicLengthDerivative analyzer computes the derivative 
+Let \f$ F \f$ denote the total free energy of the system contained in 
+one such a cell, in thermal energy units for which \f$ kT = 1 \f$. 
+This analyzer computes a derivative 
 \f[
-    F' = \frac{\partial F}{\partial L} \quad,
+    \frac{\partial F}{\partial L} = \langle \Psi \rangle 
+    \quad,
 \f]
-where the derivative is evaluated at constant monomer volume (or 
-total monomer concentration), constant volume fraction for each 
+in which the derivative is evaluated at constant monomer volume 
+(or total monomer concentration), constant volume fraction for each 
 species, and constant values of all other input parameters.  
+The functional \f$ \Psi \f$ can be expressed as a sum
+\f[
+   \Psi = 
+   + \frac{3}{L} H
+   + \frac{V}{v} \sigma
+   + \frac{\partial \ln N}{\partial L}
+\f]
+where \f$ H \f$ is the total field theoretic Hamiltonian,
+\f[
+   \sigma \equiv 
+   - \sum_{\alpha} \frac{\phi_{\alpha}}{N_{\alpha}}
+   \frac{\partial \ln Q_{\alpha}}{\partial L}
+   \quad,
+\f]
+and
+\f[
+   \frac{\partial \ln N}{\partial L}
+   = -\frac{3G}{2L}
+\f]
+Here, \f$ G \f$ is the number of grid points in the computational 
+mesh, \f$ \alpha \f$ is an index for a polymeric species, and 
+\f$ \phi_{\alpha} \f$, \f$ N_{\alpha} \f$, and \f$ Q_{\alpha} \f$ 
+are the volume fraction, total number of monomers per molecule, and
+normalized single chain partitition for polymeric species \f$ \alpha \f$, 
+respectively.  The sum over species in the above expression for 
+\f$ \sigma \f$ includes only polymeric species, excluding any 
+point-like solvent species. 
 
-Let \f$ f_{\rm id}' \f$ denote the SCFT prediction for the 
-derivative of the non-dimensional free energy per monomer, 
-normalized by \f$ kT \f$, as returned by the Rp::Mixture::stress 
-function for parameter index 0 of a cubic unit cell.  This quantity 
-is given mathematically by 
-\f[
-    f_{\rm id}' 
-    = -\sum_{\alpha} \frac{\phi_{\alpha}}{N_{\alpha}}
-       \frac{\partial \ln Q_{\alpha}}{\partial L}
-\f]
-Here, 
-\f$ \alpha \f$ is an index for polymeric species, and 
-\f$ \phi_{\alpha} \f$, \f$ N_{\alpha} \f$, and \f$Q_{\alpha}\f$ are 
-the volume fraction, total number of monomers and normalized single 
-chain partitition for species \f$ \alpha \f$, respectively. This sum 
-over species in this expression includes all polymeric species, but
-exclude any point-particle solvent species.
+<em> Do not use with a perturbation </em>: The expression for 
+\f$ \Psi \f$ used by this analyzer uses the value of the total 
+Hamiltonian \f$ H \f$. If a simulation or trajectory analysis is 
+performed using a \ref psfts_perturb_page "perturbation", then
+\f$ H \f$ contains a contribution arising from the perturbation.
+When a perturbation exists, the above expression for \f$ \Psi \f$ is
+correct if and only if the perturbation contribution to \f$ H \f$ is 
+simply proportional to \f$ L^{3} \f$ for variable \f$ L \f$ at fixed 
+values of the w-field on all nodes of the computational mesh, as would 
+be true for any extensive, local functional of the w-fields. This 
+condition is not satisfied for an EinsteinCrystalPerturbation, however,
+because this perturbation is proportional to the difference between the 
+Einstein crystal Hamiltonian (which is a simple local functional that
+would satisfy this condition) and the standard field theoretic 
+Hamiltonian (which is a nonlocal functional that does not satisfy this
+condition). The CubicLengthDerivative analyzer should thus normally be 
+used only for simulations that use an unperturbed Hamiltonian.
 
-The derivative \f$ F' \f$ is computed as a sum
-\f[
-  F' = \frac{V}{v}f_{\rm id}' + \frac{3V}{L} H_{\rm f}
-     +  \frac{3G}{2L}
-\f]
-where\f$ v \f$ is monomer volume,
-\f$ G \f$ is the number of grid points in the computational mesh, 
-and \f$ H_{\rm f} \f$ is the value of the quadratic field contribution 
-to the \ref psfts_theory_page "field theoretic Hamiltonian", as returned
-by the function Simulator::fieldHamiltonian(). In systems with two 
-monomer types, \f$ H_{\rm f} \f$ is given by an integral
-\f[
-  H_{\rm f} =
-  \int \! d{\bf r} \; \left \{
-  \frac{W_{-}^{2}({\bf r}) }{v \chi}
-  - W_{+}^{*}({\bf r}) c_{0}
-  + \frac{\chi}{4v} \right \}
-\f]
-where \f$ W_{+}^{*}({\bf r}) \f$ denotes a saddle-point configuration
-of the pressure field and \f$ c_{0} = 1/v \f$. 
+<em> For users who read the source code: </em>
+The quantity \f$ \sigma \f$ defined above is equal to the SCFT 
+prediction of the derivative of free energy per monomer with respect 
+to \f$ L \f$ for a cubic unit cell, as computed by the function 
+Rp::System::computeStress() and returned by Rp::Mixture::stress (0).
+The value of the Hamiltonian \f$ H \f$ is computed by the function 
+Rp::Simulator::computeHamiltonian() and returned by 
+Rp::Simulator::hamiltonian().
 
 \section rp_CubicLengthDerivative_parameter_sec Parameter File
 
-The full parameter file format, including all optional parameters, is 
-shown below:
+Parameter file format:
 \code
 CubicLengthDerivative{
-  interval           int
+  interval*          int     (1 by default)
   outputFileName     string
-  hasAverage*        bool    (default true)
-  nSamplePerOutput*  int     (default 1)
+  nSamplePerOutput*  int     (1 by default)
 }
 \endcode
 Meanings of the parameters are described briefly below:
@@ -81,7 +95,7 @@ Meanings of the parameters are described briefly below:
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
+    <td> interval* </td>
     <td> number of steps between data samples </td>
   </tr>
     <tr>
@@ -89,27 +103,43 @@ Meanings of the parameters are described briefly below:
      <td> name of output file </td>
   </tr>
   <tr>
-     <td>hasAverage</td>
-     <td>Should the average value and error analysis be output? </td>
-  </tr>
-  <tr>
-     <td>nSamplePerOutput</td>
-     <td>Number of sampled values per block average, and per output</td>
+     <td>nSamplePerOutput* </td>
+     <td>Number of sampled values per block average output to file</td>
   </tr>
 </table>
 
 \section rp_CubicLengthDerivative_output_sec Output
-Values of the derivative \f$  F'  \f$ are computed every "interval" 
-simulation steps. 
 
-By default, block averages of nSamplerPerOutput sequential computed
-values are output every interval * nSamplerPerOutput time steps. Output 
-of block averages may be suppressed by setting nSamplerPerOutput to
-zero.
+In the following, {outputFileName} denotes the value of the 
+outputFileName string parameter, to which various suffixes are added to 
+create output file names.
 
-If hasAverage is true, then at the end of the simulation:
-  - average info and error analysis are output to {outputFileName}.ave
-  - error analysis info are output to {outputFileName}.aer
+<b> Output during a simulation or trajectory file analysis </b>:
+
+If nSamplePerOutput > 1, then block average values of \f$ \Psi \f$, 
+averaged over blocks of nSamplePerOutput sequential samples, are output to 
+the file {outputFileName}.dat every interval \* nSamplerPerBlock simulation 
+steps or trajectory file frames.  
+
+If nSamplePerOutput == 1 (or if this optional parameter is omitted), then 
+values of \f$ \Psi \f$ are output every interval simulation steps or 
+trajectory file frames, with no block averaging.
+
+If nSamplerPerBlock == 0, then the {outputFileName}.dat data file is not
+created, and no data is output during the simulation or analysis.
+
+<b> Final output </b>:
+
+At the end of a simulation or trajectory file analysis:
+
+  - The sequence average of \f$ \Psi \f$ and an estimated error on this 
+    average are output to the file {outputFileName}.ave
+
+  - Details of the error analysis are output to the file 
+    {outputFileName}.aer
+
+See the discussion of \ref psfts_algo_analyzer_error_sec "error analysis"
+for further details.
 
 */
 

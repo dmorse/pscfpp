@@ -16,18 +16,18 @@ redirected to a file.
 The parameter file format is shown below:
 \code
 StepLogger{
-  interval           int
+  interval*    int  (1 by default)
 }
 \endcode
-Meanings of the parameter is described briefly below:
+Meaning of the only parameter:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> interval </td>
-    <td> number of steps between data samples </td>
+    <td> interval* </td>
+    <td> number of steps between outputs of the step counter </td>
   </tr>
 </table>
 

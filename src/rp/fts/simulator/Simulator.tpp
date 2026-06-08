@@ -181,7 +181,7 @@ namespace Rp {
    }
 
    /*
-   * Compute field theoretic Hamiltonian H[W].
+   * Compute field theoretic Hamiltonian and its components.
    */
    template <int D, class T>
    void Simulator<D,T>::computeHamiltonian()
@@ -202,8 +202,10 @@ namespace Rp {
       const int ns = mixture.nSolvent();
       double phi, mu;
 
-      // Compute polymer ideal gas contributions to lnQ
-      double lnQ = 0.0;
+      // Compute field Hamiltonian contribution
+      idealHamiltonian_ = 0.0;
+
+      // Polymer ideal gas contribution
       if (np > 0) {
          typename T::Polymer const * polymerPtr;
          double length;
@@ -218,12 +220,12 @@ namespace Rp {
             }
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-08) {
-               lnQ += phi*( -mu + 1.0 )/length;
+               idealHamiltonian_ += phi * ( mu - 1.0 ) / length;
             }
          }
       }
 
-      // Compute solvent ideal gas contributions to lnQ
+      // Compute solvent ideal gas contributions to idealHamiltonian_
       if (ns > 0) {
          typename T::Solvent const * solventPtr;
          double size;
@@ -234,21 +236,21 @@ namespace Rp {
             size = solventPtr->size();
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-8) {
-               lnQ += phi*( -mu + 1.0 )/size;
+               idealHamiltonian_ += phi * ( mu - 1.0 ) / size;
             }
          }
       }
 
-      // Add average of pressure field wc_[nMonomer-1] to lnQ
+      // Subtract spatial average of pressure field from idealHamiltonian_
       double sum_xi = Reduce::sum(wc_[nMonomer-1]);
-      lnQ += sum_xi/double(meshSize);
+      idealHamiltonian_ -= sum_xi / double(meshSize);
 
-      // lnQ now contains a value per monomer
+      // idealHamiltonian_  now contains a final value per monomer
 
-      // Initialize field contribution HW
+      // Compute field Hamiltonian contribution
+      fieldHamiltonian_ = 0.0;
 
-      // Compute quadratic field contribution to HW
-      double HW = 0.0;
+      // Quadratic field contribution 
       double prefactor, wSquare;
       for (int j = 0; j < nMonomer - 1; ++j) {
          UTIL_CHECK(tmpField_.capacity() == meshSize);
@@ -256,35 +258,41 @@ namespace Rp {
          VecOp::subVS(tmpField_, wc_[j], sc_[j]);
          wSquare = Reduce::sumSq(tmpField_);
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
-         HW += prefactor * wSquare;
+         fieldHamiltonian_ += prefactor * wSquare;
       }
+      fieldHamiltonian_ /= double(meshSize);
 
-      // Normalize HW to equal a value per monomer
-      HW /= double(meshSize);
+      // Add constant term K/2 per monomer ( K = s = e^{T}chi e/M^2 )
+      fieldHamiltonian_ += 0.5*sc_[nMonomer - 1];
 
-      // Add constant term K/2 per monomer (K=s=e^{T}chi e/M^2)
-      HW += 0.5*sc_[nMonomer - 1];
+      // fieldHamiltonian_ now contains a final value per monomer
 
-      // Compute number of monomers in the system (nMonomerSystem)
+      // Compute nMonomerSystem = number of monomers in the system 
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
 
-      // Compute final Hamiltonian components
-      fieldHamiltonian_ = nMonomerSystem * HW;
-      idealHamiltonian_ = -1.0 * nMonomerSystem * lnQ;
+      // Convert per monomer values to extensive values
+      fieldHamiltonian_ *= nMonomerSystem;
+      idealHamiltonian_ *= nMonomerSystem;
+
       hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
 
+      // Add perturbationHamiltonian_, if any 
       if (hasPerturbation()) {
-        perturbationHamiltonian_ = perturbation().hamiltonian(hamiltonian_);
-        hamiltonian_ += perturbationHamiltonian_;
+         perturbationHamiltonian_ 
+            = perturbation().hamiltonian(hamiltonian_);
+         hamiltonian_ += perturbationHamiltonian_;
       } else {
-        perturbationHamiltonian_ = 0.0;
+         perturbationHamiltonian_ = 0.0;
       }
 
       hasHamiltonian_ = true;
    }
 
+   /*
+   * Compute eigenvalues and eigenvectors of the projected chi matrix.
+   */
    template <int D, class T>
    void Simulator<D,T>::analyzeChi()
    {
@@ -546,15 +554,15 @@ namespace Rp {
       UTIL_CHECK(state().isAllocated);
       UTIL_CHECK(!state().hasData);
 
-      int nMonomer = system().mixture().nMonomer();
+      const int nMonomer = system().mixture().nMonomer();
 
-      // Set field components
+      // Save all w-field components
       for (int i = 0; i < nMonomer; ++i) {
          state().w[i] = system().w().rgrid(i);
          state().wc[i] = wc_[i];
       }
 
-      // Save cc based on ccSavePolicy
+      // Save cc, if needed
       if (state().needsCc) {
          UTIL_CHECK(hasCc());
          UTIL_CHECK(state().cc.isAllocated());
@@ -563,7 +571,7 @@ namespace Rp {
          }
       }
 
-      // Save dc based on dcSavePolicy
+      // Save dc, if needed
       if (state().needsDc) {
          UTIL_CHECK(hasDc());
          UTIL_CHECK(state().dc.isAllocated());
@@ -572,7 +580,7 @@ namespace Rp {
          }
       }
 
-      // Save Hamiltonian based on hamiltonianSavePolicy
+      // Save Hamiltonian and its components, if needed
       if (state().needsHamiltonian){
          UTIL_CHECK(hasHamiltonian());
          state().hamiltonian  = hamiltonian();
@@ -601,10 +609,32 @@ namespace Rp {
       UTIL_CHECK(state().hasData);
       const int nMonomer = system().mixture().nMonomer();
 
-      // Restore fields
+      // Restore monomer w-field components
       system().w().setRGrid(state().w);
 
-      // Restore Hamiltonian and components
+      // Restore wc_ field components
+      for (int i = 0; i < nMonomer; ++i) {
+         wc_[i] = state().wc[i];
+      }
+      hasWc_ = true;
+
+      // Restore cc_ c-field components, if needed
+      if (state().needsCc) {
+         for (int i = 0; i < nMonomer; ++i) {
+            cc_[i] = state().cc[i];
+         }
+         hasCc_ = true;
+      }
+
+      // Restore dc_ fieldc components, if needed
+      if (state().needsDc) {
+         for (int i = 0; i < nMonomer - 1; ++i) {
+            dc_[i] = state().dc[i];
+         }
+         hasDc_ = true;
+      }
+
+      // Restore Hamiltonian and its components, if needed
       if (state().needsHamiltonian){
          hamiltonian_ = state().hamiltonian;
          idealHamiltonian_ = state().idealHamiltonian;
@@ -613,29 +643,12 @@ namespace Rp {
          hasHamiltonian_ = true;
       }
 
-      for (int i = 0; i < nMonomer; ++i) {
-         wc_[i] = state().wc[i];
-      }
-      hasWc_ = true;
-
-      if (state().needsCc) {
-         for (int i = 0; i < nMonomer; ++i) {
-            cc_[i] = state().cc[i];
-         }
-         hasCc_ = true;
-      }
-
-      if (state().needsDc) {
-         for (int i = 0; i < nMonomer - 1; ++i) {
-            dc_[i] = state().dc[i];
-         }
-         hasDc_ = true;
-      }
-
+      // Restore internal state of perturbation, if any
       if (hasPerturbation()) {
          perturbation().restoreState();
       }
 
+      // Clear internal state of SimState object
       state().hasData = false;
    }
 
@@ -693,7 +706,7 @@ namespace Rp {
       seed_ = 0;
       readOptional(in, "seed", seed_);
 
-      // Set random number generator seed
+      // Set random number generator seeds on CPU and GPU
       // Default value seed_ = 0 uses the clock time.
       random().setSeed(seed_);
       initializeVecRandom();

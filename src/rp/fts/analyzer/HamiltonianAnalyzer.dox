@@ -1,26 +1,31 @@
 namespace Pscf {
 namespace Rp {
 
-/*! 
+/*!
 \page rp_HamiltonianAnalyzer_page HamiltonianAnalyzer
 
-This analyzer calculates the average of total hamiltonian and its 
-components. The relevant mathematical formulas can be found in the relevant 
-\ref psfts_theory_page "manual page" about the theory.
+This analyzer can output instantaneous values and averages of the 
+total field theoretic hamiltonian \f$ H \f$ and its components
+\f$ H_{\rm id} \f$ and \f$ H_{\rm f} \f$.
+These quantities are computed by the function 
+Rp::Simulator::computeHamiltonian, and their values are returned 
+by the hamiltonian(), idealHamiltonian() and fieldHamiltonian() 
+member functions of the same class template.
 
 \see HamiltonianAnalyzer (class API)
+\see Rp::Simulator
 
 \section rp_HamiltonianAnalyzer_parameter_sec Parameter File
 
-The full parameter file format is shown below:
+Parameter file block format:
 \code
 HamiltonianAnalyzer{
-  interval           int
-  outputFileName     string
-  nSamplePerBlock    int     
+  interval*           int    (1 by default)
+  outputFileName      string
+  nSamplePerOutput*   int    (1 by default)
 }
 \endcode
-Meanings of the parameters are described briefly below:
+Meanings of the parameters:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -35,21 +40,50 @@ Meanings of the parameters are described briefly below:
      <td> name of output file </td>
   </tr>
   <tr>
-     <td>nSamplePerBlock</td>
-     <td>number of samples per block average</td>
+     <td>nSamplePerOutput * </td>
+     <td>number of samples per block average output to file</td>
   </tr>
 </table>
 
+
 \section rp_HamiltonianAnalyzer_output_sec Output
 
-During the simulation, block average of total hamiltonian and 
-its components are output to the file {outputFileName} every 
-interval simulation steps. 
+In the following, "{outputFileName}" is used to represent the string
+value of the outputFileName parameter within descriptions of output
+file names.
 
-At the end of the simulation,
-  - average info are output to {outputFileName}.ave
-  - error analysis info are output to {outputFileName}.aer
+<b> Output during a simulation: </b>:
 
+If nSamplePerOutput > 0, the block averages of the total Hamiltonian
+and its components are output to the file {outputFileName}.dat every
+interval \* nSamplerPerBlock simulation steps. This file contains 4
+columns. The first column contains the integer step counter for the
+first step of each block.  The next three columns contain block average
+values of the ideal component, field component and total Hamiltonian
+(i.e,. \f$ H_{\rm id} \f$, \f$ H_{\rm f} \f$ and \f$ H \f$ ), listed
+in that order.  
+
+If nSamplePerOutput == 1 (or if this optional parameter is omitted),
+then instantaneous values of \f$ H_{\rm id} \f$, \f$ H_{\rm f} \f$ and 
+\f$ H \f$ are output to {outputFileName}.dat every interval time steps, 
+with no block averaging.
+
+If nSamplerPerBlock = 0, the {outputFileName}.dat data file is not
+created.
+
+<b> Final output: </b>:
+
+At the end of the simulation or analysis of a trajectory file:
+
+  - average values for \f$ H_{\rm id} \f$, \f$ H_{\rm f} \f$ and
+    \f$ H \f$ along with corresponding error estimates are output 
+    to the file {outputFileName}.ave
+
+  - Details of the blocking error analysis for these quantities are 
+    output to {outputFileName}.aer
+
+See the discussion of \ref psfts_algo_analyzer_error_sec "error analysis"
+for further details. 
 */
 
 }

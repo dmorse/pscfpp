@@ -32,7 +32,7 @@ namespace Rp {
    * Return a pointer to a new McMoveFactory object.
    */
    template <int D, class T>
-   Factory<typename T::McMove>* McMoveManager<D,T>::newDefaultFactory() 
+   Factory<typename T::McMove>* McMoveManager<D,T>::newDefaultFactory()
    const
    {  return new typename T::McMoveFactory(*simulatorPtr_); }
 
@@ -54,7 +54,15 @@ namespace Rp {
          totalProbability += probabilities_[iMove];
       }
 
-      // Allocate and store and normalize probabilities
+      // Validate the sum of MC move probabilities
+      if (std::abs(totalProbability - 1.0) > 1.0E-4) {
+         std::string msg = "Error: ";
+         msg += "Sum of MC move proababilities differs too much from 1.0";
+         std::cout << msg;
+         UTIL_THROW(msg.c_str());
+      }
+
+      // Store normalized probabilities for use in MC move selection
       for (iMove = 0; iMove < Base::size(); ++iMove) {
          probabilities_[iMove] = probabilities_[iMove]/totalProbability;
          (*this)[iMove].setProbability(probabilities_[iMove]);

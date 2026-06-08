@@ -125,8 +125,9 @@ public:
       TEST_ASSERT(checkAverage(filename, ref));
 
       filename = "out/cubicLengthDerivative.ave";
-      //ref = 4.2481444e+03; // old, < v1.3.4
-      ref = 4.234712800000e+03; // new in v1.3.4
+      //ref = 4.2481444e+03;      // old, before v1.3.4
+      //ref = 4.234712800000e+03; // bugfix, without perturbationHamiltonian
+      ref = 1.238404900000e+03;   // new in v1.3.4
       TEST_ASSERT(checkAverage(filename, ref));
 
       checkHamiltonianAnalyzer();

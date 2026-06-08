@@ -1,0 +1,131 @@
+/*! \page psfts_thermoint_page  Thermodynamic Integration
+
+\ref psfts_psa_page          (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page    (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Thermodynamic integration is a technique for computing a difference in
+values of the free energy in two states characterized by different values
+of a parameter. This free energy difference is computed by numerically
+integrating the derivative of the free energy \f$ F \f$ with respect to
+the relevant model parameter. 
+
+The free energy \f$ F \f$ of a field theoretic model is given by the 
+usual relationship
+\f[
+   F = -\ln Z
+\f]
+in which \f$ Z \f$ is a field theoretic partition function. Here and
+hereafter, we use "thermal" units for energy, in which \f$ kT = 1 \f$.
+For a theory that uses a partial saddle-point approximation,
+\f[
+   Z = \frac{1}{N} \int \! {\cal D}W_{-} \; e^{-H[W_{-},W_{+}^{*}] } \quad,
+\f]
+where \f$ N \f$ is a constant that is independent of the field 
+configuration., Here, we use \f$ W_{-} \f$ to denote a list of the 
+\f$ M -1 \f$ fields \f$ W_{1}, \ldots W_{M-1} \f$ that couple to 
+composition fluctuations, and \f$ W_{+}^{*} \f$ to denote the 
+partial saddle-point configuration of the pressure-like field
+\f$ W_{+} \f$$.  Correspondingly, we use \f$ \int {\cal D}W_{-} \f$ 
+to denote a functional integral with respect to these \f$ M - 1 \f$ 
+field components. 
+
+\section psfts_thermoint_N_sec Normalization constant
+
+PSCF uses a convention for the constant \f$ N \f$ which is given for 
+AB systems ( \f$ M = 2 \f$) by
+\f[
+   N \equiv
+   \int {\cal D} W_{-}
+   \exp \left \{
+   - \int \! d{\bf r} \;
+   \frac{ W_{-}^{2}({\bf r}) }{v \chi }
+   \right \}
+\f]
+When approximated by a product of Gaussian integrals on a lattice
+containing \f$ G \f$ mesh points in a volume \f$ V \f$, this yields
+\f[
+   \ln N = \frac{G}{2} 
+   \ln  \left ( \frac{\pi \chi v G }{V} \right ) \quad.
+\f]
+The generalization to the case in which \f$ M > 2 \f$, but in which 
+all \f$ M - 1 \f$ nonzero eigenvalues of the projected \f$ \chi \f$
+matrix are negative yields a constant
+\f[
+   \ln N = \frac{G}{2} \sum_{\alpha = 1}^{M-1}
+   \ln  \left ( \frac{2\pi |\lambda_{\alpha}| v G  }{ MV } \right ) 
+   \quad.
+\f]
+Here, \f$ \lambda_{1}, \dots, \lambda_{M-1} \f$ denote the first 
+\f$ M - 1 \f$ eigenvalues of the projected \f$ \chi \f$ matrix, excluding 
+the eigenvalue \f$ \lambda_{M} \f$ that is zero by construction.  
+
+Note that this above convention for \f$ N \f$ yields a value that 
+depends on the Flory-Huggins interaction parameters, the monomer 
+volume \f$ v \f$, and system volume \f$ V \f$. These dependencies
+must be taken into account when computing derivatives of \f$ F \f$ 
+with respect to any of these variables.
+
+\section psfts_thermoint_dFdx_sec Free energy derivatives
+
+Suppose \f$ x \f$ is a real-valued parameter that appears in the field 
+theoretic Hamiltonian \f$ H \f$ or the above exprssion for \f$ N \f$,
+or both. The thermodynamic integration method is based on a 
+straightforward theorem that states that the derivative of free 
+energy \f$ F \f$ with respect to \f$ x \f$ is given by a sum
+\f[
+   \frac{\partial F}{\partial x}
+   = 
+   \left \langle \frac{\partial H}{\partial x} \right \rangle
+   + \frac{\partial \ln N}{\partial x}
+   \quad.
+\f]
+Here, \f$ \partial H/\partial x \f$ is a derivative evaluated in a 
+fixed field configuration, and \f$ \langle \cdots \rangle \f$ denotes
+an equilibrium ensemble average evaluated using a Hamiltonian with the 
+specified value of parameter \f$ x \f$. To simplify notation, it is
+sometimes useful to express this an average
+\f[
+   \frac{\partial F}{\partial x} = \langle \Psi \rangle
+\f]
+in which we define a functional of the fields
+\f[
+   \Psi = \frac{\partial H}{\partial x} 
+   + \frac{\partial \ln N}{\partial x}
+\f]
+that contains a field-indepdent term arising form the derivative of
+\f$ \ln N \f$. 
+
+\section psfts_thermoint_int_sec Numerical integration
+
+The change in \f$ F \f$ associated with a change in \f$ x \f$ from
+an initial value \f$ x_{0} \f$ to a final value \f$ x_{1} \f$ is 
+obtained by integrating the derivative \f$ \partial F/ \partial x \f$ 
+over this range. This sort of integral can be computed numerically by 
+either of two methods:
+
+  - **Separate simulations** : Equilibrium simulations can be performed 
+    at a set of values of \f$ x \f$ within the range of interest, each 
+    of which yields a value of \f$ \partial F/\partial x \f$ at a single 
+    value as an ensemble average. The required integral is then 
+    approximated by numerical integration of the resulting sequence
+    of values.
+
+  - **Continuous integration** : The integral may be computed by using a
+    \ref psfts_algo_ramp_page "ramp" to continuously vary the parameter
+    of interest over the course of a simulation.
+
+Continuous integration may be used either to compute the change in free
+energy associated with a change in a parameter of the standard field
+theoretic Hamiltonian (such as an interaction parameter or the monomer
+concentration) or as a change in free energy associated with changes 
+in the strength of a \ref psfts_algo_perturb_page "perturbation" that 
+is added to the standard Hamiltonian to create an unphysical perturbed
+Hamiltonian (as done in the Einstein crystal integration method).
+
+<BR>
+\ref psfts_psa_page          (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_page              (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref psfts_algorithm_page    (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/
