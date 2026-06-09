@@ -302,11 +302,13 @@ namespace Rp {
       * 
       * The ideal Hamiltonian contribution returned by this function
       * is given by the quantity denoted by \f$ \tilde{H}_{\rm id} \f$, 
-      * as defined \ref psfts_psa_pressure_page "here", given by
+      * as defined \ref psfts_psa_pressure_sec "here", given by
       * \f[
       *    H_{\rm id}  = 
       *    \frac{V}{v}\sum_{\alpha} \frac{\phi_{\alpha}}{N_{\alpha}}
-      *    \left [ \ln \left ( \frac{\phi_{\alpha}}{Q_{\alpha}} \right ) - 1 \right ]
+      *    \left [ 
+      *       \ln \left ( \frac{\phi_{\alpha}}{Q_{\alpha}} \right )  - 1
+      *    \right ]
       *    - \frac{1}{v}\int W_{+}^{*}({\bf r})  \\
       * \f]
       * Here, \f$ \alpha \f$ is an index for molecular species, while 
@@ -322,9 +324,9 @@ namespace Rp {
       *
       * The field Hamiltonian contribution returned by this function
       * is given by the quantity denoted by \f$ \tilde{H}_{\rm id} \f$, 
-      * as defined \ref psfts_psa_pressure_page "here", given by
+      * as defined \ref psfts_psa_pressure_sec "here", given by
       * \f[
-      *    H_{\rm f}  & =
+      *    H_{\rm f}  =
       *    \frac{1}{v}
       *    \int \! d{\bf r} \; \left \{
       *    \sum_{\alpha=1}^{M-1}

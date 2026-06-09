@@ -230,16 +230,16 @@ for a BD simulation is given in skeleton form below:
 \endcode
 Elements of this block are discussed below.
 
-** seed **: The optional seed parameter provides an integer seed for
-a random number generator. If it omitted, a seed will be generated
-automatically, using a clock time as an input. This parameter is usually
-omitted, but may be included if one wishes to be able to exactly reproduce
-a previous simulation.
+The optional seed parameter provides an integer seed for a random number 
+generator. If it omitted, a seed will be generated automatically, using 
+a clock time to generate a seed. This parameter is usually omitted, but 
+may be included if one wishes to be able to exactly reproduce a previous 
+simulation.
 
-The BdStep, Compressor, and AnalyzerManager blocks contain parameters for,
-respectively, the BD step algorithm, the compressor algorithm, and any
-associated data analysis operations.  The AnalyzerManager block, if
-present, contains one or more nested subblocks that each specify a
+The BdStep, Compressor, and AnalyzerManager blocks contain parameters 
+for, respectively, the BD step algorithm, the compressor algorithm, and 
+any associated data analysis operations.  The AnalyzerManager block, if 
+present, contains one or more nested subblocks that each specify a 
 specific data analysis operation, as discussed below.
 
 The BdStep and Compressor blocks are marked as optional in the above
