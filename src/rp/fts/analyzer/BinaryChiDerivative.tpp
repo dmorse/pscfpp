@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ChiDerivative.h"
+#include "BinaryChiDerivative.h"
 #include <pscf/interaction/Interaction.h>
 
 namespace Pscf {
@@ -20,17 +20,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   ChiDerivative<D,T>::ChiDerivative(typename T::Simulator& simulator,
+   BinaryChiDerivative<D,T>::BinaryChiDerivative(typename T::Simulator& simulator,
                                      typename T::System& system)
     : AverageAnalyzerT(simulator, system)
-   {  ParamComposite::setClassName("ChiDerivative"); }
+   {  ParamComposite::setClassName("BinaryChiDerivative"); }
 
 
    /*
    * Compute and return derivative w/ respect to chi.
    */
    template <int D, class T>
-   double ChiDerivative<D,T>::compute()
+   double BinaryChiDerivative<D,T>::compute()
    {
       // Preconditions
       UTIL_CHECK(system().w().hasData());

@@ -32,7 +32,7 @@ BdSimulator{
          interval        1
          outputFileName  out/concentrationDerivative
       }
-      ChiDerivative{
+      BinaryChiDerivative{
          interval        1
          outputFileName  out/chiDerivative
       }

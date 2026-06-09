@@ -28,7 +28,7 @@ BdSimulator{
       ConcentrationDerivative{
          outputFileName  out/concentrationDerivative
       }
-      ChiDerivative{
+      BinaryChiDerivative{
          outputFileName  out/chiDerivative
       }
       HamiltonianAnalyzer{

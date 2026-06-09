@@ -10,7 +10,7 @@ rpc_fts_analyzer_= \
   rpc/fts/analyzer/BinaryStructureFactor.cpp \
   rpc/fts/analyzer/StepLogger.cpp \
   rpc/fts/analyzer/PerturbationDerivative.cpp \
-  rpc/fts/analyzer/ChiDerivative.cpp \
+  rpc/fts/analyzer/BinaryChiDerivative.cpp \
   rpc/fts/analyzer/ConcentrationDerivative.cpp \
   rpc/fts/analyzer/MaxOrderParameter.cpp \
   rpc/fts/analyzer/FourthOrderParameter.cpp \

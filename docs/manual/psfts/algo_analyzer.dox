@@ -54,7 +54,7 @@ provided for each such class:
   <li> \subpage rp_FourthOrderParameter_page "FourthOrderParameter":
        Compute an alternative order parameter that is useful for
        identifying spontaneous phase transitions. </li>
-  <li> \subpage rp_ChiDerivative_page "ChiDerivative":
+  <li> \subpage rp_BinaryChiDerivative_page "BinaryChiDerivative":
        Compute the derivative of free energy with respect to changes in
        the chi parameter of an AB (two-monomer) system.  </li>
   <li> \subpage rp_CubicLengthDerivative_page "CubicLengthDerivative"
@@ -89,14 +89,15 @@ disorder-to-order (crystallization) or order-to-disorder (melting)
 transition that occur during a simulation.
 
 <em> Free Energy Derivatives </em>:
-The last four analyzers listed above (ChiDerivative, CubicLengthDerivative,
-ConcentrationDerivative, and PerturbationDerivative) all have names that
-end with the suffix "Derivative", and are all designed to compute
-derivatives of the free energy with respect to a model parameter, for use
-in \ref psfts_thermoint_page "thermodynamic integration" calculations of 
-free energy differences. The PerturbationDerivative analyzer can be be
-used to implement \ref psfts_perturb_page "Einstein crystal" free energy
-calculations.
+The last four analyzers listed above (BinaryChiDerivative, 
+CubicLengthDerivative, ConcentrationDerivative, and 
+PerturbationDerivative) all have names that end with the 
+suffix "Derivative", and are all designed to compute derivatives 
+of the free energy with respect to a model parameter, for use in 
+\ref psfts_thermoint_page "thermodynamic integration" calculations 
+of free energy differences. The PerturbationDerivative analyzer can 
+be used to implement \ref psfts_perturb_page "Einstein crystal" 
+free energy calculations.
 
 \section psfts_algo_analyzer_files_sec Output Files
 

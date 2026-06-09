@@ -11,7 +11,7 @@ rpg_fts_analyzer_= \
   rpg/fts/analyzer/BinaryStructureFactor.cu \
   rpg/fts/analyzer/MaxOrderParameter.cu \
   rpg/fts/analyzer/FourthOrderParameter.cu \
-  rpg/fts/analyzer/ChiDerivative.cu \
+  rpg/fts/analyzer/BinaryChiDerivative.cu \
   rpg/fts/analyzer/ConcentrationDerivative.cu \
   rpg/fts/analyzer/PerturbationDerivative.cu \
   rpg/fts/analyzer/CubicLengthDerivative.cu

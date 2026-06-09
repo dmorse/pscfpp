@@ -14,7 +14,7 @@
 #include "BinaryStructureFactor.h"
 #include "StepLogger.h"
 #include "PerturbationDerivative.h"
-#include "ChiDerivative.h"
+#include "BinaryChiDerivative.h"
 #include "ConcentrationDerivative.h"
 #include "MaxOrderParameter.h"
 #include "FourthOrderParameter.h"
@@ -61,8 +61,8 @@ namespace Rpg {
       } else if (className == "PerturbationDerivative") {
          ptr = new PerturbationDerivative<D>(*simPtr_, 
                                              *sysPtr_);
-      } else if (className == "ChiDerivative") {
-         ptr = new ChiDerivative<D>(*simPtr_, *sysPtr_);
+      } else if (className == "BinaryChiDerivative") {
+         ptr = new BinaryChiDerivative<D>(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationDerivative") {
          ptr = new ConcentrationDerivative<D>(*simPtr_, 
                                               *sysPtr_);

@@ -15,7 +15,7 @@
 #include "BinaryStructureFactor.h"
 #include "MaxOrderParameter.h"
 #include "FourthOrderParameter.h"
-#include "ChiDerivative.h"
+#include "BinaryChiDerivative.h"
 #include "CubicLengthDerivative.h"
 #include "ConcentrationDerivative.h"
 #include "PerturbationDerivative.h"
@@ -62,8 +62,8 @@ namespace Rpc {
          ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
       } else if (className == "PerturbationDerivative") {
          ptr = new PerturbationDerivative<D>(*simPtr_, *sysPtr_);
-      } else if (className == "ChiDerivative") {
-         ptr = new ChiDerivative<D>(*simPtr_, *sysPtr_);
+      } else if (className == "BinaryChiDerivative") {
+         ptr = new BinaryChiDerivative<D>(*simPtr_, *sysPtr_);
       } else if (className == "CubicLengthDerivative") {
          ptr = new CubicLengthDerivative<D>(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationDerivative") {

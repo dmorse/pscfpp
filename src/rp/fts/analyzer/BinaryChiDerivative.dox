@@ -2,16 +2,16 @@ namespace Pscf {
 namespace Rp {
 
 /*!
-\page rp_ChiDerivative_page ChiDerivative
+\page rp_BinaryChiDerivative_page BinaryChiDerivative
 
 This analyzer computes the partial derivative of the total Helmholtz
 free energy with respect to the chi parameter of a AB system, with 
 two monomers types, for a system of fixed composition and fixed unit 
 cell.
 
-\see ChiDerivative (class API)
+\see BinaryChiDerivative (class API)
 
-\section rp_ChiDerivative_algorithm_sec Mathematical Formula
+\section rp_BinaryChiDerivative_algorithm_sec Mathematical Formula
 
 Consider a system with two monomer types with a Flory-Huggins parameter 
 \f$ \chi \f$ and a total Helmholtz free energy \f$ F = -\ln Z \f$. This 
@@ -41,11 +41,11 @@ and
 Here, \f$ v \f$ is the monomer reference volume and \f$ G \f$ 
 is the total number of nodes in the computational mesh.
 
-\section rp_ChiDerivative_parameter_sec Parameter File
+\section rp_BinaryChiDerivative_parameter_sec Parameter File
 
 Parameter file format:
 \code
-ChiDerivative{
+BinaryChiDerivative{
   interval*          int  (1 by default)
   outputFileName     string
   nSamplePerOutput*  int  (1 by default)
@@ -71,7 +71,7 @@ Meanings of the parameters:
   </tr>
 </table>
 
-\section rp_ChiDerivative_output_sec Output
+\section rp_BinaryChiDerivative_output_sec Output
 
 In the following, the symbol {outputFileName} is used to represent 
 the string value of the outputFileName parameter within descriptions 
