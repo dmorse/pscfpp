@@ -584,9 +584,9 @@ the Lagrange multiplier field \f$ \omega_{M} \f$ ), and
 \f[
    H_{\rm f}  =
    \int \! d{\bf r} \; \left \{
-   - \sum_{\alpha=1}^{M-1}
+     \sum_{\alpha=1}^{M-1}
      \frac{M \omega_{\alpha}^{2} }{ 2 v |\lambda_{\alpha}|}
-   - i \omega_{M}c_{0} \right \}  + U_{\rm int}^{(0)} \quad
+     - i \omega_{M}c_{0} \right \}  + U_{\rm int}^{(0)} \quad
 \f]
 \f[
    H_{\rm c}  =

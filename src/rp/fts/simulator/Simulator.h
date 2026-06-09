@@ -291,17 +291,47 @@ namespace Rp {
       *
       * This function returns the real, thermodynamically extensive
       * Hamiltonian used in simulations based on partial saddle-point
-      * approximation (PS-FTS).
+      * approximation (PS-FTS). The value returned by this function 
+      * is equal to the sum of values returned by idealHamiltonian(),
+      * fieldHamiltonian() and perturbationHamiltonian() functions.
       */
       double hamiltonian() const;
 
       /**
-      * Get ideal gas contribution (-lnQ) to the Hamiltonian.
+      * Get an ideal contribution to the Hamiltonian.
+      * 
+      * The ideal Hamiltonian contribution returned by this function
+      * is given by the quantity denoted by \f$ \tilde{H}_{\rm id} \f$, 
+      * as defined \ref psfts_psa_pressure_page "here", given by
+      * \f[
+      *    H_{\rm id}  = 
+      *    \frac{V}{v}\sum_{\alpha} \frac{\phi_{\alpha}}{N_{\alpha}}
+      *    \left [ \ln \left ( \frac{\phi_{\alpha}}{Q_{\alpha}} \right ) - 1 \right ]
+      *    - \frac{1}{v}\int W_{+}^{*}({\bf r})  \\
+      * \f]
+      * Here, \f$ \alpha \f$ is an index for molecular species, while 
+      * \f$ \phi_{\alpha} \f$, \f$ N_{\alpha} \f$ and \f$ Q_{\alpha} \f$ 
+      * are the volume fraction, number of monomer volumes per molecular 
+      * volume, and normalized single-molecule partition function for 
+      * polymer or solvent species \f$ \alpha \f$, respectively. 
       */
       double idealHamiltonian() const;
 
       /**
       * Get the quadratic field contribution to the Hamiltonian.
+      *
+      * The field Hamiltonian contribution returned by this function
+      * is given by the quantity denoted by \f$ \tilde{H}_{\rm id} \f$, 
+      * as defined \ref psfts_psa_pressure_page "here", given by
+      * \f[
+      *    H_{\rm f}  & =
+      *    \frac{1}{v}
+      *    \int \! d{\bf r} \; \left \{
+      *    \sum_{\alpha=1}^{M-1}
+      *    \frac{M (W_{\alpha} - S_{\alpha})^2 }{ 2 |\lambda_{\alpha}|}
+      *    + \frac{S_{M}}{2} \right \} \quad.
+      * \f]
+      * where \f$ S_{M} = e_i \chi_{ij} e_{j}/M^{2} \f$.
       */
       double fieldHamiltonian() const;
 
@@ -309,11 +339,9 @@ namespace Rp {
       * Get a perturbation to the standard Hamiltonian.
       *
       * A perturbation to the Hamiltonian, if any, is computed by an
-      * associated Perturbation object. When a perturbation exists,
-      * as indicated by the return value of hasPerturbation(), the
-      * perturbationHamiltonian component is added to the idealHamiltonian
-      * and fieldHamiltonian components to obtain the total value that is
-      * returned by the hamiltonian() member function.
+      * associated Perturbation object. 
+      *
+      * When no perturbation exists, this function returns zero.
       */
       double perturbationHamiltonian() const;
 

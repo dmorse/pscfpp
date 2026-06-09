@@ -4,17 +4,29 @@ namespace Rp {
 /*!
 \page rp_HamiltonianAnalyzer_page HamiltonianAnalyzer
 
-This analyzer can output instantaneous values and averages of the 
-total field theoretic hamiltonian \f$ H \f$ and its components
-\f$ H_{\rm id} \f$ and \f$ H_{\rm f} \f$.
-These quantities are computed by the function 
-Rp::Simulator::computeHamiltonian, and their values are returned 
-by the hamiltonian(), idealHamiltonian() and fieldHamiltonian() 
-member functions of the same class template.
+This analyzer can output instantaneous values and averages of the total 
+field theoretic hamiltonian \f$ H \f$ and its ideal gas and field 
+contributions.
 
 \see HamiltonianAnalyzer (class API)
 \see Rp::Simulator
 
+\section rp_HamiltonianAnalyzer_definitions_sec Mathematical Definitions
+
+The ideal and field contributions to the Hamiltonian that are 
+computed and analyzed by this class are the quantities denoted by 
+\f$ \tilde{H}_{\rm id} \f$ and \f$ \tilde{H}_{\rm f} \f$ that are 
+defined \ref psfts_psa_pressure_sec "here".  In a system with no
+associated perturbation, Hamiltonian \f$ H \f$ is given by a sum 
+\f$ H = \tilde{H}_{\rm id} + \tilde{H}_{\rm f} \f$.
+
+<em> For users who read the source code </em>: 
+The quantities \f$ H \f$, \f$ \tilde{H}_{\rm id} \f$ and 
+\f$ \tilde{H}_{rm f} \f$ that are analyzed by this class are computed by 
+the Rp::Simulator::computeHamiltonian() function and returned by the 
+Rp::Simulator::hamiltonian(), Rp::Simulator::idealHamiltonian() and 
+Rp::Simulator::fieldHamiltonian() accessor functions, respectively.
+ 
 \section rp_HamiltonianAnalyzer_parameter_sec Parameter File
 
 Parameter file block format:
@@ -56,12 +68,11 @@ file names.
 
 If nSamplePerOutput > 0, the block averages of the total Hamiltonian
 and its components are output to the file {outputFileName}.dat every
-interval \* nSamplerPerBlock simulation steps. This file contains 4
-columns. The first column contains the integer step counter for the
-first step of each block.  The next three columns contain block average
-values of the ideal component, field component and total Hamiltonian
-(i.e,. \f$ H_{\rm id} \f$, \f$ H_{\rm f} \f$ and \f$ H \f$ ), listed
-in that order.  
+interval \* nSamplerPerBlock simulation steps. This file contains four 
+columns. The first column contains an integer step counter for the first 
+simulation step or trajectory file frame in a block. The next three 
+columns contain block averaged values of \f$ \tilde{H}_{\rm id} \f$, 
+\f$ \tilde{H}_{\rm f} \f$, and \f$ H \f$, listed in that order.
 
 If nSamplePerOutput == 1 (or if this optional parameter is omitted),
 then instantaneous values of \f$ H_{\rm id} \f$, \f$ H_{\rm f} \f$ and 
@@ -70,6 +81,12 @@ with no block averaging.
 
 If nSamplerPerBlock = 0, the {outputFileName}.dat data file is not
 created.
+
+If a simulation uses a perturbation, the contribution to the 
+Hamiltonian arising from the perturbation is included in all reported
+values of \f$ H \f$, but is not analyzed separately or listed as a 
+separated column in the {outputFileName}.dat file. If no perturbation 
+exists, then \f$ H = \tilde{H}_{\rm id} + \tilde{H}_{\rm f} \f$. 
 
 <b> Final output: </b>:
 
