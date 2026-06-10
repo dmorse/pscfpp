@@ -2,12 +2,12 @@ McSimulator{
    seed              1784106389
    McMoveManager{
       ForceBiasMove{
-        probability     0.50
+        probability     0.6666666666666
         mobility        4.0E-3
       }
       
       RealMove{
-        probability     0.25
+        probability     0.3333333333333
         sigma           0.15
       }
       
