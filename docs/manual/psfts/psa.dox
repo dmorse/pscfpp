@@ -11,7 +11,7 @@ total density. When it is applicable, the approximation yields a
 theory with real statistical weights for all allowed field
 configurations.
 
-\section psfts_psa_ab_sec AB Systems (\f$ M = 2 \f$)
+\section psfts_psa_ab_sec Standard AB systems (\f$ M = 2 \f$)
 
 We first consider the PSA for an incompressible standard AB system with
 \f$ \chi > 0 \f$.  In the fully fluctuating theory for such a system,
@@ -90,7 +90,7 @@ the volume fraction, number of monomers (i.e., ratio of molecular
 volume to monomer volume), and normalized partition function for
 molecular species \f$ \alpha \f$, respectively.
 
-\section psfts_psa_general_sec General Case (\f$ M \geq 2 \f$)
+\section psfts_psa_general_sec General case (\f$ M \geq 2 \f$)
 
 The current version of PSCF allows PS-FTS simulations of some
 systems with M > 2, subject to a constraint on allowed values of the

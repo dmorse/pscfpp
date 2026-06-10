@@ -9,7 +9,7 @@ the unit cell size of a cubic unit cell.
 
 \see CubicLengthDerivative (class API)
 
-\section rp_CubicLengthDerivative_algorithm_sec Mathematical Formula
+\section rp_CubicLengthDerivative_algorithm_sec Theory
 
 Consider a system containing in a periodic cubic simulation cell of 
 volume \f$ V = L^3 \f$, where \f$ L \f$ is the cubic cell length.
@@ -78,7 +78,7 @@ The value of the Hamiltonian \f$ H \f$ is computed by the function
 Rp::Simulator::computeHamiltonian() and returned by 
 Rp::Simulator::hamiltonian().
 
-\section rp_CubicLengthDerivative_parameter_sec Parameter File
+\section rp_CubicLengthDerivative_parameter_sec Parameter file
 
 Parameter file format:
 \code

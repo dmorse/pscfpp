@@ -12,7 +12,7 @@ occur during a simulation.
 
 \see FourthOrderParameter (class API)
 
-\section rp_FourthOrderParameter_algorithm_sec Mathematical Definition
+\section rp_FourthOrderParameter_definition_sec Definition
 
 Let \f$ \Psi\f$ denotes the fourth order parameter,
 \f[
@@ -23,7 +23,7 @@ in which \f$ W_{-}(\bf G)\f$ denotes a Fourier components of the
 exchange field associated with wavevector \f$\bf G\f$. The Fourier 
 transformation is defined in \ref prdc_fourier_page.
 
-\section rp_FourthOrderParameter_parameter_sec Parameter File
+\section rp_FourthOrderParameter_parameter_sec Parameter file
 
 The full parameter file format, including all optional parameters, is shown
 below:

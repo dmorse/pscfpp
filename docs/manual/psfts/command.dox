@@ -13,7 +13,7 @@ is simply that a SIMULATE command is used to run a stochastic
 simulation, rather than the ITERATE or SWEEP command used to run an
 SCFT calculation or an SCFT parameter sweep.
 
-\section psfts_command_example_sec FTS Example
+\section psfts_command_example_sec FTS example
 
 For example, suppose that we want to use pscf_rpg to run a GPU-accelerated
 BD simulation of 30,000 BD steps in a 3D domain, using a parameter file

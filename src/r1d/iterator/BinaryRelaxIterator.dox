@@ -9,7 +9,7 @@ the SCFT equations of a 1D problem with only two monomer types, such as
 an AB block copolymer or A/B polymer blend. The iteration algorithm will
 halt if applied to a system with more than two types of monomer.
 
-\section r1d_BinaryRelaxIterator_parameter_sec Parameter File
+\section r1d_BinaryRelaxIterator_parameter_sec Parameter file
 
 The parameter file format for an BinaryRelaxIterator parameter file block 
 is:

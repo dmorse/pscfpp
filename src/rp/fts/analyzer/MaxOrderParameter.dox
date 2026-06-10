@@ -13,7 +13,7 @@ states as ordered or disordered.
 
 \see MaxOrderParameter (class API)
 
-\section rp_MaxOrderParameter_algorithm_sec Mathematical Formula
+\section rp_MaxOrderParameter_algorithm_sec Definition
 
 Let \f$ \Psi\f$ denote the maximum square-magnitude of the 
 Fourier coefficients of \f$ W_{-} \f$, such that
@@ -24,7 +24,7 @@ Fourier coefficients of \f$ W_{-} \f$, such that
 where \f$ \bf G \f$ denotes a wavevector used to compute a DFT,
 and the maximum is over all wavevectors.  
 
-\section rp_MaxOrderParameter_parameter_sec Parameter File
+\section rp_MaxOrderParameter_parameter_sec Parameter file
 
 Parameter file format:
 \code

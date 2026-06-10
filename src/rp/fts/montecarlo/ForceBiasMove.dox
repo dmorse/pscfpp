@@ -63,7 +63,7 @@ The use of a force bias allows for much higher acceptance rates than
 those obtained from the RealMove, for choices of parameters that yield 
 similar magnitude changes in the fields.
 
-\section rp_ForceBiasMove_parameter_sec Parameter File
+\section rp_ForceBiasMove_parameter_sec Parameter file
 
 The only parameters needed by this algorithm are the "probability" 
 parameter, which determines the probability that a move of this type

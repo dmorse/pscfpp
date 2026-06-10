@@ -21,7 +21,7 @@ The parameter maxShift is an integer that gives the maximum allowed
 displacement in each direction. Displacements in each direction are 
 chosen uniformly from the range between -maxShift and +maxShift.
 
-\section rp_ShiftMove_parameter_sec Parameter File
+\section rp_ShiftMove_parameter_sec Parameter file
 
 An example of the associated parameter file block is shown below.
 \code

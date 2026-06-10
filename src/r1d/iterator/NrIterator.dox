@@ -15,7 +15,7 @@ from a good initial guess, but has a high computational cost per
 iteration, and is not particularly robust in the face of a poor initial 
 guess.
 
-\section r1d_NrIterator_param_sec Parameter File 
+\section r1d_NrIterator_param_sec Parameter file 
 
 The parameter file format for an R1d::NrIterator object is:
 \code

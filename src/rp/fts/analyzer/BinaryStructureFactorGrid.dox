@@ -9,7 +9,7 @@ for all wavevectors for a AB diblock copolymer system.
 
 \see BinaryStructureFactorGrid (class API)
 
-\section rp_BinaryStructureFactorGrid_algorithm_sec Mathematical Formula
+\section rp_BinaryStructureFactorGrid_algorithm_sec Theory
 
 This class computes the structure factor \f$ S({\bf q}) \f$ for an 
 incompressible system containing two monomer types of monomer type indices 
@@ -48,7 +48,7 @@ an integral is approximated internally by \f$ V \f$ times the normalized
 discrete Fourier transform (DFT) of \f$ W_{-}({\bf r}) \f$ as computed 
 by the function FFT::forwardTransform.
 
-\section rp_BinaryStructureFactorGrid_parameter_sec Parameter File
+\section rp_BinaryStructureFactorGrid_parameter_sec Parameter file
 
 The full parameter file format, including all optional parameters, 
 is shown below:

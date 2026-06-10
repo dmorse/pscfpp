@@ -66,7 +66,7 @@ The BdMove (which does not obey detailed balance) is provided to
 allow users to mix BD and MC sampling techniques, by combining a 
 BdMove with one or more other more specialized MC moves.
 
-\section psfts_algo_montecarlo_mcbd_sec  Discussion: MC vs. BD Sampling
+\section psfts_algo_montecarlo_mcbd_sec  Discussion: MC vs. BD sampling
 
 Acceptance rates for available MC moves that satisfy detailed balance 
 (i.e., all but BdMove) generally decrease rapidly with increasing system 

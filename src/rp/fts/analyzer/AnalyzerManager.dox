@@ -13,7 +13,7 @@ or postprocessing operation.
 \see \ref rp_BdSimulator_page  (manual page)
 \see \ref rp_McSimulator_page  (manual page)
 
-\section rp_AnalyzerManager_parameter_sec Parameter File
+\section rp_AnalyzerManager_parameter_sec Parameter file
 
 An AnalyzerManager parameter file block is an optional element within
 a \ref rp_BdSimulator_page "BdSimulator" or 

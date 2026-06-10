@@ -33,7 +33,7 @@ Each step of the BdMove algorithm runs a short BD simulation, using
 the Leimkuler-Matthews BD step algorithm that is also used by the
 \ref rp_LMBdStep_page BD step algorithm.
 
-\section rp_BdMove_parameter_sec Parameter File
+\section rp_BdMove_parameter_sec Parameter file
 
 The only parameters needed by this algorithm are the "probability" 
 parameter, which determines the probability that a move of this type

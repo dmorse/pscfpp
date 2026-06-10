@@ -79,7 +79,7 @@ The reference field configuration must be read from a file during
 setup of a simulation, and so the name of that file must be 
 provided as parameter in the parameter file. 
 
-\section rp_EinsteinCrystalPerturbation_parameter_sec Parameter File
+\section rp_EinsteinCrystalPerturbation_parameter_sec Parameter file
 
 The parameter file format for this class is shown below:
 \code

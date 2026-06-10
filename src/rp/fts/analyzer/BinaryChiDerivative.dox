@@ -11,7 +11,7 @@ cell.
 
 \see BinaryChiDerivative (class API)
 
-\section rp_BinaryChiDerivative_algorithm_sec Mathematical Formula
+\section rp_BinaryChiDerivative_algorithm_sec Theory
 
 Consider a system with two monomer types with a Flory-Huggins parameter 
 \f$ \chi \f$ and a total Helmholtz free energy \f$ F = -\ln Z \f$. This 
@@ -41,7 +41,7 @@ and
 Here, \f$ v \f$ is the monomer reference volume and \f$ G \f$ 
 is the total number of nodes in the computational mesh.
 
-\section rp_BinaryChiDerivative_parameter_sec Parameter File
+\section rp_BinaryChiDerivative_parameter_sec Parameter file
 
 Parameter file format:
 \code

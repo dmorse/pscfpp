@@ -44,7 +44,7 @@ field displacements as those used in the predictor step.  This is the
 the partial saddle-point condition in the final state.
 </ul>
 
-\section rp_PredCorrBdStep_parameter_sec Parameter File
+\section rp_PredCorrBdStep_parameter_sec Parameter file
 
 The only parameter need by this algorithm is a required parameter named 
 "mobility", which gives the value of parameter denoted by \f$ \gamma \f$ 

@@ -25,7 +25,7 @@ postprocess analysis operation that may be performed using the ANALYZE
 command. Postprocess analysis of field trajectory files is discussed in
 more detail on a \ref psfts_analysis_page "separate page".
 
-\section psfts_algo_analyzer_choices_sec Analysis Algorithms
+\section psfts_algo_analyzer_choices_sec Algorithms
 
 All of the analyzer classes that are provided with the current version
 of PSCF are listed below, along with a brief description of the purpose
@@ -99,7 +99,7 @@ of free energy differences. The PerturbationDerivative analyzer can
 be used to implement \ref psfts_perturb_page "Einstein crystal" 
 free energy calculations.
 
-\section psfts_algo_analyzer_files_sec Output Files
+\section psfts_algo_analyzer_files_sec Output files
 
 Most analyzer classes that compute a single physical quantity or a
 small number of related quantities provide information in two forms:
@@ -137,7 +137,7 @@ Classes that compute sequence averages for several related quantities
 (such as HamiltonianAnalyzer) may instead be derived from specializations
 of Rp::AverageListAnalyzer.
 
-\section psfts_algo_analyzer_error_sec Statistical Error Analysis
+\section psfts_algo_analyzer_error_sec Statistical error analysis
 
 Classes that compute sequence averages of one or more physical
 quantities generally report an estimate of the statistical error on each 

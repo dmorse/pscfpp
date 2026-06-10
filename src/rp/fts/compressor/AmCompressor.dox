@@ -19,7 +19,7 @@ mixing algorithm used in PSCF is discussed in the article:
 field theoretic simulations", K. Chen and D.C. Morse, 
 <em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>,
 
-\section rp_AmCompressor_parameter_sec Parameter File
+\section rp_AmCompressor_parameter_sec Parameter file
 
 The only required parameter for this algorithm is the error threshhold
 "epsilon". A minimal parameter file block could thus look something like

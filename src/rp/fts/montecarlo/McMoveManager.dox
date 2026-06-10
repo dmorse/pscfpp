@@ -11,7 +11,7 @@ moves.
 \see McMoveManager (class API)
 \see \ref rp_McSimulator_page  (manual page)
 
-\section rp_McMoveManager_parameter_sec Parameter File
+\section rp_McMoveManager_parameter_sec Parameter file
 
 The parameter file format, including all optional parameters, is shown 
 below:

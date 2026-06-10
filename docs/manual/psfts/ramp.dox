@@ -6,7 +6,7 @@
 \ref psfts_perturb_page   (Next)
 <BR>
 
-\section psfts_ramp_concept_sec Ramp Concept
+\section psfts_ramp_concept_sec Ramp concept
 
 A "ramp" is an optional feature of PSCF that allows a user to perform
 a PS-FTS in which one or more of the parameters of the Hamiltonian
@@ -31,7 +31,7 @@ The Ramp block has been programmed as a selectable block to allow for
 later extension, but only one ramp algorithm is provided with the
 current version of PSCF, as discussed below.
 
-\section psfts_ramp_linear_sec Linear Ramp
+\section psfts_ramp_linear_sec Linear ramp
 
 The only type ramp that is currently available for either pscf_rpc
 or pscf_rpg is a linear ramp algorithm that is implemented by a class

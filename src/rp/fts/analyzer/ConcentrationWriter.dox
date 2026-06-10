@@ -14,7 +14,7 @@ potential fields (w-fields).
 
 \see ConcentrationWriter (class API)
 
-\section rp_ConcentrationWriter_parameter_sec Parameter File
+\section rp_ConcentrationWriter_parameter_sec Parameter file
 
 The full parameter file format is shown below:
 \code

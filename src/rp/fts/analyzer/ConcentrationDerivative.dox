@@ -11,7 +11,7 @@ and fixed values of all other model parameters.
 
 \see ConcentrationDerivative (Class API)
 
-\section rp_ConcentrationDerivative_algorithm_sec Mathematical Formula
+\section rp_ConcentrationDerivative_algorithm_sec Theory
 
 The required thermodynamic derivative is given by an ensemble average
 \f[
@@ -25,14 +25,15 @@ The required thermodynamic derivative is given by an ensemble average
 in which
 \f[
   \frac{\partial H}{\partial c_0} 
-  = \frac{H}{c_0}  \quad\quad
+  = \frac{H}{c_0}  
+  \quad\quad\quad\quad
   \frac{\partial \ln N}{\partial c_{0}}
   = - \frac{G}{2 c_0} \quad.
 \f]
 Here, \f$ G \f$ is the total number of grid points in the 
 computational mesh.
 
-\section rp_ConcentrationDerivative_parameter_sec Parameter File
+\section rp_ConcentrationDerivative_parameter_sec Parameter file
 
 Parameter file format:
 \code

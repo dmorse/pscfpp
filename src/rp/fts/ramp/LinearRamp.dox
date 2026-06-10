@@ -20,7 +20,7 @@ generic label "Ramp" in the appropriate location within a
   <li> \ref psfts_ramp_page "Ramp page" </li>
 </ul>
 
-\section rp_LinearRamp_param_sec Parameter File Format
+\section rp_LinearRamp_param_sec Parameter file Format
 
 The parameter file format for a LinearRamp is closely analogous to that
 used for SCFT calculations by the \ref scft_sweep_page "LinearSweep" 

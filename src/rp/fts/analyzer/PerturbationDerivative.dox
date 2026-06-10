@@ -39,7 +39,7 @@ nature of the perturbation.  See the discussion of
 \see PerturbationDerivative (class API)
 \see \ref psfts_perturb_page 
 
-\section rp_PerturbationDerivative_parameter_sec Parameter File
+\section rp_PerturbationDerivative_parameter_sec Parameter file
 
 Parameter file format:
 \code

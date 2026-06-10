@@ -12,7 +12,7 @@ saddle-point approximation is considered on the next page. Throughout
 this discussion, as elsewhere, we use units for energy in which
 \f$ k_{B} T = 1 \f$.
 
-\section psfts_theory_model_sec Incompressible Particle-Based Model
+\section psfts_theory_model_sec Incompressible particle-based model
 
 We consider a mixture of polymers and solvents constructed from \f$ M \f$
 different types of monomer. The variable \f$ M \f$ used in this discussion
@@ -67,7 +67,7 @@ in which \f$ \int {\cal D}{\bf r} \f$ denotes an integral over all
 monomer positions, and in which the \f$ \delta \f$-functional imposes
 the incompressibility constraint.
 
-\section psfts_theory_ideal_sec Ideal-Gas Reference System
+\section psfts_theory_ideal_sec Ideal-gas reference system
 
 All of the theoretical methods implemented in PSCF relate the free energy
 of an interacting polymer fluids to that of a hypothetical reference
@@ -124,7 +124,7 @@ free energy \f$ -\ln Z_{\rm id}[w] \f$ with respect to a single field
 \f]
 for any \f$ i = 1, \ldots, M \f$.
 
-\section psfts_theory_AB_sec Field Theory: Standard AB Systems (\f$ M=2 \f$)
+\section psfts_theory_AB_sec Field theory: Standard AB systems (\f$ M=2 \f$)
 
 We focus first on the commonly studied case of systems with two monomer
 types, \f$ M = 2\f$.  For simplicity, we consider a model in which the chi
@@ -335,7 +335,7 @@ equations used in SCFT for such an AB system, and that the value of the
 Hamiltonian at such a saddle point is equal to the SCFT free energy.
 Saddle-point field configurations thus correspond to SCFT solutions.
 
-\section psfts_theory_general_sec Field Theory: General Case (\f$ M \geq 2 \f$)
+\section psfts_theory_general_sec Field theory: General case (\f$ M \geq 2 \f$)
 
 The software implementation of PS-FTS in PSCF is based on a "symmetric"
 formulation of the field theory for incompressible models that is designed

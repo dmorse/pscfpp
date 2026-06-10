@@ -11,7 +11,7 @@ simulations share a common overall structure that is described
 in the remainder of this page, along with examples for both types
 of simulation and discussion of the differences.
 
-\section psfts_param_example_sec Example: BD Simulation
+\section psfts_param_example_sec Example: BD simulation
 
 Shown below is an example of a complete parameter file for a BD simulation
 of a symmetric diblock copolymer melt. The first three blocks within the
@@ -85,7 +85,7 @@ The above parameter file could be used by either the pscf_rpc or pscf_rpg
 program, which provide identical capabilities and identical user
 interfaces for PS-FTS calculations.
 
-\section psfts_param_overview_sec Parameter File Structure (Overview)
+\section psfts_param_overview_sec Parameter file (overview)
 
 A parameter file used to initialize a BD or MC PS-FTS calculation must
 begin with Mixture, Interaction and Domain blocks similar to those in a
@@ -140,7 +140,7 @@ System{
 \endcode
 Formats of the various blocks within these skeletons are discussed below.
 
-\section psfts_param_Mixture_sec Required Elements: Mixture, Interaction and Domain Blocks
+\section psfts_param_Mixture_sec Mixture, Interaction and Domain blocks
 
 The Mixture, Interaction, and Domain blocks are all required elements of 
 the parameter file for both SCFT and PS-FTS calculations. These three 
@@ -206,7 +206,7 @@ parameter file by the "latice" string parameter, while values for unit
 cell parameters (i.e., lengths and angles) are normally given within
 the header of the file containing the initial w field configuration.
 
-\section psfts_param_brownian_sec Brownian Dynamics: BdSimulator Block
+\section psfts_param_brownian_sec Brownian dynamics: BdSimulator block
 
 The BdSimulator and McSimulator parameter blocks share a common internal
 structure, except for differences in the sub-block that describes the
@@ -317,7 +317,7 @@ associated parameter file format.
 </ul>
 As already noted, the LMBdStep algorithm is the default.
 
-\section psfts_param_montecarlo_sec Monte Carlo: McSimulator Block
+\section psfts_param_montecarlo_sec Monte Carlo: McSimulator block
 
 The parameter file format for the McSimulator block of a parameter file
 used to initialize an MC simulation may be described schematically as
@@ -452,7 +452,7 @@ each MC move can be obtained by clicking on the associated link.
   <li> \ref rp_BdMove_page "BdMove" </li>
 </ul>
 
-\section psfts_param_compressor_sec Compressor Block
+\section psfts_param_compressor_sec Compressor block
 
 In the parameter file block for either a BdSimulator or an McSimulator,
 the sub-block that describes the sampling algorithm (i.e., the BdStep
@@ -541,7 +541,7 @@ A list of all of the available analyzers, including links to detailed
 documentation, was given in earlier the discussion of these
 \ref psfts_algo_analyzer_page "algorithms" .
 
-\section psfts_param_seealso_sec See Also:
+\section psfts_param_seealso_sec See also:
 
 <ul>
 <li> \subpage rp_BdSimulator_page "BdSimulator"  </li>

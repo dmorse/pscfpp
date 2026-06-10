@@ -13,7 +13,7 @@ output structure factors for all individual wavevectors.
 
 \see BinaryStructureFactor (class API)
 
-\section rp_BinaryStructureFactor_formula_sec Mathematical Definitions
+\section rp_BinaryStructureFactor_formula_sec Theory
 
 This class computes the structure factor \f$ S({\bf q}) \f$ for an 
 incompressible system containing two monomer types, for all values
@@ -58,7 +58,7 @@ volume \f$ V \f$ and the normalized discrete Fourier transform (DFT) of
 Prdc::Cpu::FFT::forwardTransform or
 Prdc::Cuda::FFT::forwardTransform .
 
-\section rp_BinaryStructureFactor_parameter_sec Parameter File
+\section rp_BinaryStructureFactor_parameter_sec Parameter file
 
 Parameter file format:
 \code

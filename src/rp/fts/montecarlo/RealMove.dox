@@ -33,7 +33,7 @@ unconstrained move each monomer field component at each grid point
 by a random amount chosen from the Gaussian distribution with zero 
 mean and a standard deviation of a sigma. 
 
-\section rp_RealMove_parameter_sec Parameter File
+\section rp_RealMove_parameter_sec Parameter file
 
 The only parameter needed by this algorithm are the "probability" 
 parameter, which determines the probability that a move of this type 

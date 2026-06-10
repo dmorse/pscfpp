@@ -9,7 +9,7 @@ modification of the form of the standard field theoretic Hamiltonian.
 Thus far, it has only been used as a framework for implementing the
 Einstein crystal method of computing free energies.
 
-\section psfts_perturb_concept_sec Perturbation Concept
+\section psfts_perturb_concept_sec Perturbation concept
 
 Any perturbation of the Hamiltonian must be implemented by a subclass
 of a base class named Perturbation. A Perturbation defines a functional
@@ -56,7 +56,7 @@ The implementation of this feature of the LinearRamp class only uses the
 interface defined by the Perturbation base class, and so is designed to
 work with any type of perturbation (i.e., any subclass of this base class).
 
-\section psfts_perturb_einstein_sec Einstein Crystal Perturbation
+\section psfts_perturb_einstein_sec Einstein crystal perturbation
 
 <b> EinsteinCrystalPerturbation </b>:
 The only type of Perturbation that is currently provided with PSCF is a
@@ -160,7 +160,7 @@ near the final value \f$ \lambda = 1 \f$.  In either method, the required
 values of \f$ \partial H(\lambda)/\partial \lambda \f$ can be sampled by
 the PerturbationDerivative analyzer.
 
-\section psfts_perturb_example_sec Example: Continuous Einstein Crystal Integration
+\section psfts_perturb_example_sec Example: Continuous Einstein crystal integration
 
 Below, we show a complete parameter file for a calculation that uses
 continuous Einstein crystal integration to compute a free energy
@@ -264,7 +264,7 @@ file name out/derivative will be used as a base file name for the file
 containing these sampled values and for another file that contains
 information about the time average.
 
-\section psfts_perturb_seealso_sec See Also:
+\section psfts_perturb_seealso_sec See also:
 
 <ul>
  <li> \subpage rp_EinsteinCrystalPerturbation_page </li>

@@ -11,7 +11,7 @@ redirected to a file.
 
 \see StepLogger (class API)
 
-\section rp_StepLogger_parameter_sec Parameter File
+\section rp_StepLogger_parameter_sec Parameter file
 
 The parameter file format is shown below:
 \code

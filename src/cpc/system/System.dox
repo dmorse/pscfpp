@@ -1,28 +1,28 @@
 namespace Pscf{
 namespace Cpc{
-/*! 
+/*!
 \page cpc_System_page System
 
 The main object in a pscf_cpc or pscf_cpg program is an instance of a class
-named System<D>, in which the integer template parameter D is the dimension 
-of space. The value of D is specified by the argument of the "-d" command 
-line option of the main program.  Closely analogous class templates named 
-System are defined in the Pscf::Cpc and Pscf::Cpg namespaces for use in 
-pscf_cpc and pscf_cpg, respectively. Both of these analogous class templates 
-are derived from partial specializations of a class template named 
-Pscf::Cp::System, which defines a skeleton parameter file format that 
-is used by both classes. 
+named System<D>, in which the integer template parameter D is the dimension
+of space. The value of D is specified by the argument of the "-d" command
+line option of the main program.  Closely analogous class templates named
+System are defined in the Pscf::Cpc and Pscf::Cpg namespaces for use in
+pscf_cpc and pscf_cpg, respectively. Both of these analogous class templates
+are derived from partial specializations of a class template named
+Pscf::Cp::System, which defines a skeleton parameter file format that
+is used by both classes.
 
 Class API Documentation:
-<ul> 
+<ul>
     <li> Pscf::Cpc::System </li>
     <li> Pscf::Cpg::System </li>
 </ul>
 
-\section cpc_System_param_sec Parameter File format
-The outermost block of the parameter file for pscf_cpc or pscf_cpg, which 
-encloses all of the data in the file, is a block labelled "System". The 
-format for this parameter file block (and thus for the entire parameter 
+\section cpc_System_param_sec Parameter file
+The outermost block of the parameter file for pscf_cpc or pscf_cpg, which
+encloses all of the data in the file, is a block labelled "System". The
+format for this parameter file block (and thus for the entire parameter
 file) is shown in skeleton form below:
 \code
 System{
@@ -37,44 +37,44 @@ Here, as elsewhere in this documentation, the suffixes # and * after a
 label denote selectable and optional elements, respectively. All relevant
 parameters and enclosed blocks are described below:
 <table>
-  <tr> 
+  <tr>
     <td> polymerModel </td>
-    <td> Specifies whether the continuous thread model (value "thread") 
-    or the discrete bead model (value "bead") of polymer conformations 
-    will be used for all polymer species throughout all calculations. 
-    (optional, "thread" by default) 
+    <td> Specifies whether the continuous thread model (value "thread")
+    or the discrete bead model (value "bead") of polymer conformations
+    will be used for all polymer species throughout all calculations.
+    (optional, "thread" by default)
     </td>
   </tr>
   <tr>
     <td> Mixture </td>
-    <td> 
+    <td>
     The Mixture block contains a description of all molecular species in a
-    mixture, as described in detail \ref user_param_mixture_page "here". 
+    mixture, as described in detail \ref user_param_mixture_page "here".
     (required)
     </td>
   </tr>
   <tr>
     <td> Interaction </td>
-    <td> 
+    <td>
     The Interaction block for a system described by the "standard model" of
     an incompressible polymer mixture. The matrix-valued "chi" parameter
-    entry contains a list of distinct nonzero Flory-Huggins chi parameters, 
+    entry contains a list of distinct nonzero Flory-Huggins chi parameters,
     as discussed \ref user_param_example_interaction "here". (required)
     </td>
   </tr>
   <tr>
     <td> Domain </td>
     <td>
-    The Domain block contains information about the periodic unit cell, 
-    the computational mesh used to discretize fields in that cell, and 
-    space group group symmetry (if any), as described 
-    \ref user_param_domain_pc_page "here". 
+    The Domain block contains information about the periodic unit cell,
+    the computational mesh used to discretize fields in that cell, and
+    space group group symmetry (if any), as described
+    \ref user_param_domain_pc_page "here".
     (required)
   </tr>
   <tr>
     <td> Simulator#* </td>
     <td>
-    The selectable \ref psfts_param_page "Simulator" block contains 
+    The selectable \ref psfts_param_page "Simulator" block contains
     parameters for all of the algorithms that used to perform and
     analyze a complex-Langevin field theoretic simulation (CL-FTS).
     </td>

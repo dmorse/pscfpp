@@ -12,7 +12,7 @@ invoking the ANALYZE command.
 
 \see TrajectoryWriter (class API)
 
-\section rp_TrajectoryWriter_parameter_sec Parameter File
+\section rp_TrajectoryWriter_parameter_sec Parameter file
 
 The parameter file format for the associated block is shown below:
 \code

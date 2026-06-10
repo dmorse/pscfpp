@@ -13,7 +13,7 @@ file block is one of two possible option (McSimulator or BdSimulator) for
 the optional, selectable "Simulator" subblock of the main System block of 
 the parameter file. 
 
-\section rp_McSimulator_parameter_sec Parameter File
+\section rp_McSimulator_parameter_sec Parameter file
 
 The format of this parameter file block is given below in skeleton form:
 \code

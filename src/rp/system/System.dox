@@ -20,7 +20,7 @@ Class API Documentation:
     <li> Pscf::Rpg::System </li>
 </ul>
 
-\section rp_System_param_sec Parameter File format
+\section rp_System_param_sec Parameter file format
 The outermost block of the parameter file for pscf_rpc or pscf_rpg, which 
 encloses all of the data in the file, is a block labelled "System". The 
 format for this parameter file block (and thus for the entire parameter 

@@ -11,7 +11,7 @@ contributions.
 \see HamiltonianAnalyzer (class API)
 \see Rp::Simulator
 
-\section rp_HamiltonianAnalyzer_definitions_sec Mathematical Definitions
+\section rp_HamiltonianAnalyzer_definitions_sec Definitions
 
 The ideal and field contributions to the Hamiltonian that are 
 computed and analyzed by this class are the quantities denoted by 
@@ -27,7 +27,7 @@ the Rp::Simulator::computeHamiltonian() function and returned by the
 Rp::Simulator::hamiltonian(), Rp::Simulator::idealHamiltonian() and 
 Rp::Simulator::fieldHamiltonian() accessor functions, respectively.
  
-\section rp_HamiltonianAnalyzer_parameter_sec Parameter File
+\section rp_HamiltonianAnalyzer_parameter_sec Parameter file
 
 Parameter file block format:
 \code
