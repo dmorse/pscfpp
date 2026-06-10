@@ -39,19 +39,20 @@ polymers are approximated by the solution of an auxiliary single-polymer
 problem in which each molecule is acted upon by a set of excess monomer
 chemical potential fields that represent average effects of interactions
 with other molecules. These chemical potential fields are referred to
-throughout the PSCF documentation as "w fields".  In a "thread" model
-of a polymer as a continuous random walk, the behavior of a single
-polymer in a specified set of w fields is described by the solution
-of a modified diffusion equation (MDE), which is a linear partial
-differential equation that describes the conformational statistics of
-a random walk polymer in an inhomogeneous environment.
-Solutions of the MDE can be used to compute average concentrations
-for monomers of each type as functions of position, yielding monomer
-concentration fields that are referred to in the PSCF documentation
-as "c fields". The solution of an SCFT problem must satisfy a set of
-nonlinear self-consistent field (SCF) equations that require that
-the w and c fields be related by an empirical description of the
-thermodynamics of mixing for the chosen set of monomer types.
+throughout the PSCF documentation as "w fields".  
+
+In a thread model of a polymer as a continuous random walk, the behavior 
+of a single polymer in a specified set of w fields is described by the 
+solution of the modified diffusion equation (MDE). The MDE is a linear 
+partial differential equation that describes the conformational statistics 
+of a random-walk polymer in an inhomogeneous environment.  Solutions of 
+the MDE can be used to compute average concentrations for monomers of 
+each type as functions of position, yielding monomer concentration 
+fields that are referred to in the PSCF documentation as "c fields". 
+The solution of an SCFT problem must satisfy a set of nonlinear 
+self-consistent field (SCF) equations involving the w and c fields, 
+which require that these fields be related by an empirical description 
+of the thermodynamics of mixing for the chosen set of monomer types.
 
 We recommend the following references as introductions to the SCFT of
 inhomogeneous polymer liquids:
@@ -68,13 +69,18 @@ inhomogeneous polymer liquids:
     "Broadly Accessible Self-Consistent Field Theory for Block Polymer
     Materials Discovery," </a> *Macromolecules*, **2016**, <i>49</i>, 4675.
 
-The reference by Arora et al. is particularly appropriate as an
+  - Magruder, B.R. and Dorfman, K.D.,
+    <a href="https://pubs.acs.org/doi/10.1021/acsinfocus.7e8001">
+    "Theory of Block Polymer Self-Assembly", </a> 
+    American Chemical Society (2024)
+    [DOI: 10.1021/acsinfocus.7e8001]
+
+The 2016 reference by Arora et al. is particularly appropriate as an
 introduction to the implementation of SCFT in PSCF because it was written,
 in part, as a description of an earlier Fortran version of PSCF, and so
 uses conventions and working equations similar to those used in the
-documentation and source code of the current C++ version. (See the
-\ref about_history_page "next page" for a discussion of the package
-history).
+current C++ version. (See the \ref about_history_page "next page" for 
+a discussion of the package history).
 
 \section about_methods_fts_sec Field-theoretic simulation (FTS)
 

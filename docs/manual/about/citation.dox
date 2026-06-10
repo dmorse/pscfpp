@@ -21,10 +21,10 @@ journal articles:
     <em> J. Chem. Phys. </em> **162**, 234901 (2025).
 
 The first two articles listed above focus on SCFT.  The 2016
-*Macromolecules* article actually discusses the the older Fortran version 
-of PSCF, but nonetheless correctly describes most SCFT algorithms used
-in the pscf_rpc and pscf_pg programs of the current version. The 2020 
-*European Physics Journal* article gives the first report of the C++ 
+<em>Macromolecules</em> article actually discusses the the older Fortran 
+version of PSCF, but nonetheless correctly describes most SCFT algorithms 
+used in the pscf_rpc and pscf_pg programs of the current version. The 2020 
+<em>European Physics Journal</em> article reports the existence of the C++ 
 version of PSCF, and documents the performance of GPU-accelerated SCFT 
 calculations. The last paper listed above announces the implementation 
 of PS-FTS in PSCF, and discusses algorithms used by PSCF to efficiently 

@@ -39,7 +39,7 @@ block of the parameter file that is used to initialize the simulation.
 We focus in the remainder of this page on procedures for creating and
 postprocessing field trajectory files.
 
-\section psfts_algorith_trajectory_sec Creating a Field Trajectory File
+\section psfts_algorith_trajectory_sec Creating a field trajectory file
 
 A trajectory file can be created during a simulation by the 
 TrajectoryWriter analyzer class.  To generate a trajectory file during 
@@ -68,7 +68,7 @@ that can read and write other formats as needed.
 
 \see \ref rp_TrajectoryWriter_page (manual page)
 
-\section psfts_analysis_postprocess_sec Postprocess Analysis
+\section psfts_analysis_postprocess_sec Postprocess analysis
 
 To postprocess such a trajectory file, one must invoke pscf_rpc or
 pscf_rpg a second time, using a command file that contains an ANALYZE
@@ -143,7 +143,7 @@ The interval parameters associated with analyzers are also often
 omitted in parameter files for postprocessing, in order to use the
 default interval value of 1 and thus analyze every frame.
 
-\section psfts_analysis_example_sec Postprocessing Example
+\section psfts_analysis_example_sec Example
 
 Suppose that a BD simulation similar to one used in a previous example
 used a TrajectoryWriter analyzer to create a trajectory file named
