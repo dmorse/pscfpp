@@ -1,6 +1,6 @@
 /*! \page scft_environment_page Environments -- Confinement and External Fields
 
- \ref prdc_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_thermo_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref scft_thin_films_page   (Next)
 <BR>
 
@@ -212,66 +212,66 @@ In the presence of imposed mask and external fields, it is necessary to
 modify the free energy calculation to account for the fields.  The free
 energy per monomer of material is given by
 \f[
-   \tilde{f} = \tilde{f}_{\rm id} + \tilde{f}_{\rm int} + \tilde{f}_{\rm ext}
+   f = f_{\rm id} + f_{\rm int} + f_{\rm ext}
 \f]
 where
 \f{eqnarray*}
-    \tilde{f}_{\rm id}
-    & = & \sum_{i=0}^{P+S-1} \frac{\overline{\phi}_{i}}{\overline{m} L_{i}}
-    \left[ \ln \left( \frac{\overline{\phi}_{i}}{\overline{m} Q_{i}}\right)
+    f_{\rm id}
+    & = & \sum_{a=0}^{P+S-1} \frac{\overline{\phi}_{a}}{\overline{m} N_{a}}
+    \left[ \ln \left( \frac{\overline{\phi}_{a}}{\overline{m} Q_{a}}\right)
      - 1 \right]
      - \frac{1}{\overline{m} V}
-       \sum_{\alpha=0}^{C-1}
+       \sum_{i=0}^{C-1}
        \int \! d\textbf{r} \;
-       w_{\alpha}(\textbf{r})
-      \phi_{\alpha}(\textbf{r}) \\
-    \tilde{f}_{\rm int}
-    & = &  \frac{1}{2 \overline{m} V} \sum_{\alpha, \beta =0}^{C-1}
-    \chi_{\alpha\beta} \int \! d\textbf{r} \;
-    \phi_{\alpha}(\textbf{r}) \phi_{\beta}(\textbf{r}) \\
-    \tilde{f}_{\rm ext}
-    & = &  \frac{1}{\overline{m}V} \sum_{\alpha=0}^{C-1}
-    \int \! d\textbf{r} \;
-       h_{\alpha}(\textbf{r})
-      \phi_{\alpha}(\textbf{r}) \quad.
+       w_{i}(\textbf{r})
+      \phi_{i}(\textbf{r}) \\
+    f_{\rm int}
+    & = &  \frac{1}{2 \overline{m} V} \sum_{i, j =0}^{C-1}
+    \chi_{i j} \int \! d\textbf{r} \;
+    \phi_{i}(\textbf{r}) \phi_{j}(\textbf{r}) \\
+    f_{\rm ext}
+    & = &  \frac{1}{\overline{m}V} \sum_{i=0}^{C-1}
+    \int \! d\textbf{r} \; h_{i}(\textbf{r}) \phi_{i}(\textbf{r}) 
+    \quad.
 \f}
-Here, \f$ \phi_{\alpha}({\bf r}) = v c_{\alpha}({\bf r}) \f$ is the local
-volume fraction of monomer type \f$ \alpha \f$ at position **r** , while
-\f$ \overline{\phi_{i}} \f$ is the spatial average volume fraction of
-molecular species \f$ i \f$ across the entire unit cell.
+Here, \f$ \phi_{i}({\bf r}) = v \langle c_{i}({\bf r}) \rangle \f$ is the 
+local volume fraction of monomer type \f$ i \f$ at position **r** , while
+\f$ \overline{\phi_{a}} \f$ is the spatial average volume fraction of
+molecular species \f$ a \f$ across the entire unit cell.
 These quantities are defined such that the sum of values of
-\f$ \phi_{\alpha}({\bf r}) \f$ over all monomer types is equal to
+\f$ \phi_{a}({\bf r}) \f$ over all monomer types is equal to
 \f$ m({\bf r}) \f$ (as discussed \ref scft_environment_mask_sec "above"),
-while the sum of values of \f$ \overline{\phi}_{i} \f$ over all molecular
+while the sum of values of \f$ \overline{\phi}_{a} \f$ over all molecular
 species is equal to \f$ \overline{m} \f$.
 
 There are three changes in the above equations relative to those that
-describe systems in the absence of imposed fields
-(see \ref scft_propagator_thermo_sec "here").
+describe systems in the absence of a mask or external fields
+(see \ref scft_thermo_helmholtz_sec "here").
 
-   - There is an additional term, \f$ \tilde{f}_{\rm ext} \f$, that contains
+   - There is an additional term, \f$ f_{\rm ext} \f$, that contains
      the average energy per monomer arising from interaction of monomers
-     with associated external potential fields. In any calculation that uses
-     external fields, this property is output as "fExt" along with the
-     \ref scft_thermo_page "other thermodynamic properties".
+     with associated external potential fields. In any calculation that 
+     uses external fields, this property is output as "fExt" along with 
+     the \ref scft_thermo_page "other thermodynamic properties".
 
-   - The overall volume fraction \f$ \overline{\phi_i} \f$ is replaced by
-     \f$ \overline{\phi_i}/\overline{m} \f$ within the expression for
-     \f$ \tilde{f}_{\rm id} \f$. In a system containing a mask, in which
-     the sum of species volume fractions \f$ \overline{\phi}_i \f$ is
-     equal to \f$ \overline{m} \f$ rather than unity, the ratio
-     \f$ \overline{\phi}_{i}/\overline{m} \f$ represents the fraction of
-     the material volume that is occupied by molecular species \f$ i \f$.
+   - The overall volume fraction \f$ \overline{\phi}_{a} \f$ is replaced 
+     by \f$ \overline{\phi}_{a}/\overline{m} \f$ within the expression 
+     for \f$ f_{\rm id} \f$. In a model that uses a mask, in which the 
+     sum of species volume fractions \f$ \overline{\phi}_{a} \f$ is 
+     equal to \f$ \overline{m} \f$ rather than unity, the ratio 
+     \f$ \overline{\phi}_{a}/\overline{m} \f$ represents the fraction of
+     the material volume that is occupied by molecular species \f$ a \f$.
 
    - The volume \f$ \overline{m}V \f$ that is occupied by material is
      used to normalize spatial integrals, rather than the volume \f$ V \f$
      of the computational unit cell, which includes regions from which
      polymer material is excluded by the mask.  Note that the material
      volume \f$ \overline{m}V \f$ is also used to normalize the spatial
-     integral used to define \f$ Q_i \f$ in a system with a mask.
+     integral used to define \f$ Q_a \f$ for each species in a model 
+     with a mask.
 
 <BR>
- \ref prdc_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref scft_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref scft_thin_films_page   (Next)
+ \ref scft_thermo_page      (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_page             (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_thin_films_page  (Next)
 */

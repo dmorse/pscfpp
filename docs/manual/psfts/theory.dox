@@ -4,13 +4,18 @@
 \ref psfts_psa_page   (Next)
 <BR>
 
-The PS-FTS simulation method used in PSCF is derived by applying a
-partial saddle-point approximation to an exact fully-fluctuating field
-theory formulation for an incompressible polymer fluid.  The fully
-fluctuating field theory is discussed on this page, while the partial
-saddle-point approximation is considered on the next page. Throughout
+The PS-FTS simulation method used in PSCF is derived by applying a partial 
+saddle-point approximation to an exact fully-fluctuating field theory 
+formulation for an incompressible polymer fluid.  The fully fluctuating 
+field theory is discussed on this page, while the partial saddle-point 
+approximation is considered on the \ref psfts_psa_page "next". Throughout 
 this discussion, as elsewhere, we use units for energy in which
-\f$ k_{B} T = 1 \f$.
+\f$ k_{B} T = 1 \f$. 
+
+The mathematical discussion given on this page and the next uses integer
+indexes that start from a minimum value of 1, rather than adopting the 
+0-based indexing used in the source code and some other parts of the 
+manual.
 
 \section psfts_theory_model_sec Incompressible particle-based model
 

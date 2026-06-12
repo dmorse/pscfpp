@@ -305,17 +305,18 @@ namespace Rp {
       * as defined \ref psfts_psa_pressure_sec "here", given by
       * \f[
       *    H_{\rm id}  = 
-      *    \frac{V}{v}\sum_{\alpha} \frac{\phi_{\alpha}}{N_{\alpha}}
+      *    \frac{V}{v} \sum_{a} \frac{\overline{\phi}_{a}}{N_{a}}
       *    \left [ 
-      *       \ln \left ( \frac{\phi_{\alpha}}{Q_{\alpha}} \right )  - 1
+      *     \ln \left ( \frac{\overline{\phi}_{a}}{Q_{a}} \right ) - 1
       *    \right ]
       *    - \frac{1}{v}\int W_{+}^{*}({\bf r})  \\
       * \f]
-      * Here, \f$ \alpha \f$ is an index for molecular species, while 
-      * \f$ \phi_{\alpha} \f$, \f$ N_{\alpha} \f$ and \f$ Q_{\alpha} \f$ 
-      * are the volume fraction, number of monomer volumes per molecular 
-      * volume, and normalized single-molecule partition function for 
-      * polymer or solvent species \f$ \alpha \f$, respectively. 
+      * Here, \f$ a \f$ is an index for molecular species, while 
+      * \f$ \overline{\phi}_{a} \f$, \f$ N_{a} \f$ and \f$ Q_{a} \f$ 
+      * are the volume fraction, number of monomers per molecule (i.e.,
+      * ratio of molecular to monomer volume), and the normalized 
+      * single-molecule partition function for polymer or solvent 
+      * species \f$ a \f$, respectively. 
       */
       double idealHamiltonian() const;
 
@@ -329,11 +330,15 @@ namespace Rp {
       *    H_{\rm f}  =
       *    \frac{1}{v}
       *    \int \! d{\bf r} \; \left \{
-      *    \sum_{\alpha=1}^{M-1}
+      *    \sum_{\alpha=0}^{M-2}
       *    \frac{M (W_{\alpha} - S_{\alpha})^2 }{ 2 |\lambda_{\alpha}|}
-      *    + \frac{S_{M}}{2} \right \} \quad.
+      *    + \frac{S_{+}}{2} \right \} \quad,
       * \f]
-      * where \f$ S_{M} = e_i \chi_{ij} e_{j}/M^{2} \f$.
+      * where \f$ \alpha \f$ is an index for eigenvectors of 
+      * the projected \f$ \chi \f$ matrix, 
+      * \f$ S_{\alpha} = v_{\alpha i} \chi_{ij} e_{j}/M^{2} \f$,
+      * and
+      * \f$ S_{+} = S_{M-1} = e_{i} \chi_{ij} e_{j}/M^{2} \f$.
       */
       double fieldHamiltonian() const;
 

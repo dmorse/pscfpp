@@ -87,7 +87,7 @@ Multiplication of symmetry operations is not commutative: Generally,
 \f$ AB \neq BA \f$.
 
 \anchor prdc_symmetry_multiplication_thrm
-<b> Theorem C.1 (Multiplication rule for crystal symmetry operations) </b>:
+<b> Theorem S.1 (Multiplication rule for crystal symmetry operations) </b>:
 If \f$ A \f$, \f$ B \f$ are two symmetry operations
 \f[
    A = (R_{A}, {\bf t}_{A}) \quad
@@ -136,7 +136,7 @@ Every crystal symmetry operation \f$ A \f$ has an inverse, denoted by
 \f]
 The identity element is equal its own inverse, since \f$ EE = E \f$.
 
-<b> Theorem C.2 (Inversion rule for crystal symmetry operations)</b> :
+<b> Theorem S.2 (Inversion rule for crystal symmetry operations)</b> :
 If \f$A\f$ is a crystal symmetry operation
 \f[
    A = (R, {\bf t})
@@ -271,7 +271,7 @@ are components of \f$ {\bf r} \f$ in a Bravais basis (reduced coordinates).
 
 \subsection prdc_symmetry_adjoint_matrix_sub Adjoint Operators
 
-<b> Theorem C.3 (Matrix representation of an adjoint operator) </b>:
+<b> Theorem S.3 (Matrix representation of an adjoint operator) </b>:
 Suppose \f$ R \f$ is a linear operator such as a point group operation
 in the inner-product space of D-dimensional real vectors, and that
 \f$ R^{\dagger} \f$ is the adjoint of \f$ R \f$.
@@ -348,13 +348,13 @@ for every crystal symmetry operation \f$ A \in S \f$.
 The following two simple theorems apply to such symmetric functions:
 
 \anchor prdc_symmetry_symmfunc_mult_thrm
-<b> Theorem C.4 (Symmetry is preserved by scalar multiplication)</b>:
+<b> Theorem S.4 (Symmetry is preserved by scalar multiplication)</b>:
 If \f$ f({\bf r}) \f$ is a field that is symmetric under a space group
 \f$ S \f$, and \f$ c \f$ is complex constant, then \f$ cf({\bf r}) \f$
 is also symmetric under \f$ S \f$.
 
 \anchor prdc_symmetry_symmfunc_conj_thrm
-<b> Theorem C.5 (Symmetry is preserved by complex conjugation)</b>:
+<b> Theorem S.5 (Symmetry is preserved by complex conjugation)</b>:
 If \f$ f({\bf r}) \f$ is a complex field that is symmetric under a
 space group \f$ S \f$, its complex conjugate \f$ f^{*}({\bf r}) \f$
 is also invariant under \f$ S \f$. This also implies that the real
@@ -393,7 +393,7 @@ a pair
 in which \f$ {\bf G} \f$ denotes the associated wavevector and \f$ c \f$
 is the prefactor.
 
-<b> Theorem C.6 (Transformation of plane waves) </b>:
+<b> Theorem S.6 (Transformation of plane waves) </b>:
 If \f$ f = ({\bf G}, c) \f$ is a wave and \f$ A=(R,{\bf t}) \f$ is a space
 group symmetry operation, then \f$ fA \f$ is a wave
 \f[

@@ -79,16 +79,21 @@ in which
 \f]
 and
 \f[
-  H_{\rm id}[w] = -\ln Z_{\rm id}[w] 
-     = \frac{V}{v}\sum_{\alpha} \frac{\phi_{\alpha}}{N_{\alpha}}
-     \left [ \ln \left ( \frac{\phi_{\alpha}}{Q_{\alpha}} \right ) - 1 \right ]
+  \begin{align}
+  H_{\rm id}[w] 
+    & = -\ln Z_{\rm id}[w]  \\
+    & = \frac{V}{v}\sum_{a} \frac{\overline{\phi}_{a}}{N_{a}}
+    \left [ 
+    \ln \left ( \frac{\overline{\phi}_{a}}{Q_{a}} \right ) - 1 
+    \right ]
   \quad.
+  \end{align}
 \f]
-Here, \f$ \alpha \f$ is an index for a molecular species, while
-\f$ \phi_{\alpha} \f$, \f$ N_{\alpha} \f$, \f$ Q_{\alpha} \f$ are
-the volume fraction, number of monomers (i.e., ratio of molecular
+Here, \f$ a \f$ is an index for a molecular species, while
+\f$ \overline{\phi}_{a} \f$, \f$ N_{\alpha} \f$, \f$ Q_{\alpha} \f$ 
+are the volume fraction, number of monomers (i.e., ratio of molecular
 volume to monomer volume), and normalized partition function for
-molecular species \f$ \alpha \f$, respectively.
+molecular species \f$ a \f$, respectively.
 
 \section psfts_psa_general_sec General case (\f$ M \geq 2 \f$)
 
@@ -163,8 +168,11 @@ in which \f$ H_{\rm id} = - \ln Z_{\rm id} \f$ and
    \frac{M (W_{\alpha} - S_{\alpha})^2 }{ 2 |\lambda_{\alpha}|}
    - W_{+}^{*} + \frac{S_{M}}{2} \right \} \quad,
 \f]
-where \f$ S_{\alpha} \equiv v_{\alpha i}\chi_{ij}e_{j}/M^{2} \f$ for 
-\f$ \alpha = 1, \ldots, M \f$, and \f$ {\bf v}_{M} = {\bf e} \f$.
+where \f$ \alpha \f$ is an index for eigenvectors of the projected
+\f$ \chi \f$ matrix, and
+\f$ S_{\alpha} \equiv v_{\alpha i}\chi_{ij}e_{j}/M^{2} \f$ for 
+\f$ \alpha = 1, \ldots, M \f$, 
+and \f$ S_{M} = e_{i}\chi_{ij}e_{j}/M^{2} \f$.
 
 \anchor psfts_psa_status
 <b> Status of Algorithms for \f$ M > 2 \f$: </b>
@@ -198,32 +206,42 @@ pressure-like field \f$ W_{M} \f$.  This generalized version of the PSA
 is not implemented in the current version of PSCF, in which the PSA is
 currently only applied to \f$ W_{M} \f$.
 
-\section psfts_psa_pressure_sec Non-uniqueness of average pressure
+\section psfts_psa_pressure_sec Indeterminancy of pressure in canonical ensemble
 
 In canonical ensemble, in which each molecular species occupies a 
-constant volume fraction, the configuration of the pressure-like field
+specified volume fraction, the configuration of the pressure-like field
 required to satisfy the partial saddle-point (or incompressibility)
 condition is unique only to within an arbitrary spatially homogeneous
 constant: In canonical ensemble, if \f$ W_{+}^{*}({\bf r})\f$ is a 
 configuration of the pressure-like field that satisfies the partial
 saddle-point condition for some specified configuration of the other 
-fields, than any other field \f$ W_{+}^{*}({\bf r}) + C \f$ that 
-differs from \f$ W_{+}^{*}({\bf r}) \f$ by any spatially homogeneous 
-constant \f$ C \f$ can be shown to also satisfy theis condition.
+fields, than any other field 
+\f[
+     W_{+}^{*}({\bf r}) \rightarrow
+     W_{+}^{*}({\bf r}) + C 
+\f] 
+that differs from \f$ W_{+}^{*}({\bf r}) \f$ by any spatially homogeneous 
+constant \f$ C \f$ can be shown to also satisfy this condition.  The 
+resulting indeterminancy also appears in the SCFT equations for a closed,
+incompressible system, as noted \ref scft_thermo_pressure_sec "previously". 
 
-Different solutions of the partial saddle-point problem that differ 
-by a spatially homogeneous constant correspond to the same physical 
-state and can be shown yield the same value for the total Hamiltonian 
-\f$ H \f$. Such pairs of physically equivalent field configurations
-to, however, yeidl different values for the components \f$ H_{\rm id} \f$ 
-and \f$ H_{\rm f} \f$ defined above. 
+Different solutions of the partial saddle-point problem that differ by a 
+spatially homogeneous constant correspond to the equivalent physical state 
+that differ only in the value of an irrelevant macroscopic pressure.
+Such states can be shown yield equal value for the total Hamiltonian 
+\f$ H \f$. Such pairs of physically equivalent field configurations do, 
+however, generally yield different values for the components 
+\f$ H_{\rm id} \f$ and \f$ H_{\rm f} \f$ defined above. 
 
-A few classes that compute or analyze the ideal and field contributions
-to the Hamiltonian reprot values for modified versions of these 
-quantities that are designed to be invariant under homogeneous changes
-in the pressure-like field. These modified Hamiltonian components are 
-denoted by \f$ \tilde{H}_{\rm id} \f$ and \f$ \tilde{H}_{\rm f} \f$, 
-and are given by
+\section psfts_psa_altH_sec Alternate definitions of Hamiltonian components
+
+To avoid any arbitrariness in the definitions of the ideal and field
+contributions to \f$ H \f$ that could result from non-uniqueness of the 
+pressure field, some classes that compute or analyze these contributions 
+use alternate definitions that do not suffer from this ambiguity. These 
+alternative definitions of the ideal and interaction contributions to 
+\f$ H \f$ are denoted here by \f$ \tilde{H}_{\rm id} \f$ and 
+\f$ \tilde{H}_{\rm f} \f$, and are defined as
 \f[ 
    \begin{align}
    \tilde{H}_{\rm id} 
@@ -237,11 +255,14 @@ and are given by
 or, more explicitly, 
 \f[
    \begin{align}
-   H_{\rm id} & = 
-     \frac{V}{v}\sum_{\alpha} \frac{\phi_{\alpha}}{N_{\alpha}}
-     \left [ \ln \left ( \frac{\phi_{\alpha}}{Q_{\alpha}} \right ) - 1 \right ]
+   \tilde{H}_{\rm id} & = 
+    \frac{V}{v}\sum_{a} 
+    \frac{\overline{\phi}_{a}}{N_{a}}
+    \left [ 
+    \ln \left ( \frac{\overline{\phi}_{a}}{Q_{a}} \right ) - 1 
+    \right ]
     -  \frac{1}{v}\int W_{+}^{*}({\bf r})  \\
-   H_{\rm f}  & =
+   \tilde{H}_{\rm f}  & =
    \frac{1}{v}
    \int \! d{\bf r} \; \left \{
    \sum_{\alpha=1}^{M-1}
@@ -249,26 +270,34 @@ or, more explicitly,
    + \frac{S_{M}}{2} \right \} \quad.
    \end{align}
 \f]
-Note that this redefinition of the components of \f$ H \f$ simply shifts 
-the term proportional to the integral of \f$ W_{+}^{*}({\bf r}) \f$ from 
-\f$ H_{\rm f} \f$ to \f$ H_{\rm id} \f$. This modification has no effect 
-on the sum of these two components, giving
+Note that these modified definitions simply move the term proportional 
+to the integral of \f$ W_{+}^{*}({\bf r}) \f$ from \f$ H_{\rm f} \f$ to 
+\f$ H_{\rm id} \f$. This simple modification leaves the sum of these 
+two components unchanged, giving
 \f[
-    H = H_{\rm id} + H_{\rm f} = \tilde{H}_{\rm id} + \tilde{H}_{\rm f}
+    H = H_{\rm id} + H_{\rm f} 
+      = \tilde{H}_{\rm id} + \tilde{H}_{\rm f}
     \quad.
 \f]
 The term proportional to the spatial integral of \f$ W^{*}({\bf r}) \f$ 
 in the definition of \f$ \tilde{H}_{\rm id} \f$ can be shown to cancel 
-the dependence of the sum of single-molecule free energies on this 
-average pressure, making \f$ \tilde{H}_{\rm id} \f$ invariant under any 
-homogeneous shift of \f$ W^{*}({\bf r}) \f$.
-The resulting definition of \f$ \tilde{H}_{\rm f} \f$ also has no
-explicit dependence on \f$ W_{+}^{*} \f$, and so is also invariant 
-under any such a homogeneous shift in pressure.
+the dependence of the sum of single-molecule free energies on the average 
+pressure, making \f$ \tilde{H}_{\rm id} \f$ invariant under any spatially
+homogeneous shift of \f$ W^{*}_{+}({\bf r}) \f$.
+Note that the resulting definition of \f$ \tilde{H}_{\rm f} \f$ has no
+explicit dependence on \f$ W_{+}^{*} \f$, and so is also invariant under 
+any such homogeneous shift in this field.
+Both \f$ \tilde{H}_{\rm id} \f$ and \f$ \tilde{H}_{\rm int} \f$ are thus
+invariant under homogeneous changes in \f$ W_{+}({\bf r}) \f$, and so have 
+unique values for each possible configuration of the fluctuating field 
+components \f$ W_{1}, \ldots, W_{M-1} \f$. This observation also implies 
+that the total Hamiltonian \f$ H \f$ of an incompressible system is
+invariant under any such homogeneous change in pressure.
 
+<em> For users who read the source code </em>:
 The quantities \f$ \tilde{H}_{\rm id} \f$ and \f$ \tilde{H}_{\rm f} \f$
-defined above may be computed and accessed using member functions of 
-the Pscf::Rp::Simulator class template, and are analyzed by the 
+defined above are computed and accessed using member functions of the 
+Pscf::Rp::Simulator class template, and are analyzed by the 
 Pscf::Rp::HamiltonianAnalyzer class template.
 
 <BR>

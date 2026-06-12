@@ -16,9 +16,9 @@ contributions.
 The ideal and field contributions to the Hamiltonian that are 
 computed and analyzed by this class are the quantities denoted by 
 \f$ \tilde{H}_{\rm id} \f$ and \f$ \tilde{H}_{\rm f} \f$ that are 
-defined \ref psfts_psa_pressure_sec "here".  In a system with no
-associated perturbation, Hamiltonian \f$ H \f$ is given by a sum 
-\f$ H = \tilde{H}_{\rm id} + \tilde{H}_{\rm f} \f$.
+defined \ref psfts_psa_altH_sec "here".  In a system with no
+associated perturbation, Hamiltonian \f$ H \f$ is given by a 
+sum \f$ H = \tilde{H}_{\rm id} + \tilde{H}_{\rm f} \f$.
 
 <em> For users who read the source code </em>: 
 The quantities \f$ H \f$, \f$ \tilde{H}_{\rm id} \f$ and 
@@ -83,7 +83,7 @@ If nSamplerPerBlock = 0, the {outputFileName}.dat data file is not
 created.
 
 If a simulation uses a perturbation, the contribution to the 
-Hamiltonian arising from the perturbation is included in all reported
+Hamiltonian that arises from the perturbation is included in all reported 
 values of \f$ H \f$, but is not analyzed separately or listed as a 
 separated column in the {outputFileName}.dat file. If no perturbation 
 exists, then \f$ H = \tilde{H}_{\rm id} + \tilde{H}_{\rm f} \f$. 

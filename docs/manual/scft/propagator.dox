@@ -9,8 +9,9 @@ that are solved by PSCF, giving a complete overview of the mathematical
 system of equations that are solved by the software and summarizing
 their connection to corresponding physical properties. This is not
 intended to be an introduction to the field theory itself, and we do
-not provide a derivation of the SCFT equations. We assume readers are
-familiar with the principles of polymer physics and statistical mechanics.
+not provide a derivation of the SCFT equations. The presentation
+assumes some familiarity with polymer physics and statistical
+mechanics.
 
 \section scft_propagator_setup_sec Model and notation
 
@@ -19,36 +20,45 @@ of block polymer species and point-like solvent molecular species.
 
 In what follows, we consider a system with \f$ C \f$ distinct monomer
 types, \f$ P \f$ block polymer species, \f$ S\f$ solvent species. We use
-a convention in which the symbols \f$ \alpha, \beta = 0, \ldots, C-1\f$
-are used as indices for monomer types, symbols \f$ a, b \f$ are used to
-denote indices for blocks within a specific block polymer species, and
-symbols \f$ i, j\f$ are used to denote molecular species indices.  In
-these notes, we use a convention in which species indices are ordered
-with all polymeric species listed first, so that species index values
-in the range \f$ i, j = 0, \ldots, P-1\f$ denote polymeric species, and
-values in the range \f$ P,\ldots, P+S-1 \f$ denote solvent species.
-A zero-based indexing scheme for indices is used throughout the notes
-to facilitate comparison to C/C++ source code.
+a convention in which the symbols \f$ i, j = 0, \ldots, C-1\f$ are used
+as indices for monomer types, symbols \f$ m, n \f$ are used as indices
+for blocks within a specific block polymer species, and symbols
+\f$ a, b\f$ are used as indices for molecular species indices.  In these
+notes, we use a convention in which species indices are ordered with all
+polymeric species listed first, so that species index values in the range
+\f$ a, b = 0, \ldots, P-1\f$ denote polymeric species, and values in the
+range \f$ P,\ldots, P+S-1 \f$ denote solvent species.  A zero-based
+indexing scheme for indices is used throughout the notes to facilitate
+comparison to C/C++ source code.
 
 To characterize inhomogeneous states, we consider the average number
-concentration \f$\langle c_{\alpha}({\bf r}) \rangle\f$ for monomers of
-each type \f$ \alpha \f$ at each position \f$ {\bf r} \f$. In a model for
-an effectively incompressible liquid in which each monomer is assumed to
-occupy a volume \f$ v \f$, we may define a corresponding volume fraction
+concentration \f$\langle c_{i}({\bf r}) \rangle\f$ for monomers of each
+type \f$ i \f$ at each position \f$ {\bf r} \f$. In a model for an
+effectively incompressible liquid in which each monomer is assumed to
+occupy a volume \f$ v \f$, we may define a non-dimensional monomer
+concentration
 \f[
-  \phi_{\alpha}(\textbf{r}) = v \langle c_{\alpha}({\bf r}) \rangle
+  \phi_{i}(\textbf{r}) = v \langle c_{i}({\bf r}) \rangle
   \quad,
-  \quad\quad\quad\quad\quad (A.1)
+  \quad\quad\quad\quad\quad (1)
 \f]
 for each monomer type, where \f$ v \f$ is a monomer reference volume
-that, by convention, has the same value for all monomer types.
-Incompressibility is imposed by requiring that
+that. By convention, we required that \f$ v \f$ has the same value for
+all monomer types. The non-dimensional monomer concentration fields
+\f$ \phi_{0}, \ldots, \phi_{C-1} \f$ are referred to elsewhere in the
+PSCF documentation as "c fields".
+
+Incompressibility is imposed at a mean-field level by requiring that
 \anchor scft_propagator_incompressibility_eqn
 \f[
-   1 = \sum_{\alpha=0}^{C-1} \phi_{\alpha}({\bf r})
-   \quad\quad\quad\quad\quad (A.2)
+   1 = \sum_{i=0}^{C-1} \phi_{i}({\bf r})
+   \quad\quad\quad\quad\quad (2)
 \f]
-at every position \f$ {\bf r} \f$ within the problem domain.
+at every position \f$ {\bf r} \f$ within the problem domain. In
+such an incompressible liquid, each of the non-dimensional monomer
+concentration fields may also be interpreted as local volume fraction
+for the specified monomer type. These "c fields" are thus also
+sometimes referred to a volume fraction fields.
 
 \section scft_propagator_scf_sec Self-consistent field approximation
 
@@ -59,59 +69,58 @@ inhomogeneous gas of noninteracting molecules. We refer to this
 hypothetical non-interacting gas as the ideal-gas reference system.
 The ideal gas reference system must have the same chemical composition
 as the real system of interest and an inhomogeneous average concenration
-\f$ \langle c_{\alpha}({\bf r}) \rangle \f$ for each monomer type
-\f$ \alpha \f$ that is equal to that in the real system.
+\f$ \langle c_{i}({\bf r}) \rangle \f$ for each monomer type
+\f$ i \f$ that is equal to that in the real system.
 Inhomogeneous monomer concentrations are induced in this reference
 system by a set of potential energy fields that couple to different
-types of monomer: Each monomer of type \f$ \alpha \f$ at position
+types of monomer: Each monomer of type \f$ i \f$ at position
 \f$ {\bf r} \f$ within this ideal gas is subjected to a potential
-\f$ k_{B}Tw_{\alpha}(\textbf{r}) \f$. In a self-consistent field
+\f$ k_{B}Tw_{i}(\textbf{r}) \f$. In a self-consistent field
 approximation, this potential represents a free energy cost for
 placing a monomer of a specified type at a specified position, due
 to interactions among monomers within an inhomogeneous structure.
 
-In SCFT, the monomer chemical potential fields (or "w fields") \f$
-w_{0}, \ldots, w_{C-1} \f$ are assumed to depend upon volume fraction
-fields in a manner that reflects the effects of interaction among
-species in the mixture. PSCF currently uses a simple approximation
-for this dependence that is based on an inhomogeneous generalization
-of the parameterization of excess free energy used in the Flory-Huggins
-theory of homogeneous polymer mixtures. In this approximation, a
-solution to the SCFT problem is required to satisfy the self-consistent
-field (SCF) equations \anchor scft_propagator_scf_eqn
+In SCFT, the monomer chemical potential fields (or "w fields")
+\f$ w_{0}, \ldots, w_{C-1} \f$ at each position \f$ {\bf r} \f$ are assumed
+to depend upon monomer volume fraction fields near that point in a manner
+that reflects the mixing thermodynamics of the types of monomer present in
+a mixture.  PSCF currently uses a simple approximation for the dependence
+of the w fields on local composition that is based on an inhomogeneous
+generalization of the model for excess free energy used in the
+Flory-Huggins theory of homogeneous polymer mixtures. In this
+approximation, a solution to the SCFT problem is required to satisfy the
+self-consistent field (SCF) equations
+\anchor scft_propagator_scf_eqn
 \f[
-   w_{\alpha}({\bf r})
-   = \sum_{\beta=0}^{C-1} \chi_{\alpha\beta} \phi_{\beta}({\bf r})
+   w_{i}({\bf r})
+   = \sum_{j=0}^{C-1} \chi_{ij} \phi_{j}({\bf r})
    + \xi({\bf r})
-   \quad\quad\quad\quad\quad (A.3)
+   \quad\quad\quad\quad\quad (3)
 \f]
-for all \f$ \alpha = 0,\ldots,C-1 \f$, in which \f$ \chi_{\alpha\beta}\f$
-is a binary Flory-Huggins dimensionless interaction parameter, defined
-such that \f$ \chi_{\alpha\beta} = \chi_{\beta\alpha} \f$.
+for all \f$ i = 0,\ldots,C-1 \f$, where \f$ \chi_{ij}\f$ is a
+dimensionless binary Flory-Huggins interaction parameter for monomer types
+\f$ i \f$ and \f$ j \f$, defined such that \f$ \chi_{ij} = \chi_{ji} \f$.
 Here, \f$ \xi({\bf r}) \f$ is a dimensionless Lagrange multiplier
-pressure field that must be chosen so that the monomer concentrations
+pressure field that must be chosen such that the monomer concentrations
 in the ideal gas reference system satisfy the
 \ref scft_propagator_incompressibility_eqn "incompressibility constraint"
 given above.
 
 In SCFT, average monomer concentration and volume fraction fields are
-computed by computing these properties for the ideal gas reference
-system. An iterative solution of an SCFT problem thus starts with an
-initial guess for the w fields for all monomer types, followed by
-iterative adjustment of these fields until the w fields and average
-monomer concentrations (or volume fractions) computed using these
-fields as inputs to the ideal gas model satisfy the above SCF
-equations and the incompressibility constraint.
+computed by computing these properties for the ideal gas reference system.
+An iterative solution of an SCFT problem thus starts with an initial guess
+for the w fields for all monomer types, followed by iterative adjustment
+of these fields until the w fields and corresponding c fields satisfy the
+SCF equations and the incompressibility constraint.
 
-\section scft_propagator_polymer_sec Polymer species
+\section scft_propagator_graph_sec Branched Polymer Topology
 
 Each polymer species in a system modeled by PSCF must be a block polymer
 consisting of one or more blocks connected at junction points.
 Homopolymers are treated as a special case of a block polymer with
-only one block.  Let \f$ B_{i} \f$ denote the number of blocks in block
-polymer species number \f$ i \f$, for \f$ i = 0, \ldots, P-1 \f$.
+only one block.  Let \f$ B_{a} \f$ denote the number of blocks in block
+polymer species number \f$ a \f$, for \f$ a = 0, \ldots, P-1 \f$.
 
-\subsection scft_propagator_graph_sub Branched Polymer Topology
 
 Each block within a block polymer connects two vertices. Each such vertex
 is either a junction to which two or more blocks are connected or a chain
@@ -122,36 +131,46 @@ every allowed polymer structure corresponds to an acyclic connected graph
 of a connected acyclic graph, in which there is exactly one path (i.e.,
 sequence of connected edges) connecting any two vertices.  A standard
 theorem of graph theory aserts that any connected acyclic graph with
-\f$ B_{i} \f$ edges must have exactly \f$ B_{i} + 1 \f$ vertices or
-nodes. An acyclic block polymer with \f$ B_{i} \f$ blocks thus always has
-exactly \f$B_{i} + 1\f$ vertices (i.e., junctions and free chain ends).
+\f$ B_{a} \f$ edges must have exactly \f$ B_{a} + 1 \f$ vertices or
+nodes. An acyclic block polymer with \f$ B_{a} \f$ blocks thus always has
+exactly \f$ B_{a} + 1 \f$ vertices (i.e., junctions and free chain ends).
 For example, a linear triblock terpolymer with three blocks in a row
 has four vertices (two free ends and two junctions), and so does a star
 triblock copolymer with three blocks that meet at a central junction
 (three free ends and one junction).
 
-PSCF assigns each block within a polymer species \f$i\f$ with \f$ B_{i} \f$
-blocks an integer index in the range \f$ [0, \ldots, B_{i}-1 ]\f$, and
-assigns each vertex (each junction or chain end) an index value in the
-range \f$ [ 0, \ldots, B_{i} ]\f$.  The structure of a polymer can thus
-be characterized by assigning each block a monomer type, a contour length,
-and a pair of integer ids for the two vertices to which the block is
-attached. The length of each block is given by the ratio of the volume
-occupied by the block to the value of a monomer reference volume.
-Let \f$ L_{ia} \f$ denote the length of block \f$ a \f$ of polymer
-species \f$ i \f$.
+PSCF assigns each block within a polymer species \f$ a \f$ an integer
+index in the range \f$ [0, \ldots, B_{a}-1 ]\f$, where \f$ B_{a} \f$
+is the number of blocks in that species. Each of the \f$ B_{a} + 1 \f$
+vertices within such a species (i.e., each junction or chain end) is
+assigned an integer index in the range \f$ [ 0, \ldots, B_{a} ] \f$.
+The structure of a block polymer can thus be characterized by assigning
+each block a monomer type, a contour length, and a pair of integer ids
+for the two vertices to which the block is attached. The length of each
+block is given by the ratio of the volume occupied by the block to the
+value of a monomer reference volume.  Let \f$ N_{ma} \f$ denote the
+length of block \f$ m \f$ of polymer species \f$ a \f$.
+
+\section scft_propagator_polymer_sec Propagator Functions (Thread Model)
+
+This section discusses the use of "propagator" functions to describe the
+statistical mechanics of individual polymers in an ideal gas reference
+system. For concreteness, this discussion uses a notation and analysis
+appropriate to the continuous thread model. The corresponding discussion
+for the bead model would be similar in many respects, but in not
+presented here.
 
 \subsection scft_propagator_propagator_sub Propagator Functions
 
 For each block, we define two "propagator" functions, denoted generically
-by \f$ q( \textbf{r}, s) \f$, each of which is associated with one of the
-two directions in which the block may be traversed.  Each propagator is
-said to originate at one of the two vertices to which the associated block
-is attached and terminate at the other. The contour variable parameter
-\f$ s \f$ is defined for each propagator \f$ q(\textbf{r},s) \f$ such
-that \f$ s = 0 \f$ at the vertex at which the propagator originates and
-\f$ s = L \f$ at the vertex at which the propagator terminates, where
-\f$ L \f$ is the contour length of the block. When we need to distinguish
+by \f$ q( \textbf{r}, s) \f$. Each propagator is associated with one of
+the two directions in which the block may be traversed.  Each propagator
+is said to originate at one of the two vertices to which the associated
+block is attached and terminate at the other. The contour variable
+parameter \f$ s \f$ is defined for each propagator \f$ q(\textbf{r},s) \f$
+such that \f$ s = 0 \f$ at the vertex at which the propagator originates
+and \f$ s = N \f$ at the vertex at which the propagator terminates, where
+\f$ N \f$ is the contour length of the block. When we need to distinguish
 between the propagators associated with a single block, we will refer to
 them instead as \f$ q \f$ and \f$ q^{\dagger} \f$, though the choice of
 which is referred to as \f$ q \f$ and which \f$ q^{\dagger} \f$ is
@@ -162,41 +181,41 @@ propagators that originate at that vertex, which we refer to the "outgoing"
 propagators for that vertex, and \f$ M \f$ propagators that terminate at
 that vertex, which we refer to as "incoming" propagators. In what follows,
 we refer to a vertex with \f$ M \geq 2 \f$ attached blocks as an M-fold
-junction, and a vertex with only one attached block as a chain end.
+junction, and a vertex with only one attached block (\f$ M = 1 \f$ as a
+chain end.
 
 It is useful for some purposes to imagine a process in which we divide
-a block of length \f$ L \f$ into two blocks of length \f$ s \f$ and
-\f$ L - s \f$ by adding a "virtual" two-fold junction at some coordinate
+a block of length \f$ N \f$ into two blocks of length \f$ s \f$ and
+\f$ N - s \f$ by adding a "virtual" two-fold junction at some coordinate
 \f$ s \f$ within the block. This yields a two-fold vertex that is
 connected to two blocks of the same monomer type. The insertion or
 removal of this type of virtual vertex modifies the graph that we use
 to describe a polymer but does change our physical description of the
-underlying underlying molecule.
+underlying molecule.
 
 \subsection scft_propagator_mde_sub Modified Diffusion Equation (MDE)
 
 Each propagator \f$ q(\textbf{r}, s) \f$ associated with a block of
-monomer type \f$ \alpha \f$ can be shown to obey a partial differential
+monomer type \f$ i \f$ can be shown to obey a partial differential
 equation (PDE) \anchor scft_propagator_mde_eqn
 \f[
-  \frac{\partial q}{\partial s} =  -H_{\alpha} q
-  \quad\quad\quad\quad\quad (A.4)
+  \frac{\partial q}{\partial s} =  -H_{i} q
+  \quad\quad\quad\quad\quad (4)
 \f]
-in which \f$ H_{\alpha} \f$ is a linear differential operator whose
+in which \f$ H_{i} \f$ is a linear differential operator whose
 action on any function \f$ f({\bf r}) \f$ of position is defined to
 be \anchor scft_propagator_hop_eqn
 \f[
-  H_{\alpha} f({\bf r})
-  = - \frac{b_{\alpha}^{2}}{6} \nabla^{2} f({\bf r})
-    + w_{\alpha}(\textbf{r}) f({\bf r})
-  \quad\quad\quad\quad\quad (A.5)
+  H_{i} f({\bf r})
+  = - \frac{b_{i}^{2}}{6} \nabla^{2} f({\bf r})
+    + w_{i}(\textbf{r}) f({\bf r})
+  \quad\quad\quad\quad\quad (5)
 \f]
-in which \f$ b_{\alpha} \f$ is the statistical segment length for
-monomers of type \f$ \alpha \f$ , and \f$ w_{\alpha}\f$ is the
-dimensionless SCF chemical potential field for such monomers.  We
-refer to this PDE as the modified diffusion equation (MDE). Numerical
-solution of the MDE is the most computationally expensive operation
-in any SCFT program.
+in which \f$ b_{i} \f$ is the statistical segment length for monomers
+of type \f$ i \f$ , and \f$ w_{i}\f$ is the dimensionless SCF chemical
+potential field for such monomers.  We refer to this PDE as the
+modified diffusion equation (MDE). Numerical solution of the MDE is
+the most computationally expensive operation in any SCFT program.
 
 <em> Initial Conditions </em>:
 
@@ -204,7 +223,7 @@ The initial condition for propagators that originate at a chain end
 requires that
 \f[
    q(\textbf{r},s=0) = 1
-  \quad\quad\quad\quad\quad (A.6)
+  \quad\quad\quad\quad\quad (6)
 \f]
 for all \f$ \textbf{r} \f$ in the relevant spatial domain.
 
@@ -213,20 +232,21 @@ that originates at an \f$ M \f$-fold junction is given by a pointwise
 product of values of the \f$ M - 1 \f$ incoming propagators for that
 junction, excluding the incoming propagator associated with the same
 block as that of the outgoing propagator of interest.
+
 Suppose we denote the outgoing propagators associated with the M blocks
-attached to an M-fold junction \f$ q_{a}({\bf r}, s) \f$, and denote
+attached to an M-fold junction \f$ q_{m}({\bf r}, s) \f$, and denote
 the final or "tail" values of the M incoming propagators
-by \f$ q^{\dagger}_{a}({\bf r}) \f$, where \f$ a = 0, \ldots, M-1 \f$
+by \f$ q^{\dagger}_{a}({\bf r}) \f$, where \f$ m = 0, \ldots, M-1 \f$
 is an integer identifer for the attached blocks. The initial condition
 for any propagator that originates at this vertex is then
 \f[
-   q_{a}({\bf r}, 0) = \prod_{b \neq a}
-   q^{\dagger}_{b}({\bf r})
-  \quad\quad\quad\quad\quad (A.7)
+   q_{m}({\bf r}, 0) = \prod_{n \neq m}
+   q^{\dagger}_{n}({\bf r})
+   \quad\quad\quad\quad\quad (7)
 \f]
-where the product over \f$ b \f$ is taken over all \f$[0, \ldots, M-1] \f$
-except the value \f$ a \f$ corresponding to the block associated with
-the outgoing propagator of interest.
+where the product over \f$ n \f$ is taken over all \f$ [0, \ldots, M-1] \f$
+except the value \f$ n = m \f$ corresponding to the block associated
+with the outgoing propagator of interest.
 
 In the simple case of a linear polymer, for which every junction connects
 two blocks, the initial condition for the each outgoing propagator that
@@ -237,33 +257,39 @@ blocks and vertices are indexed sequentially by their position relative
 to one end of the chain.  This is the indexing scheme for blocks and
 vertices that is used internally by PSCF for polymers that are assigned
 a linear type parameter value within the parameter file, which is the
-default parameter value. Let \f$ L_{a} \f$ denote the length of block
-\f$ a \f$, which connects vertices \f$ a \f$ and \f$ a + 1 \f$.  Let
-\f$ q_{a} \f$ denotes the propagator in block \f$ a \f$ that originates
-at vertex \f$ a \f$, and let \f$ q_{a}^{\dagger} \f$ denotes the
-propagator in block \f$ a \f$ that originates at vertex \f$ a+1 \f$.
+default parameter value. Let \f$ N_{m} \f$ denote the length of block
+\f$ m \f$, which connects vertices \f$ m \f$ and \f$ m + 1 \f$.  Let
+\f$ q_{m} \f$ denotes the propagator in block \f$ m \f$ that originates
+at vertex \f$ m \f$, and let \f$ q_{m}^{\dagger} \f$ denote the
+propagator in block \f$ m \f$ that originates at vertex \f$ m + 1 \f$.
 With this notation,
-\f$ q_{a+1}(\textbf{r},0) = q_{a}(\textbf{r},L_{a}) \f$ and
-\f$ q_{a}^{\dagger}(\textbf{r},0)= q_{a+1}^{\dagger}(\textbf{r},L_{a+1})\f$
-for  \f$ a = 0, \ldots, B - 2 \f$.
+\f[
+   q_{m+1}(\textbf{r},0) = q_{m}(\textbf{r}, N_{a})
+\f]
+and
+\f[
+   q_{m}^{\dagger}(\textbf{r},0)
+    = q_{m+1}^{\dagger}(\textbf{r}, N_{m+1})
+\f]
+for  \f$ m = 0, \ldots, B - 2 \f$.
 
-As an example of a branched polymer, consider the case of a three
-armed star containing blocks with indices 0, 1 and 2 that are all
-connected at a central junction.  Let \f$ L_{a} \f$ denote the
-length of block \f$ a \f$.  Let \f$ q_{a}(\textbf{r},s)\f$ denote the
-propagator in block \f$ a \f$ that originates at the central junction,
-and let \f$ q_{a}^{\dagger}(\textbf{r},s) \f$ denote the propagator in
-block \f$ a \f$ that originates at a free end and terminates at the
+As an example of a branched polymer, consider the case of a three armed
+star containing blocks with indices 0, 1 and 2 that are all connected at
+a central junction.  Let \f$ N_{m} \f$ denote the length of block
+\f$ m \f$.  Let \f$ q_{m}(\textbf{r},s) \f$ denote the propagator in
+block \f$ m \f$ that originates at the central junction, and let
+\f$ q_{m}^{\dagger}(\textbf{r},s) \f$ denote the propagator in block
+\f$ m \f$ that originates at a free end and terminates at the
 central junction. The initial condition for propagators that originate
-at chain ends requires that \f$ q_{a}^{\dagger}(\textbf{r},s=0) = 1 \f$
-for all \f$ \textbf{r} \f$ and all \f$ a \f$. The initial condition for
+at chain ends requires that \f$ q_{m}^{\dagger}(\textbf{r},s=0) = 1 \f$
+for all \f$ \textbf{r} \f$ and all \f$ m \f$. The initial condition for
 the outgoing propagator in block 0 that originates at the central vertex
 is then given by, for example, by
 \f[
     q_{0}(\textbf{r}, s=0) =
-    q_{1}^{\dagger}(\textbf{r}, L_1)
-    q_{2}^{\dagger}(\textbf{r}, L_2) \quad.
-    \quad\quad\quad\quad\quad (A.8)
+    q_{1}^{\dagger}(\textbf{r}, N_1)
+    q_{2}^{\dagger}(\textbf{r}, N_2) \quad.
+    \quad\quad\quad\quad\quad (8)
 \f]
 Initial conditions for \f$ q_{1} \f$ and \f$ q_{2} \f$ are analogous.
 
@@ -273,8 +299,8 @@ In the pscf_rpc and pscf_rpg programs, the MDE for propagators in a
 periodic structure is solved within a single unit cell, subject to
 periodic boundary conditions.
 
-In the pscf_r1d program, the MDE for each propagator \f$ q(x,s) \f$ is
-solved within a range of values of the single spatial coordinate
+In the pscf_r1d program, the MDE for each propagator \f$ q(x,s) \f$
+is solved within a range of values of the single spatial coordinate
 \f$ x \f$, where \f$ x \f$ may represent either a Cartesian normal
 coordinate for a system with the geometry of a flat film or a radial
 coordinate for a system with cylindrical or spherical symmetry.
@@ -304,30 +330,30 @@ local \f$ {\bf r} \f$ can be shown to be proportional to the product of the
 incoming propagators for that vertex, at the the position \f$ {\bf r} \f$.
 
 This relationship applies to an optional or "virtual" 2-fold vertex
-inserted at any point within any block of a an acyclic branched polymer,
+inserted at any point within any block of an acyclic branched polymer,
 as well as to vertices that are necessary to describe the polymer topology.
 Let \f$ \rho({\bf r}, s) \f$  denote the probability density per unit
 volume that a monomer or point with a contour coordinate \f$ s \f$ within
-a specified block of length \f$ L \f$ will be found within an infinitesimal
+a specified block of length \f$ N \f$ will be found within an infinitesimal
 volume centered at a position \f$ {\bf r} \f$.  This quantity is given
 to within a constant of proportionality by
 \anchor scft_propagator_rhou_eqn
 \f[
    \rho({\bf r}, s) \propto
-   q({\bf r}, s) q^{\dagger}({\bf r}, L-s) \quad,
-    \quad\quad\quad\quad\quad (A.9)
+   q({\bf r}, s) q^{\dagger}({\bf r}, N-s) \quad,
+    \quad\quad\quad\quad\quad (9)
 \f]
-Here, \f$ q({\bf r}, s) \f$ and \f$ q^{\dagger}({\bf r}, L-s) \f$ are
-the two propagators associated with that block, which are also the two
+Here, \f$ q({\bf r}, s) \f$ and \f$ q^{\dagger}({\bf r}, N - s) \f$ are
+the two propagators associated with that block. These are also the two
 incoming propagators associated with a virtual vertex introduced at
-that point within the block. The two propagators in this product are
-evaluated at contour coordinates that correspond to the same point
+point \f$ s \f$ within the block. The two propagators in this product
+are evaluated at contour coordinates that correspond to the same point
 within the block, but are each evaluated at a value \f$ s \f$ or
-\f$ L - s \f$ that corresponds to the contour distance measured from
+\f$ N - s \f$ that corresponds to the contour distance measured from
 the vertex at which that propagator originates. The more general
 expression for the probability density for the position of an M-fold
 vertex involves the product of the M incoming propagators, all
-evaluated at the same position \f$ r \f$, and at contour coordinate
+evaluated at the same position \f$ {\bf r} \f$, and at contour coordinate
 values that correspond to the lengths of the associated blocks.
 
 We show below that the constant of proportionality that relates the
@@ -343,73 +369,77 @@ propagators associated with any vertex in a polymer.
 
 \anchor scft_propagator_theorem1
 <b> Theorem A.1 </b> :
-Suppose \f$ q({\bf r}, s) q^{\dagger}({\bf r},L-s)\f$ is the product
-of two propagators defined within a single block of length \f$ L \f$.
-The value of this product at \f$ s = 0 \f$, corresponding to its value
-at the vertex at which \f$ q \f$ originates, is equal to the product
-of all the incoming propagators for this vertex.  Similarly, the
-value of this product at \f$ s = L \f$, corresponding to its value
-at the vertex at which \f$ q^{\dagger} \f$ originates, is equal to the
-product of all incoming propagators at this vertex.
+Suppose \f$ q({\bf r}, s) q^{\dagger}({\bf r},N-s) \f$ is the product
+of two propagators defined within a single block of length \f$ N \f$,
+defined such that \f$ q \f$ originates at the vertex with coordinate
+\f$ s = 0 \f$ and \f$ q^{\dagger} \f$ originates at the vertex with
+coordinate \f$ s = N \f$.  The value of this product at \f$ s = 0 \f$
+is equal to the product of all the incoming propagators at the vertex
+with coordinate \f$ s = 0 \f$, and the value of this product at
+\f$ s = N \f$ is equal to the product of all incoming propagators at
+the vertex with coordinate \f$ s = N \f$.
 
 <em> Proof </em>:
-The value \f$ q^{\dagger}(\textbf{r},L-s) \f$ at \f$ s = 0 \f$
-yields the final value for the incoming propagator for the vertex at
-\f$ s = 0 \f$ that is associated with the block within which \f$ q \f$
-and \f$ q^{\dagger} \f$ are both defined.
+First consider the value at \f$ s = 0 \f$ for \f$ M > 1 \f$.
 The initial condition for \f$ q \f$ at \f$ s = 0 \f$ for an M-fold
-junction with \f$ M > 1 \f$ requires that \f$ q({\bf r}, s=0) \f$ is
-equal to the product of the final values of incoming propagators
+junction with \f$ M > 1 \f$ requires that \f$ q({\bf r}, s = 0) \f$
+is equal to the product of the final values of incoming propagators
 associated with all *other* blocks that are attached to that vertex
 , excluding the incoming propagator associated with the block along
-which \f$ q \f$ and \f$ q^{\dagger} \f$ are defined. For any such
-junction, the value of the product
-\f$ q({\bf r},s) q^{\dagger}({\bf r},L-s) \f$ at \f$ s = 0 \f$ is thus
-equal to the product of all incoming propagators at that vertex.  If
-\f$ q \f$ originates at a chain end, then \f$ q(\textbf{r}, s) = 1 \f$,
-and so this product simply yields the value of the single incoming
-propagagator \f$ q^{\dagger}(\textbf{r}, L) \f$ at that chain end,
-which in this case is equal to the product of incoming propagators.
+which \f$ q \f$ and \f$ q^{\dagger} \f$ are defined. It follows
+immediately that the value of the product
+\f$ q({\bf r},s) q^{\dagger}({\bf r},N-s) \f$ at \f$ s = 0 \f$ is
+thus equal to the product of all incoming propagators at that vertex,
+including the incoming propagator \f$ q^{\dagger}({\bf r}, N-s)\f$
+associated with the block of interest.
+
+Next consider the case in which the vertex at \f$ s = 0 \f$ is a chain
+end, with \f$ M = 1 \f$.  In this case, \f$ q(\textbf{r}, s) = 1 \f$,
+and so the product \f$ q q^{\dagger} \f$ simply yields the value of
+the single incoming propagagator \f$ q^{\dagger}(\textbf{r}, N) \f$.
+For \f$ M = 1 \f$, \f$ q^{\dagger}({\bf r}, N) \f$ is equal to the
+product of incoming propagators.
+
 The corresponding statement about the value of \f$ q q^{\dagger} \f$
-at \f$ s = L \f$ may be obtained by completely analogous reasoning,
-with the roles of \f$ q \f$ and \f$ q^{\dagger} \f$ reversed.
+at \f$ s = N \f$ is obtained by completely analogous reasoning, with
+the roles of \f$ q \f$ and \f$ q^{\dagger} \f$ reversed.
 
 \anchor scft_propagator_theorem2
 <b> Theorem A.2 </b>: Let \f$ I(s) \f$ represent the spatial integral
 \f[
    I(s) \equiv
-   \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s)
-   \quad\quad\quad\quad\quad (A.10)
+   \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r}, N-s)
+   \quad\quad\quad\quad\quad (10)
 \f]
 of a product of two propagators that are both defined within a block
-of length \f$ L \f$, where \f$ s \f$ is the contour variable for a
+of length \f$ N \f$, where \f$ s \f$ is the contour variable for a
 point within that block.
 If the propagators \f$ q \f$ and \f$ q^{\dagger} \f$ obey a modified
 diffusion equation within some domain, subject to periodic, Dirichlet,
 von Neumann or Robin boundary conditions, then the value of
-\f$I(s)\f$ is independent of contour coordinate \f$ s \f$ for all
-\f$ s \in [0,L] \f$.
+\f$ I(s) \f$ is independent of contour coordinate \f$ s \f$ for all
+\f$ s \in [0,N] \f$.
 
 <em> Proof </em>:
 Note that
 \f{eqnarray*}
   \frac{dI(s)}{ds} & = & \frac{d}{ds}
   \int d\textbf{r} \;
-  q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s) \\
+  q (\textbf{r},s) q^{\dagger}(\textbf{r}, N - s) \\
   & = &
   \int d\textbf{r} \;  \left \{
   \frac{\partial q (\textbf{r},s)}{\partial s}
-  q^{\dagger}(\textbf{r},L-s)
+  q^{\dagger}(\textbf{r}, N - s )
   - q (\textbf{r},s)
-  \frac{\partial q^{\dagger}(\textbf{r},L-s)}{\partial s}
+  \frac{\partial q^{\dagger}(\textbf{r}, N-s)}{\partial s}
   \right \} \\
   & = &
   -\int d\textbf{r} \;  \left \{
-  [ \hat{H} q (\textbf{r},s) ] q^{\dagger}(\textbf{r},L-s)
-  - q (\textbf{r},s) [\hat{H} q^{\dagger}(\textbf{r},L-s)]
+  [ \hat{H} q (\textbf{r},s) ] q^{\dagger}(\textbf{r}, N-s)
+  - q (\textbf{r},s) [\hat{H} q^{\dagger}(\textbf{r}, N-s)]
   \right \}
   \quad.
-   \quad\quad\quad\quad\quad (A.11)
+   \quad\quad\quad\quad\quad (11)
 \f}
 We may then use the fact that the operator \f$ \hat{H} \f$ (like the
 analogous quantum mechanical Hamiltonian operator for a particle in a
@@ -418,19 +448,19 @@ any of the boundary conditions given in the theorem statement to show
 that
 \f[
   \int d\textbf{r} \;
-  [\hat{H} q (\textbf{r},s) ] q^{\dagger}(\textbf{r},L-s)
+  [\hat{H} q (\textbf{r},s) ] q^{\dagger}(\textbf{r}, N-s)
   =
   \int d\textbf{r} \;
-  q (\textbf{r},s) [\hat{H} q^{\dagger}(\textbf{r},L-s) \quad,
-  \quad\quad\quad\quad\quad (A.12)
+  q (\textbf{r},s) [\hat{H} q^{\dagger}(\textbf{r}, N-s) ] \quad,
+  \quad\quad\quad\quad\quad (12)
 \f]
 implying a cancellation of the two terms in the integrand of the last
-expression for \f$ dI(s)/ds \f$. This thus gives
+expression for \f$ dI(s)/ds \f$. We thereby show that
 \f[
   dI(s)/ds = 0
-  \quad\quad\quad\quad\quad (A.13)
+  \quad\quad\quad\quad\quad (13)
 \f]
-for all \f$ s \in [0,L] \f$, implying that \f$ I(s) \f$ is independent
+for all \f$ s \in [0,N] \f$, implying that \f$ I(s) \f$ is independent
 of \f$ s \f$ within each block.
 
 \anchor scft_propagator_theorem3
@@ -439,42 +469,47 @@ of incoming propagators associated with a vertex of an acyclic branched
 polymer has the same value for every vertex in the polymer, including
 any virtual 2-fold vertex inserted into any block of the polymer.
 
-<em> Proof </em>: \ref scft_propagator_theorem2 "Theorem A.2" shows that the
+<em> Proof </em>:
+This follows immediately from the combination of the preceding two
+theorems:  \ref scft_propagator_theorem2 "Theorem A.2" shows that the
 value of the spatial integral \f$ I(s) \f$ of the product of incoming
 propagators associated with a virtual 2-fold vertex inserted into any
 block of a polymer is independent of the coordinate \f$ s \f$ within the
-block. Combining this with \ref scft_propagator_theorem1 "theorem 1", we may
-show that the integral of the product of incoming propagators must have
+block. Thereom \ref scft_propagator_theorem1 "Theorem A.1" then implies
+that the integral of the product of incoming propagators must also have
 the same value for any vertices that are directly connected by a block.
-Because all vertices in a polymer are connected by some sequence of blocks,
-this implies that the value of this spatial integral must be the same for
-every vertex in any acyclic branched polymer, including virtual vertices
-that we insert at any point within any block.
+Because any two distinct vertices in an acyclic branched polymer are
+connected by a unique path of one or more blocks, this implies that
+the value of this spatial integral must be the same for every vertex
+in any acyclic branched polymer. Theorem A.2 also implies that this
+applies to virtual 2-fold vertices that we insert at any point within
+any block.
 
 \subsection scft_propagator_bigQ_sub Molecular Partition Function
 
-Let \f$ Q_{i} \f$ denote a normalized single-chain partition function
-for a polymer molecule of species \f$ i \f$ within an ideal gas reference
+Let \f$ Q_{a} \f$ denote a normalized single-chain partition function
+for a polymer molecule of species \f$ a \f$ within an ideal gas reference
 system that is subjected to a specified set of monomer potential fields.
-We define the value of \f$ Q_{i} \f$ to be equal to the spatial average
+We define the value of \f$ Q_{a} \f$ to be equal to the spatial average
 (i.e., the integral over the entire spatial domain of the problem
 divided by the volume of this domain) of the product of the values of
 the incoming propagators evaluated at any vertex of the polymer. The
 statement of theorem A.3 implies that we should get the same value for
-\f$ Q_{i} \f$ by evaluating it using any vertex in a polymer of species
-\f$ i \f$. Different values for \f$ Q_{i} \f$ are, however, generally
+\f$ Q_{a} \f$ by evaluating it using any vertex in a polymer of species
+\f$ a \f$. Different values for \f$ Q_{a} \f$ are, however, generally
 obtained for different species within a mixture.
 
 A particularly compact expression for this quantity may be obtained
 by evaluating the incoming propagator at any chain end, for which
-the vertex is attached to a single block of length \f$ L \f$. In this
+the vertex is attached to a single block of length \f$ N \f$. In this
 case, the above definition yields
 \anchor scft_propagator_Qend_eqn
 \f[
-   Q_{i} = \frac{1}{V} \int \! d\textbf{r} \; q^{\dagger}(\textbf{r},L)
-  \quad\quad\quad\quad\quad (A.14)
+   Q_{a} = \frac{1}{V}
+   \int \! d\textbf{r} \; q^{\dagger}(\textbf{r}, N)
+  \quad\quad\quad\quad\quad (14)
 \f]
-where \f$ q^{\dagger}(\textbf{r}, L) \f$ denotes the final value of
+where \f$ q^{\dagger}(\textbf{r}, N) \f$ denotes the final value of
 the single incoming propagator at that chain end.  Here, the integral
 is taken over the entire spatial domain for the problem of interest,
 while \f$ V \f$ is the generalized volume of that domain. In the case
@@ -485,154 +520,156 @@ volume per unit cell for a 3D crystal, area per 2D unit cell for a 2D
 structure such as a hexagonal cylinder phase, or the length per unit
 cell in a 1D lamellar phase).
 
-Another potentially useful expression for \f$ Q_{i} \f$ may be obtained
+Another potentially useful expression for \f$ Q_{a} \f$ may be obtained
 by considering a virtual 2-fold vertex inserted at contour coordinate
-\f$ s \f$ within any block \f$ a \f$ of length \f$ L_{ia} \f$ of a
-polymer species of \f$ i \f$ and using the result of theorem A.3 to show
+\f$ s \f$ within any block \f$ m \f$ of length \f$ N_{ma} \f$ of
+polymer species \f$ a \f$ and using the result of theorem A.3 to show
 that \anchor scft_propagator_Q2vertex
 \f[
-   Q_{i} = \frac{1}{V}
-   \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s)
-  \quad\quad\quad\quad\quad (A.15)
+   Q_{a} = \frac{1}{V}
+   \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},N-s)
+  \quad\quad\quad\quad\quad (15)
 \f]
-where \f$ L \f$ is the length of the chosen block, and where theorem A.3
-guarantees that the value of the RHS of this equation is actually
+where \f$ N \f$ is the length of the chosen block, and where theorem
+A.3 guarantees that the value of the RHS of this equation is actually
 independent of the choice of values for \f$ s \f$ and block index
-\f$ a \f$.
+\f$ m \f$.
 
 \subsection scft_propagator_rho_sub Monomer Probability Densities (Normalized)
 
-We can use the above definition of \f$ Q_{i} \f$ to write an explicit
-expression for the absolute probability density for the location of any
-specified monomer within an ideal gas reference system.
-Let \f$ \rho_{i a}({\bf r}, s) \f$ denote the probability density
-for the position \f$ {\bf r} \f$ of a monomer with contour position
-\f$ s \f$ with block \f$ a \f$ of a single polymer of species \f$ i \f$
-within a system that contains only a single polymer of this species, with
-no non-bonded pair interactions.  By combining our previous
-\ref scft_propagator_rhou_eqn "proportionality" that gives this quantity to
-within a constant with the requirement that integral of this probability
-density over the problem domain must equal unity, we find that
+We can use the above definition of \f$ Q_{a} \f$ to write an explicit
+expression for the absolute probability density for the location of
+any specified monomer within an ideal gas reference system.  Let
+\f$ \rho_{m a}({\bf r}, s) \f$ denote the probability density for the
+position \f$ {\bf r} \f$ of a monomer with contour coordinate \f$ s \f$
+within block \f$ m \f$ of a single polymer of species \f$ a \f$ within
+a system that contains only a single polymer of this species, with no
+non-bonded pair interactions.  By combining our previous
+\ref scft_propagator_rhou_eqn "proportionality", which gives this
+quantity to within a constant, with the requirement that integral of
+this probability density over the problem domain must equal unity, we
+find that
 \f[
-   \rho_{ia}({\bf r}, s) = \frac{1}{I_{ia}(s)}
-   q({\bf r}, s) q^{\dagger}({\bf r}, L_{ia} - s) \quad,
-  \quad\quad\quad\quad\quad (A.16)
+   \rho_{ma}({\bf r}, s) = \frac{1}{I_{ia}(s)}
+   q({\bf r}, s) q^{\dagger}({\bf r}, N_{ia} - s) \quad,
+  \quad\quad\quad\quad\quad (16)
 \f]
 in which \f$ q \f$ and \f$ q^{\dagger} \f$ are the two propagators
-associated with the block of interest, \f$ L_{ia} \f$ is the length of
-this block, and \f$ I_{ia}(s) \f$ is the spatial integral defined in
-the statement of \ref scft_propagator_theorem2 "theorem A.2", defined here
-for monomer with contour coordinate \f$ s \f$ within block \f$ a \f$
-of polymer species \f$ i \f$.
-Using the expression given \ref scft_propagator_Q2vertex "above" to relate
-\f$Q_{i}\f$ and \f$ I_{ia}(s) \f$, we find that
+associated with the block of interest, \f$ N_{ma} \f$ is the length of
+this block, and \f$ I_{ma}(s) \f$ is the spatial integral defined in
+the statement of \ref scft_propagator_theorem2 "theorem A.2", defined
+here for monomer with contour coordinate \f$ s \f$ within block
+\f$ m \f$ of polymer species \f$ a \f$.
+Using the expression given \ref scft_propagator_Q2vertex "above" to
+relate \f$ Q_{a} \f$ and \f$ I_{ma}(s) \f$, we find that
 \anchor scft_propagator_rhoia_eqn
 \f[
-   \rho_{ia} ({\bf r}, s) = \frac{1}{V Q_{i}}
-   q({\bf r}, s) q^{\dagger}({\bf r}, L-s)
-  \quad\quad\quad\quad\quad (A.17)
+   \rho_{ma} ({\bf r}, s) = \frac{1}{V Q_{a}}
+   q({\bf r}, s) q^{\dagger}({\bf r}, N-s)
+  \quad\quad\quad\quad\quad (17)
 \f]
-for any choice of block index \f$ a \f$ and contour coordinate \f$ s \f$.
+for any choice of block index \f$ m \f$ and contour coordinate \f$ s \f$.
 
 \subsection scft_propagator_phi_sub Block Volume Fractions
 
-Consider a system that contains \f$ M_{i} \f$ chains of polymer species
-\f$ i \f$ within a total volume \f$ V \f$. The volume occupied by each
-such polymer is \f$ v L_{i} \f$, where \f$ L_{i} \f$ is the total
-length of polymer species \f$ i \f$, given by the sum of the length of
-all of the blocks of that polymer. Let \f$ \overline{\phi}_{i} \f$ denote
-the average overall volume fraction occupied by molecule species \f$ i \f$
+Consider a system that contains \f$ M_{a} \f$ chains of polymer species
+\f$ a \f$ within a total volume \f$ V \f$. The volume occupied by each
+such polymer is \f$ v N_{a} \f$, where \f$ N_{a} \f$ is the total
+length of polymer species \f$ a \f$, given by the sum of the length of
+all of the blocks of that polymer. Let \f$ \overline{\phi}_{a} \f$ denote
+the average overall volume fraction occupied by molecule species \f$ a \f$
 within the mixture. This quantity is given by a ratio
 \f[
-   \overline{\phi}_{i} = \frac{M_{i} L_{i} v}{V}
-  \quad\quad\quad\quad\quad (A.18)
+   \overline{\phi}_{a} = \frac{M_{a} N_{a} v}{V}
+  \quad\quad\quad\quad\quad (18)
 \f]
-where the numerator of the RHS is the total volume occupied by \f$ M_{i} \f$
-such chains.
+where the numerator of the RHS is the total volume occupied by
+\f$ M_{a} \f$ such chains.
 
-Let \f$ \phi_{ia}(\textbf{r}) \f$ denote the local volume fraction of
-monomers belonging to block \f$ a \f$ of polymer species \f$ i \f$.  This
-quantity is related to the probability density \f$ \rho_{ia}({\bf r},s) \f$
-defined \ref scft_propagator_rhoia_eqn "above" by
+Let \f$ \phi_{ma}(\textbf{r}) \f$ denote the local volume fraction
+of monomers belonging to block \f$ m \f$ of polymer species
+\f$ a \f$.  This quantity is related to the probability density
+\f$ \rho_{ia}({\bf r},s) \f$ defined
+\ref scft_propagator_rhoia_eqn "above" by
 \f[
-   \phi_{ia}({\bf r}) = v M_{i}
-   \int\limits_{0}^{L_{ia}} \! ds \; \rho_{ia}({\bf r}, s) \quad,
-  \quad\quad\quad\quad\quad (A.19)
+   \phi_{ia}({\bf r}) = v M_{a}
+   \int\limits_{0}^{N_{ma}} \! ds \; \rho_{ma}({\bf r}, s) \quad,
+   \quad\quad\quad\quad\quad (19)
 \f]
-where \f$ M_{i} \f$ is the total number of chains of species \f$ i \f$
-and \f$ L_{ia} \f$ is the length of the relevant block.  Rewriting
-\f$ v M_{i} \f$ in terms of \f$ \overline{\phi}_{i} \f$ then yields
+where \f$ M_{a} \f$ is the total number of chains of species \f$ a \f$
+and \f$ N_{ma} \f$ is the length of the relevant block.  Rewriting
+\f$ v M_{a} \f$ in terms of \f$ \overline{\phi}_{a} \f$ then yields
 \anchor scft_propagator_phiia_eqn
 \f[
-   \phi_{ia}(\textbf{r}) =
-   \frac{\overline{\phi}_{i}}{L_{i}Q_{i}}
-   \int\limits_{0}^{L_{ia}} \! ds \;
+   \phi_{ma}(\textbf{r}) =
+   \frac{\overline{\phi}_{i}}{N_{a}Q_{a}}
+   \int\limits_{0}^{N_{ia}} \! ds \;
     q(\textbf{r},s) q^{\dagger}(\textbf{r},s)
-  \quad\quad\quad\quad\quad (A.20)
+  \quad\quad\quad\quad\quad (20)
 \f]
-where \f$ L_{i} \f$ is the total contour length of all of the blocks
-of polymer species \f$ i \f$.
+where \f$ N_{a} \f$ is the total contour length of all of the blocks
+of polymer species \f$ a \f$.
 
-The total volume fraction \f$ \phi_{\alpha}(\textbf{r}) \f$ for each
-monomer type \f$ \alpha\f$ is simply the sum of volume fractions for
-all polymer blocks and all solvent species that have been assigned a
-monomer type index \f$ \alpha\f$ .
+The total volume fraction \f$ \phi_{i}(\textbf{r}) \f$ for each
+monomer type \f$ i \f$ is simply the sum of volume fractions for
+all polymer blocks and all solvent species that have been assigned
+a monomer type index \f$ i \f$ .
 
 \section scft_propagator_solvent_sec Solvent species
 
-Each solvent species \f$ i\f$ is associated with a specific monomer type
-\f$ \alpha\f$ and a dimensionless "size" parameter. The size parameter
-for a solvent is a measure of volume closely analogous to the length
-parameter for a block in a block polymer, and is equal to the ratio of
-the volume per molecule occupied by the solvent to the monomer reference
-volume. In light of this analogy, we denote the "size" of solvent \f$ i\f$
-here by \f$ L_{i} \f$.
+Each solvent species \f$ a \f$ is associated with a specific monomer type
+\f$ i \f$ and a dimensionless "size" parameter. The size parameter for a
+solvent is a measure of volume closely analogous to the length parameter
+for a block in a block polymer, and is equal to the ratio of the volume
+per molecule occupied by the solvent to the monomer reference volume. In
+light of this analogy, we denote the "size" of solvent \f$ a\f$ here by
+\f$ N_{a} \f$.
 
 In the single molecule problem for solvent species, the free energy
-penalty for a solvent molecule of monomer type \f$ \alpha\f$ to be
-located at position \f$ \textbf{r} \f$ is given by
-\f$ k_{B}T L_{i} w_{\alpha}(\textbf{r}) \f$ .
+penalty for a solvent molecule of monomer type \f$ i \f$ to be located
+at position \f$ \textbf{r} \f$ is given by
+\f$ k_{B}T N_{a} w_{i}(\textbf{r}) \f$ .
 This implies the existence of a solvent volume fraction field
-\f$ \phi_{i}(\textbf{r}) \propto \exp[-L_{i}w_{\alpha}(\textbf{r})] \f$ .
+\f$ \phi_{a}(\textbf{r}) \propto \exp[-N_{a}w_{i}(\textbf{r})] \f$ .
 
-We define a normalized molecular partition function \f$ Q_{i} \f$ for
-solvent species \f$ i \f$ that is given by an integral
+We define a normalized molecular partition function \f$ Q_{a} \f$ for
+solvent species \f$ a \f$ that is given by an integral
 \f[
-   Q_{i} = \frac{1}{V}
-   \int \! d\textbf{r} \; \exp (-L_{i}w_{\alpha}(\textbf{r}) )
-  \quad\quad\quad\quad\quad (A.21)
+   Q_{a} = \frac{1}{V}
+   \int \! d\textbf{r} \; \exp (-N_{a}w_{i}(\textbf{r}) )
+   \quad\quad\quad\quad\quad (21)
 \f]
-for all \f$ i = P, \ldots, P + S - 1\f$ .
-The local volume fraction \f$ \phi_{i}(\textbf{r}) \f$ for solvent
-species \f$ i \f$ is then given by a ratio
+for all \f$ a = P, \ldots, P + S - 1 \f$ .
+The local volume fraction \f$ \phi_{a}(\textbf{r}) \f$ for solvent
+species \f$ a \f$ is then given by a ratio
 \f[
-   \phi_{i}(\textbf{r}) =
-   \frac{\overline{\phi}_{i}}{Q_{i}}
-   \exp(-L_{i}w_{\alpha}(\textbf{r}))
-   \quad\quad\quad\quad\quad (A.22)
+   \phi_{a}(\textbf{r}) =
+   \frac{\overline{\phi}_{a}}{Q_{a}}
+   \exp(-N_{a}w_{i}(\textbf{r}))
+   \quad\quad\quad\quad\quad (22)
 \f]
-in which \f$ \overline{\phi}_{i} \f$ is the overall volume fraction of
-solvent species \f$ i \f$ within the mixture. Note that the prefactor
-in this expression is chosen to guarantee that the spatial average of
-\f$ \phi_{i}(\textbf{r})\f$ (the integral divided by total volume) is
-give by the parameter \f$ \overline{\phi}_{i} \f$.
+in which \f$ \overline{\phi}_{a} \f$ is the overall volume fraction
+of solvent species \f$ a \f$ within the mixture. Note that the
+prefactor in this expression is chosen to guarantee that the spatial
+average of \f$ \phi_{a}(\textbf{r}) \f$ (the integral divided by total
+volume) is given by the parameter \f$ \overline{\phi}_{a} \f$.
 
 \section scft_propagator_ensemble_sec Open and closed ensembles
 
 PSCF allows the user to choose either an open or closed statistical
 ensemble for each molecular species in the mixture, by allowing a
 user to enter a value for either the overall volume fraction for
-that species, denoted here by \f$ \overline{\phi}_{i} \f$, or a
-value for the chemical potential, denoted here by \f$ \mu_{i} \f$.
+that species, denoted here by \f$ \overline{\phi}_{a} \f$, or a
+value for the chemical potential, denoted here by \f$ \mu_{a} \f$.
 
 To use an open ensemble for a particular species in SCFT, one uses an
 open (i.e., grand-canonical) ensemble to treat the behavior of that
 species when considering the hypothetical ideal gas of non-interacting
 molecules subjected to a potential. Use of a grand-canonical
-ensemble to describe to a gas of molecules of species \f$ i \f$
+ensemble to describe to a gas of molecules of species \f$ a \f$
 yields an overall concentration for that species and a corresponding
-overall volume fraction \f$ \overline{\phi}_{i} \f$ that are both
-proportional to the product \f$ e^{\mu_{i}/k_{B} T} Q_{i} \f$. The
+overall volume fraction \f$ \overline{\phi}_{a} \f$ that are both
+proportional to the product \f$ e^{\mu_{a}/k_{B} T} Q_{a} \f$. The
 value of the constants of proportionality in the expressions depends
 upon arbitrary choices of convention for normalizing volume used to
 relate the configurational integral for a single chain to a
@@ -640,8 +677,8 @@ dimensionless partition function and a choice of reference state used
 to define the chemical potential. In the equations used in PSCF, we
 set \anchor scft_propagator_phiofmu_eqn
 \f[
-   \overline{\phi}_{i} = e^{\mu_{i}/k_{B} T} Q_{i} \quad,
-   \quad\quad\quad\quad\quad (A.23)
+   \overline{\phi}_{a} = e^{\mu_{a}/k_{B} T} Q_{a} \quad,
+   \quad\quad\quad\quad\quad (23)
 \f]
 as a matter of convention.
 
@@ -649,166 +686,27 @@ Calculations of the local volume fractions for monomers within a
 specific block of a block copolymer and for the local volume fraction
 of a solvent species are thus performed for molecular species that
 are treated in an open ensemble, by simply replacing the parameter
-\f$ \overline{\phi}_{i} \f$ by the above expression in all expressions
-that involve \f$ \overline{\phi}_{i} \f$.
+\f$ \overline{\phi}_{a} \f$ by the above expression in all expressions
+that involve \f$ \overline{\phi}_{a} \f$.
 
 The value of the chemical potential is computed for any species that
 is treated in a closed ensemble (i.e., any species for which a volume
 fraction is specified in the parameter file) by computing
 \anchor scft_propagator_mu_eqn
 \f[
-   \frac{\mu_{i}}{k_{B}T }
-   = \ln \left ( \overline{\phi}_{i} / Q_{i}  \right )
+   \frac{\mu_{a}}{k_{B}T }
+   = \ln \left ( \overline{\phi}_{a} / Q_{a}  \right )
    \quad,
-   \quad\quad\quad\quad\quad (A.24)
+   \quad\quad\quad\quad\quad (24)
 \f]
-after computing \f$ Q_{i} \f$.
+after computing \f$ Q_{a} \f$.
 
 Values of species chemical potentials in both input and output files
 used by PSCF, which are denoted indicated the label "mu", are given in
 thermal energy units, and thus are correspond to values of the ratio
-\f$ \mu_{i}/k_{B}T \f$.
+\f$ \mu_{a}/k_{B}T \f$.
 
-\section scft_propagator_thermo_sec Thermodynamic properties
-
-PSCF reports values of the Helmholtz free energy and the pressure in
-non-dimensionalized form.
-
-The SCFT prediction for the total Helmholtz free energy \f$ F \f$ can be
-expressed as a sum
-\f[
-    F = F_{\rm id} + F_{\rm int}
-   \quad\quad\quad\quad\quad (A.25)
-\f]
-where \f$ F_{\rm id} \f$ is a "ideal" contribution that arises from polymer
-configurational entropy, and \f$ F_{\rm int} \f$ is an "interaction"
-contribution that arises directly from excess free energy of interaction
-that is characterized here in terms of binary interaction parameters.
-The non-dimensionalized free energy that is reported as "fHelmholtz" in
-the PSCF \ref scft_thermo_page "thermo file block" format is the free
-energy per monomer reference volume in thermal energy units, also denoted
-by the symbol
-\f[
-   \tilde{f} \equiv \frac{F v}{ V k_{B} T } \quad.
-   \quad\quad\quad\quad\quad (A.26)
-\f]
-This quantity can be expressed as a sum
-\anchor scft_propagator_ftilde_sum_eqn
-\f[
-   \tilde{f} = \tilde{f}_{\rm id} + \tilde{f}_{\rm int}
-   \quad\quad\quad\quad\quad (A.27)
-\f]
-in which the ideal and interaction contributions are given by
-\anchor scft_propagator_fidealint_eqns
-\f{eqnarray*}
-    \tilde{f}_{\rm id}
-    & = & \sum_{i=0}^{P+S-1} \frac{\overline{\phi}_{i}}{L_{i}}
-    \left [ \ln ( \overline{\phi}_{i} / Q_{i} ) - 1 \right ]
-     - \frac{1}{V}
-       \sum_{\alpha=0}^{C-1}
-       \int \! d\textbf{r} \;
-       w_{\alpha}(\textbf{r})
-      \phi_{\alpha}(\textbf{r}) \\
-    \tilde{f}_{\rm int}
-    & = &  \frac{1}{2V} \sum_{\alpha, \beta =0}^{C-1}
-    \chi_{\alpha\beta} \int \! d\textbf{r} \;
-    \phi_{\alpha}(\textbf{r}) \phi_{\beta}(\textbf{r})
-    \quad\quad\quad\quad\quad (A.28)
-\f}
-Note that the sum over species in the first term in the definition
-of \f$ F_{\rm id} \f$ is a sum over all species, including polymeric
-and solvent species. Unified notation for both types of molecule has
-been made possible by using the symbol \f$ L_{i} \f$ to denote a ratio
-of total molecular volume to monomer reference volume for species
-\f$ i \f$. This quantity is given by the overall length per molecule
-for block polymer species (the sum of the lengths of all blocks), or
-by the "size" parameter for solvent species.
-
-The macroscopic physical pressure \f$ P \f$ is computed from the identity
-\f[
-    P = - \frac{F}{V}
-        + \sum_{i=0}^{P+S-1}
-        \frac{\mu_{i}\overline{\phi}_{i}}{L_{i}v}
-    \quad\quad\quad\quad\quad (A.29)
-\f]
-in which \f$ F / V \f$ is the Helmholtz free energy density and
-\f$ \overline{\phi}_{i}/(L_{i}v) = M_{}/V\f$ is the average number
-of molecules of species \f$ i \f$ per unit volume. The value given
-in the \ref scft_thermo_page "thermo block" output file format, with
-the label "pressure", is the dimensionless quantity
-\f[
-  \tilde{p} \equiv \frac{Pv}{k_{B}T} =
-  - \tilde{f} + \frac{\mu_{i}\overline{\phi}_{i}}{L_{i}k_{B}T}
-  \quad.
-   \quad\quad\quad\quad\quad (A.30)
-\f]
-In Eqs. (A.29) and (A.30), the sum over species represents a sum
-over both polymeric and solvent species, and \f$ L_{i} \f$ denotes
-a ratio of molecular volume to monomer reference volume, exactly
-as in Eq. (A.28).
-
-\section scft_propagator_xi_sec Indeterminancy of pressure in canonical ensemble
-
-In grand-canonical and mixed ensembles, values for the Lagrange
-multiplier field \f$ \xi(\textbf{r}) \f$ and the macroscopic pressure
-\f$ P\f$ are uniquely determined by the values input for the chemical
-potentials.
-
-In the special case of canonical ensemble, however, the value of the
-Lagrange multplier field \f$ \xi(\textbf{r}) \f$ is *not* uniquely
-determined by the SCF equations and incompressibility constraint.
-In PSCF, a calculation is performed in canonical ensemble if the
-parameter file provides a volume fraction, rather than a chemical
-potential, as an input parameter for every polymer and solvent species.
-In this case, the relevant working equations can be shown to define
-\f$ \xi(\textbf{r}) \f$ only to within shifts by an arbitrary spatially
-homogeneous constant. Change in the value of \f$ \xi(\textbf{r}) \f$ by
-a homogeneous constant cause corresponding changes in values computed
-for \f$ w \f$ fields, chemical potentials and the non-dimensional
-pressure \f$ \tilde{p} \f$.  As a result, values for these quantities
-are also not uniquely defined in this ensemble, unless an additional
-mathematical constraint is imposed by convention to obtain a unique
-solution for \f$ \xi({\bf r}) \f$.
-
-Different conventions for this additional constraint on
-\f$ \xi({\bf r}) \f$ are used in different PSCF programs.  The
-implementations of the pscf_rpc and pscf_rpg programs for periodic
-microstructures obtain equations with a unique solution by requiring, as
-a matter of convention, that the spatial average of \f$ \xi(\textbf{r}) \f$
-must vanish in canonical ensemble. The pscf_r1d code for one-dimensional
-problems instead uses a convention that requires that, in canonical
-ensemble, the value of \f$ w_{\alpha}({\bf r}) \f$ must equal zero for
-the last monomer type (\f$ \alpha = C-1 \f$) at the last grid point.
-
-When an SCFT calculation is performed in canonical ensemble, each PSCF
-program outputs converted values for the pressure, chemical potentials,
-and \f$ w \f$ fields that are all consistent with the arbitrary convention
-used in that program to define a unique solution for \f$ \xi \f$.
-Numerical results for these quantities are thus sensitive to this choice
-of convention.  Results for the Helmholtz free energy density and volume
-fraction fields can, however, be shown to be independent of changes
-in the value of \f$ \xi \f$ by a homogeneous constant, and are thus
-independent of this choice of convention.
-
-Results of a calculation that is initially carried out in canonical
-ensemble can be exactly reproduced in a subsequent calculation that
-is performed in a mixed or grand-canonical ensemble by using the
-values of some or all of the chemical potentials that were output
-by the canonical calculation as inputs to a calculation performed in
-mixed or grand-canonical ensemble. Attempting to reverse procedure,
-however, leads to more complicated relationship.  Using the converged
-species volume fractions output by a calculation that is performed in
-a mixed or grand-canonical as inputs to a subsequent calculation that
-is performed in canonical ensemble will generally lead to results for
-values for the \f$ w \f$ fields, species chemical potentials and pressure
-that are different from those reported in the original calculation,
-because the value of \f$ \xi(\textbf{r}) \f$ will be shifted by a
-homogeneous constant in order to satisfy the convention that is imposed
-only in the special case of a canonical ensemble. Equal values for monomer
-volume fraction fields and Helmholtz free energies should, however, be
-obtained in any ensemble.
-
-\section scft_propagator_inputs_sec Overview: Working equations, inputs and outputs
+\section scft_propagator_inputs_sec Overview: SCFT Working equations
 
 The above discussion provide a complete set of working equations for SCFT of
 an incompressible liquid in the form implemented in PSCF, for calculations in
@@ -822,47 +720,48 @@ cell parameters.  The working equations for a PSCF SCFT calculation in a fixed
 spatial domain are:
 
    - The modified diffusion equation
-     [Eqs. (A.4) and (A.5)]
+     [Eqs. (4) and (5)]
 
-   - A definition of \f$ Q_{i} \f$ for each species
-     [Eq. (A.14) for polymers and Eq. (A.21) for solvents]
+   - A definition of \f$ Q_{a} \f$ for each species
+     [Eq. (14) for polymers and Eq. (21) for solvents]
 
-   - The relationship between \f$ \overline{\phi}_{i} \f$ and
-     \f$ \mu_{i} \f$
-     [Eq. (A.23) or (A.24)]
+   - The relationship between \f$ \overline{\phi}_{a} \f$ and
+     \f$ \mu_{a} \f$
+     [Eq. (23) or (24)]
 
    - Expressions for block and solvent monomer volume fractions
-     [Eq. (A.20) for a polymer block and (A.22) for a solvent]
+     [Eq. (20) for a polymer block and (22) for a solvent]
 
    - Self-consistent field condition
-     [Eq. (A.3)]
+     [Eq. (3)]
 
    - Incompressibility constraint
-     [Eq. (A.2)]
+     [Eq. (2)]
 
-   - Expression for Helmholtz free energy per monomer \f$ \tilde{f} \f$
-     [Eqs. (A.26 - A.28)]
+   - Expression for non-dimensional Helmholtz free energy per monomer,
+     \f$ f \f$, given \ref scft_thermo_helmholtz_sec "here".
 
-   - Expression for non-dimensionalized pressure \f$ \tilde{p} \f$
-     [Eq. (A.30)]
+   - Expression for non-dimensional pressure \f$ p \f$, or the
+     associated non-dimensional grand-canonical free energy, given
+     \ref scft_thermo_pressure_sec "here".
 
 The key outputs from solution of this set of equations are:
 
-  - A converged monomer chemical potential fields
-    \f$ w_{\alpha}({\bf r}) \f$ for each monomer type
-    \f$ \alpha = 0, \ldots, C-1 \f$
+  - A converged monomer chemical potential field
+    \f$ w_{i}({\bf r}) \f$ ("w field") for each monomer type
+    \f$ i = 0, \ldots, C-1 \f$
 
-  - A converged monomer volume fraction field
-    \f$ \phi_{\alpha}({\bf r}) \f$ for each monomer type \f$ \alpha \f$
+  - A converged monomer concentration field ("c field")
+    \f$ \phi_{i}({\bf r}) \f$ for each monomer type \f$ i \f$
 
-  - A computed chemical potential \f$ \mu_{i} \f$ or overall volume
-    fraction \f$ \overline{\phi}_{i} \f$ for each polymer and solvent
-    species \f$ i \f$ (depending on whether \f$ \overline{\phi}_{i} \f$
-    or \f$ \mu_{i} \f$ was provided as an input parameter for that
+  - A chemical potential \f$ \mu_{a} \f$ or overall volume
+    fraction \f$ \overline{\phi}_{a} \f$ for each polymer and solvent
+    species \f$ a \f$ (depending on whether \f$ \overline{\phi}_{a} \f$
+    or \f$ \mu_{a} \f$ was provided as an input parameter for that
     species)
 
   - Values for non-dimensionalized Helmholtz free energy
-    \f$ \tilde{f} \f$ and pressure \f$ \tilde{p} \f$.
+    \f$ f \f$ and pressure \f$ p \f$.
 
 The required inputs to such an SCFT calculation are:
 
@@ -871,30 +770,53 @@ The required inputs to such an SCFT calculation are:
   - A description of each block polymer type as a list of
     block lengths and vertex indices for attached vertices
 
-  - A size (volume relative to monomer reference volume) for
-    each monomer type
+  - A size (ratio of molecular volume to monomer reference volume)
+    for each solvent species
 
   - Values for all elements of the symmetric matrix of Flory-Huggins
     interaction parameters
 
   - A description of the spatial domain and boundary conditions
 
-It is straightforward to confirm, however, that the monomer
-reference volume \f$ v \f$ does not appear as a parameter in
-any of the final working equations enumerated above, and is
-thus not a required input parameter for an SCFT calculation.
+\section scft_propagator_vMonomer_sec Monomer reference volume
 
-PSCF allows the user to optionally input a value for \f$ v \f$
-in the parameter file (labelled as "vMonomer") because a value
-for \f$ v \f$ can be used for some calculations other than
-the standard SCFT calculation described above. For example, a
-value of \f$ v \f$ is required as an input to compute the total
-excess free energy of a spherical micelle, which can be output
-by the pscf_r1d program when used to simulate this geometry. A
-value of \f$ v \f$ will also be required as an input for
-stochastic field theoretic simulations that are currently
-under development as a planned addition to PSCF.
+It is straightforward to confirm that the monomer reference volume
+\f$ v \f$ does not appear as an input parameter in any of the final
+working equations enumerated above. This parameter is thus not a
+required input parameter for an SCFT calculation.
 
+PSCF allows the user to optionally input a value for \f$ v \f$ in
+the parameter file (labelled as "vMonomer"), but this value is not
+used in the solution of SCFT equations. The option of entering a
+value is provided because:
+
+  - A value for \f$ v \f$ is required as an input to field
+    theoretic simulations that can be performed by pscf_rpc
+    and pscf_rpg.
+
+  - A value for \f$ v \f$ is required to compute some physical
+    quantities that can be inferred from solution of a SCFT
+    problem.
+
+The role of the monomer volume in PS-FTS simulation is discussed
+in the next \ref psfts_page "manual section". We discuss the use
+of monomer volume in the interpretation of SCFT results below.
+
+A value for \f$ v \f$ is required in the analysis of SCFT results
+to compute some physical properties that require knowledge of the
+number of monomers or molecules that can pack into a region of
+space.  In SCFT treatments of periodic structures formed by a
+block polymer material, such properties include the number of
+molecules per unit cell and the total free energy per unit cell.
+For calculations that can be performed by pscf_1d code, such
+properties include, for example, the aggregation number and
+total excess free energy of a spherical micelle, the interfacial
+tension of an interface, and the excess concentration per area
+(adsorbed molecules per area) of a species that absorbs to an
+interface.  The pscf_r1d program provides specialized commands
+that can compute several of these properties of micelles and
+interfaces, but that require a value for \f$ v \f$ to be provided
+in the parameter file.
 
 <BR>
 \ref scft_thin_films_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

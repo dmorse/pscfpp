@@ -4,18 +4,29 @@
 \ref prdc_unitcell_page (Next)
 <BR>
 
-The thermodynamic properties obtained for a converged SCFT solution are output
-by PSCF in a standard format that we refer to a thermo file block, or simply a
-thermo block.  A thermo block can also be written to a specified file by the
-WRITE_THERMO command.  A thermo block also appears within the log information
-that is written to standard output during execution of an ITERATE command, as
-well as within each of the \ref scft_thermo_state_sec "state" files that are
-created by a SWEEP command.
+The thermodynamic properties obtained for a converged SCFT solution are
+output by PSCF in a standard format that we refer to a thermo file block.
+This information can be written to a file in any of the following ways:
+
+   - A thermo file block appears within the log information that is
+     written to standard output during execution of an ITERATE command.
+
+   - A thermo file block is included within each of
+     the \ref scft_thermo_state_sec "state" files that are created
+     by a SWEEP command.
+
+   - A thermo file block can be explicitly written to a file by the
+     WRITE_THERMO command after using the ITERATE command to obtain
+     a converged field configuration.
+
+In the remainder of this page, we first describes the format of a thermo
+file block, and then present the mathematical equations used by SCFT to
+compute thermodynamic properties.
 
 \section scft_thermo_format_sec Thermo file block format
 
-An example of the thermo block format produced by an SCFT calculation for
-a periodic system is shown below:
+An example of the thermo file block format produced by an SCFT calculation
+for a periodic system is shown below:
 
 \code
 fHelmholtz    -2.75154924314e+01
@@ -36,88 +47,65 @@ cellParams:
     0   1.62132469978e+01
 \endcode
 
-The following section discusses each of the entries in this file format,
-describing the meaning of each property and the units and conventions
-used to define its numerical value.
-
-\section scft_thermo_energetic_sec Properties
+The meaning of each entry in this file block are described below:
 
 \subsection scft_thermo_helmholtz_sub Helmholtz free energy
 
-The property "fHelmholtz" is a non-dimensional form of the Helmholtz free
-energy, which will be denoted here by the symbol \f$ \tilde{f} \f$.  The
-reported value is actually the free energy per monomer reference volume in
-thermal energy units. That is, the value reported for "fHelmholtz" for a
-system with a total Helmholtz free energy \f$ F \f$ and associated volume
-\f$ V \f$ is given by ratio
+The first line of a thermo file block contains the label "fHelmholtz"
+followed by a value.  The value of "fHelmholtz" is a non-dimensional
+form of the Helmholtz free energy, which is also denoted in equations
+by the symbol \f$ f \f$.   Specifically, the value of this quantity
+is the Helmoltz free energy per monomer reference volume in thermal
+energy units, given by
 \f[
-    \tilde{f} \equiv \frac{Fv}{Vk_{B}T}
+      f \equiv \frac{F v}{V k_{B}T} \quad,
 \f]
-where \f$ v \f$ is the monomer reference volume.
-
-In the special case of a one-component block polymer melt for which
-the input parameters are given using the
-\ref user_model_conventions_theorist_sec "theorists convention" that
-overall chain length is equal to 1.0, the monomer reference volume is
-equal to the volume per chain. In this case, the value reported for
-"fHelmholtz" is also the free energy per chain
-in thermal energy units, with \f$ k_{B}T = 1 \f$. More generally, in a
-mixture, one can obtain the free energy associated with the volume
-occupied by a molecular species by multiplying the overall contour length
-(for polymers) or size (for solvents) of the species by the value
-reported for "fHelmholtz".
+where \f$ F \f$ is total Helmholtz free energy, \f$ V \f$ is total
+volume, and \f$ v \f$ is monomer reference volume. A more detailed
+discussion is given \ref scft_thermo_helmholtz_sec "below".
 
 \subsection scft_thermo_pressure_sub Pressure and grand-canonical free energy
 
-The property "pressure" reported by PSCF is a non-dimensionalized
-thermodynamic pressure that is computed from the value of the
-grand-canonical free energy density. Consider a system that contains a
-total of \f$ N_{a} \f$ molecules of molecular species \f$ a \f$, and let
-\f$ \mu_{a} \f$ denote the chemical potential of species \f$ a \f$, for
-each polymer and solvent species.  Let \f$ \Phi \f$ denote the so-called
-"grand" or "grand-canonical" free energy, defined as
+The value given for the "pressure" in the second line of this
+example is a non-dimensionalized thermodynamic pressure that is
+computed from the value of the grand-canonical free energy density.
+The reported value, denoted by \f$ p \f$ in equations, is given by
 \f[
-   \Phi \equiv F - \sum_{a}\mu_{a}N_{a} \quad,
+     p = -\frac{\Phi v}{V k_{B}T} \quad,
 \f]
-in which the sum is taken over all polymer and solvent molecular species
-in the system. We define a thermodynamic pressure \f$ P \f$ via the
-identity
-\f[
-    \Phi = -PV  \quad,
-\f]
-where \f$ V \f$ is total system volume. The property reported by PSCF
-as "pressure", which is denoted here by the symbol \f$ \tilde{p} \f$,
-is actually the value of the ratio
-\f[
-    \tilde{p} = \frac{Pv}{k_{B}T} = -\frac{\Phi v}{Vk_{B}T} \quad.
-\f]
-The value of pressure reported by PSCF is thus \f$ -1 \f$ times the
-grand-canonical free energy per monomer reference volume, in thermal
-energy units.
+where \f$ \Phi \f$ is the total grand-canonical free energy.
+In a homogeneous material, \f$ \Phi = -PV \f$, where \f$ P \f$ is 
+macroscopic pressure, so this also yields \f$ p = Pv/(k_{B}T) \f$.
 
-\subsection scft_thermo_f_components_sub Free energy components
+\subsection scft_thermo_f_components_sub Ideal and interaction free energies
 
-The next two parameters, "fIdeal" and "fInter", are individual components
-of the Helmholtz free energy. "fInter" is an interaction free energy,
-representing the contribution to the Helmholtz free energy arising from
-interactions between dissimilar monomer species. "fIdeal" is the
-contribution to the Helmholtz free energy from everything else. This can
-be thought of as the free energy of a non-interacting ideal gas of
-polymers in the self-consistent chemical potential fields.
+The next two properties, labeled "fIdeal" (also denoted by \f$ f_{\rm id} \f$)
+and "fInter" (also denoted by \f$ f_{\rm int} \f$) are "ideal" and
+"interaction" contributions to "fHelmholtz" (or \f$ f \f$).
+Physically, \f$ f_{\rm id} \f$ is a "ideal" contribution that arises 
+from polymer configurational entropy, and \f$ f_{\rm int} \f$ is an
+"interaction" contribution that arises from the excess free energy 
+of interactions between different monomer types, as parameterized
+in PSCF in terms of binary interaction parameters.  Mathematical 
+definitions are given \ref scft_thermo_helmholtz_sec "below".
 
-In calculations with an external field, a third term will appear here:
-"fExt". This represents the contribution to the Helmholtz free energy
-arising from interactions between the monomer species and the external
-potential fields.
+In calculations with an external field, a third term will appear after
+these two, denoted by a label "fExt". This represents the energetic
+contribution \f$ f \f$ that arises directly from interactions
+between the monomer species and applied external potential fields.
+Generally, in a system that is subjected to external potentials
+\f$ f = f_{\rm id} + f_{\rm int} + f_{\rm ext} \f$, but
+\f$ f_{\rm ext} = 0 \f$ in models with no external potentials.
 
-\subsection scft_thermo_species_sub Polymer and solvent species
+\subsection scft_thermo_species_sub Polymer and solvent species properties
 
 The next two sections of the example given above are labeled "polymers"
-and "solvents". These are lists, with one row per chemical species, in
-which each row gives the species index, the overall volume fraction "phi",
-and the chemical potential "mu" of that chemical species. Note that the
-chemical potential values are in thermal energy units, so the numerical
-value reported for species \f$ a \f$ actually \f$ \mu_{a} / k_{B}T \f$.
+and "solvents". These are lists with one row per chemical species, in
+which each row gives the species index, the overall volume fraction
+"phi" and the chemical potential "mu" of one molecular species, in that
+order.  Chemical potential values are reported using thermal energy units,
+so the numerical value reported for species \f$ a \f$ is actually equal to
+\f$ \mu_{a} / k_{B}T \f$.
 
 \subsection scft_thermo_params_sub Lattice parameters
 
@@ -126,120 +114,304 @@ for the converged SCFT solution. This section appears in the output
 of SCFT calculations for periodic systems performed using pscf_rpc or
 pscf_rpg programs. It does not appear in the output of calculations
 for one-dimensional systems performed using pscf_r1d, since the domain
-size is fixed by the user in pscf_r1d calculations. In pscf_rpc and pscf_rpg
-calculations, some or all of the lattice parameters may be flexible, and
-are adjusted during the SCFT calculation so as to minimize the free
-energy density. In this case, the converged values of lattice parameters
-values that are allowed to vary are important output of the calculation.
-If an SCFT calculation is run with no flexible lattice parameters (i.e.,
-a rigid unit cell) this section of the thermo block simply reports the
-lattice parameters values that were used as inputs.  Input values for
-lattice parameters are normally provided within the header block of the
+size is fixed such 1D calculations. In pscf_rpc and pscf_rpg calculations,
+some or all of the lattice parameters may be flexible, and are adjusted
+during the SCFT calculation so as to minimize the free energy density.
+In this case, the converged values of lattice parameters values that
+are allowed to vary are important results of the calculation.
+
+If an SCFT calculation on a periodic structure is performed using a
+rigid unit cell, with no adjustable lattice parameters, lattice
+parameter values are still reported, but these values are simply equal
+to those provided as input to the calculation.  Input values for lattice
+parameters are normally provided within the header block of the field
 file used to provide an initial guess for the monomer chemical potential
-fields (the w fields). The lattice parameters are reported in whatever
-\ref user_model_parameters_length_sec "length units" were used in the
-input field and parameter files.
+fields (the w fields).
+
+Lattice parameters are reported in a thermo file block using whatever
+system of \ref user_model_parameters_length_sec "length units" was
+used in the input field and parameter files.
 
 \section scft_thermo_state_sec State files
 
 A "state" file is a type of file that is created for each state (i.e., each
 set of input parameters) during a \ref scft_sweep_page "parameter sweep"
 performed by a SWEEP command. Each such state file is comprised of a
-parameter file block followed by a thermo file block. The parameter file
+parameter file block followed by a thermo file block.  The parameter file
 block contains the input parameters used for the SCFT calculation at that
-state, with the Sweep block excluded, formatted in the nested
-curly-bracket syntax of a PSCF parameter file. The thermo block contains
-thermodynamic properties computed for the converged solution. Each state
-file thus gives all of the input <i>and</i> output parameters for a single
-calculation.  Names of state files that are generated by a SWEEP command
-contain an integer index followed by the file extension ".stt".
+state, with the Sweep block excluded, formatted in the nested curly-bracket
+syntax of a PSCF parameter file.  The thermo file block contains
+thermodynamic properties computed for the converged solution.
 
-A state file can also be generated for an individual calculation
-(as opposed to a parameter sweep) by using the command WRITE_PARAM
-followed by the command WRITE_THERMO, while using the same file name
-argument for both commands. In the command file, this might look like
+Each state file thus gives all of the input <i>and</i> output parameters
+for a single calculation.  Names of state files that are generated by a
+SWEEP command contain an integer index followed by the file name suffix
+".stt".
+
+The contents of a state file can also be generated for an individual
+SCFT calculation (as opposed to a parameter sweep) by invoking the
+command WRITE_PARAM followed by the command WRITE_THERMO, while using the
+same file name argument for both commands. In the command file, this might
+look like
 \code
 WRITE_PARAM    out/state
 WRITE_THERMO   out/state
 \endcode
-The WRITE_THERMO command is designed to append to the end of an
-existing file rather than overwrite it in order to allow both blocks
-to be written to a single file.
+The WRITE_THERMO command is designed to append to the end of an existing
+file rather than overwrite the file in order to allow both blocks to be
+written to a single file.
 
-An example of the format of a state file is shown below for a system that
-forms a lamellar phase of a diblock copolymer in a selective solvent.
-\code
-System{
-  Mixture{
-    nMonomer                               3
-    monomers[
-                         6.07000000e+00
-                         6.07000000e+00
-                         6.07000000e+00
-    ]
-    nPolymer                               1
-    nSolvent                               1
-    Polymer{
-      type                              linear
-      nBlock                                 2
-      blocks[
-                                              0    3.500000000000e-01
-                                              1    6.500000000000e-01
-      ]
-      phi                   5.000000000000e-01
-    }
-    Solvent{
-      monomerId                              2
-      size                  2.000000000000e-02
-      phi                   5.000000000000e-01
-    }
-    ds                    1.000000000000e-02
-  }
-  Interaction{
-    chi(
-                           0    0   0.000000000000e+00
-                           1    0   3.000000000000e+01
-                           1    1   0.000000000000e+00
-                           2    0   3.000000000000e+01
-                           2    1   1.000000000000e+02
-                           2    2   0.000000000000e+00
-    )
-  }
-  Domain{
-    mesh                                       100
-    lattice                         lamellar
-    groupName                           P_-1
-  }
-  AmIterator{
-    epsilon               1.000000000000e-11
-    maxItr                               200
-    maxHist                               30
-    verbose                                1
-    isFlexible                             1
-  }
-}
+\section scft_thermo_helmholtz_sec Helmholtz free energy
 
-fHelmholtz    -2.75154924314e+01
-pressure       3.24415250701e+01
+The remainder of this page discusses the mathematical formulas used by
+PSCF to compute SCFT thermodynamic properties, and the relationship to
+the non-dimensionalized quantities reported in a thermo file file. We
+focus on this page on models in inhomogeneous structures occur in a 
+homogeneous environment, without either imposed boundaries or external 
+fields. Modifications required to describe the effects of an 
+inhomogeneous environment are described on 
+\ref scft_environment_page "separate page".
 
-fIdeal        -3.44570175013e+01
-fInter         6.94152506994e+00
+In what follows, let \f$ F \f$ denote the total Helhmoltz free energy
+(or free energy per unit cell for a periodic system), and let \f$ V \f$
+denote corresponding total volume (or volume per unit cell for a periodic
+system).
 
-polymers:
-             phi                 mu
-    0   5.00000000000e-01   2.74031671637e+01
+The free energy that is reported as "fHelmholtz" in the PSCF thermo 
+file block format is the free energy per monomer reference volume in 
+thermal energy units, also denoted in equations by the symbol 
+\f$ f \equiv (F v)( V k_{B} T ) \f$. For a system in a homogeneous
+environment (i.e., in a model with no mask or external fields), this
+quantity can be expressed as a sum 
+\anchor scft_thermo_ftilde_sum_eqn
+\f[
+   f = f_{\rm id} + f_{\rm int} \quad,
+\f]
+in which the ideal and interaction contributions are given by
+\anchor scft_thermo_fidealint_eqns
+\f{eqnarray*}
+    f_{\rm id}
+    & = & \sum_{a=0}^{P+S-1}
+    \frac{\overline{\phi}_{a}}{N_{a}}
+    \left [ 
+    \ln \left (\frac{\overline{\phi}_{a}}{Q_{a}} \right ) - 1 
+    \right ]
+    - \frac{1}{V} \sum_{i=0}^{C-1}
+    \int \! d\textbf{r} \; w_{i}(\textbf{r}) \phi_{i}(\textbf{r}) \\
+    f_{\rm int} 
+    & = &  \frac{1}{2V} \sum_{i, j =0}^{C-1}
+    \chi_{i j} \int \! d\textbf{r} \; 
+    \phi_{i}(\textbf{r}) \phi_{j}(\textbf{r})
+    \quad.
+\f}
+The sum over species in the first term in the definition of 
+\f$ f_{\rm id} \f$ is a sum over all species, including polymeric and 
+solvent species.
 
-solvents:
-             phi                 mu
-    0   5.00000000000e-01  -3.51022037728e-01
+The symbol \f$ N_{a} \f$ is used here to denote the number of monomers
+or monomer volumes per molecule of species \f$ a \f$, given by the ratio
+of total molecular volume to monomer reference volume.  For a block
+polymer species, this quantity is given by the sum of the lengths (in
+the thread model) or number of beads (in a bead model) of all blocks
+in a molecule of that species.  For a solvent species, this quantity 
+is equal to the "size" parameter given in the parameter file. The 
+overall volume fraction of species \f$ a \f$, denoted by
+\f$ \overline{\phi}_{a} \f$ is given by
+\f[
+    \overline{\phi}_{a} = \frac{M_{a}N_{a}v}{V} \quad,
+\f]
+where \f$ M_{a} \f$ is the number of molecules of species \f$ a \f$
+in volume \f$ V \f$.
 
-cellParams:
-    0   1.62132469978e+01
-\endcode
+In the special case of a one-component block polymer melt for which
+the input parameters are given using the
+\ref user_model_conventions_theorist_sec "theorists convention" that
+overall chain length is equal to 1.0, the monomer reference volume is
+equal to the volume per chain. In this case, the value reported for
+"fHelmholtz" is also the free energy per chain in thermal energy units,
+with \f$ k_{B}T = 1 \f$.
+
+\section scft_thermo_pressure_sec Pressure and grand-canonical free energy
+
+The "pressure" property reported in a PSCF thermo block is a
+non-dimensionalized thermodynamic pressure that is computed from the value
+of the grand-canonical free energy density. Consider a system that contains
+ a total of \f$ M_{a} \f$ molecules of molecular species \f$ a \f$, and let
+\f$ \mu_{a} \f$ denote the chemical potential of species \f$ a \f$, for
+each polymer and solvent species.  Let \f$ \Phi \f$ denote the so-called
+"grand" or "grand-canonical" free energy, defined as
+\f[
+   \Phi \equiv F - \sum_{a} \mu_{a}M_{a} \quad,
+\f]
+in which the sum is taken over all polymer and solvent molecular species
+in the system. We define a thermodynamic pressure \f$ P \f$ via the
+identity
+\f[
+    \Phi = -PV  \quad,
+\f]
+where \f$ V \f$ is the system volume. The property reported by PSCF
+as "pressure", which is denoted here by the symbol \f$ p \f$, is
+actually the value of the ratio
+\f[
+    p = \frac{Pv}{k_{B}T} = -\frac{\Phi v}{V k_{B} T} \quad.
+\f]
+The value of pressure reported by PSCF is thus \f$ -1 \f$ times the
+grand-canonical free energy per monomer reference volume, in thermal
+energy units. This is related to the corresponding non-dimension
+Helmholtz free energy per monomer by the identity
+\f[
+   p \equiv \frac{Pv}{k_{B}T} =
+   - f + \sum_{a} \frac{ \mu_{a} \overline{\phi}_{a}}{N_{a}k_{B}T}
+   \quad,
+\f]
+where we have used the identity
+\f$ \overline{\phi}_{a}/N_{a} = M_{a}v/V  \f$.
+
+\section scft_thermo_ensemble_sec Open and closed ensembles
+
+PSCF allows the user to choose either an open or closed statistical
+ensemble for each molecular species in the mixture, by allowing a
+user to enter a value for either the overall volume fraction for that
+species, denoted here by \f$ \overline{\phi}_{a} \f$, or a value for
+the chemical potential, denoted here by \f$ \mu_{a} \f$.
+Values of species chemical potentials in both input and output files
+used by PSCF, which are denoted indicated the label "mu", are given
+in thermal energy units, and so correspond to values of the ratio
+\f$ \mu_{a}/k_{B}T \f$.
+
+The value of the chemical potential is computed for each species that
+is treated in a closed ensemble (i.e., any species for which a volume
+fraction "phi" is specified in the parameter file) by computing
+\anchor scft_thermo_mu_eqn
+\f[
+   \frac{\mu_{a}}{k_{B}T }
+   = \ln \left ( \frac{\overline{\phi}_{a} }{ Q_{a} } \right )
+   \quad,
+\f]
+where \f$ Q_{a} \f$ is the molecular partition function obtained
+with the converged w fields.  The value of \f$ \overline{\phi}_{a} \f$
+is computed for every species that is treated in an open ensemble (by
+specifying a value for the chemical potential "mu" potential rather
+than volume fraction in the parameter file) is obtained by solving
+the same equation for \f$ \overline{\phi}_{a} \f$, while treating
+\f$ \mu_{a} \f$ as a constant parameter.
+
+\section scft_thermo_xi_sec Indeterminancy of pressure in canonical ensemble
+
+In any open ensemble (grand-canonical or mixed), for each choice of
+values of the species chemical potential fields and other input parameters,
+there exists a unique Lagrange multiplier field \f$ \xi(\textbf{r}) \f$
+that the satisfies SCF equations and the incompressibility constraint.
+In such open and mixed ensembles, there also exists a corresponding
+unique value for the macroscopic pressure \f$ P \f$.
+
+In the special case of a completely closed (canonical) ensemble, however,
+the value of the Lagrange multplier field \f$ \xi(\textbf{r}) \f$ is *not*
+uniquely determined by the SCF equations and incompressibility constraint.
+In PSCF, a calculation is performed in canonical ensemble if the parameter
+file provides a volume fraction, rather than a chemical potential, as an
+input parameter for every polymer and solvent species.  In this case, the
+relevant working equations for an incompressible system can be shown to
+define \f$ \xi(\textbf{r}) \f$ only to within shifts by an arbitrary
+spatially homogeneous constant. That is, for any solution of this system
+of equations, there exist an infinite number of other solutions that are
+related by a spatially homogeneous shifts in the \f$ \xi \f$ field, of
+the form
+\f[
+    \xi({\bf r}) \rightarrow \xi({\bf r}) + C
+\f]
+where \f$ C \f$ is any constant. Such a shift corresponds to a shift in
+all of the w-fields by a constant
+\f[
+     w_{i}({\bf r}) \rightarrow w_{i}({\bf r}) + C
+\f]
+for all monomer types.
+Such a homogeneous shift of all of the w fields can be shown to cause
+no change in the computed values of the monomer concentration fields
+("c fields") or the Helmholtz free energy, but does change values of
+chemical potentials and the non-dimensional pressure \f$ p \f$.  As
+a result, values for chemical potential and pressure are not uniquely
+defined in this ensemble, unless an additional mathematical constraint
+is on the SCFT equations to obtain a unique solution for the constraint
+field \f$ \xi({\bf r}) \f$.
+
+Different conventions for this additional constraint on
+\f$ \xi({\bf r}) \f$ are used in different PSCF programs.  The
+implementations of the pscf_rpc and pscf_rpg programs for periodic
+microstructures obtain equations with a unique solution by requiring, as
+a matter of convention, that the spatial average of \f$ \xi(\textbf{r}) \f$
+must vanish in canonical ensemble. The pscf_r1d code for one-dimensional
+problems instead uses a convention that requires that, in canonical
+ensemble, the value of \f$ w_{i}({\bf r}) \f$ must vanish for
+the last monomer type (\f$ \alpha = C-1 \f$) at the last grid point
+of a one-dimensional mesh.
+
+A homogeneous shift in the \f$ \xi({\bf r}) \f$ field by a constant
+\f$ C \f$ physically to changes in the hydrostatic pressure to which 
+a closed system is subjected by an amount \f$ \Delta P = k_{B}T C / v \f$,
+or to a change in dimensionless pressure \f$ p \f$ of the form
+\f[
+    p \rightarrow p + C
+\f]
+It is straightforward to show using macroscopic classical
+thermodynamics that, for an incompressible system in which each
+species \f$ a \f$ occupies a constant molecular volume \f$ N_{a} v \f$
+(corresponding to a constant partial molar volume), such a change
+in pressure of a closed, isothermal system causes trivial changes
+in molecular chemical potentials of the form
+\f[
+   \mu_{a} \rightarrow \mu_{a} + N_{a} v C
+\f]
+for each species. Such a change in pressure also causes a change
+in the Gibbs free energy \f$ G = F + PV \f$, but can be shown to
+leave the Helmholtz free energy unchanged, since
+\f[
+   \left . \frac{\partial G}{\partial P} \right |_{T} = V
+   \quad\quad
+   \left . \frac{\partial F}{\partial P} \right |_{T} = 
+   \left . \frac{\partial (G-PV)}{\partial P} \right |_{T}
+   = - P \left . \frac{\partial V}{\partial P} \right |_{T} = 0 \quad,
+\f]
+for an incompressible system of constant composition.
+
+\section scft_thermo_convert_sec Converting between ensembles
+
+When an SCFT calculation is performed in canonical ensemble, each PSCF
+program outputs converted values for the pressure, chemical potentials,
+and \f$ w \f$ fields that are all consistent with the arbitrary convention
+used in that program to define a unique solution for \f$ \xi \f$.
+Numerical results for these quantities are thus sensitive to this choice
+of convention.  Converged results for the Helmholtz free energy and
+volume fraction fields are, however, independent of this choice of
+convention.
+
+Results of any calculation that is initially carried out in canonical
+ensemble can be exactly reproduced in a subsequent calculation that is
+performed in a mixed or grand-canonical ensemble by using the values
+of some or all of the chemical potentials that were output by the
+canonical calculation as inputs to a calculation performed in mixed
+or grand-canonical ensemble.
+
+Attempting to this reverse procedure, however, yields a more complicated
+relationship between inputs and outputs. Using the converged species
+volume fractions output by a calculation that is performed in a mixed
+or grand-canonical as inputs to a subsequent calculation that is
+performed in canonical ensemble will generally lead to converged results
+for values for the \f$ w \f$ fields, species chemical potentials and
+pressure that are different from those obtained in the original
+calculation. This is because PSCF calculation in canonical ensemble
+will shift the value of \f$ \xi(\textbf{r}) \f$ by a homogeneous
+constant in order to satisfy the additional requirement on \f$ \xi \f$
+that is imposed only in the special case of a canonical (closed)
+ensemble. The magnitude of this shift can be inferred from the resulting
+change in the value of the non-dimensional pressure \f$ p \f$.  Equal
+results for monomer volume fraction fields and Helmholtz free energy
+should, however, be obtained for physically equivalent states in any
+ensemble.
 
 <BR>
 \ref scft_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref prdc_unitcell_page (Next)
+\ref scft_environment_page (Next)
 
 */
