@@ -24,13 +24,16 @@ Discussion
 
 The most basic problem in maintaining CPU and GPU versions of the same
 code arises from the need to create CPU and GPU versions of the classes
-that store fields that are defined on a mesh and functions that manipulate 
-them. Relevant mathematical operations include things like binary and
-in-place (compound) arithmetic operations, exponentiation, and FFTs.
+that store fields that are defined on the nodes of a mesh, and distinct 
+versions of functions that manipulate these fields. All or almost all 
+of the data that is stored on the GPU in the current cuda version are
+fields of this type.  Relevant mathematical operations include things 
+like binary and in-place (compound) arithmetic operations, exponentiation, 
+and FFTs.
 
-Strategies for specializing the behavior for CPUs and GPUs can distinguish
-them either a compile time (via polymorphism) or inheritance (via 
-templates). 
+Strategies for specializing the behavior for CPUs and GPUs can choose
+between possible behaviors either at run time (via inheritance and 
+polymorphic virtual functions) or at compile time (via templates).
 
 A. Run time polymorphism via inheritance and virtual functions:
 
@@ -43,16 +46,18 @@ functions.
 Comments:
 
    - In virtual functions that implement operations for which the output
-     is a field, and one or more other fields may be provided as inputs,
-     it is natural to call the member function on the field that will 
-     hold the output, since there the output is always unique.
+     is a field, and one or more other fields may be provided as input
+     parameters, it is natural to call the member function on the field 
+     that will hold the output, since there is always one output, but
+     there may be any number of inputs.
 
    - To create generic code, functions that take fields as parameters
      must take instances of the base class. Operations are actually only
-     allowed for input and output fields of the same type, however, so
-     there must be some type of run-time check of some sort of label
-     to ensure that all fields involved in an operation are of the same
-     type (i.e., same mesh dimensions and the same CPU or GPU backend).
+     allowed for input and output fields that use the same backend.
+     There must be a run-time check of some sort of label to ensure that 
+     all fields involved in an operation use the same backend. Fields
+     in such an operation also must have the same mesh dimension, so it
+     is natural to check both of these conditions together.
 
 B. Compile time polymorphism via templates.
 
@@ -60,13 +65,12 @@ This is the proposal that is examined in detail in the remainder of this
 file. In this proposal, we define class templates that take some sort of
 template parameter that identifies the backend. Specifically, to take
 advantage of analogies with the existing implementation, the proposal
-is to define classes that essentially all take two template parameters:
-1) The integer dimension of space D=1,2, or 3, and 2) A class or
-enumeration that is uniquely identified with a particular backend. I
-propose to us a classes for this purpose so that the classes can contain
-additional information, e.g., about associated used by the associated
-FFT library for real and complex types (which are different for FFTW 
-and for cuFFT). 
+is to define many classes that each take two template parameters: 1) The 
+integer dimension of space D=1,2, or 3, and 2) A class or enumeration 
+that is uniquely identified with a particular backend. I propose to use 
+a classes to identify the backend because a classes can contain additional 
+information, e.g., about associated used by the associated FFT library for 
+real and complex types (which are different for FFTW and for cuFFT).
 
 In this approach, we would define a base class template for RField as
 
@@ -87,16 +91,16 @@ both D and T.
 
 Comments:
 
-  - Mathematical operations could be implemented as global functions
-    (for vector and reduction operations) or as member functions of
-    and associated FFT<D,T> class for FFT operations, as done 
-    currently. It appears that no changes would need to be made to 
-    any of the existing functions, and that it would remain easy to
-    add new mathematical operations without adding additional 
-    virtual functions to the field classes whenever you find it
-    convenient to define a new mathematical operation. 
+  - Mathematical operations can be implemented as global functions
+    (for vector operations and reduction operations) or as member 
+    functions of an associated FFT<D,T> class for FFT operations, 
+    exactly as done currently. It appears that no changes would need 
+    to be made to any of the existing functions, and that it would 
+    remain easy to add new mathematical operations without adding 
+    additional virtual functions to the field classes whenever you 
+    find it convenient to define a new mathematical operation. 
 
-  - Check that all fields or arrays involved in a mathematical 
+  - The check that all fields or arrays involved in a mathematical 
     operations must use the same backend would be naturally imposed by 
     the C++ type system, rather than as additional run-time-checks.
     The data types for fields are specializations of templates in
@@ -146,31 +150,92 @@ Thoughts:
 
   - The template-based system proposed here might or might not 
     be the best option if we were designing a new package from
-    scratch - I can see argument either way. It does, however,
-    seems to be the best option, and perhaps the only feasible
-    one, for improving the design of the current system without
-    starting over. 
+    scratch - I can see argument for the inheritance based system.
+    The template-based design does, however, provide a far easier
+    path for improving the design of the current code without
+    starting over, because of the formal similarity to the current
+    system. Both systems involve class templates with two parameters,
+    and simply change the nature of the Types class in a manner
+    that can be applied to one class at at time.
+
+  - I can see two options for the nature of the second template
+    parameter:
+
+      A. It can be a class, as described above. One advantage of 
+      this is that this provides a simple syntax for accessing
+      associated information about associated types or other 
+      info, via "typename T::Complex" or "T:: backend", etc.
+
+      B. The alternative is to make the second parameter an 
+      enum value (type Backend) and then use a Traits class 
+      Traits<T>::Complex to access related information. 
+
+    Either would work fine. The main reason that I prefer A is 
+    that it is more similar to the current system and provides 
+    an easier path for conversion (discussed below) by a method
+    that preserves working, testable code at intermediate steps.
+    After finishing a conversion to design A, it would be 
+    relatively easy to convert to design B in a separate step,
+    by globally converting "T::" to "Traits<T>::", if we thought 
+    the additional change was worth the trouble.
 
 Outline (order of operations)
 -----------------------------
 
-Non-disruptive  changes to existing code, in preparation:
+Non-disruptive preparatory changes to existing code design:
 
 1)  Change classes in Rp that use several class template parameters so as 
     to use a single Types class template parameter (essential for later 
-    transforming role of the Types class).
+    transforming the role of the Types class).
 
 2)  Define a enumeration that identifies backends and make a value of it
-    a static member of the existing Types classes, so that code that takes
-    a Types class as a template argument can ask explicitly what type of
-    backend is being used at run time. 
+    a static member of the existing Types classes. This would allow code 
+    that takes a Types class as a template argument to ask explicitly at
+    run time what type of backend is being used, and construct logic
+    with different paths for different back ends.
 
-3)  Try to develop abstractions to treat device <-> copy operations that
-    are required in for some Gpu implementations but not for the analogous
-    CPU versions, in order to further reduce the number of functions that
-    need different implementations for Cpu and Gpu code. The less 
-    specialization exists in the existing code, the easier it will be
-    to transform to a purely template based design.
+3)  Add Complex and Real type aliases to these classes, to represent
+    the data types used by the associated FFT classes. Convert use of
+    cudaComplex and cudaReal to typename T::Complex and typename T::Real
+    where possible in templates in the Rp namespace.
+ 
+4)  Make RField, RFieldDft and CField subclasses of specializations of
+    a class DRArray that can have countable references. This will make  
+    it is possible to create a zero-cost reference to a CPU field, and
+    increase the similarity of CPU and GPU code (since references are
+    already possible for a DeviceArray).
+
+5)  Create aliases named HostRField, HostRFieldDft and HostCField in 
+    the Types classes. In the CPU version, make these specializations
+    of DRArray, so that they can be used as references.
+
+6)  Develop an abstraction to treat device <-> copy operations that are
+    required for some Gpu implementations but not for the analogous CPU 
+    implementations. in order to further reduce the number of functions 
+    that need different implementations for Cpu and Gpu code. The CPU
+    implementations should create a reference rather than a copy, and
+    the GPU implementations should copy data between host and device.
+
+7)  More generally, reduce the number of class templates in Rp which
+    require subclasses that need to implement virtual functions in Rpc 
+    and Rpg namespaces.  The less inheritance is used to specialize in 
+    the existing code, the easier it will be to transform to a purely 
+    template based design.
+
+8)  Change names of any remaining class templates in the Rp namespace 
+    that require explicit specialization of subclasses in the Rpc and 
+    Rpg namespaces by adding name "Base" to the base class template 
+    name.  Distinguishing names of base and derived classes will prevent 
+    later clashes between base and derived class templates after we get 
+    rid of the Rpc and Rpg namespaces, and define both base and
+    derived classes in the Rp namespace. 
+
+9)  Define preprocessor macros for explicit instantiation declarations
+    and definitions, to reduce boilerplate and simplify the conversion 
+    to a new system. These can be named:
+
+       PSCF_TMPL_DT_DECLARE(Class, Types),
+       PSCF_TMPL_DT_DEFINE(Class, Typtes),
 
 Disruptive changes:
 
@@ -186,44 +251,44 @@ Disruptive changes:
     declarations and aliases, but don't include other header files
     from Rpc or Rpg, these header should be usuable anywhere in Pscf.
 
-    Add Complex and Real type aliases to these classes, to represent
-    the data types used by the associated FFT classes.
- 
 2)  Change references to Rpc::Types to CpuTypes and Rpg::Types to 
     CudaTypes throughout Rpc and Rpg namespaces, respectively. Also
     change file names for the relevant header file includes.
 
     (All code should compile again at this point. Changes have thus 
-    far been superficial changes in class names and namespaces in which
-     they are defined).
+     far been superficial changes in class names, namespaces in which
+     they are defined, and header file locations).
 
 3)  Create templates for RField, RFieldDft, CField etc. in Prdc
 
     - Create empty base class templates in Prdc of the form
-      class RField<int D, class T> where T is a "*Types" class.
+      class RField<int D, class T> where T is a "*Types" class,
+      and similarly for RFieldDft, CField, FFT, etc.
 
-    - Process: Make explicit partial specializations of RField, 
+    - Make explicit partial specializations of RField, 
       RFieldDft, CField, FFT, etc. that are just renamed versions of 
       existing classes now in Prdc::Cpu and Prdc::Cuda. Each of these
       partial specializations will still have D as an unspecified
       template parameter, like the existing classes.
 
-    - Idea: Use template parameter rather than Cpu and Cuda namespace 
-      qualifiers to distinguish names of Cpu and Gpu variants of 
-      analogous classes.  For example: 
+      For example: 
 
          Prdc::Cpu::RField<int D> => Prdc::RField<int D, CpuTypes>
  
+      Idea: Use template parameter rather than Cpu and Cuda namespace 
+      qualifiers to distinguish names of Cpu and Gpu variants of 
+      analogous field and FFT classes.  
+
     - Advantage: Template parameters in the class template of a 
       parent object can be used in type definitions for member
       variables and function interfaces.  Note: Namespaces cannot 
       be used as template parameters, so we have to use a class or
-      enumeration as template parameter to identify a backend.
+      enumeration as a template parameter to identify a backend.
 
-    - Note: No change necessary to functions defined in VecOp and 
-      Reduce. These functions operate on DArray or DeviceArray
-      containers, which are base classes for the CPU and GPU field 
-      containers, respectively.
+    - Note: No change should be necessary to functions defined in 
+      VecOp and Reduce. These functions operate on DArray or 
+      DeviceArray containers, which are base classes for the CPU 
+      and GPU field containers, respectively.
 
 4)  Make any other required changes in Prdc namespace to get this 
     namespace level directory to compile. Look for direct reference 
@@ -238,41 +303,43 @@ Disruptive changes:
     This will immediately allow re-use throughout the class templates 
     in Rp.
 
-7)  Search for and replace direct references to field and FFT type names in
-    Rpc and Rpg namespaces.
+7)  Find  and replace direct references to, e.g., RField<D> and FFT<D> 
+    type names in Rpc and Rpg namespaces with Field<D,CpuTypes> and
+    FFT<D,CpuTypes>, etc.
 
     (Code in rpc and rpg should compiles again at this point, but not 
     unit tests)
 
-8)  Find and replace direct references to Field<D> and FFT<D> types 
-    in rpc and rpg unit tests with, Field<D,T> and FFT<D,T>
+8)  Find and replace direct references to RField<D>, FFT<D>, etc. 
+    in rpc and rpg unit tests with, references to Field<D,CpuTypes> ,
+    FFT<D,CpuTypes>, etc.
 
     (All code and unit tests should again compile and run)
 
-9)  Change references via "typename T::RField" etc to more explicit 
-    RField<T,D> within class templates in the Rp namespace. This should 
-    cause no change in behavior, and is a first step towards removing 
-    need for a long list of aliases in the Types classes.
-
-10) Change names of any remaining class templates in the Rp namespace 
-    require explicit specialization of subclasses in the Rpc and Rpg 
-    namespaces by adding name "Base" to the base class template name.  
-    Distinguishing names of base and derived classes will prevent later 
-    clashes between base and derived class templates when base and 
-    derived classes are all defined in the Rp namespace.
+9)  In class templates in the Rp namespace, globally change references 
+    via "typename T::RField" etc to more explicit RField<T,D> within 
+    class templates in the Rp namespace. This should cause no change 
+    in behavior, and is a first step towards removing need for a long 
+    list of aliases in the Types classes.
 
 11) Go through the following operation for class templates defined in Rp
     for which aliases exist in the Types classes, class by class:
 
     For each class Rp::Class :
 
-       - Replace definitions of subclass templates Rpc::Class<D> 
-         and Rpg::Class<D> for each class by explicit instantiations of 
-         Rp::Class<D, CpuTypes> and Rp::Class<D, GpuTypes>. For the 
-         moment, the required explicit instantiation declarations and
-         definitions can be done within existing files in the rpc/ and 
-         rpg/ directories, by just changing class template and 
-         namespace names. 
+       - In rpc/ and rpg/ directories, remove definitions of subclass 
+         templates Rpc::Class<D> and Rpg::Class<D> for each class, and
+         instead explicitly instantiation Rp::Class<D, CpuTypes> and 
+         Rp::Class<D, GpuTypes>. For the moment, the required explicit 
+         instantiation declarations and definitions can be done within 
+         existing files in the rpc/ and rpg/ directories, by just 
+         changing class template, Types and namespace names. 
+
+         Note: It appears that the removal of definitions of subclasses 
+         needs to be done manually. This is the main reason that there
+         will need to be some work done manually, class-by-class. Use of 
+         macros for explicit instantiation declarations and definitions
+         should simplify other aspects of the conversion.
 
        - After each such conversion of a subclass to an explicitly
          instantiated template specialization, change the corresponding 
@@ -284,14 +351,16 @@ Disruptive changes:
          remove the associated alias from the Types class. (Everything 
          should still compile).
 
-       - Replace references to Class<D> to Class<D,CpuTypes> in unit 
-         tests.
+       - Replace references to Class<D> to, e.g., Class<D,CpuTypes> in 
+         unit tests.
 
     At the end of this process, the Types classes will contain almost 
     no aliases, except those for Real and Complex types used by FFT 
-    library. Each Types classes will have been gradually transformed 
-    from a container for a long lists of classes defined in Rpc or Rpg 
-    into much simpler identifiers for "policy" classes for a backend.
+    library and any others that we intend to preserve in the new system. 
+    Each Types classes will have been gradually transformed from a 
+    container for a long lists of aliases for classes defined in Rpc or 
+    Rpg into much simpler identifier for a backend, with a limited amount
+    of type information for types used by the FFT class.
 
 12) For each class that is defined in Rpc or Rpg but for which no alias
     is defined in the Types class, repeat the process applied above for
@@ -304,6 +373,25 @@ Disruptive changes:
     At the end of this process, their will not be any classes defined 
     in the Rpc or Rpg namespaces, and these namespaces will cease to
     exist.
+
+13) At this point, there will still be distinct headers in the rpc/ and
+    rpg/ namespaces for each class. The next step will be to merge these
+    headers into headers defined in the rp/ namespace, using macros to
+    place all required explicit instantiation declarations in the main
+    header. The macro used for explicit instantiation declarations 
+    within headers in the rp/ directory can rely on preprocessor logic
+    to create declarations only for backends that have been enabled by
+    the build system.
+
+    At this point, the rpc/ and rpg/ namespaces will contain *.cpp or
+    *. cu files, respectively, but no headers. Each *.cpp file or *.cu
+    file will contain just a set of explicit instantiation directives,
+    all of which can be instantiated using one or two macros.  The rpc/ 
+    and rpg/ namespaces will thus essentially have been converted into 
+    separate build directories for CPU and GPU code, to allow both 
+    versions to be built simultaneously. The bld/ directory can then
+    have rpc/ and rpg/ directories, but no rp/ directory, as in the
+    current system. 
 
 ======================================================================
 Code snippets:
@@ -383,7 +471,7 @@ Reducing need for specialization of subclasses defined in Rpc and Rpg
 
   - Make RField etc. subclasses of a class DRArray that can have countable
     references, so that it is possible to create a zero-cost reference to
-    a CPU array.
+    a CPU field.
 
   - Create an alias for HostField in each Types class. Use DRArray for
     HostField in the Cpu variant.
