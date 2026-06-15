@@ -13,8 +13,6 @@
 #include <cmath>
 
 namespace Pscf {
-// namespace Prdc {
-// namespace Cuda {
 namespace VecOp {
 
    // Anonymous namespace for CUDA kernels (only accessible in this file)

@@ -22,11 +22,6 @@ Subdirectories:
    Most named entitites in the src/pscf directory are defined directly
    in the top-level Pscf namespace. The most important exceptions are:
 
-   - All classes and functions declared in files in subdirectory pscf/cpu 
-     or pscf/cuda are declared in a correspoding nested namespaces named
-     Pscf::Cpu or Pscf::Cuda, respectively. These two namespaces provide 
-     closely analogous mathematical utilities for use in CPU or GPU code.
-
    - All classes in subdirectory pscf/floryHuggins are defined in a 
      nested namespace named Pscf::FloryHuggins. 
  

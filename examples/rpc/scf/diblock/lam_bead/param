@@ -1,0 +1,38 @@
+System{
+  polymerModel bead
+  Mixture{
+     nMonomer  2
+     monomers[
+               0.1  
+               0.1 
+     ]
+     nPolymer  1
+     Polymer{
+        type    linear
+        nBlock  2
+        blocks[
+                0   56
+                1   44
+        ]
+        phi     1.0
+     }
+  }
+  Interaction{
+     chi(
+          1   0   0.12
+     )
+  }
+  Domain{
+    mesh        40
+    lattice     lamellar  
+    groupName   P_-1
+  }
+  AmIterator{
+    epsilon 1.0e-12
+    maxItr 100
+    maxHist 10
+    isFlexible   0
+  }
+}
+
+    unitCell Lamellar   1.3835952906

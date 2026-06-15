@@ -14,7 +14,7 @@
 #include <complex>
 #include <iostream>
 
-namespace Pscf{
+namespace Pscf {
 
    /**
    * \defgroup Pscf_Cpu_Complex_Module Complex Arithmetic (CPU)
@@ -499,14 +499,16 @@ namespace Pscf{
    * \param z exponent (out)
    * \param a argument (in)
    */
-   inline
-   void assignExp(fftw_complex & z, fftw_complex const & a)
+   void assignExp(fftw_complex & z, fftw_complex const & a);
+
+   #if 0
    {
       std::complex<double> arg = std::complex<double>(a[0], a[1]); 
       std::complex<double> result = std::exp(arg);
       z[0] = result.real();
       z[1] = result.imag();
    }
+   #endif
 
    /**
    * Logarithm of an fftw_complex variable, z = log(a).
@@ -516,14 +518,16 @@ namespace Pscf{
    * \param z logarithm (out)
    * \param a argument (in)
    */
-   inline
-   void assignLog(fftw_complex & z, fftw_complex const & a)
+   void assignLog(fftw_complex & z, fftw_complex const & a);
+
+   #if 0
    {  
       std::complex<double> arg = std::complex<double>(a[0], a[1]); 
       std::complex<double> result = std::log(arg);
       z[0] = result.real();
       z[1] = result.imag();
    }
+   #endif
 
    // Stream IO operators
 

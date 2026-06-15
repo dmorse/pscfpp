@@ -3,45 +3,50 @@ Goals:
 
  - Develop a treatment of CPU and GPU versions of the same code that:
  
-     1. Allows maintenance of a single code base in a shared Rp 
-     namespace 
+     1. Allows maintenance of a single definition of each class used
+     on both CPU and GPU, whenever possible.
 
+     2. Avoiding the need to create parallel sets of classes
+     (or trivial subclasses) in the Rpc and Rpg namespaces.
 
-     2. Avoid the need to create different parallel sets of classes
-     in distinct Rpc and Rpg namespaces. 
+     3. Makes efficient use of existing code when possible - avoid the
+     need to start over.
 
-     3. Create a manageable system that allows for maintaining object
-     files and unit tests for several compiled versions of the code 
-     simultaneously.
+     4. Create a manageable build system that allows for maintaining 
+     object files for several compiled versions of the code. Ideally, 
+     I'd like to be able to maintain several versions simultaneously.
+
+     5. Create a manageable system for unit tests, with little or no
+     code duplication in the tests.
 
 Comments: Goal 1 has been largely accomplished b current system of class
-templates in Rp, with "Types" classes as template parameters. This file
-proposes a way to accomplish goal 2, and avoid the need for distinct
-Rpc and Rpg namespaces.  
+templates in namespace Rp, using "Types" classes as template parameters
+that encapsulate collections of type aliases.  This file proposes a way 
+to accomplish goal 2, and avoid the need for distinct Rpc and Rpg 
+namespaces.  
 
 Discussion
 ----------
 
 The most basic problem in maintaining CPU and GPU versions of the same
 code arises from the need to create CPU and GPU versions of the classes
-that store fields that are defined on the nodes of a mesh, and distinct 
-versions of functions that manipulate these fields. All or almost all 
-of the data that is stored on the GPU in the current cuda version are
+that store fields that are defined on the nodes of a mesh.  All or almost 
+all of the data that is stored on the GPU in the current cuda version are
 fields of this type.  Relevant mathematical operations include things 
 like binary and in-place (compound) arithmetic operations, exponentiation, 
-and FFTs.
+and FFTs. 
 
-Strategies for specializing the behavior for CPUs and GPUs can choose
-between possible behaviors either at run time (via inheritance and 
+Strategies for specializing the behavior for CPUs and GPUs can be based
+on a system that differentiates either at run time (via inheritance and 
 polymorphic virtual functions) or at compile time (via templates).
 
 A. Run time polymorphism via inheritance and virtual functions:
 
-Create an interface / base class for each field class and subclasses 
-designed to use CPU and GPU memory.  This must rely on the use of virtual 
-functions to distinguish behavior, and so requires that any mathematical 
-operation that is performed on a field be implemented by a virtual 
-functions.
+Strategy: Create an interface / base class for each field class, and define
+subclasses designed to use CPU and GPU memory.  Run-time polymorphism must 
+rely on the use of virtual functions to distinguish behavior, and so requires 
+that mathematical operation that are performed on a field all be implemented 
+by virtual functions.
 
 Comments:
 
@@ -52,25 +57,33 @@ Comments:
      there may be any number of inputs.
 
    - To create generic code, functions that take fields as parameters
-     must take instances of the base class. Operations are actually only
-     allowed for input and output fields that use the same backend.
-     There must be a run-time check of some sort of label to ensure that 
-     all fields involved in an operation use the same backend. Fields
-     in such an operation also must have the same mesh dimension, so it
-     is natural to check both of these conditions together.
+     must take references to base classes as parameters. Operations are 
+     actually only allowed for input and output fields that are defined
+     on the same grid and that use the same "backend".  There thus must 
+     be a run-time check of some sort of label to ensure that all fields 
+     involved in an operation are compatible in this sense. Because both
+     mesh dimensions and backend must be compatible, it is natural to 
+     create a structure that encapsulates the attributes and checks them
+     together. 
 
 B. Compile time polymorphism via templates.
 
-This is the proposal that is examined in detail in the remainder of this
-file. In this proposal, we define class templates that take some sort of
-template parameter that identifies the backend. Specifically, to take
-advantage of analogies with the existing implementation, the proposal
-is to define many classes that each take two template parameters: 1) The 
-integer dimension of space D=1,2, or 3, and 2) A class or enumeration 
-that is uniquely identified with a particular backend. I propose to use 
-a classes to identify the backend because a classes can contain additional 
-information, e.g., about associated used by the associated FFT library for 
-real and complex types (which are different for FFTW and for cuFFT).
+This is the proposal that is outlined in the remainder of this file. In 
+this proposal, we define class templates that take a template parameter 
+that uniquely identifies the backend. 
+
+Specifically, to take advantage of analogies with the existing 
+implementation in namespace Pscf::Rp, I propose to define many classes 
+that each take two template parameters: 
+
+   -  The integer dimension of space D=1,2, or 3, and
+   -  A class or enumeration that is uniquely identified with a 
+     particular backend. 
+
+I tentatively propose to use a classes to identify the backend because 
+a classes can contain additional information, e.g., about associated 
+types used by the associated FFT library), and because this is most
+similar to the existing system. 
 
 In this approach, we would define a base class template for RField as
 
@@ -84,7 +97,7 @@ Cuda.
 Class templates with the same two template parameters would also be 
 written for a variety of other higher level classes that own or interact
 with field classes. A class template Parent<D,T> for a parent class that
-owns a field can then have a member Field<D,T>. In this manner we can
+owns an RField can then have a member Field<D,T>. In this manner we can
 create a hierarchy of templates that own each other, such that all of
 the templates used in a given executable would have the same values for
 both D and T.
@@ -95,70 +108,101 @@ Comments:
     (for vector operations and reduction operations) or as member 
     functions of an associated FFT<D,T> class for FFT operations, 
     exactly as done currently. It appears that no changes would need 
-    to be made to any of the existing functions, and that it would 
-    remain easy to add new mathematical operations without adding 
-    additional virtual functions to the field classes whenever you 
-    find it convenient to define a new mathematical operation. 
+    to be made to any of the existing mathematical functions. Continued
+    use of global functions as makes it easy to add new mathematical 
+    operations when convenient without adding additional virtual 
+    functions to the field classes.
 
   - The check that all fields or arrays involved in a mathematical 
-    operations must use the same backend would be naturally imposed by 
-    the C++ type system, rather than as additional run-time-checks.
-    The data types for fields are specializations of templates in
-    which one of the template parmeters identifies the backend, so
-    the backend is embedded in the type definitions. Functions would
-    we defined for allowed operations, involving fields that use the
-    same backed, but not for prohibited operations, and the compiler
-    will choose the correct version of overloaded functions.
-
+    operations must use the same backend would be automatically imposed 
+    by the C++ type system, rather than as run-time-checks: The data 
+    types for fields are specializations of templates in which one 
+    of the template parmeters identifies the backend, so the backend 
+    is embedded in the type definitions. Functions would we defined 
+    for allowed operations, involving fields that use the same backend, 
+    but not for prohibited operations. The compiler will choose the 
+    correct version of overloaded functions when instantiating each
+    class template specialization. 
+    
   - I need to think about how to implement unit tests, but it may
     be natural to define some of these as member function templates
-    that take the backend types class T as a template argument. 
+    that take the backend types class T as a template argument. This
+    part is not fully fleshed out.
 
 Thoughts:
 
-  - I think the template approach is actually a rather a natural 
-    conceptual fit to a problem, but more awkard to implement in
-    C++ because of pecularities of the language. In practice, a
-    single backend will always be used throughout execution of 
-    a given program, and could be chosen simply be calling a 
-    different variant of the executable. We don't need the 
-    run-time flexibility provided by run-time polymorphism. 
+  - The template approach is arguably a more natural conceptual fit to 
+    the software design.  In either design, a single backend will always 
+    be used throughout execution of a given program, so the backend for 
+    the entire program can be specified at compile time, as a template 
+    parameter.  The flexibility promised by a system based on run-time 
+    polymorphism simply isn't necessary, or ever used: We dont' use or 
+    need the freedom to choose which backend to use during program 
+    execution, or to allow for the creation of objects with different 
+    backends during execution. Interfaces required by an inheritance
+    based solution imply that objects with different backends can be 
+    used interchangeably, but this is not true: All the objects in a 
+    given program must use the same backend for the program to function.
 
-  - The strongest argument for preferring compile-time polymorhpisms 
-    is really that the C++ mechanisms for working with templates in
-    a large framework are simply much clumsier than mechanisms for 
+  - I think that the strongest argument for preferring compile-time 
+    polymorhpisms really has to do with the strengths and defects of
+    the C++ language: The C++ mechanisms for working with templates in 
+    a large code base are simply much clumsier than mechanisms for 
     working with a system based on inheritances. The awkwardness of 
-    patterns of file inclusion for C++ templates is really a defect 
-    of the language that is a result of its descent from C, and 
-    the use of the C model for importing modules in which 
-    information about other classes is imported by a text preprocessor 
-    that literally pastes header files into other files.  The 
-    resulting awkardness of large template-based systems in C++ 
-    is real, however, and can provide good reasons to favor 
-    run-time polymorphisms even for problems in which compile-time 
-    polymorphism via templates might otherwise seem like a natural 
-    choice. 
+    C++ mechanisms for working with files that define templates is
+    largely a result of the use of a text preprocessor to literally 
+    cut-and-paste header files as a way of importing interface 
+    information that C++ inherited from C, and the way that old 
+    (archaic?) mechanism interacts with C++ templates.  The added 
+    complexity required to work with templates in C++ is, however, a 
+    real consideration, and provides an important reason to consider
+    a solution based on run-time polymorphism even for problems in 
+    which compile-time polymorphism is a reasonable option.
 
-  - The current version of PSCF uses a system of templates that
-    is in some ways very similar to that proposed here, in which
-    all of the classes defined in the Rp name space already have
-    two class templates analogous to the two proposed here. The
-    template based proposal would allow re-use of all of the 
-    existing code for basic mathematical operations, without
-    modification, and provides a path to modify class templates
-    to improve the design without ever breaking the code. 
+  - The current version of PSCF uses a system of templates that is 
+    in some ways very similar to that proposed here. In the current
+    system, the Rp namespace already contains a set of classes that
+    almost all have two class template templates analogous to the two 
+    proposed here.  In the process of developing the current 
+    template-based system, we have already developed methods to avoid 
+    some of the potential problems of large-template based frameworks 
+    in C++ (e.g., potentially long compilation times and mysterious 
+    error) by systematic use of explicit instantiation of all required 
+    template specializations.
 
-  - The template-based system proposed here might or might not 
-    be the best option if we were designing a new package from
-    scratch - I can see argument for the inheritance based system.
-    The template-based design does, however, provide a far easier
-    path for improving the design of the current code without
-    starting over, because of the formal similarity to the current
-    system. Both systems involve class templates with two parameters,
-    and simply change the nature of the Types class in a manner
-    that can be applied to one class at at time.
+  - The key difference between the current and proposed systems is that
+    the proposed system would remove the need for the existence of 
+    formally distinct CPU and GPU versions of each class that exist in
+    different namespace. Currently for a class named "Class", there is
+    generally a template class template Rp::Class<D,T> that defines all
+    or most of the class definition, and subclasses Rpc::Class<D> and
+    Rpg::Class<D> that are derived from specializations of Rp::Class
+    with different values for the Types class. The subclasses defined
+    in Rpc and Rpg are often trivial subclasses, with little or no
+    new code, which are required simply in order to segregate names 
+    for Cpu and Gpu code. In the new system, we would work directly 
+    with specializations of Rp::Class<D,T> with different values for
+    the types class T= CpuTypes or T=CudaTypes. 
 
-  - I can see two options for the nature of the second template
+  - By getting rid of the Rpc and Rpg namespaces, we would get rid of
+    the need for the Types classes to maintain sets of aliases that
+    define generic names that refer to classes defined in the Rpc and
+    Rpg namespaces. The Types classes definitions would become much
+    smaller, and would contain only a few types definitions for types
+    used by the FFT classes.
+
+  - IMHO, the ugliest aspects of the current system is the need to 
+    define separate completely parallel sets of classes in Rpc and Rpg
+    namespaces, even when analogous classes derive all or almost all of
+    their source code, and the need to use giant lists of aliases in
+    the Types classes. This proposal is designed to fix that, while
+    continuing to use a template parameter to identify a backend at
+    compile time.
+
+  - In a system in which most classes take two template parameters
+    (dimension of space D, and a second parameter T that acts as an
+    identifier for a backend (cpu, cuda, openmp, hip, etc.), I can
+    see two reasonable options for the nature of the second template
     parameter:
 
       A. It can be a class, as described above. One advantage of 
@@ -170,72 +214,94 @@ Thoughts:
       enum value (type Backend) and then use a Traits class 
       Traits<T>::Complex to access related information. 
 
-    Either would work fine. The main reason that I prefer A is 
-    that it is more similar to the current system and provides 
-    an easier path for conversion (discussed below) by a method
-    that preserves working, testable code at intermediate steps.
-    After finishing a conversion to design A, it would be 
-    relatively easy to convert to design B in a separate step,
-    by globally converting "T::" to "Traits<T>::", if we thought 
+    Either would work fine. The main reason that I curently prefer
+    A (use of a class) is that it is more similar to the current 
+    system and provides an easier path for conversion (discussed 
+    below) by a method that preserves working, testable code at 
+    intermediate steps.  After finishing a conversion to design A, 
+    it would be relatively easy to convert to design B in a separate 
+    step, by globally converting "T::" to "Traits<T>::", if I thought 
     the additional change was worth the trouble.
+
+  - As already noted, the proposed template based proposal would allow 
+    re-use of all of the existing code for basic mathematical operations, 
+    without modification. As discussed below, it also provides a path 
+    to an improved design by stepwise changes, without ever breaking 
+    the code. It appears to me that a change to an inheritance based
+    design would require a more drastic rewrite.
+
+  - The template-based system proposed here might or might not have
+    been the best option if we were designing a new package from
+    scratch. I would see an argument for the inheritance based system 
+    if I were starting over, mostly because I think it is somewhat easier 
+    for grad student developers to understand an inheritance based system
+    than a template based system. The proposed template-based design is
+    a logically reasonable option that provides an easier path for 
+    converting from the current system, of their similarity .
 
 Outline (order of operations)
 -----------------------------
 
 Non-disruptive preparatory changes to existing code design:
 
-1)  Change classes in Rp that use several class template parameters so as 
-    to use a single Types class template parameter (essential for later 
-    transforming the role of the Types class).
+1)  Change the few classes in Rp that use several explicit class template 
+    parameters rather than a Types class so as to use a Types class template 
+    parameter. This will simplify the transformation of the role of the Types
+    class from a list of aliases to (primarily) an identifier for a backend.
 
 2)  Define a enumeration that identifies backends and make a value of it
     a static member of the existing Types classes. This would allow code 
     that takes a Types class as a template argument to ask explicitly at
-    run time what type of backend is being used, and construct logic
-    with different paths for different back ends.
+    run time what type of backend is being used, and construct some logic
+    that can execute different paths for different back ends.
 
-3)  Add Complex and Real type aliases to these classes, to represent
+3)  Add Complex and Real type aliases to the Types classes, to represent
     the data types used by the associated FFT classes. Convert use of
     cudaComplex and cudaReal to typename T::Complex and typename T::Real
-    where possible in templates in the Rp namespace.
+    where possible in templates that are currently defined in the Rpg 
+    namespace.
  
-4)  Make RField, RFieldDft and CField subclasses of specializations of
-    a class DRArray that can have countable references. This will make  
-    it is possible to create a zero-cost reference to a CPU field, and
-    increase the similarity of CPU and GPU code (since references are
-    already possible for a DeviceArray).
+4)  Make the FftwDArray class from which RField, RFieldDft and CField 
+    are derived behave like a DRArray, so that it can be referred to by
+    other objects of the same type, with reference counting to ensure
+    memory safety.  This will make  it is possible to create a zero-cost 
+    reference to a CPU field to create a structure in CPU code analogous 
+    to the use of distinct device and host arrays in GPU code: In Cpu 
+    code a "HostArray" could simply be a reference to a Field container,
+    by sharing a pointer, rather than an actual deep copy. 
 
-5)  Create aliases named HostRField, HostRFieldDft and HostCField in 
-    the Types classes. In the CPU version, make these specializations
-    of DRArray, so that they can be used as references.
+5)  Create aliases named HostRField, HostRFieldDft and HostCField in the 
+    Types classes. In the CPU version, make these specializations of 
+    FftwDArray, so that they can be used as references.
 
 6)  Develop an abstraction to treat device <-> copy operations that are
     required for some Gpu implementations but not for the analogous CPU 
-    implementations. in order to further reduce the number of functions 
+    implementations, in order to further reduce the number of functions 
     that need different implementations for Cpu and Gpu code. The CPU
     implementations should create a reference rather than a copy, and
     the GPU implementations should copy data between host and device.
 
-7)  More generally, reduce the number of class templates in Rp which
-    require subclasses that need to implement virtual functions in Rpc 
-    and Rpg namespaces.  The less inheritance is used to specialize in 
-    the existing code, the easier it will be to transform to a purely 
-    template based design.
+7)  More generally, work on reducing the number of class templates in Rp 
+    which require subclasses that need to implement virtual functions in 
+    Rpc and Rpg namespaces to specialize behavior.  The less inheritance 
+    is used to specialize CPU and GPU algorithms in the existing code, 
+    the easier it will be to transform to a unitary template based design.
 
-8)  Change names of any remaining class templates in the Rp namespace 
-    that require explicit specialization of subclasses in the Rpc and 
-    Rpg namespaces by adding name "Base" to the base class template 
-    name.  Distinguishing names of base and derived classes will prevent 
-    later clashes between base and derived class templates after we get 
+8)  There may remain a few class templates in Rp namespace that require
+    specialized functions for CPU and GPU versions. For these cases, 
+    change the name of the main template by adding a suffix "Base" to
+    the class template name, and define CPU and GPU subclasses with the 
+    same name without the suffix to specialized virtual functions.
+    Distinguishing names of base and derived classes will prevent later 
+    name clashes between base and derived class templates after we get 
     rid of the Rpc and Rpg namespaces, and define both base and
     derived classes in the Rp namespace. 
 
 9)  Define preprocessor macros for explicit instantiation declarations
-    and definitions, to reduce boilerplate and simplify the conversion 
-    to a new system. These can be named:
-
-       PSCF_TMPL_DT_DECLARE(Class, Types),
-       PSCF_TMPL_DT_DEFINE(Class, Typtes),
+    and explicit istantiation definitions, to reduce the need to write
+    boilerplate code.  Macros can use preprocessor macros to conditionally
+    declare or define specializations depending on which types of hardware
+    are currently enabled in the build system. 
 
 Disruptive changes:
 
