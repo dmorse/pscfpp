@@ -4,6 +4,7 @@
 #include <test/CompositeTestRunner.h>
 
 #include "CpuFftwDArrayTest.h"
+#include "CpuFftwDRArrayTest.h"
 #include "CpuRFieldTest.h"
 #include "CpuRFieldDftTest.h"
 #include "CpuCFieldTest.h"
@@ -14,6 +15,7 @@
 
 TEST_COMPOSITE_BEGIN(CpuTestComposite)
 TEST_COMPOSITE_ADD_UNIT(CpuFftwDArrayTest);
+TEST_COMPOSITE_ADD_UNIT(CpuFftwDRArrayTest);
 TEST_COMPOSITE_ADD_UNIT(CpuRFieldTest);
 TEST_COMPOSITE_ADD_UNIT(CpuRFieldDftTest);
 TEST_COMPOSITE_ADD_UNIT(CpuCFieldTest);
