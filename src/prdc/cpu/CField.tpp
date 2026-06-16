@@ -22,7 +22,7 @@ namespace Cpu {
    */
    template <int D>
    CField<D>::CField()
-    : FftwDArray<fftw_complex>(),
+    : FftwDRArray<fftw_complex>(),
       meshDimensions_()
    {}
 
@@ -40,11 +40,11 @@ namespace Cpu {
    */
    template <int D>
    CField<D>::CField(const CField<D>& other)
-    : FftwDArray<fftw_complex>(),
+    : FftwDRArray<fftw_complex>(),
       meshDimensions_()
    {
       if (other.isAllocated() && other.capacity_ > 0) {
-         FftwDArray<fftw_complex>::allocate(other.capacity_);
+         FftwDRArray<fftw_complex>::allocate(other.capacity_);
          meshDimensions_ = other.meshDimensions_;
          for (int i = 0; i < capacity_; ++i) {
             data_[i][0] = other.data_[i][0];
@@ -96,7 +96,7 @@ namespace Cpu {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      FftwDArray<fftw_complex>::allocate(size);
+      FftwDRArray<fftw_complex>::allocate(size);
    }
 
    /*
@@ -105,7 +105,7 @@ namespace Cpu {
    template <int D>
    void CField<D>::deallocate()
    {
-      FftwDArray<fftw_complex>::deallocate();
+      FftwDRArray<fftw_complex>::deallocate();
       for (int i = 0; i < D; ++i) {
          meshDimensions_[i] = 0;
       }

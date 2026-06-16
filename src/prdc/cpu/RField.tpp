@@ -22,7 +22,7 @@ namespace Cpu {
    */
    template <int D>
    RField<D>::RField()
-    : FftwDArray<double>(),
+    : FftwDRArray<double>(),
       meshDimensions_(0)
    {}
 
@@ -42,7 +42,7 @@ namespace Cpu {
    */
    template <int D>
    RField<D>::RField(const RField<D>& other)
-    : FftwDArray<double>(),
+    : FftwDRArray<double>(),
       meshDimensions_(0)
    {
       if (other.isAllocated()) {
@@ -100,7 +100,7 @@ namespace Cpu {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      FftwDArray<double>::allocate(size);
+      FftwDRArray<double>::allocate(size);
    }
 
    /*
@@ -109,7 +109,7 @@ namespace Cpu {
    template <int D>
    void RField<D>::deallocate()
    {
-      FftwDArray<double>::deallocate();
+      FftwDRArray<double>::deallocate();
       for (int i = 0; i < D; ++i) {
          meshDimensions_[i] = 0;
       }

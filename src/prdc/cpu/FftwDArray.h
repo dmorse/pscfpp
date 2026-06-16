@@ -81,11 +81,6 @@ namespace Cpu {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
-   protected:
-
-       using Array<Data>:: data_;
-       using Array<Data>:: capacity_;
-
    private:
 
       /**
@@ -98,6 +93,8 @@ namespace Cpu {
       */
       FftwDArray<Data>& operator = (FftwDArray<Data> const & other);
 
+       using Array<Data>:: data_;
+       using Array<Data>:: capacity_;
    };
 
    /*

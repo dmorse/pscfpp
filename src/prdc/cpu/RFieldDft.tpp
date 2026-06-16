@@ -22,7 +22,7 @@ namespace Cpu {
    */
    template <int D>
    RFieldDft<D>::RFieldDft()
-    : FftwDArray<fftw_complex>(),
+    : FftwDRArray<fftw_complex>(),
       meshDimensions_(0),
       dftDimensions_(0)
    {}
@@ -41,7 +41,7 @@ namespace Cpu {
    */
    template <int D>
    RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
-    : FftwDArray<fftw_complex>(),
+    : FftwDRArray<fftw_complex>(),
       meshDimensions_(0),
       dftDimensions_(0)
    {
@@ -110,7 +110,7 @@ namespace Cpu {
       FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Allocate memory
-      FftwDArray<fftw_complex>::allocate(size);
+      FftwDRArray<fftw_complex>::allocate(size);
    }
 
    /*
@@ -119,7 +119,7 @@ namespace Cpu {
    template <int D>
    void RFieldDft<D>::deallocate()
    {
-      FftwDArray<fftw_complex>::deallocate();
+      FftwDRArray<fftw_complex>::deallocate();
       for (int i = 0; i < D; ++i) {
          meshDimensions_[i] = 0;
          dftDimensions_[i] = 0;

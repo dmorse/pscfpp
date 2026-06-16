@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/FftwDArray.h>    // base class
+#include <prdc/cpu/FftwDRArray.h>    // base class
 #include <pscf/math/IntVec.h>       // member
 #include <fftw3.h>
 
@@ -25,14 +25,14 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class CField : public FftwDArray<fftw_complex>
+   class CField : public FftwDRArray<fftw_complex>
    {
 
    public:
 
       // Type aliases
 
-      using FftwDArray<fftw_complex>::ValueType;
+      using FftwDRArray<fftw_complex>::ValueType;
 
       /**
       * Type of real and imaginary parts of a complex value
@@ -108,7 +108,7 @@ namespace Cpu {
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      using FftwDArray<fftw_complex>::allocate;
+      using FftwDRArray<fftw_complex>::allocate;
 
    };
 
@@ -126,7 +126,7 @@ namespace Cpu {
    template <class Archive>
    void CField<D>::serialize(Archive& ar, const unsigned int version)
    {
-      FftwDArray<fftw_complex>::serialize(ar, version);
+      FftwDRArray<fftw_complex>::serialize(ar, version);
       ar & meshDimensions_;
    }
 

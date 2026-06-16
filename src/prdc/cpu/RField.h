@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/FftwDArray.h>    // base class
+#include <prdc/cpu/FftwDRArray.h>   // base class
 #include <pscf/math/IntVec.h>       // member
 
 namespace Pscf {
@@ -23,14 +23,14 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class RField : public FftwDArray<double>
+   class RField : public FftwDRArray<double>
    {
 
    public:
 
       // Public type alias 
 
-      using FftwDArray<double>::ValueType;
+      using FftwDRArray<double>::ValueType;
 
       // Public member functions
 
@@ -100,7 +100,7 @@ namespace Cpu {
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      using FftwDArray<double>::allocate;
+      using FftwDRArray<double>::allocate;
 
    };
 
@@ -118,7 +118,7 @@ namespace Cpu {
    template <class Archive>
    void RField<D>::serialize(Archive& ar, const unsigned int version)
    {
-      FftwDArray<double>::serialize(ar, version);
+      FftwDRArray<double>::serialize(ar, version);
       ar & meshDimensions_;
    }
 
