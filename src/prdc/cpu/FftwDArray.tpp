@@ -9,6 +9,7 @@
 */
 
 #include "FftwDArray.h"
+#include <util/misc/Memory.h>
 #include <fftw3.h>
 
 namespace Pscf {
@@ -32,7 +33,12 @@ namespace Cpu {
    FftwDArray<Data>::~FftwDArray()
    {
       if (isAllocated()) {
-         fftw_free(data_);
+         try {
+            fftw_free(data_);
+            Memory::sub<Data>(capacity_);
+         } catch (...) {
+            std::cout << "Exception in FftwDArray destructor";
+         }
       }
       data_ = nullptr;
       capacity_ = 0;
@@ -56,6 +62,7 @@ namespace Cpu {
       }
       data_ = (Data*) fftw_malloc(sizeof(Data)*capacity);
       capacity_ = capacity;
+      Memory::add<Data>(capacity);
    }
 
    /*
@@ -71,6 +78,7 @@ namespace Cpu {
       }
       fftw_free(data_);
       data_ = nullptr;
+      Memory::sub<Data>(capacity_);
       capacity_ = 0;
    }
 
