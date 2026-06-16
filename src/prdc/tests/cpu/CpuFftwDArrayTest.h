@@ -212,7 +212,7 @@ void CpuFftwDArrayTest::testSerialize1File()
       int i2;
 
       BinaryFileOArchive oArchive;
-      openOutputFile("out/binary", oArchive.file());
+      openOutputFile("out/FftwDArray.arx", oArchive.file());
       oArchive << v;
       oArchive << i1;
       oArchive.file().close();
@@ -225,7 +225,7 @@ void CpuFftwDArrayTest::testSerialize1File()
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
-      openInputFile("out/binary", iArchive.file());
+      openInputFile("out/FftwDArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
       iArchive.file().close();
@@ -241,7 +241,7 @@ void CpuFftwDArrayTest::testSerialize1File()
       i2 = 0;
    
       // Reload into u and i2
-      openInputFile("out/binary", iArchive.file());
+      openInputFile("out/FftwDArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
    
@@ -265,7 +265,7 @@ void CpuFftwDArrayTest::testSerialize2File()
       int i2;
   
       BinaryFileOArchive oArchive;
-      openOutputFile("out/binary", oArchive.file());
+      openOutputFile("out/FftwDArray.arx", oArchive.file());
       oArchive << v;
       oArchive << i1;
       oArchive.file().close();
@@ -281,7 +281,7 @@ void CpuFftwDArrayTest::testSerialize2File()
       // from the previous test
    
       BinaryFileIArchive iArchive;
-      openInputFile("out/binary", iArchive.file());
+      openInputFile("out/FftwDArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
       iArchive.file().close();
@@ -297,7 +297,7 @@ void CpuFftwDArrayTest::testSerialize2File()
       i2 = 0;
    
       // Reload into u and i2
-      openInputFile("out/binary", iArchive.file());
+      openInputFile("out/FftwDArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
    

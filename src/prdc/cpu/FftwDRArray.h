@@ -16,6 +16,8 @@
 
 #include <fftw3.h>
 
+using namespace Util;
+
 namespace Pscf {
 namespace Prdc {
 namespace Cpu {
@@ -190,6 +192,15 @@ namespace Cpu {
       void dissociate();
 
       /**
+      * Serialize an FftwDRArray to/from an Archive.
+      *
+      * \param ar       archive
+      * \param version  archive version id
+      */
+      template <class Archive>
+      void serialize(Archive& ar, const unsigned int version);
+
+      /**
       * Return true if this container has data, false otherwise.
       *
       * A FftwDRArray is considered allocated if it has non-null pointer
@@ -218,6 +229,8 @@ namespace Cpu {
 
       using Array<Data>::data_;
       using Array<Data>::capacity_;
+
+   private:
 
       /// Counter for any containers that reference data owned by this.
       ReferenceCounter refCounter_;
@@ -249,6 +262,41 @@ namespace Cpu {
    template <typename Data> inline
    bool FftwDRArray<Data>::isAssociated() const
    {  return ((bool) data_ && ref_.isAssociated()); }
+
+   /*
+   * Serialize a FftwDArray to/from an Archive.
+   */
+   template <typename Data>
+   template <class Archive>
+   void FftwDRArray<Data>::serialize(Archive& ar, 
+                                     const unsigned int version)
+   {
+      int capacity;
+      if (Archive::is_saving()) {
+         capacity = capacity_;
+         if (capacity > 0) {
+            UTIL_CHECK(isOwner());
+         }
+      }
+      ar & capacity;
+      if (Archive::is_loading()) {
+         if (!isAllocated()) {
+            if (capacity > 0) {
+               allocate(capacity);
+            }
+         } else {
+            UTIL_CHECK(capacity == capacity_);
+            UTIL_CHECK(isOwner());
+         }
+      }
+      UTIL_CHECK(capacity == capacity_);
+      if (capacity > 0) {
+         UTIL_CHECK(isOwner());
+         for (int i = 0; i < capacity_; ++i) {
+            ar & data_[i];
+         }
+      }
+   }
 
    #if 0
    // Non-inline member function definitions
