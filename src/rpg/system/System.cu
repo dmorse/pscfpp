@@ -24,6 +24,7 @@
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Solvent.h>
 #include <rpg/field/Domain.h>
+#include <rpg/field/FieldIo.h>
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
 #include <rpg/field/Mask.h>

@@ -9,6 +9,7 @@
 */
 
 #include <rp/field/Domain.h>     // base class template
+#include <rpg/system/Types.h>    // base class template parameter
 
 // Forward declarations
 namespace Pscf {
@@ -43,8 +44,7 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class Domain
-     : public Rp::Domain< D, FFT<D>, WaveList<D>, FieldIo<D> >
+   class Domain : public Rp::Domain< D, Types<D> >
    {
    public:
       Domain() = default;
@@ -58,13 +58,9 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cuda;
-      extern template
-      class Domain<1, FFT<1>, WaveList<1>, Rpg::FieldIo<1> >;
-      extern template
-      class Domain<2, FFT<2>, WaveList<2>, Rpg::FieldIo<2> >;
-      extern template
-      class Domain<3, FFT<3>, WaveList<3>, Rpg::FieldIo<3> >;
+      extern template class Domain<1, Rpg::Types<1> >;
+      extern template class Domain<2, Rpg::Types<2> >;
+      extern template class Domain<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       extern template class Domain<1>;

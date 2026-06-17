@@ -14,10 +14,9 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cpu;
-      template class Domain<1, FFT<1>, WaveList<1>, Rpc::FieldIo<1> >;
-      template class Domain<2, FFT<2>, WaveList<2>, Rpc::FieldIo<2> >;
-      template class Domain<3, FFT<3>, WaveList<3>, Rpc::FieldIo<3> >;
+      template class Domain<1, Rpc::Types<1> >;
+      template class Domain<2, Rpc::Types<2> >;
+      template class Domain<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       template class Domain<1>;

@@ -41,20 +41,16 @@ namespace Rp {
    * <b> Field representations </b>: A Mask \<D\> contains representations
    * of the mask field in two formats:
    *
-   *  - An RFT object (where RFT is a template type parameter) contains
-   *    values of the field on the nodes of a regular mesh. This is
-   *    accessed by the rgrid() member function.
+   *  - An RField<D> object contains values of the field on the nodes of 
+   *    a regular mesh. This is accessed by the rgrid() member function.
    *
    *  - A DArray \<double\> contains components of the field in a
    *    symmetry-adapted Fourier expansion (i.e., in basis format). This
    *    is accessed by the basis() member function.
    *
    * A Mask is designed to automatically update each of these two
-   * representations when the other is modified, as appropriate.
-   * A pointer to an associated FieldIo object (an instance of temnplate
-   * parameter FIT) is used for these conversions. The FieldIo class that 
-   * is used as an argument for parameter FIT should be a subclass of 
-   * Rp::FieldIo.
+   * representations when the other is modified, as appropriate. An
+   * associated FieldIo object is used for these conversions. 
    *
    * The setBasis and readBasis functions allow the user to input field
    * components in basis format, and both internally recompute the values
@@ -77,17 +73,16 @@ namespace Rp {
    * <b> Template parameters </b>:
    *
    *   - D   : dimension of space
-   *   - RFT : real field type (Rpc::RField<D> or Rpg::RField<D>)
-   *   - FIT : FieldIo type (Rpc::FieldIo<D> or Rpg::FieldIo<D>)
+   *   - T   : a Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * <b> Subclasses </b>: Specializations of the class template
-   * Mask \<D, RFT, FIT\> are used as base classes for the class
-   * templates Rpc::Mask \<D \> and Rpg::Mask \<D\> that are used by
-   * the pscf_rpc and pscf_rpg programs, respectively.
+   * Mask \<D, T\> are used as base classes for specializations of the 
+   * class templates templates Rpc::Mask \<D \> and Rpg::Mask \<D\> that 
+   * are used by the pscf_rpc and pscf_rpg programs, respectively.
    *
    * \ingroup Rp_Field_Module
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    class Mask
    {
 
@@ -101,7 +96,7 @@ namespace Rp {
       *
       * \param fieldIo  associated FieldIo object
       */
-      void setFieldIo(FIT const & fieldIo);
+      void setFieldIo(typename T::FieldIo const & fieldIo);
 
       /**
       * Set unit cell used when reading a mask field file.
@@ -181,7 +176,7 @@ namespace Rp {
       * \param field  new field in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
-      void setRGrid(RFT const & field, bool isSymmetric = false);
+      void setRGrid(typename T::RField const & field, bool isSymmetric = false);
 
       /**
       * Read field from input stream in symmetrized basis format.
@@ -301,7 +296,7 @@ namespace Rp {
       /**
       * Get the field in r-grid format.
       */
-      RFT const & rgrid() const;
+      typename T::RField const & rgrid() const;
 
       /**
       * Return the volume fraction of unit cell occupied by material.
@@ -393,7 +388,7 @@ namespace Rp {
       /**
       * Associated FieldIo object (const reference).
       */
-      FIT const & fieldIo() const
+      typename T::FieldIo const & fieldIo() const
       {
          UTIL_CHECK(fieldIoPtr_);
          return *fieldIoPtr_;
@@ -409,7 +404,7 @@ namespace Rp {
       /**
       * Field in real-space grid (r-grid) format
       */
-      RFT rgrid_;
+      typename T::RField rgrid_;
 
       /**
       * Integer vector of grid dimensions.
@@ -441,7 +436,7 @@ namespace Rp {
       /**
       * Pointer to associated FieldIo object.
       */
-      FIT const * fieldIoPtr_;
+      typename T::FieldIo const * fieldIoPtr_;
 
       /*
       * Pointer to a Signal that is triggered by field modification.
@@ -476,8 +471,8 @@ namespace Rp {
    // Inline member functions
 
    // Get field in basis format (const)
-   template <int D, class RFT, class FIT>
-   inline DArray<double> const & Mask<D,RFT,FIT>::basis() const
+   template <int D, class T> inline 
+   DArray<double> const & Mask<D,T>::basis() const
    {
       UTIL_ASSERT(hasData_);
       UTIL_ASSERT(isSymmetric_);
@@ -485,31 +480,31 @@ namespace Rp {
    }
 
    // Get field in r-grid format (const)
-   template <int D, class RFT, class FIT>
-   inline RFT const & Mask<D,RFT,FIT>::rgrid() const
+   template <int D, class T> inline 
+   typename T::RField const & Mask<D,T>::rgrid() const
    {
       UTIL_ASSERT(hasData_);
       return rgrid_;
    }
 
    // Has memory been allocated in basis format?
-   template <int D, class RFT, class FIT>
-   inline bool Mask<D,RFT,FIT>::isAllocatedBasis() const
+   template <int D, class T>
+   inline bool Mask<D,T>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Has memory been allocated in rgrid format?
-   template <int D, class RFT, class FIT>
-   inline bool Mask<D,RFT,FIT>::isAllocatedRGrid() const
+   template <int D, class T>
+   inline bool Mask<D,T>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Have the field data been set?
-   template <int D, class RFT, class FIT>
-   inline bool Mask<D,RFT,FIT>::hasData() const
+   template <int D, class T>
+   inline bool Mask<D,T>::hasData() const
    {  return hasData_; }
 
    // Is the field symmetric under space group operations?
-   template <int D, class RFT, class FIT>
-   inline bool Mask<D,RFT,FIT>::isSymmetric() const
+   template <int D, class T>
+   inline bool Mask<D,T>::isSymmetric() const
    {  return isSymmetric_; }
 
 } // namespace Rp

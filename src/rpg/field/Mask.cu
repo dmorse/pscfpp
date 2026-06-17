@@ -6,6 +6,7 @@
 */
 
 #include "Mask.h"
+#include <rpg/field/FieldIo.h>
 #include <pscf/cuda/Reduce.h>
 
 #include <rp/field/Mask.tpp>    // base class template implementation
@@ -13,10 +14,9 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cuda;
-      template class Mask< 1, RField<1>, Rpg::FieldIo<1> >;
-      template class Mask< 2, RField<2>, Rpg::FieldIo<2> >;
-      template class Mask< 3, RField<3>, Rpg::FieldIo<3> >;
+      template class Mask< 1, Rpg::Types<1> >;
+      template class Mask< 2, Rpg::Types<2> >;
+      template class Mask< 3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class Mask<1>;

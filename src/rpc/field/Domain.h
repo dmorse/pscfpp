@@ -9,6 +9,7 @@
 */
 
 #include <rp/field/Domain.h>     // base class template
+#include <rpc/system/Types.h>    // base class template argument
 
 // Forward declarations
 namespace Pscf {
@@ -44,8 +45,7 @@ namespace Rpc {
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class Domain 
-    : public Rp::Domain< D, FFT<D>, WaveList<D>, FieldIo<D> >
+   class Domain : public Rp::Domain< D, Types<D> >
    {};
 
 } // namespace Rpc
@@ -54,13 +54,9 @@ namespace Rpc {
 // Explicit instantiation declarations 
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc;
-      extern template 
-      class Domain<1, Cpu::FFT<1>, Cpu::WaveList<1>, Rpc::FieldIo<1> >;
-      extern template 
-      class Domain<2, Cpu::FFT<2>, Cpu::WaveList<2>, Rpc::FieldIo<2> >;
-      extern template 
-      class Domain<3, Cpu::FFT<3>, Cpu::WaveList<3>, Rpc::FieldIo<3> >;
+      extern template class Domain<1, Rpc::Types<1> >;
+      extern template class Domain<2, Rpc::Types<2> >;
+      extern template class Domain<3, Rpc::Types<3> >;
    } 
    namespace Rpc {
       extern template class Domain<1>;

@@ -12,6 +12,9 @@
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
 
+#include <prdc/cuda/FFT.h>
+#include <prdc/cuda/RField.h>
+
 #include <prdc/crystal/shiftToMinimum.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>

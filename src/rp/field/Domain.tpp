@@ -24,8 +24,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   Domain<D,FFT,WLT,FIT>::Domain()
+   template <int D, class T>
+   Domain<D,T>::Domain()
     : mesh_(),
       unitCell_(),
       lattice_(UnitCell<D>::Null),
@@ -45,9 +45,9 @@ namespace Rp {
       // Construct associated objects
       groupPtr_ = new SpaceGroup<D>();
       basisPtr_ = new Basis<D>();
-      fftPtr_ = new FFT();
-      waveListPtr_ = new WLT();
-      fieldIoPtr_ = new FIT();
+      fftPtr_ = new typename T::FFT();
+      waveListPtr_ = new typename T::WaveList();
+      fieldIoPtr_ = new typename T::FieldIo();
       signalPtr_ = new Signal<void>();
 
       // Create associations between objects
@@ -59,8 +59,8 @@ namespace Rp {
    /*
    * Destructor.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   Domain<D,FFT,WLT,FIT>::~Domain()
+   template <int D, class T>
+   Domain<D,T>::~Domain()
    {
       delete basisPtr_;
       delete fftPtr_;
@@ -72,8 +72,8 @@ namespace Rp {
    /*
    * Create association with a FileMaster.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   void Domain<D,FFT,WLT,FIT>::setFileMaster(FileMaster& fileMaster)
+   template <int D, class T>
+   void Domain<D,T>::setFileMaster(FileMaster& fileMaster)
    {
       fileMasterPtr_ = &fileMaster;
       fieldIo().setFileMaster(fileMaster);
@@ -82,8 +82,8 @@ namespace Rp {
    /*
    * Read parameters and initialize.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   void Domain<D,FFT,WLT,FIT>::readParameters(std::istream& in)
+   template <int D, class T>
+   void Domain<D,T>::readParameters(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(!isInitialized_);
@@ -125,10 +125,8 @@ namespace Rp {
    *
    * Alternative to parameter file, used only for unit testing.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   void
-   Domain<D,FFT,WLT,FIT>::readRGridFieldHeader(std::istream& in,
-                                                   int& nMonomer)
+   template <int D, class T>
+   void Domain<D,T>::readRGridFieldHeader(std::istream& in, int& nMonomer)
    {
       // Preconditions - confirm that nothing is initialized
       UTIL_CHECK(!isInitialized_);
@@ -185,8 +183,8 @@ namespace Rp {
    /*
    * Make basis if needed.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   void Domain<D,FFT,WLT,FIT>::makeBasis()
+   template <int D, class T>
+   void Domain<D,T>::makeBasis()
    {
       UTIL_CHECK(mesh_.size() > 0);
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
@@ -205,10 +203,8 @@ namespace Rp {
    /*
    * Write description of symmetry-adapted stars and basis to file.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   void
-   Domain<D,FFT,WLT,FIT>::writeStars(std::string const & filename)
-   const
+   template <int D, class T>
+   void Domain<D,T>::writeStars(std::string const & filename) const
    {
       UTIL_CHECK(hasGroup());
       UTIL_CHECK(basis().isInitialized());
@@ -224,10 +220,8 @@ namespace Rp {
    /*
    * Write a list of waves and associated stars to file.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   void
-   Domain<D,FFT,WLT,FIT>::writeWaves(std::string const & filename)
-   const
+   template <int D, class T>
+   void Domain<D,T>::writeWaves(std::string const & filename) const
    {
       UTIL_CHECK(hasGroup());
       UTIL_CHECK(basis().isInitialized());
@@ -243,10 +237,8 @@ namespace Rp {
    /*
    * Write all elements of the space group to a file.
    */
-   template <int D, class FFT, class WLT, class FIT>
-   void
-   Domain<D,FFT,WLT,FIT>::writeGroup(std::string const & filename)
-   const
+   template <int D, class T>
+   void Domain<D,T>::writeGroup(std::string const & filename) const
    {
       UTIL_CHECK(hasGroup());
       std::ofstream file;
@@ -258,8 +250,8 @@ namespace Rp {
    /*
    * Has a symmetry-adapted Fourier basis been initialized ?
    */
-   template <int D, class FFT, class WLT, class FIT>
-   bool Domain<D,FFT,WLT,FIT>::hasBasis() const
+   template <int D, class T>
+   bool Domain<D,T>::hasBasis() const
    {  return basis().isInitialized(); }
 
 } // namespace Rp

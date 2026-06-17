@@ -9,8 +9,8 @@
 */
 
 #include <rp/field/Mask.h>       // base class template
-#include "FieldIo.h"             // base class template argument
-#include <prdc/cpu/RField.h>     // base class template argument
+#include <rpc/system/Types.h>    // base class template argument
+#include <prdc/cpu/RField.h>     // member
 
 namespace Pscf {
 namespace Rpc {
@@ -30,7 +30,7 @@ namespace Rpc {
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class Mask : public Rp::Mask<D, RField<D>, FieldIo<D> >
+   class Mask : public Rp::Mask<D, Types<D> >
    {};
 
 }
@@ -39,12 +39,9 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template
-      class Mask< 1, Prdc::Cpu::RField<1>, Rpc::FieldIo<1> >;
-      extern template
-      class Mask< 2, Prdc::Cpu::RField<2>, Rpc::FieldIo<2> >;
-      extern template
-      class Mask< 3, Prdc::Cpu::RField<3>, Rpc::FieldIo<3> >;
+      extern template class Mask< 1, Rpc::Types<1> >;
+      extern template class Mask< 2, Rpc::Types<2> >;
+      extern template class Mask< 3, Rpc::Types<3> >;
    }
    namespace Rpc {
       extern template class Mask<1>;

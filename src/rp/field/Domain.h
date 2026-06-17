@@ -41,9 +41,9 @@ namespace Rp {
    *  - a UnitCell crystallographic unit cell
    *  - a SpaceGroup crystallographic space group
    *  - a Basis symmetry-adapated Fourier basis
-   *  - a FFT Fast Fourier Transform calculator (class FFT)
-   *  - a WaveList container for wavevector properties (class WLT)
-   *  - a FieldIo object for field IO & conversion operations (class FIT)
+   *  - a FFT Fast Fourier Transform calculator (T::FFT)
+   *  - a WaveList container for wavevector properties (T::WaveList)
+   *  - a FieldIo object for field IO & conversion (T::FieldIo)
    *  - a lattice system enum (type Prdc::UnitCell\<D\>::LatticeSystem)
    *  - a groupName string
    *
@@ -54,10 +54,8 @@ namespace Rp {
    *
    * <b> Template Parameters </b>:
    *
-   *   - D    : integer dimension of space (D=1, 2, or 3)
-   *   - FFT  : Fast Fourier transform calculator type, e.g., FFT<D>
-   *   - WLT  : WaveList container type, e.g., WaveList<D>
-   *   - FIT  : FieldIo class for field operations, e.g., FieldIo<D>
+   *   - D  : integer dimension of space (D=1, 2, or 3)
+   *   - T  : Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * <b> Subclasses </b>: Partial specializations of the Domain class
    * template are used as base classes for classes Rpc::Domain \<D\> and
@@ -65,7 +63,7 @@ namespace Rp {
    *
    * \ingroup Rp_Field_Module
    */
-   template <int D, class FFT, class WLT, class FIT>
+   template <int D, class T>
    class Domain : public ParamComposite
    {
 
@@ -146,32 +144,32 @@ namespace Rp {
       /**
       * Get the FFT by non-const reference.
       */
-      FFT& fft();
+      typename T::FFT& fft();
 
       /**
       * Get the FFT object by non-const reference.
       */
-      FFT const & fft() const;
+      typename T::FFT const & fft() const;
 
       /**
       * Get the WaveList by non-const reference.
       */
-      WLT& waveList();
+      typename T::WaveList& waveList();
 
       /**
       * Get the WaveList by const reference.
       */
-      WLT const & waveList() const;
+      typename T::WaveList const & waveList() const;
 
       /**
       * Get the FieldIo by non-const reference.
       */
-      FIT& fieldIo();
+      typename T::FieldIo& fieldIo();
 
       /**
       * Get the FieldIo by const reference.
       */
-      FIT const & fieldIo() const;
+      typename T::FieldIo const & fieldIo() const;
 
       ///@}
       /// \name Accessors (return by value)
@@ -281,17 +279,17 @@ namespace Rp {
       /**
       * Pointer to a FFT (Fast Fourier Transform) object (owned).
       */
-      FFT* fftPtr_;
+      typename T::FFT* fftPtr_;
 
       /**
       * Pointer to a WaveList object (owned).
       */
-      WLT* waveListPtr_;
+      typename T::WaveList* waveListPtr_;
 
       /**
       * Pointer to a FieldIo object (owned).
       */
-      FIT* fieldIoPtr_;
+      typename T::FieldIo* fieldIoPtr_;
 
       /**
       * Pointer to a Signal object (owned).
@@ -327,91 +325,91 @@ namespace Rp {
    // Public inline member functions
 
    // Get the UnitCell by non-const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   UnitCell<D>& Domain<D,FFT,WLT,FIT>::unitCell()
+   template <int D, class T> inline 
+   UnitCell<D>& Domain<D,T>::unitCell()
    {  return unitCell_; }
 
    // Get the UnitCell by const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   UnitCell<D> const & Domain<D,FFT,WLT,FIT>::unitCell() const
+   template <int D, class T> inline 
+   UnitCell<D> const & Domain<D,T>::unitCell() const
    {  return unitCell_; }
 
    // Get the Mesh by non-const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   Mesh<D>& Domain<D,FFT,WLT,FIT>::mesh()
+   template <int D, class T> inline 
+   Mesh<D>& Domain<D,T>::mesh()
    {  return mesh_; }
 
    // Get the Mesh by const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   Mesh<D> const & Domain<D,FFT,WLT,FIT>::mesh() const
+   template <int D, class T> inline 
+   Mesh<D> const & Domain<D,T>::mesh() const
    {  return mesh_; }
 
    // Get the SpaceGroup by const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   SpaceGroup<D> const & Domain<D,FFT,WLT,FIT>::group() const
+   template <int D, class T> inline 
+   SpaceGroup<D> const & Domain<D,T>::group() const
    {  return *groupPtr_; }
 
    // Get the Basis by non-const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   Basis<D>& Domain<D,FFT,WLT,FIT>::basis()
+   template <int D, class T> inline 
+   Basis<D>& Domain<D,T>::basis()
    {  return *basisPtr_; }
 
    // Get the Basis by const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   Basis<D> const & Domain<D,FFT,WLT,FIT>::basis() const
+   template <int D, class T> inline 
+   Basis<D> const & Domain<D,T>::basis() const
    {  return *basisPtr_; }
 
    // Get the FFT by non-const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   FFT& Domain<D,FFT,WLT,FIT>::fft()
+   template <int D, class T> inline 
+   typename T::FFT& Domain<D,T>::fft()
    {  return *fftPtr_; }
 
    // Get the FFT by const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   FFT const & Domain<D,FFT,WLT,FIT>::fft() const
+   template <int D, class T> inline 
+   typename T::FFT const & Domain<D,T>::fft() const
    {  return *fftPtr_; }
 
    // Get the WaveList by non-const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   WLT& Domain<D,FFT,WLT,FIT>::waveList()
+   template <int D, class T> inline 
+   typename T::WaveList& Domain<D,T>::waveList()
    {  return *waveListPtr_; }
 
    // Get the WaveList by const reference.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   WLT const & Domain<D,FFT,WLT,FIT>::waveList() const
+   template <int D, class T> inline 
+   typename T::WaveList const & Domain<D,T>::waveList() const
    {  return *waveListPtr_; }
 
    // Get the FieldIo by const reference.
-   template <int D, class FFT, class WLT, class FIT> inline
-   FIT& Domain<D,FFT,WLT,FIT>::fieldIo()
+   template <int D, class T> inline
+   typename T::FieldIo& Domain<D,T>::fieldIo()
    {  return *fieldIoPtr_; }
 
    // Get the FieldIo by const reference.
-   template <int D, class FFT, class WLT, class FIT> inline
-   FIT const & Domain<D,FFT,WLT,FIT>::fieldIo() const
+   template <int D, class T> inline
+   typename T::FieldIo const & Domain<D,T>::fieldIo() const
    {  return *fieldIoPtr_; }
 
    // Get the lattice type enumeration value.
-   template <int D, class FFT, class WLT, class FIT> inline
-   typename UnitCell<D>::LatticeSystem Domain<D,FFT,WLT,FIT>::lattice()
+   template <int D, class T> inline
+   typename UnitCell<D>::LatticeSystem Domain<D,T>::lattice()
    const
    {  return lattice_; }
 
    // Get the groupName string identifier.
-   template <int D, class FFT, class WLT, class FIT> inline 
-   std::string Domain<D,FFT,WLT,FIT>::groupName() const
+   template <int D, class T> inline 
+   std::string Domain<D,T>::groupName() const
    {  return groupName_; }
 
    // Has a space group been identified?
-   template <int D, class FFT, class WLT, class FIT> inline 
-   bool Domain<D,FFT,WLT,FIT>::hasGroup() const
+   template <int D, class T> inline 
+   bool Domain<D,T>::hasGroup() const
    {  return hasGroup_; }
 
    // Private inline member function
 
    // Get FileMaster as const reference.
-   template <int D, class FFT, class WLT, class FIT> inline
-   FileMaster const & Domain<D,FFT,WLT,FIT>::fileMaster() const
+   template <int D, class T> inline
+   FileMaster const & Domain<D,T>::fileMaster() const
    {
       UTIL_CHECK(fileMasterPtr_);
       return * fileMasterPtr_;

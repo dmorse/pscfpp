@@ -25,8 +25,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class RFT, class FIT>
-   Mask<D,RFT,FIT>::Mask()
+   template <int D, class T>
+   Mask<D,T>::Mask()
     : basis_(),
       rgrid_(),
       meshDimensions_(),
@@ -47,24 +47,22 @@ namespace Rp {
    /*
    * Destructor.
    */
-   template <int D, class RFT, class FIT>
-   Mask<D,RFT,FIT>::~Mask()
-   {
-      delete signalPtr_;
-   }
+   template <int D, class T>
+   Mask<D,T>::~Mask()
+   {  delete signalPtr_; }
 
    /*
    * Create an association with a FieldIo object.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::setFieldIo(FIT const & fieldIo)
+   template <int D, class T>
+   void Mask<D,T>::setFieldIo(typename T::FieldIo const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Set the unit cell that is modified by reading a field file.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::setReadUnitCell(UnitCell<D>& cell)
+   template <int D, class T>
+   void Mask<D,T>::setReadUnitCell(UnitCell<D>& cell)
    {
       UTIL_CHECK(!readUnitCellPtr_);
       readUnitCellPtr_ = &cell;
@@ -73,9 +71,9 @@ namespace Rp {
    /*
    * Set the unit cell that whose parameters are written to a field header.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void 
-   Mask<D,RFT,FIT>::setWriteUnitCell(UnitCell<D> const & cell)
+   Mask<D,T>::setWriteUnitCell(UnitCell<D> const & cell)
    {
       UTIL_CHECK(!writeUnitCellPtr_);
       writeUnitCellPtr_ = &cell;
@@ -84,8 +82,8 @@ namespace Rp {
    /*
    * Allocate memory for a field in basis format.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::allocateBasis(int nBasis)
+   template <int D, class T>
+   void Mask<D,T>::allocateBasis(int nBasis)
    {
       UTIL_CHECK(!isAllocatedBasis_);
 
@@ -100,9 +98,9 @@ namespace Rp {
    /*
    * Allocate memory for field in basis format.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void 
-   Mask<D,RFT,FIT>::allocateRGrid(IntVec<D> const & meshDimensions)
+   Mask<D,T>::allocateRGrid(IntVec<D> const & meshDimensions)
    {
       UTIL_CHECK(!isAllocatedRGrid_);
 
@@ -122,8 +120,8 @@ namespace Rp {
    /*
    * Set new field values, in basis form.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::setBasis(DArray<double> const & field)
+   template <int D, class T>
+   void Mask<D,T>::setBasis(DArray<double> const & field)
    {
       // Allocate fields as needed
       if (!isAllocatedRGrid_) {
@@ -158,9 +156,9 @@ namespace Rp {
    /*
    * Set new field values, in r-grid form.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::setRGrid(RFT const & field,
-                                             bool isSymmetric)
+   template <int D, class T>
+   void Mask<D,T>::setRGrid(typename T::RField const & field,
+                            bool isSymmetric)
    {
       // Allocate rgrid_ field as needed
       if (!isAllocatedRGrid_) {
@@ -196,8 +194,8 @@ namespace Rp {
    * This function also computes and stores the corresponding r-grid
    * representation. On return, hasData and isSymmetric are both true.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::readBasis(std::istream& in)
+   template <int D, class T>
+   void Mask<D,T>::readBasis(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(readUnitCellPtr_);
@@ -210,7 +208,7 @@ namespace Rp {
       UTIL_CHECK(1 == nMonomerIn);
       UTIL_CHECK(isSymmetricIn);
       UTIL_CHECK(fieldIo().basis().isInitialized());
-      // Note: FIT::readFieldHeader will initialize basis if needed
+      // Note: FieldIo::readFieldHeader will initialize basis if needed
       int nBasisIn = readNBasis(in);
 
       // Local references to mesh and basis
@@ -246,8 +244,8 @@ namespace Rp {
    /*
    * Read field components from a file basis format, by filename.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::readBasis(std::string filename)
+   template <int D, class T>
+   void Mask<D,T>::readBasis(std::string filename)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
@@ -263,8 +261,8 @@ namespace Rp {
    * the corresponding basis format. If isSymmetric is false, it
    * only sets the values in the r-grid format.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::readRGrid(std::istream& in, 
+   template <int D, class T>
+   void Mask<D,T>::readRGrid(std::istream& in, 
                                               bool isSymmetric)
    {
       // Preconditions
@@ -301,8 +299,8 @@ namespace Rp {
    /*
    * Read field from a file in r-grid format, by filename.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::readRGrid(std::string filename, 
+   template <int D, class T>
+   void Mask<D,T>::readRGrid(std::string filename, 
                                               bool isSymmetric)
    {
       std::ifstream file;
@@ -315,8 +313,8 @@ namespace Rp {
    * Return volume fraction of the unit cell occupied by the 
    * polymers/solvents.
    */
-   template <int D, class RFT, class FIT>
-   double Mask<D,RFT,FIT>::phiTot() const
+   template <int D, class T>
+   double Mask<D,T>::phiTot() const
    {
       if (isSymmetric() && hasData()) {
          // Data in basis format is available
@@ -336,8 +334,8 @@ namespace Rp {
    /*
    * Write fields to an output stream in basis format.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::writeBasis(std::ostream& out) const
+   template <int D, class T>
+   void Mask<D,T>::writeBasis(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(fieldIoPtr_);
@@ -352,8 +350,8 @@ namespace Rp {
    /*
    * Write fields to a file in basis format, by filename.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::writeBasis(std::string filename) const
+   template <int D, class T>
+   void Mask<D,T>::writeBasis(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -364,8 +362,8 @@ namespace Rp {
    /*
    * Write fields to an output stream in real-space (r-grid) format.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::writeRGrid(std::ostream& out) const
+   template <int D, class T>
+   void Mask<D,T>::writeRGrid(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(writeUnitCellPtr_);
@@ -381,8 +379,8 @@ namespace Rp {
    /*
    * Write fields to a file in r-grid format, by filename.
    */
-   template <int D, class RFT, class FIT>
-   void Mask<D,RFT,FIT>::writeRGrid(std::string filename) const
+   template <int D, class T>
+   void Mask<D,T>::writeRGrid(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -395,8 +393,8 @@ namespace Rp {
    /*
    * Get a signal that is triggered by field modification.
    */
-   template <int D, class RFT, class FIT>
-   Signal<void>& Mask<D,RFT,FIT>::signal()
+   template <int D, class T>
+   Signal<void>& Mask<D,T>::signal()
    {
       UTIL_CHECK(signalPtr_);
       return *signalPtr_;

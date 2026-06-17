@@ -9,8 +9,8 @@
 */
 
 #include <rp/field/Mask.h>       // base class template
-#include "FieldIo.h"             // base class template argument
-#include <prdc/cuda/RField.h>    // base class template argument
+#include <rpg/system/Types.h>    // base class template argument
+#include <prdc/cuda/RField.h>    // base class member
 
 namespace Pscf {
 namespace Rpg {
@@ -31,7 +31,7 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class Mask : public Rp::Mask< D, RField<D>, FieldIo<D> >
+   class Mask : public Rp::Mask< D, Types<D> >
    {
    public:
       Mask() = default;
@@ -45,9 +45,9 @@ namespace Rpg {
 namespace Pscf {
    namespace Rp {
       using namespace Prdc::Cuda;
-      extern template class Mask< 1, RField<1>, Rpg::FieldIo<1> >;
-      extern template class Mask< 2, RField<2>, Rpg::FieldIo<2> >;
-      extern template class Mask< 3, RField<3>, Rpg::FieldIo<3> >;
+      extern template class Mask< 1, Rpg::Types<1> >;
+      extern template class Mask< 2, Rpg::Types<2> >;
+      extern template class Mask< 3, Rpg::Types<3> >;
    }
    namespace Rpg {
       extern template class Mask<1>;
