@@ -27,8 +27,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class RFT, class FIT>
-   WFields<D,RFT,FIT>::WFields()
+   template <int D, class T>
+   WFields<D,T>::WFields()
     : basis_(),
       rgrid_(),
       meshDimensions_(),
@@ -50,24 +50,24 @@ namespace Rp {
    /*
    * Destructor.
    */
-   template <int D, class RFT, class FIT>
-   WFields<D,RFT,FIT>::~WFields()
+   template <int D, class T>
+   WFields<D,T>::~WFields()
    {
       delete signalPtr_;
    }
 
    /*
-   * Create an association with a FIT object.
+   * Create an association with a FieldIo object.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::setFieldIo(FIT const & fieldIo)
+   template <int D, class T>
+   void WFields<D,T>::setFieldIo(typename T::FieldIo const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Set the unit cell that is modified by reading a field file.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::setReadUnitCell(UnitCell<D>& cell)
+   template <int D, class T>
+   void WFields<D,T>::setReadUnitCell(UnitCell<D>& cell)
    {
       UTIL_CHECK(!readUnitCellPtr_);
       readUnitCellPtr_ = &cell;
@@ -76,8 +76,8 @@ namespace Rp {
    /*
    * Set the unit cell that whose parameters are written to a field header.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::setWriteUnitCell(UnitCell<D> const & cell)
+   template <int D, class T>
+   void WFields<D,T>::setWriteUnitCell(UnitCell<D> const & cell)
    {
       UTIL_CHECK(!writeUnitCellPtr_);
       writeUnitCellPtr_ = &cell;
@@ -86,8 +86,8 @@ namespace Rp {
    /*
    * Set the stored value of nMonomer (this may only be called once).
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::setNMonomer(int nMonomer)
+   template <int D, class T>
+   void WFields<D,T>::setNMonomer(int nMonomer)
    {
       UTIL_CHECK(nMonomer_ == 0);
       UTIL_CHECK(nMonomer > 0);
@@ -97,9 +97,9 @@ namespace Rp {
    /*
    * Allocate memory for fields in r-grid format.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   WFields<D,RFT,FIT>::allocateRGrid(IntVec<D> const & meshDimensions)
+   WFields<D,T>::allocateRGrid(IntVec<D> const & meshDimensions)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(!hasData_);
@@ -125,8 +125,8 @@ namespace Rp {
    /*
    * Allocate memory for fields in basis format.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::allocateBasis(int nBasis)
+   template <int D, class T>
+   void WFields<D,T>::allocateBasis(int nBasis)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(nBasis > 0);
@@ -144,8 +144,8 @@ namespace Rp {
    /*
    * Allocate memory for all fields.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::allocate(int nMonomer,
+   template <int D, class T>
+   void WFields<D,T>::allocate(int nMonomer,
                                      int nBasis,
                                      IntVec<D> const & meshDimensions)
    {
@@ -159,9 +159,9 @@ namespace Rp {
    /*
    * Set new field values, in basis form.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   WFields<D,RFT,FIT>::setBasis(DArray< DArray<double> > const & fields)
+   WFields<D,T>::setBasis(DArray< DArray<double> > const & fields)
    {
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
@@ -203,10 +203,10 @@ namespace Rp {
    /*
    * Set new field values, in r-grid form.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   WFields<D,RFT,FIT>::setRGrid(DArray<RFT> const & fields,
-                                       bool isSymmetric)
+   WFields<D,T>::setRGrid(DArray<typename T::RField> const & fields,
+                          bool isSymmetric)
    {
       // Allocate r-grid fields as needed
       if (!isAllocatedRGrid_) {
@@ -246,9 +246,9 @@ namespace Rp {
    * This function also computes and stores the corresponding r-grid
    * representation. On return, hasData and isSymmetric are both true.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   WFields<D,RFT,FIT>::readBasis(std::istream& in)
+   WFields<D,T>::readBasis(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -299,9 +299,9 @@ namespace Rp {
    *
    * Calls readBasis(std::ifstream&) internally.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   WFields<D,RFT,FIT>::readBasis(std::string filename)
+   WFields<D,T>::readBasis(std::string filename)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
@@ -320,9 +320,9 @@ namespace Rp {
    * On return, hasData is true and the bool class member isSymmetric_
    * is set to the value of the isSymmetric function parameter.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   WFields<D,RFT,FIT>::readRGrid(std::istream& in,
+   WFields<D,T>::readRGrid(std::istream& in,
                                         bool isSymmetric)
    {
       // Preconditions
@@ -358,9 +358,9 @@ namespace Rp {
    /*
    * Read fields from a file in r-grid format, by filename.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   WFields<D,RFT,FIT>::readRGrid(std::string filename,
+   WFields<D,T>::readRGrid(std::string filename,
                                         bool isSymmetric)
    {
       std::ifstream file;
@@ -372,8 +372,8 @@ namespace Rp {
    /*
    * Symmetrize r-grid fields, convert to basis format.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::symmetrize()
+   template <int D, class T>
+   void WFields<D,T>::symmetrize()
    {
       UTIL_CHECK(hasData_);
       fieldIo().convertRGridToBasis(rgrid_, basis_);
@@ -389,8 +389,8 @@ namespace Rp {
    /*
    * Write fields to an output stream in basis format.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::writeBasis(std::ostream& out) const
+   template <int D, class T>
+   void WFields<D,T>::writeBasis(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -406,8 +406,8 @@ namespace Rp {
    /*
    * Write fields to a file in basis format, by filename.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::writeBasis(std::string filename) const
+   template <int D, class T>
+   void WFields<D,T>::writeBasis(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -418,8 +418,8 @@ namespace Rp {
    /*
    * Write fields to an output stream in real-space (r-grid) format.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::writeRGrid(std::ostream& out) const
+   template <int D, class T>
+   void WFields<D,T>::writeRGrid(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -437,8 +437,8 @@ namespace Rp {
    /*
    * Write fields to a file in r-grid format, by filename.
    */
-   template <int D, class RFT, class FIT>
-   void WFields<D,RFT,FIT>::writeRGrid(std::string filename) const
+   template <int D, class T>
+   void WFields<D,T>::writeRGrid(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -451,8 +451,8 @@ namespace Rp {
    /*
    * Get the Signal<void> that is triggered by field modification.
    */
-   template <int D, class RFT, class FIT>
-   Signal<void>& WFields<D,RFT,FIT>::signal()
+   template <int D, class T>
+   Signal<void>& WFields<D,T>::signal()
    {
       UTIL_CHECK(signalPtr_);
       return *signalPtr_;

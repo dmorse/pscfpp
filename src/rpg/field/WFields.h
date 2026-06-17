@@ -9,13 +9,10 @@
 */
 
 #include <rp/field/WFields.h>    // base class template
-#include <prdc/cuda/RField.h>    // base class member
+#include <rpg/system/Types.h>    // base class template argument
 
 namespace Pscf {
 namespace Rpg {
-
-   // Forward declaration
-   template <int D> class FieldIo;
 
    using namespace Util;
    using namespace Prdc;
@@ -33,8 +30,7 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class WFields
-    : public Rp::WFields<D, RField<D>, FieldIo<D> >
+   class WFields : public Rp::WFields<D, Types<D> >
    {
 
    public:
@@ -53,7 +49,7 @@ namespace Rpg {
       void setRGrid(DeviceArray<cudaReal>& fields);
 
       /// Alias for base class.
-      using RpWFields = Rp::WFields<D, RField<D>, FieldIo<D> >;
+      using RpWFields = Rp::WFields<D, Types<D> >;
 
       // Declaration to avoid hiding overloaded base class method 
       using RpWFields::setRGrid;
@@ -67,9 +63,9 @@ namespace Rpg {
 namespace Pscf {
    namespace Rp {
       using namespace Prdc::Cuda;
-      extern template class WFields<1, RField<1>, Rpg::FieldIo<1> >;
-      extern template class WFields<2, RField<2>, Rpg::FieldIo<2> >;
-      extern template class WFields<3, RField<3>, Rpg::FieldIo<3> >;
+      extern template class WFields<1, Rpg::Types<1> >;
+      extern template class WFields<2, Rpg::Types<2> >;
+      extern template class WFields<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       extern template class WFields<1>;

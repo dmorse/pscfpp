@@ -9,8 +9,7 @@
 */
 
 #include <rp/field/CFields.h>     // base class template
-#include <rpg/field/FieldIo.h>    // base class template argument
-#include <prdc/cuda/RField.h>     // base class template argument
+#include <rpg/system/Types.h>     // base class template argument
 
 namespace Pscf {
 namespace Rpg {
@@ -31,7 +30,7 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class CFields : public Rp::CFields<D, RField<D>, FieldIo<D> >
+   class CFields : public Rp::CFields<D, Types<D> >
    {
    public:
       CFields() = default;
@@ -45,9 +44,9 @@ namespace Rpg {
 namespace Pscf {
    namespace Rp {
       using namespace Prdc::Cuda;
-      extern template class Rp::CFields<1, RField<1>, Rpg::FieldIo<1> >;
-      extern template class Rp::CFields<2, RField<2>, Rpg::FieldIo<2> >;
-      extern template class Rp::CFields<3, RField<3>, Rpg::FieldIo<3> >;
+      extern template class Rp::CFields<1, Rpg::Types<1> >;
+      extern template class Rp::CFields<2, Rpg::Types<2> >;
+      extern template class Rp::CFields<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       extern template class CFields<1>;

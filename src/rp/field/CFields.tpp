@@ -20,8 +20,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class RFT, class FIT>
-   CFields<D,RFT,FIT>::CFields()
+   template <int D, class T>
+   CFields<D,T>::CFields()
     : basis_(),
       rgrid_(),
       nMonomer_(0),
@@ -34,18 +34,18 @@ namespace Rp {
    {}
 
    /*
-   * Create an association with a FIT object.
+   * Create an association with a FieldIo object.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   CFields<D,RFT,FIT>::setFieldIo(FIT const & fieldIo)
+   CFields<D,T>::setFieldIo(typename T::FieldIo const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Set the unit cell used for parameters written to a field header.
    */
-   template <int D, class RFT, class FIT>
-   void CFields<D,RFT,FIT>::setWriteUnitCell(UnitCell<D> const & cell)
+   template <int D, class T>
+   void CFields<D,T>::setWriteUnitCell(UnitCell<D> const & cell)
    {
       UTIL_CHECK(!writeUnitCellPtr_);
       writeUnitCellPtr_ = &cell;
@@ -54,8 +54,8 @@ namespace Rp {
    /*
    * Set the stored value of nMonomer (this may only be called once).
    */
-   template <int D, class RFT, class FIT>
-   void CFields<D,RFT,FIT>::setNMonomer(int nMonomer)
+   template <int D, class T>
+   void CFields<D,T>::setNMonomer(int nMonomer)
    {
       UTIL_CHECK(nMonomer_ == 0);
       UTIL_CHECK(nMonomer > 0);
@@ -65,9 +65,9 @@ namespace Rp {
    /*
    * Allocate memory for fields in r-grid format.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   CFields<D,RFT,FIT>::allocateRGrid(IntVec<D> const & dimensions)
+   CFields<D,T>::allocateRGrid(IntVec<D> const & dimensions)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(!isAllocatedRGrid_);
@@ -83,8 +83,8 @@ namespace Rp {
    /*
    * Allocate memory for fields in basis format.
    */
-   template <int D, class RFT, class FIT>
-   void CFields<D,RFT,FIT>::allocateBasis(int nBasis)
+   template <int D, class T>
+   void CFields<D,T>::allocateBasis(int nBasis)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(!isAllocatedBasis_);
@@ -100,9 +100,9 @@ namespace Rp {
    /*
    * Allocate memory for all fields.
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    void
-   CFields<D,RFT,FIT>::allocate(int nMonomer, int nBasis,
+   CFields<D,T>::allocate(int nMonomer, int nBasis,
                                     IntVec<D> const & dimensions)
    {
       setNMonomer(nMonomer);
@@ -115,8 +115,8 @@ namespace Rp {
    /*
    * Write fields to an output stream in basis format.
    */
-   template <int D, class RFT, class FIT>
-   void CFields<D,RFT,FIT>::writeBasis(std::ostream& out) const
+   template <int D, class T>
+   void CFields<D,T>::writeBasis(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -132,8 +132,8 @@ namespace Rp {
    /*
    * Write fields to a file in basis format, by filename.
    */
-   template <int D, class RFT, class FIT>
-   void CFields<D,RFT,FIT>::writeBasis(std::string filename) const
+   template <int D, class T>
+   void CFields<D,T>::writeBasis(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -144,8 +144,8 @@ namespace Rp {
    /*
    * Write fields to an output stream in real-space (r-grid) format.
    */
-   template <int D, class RFT, class FIT>
-   void CFields<D,RFT,FIT>::writeRGrid(std::ostream& out) const
+   template <int D, class T>
+   void CFields<D,T>::writeRGrid(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -163,8 +163,8 @@ namespace Rp {
    /*
    * Write fields to a file in r-grid format, by filename.
    */
-   template <int D, class RFT, class FIT>
-   void CFields<D,RFT,FIT>::writeRGrid(std::string filename) const
+   template <int D, class T>
+   void CFields<D,T>::writeRGrid(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -175,8 +175,8 @@ namespace Rp {
    // Boolean flag setter functions
 
    // Set the hasData flag.
-   template <int D, class RFT, class FIT> inline
-   void CFields<D,RFT,FIT>::setHasData(bool hasData)
+   template <int D, class T> inline
+   void CFields<D,T>::setHasData(bool hasData)
    {
       hasData_ = hasData;
       if (!hasData_) {
@@ -185,8 +185,8 @@ namespace Rp {
    }
 
    // Set the isSymmetric flag.
-   template <int D, class RFT, class FIT> inline
-   void CFields<D,RFT,FIT>::setIsSymmetric(bool isSymmetric)
+   template <int D, class T> inline
+   void CFields<D,T>::setIsSymmetric(bool isSymmetric)
    {
       UTIL_CHECK(hasData_);
       isSymmetric_ = isSymmetric;

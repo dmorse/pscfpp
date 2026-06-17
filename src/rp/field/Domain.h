@@ -398,13 +398,13 @@ namespace Rp {
    {  return lattice_; }
 
    // Get the groupName string identifier.
-   template <int D, class FFT, class WLT, class FIT>
-   inline std::string Domain<D,FFT,WLT,FIT>::groupName() const
+   template <int D, class FFT, class WLT, class FIT> inline 
+   std::string Domain<D,FFT,WLT,FIT>::groupName() const
    {  return groupName_; }
 
    // Has a space group been identified?
-   template <int D, class FFT, class WLT, class FIT>
-   inline bool Domain<D,FFT,WLT,FIT>::hasGroup() const
+   template <int D, class FFT, class WLT, class FIT> inline 
+   bool Domain<D,FFT,WLT,FIT>::hasGroup() const
    {  return hasGroup_; }
 
    // Private inline member function

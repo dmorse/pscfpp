@@ -1,0 +1,132 @@
+
+This file contains information about relationships bewteen class templates
+defined in the Rp namespace (rp/ directory) and subclasses defined in the
+Rpc and Rpg namespaces (rpc/ and rpg/ directories). 
+
+A subclass defined in the Rpc or Rpg namespace is "trivial" if it does not
+have any data members and does not define or override any member functions 
+other than possibly a constructor.
+
+=============================================================================
+fields/
+
+  Class templates in this directory use multiple template parameters 
+  rather than a single Types class. They should all be changed to use
+  a Type class.
+
+  Mask    -> trivial
+  Domain  -> trivial
+  CFields -> trivial
+  WFields -> nontrivial: extra setRGrid(DeviceArray function), rpc is trivial 
+  FieldIo -> notrivial: differentiate read/write operations (see below)
+  Domain  -> trivial (FFT, Wavelist, FieldIo)
+
+  FieldIo  -
+      Uses local host arrays DArray< HostDArray<cudaReal> >
+      Use copy device <-> host using copyArrays function defined
+          in field/fieldCheck. Uses overloaded "=" operator.
+      Use = operator directly for single arrays
+
+      For read operations: 
+           Allocate, read on host, copy from host to device
+
+      For write operations:
+           Allocate, copy device to host, write
+
+      Need operation that:
+         On GPU, allocates outer DArray, and HostArrays
+         On CPU, allocates outer DArray, not FftwDRArray objects
+
+      Proposal:
+
+             allocateHostArrays(DArray< arrayType >)
+             allocateHostArray( arrayType )
+
+             updateHostArrays(DArray< arrayType >)
+             updateDeviceArrays(DArray< arrayType >)
+             updateHostArray(DArray< arrayType >)
+             updateDeviceArray(DArray< arrayType >)
+
+             Wrap allocateArrays and "=" operator by default.
+             Specialize for FftwDRArray.
+
+             Place in field/fieldCheck
+
+=============================================================================
+solvers/
+
+   Mixture    -> extra usBatchedFFT_ parameter, distinct readParameters
+   Polymer    -> trivial
+   Solvent    -> trivial
+   Propagator -> small differences because of use of contiguous memory on GPU
+   Block      -> entirely separate implementations
+   MixtureModifier -> trivial
+
+=============================================================================
+system/
+
+   System -> almost trivial, distinct setThreadCount function
+   SystemConstRef -> trivial
+
+   Proposal: Consider removing setThreadCount function for now, since it
+   is unused.
+
+=============================================================================
+scft/
+
+   ScftThermo -> trivial
+
+=============================================================================
+scft/iterator
+
+   AmIteratorBasis -> trivial
+   AmIteratorGrid  -> trivial
+
+   Note: We need to create template versions of Factories as well.
+   This is only possible after all subclasses have been converted 
+   to templats.
+
+=============================================================================
+scft/sweep:
+
+   BasisFieldState -> trivial
+   SweepParameter -> trivial
+   Sweep -> trivial
+
+=============================================================================
+fts/
+
+    fts/analyzer:
+
+      - Analyzer  -> trivial 
+ 
+        Note: This takes Simulator and System as params, rather than a Types
+        Change to a 2-parameter template.
+
+    fts/brownian:
+
+      - BdStep -> trivial  (standard 2-parameter template)
+
+    fts/montecarlo:
+
+      - McMove -> trivial  (standard 2-parameter template)
+
+    fts/compressor:
+
+      - Compressor -> Derived directly from ParamComposite
+                      Need to create Rp::Compressor template
+
+
+    fts/perturbation:
+
+      - Perturbation -> trivial  (standard 2-parameter template)
+
+    fts/ramp:
+
+      - Ramp -> trivial  (standard 2-parameter template)
+
+    fts/simulator:
+
+      - Simulator -> almost trivial  (standard 2-parameter template)
+        (Rpc creates an association between RNGs in constructor)
+

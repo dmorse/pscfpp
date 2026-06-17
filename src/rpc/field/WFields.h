@@ -9,13 +9,10 @@
 */
 
 #include <rp/field/WFields.h>    // base class template
-#include <prdc/cpu/RField.h>     // base class member
+#include <rpc/system/Types.h>    // base class member
 
 namespace Pscf {
 namespace Rpc {
-
-   // Forward declaration
-   template <int D> class FieldIo;
 
    using namespace Util;
    using namespace Prdc;
@@ -33,8 +30,7 @@ namespace Rpc {
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class WFields
-    : public Rp::WFields<D, RField<D>, FieldIo<D> >
+   class WFields : public Rp::WFields<D, Types<D> >
    {};
 
 } // namespace Rpc
@@ -44,9 +40,9 @@ namespace Rpc {
 namespace Pscf {
    namespace Rp {
       using namespace Prdc;
-      extern template class WFields<1, Cpu::RField<1>, Rpc::FieldIo<1> >;
-      extern template class WFields<2, Cpu::RField<2>, Rpc::FieldIo<2> >;
-      extern template class WFields<3, Cpu::RField<3>, Rpc::FieldIo<3> >;
+      extern template class WFields< 1, Rpc::Types<1> >;
+      extern template class WFields< 2, Rpc::Types<2> >;
+      extern template class WFields< 3, Rpc::Types<3> >;
    }
    namespace Rpc {
       extern template class WFields<1>;

@@ -7,6 +7,7 @@
 
 #include "WFields.h"                  // class header
 #include <rpg/field/FieldIo.h>
+#include <prdc/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/DeviceArray.h>
 #include <rp/field/WFields.tpp>       // base class implementation
@@ -50,9 +51,9 @@ namespace Rpg {
 namespace Pscf {
    namespace Rp {
       using namespace Prdc;
-      template class WFields<1, Cuda::RField<1>, Rpg::FieldIo<1> >;
-      template class WFields<2, Cuda::RField<2>, Rpg::FieldIo<2> >;
-      template class WFields<3, Cuda::RField<3>, Rpg::FieldIo<3> >;
+      template class WFields<1, Rpg::Types<1> >;
+      template class WFields<2, Rpg::Types<2> >;
+      template class WFields<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class WFields<1>;

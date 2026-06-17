@@ -30,15 +30,14 @@ namespace Rp {
    * <b> Template parameters </b>: The template parameters represent:
    *
    *   - D   : integer dimensionality of space (D=1, 2, or 3)
-   *   - RFT : r-grid field type (e.g., Prdc::Cpu::RField<D>)
-   *   - FIT : class for field IO operations (e.g., Rpc::FieldIo<D>)
+   *   - T   : a "Types" class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * <b> Field Representations </b>: A CFields container has a list of
    * nMonomer fields that are each associated with a monomer type. The
    * fields may be stored in two different formats:
    *
-   *  - A DArray of RFT (RField) containers holds valus of each field
-   *    on the nodes of a regular grid. This is accessed by the rgrid()
+   *  - A DArray of RField containers holds valus of each field on
+   *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
    *  - A DArray of DArray<double> containers holds components of each
@@ -55,17 +54,9 @@ namespace Rp {
    * CFields, that are defined in Rpc and Rpg namespaces for use in the 
    * pscf_rpc and pscf_rpg programs, respectively.
    *
-   *  - Each class Rpc::CFields \<D\> is derived from a specialization
-   *    of this class template with template parameters D = 1, 2, or 3,
-   *    RFT = Cpu::RField\<D\> and FIT = Prdc::FieldIo\<D\> .
-   *
-   *  - Each class Rpg::CFields \<D\> is derived from a specialization
-   *    of this class template with template parameters D = 1, 2, or 3,
-   *    RFT = Cuda::RField \<D\> and FIT = Rpg::FieldIo \<D\> .
-   *
    * \ingroup Rp_Field_Module
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    class CFields
    {
 
@@ -75,11 +66,11 @@ namespace Rp {
       ///@{
 
       /**
-      * Create association with FIT (store pointer).
+      * Create association with a FieldIo (store pointer).
       *
-      * \param fieldIo  associated FIT (FieldIo) object
+      * \param fieldIo  associated FieldIo object
       */
-      void setFieldIo(FIT const & fieldIo);
+      void setFieldIo(typename T::FieldIo const & fieldIo);
 
       /**
       * Set unit cell used when writing field files.
@@ -165,26 +156,26 @@ namespace Rp {
       /**
       * Get array of all fields in r-grid format (non-const).
       */
-      DArray<RFT> & rgrid();
+      DArray<typename T::RField> & rgrid();
 
       /**
       * Get array of all fields in r-grid format (const).
       */
-      DArray<RFT> const & rgrid() const;
+      DArray<typename T::RField> const & rgrid() const;
 
       /**
       * Get field for one monomer type in r-grid format (non-const)
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RFT & rgrid(int monomerId);
+      typename T::RField & rgrid(int monomerId);
 
       /**
       * Get field for one monomer type in r-grid format (const).
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RFT const & rgrid(int monomerId) const;
+      typename T::RField const & rgrid(int monomerId) const;
 
       ///@}
       /// \name Field Output
@@ -281,7 +272,7 @@ namespace Rp {
       /**
       * Get associated FieldIo object (const reference).
       */
-      FIT const & fieldIo() const;
+      typename T::FieldIo const & fieldIo() const;
 
    private:
 
@@ -297,10 +288,10 @@ namespace Rp {
       /*
       * Array of fields in real-space grid (r-grid) format
       *
-      * Element basis_[i] is an RFT that contains values of the
+      * Element basis_[i] is an typename T::RField that contains values of the
       * field associated with monomer i on the nodes of a regular mesh.
       */
-      DArray<RFT> rgrid_;
+      DArray<typename T::RField> rgrid_;
 
       /*
       * Number of monomer types.
@@ -313,9 +304,9 @@ namespace Rp {
       UnitCell<D> const * writeUnitCellPtr_;
 
       /*
-      * Pointer to associated FIT (FieldIo) object
+      * Pointer to associated typename T::FieldIo (FieldIo) object
       */
-      FIT const * fieldIoPtr_;
+      typename T::FieldIo const * fieldIoPtr_;
 
       /*
       * Has memory been allocated for fields in r-grid format?
@@ -342,32 +333,32 @@ namespace Rp {
    // Public inline member functions
 
    // Get array of all fields in basis format (non-const)
-   template <int D, class RFT, class FIT> inline
-   DArray< DArray<double> >& CFields<D,RFT,FIT>::basis()
+   template <int D, class T> inline
+   DArray< DArray<double> >& CFields<D,T>::basis()
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_;
    }
 
    // Get array of all fields in basis format (const)
-   template <int D, class RFT, class FIT> inline
-   DArray< DArray<double> > const & CFields<D,RFT,FIT>::basis() const
+   template <int D, class T> inline
+   DArray< DArray<double> > const & CFields<D,T>::basis() const
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_;
    }
 
    // Get one field in basis format (non-const)
-   template <int D, class RFT, class FIT> inline
-   DArray<double> & CFields<D,RFT,FIT>::basis(int id)
+   template <int D, class T> inline
+   DArray<double> & CFields<D,T>::basis(int id)
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_[id];
    }
 
    // Get one field in basis format (const)
-   template <int D, class RFT, class FIT> inline
-   DArray<double> const & CFields<D,RFT,FIT>::basis(int id)
+   template <int D, class T> inline
+   DArray<double> const & CFields<D,T>::basis(int id)
    const
    {
       UTIL_ASSERT(isAllocatedBasis_);
@@ -375,62 +366,62 @@ namespace Rp {
    }
 
    // Get all fields in r-grid format (non-const)
-   template <int D, class RFT, class FIT> inline
-   DArray<RFT>& CFields<D,RFT,FIT>::rgrid()
+   template <int D, class T> inline
+   DArray<typename T::RField>& CFields<D,T>::rgrid()
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
    }
 
    // Get all fields in r-grid format (const)
-   template <int D, class RFT, class FIT> inline
-   DArray<RFT> const & CFields<D,RFT,FIT>::rgrid() const
+   template <int D, class T> inline
+   DArray<typename T::RField> const & CFields<D,T>::rgrid() const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
    }
 
    // Get one field in r-grid format (non-const)
-   template <int D, class RFT, class FIT> inline
-   RFT& CFields<D,RFT,FIT>::rgrid(int id)
+   template <int D, class T> inline
+   typename T::RField& CFields<D,T>::rgrid(int id)
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];
    }
 
    // Get one field in r-grid format (const)
-   template <int D, class RFT, class FIT> inline
-   RFT const & CFields<D,RFT,FIT>::rgrid(int id) const
+   template <int D, class T> inline
+   typename T::RField const & CFields<D,T>::rgrid(int id) const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];
    }
 
    // Has memory been allocated for fields in r-grid format?
-   template <int D, class RFT, class FIT> inline
-   bool CFields<D,RFT,FIT>::isAllocatedRGrid() const
+   template <int D, class T> inline
+   bool CFields<D,T>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Has memory been allocated for fields in basis format?
-   template <int D, class RFT, class FIT> inline
-   bool CFields<D,RFT,FIT>::isAllocatedBasis() const
+   template <int D, class T> inline
+   bool CFields<D,T>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Are the fields up-to-date?
-   template <int D, class RFT, class FIT> inline
-   bool CFields<D,RFT,FIT>::hasData() const
+   template <int D, class T> inline
+   bool CFields<D,T>::hasData() const
    {  return hasData_; }
 
    // Are the fields symmetric under elements of the space group?
-   template <int D, class RFT, class FIT> inline
-   bool CFields<D,RFT,FIT>::isSymmetric() const
+   template <int D, class T> inline
+   bool CFields<D,T>::isSymmetric() const
    {  return isSymmetric_; }
 
    // Protected inline member function
 
    // Associated FieldIo object (const reference).
-   template <int D, class RFT, class FIT> inline
-   FIT const & CFields<D,RFT,FIT>::fieldIo() const
+   template <int D, class T> inline
+   typename T::FieldIo const & CFields<D,T>::fieldIo() const
    {
       UTIL_CHECK(fieldIoPtr_);
       return *fieldIoPtr_;

@@ -34,15 +34,14 @@ namespace Rp {
    *
    * <b> Template parameters </b>: The template parameters represent:
    *
-   *     - D   : integer dimensionality of space, D=1,2, or 3
-   *     - RFT : r-grid field type (e.g., Prdc::Cpu::RField<D>)
-   *     - FIT : class for field IO operations (e.g., Rpc:: FieldIo<D>)
+   *     - D  : integer dimensionality of space, D=1,2, or 3
+   *     - T  : a "Types" class (Rpc::Types<D> or Rpg::Types<D>))
    *
    * <b> Field Representations </b>: A WFields object contains a list of
    * nMonomer chemical potential (w) fields that are each associated with
    * a monomer type. The fields may be stored in two different formats:
    *
-   *  - A DArray of RFT containers holds valus of each field on
+   *  - A DArray of RField containers holds valus of each field on
    *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
@@ -52,8 +51,8 @@ namespace Rp {
    *    functions.
    *
    * A WFields is designed to automatically update one of these
-   * representations when the other is modified, as appropriate. A
-   * pointer to an associated FIT object is used for these conversions.
+   * representations when the other is modified, as appropriate. 
+   * An associated FieldIo object is used for these conversions.
    *
    * The setBasis and readBasis functions allow the user to input new
    * components in basis format, and both internally recompute the values
@@ -74,21 +73,11 @@ namespace Rp {
    * observer that will be called whenever the fields are modified.
    *
    * <b> Subclasses </b>: Specializations of Rp::WFields are used as base
-   * for specializations of Rpc::WFields and Rpg::WFields :
-   *
-   *  - Each specialization Rpc::WFields \<D\> with D=1, 2, or 3 is derived 
-   *    from a specialization of Rp::WFields with template arguments D,
-   *    RFT = Cpu::RFT \<D\> and FIT = Rpc::FIT \<D\> , and is used in
-   *    the pscf_rpc CPU program.
-   *
-   *  - Each specialization Rpg::WFields \<D\> with D=1, 2 or 3 is derived
-   *    from specializations of Rp::WFields with template arguments D,
-   *    RFT = Cuda::RFT \<D\> and FIT = Rpg::FIT \<D\> , and is used in
-   *    the pscf_rpg GPU program.
+   * for specializations of Rpc::WFields and Rpg::WFields.
    *
    * \ingroup Rp_Field_Module
    */
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    class WFields
    {
 
@@ -98,17 +87,17 @@ namespace Rp {
       ///@{
 
       /**
-      * Create association with FIT (store pointer).
+      * Create association with a FieldIo object (store pointer).
       *
-      * \param fieldIo  associated FIT object
+      * \param fieldIo  associated FieldIo object
       */
-      void setFieldIo(FIT const & fieldIo);
+      void setFieldIo(typename T::FieldIo const & fieldIo);
 
       /**
       * Set unit cell used when reading field files.
       *
       * This function creates a stored pointer to a UnitCell<D> that is
-      * is used by the readBasis and readRGrid functions, which reset the
+      * used by the readBasis and readRGrid functions, which reset the
       * unit cell parameters in this object to those read from the field
       * file header. This function may only be called once.
       *
@@ -198,7 +187,7 @@ namespace Rp {
       * \param fields  array of new fields in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
-      void setRGrid(DArray< RFT > const & fields,
+      void setRGrid(DArray<typename T::RField> const & fields,
                     bool isSymmetric = false);
 
       /**
@@ -361,14 +350,14 @@ namespace Rp {
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray< RFT > const & rgrid() const;
+      DArray<typename T::RField> const & rgrid() const;
 
       /**
       * Get the field for one monomer type in r-space grid format.
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      RFT const & rgrid(int monomerId) const;
+      typename T::RField const & rgrid(int monomerId) const;
 
       ///@}
       /// \name Boolean Queries
@@ -437,9 +426,9 @@ namespace Rp {
       int nMonomer() const;
 
       /**
-      * Get associated FIT object (const reference).
+      * Get associated FieldIo object (const reference).
       */
-      FIT const & fieldIo() const;
+      typename T::FieldIo const & fieldIo() const;
 
    private:
 
@@ -455,10 +444,10 @@ namespace Rp {
       /**
       * Array of fields in real-space grid (r-grid) format.
       *
-      * Element basis_[i] is an RFT that contains values of the
+      * Element basis_[i] is an RField that contains values of the
       * field associated with monomer i on the nodes of a regular mesh.
       */
-      DArray< RFT > rgrid_;
+      DArray<typename T::RField> rgrid_;
 
       /**
       * Integer vector of grid dimensions.
@@ -493,9 +482,9 @@ namespace Rp {
       UnitCell<D> const * writeUnitCellPtr_;
 
       /**
-      * Pointer to an associated FIT object.
+      * Pointer to an associated FieldIo object.
       */
-      FIT const * fieldIoPtr_;
+      typename T::FieldIo const * fieldIoPtr_;
 
       /**
       * Pointer to a Signal that is triggered by field modification.
@@ -532,92 +521,89 @@ namespace Rp {
    // Public inline member functions
 
    // Clear data stored in this object without deallocating
-   template <int D, class RField, class FieldIo> inline
-   void WFields<D,RField,FieldIo>::clear()
+   template <int D, class T> inline
+   void WFields<D,T>::clear()
    {  hasData_ = false; }
 
    // Get array of all fields in basis format (const)
-   template <int D, class RFT, class FIT> inline
-   DArray< DArray<double> > const &
-   WFields<D,RFT,FIT>::basis() const
+   template <int D, class T> inline
+   DArray< DArray<double> > const & WFields<D,T>::basis() const
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_;
    }
 
    // Get one field in basis format (const)
-   template <int D, class RFT, class FIT> inline
-   DArray<double> const & WFields<D,RFT,FIT>::basis(int id)
-   const
+   template <int D, class T> inline
+   DArray<double> const & WFields<D,T>::basis(int id) const
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_[id];
    }
 
    // Get all fields in r-grid format (const)
-   template <int D, class RFT, class FIT> inline
-   DArray< RFT > const &
-   WFields<D,RFT,FIT>::rgrid() const
+   template <int D, class T> inline
+   DArray<typename T::RField> const & WFields<D,T>::rgrid() const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
    }
 
    // Get one field in r-grid format (const)
-   template <int D, class RFT, class FIT> inline
-   RFT const & WFields<D,RFT,FIT>::rgrid(int id) const
+   template <int D, class T> inline
+   typename T::RField const & WFields<D,T>::rgrid(int id) const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];
    }
 
    // Has memory been allocated for fields in r-grid format?
-   template <int D, class RFT, class FIT> inline
-   bool WFields<D,RFT,FIT>::isAllocatedRGrid() const
+   template <int D, class T> inline
+   bool WFields<D,T>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Has memory been allocated for fields in basis format?
-   template <int D, class RFT, class FIT> inline
-   bool WFields<D,RFT,FIT>::isAllocatedBasis() const
+   template <int D, class T> inline
+   bool WFields<D,T>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Has field data been initialized ?
-   template <int D, class RFT, class FIT> inline
-   bool WFields<D,RFT,FIT>::hasData() const
+   template <int D, class T> inline
+   bool WFields<D,T>::hasData() const
    {  return hasData_; }
 
    // Are the fields symmetric under space group operations?
-   template <int D, class RFT, class FIT> inline
-   bool WFields<D,RFT,FIT>::isSymmetric() const
+   template <int D, class T> inline
+   bool WFields<D,T>::isSymmetric() const
    {  return isSymmetric_; }
 
    // Protected inline member functions
 
    // Get mesh dimensions in each direction, set on r-grid allocation.
-   template <int D, class RFT, class FIT>
+   template <int D, class T>
    inline
    IntVec<D> const &
-   WFields<D,RFT,FIT>::meshDimensions() const
+   WFields<D,T>::meshDimensions() const
    {  return meshDimensions_; }
 
    // Get mesh size (number of grid points), set on r-grid allocation.
-   template <int D, class RFT, class FIT> inline
-   int WFields<D,RFT,FIT>::meshSize() const
+   template <int D, class T> inline
+   int WFields<D,T>::meshSize() const
    {  return meshSize_; }
 
    // Get number of basis functions, set on basis allocation.
-   template <int D, class RFT, class FIT> inline
-   int WFields<D,RFT,FIT>::nBasis() const
+   template <int D, class T> inline
+   int WFields<D,T>::nBasis() const
    {  return nBasis_; }
 
    // Get number of monomer types.
-   template <int D, class RFT, class FIT> inline
-   int WFields<D,RFT,FIT>::nMonomer() const
+   template <int D, class T> inline
+   int WFields<D,T>::nMonomer() const
    {  return nMonomer_; }
 
    // Associated FieldIo object (const reference).
-   template <int D, class RFT, class FIT> inline
-   FIT const & WFields<D,RFT,FIT>::fieldIo() const
+   template <int D, class T> inline
+   typename T::FieldIo const & WFields<D,T>::fieldIo() const
    {
       UTIL_CHECK(fieldIoPtr_);
       return *fieldIoPtr_;

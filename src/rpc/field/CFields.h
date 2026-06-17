@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/CFields.h>       // base class template
-#include <prdc/cpu/RField.h>        // base class member
+#include <rpc/system/Types.h>       // template parameter
 
 namespace Pscf {
 namespace Rpc {
@@ -33,7 +33,7 @@ namespace Rpc {
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class CFields : public Rp::CFields<D, RField<D>, FieldIo<D> >
+   class CFields : public Rp::CFields<D, Types<D> >
    {};
 
 } // namespace Rpc
@@ -43,9 +43,9 @@ namespace Rpc {
 namespace Pscf {
    namespace Rp {
       using namespace Prdc;
-      extern template class CFields<1, Cpu::RField<1>, Rpc::FieldIo<1> >;
-      extern template class CFields<2, Cpu::RField<2>, Rpc::FieldIo<2> >;
-      extern template class CFields<3, Cpu::RField<3>, Rpc::FieldIo<3> >;
+      extern template class CFields<1, Rpc::Types<1> >;
+      extern template class CFields<2, Rpc::Types<2> >;
+      extern template class CFields<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       extern template class CFields<1>;
