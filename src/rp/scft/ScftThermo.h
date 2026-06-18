@@ -142,8 +142,8 @@ namespace Rp {
       using InteractionT = typename T::Interaction;
       using DomainT = Domain<D,T>;
       using WFieldsT = typename T::WFields;
-      using CFieldsT = typename T::CFields;
-      using MaskT = typename T::Mask;
+      using CFieldsT = CFields<D,T>;
+      using MaskT = Mask<D,T>;
       using RFieldT = typename T::RField;
 
       /**

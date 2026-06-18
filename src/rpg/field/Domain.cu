@@ -19,9 +19,4 @@ namespace Pscf {
       template class Domain<2, Rpg::Types<2> >;
       template class Domain<3, Rpg::Types<3> >;
    }
-   namespace Rpg {
-      template class Domain<1>;
-      template class Domain<2>;
-      template class Domain<3>;
-   }
 }

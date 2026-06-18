@@ -207,7 +207,7 @@ namespace Rp {
 
       // Polymer ideal gas contribution
       if (np > 0) {
-         typename T::Polymer const * polymerPtr;
+         Polymer<D,T> const * polymerPtr;
          double length;
          for (int i = 0; i < np; ++i) {
             polymerPtr = &mixture.polymer(i);
@@ -227,7 +227,7 @@ namespace Rp {
 
       // Compute solvent ideal gas contributions to idealHamiltonian_
       if (ns > 0) {
-         typename T::Solvent const * solventPtr;
+         Solvent<D,T> const * solventPtr;
          double size;
          for (int i = 0; i < ns; ++i) {
             solventPtr = &mixture.solvent(i);

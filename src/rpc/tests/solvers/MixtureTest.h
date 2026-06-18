@@ -44,7 +44,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D>
-   bool tracePath(Polymer<D> const & polymer, int is, int it)
+   bool tracePath(Rp::Polymer<D, Types<D> > const & polymer, int is, int it)
    {
       if (is == it) return true;
 
@@ -90,7 +90,7 @@ public:
       mixture.readParam(in);
       in.close();
 
-      Polymer<1>& polymer = mixture.polymer(0);
+      Rp::Polymer<1, Types<1> >& polymer = mixture.polymer(0);
       TEST_ASSERT(tracePath(polymer, 2, 0));
    }
 
@@ -115,7 +115,7 @@ public:
       * 
       */
 
-      Polymer<1>& polymer = mixture.polymer(0);
+      Rp::Polymer<1, Types<1> >& polymer = mixture.polymer(0);
       Pair<int> pair;
 
       pair = polymer.path(0, 1);
@@ -254,7 +254,7 @@ public:
       mixture.allocate();
 
       // Check polymer block sizes
-      Polymer<1>& polymer = mixture.polymer(0);
+      Rp::Polymer<1, Types<1> >& polymer = mixture.polymer(0);
       TEST_ASSERT(polymer.block(0).nBead() == 20);
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);

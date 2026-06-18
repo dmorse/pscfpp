@@ -88,6 +88,16 @@ namespace Rp {
 
    public:
 
+      /**
+      * Constructor.
+      */
+      Mask();
+
+      /**
+      * Destructor.
+      */
+      ~Mask();
+
       /// \name Initialization and Memory Management
       ///@{
 
@@ -356,16 +366,6 @@ namespace Rp {
       ///@}
 
    protected:
-
-      /**
-      * Constructor.
-      */
-      Mask();
-
-      /**
-      * Destructor.
-      */
-      ~Mask();
 
       /**
       * Mesh dimensions in each direction, set by allocation.

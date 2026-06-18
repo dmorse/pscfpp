@@ -46,10 +46,5 @@ namespace Pscf {
       extern template class Polymer<2, Rpg::Types<2> >;
       extern template class Polymer<3, Rpg::Types<3> >;
    }
-   namespace Rpg {
-      extern template class Polymer<1>;
-      extern template class Polymer<2>;
-      extern template class Polymer<3>;
-   }
 }
 #endif

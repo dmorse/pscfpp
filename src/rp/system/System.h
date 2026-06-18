@@ -21,6 +21,9 @@ namespace Pscf {
       template <int D> class UnitCell;
    }
    namespace Rp {
+      template <int D, class T> class WFields;
+      template <int D, class T> class CFields;
+      template <int D, class T> class Mask;
       template <int D, class T> class Domain;
    }
 }
@@ -337,7 +340,7 @@ namespace Rp {
       /**
       * Get the monomer concentration (c) fields (const).
       */
-      typename T::CFields const & c() const;
+      CFields<D,T> const & c() const;
 
       /**
       * Get the chemical potential (w) fields (const).
@@ -362,12 +365,12 @@ namespace Rp {
       /**
       * Get the mask (const).
       */
-      typename T::Mask const & mask() const;
+      Mask<D,T> const & mask() const;
 
       /**
       * Get the mask (non-const).
       */
-      typename T::Mask& mask();
+      Mask<D,T>& mask();
 
       ///@}
       /// \name Component Object Accessors
@@ -578,7 +581,7 @@ namespace Rp {
       /**
       * Monomer concentration / volume fraction fields.
       */
-      typename T::CFields* cPtr_;
+      CFields<D,T>* cPtr_;
 
       /**
       * Chemical potential fields.
@@ -593,7 +596,7 @@ namespace Rp {
       /**
       * Field to which the total density is constrained.
       */
-      typename T::Mask* maskPtr_;
+      Mask<D,T>* maskPtr_;
 
       /**
       * Pointer to Mixture object (solves MDE for all species).
@@ -707,7 +710,7 @@ namespace Rp {
       /**
       * Get the concentration (c) fields by non-const reference (private).
       */
-      typename T::CFields& c_();
+      CFields<D,T>& c_();
 
       /**
       * Allocate memory for fields in grid formats (private).
@@ -786,7 +789,7 @@ namespace Rp {
 
    // Get the container of c fields (const).
    template <int D, class T> inline
-   typename T::CFields const & System<D,T>::c() const
+   CFields<D,T> const & System<D,T>::c() const
    {  return *cPtr_; }
 
    // Get the container of w fields (const).
@@ -811,12 +814,12 @@ namespace Rp {
 
    // Get the mask field (const).
    template <int D, class T> inline
-   typename T::Mask const & System<D,T>::mask() const
+   Mask<D,T> const & System<D,T>::mask() const
    {  return *maskPtr_; }
 
    // Get the mask field (non-const).
    template <int D, class T> inline
-   typename T::Mask& System<D,T>::mask()
+   Mask<D,T>& System<D,T>::mask()
    {  return *maskPtr_; }
 
    // Accessors for optional elements
@@ -929,7 +932,7 @@ namespace Rp {
 
    // Get the CFields container (non-const).
    template <int D, class T> inline
-   typename T::CFields & System<D,T>::c_()
+   CFields<D,T> & System<D,T>::c_()
    {  return *cPtr_; }
 
 } // namespace Rp

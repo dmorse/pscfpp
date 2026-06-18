@@ -66,9 +66,12 @@ namespace Rpg {
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class MixtureTmpl< Rpg::Polymer<1>, Rpg::Solvent<1> >;
-   template class MixtureTmpl< Rpg::Polymer<2>, Rpg::Solvent<2> >;
-   template class MixtureTmpl< Rpg::Polymer<3>, Rpg::Solvent<3> >;
+   template 
+   class MixtureTmpl< Rp::Polymer<1, Rpg::Types<1> >, Rp::Solvent<1, Rpg::Types<1> > >;
+   template 
+   class MixtureTmpl< Rp::Polymer<2, Rpg::Types<2> >, Rp::Solvent<2, Rpg::Types<2> > >;
+   template 
+   class MixtureTmpl< Rp::Polymer<3, Rpg::Types<3> >, Rp::Solvent<3, Rpg::Types<3> > >;
    namespace Rp {
       template class Mixture<1, Rpg::Types<1> >;
       template class Mixture<2, Rpg::Types<2> >;

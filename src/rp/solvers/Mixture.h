@@ -21,6 +21,10 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
    }
+   namespace Rp {
+      template <int D, class T> class Polymer;
+      template <int D, class T> class Solvent; 
+   }
 }
 
 namespace Pscf {
@@ -39,12 +43,12 @@ namespace Rp {
    * T = Rpg::Types<D> that contains a collection of class name aliases 
    * for classes used in the Rpc or Rpg program level namespace.
    *
-   * A Mixture contains a list of Polymer (T::Polymer) objects and a
-   * list of Solvent (T::Solvent) objects. Each such object can solve 
-   * the statistical mechanics problem for a single molecule of the 
-   * associated species in a set of specified chemical potential 
-   * fields, and thereby compute concentrations and molecular partition
-   * functions for all species in non-interacting reference system. 
+   * A Mixture contains a list of Polymer  objects and a separate list
+   * of Solvent objects. Each such object can solve the statistical 
+   * mechanics problem for a single molecule of the associated species 
+   * in a set of specified chemical potential fields, and thereby compute 
+   * concentrations and molecular partition functions for all species in 
+   * a non-interacting reference system. 
    *
    * The compute() member function computes single-molecule partition 
    * functions and monomer concentrations for all species.  This function 
@@ -57,7 +61,7 @@ namespace Rp {
    */
    template <int D, class T>
    class Mixture : public 
-      MixtureTmpl<typename T::Polymer, typename T::Solvent, double>
+      MixtureTmpl<Polymer<D,T>, Solvent<D,T>, double>
    {
 
    public:
@@ -65,10 +69,10 @@ namespace Rp {
       // Public type name aliases
 
       /// Polymer object type
-      using PolymerT = typename T::Polymer;
+      using PolymerT = Polymer<D,T>;
 
       /// Solvent object type
-      using SolventT = typename T::Solvent;
+      using SolventT = Solvent<D,T>;
 
       /// Block type, for a block in a block polymer.
       using BlockT = typename T::Block;

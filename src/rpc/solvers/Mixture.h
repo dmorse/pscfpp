@@ -11,11 +11,17 @@
 #include <rp/solvers/Mixture.h>   // base class template
 #include <rpc/system/Types.h>     // base class template argument
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class Polymer;
+      //template <int D, class T> class Solvent;
+   }
+}
 namespace Pscf {
 namespace Rpc {
 
    // Forward declarations
-   template <int D> class Polymer;
    template <int D> class Solvent;
 
    using namespace Util;
@@ -61,9 +67,12 @@ namespace Rpc {
 
 // Explicit instantiation declarations
 namespace Pscf {
-   extern template class MixtureTmpl< Rpc::Polymer<1>, Rpc::Solvent<1> >;
-   extern template class MixtureTmpl< Rpc::Polymer<2>, Rpc::Solvent<2> >;
-   extern template class MixtureTmpl< Rpc::Polymer<3>, Rpc::Solvent<3> >;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<1, Rpc::Types<1> >, Rp::Solvent<1, Rpc::Types<1> > >;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<2, Rpc::Types<2> >, Rp::Solvent<2, Rpc::Types<2> > >;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<3, Rpc::Types<3> >, Rp::Solvent<3, Rpc::Types<3> > >;
    namespace Rp {
       extern template class Mixture<1, Rpc::Types<1> >;
       extern template class Mixture<2, Rpc::Types<2> >;

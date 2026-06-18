@@ -38,7 +38,7 @@ namespace Rp {
    * <b> Template parameters </b>:
    *
    *   - D  dimension of space
-   *   - T  class with aliases for use in a program-level namespace.
+   *   - T  Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * \ingroup Rp_Solver_Module
    */
@@ -67,6 +67,16 @@ namespace Rp {
       using typename PolymerTmplT::SpeciesT;
 
       // Public member functions
+
+      /**
+      * Constructor.
+      */
+      Polymer();
+
+      /**
+      * Destructor.
+      */
+      ~Polymer();
 
       /**
       * Set the number of unit cell parameters.
@@ -127,37 +137,15 @@ namespace Rp {
       */
       double stress(int n) const;
 
-      // Inherited non-dependent public member functions
-      using PolymerTmplT::edge;
+      // Inherited non-dependent public member functions (for convenience)
       using PolymerTmplT::block;
-      using PolymerTmplT::propagator;
-      using PolymerSpeciesT::vertex;
-      using PolymerSpeciesT::propagatorId;
-      using PolymerSpeciesT::path;
       using PolymerSpeciesT::nBlock;
-      using PolymerSpeciesT::nVertex;
-      using PolymerSpeciesT::nPropagator;
       using PolymerSpeciesT::length;
       using PolymerSpeciesT::nBead;
-      using PolymerSpeciesT::type;
       using SpeciesT::phi;
       using SpeciesT::mu;
       using SpeciesT::q;
       using SpeciesT::ensemble;
-      using SpeciesT::setPhi;
-      using SpeciesT::setMu;
-
-   protected:
-
-      /**
-      * Constructor.
-      */
-      Polymer();
-
-      /**
-      * Destructor.
-      */
-      ~Polymer();
 
    private:
 

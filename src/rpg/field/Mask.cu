@@ -18,9 +18,11 @@ namespace Pscf {
       template class Mask< 2, Rpg::Types<2> >;
       template class Mask< 3, Rpg::Types<3> >;
    }
+   #if 0
    namespace Rpg {
       template class Mask<1>;
       template class Mask<2>;
       template class Mask<3>;
    }
+   #endif
 }

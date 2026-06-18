@@ -66,7 +66,7 @@ namespace Rp {
 
       // Call base class PolymerTmpl solve() function
       // This solves the MDE for all propagators in a precalculated order
-      solve(phiTot);
+      PolymerTmplT::solve(phiTot);
 
       // Compute block concentration fields
       double prefactor;

@@ -101,7 +101,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -111,7 +111,7 @@ public:
       bf.allocate(nBasis);
       readField("in/mask.bf", domain, bf);
 
-      Mask<1> mask;
+      Rp::Mask<1, Types<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -139,7 +139,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -150,7 +150,7 @@ public:
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Mask<1> mask;
+      Rp::Mask<1, Types<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       
       mask.allocateBasis(nBasis);
@@ -173,7 +173,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -187,7 +187,7 @@ public:
       rf.allocate(dimensions);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      Mask<1> mask;
+      Rp::Mask<1, Types<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -210,7 +210,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -220,7 +220,7 @@ public:
       bf.allocate(nBasis);
       readField("in/mask.bf", domain, bf);
 
-      Mask<1> mask;
+      Rp::Mask<1, Types<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -251,7 +251,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -262,7 +262,7 @@ public:
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Mask<1> mask;
+      Rp::Mask<1, Types<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -287,7 +287,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -298,7 +298,7 @@ public:
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Mask<1> mask;
+      Rp::Mask<1, Types<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -323,14 +323,14 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
       // Create empty mask object, check phiTot
-      Mask<1> mask;
+      Rp::Mask<1, Types<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);

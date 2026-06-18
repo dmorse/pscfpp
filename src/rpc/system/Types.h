@@ -39,15 +39,15 @@ namespace Pscf {
       template <int D> class SystemConstRef;
       template <int D> class Mixture;
       template <int D> class MixtureModifier;
-      template <int D> class Polymer;
-      template <int D> class Solvent;
+      //template <int D> class Polymer;
+      //template <int D> class Solvent;
       template <int D> class Block;
       template <int D> class Propagator;
       //template <int D> class Domain;
       template <int D> class FieldIo;
       template <int D> class WFields;
-      template <int D> class CFields;
-      template <int D> class Mask;
+      //template <int D> class CFields;
+      //template <int D> class Mask;
       template <int D> class EnvironmentFactory;
       template <int D> class ScftThermo;
       template <int D> class Iterator;
@@ -107,8 +107,8 @@ namespace Rpc {
 
       using Mixture = Rpc::Mixture<D>;
       using MixtureModifier = Rpc::MixtureModifier<D>;
-      using Polymer = Rpc::Polymer<D>;
-      using Solvent = Rpc::Solvent<D>;
+      //using Polymer = Rpc::Polymer<D>;
+      //using Solvent = Rpc::Solvent<D>;
       using Block = Rpc::Block<D>;
       using Propagator = Rpc::Propagator<D>;
 
@@ -121,8 +121,8 @@ namespace Rpc {
       //using Domain = Rpc::Domain<D>;
       using FieldIo = Rpc::FieldIo<D>;
       using WFields = Rpc::WFields<D>;
-      using CFields = Rpc::CFields<D>;
-      using Mask = Rpc::Mask<D>;
+      //using CFields = Rpc::CFields<D>;
+      //using Mask = Rpc::Mask<D>;
 
       using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpc::EnvironmentFactory<D>;

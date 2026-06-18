@@ -12,6 +12,7 @@
 #include <rpg/system/Types.h>    // base class template argument
 #include <prdc/cuda/RField.h>    // base class member
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -40,6 +41,7 @@ namespace Rpg {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -49,10 +51,12 @@ namespace Pscf {
       extern template class Mask< 2, Rpg::Types<2> >;
       extern template class Mask< 3, Rpg::Types<3> >;
    }
+   #if 0
    namespace Rpg {
       extern template class Mask<1>;
       extern template class Mask<2>;
       extern template class Mask<3>;
    }
+   #endif
 }
 #endif

@@ -162,7 +162,7 @@ public:
       mixture.allocate();
 
       // Check polymer block sizes
-      Polymer<1>& polymer = mixture.polymer(0);
+      Rp::Polymer<1, Types<1> >& polymer = mixture.polymer(0);
       TEST_ASSERT(polymer.block(0).nBead() == 20);
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);

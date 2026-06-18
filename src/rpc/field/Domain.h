@@ -11,48 +11,6 @@
 #include <rp/field/Domain.h>     // base class template
 #include <rpc/system/Types.h>    // base class template argument
 
-#if 0
-// Forward declarations
-namespace Pscf {
-   namespace Prdc {
-      namespace Cpu {
-         template <int D> class WaveList;
-         template <int D> class FFT;
-      }
-   }
-   namespace Rpc {
-      template <int D> class FieldIo;
-   }
-}
-
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cpu;
-
-   /**
-   * Spatial domain for a periodic structure with real fields, on a CPU.
-   *
-   * Specializations of this template with D =1, 2, and 3 are derived from
-   * specializations of the class template Rp::Domain<D, FFT, WLT, FIT>,
-   * defined using template type arguments FFT = Prdc::Cpu::FFT\<D\>, 
-   * WLT = Prdc::Cpu::WaveList\<D\>, and FIT = Rpc::FieldIo\<D\> that are
-   * designed to use standard CPU hardware. The entire public interface 
-   * and all of the source code are inherited from this base class. See
-   * the documentation of the Rp::Domain base class template for details. 
-   *
-   * \ingroup Rpc_Field_Module
-   */
-   template <int D>
-   class Domain : public Rp::Domain< D, Types<D> >
-   {};
-
-} // namespace Rpc
-} // namespace Pscf
-#endif
-
 // Explicit instantiation declarations 
 namespace Pscf {
    namespace Rp {
@@ -60,12 +18,5 @@ namespace Pscf {
       extern template class Domain<2, Rpc::Types<2> >;
       extern template class Domain<3, Rpc::Types<3> >;
    } 
-   #if 0
-   namespace Rpc {
-      extern template class Domain<1>;
-      extern template class Domain<2>;
-      extern template class Domain<3>;
-   }
-   #endif 
 } 
 #endif

@@ -71,10 +71,10 @@ namespace Rp {
       BracketPolicy::set(BracketPolicy::Optional);
 
       // Create field containers
-      cPtr_ = new typename T::CFields();
+      cPtr_ = new CFields<D,T>();
       wPtr_ = new typename T::WFields();
       hPtr_ = new typename T::WFields();
-      maskPtr_ = new typename T::Mask();
+      maskPtr_ = new Mask<D,T>();
 
       // Create non-optional components
       mixturePtr_ = new typename T::Mixture();

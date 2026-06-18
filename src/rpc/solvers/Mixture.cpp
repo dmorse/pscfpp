@@ -5,11 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Mixture.h"
-#include "Polymer.h"
-#include "Solvent.h"
-#include "Block.h"
-#include "Propagator.h"
+#include <rpc/solvers/Mixture.h>
+#include <rpc/solvers/Polymer.h>
+#include <rpc/solvers/Solvent.h>
+#include <rpc/solvers/Block.h>
+#include <rpc/solvers/Propagator.h>
 #include <rpc/field/FieldIo.h>
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/RField.h>
@@ -43,9 +43,9 @@ namespace Rpc {
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class MixtureTmpl< Rpc::Polymer<1>, Rpc::Solvent<1> >;
-   template class MixtureTmpl< Rpc::Polymer<2>, Rpc::Solvent<2> >;
-   template class MixtureTmpl< Rpc::Polymer<3>, Rpc::Solvent<3> >;
+   template class MixtureTmpl< Rp::Polymer<1, Rpc::Types<1> >, Rp::Solvent<1, Rpc::Types<1> > >;
+   template class MixtureTmpl< Rp::Polymer<2, Rpc::Types<2> >, Rp::Solvent<2, Rpc::Types<2> > >;
+   template class MixtureTmpl< Rp::Polymer<3, Rpc::Types<3> >, Rp::Solvent<3, Rpc::Types<3> > >;
    namespace Rp { 
       template class Mixture<1, Rpc::Types<1> >;
       template class Mixture<2, Rpc::Types<2> >;

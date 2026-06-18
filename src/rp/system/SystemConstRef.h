@@ -14,7 +14,11 @@ namespace Util {
 }
 namespace Pscf {
    namespace Rp {
+      template <int D, class T> class CFields;
+      template <int D, class T> class WFields;
+      template <int D, class T> class Mask;
       template <int D, class T> class Domain;
+      template <int D, class T> class System;
    }
 }
 
@@ -67,7 +71,7 @@ namespace Rp {
       /**
       * Get the concentration (c) field container.
       */
-      typename T::CFields const & c() const
+      CFields<D,T> const & c() const
       {  return *cPtr_; }
 
       /**
@@ -85,7 +89,7 @@ namespace Rp {
       /** 
       * Get the mask (if any).
       */
-      typename T::Mask const & mask() const
+      Mask<D,T> const & mask() const
       {  return *maskPtr_; }
 
       /**
@@ -138,7 +142,7 @@ namespace Rp {
       Domain<D,T> const * domainPtr_;
 
       /// Pointer to monomer concentration (c) field container.
-      typename T::CFields const * cPtr_;
+      CFields<D,T> const * cPtr_;
 
       /// Pointer to chemical potential (w) field container.
       typename T::WFields const * wPtr_;
@@ -147,7 +151,7 @@ namespace Rp {
       typename T::WFields const * hPtr_;
 
       /// Pointer to Mask.
-      typename T::Mask const * maskPtr_;
+      Mask<D,T> const * maskPtr_;
 
       /// Pointer to FileMaster .
       FileMaster const * fileMasterPtr_;

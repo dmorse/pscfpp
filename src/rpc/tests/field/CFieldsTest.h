@@ -134,11 +134,11 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      CFields<3> fields;
+      Rp::CFields<3, Types<3> > fields;
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
       TEST_ASSERT(fields.isAllocatedRGrid());

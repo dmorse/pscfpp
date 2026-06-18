@@ -32,15 +32,15 @@ namespace Pscf {
       template <int D> class SystemConstRef;
       template <int D> class Mixture;
       template <int D> class MixtureModifier;
-      template <int D> class Polymer;
-      template <int D> class Solvent;
+      //template <int D> class Polymer;
+      //template <int D> class Solvent;
       template <int D> class Block;
       template <int D> class Propagator;
-      template <int D> class Domain;
+      //template <int D> class Domain;
       template <int D> class FieldIo;
       template <int D> class WFields;
-      template <int D> class CFields;
-      template <int D> class Mask;
+      //template <int D> class CFields;
+      //template <int D> class Mask;
       template <int D> class ScftThermo;
       template <int D> class EnvironmentFactory;
       template <int D> class Iterator;
@@ -98,21 +98,21 @@ namespace Rpg {
 
       using Mixture = Rpg::Mixture<D>;
       using MixtureModifier = Rpg::MixtureModifier<D>;
-      using Polymer = Rpg::Polymer<D>;
-      using Solvent = Rpg::Solvent<D>;
+      //using Polymer = Rpg::Polymer<D>;
+      //using Solvent = Rpg::Solvent<D>;
       using Block = Rpg::Block<D>;
       using Propagator = Rpg::Propagator<D>;
 
       using Interaction = Pscf::Interaction;
-      using Domain = Rpg::Domain<D>;
+      //using Domain = Rpg::Domain<D>;
       using FieldIo = Rpg::FieldIo<D>;
-      using ScftThermo = Rpg::ScftThermo<D>;
-
       using WFields = Rpg::WFields<D>;
-      using CFields = Rpg::CFields<D>;
-      using Mask = Rpg::Mask<D>;
+      //using CFields = Rpg::CFields<D>;
+      //using Mask = Rpg::Mask<D>;
       using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpg::EnvironmentFactory<D>;
+
+      using ScftThermo = Rpg::ScftThermo<D>;
 
       using Iterator = Rpg::Iterator<D>;
       using IteratorFactory = Rpg::IteratorFactory<D>;

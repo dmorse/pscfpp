@@ -183,7 +183,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -219,7 +219,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize domain
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
@@ -263,7 +263,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize domain
-      Domain<2> domain;
+      Rp::Domain<2, Types<2> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_hex.rf", domain);
 
@@ -306,7 +306,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -345,7 +345,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Initialize domain by reading header of r-grid file
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -388,7 +388,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -427,7 +427,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -467,7 +467,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
@@ -494,7 +494,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<2> domain;
+      Rp::Domain<2, Types<2> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_hex.rf", domain);
 
@@ -521,7 +521,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -548,7 +548,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -579,7 +579,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -610,7 +610,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 3;
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -649,7 +649,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 2;
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -688,7 +688,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 2;
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       domain.fieldIo().setNMonomer(nMonomer_);
       readHeader("in/c_c15_1.rf", domain);
@@ -724,7 +724,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
@@ -758,7 +758,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -790,7 +790,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -821,7 +821,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -875,7 +875,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Read header
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -938,7 +938,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
       IntVec<3> dimensions = domain.mesh().dimensions();
@@ -959,7 +959,7 @@ public:
                                          replicas);
 
       // Read replicated field header 
-      Domain<3> domain_rep;
+      Rp::Domain<3, Types<3> > domain_rep;
       domain_rep.setFileMaster(fileMaster_);
       readHeader("out/w_bcc_replica.rf", domain_rep);
       IntVec<3> dimensions_rep = domain_rep.mesh().dimensions();
@@ -1006,7 +1006,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
       IntVec<1> dimensions = domain.mesh().dimensions();
@@ -1028,7 +1028,7 @@ public:
                                   newGridDimensions);
 
       // Read header for expanded field (d=3)
-      Domain<3> domain_exp;
+      Rp::Domain<3, Types<3> > domain_exp;
       domain_exp.setFileMaster(fileMaster_);
       readHeader("out/w_lam_exp.rf", domain_exp);
       IntVec<3> dimensions_exp = domain_exp.mesh().dimensions();
@@ -1066,7 +1066,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create domain and initialize by reading header
-      Domain<2> domain;
+      Rp::Domain<2, Types<2> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_hex.rf", domain);
       IntVec<2> dimensions = domain.mesh().dimensions();
@@ -1090,7 +1090,7 @@ public:
                                  newGridDimensions);
 
       // Read header for expanded field (d=3)
-      Domain<3> domain_exp;
+      Rp::Domain<3, Types<3> > domain_exp;
       domain_exp.setFileMaster(fileMaster_);
       readHeader("out/w_hex_exp.rf", domain_exp);
       IntVec<3> dimensions_exp = domain_exp.mesh().dimensions();

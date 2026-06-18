@@ -52,7 +52,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
 
       std::ifstream in;
@@ -74,7 +74,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 

@@ -41,10 +41,5 @@ namespace Pscf {
       extern template class Solvent<2, Rpg::Types<2> >;
       extern template class Solvent<3, Rpg::Types<3> >;
    }
-   namespace Rpg {
-      extern template class Solvent<1>;
-      extern template class Solvent<2>;
-      extern template class Solvent<3>;
-   }
 }
 #endif

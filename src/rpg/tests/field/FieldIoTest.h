@@ -170,7 +170,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -203,7 +203,7 @@ public:
 
    void testBasisIo3D(std::string rf, std::string bf)
    {
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/" + rf, domain);
 
@@ -275,7 +275,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -303,7 +303,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -341,7 +341,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -374,7 +374,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 3;
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -417,7 +417,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -456,7 +456,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 2;
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       domain.fieldIo().setNMonomer(nMonomer_);
       readHeader("in/c_c15_1.rf", domain);
@@ -492,7 +492,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -526,7 +526,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -560,7 +560,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<1> domain;
+      Rp::Domain<1, Types<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
@@ -594,7 +594,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -647,7 +647,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Rp::Domain<3, Types<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 

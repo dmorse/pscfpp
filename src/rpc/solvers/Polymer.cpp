@@ -24,9 +24,4 @@ namespace Pscf {
       template class Polymer< 2, Rpc::Types<2> >;
       template class Polymer< 3, Rpc::Types<3> >;
    }
-   namespace Rpc {
-      template class Polymer<1>;
-      template class Polymer<2>;
-      template class Polymer<3>;
-   }
 }
