@@ -1,5 +1,5 @@
-#ifndef RP_FIELD_IO_TPP
-#define RP_FIELD_IO_TPP
+#ifndef RP_FIELD_IO_BASE_TPP
+#define RP_FIELD_IO_BASE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo.h"
+#include "FieldIoBase.h"
 
 #include <prdc/field/fieldCheck.h>
 #include <prdc/field/rFieldIo.h>
@@ -44,8 +44,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   FieldIo<D,RFT,KFT,FFT>::FieldIo()
+   template <int D, class T>
+   FieldIoBase<D,T>::FieldIoBase()
     : meshPtr_(nullptr),
       fftPtr_(nullptr),
       hasGroupPtr_(nullptr),
@@ -64,11 +64,10 @@ namespace Rp {
    /*
    * Create associations with other members of a parent Domain<D> object.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void
-   FieldIo<D,RFT,KFT,FFT>::associate(
+   template <int D, class T>
+   void FieldIoBase<D,T>::associate(
                     Mesh<D> const & mesh,
-                    FFT const & fft,
+                    typename T::FFT const & fft,
                     typename UnitCell<D>::LatticeSystem const & lattice,
                     bool const & hasGroup,
                     std::string const & groupName,
@@ -87,16 +86,15 @@ namespace Rp {
    /*
    * Create an association with a FileMaster.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::setFileMaster(
-                              FileMaster const & fileMaster)
+   template <int D, class T>
+   void FieldIoBase<D,T>::setFileMaster(FileMaster const & fileMaster)
    {  fileMasterPtr_ = &fileMaster; }
 
    /*
    * Set nMonomer, the number of monomer types.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::setNMonomer(int nMonomer)
+   template <int D, class T>
+   void FieldIoBase<D,T>::setNMonomer(int nMonomer)
    {
       // Preconditions - require that function is only called once
       UTIL_CHECK(nMonomer_ == 0);
@@ -110,8 +108,8 @@ namespace Rp {
    /*
    * Read an array of fields in basis format from an input stream.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::readFieldsBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::readFieldsBasis(
                               std::istream& in,
                               DArray< DArray<double> >& fields,
                               UnitCell<D>& unitCell) const
@@ -148,8 +146,8 @@ namespace Rp {
    /*
    * Read a single field in basis format from an input stream
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::readFieldBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::readFieldBasis(
                               std::istream& in,
                               DArray<double>& field,
                               UnitCell<D>& unitCell) const
@@ -181,8 +179,8 @@ namespace Rp {
    /*
    * Write an array of fields in basis format to an output stream.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::writeFieldsBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldsBasis(
                               std::ostream &out,
                               DArray< DArray<double> > const & fields,
                               UnitCell<D> const & unitCell) const
@@ -209,8 +207,8 @@ namespace Rp {
    /*
    * Write a single field in basis format to an output stream.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::writeFieldBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldBasis(
                               std::ostream& out,
                               DArray<double> const & field,
                               UnitCell<D> const & unitCell) const
@@ -238,8 +236,8 @@ namespace Rp {
    /*
    * Open-close a file and read a set of fields in basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::readFieldsBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::readFieldsBasis(
                               std::string filename,
                               DArray<DArray<double> >& fields,
                               UnitCell<D>& unitCell) const
@@ -254,8 +252,8 @@ namespace Rp {
    /*
    * Open-close a file and read a single field in basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::readFieldBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::readFieldBasis(
                               std::string filename,
                               DArray<double>& field,
                               UnitCell<D>& unitCell) const
@@ -269,8 +267,8 @@ namespace Rp {
    /*
    * Open-close a file, and write an array of fields in basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::writeFieldsBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldsBasis(
                               std::string filename,
                               DArray<DArray<double> > const & fields,
                               UnitCell<D> const & unitCell) const
@@ -284,8 +282,8 @@ namespace Rp {
    /*
    * Open-close a file, and write a single field in basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::writeFieldBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldBasis(
                               std::string filename,
                               DArray<double> const & field,
                               UnitCell<D> const & unitCell) const
@@ -299,10 +297,10 @@ namespace Rp {
    /*
    * Open-close a file, and write an array of fields in r-grid format
    */
-   template <int D, class RFT, class KFT, class FFT>
-   bool FieldIo<D,RFT,KFT,FFT>::readFieldsRGrid(
+   template <int D, class T>
+   bool FieldIoBase<D,T>::readFieldsRGrid(
                               std::string filename,
-                              DArray< RFT >& fields,
+                              DArray< typename T::RField >& fields,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
@@ -316,10 +314,10 @@ namespace Rp {
    /*
    * Open-close a file, and read a single field in r-grid format
    */
-   template <int D, class RFT, class KFT, class FFT>
-   bool FieldIo<D,RFT,KFT,FFT>::readFieldRGrid(
+   template <int D, class T>
+   bool FieldIoBase<D,T>::readFieldRGrid(
                               std::string filename,
-                              RFT & field,
+                              typename T::RField & field,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
@@ -333,10 +331,10 @@ namespace Rp {
    /*
    * Open-close a file, and write an array of fields in r-grid format
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::writeFieldsRGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldsRGrid(
                               std::string filename,
-                              DArray< RFT > const & fields,
+                              DArray< typename T::RField > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -352,10 +350,10 @@ namespace Rp {
    /*
    * Open-close a file, and write a single field in r-grid format
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::writeFieldRGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldRGrid(
                               std::string filename,
-                              RFT const & field,
+                              typename T::RField const & field,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -368,10 +366,10 @@ namespace Rp {
    /*
    * Open-close a file, and read an array of fields in k-grid format
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::readFieldsKGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::readFieldsKGrid(
                               std::string filename,
-                              DArray< KFT >& fields,
+                              DArray< typename T::RFieldDft >& fields,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
@@ -383,10 +381,10 @@ namespace Rp {
    /*
    * Open-close a file, and read an array of fields in k-grid format
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::writeFieldsKGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldsKGrid(
                               std::string filename,
-                              DArray< KFT > const & fields,
+                              DArray< typename T::RFieldDft > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -401,10 +399,10 @@ namespace Rp {
    /*
    * Convert array of fields from basis to k-grid format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertBasisToKGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertBasisToKGrid(
                               DArray< DArray <double> > const & in,
-                              DArray< KFT >& out) const
+                              DArray< typename T::RFieldDft >& out) const
    {
       // Inspect input and output field containers
       int nMonomer, nMonomerOut, capacity;
@@ -424,9 +422,9 @@ namespace Rp {
    /*
    * Convert array of fields from k-grid format to basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertKGridToBasis(
-                              DArray< KFT > const & in,
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertKGridToBasis(
+                              DArray< typename T::RFieldDft > const & in,
                               DArray< DArray <double> > & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -447,8 +445,8 @@ namespace Rp {
    /*
    * Convert a field file from k-grid to basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertKGridToBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertKGridToBasis(
                                 std::string const & inFileName,
                                 std::string const & outFileName) const
    {
@@ -463,8 +461,8 @@ namespace Rp {
    /*
    * Convert a field file from basis to k-grid format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertBasisToKGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertBasisToKGrid(
                                 std::string const & inFileName,
                                 std::string const & outFileName) const
    {
@@ -481,10 +479,10 @@ namespace Rp {
    /*
    * Convert a single field from basis to r-grid format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertBasisToRGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertBasisToRGrid(
                               DArray<double> const & in,
-                              RFT& out) const
+                              typename T::RField& out) const
    {
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
@@ -496,10 +494,10 @@ namespace Rp {
    /*
    * Convert an array of fields from basis to r-grid format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertBasisToRGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertBasisToRGrid(
                               DArray< DArray <double> > const & in,
-                              DArray< RFT >& out) const
+                              DArray< typename T::RField >& out) const
    {
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
@@ -516,9 +514,9 @@ namespace Rp {
    /*
    * Convert a single field from r-grid to basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertRGridToBasis(
-                              RFT const & in,
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertRGridToBasis(
+                              typename T::RField const & in,
                               DArray<double> & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -531,9 +529,9 @@ namespace Rp {
    /*
    * Convert an array of fields from r-grid to basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertRGridToBasis(
-                              DArray< RFT > const & in,
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertRGridToBasis(
+                              DArray< typename T::RField > const & in,
                               DArray< DArray <double> > & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -557,8 +555,8 @@ namespace Rp {
    /*
    * Convert a field file from basis to r-grid format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertBasisToRGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertBasisToRGrid(
                                 std::string const & inFileName,
                                 std::string const & outFileName) const
    {
@@ -574,8 +572,8 @@ namespace Rp {
    /*
    * Convert a field file from r-grid to basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertRGridToBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertRGridToBasis(
                                 std::string const & inFileName,
                                 std::string const & outFileName) const
    {
@@ -592,10 +590,10 @@ namespace Rp {
    /*
    * Apply inverse FFT to an array of k-grid fields, converting to r-grid.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertKGridToRGrid(
-                              DArray< KFT > const & in,
-                              DArray< RFT >& out) const
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertKGridToRGrid(
+                              DArray< typename T::RFieldDft > const & in,
+                              DArray< typename T::RField >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -607,9 +605,11 @@ namespace Rp {
    /*
    * Apply inverse FFT to a single k-grid field, converting to r-grid.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertKGridToRGrid(
-                              KFT const & in, RFT& out) const
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertKGridToRGrid(
+                            typename T::RFieldDft const & in, 
+                            typename T::RField& out) 
+   const
    {
       fft().inverseTransformSafe(in, out);
    }
@@ -617,10 +617,10 @@ namespace Rp {
    /*
    * Apply forward FFT to an array of r-grid fields, converting to k-grid.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertRGridToKGrid(
-                              DArray< RFT > const & in,
-                              DArray< KFT >& out) const
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertRGridToKGrid(
+                              DArray< typename T::RField > const & in,
+                              DArray< typename T::RFieldDft >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -632,17 +632,17 @@ namespace Rp {
    /*
    * Apply forward FFT to a single r-grid field, converting to k-grid.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertRGridToKGrid(
-                              RFT const & in,
-                              KFT& out) const
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertRGridToKGrid(
+                              typename T::RField const & in,
+                              typename T::RFieldDft& out) const
    {  fft().forwardTransform(in, out); }
 
    /*
    * Convert a field file from k-grid to r-grid format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertKGridToRGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertKGridToRGrid(
                                 std::string const & inFileName,
                                 std::string const & outFileName) const
    {
@@ -660,8 +660,8 @@ namespace Rp {
    /*
    * Convert a field file from r-grid to k-grid format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::convertRGridToKGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertRGridToKGrid(
                                 std::string const & inFileName,
                                 std::string const & outFileName) const
    {
@@ -680,9 +680,9 @@ namespace Rp {
    * Return true if symmetric, false otherwise. Print error values
    * if verbose == true and hasSymmetry == false.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   bool FieldIo<D,RFT,KFT,FFT>::hasSymmetry(
-                              RFT const & in,
+   template <int D, class T>
+   bool FieldIoBase<D,T>::hasSymmetry(
+                              typename T::RField const & in,
                               double epsilon,
                               bool verbose) const
    {
@@ -694,8 +694,8 @@ namespace Rp {
    /*
    * Check if r-grid fields have declared space group symmetry.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   bool FieldIo<D,RFT,KFT,FFT>::hasSymmetry(
+   template <int D, class T>
+   bool FieldIoBase<D,T>::hasSymmetry(
                                   std::string const & inFileName,
                                   double epsilon) const
    {
@@ -719,8 +719,8 @@ namespace Rp {
    /*
    * Compare two fields in basis format, write report to Log file.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::compareFieldsBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::compareFieldsBasis(
                         DArray< DArray<double> > const & field1,
                         DArray< DArray<double> > const & field2) const
    {
@@ -735,8 +735,8 @@ namespace Rp {
                   << comparison.rmsDiff() << "\n" << std::endl;
    }
 
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::compareFieldsBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::compareFieldsBasis(
                                 std::string const & filename1,
                                 std::string const & filename2) const
    {
@@ -748,12 +748,12 @@ namespace Rp {
       compareFieldsBasis(fields1, fields2);
    }
 
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::compareFieldsRGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::compareFieldsRGrid(
                                 std::string const & filename1,
                                 std::string const & filename2) const
    {
-      DArray< RFT > fields1, fields2;
+      DArray< typename T::RField > fields1, fields2;
       UnitCell<D> tmpUnitCell;
       // Unallocated arrays will be allocated in readFieldsRGrid
       readFieldsRGrid(filename1, fields1, tmpUnitCell);
@@ -766,8 +766,8 @@ namespace Rp {
    /*
    * Multiply a single field in basis format by a constant factor.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::scaleFieldBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::scaleFieldBasis(
                               DArray<double> & field,
                               double factor) const
    {
@@ -781,8 +781,8 @@ namespace Rp {
    /*
    * Rescale an array of fields in basis format by a constant factor.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::scaleFieldsBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::scaleFieldsBasis(
                               DArray< DArray<double> >& fields,
                               double factor) const
    {
@@ -798,8 +798,8 @@ namespace Rp {
    /*
    * Rescale fields in files by a constant factor.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::scaleFieldsBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::scaleFieldsBasis(
                                 std::string const & inFileName,
                                 std::string const & outFileName,
                                 double factor) const
@@ -814,9 +814,9 @@ namespace Rp {
    /*
    * Rescale fields in r-grid format by a constant factor.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::scaleFieldsRGrid(
-                              DArray< RFT > & fields,
+   template <int D, class T>
+   void FieldIoBase<D,T>::scaleFieldsRGrid(
+                              DArray< typename T::RField > & fields,
                               double factor) const
    {
       int n = fields.capacity();
@@ -828,8 +828,8 @@ namespace Rp {
    /*
    * Rescale fields by a constant factor, read and write to file.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::scaleFieldsRGrid(
+   template <int D, class T>
+   void FieldIoBase<D,T>::scaleFieldsRGrid(
                                 std::string const & inFileName,
                                 std::string const & outFileName,
                                 double factor) const
@@ -849,8 +849,8 @@ namespace Rp {
    /*
    * Convert an array of c fields to estimated w fields, in basis form.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::estimateWBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::estimateWBasis(
                        DMatrix<double> const & chi,
                        DArray< DArray<double> > & fields) const
    {
@@ -886,8 +886,8 @@ namespace Rp {
    /*
    * Convert a file of c fields to estimated w fields, in basis format.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::estimateWBasis(
+   template <int D, class T>
+   void FieldIoBase<D,T>::estimateWBasis(
                        std::string const & inFileName,
                        std::string const & outFileName,
                        DMatrix<double> const & chi) const
@@ -935,10 +935,10 @@ namespace Rp {
    /*
    * Replicate unit cell a specified number of times in each direction.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::replicateUnitCell(
+   template <int D, class T>
+   void FieldIoBase<D,T>::replicateUnitCell(
                               std::string filename,
-                              DArray<RFT> const & fields,
+                              DArray<typename T::RField> const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
    {
@@ -951,8 +951,8 @@ namespace Rp {
    /*
    * Replicate unit cell a specified number of times in each direction.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::replicateUnitCell(
+   template <int D, class T>
+   void FieldIoBase<D,T>::replicateUnitCell(
                                 std::string const & inFileName,
                                 std::string const & outFileName,
                                 IntVec<D> const & replicas) const
@@ -967,10 +967,10 @@ namespace Rp {
    /*
    * Expand the number of spatial dimensions of an RField.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::expandRGridDimension(
+   template <int D, class T>
+   void FieldIoBase<D,T>::expandRGridDimension(
                               std::string filename,
-                              DArray<RFT> const & fields,
+                              DArray<typename T::RField> const & fields,
                               UnitCell<D> const & unitCell, int d,
                               DArray<int> newGridDimensions) const
    {
@@ -983,8 +983,8 @@ namespace Rp {
    /*
    * Expand the number of spatial dimensions of an RField.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::expandRGridDimension(
+   template <int D, class T>
+   void FieldIoBase<D,T>::expandRGridDimension(
                                 std::string const & inFileName,
                                 std::string const & outFileName,
                                 int d,
@@ -1009,8 +1009,8 @@ namespace Rp {
    * Also validates lattice type and groupName (if any), and constructs
    * a symmetry-adapted basis if there is a group but no basis.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::readFieldHeader(
+   template <int D, class T>
+   void FieldIoBase<D,T>::readFieldHeader(
                               std::istream& in,
                               int& nMonomer,
                               UnitCell<D>& unitCell,
@@ -1095,8 +1095,8 @@ namespace Rp {
    /*
    * Write a field file header.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::writeFieldHeader(
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldHeader(
                               std::ostream &out,
                               int nMonomer,
                               UnitCell<D> const & unitCell,
@@ -1119,8 +1119,8 @@ namespace Rp {
    /*
    * If necessary, allocate r-grid workspace.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::checkAllocateRGrid() const
+   template <int D, class T>
+   void FieldIoBase<D,T>::checkAllocateRGrid() const
    {
       if (isAllocatedRGrid_) return;
 
@@ -1137,8 +1137,8 @@ namespace Rp {
    /*
    * If necessary, allocate k-grid field workspace.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void FieldIo<D,RFT,KFT,FFT>::checkAllocateKGrid() const
+   template <int D, class T>
+   void FieldIoBase<D,T>::checkAllocateKGrid() const
    {
       if (isAllocatedKGrid_) return;
 
@@ -1155,10 +1155,9 @@ namespace Rp {
    /*
    * If necessary, allocate basis field workspace.
    */
-   template <int D, class RFT, class KFT, class FFT>
-   void
-   FieldIo<D,RFT,KFT,FFT>::checkAllocateBasis(
-                                std::string const & inFileName) const
+   template <int D, class T>
+   void FieldIoBase<D,T>::checkAllocateBasis( std::string const & inFileName) 
+   const
    {
       if (isAllocatedBasis_) return;
 

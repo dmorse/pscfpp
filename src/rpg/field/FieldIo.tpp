@@ -16,6 +16,9 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/FFT.h>
+
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/complex.h>
@@ -25,8 +28,8 @@
 #include <pscf/math/arithmetic.h>
 
 // Templates that require declarations given above to parse
-#include <rp/field/FieldIo.tpp>    // base class template implementation
-#include <prdc/field/rFieldIo.h>   // function templates for IO operations
+#include <rp/field/FieldIoBase.tpp> // base class template implementation
+#include <prdc/field/rFieldIo.h>    // function templates for field IO 
 
 namespace Pscf {
 namespace Rpg {

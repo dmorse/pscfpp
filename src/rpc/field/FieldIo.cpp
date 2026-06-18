@@ -9,10 +9,9 @@
 
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cpu;
-      template class Rp::FieldIo<1, RField<1>, RFieldDft<1>, FFT<1> >;
-      template class Rp::FieldIo<2, RField<2>, RFieldDft<2>, FFT<2> >;
-      template class Rp::FieldIo<3, RField<3>, RFieldDft<3>, FFT<3> >;
+      template class Rp::FieldIoBase<1, Rpc::Types<1> >;
+      template class Rp::FieldIoBase<2, Rpc::Types<2> >;
+      template class Rp::FieldIoBase<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       template class FieldIo<1>;

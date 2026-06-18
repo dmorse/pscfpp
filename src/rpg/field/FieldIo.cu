@@ -6,14 +6,13 @@
 */
 
 #include "FieldIo.tpp"
-#include <util/math/Constants.h>
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FieldIo<1, RField<1>, RFieldDft<1>, FFT<1> >;
-      template class FieldIo<2, RField<2>, RFieldDft<2>, FFT<2> >;
-      template class FieldIo<3, RField<3>, RFieldDft<3>, FFT<3> >;
+      template class FieldIoBase<1, Rpg::Types<1> >;
+      template class FieldIoBase<2, Rpg::Types<2> >;
+      template class FieldIoBase<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class FieldIo<1>;
