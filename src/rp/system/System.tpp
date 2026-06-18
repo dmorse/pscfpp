@@ -434,7 +434,7 @@ namespace Rp {
    {
       UTIL_CHECK(isAllocatedGrid_);
       std::string command, filename, inFileName, outFileName;
-      typename T::FieldIo const & fieldIo = domain_().fieldIo();
+      FieldIo<D,T> const & fieldIo = domain_().fieldIo();
 
       bool readNext = true;
       while (readNext) {

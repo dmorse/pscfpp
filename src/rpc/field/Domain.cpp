@@ -6,7 +6,7 @@
 */
 
 #include "Domain.h"                 // class header
-#include <rpc/field/FieldIo.tpp>    // base class template argument
+#include <rpc/field/FieldIo.h>      // base class template argument
 #include <prdc/cpu/WaveList.h>      // base class template argument
 #include <prdc/cpu/FFT.h>           // base class template argument
 #include <rp/field/Domain.tpp>      // base class template implementation

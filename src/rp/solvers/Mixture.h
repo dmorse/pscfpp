@@ -24,6 +24,7 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class Polymer;
       template <int D, class T> class Solvent; 
+      template <int D, class T> class FieldIo; 
    }
 }
 
@@ -90,7 +91,7 @@ namespace Rp {
       using WaveListT = typename T::WaveList;
 
       /// FieldIo type.
-      using FieldIoT = typename T::FieldIo;
+      using FieldIoT = FieldIo<D,T>;
 
       /// MixtureTmpl direct (parent) base class.
       using MixtureTmplT = MixtureTmpl<PolymerT, SolventT, double>;

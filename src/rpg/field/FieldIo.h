@@ -24,7 +24,7 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -47,8 +47,8 @@ namespace Rpg {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class FieldIo
-     : public  Rp::FieldIoBase< D, Types<D> >
+   class FieldIo<D, Rpg::Types<D> >
+     : public  FieldIoBase< D, Rpg::Types<D> >
    {
    public:
 
@@ -322,8 +322,7 @@ namespace Rpg {
 
    };
 
-
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantation declarations
@@ -333,11 +332,9 @@ namespace Pscf {
       extern template class FieldIoBase<1, Rpg::Types<1> >;
       extern template class FieldIoBase<2, Rpg::Types<2> >;
       extern template class FieldIoBase<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class FieldIo<1>;
-      extern template class FieldIo<2>;
-      extern template class FieldIo<3>;
+      extern template class FieldIo<1, Rpg::Types<1> >;
+      extern template class FieldIo<2, Rpg::Types<2> >;
+      extern template class FieldIo<3, Rpg::Types<3> >;
    }
 }
 #endif

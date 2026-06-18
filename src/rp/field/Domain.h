@@ -24,6 +24,9 @@ namespace Pscf {
       template <int D> class SpaceGroup;
       template <int D> class Basis;
    }
+   namespace Rp {
+      template <int D, class T> class FieldIo;
+   }
 }
 
 namespace Pscf {
@@ -174,12 +177,12 @@ namespace Rp {
       /**
       * Get the FieldIo by non-const reference.
       */
-      typename T::FieldIo& fieldIo();
+      FieldIo<D,T>& fieldIo();
 
       /**
       * Get the FieldIo by const reference.
       */
-      typename T::FieldIo const & fieldIo() const;
+      FieldIo<D,T> const & fieldIo() const;
 
       ///@}
       /// \name Accessors (return by value)
@@ -287,7 +290,7 @@ namespace Rp {
       /**
       * Pointer to a FieldIo object (owned).
       */
-      typename T::FieldIo* fieldIoPtr_;
+      FieldIo<D,T>* fieldIoPtr_;
 
       /**
       * Pointer to a Signal object (owned).
@@ -379,12 +382,12 @@ namespace Rp {
 
    // Get the FieldIo by const reference.
    template <int D, class T> inline
-   typename T::FieldIo& Domain<D,T>::fieldIo()
+   FieldIo<D,T>& Domain<D,T>::fieldIo()
    {  return *fieldIoPtr_; }
 
    // Get the FieldIo by const reference.
    template <int D, class T> inline
-   typename T::FieldIo const & Domain<D,T>::fieldIo() const
+   FieldIo<D,T> const & Domain<D,T>::fieldIo() const
    {  return *fieldIoPtr_; }
 
    // Get the lattice type enumeration value.

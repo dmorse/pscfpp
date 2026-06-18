@@ -62,7 +62,7 @@ namespace Rp {
    void RGridTrajectoryReader<D,T>::readHeader()
    {
       int nMonomer = system().mixture().nMonomer();
-      typename T::FieldIo const & fieldIo = system().domain().fieldIo();
+      FieldIo<D,T> const & fieldIo = system().domain().fieldIo();
       UnitCell<D> tmpUnitCell;
       bool hasSymmetry;
       fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell,
@@ -113,7 +113,7 @@ namespace Rp {
 
       // Read a w-field configuration in r-grid format
       int nMonomer = system().mixture().nMonomer();
-      typename T::FieldIo const & fieldIo = system().domain().fieldIo();
+      FieldIo<D,T> const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsRGridData(inputfile_, wField_, nMonomer);
 
       // Update system r-grid w fields

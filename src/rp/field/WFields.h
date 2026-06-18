@@ -21,6 +21,9 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
    }
+   namespace Rp {
+      template <int D, class T> class FieldIo;
+   }
 }
 
 namespace Pscf {
@@ -91,7 +94,7 @@ namespace Rp {
       *
       * \param fieldIo  associated FieldIo object
       */
-      void setFieldIo(typename T::FieldIo const & fieldIo);
+      void setFieldIo(FieldIo<D,T> const & fieldIo);
 
       /**
       * Set unit cell used when reading field files.
@@ -428,7 +431,7 @@ namespace Rp {
       /**
       * Get associated FieldIo object (const reference).
       */
-      typename T::FieldIo const & fieldIo() const;
+      FieldIo<D,T> const & fieldIo() const;
 
    private:
 
@@ -484,7 +487,7 @@ namespace Rp {
       /**
       * Pointer to an associated FieldIo object.
       */
-      typename T::FieldIo const * fieldIoPtr_;
+      FieldIo<D,T> const * fieldIoPtr_;
 
       /**
       * Pointer to a Signal that is triggered by field modification.
@@ -603,7 +606,7 @@ namespace Rp {
 
    // Associated FieldIo object (const reference).
    template <int D, class T> inline
-   typename T::FieldIo const & WFields<D,T>::fieldIo() const
+   FieldIo<D,T> const & WFields<D,T>::fieldIo() const
    {
       UTIL_CHECK(fieldIoPtr_);
       return *fieldIoPtr_;

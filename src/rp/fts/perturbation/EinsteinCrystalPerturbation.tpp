@@ -91,7 +91,7 @@ namespace Rp {
 
       // Read in reference field from a file
       UnitCell<D> tempUnitCell;
-      typename T::FieldIo const & fieldIo = system().domain().fieldIo();
+      FieldIo<D,T> const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsRGrid(fieldFileName_, w0_, tempUnitCell);
 
       // Compute eigenvector components of the reference field

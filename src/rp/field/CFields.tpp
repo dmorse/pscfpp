@@ -38,7 +38,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   CFields<D,T>::setFieldIo(typename T::FieldIo const & fieldIo)
+   CFields<D,T>::setFieldIo(FieldIo<D,T> const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*

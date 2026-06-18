@@ -16,6 +16,9 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
    }
+   namespace Rp {
+      template <int D, class T> class FieldIo;
+   }
 }
 
 namespace Pscf {
@@ -80,7 +83,7 @@ namespace Rp {
       *
       * \param fieldIo  associated FieldIo object
       */
-      void setFieldIo(typename T::FieldIo const & fieldIo);
+      void setFieldIo(FieldIo<D,T> const & fieldIo);
 
       /**
       * Set unit cell used when writing field files.
@@ -272,7 +275,7 @@ namespace Rp {
       /**
       * Get associated FieldIo object (const reference).
       */
-      typename T::FieldIo const & fieldIo() const;
+      FieldIo<D,T> const & fieldIo() const;
 
    private:
 
@@ -304,9 +307,9 @@ namespace Rp {
       UnitCell<D> const * writeUnitCellPtr_;
 
       /*
-      * Pointer to associated typename T::FieldIo (FieldIo) object
+      * Pointer to associated FieldIo<D,T> (FieldIo) object
       */
-      typename T::FieldIo const * fieldIoPtr_;
+      FieldIo<D,T> const * fieldIoPtr_;
 
       /*
       * Has memory been allocated for fields in r-grid format?
@@ -421,7 +424,7 @@ namespace Rp {
 
    // Associated FieldIo object (const reference).
    template <int D, class T> inline
-   typename T::FieldIo const & CFields<D,T>::fieldIo() const
+   FieldIo<D,T> const & CFields<D,T>::fieldIo() const
    {
       UTIL_CHECK(fieldIoPtr_);
       return *fieldIoPtr_;

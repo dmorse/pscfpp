@@ -47,7 +47,7 @@ namespace Rp {
       basisPtr_ = new Basis<D>();
       fftPtr_ = new typename T::FFT();
       waveListPtr_ = new typename T::WaveList();
-      fieldIoPtr_ = new typename T::FieldIo();
+      fieldIoPtr_ = new FieldIo<D,T>();
       signalPtr_ = new Signal<void>();
 
       // Create associations between objects

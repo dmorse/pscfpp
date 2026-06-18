@@ -1383,6 +1383,15 @@ namespace Rp {
 
    };
 
+   /**
+   * File IO, format conversions and other utilities for fields.
+   *
+   * The implementation of this primary template. It exists to allow
+   * definition of partial specialziations.
+   */
+   template <int D, class T>
+   class FieldIo {};
+
 } // namespace Rp
 } // namespace Pscf
 #endif

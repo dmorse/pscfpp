@@ -55,7 +55,7 @@ namespace Rp {
    * Create an association with a FieldIo object.
    */
    template <int D, class T>
-   void Mask<D,T>::setFieldIo(typename T::FieldIo const & fieldIo)
+   void Mask<D,T>::setFieldIo(FieldIo<D,T> const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*

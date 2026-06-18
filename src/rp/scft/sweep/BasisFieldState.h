@@ -11,6 +11,13 @@
 #include <prdc/field/FieldState.h>
 #include <string>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class FieldIo;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -99,7 +106,7 @@ namespace Rp {
 
    private:
 
-      using FieldIoT = typename T::FieldIo;
+      using FieldIoT = FieldIo<D,T>;
 
    };
 

@@ -91,7 +91,7 @@ template <int D, class T>
 class Template {};
 
 and then define partial specializations in which T is taken to be 
-either T=CpuTypes for CPU code or T=CudaTypes for GPU code written in 
+either T=CpB for CPU code or T=CuB for GPU code written in 
 Cuda. 
 
 Class templates with the same two template parameters would also be 
@@ -182,7 +182,7 @@ Thoughts:
     new code, which are required simply in order to segregate names 
     for Cpu and Gpu code. In the new system, we would work directly 
     with specializations of Rp::Class<D,T> with different values for
-    the types class T= CpuTypes or T=CudaTypes. 
+    the types class T= CpB or T=CuB. 
 
   - By getting rid of the Rpc and Rpg namespaces, we would get rid of
     the need for the Types classes to maintain sets of aliases that
@@ -329,24 +329,36 @@ Stage III: (Converting subclasses in Rpc and Rpg to specializations)
 
              "typename T::Class" => Class<D,T>
 
+       - Throughout the Rpc and namespaces, globally substitute:
+
+             "Class<D> => Rp::Class<D, Types<D> >
+
+       - Change explicit references to classes with specfic values of D
+         in unit tests.
+
        - Remove the associating "using" statement from both Types classes
 
        - Remove the associated forward declaration from both Types classes
 
-       - Put forward declarations in class template headers as needed
-
        - Remove definitions and explicit instantiation of associated 
-         subclasses in Rpc and Rpg
+         subclasses in Rpc and Rpg. The Rpc and Rpg classes no longer
+         exist.
+
+       - Add forward declarations (preferred) or header includes (as needed)
+         as required to get code to compile.
+
+       - Add header includes to unit tests if needed.
 
     For each class template in Rp with non-trivial subclasses:
 
        - Change name of base class template by adding "Base" to name
 
-       - Define a primary template for Class without "Base" suffix
+       - Define an empty primary template for Class without "Base" suffix.
+         Declare this is header for base class.
 
-       - Change subcclasses to specializations, and move to Rp namespace
+       - Change subcclasses into specializations, and move to Rp namespace
 
-       - Then go through remaining steps as for trivial subclasses (above)
+       - Go through remaining steps as for trivial subclasses (above)
 
     At the end of this process, the Types classes should not contain any
     remaining aliases for classes defined in the Rpc and Rpg namespaces.
@@ -356,8 +368,8 @@ Stage III: (Converting subclasses in Rpc and Rpg to specializations)
 
 Stage IV (Change location and role of Types classes):
 
-1)  Create Prdc::CpuTypes<D> by copying Pscf::Rpc::Types and create 
-    Prdc::CudaTypes<D> by copying Pscf::Rpg::Types. Please these in
+1)  Create Prdc::CpB<D> by copying Pscf::Rpc::Types and create 
+    Prdc::CuB<D> by copying Pscf::Rpg::Types. Please these in
     prdc/field/cpu and prdc/field/cuda. These may still contain 
     using statements for field and FFT classes.
 
@@ -371,8 +383,8 @@ Stage IV (Change location and role of Types classes):
 3)  Add Complex and Real type aliases to these new Types classes, to 
     represent the data types used by associated FFT classes. 
 
-4)  Change references to Rpc::Types to CpuTypes and Rpg::Types to 
-    CudaTypes, respectively, throughout remaining files in the rpc/
+4)  Change references to Rpc::Types to CpB and Rpg::Types to 
+    CuB, respectively, throughout remaining files in the rpc/
     and rpg/ directories. Also change file names for the corresponding
     header file includes.
 
@@ -396,7 +408,7 @@ Stage V (Convert Field and FFT classes to two-parameter templates)
 
       For example: 
 
-         Prdc::Cpu::RField<int D> => Prdc::RField<int D, CpuTypes>
+         Prdc::Cpu::RField<int D> => Prdc::RField<int D, CpB>
  
       Idea: Use template parameter rather than Cpu and Cuda namespace 
       qualifiers to distinguish names of Cpu and Gpu variants of 
@@ -422,7 +434,7 @@ Stage V (Convert Field and FFT classes to two-parameter templates)
     prdc unit tests. At this point code and unit tests in src/prdc 
     should compiles and run successfully. 
 
-4)  Change aliases to Fields and FFT types in CpuTypes and CudaTypes. 
+4)  Change aliases to Fields and FFT types in CpB and CuB. 
     This will immediately allow re-use throughout the class templates 
     in Rp.
 
@@ -431,17 +443,23 @@ Stage V (Convert Field and FFT classes to two-parameter templates)
     will get rid of the remaining aliases.
 
 6)  Find  and replace direct references to, e.g., RField<D> and FFT<D> 
-    type names in Rpc and Rpg directories with Field<D,CpuTypes> and
-    FFT<D,CpuTypes>, etc.
+    type names in Rpc and Rpg directories with Field<D,CpB> and
+    FFT<D,CpB>, etc.
 
     (Code in rpc and rpg should compiles again at this point, but not 
     unit tests)
 
 7)  Find and replace direct references to RField<D>, FFT<D>, etc. 
-    in rpc and rpg unit tests with, references to Field<D,CpuTypes> ,
-    FFT<D,CpuTypes>, etc.
+    in rpc and rpg unit tests with, references to Field<D,CpB> ,
+    FFT<D,CpB>, etc.
 
     (All code and unit tests should again compile and run)
+
+8)  Globally change CpB<D> and CuB<D> to CpB and CuB (remove template
+    parameters). These were only needed while these classes contained
+    using statement aliases for classes that were specializations of
+    templates with a D parameter. Once this is no longer true, get 
+    rid of the D parameter and make these concerete classes.
 
     At this point, the rpc/ and rpg/ namespaces will contain *.cpp or
     *. cu files, respectively, but no headers. Each *.cpp file or *.cu
@@ -461,11 +479,36 @@ rp directory
 2) Modify pattern rules to allow creation of object files with different
 suffixes created from source files with different suffixes. Recommendation:
 
-    *.o   for files created from *.cpp
-    *.uo  for files created from *.cu
-    *.ho  for files created from *.hip files
+    *.oc  for files created from *.cpp
+    *.ou  for files created from *.cu
+    *.oh  for files created from *.hip files
 
-3) Move *.cpp and *.cu files into the rp/ directory
+3) Introduce new file types for header files used only in cpp and cuda
+   code, which are currently header files defined in rpc/ and rpg/. 
+   Possible names:
+
+       *.hc  cpp-only header 
+       *.hu  cuda-only header
+
+4) Move files from rpc/ and rpg/ directories into the rp/ directory,
+   using .hc and .cpp for rpc/ files, and .hu and .cu for rpg/ files.
+
+Typical class in rp/ will then have 6 files.
+For non-specialized templates, these are:
+
+   Class.h      - header for primary template
+   Class.tpp    - implementation for primary template
+   Class.hc     - explicit instantiation declarations for CpB
+   Class.cpp    - explicit instantiation definitions for CpB
+   Class.hu     - explicit instantiation declarations for CuB
+   Class.cu     - explicit instantiation definitions for CuB
+
+   ClassBase.h   - header for base class template
+   ClassBase.tpp - implementation for base class template
+   Class.hc      - partial specialization def, explicit inst. decls for CpB
+   Class.cpp     - func defs and explicit inst. defns for CpB
+   Class.hu      - partial specialization def, explicit inst. decls for CuB
+   Class.cpp     - func defs and explicit inst. defns for CuB
 
 Stage VII: Unify and move the unit tests
 
@@ -505,13 +548,13 @@ Pscf {
       // Placed in Prdc because these contain information
       // about types used by FFT classes.
    
-      class CpuTypes {
+      class CpB {
          using Real    double;
          using Complex fftw_complex;
          static Backend backend = Backend::Cpu;
       };
    
-      class CudaTypes {
+      class CuB {
          using Real    cudaReal;
          using Complex cudaComplex
          static Backend backend = Backend::Cuda;
@@ -528,18 +571,18 @@ namespace Pscf {
 namespace Prdc {
 
    // Empty base template
-   template <int D, class t>
+   template <int D, class T>
    class RField  {};
 
-   // Explicit specialization for RField<D, CudaTypes>
+   // Explicit specialization for RField<D, CuB>
    template <int D>
-   class RField<D, CudaTypes>  : public DeviceArray<double>
-   { }
+   class RField<D, CuB>  : public DeviceArray<double>;
+   {...}
 
-   // Explicit specialization for FFT<D, CudaTypes>
+   // Explicit specialization for FFT<D, CuB>
    template <int D>
-   class FFT<D, CudaTypes> {
-   }
+   class FFT<D, CuB> 
+   {...}
 
    // The explicit partial specializations will be renamed versions 
    // of the existing Field and FFT classes.
