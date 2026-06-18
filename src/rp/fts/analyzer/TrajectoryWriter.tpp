@@ -77,7 +77,7 @@ namespace Rp {
    {
       int nMonomer = system().mixture().nMonomer();
       bool isSymmetric = false;
-      typename T::Domain const & domain = system().domain();
+      Domain<D,T> const & domain = system().domain();
       typename T::FieldIo const & fieldIo = domain.fieldIo();
       fieldIo.writeFieldHeader(out, nMonomer, domain.unitCell(),
                                isSymmetric);
@@ -93,7 +93,7 @@ namespace Rp {
       out << "i = " << iStep << "\n";
       bool writeHeader = false;
       bool isSymmetric = false;
-      typename T::Domain const & domain = system().domain();
+      Domain<D,T> const & domain = system().domain();
       typename T::FieldIo const & fieldIo = domain.fieldIo();
       fieldIo.writeFieldsRGrid(out, system().w().rgrid(),
                                domain.unitCell(),

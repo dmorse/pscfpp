@@ -20,6 +20,9 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
    }
+   namespace Rp {
+      template <int D, class T> class Domain;
+   }
 }
 
 namespace Pscf {
@@ -393,7 +396,7 @@ namespace Rp {
       /**
       * Get the Domain (const).
       */
-      typename T::Domain const & domain() const;
+      Domain<D,T> const & domain() const;
 
       /**
       * Get the WaveList (non-const).
@@ -605,7 +608,7 @@ namespace Rp {
       /**
       * Pointer to Domain object (unit cell, mesh, fft, group, basis).
       */
-      typename T::Domain* domainPtr_;
+      Domain<D,T>* domainPtr_;
 
       /**
       * Pointer to %Interaction (excess free energy model).
@@ -699,7 +702,7 @@ namespace Rp {
       /**
       * Get the Domain by non-const reference (private).
       */
-      typename T::Domain& domain_();
+      Domain<D,T>& domain_();
 
       /**
       * Get the concentration (c) fields by non-const reference (private).
@@ -771,7 +774,7 @@ namespace Rp {
 
    // Get the Domain (const).
    template <int D, class T> inline
-   typename T::Domain const & System<D,T>::domain() const
+   Domain<D,T> const & System<D,T>::domain() const
    {  return *domainPtr_; }
 
    // Get the WaveList (non-const).
@@ -921,7 +924,7 @@ namespace Rp {
 
    // Get the Domain (non-const).
    template <int D, class T> inline
-   typename T::Domain & System<D,T>::domain_()
+   Domain<D,T> & System<D,T>::domain_()
    {  return *domainPtr_; }
 
    // Get the CFields container (non-const).

@@ -69,6 +69,16 @@ namespace Rp {
 
    public:
 
+      /**
+      * Constructor.
+      */
+      Domain();
+
+      /**
+      * Destructor.
+      */
+      ~Domain();
+
       /// \name Initialization
       ///@{
 
@@ -227,18 +237,6 @@ namespace Rp {
       void writeGroup(std::string const & filename) const;
 
       ///@}
-
-   protected:
-
-      /**
-      * Constructor.
-      */
-      Domain();
-
-      /**
-      * Destructor.
-      */
-      ~Domain();
 
    private:
 

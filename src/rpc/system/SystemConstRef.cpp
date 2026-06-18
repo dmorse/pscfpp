@@ -7,6 +7,7 @@
 
 #include "SystemConstRef.h"
 #include <rpc/system/System.h>
+#include <rpc/field/Domain.h>
 
 #include <rp/system/SystemConstRef.tpp>
 

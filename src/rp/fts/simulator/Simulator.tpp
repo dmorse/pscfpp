@@ -193,7 +193,7 @@ namespace Rp {
       hasHamiltonian_ = false;
 
       typename T::Mixture const & mixture = system().mixture();
-      typename T::Domain const & domain = system().domain();
+      Domain<D,T> const & domain = system().domain();
 
       const int nMonomer = mixture.nMonomer();
       const int meshSize = domain.mesh().size();

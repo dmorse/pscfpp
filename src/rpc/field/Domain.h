@@ -11,6 +11,7 @@
 #include <rp/field/Domain.h>     // base class template
 #include <rpc/system/Types.h>    // base class template argument
 
+#if 0
 // Forward declarations
 namespace Pscf {
    namespace Prdc {
@@ -50,6 +51,7 @@ namespace Rpc {
 
 } // namespace Rpc
 } // namespace Pscf
+#endif
 
 // Explicit instantiation declarations 
 namespace Pscf {
@@ -58,10 +60,12 @@ namespace Pscf {
       extern template class Domain<2, Rpc::Types<2> >;
       extern template class Domain<3, Rpc::Types<3> >;
    } 
+   #if 0
    namespace Rpc {
       extern template class Domain<1>;
       extern template class Domain<2>;
       extern template class Domain<3>;
-   } 
+   }
+   #endif 
 } 
 #endif

@@ -66,7 +66,7 @@ namespace Rpc
    double FilmFieldGenMask<D>::stress(int paramId) const
    {
       UTIL_CHECK(sysPtr_);
-      Domain<D> const & domain = system().domain();
+      Rp::Domain<D, Types<D> > const & domain = system().domain();
       Mesh<D> const & mesh = domain.mesh();
 
       int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),

@@ -112,7 +112,7 @@ namespace Rp {
       // Constants
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();
-      typename T::Domain const & domain = system().domain();
+      Domain<D,T> const & domain = system().domain();
       const int meshSize = domain.mesh().size();
       const double vSystem  = domain.unitCell().volume();
       const double nMonomerSystem = vSystem / vMonomer;

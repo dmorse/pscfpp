@@ -301,7 +301,7 @@ namespace Rp {
    void AmIteratorGrid<D,T>::update(VectorT& newState)
    {
       // Constants and references to system components
-      typename T::Domain const & domain = system().domain();
+      Domain<D,T> const & domain = system().domain();
       Mesh<D> const & mesh = domain.mesh();
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = mesh.size();

@@ -12,6 +12,11 @@
 namespace Util {
    class FileMaster;
 }
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class Domain;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
@@ -56,7 +61,7 @@ namespace Rp {
       /**
       * Get the Domain.
       */
-      typename T::Domain const & domain() const
+      Domain<D,T> const & domain() const
       {  return *domainPtr_; }
 
       /**
@@ -130,7 +135,7 @@ namespace Rp {
       typename T::Interaction const * interactionPtr_;
 
       /// Pointer to Domain.
-      typename T::Domain const * domainPtr_;
+      Domain<D,T> const * domainPtr_;
 
       /// Pointer to monomer concentration (c) field container.
       typename T::CFields const * cPtr_;

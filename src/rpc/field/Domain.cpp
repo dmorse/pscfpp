@@ -18,9 +18,11 @@ namespace Pscf {
       template class Domain<2, Rpc::Types<2> >;
       template class Domain<3, Rpc::Types<3> >;
    }
+   #if 0
    namespace Rpc {
       template class Domain<1>;
       template class Domain<2>;
       template class Domain<3>;
    }
+   #endif
 }

@@ -43,7 +43,7 @@ namespace Pscf {
       template <int D> class Solvent;
       template <int D> class Block;
       template <int D> class Propagator;
-      template <int D> class Domain;
+      //template <int D> class Domain;
       template <int D> class FieldIo;
       template <int D> class WFields;
       template <int D> class CFields;
@@ -118,7 +118,7 @@ namespace Rpc {
       using MixtureBase = Pscf::MixtureBase<double>;
       using Interaction = Pscf::Interaction;
 
-      using Domain = Rpc::Domain<D>;
+      //using Domain = Rpc::Domain<D>;
       using FieldIo = Rpc::FieldIo<D>;
       using WFields = Rpc::WFields<D>;
       using CFields = Rpc::CFields<D>;

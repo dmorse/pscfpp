@@ -59,9 +59,9 @@ public:
       Log::setFile(logFile_);
    }
 
-   // Open and read parameter header to initialize Domain<D> system.
+   // Open and read parameter header to initialize Rp::Domain<D, Types<D> > system.
    template <int D>
-   void readParam(std::string filename, Domain<D>& domain)
+   void readParam(std::string filename, Rp::Domain<D, Types<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -69,9 +69,9 @@ public:
       in.close();
    }
 
-   // Open and read file header to initialize Domain<D> system.
+   // Open and read file header to initialize Rp::Domain<D, Types<D> > system.
    template <int D>
-   void readHeader(std::string filename, Domain<D>& domain)
+   void readHeader(std::string filename, Rp::Domain<D, Types<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -101,7 +101,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Domain<D>& domain,
+   void readFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
                    DArray< DArray<double> >& fields)
    {
       std::ifstream in;
@@ -111,7 +111,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Domain<D>& domain,
+   void readFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
                    DArray< RField<D> >& fields)
    {
       std::ifstream in;
@@ -121,7 +121,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Domain<D>& domain,
+   void writeFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
                    DArray< DArray<double> > const & fields)
    {
       std::ofstream out;

@@ -43,10 +43,10 @@ public:
    }
 
    /*
-   * Open and read file header to initialize Domain<D> system.
+   * Open and read file header to initialize Rp::Domain<D, Types<D> > system.
    */
    template <int D>
-   void readHeader(std::string filename, Domain<D>& domain)
+   void readHeader(std::string filename, Rp::Domain<D, Types<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);

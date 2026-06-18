@@ -80,7 +80,7 @@ namespace Rp {
       mixturePtr_ = new typename T::Mixture();
       mixtureModifierPtr_ = new typename T::MixtureModifier();
       interactionPtr_ = new typename T::Interaction();
-      domainPtr_ = new typename T::Domain();
+      domainPtr_ = new Domain<D,T>();
       scftPtr_ = new typename T::ScftThermo(*systemPtr_);
       fileMasterPtr_ = new FileMaster();
       tmpUnitCellPtr_ = new UnitCell<D>();
