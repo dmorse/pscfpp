@@ -81,7 +81,7 @@ public:
                         UnitCell<D>& unitCell)
    {
       allocateBasisFields(system, fields);
-      FieldIo<D> const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D, Types<D> > const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsBasis(filename, fields, unitCell);
    }
 
@@ -305,7 +305,7 @@ public:
       initSystem(system,
                  "in/diblock/lam/param.flex", 
                  "in/diblock/lam/omega.in");
-      FieldIo<1> const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<1, Types<1> > const & fieldIo = system.domain().fieldIo();
 
       // Copy w field components to wFields_check after reading
       DArray< DArray<double> > wFields_check;
@@ -377,7 +377,7 @@ public:
       initSystem(system,
                  "in/diblock/hex/param.flex", 
                  "in/diblock/hex/omega.in");
-      FieldIo<2> const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<2, Types<2> > const & fieldIo = system.domain().fieldIo();
 
       // Store components in wFields_check for later comparison
       DArray< DArray<double> > wFields_check;
@@ -466,7 +466,7 @@ public:
       wFields_check = system.w().basis();
 
       // Complete round trip basis -> rgrid -> basis
-      FieldIo<3> const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<3, Types<3> > const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/bcc/omega.in",
                           "out/testConversion3D_bcc_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion3D_bcc_w.rf",

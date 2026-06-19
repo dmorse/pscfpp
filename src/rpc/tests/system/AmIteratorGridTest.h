@@ -82,7 +82,7 @@ public:
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
-      FieldIo<D> const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D, Types<D> > const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
    }
 
@@ -188,7 +188,7 @@ public:
          std::string refFileRoot;
          refFileRoot = makeFileRoot("ref/testIterate", outSuffix, D);
    
-         FieldIo<D> const & fieldIo = system.domain().fieldIo();
+         Rp::FieldIo<D, Types<D> > const & fieldIo = system.domain().fieldIo();
          
          // Compare w fields
          std::string refFileBasis;
@@ -609,7 +609,7 @@ public:
 
       // v1.1 test used omega.in as input, compared to omega.ref
 
-      FieldIo<2> const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<2, Types<2> > const & fieldIo = system.domain().fieldIo();
       fieldIo.scaleFieldsBasis("out/testIterateBasis2D_hex_flex_w.bf",
                                "out/testIterateBasis2D_hex_flex_w_scaled.bf",
                                0.01);

@@ -44,8 +44,8 @@ namespace Pscf {
       template <int D> class Block;
       template <int D> class Propagator;
       //template <int D> class Domain;
-      template <int D> class FieldIo;
-      template <int D> class WFields;
+      //template <int D> class FieldIo;
+      //template <int D> class WFields;
       //template <int D> class CFields;
       //template <int D> class Mask;
       template <int D> class EnvironmentFactory;
@@ -119,8 +119,8 @@ namespace Rpc {
       using Interaction = Pscf::Interaction;
 
       //using Domain = Rpc::Domain<D>;
-      using FieldIo = Rpc::FieldIo<D>;
-      using WFields = Rpc::WFields<D>;
+      //using FieldIo = Rpc::FieldIo<D>;
+      //using WFields = Rpc::WFields<D>;
       //using CFields = Rpc::CFields<D>;
       //using Mask = Rpc::Mask<D>;
 

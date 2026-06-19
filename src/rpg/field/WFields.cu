@@ -10,10 +10,10 @@
 #include <prdc/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/DeviceArray.h>
-#include <rp/field/WFields.tpp>       // base class implementation
+#include <rp/field/WFieldsBase.tpp>   // base class implementation
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -25,7 +25,7 @@ namespace Rpg {
    * Set new w-field values, using unfolded array of r-grid fields.
    */
    template <int D>
-   void WFields<D>::setRGrid(DeviceArray<cudaReal>& fields)
+   void WFields<D, Rpg::Types<D> >::setRGrid(DeviceArray<cudaReal>& fields)
    {
       // Create DArray tmp with RField<D> elements
       DArray< RField<D> > tmp;
@@ -44,20 +44,17 @@ namespace Rpg {
       RpWFields::setRGrid(tmp, isSymmetric);
    }
 
-}
-}
+} // namespace Rp
+} // namespace Pscf
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc;
+      template class WFieldsBase<1, Rpg::Types<1> >;
+      template class WFieldsBase<2, Rpg::Types<2> >;
+      template class WFieldsBase<3, Rpg::Types<3> >;
       template class WFields<1, Rpg::Types<1> >;
       template class WFields<2, Rpg::Types<2> >;
       template class WFields<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class WFields<1>;
-      template class WFields<2>;
-      template class WFields<3>;
    }
 }

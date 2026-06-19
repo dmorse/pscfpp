@@ -160,7 +160,7 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      WFields<3> fields;
+      Rp::WFields<3, Types<3> > fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -188,7 +188,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      WFields<3> fields;
+      Rp::WFields<3, Types<3> > fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -228,7 +228,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
 
-      WFields<3> fields;
+      Rp::WFields<3, Types<3> > fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -266,7 +266,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      WFields<3> fields;
+      Rp::WFields<3, Types<3> > fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -300,7 +300,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      WFields<3> fields;
+      Rp::WFields<3, Types<3> > fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -341,7 +341,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
 
-      WFields<3> fields;
+      Rp::WFields<3, Types<3> > fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -381,7 +381,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      WFields<3> fields;
+      Rp::WFields<3, Types<3> > fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());

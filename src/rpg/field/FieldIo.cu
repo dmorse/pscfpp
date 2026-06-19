@@ -11,9 +11,9 @@
 namespace Pscf {
    namespace Rp {
       template class FieldIoBase<1, Rpg::Types<1> >;
-      template class FieldIoBase<1, Rpg::Types<1> >;
       template class FieldIoBase<2, Rpg::Types<2> >;
-      template class FieldIo<3, Rpg::Types<3> >;
+      template class FieldIoBase<3, Rpg::Types<3> >;
+      template class FieldIo<1, Rpg::Types<1> >;
       template class FieldIo<2, Rpg::Types<2> >;
       template class FieldIo<3, Rpg::Types<3> >;
    }

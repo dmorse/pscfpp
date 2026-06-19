@@ -89,7 +89,7 @@ public:
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
-      FieldIo<D> const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D, Types<D> > const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
    }
 

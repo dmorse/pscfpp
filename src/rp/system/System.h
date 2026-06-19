@@ -345,22 +345,22 @@ namespace Rp {
       /**
       * Get the chemical potential (w) fields (const).
       */
-      typename T::WFields const & w() const;
+      WFields<D,T> const & w() const;
 
       /**
       * Get the chemical potential (w) fields (non-const).
       */
-      typename T::WFields& w();
+      WFields<D,T>& w();
 
       /**
       * Get the external potential (h) fields (const).
       */
-      typename T::WFields const & h() const;
+      WFields<D,T> const & h() const;
 
       /**
       * Get the external potential (h) fields (non-const).
       */
-      typename T::WFields& h();
+      WFields<D,T>& h();
 
       /**
       * Get the mask (const).
@@ -586,12 +586,12 @@ namespace Rp {
       /**
       * Chemical potential fields.
       */
-      typename T::WFields* wPtr_;
+      WFields<D,T>* wPtr_;
 
       /**
       * External potential fields.
       */
-      typename T::WFields* hPtr_;
+      WFields<D,T>* hPtr_;
 
       /**
       * Field to which the total density is constrained.
@@ -794,22 +794,22 @@ namespace Rp {
 
    // Get the container of w fields (const).
    template <int D, class T> inline
-   typename T::WFields const & System<D,T>::w() const
+   WFields<D,T> const & System<D,T>::w() const
    {  return *wPtr_; }
 
    // Get the container of w fields (non-const).
    template <int D, class T> inline
-   typename T::WFields& System<D,T>::w()
+   WFields<D,T>& System<D,T>::w()
    {  return *wPtr_; }
 
    // Get the container of external fields (const).
    template <int D, class T> inline
-   typename T::WFields const & System<D,T>::h() const
+   WFields<D,T> const & System<D,T>::h() const
    {  return *hPtr_; }
 
    // Get the container of external fields (non-const).
    template <int D, class T> inline
-   typename T::WFields& System<D,T>::h()
+   WFields<D,T>& System<D,T>::h()
    {  return *hPtr_; }
 
    // Get the mask field (const).

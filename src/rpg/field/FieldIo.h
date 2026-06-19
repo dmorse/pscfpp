@@ -275,7 +275,7 @@ namespace Rp {
       /**
       * Alias for base class (partial template specialization)
       */
-      using FieldIoBase = Rp::FieldIoBase<D, Types<D> >;
+      using FieldIoBase = Rp::FieldIoBase<D, Rpg::Types<D> >;
 
       // Inherited public member functions
       using FieldIoBase::associate;

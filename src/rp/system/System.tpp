@@ -72,8 +72,8 @@ namespace Rp {
 
       // Create field containers
       cPtr_ = new CFields<D,T>();
-      wPtr_ = new typename T::WFields();
-      hPtr_ = new typename T::WFields();
+      wPtr_ = new WFields<D,T>();
+      hPtr_ = new WFields<D,T>();
       maskPtr_ = new Mask<D,T>();
 
       // Create non-optional components

@@ -1,5 +1,5 @@
-#ifndef RP_W_FIELDS_H
-#define RP_W_FIELDS_H
+#ifndef RP_W_FIELDS_BASE_H
+#define RP_W_FIELDS_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -40,9 +40,13 @@ namespace Rp {
    *     - D  : integer dimensionality of space, D=1,2, or 3
    *     - T  : a "Types" class (Rpc::Types<D> or Rpg::Types<D>))
    *
-   * <b> Field Representations </b>: A WFields object contains a list of
-   * nMonomer chemical potential (w) fields that are each associated with
-   * a monomer type. The fields may be stored in two different formats:
+   * <b> Subclasses </b>: Specializations of Rp::WFieldsBase are used as 
+   * base for specializations of Rp::WFields.
+   *
+   * <b> Field Representations </b>: A WFieldsBase object contains a list 
+   * of nMonomer chemical potential (w) fields that are each associated 
+   * with a monomer type. The fields may be stored in two different 
+   * formats:
    *
    *  - A DArray of RField containers holds valus of each field on
    *    the nodes of a regular grid. This is accessed by the rgrid()
@@ -53,7 +57,7 @@ namespace Rp {
    *    format). This is accessed by the basis() and basis(int) member
    *    functions.
    *
-   * A WFields is designed to automatically update one of these
+   * A WFieldsBase is designed to automatically update one of these
    * representations when the other is modified, as appropriate. 
    * An associated FieldIo object is used for these conversions.
    *
@@ -67,21 +71,18 @@ namespace Rp {
    * whether the current field is symmetric, and thus whether the basis
    * format exists.
    *
-   * <b> Signal </b>: A WFields object owns an instance of class
+   * <b> Signal </b>: A WFieldsBase object owns an instance of class
    * Util::Signal<void> that notifies all observers whenever the fields
-   * owned by the WFields are modified. This signal object may be
+   * owned by this object are modified. This signal object may be
    * accessed by reference using the signal() member function. The
    * Util::Signal<void>::addObserver function may used to add "observer"
    * objects and indicate a zero-parameter member function of each
    * observer that will be called whenever the fields are modified.
    *
-   * <b> Subclasses </b>: Specializations of Rp::WFields are used as base
-   * for specializations of Rpc::WFields and Rpg::WFields.
-   *
    * \ingroup Rp_Field_Module
    */
    template <int D, class T>
-   class WFields
+   class WFieldsBase
    {
 
    public:
@@ -401,12 +402,12 @@ namespace Rp {
       /**
       * Constructor.
       */
-      WFields();
+      WFieldsBase();
 
       /**
       * Destructor.
       */
-      ~WFields();
+      ~WFieldsBase();
 
       /**
       * Get mesh dimensions in each direction, set on r-grid allocation.
@@ -525,12 +526,12 @@ namespace Rp {
 
    // Clear data stored in this object without deallocating
    template <int D, class T> inline
-   void WFields<D,T>::clear()
+   void WFieldsBase<D,T>::clear()
    {  hasData_ = false; }
 
    // Get array of all fields in basis format (const)
    template <int D, class T> inline
-   DArray< DArray<double> > const & WFields<D,T>::basis() const
+   DArray< DArray<double> > const & WFieldsBase<D,T>::basis() const
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_;
@@ -538,7 +539,7 @@ namespace Rp {
 
    // Get one field in basis format (const)
    template <int D, class T> inline
-   DArray<double> const & WFields<D,T>::basis(int id) const
+   DArray<double> const & WFieldsBase<D,T>::basis(int id) const
    {
       UTIL_ASSERT(isAllocatedBasis_);
       return basis_[id];
@@ -546,7 +547,7 @@ namespace Rp {
 
    // Get all fields in r-grid format (const)
    template <int D, class T> inline
-   DArray<typename T::RField> const & WFields<D,T>::rgrid() const
+   DArray<typename T::RField> const & WFieldsBase<D,T>::rgrid() const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
@@ -554,7 +555,7 @@ namespace Rp {
 
    // Get one field in r-grid format (const)
    template <int D, class T> inline
-   typename T::RField const & WFields<D,T>::rgrid(int id) const
+   typename T::RField const & WFieldsBase<D,T>::rgrid(int id) const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];
@@ -562,22 +563,22 @@ namespace Rp {
 
    // Has memory been allocated for fields in r-grid format?
    template <int D, class T> inline
-   bool WFields<D,T>::isAllocatedRGrid() const
+   bool WFieldsBase<D,T>::isAllocatedRGrid() const
    {  return isAllocatedRGrid_; }
 
    // Has memory been allocated for fields in basis format?
    template <int D, class T> inline
-   bool WFields<D,T>::isAllocatedBasis() const
+   bool WFieldsBase<D,T>::isAllocatedBasis() const
    {  return isAllocatedBasis_; }
 
    // Has field data been initialized ?
    template <int D, class T> inline
-   bool WFields<D,T>::hasData() const
+   bool WFieldsBase<D,T>::hasData() const
    {  return hasData_; }
 
    // Are the fields symmetric under space group operations?
    template <int D, class T> inline
-   bool WFields<D,T>::isSymmetric() const
+   bool WFieldsBase<D,T>::isSymmetric() const
    {  return isSymmetric_; }
 
    // Protected inline member functions
@@ -586,31 +587,41 @@ namespace Rp {
    template <int D, class T>
    inline
    IntVec<D> const &
-   WFields<D,T>::meshDimensions() const
+   WFieldsBase<D,T>::meshDimensions() const
    {  return meshDimensions_; }
 
    // Get mesh size (number of grid points), set on r-grid allocation.
    template <int D, class T> inline
-   int WFields<D,T>::meshSize() const
+   int WFieldsBase<D,T>::meshSize() const
    {  return meshSize_; }
 
    // Get number of basis functions, set on basis allocation.
    template <int D, class T> inline
-   int WFields<D,T>::nBasis() const
+   int WFieldsBase<D,T>::nBasis() const
    {  return nBasis_; }
 
    // Get number of monomer types.
    template <int D, class T> inline
-   int WFields<D,T>::nMonomer() const
+   int WFieldsBase<D,T>::nMonomer() const
    {  return nMonomer_; }
 
    // Associated FieldIo object (const reference).
    template <int D, class T> inline
-   FieldIo<D,T> const & WFields<D,T>::fieldIo() const
+   FieldIo<D,T> const & WFieldsBase<D,T>::fieldIo() const
    {
       UTIL_CHECK(fieldIoPtr_);
       return *fieldIoPtr_;
    }
+
+   /**
+   * A container of w fields stored in both basis and r-grid format.
+   *
+   * Empty primary template - exists to allow definition of partial 
+   * specializations.
+   */
+   template <int D, class T>
+   class WFields {};
+
 
 } // namespace Rp
 } // namespace Pscf

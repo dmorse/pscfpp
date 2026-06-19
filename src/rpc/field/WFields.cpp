@@ -5,23 +5,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFields.h"               // class header
+#include "WFields.h"                // class header
 #include <rpc/field/FieldIo.h>
 #include <prdc/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
-#include <rp/field/WFields.tpp>    // base class implementation
+#include <rp/field/WFieldsBase.tpp> // base class implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc;
-      template class Rp::WFields<1, Rpc::Types<1> >;
-      template class Rp::WFields<2, Rpc::Types<2> >;
-      template class Rp::WFields<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class WFields<1>;
-      template class WFields<2>;
-      template class WFields<3>;
+      template class WFieldsBase<1, Rpc::Types<1> >;
+      template class WFieldsBase<2, Rpc::Types<2> >;
+      template class WFieldsBase<3, Rpc::Types<3> >;
+      template class WFields<1, Rpc::Types<1> >;
+      template class WFields<2, Rpc::Types<2> >;
+      template class WFields<3, Rpc::Types<3> >;
    }
 }

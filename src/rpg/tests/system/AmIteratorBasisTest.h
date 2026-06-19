@@ -83,7 +83,7 @@ public:
                         UnitCell<D>& unitCell)
    {
       allocateBasisFields(system, fields);
-      FieldIo<D> const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D, Types<D> > const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsBasis(filename, fields, unitCell);
    }
 

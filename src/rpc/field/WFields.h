@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/WFields.h>    // base class template
-#include <rpc/system/Types.h>    // base class member
+#include <rp/field/WFieldsBase.h> // base class template
+#include <rpc/system/Types.h>     // base class member
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -30,24 +30,22 @@ namespace Rpc {
    * \ingroup Rpc_Field_Module
    */
    template <int D>
-   class WFields : public Rp::WFields<D, Types<D> >
+   class WFields<D, Rpc::Types<D> > 
+    : public Rp::WFieldsBase<D, Rpc::Types<D> >
    {};
 
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc;
+      extern template class WFieldsBase< 1, Rpc::Types<1> >;
+      extern template class WFieldsBase< 2, Rpc::Types<2> >;
+      extern template class WFieldsBase< 3, Rpc::Types<3> >;
       extern template class WFields< 1, Rpc::Types<1> >;
       extern template class WFields< 2, Rpc::Types<2> >;
       extern template class WFields< 3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class WFields<1>;
-      extern template class WFields<2>;
-      extern template class WFields<3>;
    }
 }
 #endif

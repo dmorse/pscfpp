@@ -141,7 +141,7 @@ namespace Rp {
       using MixtureT = typename T::Mixture;
       using InteractionT = typename T::Interaction;
       using DomainT = Domain<D,T>;
-      using WFieldsT = typename T::WFields;
+      using WFieldsT = WFields<D,T>;
       using CFieldsT = CFields<D,T>;
       using MaskT = Mask<D,T>;
       using RFieldT = typename T::RField;

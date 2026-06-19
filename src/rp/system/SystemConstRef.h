@@ -77,13 +77,13 @@ namespace Rp {
       /**
       * Get the chemical potential (w) field container.
       */
-      typename T::WFields const & w() const
+      WFields<D,T> const & w() const
       {  return *wPtr_; }
 
       /**
       * Get the external potential (h) field container (if any).
       */
-      typename T::WFields const & h() const
+      WFields<D,T> const & h() const
       {  return *hPtr_; }
      
       /** 
@@ -145,10 +145,10 @@ namespace Rp {
       CFields<D,T> const * cPtr_;
 
       /// Pointer to chemical potential (w) field container.
-      typename T::WFields const * wPtr_;
+      WFields<D,T> const * wPtr_;
 
       /// Pointer to external potential (h) field container.
-      typename T::WFields const * hPtr_;
+      WFields<D,T> const * hPtr_;
 
       /// Pointer to Mask.
       Mask<D,T> const * maskPtr_;
