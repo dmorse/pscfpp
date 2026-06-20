@@ -69,6 +69,7 @@ namespace Rp {
    {
       setClassName("System");  // Set block label in parameter file
       BracketPolicy::set(BracketPolicy::Optional);
+      T::init();
 
       // Create field containers
       cPtr_ = new CFields<D,T>();
@@ -79,7 +80,7 @@ namespace Rp {
       // Create non-optional components
       mixturePtr_ = new typename T::Mixture();
       mixtureModifierPtr_ = new typename T::MixtureModifier();
-      interactionPtr_ = new typename T::Interaction();
+      interactionPtr_ = new Interaction();
       domainPtr_ = new Domain<D,T>();
       scftPtr_ = new typename T::ScftThermo(*systemPtr_);
       fileMasterPtr_ = new FileMaster();
@@ -92,7 +93,7 @@ namespace Rp {
       sweepFactoryPtr_ = new typename T::SweepFactory(*systemPtr_);
       simulatorFactoryPtr_ = new typename T::SimulatorFactory(*systemPtr_);
 
-      // Create associations among class members
+      // Create associations among child components
       mixtureModifier().associate(mixture_());
       domain_().setFileMaster(*fileMasterPtr_);
       w().setFieldIo(domain_().fieldIo());
@@ -107,26 +108,31 @@ namespace Rp {
       c_().setFieldIo(domain_().fieldIo());
       c_().setWriteUnitCell(domain_().unitCell());
 
-      // Note the arguments of setReadUnitCell functions used above:
-      // When w is read from a file in basis or r-grid format, the
-      // parameters of the system unit cell, domain_().unitCell(), are
-      // reset to those in the field file header. When imposed fields h()
-      // and mask() are read from a file, however, unit cell parameters
-      // from the field file header are read into a mutable workspace
-      // object, *tmpUnitCellPtr_, and ultimately discarded.
+      /*
+      * Reading unit cell parameters from field file headers:
+      * Note the arguments of setReadUnitCell functions used above:
+      * When w is read from a file in basis or r-grid format, the
+      * parameters of the system unit cell, domain_().unitCell(), are
+      * reset to those in the field file header. When imposed fields h()
+      * and mask() are read from a file, however, unit cell parameters
+      * from the field file header are instead read into a mutable 
+      * workspace object, *tmpUnitCellPtr_, and are ignored.
+      */
 
-      // Use of "signals" to maintain data relationships:
-      // Signals are instances of Unit::Signal<void> that are used to
-      // notify "observer" objects of modification of data owned by a
-      // related "notifier" object. Each signal is owned by a notifier
-      // object that maintains data that may be modified. Each signal
-      // maintains a list of observers objects that should be notified
-      // whenever the data owned by the notifier object changes. Each
-      // observer is added by the Signal<void>::addObserver function
-      // template, which takes two arguments: a reference to an observer
-      // object (i.e., an instance of a class) and a pointer to a member
-      // function of that class which will be invoked on that object when
-      // the signal is triggered by modification of associated data.
+      /*
+      * Use of "signals" to maintain data relationships:
+      * Signals are instances of Unit::Signal<void> that are used to
+      * notify "observer" objects of modification of data owned by a
+      * related "notifier" object. Each signal is owned by a notifier
+      * object that maintains data that may be modified. Each signal
+      * maintains a list of observers objects that should be notified
+      * whenever the data owned by the notifier object changes. Each
+      * observer is added by the Signal<void>::addObserver function
+      * template, which takes two arguments: a reference to an observer
+      * object (i.e., an instance of a class) and a pointer to a member
+      * function of that class which will be invoked on that object when
+      * the signal is triggered by modification of associated data.
+      */
 
       // Addition of observers to signals
 
@@ -189,6 +195,15 @@ namespace Rp {
       delete wPtr_;
       delete cPtr_;
    }
+
+   #if 0
+   /*
+   * Set the thread count.
+   */
+   template <int D, class T>
+   void System<D,T>::setThreadCount(int nThread)
+   {  T::setThreadCount(nThread); }
+   #endif
 
    // Lifetime (called in main program)
 
@@ -288,13 +303,14 @@ namespace Rp {
          fileMaster().setOutputPrefix(std::string(oArg));
       }
 
-      // If option -t, process the thread count
+      // If option -t, set the thread count
       if (tFlag) {
          if (tArg <= 0) {
             UTIL_THROW("Error: Non-positive thread count -t option");
          }
-         setThreadCount(tArg);
+         T::setThreadCount(tArg);
       }
+
    }
 
    /*

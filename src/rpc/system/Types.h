@@ -12,17 +12,11 @@
 
 // Forward declarations
 namespace Util {
-   template <typename T> class Array;
    template <typename T> class DArray;
    template <typename T> class DRArray;
 }
 namespace Pscf {
-   class Interaction;
    class CpuVecRandom;
-   template <typename WT> class Species;
-   template <typename WT> class PolymerSpecies;
-   template <typename WT> class SolventSpecies;
-   template <typename WT> class MixtureBase;
    namespace Prdc {
       class Environment;
       namespace Cpu {
@@ -72,15 +66,15 @@ namespace Pscf {
       template <int D> class AnalyzerManager;
       template <int D> class AverageAnalyzer;
       template <int D> class AverageListAnalyzer;
-      template <int D> class TrajectoryReader; 
-      template <int D> class TrajectoryReaderFactory; 
+      template <int D> class TrajectoryReader;
+      template <int D> class TrajectoryReaderFactory;
       template <int D> class BdSimulator;
       template <int D> class BdStep;
       template <int D> class BdStepFactory;
       template <int D> class McSimulator;
       template <int D> class McMove;
       template <int D> class McMoveFactory;
-      template <int D> class McMoveManager; 
+      template <int D> class McMoveManager;
    }
 }
 
@@ -102,6 +96,21 @@ namespace Rpc {
 
    public:
 
+      using VecRandom = CpuVecRandom;
+
+      template <typename Data> using HostArray = Util::DArray<Data>;
+      using Vector = Util::DRArray<double>;
+
+      using Real = double;
+      using Complex = fftw_complex;
+
+      using RField = Prdc::Cpu::RField<D>;
+      using RFieldDft = Prdc::Cpu::RFieldDft<D>;
+      using FFT = Prdc::Cpu::FFT<D>;
+      using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;
+      using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
+      using WaveList = Prdc::Cpu::WaveList<D>;
+
       using System = Rpc::System<D>;
       using SystemConstRef = Rpc::SystemConstRef<D>;
 
@@ -111,12 +120,6 @@ namespace Rpc {
       //using Solvent = Rpc::Solvent<D>;
       using Block = Rpc::Block<D>;
       using Propagator = Rpc::Propagator<D>;
-
-      using Species = Pscf::Species<double>;
-      using PolymerSpecies = Pscf::PolymerSpecies<double>;
-      using SolventSpecies = Pscf::SolventSpecies<double>;
-      using MixtureBase = Pscf::MixtureBase<double>;
-      using Interaction = Pscf::Interaction;
 
       //using Domain = Rpc::Domain<D>;
       //using FieldIo = Rpc::FieldIo<D>;
@@ -168,22 +171,26 @@ namespace Rpc {
       using McMoveFactory = Rpc::McMoveFactory<D>;
       using McMoveManager = Rpc::McMoveManager<D>;
 
-      using RField = Prdc::Cpu::RField<D>;
-      using RFieldDft = Prdc::Cpu::RFieldDft<D>;
-      using FFT = Prdc::Cpu::FFT<D>;
-      using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;
-      using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
-      using WaveList = Prdc::Cpu::WaveList<D>;
+      // Static member functions
 
-      using VecRandom = CpuVecRandom;
+      /**
+      * Initialize backend.
+      */
+      static void init();
 
-      template <typename Data> using HostArray = Util::DArray<Data>;
-      using Vector = Util::DRArray<double>;
-
-      using Real = double;
-      using Complex = fftw_complex;
+      /**
+      * Set the number of threads.
+      *
+      * \param nThread  number of threads
+      */
+      static void setThreadCount(int nThread);
 
    };
+
+   // Explicit instantiation declarations
+   extern template class Types<1>;
+   extern template class Types<2>;
+   extern template class Types<3>;
 
 } // namespace Rpc
 } // namespace Pscf

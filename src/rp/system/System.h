@@ -17,6 +17,7 @@ namespace Util {
    template <typename E, int N> class FSArray;
 }
 namespace Pscf {
+   class Interaction;
    namespace Prdc {
       template <int D> class UnitCell;
    }
@@ -43,21 +44,21 @@ namespace Rp {
    *    D - integer dimensionality of space (D=1, 2, or 3)
    *    T - "Types" class collection of aliases for other classes
    *
-   * <b> Usage </b>: A specialization of Rp::System\<D, T\> is used as 
+   * <b> Usage </b>: A specialization of Rp::System\<D, T\> is used as
    * a base class for each System\<D\> class defined in the Rpc and Rpg
-   * program-level namespaces, for D=1, 2, or 3.  In this usage, template 
-   * parameter T is an instance of a class template named Types that 
-   * is defined in each of these two namespaces.  For example, in the 
-   * Pscf::Rpc namespace, for each value of D, class Rpc::System\<D\> 
-   * is derived from the class Prdc::System\< D, Rpc::Types\<D\> >. 
+   * program-level namespaces, for D=1, 2, or 3.  In this usage, template
+   * parameter T is an instance of a class template named Types that
+   * is defined in each of these two namespaces.  For example, in the
+   * Pscf::Rpc namespace, for each value of D, class Rpc::System\<D\>
+   * is derived from the class Prdc::System\< D, Rpc::Types\<D\> >.
    *
-   * For each such specialization, class T = Types\<D\> defines a set 
-   * of typename aliases for classes used in the relevant program-level 
-   * namespace, for the specified value of D.  For example, for each value 
-   * of D, the typename Rpc::Types\<D\>::Mixture is an alias for the type 
-   * Rpc::Mixture<D> that used to represent a mixture in the Rpc namespace 
-   * for systems of spatial dimension D. See the definitions of Rpc::Types 
-   * and Rpg::Types (src/rpc/system/Types.h and src/rpg/system/Types.h) 
+   * For each such specialization, class T = Types\<D\> defines a set
+   * of typename aliases for classes used in the relevant program-level
+   * namespace, for the specified value of D.  For example, for each value
+   * of D, the typename Rpc::Types\<D\>::Mixture is an alias for the type
+   * Rpc::Mixture<D> that used to represent a mixture in the Rpc namespace
+   * for systems of spatial dimension D. See the definitions of Rpc::Types
+   * and Rpg::Types (src/rpc/system/Types.h and src/rpg/system/Types.h)
    * for lists of all of the typenames defined in these class templates.
    *
    * In the remainder of this documentation for the Rp::System template,
@@ -78,11 +79,11 @@ namespace Rp {
    *    - a WFields container of external (h) fields
    *    - a Mask field that defines an inhomogeneous density constraint
    *
-   * The container of external fields and the Mask are only needed 
+   * The container of external fields and the Mask are only needed
    * to describe systems that are subjected to inhomogeneous imposed
    * environments (such as in thin films) and are otherwise left empty
    * and unused. The h().hasData() and mask().hasData() bool functions
-   * may be queried to determine if these components are actually in 
+   * may be queried to determine if these components are actually in
    * use.
    *
    * A System may also optionally have:
@@ -93,19 +94,19 @@ namespace Rp {
    *    - a Simulator
    *
    * Each optional component is constructed if and only if the parameter
-   * file that is used to initialize the System contains a corresponding 
-   * optional parameter file block. An %Environment is used to generate 
-   * external and mask fields to describe inhomogeneous environments, and 
-   * is omitted in standard calculations for structures formed in a 
-   * homogeneous environment.  An Iterator is used for SCFT calculations. 
-   * A Sweep is used for "sweep" calculations that solve a sequence of 
-   * SCFT problems along a path through parameter space.  A Simulator is 
+   * file that is used to initialize the System contains a corresponding
+   * optional parameter file block. An %Environment is used to generate
+   * external and mask fields to describe inhomogeneous environments, and
+   * is omitted in standard calculations for structures formed in a
+   * homogeneous environment.  An Iterator is used for SCFT calculations.
+   * A Sweep is used for "sweep" calculations that solve a sequence of
+   * SCFT problems along a path through parameter space.  A Simulator is
    * only used for PS-FTS calculations,  i.e., field theoretic simulations
-   * based on a partial saddle-point approximation. The Iterator and Sweep 
-   * objects is thus normally omitted for PS-FTS calculations, while the 
-   * Simulator object is normally omitted for SCFT calculations. The 
+   * based on a partial saddle-point approximation. The Iterator and Sweep
+   * objects is thus normally omitted for PS-FTS calculations, while the
+   * Simulator object is normally omitted for SCFT calculations. The
    * hasEnvironment(), hasIterator(), hasSweep(), and hasSimulator() bool
-   * member functions may be queried after processing of the parameter 
+   * member functions may be queried after processing of the parameter
    * file to determine which of these optional components exist.
    *
    * See also:
@@ -389,12 +390,12 @@ namespace Rp {
       /**
       * Get the %Interaction (const).
       */
-      typename T::Interaction const & interaction() const;
+      Interaction const & interaction() const;
 
       /**
       * Get the %Interaction (non-const).
       */
-      typename T::Interaction& interaction();
+      Interaction& interaction();
 
       /**
       * Get the Domain (const).
@@ -529,16 +530,16 @@ namespace Rp {
       /**
       * Constructor.
       *
-      * When a specialization of System\<D,T\> is used as a base class 
+      * When a specialization of System\<D,T\> is used as a base class
       * for a subclass defined in the Rpc or Rpg program-level namespace,
       * such as Rpc::System\<D\>, typename T::System is an alias for the
       * System subclass defined in Rpc or Rpg. In the constructor such a
       * derived class, the relevant instance of the derived class must
       * be passed to the Rp::System<D,T> base class constructor via the
-      * standard "this" pointer. The address of this T::System subclass 
-      * instance is retained in the Rp::System base class instance by a 
-      * private member variable named systemPtr_ of type T::System*. 
-      * See definitions of the constructors for the Rpc::System and 
+      * standard "this" pointer. The address of this T::System subclass
+      * instance is retained in the Rp::System base class instance by a
+      * private member variable named systemPtr_ of type T::System*.
+      * See definitions of the constructors for the Rpc::System and
       * Rpc::System class templates for examples of this usage.
       *
       * \param system  instance of System subclass
@@ -551,23 +552,21 @@ namespace Rp {
       ~System();
 
       ///@}
+
+      #if 0
       /**
       * Set the number of threads given as a command line argument.
       *
       * This function is called in the setOpts function that processes
       * command line arguments. The argument nThread may be passed to the
       * main program as the argument of the -t option. This value gives
-      * the number of threads in a threaded CPU implementation or an
-      * explicit choice for the maximum number of threads per block in
-      * GPU code.
-      *
-      * The do-nothing default implementation is used by CPU code that
-      * has not implemented threading (the current status).
+      * the maximum number of threads per block in a GPU-enabled version
+      * or the number of threads for a threaded CPU version.
       *
       * \param nThread  thread count
       */
-      virtual void setThreadCount(int nThread)
-      {};
+      virtual void setThreadCount(int nThread);
+      #endif
 
    private:
 
@@ -616,7 +615,7 @@ namespace Rp {
       /**
       * Pointer to %Interaction (excess free energy model).
       */
-      typename T::Interaction* interactionPtr_;
+      Interaction* interactionPtr_;
 
       /**
       * Pointer to SCFT property calculator.
@@ -749,7 +748,10 @@ namespace Rp {
    // Get the Mixture (const).
    template <int D, class T> inline
    typename T::Mixture const & System<D,T>::mixture() const
-   {  return *mixturePtr_; }
+   {
+      UTIL_ASSERT(mixturePtr_);
+      return *mixturePtr_;
+   }
 
    // Get the MixtureModifier (non-const).
    template <int D, class T> inline
@@ -761,7 +763,7 @@ namespace Rp {
 
    // Get the %Interaction (const).
    template <int D, class T> inline
-   typename T::Interaction const & System<D,T>::interaction() const
+   Interaction const & System<D,T>::interaction() const
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
@@ -769,7 +771,7 @@ namespace Rp {
 
    // Get the %Interaction (non-const).
    template <int D, class T> inline
-   typename T::Interaction& System<D,T>::interaction()
+   Interaction& System<D,T>::interaction()
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
@@ -778,12 +780,34 @@ namespace Rp {
    // Get the Domain (const).
    template <int D, class T> inline
    Domain<D,T> const & System<D,T>::domain() const
-   {  return *domainPtr_; }
+   {
+      UTIL_ASSERT(domainPtr_);
+      return *domainPtr_;
+   }
 
    // Get the WaveList (non-const).
    template <int D, class T> inline
    typename T::WaveList& System<D,T>::waveList()
-   {  return domainPtr_->waveList(); }
+   {
+      UTIL_ASSERT(domainPtr_);
+      return domainPtr_->waveList();
+   }
+
+   // Get the FileMaster (const).
+   template <int D, class T> inline
+   FileMaster const & System<D,T>::fileMaster() const
+   {
+      UTIL_ASSERT(fileMasterPtr_);
+      return *fileMasterPtr_;
+   }
+
+   // Get the FileMaster (non-const).
+   template <int D, class T> inline
+   FileMaster& System<D,T>::fileMaster()
+   {
+      UTIL_ASSERT(fileMasterPtr_);
+      return *fileMasterPtr_;
+   }
 
    // Accessors for field containers
 
@@ -845,7 +869,7 @@ namespace Rp {
       return *environmentPtr_;
    }
 
-   // Get the Scft calculator (const).
+   // Get the Scft thermodynamics calculator (const).
    template <int D, class T> inline
    typename T::ScftThermo const & System<D,T>::scft() const
    {
@@ -853,7 +877,7 @@ namespace Rp {
       return *scftPtr_;
    }
 
-   // Get the Scft calculator (non-const).
+   // Get the Scft thermodynamics calculator (non-const).
    template <int D, class T> inline
    typename T::ScftThermo & System<D,T>::scft()
    {
@@ -861,12 +885,12 @@ namespace Rp {
       return *scftPtr_;
    }
 
-   // Does this system have an Iterator?
+   // Does this system have an SCFT Iterator?
    template <int D, class T> inline
    bool System<D,T>::hasIterator() const
    {  return (iteratorPtr_); }
 
-   // Get the Iterator (const).
+   // Get the SCFT Iterator (const).
    template <int D, class T> inline
    typename T::Iterator const & System<D,T>::iterator() const
    {
@@ -874,7 +898,7 @@ namespace Rp {
       return *iteratorPtr_;
    }
 
-   // Get the Iterator (non-const).
+   // Get the SCFT Iterator (non-const).
    template <int D, class T> inline
    typename T::Iterator& System<D,T>::iterator()
    {
@@ -882,7 +906,7 @@ namespace Rp {
       return *iteratorPtr_;
    }
 
-   // Does this system have a Sweep?
+   // Does this system have an SCFT Sweep?
    template <int D, class T> inline
    bool System<D,T>::hasSweep() const
    {  return (sweepPtr_); }
@@ -907,16 +931,6 @@ namespace Rp {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
    }
-
-   // Get the FileMaster (const).
-   template <int D, class T> inline
-   FileMaster const & System<D,T>::fileMaster() const
-   {  return *fileMasterPtr_; }
-
-   // Get the FileMaster (non-const).
-   template <int D, class T> inline
-   FileMaster& System<D,T>::fileMaster()
-   {  return *fileMasterPtr_; }
 
    // Private inline functions:
 

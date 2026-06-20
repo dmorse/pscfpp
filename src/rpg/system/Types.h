@@ -12,12 +12,10 @@
 
 // Forward declarations
 namespace Pscf {
-   class Interaction;
    class CudaVecRandom;
    template <typename T> class DeviceArray;
    template <typename T> class HostDArray;
    namespace Prdc {
-      class Environment;
       namespace Cuda {
          template <int D> class RField;
          template <int D> class RFieldDft;
@@ -65,15 +63,15 @@ namespace Pscf {
       template <int D> class AnalyzerManager;
       template <int D> class AverageAnalyzer;
       template <int D> class AverageListAnalyzer;
-      template <int D> class TrajectoryReader; 
-      template <int D> class TrajectoryReaderFactory; 
+      template <int D> class TrajectoryReader;
+      template <int D> class TrajectoryReaderFactory;
       template <int D> class BdSimulator;
       template <int D> class BdStep;
       template <int D> class BdStepFactory;
       template <int D> class McSimulator;
       template <int D> class McMove;
       template <int D> class McMoveFactory;
-      template <int D> class McMoveManager; 
+      template <int D> class McMoveManager;
    }
 }
 
@@ -93,6 +91,21 @@ namespace Rpg {
 
    public:
 
+      using VecRandom = Pscf::CudaVecRandom;
+
+      template <typename T> using HostArray = Pscf::HostDArray<T>;
+      using Vector = Pscf::DeviceArray<Pscf::cudaReal>;
+
+      using Real = Pscf::cudaReal;
+      using Complex = Pscf::cudaComplex;
+
+      using RField = Prdc::Cuda::RField<D>;
+      using RFieldDft = Prdc::Cuda::RFieldDft<D>;
+      using FFT = Prdc::Cuda::FFT<D>;
+      using RFieldComparison = Prdc::Cuda::RFieldComparison<D>;
+      using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;
+      using WaveList = Prdc::Cuda::WaveList<D>;
+
       using System = Rpg::System<D>;
       using SystemConstRef = Rpg::SystemConstRef<D>;
 
@@ -103,13 +116,11 @@ namespace Rpg {
       using Block = Rpg::Block<D>;
       using Propagator = Rpg::Propagator<D>;
 
-      using Interaction = Pscf::Interaction;
       //using Domain = Rpg::Domain<D>;
       //using FieldIo = Rpg::FieldIo<D>;
       //using WFields = Rpg::WFields<D>;
       //using CFields = Rpg::CFields<D>;
       //using Mask = Rpg::Mask<D>;
-      using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpg::EnvironmentFactory<D>;
 
       using ScftThermo = Rpg::ScftThermo<D>;
@@ -154,20 +165,19 @@ namespace Rpg {
       using McMoveFactory = Rpg::McMoveFactory<D>;
       using McMoveManager = Rpg::McMoveManager<D>;
 
-      using RField = Prdc::Cuda::RField<D>;
-      using RFieldDft = Prdc::Cuda::RFieldDft<D>;
-      using FFT = Prdc::Cuda::FFT<D>;
-      using RFieldComparison = Prdc::Cuda::RFieldComparison<D>;
-      using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;
-      using WaveList = Prdc::Cuda::WaveList<D>;
+      // Static member functions
 
-      using VecRandom = Pscf::CudaVecRandom;
+      /**
+      * Initialize backend thread array.
+      */
+      static void init();
 
-      template <typename T> using HostArray = Pscf::HostDArray<T>;
-      using Vector = Pscf::DeviceArray<Pscf::cudaReal>;
-
-      using Real = Pscf::cudaReal;
-      using Complex = Pscf::cudaComplex;
+      /**
+      * Set the number of threads per block.
+      *
+      * \param nThread  number of threads
+      */
+      static void setThreadCount(int nThread);
 
    };
 

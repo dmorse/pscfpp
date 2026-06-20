@@ -50,10 +50,10 @@ namespace Rpg {
    System<D>::System()
     : Rp::System<D, Types<D> >(*this)
    {
-      ParamComposite::setClassName("System");
-      ThreadArray::init();
+      //ThreadArray::init();
    }
 
+   #if 0
    /*
    * Set thread count.
    */
@@ -63,6 +63,7 @@ namespace Rpg {
       ThreadArray::setThreadsPerBlock(nThread);
       ThreadMesh::setThreadsPerBlock(nThread);
    }
+   #endif
 
 }
 }

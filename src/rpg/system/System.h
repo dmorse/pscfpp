@@ -51,6 +51,7 @@ namespace Rpg {
 
    protected:
 
+      #if 0
       /**
       * Explicitly set maximum number of threads per block.
       *
@@ -60,6 +61,7 @@ namespace Rpg {
       * \param nThread  thread count (maximum per block)
       */
       virtual void setThreadCount(int nThread) override;
+      #endif
 
    };
 

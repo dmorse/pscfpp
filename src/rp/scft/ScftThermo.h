@@ -139,7 +139,6 @@ namespace Rp {
 
       // Protected inherited type name aliases.
       using MixtureT = typename T::Mixture;
-      using InteractionT = typename T::Interaction;
       using DomainT = Domain<D,T>;
       using WFieldsT = WFields<D,T>;
       using CFieldsT = CFields<D,T>;

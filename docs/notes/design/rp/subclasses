@@ -96,16 +96,47 @@ scft/sweep:
 =============================================================================
 fts/
 
+    fts/simulator:
+
+        Simulator: Initialization for random seed is distinct, 
+                   called in subclass constructor
+                   Rpg: Base::vecRandom().setSeed(
+                   Rpc: Prc creates and association in constructor
+
+        SimState  -> trivial
+
     fts/analyzer:
 
       - Analyzer  -> trivial 
  
-        Note: This takes Simulator and System as params, rather than a Types
-        Change to a 2-parameter template.
+        Note: This takes Simulator and System as template params, rather 
+        than a Types class.  Change to a 2-parameter template.
+
+        AnalyzerFactory -> explicit specialization (no need for base class)
+        AnalyzerManager -> explicit specialization (no need for base class)
+       
+        AverageAnalyzer     -> trivial
+        AverageListAnalyzer -> trivial
+
+        BinaryChiDerivative -> trivial
+        ConcentrationDerivative -> trivial
+        CubicLengthDerivative -> trivial
+        HamiltonianAnalyzer -> trivial
+        PerturbationDerivative -> trivial
+
+        BinaryStructureFactor -> nontrivial
+        FourthOrderParameter -> computePrefactor is distinct
+        MaxOrderParameter -> nontrivial
+                
+        
 
     fts/brownian:
 
-      - BdStep -> trivial  (standard 2-parameter template)
+        BdStep -> trivial  (standard 2-parameter template)
+        BdSimulator -> trivial
+        ExplicitBdStep -> trivial
+        LMBdStep -> trivial
+        PredCorrBdStep -> trivial
 
     fts/montecarlo:
 
@@ -124,9 +155,4 @@ fts/
     fts/ramp:
 
       - Ramp -> trivial  (standard 2-parameter template)
-
-    fts/simulator:
-
-      - Simulator -> almost trivial  (standard 2-parameter template)
-        (Rpc creates an association between RNGs in constructor)
 

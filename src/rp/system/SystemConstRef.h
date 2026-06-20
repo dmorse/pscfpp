@@ -13,6 +13,7 @@ namespace Util {
    class FileMaster;
 }
 namespace Pscf {
+   class Interaction;
    namespace Rp {
       template <int D, class T> class CFields;
       template <int D, class T> class WFields;
@@ -59,7 +60,7 @@ namespace Rp {
       /**
       * Get the Interaction.
       */
-      typename T::Interaction const & interaction() const
+      Interaction const & interaction() const
       {  return *interactionPtr_; }
 
       /**
@@ -136,7 +137,7 @@ namespace Rp {
       typename T::Mixture const * mixturePtr_;
 
       /// Pointer to Interaction.
-      typename T::Interaction const * interactionPtr_;
+      Interaction const * interactionPtr_;
 
       /// Pointer to Domain.
       Domain<D,T> const * domainPtr_;
