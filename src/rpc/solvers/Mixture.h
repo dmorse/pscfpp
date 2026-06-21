@@ -15,14 +15,11 @@
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class Polymer;
-      //template <int D, class T> class Solvent;
+      template <int D, class T> class Solvent;
    }
 }
 namespace Pscf {
 namespace Rpc {
-
-   // Forward declarations
-   template <int D> class Solvent;
 
    using namespace Util;
    using namespace Prdc;

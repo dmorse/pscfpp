@@ -19,6 +19,7 @@ namespace Pscf {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class Propagator;
+      template <int D, class T> class Block;
    }
 }
 
@@ -71,7 +72,7 @@ namespace Rp {
       *
       * \param block associated Block object
       */
-      void setBlock(typename T::Block& block);
+      void setBlock(Block<D,T>& block);
 
       /**
       * Allocate memory used by this propagator.
@@ -160,7 +161,7 @@ namespace Rp {
       /**
       * Get the associated Block object by const reference.
       */
-      typename T::Block const & block() const;
+      Block<D,T> const & block() const;
 
       /**
       * Return the associated Mesh object by const reference.
@@ -232,12 +233,12 @@ namespace Rp {
       /**
       * Get the associated Block object by non-const reference.
       */
-      typename T::Block& block();
+      Block<D,T>& block();
 
    private:
 
       /// Pointer to the associated Block.
-      typename T::Block* blockPtr_;
+      Block<D,T>* blockPtr_;
 
       /// Pointer to the associated Mesh.
       Mesh<D> const * meshPtr_;
@@ -281,7 +282,7 @@ namespace Rp {
    * Get the associated Block object by const reference.
    */
    template <int D, class T> inline
-   typename T::Block const & PropagatorBase<D,T>::block() const
+   Block<D,T> const & PropagatorBase<D,T>::block() const
    {
       UTIL_ASSERT(blockPtr_);
       return *blockPtr_;
@@ -291,7 +292,7 @@ namespace Rp {
    * Get the associated Block object by non-const reference.
    */
    template <int D, class T> inline
-   typename T::Block& PropagatorBase<D,T>::block()
+   Block<D,T>& PropagatorBase<D,T>::block()
    {
       UTIL_ASSERT(blockPtr_);
       return *blockPtr_;
@@ -325,7 +326,7 @@ namespace Rp {
    * Associate this propagator with a unique block.
    */
    template <int D, class T> inline
-   void PropagatorBase<D,T>::setBlock(typename T::Block& block)
+   void PropagatorBase<D,T>::setBlock(Block<D,T>& block)
    {  blockPtr_ = &block; }
 
 } // namespace Rp

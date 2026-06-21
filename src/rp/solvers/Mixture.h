@@ -24,6 +24,7 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class Solvent; 
       template <int D, class T> class Polymer;
+      template <int D, class T> class Block; 
       template <int D, class T> class Propagator; 
       template <int D, class T> class FieldIo; 
    }
@@ -77,7 +78,7 @@ namespace Rp {
       using SolventT = Solvent<D,T>;
 
       /// Block type, for a block in a block polymer.
-      using BlockT = typename T::Block;
+      using BlockT = Block<D, T>;
 
       /// Propagator type, for one direction within a block.
       using PropagatorT = Propagator<D,T>;

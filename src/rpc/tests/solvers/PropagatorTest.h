@@ -75,7 +75,7 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Block<1> block;
+      Rp::Block<1, Types<1> > block;
    }
 
    void testSetup1D()
@@ -83,7 +83,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Block<1> block;
+      Rp::Block<1, Types<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -119,7 +119,7 @@ public:
       printMethod(TEST_FUNC);
 
       //Create and initialize block
-      Block<2> block;
+      Rp::Block<2, Types<2> > block;
       setupBlock<2>(block);
 
       Mesh<2> mesh;
@@ -154,7 +154,7 @@ public:
       printMethod(TEST_FUNC);
 
       //Create and initialize block
-      Block<3> block;
+      Rp::Block<3, Types<3> > block;
       setupBlock<3>(block);
 
       Mesh<3> mesh;
@@ -194,7 +194,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Block<1> block;
+      Rp::Block<1, Types<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -236,7 +236,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Block<2> block;
+      Rp::Block<2, Types<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -281,7 +281,7 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Block<2> block;
+      Rp::Block<2, Types<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -324,7 +324,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Block<3> block;
+      Rp::Block<3, Types<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
@@ -369,7 +369,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Block<1> block;
+      Rp::Block<1, Types<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -449,7 +449,7 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Block<1> block;
+      Rp::Block<1, Types<1> > block;
       setupBlock<1>(block);
       int nBead = block.nBead();
 
@@ -548,7 +548,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Block<2> block;
+      Rp::Block<2, Types<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -641,7 +641,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Block<3> block;
+      Rp::Block<3, Types<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh

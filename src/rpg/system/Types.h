@@ -32,8 +32,8 @@ namespace Pscf {
       template <int D> class MixtureModifier;
       //template <int D> class Polymer;
       //template <int D> class Solvent;
-      template <int D> class Block;
-      template <int D> class Propagator;
+      //template <int D> class Block;
+      //template <int D> class Propagator;
       //template <int D> class Domain;
       //template <int D> class FieldIo;
       //template <int D> class WFields;
@@ -113,8 +113,8 @@ namespace Rpg {
       using MixtureModifier = Rpg::MixtureModifier<D>;
       //using Polymer = Rpg::Polymer<D>;
       //using Solvent = Rpg::Solvent<D>;
-      using Block = Rpg::Block<D>;
-      using Propagator = Rpg::Propagator<D>;
+      //using Block = Rpg::Block<D>;
+      //using Propagator = Rpg::Propagator<D>;
 
       //using Domain = Rpg::Domain<D>;
       //using FieldIo = Rpg::FieldIo<D>;

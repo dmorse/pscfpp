@@ -14,12 +14,11 @@
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class Propagator;
+      template <int D, class T> class Block;
    }
-   namespace Rpg {
-      template <int D> class Block;
-   } 
 }
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -44,12 +43,16 @@ namespace Rpg {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
-   extern template class PolymerTmpl< Rpg::Block<1>, Rp::Propagator<1, Rpg::Types<1> > >;
-   extern template class PolymerTmpl< Rpg::Block<2>, Rp::Propagator<2, Rpg::Types<2> > >;
-   extern template class PolymerTmpl< Rpg::Block<3>, Rp::Propagator<3, Rpg::Types<3> > >;
+   extern template 
+   class PolymerTmpl< Rp::Block<1, Rpg::Types<1> >, Rp::Propagator<1, Rpg::Types<1> > >;
+   extern template 
+   class PolymerTmpl< Rp::Block<2, Rpg::Types<2> >, Rp::Propagator<2, Rpg::Types<2> > >;
+   extern template 
+   class PolymerTmpl< Rp::Block<3, Rpg::Types<3> >, Rp::Propagator<3, Rpg::Types<3> > >;
    namespace Rp {
       extern template class Polymer<1, Rpg::Types<1> >;
       extern template class Polymer<2, Rpg::Types<2> >;

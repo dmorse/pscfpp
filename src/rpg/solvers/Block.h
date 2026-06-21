@@ -31,11 +31,12 @@ namespace Pscf {
    }
    namespace Rp {
       template <int D, class T> class Propagator;
+      template <int D, class T> class Block;
    }
 }
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -54,8 +55,8 @@ namespace Rpg {
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Block 
-     : public BlockTmpl< Rp::Propagator<D, Types<D> >, RField<D> >
+   class Block<D, Rpg::Types<D> > 
+     : public BlockTmpl< Rp::Propagator<D, Rpg::Types<D> >, RField<D> >
    {
 
    public:
@@ -63,7 +64,7 @@ namespace Rpg {
       // Public type name aliases
 
       /// Direct (parent) base class.
-      using BlockTmplT = BlockTmpl< Rp::Propagator<D, Types<D> >, RField<D> > ;
+      using BlockTmplT = BlockTmpl< Rp::Propagator<D, Rpg::Types<D> >, RField<D> > ;
 
       /// Propagator type (inherited).
       using typename BlockTmplT::PropagatorT;
@@ -450,47 +451,47 @@ namespace Rpg {
    // Inline member functions
 
    // Get number of contour steps.
-   template <int D>
-   inline int Block<D>::ns() const
+   template <int D> inline 
+   int Block<D, Rpg::Types<D> >::ns() const
    {  return ns_; }
 
    // Get contour length step size.
-   template <int D>
-   inline double Block<D>::ds() const
+   template <int D> inline 
+   double Block<D, Rpg::Types<D> >::ds() const
    {  return ds_; }
 
    // Get derivative of free energy w/ respect to a unit cell parameter.
-   template <int D>
-   inline double Block<D>::stress(int n) const
+   template <int D> inline
+   double Block<D, Rpg::Types<D> >::stress(int n) const
    {  return stress_[n]; }
 
    // Get Mesh by reference.
-   template <int D>
-   inline Mesh<D> const & Block<D>::mesh() const
+   template <int D> inline
+   Mesh<D> const & Block<D, Rpg::Types<D> >::mesh() const
    {
       UTIL_ASSERT(meshPtr_);
       return *meshPtr_;
    }
 
    // Get FFT by reference.
-   template <int D>
-   inline FFT<D> const & Block<D>::fft() const
+   template <int D> inline
+   FFT<D> const & Block<D, Rpg::Types<D> >::fft() const
    {
       UTIL_ASSERT(fftPtr_);
       return *fftPtr_;
    }
 
    // Get associated UnitCell<D> by const reference (private).
-   template <int D>
-   UnitCell<D> const & Block<D>::unitCell() const
+   template <int D> inline
+   UnitCell<D> const & Block<D, Rpg::Types<D> >::unitCell() const
    {  return *unitCellPtr_; }
 
    // Get the WaveList by non-const reference (private).
-   template <int D>
-   WaveList<D> & Block<D>::waveList()
+   template <int D> inline
+   WaveList<D> & Block<D, Rpg::Types<D> >::waveList()
    {  return *waveListPtr_; }
 
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation declarations
@@ -503,10 +504,10 @@ namespace Pscf {
    extern template
    class BlockTmpl< Rp::Propagator<3, Rpg::Types<3> >, Prdc::Cuda::RField<3> >;
 
-   namespace Rpg {
-      extern template class Block<1>;
-      extern template class Block<2>;
-      extern template class Block<3>;
+   namespace Rp {
+      extern template class Block<1, Rpg::Types<1> >;
+      extern template class Block<2, Rpg::Types<2> >;
+      extern template class Block<3, Rpg::Types<3> >;
    }
 }
 #endif

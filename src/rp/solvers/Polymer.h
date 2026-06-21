@@ -18,6 +18,7 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class Propagator;
+      template <int D, class T> class Block;
    }
 }
 
@@ -49,7 +50,7 @@ namespace Rp {
    */
    template <int D, class T>
    class Polymer 
-     : public PolymerTmpl<typename T::Block, Propagator<D,T>, double>
+     : public PolymerTmpl<Block<D,T>, Propagator<D,T>, double>
    {
 
    public:
@@ -57,7 +58,7 @@ namespace Rp {
       // Public type name aliases
 
       /// Block type, for a block within a block polymer.
-      using BlockT = typename T::Block;
+      using BlockT = Block<D,T>;
 
       /// Propagator type, for one direction within a block.
       using PropagatorT = Propagator<D,T>;
