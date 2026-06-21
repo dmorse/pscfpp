@@ -1,5 +1,5 @@
-#ifndef RP_PROPAGATOR_H
-#define RP_PROPAGATOR_H
+#ifndef RP_PROPAGATOR_BASE_H
+#define RP_PROPAGATOR_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -15,6 +15,11 @@
 // Forward declaration
 namespace Pscf {
    template <int D> class Mesh;
+}
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class Propagator;
+   }
 }
 
 namespace Pscf {
@@ -56,7 +61,7 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D, class T>
-   class Propagator : public PropagatorTmpl<typename T::Propagator>
+   class PropagatorBase : public PropagatorTmpl< Propagator<D,T> >
    {
 
    public:
@@ -179,7 +184,7 @@ namespace Rp {
       bool isAllocated() const;
 
       /// Direct (parent) base class.
-      using PropagatorTmplT = PropagatorTmpl<typename T::Propagator>;
+      using PropagatorTmplT = PropagatorTmpl< Propagator<D,T> >;
 
       // Inherited non-dependent members (selected, for convenience)
       using PropagatorTmplT::source;
@@ -199,12 +204,12 @@ namespace Rp {
       /**
       * Constructor.
       */
-      Propagator();
+      PropagatorBase();
 
       /**
       * Destructor.
       */
-      ~Propagator();
+      ~PropagatorBase();
 
       /**
       * Compute initial q-field at the head vertex.
@@ -245,7 +250,7 @@ namespace Rp {
    * Return q-field at beginning of block.
    */
    template <int D, class T> inline
-   typename T::RField const& Propagator<D,T>::head() const
+   typename T::RField const& PropagatorBase<D,T>::head() const
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFields_[0];
@@ -255,7 +260,7 @@ namespace Rp {
    * Return q-field at end of block.
    */
    template <int D, class T> inline
-   typename T::RField const& Propagator<D,T>::tail() const
+   typename T::RField const& PropagatorBase<D,T>::tail() const
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       UTIL_CHECK(PolymerModel::isThread() || !PropagatorTmplT::isTailEnd());
@@ -266,7 +271,7 @@ namespace Rp {
    * Return q-field at specified step.
    */
    template <int D, class T> inline
-   typename T::RField const& Propagator<D,T>::q(int i) const
+   typename T::RField const& PropagatorBase<D,T>::q(int i) const
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFields_[i];
@@ -276,7 +281,7 @@ namespace Rp {
    * Get the associated Block object by const reference.
    */
    template <int D, class T> inline
-   typename T::Block const & Propagator<D,T>::block() const
+   typename T::Block const & PropagatorBase<D,T>::block() const
    {
       UTIL_ASSERT(blockPtr_);
       return *blockPtr_;
@@ -286,7 +291,7 @@ namespace Rp {
    * Get the associated Block object by non-const reference.
    */
    template <int D, class T> inline
-   typename T::Block& Propagator<D,T>::block()
+   typename T::Block& PropagatorBase<D,T>::block()
    {
       UTIL_ASSERT(blockPtr_);
       return *blockPtr_;
@@ -296,7 +301,7 @@ namespace Rp {
    * Get the associated Mesh object by const reference.
    */
    template <int D, class T> inline
-   Mesh<D> const & Propagator<D,T>::mesh() const
+   Mesh<D> const & PropagatorBase<D,T>::mesh() const
    {
       UTIL_ASSERT(meshPtr_);
       return *meshPtr_;
@@ -306,21 +311,21 @@ namespace Rp {
    * Get the number of counter grid points.
    */
    template <int D, class T> inline
-   int Propagator<D,T>::ns() const
+   int PropagatorBase<D,T>::ns() const
    {  return ns_; }
 
    /*
    * Has memory been allocated for this propagator?
    */
    template <int D, class T> inline
-   bool Propagator<D,T>::isAllocated() const
+   bool PropagatorBase<D,T>::isAllocated() const
    {  return isAllocated_; }
 
    /*
    * Associate this propagator with a unique block.
    */
    template <int D, class T> inline
-   void Propagator<D,T>::setBlock(typename T::Block& block)
+   void PropagatorBase<D,T>::setBlock(typename T::Block& block)
    {  blockPtr_ = &block; }
 
 } // namespace Rp

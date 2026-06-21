@@ -22,8 +22,9 @@ namespace Pscf {
       template <int D> class UnitCell;
    }
    namespace Rp {
-      template <int D, class T> class Polymer;
       template <int D, class T> class Solvent; 
+      template <int D, class T> class Polymer;
+      template <int D, class T> class Propagator; 
       template <int D, class T> class FieldIo; 
    }
 }
@@ -79,7 +80,7 @@ namespace Rp {
       using BlockT = typename T::Block;
 
       /// Propagator type, for one direction within a block.
-      using PropagatorT = typename T::Propagator;
+      using PropagatorT = Propagator<D,T>;
 
       /// Field type, for data defined on a real-space grid.
       using FieldT = typename T::RField;

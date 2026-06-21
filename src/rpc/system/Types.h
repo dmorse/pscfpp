@@ -36,7 +36,7 @@ namespace Pscf {
       //template <int D> class Polymer;
       //template <int D> class Solvent;
       template <int D> class Block;
-      template <int D> class Propagator;
+      //template <int D> class Propagator;
       //template <int D> class Domain;
       //template <int D> class FieldIo;
       //template <int D> class WFields;
@@ -119,7 +119,7 @@ namespace Rpc {
       //using Polymer = Rpc::Polymer<D>;
       //using Solvent = Rpc::Solvent<D>;
       using Block = Rpc::Block<D>;
-      using Propagator = Rpc::Propagator<D>;
+      //using Propagator = Propagator<D, Rpc::Types<D> >;
 
       //using Domain = Rpc::Domain<D>;
       //using FieldIo = Rpc::FieldIo<D>;

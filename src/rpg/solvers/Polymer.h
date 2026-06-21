@@ -12,6 +12,15 @@
 #include <rpg/system/Types.h>      // base class template parameter
 
 namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class Propagator;
+   }
+   namespace Rpg {
+      template <int D> class Block;
+   } 
+}
+
+namespace Pscf {
 namespace Rpg {
 
    using namespace Util;
@@ -38,9 +47,9 @@ namespace Rpg {
 
 // Explicit instantiation declarations
 namespace Pscf {
-   extern template class PolymerTmpl< Rpg::Block<1>, Rpg::Propagator<1> >;
-   extern template class PolymerTmpl< Rpg::Block<2>, Rpg::Propagator<2> >;
-   extern template class PolymerTmpl< Rpg::Block<3>, Rpg::Propagator<3> >;
+   extern template class PolymerTmpl< Rpg::Block<1>, Rp::Propagator<1, Rpg::Types<1> > >;
+   extern template class PolymerTmpl< Rpg::Block<2>, Rp::Propagator<2, Rpg::Types<2> > >;
+   extern template class PolymerTmpl< Rpg::Block<3>, Rp::Propagator<3, Rpg::Types<3> > >;
    namespace Rp {
       extern template class Polymer<1, Rpg::Types<1> >;
       extern template class Polymer<2, Rpg::Types<2> >;

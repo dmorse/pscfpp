@@ -510,7 +510,7 @@ public:
       }
   
       // Test propagator solve, block owns both vertices
-      Propagator<1>& p0 = block.propagator(0);
+      Rp::Propagator<1, Types<1> >& p0 = block.propagator(0);
       p0.solve();
 
       // Check head slice
@@ -531,7 +531,7 @@ public:
          TEST_ASSERT(eq(p0.q(nBead)[i], expected));
       }
 
-      Propagator<1>& p1 = block.propagator(1);
+      Rp::Propagator<1, Types<1> >& p1 = block.propagator(1);
       p1.solve();
 
       #if 0

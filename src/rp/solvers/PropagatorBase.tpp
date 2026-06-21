@@ -1,5 +1,5 @@
-#ifndef RP_PROPAGATOR_TPP
-#define RP_PROPAGATOR_TPP
+#ifndef RP_PROPAGATOR_BASE_TPP
+#define RP_PROPAGATOR_BASE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"
+#include "PropagatorBase.h"
 #include <pscf/mesh/Mesh.h>
 
 namespace Pscf {
@@ -20,7 +20,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   Propagator<D,T>::Propagator()
+   PropagatorBase<D,T>::PropagatorBase()
     : ns_(0),
       isAllocated_(false),
       blockPtr_(nullptr),
@@ -31,14 +31,14 @@ namespace Rp {
    * Destructor.
    */
    template <int D, class T>
-   Propagator<D,T>::~Propagator()
+   PropagatorBase<D,T>::~PropagatorBase()
    {}
 
    /*
    * Allocate memory used by this propagator.
    */
    template <int D, class T>
-   void Propagator<D,T>::allocate(int ns, const Mesh<D>& mesh)
+   void PropagatorBase<D,T>::allocate(int ns, const Mesh<D>& mesh)
    {
       UTIL_CHECK(!isAllocated_);
       ns_ = ns;
@@ -49,7 +49,7 @@ namespace Rp {
    * Reallocate memory used by this propagator using new ns value.
    */
    template <int D, class T>
-   void Propagator<D,T>::reallocate(int ns)
+   void PropagatorBase<D,T>::reallocate(int ns)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(isAllocated_);
@@ -61,7 +61,7 @@ namespace Rp {
    * Compute initial head q-field as a product of tail slices of sources.
    */
    template <int D, class T>
-   void Propagator<D,T>::computeHead()
+   void PropagatorBase<D,T>::computeHead()
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(isAllocated_);
@@ -93,7 +93,7 @@ namespace Rp {
    * a product of tail slices from source propagators.
    */
    template <int D, class T>
-   void Propagator<D,T>::solve()
+   void PropagatorBase<D,T>::solve()
    {
       computeHead();
       solveMde();
@@ -103,7 +103,7 @@ namespace Rp {
    * Solve the MDE with a specified initial condition at the head.
    */
    template <int D, class T>
-   void Propagator<D,T>::solve(typename T::RField const & head)
+   void PropagatorBase<D,T>::solve(typename T::RField const & head)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(head.capacity() == mesh().size());
@@ -118,7 +118,7 @@ namespace Rp {
    * Solve the MDE, using stored precomputed head slice (private).
    */
    template <int D, class T>
-   void Propagator<D,T>::solveMde()
+   void PropagatorBase<D,T>::solveMde()
    {
       UTIL_CHECK(blockPtr_);
       UTIL_CHECK(isAllocated());
@@ -168,7 +168,7 @@ namespace Rp {
    * Compute spatial average of product of head and tail of partner.
    */
    template <int D, class T>
-   void Propagator<D,T>::computeQ(double & Q) const
+   void PropagatorBase<D,T>::computeQ(double & Q) const
    {
       // Preconditions
       UTIL_CHECK(meshPtr_);

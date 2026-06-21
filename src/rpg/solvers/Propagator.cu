@@ -12,10 +12,10 @@
 #include <pscf/cuda/Reduce.h>
 #include <pscf/mesh/Mesh.h>
 
-#include <rp/solvers/Propagator.tpp>  // base class template implementation
+#include <rp/solvers/PropagatorBase.tpp>  // base class implementation
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
 
@@ -25,7 +25,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   Propagator<D>::Propagator()
+   Propagator<D, Rpg::Types<D> >::Propagator()
     : RpPropagatorT()
    {}
 
@@ -33,7 +33,7 @@ namespace Rpg {
    * Destructor.
    */
    template <int D>
-   Propagator<D>::~Propagator()
+   Propagator<D, Rpg::Types<D> >::~Propagator()
    {
       dissociateQFields();
 
@@ -50,7 +50,7 @@ namespace Rpg {
    * Allocate memory used by this propagator.
    */
    template <int D>
-   void Propagator<D>::allocate(int ns, const Mesh<D>& mesh)
+   void Propagator<D, Rpg::Types<D> >::allocate(int ns, const Mesh<D>& mesh)
    {
       RpPropagatorT::allocate(ns, mesh);
 
@@ -74,7 +74,7 @@ namespace Rpg {
    * Reallocate memory used by this propagator using new ns value.
    */
    template <int D>
-   void Propagator<D>::reallocate(int ns)
+   void Propagator<D, Rpg::Types<D> >::reallocate(int ns)
    {
       RpPropagatorT::reallocate(ns);
 
@@ -120,7 +120,7 @@ namespace Rpg {
    * to this ReferenceCounter.
    */
    template <int D>
-   void Propagator<D>::dissociateQFields()
+   void Propagator<D, Rpg::Types<D> >::dissociateQFields()
    {
       if (qFields_.isAllocated()) {
          int ns = qFields_.capacity();
@@ -138,13 +138,11 @@ namespace Rpg {
 // Explicit Instantiation definitions
 namespace Pscf { 
    namespace Rp {
+      template class PropagatorBase<1, Rpg::Types<1> >;
+      template class PropagatorBase<2, Rpg::Types<2> >;
+      template class PropagatorBase<3, Rpg::Types<3> >;
       template class Propagator<1, Rpg::Types<1> >;
       template class Propagator<2, Rpg::Types<2> >;
       template class Propagator<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class Propagator<1>;
-      template class Propagator<2>;
-      template class Propagator<3>;
    }
 }

@@ -196,15 +196,6 @@ namespace Rp {
       delete cPtr_;
    }
 
-   #if 0
-   /*
-   * Set the thread count.
-   */
-   template <int D, class T>
-   void System<D,T>::setThreadCount(int nThread)
-   {  T::setThreadCount(nThread); }
-   #endif
-
    // Lifetime (called in main program)
 
    /*

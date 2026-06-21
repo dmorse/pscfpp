@@ -12,10 +12,10 @@
 #include <pscf/cpu/Reduce.h>
 #include <pscf/mesh/Mesh.h>
 
-#include <rp/solvers/Propagator.tpp>
+#include <rp/solvers/PropagatorBase.tpp>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
 
@@ -23,7 +23,7 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   Propagator<D>::Propagator()
+   Propagator<D, Rpc::Types<D> >::Propagator()
     : RpPropagatorT()
    {}
 
@@ -31,14 +31,14 @@ namespace Rpc {
    * Destructor.
    */
    template <int D>
-   Propagator<D>::~Propagator()
+   Propagator<D, Rpc::Types<D> >::~Propagator()
    {}
 
    /*
    * Allocate memory used by this propagator.
    */
    template <int D>
-   void Propagator<D>::allocate(int ns, const Mesh<D>& mesh)
+   void Propagator<D, Rpc::Types<D> >::allocate(int ns, const Mesh<D>& mesh)
    {
       RpPropagatorT::allocate(ns, mesh);
       UTIL_CHECK(RpPropagatorT::ns() == ns);
@@ -56,7 +56,7 @@ namespace Rpc {
    * Reallocate memory used by this propagator using new ns value.
    */
    template <int D>
-   void Propagator<D>::reallocate(int ns)
+   void Propagator<D, Rpc::Types<D> >::reallocate(int ns)
    {
       RpPropagatorT::reallocate(ns);
       UTIL_CHECK(RpPropagatorT::ns() == ns);
@@ -87,13 +87,11 @@ namespace Rpc {
 // Explicit instantiation definitions
 namespace Pscf { 
    namespace Rp {
+      template class PropagatorBase<1, Rpc::Types<1> >;
+      template class PropagatorBase<2, Rpc::Types<2> >;
+      template class PropagatorBase<3, Rpc::Types<3> >;
       template class Propagator<1, Rpc::Types<1> >;
       template class Propagator<2, Rpc::Types<2> >;
       template class Propagator<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class Propagator<1>;
-      template class Propagator<2>;
-      template class Propagator<3>;
    }
 }

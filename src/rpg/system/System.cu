@@ -49,21 +49,7 @@ namespace Rpg {
    template <int D>
    System<D>::System()
     : Rp::System<D, Types<D> >(*this)
-   {
-      //ThreadArray::init();
-   }
-
-   #if 0
-   /*
-   * Set thread count.
-   */
-   template <int D>
-   void System<D>::setThreadCount(int nThread)
-   {
-      ThreadArray::setThreadsPerBlock(nThread);
-      ThreadMesh::setThreadsPerBlock(nThread);
-   }
-   #endif
+   {}
 
 }
 }

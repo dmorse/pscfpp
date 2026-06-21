@@ -40,7 +40,7 @@ namespace Pscf {
       template <int D>
       System<D>::System()
        : Rp::System<D, Types<D> >(*this)
-      {  ParamComposite::setClassName("System"); }
+      {}
 
    }
 }

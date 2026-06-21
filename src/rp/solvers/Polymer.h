@@ -15,6 +15,11 @@
 namespace Util {
    template <typename T> class DArray;
 }
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class Propagator;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
@@ -44,7 +49,7 @@ namespace Rp {
    */
    template <int D, class T>
    class Polymer 
-     : public PolymerTmpl<typename T::Block, typename T::Propagator, double>
+     : public PolymerTmpl<typename T::Block, Propagator<D,T>, double>
    {
 
    public:
@@ -55,7 +60,7 @@ namespace Rp {
       using BlockT = typename T::Block;
 
       /// Propagator type, for one direction within a block.
-      using PropagatorT = typename T::Propagator;
+      using PropagatorT = Propagator<D,T>;
 
       /// Direct base class, specialization of PolymerTmpl class template.
       using PolymerTmplT = PolymerTmpl<BlockT, PropagatorT, double>;

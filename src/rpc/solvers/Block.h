@@ -9,6 +9,7 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
+#include <rpc/system/Types.h>             // template argument
 
 #include <prdc/cpu/RField.h>              // member
 #include <prdc/cpu/RFieldDft.h>           // member
@@ -24,8 +25,8 @@ namespace Pscf {
          template <int D> class WaveList;
       }
    }
-   namespace Rpc{
-      template <int D> class Propagator;
+   namespace Rp{
+      template <int D, class T> class Propagator;
    }
 }
 
@@ -39,14 +40,15 @@ namespace Rpc {
    /**
    * Block within a linear or branched block polymer.
    *
-   * A Block has two Propagator<D> members, and a RField<D> concentration
-   * field.
+   * A Block has two Propagator<D, Types<D> > members, and an 
+   * RField<D> concentration field.
    *
    * \ref user_param_block_sec "Manual Page"
    * \ingroup Rpc_Solver_Module
    */
    template <int D>
-   class Block : public BlockTmpl< Propagator<D>, RField<D> >
+   class Block 
+    : public BlockTmpl< Rp::Propagator<D, Types<D> >, RField<D> >
    {
 
    public:
@@ -54,7 +56,7 @@ namespace Rpc {
       // Public type name aliases
 
       /// Direct (parent) base class.
-      using BlockTmplT = BlockTmpl< Propagator<D>, RField<D> >;
+      using BlockTmplT = BlockTmpl< Rp::Propagator<D, Types<D> >, RField<D> >;
 
       /// Propagator type (inherited).
       using typename BlockTmplT::PropagatorT;
@@ -493,11 +495,11 @@ namespace Rpc {
 namespace Pscf {
 
    extern template
-   class BlockTmpl< Rpc::Propagator<1>, Prdc::Cpu::RField<1> >;
+   class BlockTmpl< Rp::Propagator<1, Rpc::Types<1> >, Prdc::Cpu::RField<1> >;
    extern template
-   class BlockTmpl< Rpc::Propagator<2>, Prdc::Cpu::RField<2> >;
+   class BlockTmpl< Rp::Propagator<2, Rpc::Types<2> >, Prdc::Cpu::RField<2> >;
    extern template
-   class BlockTmpl< Rpc::Propagator<3>, Prdc::Cpu::RField<3> >;
+   class BlockTmpl< Rp::Propagator<3, Rpc::Types<3> >, Prdc::Cpu::RField<3> >;
 
    namespace Rpc {
       extern template class Block<1>;

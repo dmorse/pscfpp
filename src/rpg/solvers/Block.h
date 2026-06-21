@@ -10,6 +10,7 @@
 
 #include <pscf/solvers/BlockTmpl.h>      // base class template
 
+#include <rpg/system/Types.h>            // template argument
 #include <prdc/cuda/RField.h>            // member
 #include <prdc/cuda/RFieldDft.h>         // member
 #include <prdc/cuda/FFTBatched.h>        // member
@@ -28,8 +29,8 @@ namespace Pscf {
          template <int D> class FFT;
       }
    }
-   namespace Rpg {
-      template <int D> class Propagator;
+   namespace Rp {
+      template <int D, class T> class Propagator;
    }
 }
 
@@ -43,8 +44,8 @@ namespace Rpg {
    /**
    * Block within a branched polymer.
    *
-   * A Block has two Propagator<D> members and a RField<D> concentraiton
-   * field. 
+   * A Block has two Propagator<D, Rpg::Types<D> > members and an 
+   * RField<D> concentraiton field. 
    *
    * Specializations of Rpg::Block with D=1, 2, and 3 are directly derived 
    * from corresponding specializations of Pscf::BlockTmpl, and indirectly
@@ -53,7 +54,8 @@ namespace Rpg {
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Block : public BlockTmpl< Propagator<D>, RField<D> >
+   class Block 
+     : public BlockTmpl< Rp::Propagator<D, Types<D> >, RField<D> >
    {
 
    public:
@@ -61,7 +63,7 @@ namespace Rpg {
       // Public type name aliases
 
       /// Direct (parent) base class.
-      using BlockTmplT = BlockTmpl< Propagator<D>, RField<D> > ;
+      using BlockTmplT = BlockTmpl< Rp::Propagator<D, Types<D> >, RField<D> > ;
 
       /// Propagator type (inherited).
       using typename BlockTmplT::PropagatorT;
@@ -495,11 +497,11 @@ namespace Rpg {
 namespace Pscf {
 
    extern template
-   class BlockTmpl< Rpg::Propagator<1>, Prdc::Cuda::RField<1> >;
+   class BlockTmpl< Rp::Propagator<1, Rpg::Types<1> >, Prdc::Cuda::RField<1> >;
    extern template
-   class BlockTmpl< Rpg::Propagator<2>, Prdc::Cuda::RField<2> >;
+   class BlockTmpl< Rp::Propagator<2, Rpg::Types<2> >, Prdc::Cuda::RField<2> >;
    extern template
-   class BlockTmpl< Rpg::Propagator<3>, Prdc::Cuda::RField<3> >;
+   class BlockTmpl< Rp::Propagator<3, Rpg::Types<3> >, Prdc::Cuda::RField<3> >;
 
    namespace Rpg {
       extern template class Block<1>;

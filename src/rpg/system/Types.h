@@ -121,6 +121,7 @@ namespace Rpg {
       //using WFields = Rpg::WFields<D>;
       //using CFields = Rpg::CFields<D>;
       //using Mask = Rpg::Mask<D>;
+
       using EnvironmentFactory = Rpg::EnvironmentFactory<D>;
 
       using ScftThermo = Rpg::ScftThermo<D>;
@@ -180,6 +181,11 @@ namespace Rpg {
       static void setThreadCount(int nThread);
 
    };
+
+   // Explicit instantiation declarations
+   extern template class Types<1>;
+   extern template class Types<2>;
+   extern template class Types<3>;
 
 } // namespace Rpg
 } // namespace Pscf
