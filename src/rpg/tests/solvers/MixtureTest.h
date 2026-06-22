@@ -46,13 +46,13 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpg::Types<1> > mixture;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpg::Types<1> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
@@ -63,7 +63,7 @@ public:
    void testReadParameters1D_bead()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpg::Types<1> > mixture;
       PolymerModel::setModel(PolymerModel::Bead);
 
       std::ifstream in;
@@ -78,7 +78,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpg::Types<1> > mixture;
       Mesh<1> mesh;
       Cuda::FFT<1> fft;
       UnitCell<1> unitCell;
@@ -153,7 +153,7 @@ public:
       // Read parameter block, unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture1d_bead", in);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpg::Types<1> > mixture;
       mixture.readParam(in);
       UnitCell<1> unitCell;
       in >> unitCell;
@@ -239,7 +239,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Mixture<2> mixture;
+      Rp::Mixture<2, Rpg::Types<2> > mixture;
       Mesh<2> mesh;
       Cuda::FFT<2> fft;
       UnitCell<2> unitCell;
@@ -320,7 +320,7 @@ public:
    void testSolver2D_hex()
    {
       printMethod(TEST_FUNC);
-      Mixture<2> mixture;
+      Rp::Mixture<2, Rpg::Types<2> > mixture;
       Mesh<2> mesh;
       Cuda::FFT<2> fft;
       Cuda::WaveList<2> wavelist;
@@ -403,7 +403,7 @@ public:
    void testSolver3D()
    {
       printMethod(TEST_FUNC);
-      Mixture<3> mixture;
+      Rp::Mixture<3, Rpg::Types<3> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture3d", in);

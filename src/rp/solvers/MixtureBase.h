@@ -476,6 +476,9 @@ namespace Rp {
       return stress_[parameterId];
    }
 
+   // Primary template declaration for subclasses.
+   template <int D, class T> class Mixture;
+
 } // namespace Rp
 } // namespace Pscf
 #endif

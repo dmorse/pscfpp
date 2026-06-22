@@ -78,7 +78,7 @@ namespace Rp {
       maskPtr_ = new Mask<D,T>();
 
       // Create non-optional components
-      mixturePtr_ = new typename T::Mixture();
+      mixturePtr_ = new Mixture<D,T>();
       mixtureModifierPtr_ = new typename T::MixtureModifier();
       interactionPtr_ = new Interaction();
       domainPtr_ = new Domain<D,T>();

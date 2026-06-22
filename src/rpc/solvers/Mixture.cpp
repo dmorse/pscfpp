@@ -11,14 +11,16 @@
 #include <rpc/solvers/Block.h>
 #include <rpc/solvers/Propagator.h>
 #include <rpc/field/FieldIo.h>
+
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/RField.h>
+
 #include <pscf/cpu/VecOp.h>
 
 #include <rp/solvers/MixtureBase.tpp>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Prdc;
 
@@ -26,7 +28,7 @@ namespace Rpc {
    * Allocate memory for all blocks.
    */
    template <int D>
-   void Mixture<D>::allocateBlocks()
+   void Mixture<D, Rpc::Types<D> >::allocateBlocks()
    {
       const double ds = RpMixtureT::ds();
       const int np = CompositionT::nPolymer();
@@ -53,10 +55,8 @@ namespace Pscf {
       template class MixtureBase<1, Rpc::Types<1> >;
       template class MixtureBase<2, Rpc::Types<2> >;
       template class MixtureBase<3, Rpc::Types<3> >;
-   }
-   namespace Rpc { 
-      template class Mixture<1>;
-      template class Mixture<2>;
-      template class Mixture<3>;
+      template class Mixture<1, Rpc::Types<1> >;
+      template class Mixture<2, Rpc::Types<2> >;
+      template class Mixture<3, Rpc::Types<3> >;
    }
 }

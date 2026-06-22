@@ -28,7 +28,7 @@ namespace Rp {
    * template.
    *
    * Virtual allocate() and reallocate() functions are defined here and 
-   * in the analogous Rpg::Propagator class template because the CPU and 
+   * in the analogous Rpc::Propagator class template because the CPU and 
    * GPU versions of this class use different strategies for memory 
    * allocation.
    *

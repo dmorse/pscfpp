@@ -6,16 +6,18 @@
 */
 
 #include "MixtureModifier.h"
-#include <rp/solvers/MixtureModifier.tpp>
+#include <rpc/solvers/Mixture.h>
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 #include <rpc/solvers/Block.h>
 
+#include <rp/solvers/MixtureModifier.tpp>
+
 namespace Pscf {
    namespace Rp { 
-      template class MixtureModifier< Rpc::Mixture<1> >;
-      template class MixtureModifier< Rpc::Mixture<2> >;
-      template class MixtureModifier< Rpc::Mixture<3> >;
+      template class MixtureModifier< Rp::Mixture<1, Rpc::Types<1> > >;
+      template class MixtureModifier< Rp::Mixture<2, Rpc::Types<2> > >;
+      template class MixtureModifier< Rp::Mixture<3, Rpc::Types<3> > >;
    }
    namespace Rpc { 
       template class MixtureModifier<1>;

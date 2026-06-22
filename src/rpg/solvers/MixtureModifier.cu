@@ -15,12 +15,12 @@
 
 // Explicit instantiation definitions
 namespace Pscf {
-   namespace Rp { 
-      template class MixtureModifier< Rpg::Mixture<1> >;
-      template class MixtureModifier< Rpg::Mixture<2> >;
-      template class MixtureModifier< Rpg::Mixture<3> >;
+   namespace Rp {
+      template class MixtureModifier< Rp::Mixture<1, Rpg::Types<1> > >;
+      template class MixtureModifier< Rp::Mixture<2, Rpg::Types<2> > >;
+      template class MixtureModifier< Rp::Mixture<3, Rpg::Types<3> > >;
    }
-   namespace Rpg { 
+   namespace Rpg {
       template class MixtureModifier<1>;
       template class MixtureModifier<2>;
       template class MixtureModifier<3>;

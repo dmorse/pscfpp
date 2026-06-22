@@ -77,13 +77,13 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpc::Types<1> > mixture;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpc::Types<1> > mixture;
     
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
@@ -97,7 +97,7 @@ public:
    void testReadParameters1DBranched()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpc::Types<1> > mixture;
 
       std::ifstream in;
       openInputFile("in/MixtureBranched", in);
@@ -135,7 +135,7 @@ public:
    void testReadParameters1D_bead()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpc::Types<1> > mixture;
       PolymerModel::setModel(PolymerModel::Bead); 
 
       std::ifstream in;
@@ -149,7 +149,7 @@ public:
    void testSolver1D()
    {
       printMethod(TEST_FUNC);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpc::Types<1> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
@@ -235,7 +235,7 @@ public:
       // Read parameter block, unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture1d_bead", in);
-      Mixture<1> mixture;
+      Rp::Mixture<1, Rpc::Types<1> > mixture;
       mixture.readParam(in);
       UnitCell<1> unitCell;
       in >> unitCell;
@@ -314,7 +314,7 @@ public:
    void testSolver2D()
    {
       printMethod(TEST_FUNC);
-      Mixture<2> mixture;
+      Rp::Mixture<2, Rpc::Types<2> > mixture;
 
       // Read param file block unit cell and mesh dimensions
       std::ifstream in;
@@ -409,7 +409,7 @@ public:
    void testSolver2D_hex()
    {
       printMethod(TEST_FUNC);
-      Mixture<2> mixture;
+      Rp::Mixture<2, Rpc::Types<2> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture2d_hex", in);
@@ -499,7 +499,7 @@ public:
    void testSolver3D()
    {
       printMethod(TEST_FUNC);
-      Mixture<3> mixture;
+      Rp::Mixture<3, Rpc::Types<3> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture3d", in);

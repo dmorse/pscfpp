@@ -192,7 +192,7 @@ namespace Rp {
       UTIL_CHECK(hasWc_);
       hasHamiltonian_ = false;
 
-      typename T::Mixture const & mixture = system().mixture();
+      Mixture<D,T> const & mixture = system().mixture();
       Domain<D,T> const & domain = system().domain();
 
       const int nMonomer = mixture.nMonomer();

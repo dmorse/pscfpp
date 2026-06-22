@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Mixture.h"               // class header
+#include "Mixture.h"                    // class header
 
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Solvent.h>
@@ -16,10 +16,10 @@
 #include <prdc/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 
-#include <rp/solvers/MixtureBase.tpp>        // base class template implementation
+#include <rp/solvers/MixtureBase.tpp>   // base class template implementation
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Prdc;
 
@@ -27,8 +27,8 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   Mixture<D>::Mixture()
-    : Rp::MixtureBase<D, Types<D> >(),
+   Mixture<D, Rpg::Types<D> >::Mixture()
+    : Rp::MixtureBase<D, Rpg::Types<D> >(),
       useBatchedFFT_(true)
    {}
 
@@ -36,7 +36,7 @@ namespace Rpg {
    * Read all parameters and initialize.
    */
    template <int D>
-   void Mixture<D>::readParameters(std::istream& in)
+   void Mixture<D, Rpg::Types<D> >::readParameters(std::istream& in)
    {
       RpMixtureT::readParameters(in);
 
@@ -49,7 +49,7 @@ namespace Rpg {
    * Allocate memory for all blocks.
    */
    template <int D>
-   void Mixture<D>::allocateBlocks()
+   void Mixture<D, Rpg::Types<D> >::allocateBlocks()
    {
       const double ds = RpMixtureT::ds();
       const int np = Composition<cudaReal>::nPolymer();
@@ -61,7 +61,7 @@ namespace Rpg {
       }
    }
 
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation definitions
@@ -76,10 +76,8 @@ namespace Pscf {
       template class MixtureBase<1, Rpg::Types<1> >;
       template class MixtureBase<2, Rpg::Types<2> >;
       template class MixtureBase<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class Mixture<1>;
-      template class Mixture<2>;
-      template class Mixture<3>;
+      template class Mixture<1, Rpg::Types<1> >;
+      template class Mixture<2, Rpg::Types<2> >;
+      template class Mixture<3, Rpg::Types<3> >;
    }
 }

@@ -16,10 +16,11 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class Polymer;
       template <int D, class T> class Solvent;
+      template <int D, class T> class Mixture;
    }
 }
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -32,17 +33,18 @@ namespace Rpc {
    * and inherit their public interface and almost all of their source
    * code from this base class.
    *
-   * \see Rp::Mixture
+   * \see Rp::MixtureBase
    * \ref user_param_mixture_page "Manual Page"
    * \ingroup Rpc_Solver_Module
    */
    template <int D>
-   class Mixture : public Rp::MixtureBase< D, Types<D> >
+   class Mixture<D, Rpc::Types<D> > 
+    : public Rp::MixtureBase<D, Rpc::Types<D> >
    {
    public:
 
       /// Direct base class
-      using RpMixtureT = typename Rp::MixtureBase< D, Types<D> >;
+      using RpMixtureT = typename Rp::MixtureBase< D, Rpc::Types<D> >;
 
       // Inherited names
       using typename RpMixtureT::CompositionT;
@@ -59,7 +61,7 @@ namespace Rpc {
 
    };
 
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation declarations
@@ -74,11 +76,9 @@ namespace Pscf {
       extern template class MixtureBase<1, Rpc::Types<1> >;
       extern template class MixtureBase<2, Rpc::Types<2> >;
       extern template class MixtureBase<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class Mixture<1>;
-      extern template class Mixture<2>;
-      extern template class Mixture<3>;
+      extern template class Mixture<1, Rpc::Types<1> >;
+      extern template class Mixture<2, Rpc::Types<2> >;
+      extern template class Mixture<3, Rpc::Types<3> >;
    }
 }
 #endif

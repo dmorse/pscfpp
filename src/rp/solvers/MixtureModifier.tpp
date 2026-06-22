@@ -1,5 +1,5 @@
-#ifndef PRDC_MIXTURE_MODIFIER_PRDC_TPP
-#define PRDC_MIXTURE_MODIFIER_PRDC_TPP
+#ifndef RP_MIXTURE_MODIFIER_TPP
+#define RP_MIXTURE_MODIFIER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field

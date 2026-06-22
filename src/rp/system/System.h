@@ -27,6 +27,7 @@ namespace Pscf {
       template <int D, class T> class CFields;
       template <int D, class T> class Mask;
       template <int D, class T> class Domain;
+      template <int D, class T> class Mixture;
    }
 }
 
@@ -381,7 +382,7 @@ namespace Rp {
       /**
       * Get the Mixture (const).
       */
-      typename T::Mixture const & mixture() const;
+      Mixture<D,T> const & mixture() const;
 
       /**
       * Get the MixtureModifier (non-const).
@@ -586,7 +587,7 @@ namespace Rp {
       /**
       * Pointer to Mixture object (solves MDE for all species).
       */
-      typename T::Mixture* mixturePtr_;
+      Mixture<D,T>* mixturePtr_;
 
       /**
       * Pointer to MixtureModifier (public non-const interface for Mixture).
@@ -685,7 +686,7 @@ namespace Rp {
       /**
       * Get the Mixture by non-const reference (private).
       */
-      typename T::Mixture & mixture_();
+      Mixture<D,T> & mixture_();
 
       /**
       * Get the Domain by non-const reference (private).
@@ -733,7 +734,7 @@ namespace Rp {
 
    // Get the Mixture (const).
    template <int D, class T> inline
-   typename T::Mixture const & System<D,T>::mixture() const
+   Mixture<D,T> const & System<D,T>::mixture() const
    {
       UTIL_ASSERT(mixturePtr_);
       return *mixturePtr_;
@@ -922,7 +923,7 @@ namespace Rp {
 
    // Get the Mixture (non-const).
    template <int D, class T> inline
-   typename T::Mixture & System<D,T>::mixture_()
+   Mixture<D,T> & System<D,T>::mixture_()
    {  return *mixturePtr_; }
 
    // Get the Domain (non-const).

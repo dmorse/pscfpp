@@ -19,7 +19,7 @@ namespace Pscf {
       template <int D, class T> class WFields;
       template <int D, class T> class Mask;
       template <int D, class T> class Domain;
-      template <int D, class T> class System;
+      template <int D, class T> class Mixture;
    }
 }
 
@@ -54,7 +54,7 @@ namespace Rp {
       /**
       * Get the Mixture.
       */
-      typename T::Mixture const & mixture() const
+      Mixture<D,T> const & mixture() const
       {  return *mixturePtr_; }
 
       /**
@@ -134,7 +134,7 @@ namespace Rp {
       typename T::System const * systemPtr_;
 
       /// Pointer to Mixture.
-      typename T::Mixture const * mixturePtr_;
+      Mixture<D,T> const * mixturePtr_;
 
       /// Pointer to Interaction.
       Interaction const * interactionPtr_;

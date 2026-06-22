@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/MixtureModifier.h>  // base class template
-#include "Mixture.h"                     // base class template argument
+#include <rpg/solvers/Mixture.h>         // base class template argument
 
 namespace Pscf {
 namespace Rpg {
@@ -28,7 +28,7 @@ namespace Rpg {
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class MixtureModifier : public Rp::MixtureModifier< Mixture<D> >
+   class MixtureModifier : public Rp::MixtureModifier< Rp::Mixture<D, Rpg::Types<D> > >
    { 
    public:
 
@@ -43,9 +43,9 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class MixtureModifier< Rpg::Mixture<1> >;
-      extern template class MixtureModifier< Rpg::Mixture<2> >;
-      extern template class MixtureModifier< Rpg::Mixture<3> >;
+      extern template class MixtureModifier< Rp::Mixture<1, Rpg::Types<1> > >;
+      extern template class MixtureModifier< Rp::Mixture<2, Rpg::Types<2> > >;
+      extern template class MixtureModifier< Rp::Mixture<3, Rpg::Types<3> > >;
    } 
    namespace Rpg {
       extern template class MixtureModifier<1>;

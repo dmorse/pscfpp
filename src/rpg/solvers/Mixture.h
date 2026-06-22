@@ -16,11 +16,12 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class Polymer;
       template <int D, class T> class Solvent;
+      template <int D, class T> class Mixture;
    }
 }
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -38,7 +39,8 @@ namespace Rpg {
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Mixture : public Rp::MixtureBase<D, Types<D> >
+   class Mixture<D, Rpg::Types<D> > 
+     : public Rp::MixtureBase<D, Rpg::Types<D> >
    {
 
    public:
@@ -58,7 +60,7 @@ namespace Rpg {
       void readParameters(std::istream& in) override;
 
       /// Base class type aliases
-      using RpMixtureT = typename Rp::MixtureBase<D, Types<D> >;
+      using RpMixtureT = typename Rp::MixtureBase<D, Rpg::Types<D> >;
       using typename RpMixtureT::MixtureTmplT;
       using typename RpMixtureT::CompositionT;
       using typename RpMixtureT::FieldT;
@@ -77,7 +79,7 @@ namespace Rpg {
 
    };
 
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation declarations
@@ -92,11 +94,9 @@ namespace Pscf {
       extern template class MixtureBase<1, Rpg::Types<1> >;
       extern template class MixtureBase<2, Rpg::Types<2> >;
       extern template class MixtureBase<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class Mixture<1>;
-      extern template class Mixture<2>;
-      extern template class Mixture<3>;
+      extern template class Mixture<1, Rpg::Types<1> >;
+      extern template class Mixture<2, Rpg::Types<2> >;
+      extern template class Mixture<3, Rpg::Types<3> >;
    }
 }
 #endif
