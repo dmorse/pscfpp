@@ -39,6 +39,19 @@ namespace Rp {
 
    public:
 
+      /// \name Construction
+      ///@{
+      
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      ScftThermo(typename T::System const & system);
+
+      ~ScftThermo() = default;
+
+      ///@}
       /// \name State modifiers
       ///@{
 
@@ -62,7 +75,7 @@ namespace Rp {
       void clear();
 
       ///@}
-      /// \name SCFT Property Access and Output
+      /// \name Property access and output
       ///@{
 
       /**
@@ -133,29 +146,6 @@ namespace Rp {
 
       /// Base class type name alias.
       using SystemConstRefT = typename T::SystemConstRef;
-
-      /// Parent System type name alias.
-      using SystemT = typename T::System;
-
-      // Protected inherited type name aliases.
-      using MixtureT = Mixture<D,T>;
-      using DomainT = Domain<D,T>;
-      using WFieldsT = WFields<D,T>;
-      using CFieldsT = CFields<D,T>;
-      using MaskT = Mask<D,T>;
-      using RFieldT = typename T::RField;
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      ScftThermo(SystemT const & system);
-
-      /**
-      * Destructor.
-      */
-      ~ScftThermo();
 
       // Protected inherited member functions
       using SystemConstRefT::system;

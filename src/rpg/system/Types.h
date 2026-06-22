@@ -39,7 +39,7 @@ namespace Pscf {
       //template <int D> class WFields;
       //template <int D> class CFields;
       //template <int D> class Mask;
-      template <int D> class ScftThermo;
+      //template <int D> class ScftThermo;
       template <int D> class EnvironmentFactory;
       template <int D> class Iterator;
       template <int D> class IteratorFactory;
@@ -124,8 +124,7 @@ namespace Rpg {
 
       using EnvironmentFactory = Rpg::EnvironmentFactory<D>;
 
-      using ScftThermo = Rpg::ScftThermo<D>;
-
+      //using ScftThermo = Rp::ScftThermo<D, Rpg::Types<D> >;
       using Iterator = Rpg::Iterator<D>;
       using IteratorFactory = Rpg::IteratorFactory<D>;
       using Sweep = Rpg::Sweep<D>;

@@ -28,7 +28,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   ScftThermo<D,T>::ScftThermo(SystemT const & system)
+   ScftThermo<D,T>::ScftThermo(typename T::System const & system)
     : SystemConstRefT(system),
       fHelmholtz_(0.0),
       fIdeal_(0.0),
@@ -36,13 +36,6 @@ namespace Rp {
       fExt_(0.0),
       pressure_(0.0),
       hasData_(false)
-   {}
-
-   /*
-   * Destructor.
-   */
-   template <int D, class T>
-   ScftThermo<D,T>::~ScftThermo()
    {}
 
    /*

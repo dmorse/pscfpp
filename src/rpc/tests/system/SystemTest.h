@@ -12,8 +12,15 @@
 #include <rpc/solvers/Polymer.h>
 #include <rpc/solvers/Solvent.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/WFields.h>
+#include <rpc/field/CFields.h>
+#include <rpc/field/Mask.h>
+#include <rpc/field/FieldIo.h>
+
+#include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
+
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
 #include <util/misc/FileMaster.h>

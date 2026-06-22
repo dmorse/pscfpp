@@ -43,7 +43,7 @@ namespace Pscf {
       //template <int D> class CFields;
       //template <int D> class Mask;
       template <int D> class EnvironmentFactory;
-      template <int D> class ScftThermo;
+      //template <int D> class ScftThermo;
       template <int D> class Iterator;
       template <int D> class IteratorFactory;
       template <int D> class Sweep;
@@ -130,7 +130,7 @@ namespace Rpc {
       using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpc::EnvironmentFactory<D>;
 
-      using ScftThermo = Rpc::ScftThermo<D>;
+      //using ScftThermo = Rp::ScftThermo<D, Rpc::Types<D> >;
       using Iterator = Rpc::Iterator<D>;
       using IteratorFactory = Rpc::IteratorFactory<D>;
       using Sweep = Rpc::Sweep<D>;

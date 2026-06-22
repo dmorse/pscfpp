@@ -12,51 +12,12 @@
 #include <rpc/system/Types.h>            // template argument
 #include <rpc/system/SystemConstRef.h>   // indirect base
 
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Pscf::Prdc;
-
-   /**
-   * Computes SCFT free energies.
-   *
-   * Specializations of this template with D =1, 2, and 3 are derived 
-   * from specializations of the base class template Rp::ScftThermo, and 
-   * inherit their public interface and almost all of their source code
-   * from this base class. See the documentation for this base class 
-   * template for details. 
-   *
-   * \ingroup Rpc_Scft_Module
-   */
-   template <int D>
-   class ScftThermo : public Rp::ScftThermo<D, Types<D> >
-   {
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System
-      */
-      ScftThermo(System<D> const & system);
-
-   };
-
-} // namespace Rpc
-} // namespace Pscf
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class Rp::ScftThermo<1, Rpc::Types<1> >;
       extern template class Rp::ScftThermo<2, Rpc::Types<2> >;
       extern template class Rp::ScftThermo<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class ScftThermo<1>;
-      extern template class ScftThermo<2>;
-      extern template class ScftThermo<3>;
    }
 } 
 #endif

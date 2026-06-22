@@ -29,6 +29,7 @@ namespace Pscf {
       template <int D, class T> class Domain;
       template <int D, class T> class Mixture;
       template <int D, class T> class MixtureModifier;
+      template <int D, class T> class ScftThermo;
    }
 }
 
@@ -435,12 +436,12 @@ namespace Rp {
       /**
       * Get the ScftThermo object (const).
       */
-      typename T::ScftThermo const & scft() const;
+      ScftThermo<D,T> const & scft() const;
 
       /**
       * Get the ScftThermo object (non-const).
       */
-      typename T::ScftThermo& scft();
+      ScftThermo<D,T>& scft();
 
       /**
       * Does this system have an Iterator?
@@ -608,7 +609,7 @@ namespace Rp {
       /**
       * Pointer to SCFT property calculator.
       */
-      typename T::ScftThermo* scftPtr_;
+      ScftThermo<D,T>* scftPtr_;
 
       /**
       * Pointer to an %Environment.
@@ -859,7 +860,7 @@ namespace Rp {
 
    // Get the Scft thermodynamics calculator (const).
    template <int D, class T> inline
-   typename T::ScftThermo const & System<D,T>::scft() const
+   ScftThermo<D,T> const & System<D,T>::scft() const
    {
       UTIL_ASSERT(scftPtr_);
       return *scftPtr_;
@@ -867,7 +868,7 @@ namespace Rp {
 
    // Get the Scft thermodynamics calculator (non-const).
    template <int D, class T> inline
-   typename T::ScftThermo & System<D,T>::scft()
+   ScftThermo<D,T> & System<D,T>::scft()
    {
       UTIL_ASSERT(scftPtr_);
       return *scftPtr_;

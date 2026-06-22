@@ -13,6 +13,8 @@
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
+#include <rpc/field/Mask.h>
+#include <rpc/field/FieldIo.h>
 
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldComparison.h>

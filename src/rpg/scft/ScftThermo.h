@@ -12,6 +12,7 @@
 #include <rpg/system/SystemConstRef.h>  // template argument
 #include <rpg/system/Types.h>           // template argument
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -50,6 +51,7 @@ namespace Rpg {
 
 } // namespace Rpg
 } // namespace Pscf
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -58,10 +60,12 @@ namespace Pscf {
       extern template class Rp::ScftThermo<2, Rpg::Types<2> >;
       extern template class Rp::ScftThermo<3, Rpg::Types<3> >;
    }
+   #if 0
    namespace Rpg {
       extern template class ScftThermo<1>;
       extern template class ScftThermo<2>;
       extern template class ScftThermo<3>;
    }
+   #endif
 } 
 #endif
