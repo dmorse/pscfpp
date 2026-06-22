@@ -14,6 +14,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>     // secondary base class
 #include <util/containers/DRArray.h>          // indirect base argument
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -48,6 +49,7 @@ namespace Rpc {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -61,11 +63,6 @@ namespace Pscf {
       extern template class AmIteratorGrid<1, Rpc::Types<1> >;
       extern template class AmIteratorGrid<2, Rpc::Types<2> >;
       extern template class AmIteratorGrid<3, Rpc::Types<3> >;
-   } 
-   namespace Rpc {
-      extern template class AmIteratorGrid<1>;
-      extern template class AmIteratorGrid<2>;
-      extern template class AmIteratorGrid<3>;
    } 
 }
 #endif

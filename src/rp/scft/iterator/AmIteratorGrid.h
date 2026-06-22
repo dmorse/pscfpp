@@ -51,6 +51,18 @@ namespace Rp {
    public:
 
       /**
+      * Constructor.
+      *
+      * \param system  parent system object
+      */
+      AmIteratorGrid(typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      virtual ~AmIteratorGrid();
+
+      /**
       * Read all parameters and initialize.
       *
       * \param in input filestream
@@ -65,18 +77,6 @@ namespace Rp {
       void outputTimers(std::ostream& out) const override;
 
    protected:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent system object
-      */
-      AmIteratorGrid(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~AmIteratorGrid();
 
       /**
       * Setup iterator just before entering iteration loop.

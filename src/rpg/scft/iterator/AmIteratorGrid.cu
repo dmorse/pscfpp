@@ -18,31 +18,31 @@
 
 #include <rp/scft/iterator/AmIteratorGrid.tpp>
 
+#if 0
 namespace Pscf {
    namespace Rpg {
   
       // Constructor.
       template <int D>
-      AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
+      Rp::AmIteratorGrid<D, Rpg::Types<D> >::AmIteratorGrid(System<D>& system)
        : Rp::AmIteratorGrid<D, Types<D> >(system)
       {}
 
    }
 }
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class AmIteratorTmpl< Rp::Iterator<1, Rpg::Types<1> >, DeviceArray<cudaReal> >;
-   template class AmIteratorTmpl< Rp::Iterator<2, Rpg::Types<2> >, DeviceArray<cudaReal> >;
-   template class AmIteratorTmpl< Rp::Iterator<3, Rpg::Types<3> >, DeviceArray<cudaReal> >;
+   template class 
+   AmIteratorTmpl< Rp::Iterator<1, Rpg::Types<1> >, DeviceArray<cudaReal> >;
+   template class 
+   AmIteratorTmpl< Rp::Iterator<2, Rpg::Types<2> >, DeviceArray<cudaReal> >;
+   template class 
+   AmIteratorTmpl< Rp::Iterator<3, Rpg::Types<3> >, DeviceArray<cudaReal> >;
    namespace Rp {
       template class AmIteratorGrid<1, Rpg::Types<1> >;
       template class AmIteratorGrid<2, Rpg::Types<2> >;
       template class AmIteratorGrid<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class AmIteratorGrid<1>;
-      template class AmIteratorGrid<2>;
-      template class AmIteratorGrid<3>;
    }
 }

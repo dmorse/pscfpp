@@ -14,6 +14,7 @@
 #include <pscf/cuda/DeviceArray.h>            // indirect base argument
 #include <pscf/cuda/cudaTypes.h>              // indirect base argument
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -48,6 +49,7 @@ namespace Rpg {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -63,11 +65,6 @@ namespace Pscf {
       extern template class AmIteratorGrid<1, Rpg::Types<1> >;
       extern template class AmIteratorGrid<2, Rpg::Types<2> >;
       extern template class AmIteratorGrid<3, Rpg::Types<3> >;
-   } 
-   namespace Rpg {
-      extern template class AmIteratorGrid<1>;
-      extern template class AmIteratorGrid<2>;
-      extern template class AmIteratorGrid<3>;
    } 
 } 
 #endif

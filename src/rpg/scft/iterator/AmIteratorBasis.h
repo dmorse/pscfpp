@@ -13,6 +13,7 @@
 #include <rpg/scft/iterator/Iterator.h>        // indirect base argument
 #include <util/containers/DArray.h>            // indirect base argument
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -50,6 +51,7 @@ namespace Rpg {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -60,11 +62,6 @@ namespace Pscf {
       extern template class AmIteratorBasis<1, Rpg::Types<1> >;
       extern template class AmIteratorBasis<2, Rpg::Types<2> >;
       extern template class AmIteratorBasis<3, Rpg::Types<3> >;
-   } 
-   namespace Rpg {
-      extern template class AmIteratorBasis<1>;
-      extern template class AmIteratorBasis<2>;
-      extern template class AmIteratorBasis<3>;
    } 
 }
 #endif

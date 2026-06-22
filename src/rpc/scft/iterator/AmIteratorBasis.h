@@ -14,6 +14,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>      // tertiary base class
 #include <util/containers/DArray.h>            // tertiary base argument
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -51,6 +52,7 @@ namespace Rpc {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -61,11 +63,6 @@ namespace Pscf {
       extern template class AmIteratorBasis<1, Rpc::Types<1> >;
       extern template class AmIteratorBasis<2, Rpc::Types<2> >;
       extern template class AmIteratorBasis<3, Rpc::Types<3> >;
-   } 
-   namespace Rpc {
-      extern template class AmIteratorBasis<1>;
-      extern template class AmIteratorBasis<2>;
-      extern template class AmIteratorBasis<3>;
    } 
 }
 #endif

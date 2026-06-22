@@ -46,14 +46,17 @@ namespace Rp {
 
    public:
 
-      /// Alias for iterator type.
-      using IteratorT = Iterator<D,T>;
+      /**
+      * Constructor.
+      *
+      * \param system System object associated with this iterator.
+      */
+      AmIteratorBasis(typename T::System& system);
 
-      /// Alias for type of residual and state vectors
-      using VectorT = DArray<double>;
-
-      /// Alias for base class.
-      using AmIterTmplT = AmIteratorTmpl< IteratorT, VectorT >;
+      /**
+      * Destructor.
+      */
+      virtual ~AmIteratorBasis();
 
       /**
       * Read all parameters and initialize.
@@ -72,23 +75,20 @@ namespace Rp {
    protected:
 
       /**
-      * Constructor.
-      *
-      * \param system System object associated with this iterator.
-      */
-      AmIteratorBasis(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~AmIteratorBasis();
-
-      /**
       * Setup iterator just before entering iteration loop.
       *
       * \param isContinuation Is this a continuation within a sweep?
       */
       void setup(bool isContinuation) override;
+
+      /// Alias for iterator type.
+      using IteratorT = Iterator<D,T>;
+
+      /// Alias for type of residual and state vectors
+      using VectorT = DArray<double>;
+
+      /// Alias for base class.
+      using AmIterTmplT = AmIteratorTmpl< IteratorT, VectorT >;
 
       // Inherited protected members
       using IteratorT::system;

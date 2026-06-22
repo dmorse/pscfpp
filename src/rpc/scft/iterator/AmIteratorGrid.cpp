@@ -18,17 +18,19 @@
 
 #include <rp/scft/iterator/AmIteratorGrid.tpp> // base class implementation
 
+#if 0
 namespace Pscf {
    namespace Rpc {
 
       // Constructor
       template <int D>
-      AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
+      Rp::AmIteratorGrid<D, Rpc::Types<D> >::AmIteratorGrid(System<D>& system)
        : Rp::AmIteratorGrid<D, Types<D> >(system)
       {}
 
    }
 }
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -42,10 +44,5 @@ namespace Pscf {
       template class AmIteratorGrid<1, Rpc::Types<1> >;
       template class AmIteratorGrid<2, Rpc::Types<2> >;
       template class AmIteratorGrid<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class AmIteratorGrid<1>;
-      template class AmIteratorGrid<2>;
-      template class AmIteratorGrid<3>;
    }
 }

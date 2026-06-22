@@ -17,18 +17,20 @@
 
 #include <rp/scft/iterator/AmIteratorBasis.tpp>     // base class implementation
 
+#if 0
 // Constructor definition
 namespace Pscf {
    namespace Rpg {
 
       // Constructor
       template <int D>
-      AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
+      Rp::AmIteratorBasis<D, Rpg::Types<D> >::AmIteratorBasis(System<D>& system)
        : Rp::AmIteratorBasis<D, Types<D> >(system)
       {}
 
    }
 }
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -39,10 +41,5 @@ namespace Pscf {
       template class AmIteratorBasis<1, Rpg::Types<1> >;
       template class AmIteratorBasis<2, Rpg::Types<2> >;
       template class AmIteratorBasis<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class AmIteratorBasis<1>;
-      template class AmIteratorBasis<2>;
-      template class AmIteratorBasis<3>;
    }
 }

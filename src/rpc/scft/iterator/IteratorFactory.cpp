@@ -40,10 +40,10 @@ namespace Rpc {
       // Try to match classname
       if (className == "Iterator" || className == "AmIteratorBasis" 
           || className == "AmIterator" ) {
-         ptr = new AmIteratorBasis<D>(*sysPtr_);
+         ptr = new Rp::AmIteratorBasis<D, Rpc::Types<D> >(*sysPtr_);
       } else 
       if (className == "AmIteratorGrid") {
-         ptr = new AmIteratorGrid<D>(*sysPtr_);
+         ptr = new Rp::AmIteratorGrid<D, Rpc::Types<D> >(*sysPtr_);
       }
 
       return ptr;
