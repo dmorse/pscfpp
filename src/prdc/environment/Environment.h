@@ -9,7 +9,7 @@
 */
 
 #include <pscf/environment/EnvironmentBase.h> // base class
-#include <rp/solvers/Mixture.h>               // method parameter
+#include <rp/solvers/MixtureBase.h>           // function parameter
 #include <util/containers/FSArray.h>          // container
 #include <iostream>
 
@@ -102,7 +102,7 @@ namespace Prdc {
       * \param flexibleParams  array indicating which stresses to compute
       */
       template <int D, class TT>
-      void computeStress(Rp::Mixture<D, TT> const & mixture, 
+      void computeStress(Rp::MixtureBase<D, TT> const & mixture, 
                          FSArray<bool, 6> const & flexibleParams);
 
       /**
@@ -173,7 +173,7 @@ namespace Prdc {
    * be implicitly instantiated by the compiler wherever needed)
    */
    template <int D, class TT>
-   void Environment::computeStress(Rp::Mixture<D, TT> const & mixture, 
+   void Environment::computeStress(Rp::MixtureBase<D, TT> const & mixture, 
                                    FSArray<bool, 6> const & flexibleParams)
    {
       if (hasStress_) return;

@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/Mixture.h>    // base class template
-#include <rpg/system/Types.h>      // base class argument
+#include <rp/solvers/MixtureBase.h>  // base class template
+#include <rpg/system/Types.h>        // base class template argument
 
 // Forward declarations
 namespace Pscf {
@@ -33,12 +33,12 @@ namespace Rpg {
    * inherit their public interface and almost all of their source
    * code from this base class.
    *
-   * \see Rp::Mixture
+   * \see Rp::MixtureBase
    * \ref user_param_mixture_page "Manual Page"
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Mixture : public Rp::Mixture< D, Types<D> >
+   class Mixture : public Rp::MixtureBase<D, Types<D> >
    {
 
    public:
@@ -51,11 +51,6 @@ namespace Rpg {
       Mixture();
 
       /**
-      * Destructor.
-      */
-      virtual ~Mixture() = default;
-
-      /**
       * Read body of parameter file block and initialize.
       *
       * \param in  input parameter stream
@@ -63,7 +58,7 @@ namespace Rpg {
       void readParameters(std::istream& in) override;
 
       /// Base class type aliases
-      using RpMixtureT = typename Rp::Mixture<D, Types<D> >;
+      using RpMixtureT = typename Rp::MixtureBase<D, Types<D> >;
       using typename RpMixtureT::MixtureTmplT;
       using typename RpMixtureT::CompositionT;
       using typename RpMixtureT::FieldT;
@@ -94,9 +89,9 @@ namespace Pscf {
    extern template 
    class MixtureTmpl< Rp::Polymer<3, Rpg::Types<3> >, Rp::Solvent<3, Rpg::Types<3> > >;
    namespace Rp {
-      extern template class Mixture<1, Rpg::Types<1> >;
-      extern template class Mixture<2, Rpg::Types<2> >;
-      extern template class Mixture<3, Rpg::Types<3> >;
+      extern template class MixtureBase<1, Rpg::Types<1> >;
+      extern template class MixtureBase<2, Rpg::Types<2> >;
+      extern template class MixtureBase<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       extern template class Mixture<1>;

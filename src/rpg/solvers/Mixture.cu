@@ -16,7 +16,7 @@
 #include <prdc/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 
-#include <rp/solvers/Mixture.tpp>        // base class template implementation
+#include <rp/solvers/MixtureBase.tpp>        // base class template implementation
 
 namespace Pscf {
 namespace Rpg {
@@ -28,7 +28,7 @@ namespace Rpg {
    */
    template <int D>
    Mixture<D>::Mixture()
-    : Rp::Mixture<D, Types<D> >(),
+    : Rp::MixtureBase<D, Types<D> >(),
       useBatchedFFT_(true)
    {}
 
@@ -73,9 +73,9 @@ namespace Pscf {
    template 
    class MixtureTmpl< Rp::Polymer<3, Rpg::Types<3> >, Rp::Solvent<3, Rpg::Types<3> > >;
    namespace Rp {
-      template class Mixture<1, Rpg::Types<1> >;
-      template class Mixture<2, Rpg::Types<2> >;
-      template class Mixture<3, Rpg::Types<3> >;
+      template class MixtureBase<1, Rpg::Types<1> >;
+      template class MixtureBase<2, Rpg::Types<2> >;
+      template class MixtureBase<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class Mixture<1>;

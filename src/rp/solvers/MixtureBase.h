@@ -1,5 +1,5 @@
-#ifndef RP_MIXTURE_H
-#define RP_MIXTURE_H
+#ifndef RP_MIXTURE_BASE_H
+#define RP_MIXTURE_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -39,15 +39,14 @@ namespace Rp {
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
-   * Specializations of the Rp::Mixture template are used as base classes
-   * for specializations of the Rpc::Mixture<D> and Rpg::Mixture<D> class
-   * templates. The template parameters of R::Mixture<int D, class T> 
-   * are the dimension of space, D, and a class T = Rpc::Types<D> or
-   * T = Rpg::Types<D> that contains a collection of class name aliases 
-   * for classes used in the Rpc or Rpg program level namespace.
+   * Specializations of the Rp::MixtureBase template are used as base 
+   * classes for specializations of the Rp::Mixture class template. 
+   * The template parameters of R::Mixture<int D, class T> are the 
+   * dimension of space, D, and a Types class, T = Rpc::Types<D> or 
+   * T = Rpg::Types<D>.
    *
-   * A Mixture contains a list of Polymer  objects and a separate list
-   * of Solvent objects. Each such object can solve the statistical 
+   * A MixtureBase contains a list of Polymer  objects and a separate 
+   * list of Solvent objects. Each such object can solve the statistical 
    * mechanics problem for a single molecule of the associated species 
    * in a set of specified chemical potential fields, and thereby compute 
    * concentrations and molecular partition functions for all species in 
@@ -63,7 +62,7 @@ namespace Rp {
    * \ref user_param_mixture_page "Manual Page"
    */
    template <int D, class T>
-   class Mixture : public 
+   class MixtureBase : public 
       MixtureTmpl<Polymer<D,T>, Solvent<D,T>, double>
    {
 
@@ -397,12 +396,12 @@ namespace Rp {
       /**
       * Constructor.
       */
-      Mixture();
+      MixtureBase();
 
       /**
       * Destructor.
       */
-      ~Mixture();
+      ~MixtureBase();
 
       /// Return associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const
@@ -463,14 +462,14 @@ namespace Rp {
    * Has the stress been computed for the current w fields?
    */
    template <int D, class T>
-   inline bool Mixture<D,T>::hasStress() const
+   inline bool MixtureBase<D,T>::hasStress() const
    {  return hasStress_; }
 
    /*
    * Get derivative of free energy w/ respect to a unit cell parameter.
    */
    template <int D, class T>
-   inline double Mixture<D,T>::stress(int parameterId) const
+   inline double MixtureBase<D,T>::stress(int parameterId) const
    {
       UTIL_CHECK(hasStress_);
       UTIL_CHECK(parameterId < nParam_);

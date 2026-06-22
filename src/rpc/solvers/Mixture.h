@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/Mixture.h>   // base class template
-#include <rpc/system/Types.h>     // base class template argument
+#include <rp/solvers/MixtureBase.h>  // base class template
+#include <rpc/system/Types.h>        // base class template argument
 
 // Forward declarations
 namespace Pscf {
@@ -37,12 +37,12 @@ namespace Rpc {
    * \ingroup Rpc_Solver_Module
    */
    template <int D>
-   class Mixture : public Rp::Mixture< D, Types<D> >
+   class Mixture : public Rp::MixtureBase< D, Types<D> >
    {
    public:
 
       /// Direct base class
-      using RpMixtureT = typename Rp::Mixture< D, Types<D> >;
+      using RpMixtureT = typename Rp::MixtureBase< D, Types<D> >;
 
       // Inherited names
       using typename RpMixtureT::CompositionT;
@@ -71,9 +71,9 @@ namespace Pscf {
    extern template 
    class MixtureTmpl< Rp::Polymer<3, Rpc::Types<3> >, Rp::Solvent<3, Rpc::Types<3> > >;
    namespace Rp {
-      extern template class Mixture<1, Rpc::Types<1> >;
-      extern template class Mixture<2, Rpc::Types<2> >;
-      extern template class Mixture<3, Rpc::Types<3> >;
+      extern template class MixtureBase<1, Rpc::Types<1> >;
+      extern template class MixtureBase<2, Rpc::Types<2> >;
+      extern template class MixtureBase<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       extern template class Mixture<1>;

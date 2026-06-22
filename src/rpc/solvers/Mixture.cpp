@@ -15,7 +15,7 @@
 #include <prdc/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
 
-#include <rp/solvers/Mixture.tpp>
+#include <rp/solvers/MixtureBase.tpp>
 
 namespace Pscf {
 namespace Rpc {
@@ -43,13 +43,16 @@ namespace Rpc {
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class MixtureTmpl< Rp::Polymer<1, Rpc::Types<1> >, Rp::Solvent<1, Rpc::Types<1> > >;
-   template class MixtureTmpl< Rp::Polymer<2, Rpc::Types<2> >, Rp::Solvent<2, Rpc::Types<2> > >;
-   template class MixtureTmpl< Rp::Polymer<3, Rpc::Types<3> >, Rp::Solvent<3, Rpc::Types<3> > >;
+   template 
+   class MixtureTmpl< Rp::Polymer<1, Rpc::Types<1> >, Rp::Solvent<1, Rpc::Types<1> > >;
+   template 
+   class MixtureTmpl< Rp::Polymer<2, Rpc::Types<2> >, Rp::Solvent<2, Rpc::Types<2> > >;
+   template 
+   class MixtureTmpl< Rp::Polymer<3, Rpc::Types<3> >, Rp::Solvent<3, Rpc::Types<3> > >;
    namespace Rp { 
-      template class Mixture<1, Rpc::Types<1> >;
-      template class Mixture<2, Rpc::Types<2> >;
-      template class Mixture<3, Rpc::Types<3> >;
+      template class MixtureBase<1, Rpc::Types<1> >;
+      template class MixtureBase<2, Rpc::Types<2> >;
+      template class MixtureBase<3, Rpc::Types<3> >;
    }
    namespace Rpc { 
       template class Mixture<1>;
