@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/Propagator.h>  // base class template
-#include <rpc/system/Types.h>       // base class template argument
+#include <rp/solvers/PropagatorBase.h>  // base class template
+#include <rpc/system/Types.h>           // base class template argument
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -21,9 +21,9 @@ namespace Rpc {
    * MDE solver for one direction of one block.
    *
    * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::Propagator, 
-   * and inherit their public interface and almost all of their source 
-   * code from this base class. Specializations of this template are also
+   * corresponding specializations of base class template Rp::PropagatorBase, 
+   * and inherit their public interface and almost all of their source code
+   * from this base class. Specializations of this template are also
    * indirectly derived from specializations of the Pscf::PropagatorTmpl
    * template.
    *
@@ -32,12 +32,13 @@ namespace Rpc {
    * GPU versions of this class use different strategies for memory 
    * allocation.
    *
-   * \see Rp::Propagator
+   * \see Rp::PropagatorBase
    * \see Pscf::PropagatorTmpl
    * \ingroup Rpc_Solver_Module
    */
    template <int D>
-   class Propagator : public Rp::Propagator< D, Types<D> >
+   class Propagator<D, Rpc::Types<D> > 
+    : public PropagatorBase< D, Rpc::Types<D> >
    {
 
    public:
@@ -86,7 +87,7 @@ namespace Rpc {
    protected:
 
       /// Direct (parent) base class.
-      using RpPropagatorT = Rp::Propagator<D, Types<D> >;
+      using RpPropagatorT = PropagatorBase<D, Rpc::Types<D> >;
 
       /// Inherited typename alias for indirect (grandparent) base class.
       using typename RpPropagatorT::PropagatorTmplT;
@@ -105,14 +106,12 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
+      extern template class PropagatorBase<1, Rpc::Types<1> >;
+      extern template class PropagatorBase<2, Rpc::Types<2> >;
+      extern template class PropagatorBase<3, Rpc::Types<3> >;
       extern template class Propagator<1, Rpc::Types<1> >;
       extern template class Propagator<2, Rpc::Types<2> >;
       extern template class Propagator<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class Propagator<1>;
-      extern template class Propagator<2>;
-      extern template class Propagator<3>;
    }
 }
 #endif

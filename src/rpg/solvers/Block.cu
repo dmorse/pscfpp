@@ -9,9 +9,9 @@
 
 namespace Pscf {
 
-   template class BlockTmpl< Rpg::Propagator<1>, Prdc::Cuda::RField<1> >;
-   template class BlockTmpl< Rpg::Propagator<2>, Prdc::Cuda::RField<2> >;
-   template class BlockTmpl< Rpg::Propagator<3>, Prdc::Cuda::RField<3> >;
+   template class BlockTmpl< Rp::Propagator<1, Rpg::Types<1> >, Prdc::Cuda::RField<1> >;
+   template class BlockTmpl< Rp::Propagator<2, Rpg::Types<2> >, Prdc::Cuda::RField<2> >;
+   template class BlockTmpl< Rp::Propagator<3, Rpg::Types<3> >, Prdc::Cuda::RField<3> >;
 
    namespace Rpg {
       template class Block<1>;

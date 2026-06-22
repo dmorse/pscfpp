@@ -17,18 +17,22 @@ namespace Rpg {
    * Initialize backend.
    */
    template <int D>
-   static void Types<D>::init()
+   void Types<D>::init()
    {  ThreadArray::init(); }
 
    /*
    * Set thread count in backend.
    */
    template <int D>
-   static void Types<D>::setThreadCount(int nThread)
+   void Types<D>::setThreadCount(int nThread)
    {
       ThreadArray::setThreadsPerBlock(nThread);
       ThreadMesh::setThreadsPerBlock(nThread);
    }
 
+   // Explicit instantiation definitions
+   template class Types<1>;
+   template class Types<2>;
+   template class Types<3>;
 }
 }

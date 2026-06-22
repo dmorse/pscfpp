@@ -11,35 +11,21 @@
 #include <rp/solvers/Polymer.h>    // base class template
 #include <rpc/system/Types.h>      // base class template argument
 
-#if 0
+// Forward declarations
 namespace Pscf {
-namespace Rpc {
-
-   /**
-   * Descriptor and solver for one polymer species.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::Polymer, and
-   * inherit their public interface and all of their source code from this
-   * base class.  
-   *
-   * \see Rp::Polymer
-   * \ref user_param_polymer_sec "Manual Page"
-   * \ingroup Rpc_Solver_Module
-   */
-   template <int D>
-   class Polymer : public Rp::Polymer< D, Types<D> >
-   {};
-
+   namespace Rp {
+      template <int D, class T> class Propagator;
+   }
+   namespace Rpc {
+      template <int D> class Block;
+   }
 }
-}
-#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
-   extern template class PolymerTmpl< Rpc::Block<1>, Rpc::Propagator<1> >;
-   extern template class PolymerTmpl< Rpc::Block<2>, Rpc::Propagator<2> >;
-   extern template class PolymerTmpl< Rpc::Block<3>, Rpc::Propagator<3> >;
+   extern template class PolymerTmpl< Rpc::Block<1>, Rp::Propagator<1, Rpc::Types<1> > >;
+   extern template class PolymerTmpl< Rpc::Block<2>, Rp::Propagator<2, Rpc::Types<2> > >;
+   extern template class PolymerTmpl< Rpc::Block<3>, Rp::Propagator<3, Rpc::Types<3> > >;
    namespace Rp {
       extern template class Polymer<1, Rpc::Types<1> >;
       extern template class Polymer<2, Rpc::Types<2> >;

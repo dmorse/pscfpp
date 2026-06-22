@@ -452,8 +452,8 @@ namespace Rpc {
       }
 
       // References to forward and reverse propagators
-      Propagator<D> const & p0 = propagator(0);
-      Propagator<D> const & p1 = propagator(1);
+      Rp::Propagator<D, Types<D> > const & p0 = propagator(0);
+      Rp::Propagator<D, Types<D> > const & p1 = propagator(1);
 
       // Evaluate unnormalized integral
 
@@ -514,8 +514,8 @@ namespace Rpc {
       }
    
       // References to forward and reverse propagators
-      Propagator<D> const & p0 = propagator(0);
-      Propagator<D> const & p1 = propagator(1);
+      Rp::Propagator<D, Types<D> > const & p0 = propagator(0);
+      Rp::Propagator<D, Types<D> > const & p1 = propagator(1);
 
       // Sum over beads (j = 1, ... , ns_ -2)
       int j;
@@ -549,8 +549,8 @@ namespace Rpc {
       UTIL_CHECK(ds_ > 0);
 
       // References to forward and reverse propagators
-      Propagator<D> const & p0 = propagator(0);
-      Propagator<D> const & p1 = propagator(1);
+      Rp::Propagator<D, Types<D> > const & p0 = propagator(0);
+      Rp::Propagator<D, Types<D> > const & p1 = propagator(1);
       UTIL_CHECK(p0.isAllocated());
       UTIL_CHECK(p1.isAllocated());
 
@@ -631,8 +631,8 @@ namespace Rpc {
       UTIL_CHECK(ns_ > 0);
 
       // References to forward to reverse propagators
-      Propagator<D> const & p0 = propagator(0);
-      Propagator<D> const & p1 = propagator(1);
+      Rp::Propagator<D, Types<D> > const & p0 = propagator(0);
+      Rp::Propagator<D, Types<D> > const & p1 = propagator(1);
       UTIL_CHECK(p0.isSolved());
       UTIL_CHECK(p1.isSolved());
 

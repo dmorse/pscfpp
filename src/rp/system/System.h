@@ -20,6 +20,7 @@ namespace Pscf {
    class Interaction;
    namespace Prdc {
       template <int D> class UnitCell;
+      class Environment;
    }
    namespace Rp {
       template <int D, class T> class WFields;
@@ -422,12 +423,12 @@ namespace Rp {
       /**
       * Get the %Environment (const).
       */
-      typename T::Environment const & environment() const;
+      Environment const & environment() const;
 
       /**
       * Get the %Environment (non-const).
       */
-      typename T::Environment& environment();
+      Environment& environment();
 
       /**
       * Get the ScftThermo object (const).
@@ -553,21 +554,6 @@ namespace Rp {
 
       ///@}
 
-      #if 0
-      /**
-      * Set the number of threads given as a command line argument.
-      *
-      * This function is called in the setOpts function that processes
-      * command line arguments. The argument nThread may be passed to the
-      * main program as the argument of the -t option. This value gives
-      * the maximum number of threads per block in a GPU-enabled version
-      * or the number of threads for a threaded CPU version.
-      *
-      * \param nThread  thread count
-      */
-      virtual void setThreadCount(int nThread);
-      #endif
-
    private:
 
       /**
@@ -625,7 +611,7 @@ namespace Rp {
       /**
       * Pointer to an %Environment.
       */
-      typename T::Environment* environmentPtr_;
+      Environment* environmentPtr_;
 
       /**
       * Pointer to an %Environment factory object.
@@ -855,7 +841,7 @@ namespace Rp {
 
    // Get the %Environment (const).
    template <int D, class T> inline
-   typename T::Environment const & System<D,T>::environment() const
+   Environment const & System<D,T>::environment() const
    {
       UTIL_ASSERT(environmentPtr_);
       return *environmentPtr_;
@@ -863,7 +849,7 @@ namespace Rp {
 
    // Get the %Environment (non-const).
    template <int D, class T> inline
-   typename T::Environment & System<D,T>::environment()
+   Environment & System<D,T>::environment()
    {
       UTIL_ASSERT(environmentPtr_);
       return *environmentPtr_;

@@ -49,20 +49,6 @@ namespace Rpg {
       System(System<D> const &) = delete;
       System<D>& operator = (System<D> const &) = delete;
 
-   protected:
-
-      #if 0
-      /**
-      * Explicitly set maximum number of threads per block.
-      *
-      * This function is called in the setOptions function if the
-      * -t command line option is present.
-      *
-      * \param nThread  thread count (maximum per block)
-      */
-      virtual void setThreadCount(int nThread) override;
-      #endif
-
    };
 
 } // namespace Rpg

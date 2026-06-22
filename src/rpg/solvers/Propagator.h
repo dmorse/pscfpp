@@ -8,12 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/Propagator.h>   // base class template
-#include <rpg/system/Types.h>        // base class template argument
-#include <pscf/cuda/DeviceArray.h>   // member
+#include <rp/solvers/PropagatorBase.h>   // base class template
+#include <rpg/system/Types.h>            // base class template argument
+#include <pscf/cuda/DeviceArray.h>       // member
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -22,17 +22,18 @@ namespace Rpg {
    * MDE solver for one direction of one block.
    *
    * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::Propagator, 
-   * and inherit most of their public interface from this base class.  
-   * Only a few functions that involve memory allocation on the GPU are 
-   * defined or re-defined in this template
+   * specializations of the base class template Rp::PropagatorBase, and
+   * inherit most of their public interface from this base class.  Only 
+   * a few functions that involve memory allocation on the GPU are defined
+   * or re-defined in this template
    *
-   * \see Rp::Propagator
+   * \see PropagatorBase
    * \see Pscf::PropagatorTmpl
    * \ingroup Rpg_Solver_Module
    */
    template <int D>
-   class Propagator : public Rp::Propagator< D, Types<D> >
+   class Propagator<D, Rpg::Types<D> > 
+    : public Rp::PropagatorBase< D, Rpg::Types<D> >
    {
 
    public:
@@ -86,7 +87,7 @@ namespace Rpg {
    protected:
 
       /// Direct base class.
-      using RpPropagatorT = Rp::Propagator<D, Types<D> >;
+      using RpPropagatorT = Rp::PropagatorBase<D, Rpg::Types<D> >;
 
       // Inherited typename alias
       using typename RpPropagatorT::PropagatorTmplT;
@@ -126,7 +127,7 @@ namespace Rpg {
    * Return the full array of q-fields.
    */
    template <int D> inline
-   DeviceArray<cudaReal> const & Propagator<D>::qAll()
+   DeviceArray<cudaReal> const & Propagator<D, Rpg::Types<D> >::qAll()
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFieldsAll_;
@@ -138,14 +139,12 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
+      extern template class PropagatorBase<1, Rpg::Types<1> >;
+      extern template class PropagatorBase<2, Rpg::Types<2> >;
+      extern template class PropagatorBase<3, Rpg::Types<3> >;
       extern template class Propagator<1, Rpg::Types<1> >;
       extern template class Propagator<2, Rpg::Types<2> >;
       extern template class Propagator<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class Propagator<1>;
-      extern template class Propagator<2>;
-      extern template class Propagator<3>;
    }
 }
 #endif

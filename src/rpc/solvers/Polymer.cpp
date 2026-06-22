@@ -16,9 +16,9 @@
 #include <rp/solvers/Polymer.tpp>
 
 namespace Pscf {
-   template class PolymerTmpl< Rpc::Block<1>, Rpc::Propagator<1> >;
-   template class PolymerTmpl< Rpc::Block<2>, Rpc::Propagator<2> >;
-   template class PolymerTmpl< Rpc::Block<3>, Rpc::Propagator<3> >;
+   template class PolymerTmpl< Rpc::Block<1>, Rp::Propagator<1, Rpc::Types<1> > >;
+   template class PolymerTmpl< Rpc::Block<2>, Rp::Propagator<2, Rpc::Types<2> > >;
+   template class PolymerTmpl< Rpc::Block<3>, Rp::Propagator<3, Rpc::Types<3> > >;
    namespace Rp {
       template class Polymer< 1, Rpc::Types<1> >;
       template class Polymer< 2, Rpc::Types<2> >;
