@@ -98,8 +98,8 @@ namespace Rp {
       /// MixtureTmpl direct (parent) base class.
       using MixtureTmplT = MixtureTmpl<PolymerT, SolventT, double>;
 
-      /// MixtureBase indirect (grandparent) base class.
-      using MixtureBaseT = typename MixtureTmplT::MixtureBaseT;
+      /// Composition indirect (grandparent) base class.
+      using CompositionT = typename MixtureTmplT::CompositionT;
 
       // Public member functions
 
@@ -384,13 +384,13 @@ namespace Rp {
       using MixtureTmplT::polymerSpecies;
       using MixtureTmplT::solvent;
       using MixtureTmplT::solventSpecies;
-      using MixtureBaseT::nMonomer;
-      using MixtureBaseT::monomer;
-      using MixtureBaseT::nPolymer;
-      using MixtureBaseT::nSolvent;
-      using MixtureBaseT::nBlock;
-      using MixtureBaseT::vMonomer;
-      using MixtureBaseT::isCanonical;
+      using CompositionT::nMonomer;
+      using CompositionT::monomer;
+      using CompositionT::nPolymer;
+      using CompositionT::nSolvent;
+      using CompositionT::nBlock;
+      using CompositionT::vMonomer;
+      using CompositionT::isCanonical;
 
    protected:
 

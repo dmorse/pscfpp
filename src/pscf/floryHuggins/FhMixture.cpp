@@ -415,6 +415,6 @@ namespace Pscf {
 
    // Explicit instantiation definition for member function template.
    template 
-   void FhMixture::initialize<double>(MixtureBase<double> const & );
+   void FhMixture::initialize<double>(Composition<double> const & );
 
 } // namespace Pscf

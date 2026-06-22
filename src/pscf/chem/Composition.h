@@ -20,20 +20,19 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Abstract descriptor for a mixture of polymer and solvent species.
+   * Composition of a mixture of polymer and solvent species.
    *
-   * A MixtureBase has an array of Monomer objects and provides access to
+   * A Composition has an array of Monomer objects and provides access to
    * PolymerSpecies and SolventSpecies objects describing all molecular
-   * species in in a mixture.  The MixtureBase class does not have 
-   * functions or data structures needed to solve the modified diffusion 
-   * equation (MDE), and is thus a descriptor but not an MDE solver for 
-   * the mixture. 
+   * species in a mixture.  The Composition class does not have additional
+   * or data structures needed to solve the modified diffusion equation
+   * (MDE), and is thus a descriptor but not an MDE solver for the mixture. 
    *
-   * MixtureBase is an abstract base class for "solver" classes that can 
-   * actually solve the single-molecule statistical mechanics problem for 
-   * very species in a mixture. Each implementation level sub-namespace 
+   * Composition is an abstract base class for "solver" subclasses that 
+   * can also solve the single-molecule statistical mechanics problem 
+   * for every species in a mixture. Each program level sub-namespace 
    * of Pscf (R1d, Rpc or Rpg) contains a concrete class named Mixture 
-   * that is derived from Pscf::MixtureBase, and that acts as both a 
+   * that is derived from Pscf::Composition, and that acts as both a 
    * solver and descriptor for the mixture.  Each such subspace also 
    * defines an polymer MDE solver class named Polymer that is a subclass 
    * of PolymerSpecies and a solvent solver class named Solvent that is 
@@ -42,11 +41,11 @@ namespace Pscf
    * The Mixture class in each such program-level namespace is a 
    * subclass of a specialization Pscf::PolymerTmpl<Polymer, Solvent> of 
    * the class template Pscf::PolymerTmpl. This template is derived 
-   * directly from MixtureBase. A PolymerTmpl<Polymer, Solvent> object has 
+   * directly from Composition. A PolymerTmpl<Polymer, Solvent> object has 
    * two member private variables that are arrays of Polymer and Solvent 
    * solver objects.  The PolymerTmpl template defines implementations of 
    * functions polymerSpecies(int id) and solventSpecies(int id) that are
-   * declared as pure virtual member functions of MixtureBase. These
+   * declared as pure virtual member functions of Composition. These
    * functions return a single Polymer solver object as a reference to
    * a PolymerSpecies descriptor, or a Solvent solver object as a 
    * reference to a SolventSpecies descriptor, respectively.
@@ -54,7 +53,7 @@ namespace Pscf
    * \ingroup Pscf_Chem_Module
    */
    template <typename WT>
-   class MixtureBase 
+   class Composition 
    {
 
    public:
@@ -62,12 +61,12 @@ namespace Pscf
       /**
       * Constructor.
       */
-      MixtureBase();
+      Composition();
 
       /**
       * Destructor.
       */
-      virtual ~MixtureBase() = default;
+      virtual ~Composition() = default;
 
       /**
       * Set new vMonomer value.
@@ -186,27 +185,27 @@ namespace Pscf
    // Inline public member functions
 
    template <typename WT> inline 
-   int MixtureBase<WT>::nMonomer() const
+   int Composition<WT>::nMonomer() const
    {  return nMonomer_; }
 
    template <typename WT> inline 
-   int MixtureBase<WT>::nPolymer() const
+   int Composition<WT>::nPolymer() const
    {  return nPolymer_; }
 
    template <typename WT> inline 
-   int MixtureBase<WT>::nSolvent() const
+   int Composition<WT>::nSolvent() const
    {  return nSolvent_; }
 
    template <typename WT> inline 
-   int MixtureBase<WT>::nBlock() const
+   int Composition<WT>::nBlock() const
    {  return nBlock_; }
 
    template <typename WT> inline 
-   double MixtureBase<WT>::vMonomer() const
+   double Composition<WT>::vMonomer() const
    {  return vMonomer_; }
 
    template <typename WT> inline 
-   Monomer const & MixtureBase<WT>::monomer(int id) const
+   Monomer const & Composition<WT>::monomer(int id) const
    {  
       UTIL_CHECK(id < nMonomer_);
       return monomers_[id]; 
@@ -215,13 +214,13 @@ namespace Pscf
    // Inline protected member function
 
    template <typename WT> inline 
-   Monomer& MixtureBase<WT>::monomer(int id)
+   Monomer& Composition<WT>::monomer(int id)
    {  
       UTIL_CHECK(id < nMonomer_);
       return monomers_[id]; 
    }
 
-   extern template class MixtureBase<double>;
+   extern template class Composition<double>;
 
 }
 #endif

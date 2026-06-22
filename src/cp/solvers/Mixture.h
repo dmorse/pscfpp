@@ -58,8 +58,8 @@ namespace Cp {
       /// MixtureTmpl class.
       using MixtureTmplT = MixtureTmpl< PT, ST, std::complex<double> >;
 
-      /// MixtureBase class.
-      using MixtureBaseT = MixtureBase< std::complex<double> >;
+      /// Composition class.
+      using CompositionT = Composition< std::complex<double> >;
 
       /// Solvent object type: SolventT = ST (inherited).
       using typename MixtureTmplT::SolventT;
@@ -321,13 +321,13 @@ namespace Cp {
       using MixtureTmplT::polymerSpecies;
       using MixtureTmplT::solvent;
       using MixtureTmplT::solventSpecies;
-      using MixtureBaseT::nMonomer;
-      using MixtureBaseT::monomer;
-      using MixtureBaseT::nPolymer;
-      using MixtureBaseT::nSolvent;
-      using MixtureBaseT::nBlock;
-      using MixtureBaseT::vMonomer;
-      using MixtureBaseT::isCanonical;
+      using CompositionT::nMonomer;
+      using CompositionT::monomer;
+      using CompositionT::nPolymer;
+      using CompositionT::nSolvent;
+      using CompositionT::nBlock;
+      using CompositionT::vMonomer;
+      using CompositionT::isCanonical;
 
    protected:
 

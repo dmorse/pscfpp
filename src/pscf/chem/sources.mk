@@ -8,7 +8,7 @@ pscf_chem_= \
   pscf/chem/Species.cpp \
   pscf/chem/PolymerSpecies.cpp \
   pscf/chem/SolventSpecies.cpp \
-  pscf/chem/MixtureBase.cpp \
+  pscf/chem/Composition.cpp \
   pscf/chem/VertexIterator.cpp \
   pscf/chem/EdgeIterator.cpp 
 

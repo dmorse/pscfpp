@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/MixtureBase.h>       // base class
+#include <pscf/chem/Composition.h>       // base class
 #include <util/param/ParamComposite.h>   // base class
 #include <util/containers/DArray.h>      // member template
 
@@ -23,7 +23,7 @@ namespace Pscf
    * \ingroup Pscf_Solver_Module
    */
    template <class PT, class ST, typename WT = double>
-   class MixtureTmpl : public MixtureBase<WT>, public ParamComposite
+   class MixtureTmpl : public Composition<WT>, public ParamComposite
    {
    public:
 
@@ -42,7 +42,7 @@ namespace Pscf
       // Public member functions
 
       /*
-      * Public member functions inherited from MixtureBase:
+      * Public member functions inherited from Composition:
       *
       *   int nMonomer() const;
       *   int nPolymer() const;
@@ -81,7 +81,7 @@ namespace Pscf
       /**
       * Get a PolymerSpecies descriptor by const reference.
       *
-      * Defines function declared pure virtual by MixtureBase.
+      * Defines function declared pure virtual by Composition.
       *
       * \param id  integer polymer species index (0 <= id < nPolymer)
       */
@@ -104,7 +104,7 @@ namespace Pscf
       /**
       * Set a SolventSpecies descriptor object by const reference.
       *
-      * Defines function declared pure virtual by MixtureBase.
+      * Defines function declared pure virtual by Composition.
       *
       * \param id integer solvent species index (0 <= id < nSolvent)
       */
@@ -127,7 +127,7 @@ namespace Pscf
       /**
       * Alias for base class.
       */
-      using  MixtureBaseT = MixtureBase<WT>;
+      using  CompositionT = Composition<WT>;
 
    private:
 
@@ -146,12 +146,12 @@ namespace Pscf
       DArray<SolventT> solvents_;
 
       // Restrict access to inherited protected data
-      using MixtureBase<WT>::monomers_;
-      using MixtureBase<WT>::nMonomer_;
-      using MixtureBase<WT>::nPolymer_;
-      using MixtureBase<WT>::nSolvent_;
-      using MixtureBase<WT>::nBlock_;
-      using MixtureBase<WT>::vMonomer_;
+      using Composition<WT>::monomers_;
+      using Composition<WT>::nMonomer_;
+      using Composition<WT>::nPolymer_;
+      using Composition<WT>::nSolvent_;
+      using Composition<WT>::nBlock_;
+      using Composition<WT>::vMonomer_;
 
    };
 

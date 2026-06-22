@@ -52,7 +52,7 @@ namespace Rpg {
    void Mixture<D>::allocateBlocks()
    {
       const double ds = RpMixtureT::ds();
-      const int np = MixtureBase<cudaReal>::nPolymer();
+      const int np = Composition<cudaReal>::nPolymer();
       int i, j;
       for (i = 0; i < np; ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {

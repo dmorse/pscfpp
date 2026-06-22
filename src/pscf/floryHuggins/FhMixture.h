@@ -19,7 +19,7 @@
 namespace Pscf {
    class FhInteraction;
    class LuSolver;
-   template <typename WT> class MixtureBase;
+   template <typename WT> class Composition;
 }
 
 namespace Pscf {
@@ -56,12 +56,12 @@ namespace Pscf {
       virtual void readParameters(std::istream& in);
 
       /**
-      * Initialize to properties of a MixtureBase descriptor.
+      * Initialize to properties of a Composition descriptor.
       *
       * \param mixture  descriptor for a SCFT or FTS mixture
       */
       template <typename WT>
-      void initialize(MixtureBase<WT> const& mixture);
+      void initialize(Composition<WT> const& mixture);
 
       /**
       * Set the number of molecular species and allocate memory.
@@ -337,7 +337,7 @@ namespace Pscf {
 
    // Explicit instantiation declaration for member function template
    extern template 
-   void FhMixture::initialize<double>(MixtureBase<double> const &);
+   void FhMixture::initialize<double>(Composition<double> const &);
 
 } // namespace Pscf
 #endif

@@ -95,7 +95,7 @@ public:
       TEST_ASSERT(c.polymer(1).blockIds(1)[0] == 1);
 
       // Test for equal statistical segment lengths
-      MixtureBase<double> const & mixc = mixture;
+      Composition<double> const & mixc = mixture;
       double b = mixc.monomer(0).kuhn();
       TEST_ASSERT(eq(mixc.monomer(1).kuhn(), b));
 
@@ -208,7 +208,7 @@ public:
       TEST_ASSERT(c.polymer(1).blockIds(1)[0] == 1);
 
       // Test for equal statistical segment lengths
-      MixtureBase<double> const & mixc = mixture;
+      Composition<double> const & mixc = mixture;
       double b = mixc.monomer(0).kuhn();
       TEST_ASSERT(eq(mixc.monomer(1).kuhn(), b));
 
