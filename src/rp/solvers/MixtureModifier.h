@@ -11,6 +11,9 @@
 namespace Pscf {
 namespace Rp {
 
+   // Forward declaration
+   template <int D, class T> class Mixture;
+
    /**
    * Modifier for parameters of an associated mixture.
    *
@@ -34,7 +37,7 @@ namespace Rp {
    *
    * \ingroup Rp_Solver_Module
    */
-   template <class MT>
+   template <int D, class T>
    class MixtureModifier 
    {
 
@@ -44,11 +47,21 @@ namespace Rp {
       ///@{
 
       /**
+      * Constructor.
+      */
+      MixtureModifier();
+
+      /**
+      * Destructor.
+      */
+      ~MixtureModifier();
+
+      /**
       * Create associations with a Mixture.
       *
       * \param mixture  associated Mixture object
       */
-      void associate(MT& mixture);
+      void associate(Mixture<D,T>& mixture);
 
       ///@}
       /// \name Parameter Modification Functions
@@ -138,27 +151,15 @@ namespace Rp {
       */
       void clearUnitCellData();
 
-   protected:
-
-      /**
-      * Constructor.
-      */
-      MixtureModifier();
-
-      /**
-      * Destructor.
-      */
-      ~MixtureModifier();
-
    private:
 
       /// Pointer to the asssociated mixture.
-      MT* mixturePtr_;
+      Mixture<D,T>* mixturePtr_;
 
       /**
       * Get the mixture by non-const reference.
       */
-      MT& mixture();
+      Mixture<D,T>& mixture();
 
    };
 

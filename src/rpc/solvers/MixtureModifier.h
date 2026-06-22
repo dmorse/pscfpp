@@ -11,6 +11,7 @@
 #include <rp/solvers/MixtureModifier.h>  // base class template
 #include <rpc/solvers/Mixture.h>         // base class argument
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -34,18 +35,14 @@ namespace Rpc {
 
 } // namespace Rpc
 } // namespace Pscf
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class MixtureModifier< Rp::Mixture<1, Rpc::Types<1> > >;
-      extern template class MixtureModifier< Rp::Mixture<2, Rpc::Types<2> > >;
-      extern template class MixtureModifier< Rp::Mixture<3, Rpc::Types<3> > >;
+      extern template class MixtureModifier<1, Rpc::Types<1> >;
+      extern template class MixtureModifier<2, Rpc::Types<2> >;
+      extern template class MixtureModifier<3, Rpc::Types<3> >;
    }
-   namespace Rpc {
-      extern template class MixtureModifier<1>;
-      extern template class MixtureModifier<2>;
-      extern template class MixtureModifier<3>;
-   }        
 } 
 #endif

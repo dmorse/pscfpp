@@ -28,6 +28,7 @@ namespace Pscf {
       template <int D, class T> class Mask;
       template <int D, class T> class Domain;
       template <int D, class T> class Mixture;
+      template <int D, class T> class MixtureModifier;
    }
 }
 
@@ -387,7 +388,7 @@ namespace Rp {
       /**
       * Get the MixtureModifier (non-const).
       */
-      typename T::MixtureModifier& mixtureModifier();
+      MixtureModifier<D,T>& mixtureModifier();
 
       /**
       * Get the %Interaction (const).
@@ -592,7 +593,7 @@ namespace Rp {
       /**
       * Pointer to MixtureModifier (public non-const interface for Mixture).
       */
-      typename T::MixtureModifier* mixtureModifierPtr_;
+      MixtureModifier<D,T>* mixtureModifierPtr_;
 
       /**
       * Pointer to Domain object (unit cell, mesh, fft, group, basis).
@@ -742,7 +743,7 @@ namespace Rp {
 
    // Get the MixtureModifier (non-const).
    template <int D, class T> inline
-   typename T::MixtureModifier& System<D,T>::mixtureModifier()
+   MixtureModifier<D,T>& System<D,T>::mixtureModifier()
    {
       UTIL_ASSERT(mixtureModifierPtr_);
       return *mixtureModifierPtr_;
