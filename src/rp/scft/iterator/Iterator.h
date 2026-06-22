@@ -23,15 +23,11 @@ namespace Rp {
    * Template parameters:
    *
    *    - D  dimension of space
-   *    - ST system class (Rpc::System<D> or Rpg::System<D>)
-   *
-   * Specializations of this template are used as base classes for
-   * specializations of the class templates Rpc::Iterator<in D> and
-   * Rpg::Iterator<int D>.
+   *    - T  Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * \ingroup Rp_Scft_Module
    */
-   template <int D, class ST>
+   template <int D, class T>
    class Iterator : public ParamComposite
    {
 
@@ -127,7 +123,7 @@ namespace Rp {
       *
       * \param system parent System object
       */
-      Iterator(ST& system);
+      Iterator(typename T::System& system);
 
       /**
       * Destructor.
@@ -139,22 +135,22 @@ namespace Rp {
       *
       * \param system  parent System object
       */
-      void setSystem(ST& system);
+      void setSystem(typename T::System& system);
 
       /**
       * Get parent system by const reference.
       */
-      ST const & system() const;
+      typename T::System const & system() const;
 
       /**
       * Get parent system by non-const reference.
       */
-      ST& system();
+      typename T::System& system();
 
    private:
 
       /// Pointer to the associated system object.
-      ST* sysPtr_;
+      typename T::System* sysPtr_;
 
    };
 
@@ -163,8 +159,8 @@ namespace Rp {
    /**
    * Get parent system by const reference.
    */
-   template <int D, class ST> inline
-   ST const & Iterator<D, ST>::system() const
+   template <int D, class T> inline
+   typename T::System const & Iterator<D, T>::system() const
    {
       UTIL_CHECK(sysPtr_);
       return *sysPtr_;
@@ -173,8 +169,8 @@ namespace Rp {
    /**
    * Get parent system by non-const reference.
    */
-   template <int D, class ST> inline
-   ST& Iterator<D, ST>::system()
+   template <int D, class T> inline
+   typename T::System& Iterator<D, T>::system()
    {
       UTIL_CHECK(sysPtr_);
       return *sysPtr_;

@@ -9,6 +9,7 @@
 */
 
 #include <rp/scft/iterator/Iterator.h>  // base class template
+#include <rpc/system/Types.h>           // base class template
 
 namespace Pscf {
 namespace Rpc {
@@ -24,7 +25,7 @@ namespace Rpc {
    * \ingroup Rpc_Scft_Iterator_Module
    */
    template <int D>
-   class Iterator : public Rp::Iterator<D, System<D> >
+   class Iterator : public Rp::Iterator<D, Types<D> >
    {
 
    public:
@@ -54,9 +55,9 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Iterator<1, Rpc::System<1> >;
-      extern template class Iterator<2, Rpc::System<2> >;
-      extern template class Iterator<3, Rpc::System<3> >;
+      extern template class Iterator<1, Rpc::Types<1> >;
+      extern template class Iterator<2, Rpc::Types<2> >;
+      extern template class Iterator<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       extern template class Iterator<1>;

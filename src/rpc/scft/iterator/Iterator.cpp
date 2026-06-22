@@ -22,7 +22,7 @@ namespace Rpc {
    */
    template <int D>
    Iterator<D>::Iterator()
-    : Rp::Iterator<D, System<D> >()
+    : Rp::Iterator<D, Types<D> >()
    {}
 
    /*
@@ -30,7 +30,7 @@ namespace Rpc {
    */
    template <int D>
    Iterator<D>::Iterator(System<D>& system)
-    : Rp::Iterator<D, System<D> >(system)
+    : Rp::Iterator<D, Types<D> >(system)
    {}
 
 } // namespace Rpc
@@ -39,9 +39,9 @@ namespace Rpc {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Iterator<1, Rpc::System<1> >;
-      template class Iterator<2, Rpc::System<2> >;
-      template class Iterator<3, Rpc::System<3> >;
+      template class Iterator<1, Rpc::Types<1> >;
+      template class Iterator<2, Rpc::Types<2> >;
+      template class Iterator<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       template class Iterator<1>;

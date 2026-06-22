@@ -20,8 +20,8 @@ namespace Rp {
    /*
    * Default constructor.
    */
-   template <int D, class ST>
-   Iterator<D,ST>::Iterator()
+   template <int D, class T>
+   Iterator<D,T>::Iterator()
     : isSymmetric_(false),
       isFlexible_(false),
       sysPtr_(nullptr)
@@ -30,8 +30,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class ST>
-   Iterator<D,ST>::Iterator(ST& system)
+   template <int D, class T>
+   Iterator<D,T>::Iterator(typename T::System& system)
     : isSymmetric_(false),
       isFlexible_(false),
       sysPtr_(&system)
@@ -40,15 +40,15 @@ namespace Rp {
    /*
    * Destructor.
    */
-   template <int D, class ST>
-   Iterator<D,ST>::~Iterator()
+   template <int D, class T>
+   Iterator<D,T>::~Iterator()
    {}
 
    /*
    * Get the number of flexible lattice parameters.
    */
-   template <int D, class ST>
-   int Iterator<D,ST>::nFlexibleParams() const
+   template <int D, class T>
+   int Iterator<D,T>::nFlexibleParams() const
    {
       UTIL_CHECK(sysPtr_);
       UTIL_CHECK(flexibleParams_.size() == 
@@ -63,8 +63,8 @@ namespace Rp {
    /*
    * Set the array indicating which lattice parameters are flexible.
    */
-   template <int D, class ST>
-   void Iterator<D,ST>::setFlexibleParams(FSArray<bool,6> const & flexParams)
+   template <int D, class T>
+   void Iterator<D,T>::setFlexibleParams(FSArray<bool,6> const & flexParams)
    {  
       UTIL_CHECK(sysPtr_);
       flexibleParams_ = flexParams; 
@@ -78,8 +78,8 @@ namespace Rp {
    /*
    * Return the stress used by this Iterator, for one lattice parameter.
    */
-   template <int D, class ST>
-   double Iterator<D,ST>::stress(int paramId) const
+   template <int D, class T>
+   double Iterator<D,T>::stress(int paramId) const
    {
       // Parameter must be flexible to access the stress
       UTIL_CHECK(sysPtr_);
@@ -97,8 +97,8 @@ namespace Rp {
    /*
    * Set system.
    */
-   template <int D, class ST>
-   void Iterator<D,ST>::setSystem(ST& system)
+   template <int D, class T>
+   void Iterator<D,T>::setSystem(typename T::System& system)
    {
       UTIL_CHECK(!sysPtr_);  
       sysPtr_ = &system; 
