@@ -28,10 +28,10 @@ namespace Rpg {
    * Return a pointer to a instance of Iterator subclass className.
    */
    template <int D>
-   Iterator<D>* IteratorFactory<D>::factory(std::string const& className) 
+   Rp::Iterator<D, Rpg::Types<D> >* IteratorFactory<D>::factory(std::string const& className) 
    const
    {
-      Iterator<D>* ptr = 0;
+      Rp::Iterator<D, Rpg::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);

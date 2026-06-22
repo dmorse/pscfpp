@@ -27,7 +27,7 @@ namespace Rpc {
    */
 
    template <int D>
-   class IteratorFactory : public Factory< Iterator<D> > 
+   class IteratorFactory : public Factory< Rp::Iterator<D, Rpc::Types<D> > > 
    {
 
    public:
@@ -42,14 +42,14 @@ namespace Rpc {
       /**
       * Method to create any Iterator supplied with PSCF.
       *
-      * \param className  name of the Iterator<D> subclass
+      * \param className  name of the Rp::Iterator<D, Rpc::Types<D> > subclass
       * \return  pointer to new instance of className
       */
-      Iterator<D>* factory(const std::string &className) const;
+      Rp::Iterator<D, Rpc::Types<D> >* factory(const std::string &className) const;
 
       // Inherited member functions
-      using Factory< Iterator<D> >::trySubfactories;
-      using Factory< Iterator<D> >::readObjectOptional;
+      using Factory< Rp::Iterator<D, Rpc::Types<D> > >::trySubfactories;
+      using Factory< Rp::Iterator<D, Rpc::Types<D> > >::readObjectOptional;
 
    private:
 

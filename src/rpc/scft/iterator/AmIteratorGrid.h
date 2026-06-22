@@ -51,9 +51,12 @@ namespace Rpc {
 
 // Explicit instantiation declarations
 namespace Pscf {
-   extern template class AmIteratorTmpl<Rpc::Iterator<1>, DRArray<double> >;
-   extern template class AmIteratorTmpl<Rpc::Iterator<2>, DRArray<double> >;
-   extern template class AmIteratorTmpl<Rpc::Iterator<3>, DRArray<double> >;
+   extern template 
+   class AmIteratorTmpl<Rp::Iterator<1, Rpc::Types<1> >, DRArray<double> >;
+   extern template 
+   class AmIteratorTmpl<Rp::Iterator<2, Rpc::Types<2> >, DRArray<double> >;
+   extern template 
+   class AmIteratorTmpl<Rp::Iterator<3, Rpc::Types<3> >, DRArray<double> >;
    namespace Rp {
       extern template class AmIteratorGrid<1, Rpc::Types<1> >;
       extern template class AmIteratorGrid<2, Rpc::Types<2> >;

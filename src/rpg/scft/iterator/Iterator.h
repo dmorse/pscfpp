@@ -11,6 +11,7 @@
 #include <rp/scft/iterator/Iterator.h>  // base class template
 #include <rpg/system/Types.h>           // base class template argument
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -50,6 +51,7 @@ namespace Rpg {
 
 } // namespace Rpg
 } // namespace Pscf
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -57,11 +59,6 @@ namespace Pscf {
       extern template class Iterator<1, Rpg::Types<1> >;
       extern template class Iterator<2, Rpg::Types<2> >;
       extern template class Iterator<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class Iterator<1>;
-      extern template class Iterator<2>;
-      extern template class Iterator<3>;
    }
 } 
 #endif

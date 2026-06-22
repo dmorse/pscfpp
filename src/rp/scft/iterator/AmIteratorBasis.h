@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>    // base class
+#include <pscf/iterator/AmIteratorTmpl.h>    // direct base class
+#include <rp/scft/iterator/Iterator.h>       // indirect base class
 #include <pscf/iterator/AmbdInteraction.h>   // direct base member 
 #include <util/containers/DArray.h>          // indirect base member
 
@@ -40,13 +41,13 @@ namespace Rp {
    */
    template <int D, class T>
    class AmIteratorBasis 
-    : public AmIteratorTmpl<typename T::Iterator, DArray<double> >
+    : public AmIteratorTmpl<Iterator<D,T>, DArray<double> >
    {
 
    public:
 
       /// Alias for iterator type.
-      using IteratorT = typename T::Iterator;
+      using IteratorT = Iterator<D,T>;
 
       /// Alias for type of residual and state vectors
       using VectorT = DArray<double>;

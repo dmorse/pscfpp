@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>    // base class
-#include <pscf/iterator/AmbdInteraction.h>   // member
+#include <pscf/iterator/AmIteratorTmpl.h>   // base class
+#include <rp/scft/iterator/Iterator.h>      // indirect base class
+#include <pscf/iterator/AmbdInteraction.h>  // member
 #include <iostream>
 
 namespace Pscf {
@@ -44,7 +45,7 @@ namespace Rp {
    */
    template <int D, class T>
    class AmIteratorGrid
-    : public AmIteratorTmpl< typename T::Iterator, typename T::Vector >
+    : public AmIteratorTmpl< Iterator<D,T>, typename T::Vector >
    {
 
    public:
@@ -85,7 +86,7 @@ namespace Rp {
       void setup(bool isContinuation) override;
 
       /// Alias for Iterator type.
-      using IteratorT = typename T::Iterator;
+      using IteratorT = Iterator<D,T>;
 
       /// Alias for type of state and residual vectors.
       using VectorT = typename T::Vector;

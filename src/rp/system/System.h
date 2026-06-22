@@ -30,6 +30,10 @@ namespace Pscf {
       template <int D, class T> class Mixture;
       template <int D, class T> class MixtureModifier;
       template <int D, class T> class ScftThermo;
+      template <int D, class T> class Iterator;
+      template <int D, class T> class IteratorFactory;
+      template <int D, class T> class Sweep;
+      template <int D, class T> class SweepFactory;
    }
 }
 
@@ -451,12 +455,12 @@ namespace Rp {
       /**
       * Get the Iterator (const).
       */
-      typename T::Iterator const & iterator() const;
+      Iterator<D,T> const & iterator() const;
 
       /**
       * Get the Iterator (non-const).
       */
-      typename T::Iterator& iterator();
+      Iterator<D,T>& iterator();
 
       /**
       * Does this system have a Sweep?
@@ -624,7 +628,7 @@ namespace Rp {
       /**
       * Pointer to an SCFT Iterator.
       */
-      typename T::Iterator* iteratorPtr_;
+      Iterator<D,T>* iteratorPtr_;
 
       /**
       * Pointer to an Iterator factory object.
@@ -881,7 +885,7 @@ namespace Rp {
 
    // Get the SCFT Iterator (const).
    template <int D, class T> inline
-   typename T::Iterator const & System<D,T>::iterator() const
+   Iterator<D,T> const & System<D,T>::iterator() const
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
@@ -889,7 +893,7 @@ namespace Rp {
 
    // Get the SCFT Iterator (non-const).
    template <int D, class T> inline
-   typename T::Iterator& System<D,T>::iterator()
+   Iterator<D,T>& System<D,T>::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;

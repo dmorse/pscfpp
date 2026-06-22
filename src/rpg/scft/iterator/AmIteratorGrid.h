@@ -53,11 +53,11 @@ namespace Rpg {
 namespace Pscf {
 
    extern template 
-   class AmIteratorTmpl<Rpg::Iterator<1>, DeviceArray<cudaReal> >;
+   class AmIteratorTmpl<Rp::Iterator<1, Rpg::Types<1> >, DeviceArray<cudaReal> >;
    extern template 
-   class AmIteratorTmpl<Rpg::Iterator<2>, DeviceArray<cudaReal> >;
+   class AmIteratorTmpl<Rp::Iterator<2, Rpg::Types<2> >, DeviceArray<cudaReal> >;
    extern template 
-   class AmIteratorTmpl<Rpg::Iterator<3>, DeviceArray<cudaReal> >;
+   class AmIteratorTmpl<Rp::Iterator<3, Rpg::Types<3> >, DeviceArray<cudaReal> >;
 
    namespace Rp {
       extern template class AmIteratorGrid<1, Rpg::Types<1> >;

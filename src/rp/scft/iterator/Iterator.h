@@ -34,6 +34,23 @@ namespace Rp {
    public:
 
       /**
+      * Default constructor.
+      */
+      Iterator();
+
+      /**
+      * Constructor.
+      *
+      * \param system parent System object
+      */
+      Iterator(typename T::System& system);
+
+      /**
+      * Destructor.
+      */
+      ~Iterator() = default;
+
+      /**
       * Iterate to solution.
       *
       * \param isContinuation true iff a continuation within a sweep
@@ -112,23 +129,6 @@ namespace Rp {
       FSArray<bool,6> flexibleParams_;
 
       // Protected member functions
-
-      /**
-      * Default constructor.
-      */
-      Iterator();
-
-      /**
-      * Constructor.
-      *
-      * \param system parent System object
-      */
-      Iterator(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      ~Iterator();
 
       /**
       * Set parent system.

@@ -9,6 +9,7 @@
 */
 
 #include "Iterator.h"
+#include <prdc/environment/Environment.h>
 
 namespace Pscf {
 namespace Rp {
@@ -36,13 +37,6 @@ namespace Rp {
       isFlexible_(false),
       sysPtr_(&system)
    {  setClassName("Iterator"); }
-
-   /*
-   * Destructor.
-   */
-   template <int D, class T>
-   Iterator<D,T>::~Iterator()
-   {}
 
    /*
    * Get the number of flexible lattice parameters.

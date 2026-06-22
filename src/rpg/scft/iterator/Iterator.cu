@@ -14,6 +14,7 @@
 
 #include <rp/scft/iterator/Iterator.tpp>
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -21,7 +22,7 @@ namespace Rpg {
    * Default constructor.
    */
    template <int D>
-   Iterator<D>::Iterator()
+   Rp::Iterator<D, Rpg::Types<D> >::Iterator()
     : Rp::Iterator<D, Types<D> >()
    {}
 
@@ -29,12 +30,13 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   Iterator<D>::Iterator(System<D>& system)
+   Rp::Iterator<D, Rpg::Types<D> >::Iterator(System<D>& system)
     : Rp::Iterator<D, Types<D> >(system)
    {}
 
 }
 }
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -42,10 +44,5 @@ namespace Pscf {
       template class Iterator<1, Rpg::Types<1> >;
       template class Iterator<2, Rpg::Types<2> >;
       template class Iterator<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class Iterator<1>;
-      template class Iterator<2>;
-      template class Iterator<3>;
    }
 }

@@ -53,9 +53,9 @@ namespace Rpg {
 
 // Explicit instantiation declarations
 namespace Pscf {
-   extern template class AmIteratorTmpl<Rpg::Iterator<1>, DArray<double> >;
-   extern template class AmIteratorTmpl<Rpg::Iterator<2>, DArray<double> >;
-   extern template class AmIteratorTmpl<Rpg::Iterator<3>, DArray<double> >;
+   extern template class AmIteratorTmpl<Rp::Iterator<1, Rpg::Types<1> >, DArray<double> >;
+   extern template class AmIteratorTmpl<Rp::Iterator<2, Rpg::Types<2> >, DArray<double> >;
+   extern template class AmIteratorTmpl<Rp::Iterator<3, Rpg::Types<3> >, DArray<double> >;
    namespace Rp {
       extern template class AmIteratorBasis<1, Rpg::Types<1> >;
       extern template class AmIteratorBasis<2, Rpg::Types<2> >;

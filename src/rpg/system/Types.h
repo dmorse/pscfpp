@@ -41,7 +41,7 @@ namespace Pscf {
       //template <int D> class Mask;
       //template <int D> class ScftThermo;
       template <int D> class EnvironmentFactory;
-      template <int D> class Iterator;
+      //template <int D> class Iterator;
       template <int D> class IteratorFactory;
       template <int D> class Sweep;
       template <int D> class SweepParameter;
@@ -125,7 +125,7 @@ namespace Rpg {
       using EnvironmentFactory = Rpg::EnvironmentFactory<D>;
 
       //using ScftThermo = Rp::ScftThermo<D, Rpg::Types<D> >;
-      using Iterator = Rpg::Iterator<D>;
+      //using Iterator = Rp::Iterator<D, Rpg::Types<D> >;
       using IteratorFactory = Rpg::IteratorFactory<D>;
       using Sweep = Rpg::Sweep<D>;
       using SweepParameter = Rpg::SweepParameter<D>;

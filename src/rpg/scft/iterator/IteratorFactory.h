@@ -28,7 +28,7 @@ namespace Rpg {
    */
 
    template <int D>
-   class IteratorFactory : public Factory< Iterator<D> > 
+   class IteratorFactory : public Factory< Rp::Iterator<D, Rpg::Types<D> > > 
    {
 
    public:
@@ -46,11 +46,11 @@ namespace Rpg {
       * \param className name of the Iterator subclass
       * \return Iterator* pointer to new instance of className
       */
-      Iterator<D>* factory(const std::string &className) const;
+      Rp::Iterator<D, Rpg::Types<D> >* factory(const std::string &className) const;
 
       // Inherited member functions
-      using Factory< Iterator<D> >::trySubfactories;
-      using Factory< Iterator<D> >::readObjectOptional;
+      using Factory< Rp::Iterator<D, Rpg::Types<D> > >::trySubfactories;
+      using Factory< Rp::Iterator<D, Rpg::Types<D> > >::readObjectOptional;
 
    private:
 
