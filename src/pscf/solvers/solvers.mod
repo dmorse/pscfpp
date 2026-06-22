@@ -21,13 +21,14 @@ namespace Pscf{
    * clashes or ambiguities.
    * 
    * The solver templates PolymerTmpl and MixtureTmpl templates are each
-   * derived from a "descriptor" class that provides a description of a
-   * species or mixture but that does not provide functions or data 
-   * structures required to solve single-molecule statistical mechanics 
-   * problem.  The descriptor classes for polymer species and mixtures are 
-   * named PolymerSpecies and MixtureBase, respectively. The descriptor 
-   * class for solvent species is named SolventSpecies. Source code files 
-   * for these descriptor classes are in directory src/pscf/chem.
+   * derived from a "descriptor" class that provides a description of a 
+   * molecule or mixture but that does not provide additional functions 
+   * and data structures required to solve a single-molecule statistical 
+   * mechanics problem.  The descriptor classes for polymer and solvent 
+   * species descriptor classes are named PolymerSpecies and SolventSpecies,
+   * respectively. The descriptor for the mixture is named Composition.
+   * Source code files for these descriptor classes are in directory 
+   * src/pscf/chem.
    *
    * To define an implementation of polymer field theory, one must define
    * the following set of solver classes within each program-level

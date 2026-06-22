@@ -65,7 +65,7 @@ namespace Rpg {
       /// Base class type aliases
       using RpMixtureT = typename Rp::Mixture<D, Types<D> >;
       using typename RpMixtureT::MixtureTmplT;
-      using typename RpMixtureT::MixtureBaseT;
+      using typename RpMixtureT::CompositionT;
       using typename RpMixtureT::FieldT;
 
       using MixtureTmplT::polymer;

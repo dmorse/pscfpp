@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MixtureBase.h"
+#include "Composition.h"
 #include "PolymerSpecies.h"
 #include "SolventSpecies.h"
 
@@ -16,7 +16,7 @@ namespace Pscf
    * Constructor.
    */
    template <typename WT>
-   MixtureBase<WT>::MixtureBase()
+   Composition<WT>::Composition()
     : monomers_(),
       nMonomer_(0),
       nPolymer_(0),
@@ -29,7 +29,7 @@ namespace Pscf
    * Set the monomer volume value.
    */
    template <typename WT>
-   void MixtureBase<WT>::setVmonomer(double vMonomer)
+   void Composition<WT>::setVmonomer(double vMonomer)
    {
       UTIL_CHECK(vMonomer > 0.0);  
       vMonomer_ = vMonomer; 
@@ -39,7 +39,7 @@ namespace Pscf
    * Is the ensemble closed for all species?
    */
    template <typename WT>
-   bool MixtureBase<WT>::isCanonical() const
+   bool Composition<WT>::isCanonical() const
    {
       // Check ensemble of all polymer species
       for (int i = 0; i < nPolymer(); ++i) {

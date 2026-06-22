@@ -13,7 +13,7 @@
 
 // Forward declarations
 namespace Pscf {
-   template <typename WT> class MixtureBase;
+   template <typename WT> class Composition;
 }
 
 namespace Pscf {
@@ -40,9 +40,9 @@ namespace Correlation {
       /**
       * Constructor.
       *
-      * \param mixture  assocated MixtureBase object
+      * \param mixture  assocated Composition object
       */
-      Mixture(MixtureBase<WT> const & mixture);
+      Mixture(Composition<WT> const & mixture);
 
       /**
       * Destructor.
@@ -52,9 +52,9 @@ namespace Correlation {
       /**
       * Create an association with a Mixture.
       *
-      * \param mixture  associated MixtureBase
+      * \param mixture  associated Composition
       */
-      void associate(MixtureBase<WT> const& mixture);
+      void associate(Composition<WT> const& mixture);
 
       /**
       * Allocate private data structures, set immutable private data.
@@ -121,7 +121,7 @@ namespace Correlation {
       /**
       * Return reference to a descriptor for the associated mixture.
       */
-      MixtureBase<WT> const & mixture() const;
+      Composition<WT> const & mixture() const;
 
       /**
       * Has this Mixture been previously allocated?
@@ -133,8 +133,8 @@ namespace Correlation {
       /// Array of Correlation::Polymer objects
       DArray< Correlation::Polymer<WT> > polymers_;
 
-      /// Pointer to the associated MixtureBase object.
-      MixtureBase<WT> const * mixturePtr_;
+      /// Pointer to the associated Composition object.
+      Composition<WT> const * mixturePtr_;
 
    };
 
@@ -148,7 +148,7 @@ namespace Correlation {
 
    // Get  a descriptor for the parent mixture by const reference.
    template <typename WT> inline 
-   MixtureBase<WT> const & Mixture<WT>::mixture() const
+   Composition<WT> const & Mixture<WT>::mixture() const
    {  return *mixturePtr_; }
 
    // Has this object been allocated?

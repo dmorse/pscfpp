@@ -14,7 +14,7 @@ namespace Pscf {
    template <typename WT> class Species;
    template <typename WT> class PolymerSpecies;
    template <typename WT> class SolventSpecies;
-   template <typename WT> class MixtureBase;
+   template <typename WT> class Composition;
    namespace Prdc {
       class Environment;
       namespace Cpu {
@@ -71,7 +71,7 @@ namespace Cpc {
       using Species = Pscf::Species<double>;
       using PolymerSpecies = Pscf::PolymerSpecies<double>;
       using SolventSpecies = Pscf::SolventSpecies<double>;
-      using MixtureBase = Pscf::MixtureBase<double>;
+      using Composition = Pscf::Composition<double>;
 
       using Interaction = Pscf::Interaction;
       using Domain = Cpc::Domain<D>;

@@ -11,7 +11,7 @@
 #include "FhMixture.h"
 #include "FhMolecule.h"
 #include "FhClump.h"
-#include <pscf/chem/MixtureBase.h>
+#include <pscf/chem/Composition.h>
 #include <pscf/chem/PolymerSpecies.h>
 #include <pscf/chem/SolventSpecies.h>
 #include <pscf/chem/Edge.h>
@@ -21,7 +21,7 @@ namespace Pscf {
    using namespace Util;
 
    template <typename WT>
-   void FhMixture::initialize(MixtureBase<WT> const & mixture)
+   void FhMixture::initialize(Composition<WT> const & mixture)
    {
 
       // Set number of molecular species and monomers

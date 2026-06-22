@@ -42,12 +42,12 @@ namespace Cpc {
       using CpMixtureT
          = typename Cp::Mixture<D, Polymer<D>, Solvent<D>, Types<D> >;
       using typename CpMixtureT::MixtureTmplT;
-      using typename CpMixtureT::MixtureBaseT;
+      using typename CpMixtureT::CompositionT;
 
       using typename CpMixtureT::FieldT;
 
       using MixtureTmplT::polymer;
-      using MixtureBaseT::nPolymer;
+      using CompositionT::nPolymer;
 
    protected:
 

@@ -18,7 +18,7 @@ namespace Pscf
    */
    template <class PT, class ST, typename WT>
    MixtureTmpl<PT,ST,WT>::MixtureTmpl()
-    : MixtureBase<WT>(),
+    : Composition<WT>(),
       ParamComposite(),
       polymers_(),
       solvents_()
@@ -91,7 +91,7 @@ namespace Pscf
          for (int i = 0; i < nPolymer_; ++i) {
             for (int j = 0; j < polymer(i).nBlock(); ++j) {
                monomerId = polymer(i).block(j).monomerId();
-               kuhn = MixtureBase<WT>::monomer(monomerId).kuhn();
+               kuhn = Composition<WT>::monomer(monomerId).kuhn();
                polymer(i).block(j).setKuhn(kuhn);
             }
          }

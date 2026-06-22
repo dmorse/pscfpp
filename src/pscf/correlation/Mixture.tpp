@@ -8,7 +8,7 @@
 #include "Mixture.h"
 #include "Polymer.h"
 
-#include <pscf/chem/MixtureBase.h>
+#include <pscf/chem/Composition.h>
 #include <pscf/chem/SolventSpecies.h>
 
 #include <util/global.h>
@@ -32,7 +32,7 @@ namespace Correlation {
    * Constructor.
    */
    template <typename WT>
-   Mixture<WT>::Mixture(MixtureBase<WT> const & mixture)
+   Mixture<WT>::Mixture(Composition<WT> const & mixture)
     : mixturePtr_(&mixture)
    {}
 
@@ -47,7 +47,7 @@ namespace Correlation {
    * Create an association with a Mixture.
    */
    template <typename WT>
-   void Mixture<WT>::associate(MixtureBase<WT> const & mixture)
+   void Mixture<WT>::associate(Composition<WT> const & mixture)
    {
       UTIL_CHECK(!mixturePtr_);  
       mixturePtr_ = &mixture; 

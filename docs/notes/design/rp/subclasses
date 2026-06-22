@@ -17,9 +17,9 @@ fields/
   Mask    -> trivial
   Domain  -> trivial
   CFields -> trivial
+  Domain  -> trivial (FFT, Wavelist, FieldIo)
   WFields -> nontrivial: extra setRGrid(DeviceArray function), rpc is trivial 
   FieldIo -> notrivial: differentiate read/write operations (see below)
-  Domain  -> trivial (FFT, Wavelist, FieldIo)
 
   FieldIo  -
       Uses local host arrays DArray< HostDArray<cudaReal> >

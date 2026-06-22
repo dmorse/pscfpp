@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MixtureBase.tpp"
+#include "Composition.tpp"
 namespace Pscf {  
 
-   template class MixtureBase<double>;  
+   template class Composition<double>;  
 
 }

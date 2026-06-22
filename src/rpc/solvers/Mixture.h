@@ -48,7 +48,7 @@ namespace Rpc {
       using RpMixtureT = typename Rp::Mixture< D, Types<D> >;
 
       // Inherited names
-      using typename RpMixtureT::MixtureBaseT;
+      using typename RpMixtureT::CompositionT;
       using typename RpMixtureT::MixtureTmplT;
       using typename RpMixtureT::FieldT;
       using MixtureTmplT::polymer;
