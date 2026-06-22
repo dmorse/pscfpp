@@ -18,33 +18,6 @@ namespace Pscf {
    }
 }
 
-#if 0
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-   using namespace Pscf::Prdc;
-
-   /**
-   * Descriptor and solver for one polymer species.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::Polymer, and
-   * inherit their public interface and all of their source code from this
-   * base class.
-   *
-   * \see Rp::Polymer
-   * \ref user_param_polymer_sec "Manual Page"
-   * \ingroup Rpg_Solver_Module
-   */
-   template <int D>
-   class Polymer : public Rp::Polymer<D, Types<D> >
-   {};
-
-}
-}
-#endif
-
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 

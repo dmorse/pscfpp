@@ -4,14 +4,20 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
 #include <rpg/solvers/Block.h>
 #include <rpg/solvers/Propagator.h>
 
-#include <prdc/cuda/WaveList.h>
+#include <prdc/cuda/RField.h>
 #include <prdc/cuda/FFT.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/cuda/resources.h>
+#include <prdc/cuda/WaveList.h>
 
+#include <prdc/crystal/UnitCell.h>
+//#include <prdc/cuda/resources.h>
+
+#include <pscf/cuda/cudaTypes.h>
+#include <pscf/cuda/HostDArray.h>
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
@@ -39,7 +45,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D> 
-   void setupBlock(Pscf::Rpg::Block<D>& block)
+   void setupBlock(Rp::Block<D, Types<D> >& block)
    {
       block.setId(0);
       if (PolymerModel::isThread()) {
@@ -77,7 +83,7 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Pscf::Rpg::Block<1> block;
+      Pscf::Rp::Block<1, Rpg::Types<1> > block;
    }
 
    void testSetup1D() // test allocate and associate methods
@@ -85,13 +91,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<1> block;
+      Pscf::Rp::Block<1, Rpg::Types<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      Cuda::FFT<1> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -99,7 +105,7 @@ public:
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
       // Create wavelist
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -123,13 +129,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<2> block;
+      Pscf::Rp::Block<2, Rpg::Types<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      Cuda::FFT<2> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -137,7 +143,7 @@ public:
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       // Create wavelist 
-      WaveList<2> wavelist;
+      Cuda::WaveList<2> wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -160,13 +166,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<3> block;
+      Pscf::Rp::Block<3, Rpg::Types<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3> fft;
+      Cuda::FFT<3> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -174,7 +180,7 @@ public:
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
       // Create wavelist 
-      WaveList<3> wavelist;
+      Cuda::WaveList<3> wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -197,13 +203,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<1> block;
+      Pscf::Rp::Block<1, Rpg::Types<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      Cuda::FFT<1> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -212,7 +218,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Construct wavelist
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -248,13 +254,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<2> block;
+      Pscf::Rp::Block<2, Rpg::Types<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      Cuda::FFT<2> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -265,7 +271,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Construct wavelist
-      WaveList<2> wavelist;
+      Cuda::WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -303,20 +309,20 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Pscf::Rpg::Block<2> block;
+      Pscf::Rp::Block<2, Rpg::Types<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      Cuda::FFT<2> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       // Create wavelist 
-      WaveList<2> wavelist;
+      Cuda::WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       double ds = 0.5;
@@ -348,13 +354,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<3> block;
+      Pscf::Rp::Block<3, Rpg::Types<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3> fft;
+      Cuda::FFT<3> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -366,7 +372,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Construct wavelist
-      WaveList<3> wavelist;
+      Cuda::WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -402,13 +408,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<1> block;
+      Pscf::Rp::Block<1, Rpg::Types<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      Cuda::FFT<1> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -417,7 +423,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Construct wavelist
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -502,20 +508,20 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Pscf::Rpg::Block<1> block;
+      Pscf::Rp::Block<1, Rpg::Types<1> > block;
       setupBlock<1>(block);
       int nBead = block.nBead();
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      Cuda::FFT<1> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       double ds = 1.00;
@@ -611,13 +617,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<2> block;
+      Pscf::Rp::Block<2, Rpg::Types<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      Cuda::FFT<2> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -627,7 +633,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Construct wavelist
-      WaveList<2> wavelist;
+      Cuda::WaveList<2> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -719,13 +725,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rpg::Block<3> block;
+      Pscf::Rp::Block<3, Rpg::Types<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3> fft;
+      Cuda::FFT<3> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -736,7 +742,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Construct wavelist
-      WaveList<3> wavelist;
+      Cuda::WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block

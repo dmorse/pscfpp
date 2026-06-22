@@ -7,16 +7,16 @@
 
 #include "Mixture.h"               // class header
 
-#include "Polymer.h"
-#include "Solvent.h"
-#include "Block.h"
-#include "Propagator.h"
+#include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
+#include <rpg/solvers/Block.h>
+#include <rpg/solvers/Propagator.h>
 #include <rpg/field/FieldIo.h>
 #include <prdc/cuda/FFT.h>
 #include <prdc/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 
-#include <rp/solvers/Mixture.tpp>  // base class template implementation
+#include <rp/solvers/Mixture.tpp>        // base class template implementation
 
 namespace Pscf {
 namespace Rpg {

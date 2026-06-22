@@ -7,6 +7,7 @@
 #include <rpc/solvers/Block.h>
 #include <rpc/solvers/Propagator.h>
 
+#include <prdc/cpu/RField.h>
 #include <prdc/cpu/FFT.h>
 #include <prdc/cpu/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
@@ -37,7 +38,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D> 
-   void setupBlock(Block<D>& block)
+   void setupBlock(Rp::Block<D, Types<D> >& block)
    {
       block.setId(0);
       if (PolymerModel::isThread()) {
@@ -89,14 +90,14 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      Cpu::FFT<1> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1> waveList;
+      Cpu::WaveList<1> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -124,14 +125,14 @@ public:
 
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      Cpu::FFT<2> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2> waveList;
+      Cpu::WaveList<2> waveList;
       waveList.allocate(mesh, unitCell);
 
       block.associate(mesh, fft, unitCell, waveList);
@@ -159,14 +160,14 @@ public:
 
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3> fft;
+      Cpu::FFT<3> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
-      WaveList<3> waveList;
+      Cpu::WaveList<3> waveList;
       waveList.allocate(mesh, unitCell);
 
       // Associate block
@@ -200,13 +201,13 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      Cpu::FFT<1> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1> waveList;
+      Cpu::WaveList<1> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -220,7 +221,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
-      RField<1> w;
+      Cpu::RField<1> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -242,13 +243,13 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      Cpu::FFT<2> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2> waveList;
+      Cpu::WaveList<2> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -263,7 +264,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2> w;
+      Cpu::RField<2> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -287,13 +288,13 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      Cpu::FFT<2> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2> waveList;
+      Cpu::WaveList<2> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.5;
@@ -308,7 +309,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2> w;
+      Cpu::RField<2> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -331,13 +332,13 @@ public:
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      FFT<3> fft;
+      Cpu::FFT<3> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
-      WaveList<3> waveList;
+      Cpu::WaveList<3> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -353,7 +354,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      RField<3> w;
+      Cpu::RField<3> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -375,14 +376,14 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      Cpu::FFT<1> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
       double a = unitCell.parameter(0);
 
-      WaveList<1> waveList;
+      Cpu::WaveList<1> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -394,7 +395,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      RField<1> w;
+      Cpu::RField<1> w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -407,8 +408,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<1> qin;
-      RField<1> qout;
+      Cpu::RField<1> qin;
+      Cpu::RField<1> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -456,13 +457,13 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      Cpu::FFT<1> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1> waveList;
+      Cpu::WaveList<1> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 1.00;
@@ -475,7 +476,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      RField<1> w;
+      Cpu::RField<1> w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -488,8 +489,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<1> qin;
-      RField<1> qout;
+      Cpu::RField<1> qin;
+      Cpu::RField<1> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -555,13 +556,13 @@ public:
       Mesh<2> mesh;
       setupMesh<2>(mesh);
 
-      FFT<2> fft;
+      Cpu::FFT<2> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2> waveList;
+      Cpu::WaveList<2> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -576,7 +577,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2> w;
+      Cpu::RField<2> w;
       w.allocate(mesh.dimensions());
       MeshIterator<2> iter(mesh.dimensions());
 
@@ -590,8 +591,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<2> qin;
-      RField<2> qout;
+      Cpu::RField<2> qin;
+      Cpu::RField<2> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -648,13 +649,13 @@ public:
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      FFT<3> fft;
+      Cpu::FFT<3> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
-      WaveList<3> waveList;
+      Cpu::WaveList<3> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -670,7 +671,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      RField<3> w;
+      Cpu::RField<3> w;
       w.allocate(mesh.dimensions());
       MeshIterator<3> iter(mesh.dimensions());
 
@@ -684,8 +685,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<3> qin;
-      RField<3> qout;
+      Cpu::RField<3> qin;
+      Cpu::RField<3> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 

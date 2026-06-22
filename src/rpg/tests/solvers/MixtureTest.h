@@ -6,14 +6,24 @@
 
 #include <rpg/solvers/Mixture.h>
 #include <rpg/solvers/Polymer.h>
+#include <rpg/solvers/Solvent.h>
 #include <rpg/solvers/Block.h>
 #include <rpg/solvers/Propagator.h>
+
+#include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/cudaTypes.h>
+
+#include <prdc/cuda/RField.h>
+#include <prdc/cuda/FFT.h>
+#include <prdc/cuda/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
+
+#include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
+
 #include <util/math/Constants.h>
 
-#include <prdc/cuda/resources.h>
 
 #include <fstream>
 
@@ -70,9 +80,9 @@ public:
 
       Mixture<1> mixture;
       Mesh<1> mesh;
-      FFT<1> fft;
+      Cuda::FFT<1> fft;
       UnitCell<1> unitCell;
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
       IntVec<1> d;
 
       // Read parameter block, unit cell and mesh dimensions
@@ -92,8 +102,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1> > wFields;
-      DArray< RField<1> > cFields;
+      DArray< Cuda::RField<1> > wFields;
+      DArray< Cuda::RField<1> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -154,9 +164,9 @@ public:
       // Set up associated objects and allocate
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      FFT<1> fft;
+      Cuda::FFT<1> fft;
       fft.setup(d);
-      WaveList<1> wavelist;
+      Cuda::WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, wavelist);
       mixture.allocate();
@@ -179,8 +189,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1> > wFields;
-      DArray< RField<1> > cFields;
+      DArray< Cuda::RField<1> > wFields;
+      DArray< Cuda::RField<1> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -231,9 +241,9 @@ public:
 
       Mixture<2> mixture;
       Mesh<2> mesh;
-      FFT<2> fft;
+      Cuda::FFT<2> fft;
       UnitCell<2> unitCell;
-      WaveList<2> wavelist;
+      Cuda::WaveList<2> wavelist;
       IntVec<2> d;
 
       // Read parameter block, unit cell and mesh dimensions
@@ -254,8 +264,8 @@ public:
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
 
       // Allocate w and c field arrays on device and host
-      DArray< RField<2> > wFields;
-      DArray< RField<2> > cFields;
+      DArray< Cuda::RField<2> > wFields;
+      DArray< Cuda::RField<2> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -312,8 +322,8 @@ public:
       printMethod(TEST_FUNC);
       Mixture<2> mixture;
       Mesh<2> mesh;
-      FFT<2> fft;
-      WaveList<2> wavelist;
+      Cuda::FFT<2> fft;
+      Cuda::WaveList<2> wavelist;
       IntVec<2> d;
 
       // Read file: param block, unit cell and mesh dimensions
@@ -335,8 +345,8 @@ public:
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
 
       // Allocate w and c field arrays on device and host
-      DArray< RField<2> > wFields;
-      DArray< RField<2> > cFields;
+      DArray< Cuda::RField<2> > wFields;
+      DArray< Cuda::RField<2> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -408,11 +418,11 @@ public:
 
       Mesh<3> mesh;
       mesh.setDimensions(d);
-      FFT<3> fft;
+      Cuda::FFT<3> fft;
       fft.setup(d);
 
       // Construct wavelist
-      WaveList<3> wavelist;
+      Cuda::WaveList<3> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Set up mixture
@@ -420,8 +430,8 @@ public:
       mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<3> > wFields;
-      DArray< RField<3> > cFields;
+      DArray< Cuda::RField<3> > wFields;
+      DArray< Cuda::RField<3> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
