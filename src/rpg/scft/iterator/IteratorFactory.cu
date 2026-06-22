@@ -12,7 +12,7 @@
 #include "AmIteratorGrid.h"
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
 
@@ -20,7 +20,7 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   IteratorFactory<D>::IteratorFactory(System<D>& system)
+   IteratorFactory<D, Rpg::Types<D> >::IteratorFactory(Rpg::System<D>& system)
     : sysPtr_(&system)
    {}
 
@@ -28,10 +28,11 @@ namespace Rpg {
    * Return a pointer to a instance of Iterator subclass className.
    */
    template <int D>
-   Rp::Iterator<D, Rpg::Types<D> >* IteratorFactory<D>::factory(std::string const& className) 
+   Iterator<D, Rpg::Types<D> >* 
+   IteratorFactory<D, Rpg::Types<D> >::factory(std::string const& className) 
    const
    {
-      Rp::Iterator<D, Rpg::Types<D> >* ptr = 0;
+      Iterator<D, Rpg::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);
@@ -39,10 +40,10 @@ namespace Rpg {
  
       // Try to match classname
       if (className == "Iterator" || className == "AmIteratorBasis") {
-         ptr = new Rp::AmIteratorBasis<D, Rpg::Types<D> >(*sysPtr_);
+         ptr = new AmIteratorBasis<D, Rpg::Types<D> >(*sysPtr_);
       } else 
       if (className == "AmIteratorGrid") {
-         ptr = new Rp::AmIteratorGrid<D, Rpg::Types<D> >(*sysPtr_);
+         ptr = new AmIteratorGrid<D, Rpg::Types<D> >(*sysPtr_);
       }
 
       return ptr;
@@ -53,9 +54,9 @@ namespace Rpg {
 
 // Explicit instantiation definitions
 namespace Pscf {
-   namespace Rpg {
-      template class IteratorFactory<1>;
-      template class IteratorFactory<2>;
-      template class IteratorFactory<3>;
+   namespace Rp {
+      template class IteratorFactory<1, Rpg::Types<1> >;
+      template class IteratorFactory<2, Rpg::Types<2> >;
+      template class IteratorFactory<3, Rpg::Types<3> >;
    }
 }

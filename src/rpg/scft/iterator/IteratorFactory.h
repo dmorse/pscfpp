@@ -15,11 +15,19 @@
 #include <string>
 
 namespace Pscf {
-namespace Rpg {
+   namespace Rp {
+      template <int D, class T> class IteratorFactory;
+   }
+   namespace Rpg {
+      template <int D> class System;
+   }
+}
+
+namespace Pscf {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Factory for subclasses of Iterator.
@@ -28,7 +36,8 @@ namespace Rpg {
    */
 
    template <int D>
-   class IteratorFactory : public Factory< Rp::Iterator<D, Rpg::Types<D> > > 
+   class IteratorFactory<D, Rpg::Types<D> > 
+     : public Factory< Iterator<D, Rpg::Types<D> > > 
    {
 
    public:
@@ -38,7 +47,7 @@ namespace Rpg {
       *
       * \param system  parent system
       */
-      IteratorFactory(System<D>& system);
+      IteratorFactory(Rpg::System<D>& system);
 
       /**
       * Method to create any Iterator supplied with PSCF.
@@ -46,23 +55,23 @@ namespace Rpg {
       * \param className name of the Iterator subclass
       * \return Iterator* pointer to new instance of className
       */
-      Rp::Iterator<D, Rpg::Types<D> >* factory(const std::string &className) const;
+      Iterator<D, Rpg::Types<D> >* factory(const std::string &className) const;
 
       // Inherited member functions
-      using Factory< Rp::Iterator<D, Rpg::Types<D> > >::trySubfactories;
-      using Factory< Rp::Iterator<D, Rpg::Types<D> > >::readObjectOptional;
+      using Factory< Iterator<D, Rpg::Types<D> > >::trySubfactories;
+      using Factory< Iterator<D, Rpg::Types<D> > >::readObjectOptional;
 
    private:
 
       /// Pointer to the parent system object.
-      System<D>* sysPtr_;
+      Rpg::System<D>* sysPtr_;
 
    };
 
    // Explicit instantiation declarations
-   extern template class IteratorFactory<1>;
-   extern template class IteratorFactory<2>;
-   extern template class IteratorFactory<3>;
+   extern template class IteratorFactory<1, Rpg::Types<1> >;
+   extern template class IteratorFactory<2, Rpg::Types<2> >;
+   extern template class IteratorFactory<3, Rpg::Types<3> >;
 
 }
 }

@@ -12,7 +12,7 @@
 #include "AmIteratorGrid.h"
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
 
@@ -20,7 +20,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   IteratorFactory<D>::IteratorFactory(System<D>& system)
+   IteratorFactory<D, Rpc::Types<D> >::IteratorFactory(Rpc::System<D>& system)
     : sysPtr_(&system)
    {}
 
@@ -28,7 +28,8 @@ namespace Rpc {
    * Return a pointer to a instance of Iterator subclass className.
    */
    template <int D>
-   Rp::Iterator<D, Rpc::Types<D> >* IteratorFactory<D>::factory(const std::string &className) 
+   Iterator<D, Rpc::Types<D> >* 
+   IteratorFactory<D, Rpc::Types<D> >::factory(const std::string &className) 
    const
    {
       Rp::Iterator<D, Rpc::Types<D> >* ptr = nullptr;
@@ -54,9 +55,9 @@ namespace Rpc {
 
 // Explicit instantiation definitions
 namespace Pscf {
-namespace Rpc {
-   template class IteratorFactory<1>;
-   template class IteratorFactory<2>;
-   template class IteratorFactory<3>;
+namespace Rp {
+   template class IteratorFactory<1, Rpc::Types<1> >;
+   template class IteratorFactory<2, Rpc::Types<2> >;
+   template class IteratorFactory<3, Rpc::Types<3> >;
 }
 }

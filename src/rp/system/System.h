@@ -633,7 +633,7 @@ namespace Rp {
       /**
       * Pointer to an Iterator factory object.
       */
-      typename T::IteratorFactory* iteratorFactoryPtr_;
+      IteratorFactory<D,T>* iteratorFactoryPtr_;
 
       /**
       * Pointer to an SCFT Sweep object.

@@ -9,14 +9,24 @@
 */
 
 #include <rpc/scft/iterator/Iterator.h>
+#include <rpc/system/Types.h>
 #include <util/param/Factory.h>  
 
 #include <string>
 
+// Forward declaration
 namespace Pscf {
-namespace Rpc {
+   namespace Rp {
+      template <int D, class T> class IteratorFactory;
+   }
+   namespace Rpc {
+      template <int D> class System;
+   }
+}
 
-   template <int D> class System;
+namespace Pscf {
+namespace Rp {
+
 
    using namespace Util;
 
@@ -27,7 +37,8 @@ namespace Rpc {
    */
 
    template <int D>
-   class IteratorFactory : public Factory< Rp::Iterator<D, Rpc::Types<D> > > 
+   class IteratorFactory<D, Rpc::Types<D> > 
+    : public Factory< Rp::Iterator<D, Rpc::Types<D> > > 
    {
 
    public:
@@ -37,7 +48,7 @@ namespace Rpc {
       *
       * \param system  parent System
       */
-      IteratorFactory(System<D>& system);
+      IteratorFactory(Rpc::System<D>& system);
 
       /**
       * Method to create any Iterator supplied with PSCF.
@@ -54,14 +65,14 @@ namespace Rpc {
    private:
 
       /// Pointer to the parent system.
-      System<D>* sysPtr_;
+      Rpc::System<D>* sysPtr_;
 
    };
 
    // Explicit instantiation declarations
-   extern template class IteratorFactory<1>;
-   extern template class IteratorFactory<2>;
-   extern template class IteratorFactory<3>;
+   extern template class IteratorFactory<1, Rpc::Types<1> >;
+   extern template class IteratorFactory<2, Rpc::Types<2> >;
+   extern template class IteratorFactory<3, Rpc::Types<3> >;
 
 }
 }
