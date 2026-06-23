@@ -52,10 +52,12 @@ namespace Rpg {
 
    protected:
 
+      #if 0
       /**
       * Initialize seed for vector random number generator.
       */
       void initializeVecRandom();
+      #endif
 
    };
 

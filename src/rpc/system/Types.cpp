@@ -7,6 +7,8 @@
 
 
 #include "Types.h"
+#include <pscf/cpu/CpuVecRandom.h>
+#include <util/random/Random.h>
 
 namespace Pscf {
 namespace Rpc {
@@ -23,6 +25,24 @@ namespace Rpc {
    */
    template <int D>
    void Types<D>::setThreadCount(int nThread)
+   {}
+
+   /*
+   * Associate vector and scalar random number generators, if needed.
+   *
+   * GPU-enabled code would instead do nothing.
+   */
+   template <int D>
+   void Types<D>::linkVecRandom(VecRandom& vr, Random & sr)
+   {  vr.associate(sr); }
+
+   /*
+   * Set vector RNG seed, if needed (do nothing for CPU code).
+   *
+   * GPU-enabled code would instead set the seed.
+   */
+   template <int D>
+   void Types<D>::seedVecRandom(VecRandom& vr, long seed)
    {}
 
    // Explicit instantiation definitions

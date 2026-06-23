@@ -32,13 +32,15 @@
 
 namespace Pscf {
    namespace Rpc {
-   
+
       // Constructor.
       template <int D>
       Simulator<D>::Simulator(Rp::System<D, Rpc::Types<D> >& system)
        : RpSimulator(system, *this)
-      {  RpSimulator::vecRandom().associate(RpSimulator::random()); }
-   
+      {
+         //RpSimulator::vecRandom().associate(RpSimulator::random());
+      }
+
    }
 }
 

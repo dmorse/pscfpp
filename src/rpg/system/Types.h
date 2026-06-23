@@ -11,6 +11,9 @@
 #include <pscf/cuda/cudaTypes.h>
 
 // Forward declarations
+namespace Util {
+   class Random;
+}
 namespace Pscf {
    class CudaVecRandom;
    template <typename T> class DeviceArray;
@@ -178,6 +181,29 @@ namespace Rpg {
       * \param nThread  number of threads
       */
       static void setThreadCount(int nThread);
+
+      /**
+      * Link vector and scalar random number generators, if needed.
+      *
+      * The Cuda GPU implementation does nothing, because the host and
+      * device RNGs are independent.
+      *
+      * \param vr  vector RNG
+      * \param sr  scalar RNG
+      */
+      static
+      void linkVecRandom(VecRandom& vr, Random & sr);
+
+      /**
+      * Set the vector random number generator seed, if needed.
+      *
+      * The Cuda GPU implementation sets a seed for the device RNG.
+      *
+      * \param vr  vector RNG to be initialized
+      * \param seed  random seed value
+      */
+      static
+      void seedVecRandom(VecRandom& vr, long seed);
 
    };
 

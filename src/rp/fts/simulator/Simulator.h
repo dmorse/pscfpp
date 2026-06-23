@@ -85,10 +85,26 @@ namespace Rp {
       /// Container for a real-valued periodic field
       using RFieldT = typename T::RField;
 
-      // Protected constructor and destructor (see below).
-
-      /// \name Initialization
+      /// \name Construction, destruction and initialization
       ///@{
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System
+      * \param simulator  enclosing instance of a subclass
+      */
+      Simulator(System<D,T>& system, 
+                typename T::Simulator& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~Simulator();
+
+      // Prohibit copying and assignment.
+      Simulator(Simulator<D,T> const &) = delete;
+      Simulator<D,T>& operator = (Simulator<D,T> const &) = delete;
 
       /**
       * Read parameters for a simulation.
@@ -105,10 +121,12 @@ namespace Rp {
       /**
       * Allocate required memory during initialization.
       *
-      * Values of nMonomer and the mesh dimensions must be defined in
-      * Mixture and Domain members of the parent System on entry. This
-      * function should be called by the readParameters method of any
-      * subclass. Made public to allow use in unit tests.
+      * This function must be called by the readParameters method of any
+      * subclass. Declared as public to also allow use in unit tests.
+      *
+      * Preconditions: Values of nMonomer and the mesh dimensions must
+      * be defined in Mixture and Domain members of the parent System on 
+      * entry.
       */
       void allocate();
 
@@ -605,37 +623,11 @@ namespace Rp {
       // Protected member functions
 
       /**
-      * Constructor.
-      *
-      * \param system  parent System
-      * \param simulator  enclosing instance of a subclass
-      */
-      Simulator(System<D,T>& system, 
-                typename T::Simulator& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~Simulator();
-
-      // Prohibit copying and assignment.
-      Simulator(Simulator<D,T> const &) = delete;
-      Simulator<D,T>& operator = (Simulator<D,T> const &) = delete;
-
-      /**
       * Optionally read a random seed and initialize RNGs.
       *
       * \param in  input parameter stream
       */
       void readRandomSeed(std::istream& in);
-
-      /**
-      * Initialize the vector RNG.
-      *  
-      * Empty default implementation can be used by Rpc::Simulator<D>.
-      */
-      virtual void initializeVecRandom()
-      {};
 
       /**
       * Get the Compressor factory by reference.

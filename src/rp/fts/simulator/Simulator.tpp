@@ -59,6 +59,8 @@ namespace Rp {
       perturbationFactoryPtr_ 
              = new typename T::PerturbationFactory(simulator);
       rampFactoryPtr_ = new typename T::RampFactory(simulator);
+
+      T::linkVecRandom(vecRandom(), random());
    }
 
    /*
@@ -709,7 +711,9 @@ namespace Rp {
       // Set random number generator seeds on CPU and GPU
       // Default value seed_ = 0 uses the clock time.
       random().setSeed(seed_);
-      initializeVecRandom();
+
+      T::seedVecRandom(vecRandom(), seed_);
+      // CPU version does nothing, GPU version sets the seed.
    }
 
    // Functions related to a Compressor

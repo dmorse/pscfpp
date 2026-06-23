@@ -30,9 +30,36 @@ namespace Rpg {
       ThreadMesh::setThreadsPerBlock(nThread);
    }
 
+   /*
+   * Initialize the random number generator.
+   */
+   template <int D>
+   void Types<D>::initVecRandom(VecRandom& vr, Random & r, long seed)
+   {  vr.setSeed(seed); }
+
+   /*
+   * Link vector and scalar random number generators, if needed.
+   *
+   * GPU implementation does nothing, because host and device RNGs are
+   * are independent in this case.
+   */
+   template <int D>
+   void Types<D>::linkVecRandom(VecRandom& vr, Random & sr)
+   {}
+
+   /*
+   * Set vector RNG seed, if needed (do nothing for CPU code).
+   *
+   * GPU implementation sets the seed for the GPU vector RNG.
+   */
+   template <int D>
+   void Types<D>::seedVecRandom(VecRandom& vr, long seed)
+   {  vr.setSeed(seed); }
+
    // Explicit instantiation definitions
    template class Types<1>;
    template class Types<2>;
    template class Types<3>;
+
 }
 }

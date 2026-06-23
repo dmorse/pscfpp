@@ -44,12 +44,14 @@ namespace Rpg {
     : Base(system, *this)
    {}
 
+   #if 0
    /*
    * Initialize the GPU vector random number generator.
    */
    template <int D>
    void Simulator<D>::initializeVecRandom()
    {  Base::vecRandom().setSeed(Base::seed_); }
+   #endif
 
 }
 }
