@@ -329,7 +329,7 @@ public:
       SweepTest::SetUpSystem(system, "in/" + paramname + "/param");
       
       // Read expected w fields
-      DArray< BasisFieldState<1> > fieldsRef;
+      DArray< Rp::BasisFieldState<1, Rpc::Types<1> > > fieldsRef;
       fieldsRef.allocate(5);
       for (int i = 0; i < 5; ++i) {
          fieldsRef[i].setSystem(system);
@@ -347,7 +347,7 @@ public:
       }
 
       // Read outputted fields
-      DArray< BasisFieldState<1> > fieldsOut;
+      DArray< Rp::BasisFieldState<1, Rpc::Types<1> > > fieldsOut;
       fieldsOut.allocate(5);
       for (int i = 0; i < 5; ++i) {
          fieldsOut[i].setSystem(system);

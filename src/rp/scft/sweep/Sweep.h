@@ -18,6 +18,7 @@
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
+      template <int D, class T> class BasisFieldState;
    }
 }
 
@@ -43,7 +44,7 @@ namespace Rp {
    * \ingroup Rp_Scft_Sweep_Module
    */
    template <int D, class T>
-   class Sweep : public SweepTmpl< typename T::BasisFieldState >
+   class Sweep : public SweepTmpl< BasisFieldState<D,T> >
    {
 
    public:
@@ -88,7 +89,7 @@ namespace Rp {
       *
       * \param state  stored state of the system
       */
-      virtual void checkAllocation(typename T::BasisFieldState& state);
+      virtual void checkAllocation(BasisFieldState<D,T>& state);
 
       /**
       * Setup operation at the beginning of a sweep.
@@ -181,7 +182,7 @@ namespace Rp {
    private:
 
       /// Trial state (produced by continuation in setGuess)
-      typename T::BasisFieldState trial_;
+      BasisFieldState<D,T> trial_;
 
       /// Unit cell parameters for trial state
       FSArray<double, 6> unitCellParameters_;
@@ -199,7 +200,7 @@ namespace Rp {
       void outputSummary(std::ostream&);
 
       // Private alias for base class.
-      using SweepTmplT = SweepTmpl< typename T::BasisFieldState >;
+      using SweepTmplT = SweepTmpl< BasisFieldState<D,T> >;
 
    };
 

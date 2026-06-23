@@ -47,6 +47,20 @@ namespace Rp {
    public:
 
       /**
+      * Default constructor.
+      */
+      BasisFieldState();
+
+      /**
+      * Constructor, create association with a parent system.
+      *
+      * \param system associated parent system
+      */
+      BasisFieldState(System<D,T>& system);
+
+      ~BasisFieldState() = default;
+
+      /**
       * Allocate all fields.
       *
       * Precondition: hasSystem() == true
@@ -88,22 +102,6 @@ namespace Rp {
       using FieldStateT::field;
       using FieldStateT::unitCell;
       using FieldStateT::system;
-
-   protected:
-
-      /**
-      * Default constructor.
-      */
-      BasisFieldState();
-
-      /**
-      * Constructor, create association with a parent system.
-      *
-      * \param system associated parent system
-      */
-      BasisFieldState(System<D,T>& system);
-
-      ~BasisFieldState() = default;
 
    private:
 

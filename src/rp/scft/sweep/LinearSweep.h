@@ -15,6 +15,12 @@
 #include <iostream>
 
 namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class BasisFieldState;
+   }
+}
+
+namespace Pscf {
 namespace Rp {
 
    using namespace Util;
@@ -79,7 +85,7 @@ namespace Rp {
 
       // Typename aliases
       using SweepParameterT = typename T::SweepParameter;
-      using BasisFieldStateT = typename T::BasisFieldState;
+      using BasisFieldStateT = BasisFieldState<D,T>;
       using SweepTmplT = SweepTmpl< BasisFieldStateT >;
 
       /// Number of parameters being swept.

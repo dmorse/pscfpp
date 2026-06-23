@@ -90,7 +90,7 @@ namespace Rp {
    * Check allocation of one state object, allocate if necessary.
    */
    template <int D, class T>
-   void Sweep<D,T>::checkAllocation(typename T::BasisFieldState& state)
+   void Sweep<D,T>::checkAllocation(BasisFieldState<D,T>& state)
    {
       UTIL_CHECK(hasSystem());
       state.setSystem(system());

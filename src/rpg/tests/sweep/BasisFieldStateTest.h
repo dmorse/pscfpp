@@ -34,8 +34,8 @@ public:
       printMethod(TEST_FUNC);
 
       Rp::System<3, Rpg::Types<3> > system;
-      BasisFieldState<3> bfs1(system);
-      BasisFieldState<3> bfs2;
+      Rp::BasisFieldState<3, Rpg::Types<3> > bfs1(system);
+      Rp::BasisFieldState<3, Rpg::Types<3> > bfs2;
    }
 
    void testRead()
@@ -43,7 +43,7 @@ public:
       printMethod(TEST_FUNC);
       
       Rp::System<3, Rpg::Types<3> > system;
-      BasisFieldState<3> bfs(system);
+      Rp::BasisFieldState<3, Rpg::Types<3> > bfs(system);
       BFieldComparison comparison;
    
       // Setup system
@@ -66,7 +66,7 @@ public:
       printMethod(TEST_FUNC);
 
       Rp::System<3, Rpg::Types<3> > system;
-      BasisFieldState<3> bfs1(system), bfs2(system);
+      Rp::BasisFieldState<3, Rpg::Types<3> > bfs1(system), bfs2(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -88,7 +88,7 @@ public:
       printMethod(TEST_FUNC);
 
       Rp::System<3, Rpg::Types<3> > system;
-      BasisFieldState<3> bfs(system);
+      Rp::BasisFieldState<3, Rpg::Types<3> > bfs(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -109,7 +109,7 @@ public:
       printMethod(TEST_FUNC);
 
       Rp::System<3, Rpg::Types<3> > system;
-      BasisFieldState<3> bfs(system);
+      Rp::BasisFieldState<3, Rpg::Types<3> > bfs(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -130,7 +130,7 @@ public:
       printMethod(TEST_FUNC);
 
       Rp::System<3, Rpg::Types<3> > system;
-      BasisFieldState<3> bfs;
+      Rp::BasisFieldState<3, Rpg::Types<3> > bfs;
 
       // Setup system
       BasisFieldStateTest::SetUpSystem(system);
