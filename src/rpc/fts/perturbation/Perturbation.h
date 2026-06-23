@@ -43,7 +43,7 @@ namespace Rpc {
       *
       * \param simulator  parent Simulator object
       */
-      Perturbation(Simulator<D>& simulator);
+      Perturbation(Rp::Simulator<D, Rpc::Types<D> >& simulator);
 
       /**
       * Destructor.

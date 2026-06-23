@@ -68,7 +68,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param1_simulator");
-      Simulator<3> simulator(system);
+      Rp::Simulator<3, Rpg::Types<3> > simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
@@ -108,7 +108,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param1_simulator");
-      Simulator<3> simulator(system);
+      Rp::Simulator<3, Rpg::Types<3> > simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
@@ -216,7 +216,7 @@ public:
       printMethod(TEST_FUNC);
       
       initSystem("in/param_system_disordered");
-      Simulator<3> simulator(system);
+      Rp::Simulator<3, Rpg::Types<3> > simulator(system);
       
       simulator.allocate();
       simulator.analyzeChi();
@@ -254,7 +254,7 @@ public:
       printMethod(TEST_FUNC);
       
       initSystem("in/param_system_disordered");
-      Simulator<3> simulator(system);
+      Rp::Simulator<3, Rpg::Types<3> > simulator(system);
       
       simulator.allocate();
       simulator.analyzeChi();

@@ -70,7 +70,7 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      TrajectoryWriter(typename T::Simulator& simulator, 
+      TrajectoryWriter(Simulator<D,T>& simulator, 
                        System<D,T>& system);
 
       /**

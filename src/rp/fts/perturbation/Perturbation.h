@@ -2,6 +2,7 @@
 #define RP_PERTURBATION_H
 
 #include <util/param/ParamComposite.h>      // base class
+#include <util/global.h>
 
 // Forward declarations
 namespace Util {  
@@ -107,9 +108,9 @@ namespace Rp {
       virtual double df();
 
       /**
-      * Get parent typename T::Simulator by const reference.
+      * Get parent Simulator<D,T> by const reference.
       */
-      typename T::Simulator const & simulator() const;
+      Simulator<D,T> const & simulator() const;
 
       /**
       * Get parent System<D,T> by const reference.
@@ -139,7 +140,7 @@ namespace Rp {
       *
       * \param simulator  parent Simulator object
       */
-      Perturbation(typename T::Simulator& simulator);
+      Perturbation(Simulator<D,T>& simulator);
 
       /**
       * Destructor.
@@ -149,7 +150,7 @@ namespace Rp {
       /**
       * Get parent Simulator by non-const reference.
       */
-      typename T::Simulator& simulator();
+      Simulator<D,T>& simulator();
 
       /**
       * Get parent System by non-const reference.
@@ -164,7 +165,7 @@ namespace Rp {
    private:
 
       /// Pointer to parent Simulator.
-      typename T::Simulator* simulatorPtr_;
+      Simulator<D,T>* simulatorPtr_;
 
       /// Pointer to parent System.
       System<D,T>* systemPtr_;
@@ -174,34 +175,34 @@ namespace Rp {
    // Inline methods
 
    // Return parent simulator by const reference.
-   template <int D, class T>
-   inline typename T::Simulator const & Perturbation<D,T>::simulator() const
+   template <int D, class T> inline 
+   Simulator<D,T> const & Perturbation<D,T>::simulator() const
    {
-      assert(simulatorPtr_);
+      UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
    }
 
    // Return parent simulator by non-const reference.
-   template <int D, class T>
-   inline typename T::Simulator & Perturbation<D,T>::simulator()
+   template <int D, class T> inline 
+   Simulator<D,T> & Perturbation<D,T>::simulator()
    {
-      assert(simulatorPtr_);
+      UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
    }
 
    // Return parent simulator by const reference.
-   template <int D, class T>
-   inline System<D,T> const & Perturbation<D,T>::system() const
+   template <int D, class T> inline 
+   System<D,T> const & Perturbation<D,T>::system() const
    {
-      assert(systemPtr_);
+      UTIL_ASSERT(systemPtr_);
       return *systemPtr_;
    }
 
    // Return parent simulator by non-const reference.
-   template <int D, class T>
-   inline System<D,T> & Perturbation<D,T>::system()
+   template <int D, class T> inline 
+   System<D,T> & Perturbation<D,T>::system()
    {
-      assert(systemPtr_);
+      UTIL_ASSERT(systemPtr_);
       return *systemPtr_;
    }
 

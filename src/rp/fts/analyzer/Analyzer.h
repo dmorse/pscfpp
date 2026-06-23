@@ -12,6 +12,7 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
+      template <int D, class T> class Simulator;
    }
 }
 

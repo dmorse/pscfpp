@@ -18,9 +18,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declaration
-   template <int D> class System;
-
    // Namespaces that can be used implicitly
    using namespace Util;
    using namespace Prdc;

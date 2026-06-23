@@ -78,7 +78,7 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      MaxOrderParameter(typename T::Simulator& simulator, 
+      MaxOrderParameter(Simulator<D,T>& simulator, 
                         System<D,T>& system);
 
       /**

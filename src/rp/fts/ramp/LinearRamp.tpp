@@ -13,7 +13,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   LinearRamp<D,T>::LinearRamp(typename T::Simulator& simulator)
+   LinearRamp<D,T>::LinearRamp(Simulator<D,T>& simulator)
     : RampT(simulator)
    {  ParamComposite::setClassName("LinearRamp"); }
 

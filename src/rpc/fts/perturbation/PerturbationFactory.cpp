@@ -21,7 +21,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   PerturbationFactory<D>::PerturbationFactory(Simulator<D>& simulator)
+   PerturbationFactory<D>::PerturbationFactory(Rp::Simulator<D, Rpc::Types<D> >& simulator)
     : simulatorPtr_(&simulator)
    {}
 

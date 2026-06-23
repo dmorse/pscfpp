@@ -48,7 +48,7 @@ namespace Rpg {
       *
       * \param simulator  parent Simulator
       */
-      RampParameter(Simulator<D>& simulator);
+      RampParameter(Rp::Simulator<D, Rpg::Types<D> >& simulator);
 
    };
 

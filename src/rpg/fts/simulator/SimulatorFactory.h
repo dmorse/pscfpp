@@ -26,7 +26,7 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Simulator_Module
    */
    template <int D>
-   class SimulatorFactory : public Factory< Simulator<D> > 
+   class SimulatorFactory : public Factory< Rp::Simulator<D, Rpg::Types<D> > > 
    {
 
    public:
@@ -44,10 +44,10 @@ namespace Rpg {
       * \param className name of the Simulator subclass
       * \return Simulator* pointer to new instance of className
       */
-      Simulator<D>* factory(const std::string &className) const;
+      Rp::Simulator<D, Rpg::Types<D> >* factory(const std::string &className) const;
 
-      using Factory< Simulator<D> >::trySubfactories;
-      using Factory< Simulator<D> >::readObjectOptional;
+      using Factory< Rp::Simulator<D, Rpg::Types<D> > >::trySubfactories;
+      using Factory< Rp::Simulator<D, Rpg::Types<D> > >::readObjectOptional;
 
    private:
 

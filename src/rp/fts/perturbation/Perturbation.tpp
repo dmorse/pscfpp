@@ -18,7 +18,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   Perturbation<D,T>::Perturbation(typename T::Simulator& simulator)
+   Perturbation<D,T>::Perturbation(Simulator<D,T>& simulator)
     : ParamComposite(),
       lambda_(1.0),
       simulatorPtr_(&simulator),

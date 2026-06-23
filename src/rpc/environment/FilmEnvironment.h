@@ -22,12 +22,18 @@
 #include "FilmFieldGenExt.h"
 #include <prdc/environment/MixAndMatchEnv.h>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+      template <int D, class T> class Simulator;
+   }
+}
+
 namespace Pscf {
 namespace Rpc {
 
    using namespace Util;
-
-   template <int D> class System;
 
    /**
    * Class defining mask & external fields for thin-film systems.

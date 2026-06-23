@@ -23,7 +23,7 @@ namespace Rpg {
    // Constructor.
    template <int D>
    EinsteinCrystalPerturbation<D>::EinsteinCrystalPerturbation(
-                                                  Simulator<D>& simulator)
+                                                  Rp::Simulator<D, Rpg::Types<D> >& simulator)
     : Rp::EinsteinCrystalPerturbation<D, Types<D> >(simulator)
    {}
 

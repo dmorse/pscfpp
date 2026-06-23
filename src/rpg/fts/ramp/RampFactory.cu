@@ -20,7 +20,7 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   RampFactory<D>::RampFactory(Simulator<D>& simulator)
+   RampFactory<D>::RampFactory(Rp::Simulator<D, Rpg::Types<D> >& simulator)
     : simulatorPtr_(&simulator)
    {}
 

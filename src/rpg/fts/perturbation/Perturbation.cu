@@ -18,7 +18,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   Perturbation<D>::Perturbation(Simulator<D>& simulator)
+   Perturbation<D>::Perturbation(Rp::Simulator<D, Rpg::Types<D> >& simulator)
     : Rp::Perturbation<D, Types<D> > (simulator)
    {}
 

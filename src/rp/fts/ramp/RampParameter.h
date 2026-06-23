@@ -18,6 +18,7 @@
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
+      template <int D, class T> class Simulator;
    }
 }
 
@@ -120,7 +121,7 @@ namespace Rp {
       *
       * \param simulator  parent simulator
       */
-      void setSimulator(typename T::Simulator& simulator);
+      void setSimulator(Simulator<D,T>& simulator);
 
       /**
       * Get and store initial value this parameters.
@@ -216,7 +217,7 @@ namespace Rp {
       *
       * \param simulator  parent Simulator
       */
-      RampParameter(typename T::Simulator& simulator);
+      RampParameter(Simulator<D,T>& simulator);
 
       /**
       * Destructor.
@@ -246,7 +247,7 @@ namespace Rp {
       double change_;
 
       /// Pointer to the parent simulator
-      typename T::Simulator* simulatorPtr_;
+      Simulator<D,T>* simulatorPtr_;
 
       /// Pointer to the parent system
       System<D,T>* systemPtr_;

@@ -29,7 +29,7 @@ namespace Rp {
    */
    template <int D, class T>
    BinaryStructureFactor<D,T>::BinaryStructureFactor(
-                                typename T::Simulator& simulator,
+                                Simulator<D,T>& simulator,
                                 System<D,T>& system)
     : AnalyzerT(simulator, system),
       kMeshDimensions_(),

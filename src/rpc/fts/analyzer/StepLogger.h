@@ -15,10 +15,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declarations
-   template <int D> class Simulator;
-   template <int D> class System;
-
    using namespace Util;
 
    /**
@@ -45,7 +41,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      StepLogger(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
+      StepLogger(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

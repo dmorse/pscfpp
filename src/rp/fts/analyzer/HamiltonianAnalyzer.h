@@ -57,7 +57,7 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      HamiltonianAnalyzer(typename T::Simulator& simulator, 
+      HamiltonianAnalyzer(Simulator<D,T>& simulator, 
                           System<D,T>& system);
 
       /**

@@ -15,8 +15,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   template <int D> class Simulator;
-
    using namespace Util;
 
    /**
@@ -33,9 +31,9 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param simulator  parent Simulator<D> object
+      * \param simulator  parent Rp::Simulator<D, Rpc::Types<D> > object
       */
-      PerturbationFactory(Simulator<D>& simulator);
+      PerturbationFactory(Rp::Simulator<D, Rpc::Types<D> >& simulator);
 
       /**
       * Method to create any Perturbation supplied with PSCF.
@@ -50,7 +48,7 @@ namespace Rpc {
    private:
       
       /// Pointer to the parent simulator.
-      Simulator<D>* simulatorPtr_;
+      Rp::Simulator<D, Rpc::Types<D> >* simulatorPtr_;
 
    };
 

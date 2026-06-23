@@ -20,7 +20,7 @@ namespace Rp {
    */
    template <int D, class T>
    PerturbationDerivative<D,T>::PerturbationDerivative(
-                                        typename T::Simulator& simulator,
+                                        Simulator<D,T>& simulator,
                                         System<D,T>& system)
     : AverageAnalyzerT(simulator, system)
    {  ParamComposite::setClassName("PerturbationDerivative"); }

@@ -24,7 +24,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   AverageAnalyzer<D,T>::AverageAnalyzer(typename T::Simulator& simulator,
+   AverageAnalyzer<D,T>::AverageAnalyzer(Simulator<D,T>& simulator,
                                          System<D,T>& system)
     : AnalyzerT(simulator, system),
       nSamplePerOutput_(1)

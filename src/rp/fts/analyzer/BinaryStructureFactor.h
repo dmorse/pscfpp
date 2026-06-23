@@ -59,7 +59,7 @@ namespace Rp {
       * \param simulator  parent simulator object
       * \param system  parent system object
       */
-      BinaryStructureFactor(typename T::Simulator& simulator, 
+      BinaryStructureFactor(Simulator<D,T>& simulator, 
                             System<D,T>& system);
 
       /**

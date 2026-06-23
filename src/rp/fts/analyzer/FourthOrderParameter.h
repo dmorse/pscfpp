@@ -73,7 +73,7 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      FourthOrderParameter(typename T::Simulator& simulator, 
+      FourthOrderParameter(Simulator<D,T>& simulator, 
                            System<D,T>& system);
 
       /**

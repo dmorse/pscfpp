@@ -6,13 +6,6 @@
 #include <rpc/fts/analyzer/Analyzer.h>       // indirect base class member
 #include <util/param/Manager.h>              // indirect base class template
 
-// Forward declarations
-namespace Pscf {
-   namespace Rpc {
-      template <int D> class Simulator;
-   }
-}
-
 namespace Pscf {
 namespace Rpc {
 
@@ -40,7 +33,7 @@ namespace Rpc {
       * \param simulator  parent Simulator
       * \param system  parent System
       */
-      AnalyzerManager(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
+      AnalyzerManager(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

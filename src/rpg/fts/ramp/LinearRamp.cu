@@ -14,7 +14,7 @@ namespace Rpg {
 
    // Constructor
    template <int D>
-   LinearRamp<D>::LinearRamp(Simulator<D>& simulator)
+   LinearRamp<D>::LinearRamp(Rp::Simulator<D, Rpg::Types<D> >& simulator)
     : Rp::LinearRamp<D, Types<D> >(simulator)
    {}
 

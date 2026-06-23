@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"                         // indirect base class
-#include <rp/fts/analyzer/AverageAnalyzer.h>  // direct base template
-#include <rpg/system/Types.h>                 // base template argument
+#include <rp/fts/analyzer/AverageAnalyzer.h> // direct base template
+#include <rpg/system/Types.h>                // base template argument
+#include <rpg/fts/analyzer/Analyzer.h>       // indirect base class
 
 namespace Pscf {
 namespace Rpg {
@@ -44,7 +44,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      AverageAnalyzer(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      AverageAnalyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    protected:
 

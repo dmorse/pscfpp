@@ -19,6 +19,7 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
+      template <int D, class T> class Simulator;
    }
 }
 
@@ -45,7 +46,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Brownian_Module
    */
    template <int D, class T>
-   class BdSimulator : public T::Simulator 
+   class BdSimulator : public Simulator<D,T>
    {
 
    public:
@@ -134,7 +135,7 @@ namespace Rp {
       using SystemT = System<D,T>;
 
       /// Alias for Simulator class in program-level namespace.
-      using SimulatorT = typename T::Simulator;
+      using SimulatorT = Simulator<D,T>;
 
       /// Alias for BdSimulator class in program-level namespace.
       using BdSimulatorT = typename T::BdSimulator;

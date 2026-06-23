@@ -19,6 +19,7 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System; 
+      template <int D, class T> class Simulator; 
    }
 }
 
@@ -50,7 +51,7 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
-   class McSimulator : public T::Simulator
+   class McSimulator : public Simulator<D,T>
    {
 
    public:
@@ -168,7 +169,7 @@ namespace Rp {
       using SystemT = System<D,T>;
 
       /// Alias for Simulator class in program-level namespace.
-      using SimulatorT = typename T::Simulator;
+      using SimulatorT = Simulator<D,T>;
 
       /// Alias for McSimulator class in program-level namespace.
       using McSimulatorT = typename T::McSimulator;

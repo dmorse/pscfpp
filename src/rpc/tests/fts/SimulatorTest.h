@@ -69,7 +69,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_Simulator");
-      Simulator<3> simulator(system);
+      Rp::Simulator<3, Rpc::Types<3> > simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
       double const eps = 1.0E-8;
@@ -114,7 +114,7 @@ public:
       openLogFile("out/testSaddlePointField.log");
 
       initSystem("in/param_Simulator");
-      Simulator<3> simulator(system);
+      Rp::Simulator<3, Rpc::Types<3> > simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
@@ -208,7 +208,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_system_disordered");
-      Simulator<3> simulator(system);
+      Rp::Simulator<3, Rpc::Types<3> > simulator(system);
 
       simulator.allocate();
       simulator.analyzeChi();
@@ -248,7 +248,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_system_disordered");
-      Simulator<3> simulator(system);
+      Rp::Simulator<3, Rpc::Types<3> > simulator(system);
 
       simulator.allocate();
       simulator.analyzeChi();

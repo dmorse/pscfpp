@@ -24,7 +24,7 @@ namespace Rpc {
    // Constructor.
    template <int D>
    ConcentrationWriter<D>::ConcentrationWriter(
-                                  Simulator<D>& simulator,
+                                  Rp::Simulator<D, Rpc::Types<D> >& simulator,
                                   Rp::System<D, Rpc::Types<D> >& system)
     : Rp::ConcentrationWriter< D, Types<D> >(simulator, system)
    {}

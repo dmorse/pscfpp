@@ -14,7 +14,7 @@ namespace Rpc {
 
    // Constructor 
    template <int D>
-   LinearRamp<D>::LinearRamp(Simulator<D>& simulator)
+   LinearRamp<D>::LinearRamp(Rp::Simulator<D, Rpc::Types<D> >& simulator)
     : Rp::LinearRamp<D, Types<D> >(simulator)
    {}
 

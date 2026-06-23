@@ -29,10 +29,10 @@ namespace Rpg {
    * Return a pointer to a instance of Simulator subclass className.
    */
    template <int D>
-   Simulator<D>* SimulatorFactory<D>::factory(const std::string &className) 
+   Rp::Simulator<D, Rpg::Types<D> >* SimulatorFactory<D>::factory(const std::string &className) 
    const
    {
-      Simulator<D>* ptr = 0;
+      Rp::Simulator<D, Rpg::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);

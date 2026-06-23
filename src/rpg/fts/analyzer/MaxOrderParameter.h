@@ -19,9 +19,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   template <int D> class System;
-   template <int D> class Simulator;
-
    using namespace Util;
    using namespace Prdc;
 
@@ -50,7 +47,7 @@ namespace Rpg {
       * \param simulator  parent simulator object
       * \param system  parent system object
       */
-      MaxOrderParameter(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      MaxOrderParameter(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Setup before the start of simulation.

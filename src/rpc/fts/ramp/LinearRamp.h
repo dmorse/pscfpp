@@ -45,7 +45,7 @@ namespace Rpc {
       *
       * \param simulator  parent Simulator
       */
-      LinearRamp(Simulator<D>& simulator);
+      LinearRamp(Rp::Simulator<D, Rpc::Types<D> >& simulator);
 
    };
 

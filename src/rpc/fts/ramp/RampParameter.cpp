@@ -29,7 +29,7 @@ namespace Rpc {
 
    // Constructor - creates association with a Simulator.
    template <int D>
-   RampParameter<D>::RampParameter(Simulator<D>& simulator)
+   RampParameter<D>::RampParameter(Rp::Simulator<D, Rpc::Types<D> >& simulator)
     : Rp::RampParameter<D, Types<D> >(simulator)
    {}
 

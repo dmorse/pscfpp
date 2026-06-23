@@ -16,7 +16,7 @@ namespace Pscf {
 
       /// Constructor.
       template <int D>
-      AverageAnalyzer<D>::AverageAnalyzer(Simulator<D>& simulator,
+      AverageAnalyzer<D>::AverageAnalyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator,
 		                          Rp::System<D, Rpg::Types<D> >& system)
        : Rp::AverageAnalyzer< D, Types<D> >(simulator, system)
       {}

@@ -94,8 +94,7 @@ namespace Rp {
       * \param system  parent System
       * \param simulator  enclosing instance of a subclass
       */
-      Simulator(System<D,T>& system, 
-                typename T::Simulator& simulator);
+      Simulator(System<D,T>& system);
 
       /**
       * Destructor.
@@ -860,11 +859,6 @@ namespace Rp {
       * Pointer to the parent system.
       */
       System<D,T>* systemPtr_;
-
-      /**
-      * Pointer to the enclosing instance of a Rp::Simulator<D,T> subclass.
-      */
-      typename T::Simulator* simulatorPtr_;
 
       /**
       * Pointer to a scalar random number generator.

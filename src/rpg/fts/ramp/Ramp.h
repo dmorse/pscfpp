@@ -42,7 +42,7 @@ namespace Rpg {
       *
       * \param simulator  parent Simulator
       */
-      Ramp(Simulator<D>& simulator);
+      Ramp(Rp::Simulator<D, Rpg::Types<D> >& simulator);
 
       /**
       * Destructor.

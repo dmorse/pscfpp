@@ -20,7 +20,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   BinaryChiDerivative<D,T>::BinaryChiDerivative(typename T::Simulator& simulator,
+   BinaryChiDerivative<D,T>::BinaryChiDerivative(Simulator<D,T>& simulator,
                                      System<D,T>& system)
     : AverageAnalyzerT(simulator, system)
    {  ParamComposite::setClassName("BinaryChiDerivative"); }

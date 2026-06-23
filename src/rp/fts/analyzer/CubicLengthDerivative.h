@@ -28,7 +28,7 @@ namespace Rp {
       /**
       * Constructor.
       */
-      CubicLengthDerivative(typename T::Simulator& simulator, 
+      CubicLengthDerivative(Simulator<D,T>& simulator, 
                           System<D,T>& system);
 
       /**

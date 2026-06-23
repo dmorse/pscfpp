@@ -21,7 +21,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   RampFactory<D>::RampFactory(Simulator<D>& simulator)
+   RampFactory<D>::RampFactory(Rp::Simulator<D, Rpc::Types<D> >& simulator)
     : simulatorPtr_(&simulator)
    {}
 

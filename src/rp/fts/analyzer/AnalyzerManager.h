@@ -10,6 +10,7 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
+      template <int D, class T> class Simulator;
    }
 }
 
@@ -85,7 +86,7 @@ namespace Rp {
       * \param simulator  parent Simulator
       * \param system  parent System
       */
-      AnalyzerManager(typename T::Simulator& simulator, 
+      AnalyzerManager(Simulator<D,T>& simulator, 
                       System<D,T>& system);
 
       /**
@@ -102,7 +103,7 @@ namespace Rp {
       /**
       * Pointer to parent Simulator
       */
-      typename T::Simulator* simulatorPtr_;
+      Simulator<D,T>* simulatorPtr_;
 
       /**
       * Pointer to parent System.

@@ -14,9 +14,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declaration
-   template <int D> class Simulator;
-
    using namespace Util;
 
    /**
@@ -43,7 +40,7 @@ namespace Rpc {
       *
       * \param simulator  parent Simulator
       */
-      Ramp(Simulator<D>& simulator);
+      Ramp(Rp::Simulator<D, Rpc::Types<D> >& simulator);
 
       /**
       * Destructor.

@@ -49,7 +49,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      AverageListAnalyzer(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      AverageListAnalyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

@@ -14,7 +14,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   Ramp<D,T>::Ramp(typename T::Simulator& simulator)
+   Ramp<D,T>::Ramp(Simulator<D,T>& simulator)
     : ParamComposite(),
       simulatorPtr_(&simulator)
    {}

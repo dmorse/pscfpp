@@ -4,17 +4,9 @@
 #include <rp/fts/analyzer/Analyzer.h>  // base class template
 #include <rpc/system/Types.h>          // base class template argument
 
-// Forward declarations
-namespace Pscf {
-   namespace Rp {
-      template <int D, class T> class System;
-   }
-}
-
 namespace Pscf {
 namespace Rpc {
 
-   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -36,7 +28,7 @@ namespace Rpc {
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class Analyzer : public Rp::Analyzer<D, Simulator<D>, Rp::System<D, Rpc::Types<D> > >
+   class Analyzer : public Rp::Analyzer<D, Rp::Simulator<D, Rpc::Types<D> >, Rp::System<D, Rpc::Types<D> > >
    {
 
    public:
@@ -47,7 +39,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      Analyzer(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
+      Analyzer(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Destructor.
@@ -66,11 +58,11 @@ namespace Rpc {
 namespace Pscf {
    namespace Rp {
       extern template 
-      class Analyzer<1, Rpc::Simulator<1>, Rp::System<1, Rpc::Types<1> > >;
+      class Analyzer<1, Rp::Simulator<1, Rpc::Types<1> >, Rp::System<1, Rpc::Types<1> > >;
       extern template 
-      class Analyzer<2, Rpc::Simulator<2>, Rp::System<2, Rpc::Types<2> > >;
+      class Analyzer<2, Rp::Simulator<2, Rpc::Types<2> >, Rp::System<2, Rpc::Types<2> > >;
       extern template 
-      class Analyzer<3, Rpc::Simulator<3>, Rp::System<3, Rpc::Types<3> > >;
+      class Analyzer<3, Rp::Simulator<3, Rpc::Types<3> >, Rp::System<3, Rpc::Types<3> > >;
    } 
    namespace Rpc {
       extern template class Analyzer<1>;

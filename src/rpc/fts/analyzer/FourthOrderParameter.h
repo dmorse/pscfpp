@@ -17,9 +17,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   template <int D> class System;
-   template <int D> class Simulator;
-
    using namespace Util;
    using namespace Prdc;
 
@@ -51,7 +48,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      FourthOrderParameter(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
+      FourthOrderParameter(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    private:
 

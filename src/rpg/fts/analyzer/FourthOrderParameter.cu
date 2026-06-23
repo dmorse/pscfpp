@@ -29,7 +29,7 @@ namespace Rpg {
    */
    template <int D>
    FourthOrderParameter<D>::FourthOrderParameter(
-                                   Simulator<D>& simulator,
+                                   Rp::Simulator<D, Rpg::Types<D> >& simulator,
                                    Rp::System<D, Rpg::Types<D> >& system)
     : Base(simulator, system)
    {}

@@ -27,7 +27,7 @@ namespace Rp {
    */
    template <int D, class T>
    MaxOrderParameter<D,T>::MaxOrderParameter(
-                                     typename T::Simulator& simulator,
+                                     Simulator<D,T>& simulator,
                                      System<D,T>& system)
     : AverageAnalyzerT(simulator, system),
       kSize_(-1)

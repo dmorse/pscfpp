@@ -21,7 +21,7 @@ namespace Rpc {
 
    // Constructor.
    template <int D>
-   TrajectoryWriter<D>::TrajectoryWriter(Simulator<D>& simulator, 
+   TrajectoryWriter<D>::TrajectoryWriter(Rp::Simulator<D, Rpc::Types<D> >& simulator, 
                                          Rp::System<D, Rpc::Types<D> >& system)
     : Rp::TrajectoryWriter< D, Types<D> > (simulator, system)
    {}

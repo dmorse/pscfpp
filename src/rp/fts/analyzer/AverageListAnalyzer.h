@@ -50,7 +50,7 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      AverageListAnalyzer(typename T::Simulator& simulator, 
+      AverageListAnalyzer(Simulator<D,T>& simulator, 
                           System<D,T>& system);
 
       /**

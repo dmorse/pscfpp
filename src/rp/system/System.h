@@ -34,6 +34,7 @@ namespace Pscf {
       template <int D, class T> class IteratorFactory;
       template <int D, class T> class Sweep;
       template <int D, class T> class SweepFactory;
+      template <int D, class T> class Simulator;
    }
 }
 
@@ -489,12 +490,12 @@ namespace Rp {
       /**
       * Get the Simulator (const).
       */
-      typename T::Simulator const & simulator() const;
+      Simulator<D,T> const & simulator() const;
 
       /**
       * Get the Simulator (non-const).
       */
-      typename T::Simulator& simulator();
+      Simulator<D,T>& simulator();
 
       /**
       * Get the FileMaster (const).
@@ -629,7 +630,7 @@ namespace Rp {
       /**
       * Pointer to a Simulator.
       */
-      typename T::Simulator* simulatorPtr_;
+      Simulator<D,T>* simulatorPtr_;
 
       /**
       * Pointer to a simulator factory object.
@@ -892,7 +893,7 @@ namespace Rp {
 
    // Get the Simulator (const).
    template <int D, class T> inline
-   typename T::Simulator const & System<D,T>::simulator() const
+   Simulator<D,T> const & System<D,T>::simulator() const
    {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
@@ -900,7 +901,7 @@ namespace Rp {
 
    // Get the Simulator (non-const).
    template <int D, class T> inline
-   typename T::Simulator& System<D,T>::simulator()
+   Simulator<D,T>& System<D,T>::simulator()
    {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;

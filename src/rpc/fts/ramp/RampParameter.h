@@ -12,10 +12,15 @@
 #include <rpc/system/Types.h>            // base class template argument
 #include <rpc/fts/ramp/Ramp.h>           // indirect base class
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class Simulator;
+   }
+}
+
 namespace Pscf {
 namespace Rpc {
-
-   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -48,7 +53,7 @@ namespace Rpc {
       *
       * \param simulator  parent Simulator
       */
-      RampParameter(Simulator<D>& simulator);
+      RampParameter(Rp::Simulator<D, Rpc::Types<D> >& simulator);
 
    };
 

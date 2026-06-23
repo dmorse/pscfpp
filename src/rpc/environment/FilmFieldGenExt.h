@@ -11,6 +11,14 @@
 #include <rpc/system/System.h>
 #include <prdc/environment/FilmFieldGenExtBase.h>  // Base class
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+      template <int D, class T> class Simulator;
+   }
+}
+
 namespace Pscf {
 namespace Rpc {
 

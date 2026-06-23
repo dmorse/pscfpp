@@ -41,7 +41,7 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      ConcentrationDerivative(typename T::Simulator& simulator,
+      ConcentrationDerivative(Simulator<D,T>& simulator,
                               System<D,T>& system);
 
       /**

@@ -23,7 +23,7 @@ namespace Rp {
    */
    template <int D, class T>
    EinsteinCrystalPerturbation<D,T>::EinsteinCrystalPerturbation(
-                                      typename T::Simulator& simulator)
+                                      Simulator<D,T>& simulator)
     : PerturbationT(simulator),
       ecHamiltonian_(0.0),
       unperturbedHamiltonian_(0.0),

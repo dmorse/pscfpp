@@ -15,9 +15,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   template <int D> class System;
-   template <int D> class Simulator;
-
    using namespace Util;
 
    /**
@@ -44,7 +41,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryChiDerivative(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      BinaryChiDerivative(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

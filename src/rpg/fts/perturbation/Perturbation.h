@@ -41,7 +41,7 @@ namespace Rpg {
       *
       * \param simulator  parent Simulator object
       */
-      Perturbation(Simulator<D>& simulator);
+      Perturbation(Rp::Simulator<D, Rpg::Types<D> >& simulator);
 
       /**
       * Destructor.

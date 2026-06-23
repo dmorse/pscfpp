@@ -14,7 +14,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   AnalyzerManager<D,T>::AnalyzerManager(typename T::Simulator& simulator,
+   AnalyzerManager<D,T>::AnalyzerManager(Simulator<D,T>& simulator,
                                        System<D,T>& system)
     : Base(),
       simulatorPtr_(&simulator),

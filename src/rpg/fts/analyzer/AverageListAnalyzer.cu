@@ -14,7 +14,7 @@ namespace Rpg {
 
    // Constructor.
    template <int D>
-   AverageListAnalyzer<D>::AverageListAnalyzer(Simulator<D>& simulator,
+   AverageListAnalyzer<D>::AverageListAnalyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator,
                                    Rp::System<D, Rpg::Types<D> >& system)
     : Rp::AverageListAnalyzer< D, Types<D> >(simulator, system)
    {}

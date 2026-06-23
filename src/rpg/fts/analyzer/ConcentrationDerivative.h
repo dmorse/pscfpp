@@ -15,10 +15,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   // Forward declarations
-   template <int D> class System;
-   template <int D> class Simulator;
-
    using namespace Util;
 
    /**
@@ -46,7 +42,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      ConcentrationDerivative(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      ConcentrationDerivative(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

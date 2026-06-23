@@ -25,7 +25,7 @@ namespace Rp {
    */
    template <int D, class T>
    AverageListAnalyzer<D,T>::AverageListAnalyzer(
-                                typename T::Simulator& simulator,
+                                Simulator<D,T>& simulator,
                                 System<D,T>& system)
     : AnalyzerT(simulator, system),
       nSamplePerOutput_(1),

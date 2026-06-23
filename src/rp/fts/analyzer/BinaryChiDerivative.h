@@ -43,7 +43,7 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryChiDerivative(typename T::Simulator& simulator, 
+      BinaryChiDerivative(Simulator<D,T>& simulator, 
                     System<D,T>& system);
 
       /**

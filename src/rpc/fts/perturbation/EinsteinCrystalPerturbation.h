@@ -9,9 +9,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declaration
-   template <int D> class Simulator;
-
    /**
    * Perturbation for Einstein crystal thermodynamic integration.
    *
@@ -36,7 +33,7 @@ namespace Rpc {
       *
       * \param simulator  parent Simulator object
       */
-      EinsteinCrystalPerturbation(Simulator<D>& simulator);
+      EinsteinCrystalPerturbation(Rp::Simulator<D, Rpc::Types<D> >& simulator);
 
    };
 

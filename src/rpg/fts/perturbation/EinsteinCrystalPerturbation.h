@@ -36,7 +36,7 @@ namespace Rpg {
       *
       * \param simulator  parent Simulator object
       */
-      EinsteinCrystalPerturbation(Simulator<D>& simulator);
+      EinsteinCrystalPerturbation(Rp::Simulator<D, Rpg::Types<D> >& simulator);
 
    };
 

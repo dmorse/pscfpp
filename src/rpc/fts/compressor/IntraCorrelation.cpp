@@ -30,27 +30,6 @@ namespace Rpc {
     : Rp::IntraCorrelation<D, Types<D> >(system)
    {}
 
-   #if 0
-   /*
-   * Compute k-space array of intramolecular correlation functions.
-   */
-   template<int D>
-   void
-   IntraCorrelation<D>::computeOmegaTotal(RField<D>& correlations)
-   {
-      computeMeshProperties();
-
-      // Compute total intramolecular correlation function
-      UTIL_CHECK(correlations.capacity() == kSize_);
-      if (!correlationMixturePtr_->isAllocated()) {
-         correlationMixturePtr_->allocate();
-      }
-      correlationMixturePtr_->setup();
-      correlationMixturePtr_->computeOmegaTotal(Gsq_, correlations);
-
-   }
-   #endif
-
 }
 }
 

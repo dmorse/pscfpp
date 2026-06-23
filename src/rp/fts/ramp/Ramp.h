@@ -71,9 +71,9 @@ namespace Rp {
       {}
 
       /**
-      * Get parent typename T::Simulator by const reference.
+      * Get parent Simulator<D,T> by const reference.
       */
-      typename T::Simulator const & simulator() const;
+      Simulator<D,T> const & simulator() const;
 
    protected:
 
@@ -82,7 +82,7 @@ namespace Rp {
       *
       * \param simulator parent Simulator
       */
-      Ramp(typename T::Simulator& simulator);
+      Ramp(Simulator<D,T>& simulator);
 
       /**
       * Destructor.
@@ -90,9 +90,9 @@ namespace Rp {
       ~Ramp() = default;
 
       /**
-      * Get parent typename T::Simulator by non-const reference.
+      * Get parent Simulator<D,T> by non-const reference.
       */
-      typename T::Simulator& simulator();
+      Simulator<D,T>& simulator();
 
       /// Number of steps planned for this simulation (set in setup).
       int nStep_;
@@ -100,7 +100,7 @@ namespace Rp {
    private:
 
       /// Pointer to parent Simulator (not owned by this).
-      typename T::Simulator* simulatorPtr_;
+      Simulator<D,T>* simulatorPtr_;
 
    };
 
@@ -108,7 +108,7 @@ namespace Rp {
 
    // Return parent simulator by const reference.
    template <int D, class T> inline 
-   typename T::Simulator const & Ramp<D,T>::simulator() const
+   Simulator<D,T> const & Ramp<D,T>::simulator() const
    {
       assert(simulatorPtr_);  
       return *simulatorPtr_; 
@@ -116,7 +116,7 @@ namespace Rp {
 
    // Return parent simulator by non-const reference.
    template <int D, class T> inline 
-   typename T::Simulator & Ramp<D,T>::simulator() 
+   Simulator<D,T> & Ramp<D,T>::simulator() 
    {  
       assert(simulatorPtr_);
       return *simulatorPtr_; 

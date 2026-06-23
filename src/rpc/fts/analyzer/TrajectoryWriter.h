@@ -10,13 +10,10 @@
 
 #include <rp/fts/analyzer/TrajectoryWriter.h> // direct base class template
 #include <rpc/system/Types.h>                 // base class argument
-#include "Analyzer.h"                         // indirect base class
+#include <rpc/fts/analyzer/Analyzer.h>        // indirect base class
 
 namespace Pscf {
 namespace Rpc {
-
-   template <int D> class System;
-   template <int D> class Simulator;
 
    using namespace Util;
 
@@ -44,7 +41,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      TrajectoryWriter(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
+      TrajectoryWriter(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

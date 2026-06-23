@@ -21,8 +21,8 @@ namespace Pscf {
          template <int D> class RField;
       }
    }
-   namespace Rpc {
-      template <int D> class System;
+   namespace Rp {
+      template <int D, class T> class System;
    }
 }
 
@@ -50,15 +50,6 @@ namespace Rpc {
       * \param system  parent system object
       */
       IntraCorrelation(Rp::System<D, Rpc::Types<D> > const & system);
-
-      #if 0
-      /**
-      * Compute total intramolecular correlation function (all blocks).
-      *
-      * \param correlations  omega values on a k-space mesh
-      */
-      void computeOmegaTotal(RField<D>& correlations);
-      #endif
 
    };
 

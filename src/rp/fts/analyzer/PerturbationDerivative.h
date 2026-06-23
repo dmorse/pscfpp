@@ -41,7 +41,7 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      PerturbationDerivative(typename T::Simulator& simulator, 
+      PerturbationDerivative(Simulator<D,T>& simulator, 
                              System<D,T>& system);
 
       /**

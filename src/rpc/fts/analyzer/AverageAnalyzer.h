@@ -44,7 +44,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      AverageAnalyzer(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
+      AverageAnalyzer(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
       /// Alias for base class
       using AnalyzerT = typename Types<D>::Analyzer;

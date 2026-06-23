@@ -15,10 +15,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   // Forward declarations
-   template <int D> class System;
-   template <int D> class Simulator;
-
    /**
    * Evaluate the derivative of H with respect to cubic box length.
    *
@@ -43,7 +39,7 @@ namespace Rpg {
       /**
       * Constructor.
       */
-      CubicLengthDerivative(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      CubicLengthDerivative(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

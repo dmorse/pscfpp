@@ -28,7 +28,7 @@ namespace Rp {
    */
    template <int D, class T>
    FourthOrderParameter<D,T>::FourthOrderParameter(
-                                       typename T::Simulator& simulator,
+                                       Simulator<D,T>& simulator,
                                        System<D,T>& system)
     : AverageAnalyzerT(simulator, system),
       kSize_(1),

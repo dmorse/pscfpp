@@ -32,7 +32,7 @@ namespace Rpg {
    */
    template <int D>
    BinaryStructureFactor<D>::BinaryStructureFactor(
-                                  Simulator<D>& simulator,
+                                  Rp::Simulator<D, Rpg::Types<D> >& simulator,
                                   Rp::System<D, Rpg::Types<D> >& system)
     : Rp::BinaryStructureFactor< D, Types<D> >(simulator, system)
    {}

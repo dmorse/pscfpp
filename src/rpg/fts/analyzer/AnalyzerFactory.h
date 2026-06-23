@@ -15,9 +15,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   template <int D> class System;
-   template <int D> class Simulator;
-
    using namespace Util;
 
    /**
@@ -34,10 +31,10 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param simulator  parent Simulator<D> object
+      * \param simulator  parent Rp::Simulator<D, Rpg::Types<D> > object
       * \param system  parent Rp::System<D, Rpg::Types<D> > object
       */
-      AnalyzerFactory(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      AnalyzerFactory(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Method to create any Analyzer supplied with PSCF.
@@ -52,7 +49,7 @@ namespace Rpg {
    private:
       
       /// Pointer to the parent simulator.
-      Simulator<D>* simPtr_;
+      Rp::Simulator<D, Rpg::Types<D> >* simPtr_;
 
       /// Pointer to the parent system.
       Rp::System<D, Rpg::Types<D> >* sysPtr_;

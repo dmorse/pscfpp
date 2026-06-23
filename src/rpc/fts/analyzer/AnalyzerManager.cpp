@@ -14,7 +14,7 @@ namespace Rpc {
 
    // Constructor.
    template <int D>
-   AnalyzerManager<D>::AnalyzerManager(Simulator<D>& simulator,
+   AnalyzerManager<D>::AnalyzerManager(Rp::Simulator<D, Rpc::Types<D> >& simulator,
                                        Rp::System<D, Rpc::Types<D> >& system)
     : Rp::AnalyzerManager<D, Types<D> >(simulator, system)
    {}

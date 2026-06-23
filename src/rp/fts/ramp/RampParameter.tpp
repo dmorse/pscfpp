@@ -41,7 +41,7 @@ namespace Rp {
    * Constructor, creates association with simulator and system.
    */
    template <int D, class T>
-   RampParameter<D,T>::RampParameter(typename T::Simulator& simulator)
+   RampParameter<D,T>::RampParameter(Simulator<D,T>& simulator)
     : type_(RampParameter<D,T>::Null),
       nId_(0),
       id_(),
@@ -55,7 +55,7 @@ namespace Rp {
    * Set the simulator and system associated with this object.
    */
    template <int D, class T>
-   void RampParameter<D,T>::setSimulator(typename T::Simulator& simulator)
+   void RampParameter<D,T>::setSimulator(Simulator<D,T>& simulator)
    {
       simulatorPtr_ = &simulator;
       systemPtr_ = &(simulator.system());

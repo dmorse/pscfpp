@@ -1,7 +1,8 @@
 #ifndef RP_EINSTEIN_CRYSTAL_PERTURBATION_H
 #define RP_EINSTEIN_CRYSTAL_PERTURBATION_H
 
-#include <util/containers/DArray.h>  // member
+#include <rp/fts/perturbation/Perturbation.h> // base class template
+#include <util/containers/DArray.h>           // member
 #include <iostream>
 
 namespace Pscf {
@@ -82,7 +83,7 @@ namespace Rp {
       *
       * \param simulator  parent Simulator object
       */
-      EinsteinCrystalPerturbation(typename T::Simulator& simulator);
+      EinsteinCrystalPerturbation(Simulator<D,T>& simulator);
 
       /**
       * Destructor.

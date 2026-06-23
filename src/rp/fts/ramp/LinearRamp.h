@@ -1,7 +1,8 @@
 #ifndef RP_LINEAR_RAMP_H
 #define RP_LINEAR_RAMP_H
 
-#include <util/containers/DArray.h>      // member
+#include <rp/fts/ramp/Ramp.h>         // base class template
+#include <util/containers/DArray.h>   // member
 #include <iostream>
 
 namespace Pscf {
@@ -70,7 +71,7 @@ namespace Rp {
       *
       * \param simulator  parent Simulator object
       */
-      LinearRamp(typename T::Simulator& simulator);
+      LinearRamp(Simulator<D,T>& simulator);
 
       /**
       * Destructor.

@@ -31,41 +31,11 @@
 
 #include <rp/fts/simulator/Simulator.tpp>  // base class implementation
 
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   /*
-   * Constructor.
-   */
-   template <int D>
-   Simulator<D>::Simulator(Rp::System<D, Rpg::Types<D> >& system)
-    : Base(system, *this)
-   {}
-
-   #if 0
-   /*
-   * Initialize the GPU vector random number generator.
-   */
-   template <int D>
-   void Simulator<D>::initializeVecRandom()
-   {  Base::vecRandom().setSeed(Base::seed_); }
-   #endif
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class Simulator<1, Rpg::Types<1> >;
       template class Simulator<2, Rpg::Types<2> >;
       template class Simulator<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class Simulator<1>;
-      template class Simulator<2>;
-      template class Simulator<3>;
    }
 }

@@ -27,8 +27,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   Simulator<D,T>::Simulator(System<D,T>& system,
-                             typename T::Simulator& simulator)
+   Simulator<D,T>::Simulator(System<D,T>& system)
     : hamiltonian_(0.0),
       idealHamiltonian_(0.0),
       fieldHamiltonian_(0.0),
@@ -41,7 +40,6 @@ namespace Rp {
       hasCc_(false),
       hasDc_(false),
       systemPtr_(&system),
-      simulatorPtr_(&simulator),
       randomPtr_(nullptr),
       vecRandomPtr_(nullptr),
       compressorFactoryPtr_(nullptr),
@@ -57,8 +55,8 @@ namespace Rp {
       vecRandomPtr_ = new typename T::VecRandom();
       compressorFactoryPtr_ = new typename T::CompressorFactory(system);
       perturbationFactoryPtr_ 
-             = new typename T::PerturbationFactory(simulator);
-      rampFactoryPtr_ = new typename T::RampFactory(simulator);
+             = new typename T::PerturbationFactory(*this);
+      rampFactoryPtr_ = new typename T::RampFactory(*this);
 
       T::linkVecRandom(vecRandom(), random());
    }

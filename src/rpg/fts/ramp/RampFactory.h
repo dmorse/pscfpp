@@ -33,9 +33,9 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param simulator  parent Simulator<D> object
+      * \param simulator  parent Rp::Simulator<D, Rpg::Types<D> > object
       */
-      RampFactory(Simulator<D>& simulator);
+      RampFactory(Rp::Simulator<D, Rpg::Types<D> >& simulator);
 
       /**
       * Method to create any Ramp supplied with PSCF.
@@ -50,7 +50,7 @@ namespace Rpg {
    private:
       
       /// Pointer to the parent simulator.
-      Simulator<D>* simulatorPtr_;
+      Rp::Simulator<D, Rpg::Types<D> >* simulatorPtr_;
 
    };
 
