@@ -82,6 +82,7 @@ namespace Pscf {
 namespace Rpg {
 
    // Namespaces that may be used implicitly
+   using namespace Util;
    using namespace Prdc;
 
    /**
