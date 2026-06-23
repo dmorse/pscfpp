@@ -24,7 +24,7 @@ namespace Pscf {
   
       // Constructor.
       template <int D>
-      Rp::AmIteratorGrid<D, Rpg::Types<D> >::AmIteratorGrid(System<D>& system)
+      Rp::AmIteratorGrid<D, Rpg::Types<D> >::AmIteratorGrid(Rp::System<D, Rpg::Types<D> >& system)
        : Rp::AmIteratorGrid<D, Types<D> >(system)
       {}
 

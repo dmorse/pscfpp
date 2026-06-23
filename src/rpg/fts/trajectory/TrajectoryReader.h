@@ -39,7 +39,7 @@ namespace Rpg {
       *
       * \param system  parent System object
       */
-      TrajectoryReader<D>(System<D>& system);
+      TrajectoryReader<D>(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Destructor.

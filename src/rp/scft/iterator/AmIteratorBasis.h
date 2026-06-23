@@ -51,7 +51,7 @@ namespace Rp {
       *
       * \param system System object associated with this iterator.
       */
-      AmIteratorBasis(typename T::System& system);
+      AmIteratorBasis(System<D,T>& system);
 
       /**
       * Destructor.

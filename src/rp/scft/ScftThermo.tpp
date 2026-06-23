@@ -28,7 +28,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   ScftThermo<D,T>::ScftThermo(typename T::System const & system)
+   ScftThermo<D,T>::ScftThermo(System<D,T> const & system)
     : SystemConstRefT(system),
       fHelmholtz_(0.0),
       fIdeal_(0.0),

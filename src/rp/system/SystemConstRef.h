@@ -15,11 +15,12 @@ namespace Util {
 namespace Pscf {
    class Interaction;
    namespace Rp {
+      template <int D, class T> class System;
+      template <int D, class T> class Mixture;
+      template <int D, class T> class Domain;
       template <int D, class T> class CFields;
       template <int D, class T> class WFields;
       template <int D, class T> class Mask;
-      template <int D, class T> class Domain;
-      template <int D, class T> class Mixture;
    }
 }
 
@@ -48,7 +49,7 @@ namespace Rp {
       /**
       * Get the associated System.
       */
-      typename T::System const & system() const
+      System<D,T> const & system() const
       {  return *systemPtr_; }
 
       /**
@@ -114,7 +115,7 @@ namespace Rp {
       * 
       * \param system  parent system object
       */
-      SystemConstRef(typename T::System const & system);
+      SystemConstRef(System<D,T> const & system);
 
       /**
       * Destructor.
@@ -126,12 +127,12 @@ namespace Rp {
       * 
       * \param system  parent system object
       */
-      void associate(typename T::System const & system);
+      void associate(System<D,T> const & system);
 
    private:
 
       /// Pointer to System.
-      typename T::System const * systemPtr_;
+      System<D,T> const * systemPtr_;
 
       /// Pointer to Mixture.
       Mixture<D,T> const * mixturePtr_;

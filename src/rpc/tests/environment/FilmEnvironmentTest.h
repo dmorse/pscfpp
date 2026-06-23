@@ -51,7 +51,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       FilmEnvironment<1> ext(system);
    }
 
@@ -61,7 +61,7 @@ public:
       openLogFile("out/FilmEnvTestReadParameters.log");
 
       // Set up film environment from file
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       createSystem(system, "in/system1DEnv");
       FilmEnvironment<1> env(system);
 
@@ -92,7 +92,7 @@ public:
       openLogFile("out/FilmEnvTestSolve1D.log");
       
       // Set up system with some data
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       createSystem(system, "in/system1DEnv");
 
       // Read initial guess
@@ -145,7 +145,7 @@ public:
       openLogFile("out/FilmEnvTestSolve2D.log");
       
       // Set up system with some data
-      System<2> system;
+      Rp::System<2, Rpc::Types<2> > system;
       createSystem(system, "in/system2DEnv");
 
       // Read initial guess
@@ -198,7 +198,7 @@ public:
       openLogFile("out/FilmEnvTestSweep.log");
       
       // Set up system
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       createSystem(system, "in/system1DEnv");
 
       // Read initial guess
@@ -242,7 +242,7 @@ public:
       openLogFile("out/FilmEnvTestSolveWithFBulk.log");
       
       // Set up system with some data
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       createSystem(system, "in/system1DEnvFBulk");
 
       // Read initial guess
@@ -291,7 +291,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void createSystem(System<D>& system, std::string fname)
+   void createSystem(Rp::System<D, Rpc::Types<D> >& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

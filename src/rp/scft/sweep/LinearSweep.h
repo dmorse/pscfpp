@@ -67,7 +67,7 @@ namespace Rp {
       *
       * \param system  parent system object
       */
-      LinearSweep(typename T::System& system);
+      LinearSweep(System<D,T>& system);
 
       ~LinearSweep() = default;
 

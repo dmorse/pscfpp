@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                    // base class
+#include <rp/fts/montecarlo/McMove.h>  // base class
 #include <util/containers/DArray.h>    // member
 #include <pscf/math/IntVec.h>          // template with defaults
 
@@ -16,6 +16,12 @@
 namespace Util {
    template <typename Data> class Array;
 }
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 
 namespace Pscf {
 namespace Rp {

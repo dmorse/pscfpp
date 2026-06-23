@@ -40,7 +40,7 @@ namespace Rpc {
       *
       * \param system  parent System object
       */
-      RGridTrajectoryReader<D>(System<D>& system);
+      RGridTrajectoryReader<D>(Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

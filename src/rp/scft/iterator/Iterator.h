@@ -12,6 +12,13 @@
 #include <util/containers/FSArray.h>      // member
 #include <util/global.h>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -43,7 +50,7 @@ namespace Rp {
       *
       * \param system parent System object
       */
-      Iterator(typename T::System& system);
+      Iterator(System<D,T>& system);
 
       /**
       * Destructor.
@@ -135,22 +142,22 @@ namespace Rp {
       *
       * \param system  parent System object
       */
-      void setSystem(typename T::System& system);
+      void setSystem(System<D,T>& system);
 
       /**
       * Get parent system by const reference.
       */
-      typename T::System const & system() const;
+      System<D,T> const & system() const;
 
       /**
       * Get parent system by non-const reference.
       */
-      typename T::System& system();
+      System<D,T>& system();
 
    private:
 
       /// Pointer to the associated system object.
-      typename T::System* sysPtr_;
+      System<D,T>* sysPtr_;
 
    };
 
@@ -160,7 +167,7 @@ namespace Rp {
    * Get parent system by const reference.
    */
    template <int D, class T> inline
-   typename T::System const & Iterator<D, T>::system() const
+   System<D,T> const & Iterator<D, T>::system() const
    {
       UTIL_CHECK(sysPtr_);
       return *sysPtr_;
@@ -170,7 +177,7 @@ namespace Rp {
    * Get parent system by non-const reference.
    */
    template <int D, class T> inline
-   typename T::System& Iterator<D, T>::system()
+   System<D,T>& Iterator<D, T>::system()
    {
       UTIL_CHECK(sysPtr_);
       return *sysPtr_;

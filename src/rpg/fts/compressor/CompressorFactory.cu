@@ -21,7 +21,7 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   CompressorFactory<D>::CompressorFactory(System<D>& system)
+   CompressorFactory<D>::CompressorFactory(Rp::System<D, Rpg::Types<D> >& system)
     : sysPtr_(&system)
    {}
 

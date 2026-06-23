@@ -45,7 +45,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      HamiltonianAnalyzer(Simulator<D>& simulator, System<D>& system);
+      HamiltonianAnalyzer(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

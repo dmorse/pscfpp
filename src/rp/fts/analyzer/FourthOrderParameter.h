@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>                     // member
+#include <rp/fts/analyzer/AverageAnalyzer.h>   // base class template
+#include <pscf/math/IntVec.h>                  // member
 
 // Forward declaration
 namespace Util {
@@ -73,7 +74,7 @@ namespace Rp {
       * \param system  parent System object
       */
       FourthOrderParameter(typename T::Simulator& simulator, 
-                           typename T::System& system);
+                           System<D,T>& system);
 
       /**
       * Destructor.

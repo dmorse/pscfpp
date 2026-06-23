@@ -29,7 +29,6 @@ namespace Pscf {
       }
    }
    namespace Rpc {
-      template <int D> class System;
       template <int D> class SystemConstRef;
       //template <int D> class Mixture;
       //template <int D> class MixtureModifier;
@@ -111,7 +110,7 @@ namespace Rpc {
       using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
       using WaveList = Prdc::Cpu::WaveList<D>;
 
-      using System = Rpc::System<D>;
+      //using System = Rp::System<D, Rpc::Types<D> >;
       using SystemConstRef = Rpc::SystemConstRef<D>;
 
       //using Mixture = Rp::Mixture<D, Rpc::Types<D> >;

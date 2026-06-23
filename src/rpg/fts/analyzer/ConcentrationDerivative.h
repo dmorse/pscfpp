@@ -46,7 +46,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      ConcentrationDerivative(Simulator<D>& simulator, System<D>& system);
+      ConcentrationDerivative(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

@@ -34,7 +34,7 @@ namespace Rpc {
    template <int D>
    BinaryStructureFactor<D>::BinaryStructureFactor(
                                   Simulator<D>& simulator,
-                                  System<D>& system)
+                                  Rp::System<D, Rpc::Types<D> >& system)
     : Rp::BinaryStructureFactor< D, Types<D> >(simulator, system)
    {}
 

@@ -29,7 +29,7 @@ namespace Rpc {
 
    // Constructor - creates association with parent system.
    template <int D>
-   BasisFieldState<D>::BasisFieldState(System<D>& system)
+   BasisFieldState<D>::BasisFieldState(Rp::System<D, Rpc::Types<D> >& system)
     : Rp::BasisFieldState<D, Types<D> > (system)
    {}
 

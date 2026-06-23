@@ -55,7 +55,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      System<1> system;
+      Rp::System<1, Rpg::Types<1> > system;
       FilmFieldGenExt<1> ext(system);
    }
 
@@ -64,7 +64,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up external field generator from file
-      System<1> system;
+      Rp::System<1, Rpg::Types<1> > system;
       createSystem(system, "in/system1D");
       FilmFieldGenExt<1> ext(system);
 
@@ -92,7 +92,7 @@ public:
       openLogFile("out/extTestCheckCompatibility.log");
 
       // Set up 1D external field with symmetric walls
-      System<1> system1;
+      Rp::System<1, Rpg::Types<1> > system1;
       createSystem(system1, "in/system1D");
       
       FilmFieldGenExt<1> ext1(system1);
@@ -106,7 +106,7 @@ public:
 
       // Set up 2D external field with asymmetric walls and an 
       // incompatible space group
-      System<2> system2;
+      Rp::System<2, Rpg::Types<2> > system2;
       createSystem(system2, "in/system2D_1");
 
       FilmFieldGenExt<2> ext2(system2);
@@ -118,7 +118,7 @@ public:
 
       // Set up 3D external field with asymmetric walls and a compatible
       // space group
-      System<3> system3;
+      Rp::System<3, Rpg::Types<3> > system3;
       createSystem(system3, "in/system3D_3");
 
       FilmFieldGenExt<3> ext3(system3);
@@ -138,7 +138,7 @@ public:
       openLogFile("out/extTestGenerate.log");
 
       // Set up 3D external field with a compatible system
-      System<3> system1;
+      Rp::System<3, Rpg::Types<3> > system1;
       createSystem(system1, "in/system3D_3");
       system1.mask().allocateBasis(1920);
       system1.mask().allocateRGrid(system1.domain().mesh().dimensions());
@@ -176,7 +176,7 @@ public:
 
 
       // Set up 3D system with athermal walls
-      System<3> system2;
+      Rp::System<3, Rpg::Types<3> > system2;
       createSystem(system2, "in/system3D_3");
       system2.mask().allocateBasis(1920);
       system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
@@ -204,7 +204,7 @@ public:
       openLogFile("out/extTestRegenerate.log");
 
       // Set up 1D external field with a compatible system
-      System<1> system;
+      Rp::System<1, Rpg::Types<1> > system;
       createSystem(system, "in/system1D");
 
       // Set unit cell parameter
@@ -278,7 +278,7 @@ public:
       openLogFile("out/extTestStress.log");
 
       // Set up 2D field generator with a compatible system
-      System<2> system;
+      Rp::System<2, Rpg::Types<2> > system;
       createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
@@ -310,7 +310,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void createSystem(System<D>& system, std::string fname)
+   void createSystem(Rp::System<D, Rpg::Types<D> >& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

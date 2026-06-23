@@ -20,7 +20,7 @@ namespace Rpg {
 
    // Constructor.
    template <int D>
-   RGridTrajectoryReader<D>::RGridTrajectoryReader(System<D>& system)
+   RGridTrajectoryReader<D>::RGridTrajectoryReader(Rp::System<D, Rpg::Types<D> >& system)
     : Rp::RGridTrajectoryReader<D, Types<D> >(system)
    {}
 

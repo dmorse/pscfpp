@@ -34,7 +34,7 @@ namespace Rpc {
       *
       * \param system parent System object
       */
-      SweepFactory(System<D>& system);
+      SweepFactory(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Method to create any Sweep subclass.
@@ -50,7 +50,7 @@ namespace Rpc {
    private:
 
       // Pointer to parent system object.
-      System<D>* systemPtr_;
+      Rp::System<D, Rpc::Types<D> >* systemPtr_;
 
    };
 

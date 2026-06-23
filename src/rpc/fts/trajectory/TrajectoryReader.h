@@ -14,9 +14,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declaration
-   template <int D> class System;
-
    /**
    * Trajectory file reader (base class).
    *
@@ -39,7 +36,7 @@ namespace Rpc {
       *
       * \param system  parent System object
       */
-      TrajectoryReader<D>(System<D>& system);
+      TrajectoryReader<D>(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Destructor.

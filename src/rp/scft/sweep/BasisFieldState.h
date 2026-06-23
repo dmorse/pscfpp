@@ -15,6 +15,7 @@
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class FieldIo;
+      template <int D, class T> class System;
    }
 }
 
@@ -41,7 +42,7 @@ namespace Rp {
    */
    template <int D, class T>
    class BasisFieldState
-    : public FieldState<D, DArray<double>, typename T::System>
+    : public FieldState<D, DArray<double>, System<D,T> >
    {
    public:
 
@@ -80,7 +81,7 @@ namespace Rp {
       */
       void setSystemState(bool newCellParams);
 
-      using FieldStateT = FieldState<D, DArray<double>, typename T::System>;
+      using FieldStateT = FieldState<D, DArray<double>, System<D,T> >;
 
       // Inherited member functions
       using FieldStateT::fields;
@@ -100,7 +101,7 @@ namespace Rp {
       *
       * \param system associated parent system
       */
-      BasisFieldState(typename T::System& system);
+      BasisFieldState(System<D,T>& system);
 
       ~BasisFieldState() = default;
 

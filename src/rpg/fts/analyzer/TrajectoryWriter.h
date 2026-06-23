@@ -45,7 +45,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      TrajectoryWriter(Simulator<D>& simulator, System<D>& system);
+      TrajectoryWriter(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

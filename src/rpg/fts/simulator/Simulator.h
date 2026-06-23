@@ -43,7 +43,7 @@ namespace Rpg {
       *
       * \param system  parent System object
       */
-      Simulator(typename Types<D>::System& system);
+      Simulator(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Destructor.

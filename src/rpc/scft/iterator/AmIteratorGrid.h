@@ -43,7 +43,7 @@ namespace Rpc {
       *
       * \param system  parent system
       */
-      AmIteratorGrid(System<D>& system);
+      AmIteratorGrid(Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

@@ -55,7 +55,7 @@ namespace Rp {
       *
       * \param system  parent system object
       */
-      AmIteratorGrid(typename T::System& system);
+      AmIteratorGrid(System<D,T>& system);
 
       /**
       * Destructor.

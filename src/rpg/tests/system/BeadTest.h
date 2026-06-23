@@ -27,7 +27,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(System<D>& system, std::string filename)
+   void initSystem(Rp::System<D, Rpg::Types<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -45,7 +45,7 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputeFreeEnergyBead.log");
-      System<1> system;
+      Rp::System<1, Rpg::Types<1> > system;
       initSystem(system, "in/bead/param_system_1D_N100");
       system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
@@ -61,7 +61,7 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputelnqBead.log");
-      System<1> system;
+      Rp::System<1, Rpg::Types<1> > system;
       initSystem(system, "in/bead/param_system_1D_N100");
       system.w().readBasis("in/bead/omegaN100.in");
       system.compute();

@@ -27,7 +27,7 @@ namespace Rpg {
    template <int D>
    CubicLengthDerivative<D>::CubicLengthDerivative(
                                                Simulator<D>& simulator,
-                                               System<D>& system)
+                                               Rp::System<D, Rpg::Types<D> >& system)
     : Rp::CubicLengthDerivative<D, Types<D> >(simulator, system)
    {}
 

@@ -29,7 +29,7 @@ namespace Rpc {
    */
    template <int D>
    MaxOrderParameter<D>::MaxOrderParameter(Simulator<D>& simulator,
-                                           System<D>& system)
+                                           Rp::System<D, Rpc::Types<D> >& system)
     : Rp::MaxOrderParameter<D, Types<D> >(simulator, system)
    {}
 

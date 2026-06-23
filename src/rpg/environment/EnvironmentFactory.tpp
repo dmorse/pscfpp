@@ -13,7 +13,7 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   EnvironmentFactory<D>::EnvironmentFactory(System<D>& system)
+   EnvironmentFactory<D>::EnvironmentFactory(Rp::System<D, Rpg::Types<D> >& system)
     : sysPtr_(&system)
    {}
 

@@ -28,7 +28,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(System<D>& system, std::string filename)
+   void initSystem(Rp::System<D, Rpg::Types<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -50,7 +50,7 @@ public:
    
    void analyzeTrajectory()
    {
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_disordered");
       BdSimulator<3> simulator(system);
       initSimulator(simulator, "in/param_BdSimulator_analyzer");

@@ -47,7 +47,7 @@ namespace Rp {
       *
       * \param system  parent System object
       */
-      ScftThermo(typename T::System const & system);
+      ScftThermo(System<D,T> const & system);
 
       ~ScftThermo() = default;
 

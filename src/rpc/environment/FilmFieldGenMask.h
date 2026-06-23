@@ -46,7 +46,7 @@ namespace Rpc {
       * 
       * \param sys  System parent object
       */
-      FilmFieldGenMask(System<D>& sys);
+      FilmFieldGenMask(Rp::System<D, Rpc::Types<D> >& sys);
 
       /**
       * Destructor
@@ -105,12 +105,12 @@ namespace Rpc {
       /**
       * Get the parent System by non-const reference.
       */
-      System<D>& system();
+      Rp::System<D, Rpc::Types<D> >& system();
 
       /**
       * Get the parent System by const reference.
       */
-      System<D> const & system() const;
+      Rp::System<D, Rpc::Types<D> > const & system() const;
 
       /**
       * Get the space group name for this system.
@@ -132,7 +132,7 @@ namespace Rpc {
    private:
 
       /// Pointer to the associated system object.
-      System<D>* sysPtr_;
+      Rp::System<D, Rpc::Types<D> >* sysPtr_;
 
    };
 
@@ -140,7 +140,7 @@ namespace Rpc {
 
    // Get parent System by non-const reference.
    template <int D>
-   System<D>& FilmFieldGenMask<D>::system() 
+   Rp::System<D, Rpc::Types<D> >& FilmFieldGenMask<D>::system() 
    {
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
@@ -148,7 +148,7 @@ namespace Rpc {
 
    // Get parent System by const reference.
    template <int D>
-   System<D> const & FilmFieldGenMask<D>::system() const
+   Rp::System<D, Rpc::Types<D> > const & FilmFieldGenMask<D>::system() const
    {  
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 

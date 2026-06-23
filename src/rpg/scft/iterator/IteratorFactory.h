@@ -47,7 +47,7 @@ namespace Rp {
       *
       * \param system  parent system
       */
-      IteratorFactory(Rpg::System<D>& system);
+      IteratorFactory(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Method to create any Iterator supplied with PSCF.
@@ -64,7 +64,7 @@ namespace Rp {
    private:
 
       /// Pointer to the parent system object.
-      Rpg::System<D>* sysPtr_;
+      Rp::System<D, Rpg::Types<D> >* sysPtr_;
 
    };
 

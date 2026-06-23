@@ -25,7 +25,7 @@ namespace Rp {
    */
    template <int D, class T>
    AverageAnalyzer<D,T>::AverageAnalyzer(typename T::Simulator& simulator,
-                                         typename T::System& system)
+                                         System<D,T>& system)
     : AnalyzerT(simulator, system),
       nSamplePerOutput_(1)
    {  AnalyzerT::setFileMaster(system.fileMaster()); }

@@ -16,9 +16,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declaration
-   template <int D> class System;
-
    /**
    * Brownian dynamics simulator for PS-FTS.
    *
@@ -42,7 +39,7 @@ namespace Rpc {
       *
       * \param system  parent System
       */
-      BdSimulator(System<D>& system);
+      BdSimulator(Rp::System<D, Rpc::Types<D> >& system);
 
       BdSimulator() = delete;
       BdSimulator(BdSimulator<D> const &) = delete;

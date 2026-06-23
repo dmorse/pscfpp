@@ -34,9 +34,9 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param system parent System<D> object
+      * \param system parent Rp::System<D, Rpg::Types<D> > object
       */
-      SimulatorFactory(System<D>& system);
+      SimulatorFactory(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Method to create any Simulator supplied with PSCF.
@@ -52,7 +52,7 @@ namespace Rpg {
    private:
 
       /// Pointer to the parent system.
-      System<D>* systemPtr_;
+      Rp::System<D, Rpg::Types<D> >* systemPtr_;
 
    };
 

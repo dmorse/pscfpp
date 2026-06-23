@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"                      // base class
-#include <pscf/math/IntVec.h>                     // member
-#include <util/containers/DArray.h>               // member
+#include "AverageAnalyzer.h"              // base class template
+#include <pscf/math/IntVec.h>             // member
+#include <util/containers/DArray.h>       // member
 #include <iostream>
 
 namespace Pscf {
@@ -79,7 +79,7 @@ namespace Rp {
       * \param system  parent System object
       */
       MaxOrderParameter(typename T::Simulator& simulator, 
-                        typename T::System& system);
+                        System<D,T>& system);
 
       /**
       * Destructor.

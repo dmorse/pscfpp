@@ -33,28 +33,11 @@
 
 #include <rp/system/System.tpp>  // base class template implementation
 
-namespace Pscf {
-   namespace Rpc {
-
-      // Constructor.
-      template <int D>
-      System<D>::System()
-       : Rp::System<D, Types<D> >(*this)
-      {}
-
-   }
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class System< 1, Rpc::Types<1> >;
       template class System< 2, Rpc::Types<2> >;
       template class System< 3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class System<1>;
-      template class System<2>;
-      template class System<3>;
    }
 }

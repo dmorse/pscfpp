@@ -8,9 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>                     // member
-#include <util/accumulators/Average.h>            // member
-#include <util/containers/DArray.h>               // member
+#include <rp/fts/analyzer/Analyzer.h>         // base class
+#include <pscf/math/IntVec.h>                 // member
+#include <util/accumulators/Average.h>        // member
+#include <util/containers/DArray.h>           // member
 
 #include <iostream>
 
@@ -59,7 +60,7 @@ namespace Rp {
       * \param system  parent system object
       */
       BinaryStructureFactor(typename T::Simulator& simulator, 
-                            typename T::System& system);
+                            System<D,T>& system);
 
       /**
       * Read parameters from file.

@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/accumulators/Average.h>           // member
+#include <rp/fts/analyzer/Analyzer.h>     // base class
+#include <util/accumulators/Average.h>    // member
 #include <iostream>
 
 namespace Pscf {
@@ -107,7 +108,7 @@ namespace Rp {
       * \param system  parent System object
       */
       AverageAnalyzer(typename T::Simulator& simulator, 
-                      typename T::System& system);
+                      System<D,T>& system);
 
       /**
       * Destructor.

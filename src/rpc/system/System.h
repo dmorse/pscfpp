@@ -12,57 +12,12 @@
 #include <rp/system/System.h>      // base class template
 #include <rpc/system/Types.h>      // base class template argument
 
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Prdc;
-
-   /**
-   * A complete physical system.
-   *
-   * Specializations of this template with D=1, 2 or 3 are derived from
-   * corresponding specializations of the base class template Rp::System,
-   * and each have the same public interface as this base class.
-   *
-   * \see Rp::System
-   * \ingroup Rpc_System_Module
-   */
-   template <int D>
-   class System : public Rp::System< D, Types<D> >
-   {
-   public:
-
-      /**
-      * Constructor.
-      */
-      System();
-
-      /**
-      * Destructor.
-      */
-      virtual ~System() = default;
-
-      // Prohibit copying and assignment
-      System(System<D> const &) = delete;
-      System<D>& operator = (System<D> const &) = delete;
-
-   };
-
-} // namespace Rpc
-} // namespace Pscf
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class System<1, Rpc::Types<1> >;
       extern template class System<2, Rpc::Types<1> >;
       extern template class System<3, Rpc::Types<1> >;
-   }
-   namespace Rpc {
-      extern template class System<1>;
-      extern template class System<2>;
-      extern template class System<3>;
    }
 }
 #endif

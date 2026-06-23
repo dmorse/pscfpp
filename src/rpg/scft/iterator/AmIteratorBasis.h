@@ -45,7 +45,7 @@ namespace Rpg {
       *
       * \param system  parent system
       */
-      AmIteratorBasis(System<D>& system);
+      AmIteratorBasis(Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

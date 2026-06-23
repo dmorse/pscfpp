@@ -8,14 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rpc/system/Types.h>
 #include <util/param/ParamComposite.h>    // base class
 #include <util/global.h>
 
+// Forward declarations
 namespace Pscf {
-namespace Rpc
-{
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
 
-   template <int D> class System;
+namespace Pscf {
+namespace Rpc {
+
 
    using namespace Util;
 
@@ -40,7 +46,7 @@ namespace Rpc
       *
       * \param system parent System object
       */
-      Compressor(System<D>& system);
+      Compressor(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Destructor.
@@ -78,17 +84,17 @@ namespace Rpc
       *
       * \param system parent System object
       */
-      void setSystem(System<D>& system);
+      void setSystem(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Return parent system by const reference.
       */
-      System<D> const & system() const;
+      Rp::System<D, Rpc::Types<D> > const & system() const;
 
       /**
       * Return parent system by non-const reference.
       */
-      System<D>& system();
+      Rp::System<D, Rpc::Types<D> >& system();
 
       /**
       * Count how many times MDE has been solved.
@@ -98,7 +104,7 @@ namespace Rpc
    private:
 
       /// Pointer to the associated system object.
-      System<D>* sysPtr_;
+      Rp::System<D, Rpc::Types<D> >* sysPtr_;
 
    };
 
@@ -108,7 +114,7 @@ namespace Rpc
    * Return parent system by const reference.
    */
    template <int D> inline
-   System<D> const & Compressor<D>::system() const
+   Rp::System<D, Rpc::Types<D> > const & Compressor<D>::system() const
    {  
       UTIL_ASSERT(sysPtr_);
       return *sysPtr_;
@@ -118,7 +124,7 @@ namespace Rpc
    * Return parent system by non-const reference.
    */
    template <int D> inline
-   System<D>& Compressor<D>::system()
+   Rp::System<D, Rpc::Types<D> >& Compressor<D>::system()
    {  
       UTIL_ASSERT(sysPtr_);
       return *sysPtr_;
@@ -139,7 +145,7 @@ namespace Rpc
    * Constructor (creates association with parent system)
    */
    template <int D>
-   Compressor<D>::Compressor(System<D>& system)
+   Compressor<D>::Compressor(Rp::System<D, Rpc::Types<D> >& system)
     : mdeCounter_(0),
       sysPtr_(&system)
    {  setClassName("Compressor"); }
@@ -148,7 +154,7 @@ namespace Rpc
    * Create association with the parent system.
    */
    template <int D>
-   void Compressor<D>::setSystem(System<D>& system)
+   void Compressor<D>::setSystem(Rp::System<D, Rpc::Types<D> >& system)
    {  sysPtr_ = &system; }
 
    /*

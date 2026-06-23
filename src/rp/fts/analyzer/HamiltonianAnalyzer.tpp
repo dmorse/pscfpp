@@ -22,7 +22,7 @@ namespace Rp {
    template <int D, class T>
    HamiltonianAnalyzer<D,T>::HamiltonianAnalyzer(
                                       typename T::Simulator& simulator,
-                                      typename T::System& system)
+                                      System<D,T>& system)
     : AverageListAnalyzerT(simulator, system),
       idealId_(-1),
       fieldId_(-1),

@@ -15,7 +15,7 @@ namespace Rpc {
    // Constructor.
    template <int D>
    AverageListAnalyzer<D>::AverageListAnalyzer(Simulator<D>& simulator,
-                                   System<D>& system)
+                                   Rp::System<D, Rpc::Types<D> >& system)
     : Rp::AverageListAnalyzer< D, Types<D> >(simulator, system)
    {}
 

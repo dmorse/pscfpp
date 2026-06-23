@@ -20,7 +20,7 @@ namespace Rpc {
    template <int D>
    PerturbationDerivative<D>::PerturbationDerivative(
                                      Simulator<D>& simulator,
-                                     System<D>& system)
+                                     Rp::System<D, Rpc::Types<D> >& system)
     : Rp::PerturbationDerivative< D, Types<D> >(simulator, system)
    {}
 

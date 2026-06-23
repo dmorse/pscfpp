@@ -8,8 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>    // base class
-#include <util/global.h>                  
+#include <rpg/system/Types.h>           // template argument
+#include <util/param/ParamComposite.h>  // base class
+#include <util/global.h>
+
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
 
 namespace Pscf {
 namespace Rpg {
@@ -36,10 +44,10 @@ namespace Rpg {
 
       /**
       * Constructor.
-      * 
+      *
       * \param system parent System object
       */
-      Compressor(System<D>& system);
+      Compressor(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Destructor.
@@ -52,24 +60,24 @@ namespace Rpg {
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int compress() = 0;
-      
+
       /**
       * Get the number of times the MDE has been solved.
       */
       int mdeCounter() const;
-      
+
       /**
       * Log output timing results.
       *
       * \param out  output stream
       */
       virtual void outputTimers(std::ostream& out) const = 0;
-      
+
       /**
-      * Clear timers 
+      * Clear timers
       */
       virtual void clearTimers() = 0;
-      
+
    protected:
 
       /**
@@ -82,33 +90,33 @@ namespace Rpg {
       *
       * \param system  parent System object
       */
-      void setSystem(System<D>& system);
+      void setSystem(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Return parent system by const reference.
       */
-      System<D> const & system() const;
-      
+      Rp::System<D, Rpg::Types<D> > const & system() const;
+
       /**
       * Return parent system by non-const reference.
       */
-      System<D>& system();
-      
+      Rp::System<D, Rpg::Types<D> >& system();
+
    private:
 
       /// Pointer to the associated system object.
-      System<D>* sysPtr_;
+      Rp::System<D, Rpg::Types<D> >* sysPtr_;
 
    };
 
    // Inline member functions
- 
+
    /*
    * Return parent system by const reference.
    */
    template <int D> inline
-   System<D> const & Compressor<D>::system() const
-   {  
+   Rp::System<D, Rpg::Types<D> > const & Compressor<D>::system() const
+   {
       UTIL_ASSERT(sysPtr_);
       return *sysPtr_;
    }
@@ -117,15 +125,15 @@ namespace Rpg {
    * Return parent system by non-const reference.
    */
    template <int D> inline
-   System<D>& Compressor<D>::system()
-   {  
+   Rp::System<D, Rpg::Types<D> >& Compressor<D>::system()
+   {
       UTIL_ASSERT(sysPtr_);
       return *sysPtr_;
    }
 
    // Non-inline member functions
 
-   /* 
+   /*
    * Default constructor.
    */
    template <int D>
@@ -138,7 +146,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   Compressor<D>::Compressor(System<D>& system)
+   Compressor<D>::Compressor(Rp::System<D, Rpg::Types<D> >& system)
     : mdeCounter_(0),
       sysPtr_(&system)
    {  setClassName("Compressor"); }
@@ -151,15 +159,15 @@ namespace Rpg {
    {  return mdeCounter_; }
 
    // Protected function
-  
+
    /*
    * Create association with the parent system.
    */
    template <int D>
-   void Compressor<D>::setSystem(System<D>& system)
+   void Compressor<D>::setSystem(Rp::System<D, Rpg::Types<D> >& system)
    {
       UTIL_CHECK(!sysPtr_);
-      sysPtr_ = &system; 
+      sysPtr_ = &system;
    }
 
 } // namespace Rpg

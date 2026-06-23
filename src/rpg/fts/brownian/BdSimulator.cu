@@ -34,7 +34,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   BdSimulator<D>::BdSimulator(System<D>& system)
+   BdSimulator<D>::BdSimulator(Rp::System<D, Rpg::Types<D> >& system)
     : Rp::BdSimulator<D, Types<D> >(system, *this)
    {}
 

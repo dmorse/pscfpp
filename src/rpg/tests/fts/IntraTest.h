@@ -36,7 +36,7 @@ public:
    {  setVerbose(0); }
    
    template <int D>
-   void initSystem(System<D>& system, std::string filename)
+   void initSystem(Rp::System<D, Rpg::Types<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -52,7 +52,7 @@ public:
                   char const * outfilename)
    {
       openLogFile(outfilename);
-      System<1> system; 
+      Rp::System<1, Rpg::Types<1> > system; 
       initSystem(system, paramFilename);
       system.w().readRGrid(inFieldFilename);
       
@@ -186,7 +186,7 @@ public:
       printMethod(TEST_FUNC);
       
       openLogFile("out/testIntraHomoThread.log");
-      System<1> system; 
+      Rp::System<1, Rpg::Types<1> > system; 
       initSystem(system, "in/param_system_1D_diblcok_thread");
       system.w().readRGrid("in/w_diblock_homogenous.rf");
       
@@ -201,7 +201,7 @@ public:
       intra.computeOmegaTotal(intraCorrelationK);
       
       // The intracorrelation function of conformational homo
-      System<1> systemHomo; 
+      Rp::System<1, Rpg::Types<1> > systemHomo; 
       initSystem(systemHomo, "in/param_system_1D_homo_thread");
       systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
       RField<1> intraCorrelationKHomo;
@@ -221,7 +221,7 @@ public:
       printMethod(TEST_FUNC);
       
       openLogFile("out/testIntraHomoBead.log");
-      System<1> system; 
+      Rp::System<1, Rpg::Types<1> > system; 
       initSystem(system, "in/param_system_1D_diblcok_bead");
       system.w().readRGrid("in/w_diblock_homogenous.rf");
       
@@ -236,7 +236,7 @@ public:
       intra.computeOmegaTotal(intraCorrelationK);
       
       // The intracorrelation function of conformational homo
-      System<1> systemHomo; 
+      Rp::System<1, Rpg::Types<1> > systemHomo; 
       initSystem(systemHomo, "in/param_system_1D_homo_bead");
       systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
       RField<1> intraCorrelationKHomo;

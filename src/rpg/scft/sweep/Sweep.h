@@ -47,7 +47,7 @@ namespace Rpg {
       *
       * \param system  parent system
       */
-      Sweep(System<D>& system);
+      Sweep(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Destructor.

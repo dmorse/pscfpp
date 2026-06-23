@@ -13,13 +13,20 @@
 #include <util/param/Manager.h>              // indirect base class
 #include <util/containers/DArray.h>          // member
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+   namespace Rpc {
+      template <int D> class McSimulator;
+   }
+}
+
 namespace Pscf {
 namespace Rpc {
 
    using namespace Util;
-
-   template <int D> class System;
-   template <int D> class McSimulator;
 
    /**
    * Manager for a set of McMove objects.
@@ -39,7 +46,7 @@ namespace Rpc {
       * \param simulator parent McSimulator
       * \param system parent System
       */
-      McMoveManager(McSimulator<D>& simulator, System<D>& system);
+      McMoveManager(McSimulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

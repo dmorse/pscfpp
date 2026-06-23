@@ -28,7 +28,7 @@ namespace Rpc {
    template <int D>
    FourthOrderParameter<D>::FourthOrderParameter(
                                    Simulator<D>& simulator,
-                                   System<D>& system)
+                                   Rp::System<D, Rpc::Types<D> >& system)
     : Base(simulator, system)
    {}
 

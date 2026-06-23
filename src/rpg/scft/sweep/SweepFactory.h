@@ -35,7 +35,7 @@ namespace Rpg {
       *
       * \param system parent System object
       */
-      SweepFactory(System<D>& system);
+      SweepFactory(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Method to create any Sweep subclass.
@@ -51,7 +51,7 @@ namespace Rpg {
    private:
 
       // Pointer to parent system.
-      System<D>* systemPtr_;
+      Rp::System<D, Rpg::Types<D> >* systemPtr_;
 
    };
 

@@ -9,6 +9,11 @@
 namespace Util {
    class FileMaster;
 }
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
 
 namespace Pscf {
 namespace Rp {

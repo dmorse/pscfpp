@@ -14,7 +14,14 @@
 #include <iostream>
 
 // Forward declaration
-namespace Util { class Random; }
+namespace Util { 
+   class Random; 
+}
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
@@ -534,7 +541,7 @@ namespace Rp {
       /**
       * Get the parent system by reference.
       */
-      typename T::System& system();
+      System<D,T>& system();
 
       /**
       * Get the scalar random number generator by reference.
@@ -603,7 +610,7 @@ namespace Rp {
       * \param system  parent System
       * \param simulator  enclosing instance of a subclass
       */
-      Simulator(typename T::System& system, 
+      Simulator(System<D,T>& system, 
                 typename T::Simulator& simulator);
 
       /**
@@ -860,7 +867,7 @@ namespace Rp {
       /**
       * Pointer to the parent system.
       */
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /**
       * Pointer to the enclosing instance of a Rp::Simulator<D,T> subclass.
@@ -920,7 +927,7 @@ namespace Rp {
 
    // Get the parent System by reference.
    template <int D, class T> inline 
-   typename T::System& Simulator<D,T>::system()
+   System<D,T>& Simulator<D,T>::system()
    {
       UTIL_ASSERT(systemPtr_);
       return *systemPtr_;

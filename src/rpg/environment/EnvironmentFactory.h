@@ -8,14 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rpg/system/Types.h>
 #include <prdc/environment/Environment.h>
 #include <util/param/Factory.h>  
 #include <string>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rpg {
-
-   template <int D> class System;
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -33,7 +39,7 @@ namespace Rpg {
    public:
 
       /// Constructor
-      EnvironmentFactory(System<D>& system);
+      EnvironmentFactory(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Method to create any Environment supplied with PSCF.
@@ -49,7 +55,7 @@ namespace Rpg {
    private:
 
       /// Pointer to the parent system.
-      System<D>* sysPtr_;
+      Rp::System<D, Rpg::Types<D> >* sysPtr_;
 
    };
 

@@ -3,8 +3,17 @@
 
 #include <util/param/ParamComposite.h>      // base class
 
-// Forward declaration
-namespace Util {  template <typename T> class DArray; }
+// Forward declarations
+namespace Util {  
+   template <typename T> class DArray; 
+}
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System; 
+      template <int D, class T> class Simulator; 
+   }
+}
+
 
 namespace Pscf {
 namespace Rp {
@@ -103,9 +112,9 @@ namespace Rp {
       typename T::Simulator const & simulator() const;
 
       /**
-      * Get parent typename T::System by const reference.
+      * Get parent System<D,T> by const reference.
       */
-      typename T::System const & system() const;
+      System<D,T> const & system() const;
 
       /**
       * Get the perturbation parameter.
@@ -145,7 +154,7 @@ namespace Rp {
       /**
       * Get parent System by non-const reference.
       */
-      typename T::System& system();
+      System<D,T>& system();
 
       /**
       * Strength of the perturbation
@@ -158,7 +167,7 @@ namespace Rp {
       typename T::Simulator* simulatorPtr_;
 
       /// Pointer to parent System.
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
    };
 
@@ -182,7 +191,7 @@ namespace Rp {
 
    // Return parent simulator by const reference.
    template <int D, class T>
-   inline typename T::System const & Perturbation<D,T>::system() const
+   inline System<D,T> const & Perturbation<D,T>::system() const
    {
       assert(systemPtr_);
       return *systemPtr_;
@@ -190,7 +199,7 @@ namespace Rp {
 
    // Return parent simulator by non-const reference.
    template <int D, class T>
-   inline typename T::System & Perturbation<D,T>::system()
+   inline System<D,T> & Perturbation<D,T>::system()
    {
       assert(systemPtr_);
       return *systemPtr_;

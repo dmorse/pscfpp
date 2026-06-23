@@ -46,7 +46,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      PerturbationDerivative(Simulator<D>& simulator, System<D>& system);
+      PerturbationDerivative(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

@@ -46,7 +46,7 @@ namespace Rpc {
       * \param simulator  parent Simulator
       * \param system  parent System
       */
-      CubicLengthDerivative(Simulator<D>& simulator, System<D>& system);
+      CubicLengthDerivative(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

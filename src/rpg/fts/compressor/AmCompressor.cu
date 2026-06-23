@@ -25,7 +25,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   AmCompressor<D>::AmCompressor(System<D>& system)
+   AmCompressor<D>::AmCompressor(Rp::System<D, Rpg::Types<D> >& system)
     : Rp::AmCompressor<D, Types<D>, DeviceArray<cudaReal> >(system)
    {}
 

@@ -14,7 +14,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   TrajectoryReader<D>::TrajectoryReader(System<D>& system)
+   TrajectoryReader<D>::TrajectoryReader(Rp::System<D, Rpg::Types<D> >& system)
     : Rp::TrajectoryReader<D, Types<D> >(system)
    {}
 

@@ -38,7 +38,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   BasisFieldState<D,T>::BasisFieldState(typename T::System& system)
+   BasisFieldState<D,T>::BasisFieldState(System<D,T>& system)
     : FieldStateT(system)
    {}
 

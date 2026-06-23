@@ -35,9 +35,9 @@ namespace Rpg {
       * Constructor.
       *
       * \param simulator  parent Simulator<D> object
-      * \param system  parent System<D> object
+      * \param system  parent Rp::System<D, Rpg::Types<D> > object
       */
-      AnalyzerFactory(Simulator<D>& simulator, System<D>& system);
+      AnalyzerFactory(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Method to create any Analyzer supplied with PSCF.
@@ -55,7 +55,7 @@ namespace Rpg {
       Simulator<D>* simPtr_;
 
       /// Pointer to the parent system.
-      System<D>* sysPtr_;
+      Rp::System<D, Rpg::Types<D> >* sysPtr_;
       
    };
 

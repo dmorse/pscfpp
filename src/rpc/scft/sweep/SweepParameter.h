@@ -47,7 +47,7 @@ namespace Rpc {
       *
       * \param system  parent system
       */
-      SweepParameter(System<D>& system);
+      SweepParameter(Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

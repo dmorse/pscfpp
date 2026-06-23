@@ -12,8 +12,16 @@
 #include <util/misc/Timer.h>            // member
 #include <util/global.h>
 
-// Forward declaration
-namespace Util { class Random; }
+// Forward declarations
+namespace Util { 
+   class Random; 
+}
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 
 namespace Pscf {
 namespace Rp {
@@ -188,12 +196,12 @@ namespace Rp {
       /**
       * Get parent System object (non-const ref).
       */
-      typename T::System& system();
+      System<D,T>& system();
 
       /**
       * Get parent System object (const ref)
       */
-      typename T::System const & system() const;
+      System<D,T> const & system() const;
 
       /**
       * Get parent McSimulator object (non-const ref).
@@ -247,7 +255,7 @@ namespace Rp {
       typename T::McSimulator* simulatorPtr_;
 
       /// Pointer to parent System object.
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /// Pointer to the scalar random number generator.
       Random* randomPtr_;
@@ -319,14 +327,14 @@ namespace Rp {
    * Get parent System object (non-const ref).
    */
    template <int D, class T> inline
-   typename T::System& McMove<D,T>::system()
+   System<D,T>& McMove<D,T>::system()
    {  return *systemPtr_; }
 
    /*
    * Get parent System object (const ref).
    */
    template <int D, class T> inline
-   typename T::System const & McMove<D,T>::system() const
+   System<D,T> const & McMove<D,T>::system() const
    {  return *systemPtr_; }
 
    /*

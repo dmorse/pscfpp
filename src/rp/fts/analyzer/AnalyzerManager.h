@@ -3,9 +3,14 @@
 
 #include <util/param/Manager.h>        // base class template
 
-// Forward declaration
+// Forward declarations
 namespace Util {
    template <class T> class Factory;
+}
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
 }
 
 namespace Pscf {
@@ -81,7 +86,7 @@ namespace Rp {
       * \param system  parent System
       */
       AnalyzerManager(typename T::Simulator& simulator, 
-                      typename T::System& system);
+                      System<D,T>& system);
 
       /**
       * Destructor.
@@ -102,7 +107,7 @@ namespace Rp {
       /**
       * Pointer to parent System.
       */
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /**
       * Return pointer to a new AnalyzerFactory.

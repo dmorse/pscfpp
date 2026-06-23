@@ -22,7 +22,7 @@ namespace Rpg {
    // Constructor.
    template <int D>
    TrajectoryWriter<D>::TrajectoryWriter(Simulator<D>& simulator, 
-                                         System<D>& system)
+                                         Rp::System<D, Rpg::Types<D> >& system)
     : Rp::TrajectoryWriter< D, Types<D> > (simulator, system)
    {}
 

@@ -30,7 +30,7 @@ namespace Rpc {
    */
    template <int D>
    AnalyzerFactory<D>::AnalyzerFactory(Simulator<D>& simulator,
-                                       System<D>& system)
+                                       Rp::System<D, Rpc::Types<D> >& system)
     : simPtr_(&simulator),
       sysPtr_(&system)
    {}

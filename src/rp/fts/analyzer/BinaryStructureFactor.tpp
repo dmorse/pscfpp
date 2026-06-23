@@ -30,7 +30,7 @@ namespace Rp {
    template <int D, class T>
    BinaryStructureFactor<D,T>::BinaryStructureFactor(
                                 typename T::Simulator& simulator,
-                                typename T::System& system)
+                                System<D,T>& system)
     : AnalyzerT(simulator, system),
       kMeshDimensions_(),
       nWave_(0),

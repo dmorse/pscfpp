@@ -26,7 +26,7 @@ namespace Pscf {
       * Constructor.
       */
       template <int D>
-      Rp::ScftThermo<D, Rpg::Types<D> >::ScftThermo(System<D> const & system)
+      Rp::ScftThermo<D, Rpg::Types<D> >::ScftThermo(Rp::System<D, Rpg::Types<D> > const & system)
        : Rp::ScftThermo<D, Types<D> >(system)
       {};
 

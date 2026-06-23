@@ -43,7 +43,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       LinearSweep<3> ls(system);
       SweepFactory<3> sf(system);
    }
@@ -52,7 +52,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       SweepFactory<3> sf(system);
       Sweep<3>* sweepPtr;
       
@@ -65,7 +65,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up system with some data
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       SweepTest::SetUpSystem(system, "in/block/param");
       // Set up SweepParameter objects 
       DArray< SweepParameter<1> > ps;
@@ -108,7 +108,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up system
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
       // Set up SweepParameter objects 
@@ -146,7 +146,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up system
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
       // Set up SweepParameter objects 
@@ -254,7 +254,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up system with Linear Sweep Object
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       SweepTest::SetUpSystem(system, "in/block/param");
    }
 
@@ -308,7 +308,7 @@ public:
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
-   void SetUpSystem(System<1>& system, std::string fname)
+   void SetUpSystem(Rp::System<1, Rpc::Types<1> >& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -325,7 +325,7 @@ public:
    double testLinearSweepParam(std::string paramname)
    {
       // Set up system with a LinearSweep object
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       SweepTest::SetUpSystem(system, "in/" + paramname + "/param");
       
       // Read expected w fields

@@ -30,7 +30,7 @@ namespace Rp {
    */
    template <int D, class T>
    IntraCorrelation<D,T>::IntraCorrelation(
-                                     typename T::System const & system)
+                                     System<D,T> const & system)
     : systemPtr_(&system),
       correlationMixturePtr_(nullptr),
       kSize_(-1)

@@ -41,9 +41,8 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   System<D,T>::System(typename T::System& system)
-    : systemPtr_(&system),
-      cPtr_(nullptr),
+   System<D,T>::System()
+    : cPtr_(nullptr),
       wPtr_(nullptr),
       hPtr_(nullptr),
       maskPtr_(nullptr),
@@ -82,16 +81,16 @@ namespace Rp {
       mixtureModifierPtr_ = new MixtureModifier<D,T>();
       interactionPtr_ = new Interaction();
       domainPtr_ = new Domain<D,T>();
-      scftPtr_ = new ScftThermo<D,T>(*systemPtr_);
+      scftPtr_ = new ScftThermo<D,T>(*this);
       fileMasterPtr_ = new FileMaster();
       tmpUnitCellPtr_ = new UnitCell<D>();
 
       // Create Factories for optional components
       environmentFactoryPtr_ 
-         = new typename T::EnvironmentFactory(*systemPtr_);
-      iteratorFactoryPtr_ = new IteratorFactory<D,T>(*systemPtr_);
-      sweepFactoryPtr_ = new typename T::SweepFactory(*systemPtr_);
-      simulatorFactoryPtr_ = new typename T::SimulatorFactory(*systemPtr_);
+         = new typename T::EnvironmentFactory(*this);
+      iteratorFactoryPtr_ = new IteratorFactory<D,T>(*this);
+      sweepFactoryPtr_ = new typename T::SweepFactory(*this);
+      simulatorFactoryPtr_ = new typename T::SimulatorFactory(*this);
 
       // Create associations among child components
       mixtureModifier().associate(mixture_());

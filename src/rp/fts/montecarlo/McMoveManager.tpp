@@ -21,7 +21,7 @@ namespace Rp {
    */
    template <int D, class T>
    McMoveManager<D,T>::McMoveManager(typename T::McSimulator& simulator,
-                                     typename T::System& system)
+                                     System<D,T>& system)
     : Base(),
       simulatorPtr_(&simulator),
       systemPtr_(&system),

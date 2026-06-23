@@ -16,6 +16,12 @@
 namespace Util {
    template <class T> class Factory;
 }
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 
 namespace Pscf {
 namespace Rp {
@@ -125,7 +131,7 @@ namespace Rp {
    protected:
 
       /// Alias for System class in program-level namespace.
-      using SystemT = typename T::System;
+      using SystemT = System<D,T>;
 
       /// Alias for Simulator class in program-level namespace.
       using SimulatorT = typename T::Simulator;

@@ -22,7 +22,7 @@ namespace Rp {
    */
    template <int D, class T>
    TrajectoryWriter<D,T>::TrajectoryWriter(typename T::Simulator& simulator,
-                                         typename T::System& system)
+                                         System<D,T>& system)
     : AnalyzerT(simulator, system),
       nSample_(0),
       isInitialized_(false)

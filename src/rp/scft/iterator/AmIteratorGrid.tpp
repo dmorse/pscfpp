@@ -31,7 +31,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   AmIteratorGrid<D,T>::AmIteratorGrid(typename T::System& system)
+   AmIteratorGrid<D,T>::AmIteratorGrid(System<D,T>& system)
     : AmIterTmplT(),
       interaction_(),
       scaleStress_(1.0)

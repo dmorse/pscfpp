@@ -13,7 +13,7 @@ namespace Rpg {
 
    // Constructor.
    template <int D>
-   StepLogger<D>::StepLogger(Simulator<D>& simulator, System<D>& system)
+   StepLogger<D>::StepLogger(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system)
     : Rp::StepLogger< D, Types<D> >(simulator, system)
    {}
 

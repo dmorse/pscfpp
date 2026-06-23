@@ -8,6 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/analyzer/AverageListAnalyzer.h> // base class template
+
 #include <iostream>
 
 namespace Pscf {
@@ -56,7 +58,7 @@ namespace Rp {
       * \param system  parent System object
       */
       HamiltonianAnalyzer(typename T::Simulator& simulator, 
-                          typename T::System& system);
+                          System<D,T>& system);
 
       /**
       * Destructor.

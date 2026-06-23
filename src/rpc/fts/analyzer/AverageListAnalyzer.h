@@ -50,7 +50,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      AverageListAnalyzer(Simulator<D>& simulator, System<D>& system);
+      AverageListAnalyzer(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

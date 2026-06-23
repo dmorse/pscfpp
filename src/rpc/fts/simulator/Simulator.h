@@ -46,7 +46,7 @@ namespace Rpc {
       *
       * \param system  parent System object
       */
-      Simulator(System<D>& system);
+      Simulator(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Destructor.

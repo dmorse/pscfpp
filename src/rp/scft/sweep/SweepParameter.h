@@ -14,6 +14,13 @@
 #include <iostream>
 #include <string>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -125,7 +132,7 @@ namespace Rp {
       *
       * \param system  parent system
       */
-      void setSystem(typename T::System& system)
+      void setSystem(System<D,T>& system)
       {  systemPtr_ = &system; }
 
       /**
@@ -248,7 +255,7 @@ namespace Rp {
       *
       * \param system  parent system
       */
-      SweepParameter(typename T::System& system);
+      SweepParameter(System<D,T>& system);
 
    private:
 
@@ -273,7 +280,7 @@ namespace Rp {
       double change_;
 
       /// Pointer to the parent system.
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /// Pointer to the parameterTypes_ array of the Sweep base class.
       GArray<ParameterType>* parameterTypesPtr_;

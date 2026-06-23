@@ -6,6 +6,7 @@
 */
 
 #include <rpc/system/System.h>
+#include <rpc/system/Types.h>
 #include <prdc/crystal/getDimension.h>
 #include <pscf/chem/PolymerModel.h>
 #include <util/format/Int.h>
@@ -27,7 +28,7 @@ namespace Rpc {
    */
    template <int D>
    void run(int argc, char **argv) {
-      System<D> system;
+      Rp::System<D, Rpc::Types<D> > system;
 
       // Process command line options
       system.setOptions(argc, argv);

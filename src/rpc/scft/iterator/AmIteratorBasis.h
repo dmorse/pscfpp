@@ -46,7 +46,7 @@ namespace Rpc {
       *
       * \param system  parent system
       */
-      AmIteratorBasis(System<D>& system);
+      AmIteratorBasis(Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

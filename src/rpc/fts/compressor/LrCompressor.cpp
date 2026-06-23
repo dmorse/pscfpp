@@ -26,7 +26,7 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   LrCompressor<D>::LrCompressor(System<D>& system)
+   LrCompressor<D>::LrCompressor(Rp::System<D, Rpc::Types<D> >& system)
     : Rp::LrCompressor<D, Types<D> >(system)
    {}
 

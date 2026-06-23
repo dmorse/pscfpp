@@ -38,7 +38,7 @@ namespace Rpg {
       * \param simulator parent McSimulator
       * \param system parent System
       */
-      McMoveManager(McSimulator<D>& simulator, System<D>& system);
+      McMoveManager(McSimulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

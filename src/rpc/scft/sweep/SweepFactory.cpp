@@ -16,7 +16,7 @@ namespace Rpc{
    using namespace Util;
 
    template <int D>
-   SweepFactory<D>::SweepFactory(System<D>& system)
+   SweepFactory<D>::SweepFactory(Rp::System<D, Rpc::Types<D> >& system)
     : systemPtr_(&system)
    {}
 

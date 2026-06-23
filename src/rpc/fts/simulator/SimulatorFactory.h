@@ -13,10 +13,15 @@
 
 #include <string>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rpc {
-
-   template <int D> class System;
 
    using namespace Util;
 
@@ -34,9 +39,9 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param system parent System<D> object
+      * \param system parent Rp::System<D, Rpc::Types<D> > object
       */
-      SimulatorFactory(System<D>& system);
+      SimulatorFactory(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Method to create any Simulator supplied with PSCF.
@@ -52,7 +57,7 @@ namespace Rpc {
    private:
 
       /// Pointer to the parent system.
-      System<D>* systemPtr_;
+      Rp::System<D, Rpc::Types<D> >* systemPtr_;
 
    };
 

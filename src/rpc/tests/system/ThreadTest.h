@@ -27,7 +27,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(System<D>& system, std::string filename)
+   void initSystem(Rp::System<D, Rpc::Types<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -45,7 +45,7 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputeFreeEnergyThread.log");
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       initSystem(system, "in/thread/param_system_1D");
       system.w().readBasis("in/thread/omega.in");
       system.compute();
@@ -61,7 +61,7 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputelnqThread.log");
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       initSystem(system, "in/thread/param_system_1D");
       system.w().readBasis("in/thread/omega.in");
       system.compute();

@@ -9,7 +9,6 @@
 // Forward declarations
 namespace Pscf {
    namespace Rpc {
-      template <int D> class System;
       template <int D> class Simulator;
    }
 }
@@ -41,7 +40,7 @@ namespace Rpc {
       * \param simulator  parent Simulator
       * \param system  parent System
       */
-      AnalyzerManager(Simulator<D>& simulator, System<D>& system);
+      AnalyzerManager(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

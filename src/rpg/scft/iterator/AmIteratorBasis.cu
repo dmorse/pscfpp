@@ -24,7 +24,7 @@ namespace Pscf {
 
       // Constructor
       template <int D>
-      Rp::AmIteratorBasis<D, Rpg::Types<D> >::AmIteratorBasis(System<D>& system)
+      Rp::AmIteratorBasis<D, Rpg::Types<D> >::AmIteratorBasis(Rp::System<D, Rpg::Types<D> >& system)
        : Rp::AmIteratorBasis<D, Types<D> >(system)
       {}
 

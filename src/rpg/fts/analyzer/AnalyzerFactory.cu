@@ -29,7 +29,7 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   AnalyzerFactory<D>::AnalyzerFactory(Simulator<D>& simulator, System<D>& system)
+   AnalyzerFactory<D>::AnalyzerFactory(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system)
     : simPtr_(&simulator),
       sysPtr_(&system)
    {}

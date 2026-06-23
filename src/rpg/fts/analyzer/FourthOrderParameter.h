@@ -48,7 +48,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      FourthOrderParameter(Simulator<D>& simulator, System<D>& system);
+      FourthOrderParameter(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    private:
 

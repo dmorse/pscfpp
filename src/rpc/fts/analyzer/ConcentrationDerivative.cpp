@@ -22,7 +22,7 @@ namespace Rpc {
    template <int D>
    ConcentrationDerivative<D>::ConcentrationDerivative(
                                    Simulator<D>& simulator,
-                                   System<D>& system)
+                                   Rp::System<D, Rpc::Types<D> >& system)
     : Rp::ConcentrationDerivative< D, Types<D> >(simulator, system)
    {}
 

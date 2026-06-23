@@ -44,7 +44,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryChiDerivative(Simulator<D>& simulator, System<D>& system);
+      BinaryChiDerivative(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

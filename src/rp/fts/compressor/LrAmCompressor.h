@@ -12,6 +12,13 @@
 #include <pscf/math/IntVec.h>                    // member
 #include <util/containers/DArray.h>              // member
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -94,7 +101,7 @@ namespace Rp {
       *
       * \param system  parent System object
       */
-      LrAmCompressor(typename T::System& system);
+      LrAmCompressor(System<D,T>& system);
 
       /**
       * Destructor.

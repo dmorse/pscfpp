@@ -35,7 +35,7 @@ namespace Rpg {
 
    // Constructor.
    template <int D>
-   McSimulator<D>::McSimulator(System<D>& system)
+   McSimulator<D>::McSimulator(Rp::System<D, Rpg::Types<D> >& system)
     : Rp::McSimulator<D, Types<D> >(system, *this)
    {}
 

@@ -19,7 +19,7 @@ namespace Rpc {
    // Constructor.
    template <int D>
    HamiltonianAnalyzer<D>::HamiltonianAnalyzer(Simulator<D>& simulator,
-                                   System<D>& system)
+                                   Rp::System<D, Rpc::Types<D> >& system)
     : Rp::HamiltonianAnalyzer< D, Types<D> >(simulator, system)
    {}
 

@@ -31,7 +31,7 @@ namespace Rpg {
    */
    template <int D>
    MaxOrderParameter<D>::MaxOrderParameter(Simulator<D>& simulator,
-                                           System<D>& system)
+                                           Rp::System<D, Rpg::Types<D> >& system)
     : Rp::MaxOrderParameter<D, Types<D> >(simulator, system)
    {}
 

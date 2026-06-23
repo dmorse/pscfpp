@@ -14,6 +14,13 @@
 #include <iostream>
 #include <string>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -242,7 +249,7 @@ namespace Rp {
       typename T::Simulator* simulatorPtr_;
 
       /// Pointer to the parent system
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /**
       * Read type of parameter being swept, and set number of identifiers.

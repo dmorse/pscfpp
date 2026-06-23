@@ -12,10 +12,15 @@
 #include <rpc/fts/trajectory/TrajectoryReader.h>
 #include <string>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rpc {
-
-   template <int D> class System;
 
    using namespace Util;
    
@@ -31,7 +36,7 @@ namespace Rpc {
    public:
 
       /// Constructor
-      TrajectoryReaderFactory(System<D>& system);
+      TrajectoryReaderFactory(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Method to create any TrajectoryReader supplied with PSCF
@@ -46,7 +51,7 @@ namespace Rpc {
    private:
       
       /// Pointer to the parent system.
-      System<D>* sysPtr_;
+      Rp::System<D, Rpc::Types<D> >* sysPtr_;
       
    };
 

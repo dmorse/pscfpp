@@ -8,6 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/analyzer/Analyzer.h>
+
 #include <iostream>
 
 namespace Pscf {
@@ -60,7 +62,7 @@ namespace Rp {
       * \param system  parent System object
       */
       StepLogger(typename T::Simulator& simulator, 
-                 typename T::System& system);
+                 System<D,T>& system);
 
       /**
       * Destructor.

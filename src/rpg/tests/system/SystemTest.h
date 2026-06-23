@@ -37,14 +37,14 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      System<1> system;
+      Rp::System<1, Rpg::Types<1> > system;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
 
-      System<1> system;
+      Rp::System<1, Rpg::Types<1> > system;
       setupSystem<1>(system,"in/diblock/lam/param.flex"); 
    }
 
@@ -53,7 +53,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testConversion1D_lam.log");
       
-      System<1> system;
+      Rp::System<1, Rpg::Types<1> > system;
       setupSystem<1>(system,"in/diblock/lam/param.flex"); 
 
       // Read w-fields (reference solution, solved by Fortran PSCF)
@@ -92,7 +92,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testConversion2D_hex.log");
 
-      System<2> system;
+      Rp::System<2, Rpg::Types<2> > system;
       setupSystem<2>(system,"in/diblock/hex/param.flex"); 
 
       // Read w fields
@@ -132,7 +132,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testConversion3D_bcc.log");
 
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       setupSystem<3>(system,"in/diblock/bcc/param.flex"); 
 
       // Read w fields in system.wFields
@@ -167,7 +167,7 @@ public:
 /*   void testCheckSymmetry3D_bcc()
 *   {
 *      printMethod(TEST_FUNC);
-*      System<3> system;
+*      Rp::System<3, Rpg::Types<3> > system;
 *      system.fileMaster().setInputPrefix(filePrefix());
 *      system.fileMaster().setOutputPrefix(filePrefix());
 *
@@ -192,7 +192,7 @@ public:
 */
 
    template <int D>
-   void setupSystem(System<D>& system, std::string fname)
+   void setupSystem(Rp::System<D, Rpg::Types<D> >& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

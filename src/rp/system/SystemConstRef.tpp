@@ -33,7 +33,7 @@ namespace Rp {
    * Constructor (creates associations).
    */
    template <int D, class T>
-   SystemConstRef<D,T>::SystemConstRef(typename T::System const & system)
+   SystemConstRef<D,T>::SystemConstRef(System<D,T> const & system)
     : systemPtr_(nullptr),
       mixturePtr_(nullptr),
       interactionPtr_(nullptr),
@@ -53,7 +53,7 @@ namespace Rp {
    {}
 
    template <int D, class T>
-   void SystemConstRef<D,T>::associate(typename T::System const & system)
+   void SystemConstRef<D,T>::associate(System<D,T> const & system)
    {
       systemPtr_ = &system;
       mixturePtr_ = &(system.mixture());

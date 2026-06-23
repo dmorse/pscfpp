@@ -27,7 +27,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   Simulator<D,T>::Simulator(typename T::System& system,
+   Simulator<D,T>::Simulator(System<D,T>& system,
                              typename T::Simulator& simulator)
     : hamiltonian_(0.0),
       idealHamiltonian_(0.0),

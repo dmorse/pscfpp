@@ -28,7 +28,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   LrCompressor<D>::LrCompressor(System<D>& system)
+   LrCompressor<D>::LrCompressor(Rp::System<D, Rpg::Types<D> >& system)
     : Rp::LrCompressor<D, Types<D> >(system)
    {}
 

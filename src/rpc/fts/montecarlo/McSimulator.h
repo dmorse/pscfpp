@@ -42,7 +42,7 @@ namespace Rpc {
       *
       * \param system parent System
       */
-      McSimulator(System<D>& system);
+      McSimulator(Rp::System<D, Rpc::Types<D> >& system);
 
       McSimulator() = delete;
       McSimulator(McSimulator<D> const & ) = delete;

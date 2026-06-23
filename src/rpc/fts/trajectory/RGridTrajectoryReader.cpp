@@ -22,7 +22,7 @@ namespace Rpc {
 
    // Constructor.
    template <int D>
-   RGridTrajectoryReader<D>::RGridTrajectoryReader(System<D>& system)
+   RGridTrajectoryReader<D>::RGridTrajectoryReader(Rp::System<D, Rpc::Types<D> >& system)
     : Rp::RGridTrajectoryReader<D, Types<D> >(system)
    {}
 

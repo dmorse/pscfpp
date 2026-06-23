@@ -3,6 +3,14 @@
 
 #include <util/param/ParamComposite.h>      // base class
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+      template <int D, class T> class Simulator;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 

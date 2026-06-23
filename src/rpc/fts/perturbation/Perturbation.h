@@ -11,8 +11,10 @@ namespace Pscf {
          template <int D> class RField;
       }
    }
+   namespace Rp {
+      template <int D, class T> class System;
+   }
    namespace Rpc {
-      template <int D> class System;
       template <int D> class Simulator;
    }
 }
@@ -31,7 +33,7 @@ namespace Rpc {
    * \ingroup Rpc_Fts_Perturbation_Module
    */
    template <int D>
-   class Perturbation : public Rp::Perturbation<D, Types<D> >
+   class Perturbation : public Rp::Perturbation<D, Rpc::Types<D> >
    {
 
    public:

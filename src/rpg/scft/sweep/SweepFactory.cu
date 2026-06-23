@@ -18,7 +18,7 @@ namespace Rpg{
    * Constructor.
    */
    template <int D>
-   SweepFactory<D>::SweepFactory(System<D>& system)
+   SweepFactory<D>::SweepFactory(Rp::System<D, Rpg::Types<D> >& system)
     : systemPtr_(&system)
    {}
 

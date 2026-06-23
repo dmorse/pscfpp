@@ -36,7 +36,7 @@ using namespace Pscf::Rpg;
 class SimulatorTest : public LogFileUnitTest
 {
 
-   System<3> system;
+   Rp::System<3, Rpg::Types<3> > system;
 
 public:
 

@@ -47,7 +47,7 @@ namespace Rpc
    * Constructor
    */
    template <int D>
-   FilmFieldGenMask<D>::FilmFieldGenMask(System<D>& sys)
+   FilmFieldGenMask<D>::FilmFieldGenMask(Rp::System<D, Rpc::Types<D> >& sys)
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(&sys)
    {  setClassName("FilmFieldGenMask"); }

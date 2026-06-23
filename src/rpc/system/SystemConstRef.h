@@ -44,9 +44,9 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param system  System<D> object to which this refers.
+      * \param system  Rp::System<D, Rpc::Types<D> > object to which this refers.
       */
-      SystemConstRef(System<D> const & system)
+      SystemConstRef(Rp::System<D, Rpc::Types<D> > const & system)
        : Rp::SystemConstRef<D, Types<D> > (system)
       {};
 

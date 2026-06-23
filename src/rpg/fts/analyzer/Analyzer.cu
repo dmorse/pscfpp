@@ -16,8 +16,8 @@ namespace Pscf {
       * Constructor.
       */
       template <int D>
-      Analyzer<D>::Analyzer(Simulator<D>& simulator, System<D>& system)
-       : Rp::Analyzer<D, Simulator<D>, System<D> >(simulator, system)
+      Analyzer<D>::Analyzer(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system)
+       : Rp::Analyzer<D, Simulator<D>, Rp::System<D, Rpg::Types<D> > >(simulator, system)
       {}
 
    }
@@ -26,9 +26,9 @@ namespace Pscf {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class Analyzer<1, Rpg::Simulator<1>, Rpg::System<1> >;
-      template class Analyzer<2, Rpg::Simulator<2>, Rpg::System<2> >;
-      template class Analyzer<3, Rpg::Simulator<3>, Rpg::System<3> >;
+      template class Analyzer<1, Rpg::Simulator<1>, Rp::System<1, Rpg::Types<1> > >;
+      template class Analyzer<2, Rpg::Simulator<2>, Rp::System<2, Rpg::Types<2> > >;
+      template class Analyzer<3, Rpg::Simulator<3>, Rp::System<3, Rpg::Types<3> > >;
    } 
    namespace Rpg {
       template class Analyzer<1>;

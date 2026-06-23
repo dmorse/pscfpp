@@ -43,7 +43,7 @@ namespace Rpc {
       *
       * \param system  parent System object
       */
-      LrCompressor(System<D>& system);
+      LrCompressor(Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

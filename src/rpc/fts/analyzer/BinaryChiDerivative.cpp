@@ -21,7 +21,7 @@ namespace Rpc {
    // Constructor.
    template <int D>
    BinaryChiDerivative<D>::BinaryChiDerivative(Simulator<D>& simulator,
-                                   System<D>& system)
+                                   Rp::System<D, Rpc::Types<D> >& system)
     : Rp::BinaryChiDerivative< D, Types<D> >(simulator, system)
    {}
 

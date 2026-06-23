@@ -23,7 +23,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T, class V>
-   LrAmCompressor<D,T,V>::LrAmCompressor(typename T::System& system)
+   LrAmCompressor<D,T,V>::LrAmCompressor(System<D,T>& system)
     : intra_(system),
       isIntraCalculated_(false),
       isAllocated_(false)

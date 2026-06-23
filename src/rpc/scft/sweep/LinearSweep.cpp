@@ -15,7 +15,7 @@ namespace Rpc {
 
    // Constructor
    template <int D>
-   LinearSweep<D>::LinearSweep(System<D>& system)
+   LinearSweep<D>::LinearSweep(Rp::System<D, Rpc::Types<D> >& system)
     : Rp::LinearSweep<D, Types<D> >(system)
    {}
 

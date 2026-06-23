@@ -133,10 +133,24 @@ namespace Rp {
 
    public:
 
-      // Suppress several compiler-generated member functions
-      System() = delete;
+      /// \name Construction and Destruction
+      ///@{
+
+      /**
+      * Constructor.
+      */
+      System();
+
+      /**
+      * Destructor.
+      */
+      ~System();
+
+      // Suppress copying and assignment
       System(System<D,T> const &) = delete;
       System<D,T>& operator = (System<D,T> const & ) = delete;
+
+      ///@}
 
       /// \name Lifetime Actions
       ///@{
@@ -532,41 +546,8 @@ namespace Rp {
 
    protected:
 
-      /// \name Construction and Destruction
-      ///@{
-
-      /**
-      * Constructor.
-      *
-      * When a specialization of System\<D,T\> is used as a base class
-      * for a subclass defined in the Rpc or Rpg program-level namespace,
-      * such as Rpc::System\<D\>, typename T::System is an alias for the
-      * System subclass defined in Rpc or Rpg. In the constructor such a
-      * derived class, the relevant instance of the derived class must
-      * be passed to the Rp::System<D,T> base class constructor via the
-      * standard "this" pointer. The address of this T::System subclass
-      * instance is retained in the Rp::System base class instance by a
-      * private member variable named systemPtr_ of type T::System*.
-      * See definitions of the constructors for the Rpc::System and
-      * Rpc::System class templates for examples of this usage.
-      *
-      * \param system  instance of System subclass
-      */
-      System(typename T::System& system);
-
-      /**
-      * Destructor.
-      */
-      ~System();
-
-      ///@}
-
    private:
 
-      /**
-      * Pointer to enclosing instance of System subclass.
-      */
-      typename T::System* systemPtr_;
 
       // Pointers to associated sub-objects (owned by System)
 

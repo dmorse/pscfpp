@@ -44,7 +44,7 @@ namespace Rpg {
       *
       * \param system associated parent system
       */
-      BasisFieldState(System<D>& system);
+      BasisFieldState(Rp::System<D, Rpg::Types<D> >& system);
 
       virtual ~BasisFieldState() = default;
 

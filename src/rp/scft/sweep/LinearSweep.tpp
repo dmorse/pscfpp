@@ -16,7 +16,7 @@ namespace Rp {
    using namespace Util;
 
    template <int D, class T>
-   LinearSweep<D,T>::LinearSweep(typename T::System& system)
+   LinearSweep<D,T>::LinearSweep(System<D,T>& system)
     : SweepT(system)
    {}
 

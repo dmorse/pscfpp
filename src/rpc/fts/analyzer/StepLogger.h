@@ -45,7 +45,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      StepLogger(Simulator<D>& simulator, System<D>& system);
+      StepLogger(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

@@ -20,7 +20,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   TrajectoryReaderFactory<D>::TrajectoryReaderFactory(System<D>& system)
+   TrajectoryReaderFactory<D>::TrajectoryReaderFactory(Rp::System<D, Rpc::Types<D> >& system)
     : sysPtr_(&system)
    {}
 

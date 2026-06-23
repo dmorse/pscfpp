@@ -8,6 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/analyzer/AverageAnalyzer.h> // base class template
+
 #include <iostream>
 
 namespace Pscf {
@@ -42,7 +44,7 @@ namespace Rp {
       * \param system  parent System object
       */
       BinaryChiDerivative(typename T::Simulator& simulator, 
-                    typename T::System& system);
+                    System<D,T>& system);
 
       /**
       * Destructor.

@@ -24,7 +24,7 @@ namespace Rpg {
    void run(int argc, char **argv) {
 
       // Construct System object for specific dimension D.
-      System<D> system;
+      Rp::System<D, Rpg::Types<D> > system;
 
       // Process command line options
       system.setOptions(argc, argv);

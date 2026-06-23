@@ -19,7 +19,7 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   TrajectoryReaderFactory<D>::TrajectoryReaderFactory(System<D>& system)
+   TrajectoryReaderFactory<D>::TrajectoryReaderFactory(Rp::System<D, Rpg::Types<D> >& system)
     : sysPtr_(&system)
    {}
 

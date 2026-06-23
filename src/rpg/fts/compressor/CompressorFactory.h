@@ -32,7 +32,7 @@ namespace Rpg {
    public:
 
       /// Constructor
-      CompressorFactory(System<D>& system);
+      CompressorFactory(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Method to create any Compressor supplied with PSCF.
@@ -47,7 +47,7 @@ namespace Rpg {
    private:
 
       /// Pointer to the parent system.
-      System<D>* sysPtr_;
+      Rp::System<D, Rpg::Types<D> >* sysPtr_;
 
    };
 

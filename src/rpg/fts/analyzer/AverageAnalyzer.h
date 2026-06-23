@@ -44,7 +44,7 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      AverageAnalyzer(Simulator<D>& simulator, System<D>& system);
+      AverageAnalyzer(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    protected:
 

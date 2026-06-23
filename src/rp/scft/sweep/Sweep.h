@@ -14,6 +14,13 @@
 
 #include <fstream>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -48,7 +55,7 @@ namespace Rp {
       *
       * \param system  parent system
       */
-      void setSystem(typename T::System& system);
+      void setSystem(System<D,T>& system);
 
       /**
       * Read parameters from param file.
@@ -69,7 +76,7 @@ namespace Rp {
       *
       * \param system  parent system
       */
-      Sweep(typename T::System& system);
+      Sweep(System<D,T>& system);
 
       /**
       * Destructor.
@@ -146,7 +153,7 @@ namespace Rp {
       /**
       * Return the parent system by reference.
       */
-      typename T::System& system()
+      System<D,T>& system()
       {
          UTIL_CHECK(systemPtr_);
          return *systemPtr_;
@@ -183,7 +190,7 @@ namespace Rp {
       std::ofstream logFile_;
 
       /// Pointer to parent system
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /// Output data to several files after convergence.
       void outputSolution();

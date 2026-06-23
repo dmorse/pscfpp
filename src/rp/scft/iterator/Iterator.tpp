@@ -32,7 +32,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   Iterator<D,T>::Iterator(typename T::System& system)
+   Iterator<D,T>::Iterator(System<D,T>& system)
     : isSymmetric_(false),
       isFlexible_(false),
       sysPtr_(&system)
@@ -92,7 +92,7 @@ namespace Rp {
    * Set system.
    */
    template <int D, class T>
-   void Iterator<D,T>::setSystem(typename T::System& system)
+   void Iterator<D,T>::setSystem(System<D,T>& system)
    {
       UTIL_CHECK(!sysPtr_);  
       sysPtr_ = &system; 

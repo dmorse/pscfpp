@@ -21,7 +21,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   CompressorFactory<D>::CompressorFactory(System<D>& system)
+   CompressorFactory<D>::CompressorFactory(Rp::System<D, Rpc::Types<D> >& system)
     : sysPtr_(&system)
    {}
 

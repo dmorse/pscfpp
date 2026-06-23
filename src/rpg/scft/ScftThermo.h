@@ -40,7 +40,7 @@ namespace Rpg {
       *
       * \param system  parent System
       */
-      ScftThermo(System<D> const & system);
+      ScftThermo(Rp::System<D, Rpg::Types<D> > const & system);
 
       /**
       * Destructor.

@@ -24,7 +24,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   LrCompressor<D,T>::LrCompressor(typename T::System& system)
+   LrCompressor<D,T>::LrCompressor(System<D,T>& system)
     : CompressorT(system),
       intra_(system),
       errorType_("rms"),

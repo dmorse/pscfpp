@@ -40,7 +40,7 @@ namespace Rpg {
       *
       * \param system  parent system object
       */
-      McSimulator(System<D>& system);
+      McSimulator(Rp::System<D, Rpg::Types<D> >& system);
 
       McSimulator() = delete;
       McSimulator(McSimulator<D> const & ) = delete;

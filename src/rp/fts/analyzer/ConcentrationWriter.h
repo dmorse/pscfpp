@@ -8,6 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/analyzer/Analyzer.h> // base class template
+
 #include <iostream>
 #include <fstream>
 
@@ -43,7 +45,7 @@ namespace Rp {
       * \param system  parent System object
       */
       ConcentrationWriter(typename T::Simulator& simulator, 
-                          typename T::System& system);
+                          System<D,T>& system);
 
       /**
       * Read interval and output file name.

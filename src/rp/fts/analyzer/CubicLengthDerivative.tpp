@@ -22,7 +22,7 @@ namespace Rp {
    template <int D, class T>
    CubicLengthDerivative<D,T>::CubicLengthDerivative(
                                       typename T::Simulator& simulator,
-                                      typename T::System& system)
+                                      System<D,T>& system)
     : AverageAnalyzerT(simulator, system)
    {  ParamComposite::setClassName("CubicLengthDerivative"); }
 

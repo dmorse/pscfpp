@@ -37,7 +37,7 @@ namespace Rpg {
       * 
       * \param sys  System parent object
       */
-      FilmEnvironment(System<D>& sys)
+      FilmEnvironment(Rp::System<D, Rpg::Types<D> >& sys)
        : MixAndMatchEnv::MixAndMatchEnv(),
          sysPtr_(&sys)
       {  ParamComposite::setClassName("FilmEnvironment"); }
@@ -51,7 +51,7 @@ namespace Rpg {
    private:
 
       /// Pointer to the associated system object.
-      System<D>* sysPtr_;
+      Rp::System<D, Rpg::Types<D> >* sysPtr_;
 
       /**
       * Create FieldGenerator objects for the mask & external field

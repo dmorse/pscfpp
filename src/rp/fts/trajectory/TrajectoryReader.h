@@ -10,6 +10,13 @@
 
 #include <string>
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -78,7 +85,7 @@ namespace Rp {
       *
       * \param system  parent System object
       */
-      TrajectoryReader(typename T::System& system)
+      TrajectoryReader(System<D,T>& system)
        : systemPtr_(&system)
       {}
 
@@ -90,7 +97,7 @@ namespace Rp {
       /**
       * Return reference to parent system.
       */
-      typename T::System& system()
+      System<D,T>& system()
       {  return *systemPtr_; }
 
    private:
@@ -98,7 +105,7 @@ namespace Rp {
       /**
       * Pointer to the parent system (not owned by this).
       */
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
    };
 

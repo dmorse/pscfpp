@@ -46,7 +46,7 @@ namespace Rpg {
       *
       * \param system  parent system
       */
-      SweepParameter(System<D>& system);
+      SweepParameter(Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

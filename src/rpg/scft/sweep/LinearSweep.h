@@ -41,7 +41,7 @@ namespace Rpg {
       *
       * \param system  parent system object
       */
-      LinearSweep(System<D>& system);
+      LinearSweep(Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

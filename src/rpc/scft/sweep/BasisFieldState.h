@@ -44,7 +44,7 @@ namespace Rpc {
       *
       * \param system associated parent system
       */
-      BasisFieldState(System<D>& system);
+      BasisFieldState(Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

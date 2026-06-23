@@ -46,7 +46,7 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryStructureFactor(Simulator<D>& simulator, System<D>& system);
+      BinaryStructureFactor(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Setup before the main loop.

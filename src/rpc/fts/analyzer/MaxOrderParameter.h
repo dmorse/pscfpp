@@ -45,7 +45,7 @@ namespace Rpc {
       /**
       * Constructor.
       */
-      MaxOrderParameter(Simulator<D>& simulator, System<D>& system);
+      MaxOrderParameter(Simulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    protected:
 

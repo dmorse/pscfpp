@@ -50,7 +50,7 @@ namespace Rpg {
       * \param simulator  parent simulator object
       * \param system  parent system object
       */
-      MaxOrderParameter(Simulator<D>& simulator, System<D>& system);
+      MaxOrderParameter(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Setup before the start of simulation.

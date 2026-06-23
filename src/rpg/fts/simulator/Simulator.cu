@@ -40,7 +40,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   Simulator<D>::Simulator(typename Types<D>::System& system)
+   Simulator<D>::Simulator(Rp::System<D, Rpg::Types<D> >& system)
     : Base(system, *this)
    {}
 

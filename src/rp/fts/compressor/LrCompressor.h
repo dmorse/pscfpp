@@ -12,6 +12,13 @@
 #include <util/containers/DArray.h>               // member
 #include <util/misc/Timer.h>                      // member
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -86,7 +93,7 @@ namespace Rp {
       *
       * \param system  parent System object
       */
-      LrCompressor(typename T::System& system);
+      LrCompressor(System<D,T>& system);
 
       /**
       * Destructor.

@@ -57,7 +57,7 @@ namespace Rpg {
       *
       * \param system  parent system object
       */
-      IntraCorrelation(System<D> const & system);
+      IntraCorrelation(Rp::System<D, Rpg::Types<D> > const & system);
 
       /**
       * Compute total intramolecular correlation function (all blocks).

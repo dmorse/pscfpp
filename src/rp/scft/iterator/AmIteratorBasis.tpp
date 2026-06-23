@@ -31,7 +31,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   AmIteratorBasis<D,T>::AmIteratorBasis(typename T::System& system)
+   AmIteratorBasis<D,T>::AmIteratorBasis(System<D,T>& system)
     : AmIterTmplT(),
       interaction_(),
       scaleStress_(10.0)

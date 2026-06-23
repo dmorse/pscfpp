@@ -11,6 +11,13 @@
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <util/containers/DArray.h>         // member
 
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
@@ -88,7 +95,7 @@ namespace Rp {
       *
       * \param system  parent System object
       */
-      AmCompressor(typename T::System& system);
+      AmCompressor(System<D,T>& system);
 
       /**
       * Destructor.

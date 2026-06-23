@@ -15,7 +15,7 @@ namespace Rpg {
    // Constructor.
    template <int D>
    AnalyzerManager<D>::AnalyzerManager(Simulator<D>& simulator,
-                                       System<D>& system)
+                                       Rp::System<D, Rpg::Types<D> >& system)
     : Rp::AnalyzerManager<D, Types<D> >(simulator, system)
    {}
 

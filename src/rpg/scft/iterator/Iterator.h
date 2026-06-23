@@ -40,7 +40,7 @@ namespace Rpg {
       * 
       * \param system parent System object
       */
-      Iterator(System<D>& system);
+      Iterator(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Destructor.

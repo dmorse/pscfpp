@@ -43,7 +43,7 @@ namespace Rp {
    * Constructor, creates association with parent system.
    */
    template <int D, class T>
-   Sweep<D,T>::Sweep(typename T::System & sys)
+   Sweep<D,T>::Sweep(System<D,T> & sys)
     : SweepTmplT(RP_HISTORY_CAPACITY),
       writeCRGrid_(false),
       writeCBasis_(false),
@@ -68,7 +68,7 @@ namespace Rp {
    * Set association with a parent system (for unit testing).
    */
    template <int D, class T>
-   void Sweep<D,T>::setSystem(typename T::System& system)
+   void Sweep<D,T>::setSystem(System<D,T>& system)
    {  systemPtr_ = &system; }
 
    /*

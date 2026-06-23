@@ -47,7 +47,7 @@ namespace Rpg {
       *
       * \param system  parent System object
       */
-      AmCompressor(System<D>& system);
+      AmCompressor(Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

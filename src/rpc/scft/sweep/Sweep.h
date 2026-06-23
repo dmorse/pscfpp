@@ -15,8 +15,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   template <int D> class System;
-
    using namespace Util;
 
    /**
@@ -47,7 +45,7 @@ namespace Rpc {
       *
       * \param system  parent system
       */
-      Sweep(System<D>& system);
+      Sweep(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Destructor.

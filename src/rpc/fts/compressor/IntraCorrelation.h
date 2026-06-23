@@ -49,7 +49,7 @@ namespace Rpc {
       *
       * \param system  parent system object
       */
-      IntraCorrelation(System<D> const & system);
+      IntraCorrelation(Rp::System<D, Rpc::Types<D> > const & system);
 
       #if 0
       /**

@@ -30,7 +30,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   Rp::Iterator<D, Rpg::Types<D> >::Iterator(System<D>& system)
+   Rp::Iterator<D, Rpg::Types<D> >::Iterator(Rp::System<D, Rpg::Types<D> >& system)
     : Rp::Iterator<D, Types<D> >(system)
    {}
 

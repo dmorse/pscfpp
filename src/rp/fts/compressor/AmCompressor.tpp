@@ -25,7 +25,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T, class V>
-   AmCompressor<D,T,V>::AmCompressor(typename T::System& system)
+   AmCompressor<D,T,V>::AmCompressor(System<D,T>& system)
     : isAllocated_(false)
    {  
       CompressorT::setSystem(system);

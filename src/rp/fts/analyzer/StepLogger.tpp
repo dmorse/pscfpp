@@ -21,7 +21,7 @@ namespace Rp {
    */
    template <int D, class T>
    StepLogger<D,T>::StepLogger(typename T::Simulator& simulator, 
-                             typename T::System& system)
+                             System<D,T>& system)
     : AnalyzerT(simulator, system)
    {  ParamComposite::setClassName("StepLogger"); }
 

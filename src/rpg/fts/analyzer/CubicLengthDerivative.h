@@ -43,7 +43,7 @@ namespace Rpg {
       /**
       * Constructor.
       */
-      CubicLengthDerivative(Simulator<D>& simulator, System<D>& system);
+      CubicLengthDerivative(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

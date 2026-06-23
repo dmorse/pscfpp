@@ -21,7 +21,7 @@ namespace Rp {
    template <int D, class T>
    ConcentrationDerivative<D,T>::ConcentrationDerivative(
                                   typename T::Simulator& simulator,
-                                  typename T::System& system)
+                                  System<D,T>& system)
     : AverageAnalyzerT(simulator, system)
    {  ParamComposite::setClassName("ConcentrationDerivative"); }
 

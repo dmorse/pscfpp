@@ -17,7 +17,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   EnvironmentFactory<D>::EnvironmentFactory(System<D>& system)
+   EnvironmentFactory<D>::EnvironmentFactory(Rp::System<D, Rpc::Types<D> >& system)
     : sysPtr_(&system)
    {}
 

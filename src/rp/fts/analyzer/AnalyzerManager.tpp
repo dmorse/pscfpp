@@ -15,7 +15,7 @@ namespace Rp {
    */
    template <int D, class T>
    AnalyzerManager<D,T>::AnalyzerManager(typename T::Simulator& simulator,
-                                       typename T::System& system)
+                                       System<D,T>& system)
     : Base(),
       simulatorPtr_(&simulator),
       systemPtr_(&system)

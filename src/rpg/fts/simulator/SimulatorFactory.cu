@@ -21,7 +21,7 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   SimulatorFactory<D>::SimulatorFactory(System<D>& system)
+   SimulatorFactory<D>::SimulatorFactory(Rp::System<D, Rpg::Types<D> >& system)
     : systemPtr_(&system)
    {}
 

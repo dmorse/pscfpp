@@ -32,7 +32,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(System<D>& system, std::string filename)
+   void initSystem(Rp::System<D, Rpg::Types<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -59,7 +59,7 @@ public:
    * Allocate an array of rgrid fields.
    */
    template <int D>
-   void allocateRGridFields(System<D> const & system,
+   void allocateRGridFields(Rp::System<D, Rpg::Types<D> > const & system,
                             DArray< RField<D> >& fields)
    {
       // Check and allocate outer DArray
@@ -87,7 +87,7 @@ public:
    * Read r-grid fields into an array.
    */
    template <int D>
-   void readRGridFields(System<D> const & system,
+   void readRGridFields(Rp::System<D, Rpg::Types<D> > const & system,
                         std::string filename,
                         DArray< RField<D> >& fields,
                         UnitCell<D>& unitCell)
@@ -100,7 +100,7 @@ public:
    /*
    * Generic BdSimulator test function template.
    */
-   void testBdSimulator(System<3>& system,
+   void testBdSimulator(Rp::System<3, Rpg::Types<3> >& system,
                         std::string systemfilename,
                         std::string simulatorfilename,
                         std::string infieldsfilename,
@@ -134,7 +134,7 @@ public:
    void testLMBdStepDiblocks()
    {
       printMethod(TEST_FUNC);
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       testBdSimulator(system, "in/param_system_disordered",
                      "in/param_LMBdStep",
                      "in/w_dis.rf",
@@ -146,7 +146,7 @@ public:
    void testLMBdStepTriblocks()
    {
       printMethod(TEST_FUNC);
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       testBdSimulator(system, "in/param_system_triblock",
                      "in/param_LMBdStep",
                      "in/w_triblock.rf",
@@ -158,7 +158,7 @@ public:
    void testExplicitBdStepDiblocks()
    {
       printMethod(TEST_FUNC);
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       testBdSimulator(system, "in/param_system_disordered",
                      "in/param_explicitBdStep",
                      "in/w_dis.rf",
@@ -170,7 +170,7 @@ public:
    void testExplicitBdStepTriblocks()
    {
       printMethod(TEST_FUNC);
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       testBdSimulator(system, "in/param_system_triblock",
                      "in/param_explicitBdStep",
                      "in/w_triblock.rf",
@@ -182,7 +182,7 @@ public:
    void testPredCorrBdStepDiblocks()
    {
       printMethod(TEST_FUNC);
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       testBdSimulator(system, "in/param_system_disordered",
                      "in/param_predCorrBdStep",
                      "in/w_dis.rf",
@@ -194,7 +194,7 @@ public:
    void testPredCorrBdStepTriblocks()
    {
       printMethod(TEST_FUNC);
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       testBdSimulator(system, "in/param_system_triblock",
                      "in/param_predCorrBdStep",
                      "in/w_triblock.rf",

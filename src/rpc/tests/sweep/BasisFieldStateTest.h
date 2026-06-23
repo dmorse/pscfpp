@@ -40,7 +40,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       BasisFieldState<3> bfs1(system);
       BasisFieldState<3> bfs2;
    }
@@ -49,7 +49,7 @@ public:
    {
       printMethod(TEST_FUNC);
       
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       BasisFieldState<3> bfs(system);
       BFieldComparison comparison;
    
@@ -73,7 +73,7 @@ public:
       // Write tested with a read/write/read/comparison procedure
       printMethod(TEST_FUNC);
 
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       BasisFieldState<3> bfs1(system), bfs2(system);
       BFieldComparison comparison;
 
@@ -95,7 +95,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       BasisFieldState<3> bfs(system);
       BFieldComparison comparison;
 
@@ -116,7 +116,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       BasisFieldState<3> bfs(system);
       BFieldComparison comparison;
 
@@ -137,7 +137,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       BasisFieldState<3> bfs;
 
       // Setup system
@@ -146,7 +146,7 @@ public:
       bfs.setSystem(system);
    }
 
-   void SetUpSystem(System<3>& system)
+   void SetUpSystem(Rp::System<3, Rpc::Types<3> >& system)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

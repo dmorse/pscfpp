@@ -78,7 +78,7 @@ namespace Rp {
       *
       * \param system  parent System object
       */
-      RGridTrajectoryReader(typename T::System& system);
+      RGridTrajectoryReader(System<D,T>& system);
 
       /**
       * Destructor.

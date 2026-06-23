@@ -30,7 +30,7 @@ namespace Rpg {
 
    // Constructor, creates association with parent system.
    template <int D>
-   Sweep<D>::Sweep(System<D> & sys)
+   Sweep<D>::Sweep(Rp::System<D, Rpg::Types<D> > & sys)
     : Rp::Sweep<D, Types<D> >(sys)
    {}
 

@@ -11,8 +11,16 @@
 #include <util/param/Manager.h>          // base class template
 #include <util/containers/DArray.h>      // member
 
-// Forward declaration
-namespace Util { class Random; }
+// Forward declarations
+namespace Util { 
+   class Random; 
+}
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
+
 
 namespace Pscf {
 namespace Rp {
@@ -107,7 +115,7 @@ namespace Rp {
       * \param system parent System
       */
       McMoveManager(typename T::McSimulator& simulator, 
-                    typename T::System& system);
+                    System<D,T>& system);
 
       /**
       * Destructor.
@@ -134,7 +142,7 @@ namespace Rp {
       /**
       * Pointer to parent System.
       */
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /**
       * Pointer to random number generator.

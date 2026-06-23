@@ -44,7 +44,7 @@ namespace Rp {
    * Constructor, creates association with system.
    */
    template <int D, class T>
-   SweepParameter<D,T>::SweepParameter(typename T::System& system)
+   SweepParameter<D,T>::SweepParameter(System<D,T>& system)
     : type_(SweepParameter<D,T>::Null),
       nId_(0),
       id_(),

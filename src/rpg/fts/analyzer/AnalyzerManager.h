@@ -42,7 +42,7 @@ namespace Rpg {
       * \param simulator  parent Simulator
       * \param system  parent System
       */
-      AnalyzerManager(Simulator<D>& simulator, System<D>& system);
+      AnalyzerManager(Simulator<D>& simulator, Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

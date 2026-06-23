@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/analyzer/Analyzer.h>    // base class
 #include <util/accumulators/Average.h>   // member
 #include <util/global.h>
 
@@ -50,7 +51,7 @@ namespace Rp {
       * \param system  parent System object
       */
       AverageListAnalyzer(typename T::Simulator& simulator, 
-                          typename T::System& system);
+                          System<D,T>& system);
 
       /**
       * Read interval, outputFileName and (optionally) nSamplePerOutput.

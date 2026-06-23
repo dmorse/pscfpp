@@ -20,7 +20,7 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   IteratorFactory<D, Rpc::Types<D> >::IteratorFactory(Rpc::System<D>& system)
+   IteratorFactory<D, Rpc::Types<D> >::IteratorFactory(Rp::System<D, Rpc::Types<D> >& system)
     : sysPtr_(&system)
    {}
 

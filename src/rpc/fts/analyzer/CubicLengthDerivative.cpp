@@ -25,7 +25,7 @@ namespace Rpc {
    // Constructor.
    template <int D>
    CubicLengthDerivative<D>::CubicLengthDerivative(Simulator<D>& simulator,
-                                               System<D>& system)
+                                               Rp::System<D, Rpc::Types<D> >& system)
     : Rp::CubicLengthDerivative<D, Types<D> >(simulator, system)
    {}
 

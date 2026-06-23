@@ -32,7 +32,7 @@ public:
    {  setVerbose(0); }
    
    template <int D>
-   void initSystem(System<D>& system, std::string filename)
+   void initSystem(Rp::System<D, Rpg::Types<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -57,7 +57,7 @@ public:
    * Allocate an array of rgrid fields.
    */
    template <int D>
-   void allocateRGridFields(System<D> const & system,
+   void allocateRGridFields(Rp::System<D, Rpg::Types<D> > const & system,
                             DArray< RField<D> >& fields)
    {
       // Check and allocate outer DArray
@@ -85,7 +85,7 @@ public:
    * Read r-grid fields into an array.
    */
    template <int D>
-   void readRGridFields(System<D> const & system,
+   void readRGridFields(Rp::System<D, Rpg::Types<D> > const & system,
                         std::string filename,
                         DArray< RField<D> >& fields,
                         UnitCell<D>& unitCell)
@@ -100,7 +100,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateDiblocks.log");
       
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_disordered");
       
       McSimulator<3> simulator(system);
@@ -128,7 +128,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateBdMoveDiblocks.log");
       
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_disordered");
       
       McSimulator<3> simulator(system);
@@ -156,7 +156,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateShiftDiblocks.log");
       
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_disordered");
       
       McSimulator<3> simulator(system);
@@ -184,7 +184,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateTriblocks.log");
       
-      System<3> system;
+      Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_triblock");
       
       McSimulator<3> simulator(system);

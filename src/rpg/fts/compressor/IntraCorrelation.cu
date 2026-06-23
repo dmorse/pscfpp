@@ -26,7 +26,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   IntraCorrelation<D>::IntraCorrelation(System<D> const & system)
+   IntraCorrelation<D>::IntraCorrelation(Rp::System<D, Rpg::Types<D> > const & system)
     : Rp::IntraCorrelation<D, Types<D> >(system)
    {}
 

@@ -15,6 +15,13 @@
 namespace Util {
    class Random;
 }
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+      template <int D, class T> class BdSimulator;
+   }
+}
+
 
 namespace Pscf {
 namespace Rp {
@@ -137,7 +144,7 @@ namespace Rp {
       /**
       * Get parent System object.
       */
-      typename T::System& system();
+      System<D,T>& system();
 
       /**
       * Get parent BdSimulator object.
@@ -160,7 +167,7 @@ namespace Rp {
       typename T::BdSimulator* simulatorPtr_;
 
       /// Pointer to parent System object
-      typename T::System* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /// Pointer to the scalar random number generator
       Random  *randomPtr_;
@@ -176,7 +183,7 @@ namespace Rp {
    * Get parent System object.
    */
    template <int D, class T> inline 
-   typename T::System& BdStep<D,T>::system()
+   System<D,T>& BdStep<D,T>::system()
    {  return *systemPtr_; }
 
    /*

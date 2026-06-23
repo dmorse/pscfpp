@@ -55,7 +55,7 @@ public:
    * Allocate an array of basis fields.
    */
    template <int D>
-   void allocateBasisFields(System<D> const & system,
+   void allocateBasisFields(Rp::System<D, Rpc::Types<D> > const & system,
                             DArray< DArray<double> >& fields)
    {
       int nMonomer = system.mixture().nMonomer();
@@ -82,7 +82,7 @@ public:
    * Read basis fields into an array.
    */
    template <int D>
-   void readBasisFields(System<D> const & system,
+   void readBasisFields(Rp::System<D, Rpc::Types<D> > const & system,
                         std::string filename,
                         DArray< DArray<double> >& fields,
                         UnitCell<D>& unitCell)
@@ -113,7 +113,7 @@ public:
    * Compare system w fields to reference fields from a file.
    */
    template <int D>
-   double readCompareWBasis(System<D> const & system,
+   double readCompareWBasis(Rp::System<D, Rpc::Types<D> > const & system,
                             std::string filename)
    {
       DArray< DArray<double> > fields;
@@ -127,7 +127,7 @@ public:
    * Compare system c fields to reference fields from a file.
    */
    template <int D>
-   double readCompareCBasis(System<D> const & system,
+   double readCompareCBasis(Rp::System<D, Rpc::Types<D> > const & system,
                             std::string filename)
    {
       DArray< DArray<double> > fields;
@@ -143,7 +143,7 @@ public:
    * On output, fHelhmoltz and pressure contain absolute differences
    */
    template <int D>
-   void compareFreeEnergies(System<D> const & system,
+   void compareFreeEnergies(Rp::System<D, Rpc::Types<D> > const & system,
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
@@ -159,7 +159,7 @@ public:
    * Setup a system, and read parameter file.
    */
    template <int D>
-   void setupSystem(System<D>& system,
+   void setupSystem(Rp::System<D, Rpc::Types<D> >& system,
                    std::string paramFileName,
                    std::string wFileName)
    {
@@ -177,7 +177,7 @@ public:
    * Setup system - read parameter file and basis file. 
    */
    template <int D>
-   void initSystem(System<D>& system,
+   void initSystem(Rp::System<D, Rpc::Types<D> >& system,
                    std::string paramFileName,
                    std::string wFileName)
    {
@@ -210,7 +210,7 @@ public:
    * Iterate and output final fields.
    */
    template <int D>
-   void iterate(System<D>& system,
+   void iterate(Rp::System<D, Rpc::Types<D> >& system,
                 std::string const & outFileRoot)
    {
       // Iterate
@@ -229,7 +229,7 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void testIterate(System<D>& system,
+   void testIterate(Rp::System<D, Rpc::Types<D> >& system,
                     std::string paramFileName,
                     std::string wFileName,
                     std::string outSuffix,
@@ -260,7 +260,7 @@ public:
    * Compute and return stress.
    */
    template <int D>
-   FSArray<double, 6> computeStress(System<D>& system)
+   FSArray<double, 6> computeStress(Rp::System<D, Rpc::Types<D> >& system)
    {
       FSArray<double, 6> stress;
       int nParameter = system.domain().unitCell().nParameter();
@@ -284,13 +284,13 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -308,7 +308,7 @@ public:
       outFileRoot = makeFileRoot("out/testConversion","lam", 1);
       openLogFile(outFileRoot + ".log");
 
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       initSystem(system,
                  "in/diblock/lam/param.flex", 
                  "in/diblock/lam/omega.in");
@@ -380,7 +380,7 @@ public:
       outFileRoot = makeFileRoot("out/testConversion","hex", 2);
       openLogFile(outFileRoot + ".log");
 
-      System<2> system;
+      Rp::System<2, Rpc::Types<2> > system;
       initSystem(system,
                  "in/diblock/hex/param.flex", 
                  "in/diblock/hex/omega.in");
@@ -453,7 +453,7 @@ public:
    void testConversion3D_bcc()
    {
       printMethod(TEST_FUNC);
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -535,7 +535,7 @@ public:
    void testCheckSymmetry3D_bcc()
    {
       printMethod(TEST_FUNC);
-      System<3> system;
+      Rp::System<3, Rpc::Types<3> > system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 

@@ -31,7 +31,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   LrAmCompressor<D>::LrAmCompressor(System<D>& system)
+   LrAmCompressor<D>::LrAmCompressor(Rp::System<D, Rpg::Types<D> >& system)
     : Rp::LrAmCompressor<D, Types<D>, DeviceArray<cudaReal> >(system)
    {}
 

@@ -11,8 +11,11 @@
 #include <pscf/math/IntVec.h>         // member
 #include <util/containers/DArray.h>   // member
 
-// Forward declaration
+// Forward declarations
 namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
    namespace Correlation {
       template <typename WT> class Mixture;
    }
@@ -48,7 +51,7 @@ namespace Rp {
       *
       * \param system  parent system object
       */
-      IntraCorrelation(typename T::System const & system);
+      IntraCorrelation(System<D,T> const & system);
 
       /**
       * Destructor.
@@ -77,14 +80,14 @@ namespace Rp {
       /**
       * Get the parent system by const ref.
       */
-      typename T::System const & system() const;
+      System<D,T> const & system() const;
 
    private:
 
       using RealT = typename T::Real;
 
       /// Pointer to parent system object.
-      typename T::System const * systemPtr_;
+      System<D,T> const * systemPtr_;
 
       /// Pointer to child Correlation::Mixture object.
       Correlation::Mixture<RealT>* correlationMixturePtr_;
@@ -112,7 +115,7 @@ namespace Rp {
 
    // Get the parent system by const reference.
    template <int D, class T> inline
-   typename T::System const & IntraCorrelation<D,T>::system() const
+   System<D,T> const & IntraCorrelation<D,T>::system() const
    {  return *systemPtr_; }
 
 } // namespace Rp

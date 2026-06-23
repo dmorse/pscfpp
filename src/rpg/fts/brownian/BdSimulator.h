@@ -38,9 +38,9 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param system  parent Rpg::System<D> object
+      * \param system  parent Rp::System<D, Rpg::Types<D> > object
       */
-      BdSimulator(System<D>& system);
+      BdSimulator(Rp::System<D, Rpg::Types<D> >& system);
 
    };
 

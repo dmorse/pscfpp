@@ -176,7 +176,7 @@ namespace Rpg
    * Constructor
    */
    template <int D>
-   FilmFieldGenExt<D>::FilmFieldGenExt(System<D>& sys)
+   FilmFieldGenExt<D>::FilmFieldGenExt(Rp::System<D, Rpg::Types<D> >& sys)
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(&sys)
    {  setClassName("FilmFieldGenExt"); }

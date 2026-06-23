@@ -41,7 +41,7 @@ namespace Rpc {
       *
       * \param system  parent system object
       */
-      LinearSweep(System<D>& system);
+      LinearSweep(Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

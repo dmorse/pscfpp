@@ -56,7 +56,7 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/maskTestConstructor.log");
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       FilmFieldGenMask<1> mask(system);
    }
 
@@ -66,7 +66,7 @@ public:
       openLogFile("out/maskTestReadParameters.log");
 
       // Set up mask from file
-      System<2> system;
+      Rp::System<2, Rpc::Types<2> > system;
       FilmFieldGenMask<2> mask(system);
 
       std::ifstream in;
@@ -98,7 +98,7 @@ public:
       openLogFile("out/maskTestCheckCompatibility.log");
 
       // Set up 1D mask with a compatible system and check compatibility
-      System<1> system1;
+      Rp::System<1, Rpc::Types<1> > system1;
       createSystem(system1, "in/system1D");
 
       // Set unit cell parameter
@@ -119,7 +119,7 @@ public:
 
 
       // Set up 2D mask with a compatible system and check compatibility
-      System<2> system2;
+      Rp::System<2, Rpc::Types<2> > system2;
       createSystem(system2, "in/system2D_1");
 
       // Set unit cell parameters
@@ -140,7 +140,7 @@ public:
       TEST_ASSERT(system2.iterator().flexibleParams()[1] == false);
 
       // Set up 2D mask with an incompatible system and check compatibility
-      System<2> system3;
+      Rp::System<2, Rpc::Types<2> > system3;
       createSystem(system3, "in/system2D_2");
 
       // Set unit cell parameters
@@ -157,7 +157,7 @@ public:
 
 
       // Set up 3D mask with a compatible system and check compatibility
-      System<3> system4;
+      Rp::System<3, Rpc::Types<3> > system4;
       createSystem(system4, "in/system3D_1");
 
       // Set unit cell parameters
@@ -179,7 +179,7 @@ public:
    
 
       // Set up another 3D mask with a compatible system
-      System<3> system5;
+      Rp::System<3, Rpc::Types<3> > system5;
       createSystem(system5, "in/system3D_2");
 
       // Set unit cell parameters
@@ -226,7 +226,7 @@ public:
       openLogFile("out/maskTestGenerate.log");
 
       // Set up 2D mask with a compatible system
-      System<2> system;
+      Rp::System<2, Rpc::Types<2> > system;
       createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
@@ -268,7 +268,7 @@ public:
       openLogFile("out/maskTestRegenerate.log");
 
       // Set up 1D mask with a compatible system
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       createSystem(system, "in/system1D");
 
       // Set unit cell parameter
@@ -309,7 +309,7 @@ public:
       openLogFile("out/maskTestStress.log");
 
       // Set up 2D mask with a compatible system
-      System<2> system;
+      Rp::System<2, Rpc::Types<2> > system;
       createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
@@ -339,7 +339,7 @@ public:
       openLogFile("out/maskTestModifyStress.log");
 
       // Set up 1D mask with a compatible system
-      System<1> system;
+      Rp::System<1, Rpc::Types<1> > system;
       createSystem(system, "in/system1D");
 
       // Set unit cell parameter
@@ -364,7 +364,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void createSystem(System<D>& system, std::string fname)
+   void createSystem(Rp::System<D, Rpc::Types<D> >& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

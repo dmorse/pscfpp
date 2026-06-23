@@ -8,6 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/analyzer/AverageAnalyzer.h>  // base class template
+
 namespace Pscf {
 namespace Rp {
 
@@ -40,7 +42,7 @@ namespace Rp {
       * \param system  parent System object
       */
       PerturbationDerivative(typename T::Simulator& simulator, 
-                             typename T::System& system);
+                             System<D,T>& system);
 
       /**
       * Destructor.
