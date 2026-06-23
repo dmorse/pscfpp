@@ -18,9 +18,6 @@ namespace Rpg {
 
    using namespace Util;
 
-   template <int D> class System;
-   template <int D> class McSimulator;
-
    /**
    * Manager for a set of McMove objects.
    *

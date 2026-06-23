@@ -15,9 +15,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   template <int D> class System;
-   template <int D> class Simulator;
-
    using namespace Util;
 
    /**

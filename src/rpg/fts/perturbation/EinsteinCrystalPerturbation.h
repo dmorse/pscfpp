@@ -9,9 +9,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   // Forward declaration
-   template <int D> class Simulator;
-
    /**
    * Perturbation for Einstein crystal thermodynamic integration.
    *

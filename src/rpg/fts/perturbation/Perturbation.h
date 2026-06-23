@@ -11,10 +11,6 @@ namespace Pscf {
          template <int D> class RField;
       }
    }
-   namespace Rpg {
-      template <int D> class System;
-      template <int D> class Simulator;
-   }
 }
 
 namespace Pscf {

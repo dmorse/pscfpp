@@ -13,46 +13,6 @@
 #include <rpg/scft/iterator/Iterator.h>        // indirect base argument
 #include <util/containers/DArray.h>            // indirect base argument
 
-#if 0
-namespace Pscf {
-namespace Rpg {
-
-   // Forward declaration
-   template <int D> class System;
-
-   using namespace Util;
-
-   /**
-   * Anderson mixing iterator with imposed space-group symmetry).
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * specializations of the base class template Rp::AmIteratorBasis, and
-   * inherit their public interface and almost all of their source code
-   * from this base class.  
-   *
-   * \see Rp::AmIteratorBasis
-   * \see \ref rp_AmIteratorBasis_page "Manual Page"
-   * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
-   * \ingroup Rpg_Scft_Iterator_Module
-   */
-   template <int D>
-   class AmIteratorBasis : public Rp::AmIteratorBasis< D, Types<D> > 
-   {
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent system
-      */
-      AmIteratorBasis(Rp::System<D, Rpg::Types<D> >& system);
-
-   };
-
-}
-}
-#endif
-
 // Explicit instantiation declarations
 namespace Pscf {
    extern template class AmIteratorTmpl<Rp::Iterator<1, Rpg::Types<1> >, DArray<double> >;

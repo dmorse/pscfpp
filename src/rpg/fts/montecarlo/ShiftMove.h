@@ -18,10 +18,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   // Forward declarations
-   template <int D> class McSimulator;
-   template <int D> class System;
-
    using namespace Util;
    using namespace Prdc;
 

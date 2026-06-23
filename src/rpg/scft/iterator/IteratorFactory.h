@@ -8,23 +8,17 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/scft/iterator/Iterator.h>
-#include <rpg/system/System.h>
+#include <rp/scft/iterator/Iterator.h>
+#include <rpg/system/Types.h>
 #include <util/param/Factory.h>  
 
 #include <string>
 
 namespace Pscf {
-   namespace Rp {
-      template <int D, class T> class IteratorFactory;
-   }
-   namespace Rpg {
-      template <int D> class System;
-   }
-}
-
-namespace Pscf {
 namespace Rp {
+
+   // Forward declaration
+   template <int D, class T> class IteratorFactory; 
 
    using namespace Util;
    using namespace Pscf::Prdc;

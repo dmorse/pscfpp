@@ -12,11 +12,8 @@
 #include <rpg/fts/trajectory/TrajectoryReader.h>
 #include <string>
 
-
 namespace Pscf {
 namespace Rpg {
-   
-   template <int D> class System;
    
    using namespace Util;
    

@@ -15,10 +15,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   // Forward declarations
-   template <int D> class Simulator;
-   template <int D> class System;
-
    using namespace Util;
 
    /**

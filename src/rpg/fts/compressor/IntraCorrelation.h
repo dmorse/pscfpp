@@ -20,9 +20,6 @@ namespace Pscf {
          template <int D> class RField;
       }
    }
-   namespace Rpg {
-      template <int D> class System;
-   }
 }
 
 namespace Pscf {

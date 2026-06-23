@@ -12,7 +12,7 @@
 #include <util/param/ParamComposite.h>  // base class
 #include <util/global.h>
 
-// Forward declarations
+// Forward declaration
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
@@ -21,8 +21,6 @@ namespace Pscf {
 
 namespace Pscf {
 namespace Rpg {
-
-   template <int D> class System;
 
    using namespace Util;
 

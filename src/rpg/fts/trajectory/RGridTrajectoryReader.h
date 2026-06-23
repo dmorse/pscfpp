@@ -16,9 +16,6 @@
 namespace Pscf {
 namespace Rpg {
 
-   // Forward declaration
-   template <int D> class System;
-
    using namespace Util;
    using namespace Prdc;
    using namespace Prdc::Cuda;
