@@ -68,7 +68,7 @@ public:
       Rp::System<1, Rpc::Types<1> > system;
       SweepTest::SetUpSystem(system, "in/block/param");
       // Set up SweepParameter objects 
-      DArray< SweepParameter<1> > ps;
+      DArray< Rp::SweepParameter<1, Rpc::Types<1> > > ps;
       ps.allocate(4);
       for (int i = 0; i < 4; ++i) {
          ps[i].setSystem(system);
@@ -112,7 +112,7 @@ public:
       SweepTest::SetUpSystem(system, "in/block/param");
 
       // Set up SweepParameter objects 
-      DArray< SweepParameter<1> > ps;
+      DArray< Rp::SweepParameter<1, Rpc::Types<1> > > ps;
       ps.allocate(4);
       std::ifstream in;
       openInputFile("in/param.test", in);
@@ -150,7 +150,7 @@ public:
       SweepTest::SetUpSystem(system, "in/block/param");
 
       // Set up SweepParameter objects 
-      DArray< SweepParameter<1> > ps;
+      DArray< Rp::SweepParameter<1, Rpc::Types<1> > > ps;
       ps.allocate(4);
       std::ifstream in;
       openInputFile("in/param.test", in);
@@ -213,7 +213,7 @@ public:
       Log::file() << pTypes.size() << std::endl;
 
       // Set up SweepParameter objects 
-      DArray< SweepParameter<1> > ps;
+      DArray< Rp::SweepParameter<1, Rpc::Types<1> > > ps;
       ps.allocate(3);
       std::ifstream in;
       openInputFile("in/special/param.test", in);

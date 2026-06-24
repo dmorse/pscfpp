@@ -16,6 +16,7 @@
 
 namespace Pscf {
    namespace Rp {
+      template <int D, class T> class System;
       template <int D, class T> class BasisFieldState;
    }
 }
@@ -84,7 +85,7 @@ namespace Rp {
    private:
 
       // Typename aliases
-      using SweepParameterT = typename T::SweepParameter;
+      using SweepParameterT = SweepParameter<D,T>;
       using BasisFieldStateT = BasisFieldState<D,T>;
       using SweepTmplT = SweepTmpl< BasisFieldStateT >;
 

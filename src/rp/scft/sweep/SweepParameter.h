@@ -125,6 +125,18 @@ namespace Rp {
    public:
 
       /**
+      * Default constructor.
+      */
+      SweepParameter();
+
+      /**
+      * Constructor - creates association with parent system.
+      *
+      * \param system  parent system
+      */
+      SweepParameter(System<D,T>& system);
+
+      /**
       * Set the system associated with this object.
       *
       * Invoke this function on objects created with the default
@@ -242,20 +254,6 @@ namespace Rp {
       */
       template <class Archive>
       void serialize(Archive ar, const unsigned int version);
-
-   protected:
-
-      /**
-      * Default constructor.
-      */
-      SweepParameter();
-
-      /**
-      * Constructor - creates association with parent system.
-      *
-      * \param system  parent system
-      */
-      SweepParameter(System<D,T>& system);
 
    private:
 

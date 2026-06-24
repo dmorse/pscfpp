@@ -16,9 +16,6 @@
 namespace Pscf {
 namespace Rpc {
 
-   // Forward declaration
-   template <int D> class System;
-
    /**
    * Sweep in which parameters vary linearly with sweep variable s.
    *
