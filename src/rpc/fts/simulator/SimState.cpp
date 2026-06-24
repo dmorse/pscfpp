@@ -6,18 +6,14 @@
 */
 
 #include "SimState.h"
+#include <prdc/cpu/RField.h>
 #include <rp/fts/simulator/SimState.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template struct SimState<1, Prdc::Cpu::RField<1> >;
-      template struct SimState<2, Prdc::Cpu::RField<2> >;
-      template struct SimState<3, Prdc::Cpu::RField<3> >;
-   }
-   namespace Rpc {
-      template struct SimState<1>;
-      template struct SimState<2>;
-      template struct SimState<3>;
+      template struct SimState<1, Rpc::Types<1> >;
+      template struct SimState<2, Rpc::Types<2> >;
+      template struct SimState<3, Rpc::Types<3> >;
    }
 }

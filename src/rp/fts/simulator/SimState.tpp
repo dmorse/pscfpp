@@ -17,8 +17,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class FT>
-   SimState<D,FT>::SimState() 
+   template <int D, class T>
+   SimState<D,T>::SimState() 
      : w(),
        wc(), 
        hamiltonian(0.0),
@@ -34,8 +34,8 @@ namespace Rp {
    /*
    * Allocate memory for w fields.
    */ 
-   template <int D, class FT>
-   void SimState<D,FT>::allocate(int nMonomer, IntVec<D> const & dimensions)
+   template <int D, class T>
+   void SimState<D,T>::allocate(int nMonomer, IntVec<D> const & dimensions)
    {
       w.allocate(nMonomer);
       wc.allocate(nMonomer);

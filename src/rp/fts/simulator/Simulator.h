@@ -20,6 +20,7 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
+      template <int D, class T> class SimState;
    }
 }
 
@@ -698,7 +699,7 @@ namespace Rp {
       * MC move or failure of the Compressor to converge during either
       * a BD or MC move.
       */
-      typename T::SimState& state();
+      SimState<D,T>& state();
 
       // Protected data members
 
@@ -738,7 +739,7 @@ namespace Rp {
       * This data structure is used to restore a previous state if the
       * compressor fails to converge or if a MC move is rejected.
       */
-      mutable typename T::SimState state_;
+      mutable SimState<D,T> state_;
 
       /**
       * Total field theoretic Hamiltonian H[W] (extensive value).
@@ -1000,7 +1001,7 @@ namespace Rp {
 
    // Get the stored internal state by reference.
    template <int D, class T> inline 
-   typename T::SimState& Simulator<D,T>::state()
+   SimState<D,T>& Simulator<D,T>::state()
    {  return state_; }
 
    // Projected Chi Matrix

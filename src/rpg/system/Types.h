@@ -51,8 +51,8 @@ namespace Pscf {
       //template <int D> class BasisFieldState;
       template <int D> class SweepFactory;
       //template <int D> class Simulator;
+      //template <int D> struct SimState;
       template <int D> class SimulatorFactory;
-      template <int D> struct SimState;
       template <int D> class Compressor;
       template <int D> class CompressorFactory;
       template <int D> class IntraCorrelation;
@@ -137,8 +137,8 @@ namespace Rpg {
       using SweepFactory = Rpg::SweepFactory<D>;
 
       //using Simulator = Rp::Simulator<D, Rpg::Types<D> >;
+      //using SimState = Rp::SimState<D, Rpg::Types<D> >;
       using SimulatorFactory = Rpg::SimulatorFactory<D>;
-      using SimState = Rpg::SimState<D>;
 
       using Compressor = Rpg::Compressor<D>;
       using CompressorFactory = Rpg::CompressorFactory<D>;

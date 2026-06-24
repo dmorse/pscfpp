@@ -38,13 +38,35 @@ namespace Rp {
    *
    * \ingroup Rp_Fts_Simulator_Module
    */
-   template <int D, class FT>
+   template <int D, class T>
    struct SimState 
    {
 
    public:
 
+      // Public member functions
+
+      /**
+      * Constructor.
+      */
+      SimState();
+
+      /**
+      * Destructor.
+      */
+      ~SimState() = default;
+
+      /**
+      * Allocate memory for stored fields.
+      *
+      * \param nMonomer  number of monomer types
+      * \param dimensions  dimensions of discretization grid
+      */ 
+      void allocate(int nMonomer, IntVec<D> const & dimensions);
+
       // Public data members
+      
+      using FT = typename T::RField;
 
       /**
       * Chemical potential fields, r-grid format, indexed by monomer.
@@ -106,28 +128,6 @@ namespace Rp {
       
       /// Has memory been allocated for the fields?
       bool isAllocated;
-
-      // Public member function
-
-      /**
-      * Allocate memory for stored fields.
-      *
-      * \param nMonomer  number of monomer types
-      * \param dimensions  dimensions of discretization grid
-      */ 
-      void allocate(int nMonomer, IntVec<D> const & dimensions);
-
-   protected:
- 
-      /**
-      * Constructor.
-      */
-      SimState();
-
-      /**
-      * Destructor.
-      */
-      ~SimState() = default;
 
    };
 
