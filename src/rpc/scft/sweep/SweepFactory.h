@@ -24,7 +24,7 @@ namespace Rpc {
    * \ingroup Rpc_Scft_Sweep_Module
    */
    template <int D>
-   class SweepFactory : public Factory< Sweep<D> > 
+   class SweepFactory : public Factory< Rp::Sweep<D, Rpc::Types<D> > > 
    {
 
    public:
@@ -40,12 +40,12 @@ namespace Rpc {
       * Method to create any Sweep subclass.
       *
       * \param className name of the Sweep subclass
-      * \return Sweep<D>* pointer to new instance of speciesName
+      * \return Rp::Sweep<D, Rpc::Types<D> >* pointer to new instance of speciesName
       */
-      Sweep<D>* factory(std::string const & className) const;
+      Rp::Sweep<D, Rpc::Types<D> >* factory(std::string const & className) const;
 
-      using Factory< Sweep<D> >::trySubfactories;
-      using Factory< Sweep<D> >::readObjectOptional;
+      using Factory< Rp::Sweep<D, Rpc::Types<D> > >::trySubfactories;
+      using Factory< Rp::Sweep<D, Rpc::Types<D> > >::readObjectOptional;
 
    private:
 

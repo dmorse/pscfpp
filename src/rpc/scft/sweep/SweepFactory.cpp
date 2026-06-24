@@ -24,10 +24,10 @@ namespace Rpc{
    * Return a pointer to a Sweep subclass with name className
    */
    template <int D>
-   Sweep<D>* SweepFactory<D>::factory(std::string const & className) 
+   Rp::Sweep<D, Rpc::Types<D> >* SweepFactory<D>::factory(std::string const & className) 
    const
    {
-       Sweep<D> *ptr = nullptr;
+       Rp::Sweep<D, Rpc::Types<D> > *ptr = nullptr;
 
        // First check if name is known by any subfactories
        ptr = trySubfactories(className);

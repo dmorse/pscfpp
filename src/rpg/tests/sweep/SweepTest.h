@@ -55,7 +55,7 @@ public:
 
       Rp::System<3, Rpg::Types<3> > system;
       SweepFactory<3> sf(system);
-      Sweep<3>* sweepPtr;
+      Rp::Sweep<3, Rpg::Types<3> >* sweepPtr;
       
       sweepPtr = sf.factory("LinearSweep");
       TEST_ASSERT(sweepPtr != 0);

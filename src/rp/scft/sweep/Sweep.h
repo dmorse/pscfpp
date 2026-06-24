@@ -50,6 +50,23 @@ namespace Rp {
    public:
 
       /**
+      * Default constructor.
+      */
+      Sweep();
+
+      /**
+      * Constructor, creates assocation with parent system.
+      *
+      * \param system  parent system
+      */
+      Sweep(System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~Sweep();
+
+      /**
       * Set association with parent system.
       *
       * Call for objects created with default constructor.
@@ -66,23 +83,6 @@ namespace Rp {
       virtual void readParameters(std::istream& in);
 
    protected:
-
-      /**
-      * Default constructor.
-      */
-      Sweep();
-
-      /**
-      * Constructor, creates assocation with parent system.
-      *
-      * \param system  parent system
-      */
-      Sweep(System<D,T>& system);
-
-      /**
-      * Destructor.
-      */
-      ~Sweep();
 
       /**
       * Check allocation of fields in one state, allocate if necessary.

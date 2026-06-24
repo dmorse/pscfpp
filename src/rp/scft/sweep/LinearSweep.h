@@ -17,6 +17,7 @@
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
+      template <int D, class T> class Sweep;
       template <int D, class T> class BasisFieldState;
    }
 }
@@ -33,7 +34,7 @@ namespace Rp {
    * \ingroup Rp_Scft_Sweep_Module
    */
    template <int D, class T>
-   class LinearSweep : public T::Sweep
+   class LinearSweep : public Sweep<D,T>
    {
    public:
 
@@ -79,7 +80,7 @@ namespace Rp {
    protected:
 
       // Inherited protected members
-      using SweepT = typename T::Sweep;
+      using SweepT = Sweep<D,T>;
       using SweepT::system;
 
    private:

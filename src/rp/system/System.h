@@ -620,7 +620,7 @@ namespace Rp {
       /**
       * Pointer to an SCFT Sweep object.
       */
-      typename T::Sweep* sweepPtr_;
+      Sweep<D,T>* sweepPtr_;
 
       /**
       * Pointer to a sweep factory object.

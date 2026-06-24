@@ -17,26 +17,6 @@
 
 #include <rp/scft/sweep/Sweep.tpp>
 
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   // Default constructor (for unit testing).
-   template <int D>
-   Sweep<D>::Sweep()
-    : Rp::Sweep<D, Types<D> >()
-   {}
-
-   // Constructor, creates association with parent system.
-   template <int D>
-   Sweep<D>::Sweep(Rp::System<D, Rpg::Types<D> > & sys)
-    : Rp::Sweep<D, Types<D> >(sys)
-   {}
-
-} // namespace Rpg
-} // namespace Pscf
-
 // Explicit instantiation definitions
 namespace Pscf {
    template class SweepTmpl< Rp::BasisFieldState<1, Rpg::Types<1> > >;
@@ -46,10 +26,5 @@ namespace Pscf {
       template class Sweep<1, Rpg::Types<1> >;
       template class Sweep<2, Rpg::Types<2> >;
       template class Sweep<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class Sweep<1>;
-      template class Sweep<2>;
-      template class Sweep<3>;
    }
 }
