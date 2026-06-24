@@ -72,7 +72,7 @@ namespace Pscf {
 
       //template <int D> class McSimulator;
       //template <int D> class McMove;
-      template <int D> class McMoveManager;
+      //template <int D> class McMoveManager;
       template <int D> class McMoveFactory;
 
       template <int D> class TrajectoryReader;
@@ -159,7 +159,7 @@ namespace Rpg {
 
       //using McSimulator = Rp::McSimulator<D, Rpg::Types<D> >;
       //using McMove = Rp::McMove<D, Rpg::Types<D> >;
-      using McMoveManager = Rpg::McMoveManager<D>;
+      //using McMoveManager = Rp::McMoveManager<D, Rpg::Types<D> >;
       using McMoveFactory = Rpg::McMoveFactory<D>;
 
       using Perturbation = Rpg::Perturbation<D>;

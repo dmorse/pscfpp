@@ -20,6 +20,7 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System; 
       template <int D, class T> class Simulator; 
+      template <int D, class T> class McMoveManager; 
    }
 }
 
@@ -129,12 +130,12 @@ namespace Rp {
       /**
       * Get the McMoveManager (const).
       */
-      typename T::McMoveManager const& mcMoveManager() const;
+      McMoveManager<D,T> const& mcMoveManager() const;
 
       /**
       * Get the McMoveManager (non-const).
       */
-      typename T::McMoveManager& mcMoveManager();
+      McMoveManager<D,T>& mcMoveManager();
 
       /**
       * Get the AnalyzerManager (const).
@@ -196,7 +197,7 @@ namespace Rp {
       /**
       * Pointer to Manager for Monte Carlo moves.
       */
-      typename T::McMoveManager* mcMoveManagerPtr_;
+      McMoveManager<D,T>* mcMoveManagerPtr_;
 
       /**
       * Pointer to Manager for analyzers.
@@ -223,7 +224,7 @@ namespace Rp {
 
    // Get the Monte-Carlo move manager (const)
    template <int D, class T> inline
-   typename T::McMoveManager const& McSimulator<D,T>::mcMoveManager() const
+   McMoveManager<D,T> const& McSimulator<D,T>::mcMoveManager() const
    {  
       UTIL_ASSERT(mcMoveManagerPtr_);
       return *mcMoveManagerPtr_; 
@@ -231,7 +232,7 @@ namespace Rp {
 
    // Get the Monte-Carlo move manager (non-const).
    template <int D, class T> inline
-   typename T::McMoveManager& McSimulator<D,T>::mcMoveManager()
+   McMoveManager<D,T>& McSimulator<D,T>::mcMoveManager()
    {  
       UTIL_ASSERT(mcMoveManagerPtr_);
       return *mcMoveManagerPtr_; 

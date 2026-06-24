@@ -13,46 +13,12 @@
 #include <util/param/Manager.h>              // indirect base class
 #include <util/containers/DArray.h>          // member
 
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   /**
-   * Manager for a set of McMove objects.
-   *
-   * \ingroup Rpg_Fts_MonteCarlo_Module
-   */
-   template <int D>
-   class McMoveManager : public Rp::McMoveManager< D, Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator parent McSimulator
-      * \param system parent System
-      */
-      McMoveManager(Rp::McSimulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
-
-   };
-
-}
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class McMoveManager<1, Rpg::Types<1> >;
       extern template class McMoveManager<2, Rpg::Types<2> >;
       extern template class McMoveManager<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class McMoveManager<1>;
-      extern template class McMoveManager<2>;
-      extern template class McMoveManager<3>;
    }
 }
 #endif

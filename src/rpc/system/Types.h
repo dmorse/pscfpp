@@ -68,7 +68,7 @@ namespace Pscf {
       template <int D> class BdStepFactory;
       //template <int D> class McSimulator;
       //template <int D> class McMove;
-      template <int D> class McMoveManager;
+      //template <int D> class McMoveManager;
       template <int D> class McMoveFactory;
       template <int D> class Perturbation;
       template <int D> class PerturbationFactory;
@@ -152,7 +152,7 @@ namespace Rpc {
 
       //using McSimulator = Rp::McSimulator<D, Rpc::Types<D> >;
       //using McMove = Rp::McMove<D, Rpc::Types<D> >;
-      using McMoveManager = Rpc::McMoveManager<D>;
+      //using McMoveManager = Rp::McMoveManager<D, Rpc::Types<D> >;
       using McMoveFactory = Rpc::McMoveFactory<D>;
 
       using Analyzer = Rpc::Analyzer<D>;

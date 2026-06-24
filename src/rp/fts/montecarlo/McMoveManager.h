@@ -52,7 +52,19 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator parent McSimulator
+      * \param system parent System
+      */
+      McMoveManager(McSimulator<D,T>& simulator, 
+                    System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~McMoveManager() = default;
 
       /**
       * Read instructions for creating McMove objects.
@@ -110,26 +122,10 @@ namespace Rp {
       */
       bool needsDc();
 
-   protected:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator parent McSimulator
-      * \param system parent System
-      */
-      McMoveManager(McSimulator<D,T>& simulator, 
-                    System<D,T>& system);
-
-      /**
-      * Destructor.
-      */
-      ~McMoveManager() = default;
-
    private:
 
       using McMoveT = McMove<D,T>;
-      using Base = Manager< McMoveT >;
+      using Base = Manager< McMove<D,T> >;
 
       // Private data members
 
@@ -158,7 +154,7 @@ namespace Rp {
       /**
       * Return pointer to a new McMoveFactory.
       */
-      virtual Factory< McMoveT >* newDefaultFactory() const;
+      virtual Factory< McMove<D,T> >* newDefaultFactory() const;
 
    };
 

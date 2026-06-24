@@ -23,47 +23,12 @@ namespace Pscf {
    }
 }
 
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /**
-   * Manager for a set of McMove objects.
-   *
-   * \see \ref rp_McMoveManager_page "Manual Page"
-   * \ingroup Rpc_Fts_MonteCarlo_Module
-   */
-   template <int D>
-   class McMoveManager : public Rp::McMoveManager< D, Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator parent McSimulator
-      * \param system parent System
-      */
-      McMoveManager(Rp::McSimulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
-
-   };
-
-}
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class McMoveManager<1, Rpc::Types<1> >;
       extern template class McMoveManager<2, Rpc::Types<2> >;
       extern template class McMoveManager<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class McMoveManager<1>;
-      extern template class McMoveManager<2>;
-      extern template class McMoveManager<3>;
    }
 }
 #endif

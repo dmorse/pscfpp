@@ -34,7 +34,7 @@ namespace Rp {
    {
       ParamComposite::setClassName("McSimulator");
       mcMoveManagerPtr_ 
-            = new typename T::McMoveManager(*this, system),
+            = new McMoveManager<D,T>(*this, system),
       analyzerManagerPtr_
             = new typename T::AnalyzerManager(*this, system),
       trajectoryReaderFactoryPtr_

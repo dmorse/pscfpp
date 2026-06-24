@@ -42,7 +42,7 @@ namespace Rp {
    template <int D, class T>
    void McMoveManager<D,T>::readParameters(std::istream &in)
    {
-      // Read parameters for all McMoveT objects
+      // Read parameters for all McMove objects
       Base::readParameters(in);
 
       // Allocate and store probabilities
