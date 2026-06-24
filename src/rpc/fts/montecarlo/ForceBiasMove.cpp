@@ -47,7 +47,7 @@ namespace Rpc {
                                RField<D> const & dwc,
                                double mobility)
    {
-      const int n = McMove<D>::system().domain().mesh().size();
+      const int n = Rp::McMove<D, Rpc::Types<D> >::system().domain().mesh().size();
       UTIL_CHECK(result.capacity() == n);
       UTIL_CHECK(di.capacity() == n);
       UTIL_CHECK(df.capacity() == n);

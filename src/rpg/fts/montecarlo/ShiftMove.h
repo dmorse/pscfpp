@@ -47,7 +47,7 @@ namespace Rpg {
 
    protected:
 
-      using McMove<D>::system;
+      using Rp::McMove<D, Rpg::Types<D> >::system;
 
     
       /**

@@ -32,7 +32,7 @@ namespace Rp {
    * Return a pointer to a new McMoveFactory object.
    */
    template <int D, class T>
-   Factory<typename T::McMove>* McMoveManager<D,T>::newDefaultFactory()
+   Factory<McMove<D,T> >* McMoveManager<D,T>::newDefaultFactory()
    const
    {  return new typename T::McMoveFactory(*simulatorPtr_); }
 
@@ -84,7 +84,7 @@ namespace Rp {
    * Choose a McMove at random.
    */
    template <int D, class T>
-   typename T::McMove& McMoveManager<D,T>::chooseMove()
+   McMove<D,T>& McMoveManager<D,T>::chooseMove()
    {
       int iMove;
       iMove = randomPtr_->drawFrom(&probabilities_[0], Base::size());

@@ -56,6 +56,18 @@ namespace Rp {
    public:
 
       /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator object
+      */
+      McMove(McSimulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~McMove() = default;
+
+      /**
       * Read required parameters from file.
       *
       * Empty default implementation.
@@ -160,18 +172,6 @@ namespace Rp {
       virtual void output();
 
    protected:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator object
-      */
-      McMove(McSimulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~McMove() = default;
 
       /**
       * Increment the number of attempted moves.

@@ -28,7 +28,7 @@ namespace Rpc {
    */
    template <int D>
    ShiftMove<D>::ShiftMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
-    : McMove<D>(simulator),
+    : Rp::McMove<D, Rpc::Types<D> >(simulator),
       maxShift_(0),
       isAllocated_(false)
    {  ParamComposite::setClassName("ShiftMove"); }
@@ -41,7 +41,7 @@ namespace Rpc {
    {
 
       // Read the probability
-      McMove<D>::readProbability(in);
+      Rp::McMove<D, Rpc::Types<D> >::readProbability(in);
 
       // Read the maximum shift
       ParamComposite::read(in, "maxShift", maxShift_);
@@ -58,7 +58,7 @@ namespace Rpc {
    void ShiftMove<D>::setup()
    {
       // Setup base class
-      McMove<D>::setup();
+      Rp::McMove<D, Rpc::Types<D> >::setup();
 
       // Allocate memory if necessary
       if (!isAllocated_) {
@@ -146,7 +146,7 @@ namespace Rpc {
    {
       out << "\n";
       out << "ShiftMove time contributions:\n";
-      McMove<D>::outputTimers(out);
+      Rp::McMove<D, Rpc::Types<D> >::outputTimers(out);
    }
 
 }

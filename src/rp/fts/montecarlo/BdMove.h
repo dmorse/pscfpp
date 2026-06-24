@@ -38,7 +38,7 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
-   class BdMove : public T::McMove
+   class BdMove : public McMove<D,T>
    {
 
    public:
@@ -93,7 +93,7 @@ namespace Rp {
       */
       bool bdStep();
 
-      using McMoveT = typename T::McMove;
+      using McMoveT = McMove<D,T>;
 
       // Inherited protected member functions
       using McMoveT::system;

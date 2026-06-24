@@ -47,7 +47,7 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
-   class McMoveManager : public Manager< typename T::McMove >
+   class McMoveManager : public Manager< McMove<D,T> >
    {
 
    public:
@@ -73,7 +73,7 @@ namespace Rp {
       *
       * \return chosen McMove
       */
-      typename T::McMove& chooseMove();
+      McMove<D,T>& chooseMove();
 
       /**
       * Output statistics for all moves.
@@ -128,7 +128,7 @@ namespace Rp {
 
    private:
 
-      using McMoveT = typename T::McMove;
+      using McMoveT = McMove<D,T>;
       using Base = Manager< McMoveT >;
 
       // Private data members

@@ -11,59 +11,12 @@
 #include <rp/fts/montecarlo/McMove.h>
 #include <rpg/system/Types.h>
 
-namespace Pscf {
-namespace Rpg {
-
-   /**
-   * McMove is an abstract base class for Monte Carlo moves.
-   *
-   * The virtual move() function must generate a trial move, decide whether
-   * to accept or reject it, and update the associated System fields if
-   * it is accepted.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::McMove, and
-   * inherit their public interface and almost all of their source code
-   * from this base class.  
-   *
-   * \see Rp::McMove
-   * \see psfts_algo_montecarlo_page "Monte Carlo"
-   * \ingroup Rpg_Fts_MonteCarlo_Module
-   */
-   template <int D>
-   class McMove : public Rp::McMove<D, Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Rp::McSimulator<D, Rpg::Types<D> > object
-      */
-      McMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
-
-      /**
-      * Destructor.
-      */
-      virtual ~McMove() = default;
-
-   };
-
-}
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class McMove<1, Rpg::Types<1> >;
       extern template class McMove<2, Rpg::Types<2> >;
       extern template class McMove<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class McMove<1>;
-      extern template class McMove<2>;
-      extern template class McMove<3>;
    }
 }
 #endif

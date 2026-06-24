@@ -43,7 +43,7 @@ namespace Rpc {
 
    protected:
 
-      using McMove<D>::system;
+      using Rp::McMove<D, Rpc::Types<D> >::system;
 
    protected:
     

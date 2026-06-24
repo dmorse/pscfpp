@@ -11,6 +11,7 @@
 #include <rp/fts/montecarlo/McMove.h>
 #include <rpc/system/Types.h>
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -49,14 +50,15 @@ namespace Rpc {
       virtual ~McMove() = default;
 
       // Not copyable or assignable.
-      McMove(McMove<D> const &) = delete;
-      McMove<D>& operator = (McMove<D> const &) = delete;
+      McMove(Rp::McMove<D, Rpc::Types<D> > const &) = delete;
+      Rp::McMove<D, Rpc::Types<D> >& operator = (Rp::McMove<D, Rpc::Types<D> > const &) = delete;
 
    };
 
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -64,11 +66,6 @@ namespace Pscf {
       extern template class McMove<1, Rpc::Types<1> >;
       extern template class McMove<2, Rpc::Types<2> >;
       extern template class McMove<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class McMove<1>;
-      extern template class McMove<2>;
-      extern template class McMove<3>;
    }
 }
 #endif

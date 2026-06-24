@@ -31,9 +31,9 @@ namespace Rpc {
    * Return a pointer to a instance of McMove subclass className.
    */
    template <int D>
-   McMove<D>* McMoveFactory<D>::factory(const std::string &className) const
+   Rp::McMove<D, Rpc::Types<D> >* McMoveFactory<D>::factory(const std::string &className) const
    {
-      McMove<D>* ptr = 0;
+      Rp::McMove<D, Rpc::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);

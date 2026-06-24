@@ -34,7 +34,7 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
-   class RealMove : public T::McMove
+   class RealMove : public McMove<D,T>
    {
    public:
 
@@ -70,7 +70,7 @@ namespace Rp {
       void attemptMove() override;
 
       // Alias for McMove base class.
-      using McMoveT = typename T::McMove;
+      using McMoveT = McMove<D,T>;
 
       // Inherited protected member functions (selected).
       using McMoveT::system;

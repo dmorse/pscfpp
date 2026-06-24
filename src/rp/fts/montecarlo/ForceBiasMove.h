@@ -43,7 +43,7 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
-   class ForceBiasMove : public T::McMove
+   class ForceBiasMove : public McMove<D,T>
    {
 
    public:
@@ -94,7 +94,7 @@ namespace Rp {
       ~ForceBiasMove() = default;
 
       /// Alias for McMove base class.
-      using McMoveT = typename T::McMove;
+      using McMoveT = McMove<D,T>;
 
       // Protected inherited member functions (selected).
       using McMoveT::system;

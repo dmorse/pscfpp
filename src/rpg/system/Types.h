@@ -49,32 +49,40 @@ namespace Pscf {
       //template <int D> class Sweep;
       //template <int D> class SweepParameter;
       //template <int D> class BasisFieldState;
+      //
       template <int D> class SweepFactory;
+
       //template <int D> class Simulator;
       //template <int D> struct SimState;
       template <int D> class SimulatorFactory;
+
       template <int D> class Compressor;
       template <int D> class CompressorFactory;
       template <int D> class IntraCorrelation;
-      template <int D> class Perturbation;
-      template <int D> class PerturbationFactory;
-      template <int D> class Ramp;
-      template <int D> class RampParameter;
-      template <int D> class RampFactory;
       template <int D> class Analyzer;
       template <int D> class AnalyzerFactory;
       template <int D> class AnalyzerManager;
       template <int D> class AverageAnalyzer;
       template <int D> class AverageListAnalyzer;
-      template <int D> class TrajectoryReader;
-      template <int D> class TrajectoryReaderFactory;
+
       template <int D> class BdSimulator;
       template <int D> class BdStep;
       template <int D> class BdStepFactory;
+
       //template <int D> class McSimulator;
-      template <int D> class McMove;
-      template <int D> class McMoveFactory;
+      //template <int D> class McMove;
       template <int D> class McMoveManager;
+      template <int D> class McMoveFactory;
+
+      template <int D> class TrajectoryReader;
+      template <int D> class TrajectoryReaderFactory;
+
+      template <int D> class Perturbation;
+      template <int D> class PerturbationFactory;
+
+      template <int D> class Ramp;
+      template <int D> class RampParameter;
+      template <int D> class RampFactory;
    }
 }
 
@@ -165,7 +173,7 @@ namespace Rpg {
       using BdStepFactory = Rpg::BdStepFactory<D>;
 
       //using McSimulator = Rp::McSimulator<D, Rpg::Types<D> >;
-      using McMove = Rpg::McMove<D>;
+      //using McMove = Rp::McMove<D, Rpg::Types<D> >;
       using McMoveFactory = Rpg::McMoveFactory<D>;
       using McMoveManager = Rpg::McMoveManager<D>;
 

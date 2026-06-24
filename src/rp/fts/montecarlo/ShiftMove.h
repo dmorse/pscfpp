@@ -49,7 +49,7 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
-   class ShiftMove : public T::McMove
+   class ShiftMove : public McMove<D,T>
    {
 
    public:
@@ -116,7 +116,7 @@ namespace Rp {
       mutable DArray< typename T::RField > w_;
 
       // Alias for McMove base class.
-      using McMoveT = typename T::McMove;
+      using McMoveT = McMove<D,T>;
 
       // Inherited protected member functions (selected).
       using McMoveT::system;

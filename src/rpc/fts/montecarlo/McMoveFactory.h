@@ -26,7 +26,7 @@ namespace Rpc {
    * \ingroup Rpc_Fts_MonteCarlo_Module
    */
    template <int D>
-   class McMoveFactory : public Factory< McMove<D> > 
+   class McMoveFactory : public Factory< Rp::McMove<D, Rpc::Types<D> > > 
    {
 
    public:
@@ -44,9 +44,9 @@ namespace Rpc {
       * \param className name of the McMove subclass
       * \return McMove* pointer to new instance of className
       */
-      McMove<D>* factory(const std::string &className) const;
+      Rp::McMove<D, Rpc::Types<D> >* factory(const std::string &className) const;
 
-      using Factory< McMove<D> >::trySubfactories;
+      using Factory< Rp::McMove<D, Rpc::Types<D> > >::trySubfactories;
 
    private:
 
