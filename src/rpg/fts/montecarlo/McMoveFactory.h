@@ -34,9 +34,9 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param simulator parent McSimulator<D> object
+      * \param simulator parent Rp::McSimulator<D, Rpg::Types<D> > object
       */
-      McMoveFactory(McSimulator<D>& simulator);
+      McMoveFactory(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
 
       /**
       * Method to create any McMove supplied with PSCF.
@@ -51,7 +51,7 @@ namespace Rpg {
    private:
 
       /// Pointer to the parent simulator.
-      McSimulator<D>* simulatorPtr_;
+      Rp::McSimulator<D, Rpg::Types<D> >* simulatorPtr_;
 
    };
 

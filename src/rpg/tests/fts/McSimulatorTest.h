@@ -45,7 +45,7 @@ public:
    }
    
    template <int D>
-   void initSimulator(McSimulator<D>& simulator, std::string filename)
+   void initSimulator(Rp::McSimulator<D, Rpg::Types<D> >& simulator, std::string filename)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -103,7 +103,7 @@ public:
       Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_disordered");
       
-      McSimulator<3> simulator(system);
+      Rp::McSimulator<3, Rpg::Types<3> > simulator(system);
       initSimulator(simulator, "in/param_McSimulator");
       
       system.w().readRGrid("in/w_dis.rf");
@@ -131,7 +131,7 @@ public:
       Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_disordered");
       
-      McSimulator<3> simulator(system);
+      Rp::McSimulator<3, Rpg::Types<3> > simulator(system);
       initSimulator(simulator, "in/param_McSimulator_BdMove");
       
       system.w().readRGrid("in/w_dis.rf");
@@ -159,7 +159,7 @@ public:
       Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_disordered");
       
-      McSimulator<3> simulator(system);
+      Rp::McSimulator<3, Rpg::Types<3> > simulator(system);
       initSimulator(simulator, "in/param_McSimulator_ShiftMove");
       
       system.w().readRGrid("in/w_dis.rf");
@@ -187,7 +187,7 @@ public:
       Rp::System<3, Rpg::Types<3> > system;
       initSystem(system, "in/param_system_triblock");
       
-      McSimulator<3> simulator(system);
+      Rp::McSimulator<3, Rpg::Types<3> > simulator(system);
       initSimulator(simulator, "in/param_triblock_McSimulator");
       
       system.w().readRGrid("in/w_triblock.rf");

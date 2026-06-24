@@ -18,7 +18,7 @@ namespace Rpc {
 
    // Constructor.
    template <int D>
-   McMoveManager<D>::McMoveManager(McSimulator<D>& simulator,
+   McMoveManager<D>::McMoveManager(Rp::McSimulator<D, Rpc::Types<D> >& simulator,
                                    Rp::System<D, Rpc::Types<D> >& system)
     : Rp::McMoveManager<D, Types<D> >(simulator, system)
    {}

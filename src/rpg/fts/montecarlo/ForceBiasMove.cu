@@ -35,7 +35,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   ForceBiasMove<D>::ForceBiasMove(McSimulator<D>& simulator)
+   ForceBiasMove<D>::ForceBiasMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator)
     : Rp::ForceBiasMove<D, Types<D> > (simulator)
    {}
 

@@ -75,7 +75,7 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator
       */
-      ShiftMove(typename T::McSimulator& simulator);
+      ShiftMove(McSimulator<D,T>& simulator);
 
       /**
       * Destructor.

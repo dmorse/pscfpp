@@ -40,7 +40,7 @@ namespace Rpc {
 
       // Try to match classname
       if (className == "McSimulator" || className == "Simulator") {
-         ptr = new McSimulator<D>(*systemPtr_);
+         ptr = new Rp::McSimulator<D, Rpc::Types<D> >(*systemPtr_);
       } else
       if (className == "BdSimulator") {
          ptr = new BdSimulator<D>(*systemPtr_);

@@ -56,8 +56,24 @@ namespace Rp {
 
    public:
 
-      /// \name Initialization
+      /// \name Construction, destruction and initialization
       ///@{
+
+      /**
+      * Constructor.
+      *
+      * \param system  parent System
+      */
+      McSimulator(System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~McSimulator();
+
+      // Prohibit copying and assignment. 
+      McSimulator(McSimulator<D,T> const &) = delete;
+      McSimulator<D,T>& operator = (McSimulator<D,T> const &) = delete;
 
       /**
       * Read parameter file block.
@@ -165,38 +181,12 @@ namespace Rp {
 
    protected:
 
-      /// Alias for System class in program-level namespace.
-      using SystemT = System<D,T>;
-
-      /// Alias for Simulator class in program-level namespace.
-      using SimulatorT = Simulator<D,T>;
-
-      /// Alias for McSimulator class in program-level namespace.
-      using McSimulatorT = typename T::McSimulator;
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System
-      * \param mcSimulator  instance of enclosing McSimulator subclass
-      */
-      McSimulator(SystemT& system, McSimulatorT& mcSimulator);
-
-      /**
-      * Destructor.
-      */
-      ~McSimulator();
-
-      // Prohibit copying and assignment. 
-      McSimulator(McSimulator<D,T> const &) = delete;
-      McSimulator<D,T>& operator = (McSimulator<D,T> const &) = delete;
-
       // Inherited protected member function (selected).
-      using SimulatorT::state;
+      using Simulator<D,T>::state;
 
       // Inherited protected data members (selected).
-      using SimulatorT::iStep_;
-      using SimulatorT::iTotalStep_;
+      using Simulator<D,T>::iStep_;
+      using Simulator<D,T>::iTotalStep_;
 
    private:
 

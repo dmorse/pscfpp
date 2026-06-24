@@ -24,7 +24,7 @@ namespace Rpg {
 
    // Constructor.
    template <int D>
-   RealMove<D>::RealMove(McSimulator<D>& simulator)
+   RealMove<D>::RealMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator)
     : Rp::RealMove<D, Types<D> > (simulator)
    {}
 

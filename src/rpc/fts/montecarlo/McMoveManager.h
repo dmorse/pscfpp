@@ -46,7 +46,7 @@ namespace Rpc {
       * \param simulator parent McSimulator
       * \param system parent System
       */
-      McMoveManager(McSimulator<D>& simulator, Rp::System<D, Rpc::Types<D> >& system);
+      McMoveManager(Rp::McSimulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
 
    };
 

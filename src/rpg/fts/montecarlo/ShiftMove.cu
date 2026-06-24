@@ -25,7 +25,7 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   ShiftMove<D>::ShiftMove(McSimulator<D>& simulator)
+   ShiftMove<D>::ShiftMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator)
     : RpShiftMove(simulator)
    {}
 

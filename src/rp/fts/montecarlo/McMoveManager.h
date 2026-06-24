@@ -9,6 +9,7 @@
 */
 
 #include <util/param/Manager.h>          // base class template
+#include <rp/fts/montecarlo/McMove.h>    // template argument
 #include <util/containers/DArray.h>      // member
 
 // Forward declarations
@@ -19,6 +20,8 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
+      template <int D, class T> class McSimulator;
+      template <int D, class T> class McMove;
    }
 }
 
@@ -115,7 +118,7 @@ namespace Rp {
       * \param simulator parent McSimulator
       * \param system parent System
       */
-      McMoveManager(typename T::McSimulator& simulator, 
+      McMoveManager(McSimulator<D,T>& simulator, 
                     System<D,T>& system);
 
       /**
@@ -138,7 +141,7 @@ namespace Rp {
       /**
       * Pointer to parent Simulator.
       */
-      typename T::McSimulator* simulatorPtr_;
+      McSimulator<D,T>* simulatorPtr_;
 
       /**
       * Pointer to parent System.

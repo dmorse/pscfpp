@@ -23,7 +23,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   ForceBiasMove<D,T>::ForceBiasMove(typename T::McSimulator& simulator)
+   ForceBiasMove<D,T>::ForceBiasMove(McSimulator<D,T>& simulator)
     : McMoveT(simulator),
       w_(),
       dwc_(),

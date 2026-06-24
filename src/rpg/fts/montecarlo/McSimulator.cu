@@ -30,28 +30,11 @@
 
 #include <rp/fts/montecarlo/McSimulator.tpp>    // base class implementation
 
-namespace Pscf {
-namespace Rpg {
-
-   // Constructor.
-   template <int D>
-   McSimulator<D>::McSimulator(Rp::System<D, Rpg::Types<D> >& system)
-    : Rp::McSimulator<D, Types<D> >(system, *this)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class McSimulator< 1, Rpg::Types<1> >;
       template class McSimulator< 2, Rpg::Types<2> >;
       template class McSimulator< 3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class McSimulator<1>;
-      template class McSimulator<2>;
-      template class McSimulator<3>;
    }
 }

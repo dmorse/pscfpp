@@ -45,7 +45,7 @@ namespace Rpg {
       *
       * \param simulator  parent McSimulator object
       */
-      BdMove(McSimulator<D>& simulator);
+      BdMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
 
    };
 

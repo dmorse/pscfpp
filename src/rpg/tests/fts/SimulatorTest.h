@@ -13,6 +13,7 @@
 #include <rpg/field/Domain.h>
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
+#include <rpg/field/FieldIo.h>
 
 #include <prdc/cuda/RField.h> 
 #include <prdc/cuda/RFieldComparison.h>

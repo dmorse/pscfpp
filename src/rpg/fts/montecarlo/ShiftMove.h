@@ -38,7 +38,7 @@ namespace Rpg {
       *
       * \param simulator  parent McSimulator
       */
-      ShiftMove(McSimulator<D>& simulator);
+      ShiftMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
 
       /**
       * Setup before simulation.

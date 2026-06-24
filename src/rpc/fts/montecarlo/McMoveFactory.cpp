@@ -23,7 +23,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   McMoveFactory<D>::McMoveFactory(McSimulator<D>& simulator)
+   McMoveFactory<D>::McMoveFactory(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
     : simulatorPtr_(&simulator)
    {}
 

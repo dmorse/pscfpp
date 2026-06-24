@@ -39,7 +39,7 @@ namespace Rpc {
       *
       * \param simulator  parent McSimulator
       */
-      ShiftMove(McSimulator<D>& simulator);
+      ShiftMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator);
 
    protected:
 

@@ -51,7 +51,7 @@ namespace Rpc {
       *
       * \param simulator  parent McSimulator
       */
-      ForceBiasMove(McSimulator<D>& simulator);
+      ForceBiasMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator);
 
    private:
 

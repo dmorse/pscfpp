@@ -20,6 +20,7 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
+      template <int D, class T> class McSimulator;
    }
 }
 
@@ -165,7 +166,7 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator object
       */
-      McMove(typename T::McSimulator& simulator);
+      McMove(McSimulator<D,T>& simulator);
 
       /**
       * Destructor.
@@ -207,12 +208,12 @@ namespace Rp {
       /**
       * Get parent McSimulator object (non-const ref).
       */
-      typename T::McSimulator& simulator();
+      McSimulator<D,T>& simulator();
 
       /**
       * Get parent McSimulator object (const ref)
       */
-      typename T::McSimulator const & simulator() const;
+      McSimulator<D,T> const & simulator() const;
 
       /**
       * Get the scalar random number generator.
@@ -253,7 +254,7 @@ namespace Rp {
    private:
 
       /// Pointer to parent McSimulator object.
-      typename T::McSimulator* simulatorPtr_;
+      McSimulator<D,T>* simulatorPtr_;
 
       /// Pointer to parent System object.
       System<D,T>* systemPtr_;
@@ -342,14 +343,14 @@ namespace Rp {
    * Get parent McSimulator object (non-const ref).
    */
    template <int D, class T> inline
-   typename T::McSimulator& McMove<D,T>::simulator()
+   McSimulator<D,T>& McMove<D,T>::simulator()
    {  return *simulatorPtr_; }
 
    /*
    * Get parent McSimulator object (const ref).
    */
    template <int D, class T> inline
-   typename T::McSimulator const & McMove<D,T>::simulator() const
+   McSimulator<D,T> const & McMove<D,T>::simulator() const
    {  return *simulatorPtr_; }
 
    /*

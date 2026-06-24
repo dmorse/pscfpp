@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>          // member
+#include <rp/fts/montecarlo/McMove.h>  // base class
+#include <util/containers/DArray.h>    // member
 #include <iostream>
 
 namespace Pscf {
@@ -56,7 +57,7 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator object
       */
-      RealMove(typename T::McSimulator& simulator);
+      RealMove(McSimulator<D,T>& simulator);
 
       /**
       * Destructor.

@@ -56,7 +56,7 @@ namespace Rpg {
       *
       * \param simulator  parent McSimulator
       */
-      ForceBiasMove(McSimulator<D>& simulator);
+      ForceBiasMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
 
    private:
 

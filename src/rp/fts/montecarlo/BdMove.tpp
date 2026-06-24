@@ -22,7 +22,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   BdMove<D,T>::BdMove(typename T::McSimulator& simulator)
+   BdMove<D,T>::BdMove(McSimulator<D,T>& simulator)
     : McMoveT(simulator),
       w_(),
       etaA_(),

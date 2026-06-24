@@ -20,7 +20,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   RealMove<D,T>::RealMove(typename T::McSimulator& simulator)
+   RealMove<D,T>::RealMove(McSimulator<D,T>& simulator)
     : McMoveT(simulator),
       w_(),
       dwc_(),

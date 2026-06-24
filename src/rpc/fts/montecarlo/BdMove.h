@@ -45,7 +45,7 @@ namespace Rpc {
       *
       * \param simulator  parent McSimulator object
       */
-      BdMove(McSimulator<D>& simulator);
+      BdMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator);
 
    };
 

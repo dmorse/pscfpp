@@ -43,7 +43,7 @@ namespace Rpc {
       *
       * \param simulator  parent McSimulator object
       */
-      RealMove(McSimulator<D>& simulator);
+      RealMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator);
 
    };
 

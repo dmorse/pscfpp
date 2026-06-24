@@ -22,7 +22,7 @@ namespace Pscf {
       * Constructor.
       */
       template <int D>
-      McMove<D>::McMove(McSimulator<D>& simulator)
+      McMove<D>::McMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator)
        : Rp::McMove<D, Types<D> >(simulator)
       {}
    

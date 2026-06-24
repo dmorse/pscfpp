@@ -23,7 +23,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   ShiftMove<D,T>::ShiftMove(typename T::McSimulator& simulator)
+   ShiftMove<D,T>::ShiftMove(McSimulator<D,T>& simulator)
     : McMoveT(simulator),
       maxShift_(0),
       isAllocated_(false)

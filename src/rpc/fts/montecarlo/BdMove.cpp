@@ -23,7 +23,7 @@ namespace Rpc {
 
    // Constructor.
    template <int D>
-   BdMove<D>::BdMove(McSimulator<D>& simulator)
+   BdMove<D>::BdMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
     : Rp::BdMove<D, Types<D> >(simulator)
    {}
 

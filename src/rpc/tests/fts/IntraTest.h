@@ -11,6 +11,7 @@
 #include <rpc/fts/compressor/IntraCorrelation.h>
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldDft.h>
+#include <prdc/cpu/FFT.h>
 #include <prdc/cpu/RFieldComparison.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/PolymerSpecies.h>

@@ -32,7 +32,7 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   ForceBiasMove<D>::ForceBiasMove(McSimulator<D>& simulator)
+   ForceBiasMove<D>::ForceBiasMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
     : Rp::ForceBiasMove<D, Types<D> > (simulator)
    {}
 

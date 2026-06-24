@@ -44,7 +44,7 @@ namespace Rpg {
       *
       * \param simulator  parent McSimulator object
       */
-      RealMove(McSimulator<D>& simulator);
+      RealMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
 
    };
 

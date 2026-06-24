@@ -27,7 +27,7 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   ShiftMove<D>::ShiftMove(McSimulator<D>& simulator)
+   ShiftMove<D>::ShiftMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
     : McMove<D>(simulator),
       maxShift_(0),
       isAllocated_(false)

@@ -22,7 +22,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   McMove<D,T>::McMove(typename T::McSimulator& simulator)
+   McMove<D,T>::McMove(McSimulator<D,T>& simulator)
     : simulatorPtr_(&simulator),
       systemPtr_(&(simulator.system())),
       randomPtr_(&(simulator.random())),

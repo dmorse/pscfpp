@@ -26,17 +26,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   McSimulator<D,T>::McSimulator(SystemT& system, McSimulatorT& mcSimulator)
-    : SimulatorT(system),
+   McSimulator<D,T>::McSimulator(System<D,T>& system)
+    : Simulator<D,T>(system),
       mcMoveManagerPtr_(nullptr),
       analyzerManagerPtr_(nullptr),
       trajectoryReaderFactoryPtr_(nullptr)
    {
       ParamComposite::setClassName("McSimulator");
       mcMoveManagerPtr_ 
-            = new typename T::McMoveManager(mcSimulator, system),
+            = new typename T::McMoveManager(*this, system),
       analyzerManagerPtr_
-            = new typename T::AnalyzerManager(mcSimulator, system),
+            = new typename T::AnalyzerManager(*this, system),
       trajectoryReaderFactoryPtr_
             = new typename T::TrajectoryReaderFactory(system);
       AnalyzerT::initStatic();
@@ -62,25 +62,25 @@ namespace Rp {
    void McSimulator<D,T>::readParameters(std::istream &in)
    {
       // Optionally read random seed. Initialize random number generators
-      SimulatorT::readRandomSeed(in);
+      Simulator<D,T>::readRandomSeed(in);
 
       // Optionally read McMoveManager block
       ParamComposite::readParamCompositeOptional(in, mcMoveManager());
 
       // Optionally read Compressor block
       bool isEnd = false;
-      SimulatorT::readCompressor(in, isEnd);
+      Simulator<D,T>::readCompressor(in, isEnd);
       if (hasMcMoves()) {
-         UTIL_CHECK(SimulatorT::hasCompressor());
+         UTIL_CHECK((Simulator<D,T>::hasCompressor()));
       }
 
       // A Compressor is required if MC moves are declared.
       // A Ramp is allowed only if MC moves are declared.
 
       // Optionally read Perturbation and/or Ramp blocks
-      SimulatorT::readPerturbation(in, isEnd);
+      Simulator<D,T>::readPerturbation(in, isEnd);
       if (hasMcMoves()) {
-         SimulatorT::readRamp(in, isEnd);
+         Simulator<D,T>::readRamp(in, isEnd);
       }
 
       // Optionally read AnalyzerManager block
@@ -98,8 +98,8 @@ namespace Rp {
          state().needsDc = true;
       }
 
-      // Allocate memory for SimulatorT base class
-      SimulatorT::allocate();
+      // Allocate memory for Simulator<D,T> base class
+      Simulator<D,T>::allocate();
    }
 
    /*
@@ -108,37 +108,37 @@ namespace Rp {
    template <int D, class T>
    void McSimulator<D,T>::setup(int nStep)
    {
-      UTIL_CHECK(SimulatorT::system().w().hasData());
+      UTIL_CHECK((Simulator<D,T>::system().w().hasData()));
 
       // Eigenanalysis of the projected chi matrix.
-      SimulatorT::analyzeChi();
+      Simulator<D,T>::analyzeChi();
 
-      if (SimulatorT::hasPerturbation()) {
-         SimulatorT::perturbation().setup();
+      if (Simulator<D,T>::hasPerturbation()) {
+         Simulator<D,T>::perturbation().setup();
       }
 
-      if (SimulatorT::hasRamp()) {
-         SimulatorT::ramp().setup(nStep);
+      if (Simulator<D,T>::hasRamp()) {
+         Simulator<D,T>::ramp().setup(nStep);
       }
 
       // Solve the MDE and compute c-fields for the initial state
-      SimulatorT::system().compute();
+      Simulator<D,T>::system().compute();
 
       // Compress the initial state (adjust pressure-like field)
-      if (SimulatorT::hasCompressor()) {
-         SimulatorT::compressor().compress();
-         SimulatorT::compressor().clearTimers();
+      if (Simulator<D,T>::hasCompressor()) {
+         Simulator<D,T>::compressor().compress();
+         Simulator<D,T>::compressor().clearTimers();
       }
 
       // Compute field components and Hamiltonian
-      SimulatorT::computeWc();
+      Simulator<D,T>::computeWc();
       if (state().needsCc || state().needsDc) {
-         SimulatorT::computeCc();
+         Simulator<D,T>::computeCc();
       }
       if (state().needsDc) {
-         SimulatorT::computeDc();
+         Simulator<D,T>::computeDc();
       }
-      SimulatorT::computeHamiltonian();
+      Simulator<D,T>::computeHamiltonian();
 
       // Setup MC moves (if any)
       if (hasMcMoves()) {
@@ -159,13 +159,13 @@ namespace Rp {
    void McSimulator<D,T>::simulate(int nStep)
    {
       UTIL_CHECK(hasMcMoves());
-      UTIL_CHECK(SimulatorT::hasCompressor());
+      UTIL_CHECK((Simulator<D,T>::hasCompressor()));
 
       // Initial setup
       setup(nStep);
       iStep_ = 0;
-      if (SimulatorT::hasRamp()) {
-         SimulatorT::ramp().setParameters(iStep_);
+      if (Simulator<D,T>::hasRamp()) {
+         Simulator<D,T>::ramp().setParameters(iStep_);
       }
       int analyzerBaseInterval = AnalyzerT::baseInterval;
       Log::file() << std::endl;
@@ -190,8 +190,8 @@ namespace Rp {
          if (converged){
             iStep_++;
 
-            if (SimulatorT::hasRamp()) {
-               SimulatorT::ramp().setParameters(iStep_);
+            if (Simulator<D,T>::hasRamp()) {
+               Simulator<D,T>::ramp().setParameters(iStep_);
             }
 
             // Analysis (if any)
@@ -221,8 +221,8 @@ namespace Rp {
       }
 
       // Final output from ramp (if any)
-      if (SimulatorT::hasRamp()){
-         SimulatorT::ramp().output();
+      if (Simulator<D,T>::hasRamp()){
+         Simulator<D,T>::ramp().output();
       }
 
       // Output times for the simulation run
@@ -242,7 +242,7 @@ namespace Rp {
       Log::file() << std::endl;
 
       // Output number of times MDE has been solved for the simulation run
-      SimulatorT::outputMdeCounter(Log::file());
+      Simulator<D,T>::outputMdeCounter(Log::file());
 
       // Print McMove acceptance statistics
       long attempt;
@@ -311,7 +311,7 @@ namespace Rp {
 
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
          if (hasFrame) {
-            SimulatorT::clearData();
+            Simulator<D,T>::clearData();
 
             // Initialize analyzers
             if (iStep_ == min) {
@@ -352,7 +352,7 @@ namespace Rp {
    template <int D, class T>
    void McSimulator<D,T>::outputTimers(std::ostream& out) const
    {
-      SimulatorT::compressor().outputTimers(out);
+      Simulator<D,T>::compressor().outputTimers(out);
       out << "\n";
       out << "MC move time contributions:\n";
       mcMoveManager().outputTimers(out);

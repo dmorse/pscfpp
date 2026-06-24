@@ -39,9 +39,9 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param simulator  parent Rpg::McSimulator<D> object
+      * \param simulator  parent Rp::McSimulator<D, Rpg::Types<D> > object
       */
-      McMove(McSimulator<D>& simulator);
+      McMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
 
       /**
       * Destructor.

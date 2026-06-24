@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/montecarlo/McMove.h>  // base class
 #include <util/containers/DArray.h>    // member
 #include <iostream>
 
@@ -73,7 +74,7 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator object
       */
-      BdMove(typename T::McSimulator& simulator);
+      BdMove(McSimulator<D,T>& simulator);
 
       /**
       * Destructor.
