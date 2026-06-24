@@ -27,7 +27,7 @@ namespace Rpc {
    * \ingroup Rpc_Fts_Brownian_Module
    */
    template <int D>
-   class BdStepFactory : public Factory< BdStep<D> > 
+   class BdStepFactory : public Factory< Rp::BdStep<D, Rpc::Types<D> > > 
    {
 
    public:
@@ -45,9 +45,9 @@ namespace Rpc {
       * \param className name of the BdStep subclass
       * \return BdStep* pointer to new instance of className
       */
-      BdStep<D>* factory(const std::string &className) const;
+      Rp::BdStep<D, Rpc::Types<D> >* factory(const std::string &className) const;
 
-      using Factory< BdStep<D> >::trySubfactories;
+      using Factory< Rp::BdStep<D, Rpc::Types<D> > >::trySubfactories;
 
    private:
 

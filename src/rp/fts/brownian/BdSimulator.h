@@ -20,6 +20,7 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
+      template <int D, class T> class BdStep;
    }
 }
 
@@ -120,7 +121,7 @@ namespace Rp {
       /**
       * Get the BdStep by non-const reference.
       */
-      typename T::BdStep& bdStep();
+      BdStep<D,T>& bdStep();
 
       /**
       * Get the AnalyzerManager (const).
@@ -167,12 +168,12 @@ namespace Rp {
       /**
       * Pointer to Brownian dynamics step algorithm.
       */
-      typename T::BdStep* bdStepPtr_;
+      BdStep<D,T>* bdStepPtr_;
 
       /**
       * Pointer to a BdStep factory.
       */
-      Factory< typename T::BdStep >* bdStepFactoryPtr_;
+      Factory< BdStep<D,T> >* bdStepFactoryPtr_;
 
       /**
       * Pointer to a trajectory reader factory.
@@ -199,7 +200,7 @@ namespace Rp {
 
    // Get the BdStep.
    template <int D, class T> inline
-   typename T::BdStep& BdSimulator<D,T>::bdStep()
+   BdStep<D,T>& BdSimulator<D,T>::bdStep()
    {
       UTIL_CHECK(bdStepPtr_);
       return *bdStepPtr_;

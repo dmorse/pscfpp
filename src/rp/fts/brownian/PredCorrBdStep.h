@@ -33,7 +33,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Brownian_Module
    */
    template <int D, class T>
-   class PredCorrBdStep : public T::BdStep
+   class PredCorrBdStep : public BdStep<D,T>
    {
 
    public:
@@ -71,7 +71,7 @@ namespace Rp {
       ~PredCorrBdStep() = default;
 
       // Alias for base class.
-      using BdStepT = typename T::BdStep;
+      using BdStepT = BdStep<D,T>;
 
       // Protected inherited member functions
       using BdStepT::system;

@@ -11,6 +11,7 @@
 #include <rp/fts/brownian/BdStep.h>
 #include <rpc/system/Types.h>
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -52,6 +53,7 @@ namespace Rpc {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -59,11 +61,6 @@ namespace Pscf {
       extern template class BdStep< 1, Rpc::Types<1> >;
       extern template class BdStep< 2, Rpc::Types<2> >;
       extern template class BdStep< 3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class BdStep<1>;
-      extern template class BdStep<2>;
-      extern template class BdStep<3>;
    }
 }
 #endif

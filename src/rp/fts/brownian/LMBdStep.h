@@ -49,7 +49,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Brownian_Module
    */
    template <int D, class T>
-   class LMBdStep : public T::BdStep
+   class LMBdStep : public BdStep<D,T>
    {
    public:
 
@@ -86,7 +86,7 @@ namespace Rp {
       ~LMBdStep() = default;
 
       // Alias for base class.
-      using BdStepT = typename T::BdStep;
+      using BdStepT = BdStep<D,T>;
 
       // Inherited functions (selected)
       using BdStepT::system;

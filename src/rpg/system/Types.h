@@ -49,7 +49,7 @@ namespace Pscf {
       //template <int D> class Sweep;
       //template <int D> class SweepParameter;
       //template <int D> class BasisFieldState;
-      //
+
       template <int D> class SweepFactory;
 
       //template <int D> class Simulator;
@@ -59,6 +59,7 @@ namespace Pscf {
       template <int D> class Compressor;
       template <int D> class CompressorFactory;
       template <int D> class IntraCorrelation;
+
       template <int D> class Analyzer;
       template <int D> class AnalyzerFactory;
       template <int D> class AnalyzerManager;
@@ -66,7 +67,7 @@ namespace Pscf {
       template <int D> class AverageListAnalyzer;
 
       //template <int D> class BdSimulator;
-      template <int D> class BdStep;
+      //template <int D> class BdStep;
       template <int D> class BdStepFactory;
 
       //template <int D> class McSimulator;
@@ -152,6 +153,15 @@ namespace Rpg {
       using CompressorFactory = Rpg::CompressorFactory<D>;
       using IntraCorrelation = Rpg::IntraCorrelation<D>;
 
+      //using BdSimulator = Rp::BdSimulator<D, Rpg::Types<D> >;
+      //using BdStep = Rp::BdStep<D, Rpg::Types<D> >;
+      using BdStepFactory = Rpg::BdStepFactory<D>;
+
+      //using McSimulator = Rp::McSimulator<D, Rpg::Types<D> >;
+      //using McMove = Rp::McMove<D, Rpg::Types<D> >;
+      using McMoveManager = Rpg::McMoveManager<D>;
+      using McMoveFactory = Rpg::McMoveFactory<D>;
+
       using Perturbation = Rpg::Perturbation<D>;
       using PerturbationFactory = Rpg::PerturbationFactory<D>;
 
@@ -167,15 +177,6 @@ namespace Rpg {
 
       using TrajectoryReader = Rpg::TrajectoryReader<D>;
       using TrajectoryReaderFactory = Rpg::TrajectoryReaderFactory<D>;
-
-      //using BdSimulator = Rp::BdSimulator<D, Rpg::Types<D> >;
-      using BdStep = Rpg::BdStep<D>;
-      using BdStepFactory = Rpg::BdStepFactory<D>;
-
-      //using McSimulator = Rp::McSimulator<D, Rpg::Types<D> >;
-      //using McMove = Rp::McMove<D, Rpg::Types<D> >;
-      using McMoveFactory = Rpg::McMoveFactory<D>;
-      using McMoveManager = Rpg::McMoveManager<D>;
 
       // Static member functions
 

@@ -11,30 +11,11 @@
 
 #include <rp/fts/brownian/BdStep.tpp>
 
-namespace Pscf {
-   namespace Rpg {
-   
-      /*
-      * Constructor.
-      */
-      template <int D>
-      BdStep<D>::BdStep(Rp::BdSimulator<D, Rpg::Types<D> >& simulator)
-       : Rp::BdStep<D, Types<D> >(simulator)
-      {}
-   
-   }
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class BdStep< 1, Rpg::Types<1> >;
       template class BdStep< 2, Rpg::Types<2> >;
       template class BdStep< 3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class BdStep<1>;
-      template class BdStep<2>;
-      template class BdStep<3>;
    }
 }

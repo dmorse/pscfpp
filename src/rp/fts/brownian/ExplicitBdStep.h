@@ -32,7 +32,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Brownian_Module
    */
    template <int D, class T>
-   class ExplicitBdStep : public T::BdStep
+   class ExplicitBdStep : public BdStep<D,T>
    {
 
    public:
@@ -73,7 +73,7 @@ namespace Rp {
 
       ~ExplicitBdStep() = default;
 
-      using BdStepT = typename T::BdStep;
+      using BdStepT = BdStep<D,T>;
       using BdStepT::system;
       using BdStepT::simulator;
       using BdStepT::vecRandom;

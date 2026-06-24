@@ -30,9 +30,9 @@ namespace Rpc {
    * Return a pointer to a instance of BdStep subclass className.
    */
    template <int D>
-   BdStep<D>* BdStepFactory<D>::factory(const std::string &className) const
+   Rp::BdStep<D, Rpc::Types<D> >* BdStepFactory<D>::factory(const std::string &className) const
    {
-      BdStep<D>* ptr = 0;
+      Rp::BdStep<D, Rpc::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);

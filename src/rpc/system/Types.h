@@ -64,7 +64,7 @@ namespace Pscf {
       template <int D> class TrajectoryReader;
       template <int D> class TrajectoryReaderFactory;
       //template <int D> class BdSimulator;
-      template <int D> class BdStep;
+      //template <int D> class BdStep;
       template <int D> class BdStepFactory;
       //template <int D> class McSimulator;
       //template <int D> class McMove;
@@ -147,7 +147,7 @@ namespace Rpc {
       using IntraCorrelation = Rpc::IntraCorrelation<D>;
 
       //using BdSimulator = Rp::BdSimulator<D, Rpc::Types<D> >;
-      using BdStep = Rpc::BdStep<D>;
+      //using BdStep = Rp::BdStep<D, Rpc::Types<D> >;
       using BdStepFactory = Rpc::BdStepFactory<D>;
 
       //using McSimulator = Rp::McSimulator<D, Rpc::Types<D> >;

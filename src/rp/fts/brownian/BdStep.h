@@ -61,9 +61,16 @@ namespace Rp {
    {
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent BdSimulator object
+      */
+      BdStep(BdSimulator<D,T>& simulator);
 
-      // Not copyable or assignable.
+      ~BdStep() = default;
+
+      // Prohibit copying and assignment
       BdStep(BdStep<D,T> const &) = delete;
       BdStep<D,T>& operator = (BdStep<D,T> const &) = delete;
 
@@ -133,15 +140,6 @@ namespace Rp {
 
    protected:
       
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent BdSimulator object
-      */
-      BdStep(BdSimulator<D,T>& simulator);
-
-      ~BdStep() = default;
-
       /**
       * Get parent System object.
       */
