@@ -90,7 +90,7 @@ namespace Rp {
          = new typename T::EnvironmentFactory(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D,T>(*this);
       sweepFactoryPtr_ = new typename T::SweepFactory(*this);
-      simulatorFactoryPtr_ = new typename T::SimulatorFactory(*this);
+      simulatorFactoryPtr_ = new SimulatorFactory<D,T>(*this);
 
       // Create associations among child components
       mixtureModifier().associate(mixture_());

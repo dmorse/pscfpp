@@ -6,53 +6,18 @@
 */
 
 #include "SimulatorFactory.h"
-//#include <rpc/system/System.h>
 
 // Subclasses of Simulator
 #include <rpc/fts/montecarlo/McSimulator.h>
 #include <rpc/fts/brownian/BdSimulator.h>
 
+#include <rp/fts/simulator/SimulatorFactory.tpp>
+
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /*
-   * Constructor
-   */
-   template <int D>
-   SimulatorFactory<D>::SimulatorFactory(Rp::System<D, Rpc::Types<D> >& system)
-    : systemPtr_(&system)
-   {}
-
-   /*
-   * Return a pointer to a instance of Simulator subclass className.
-   */
-   template <int D>
-   Rp::Simulator<D, Rpc::Types<D> >* SimulatorFactory<D>::factory(const std::string &className)
-   const
-   {
-      Rp::Simulator<D, Rpc::Types<D> >* ptr = 0;
-
-      // Try subfactories first
-      ptr = trySubfactories(className);
-      if (ptr) return ptr;
-
-      // Try to match classname
-      if (className == "McSimulator" || className == "Simulator") {
-         ptr = new Rp::McSimulator<D, Rpc::Types<D> >(*systemPtr_);
-      } else
-      if (className == "BdSimulator") {
-         ptr = new Rp::BdSimulator<D, Rpc::Types<D> >(*systemPtr_);
-      }
-
-      return ptr;
+   namespace Rp {
+      template class SimulatorFactory<1, Rpc::Types<1> >;
+      template class SimulatorFactory<2, Rpc::Types<2> >;
+      template class SimulatorFactory<3, Rpc::Types<3> >;
    }
-
-   // Explicit instantiation definitions
-   template class SimulatorFactory<1>;
-   template class SimulatorFactory<2>;
-   template class SimulatorFactory<3>;
-
-}
 }

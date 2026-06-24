@@ -35,6 +35,7 @@ namespace Pscf {
       template <int D, class T> class Sweep;
       template <int D, class T> class SweepFactory;
       template <int D, class T> class Simulator;
+      template <int D, class T> class SimulatorFactory;
    }
 }
 
@@ -635,7 +636,7 @@ namespace Rp {
       /**
       * Pointer to a simulator factory object.
       */
-      typename T::SimulatorFactory* simulatorFactoryPtr_;
+      SimulatorFactory<D,T>* simulatorFactoryPtr_;
 
       /**
       * Filemaster (holds path prefixes for input and output files).

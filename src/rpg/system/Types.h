@@ -54,7 +54,7 @@ namespace Pscf {
 
       //template <int D> class Simulator;
       //template <int D> struct SimState;
-      template <int D> class SimulatorFactory;
+      //template <int D> class SimulatorFactory;
 
       template <int D> class Compressor;
       template <int D> class CompressorFactory;
@@ -146,7 +146,7 @@ namespace Rpg {
 
       //using Simulator = Rp::Simulator<D, Rpg::Types<D> >;
       //using SimState = Rp::SimState<D, Rpg::Types<D> >;
-      using SimulatorFactory = Rpg::SimulatorFactory<D>;
+      //using SimulatorFactory = Rp::SimulatorFactory<D, Rpg::Types<D> >;
 
       using Compressor = Rpg::Compressor<D>;
       using CompressorFactory = Rpg::CompressorFactory<D>;
