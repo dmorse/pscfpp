@@ -36,7 +36,7 @@ namespace Rpg{
 
        // Explicit class names
        if (className == "Sweep" || className == "LinearSweep") {
-           ptr = new LinearSweep<D>(*systemPtr_);
+           ptr = new Rp::LinearSweep<D, Rpg::Types<D> >(*systemPtr_);
        }
 
        return ptr;

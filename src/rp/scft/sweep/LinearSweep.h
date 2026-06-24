@@ -38,6 +38,15 @@ namespace Rp {
    public:
 
       /**
+      * Constructor.
+      *
+      * \param system  parent system object
+      */
+      LinearSweep(System<D,T>& system);
+
+      ~LinearSweep() = default;
+
+      /**
       * Read parameters from param file.
       *
       * \param in  parameter file input stream
@@ -69,15 +78,6 @@ namespace Rp {
 
    protected:
 
-      /**
-      * Constructor.
-      *
-      * \param system  parent system object
-      */
-      LinearSweep(System<D,T>& system);
-
-      ~LinearSweep() = default;
-
       // Inherited protected members
       using SweepT = typename T::Sweep;
       using SweepT::system;
@@ -85,7 +85,6 @@ namespace Rp {
    private:
 
       // Typename aliases
-      using SweepParameterT = SweepParameter<D,T>;
       using BasisFieldStateT = BasisFieldState<D,T>;
       using SweepTmplT = SweepTmpl< BasisFieldStateT >;
 
@@ -93,7 +92,7 @@ namespace Rp {
       int nParameter_;
 
       /// Array of SweepParameter objects.
-      DArray< SweepParameterT > parameters_;
+      DArray< SweepParameter<D,T> > parameters_;
 
    };
 

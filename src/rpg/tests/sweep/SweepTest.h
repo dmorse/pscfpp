@@ -45,7 +45,7 @@ public:
       printMethod(TEST_FUNC);
 
       Rp::System<3, Rpg::Types<3> > system;
-      LinearSweep<3> ls(system);
+      Rp::LinearSweep<3, Rpg::Types<3> > ls(system);
       SweepFactory<3> sf(system);
    }
 
