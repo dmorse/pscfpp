@@ -42,7 +42,7 @@ namespace Rpc {
       *
       * \param simulator  parent BdSimulator object
       */
-      ExplicitBdStep(BdSimulator<D>& simulator);
+      ExplicitBdStep(Rp::BdSimulator<D, Rpc::Types<D> >& simulator);
 
    };
 

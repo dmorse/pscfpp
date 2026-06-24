@@ -45,7 +45,7 @@ public:
    }
 
    template <int D>
-   void initSimulator(BdSimulator<D>& simulator, std::string filename)
+   void initSimulator(Rp::BdSimulator<D, Rpg::Types<D> >& simulator, std::string filename)
    {
       Analyzer<D>::initStatic();
 
@@ -111,7 +111,7 @@ public:
       openLogFile(outfilename);
       initSystem(system, systemfilename);
 
-      BdSimulator<3> simulator(system);
+      Rp::BdSimulator<3, Rpg::Types<3> > simulator(system);
       initSimulator(simulator, simulatorfilename);
 
       system.w().readRGrid(infieldsfilename);

@@ -41,7 +41,7 @@ namespace Rpg {
       *
       * \param simulator  parent BdSimulator object
       */
-      PredCorrBdStep(BdSimulator<D>& simulator);
+      PredCorrBdStep(Rp::BdSimulator<D, Rpg::Types<D> >& simulator);
 
    };
 

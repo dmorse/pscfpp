@@ -56,11 +56,6 @@ namespace Pscf {
       template <int D> class Compressor;
       template <int D> class CompressorFactory;
       template <int D> class IntraCorrelation;
-      template <int D> class Perturbation;
-      template <int D> class PerturbationFactory;
-      template <int D> class Ramp;
-      template <int D> class RampParameter;
-      template <int D> class RampFactory;
       template <int D> class Analyzer;
       template <int D> class AnalyzerFactory;
       template <int D> class AnalyzerManager;
@@ -68,13 +63,18 @@ namespace Pscf {
       template <int D> class AverageListAnalyzer;
       template <int D> class TrajectoryReader;
       template <int D> class TrajectoryReaderFactory;
-      template <int D> class BdSimulator;
+      //template <int D> class BdSimulator;
       template <int D> class BdStep;
       template <int D> class BdStepFactory;
       //template <int D> class McSimulator;
       //template <int D> class McMove;
       template <int D> class McMoveManager;
       template <int D> class McMoveFactory;
+      template <int D> class Perturbation;
+      template <int D> class PerturbationFactory;
+      template <int D> class Ramp;
+      template <int D> class RampParameter;
+      template <int D> class RampFactory;
    }
 }
 
@@ -146,23 +146,7 @@ namespace Rpc {
       using CompressorFactory = Rpc::CompressorFactory<D>;
       using IntraCorrelation = Rpc::IntraCorrelation<D>;
 
-      using Perturbation = Rpc::Perturbation<D>;
-      using PerturbationFactory = Rpc::PerturbationFactory<D>;
-
-      using Ramp = Rpc::Ramp<D>;
-      using RampParameter = Rpc::RampParameter<D>;
-      using RampFactory = Rpc::RampFactory<D>;
-
-      using TrajectoryReader = Rpc::TrajectoryReader<D>;
-      using TrajectoryReaderFactory = Rpc::TrajectoryReaderFactory<D>;
-
-      using Analyzer = Rpc::Analyzer<D>;
-      using AnalyzerFactory = Rpc::AnalyzerFactory<D>;
-      using AnalyzerManager = Rpc::AnalyzerManager<D>;
-      using AverageAnalyzer = Rpc::AverageAnalyzer<D>;
-      using AverageListAnalyzer = Rpc::AverageListAnalyzer<D>;
-
-      using BdSimulator = Rpc::BdSimulator<D>;
+      //using BdSimulator = Rp::BdSimulator<D, Rpc::Types<D> >;
       using BdStep = Rpc::BdStep<D>;
       using BdStepFactory = Rpc::BdStepFactory<D>;
 
@@ -170,6 +154,22 @@ namespace Rpc {
       //using McMove = Rp::McMove<D, Rpc::Types<D> >;
       using McMoveManager = Rpc::McMoveManager<D>;
       using McMoveFactory = Rpc::McMoveFactory<D>;
+
+      using Analyzer = Rpc::Analyzer<D>;
+      using AnalyzerFactory = Rpc::AnalyzerFactory<D>;
+      using AnalyzerManager = Rpc::AnalyzerManager<D>;
+      using AverageAnalyzer = Rpc::AverageAnalyzer<D>;
+      using AverageListAnalyzer = Rpc::AverageListAnalyzer<D>;
+
+      using TrajectoryReader = Rpc::TrajectoryReader<D>;
+      using TrajectoryReaderFactory = Rpc::TrajectoryReaderFactory<D>;
+
+      using Perturbation = Rpc::Perturbation<D>;
+      using PerturbationFactory = Rpc::PerturbationFactory<D>;
+
+      using Ramp = Rpc::Ramp<D>;
+      using RampParameter = Rpc::RampParameter<D>;
+      using RampFactory = Rpc::RampFactory<D>;
 
       // Static member functions
 

@@ -38,9 +38,9 @@ namespace Rpg {
       /**
       * Constructor.
       *
-      * \param simulator  parent Rpg::BdSimulator<D> object
+      * \param simulator  parent Rp::BdSimulator<D, Rpg::Types<D> > object
       */
-      BdStep(BdSimulator<D>& simulator);
+      BdStep(Rp::BdSimulator<D, Rpg::Types<D> >& simulator);
 
       /**
       * Destructor.

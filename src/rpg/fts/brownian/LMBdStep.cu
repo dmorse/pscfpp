@@ -24,7 +24,7 @@ namespace Rpg {
 
    // Constructor.
    template <int D>
-   LMBdStep<D>::LMBdStep(BdSimulator<D>& simulator)
+   LMBdStep<D>::LMBdStep(Rp::BdSimulator<D, Rpg::Types<D> >& simulator)
     : Rp::LMBdStep<D, Types<D> >(simulator)
    {}
 

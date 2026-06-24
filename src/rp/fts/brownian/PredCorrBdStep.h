@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
-#include <util/containers/DArray.h>        // member
+#include <rp/fts/brownian/BdStep.h>      // base class
+#include <util/containers/DArray.h>      // member
 
 namespace Pscf {
 namespace Rp {
@@ -66,7 +66,7 @@ namespace Rp {
       *
       * \param simulator  parent BdSimulator object
       */
-      PredCorrBdStep(typename T::BdSimulator& simulator);
+      PredCorrBdStep(BdSimulator<D,T>& simulator);
 
       ~PredCorrBdStep() = default;
 

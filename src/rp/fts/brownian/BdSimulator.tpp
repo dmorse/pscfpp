@@ -24,8 +24,8 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   BdSimulator<D,T>::BdSimulator(SystemT& system, BdSimulatorT& bdSimulator)
-    : SimulatorT(system),
+   BdSimulator<D,T>::BdSimulator(System<D,T>& system)
+    : Simulator<D,T>(system),
       analyzerManagerPtr_(nullptr),
       bdStepPtr_(nullptr),
       bdStepFactoryPtr_(nullptr),
@@ -33,8 +33,8 @@ namespace Rp {
    {
       ParamComposite::setClassName("BdSimulator");
       analyzerManagerPtr_ 
-             = new typename T::AnalyzerManager(bdSimulator, system),
-      bdStepFactoryPtr_ = new typename T::BdStepFactory(bdSimulator);
+             = new typename T::AnalyzerManager(*this, system),
+      bdStepFactoryPtr_ = new typename T::BdStepFactory(*this);
       trajectoryReaderFactoryPtr_
              = new typename T::TrajectoryReaderFactory(system);
       AnalyzerT::initStatic();
@@ -65,7 +65,7 @@ namespace Rp {
    void BdSimulator<D,T>::readParameters(std::istream &in)
    {
       // Optionally read random seed, initialize random number generators
-      SimulatorT::readRandomSeed(in);
+      Simulator<D,T>::readRandomSeed(in);
 
       // Optionally read a BdStep block
       bool isEnd = false;
@@ -84,17 +84,17 @@ namespace Rp {
       // A Ramp is allowed only if a BdStep exists
 
       // Optionally read a Compressor block
-      SimulatorT::readCompressor(in, isEnd);
+      Simulator<D,T>::readCompressor(in, isEnd);
       if (hasBdStep()) {
-         UTIL_CHECK(SimulatorT::hasCompressor());
+         UTIL_CHECK((Simulator<D,T>::hasCompressor()));
       }
 
       // Optionally read a Perturbation block
-      SimulatorT::readPerturbation(in, isEnd);
+      Simulator<D,T>::readPerturbation(in, isEnd);
 
       // Optionally read a Ramp block
       if (hasBdStep()) {
-         SimulatorT::readRamp(in, isEnd);
+         Simulator<D,T>::readRamp(in, isEnd);
       }
 
       // Optionally read an AnalyzerManager block
@@ -114,8 +114,8 @@ namespace Rp {
          }
       }
 
-      // Allocate memory for SimulatorT base class
-      SimulatorT::allocate();
+      // Allocate memory for Simulator<D,T> base class
+      Simulator<D,T>::allocate();
    }
 
    /*
@@ -124,33 +124,33 @@ namespace Rp {
    template <int D, class T>
    void BdSimulator<D,T>::setup(int nStep)
    {
-      UTIL_CHECK(SimulatorT::system().w().hasData());
+      UTIL_CHECK((Simulator<D,T>::system().w().hasData()));
 
       // Eigenanalysis of the projected chi matrix.
-      SimulatorT::analyzeChi();
+      Simulator<D,T>::analyzeChi();
 
-      if (SimulatorT::hasPerturbation()) {
-         SimulatorT::perturbation().setup();
+      if (Simulator<D,T>::hasPerturbation()) {
+         Simulator<D,T>::perturbation().setup();
       }
 
-      if (SimulatorT::hasRamp()) {
-         SimulatorT::ramp().setup(nStep);
+      if (Simulator<D,T>::hasRamp()) {
+         Simulator<D,T>::ramp().setup(nStep);
       }
 
       // Solve MDE and compute c-fields for the intial state
-      SimulatorT::system().compute();
+      Simulator<D,T>::system().compute();
 
       // Compress the initial state (adjust pressure-like field)
-      if (SimulatorT::hasCompressor()) {
-         SimulatorT::compressor().compress();
-         SimulatorT::compressor().clearTimers();
+      if (Simulator<D,T>::hasCompressor()) {
+         Simulator<D,T>::compressor().compress();
+         Simulator<D,T>::compressor().clearTimers();
       }
 
       // Compute field components and Hamiltonian for initial state.
-      SimulatorT::computeWc();
-      SimulatorT::computeCc();
-      SimulatorT::computeDc();
-      SimulatorT::computeHamiltonian();
+      Simulator<D,T>::computeWc();
+      Simulator<D,T>::computeCc();
+      Simulator<D,T>::computeDc();
+      Simulator<D,T>::computeHamiltonian();
 
       if (hasBdStep()) {
          bdStep().setup();
@@ -169,14 +169,14 @@ namespace Rp {
    void BdSimulator<D,T>::simulate(int nStep)
    {
       UTIL_CHECK(hasBdStep());
-      UTIL_CHECK(SimulatorT::hasCompressor());
-      UTIL_CHECK(SimulatorT::system().w().hasData());
+      UTIL_CHECK((Simulator<D,T>::hasCompressor()));
+      UTIL_CHECK((Simulator<D,T>::system().w().hasData()));
 
       // Initial setup
       setup(nStep);
       iStep_ = 0;
-      if (SimulatorT::hasRamp()) {
-         SimulatorT::ramp().setParameters(iStep_);
+      if (Simulator<D,T>::hasRamp()) {
+         Simulator<D,T>::ramp().setParameters(iStep_);
       }
       int analyzerBaseInterval = AnalyzerT::baseInterval;
 
@@ -203,8 +203,8 @@ namespace Rp {
          if (converged){
             iStep_++;
 
-            if (SimulatorT::hasRamp()) {
-               SimulatorT::ramp().setParameters(iStep_);
+            if (Simulator<D,T>::hasRamp()) {
+               Simulator<D,T>::ramp().setParameters(iStep_);
             }
 
             // Analysis (if any)
@@ -234,9 +234,9 @@ namespace Rp {
       }
 
       // Output results of ramp
-      if (SimulatorT::hasRamp()){
+      if (Simulator<D,T>::hasRamp()){
          Log::file() << std::endl;
-         SimulatorT::ramp().output();
+         Simulator<D,T>::ramp().output();
       }
 
       // Output times for the simulation run
@@ -257,7 +257,7 @@ namespace Rp {
 
       // Output number of times MDE has been solved for the simulation run
       Log::file() << "MDE counter   "
-                  << SimulatorT::compressor().mdeCounter() << std::endl;
+                  << Simulator<D,T>::compressor().mdeCounter() << std::endl;
       Log::file() << std::endl;
 
    }
@@ -297,7 +297,7 @@ namespace Rp {
 
       for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
          if (hasFrame) {
-            SimulatorT::clearData();
+            Simulator<D,T>::clearData();
 
             // Initialize analyzers
             if (iStep_ == min) {

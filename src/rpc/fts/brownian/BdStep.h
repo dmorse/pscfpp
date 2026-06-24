@@ -39,9 +39,9 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param simulator  parent BdSimulator<D> object
+      * \param simulator  parent Rp::BdSimulator<D, Rpc::Types<D> > object
       */
-      BdStep(BdSimulator<D>& simulator);
+      BdStep(Rp::BdSimulator<D, Rpc::Types<D> >& simulator);
 
       /**
       * Destructor.

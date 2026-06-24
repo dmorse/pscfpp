@@ -23,7 +23,7 @@ namespace Rpg {
 
    // Constructor.
    template <int D>
-   ExplicitBdStep<D>::ExplicitBdStep(BdSimulator<D>& simulator)
+   ExplicitBdStep<D>::ExplicitBdStep(Rp::BdSimulator<D, Rpg::Types<D> >& simulator)
     : Rp::ExplicitBdStep<D, Types<D> >(simulator)
    {}
 

@@ -45,7 +45,7 @@ namespace Rpg {
       *
       * \param simulator  parent BdSimulator object
       */
-      ExplicitBdStep(BdSimulator<D>& simulator);
+      ExplicitBdStep(Rp::BdSimulator<D, Rpg::Types<D> >& simulator);
 
    };
 

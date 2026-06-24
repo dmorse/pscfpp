@@ -25,7 +25,7 @@ namespace Rpg {
 
    // Constructor.
    template <int D>
-   PredCorrBdStep<D>::PredCorrBdStep(BdSimulator<D>& simulator)
+   PredCorrBdStep<D>::PredCorrBdStep(Rp::BdSimulator<D, Rpg::Types<D> >& simulator)
     : Rp::PredCorrBdStep<D, Types<D> >(simulator)
    {}
 

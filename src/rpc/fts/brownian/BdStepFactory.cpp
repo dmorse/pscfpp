@@ -22,7 +22,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   BdStepFactory<D>::BdStepFactory(BdSimulator<D>& simulator)
+   BdStepFactory<D>::BdStepFactory(Rp::BdSimulator<D, Rpc::Types<D> >& simulator)
     : simulatorPtr_(&simulator)
    {}
 

@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/brownian/BdStep.h>    // base class
 #include <util/containers/DArray.h>    // member
 
 namespace Pscf {
@@ -80,7 +81,7 @@ namespace Rp {
       *
       * \param simulator  parent BdSimulator object
       */
-      LMBdStep(typename T::BdSimulator& simulator);
+      LMBdStep(BdSimulator<D,T>& simulator);
 
       ~LMBdStep() = default;
 

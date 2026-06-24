@@ -51,14 +51,24 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /// \name Construction, destruction and initialization
+      ///@{
 
-      // Not copyable or assignable.
+      /**
+      * Constructor.
+      *
+      * \param system  parent System
+      */
+      BdSimulator(System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~BdSimulator();
+
+      // Prohibit copying or assignment.
       BdSimulator(BdSimulator<D,T> const &) = delete;
       BdSimulator<D,T>& operator = (BdSimulator<D,T> const &) = delete;
-
-      /// \name Initialization
-      ///@{
 
       /**
       * Read parameter file block.
@@ -131,34 +141,18 @@ namespace Rp {
 
    protected:
 
-      /// Alias for System class in program-level namespace.
-      using SystemT = System<D,T>;
-
       /// Alias for Simulator class in program-level namespace.
       using SimulatorT = Simulator<D,T>;
 
       /// Alias for BdSimulator class in program-level namespace.
-      using BdSimulatorT = typename T::BdSimulator;
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System
-      * \param bdSimulator  instance of enclosing subclass
-      */
-      BdSimulator(SystemT& system, BdSimulatorT& bdSimulator);
-
-      /**
-      * Destructor.
-      */
-      ~BdSimulator();
+      using BdSimulatorT = BdSimulator<D,T>;
 
       // Inherited protected function (selected)
-      using SimulatorT::state;
+      using Simulator<D,T>::state;
 
       // Inherited protected data members (selected)
-      using SimulatorT::iStep_;
-      using SimulatorT::iTotalStep_;
+      using Simulator<D,T>::iStep_;
+      using Simulator<D,T>::iTotalStep_;
 
    private:
 

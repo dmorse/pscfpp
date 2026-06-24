@@ -35,9 +35,9 @@ namespace Rpc {
       /**
       * Constructor.
       *
-      * \param simulator  parent BdSimulator<D> object
+      * \param simulator  parent Rp::BdSimulator<D, Rpc::Types<D> > object
       */
-      BdStepFactory(BdSimulator<D>& simulator);
+      BdStepFactory(Rp::BdSimulator<D, Rpc::Types<D> >& simulator);
 
       /**
       * Method to create any BdStep supplied with PSCF.
@@ -52,7 +52,7 @@ namespace Rpc {
    private:
 
       /// Pointer to the parent simulator.
-      BdSimulator<D>* simulatorPtr_;
+      Rp::BdSimulator<D, Rpc::Types<D> >* simulatorPtr_;
 
    };
 

@@ -21,7 +21,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   ExplicitBdStep<D,T>::ExplicitBdStep(typename T::BdSimulator& simulator)
+   ExplicitBdStep<D,T>::ExplicitBdStep(BdSimulator<D,T>& simulator)
     : BdStepT(simulator),
       w_(),
       dwc_(),

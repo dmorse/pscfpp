@@ -20,7 +20,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   BdStep<D,T>::BdStep(typename T::BdSimulator& simulator)
+   BdStep<D,T>::BdStep(BdSimulator<D,T>& simulator)
     : simulatorPtr_(&simulator),
       systemPtr_(&(simulator.system())),
       randomPtr_(&(simulator.random())),

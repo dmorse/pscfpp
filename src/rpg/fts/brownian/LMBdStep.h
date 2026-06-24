@@ -45,7 +45,7 @@ namespace Rpg {
       *
       * \param simulator  parent BdSimulator object
       */
-      LMBdStep(BdSimulator<D>& simulator);
+      LMBdStep(Rp::BdSimulator<D, Rpg::Types<D> >& simulator);
 
    };
 

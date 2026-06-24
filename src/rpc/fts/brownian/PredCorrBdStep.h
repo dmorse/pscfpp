@@ -42,7 +42,7 @@ namespace Rpc {
       *
       * \param simulator  parent BdSimulator object
       */
-      PredCorrBdStep(BdSimulator<D>& simulator);
+      PredCorrBdStep(Rp::BdSimulator<D, Rpc::Types<D> >& simulator);
 
    };
 

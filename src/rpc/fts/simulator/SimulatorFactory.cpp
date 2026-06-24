@@ -43,7 +43,7 @@ namespace Rpc {
          ptr = new Rp::McSimulator<D, Rpc::Types<D> >(*systemPtr_);
       } else
       if (className == "BdSimulator") {
-         ptr = new BdSimulator<D>(*systemPtr_);
+         ptr = new Rp::BdSimulator<D, Rpc::Types<D> >(*systemPtr_);
       }
 
       return ptr;

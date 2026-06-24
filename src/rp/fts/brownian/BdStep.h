@@ -19,6 +19,7 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
+      template <int D, class T> class BdSimulator;
    }
 }
 
@@ -137,7 +138,7 @@ namespace Rp {
       *
       * \param simulator  parent BdSimulator object
       */
-      BdStep(typename T::BdSimulator& simulator);
+      BdStep(BdSimulator<D,T>& simulator);
 
       ~BdStep() = default;
 
@@ -149,7 +150,7 @@ namespace Rp {
       /**
       * Get parent BdSimulator object.
       */
-      typename T::BdSimulator& simulator();
+      BdSimulator<D,T>& simulator();
 
       /**
       * Get scalar random number generator of parent simulator.
@@ -164,7 +165,7 @@ namespace Rp {
    private:
       
       /// Pointer to parent BdSimulator object
-      typename T::BdSimulator* simulatorPtr_;
+      BdSimulator<D,T>* simulatorPtr_;
 
       /// Pointer to parent System object
       System<D,T>* systemPtr_;
@@ -190,7 +191,7 @@ namespace Rp {
    * Get parent BdSimulator object.
    */
    template <int D, class T> inline 
-   typename T::BdSimulator& BdStep<D,T>::simulator()
+   BdSimulator<D,T>& BdStep<D,T>::simulator()
    {  return *simulatorPtr_; }
 
    /*

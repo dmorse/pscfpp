@@ -22,7 +22,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   LMBdStep<D,T>::LMBdStep(typename T::BdSimulator& simulator)
+   LMBdStep<D,T>::LMBdStep(BdSimulator<D,T>& simulator)
     : BdStepT(simulator),
       w_(),
       etaA_(),

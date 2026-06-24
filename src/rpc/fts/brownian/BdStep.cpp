@@ -16,7 +16,7 @@ namespace Pscf {
    
       // Constructor.
       template <int D>
-      BdStep<D>::BdStep(BdSimulator<D>& simulator)
+      BdStep<D>::BdStep(Rp::BdSimulator<D, Rpc::Types<D> >& simulator)
        : Rp::BdStep<D, Types<D> >(simulator)
       {}
    

@@ -25,28 +25,11 @@
 
 #include <rp/fts/brownian/BdSimulator.tpp>  // base class implementation
 
-namespace Pscf {
-   namespace Rpc {
-   
-      // Constructor.
-      template <int D>
-      BdSimulator<D>::BdSimulator(Rp::System<D, Rpc::Types<D> >& system)
-       : Rp::BdSimulator<D, Types<D> >(system, *this)
-      {}
-   
-   }
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class BdSimulator<1, Rpc::Types<1> >;
       template class BdSimulator<2, Rpc::Types<2> >;
       template class BdSimulator<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class BdSimulator<1>;
-      template class BdSimulator<2>;
-      template class BdSimulator<3>;
    }
 }

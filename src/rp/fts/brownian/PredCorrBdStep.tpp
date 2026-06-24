@@ -20,7 +20,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   PredCorrBdStep<D,T>::PredCorrBdStep(typename T::BdSimulator& simulator)
+   PredCorrBdStep<D,T>::PredCorrBdStep(BdSimulator<D,T>& simulator)
     : BdStepT(simulator),
       wf_(),
       dci_(),
