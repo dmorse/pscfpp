@@ -78,7 +78,7 @@ namespace Pscf {
       template <int D> class TrajectoryReader;
       template <int D> class TrajectoryReaderFactory;
 
-      template <int D> class Perturbation;
+      //template <int D> class Perturbation;
       template <int D> class PerturbationFactory;
 
       template <int D> class Ramp;
@@ -162,7 +162,7 @@ namespace Rpg {
       //using McMoveManager = Rp::McMoveManager<D, Rpg::Types<D> >;
       using McMoveFactory = Rpg::McMoveFactory<D>;
 
-      using Perturbation = Rpg::Perturbation<D>;
+      //using Perturbation = Rp::Perturbation<D, Rpg::Types<D> >;
       using PerturbationFactory = Rpg::PerturbationFactory<D>;
 
       using Ramp = Rpg::Ramp<D>;

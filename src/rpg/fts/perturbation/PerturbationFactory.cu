@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "PerturbationFactory.h"  
+#include "PerturbationFactory.h"
 
-// Subclasses of Perturbation 
+// Subclasses of Perturbation
 #include "EinsteinCrystalPerturbation.h"
 
 #include <rpg/fts/simulator/Simulator.h>
@@ -21,28 +21,30 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   PerturbationFactory<D>::PerturbationFactory(Rp::Simulator<D, Rpg::Types<D> >& simulator)
+   PerturbationFactory<D>::PerturbationFactory(
+                           Rp::Simulator<D, Rpg::Types<D> >& simulator)
     : simulatorPtr_(&simulator)
    {}
 
-   /* 
+   /*
    * Return a pointer to a instance of Perturbation subclass className.
    */
    template <int D>
-   Perturbation<D>* 
+   Rp::Perturbation<D, Rpg::Types<D> >*
    PerturbationFactory<D>::factory(const std::string & className) const
    {
-      Perturbation<D>* ptr = 0;
+      Rp::Perturbation<D, Rpg::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);
       if (ptr) return ptr;
-       
+
       // Try to match classname
-      if (className == "EinsteinCrystal" || 
-          className == "EinsteinCrystalPerturbation") {
-         ptr = new EinsteinCrystalPerturbation<D>(*simulatorPtr_);
-      } 
+      if (className == "EinsteinCrystal" ||
+         className == "EinsteinCrystalPerturbation") {
+         ptr = new
+            Rp::EinsteinCrystalPerturbation<D, Rpg::Types<D> >(*simulatorPtr_);
+      }
 
       return ptr;
    }

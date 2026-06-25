@@ -17,6 +17,7 @@
 
 #include <rp/fts/perturbation/EinsteinCrystalPerturbation.tpp>
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -29,6 +30,7 @@ namespace Rpg {
 
 }
 }
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -36,10 +38,5 @@ namespace Pscf {
       template class EinsteinCrystalPerturbation<1, Rpg::Types<1> >;
       template class EinsteinCrystalPerturbation<2, Rpg::Types<2> >;
       template class EinsteinCrystalPerturbation<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class EinsteinCrystalPerturbation<1>;
-      template class EinsteinCrystalPerturbation<2>;
-      template class EinsteinCrystalPerturbation<3>;
    }
 }

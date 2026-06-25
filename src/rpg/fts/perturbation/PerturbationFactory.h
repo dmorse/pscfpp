@@ -23,7 +23,7 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Perturbation_Module
    */
    template <int D>
-   class PerturbationFactory : public Factory< Perturbation<D> > 
+   class PerturbationFactory : public Factory< Rp::Perturbation<D, Rpg::Types<D> > > 
    {
 
    public:
@@ -41,9 +41,9 @@ namespace Rpg {
       * \param className name of the Perturbation subclass
       * \return Perturbation* pointer to new instance of className
       */
-      Perturbation<D>* factory(const std::string & className) const;
+      Rp::Perturbation<D, Rpg::Types<D> >* factory(const std::string & className) const;
 
-      using Factory< Perturbation<D> >::trySubfactories;
+      using Factory< Rp::Perturbation<D, Rpg::Types<D> > >::trySubfactories;
 
    private:
       

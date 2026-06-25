@@ -19,53 +19,12 @@ namespace Pscf {
    }
 }
 
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cpu;
-
-   /**
-   * Additive perturbation of standard FTS Hamiltonian (base class).
-   *
-   * \see \ref psfts_perturb_page "Manual Page"
-   * \ingroup Rpc_Fts_Perturbation_Module
-   */
-   template <int D>
-   class Perturbation : public Rp::Perturbation<D, Rpc::Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      */
-      Perturbation(Rp::Simulator<D, Rpc::Types<D> >& simulator);
-
-      /**
-      * Destructor.
-      */
-      virtual ~Perturbation() = default;
-
-   };
-
-}
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class Perturbation<1, Rpc::Types<1> >;
       extern template class Perturbation<2, Rpc::Types<2> >;
       extern template class Perturbation<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class Perturbation<1>;
-      extern template class Perturbation<2>;
-      extern template class Perturbation<3>;
    }
 }
 #endif

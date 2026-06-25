@@ -6,6 +6,7 @@
 #include <rpg/fts/perturbation/Perturbation.h>            // indirect base
 #include <prdc/cuda/RField.h>                             // base member
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -39,6 +40,7 @@ namespace Rpg {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -46,11 +48,6 @@ namespace Pscf {
       extern template class EinsteinCrystalPerturbation<1, Rpg::Types<1> >;
       extern template class EinsteinCrystalPerturbation<2, Rpg::Types<2> >;
       extern template class EinsteinCrystalPerturbation<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class EinsteinCrystalPerturbation<1>;
-      extern template class EinsteinCrystalPerturbation<2>;
-      extern template class EinsteinCrystalPerturbation<3>;
    }
 }
 #endif

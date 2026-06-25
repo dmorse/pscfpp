@@ -31,7 +31,7 @@ namespace Rp {
    *
    * Template parameters:
    *
-   *   - D : dimension
+   *   - D : dimension of space (1, 2, or 3)
    *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
    *
    * \see \ref psfts_perturb_page "Manual Page"
@@ -43,7 +43,17 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      */
+      Perturbation(Simulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      virtual ~Perturbation() = default;
 
       /**
       * Read parameters from archive.
@@ -134,18 +144,6 @@ namespace Rp {
       void setLambda(double lambda);
 
    protected:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      */
-      Perturbation(Simulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      virtual ~Perturbation() = default;
 
       /**
       * Get parent Simulator by non-const reference.

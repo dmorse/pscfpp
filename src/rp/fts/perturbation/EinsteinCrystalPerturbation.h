@@ -28,12 +28,22 @@ namespace Rp {
    * \ingroup Rp_Fts_Perturbation_Module
    */
    template <int D, class T>
-   class EinsteinCrystalPerturbation : public T::Perturbation
+   class EinsteinCrystalPerturbation : public Perturbation<D,T>
    {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      */
+      EinsteinCrystalPerturbation(Simulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~EinsteinCrystalPerturbation() = default;
 
       /**
       * Read body of parameter file block and initialize.
@@ -78,25 +88,13 @@ namespace Rp {
 
    protected:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      */
-      EinsteinCrystalPerturbation(Simulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~EinsteinCrystalPerturbation() = default;
-
       // Alias for base class.
-      using PerturbationT = typename T::Perturbation;
+      using PerturbationT = Perturbation<D,T>;
 
       // Inherited protected members (selected).
-      using PerturbationT::lambda_;
-      using PerturbationT::simulator;
-      using PerturbationT::system;
+      using Perturbation<D,T>::lambda_;
+      using Perturbation<D,T>::simulator;
+      using Perturbation<D,T>::system;
 
    private:
 

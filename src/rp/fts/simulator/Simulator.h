@@ -21,6 +21,8 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class SimState;
+      template <int D, class T> class Perturbation;
+      template <int D, class T> class Ramp;
    }
 }
 
@@ -594,12 +596,12 @@ namespace Rp {
       /**
       * Get a Perturbation by const reference.
       */
-      typename T::Perturbation const & perturbation() const;
+      Perturbation<D,T> const & perturbation() const;
 
       /**
       * Get a Perturbation by non-const reference.
       */
-      typename T::Perturbation& perturbation();
+      Perturbation<D,T>& perturbation();
 
       /**
       * Does this Simulator have a Ramp?
@@ -666,7 +668,7 @@ namespace Rp {
       *
       * \param ptr pointer to a new Perturbation
       */
-      void setPerturbation(typename T::Perturbation* ptr);
+      void setPerturbation(Perturbation<D,T>* ptr);
 
       /**
       * Get the Ramp factory by reference.
@@ -889,7 +891,7 @@ namespace Rp {
       /**
       * Pointer to a Perturbation.
       */
-      typename T::Perturbation* perturbationPtr_;
+      Perturbation<D,T>* perturbationPtr_;
 
       /**
       * Pointer to a Ramp factory.
@@ -964,7 +966,7 @@ namespace Rp {
 
    // Get a Perturbation by const reference.
    template <int D, class T> inline 
-   typename T::Perturbation const & Simulator<D,T>::perturbation() const
+   Perturbation<D,T> const & Simulator<D,T>::perturbation() const
    {
       UTIL_CHECK(perturbationPtr_);
       return *perturbationPtr_;
@@ -972,7 +974,7 @@ namespace Rp {
 
    // Get a Perturbation by non-const reference.
    template <int D, class T> inline 
-   typename T::Perturbation& Simulator<D,T>::perturbation()
+   Perturbation<D,T>& Simulator<D,T>::perturbation()
    {
       UTIL_CHECK(perturbationPtr_);
       return *perturbationPtr_;

@@ -780,7 +780,7 @@ namespace Rp {
    * Set the associated Perturbation object.
    */
    template <int D, class T>
-   void Simulator<D,T>::setPerturbation(typename T::Perturbation* ptr)
+   void Simulator<D,T>::setPerturbation(Perturbation<D,T>* ptr)
    {
       UTIL_CHECK(ptr);
       perturbationPtr_ = ptr;

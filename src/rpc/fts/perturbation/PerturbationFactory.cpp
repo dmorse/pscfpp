@@ -29,10 +29,10 @@ namespace Rpc {
    * Return a pointer to a instance of Perturbation subclass className.
    */
    template <int D>
-   Perturbation<D>* 
+   Rp::Perturbation<D, Rpc::Types<D> >* 
    PerturbationFactory<D>::factory(const std::string & className) const
    {
-      Perturbation<D>* ptr = 0;
+      Rp::Perturbation<D, Rpc::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);
