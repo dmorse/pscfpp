@@ -83,7 +83,7 @@ namespace Pscf {
 
       //template <int D> class Ramp;
       //template <int D> class RampParameter;
-      template <int D> class RampFactory;
+      //template <int D> class RampFactory;
    }
 }
 
@@ -167,7 +167,7 @@ namespace Rpg {
 
       //using Ramp = Rp::Ramp<D, Rpg::Types<D> >;
       //using RampParameter = Rp::RampParameter<D, Rpg::Types<D> >;
-      using RampFactory = Rpg::RampFactory<D>;
+      //using RampFactory = Rp::RampFactory<D, Rpg::Types<D> >;
 
       using Analyzer = Rpg::Analyzer<D>;
       using AnalyzerFactory = Rpg::AnalyzerFactory<D>;

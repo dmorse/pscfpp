@@ -8,6 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/ramp/RampFactory.h>
+#include <rpc/system/Types.h>
+
+#if 0
 #include <rpc/fts/ramp/Ramp.h>
 #include <util/param/Factory.h>  
 #include <string>
@@ -53,10 +57,20 @@ namespace Rpc {
    };
 
    // Explicit instantiation declarations
-   extern template class RampFactory<1>;
-   extern template class RampFactory<2>;
-   extern template class RampFactory<3>;
+   extern template class Rp::RampFactory<1, Rpc::Types<1> >;
+   extern template class Rp::RampFactory<2, Rpc::Types<2> >;
+   extern template class Rp::RampFactory<3, Rpc::Types<3> >;
 
 }
+}
+#endif
+
+// Explicit instantiation declarations
+namespace Pscf {
+   namespace Rp {
+      extern template class RampFactory<1, Rpc::Types<1> >;
+      extern template class RampFactory<2, Rpc::Types<2> >;
+      extern template class RampFactory<3, Rpc::Types<3> >;
+   }
 }
 #endif

@@ -1,5 +1,5 @@
-#ifndef RPG_RAMP_FACTORY_H
-#define RPG_RAMP_FACTORY_H
+#ifndef RPC_RAMP_FACTORY_H
+#define RPC_RAMP_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,55 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/fts/ramp/Ramp.h>
-#include <util/param/Factory.h>  
-#include <string>
+#include <rp/fts/ramp/RampFactory.h>
+#include <rpg/system/Types.h>
 
+// Explicit instantiation declarations
 namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   /**
-   * Factory for subclasses of Ramp.
-   *
-   * \ingroup Rpg_Fts_Ramp_Module
-   */
-   template <int D>
-   class RampFactory : public Factory< Rp::Ramp<D, Rpg::Types<D> > > 
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Rp::Simulator<D, Rpg::Types<D> > object
-      */
-      RampFactory(Rp::Simulator<D, Rpg::Types<D> >& simulator);
-
-      /**
-      * Method to create any Ramp supplied with PSCF.
-      *
-      * \param className name of the Ramp subclass
-      * \return Ramp* pointer to new instance of className
-      */
-      Rp::Ramp<D, Rpg::Types<D> >* factory(const std::string & className) const;
-
-      using Factory< Rp::Ramp<D, Rpg::Types<D> > >::trySubfactories;
-
-   private:
-      
-      /// Pointer to the parent simulator.
-      Rp::Simulator<D, Rpg::Types<D> >* simulatorPtr_;
-
-   };
-
-   // Explicit instantiation declarations
-   extern template class RampFactory<1>;
-   extern template class RampFactory<2>;
-   extern template class RampFactory<3>;
-
-}
+   namespace Rp {
+      extern template class RampFactory<1, Rpg::Types<1> >;
+      extern template class RampFactory<2, Rpg::Types<2> >;
+      extern template class RampFactory<3, Rpg::Types<3> >;
+   }
 }
 #endif

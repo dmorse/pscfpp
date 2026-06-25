@@ -23,6 +23,7 @@ namespace Pscf {
       template <int D, class T> class SimState;
       template <int D, class T> class Perturbation;
       template <int D, class T> class Ramp;
+      template <int D, class T> class RampFactory;
    }
 }
 
@@ -673,7 +674,7 @@ namespace Rp {
       /**
       * Get the Ramp factory by reference.
       */
-      typename T::RampFactory& rampFactory();
+      RampFactory<D,T>& rampFactory();
 
       /**
       * Optionally read a Ramp parameter file block.
@@ -896,7 +897,7 @@ namespace Rp {
       /**
       * Pointer to a Ramp factory.
       */
-      typename T::RampFactory* rampFactoryPtr_;
+      RampFactory<D,T>* rampFactoryPtr_;
 
       /**
       * Pointer to a Ramp.
