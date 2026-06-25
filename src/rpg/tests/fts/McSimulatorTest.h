@@ -7,8 +7,9 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/system/System.h>
-#include <rpg/fts/compressor/Compressor.h>
 #include <rpg/field/FieldIo.h>
+
+#include <rp/fts/compressor/Compressor.h>
 
 #include <prdc/cuda/RField.h>
 #include <prdc/cuda/RFieldComparison.h>

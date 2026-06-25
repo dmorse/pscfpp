@@ -10,12 +10,20 @@
 
 #include "Simulator.h"
 
+//#include <rp/field/CFields.h>
+//#include <rp/field/Domain.h>
+//#include <rp/system/System.h>
+//#include <rp/fts/simulator/SimState.h>
+//#include <rp/fts/compressor/Compressor.h>
+
 #include <pscf/interaction/Interaction.h>
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/math/IntVec.h>
+
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
 #include <util/global.h>
+
 #include <gsl/gsl_eigen.h>
 
 namespace Pscf {

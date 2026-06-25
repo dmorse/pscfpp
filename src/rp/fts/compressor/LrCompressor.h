@@ -8,9 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>                     // member
-#include <util/containers/DArray.h>               // member
-#include <util/misc/Timer.h>                      // member
+#include <rp/fts/compressor/Compressor.h>    // base class
+#include <pscf/math/IntVec.h>                // member
+#include <util/containers/DArray.h>          // member
+#include <util/misc/Timer.h>                 // member
 
 // Forward declarations
 namespace Pscf {
@@ -47,7 +48,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Compressor_Module
    */
    template <int D, class T>
-   class LrCompressor : public T::Compressor
+   class LrCompressor : public Compressor<D,T>
    {
 
    public:
@@ -102,7 +103,7 @@ namespace Rp {
       ~LrCompressor() = default;
 
       // Inherited protected members
-      using CompressorT = typename T::Compressor;
+      using CompressorT = Compressor<D,T>;
       using CompressorT::mdeCounter_;
       using CompressorT::system;
 

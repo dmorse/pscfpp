@@ -7,7 +7,7 @@
 #include <rpc/system/System.h>
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/brownian/BdSimulator.h>
-#include <rpc/fts/compressor/Compressor.h>
+#include <rp/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/AmCompressor.h>
 #include <rpc/fts/compressor/LrCompressor.h>
 #include <rpc/fts/compressor/LrAmCompressor.h>

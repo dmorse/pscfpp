@@ -6,9 +6,9 @@
 */
 
 #include "ForceBiasMove.h"
-#include "McMove.h"
+
+#include <rpc/fts/montecarlo/McMove.h>
 #include <rpc/fts/montecarlo/McSimulator.h>
-#include <rpc/fts/compressor/Compressor.h>
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>

@@ -9,6 +9,15 @@
 */
 
 #include "BdStep.h"
+
+#include <rp/fts/brownian/BdSimulator.h>
+#include <rp/fts/compressor/Compressor.h>
+#include <rp/system/System.h>
+//#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+//#include <rp/field/WFields.h>
+
 #include <util/random/Random.h>
 
 namespace Pscf {

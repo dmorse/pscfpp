@@ -10,6 +10,14 @@
 
 #include "System.h"
 
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/compressor/Compressor.h>
+//#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+//#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
+
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 

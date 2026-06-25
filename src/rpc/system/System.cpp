@@ -10,7 +10,6 @@
 #include <rpc/environment/EnvironmentFactory.h>
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/simulator/SimulatorFactory.h>
-#include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/compressor/CompressorFactory.h>
 #include <rpc/scft/ScftThermo.h>
 #include <rpc/scft/iterator/Iterator.h>

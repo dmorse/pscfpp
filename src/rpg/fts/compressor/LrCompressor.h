@@ -13,7 +13,7 @@
 #include <rpg/fts/compressor/IntraCorrelation.h> // direct base member
 #include <prdc/cuda/RField.h>                    // direct base member
 #include <prdc/cuda/RFieldDft.h>                 // direct base member
-#include <rpg/fts/compressor/Compressor.h>       // indirect base class
+#include <rp/fts/compressor/Compressor.h>        // indirect base class
 
 namespace Pscf {
 namespace Rpg {
@@ -21,7 +21,6 @@ namespace Rpg {
    // Namespaces that can be used implicitly
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cuda;
 
    /**
    * Linear-response Anderson mixing compressor.

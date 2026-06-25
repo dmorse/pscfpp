@@ -13,13 +13,13 @@
 #include <rpc/fts/trajectory/TrajectoryReader.h>
 #include <rpc/fts/trajectory/TrajectoryReaderFactory.h>
 #include <rpc/fts/simulator/Simulator.h>
-#include <rpc/fts/compressor/Compressor.h>
 #include <rpc/fts/perturbation/Perturbation.h>
 #include <rpc/fts/ramp/Ramp.h>
 #include <rpc/system/System.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
+
 #include <prdc/cpu/RField.h>
 #include <pscf/cpu/CpuVecRandom.h>
 

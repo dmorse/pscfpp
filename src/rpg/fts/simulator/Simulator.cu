@@ -8,7 +8,6 @@
 #include "Simulator.h"
 
 #include <rpg/fts/simulator/SimState.h>
-#include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/compressor/CompressorFactory.h>
 #include <rpg/fts/perturbation/Perturbation.h>
 #include <rpg/fts/perturbation/PerturbationFactory.h>

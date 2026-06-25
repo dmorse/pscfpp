@@ -7,12 +7,12 @@
 
 #include "BdMove.h"                         // class header
 #include <rpg/fts/montecarlo/McSimulator.h>
-#include <rpg/fts/compressor/Compressor.h>
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
+
 #include <pscf/cuda/CudaVecRandom.h>
 #include <pscf/cuda/VecOp.h>
 

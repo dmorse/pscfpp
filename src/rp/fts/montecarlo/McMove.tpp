@@ -10,6 +10,11 @@
 
 #include "McMove.h"
 
+#include <rp/system/System.h>
+#include <rp/field/CFields.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/montecarlo/McSimulator.h>
+#include <rp/fts/compressor/Compressor.h>
 #include <util/random/Random.h>
 #include <util/archives/Serializable_includes.h>
 
@@ -114,7 +119,6 @@ namespace Rp {
          // Compute cc fields if any move require cc fields
          if (simulator().needsCc() || simulator().needsDc()){
             UTIL_CHECK(system().c().hasData()); 
-            //system().compute();
             simulator().computeCc();
          }
          // Compute dc fields if any move require dc fields

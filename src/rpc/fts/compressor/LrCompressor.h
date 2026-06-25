@@ -13,7 +13,7 @@
 #include <rpc/fts/compressor/IntraCorrelation.h> // direct base member
 #include <prdc/cpu/RField.h>                     // direct base member
 #include <prdc/cpu/RFieldDft.h>                  // direct base member
-#include <rpc/fts/compressor/Compressor.h>       // indirect base class
+#include <rp/fts/compressor/Compressor.h>        // indirect base class
 
 namespace Pscf {
 namespace Rpc {

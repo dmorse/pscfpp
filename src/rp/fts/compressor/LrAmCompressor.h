@@ -8,15 +8,17 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>        // base class template
-#include <pscf/math/IntVec.h>                    // member
-#include <util/containers/DArray.h>              // member
+#include <pscf/iterator/AmIteratorTmpl.h>  // base class template
+#include <rp/fts/compressor/Compressor.h>  // base template argument
+#include <pscf/math/IntVec.h>              // member
+#include <util/containers/DArray.h>        // member
 
 // Forward declarations
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
+      template <int D, class T> class Compressor; 
    }
 }
 
@@ -50,7 +52,7 @@ namespace Rp {
    */
    template <int D, class T, class V>
    class LrAmCompressor
-    : public AmIteratorTmpl<typename T::Compressor, V>
+    : public AmIteratorTmpl<Compressor<D,T>, V>
    {
 
    public:
@@ -110,7 +112,7 @@ namespace Rp {
       ~LrAmCompressor() = default;
 
       // Alias for base class.
-      using CompressorT = typename T::Compressor;
+      using CompressorT = Compressor<D,T>;
 
       // Inherited member function.
       using CompressorT::system;

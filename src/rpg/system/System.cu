@@ -13,7 +13,6 @@
 #include <rpg/environment/EnvironmentFactory.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/simulator/SimulatorFactory.h>
-#include <rpg/fts/compressor/Compressor.h>
 #include <rpg/scft/ScftThermo.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/scft/iterator/IteratorFactory.h>

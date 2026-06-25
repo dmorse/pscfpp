@@ -29,10 +29,10 @@ namespace Rpg {
    * Return a pointer to a instance of Compressor subclass className.
    */
    template <int D>
-   Compressor<D>* 
+   Rp::Compressor<D, Rpg::Types<D> >* 
    CompressorFactory<D>::factory(std::string const &className) const
    {
-      Compressor<D>* ptr = 0;
+      Rp::Compressor<D, Rpg::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);

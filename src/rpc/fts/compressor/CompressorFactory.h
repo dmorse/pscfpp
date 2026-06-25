@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/compressor/Compressor.h>
-#include <util/param/Factory.h>  
+#include <util/param/Factory.h>            // base class template
+#include <rp/fts/compressor/Compressor.h>  // base template argument
+#include <rpc/system/Types.h>              // argument of argument
 
 #include <string>
 
@@ -25,7 +26,7 @@ namespace Rpc {
    */
 
    template <int D>
-   class CompressorFactory : public Factory< Compressor<D> > 
+   class CompressorFactory : public Factory< Rp::Compressor<D, Rpc::Types<D> > > 
    {
 
    public:
@@ -39,9 +40,9 @@ namespace Rpc {
       * \param className name of the Compressor subclass
       * \return Compressor* pointer to new instance of className
       */
-      Compressor<D>* factory(const std::string &className) const;
+      Rp::Compressor<D, Rpc::Types<D> >* factory(const std::string &className) const;
 
-      using Factory< Compressor<D> >::trySubfactories;
+      using Factory< Rp::Compressor<D, Rpc::Types<D> > >::trySubfactories;
 
    private:
 

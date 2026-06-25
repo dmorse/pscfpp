@@ -9,9 +9,15 @@
 */
 
 #include "ForceBiasMove.h"
-#include <util/param/ParamComposite.h>
+#include <rp/field/CFields.h>
+//#include <rp/field/WFields.h>
+#include <rp/field/Domain.h>
+#include <rp/system/System.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/compressor/Compressor.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
+#include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
 
 namespace Pscf {

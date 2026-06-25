@@ -57,9 +57,9 @@ namespace Pscf {
       //template <int D> struct SimState;
       //template <int D> class SimulatorFactory;
 
-      template <int D> class Compressor;
-      template <int D> class CompressorFactory;
+      //template <int D> class Compressor;
       template <int D> class IntraCorrelation;
+      template <int D> class CompressorFactory;
 
       //template <int D> class BdSimulator;
       //template <int D> class BdStep;
@@ -153,7 +153,7 @@ namespace Rpc {
       //using SimState = Rp::SimState<D, Rpc::Types<D> >;
       //using SimulatorFactory = Rp::SimulatorFactory<D, Rpc::Types<D> >;
 
-      using Compressor = Rpc::Compressor<D>;
+      //using Compressor = Rp::Compressor<D, Rpc::Types<D> >;
       using CompressorFactory = Rpc::CompressorFactory<D>;
       using IntraCorrelation = Rpc::IntraCorrelation<D>;
 

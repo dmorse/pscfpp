@@ -9,9 +9,10 @@
 #include <rpc/fts/brownian/ExplicitBdStep.h>
 #include <rpc/fts/brownian/PredCorrBdStep.h>
 #include <rpc/fts/brownian/LMBdStep.h>
-#include <rpc/fts/compressor/Compressor.h>
 #include <rpc/system/System.h>
 #include <rpc/field/WFields.h>
+
+#include <rp/fts/compressor/Compressor.h>
 
 #include <prdc/cpu/RField.h>
 #include <prdc/cpu/RFieldComparison.h>

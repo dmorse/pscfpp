@@ -8,9 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
-#include <rpg/fts/compressor/Compressor.h>
-#include <rpg/system/System.h>
+#include <util/param/Factory.h>            // base class template
+#include <rp/fts/compressor/Compressor.h>  // base template argument
+#include <rpg/system/Types.h>              // argument of argument
+
+// Forward declaration
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class System;
+   }
+}
 
 #include <string>
 
@@ -26,23 +33,28 @@ namespace Rpg {
    */
 
    template <int D>
-   class CompressorFactory : public Factory< Compressor<D> > 
+   class CompressorFactory : public Factory< Rp::Compressor<D, Rpg::Types<D> > > 
    {
 
    public:
 
-      /// Constructor
+      /**
+      * Constructor.
+      *
+      * \param system  parent system
+      */
       CompressorFactory(Rp::System<D, Rpg::Types<D> >& system);
 
       /**
-      * Method to create any Compressor supplied with PSCF.
+      * Method to create a Compressor.
       *
       * \param className name of the Compressor subclass
       * \return Compressor* pointer to new instance of className
       */
-      Compressor<D>* factory(const std::string &className) const;
+      Rp::Compressor<D, Rpg::Types<D> >* factory(std::string const & className) 
+      const;
 
-      using Factory< Compressor<D> >::trySubfactories;
+      using Factory< Rp::Compressor<D, Rpg::Types<D> > >::trySubfactories;
 
    private:
 

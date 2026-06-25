@@ -6,8 +6,8 @@
 */
 
 #include "McMove.h"
+
 #include <rpg/fts/montecarlo/McSimulator.h>
-#include <rpg/fts/compressor/Compressor.h>
 #include <rpg/system/System.h>
 #include <rpg/field/Domain.h>
 #include <rpg/field/CFields.h>

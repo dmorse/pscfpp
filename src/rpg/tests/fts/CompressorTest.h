@@ -6,7 +6,6 @@
 
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/fts/brownian/BdSimulator.h>
-#include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/compressor/AmCompressor.h>
 #include <rpg/fts/compressor/LrCompressor.h>
 #include <rpg/fts/compressor/LrAmCompressor.h>
@@ -16,6 +15,8 @@
 #include <rpg/field/Domain.h>
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
+
+#include <rp/fts/compressor/Compressor.h>
 
 #include <prdc/cuda/RFieldComparison.h>
 #include <prdc/cuda/resources.h>

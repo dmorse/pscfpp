@@ -15,10 +15,9 @@
 #include <rpg/fts/analyzer/AnalyzerManager.h>
 #include <rpg/fts/trajectory/TrajectoryReaderFactory.h>
 #include <rpg/fts/trajectory/TrajectoryReader.h>
-#include <rpg/fts/simulator/Simulator.h>
-#include <rpg/fts/compressor/Compressor.h>
 #include <rpg/fts/perturbation/Perturbation.h>
 #include <rpg/fts/ramp/Ramp.h>
+#include <rpg/fts/simulator/Simulator.h>
 
 #include <rpg/system/System.h>
 #include <rpg/field/Domain.h>

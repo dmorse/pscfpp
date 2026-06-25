@@ -20,6 +20,7 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
+      template <int D, class T> class Compressor;
       template <int D, class T> class SimState;
       template <int D, class T> class Perturbation;
       template <int D, class T> class Ramp;
@@ -582,12 +583,12 @@ namespace Rp {
       /**
       * Get the Compressor by const reference.
       */
-      typename T::Compressor const & compressor() const;
+      Compressor<D,T> const & compressor() const;
 
       /**
       * Get the Compressor by non-const reference.
       */
-      typename T::Compressor& compressor();
+      Compressor<D,T>& compressor();
 
       /**
       * Does this Simulator have a Perturbation?
@@ -882,7 +883,7 @@ namespace Rp {
       /**
       * Pointer to a compressor.
       */
-      typename T::Compressor* compressorPtr_;
+      Compressor<D,T>* compressorPtr_;
 
       /**
       * Pointer to a Perturbation factory.
@@ -946,7 +947,7 @@ namespace Rp {
 
    // Get the Compressor by non-const reference.
    template <int D, class T> inline 
-   typename T::Compressor& Simulator<D,T>::compressor()
+   Compressor<D,T>& Simulator<D,T>::compressor()
    {
       UTIL_CHECK(compressorPtr_);
       return *compressorPtr_;
@@ -954,7 +955,7 @@ namespace Rp {
 
    // Get the Compressor by const reference.
    template <int D, class T> inline 
-   typename T::Compressor const & Simulator<D,T>::compressor() const
+   Compressor<D,T> const & Simulator<D,T>::compressor() const
    {
       UTIL_CHECK(compressorPtr_);
       return *compressorPtr_;

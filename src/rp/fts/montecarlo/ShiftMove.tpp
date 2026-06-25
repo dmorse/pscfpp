@@ -10,7 +10,13 @@
 
 #include "ShiftMove.h"
 
+//#include <rp/field/WFields.h>
+#include <rp/field/Domain.h>
+//#include <rp/solvers/Mixture.h>
+#include <rp/system/System.h>
+
 #include <pscf/mesh/Mesh.h>
+
 #include <util/containers/Array.h>
 #include <util/random/Random.h>
 
@@ -24,7 +30,7 @@ namespace Rp {
    */
    template <int D, class T>
    ShiftMove<D,T>::ShiftMove(McSimulator<D,T>& simulator)
-    : McMoveT(simulator),
+    : McMove<D,T>(simulator),
       maxShift_(0),
       isAllocated_(false)
    {  ParamComposite::setClassName("ShiftMove"); }
@@ -37,7 +43,7 @@ namespace Rp {
    {
 
       // Read the probability
-      McMoveT::readProbability(in);
+      McMove<D,T>::readProbability(in);
 
       // Read the maximum shift
       ParamComposite::read(in, "maxShift", maxShift_);
@@ -57,7 +63,7 @@ namespace Rp {
    void ShiftMove<D,T>::setup()
    {
       // Setup base class
-      McMoveT::setup();
+      McMove<D,T>::setup();
 
       // Allocate memory if necessary
       if (!isAllocated_) {
@@ -80,7 +86,8 @@ namespace Rp {
       // Select random displacement by integer numbers of mesh points
       IntVec<D> shift;
       for (int i = 0; i < D; i++){
-         shift[i] = McMoveT::random().uniformInt(-maxShift_, maxShift_ + 1);
+         shift[i] 
+           = McMove<D,T>::random().uniformInt(-maxShift_, maxShift_ + 1);
       }
 
       // Compute shifted fields stored in w_ array
@@ -95,9 +102,9 @@ namespace Rp {
    */
    template <int D, class T>
    void ShiftMove<D,T>::shiftField(Array<double> & out, 
-                                 Array<double> const & in,
-                                 IntVec<D> shift, 
-                                 IntVec<D> dimensions) const
+                                   Array<double> const & in,
+                                   IntVec<D> shift, 
+                                   IntVec<D> dimensions) const
    {
       Mesh<D> mesh(dimensions);
       IntVec<D> inPosition, outPosition;

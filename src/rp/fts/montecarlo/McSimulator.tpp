@@ -10,6 +10,9 @@
 
 #include "McSimulator.h"
 
+#include <rp/fts/simulator/SimState.h>
+#include <rp/fts/compressor/Compressor.h>
+
 #include <util/param/Factory.h>
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>

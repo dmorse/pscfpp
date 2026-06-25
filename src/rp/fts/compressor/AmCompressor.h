@@ -9,6 +9,7 @@
 */
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
+#include <rp/fts/compressor/Compressor.h>   // template argument
 #include <util/containers/DArray.h>         // member
 
 // Forward declarations
@@ -44,7 +45,7 @@ namespace Rp {
    */
    template <int D, class T, class V>
    class AmCompressor 
-    : public AmIteratorTmpl< typename T::Compressor, V >
+    : public AmIteratorTmpl< Compressor<D,T>, V >
    {
 
    public:
@@ -104,7 +105,7 @@ namespace Rp {
       ~AmCompressor() = default;
 
       /// Compressor type.
-      using CompressorT = typename T::Compressor;
+      using CompressorT = Compressor<D,T>;
 
       // Inherited protected member function
       using CompressorT::system;

@@ -10,10 +10,10 @@
 
 #include <rp/fts/compressor/LrAmCompressor.h>    // direct base template
 #include <rpg/system/Types.h>                    // direct base argument
-#include <rpg/fts/compressor/AmCompressorBase.h> // indirect base class
 #include <rpg/fts/compressor/IntraCorrelation.h> // direct base member
 #include <prdc/cuda/RField.h>                    // direct base member
 #include <prdc/cuda/RFieldDft.h>                 // direct base member
+#include <rpg/fts/compressor/AmCompressorBase.h> // indirect base class
 
 namespace Pscf {
 namespace Rpg {

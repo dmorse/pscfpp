@@ -6,11 +6,8 @@
 */
 
 #include "McMove.h"
-#include <rpc/fts/montecarlo/McSimulator.h>
-#include <rpc/fts/compressor/Compressor.h>
-#include <rpc/system/System.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/CFields.h>
+#include <rpc/fts/simulator/SimState.h>
+#include <prdc/cpu/RField.h>
 
 #include <rp/fts/montecarlo/McMove.tpp>     // base class implementation
 
