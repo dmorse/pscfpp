@@ -820,7 +820,7 @@ namespace Rp {
    * Set the associated Ramp object.
    */
    template <int D, class T>
-   void Simulator<D,T>::setRamp(typename T::Ramp* ptr)
+   void Simulator<D,T>::setRamp(Ramp<D,T>* ptr)
    {
       UTIL_CHECK(ptr);
       rampPtr_ = ptr;

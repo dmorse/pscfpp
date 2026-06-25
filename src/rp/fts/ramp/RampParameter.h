@@ -110,7 +110,22 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Default constructor.
+      */
+      RampParameter();
+
+      /**
+      * Constructor that stores a pointer to parent Simulator.
+      *
+      * \param simulator  parent Simulator
+      */
+      RampParameter(Simulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~RampParameter() = default;
 
       /**
       * Set the simulator and system associated with this object.
@@ -204,25 +219,6 @@ namespace Rp {
       */
       template <class Archive>
       void serialize(Archive ar, const unsigned int version);
-
-   protected:
-
-      /**
-      * Default constructor.
-      */
-      RampParameter();
-
-      /**
-      * Constructor that stores a pointer to parent Simulator.
-      *
-      * \param simulator  parent Simulator
-      */
-      RampParameter(Simulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~RampParameter() = default;
 
    private:
 

@@ -1,7 +1,8 @@
 #ifndef RP_RAMP_H
 #define RP_RAMP_H
 
-#include <util/param/ParamComposite.h>      // base class
+#include <util/param/ParamComposite.h>  // base class
+#include <util/global.h>                // inline functions
 
 // Forward declarations
 namespace Pscf {
@@ -38,7 +39,17 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator parent Simulator
+      */
+      Ramp(Simulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~Ramp() = default;
 
       /**
       * Final setup before simulation loop, set value of nStep.
@@ -78,18 +89,6 @@ namespace Rp {
    protected:
 
       /**
-      * Constructor.
-      *
-      * \param simulator parent Simulator
-      */
-      Ramp(Simulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~Ramp() = default;
-
-      /**
       * Get parent Simulator<D,T> by non-const reference.
       */
       Simulator<D,T>& simulator();
@@ -110,7 +109,7 @@ namespace Rp {
    template <int D, class T> inline 
    Simulator<D,T> const & Ramp<D,T>::simulator() const
    {
-      assert(simulatorPtr_);  
+      UTIL_ASSERT(simulatorPtr_);  
       return *simulatorPtr_; 
    }
 
@@ -118,7 +117,7 @@ namespace Rp {
    template <int D, class T> inline 
    Simulator<D,T> & Ramp<D,T>::simulator() 
    {  
-      assert(simulatorPtr_);
+      UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_; 
    }
 

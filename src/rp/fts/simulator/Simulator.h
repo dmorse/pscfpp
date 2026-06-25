@@ -611,12 +611,12 @@ namespace Rp {
       /**
       * Get a Ramp by const reference.
       */
-      typename T::Ramp const & ramp() const;
+      Ramp<D,T> const & ramp() const;
 
       /**
       * Get a Ramp by non-const reference.
       */
-      typename T::Ramp& ramp();
+      Ramp<D,T>& ramp();
 
       ///@}
 
@@ -691,7 +691,7 @@ namespace Rp {
       *
       * \param ptr pointer to a new Ramp
       */
-      void setRamp(typename T::Ramp* ptr);
+      void setRamp(Ramp<D,T>* ptr);
 
       /**
       * Get the SimState stored internal state by reference.
@@ -901,7 +901,7 @@ namespace Rp {
       /**
       * Pointer to a Ramp.
       */
-      typename T::Ramp* rampPtr_;
+      Ramp<D,T>* rampPtr_;
 
       /**
       * Has required memory been allocated?
@@ -987,7 +987,7 @@ namespace Rp {
 
    // Get a Ramp by const reference.
    template <int D, class T> inline 
-   typename T::Ramp const & Simulator<D,T>::ramp() const
+   Ramp<D,T> const & Simulator<D,T>::ramp() const
    {
       UTIL_CHECK(rampPtr_);
       return *rampPtr_;
@@ -995,7 +995,7 @@ namespace Rp {
 
    // Get a Ramp by non-const reference.
    template <int D, class T> inline 
-   typename T::Ramp& Simulator<D,T>::ramp()
+   Ramp<D,T>& Simulator<D,T>::ramp()
    {
       UTIL_CHECK(rampPtr_);
       return *rampPtr_;

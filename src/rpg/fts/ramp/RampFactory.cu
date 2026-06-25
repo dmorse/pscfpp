@@ -28,9 +28,9 @@ namespace Rpg {
    * Return a pointer to a instance of Ramp subclass className.
    */
    template <int D>
-   Ramp<D>* RampFactory<D>::factory(const std::string & className) const
+   Rp::Ramp<D, Rpg::Types<D> >* RampFactory<D>::factory(const std::string & className) const
    {
-      Ramp<D>* ptr = 0;
+      Rp::Ramp<D, Rpg::Types<D> >* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);
@@ -38,7 +38,7 @@ namespace Rpg {
        
       // Try to match classname
       if (className == "LinearRamp") {
-         ptr = new LinearRamp<D>(*simulatorPtr_);
+         ptr = new Rp::LinearRamp<D, Rpg::Types<D> >(*simulatorPtr_);
       }
 
       return ptr;

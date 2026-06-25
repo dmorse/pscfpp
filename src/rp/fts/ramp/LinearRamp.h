@@ -5,6 +5,12 @@
 #include <util/containers/DArray.h>   // member
 #include <iostream>
 
+// Forward declaration
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class RampParameter;
+   }
+}
 namespace Pscf {
 namespace Rp {
 
@@ -28,12 +34,22 @@ namespace Rp {
    * \ingroup Rp_Fts_Ramp_Module
    */
    template <int D, class T>
-   class LinearRamp : public T::Ramp
+   class LinearRamp : public Ramp<D,T>
    {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      */
+      LinearRamp(Simulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~LinearRamp() = default;
 
       /**
       * Read parameters from parameter file input stream.
@@ -66,20 +82,8 @@ namespace Rp {
 
    protected:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      */
-      LinearRamp(Simulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~LinearRamp() = default;
-
-      using RampT = typename T::Ramp;
-      using RampParameterT = typename T::RampParameter;
+      using RampT = Ramp<D,T>;
+      using RampParameterT = RampParameter<D,T>;
 
    private:
 
@@ -87,7 +91,7 @@ namespace Rp {
       int nParameter_;
 
       // Array of variable parameters
-      DArray< RampParameterT > parameters_;
+      DArray< RampParameter<D,T> > parameters_;
 
    };
 

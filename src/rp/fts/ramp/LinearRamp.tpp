@@ -45,11 +45,11 @@ namespace Rp {
    template <int D, class T>
    void LinearRamp<D,T>::setup(int nStep)
    {
-      RampT::nStep_ = nStep;
+      Ramp<D,T>::nStep_ = nStep;
 
       // Set simulator pointer and initial value for each parameter object
       for (int i = 0; i < nParameter_; ++i) {
-         parameters_[i].setSimulator(RampT::simulator());
+         parameters_[i].setSimulator(Ramp<D,T>::simulator());
          parameters_[i].getInitial();
       }
    }
@@ -58,7 +58,7 @@ namespace Rp {
    void LinearRamp<D,T>::setParameters(int iStep)
    {
       // Compute a ramp parameter in the range [0,1]
-      double s = double(iStep)/double(RampT::nStep_);
+      double s = double(iStep)/double(Ramp<D,T>::nStep_);
 
       // Update the system parameter values
       double newVal;
@@ -68,7 +68,7 @@ namespace Rp {
 
          // Update chiEvals and chiEvecs if parameter is chi
          if (parameters_[i].type() == "chi") {
-            RampT::simulator().analyzeChi();
+            Ramp<D,T>::simulator().analyzeChi();
          }
 
       }

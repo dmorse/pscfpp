@@ -23,7 +23,7 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Ramp_Module
    */
    template <int D>
-   class RampFactory : public Factory< Ramp<D> > 
+   class RampFactory : public Factory< Rp::Ramp<D, Rpg::Types<D> > > 
    {
 
    public:
@@ -41,9 +41,9 @@ namespace Rpg {
       * \param className name of the Ramp subclass
       * \return Ramp* pointer to new instance of className
       */
-      Ramp<D>* factory(const std::string & className) const;
+      Rp::Ramp<D, Rpg::Types<D> >* factory(const std::string & className) const;
 
-      using Factory< Ramp<D> >::trySubfactories;
+      using Factory< Rp::Ramp<D, Rpg::Types<D> > >::trySubfactories;
 
    private:
       

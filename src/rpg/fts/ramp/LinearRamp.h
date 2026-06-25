@@ -13,52 +13,12 @@
 #include <rpg/fts/ramp/RampParameter.h>  // base class member
 #include <rpg/fts/ramp/Ramp.h>           // indirect base class
 
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   /**
-   * Ramp that varies parameters linearly with index.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * specializations of the base class template Rp::LinearRamp, and inherit
-   * their entire public interface and almost all of their source code 
-   * from this base class.  See the documentation of this base class.
-   *
-   * \see \ref Rp::LinearRamp
-   * \see \ref rp_LinearRamp_page "Manual Page"
-   * \ingroup Rpg_Fts_Ramp_Module
-   */
-   template <int D>
-   class LinearRamp : public Rp::LinearRamp<D, Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator
-      */
-      LinearRamp(Rp::Simulator<D, Rpg::Types<D> >& simulator);
-
-   };
-
-}
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class LinearRamp<1, Rpg::Types<1> >;
       extern template class LinearRamp<2, Rpg::Types<2> >;
       extern template class LinearRamp<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class LinearRamp<1>;
-      extern template class LinearRamp<2>;
-      extern template class LinearRamp<3>;
    }
 }
 #endif

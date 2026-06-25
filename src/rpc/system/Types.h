@@ -73,8 +73,8 @@ namespace Pscf {
       //template <int D> class Perturbation;
       template <int D> class PerturbationFactory;
 
-      template <int D> class Ramp;
-      template <int D> class RampParameter;
+      //template <int D> class Ramp;
+      //template <int D> class RampParameter;
       template <int D> class RampFactory;
 
       template <int D> class Analyzer;
@@ -178,8 +178,8 @@ namespace Rpc {
       //using Perturbation = Rp::Perturbation<D, Rpc::Types<D> >;
       using PerturbationFactory = Rpc::PerturbationFactory<D>;
 
-      using Ramp = Rpc::Ramp<D>;
-      using RampParameter = Rpc::RampParameter<D>;
+      //using Ramp = Rp::Ramp<D, Rpc::Types<D> >;
+      //using RampParameter = Rp::RampParameter<D, Rpc::Types<D> >;
       using RampFactory = Rpc::RampFactory<D>;
 
       // Static member functions
