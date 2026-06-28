@@ -54,7 +54,7 @@ namespace Pscf {
       template <int D> class SweepFactory;
 
       //template <int D> class Simulator;
-      //template <int D> struct SimState;
+      //template <int D> class SimState;
       //template <int D> class SimulatorFactory;
 
       //template <int D> class Compressor;

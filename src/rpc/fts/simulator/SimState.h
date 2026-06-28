@@ -14,9 +14,9 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template struct SimState<1, Rpc::Types<1> >;
-      extern template struct SimState<2, Rpc::Types<2> >;
-      extern template struct SimState<3, Rpc::Types<3> >;
+      extern template class SimState<1, Rpc::Types<1> >;
+      extern template class SimState<2, Rpc::Types<2> >;
+      extern template class SimState<3, Rpc::Types<3> >;
    }
 }
 #endif

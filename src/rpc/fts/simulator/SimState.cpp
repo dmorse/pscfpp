@@ -12,8 +12,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template struct SimState<1, Rpc::Types<1> >;
-      template struct SimState<2, Rpc::Types<2> >;
-      template struct SimState<3, Rpc::Types<3> >;
+      template class SimState<1, Rpc::Types<1> >;
+      template class SimState<2, Rpc::Types<2> >;
+      template class SimState<3, Rpc::Types<3> >;
    }
 }

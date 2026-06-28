@@ -39,7 +39,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Simulator_Module
    */
    template <int D, class T>
-   struct SimState 
+   class SimState 
    {
 
    public:
