@@ -12,11 +12,11 @@
 #include <pscf/cpu/complex.h>
 
 #include "FieldIo.h"
-#include <prdc/field/fieldCheck.h>
+#include <prdc/fieldIo/fieldCheck.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/cpu/CFieldComparison.h>
-#include <prdc/field/cFieldIo.h>
-#include <prdc/field/rFieldIo.h>
+#include <prdc/fieldIo/cFieldIo.h>
+#include <prdc/fieldIo/rFieldIo.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
 

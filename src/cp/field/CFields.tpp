@@ -9,7 +9,7 @@
 */
 
 #include "CFields.h"
-#include <prdc/field/cFieldIo.h>
+#include <prdc/fieldIo/cFieldIo.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
 #include <util/misc/FileMaster.h>

@@ -12,7 +12,7 @@
 
 #include <prdc/cuda/HostDArrayComplex.h>
 #include <prdc/cuda/RFieldComparison.h>
-#include <prdc/field/fieldCheck.h>
+#include <prdc/fieldIo/fieldCheck.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 
@@ -29,7 +29,7 @@
 
 // Templates that require declarations given above to parse
 #include <rp/field/FieldIoBase.tpp> // base class template implementation
-#include <prdc/field/rFieldIo.h>    // function templates for field IO 
+#include <prdc/fieldIo/rFieldIo.h>    // function templates for field IO 
 
 namespace Pscf {
 namespace Rp {

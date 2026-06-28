@@ -51,7 +51,7 @@ namespace Prdc {
    * 
    * Explicit specializations of this function template are called 
    * within the replicateUnitCell function template defined in file 
-   * src/prdc/fields/fieldIoUtil.tpp. This function takes an array of
+   * src/prdc/fieldIos/fieldIoUtil.tpp. This function takes an array of
    * fields as an input and writes a replicated version of those fields
    * to an r-grid field file. The header of the resulting file contains a 
    * description of the unit cell obtained here. That field replication 

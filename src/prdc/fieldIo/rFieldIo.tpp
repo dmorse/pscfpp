@@ -12,7 +12,7 @@
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/replicateUnitCell.h>
-#include <prdc/field/fieldHeader.h>
+#include <prdc/fieldIo/fieldHeader.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>

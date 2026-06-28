@@ -11,7 +11,7 @@
 #include "Domain.h"
 #include <prdc/crystal/SpaceGroup.h>
 #include <prdc/crystal/Basis.h>
-#include <prdc/field/fieldHeader.h>
+#include <prdc/fieldIo/fieldHeader.h>
 #include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>
 

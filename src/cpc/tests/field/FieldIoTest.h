@@ -12,7 +12,7 @@
 #include <prdc/cpu/RFieldComparison.h>
 #include <prdc/cpu/RFieldDftComparison.h>
 #include <prdc/cpu/FFT.h>
-#include <prdc/field/fieldCheck.h>
+#include <prdc/fieldIo/fieldCheck.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
