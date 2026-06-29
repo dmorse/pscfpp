@@ -8,8 +8,8 @@
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/fts/brownian/BdSimulator.h>
 
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/field/cpu/RField.h>
+#include <prdc/field/cpu/RFieldComparison.h>
 
 #include <util/tests/LogFileUnitTest.h>
 

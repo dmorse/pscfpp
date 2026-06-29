@@ -13,8 +13,8 @@
 #include <rpg/field/Domain.h>
 #include <rpg/field/WFields.h>
 
-#include <prdc/cuda/FFT.h>
-#include <prdc/cuda/WaveList.h>
+#include <prdc/field/cuda/FFT.h>
+#include <prdc/field/cuda/WaveList.h>
 
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/complex.h>

@@ -11,9 +11,9 @@
 #include "Block.h"
 #include "Propagator.h"
 
-#include <prdc/cuda/WaveList.h>
-#include <prdc/cuda/FFT.h>
-#include <prdc/cuda/resources.h>
+#include <prdc/field/cuda/WaveList.h>
+#include <prdc/field/cuda/FFT.h>
+#include <prdc/field/cuda/resources.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>

@@ -10,7 +10,7 @@
 
 #include <rp/fts/trajectory/RGridTrajectoryReader.h> // direct base class 
 #include <rpg/system/Types.h>                        // base class argument
-#include <prdc/cuda/RField.h>                        // base class member
+#include <prdc/field/cuda/RField.h>                        // base class member
 #include <rpg/fts/trajectory/TrajectoryReader.h>     // indirect base class 
 
 namespace Pscf {

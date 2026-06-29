@@ -11,8 +11,8 @@
 #include <rp/fts/analyzer/FourthOrderParameter.h>  // base class template
 #include <rpc/system/Types.h>                      // template argument
 #include <rpc/fts/analyzer/AverageAnalyzer.h>      // indirect base 
-#include <prdc/cpu/RField.h>                       // member
-#include <prdc/cpu/RFieldDft.h>                    // member
+#include <prdc/field/cpu/RField.h>                       // member
+#include <prdc/field/cpu/RFieldDft.h>                    // member
 
 namespace Pscf {
 namespace Rpc {

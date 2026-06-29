@@ -7,11 +7,11 @@
 #include <rpg/field/Domain.h>
 #include <rpg/field/FieldIo.h>
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/RFieldDft.h>
-#include <prdc/cuda/RFieldComparison.h>
-#include <prdc/cuda/RFieldDftComparison.h>
-#include <prdc/cuda/FFT.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/RFieldDft.h>
+#include <prdc/field/cuda/RFieldComparison.h>
+#include <prdc/field/cuda/RFieldDftComparison.h>
+#include <prdc/field/cuda/FFT.h>
 
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/crystal/Basis.h>

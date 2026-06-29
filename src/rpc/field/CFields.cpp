@@ -7,7 +7,7 @@
 
 #include "CFields.h"              // class header
 #include <rpc/field/FieldIo.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 #include <rp/field/CFields.tpp>   // base class implementation
 
 // Explicit instantiation definitions

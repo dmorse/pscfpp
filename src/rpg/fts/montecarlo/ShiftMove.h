@@ -11,7 +11,7 @@
 #include <rp/fts/montecarlo/ShiftMove.h>     // base class template
 #include <rpg/system/Types.h>                // base class argument
 #include <rpg/fts/montecarlo/McMove.h>       // indirect base class
-#include <prdc/cuda/RField.h>                // base class member
+#include <prdc/field/cuda/RField.h>                // base class member
 #include <pscf/cuda/HostDArray.h>            // member
 #include <pscf/cuda/cudaTypes.h>             // member
 

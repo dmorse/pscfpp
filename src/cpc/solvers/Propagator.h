@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
-#include <prdc/cpu/CField.h>             // member template
+#include <prdc/field/cpu/CField.h>             // member template
 #include <util/containers/DArray.h>      // member template
 
 // Forward declarations

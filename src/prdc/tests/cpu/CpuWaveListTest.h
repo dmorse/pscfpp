@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cpu/WaveList.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/WaveList.h>
+#include <prdc/field/cpu/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 

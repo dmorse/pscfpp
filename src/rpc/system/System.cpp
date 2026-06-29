@@ -24,10 +24,10 @@
 #include <rpc/field/CFields.h>
 #include <rpc/field/Mask.h>
 
-#include <prdc/cpu/WaveList.h>
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
+#include <prdc/field/cpu/WaveList.h>
+#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpu/RField.h>
+#include <prdc/field/cpu/RFieldDft.h>
 #include <prdc/environment/Environment.h>
 
 #include <rp/system/System.tpp>  // base class template implementation

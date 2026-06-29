@@ -11,8 +11,8 @@
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
 
-#include <prdc/cuda/FFT.h>
-#include <prdc/cuda/RField.h>
+#include <prdc/field/cuda/FFT.h>
+#include <prdc/field/cuda/RField.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 

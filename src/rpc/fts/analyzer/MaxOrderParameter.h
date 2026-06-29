@@ -11,8 +11,8 @@
 #include <rp/fts/analyzer/MaxOrderParameter.h>   // direct base template
 #include <rpc/system/Types.h>                    // base class argument
 #include <rpc/fts/analyzer/AverageAnalyzer.h>    // indirect base
-#include <prdc/cpu/RField.h>                     // direct base member
-#include <prdc/cpu/RFieldDft.h>                  // direct base member
+#include <prdc/field/cpu/RField.h>                     // direct base member
+#include <prdc/field/cpu/RFieldDft.h>                  // direct base member
 
 namespace Pscf {
 namespace Rpc {

@@ -18,8 +18,8 @@
 
 #include <rp/fts/compressor/Compressor.h>
 
-#include <prdc/cuda/RFieldComparison.h>
-#include <prdc/cuda/resources.h>
+#include <prdc/field/cuda/RFieldComparison.h>
+#include <prdc/field/cuda/resources.h>
 
 #include <pscf/cuda/VecOp.h> 
 #include <pscf/cuda/CudaVecRandom.h> 

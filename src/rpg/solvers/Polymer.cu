@@ -8,7 +8,7 @@
 #include "Polymer.h"
 #include <rpg/solvers/Block.h>
 #include <rpg/solvers/Propagator.h>
-#include <prdc/cuda/RField.h>
+#include <prdc/field/cuda/RField.h>
 #include <pscf/solvers/PolymerTmpl.tpp>
 #include <pscf/chem/PolymerModel.h>
 

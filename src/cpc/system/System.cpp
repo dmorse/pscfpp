@@ -11,9 +11,9 @@
 #include "System.h"              // header
 #include <cpc/solvers/Mixture.h>
 #include <cpc/field/Domain.h>
-#include <prdc/cpu/WaveList.h>
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/CField.h>
+#include <prdc/field/cpu/WaveList.h>
+#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpu/CField.h>
 #include <pscf/interaction/Interaction.h>
 
 #include <cp/system/System.tpp>  // base class template implementation 

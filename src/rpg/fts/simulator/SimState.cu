@@ -6,7 +6,7 @@
 */
 
 #include "SimState.h"
-#include <prdc/cuda/RField.h>
+#include <prdc/field/cuda/RField.h>
 #include <rp/fts/simulator/SimState.tpp>
 
 // Explicit instantiation definitions

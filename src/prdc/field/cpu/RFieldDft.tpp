@@ -9,7 +9,7 @@
 */
 
 #include "RFieldDft.h"
-#include <prdc/cpu/FFT.h>
+#include <prdc/field/cpu/FFT.h>
 
 namespace Pscf {
 namespace Prdc {

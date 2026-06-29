@@ -4,7 +4,7 @@
 #include <rp/fts/perturbation/EinsteinCrystalPerturbation.h> // base class
 #include <rpg/system/Types.h>                             // base argument
 #include <rpg/fts/perturbation/Perturbation.h>            // indirect base
-#include <prdc/cuda/RField.h>                             // base member
+#include <prdc/field/cuda/RField.h>                             // base member
 
 #if 0
 namespace Pscf {

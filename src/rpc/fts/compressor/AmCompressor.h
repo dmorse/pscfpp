@@ -10,7 +10,7 @@
 
 #include <rp/fts/compressor/AmCompressor.h>      // direct base template
 #include <rpc/system/Types.h>                    // direct base argument
-#include <prdc/cpu/RField.h>                     // direct base member
+#include <prdc/field/cpu/RField.h>                     // direct base member
 #include <rpc/fts/compressor/AmCompressorBase.h> // indirect base
 
 namespace Pscf {

@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cpu/RFieldDft.h>
+#include <prdc/field/cpu/RFieldDft.h>
 
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>

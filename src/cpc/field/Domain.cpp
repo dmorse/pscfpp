@@ -7,8 +7,8 @@
 
 #include "Domain.h"               // Class header
 #include <cpc/field/FieldIo.tpp>
-#include <prdc/cpu/WaveList.h>
-#include <prdc/cpu/FFT.h>
+#include <prdc/field/cpu/WaveList.h>
+#include <prdc/field/cpu/FFT.h>
 
 #include <cp/field/Domain.tpp>    // Base class template implementation
 

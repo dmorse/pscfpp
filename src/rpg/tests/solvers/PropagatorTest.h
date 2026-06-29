@@ -9,12 +9,12 @@
 #include <rpg/solvers/Block.h>
 #include <rpg/solvers/Propagator.h>
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/FFT.h>
-#include <prdc/cuda/WaveList.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/FFT.h>
+#include <prdc/field/cuda/WaveList.h>
 
 #include <prdc/crystal/UnitCell.h>
-//#include <prdc/cuda/resources.h>
+//#include <prdc/field/cuda/resources.h>
 
 #include <pscf/cuda/cudaTypes.h>
 #include <pscf/cuda/HostDArray.h>

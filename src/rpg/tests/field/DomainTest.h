@@ -7,7 +7,7 @@
 #include <rpg/field/Domain.h>
 #include <rpg/field/FieldIo.h>
 
-#include <prdc/cuda/FFT.h>
+#include <prdc/field/cuda/FFT.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/SpaceGroup.h>
 #include <prdc/crystal/UnitCell.h>

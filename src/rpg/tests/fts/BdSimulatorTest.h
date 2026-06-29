@@ -11,8 +11,8 @@
 
 #include <rp/fts/compressor/Compressor.h>
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/RFieldComparison.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/RFieldComparison.h>
 
 #include <util/tests/LogFileUnitTest.h>
 

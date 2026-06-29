@@ -28,9 +28,9 @@
 #include <rpg/field/WFields.h>
 #include <rpg/field/Mask.h>
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/RFieldDft.h>
-#include <prdc/cuda/WaveList.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/RFieldDft.h>
+#include <prdc/field/cuda/WaveList.h>
 #include <prdc/environment/Environment.h>
 
 #include <pscf/interaction/Interaction.h>

@@ -11,7 +11,7 @@
 #include <rp/fts/montecarlo/BdMove.h>   // base class template
 #include <rpg/system/Types.h>           // base class template argument 
 #include <rpg/fts/montecarlo/McMove.h>  // indirect base class
-#include <prdc/cuda/RField.h>           // base class member
+#include <prdc/field/cuda/RField.h>           // base class member
 
 namespace Pscf {
 namespace Rpg {

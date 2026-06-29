@@ -18,7 +18,7 @@
 #include <rpc/field/CFields.h>
 #include <rpc/field/Mask.h>
 
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/paramIdConversions.h>

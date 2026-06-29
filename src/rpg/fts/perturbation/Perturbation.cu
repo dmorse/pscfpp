@@ -7,7 +7,7 @@
 
 #include "Perturbation.h"
 #include <rpg/fts/simulator/Simulator.h>
-#include <prdc/cuda/RField.h>
+#include <prdc/field/cuda/RField.h>
 
 #include <rp/fts/perturbation/Perturbation.tpp> // base class implementation
 

@@ -18,7 +18,7 @@
 #include <rpc/field/CFields.h>
 #include <rpc/field/Mask.h>
 #include <rpc/field/FieldIo.h>
-#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/field/cpu/RFieldComparison.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/misc/FileMaster.h>

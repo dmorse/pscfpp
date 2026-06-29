@@ -6,7 +6,7 @@
 */
 
 #include "sortWaves.h"
-#include <prdc/cpu/FFT.h>
+#include <prdc/field/cpu/FFT.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/MeshIterator.h>

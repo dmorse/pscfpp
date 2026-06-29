@@ -7,9 +7,9 @@
 #include <rpc/field/Domain.h>
 #include <rpc/field/FieldIo.h>
 
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
-#include <prdc/cpu/FFT.h>
+#include <prdc/field/cpu/RField.h>
+#include <prdc/field/cpu/RFieldDft.h>
+#include <prdc/field/cpu/FFT.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/SpaceGroup.h>
 #include <prdc/crystal/UnitCell.h>

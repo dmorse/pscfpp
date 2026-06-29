@@ -20,7 +20,7 @@
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
 
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/CpuVecRandom.h>
 
 #include <rp/fts/brownian/BdSimulator.tpp>  // base class implementation

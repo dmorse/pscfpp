@@ -9,7 +9,7 @@
 */
 
 #include "CFieldComparison.h"
-#include <prdc/cpu/CField.h>
+#include <prdc/field/cpu/CField.h>
 #include <util/containers/DArray.h>
 #include <cmath>
 

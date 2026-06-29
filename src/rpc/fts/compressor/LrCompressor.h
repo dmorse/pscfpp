@@ -11,8 +11,8 @@
 #include <rp/fts/compressor/LrCompressor.h>      // direct base template
 #include <rpc/system/Types.h>                    // direct base argument
 #include <rpc/fts/compressor/IntraCorrelation.h> // direct base member
-#include <prdc/cpu/RField.h>                     // direct base member
-#include <prdc/cpu/RFieldDft.h>                  // direct base member
+#include <prdc/field/cpu/RField.h>                     // direct base member
+#include <prdc/field/cpu/RFieldDft.h>                  // direct base member
 #include <rp/fts/compressor/Compressor.h>        // indirect base class
 
 namespace Pscf {

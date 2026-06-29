@@ -11,8 +11,8 @@
 #include <rp/fts/analyzer/BinaryStructureFactor.h>  // base template
 #include <rpc/system/Types.h>                       // template argument
 #include <rpc/fts/analyzer/Analyzer.h>              // indirect base
-#include <prdc/cpu/RField.h>                        // base class member
-#include <prdc/cpu/RFieldDft.h>                     // base class member
+#include <prdc/field/cpu/RField.h>                        // base class member
+#include <prdc/field/cpu/RFieldDft.h>                     // base class member
 
 namespace Pscf {
 namespace Rpc {

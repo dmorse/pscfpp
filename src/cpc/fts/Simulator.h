@@ -9,7 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
-#include <prdc/cpu/CField.h>               // member (template arg)
+#include <prdc/field/cpu/CField.h>               // member (template arg)
 #include <util/random/Random.h>            // member
 #include <util/containers/DArray.h>        // member (template)
 #include <util/containers/DMatrix.h>       // member (template)

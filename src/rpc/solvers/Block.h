@@ -11,8 +11,8 @@
 #include <pscf/solvers/BlockTmpl.h>       // base class template
 #include <rpc/system/Types.h>             // template argument
 
-#include <prdc/cpu/RField.h>              // member
-#include <prdc/cpu/RFieldDft.h>           // member
+#include <prdc/field/cpu/RField.h>              // member
+#include <prdc/field/cpu/RFieldDft.h>           // member
 #include <util/containers/FSArray.h>      // member
 
 // Forward declarations

@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cpu/FieldBasisConverter.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/FieldBasisConverter.h>
+#include <prdc/field/cpu/RField.h>
 #include <pscf/math/IntVec.h>
 
 #include <util/containers/DArray.h>

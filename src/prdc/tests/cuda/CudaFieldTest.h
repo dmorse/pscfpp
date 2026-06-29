@@ -4,10 +4,10 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/CField.h>
-#include <prdc/cuda/RFieldDft.h>
-#include <prdc/cuda/resources.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/CField.h>
+#include <prdc/field/cuda/RFieldDft.h>
+#include <prdc/field/cuda/resources.h>
 
 #include <pscf/math/IntVec.h>
 

@@ -14,7 +14,7 @@
 #include "FieldIo.h"
 #include <prdc/fieldIo/fieldCheck.h>
 #include <prdc/crystal/UnitCell.h>
-#include <prdc/cpu/CFieldComparison.h>
+#include <prdc/field/cpu/CFieldComparison.h>
 #include <prdc/fieldIo/cFieldIo.h>
 #include <prdc/fieldIo/rFieldIo.h>
 #include <pscf/mesh/Mesh.h>

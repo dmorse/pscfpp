@@ -10,8 +10,8 @@
 
 #include "WaveList.h"
 
-#include <prdc/cuda/resources.h>
-#include <prdc/cuda/FFT.h>
+#include <prdc/field/cuda/resources.h>
+#include <prdc/field/cuda/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/hasVariableAngle.h>
 #include <pscf/cuda/HostDArray.h>

@@ -14,11 +14,11 @@
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
 #include <rpg/field/FieldIo.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
-#include <prdc/cuda/resources.h>
+#include <prdc/field/cuda/resources.h>
 #include <pscf/interaction/Interaction.h>
 #include <cmath>
 

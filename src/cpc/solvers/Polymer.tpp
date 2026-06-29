@@ -11,7 +11,7 @@
 #include "Polymer.h"
 #include "Block.h"
 #include "Propagator.h"
-#include <prdc/cpu/CField.h>
+#include <prdc/field/cpu/CField.h>
 #include <pscf/cpu/complex.h>
 
 namespace Pscf {

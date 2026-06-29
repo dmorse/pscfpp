@@ -7,7 +7,7 @@
 
 #include "WFields.h"                  // class header
 #include <rpg/field/FieldIo.h>
-#include <prdc/cuda/RField.h>
+#include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/DeviceArray.h>
 #include <rp/field/WFieldsBase.tpp>   // base class implementation

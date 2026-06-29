@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_WAVE_LIST_H
-#define PRDC_CUDA_WAVE_LIST_H
+#ifndef PRDC_CPU_WAVE_LIST_H
+#define PRDC_CPU_WAVE_LIST_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,13 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/RField.h>        // member
-#include <pscf/cuda/DeviceArray.h>   // member
-#include <pscf/cuda/HostDArray.h>    // member
-#include <pscf/math/IntVec.h>        // member
-#include <util/containers/DArray.h>  // member
-#include <util/containers/GArray.h>  // member
-#include <util/containers/Pair.h>    // member
+#include <prdc/field/cpu/RField.h>           // member
+#include <pscf/math/IntVec.h>          // member
+#include <util/containers/DArray.h>    // member
+#include <util/containers/GArray.h>    // member
+#include <util/containers/Pair.h>      // member
 
 // Forward declarations
 namespace Pscf {
@@ -26,7 +24,7 @@ namespace Pscf {
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
+namespace Cpu {
 
    using namespace Util;
 
@@ -62,7 +60,7 @@ namespace Cuda {
    * properties as being outdated, indicating that they are outdated and 
    * thus must be recalculated before the next use.
    *
-   * \ingroup Prdc_Cuda_Module
+   * \ingroup Prdc_Cpu_Module
    */
    template <int D>
    class WaveList
@@ -70,7 +68,7 @@ namespace Cuda {
    public:
 
       /// \name Construction, Destruction and Initialization
-      ///@{ 
+      ///@{
 
       /**
       * Constructor.
@@ -94,22 +92,23 @@ namespace Cuda {
 
       ///@}
       /// \name Computation
-      ///@{ 
+      ///@{
 
       /**
       * Clear all internal data that depends on lattice parameters.
       *
-      * Sets hasKSq_ and hasdKSq_ to false, and sets hasMinImages_ to
-      * false only if the unit cell type has variable angles.
+      * Sets hasKSq_ and hasdKSq_ to false. Sets hasMinImages_ to false
+      * if the unit cell type has variable angles. Sets isSorted_ to 
+      * false if the unit cell has more than one unit cell parameter.
       */
       void clearUnitCellData();
 
       /**
-      * Compute minimum images of wavevectors, and also calculate kSq.
+      * Compute minimum images of wavevectors, and also calculates kSq.
       *
       * This function recomputes the minimum images of all wavevectors if
       * necessary (i.e., if hasMinImages() == false), but does nothing if
-      * the minimum images are up to date (if hasMinImages() == true).
+      * if minimum images are up to date (if hasMinImages() == true).
       *
       * The minimum images may change if a lattice angle in the unit cell
       * is changed, so this method should be called whenever such changes
@@ -126,10 +125,10 @@ namespace Cuda {
       /**
       * Compute square norm |k|^2 for all wavevectors.
       *
-      * This function recomputes values of the square norm for all 
+      * This function recomputes values of the square norm for all
       * wavevectors if necessary (i.e., if hasKSq() == false), and does
-      * nothing if these values are up to date (if hasKSq() ==  true).
-      * Mininum image values are updated if necessary. 
+      * nothing if these values are up to date (if hasKSq() == true).
+      * Minimum image values are updated if necessary.
       */
       void computeKSq();
 
@@ -154,72 +153,72 @@ namespace Cuda {
 
       ///@}
       /// \name Data Access
-      ///@{ 
+      ///@{
 
       /**
-      * Get the array of minimum images on the device by reference.
+      * Get the array of minimum image vectors by const reference.
       *
-      * The array has size kSize * D, where kSize is the number of grid
-      * points in the FFT k-space mesh. The array is unwrapped into a
-      * linear array in an index-by-index manner, in which the first kSize
-      * elements of the array contain the first index of each minimum
-      * image, and so on. If isRealField is true, kSize is smaller than
-      * the size of the real-space mesh. Otherwise, it is equal.
-      */
-      DeviceArray<int> const & minImages_d() const;
-
-      /**
-      * Get minimum images as IntVec<D> objects on the host.
-      *
-      * This function returns an array of kSize elements in which each
+      * This function returns an array of kSize elements in which each 
       * element is an IntVec<D> containing the integer coordinates of 
       * the minimum image of one wavevector in the k-space mesh used for
-      * discrete Fourier transforms.
+      * a discrete Fourier transforms. Array indices correspond to 
+      * ranks in this k-space mesh.
       */
-      HostDArray< IntVec<D> > const & minImages_h() const;
+      DArray< IntVec<D> > const & minImages() const;
 
       /**
-      * Get the kSq array on the device by reference.
+      * Get the kSq array on the device by const reference.
       *
-      * This method returns an RField<D> in which each element is the 
-      * square magnitude |k|^2 of a wavevector k in the k-space mesh used 
-      * for a DFT. If isRealField is true, this k-space mesh is smaller 
-      * than the real-space mesh. Otherwise, it is the same size.
+      * This function returns an array in which each element is the square
+      * magnitude |k|^2 of a wavevector in the k-space mesh used for a
+      * discrete Fourier transform. Array indices correspond to ranks
+      * within this k-space mesh.
       */
       RField<D> const & kSq() const;
 
       /**
-      * Get derivatives of |k|^2 with respect to lattice parameter i.
+      * Get derivatives of kSq with respect to unit cell parameter i.
       *
-      * This method returns an RField<D> in which each element is the
-      * derivative of the square-wavevector with respect to unit cell
-      * parameter i, multiplied by a prefactor. The prefactor is 2.0 for
-      * waves that have an implicit inverse and 1.0 otherwise. The choice
-      * of prefactor is designed to simplify use of the array to compute
-      * stress.
+      * This function returns an array in which element j contains the
+      * derivative of the square-wavevector kSq[j] wtih respect to unit
+      * cell parameter number i, multiplied by a weight factor. If the
+      * flag isRealField is true, then the weight factor is 2.0 for waves
+      * that have an implicit inverse and and 1.0 otherwise. If isReaField
+      * is false, then the weight factor is 1.0 for all wavevectors. The 
+      * inclusion of a weight factor is designed to simplify use of this 
+      * array to compute stress. 
       *
-      * Each element corresponds to one wavevector k in the k-space mesh
-      * used for the DFT. If isRealField is true, this k-space mesh is
-      * smaller than the real-space mesh. Otherwise, it is the same size.
-      * In the latter case, there are no implicit waves, so the prefactor
-      * is always 1.0.
+      * Values of the grid array index j correspond to the the rank of 
+      * the k-space mesh used for discrete Fourier transforms.
       *
       * \param i index of lattice parameter
       */
       RField<D> const & dKSq(int i) const;
 
       /**
+      * Get all derivatives of kSq with respect to unit cell parameters.
+      *
+      * Element i of the DArray is the RField<D> that can also be obtained
+      * from member function dKSq(int i). See documentation of that
+      * function.
+      */
+      DArray< RField<D> > const & dKSq() const;
+
+      /**
       * Get the implicitInverse array by reference.
       *
       * This array is defined on a k-grid mesh, with a boolean value for
-      * each wavevector. The boolean represents whether the inverse of the
-      * wave at the given gridpoint is an implicit wave. Implicit here is
-      * used to mean any wave that is outside the bounds of the k-grid.
+      * each gridpoint. The boolean represents whether the inverse of the
+      * wave at the given gridpoint is an implicit wave in the k-space
+      * mesh used for a discrete Fourier transform of a real function. 
+      * The inverse is implicit if it is outside the bounds of this
+      * truncated k-space mesh. Array indices correspond to ranks within
+      * this k-space mesh.
       *
-      * This method will throw an error if isRealField == false, because
+      * This function throws an Exception if isRealField == false, because
       * there are no implicit inverses in such a case.
       */
-      DeviceArray<bool> const & implicitInverse() const;
+      DArray<bool> const & implicitInverse() const;
 
       /**
       * Get the sortedIds array by reference.
@@ -235,11 +234,12 @@ namespace Cuda {
       * Get the sortedBunches array by reference.
       *
       * Each element in this array contains a Pair<int> of two integers 
-      * that give upper and lower index bounds of a contiguous slice
-      * (a "bunch") that contains ids of wavevectors of equal magnitude.
-      * The first value in such a pair is the array index in sortIds_ of 
-      * the first element of such bunch, and the second is one greater 
-      * than the index of the last element in that bunch.
+      * that give upper and lower bounds for array indices in the 
+      * sortedIds array of a contiguous slice (a "bunch") of sorted
+      * waves for which the wavevector have equal vector magitudes. The 
+      * first integer in such a pair is the array index of the first 
+      * wavevector in such a bunch, and the second is one greater than 
+      * the index of the last wavevector in the bunch.
       *
       * This method throws an Exception if isSorted == false.
       */
@@ -258,20 +258,19 @@ namespace Cuda {
       DArray<int> const & bunchIds() const;
 
       /**
-      * Return the dimensions of the k-space mesh.
-      *
-      * If isRealField() == true, the reciprocal-space grid is smaller
+      * Return the dimensions of the k-grid mesh.
+      * 
+      * If isRealField() == true, the reciprocal-space grid is smaller 
       * than the real-space grid. Otherwise, the two grids are identical.
       */
       IntVec<D> const & kMeshDimensions() const
       {  return kMeshDimensions_; }
 
       /**
-      * Return the number of points in the k-space mesh.
+      * Return the number of points in the k-grid mesh.
       *
       * If isRealField() == true, kSize is approximately half the size
       * of the real-space grid.  Otherwise, the two grids are identical.
-      * 
       */
       int kSize() const
       {  return kSize_; }
@@ -287,7 +286,7 @@ namespace Cuda {
 
       ///@}
       /// \name Boolean Queries
-      ///@{ 
+      ///@{
 
       /**
       * Has memory been allocated for arrays?
@@ -296,19 +295,19 @@ namespace Cuda {
       {  return isAllocated_; }
 
       /**
-      * Have minimum images been computed?
+      * Are minimum images up to date ?
       */
       bool hasMinImages() const
       {  return hasMinImages_; }
 
       /**
-      * Has the kSq array been computed?
+      * Are values of kSq up-to-date ?
       */
       bool hasKSq() const
       {  return hasKSq_; }
 
       /**
-      * Has the dKSq array been computed?
+      * Are values of dKSq up-to-date?
       */
       bool hasdKSq() const
       {  return hasdKSq_; }
@@ -329,71 +328,36 @@ namespace Cuda {
 
    private:
 
-      // Private member variables
-
-      /**
-      * Array containing minimum images for all waves, stored on device.
-      *
-      * The array has size kSize_ * D, where kSize_ is the number of grid
-      * points in reciprocal space. The array is unwrapped into a linear
-      * array in which the first kSize_ elements of the array contain
-      * the the first coordinate for all minimum image, and so on. If
-      * isRealField_ is true, kSize_ is smaller than the size of the
-      * real-space mesh. Otherwise, kSize_ is equal to the size of the
-      * real-space mesh.
+      /*
+      * Array indices for arrays minImages_, kSq_, dKSq_ implicitInverse_,
+      * and bunchIds_ correspond to ranks with the mesh with dimensions
+      * given by kMeshDimensions_.
       */
-      DeviceArray<int> minImages_;
 
       /**
-      * Array of IntVec<D> minimum images for waves, stored on the host.
-      *
-      * Each element of minImageVecs_ contains all D coordinates of the
-      * minimum image for a single wavevector, stored on the host as an
-      * IntVec<D>. The array has capacity kSize_. If isRealField is true,
-      * kSize_ is smaller than the size of the real-space mesh. Otherwise,
-      * kSize_ is equal to the size of the real space mesh.
+      * Array of minimum images for each wave, indexed by wave rank.
       */
-      mutable
-      HostDArray< IntVec<D> > minImages_h_;
+      DArray< IntVec<D> > minImages_;
 
       /**
-      * Array containing values of kSq_, stored on the device.
-      *
-      * The mesh dimensions are those of the reciprocal space mesh.
+      * Array of square-magnitude values for wavevectors.
       */
       RField<D> kSq_;
 
       /**
-      * Array containing all values of dKSq_, stored on the device.
+      * Derivatives of kSq_ with respect to lattice parameters.
       *
-      * The dimensions are kSize_ * nParam, where nParam is the number
-      * of unit cell parameters.
+      * Element kSq_[i][j] is the derivative of kSq_[j] with respect to
+      * lattice parameter i. 
       */
-      DeviceArray<cudaReal> dKSq_;
-
-      /**
-      * Array of RFields, where each RField is a slice of the dKSq_ array.
-      *
-      * The number of elements is equal to nParam, the number of unit cell
-      * parameters.  Element dKSqSlices_[i] is an  RField<D> element that
-      * is associated with a slice of the larger dKSq_ device array, and
-      * that contains derivatives of square wavevectors with respect to
-      * unit cell parameter number i.
-      *
-      * The dKSqSlices_ container should appear after dKSq_ in the
-      * declaration of class members in order to gurantee that the
-      * elements of dkSqSlices_ will be destroyed before the dKSq_
-      * container that owns the data.
-      */
-      DArray< RField<D> > dKSqSlices_;
+      DArray< RField<D> > dKSq_;
 
       /**
       * Array indicating whether a given gridpoint has an implicit partner.
-      *
-      * This array is only allocated and used if isRealField_ is true,
-      * in which case it has size kSize_.
+      * 
+      * This array is allocated and used only if isRealField == true.
       */
-      DeviceArray<bool> implicitInverse_;
+      DArray<bool> implicitInverse_;
 
       /**
       * Wavevector ranks, sorted in ascending wavevector magnitude.
@@ -428,46 +392,34 @@ namespace Cuda {
       /**
       * Dimensions of the mesh in reciprocal space.
       *
-      * If isRealField_ is true, kMeshDimensions_ is equal to the vector
-      * of dimensions of the reciprocal space grid used by a RFieldDft<D>
-      * container to store the discrete Fourier transform of a real field.
-      * One dimension of this mesh is approximately half the corresponding
-      * dimension of the associated real space grid.  If isRealField_
-      * is false, indicating application to a complex field, then
-      * kMeshDimensions_ is equal to the vector of dimensions of the real
-      * space grid.
+      * If isRealField_, the reciprocal-space grid is smaller than the
+      * real-space grid. Otherwise, the two grids have equal dimensions.
       */
       IntVec<D> kMeshDimensions_;
 
       /**
       * Number of grid points in reciprocal space.
       *
-      * The integer kSize_ is the number of elements in the reciprocal
-      * space grid, given by the product of elements of kMeshDimensions_.
-      * If isRealField_, kSize_ is smaller than the size of the real
-      * space mesh, by approximately a factor of 2 for large meshes.
+      * If isRealField_, the reciprocal-space grid is smaller than the
+      * real-space grid. Otherwise, the two grids have equal sizes.
       */
       int kSize_;
 
       /**
-      * Number of distinct wavevector magnitudes.
+      * Number of distinct wavenumbers (i.e., wavevector magnitudes).
       */
       int nBunch_;
 
-      /// Has memory been allocated for private member arrays?
+      /// Has memory been allocated for arrays?
       bool isAllocated_;
 
-      /// Do valid minimum images exist (array minImages_) ?
+      /// Have minimum images been computed?
       bool hasMinImages_;
 
-      /// Have minimum image vectors been re-ordered in minImageVecs_ ?
-      mutable
-      bool hasMinImages_h_;
-
-      /// Do valid values of kSq_ array exist ?
+      /// Has the kSq array been computed?
       bool hasKSq_;
 
-      /// Do valid values of dKSq_ exist ?
+      /// Has the dKSq array been computed?
       bool hasdKSq_;
 
       /// Have the waves been sorted by magnitude?
@@ -482,13 +434,11 @@ namespace Cuda {
       /// Pointer to associated Mesh<D> object
       Mesh<D> const * meshPtr_;
 
-      // Private member functions
-
-      /// Access associated UnitCell<D> by reference.
+      /// Access associated UnitCell<D> by const reference.
       UnitCell<D> const & unitCell() const
       {  return *unitCellPtr_; }
 
-      /// Access associated Mesh<D> by reference.
+      /// Access associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const
       {  return *meshPtr_; }
 
@@ -496,7 +446,7 @@ namespace Cuda {
 
    // Get the array of minimum images on the device by reference.
    template <int D> inline
-   DeviceArray<int> const & WaveList<D>::minImages_d() const
+   DArray< IntVec<D> > const & WaveList<D>::minImages() const
    {
       UTIL_CHECK(hasMinImages_);
       return minImages_;
@@ -510,17 +460,25 @@ namespace Cuda {
       return kSq_;
    }
 
-   // Get a slice of the dKSq array on the device by reference.
-   template <int D> inline 
+   // Get dKSq for unit cell parameter array i.
+   template <int D> inline
    RField<D> const & WaveList<D>::dKSq(int i) const
    {
       UTIL_CHECK(hasdKSq_);
-      return dKSqSlices_[i];
+      return dKSq_[i];
    }
 
-   // Get the implicitInverse array by reference.
+   // Get entire dKSq container by const reference.
    template <int D> inline
-   DeviceArray<bool> const & WaveList<D>::implicitInverse() const
+   DArray< RField<D> > const & WaveList<D>::dKSq() const
+   {
+      UTIL_CHECK(hasdKSq_);
+      return dKSq_;
+   }
+
+   // Get the implicitInverse array by const reference.
+   template <int D> inline
+   DArray<bool> const & WaveList<D>::implicitInverse() const
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);
@@ -528,8 +486,7 @@ namespace Cuda {
    }
 
    // Get the sortedIds array by const reference.
-   template <int D>
-   inline
+   template <int D> inline
    DArray<int> const & WaveList<D>::sortedIds() const
    {
       UTIL_CHECK(isSorted_);
@@ -557,7 +514,7 @@ namespace Cuda {
    extern template class WaveList<2>;
    extern template class WaveList<3>;
 
-} // namespace Cuda
-} // namespace Prdc
-} // namespace Pscf
+} // Cpu
+} // Prdc
+} // Pscf
 #endif

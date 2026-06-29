@@ -10,7 +10,7 @@
 
 #include <rp/fts/brownian/PredCorrBdStep.h> // base class template
 #include <rpc/system/Types.h>               // base class template argument 
-#include <prdc/cpu/RField.h>                // base class member
+#include <prdc/field/cpu/RField.h>                // base class member
 #include <rpc/fts/brownian/BdStep.h>        // indirect base class
 
 namespace Pscf {

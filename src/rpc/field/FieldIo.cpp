@@ -7,9 +7,9 @@
 
 #include "FieldIo.h"                 // class header
 
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldComparison.h>
+#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpu/RField.h>
+#include <prdc/field/cpu/RFieldComparison.h>
 #include <pscf/cpu/complex.h>
 
 #include <rp/field/FieldIoBase.tpp>  // base class template implementation

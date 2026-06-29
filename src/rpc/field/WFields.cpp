@@ -7,7 +7,7 @@
 
 #include "WFields.h"                // class header
 #include <rpc/field/FieldIo.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
 #include <rp/field/WFieldsBase.tpp> // base class implementation
 

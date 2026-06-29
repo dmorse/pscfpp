@@ -7,7 +7,7 @@
 
 #include "Propagator.h"
 #include "Block.h"
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 #include <pscf/mesh/Mesh.h>

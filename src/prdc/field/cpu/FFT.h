@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/RFieldDft.h>   // member
+#include <prdc/field/cpu/RFieldDft.h>   // member
 #include <pscf/math/IntVec.h>     // member
 
 #include <fftw3.h>

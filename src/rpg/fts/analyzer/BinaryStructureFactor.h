@@ -12,8 +12,8 @@
 #include <rpg/system/Types.h>                       // template argument
 #include <rpg/fts/analyzer/Analyzer.h>              // indirect base
 #include <pscf/cuda/HostDArray.h>                   // member
-#include <prdc/cuda/RField.h>                       // base class member
-#include <prdc/cuda/RFieldDft.h>                    // base class member
+#include <prdc/field/cuda/RField.h>                       // base class member
+#include <prdc/field/cuda/RFieldDft.h>                    // base class member
 
 namespace Pscf {
 namespace Rpg {

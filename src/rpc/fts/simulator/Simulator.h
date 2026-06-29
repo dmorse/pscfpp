@@ -11,7 +11,7 @@
 #include <rp/fts/simulator/Simulator.h>    // base class template
 #include <rpc/system/Types.h>              // template argument
 #include <rpc/fts/simulator/SimState.h>    // member
-#include <prdc/cpu/RField.h>               // member (template arg)
+#include <prdc/field/cpu/RField.h>               // member (template arg)
 
 // Explicit instantiation declarations
 namespace Pscf {

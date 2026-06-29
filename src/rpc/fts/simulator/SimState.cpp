@@ -6,7 +6,7 @@
 */
 
 #include "SimState.h"
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 #include <rp/fts/simulator/SimState.tpp>
 
 // Explicit instantiation definitions

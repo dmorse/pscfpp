@@ -9,7 +9,7 @@
 */
 
 #include <pscf/chem/SolventSpecies.h>   // base class
-#include <prdc/cpu/CField.h>            // member
+#include <prdc/field/cpu/CField.h>            // member
 #include <complex>
 
 // Forward declaration

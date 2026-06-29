@@ -9,10 +9,10 @@
 #include <rpg/system/System.h>
 #include <rpg/field/CFields.h>
 
-#include <prdc/cuda/FFT.h>
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/RFieldDft.h>
-#include <prdc/cuda/RFieldComparison.h>
+#include <prdc/field/cuda/FFT.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/RFieldDft.h>
+#include <prdc/field/cuda/RFieldComparison.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/PolymerSpecies.h>
 #include <pscf/chem/PolymerModel.h>

@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cpu/FftwDRArray.h>
+#include <prdc/field/cpu/FftwDRArray.h>
 
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>

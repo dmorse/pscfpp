@@ -1,0 +1,15 @@
+prdc_field_cuda_= \
+  prdc/field/cuda/RField.cu \
+  prdc/field/cuda/RFieldDft.cu \
+  prdc/field/cuda/CField.cu \
+  prdc/field/cuda/HostDArrayComplex.cu \
+  prdc/field/cuda/RFieldComparison.cu \
+  prdc/field/cuda/RFieldDftComparison.cu \
+  prdc/field/cuda/CFieldComparison.cu \
+  prdc/field/cuda/FFT.cu \
+  prdc/field/cuda/FFTBatched.cu \
+  prdc/field/cuda/WaveList.cu 
+
+prdc_field_cuda_OBJS=\
+     $(addprefix $(BLD_DIR)/, $(prdc_field_cuda_:.cu=.o))
+

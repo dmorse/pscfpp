@@ -15,10 +15,10 @@
 #include <rpg/field/WFields.h>
 #include <rpg/field/FieldIo.h>
 
-#include <prdc/cuda/RField.h> 
-#include <prdc/cuda/RFieldComparison.h>
+#include <prdc/field/cuda/RField.h> 
+#include <prdc/field/cuda/RFieldComparison.h>
 
-#include <prdc/cuda/resources.h>
+#include <prdc/field/cuda/resources.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/interaction/Interaction.h>
 

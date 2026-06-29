@@ -10,7 +10,7 @@
 
 #include <rp/field/FieldIoBase.h>   // base class template
 #include <rpg/system/Types.h>       // base class template argument
-#include <prdc/cuda/RFieldDft.h>    // base class member
+#include <prdc/field/cuda/RFieldDft.h>    // base class member
 
 // Forward declarations for classes used only via references or pointers
 namespace Util {

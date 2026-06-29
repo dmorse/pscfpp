@@ -9,8 +9,8 @@
 */
 
 #include <cp/field/FieldIo.h>         // base class template
-#include <prdc/cpu/CField.h>    // base class template argument
-#include <prdc/cpu/FFT.h>       // base class template argument
+#include <prdc/field/cpu/CField.h>    // base class template argument
+#include <prdc/field/cpu/FFT.h>       // base class template argument
 
 // Forward declarations
 namespace Util {

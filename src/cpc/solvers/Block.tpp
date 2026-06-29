@@ -11,8 +11,8 @@
 #include "Block.h"
 #include "Propagator.h"
 
-#include <prdc/cpu/WaveList.h>
-#include <prdc/cpu/FFT.h>
+#include <prdc/field/cpu/WaveList.h>
+#include <prdc/field/cpu/FFT.h>
 #include <pscf/cpu/complex.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>

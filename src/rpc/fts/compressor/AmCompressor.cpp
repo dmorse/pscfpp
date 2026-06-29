@@ -11,7 +11,7 @@
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 

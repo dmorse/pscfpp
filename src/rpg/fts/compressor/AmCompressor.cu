@@ -12,7 +12,7 @@
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
 
-#include <prdc/cuda/RField.h>
+#include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 

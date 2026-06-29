@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cpu/FFT.h>
+#include <prdc/field/cpu/FFT.h>
 #include <prdc/crystal/sortWaves.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>

@@ -10,7 +10,7 @@
 
 #include <rp/field/Mask.h>       // base class template
 #include <rpc/system/Types.h>    // base class template argument
-#include <prdc/cpu/RField.h>     // base class member
+#include <prdc/field/cpu/RField.h>     // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {

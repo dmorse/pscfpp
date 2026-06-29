@@ -9,7 +9,7 @@
 */
 
 #include "RFieldDftComparison.h"
-#include <prdc/cpu/RFieldDft.h>
+#include <prdc/field/cpu/RFieldDft.h>
 #include <util/containers/DArray.h>
 #include <cmath>
 

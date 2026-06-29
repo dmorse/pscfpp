@@ -12,8 +12,8 @@
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOpCx.h>
 
 #include <rp/fts/analyzer/MaxOrderParameter.tpp>

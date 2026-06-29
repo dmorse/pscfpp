@@ -7,9 +7,9 @@
 #include <cpc/field/Domain.h>
 #include <cpc/field/FieldIo.h>
 
-#include <prdc/cpu/RField.h>
-#include <prdc/cpu/RFieldDft.h>
-#include <prdc/cpu/FFT.h>
+#include <prdc/field/cpu/RField.h>
+#include <prdc/field/cpu/RFieldDft.h>
+#include <prdc/field/cpu/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>

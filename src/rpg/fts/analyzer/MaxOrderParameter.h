@@ -11,8 +11,8 @@
 #include <rp/fts/analyzer/MaxOrderParameter.h>   // direct base template
 #include <rpg/system/Types.h>                    // base class argument
 #include <rpg/fts/analyzer/AverageAnalyzer.h>    // indirect base
-#include <prdc/cuda/RField.h>                    // direct base member
-#include <prdc/cuda/RFieldDft.h>                 // direct base member
+#include <prdc/field/cuda/RField.h>                    // direct base member
+#include <prdc/field/cuda/RFieldDft.h>                 // direct base member
 #include <pscf/cuda/HostDArray.h>                // member
 #include <pscf/cuda/cudaTypes.h>                 // member
 

@@ -11,13 +11,13 @@
 #include <pscf/solvers/BlockTmpl.h>      // base class template
 
 #include <rpg/system/Types.h>            // template argument
-#include <prdc/cuda/RField.h>            // member
-#include <prdc/cuda/RFieldDft.h>         // member
-#include <prdc/cuda/FFTBatched.h>        // member
+#include <prdc/field/cuda/RField.h>            // member
+#include <prdc/field/cuda/RFieldDft.h>         // member
+#include <prdc/field/cuda/FFTBatched.h>        // member
 #include <pscf/cuda/DeviceArray.h>       // member
 #include <util/containers/FSArray.h>     // member
 
-#include <prdc/cuda/resources.h>
+#include <prdc/field/cuda/resources.h>
 
 // Forward declarations
 namespace Pscf {

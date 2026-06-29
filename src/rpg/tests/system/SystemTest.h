@@ -14,8 +14,8 @@
 #include <rpg/field/WFields.h>
 #include <rpg/field/CFields.h>
 #include <rpg/field/Mask.h>
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/resources.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/resources.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
 

@@ -10,14 +10,14 @@
 
 #include "FieldIo.h"               // class header
 
-#include <prdc/cuda/HostDArrayComplex.h>
-#include <prdc/cuda/RFieldComparison.h>
+#include <prdc/field/cuda/HostDArrayComplex.h>
+#include <prdc/field/cuda/RFieldComparison.h>
 #include <prdc/fieldIo/fieldCheck.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/FFT.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/FFT.h>
 
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/VecOp.h>

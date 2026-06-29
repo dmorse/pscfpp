@@ -8,8 +8,8 @@
 #include <cpc/solvers/Propagator.h>
 #include <cpc/field/Domain.h>
 
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/WaveList.h>
+#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpu/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>

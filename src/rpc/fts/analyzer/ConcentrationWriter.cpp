@@ -14,7 +14,7 @@
 #include <rpc/field/FieldIo.h>
 #include <rpc/field/CFields.h>
 #include <rpc/field/WFields.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/RField.h>
 
 #include <rp/fts/analyzer/ConcentrationWriter.tpp>
 

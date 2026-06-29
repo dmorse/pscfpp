@@ -10,7 +10,7 @@
 
 #include <rp/solvers/Solvent.h>    // base class template
 #include <rpc/system/Types.h>      // base class template parameter
-#include <prdc/cpu/RField.h>       // member of base class
+#include <prdc/field/cpu/RField.h>       // member of base class
 
 // Explicit instantiation declarations
 namespace Pscf {

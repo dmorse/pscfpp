@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cuda/CField.h>
+#include <prdc/field/cuda/CField.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {

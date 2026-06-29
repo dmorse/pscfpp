@@ -12,8 +12,8 @@
 #include <rpg/solvers/Block.h>
 #include <rpg/solvers/Propagator.h>
 #include <rpg/field/FieldIo.h>
-#include <prdc/cuda/FFT.h>
-#include <prdc/cuda/RField.h>
+#include <prdc/field/cuda/FFT.h>
+#include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 
 #include <rp/solvers/MixtureBase.tpp>   // base class template implementation

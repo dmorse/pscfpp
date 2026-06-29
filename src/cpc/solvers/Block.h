@@ -10,8 +10,8 @@
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
 
-#include <prdc/cpu/CField.h>              // members
-#include <prdc/cpu/RField.h>              // member
+#include <prdc/field/cpu/CField.h>              // members
+#include <prdc/field/cpu/RField.h>              // member
 
 namespace Pscf {
 

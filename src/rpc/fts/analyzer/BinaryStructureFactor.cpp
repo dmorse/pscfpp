@@ -13,8 +13,8 @@
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
 
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/WaveList.h>
+#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpu/WaveList.h>
 
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/VecOpCx.h>

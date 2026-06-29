@@ -3,7 +3,7 @@
 
 # Include source list files from subdirectories
 include $(SRC_DIR)/prdc/crystal/sources.mk
-include $(SRC_DIR)/prdc/cpu/sources.mk
+include $(SRC_DIR)/prdc/field/cpu/sources.mk
 include $(SRC_DIR)/prdc/fieldIo/sources.mk
 include $(SRC_DIR)/prdc/environment/sources.mk
 
@@ -11,7 +11,7 @@ include $(SRC_DIR)/prdc/environment/sources.mk
 
 prdc_CPP= \
   $(prdc_crystal_) \
-  $(prdc_cpu_) \
+  $(prdc_field_cpu_) \
   $(prdc_fieldIo_) \
   $(prdc_environment_) 
 
@@ -23,8 +23,8 @@ prdc_OBJS = $(prdc_CPP_OBJS)
 # CUDA C++ source files
 
 ifdef PSCF_CUDA
-  include $(SRC_DIR)/prdc/cuda/sources.mk
-  prdc_OBJS += $(prdc_cuda_OBJS)
+  include $(SRC_DIR)/prdc/field/cuda/sources.mk
+  prdc_OBJS += $(prdc_field_cuda_OBJS)
 endif
 
 #-----------------------------------------------------------------------

@@ -11,7 +11,7 @@
 #include <rp/fts/brownian/ExplicitBdStep.h>  // base class template
 #include <rpc/system/Types.h>                // base template argument 
 #include <rpc/fts/brownian/BdStep.h>         // indirect base class
-#include <prdc/cpu/RField.h>                 // base class member
+#include <prdc/field/cpu/RField.h>                 // base class member
 
 namespace Pscf {
 namespace Rpc {

@@ -4,11 +4,11 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/RFieldDft.h>
-#include <prdc/cuda/RFieldComparison.h>
-#include <prdc/cuda/RFieldDftComparison.h>
-#include <prdc/cuda/CFieldComparison.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/RFieldDft.h>
+#include <prdc/field/cuda/RFieldComparison.h>
+#include <prdc/field/cuda/RFieldDftComparison.h>
+#include <prdc/field/cuda/CFieldComparison.h>
 
 #include <pscf/cuda/HostDArray.h>
 

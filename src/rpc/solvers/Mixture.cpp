@@ -12,8 +12,8 @@
 #include <rpc/solvers/Propagator.h>
 #include <rpc/field/FieldIo.h>
 
-#include <prdc/cpu/FFT.h>
-#include <prdc/cpu/RField.h>
+#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpu/RField.h>
 
 #include <pscf/cpu/VecOp.h>
 

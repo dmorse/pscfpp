@@ -7,7 +7,7 @@
 
 #include "CFields.h"              // class header
 #include <rpg/field/FieldIo.tpp> 
-#include <prdc/cuda/RField.tpp> 
+#include <prdc/field/cuda/RField.tpp> 
 
 #include <rp/field/CFields.tpp>   // base class implementation
 

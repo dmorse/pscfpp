@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_C_FIELD_H
-#define PRDC_CPU_C_FIELD_H
+#ifndef PRDC_CPU_R_FIELD_H
+#define PRDC_CPU_R_FIELD_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -8,84 +8,76 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/cpu/FftwDRArray.h>    // base class
+#include <prdc/field/cpu/FftwDRArray.h>   // base class
 #include <pscf/math/IntVec.h>       // member
-#include <fftw3.h>
 
 namespace Pscf {
 namespace Prdc {
 namespace Cpu {
 
    using namespace Util;
-   using namespace Pscf;
 
    /**
-   * Field of complex double precision values on an FFT mesh.
+   * Field of real double precision values on an FFT mesh.
    * 
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class CField : public FftwDRArray<fftw_complex>
+   class RField : public FftwDRArray<double>
    {
 
    public:
 
-      // Type aliases
+      // Public type alias 
 
-      using FftwDRArray<fftw_complex>::ValueType;
+      using FftwDRArray<double>::ValueType;
 
-      /**
-      * Type of real and imaginary parts of a complex value
-      */
-      using RealType = double;
-
-      // Member functions
+      // Public member functions
 
       /**
       * Default constructor.
       */
-      CField();
+      RField();
 
       /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
-      *\param other the CField to be copied.
+      *\param other the RField to be copied.
       */
-      CField(const CField& other);
+      RField(const RField& other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~CField();
+      virtual ~RField();
 
       /**
       * Assignment operator.
       *
-      * If this field is not allocated, this function allocates the field
-      * and copies all elements.
+      * If this Field is not allocated, allocates and copies all elements.
       *
-      * If this and the other field are both allocated, the capacities must
-      * be equal. If so, this functions copies all elements.
+      * If this and the other Field are both allocated, the capacities must
+      * be exactly equal. If so, this method copies all elements.
       *
-      * \param other the RHS CField
+      * \param other the RHS RField
       */
-      CField& operator = (const CField& other);
+      RField& operator = (const RField& other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
       *
-      * \throw Exception if the CField is already allocated.
+      * \throw Exception if the RField is already allocated.
       *
       * \param meshDimensions vector of numbers of grid points per direction
       */
-      void allocate(const IntVec<D>& meshDimensions);
+      void allocate(IntVec<D> const & meshDimensions);
 
       /**
-      * Deallocate underlying C array and clear mesh dimensions.
+      * Deallocate memory and return to empty state.
       */
       virtual void deallocate();
 
@@ -108,7 +100,7 @@ namespace Cpu {
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      using FftwDRArray<fftw_complex>::allocate;
+      using FftwDRArray<double>::allocate;
 
    };
 
@@ -116,7 +108,7 @@ namespace Cpu {
    * Return mesh dimensions by constant reference.
    */
    template <int D>
-   inline const IntVec<D>& CField<D>::meshDimensions() const
+   inline const IntVec<D>& RField<D>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
@@ -124,18 +116,18 @@ namespace Cpu {
    */
    template <int D>
    template <class Archive>
-   void CField<D>::serialize(Archive& ar, const unsigned int version)
+   void RField<D>::serialize(Archive& ar, const unsigned int version)
    {
-      FftwDRArray<fftw_complex>::serialize(ar, version);
+      FftwDRArray<double>::serialize(ar, version);
       ar & meshDimensions_;
    }
 
    // Explicit instantiation declarations
-   extern template class CField<1>;
-   extern template class CField<2>;
-   extern template class CField<3>;
+   extern template class RField<1>;
+   extern template class RField<2>;
+   extern template class RField<3>;
 
-}
-}
-}
+} // namespace Cpu
+} // namespace Prdc
+} // namespace Pscf
 #endif

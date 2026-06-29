@@ -13,9 +13,9 @@
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/cudaTypes.h>
 
-#include <prdc/cuda/RField.h>
-#include <prdc/cuda/FFT.h>
-#include <prdc/cuda/WaveList.h>
+#include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/FFT.h>
+#include <prdc/field/cuda/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>

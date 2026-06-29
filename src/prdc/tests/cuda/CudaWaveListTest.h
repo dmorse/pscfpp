@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/cuda/WaveList.h>
+#include <prdc/field/cuda/WaveList.h>
 #include <pscf/cuda/cudaTypes.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
