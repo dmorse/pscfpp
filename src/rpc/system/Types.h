@@ -30,24 +30,29 @@ namespace Pscf {
       }
    }
    namespace Rpc {
-      template <int D> class SystemConstRef;
-      //template <int D> class Mixture;
-      //template <int D> class MixtureModifier;
-      //template <int D> class Polymer;
-      //template <int D> class Solvent;
-      //template <int D> class Block;
-      //template <int D> class Propagator;
-      //template <int D> class Domain;
-      //template <int D> class FieldIo;
+
       //template <int D> class WFields;
       //template <int D> class CFields;
       //template <int D> class Mask;
+      //template <int D> class FieldIo;
+      //template <int D> class Domain;
+
+      //template <int D> class Propagator;
+      //template <int D> class Block;
+      //template <int D> class Polymer;
+      //template <int D> class Solvent;
+      //template <int D> class Mixture;
+      //template <int D> class MixtureModifier;
   
+      //template <int D> class System;
+      template <int D> class SystemConstRef;
+
       template <int D> class EnvironmentFactory;
 
       //template <int D> class ScftThermo;
       //template <int D> class Iterator;
       //template <int D> class IteratorFactory;
+
       //template <int D> class Sweep;
       //template <int D> class SweepParameter;
       //template <int D> class BasisFieldState;
@@ -122,8 +127,11 @@ namespace Rpc {
       using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
       using WaveList = Prdc::Cpu::WaveList<D>;
 
-      //using System = Rp::System<D, Rpc::Types<D> >;
-      using SystemConstRef = Rpc::SystemConstRef<D>;
+      //using WFields = Rpc::WFields<D>;
+      //using CFields = Rpc::CFields<D>;
+      //using Mask = Rpc::Mask<D>;
+      //using FieldIo = Rpc::FieldIo<D>;
+      //using Domain = Rpc::Domain<D>;
 
       //using Mixture = Rp::Mixture<D, Rpc::Types<D> >;
       //using MixtureModifier = Rp::MixtureModifier<D, Rpc::Types<D> >;
@@ -132,11 +140,8 @@ namespace Rpc {
       //using Block = Rpc::Block<D>;
       //using Propagator = Propagator<D, Rpc::Types<D> >;
 
-      //using Domain = Rpc::Domain<D>;
-      //using FieldIo = Rpc::FieldIo<D>;
-      //using WFields = Rpc::WFields<D>;
-      //using CFields = Rpc::CFields<D>;
-      //using Mask = Rpc::Mask<D>;
+      //using System = Rp::System<D, Rpc::Types<D> >;
+      using SystemConstRef = Rpc::SystemConstRef<D>;
 
       using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpc::EnvironmentFactory<D>;
@@ -155,8 +160,8 @@ namespace Rpc {
       //using SimulatorFactory = Rp::SimulatorFactory<D, Rpc::Types<D> >;
 
       //using Compressor = Rp::Compressor<D, Rpc::Types<D> >;
-      using CompressorFactory = Rpc::CompressorFactory<D>;
       using IntraCorrelation = Rpc::IntraCorrelation<D>;
+      using CompressorFactory = Rpc::CompressorFactory<D>;
 
       //using BdSimulator = Rp::BdSimulator<D, Rpc::Types<D> >;
       //using BdStep = Rp::BdStep<D, Rpc::Types<D> >;

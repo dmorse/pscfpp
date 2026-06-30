@@ -8,9 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>   // base class
-#include <rp/scft/iterator/Iterator.h>      // indirect base class
-#include <pscf/iterator/AmbdInteraction.h>  // member
+#include <pscf/iterator/AmIteratorTmpl.h>    // base class template
+#include <rp/scft/iterator/Iterator.h>       // base class argument
+#include <pscf/iterator/AmbdInteraction.h>   // member
+
 #include <iostream>
 
 namespace Pscf {
@@ -23,21 +24,11 @@ namespace Rp {
    *
    * This variant of the Anderson mixing algorithm uses a regular 
    * computational mesh to represent all fields, with no imposed symmetry.
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named AmIteratorGrid,
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
-   * and pscf_rpg programs, respectively.
    *
    * Template parameters:
    *
    *   - D : dimension
    *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
-   *
-   * Typename T::Vector must be Util::DArray<double> for use in the
-   * Rpc namespace and Pscf::DevArray<cudaReal> for use in the Rpg
-   * namespace. Both classes allow the same container to either own
-   * data or be associated with a slice of data that is owned by 
-   * another instance of the same class.
    *
    * \see \ref rp_AmIteratorGrid_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
@@ -85,18 +76,15 @@ namespace Rp {
       */
       void setup(bool isContinuation) override;
 
-      /// Alias for Iterator type.
-      using IteratorT = Iterator<D,T>;
-
       /// Alias for type of state and residual vectors.
       using VectorT = typename T::Vector;
 
       /// Alias for base class.
-      using AmIterTmplT = AmIteratorTmpl< IteratorT, VectorT >;
+      using AmIterTmplT = AmIteratorTmpl< Iterator<D,T> , VectorT >;
 
       // Inherited protected members
-      using IteratorT::system;
-      using IteratorT::flexibleParams_;
+      using Iterator<D,T>::system;
+      using Iterator<D,T>::flexibleParams_;
 
    private:
 
@@ -157,9 +145,6 @@ namespace Rp {
       // Private type aliases
       using RealT = double;
       using RFieldT = typename T::RField;
-
-      //template <typename Data> 
-      //using HostArrayT = (typename T::HostDArray)<Data>;
 
    };
 

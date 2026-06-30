@@ -8,49 +8,10 @@
 #include "IteratorFactory.h"  
 
 // Subclasses of Iterator 
-#include "AmIteratorBasis.h"
-#include "AmIteratorGrid.h"
+#include <rpg/scft/iterator/AmIteratorBasis.h>
+#include <rpg/scft/iterator/AmIteratorGrid.h>
 
-namespace Pscf {
-namespace Rp {
-
-   using namespace Util;
-
-   /*
-   * Constructor
-   */
-   template <int D>
-   IteratorFactory<D, Rpg::Types<D> >::IteratorFactory(Rp::System<D, Rpg::Types<D> >& system)
-    : sysPtr_(&system)
-   {}
-
-   /* 
-   * Return a pointer to a instance of Iterator subclass className.
-   */
-   template <int D>
-   Iterator<D, Rpg::Types<D> >* 
-   IteratorFactory<D, Rpg::Types<D> >::factory(std::string const& className) 
-   const
-   {
-      Iterator<D, Rpg::Types<D> >* ptr = 0;
-
-      // Try subfactories first
-      ptr = trySubfactories(className);
-      if (ptr) return ptr;
- 
-      // Try to match classname
-      if (className == "Iterator" || className == "AmIteratorBasis") {
-         ptr = new AmIteratorBasis<D, Rpg::Types<D> >(*sysPtr_);
-      } else 
-      if (className == "AmIteratorGrid") {
-         ptr = new AmIteratorGrid<D, Rpg::Types<D> >(*sysPtr_);
-      }
-
-      return ptr;
-   }
-
-}
-}
+#include <rp/scft/iterator/IteratorFactory.tpp>  // template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

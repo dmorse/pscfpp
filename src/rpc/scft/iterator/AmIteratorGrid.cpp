@@ -6,43 +6,35 @@
 */
 
 #include "AmIteratorGrid.h"                    // class header
+
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/CFields.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/Mask.h>
+
 #include <prdc/field/cpu/RField.h>
+
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
-#include <rp/scft/iterator/AmIteratorGrid.tpp> // base class implementation
-
-#if 0
-namespace Pscf {
-   namespace Rpc {
-
-      // Constructor
-      template <int D>
-      Rp::AmIteratorGrid<D, Rpc::Types<D> >::AmIteratorGrid(Rp::System<D, Rpc::Types<D> >& system)
-       : Rp::AmIteratorGrid<D, Types<D> >(system)
-      {}
-
-   }
-}
-#endif
+#include <rp/scft/iterator/AmIteratorGrid.tpp> // template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
+
    template class 
    AmIteratorTmpl< Rp::Iterator<1, Rpc::Types<1> >, DRArray<double> >;
    template class 
    AmIteratorTmpl< Rp::Iterator<2, Rpc::Types<2> >, DRArray<double> >;
    template class 
    AmIteratorTmpl< Rp::Iterator<3, Rpc::Types<3> >, DRArray<double> >;
+
    namespace Rp {
       template class AmIteratorGrid<1, Rpc::Types<1> >;
       template class AmIteratorGrid<2, Rpc::Types<2> >;
       template class AmIteratorGrid<3, Rpc::Types<3> >;
    }
+
 }

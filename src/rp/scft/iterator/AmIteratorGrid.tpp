@@ -9,15 +9,26 @@
 */
 
 #include "AmIteratorGrid.h"
+
+#include <rp/system/System.h>
+//#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+//#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
+
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
+
 #include <pscf/interaction/Interaction.h>
+
 #include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
+
 #include <cmath>
 
-#include <pscf/iterator/AmIteratorTmpl.tpp>
+#include <pscf/iterator/AmIteratorTmpl.tpp> // base template impl.
 
 namespace Pscf {
 namespace Rp {
@@ -36,9 +47,9 @@ namespace Rp {
       interaction_(),
       scaleStress_(1.0)
    {
-      IteratorT::setSystem(system);
+      Iterator<D,T>::setSystem(system);
       ParamComposite::setClassName("AmIteratorGrid");
-      IteratorT::isSymmetric_ = false;
+      Iterator<D,T>::isSymmetric_ = false;
    }
 
    /*
@@ -66,12 +77,12 @@ namespace Rp {
       AmIterTmplT::readErrorType(in);
 
       // Read optional isFlexible boolean (true by default)
-      IteratorT::isFlexible_ = 1;
+      Iterator<D,T>::isFlexible_ = 1;
       ParamComposite::readOptional(in, "isFlexible", 
-                                   IteratorT::isFlexible_);
+                                   Iterator<D,T>::isFlexible_);
 
       // Populate flexibleParams_ bool array, based on isFlexible_ 
-      if (IteratorT::isFlexible_) {
+      if (Iterator<D,T>::isFlexible_) {
          // Initialize to all true by default
          flexibleParams_.clear();
          for (int i = 0; i < np; ++i) {
@@ -80,8 +91,8 @@ namespace Rp {
          // Optionally read flexibleParams_ array (overwrites default)
          ParamComposite::readOptionalFSArray(in, "flexibleParams",
                                              flexibleParams_, np);
-         if (IteratorT::nFlexibleParams() == 0) {
-            IteratorT::isFlexible_ = false;
+         if (Iterator<D,T>::nFlexibleParams() == 0) {
+            Iterator<D,T>::isFlexible_ = false;
          }
       } else { //  if isFlexible_ == false
          // Set all elements of flexibleParams_ to false
@@ -137,8 +148,8 @@ namespace Rp {
       const int nMesh = system().domain().mesh().size();
 
       int nEle = nMonomer*nMesh;
-      if (IteratorT::isFlexible_) {
-         nEle += IteratorT::nFlexibleParams();
+      if (Iterator<D,T>::isFlexible_) {
+         nEle += Iterator<D,T>::nFlexibleParams();
       }
       return nEle;
    }
@@ -170,8 +181,8 @@ namespace Rp {
       }
 
       // If flexible unit cell, also store unit cell parameters
-      if (IteratorT::isFlexible_) {
-         int nFlex = IteratorT::nFlexibleParams();
+      if (Iterator<D,T>::isFlexible_) {
+         int nFlex = Iterator<D,T>::nFlexibleParams();
          UTIL_CHECK(nFlex > 0);
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double, 6> const & parameters = unitCell.parameters();
@@ -199,7 +210,7 @@ namespace Rp {
    */
    template <int D, class T>
    void AmIteratorGrid<D,T>::evaluate()
-   {  system().compute(IteratorT::isFlexible_); }
+   {  system().compute(Iterator<D,T>::isFlexible_); }
 
    /*
    * Compute the residual for the current system state.
@@ -259,7 +270,7 @@ namespace Rp {
       }
 
       // If flexible unit cell, then compute stress residuals
-      if (IteratorT::isFlexible_) {
+      if (Iterator<D,T>::isFlexible_) {
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -272,13 +283,13 @@ namespace Rp {
 
          const RealT scale = -1.0 * scaleStress_;
          const int nParam = system().domain().unitCell().nParameter();
-         const int nFlex = IteratorT::nFlexibleParams();
+         const int nFlex = Iterator<D,T>::nFlexibleParams();
          DArray<RealT> stressTmp(nFlex);
          //HostArrayT<RealT> stressTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               stressTmp[counter] = scale * IteratorT::stress(i);
+               stressTmp[counter] = scale * Iterator<D,T>::stress(i);
                counter++;
             }
          }
@@ -367,9 +378,9 @@ namespace Rp {
       system().w().setRGrid(wFields);
 
       // If flexible, update unit cell parameters
-      if (IteratorT::isFlexible_) {
+      if (Iterator<D,T>::isFlexible_) {
          const int nParam = domain.unitCell().nParameter();
-         const int nFlex = IteratorT::nFlexibleParams();
+         const int nFlex = Iterator<D,T>::nFlexibleParams();
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
@@ -406,10 +417,10 @@ namespace Rp {
    template <int D, class T>
    void AmIteratorGrid<D,T>::outputToLog()
    {
-      if (IteratorT::isFlexible_ && AmIterTmplT::verbose() > 1) {
+      if (Iterator<D,T>::isFlexible_ && AmIterTmplT::verbose() > 1) {
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
-         const int nFlex = IteratorT::nFlexibleParams();
+         const int nFlex = Iterator<D,T>::nFlexibleParams();
          const int nMonomer = system().mixture().nMonomer();
          const int nMesh = system().domain().mesh().size();
          const int begin = nMonomer*nMesh;

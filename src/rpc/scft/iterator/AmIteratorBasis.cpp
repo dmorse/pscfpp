@@ -12,33 +12,27 @@
 #include <rpc/field/CFields.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/Mask.h>
+
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
-#include <rp/scft/iterator/AmIteratorBasis.tpp>     // base class implementation
-
-#if 0
-namespace Pscf {
-   namespace Rpc {
-  
-      // Constructor
-      template <int D>
-      Rp::AmIteratorBasis<D, Rpc::Types<D> >::AmIteratorBasis(Rp::System<D, Rpc::Types<D> >& system)
-       : Rp::AmIteratorBasis<D, Types<D> >(system)
-      {}
-
-   }
-}
-#endif
+#include <rp/scft/iterator/AmIteratorBasis.tpp> // template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class AmIteratorTmpl< Rp::Iterator<1, Rpc::Types<1> >, DArray<double> >;
-   template class AmIteratorTmpl< Rp::Iterator<2, Rpc::Types<2> >, DArray<double> >;
-   template class AmIteratorTmpl< Rp::Iterator<3, Rpc::Types<3> >, DArray<double> >;
+
+   // Base class instantiation definitions
+   template class 
+   AmIteratorTmpl< Rp::Iterator<1, Rpc::Types<1> >, DArray<double> >;
+   template class 
+   AmIteratorTmpl< Rp::Iterator<2, Rpc::Types<2> >, DArray<double> >;
+   template class 
+   AmIteratorTmpl< Rp::Iterator<3, Rpc::Types<3> >, DArray<double> >;
+
    namespace Rp {
       template class AmIteratorBasis<1, Rpc::Types<1> >;
       template class AmIteratorBasis<2, Rpc::Types<2> >;
       template class AmIteratorBasis<3, Rpc::Types<3> >;
    }
+
 }

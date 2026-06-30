@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>    // direct base class
-#include <rp/scft/iterator/Iterator.h>       // indirect base class
+#include <pscf/iterator/AmIteratorTmpl.h>    // base class template
+#include <rp/scft/iterator/Iterator.h>       // base template argument
+#include <util/containers/DArray.h>          // base template argument
 #include <pscf/iterator/AmbdInteraction.h>   // direct base member 
-#include <util/containers/DArray.h>          // indirect base member
 
 namespace Pscf {
 namespace Rp {
@@ -81,18 +81,15 @@ namespace Rp {
       */
       void setup(bool isContinuation) override;
 
-      /// Alias for iterator type.
-      using IteratorT = Iterator<D,T>;
-
       /// Alias for type of residual and state vectors
       using VectorT = DArray<double>;
 
       /// Alias for base class.
-      using AmIterTmplT = AmIteratorTmpl< IteratorT, VectorT >;
+      using AmIterTmplT = AmIteratorTmpl< Iterator<D,T>, VectorT>;
 
       // Inherited protected members
-      using IteratorT::system;
-      using IteratorT::flexibleParams_;
+      using Iterator<D,T>::system;
+      using Iterator<D,T>::flexibleParams_;
 
    private:
 

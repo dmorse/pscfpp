@@ -12,12 +12,18 @@
 
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/compressor/Compressor.h>
+#include <rp/scft/sweep/SweepFactory.h>
+#include <rp/scft/sweep/Sweep.h>
+#include <rp/scft/iterator/IteratorFactory.h>
+#include <rp/scft/iterator/Iterator.h>
+#include <rp/scft/ScftThermo.h>
 //#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
 //#include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
+#include <prdc/environment/Environment.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 

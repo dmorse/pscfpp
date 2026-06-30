@@ -9,15 +9,25 @@
 */
 
 #include "AmIteratorBasis.h"
+
+#include <rp/system/System.h>
+//#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+//#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
+
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+
 #include <pscf/interaction/Interaction.h>
 #include <pscf/iterator/NanException.h>
 #include <util/containers/DArray.h>
+
 #include <util/global.h>
 #include <cmath>
 
-#include <pscf/iterator/AmIteratorTmpl.tpp>
+#include <pscf/iterator/AmIteratorTmpl.tpp> // base template implementation
 
 namespace Pscf {
 namespace Rp {
@@ -36,8 +46,8 @@ namespace Rp {
       interaction_(),
       scaleStress_(10.0)
    {
-      IteratorT::setSystem(system);
-      IteratorT::isSymmetric_ = true;  
+      Iterator<D,T>::setSystem(system);
+      Iterator<D,T>::isSymmetric_ = true;  
       ParamComposite::setClassName("AmIteratorBasis"); 
    }
 
@@ -65,12 +75,12 @@ namespace Rp {
       UTIL_CHECK(np <= 6);
 
       // Read optional isFlexible boolean (true by default)
-      IteratorT::isFlexible_ = 1;  // Default
+      Iterator<D,T>::isFlexible_ = 1;  // Default
       ParamComposite::readOptional(in, "isFlexible", 
-                                   IteratorT::isFlexible_);
+                                   Iterator<D,T>::isFlexible_);
 
       // Populate flexibleParams_ bool array
-      if (IteratorT::isFlexible_) {
+      if (Iterator<D,T>::isFlexible_) {
          flexibleParams_.clear();
          // Set all flexibleParams_ values to true by default
          for (int i = 0; i < np; i++) {
@@ -79,8 +89,8 @@ namespace Rp {
          // Optionally read flexibleParams_ array
          ParamComposite::readOptionalFSArray(in, "flexibleParams", 
                                              flexibleParams_, np);
-         if (IteratorT::nFlexibleParams() == 0) {
-            IteratorT::isFlexible_ = false;
+         if (Iterator<D,T>::nFlexibleParams() == 0) {
+            Iterator<D,T>::isFlexible_ = false;
          }
       } else { // If isFlexible_ == false
          // Set all flexibleParams_ values to false
@@ -136,8 +146,8 @@ namespace Rp {
       const int nBasis = system().domain().basis().nBasis();
 
       int nEle = nMonomer*nBasis;
-      if (IteratorT::isFlexible_) {
-         nEle += IteratorT::nFlexibleParams();
+      if (Iterator<D,T>::isFlexible_) {
+         nEle += Iterator<D,T>::nFlexibleParams();
       }
       return nEle;
    }
@@ -171,8 +181,8 @@ namespace Rp {
       }
 
       // Add elements associated with unit cell parameters (if any)
-      if (IteratorT::isFlexible_) {
-         UTIL_CHECK(IteratorT::nFlexibleParams() > 0);
+      if (Iterator<D,T>::isFlexible_) {
+         UTIL_CHECK((Iterator<D,T>::nFlexibleParams() > 0));
          UnitCell<D> const & unitCell = system().domain().unitCell();
          FSArray<double,6> const & parameters = unitCell.parameters();
          const int nParam = unitCell.nParameter();
@@ -184,7 +194,7 @@ namespace Rp {
                counter++;
             }
          }
-         UTIL_CHECK(counter == IteratorT::nFlexibleParams());
+         UTIL_CHECK((counter == Iterator<D,T>::nFlexibleParams()));
       }
 
    }
@@ -194,7 +204,7 @@ namespace Rp {
    */
    template <int D, class T>
    void AmIteratorBasis<D,T>::evaluate()
-   {  system().compute(IteratorT::isFlexible_); }
+   {  system().compute(Iterator<D,T>::isFlexible_); }
 
    /*
    * Compute the residual for the current system state.
@@ -261,7 +271,7 @@ namespace Rp {
       }
 
       // If flexible unit cell, then compute stress residuals
-      if (IteratorT::isFlexible_) {
+      if (Iterator<D,T>::isFlexible_) {
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -278,11 +288,11 @@ namespace Rp {
          int counter = 0;
          for (i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
-               resid[begin + counter] = coeff * IteratorT::stress(i);
+               resid[begin + counter] = coeff * Iterator<D,T>::stress(i);
                counter++;
             }
          }
-         UTIL_CHECK(counter == IteratorT::nFlexibleParams());
+         UTIL_CHECK((counter == Iterator<D,T>::nFlexibleParams()));
       }
 
    }
@@ -345,7 +355,7 @@ namespace Rp {
       system().w().setBasis(wFields);
 
       // If flexible, update unit cell parameters
-      if (IteratorT::isFlexible_) {
+      if (Iterator<D,T>::isFlexible_) {
 
          // Initialize parameters array with current values
          FSArray<double, 6> parameters;
@@ -362,7 +372,7 @@ namespace Rp {
                counter++;
             }
          }
-         UTIL_CHECK(counter == IteratorT::nFlexibleParams());
+         UTIL_CHECK((counter == Iterator<D,T>::nFlexibleParams()));
 
          // Set system unit cell parameters
          system().setUnitCell(parameters);
@@ -375,7 +385,7 @@ namespace Rp {
    template <int D, class T>
    void AmIteratorBasis<D,T>::outputToLog()
    {
-      if (IteratorT::isFlexible_ && AmIterTmplT::verbose() > 1) {
+      if (Iterator<D,T>::isFlexible_ && AmIterTmplT::verbose() > 1) {
 
          UnitCell<D> const & unitCell = system().domain().unitCell();
          const int nParam = unitCell.nParameter();
