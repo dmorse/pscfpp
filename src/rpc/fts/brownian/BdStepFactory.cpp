@@ -9,9 +9,9 @@
 //#include <rpc/fts/brownian/BdSimulator.h>
 
 // Subclasses of BdStep
-#include "ExplicitBdStep.h"
-#include "PredCorrBdStep.h"
-#include "LMBdStep.h"
+#include <rpc/fts/brownian/ExplicitBdStep.h>
+#include <rpc/fts/brownian/PredCorrBdStep.h>
+#include <rpc/fts/brownian/LMBdStep.h>
 
 namespace Pscf {
 namespace Rpc {
@@ -40,13 +40,13 @@ namespace Rpc {
 
       // Try to match classname
       if (className == "ExplicitBdStep" || className == "BdStep") {
-         ptr = new ExplicitBdStep<D>(*simulatorPtr_);
+         ptr = new Rp::ExplicitBdStep<D, Rpc::Types<D> >(*simulatorPtr_);
       } else
       if (className == "PredCorrBdStep") {
-         ptr = new PredCorrBdStep<D>(*simulatorPtr_);
+         ptr = new Rp::PredCorrBdStep<D, Rpc::Types<D> >(*simulatorPtr_);
       } else
       if (className == "LMBdStep") {
-         ptr = new LMBdStep<D>(*simulatorPtr_);
+         ptr = new Rp::LMBdStep<D, Rpc::Types<D> >(*simulatorPtr_);
       }
 
       return ptr;

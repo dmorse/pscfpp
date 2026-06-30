@@ -19,11 +19,6 @@ namespace Rp {
    /**
    * Explicit Euler-Maruyama Brownian dynamics step.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named ExplicitBdStep,
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *    - D : dimension
    *    - T : Types class, Rpc::Types<D> or Rpg::Types<D>
@@ -37,7 +32,14 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent BdSimulator object
+      */
+      ExplicitBdStep(BdSimulator<D,T>& simulator);
+
+      ~ExplicitBdStep() = default;
 
       // Not copyable or assignable
       ExplicitBdStep(ExplicitBdStep<D,T> const & ) = delete;
@@ -64,19 +66,9 @@ namespace Rp {
 
    protected:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent BdSimulator object
-      */
-      ExplicitBdStep(BdSimulator<D,T>& simulator);
-
-      ~ExplicitBdStep() = default;
-
-      using BdStepT = BdStep<D,T>;
-      using BdStepT::system;
-      using BdStepT::simulator;
-      using BdStepT::vecRandom;
+      using BdStep<D,T>::system;
+      using BdStep<D,T>::simulator;
+      using BdStep<D,T>::vecRandom;
 
    private:
 

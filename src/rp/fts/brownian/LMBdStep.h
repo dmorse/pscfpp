@@ -53,7 +53,14 @@ namespace Rp {
    {
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent BdSimulator object
+      */
+      LMBdStep(BdSimulator<D,T>& simulator);
+
+      ~LMBdStep() = default;
 
       /**
       * Read body of parameter file block.
@@ -75,15 +82,6 @@ namespace Rp {
       bool step() override;
 
    protected:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent BdSimulator object
-      */
-      LMBdStep(BdSimulator<D,T>& simulator);
-
-      ~LMBdStep() = default;
 
       // Alias for base class.
       using BdStepT = BdStep<D,T>;

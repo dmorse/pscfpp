@@ -31,7 +31,7 @@ namespace Rp {
    */
    template <int D, class T>
    ExplicitBdStep<D,T>::ExplicitBdStep(BdSimulator<D,T>& simulator)
-    : BdStepT(simulator),
+    : BdStep<D,T>(simulator),
       w_(),
       dwc_(),
       gaussianField_(),

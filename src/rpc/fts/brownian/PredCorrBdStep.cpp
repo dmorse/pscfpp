@@ -18,28 +18,11 @@
 
 #include <rp/fts/brownian/PredCorrBdStep.tpp>  // base class implementation
 
-namespace Pscf {
-namespace Rpc {
-
-   // Constructor.
-   template <int D>
-   PredCorrBdStep<D>::PredCorrBdStep(Rp::BdSimulator<D, Rpc::Types<D> >& simulator)
-    : Rp::PredCorrBdStep<D, Types<D> >(simulator)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Rp::PredCorrBdStep<1, Rpc::Types<1> >;
-      template class Rp::PredCorrBdStep<2, Rpc::Types<2> >;
-      template class Rp::PredCorrBdStep<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class PredCorrBdStep<1>;
-      template class PredCorrBdStep<2>;
-      template class PredCorrBdStep<3>;
+      template class PredCorrBdStep<1, Rpc::Types<1> >;
+      template class PredCorrBdStep<2, Rpc::Types<2> >;
+      template class PredCorrBdStep<3, Rpc::Types<3> >;
    }
 }

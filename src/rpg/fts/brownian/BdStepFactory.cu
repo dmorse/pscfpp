@@ -9,9 +9,9 @@
 #include <rpg/fts/brownian/BdSimulator.h>
 
 // Subclasses of BdStep 
-#include "ExplicitBdStep.h"
-#include "PredCorrBdStep.h"
-#include "LMBdStep.h"
+#include <rpg/fts/brownian/ExplicitBdStep.h>
+#include <rpg/fts/brownian/PredCorrBdStep.h>
+#include <rpg/fts/brownian/LMBdStep.h>
 
 namespace Pscf {
 namespace Rpg {
@@ -30,7 +30,8 @@ namespace Rpg {
    * Return a pointer to a instance of BdStep subclass className.
    */
    template <int D>
-   Rp::BdStep<D, Rpg::Types<D> >* BdStepFactory<D>::factory(const std::string &className) const
+   Rp::BdStep<D, Rpg::Types<D> >* 
+   BdStepFactory<D>::factory(const std::string &className) const
    {
       Rp::BdStep<D, Rpg::Types<D> >* ptr = 0;
 
@@ -41,13 +42,13 @@ namespace Rpg {
       
       // Try to match classname
       if (className == "ExplicitBdStep" || className == "BdStep") {
-         ptr = new ExplicitBdStep<D>(*simulatorPtr_);
+         ptr = new Rp::ExplicitBdStep<D, Rpg::Types<D> >(*simulatorPtr_);
       } else
       if (className == "PredCorrBdStep") {
-         ptr = new PredCorrBdStep<D>(*simulatorPtr_);
+         ptr = new Rp::PredCorrBdStep<D, Rpg::Types<D> >(*simulatorPtr_);
       } else
       if (className == "LMBdStep") {
-         ptr = new LMBdStep<D>(*simulatorPtr_);
+         ptr = new Rp::LMBdStep<D, Rpg::Types<D> >(*simulatorPtr_);
       }
 
       return ptr;
