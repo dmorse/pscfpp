@@ -24,11 +24,6 @@ namespace Rp {
    /**
    * Trajectory file reader (abstract base class).
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named TrajectoryReader,
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *   - D : dimension
@@ -42,7 +37,19 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destructor (see below). 
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      TrajectoryReader(System<D,T>& system)
+       : systemPtr_(&system)
+      {}
+
+      /**
+      * Destructor.
+      */
+      virtual ~TrajectoryReader() = default;
 
       /**
       * Open trajectory file and allocate memory if necessary.
@@ -80,20 +87,6 @@ namespace Rp {
       virtual void close() = 0;
 
    protected:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      TrajectoryReader(System<D,T>& system)
-       : systemPtr_(&system)
-      {}
-
-      /**
-      * Destructor.
-      */
-      ~TrajectoryReader() = default;
 
       /**
       * Return reference to parent system.

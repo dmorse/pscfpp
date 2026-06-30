@@ -10,39 +10,8 @@
 
 #include <rp/fts/trajectory/RGridTrajectoryReader.h> // direct base class 
 #include <rpc/system/Types.h>                        // base class argument
-#include <prdc/field/cpu/RField.h>                         // base class member
+#include <prdc/field/cpu/RField.h>                   // base class member
 #include <rpc/fts/trajectory/TrajectoryReader.h>     // indirect base class 
-
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cpu;
-
-   /**
-   * Trajectory file reader.
-   *
-   * \ingroup Rpc_Fts_Trajectory_Module
-   */
-   template <int D>
-   class RGridTrajectoryReader 
-    : public Rp::RGridTrajectoryReader<D, Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      RGridTrajectoryReader<D>(Rp::System<D, Rpc::Types<D> >& system);
-
-   };
-
-}
-}
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -50,11 +19,6 @@ namespace Pscf {
       extern template class RGridTrajectoryReader<1, Rpc::Types<1> >;
       extern template class RGridTrajectoryReader<2, Rpc::Types<2> >;
       extern template class RGridTrajectoryReader<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class RGridTrajectoryReader<1>;
-      extern template class RGridTrajectoryReader<2>;
-      extern template class RGridTrajectoryReader<3>;
    }
 }
 #endif

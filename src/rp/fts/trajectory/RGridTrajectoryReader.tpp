@@ -23,7 +23,7 @@ namespace Rp {
    template <int D, class T>
    RGridTrajectoryReader<D,T>::RGridTrajectoryReader(
                                          System<D,T>& system)
-    : TrajectoryReaderT(system),
+    : TrajectoryReader<D,T>(system),
       isAllocated_(false)
    {}
 

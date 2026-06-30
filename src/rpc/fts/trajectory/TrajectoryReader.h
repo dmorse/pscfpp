@@ -11,6 +11,7 @@
 #include <rp/fts/trajectory/TrajectoryReader.h>
 #include <rpc/system/Types.h>
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -36,7 +37,7 @@ namespace Rpc {
       *
       * \param system  parent System object
       */
-      TrajectoryReader<D>(Rp::System<D, Rpc::Types<D> >& system);
+      Rp::TrajectoryReader<D, Rpc::Types<D> >(Rp::System<D, Rpc::Types<D> >& system);
 
       /**
       * Destructor.
@@ -46,6 +47,7 @@ namespace Rpc {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -53,11 +55,6 @@ namespace Pscf {
       extern template class TrajectoryReader<1, Rpc::Types<1> >;
       extern template class TrajectoryReader<2, Rpc::Types<2> >;
       extern template class TrajectoryReader<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class TrajectoryReader<1>;
-      extern template class TrajectoryReader<2>;
-      extern template class TrajectoryReader<3>;
    }
 }
 #endif

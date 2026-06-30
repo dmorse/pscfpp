@@ -11,54 +11,12 @@
 #include <rp/fts/trajectory/TrajectoryReader.h>
 #include <rpg/system/Types.h>
 
-namespace Pscf {
-namespace Rpg {
-
-   /**
-   * Trajectory file reader (base class).
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * specializations of the base class template Rp::TrajectoryReader, and
-   * inherit their public interface and almost all of their source code
-   * from this base class.  See the documentation of this base class 
-   * template for details. 
-   *
-   * \ingroup Rpg_Fts_Trajectory_Module
-   */
-   template <int D>
-   class TrajectoryReader : public Rp::TrajectoryReader<D, Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      TrajectoryReader<D>(Rp::System<D, Rpg::Types<D> >& system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~TrajectoryReader() = default;
-
-   };
-
-}
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class TrajectoryReader<1, Rpg::Types<1> >;
       extern template class TrajectoryReader<2, Rpg::Types<2> >;
       extern template class TrajectoryReader<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class TrajectoryReader<1>;
-      extern template class TrajectoryReader<2>;
-      extern template class TrajectoryReader<3>;
    }
 }
 #endif

@@ -21,6 +21,7 @@ namespace Pscf {
       template <int D, class T> class System; 
       template <int D, class T> class Simulator; 
       template <int D, class T> class McMoveManager; 
+      template <int D, class T> class TrajectoryReader; 
    }
 }
 
@@ -150,7 +151,7 @@ namespace Rp {
       /**
       * Get the trajectory reader factory by reference.
       */
-      Factory<typename T::TrajectoryReader>& trajectoryReaderFactory();
+      Factory<TrajectoryReader<D,T> >& trajectoryReaderFactory();
 
       /**
       * Have any MC moves been defined?
@@ -207,7 +208,7 @@ namespace Rp {
       /**
       * Pointer to a trajectory reader factory.
       */
-      Factory<typename T::TrajectoryReader>* trajectoryReaderFactoryPtr_;
+      Factory<TrajectoryReader<D,T> >* trajectoryReaderFactoryPtr_;
 
       // Private member function
 
@@ -257,7 +258,7 @@ namespace Rp {
 
    // Get the TrajectoryReader factory.
    template <int D, class T> inline
-   Factory<typename T::TrajectoryReader>& 
+   Factory<TrajectoryReader<D,T> >& 
    McSimulator<D,T>::trajectoryReaderFactory()
    {
       UTIL_ASSERT(trajectoryReaderFactoryPtr_);

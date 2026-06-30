@@ -21,6 +21,7 @@ namespace Pscf {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
       template <int D, class T> class BdStep;
+      template <int D, class T> class TrajectoryReader;
    }
 }
 
@@ -136,7 +137,7 @@ namespace Rp {
       /**
       * Get the trajectory reader factory by reference.
       */
-      Factory< typename T::TrajectoryReader >& trajectoryReaderFactory();
+      Factory< TrajectoryReader<D,T> >& trajectoryReaderFactory();
 
       ///@}
 
@@ -178,7 +179,7 @@ namespace Rp {
       /**
       * Pointer to a trajectory reader factory.
       */
-      Factory< typename T::TrajectoryReader >* trajectoryReaderFactoryPtr_;
+      Factory< TrajectoryReader<D,T> >* trajectoryReaderFactoryPtr_;
 
       // Private member function
 

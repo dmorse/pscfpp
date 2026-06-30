@@ -35,12 +35,22 @@ namespace Rp {
    * \ingroup Rp_Fts_Trajectory_Module
    */
    template <int D, class T>
-   class RGridTrajectoryReader : public T::TrajectoryReader
+   class RGridTrajectoryReader : public TrajectoryReader<D,T>
    {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      RGridTrajectoryReader(System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~RGridTrajectoryReader() = default;
 
       /**
       * Open trajectory file and read header, if any.
@@ -73,20 +83,7 @@ namespace Rp {
 
    protected:
 
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      RGridTrajectoryReader(System<D,T>& system);
-
-      /**
-      * Destructor.
-      */
-      ~RGridTrajectoryReader() = default;
-
-      using TrajectoryReaderT = typename T::TrajectoryReader;
-      using TrajectoryReaderT::system;
+      using TrajectoryReader<D,T>::system;
 
    private:
 

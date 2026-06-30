@@ -23,7 +23,7 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Trajectory_Module
    */
    template <int D>
-   class TrajectoryReaderFactory : public Factory< TrajectoryReader<D> > 
+   class TrajectoryReaderFactory : public Factory< Rp::TrajectoryReader<D, Rpg::Types<D> > > 
    {
 
    public:
@@ -37,9 +37,9 @@ namespace Rpg {
       * \param className name of the TrajectoryReader subclass
       * \return TrajectoryReader* pointer to new instance of className
       */
-      TrajectoryReader<D>* factory(const std::string &className) const;
+      Rp::TrajectoryReader<D, Rpg::Types<D> >* factory(const std::string &className) const;
       
-      using Factory< TrajectoryReader<D> >::trySubfactories;
+      using Factory< Rp::TrajectoryReader<D, Rpg::Types<D> > >::trySubfactories;
 
    private:
       

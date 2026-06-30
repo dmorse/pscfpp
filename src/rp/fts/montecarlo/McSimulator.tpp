@@ -295,7 +295,7 @@ namespace Rp {
       UTIL_CHECK(analyzerManager().size() > 0);
 
       // Construct TrajectoryReader
-      typename T::TrajectoryReader* trajectoryReaderPtr;
+      TrajectoryReader<D,T>* trajectoryReaderPtr;
       trajectoryReaderPtr = trajectoryReaderFactory().factory(classname);
       if (!trajectoryReaderPtr) {
          std::string message;

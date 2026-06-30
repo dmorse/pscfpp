@@ -28,10 +28,10 @@ namespace Rpc {
    * Return a pointer to a instance of Trajectory subclass className.
    */
    template <int D>
-   TrajectoryReader<D>* 
+   Rp::TrajectoryReader<D, Rpc::Types<D> >* 
    TrajectoryReaderFactory<D>::factory(const std::string &className) const
    {
-      TrajectoryReader<D> *ptr = 0;
+      Rp::TrajectoryReader<D, Rpc::Types<D> > *ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);
@@ -39,7 +39,7 @@ namespace Rpc {
 
       if (className == "RGridTrajectoryReader" 
           || className == "TrajectoryReader") {
-         ptr = new RGridTrajectoryReader<D>(*sysPtr_);
+         ptr = new Rp::RGridTrajectoryReader<D, Rpc::Types<D> >(*sysPtr_);
       }
  
       return ptr;

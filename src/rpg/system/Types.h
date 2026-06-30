@@ -77,7 +77,7 @@ namespace Pscf {
       //template <int D> class McMoveManager;
       template <int D> class McMoveFactory;
 
-      template <int D> class TrajectoryReader;
+      //template <int D> class TrajectoryReader;
       template <int D> class TrajectoryReaderFactory;
 
       //template <int D> class Perturbation;
@@ -177,7 +177,7 @@ namespace Rpg {
       using AverageAnalyzer = Rpg::AverageAnalyzer<D>;
       using AverageListAnalyzer = Rpg::AverageListAnalyzer<D>;
 
-      using TrajectoryReader = Rpg::TrajectoryReader<D>;
+      //using TrajectoryReader = Rp::TrajectoryReader<D, Rpg::Types<D> >;
       using TrajectoryReaderFactory = Rpg::TrajectoryReaderFactory<D>;
 
       // Static member functions

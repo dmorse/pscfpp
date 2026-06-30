@@ -7,6 +7,7 @@
 
 #include "TrajectoryReader.h"
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -14,12 +15,13 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   TrajectoryReader<D>::TrajectoryReader(Rp::System<D, Rpc::Types<D> >& system)
+   Rp::TrajectoryReader<D, Rpc::Types<D> >::TrajectoryReader(Rp::System<D, Rpc::Types<D> >& system)
     : Rp::TrajectoryReader<D, Types<D> >(system)
    {}
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -27,10 +29,5 @@ namespace Pscf {
       template class TrajectoryReader<1, Rpc::Types<1> >;
       template class TrajectoryReader<2, Rpc::Types<2> >;
       template class TrajectoryReader<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class TrajectoryReader<1>;
-      template class TrajectoryReader<2>;
-      template class TrajectoryReader<3>;
    }
 }

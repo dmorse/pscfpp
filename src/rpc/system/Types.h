@@ -88,7 +88,7 @@ namespace Pscf {
       template <int D> class AverageAnalyzer;
       template <int D> class AverageListAnalyzer;
 
-      template <int D> class TrajectoryReader;
+      //template <int D> class TrajectoryReader;
       template <int D> class TrajectoryReaderFactory;
 
    }
@@ -178,7 +178,7 @@ namespace Rpc {
       using AverageAnalyzer = Rpc::AverageAnalyzer<D>;
       using AverageListAnalyzer = Rpc::AverageListAnalyzer<D>;
 
-      using TrajectoryReader = Rpc::TrajectoryReader<D>;
+      //using TrajectoryReader = Rp::TrajectoryReader<D, Rpc::Types<D> >;
       using TrajectoryReaderFactory = Rpc::TrajectoryReaderFactory<D>;
 
       //using Perturbation = Rp::Perturbation<D, Rpc::Types<D> >;
