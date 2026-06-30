@@ -1,18 +1,8 @@
 /*! 
 \page rp_LMBdStep_page LMBdStep
 
-The LMBdStep classes used by both the pscf_rpc and pscf_rpg programs 
-implement the Leimkuhler-Matthews Brownian dynamics step algorithm.
-
-Two closely analogous classes named Pscf::Rpc::LMBdStep and 
-Pscf::Rpg::LMBdStep that have the same class name but that are 
-defined in different namespaces are used to implement this step 
-algorithm for different programs. The LMBdStep class defined in the 
-Rpc namespace is used in the pscf_rpc program (using CPU hardware) 
-and the class defined in the Rpg namespace is used in the pscf_rpg 
-program (using GPU acceleration). These two analogous classes 
-implement the same step algorithm and use the same parameter file 
-format, as documented below.
+The LMBdStep class template implements the Leimkuhler-Matthews Brownian 
+dynamics step algorithm.
 
 \section rp_LMBdStep_algorithm_sec Step Algorithm
 

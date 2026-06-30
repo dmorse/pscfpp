@@ -42,7 +42,7 @@ namespace Rp {
       ParamComposite::setClassName("BdSimulator");
       analyzerManagerPtr_ 
              = new typename T::AnalyzerManager(*this, system),
-      bdStepFactoryPtr_ = new typename T::BdStepFactory(*this);
+      bdStepFactoryPtr_ = new BdStepFactory<D,T>(*this);
       trajectoryReaderFactoryPtr_
              = new TrajectoryReaderFactory<D,T>(system);
       AnalyzerT::initStatic();

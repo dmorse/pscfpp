@@ -6,56 +6,20 @@
 */
 
 #include "BdStepFactory.h"
-//#include <rpc/fts/brownian/BdSimulator.h>
 
 // Subclasses of BdStep
 #include <rpc/fts/brownian/ExplicitBdStep.h>
 #include <rpc/fts/brownian/PredCorrBdStep.h>
 #include <rpc/fts/brownian/LMBdStep.h>
+//#include <rpc/fts/brownian/BdSimulator.h>
 
+#include <rp/fts/brownian/BdStepFactory.tpp>
+
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /*
-   * Constructor
-   */
-   template <int D>
-   BdStepFactory<D>::BdStepFactory(Rp::BdSimulator<D, Rpc::Types<D> >& simulator)
-    : simulatorPtr_(&simulator)
-   {}
-
-   /*
-   * Return a pointer to a instance of BdStep subclass className.
-   */
-   template <int D>
-   Rp::BdStep<D, Rpc::Types<D> >* BdStepFactory<D>::factory(const std::string &className) const
-   {
-      Rp::BdStep<D, Rpc::Types<D> >* ptr = 0;
-
-      // Try subfactories first
-      ptr = trySubfactories(className);
-      if (ptr) return ptr;
-
-      // Try to match classname
-      if (className == "ExplicitBdStep" || className == "BdStep") {
-         ptr = new Rp::ExplicitBdStep<D, Rpc::Types<D> >(*simulatorPtr_);
-      } else
-      if (className == "PredCorrBdStep") {
-         ptr = new Rp::PredCorrBdStep<D, Rpc::Types<D> >(*simulatorPtr_);
-      } else
-      if (className == "LMBdStep") {
-         ptr = new Rp::LMBdStep<D, Rpc::Types<D> >(*simulatorPtr_);
-      }
-
-      return ptr;
+   namespace Rp {
+      template class BdStepFactory<1, Rpc::Types<1> >;
+      template class BdStepFactory<2, Rpc::Types<2> >;
+      template class BdStepFactory<3, Rpc::Types<3> >;
    }
-
-   // Explicit instantiation definitions
-   template class BdStepFactory<1>;
-   template class BdStepFactory<2>;
-   template class BdStepFactory<3>;
-
-}
 }

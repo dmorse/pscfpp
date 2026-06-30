@@ -34,11 +34,6 @@ namespace Rp {
    /**
    * Brownian dynamics simulator for PS-FTS.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, both also named BdSimulator,
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space

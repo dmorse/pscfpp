@@ -70,7 +70,7 @@ namespace Pscf {
 
       //template <int D> class BdSimulator;
       //template <int D> class BdStep;
-      template <int D> class BdStepFactory;
+      //template <int D> class BdStepFactory;
 
       //template <int D> class McSimulator;
       //template <int D> class McMove;
@@ -152,12 +152,12 @@ namespace Rpg {
       //using SimulatorFactory = Rp::SimulatorFactory<D, Rpg::Types<D> >;
 
       //using Compressor = Rp::Compressor<D, Rpg::Types<D> >;
-      using CompressorFactory = Rpg::CompressorFactory<D>;
       using IntraCorrelation = Rpg::IntraCorrelation<D>;
+      using CompressorFactory = Rpg::CompressorFactory<D>;
 
       //using BdSimulator = Rp::BdSimulator<D, Rpg::Types<D> >;
       //using BdStep = Rp::BdStep<D, Rpg::Types<D> >;
-      using BdStepFactory = Rpg::BdStepFactory<D>;
+      //using BdStepFactory = Rp::BdStepFactory<D, Rpg::Types<D> >;
 
       //using McSimulator = Rp::McSimulator<D, Rpg::Types<D> >;
       //using McMove = Rp::McMove<D, Rpg::Types<D> >;

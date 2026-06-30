@@ -68,7 +68,7 @@ namespace Pscf {
 
       //template <int D> class BdSimulator;
       //template <int D> class BdStep;
-      template <int D> class BdStepFactory;
+      //template <int D> class BdStepFactory;
 
       //template <int D> class McSimulator;
       //template <int D> class McMove;
@@ -165,7 +165,7 @@ namespace Rpc {
 
       //using BdSimulator = Rp::BdSimulator<D, Rpc::Types<D> >;
       //using BdStep = Rp::BdStep<D, Rpc::Types<D> >;
-      using BdStepFactory = Rpc::BdStepFactory<D>;
+      //using BdStepFactory = Rp::BdStepFactory<D, Rpc::Types<D> >;
 
       //using McSimulator = Rp::McSimulator<D, Rpc::Types<D> >;
       //using McMove = Rp::McMove<D, Rpc::Types<D> >;
