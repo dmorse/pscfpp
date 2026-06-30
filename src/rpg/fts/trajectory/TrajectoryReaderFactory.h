@@ -8,51 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
-#include <rpg/fts/trajectory/TrajectoryReader.h>
-#include <string>
+#include <rp/fts/trajectory/TrajectoryReaderFactory.h>
+#include <rpg/system/Types.h>
 
+
+// Explicit instantiation declarations
 namespace Pscf {
-namespace Rpg {
-   
-   using namespace Util;
-   
-   /**
-   * Factory for subclasses of TrajectoryReader.
-   *
-   * \ingroup Rpg_Fts_Trajectory_Module
-   */
-   template <int D>
-   class TrajectoryReaderFactory : public Factory< Rp::TrajectoryReader<D, Rpg::Types<D> > > 
-   {
-
-   public:
-
-      /// Constructor
-      TrajectoryReaderFactory(Rp::System<D, Rpg::Types<D> >& system);
-
-      /**
-      * Method to create any TrajectoryReader supplied with PSCF
-      *
-      * \param className name of the TrajectoryReader subclass
-      * \return TrajectoryReader* pointer to new instance of className
-      */
-      Rp::TrajectoryReader<D, Rpg::Types<D> >* factory(const std::string &className) const;
-      
-      using Factory< Rp::TrajectoryReader<D, Rpg::Types<D> > >::trySubfactories;
-
-   private:
-      
-      /// Pointer to the parent system.
-      Rp::System<D, Rpg::Types<D> >* sysPtr_;
-      
-   };
-
-   // Explicit instantiation declarations
-   extern template class TrajectoryReaderFactory<1>;
-   extern template class TrajectoryReaderFactory<2>;
-   extern template class TrajectoryReaderFactory<3>;
-
-}
+   namespace Rp {
+      extern template class TrajectoryReaderFactory<1, Rpg::Types<1> >;
+      extern template class TrajectoryReaderFactory<2, Rpg::Types<2> >;
+      extern template class TrajectoryReaderFactory<3, Rpg::Types<3> >;
+   }
 }
 #endif

@@ -9,13 +9,17 @@
 */
 
 #include "RGridTrajectoryReader.h"
+#include <prdc/crystal/UnitCell.h>
 #include <util/misc/ioUtil.h>
 #include <util/misc/FileMaster.h>
 
 namespace Pscf {
 namespace Rp {
 
+   template <int D, class T> class FieldIo;
+
    using namespace Util;
+   using namespace Prdc;
 
    /*
    * Constructor.

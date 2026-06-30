@@ -8,58 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
-#include <rpc/fts/trajectory/TrajectoryReader.h>
-#include <string>
+#include <rp/fts/trajectory/TrajectoryReaderFactory.h>
+#include <rpc/system/Types.h>
 
-// Forward declarations
+
+// Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template <int D, class T> class System;
+      extern template class TrajectoryReaderFactory<1, Rpc::Types<1> >;
+      extern template class TrajectoryReaderFactory<2, Rpc::Types<2> >;
+      extern template class TrajectoryReaderFactory<3, Rpc::Types<3> >;
    }
-}
-
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   
-   /**
-   * Factory for subclasses of TrajectoryReader.
-   *
-   * \ingroup Rpc_Fts_Trajectory_Module
-   */
-   template <int D>
-   class TrajectoryReaderFactory : public Factory< Rp::TrajectoryReader<D, Rpc::Types<D> > > 
-   {
-
-   public:
-
-      /// Constructor
-      TrajectoryReaderFactory(Rp::System<D, Rpc::Types<D> >& system);
-
-      /**
-      * Method to create any TrajectoryReader supplied with PSCF
-      *
-      * \param className name of the TrajectoryReader subclass
-      * \return TrajectoryReader* pointer to new instance of className
-      */
-      Rp::TrajectoryReader<D, Rpc::Types<D> >* factory(const std::string &className) const;
-      
-      using Factory< Rp::TrajectoryReader<D, Rpc::Types<D> > >::trySubfactories;
-
-   private:
-      
-      /// Pointer to the parent system.
-      Rp::System<D, Rpc::Types<D> >* sysPtr_;
-      
-   };
-
-   // Explicit instantiation declarations
-   extern template class TrajectoryReaderFactory<1>;
-   extern template class TrajectoryReaderFactory<2>;
-   extern template class TrajectoryReaderFactory<3>;
-
-}
 }
 #endif

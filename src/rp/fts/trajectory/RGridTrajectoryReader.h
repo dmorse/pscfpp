@@ -22,11 +22,6 @@ namespace Rp {
    /**
    * Trajectory file reader.
    *
-   * Specializations of this class template are used as base classes for two
-   * closely analogous class templates, also named RGridTrajectorReader,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *   - D : dimension

@@ -44,7 +44,7 @@ namespace Rp {
              = new typename T::AnalyzerManager(*this, system),
       bdStepFactoryPtr_ = new typename T::BdStepFactory(*this);
       trajectoryReaderFactoryPtr_
-             = new typename T::TrajectoryReaderFactory(system);
+             = new TrajectoryReaderFactory<D,T>(system);
       AnalyzerT::initStatic();
    }
 

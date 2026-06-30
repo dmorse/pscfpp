@@ -41,7 +41,7 @@ namespace Rp {
       analyzerManagerPtr_
             = new typename T::AnalyzerManager(*this, system),
       trajectoryReaderFactoryPtr_
-            = new typename T::TrajectoryReaderFactory(system);
+            = new TrajectoryReaderFactory<D,T>(system);
       AnalyzerT::initStatic();
    }
 
