@@ -626,7 +626,7 @@ namespace Rp {
       /**
       * Pointer to a sweep factory object.
       */
-      typename T::SweepFactory* sweepFactoryPtr_;
+      SweepFactory<D,T>* sweepFactoryPtr_;
 
       /**
       * Pointer to a Simulator.

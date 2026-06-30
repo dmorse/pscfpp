@@ -43,14 +43,16 @@ namespace Pscf {
       //template <int D> class CFields;
       //template <int D> class Mask;
       //template <int D> class ScftThermo;
+
       template <int D> class EnvironmentFactory;
+
       //template <int D> class Iterator;
       //template <int D> class IteratorFactory;
+
       //template <int D> class Sweep;
       //template <int D> class SweepParameter;
       //template <int D> class BasisFieldState;
-
-      template <int D> class SweepFactory;
+      //template <int D> class SweepFactory;
 
       //template <int D> class Simulator;
       //template <int D> class SimState;
@@ -143,7 +145,7 @@ namespace Rpg {
       //using Sweep = Rp::Sweep<D, Rpg::Types<D> >;
       //using SweepParameter = Rp::SweepParameter<D, Rpg::Types<D> >;
       //using BasisFieldState = Rp::BasisFieldState<D, Rpg::Types<D> >;
-      using SweepFactory = Rpg::SweepFactory<D>;
+      //using SweepFactory = Rp::SweepFactory<D, Rpg::Types<D> >;
 
       //using Simulator = Rp::Simulator<D, Rpg::Types<D> >;
       //using SimState = Rp::SimState<D, Rpg::Types<D> >;

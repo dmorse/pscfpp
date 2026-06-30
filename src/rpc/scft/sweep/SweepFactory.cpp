@@ -5,50 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SweepFactory.h"
-
-// Subclasses of Sweep
-#include "LinearSweep.h"
-
-namespace Pscf{
-namespace Rpc{
-
-   using namespace Util;
-
-   template <int D>
-   SweepFactory<D>::SweepFactory(Rp::System<D, Rpc::Types<D> >& system)
-    : systemPtr_(&system)
-   {}
-
-   /**
-   * Return a pointer to a Sweep subclass with name className
-   */
-   template <int D>
-   Rp::Sweep<D, Rpc::Types<D> >* SweepFactory<D>::factory(std::string const & className) 
-   const
-   {
-       Rp::Sweep<D, Rpc::Types<D> > *ptr = nullptr;
-
-       // First check if name is known by any subfactories
-       ptr = trySubfactories(className);
-       if (ptr) return ptr;
-
-       // Explicit class names
-       if (className == "Sweep" || className == "LinearSweep") {
-           ptr = new Rp::LinearSweep<D, Rpc::Types<D> >(*systemPtr_);
-       }
-
-       return ptr;
-   }
-
-} // namespace Rpc
-} // namespace Pscf
+#include "SweepFactory.h"                   // header
+#include <rpc/scft/sweep/LinearSweep.h>
+#include <rp/scft/sweep/SweepFactory.tpp>   // template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
-   namespace Rpc {
-      template class SweepFactory<1>;
-      template class SweepFactory<2>;
-      template class SweepFactory<3>;
-   } 
-} 
+   namespace Rp {
+      template class SweepFactory<1, Rpc::Types<1> >;
+      template class SweepFactory<2, Rpc::Types<2> >;
+      template class SweepFactory<3, Rpc::Types<3> >;
+   }
+}

@@ -8,58 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
-#include "Sweep.h"
+#include <rp/scft/sweep/SweepFactory.h>
+#include <rpg/system/Types.h>
 
-#include <string>
-
+// Explicit instantiation declarations
 namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-   using namespace Prdc;
-   
-   /**
-   * Default Factory for subclasses of Sweep.
-   *
-   * \ingroup Rpg_Scft_Sweep_Module
-   */
-   template <int D>
-   class SweepFactory : public Factory< Rp::Sweep<D, Rpg::Types<D> > > 
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system parent System object
-      */
-      SweepFactory(Rp::System<D, Rpg::Types<D> >& system);
-
-      /**
-      * Method to create any Sweep subclass.
-      *
-      * \param className name of the Sweep subclass
-      * \return Rp::Sweep<D, Rpg::Types<D> >* pointer to new instance of speciesName
-      */
-      Rp::Sweep<D, Rpg::Types<D> >* factory(std::string const & className) const;
-
-      using Factory< Rp::Sweep<D, Rpg::Types<D> > >::trySubfactories;
-      using Factory< Rp::Sweep<D, Rpg::Types<D> > >::readObjectOptional;
-
-   private:
-
-      // Pointer to parent system.
-      Rp::System<D, Rpg::Types<D> >* systemPtr_;
-
-   };
-
-   // Explicit instantiation declarations
-   extern template class SweepFactory<1>;
-   extern template class SweepFactory<2>;
-   extern template class SweepFactory<3>;
-
-}
+   namespace Rp {
+      extern template class SweepFactory<1, Rpg::Types<1> >;
+      extern template class SweepFactory<2, Rpg::Types<2> >;
+      extern template class SweepFactory<3, Rpg::Types<3> >;
+   }
 }
 #endif

@@ -46,7 +46,7 @@ public:
 
       Rp::System<3, Rpg::Types<3> > system;
       Rp::LinearSweep<3, Rpg::Types<3> > ls(system);
-      SweepFactory<3> sf(system);
+      Rp::SweepFactory<3, Rpg::Types<3> > sf(system);
    }
 
    void testFactory() 
@@ -54,7 +54,7 @@ public:
       printMethod(TEST_FUNC);
 
       Rp::System<3, Rpg::Types<3> > system;
-      SweepFactory<3> sf(system);
+      Rp::SweepFactory<3, Rpg::Types<3> > sf(system);
       Rp::Sweep<3, Rpg::Types<3> >* sweepPtr;
       
       sweepPtr = sf.factory("LinearSweep");
