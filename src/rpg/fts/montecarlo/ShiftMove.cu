@@ -6,16 +6,18 @@
 */
 
 #include "ShiftMove.h"
+
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
 #include <rpg/field/WFields.h>
+#include <pscf/mesh/Mesh.h>
 
-#include <rp/fts/montecarlo/ShiftMove.tpp>
+#include <rp/fts/montecarlo/ShiftMoveBase.tpp>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -25,17 +27,18 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   ShiftMove<D>::ShiftMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator)
-    : RpShiftMove(simulator)
+   ShiftMove<D, Rpg::Types<D> >::ShiftMove(
+                                McSimulator<D, Rpg::Types<D> >& simulator)
+    : ShiftMoveBaseT(simulator)
    {}
 
    /*
    * Setup immediately before starting a simulation.
    */
    template <int D>
-   void ShiftMove<D>::setup()
+   void ShiftMove<D, Rpg::Types<D> >::setup()
    {
-      RpShiftMove::setup();
+      ShiftMoveBaseT::setup();
 
       // Allocate CPU work space
       if (!wOld_.isAllocated()) {
@@ -49,15 +52,15 @@ namespace Rpg {
    * Compute and store array w_ of shifted fields.
    */
    template <int D>
-   void ShiftMove<D>::shiftFields(IntVec<D> const & shift)
+   void ShiftMove<D, Rpg::Types<D> >::shiftFields(IntVec<D> const & shift)
    {
       IntVec<D> const& dimensions = system().domain().mesh().dimensions();
       const int nMonomer = system().mixture().nMonomer();
 
       for (int j = 0; j< nMonomer; ++j) {
          wOld_ = system().w().rgrid(j);
-	 RpShiftMove::shiftField(wNew_, wOld_, shift, dimensions);
-         RpShiftMove::w_[j] = wNew_;
+	 ShiftMoveBaseT::shiftField(wNew_, wOld_, shift, dimensions);
+         ShiftMoveBaseT::w_[j] = wNew_;
       }
    }
 
@@ -67,13 +70,11 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class Rp::ShiftMove<1, Rpg::Types<1> >;
-      template class Rp::ShiftMove<2, Rpg::Types<2> >;
-      template class Rp::ShiftMove<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class ShiftMove<1>;
-      template class ShiftMove<2>;
-      template class ShiftMove<3>;
+      template class ShiftMoveBase<1, Rpg::Types<1> >;
+      template class ShiftMoveBase<2, Rpg::Types<2> >;
+      template class ShiftMoveBase<3, Rpg::Types<3> >;
+      template class ShiftMove<1, Rpg::Types<1> >;
+      template class ShiftMove<2, Rpg::Types<2> >;
+      template class ShiftMove<3, Rpg::Types<3> >;
    }
 }

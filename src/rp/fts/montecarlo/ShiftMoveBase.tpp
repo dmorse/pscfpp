@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ShiftMove.h"
+#include "ShiftMoveBase.h"
 
 //#include <rp/field/WFields.h>
 #include <rp/field/Domain.h>
@@ -29,7 +29,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   ShiftMove<D,T>::ShiftMove(McSimulator<D,T>& simulator)
+   ShiftMoveBase<D,T>::ShiftMoveBase(McSimulator<D,T>& simulator)
     : McMove<D,T>(simulator),
       maxShift_(0),
       isAllocated_(false)
@@ -39,7 +39,7 @@ namespace Rp {
    * Read body of parameter file block.
    */
    template <int D, class T>
-   void ShiftMove<D,T>::readParameters(std::istream &in)
+   void ShiftMoveBase<D,T>::readParameters(std::istream &in)
    {
 
       // Read the probability
@@ -60,7 +60,7 @@ namespace Rp {
    * Setup just before beginning a simulation.
    */
    template <int D, class T>
-   void ShiftMove<D,T>::setup()
+   void ShiftMoveBase<D,T>::setup()
    {
       // Setup base class
       McMove<D,T>::setup();
@@ -81,7 +81,7 @@ namespace Rp {
    * Attempt unconstrained move
    */
    template <int D, class T>
-   void ShiftMove<D,T>::attemptMove()
+   void ShiftMoveBase<D,T>::attemptMove()
    {
       // Select random displacement by integer numbers of mesh points
       IntVec<D> shift;
@@ -101,10 +101,10 @@ namespace Rp {
    * Shift a single field.
    */
    template <int D, class T>
-   void ShiftMove<D,T>::shiftField(Array<double> & out, 
-                                   Array<double> const & in,
-                                   IntVec<D> shift, 
-                                   IntVec<D> dimensions) const
+   void ShiftMoveBase<D,T>::shiftField(Array<double> & out, 
+                                       Array<double> const & in,
+                                       IntVec<D> shift, 
+                                       IntVec<D> dimensions) const
    {
       Mesh<D> mesh(dimensions);
       IntVec<D> inPosition, outPosition;

@@ -19,10 +19,10 @@
 #include <pscf/cpu/Reduce.h>
 #include <pscf/cpu/CpuVecRandom.h>
 
-#include <rp/fts/montecarlo/ForceBiasMove.tpp>
+#include <rp/fts/montecarlo/ForceBiasMoveBase.tpp>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -32,22 +32,24 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   ForceBiasMove<D>::ForceBiasMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
-    : Rp::ForceBiasMove<D, Types<D> > (simulator)
+   ForceBiasMove<D, Rpc::Types<D> >::ForceBiasMove(
+                              McSimulator<D, Rpc::Types<D> >& simulator)
+    : ForceBiasMoveBase<D, Rpc::Types<D> > (simulator)
    {}
 
    /*
    * Compute force bias field for use in Metropolis acceptance test.
    */
    template<int D>
-   void ForceBiasMove<D>::computeForceBias(
+   void ForceBiasMove<D, Rpc::Types<D> >::computeForceBias(
                                RField<D>& result,
                                RField<D> const & di,
                                RField<D> const & df,
                                RField<D> const & dwc,
                                double mobility)
    {
-      const int n = Rp::McMove<D, Rpc::Types<D> >::system().domain().mesh().size();
+      const int n
+         = McMove<D, Rpc::Types<D> >::system().domain().mesh().size();
       UTIL_CHECK(result.capacity() == n);
       UTIL_CHECK(di.capacity() == n);
       UTIL_CHECK(df.capacity() == n);
@@ -61,20 +63,17 @@ namespace Rpc {
       }
    }
 
-
 }
 }
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
+      template class ForceBiasMoveBase<1, Rpc::Types<1> >;
+      template class ForceBiasMoveBase<2, Rpc::Types<2> >;
+      template class ForceBiasMoveBase<3, Rpc::Types<3> >;
       template class ForceBiasMove<1, Rpc::Types<1> >;
       template class ForceBiasMove<2, Rpc::Types<2> >;
       template class ForceBiasMove<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class ForceBiasMove<1>;
-      template class ForceBiasMove<2>;
-      template class ForceBiasMove<3>;
    }
 }

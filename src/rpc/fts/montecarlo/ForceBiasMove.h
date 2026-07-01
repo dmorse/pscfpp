@@ -8,17 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/montecarlo/ForceBiasMove.h> // direct base class template
-#include <rpc/system/Types.h>                // direct base argument
-#include <prdc/field/cpu/RField.h>                 // direct base member
-#include <util/containers/DArray.h>          // direct base member
-#include "McMove.h"                          // indirect base class
+#include <rp/fts/montecarlo/ForceBiasMoveBase.h> // base class template
+#include <rpc/system/Types.h>                    // base classjargument
+#include <prdc/field/cpu/RField.h>               // base class member
+#include <util/containers/DArray.h>              // base class member
+#include "McMove.h"                              // indirect base class
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
-   // Forward declaration
-   template <int D> class McSimulator;
+   template <int D, class T> class ForceBiasMove;
 
    using namespace Util;
    using namespace Prdc;
@@ -38,10 +37,11 @@ namespace Rpc {
    *
    * \see Rp::ForceBiasMove
    * \see \ref rp_ForceBiasMove_page "Manual Page"
-   * \ingroup Rpc_Fts_MonteCarlo_Module
+   * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ForceBiasMove : public Rp::ForceBiasMove<D, Types<D> >
+   class ForceBiasMove<D, Rpc::Types<D> > 
+     : public Rp::ForceBiasMoveBase<D, Rpc::Types<D> >
    {
 
    public:
@@ -72,14 +72,12 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
+      extern template class ForceBiasMoveBase<1, Rpc::Types<1> >;
+      extern template class ForceBiasMoveBase<2, Rpc::Types<2> >;
+      extern template class ForceBiasMoveBase<3, Rpc::Types<3> >;
       extern template class ForceBiasMove<1, Rpc::Types<1> >;
       extern template class ForceBiasMove<2, Rpc::Types<2> >;
       extern template class ForceBiasMove<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class ForceBiasMove<1>;
-      extern template class ForceBiasMove<2>;
-      extern template class ForceBiasMove<3>;
    }
 }
 #endif

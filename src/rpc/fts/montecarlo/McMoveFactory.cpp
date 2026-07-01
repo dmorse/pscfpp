@@ -41,13 +41,13 @@ namespace Rpc {
 
       // Try to match classname
       if (className == "RealMove") {
-         ptr = new RealMove<D>(*simulatorPtr_);
+         ptr = new Rp::RealMove<D, Rpc::Types<D> >(*simulatorPtr_);
       } else if (className == "ForceBiasMove") {
-         ptr = new ForceBiasMove<D>(*simulatorPtr_);
+         ptr = new Rp::ForceBiasMove<D, Rpc::Types<D> >(*simulatorPtr_);
       } else if (className == "BdMove") {
-         ptr = new BdMove<D>(*simulatorPtr_);
+         ptr = new Rp::BdMove<D, Rpc::Types<D> >(*simulatorPtr_);
       } else if (className == "ShiftMove") {
-         ptr = new ShiftMove<D>(*simulatorPtr_);
+         ptr = new Rp::ShiftMove<D, Rpc::Types<D> >(*simulatorPtr_);
       }
 
       return ptr;

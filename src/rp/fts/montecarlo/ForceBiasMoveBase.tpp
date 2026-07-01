@@ -1,5 +1,5 @@
-#ifndef RP_FORCE_BIAS_MOVE_TPP
-#define RP_FORCE_BIAS_MOVE_TPP
+#ifndef RP_FORCE_BIAS_MOVE_BASE_TPP
+#define RP_FORCE_BIAS_MOVE_BASE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,15 +8,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ForceBiasMove.h"
-#include <rp/field/CFields.h>
-//#include <rp/field/WFields.h>
-#include <rp/field/Domain.h>
-#include <rp/system/System.h>
+#include "ForceBiasMoveBase.h"
+
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/compressor/Compressor.h>
+#include <rp/system/System.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+//#include <rp/field/WFields.h>
+
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
+
 #include <util/param/ParamComposite.h>
 #include <util/random/Random.h>
 
@@ -29,8 +32,8 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   ForceBiasMove<D,T>::ForceBiasMove(McSimulator<D,T>& simulator)
-    : McMoveT(simulator),
+   ForceBiasMoveBase<D,T>::ForceBiasMoveBase(McSimulator<D,T>& simulator)
+    : McMove<D,T>(simulator),
       w_(),
       dwc_(),
       mobility_(0.0)
@@ -40,9 +43,9 @@ namespace Rp {
    * Read body of parameter file block and allocate memory.
    */
    template <int D, class T>
-   void ForceBiasMove<D,T>::readParameters(std::istream &in)
+   void ForceBiasMoveBase<D,T>::readParameters(std::istream &in)
    {
-      McMoveT::readProbability(in);
+      McMove<D,T>::readProbability(in);
       ParamComposite::read(in, "mobility", mobility_);
 
       // Allocate memory for private containers
@@ -66,7 +69,7 @@ namespace Rp {
    * Setup before entering main simulation loop.
    */
    template <int D, class T>
-   void ForceBiasMove<D,T>::setup()
+   void ForceBiasMoveBase<D,T>::setup()
    {
       // Check array capacities
       int meshSize = system().domain().mesh().size();
@@ -82,17 +85,17 @@ namespace Rp {
          UTIL_CHECK(dwc_[i].capacity() == meshSize);
       }
 
-      McMoveT::setup();
+      McMove<D,T>::setup();
    }
 
    /*
    * Attempt and accept or reject MC move
    */
    template <int D, class T>
-   bool ForceBiasMove<D,T>::move()
+   bool ForceBiasMoveBase<D,T>::move()
    {
-      McMoveT::totalTimer_.start();
-      McMoveT::incrementNAttempt();
+      McMove<D,T>::totalTimer_.start();
+      McMove<D,T>::incrementNAttempt();
 
       // Preconditions
       UTIL_CHECK(simulator().hasWc());
@@ -113,7 +116,7 @@ namespace Rp {
       // Clear eigen-components of the fields and Hamiltonian
       simulator().clearData();
 
-      McMoveT::attemptMoveTimer_.start();
+      McMove<D,T>::attemptMoveTimer_.start();
 
       // Copy current W fields from parent system into wc_
       for (i = 0; i < nMonomer; ++i) {
@@ -138,7 +141,7 @@ namespace Rp {
       for (j = 0; j < nMonomer - 1; ++j) {
 
          // Generate vector of normal distributed random numbers
-         McMoveT::vecRandom().normal(eta_, stddev, mean);
+         McMove<D,T>::vecRandom().normal(eta_, stddev, mean);
 
          // Compute vector dwc_[j] of field component changes
          VecOp::addVcVc(dwc_[j], dc_[j], a, eta_, b);
@@ -155,31 +158,31 @@ namespace Rp {
       system().w().setRGrid(w_);
       simulator().clearData();
 
-      McMoveT::attemptMoveTimer_.stop();
+      McMove<D,T>::attemptMoveTimer_.stop();
 
       // Call compressor
-      McMoveT::compressorTimer_.start();
+      McMove<D,T>::compressorTimer_.start();
       int compress = simulator().compressor().compress();
       UTIL_CHECK(system().c().hasData());
-      McMoveT::compressorTimer_.stop();
+      McMove<D,T>::compressorTimer_.stop();
 
       bool isConverged = false;
       if (compress != 0){
-         McMoveT::incrementNFail();
+         McMove<D,T>::incrementNFail();
          simulator().restoreState();
       } else {
          isConverged = true;
 
          // Compute eigenvector components of current fields
-         McMoveT::componentTimer_.start();
+         McMove<D,T>::componentTimer_.start();
          simulator().computeWc();
          UTIL_CHECK(system().c().hasData());
          simulator().computeCc();
          simulator().computeDc();
-         McMoveT::componentTimer_.stop();
+         McMove<D,T>::componentTimer_.stop();
 
          // Evaluate new Hamiltonian
-         McMoveT::hamiltonianTimer_.start();
+         McMove<D,T>::hamiltonianTimer_.start();
          simulator().computeHamiltonian();
          double newHamiltonian = simulator().hamiltonian();
          double dH = newHamiltonian - oldHamiltonian;
@@ -193,22 +196,22 @@ namespace Rp {
             bias += Reduce::sum(biasField_);
          }
          bias *= vNode;
-         McMoveT::hamiltonianTimer_.stop();
+         McMove<D,T>::hamiltonianTimer_.stop();
 
          // Accept or reject move
-         McMoveT::decisionTimer_.start();
+         McMove<D,T>::decisionTimer_.start();
          bool accept = false;
          double weight = exp(bias - dH);
-         accept = McMoveT::random().metropolis(weight);
+         accept = McMove<D,T>::random().metropolis(weight);
          if (accept) {
-            McMoveT::incrementNAccept();
+            McMove<D,T>::incrementNAccept();
             simulator().clearState();
          } else {
             simulator().restoreState();
          }
-         McMoveT::decisionTimer_.stop();
+         McMove<D,T>::decisionTimer_.stop();
       }
-      McMoveT::totalTimer_.stop();
+      McMove<D,T>::totalTimer_.stop();
 
       return isConverged;
    }
@@ -217,7 +220,7 @@ namespace Rp {
    * Output data to log file (do-nothing implementation).
    */
    template <int D, class T>
-   void ForceBiasMove<D,T>::output()
+   void ForceBiasMoveBase<D,T>::output()
    {}
 
 }

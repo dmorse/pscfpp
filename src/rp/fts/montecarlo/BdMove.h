@@ -43,7 +43,18 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destrutor (see below)
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator object
+      */
+      BdMove(McSimulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~BdMove() = default;
+
 
       /**
       * Read body of parameter file block.
@@ -68,18 +79,6 @@ namespace Rp {
       {  return true; }
 
    protected:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator object
-      */
-      BdMove(McSimulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~BdMove() = default;
 
       /**
       * Setup before simulation loop.

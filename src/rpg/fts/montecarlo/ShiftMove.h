@@ -8,18 +8,19 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/montecarlo/ShiftMove.h>     // base class template
+#include <rp/fts/montecarlo/ShiftMoveBase.h> // base class template
 #include <rpg/system/Types.h>                // base class argument
 #include <rpg/fts/montecarlo/McMove.h>       // indirect base class
-#include <prdc/field/cuda/RField.h>                // base class member
+#include <prdc/field/cuda/RField.h>          // base class member
 #include <pscf/cuda/HostDArray.h>            // member
 #include <pscf/cuda/cudaTypes.h>             // member
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * ShiftMove shifts field.
@@ -28,7 +29,8 @@ namespace Rpg {
    * \ingroup Rpg_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ShiftMove : public Rp::ShiftMove<D, Types<D> >
+   class ShiftMove<D, Rpg::Types<D> >
+    : public ShiftMoveBase<D, Rpg::Types<D> >
    {
 
    public:
@@ -38,7 +40,7 @@ namespace Rpg {
       *
       * \param simulator  parent McSimulator
       */
-      ShiftMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
+      ShiftMove(McSimulator<D, Rpg::Types<D> >& simulator);
 
       /**
       * Setup before simulation.
@@ -47,8 +49,7 @@ namespace Rpg {
 
    protected:
 
-      using Rp::McMove<D, Rpg::Types<D> >::system;
-
+      using McMove<D, Rpg::Types<D> >::system;
     
       /**
       * Compute and store shifted w fields.
@@ -68,7 +69,7 @@ namespace Rpg {
       // Work space on CPU for a shifted field
       HostDArray<cudaReal> wNew_;
 
-      using RpShiftMove = Rp::ShiftMove<D, Types<D> >;
+      using ShiftMoveBaseT = ShiftMoveBase<D, Rpg::Types<D> >;
 
    };
 
@@ -79,14 +80,12 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Rp::ShiftMove<1, Rpg::Types<1> >;
-      extern template class Rp::ShiftMove<2, Rpg::Types<2> >;
-      extern template class Rp::ShiftMove<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class ShiftMove<1>;
-      extern template class ShiftMove<2>;
-      extern template class ShiftMove<3>;
+      extern template class ShiftMoveBase<1, Rpg::Types<1> >;
+      extern template class ShiftMoveBase<2, Rpg::Types<2> >;
+      extern template class ShiftMoveBase<3, Rpg::Types<3> >;
+      extern template class ShiftMove<1, Rpg::Types<1> >;
+      extern template class ShiftMove<2, Rpg::Types<2> >;
+      extern template class ShiftMove<3, Rpg::Types<3> >;
    }
 }
 #endif

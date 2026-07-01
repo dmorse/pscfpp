@@ -18,28 +18,11 @@
 
 #include <rp/fts/montecarlo/RealMove.tpp>  // base class implementation
 
-namespace Pscf {
-namespace Rpc {
-
-   // Constructor.
-   template <int D>
-   RealMove<D>::RealMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
-    : Rp::RealMove<D, Types<D> > (simulator)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class RealMove<1, Rpc::Types<1> >;
       template class RealMove<2, Rpc::Types<2> >;
       template class RealMove<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class RealMove<1>;
-      template class RealMove<2>;
-      template class RealMove<3>;
    }
 }

@@ -1,5 +1,5 @@
-#ifndef RP_FORCE_BIAS_MOVE_H
-#define RP_FORCE_BIAS_MOVE_H
+#ifndef RP_FORCE_BIAS_MOVE_BASE_H
+#define RP_FORCE_BIAS_MOVE_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -18,7 +18,7 @@ namespace Rp {
    using namespace Util;
 
    /**
-   * ForceBiasMove attempts a Brownian dynamics move.
+   * ForceBiasMoveBase attempts a Brownian dynamics move.
    *
    * This class implements a Monte Carlo move in which the unconstrained
    * attempted move is created by an explicit Euler-Maruyama Brownian
@@ -29,11 +29,6 @@ namespace Rp {
    * the move() function must take into account the ratio of generation
    * probabilities.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, both also named ForceBiasMove,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space (D=1, 2, or 3)
@@ -43,12 +38,22 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
-   class ForceBiasMove : public McMove<D,T>
+   class ForceBiasMoveBase : public McMove<D,T>
    {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator
+      */
+      ForceBiasMoveBase(McSimulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~ForceBiasMoveBase() = default;
 
       /**
       * Read body of parameter file block and allocate memory.
@@ -81,24 +86,12 @@ namespace Rp {
 
    protected:
 
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator
-      */
-      ForceBiasMove(McSimulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~ForceBiasMove() = default;
-
       /// Alias for McMove base class.
       using McMoveT = McMove<D,T>;
 
       // Protected inherited member functions (selected).
-      using McMoveT::system;
-      using McMoveT::simulator;
+      using McMove<D,T>::system;
+      using McMove<D,T>::simulator;
 
    private:
 
@@ -141,9 +134,11 @@ namespace Rp {
    * Specify if dc fields need to be saved.
    */
    template <int D, class T>
-   inline bool ForceBiasMove<D,T>::needsDc()
+   inline bool ForceBiasMoveBase<D,T>::needsDc()
    {  return true; }
 
+   // Primary template declaration for subclasses
+   template <int D, class T> class ForceBiasMove;
 }
 }
 #endif

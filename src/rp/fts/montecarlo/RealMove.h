@@ -39,6 +39,18 @@ namespace Rp {
    public:
 
       /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator object
+      */
+      RealMove(McSimulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~RealMove() = default;
+
+      /**
       * Read body of parameter file block.
       *
       * \param in  input parameter stream
@@ -53,18 +65,6 @@ namespace Rp {
    protected:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator object
-      */
-      RealMove(McSimulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~RealMove() = default;
-
-      /**
       * Attempt unconstrained move.
       */
       void attemptMove() override;
@@ -73,9 +73,9 @@ namespace Rp {
       using McMoveT = McMove<D,T>;
 
       // Inherited protected member functions (selected).
-      using McMoveT::system;
-      using McMoveT::simulator;
-      using McMoveT::vecRandom;
+      using McMove<D,T>::system;
+      using McMove<D,T>::simulator;
+      using McMove<D,T>::vecRandom;
 
    private:
 

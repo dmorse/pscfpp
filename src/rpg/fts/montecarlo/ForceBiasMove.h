@@ -8,21 +8,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/montecarlo/ForceBiasMove.h> // direct base class template
-#include <rpg/system/Types.h>                // direct base argument
-#include <prdc/field/cuda/RField.h>                // direct base member
-#include <util/containers/DArray.h>          // direct base member
-#include "McMove.h"                          // indirect base class
+#include <rp/fts/montecarlo/ForceBiasMoveBase.h> // base class template
+#include <rpg/system/Types.h>                    // base class argument
+#include <prdc/field/cuda/RField.h>              // base class member
+#include <util/containers/DArray.h>              // base base member
+#include <rp/fts/montecarlo/McMove.h>            // indirect base class
 
 namespace Pscf {
-namespace Rpg {
-
-   // Forward declaration
-   template <int D> class McSimulator;
+namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cuda;
+   using namespace Pscf::Prdc;
+   using namespace Pscf::Prdc::Cuda;
 
    /**
    * ForceBiasMove attempts a Brownian dynamics move.
@@ -36,17 +33,13 @@ namespace Rpg {
    * the move() function must take into account the ratio of generation
    * probabilities.
    *
-   * Specializations of this template with D=1, 2, and 3 are derived 
-   * from specializations of the base class template Rp::ForceBiasMove, 
-   * and inherit their public interface and almost all of their source 
-   * code from this base class.  
-   *
-   * \see Rp::ForceBiasMove
+   * \see ForceBiasMoveBase
    * \see \ref rp_ForceBiasMove_page "Manual Page"
-   * \ingroup Rpg_Fts_MonteCarlo_Module
+   * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ForceBiasMove : public Rp::ForceBiasMove<D, Types<D> >
+   class ForceBiasMove<D, Rpg::Types<D> >
+    : public ForceBiasMoveBase<D, Rpg::Types<D> >
    {
 
    public:
@@ -56,14 +49,14 @@ namespace Rpg {
       *
       * \param simulator  parent McSimulator
       */
-      ForceBiasMove(Rp::McSimulator<D, Rpg::Types<D> >& simulator);
+      ForceBiasMove(McSimulator<D, Rpg::Types<D> >& simulator);
 
    private:
 
       /**
       * Compute force bias field.
       */
-      void computeForceBias(RField<D>& result,
+      void computeForceBias(RField<D> & result,
                             RField<D> const & di,
                             RField<D> const & df,
                             RField<D> const & dwc,
@@ -77,14 +70,12 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
+      extern template class ForceBiasMoveBase<1, Rpg::Types<1> >;
+      extern template class ForceBiasMoveBase<2, Rpg::Types<2> >;
+      extern template class ForceBiasMoveBase<3, Rpg::Types<3> >;
       extern template class ForceBiasMove<1, Rpg::Types<1> >;
       extern template class ForceBiasMove<2, Rpg::Types<2> >;
       extern template class ForceBiasMove<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class ForceBiasMove<1>;
-      extern template class ForceBiasMove<2>;
-      extern template class ForceBiasMove<3>;
    }
 }
 #endif

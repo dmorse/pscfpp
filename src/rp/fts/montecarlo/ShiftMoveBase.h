@@ -1,5 +1,5 @@
-#ifndef RP_SHIFT_MOVE_H
-#define RP_SHIFT_MOVE_H
+#ifndef RP_SHIFT_MOVE_BASE_H
+#define RP_SHIFT_MOVE_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -29,16 +29,11 @@ namespace Rp {
    using namespace Util;
 
    /**
-   * ShiftMove rigidly translates the field.
+   * ShiftMove rigidly translates all w fields.
    * 
    * An attempted ShiftMove rigidly translates all w fields by a random 
    * rigid translation, shifting each coordinate by an integer number of 
    * grid points in each direction.
-   *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also both named ShiftMove,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
    *
    * Template parameters:
    *
@@ -49,12 +44,22 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
-   class ShiftMove : public McMove<D,T>
+   class ShiftMoveBase : public McMove<D,T>
    {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent McSimulator
+      */
+      ShiftMoveBase(McSimulator<D,T>& simulator);
+
+      /**
+      * Destructor.
+      */
+      ~ShiftMoveBase() = default;
 
       /**
       * Read body of parameter file block.
@@ -69,18 +74,6 @@ namespace Rp {
       void setup() override;
 
    protected:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent McSimulator
-      */
-      ShiftMove(McSimulator<D,T>& simulator);
-
-      /**
-      * Destructor.
-      */
-      ~ShiftMove() = default;
 
       /**
       *  Attempt move that translates all w fields.
@@ -119,8 +112,8 @@ namespace Rp {
       using McMoveT = McMove<D,T>;
 
       // Inherited protected member functions (selected).
-      using McMoveT::system;
-      using McMoveT::simulator;
+      using McMove<D,T>::system;
+      using McMove<D,T>::simulator;
 
    private:
 
@@ -131,6 +124,9 @@ namespace Rp {
       bool isAllocated_;
 
    };
+
+   // Declaration of primary ShiftMove template
+   template <int D, class T> class ShiftMove;
 
 }
 }

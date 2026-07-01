@@ -11,11 +11,12 @@
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
+#include <pscf/mesh/Mesh.h>
 
-#include <rp/fts/montecarlo/ShiftMove.tpp>
+#include <rp/fts/montecarlo/ShiftMoveBase.tpp>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc::Cpu;
@@ -24,22 +25,23 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   ShiftMove<D>::ShiftMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
-    : RpShiftMove(simulator)
+   ShiftMove<D, Rpc::Types<D> >::ShiftMove(
+		            Rp::McSimulator<D, Rpc::Types<D> >& simulator)
+    : ShiftMoveBaseT(simulator)
    {}
 
    /*
    * Compute and store array w_ of shifted fields.
    */
    template <int D>
-   void ShiftMove<D>::shiftFields(IntVec<D> const & shift)
+   void ShiftMove<D, Rpc::Types<D> >::shiftFields(IntVec<D> const & shift)
    {
       IntVec<D> const& dimensions = system().domain().mesh().dimensions();
       const int nMonomer = system().mixture().nMonomer();
       for (int j = 0; j< nMonomer; ++j) {
          RField<D> const & wOld = system().w().rgrid(j);
-         RField<D> & wNew = RpShiftMove::w_[j];
-	 RpShiftMove::shiftField(wNew, wOld, shift, dimensions);
+         RField<D> & wNew = ShiftMoveBaseT::w_[j];
+	 ShiftMoveBaseT::shiftField(wNew, wOld, shift, dimensions);
       }
    }
 
@@ -49,13 +51,11 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
+      template class Rp::ShiftMoveBase<1, Rpc::Types<1> >;
+      template class Rp::ShiftMoveBase<2, Rpc::Types<2> >;
+      template class Rp::ShiftMoveBase<3, Rpc::Types<3> >;
       template class Rp::ShiftMove<1, Rpc::Types<1> >;
       template class Rp::ShiftMove<2, Rpc::Types<2> >;
       template class Rp::ShiftMove<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class ShiftMove<1>;
-      template class ShiftMove<2>;
-      template class ShiftMove<3>;
    }
 }

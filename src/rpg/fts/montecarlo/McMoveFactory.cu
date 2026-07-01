@@ -41,18 +41,17 @@ namespace Rpg {
 
       // Try to match classname
       if (className == "RealMove") {
-         ptr = new RealMove<D>(*simulatorPtr_);
+         ptr = new Rp::RealMove<D, Rpg::Types<D> >(*simulatorPtr_);
       } else if (className == "ForceBiasMove") {
-         ptr = new ForceBiasMove<D>(*simulatorPtr_);
+         ptr = new Rp::ForceBiasMove<D, Rpg::Types<D> >(*simulatorPtr_);
       } else if (className == "BdMove") {
-         ptr = new BdMove<D>(*simulatorPtr_);
+         ptr = new Rp::BdMove<D, Rpg::Types<D> >(*simulatorPtr_);
       } else if (className == "ShiftMove") {
-         ptr = new ShiftMove<D>(*simulatorPtr_);
+         ptr = new Rp::ShiftMove<D, Rpg::Types<D> >(*simulatorPtr_);
       }
 
       return ptr;
    }
-
 
    // Explicit instantiation definitions
    template class McMoveFactory<1>;

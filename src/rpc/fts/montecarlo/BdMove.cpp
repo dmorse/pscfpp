@@ -18,28 +18,11 @@
 
 #include <rp/fts/montecarlo/BdMove.tpp>     // base class implementation
 
-namespace Pscf {
-namespace Rpc {
-
-   // Constructor.
-   template <int D>
-   BdMove<D>::BdMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator)
-    : Rp::BdMove<D, Types<D> >(simulator)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class Rp::BdMove<1, Rpc::Types<1> >;
       template class Rp::BdMove<2, Rpc::Types<2> >;
       template class Rp::BdMove<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class BdMove<1>;
-      template class BdMove<2>;
-      template class BdMove<3>;
    }
 }
