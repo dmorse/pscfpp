@@ -10,18 +10,6 @@
 
 #include <rp/fts/montecarlo/McMoveManager.h> // base class template
 #include <rpc/system/Types.h>                // base class template argument
-#include <util/param/Manager.h>              // indirect base class
-#include <util/containers/DArray.h>          // member
-
-// Forward declarations
-namespace Pscf {
-   namespace Rp {
-      template <int D, class T> class System;
-   }
-   namespace Rpc {
-      template <int D> class McSimulator;
-   }
-}
 
 // Explicit instantiation declarations
 namespace Pscf {

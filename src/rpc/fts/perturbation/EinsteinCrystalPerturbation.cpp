@@ -6,6 +6,7 @@
 */
 
 #include "EinsteinCrystalPerturbation.h"
+
 #include <rpc/fts/simulator/Simulator.h>
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
@@ -16,6 +17,7 @@
 
 #include <rp/fts/perturbation/EinsteinCrystalPerturbation.tpp>
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -28,6 +30,7 @@ namespace Rpc {
 
 }
 }
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -35,10 +38,5 @@ namespace Pscf {
       template class EinsteinCrystalPerturbation<1, Rpc::Types<1> >;
       template class EinsteinCrystalPerturbation<2, Rpc::Types<2> >;
       template class EinsteinCrystalPerturbation<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class EinsteinCrystalPerturbation<1>;
-      template class EinsteinCrystalPerturbation<2>;
-      template class EinsteinCrystalPerturbation<3>;
    }
 }

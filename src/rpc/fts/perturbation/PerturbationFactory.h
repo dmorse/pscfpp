@@ -8,55 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/perturbation/Perturbation.h>
-#include <util/param/Factory.h>  
-#include <string>
+#include <rp/fts/perturbation/PerturbationFactory.h>
+#include <rpc/system/Types.h>
 
+// Explicit instantiation declarations
 namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /**
-   * Factory for subclasses of Perturbation.
-   *
-   * \ingroup Rpc_Fts_Perturbation_Module
-   */
-   template <int D>
-   class PerturbationFactory : public Factory< Rp::Perturbation<D, Rpc::Types<D> > > 
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Rp::Simulator<D, Rpc::Types<D> > object
-      */
-      PerturbationFactory(Rp::Simulator<D, Rpc::Types<D> >& simulator);
-
-      /**
-      * Method to create any Perturbation supplied with PSCF.
-      *
-      * \param className name of the Perturbation subclass
-      * \return Perturbation* pointer to new instance of className
-      */
-      Rp::Perturbation<D, Rpc::Types<D> >* factory(const std::string & className) const;
-
-      using Factory< Rp::Perturbation<D, Rpc::Types<D> > >::trySubfactories;
-
-   private:
-      
-      /// Pointer to the parent simulator.
-      Rp::Simulator<D, Rpc::Types<D> >* simulatorPtr_;
-
-   };
-
-   // Explicit instantiation declarations
-   extern template class PerturbationFactory<1>;
-   extern template class PerturbationFactory<2>;
-   extern template class PerturbationFactory<3>;
-
-}
+   namespace Rp {
+      extern template class PerturbationFactory<1, Rpc::Types<1> >;
+      extern template class PerturbationFactory<2, Rpc::Types<2> >;
+      extern template class PerturbationFactory<3, Rpc::Types<3> >;
+   }
 }
 #endif

@@ -63,7 +63,7 @@ namespace Rp {
       vecRandomPtr_ = new typename T::VecRandom();
       compressorFactoryPtr_ = new typename T::CompressorFactory(system);
       perturbationFactoryPtr_ 
-             = new typename T::PerturbationFactory(*this);
+             = new PerturbationFactory<D,T>(*this);
       rampFactoryPtr_ = new RampFactory<D,T>(*this);
 
       T::linkVecRandom(vecRandom(), random());
@@ -778,7 +778,7 @@ namespace Rp {
    * Get the Perturbation factory by reference.
    */
    template <int D, class T>
-   typename T::PerturbationFactory& Simulator<D,T>::perturbationFactory()
+   PerturbationFactory<D,T>& Simulator<D,T>::perturbationFactory()
    {
       UTIL_CHECK(perturbationFactoryPtr_);
       return *perturbationFactoryPtr_;

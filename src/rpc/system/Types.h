@@ -73,10 +73,10 @@ namespace Pscf {
       //template <int D> class McSimulator;
       //template <int D> class McMove;
       //template <int D> class McMoveManager;
-      template <int D> class McMoveFactory;
+      //template <int D> class McMoveFactory;
 
       //template <int D> class Perturbation;
-      template <int D> class PerturbationFactory;
+      //template <int D> class PerturbationFactory;
 
       //template <int D> class Ramp;
       //template <int D> class RampParameter;
@@ -170,7 +170,7 @@ namespace Rpc {
       //using McSimulator = Rp::McSimulator<D, Rpc::Types<D> >;
       //using McMove = Rp::McMove<D, Rpc::Types<D> >;
       //using McMoveManager = Rp::McMoveManager<D, Rpc::Types<D> >;
-      using McMoveFactory = Rpc::McMoveFactory<D>;
+      //using McMoveFactory = Rp::McMoveFactory<D, Rpc::Types<D> >;
 
       using Analyzer = Rpc::Analyzer<D>;
       using AnalyzerFactory = Rpc::AnalyzerFactory<D>;
@@ -182,7 +182,7 @@ namespace Rpc {
       //using TrajectoryReaderFactory = Rp::TrajectoryReaderFactory<D, Rpc::Types<D> >;
 
       //using Perturbation = Rp::Perturbation<D, Rpc::Types<D> >;
-      using PerturbationFactory = Rpc::PerturbationFactory<D>;
+      //using PerturbationFactory = Rp::PerturbationFactory<D, Rpc::Types<D> >;
 
       //using Ramp = Rp::Ramp<D, Rpc::Types<D> >;
       //using RampParameter = Rp::RampParameter<D, Rpc::Types<D> >;

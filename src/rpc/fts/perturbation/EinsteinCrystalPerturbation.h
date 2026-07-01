@@ -2,10 +2,11 @@
 #define RPC_EINSTEIN_CRYSTAL_PERTURBATION_H
 
 #include <rp/fts/perturbation/EinsteinCrystalPerturbation.h> // base class
-#include <rpc/system/Types.h>                             // base argument
-#include <rpc/fts/perturbation/Perturbation.h>            // indirect base
-#include <prdc/field/cpu/RField.h>                              // base member
+#include <rpc/system/Types.h>                                // base argument
+#include <rpc/fts/perturbation/Perturbation.h>               // indirect base
+#include <prdc/field/cpu/RField.h>                           // base member
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -39,18 +40,17 @@ namespace Rpc {
 
 }
 }
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class EinsteinCrystalPerturbation<1, Rpc::Types<1> >;
-      extern template class EinsteinCrystalPerturbation<2, Rpc::Types<2> >;
-      extern template class EinsteinCrystalPerturbation<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class EinsteinCrystalPerturbation<1>;
-      extern template class EinsteinCrystalPerturbation<2>;
-      extern template class EinsteinCrystalPerturbation<3>;
+      extern template 
+      class EinsteinCrystalPerturbation<1, Rpc::Types<1> >;
+      extern template 
+      class EinsteinCrystalPerturbation<2, Rpc::Types<2> >;
+      extern template 
+      class EinsteinCrystalPerturbation<3, Rpc::Types<3> >;
    }
 }
 #endif

@@ -5,52 +5,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "PerturbationFactory.h"  
-//#include <rpc/fts/simulator/Simulator.h>
+#include <rpc/fts/perturbation/PerturbationFactory.h>
 
-// Subclasses of Perturbation 
-#include "EinsteinCrystalPerturbation.h"
+// Subclasses of Perturbation
+#include <rpc/fts/perturbation/EinsteinCrystalPerturbation.h>
 
+#include <rp/fts/perturbation/PerturbationFactory.tpp>
 
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /*
-   * Constructor
-   */
-   template <int D>
-   PerturbationFactory<D>::PerturbationFactory(Rp::Simulator<D, Rpc::Types<D> >& simulator)
-    : simulatorPtr_(&simulator)
-   {}
-
-   /* 
-   * Return a pointer to a instance of Perturbation subclass className.
-   */
-   template <int D>
-   Rp::Perturbation<D, Rpc::Types<D> >* 
-   PerturbationFactory<D>::factory(const std::string & className) const
-   {
-      Rp::Perturbation<D, Rpc::Types<D> >* ptr = 0;
-
-      // Try subfactories first
-      ptr = trySubfactories(className);
-      if (ptr) return ptr;
-       
-      // Try to match classname
-      if (className == "EinsteinCrystal" || 
-          className == "EinsteinCrystalPerturbation") {
-         ptr = new EinsteinCrystalPerturbation<D>(*simulatorPtr_);
-      } 
-
-      return ptr;
+   namespace Rp {
+      template class PerturbationFactory<1, Rpc::Types<1> >;
+      template class PerturbationFactory<2, Rpc::Types<2> >;
+      template class PerturbationFactory<3, Rpc::Types<3> >;
    }
-
-   // Explicit instantiation definitions
-   template class PerturbationFactory<1>;
-   template class PerturbationFactory<2>;
-   template class PerturbationFactory<3>;
-
-}
 }

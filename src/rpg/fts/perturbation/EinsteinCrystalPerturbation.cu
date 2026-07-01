@@ -17,21 +17,6 @@
 
 #include <rp/fts/perturbation/EinsteinCrystalPerturbation.tpp>
 
-#if 0
-namespace Pscf {
-namespace Rpg {
-
-   // Constructor.
-   template <int D>
-   EinsteinCrystalPerturbation<D>::EinsteinCrystalPerturbation(
-                                                  Rp::Simulator<D, Rpg::Types<D> >& simulator)
-    : Rp::EinsteinCrystalPerturbation<D, Types<D> >(simulator)
-   {}
-
-}
-}
-#endif
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {

@@ -34,7 +34,7 @@ namespace Rp {
    template <int D, class T>
    Factory<McMove<D,T> >* McMoveManager<D,T>::newDefaultFactory()
    const
-   {  return new typename T::McMoveFactory(*simulatorPtr_); }
+   {  return new McMoveFactory<D,T>(*simulatorPtr_); }
 
    /*
    * Read instructions for creating objects from file.

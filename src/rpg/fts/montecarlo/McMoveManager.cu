@@ -11,7 +11,7 @@
 #include <util/random/Random.h>
 #include <util/global.h>
 
-#include <rp/fts/montecarlo/McMoveManager.tpp> // base class implementation
+#include <rp/fts/montecarlo/McMoveManager.tpp> // template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

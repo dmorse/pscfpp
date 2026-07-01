@@ -23,6 +23,7 @@ namespace Pscf {
       template <int D, class T> class Compressor;
       template <int D, class T> class SimState;
       template <int D, class T> class Perturbation;
+      template <int D, class T> class PerturbationFactory;
       template <int D, class T> class Ramp;
       template <int D, class T> class RampFactory;
    }
@@ -652,7 +653,7 @@ namespace Rp {
       /**
       * Get the Perturbation factory by reference.
       */
-      typename T::PerturbationFactory& perturbationFactory();
+      PerturbationFactory<D,T>& perturbationFactory();
 
       /**
       * Optionally read a Perturbation parameter file block.
@@ -888,7 +889,7 @@ namespace Rp {
       /**
       * Pointer to a Perturbation factory.
       */
-      typename T::PerturbationFactory* perturbationFactoryPtr_;
+      PerturbationFactory<D,T>* perturbationFactoryPtr_;
 
       /**
       * Pointer to a Perturbation.
