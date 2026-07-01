@@ -3,13 +3,12 @@ namespace Rp {
 /*!
 \page rp_BdSimulator_page BdSimulator
 
-An instance of class BdSimulator<D,T> provides a set of data structures and
-algorithms that are needed to enable partial saddle-point field theoretic
-simulation (PS-FTS) using Brownian dynamic sampling, but that are not needed
-for a self-consistent field (SCFT) calculation. The associated parameter
-file block is one of two possible options (BdSimulator or McSimulator) for
-the optional, selectable "Simulator" subblock of the main
-\ref rp_System_page "System" block of the parameter file.
+A BdSimulator provides a set of data structures and algorithms that are needed 
+to enable partial saddle-point field theoretic simulation (PS-FTS) using Brownian 
+dynamic sampling, but that are not needed for a self-consistent field (SCFT) 
+calculation. The associated parameter file block is one of two possible options 
+(BdSimulator or McSimulator) for the optional, selectable "Simulator" subblock 
+of the main \ref rp_System_page "System" block of the parameter file.
 
 \section rp_BdSimulator_parameter_page Parameter File
 

@@ -1,8 +1,8 @@
 /*! 
 \page rp_ExplicitBdStep_page ExplicitBdStep
 
-An ExplictBdStep<D,T> class implement a simple explicit Euler Brownian 
-dynamics step algorithm.
+The ExplictBdStep class template implement a simple explicit Euler 
+Brownian dynamics step algorithm.
 
 \section rp_ExplicitBdStep_algorithm_sec Step Algorithm
 

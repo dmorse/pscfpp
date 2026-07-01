@@ -4,14 +4,12 @@ namespace Rp {
 /*! 
 \page rp_McSimulator_page McSimulator
 
-An instance of a class McSimulator<D> in namespace Pscf::Rpc (for pscf_rpc)
-or Pscf::Rpg (for pscf_rpg) provides a variety of data structures and 
-algorithms that are needed to implement a partial saddle-point field 
-theoretic simulation (PS-FTS) using Monte-Carlo sampling, but that are not 
-needed for self-consistent field (SCFT) calculation. The associated parameter 
-file block is one of two possible option (McSimulator or BdSimulator) for 
-the optional, selectable "Simulator" subblock of the main System block of 
-the parameter file. 
+An McSimulator provides a variety of data structures and algorithms that are 
+needed to implement a partial saddle-point field theoretic simulation (PS-FTS) 
+using Monte-Carlo sampling, but that are not needed for self-consistent field 
+(SCFT) calculation. The associated parameter file block is one of two possible 
+option (McSimulator or BdSimulator) for the optional, selectable "Simulator" 
+subblock of the main System block of the parameter file. 
 
 \section rp_McSimulator_parameter_sec Parameter file
 

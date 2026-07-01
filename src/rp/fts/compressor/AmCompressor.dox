@@ -1,13 +1,8 @@
 /*! 
 \page rp_AmCompressor_page AmCompressor
 
-The AmCompressor classes used by both the pscf_rpc and pscf_rpg programs 
-each implement a \ref pscf_AmIteratorTmpl_page "Anderson mixing" 
-compressor algorithm.  Two closely analogous classes named 
-Pscf::Rpc::AmCompressor and Pscf::Rpg::AmCompressor implement this 
-algorithm for the pscf_rpc CPU program and the pscf_rpg GPU-accelerated 
-program, respectively. These two classes implement the same step 
-algorithm and use the same parameter file format, as documented below.
+The AmCompressor class template implements an 
+\ref pscf_AmIteratorTmpl_page "Anderson mixing" compressor algorithm.  
 
 \section rp_AmCompressor_algorithm_sec Step Algorithm
 

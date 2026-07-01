@@ -1,28 +1,20 @@
 /*!
 \page rp_LrCompressor_page LrCompressor
 
-The LrCompressor classes used by both the pscf_rpc and pscf_rpg programs
-implements a linear-response Anderson mixing (LRAM) algorithm as described
-in this publication.
-
-Two closely analogous classes named Pscf::Rpc::LrCompressor and
-Pscf::Rpg::LrCompressor implement this algorithm for the pscf_rpc CPU and
-program and the pscf_rpg GPU-accelerated program, respectively. These two
-classes implement the same step algorithm and use the same parameter file
-format, which are documented below.
+The LrCompressor class template implements a linear-response (LR)
+compressor algorithm.  This is a quasi-Newton algorithm in which 
+the linear response of an inhomogeneous ideal gas to an infinitesimal 
+change in the pressure-like field \f$ W_{+}({\bf r}) \f$ is approximated 
+by the analytically calculable response of a hypothetical homogeneous 
+state of the same fluid.
 
 A general discussion of compressor algorithms for PS-FTS is given
-\ref psfts_algorithm_page "here". Each LrCompressor class implements
-the linear response (LR) algorithm that is presented in the following
-publication: <a href="https://doi.org/10.1063/5.0264036">
+\ref psfts_algorithm_page "here". The LrCompressor class template 
+implements the linear response (LR) algorithm that is presented in the 
+following publication: <a href="https://doi.org/10.1063/5.0264036">
 "Improved algorithm for identifying partial saddle-points in polymer
 field theoretic simulations", K. Chen and D.C. Morse,
 <em> J. Chem. Phys. </em> <b> 162 </b>, 243901 (2025). </a>.
-This is a quasi-Newton algorithm in which linear response of an
-inhomogeneous ideal gas to an infinitesimal change in the pressure-like
-field \f$ W_{+}({\bf r}) \f$ is approximated by the analytically
-calculable response of a hypothetical homogeneous state of the same
-fluid.
 
 \section rp_LrCompressor_parameter_sec Parameter file
 

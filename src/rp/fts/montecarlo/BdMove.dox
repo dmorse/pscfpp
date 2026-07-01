@@ -4,26 +4,19 @@ namespace Rp {
 /*! 
 \page rp_BdMove_page BdMove
 
-The BdMove classes used by both the pscf_rpc and pscf_rpg programs 
-implements a MC move that performs a short BD simulation, and always
-accepts the result. Unlike other MC moves, this move does not exactly
-satisfy detailed balance, and incurs the same sorts of systematic 
-errors as those found in BD simulations. 
+A BdMove implements a MC move that performs a short BD simulation, 
+and always accepts the result. Unlike other MC moves, this move does 
+not exactly satisfy detailed balance, and so incurs a systematic 
+error similar to that found in pure BD simulations.
 
 The BdMove class is provided to allow users to mix BD and MC 
 sampling strategies. For large systems, BD simulation is generally 
-more efficient than MC simulation, at the cost of the existence of 
-a systematic error that decreases with decreasing time step. By
-combining a BdMove with a one or more more specialized MC move, a 
-user may combine the efficiency of BD simulation with specialized
+more efficient than MC simulation, because the acceptance rates of
+the types of MC moves used in field theoretic simulations generally
+decreases with increasing system size.  By combining a BdMove with 
+a one or more more specialized MC move, a user may combine the 
+efficiency of BD simulation for large systems with specialized
 capabilities provided by another type of MC move. 
-
-Two closely analogous class templates named Pscf::Rp::BdMove and 
-Pscf::Rpg::BdMove are used to perform this type of move in the
-pscf_rpc and pscf_rpg programs, respectively. Specializations of 
-these templates are derived from specializations of the base class 
-template Pscf::Rp::BdMove, which defines the implementation of the
-move in a generic form.
 
 \see Rp::BdMove (class API)
 

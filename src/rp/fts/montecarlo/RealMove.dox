@@ -4,18 +4,8 @@ namespace Rpc {
 /*! 
 \page rp_RealMove_page RealMove
 
-The RealMove classes used by both the pscf_rpc and pscf_rpg programs 
-implements a simple MC move for which the attempted move is a random
-change at every grid point.
-
-Two closely analogous classes named Pscf::Rpc::RealMove and 
-Pscf::Rpg::RealMove that are defined in different namespaces are used 
-to implement this the same step algorithm for different programs. 
-The RealMove class defined in the Rpc namespace is used in the pscf_rpc 
-program (using CPU hardware) and the class defined in the Rpg namespace 
-is used in the pscf_rpg program (using GPU acceleration). These two 
-classes implement the same step algorithm and use the same parameter 
-file format, which are documented below.
+A RealMove implements a simple MC move for which the attempted move 
+is a random change at every grid point.
 
 \section rp_RealMove_algorithm_sec Step Algorithm
 
