@@ -46,7 +46,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class MaxOrderParameter : public T::AverageAnalyzer
+   class MaxOrderParameter : public AverageAnalyzer<D,T>
    {
 
    public:
@@ -111,7 +111,7 @@ namespace Rp {
       void findMaximum(Array<typename T::Real> const & psi);
 
       // Alias for base class.
-      using AverageAnalyzerT = typename T::AverageAnalyzer;
+      using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member variables (selected).
       using AverageAnalyzerT::simulator;

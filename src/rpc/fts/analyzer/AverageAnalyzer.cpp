@@ -11,32 +11,11 @@
 
 #include <rp/fts/analyzer/AverageAnalyzer.tpp>
 
-namespace Pscf {
-   namespace Rpc {
-
-      /// Constructor.
-      template <int D>
-      AverageAnalyzer<D>::AverageAnalyzer(Rp::Simulator<D, Rpc::Types<D> >& simulator,
-		                          Rp::System<D, Rpc::Types<D> >& system)
-       : Rp::AverageAnalyzer< D, Types<D> >(simulator, system)
-      {}
-
-   }
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class
-      AverageAnalyzer<1, Rpc::Types<1> >;
-      template class
-      AverageAnalyzer<2, Rpc::Types<2> >;
-      template class
-      AverageAnalyzer<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class AverageAnalyzer<1>;
-      template class AverageAnalyzer<2>;
-      template class AverageAnalyzer<3>;
+      template class AverageAnalyzer<1, Rpc::Types<1> >;
+      template class AverageAnalyzer<2, Rpc::Types<2> >;
+      template class AverageAnalyzer<3, Rpc::Types<3> >;
    }
 }

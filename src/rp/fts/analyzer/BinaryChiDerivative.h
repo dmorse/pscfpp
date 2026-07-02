@@ -32,7 +32,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class BinaryChiDerivative : public T::AverageAnalyzer
+   class BinaryChiDerivative : public AverageAnalyzer<D,T>
    {
 
    protected:
@@ -58,7 +58,7 @@ namespace Rp {
 
       // Aliases for base classes.
       using AnalyzerT = typename T::Analyzer;
-      using AverageAnalyzerT = typename T::AverageAnalyzer;
+      using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).
       using AnalyzerT::simulator;

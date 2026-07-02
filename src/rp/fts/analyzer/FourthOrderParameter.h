@@ -49,7 +49,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class FourthOrderParameter : public T::AverageAnalyzer
+   class FourthOrderParameter : public AverageAnalyzer<D,T>
    {
 
    public:
@@ -100,7 +100,7 @@ namespace Rp {
       void computePrefactor(Array<double>& prefactor);
 
       // Alias for base class
-      using AverageAnalyzerT = typename T::AverageAnalyzer;
+      using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).
       using AverageAnalyzerT::simulator;

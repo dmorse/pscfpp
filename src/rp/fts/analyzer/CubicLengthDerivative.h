@@ -20,7 +20,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class CubicLengthDerivative : public T::AverageAnalyzer
+   class CubicLengthDerivative : public AverageAnalyzer<D,T>
    {
 
    protected:
@@ -41,7 +41,7 @@ namespace Rp {
       */
       double compute() override;
 
-      using AverageAnalyzerT = typename T::AverageAnalyzer;
+      using AverageAnalyzerT = AverageAnalyzer<D,T>;
       using AverageAnalyzerT::simulator;
       using AverageAnalyzerT::system;
       using AverageAnalyzerT::outputFile_;

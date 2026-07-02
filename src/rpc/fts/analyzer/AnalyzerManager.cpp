@@ -5,22 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AnalyzerManager.h"                   // class header
-#include "AnalyzerFactory.h"
-#include <rp/fts/analyzer/AnalyzerManager.tpp> // base class implementation
+#include <rpc/fts/analyzer/AnalyzerManager.h>
+#include <rpc/fts/analyzer/AnalyzerFactory.h>
 
-namespace Pscf {
-namespace Rpc {
-
-   // Constructor.
-   template <int D>
-   AnalyzerManager<D>::AnalyzerManager(Rp::Simulator<D, Rpc::Types<D> >& simulator,
-                                       Rp::System<D, Rpc::Types<D> >& system)
-    : Rp::AnalyzerManager<D, Types<D> >(simulator, system)
-   {}
-
-}
-}
+#include <rp/fts/analyzer/AnalyzerManager.tpp> // class implementation
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -28,10 +16,5 @@ namespace Pscf {
       template class AnalyzerManager<1, Rpc::Types<1> >;
       template class AnalyzerManager<2, Rpc::Types<2> >;
       template class AnalyzerManager<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class AnalyzerManager<1>;
-      template class AnalyzerManager<2>;
-      template class AnalyzerManager<3>;
    }
 }

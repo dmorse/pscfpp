@@ -21,6 +21,7 @@ namespace Pscf {
       template <int D, class T> class System; 
       template <int D, class T> class Simulator; 
       template <int D, class T> class McMoveManager; 
+      template <int D, class T> class AnalyzerManager; 
       template <int D, class T> class TrajectoryReader; 
    }
 }
@@ -141,12 +142,12 @@ namespace Rp {
       /**
       * Get the AnalyzerManager (const).
       */
-      typename T::AnalyzerManager const & analyzerManager() const;
+      AnalyzerManager<D,T> const & analyzerManager() const;
 
       /**
       * Get the AnalyzerManager (non-const).
       */
-      typename T::AnalyzerManager& analyzerManager();
+      AnalyzerManager<D,T>& analyzerManager();
 
       /**
       * Get the trajectory reader factory by reference.
@@ -203,7 +204,7 @@ namespace Rp {
       /**
       * Pointer to Manager for analyzers.
       */
-      typename T::AnalyzerManager* analyzerManagerPtr_;
+      AnalyzerManager<D,T>* analyzerManagerPtr_;
 
       /**
       * Pointer to a trajectory reader factory.
@@ -241,7 +242,7 @@ namespace Rp {
 
    // Get the Analyzer manager (const).
    template <int D, class T> inline
-   typename T::AnalyzerManager const& McSimulator<D,T>::analyzerManager() 
+   AnalyzerManager<D,T> const& McSimulator<D,T>::analyzerManager() 
    const
    {  
       UTIL_ASSERT(analyzerManagerPtr_);
@@ -250,7 +251,7 @@ namespace Rp {
 
    // Get the Analyzer manager.
    template <int D, class T> inline
-   typename T::AnalyzerManager& McSimulator<D,T>::analyzerManager()
+   AnalyzerManager<D,T>& McSimulator<D,T>::analyzerManager()
    {  
       UTIL_ASSERT(analyzerManagerPtr_);
       return *analyzerManagerPtr_; 

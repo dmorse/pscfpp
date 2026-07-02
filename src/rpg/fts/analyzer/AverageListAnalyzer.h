@@ -8,50 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"
-#include <rp/fts/analyzer/AverageListAnalyzer.h>
-#include <rpg/system/Types.h>
-
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   /**
-   * Analyze averages and block averages of several real variables.
-   *
-   * This class evaluates averages of several sampled real variables,
-   * and optionally writes block averages to a data file during a
-   * simulation. It is intended for use as a base class for Analyzers
-   * that evaluate averages and (optionally) block averages for several
-   * physical variables.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * specializations of the base class template Rp::AverageListAnalyzer,
-   * and inherit their public interface and almost all of their source
-   * code from this base class.
-   *
-   * \see Rp::AverageListAnalyzer
-   * \ingroup Rpg_Fts_Analyzer_Module
-   */
-   template <int D>
-   class AverageListAnalyzer
-     : public Rp::AverageListAnalyzer< D, Types<D> >
-   {
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      AverageListAnalyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
-
-   };
-
-}
-}
+#include <rp/fts/analyzer/AverageListAnalyzer.h> // class template
+#include <rpg/system/Types.h>                    // class argument
+#include "Analyzer.h"                            // base class
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -59,11 +18,6 @@ namespace Pscf {
       extern template class AverageListAnalyzer<1, Rpg::Types<1> >;
       extern template class AverageListAnalyzer<2, Rpg::Types<2> >;
       extern template class AverageListAnalyzer<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class AverageListAnalyzer<1>;
-      extern template class AverageListAnalyzer<2>;
-      extern template class AverageListAnalyzer<3>;
    }
 }
 #endif

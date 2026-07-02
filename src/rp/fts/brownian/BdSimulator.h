@@ -21,6 +21,7 @@ namespace Pscf {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
       template <int D, class T> class BdStep;
+      template <int D, class T> class AnalyzerManager;
       template <int D, class T> class TrajectoryReader;
    }
 }
@@ -122,12 +123,12 @@ namespace Rp {
       /**
       * Get the AnalyzerManager (const).
       */
-      typename T::AnalyzerManager& analyzerManager();
+      AnalyzerManager<D,T>& analyzerManager();
 
       /**
       * Get the AnalyzerManager (non-const).
       */
-      typename T::AnalyzerManager const& analyzerManager() const;
+      AnalyzerManager<D,T> const& analyzerManager() const;
 
       /**
       * Get the trajectory reader factory by reference.
@@ -159,7 +160,7 @@ namespace Rp {
       /**
       * Manager for Analyzer.
       */
-      typename T::AnalyzerManager* analyzerManagerPtr_;
+      AnalyzerManager<D,T>* analyzerManagerPtr_;
 
       /**
       * Pointer to Brownian dynamics step algorithm.
@@ -204,13 +205,13 @@ namespace Rp {
 
    // Get the AnalyzerManager (const).
    template <int D, class T> inline
-   typename T::AnalyzerManager const& 
+   AnalyzerManager<D,T> const& 
    BdSimulator<D,T>::analyzerManager() const
    {  return *analyzerManagerPtr_; }
 
    // Get the AnalyzerManager (non-const).
    template <int D, class T> inline
-   typename T::AnalyzerManager& BdSimulator<D,T>::analyzerManager()
+   AnalyzerManager<D,T>& BdSimulator<D,T>::analyzerManager()
    {  return *analyzerManagerPtr_; }
 
 }

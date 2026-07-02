@@ -37,7 +37,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class HamiltonianAnalyzer : public T::AverageListAnalyzer
+   class HamiltonianAnalyzer : public AverageListAnalyzer<D,T>
    {
 
    public:
@@ -71,7 +71,7 @@ namespace Rp {
       void compute() override;
 
       // Aliases for base classes.
-      using AverageListAnalyzerT = typename T::AverageListAnalyzer;
+      using AverageListAnalyzerT = AverageListAnalyzer<D,T>;
       using AnalyzerT = typename T::Analyzer;
 
       // Inherited protected member functions (selected).

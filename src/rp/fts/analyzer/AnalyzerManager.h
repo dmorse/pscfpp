@@ -40,7 +40,19 @@ namespace Rp {
 
    public:
 
-      // Protected constructor and destructor (see below). 
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator
+      * \param system  parent System
+      */
+      AnalyzerManager(Simulator<D,T>& simulator, 
+                      System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~AnalyzerManager() = default;
 
       /**
       * Read body of parameter file block.
@@ -77,22 +89,6 @@ namespace Rp {
       * of each analyzer, or does nothing if size() == 0.
       */
       void output();
-
-   protected:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator
-      * \param system  parent System
-      */
-      AnalyzerManager(Simulator<D,T>& simulator, 
-                      System<D,T>& system);
-
-      /**
-      * Destructor.
-      */
-      ~AnalyzerManager() = default;
 
    private:
 

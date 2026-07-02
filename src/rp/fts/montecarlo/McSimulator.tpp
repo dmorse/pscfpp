@@ -39,7 +39,7 @@ namespace Rp {
       mcMoveManagerPtr_ 
             = new McMoveManager<D,T>(*this, system),
       analyzerManagerPtr_
-            = new typename T::AnalyzerManager(*this, system),
+            = new AnalyzerManager<D,T>(*this, system),
       trajectoryReaderFactoryPtr_
             = new TrajectoryReaderFactory<D,T>(system);
       AnalyzerT::initStatic();
