@@ -33,7 +33,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class TrajectoryWriter : public T::Analyzer
+   class TrajectoryWriter : public Analyzer<D,T>
    {
 
    public:
@@ -94,7 +94,7 @@ namespace Rp {
       void writeFrame(std::ofstream& out, long iStep);
 
       // Alias for base class.
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
 
       // Inherited protected member functions (selected).
       using AnalyzerT::simulator;

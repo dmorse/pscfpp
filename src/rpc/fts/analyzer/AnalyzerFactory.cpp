@@ -39,10 +39,10 @@ namespace Rpc {
    * Return a pointer to a instance of Analyzer subclass className.
    */
    template <int D>
-   Analyzer<D>* AnalyzerFactory<D>::factory(const std::string &className) 
+   Rp::Analyzer<D, Rpc::Types<D> >* AnalyzerFactory<D>::factory(const std::string &className) 
    const
    {
-      Analyzer<D>* ptr = nullptr;
+      Rp::Analyzer<D, Rpc::Types<D> >* ptr = nullptr;
 
       // Try subfactories first
       ptr = trySubfactories(className);

@@ -55,7 +55,7 @@ namespace Rp {
       double compute() override;
 
       // Aliases for base classes.
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
       using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).

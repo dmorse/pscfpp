@@ -33,7 +33,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class ConcentrationWriter : public T::Analyzer
+   class ConcentrationWriter : public Analyzer<D,T>
    {
 
    public:
@@ -71,7 +71,7 @@ namespace Rp {
       */
       void output() override;
 
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
       using AnalyzerT::simulator;
       using AnalyzerT::system;
 

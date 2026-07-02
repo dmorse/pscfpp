@@ -1,9 +1,10 @@
 #ifndef RPG_ANALYZER_H
 #define RPG_ANALYZER_H
 
-#include <rp/fts/analyzer/Analyzer.h>   // base class template
-#include <rpg/system/Types.h>           // base class argument
+#include <rp/fts/analyzer/Analyzer.h>   // class template
+#include <rpg/system/Types.h>           // class argument
 
+#if 0
 namespace Pscf {
 namespace Rpg {
 
@@ -26,8 +27,7 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Analyzer_Module
    */
    template <int D>
-   class Analyzer 
-    : public Rp::Analyzer<D, Rp::Simulator<D, Rpg::Types<D> >, Rp::System<D, Rpg::Types<D> > >
+   class Analyzer : public Rp::Analyzer<D, Rpg::Types<D> >
    {
 
    public:
@@ -38,34 +38,28 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      Analyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      Analyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator, 
+               Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Destructor.
       */
       virtual ~Analyzer() = default;
 
-      using Rp::Analyzer<D, Rp::Simulator<D, Rpg::Types<D> >, Rp::System<D, Rpg::Types<D> > >::baseInterval;
+      using Rp::Analyzer<D, Rpg::Types<D> >::baseInterval;
 
    };
 
 } // namespace Rpg
 } // namespace Pscf
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template 
-      class Analyzer<1, Rp::Simulator<1, Rpg::Types<1> >, Rp::System<1, Rpg::Types<1> > >;
-      extern template 
-      class Analyzer<2, Rp::Simulator<2, Rpg::Types<2> >, Rp::System<2, Rpg::Types<2> > >;
-      extern template 
-      class Analyzer<3, Rp::Simulator<3, Rpg::Types<3> >, Rp::System<3, Rpg::Types<3> > >;
-   } 
-   namespace Rpg {
-      extern template class Analyzer<1>;
-      extern template class Analyzer<2>;
-      extern template class Analyzer<3>;
+      extern template class Analyzer<1, Rpg::Types<1> >;
+      extern template class Analyzer<2, Rpg::Types<2> >;
+      extern template class Analyzer<3, Rpg::Types<3> >;
    } 
 } 
 #endif

@@ -32,7 +32,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class StepLogger : public T::Analyzer
+   class StepLogger : public Analyzer<D,T>
    {
 
    public:
@@ -72,7 +72,7 @@ namespace Rp {
    private:
 
       // Private alias for base class.
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
 
    };
 

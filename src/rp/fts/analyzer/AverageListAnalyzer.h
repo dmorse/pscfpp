@@ -39,7 +39,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class AverageListAnalyzer : public T::Analyzer
+   class AverageListAnalyzer : public Analyzer<D,T>
    {
 
    public:
@@ -173,7 +173,7 @@ namespace Rp {
       */
       void outputAccumulators();
 
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
       using AnalyzerT::simulator;
       using AnalyzerT::system;
 

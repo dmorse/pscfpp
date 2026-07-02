@@ -62,7 +62,7 @@ namespace Pscf {
       template <int D> class IntraCorrelation;
       template <int D> class CompressorFactory;
 
-      template <int D> class Analyzer;
+      //template <int D> class Analyzer;
       //template <int D> class AverageAnalyzer;
       //template <int D> class AverageListAnalyzer;
       //template <int D> class AnalyzerManager;
@@ -171,7 +171,7 @@ namespace Rpg {
       //using RampParameter = Rp::RampParameter<D, Rpg::Types<D> >;
       //using RampFactory = Rp::RampFactory<D, Rpg::Types<D> >;
 
-      using Analyzer = Rpg::Analyzer<D>;
+      //using Analyzer = Rp::Analyzer<D, Rpg::Types<D> >;
       //using AverageAnalyzer = Rp::AverageAnalyzer<D, Rpg::Types<D> >;
       //using AverageListAnalyzer = Rp::AverageListAnalyzer<D, Rpg::Types<D> >;
       //using AnalyzerManager = Rp::AnalyzerManager<D, Rpg::Types<D> >;

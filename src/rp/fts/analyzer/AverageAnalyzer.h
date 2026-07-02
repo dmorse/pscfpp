@@ -38,7 +38,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class AverageAnalyzer : public T::Analyzer
+   class AverageAnalyzer : public Analyzer<D,T>
    {
 
    public:
@@ -133,7 +133,7 @@ namespace Rp {
       /// Number of samples per block average output.
       int nSamplePerOutput_;
 
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
 
    };
 

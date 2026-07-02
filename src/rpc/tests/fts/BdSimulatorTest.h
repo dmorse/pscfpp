@@ -52,8 +52,9 @@ public:
    template <int D>
    void initSimulator(Rp::BdSimulator<D, Rpc::Types<D> >& simulator, std::string filename)
    {
-      Analyzer<D>::initStatic();
-      TEST_ASSERT(Analyzer<D>::baseInterval == 1);
+      Rp::Analyzer<D, Rpc::Types<D> >::initStatic();
+      int baseInterval = Rp::Analyzer<D, Rpc::Types<D> >::baseInterval;
+      TEST_ASSERT(baseInterval == 1);
 
       std::ifstream in;
       openInputFile(filename, in);

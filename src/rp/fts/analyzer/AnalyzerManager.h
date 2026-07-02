@@ -11,6 +11,7 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
+      template <int D, class T> class Analyzer;
    }
 }
 
@@ -35,7 +36,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class AnalyzerManager : public Manager< typename T::Analyzer >
+   class AnalyzerManager : public Manager< Analyzer<D,T> >
    {
 
    public:
@@ -92,7 +93,7 @@ namespace Rp {
 
    private:
 
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
       using AnalyzerFactoryT = typename T::AnalyzerFactory;
       using Base = Manager< AnalyzerT >;
 

@@ -48,7 +48,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class BinaryStructureFactor : public T::Analyzer
+   class BinaryStructureFactor : public Analyzer<D,T>
    {
 
    public:
@@ -114,7 +114,7 @@ namespace Rp {
       typename T::RFieldDft wk_;
 
       // Alias for base class
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
 
       // Inherited protected member functions (selected)
       using AnalyzerT::system;

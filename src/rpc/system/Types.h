@@ -172,7 +172,7 @@ namespace Rpc {
       //using McMoveManager = Rp::McMoveManager<D, Rpc::Types<D> >;
       //using McMoveFactory = Rp::McMoveFactory<D, Rpc::Types<D> >;
 
-      using Analyzer = Rpc::Analyzer<D>;
+      //using Analyzer = Rp::Analyzer<D, Rpc::Types<D> >;
       //using AverageAnalyzer = Rp::AverageAnalyzer<D, Rpc::Types<D> >;
       //using AverageListAnalyzer = Rp::AverageListAnalyzer<D, Rpc::Types<D> >;
       //using AnalyzerManager = Rp::AnalyzerManager<D, Rpc::Types<D> >;

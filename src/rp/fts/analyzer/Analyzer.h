@@ -41,19 +41,29 @@ namespace Rp {
    *
    * Template parameters:
    *
-   *    - D : dimension
-   *    - SimT : simulation type, e.g., Rpc::Simulation<D>
-   *    - SysT : system type, e.g., Rpc::System<D>
+   *   - D : dimension
+   *   - T : Types class, Rpc::Types<D. or Rpg::Types<D>
    *
    * \ingroup Rp_Fts_Analyzer_Module
    */
-   template <int D, class SimT, class SysT>
+   template <int D, class T>
    class Analyzer : public ParamComposite
    {
 
    public:
 
-      // Protected constructor and destructor (see below).
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      Analyzer(Simulator<D,T>& simulator, System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~Analyzer() = default;
 
       /**
       * Read parameters from archive.
@@ -124,19 +134,6 @@ namespace Rp {
    protected:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      Analyzer(SimT& simulator, SysT& system);
-
-      /**
-      * Destructor.
-      */
-      ~Analyzer() = default;
-
-      /**
       * Set the FileMaster to use to open files.
       *
       * \param fileMaster  associated FileMaster object
@@ -163,12 +160,12 @@ namespace Rp {
       /**
       * Get the parent Simulator by reference.
       */
-      SimT& simulator();
+      Simulator<D,T>& simulator();
 
       /**
       * Get the parent System by reference.
       */
-      SysT& system();
+      System<D,T>& system();
 
       /**
       * Get the FileMaster by reference.
@@ -198,10 +195,10 @@ namespace Rp {
       std::string outputFileName_;
 
       /// Pointer to the parent Simulator.
-      SimT* simulatorPtr_;
+      Simulator<D,T>* simulatorPtr_;
 
       /// Pointer to the parent System.
-      SysT* systemPtr_;
+      System<D,T>* systemPtr_;
 
       /// Pointer to fileMaster for opening output file(s).
       FileMaster* fileMasterPtr_;
@@ -213,29 +210,29 @@ namespace Rp {
    /*
    * Get the interval value.
    */
-   template <int D, class SimT, class SysT> inline
-   int Analyzer<D,SimT,SysT>::interval() const
+   template <int D, class T> inline
+   int Analyzer<D,T>::interval() const
    {  return interval_; }
 
    /*
    * Return true iff counter is a multiple of the interval.
    */
-   template <int D, class SimT, class SysT> inline
-   bool Analyzer<D,SimT,SysT>::isAtInterval(long counter) const
+   template <int D, class T> inline
+   bool Analyzer<D,T>::isAtInterval(long counter) const
    {  return (counter%interval_ == 0); }
 
    /*
    * Get the outputFileName string.
    */
-   template <int D, class SimT, class SysT> inline
-   std::string const & Analyzer<D,SimT,SysT>::outputFileName() const
+   template <int D, class T> inline
+   std::string const & Analyzer<D,T>::outputFileName() const
    {  return outputFileName_; }
 
    /*
    * Get the parent Simulator by reference.
    */
-   template <int D, class SimT, class SysT> inline
-   SimT& Analyzer<D,SimT,SysT>::simulator()
+   template <int D, class T> inline
+   Simulator<D,T>& Analyzer<D,T>::simulator()
    {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_;
@@ -244,8 +241,8 @@ namespace Rp {
    /*
    * Get the parent System by reference.
    */
-   template <int D, class SimT, class SysT> inline
-   SysT& Analyzer<D,SimT,SysT>::system()
+   template <int D, class T> inline
+   System<D,T>& Analyzer<D,T>::system()
    {
       UTIL_ASSERT(systemPtr_);
       return *systemPtr_;

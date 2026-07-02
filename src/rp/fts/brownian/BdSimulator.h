@@ -21,6 +21,7 @@ namespace Pscf {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
       template <int D, class T> class BdStep;
+      template <int D, class T> class Analyzer;
       template <int D, class T> class AnalyzerManager;
       template <int D, class T> class TrajectoryReader;
    }
@@ -155,7 +156,7 @@ namespace Rp {
    private:
 
       /// Private alias for analyzer class
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
 
       /**
       * Manager for Analyzer.

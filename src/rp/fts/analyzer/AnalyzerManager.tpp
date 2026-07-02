@@ -25,7 +25,7 @@ namespace Rp {
    * Return a pointer to a new AnalyzerFactory object.
    */
    template <int D, class T>
-   Factory<typename T::Analyzer>* AnalyzerManager<D,T>::newDefaultFactory() 
+   Factory<Analyzer<D,T> >* AnalyzerManager<D,T>::newDefaultFactory() 
    const
    {  return new AnalyzerFactoryT(*simulatorPtr_, *systemPtr_); }
 

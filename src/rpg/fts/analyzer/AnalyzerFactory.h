@@ -23,7 +23,7 @@ namespace Rpg {
    * \ingroup Rpg_Fts_Analyzer_Module
    */
    template <int D>
-   class AnalyzerFactory : public Factory< Analyzer<D> > 
+   class AnalyzerFactory : public Factory< Rp::Analyzer<D, Rpg::Types<D> > > 
    {
 
    public:
@@ -42,9 +42,9 @@ namespace Rpg {
       * \param className name of the Analyzer subclass
       * \return Analyzer* pointer to new instance of className
       */
-      Analyzer<D>* factory(const std::string &className) const;
+      Rp::Analyzer<D, Rpg::Types<D> >* factory(const std::string &className) const;
 
-      using Factory< Analyzer<D> >::trySubfactories;
+      using Factory< Rp::Analyzer<D, Rpg::Types<D> > >::trySubfactories;
 
    private:
       

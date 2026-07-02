@@ -42,7 +42,7 @@ namespace Rp {
             = new AnalyzerManager<D,T>(*this, system),
       trajectoryReaderFactoryPtr_
             = new TrajectoryReaderFactory<D,T>(system);
-      AnalyzerT::initStatic();
+      Analyzer<D,T>::initStatic();
    }
 
    /*
@@ -87,7 +87,7 @@ namespace Rp {
       }
 
       // Optionally read AnalyzerManager block
-      AnalyzerT::baseInterval = 0; // default value
+      Analyzer<D,T>::baseInterval = 0; // default value
       ParamComposite::readParamCompositeOptional(in, analyzerManager());
 
       // Figure out what needs to be saved in stored state
@@ -170,7 +170,7 @@ namespace Rp {
       if (Simulator<D,T>::hasRamp()) {
          Simulator<D,T>::ramp().setParameters(iStep_);
       }
-      int analyzerBaseInterval = AnalyzerT::baseInterval;
+      int analyzerBaseInterval = Analyzer<D,T>::baseInterval;
       Log::file() << std::endl;
 
       // Start timers
@@ -291,7 +291,7 @@ namespace Rp {
       // Preconditions
       UTIL_CHECK(min >= 0);
       UTIL_CHECK(max >= min);
-      UTIL_CHECK(AnalyzerT::baseInterval > 0);
+      UTIL_CHECK((Analyzer<D,T>::baseInterval > 0));
       UTIL_CHECK(analyzerManager().size() > 0);
 
       // Construct TrajectoryReader

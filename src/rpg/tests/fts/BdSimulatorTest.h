@@ -48,7 +48,7 @@ public:
    template <int D>
    void initSimulator(Rp::BdSimulator<D, Rpg::Types<D> >& simulator, std::string filename)
    {
-      Analyzer<D>::initStatic();
+      Rp::Analyzer<D, Rpg::Types<D> >::initStatic();
 
       std::ifstream in;
       openInputFile(filename, in);

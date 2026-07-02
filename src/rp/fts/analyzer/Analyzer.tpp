@@ -12,23 +12,24 @@ namespace Rp {
 
    // Static members
 
-   template <int D, class SimT, class SysT>
-   long Analyzer<D,SimT,SysT>::baseInterval = 1;
+   template <int D, class T>
+   long Analyzer<D,T>::baseInterval = 1;
 
    /*
    * Static initialization function.
    */
-   template <int D, class SimT, class SysT>
-   void Analyzer<D,SimT,SysT>::initStatic()
-   {  Analyzer<D,SimT,SysT>::baseInterval = 1; }
+   template <int D, class T>
+   void Analyzer<D,T>::initStatic()
+   {  Analyzer<D,T>::baseInterval = 1; }
 
    // Non-static member functions
 
    /*
    * Constructor.
    */
-   template <int D, class SimT, class SysT>
-   Analyzer<D,SimT,SysT>::Analyzer(SimT& simulator, SysT& system)
+   template <int D, class T>
+   Analyzer<D,T>::Analyzer(Simulator<D,T>& simulator, 
+                           System<D,T>& system)
     : ParamComposite(),
       interval_(1),
       outputFileName_(""),
@@ -40,8 +41,8 @@ namespace Rp {
    /*
    * Read parameters from stream, default implementation.
    */
-   template <int D, class SimT, class SysT>
-   void Analyzer<D,SimT,SysT>::readParameters(std::istream& in)
+   template <int D, class T>
+   void Analyzer<D,T>::readParameters(std::istream& in)
    {
       readInterval(in);
       readOutputFileName(in);
@@ -50,8 +51,8 @@ namespace Rp {
    /*
    * Read the interval from parameter file, with error checking.
    */
-   template <int D, class SimT, class SysT>
-   void Analyzer<D,SimT,SysT>::readInterval(std::istream& in)
+   template <int D, class T>
+   void Analyzer<D,T>::readInterval(std::istream& in)
    {
       // Check that baseInterval has a nonzero, positive value
       if (baseInterval == 0) {
@@ -77,8 +78,8 @@ namespace Rp {
       }
    }
 
-   template <int D, class SimT, class SysT>
-   void Analyzer<D,SimT,SysT>::readOutputFileName(std::istream &in)
+   template <int D, class T>
+   void Analyzer<D,T>::readOutputFileName(std::istream &in)
    {
       ParamComposite::read<std::string>(in, "outputFileName",
                                         outputFileName_);
@@ -87,15 +88,15 @@ namespace Rp {
    /*
    * Set the FileMaster.
    */
-   template <int D, class SimT, class SysT>
-   void Analyzer<D,SimT,SysT>::setFileMaster(FileMaster& fileMaster)
+   template <int D, class T>
+   void Analyzer<D,T>::setFileMaster(FileMaster& fileMaster)
    {  fileMasterPtr_ = &fileMaster; }
 
    /*
    * Get the FileMaster by reference.
    */
-   template <int D, class SimT, class SysT>
-   FileMaster& Analyzer<D,SimT,SysT>::fileMaster()
+   template <int D, class T>
+   FileMaster& Analyzer<D,T>::fileMaster()
    {
       UTIL_CHECK(fileMasterPtr_);
       return (*fileMasterPtr_);
@@ -104,9 +105,9 @@ namespace Rp {
    /*
    * Get the outputFileName string with an added suffix
    */
-   template <int D, class SimT, class SysT>
+   template <int D, class T>
    std::string
-   Analyzer<D,SimT,SysT>::outputFileName(std::string const & suffix) const
+   Analyzer<D,T>::outputFileName(std::string const & suffix) const
    {
       std::string filename = outputFileName_;
       filename += suffix;

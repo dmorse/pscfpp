@@ -72,7 +72,7 @@ namespace Rp {
 
       // Aliases for base classes.
       using AverageListAnalyzerT = AverageListAnalyzer<D,T>;
-      using AnalyzerT = typename T::Analyzer;
+      using AnalyzerT = Analyzer<D,T>;
 
       // Inherited protected member functions (selected).
       using AnalyzerT::simulator;

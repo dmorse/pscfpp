@@ -193,9 +193,6 @@ namespace Rp {
 
    private:
 
-      /// Alias for Analyzer class in program-level namespace.
-      using AnalyzerT = typename T::Analyzer;
-
       /**
       * Pointer to Manager for Monte Carlo moves.
       */
