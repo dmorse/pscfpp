@@ -59,7 +59,7 @@ namespace Rpc {
       } else if (className == "HamiltonianAnalyzer") {
          ptr = new Rp::HamiltonianAnalyzer<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactor") {
-         ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::BinaryStructureFactor<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "PerturbationDerivative") {
          ptr = new Rp::PerturbationDerivative<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "BinaryChiDerivative") {
@@ -69,9 +69,9 @@ namespace Rpc {
       } else if (className == "ConcentrationDerivative") {
          ptr = new Rp::ConcentrationDerivative<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "MaxOrderParameter") {
-         ptr = new MaxOrderParameter<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::MaxOrderParameter<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "FourthOrderParameter") {
-         ptr = new FourthOrderParameter<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::FourthOrderParameter<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       }
 
       return ptr;

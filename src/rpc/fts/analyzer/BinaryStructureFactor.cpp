@@ -23,7 +23,7 @@
 #include <rp/fts/analyzer/BinaryStructureFactorBase.tpp>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -32,17 +32,17 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactor<D>::BinaryStructureFactor(
-                                  Rp::Simulator<D, Rpc::Types<D> >& simulator,
-                                  Rp::System<D, Rpc::Types<D> >& system)
-    : Rp::BinaryStructureFactorBase< D, Types<D> >(simulator, system)
+   BinaryStructureFactor<D, Rpc::Types<D> >::BinaryStructureFactor(
+                                  Simulator<D, Rpc::Types<D> >& simulator,
+                                  System<D, Rpc::Types<D> >& system)
+    : BinaryStructureFactorBase< D, Rpc::Types<D> >(simulator, system)
    {}
 
    /*
    * Setup before entering main loop.
    */
    template <int D>
-   void BinaryStructureFactor<D>::setup()
+   void BinaryStructureFactor<D, Rpc::Types<D> >::setup()
    {
       allocate();
       Cpu::WaveList<D> const & waveList = AnalyzerT::system().waveList();
@@ -53,7 +53,7 @@ namespace Rpc {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D>
-   void BinaryStructureFactor<D>::sample(long iStep)
+   void BinaryStructureFactor<D, Rpc::Types<D> >::sample(long iStep)
    {
       if (AnalyzerT::isAtInterval(iStep)) {
          computeW();
@@ -70,10 +70,8 @@ namespace Pscf {
       template class BinaryStructureFactorBase<1, Rpc::Types<1> >;
       template class BinaryStructureFactorBase<2, Rpc::Types<2> >;
       template class BinaryStructureFactorBase<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class BinaryStructureFactor<1>;
-      template class BinaryStructureFactor<2>;
-      template class BinaryStructureFactor<3>;
+      template class BinaryStructureFactor<1, Rpc::Types<1> >;
+      template class BinaryStructureFactor<2, Rpc::Types<2> >;
+      template class BinaryStructureFactor<3, Rpc::Types<3> >;
    }
 }

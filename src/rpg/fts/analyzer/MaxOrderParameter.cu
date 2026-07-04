@@ -18,10 +18,10 @@
 #include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 
-#include <rp/fts/analyzer/MaxOrderParameter.tpp>
+#include <rp/fts/analyzer/MaxOrderParameterBase.tpp>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -30,22 +30,23 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   MaxOrderParameter<D>::MaxOrderParameter(Rp::Simulator<D, Rpg::Types<D> >& simulator,
-                                           Rp::System<D, Rpg::Types<D> >& system)
-    : Rp::MaxOrderParameter<D, Types<D> >(simulator, system)
+   MaxOrderParameter<D, Rpg::Types<D> >::MaxOrderParameter(
+                           Simulator<D, Rpg::Types<D> >& simulator,
+                           System<D, Rpg::Types<D> >& system)
+    : MaxOrderParameterBase<D, Rpg::Types<D> >(simulator, system)
    {}
 
    /*
    * Compute and return maximum of square magnitude Fourier amplitude.
    */
    template <int D>
-   void MaxOrderParameter<D>::setup()
+   void MaxOrderParameter<D, Rpg::Types<D> >::setup()
    {
       // Setup base class
-      RpMaxOrderParameter::setup();
+      Base::setup();
 
       // Allocate psiHost_ array 
-      int kSize = RpMaxOrderParameter::kSize_;
+      int kSize = Base::kSize_;
       UTIL_CHECK(kSize > 0);
       if (!psiHost_.isAllocated()) {
          psiHost_.allocate(kSize);
@@ -58,18 +59,18 @@ namespace Rpg {
    * Compute and return maximum of square magnitude Fourier amplitude.
    */
    template <int D>
-   double MaxOrderParameter<D>::compute()
+   double MaxOrderParameter<D, Rpg::Types<D> >::compute()
    {
       // Compute device array psi_ of squared Fourier magnitudes
-      RpMaxOrderParameter::computePsi();
+      Base::computePsi();
 
       // Copy device array psi_ to corresponing host array psiHost_
-      psiHost_ = RpMaxOrderParameter::psi_;
+      psiHost_ = Base::psi_;
 
       // Compute maximum from host array
-      RpMaxOrderParameter::findMaximum(psiHost_);
+      Base::findMaximum(psiHost_);
 
-      return RpMaxOrderParameter::maxPsi_;
+      return Base::maxPsi_;
    }
 
 }
@@ -78,13 +79,11 @@ namespace Rpg {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
+      template class MaxOrderParameterBase<1, Rpg::Types<1> >;
+      template class MaxOrderParameterBase<2, Rpg::Types<2> >;
+      template class MaxOrderParameterBase<3, Rpg::Types<3> >;
       template class MaxOrderParameter<1, Rpg::Types<1> >;
       template class MaxOrderParameter<2, Rpg::Types<2> >;
       template class MaxOrderParameter<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class MaxOrderParameter<1>;
-      template class MaxOrderParameter<2>;
-      template class MaxOrderParameter<3>;
    }
 }

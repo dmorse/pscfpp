@@ -22,7 +22,7 @@
 #include <rp/fts/analyzer/BinaryStructureFactorBase.tpp>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -31,17 +31,17 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactor<D>::BinaryStructureFactor(
-              Rp::Simulator<D, Rpg::Types<D> >& simulator,
-              Rp::System<D, Rpg::Types<D> >& system)
-    : Rp::BinaryStructureFactorBase< D, Types<D> >(simulator, system)
+   BinaryStructureFactor<D, Rpg::Types<D> >::BinaryStructureFactor(
+              Simulator<D, Rpg::Types<D> >& simulator,
+              System<D, Rpg::Types<D> >& system)
+    : BinaryStructureFactorBase< D, Rpg::Types<D> >(simulator, system)
    {}
 
    /*
    * Setup before entering main loop.
    */
    template <int D>
-   void BinaryStructureFactor<D>::setup()
+   void BinaryStructureFactor<D, Rpg::Types<D> >::setup()
    {
       allocate();
       UTIL_CHECK(wk_.isAllocated());
@@ -52,19 +52,19 @@ namespace Rpg {
       Cuda::WaveList<D> const & waveList = AnalyzerT::system().waveList();
       HostDArray<double> kSq = waveList.kSq();
       HostDArray<bool> implicit = waveList.implicitInverse();
-      findWaveBunches(kSq, implicit);
+      Base::findWaveBunches(kSq, implicit);
    }
 
    /*
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D>
-   void BinaryStructureFactor<D>::sample(long iStep)
+   void BinaryStructureFactor<D, Rpg::Types<D> >::sample(long iStep)
    {
       if (AnalyzerT::isAtInterval(iStep)) {
-         computeW();
+         Base::computeW();
          wkHost_ = wk_;  // Copy wk_ from device to host
-         computeS(wkHost_);
+         Base::computeS(wkHost_);
       }
    }
 
@@ -77,10 +77,8 @@ namespace Pscf {
       template class BinaryStructureFactorBase<1, Rpg::Types<1> >;
       template class BinaryStructureFactorBase<2, Rpg::Types<2> >;
       template class BinaryStructureFactorBase<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class BinaryStructureFactor<1>;
-      template class BinaryStructureFactor<2>;
-      template class BinaryStructureFactor<3>;
+      template class BinaryStructureFactor<1, Rpg::Types<1> >;
+      template class BinaryStructureFactor<2, Rpg::Types<2> >;
+      template class BinaryStructureFactor<3, Rpg::Types<3> >;
    }
 }

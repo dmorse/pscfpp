@@ -16,7 +16,7 @@
 #include <prdc/field/cuda/RFieldDft.h>                 // base class member
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
 
@@ -24,16 +24,16 @@ namespace Rpg {
    * Spherically averaged structure factor for a two-monomer system.
    *
    * Specializations of this template are derived from specializations of 
-   * the base class template Rp::BinaryStructureFactor, and inherit most
+   * the base class template BinaryStructureFactor, and inherit most
    * of their source code from this base class.
    *
-   * \see Rp::BinaryStructureFactor
+   * \see BinaryStructureFactorBase
    * \see \ref rp_BinaryStructureFactor_page "Manual Page"
-   * \ingroup Rpg_Fts_Analyzer_Module
+   * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class BinaryStructureFactor 
-    : public Rp::BinaryStructureFactorBase<D, Types<D> >
+   class BinaryStructureFactor<D, Rpg::Types<D> > 
+    : public BinaryStructureFactorBase<D, Rpg::Types<D> >
    {
 
    public:
@@ -45,8 +45,8 @@ namespace Rpg {
       * \param system  parent System object
       */
       BinaryStructureFactor(
-         Rp::Simulator<D, Rpg::Types<D> >& simulator, 
-         Rp::System<D, Rpg::Types<D> >& system);
+         Simulator<D, Rpg::Types<D> >& simulator, 
+         System<D, Rpg::Types<D> >& system);
 
       /**
       * Setup before the main loop.
@@ -62,16 +62,15 @@ namespace Rpg {
 
    protected:
 
-      using BinaryStructureFactorBase 
-                      = typename Rp::BinaryStructureFactorBase<D, Types<D> >;
-      using typename BinaryStructureFactorBase::AnalyzerT;
+      using Base = BinaryStructureFactorBase<D, Rpg::Types<D> >;
+      using AnalyzerT = Analyzer<D, Rpg::Types<D> > ;
 
-      using BinaryStructureFactorBase::allocate;
-      using BinaryStructureFactorBase::findWaveBunches;
-      using BinaryStructureFactorBase::computeW;
-      using BinaryStructureFactorBase::computeS;
+      using Base::allocate;
+      using Base::findWaveBunches;
+      using Base::computeW;
+      using Base::computeS;
 
-      using BinaryStructureFactorBase::wk_;
+      using Base::wk_;
 
    private:
 
@@ -89,11 +88,9 @@ namespace Pscf {
       extern template class BinaryStructureFactorBase<1, Rpg::Types<1> >;
       extern template class BinaryStructureFactorBase<2, Rpg::Types<2> >;
       extern template class BinaryStructureFactorBase<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class BinaryStructureFactor<1>;
-      extern template class BinaryStructureFactor<2>;
-      extern template class BinaryStructureFactor<3>;
+      extern template class BinaryStructureFactor<1, Rpg::Types<1> >;
+      extern template class BinaryStructureFactor<2, Rpg::Types<2> >;
+      extern template class BinaryStructureFactor<3, Rpg::Types<3> >;
    }
 }
 #endif

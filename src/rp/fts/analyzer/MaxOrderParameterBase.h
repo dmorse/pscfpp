@@ -1,5 +1,5 @@
-#ifndef RP_MAX_ORDER_PARAMETER_H
-#define RP_MAX_ORDER_PARAMETER_H
+#ifndef RP_MAX_ORDER_PARAMETER_BASE_H
+#define RP_MAX_ORDER_PARAMETER_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -37,11 +37,11 @@ namespace Rp {
    *   - D : dimension of space (D=1, 2, or 3)
    *   - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
-   * \see \ref rp_MaxOrderParameter_page "Manual Page"
+   * \see \ref rp_MaxOrderParameterBase_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class MaxOrderParameter : public AverageAnalyzer<D,T>
+   class MaxOrderParameterBase : public AverageAnalyzer<D,T>
    {
 
    public:
@@ -52,13 +52,13 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      MaxOrderParameter(Simulator<D,T>& simulator, 
-                        System<D,T>& system);
+      MaxOrderParameterBase(Simulator<D,T>& simulator, 
+                            System<D,T>& system);
 
       /**
       * Destructor.
       */
-      ~MaxOrderParameter() = default;
+      ~MaxOrderParameterBase() = default;
 
       /**
       * Setup before simulation loop.
@@ -103,9 +103,6 @@ namespace Rp {
       /// Number of wavevectors in Fourier space (k-grid) mesh.
       int  kSize_;
 
-      // Alias for base class.
-      using AverageAnalyzerT = AverageAnalyzer<D,T>;
-
       // Inherited protected member variables (selected).
       using AverageAnalyzer<D,T>::simulator;
       using AverageAnalyzer<D,T>::system;
@@ -124,6 +121,8 @@ namespace Rp {
       using FFTT = typename T::FFT;
    };
 
+   // Primary template for subclasses
+   template <int D, class T> class MaxOrderParameter;
 }
 }
 #endif

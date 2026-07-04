@@ -1,5 +1,5 @@
-#ifndef RP_FOURTH_ORDER_PARAMETER_H
-#define RP_FOURTH_ORDER_PARAMETER_H
+#ifndef RP_FOURTH_ORDER_PARAMETER_BASE_H
+#define RP_FOURTH_ORDER_PARAMETER_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -22,7 +22,7 @@ namespace Rp {
    using namespace Util;
 
    /**
-   * FourthOrderParameter is used to detect an order-disorder transition.
+   * FourthOrderParameterBase is used to detect an order-disorder transition.
    *
    * This class evaluates and averages the sum of fourth power of the
    * magnitude of the Fourier mode amplitudes of a fluctuating exchange
@@ -40,11 +40,11 @@ namespace Rp {
    *    - D : dimension of space
    *    - T : Types class, Rpc::Types<D> or Rpg::Types<D>
    *
-   * \see \ref rp_FourthOrderParameter_page "Manual Page"
+   * \see \ref rp_FourthOrderParameterBase_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class FourthOrderParameter : public AverageAnalyzer<D,T>
+   class FourthOrderParameterBase : public AverageAnalyzer<D,T>
    {
 
    public:
@@ -55,13 +55,13 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      FourthOrderParameter(Simulator<D,T>& simulator, 
+      FourthOrderParameterBase(Simulator<D,T>& simulator, 
                            System<D,T>& system);
 
       /**
       * Destructor.
       */
-      ~FourthOrderParameter() = default;
+      ~FourthOrderParameterBase() = default;
 
       /**
       * Setup before the main loop.
@@ -126,6 +126,9 @@ namespace Rp {
       using FFTT = typename T::FFT;
 
    };
+
+   // Primary template declaration for subclasses
+   template <int D, class t> class FourthOrderParameter;
 
 }
 }

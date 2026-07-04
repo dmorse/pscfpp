@@ -1,7 +1,7 @@
-#ifndef RP_MAX_ORDER_PARAMETER_TPP
-#define RP_MAX_ORDER_PARAMETER_TPP
+#ifndef RP_MAX_ORDER_PARAMETER_BASE_TPP
+#define RP_MAX_ORDER_PARAMETER_BASE_TPP
 
-#include "MaxOrderParameter.h"
+#include "MaxOrderParameterBase.h"
 
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
@@ -26,18 +26,18 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   MaxOrderParameter<D,T>::MaxOrderParameter(
+   MaxOrderParameterBase<D,T>::MaxOrderParameterBase(
                                      Simulator<D,T>& simulator,
                                      System<D,T>& system)
     : AverageAnalyzer<D,T>(simulator, system),
       kSize_(-1)
-   {  ParamComposite::setClassName("MaxOrderParameter"); }
+   {  ParamComposite::setClassName("MaxOrderParameterBase"); }
 
    /*
    * Setup before main loop.
    */
    template <int D, class T>
-   void MaxOrderParameter<D,T>::setup()
+   void MaxOrderParameterBase<D,T>::setup()
    {
       // Precondition: Require that the system has two monomer types
       const int nMonomer = system().mixture().nMonomer();
@@ -63,7 +63,7 @@ namespace Rp {
    * Compute array psi_ of squared Fourier amplitudes.
    */
    template <int D, class T>
-   void MaxOrderParameter<D,T>::computePsi()
+   void MaxOrderParameterBase<D,T>::computePsi()
    {
       UTIL_CHECK(system().w().hasData());
       if (!simulator().hasWc()){
@@ -76,9 +76,8 @@ namespace Rp {
    /*
    * Search for and return maximum Fourier amplitude.
    */
-   template <int D, class T>
-   void 
-   MaxOrderParameter<D,T>::findMaximum(Array<typename T::Real> const & psi)
+   template <int D, class T> void 
+   MaxOrderParameterBase<D,T>::findMaximum(Array<typename T::Real> const & psi)
    {
       // Identify index of maximum element of array psi
       maxPsi_ = psi[1];
@@ -101,7 +100,7 @@ namespace Rp {
    * Output instantaneous value during simulation.
    */
    template <int D, class T>
-   void MaxOrderParameter<D,T>::outputValue(int step, double value)
+   void MaxOrderParameterBase<D,T>::outputValue(int step, double value)
    {
       std::ofstream& file = AverageAnalyzer<D,T>::outputFile_;
       UTIL_CHECK(file.is_open());

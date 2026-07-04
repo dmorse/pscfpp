@@ -19,16 +19,16 @@
 #include <pscf/cuda/cudaTypes.h>
 #include <pscf/cpu/VecOp.h>
 
-#include <rp/fts/analyzer/FourthOrderParameter.tpp>
+#include <rp/fts/analyzer/FourthOrderParameterBase.tpp>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    /*
    * Constructor.
    */
    template <int D>
-   FourthOrderParameter<D>::FourthOrderParameter(
+   FourthOrderParameter<D, Rpg::Types<D> >::FourthOrderParameter(
                                    Rp::Simulator<D, Rpg::Types<D> >& simulator,
                                    Rp::System<D, Rpg::Types<D> >& system)
     : Base(simulator, system)
@@ -38,7 +38,7 @@ namespace Rpg {
    * Initialize Base::prefactor_ protected member variable.
    */
    template <int D>
-   void FourthOrderParameter<D>::computePrefactor()
+   void FourthOrderParameter<D, Rpg::Types<D> >::computePrefactor()
    {
       // Allocate CPU host array
       HostDArray<cudaReal> prefactor_h(Base::kSize_);
@@ -57,13 +57,11 @@ namespace Rpg {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
+      template class FourthOrderParameterBase<1, Rpg::Types<1> >;
+      template class FourthOrderParameterBase<2, Rpg::Types<2> >;
+      template class FourthOrderParameterBase<3, Rpg::Types<3> >;
       template class FourthOrderParameter<1, Rpg::Types<1> >;
       template class FourthOrderParameter<2, Rpg::Types<2> >;
       template class FourthOrderParameter<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class FourthOrderParameter<1>;
-      template class FourthOrderParameter<2>;
-      template class FourthOrderParameter<3>;
    }
 }

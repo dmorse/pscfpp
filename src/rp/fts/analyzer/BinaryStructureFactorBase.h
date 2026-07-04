@@ -165,6 +165,9 @@ namespace Rp {
 
    };
 
+   // Declaration of primary template for subclasses
+   template <int D, class T> class BinaryStructureFactor;
+
 } // namespace Rp
 } // namespace Pscf
 #endif

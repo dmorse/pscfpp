@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/FourthOrderParameter.h>  // base class template
-#include <rpc/system/Types.h>                      // template argument
-#include <rpc/fts/analyzer/AverageAnalyzer.h>      // indirect base 
-#include <prdc/field/cpu/RField.h>                       // member
-#include <prdc/field/cpu/RFieldDft.h>                    // member
+#include <rp/fts/analyzer/FourthOrderParameterBase.h> // base template
+#include <rpc/system/Types.h>                         // base argument
+#include <rpc/fts/analyzer/AverageAnalyzer.h>         // indirect base 
+#include <prdc/field/cpu/RField.h>                    // base member
+#include <prdc/field/cpu/RFieldDft.h>                 // base member
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -27,17 +27,17 @@ namespace Rpc {
    * amplitudes of a fluctuating exchange w field.
    *
    * Specializations of this template are derived from specializations of 
-   * the base class template Rp::FourthOrderParameter, and inherit their 
+   * the base class template FourthOrderParameterBase, and inherit their 
    * entire public interface and almost all of their source code from this
    * base class.
    *
-   * \see Rp::FourthOrderParameter
+   * \see FourthOrderParameterBase
    * \see \ref rp_FourthOrderParameter_page "Manual Page"
    * \ingroup Rpc_Fts_Analyzer_Module
    */
    template <int D>
-   class FourthOrderParameter 
-    : public Rp::FourthOrderParameter< D, Types<D> >
+   class FourthOrderParameter<D, Rpc::Types<D> >
+    : public FourthOrderParameterBase< D, Rpc::Types<D> >
    {
 
    public:
@@ -48,7 +48,9 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      FourthOrderParameter(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
+      FourthOrderParameter(
+                 Simulator<D, Rpc::Types<D> >& simulator, 
+                 System<D, Rpc::Types<D> >& system);
 
    private:
 
@@ -57,7 +59,8 @@ namespace Rpc {
       */
       void computePrefactor() override;
 
-      using Base = Rp::FourthOrderParameter< D, Types<D> >;
+      //  Private aliase for base class
+      using Base = FourthOrderParameterBase< D, Rpc::Types<D> >;
 
    };
 
@@ -67,14 +70,12 @@ namespace Rpc {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
+      extern template class FourthOrderParameterBase<1, Rpc::Types<1> >;
+      extern template class FourthOrderParameterBase<2, Rpc::Types<2> >;
+      extern template class FourthOrderParameterBase<3, Rpc::Types<3> >;
       extern template class FourthOrderParameter<1, Rpc::Types<1> >;
       extern template class FourthOrderParameter<2, Rpc::Types<2> >;
       extern template class FourthOrderParameter<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class FourthOrderParameter<1>;
-      extern template class FourthOrderParameter<2>;
-      extern template class FourthOrderParameter<3>;
    }
 }
 #endif

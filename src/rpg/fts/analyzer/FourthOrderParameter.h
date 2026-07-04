@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/FourthOrderParameter.h> // base class template
-#include <rpg/system/Types.h>                     // template argument
-#include <rpg/fts/analyzer/AverageAnalyzer.h>     // indirect base 
-#include <prdc/field/cuda/RField.h>                     // member
-#include <prdc/field/cuda/RFieldDft.h>                  // member
+#include <rp/fts/analyzer/FourthOrderParameterBase.h> // base template
+#include <rpg/system/Types.h>                         // base argument
+#include <rpg/fts/analyzer/AverageAnalyzer.h>         // indirect base 
+#include <prdc/field/cuda/RField.h>                   // base member
+#include <prdc/field/cuda/RFieldDft.h>                // base member
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
@@ -28,13 +28,13 @@ namespace Rpg {
    * and inherit their public interface and almost all of their source 
    * code from this base class.  
    *
-   * \see Rp::FourthOrderDerivative
+   * \see FourthOrderDerivative
    * \see \ref rp_FourthOrderParameter_page "Manual Page"
-   * \ingroup Rpg_Fts_Analyzer_Module
+   * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class FourthOrderParameter 
-    : public Rp::FourthOrderParameter< D, Types<D> >
+   class FourthOrderParameter<D, Rpg::Types<D> >
+    : public FourthOrderParameterBase< D, Rpg::Types<D> >
    {
 
    public:
@@ -45,7 +45,8 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      FourthOrderParameter(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      FourthOrderParameter(Simulator<D, Rpg::Types<D> >& simulator, 
+		           System<D, Rpg::Types<D> >& system);
 
    private:
 
@@ -54,7 +55,7 @@ namespace Rpg {
       */
       void computePrefactor() override;
 
-      using Base = Rp::FourthOrderParameter< D, Types<D> >;
+      using Base = FourthOrderParameterBase< D, Rpg::Types<D> >;
 
    };
 
@@ -64,14 +65,12 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
+      extern template class FourthOrderParameterBase<1, Rpg::Types<1> >;
+      extern template class FourthOrderParameterBase<2, Rpg::Types<2> >;
+      extern template class FourthOrderParameterBase<3, Rpg::Types<3> >;
       extern template class FourthOrderParameter<1, Rpg::Types<1> >;
       extern template class FourthOrderParameter<2, Rpg::Types<2> >;
       extern template class FourthOrderParameter<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class FourthOrderParameter<1>;
-      extern template class FourthOrderParameter<2>;
-      extern template class FourthOrderParameter<3>;
    }
 }
 #endif

@@ -57,7 +57,7 @@ namespace Rpg {
       } else if (className == "HamiltonianAnalyzer") {
          ptr = new Rp::HamiltonianAnalyzer<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactor") {
-         ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::BinaryStructureFactor<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "StepLogger") {
          ptr = new Rp::StepLogger<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "PerturbationDerivative") {
@@ -66,13 +66,13 @@ namespace Rpg {
          ptr = new Rp::BinaryChiDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationDerivative") {
          ptr = new Rp::ConcentrationDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "MaxOrderParameter") {
-         ptr = new MaxOrderParameter<D>(*simPtr_, *sysPtr_);
-      } else if (className == "FourthOrderParameter") {
-         ptr = new FourthOrderParameter<D>(*simPtr_, *sysPtr_);
       } else if (className == "CubicLengthDerivative") {
          ptr = new Rp::CubicLengthDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      }
+      } else if (className == "MaxOrderParameter") {
+         ptr = new Rp::MaxOrderParameter<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
+      } else if (className == "FourthOrderParameter") {
+         ptr = new Rp::FourthOrderParameter<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
+      } 
 
       return ptr;
    }

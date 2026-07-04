@@ -15,7 +15,7 @@
 #include <prdc/field/cpu/RFieldDft.h>                  // base member
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
 
@@ -28,11 +28,11 @@ namespace Rpc {
    *
    * \see BinaryStructureFactorBase
    * \see \ref rp_BinaryStructureFactor_page "Manual Page"
-   * \ingroup Rpc_Fts_Analyzer_Module
+   * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class BinaryStructureFactor 
-    : public Rp::BinaryStructureFactorBase<D, Types<D> >
+   class BinaryStructureFactor<D, Rpc::Types<D> >
+    : public BinaryStructureFactorBase<D, Rpc::Types<D> >
    {
 
    public:
@@ -43,8 +43,8 @@ namespace Rpc {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryStructureFactor(Rp::Simulator<D, Rpc::Types<D> >& simulator, 
-                            Rp::System<D, Rpc::Types<D> >& system);
+      BinaryStructureFactor(Simulator<D, Rpc::Types<D> >& simulator, 
+                            System<D, Rpc::Types<D> >& system);
 
       /**
       * Setup before the main loop.
@@ -60,15 +60,14 @@ namespace Rpc {
 
    protected:
 
-      using BinaryStructureFactorBase 
-         = typename Rp::BinaryStructureFactorBase<D, Types<D> >;
-      using typename BinaryStructureFactorBase::AnalyzerT;
+      using Base = BinaryStructureFactorBase<D, Rpc::Types<D> >;
+      using AnalyzerT = Analyzer<D, Rpc::Types<D> >;
 
-      using BinaryStructureFactorBase::wk_;
-      using BinaryStructureFactorBase::allocate;
-      using BinaryStructureFactorBase::findWaveBunches;
-      using BinaryStructureFactorBase::computeW;
-      using BinaryStructureFactorBase::computeS;
+      using Base::wk_;
+      using Base::allocate;
+      using Base::findWaveBunches;
+      using Base::computeW;
+      using Base::computeS;
 
    };
 
@@ -81,11 +80,9 @@ namespace Pscf {
       extern template class BinaryStructureFactorBase<1, Rpc::Types<1> >;
       extern template class BinaryStructureFactorBase<2, Rpc::Types<2> >;
       extern template class BinaryStructureFactorBase<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class BinaryStructureFactor<1>;
-      extern template class BinaryStructureFactor<2>;
-      extern template class BinaryStructureFactor<3>;
+      extern template class BinaryStructureFactor<1, Rpc::Types<1> >;
+      extern template class BinaryStructureFactor<2, Rpc::Types<2> >;
+      extern template class BinaryStructureFactor<3, Rpc::Types<3> >;
    }
 }
 #endif

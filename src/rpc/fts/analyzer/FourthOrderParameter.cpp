@@ -13,22 +13,24 @@
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
+
 #include <prdc/field/cpu/FFT.h>
+
 #include <pscf/cpu/VecOpCx.h>
 #include <pscf/cpu/ReduceCx.h>
 
-#include <rp/fts/analyzer/FourthOrderParameter.tpp>
+#include <rp/fts/analyzer/FourthOrderParameterBase.tpp>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    /*
    * Constructor.
    */
    template <int D>
-   FourthOrderParameter<D>::FourthOrderParameter(
-                                   Rp::Simulator<D, Rpc::Types<D> >& simulator,
-                                   Rp::System<D, Rpc::Types<D> >& system)
+   FourthOrderParameter<D, Rpc::Types<D> >::FourthOrderParameter(
+                                   Simulator<D, Rpc::Types<D> >& simulator,
+                                   System<D, Rpc::Types<D> >& system)
     : Base(simulator, system)
    {}
 
@@ -36,7 +38,7 @@ namespace Rpc {
    * Initialize Base::prefactor_ protected member variable.
    */
    template <int D>
-   void FourthOrderParameter<D>::computePrefactor()
+   void FourthOrderParameter<D, Rpc::Types<D> >::computePrefactor()
    {  Base::computePrefactor(Base::prefactor_); }
 
 }
@@ -45,13 +47,11 @@ namespace Rpc {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
+      template class FourthOrderParameterBase<1, Rpc::Types<1> >;
+      template class FourthOrderParameterBase<2, Rpc::Types<2> >;
+      template class FourthOrderParameterBase<3, Rpc::Types<3> >;
       template class FourthOrderParameter<1, Rpc::Types<1> >;
       template class FourthOrderParameter<2, Rpc::Types<2> >;
       template class FourthOrderParameter<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class FourthOrderParameter<1>;
-      template class FourthOrderParameter<2>;
-      template class FourthOrderParameter<3>;
    }
 }

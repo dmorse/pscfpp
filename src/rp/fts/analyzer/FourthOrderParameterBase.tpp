@@ -1,7 +1,7 @@
-#ifndef RP_FOURTH_ORDER_PARAMETER_TPP
-#define RP_FOURTH_ORDER_PARAMETER_TPP
+#ifndef RP_FOURTH_ORDER_PARAMETER_BASE_TPP
+#define RP_FOURTH_ORDER_PARAMETER_BASE_TPP
 
-#include "FourthOrderParameter.h"
+#include "FourthOrderParameterBase.h"
 
 #include <prdc/crystal/shiftToMinimum.h>
 
@@ -27,7 +27,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   FourthOrderParameter<D,T>::FourthOrderParameter(
+   FourthOrderParameterBase<D,T>::FourthOrderParameterBase(
                                        Simulator<D,T>& simulator,
                                        System<D,T>& system)
     : AverageAnalyzer<D,T>(simulator, system),
@@ -39,7 +39,7 @@ namespace Rp {
    * Setup before the main loop.
    */
    template <int D, class T>
-   void FourthOrderParameter<D,T>::setup()
+   void FourthOrderParameterBase<D,T>::setup()
    {
       // Precondition: The system must have exactly two monomer types
       UTIL_CHECK(system().mixture().nMonomer() == 2);
@@ -66,7 +66,7 @@ namespace Rp {
    * Compute and return the order parameter.
    */
    template <int D, class T>
-   double FourthOrderParameter<D,T>::compute()
+   double FourthOrderParameterBase<D,T>::compute()
    {
       UTIL_CHECK(isInitialized_);
       UTIL_CHECK(wK_.capacity() == kSize_);
@@ -97,7 +97,7 @@ namespace Rp {
    */
    template <int D, class T>
    void 
-   FourthOrderParameter<D,T>::computePrefactor(Array<double>& prefactor)
+   FourthOrderParameterBase<D,T>::computePrefactor(Array<double>& prefactor)
    {
       IntVec<D> G;
       IntVec<D> Gmin;
