@@ -15,29 +15,11 @@
 
 #include <rp/fts/analyzer/BinaryChiDerivative.tpp>  // base class implementation
 
-namespace Pscf {
-namespace Rpc {
-
-   // Constructor.
-   template <int D>
-   BinaryChiDerivative<D>::BinaryChiDerivative(Rp::Simulator<D, Rpc::Types<D> >& simulator,
-                                   Rp::System<D, Rpc::Types<D> >& system)
-    : Rp::BinaryChiDerivative< D, Types<D> >(simulator, system)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class BinaryChiDerivative< 1, Rpc::Types<1> >;
       template class BinaryChiDerivative< 2, Rpc::Types<2> >;
       template class BinaryChiDerivative< 3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class BinaryChiDerivative<1>;
-      template class BinaryChiDerivative<2>;
-      template class BinaryChiDerivative<3>;
    }
 }

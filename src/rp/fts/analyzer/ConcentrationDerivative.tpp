@@ -22,7 +22,7 @@ namespace Rp {
    ConcentrationDerivative<D,T>::ConcentrationDerivative(
                                   Simulator<D,T>& simulator,
                                   System<D,T>& system)
-    : AverageAnalyzerT(simulator, system)
+    : AverageAnalyzer<D,T>(simulator, system)
    {  ParamComposite::setClassName("ConcentrationDerivative"); }
 
    /*

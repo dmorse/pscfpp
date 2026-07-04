@@ -26,9 +26,9 @@ namespace Rp {
    template <int D, class T>
    AverageAnalyzer<D,T>::AverageAnalyzer(Simulator<D,T>& simulator,
                                          System<D,T>& system)
-    : AnalyzerT(simulator, system),
+    : Analyzer<D,T>(simulator, system),
       nSamplePerOutput_(1)
-   {  AnalyzerT::setFileMaster(system.fileMaster()); }
+   {  Analyzer<D,T>::setFileMaster(system.fileMaster()); }
 
    /*
    * Read interval, outputFileName, and nSamplePerOutput.
@@ -37,15 +37,15 @@ namespace Rp {
    void AverageAnalyzer<D,T>::readParameters(std::istream& in)
    {
       // Read interval and outputFileName
-      AnalyzerT::readParameters(in);
+      Analyzer<D,T>::readParameters(in);
 
       // Read nSamplePerOutput_
       nSamplePerOutput_ = 1;
       ParamComposite::readOptional(in,"nSamplePerOutput", 
                                    nSamplePerOutput_);
       if (nSamplePerOutput_ > 0) {
-         std::string fileName = AnalyzerT::outputFileName(".dat");
-         AnalyzerT::system().fileMaster().openOutputFile(fileName, outputFile_);
+         std::string fileName = Analyzer<D,T>::outputFileName(".dat");
+         Analyzer<D,T>::system().fileMaster().openOutputFile(fileName, outputFile_);
       }
 
       // Set the Average accumulator to compute block averages
@@ -66,7 +66,7 @@ namespace Rp {
    template <int D, class T>
    void AverageAnalyzer<D,T>::sample(long iStep)
    {
-      if (!AnalyzerT::isAtInterval(iStep)) return;
+      if (!Analyzer<D,T>::isAtInterval(iStep)) return;
 
       double value = compute();
       accumulator_.sample(value);
@@ -77,7 +77,7 @@ namespace Rp {
             outputValue(iStep, value);
          } else 
          if (accumulator_.isBlockComplete()) {
-            int interval = AnalyzerT::interval();
+            int interval = Analyzer<D,T>::interval();
             int beginStep = iStep - (nSamplePerOutput_ - 1)*interval;
             value = accumulator_.blockAverage();
             outputValue(beginStep, value);
@@ -112,28 +112,28 @@ namespace Rp {
 
       #if 0
       // Write parameter (*.prm) file
-      fileName = AnalyzerT::outputFileName(".prm");
-      AnalyzerT::system().fileMaster().openOutputFile(fileName, 
+      fileName = Analyzer<D,T>::outputFileName(".prm");
+      Analyzer<D,T>::system().fileMaster().openOutputFile(fileName, 
                                                       outputFile_);
       ParamComposite::writeParam(outputFile_);
       outputFile_.close();
       #endif
 
       // Write average (*.ave) file
-      fileName = AnalyzerT::outputFileName(".ave");
-      AnalyzerT::system().fileMaster().openOutputFile(fileName, 
+      fileName = Analyzer<D,T>::outputFileName(".ave");
+      Analyzer<D,T>::system().fileMaster().openOutputFile(fileName, 
                                                       outputFile_);
       double ave = accumulator_.average();
       outputFile_ << "Average = ";
       outputFile_ << Dbl(ave);
-      if (!AnalyzerT::simulator().hasRamp()) {
+      if (!Analyzer<D,T>::simulator().hasRamp()) {
          double err = accumulator_.blockingError();
          outputFile_ << " +- " << Dbl(err, 10, 3);
       }
       outputFile_ << "\n";
 
       // Write error analysis to file
-      if (!AnalyzerT::simulator().hasRamp()) {
+      if (!Analyzer<D,T>::simulator().hasRamp()) {
          outputFile_ << "\n";
          std::string line;
          line =

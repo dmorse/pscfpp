@@ -16,11 +16,6 @@ namespace Rp {
    /**
    * Evaluate derivative of H w/ respect to perturbation parameter lambda.
    *
-   * Specializations of this template are used as base classes for two
-   * closely analogous class templates, also named PerturbationDerivative, 
-   * that are defined in the Rpc and Rpg namespaces for use in the 
-   * pscf_rpc and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space
@@ -33,7 +28,7 @@ namespace Rp {
    class PerturbationDerivative : public AverageAnalyzer<D,T>
    {
 
-   protected:
+   public:
 
       /**
       * Constructor.
@@ -49,6 +44,8 @@ namespace Rp {
       */
       ~PerturbationDerivative() = default;
 
+   protected:
+
       /**
       * Compute and return the derivative of H w/ respect to lambda.
       */
@@ -59,8 +56,8 @@ namespace Rp {
       using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).
-      using AnalyzerT::simulator;
-      using AnalyzerT::system;
+      using Analyzer<D,T>::simulator;
+      using Analyzer<D,T>::system;
 
    };
 

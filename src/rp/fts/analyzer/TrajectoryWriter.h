@@ -19,11 +19,6 @@ namespace Rp {
    /**
    * Periodically write field frames (snapshots) to a trajectory file.
    *
-   * Specializations of this template are used as base classes for two
-   * closely analogous class templates, also named TrajectoryWriter, that
-   * are defined in the Rpc and Rpg namespaces for use in the pscf_rpc and 
-   * pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space
@@ -37,6 +32,20 @@ namespace Rp {
    {
 
    public:
+
+      /**
+      * Constructor.
+      *
+      * \param simulator  parent Simulator object
+      * \param system  parent System object
+      */
+      TrajectoryWriter(Simulator<D,T>& simulator, 
+                       System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~TrajectoryWriter() = default;
 
       /**
       * Read interval and output file name.
@@ -65,20 +74,6 @@ namespace Rp {
    protected:
 
       /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      TrajectoryWriter(Simulator<D,T>& simulator, 
-                       System<D,T>& system);
-
-      /**
-      * Destructor.
-      */
-      ~TrajectoryWriter() = default;
-
-      /**
       * Write data that should appear once, at beginning of the file.
       *
       * \param out  output file stream
@@ -93,13 +88,6 @@ namespace Rp {
       */
       void writeFrame(std::ofstream& out, long iStep);
 
-      // Alias for base class.
-      using AnalyzerT = Analyzer<D,T>;
-
-      // Inherited protected member functions (selected).
-      using AnalyzerT::simulator;
-      using AnalyzerT::system;
-
    private:
 
       /// Output file stream.
@@ -111,6 +99,9 @@ namespace Rp {
       /// Has readParam been called?
       long isInitialized_;
 
+      // Inherited protected member functions (selected).
+      using Analyzer<D,T>::simulator;
+      using Analyzer<D,T>::system;
    };
 
 }

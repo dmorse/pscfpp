@@ -12,55 +12,12 @@
 #include <rp/fts/analyzer/PerturbationDerivative.h>
 #include <rpc/system/Types.h>
 
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /**
-   * Evaluate derivative of H w/ respect to perturbation parameter lambda.
-   *
-   * Specializations of this template are derived from specializations of 
-   * the base class template Rp::PerturbationDerivative, and inherit their 
-   * entire public interface and almost all of their source code from this 
-   * base class. See the documentation for this base class template for
-   * details. 
-   *
-   * \see Rp::PerturbationDerivative
-   * \see rp_PerturbationDerivative_page "Manual Page"
-   * \ingroup Rpc_Fts_Analyzer_Module
-   */
-   template <int D>
-   class PerturbationDerivative 
-     : public Rp::PerturbationDerivative< D, Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator object
-      * \param system  parent System object
-      */
-      PerturbationDerivative(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
-
-   };
-
-} // namespace Rpc
-} // namespace Pscf
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class PerturbationDerivative< 1, Rpc::Types<1> >;
       extern template class PerturbationDerivative< 2, Rpc::Types<2> >;
       extern template class PerturbationDerivative< 3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class PerturbationDerivative<1>;
-      extern template class PerturbationDerivative<2>;
-      extern template class PerturbationDerivative<3>;
    }
 }
 #endif

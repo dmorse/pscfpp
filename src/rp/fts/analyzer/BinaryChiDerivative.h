@@ -18,11 +18,6 @@ namespace Rp {
    /**
    * Evaluate derivative of H with respect to chi for binary system.
    *
-   * Specializations of this template are used as base classes for two
-   * closely analogous class templates, also named BinaryChiDerivative, that 
-   * are defined in the Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space
@@ -35,7 +30,7 @@ namespace Rp {
    class BinaryChiDerivative : public AverageAnalyzer<D,T>
    {
 
-   protected:
+   public:
 
       /**
       * Constructor.
@@ -43,13 +38,16 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryChiDerivative(Simulator<D,T>& simulator, 
+      BinaryChiDerivative(
+                    Simulator<D,T>& simulator, 
                     System<D,T>& system);
 
       /**
       * Destructor.
       */
       ~BinaryChiDerivative() = default;
+
+   protected:
 
       /**
       * Compute and return the derivative of H w/ respect to chi.
@@ -61,8 +59,8 @@ namespace Rp {
       using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).
-      using AnalyzerT::simulator;
-      using AnalyzerT::system;
+      using Analyzer<D,T>::simulator;
+      using Analyzer<D,T>::system;
 
    };
 

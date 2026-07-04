@@ -32,11 +32,6 @@ namespace Rp {
    * where \f$ W_{-}({\bf k})\f$ is fluctuating field component with
    * wavevector \f$ {\bf k} \f$.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named MaxOrderParameter,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *   - D : dimension of space (D=1, 2, or 3)
@@ -52,27 +47,6 @@ namespace Rp {
    public:
 
       /**
-      * Setup before simulation loop.
-      */
-      void setup() override;
-
-   protected:
-
-   protected:
-
-      /// Square magnitude |W_|^2 in Fourier space.
-      typename T::RField psi_;
-
-      /// Maximum square magnitude (value of maximum element of psi_).
-      double maxPsi_;
-
-      /// Indices of wavevector with maximum magnitude.
-      IntVec<D> Gmax_;
-
-      /// Number of wavevectors in Fourier space (k-grid) mesh.
-      int  kSize_;
-
-      /**
       * Constructor.
       *
       * \param simulator  parent Simulator object
@@ -85,6 +59,13 @@ namespace Rp {
       * Destructor.
       */
       ~MaxOrderParameter() = default;
+
+      /**
+      * Setup before simulation loop.
+      */
+      void setup() override;
+
+   protected:
 
       /**
       * Output a sampled or block average value.
@@ -110,12 +91,24 @@ namespace Rp {
       */
       void findMaximum(Array<typename T::Real> const & psi);
 
+      /// Square magnitude |W_|^2 in Fourier space.
+      typename T::RField psi_;
+
+      /// Maximum square magnitude (value of maximum element of psi_).
+      double maxPsi_;
+
+      /// Indices of wavevector with maximum magnitude.
+      IntVec<D> Gmax_;
+
+      /// Number of wavevectors in Fourier space (k-grid) mesh.
+      int  kSize_;
+
       // Alias for base class.
       using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member variables (selected).
-      using AverageAnalyzerT::simulator;
-      using AverageAnalyzerT::system;
+      using AverageAnalyzer<D,T>::simulator;
+      using AverageAnalyzer<D,T>::system;
 
    private:
 

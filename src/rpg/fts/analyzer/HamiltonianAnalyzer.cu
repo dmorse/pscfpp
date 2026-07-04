@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "HamiltonianAnalyzer.h"                    // header
+#include "HamiltonianAnalyzer.h"
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/system/System.h>
 #include <rpg/field/Domain.h>
@@ -14,29 +14,11 @@
 
 #include <rp/fts/analyzer/HamiltonianAnalyzer.tpp>  // implementation
 
-namespace Pscf {
-namespace Rpg {
-
-   // Constructor.
-   template <int D>
-   HamiltonianAnalyzer<D>::HamiltonianAnalyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator,
-                                   Rp::System<D, Rpg::Types<D> >& system)
-    : Rp::HamiltonianAnalyzer< D, Types<D> >(simulator, system)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class HamiltonianAnalyzer< 1, Rpg::Types<1> >;
       template class HamiltonianAnalyzer< 2, Rpg::Types<2> >;
       template class HamiltonianAnalyzer< 3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class HamiltonianAnalyzer<1>;
-      template class HamiltonianAnalyzer<2>;
-      template class HamiltonianAnalyzer<3>;
    }
 }

@@ -18,30 +18,11 @@
 
 #include <rp/fts/analyzer/ConcentrationWriter.tpp>
 
-namespace Pscf {
-namespace Rpc {
-
-   // Constructor.
-   template <int D>
-   ConcentrationWriter<D>::ConcentrationWriter(
-                                  Rp::Simulator<D, Rpc::Types<D> >& simulator,
-                                  Rp::System<D, Rpc::Types<D> >& system)
-    : Rp::ConcentrationWriter< D, Types<D> >(simulator, system)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class ConcentrationWriter<1, Rpc::Types<1> >;
       template class ConcentrationWriter<2, Rpc::Types<2> >;
       template class ConcentrationWriter<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class ConcentrationWriter<1>;
-      template class ConcentrationWriter<2>;
-      template class ConcentrationWriter<3>;
    }
 }

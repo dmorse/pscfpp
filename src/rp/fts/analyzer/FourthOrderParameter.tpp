@@ -30,7 +30,7 @@ namespace Rp {
    FourthOrderParameter<D,T>::FourthOrderParameter(
                                        Simulator<D,T>& simulator,
                                        System<D,T>& system)
-    : AverageAnalyzerT(simulator, system),
+    : AverageAnalyzer<D,T>(simulator, system),
       kSize_(1),
       isInitialized_(false)
    {  ParamComposite::setClassName("FourthOrderParameter"); }
@@ -44,7 +44,7 @@ namespace Rp {
       // Precondition: The system must have exactly two monomer types
       UTIL_CHECK(system().mixture().nMonomer() == 2);
 
-      AverageAnalyzerT::setup();
+      AverageAnalyzer<D,T>::setup();
 
       // Compute k-space mesh kMeshDimensions_ and kSize_
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();

@@ -23,7 +23,7 @@ namespace Rp {
    CubicLengthDerivative<D,T>::CubicLengthDerivative(
                                       Simulator<D,T>& simulator,
                                       System<D,T>& system)
-    : AverageAnalyzerT(simulator, system)
+    : AverageAnalyzer<D,T>(simulator, system)
    {  ParamComposite::setClassName("CubicLengthDerivative"); }
 
    /*

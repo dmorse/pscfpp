@@ -23,10 +23,6 @@ namespace Rp {
    /**
    * Manager for a list of Analyzer objects.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named AnalyzerManager,
-   * that are defined in Rpc and Rpg namespaces.
-   *
    * Template parameters:
    *
    *   - D : dimension of space (1, 2, or 3)

@@ -5,7 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BinaryChiDerivative.h"                    // header
+#include "BinaryChiDerivative.h"
+
 #include <rpg/system/System.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/solvers/Mixture.h>
@@ -13,20 +14,7 @@
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
 
-#include <rp/fts/analyzer/BinaryChiDerivative.tpp>  // base class implementation
-
-namespace Pscf {
-namespace Rpg {
-
-   // Constructor.
-   template <int D>
-   BinaryChiDerivative<D>::BinaryChiDerivative(Rp::Simulator<D, Rpg::Types<D> >& simulator,
-                                   Rp::System<D, Rpg::Types<D> >& system)
-    : Rp::BinaryChiDerivative< D, Types<D> >(simulator, system)
-   {}
-
-}
-}
+#include <rp/fts/analyzer/BinaryChiDerivative.tpp>  // implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -34,10 +22,5 @@ namespace Pscf {
       template class BinaryChiDerivative< 1, Rpg::Types<1> >;
       template class BinaryChiDerivative< 2, Rpg::Types<2> >;
       template class BinaryChiDerivative< 3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class BinaryChiDerivative<1>;
-      template class BinaryChiDerivative<2>;
-      template class BinaryChiDerivative<3>;
    }
 }

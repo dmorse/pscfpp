@@ -25,11 +25,6 @@ namespace Rp {
    * simulation.  It is intended for use as a base class for any Analyzer
    * that computes and evaluates an average for a single physical variable.
    *
-   * Specializations of this template are used as base classes for two
-   * closely analogous class templates, also named AverageAnalyzer, that
-   * are defined in the Rpc and Rpg namespaces for use in the pscf_rpc and
-   * pscf_rpg programs.
-   *
    * Template parameters:
    *
    *    - D : dimension of space
@@ -93,12 +88,6 @@ namespace Rp {
 
    protected:
 
-      /// Output file stream.
-      std::ofstream outputFile_;
-
-      /// Average object.
-      Average accumulator_;
-
       // Protected member functions
 
       /**
@@ -127,6 +116,14 @@ namespace Rp {
       * \param value  value of physical observable
       */
       virtual void outputValue(int step, double value);
+
+      // Protected member variables
+
+      /// Output file stream.
+      std::ofstream outputFile_;
+
+      /// Average object.
+      Average accumulator_;
 
    private:
 

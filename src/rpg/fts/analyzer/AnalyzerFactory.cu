@@ -29,7 +29,9 @@ namespace Rpg {
    * Constructor
    */
    template <int D>
-   AnalyzerFactory<D>::AnalyzerFactory(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system)
+   AnalyzerFactory<D>::AnalyzerFactory(
+                         Rp::Simulator<D, Rpg::Types<D> >& simulator, 
+                         Rp::System<D, Rpg::Types<D> >& system)
     : simPtr_(&simulator),
       sysPtr_(&system)
    {}
@@ -38,7 +40,8 @@ namespace Rpg {
    * Return a pointer to a instance of Analyzer subclass className.
    */
    template <int D>
-   Rp::Analyzer<D, Rpg::Types<D> >* AnalyzerFactory<D>::factory(const std::string &className) const
+   Rp::Analyzer<D, Rpg::Types<D> >* 
+   AnalyzerFactory<D>::factory(const std::string &className) const
    {
       Rp::Analyzer<D, Rpg::Types<D> >* ptr = 0;
 
@@ -48,30 +51,27 @@ namespace Rpg {
 
       // Try to match classname
       if (className == "TrajectoryWriter") {
-         ptr = new TrajectoryWriter<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::TrajectoryWriter<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationWriter") {
-         ptr = 
-           new ConcentrationWriter<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::ConcentrationWriter<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "HamiltonianAnalyzer") {
-         ptr = new HamiltonianAnalyzer<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::HamiltonianAnalyzer<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactor") {
          ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
       } else if (className == "StepLogger") {
-         ptr = new StepLogger<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::StepLogger<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "PerturbationDerivative") {
-         ptr = new PerturbationDerivative<D>(*simPtr_, 
-                                             *sysPtr_);
+         ptr = new Rp::PerturbationDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "BinaryChiDerivative") {
-         ptr = new BinaryChiDerivative<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::BinaryChiDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationDerivative") {
-         ptr = new ConcentrationDerivative<D>(*simPtr_, 
-                                              *sysPtr_);
+         ptr = new Rp::ConcentrationDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "MaxOrderParameter") {
          ptr = new MaxOrderParameter<D>(*simPtr_, *sysPtr_);
       } else if (className == "FourthOrderParameter") {
          ptr = new FourthOrderParameter<D>(*simPtr_, *sysPtr_);
       } else if (className == "CubicLengthDerivative") {
-         ptr = new CubicLengthDerivative<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::CubicLengthDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
       }
 
       return ptr;

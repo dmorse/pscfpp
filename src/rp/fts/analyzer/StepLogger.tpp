@@ -22,7 +22,7 @@ namespace Rp {
    template <int D, class T>
    StepLogger<D,T>::StepLogger(Simulator<D,T>& simulator, 
                              System<D,T>& system)
-    : AnalyzerT(simulator, system)
+    : Analyzer<D,T>(simulator, system)
    {  ParamComposite::setClassName("StepLogger"); }
 
    /*
@@ -30,7 +30,7 @@ namespace Rp {
    */
    template <int D, class T>
    void StepLogger<D,T>::readParameters(std::istream& in)
-   {  AnalyzerT::readInterval(in); }
+   {  Analyzer<D,T>::readInterval(in); }
 
    /*
    * Periodically write the step index to a log file.
@@ -38,7 +38,7 @@ namespace Rp {
    template <int D, class T>
    void StepLogger<D,T>::sample(long iStep)
    {
-      if (AnalyzerT::isAtInterval(iStep)) {
+      if (Analyzer<D,T>::isAtInterval(iStep)) {
          Log::file() << "iStep  " << Int(iStep,10) << std::endl;
       }
    }

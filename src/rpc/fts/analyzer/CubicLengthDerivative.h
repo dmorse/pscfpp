@@ -12,55 +12,12 @@
 #include <rpc/system/Types.h>
 #include <rpc/fts/analyzer/AverageAnalyzer.h>
 
-namespace Pscf {
-namespace Rpc {
-
-   /**
-   * Evaluate the derivative of H with respect to cubic box length.
-   *
-   * This class is designed specifically for use with a cubic unit cell.
-   *
-   * Specializations of this template with D=1, 2 and 3 are derived from
-   * specializations of the base class template Rp::CubicLengthDerivative,
-   * and inherit their public interface and almost all of their source
-   * code from this base class.
-   *
-   * \see Rp::CubicLengthDerivative
-   * \see \ref rp_CubicLengthDerivative_page "Manual Page"
-   * \ingroup Rpc_Fts_Analyzer_Module
-   */
-   template <int D>
-   class CubicLengthDerivative
-     : public Rp::CubicLengthDerivative< D, Rpc::Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Simulator
-      * \param system  parent System
-      */
-      CubicLengthDerivative(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
-
-   };
-
-
-}
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       extern template class CubicLengthDerivative<1, Rpc::Types<1> >;
       extern template class CubicLengthDerivative<2, Rpc::Types<2> >;
       extern template class CubicLengthDerivative<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class CubicLengthDerivative<1>;
-      extern template class CubicLengthDerivative<2>;
-      extern template class CubicLengthDerivative<3>;
    }
 }
 #endif

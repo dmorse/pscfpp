@@ -10,7 +10,7 @@
 
 #include <util/param/Factory.h>  
 #include <rpg/fts/analyzer/Analyzer.h>
-#include <string>
+//#include <string>
 
 namespace Pscf {
 namespace Rpg {

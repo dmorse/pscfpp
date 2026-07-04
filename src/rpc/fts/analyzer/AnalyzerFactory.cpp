@@ -39,8 +39,8 @@ namespace Rpc {
    * Return a pointer to a instance of Analyzer subclass className.
    */
    template <int D>
-   Rp::Analyzer<D, Rpc::Types<D> >* AnalyzerFactory<D>::factory(const std::string &className) 
-   const
+   Rp::Analyzer<D, Rpc::Types<D> >* 
+   AnalyzerFactory<D>::factory(const std::string &className) const
    {
       Rp::Analyzer<D, Rpc::Types<D> >* ptr = nullptr;
 
@@ -51,23 +51,23 @@ namespace Rpc {
 
       // Try to match classname
       if (className == "StepLogger") {
-         ptr = new StepLogger<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::StepLogger<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "TrajectoryWriter") {
-         ptr = new TrajectoryWriter<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::TrajectoryWriter<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationWriter") {
-         ptr = new ConcentrationWriter<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::ConcentrationWriter<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "HamiltonianAnalyzer") {
-         ptr = new HamiltonianAnalyzer<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::HamiltonianAnalyzer<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "BinaryStructureFactor") {
          ptr = new BinaryStructureFactor<D>(*simPtr_, *sysPtr_);
       } else if (className == "PerturbationDerivative") {
-         ptr = new PerturbationDerivative<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::PerturbationDerivative<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "BinaryChiDerivative") {
-         ptr = new BinaryChiDerivative<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::BinaryChiDerivative<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "CubicLengthDerivative") {
-         ptr = new CubicLengthDerivative<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::CubicLengthDerivative<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "ConcentrationDerivative") {
-         ptr = new ConcentrationDerivative<D>(*simPtr_, *sysPtr_);
+         ptr = new Rp::ConcentrationDerivative<D, Rpc::Types<D> >(*simPtr_, *sysPtr_);
       } else if (className == "MaxOrderParameter") {
          ptr = new MaxOrderParameter<D>(*simPtr_, *sysPtr_);
       } else if (className == "FourthOrderParameter") {

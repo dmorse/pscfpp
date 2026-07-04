@@ -24,10 +24,6 @@ namespace Rp {
    /**
    * Abstract base for periodic output and/or analysis actions.
    *
-   * Specializations of this class template are used as base classes for
-   * two closely analogous classes, also named Analyzer, that are defined 
-   * in the Rpc and Rpg namespaces for use in pscf_rpc and pscf_rpg.
-   *
    * The periodic action associated with an Analyzer may involve retrieval
    * or computation of a physical property value, adding it to a statistical
    * accumulator, and/or outputting it to file. This periodic action must

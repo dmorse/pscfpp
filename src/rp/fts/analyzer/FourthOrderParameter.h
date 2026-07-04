@@ -35,11 +35,6 @@ namespace Rp {
    * \f]
    * where \f$W_({\bf G})\f$ is a Fourier mode of fluctuating field.
    *
-   * Specializations of this template are used as base classes for two
-   * closely analogous class templates, also named FourthOrderParameter, 
-   * that are defined in the Rpc and Rpg namespaces for use in the 
-   * pscf_rpc and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space
@@ -55,19 +50,6 @@ namespace Rp {
    public:
 
       /**
-      * Setup before the main loop.
-      */
-      void setup() override;
-
-   protected:
-
-      /// Prefactor for each Fourier component.
-      typename T::RField prefactor_;
-
-      /// Number of wavevectors in Fourier space (k-grid) mesh.
-      int  kSize_;
-
-      /**
       * Constructor.
       *
       * \param simulator  parent Simulator object
@@ -80,6 +62,13 @@ namespace Rp {
       * Destructor.
       */
       ~FourthOrderParameter() = default;
+
+      /**
+      * Setup before the main loop.
+      */
+      void setup() override;
+
+   protected:
 
       /**
       * Compute and return the order parameter.
@@ -99,12 +88,18 @@ namespace Rp {
       */
       void computePrefactor(Array<double>& prefactor);
 
+      /// Prefactor for each Fourier component.
+      typename T::RField prefactor_;
+
+      /// Number of wavevectors in Fourier space (k-grid) mesh.
+      int  kSize_;
+
       // Alias for base class
       using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).
-      using AverageAnalyzerT::simulator;
-      using AverageAnalyzerT::system;
+      using AverageAnalyzer<D,T>::simulator;
+      using AverageAnalyzer<D,T>::system;
 
    private:
 

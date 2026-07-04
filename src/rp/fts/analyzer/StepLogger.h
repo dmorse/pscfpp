@@ -18,11 +18,6 @@ namespace Rp {
    /**
    * Periodically write the step index to a log file.
    *
-   * Specializations of this template are used as base classes for 
-   * two closely analogous class templates, also named StepLogger, 
-   * that are defined in the Rpc and Rpg namespaces for use in the 
-   * pscf_rpc and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space
@@ -36,24 +31,6 @@ namespace Rp {
    {
 
    public:
-
-      // Protected constructor and destructor (see below).
-
-      /**
-      * Read interval.
-      *
-      * \param in input parameter file
-      */
-      void readParameters(std::istream& in) override;
-
-      /**
-      * Write the step index to a log file.
-      *
-      * \param iStep  step index
-      */
-      void sample(long iStep) override;
-
-   protected:
 
       /**
       * Constructor.
@@ -69,10 +46,19 @@ namespace Rp {
       */
       ~StepLogger() = default;
 
-   private:
+      /**
+      * Read interval.
+      *
+      * \param in input parameter file
+      */
+      void readParameters(std::istream& in) override;
 
-      // Private alias for base class.
-      using AnalyzerT = Analyzer<D,T>;
+      /**
+      * Write the step index to a log file.
+      *
+      * \param iStep  step index
+      */
+      void sample(long iStep) override;
 
    };
 

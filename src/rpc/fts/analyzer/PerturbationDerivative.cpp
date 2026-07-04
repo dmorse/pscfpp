@@ -13,30 +13,11 @@
 #include <rpc/field/CFields.h>
 #include <rpc/fts/simulator/Simulator.h>
 
-namespace Pscf {
-namespace Rpc {
-
-   // Constructor.
-   template <int D>
-   PerturbationDerivative<D>::PerturbationDerivative(
-                                     Rp::Simulator<D, Rpc::Types<D> >& simulator,
-                                     Rp::System<D, Rpc::Types<D> >& system)
-    : Rp::PerturbationDerivative< D, Types<D> >(simulator, system)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class PerturbationDerivative< 1, Rpc::Types<1> >;
       template class PerturbationDerivative< 2, Rpc::Types<2> >;
       template class PerturbationDerivative< 3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class PerturbationDerivative<1>;
-      template class PerturbationDerivative<2>;
-      template class PerturbationDerivative<3>;
    }
 }

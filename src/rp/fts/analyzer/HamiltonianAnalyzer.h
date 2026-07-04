@@ -23,11 +23,6 @@ namespace Rp {
    * Field contribution (HW)) as well as for the total, and
    * periodically outputs block averages of each to a file.
    *
-   * Specializations of this template are used as base classes for two
-   * closely analogous class templates, also named HamiltonianAnalyzer, 
-   * that are defined in the Rpc and Rpg namespaces for use in the 
-   * pscf_rpc and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space
@@ -41,15 +36,6 @@ namespace Rp {
    {
 
    public:
-
-      /**
-      * Read interval and output file name.
-      *
-      * \param in  input parameter file
-      */
-      void readParameters(std::istream& in) override;
-
-   protected:
 
       /**
       * Constructor.
@@ -66,6 +52,15 @@ namespace Rp {
       ~HamiltonianAnalyzer() = default;
      
       /**
+      * Read interval and output file name.
+      *
+      * \param in  input parameter file
+      */
+      void readParameters(std::istream& in) override;
+
+   protected:
+
+      /**
       * Compute and store values of Hamiltonian components.
       */
       void compute() override;
@@ -75,8 +70,8 @@ namespace Rp {
       using AnalyzerT = Analyzer<D,T>;
 
       // Inherited protected member functions (selected).
-      using AnalyzerT::simulator;
-      using AnalyzerT::system;
+      using Analyzer<D,T>::simulator;
+      using Analyzer<D,T>::system;
 
    private:
 

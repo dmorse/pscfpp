@@ -29,7 +29,7 @@ namespace Rp {
    MaxOrderParameter<D,T>::MaxOrderParameter(
                                      Simulator<D,T>& simulator,
                                      System<D,T>& system)
-    : AverageAnalyzerT(simulator, system),
+    : AverageAnalyzer<D,T>(simulator, system),
       kSize_(-1)
    {  ParamComposite::setClassName("MaxOrderParameter"); }
 
@@ -43,7 +43,7 @@ namespace Rp {
       const int nMonomer = system().mixture().nMonomer();
       UTIL_CHECK(nMonomer == 2);
 
-      AverageAnalyzerT::setup();
+      AverageAnalyzer<D,T>::setup();
 
       // Set mesh dimensions
       meshDimensions_ = system().domain().mesh().dimensions();
@@ -103,9 +103,9 @@ namespace Rp {
    template <int D, class T>
    void MaxOrderParameter<D,T>::outputValue(int step, double value)
    {
-      std::ofstream& file = AverageAnalyzerT::outputFile_;
+      std::ofstream& file = AverageAnalyzer<D,T>::outputFile_;
       UTIL_CHECK(file.is_open());
-      int nSamplePerOutput = AverageAnalyzerT::nSamplePerOutput();
+      int nSamplePerOutput = AverageAnalyzer<D,T>::nSamplePerOutput();
       if (nSamplePerOutput == 1) {
          file << Int(step);
          file << "   ( ";

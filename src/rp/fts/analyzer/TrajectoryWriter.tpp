@@ -23,7 +23,7 @@ namespace Rp {
    template <int D, class T>
    TrajectoryWriter<D,T>::TrajectoryWriter(Simulator<D,T>& simulator,
                                          System<D,T>& system)
-    : AnalyzerT(simulator, system),
+    : Analyzer<D,T>(simulator, system),
       nSample_(0),
       isInitialized_(false)
    {  ParamComposite::setClassName("TrajectoryWriter"); }
@@ -34,7 +34,7 @@ namespace Rp {
    template <int D, class T>
    void TrajectoryWriter<D,T>::readParameters(std::istream& in)
    {
-      AnalyzerT::readParameters(in);
+      Analyzer<D,T>::readParameters(in);
       isInitialized_ = true;
    }
 
@@ -45,7 +45,7 @@ namespace Rp {
    void TrajectoryWriter<D,T>::setup()
    {
       nSample_ = 0;
-      std::string filename = AnalyzerT::outputFileName();
+      std::string filename = Analyzer<D,T>::outputFileName();
       system().fileMaster().openOutputFile(filename, outputFile_);
       writeHeader(outputFile_);
    }
@@ -56,7 +56,7 @@ namespace Rp {
    template <int D, class T>
    void TrajectoryWriter<D,T>::sample(long iStep)
    {
-      if (AnalyzerT::isAtInterval(iStep))  {
+      if (Analyzer<D,T>::isAtInterval(iStep))  {
          writeFrame(outputFile_, iStep);
          ++nSample_;
       }

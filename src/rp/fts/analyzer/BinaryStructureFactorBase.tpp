@@ -31,7 +31,7 @@ namespace Rp {
    BinaryStructureFactorBase<D,T>::BinaryStructureFactorBase(
                                 Simulator<D,T>& simulator,
                                 System<D,T>& system)
-    : AnalyzerT(simulator, system),
+    : Analyzer<D,T>(simulator, system),
       kMeshDimensions_(),
       nWave_(0),
       nBunch_(0),
@@ -39,7 +39,7 @@ namespace Rp {
       isInitialized_(false)
    {
       ParamComposite::setClassName("BinaryStructureFactor");
-      AnalyzerT::setFileMaster(system.fileMaster());
+      Analyzer<D,T>::setFileMaster(system.fileMaster());
    }
 
    /*
@@ -51,8 +51,8 @@ namespace Rp {
       // Precondition: Require that the system has two monomer types
       UTIL_CHECK(system().mixture().nMonomer() == 2);
 
-      AnalyzerT::readInterval(in);
-      AnalyzerT::readOutputFileName(in);
+      Analyzer<D,T>::readInterval(in);
+      Analyzer<D,T>::readOutputFileName(in);
       writeWaveData_ = false;
       ParamComposite::readOptional(in, "writeWaveData", writeWaveData_);
       isInitialized_ = true;
@@ -297,11 +297,11 @@ namespace Rp {
       std::ofstream file;
 
       // Output spherical average values of S(q) for wavector bunches
-      filename = AnalyzerT::outputFileName();
+      filename = Analyzer<D,T>::outputFileName();
       if (writeWaveData_) {
          filename += "_ave";
       }
-      AnalyzerT::fileMaster().openOutputFile(filename, file);
+      Analyzer<D,T>::fileMaster().openOutputFile(filename, file);
       for (int i = 0; i < nBunch_; ++i) {
          file << Dbl(bunchWavenumbers_[i], 18, 8);
          file << Dbl(bunchAccumulators_[i].average(), 18, 8);
@@ -311,9 +311,9 @@ namespace Rp {
 
       // Optionally output S(q) values for individual waves
       if (writeWaveData_) {
-         filename = AnalyzerT::outputFileName();
+         filename = Analyzer<D,T>::outputFileName();
          filename += "_wave";
-         AnalyzerT::fileMaster().openOutputFile(filename, file);
+         Analyzer<D,T>::fileMaster().openOutputFile(filename, file);
          MeshIterator<D> iter(kMeshDimensions_);
          IntVec<D> p; 
          int iw, j;

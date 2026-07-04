@@ -23,7 +23,7 @@ namespace Rp {
    HamiltonianAnalyzer<D,T>::HamiltonianAnalyzer(
                                       Simulator<D,T>& simulator,
                                       System<D,T>& system)
-    : AverageListAnalyzerT(simulator, system),
+    : AverageListAnalyzer<D,T>(simulator, system),
       idealId_(-1),
       fieldId_(-1),
       totalId_(-1)
@@ -35,15 +35,15 @@ namespace Rp {
    template <int D, class T>
    void HamiltonianAnalyzer<D,T>::readParameters(std::istream& in)
    {
-      AverageListAnalyzerT::readParameters(in);
-      AverageListAnalyzerT::initializeAccumulators(3);
+      AverageListAnalyzer<D,T>::readParameters(in);
+      AverageListAnalyzer<D,T>::initializeAccumulators(3);
 
       idealId_ = 0;
-      AverageListAnalyzerT::setName(idealId_, "ideal");
+      AverageListAnalyzer<D,T>::setName(idealId_, "ideal");
       fieldId_ = 1;
-      AverageListAnalyzerT::setName(fieldId_, "field");
+      AverageListAnalyzer<D,T>::setName(fieldId_, "field");
       totalId_ = 2;
-      AverageListAnalyzerT::setName(totalId_, "total");
+      AverageListAnalyzer<D,T>::setName(totalId_, "total");
    }
 
    /*
@@ -67,13 +67,13 @@ namespace Rp {
       UTIL_CHECK(simulator().hasHamiltonian());
 
       double ideal = simulator().idealHamiltonian();
-      AverageListAnalyzerT::setValue(idealId_, ideal);
+      AverageListAnalyzer<D,T>::setValue(idealId_, ideal);
 
       double field = simulator().fieldHamiltonian();
-      AverageListAnalyzerT::setValue(fieldId_, field);
+      AverageListAnalyzer<D,T>::setValue(fieldId_, field);
 
       double total = simulator().hamiltonian();
-      AverageListAnalyzerT::setValue(totalId_, total);
+      AverageListAnalyzer<D,T>::setValue(totalId_, total);
    }
 
 }

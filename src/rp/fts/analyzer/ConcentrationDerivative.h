@@ -14,12 +14,7 @@ namespace Pscf {
 namespace Rp {
 
    /**
-   * Evaluate the derivative of H with respect to concentration.
-   *
-   * Specializations of this template are used as base classes for two
-   * closely analogous class templates, also named ConcentrationDerivative, 
-   * that are defined in the Rpc and Rpg namespaces for use in the 
-   * pscf_rpc and pscf_rpg programs, respectively.
+   * Evaluate the derivative of H with respect to monomer concentration.
    *
    * Template parameters:
    *
@@ -33,7 +28,7 @@ namespace Rp {
    class ConcentrationDerivative : public AverageAnalyzer<D,T>
    {
 
-   protected:
+   public:
 
       /**
       * Constructor.
@@ -49,6 +44,8 @@ namespace Rp {
       */
       ~ConcentrationDerivative() = default;
 
+   protected:
+
       /**
       * Compute and return the derivative of H w/ respect to concentration.
       */
@@ -59,8 +56,8 @@ namespace Rp {
       using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).
-      using AnalyzerT::simulator;
-      using AnalyzerT::system;
+      using Analyzer<D,T>::simulator;
+      using Analyzer<D,T>::system;
 
    };
 

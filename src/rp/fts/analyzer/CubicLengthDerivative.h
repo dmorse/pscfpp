@@ -22,19 +22,20 @@ namespace Rp {
    template <int D, class T>
    class CubicLengthDerivative : public AverageAnalyzer<D,T>
    {
-
-   protected:
+   public:
 
       /**
       * Constructor.
       */
       CubicLengthDerivative(Simulator<D,T>& simulator, 
-                          System<D,T>& system);
+                            System<D,T>& system);
 
       /**
       * Destructor.
       */
       ~CubicLengthDerivative() = default;
+
+   protected:
 
       /**
       * Compute and return the derivative of H w/ respect to L.
@@ -42,9 +43,9 @@ namespace Rp {
       double compute() override;
 
       using AverageAnalyzerT = AverageAnalyzer<D,T>;
-      using AverageAnalyzerT::simulator;
-      using AverageAnalyzerT::system;
-      using AverageAnalyzerT::outputFile_;
+      using AverageAnalyzer<D,T>::simulator;
+      using AverageAnalyzer<D,T>::system;
+      using AverageAnalyzer<D,T>::outputFile_;
 
    };
 

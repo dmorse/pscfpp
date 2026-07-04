@@ -17,31 +17,11 @@
 
 #include <rp/fts/analyzer/CubicLengthDerivative.tpp>
 
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   // Constructor.
-   template <int D>
-   CubicLengthDerivative<D>::CubicLengthDerivative(Rp::Simulator<D, Rpc::Types<D> >& simulator,
-                                               Rp::System<D, Rpc::Types<D> >& system)
-    : Rp::CubicLengthDerivative<D, Types<D> >(simulator, system)
-   {}
-
-}
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       template class CubicLengthDerivative<1, Rpc::Types<1> >;
       template class CubicLengthDerivative<2, Rpc::Types<2> >;
       template class CubicLengthDerivative<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class CubicLengthDerivative<1>;
-      template class CubicLengthDerivative<2>;
-      template class CubicLengthDerivative<3>;
    }
 }

@@ -8,24 +8,6 @@
 #include "Analyzer.h"
 #include <rp/fts/analyzer/Analyzer.tpp>
 
-#if 0
-// Subclass constructor definition
-namespace Pscf {
-   namespace Rpg {
-
-      /*
-      * Constructor.
-      */
-      template <int D>
-      Rp::Analyzer<D, Rpg::Types<D> >::Analyzer(Rp::Simulator<D, Rpg::Types<D> >& simulator,
-                            Rp::System<D, Rpg::Types<D> >& system)
-       : Rp::Analyzer<D, Rpg::Types<D> >(simulator, system)
-      {}
-
-   }
-}
-#endif
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {

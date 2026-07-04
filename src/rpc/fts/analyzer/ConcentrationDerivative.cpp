@@ -15,30 +15,11 @@
 
 #include <rp/fts/analyzer/ConcentrationDerivative.tpp>  // implementation
 
-namespace Pscf {
-namespace Rpc {
-
-   // Constructor.
-   template <int D>
-   ConcentrationDerivative<D>::ConcentrationDerivative(
-                                   Rp::Simulator<D, Rpc::Types<D> >& simulator,
-                                   Rp::System<D, Rpc::Types<D> >& system)
-    : Rp::ConcentrationDerivative< D, Types<D> >(simulator, system)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class ConcentrationDerivative< 1, Rpc::Types<1> >;
       template class ConcentrationDerivative< 2, Rpc::Types<2> >;
       template class ConcentrationDerivative< 3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class ConcentrationDerivative<1>;
-      template class ConcentrationDerivative<2>;
-      template class ConcentrationDerivative<3>;
    }
 }

@@ -19,11 +19,6 @@ namespace Rp {
    /**
    * Periodically write c-field snapshots to a trajectory file.
    *
-   * Specializations of this template are used as base classes for two
-   * closely analogous class templates, also named ConcentrationWriter, 
-   * that are defined in the Rpc and Rpg namespaces for use in the 
-   * pscf_rpc and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space
