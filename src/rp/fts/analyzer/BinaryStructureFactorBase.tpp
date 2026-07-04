@@ -1,7 +1,7 @@
-#ifndef RP_BINARY_STRUCTURE_FACTOR_TPP
-#define RP_BINARY_STRUCTURE_FACTOR_TPP
+#ifndef RP_BINARY_STRUCTURE_FACTOR_BASE_TPP
+#define RP_BINARY_STRUCTURE_FACTOR_BASE_TPP
 
-#include "BinaryStructureFactor.h"
+#include "BinaryStructureFactorBase.h"
 
 #include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -28,7 +28,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   BinaryStructureFactor<D,T>::BinaryStructureFactor(
+   BinaryStructureFactorBase<D,T>::BinaryStructureFactorBase(
                                 Simulator<D,T>& simulator,
                                 System<D,T>& system)
     : AnalyzerT(simulator, system),
@@ -46,7 +46,7 @@ namespace Rp {
    * Read parameters from file, and allocate memory.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::readParameters(std::istream& in)
+   void BinaryStructureFactorBase<D,T>::readParameters(std::istream& in)
    {
       // Precondition: Require that the system has two monomer types
       UTIL_CHECK(system().mixture().nMonomer() == 2);
@@ -62,7 +62,7 @@ namespace Rp {
    * Allocate memory arrays with dimensions that depend only on mesh.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::allocate()
+   void BinaryStructureFactorBase<D,T>::allocate()
    {
       UTIL_CHECK(isInitialized_);
 
@@ -98,7 +98,7 @@ namespace Rp {
    * Allocate and initialize data structures that involve wave bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::findWaveBunches(
+   void BinaryStructureFactorBase<D,T>::findWaveBunches(
                                   Array<double> const & kSq,
                                   Array<bool> const & implicit)
    {
@@ -219,7 +219,7 @@ namespace Rp {
    * Compute W_{-} and it Fourier transform.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::computeW()
+   void BinaryStructureFactorBase<D,T>::computeW()
    {
       // Preconditions
       UTIL_CHECK(isInitialized_);
@@ -240,7 +240,7 @@ namespace Rp {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::computeS(
+   void BinaryStructureFactorBase<D,T>::computeS(
                                     Array<typename T::Complex> const & wk)
    {
       // Preconditions
@@ -291,7 +291,7 @@ namespace Rp {
    * Output final results to output file.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::output()
+   void BinaryStructureFactorBase<D,T>::output()
    {
       std::string filename;
       std::ofstream file;

@@ -20,7 +20,7 @@
 #include <pscf/cpu/VecOpCx.h>
 #include <pscf/cpu/complex.h>
 
-#include <rp/fts/analyzer/BinaryStructureFactor.tpp>
+#include <rp/fts/analyzer/BinaryStructureFactorBase.tpp>
 
 namespace Pscf {
 namespace Rpc {
@@ -35,7 +35,7 @@ namespace Rpc {
    BinaryStructureFactor<D>::BinaryStructureFactor(
                                   Rp::Simulator<D, Rpc::Types<D> >& simulator,
                                   Rp::System<D, Rpc::Types<D> >& system)
-    : Rp::BinaryStructureFactor< D, Types<D> >(simulator, system)
+    : Rp::BinaryStructureFactorBase< D, Types<D> >(simulator, system)
    {}
 
    /*
@@ -67,9 +67,9 @@ namespace Rpc {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BinaryStructureFactor<1, Rpc::Types<1> >;
-      template class BinaryStructureFactor<2, Rpc::Types<2> >;
-      template class BinaryStructureFactor<3, Rpc::Types<3> >;
+      template class BinaryStructureFactorBase<1, Rpc::Types<1> >;
+      template class BinaryStructureFactorBase<2, Rpc::Types<2> >;
+      template class BinaryStructureFactorBase<3, Rpc::Types<3> >;
    }
    namespace Rpc {
       template class BinaryStructureFactor<1>;

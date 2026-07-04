@@ -19,7 +19,7 @@
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/complex.h>
 
-#include <rp/fts/analyzer/BinaryStructureFactor.tpp>
+#include <rp/fts/analyzer/BinaryStructureFactorBase.tpp>
 
 namespace Pscf {
 namespace Rpg {
@@ -32,9 +32,9 @@ namespace Rpg {
    */
    template <int D>
    BinaryStructureFactor<D>::BinaryStructureFactor(
-                                  Rp::Simulator<D, Rpg::Types<D> >& simulator,
-                                  Rp::System<D, Rpg::Types<D> >& system)
-    : Rp::BinaryStructureFactor< D, Types<D> >(simulator, system)
+              Rp::Simulator<D, Rpg::Types<D> >& simulator,
+              Rp::System<D, Rpg::Types<D> >& system)
+    : Rp::BinaryStructureFactorBase< D, Types<D> >(simulator, system)
    {}
 
    /*
@@ -74,9 +74,9 @@ namespace Rpg {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BinaryStructureFactor<1, Rpg::Types<1> >;
-      template class BinaryStructureFactor<2, Rpg::Types<2> >;
-      template class BinaryStructureFactor<3, Rpg::Types<3> >;
+      template class BinaryStructureFactorBase<1, Rpg::Types<1> >;
+      template class BinaryStructureFactorBase<2, Rpg::Types<2> >;
+      template class BinaryStructureFactorBase<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       template class BinaryStructureFactor<1>;

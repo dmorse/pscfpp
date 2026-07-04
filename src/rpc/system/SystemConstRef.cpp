@@ -18,9 +18,4 @@ namespace Pscf {
       template class SystemConstRef<2, Rpc::Types<2> >;
       template class SystemConstRef<3, Rpc::Types<3> >;
    }
-   namespace Rpc {
-      template class SystemConstRef<1>;
-      template class SystemConstRef<2>;
-      template class SystemConstRef<3>;
-   } 
 } 

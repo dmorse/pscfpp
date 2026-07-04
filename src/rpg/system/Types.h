@@ -30,7 +30,7 @@ namespace Pscf {
    }
    namespace Rpg {
       //template <int D> class System;
-      template <int D> class SystemConstRef;
+      //template <int D> class SystemConstRef;
       //template <int D> class Mixture;
       //template <int D> class MixtureModifier;
       //template <int D> class Polymer;
@@ -122,7 +122,7 @@ namespace Rpg {
       using WaveList = Prdc::Cuda::WaveList<D>;
 
       //using System = Rp::System<D, Rpg::Types<D> >;
-      using SystemConstRef = Rpg::SystemConstRef<D>;
+      //using SystemConstRef = Rp::SystemConstRef<D, Rpg::Types<D> >;
 
       //using Mixture = Rp::Mixture<D, Rpg::Types<D> >;
       //using MixtureModifier = Rp::MixtureModifier<D, Rpg::Types<D> >;

@@ -1,5 +1,5 @@
-#ifndef RP_BINARY_STRUCTURE_FACTOR_H
-#define RP_BINARY_STRUCTURE_FACTOR_H
+#ifndef RP_BINARY_STRUCTURE_FACTOR_BASE_H
+#define RP_BINARY_STRUCTURE_FACTOR_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -40,15 +40,15 @@ namespace Rp {
    * \f]
    * where, V is system volume, v is monomer volume, and \f$W_(k)\f$ 
    * is a Fourier transform of the fluctuating exchange field 
-   * \f$ W_{-} = (w_{A} - w_{B})/2 \f$. This analyzer outputs the 
-   * average value of this quantity for each bunch (or wavenumber
-   * value), averaged over waves in a "bunch".
+   * \f$ W_{-} = (w_{A} - w_{B})/2 \f$. This analyzer outputs the average
+   * value of this quantity for each bunch (or wavenumber value), averaged
+   * over waves in a "bunch".
    *
    * \see \ref rp_BinaryStructureFactor_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
-   class BinaryStructureFactor : public Analyzer<D,T>
+   class BinaryStructureFactorBase : public Analyzer<D,T>
    {
 
    public:
@@ -59,8 +59,8 @@ namespace Rp {
       * \param simulator  parent simulator object
       * \param system  parent system object
       */
-      BinaryStructureFactor(Simulator<D,T>& simulator, 
-                            System<D,T>& system);
+      BinaryStructureFactorBase(Simulator<D,T>& simulator, 
+                                System<D,T>& system);
 
       /**
       * Read parameters from file.
@@ -79,7 +79,6 @@ namespace Rp {
       *
       * For output files and file format, see
       * \ref rp_BinaryStructureFactor_page "Manual Page"
-      *
       */
       void output() override;
 
@@ -97,8 +96,8 @@ namespace Rp {
       * \param implicit  bools indicating existence of implicit inverse
       */
       void findWaveBunches(
-		 Array<double> const & kSq,
-		 Array<bool> const & implicit);
+                 Array<double> const & kSq,
+                 Array<bool> const & implicit);
 
       /**
       * Compute member variables wm_ and wk_.
@@ -113,7 +112,7 @@ namespace Rp {
       /// Discrete Fourier transform (DFT) of wm_ . 
       typename T::RFieldDft wk_;
 
-      // Alias for base class
+      /// Alias for base class
       using AnalyzerT = Analyzer<D,T>;
 
       // Inherited protected member functions (selected)

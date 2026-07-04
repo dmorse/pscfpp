@@ -45,7 +45,7 @@ namespace Pscf {
       //template <int D> class MixtureModifier;
   
       //template <int D> class System;
-      template <int D> class SystemConstRef;
+      //template <int D> class SystemConstRef;
 
       template <int D> class EnvironmentFactory;
 
@@ -141,7 +141,7 @@ namespace Rpc {
       //using Propagator = Propagator<D, Rpc::Types<D> >;
 
       //using System = Rp::System<D, Rpc::Types<D> >;
-      using SystemConstRef = Rpc::SystemConstRef<D>;
+      //using SystemConstRef = Rp::SystemConstRef<D, Rpc::Types<D> >;
 
       using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpc::EnvironmentFactory<D>;

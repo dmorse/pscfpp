@@ -34,7 +34,7 @@ namespace Rp {
    * \ingroup Rp_Scft_Module
    */
    template <int D, class T>
-   class ScftThermo : protected T::SystemConstRef
+   class ScftThermo : protected SystemConstRef<D,T>
    {
 
    public:
@@ -145,7 +145,7 @@ namespace Rp {
    protected:
 
       /// Base class type name alias.
-      using SystemConstRefT = typename T::SystemConstRef;
+      using SystemConstRefT = SystemConstRef<D,T>;
 
       // Protected inherited member functions
       using SystemConstRefT::system;

@@ -8,12 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/BinaryStructureFactor.h>  // base template
-#include <rpg/system/Types.h>                       // template argument
-#include <rpg/fts/analyzer/Analyzer.h>              // indirect base
-#include <pscf/cuda/HostDArray.h>                   // member
-#include <prdc/field/cuda/RField.h>                       // base class member
-#include <prdc/field/cuda/RFieldDft.h>                    // base class member
+#include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
+#include <rpg/system/Types.h>                          // base argument
+#include <rpg/fts/analyzer/Analyzer.h>                 // indirect base
+#include <pscf/cuda/HostDArray.h>                      // member
+#include <prdc/field/cuda/RField.h>                    // base class member
+#include <prdc/field/cuda/RFieldDft.h>                 // base class member
 
 namespace Pscf {
 namespace Rpg {
@@ -33,7 +33,7 @@ namespace Rpg {
    */
    template <int D>
    class BinaryStructureFactor 
-    : public Rp::BinaryStructureFactor<D, Types<D> >
+    : public Rp::BinaryStructureFactorBase<D, Types<D> >
    {
 
    public:
@@ -44,7 +44,9 @@ namespace Rpg {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryStructureFactor(Rp::Simulator<D, Rpg::Types<D> >& simulator, Rp::System<D, Rpg::Types<D> >& system);
+      BinaryStructureFactor(
+         Rp::Simulator<D, Rpg::Types<D> >& simulator, 
+         Rp::System<D, Rpg::Types<D> >& system);
 
       /**
       * Setup before the main loop.
@@ -60,16 +62,16 @@ namespace Rpg {
 
    protected:
 
-      using RpBinaryStructureFactor 
-                      = typename Rp::BinaryStructureFactor<D, Types<D> >;
-      using typename RpBinaryStructureFactor::AnalyzerT;
+      using BinaryStructureFactorBase 
+                      = typename Rp::BinaryStructureFactorBase<D, Types<D> >;
+      using typename BinaryStructureFactorBase::AnalyzerT;
 
-      using RpBinaryStructureFactor::allocate;
-      using RpBinaryStructureFactor::findWaveBunches;
-      using RpBinaryStructureFactor::computeW;
-      using RpBinaryStructureFactor::computeS;
+      using BinaryStructureFactorBase::allocate;
+      using BinaryStructureFactorBase::findWaveBunches;
+      using BinaryStructureFactorBase::computeW;
+      using BinaryStructureFactorBase::computeS;
 
-      using RpBinaryStructureFactor::wk_;
+      using BinaryStructureFactorBase::wk_;
 
    private:
 
@@ -84,9 +86,9 @@ namespace Rpg {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BinaryStructureFactor<1, Rpg::Types<1> >;
-      extern template class BinaryStructureFactor<2, Rpg::Types<2> >;
-      extern template class BinaryStructureFactor<3, Rpg::Types<3> >;
+      extern template class BinaryStructureFactorBase<1, Rpg::Types<1> >;
+      extern template class BinaryStructureFactorBase<2, Rpg::Types<2> >;
+      extern template class BinaryStructureFactorBase<3, Rpg::Types<3> >;
    }
    namespace Rpg {
       extern template class BinaryStructureFactor<1>;
