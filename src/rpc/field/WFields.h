@@ -27,7 +27,7 @@ namespace Rp {
    * from this base class. See the documentation for this base class
    * template for details.
    *
-   * \ingroup Rpc_Field_Module
+   * \ingroup Rp_Field_Module
    */
    template <int D>
    class WFields<D, Rpc::Types<D> > 

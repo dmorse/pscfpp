@@ -33,7 +33,7 @@ namespace Rp {
    *
    * \see FourthOrderParameterBase
    * \see \ref rp_FourthOrderParameter_page "Manual Page"
-   * \ingroup Rpc_Fts_Analyzer_Module
+   * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
    class FourthOrderParameter<D, Rpc::Types<D> >

@@ -8,59 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/analyzer/Analyzer.h>
-#include <util/param/Factory.h>  
-#include <string>
+#include <rp/fts/analyzer/AnalyzerFactory.h>
+#include <rpc/system/Types.h>
 
+// Explicit instantiation declarations
 namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /**
-   * Factory for subclasses of Analyzer.
-   *
-   * \ingroup Rpc_Fts_Analyzer_Module
-   */
-   template <int D>
-   class AnalyzerFactory : public Factory< Rp::Analyzer<D, Rpc::Types<D> > > 
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param simulator  parent Rp::Simulator<D, Rpc::Types<D> > object
-      * \param system  parent Rp::System<D, Rpc::Types<D> > object
-      */
-      AnalyzerFactory(Rp::Simulator<D, Rpc::Types<D> >& simulator, Rp::System<D, Rpc::Types<D> >& system);
-
-      /**
-      * Method to create any Analyzer supplied with PSCF.
-      *
-      * \param className name of the Analyzer subclass
-      * \return Analyzer* pointer to new instance of className
-      */
-      Rp::Analyzer<D, Rpc::Types<D> >* factory(const std::string &className) const;
-
-      using Factory< Rp::Analyzer<D, Rpc::Types<D> > >::trySubfactories;
-
-   private:
-      
-      /// Pointer to the parent simulator.
-      Rp::Simulator<D, Rpc::Types<D> >* simPtr_;
-
-      /// Pointer to the parent system.
-      Rp::System<D, Rpc::Types<D> >* sysPtr_;
-      
-   };
-
-   // Explicit instantiation declarations
-   extern template class AnalyzerFactory<1>;
-   extern template class AnalyzerFactory<2>;
-   extern template class AnalyzerFactory<3>;
-
+namespace Rp {
+   extern template class AnalyzerFactory<1, Rpc::Types<1> >;
+   extern template class AnalyzerFactory<2, Rpc::Types<2> >;
+   extern template class AnalyzerFactory<3, Rpc::Types<3> >;
 }
 }
 #endif

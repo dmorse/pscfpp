@@ -50,8 +50,17 @@ namespace Rp {
 
    public:
 
-      /// Type for state and residual vectors.
-      using VectorT = V;
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      AmCompressor(System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~AmCompressor() = default;
 
       /**
       * Read all parameters and initialize.
@@ -92,17 +101,8 @@ namespace Rp {
 
    protected:
 
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      AmCompressor(System<D,T>& system);
-
-      /**
-      * Destructor.
-      */
-      ~AmCompressor() = default;
+      /// Type for state and residual vectors.
+      using VectorT = V;
 
       /// Compressor type.
       using CompressorT = Compressor<D,T>;

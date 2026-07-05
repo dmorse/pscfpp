@@ -57,8 +57,17 @@ namespace Rp {
 
    public:
 
-      /// Type of field and residual vectors.
-      using VectorT = V;
+      /**
+      * Constructor.
+      *
+      * \param system  parent System object
+      */
+      LrAmCompressor(System<D,T>& system);
+
+      /**
+      * Destructor.
+      */
+      ~LrAmCompressor() = default;
 
       /**
       * Read body of parameter file block and initialize.
@@ -99,25 +108,16 @@ namespace Rp {
 
    protected:
 
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      LrAmCompressor(System<D,T>& system);
-
-      /**
-      * Destructor.
-      */
-      ~LrAmCompressor() = default;
-
       // Alias for base class.
       using CompressorT = Compressor<D,T>;
 
       // Inherited member function.
-      using CompressorT::system;
+      using Compressor<D,T>::system;
 
    private:
+
+      /// Type of field and residual vectors.
+      using VectorT = V;
 
       /**
       * Initial values of all w fields.
@@ -230,7 +230,7 @@ namespace Rp {
       using FFTT = typename T::FFT;
 
       /// Typename alias for base class.
-      using AmTmpl = AmIteratorTmpl< CompressorT, VectorT >;
+      using AmTmpl = AmIteratorTmpl< Compressor<D,T>, VectorT >;
 
    };
 

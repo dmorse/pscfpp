@@ -9,33 +9,7 @@
 */
 
 #include <rp/solvers/MixtureModifier.h>  // base class template
-#include <rpc/solvers/Mixture.h>         // base class argument
-
-#if 0
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Prdc;
-
-   /**
-   * Parameter modifier for an associated Mixture.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived 
-   * from specializations of base class template Rp::MixtureModifier, 
-   * and inherit their public interface and all of their source code
-   * from this base class.  
-   *
-   * \see Rp::MixtureModifier
-   * \ingroup Rpc_Solver_Module
-   */
-   template <int D>
-   class MixtureModifier : public Rp::MixtureModifier< Rp::Mixture<D, Rpc::Types<D> > >
-   {};
-
-} // namespace Rpc
-} // namespace Pscf
-#endif
+#include <rpc/system/Types.h>            // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

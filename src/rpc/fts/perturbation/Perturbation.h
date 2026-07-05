@@ -4,21 +4,6 @@
 #include <rp/fts/perturbation/Perturbation.h>  // base class template
 #include <rpc/system/Types.h>                  // base class argument
 
-// Forward declarations
-namespace Pscf {
-   namespace Prdc {
-      namespace Cpu {
-         template <int D> class RField;
-      }
-   }
-   namespace Rp {
-      template <int D, class T> class System;
-   }
-   namespace Rpc {
-      template <int D> class Simulator;
-   }
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {

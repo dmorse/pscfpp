@@ -15,7 +15,7 @@ namespace Rp {
    */
    template <int D, class T>
    AnalyzerManager<D,T>::AnalyzerManager(Simulator<D,T>& simulator,
-                                       System<D,T>& system)
+                                         System<D,T>& system)
     : Base(),
       simulatorPtr_(&simulator),
       systemPtr_(&system)
@@ -27,7 +27,7 @@ namespace Rp {
    template <int D, class T>
    Factory<Analyzer<D,T> >* AnalyzerManager<D,T>::newDefaultFactory() 
    const
-   {  return new AnalyzerFactoryT(*simulatorPtr_, *systemPtr_); }
+   {  return new AnalyzerFactory<D,T>(*simulatorPtr_, *systemPtr_); }
 
    /*
    * Read body of parameter file block.
@@ -35,9 +35,9 @@ namespace Rp {
    template <int D, class T>
    void AnalyzerManager<D,T>::readParameters(std::istream &in)
    {
-      AnalyzerT::baseInterval = 1;
+      Analyzer<D,T>::baseInterval = 1;
       ParamComposite::readOptional(in, "baseInterval",
-                                   AnalyzerT::baseInterval);
+                                   Analyzer<D,T>::baseInterval);
       Base::readParameters(in);
    }
 
@@ -58,7 +58,7 @@ namespace Rp {
    template <int D, class T>
    void AnalyzerManager<D,T>::sample(long iStep)
    {
-      int baseInterval = AnalyzerT::baseInterval;
+      int baseInterval = Analyzer<D,T>::baseInterval;
       UTIL_CHECK(baseInterval > 0);
       UTIL_CHECK(iStep % baseInterval == 0);
       for (int i = 0; i < Base::size(); ++i) {

@@ -5,82 +5,28 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AnalyzerFactory.h"  
+#include "AnalyzerFactory.h"
 
-// Subclasses of Analyzer 
-#include "TrajectoryWriter.h"
-#include "ConcentrationWriter.h"
-#include "HamiltonianAnalyzer.h"
-#include "BinaryStructureFactor.h"
-#include "StepLogger.h"
-#include "PerturbationDerivative.h"
-#include "BinaryChiDerivative.h"
-#include "ConcentrationDerivative.h"
-#include "MaxOrderParameter.h"
-#include "FourthOrderParameter.h"
-#include "CubicLengthDerivative.h"
+// Subclasses of Analyzer
+#include <rpg/fts/analyzer/StepLogger.h>
+#include <rpg/fts/analyzer/TrajectoryWriter.h>
+#include <rpg/fts/analyzer/ConcentrationWriter.h>
+#include <rpg/fts/analyzer/HamiltonianAnalyzer.h>
+#include <rpg/fts/analyzer/BinaryStructureFactor.h>
+#include <rpg/fts/analyzer/MaxOrderParameter.h>
+#include <rpg/fts/analyzer/FourthOrderParameter.h>
+#include <rpg/fts/analyzer/BinaryChiDerivative.h>
+#include <rpg/fts/analyzer/CubicLengthDerivative.h>
+#include <rpg/fts/analyzer/ConcentrationDerivative.h>
+#include <rpg/fts/analyzer/PerturbationDerivative.h>
 
+#include <rp/fts/analyzer/AnalyzerFactory.tpp>
+
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   /*
-   * Constructor
-   */
-   template <int D>
-   AnalyzerFactory<D>::AnalyzerFactory(
-                         Rp::Simulator<D, Rpg::Types<D> >& simulator, 
-                         Rp::System<D, Rpg::Types<D> >& system)
-    : simPtr_(&simulator),
-      sysPtr_(&system)
-   {}
-
-   /* 
-   * Return a pointer to a instance of Analyzer subclass className.
-   */
-   template <int D>
-   Rp::Analyzer<D, Rpg::Types<D> >* 
-   AnalyzerFactory<D>::factory(const std::string &className) const
-   {
-      Rp::Analyzer<D, Rpg::Types<D> >* ptr = 0;
-
-      // Try subfactories first
-      ptr = trySubfactories(className);
-      if (ptr) return ptr;
-
-      // Try to match classname
-      if (className == "TrajectoryWriter") {
-         ptr = new Rp::TrajectoryWriter<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "ConcentrationWriter") {
-         ptr = new Rp::ConcentrationWriter<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "HamiltonianAnalyzer") {
-         ptr = new Rp::HamiltonianAnalyzer<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "BinaryStructureFactor") {
-         ptr = new Rp::BinaryStructureFactor<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "StepLogger") {
-         ptr = new Rp::StepLogger<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "PerturbationDerivative") {
-         ptr = new Rp::PerturbationDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "BinaryChiDerivative") {
-         ptr = new Rp::BinaryChiDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "ConcentrationDerivative") {
-         ptr = new Rp::ConcentrationDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "CubicLengthDerivative") {
-         ptr = new Rp::CubicLengthDerivative<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "MaxOrderParameter") {
-         ptr = new Rp::MaxOrderParameter<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } else if (className == "FourthOrderParameter") {
-         ptr = new Rp::FourthOrderParameter<D, Rpg::Types<D> >(*simPtr_, *sysPtr_);
-      } 
-
-      return ptr;
+   namespace Rp {
+      template class AnalyzerFactory<1, Rpg::Types<1> >;
+      template class AnalyzerFactory<2, Rpg::Types<2> >;
+      template class AnalyzerFactory<3, Rpg::Types<3> >;
    }
-
-   // Explicit instantiation definitions
-   template class AnalyzerFactory<1>;
-   template class AnalyzerFactory<2>;
-   template class AnalyzerFactory<3>;
-
-}
 }

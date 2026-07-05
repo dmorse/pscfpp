@@ -66,7 +66,7 @@ namespace Pscf {
       //template <int D> class AverageAnalyzer;
       //template <int D> class AverageListAnalyzer;
       //template <int D> class AnalyzerManager;
-      template <int D> class AnalyzerFactory;
+      //template <int D> class AnalyzerFactory;
 
       //template <int D> class BdSimulator;
       //template <int D> class BdStep;
@@ -175,7 +175,7 @@ namespace Rpg {
       //using AverageAnalyzer = Rp::AverageAnalyzer<D, Rpg::Types<D> >;
       //using AverageListAnalyzer = Rp::AverageListAnalyzer<D, Rpg::Types<D> >;
       //using AnalyzerManager = Rp::AnalyzerManager<D, Rpg::Types<D> >;
-      using AnalyzerFactory = Rpg::AnalyzerFactory<D>;
+      //using AnalyzerFactory = Rpg::AnalyzerFactory<D>;
 
       //using TrajectoryReader = Rp::TrajectoryReader<D, Rpg::Types<D> >;
       //using TrajectoryReaderFactory = Rp::TrajectoryReaderFactory<D, Rpg::Types<D> >;

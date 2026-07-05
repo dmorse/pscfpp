@@ -11,6 +11,7 @@
 #include <rp/solvers/MixtureBase.h>  // base class template
 #include <rpc/system/Types.h>        // base class template argument
 
+#if 0
 // Forward declarations
 namespace Pscf {
    namespace Rp {
@@ -19,6 +20,8 @@ namespace Pscf {
       template <int D, class T> class Mixture;
    }
 }
+#endif
+
 namespace Pscf {
 namespace Rp {
 
@@ -35,7 +38,7 @@ namespace Rp {
    *
    * \see Rp::MixtureBase
    * \ref user_param_mixture_page "Manual Page"
-   * \ingroup Rpc_Solver_Module
+   * \ingroup Rp_Solver_Module
    */
    template <int D>
    class Mixture<D, Rpc::Types<D> > 

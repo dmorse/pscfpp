@@ -12,6 +12,7 @@ namespace Pscf {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
       template <int D, class T> class Analyzer;
+      template <int D, class T> class AnalyzerFactory;
    }
 }
 
@@ -90,7 +91,7 @@ namespace Rp {
    private:
 
       using AnalyzerT = Analyzer<D,T>;
-      using AnalyzerFactoryT = typename T::AnalyzerFactory;
+      using AnalyzerFactoryT = AnalyzerFactory<D,T>;
       using Base = Manager< AnalyzerT >;
 
       /**
@@ -106,7 +107,7 @@ namespace Rp {
       /**
       * Return pointer to a new AnalyzerFactory.
       */
-      Factory<AnalyzerT>* newDefaultFactory() const override;
+      Factory< Analyzer<D,T> >* newDefaultFactory() const override;
 
    };
 

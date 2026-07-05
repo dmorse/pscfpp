@@ -8,65 +8,22 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/compressor/LrAmCompressor.h>    // direct base template
-#include <rpg/system/Types.h>                    // direct base argument
-#include <rpg/fts/compressor/IntraCorrelation.h> // direct base member
-#include <prdc/field/cuda/RField.h>                    // direct base member
-#include <prdc/field/cuda/RFieldDft.h>                 // direct base member
-#include <rpg/fts/compressor/AmCompressorBase.h> // indirect base class
-
-namespace Pscf {
-namespace Rpg {
-
-   // Namespaces that can be used implicitly
-   using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cuda;
-
-   /**
-   * Linear-response Anderson mixing compressor.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived 
-   * from specializations of the base class template Rp::LrAmCompressor, 
-   * and inherit their public interface and almost all of their source 
-   * code from this base class.  
-   *
-   * \see Rp::LrAmCompressor
-   * \see \ref rp_LrAmCompressor_page "Manual Page"
-   * \ingroup Rpg_Fts_Compressor_Module
-   */
-   template <int D>
-   class LrAmCompressor
-    : public Rp::LrAmCompressor<D, Rpg::Types<D>, DeviceArray<cudaReal> >
-   {
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      LrAmCompressor(Rp::System<D, Rpg::Types<D> >& system);
-
-   };
-
-} // namespace Rpg
-} // namespace Pscf
+#include <rp/fts/compressor/LrAmCompressor.h>    // base class template
+#include <rpg/system/Types.h>                    // base class argument
+#include <rpg/fts/compressor/IntraCorrelation.h> // base member
+#include <prdc/field/cuda/RField.h>              // base member
+#include <prdc/field/cuda/RFieldDft.h>           // base member
+#include <rpg/fts/compressor/AmCompressorBase.h> // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template 
+      extern template
       class LrAmCompressor<1, Rpg::Types<1>, DeviceArray<cudaReal> >;
-      extern template 
+      extern template
       class LrAmCompressor<2, Rpg::Types<2>, DeviceArray<cudaReal> >;
-      extern template 
+      extern template
       class LrAmCompressor<3, Rpg::Types<3>, DeviceArray<cudaReal> >;
-   }
-   namespace Rpg {
-      extern template class LrAmCompressor<1>;
-      extern template class LrAmCompressor<2>;
-      extern template class LrAmCompressor<3>;
    }
 }
 #endif

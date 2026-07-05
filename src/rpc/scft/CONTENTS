@@ -17,8 +17,3 @@ Makefile and makefile fragments:
 makefile      - main makefile for rpc/scft directory tree
 sources.mk    - list of source files in rpc/scft (makefile fragment)
 
-Doxygen documentation files:
-----------------------------
-
-scft.mod      - defintion of the Rpc_Scft_Module doxygen module
-

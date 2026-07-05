@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CompressorFactory.h"  
+#include "CompressorFactory.h"
 
-// Subclasses of Compressor 
+// Subclasses of Compressor
+#include "LrAmCompressor.h"
 #include "AmCompressor.h"
 #include "LrCompressor.h"
-#include "LrAmCompressor.h"
 
 namespace Pscf {
 namespace Rpg {
@@ -25,11 +25,11 @@ namespace Rpg {
     : sysPtr_(&system)
    {}
 
-   /* 
+   /*
    * Return a pointer to a instance of Compressor subclass className.
    */
    template <int D>
-   Rp::Compressor<D, Rpg::Types<D> >* 
+   Rp::Compressor<D, Rpg::Types<D> >*
    CompressorFactory<D>::factory(std::string const &className) const
    {
       Rp::Compressor<D, Rpg::Types<D> >* ptr = 0;
@@ -39,17 +39,16 @@ namespace Rpg {
       if (ptr) return ptr;
 
       // Try to match classname
-      if (className == "Compressor" || className == "AmCompressor") {
-         ptr = new AmCompressor<D>(*sysPtr_);
+      if (className == "Compressor" || className == "LrAmCompressor") {
+         ptr = new Rp::LrAmCompressor<D, Rpg::Types<D>, DeviceArray<cudaReal> >(*sysPtr_);
+      } else if (className == "AmCompressor") {
+         ptr = new Rp::AmCompressor<D, Rpg::Types<D>, DeviceArray<cudaReal> >(*sysPtr_);
       } else if (className == "LrCompressor") {
-         ptr = new LrCompressor<D>(*sysPtr_);
-      } else if (className == "LrAmCompressor") {
-         ptr = new LrAmCompressor<D>(*sysPtr_);
+         ptr = new Rp::LrCompressor<D, Rpg::Types<D> >(*sysPtr_);
       }
-      
+
       return ptr;
    }
-
 
    // Explicit instantiation definitions
    template class CompressorFactory<1>;

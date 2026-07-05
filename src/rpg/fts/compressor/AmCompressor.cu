@@ -18,20 +18,6 @@
 
 #include <rp/fts/compressor/AmCompressor.tpp>
 
-namespace Pscf {
-namespace Rpg {
-
-   /*
-   * Constructor.
-   */
-   template <int D>
-   AmCompressor<D>::AmCompressor(Rp::System<D, Rpg::Types<D> >& system)
-    : Rp::AmCompressor<D, Types<D>, DeviceArray<cudaReal> >(system)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
@@ -41,10 +27,5 @@ namespace Pscf {
       class AmCompressor<2, Rpg::Types<2>, DeviceArray<cudaReal> >;
       template 
       class AmCompressor<3, Rpg::Types<3>, DeviceArray<cudaReal> >;
-   }
-   namespace Rpg {
-      template class AmCompressor<1>;
-      template class AmCompressor<2>;
-      template class AmCompressor<3>;
    }
 }

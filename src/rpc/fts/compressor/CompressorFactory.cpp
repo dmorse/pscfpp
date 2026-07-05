@@ -40,11 +40,11 @@ namespace Rpc {
 
       // Try to match classname
       if (className == "Compressor" || className == "LrAmCompressor") {
-         ptr = new LrAmCompressor<D>(*sysPtr_);
+         ptr = new Rp::LrAmCompressor<D, Rpc::Types<D>, DArray<double> >(*sysPtr_);
       } else if (className == "AmCompressor") {
-         ptr = new AmCompressor<D>(*sysPtr_);
+         ptr = new Rp::AmCompressor<D, Rpc::Types<D>, DArray<double> >(*sysPtr_);
       } else if (className == "LrCompressor") {
-         ptr = new LrCompressor<D>(*sysPtr_);
+         ptr = new Rp::LrCompressor<D, Rpc::Types<D> >(*sysPtr_);
       }
   
       return ptr;

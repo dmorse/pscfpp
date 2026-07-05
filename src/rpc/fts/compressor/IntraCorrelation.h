@@ -11,21 +11,6 @@
 #include <rp/fts/compressor/IntraCorrelation.h>
 #include <rpc/system/Types.h>
 
-//#include <pscf/math/IntVec.h>         // memmber variable type
-//#include <util/containers/DArray.h>   // memmber variable type
-
-// Forward declarations
-namespace Pscf {
-   namespace Prdc {
-      namespace Cpu {
-         template <int D> class RField;
-      }
-   }
-   namespace Rp {
-      template <int D, class T> class System;
-   }
-}
-
 namespace Pscf {
 namespace Rpc {
 
@@ -36,10 +21,10 @@ namespace Rpc {
    /**
    * Intramolecular correlation analyzer.
    *
-   * \ingroup Rpc_Fts_Compressor_Module
+   * \ingroup Rp_Fts_Compressor_Module
    */
    template <int D>
-   class IntraCorrelation : public Rp::IntraCorrelation<D, Types<D> >
+   class IntraCorrelation : public Rp::IntraCorrelation<D, Rpc::Types<D> >
    {
 
    public:

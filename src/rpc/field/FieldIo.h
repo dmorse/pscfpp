@@ -50,7 +50,7 @@ namespace Rp {
    * for the CPU and GPU variants, usually because the GPU implementation 
    * requires data transfer between CPU host and GPUdevice.
    *
-   * \ingroup Rpc_Field_Module
+   * \ingroup Rp_Field_Module
    */
    template <int D>
    class FieldIo<D, Rpc::Types<D> > 

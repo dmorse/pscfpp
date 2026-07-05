@@ -26,7 +26,7 @@ namespace Rp {
    */
    template <int D>
    ShiftMove<D, Rpc::Types<D> >::ShiftMove(
-		            Rp::McSimulator<D, Rpc::Types<D> >& simulator)
+		            McSimulator<D, Rpc::Types<D> >& simulator)
     : ShiftMoveBaseT(simulator)
    {}
 
@@ -51,11 +51,11 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class Rp::ShiftMoveBase<1, Rpc::Types<1> >;
-      template class Rp::ShiftMoveBase<2, Rpc::Types<2> >;
-      template class Rp::ShiftMoveBase<3, Rpc::Types<3> >;
-      template class Rp::ShiftMove<1, Rpc::Types<1> >;
-      template class Rp::ShiftMove<2, Rpc::Types<2> >;
-      template class Rp::ShiftMove<3, Rpc::Types<3> >;
+      template class ShiftMoveBase<1, Rpc::Types<1> >;
+      template class ShiftMoveBase<2, Rpc::Types<2> >;
+      template class ShiftMoveBase<3, Rpc::Types<3> >;
+      template class ShiftMove<1, Rpc::Types<1> >;
+      template class ShiftMove<2, Rpc::Types<2> >;
+      template class ShiftMove<3, Rpc::Types<3> >;
    }
 }

@@ -81,7 +81,7 @@ namespace Rp {
       PropagatorTmplT::setIsSolved(false);
    }
 
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation definitions

@@ -21,20 +21,19 @@ namespace Rp {
    * MDE solver for one direction of one block.
    *
    * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::PropagatorBase, 
+   * corresponding specializations of base class template PropagatorBase, 
    * and inherit their public interface and almost all of their source code
    * from this base class. Specializations of this template are also
    * indirectly derived from specializations of the Pscf::PropagatorTmpl
    * template.
    *
-   * Virtual allocate() and reallocate() functions are defined here and 
-   * in the analogous Rpc::Propagator class template because the CPU and 
-   * GPU versions of this class use different strategies for memory 
-   * allocation.
+   * Virtual allocate() and reallocate() functions are defined here rather
+   * than in PropagatorBase because the CPU and * GPU versions of this class 
+   * use different strategies for memory allocation.
    *
-   * \see Rp::PropagatorBase
+   * \see PropagatorBase
    * \see Pscf::PropagatorTmpl
-   * \ingroup Rpc_Solver_Module
+   * \ingroup Rp_Solver_Module
    */
    template <int D>
    class Propagator<D, Rpc::Types<D> > 
@@ -100,7 +99,7 @@ namespace Rp {
 
    };
 
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation declarations

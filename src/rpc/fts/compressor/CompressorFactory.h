@@ -22,7 +22,7 @@ namespace Rpc {
    /**
    * Factory for subclasses of Compressor.
    *
-   * \ingroup Rpc_Fts_Compressor_Module
+   * \ingroup Rp_Fts_Compressor_Module
    */
 
    template <int D>

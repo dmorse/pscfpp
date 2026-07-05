@@ -188,7 +188,7 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<3, Rpc::Types<3> > system;
-      AmCompressor<3> amCompressor(system);
+      Rp::AmCompressor<3, Rpc::Types<3>, DArray<double> > amCompressor(system);
       testCompressor(amCompressor, system, 
                      "in/param_AmCompressor",
                      "out/testAmCompressor.log");
@@ -198,7 +198,7 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<3, Rpc::Types<3> > system;
-      LrCompressor<3> lrCompressor(system);
+      Rp::LrCompressor<3, Rpc::Types<3> > lrCompressor(system);
       testCompressor(lrCompressor,  system, 
                      "in/param_LrCompressor", 
                      "out/testLrCompressor.log");
@@ -220,7 +220,7 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<3, Rpc::Types<3> > system;
-      LrAmCompressor<3> lrAmCompressor(system);
+      Rp::LrAmCompressor<3, Rpc::Types<3>, DArray<double> > lrAmCompressor(system);
       testCompressor(lrAmCompressor, system, 
                      "in/param_LrAmCompressor",
                      "out/testLrAmCompressor.log");

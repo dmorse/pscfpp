@@ -21,30 +21,11 @@
 
 #include <rp/fts/compressor/LrCompressor.tpp>
 
-namespace Pscf {
-namespace Rpg {
-
-   /*
-   * Constructor.
-   */
-   template <int D>
-   LrCompressor<D>::LrCompressor(Rp::System<D, Rpg::Types<D> >& system)
-    : Rp::LrCompressor<D, Types<D> >(system)
-   {}
-
-}
-}
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
       template class LrCompressor<1, Rpg::Types<1> >;
       template class LrCompressor<2, Rpg::Types<2> >;
       template class LrCompressor<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      template class LrCompressor<1>;
-      template class LrCompressor<2>;
-      template class LrCompressor<3>;
    }
 }

@@ -45,7 +45,7 @@ namespace Rp {
    * RField<D> concentration field.
    *
    * \ref user_param_block_sec "Manual Page"
-   * \ingroup Rpc_Solver_Module
+   * \ingroup Rp_Solver_Module
    */
    template <int D>
    class Block<D, Rpc::Types<D> > 

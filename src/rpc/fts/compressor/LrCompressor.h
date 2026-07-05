@@ -8,44 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/compressor/LrCompressor.h>      // direct base template
-#include <rpc/system/Types.h>                    // direct base argument
-#include <rpc/fts/compressor/IntraCorrelation.h> // direct base member
-#include <prdc/field/cpu/RField.h>                     // direct base member
-#include <prdc/field/cpu/RFieldDft.h>                  // direct base member
-#include <rp/fts/compressor/Compressor.h>        // indirect base class
-
-namespace Pscf {
-namespace Rpc {
-
-   // Namespaces that can be used implicitly
-   using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cpu;
-
-   /**
-   * Linear-response Anderson mixing compressor.
-   *
-   * \see \ref rp_LrCompressor_page "Manual Page"
-   * \ingroup Rpc_Fts_Compressor_Module
-   */
-   template <int D>
-   class LrCompressor
-    : public Rp::LrCompressor<D, Rpc::Types<D> >
-   {
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System object
-      */
-      LrCompressor(Rp::System<D, Rpc::Types<D> >& system);
-
-   };
-
-} // namespace Rpc
-} // namespace Pscf
+#include <rp/fts/compressor/LrCompressor.h>       // base class template
+#include <rpc/system/Types.h>                     // base class argument
+#include <rpc/fts/compressor/IntraCorrelation.h>  // base member
+#include <prdc/field/cpu/RField.h>                // base member
+#include <prdc/field/cpu/RFieldDft.h>             // base member
+#include <rp/fts/compressor/Compressor.h>         // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -53,11 +21,6 @@ namespace Pscf {
       extern template class LrCompressor<1, Rpc::Types<1> >;
       extern template class LrCompressor<2, Rpc::Types<2> >;
       extern template class LrCompressor<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class LrCompressor<1>;
-      extern template class LrCompressor<2>;
-      extern template class LrCompressor<3>;
    }
 }
 #endif

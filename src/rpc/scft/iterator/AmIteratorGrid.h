@@ -14,43 +14,6 @@
 #include <pscf/iterator/AmIteratorTmpl.h>     // secondary base class
 #include <util/containers/DRArray.h>          // indirect base argument
 
-#if 0
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /**
-   * Anderson Mixing iterator on grid (no space-group symmetry).
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * specializations of the base class template Rp::AmIteratorGrid, and
-   * inherit their public interface and almost all of their source code
-   * from this base class.  
-   *
-   * \see Rp::AmIteratorGrid
-   * \see \ref rp_AmIteratorGrid_page "Manual Page"
-   * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"
-   * \ingroup Rpc_Scft_Iterator_Module
-   */
-   template <int D>
-   class AmIteratorGrid : public Rp::AmIteratorGrid<D, Types<D> > 
-   {
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent system
-      */
-      AmIteratorGrid(Rp::System<D, Rpc::Types<D> >& system);
-
-   };
-
-}
-}
-#endif
-
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
