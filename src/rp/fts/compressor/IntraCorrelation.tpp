@@ -49,9 +49,28 @@ namespace Rp {
    /*
    * Compute k-space array of intramolecular correlation functions.
    */
+   template<int D, class T>
+   void
+   IntraCorrelation<D,T>::computeOmegaTotal(typename T::RField& correlations)
+   {
+      getMeshDimensions();
+      int nk = kSize();
+      UTIL_CHECK(correlations.capacity() == nk);
+
+      setupHostArray(correlations_, correlations);
+
+      computeOmegaTotalArray(correlations_);
+
+      sendToDevice(correlations, correlations_);
+      releaseHostArray(correlations_);
+   }
+
+   /*
+   * Compute k-space array of intramolecular correlation functions.
+   */
    template <int D, class T>
    void
-   IntraCorrelation<D,T>::computeOmegaTotal(Array<RealT>& correlations)
+   IntraCorrelation<D,T>::computeOmegaTotalArray(Array<RealT>& correlations)
    {
       getMeshDimensions();
       UTIL_CHECK(correlations.capacity() == kSize_);

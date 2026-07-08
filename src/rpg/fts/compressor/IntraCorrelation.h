@@ -10,8 +10,8 @@
 
 #include <rp/fts/compressor/IntraCorrelation.h>
 #include <rpg/system/Types.h>
-#include <pscf/cuda/cudaTypes.h>
 #include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/cudaTypes.h>
 
 // Forward declarations
 namespace Pscf {
@@ -46,30 +46,12 @@ namespace Rpg {
 
    public:
 
-      // Alias for base class
-      using RpIntraCorrelation = Rp::IntraCorrelation<D,Types<D> >;
-
       /**
       * Constructor.
       *
       * \param system  parent system object
       */
       IntraCorrelation(Rp::System<D, Rpg::Types<D> > const & system);
-
-      /**
-      * Compute total intramolecular correlation function (all blocks).
-      *
-      * \param correlations  omega values on a k-space mesh
-      */
-      void computeOmegaTotal(RField<D>& correlations);
-
-      // Using declaration to avoid hiding name from base class.
-      using RpIntraCorrelation::computeOmegaTotal;
-
-   private:
-
-      /// Host array of square magnitudes for wavevectors on a k-grid.
-      HostDArray<cudaReal> correlations_;
 
    };
 

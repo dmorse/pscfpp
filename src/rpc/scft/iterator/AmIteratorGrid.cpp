@@ -14,6 +14,7 @@
 #include <rpc/field/WFields.h>
 #include <rpc/field/Mask.h>
 
+#include <prdc/field/cpu/FftwDRArray.h>
 #include <prdc/field/cpu/RField.h>
 
 #include <pscf/cpu/VecOp.h>
@@ -25,11 +26,11 @@
 namespace Pscf {
 
    template class 
-   AmIteratorTmpl< Rp::Iterator<1, Rpc::Types<1> >, DRArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<1, Rpc::Types<1> >, Prdc::Cpu::FftwDRArray<double> >;
    template class 
-   AmIteratorTmpl< Rp::Iterator<2, Rpc::Types<2> >, DRArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<2, Rpc::Types<2> >, Prdc::Cpu::FftwDRArray<double> >;
    template class 
-   AmIteratorTmpl< Rp::Iterator<3, Rpc::Types<3> >, DRArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<3, Rpc::Types<3> >, Prdc::Cpu::FftwDRArray<double> >;
 
    namespace Rp {
       template class AmIteratorGrid<1, Rpc::Types<1> >;

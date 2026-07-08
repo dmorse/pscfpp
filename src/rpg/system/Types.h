@@ -106,13 +106,18 @@ namespace Rpg {
 
    public:
 
-      using VecRandom = Pscf::CudaVecRandom;
-
-      template <typename T> using HostArray = Pscf::HostDArray<T>;
-      using Vector = Pscf::DeviceArray<Pscf::cudaReal>;
-
       using Real = Pscf::cudaReal;
       using Complex = Pscf::cudaComplex;
+
+      template <typename T> using DevArray = Pscf::DeviceArray<T>;
+      template <typename T> using LocArray = Pscf::HostDArray<T>;
+
+      using RDevArray = DevArray<Real>;
+      using RLocArray = LocArray<Real>;
+
+      //using Vector = DevArray<Real>;
+
+      using VecRandom = Pscf::CudaVecRandom;
 
       using RField = Prdc::Cuda::RField<D>;
       using RFieldDft = Prdc::Cuda::RFieldDft<D>;

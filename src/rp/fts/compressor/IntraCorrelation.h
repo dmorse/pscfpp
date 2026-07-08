@@ -43,7 +43,8 @@ namespace Rp {
       *
       * \param correlations  omega values on a k-space mesh
       */
-      void computeOmegaTotal(Array<typename T::Real>& correlations);
+      virtual
+      void computeOmegaTotal(typename T::RField& correlations);
 
    protected:
 
@@ -58,6 +59,13 @@ namespace Rp {
       * Destructor.
       */
       ~IntraCorrelation();
+
+      /**
+      * Compute total intramolecular correlation function (all blocks).
+      *
+      * \param correlations  omega values on a k-space mesh
+      */
+      void computeOmegaTotalArray(Array<typename T::Real>& correlations);
 
       /**
       * Get and store r-grid and kgrid-mesh dimensions.
@@ -95,6 +103,9 @@ namespace Rp {
 
       /// Array of square magnitudes for wavevectors on a k-grid.
       DArray<RealT> Gsq_;
+
+      /// Local (host) array of omega values on a k-grid.
+      typename T::RLocArray correlations_;
 
       /// Dimensions of r-space mesh.
       IntVec<D> meshDimensions_;

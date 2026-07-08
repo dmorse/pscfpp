@@ -21,6 +21,7 @@ namespace Pscf {
    namespace Prdc {
       class Environment;
       namespace Cpu {
+         template <typename T> class FftwDRArray;
          template <int D> class RField;
          template <int D> class RFieldDft;
          template <int D> class FFT;
@@ -110,13 +111,15 @@ namespace Rpc {
 
    public:
 
-      using VecRandom = CpuVecRandom;
-
-      template <typename Data> using HostArray = Util::DArray<Data>;
-      using Vector = Util::DRArray<double>;
-
       using Real = double;
       using Complex = fftw_complex;
+
+      using VecRandom = CpuVecRandom;
+
+      template <typename T> using DevArray = Prdc::Cpu::FftwDRArray<T>;
+      template <typename T> using LocArray = Prdc::Cpu::FftwDRArray<T>;
+      using RDevArray = DevArray<Real>;
+      using RLocArray = LocArray<Real>;
 
       using RField = Prdc::Cpu::RField<D>;
       using RFieldDft = Prdc::Cpu::RFieldDft<D>;

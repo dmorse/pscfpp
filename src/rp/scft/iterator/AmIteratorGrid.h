@@ -36,7 +36,7 @@ namespace Rp {
    */
    template <int D, class T>
    class AmIteratorGrid
-    : public AmIteratorTmpl< Iterator<D,T>, typename T::Vector >
+    : public AmIteratorTmpl< Iterator<D,T>, typename T::RDevArray >
    {
 
    public:
@@ -77,7 +77,7 @@ namespace Rp {
       void setup(bool isContinuation) override;
 
       /// Alias for type of state and residual vectors.
-      using VectorT = typename T::Vector;
+      using VectorT = typename T::RDevArray;
 
       /// Alias for base class.
       using AmIterTmplT = AmIteratorTmpl< Iterator<D,T> , VectorT >;

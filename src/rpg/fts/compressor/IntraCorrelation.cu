@@ -13,6 +13,7 @@
 
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/field/cuda/RField.h>
+#include <prdc/field/cuda/send.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 
@@ -26,33 +27,10 @@ namespace Rpg {
    * Constructor.
    */
    template <int D>
-   IntraCorrelation<D>::IntraCorrelation(Rp::System<D, Rpg::Types<D> > const & system)
+   IntraCorrelation<D>::IntraCorrelation(
+            Rp::System<D, Rpg::Types<D> > const & system)
     : Rp::IntraCorrelation<D, Types<D> >(system)
    {}
-
-   /*
-   * Compute k-space array of intramolecular correlation functions.
-   */
-   template<int D>
-   void
-   IntraCorrelation<D>::computeOmegaTotal(RField<D>& correlations)
-   {
-      RpIntraCorrelation::getMeshDimensions();
-      int nk = RpIntraCorrelation::kSize();
-      UTIL_CHECK(correlations.capacity() == nk);
-
-      // Check allocation of host array correlations_
-      if (!correlations_.isAllocated()) {
-         correlations_.allocate(nk);
-      }
-      UTIL_CHECK(correlations_.capacity() == nk);
-
-      RpIntraCorrelation::computeOmegaTotal(correlations_);
-
-      // Copy host array to device array 
-      correlations = correlations_;
-
-   }
 
 }
 }

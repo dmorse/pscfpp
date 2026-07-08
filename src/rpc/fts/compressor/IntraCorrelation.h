@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/compressor/IntraCorrelation.h>
-#include <rpc/system/Types.h>
+#include <rp/fts/compressor/IntraCorrelation.h>   // base class template
+#include <rpc/system/Types.h>                     // base class argument
+#include <prdc/field/cpu/FftwDRArray.h>           // base class member
 
 namespace Pscf {
 namespace Rpc {

@@ -13,6 +13,7 @@
 
 #include <prdc/field/cpu/FFT.h>
 #include <prdc/field/cpu/RField.h>
+#include <prdc/field/cpu/send.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 

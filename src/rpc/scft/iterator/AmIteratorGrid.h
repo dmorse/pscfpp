@@ -12,16 +12,16 @@
 #include <rpc/system/Types.h>                 // direct base argument
 #include <rpc/scft/iterator/Iterator.h>       // tertiary base class
 #include <pscf/iterator/AmIteratorTmpl.h>     // secondary base class
-#include <util/containers/DRArray.h>          // indirect base argument
+#include <prdc/field/cpu/FftwDRArray.h>       // indirect base argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
-   class AmIteratorTmpl<Rp::Iterator<1, Rpc::Types<1> >, DRArray<double> >;
+   class AmIteratorTmpl<Rp::Iterator<1, Rpc::Types<1> >, Prdc::Cpu::FftwDRArray<double> >;
    extern template 
-   class AmIteratorTmpl<Rp::Iterator<2, Rpc::Types<2> >, DRArray<double> >;
+   class AmIteratorTmpl<Rp::Iterator<2, Rpc::Types<2> >, Prdc::Cpu::FftwDRArray<double> >;
    extern template 
-   class AmIteratorTmpl<Rp::Iterator<3, Rpc::Types<3> >, DRArray<double> >;
+   class AmIteratorTmpl<Rp::Iterator<3, Rpc::Types<3> >, Prdc::Cpu::FftwDRArray<double> >;
    namespace Rp {
       extern template class AmIteratorGrid<1, Rpc::Types<1> >;
       extern template class AmIteratorGrid<2, Rpc::Types<2> >;
