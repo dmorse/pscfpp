@@ -65,7 +65,7 @@ namespace Pscf {
 
       //template <int D> class Compressor;
       //template <int D> class IntraCorrelation;
-      template <int D> class CompressorFactory;
+      //template <int D> class CompressorFactory;
 
       //template <int D> class BdSimulator;
       //template <int D> class BdStep;
@@ -162,7 +162,7 @@ namespace Rpc {
 
       //using Compressor = Rp::Compressor<D, Rpc::Types<D> >;
       //using IntraCorrelation = Rp::IntraCorrelation<D, Rpc::Types<D> >;
-      using CompressorFactory = Rpc::CompressorFactory<D>;
+      //using CompressorFactory = Rp::CompressorFactory<D, Rpc::Types<D> >;
 
       //using BdSimulator = Rp::BdSimulator<D, Rpc::Types<D> >;
       //using BdStep = Rp::BdStep<D, Rpc::Types<D> >;

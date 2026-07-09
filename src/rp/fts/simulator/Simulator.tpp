@@ -61,7 +61,7 @@ namespace Rp {
       ParamComposite::setClassName("Simulator");
       randomPtr_ = new Random();
       vecRandomPtr_ = new typename T::VecRandom();
-      compressorFactoryPtr_ = new typename T::CompressorFactory(system);
+      compressorFactoryPtr_ = new CompressorFactory<D,T>(system);
       perturbationFactoryPtr_ 
              = new PerturbationFactory<D,T>(*this);
       rampFactoryPtr_ = new RampFactory<D,T>(*this);
@@ -747,7 +747,7 @@ namespace Rp {
    * Get the Compressor factory by reference.
    */
    template <int D, class T>
-   typename T::CompressorFactory& Simulator<D,T>::compressorFactory()
+   CompressorFactory<D,T>& Simulator<D,T>::compressorFactory()
    {
       UTIL_CHECK(compressorFactoryPtr_);
       return *compressorFactoryPtr_;

@@ -20,8 +20,9 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
-      template <int D, class T> class Compressor;
       template <int D, class T> class SimState;
+      template <int D, class T> class Compressor;
+      template <int D, class T> class CompressorFactory;
       template <int D, class T> class Perturbation;
       template <int D, class T> class PerturbationFactory;
       template <int D, class T> class Ramp;
@@ -637,7 +638,7 @@ namespace Rp {
       /**
       * Get the Compressor factory by reference.
       */
-      typename T::CompressorFactory& compressorFactory();
+      CompressorFactory<D,T>& compressorFactory();
 
       /**
       * Optionally read a Compressor parameter file block.
@@ -879,7 +880,7 @@ namespace Rp {
       /**
       * Pointer to a Compressor factory.
       */
-      typename T::CompressorFactory* compressorFactoryPtr_;
+      CompressorFactory<D,T>* compressorFactoryPtr_;
 
       /**
       * Pointer to a compressor.

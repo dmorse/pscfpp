@@ -8,66 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>            // base class template
-#include <rp/fts/compressor/Compressor.h>  // base template argument
-#include <rpg/system/Types.h>              // argument of argument
+#include <rp/fts/compressor/CompressorFactory.h>  // base class template
+#include <rpg/system/Types.h>                     // base class argument
 
-// Forward declaration
+// Explicit instantiation declarations
 namespace Pscf {
-   namespace Rp {
-      template <int D, class T> class System;
-   }
-}
-
-#include <string>
-
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   /**
-   * Factory for subclasses of Compressor.
-   *
-   * \ingroup Rpg_Fts_Compressor_Module
-   */
-
-   template <int D>
-   class CompressorFactory : public Factory< Rp::Compressor<D, Rpg::Types<D> > > 
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent system
-      */
-      CompressorFactory(Rp::System<D, Rpg::Types<D> >& system);
-
-      /**
-      * Method to create a Compressor.
-      *
-      * \param className name of the Compressor subclass
-      * \return Compressor* pointer to new instance of className
-      */
-      Rp::Compressor<D, Rpg::Types<D> >* factory(std::string const & className) 
-      const;
-
-      using Factory< Rp::Compressor<D, Rpg::Types<D> > >::trySubfactories;
-
-   private:
-
-      /// Pointer to the parent system.
-      Rp::System<D, Rpg::Types<D> >* sysPtr_;
-
-   };
-
-   // Explicit instantiation declarations
-   extern template class CompressorFactory<1>;
-   extern template class CompressorFactory<2>;
-   extern template class CompressorFactory<3>;
-
+namespace Rp {
+   extern template class CompressorFactory<1, Rpg::Types<1> >;
+   extern template class CompressorFactory<2, Rpg::Types<2> >;
+   extern template class CompressorFactory<3, Rpg::Types<3> >;
 }
 }
 #endif
