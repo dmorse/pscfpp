@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"                    // indirect base 
-#include <rp/fts/analyzer/StepLogger.h>  // base class template
-#include <rpc/system/Types.h>            // base class argument
+#include <rp/fts/analyzer/StepLogger.h>     // base class template
+#include <rpc/system/Types.h>               // base class argument
+#include <rp/fts/analyzer/Analyzer.h>       // indirect base 
 
 // Explicit instantiation declarations
 namespace Pscf {

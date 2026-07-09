@@ -8,11 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/montecarlo/ForceBiasMoveBase.h> // base class template
-#include <rpc/system/Types.h>                    // base classjargument
-#include <prdc/field/cpu/RField.h>               // base class member
-#include <util/containers/DArray.h>              // base class member
-#include "McMove.h"                              // indirect base class
+#include <rp/fts/montecarlo/ForceBiasMoveBase.h>   // base class template
+#include <rpc/system/Types.h>                      // base class argument
+#include <rpc/fts/montecarlo/McMove.h>             // indirect base class
+#include <prdc/field/cpu/RField.h>                 // base class member
 
 namespace Pscf {
 namespace Rp {

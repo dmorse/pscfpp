@@ -11,7 +11,6 @@
 #include <rp/fts/brownian/BdSimulator.h>       // base class template
 #include <rpc/system/Types.h>                  // template argument
 #include <rpc/fts/simulator/Simulator.h>       // indirect base class
-#include <rpc/fts/analyzer/AnalyzerManager.h>  // member of base class
 
 // Explicit instantiation declarations
 namespace Pscf {

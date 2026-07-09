@@ -13,6 +13,7 @@
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/cudaTypes.h>
 
+#if 0
 // Forward declarations
 namespace Pscf {
    namespace Prdc {
@@ -31,11 +32,6 @@ namespace Rpg {
 
    /**
    * Intramolecular correlation analyzer.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived 
-   * from corresponding specializations of the base class template 
-   * Rp::IntraCorrelation, and inherit most of their source code from
-   * this base class.  
    *
    * \see Rp::IntraCorrelation
    * \ingroup Rpg_Fts_Compressor_Module
@@ -57,6 +53,7 @@ namespace Rpg {
 
 } // namespace Rpg
 } // namespace Pscf
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -64,11 +61,6 @@ namespace Pscf {
       extern template class IntraCorrelation<1, Rpg::Types<1> >;
       extern template class IntraCorrelation<2, Rpg::Types<2> >;
       extern template class IntraCorrelation<3, Rpg::Types<3> >;
-   }
-   namespace Rpg {
-      extern template class IntraCorrelation<1>;
-      extern template class IntraCorrelation<2>;
-      extern template class IntraCorrelation<3>;
    }
 }
 #endif

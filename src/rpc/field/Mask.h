@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/Mask.h>       // base class template
-#include <rpc/system/Types.h>    // base class template argument
-#include <prdc/field/cpu/RField.h>     // base class member
+#include <rp/field/Mask.h>           // base class template
+#include <rpc/system/Types.h>        // base class template argument
+#include <prdc/field/cpu/RField.h>   // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {

@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/PropagatorBase.h>  // base class template
-#include <rpc/system/Types.h>           // base class template argument
+#include <rpc/system/Types.h>           // base class argument
 
 namespace Pscf {
 namespace Rp {

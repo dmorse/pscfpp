@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/Solvent.h>    // base class template
-#include <rpc/system/Types.h>      // base class template parameter
-#include <prdc/field/cpu/RField.h>       // member of base class
+#include <rp/solvers/Solvent.h>       // base class template
+#include <rpc/system/Types.h>         // base class argument
+#include <prdc/field/cpu/RField.h>    // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {

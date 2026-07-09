@@ -8,12 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/compressor/LrAmCompressor.h>     // base class template
-#include <rpc/system/Types.h>                     // base class argument
-#include <rpc/fts/compressor/AmCompressorBase.h>  // indirect base
 #include <rpc/fts/compressor/IntraCorrelation.h>  // base member
 #include <prdc/field/cpu/RField.h>                // base member
 #include <prdc/field/cpu/RFieldDft.h>             // base member
+#include <rpc/fts/compressor/AmCompressorBase.h>  // indirect base
+#include <rp/fts/compressor/LrAmCompressor.h>     // base class template
+#include <rpc/system/Types.h>                     // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

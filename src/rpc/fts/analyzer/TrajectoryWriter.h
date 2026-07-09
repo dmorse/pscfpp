@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/TrajectoryWriter.h> // direct base class template
+#include <rp/fts/analyzer/TrajectoryWriter.h> // base class template
 #include <rpc/system/Types.h>                 // base class argument
 #include <rpc/fts/analyzer/Analyzer.h>        // indirect base class
 

@@ -8,11 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/scft/iterator/AmIteratorBasis.h>  // class template
-#include <rpc/system/Types.h>                  // class argument 
-#include <pscf/iterator/AmIteratorTmpl.h>      // secondary base class
-#include <util/containers/DArray.h>            // secondary base argument
-#include <rpc/scft/iterator/Iterator.h>        // indirectbase class
+#include <rp/scft/iterator/AmIteratorBasis.h>  // base class template
+#include <rpc/system/Types.h>                  // base class argument 
+#include <rpc/scft/iterator/Iterator.h>        // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {

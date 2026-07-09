@@ -39,16 +39,6 @@ namespace Rp {
    public:
 
       /**
-      * Compute total intramolecular correlation function (all blocks).
-      *
-      * \param correlations  omega values on a k-space mesh
-      */
-      virtual
-      void computeOmegaTotal(typename T::RField& correlations);
-
-   protected:
-
-      /**
       * Constructor.
       *
       * \param system  parent system object
@@ -59,6 +49,16 @@ namespace Rp {
       * Destructor.
       */
       ~IntraCorrelation();
+
+      /**
+      * Compute total intramolecular correlation function (all blocks).
+      *
+      * \param correlations  omega values on a k-space mesh
+      */
+      virtual
+      void computeOmegaTotal(typename T::RField& correlations);
+
+   protected:
 
       /**
       * Compute total intramolecular correlation function (all blocks).

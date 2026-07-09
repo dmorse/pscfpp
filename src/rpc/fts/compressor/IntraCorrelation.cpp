@@ -17,6 +17,7 @@
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -27,12 +28,14 @@ namespace Rpc {
    * Constructor.
    */
    template <int D>
-   IntraCorrelation<D>::IntraCorrelation(Rp::System<D, Rpc::Types<D> > const & system)
+   Rp::IntraCorrelation<D, Rpc::Types<D> >::IntraCorrelation(
+              Rp::System<D, Rpc::Types<D> > const & system)
     : Rp::IntraCorrelation<D, Types<D> >(system)
    {}
 
 }
 }
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -40,10 +43,5 @@ namespace Pscf {
       template class IntraCorrelation<1, Rpc::Types<1> >;
       template class IntraCorrelation<2, Rpc::Types<2> >;
       template class IntraCorrelation<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      template class IntraCorrelation<1>;
-      template class IntraCorrelation<2>;
-      template class IntraCorrelation<3>;
    }
 }

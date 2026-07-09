@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"
-#include <rp/fts/analyzer/PerturbationDerivative.h>
-#include <rpc/system/Types.h>
+#include <rp/fts/analyzer/PerturbationDerivative.h> // base class template
+#include <rpc/system/Types.h>                       // base class argument
+#include <rp/fts/analyzer/AverageAnalyzer.h>        // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {

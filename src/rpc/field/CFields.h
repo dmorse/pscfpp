@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/CFields.h>       // base class template
-#include <rpc/system/Types.h>       // template parameter
+#include <rpc/system/Types.h>       // base class parameter
 
 // Explicit instantiation declarations
 namespace Pscf {

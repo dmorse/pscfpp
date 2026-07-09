@@ -11,17 +11,6 @@
 #include <rp/solvers/MixtureBase.h>  // base class template
 #include <rpc/system/Types.h>        // base class template argument
 
-#if 0
-// Forward declarations
-namespace Pscf {
-   namespace Rp {
-      template <int D, class T> class Polymer;
-      template <int D, class T> class Solvent;
-      template <int D, class T> class Mixture;
-   }
-}
-#endif
-
 namespace Pscf {
 namespace Rp {
 

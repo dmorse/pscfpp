@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/ConcentrationWriter.h>  // base template
-#include <rpc/system/Types.h>                     // template argument
-#include <rpc/fts/analyzer/Analyzer.h>            // indirect base
+#include <rp/fts/analyzer/ConcentrationWriter.h>  // base class template
+#include <rpc/system/Types.h>                     // base class argument
+#include <rpc/fts/analyzer/Analyzer.h>            // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {

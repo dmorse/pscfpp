@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/MaxOrderParameterBase.h>   // base class template
-#include <rpc/system/Types.h>                        // base class argument
-#include <rpc/fts/analyzer/AverageAnalyzer.h>        // indirect base
-#include <prdc/field/cpu/RField.h>                   // direct base member
-#include <prdc/field/cpu/RFieldDft.h>                // direct base member
+#include <rp/fts/analyzer/MaxOrderParameterBase.h>  // base class template
+#include <rpc/system/Types.h>                       // base class argument
+#include <rpc/fts/analyzer/AverageAnalyzer.h>       // indirect base
+#include <prdc/field/cpu/RField.h>                  // direct base member
+#include <prdc/field/cpu/RFieldDft.h>               // direct base member
 
 namespace Pscf {
 namespace Rp {

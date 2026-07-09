@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/montecarlo/BdMove.h>   // base class template
-#include <rpc/system/Types.h>           // base class template argument 
-#include <rpc/fts/montecarlo/McMove.h>  // indirect base class
-#include <prdc/field/cpu/RField.h>      // base class member
+#include <rp/fts/montecarlo/BdMove.h>     // base class template
+#include <rpc/system/Types.h>             // base class argument 
+#include <rpc/fts/montecarlo/McMove.h>    // indirect base class
+#include <prdc/field/cpu/RField.h>        // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {

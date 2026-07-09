@@ -147,7 +147,7 @@ namespace Rp {
       /**
       * IntraCorrelation object, used to compute intraCorrelationK_.
       */
-      typename T::IntraCorrelation intra_;
+      IntraCorrelation<D,T> intra_;
 
       /**
       * Dimensions of wavevector mesh for real-to-complex transform.

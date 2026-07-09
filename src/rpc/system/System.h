@@ -9,8 +9,8 @@
 */
 
 // Header file includes
-#include <rp/system/System.h>      // template
-#include <rpc/system/Types.h>      // template argument
+#include <rp/system/System.h>      // base class template
+#include <rpc/system/Types.h>      // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

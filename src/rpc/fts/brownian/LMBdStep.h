@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/brownian/LMBdStep.h>     // base class template
-#include <rpc/system/Types.h>             // base class template argument 
-#include <prdc/field/cpu/RField.h>        // base class member
-#include <rpc/fts/brownian/BdStep.h>      // indirect base class
+#include <rp/fts/brownian/LMBdStep.h>      // base class template
+#include <rpc/system/Types.h>              // base class argument 
+#include <rpc/fts/brownian/BdStep.h>       // indirect base class
+#include <prdc/field/cpu/RField.h>         // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {

@@ -8,20 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/FieldIoBase.h>  // base class template
-#include <rpc/system/Types.h>      // base class template
-#include <prdc/field/cpu/RFieldDft.h>    // base class member
-
-// Forward declarations 
-namespace Util {
-   class FileMaster;
-   template <typename T> class DArray;
-}
-namespace Pscf {
-   namespace Prdc {
-      template <int D> class UnitCell;
-   }
-}
+#include <rp/field/FieldIoBase.h>      // base class template
+#include <rpc/system/Types.h>          // base class template
+#include <prdc/field/cpu/RFieldDft.h>  // base class member
 
 namespace Pscf {
 namespace Rp {

@@ -114,7 +114,7 @@ namespace Rp {
       using FFTT = typename T::FFT;
 
       // IntraCorrelation object
-      typename T::IntraCorrelation intra_;
+      IntraCorrelation<D,T> intra_;
 
       // Template w Field used in update function
       DArray< RFieldT > wFieldTmp_;

@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/scft/sweep/LinearSweep.h>      // direct base class template
+#include <rp/scft/sweep/LinearSweep.h>      // base class template
 #include <rpc/system/Types.h>               // base class argument
 #include <rpc/scft/sweep/Sweep.h>           // indirect base class
 #include <rpc/scft/sweep/SweepParameter.h>  // indirect base member

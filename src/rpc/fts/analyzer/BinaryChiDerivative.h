@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"                // indirect base class
 #include <rp/fts/analyzer/BinaryChiDerivative.h>  // base class template
-#include <rpc/system/Types.h>               // base template argument
+#include <rpc/system/Types.h>                     // base template argument
+#include <rpc/fts/analyzer/AverageAnalyzer.h>     // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {

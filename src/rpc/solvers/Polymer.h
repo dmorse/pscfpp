@@ -11,14 +11,6 @@
 #include <rp/solvers/Polymer.h>    // base class template
 #include <rpc/system/Types.h>      // base class template argument
 
-// Forward declarations
-namespace Pscf {
-   namespace Rp {
-      template <int D, class T> class Propagator;
-      template <int D, class T> class Block;
-   }
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 

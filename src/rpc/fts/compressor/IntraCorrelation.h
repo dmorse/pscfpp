@@ -12,6 +12,7 @@
 #include <rpc/system/Types.h>                     // base class argument
 #include <prdc/field/cpu/FftwDRArray.h>           // base class member
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -41,6 +42,7 @@ namespace Rpc {
 
 } // namespace Rpc
 } // namespace Pscf
+#endif
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -48,11 +50,6 @@ namespace Pscf {
       extern template class IntraCorrelation<1, Rpc::Types<1> >;
       extern template class IntraCorrelation<2, Rpc::Types<2> >;
       extern template class IntraCorrelation<3, Rpc::Types<3> >;
-   }
-   namespace Rpc {
-      extern template class IntraCorrelation<1>;
-      extern template class IntraCorrelation<2>;
-      extern template class IntraCorrelation<3>;
    }
 }
 #endif

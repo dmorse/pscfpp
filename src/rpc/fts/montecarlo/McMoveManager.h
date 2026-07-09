@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/McMoveManager.h> // base class template
-#include <rpc/system/Types.h>                // base class template argument
+#include <rpc/system/Types.h>                // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

@@ -114,7 +114,7 @@ public:
       kMeshDimensions[0] = dimensions[0]/2 + 1;
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      IntraCorrelation<1> intra_(system);
+      Rp::IntraCorrelation<1, Rpc::Types<1> > intra_(system);
       intra_.computeOmegaTotal(intraCorrelationK);
 
       // Compute analytical dphi using Intra
@@ -199,7 +199,7 @@ public:
       kMeshDimensions[0] = dimensions[0]/2 + 1;
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      IntraCorrelation<1> intra(system);
+      Rp::IntraCorrelation<1, Rpc::Types<1> > intra(system);
       intra.computeOmegaTotal(intraCorrelationK);
 
       // The intracorrelation function of conformational homo
@@ -208,7 +208,7 @@ public:
       systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
       RField<1> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
-      IntraCorrelation<1> intraHomo(systemHomo);
+      Rp::IntraCorrelation<1, Rpc::Types<1> > intraHomo(systemHomo);
       intraHomo.computeOmegaTotal(intraCorrelationKHomo);
 
       RFieldComparison<1> comparison;
@@ -234,7 +234,7 @@ public:
       kMeshDimensions[0] = dimensions[0]/2 + 1;
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      IntraCorrelation<1> intra(system);
+      Rp::IntraCorrelation<1, Rpc::Types<1> > intra(system);
       intra.computeOmegaTotal(intraCorrelationK);
 
       // The intracorrelation function of conformational homo
@@ -243,7 +243,7 @@ public:
       systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
       RField<1> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
-      IntraCorrelation<1> intraHomo(systemHomo);
+      Rp::IntraCorrelation<1, Rpc::Types<1> > intraHomo(systemHomo);
       intraHomo.computeOmegaTotal(intraCorrelationKHomo);
 
       RFieldComparison<1> comparison;

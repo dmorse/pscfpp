@@ -9,7 +9,7 @@
 */
 
 #include <rp/system/SystemConstRef.h>   // base class template
-#include <rpc/system/Types.h>           // base class parameter
+#include <rpc/system/Types.h>           // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

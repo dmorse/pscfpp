@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/analyzer/CubicLengthDerivative.h>
-#include <rpc/system/Types.h>
-#include <rpc/fts/analyzer/AverageAnalyzer.h>
+#include <rp/fts/analyzer/CubicLengthDerivative.h>  // base class template
+#include <rpc/system/Types.h>                       // base class argument
+#include <rpc/fts/analyzer/AverageAnalyzer.h>       // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {
