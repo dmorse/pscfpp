@@ -9,6 +9,7 @@
 */
 
 #include <pscf/cuda/cudaTypes.h>
+#include <prdc/field/BackendId.h>
 
 // Forward declarations
 namespace Util {
@@ -106,6 +107,8 @@ namespace Rpg {
 
    public:
 
+      // Type aliases
+
       using Real = Pscf::cudaReal;
       using Complex = Pscf::cudaComplex;
 
@@ -185,7 +188,12 @@ namespace Rpg {
       //using TrajectoryReader = Rp::TrajectoryReader<D, Rpg::Types<D> >;
       //using TrajectoryReaderFactory = Rp::TrajectoryReaderFactory<D, Rpg::Types<D> >;
 
-      // Static member functions
+      // Static members
+
+      /**
+      * Identifier for computational backend.
+      */
+      static const Prdc::BackendId backendId = BackendId::Cpp;
 
       /**
       * Initialize backend thread array.

@@ -41,7 +41,7 @@ namespace Rp {
    *     - T  : a "Types" class (Rpc::Types<D> or Rpg::Types<D>))
    *
    * <b> Subclasses </b>: Specializations of Rp::WFieldsBase are used as 
-   * base for specializations of Rp::WFields.
+   * base classes for corresponding specializations of Rp::WFields.
    *
    * <b> Field Representations </b>: A WFieldsBase object contains a list 
    * of nMonomer chemical potential (w) fields that are each associated 
@@ -619,8 +619,7 @@ namespace Rp {
    * Empty primary template - exists to allow definition of partial 
    * specializations.
    */
-   template <int D, class T>
-   class WFields {};
+   template <int D, class T> class WFields;
 
 
 } // namespace Rp

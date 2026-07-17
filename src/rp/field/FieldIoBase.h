@@ -12,7 +12,7 @@
 #include <pscf/math/IntVec.h>          // template with default
 #include <util/containers/DArray.h>    // member
 
-// Forward declarations for classes used in interfaces
+// Forward declarations
 namespace Util {
    class FileMaster;
    template <typename T> class DMatrix;
@@ -46,8 +46,9 @@ namespace Rp {
    *    - T    : Types class (Rpc::Types<D> or Rpg::Types<D>)
    *
    * <b>Subclasses:</b>
-   * The FieldIoBase template is a base class for two class templates 
-   * named FieldIo that are defined in namespaces Pscf::Rpc and Pscf::Rpg.
+   * The FieldIoBase template is a base class for specializations of a
+   * template named FieldIo with the same two template parameters. Partial
+   * specializations are defined for T=Rpc::Types<D> and T=Rpg::Types<D>.
    *
    * <b>Basis construction as side effect of reading field files:</b>
    * Every member function that reads fields from a file may construct a

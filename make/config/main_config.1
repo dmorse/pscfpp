@@ -20,8 +20,11 @@
 #  - A variable UTIL_DEBUG that, if defined, enables conditional
 #    compilation of additional run-time validity checks
 #
-#  - A variable PSCF_CUDA that, if defined, enables compilation of 
-#    CUDA C++ source files
+#  - A variable PSCF_CUDA that, if defined, enables compilation of code
+#    that uses a GPU backend programmed in CUDA C++.
+#
+#  - A variable PSCF_CPP that, if defined, enables compilation of code
+#    that uses a serial backend programmed in standard C++.
 #
 #  - Several variables that specify the names of the C++ and C++/CUDA 
 #    compilers, and command line options passed to both compilers.
@@ -65,10 +68,21 @@ DAT_DIR=$(ROOT_DIR)/data
 #======================================================================
 # Conditional compilation of CUDA code
  
-# Defining PSCF_CUDA enables compilation of CUDA code.
+# Defining PSCF_CUDA enables compilation of code that uses a GPU backend
+# programmed in CUDA C++.
 #PSCF_CUDA=1
  
 # Note: The setopts script may be used to uncomment or comment out this
-# definition, by entering "./setopts -c1" to enable CUDA (uncomment) or 
-# "./setopts -c0" to disable (comment out).
+# definition, by entering "./setopts -c1" to enable (uncomment) or 
+# "./setopts -c0" to disable (comment out) compilation of CUDA files.
+#======================================================================
+# Conditional compilation of code that uses a CPU backend.
+ 
+# Defining PSCF_CPP enables compilation of code that uses a serial CPU
+# backend programmed in standard C++.
+PSCF_CPP=1
+ 
+# Note: The setopts script may be used to uncomment or comment out this
+# definition, by entering "./setopts -p1" to enable (uncomment) or
+# "./setopts -p0" to disable (comment out) the relevant C++ files.
 #======================================================================

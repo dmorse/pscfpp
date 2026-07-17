@@ -1,5 +1,5 @@
-#ifndef RPC_FIELD_IO_H
-#define RPC_FIELD_IO_H
+#ifndef RPG_FIELD_IO_CU_H
+#define RPG_FIELD_IO_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,35 +8,38 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/FieldIoBase.h>      // base class template
-#include <rpc/system/Types.h>          // base class template
-#include <prdc/field/cpu/RFieldDft.h>  // base class member
+#include <rp/field/FieldIoBase.h>          // base class template
+#include <rpg/system/Types.h>              // base class argument
+#include <prdc/field/cuda/RFieldDft.h>     // base class member
+
+// Forward declarations
+namespace Util {
+   class FileMaster;
+   template <typename T> class DArray;
+}
+namespace Pscf {
+   namespace Prdc {
+      template <int D> class UnitCell;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
+   using namespace Prdc::Cuda;
 
    /**
    * File input/output operations and format conversions for fields.
    *
-   * The public interface of this subclass is identical to that of the 
-   * base class, Rp::FieldIoBase. Member functions defined in this class 
-   * all implement pure virtual functions declared by the base class for 
-   * which CPU and GPU partial specializations of derived class template
-   * Rp::FieldIo require different implementations. Specialization is 
-   * often required because the GPU implementation requires data transfer 
-   * bewteen the between CPU and GPU.
-   *
-   * \ingroup Rp_Field_Module
+   * \see Rp::FieldIo
+   * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class FieldIo<D, Rpc::Types<D> > 
-    : public  FieldIoBase< D, Rpc::Types<D> >
+   class FieldIo<D, Rpg::Types<D> >
+     : public  FieldIoBase< D, Rpg::Types<D> >
    {
-
    public:
 
       FieldIo() = default;
@@ -47,14 +50,15 @@ namespace Rp {
       *
       * See documentation of analogous function in Rp::FieldIoBase.
       *
-      * \param in  input file stream 
+      * \param in  input file stream
       * \param fields  array of RField fields (r-space grid)
       * \param unitCell  associated crystallographic unit cell
       * \return true iff the header contains a space group (isSymmetric)
       */
       bool readFieldsRGrid(std::istream& in,
                            DArray< RField<D> >& fields,
-                           UnitCell<D> & unitCell) const override;
+                           UnitCell<D> & unitCell)
+      const override;
 
       /**
       * Read data for an array of r-grid fields, with no header section.
@@ -67,21 +71,23 @@ namespace Rp {
       */
       void readFieldsRGridData(std::istream& in,
                                DArray< RField<D> >& fields,
-                               int nMonomer) const override;
+                               int nMonomer)
+      const override;
 
       /**
       * Read a single RField (field on an r-space grid) from a stream.
       *
       * See documentation of analogous function in Rp::FieldIoBase.
       *
-      * \param in  input file stream 
+      * \param in  input file stream
       * \param field  fields defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
       * \return true iff the header contains a space group (isSymmetric)
       */
       bool readFieldRGrid(std::istream &in,
                           RField<D> & field,
-                          UnitCell<D>& unitCell) const override;
+                          UnitCell<D>& unitCell)
+      const override;
 
       /**
       * Write array of RField objects (fields on r-space grid) to a stream.
@@ -100,7 +106,8 @@ namespace Rp {
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
-                            bool writeMeshSize = true) const override;
+                            bool writeMeshSize = true)
+      const override;
 
       /**
       * Write a single RField (field on an r-space grid) to a stream.
@@ -117,7 +124,7 @@ namespace Rp {
                            RField<D> const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
-                           bool isSymmetric = true) 
+                           bool isSymmetric = true)
       const override;
 
       /**
@@ -131,7 +138,7 @@ namespace Rp {
       */
       void readFieldsKGrid(std::istream& in,
                            DArray< RFieldDft<D> >& fields,
-                           UnitCell<D> & unitCell) 
+                           UnitCell<D> & unitCell)
       const override;
 
       /**
@@ -147,7 +154,7 @@ namespace Rp {
       void writeFieldsKGrid(std::ostream& out,
                             DArray< RFieldDft<D> > const & fields,
                             UnitCell<D> const & unitCell,
-                            bool isSymmetric = true) 
+                            bool isSymmetric = true)
       const override;
 
       /**
@@ -159,7 +166,7 @@ namespace Rp {
       * \param dft  discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(DArray<double> const & components,
-                               RFieldDft<D>& dft) 
+                               RFieldDft<D>& dft)
       const override;
 
       /**
@@ -175,7 +182,7 @@ namespace Rp {
       void convertKGridToBasis(RFieldDft<D> const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
-                               double epsilon = 1.0e-8) 
+                               double epsilon = 1.0e-8)
       const override;
 
       /**
@@ -188,22 +195,22 @@ namespace Rp {
       * \param verbose  if true, write error to Log::file()
       * \return true iff the field is symmetric to within tolerance
       */
-      bool hasSymmetry(RFieldDft<D> const & in, 
+      bool hasSymmetry(RFieldDft<D> const & in,
                        double epsilon = 1.0e-8,
-                       bool verbose = true) 
+                       bool verbose = true)
       const override;
 
       /**
       * Compare two fields in r-grid format, output a report.
       *
-      * Outputs maximum and root-mean-squared differences to the standard
-      * Log file.
+      * Outputs maximum and root-mean-squared differences to the
+      * standard Log file.
       *
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
       void compareFieldsRGrid(DArray< RField<D> > const & field1,
-                              DArray< RField<D> > const & field2) 
+                              DArray< RField<D> > const & field2)
       const override;
 
       /**
@@ -215,7 +222,7 @@ namespace Rp {
       * \param field  real space (r-grid) field (in-out)
       * \param factor  real scalar by which to multiply all elements
       */
-      void scaleFieldRGrid(RField<D>& field, double factor) 
+      void scaleFieldRGrid(RField<D>& field, double factor)
       const override;
 
       /**
@@ -223,7 +230,7 @@ namespace Rp {
       *
       * See documentation of analogous function in Rp::FieldIoBase.
       *
-      * \param out  output file stream 
+      * \param out  output file stream
       * \param fields  input array of D-dimensional r-grid fields
       * \param unitCell  original D-dimensional unit cell
       * \param d  expanded spatial dimension (d > D)
@@ -234,30 +241,37 @@ namespace Rp {
                           DArray<RField<D> > const & fields,
                           UnitCell<D> const & unitCell,
                           int d,
-                          DArray<int> const& newGridDimensions) 
+                          DArray<int> const& newGridDimensions)
       const override;
 
       /**
-      * Write r-grid fields in a replicated unit cell to std::ostream.  
+      * Write r-grid fields in a replicated unit cell to std::ostream.
       *
       * See documentation of analogous function in Rp::FieldIoBase.
       *
-      * \param out  output file stream 
+      * \param out  output file stream
       * \param fields  array of RField (r-space) fields to be replicated
       * \param unitCell  original crystallographic unit cell
       * \param replicas  number of unit cell replicas in each direction
-      */ 
+      */
       void replicateUnitCell(
                           std::ostream& out,
                           DArray< RField<D> > const & fields,
                           UnitCell<D> const & unitCell,
-                          IntVec<D> const & replicas) 
+                          IntVec<D> const & replicas)
       const override;
 
-      /// Alias for base class
-      using FieldIoBase =  Rp::FieldIoBase<D, Rpc::Types<D> >;
 
-      // Inherited public member functions (to avoid hiding)
+      /**
+      * Alias for base class (partial template specialization)
+      */
+      using FieldIoBase = Rp::FieldIoBase<D, Rpg::Types<D> >;
+
+      // Inherited public member functions
+      using FieldIoBase::associate;
+      using FieldIoBase::setFileMaster;
+      using FieldIoBase::readFieldsBasis;
+      using FieldIoBase::readFieldBasis;
       using FieldIoBase::writeFieldBasis;
       using FieldIoBase::writeFieldsBasis;
       using FieldIoBase::readFieldsRGrid;
@@ -267,28 +281,50 @@ namespace Rp {
       using FieldIoBase::writeFieldRGrid;
       using FieldIoBase::readFieldsKGrid;
       using FieldIoBase::writeFieldsKGrid;
-      using FieldIoBase::replicateUnitCell;
-      using FieldIoBase::expandRGridDimension;
       using FieldIoBase::convertBasisToKGrid;
       using FieldIoBase::convertKGridToBasis;
+      using FieldIoBase::convertBasisToRGrid;
+      using FieldIoBase::convertRGridToBasis;
+      using FieldIoBase::convertKGridToRGrid;
+      using FieldIoBase::convertRGridToKGrid;
       using FieldIoBase::hasSymmetry;
+      using FieldIoBase::compareFieldsBasis;
       using FieldIoBase::compareFieldsRGrid;
+      using FieldIoBase::estimateWBasis;
+      using FieldIoBase::scaleFieldsBasis;
       using FieldIoBase::scaleFieldsRGrid;
+      using FieldIoBase::replicateUnitCell;
+      using FieldIoBase::expandRGridDimension;
+      using FieldIoBase::readFieldHeader;
+      using FieldIoBase::writeFieldHeader;
+      using FieldIoBase::mesh;
+      using FieldIoBase::basis;
+      using FieldIoBase::fileMaster;
+
+   protected:
+
+      // Inherited protected member functions
+      using FieldIoBase::lattice;
+      using FieldIoBase::hasGroup;
+      using FieldIoBase::groupName;
+      using FieldIoBase::group;
+      using FieldIoBase::fft;
 
    };
 
 } // namespace Rp
-} // namespace Pscf 
+} // namespace Pscf
 
-// Explicit instantiation declarations
+// Explicit instantation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class FieldIoBase<1, Rpc::Types<1> >;
-      extern template class FieldIoBase<2, Rpc::Types<2> >;
-      extern template class FieldIoBase<3, Rpc::Types<3> >;
-      extern template class FieldIo<1, Rpc::Types<1> >;
-      extern template class FieldIo<2, Rpc::Types<2> >;
-      extern template class FieldIo<3, Rpc::Types<3> >;
+      using namespace Prdc::Cuda;
+      extern template class FieldIoBase<1, Rpg::Types<1> >;
+      extern template class FieldIoBase<2, Rpg::Types<2> >;
+      extern template class FieldIoBase<3, Rpg::Types<3> >;
+      extern template class FieldIo<1, Rpg::Types<1> >;
+      extern template class FieldIo<2, Rpg::Types<2> >;
+      extern template class FieldIo<3, Rpg::Types<3> >;
    }
-} 
+}
 #endif

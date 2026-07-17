@@ -9,6 +9,7 @@
 */
 
 #include <fftw3.h>
+#include <prdc/field/BackendId.h>
 
 // Forward declarations
 namespace Util {
@@ -32,65 +33,7 @@ namespace Pscf {
    }
    namespace Rpc {
 
-      //template <int D> class WFields;
-      //template <int D> class CFields;
-      //template <int D> class Mask;
-      //template <int D> class FieldIo;
-      //template <int D> class Domain;
-
-      //template <int D> class Propagator;
-      //template <int D> class Block;
-      //template <int D> class Polymer;
-      //template <int D> class Solvent;
-      //template <int D> class Mixture;
-      //template <int D> class MixtureModifier;
-  
-      //template <int D> class System;
-      //template <int D> class SystemConstRef;
-
       template <int D> class EnvironmentFactory;
-
-      //template <int D> class ScftThermo;
-      //template <int D> class Iterator;
-      //template <int D> class IteratorFactory;
-
-      //template <int D> class Sweep;
-      //template <int D> class SweepParameter;
-      //template <int D> class BasisFieldState;
-      //template <int D> class SweepFactory;
-
-      //template <int D> class Simulator;
-      //template <int D> class SimState;
-      //template <int D> class SimulatorFactory;
-
-      //template <int D> class Compressor;
-      //template <int D> class IntraCorrelation;
-      //template <int D> class CompressorFactory;
-
-      //template <int D> class BdSimulator;
-      //template <int D> class BdStep;
-      //template <int D> class BdStepFactory;
-
-      //template <int D> class McSimulator;
-      //template <int D> class McMove;
-      //template <int D> class McMoveManager;
-      //template <int D> class McMoveFactory;
-
-      //template <int D> class Perturbation;
-      //template <int D> class PerturbationFactory;
-
-      //template <int D> class Ramp;
-      //template <int D> class RampParameter;
-      //template <int D> class RampFactory;
-
-      //template <int D> class Analyzer;
-      //template <int D> class AverageAnalyzer;
-      //template <int D> class AverageListAnalyzer;
-      //template <int D> class AnalyzerManager;
-      //template <int D> class AnalyzerFactory;
-
-      //template <int D> class TrajectoryReader;
-      //template <int D> class TrajectoryReaderFactory;
 
    }
 }
@@ -111,6 +54,8 @@ namespace Rpc {
 
    public:
 
+      // Aliases for associated types
+
       using Real = double;
       using Complex = fftw_complex;
 
@@ -128,68 +73,15 @@ namespace Rpc {
       using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
       using WaveList = Prdc::Cpu::WaveList<D>;
 
-      //using WFields = Rpc::WFields<D>;
-      //using CFields = Rpc::CFields<D>;
-      //using Mask = Rpc::Mask<D>;
-      //using FieldIo = Rpc::FieldIo<D>;
-      //using Domain = Rpc::Domain<D>;
-
-      //using Mixture = Rp::Mixture<D, Rpc::Types<D> >;
-      //using MixtureModifier = Rp::MixtureModifier<D, Rpc::Types<D> >;
-      //using Polymer = Rpc::Polymer<D>;
-      //using Solvent = Rpc::Solvent<D>;
-      //using Block = Rpc::Block<D>;
-      //using Propagator = Propagator<D, Rpc::Types<D> >;
-
-      //using System = Rp::System<D, Rpc::Types<D> >;
-      //using SystemConstRef = Rp::SystemConstRef<D, Rpc::Types<D> >;
-
       using Environment = Prdc::Environment;
       using EnvironmentFactory = Rpc::EnvironmentFactory<D>;
 
-      //using ScftThermo = Rp::ScftThermo<D, Rpc::Types<D> >;
-      //using Iterator = Rp::Iterator<D, Rpc::Types<D> >;
-      //using IteratorFactory = Rp::IteratorFactory<D, Rpc::Types<D> >;
+      // Static members
 
-      //using Sweep = Rp::Sweep<D, Rpc::Types<D> >;
-      //using SweepParameter = Rp::SweepParameter<D, Rpc::Types<D> >;
-      //using BasisFieldState = Rp::BasisFieldState<D, Rpc::Types<D> >;
-      //using SweepFactory = Rp::SweepFactory<D, Rpc::Types<D> >;
-
-      //using Simulator = Rp::Simulator<D, Rpc::Types<D> >;
-      //using SimState = Rp::SimState<D, Rpc::Types<D> >;
-      //using SimulatorFactory = Rp::SimulatorFactory<D, Rpc::Types<D> >;
-
-      //using Compressor = Rp::Compressor<D, Rpc::Types<D> >;
-      //using IntraCorrelation = Rp::IntraCorrelation<D, Rpc::Types<D> >;
-      //using CompressorFactory = Rp::CompressorFactory<D, Rpc::Types<D> >;
-
-      //using BdSimulator = Rp::BdSimulator<D, Rpc::Types<D> >;
-      //using BdStep = Rp::BdStep<D, Rpc::Types<D> >;
-      //using BdStepFactory = Rp::BdStepFactory<D, Rpc::Types<D> >;
-
-      //using McSimulator = Rp::McSimulator<D, Rpc::Types<D> >;
-      //using McMove = Rp::McMove<D, Rpc::Types<D> >;
-      //using McMoveManager = Rp::McMoveManager<D, Rpc::Types<D> >;
-      //using McMoveFactory = Rp::McMoveFactory<D, Rpc::Types<D> >;
-
-      //using Analyzer = Rp::Analyzer<D, Rpc::Types<D> >;
-      //using AverageAnalyzer = Rp::AverageAnalyzer<D, Rpc::Types<D> >;
-      //using AverageListAnalyzer = Rp::AverageListAnalyzer<D, Rpc::Types<D> >;
-      //using AnalyzerManager = Rp::AnalyzerManager<D, Rpc::Types<D> >;
-      //using AnalyzerFactory = Rpc::AnalyzerFactory<D>;
-
-      //using TrajectoryReader = Rp::TrajectoryReader<D, Rpc::Types<D> >;
-      //using TrajectoryReaderFactory = Rp::TrajectoryReaderFactory<D, Rpc::Types<D> >;
-
-      //using Perturbation = Rp::Perturbation<D, Rpc::Types<D> >;
-      //using PerturbationFactory = Rp::PerturbationFactory<D, Rpc::Types<D> >;
-
-      //using Ramp = Rp::Ramp<D, Rpc::Types<D> >;
-      //using RampParameter = Rp::RampParameter<D, Rpc::Types<D> >;
-      //using RampFactory = Rp::RampFactory<D, Rpc::Types<D> >;
-
-      // Static member functions
+      /**
+      * Identifier for computational backend.
+      */
+      static const Prdc::BackendId backendId = BackendId::Cpp;
 
       /**
       * Initialize backend.
