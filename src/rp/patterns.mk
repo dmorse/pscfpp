@@ -8,7 +8,7 @@
 # Variables used in pattern rules
 
 # List of relevant static libraries defined by PSCF (the order matters)
-PSCF_LIBS=$(prdc_LIB) $(pscf_LIB) $(util_LIB)
+PSCF_LIBS=$(rp_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
 # List of all libraries needed in src/rp (including external libraries)
 LIBS=$(PSCF_LIBS)
@@ -17,13 +17,13 @@ LIBS=$(PSCF_LIBS)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB)
 
-# Add header include and library paths for the C++ FFTW library
+# Conditionally add paths for the C++ FFTW library
 ifdef PSCF_CPP
 INCLUDES+=$(FFTW_INC)
 LIBS+=$(FFTW_LIB)
 endif
 
-# Add header include and library paths for the CUDA FFT library
+# Conditionally add paths for the CUDA FFT library
 ifdef PSCF_CUDA
 INCLUDES+=$(CUDA_INC)
 LIBS+=$(CUDA_LIB)
@@ -56,7 +56,7 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSCF_LIBS)
 	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)
 
-# Note: In the linking rule for unit test programs, we include the list 
-# $(PSCF_LIBS) of PSCF-specific libraries as prerequisites but link to 
-# the full list $(LIBS) of libraries that includes all relevant external 
-# libraries.
+# Note: In the linking rule for unit test programs, the prerequisite list
+# contains the list $(PSCF_LIBS) of PSCF-specific libraries, but the action
+# links to the full list $(LIBS) of libraries that includes all relevant 
+# external libraries.
