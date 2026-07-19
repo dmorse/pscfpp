@@ -13,48 +13,6 @@
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/cudaTypes.h>
 
-#if 0
-// Forward declarations
-namespace Pscf {
-   namespace Prdc {
-      namespace Cuda {
-         template <int D> class RField;
-      }
-   }
-}
-
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cuda;
-
-   /**
-   * Intramolecular correlation analyzer.
-   *
-   * \see Rp::IntraCorrelation
-   * \ingroup Rpg_Fts_Compressor_Module
-   */
-   template <int D>
-   class IntraCorrelation : public Rp::IntraCorrelation< D, Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent system object
-      */
-      IntraCorrelation(Rp::System<D, Rpg::Types<D> > const & system);
-
-   };
-
-} // namespace Rpg
-} // namespace Pscf
-#endif
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {

@@ -78,8 +78,8 @@ namespace Rpc {
       */
       void createGenerators()
       {
-         MixAndMatchEnv::fieldGenPtr1_ = new FilmFieldGenMask<D>(*sysPtr_);
-         MixAndMatchEnv::fieldGenPtr2_ = new FilmFieldGenExt<D>(*sysPtr_);
+         MixAndMatchEnv::fieldGenPtr1_ = new Rp::FilmFieldGenMask<D, Rpc::Types<D> >(*sysPtr_);
+         MixAndMatchEnv::fieldGenPtr2_ = new Rp::FilmFieldGenExt<D, Rpc::Types<D> >(*sysPtr_);
       }
 
    };

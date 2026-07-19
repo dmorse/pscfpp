@@ -1,5 +1,5 @@
-#ifndef RPC_MASK_GEN_FILM_TPP
-#define RPC_MASK_GEN_FILM_TPP
+#ifndef RP_MASK_GEN_FILM_TPP
+#define RP_MASK_GEN_FILM_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,6 +9,7 @@
 */
 
 #include "FilmFieldGenMask.h"
+
 #include <rpc/solvers/Mixture.h>
 #include <rpc/scft/iterator/Iterator.h>
 #include <rpc/scft/ScftThermo.h>
@@ -22,13 +23,14 @@
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/paramIdConversions.h>
+
 #include <pscf/interaction/Interaction.h>
 #include <pscf/math/IntVec.h>
+
 #include <cmath>
 
 namespace Pscf {
-namespace Rpc
-{
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -38,35 +40,36 @@ namespace Rpc
    * Default constructor
    */
    template <int D>
-   FilmFieldGenMask<D>::FilmFieldGenMask()
+   FilmFieldGenMask<D, Rpc::Types<D> >::FilmFieldGenMask()
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(nullptr)
-   {  setClassName("FilmFieldGenMask"); }
+   {  ParamComposite::setClassName("FilmFieldGenMask"); }
    
    /*
    * Constructor
    */
    template <int D>
-   FilmFieldGenMask<D>::FilmFieldGenMask(Rp::System<D, Rpc::Types<D> >& sys)
+   FilmFieldGenMask<D, Rpc::Types<D> >::FilmFieldGenMask(
+         Rp::System<D, Rpc::Types<D> >& sys)
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(&sys)
-   {  setClassName("FilmFieldGenMask"); }
+   {  ParamComposite::setClassName("FilmFieldGenMask"); }
 
    /*
    * Destructor
    */
    template <int D>
-   FilmFieldGenMask<D>::~FilmFieldGenMask()
+   FilmFieldGenMask<D, Rpc::Types<D> >::~FilmFieldGenMask()
    {}
 
    /*
    * Get contribution to the stress from this mask
    */
    template <int D>
-   double FilmFieldGenMask<D>::stress(int paramId) const
+   double FilmFieldGenMask<D, Rpc::Types<D> >::stress(int paramId) const
    {
       UTIL_CHECK(sysPtr_);
-      Rp::Domain<D, Types<D> > const & domain = system().domain();
+      Rp::Domain<D, Rpc::Types<D> > const & domain = system().domain();
       Mesh<D> const & mesh = domain.mesh();
 
       int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),
@@ -175,8 +178,10 @@ namespace Rpc
    }
 
    template <int D>
-   double FilmFieldGenMask<D>::modifyStress(int paramId, double stress) 
-   const
+   double 
+   FilmFieldGenMask<D, Rpc::Types<D> >::modifyStress(
+        int paramId, 
+        double stress) const
    {
       UTIL_CHECK(sysPtr_);
       int nvParamId = convertFullParamIdToReduced<D>(normalVecId(),
@@ -210,7 +215,7 @@ namespace Rpc
    * Compute the field and store where the System can access
    */
    template <int D>
-   void FilmFieldGenMask<D>::compute()
+   void FilmFieldGenMask<D, Rpc::Types<D> >::compute()
    {
       UTIL_CHECK(sysPtr_);
       UTIL_CHECK(interfaceThickness() > 0);
@@ -221,8 +226,9 @@ namespace Rpc
       }
       
       // Get the length L of the lattice basis vector normal to the walls
-      int paramId = convertFullParamIdToReduced<D>(normalVecId(),
-                                                system().domain().lattice());
+      int paramId 
+          = convertFullParamIdToReduced<D>(normalVecId(),
+                                           system().domain().lattice());
       double L = system().domain().unitCell().parameter(paramId);
 
       // Create a 3 element vector 'dim' that contains the grid dimensions.
@@ -275,7 +281,7 @@ namespace Rpc
    * Sets flexible lattice parameters to be compatible with the mask.
    */
    template <int D>
-   void FilmFieldGenMask<D>::setFlexibleParams() const
+   void FilmFieldGenMask<D, Rpc::Types<D> >::setFlexibleParams() const
    {
       UTIL_CHECK(sysPtr_);
       if (system().iterator().isFlexible()) {
@@ -286,6 +292,6 @@ namespace Rpc
       }
    }
    
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 #endif

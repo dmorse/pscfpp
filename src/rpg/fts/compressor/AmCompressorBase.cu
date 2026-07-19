@@ -11,8 +11,10 @@
 */
 
 #include "AmCompressorBase.h"
+
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
+
 #include <pscf/iterator/AmIteratorTmpl.tpp>
 
 // Explicit instantiation definitions

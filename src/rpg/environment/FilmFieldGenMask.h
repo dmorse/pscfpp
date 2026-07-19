@@ -8,30 +8,40 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
+#include <rpg/system/Types.h>                       // template argument
 #include <rpg/system/System.h>
-#include <prdc/environment/FilmFieldGenMaskBase.h>  // Base class
+
+// Forward declarations
+namespace Pscf {
+   namespace Rp {
+      template <int D, class T> class FilmFieldGenMask;
+      template <int D, class T> class System;
+   }
+}
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
 
    /**
-   * Field Generator for thin-film masks.
+   * Field generator for thin-film masks.
    *
-   * The parent FilmFieldGenMaskBase class template defines all traits of a 
-   * FilmFieldGenMask that do not require access to the System. This subclass
-   * defines all methods that need System access.
+   * The parent FilmFieldGenMaskBase class template defines all traits of 
+   * a FilmFieldGenMask that do not require access to the System. This 
+   * subclass defines all methods that need System access.
    * 
    * If a MixAndMatchEnv contains a FilmFieldGenMask, then the system will
    * contain two parallel hard surfaces ("walls"), confining the
    * polymers/solvents to a "thin film" region of the unit cell.
    *
-   * \ingroup Rpg_Field_Module
+   * \ingroup Rp_Field_Module
    */
    template <int D>
-   class FilmFieldGenMask : public FilmFieldGenMaskBase<D>
+   class FilmFieldGenMask<D, Rpg::Types<D> > 
+    : public FilmFieldGenMaskBase<D>
    {
 
    public:
@@ -138,31 +148,41 @@ namespace Rpg {
    // Inline member functions
 
    // Get parent System by non-const reference.
-   template <int D>
-   Rp::System<D, Rpg::Types<D> >& FilmFieldGenMask<D>::system() 
-   {  return *sysPtr_; }
+   template <int D> inline
+   Rp::System<D, Rpg::Types<D> >& 
+   FilmFieldGenMask<D, Rpg::Types<D> >::system() 
+   {  
+      UTIL_CHECK(sysPtr_);
+      return *sysPtr_; 
+   }
 
    // Get parent System by const reference.
-   template <int D>
-   Rp::System<D, Rpg::Types<D> > const & FilmFieldGenMask<D>::system() const
-   {  return *sysPtr_; }
+   template <int D> inline
+   Rp::System<D, Rpg::Types<D> > const & 
+   FilmFieldGenMask<D, Rpg::Types<D> >::system() const
+   {
+      UTIL_CHECK(sysPtr_);
+      return *sysPtr_; 
+   }
 
    // Get space group name for this system.
-   template <int D>
-   inline std::string FilmFieldGenMask<D>::systemSpaceGroup() const
+   template <int D> inline 
+   std::string 
+   FilmFieldGenMask<D, Rpg::Types<D> >::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    // Get one of the lattice vectors for this system.
-   template <int D>
-   inline RealVec<D> FilmFieldGenMask<D>::systemLatticeVector(int id) const
+   template <int D> inline 
+   RealVec<D> 
+   FilmFieldGenMask<D, Rpg::Types<D> >::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    // Explicit instantiation declarations
-   extern template class FilmFieldGenMask<1>;
-   extern template class FilmFieldGenMask<2>;
-   extern template class FilmFieldGenMask<3>;
+   extern template class FilmFieldGenMask<1, Rpg::Types<1> >;
+   extern template class FilmFieldGenMask<2, Rpg::Types<2> >;
+   extern template class FilmFieldGenMask<3, Rpg::Types<3> >;
 
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 
 #endif

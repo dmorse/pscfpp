@@ -8,10 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/compressor/AmCompressor.h>       // direct base template
-#include <rpg/system/Types.h>                     // direct base argument
-#include <rpg/fts/compressor/AmCompressorBase.h>  // indirect base 
-#include <prdc/field/cuda/RField.h>               // direct base member
+#include <rp/fts/compressor/AmCompressor.h>       // base class template
+#include <rpg/system/Types.h>                     // base class argument
+#include <prdc/field/cuda/RField.h>               // base class member
+#include <pscf/cuda/DeviceArray.h>                // base class argument
+#include <pscf/cuda/cudaTypes.h>                  // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

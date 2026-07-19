@@ -7,6 +7,7 @@
 #include <rpc/environment/FilmFieldGenExt.h>
 #include <rpc/system/System.h>
 #include <rpc/field/Domain.h>
+#include <rpc/field/FieldIo.h>
 #include <rpc/field/WFields.h>
 
 #include <prdc/crystal/Basis.h>
@@ -57,7 +58,7 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<1, Rpc::Types<1> > system;
-      FilmFieldGenExt<1> ext(system);
+      Rp::FilmFieldGenExt<1, Rpc::Types<1> > ext(system);
    }
 
    void testReadParameters() // test FilmFieldGenExtBase::readParameters()
@@ -67,7 +68,7 @@ public:
       // Set up external field generator from file
       Rp::System<1, Rpc::Types<1> > system;
       createSystem(system, "in/system1D");
-      FilmFieldGenExt<1> ext(system);
+      Rp::FilmFieldGenExt<1, Rpc::Types<1> > ext(system);
 
       std::ifstream in;
       openInputFile("in/filmExt1Asym", in);
@@ -99,7 +100,7 @@ public:
       Rp::System<1, Rpc::Types<1> > system1;
       createSystem(system1, "in/system1D");
       
-      FilmFieldGenExt<1> ext1(system1);
+      Rp::FilmFieldGenExt<1, Rpc::Types<1> > ext1(system1);
       createFilmFieldGenExt(ext1, "in/filmExt1Sym");
       
       Log::file() << "Testing system 1:" << std::endl;
@@ -116,7 +117,7 @@ public:
       system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
       system2.mask().readBasis("in/maskRef2.bf");
 
-      FilmFieldGenExt<2> ext2(system2);
+      Rp::FilmFieldGenExt<2, Rpc::Types<2> > ext2(system2);
       createFilmFieldGenExt(ext2, "in/filmExt2Asym");
 
       Log::file() << "Testing system 2:" << std::endl;
@@ -131,7 +132,7 @@ public:
       system3.mask().allocateRGrid(system3.domain().mesh().dimensions());
       system3.mask().readBasis("in/maskRef3.bf");
 
-      FilmFieldGenExt<3> ext3(system3);
+      Rp::FilmFieldGenExt<3, Rpc::Types<3> > ext3(system3);
       createFilmFieldGenExt(ext3, "in/filmExt3Asym");
 
       Log::file() << "Testing system 3:" << std::endl;
@@ -162,7 +163,7 @@ public:
       system1.setUnitCell(parameters);
 
       // Set up external field
-      FilmFieldGenExt<3> ext1(system1);
+      Rp::FilmFieldGenExt<3, Rpc::Types<3> > ext1(system1);
       createFilmFieldGenExt(ext1, "in/filmExt3Asym");
       ext1.generate();
       TEST_ASSERT(!ext1.needsUpdate());
@@ -193,7 +194,7 @@ public:
       system2.setUnitCell(parameters);
 
       // Set up external field
-      FilmFieldGenExt<3> ext2(system2);
+      Rp::FilmFieldGenExt<3, Rpc::Types<3> > ext2(system2);
       createFilmFieldGenExt(ext2, "in/filmExt3Athermal");
       ext2.generate();
 
@@ -226,7 +227,7 @@ public:
       system.mask().readBasis("in/maskRef1.bf");
 
       // Set up external field generator
-      FilmFieldGenExt<1> ext(system);
+      Rp::FilmFieldGenExt<1, Rpc::Types<1> > ext(system);
       createFilmFieldGenExt(ext, "in/filmExt1Sym");
       ext.generate();
 
@@ -296,7 +297,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      FilmFieldGenMask<2> mask(system);
+      Rp::FilmFieldGenMask<2, Rpc::Types<2> > mask(system);
       std::ifstream in;
       openInputFile("in/filmMask2", in);
       mask.readParameters(in);
@@ -304,7 +305,7 @@ public:
       mask.generate();
 
       // Set up external field generator
-      FilmFieldGenExt<2> ext(system);
+      Rp::FilmFieldGenExt<2, Rpc::Types<2> > ext(system);
       createFilmFieldGenExt(ext, "in/filmExt2Sym");
       ext.generate();
 
@@ -331,7 +332,7 @@ public:
 
    // Read parameter file section to create a FilmFieldGenExt object
    template <int D>
-   void createFilmFieldGenExt(FilmFieldGenExt<D>& ext, std::string fname)
+   void createFilmFieldGenExt(Rp::FilmFieldGenExt<D, Rpc::Types<D> >& ext, std::string fname)
    {
       std::ifstream in;
       openInputFile(fname, in);
@@ -344,7 +345,7 @@ public:
    // an error or not, and returns a boolean indicating whether the 
    // function demonstrated the expected behavior.
    template <int D>
-   bool checkCheckCompatibility(FilmFieldGenExt<D>& ext, bool expectError)
+   bool checkCheckCompatibility(Rp::FilmFieldGenExt<D, Rpc::Types<D> >& ext, bool expectError)
    {
       bool pass = true;
       if (expectError) {

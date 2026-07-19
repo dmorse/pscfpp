@@ -16,9 +16,9 @@
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/fts/compressor/Compressor.h>   // base class argument
-#include <rpg/system/Types.h>               // argument of argument
+#include <rpg/system/Types.h>               // base class argument
 #include <pscf/cuda/DeviceArray.h>          // base class argument
-#include <pscf/cuda/cudaTypes.h>
+#include <pscf/cuda/cudaTypes.h>            // base class argument
 
 namespace Pscf {
    extern template

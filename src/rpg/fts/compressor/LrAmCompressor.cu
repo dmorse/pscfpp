@@ -6,6 +6,7 @@
 */
 
 #include "LrAmCompressor.h"
+
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>

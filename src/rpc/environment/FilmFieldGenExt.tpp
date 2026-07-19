@@ -21,10 +21,11 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <pscf/math/IntVec.h>
+
 #include <cmath>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -34,32 +35,33 @@ namespace Rpc {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenExt<D>::FilmFieldGenExt()
+   FilmFieldGenExt<D, Rpc::Types<D> >::FilmFieldGenExt()
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(nullptr)
-   {  setClassName("FilmFieldGenExt"); }
+   {  ParamComposite::setClassName("FilmFieldGenExt"); }
    
    /*
    * Constructor
    */
    template <int D>
-   FilmFieldGenExt<D>::FilmFieldGenExt(Rp::System<D, Rpc::Types<D> >& sys)
+   FilmFieldGenExt<D, Rpc::Types<D> >::FilmFieldGenExt(
+         Rp::System<D, Rpc::Types<D> >& sys)
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(&sys)
-   {  setClassName("FilmFieldGenExt"); }
+   {  ParamComposite::setClassName("FilmFieldGenExt"); }
 
    /*
    * Destructor
    */
    template <int D>
-   FilmFieldGenExt<D>::~FilmFieldGenExt()
+   FilmFieldGenExt<D, Rpc::Types<D> >::~FilmFieldGenExt()
    {}
 
    /*
    * Get contribution to the stress from these external fields
    */
    template <int D>
-   double FilmFieldGenExt<D>::stress(int paramId) const
+   double FilmFieldGenExt<D, Rpc::Types<D> >::stress(int paramId) const
    {
       // If walls are athermal then there is no external field, so no
       // contribution to the stress.
@@ -67,8 +69,9 @@ namespace Rpc {
       
       // If paramId is not normalVecId, there is no stress contribution
       UTIL_CHECK(normalVecId() >= 0); // normalVecId has been set
-      int nvParamId = convertFullParamIdToReduced<D>(normalVecId(),
-                                                 system().domain().lattice());
+      int nvParamId 
+          = convertFullParamIdToReduced<D>(normalVecId(),
+                                           system().domain().lattice());
       if (nvParamId != paramId) return 0.0;
 
       // If this point is reached, calculate the stress contribution
@@ -156,7 +159,7 @@ namespace Rpc {
    * Compute the fields and store where the System can access.
    */
    template <int D>
-   void FilmFieldGenExt<D>::compute()
+   void FilmFieldGenExt<D, Rpc::Types<D> >::compute()
    {
       // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
@@ -236,21 +239,23 @@ namespace Rpc {
    * Get space group name for this system.
    */
    template <int D>
-   std::string FilmFieldGenExt<D>::systemSpaceGroup() const
+   std::string 
+   FilmFieldGenExt<D, Rpc::Types<D> >::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    /*
    * Get one of the lattice vectors for this system.
    */
    template <int D>
-   RealVec<D> FilmFieldGenExt<D>::systemLatticeVector(int id) const
+   RealVec<D> 
+   FilmFieldGenExt<D, Rpc::Types<D> >::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    /*
    * Get the number of monomer species for this system.
    */
    template <int D>
-   int FilmFieldGenExt<D>::systemNMonomer() const
+   int FilmFieldGenExt<D, Rpc::Types<D> >::systemNMonomer() const
    {  return system().mixture().nMonomer(); }
 
 }

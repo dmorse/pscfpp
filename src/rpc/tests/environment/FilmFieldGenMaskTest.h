@@ -6,8 +6,9 @@
 
 #include <rpc/environment/FilmFieldGenMask.h>
 #include <rpc/system/System.h>
-#include <rpc/field/Domain.h>
 #include <rpc/scft/iterator/Iterator.h>
+#include <rpc/field/Domain.h>
+#include <rpc/field/FieldIo.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/Mask.h>
 
@@ -57,7 +58,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/maskTestConstructor.log");
       Rp::System<1, Rpc::Types<1> > system;
-      FilmFieldGenMask<1> mask(system);
+      Rp::FilmFieldGenMask<1, Rpc::Types<1> > mask(system);
    }
 
    void testReadParameters() // test FilmFieldGenMaskBase::readParameters()
@@ -67,7 +68,7 @@ public:
 
       // Set up mask from file
       Rp::System<2, Rpc::Types<2> > system;
-      FilmFieldGenMask<2> mask(system);
+      Rp::FilmFieldGenMask<2, Rpc::Types<2> > mask(system);
 
       std::ifstream in;
       openInputFile("in/filmMask1", in);
@@ -107,7 +108,7 @@ public:
       //system1.setUnitCell(UnitCell<1>::Lamellar, parameters);
       system1.setUnitCell(parameters);
       
-      FilmFieldGenMask<1> mask1(system1);
+      Rp::FilmFieldGenMask<1, Rpc::Types<1> > mask1(system1);
       createFilmFieldGenMask(mask1, "in/filmMask1");
       
       Log::file() << "Testing system 1:" << std::endl;
@@ -129,7 +130,7 @@ public:
       //system2.setUnitCell(UnitCell<2>::Rectangular, parameters);
       system2.setUnitCell(parameters);
 
-      FilmFieldGenMask<2> mask2(system2);
+      Rp::FilmFieldGenMask<2, Rpc::Types<2> > mask2(system2);
       createFilmFieldGenMask(mask2, "in/filmMask2");
 
       Log::file() << "Testing system 2:" << std::endl;
@@ -149,7 +150,7 @@ public:
       //system3.setUnitCell(UnitCell<2>::Square, parameters);
       system3.setUnitCell(parameters);
 
-      FilmFieldGenMask<2> mask3(system3);
+      Rp::FilmFieldGenMask<2, Rpc::Types<2> > mask3(system3);
       createFilmFieldGenMask(mask3, "in/filmMask2");
 
       Log::file() << "Testing system 3:" << std::endl;
@@ -167,7 +168,7 @@ public:
       //system4.setUnitCell(UnitCell<3>::Tetragonal, parameters);
       system4.setUnitCell(parameters);
 
-      FilmFieldGenMask<3> mask4(system4);
+      Rp::FilmFieldGenMask<3, Rpc::Types<3> > mask4(system4);
       createFilmFieldGenMask(mask4, "in/filmMask3");
 
       Log::file() << "Testing system 4:" << std::endl;
@@ -191,7 +192,7 @@ public:
       //system5.setUnitCell(UnitCell<3>::Monoclinic, parameters);
       system5.setUnitCell(parameters);
 
-      FilmFieldGenMask<3> mask5(system5);
+      Rp::FilmFieldGenMask<3, Rpc::Types<3> > mask5(system5);
       createFilmFieldGenMask(mask5, "in/filmMask3");
 
       // Test compatibility
@@ -213,7 +214,7 @@ public:
 
       // Try a different mask with normalVecId == 1, which is incompatible
       // due to the space group
-      FilmFieldGenMask<3> mask6(system5);
+      Rp::FilmFieldGenMask<3, Rpc::Types<3> > mask6(system5);
       createFilmFieldGenMask(mask6, "in/filmMask2");
       Log::file() << "Testing system 7:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask6,true));
@@ -237,7 +238,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      FilmFieldGenMask<2> mask(system);
+      Rp::FilmFieldGenMask<2, Rpc::Types<2> > mask(system);
       createFilmFieldGenMask(mask, "in/filmMask2");
       Log::file() << "1" << std::endl;
       mask.generate();
@@ -278,7 +279,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      FilmFieldGenMask<1> mask(system);
+      Rp::FilmFieldGenMask<1, Rpc::Types<1> > mask(system);
       createFilmFieldGenMask(mask, "in/filmMask1");
       mask.generate();
       TEST_ASSERT(!mask.needsUpdate());
@@ -320,7 +321,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      FilmFieldGenMask<2> mask(system);
+      Rp::FilmFieldGenMask<2, Rpc::Types<2> > mask(system);
       createFilmFieldGenMask(mask, "in/filmMask2");
       mask.generate();
 
@@ -349,7 +350,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      FilmFieldGenMask<1> mask(system);
+      Rp::FilmFieldGenMask<1, Rpc::Types<1> > mask(system);
       createFilmFieldGenMask(mask, "in/filmMask1");
       mask.generate();
 
@@ -376,7 +377,7 @@ public:
 
    // Read parameter file section to create a FilmFieldGenMask object
    template <int D>
-   void createFilmFieldGenMask(FilmFieldGenMask<D>& mask, std::string fname)
+   void createFilmFieldGenMask(Rp::FilmFieldGenMask<D, Rpc::Types<D> >& mask, std::string fname)
    {
       std::ifstream in;
       openInputFile(fname, in);
@@ -389,7 +390,7 @@ public:
    // an error or not, and returns a boolean indicating whether the 
    // function demonstrated the expected behavior.
    template <int D>
-   bool checkCheckCompatibility(FilmFieldGenMask<D>& mask, bool expectError)
+   bool checkCheckCompatibility(Rp::FilmFieldGenMask<D, Rpc::Types<D> >& mask, bool expectError)
    {
       bool pass = true;
       if (expectError) {

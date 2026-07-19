@@ -74,7 +74,7 @@
 ROOT=$PWD
 opt=""
 OPTARG=""
-while getopts "a:c:d:m:qh" opt; do
+while getopts "d:p::c:u:d:m:qh" opt; do
 
   if [[ "$opt" != "?" ]]; then
     if [[ "$opt" != "h" ]]; then

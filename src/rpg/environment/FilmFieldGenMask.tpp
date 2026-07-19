@@ -9,21 +9,25 @@
 */
 
 #include "FilmFieldGenMask.h"
+
 #include <rpg/scft/ScftThermo.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
 #include <rpg/field/FieldIo.h>
+
 #include <prdc/field/cpu/RField.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
 #include <prdc/field/cuda/resources.h>
+
 #include <pscf/interaction/Interaction.h>
+
 #include <cmath>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -148,37 +152,39 @@ namespace Rpg {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenMask<D>::FilmFieldGenMask()
+   FilmFieldGenMask<D, Rpg::Types<D> >::FilmFieldGenMask()
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(0)
-   {  setClassName("FilmFieldGenMask"); }
+   {  ParamComposite::setClassName("FilmFieldGenMask"); }
    
    /*
    * Constructor
    */
    template <int D>
-   FilmFieldGenMask<D>::FilmFieldGenMask(Rp::System<D, Rpg::Types<D> >& sys)
+   FilmFieldGenMask<D, Rpg::Types<D> >::FilmFieldGenMask(
+         Rp::System<D, Rpg::Types<D> >& sys)
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(&sys)
-   {  setClassName("FilmFieldGenMask"); }
+   {  ParamComposite::setClassName("FilmFieldGenMask"); }
 
    /*
    * Destructor
    */
    template <int D>
-   FilmFieldGenMask<D>::~FilmFieldGenMask()
+   FilmFieldGenMask<D, Rpg::Types<D> >::~FilmFieldGenMask()
    {}
 
    /*
    * Get contribution to the stress from this mask
    */
    template <int D>
-   double FilmFieldGenMask<D>::stress(int paramId) const
+   double FilmFieldGenMask<D, Rpg::Types<D> >::stress(int paramId) const
    {
       // If paramId is not normalVecId, there is no stress contribution
       UTIL_CHECK(normalVecId() >= 0);
-      int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),
-                                                system().domain().lattice());
+      int normalVecParamId 
+          = convertFullParamIdToReduced<D>(normalVecId(),
+                                           system().domain().lattice());
       if (normalVecParamId != paramId) return 0.0;
 
       // If this point is reached, stress contribution must be calculated
@@ -238,8 +244,10 @@ namespace Rpg {
    }
 
    template <int D>
-   double FilmFieldGenMask<D>::modifyStress(int paramId, double stress) 
-   const
+   double 
+   FilmFieldGenMask<D, Rpg::Types<D> >::modifyStress(
+         int paramId, 
+         double stress) const
    {
       int nvParamId = convertFullParamIdToReduced<D>(normalVecId(),
                                              system().domain().lattice());
@@ -273,7 +281,7 @@ namespace Rpg {
    * Compute the field and store where the System can access
    */
    template <int D>
-   void FilmFieldGenMask<D>::compute()
+   void FilmFieldGenMask<D, Rpg::Types<D> >::compute()
    {
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(interfaceThickness() > 0);
@@ -313,7 +321,7 @@ namespace Rpg {
    * Sets flexible lattice parameters to be compatible with the mask.
    */
    template <int D>
-   void FilmFieldGenMask<D>::setFlexibleParams() const
+   void FilmFieldGenMask<D, Rpg::Types<D> >::setFlexibleParams() const
    {
       if (system().iterator().isFlexible()) {
          FSArray<bool,6> updated;
@@ -323,6 +331,6 @@ namespace Rpg {
       }
    }
 
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 #endif

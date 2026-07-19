@@ -27,8 +27,12 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class LrAmCompressor<1, Rpc::Types<1>, DArray<double> >;
-      template class LrAmCompressor<2, Rpc::Types<2>, DArray<double> >;
-      template class LrAmCompressor<3, Rpc::Types<3>, DArray<double> >;
+      using namespace Prdc::Cpu;
+      template 
+      class LrAmCompressor<1, Rpc::Types<1>, FftwDRArray<double> >;
+      template 
+      class LrAmCompressor<2, Rpc::Types<2>, FftwDRArray<double> >;
+      template 
+      class LrAmCompressor<3, Rpc::Types<3>, FftwDRArray<double> >;
    }
 }

@@ -52,6 +52,9 @@ namespace Rp {
       /// Pointer to the parent system.
       System<D,T>* sysPtr_;
 
+      /// Alias to base class
+      using FactoryT = Factory< Compressor<D,T> >;
+
    };
 
 }

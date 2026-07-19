@@ -8,19 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/environment/FilmFieldGenExtBase.h>  // base class template
+#include <rpc/system/Types.h>                      // base class argument
 #include <rpc/system/System.h>
-#include <prdc/environment/FilmFieldGenExtBase.h>  // Base class
 
 // Forward declarations
 namespace Pscf {
    namespace Rp {
+      template <int D, class T> class FilmFieldGenExt;
       template <int D, class T> class System;
-      template <int D, class T> class Simulator;
    }
 }
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -40,10 +41,11 @@ namespace Rpc {
    * the bottom, through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
    *
-   * \ingroup Rpc_Environment_Module
+   * \ingroup Rp_Environment_Module
    */
    template <int D>
-   class FilmFieldGenExt : public FilmFieldGenExtBase<D>
+   class FilmFieldGenExt<D, Rpc::Types<D> > 
+     : public FilmFieldGenExtBase<D>
    {
 
    public:
@@ -58,7 +60,7 @@ namespace Rpc {
       * 
       * \param sys  parent System object
       */
-      FilmFieldGenExt(Rp::System<D, Rpc::Types<D> >& sys);
+      FilmFieldGenExt(System<D, Rpc::Types<D> >& sys);
 
       /**
       * Destructor
@@ -96,12 +98,12 @@ namespace Rpc {
       /**
       * Get the parent System by non-const reference.
       */
-      Rp::System<D, Rpc::Types<D> > & system();
+      System<D, Rpc::Types<D> > & system();
 
       /**
       * Get the parent System by const reference.
       */
-      Rp::System<D, Rpc::Types<D> > const & system() const;
+      System<D, Rpc::Types<D> > const & system() const;
 
       /**
       * Get the space group name for this system.
@@ -128,7 +130,7 @@ namespace Rpc {
    private:
 
       /// Pointer to the associated system object.
-      Rp::System<D, Rpc::Types<D> >* sysPtr_;
+      System<D, Rpc::Types<D> >* sysPtr_;
 
       /// Mask interfaceThickness, obtained via maskInterfaceThickness
       double interfaceThickness_;
@@ -138,27 +140,29 @@ namespace Rpc {
    // Inline member functions
 
    // Get parent System by non-const reference.
-   template <int D>
-   Rp::System<D, Rpc::Types<D> >& FilmFieldGenExt<D>::system() 
+   template <int D> inline
+   System<D, Rpc::Types<D> >& 
+   FilmFieldGenExt<D, Rpc::Types<D> >::system() 
    {
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
    }
 
    // Get parent System by const reference.
-   template <int D>
-   Rp::System<D, Rpc::Types<D> > const & FilmFieldGenExt<D>::system() const
+   template <int D> inline
+   System<D, Rpc::Types<D> > const & 
+   FilmFieldGenExt<D, Rpc::Types<D> >::system() const
    {  
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
    }
 
    // Explicit instantiation declarations
-   extern template class FilmFieldGenExt<1>;
-   extern template class FilmFieldGenExt<2>;
-   extern template class FilmFieldGenExt<3>;
+   extern template class FilmFieldGenExt<1, Rpc::Types<1> >;
+   extern template class FilmFieldGenExt<2, Rpc::Types<2> >;
+   extern template class FilmFieldGenExt<3, Rpc::Types<3> >;
 
-} // namespace Rpc
+} // namespace Rp
 } // namespace Pscf
 
 #endif

@@ -6,17 +6,17 @@
 */
 
 #include "FilmFieldGenExt.tpp"
+
 #include <rpg/field/Domain.cu>
 #include <rpg/field/CFields.cu>
 #include <rpg/field/WFields.cu>
 #include <rpg/field/Mask.cu>
 
 namespace Pscf {
-namespace Rpg {
-
-   template class FilmFieldGenExt<1>;
-   template class FilmFieldGenExt<2>;
-   template class FilmFieldGenExt<3>;
-
-}
+   namespace Rp {
+      // Explicit instantiation definitions
+      template class FilmFieldGenExt<1, Rpg::Types<1> >;
+      template class FilmFieldGenExt<2, Rpg::Types<2> >;
+      template class FilmFieldGenExt<3, Rpg::Types<3> >;
+   }
 }

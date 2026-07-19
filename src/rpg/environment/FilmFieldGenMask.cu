@@ -12,12 +12,12 @@
 #include <rpg/field/Mask.h>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
-   // Class declarations
-   template class FilmFieldGenMask<1>;
-   template class FilmFieldGenMask<2>;
-   template class FilmFieldGenMask<3>;
+   // Explicit instantiation declarations
+   template class FilmFieldGenMask<1, Rpg::Types<1> >;
+   template class FilmFieldGenMask<2, Rpg::Types<2> >;
+   template class FilmFieldGenMask<3, Rpg::Types<3> >;
    
 }
 }

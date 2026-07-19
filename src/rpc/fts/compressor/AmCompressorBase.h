@@ -16,15 +16,15 @@
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/fts/compressor/Compressor.h>   // base class argument
-#include <rpc/system/Types.h>               // argument of argument
-#include <util/containers/DArray.h>         // base class argument
+#include <rpc/system/Types.h>               // base class argument
+#include <prdc/field/cpu/FftwDRArray.h>     // base class argument
 
 namespace Pscf {
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<1, Rpc::Types<1> >, DArray<double> >;
+   class AmIteratorTmpl< Rp::Compressor<1, Rpc::Types<1> >, Prdc::Cpu::FftwDRArray<double> >;
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<2, Rpc::Types<2> >, DArray<double> >;
+   class AmIteratorTmpl< Rp::Compressor<2, Rpc::Types<2> >, Prdc::Cpu::FftwDRArray<double> >;
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<3, Rpc::Types<3> >, DArray<double> >;
+   class AmIteratorTmpl< Rp::Compressor<3, Rpc::Types<3> >, Prdc::Cpu::FftwDRArray<double> >;
 }
 #endif

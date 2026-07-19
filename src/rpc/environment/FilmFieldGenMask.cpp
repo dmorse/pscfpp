@@ -8,12 +8,12 @@
 #include "FilmFieldGenMask.tpp"
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    // Class declarations
-   template class FilmFieldGenMask<1>;
-   template class FilmFieldGenMask<2>;
-   template class FilmFieldGenMask<3>;
-   
+   template class FilmFieldGenMask<1, Rpc::Types<1> >;
+   template class FilmFieldGenMask<2, Rpc::Types<2> >;
+   template class FilmFieldGenMask<3, Rpc::Types<3> >;
+ 
 }
 }

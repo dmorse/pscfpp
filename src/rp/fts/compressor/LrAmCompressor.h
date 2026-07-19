@@ -18,7 +18,8 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
-      template <int D, class T> class Compressor; 
+      template <int D, class T> class Compressor;
+      template <int D, class T> class IntraCorrelation;
    }
 }
 
@@ -37,15 +38,10 @@ namespace Rp {
    * vector in which each element represents the deviation of the
    * sum of volume fractions from unity.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named LrAmCompressor,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension
-   *    - Types : class that contains type aliases, e.g., Rpc::Types<D>
+   *    - T : Types class (e.g., Rpc::Types<D> or Rpg::Types<D>)
    *
    * \see \ref rp_LrAmCompressor_page "Manual Page"
    * \ingroup Rp_Fts_Compressor_Module
@@ -107,9 +103,6 @@ namespace Rp {
       void clearTimers() override;
 
    protected:
-
-      // Alias for base class.
-      using CompressorT = Compressor<D,T>;
 
       // Inherited member function.
       using Compressor<D,T>::system;
@@ -225,6 +218,9 @@ namespace Rp {
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
+
+      // Alias for base class.
+      using CompressorT = Compressor<D,T>;
 
       /// Typename alias for FFT class
       using FFTT = typename T::FFT;

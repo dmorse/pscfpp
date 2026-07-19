@@ -9,20 +9,23 @@
 */
 
 #include "FilmFieldGenExt.h"
+
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/field/FieldIo.h>
 #include <rpg/solvers/Mixture.h>
 #include <rpg/field/Domain.h>
+
 #include <prdc/field/cpu/RField.h>
+#include <prdc/field/cuda/resources.h>
+
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>
-#include <prdc/field/cuda/resources.h>
+
 #include <cmath>
 
 namespace Pscf {
-namespace Rpg
-{
+namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
@@ -167,32 +170,33 @@ namespace Rpg
    * Default constructor
    */
    template <int D>
-   FilmFieldGenExt<D>::FilmFieldGenExt()
+   FilmFieldGenExt<D, Rpg::Types<D> >::FilmFieldGenExt()
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(0)
-   {  setClassName("FilmFieldGenExt"); }
+   {  ParamComposite::setClassName("FilmFieldGenExt"); }
    
    /*
    * Constructor
    */
    template <int D>
-   FilmFieldGenExt<D>::FilmFieldGenExt(Rp::System<D, Rpg::Types<D> >& sys)
+   FilmFieldGenExt<D, Rpg::Types<D> >::FilmFieldGenExt(
+         Rp::System<D, Rpg::Types<D> >& sys)
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(&sys)
-   {  setClassName("FilmFieldGenExt"); }
+   {  ParamComposite::setClassName("FilmFieldGenExt"); }
 
    /*
    * Destructor
    */
    template <int D>
-   FilmFieldGenExt<D>::~FilmFieldGenExt()
+   FilmFieldGenExt<D, Rpg::Types<D> >::~FilmFieldGenExt()
    {}
 
    /*
    * Get contribution to the stress from these external fields
    */
    template <int D>
-   double FilmFieldGenExt<D>::stress(int paramId) const
+   double FilmFieldGenExt<D, Rpg::Types<D> >::stress(int paramId) const
    {
       // If walls are athermal then there is no external field, so no
       // contribution to the stress.
@@ -257,7 +261,7 @@ namespace Rpg
    * Compute the fields and store where the System can access.
    */
    template <int D>
-   void FilmFieldGenExt<D>::compute()
+   void FilmFieldGenExt<D, Rpg::Types<D> >::compute()
    {
       // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
