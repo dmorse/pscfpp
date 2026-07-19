@@ -12,9 +12,12 @@
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+
 #include <pscf/chem/PolymerSpecies.h>
 #include <pscf/chem/SolventSpecies.h>
+#include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/Mesh.h>
+
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 

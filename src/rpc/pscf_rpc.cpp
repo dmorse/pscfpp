@@ -16,12 +16,12 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
    /**
    * Function template for main pscf_rpc program.
    *
-   * \ingroup Pscf_Rpc_Module
+   * \ingroup Pscf_Rp_Module
    *
    * \param argc  number of command line parameters
    * \param argv  array of command line parameter strings
@@ -51,7 +51,7 @@ namespace Rpc {
 *
 * \param argc  number of command line arguments
 * \param argv  array of command line arguments
-* \ingroup Pscf_Rpc_Module
+* \ingroup Pscf_Rp_Module
 */
 int main(int argc, char **argv)
 {
@@ -65,13 +65,13 @@ int main(int argc, char **argv)
 
    // Run relevant template specialization
    if (1 == D) {
-      Rpc::run<1>(argc, argv);
+      Rp::run<1>(argc, argv);
    } else
    if (2 == D) {
-      Rpc::run<2>(argc, argv);
+      Rp::run<2>(argc, argv);
    } else
    if (3 == D) {
-      Rpc::run<3>(argc, argv);
+      Rp::run<3>(argc, argv);
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
    }

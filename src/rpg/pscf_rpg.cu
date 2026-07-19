@@ -10,12 +10,12 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Rpg {
+namespace Rp {
 
    /**
    * Function template for main pscf_rpg program.
    *
-   * \ingroup Pscf_Rpg_Module
+   * \ingroup Pscf_Rp_Module
    *
    * \param argc  number of command line parameters
    * \param argv  array of command line parameter strings
@@ -45,7 +45,7 @@ namespace Rpg {
 *
 * \param argc  number of command line arguments
 * \param argv  array of command line arguments
-* \ingroup Pscf_Rpg_Module
+* \ingroup Pscf_Rp_Module
 */
 int main(int argc, char **argv)
 {
@@ -55,13 +55,13 @@ int main(int argc, char **argv)
    std::cout << "dimension    " << D << std::endl;
 
    if (1 == D) {
-      Pscf::Rpg::run<1>(argc, argv);
+      Pscf::Rp::run<1>(argc, argv);
    } else
    if (2 == D) {
-      Pscf::Rpg::run<2>(argc, argv);
+      Pscf::Rp::run<2>(argc, argv);
    } else
    if (3 == D) {
-      Pscf::Rpg::run<3>(argc, argv);
+      Pscf::Rp::run<3>(argc, argv);
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
    }

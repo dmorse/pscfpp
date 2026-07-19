@@ -27,7 +27,7 @@ namespace Rp {
    * from this base class.
    *
    * \see Rp::WFields
-   * \ingroup Rpg_Field_Module
+   * \ingroup Rp_Field_Module
    */
    template <int D>
    class WFields<D, Rpg::Types<D> > 
@@ -57,7 +57,7 @@ namespace Rp {
 
    };
 
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation declarations

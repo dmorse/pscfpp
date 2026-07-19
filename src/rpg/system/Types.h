@@ -41,7 +41,7 @@ namespace Rpg {
    /**
    * List of aliases for types used in the Rpg program-level namespace.
    *
-   * \ingroup Rpg_System_Module
+   * \ingroup Rp_System_Module
    */
    template <int D>
    class Types {
@@ -117,6 +117,6 @@ namespace Rpg {
    extern template class Types<2>;
    extern template class Types<3>;
 
-} // namespace Rpg
+} 
 } // namespace Pscf
 #endif

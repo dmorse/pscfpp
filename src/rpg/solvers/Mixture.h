@@ -36,7 +36,7 @@ namespace Rp {
    *
    * \see Rp::MixtureBase
    * \ref user_param_mixture_page "Manual Page"
-   * \ingroup Rpg_Solver_Module
+   * \ingroup Rp_Solver_Module
    */
    template <int D>
    class Mixture<D, Rpg::Types<D> > 

@@ -8,50 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/scft/ScftThermo.h>         // base class template
-#include <rpg/system/SystemConstRef.h>  // template argument
+#include <rp/scft/ScftThermo.h>         // class template
 #include <rpg/system/Types.h>           // template argument
-
-#if 0
-namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-   using namespace Pscf::Prdc;
-
-   /**
-   * Computes SCFT free energies.
-   *
-   * Specializations of this template with D =1, 2, and 3 are derived 
-   * from specializations of the base class template Rp::ScftThermo, and 
-   * inherit their public interface and almost all of their source code
-   * from this base class. See the documentation for this base class 
-   * template for details. 
-   *
-   * \ingroup Rpg_Scft_Module
-   */
-   template <int D>
-   class ScftThermo : public Rp::ScftThermo<D, Types<D> >
-   {
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent System
-      */
-      ScftThermo(Rp::System<D, Rpg::Types<D> > const & system);
-
-      /**
-      * Destructor.
-      */
-      virtual ~ScftThermo() = default;
-
-   };
-
-} // namespace Rpg
-} // namespace Pscf
-#endif
+#include <rpg/system/SystemConstRef.h>  // base class
 
 // Explicit instantiation declarations
 namespace Pscf {
@@ -60,12 +19,5 @@ namespace Pscf {
       extern template class Rp::ScftThermo<2, Rpg::Types<2> >;
       extern template class Rp::ScftThermo<3, Rpg::Types<3> >;
    }
-   #if 0
-   namespace Rpg {
-      extern template class ScftThermo<1>;
-      extern template class ScftThermo<2>;
-      extern template class ScftThermo<3>;
-   }
-   #endif
 } 
 #endif

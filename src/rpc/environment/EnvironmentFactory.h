@@ -11,60 +11,6 @@
 #include <rp/environment/EnvironmentFactory.h>
 #include <rpc/system/Types.h>
 
-#if 0
-// Forward declarations
-namespace Pscf {
-   namespace Rp {
-      template <int D, class T> class System;
-      template <int D, class T> class Simulator;
-   }
-}
-
-namespace Pscf {
-namespace Rpc {
-
-
-   using namespace Util;
-   using namespace Pscf::Prdc;
-
-   /**
-   * Factory for subclasses of Environment.
-   *
-   * \ingroup Rpc_Environment_Module
-   */
-
-   template <int D>
-   class EnvironmentFactory : public Factory<Environment> 
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      */
-      EnvironmentFactory(Rp::System<D, Rpc::Types<D> >& system);
-
-      /**
-      * Method to create any Environment supplied with PSCF.
-      *
-      * \param className name of the Environment subclass
-      * \return Environment* pointer to new instance of className
-      */
-      Environment* factory(const std::string &className) const;
-
-      using Factory<Environment>::trySubfactories;
-      using Factory<Environment>::readObjectOptional;
-
-   private:
-
-      /// Pointer to the parent system.
-      Rp::System<D, Rpc::Types<D> >* sysPtr_;
-
-   };
-}
-}
-#endif
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {

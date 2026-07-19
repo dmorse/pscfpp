@@ -9,7 +9,7 @@
 #include <rpg/field/FieldIo.tpp> 
 #include <prdc/field/cuda/RField.tpp> 
 
-#include <rp/field/CFields.tpp>   // base class implementation
+#include <rp/field/CFields.tpp>   // implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -18,10 +18,5 @@ namespace Pscf {
       template class CFields<1, Rpg::Types<1> >;
       template class CFields<2, Rpg::Types<2> >;
       template class CFields<3, Rpg::Types<3> >;
-   } 
-   namespace Rpg {
-      template class CFields<1>;
-      template class CFields<2>;
-      template class CFields<3>;
    } 
 }

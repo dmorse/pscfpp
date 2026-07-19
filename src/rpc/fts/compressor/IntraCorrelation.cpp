@@ -17,26 +17,6 @@
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 
-#if 0
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Prdc;
-
-   /*
-   * Constructor.
-   */
-   template <int D>
-   Rp::IntraCorrelation<D, Rpc::Types<D> >::IntraCorrelation(
-              Rp::System<D, Rpc::Types<D> > const & system)
-    : Rp::IntraCorrelation<D, Types<D> >(system)
-   {}
-
-}
-}
-#endif
-
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {

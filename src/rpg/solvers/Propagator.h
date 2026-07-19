@@ -19,17 +19,11 @@ namespace Rp {
    using namespace Pscf::Prdc;
 
    /**
-   * MDE solver for one direction of one block.
-   *
-   * Specializations of this template with D=1, 2, and 3 are derived from
-   * specializations of the base class template Rp::PropagatorBase, and
-   * inherit most of their public interface from this base class.  Only 
-   * a few functions that involve memory allocation on the GPU are defined
-   * or re-defined in this template
+   * MDE solver for one direction of one block, CUDA variant.
    *
    * \see PropagatorBase
    * \see Pscf::PropagatorTmpl
-   * \ingroup Rpg_Solver_Module
+   * \ingroup Rp_Solver_Module
    */
    template <int D>
    class Propagator<D, Rpg::Types<D> > 
@@ -133,7 +127,7 @@ namespace Rp {
       return qFieldsAll_;
    }
 
-} // namespace Rpg
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation declarations

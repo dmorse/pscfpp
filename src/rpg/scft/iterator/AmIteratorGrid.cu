@@ -18,20 +18,6 @@
 
 #include <rp/scft/iterator/AmIteratorGrid.tpp>
 
-#if 0
-namespace Pscf {
-   namespace Rpg {
-  
-      // Constructor.
-      template <int D>
-      Rp::AmIteratorGrid<D, Rpg::Types<D> >::AmIteratorGrid(Rp::System<D, Rpg::Types<D> >& system)
-       : Rp::AmIteratorGrid<D, Types<D> >(system)
-      {}
-
-   }
-}
-#endif
-
 // Explicit instantiation definitions
 namespace Pscf {
    template class 

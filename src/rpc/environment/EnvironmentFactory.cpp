@@ -5,48 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "EnvironmentFactory.h"  
+#include <rpc/environment/EnvironmentFactory.h>  // header
+
 #include "FilmEnvironment.h"
-#include <rp/environment/EnvironmentFactory.tpp>
 
-#if 0
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-
-   /*
-   * Constructor
-   */
-   template <int D>
-   Rp::EnvironmentFactory<D, Rpc::Types<D> >::EnvironmentFactory(Rp::System<D, Rpc::Types<D> >& system)
-    : sysPtr_(&system)
-   {}
-
-   /* 
-   * Return a pointer to a instance of Environment subclass className.
-   */
-   template <int D>
-   Environment* 
-   Rp::EnvironmentFactory<D, Rpc::Types<D> >::factory(std::string const& className) const
-   {
-      Environment* ptr = nullptr;
-
-      // Try subfactories first
-      ptr = trySubfactories(className);
-      if (ptr) return ptr;
- 
-      // Try to match classname
-      if (className == "FilmEnvironment") {
-         ptr = new Rp::FilmEnvironment<D, Rpc::Types<D> >(*sysPtr_);
-      }
-
-      return ptr;
-   }
-
-}
-}
-#endif
+#include <rp/environment/EnvironmentFactory.tpp> // implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

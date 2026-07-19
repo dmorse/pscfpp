@@ -44,7 +44,7 @@ namespace Rp {
    * transfer r-grid field data between the GPU device and the CPU host.
    *
    * \see Rp::FieldIo
-   * \ingroup Rpg_Field_Module
+   * \ingroup Rp_Field_Module
    */
    template <int D>
    class FieldIo<D, Rpg::Types<D> >

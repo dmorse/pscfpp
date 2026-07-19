@@ -8,41 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/compressor/IntraCorrelation.h>   // base class template
-#include <rpc/system/Types.h>                     // base class argument
-#include <prdc/field/cpu/FftwDRArray.h>           // base class member
-
-#if 0
-namespace Pscf {
-namespace Rpc {
-
-   using namespace Util;
-   using namespace Prdc;
-   using namespace Prdc::Cpu;
-
-   /**
-   * Intramolecular correlation analyzer.
-   *
-   * \ingroup Rp_Fts_Compressor_Module
-   */
-   template <int D>
-   class IntraCorrelation : public Rp::IntraCorrelation<D, Rpc::Types<D> >
-   {
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * \param system  parent system object
-      */
-      IntraCorrelation(Rp::System<D, Rpc::Types<D> > const & system);
-
-   };
-
-} // namespace Rpc
-} // namespace Pscf
-#endif
+#include <rp/fts/compressor/IntraCorrelation.h>  // class template
+#include <rpc/system/Types.h>                    // class argument
+#include <prdc/field/cpu/FftwDRArray.h>          // class member
 
 // Explicit instantiation declarations
 namespace Pscf {

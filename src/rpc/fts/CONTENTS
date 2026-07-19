@@ -19,8 +19,3 @@ Makefile and makefile fragments:
 makefile      - main makefile for rpc/fts directory tree
 sources.mk    - list of source files (makefile fragment)
 
-Doxygen documentation files:
-----------------------------
-
-fts.mod       - definition of the Rpc_Fts_Module doxygen topic module
-

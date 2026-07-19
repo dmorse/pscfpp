@@ -26,7 +26,7 @@ namespace Rp {
    * ShiftMove shifts field.
    *
    * \see \ref rp_ShiftMove_page "Manual Page".
-   * \ingroup Rpg_Fts_MonteCarlo_Module
+   * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
    class ShiftMove<D, Rpg::Types<D> >

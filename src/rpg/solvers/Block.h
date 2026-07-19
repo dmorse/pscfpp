@@ -43,16 +43,12 @@ namespace Rp {
    using namespace Pscf::Prdc::Cuda;
 
    /**
-   * Block within a branched polymer.
+   * Block within a branched polymer, for Cpp backend.
    *
    * A Block has two Propagator<D, Rpg::Types<D> > members and an 
-   * RField<D> concentraiton field. 
+   * RField<D> monomer concentration field. 
    *
-   * Specializations of Rpg::Block with D=1, 2, and 3 are directly derived 
-   * from corresponding specializations of Pscf::BlockTmpl, and indirectly
-   * derived from Pscf::Edge.
-   *
-   * \ingroup Rpg_Solver_Module
+   * \ingroup Rp_Solver_Module
    */
    template <int D>
    class Block<D, Rpg::Types<D> > 

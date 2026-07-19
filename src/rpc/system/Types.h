@@ -20,7 +20,6 @@ namespace Util {
 namespace Pscf {
    class CpuVecRandom;
    namespace Prdc {
-      class Environment;
       namespace Cpu {
          template <typename T> class FftwDRArray;
          template <int D> class RField;
@@ -41,7 +40,7 @@ namespace Rpc {
    using namespace Prdc;
 
    /**
-   * Aliases for types used in the Rpc program-level namespace.
+   * Aliases for types used by the C++ Cpu backend.
    */
    template <int D>
    class Types 
@@ -118,6 +117,6 @@ namespace Rpc {
    extern template class Types<2>;
    extern template class Types<3>;
 
-} // namespace Rpc
+} 
 } // namespace Pscf
 #endif

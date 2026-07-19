@@ -17,8 +17,3 @@ Makefile and makefile fragments:
 makefile     - makefile for rpg/scft directory tree
 sources.mk   - list of source files in rpg/scft (makefile fragment)
 
-Doxygen documentation files:
-----------------------------
-
-scft.mod     - definition of the Rpg_Scft_Module doxygen module
-
