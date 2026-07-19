@@ -21,7 +21,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
+   *   - T : Types class, Cpp<D> or Rpg::Types<D>
    *
    * \see \ref rp_EinsteinCrystalPerturbation_page "Einstein Crystal"
    * \see \ref psfts_perturb_page "Perturbations"

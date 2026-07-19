@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/montecarlo/McMoveFactory.h>
-#include <rpc/system/Types.h>
+#include <pscf/cpu/Cpp.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class McMoveFactory<1, Rpc::Types<1> >;
-      extern template class McMoveFactory<2, Rpc::Types<2> >;
-      extern template class McMoveFactory<3, Rpc::Types<3> >;
+      extern template class McMoveFactory<1, Cpp<1> >;
+      extern template class McMoveFactory<2, Cpp<2> >;
+      extern template class McMoveFactory<3, Cpp<3> >;
    }
 }
 #endif

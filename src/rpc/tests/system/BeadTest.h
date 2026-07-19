@@ -16,7 +16,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
 
 class BeadTest : public LogFileUnitTest
 {
@@ -27,7 +26,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, Rpc::Types<D> >& system, std::string filename)
+   void initSystem(Rp::System<D, Cpp<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -45,7 +44,7 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputeFreeEnergyBead.log");
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       initSystem(system, "in/bead/param_system_1D_N100");
       system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
@@ -61,11 +60,11 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputelnqBead.log");
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       initSystem(system, "in/bead/param_system_1D_N100");
       system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
-      Rp::Polymer<1, Types<1> > const & polymer = system.mixture().polymer(0);
+      Rp::Polymer<1, Cpp<1> > const & polymer = system.mixture().polymer(0);
       double q; double lnq;
       q = polymer.q();
       lnq = log(q);

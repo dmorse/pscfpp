@@ -27,7 +27,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
 
 class FilmFieldGenExtTest : public UnitTest
 {
@@ -57,8 +56,8 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, Rpc::Types<1> > system;
-      Rp::FilmFieldGenExt<1, Rpc::Types<1> > ext(system);
+      Rp::System<1, Cpp<1> > system;
+      Rp::FilmFieldGenExt<1, Cpp<1> > ext(system);
    }
 
    void testReadParameters() // test FilmFieldGenExtBase::readParameters()
@@ -66,9 +65,9 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up external field generator from file
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       createSystem(system, "in/system1D");
-      Rp::FilmFieldGenExt<1, Rpc::Types<1> > ext(system);
+      Rp::FilmFieldGenExt<1, Cpp<1> > ext(system);
 
       std::ifstream in;
       openInputFile("in/filmExt1Asym", in);
@@ -97,10 +96,10 @@ public:
       openLogFile("out/extTestCheckCompatibility.log");
 
       // Set up 1D external field with symmetric walls
-      Rp::System<1, Rpc::Types<1> > system1;
+      Rp::System<1, Cpp<1> > system1;
       createSystem(system1, "in/system1D");
       
-      Rp::FilmFieldGenExt<1, Rpc::Types<1> > ext1(system1);
+      Rp::FilmFieldGenExt<1, Cpp<1> > ext1(system1);
       createFilmFieldGenExt(ext1, "in/filmExt1Sym");
       
       Log::file() << "Testing system 1:" << std::endl;
@@ -111,13 +110,13 @@ public:
 
       // Set up 2D external field with asymmetric walls and an 
       // incompatible space group
-      Rp::System<2, Rpc::Types<2> > system2;
+      Rp::System<2, Cpp<2> > system2;
       createSystem(system2, "in/system2D_1");
       system2.mask().allocateBasis(1225);
       system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
       system2.mask().readBasis("in/maskRef2.bf");
 
-      Rp::FilmFieldGenExt<2, Rpc::Types<2> > ext2(system2);
+      Rp::FilmFieldGenExt<2, Cpp<2> > ext2(system2);
       createFilmFieldGenExt(ext2, "in/filmExt2Asym");
 
       Log::file() << "Testing system 2:" << std::endl;
@@ -126,13 +125,13 @@ public:
 
       // Set up 3D external field with asymmetric walls and a compatible
       // space group
-      Rp::System<3, Rpc::Types<3> > system3;
+      Rp::System<3, Cpp<3> > system3;
       createSystem(system3, "in/system3D_3");
       system3.mask().allocateBasis(1920);
       system3.mask().allocateRGrid(system3.domain().mesh().dimensions());
       system3.mask().readBasis("in/maskRef3.bf");
 
-      Rp::FilmFieldGenExt<3, Rpc::Types<3> > ext3(system3);
+      Rp::FilmFieldGenExt<3, Cpp<3> > ext3(system3);
       createFilmFieldGenExt(ext3, "in/filmExt3Asym");
 
       Log::file() << "Testing system 3:" << std::endl;
@@ -149,7 +148,7 @@ public:
       openLogFile("out/extTestGenerate.log");
 
       // Set up 3D external field with a compatible system
-      Rp::System<3, Rpc::Types<3> > system1;
+      Rp::System<3, Cpp<3> > system1;
       createSystem(system1, "in/system3D_3");
       system1.mask().allocateBasis(1920);
       system1.mask().allocateRGrid(system1.domain().mesh().dimensions());
@@ -163,7 +162,7 @@ public:
       system1.setUnitCell(parameters);
 
       // Set up external field
-      Rp::FilmFieldGenExt<3, Rpc::Types<3> > ext1(system1);
+      Rp::FilmFieldGenExt<3, Cpp<3> > ext1(system1);
       createFilmFieldGenExt(ext1, "in/filmExt3Asym");
       ext1.generate();
       TEST_ASSERT(!ext1.needsUpdate());
@@ -186,7 +185,7 @@ public:
 
 
       // Set up 3D system with athermal walls
-      Rp::System<3, Rpc::Types<3> > system2;
+      Rp::System<3, Cpp<3> > system2;
       createSystem(system2, "in/system3D_3");
       system2.mask().allocateBasis(1920);
       system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
@@ -194,7 +193,7 @@ public:
       system2.setUnitCell(parameters);
 
       // Set up external field
-      Rp::FilmFieldGenExt<3, Rpc::Types<3> > ext2(system2);
+      Rp::FilmFieldGenExt<3, Cpp<3> > ext2(system2);
       createFilmFieldGenExt(ext2, "in/filmExt3Athermal");
       ext2.generate();
 
@@ -214,7 +213,7 @@ public:
       openLogFile("out/extTestRegenerate.log");
 
       // Set up 1D external field with a compatible system
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       createSystem(system, "in/system1D");
 
       // Set unit cell parameter
@@ -227,7 +226,7 @@ public:
       system.mask().readBasis("in/maskRef1.bf");
 
       // Set up external field generator
-      Rp::FilmFieldGenExt<1, Rpc::Types<1> > ext(system);
+      Rp::FilmFieldGenExt<1, Cpp<1> > ext(system);
       createFilmFieldGenExt(ext, "in/filmExt1Sym");
       ext.generate();
 
@@ -286,7 +285,7 @@ public:
       openLogFile("out/extTestStress.log");
 
       // Set up 2D field generator with a compatible system
-      Rp::System<2, Rpc::Types<2> > system;
+      Rp::System<2, Cpp<2> > system;
       createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
@@ -297,7 +296,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      Rp::FilmFieldGenMask<2, Rpc::Types<2> > mask(system);
+      Rp::FilmFieldGenMask<2, Cpp<2> > mask(system);
       std::ifstream in;
       openInputFile("in/filmMask2", in);
       mask.readParameters(in);
@@ -305,7 +304,7 @@ public:
       mask.generate();
 
       // Set up external field generator
-      Rp::FilmFieldGenExt<2, Rpc::Types<2> > ext(system);
+      Rp::FilmFieldGenExt<2, Cpp<2> > ext(system);
       createFilmFieldGenExt(ext, "in/filmExt2Sym");
       ext.generate();
 
@@ -320,7 +319,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void createSystem(Rp::System<D, Rpc::Types<D> >& system, std::string fname)
+   void createSystem(Rp::System<D, Cpp<D> >& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -332,7 +331,7 @@ public:
 
    // Read parameter file section to create a FilmFieldGenExt object
    template <int D>
-   void createFilmFieldGenExt(Rp::FilmFieldGenExt<D, Rpc::Types<D> >& ext, std::string fname)
+   void createFilmFieldGenExt(Rp::FilmFieldGenExt<D, Cpp<D> >& ext, std::string fname)
    {
       std::ifstream in;
       openInputFile(fname, in);
@@ -345,7 +344,7 @@ public:
    // an error or not, and returns a boolean indicating whether the 
    // function demonstrated the expected behavior.
    template <int D>
-   bool checkCheckCompatibility(Rp::FilmFieldGenExt<D, Rpc::Types<D> >& ext, bool expectError)
+   bool checkCheckCompatibility(Rp::FilmFieldGenExt<D, Cpp<D> >& ext, bool expectError)
    {
       bool pass = true;
       if (expectError) {

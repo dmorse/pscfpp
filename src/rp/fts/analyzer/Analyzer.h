@@ -38,7 +38,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, Rpc::Types<D. or Rpg::Types<D>
+   *   - T : Types class, Cpp<D. or Rpg::Types<D>
    *
    * \ingroup Rp_Fts_Analyzer_Module
    */

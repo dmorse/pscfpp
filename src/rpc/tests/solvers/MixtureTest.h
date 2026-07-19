@@ -27,7 +27,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
 
 class MixtureTest : public UnitTest
 {
@@ -44,7 +43,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D>
-   bool tracePath(Rp::Polymer<D, Types<D> > const & polymer, int is, int it)
+   bool tracePath(Rp::Polymer<D, Cpp<D> > const & polymer, int is, int it)
    {
       if (is == it) return true;
 
@@ -77,27 +76,27 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, Rpc::Types<1> > mixture;
+      Rp::Mixture<1, Cpp<1> > mixture;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, Rpc::Types<1> > mixture;
+      Rp::Mixture<1, Cpp<1> > mixture;
     
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
       mixture.readParam(in);
       in.close();
 
-      Rp::Polymer<1, Types<1> >& polymer = mixture.polymer(0);
+      Rp::Polymer<1, Cpp<1> >& polymer = mixture.polymer(0);
       TEST_ASSERT(tracePath(polymer, 2, 0));
    }
 
    void testReadParameters1DBranched()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, Rpc::Types<1> > mixture;
+      Rp::Mixture<1, Cpp<1> > mixture;
 
       std::ifstream in;
       openInputFile("in/MixtureBranched", in);
@@ -115,7 +114,7 @@ public:
       * 
       */
 
-      Rp::Polymer<1, Types<1> >& polymer = mixture.polymer(0);
+      Rp::Polymer<1, Cpp<1> >& polymer = mixture.polymer(0);
       Pair<int> pair;
 
       pair = polymer.path(0, 1);
@@ -135,7 +134,7 @@ public:
    void testReadParameters1D_bead()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, Rpc::Types<1> > mixture;
+      Rp::Mixture<1, Cpp<1> > mixture;
       PolymerModel::setModel(PolymerModel::Bead); 
 
       std::ifstream in;
@@ -149,7 +148,7 @@ public:
    void testSolver1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, Rpc::Types<1> > mixture;
+      Rp::Mixture<1, Cpp<1> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
@@ -235,7 +234,7 @@ public:
       // Read parameter block, unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture1d_bead", in);
-      Rp::Mixture<1, Rpc::Types<1> > mixture;
+      Rp::Mixture<1, Cpp<1> > mixture;
       mixture.readParam(in);
       UnitCell<1> unitCell;
       in >> unitCell;
@@ -254,7 +253,7 @@ public:
       mixture.allocate();
 
       // Check polymer block sizes
-      Rp::Polymer<1, Types<1> >& polymer = mixture.polymer(0);
+      Rp::Polymer<1, Cpp<1> >& polymer = mixture.polymer(0);
       TEST_ASSERT(polymer.block(0).nBead() == 20);
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);
@@ -314,7 +313,7 @@ public:
    void testSolver2D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<2, Rpc::Types<2> > mixture;
+      Rp::Mixture<2, Cpp<2> > mixture;
 
       // Read param file block unit cell and mesh dimensions
       std::ifstream in;
@@ -409,7 +408,7 @@ public:
    void testSolver2D_hex()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<2, Rpc::Types<2> > mixture;
+      Rp::Mixture<2, Cpp<2> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture2d_hex", in);
@@ -499,7 +498,7 @@ public:
    void testSolver3D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<3, Rpc::Types<3> > mixture;
+      Rp::Mixture<3, Cpp<3> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture3d", in);

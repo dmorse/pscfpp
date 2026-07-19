@@ -36,7 +36,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension of space (1, 2, or 3)
-   *   - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
+   *   - T : Types class (Cpp<D> or Rpg::Types<D>)
    *
    * \ingroup Rp_Scft_Sweep_Module
    */

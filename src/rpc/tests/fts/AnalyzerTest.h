@@ -20,7 +20,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
 
 class AnalyzerTest : public LogFileUnitTest
 {
@@ -31,7 +30,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, Rpc::Types<D> >& system, std::string filename)
+   void initSystem(Rp::System<D, Cpp<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -43,10 +42,10 @@ public:
    }
 
    template <int D>
-   void initSimulator(Rp::BdSimulator<D, Rpc::Types<D> >& simulator, std::string filename)
+   void initSimulator(Rp::BdSimulator<D, Cpp<D> >& simulator, std::string filename)
    {
-      Rp::Analyzer<D, Rpc::Types<D> >::initStatic();
-      int baseInterval = Rp::Analyzer<D, Rpc::Types<D> >::baseInterval;
+      Rp::Analyzer<D, Cpp<D> >::initStatic();
+      int baseInterval = Rp::Analyzer<D, Cpp<D> >::baseInterval;
       TEST_ASSERT(baseInterval == 1);
       std::ifstream in;
       openInputFile(filename, in);
@@ -56,9 +55,9 @@ public:
 
    void analyzeTrajectory()
    {
-      Rp::System<3, Rpc::Types<3> > system;
+      Rp::System<3, Cpp<3> > system;
       initSystem(system, "in/param_system_disordered");
-      Rp::BdSimulator<3, Rpc::Types<3> > simulator(system);
+      Rp::BdSimulator<3, Cpp<3> > simulator(system);
       initSimulator(simulator, "in/param_BdSimulator_analyzer");
       std::string filename = filePrefix() + "in/w_dis_trajectory.rf";
       simulator.analyze(0, 50, "RGridTrajectoryReader", filename);

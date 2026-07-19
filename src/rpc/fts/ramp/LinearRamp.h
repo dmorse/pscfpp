@@ -9,16 +9,16 @@
 */
 
 #include <rp/fts/ramp/LinearRamp.h>      // direct base class template
-#include <rpc/system/Types.h>            // base class template argument
+#include <pscf/cpu/Cpp.h>            // base class template argument
 #include <rpc/fts/ramp/RampParameter.h>  // base class member
 #include <rpc/fts/ramp/Ramp.h>           // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class LinearRamp<1, Rpc::Types<1> >;
-      extern template class LinearRamp<2, Rpc::Types<2> >;
-      extern template class LinearRamp<3, Rpc::Types<3> >;
+      extern template class LinearRamp<1, Cpp<1> >;
+      extern template class LinearRamp<2, Cpp<2> >;
+      extern template class LinearRamp<3, Cpp<3> >;
    }
 }
 #endif

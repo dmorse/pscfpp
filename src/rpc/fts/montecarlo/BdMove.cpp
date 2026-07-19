@@ -21,8 +21,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Rp::BdMove<1, Rpc::Types<1> >;
-      template class Rp::BdMove<2, Rpc::Types<2> >;
-      template class Rp::BdMove<3, Rpc::Types<3> >;
+      template class Rp::BdMove<1, Cpp<1> >;
+      template class Rp::BdMove<2, Cpp<2> >;
+      template class Rp::BdMove<3, Cpp<3> >;
    }
 }

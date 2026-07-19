@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/compressor/LrCompressor.h>       // base class template
-#include <rpc/system/Types.h>                     // base class argument
+#include <pscf/cpu/Cpp.h>                     // base class argument
 #include <rpc/fts/compressor/IntraCorrelation.h>  // base member
 #include <prdc/field/cpu/RField.h>                // base member
 #include <prdc/field/cpu/RFieldDft.h>             // base member
@@ -18,9 +18,9 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class LrCompressor<1, Rpc::Types<1> >;
-      extern template class LrCompressor<2, Rpc::Types<2> >;
-      extern template class LrCompressor<3, Rpc::Types<3> >;
+      extern template class LrCompressor<1, Cpp<1> >;
+      extern template class LrCompressor<2, Cpp<2> >;
+      extern template class LrCompressor<3, Cpp<3> >;
    }
 }
 #endif

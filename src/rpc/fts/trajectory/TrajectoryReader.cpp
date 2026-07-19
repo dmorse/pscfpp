@@ -10,8 +10,8 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class TrajectoryReader<1, Rpc::Types<1> >;
-      template class TrajectoryReader<2, Rpc::Types<2> >;
-      template class TrajectoryReader<3, Rpc::Types<3> >;
+      template class TrajectoryReader<1, Cpp<1> >;
+      template class TrajectoryReader<2, Cpp<2> >;
+      template class TrajectoryReader<3, Cpp<3> >;
    }
 }

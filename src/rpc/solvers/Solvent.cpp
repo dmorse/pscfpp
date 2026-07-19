@@ -14,8 +14,8 @@
 
 namespace Pscf {
    namespace Rp {
-      template class Solvent<1, Rpc::Types<1> >;
-      template class Solvent<2, Rpc::Types<2> >;
-      template class Solvent<3, Rpc::Types<3> >;
+      template class Solvent<1, Cpp<1> >;
+      template class Solvent<2, Cpp<2> >;
+      template class Solvent<3, Cpp<3> >;
    }
 }

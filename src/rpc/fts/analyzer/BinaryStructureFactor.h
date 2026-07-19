@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
-#include <rpc/system/Types.h>                          // base argument
+#include <pscf/cpu/Cpp.h>                          // base argument
 #include <rpc/fts/analyzer/Analyzer.h>                 // indirect base
 #include <prdc/field/cpu/RField.h>                     // base member
 #include <prdc/field/cpu/RFieldDft.h>                  // base member
@@ -31,8 +31,8 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class BinaryStructureFactor<D, Rpc::Types<D> >
-    : public BinaryStructureFactorBase<D, Rpc::Types<D> >
+   class BinaryStructureFactor<D, Cpp<D> >
+    : public BinaryStructureFactorBase<D, Cpp<D> >
    {
 
    public:
@@ -43,8 +43,8 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryStructureFactor(Simulator<D, Rpc::Types<D> >& simulator, 
-                            System<D, Rpc::Types<D> >& system);
+      BinaryStructureFactor(Simulator<D, Cpp<D> >& simulator, 
+                            System<D, Cpp<D> >& system);
 
       /**
       * Setup before the main loop.
@@ -60,8 +60,8 @@ namespace Rp {
 
    protected:
 
-      using Base = BinaryStructureFactorBase<D, Rpc::Types<D> >;
-      using AnalyzerT = Analyzer<D, Rpc::Types<D> >;
+      using Base = BinaryStructureFactorBase<D, Cpp<D> >;
+      using AnalyzerT = Analyzer<D, Cpp<D> >;
 
       using Base::wk_;
       using Base::allocate;
@@ -77,12 +77,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BinaryStructureFactorBase<1, Rpc::Types<1> >;
-      extern template class BinaryStructureFactorBase<2, Rpc::Types<2> >;
-      extern template class BinaryStructureFactorBase<3, Rpc::Types<3> >;
-      extern template class BinaryStructureFactor<1, Rpc::Types<1> >;
-      extern template class BinaryStructureFactor<2, Rpc::Types<2> >;
-      extern template class BinaryStructureFactor<3, Rpc::Types<3> >;
+      extern template class BinaryStructureFactorBase<1, Cpp<1> >;
+      extern template class BinaryStructureFactorBase<2, Cpp<2> >;
+      extern template class BinaryStructureFactorBase<3, Cpp<3> >;
+      extern template class BinaryStructureFactor<1, Cpp<1> >;
+      extern template class BinaryStructureFactor<2, Cpp<2> >;
+      extern template class BinaryStructureFactor<3, Cpp<3> >;
    }
 }
 #endif

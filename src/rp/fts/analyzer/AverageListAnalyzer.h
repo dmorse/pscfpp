@@ -29,7 +29,7 @@ namespace Rp {
    * Template parameters:
    *
    *    - D : dimension of space
-   *    - T : collection of type aliases, e.g., Rpc::Types<D>
+   *    - T : collection of type aliases, e.g., Cpp<D>
    *
    * \ingroup Rp_Fts_Analyzer_Module
    */

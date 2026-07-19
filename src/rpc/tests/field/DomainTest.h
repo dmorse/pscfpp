@@ -25,7 +25,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Rpc;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
 
@@ -43,10 +42,10 @@ public:
    }
 
    /*
-   * Open and read file header to initialize Rp::Domain<D, Types<D> > system.
+   * Open and read file header to initialize Rp::Domain<D, Cpp<D> > system.
    */
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, Types<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D, Cpp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -59,7 +58,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, Cpp<3> > domain;
       domain.setFileMaster(fileMaster_);
 
       std::ifstream in;
@@ -79,7 +78,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, Cpp<3> > domain;
       domain.setFileMaster(fileMaster_);
 
       // Read parameter file
@@ -113,7 +112,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, Cpp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 

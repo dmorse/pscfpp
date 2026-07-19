@@ -30,12 +30,11 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
 
 class CompressorTest : public LogFileUnitTest
 {
 
-   Rp::System<3, Rpc::Types<3> > system;
+   Rp::System<3, Cpp<3> > system;
    
 public:
    
@@ -46,7 +45,7 @@ public:
    {  setVerbose(0); }
    
    template <int D>
-   void initSystem(Rp::System<D, Rpc::Types<D> >& system, std::string filename)
+   void initSystem(Rp::System<D, Cpp<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -59,7 +58,7 @@ public:
    }
    
    template <int D>
-   void randomStep(Rp::System<D, Rpc::Types<D> >& system)
+   void randomStep(Rp::System<D, Cpp<D> >& system)
    {
       // Random change in pressure field
       int nMonomer = system.mixture().nMonomer();
@@ -85,7 +84,7 @@ public:
    }
    
    template <int D>
-   void addPressureField(Rp::System<D, Rpc::Types<D> >& system)
+   void addPressureField(Rp::System<D, Cpp<D> >& system)
    {
       // Random change in pressure field
       int nMonomer = system.mixture().nMonomer();
@@ -124,7 +123,7 @@ public:
    */ 
    template <typename Compressor>
    void testCompressor(Compressor& compressor, 
-                       Rp::System<3, Rpc::Types<3> >& system, 
+                       Rp::System<3, Cpp<3> >& system, 
                        std::string infilename, 
                        char const * outfilename)
    {
@@ -187,8 +186,8 @@ public:
    void testAmCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, Rpc::Types<3> > system;
-      Rp::AmCompressor<3, Rpc::Types<3> > amCompressor(system);
+      Rp::System<3, Cpp<3> > system;
+      Rp::AmCompressor<3, Cpp<3> > amCompressor(system);
       testCompressor(amCompressor, system, 
                      "in/param_AmCompressor",
                      "out/testAmCompressor.log");
@@ -197,8 +196,8 @@ public:
    void testLrCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, Rpc::Types<3> > system;
-      Rp::LrCompressor<3, Rpc::Types<3> > lrCompressor(system);
+      Rp::System<3, Cpp<3> > system;
+      Rp::LrCompressor<3, Cpp<3> > lrCompressor(system);
       testCompressor(lrCompressor,  system, 
                      "in/param_LrCompressor", 
                      "out/testLrCompressor.log");
@@ -208,7 +207,7 @@ public:
    void testLrAmPreCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, Rpc::Types<3> > system;
+      Rp::System<3, Cpp<3> > system;
       LrAmPreCompressor<3> lrAmPreCompressor(system);
       testCompressor(lrAmPreCompressor, system, 
                      "in/param_LrAmPreCompressor",
@@ -219,8 +218,8 @@ public:
    void testLrAmCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, Rpc::Types<3> > system;
-      Rp::LrAmCompressor<3, Rpc::Types<3> > lrAmCompressor(system);
+      Rp::System<3, Cpp<3> > system;
+      Rp::LrAmCompressor<3, Cpp<3> > lrAmCompressor(system);
       testCompressor(lrAmCompressor, system, 
                      "in/param_LrAmCompressor",
                      "out/testLrAmCompressor.log");

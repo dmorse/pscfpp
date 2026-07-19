@@ -28,9 +28,9 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   FourthOrderParameter<D, Rpc::Types<D> >::FourthOrderParameter(
-                                   Simulator<D, Rpc::Types<D> >& simulator,
-                                   System<D, Rpc::Types<D> >& system)
+   FourthOrderParameter<D, Cpp<D> >::FourthOrderParameter(
+                                   Simulator<D, Cpp<D> >& simulator,
+                                   System<D, Cpp<D> >& system)
     : Base(simulator, system)
    {}
 
@@ -38,7 +38,7 @@ namespace Rp {
    * Initialize Base::prefactor_ protected member variable.
    */
    template <int D>
-   void FourthOrderParameter<D, Rpc::Types<D> >::computePrefactor()
+   void FourthOrderParameter<D, Cpp<D> >::computePrefactor()
    {  Base::computePrefactor(Base::prefactor_); }
 
 }
@@ -47,11 +47,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FourthOrderParameterBase<1, Rpc::Types<1> >;
-      template class FourthOrderParameterBase<2, Rpc::Types<2> >;
-      template class FourthOrderParameterBase<3, Rpc::Types<3> >;
-      template class FourthOrderParameter<1, Rpc::Types<1> >;
-      template class FourthOrderParameter<2, Rpc::Types<2> >;
-      template class FourthOrderParameter<3, Rpc::Types<3> >;
+      template class FourthOrderParameterBase<1, Cpp<1> >;
+      template class FourthOrderParameterBase<2, Cpp<2> >;
+      template class FourthOrderParameterBase<3, Cpp<3> >;
+      template class FourthOrderParameter<1, Cpp<1> >;
+      template class FourthOrderParameter<2, Cpp<2> >;
+      template class FourthOrderParameter<3, Cpp<3> >;
    }
 }

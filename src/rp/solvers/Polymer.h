@@ -44,7 +44,7 @@ namespace Rp {
    * <b> Template parameters </b>:
    *
    *   - D  dimension of space
-   *   - T  Types class (Rpc::Types<D> or Rpg::Types<D>)
+   *   - T  Types class (Cpp<D> or Rpg::Types<D>)
    *
    * \ingroup Rp_Solver_Module
    */

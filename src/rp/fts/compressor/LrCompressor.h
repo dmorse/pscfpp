@@ -43,7 +43,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension of space (D=1, 2, or 3)
-   *   - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
+   *   - T : Types class (Cpp<D> or Rpg::Types<D>)
    *
    * \see \ref rp_LrCompressor_page
    * \ingroup Rp_Fts_Compressor_Module

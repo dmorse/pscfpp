@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/PropagatorBase.h>  // base class template
-#include <rpc/system/Types.h>           // base class argument
+#include <pscf/cpu/Cpp.h>           // base class argument
 
 namespace Pscf {
 namespace Rp {
@@ -36,8 +36,8 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Propagator<D, Rpc::Types<D> > 
-    : public PropagatorBase< D, Rpc::Types<D> >
+   class Propagator<D, Cpp<D> > 
+    : public PropagatorBase< D, Cpp<D> >
    {
 
    public:
@@ -86,7 +86,7 @@ namespace Rp {
    protected:
 
       /// Direct (parent) base class.
-      using RpPropagatorT = PropagatorBase<D, Rpc::Types<D> >;
+      using RpPropagatorT = PropagatorBase<D, Cpp<D> >;
 
       /// Inherited typename alias for indirect (grandparent) base class.
       using typename RpPropagatorT::PropagatorTmplT;
@@ -105,12 +105,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class PropagatorBase<1, Rpc::Types<1> >;
-      extern template class PropagatorBase<2, Rpc::Types<2> >;
-      extern template class PropagatorBase<3, Rpc::Types<3> >;
-      extern template class Propagator<1, Rpc::Types<1> >;
-      extern template class Propagator<2, Rpc::Types<2> >;
-      extern template class Propagator<3, Rpc::Types<3> >;
+      extern template class PropagatorBase<1, Cpp<1> >;
+      extern template class PropagatorBase<2, Cpp<2> >;
+      extern template class PropagatorBase<3, Cpp<3> >;
+      extern template class Propagator<1, Cpp<1> >;
+      extern template class Propagator<2, Cpp<2> >;
+      extern template class Propagator<3, Cpp<3> >;
    }
 }
 #endif

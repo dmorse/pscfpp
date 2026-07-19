@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/FieldIoBase.h>      // base class template
-#include <rpc/system/Types.h>          // base class template
+#include <pscf/cpu/Cpp.h>          // base class template
 #include <prdc/field/cpu/RFieldDft.h>  // base class member
 
 namespace Pscf {
@@ -33,8 +33,8 @@ namespace Rp {
    * \ingroup Rp_Field_Module
    */
    template <int D>
-   class FieldIo<D, Rpc::Types<D> > 
-    : public  FieldIoBase< D, Rpc::Types<D> >
+   class FieldIo<D, Cpp<D> > 
+    : public  FieldIoBase< D, Cpp<D> >
    {
 
    public:
@@ -255,7 +255,7 @@ namespace Rp {
       const override;
 
       /// Alias for base class
-      using FieldIoBase =  Rp::FieldIoBase<D, Rpc::Types<D> >;
+      using FieldIoBase =  Rp::FieldIoBase<D, Cpp<D> >;
 
       // Inherited public member functions (to avoid hiding)
       using FieldIoBase::writeFieldBasis;
@@ -283,12 +283,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class FieldIoBase<1, Rpc::Types<1> >;
-      extern template class FieldIoBase<2, Rpc::Types<2> >;
-      extern template class FieldIoBase<3, Rpc::Types<3> >;
-      extern template class FieldIo<1, Rpc::Types<1> >;
-      extern template class FieldIo<2, Rpc::Types<2> >;
-      extern template class FieldIo<3, Rpc::Types<3> >;
+      extern template class FieldIoBase<1, Cpp<1> >;
+      extern template class FieldIoBase<2, Cpp<2> >;
+      extern template class FieldIoBase<3, Cpp<3> >;
+      extern template class FieldIo<1, Cpp<1> >;
+      extern template class FieldIo<2, Cpp<2> >;
+      extern template class FieldIo<3, Cpp<3> >;
    }
 } 
 #endif

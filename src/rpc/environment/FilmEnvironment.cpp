@@ -15,8 +15,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FilmEnvironment<1, Rpc::Types<1> >;
-      template class FilmEnvironment<2, Rpc::Types<2> >;
-      template class FilmEnvironment<3, Rpc::Types<3> >;
+      template class FilmEnvironment<1, Cpp<1> >;
+      template class FilmEnvironment<2, Cpp<2> >;
+      template class FilmEnvironment<3, Cpp<3> >;
    }
 }

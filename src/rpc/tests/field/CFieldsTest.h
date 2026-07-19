@@ -27,7 +27,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Rpc;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
 
@@ -59,9 +58,9 @@ public:
       Log::setFile(logFile_);
    }
 
-   // Open and read parameter header to initialize Rp::Domain<D, Types<D> > system.
+   // Open and read parameter header to initialize Rp::Domain<D, Cpp<D> > system.
    template <int D>
-   void readParam(std::string filename, Rp::Domain<D, Types<D> >& domain)
+   void readParam(std::string filename, Rp::Domain<D, Cpp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -69,9 +68,9 @@ public:
       in.close();
    }
 
-   // Open and read file header to initialize Rp::Domain<D, Types<D> > system.
+   // Open and read file header to initialize Rp::Domain<D, Cpp<D> > system.
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, Types<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D, Cpp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -101,7 +100,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
                    DArray< DArray<double> >& fields)
    {
       std::ifstream in;
@@ -111,7 +110,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
                    DArray< RField<D> >& fields)
    {
       std::ifstream in;
@@ -121,7 +120,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
                    DArray< DArray<double> > const & fields)
    {
       std::ofstream out;
@@ -134,11 +133,11 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, Cpp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      Rp::CFields<3, Types<3> > fields;
+      Rp::CFields<3, Cpp<3> > fields;
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
       TEST_ASSERT(fields.isAllocatedRGrid());

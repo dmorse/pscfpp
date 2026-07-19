@@ -41,7 +41,7 @@ namespace Rp {
    * Template parameters:
    *
    *    - D : dimension
-   *    - T : Types class (e.g., Rpc::Types<D> or Rpg::Types<D>)
+   *    - T : Types class (e.g., Cpp<D> or Rpg::Types<D>)
    *
    * \see \ref rp_LrAmCompressor_page "Manual Page"
    * \ingroup Rp_Fts_Compressor_Module

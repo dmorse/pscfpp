@@ -21,8 +21,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class PredCorrBdStep<1, Rpc::Types<1> >;
-      template class PredCorrBdStep<2, Rpc::Types<2> >;
-      template class PredCorrBdStep<3, Rpc::Types<3> >;
+      template class PredCorrBdStep<1, Cpp<1> >;
+      template class PredCorrBdStep<2, Cpp<2> >;
+      template class PredCorrBdStep<3, Cpp<3> >;
    }
 }

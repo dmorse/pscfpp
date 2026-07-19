@@ -9,15 +9,16 @@
 */
 
 #include <rp/solvers/Solvent.h>       // base class template
-#include <rpc/system/Types.h>         // base class argument
+#include <pscf/cpu/Cpp.h>         // base class argument
 #include <prdc/field/cpu/RField.h>    // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Solvent<1, Rpc::Types<1> >;
-      extern template class Solvent<2, Rpc::Types<2> >;
-      extern template class Solvent<3, Rpc::Types<3> >;
+      using namespace Pscf::Prdc;
+      extern template class Solvent<1, Cpp<1> >;
+      extern template class Solvent<2, Cpp<2> >;
+      extern template class Solvent<3, Cpp<3> >;
    }
 }
 #endif

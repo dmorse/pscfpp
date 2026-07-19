@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/MaxOrderParameterBase.h>  // base class template
-#include <rpc/system/Types.h>                       // base class argument
+#include <pscf/cpu/Cpp.h>                       // base class argument
 #include <rpc/fts/analyzer/AverageAnalyzer.h>       // indirect base
 #include <prdc/field/cpu/RField.h>                  // direct base member
 #include <prdc/field/cpu/RFieldDft.h>               // direct base member
@@ -33,8 +33,8 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class MaxOrderParameter<D, Rpc::Types<D> >
-    : public MaxOrderParameterBase<D, Rpc::Types<D> >
+   class MaxOrderParameter<D, Cpp<D> >
+    : public MaxOrderParameterBase<D, Cpp<D> >
    {
 
    public:
@@ -42,8 +42,8 @@ namespace Rp {
       /**
       * Constructor.
       */
-      MaxOrderParameter(Simulator<D, Rpc::Types<D> >& simulator, 
-                        System<D, Rpc::Types<D> >& system);
+      MaxOrderParameter(Simulator<D, Cpp<D> >& simulator, 
+                        System<D, Cpp<D> >& system);
 
    protected:
 
@@ -52,7 +52,7 @@ namespace Rp {
       */
       double compute() override;
 
-      using Base = MaxOrderParameterBase<D, Rpc::Types<D> >;
+      using Base = MaxOrderParameterBase<D, Cpp<D> >;
 
    };
 
@@ -62,12 +62,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class MaxOrderParameterBase<1, Rpc::Types<1> >;
-      extern template class MaxOrderParameterBase<2, Rpc::Types<2> >;
-      extern template class MaxOrderParameterBase<3, Rpc::Types<3> >;
-      extern template class MaxOrderParameter<1, Rpc::Types<1> >;
-      extern template class MaxOrderParameter<2, Rpc::Types<2> >;
-      extern template class MaxOrderParameter<3, Rpc::Types<3> >;
+      extern template class MaxOrderParameterBase<1, Cpp<1> >;
+      extern template class MaxOrderParameterBase<2, Cpp<2> >;
+      extern template class MaxOrderParameterBase<3, Cpp<3> >;
+      extern template class MaxOrderParameter<1, Cpp<1> >;
+      extern template class MaxOrderParameter<2, Cpp<2> >;
+      extern template class MaxOrderParameter<3, Cpp<3> >;
    }
 }
 #endif

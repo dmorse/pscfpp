@@ -32,7 +32,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension of space (1, 2, or 3)
-   *   - T : Types class, Rpc::Types<D> or Rpg::Types<D>
+   *   - T : Types class, Cpp<D> or Rpg::Types<D>
    *
    * \see \ref psfts_perturb_page "Manual Page"
    * \ingroup Rp_Fts_Perturbation_Module

@@ -42,7 +42,7 @@ namespace Rp {
    * Specializations of the Rp::MixtureBase template are used as base 
    * classes for specializations of the Rp::Mixture class template. 
    * The template parameters of R::Mixture<int D, class T> are the 
-   * dimension of space, D, and a Types class, T = Rpc::Types<D> or 
+   * dimension of space, D, and a Types class, T = Cpp<D> or 
    * T = Rpg::Types<D>.
    *
    * A MixtureBase contains a list of Polymer  objects and a separate 

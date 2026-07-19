@@ -21,7 +21,7 @@ namespace Rp {
    * A container of fields stored in both basis and r-grid format.
    *
    * This primary template is used for the CPU specialization, for which
-   * T = Rpc::Types<D>. A partial specialization is defined for the CUDA
+   * T = Cpp<D>. A partial specialization is defined for the CUDA
    * variant.
    *
    * \ingroup Rp_Field_Module

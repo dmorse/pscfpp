@@ -9,23 +9,23 @@
 */
 
 #include <rp/scft/iterator/AmIteratorBasis.h>  // base class template
-#include <rpc/system/Types.h>                  // base class argument 
+#include <pscf/cpu/Cpp.h>                  // base class argument 
 #include <rpc/scft/iterator/Iterator.h>        // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {
 
    extern template 
-   class AmIteratorTmpl<Rp::Iterator<1, Rpc::Types<1> >, DArray<double> >;
+   class AmIteratorTmpl<Rp::Iterator<1, Cpp<1> >, DArray<double> >;
    extern template class 
-   AmIteratorTmpl<Rp::Iterator<2, Rpc::Types<2> >, DArray<double> >;
+   AmIteratorTmpl<Rp::Iterator<2, Cpp<2> >, DArray<double> >;
    extern template 
-   class AmIteratorTmpl<Rp::Iterator<3, Rpc::Types<3> >, DArray<double> >;
+   class AmIteratorTmpl<Rp::Iterator<3, Cpp<3> >, DArray<double> >;
 
    namespace Rp {
-      extern template class AmIteratorBasis<1, Rpc::Types<1> >;
-      extern template class AmIteratorBasis<2, Rpc::Types<2> >;
-      extern template class AmIteratorBasis<3, Rpc::Types<3> >;
+      extern template class AmIteratorBasis<1, Cpp<1> >;
+      extern template class AmIteratorBasis<2, Cpp<2> >;
+      extern template class AmIteratorBasis<3, Cpp<3> >;
    }
 
 }

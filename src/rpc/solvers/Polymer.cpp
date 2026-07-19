@@ -16,12 +16,17 @@
 #include <rp/solvers/Polymer.tpp>
 
 namespace Pscf {
-   template class PolymerTmpl< Rp::Block<1, Rpc::Types<1> >, Rp::Propagator<1, Rpc::Types<1> > >;
-   template class PolymerTmpl< Rp::Block<2, Rpc::Types<2> >, Rp::Propagator<2, Rpc::Types<2> > >;
-   template class PolymerTmpl< Rp::Block<3, Rpc::Types<3> >, Rp::Propagator<3, Rpc::Types<3> > >;
+
+   template class 
+   PolymerTmpl< Rp::Block<1, Cpp<1> >, Rp::Propagator<1, Cpp<1> > >;
+   template class 
+   PolymerTmpl< Rp::Block<2, Cpp<2> >, Rp::Propagator<2, Cpp<2> > >;
+   template class 
+   PolymerTmpl< Rp::Block<3, Cpp<3> >, Rp::Propagator<3, Cpp<3> > >;
+
    namespace Rp {
-      template class Polymer< 1, Rpc::Types<1> >;
-      template class Polymer< 2, Rpc::Types<2> >;
-      template class Polymer< 3, Rpc::Types<3> >;
+      template class Polymer< 1, Cpp<1> >;
+      template class Polymer< 2, Cpp<2> >;
+      template class Polymer< 3, Cpp<3> >;
    }
 }

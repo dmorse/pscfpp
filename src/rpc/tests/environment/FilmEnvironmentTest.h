@@ -22,7 +22,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
 
 class FilmEnvironmentTest : public UnitTest
 {
@@ -51,8 +50,8 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, Rpc::Types<1> > system;
-      Rp::FilmEnvironment<1, Rpc::Types<1> > ext(system);
+      Rp::System<1, Cpp<1> > system;
+      Rp::FilmEnvironment<1, Cpp<1> > ext(system);
    }
 
    void testReadParameters() // test FilmEnvironment::readParameters()
@@ -61,9 +60,9 @@ public:
       openLogFile("out/FilmEnvTestReadParameters.log");
 
       // Set up film environment from file
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       createSystem(system, "in/system1DEnv");
-      Rp::FilmEnvironment<1, Rpc::Types<1> > env(system);
+      Rp::FilmEnvironment<1, Cpp<1> > env(system);
 
       std::ifstream in;
       openInputFile("in/environment1", in);
@@ -92,7 +91,7 @@ public:
       openLogFile("out/FilmEnvTestSolve1D.log");
       
       // Set up system with some data
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       createSystem(system, "in/system1DEnv");
 
       // Read initial guess
@@ -145,7 +144,7 @@ public:
       openLogFile("out/FilmEnvTestSolve2D.log");
       
       // Set up system with some data
-      Rp::System<2, Rpc::Types<2> > system;
+      Rp::System<2, Cpp<2> > system;
       createSystem(system, "in/system2DEnv");
 
       // Read initial guess
@@ -198,7 +197,7 @@ public:
       openLogFile("out/FilmEnvTestSweep.log");
       
       // Set up system
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       createSystem(system, "in/system1DEnv");
 
       // Read initial guess
@@ -242,7 +241,7 @@ public:
       openLogFile("out/FilmEnvTestSolveWithFBulk.log");
       
       // Set up system with some data
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       createSystem(system, "in/system1DEnvFBulk");
 
       // Read initial guess
@@ -291,7 +290,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void createSystem(Rp::System<D, Rpc::Types<D> >& system, std::string fname)
+   void createSystem(Rp::System<D, Cpp<D> >& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

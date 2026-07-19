@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ForceBiasMoveBase.h>   // base class template
-#include <rpc/system/Types.h>                      // base class argument
+#include <pscf/cpu/Cpp.h>                      // base class argument
 #include <rpc/fts/montecarlo/McMove.h>             // indirect base class
 #include <prdc/field/cpu/RField.h>                 // base class member
 
@@ -39,8 +39,8 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ForceBiasMove<D, Rpc::Types<D> > 
-     : public Rp::ForceBiasMoveBase<D, Rpc::Types<D> >
+   class ForceBiasMove<D, Cpp<D> > 
+     : public Rp::ForceBiasMoveBase<D, Cpp<D> >
    {
 
    public:
@@ -50,7 +50,7 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator
       */
-      ForceBiasMove(Rp::McSimulator<D, Rpc::Types<D> >& simulator);
+      ForceBiasMove(Rp::McSimulator<D, Cpp<D> >& simulator);
 
    private:
 
@@ -71,12 +71,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class ForceBiasMoveBase<1, Rpc::Types<1> >;
-      extern template class ForceBiasMoveBase<2, Rpc::Types<2> >;
-      extern template class ForceBiasMoveBase<3, Rpc::Types<3> >;
-      extern template class ForceBiasMove<1, Rpc::Types<1> >;
-      extern template class ForceBiasMove<2, Rpc::Types<2> >;
-      extern template class ForceBiasMove<3, Rpc::Types<3> >;
+      extern template class ForceBiasMoveBase<1, Cpp<1> >;
+      extern template class ForceBiasMoveBase<2, Cpp<2> >;
+      extern template class ForceBiasMoveBase<3, Cpp<3> >;
+      extern template class ForceBiasMove<1, Cpp<1> >;
+      extern template class ForceBiasMove<2, Cpp<2> >;
+      extern template class ForceBiasMove<3, Cpp<3> >;
    }
 }
 #endif

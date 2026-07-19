@@ -18,8 +18,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BasisFieldState< 1, Rpc::Types<1> >;
-      template class BasisFieldState< 2, Rpc::Types<2> >;
-      template class BasisFieldState< 3, Rpc::Types<3> >;
+      template class BasisFieldState< 1, Cpp<1> >;
+      template class BasisFieldState< 2, Cpp<2> >;
+      template class BasisFieldState< 3, Cpp<3> >;
    }
 }

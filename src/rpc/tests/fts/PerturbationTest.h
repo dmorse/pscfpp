@@ -19,7 +19,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
 
 class PerturbationTest : public LogFileUnitTest
 {
@@ -30,7 +29,7 @@ public:
    {  setVerbose(0); }
    
    template <int D>
-   void initSystem(Rp::System<D, Rpc::Types<D> >& system, std::string filename)
+   void initSystem(Rp::System<D, Cpp<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -43,7 +42,7 @@ public:
    }
    
    template <int D>
-   void initSimulator(Rp::BdSimulator<D, Rpc::Types<D> >& simulator, std::string filename)
+   void initSimulator(Rp::BdSimulator<D, Cpp<D> >& simulator, std::string filename)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -55,7 +54,7 @@ public:
    * Allocate an array of rgrid fields.
    */
    template <int D>
-   void allocateRGridFields(Rp::System<D, Rpc::Types<D> > const & system,
+   void allocateRGridFields(Rp::System<D, Cpp<D> > const & system,
                             DArray< RField<D> >& fields)
    {
       // Check and allocate outer DArray
@@ -83,20 +82,20 @@ public:
    * Read r-grid fields into an array.
    */
    template <int D>
-   void readRGridFields(Rp::System<D, Rpc::Types<D> > const & system,
+   void readRGridFields(Rp::System<D, Cpp<D> > const & system,
                         std::string filename,
                         DArray< RField<D> >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
-      Rp::FieldIo<D, Types<D> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D, Cpp<D> > const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
    }
 
    /*
    * Generic BdSimulator test function template.
    */ 
-   void testPerturbation(Rp::System<3, Rpc::Types<3> >& system, 
+   void testPerturbation(Rp::System<3, Cpp<3> >& system, 
                         std::string systemfilename,
                         std::string simulatorfilename,
                         std::string infieldsfilename,
@@ -107,7 +106,7 @@ public:
       openLogFile(outfilename);
       initSystem(system, systemfilename);
 
-      Rp::BdSimulator<3, Rpc::Types<3> > simulator(system);
+      Rp::BdSimulator<3, Cpp<3> > simulator(system);
       initSimulator(simulator, simulatorfilename);
 
       system.w().readRGrid(infieldsfilename);
@@ -130,7 +129,7 @@ public:
    void testEinsteinCrystalPerturbation()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, Rpc::Types<3> > system;
+      Rp::System<3, Cpp<3> > system;
       testPerturbation(system, "in/param_system_disordered",
                      "in/param_LMBdStep_EinsteinCrystalPerturbation",
                      "in/w_dis.rf",

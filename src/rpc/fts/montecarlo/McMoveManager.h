@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/montecarlo/McMoveManager.h> // base class template
-#include <rpc/system/Types.h>                // base class argument
+#include <pscf/cpu/Cpp.h>                // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class McMoveManager<1, Rpc::Types<1> >;
-      extern template class McMoveManager<2, Rpc::Types<2> >;
-      extern template class McMoveManager<3, Rpc::Types<3> >;
+      extern template class McMoveManager<1, Cpp<1> >;
+      extern template class McMoveManager<2, Cpp<2> >;
+      extern template class McMoveManager<3, Cpp<3> >;
    }
 }
 #endif

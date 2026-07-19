@@ -9,16 +9,16 @@
 */
 
 #include <rp/fts/montecarlo/RealMove.h>    // base class template
-#include <rpc/system/Types.h>              // template argument
+#include <pscf/cpu/Cpp.h>              // template argument
 #include <rpc/fts/montecarlo/McMove.h>     // indirect base class
 #include <prdc/field/cpu/RField.h>         // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class RealMove<1, Rpc::Types<1> >;
-      extern template class RealMove<2, Rpc::Types<2> >;
-      extern template class RealMove<3, Rpc::Types<3> >;
+      extern template class RealMove<1, Cpp<1> >;
+      extern template class RealMove<2, Cpp<2> >;
+      extern template class RealMove<3, Cpp<3> >;
    }
 }
 #endif

@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/analyzer/AnalyzerFactory.h>
-#include <rpc/system/Types.h>
+#include <pscf/cpu/Cpp.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
 namespace Rp {
-   extern template class AnalyzerFactory<1, Rpc::Types<1> >;
-   extern template class AnalyzerFactory<2, Rpc::Types<2> >;
-   extern template class AnalyzerFactory<3, Rpc::Types<3> >;
+   extern template class AnalyzerFactory<1, Cpp<1> >;
+   extern template class AnalyzerFactory<2, Cpp<2> >;
+   extern template class AnalyzerFactory<3, Cpp<3> >;
 }
 }
 #endif

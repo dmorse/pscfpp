@@ -23,7 +23,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Rpc;
 using namespace Pscf::Prdc;
 
 class PropagatorTest : public UnitTest
@@ -38,7 +37,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D> 
-   void setupBlock(Rp::Block<D, Types<D> >& block)
+   void setupBlock(Rp::Block<D, Cpp<D> >& block)
    {
       block.setId(0);
       if (PolymerModel::isThread()) {
@@ -76,7 +75,7 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Block<1, Types<1> > block;
+      Rp::Block<1, Cpp<1> > block;
    }
 
    void testSetup1D()
@@ -84,7 +83,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<1, Types<1> > block;
+      Rp::Block<1, Cpp<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -120,7 +119,7 @@ public:
       printMethod(TEST_FUNC);
 
       //Create and initialize block
-      Rp::Block<2, Types<2> > block;
+      Rp::Block<2, Cpp<2> > block;
       setupBlock<2>(block);
 
       Mesh<2> mesh;
@@ -155,7 +154,7 @@ public:
       printMethod(TEST_FUNC);
 
       //Create and initialize block
-      Rp::Block<3, Types<3> > block;
+      Rp::Block<3, Cpp<3> > block;
       setupBlock<3>(block);
 
       Mesh<3> mesh;
@@ -195,7 +194,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<1, Types<1> > block;
+      Rp::Block<1, Cpp<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -237,7 +236,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<2, Types<2> > block;
+      Rp::Block<2, Cpp<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -282,7 +281,7 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Rp::Block<2, Types<2> > block;
+      Rp::Block<2, Cpp<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -325,7 +324,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<3, Types<3> > block;
+      Rp::Block<3, Cpp<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
@@ -370,7 +369,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<1, Types<1> > block;
+      Rp::Block<1, Cpp<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -450,7 +449,7 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Rp::Block<1, Types<1> > block;
+      Rp::Block<1, Cpp<1> > block;
       setupBlock<1>(block);
       int nBead = block.nBead();
 
@@ -511,7 +510,7 @@ public:
       }
   
       // Test propagator solve, block owns both vertices
-      Rp::Propagator<1, Types<1> >& p0 = block.propagator(0);
+      Rp::Propagator<1, Cpp<1> >& p0 = block.propagator(0);
       p0.solve();
 
       // Check head slice
@@ -532,7 +531,7 @@ public:
          TEST_ASSERT(eq(p0.q(nBead)[i], expected));
       }
 
-      Rp::Propagator<1, Types<1> >& p1 = block.propagator(1);
+      Rp::Propagator<1, Cpp<1> >& p1 = block.propagator(1);
       p1.solve();
 
       #if 0
@@ -549,7 +548,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<2, Types<2> > block;
+      Rp::Block<2, Cpp<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -642,7 +641,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<3, Types<3> > block;
+      Rp::Block<3, Cpp<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh

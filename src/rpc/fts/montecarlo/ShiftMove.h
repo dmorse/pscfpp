@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ShiftMoveBase.h> // base class template
-#include <rpc/system/Types.h>                // base class argument
+#include <pscf/cpu/Cpp.h>                // base class argument
 #include <prdc/field/cpu/RField.h>           // base class member
 #include <rpc/fts/montecarlo/McMove.h>       // indirect base class
 
@@ -26,8 +26,8 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ShiftMove<D, Rpc::Types<D> >
-     : public ShiftMoveBase<D, Rpc::Types<D> >
+   class ShiftMove<D, Cpp<D> >
+     : public ShiftMoveBase<D, Cpp<D> >
    {
 
    public:
@@ -37,11 +37,11 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator
       */
-      ShiftMove(McSimulator<D, Rpc::Types<D> >& simulator);
+      ShiftMove(McSimulator<D, Cpp<D> >& simulator);
 
    protected:
 
-      using McMove<D, Rpc::Types<D> >::system;
+      using McMove<D, Cpp<D> >::system;
 
    protected:
     
@@ -55,7 +55,7 @@ namespace Rp {
       */ 
       void shiftFields(IntVec<D> const & shift);
 
-      using ShiftMoveBaseT = ShiftMoveBase<D, Rpc::Types<D> >;
+      using ShiftMoveBaseT = ShiftMoveBase<D, Cpp<D> >;
 
    };
 
@@ -66,12 +66,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class ShiftMoveBase<1, Rpc::Types<1> >;
-      extern template class ShiftMoveBase<2, Rpc::Types<2> >;
-      extern template class ShiftMoveBase<3, Rpc::Types<3> >;
-      extern template class ShiftMove<1, Rpc::Types<1> >;
-      extern template class ShiftMove<2, Rpc::Types<2> >;
-      extern template class ShiftMove<3, Rpc::Types<3> >;
+      extern template class ShiftMoveBase<1, Cpp<1> >;
+      extern template class ShiftMoveBase<2, Cpp<2> >;
+      extern template class ShiftMoveBase<3, Cpp<3> >;
+      extern template class ShiftMove<1, Cpp<1> >;
+      extern template class ShiftMove<2, Cpp<2> >;
+      extern template class ShiftMove<3, Cpp<3> >;
    }
 }
 #endif

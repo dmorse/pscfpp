@@ -16,8 +16,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class PerturbationDerivative< 1, Rpc::Types<1> >;
-      template class PerturbationDerivative< 2, Rpc::Types<2> >;
-      template class PerturbationDerivative< 3, Rpc::Types<3> >;
+      template class PerturbationDerivative< 1, Cpp<1> >;
+      template class PerturbationDerivative< 2, Cpp<2> >;
+      template class PerturbationDerivative< 3, Cpp<3> >;
    }
 }

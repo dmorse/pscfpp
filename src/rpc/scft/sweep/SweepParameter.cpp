@@ -20,9 +20,9 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class SweepParameter<1, Rpc::Types<1> >;
-      template class SweepParameter<2, Rpc::Types<2> >;
-      template class SweepParameter<3, Rpc::Types<3> >;
+      template class SweepParameter<1, Cpp<1> >;
+      template class SweepParameter<2, Cpp<2> >;
+      template class SweepParameter<3, Cpp<3> >;
       
    }
 }

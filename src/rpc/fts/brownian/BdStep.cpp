@@ -14,8 +14,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BdStep< 1, Rpc::Types<1> >;
-      template class BdStep< 2, Rpc::Types<2> >;
-      template class BdStep< 3, Rpc::Types<3> >;
+      template class BdStep< 1, Cpp<1> >;
+      template class BdStep< 2, Cpp<2> >;
+      template class BdStep< 3, Cpp<3> >;
    }
 }

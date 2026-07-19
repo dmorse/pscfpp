@@ -10,14 +10,14 @@
 
 // Header file includes
 #include <rp/system/System.h>      // base class template
-#include <rpc/system/Types.h>      // base class argument
+#include <pscf/cpu/Cpp.h>      // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class System<1, Rpc::Types<1> >;
-      extern template class System<2, Rpc::Types<1> >;
-      extern template class System<3, Rpc::Types<1> >;
+      extern template class System<1, Cpp<1> >;
+      extern template class System<2, Cpp<1> >;
+      extern template class System<3, Cpp<1> >;
    }
 }
 #endif

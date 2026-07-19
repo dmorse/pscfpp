@@ -26,7 +26,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cpu;
-using namespace Pscf::Rpc;
 
 class IntraTest : public LogFileUnitTest
 {
@@ -37,7 +36,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, Rpc::Types<D> >& system, std::string filename)
+   void initSystem(Rp::System<D, Cpp<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -53,7 +52,7 @@ public:
                   char const * outfilename)
    {
       openLogFile(outfilename);
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       initSystem(system, paramFilename);
       system.w().readRGrid(inFieldFilename);
 
@@ -114,7 +113,7 @@ public:
       kMeshDimensions[0] = dimensions[0]/2 + 1;
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, Rpc::Types<1> > intra_(system);
+      Rp::IntraCorrelation<1, Cpp<1> > intra_(system);
       intra_.computeOmegaTotal(intraCorrelationK);
 
       // Compute analytical dphi using Intra
@@ -188,7 +187,7 @@ public:
       printMethod(TEST_FUNC);
 
       openLogFile("out/testIntraHomoThread.log");
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       initSystem(system, "in/param_system_1D_diblock_thread");
       system.w().readRGrid("in/w_diblock_homogenous.rf");
 
@@ -199,16 +198,16 @@ public:
       kMeshDimensions[0] = dimensions[0]/2 + 1;
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, Rpc::Types<1> > intra(system);
+      Rp::IntraCorrelation<1, Cpp<1> > intra(system);
       intra.computeOmegaTotal(intraCorrelationK);
 
       // The intracorrelation function of conformational homo
-      Rp::System<1, Rpc::Types<1> > systemHomo;
+      Rp::System<1, Cpp<1> > systemHomo;
       initSystem(systemHomo, "in/param_system_1D_homo_thread");
       systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
       RField<1> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, Rpc::Types<1> > intraHomo(systemHomo);
+      Rp::IntraCorrelation<1, Cpp<1> > intraHomo(systemHomo);
       intraHomo.computeOmegaTotal(intraCorrelationKHomo);
 
       RFieldComparison<1> comparison;
@@ -223,7 +222,7 @@ public:
       printMethod(TEST_FUNC);
 
       openLogFile("out/testIntraHomoBead.log");
-      Rp::System<1, Rpc::Types<1> > system;
+      Rp::System<1, Cpp<1> > system;
       initSystem(system, "in/param_system_1D_diblock_bead");
       system.w().readRGrid("in/w_diblock_homogenous.rf");
 
@@ -234,16 +233,16 @@ public:
       kMeshDimensions[0] = dimensions[0]/2 + 1;
       RField<1> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, Rpc::Types<1> > intra(system);
+      Rp::IntraCorrelation<1, Cpp<1> > intra(system);
       intra.computeOmegaTotal(intraCorrelationK);
 
       // The intracorrelation function of conformational homo
-      Rp::System<1, Rpc::Types<1> > systemHomo;
+      Rp::System<1, Cpp<1> > systemHomo;
       initSystem(systemHomo, "in/param_system_1D_homo_bead");
       systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
       RField<1> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, Rpc::Types<1> > intraHomo(systemHomo);
+      Rp::IntraCorrelation<1, Cpp<1> > intraHomo(systemHomo);
       intraHomo.computeOmegaTotal(intraCorrelationKHomo);
 
       RFieldComparison<1> comparison;
