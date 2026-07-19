@@ -46,9 +46,9 @@ namespace Rp {
    * \see \ref rp_LrAmCompressor_page "Manual Page"
    * \ingroup Rp_Fts_Compressor_Module
    */
-   template <int D, class T, class V>
+   template <int D, class T>
    class LrAmCompressor
-    : public AmIteratorTmpl<Compressor<D,T>, V>
+    : public AmIteratorTmpl<Compressor<D,T>, typename T::RDevArray>
    {
 
    public:
@@ -109,8 +109,17 @@ namespace Rp {
 
    private:
 
+      /// Alias for base class.
+      using CompressorT = Compressor<D,T>;
+
       /// Type of field and residual vectors.
-      using VectorT = V;
+      using VectorT = typename T::RDevArray;
+
+      /// Typename alias for base class.
+      using AmTmpl = AmIteratorTmpl< Compressor<D,T>, VectorT >;
+
+      /// Typename alias for FFT class
+      using FFTT = typename T::FFT;
 
       /**
       * Initial values of all w fields.
@@ -218,15 +227,6 @@ namespace Rp {
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
-
-      // Alias for base class.
-      using CompressorT = Compressor<D,T>;
-
-      /// Typename alias for FFT class
-      using FFTT = typename T::FFT;
-
-      /// Typename alias for base class.
-      using AmTmpl = AmIteratorTmpl< Compressor<D,T>, VectorT >;
 
    };
 

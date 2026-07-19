@@ -5,15 +5,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FilmEnvironment.h"
+#include <rpc/environment/FilmEnvironment.h>
 
+#include <rpc/environment/FilmFieldGenMask.h>
+#include <rpc/environment/FilmFieldGenExt.h>
+
+#include <rp/environment/FilmEnvironment.tpp>
+
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Rpc {
-
-   // FilmEnvironment instantiation
-   template class FilmEnvironment<1>;
-   template class FilmEnvironment<2>;
-   template class FilmEnvironment<3>;
-
-}
+   namespace Rp {
+      template class FilmEnvironment<1, Rpc::Types<1> >;
+      template class FilmEnvironment<2, Rpc::Types<2> >;
+      template class FilmEnvironment<3, Rpc::Types<3> >;
+   }
 }

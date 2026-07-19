@@ -20,19 +20,13 @@
 #include <pscf/cuda/VecOpMisc.h>
 #include <pscf/cuda/Reduce.h>
 
-//#include <pscf/math/IntVec.h>
-//#include <util/global.h>
-
 #include <rp/fts/compressor/LrAmCompressor.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template 
-      class LrAmCompressor<1, Rpg::Types<1>, DeviceArray<cudaReal> >;
-      template 
-      class LrAmCompressor<2, Rpg::Types<2>, DeviceArray<cudaReal> >;
-      template 
-      class LrAmCompressor<3, Rpg::Types<3>, DeviceArray<cudaReal> >;
+      template class LrAmCompressor<1, Rpg::Types<1> >;
+      template class LrAmCompressor<2, Rpg::Types<2> >;
+      template class LrAmCompressor<3, Rpg::Types<3> >;
    }
 }

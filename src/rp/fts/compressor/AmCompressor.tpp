@@ -24,8 +24,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class T, class V>
-   AmCompressor<D,T,V>::AmCompressor(System<D,T>& system)
+   template <int D, class T>
+   AmCompressor<D,T>::AmCompressor(System<D,T>& system)
     : isAllocated_(false)
    {  
       CompressorT::setSystem(system);
@@ -35,29 +35,29 @@ namespace Rp {
    /*
    * Read parameters from file.
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::readParameters(std::istream& in)
+   template <int D, class T>
+   void AmCompressor<D,T>::readParameters(std::istream& in)
    {
       // Default values
-      AmTmpl::maxItr_ = 100;
-      AmTmpl::verbose_ = 0;
-      AmTmpl::errorType_ = "rms";
+      AmTmplT::maxItr_ = 100;
+      AmTmplT::verbose_ = 0;
+      AmTmplT::errorType_ = "rms";
       bool useLambdaRamp = false;
 
-      AmTmpl::readParameters(in);
-      AmTmpl::readErrorType(in);
-      AmTmpl::readMixingParameters(in, useLambdaRamp);
+      AmTmplT::readParameters(in);
+      AmTmplT::readErrorType(in);
+      AmTmplT::readMixingParameters(in, useLambdaRamp);
    }
 
    /*
    * Initialize just before entry to iterative loop.
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::setup(bool isContinuation)
+   template <int D, class T>
+   void AmCompressor<D,T>::setup(bool isContinuation)
    {
       Log::file() << "\n Entering setup";
       // Allocate memory required by AM algorithm if not done earlier.
-      AmTmpl::setup(isContinuation);
+      AmTmplT::setup(isContinuation);
 
       const int nMonomer = system().mixture().nMonomer();
       const IntVec<D> dimensions = system().domain().mesh().dimensions();
@@ -83,11 +83,11 @@ namespace Rp {
    /*
    * Main function - identify partial saddle-point state.
    */
-   template <int D, class T, class V>
-   int AmCompressor<D,T,V>::compress()
+   template <int D, class T>
+   int AmCompressor<D,T>::compress()
    {
       Log::file() << "\n Entering compress";
-      int solve = AmTmpl::solve();
+      int solve = AmTmplT::solve();
       Log::file() << "\n Exiting compress";
       return solve;
    }
@@ -95,21 +95,21 @@ namespace Rp {
    /*
    * Output timer information, if requested.
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::outputTimers(std::ostream& out) const
+   template <int D, class T>
+   void AmCompressor<D,T>::outputTimers(std::ostream& out) const
    {
       out << "\n";
       out << "Compressor time contributions:\n";
-      AmTmpl::outputTimers(out);
+      AmTmplT::outputTimers(out);
    }
 
    /*
    * Clear timers and MDE counter.
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::clearTimers()
+   template <int D, class T>
+   void AmCompressor<D,T>::clearTimers()
    {
-      AmTmpl::clearTimers();
+      AmTmplT::clearTimers();
       CompressorT::mdeCounter_ = 0;
    }
 
@@ -118,22 +118,22 @@ namespace Rp {
    /*
    * Compute and return the number of elements in a field vector.
    */
-   template <int D, class T, class V>
-   int AmCompressor<D,T,V>::nElements()
+   template <int D, class T>
+   int AmCompressor<D,T>::nElements()
    {  return system().domain().mesh().size(); }
 
    /*
    * Does the system have an initial field guess?
    */
-   template <int D, class T, class V>
-   bool AmCompressor<D,T,V>::hasInitialGuess()
+   template <int D, class T>
+   bool AmCompressor<D,T>::hasInitialGuess()
    {  return system().w().hasData(); }
 
    /*
    * Get the current field from the system.
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::getCurrent(VectorT& curr)
+   template <int D, class T>
+   void AmCompressor<D,T>::getCurrent(VectorT& curr)
    {
       /*
       * The field that we are adjusting is the Langrange multiplier
@@ -147,8 +147,8 @@ namespace Rp {
    /*
    * Perform the main system computation (solve the MDE).
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::evaluate()
+   template <int D, class T>
+   void AmCompressor<D,T>::evaluate()
    {
       system().compute();
       ++(CompressorT::mdeCounter_);
@@ -157,8 +157,8 @@ namespace Rp {
    /*
    * Compute the residual vector for the current system state.
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::getResidual(VectorT& resid)
+   template <int D, class T>
+   void AmCompressor<D,T>::getResidual(VectorT& resid)
    {
       // Initialize residual to -1.0
       VecOp::eqS(resid, -1.0);
@@ -173,8 +173,8 @@ namespace Rp {
    /*
    * Update the current system w fields.
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::update(VectorT& newGuess)
+   template <int D, class T>
+   void AmCompressor<D,T>::update(VectorT& newGuess)
    {
       // New field is w0_ + newGuess for the pressure field
       const int nMonomer = system().mixture().nMonomer();
@@ -189,8 +189,8 @@ namespace Rp {
    /*
    * Do-nothing output function.
    */
-   template <int D, class T, class V>
-   void AmCompressor<D,T,V>::outputToLog()
+   template <int D, class T>
+   void AmCompressor<D,T>::outputToLog()
    {}
 
 }

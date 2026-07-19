@@ -180,7 +180,7 @@ namespace Rp {
    */
    template <int D>
    FilmFieldGenExt<D, Rpg::Types<D> >::FilmFieldGenExt(
-         Rp::System<D, Rpg::Types<D> >& sys)
+         System<D, Rpg::Types<D> >& sys)
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(&sys)
    {  ParamComposite::setClassName("FilmFieldGenExt"); }

@@ -35,9 +35,9 @@ namespace Rp {
 
       // Try to match classname
       if (className == "Compressor" || className == "LrAmCompressor") {
-         ptr = new LrAmCompressor<D, T, typename T::RDevArray >(*sysPtr_);
+         ptr = new LrAmCompressor<D,T>(*sysPtr_);
       } else if (className == "AmCompressor") {
-         ptr = new AmCompressor<D, T, typename T::RDevArray >(*sysPtr_);
+         ptr = new AmCompressor<D,T>(*sysPtr_);
       } else if (className == "LrCompressor") {
          ptr = new LrCompressor<D,T>(*sysPtr_);
       }

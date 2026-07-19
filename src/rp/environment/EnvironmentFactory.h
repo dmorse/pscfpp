@@ -1,5 +1,5 @@
-#ifndef RPC_ENVIRONMENT_FACTORY_H
-#define RPC_ENVIRONMENT_FACTORY_H
+#ifndef RP_ENVIRONMENT_FACTORY_H
+#define RP_ENVIRONMENT_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,10 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/environment/EnvironmentFactory.h>
-#include <rpc/system/Types.h>
+#include <util/param/Factory.h>            // base class template
+#include <prdc/environment/Environment.h>  // base class argument
 
-#if 0
+#include <string>
+
 // Forward declarations
 namespace Pscf {
    namespace Rp {
@@ -21,7 +22,7 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
 
    using namespace Util;
@@ -30,10 +31,10 @@ namespace Rpc {
    /**
    * Factory for subclasses of Environment.
    *
-   * \ingroup Rpc_Environment_Module
+   * \ingroup Rp_Environment_Module
    */
 
-   template <int D>
+   template <int D, class T>
    class EnvironmentFactory : public Factory<Environment> 
    {
 
@@ -42,7 +43,7 @@ namespace Rpc {
       /**
       * Constructor.
       */
-      EnvironmentFactory(Rp::System<D, Rpc::Types<D> >& system);
+      EnvironmentFactory(System<D,T>& system);
 
       /**
       * Method to create any Environment supplied with PSCF.
@@ -52,25 +53,16 @@ namespace Rpc {
       */
       Environment* factory(const std::string &className) const;
 
-      using Factory<Environment>::trySubfactories;
-      using Factory<Environment>::readObjectOptional;
+      //using Factory<Environment>::trySubfactories;
+      //using Factory<Environment>::readObjectOptional;
 
    private:
 
       /// Pointer to the parent system.
-      Rp::System<D, Rpc::Types<D> >* sysPtr_;
+      System<D,T>* sysPtr_;
 
    };
-}
-}
-#endif
 
-// Explicit instantiation declarations
-namespace Pscf {
-   namespace Rp {
-      extern template class EnvironmentFactory<1, Rpc::Types<1> >;
-      extern template class EnvironmentFactory<2, Rpc::Types<2> >;
-      extern template class EnvironmentFactory<3, Rpc::Types<3> >;
-   }
+}
 }
 #endif

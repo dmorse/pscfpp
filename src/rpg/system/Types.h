@@ -29,65 +29,6 @@ namespace Pscf {
          template <int D> class WaveList;
       }
    }
-   namespace Rpg {
-      //template <int D> class System;
-      //template <int D> class SystemConstRef;
-      //template <int D> class Mixture;
-      //template <int D> class MixtureModifier;
-      //template <int D> class Polymer;
-      //template <int D> class Solvent;
-      //template <int D> class Block;
-      //template <int D> class Propagator;
-      //template <int D> class Domain;
-      //template <int D> class FieldIo;
-      //template <int D> class WFields;
-      //template <int D> class CFields;
-      //template <int D> class Mask;
-      //template <int D> class ScftThermo;
-
-      template <int D> class EnvironmentFactory;
-
-      //template <int D> class Iterator;
-      //template <int D> class IteratorFactory;
-
-      //template <int D> class Sweep;
-      //template <int D> class SweepParameter;
-      //template <int D> class BasisFieldState;
-      //template <int D> class SweepFactory;
-
-      //template <int D> class Simulator;
-      //template <int D> class SimState;
-      //template <int D> class SimulatorFactory;
-
-      //template <int D> class Compressor;
-      //template <int D> class IntraCorrelation;
-      //template <int D> class CompressorFactory;
-
-      //template <int D> class Analyzer;
-      //template <int D> class AverageAnalyzer;
-      //template <int D> class AverageListAnalyzer;
-      //template <int D> class AnalyzerManager;
-      //template <int D> class AnalyzerFactory;
-
-      //template <int D> class BdSimulator;
-      //template <int D> class BdStep;
-      //template <int D> class BdStepFactory;
-
-      //template <int D> class McSimulator;
-      //template <int D> class McMove;
-      //template <int D> class McMoveManager;
-      //template <int D> class McMoveFactory;
-
-      //template <int D> class TrajectoryReader;
-      //template <int D> class TrajectoryReaderFactory;
-
-      //template <int D> class Perturbation;
-      //template <int D> class PerturbationFactory;
-
-      //template <int D> class Ramp;
-      //template <int D> class RampParameter;
-      //template <int D> class RampFactory;
-   }
 }
 
 namespace Pscf {
@@ -118,8 +59,6 @@ namespace Rpg {
       using RDevArray = DevArray<Real>;
       using RLocArray = LocArray<Real>;
 
-      //using Vector = DevArray<Real>;
-
       using VecRandom = Pscf::CudaVecRandom;
 
       using RField = Prdc::Cuda::RField<D>;
@@ -128,65 +67,6 @@ namespace Rpg {
       using RFieldComparison = Prdc::Cuda::RFieldComparison<D>;
       using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;
       using WaveList = Prdc::Cuda::WaveList<D>;
-
-      //using System = Rp::System<D, Rpg::Types<D> >;
-      //using SystemConstRef = Rp::SystemConstRef<D, Rpg::Types<D> >;
-
-      //using Mixture = Rp::Mixture<D, Rpg::Types<D> >;
-      //using MixtureModifier = Rp::MixtureModifier<D, Rpg::Types<D> >;
-      //using Polymer = Rpg::Polymer<D>;
-      //using Solvent = Rpg::Solvent<D>;
-      //using Block = Rpg::Block<D>;
-      //using Propagator = Rpg::Propagator<D>;
-
-      //using Domain = Rpg::Domain<D>;
-      //using FieldIo = Rpg::FieldIo<D>;
-      //using WFields = Rpg::WFields<D>;
-      //using CFields = Rpg::CFields<D>;
-      //using Mask = Rpg::Mask<D>;
-
-      using EnvironmentFactory = Rpg::EnvironmentFactory<D>;
-
-      //using ScftThermo = Rp::ScftThermo<D, Rpg::Types<D> >;
-      //using Iterator = Rp::Iterator<D, Rpg::Types<D> >;
-      //using IteratorFactory = Rp::IteratorFactory<D, Rpg::Types<D> >;
-      //using Sweep = Rp::Sweep<D, Rpg::Types<D> >;
-      //using SweepParameter = Rp::SweepParameter<D, Rpg::Types<D> >;
-      //using BasisFieldState = Rp::BasisFieldState<D, Rpg::Types<D> >;
-      //using SweepFactory = Rp::SweepFactory<D, Rpg::Types<D> >;
-
-      //using Simulator = Rp::Simulator<D, Rpg::Types<D> >;
-      //using SimState = Rp::SimState<D, Rpg::Types<D> >;
-      //using SimulatorFactory = Rp::SimulatorFactory<D, Rpg::Types<D> >;
-
-      //using Compressor = Rp::Compressor<D, Rpg::Types<D> >;
-      //using IntraCorrelation = Rp::IntraCorrelation<D, Rpg::Types<D> >;
-      //using CompressorFactory = Rp::CompressorFactory<D, Rpg::Types<D> >;
-
-      //using BdSimulator = Rp::BdSimulator<D, Rpg::Types<D> >;
-      //using BdStep = Rp::BdStep<D, Rpg::Types<D> >;
-      //using BdStepFactory = Rp::BdStepFactory<D, Rpg::Types<D> >;
-
-      //using McSimulator = Rp::McSimulator<D, Rpg::Types<D> >;
-      //using McMove = Rp::McMove<D, Rpg::Types<D> >;
-      //using McMoveManager = Rp::McMoveManager<D, Rpg::Types<D> >;
-      //using McMoveFactory = Rp::McMoveFactory<D, Rpg::Types<D> >;
-
-      //using Perturbation = Rp::Perturbation<D, Rpg::Types<D> >;
-      //using PerturbationFactory = Rp::PerturbationFactory<D, Rpg::Types<D> >;
-
-      //using Ramp = Rp::Ramp<D, Rpg::Types<D> >;
-      //using RampParameter = Rp::RampParameter<D, Rpg::Types<D> >;
-      //using RampFactory = Rp::RampFactory<D, Rpg::Types<D> >;
-
-      //using Analyzer = Rp::Analyzer<D, Rpg::Types<D> >;
-      //using AverageAnalyzer = Rp::AverageAnalyzer<D, Rpg::Types<D> >;
-      //using AverageListAnalyzer = Rp::AverageListAnalyzer<D, Rpg::Types<D> >;
-      //using AnalyzerManager = Rp::AnalyzerManager<D, Rpg::Types<D> >;
-      //using AnalyzerFactory = Rpg::AnalyzerFactory<D>;
-
-      //using TrajectoryReader = Rp::TrajectoryReader<D, Rpg::Types<D> >;
-      //using TrajectoryReaderFactory = Rp::TrajectoryReaderFactory<D, Rpg::Types<D> >;
 
       // Static members
 

@@ -22,8 +22,8 @@ namespace Rp {
    /*
    * Constructor.
    */
-   template <int D, class T, class V>
-   LrAmCompressor<D,T,V>::LrAmCompressor(System<D,T>& system)
+   template <int D, class T>
+   LrAmCompressor<D,T>::LrAmCompressor(System<D,T>& system)
     : intra_(system),
       isIntraCalculated_(false),
       isAllocated_(false)
@@ -35,8 +35,8 @@ namespace Rp {
    /*
    * Read body of parameter file block and initialize.
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::readParameters(std::istream& in)
+   template <int D, class T>
+   void LrAmCompressor<D,T>::readParameters(std::istream& in)
    {
       // Default values
       AmTmpl::maxItr_ = 100;
@@ -51,8 +51,8 @@ namespace Rp {
    /*
    * Initialize just before entry to iterative loop.
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::setup(bool isContinuation)
+   template <int D, class T>
+   void LrAmCompressor<D,T>::setup(bool isContinuation)
    {
 
       // Allocate memory required by AM algorithm, if not done earlier
@@ -92,8 +92,8 @@ namespace Rp {
    /*
    * Main function - iteratively adjust the pressure field.
    */
-   template <int D, class T, class V>
-   int LrAmCompressor<D,T,V>::compress()
+   template <int D, class T>
+   int LrAmCompressor<D,T>::compress()
    {
       int solve = AmTmpl::solve();
       return solve;
@@ -102,8 +102,8 @@ namespace Rp {
    /*
    * Output timer results.
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::outputTimers(std::ostream& out) const
+   template <int D, class T>
+   void LrAmCompressor<D,T>::outputTimers(std::ostream& out) const
    {
       out << "\n";
       out << "LrAmCompressor time contributions:\n";
@@ -113,8 +113,8 @@ namespace Rp {
    /*
    * Clear timers and the MDE counter.
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::clearTimers()
+   template <int D, class T>
+   void LrAmCompressor<D,T>::clearTimers()
    {
       AmTmpl::clearTimers();
       CompressorT::mdeCounter_ = 0;
@@ -125,15 +125,15 @@ namespace Rp {
    /*
    * Compute and return the number of elements in a field vector.
    */
-   template <int D, class T, class V>
-   int LrAmCompressor<D,T,V>::nElements()
+   template <int D, class T>
+   int LrAmCompressor<D,T>::nElements()
    {  return system().domain().mesh().size(); }
 
    /*
    * Does the system have an initial field guess?
    */
-   template <int D, class T, class V>
-   bool LrAmCompressor<D,T,V>::hasInitialGuess()
+   template <int D, class T>
+   bool LrAmCompressor<D,T>::hasInitialGuess()
    {  return system().w().hasData(); }
 
    /*
@@ -142,8 +142,8 @@ namespace Rp {
    * The field variable is the change in the Lagrange multiplier field
    * relative to that used in the initial array of monomer fields, w0_.
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::getCurrent(VectorT& curr)
+   template <int D, class T>
+   void LrAmCompressor<D,T>::getCurrent(VectorT& curr)
    {
       /*
       * The field that we are adjusting is the Langrange multiplier
@@ -157,8 +157,8 @@ namespace Rp {
    /*
    * Perform the main system computation (solve the MDE).
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::evaluate()
+   template <int D, class T>
+   void LrAmCompressor<D,T>::evaluate()
    {
       system().compute();
       ++(CompressorT::mdeCounter_);
@@ -167,8 +167,8 @@ namespace Rp {
    /*
    * Compute the residual vector for the current system state.
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::getResidual(VectorT& resid)
+   template <int D, class T>
+   void LrAmCompressor<D,T>::getResidual(VectorT& resid)
    {
       // Initialize residual to -1.0
       VecOp::eqS(resid, -1.0);
@@ -186,9 +186,9 @@ namespace Rp {
    * This LrAm algorithm uses a quasi-Newton correction step with an
    * approximate Jacobian given by the Jacobian in a homogeneous state.
    */
-   template <int D, class T, class V>
+   template <int D, class T>
    void
-   LrAmCompressor<D,T,V>::addCorrection(VectorT& fieldTrial,
+   LrAmCompressor<D,T>::addCorrection(VectorT& fieldTrial,
                                     VectorT const & resTrial)
    {
       // Copy resTrial to RField resid_
@@ -212,8 +212,8 @@ namespace Rp {
    /*
    * Update the w field values stored in the system
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::update(VectorT& newGuess)
+   template <int D, class T>
+   void LrAmCompressor<D,T>::update(VectorT& newGuess)
    {
       // New field is w0_ + newGuess for the pressure field
       const int nMonomer = system().mixture().nMonomer();
@@ -228,8 +228,8 @@ namespace Rp {
    /*
    * Output results to log file (do-nothing implementation).
    */
-   template <int D, class T, class V>
-   void LrAmCompressor<D,T,V>::outputToLog()
+   template <int D, class T>
+   void LrAmCompressor<D,T>::outputToLog()
    {}
 
 }

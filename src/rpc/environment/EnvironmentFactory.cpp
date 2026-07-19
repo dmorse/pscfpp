@@ -7,7 +7,9 @@
 
 #include "EnvironmentFactory.h"  
 #include "FilmEnvironment.h"
+#include <rp/environment/EnvironmentFactory.tpp>
 
+#if 0
 namespace Pscf {
 namespace Rpc {
 
@@ -17,7 +19,7 @@ namespace Rpc {
    * Constructor
    */
    template <int D>
-   EnvironmentFactory<D>::EnvironmentFactory(Rp::System<D, Rpc::Types<D> >& system)
+   Rp::EnvironmentFactory<D, Rpc::Types<D> >::EnvironmentFactory(Rp::System<D, Rpc::Types<D> >& system)
     : sysPtr_(&system)
    {}
 
@@ -26,7 +28,7 @@ namespace Rpc {
    */
    template <int D>
    Environment* 
-   EnvironmentFactory<D>::factory(std::string const& className) const
+   Rp::EnvironmentFactory<D, Rpc::Types<D> >::factory(std::string const& className) const
    {
       Environment* ptr = nullptr;
 
@@ -36,7 +38,7 @@ namespace Rpc {
  
       // Try to match classname
       if (className == "FilmEnvironment") {
-         ptr = new FilmEnvironment<D>(*sysPtr_);
+         ptr = new Rp::FilmEnvironment<D, Rpc::Types<D> >(*sysPtr_);
       }
 
       return ptr;
@@ -44,12 +46,13 @@ namespace Rpc {
 
 }
 }
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {
-namespace Rpc {
-   template class EnvironmentFactory<1>;
-   template class EnvironmentFactory<2>;
-   template class EnvironmentFactory<3>;
-}
+   namespace Rp {
+      template class EnvironmentFactory<1, Rpc::Types<1> >;
+      template class EnvironmentFactory<2, Rpc::Types<2> >;
+      template class EnvironmentFactory<3, Rpc::Types<3> >;
+   }
 }

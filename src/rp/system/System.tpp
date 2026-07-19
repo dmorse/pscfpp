@@ -101,7 +101,7 @@ namespace Rp {
 
       // Create Factories for optional components
       environmentFactoryPtr_ 
-         = new typename T::EnvironmentFactory(*this);
+         = new EnvironmentFactory<D,T>(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D,T>(*this);
       sweepFactoryPtr_ = new SweepFactory<D,T>(*this);
       simulatorFactoryPtr_ = new SimulatorFactory<D,T>(*this);

@@ -22,11 +22,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template 
-      class AmCompressor<1, Rpg::Types<1>, DeviceArray<cudaReal> >;
-      template 
-      class AmCompressor<2, Rpg::Types<2>, DeviceArray<cudaReal> >;
-      template 
-      class AmCompressor<3, Rpg::Types<3>, DeviceArray<cudaReal> >;
+      template class AmCompressor<1, Rpg::Types<1> >;
+      template class AmCompressor<2, Rpg::Types<2> >;
+      template class AmCompressor<3, Rpg::Types<3> >;
    }
 }

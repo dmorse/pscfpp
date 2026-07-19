@@ -214,7 +214,7 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<3, Rpg::Types<3> > system;
-      Rp::AmCompressor<3, Rpg::Types<3>, DeviceArray<cudaReal> > amCompressor(system);
+      Rp::AmCompressor<3, Rpg::Types<3> > amCompressor(system);
       testCompressor(amCompressor, system, 
                      "in/param_AmCompressor",
                      "out/testAmCompressor.log");
@@ -234,7 +234,7 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<3, Rpg::Types<3> > system;
-      Rp::LrAmCompressor<3, Rpg::Types<3>, DeviceArray<cudaReal> > lrAmCompressor(system);
+      Rp::LrAmCompressor<3, Rpg::Types<3> > lrAmCompressor(system);
       testCompressor(lrAmCompressor, system, 
                      "in/param_LrAmCompressor",
                      "out/testLrAmCompressor.log");

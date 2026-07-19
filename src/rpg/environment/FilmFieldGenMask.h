@@ -56,7 +56,7 @@ namespace Rp {
       * 
       * \param sys  System parent object
       */
-      FilmFieldGenMask(Rp::System<D, Rpg::Types<D> >& sys);
+      FilmFieldGenMask(System<D, Rpg::Types<D> >& sys);
 
       /**
       * Destructor
@@ -115,11 +115,11 @@ namespace Rp {
       /**
       * Get the System associated with this object by reference.
       */
-      Rp::System<D, Rpg::Types<D> >& system();
+      System<D, Rpg::Types<D> >& system();
       /**
       * Get the System associated with this object by const reference.
       */
-      Rp::System<D, Rpg::Types<D> > const & system() const;
+      System<D, Rpg::Types<D> > const & system() const;
 
       /**
       * Get the space group name for this system.
@@ -141,7 +141,7 @@ namespace Rp {
    private:
 
       /// Pointer to the associated system object.
-      Rp::System<D, Rpg::Types<D> >* sysPtr_;
+      System<D, Rpg::Types<D> >* sysPtr_;
 
    };
 
@@ -149,7 +149,7 @@ namespace Rp {
 
    // Get parent System by non-const reference.
    template <int D> inline
-   Rp::System<D, Rpg::Types<D> >& 
+   System<D, Rpg::Types<D> >& 
    FilmFieldGenMask<D, Rpg::Types<D> >::system() 
    {  
       UTIL_CHECK(sysPtr_);
@@ -158,7 +158,7 @@ namespace Rp {
 
    // Get parent System by const reference.
    template <int D> inline
-   Rp::System<D, Rpg::Types<D> > const & 
+   System<D, Rpg::Types<D> > const & 
    FilmFieldGenMask<D, Rpg::Types<D> >::system() const
    {
       UTIL_CHECK(sysPtr_);

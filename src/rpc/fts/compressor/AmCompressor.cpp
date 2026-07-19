@@ -6,12 +6,15 @@
 */
 
 #include "AmCompressor.h"
+
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>
 #include <rpc/field/Domain.h>
 #include <rpc/field/WFields.h>
 #include <rpc/field/CFields.h>
+
 #include <prdc/field/cpu/RField.h>
+
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
@@ -20,9 +23,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cpu;
-      template class AmCompressor<1, Rpc::Types<1>, FftwDRArray<double> >;
-      template class AmCompressor<2, Rpc::Types<2>, FftwDRArray<double> >;
-      template class AmCompressor<3, Rpc::Types<3>, FftwDRArray<double> >;
+      template class AmCompressor<1, Rpc::Types<1> >;
+      template class AmCompressor<2, Rpc::Types<2> >;
+      template class AmCompressor<3, Rpc::Types<3> >;
    }
 }

@@ -30,6 +30,7 @@ namespace Pscf {
       template <int D, class T> class Mixture;
       template <int D, class T> class MixtureModifier;
       template <int D, class T> class ScftThermo;
+      template <int D, class T> class EnvironmentFactory;
       template <int D, class T> class Iterator;
       template <int D, class T> class IteratorFactory;
       template <int D, class T> class Sweep;
@@ -606,7 +607,7 @@ namespace Rp {
       /**
       * Pointer to an %Environment factory object.
       */
-      typename T::EnvironmentFactory* environmentFactoryPtr_;
+      EnvironmentFactory<D,T>* environmentFactoryPtr_;
 
       /**
       * Pointer to an SCFT Iterator.

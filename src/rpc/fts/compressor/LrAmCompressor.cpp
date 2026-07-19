@@ -22,17 +22,13 @@
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
-#include <rp/fts/compressor/LrAmCompressor.tpp>
+#include <rp/fts/compressor/LrAmCompressor.tpp> // implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cpu;
-      template 
-      class LrAmCompressor<1, Rpc::Types<1>, FftwDRArray<double> >;
-      template 
-      class LrAmCompressor<2, Rpc::Types<2>, FftwDRArray<double> >;
-      template 
-      class LrAmCompressor<3, Rpc::Types<3>, FftwDRArray<double> >;
+      template class LrAmCompressor<1, Rpc::Types<1> >;
+      template class LrAmCompressor<2, Rpc::Types<2> >;
+      template class LrAmCompressor<3, Rpc::Types<3> >;
    }
 }

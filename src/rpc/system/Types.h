@@ -31,11 +31,6 @@ namespace Pscf {
          template <int D> class WaveList;
       }
    }
-   namespace Rpc {
-
-      template <int D> class EnvironmentFactory;
-
-   }
 }
 
 namespace Pscf {
@@ -49,7 +44,7 @@ namespace Rpc {
    * Aliases for types used in the Rpc program-level namespace.
    */
    template <int D>
-   class Types
+   class Types 
    {
 
    public:
@@ -72,9 +67,6 @@ namespace Rpc {
       using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;
       using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
       using WaveList = Prdc::Cpu::WaveList<D>;
-
-      using Environment = Prdc::Environment;
-      using EnvironmentFactory = Rpc::EnvironmentFactory<D>;
 
       // Static members
 

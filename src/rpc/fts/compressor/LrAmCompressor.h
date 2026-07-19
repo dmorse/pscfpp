@@ -18,13 +18,9 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cpu;;
-      extern template 
-      class LrAmCompressor<1, Rpc::Types<1>, FftwDRArray<double> >;
-      extern template 
-      class LrAmCompressor<2, Rpc::Types<2>, FftwDRArray<double> >;
-      extern template 
-      class LrAmCompressor<3, Rpc::Types<3>, FftwDRArray<double> >;
+      extern template class LrAmCompressor<1, Rpc::Types<1> >; 
+      extern template class LrAmCompressor<2, Rpc::Types<2> >;
+      extern template class LrAmCompressor<3, Rpc::Types<3> >;
    }
 }
 #endif

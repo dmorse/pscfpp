@@ -52,7 +52,7 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<1, Rpc::Types<1> > system;
-      FilmEnvironment<1> ext(system);
+      Rp::FilmEnvironment<1, Rpc::Types<1> > ext(system);
    }
 
    void testReadParameters() // test FilmEnvironment::readParameters()
@@ -63,7 +63,7 @@ public:
       // Set up film environment from file
       Rp::System<1, Rpc::Types<1> > system;
       createSystem(system, "in/system1DEnv");
-      FilmEnvironment<1> env(system);
+      Rp::FilmEnvironment<1, Rpc::Types<1> > env(system);
 
       std::ifstream in;
       openInputFile("in/environment1", in);

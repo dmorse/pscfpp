@@ -8,73 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FilmFieldGenMask.h"
-#include "FilmFieldGenExt.h"
-#include <rpg/scft/iterator/Iterator.h>
-#include <prdc/environment/MixAndMatchEnv.h>
+#include <rp/environment/FilmEnvironment.h> // base class template
+#include <rpg/system/Types.h>               // base class argument
 
+// Explicit instantiation declarations
 namespace Pscf {
-namespace Rpg {
-
-   using namespace Util;
-
-   template <int D> 
-   class System;
-
-   /**
-   * Class defining mask & external fields for thin-film systems
-   * 
-   * \ingroup Rpg_Field_Module
-   */
-   template <int D>
-   class FilmEnvironment : public MixAndMatchEnv
-   {
-
-   public:
-
-      /**
-      * Constructor
-      * 
-      * \param sys  System parent object
-      */
-      FilmEnvironment(Rp::System<D, Rpg::Types<D> >& sys)
-       : MixAndMatchEnv::MixAndMatchEnv(),
-         sysPtr_(&sys)
-      {  ParamComposite::setClassName("FilmEnvironment"); }
-
-      /**
-      * Destructor
-      */
-      ~FilmEnvironment()
-      {}
-
-   private:
-
-      /// Pointer to the associated system object.
-      Rp::System<D, Rpg::Types<D> >* sysPtr_;
-
-      /**
-      * Create FieldGenerator objects for the mask & external field
-      * 
-      * This method dynamically allocates FieldGenerator objects and
-      * assigns fieldGenPtr1_ and fieldGenPtr2_ to them, where the 
-      * actual type of each of these objects will be a subclass of 
-      * FieldGenerator, and the type will depend on the type_ parameter
-      * that is read by this object.
-      */
-      void createGenerators()
-      {
-         MixAndMatchEnv::fieldGenPtr1_ = new Rp::FilmFieldGenMask<D, Rpg::Types<D> >(*sysPtr_);
-         MixAndMatchEnv::fieldGenPtr2_ = new Rp::FilmFieldGenExt<D, Rpg::Types<D> >(*sysPtr_);
-      }
-
-   };
-
-   // Explicit instantiation declarations
-   extern template class FilmEnvironment<1>;
-   extern template class FilmEnvironment<2>;
-   extern template class FilmEnvironment<3>;
-
-} // namespace Rpg
-} // namespace Pscf
+   namespace Rp {
+      extern template class FilmEnvironment<1, Rpg::Types<1> >;
+      extern template class FilmEnvironment<2, Rpg::Types<2> >;
+      extern template class FilmEnvironment<3, Rpg::Types<3> >;
+   } 
+} 
 #endif

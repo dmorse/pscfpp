@@ -38,14 +38,13 @@ namespace Rp {
    *
    *    - D : dimension of space (D=1, 2, or 3)
    *    - T : Types class (Rpc::Types<D> or Rpg::Types<D>)
-   *    - V : 1D array type used for state and residual vectors
    *
    * \see \ref rp_AmCompressor_page "Manual Page"
    * \ingroup Rp_Fts_Compressor_Module
    */
-   template <int D, class T, class V>
+   template <int D, class T>
    class AmCompressor 
-    : public AmIteratorTmpl< Compressor<D,T>, V >
+    : public AmIteratorTmpl< Compressor<D,T>, typename T::RDevArray >
    {
 
    public:
@@ -101,16 +100,23 @@ namespace Rp {
 
    protected:
 
-      /// Type for state and residual vectors.
-      using VectorT = V;
+      // Inherited protected member function
+      using Compressor<D,T>::system;
+
+   private:
+
+      // Private typename aliases
 
       /// Compressor type.
       using CompressorT = Compressor<D,T>;
 
-      // Inherited protected member function
-      using CompressorT::system;
+      /// Type for state and residual vectors.
+      using VectorT = typename T::RDevArray;
 
-   private:
+      /// Typename alias for base class.
+      using AmTmplT = AmIteratorTmpl< CompressorT, VectorT>;
+
+      // Private member variables
 
       /**
       * Initial values of all fields.
@@ -174,9 +180,6 @@ namespace Rp {
       * Output relevant system details to the iteration log.
       */
       void outputToLog() override;
-
-      /// Typename alias for base class.
-      using AmTmpl = AmIteratorTmpl< CompressorT, VectorT >;
 
    };
 
