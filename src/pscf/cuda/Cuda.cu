@@ -18,14 +18,14 @@ namespace Pscf {
    * Initialize backend.
    */
    template <int D>
-   void Cuda<D>::init()
+   void CudaTp<D>::init()
    {  ThreadArray::init(); }
 
    /*
    * Set thread count in backend.
    */
    template <int D>
-   void Cuda<D>::setThreadCount(int nThread)
+   void CudaTp<D>::setThreadCount(int nThread)
    {
       ThreadArray::setThreadsPerBlock(nThread);
       ThreadMesh::setThreadsPerBlock(nThread);
@@ -39,7 +39,7 @@ namespace Pscf {
    * link the two RNGs.
    */
    template <int D>
-   void Cuda<D>::linkVecRandom(VecRandom& vr, Random & sr)
+   void CudaTp<D>::linkVecRandom(VecRandom& vr, Random & sr)
    {}
 
    /*
@@ -50,12 +50,12 @@ namespace Pscf {
    * in this case.
    */
    template <int D>
-   void Cuda<D>::seedVecRandom(VecRandom& vr, long seed)
+   void CudaTp<D>::seedVecRandom(VecRandom& vr, long seed)
    {  vr.setSeed(seed); }
 
    // Explicit instantiation definitions
-   template class Cuda<1>;
-   template class Cuda<2>;
-   template class Cuda<3>;
+   template class CudaTp<1>;
+   template class CudaTp<2>;
+   template class CudaTp<3>;
 
 }

@@ -30,17 +30,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   MaxOrderParameter<D, Rpg::Types<D> >::MaxOrderParameter(
-                           Simulator<D, Rpg::Types<D> >& simulator,
-                           System<D, Rpg::Types<D> >& system)
-    : MaxOrderParameterBase<D, Rpg::Types<D> >(simulator, system)
+   MaxOrderParameter<D, CudaTp<D> >::MaxOrderParameter(
+                           Simulator<D, CudaTp<D> >& simulator,
+                           System<D, CudaTp<D> >& system)
+    : MaxOrderParameterBase<D, CudaTp<D> >(simulator, system)
    {}
 
    /*
    * Compute and return maximum of square magnitude Fourier amplitude.
    */
    template <int D>
-   void MaxOrderParameter<D, Rpg::Types<D> >::setup()
+   void MaxOrderParameter<D, CudaTp<D> >::setup()
    {
       // Setup base class
       Base::setup();
@@ -59,7 +59,7 @@ namespace Rp {
    * Compute and return maximum of square magnitude Fourier amplitude.
    */
    template <int D>
-   double MaxOrderParameter<D, Rpg::Types<D> >::compute()
+   double MaxOrderParameter<D, CudaTp<D> >::compute()
    {
       // Compute device array psi_ of squared Fourier magnitudes
       Base::computePsi();
@@ -79,11 +79,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class MaxOrderParameterBase<1, Rpg::Types<1> >;
-      template class MaxOrderParameterBase<2, Rpg::Types<2> >;
-      template class MaxOrderParameterBase<3, Rpg::Types<3> >;
-      template class MaxOrderParameter<1, Rpg::Types<1> >;
-      template class MaxOrderParameter<2, Rpg::Types<2> >;
-      template class MaxOrderParameter<3, Rpg::Types<3> >;
+      template class MaxOrderParameterBase<1, CudaTp<1> >;
+      template class MaxOrderParameterBase<2, CudaTp<2> >;
+      template class MaxOrderParameterBase<3, CudaTp<3> >;
+      template class MaxOrderParameter<1, CudaTp<1> >;
+      template class MaxOrderParameter<2, CudaTp<2> >;
+      template class MaxOrderParameter<3, CudaTp<3> >;
    }
 }

@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/PropagatorBase.h>   // base class template
-#include <rpg/system/Types.h>            // base class template argument
+#include <pscf/cuda/Cuda.h>            // base class template argument
 #include <pscf/cuda/DeviceArray.h>       // member
 
 namespace Pscf {
@@ -26,8 +26,8 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Propagator<D, Rpg::Types<D> > 
-    : public Rp::PropagatorBase< D, Rpg::Types<D> >
+   class Propagator<D, CudaTp<D> > 
+    : public Rp::PropagatorBase< D, CudaTp<D> >
    {
 
    public:
@@ -81,7 +81,7 @@ namespace Rp {
    protected:
 
       /// Direct base class.
-      using RpPropagatorT = Rp::PropagatorBase<D, Rpg::Types<D> >;
+      using RpPropagatorT = Rp::PropagatorBase<D, CudaTp<D> >;
 
       // Inherited typename alias
       using typename RpPropagatorT::PropagatorTmplT;
@@ -121,7 +121,7 @@ namespace Rp {
    * Return the full array of q-fields.
    */
    template <int D> inline
-   DeviceArray<cudaReal> const & Propagator<D, Rpg::Types<D> >::qAll()
+   DeviceArray<cudaReal> const & Propagator<D, CudaTp<D> >::qAll()
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFieldsAll_;
@@ -133,12 +133,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class PropagatorBase<1, Rpg::Types<1> >;
-      extern template class PropagatorBase<2, Rpg::Types<2> >;
-      extern template class PropagatorBase<3, Rpg::Types<3> >;
-      extern template class Propagator<1, Rpg::Types<1> >;
-      extern template class Propagator<2, Rpg::Types<2> >;
-      extern template class Propagator<3, Rpg::Types<3> >;
+      extern template class PropagatorBase<1, CudaTp<1> >;
+      extern template class PropagatorBase<2, CudaTp<2> >;
+      extern template class PropagatorBase<3, CudaTp<3> >;
+      extern template class Propagator<1, CudaTp<1> >;
+      extern template class Propagator<2, CudaTp<2> >;
+      extern template class Propagator<3, CudaTp<3> >;
    }
 }
 #endif

@@ -31,17 +31,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactor<D, Rpg::Types<D> >::BinaryStructureFactor(
-              Simulator<D, Rpg::Types<D> >& simulator,
-              System<D, Rpg::Types<D> >& system)
-    : BinaryStructureFactorBase< D, Rpg::Types<D> >(simulator, system)
+   BinaryStructureFactor<D, CudaTp<D> >::BinaryStructureFactor(
+              Simulator<D, CudaTp<D> >& simulator,
+              System<D, CudaTp<D> >& system)
+    : BinaryStructureFactorBase< D, CudaTp<D> >(simulator, system)
    {}
 
    /*
    * Setup before entering main loop.
    */
    template <int D>
-   void BinaryStructureFactor<D, Rpg::Types<D> >::setup()
+   void BinaryStructureFactor<D, CudaTp<D> >::setup()
    {
       allocate();
       UTIL_CHECK(wk_.isAllocated());
@@ -59,7 +59,7 @@ namespace Rp {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D>
-   void BinaryStructureFactor<D, Rpg::Types<D> >::sample(long iStep)
+   void BinaryStructureFactor<D, CudaTp<D> >::sample(long iStep)
    {
       if (AnalyzerT::isAtInterval(iStep)) {
          Base::computeW();
@@ -74,11 +74,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BinaryStructureFactorBase<1, Rpg::Types<1> >;
-      template class BinaryStructureFactorBase<2, Rpg::Types<2> >;
-      template class BinaryStructureFactorBase<3, Rpg::Types<3> >;
-      template class BinaryStructureFactor<1, Rpg::Types<1> >;
-      template class BinaryStructureFactor<2, Rpg::Types<2> >;
-      template class BinaryStructureFactor<3, Rpg::Types<3> >;
+      template class BinaryStructureFactorBase<1, CudaTp<1> >;
+      template class BinaryStructureFactorBase<2, CudaTp<2> >;
+      template class BinaryStructureFactorBase<3, CudaTp<3> >;
+      template class BinaryStructureFactor<1, CudaTp<1> >;
+      template class BinaryStructureFactor<2, CudaTp<2> >;
+      template class BinaryStructureFactor<3, CudaTp<3> >;
    }
 }

@@ -76,7 +76,7 @@ namespace Rp {
    * <b> Template parameters </b>:
    *
    *   - D   : dimension of space
-   *   - T   : a Types class (Cpp<D> or Rpg::Types<D>)
+   *   - T   : a Types class (Cpp<D> or CudaTp<D>)
    *
    * <b> Subclasses </b>: Specializations of the class template
    * Mask \<D, T\> are used as base classes for specializations of the 

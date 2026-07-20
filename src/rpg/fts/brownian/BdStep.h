@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/brownian/BdStep.h>
-#include <rpg/system/Types.h>
+#include <pscf/cuda/Cuda.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BdStep< 1, Rpg::Types<1> >;
-      extern template class BdStep< 2, Rpg::Types<2> >;
-      extern template class BdStep< 3, Rpg::Types<3> >;
+      extern template class BdStep< 1, CudaTp<1> >;
+      extern template class BdStep< 2, CudaTp<2> >;
+      extern template class BdStep< 3, CudaTp<3> >;
    }
 }
 #endif

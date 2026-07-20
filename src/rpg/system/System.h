@@ -10,14 +10,14 @@
 
 // Header file includes
 #include <rp/system/System.h>       // base class template
-#include <rpg/system/Types.h>       // base class template argument
+#include <pscf/cuda/Cuda.h>       // base class template argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Rp::System<1, Rpg::Types<1> >;
-      extern template class Rp::System<2, Rpg::Types<1> >;
-      extern template class Rp::System<3, Rpg::Types<1> >;
+      extern template class Rp::System<1, CudaTp<1> >;
+      extern template class Rp::System<2, CudaTp<1> >;
+      extern template class Rp::System<3, CudaTp<1> >;
    }
 }
 #endif

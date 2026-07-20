@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/TrajectoryWriter.h> // base template
-#include <rpg/system/Types.h>                 // base argument
+#include <pscf/cuda/Cuda.h>                 // base argument
 #include "Analyzer.h"                         // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class TrajectoryWriter<1, Rpg::Types<1> >;
-      extern template class TrajectoryWriter<2, Rpg::Types<2> >;
-      extern template class TrajectoryWriter<3, Rpg::Types<3> >;
+      extern template class TrajectoryWriter<1, CudaTp<1> >;
+      extern template class TrajectoryWriter<2, CudaTp<2> >;
+      extern template class TrajectoryWriter<3, CudaTp<3> >;
    }
 }
 #endif

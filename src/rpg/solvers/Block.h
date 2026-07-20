@@ -10,7 +10,7 @@
 
 #include <pscf/solvers/BlockTmpl.h>      // base class template
 
-#include <rpg/system/Types.h>            // template argument
+#include <pscf/cuda/Cuda.h>            // template argument
 #include <prdc/field/cuda/RField.h>            // member
 #include <prdc/field/cuda/RFieldDft.h>         // member
 #include <prdc/field/cuda/FFTBatched.h>        // member
@@ -45,14 +45,14 @@ namespace Rp {
    /**
    * Block within a branched polymer, for Cpp backend.
    *
-   * A Block has two Propagator<D, Rpg::Types<D> > members and an 
+   * A Block has two Propagator<D, CudaTp<D> > members and an 
    * RField<D> monomer concentration field. 
    *
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Block<D, Rpg::Types<D> > 
-     : public BlockTmpl< Rp::Propagator<D, Rpg::Types<D> >, RField<D> >
+   class Block<D, CudaTp<D> > 
+     : public BlockTmpl< Rp::Propagator<D, CudaTp<D> >, RField<D> >
    {
 
    public:
@@ -60,7 +60,7 @@ namespace Rp {
       // Public type name aliases
 
       /// Direct (parent) base class.
-      using BlockTmplT = BlockTmpl< Rp::Propagator<D, Rpg::Types<D> >, RField<D> > ;
+      using BlockTmplT = BlockTmpl< Rp::Propagator<D, CudaTp<D> >, RField<D> > ;
 
       /// Propagator type (inherited).
       using typename BlockTmplT::PropagatorT;
@@ -448,22 +448,22 @@ namespace Rp {
 
    // Get number of contour steps.
    template <int D> inline 
-   int Block<D, Rpg::Types<D> >::ns() const
+   int Block<D, CudaTp<D> >::ns() const
    {  return ns_; }
 
    // Get contour length step size.
    template <int D> inline 
-   double Block<D, Rpg::Types<D> >::ds() const
+   double Block<D, CudaTp<D> >::ds() const
    {  return ds_; }
 
    // Get derivative of free energy w/ respect to a unit cell parameter.
    template <int D> inline
-   double Block<D, Rpg::Types<D> >::stress(int n) const
+   double Block<D, CudaTp<D> >::stress(int n) const
    {  return stress_[n]; }
 
    // Get Mesh by reference.
    template <int D> inline
-   Mesh<D> const & Block<D, Rpg::Types<D> >::mesh() const
+   Mesh<D> const & Block<D, CudaTp<D> >::mesh() const
    {
       UTIL_ASSERT(meshPtr_);
       return *meshPtr_;
@@ -471,7 +471,7 @@ namespace Rp {
 
    // Get FFT by reference.
    template <int D> inline
-   FFT<D> const & Block<D, Rpg::Types<D> >::fft() const
+   FFT<D> const & Block<D, CudaTp<D> >::fft() const
    {
       UTIL_ASSERT(fftPtr_);
       return *fftPtr_;
@@ -479,12 +479,12 @@ namespace Rp {
 
    // Get associated UnitCell<D> by const reference (private).
    template <int D> inline
-   UnitCell<D> const & Block<D, Rpg::Types<D> >::unitCell() const
+   UnitCell<D> const & Block<D, CudaTp<D> >::unitCell() const
    {  return *unitCellPtr_; }
 
    // Get the WaveList by non-const reference (private).
    template <int D> inline
-   WaveList<D> & Block<D, Rpg::Types<D> >::waveList()
+   WaveList<D> & Block<D, CudaTp<D> >::waveList()
    {  return *waveListPtr_; }
 
 } // namespace Rp
@@ -494,16 +494,16 @@ namespace Rp {
 namespace Pscf {
 
    extern template
-   class BlockTmpl< Rp::Propagator<1, Rpg::Types<1> >, Prdc::Cuda::RField<1> >;
+   class BlockTmpl< Rp::Propagator<1, CudaTp<1> >, Prdc::Cuda::RField<1> >;
    extern template
-   class BlockTmpl< Rp::Propagator<2, Rpg::Types<2> >, Prdc::Cuda::RField<2> >;
+   class BlockTmpl< Rp::Propagator<2, CudaTp<2> >, Prdc::Cuda::RField<2> >;
    extern template
-   class BlockTmpl< Rp::Propagator<3, Rpg::Types<3> >, Prdc::Cuda::RField<3> >;
+   class BlockTmpl< Rp::Propagator<3, CudaTp<3> >, Prdc::Cuda::RField<3> >;
 
    namespace Rp {
-      extern template class Block<1, Rpg::Types<1> >;
-      extern template class Block<2, Rpg::Types<2> >;
-      extern template class Block<3, Rpg::Types<3> >;
+      extern template class Block<1, CudaTp<1> >;
+      extern template class Block<2, CudaTp<2> >;
+      extern template class Block<3, CudaTp<3> >;
    }
 }
 #endif

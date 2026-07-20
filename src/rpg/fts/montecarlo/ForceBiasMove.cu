@@ -60,16 +60,16 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   ForceBiasMove<D, Rpg::Types<D> >::ForceBiasMove(
-                             McSimulator<D, Rpg::Types<D> >& simulator)
-    : ForceBiasMoveBase<D, Rpg::Types<D> > (simulator)
+   ForceBiasMove<D, CudaTp<D> >::ForceBiasMove(
+                             McSimulator<D, CudaTp<D> >& simulator)
+    : ForceBiasMoveBase<D, CudaTp<D> > (simulator)
    {}
 
    /*
    * Compute force bias field for use in Metropolis acceptance test.
    */
    template<int D>
-   void ForceBiasMove<D, Rpg::Types<D> >::computeForceBias(
+   void ForceBiasMove<D, CudaTp<D> >::computeForceBias(
                                RField<D>& result,
                                RField<D> const & di,
                                RField<D> const & df,
@@ -98,11 +98,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class ForceBiasMoveBase<1, Rpg::Types<1> >;
-      template class ForceBiasMoveBase<2, Rpg::Types<2> >;
-      template class ForceBiasMoveBase<3, Rpg::Types<3> >;
-      template class ForceBiasMove<1, Rpg::Types<1> >;
-      template class ForceBiasMove<2, Rpg::Types<2> >;
-      template class ForceBiasMove<3, Rpg::Types<3> >;
+      template class ForceBiasMoveBase<1, CudaTp<1> >;
+      template class ForceBiasMoveBase<2, CudaTp<2> >;
+      template class ForceBiasMoveBase<3, CudaTp<3> >;
+      template class ForceBiasMove<1, CudaTp<1> >;
+      template class ForceBiasMove<2, CudaTp<2> >;
+      template class ForceBiasMove<3, CudaTp<3> >;
    }
 }

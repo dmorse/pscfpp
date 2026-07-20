@@ -42,7 +42,7 @@ namespace Pscf {
    * \ingroup Prdc_Field_Module
    */
    template <int D>
-   class Cuda {
+   class CudaTp {
 
    public:
 
@@ -111,9 +111,9 @@ namespace Pscf {
    };
 
    // Explicit instantiation declarations
-   extern template class Cuda<1>;
-   extern template class Cuda<2>;
-   extern template class Cuda<3>;
+   extern template class CudaTp<1>;
+   extern template class CudaTp<2>;
+   extern template class CudaTp<3>;
 
 } // namespace Pscf
 #endif

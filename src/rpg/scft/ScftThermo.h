@@ -9,15 +9,15 @@
 */
 
 #include <rp/scft/ScftThermo.h>         // class template
-#include <rpg/system/Types.h>           // template argument
+#include <pscf/cuda/Cuda.h>           // template argument
 #include <rpg/system/SystemConstRef.h>  // base class
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Rp::ScftThermo<1, Rpg::Types<1> >;
-      extern template class Rp::ScftThermo<2, Rpg::Types<2> >;
-      extern template class Rp::ScftThermo<3, Rpg::Types<3> >;
+      extern template class Rp::ScftThermo<1, CudaTp<1> >;
+      extern template class Rp::ScftThermo<2, CudaTp<2> >;
+      extern template class Rp::ScftThermo<3, CudaTp<3> >;
    }
 } 
 #endif

@@ -22,8 +22,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class ScftThermo<1, Rpg::Types<1> >;
-      template class ScftThermo<2, Rpg::Types<2> >;
-      template class ScftThermo<3, Rpg::Types<3> >;
+      template class ScftThermo<1, CudaTp<1> >;
+      template class ScftThermo<2, CudaTp<2> >;
+      template class ScftThermo<3, CudaTp<3> >;
    }
 }

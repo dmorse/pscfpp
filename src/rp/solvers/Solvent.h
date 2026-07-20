@@ -30,7 +30,7 @@ namespace Rp {
    * <b> Template parameters </b>:
    *
    *   - D : dimension of space (1, 2, or 3)
-   *   - T : Types class (Cpp<D> or Rpg::Types<D>)
+   *   - T : Types class (Cpp<D> or CudaTp<D>)
    *
    * \ingroup Rp_Solver_Module
    */

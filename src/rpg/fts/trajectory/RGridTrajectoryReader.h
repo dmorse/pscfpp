@@ -9,16 +9,16 @@
 */
 
 #include <rp/fts/trajectory/RGridTrajectoryReader.h> // direct base class 
-#include <rpg/system/Types.h>                        // base class argument
+#include <pscf/cuda/Cuda.h>                        // base class argument
 #include <prdc/field/cuda/RField.h>                  // base class member
 #include <rpg/fts/trajectory/TrajectoryReader.h>     // indirect base class 
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class RGridTrajectoryReader<1, Rpg::Types<1> >;
-      extern template class RGridTrajectoryReader<2, Rpg::Types<2> >;
-      extern template class RGridTrajectoryReader<3, Rpg::Types<3> >;
+      extern template class RGridTrajectoryReader<1, CudaTp<1> >;
+      extern template class RGridTrajectoryReader<2, CudaTp<2> >;
+      extern template class RGridTrajectoryReader<3, CudaTp<3> >;
    }
 }
 #endif

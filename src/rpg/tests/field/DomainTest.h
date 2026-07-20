@@ -23,7 +23,7 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Rpg;
+using namespace Pscf::Prdc;
 
 class DomainTest : public LogFileUnitTest 
 {
@@ -34,13 +34,13 @@ class DomainTest : public LogFileUnitTest
 public:
 
    void setUp()
-   { setVerbose(0); }
+   {  setVerbose(0); }
 
    /*
-   * Open and read file header to initialize Rp::Domain<D, Types<D> > system.
+   * Open and read file header to initialize Rp::Domain<D, CudaTp<D> > system.
    */
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, Types<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D, CudaTp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -52,7 +52,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
 
       std::ifstream in;
@@ -63,7 +63,7 @@ public:
       TEST_ASSERT(domain.mesh().dimension(0) == 32);
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
-      TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.unitCell().lattice() == Prdc::UnitCell<3>::Cubic);
       TEST_ASSERT(domain.group().size() == 96);
       if (domain.basis().isInitialized()) {
          TEST_ASSERT(domain.basis().nBasis() == 489);
@@ -74,14 +74,14 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
       TEST_ASSERT(domain.mesh().dimension(0) == 32);
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
-      TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.unitCell().lattice() == Prdc::UnitCell<3>::Cubic);
       TEST_ASSERT(domain.group().size() == 96);
       TEST_ASSERT(domain.basis().isInitialized());
       TEST_ASSERT(domain.basis().nBasis() == 489);

@@ -24,7 +24,7 @@ namespace Rp {
    void run(int argc, char **argv) {
 
       // Construct System object for specific dimension D.
-      Rp::System<D, Rpg::Types<D> > system;
+      Rp::System<D, CudaTp<D> > system;
 
       // Process command line options
       system.setOptions(argc, argv);

@@ -2,7 +2,7 @@
 #define RPG_PERTURBATION_H
 
 #include <rp/fts/perturbation/Perturbation.h>  // base class template
-#include <rpg/system/Types.h>                  // base class argument
+#include <pscf/cuda/Cuda.h>                  // base class argument
 
 // Forward declarations
 namespace Pscf {
@@ -16,9 +16,9 @@ namespace Pscf {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Perturbation<1, Rpg::Types<1> >;
-      extern template class Perturbation<2, Rpg::Types<2> >;
-      extern template class Perturbation<3, Rpg::Types<3> >;
+      extern template class Perturbation<1, CudaTp<1> >;
+      extern template class Perturbation<2, CudaTp<2> >;
+      extern template class Perturbation<3, CudaTp<3> >;
    }
 }
 #endif

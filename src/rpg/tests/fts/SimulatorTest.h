@@ -32,12 +32,11 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cuda;
-using namespace Pscf::Rpg;
 
 class SimulatorTest : public LogFileUnitTest
 {
 
-   Rp::System<3, Rpg::Types<3> > system;
+   Rp::System<3, CudaTp<3> > system;
 
 public:
 
@@ -69,7 +68,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param1_simulator");
-      Rp::Simulator<3, Rpg::Types<3> > simulator(system);
+      Rp::Simulator<3, CudaTp<3> > simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
@@ -109,7 +108,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param1_simulator");
-      Rp::Simulator<3, Rpg::Types<3> > simulator(system);
+      Rp::Simulator<3, CudaTp<3> > simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
@@ -217,7 +216,7 @@ public:
       printMethod(TEST_FUNC);
       
       initSystem("in/param_system_disordered");
-      Rp::Simulator<3, Rpg::Types<3> > simulator(system);
+      Rp::Simulator<3, CudaTp<3> > simulator(system);
       
       simulator.allocate();
       simulator.analyzeChi();
@@ -255,7 +254,7 @@ public:
       printMethod(TEST_FUNC);
       
       initSystem("in/param_system_disordered");
-      Rp::Simulator<3, Rpg::Types<3> > simulator(system);
+      Rp::Simulator<3, CudaTp<3> > simulator(system);
       
       simulator.allocate();
       simulator.analyzeChi();

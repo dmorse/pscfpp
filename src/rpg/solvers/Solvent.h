@@ -9,15 +9,15 @@
 */
 
 #include <rp/solvers/Solvent.h>    // base class template
-#include <rpg/system/Types.h>      // base class template parameter
+#include <pscf/cuda/Cuda.h>      // base class template parameter
 #include <prdc/field/cuda/RField.h>      // member of base class
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Solvent<1, Rpg::Types<1> >;
-      extern template class Solvent<2, Rpg::Types<2> >;
-      extern template class Solvent<3, Rpg::Types<3> >;
+      extern template class Solvent<1, CudaTp<1> >;
+      extern template class Solvent<2, CudaTp<2> >;
+      extern template class Solvent<3, CudaTp<3> >;
    }
 }
 #endif

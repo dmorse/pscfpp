@@ -10,7 +10,7 @@
 
 #include <rp/field/WFieldsBase.h>  // base class template
 #include <rp/field/WFields.h>      // primary template
-#include <rpg/system/Types.h>      // class template argument
+#include <pscf/cuda/Cuda.h>      // class template argument
 
 namespace Pscf {
 namespace Rp {
@@ -31,8 +31,8 @@ namespace Rp {
    * \ingroup Rpg_Field_Module
    */
    template <int D>
-   class WFields<D, Rpg::Types<D> > 
-    : public WFieldsBase<D, Rpg::Types<D> >
+   class WFields<D, CudaTp<D> > 
+    : public WFieldsBase<D, CudaTp<D> >
    {
 
    public:
@@ -51,7 +51,7 @@ namespace Rp {
       void setRGrid(DeviceArray<cudaReal>& fields);
 
       /// Alias for base class.
-      using RpWFields = Rp::WFieldsBase<D, Rpg::Types<D> >;
+      using RpWFields = Rp::WFieldsBase<D, CudaTp<D> >;
 
       // Declaration to avoid hiding overloaded base class method 
       using RpWFields::setRGrid;
@@ -64,12 +64,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class WFieldsBase<1, Rpg::Types<1> >;
-      extern template class WFieldsBase<2, Rpg::Types<2> >;
-      extern template class WFieldsBase<3, Rpg::Types<3> >;
-      extern template class WFields<1, Rpg::Types<1> >;
-      extern template class WFields<2, Rpg::Types<2> >;
-      extern template class WFields<3, Rpg::Types<3> >;
+      extern template class WFieldsBase<1, CudaTp<1> >;
+      extern template class WFieldsBase<2, CudaTp<2> >;
+      extern template class WFieldsBase<3, CudaTp<3> >;
+      extern template class WFields<1, CudaTp<1> >;
+      extern template class WFields<2, CudaTp<2> >;
+      extern template class WFields<3, CudaTp<3> >;
    }
 }
 #endif

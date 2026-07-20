@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/StepLogger.h>  // base class template
-#include <rpg/system/Types.h>            // base class argument
+#include <pscf/cuda/Cuda.h>            // base class argument
 #include <rpg/fts/analyzer/Analyzer.h>   // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class StepLogger< 1, Rpg::Types<1> >;
-      extern template class StepLogger< 2, Rpg::Types<2> >;
-      extern template class StepLogger< 3, Rpg::Types<3> >;
+      extern template class StepLogger< 1, CudaTp<1> >;
+      extern template class StepLogger< 2, CudaTp<2> >;
+      extern template class StepLogger< 3, CudaTp<3> >;
    }
 }
 #endif

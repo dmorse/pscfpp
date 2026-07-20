@@ -10,14 +10,14 @@
 
 #include "AverageAnalyzer.h"
 #include <rp/fts/analyzer/PerturbationDerivative.h>
-#include <rpg/system/Types.h>
+#include <pscf/cuda/Cuda.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class PerturbationDerivative< 1, Rpg::Types<1> >;
-      extern template class PerturbationDerivative< 2, Rpg::Types<2> >;
-      extern template class PerturbationDerivative< 3, Rpg::Types<3> >;
+      extern template class PerturbationDerivative< 1, CudaTp<1> >;
+      extern template class PerturbationDerivative< 2, CudaTp<2> >;
+      extern template class PerturbationDerivative< 3, CudaTp<3> >;
    }
 }
 #endif

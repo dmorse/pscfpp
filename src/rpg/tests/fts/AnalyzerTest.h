@@ -17,7 +17,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cuda;
-using namespace Pscf::Rpg;
 
 class AnalyzerTest : public LogFileUnitTest
 {
@@ -28,7 +27,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, Rpg::Types<D> >& system, std::string filename)
+   void initSystem(Rp::System<D, CudaTp<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -40,7 +39,7 @@ public:
    }
    
    template <int D>
-   void initSimulator(Rp::BdSimulator<D, Rpg::Types<D> >& simulator, std::string filename)
+   void initSimulator(Rp::BdSimulator<D, CudaTp<D> >& simulator, std::string filename)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -50,9 +49,9 @@ public:
    
    void analyzeTrajectory()
    {
-      Rp::System<3, Rpg::Types<3> > system;
+      Rp::System<3, CudaTp<3> > system;
       initSystem(system, "in/param_system_disordered");
-      Rp::BdSimulator<3, Rpg::Types<3> > simulator(system);
+      Rp::BdSimulator<3, CudaTp<3> > simulator(system);
       initSimulator(simulator, "in/param_BdSimulator_analyzer");
       std::string filename = filePrefix() + "in/w_dis_trajectory.rf";
       simulator.analyze(0, 50, "RGridTrajectoryReader", filename);

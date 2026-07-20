@@ -19,12 +19,12 @@
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class SweepTmpl< Rp::BasisFieldState<1, Rpg::Types<1> > >;
-   template class SweepTmpl< Rp::BasisFieldState<2, Rpg::Types<2> > >;
-   template class SweepTmpl< Rp::BasisFieldState<3, Rpg::Types<3> > >;
+   template class SweepTmpl< Rp::BasisFieldState<1, CudaTp<1> > >;
+   template class SweepTmpl< Rp::BasisFieldState<2, CudaTp<2> > >;
+   template class SweepTmpl< Rp::BasisFieldState<3, CudaTp<3> > >;
    namespace Rp {
-      template class Sweep<1, Rpg::Types<1> >;
-      template class Sweep<2, Rpg::Types<2> >;
-      template class Sweep<3, Rpg::Types<3> >;
+      template class Sweep<1, CudaTp<1> >;
+      template class Sweep<2, CudaTp<2> >;
+      template class Sweep<3, CudaTp<3> >;
    }
 }

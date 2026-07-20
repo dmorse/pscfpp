@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/perturbation/PerturbationFactory.h>
-#include <rpg/system/Types.h>
+#include <pscf/cuda/Cuda.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class PerturbationFactory<1, Rpg::Types<1> >;
-      extern template class PerturbationFactory<2, Rpg::Types<2> >;
-      extern template class PerturbationFactory<3, Rpg::Types<3> >;
+      extern template class PerturbationFactory<1, CudaTp<1> >;
+      extern template class PerturbationFactory<2, CudaTp<2> >;
+      extern template class PerturbationFactory<3, CudaTp<3> >;
    }
 }
 #endif

@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/FieldIoBase.h>   // base class template
-#include <rpg/system/Types.h>       // base class template argument
+#include <pscf/cuda/Cuda.h>       // base class template argument
 #include <prdc/field/cuda/RFieldDft.h>    // base class member
 
 // Forward declarations for classes used only via references or pointers
@@ -47,8 +47,8 @@ namespace Rp {
    * \ingroup Rp_Field_Module
    */
    template <int D>
-   class FieldIo<D, Rpg::Types<D> >
-     : public  FieldIoBase< D, Rpg::Types<D> >
+   class FieldIo<D, CudaTp<D> >
+     : public  FieldIoBase< D, CudaTp<D> >
    {
    public:
 
@@ -275,7 +275,7 @@ namespace Rp {
       /**
       * Alias for base class (partial template specialization)
       */
-      using FieldIoBase = Rp::FieldIoBase<D, Rpg::Types<D> >;
+      using FieldIoBase = Rp::FieldIoBase<D, CudaTp<D> >;
 
       // Inherited public member functions
       using FieldIoBase::associate;
@@ -329,12 +329,12 @@ namespace Rp {
 namespace Pscf {
    namespace Rp {
       using namespace Prdc::Cuda;
-      extern template class FieldIoBase<1, Rpg::Types<1> >;
-      extern template class FieldIoBase<2, Rpg::Types<2> >;
-      extern template class FieldIoBase<3, Rpg::Types<3> >;
-      extern template class FieldIo<1, Rpg::Types<1> >;
-      extern template class FieldIo<2, Rpg::Types<2> >;
-      extern template class FieldIo<3, Rpg::Types<3> >;
+      extern template class FieldIoBase<1, CudaTp<1> >;
+      extern template class FieldIoBase<2, CudaTp<2> >;
+      extern template class FieldIoBase<3, CudaTp<3> >;
+      extern template class FieldIo<1, CudaTp<1> >;
+      extern template class FieldIo<2, CudaTp<2> >;
+      extern template class FieldIo<3, CudaTp<3> >;
    }
 }
 #endif

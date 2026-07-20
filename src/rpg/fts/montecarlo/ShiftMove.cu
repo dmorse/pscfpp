@@ -27,8 +27,8 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   ShiftMove<D, Rpg::Types<D> >::ShiftMove(
-                                McSimulator<D, Rpg::Types<D> >& simulator)
+   ShiftMove<D, CudaTp<D> >::ShiftMove(
+                                McSimulator<D, CudaTp<D> >& simulator)
     : ShiftMoveBaseT(simulator)
    {}
 
@@ -36,7 +36,7 @@ namespace Rp {
    * Setup immediately before starting a simulation.
    */
    template <int D>
-   void ShiftMove<D, Rpg::Types<D> >::setup()
+   void ShiftMove<D, CudaTp<D> >::setup()
    {
       ShiftMoveBaseT::setup();
 
@@ -52,7 +52,7 @@ namespace Rp {
    * Compute and store array w_ of shifted fields.
    */
    template <int D>
-   void ShiftMove<D, Rpg::Types<D> >::shiftFields(IntVec<D> const & shift)
+   void ShiftMove<D, CudaTp<D> >::shiftFields(IntVec<D> const & shift)
    {
       IntVec<D> const& dimensions = system().domain().mesh().dimensions();
       const int nMonomer = system().mixture().nMonomer();
@@ -70,11 +70,11 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class ShiftMoveBase<1, Rpg::Types<1> >;
-      template class ShiftMoveBase<2, Rpg::Types<2> >;
-      template class ShiftMoveBase<3, Rpg::Types<3> >;
-      template class ShiftMove<1, Rpg::Types<1> >;
-      template class ShiftMove<2, Rpg::Types<2> >;
-      template class ShiftMove<3, Rpg::Types<3> >;
+      template class ShiftMoveBase<1, CudaTp<1> >;
+      template class ShiftMoveBase<2, CudaTp<2> >;
+      template class ShiftMoveBase<3, CudaTp<3> >;
+      template class ShiftMove<1, CudaTp<1> >;
+      template class ShiftMove<2, CudaTp<2> >;
+      template class ShiftMove<3, CudaTp<3> >;
    }
 }

@@ -9,7 +9,7 @@
 */
 
 #include <rp/scft/iterator/AmIteratorGrid.h>  // class template
-#include <rpg/system/Types.h>                 // class argument
+#include <pscf/cuda/Cuda.h>                 // class argument
 #include <rpg/scft/iterator/Iterator.h>       // indirect base class 
 #include <pscf/cuda/DeviceArray.h>            // base class argument
 
@@ -17,16 +17,16 @@
 namespace Pscf {
 
    extern template class 
-   AmIteratorTmpl<Rp::Iterator<1, Rpg::Types<1> >, DeviceArray<cudaReal> >;
+   AmIteratorTmpl<Rp::Iterator<1, CudaTp<1> >, DeviceArray<cudaReal> >;
    extern template class 
-   AmIteratorTmpl<Rp::Iterator<2, Rpg::Types<2> >, DeviceArray<cudaReal> >;
+   AmIteratorTmpl<Rp::Iterator<2, CudaTp<2> >, DeviceArray<cudaReal> >;
    extern template class 
-   AmIteratorTmpl<Rp::Iterator<3, Rpg::Types<3> >, DeviceArray<cudaReal> >;
+   AmIteratorTmpl<Rp::Iterator<3, CudaTp<3> >, DeviceArray<cudaReal> >;
 
    namespace Rp {
-      extern template class AmIteratorGrid<1, Rpg::Types<1> >;
-      extern template class AmIteratorGrid<2, Rpg::Types<2> >;
-      extern template class AmIteratorGrid<3, Rpg::Types<3> >;
+      extern template class AmIteratorGrid<1, CudaTp<1> >;
+      extern template class AmIteratorGrid<2, CudaTp<2> >;
+      extern template class AmIteratorGrid<3, CudaTp<3> >;
    }
 
 } 

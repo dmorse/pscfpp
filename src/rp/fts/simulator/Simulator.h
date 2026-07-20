@@ -77,7 +77,7 @@ namespace Rp {
    * <b> Template parameters and typename aliases </b>:
    *
    *    D - integer dimensionality of space (D=1, 2, or 3)
-   *    T - Types class, Cpp<D> or Rpg::Types<D>)
+   *    T - Types class, Cpp<D> or CudaTp<D>)
    *
    * \see \ref rp_BdSimulator_page  (manual page)
    * \see \ref rp_McSimulator_page  (manual page)

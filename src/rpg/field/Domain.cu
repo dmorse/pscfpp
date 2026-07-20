@@ -15,8 +15,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Domain<1, Rpg::Types<1> >;
-      template class Domain<2, Rpg::Types<2> >;
-      template class Domain<3, Rpg::Types<3> >;
+      template class Domain<1, CudaTp<1> >;
+      template class Domain<2, CudaTp<2> >;
+      template class Domain<3, CudaTp<3> >;
    }
 }

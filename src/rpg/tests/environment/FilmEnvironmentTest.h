@@ -25,7 +25,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cuda;
-using namespace Pscf::Rpg;
 
 class FilmEnvironmentTest : public UnitTest
 {
@@ -53,8 +52,8 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, Rpg::Types<1> > system;
-      Rp::FilmEnvironment<1, Rpg::Types<1> > ext(system);
+      Rp::System<1, CudaTp<1> > system;
+      Rp::FilmEnvironment<1, CudaTp<1> > ext(system);
    }
 
    void testReadParameters() // test FilmEnvironment::readParameters()
@@ -62,9 +61,9 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up film environment from file
-      Rp::System<1, Rpg::Types<1> > system;
+      Rp::System<1, CudaTp<1> > system;
       createSystem(system, "in/system1DEnv");
-      Rp::FilmEnvironment<1, Rpg::Types<1> > env(system);
+      Rp::FilmEnvironment<1, CudaTp<1> > env(system);
 
       std::ifstream in;
       openInputFile("in/environment1", in);
@@ -93,7 +92,7 @@ public:
       openLogFile("out/FilmEnvTestSolve1D.log");
       
       // Set up system with some data
-      Rp::System<1, Rpg::Types<1> > system;
+      Rp::System<1, CudaTp<1> > system;
       createSystem(system, "in/system1DEnv");
 
       // Read initial guess
@@ -134,7 +133,7 @@ public:
       openLogFile("out/FilmEnvTestSolve2D.log");
       
       // Set up system with some data
-      Rp::System<2, Rpg::Types<2> > system;
+      Rp::System<2, CudaTp<2> > system;
       createSystem(system, "in/system2DEnv");
 
       // Read initial guess
@@ -184,7 +183,7 @@ public:
       openLogFile("out/FilmEnvTestSweep.log");
       
       // Set up system
-      Rp::System<1, Rpg::Types<1> > system;
+      Rp::System<1, CudaTp<1> > system;
       createSystem(system, "in/system1DEnv");
 
       // Read initial guess
@@ -226,7 +225,7 @@ public:
       openLogFile("out/FilmEnvTestSolveWithFBulk.log");
       
       // Set up system with some data
-      Rp::System<1, Rpg::Types<1> > system;
+      Rp::System<1, CudaTp<1> > system;
       createSystem(system, "in/system1DEnvFBulk");
 
       // Read initial guess
@@ -278,7 +277,7 @@ public:
       openLogFile("out/FilmEnvTestSolve1DGrid.log");
       
       // Set up system with some data
-      Rp::System<1, Rpg::Types<1> > system;
+      Rp::System<1, CudaTp<1> > system;
       createSystem(system, "in/system1DEnvGrid");
 
       // Read initial guess
@@ -318,7 +317,7 @@ public:
       openLogFile("out/FilmEnvTestSolve2DGrid.log");
       
       // Set up system with some data
-      Rp::System<2, Rpg::Types<2> > system;
+      Rp::System<2, CudaTp<2> > system;
       createSystem(system, "in/system2DEnvGrid");
 
       // Read initial guess
@@ -368,7 +367,7 @@ public:
       openLogFile("out/FilmEnvTestSweepGrid.log");
       
       // Set up system
-      Rp::System<1, Rpg::Types<1> > system;
+      Rp::System<1, CudaTp<1> > system;
       createSystem(system, "in/system1DEnvGrid");
 
       // Read initial guess
@@ -412,7 +411,7 @@ public:
       openLogFile("out/FilmEnvTestSolveWithFBulkGrid.log");
       
       // Set up system with some data
-      Rp::System<1, Rpg::Types<1> > system;
+      Rp::System<1, CudaTp<1> > system;
       createSystem(system, "in/system1DEnvFBulkGrid");
 
       // Read initial guess
@@ -460,7 +459,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void createSystem(Rp::System<D, Rpg::Types<D> >& system, std::string fname)
+   void createSystem(Rp::System<D, CudaTp<D> >& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

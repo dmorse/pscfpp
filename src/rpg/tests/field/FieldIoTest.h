@@ -33,7 +33,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cuda;
-using namespace Pscf::Rpg;
 
 class FieldIoTest : public LogFileUnitTest 
 {
@@ -51,10 +50,10 @@ public:
    }
 
    /*
-   * Open and read parameter header to initialize Rp::Domain<D, Types<D> > system.
+   * Open and read parameter header to initialize Rp::Domain<D, CudaTp<D> > system.
    */
    template <int D>
-   void readParam(std::string filename, Rp::Domain<D, Types<D> >& domain)
+   void readParam(std::string filename, Rp::Domain<D, CudaTp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -63,10 +62,10 @@ public:
    }
 
    /*
-   * Open and read file header to initialize Rp::Domain<D, Types<D> > system.
+   * Open and read file header to initialize Rp::Domain<D, CudaTp<D> > system.
    */
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, Types<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D, CudaTp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -107,7 +106,7 @@ public:
    }
 
    template <int D>
-   void readFieldsBasis(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void readFieldsBasis(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
                    DArray< DArray<double> >& fields)
    {
       std::ifstream in;
@@ -117,7 +116,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
                    DArray< RField<D> >& fields)
    {
       std::ifstream in;
@@ -127,7 +126,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
                    DArray< RFieldDft<D> >& fields)
    {
       std::ifstream in;
@@ -137,7 +136,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
                    DArray< DArray<double> > const & fields)
    {
       std::ofstream out;
@@ -147,7 +146,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
                    DArray< RField<D> > const & fields)
    {
       std::ofstream out;
@@ -157,7 +156,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, Types<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
                    DArray< RFieldDft<D> > const & fields)
    {
       std::ofstream out;
@@ -170,7 +169,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -203,7 +202,7 @@ public:
 
    void testBasisIo3D(std::string rf, std::string bf)
    {
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/" + rf, domain);
 
@@ -275,7 +274,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -303,7 +302,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -341,7 +340,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -374,7 +373,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 3;
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -417,7 +416,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -456,7 +455,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 2;
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       domain.fieldIo().setNMonomer(nMonomer_);
       readHeader("in/c_c15_1.rf", domain);
@@ -492,7 +491,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -526,7 +525,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -560,7 +559,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Types<1> > domain;
+      Rp::Domain<1, CudaTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
@@ -594,7 +593,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -647,7 +646,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Types<3> > domain;
+      Rp::Domain<3, CudaTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 

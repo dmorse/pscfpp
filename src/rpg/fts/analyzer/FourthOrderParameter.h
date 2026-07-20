@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.h> // base template
-#include <rpg/system/Types.h>                         // base argument
+#include <pscf/cuda/Cuda.h>                         // base argument
 #include <rpg/fts/analyzer/AverageAnalyzer.h>         // indirect base 
 #include <prdc/field/cuda/RField.h>                   // base member
 #include <prdc/field/cuda/RFieldDft.h>                // base member
@@ -33,8 +33,8 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class FourthOrderParameter<D, Rpg::Types<D> >
-    : public FourthOrderParameterBase< D, Rpg::Types<D> >
+   class FourthOrderParameter<D, CudaTp<D> >
+    : public FourthOrderParameterBase< D, CudaTp<D> >
    {
 
    public:
@@ -45,8 +45,8 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      FourthOrderParameter(Simulator<D, Rpg::Types<D> >& simulator, 
-		           System<D, Rpg::Types<D> >& system);
+      FourthOrderParameter(Simulator<D, CudaTp<D> >& simulator, 
+		           System<D, CudaTp<D> >& system);
 
    private:
 
@@ -55,7 +55,7 @@ namespace Rp {
       */
       void computePrefactor() override;
 
-      using Base = FourthOrderParameterBase< D, Rpg::Types<D> >;
+      using Base = FourthOrderParameterBase< D, CudaTp<D> >;
 
    };
 
@@ -65,12 +65,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class FourthOrderParameterBase<1, Rpg::Types<1> >;
-      extern template class FourthOrderParameterBase<2, Rpg::Types<2> >;
-      extern template class FourthOrderParameterBase<3, Rpg::Types<3> >;
-      extern template class FourthOrderParameter<1, Rpg::Types<1> >;
-      extern template class FourthOrderParameter<2, Rpg::Types<2> >;
-      extern template class FourthOrderParameter<3, Rpg::Types<3> >;
+      extern template class FourthOrderParameterBase<1, CudaTp<1> >;
+      extern template class FourthOrderParameterBase<2, CudaTp<2> >;
+      extern template class FourthOrderParameterBase<3, CudaTp<3> >;
+      extern template class FourthOrderParameter<1, CudaTp<1> >;
+      extern template class FourthOrderParameter<2, CudaTp<2> >;
+      extern template class FourthOrderParameter<3, CudaTp<3> >;
    }
 }
 #endif

@@ -9,14 +9,14 @@
 */
 
 #include <rp/system/SystemConstRef.h>   // base class template
-#include <rpg/system/Types.h>           // base class parameter
+#include <pscf/cuda/Cuda.h>           // base class parameter
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class SystemConstRef<1, Rpg::Types<1> >;
-      extern template class SystemConstRef<2, Rpg::Types<2> >;
-      extern template class SystemConstRef<3, Rpg::Types<3> >;
+      extern template class SystemConstRef<1, CudaTp<1> >;
+      extern template class SystemConstRef<2, CudaTp<2> >;
+      extern template class SystemConstRef<3, CudaTp<3> >;
    }
 }
 #endif

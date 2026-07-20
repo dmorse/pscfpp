@@ -31,7 +31,6 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
 using namespace Pscf::Prdc::Cuda;
-using namespace Pscf::Rpg;
 
 class PropagatorTest : public UnitTest
 {
@@ -45,7 +44,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D> 
-   void setupBlock(Rp::Block<D, Types<D> >& block)
+   void setupBlock(Rp::Block<D, CudaTp<D> >& block)
    {
       block.setId(0);
       if (PolymerModel::isThread()) {
@@ -83,7 +82,7 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Pscf::Rp::Block<1, Rpg::Types<1> > block;
+      Pscf::Rp::Block<1, CudaTp<1> > block;
    }
 
    void testSetup1D() // test allocate and associate methods
@@ -91,7 +90,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<1, Rpg::Types<1> > block;
+      Pscf::Rp::Block<1, CudaTp<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -129,7 +128,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<2, Rpg::Types<2> > block;
+      Pscf::Rp::Block<2, CudaTp<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -166,7 +165,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<3, Rpg::Types<3> > block;
+      Pscf::Rp::Block<3, CudaTp<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
@@ -203,7 +202,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<1, Rpg::Types<1> > block;
+      Pscf::Rp::Block<1, CudaTp<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -254,7 +253,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<2, Rpg::Types<2> > block;
+      Pscf::Rp::Block<2, CudaTp<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -309,7 +308,7 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Pscf::Rp::Block<2, Rpg::Types<2> > block;
+      Pscf::Rp::Block<2, CudaTp<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -354,7 +353,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<3, Rpg::Types<3> > block;
+      Pscf::Rp::Block<3, CudaTp<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
@@ -408,7 +407,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<1, Rpg::Types<1> > block;
+      Pscf::Rp::Block<1, CudaTp<1> > block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
@@ -508,7 +507,7 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Pscf::Rp::Block<1, Rpg::Types<1> > block;
+      Pscf::Rp::Block<1, CudaTp<1> > block;
       setupBlock<1>(block);
       int nBead = block.nBead();
 
@@ -575,7 +574,7 @@ public:
       }
    
       // Test propagator solve, block owns both vertices
-      Rp::Propagator<1, Types<1> >& p0 = block.propagator(0);
+      Rp::Propagator<1, CudaTp<1> >& p0 = block.propagator(0);
       p0.solve();
 
       // Check head slice
@@ -601,7 +600,7 @@ public:
          TEST_ASSERT(eq(qt_h[i], expected));
       }
 
-      Rp::Propagator<1, Types<1> >& p1 = block.propagator(1);
+      Rp::Propagator<1, CudaTp<1> >& p1 = block.propagator(1);
       p1.solve();
 
       #if 0
@@ -617,7 +616,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<2, Rpg::Types<2> > block;
+      Pscf::Rp::Block<2, CudaTp<2> > block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
@@ -725,7 +724,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<3, Rpg::Types<3> > block;
+      Pscf::Rp::Block<3, CudaTp<3> > block;
       setupBlock<3>(block);
 
       // Create and initialize mesh

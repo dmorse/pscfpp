@@ -153,7 +153,7 @@ namespace Rp {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenMask<D, Rpg::Types<D> >::FilmFieldGenMask()
+   FilmFieldGenMask<D, CudaTp<D> >::FilmFieldGenMask()
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(0)
    {  ParamComposite::setClassName("FilmFieldGenMask"); }
@@ -162,8 +162,8 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   FilmFieldGenMask<D, Rpg::Types<D> >::FilmFieldGenMask(
-         Rp::System<D, Rpg::Types<D> >& sys)
+   FilmFieldGenMask<D, CudaTp<D> >::FilmFieldGenMask(
+         Rp::System<D, CudaTp<D> >& sys)
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(&sys)
    {  ParamComposite::setClassName("FilmFieldGenMask"); }
@@ -172,14 +172,14 @@ namespace Rp {
    * Destructor
    */
    template <int D>
-   FilmFieldGenMask<D, Rpg::Types<D> >::~FilmFieldGenMask()
+   FilmFieldGenMask<D, CudaTp<D> >::~FilmFieldGenMask()
    {}
 
    /*
    * Get contribution to the stress from this mask
    */
    template <int D>
-   double FilmFieldGenMask<D, Rpg::Types<D> >::stress(int paramId) const
+   double FilmFieldGenMask<D, CudaTp<D> >::stress(int paramId) const
    {
       // If paramId is not normalVecId, there is no stress contribution
       UTIL_CHECK(normalVecId() >= 0);
@@ -246,7 +246,7 @@ namespace Rp {
 
    template <int D>
    double 
-   FilmFieldGenMask<D, Rpg::Types<D> >::modifyStress(
+   FilmFieldGenMask<D, CudaTp<D> >::modifyStress(
          int paramId, 
          double stress) const
    {
@@ -282,7 +282,7 @@ namespace Rp {
    * Compute the field and store where the System can access
    */
    template <int D>
-   void FilmFieldGenMask<D, Rpg::Types<D> >::compute()
+   void FilmFieldGenMask<D, CudaTp<D> >::compute()
    {
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(interfaceThickness() > 0);
@@ -322,7 +322,7 @@ namespace Rp {
    * Sets flexible lattice parameters to be compatible with the mask.
    */
    template <int D>
-   void FilmFieldGenMask<D, Rpg::Types<D> >::setFlexibleParams() const
+   void FilmFieldGenMask<D, CudaTp<D> >::setFlexibleParams() const
    {
       if (system().iterator().isFlexible()) {
          FSArray<bool,6> updated;
@@ -338,8 +338,8 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FilmFieldGenMask<1, Rpg::Types<1> >;
-      template class FilmFieldGenMask<2, Rpg::Types<2> >;
-      template class FilmFieldGenMask<3, Rpg::Types<3> >;
+      template class FilmFieldGenMask<1, CudaTp<1> >;
+      template class FilmFieldGenMask<2, CudaTp<2> >;
+      template class FilmFieldGenMask<3, CudaTp<3> >;
    }
 }

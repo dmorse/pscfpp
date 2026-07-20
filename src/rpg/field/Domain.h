@@ -9,14 +9,14 @@
 */
 
 #include <rp/field/Domain.h>     // base class template
-#include <rpg/system/Types.h>    // base class template parameter
+#include <pscf/cuda/Cuda.h>    // base class template parameter
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Domain<1, Rpg::Types<1> >;
-      extern template class Domain<2, Rpg::Types<2> >;
-      extern template class Domain<3, Rpg::Types<3> >;
+      extern template class Domain<1, CudaTp<1> >;
+      extern template class Domain<2, CudaTp<2> >;
+      extern template class Domain<3, CudaTp<3> >;
    }
 }
 #endif

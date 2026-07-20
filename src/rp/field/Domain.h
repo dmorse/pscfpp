@@ -58,7 +58,7 @@ namespace Rp {
    * <b> Template Parameters </b>:
    *
    *   - D  : integer dimension of space (D=1, 2, or 3)
-   *   - T  : Types class (Cpp<D> or Rpg::Types<D>)
+   *   - T  : Types class (Cpp<D> or CudaTp<D>)
    *
    * <b> Subclasses </b>: Partial specializations of the Domain class
    * template are used as base classes for classes Rpc::Domain \<D\> and

@@ -10,14 +10,14 @@
 
 #include "AverageListAnalyzer.h"                  // indirect base class
 #include <rp/fts/analyzer/HamiltonianAnalyzer.h>  // base class template
-#include <rpg/system/Types.h>                     // template argument
+#include <pscf/cuda/Cuda.h>                     // template argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class HamiltonianAnalyzer< 1, Rpg::Types<1> >;
-      extern template class HamiltonianAnalyzer< 2, Rpg::Types<2> >;
-      extern template class HamiltonianAnalyzer< 3, Rpg::Types<3> >;
+      extern template class HamiltonianAnalyzer< 1, CudaTp<1> >;
+      extern template class HamiltonianAnalyzer< 2, CudaTp<2> >;
+      extern template class HamiltonianAnalyzer< 3, CudaTp<3> >;
    }
 }
 #endif

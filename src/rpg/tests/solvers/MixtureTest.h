@@ -30,7 +30,6 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Rpg;
 
 class MixtureTest : public UnitTest
 {
@@ -46,13 +45,13 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, Rpg::Types<1> > mixture;
+      Rp::Mixture<1, CudaTp<1> > mixture;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, Rpg::Types<1> > mixture;
+      Rp::Mixture<1, CudaTp<1> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
@@ -63,7 +62,7 @@ public:
    void testReadParameters1D_bead()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, Rpg::Types<1> > mixture;
+      Rp::Mixture<1, CudaTp<1> > mixture;
       PolymerModel::setModel(PolymerModel::Bead);
 
       std::ifstream in;
@@ -78,7 +77,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Mixture<1, Rpg::Types<1> > mixture;
+      Rp::Mixture<1, CudaTp<1> > mixture;
       Mesh<1> mesh;
       Cuda::FFT<1> fft;
       UnitCell<1> unitCell;
@@ -153,7 +152,7 @@ public:
       // Read parameter block, unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture1d_bead", in);
-      Rp::Mixture<1, Rpg::Types<1> > mixture;
+      Rp::Mixture<1, CudaTp<1> > mixture;
       mixture.readParam(in);
       UnitCell<1> unitCell;
       in >> unitCell;
@@ -172,7 +171,7 @@ public:
       mixture.allocate();
 
       // Check polymer block sizes
-      Rp::Polymer<1, Types<1> >& polymer = mixture.polymer(0);
+      Rp::Polymer<1, CudaTp<1> >& polymer = mixture.polymer(0);
       TEST_ASSERT(polymer.block(0).nBead() == 20);
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);
@@ -239,7 +238,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Mixture<2, Rpg::Types<2> > mixture;
+      Rp::Mixture<2, CudaTp<2> > mixture;
       Mesh<2> mesh;
       Cuda::FFT<2> fft;
       UnitCell<2> unitCell;
@@ -320,7 +319,7 @@ public:
    void testSolver2D_hex()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<2, Rpg::Types<2> > mixture;
+      Rp::Mixture<2, CudaTp<2> > mixture;
       Mesh<2> mesh;
       Cuda::FFT<2> fft;
       Cuda::WaveList<2> wavelist;
@@ -403,7 +402,7 @@ public:
    void testSolver3D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<3, Rpg::Types<3> > mixture;
+      Rp::Mixture<3, CudaTp<3> > mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture3d", in);

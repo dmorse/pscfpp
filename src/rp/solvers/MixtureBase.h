@@ -43,7 +43,7 @@ namespace Rp {
    * classes for specializations of the Rp::Mixture class template. 
    * The template parameters of R::Mixture<int D, class T> are the 
    * dimension of space, D, and a Types class, T = Cpp<D> or 
-   * T = Rpg::Types<D>.
+   * T = CudaTp<D>.
    *
    * A MixtureBase contains a list of Polymer  objects and a separate 
    * list of Solvent objects. Each such object can solve the statistical 

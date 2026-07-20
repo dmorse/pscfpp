@@ -28,7 +28,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, Cpp<D> or Rpg::Types<D>
+   *   - T : Types class, Cpp<D> or CudaTp<D>
    *
    * \see \ref rp_AmIteratorGrid_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"

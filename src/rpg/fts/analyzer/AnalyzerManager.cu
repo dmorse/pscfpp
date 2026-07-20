@@ -12,8 +12,8 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class AnalyzerManager<1, Rpg::Types<1> >;
-      template class AnalyzerManager<2, Rpg::Types<2> >;
-      template class AnalyzerManager<3, Rpg::Types<3> >;
+      template class AnalyzerManager<1, CudaTp<1> >;
+      template class AnalyzerManager<2, CudaTp<2> >;
+      template class AnalyzerManager<3, CudaTp<3> >;
    }
 }

@@ -69,14 +69,14 @@ namespace Rp {
    * of D, the typename Cpp\<D\>::Mixture is an alias for the type
    * Rpc::Mixture<D> that used to represent a mixture in the Rpc namespace
    * for systems of spatial dimension D. See the definitions of Cpp
-   * and Rpg::Types (src/pscf/cpu/Cpp.h and src/rpg/system/Types.h)
+   * and Cuda (src/pscf/cpu/Cpp.h and src/pscf/cuda/Cuda.h)
    * for lists of all of the typenames defined in these class templates.
    *
    * In the remainder of this documentation for the Rp::System template,
    * unqualified names such as "Mixture", "Iterator", etc. are used as
    * shorthand for typename aliases such as T::Mixture or T::Iterator
    * that are defined in the types class T (i.e., in Cpp\<D\> or
-   * Rpg::Types\<D\>), which are aliases for class names such as
+   * Cuda\<D\>), which are aliases for class names such as
    * Rpc::Mixture<D> or Rpg::Iterator<D>.
    *
    * <b> Class Components </b>:

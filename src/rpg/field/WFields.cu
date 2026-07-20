@@ -25,7 +25,7 @@ namespace Rp {
    * Set new w-field values, using unfolded array of r-grid fields.
    */
    template <int D>
-   void WFields<D, Rpg::Types<D> >::setRGrid(DeviceArray<cudaReal>& fields)
+   void WFields<D, CudaTp<D> >::setRGrid(DeviceArray<cudaReal>& fields)
    {
       // Create DArray tmp with RField<D> elements
       DArray< RField<D> > tmp;
@@ -50,11 +50,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class WFieldsBase<1, Rpg::Types<1> >;
-      template class WFieldsBase<2, Rpg::Types<2> >;
-      template class WFieldsBase<3, Rpg::Types<3> >;
-      template class WFields<1, Rpg::Types<1> >;
-      template class WFields<2, Rpg::Types<2> >;
-      template class WFields<3, Rpg::Types<3> >;
+      template class WFieldsBase<1, CudaTp<1> >;
+      template class WFieldsBase<2, CudaTp<2> >;
+      template class WFieldsBase<3, CudaTp<3> >;
+      template class WFields<1, CudaTp<1> >;
+      template class WFields<2, CudaTp<2> >;
+      template class WFields<3, CudaTp<3> >;
    }
 }

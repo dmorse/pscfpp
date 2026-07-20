@@ -9,16 +9,16 @@
 */
 
 #include <rp/fts/simulator/Simulator.h>    // base class template
-#include <rpg/system/Types.h>              // template argument
+#include <pscf/cuda/Cuda.h>              // template argument
 #include <rpg/fts/simulator/SimState.h>    // member
 #include <prdc/field/cuda/RField.h>              // member (template arg)
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Simulator<1, Rpg::Types<1> >;
-      extern template class Simulator<2, Rpg::Types<2> >;
-      extern template class Simulator<3, Rpg::Types<3> >;
+      extern template class Simulator<1, CudaTp<1> >;
+      extern template class Simulator<2, CudaTp<2> >;
+      extern template class Simulator<3, CudaTp<3> >;
    }
 }
 #endif

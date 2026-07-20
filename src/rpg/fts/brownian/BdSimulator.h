@@ -9,16 +9,16 @@
 */
 
 #include <rp/fts/brownian/BdSimulator.h>       // base class template
-#include <rpg/system/Types.h>                  // template argument
+#include <pscf/cuda/Cuda.h>                  // template argument
 #include <rpg/fts/simulator/Simulator.h>       // indirect base class
 #include <rpg/fts/analyzer/AnalyzerManager.h>  // member of base class
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BdSimulator<1, Rpg::Types<1> >;
-      extern template class BdSimulator<2, Rpg::Types<2> >;
-      extern template class BdSimulator<3, Rpg::Types<3> >;
+      extern template class BdSimulator<1, CudaTp<1> >;
+      extern template class BdSimulator<2, CudaTp<2> >;
+      extern template class BdSimulator<3, CudaTp<3> >;
    }
 }
 #endif

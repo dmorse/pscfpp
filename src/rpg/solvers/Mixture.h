@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/MixtureBase.h>  // base class template
-#include <rpg/system/Types.h>        // base class template argument
+#include <pscf/cuda/Cuda.h>        // base class template argument
 
 // Forward declarations
 namespace Pscf {
@@ -39,8 +39,8 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Mixture<D, Rpg::Types<D> > 
-     : public Rp::MixtureBase<D, Rpg::Types<D> >
+   class Mixture<D, CudaTp<D> > 
+     : public Rp::MixtureBase<D, CudaTp<D> >
    {
 
    public:
@@ -60,7 +60,7 @@ namespace Rp {
       void readParameters(std::istream& in) override;
 
       /// Base class type aliases
-      using RpMixtureT = typename Rp::MixtureBase<D, Rpg::Types<D> >;
+      using RpMixtureT = typename Rp::MixtureBase<D, CudaTp<D> >;
       using typename RpMixtureT::MixtureTmplT;
       using typename RpMixtureT::CompositionT;
       using typename RpMixtureT::FieldT;
@@ -85,18 +85,18 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
-   class MixtureTmpl< Rp::Polymer<1, Rpg::Types<1> >, Rp::Solvent<1, Rpg::Types<1> > >;
+   class MixtureTmpl< Rp::Polymer<1, CudaTp<1> >, Rp::Solvent<1, CudaTp<1> > >;
    extern template 
-   class MixtureTmpl< Rp::Polymer<2, Rpg::Types<2> >, Rp::Solvent<2, Rpg::Types<2> > >;
+   class MixtureTmpl< Rp::Polymer<2, CudaTp<2> >, Rp::Solvent<2, CudaTp<2> > >;
    extern template 
-   class MixtureTmpl< Rp::Polymer<3, Rpg::Types<3> >, Rp::Solvent<3, Rpg::Types<3> > >;
+   class MixtureTmpl< Rp::Polymer<3, CudaTp<3> >, Rp::Solvent<3, CudaTp<3> > >;
    namespace Rp {
-      extern template class MixtureBase<1, Rpg::Types<1> >;
-      extern template class MixtureBase<2, Rpg::Types<2> >;
-      extern template class MixtureBase<3, Rpg::Types<3> >;
-      extern template class Mixture<1, Rpg::Types<1> >;
-      extern template class Mixture<2, Rpg::Types<2> >;
-      extern template class Mixture<3, Rpg::Types<3> >;
+      extern template class MixtureBase<1, CudaTp<1> >;
+      extern template class MixtureBase<2, CudaTp<2> >;
+      extern template class MixtureBase<3, CudaTp<3> >;
+      extern template class Mixture<1, CudaTp<1> >;
+      extern template class Mixture<2, CudaTp<2> >;
+      extern template class Mixture<3, CudaTp<3> >;
    }
 }
 #endif

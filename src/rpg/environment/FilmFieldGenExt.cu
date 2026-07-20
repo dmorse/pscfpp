@@ -170,7 +170,7 @@ namespace Rp {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenExt<D, Rpg::Types<D> >::FilmFieldGenExt()
+   FilmFieldGenExt<D, CudaTp<D> >::FilmFieldGenExt()
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(0)
    {  ParamComposite::setClassName("FilmFieldGenExt"); }
@@ -179,8 +179,8 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   FilmFieldGenExt<D, Rpg::Types<D> >::FilmFieldGenExt(
-         System<D, Rpg::Types<D> >& sys)
+   FilmFieldGenExt<D, CudaTp<D> >::FilmFieldGenExt(
+         System<D, CudaTp<D> >& sys)
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(&sys)
    {  ParamComposite::setClassName("FilmFieldGenExt"); }
@@ -189,14 +189,14 @@ namespace Rp {
    * Destructor
    */
    template <int D>
-   FilmFieldGenExt<D, Rpg::Types<D> >::~FilmFieldGenExt()
+   FilmFieldGenExt<D, CudaTp<D> >::~FilmFieldGenExt()
    {}
 
    /*
    * Get contribution to the stress from these external fields
    */
    template <int D>
-   double FilmFieldGenExt<D, Rpg::Types<D> >::stress(int paramId) const
+   double FilmFieldGenExt<D, CudaTp<D> >::stress(int paramId) const
    {
       // If walls are athermal then there is no external field, so no
       // contribution to the stress.
@@ -261,7 +261,7 @@ namespace Rp {
    * Compute the fields and store where the System can access.
    */
    template <int D>
-   void FilmFieldGenExt<D, Rpg::Types<D> >::compute()
+   void FilmFieldGenExt<D, CudaTp<D> >::compute()
    {
       // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
@@ -327,8 +327,8 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FilmFieldGenExt<1, Rpg::Types<1> >;
-      template class FilmFieldGenExt<2, Rpg::Types<2> >;
-      template class FilmFieldGenExt<3, Rpg::Types<3> >;
+      template class FilmFieldGenExt<1, CudaTp<1> >;
+      template class FilmFieldGenExt<2, CudaTp<2> >;
+      template class FilmFieldGenExt<3, CudaTp<3> >;
    }
 }

@@ -56,7 +56,7 @@ clean:
 	cd tests; $(MAKE) clean
 
 # C++ CPU backend
-if PSCF_CPP
+ifdef PSCF_CPP
 
 # Main pscf_rpc executable
 $(PSCF_RPC_EXE): $(PSCF_RPC).o $(PSCF_LIBS)
@@ -69,7 +69,7 @@ pscf_rpc:
 endif
 
 # Cuda GPU backend
-if PSCF_CUDA
+ifdef PSCF_CUDA
 
 # Main pscf_rpg executable 
 $(PSCF_RPG_EXE): $(PSCF_RPG).o $(PSCF_LIBS)

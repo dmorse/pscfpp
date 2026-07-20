@@ -37,7 +37,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, Cpp<D> or Rpg::Types<D>
+   *   - T : Types class, Cpp<D> or CudaTp<D>
    *
    * This class stores the information required to sweep a single
    * parameter value of any of several types.  The type of parameter

@@ -19,7 +19,6 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Rpg;
 
 class BasisFieldStateTest : public LogFileUnitTest
 {
@@ -33,17 +32,17 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Rpg::Types<3> > system;
-      Rp::BasisFieldState<3, Rpg::Types<3> > bfs1(system);
-      Rp::BasisFieldState<3, Rpg::Types<3> > bfs2;
+      Rp::System<3, CudaTp<3> > system;
+      Rp::BasisFieldState<3, CudaTp<3> > bfs1(system);
+      Rp::BasisFieldState<3, CudaTp<3> > bfs2;
    }
 
    void testRead()
    {
       printMethod(TEST_FUNC);
       
-      Rp::System<3, Rpg::Types<3> > system;
-      Rp::BasisFieldState<3, Rpg::Types<3> > bfs(system);
+      Rp::System<3, CudaTp<3> > system;
+      Rp::BasisFieldState<3, CudaTp<3> > bfs(system);
       BFieldComparison comparison;
    
       // Setup system
@@ -65,8 +64,8 @@ public:
       // Write tested with a read/write/read/comparison procedure
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Rpg::Types<3> > system;
-      Rp::BasisFieldState<3, Rpg::Types<3> > bfs1(system), bfs2(system);
+      Rp::System<3, CudaTp<3> > system;
+      Rp::BasisFieldState<3, CudaTp<3> > bfs1(system), bfs2(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -87,8 +86,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Rpg::Types<3> > system;
-      Rp::BasisFieldState<3, Rpg::Types<3> > bfs(system);
+      Rp::System<3, CudaTp<3> > system;
+      Rp::BasisFieldState<3, CudaTp<3> > bfs(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -108,8 +107,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Rpg::Types<3> > system;
-      Rp::BasisFieldState<3, Rpg::Types<3> > bfs(system);
+      Rp::System<3, CudaTp<3> > system;
+      Rp::BasisFieldState<3, CudaTp<3> > bfs(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -129,8 +128,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Rpg::Types<3> > system;
-      Rp::BasisFieldState<3, Rpg::Types<3> > bfs;
+      Rp::System<3, CudaTp<3> > system;
+      Rp::BasisFieldState<3, CudaTp<3> > bfs;
 
       // Setup system
       BasisFieldStateTest::SetUpSystem(system);
@@ -138,7 +137,7 @@ public:
       bfs.setSystem(system);
    }
 
-   void SetUpSystem(Rp::System<3, Rpg::Types<3> >& system)
+   void SetUpSystem(Rp::System<3, CudaTp<3> >& system)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

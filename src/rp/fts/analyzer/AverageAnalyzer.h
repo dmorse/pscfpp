@@ -28,7 +28,7 @@ namespace Rp {
    * Template parameters:
    *
    *    - D : dimension of space
-   *    - T : Types class, Cpp<D> or Rpg::Types<D>.
+   *    - T : Types class, Cpp<D> or CudaTp<D>.
    *
    * \ingroup Rp_Fts_Analyzer_Module
    */
