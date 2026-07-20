@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FftwDArray.h"
+//#include "FftwDArray.h"
 #include <util/misc/Memory.h>
 #include <fftw3.h>
 

@@ -14,7 +14,7 @@
 #include <rpc/field/WFields.h>
 #include <rpc/field/Mask.h>
 
-#include <prdc/field/cpu/FftwDRArray.h>
+#include <pscf/cpu/FftwDRArray.h>
 #include <prdc/field/cpu/RField.h>
 
 #include <pscf/cpu/VecOp.h>

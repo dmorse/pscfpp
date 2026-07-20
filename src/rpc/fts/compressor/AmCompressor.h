@@ -12,7 +12,7 @@
 #include <pscf/cpu/CppTp.h>                     // base class argument
 #include <rpc/fts/compressor/AmCompressorBase.h>  // indirect base
 #include <prdc/field/cpu/RField.h>                // base member
-#include <prdc/field/cpu/FftwDRArray.h>           // base member
+#include <pscf/cpu/FftwDRArray.h>           // base member
 
 // Explicit instantiation declarations
 namespace Pscf {

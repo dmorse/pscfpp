@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FFTW_DR_ARRAY_H
-#define PRDC_CPU_FFTW_DR_ARRAY_H
+#ifndef PSCF_FFTW_DR_ARRAY_H
+#define PSCF_FFTW_DR_ARRAY_H
 
 /*
 * Util Package - C++ Utilities for Scientific Computation

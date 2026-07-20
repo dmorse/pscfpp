@@ -17,7 +17,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/fts/compressor/Compressor.h>   // base class argument
 #include <pscf/cpu/CppTp.h>                 // base class argument
-#include <prdc/field/cpu/FftwDRArray.h>     // base class argument
+#include <pscf/cpu/FftwDRArray.h>     // base class argument
 
 namespace Pscf {
    extern template 

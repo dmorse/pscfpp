@@ -10,7 +10,7 @@
 
 #include <rp/fts/compressor/IntraCorrelation.h>  // class template
 #include <pscf/cpu/CppTp.h>                    // class argument
-#include <prdc/field/cpu/FftwDRArray.h>          // class member
+#include <pscf/cpu/FftwDRArray.h>          // class member
 
 // Explicit instantiation declarations
 namespace Pscf {

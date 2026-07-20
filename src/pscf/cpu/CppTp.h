@@ -10,7 +10,7 @@
 
 #include <fftw3.h>
 #include <prdc/field/BackendId.h>
-#include <prdc/field/cpu/FftwDRArray.h>
+#include <pscf/cpu/FftwDRArray.h>
 
 // Forward declarations
 namespace Util {

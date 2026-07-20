@@ -12,7 +12,7 @@
 #include <pscf/cpu/CppTp.h>                 // direct base argument
 #include <rpc/scft/iterator/Iterator.h>       // tertiary base class
 //#include <pscf/iterator/AmIteratorTmpl.h>     // secondary base class
-#include <prdc/field/cpu/FftwDRArray.h>       // indirect base argument
+#include <pscf/cpu/FftwDRArray.h>       // indirect base argument
 
 // Explicit instantiation declarations
 namespace Pscf {
