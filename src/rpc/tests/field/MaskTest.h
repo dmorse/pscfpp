@@ -55,9 +55,9 @@ public:
       Log::setFile(logFile_);
    }
 
-   // Open and read parameter header to initialize Rp::Domain<D, Cpp<D> > system.
+   // Open and read parameter header to initialize Rp::Domain<D, CppTp<D> > system.
    template <int D>
-   void readParam(std::string filename, Rp::Domain<D, Cpp<D> >& domain)
+   void readParam(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -65,9 +65,9 @@ public:
       in.close();
    }
 
-   // Open and read file header to initialize Rp::Domain<D, Cpp<D> > system.
+   // Open and read file header to initialize Rp::Domain<D, CppTp<D> > system.
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, Cpp<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -77,7 +77,7 @@ public:
    }
 
    template <int D>
-   void readField(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
+   void readField(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
                    DArray<double>& field)
    {
       std::ifstream in;
@@ -87,7 +87,7 @@ public:
    }
 
    template <int D>
-   void readField(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
+   void readField(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
                   RField<D>& field)
    {
       std::ifstream in;
@@ -100,7 +100,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -110,7 +110,7 @@ public:
       bf.allocate(nBasis);
       readField("in/mask.bf", domain, bf);
 
-      Rp::Mask<1, Cpp<1> > mask;
+      Rp::Mask<1, CppTp<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -138,7 +138,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -149,7 +149,7 @@ public:
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Rp::Mask<1, Cpp<1> > mask;
+      Rp::Mask<1, CppTp<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -171,7 +171,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -185,7 +185,7 @@ public:
       rf.allocate(dimensions);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      Rp::Mask<1, Cpp<1> > mask;
+      Rp::Mask<1, CppTp<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -208,7 +208,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -218,7 +218,7 @@ public:
       bf.allocate(nBasis);
       readField("in/mask.bf", domain, bf);
 
-      Rp::Mask<1, Cpp<1> > mask;
+      Rp::Mask<1, CppTp<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.setReadUnitCell(domain.unitCell());
       mask.allocateBasis(nBasis);
@@ -249,7 +249,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -260,7 +260,7 @@ public:
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Rp::Mask<1, Cpp<1> > mask;
+      Rp::Mask<1, CppTp<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.setReadUnitCell(domain.unitCell());
       mask.allocateBasis(nBasis);
@@ -285,7 +285,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -296,7 +296,7 @@ public:
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Rp::Mask<1, Cpp<1> > mask;
+      Rp::Mask<1, CppTp<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.setReadUnitCell(domain.unitCell());
       mask.allocateBasis(nBasis);
@@ -321,14 +321,14 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
       // Create empty mask object, check phiTot
-      Rp::Mask<1, Cpp<1> > mask;
+      Rp::Mask<1, CppTp<1> > mask;
       mask.setFieldIo(domain.fieldIo());
       mask.setReadUnitCell(domain.unitCell());
       mask.allocateBasis(nBasis);

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/StepLogger.h>  // base class template
-#include <pscf/cuda/Cuda.h>            // base class argument
+#include <pscf/cuda/CudaTp.h>            // base class argument
 #include <rpg/fts/analyzer/Analyzer.h>   // indirect base
 
 // Explicit instantiation declarations

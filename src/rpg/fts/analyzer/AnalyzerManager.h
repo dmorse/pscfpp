@@ -2,7 +2,7 @@
 #define RPG_ANALYZER_MANAGER_H
 
 #include <rp/fts/analyzer/AnalyzerManager.h> // class template
-#include <pscf/cuda/Cuda.h>                // template argument
+#include <pscf/cuda/CudaTp.h>                // template argument
 #include <util/param/Manager.h>              // base class template
 #include <rpg/fts/analyzer/Analyzer.h>       // base class argument
 

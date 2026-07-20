@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/FieldIoBase.h>          // base class template
-#include <pscf/cuda/Cuda.h>              // base class argument
+#include <pscf/cuda/CudaTp.h>              // base class argument
 #include <prdc/field/cuda/RFieldDft.h>     // base class member
 
 // Forward declarations

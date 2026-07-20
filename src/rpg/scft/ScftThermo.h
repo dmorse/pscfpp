@@ -9,7 +9,7 @@
 */
 
 #include <rp/scft/ScftThermo.h>         // class template
-#include <pscf/cuda/Cuda.h>           // template argument
+#include <pscf/cuda/CudaTp.h>           // template argument
 #include <rpg/system/SystemConstRef.h>  // base class
 
 // Explicit instantiation declarations

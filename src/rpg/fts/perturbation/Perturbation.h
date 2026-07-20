@@ -2,7 +2,7 @@
 #define RPG_PERTURBATION_H
 
 #include <rp/fts/perturbation/Perturbation.h>  // base class template
-#include <pscf/cuda/Cuda.h>                  // base class argument
+#include <pscf/cuda/CudaTp.h>                  // base class argument
 
 // Forward declarations
 namespace Pscf {

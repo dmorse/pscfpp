@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>
-#include <pscf/cuda/Cuda.h>
+#include <pscf/cuda/CudaTp.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

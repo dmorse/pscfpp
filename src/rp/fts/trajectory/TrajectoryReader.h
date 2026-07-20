@@ -27,7 +27,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, Cpp<D> or CudaTp<D>
+   *   - T : Types class, CppTp<D> or CudaTp<D>
    *
    * \ingroup Rp_Fts_Trajectory_Module
    */

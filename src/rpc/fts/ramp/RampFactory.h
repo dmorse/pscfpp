@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/ramp/RampFactory.h>
-#include <pscf/cpu/Cpp.h>
+#include <pscf/cpu/CppTp.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class RampFactory<1, Cpp<1> >;
-      extern template class RampFactory<2, Cpp<2> >;
-      extern template class RampFactory<3, Cpp<3> >;
+      extern template class RampFactory<1, CppTp<1> >;
+      extern template class RampFactory<2, CppTp<2> >;
+      extern template class RampFactory<3, CppTp<3> >;
    }
 }
 #endif

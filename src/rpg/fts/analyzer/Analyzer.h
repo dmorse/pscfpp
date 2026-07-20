@@ -2,7 +2,7 @@
 #define RPG_ANALYZER_H
 
 #include <rp/fts/analyzer/Analyzer.h>   // class template
-#include <pscf/cuda/Cuda.h>           // class argument
+#include <pscf/cuda/CudaTp.h>           // class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

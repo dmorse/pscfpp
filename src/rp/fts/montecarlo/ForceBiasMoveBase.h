@@ -32,7 +32,7 @@ namespace Rp {
    * Template parameters:
    *
    *    - D : dimension of space (D=1, 2, or 3)
-   *    - T : Types class (Cpp<D> or CudaTp<D>)
+   *    - T : Types class (CppTp<D> or CudaTp<D>)
    *
    * \see \ref rp_ForceBiasMove_page "Manual Page"
    * \ingroup Rp_Fts_MonteCarlo_Module

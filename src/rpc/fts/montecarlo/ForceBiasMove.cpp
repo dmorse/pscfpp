@@ -32,16 +32,16 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   ForceBiasMove<D, Cpp<D> >::ForceBiasMove(
-                              McSimulator<D, Cpp<D> >& simulator)
-    : ForceBiasMoveBase<D, Cpp<D> > (simulator)
+   ForceBiasMove<D, CppTp<D> >::ForceBiasMove(
+                              McSimulator<D, CppTp<D> >& simulator)
+    : ForceBiasMoveBase<D, CppTp<D> > (simulator)
    {}
 
    /*
    * Compute force bias field for use in Metropolis acceptance test.
    */
    template<int D>
-   void ForceBiasMove<D, Cpp<D> >::computeForceBias(
+   void ForceBiasMove<D, CppTp<D> >::computeForceBias(
                                RField<D>& result,
                                RField<D> const & di,
                                RField<D> const & df,
@@ -49,7 +49,7 @@ namespace Rp {
                                double mobility)
    {
       const int n
-         = McMove<D, Cpp<D> >::system().domain().mesh().size();
+         = McMove<D, CppTp<D> >::system().domain().mesh().size();
       UTIL_CHECK(result.capacity() == n);
       UTIL_CHECK(di.capacity() == n);
       UTIL_CHECK(df.capacity() == n);
@@ -69,11 +69,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class ForceBiasMoveBase<1, Cpp<1> >;
-      template class ForceBiasMoveBase<2, Cpp<2> >;
-      template class ForceBiasMoveBase<3, Cpp<3> >;
-      template class ForceBiasMove<1, Cpp<1> >;
-      template class ForceBiasMove<2, Cpp<2> >;
-      template class ForceBiasMove<3, Cpp<3> >;
+      template class ForceBiasMoveBase<1, CppTp<1> >;
+      template class ForceBiasMoveBase<2, CppTp<2> >;
+      template class ForceBiasMoveBase<3, CppTp<3> >;
+      template class ForceBiasMove<1, CppTp<1> >;
+      template class ForceBiasMove<2, CppTp<2> >;
+      template class ForceBiasMove<3, CppTp<3> >;
    }
 }

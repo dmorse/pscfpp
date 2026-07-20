@@ -10,7 +10,7 @@
 
 #include <rp/field/WFieldsBase.h>  // base class template
 #include <rp/field/WFields.h>      // primary template
-#include <pscf/cuda/Cuda.h>      // class template argument
+#include <pscf/cuda/CudaTp.h>      // class template argument
 
 namespace Pscf {
 namespace Rp {

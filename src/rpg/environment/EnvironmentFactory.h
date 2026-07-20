@@ -9,7 +9,7 @@
 */
 
 #include <rp/environment/EnvironmentFactory.h>
-#include <pscf/cuda/Cuda.h>
+#include <pscf/cuda/CudaTp.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pscf/cpu/Cpp.h>           // template argument
+#include <pscf/cpu/CppTp.h>           // template argument
 
 #include <prdc/field/cpu/RField.h>        // member
 #include <prdc/field/cpu/RFieldDft.h>     // member
@@ -48,8 +48,8 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Block<D, Cpp<D> > 
-    : public BlockTmpl< Rp::Propagator<D, Cpp<D> >, RField<D> >
+   class Block<D, CppTp<D> > 
+    : public BlockTmpl< Rp::Propagator<D, CppTp<D> >, RField<D> >
    {
 
    public:
@@ -57,7 +57,7 @@ namespace Rp {
       // Public type name aliases
 
       /// Direct (parent) base class.
-      using BlockTmplT = BlockTmpl< Rp::Propagator<D, Cpp<D> >, RField<D> >;
+      using BlockTmplT = BlockTmpl< Rp::Propagator<D, CppTp<D> >, RField<D> >;
 
       /// Propagator type (inherited).
       using typename BlockTmplT::PropagatorT;
@@ -442,24 +442,24 @@ namespace Rp {
 
    // Get number of contour grid points, including end points.
    template <int D>
-   inline int Block<D, Cpp<D> >::ns() const
+   inline int Block<D, CppTp<D> >::ns() const
    {  return ns_; }
 
    // Get contour step size.
    template <int D>
-   inline double Block<D, Cpp<D> >::ds() const
+   inline double Block<D, CppTp<D> >::ds() const
    {  return ds_; }
 
    // Stress with respect to unit cell parameter n.
    template <int D>
-   inline double Block<D, Cpp<D> >::stress(int n) const
+   inline double Block<D, CppTp<D> >::stress(int n) const
    {  return stress_[n]; }
 
    // Private inline member function definitions
 
    // Get associated Mesh<D> object by const reference (private).
    template <int D>
-   inline Mesh<D> const & Block<D, Cpp<D> >::mesh() const
+   inline Mesh<D> const & Block<D, CppTp<D> >::mesh() const
    {
       UTIL_CHECK(meshPtr_);
       return *meshPtr_;
@@ -467,7 +467,7 @@ namespace Rp {
 
    // Get associated FFT<D> object by const reference (private).
    template <int D>
-   inline FFT<D> const & Block<D, Cpp<D> >::fft() const
+   inline FFT<D> const & Block<D, CppTp<D> >::fft() const
    {
       UTIL_CHECK(fftPtr_);
       return * fftPtr_;
@@ -475,7 +475,7 @@ namespace Rp {
 
    // Get associated UnitCell<D> by const reference (private).
    template <int D>
-   UnitCell<D> const & Block<D, Cpp<D> >::unitCell() const
+   UnitCell<D> const & Block<D, CppTp<D> >::unitCell() const
    {
       UTIL_CHECK(unitCellPtr_);
       return *unitCellPtr_;
@@ -483,7 +483,7 @@ namespace Rp {
 
    // Get associated WaveList<D> by reference (private).
    template <int D>
-   WaveList<D>& Block<D, Cpp<D> >::waveList()
+   WaveList<D>& Block<D, CppTp<D> >::waveList()
    {
       UTIL_CHECK(waveListPtr_);
       return *waveListPtr_;
@@ -496,16 +496,16 @@ namespace Rp {
 namespace Pscf {
 
    extern template
-   class BlockTmpl< Rp::Propagator<1, Cpp<1> >, Prdc::Cpu::RField<1> >;
+   class BlockTmpl< Rp::Propagator<1, CppTp<1> >, Prdc::Cpu::RField<1> >;
    extern template
-   class BlockTmpl< Rp::Propagator<2, Cpp<2> >, Prdc::Cpu::RField<2> >;
+   class BlockTmpl< Rp::Propagator<2, CppTp<2> >, Prdc::Cpu::RField<2> >;
    extern template
-   class BlockTmpl< Rp::Propagator<3, Cpp<3> >, Prdc::Cpu::RField<3> >;
+   class BlockTmpl< Rp::Propagator<3, CppTp<3> >, Prdc::Cpu::RField<3> >;
 
    namespace Rp {
-      extern template class Block<1, Cpp<1> >;
-      extern template class Block<2, Cpp<2> >;
-      extern template class Block<3, Cpp<3> >;
+      extern template class Block<1, CppTp<1> >;
+      extern template class Block<2, CppTp<2> >;
+      extern template class Block<3, CppTp<3> >;
    }
 
 }

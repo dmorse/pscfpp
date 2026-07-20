@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/trajectory/TrajectoryReader.h>
-#include <pscf/cpu/Cpp.h>
+#include <pscf/cpu/CppTp.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class TrajectoryReader<1, Cpp<1> >;
-      extern template class TrajectoryReader<2, Cpp<2> >;
-      extern template class TrajectoryReader<3, Cpp<3> >;
+      extern template class TrajectoryReader<1, CppTp<1> >;
+      extern template class TrajectoryReader<2, CppTp<2> >;
+      extern template class TrajectoryReader<3, CppTp<3> >;
    }
 }
 #endif

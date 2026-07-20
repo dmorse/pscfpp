@@ -10,7 +10,7 @@
 
 #include "AverageAnalyzer.h"
 #include <rp/fts/analyzer/PerturbationDerivative.h>
-#include <pscf/cuda/Cuda.h>
+#include <pscf/cuda/CudaTp.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

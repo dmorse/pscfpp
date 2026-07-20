@@ -9,7 +9,7 @@
 */
 
 #include <rp/scft/iterator/AmIteratorBasis.h>  // direct base class 
-#include <pscf/cuda/Cuda.h>                  // direct base argument
+#include <pscf/cuda/CudaTp.h>                  // direct base argument
 #include <rpg/scft/iterator/Iterator.h>        // indirect base argument
 #include <util/containers/DArray.h>            // indirect base argument
 

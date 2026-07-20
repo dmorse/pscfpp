@@ -6,7 +6,7 @@
 */
 
 
-#include "Cuda.h"
+#include "CudaTp.h"
 #include <pscf/cuda/ThreadArray.h>
 #include <pscf/cuda/ThreadMesh.h>
 #include <pscf/cuda/CudaVecRandom.h>

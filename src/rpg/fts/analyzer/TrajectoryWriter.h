@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/TrajectoryWriter.h> // base template
-#include <pscf/cuda/Cuda.h>                 // base argument
+#include <pscf/cuda/CudaTp.h>                 // base argument
 #include "Analyzer.h"                         // indirect base
 
 // Explicit instantiation declarations

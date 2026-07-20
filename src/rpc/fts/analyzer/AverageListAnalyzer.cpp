@@ -13,8 +13,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class AverageListAnalyzer<1, Cpp<1> >;
-      template class AverageListAnalyzer<2, Cpp<2> >;
-      template class AverageListAnalyzer<3, Cpp<3> >;
+      template class AverageListAnalyzer<1, CppTp<1> >;
+      template class AverageListAnalyzer<2, CppTp<2> >;
+      template class AverageListAnalyzer<3, CppTp<3> >;
    }
 }

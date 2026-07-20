@@ -9,7 +9,7 @@
 */
 
 #include <prdc/environment/FilmFieldGenExtBase.h>  // base class template
-#include <pscf/cpu/Cpp.h>                      // base class argument
+#include <pscf/cpu/CppTp.h>                      // base class argument
 #include <rpc/system/System.h>
 
 // Forward declarations
@@ -44,7 +44,7 @@ namespace Rp {
    * \ingroup Rp_Environment_Module
    */
    template <int D>
-   class FilmFieldGenExt<D, Cpp<D> > 
+   class FilmFieldGenExt<D, CppTp<D> > 
      : public FilmFieldGenExtBase<D>
    {
 
@@ -60,7 +60,7 @@ namespace Rp {
       * 
       * \param sys  parent System object
       */
-      FilmFieldGenExt(System<D, Cpp<D> >& sys);
+      FilmFieldGenExt(System<D, CppTp<D> >& sys);
 
       /**
       * Destructor
@@ -98,12 +98,12 @@ namespace Rp {
       /**
       * Get the parent System by non-const reference.
       */
-      System<D, Cpp<D> > & system();
+      System<D, CppTp<D> > & system();
 
       /**
       * Get the parent System by const reference.
       */
-      System<D, Cpp<D> > const & system() const;
+      System<D, CppTp<D> > const & system() const;
 
       /**
       * Get the space group name for this system.
@@ -130,7 +130,7 @@ namespace Rp {
    private:
 
       /// Pointer to the associated system object.
-      System<D, Cpp<D> >* sysPtr_;
+      System<D, CppTp<D> >* sysPtr_;
 
       /// Mask interfaceThickness, obtained via maskInterfaceThickness
       double interfaceThickness_;
@@ -141,8 +141,8 @@ namespace Rp {
 
    // Get parent System by non-const reference.
    template <int D> inline
-   System<D, Cpp<D> >& 
-   FilmFieldGenExt<D, Cpp<D> >::system() 
+   System<D, CppTp<D> >& 
+   FilmFieldGenExt<D, CppTp<D> >::system() 
    {
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
@@ -150,17 +150,17 @@ namespace Rp {
 
    // Get parent System by const reference.
    template <int D> inline
-   System<D, Cpp<D> > const & 
-   FilmFieldGenExt<D, Cpp<D> >::system() const
+   System<D, CppTp<D> > const & 
+   FilmFieldGenExt<D, CppTp<D> >::system() const
    {  
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
    }
 
    // Explicit instantiation declarations
-   extern template class FilmFieldGenExt<1, Cpp<1> >;
-   extern template class FilmFieldGenExt<2, Cpp<2> >;
-   extern template class FilmFieldGenExt<3, Cpp<3> >;
+   extern template class FilmFieldGenExt<1, CppTp<1> >;
+   extern template class FilmFieldGenExt<2, CppTp<2> >;
+   extern template class FilmFieldGenExt<3, CppTp<3> >;
 
 } // namespace Rp
 } // namespace Pscf

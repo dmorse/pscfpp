@@ -38,7 +38,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   Block<D, Cpp<D> >::Block()
+   Block<D, CppTp<D> >::Block()
     : meshPtr_(nullptr),
       fftPtr_(nullptr),
       unitCellPtr_(nullptr),
@@ -60,14 +60,14 @@ namespace Rp {
    * Destructor.
    */
    template <int D>
-   Block<D, Cpp<D> >::~Block()
+   Block<D, CppTp<D> >::~Block()
    {}
 
    /*
    * Store addresses of mesh, FFT and unit cell.
    */
    template <int D>
-   void Block<D, Cpp<D> >::associate(Mesh<D> const & mesh,
+   void Block<D, CppTp<D> >::associate(Mesh<D> const & mesh,
                             FFT<D> const& fft,
                             UnitCell<D> const& cell,
                             WaveList<D>& waveList)
@@ -88,7 +88,7 @@ namespace Rp {
    * Compute number of contour steps and allocate all memory.
    */
    template <int D>
-   void Block<D, Cpp<D> >::allocate(double ds)
+   void Block<D, CppTp<D> >::allocate(double ds)
    {
       UTIL_CHECK(ds > 0.0);
       UTIL_CHECK(meshPtr_);
@@ -151,7 +151,7 @@ namespace Rp {
    * Set or reset the the block length.
    */
    template <int D>
-   void Block<D, Cpp<D> >::setLength(double newLength)
+   void Block<D, CppTp<D> >::setLength(double newLength)
    {
       UTIL_CHECK(PolymerModel::isThread());
       Edge::setLength(newLength);
@@ -184,7 +184,7 @@ namespace Rp {
    * Set or reset the the block length.
    */
    template <int D>
-   void Block<D, Cpp<D> >::setKuhn(double kuhn)
+   void Block<D, CppTp<D> >::setKuhn(double kuhn)
    {
       BlockTmplT::setKuhn(kuhn);
       hasExpKsq_ = false;
@@ -194,7 +194,7 @@ namespace Rp {
    * Clear all internal data that depends on the unit cell parameters.
    */
    template <int D>
-   void Block<D, Cpp<D> >::clearUnitCellData()
+   void Block<D, CppTp<D> >::clearUnitCellData()
    {  
       hasExpKsq_ = false;
       stress_.clear();
@@ -204,7 +204,7 @@ namespace Rp {
    * Compute all elements of expKsq_ and expKsq2_ arrays
    */
    template <int D>
-   void Block<D, Cpp<D> >::computeExpKsq()
+   void Block<D, CppTp<D> >::computeExpKsq()
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(waveListPtr_);
@@ -241,7 +241,7 @@ namespace Rp {
    */
    template <int D>
    void
-   Block<D, Cpp<D> >::setupSolver(RField<D> const& w)
+   Block<D, CppTp<D> >::setupSolver(RField<D> const& w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -277,7 +277,7 @@ namespace Rp {
    * Propagate solution by one step for the thread model.
    */
    template <int D>
-   void Block<D, Cpp<D> >::stepThread(RField<D> const & q, RField<D>& qout) const
+   void Block<D, CppTp<D> >::stepThread(RField<D> const & q, RField<D>& qout) const
    {
       UTIL_CHECK(PolymerModel::isThread());
 
@@ -353,7 +353,7 @@ namespace Rp {
    * Apply one step of MDE solution for the bead model.
    */
    template <int D>
-   void Block<D, Cpp<D> >::stepBead(RField<D> const & q, RField<D>& qout) const
+   void Block<D, CppTp<D> >::stepBead(RField<D> const & q, RField<D>& qout) const
    {
       UTIL_CHECK(PolymerModel::isBead());
       stepBondBead(q, qout);
@@ -364,7 +364,7 @@ namespace Rp {
    * Apply the bond operator for the bead model.
    */
    template <int D>
-   void Block<D, Cpp<D> >::stepBondBead(RField<D> const & q, RField<D>& qout) const
+   void Block<D, CppTp<D> >::stepBondBead(RField<D> const & q, RField<D>& qout) const
    {
       // Prereconditions 
       UTIL_CHECK(isAllocated_);
@@ -390,7 +390,7 @@ namespace Rp {
    * Apply the half-bond operator for the bead model.
    */
    template <int D>
-   void Block<D, Cpp<D> >::stepHalfBondBead(RField<D> const & q, RField<D>& qout) const
+   void Block<D, CppTp<D> >::stepHalfBondBead(RField<D> const & q, RField<D>& qout) const
    {
       // Preconditions 
       UTIL_CHECK(isAllocated_);
@@ -416,7 +416,7 @@ namespace Rp {
    * Apply the local field operator for the bead model.
    */
    template <int D>
-   void Block<D, Cpp<D> >::stepFieldBead(RField<D>& q) const
+   void Block<D, CppTp<D> >::stepFieldBead(RField<D>& q) const
    {
       // Preconditions 
       int nx = mesh().size();
@@ -434,7 +434,7 @@ namespace Rp {
    * Integrate to calculate monomer concentration for this block
    */
    template <int D>
-   void Block<D, Cpp<D> >::computeConcentrationThread(double prefactor)
+   void Block<D, CppTp<D> >::computeConcentrationThread(double prefactor)
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -452,8 +452,8 @@ namespace Rp {
       }
 
       // References to forward and reverse propagators
-      Rp::Propagator<D, Cpp<D> > const & p0 = propagator(0);
-      Rp::Propagator<D, Cpp<D> > const & p1 = propagator(1);
+      Rp::Propagator<D, CppTp<D> > const & p0 = propagator(0);
+      Rp::Propagator<D, CppTp<D> > const & p1 = propagator(1);
 
       // Evaluate unnormalized integral
 
@@ -496,7 +496,7 @@ namespace Rp {
    * Calculate monomer concentration for this block, bead model.
    */
    template <int D>
-   void Block<D, Cpp<D> >::computeConcentrationBead(double prefactor)
+   void Block<D, CppTp<D> >::computeConcentrationBead(double prefactor)
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -514,8 +514,8 @@ namespace Rp {
       }
    
       // References to forward and reverse propagators
-      Rp::Propagator<D, Cpp<D> > const & p0 = propagator(0);
-      Rp::Propagator<D, Cpp<D> > const & p1 = propagator(1);
+      Rp::Propagator<D, CppTp<D> > const & p0 = propagator(0);
+      Rp::Propagator<D, CppTp<D> > const & p1 = propagator(1);
 
       // Sum over beads (j = 1, ... , ns_ -2)
       int j;
@@ -537,7 +537,7 @@ namespace Rp {
    * Integrate to compute stress exerted by this block (thread).
    */
    template <int D>
-   void Block<D, Cpp<D> >::computeStressThread(double prefactor)
+   void Block<D, CppTp<D> >::computeStressThread(double prefactor)
    {
       // Preconditions
       UTIL_CHECK(PolymerModel::isThread());
@@ -549,8 +549,8 @@ namespace Rp {
       UTIL_CHECK(ds_ > 0);
 
       // References to forward and reverse propagators
-      Rp::Propagator<D, Cpp<D> > const & p0 = propagator(0);
-      Rp::Propagator<D, Cpp<D> > const & p1 = propagator(1);
+      Rp::Propagator<D, CppTp<D> > const & p0 = propagator(0);
+      Rp::Propagator<D, CppTp<D> > const & p1 = propagator(1);
       UTIL_CHECK(p0.isAllocated());
       UTIL_CHECK(p1.isAllocated());
 
@@ -620,7 +620,7 @@ namespace Rp {
    * Compute contribution of this block to stress for bead model.
    */
    template <int D>
-   void Block<D, Cpp<D> >::computeStressBead(double prefactor)
+   void Block<D, CppTp<D> >::computeStressBead(double prefactor)
    {
       // Preconditions
       UTIL_CHECK(PolymerModel::isBead());
@@ -631,8 +631,8 @@ namespace Rp {
       UTIL_CHECK(ns_ > 0);
 
       // References to forward to reverse propagators
-      Rp::Propagator<D, Cpp<D> > const & p0 = propagator(0);
-      Rp::Propagator<D, Cpp<D> > const & p1 = propagator(1);
+      Rp::Propagator<D, CppTp<D> > const & p0 = propagator(0);
+      Rp::Propagator<D, CppTp<D> > const & p1 = propagator(1);
       UTIL_CHECK(p0.isSolved());
       UTIL_CHECK(p1.isSolved());
 

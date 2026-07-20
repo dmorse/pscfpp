@@ -10,7 +10,7 @@
 
 #include <pscf/solvers/BlockTmpl.h>      // base class template
 
-#include <pscf/cuda/Cuda.h>            // template argument
+#include <pscf/cuda/CudaTp.h>            // template argument
 #include <prdc/field/cuda/RField.h>            // member
 #include <prdc/field/cuda/RFieldDft.h>         // member
 #include <prdc/field/cuda/FFTBatched.h>        // member

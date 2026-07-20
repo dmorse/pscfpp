@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
-#include <pscf/cuda/Cuda.h>                          // base argument
+#include <pscf/cuda/CudaTp.h>                          // base argument
 #include <rpg/fts/analyzer/Analyzer.h>                 // indirect base
 #include <pscf/cuda/HostDArray.h>                      // member
 #include <prdc/field/cuda/RField.h>                    // base class member

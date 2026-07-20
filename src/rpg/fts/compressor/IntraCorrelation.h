@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/compressor/IntraCorrelation.h>
-#include <pscf/cuda/Cuda.h>
+#include <pscf/cuda/CudaTp.h>
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/cudaTypes.h>
 

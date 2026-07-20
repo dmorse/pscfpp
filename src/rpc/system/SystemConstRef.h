@@ -9,14 +9,14 @@
 */
 
 #include <rp/system/SystemConstRef.h>   // base class template
-#include <pscf/cpu/Cpp.h>           // base class argument
+#include <pscf/cpu/CppTp.h>           // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class SystemConstRef<1, Cpp<1> >;
-      extern template class SystemConstRef<2, Cpp<2> >;
-      extern template class SystemConstRef<3, Cpp<3> >;
+      extern template class SystemConstRef<1, CppTp<1> >;
+      extern template class SystemConstRef<2, CppTp<2> >;
+      extern template class SystemConstRef<3, CppTp<3> >;
    }
 }
 #endif

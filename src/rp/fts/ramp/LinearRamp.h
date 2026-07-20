@@ -27,7 +27,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, Cpp<D> or CudaTp<D>
+   *   - T : Types class, CppTp<D> or CudaTp<D>
    *
    * \see \ref rp_LinearRamp_page "Manual Page (Linear Ramp)"
    * \see \ref psfts_ramp_page "Manual Page" (Ramp)"

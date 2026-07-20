@@ -9,15 +9,15 @@
 */
 
 #include <rp/field/Mask.h>           // base class template
-#include <pscf/cpu/Cpp.h>        // base class template argument
+#include <pscf/cpu/CppTp.h>        // base class template argument
 #include <prdc/field/cpu/RField.h>   // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Mask< 1, Cpp<1> >;
-      extern template class Mask< 2, Cpp<2> >;
-      extern template class Mask< 3, Cpp<3> >;
+      extern template class Mask< 1, CppTp<1> >;
+      extern template class Mask< 2, CppTp<2> >;
+      extern template class Mask< 3, CppTp<3> >;
    }
 }
 #endif

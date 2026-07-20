@@ -21,7 +21,7 @@ namespace Rp {
    *
    * Template parameters:
    *    - D : dimension
-   *    - T : Types class, Cpp<D> or CudaTp<D>
+   *    - T : Types class, CppTp<D> or CudaTp<D>
    *
    * \see \ref rp_ExplicitBdStep_page "Manual Page"
    * \ingroup Rp_Fts_Brownian_Module

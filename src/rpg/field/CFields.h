@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/CFields.h>     // class template
-#include <pscf/cuda/Cuda.h>     // class template argument
+#include <pscf/cuda/CudaTp.h>     // class template argument
 
 // Explicit instantiation declarations
 namespace Pscf {

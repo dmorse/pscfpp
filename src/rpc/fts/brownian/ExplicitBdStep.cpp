@@ -22,8 +22,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class ExplicitBdStep<1, Cpp<1> >;
-      template class ExplicitBdStep<2, Cpp<2> >;
-      template class ExplicitBdStep<3, Cpp<3> >;
+      template class ExplicitBdStep<1, CppTp<1> >;
+      template class ExplicitBdStep<2, CppTp<2> >;
+      template class ExplicitBdStep<3, CppTp<3> >;
    }
 }

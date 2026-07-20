@@ -10,7 +10,7 @@
 
 #include "AverageListAnalyzer.h"                  // indirect base class
 #include <rp/fts/analyzer/HamiltonianAnalyzer.h>  // base class template
-#include <pscf/cuda/Cuda.h>                     // template argument
+#include <pscf/cuda/CudaTp.h>                     // template argument
 
 // Explicit instantiation declarations
 namespace Pscf {

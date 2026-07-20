@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/perturbation/PerturbationFactory.h>
-#include <pscf/cpu/Cpp.h>
+#include <pscf/cpu/CppTp.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class PerturbationFactory<1, Cpp<1> >;
-      extern template class PerturbationFactory<2, Cpp<2> >;
-      extern template class PerturbationFactory<3, Cpp<3> >;
+      extern template class PerturbationFactory<1, CppTp<1> >;
+      extern template class PerturbationFactory<2, CppTp<2> >;
+      extern template class PerturbationFactory<3, CppTp<3> >;
    }
 }
 #endif

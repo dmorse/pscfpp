@@ -33,7 +33,7 @@ namespace Rp {
    * <b> Template parameters </b>: The template parameters represent:
    *
    *   - D   : integer dimensionality of space (D=1, 2, or 3)
-   *   - T   : a "Types" class (Cpp<D> or CudaTp<D>)
+   *   - T   : a "Types" class (CppTp<D> or CudaTp<D>)
    *
    * <b> Field Representations </b>: A CFields container has a list of
    * nMonomer fields that are each associated with a monomer type. The

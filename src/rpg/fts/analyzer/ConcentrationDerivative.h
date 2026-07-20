@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/ConcentrationDerivative.h> // base class template
-#include <pscf/cuda/Cuda.h>                        // base argument
+#include <pscf/cuda/CudaTp.h>                        // base argument
 #include <rpg/fts/analyzer/AverageAnalyzer.h>        // indirect base
 
 // Explicit instantiation declarations

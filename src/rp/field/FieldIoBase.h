@@ -43,12 +43,12 @@ namespace Rp {
    * <b>Template parameters:</b>
    *
    *    - D    : integer dimension of space, i.e., 1, 2, or 3
-   *    - T    : Types class (Cpp<D> or CudaTp<D>)
+   *    - T    : Types class (CppTp<D> or CudaTp<D>)
    *
    * <b>Subclasses:</b>
    * The FieldIoBase template is a base class for specializations of a
    * template named FieldIo with the same two template parameters. Partial
-   * specializations are defined for T=Cpp<D> and T=CudaTp<D>.
+   * specializations are defined for T=CppTp<D> and T=CudaTp<D>.
    *
    * <b>Basis construction as side effect of reading field files:</b>
    * Every member function that reads fields from a file may construct a

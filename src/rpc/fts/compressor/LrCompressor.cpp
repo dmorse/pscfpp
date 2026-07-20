@@ -21,8 +21,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class LrCompressor<1, Cpp<1> >;
-      template class LrCompressor<2, Cpp<2> >;
-      template class LrCompressor<3, Cpp<3> >;
+      template class LrCompressor<1, CppTp<1> >;
+      template class LrCompressor<2, CppTp<2> >;
+      template class LrCompressor<3, CppTp<3> >;
    }
 }

@@ -34,7 +34,7 @@ using namespace Pscf::Prdc::Cpu;
 class SimulatorTest : public LogFileUnitTest
 {
 
-   Rp::System<3, Cpp<3> > system;
+   Rp::System<3, CppTp<3> > system;
 
 public:
 
@@ -68,7 +68,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_Simulator");
-      Rp::Simulator<3, Cpp<3> > simulator(system);
+      Rp::Simulator<3, CppTp<3> > simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
       double const eps = 1.0E-8;
@@ -113,7 +113,7 @@ public:
       openLogFile("out/testSaddlePointField.log");
 
       initSystem("in/param_Simulator");
-      Rp::Simulator<3, Cpp<3> > simulator(system);
+      Rp::Simulator<3, CppTp<3> > simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
@@ -207,7 +207,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_system_disordered");
-      Rp::Simulator<3, Cpp<3> > simulator(system);
+      Rp::Simulator<3, CppTp<3> > simulator(system);
 
       simulator.allocate();
       simulator.analyzeChi();
@@ -247,7 +247,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_system_disordered");
-      Rp::Simulator<3, Cpp<3> > simulator(system);
+      Rp::Simulator<3, CppTp<3> > simulator(system);
 
       simulator.allocate();
       simulator.analyzeChi();

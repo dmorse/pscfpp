@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/CubicLengthDerivative.h>  // base class template
-#include <pscf/cpu/Cpp.h>                       // base class argument
+#include <pscf/cpu/CppTp.h>                       // base class argument
 #include <rpc/fts/analyzer/AverageAnalyzer.h>       // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class CubicLengthDerivative<1, Cpp<1> >;
-      extern template class CubicLengthDerivative<2, Cpp<2> >;
-      extern template class CubicLengthDerivative<3, Cpp<3> >;
+      extern template class CubicLengthDerivative<1, CppTp<1> >;
+      extern template class CubicLengthDerivative<2, CppTp<2> >;
+      extern template class CubicLengthDerivative<3, CppTp<3> >;
    }
 }
 #endif

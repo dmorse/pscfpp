@@ -26,7 +26,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, Cpp<D> >& system, std::string filename)
+   void initSystem(Rp::System<D, CppTp<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -44,7 +44,7 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputeFreeEnergyThread.log");
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       initSystem(system, "in/thread/param_system_1D");
       system.w().readBasis("in/thread/omega.in");
       system.compute();
@@ -60,11 +60,11 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputelnqThread.log");
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       initSystem(system, "in/thread/param_system_1D");
       system.w().readBasis("in/thread/omega.in");
       system.compute();
-      Rp::Polymer<1, Cpp<1> > const & polymer = system.mixture().polymer(0);
+      Rp::Polymer<1, CppTp<1> > const & polymer = system.mixture().polymer(0);
       double q; double lnq;
       q = polymer.q();
       lnq = log(q);

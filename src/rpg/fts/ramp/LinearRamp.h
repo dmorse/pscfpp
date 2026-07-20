@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/ramp/LinearRamp.h>      // direct base class template
-#include <pscf/cuda/Cuda.h>            // base class template argument
+#include <pscf/cuda/CudaTp.h>            // base class template argument
 #include <rpg/fts/ramp/RampParameter.h>  // base class member
 #include <rpg/fts/ramp/Ramp.h>           // indirect base class
 

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.h> // base template
-#include <pscf/cuda/Cuda.h>                         // base argument
+#include <pscf/cuda/CudaTp.h>                         // base argument
 #include <rpg/fts/analyzer/AverageAnalyzer.h>         // indirect base 
 #include <prdc/field/cuda/RField.h>                   // base member
 #include <prdc/field/cuda/RFieldDft.h>                // base member

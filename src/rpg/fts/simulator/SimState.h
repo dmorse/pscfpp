@@ -9,7 +9,7 @@
 */
 
 #include<rp/fts/simulator/SimState.h>  // class template
-#include<pscf/cuda/Cuda.h>           // template argument
+#include<pscf/cuda/CudaTp.h>           // template argument
 
 //Explicit instantiation declarations
 namespace Pscf {

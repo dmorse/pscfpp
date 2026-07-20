@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/Mask.h>            // lass template
-#include <pscf/cuda/Cuda.h>         // class template argument
+#include <pscf/cuda/CudaTp.h>         // class template argument
 #include <prdc/field/cuda/RField.h>   // base class member
 
 

@@ -9,7 +9,7 @@
 */
 
 #include <rp/environment/FilmEnvironment.h> // base class template
-#include <pscf/cuda/Cuda.h>               // base class argument
+#include <pscf/cuda/CudaTp.h>               // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

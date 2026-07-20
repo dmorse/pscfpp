@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/PropagatorBase.h>   // base class template
-#include <pscf/cuda/Cuda.h>            // base class template argument
+#include <pscf/cuda/CudaTp.h>            // base class template argument
 #include <pscf/cuda/DeviceArray.h>       // member
 
 namespace Pscf {

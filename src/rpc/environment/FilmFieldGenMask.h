@@ -9,7 +9,7 @@
 */
 
 #include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
-#include <pscf/cpu/Cpp.h>                       // template parameter
+#include <pscf/cpu/CppTp.h>                       // template parameter
 #include <rpc/system/System.h>
 
 // Forward declarations
@@ -40,7 +40,7 @@ namespace Rp {
    * \ingroup Rp_Environment_Module
    */
    template <int D>
-   class FilmFieldGenMask<D, Cpp<D> >
+   class FilmFieldGenMask<D, CppTp<D> >
      : public FilmFieldGenMaskBase<D>
    {
 
@@ -56,7 +56,7 @@ namespace Rp {
       * 
       * \param sys  System parent object
       */
-      FilmFieldGenMask(Rp::System<D, Cpp<D> >& sys);
+      FilmFieldGenMask(Rp::System<D, CppTp<D> >& sys);
 
       /**
       * Destructor
@@ -115,12 +115,12 @@ namespace Rp {
       /**
       * Get the parent System by non-const reference.
       */
-      Rp::System<D, Cpp<D> >& system();
+      Rp::System<D, CppTp<D> >& system();
 
       /**
       * Get the parent System by const reference.
       */
-      Rp::System<D, Cpp<D> > const & system() const;
+      Rp::System<D, CppTp<D> > const & system() const;
 
       /**
       * Get the space group name for this system.
@@ -142,7 +142,7 @@ namespace Rp {
    private:
 
       /// Pointer to the associated system object.
-      Rp::System<D, Cpp<D> >* sysPtr_;
+      Rp::System<D, CppTp<D> >* sysPtr_;
 
    };
 
@@ -150,8 +150,8 @@ namespace Rp {
 
    // Get parent System by non-const reference.
    template <int D>
-   Rp::System<D, Cpp<D> >& 
-   FilmFieldGenMask<D, Cpp<D> >::system() 
+   Rp::System<D, CppTp<D> >& 
+   FilmFieldGenMask<D, CppTp<D> >::system() 
    {
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
@@ -159,8 +159,8 @@ namespace Rp {
 
    // Get parent System by const reference.
    template <int D>
-   Rp::System<D, Cpp<D> > const & 
-   FilmFieldGenMask<D, Cpp<D> >::system() const
+   Rp::System<D, CppTp<D> > const & 
+   FilmFieldGenMask<D, CppTp<D> >::system() const
    {  
       UTIL_CHECK(sysPtr_);  
       return *sysPtr_; 
@@ -169,19 +169,19 @@ namespace Rp {
    // Get space group name for this system.
    template <int D> inline 
    std::string 
-   FilmFieldGenMask<D, Cpp<D> >::systemSpaceGroup() const
+   FilmFieldGenMask<D, CppTp<D> >::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    // Get one of the lattice vectors for this system.
    template <int D> inline 
    RealVec<D> 
-   FilmFieldGenMask<D, Cpp<D> >::systemLatticeVector(int id) const
+   FilmFieldGenMask<D, CppTp<D> >::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    // Explicit instantiation declarations
-   extern template class FilmFieldGenMask<1, Cpp<1> >;
-   extern template class FilmFieldGenMask<2, Cpp<2> >;
-   extern template class FilmFieldGenMask<3, Cpp<3> >;
+   extern template class FilmFieldGenMask<1, CppTp<1> >;
+   extern template class FilmFieldGenMask<2, CppTp<2> >;
+   extern template class FilmFieldGenMask<3, CppTp<3> >;
 
 } // namespace Rp
 } // namespace Pscf

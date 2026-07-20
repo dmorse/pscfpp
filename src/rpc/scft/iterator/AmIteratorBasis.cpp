@@ -23,16 +23,16 @@ namespace Pscf {
 
    // Base class instantiation definitions
    template class 
-   AmIteratorTmpl< Rp::Iterator<1, Cpp<1> >, DArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<1, CppTp<1> >, DArray<double> >;
    template class 
-   AmIteratorTmpl< Rp::Iterator<2, Cpp<2> >, DArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<2, CppTp<2> >, DArray<double> >;
    template class 
-   AmIteratorTmpl< Rp::Iterator<3, Cpp<3> >, DArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<3, CppTp<3> >, DArray<double> >;
 
    namespace Rp {
-      template class AmIteratorBasis<1, Cpp<1> >;
-      template class AmIteratorBasis<2, Cpp<2> >;
-      template class AmIteratorBasis<3, Cpp<3> >;
+      template class AmIteratorBasis<1, CppTp<1> >;
+      template class AmIteratorBasis<2, CppTp<2> >;
+      template class AmIteratorBasis<3, CppTp<3> >;
    }
 
 }

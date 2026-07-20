@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/brownian/PredCorrBdStep.h> // base class template
-#include <pscf/cuda/Cuda.h>               // base class template argument 
+#include <pscf/cuda/CudaTp.h>               // base class template argument 
 #include <prdc/field/cuda/RField.h>               // base class member
 #include <rpg/fts/brownian/BdStep.h>        // indirect base class
 

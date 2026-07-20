@@ -38,7 +38,7 @@ namespace Rp {
    * <b> Template parameters </b>: The template parameters represent:
    *
    *     - D  : integer dimensionality of space, D=1,2, or 3
-   *     - T  : a "Types" class (Cpp<D> or CudaTp<D>))
+   *     - T  : a "Types" class (CppTp<D> or CudaTp<D>))
    *
    * <b> Subclasses </b>: Specializations of Rp::WFieldsBase are used as 
    * base classes for corresponding specializations of Rp::WFields.

@@ -32,7 +32,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, Cpp<D> >& system, std::string filename)
+   void initSystem(Rp::System<D, CppTp<D> >& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -45,10 +45,10 @@ public:
    }
 
    template <int D>
-   void initSimulator(Rp::McSimulator<D, Cpp<D> >& simulator, std::string filename)
+   void initSimulator(Rp::McSimulator<D, CppTp<D> >& simulator, std::string filename)
    {
-      Rp::Analyzer<D, Cpp<D> >::initStatic();
-      int baseInterval = Rp::Analyzer<D, Cpp<D> >::baseInterval;
+      Rp::Analyzer<D, CppTp<D> >::initStatic();
+      int baseInterval = Rp::Analyzer<D, CppTp<D> >::baseInterval;
       TEST_ASSERT(baseInterval == 1);
 
       std::ifstream in;
@@ -61,7 +61,7 @@ public:
    * Allocate an array of rgrid fields.
    */
    template <int D>
-   void allocateRGridFields(Rp::System<D, Cpp<D> > const & system,
+   void allocateRGridFields(Rp::System<D, CppTp<D> > const & system,
                             DArray< RField<D> >& fields)
    {
       // Check and allocate outer DArray
@@ -89,13 +89,13 @@ public:
    * Read r-grid fields into an array.
    */
    template <int D>
-   void readRGridFields(Rp::System<D, Cpp<D> > const & system,
+   void readRGridFields(Rp::System<D, CppTp<D> > const & system,
                         std::string filename,
                         DArray< RField<D> >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
-      Rp::FieldIo<D, Cpp<D> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D, CppTp<D> > const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
    }
 
@@ -104,10 +104,10 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateDiblocks.log");
 
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       initSystem(system, "in/param_system_disordered");
 
-      Rp::McSimulator<3, Cpp<3> > simulator(system);
+      Rp::McSimulator<3, CppTp<3> > simulator(system);
       initSimulator(simulator, "in/param_McSimulator");
 
       system.w().readRGrid("in/w_dis.rf");
@@ -132,10 +132,10 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateBdMoveDiblocks.log");
       
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       initSystem(system, "in/param_system_disordered");
       
-      Rp::McSimulator<3, Cpp<3> > simulator(system);
+      Rp::McSimulator<3, CppTp<3> > simulator(system);
       initSimulator(simulator, "in/param_McSimulator_BdMove");
       
       system.w().readRGrid("in/w_dis.rf");
@@ -160,10 +160,10 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateShiftDiblocks.log");
       
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       initSystem(system, "in/param_system_disordered");
       
-      Rp::McSimulator<3, Cpp<3> > simulator(system);
+      Rp::McSimulator<3, CppTp<3> > simulator(system);
       initSimulator(simulator, "in/param_McSimulator_ShiftMove");
       
       system.w().readRGrid("in/w_dis.rf");
@@ -188,10 +188,10 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testMcSimulateTriblocks.log");
 
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       initSystem(system, "in/param_system_triblock");
 
-      Rp::McSimulator<3, Cpp<3> > simulator(system);
+      Rp::McSimulator<3, CppTp<3> > simulator(system);
       initSimulator(simulator, "in/param_triblock_McSimulator");
 
       system.w().readRGrid("in/w_triblock.rf");

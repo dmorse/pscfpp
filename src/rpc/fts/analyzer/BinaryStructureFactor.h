@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
-#include <pscf/cpu/Cpp.h>                          // base argument
+#include <pscf/cpu/CppTp.h>                          // base argument
 #include <rpc/fts/analyzer/Analyzer.h>                 // indirect base
 #include <prdc/field/cpu/RField.h>                     // base member
 #include <prdc/field/cpu/RFieldDft.h>                  // base member
@@ -31,8 +31,8 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class BinaryStructureFactor<D, Cpp<D> >
-    : public BinaryStructureFactorBase<D, Cpp<D> >
+   class BinaryStructureFactor<D, CppTp<D> >
+    : public BinaryStructureFactorBase<D, CppTp<D> >
    {
 
    public:
@@ -43,8 +43,8 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryStructureFactor(Simulator<D, Cpp<D> >& simulator, 
-                            System<D, Cpp<D> >& system);
+      BinaryStructureFactor(Simulator<D, CppTp<D> >& simulator, 
+                            System<D, CppTp<D> >& system);
 
       /**
       * Setup before the main loop.
@@ -60,8 +60,8 @@ namespace Rp {
 
    protected:
 
-      using Base = BinaryStructureFactorBase<D, Cpp<D> >;
-      using AnalyzerT = Analyzer<D, Cpp<D> >;
+      using Base = BinaryStructureFactorBase<D, CppTp<D> >;
+      using AnalyzerT = Analyzer<D, CppTp<D> >;
 
       using Base::wk_;
       using Base::allocate;
@@ -77,12 +77,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BinaryStructureFactorBase<1, Cpp<1> >;
-      extern template class BinaryStructureFactorBase<2, Cpp<2> >;
-      extern template class BinaryStructureFactorBase<3, Cpp<3> >;
-      extern template class BinaryStructureFactor<1, Cpp<1> >;
-      extern template class BinaryStructureFactor<2, Cpp<2> >;
-      extern template class BinaryStructureFactor<3, Cpp<3> >;
+      extern template class BinaryStructureFactorBase<1, CppTp<1> >;
+      extern template class BinaryStructureFactorBase<2, CppTp<2> >;
+      extern template class BinaryStructureFactorBase<3, CppTp<3> >;
+      extern template class BinaryStructureFactor<1, CppTp<1> >;
+      extern template class BinaryStructureFactor<2, CppTp<2> >;
+      extern template class BinaryStructureFactor<3, CppTp<3> >;
    }
 }
 #endif

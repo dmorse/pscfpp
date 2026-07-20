@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ForceBiasMoveBase.h> // base class template
-#include <pscf/cuda/Cuda.h>                    // base class argument
+#include <pscf/cuda/CudaTp.h>                    // base class argument
 #include <prdc/field/cuda/RField.h>              // base class member
 #include <util/containers/DArray.h>              // base base member
 #include <rp/fts/montecarlo/McMove.h>            // indirect base class

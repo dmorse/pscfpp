@@ -9,7 +9,7 @@
 */
 
 #include <rp/system/SystemConstRef.h>   // base class template
-#include <pscf/cuda/Cuda.h>           // base class parameter
+#include <pscf/cuda/CudaTp.h>           // base class parameter
 
 // Explicit instantiation declarations
 namespace Pscf {

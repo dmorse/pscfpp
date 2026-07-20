@@ -14,11 +14,11 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class WFieldsBase<1, Cpp<1> >;
-      template class WFieldsBase<2, Cpp<2> >;
-      template class WFieldsBase<3, Cpp<3> >;
-      template class WFields<1, Cpp<1> >;
-      template class WFields<2, Cpp<2> >;
-      template class WFields<3, Cpp<3> >;
+      template class WFieldsBase<1, CppTp<1> >;
+      template class WFieldsBase<2, CppTp<2> >;
+      template class WFieldsBase<3, CppTp<3> >;
+      template class WFields<1, CppTp<1> >;
+      template class WFields<2, CppTp<2> >;
+      template class WFields<3, CppTp<3> >;
    }
 }

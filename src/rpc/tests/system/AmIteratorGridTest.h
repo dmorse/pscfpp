@@ -48,7 +48,7 @@ public:
    * Allocate an array of rgrid fields.
    */
    template <int D>
-   void allocateRGridFields(Rp::System<D, Cpp<D> > const & system,
+   void allocateRGridFields(Rp::System<D, CppTp<D> > const & system,
                             DArray< RField<D> >& fields)
    {
       // Check and allocate outer DArray
@@ -77,13 +77,13 @@ public:
    * Read r-grid fields into an array.
    */
    template <int D>
-   void readRGridFields(Rp::System<D, Cpp<D> > const & system,
+   void readRGridFields(Rp::System<D, CppTp<D> > const & system,
                         std::string filename,
                         DArray< RField<D> >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
-      Rp::FieldIo<D, Cpp<D> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D, CppTp<D> > const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
    }
 
@@ -109,7 +109,7 @@ public:
    * Compare system w fields to reference fields from a file.
    */
    template <int D>
-   double readCompareWRGrid(Rp::System<D, Cpp<D> > const & system,
+   double readCompareWRGrid(Rp::System<D, CppTp<D> > const & system,
                             std::string filename)
    {
       DArray< RField<D> > fields;
@@ -123,7 +123,7 @@ public:
    * Compare system w fields to reference fields from a file.
    */
    template <int D>
-   double readCompareCRGrid(Rp::System<D, Cpp<D> > const & system,
+   double readCompareCRGrid(Rp::System<D, CppTp<D> > const & system,
                             std::string filename)
    {
       DArray< RField<D> > fields;
@@ -134,7 +134,7 @@ public:
    }
 
    template <int D>
-   void setupSystem(Rp::System<D, Cpp<D> >& system, std::string paramFileName)
+   void setupSystem(Rp::System<D, CppTp<D> >& system, std::string paramFileName)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -161,7 +161,7 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void testIterate(Rp::System<D, Cpp<D> >& system,
+   void testIterate(Rp::System<D, CppTp<D> >& system,
                     std::string paramFileName,
                     std::string wFileName,
                     std::string outSuffix,
@@ -189,7 +189,7 @@ public:
          std::string refFileRoot;
          refFileRoot = makeFileRoot("ref/testIterate", outSuffix, D);
    
-         Rp::FieldIo<D, Cpp<D> > const & fieldIo = system.domain().fieldIo();
+         Rp::FieldIo<D, CppTp<D> > const & fieldIo = system.domain().fieldIo();
          
          // Compare w fields
          std::string refFileBasis;
@@ -217,7 +217,7 @@ public:
    * On output, fHelhmoltz and pressure contain absolute differences
    */
    template <int D>
-   void compareFreeEnergies(Rp::System<D, Cpp<D> > const & system,
+   void compareFreeEnergies(Rp::System<D, CppTp<D> > const & system,
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
@@ -237,7 +237,7 @@ public:
    * Compute and return stress.
    */
    template <int D>
-   FSArray<double, 6> computeStress(Rp::System<D, Cpp<D> >& system)
+   FSArray<double, 6> computeStress(Rp::System<D, CppTp<D> >& system)
    {
       FSArray<double, 6> stress;
       int nParameter = system.domain().unitCell().nParameter();
@@ -262,7 +262,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -296,7 +296,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -336,7 +336,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -373,7 +373,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -410,7 +410,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -447,7 +447,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -482,7 +482,7 @@ public:
       openLogFile("out/testIterate1D_lam_open_shift.log");
 
       // Process system
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       initSystem(system,
                  "in/solution/lam_open/param",
                  "in/solution/lam_open/w.bf");
@@ -492,7 +492,7 @@ public:
       }
 
       // Initialize systemShift
-      Rp::System<1, Cpp<1> > systemShift;
+      Rp::System<1, CppTp<1> > systemShift;
       initSystem(systemShift,
                  "in/solution/lam_open/param",
                  "in/solution/lam_open/w.bf");
@@ -551,7 +551,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<2, Cpp<2> > system;
+      Rp::System<2, CppTp<2> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -583,7 +583,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<2, Cpp<2> > system;
+      Rp::System<2, CppTp<2> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -610,7 +610,7 @@ public:
 
       // v1.1 test used omega.in as input, compared to omega.ref
 
-      Rp::FieldIo<2, Cpp<2> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<2, CppTp<2> > const & fieldIo = system.domain().fieldIo();
       fieldIo.scaleFieldsBasis("out/testIterateBasis2D_hex_flex_w.bf",
                                "out/testIterateBasis2D_hex_flex_w_scaled.bf",
                                0.01);
@@ -622,7 +622,7 @@ public:
       //setVerbose(1);
 
       double wMaxDiff, cMaxDiff;
-      Rp::System<2, Cpp<2> > system;
+      Rp::System<2, CppTp<2> > system;
       int error;
       testIterate(system,
                   "in/diblock/hex_bead/param.flex",
@@ -653,7 +653,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -686,7 +686,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -724,7 +724,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,

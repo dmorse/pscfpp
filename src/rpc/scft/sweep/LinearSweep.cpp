@@ -13,8 +13,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class LinearSweep< 1, Cpp<1> >;
-      template class LinearSweep< 2, Cpp<2> >;
-      template class LinearSweep< 3, Cpp<3> >;
+      template class LinearSweep< 1, CppTp<1> >;
+      template class LinearSweep< 2, CppTp<2> >;
+      template class LinearSweep< 3, CppTp<3> >;
    }
 }

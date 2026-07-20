@@ -32,7 +32,7 @@ namespace Rp {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenExt<D, Cpp<D> >::FilmFieldGenExt()
+   FilmFieldGenExt<D, CppTp<D> >::FilmFieldGenExt()
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(nullptr)
    {  ParamComposite::setClassName("FilmFieldGenExt"); }
@@ -41,8 +41,8 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   FilmFieldGenExt<D, Cpp<D> >::FilmFieldGenExt(
-         Rp::System<D, Cpp<D> >& sys)
+   FilmFieldGenExt<D, CppTp<D> >::FilmFieldGenExt(
+         Rp::System<D, CppTp<D> >& sys)
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(&sys)
    {  ParamComposite::setClassName("FilmFieldGenExt"); }
@@ -51,14 +51,14 @@ namespace Rp {
    * Destructor
    */
    template <int D>
-   FilmFieldGenExt<D, Cpp<D> >::~FilmFieldGenExt()
+   FilmFieldGenExt<D, CppTp<D> >::~FilmFieldGenExt()
    {}
 
    /*
    * Get contribution to the stress from these external fields
    */
    template <int D>
-   double FilmFieldGenExt<D, Cpp<D> >::stress(int paramId) const
+   double FilmFieldGenExt<D, CppTp<D> >::stress(int paramId) const
    {
       // If walls are athermal then there is no external field, so no
       // contribution to the stress.
@@ -156,7 +156,7 @@ namespace Rp {
    * Compute the fields and store where the System can access.
    */
    template <int D>
-   void FilmFieldGenExt<D, Cpp<D> >::compute()
+   void FilmFieldGenExt<D, CppTp<D> >::compute()
    {
       // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
@@ -237,7 +237,7 @@ namespace Rp {
    */
    template <int D>
    std::string 
-   FilmFieldGenExt<D, Cpp<D> >::systemSpaceGroup() const
+   FilmFieldGenExt<D, CppTp<D> >::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    /*
@@ -245,14 +245,14 @@ namespace Rp {
    */
    template <int D>
    RealVec<D> 
-   FilmFieldGenExt<D, Cpp<D> >::systemLatticeVector(int id) const
+   FilmFieldGenExt<D, CppTp<D> >::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    /*
    * Get the number of monomer species for this system.
    */
    template <int D>
-   int FilmFieldGenExt<D, Cpp<D> >::systemNMonomer() const
+   int FilmFieldGenExt<D, CppTp<D> >::systemNMonomer() const
    {  return system().mixture().nMonomer(); }
 
 }
@@ -261,8 +261,8 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FilmFieldGenExt<1, Cpp<1> >;
-      template class FilmFieldGenExt<2, Cpp<2> >;
-      template class FilmFieldGenExt<3, Cpp<3> >;
+      template class FilmFieldGenExt<1, CppTp<1> >;
+      template class FilmFieldGenExt<2, CppTp<2> >;
+      template class FilmFieldGenExt<3, CppTp<3> >;
    }
 }

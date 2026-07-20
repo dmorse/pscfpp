@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/MixtureBase.h>  // base class template
-#include <pscf/cuda/Cuda.h>        // base class template argument
+#include <pscf/cuda/CudaTp.h>        // base class template argument
 
 // Forward declarations
 namespace Pscf {

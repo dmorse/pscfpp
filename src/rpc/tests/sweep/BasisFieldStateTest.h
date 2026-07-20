@@ -39,17 +39,17 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Cpp<3> > system;
-      Rp::BasisFieldState<3, Cpp<3> > bfs1(system);
-      Rp::BasisFieldState<3, Cpp<3> > bfs2;
+      Rp::System<3, CppTp<3> > system;
+      Rp::BasisFieldState<3, CppTp<3> > bfs1(system);
+      Rp::BasisFieldState<3, CppTp<3> > bfs2;
    }
 
    void testRead()
    {
       printMethod(TEST_FUNC);
       
-      Rp::System<3, Cpp<3> > system;
-      Rp::BasisFieldState<3, Cpp<3> > bfs(system);
+      Rp::System<3, CppTp<3> > system;
+      Rp::BasisFieldState<3, CppTp<3> > bfs(system);
       BFieldComparison comparison;
    
       // Setup system
@@ -72,8 +72,8 @@ public:
       // Write tested with a read/write/read/comparison procedure
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Cpp<3> > system;
-      Rp::BasisFieldState<3, Cpp<3> > bfs1(system), bfs2(system);
+      Rp::System<3, CppTp<3> > system;
+      Rp::BasisFieldState<3, CppTp<3> > bfs1(system), bfs2(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -94,8 +94,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Cpp<3> > system;
-      Rp::BasisFieldState<3, Cpp<3> > bfs(system);
+      Rp::System<3, CppTp<3> > system;
+      Rp::BasisFieldState<3, CppTp<3> > bfs(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -115,8 +115,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Cpp<3> > system;
-      Rp::BasisFieldState<3, Cpp<3> > bfs(system);
+      Rp::System<3, CppTp<3> > system;
+      Rp::BasisFieldState<3, CppTp<3> > bfs(system);
       BFieldComparison comparison;
 
       // Setup system
@@ -136,8 +136,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, Cpp<3> > system;
-      Rp::BasisFieldState<3, Cpp<3> > bfs;
+      Rp::System<3, CppTp<3> > system;
+      Rp::BasisFieldState<3, CppTp<3> > bfs;
 
       // Setup system
       BasisFieldStateTest::SetUpSystem(system);
@@ -145,7 +145,7 @@ public:
       bfs.setSystem(system);
    }
 
-   void SetUpSystem(Rp::System<3, Cpp<3> >& system)
+   void SetUpSystem(Rp::System<3, CppTp<3> >& system)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

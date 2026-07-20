@@ -9,7 +9,7 @@
 */
 
 #include <rp/scft/sweep/LinearSweep.h>      // direct base class template
-#include <pscf/cuda/Cuda.h>               // base class argument
+#include <pscf/cuda/CudaTp.h>               // base class argument
 #include <rpg/scft/sweep/Sweep.h>           // indirect base class
 #include <rpg/scft/sweep/SweepParameter.h>  // indirect base member
 

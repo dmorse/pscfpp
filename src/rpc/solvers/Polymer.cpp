@@ -18,15 +18,15 @@
 namespace Pscf {
 
    template class 
-   PolymerTmpl< Rp::Block<1, Cpp<1> >, Rp::Propagator<1, Cpp<1> > >;
+   PolymerTmpl< Rp::Block<1, CppTp<1> >, Rp::Propagator<1, CppTp<1> > >;
    template class 
-   PolymerTmpl< Rp::Block<2, Cpp<2> >, Rp::Propagator<2, Cpp<2> > >;
+   PolymerTmpl< Rp::Block<2, CppTp<2> >, Rp::Propagator<2, CppTp<2> > >;
    template class 
-   PolymerTmpl< Rp::Block<3, Cpp<3> >, Rp::Propagator<3, Cpp<3> > >;
+   PolymerTmpl< Rp::Block<3, CppTp<3> >, Rp::Propagator<3, CppTp<3> > >;
 
    namespace Rp {
-      template class Polymer< 1, Cpp<1> >;
-      template class Polymer< 2, Cpp<2> >;
-      template class Polymer< 3, Cpp<3> >;
+      template class Polymer< 1, CppTp<1> >;
+      template class Polymer< 2, CppTp<2> >;
+      template class Polymer< 3, CppTp<3> >;
    }
 }

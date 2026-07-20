@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/Solvent.h>    // base class template
-#include <pscf/cuda/Cuda.h>      // base class template parameter
+#include <pscf/cuda/CudaTp.h>      // base class template parameter
 #include <prdc/field/cuda/RField.h>      // member of base class
 
 // Explicit instantiation declarations

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/McMoveManager.h> // base class template
-#include <pscf/cuda/Cuda.h>                // base class template argument
+#include <pscf/cuda/CudaTp.h>                // base class template argument
 #include <util/param/Manager.h>              // indirect base class
 #include <util/containers/DArray.h>          // member
 

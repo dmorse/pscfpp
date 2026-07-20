@@ -9,7 +9,7 @@
 */
 
 #include <rp/scft/iterator/AmIteratorGrid.h>  // class template
-#include <pscf/cuda/Cuda.h>                 // class argument
+#include <pscf/cuda/CudaTp.h>                 // class argument
 #include <rpg/scft/iterator/Iterator.h>       // indirect base class 
 #include <pscf/cuda/DeviceArray.h>            // base class argument
 

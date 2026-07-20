@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/trajectory/TrajectoryReaderFactory.h>
-#include <pscf/cuda/Cuda.h>
+#include <pscf/cuda/CudaTp.h>
 
 
 // Explicit instantiation declarations

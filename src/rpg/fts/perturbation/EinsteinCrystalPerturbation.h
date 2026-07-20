@@ -2,7 +2,7 @@
 #define RPG_EINSTEIN_CRYSTAL_PERTURBATION_H
 
 #include <rp/fts/perturbation/EinsteinCrystalPerturbation.h> // base class
-#include <pscf/cuda/Cuda.h>                               // base argument
+#include <pscf/cuda/CudaTp.h>                               // base argument
 #include <rpg/fts/perturbation/Perturbation.h>              // indirect base
 #include <prdc/field/cuda/RField.h>                         // base member
 

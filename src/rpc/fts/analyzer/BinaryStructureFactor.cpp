@@ -32,17 +32,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactor<D, Cpp<D> >::BinaryStructureFactor(
-                                  Simulator<D, Cpp<D> >& simulator,
-                                  System<D, Cpp<D> >& system)
-    : BinaryStructureFactorBase< D, Cpp<D> >(simulator, system)
+   BinaryStructureFactor<D, CppTp<D> >::BinaryStructureFactor(
+                                  Simulator<D, CppTp<D> >& simulator,
+                                  System<D, CppTp<D> >& system)
+    : BinaryStructureFactorBase< D, CppTp<D> >(simulator, system)
    {}
 
    /*
    * Setup before entering main loop.
    */
    template <int D>
-   void BinaryStructureFactor<D, Cpp<D> >::setup()
+   void BinaryStructureFactor<D, CppTp<D> >::setup()
    {
       allocate();
       Cpu::WaveList<D> const & waveList = AnalyzerT::system().waveList();
@@ -53,7 +53,7 @@ namespace Rp {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D>
-   void BinaryStructureFactor<D, Cpp<D> >::sample(long iStep)
+   void BinaryStructureFactor<D, CppTp<D> >::sample(long iStep)
    {
       if (AnalyzerT::isAtInterval(iStep)) {
          computeW();
@@ -67,11 +67,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BinaryStructureFactorBase<1, Cpp<1> >;
-      template class BinaryStructureFactorBase<2, Cpp<2> >;
-      template class BinaryStructureFactorBase<3, Cpp<3> >;
-      template class BinaryStructureFactor<1, Cpp<1> >;
-      template class BinaryStructureFactor<2, Cpp<2> >;
-      template class BinaryStructureFactor<3, Cpp<3> >;
+      template class BinaryStructureFactorBase<1, CppTp<1> >;
+      template class BinaryStructureFactorBase<2, CppTp<2> >;
+      template class BinaryStructureFactorBase<3, CppTp<3> >;
+      template class BinaryStructureFactor<1, CppTp<1> >;
+      template class BinaryStructureFactor<2, CppTp<2> >;
+      template class BinaryStructureFactor<3, CppTp<3> >;
    }
 }

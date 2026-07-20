@@ -14,8 +14,8 @@
 namespace Pscf {
    namespace Rp {
       using namespace Prdc;
-      template class CFields<1, Cpp<1> >;
-      template class CFields<2, Cpp<2> >;
-      template class CFields<3, Cpp<3> >;
+      template class CFields<1, CppTp<1> >;
+      template class CFields<2, CppTp<2> >;
+      template class CFields<3, CppTp<3> >;
    }
 }

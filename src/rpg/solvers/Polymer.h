@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/Polymer.h>    // base class template
-#include <pscf/cuda/Cuda.h>      // base class template parameter
+#include <pscf/cuda/CudaTp.h>      // base class template parameter
 
 namespace Pscf {
    namespace Rp {

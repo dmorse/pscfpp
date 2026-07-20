@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/RealMove.h>    // base class template
-#include <pscf/cuda/Cuda.h>              // template argument
+#include <pscf/cuda/CudaTp.h>              // template argument
 #include <rpg/fts/montecarlo/McMove.h>     // indirect base class
 #include <prdc/field/cuda/RField.h>               // base class member
 

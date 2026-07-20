@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/MixtureBase.h>  // base class template
-#include <pscf/cpu/Cpp.h>      // base class template argument
+#include <pscf/cpu/CppTp.h>      // base class template argument
 
 namespace Pscf {
 namespace Rp {
@@ -30,13 +30,13 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Mixture<D, Cpp<D> > 
-    : public Rp::MixtureBase<D, Cpp<D> >
+   class Mixture<D, CppTp<D> > 
+    : public Rp::MixtureBase<D, CppTp<D> >
    {
    public:
 
       /// Direct base class
-      using RpMixtureT = typename Rp::MixtureBase< D, Cpp<D> >;
+      using RpMixtureT = typename Rp::MixtureBase< D, CppTp<D> >;
 
       // Inherited names
       using typename RpMixtureT::CompositionT;
@@ -59,18 +59,18 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
-   class MixtureTmpl< Rp::Polymer<1, Cpp<1> >, Rp::Solvent<1, Cpp<1> > >;
+   class MixtureTmpl< Rp::Polymer<1, CppTp<1> >, Rp::Solvent<1, CppTp<1> > >;
    extern template 
-   class MixtureTmpl< Rp::Polymer<2, Cpp<2> >, Rp::Solvent<2, Cpp<2> > >;
+   class MixtureTmpl< Rp::Polymer<2, CppTp<2> >, Rp::Solvent<2, CppTp<2> > >;
    extern template 
-   class MixtureTmpl< Rp::Polymer<3, Cpp<3> >, Rp::Solvent<3, Cpp<3> > >;
+   class MixtureTmpl< Rp::Polymer<3, CppTp<3> >, Rp::Solvent<3, CppTp<3> > >;
    namespace Rp {
-      extern template class MixtureBase<1, Cpp<1> >;
-      extern template class MixtureBase<2, Cpp<2> >;
-      extern template class MixtureBase<3, Cpp<3> >;
-      extern template class Mixture<1, Cpp<1> >;
-      extern template class Mixture<2, Cpp<2> >;
-      extern template class Mixture<3, Cpp<3> >;
+      extern template class MixtureBase<1, CppTp<1> >;
+      extern template class MixtureBase<2, CppTp<2> >;
+      extern template class MixtureBase<3, CppTp<3> >;
+      extern template class Mixture<1, CppTp<1> >;
+      extern template class Mixture<2, CppTp<2> >;
+      extern template class Mixture<3, CppTp<3> >;
    }
 }
 #endif

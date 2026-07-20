@@ -40,7 +40,7 @@ namespace Pscf {
    * Type class for the C++ serial CPU backend.
    */
    template <int D>
-   class Cpp
+   class CppTp
    {
 
    public:
@@ -110,9 +110,9 @@ namespace Pscf {
    };
 
    // Explicit instantiation declarations
-   extern template class Cpp<1>;
-   extern template class Cpp<2>;
-   extern template class Cpp<3>;
+   extern template class CppTp<1>;
+   extern template class CppTp<2>;
+   extern template class CppTp<3>;
 
 } // namespace Pscf
 #endif

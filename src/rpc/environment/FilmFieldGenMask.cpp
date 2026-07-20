@@ -37,7 +37,7 @@ namespace Rp {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenMask<D, Cpp<D> >::FilmFieldGenMask()
+   FilmFieldGenMask<D, CppTp<D> >::FilmFieldGenMask()
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(nullptr)
    {  ParamComposite::setClassName("FilmFieldGenMask"); }
@@ -46,8 +46,8 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   FilmFieldGenMask<D, Cpp<D> >::FilmFieldGenMask(
-         Rp::System<D, Cpp<D> >& sys)
+   FilmFieldGenMask<D, CppTp<D> >::FilmFieldGenMask(
+         Rp::System<D, CppTp<D> >& sys)
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(&sys)
    {  ParamComposite::setClassName("FilmFieldGenMask"); }
@@ -56,17 +56,17 @@ namespace Rp {
    * Destructor
    */
    template <int D>
-   FilmFieldGenMask<D, Cpp<D> >::~FilmFieldGenMask()
+   FilmFieldGenMask<D, CppTp<D> >::~FilmFieldGenMask()
    {}
 
    /*
    * Get contribution to the stress from this mask
    */
    template <int D>
-   double FilmFieldGenMask<D, Cpp<D> >::stress(int paramId) const
+   double FilmFieldGenMask<D, CppTp<D> >::stress(int paramId) const
    {
       UTIL_CHECK(sysPtr_);
-      Rp::Domain<D, Cpp<D> > const & domain = system().domain();
+      Rp::Domain<D, CppTp<D> > const & domain = system().domain();
       Mesh<D> const & mesh = domain.mesh();
 
       int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),
@@ -176,7 +176,7 @@ namespace Rp {
 
    template <int D>
    double 
-   FilmFieldGenMask<D, Cpp<D> >::modifyStress(
+   FilmFieldGenMask<D, CppTp<D> >::modifyStress(
         int paramId, 
         double stress) const
    {
@@ -212,7 +212,7 @@ namespace Rp {
    * Compute the field and store where the System can access
    */
    template <int D>
-   void FilmFieldGenMask<D, Cpp<D> >::compute()
+   void FilmFieldGenMask<D, CppTp<D> >::compute()
    {
       UTIL_CHECK(sysPtr_);
       UTIL_CHECK(interfaceThickness() > 0);
@@ -278,7 +278,7 @@ namespace Rp {
    * Sets flexible lattice parameters to be compatible with the mask.
    */
    template <int D>
-   void FilmFieldGenMask<D, Cpp<D> >::setFlexibleParams() const
+   void FilmFieldGenMask<D, CppTp<D> >::setFlexibleParams() const
    {
       UTIL_CHECK(sysPtr_);
       if (system().iterator().isFlexible()) {
@@ -295,8 +295,8 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FilmFieldGenMask<1, Cpp<1> >;
-      template class FilmFieldGenMask<2, Cpp<2> >;
-      template class FilmFieldGenMask<3, Cpp<3> >;
+      template class FilmFieldGenMask<1, CppTp<1> >;
+      template class FilmFieldGenMask<2, CppTp<2> >;
+      template class FilmFieldGenMask<3, CppTp<3> >;
    }
 }

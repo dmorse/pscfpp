@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/ramp/RampParameter.h>   // direct base class template
-#include <pscf/cuda/Cuda.h>            // base class template argument
+#include <pscf/cuda/CudaTp.h>            // base class template argument
 
 // Explicit instantiation declarations
 namespace Pscf {

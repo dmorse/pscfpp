@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/McSimulator.h>      // base class template
-#include <pscf/cpu/Cpp.h>                   // template argument
+#include <pscf/cpu/CppTp.h>                   // template argument
 #include <rpc/fts/simulator/Simulator.h>        // indirect base class
 #include <rpc/fts/montecarlo/McMoveManager.h>   // member of base class
 #include <rpc/fts/analyzer/AnalyzerManager.h>   // member of base class
@@ -17,9 +17,9 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class McSimulator<1, Cpp<1> >;
-      extern template class McSimulator<2, Cpp<2> >;
-      extern template class McSimulator<3, Cpp<3> >;
+      extern template class McSimulator<1, CppTp<1> >;
+      extern template class McSimulator<2, CppTp<2> >;
+      extern template class McSimulator<3, CppTp<3> >;
    }
 }
 #endif

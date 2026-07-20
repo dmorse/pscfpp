@@ -54,7 +54,7 @@ public:
    * Allocate an array of basis fields.
    */
    template <int D>
-   void allocateBasisFields(Rp::System<D, Cpp<D> > const & system,
+   void allocateBasisFields(Rp::System<D, CppTp<D> > const & system,
                             DArray< DArray<double> >& fields)
    {
       int nMonomer = system.mixture().nMonomer();
@@ -81,13 +81,13 @@ public:
    * Read basis fields into an array.
    */
    template <int D>
-   void readBasisFields(Rp::System<D, Cpp<D> > const & system,
+   void readBasisFields(Rp::System<D, CppTp<D> > const & system,
                         std::string filename,
                         DArray< DArray<double> >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateBasisFields(system, fields);
-      Rp::FieldIo<D, Cpp<D> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D, CppTp<D> > const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsBasis(filename, fields, unitCell);
    }
 
@@ -112,7 +112,7 @@ public:
    * Compare system w fields to reference fields from a file.
    */
    template <int D>
-   double readCompareWBasis(Rp::System<D, Cpp<D> > const & system,
+   double readCompareWBasis(Rp::System<D, CppTp<D> > const & system,
                             std::string filename)
    {
       DArray< DArray<double> > fields;
@@ -126,7 +126,7 @@ public:
    * Compare system c fields to reference fields from a file.
    */
    template <int D>
-   double readCompareCBasis(Rp::System<D, Cpp<D> > const & system,
+   double readCompareCBasis(Rp::System<D, CppTp<D> > const & system,
                             std::string filename)
    {
       DArray< DArray<double> > fields;
@@ -142,7 +142,7 @@ public:
    * On output, fHelhmoltz and pressure contain absolute differences
    */
    template <int D>
-   void compareFreeEnergies(Rp::System<D, Cpp<D> > const & system,
+   void compareFreeEnergies(Rp::System<D, CppTp<D> > const & system,
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
@@ -158,7 +158,7 @@ public:
    * Setup a system, and read parameter file.
    */
    template <int D>
-   void setupSystem(Rp::System<D, Cpp<D> >& system,
+   void setupSystem(Rp::System<D, CppTp<D> >& system,
                    std::string paramFileName,
                    std::string wFileName)
    {
@@ -176,7 +176,7 @@ public:
    * Setup system - read parameter file and basis file. 
    */
    template <int D>
-   void initSystem(Rp::System<D, Cpp<D> >& system,
+   void initSystem(Rp::System<D, CppTp<D> >& system,
                    std::string paramFileName,
                    std::string wFileName)
    {
@@ -209,7 +209,7 @@ public:
    * Iterate and output final fields.
    */
    template <int D>
-   void iterate(Rp::System<D, Cpp<D> >& system,
+   void iterate(Rp::System<D, CppTp<D> >& system,
                 std::string const & outFileRoot)
    {
       // Iterate
@@ -228,7 +228,7 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void testIterate(Rp::System<D, Cpp<D> >& system,
+   void testIterate(Rp::System<D, CppTp<D> >& system,
                     std::string paramFileName,
                     std::string wFileName,
                     std::string outSuffix,
@@ -259,7 +259,7 @@ public:
    * Compute and return stress.
    */
    template <int D>
-   FSArray<double, 6> computeStress(Rp::System<D, Cpp<D> >& system)
+   FSArray<double, 6> computeStress(Rp::System<D, CppTp<D> >& system)
    {
       FSArray<double, 6> stress;
       int nParameter = system.domain().unitCell().nParameter();
@@ -283,13 +283,13 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -307,11 +307,11 @@ public:
       outFileRoot = makeFileRoot("out/testConversion","lam", 1);
       openLogFile(outFileRoot + ".log");
 
-      Rp::System<1, Cpp<1> > system;
+      Rp::System<1, CppTp<1> > system;
       initSystem(system,
                  "in/diblock/lam/param.flex", 
                  "in/diblock/lam/omega.in");
-      Rp::FieldIo<1, Cpp<1> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<1, CppTp<1> > const & fieldIo = system.domain().fieldIo();
 
       // Copy w field components to wFields_check after reading
       DArray< DArray<double> > wFields_check;
@@ -379,11 +379,11 @@ public:
       outFileRoot = makeFileRoot("out/testConversion","hex", 2);
       openLogFile(outFileRoot + ".log");
 
-      Rp::System<2, Cpp<2> > system;
+      Rp::System<2, CppTp<2> > system;
       initSystem(system,
                  "in/diblock/hex/param.flex", 
                  "in/diblock/hex/omega.in");
-      Rp::FieldIo<2, Cpp<2> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<2, CppTp<2> > const & fieldIo = system.domain().fieldIo();
 
       // Store components in wFields_check for later comparison
       DArray< DArray<double> > wFields_check;
@@ -452,7 +452,7 @@ public:
    void testConversion3D_bcc()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -472,7 +472,7 @@ public:
       wFields_check = system.w().basis();
 
       // Complete round trip basis -> rgrid -> basis
-      Rp::FieldIo<3, Cpp<3> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<3, CppTp<3> > const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/bcc/omega.in",
                           "out/testConversion3D_bcc_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion3D_bcc_w.rf",
@@ -534,7 +534,7 @@ public:
    void testCheckSymmetry3D_bcc()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, Cpp<3> > system;
+      Rp::System<3, CppTp<3> > system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 

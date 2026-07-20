@@ -9,7 +9,7 @@
 */
 
 #include <rp/scft/sweep/Sweep.h>             // base class template
-#include <pscf/cuda/Cuda.h>                // base class argument
+#include <pscf/cuda/CudaTp.h>                // base class argument
 #include <rpg/scft/sweep/BasisFieldState.h>  // indirect base argument
 
 // Explicit instantiation declarations

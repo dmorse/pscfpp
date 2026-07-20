@@ -42,10 +42,10 @@ public:
    }
 
    /*
-   * Open and read file header to initialize Rp::Domain<D, Cpp<D> > system.
+   * Open and read file header to initialize Rp::Domain<D, CppTp<D> > system.
    */
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, Cpp<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -58,7 +58,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
 
       std::ifstream in;
@@ -78,7 +78,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
 
       // Read parameter file
@@ -112,7 +112,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 

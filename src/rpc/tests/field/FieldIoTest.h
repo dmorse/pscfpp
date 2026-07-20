@@ -63,10 +63,10 @@ public:
    }
 
    /*
-   * Open and read parameter header to initialize Rp::Domain<D, Cpp<D> > system.
+   * Open and read parameter header to initialize Rp::Domain<D, CppTp<D> > system.
    */
    template <int D>
-   void readParam(std::string filename, Rp::Domain<D, Cpp<D> >& domain)
+   void readParam(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -75,10 +75,10 @@ public:
    }
 
    /*
-   * Open and read file header to initialize Rp::Domain<D, Cpp<D> > system.
+   * Open and read file header to initialize Rp::Domain<D, CppTp<D> > system.
    */
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, Cpp<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -119,7 +119,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
                    DArray< DArray<double> >& fields)
    {
       std::ifstream in;
@@ -129,7 +129,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
                    DArray< RField<D> >& fields)
    {
       std::ifstream in;
@@ -139,7 +139,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
                    DArray< RFieldDft<D> >& fields)
    {
       std::ifstream in;
@@ -149,7 +149,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
                    DArray< DArray<double> > const & fields)
    {
       std::ofstream out;
@@ -159,7 +159,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
                    DArray< RField<D> > const & fields)
    {
       std::ofstream out;
@@ -169,7 +169,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, Cpp<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
                    DArray< RFieldDft<D> > const & fields)
    {
       std::ofstream out;
@@ -182,7 +182,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -218,7 +218,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize domain
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
@@ -262,7 +262,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize domain
-      Rp::Domain<2, Cpp<2> > domain;
+      Rp::Domain<2, CppTp<2> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_hex.rf", domain);
 
@@ -305,7 +305,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -344,7 +344,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Initialize domain by reading header of r-grid file
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -387,7 +387,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -426,7 +426,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -466,7 +466,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
@@ -493,7 +493,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<2, Cpp<2> > domain;
+      Rp::Domain<2, CppTp<2> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_hex.rf", domain);
 
@@ -520,7 +520,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -547,7 +547,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -578,7 +578,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -609,7 +609,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 3;
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -648,7 +648,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 2;
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -687,7 +687,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 2;
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       domain.fieldIo().setNMonomer(nMonomer_);
       readHeader("in/c_c15_1.rf", domain);
@@ -723,7 +723,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
@@ -757,7 +757,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -789,7 +789,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -820,7 +820,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -874,7 +874,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Read header
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -937,7 +937,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, Cpp<3> > domain;
+      Rp::Domain<3, CppTp<3> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
       IntVec<3> dimensions = domain.mesh().dimensions();
@@ -958,7 +958,7 @@ public:
                                          replicas);
 
       // Read replicated field header 
-      Rp::Domain<3, Cpp<3> > domain_rep;
+      Rp::Domain<3, CppTp<3> > domain_rep;
       domain_rep.setFileMaster(fileMaster_);
       readHeader("out/w_bcc_replica.rf", domain_rep);
       IntVec<3> dimensions_rep = domain_rep.mesh().dimensions();
@@ -1005,7 +1005,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, Cpp<1> > domain;
+      Rp::Domain<1, CppTp<1> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
       IntVec<1> dimensions = domain.mesh().dimensions();
@@ -1027,7 +1027,7 @@ public:
                                   newGridDimensions);
 
       // Read header for expanded field (d=3)
-      Rp::Domain<3, Cpp<3> > domain_exp;
+      Rp::Domain<3, CppTp<3> > domain_exp;
       domain_exp.setFileMaster(fileMaster_);
       readHeader("out/w_lam_exp.rf", domain_exp);
       IntVec<3> dimensions_exp = domain_exp.mesh().dimensions();
@@ -1065,7 +1065,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Create domain and initialize by reading header
-      Rp::Domain<2, Cpp<2> > domain;
+      Rp::Domain<2, CppTp<2> > domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_hex.rf", domain);
       IntVec<2> dimensions = domain.mesh().dimensions();
@@ -1089,7 +1089,7 @@ public:
                                  newGridDimensions);
 
       // Read header for expanded field (d=3)
-      Rp::Domain<3, Cpp<3> > domain_exp;
+      Rp::Domain<3, CppTp<3> > domain_exp;
       domain_exp.setFileMaster(fileMaster_);
       readHeader("out/w_hex_exp.rf", domain_exp);
       IntVec<3> dimensions_exp = domain_exp.mesh().dimensions();

@@ -20,8 +20,8 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class CubicLengthDerivative<1, Cpp<1> >;
-      template class CubicLengthDerivative<2, Cpp<2> >;
-      template class CubicLengthDerivative<3, Cpp<3> >;
+      template class CubicLengthDerivative<1, CppTp<1> >;
+      template class CubicLengthDerivative<2, CppTp<2> >;
+      template class CubicLengthDerivative<3, CppTp<3> >;
    }
 }

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/compressor/LrCompressor.h>      // base class template
-#include <pscf/cuda/Cuda.h>                    // base class argument
+#include <pscf/cuda/CudaTp.h>                    // base class argument
 #include <rp/fts/compressor/Compressor.h>        // indirect base class
 
 #include <rpg/fts/compressor/IntraCorrelation.h> // base class member

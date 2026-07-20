@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/trajectory/RGridTrajectoryReader.h> // direct base class 
-#include <pscf/cuda/Cuda.h>                        // base class argument
+#include <pscf/cuda/CudaTp.h>                        // base class argument
 #include <prdc/field/cuda/RField.h>                  // base class member
 #include <rpg/fts/trajectory/TrajectoryReader.h>     // indirect base class 
 

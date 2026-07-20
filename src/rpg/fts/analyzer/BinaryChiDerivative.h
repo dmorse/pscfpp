@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/BinaryChiDerivative.h>     // direct base template
-#include <pscf/cuda/Cuda.h>                  // direct base argument
+#include <pscf/cuda/CudaTp.h>                  // direct base argument
 #include <rpg/fts/analyzer/AverageAnalyzer.h>  // indirect base class
 
 // Explicit instantiation declarations

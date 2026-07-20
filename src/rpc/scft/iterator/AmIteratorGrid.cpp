@@ -26,16 +26,16 @@
 namespace Pscf {
 
    template class 
-   AmIteratorTmpl< Rp::Iterator<1, Cpp<1> >, Prdc::Cpu::FftwDRArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<1, CppTp<1> >, Prdc::Cpu::FftwDRArray<double> >;
    template class 
-   AmIteratorTmpl< Rp::Iterator<2, Cpp<2> >, Prdc::Cpu::FftwDRArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<2, CppTp<2> >, Prdc::Cpu::FftwDRArray<double> >;
    template class 
-   AmIteratorTmpl< Rp::Iterator<3, Cpp<3> >, Prdc::Cpu::FftwDRArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<3, CppTp<3> >, Prdc::Cpu::FftwDRArray<double> >;
 
    namespace Rp {
-      template class AmIteratorGrid<1, Cpp<1> >;
-      template class AmIteratorGrid<2, Cpp<2> >;
-      template class AmIteratorGrid<3, Cpp<3> >;
+      template class AmIteratorGrid<1, CppTp<1> >;
+      template class AmIteratorGrid<2, CppTp<2> >;
+      template class AmIteratorGrid<3, CppTp<3> >;
    }
 
 }

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/MaxOrderParameterBase.h>   // base class template
-#include <pscf/cuda/Cuda.h>                        // base class argument
+#include <pscf/cuda/CudaTp.h>                        // base class argument
 #include <rpg/fts/analyzer/AverageAnalyzer.h>        // indirect base
 #include <prdc/field/cuda/RField.h>                  // direct base member
 #include <prdc/field/cuda/RFieldDft.h>               // direct base member

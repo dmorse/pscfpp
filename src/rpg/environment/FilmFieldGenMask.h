@@ -9,7 +9,7 @@
 */
 
 #include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
-#include <pscf/cuda/Cuda.h>                       // template argument
+#include <pscf/cuda/CudaTp.h>                       // template argument
 #include <rpg/system/System.h>
 
 // Forward declarations

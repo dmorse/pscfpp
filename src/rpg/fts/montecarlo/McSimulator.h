@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/McSimulator.h>      // base class template
-#include <pscf/cuda/Cuda.h>                   // template argument
+#include <pscf/cuda/CudaTp.h>                   // template argument
 #include <rpg/fts/simulator/Simulator.h>        // indirect base class
 #include <rpg/fts/montecarlo/McMoveManager.h>   // member of base class
 #include <rpg/fts/analyzer/AnalyzerManager.h>   // member of base class

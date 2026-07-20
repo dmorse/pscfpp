@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/AverageAnalyzer.h> // class template
-#include <pscf/cuda/Cuda.h>                // template argument
+#include <pscf/cuda/CudaTp.h>                // template argument
 #include <rpg/fts/analyzer/Analyzer.h>       // base class
 
 // Explicit instantiation declarations

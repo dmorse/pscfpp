@@ -16,7 +16,7 @@
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/fts/compressor/Compressor.h>   // base class argument
-#include <pscf/cuda/Cuda.h>               // base class argument
+#include <pscf/cuda/CudaTp.h>               // base class argument
 #include <pscf/cuda/DeviceArray.h>          // base class argument
 #include <pscf/cuda/cudaTypes.h>            // base class argument
 

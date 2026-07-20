@@ -69,7 +69,7 @@ namespace Rp {
    * of D, the typename Cpp\<D\>::Mixture is an alias for the type
    * Rpc::Mixture<D> that used to represent a mixture in the Rpc namespace
    * for systems of spatial dimension D. See the definitions of Cpp
-   * and Cuda (src/pscf/cpu/Cpp.h and src/pscf/cuda/Cuda.h)
+   * and Cuda (src/pscf/cpu/CppTp.h and src/pscf/cuda/CudaTp.h)
    * for lists of all of the typenames defined in these class templates.
    *
    * In the remainder of this documentation for the Rp::System template,
