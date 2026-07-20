@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FFTW_D_ARRAY_TPP
-#define PRDC_CPU_FFTW_D_ARRAY_TPP
+#ifndef PSCF_FFTW_D_ARRAY_TPP
+#define PSCF_FFTW_D_ARRAY_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -13,8 +13,6 @@
 #include <fftw3.h>
 
 namespace Pscf {
-namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
 
@@ -82,7 +80,5 @@ namespace Cpu {
       capacity_ = 0;
    }
 
-}
-}
 }
 #endif

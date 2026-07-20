@@ -19,8 +19,6 @@
 using namespace Util;
 
 namespace Pscf {
-namespace Prdc {
-namespace Cpu {
 
    /**
    * Dynamic reference counted array for use with FFTW library.
@@ -489,8 +487,6 @@ namespace Cpu {
    }
    #endif
 
-} // namespace Cpu
-} // namespace Prdc
 } // namespace Pscf
 #include "FftwDRArray.tpp"
 #endif

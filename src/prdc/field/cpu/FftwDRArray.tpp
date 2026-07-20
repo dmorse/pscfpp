@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FFTW_DR_ARRAY_TPP
-#define PRDC_CPU_FFTW_DR_ARRAY_TPP
+#ifndef PSCF_FFTW_DR_ARRAY_TPP
+#define PSCF_FFTW_DR_ARRAY_TPP
 
 /*
 * Util Package - C++ Utilities for Scientific Computation
@@ -14,9 +14,6 @@
 #include <fftw3.h>
 
 namespace Pscf {
-namespace Prdc {
-namespace Cpu {
-
 
    // Non-inline member function definitions
 
@@ -211,7 +208,5 @@ namespace Cpu {
       ref_.dissociate(); // decrements counter mainained by owner
    }
 
-} // namespace Cpu
-} // namespace Prdc
 } // namespace Pscf
 #endif

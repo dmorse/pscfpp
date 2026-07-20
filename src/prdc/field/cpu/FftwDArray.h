@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FFTW_D_ARRAY_H
-#define PRDC_CPU_FFTW_D_ARRAY_H
+#ifndef PSCF_FFTW_D_ARRAY_H
+#define PSCF_FFTW_D_ARRAY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -14,8 +14,6 @@
 #include <fftw3.h>
 
 namespace Pscf {
-namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
 
@@ -26,7 +24,7 @@ namespace Cpu {
    * provided by the FFTW library to allocate and free aligned memory. 
    * The class is otherwise similar in most respects to a Util::DArray.
    *
-   * \ingroup Prdc_Cpu_Module
+   * \ingroup Pscf_Cpu_Module
    */
    template <typename Data>
    class FftwDArray : public Array<Data>
@@ -134,8 +132,6 @@ namespace Cpu {
       }
    }
 
-}
-}
 }
 #include "FftwDArray.tpp"
 #endif

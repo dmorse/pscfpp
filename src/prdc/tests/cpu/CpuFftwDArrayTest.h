@@ -44,7 +44,7 @@ void CpuFftwDArrayTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDArray<double> v;
+      FftwDArray<double> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
@@ -54,7 +54,7 @@ void CpuFftwDArrayTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDArray<double> v;
+      FftwDArray<double> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
@@ -65,7 +65,7 @@ void CpuFftwDArrayTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDArray<double> v;
+      FftwDArray<double> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
@@ -80,7 +80,7 @@ void CpuFftwDArrayTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDArray<double> v;
+      FftwDArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -101,7 +101,7 @@ void CpuFftwDArrayTest::testSerialize1Memory()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::FftwDArray<double> u;
+      FftwDArray<double> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -161,7 +161,7 @@ void CpuFftwDArrayTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDArray<double> v;
+      FftwDArray<double> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -178,9 +178,9 @@ void CpuFftwDArrayTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::FftwDArray<double> u;
+      FftwDArray<double> u;
    
-      // Note: We do not allocate Cpu::FftwDArray<double> u in this test.
+      // Note: We do not allocate FftwDArray<double> u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -202,7 +202,7 @@ void CpuFftwDArrayTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDArray<double> v;
+      FftwDArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -221,7 +221,7 @@ void CpuFftwDArrayTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::FftwDArray<double> u;
+      FftwDArray<double> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
@@ -255,7 +255,7 @@ void CpuFftwDArrayTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDArray<double> v;
+      FftwDArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -274,7 +274,7 @@ void CpuFftwDArrayTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::FftwDArray<double> u;
+      FftwDArray<double> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 

@@ -58,7 +58,7 @@ void CpuFftwDRArrayTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDRArray<Data> v;
+      FftwDRArray<Data> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
       TEST_ASSERT(!v.isOwner());
@@ -72,7 +72,7 @@ void CpuFftwDRArrayTest::testAllocateConstructor()
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
    {
-      Cpu::FftwDRArray<Data> v(capacity);
+      FftwDRArray<Data> v(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
@@ -95,7 +95,7 @@ void CpuFftwDRArrayTest::testAllocate()
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
    {
-      Cpu::FftwDRArray<Data> v;
+      FftwDRArray<Data> v;
 
       // Allocate array
       v.allocate(capacity);
@@ -121,7 +121,7 @@ void CpuFftwDRArrayTest::testSubscript()
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      Cpu::FftwDRArray<Data> v(capacity);
+      FftwDRArray<Data> v(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
@@ -139,10 +139,10 @@ void CpuFftwDRArrayTest::testAssociate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
-   Cpu::FftwDRArray<Data> u;
+   FftwDRArray<Data> u;
    {
       // Data owner
-      Cpu::FftwDRArray<Data> v(capacity);
+      FftwDRArray<Data> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
 
       // Data user
@@ -190,7 +190,7 @@ void CpuFftwDRArrayTest::testSubscriptCmplx()
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      Cpu::FftwDRArray< std::complex<Data> > v;
+      FftwDRArray< std::complex<Data> > v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i].real((i+1)*10.0);
@@ -212,7 +212,7 @@ void CpuFftwDRArrayTest::testCopyConstructor()
    TEST_ASSERT(Memory::total() == memory_);
    {
       // Data owner
-      Cpu::FftwDRArray<Data> v(capacity);
+      FftwDRArray<Data> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
@@ -223,7 +223,7 @@ void CpuFftwDRArrayTest::testCopyConstructor()
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
-      Cpu::FftwDRArray<Data> u(v);
+      FftwDRArray<Data> u(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isOwner());
@@ -252,7 +252,7 @@ void CpuFftwDRArrayTest::testCopyConstructorCmplx()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDRArray< std::complex<Data> > v;
+      FftwDRArray< std::complex<Data> > v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
 
@@ -264,7 +264,7 @@ void CpuFftwDRArrayTest::testCopyConstructorCmplx()
          v[i].imag((i+1)*10.0 + 0.1);
       }
 
-      Cpu::FftwDRArray< std::complex<Data> > u(v);
+      FftwDRArray< std::complex<Data> > u(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner());
@@ -286,14 +286,14 @@ void CpuFftwDRArrayTest::testAssignment()
    printMethod(TEST_FUNC);
 
    {
-      Cpu::FftwDRArray<Data> v;
+      FftwDRArray<Data> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3 );
       TEST_ASSERT(v.isAllocated() );
       TEST_ASSERT(v.isOwner() );
       TEST_ASSERT(!v.isAssociated() );
 
-      Cpu::FftwDRArray<Data> u;
+      FftwDRArray<Data> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -323,12 +323,12 @@ void CpuFftwDRArrayTest::testAssignmentCmplx()
    printMethod(TEST_FUNC);
 
    {
-      Cpu::FftwDRArray< std::complex<Data> > v;
+      FftwDRArray< std::complex<Data> > v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3);
       TEST_ASSERT(v.isAllocated());
 
-      Cpu::FftwDRArray< std::complex<Data> > u;
+      FftwDRArray< std::complex<Data> > u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -357,7 +357,7 @@ void CpuFftwDRArrayTest::testIterator()
    printMethod(TEST_FUNC);
    TEST_ASSERT((int)Memory::total() == 0);
    {
-      Cpu::FftwDRArray<Data> v;
+      FftwDRArray<Data> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -387,7 +387,7 @@ void CpuFftwDRArrayTest::testBaseClassReference()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDRArray<Data> v;
+      FftwDRArray<Data> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -404,7 +404,7 @@ void CpuFftwDRArrayTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDRArray<double> v;
+      FftwDRArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -425,7 +425,7 @@ void CpuFftwDRArrayTest::testSerialize1Memory()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::FftwDRArray<double> u;
+      FftwDRArray<double> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -485,7 +485,7 @@ void CpuFftwDRArrayTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDRArray<double> v;
+      FftwDRArray<double> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -502,9 +502,9 @@ void CpuFftwDRArrayTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::FftwDRArray<double> u;
+      FftwDRArray<double> u;
    
-      // Note: We do not allocate Cpu::FftwDRArray<double> u in this test.
+      // Note: We do not allocate FftwDRArray<double> u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -526,7 +526,7 @@ void CpuFftwDRArrayTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDRArray<double> v;
+      FftwDRArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -545,7 +545,7 @@ void CpuFftwDRArrayTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::FftwDRArray<double> u;
+      FftwDRArray<double> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
@@ -579,7 +579,7 @@ void CpuFftwDRArrayTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FftwDRArray<double> v;
+      FftwDRArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -598,7 +598,7 @@ void CpuFftwDRArrayTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      Cpu::FftwDRArray<double> u;
+      FftwDRArray<double> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 

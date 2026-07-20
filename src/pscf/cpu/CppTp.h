@@ -52,8 +52,8 @@ namespace Pscf {
 
       using VecRandom = CpuVecRandom;
 
-      template <typename T> using DevArray = Prdc::Cpu::FftwDRArray<T>;
-      template <typename T> using LocArray = Prdc::Cpu::FftwDRArray<T>;
+      template <typename T> using DevArray = FftwDRArray<T>;
+      template <typename T> using LocArray = FftwDRArray<T>;
       using RDevArray = DevArray<Real>;
       using RLocArray = LocArray<Real>;
 

@@ -13,7 +13,7 @@
 
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/field/cuda/RField.h>
-#include <prdc/field/cuda/send.h>
+#include <pscf/cuda/send.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 

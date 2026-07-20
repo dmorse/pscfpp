@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_SEND_H
-#define PRDC_CPU_SEND_H
+#ifndef PSCF_CPU_SEND_H
+#define PSCF_CPU_SEND_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -12,10 +12,19 @@
 #include <util/global.h> 
 
 namespace Pscf {
-namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
+
+   /*
+   * These functions are designed to allow a pair of FftwDArray containers 
+   * to be used in template code in a manner analogous to the use of a
+   * device and host array in code that stores memory in the separate 
+   * memory of a GPU device. Function template specializations designed 
+   * for use with a GPU actually copy memory between the device and host. 
+   * The specializations defined here, which are designed to use only a
+   * CPU, instead create a temporary association between the two arrays 
+   * without copying any data.
+   */
 
    /**
    * Setup host/user array for use.
@@ -87,7 +96,5 @@ namespace Cpu {
       array.dissociate();
    }
 
-}
-}
 }
 #endif
