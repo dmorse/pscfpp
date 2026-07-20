@@ -21,7 +21,7 @@ namespace Rpc {
    /**
    * Function template for main pscf_rpc program.
    *
-   * \ingroup Pscf_Rpc_Module
+   * \ingroup Pscf_Rp_Module
    *
    * \param argc  number of command line parameters
    * \param argv  array of command line parameter strings
@@ -51,7 +51,7 @@ namespace Rpc {
 *
 * \param argc  number of command line arguments
 * \param argv  array of command line arguments
-* \ingroup Pscf_Rpc_Module
+* \ingroup Pscf_Rp_Module
 */
 int main(int argc, char **argv)
 {

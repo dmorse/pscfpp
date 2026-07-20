@@ -5,15 +5,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CFields.h"
+#include "CFields.h"             // header
+
 #include <rpc/field/FieldIo.h>
 #include <prdc/field/cpu/RField.h>
-#include <rp/field/CFields.tpp>   // base class implementation
+
+#include <rp/field/CFields.tpp>   // template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc;
       template class CFields<1, CppTp<1> >;
       template class CFields<2, CppTp<2> >;
       template class CFields<3, CppTp<3> >;

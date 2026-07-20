@@ -1,5 +1,5 @@
-#ifndef RPC_W_FIELDS_H
-#define RPC_W_FIELDS_H
+#ifndef RP_W_FIELDS_H
+#define RP_W_FIELDS_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -21,8 +21,8 @@ namespace Rp {
    * A container of fields stored in both basis and r-grid format.
    *
    * This primary template is used for the CPU specialization, for which
-   * T = CppTp<D>. A partial specialization is defined for the CUDA
-   * variant.
+   * T = CppTp<D>. A partial specializations is defined for the CUDA 
+   * backend.
    *
    * \ingroup Rp_Field_Module
    */

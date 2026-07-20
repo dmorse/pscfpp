@@ -1,5 +1,5 @@
-#ifndef RPG_W_FIELDS_CU_H
-#define RPG_W_FIELDS_CU_H
+#ifndef RP_W_FIELDS_CU_H
+#define RP_W_FIELDS_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

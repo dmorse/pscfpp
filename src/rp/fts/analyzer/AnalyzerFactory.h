@@ -20,7 +20,7 @@ namespace Rp {
    /**
    * Factory for subclasses of Analyzer.
    *
-   * \ingroup Rpc_Fts_Analyzer_Module
+   * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
    class AnalyzerFactory : public Factory< Analyzer<D,T> > 

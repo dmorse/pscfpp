@@ -24,7 +24,7 @@ namespace Rp {
    /**
    * Factory for subclasses of McMove.
    *
-   * \ingroup Rpc_Fts_MonteCarlo_Module
+   * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D, class T>
    class McMoveFactory : public Factory< McMove<D,T> > 

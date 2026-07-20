@@ -28,7 +28,7 @@ namespace Rp {
    /**
    * Factory for subclasses of Iterator.
    *
-   * \ingroup Rpc_Scft_Iterator_Module
+   * \ingroup Rp_Scft_Iterator_Module
    */
 
    template <int D, class T>

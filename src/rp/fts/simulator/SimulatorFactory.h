@@ -29,7 +29,7 @@ namespace Rp {
    /**
    * Factory for subclasses of Simulator.
    *
-   * \ingroup Rpc_Fts_Simulator_Module
+   * \ingroup Rp_Fts_Simulator_Module
    */
    template <int D, class T>
    class SimulatorFactory : public Factory< Simulator<D,T> > 

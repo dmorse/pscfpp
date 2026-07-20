@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFields.h"                // class header
+#include "WFields.h"                // class template header
 
 #include <pscf/cpu/CppTp.h>
 #include <rpc/field/FieldIo.h>

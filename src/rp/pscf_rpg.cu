@@ -15,7 +15,7 @@ namespace Rpg {
    /**
    * Function template for main pscf_rpg program.
    *
-   * \ingroup Pscf_Rpg_Module
+   * \ingroup Pscf_Rp_Module
    *
    * \param argc  number of command line parameters
    * \param argv  array of command line parameter strings
@@ -45,7 +45,7 @@ namespace Rpg {
 *
 * \param argc  number of command line arguments
 * \param argv  array of command line arguments
-* \ingroup Pscf_Rpg_Module
+* \ingroup Pscf_Rp_Module
 */
 int main(int argc, char **argv)
 {
