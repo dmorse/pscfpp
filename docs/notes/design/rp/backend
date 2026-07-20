@@ -6,24 +6,28 @@ Goals:
      1. Allows maintenance of a code base, with a single definition of 
      each class that can be used on both CPU and GPU, whenever possible.
 
-     2. Avoiding the need to create parallel sets of classes (or trivial 
-     subclasses) in the Rpc and Rpg namespaces.
+     2. Avoiding the need to create parallel sets of nearly identical
+     classes (or trivial subclasses) in the Rpc and Rpg namespaces.
 
      3. Makes efficient use of existing code when possible - avoid the
      need to start over.
 
      4. Create a manageable build system that allows for maintaining 
      object files for several compiled versions of the code. Ideally, 
-     I'd like to be able to maintain several versions simultaneously.
+     I'd like to be able to either compile for a single backend or
+     maintain versions for several backends simultaneously, at the
+     discretion of the user.
 
      5. Create a manageable system for unit tests, with little or no
      code duplication in the tests.
 
-Comments: Goal 1 has been largely accomplished b current system of class
-templates in namespace Rp, using "Types" classes as template parameters
-that encapsulate collections of type aliases.  This file proposes a way 
-to accomplish goal 2, and thus avoid the need for distinct Rpc and Rpg 
-namespaces.
+Comments: Goal 1 has been largely accomplished by the current system 
+of class templates defined in namespace Rp, in which "Types" classes 
+are used as template parameters that encapsulate collections of type 
+aliases for specialized subclasses. This file proposes a way to 
+accomplish goal 2 and the remaining other goals. One outcome will be
+to avoid the need for distinct Rpc and Rpg namespaces and distinct
+src/rpc and src/rpg directories, which will cease to exist.
 
 Discussion
 ----------
@@ -36,7 +40,7 @@ fields of this type.  Relevant mathematical operations include things
 like binary and in-place (compound) arithmetic operations, exponentiation, 
 and FFTs.
 
-A strategy for specializing behavior for CPUs and GPU-enabled code 
+A design that differentiates behavior for CPUs and GPU-enabled code 
 could differentiate behavior either at run time (via inheritance and 
 polymorphic virtual functions) or at compile time (via templates).
 
@@ -80,18 +84,18 @@ classes that each take two template parameters:
    - A class parameter T that is uniquely associated with a particular
      backend.
 
-Use of a class to identify the backend (rather than some simpler form
-of identifier such as a enum or string) allows the class to contain
-additional information, such as associated types used by the related 
-FFT library). This is also very similar to the existing system, in 
-which each class template in namespace Rp takes D and a "Types" class 
-as template parameters.
+We propose to use a class to identify the backend, rather than some simpler 
+type of identifier such as an integer, enum or string, because a class can
+contain additional information, such as aliases for associated types used 
+by the related FFT library. The use of a class as a second parameter is 
+also very similar to the existing system, in which each class template in 
+namespace Rp takes D and a "Types" class as template parameters.
 
 The field RField that represents real data on a periodic mesh would
 thus become a template <int D, int T> class RField. If we define a
-class CpB to represent a Cpu backend and CuB to represent a GPU backend
-programmed in CUDA, the RField<3,CuB> would be a field defined on a 3D
-mesh and allocated in global GPU device memory.
+class CppTp to represent a Cpu backend and a class CudaTp to represent 
+a GPU backend programmed in CUDA, then RField<3,CudaTp> would be a field 
+defined on a 3D mesh and allocated in global GPU device memory.
 
 Class templates with these two template parameters would be defined both
 for basic Field and FFT classes, and for a variety of higher level 
@@ -121,26 +125,27 @@ Comments:
     
   - I need to think about how to implement unit tests, but it may
     be natural to re-define these as member function templates that 
-    take the backend types class T as a template argument. The
+    take the backend type class T as a template argument. The
     unification of unit tests is not fully fleshed out.
 
 Thoughts:
 
-  - The template approach is arguably a more natural conceptual fit to 
-    the way the software is used: The intent is that a single backend 
-    will always be used throughout execution of a given program, so 
-    the backend for the entire program can be specified at compile time, 
-    as a template parameter.  The run-time flexibility promised by a 
-    system based on run-time polymorphism simply isn't needed, or ever 
-    used. 
+  - The use of a template parameter to differentiate backends is
+    arguably a very natural fit to the way the software is used. The 
+    intent is that a single backend will always be used throughout 
+    execution of a given program. The backend for the entire program 
+    can thus be specified at compile time, as a template parameter
+    that is used by every object that needs to differentiate behavior.  
+    The run-time flexibility promised by a system based on run-time 
+    polymorphism simply isn't needed, or ever used. 
 
   - I think that the strongest argument for preferring compile-time 
     polymorhpisms is a result of the strengths and weaknesses of the  
     C++ language: The C++ mechanisms for working with templates in a 
     large code base are clumsier than mechanisms for working with a 
-    system based on inheritance. The awkwardness of C++ mechanisms for 
-    working with templates is largely a result of the history of the 
-    language as an extension of C, the continued use of a text 
+    system based on inheritance. The awkwardness of C++ mechanisms 
+    for working with templates is largely a result of the history of 
+    the language as an extension of C, the continued use of a text 
     preprocessor as the way of importing interface information, and 
     the way that this old (archaic?) mechanism form importing modules
     interacts with C++ templates.  The added complexity required to 
@@ -173,45 +178,32 @@ Thoughts:
     messages) by explicitly instantiating template specializations 
     of each class for all allowed values of D=1,2, and 3. 
 
-  - In the current code, for each class named "Class", there is
-    generally a class template Rp::Class<D,T> that defines all or most 
-    of the class definition, and subclasses Rpc::Class<D> and
-    Rpg::Class<D> that are derived from specializations of Rp::Class
-    with different values for the Types class. The subclasses defined
-    in Rpc and Rpg are often trivial, with little or no new code, 
-    and are required simply in order to segregate names for Cpu and 
-    Gpu code into different namespaces. In the new system, we would 
-    work directly with specializations of Rp::Class<D,T> with different 
-    values for the types class T= CpB or T=CuB. The new design would thus
-    remove the need for the Rpc and Rpg namespaces.
+  - In the current code, for each class template named "Class" in 
+    the Rpc and Rpg namespaces, there is generally a class template 
+    Rp::Class<D,T> that defines all or most of the class definition, 
+    and subclasses Rpc::Class<D> and Rpg::Class<D> that are derived 
+    from specializations of Rp::Class with different values for the 
+    Types class. The two subclasses defined in Rpc and Rpg are often 
+    trivial, with little or no new code, and are defined simply in 
+    order to segregate names for Cpu and Gpu code into different 
+    namespaces. In the new system, we would work directly with 
+    specializations of Rp::Class<D,T> with different values for the 
+    types class T= CppTp or T=CudaTp. The new design would thus remove 
+    the need for distinct Rpc and Rpg namespaces. All code for real
+    fields with periodic boundary conditions would be defined in the
+    Pscf::Rp namespace.
 
   - By getting rid of the Rpc and Rpg namespaces, we would get rid of
     the need for the Types classes to maintain sets of aliases that
     define generic names that refer to classes defined in the Rpc and
     Rpg namespaces. The Types classes definitions would become much
     smaller, and would contain only a few types definitions for types
-    used by the FFT classes.
-
-  - In a system in which most classes take two template parameters
-    (dimension of space D, and a second parameter T that acts as an
-    identifier for a backend, I can see two reasonable options for 
-    the nature of the second template parameter:
-
-      A. It can be a class, as described above. One advantage of 
-      this is that this provides a simple syntax for accessing
-      associated information about associated types or other info, 
-      via "typename T::Complex" or "T:: backend", etc. A class can
-      also define a few static functions to do things like initialize
-      or clean up an infrastructure used by a particular backend.
-
-      B. A possible alternative is to make the second parameter an 
-      enum value (enum class Backend) and then use Traits classes to 
-      to access related information. 
-
-    Either would work fine. One main reason that I curently prefer
-    A (use of a class) is that it is more similar to the current 
-    system and provides an easier path for conversion, as discussed 
-    below.
+    used by the FFT classes and perhaps specialized array types (e.g.,
+    Device and Host array types used by the CUDA code). The remaining
+    simplified types classes could also define a few static functions
+    for global operatons that must be implemented differently with
+    different backends, such as initialization and clean-up of any
+    backend infrastructure.
 
   - As already noted, the proposed template based proposal would allow 
     re-use of all of the existing code for basic mathematical operations, 
@@ -224,9 +216,15 @@ Thoughts:
     been the best option if we were designing a new package from
     scratch. I would see an argument for the inheritance based system 
     if I were starting over, because I think it would be somewhat easier 
-    for grad student developers to understand.  The proposed 
-    template-based design is a reasonable alternative that requires
-    less rewriting of the current design. 
+    for grad student developers to understand.  A reasonable argument
+    could also be made for a system in which the backend is treated
+    as a template parameter but the dimension D of space is passed 
+    to each object as an argument of all constructor functions. The
+    proposed template-based design with two template parameters is a 
+    reasonable alternative that requires less rewriting of the current 
+    design. Once you decide to use templates, a system with two
+    template parameters is not much more complicated to understand or
+    maintain than a system with one.
 
 =====================================================================
 Build System
@@ -245,7 +243,7 @@ Build System
 - Proposal:
 
     - For each backend, create a makefile variable and corresponding
-      C++ preprocessor macro, named PSCF_CPU, PSCF_CUDA, PSCF_HIP
+      C++ preprocessor macro, named PSCF_CPP, PSCF_CUDA, PSCF_HIP
       that enables use of a particular backend. If the variable 
       associated with a backend is defined, then template specializations 
       that take the associated backend class as an argument should be 
@@ -258,15 +256,15 @@ Build System
       macros to be defined and undefined. Proposed single-letter 
       option names:
 
-           -s for PSCF_CPU  (s for "serial")
+           -p for PSCF_CPU  (s for "serial")
            -u for PSCF_CUDA (allow -c for backwards compatibility)
            -i for PSCF_HIP
            -m for PSCF_OMP
 
-    - Use different file name suffixes for compilable source files 
-      that contain explicit instantiations definitions for 
-      specializations that must be compiled by different compilers, 
-      using file name suffixes *.cpp, *.cu, etc.
+    - Use different file name suffixes and the same base name for 
+      compilable source files that contain explicit instantiations 
+      definitions for specializations that must be compiled by 
+      different compilers, using file name suffixes *.cpp, *.cu, etc.
 
     - Change the pattern rules for each suffix so as to create object 
       files with different names, such as .o (serial C++) and .ou 
@@ -275,26 +273,47 @@ Build System
     - Each class template should have a header file that contains
       explicit instantiation declarations for all specializations 
       that will be built, with blocks of specialization declarations
-      enclosed in preprocessor #ifdef .. #endif.
+      enclosed in preprocessor #ifdef .. #endif. 
+
+    - Mainenance of explicit specialization declarations could be
+      be simplified by using a preprocessor function macro that 
+      takes the class name as a parameter to generate all of these 
+      declarations for each class. The bottom of each header file
+      in src/rp could have a single line something like
+
+      PSCF_TMPL_DECLARE(Class)
+
+      that the preprocessor expands to
+
+      #ifdef PSCF_CPP
+      extern template class Class<1,CppTp>;
+      extern template class Class<2,CppTp>;
+      extern template class Class<3,CppTp>;
+      #endif
+      #ifdef PSCF_CUDA
+      extern template class Class<1,CudaTp>;
+      extern template class Class<2,CudaTp>;
+      extern template class Class<3,CudaTp>;
+      #endif
 
     - Class templates defined in src/rp that do not require explicit
       specialization will require 4 associated files:
  
-             Class.h    - unified header (all required declarations)
-             Class.tpp  - template implementation file
-             Class.cpp  - instantiation definitions for CPU
-             Class.cu   - instantiation definitions for CUDA
+         Class.h    - unified header (all required declarations)
+         Class.tpp  - template implementation file
+         Class.cpp  - explicit instantiation definitions for CPU
+         Class.cu   - explicit instantiation definitions for CUDA
 
       The Class.h will contain all relevant explicit instantiation
-      declarations, controlled by preprocessor macros. Most class 
+      declarations, generated by a preprocessor macro. Most class 
       templates in directory src/rp will be of this type.
 
     - Files containing partial specializations of class templates that
       are defined in directory rp/ must use distinct file names for
       different specializations.  Use name patterns:
 
-           Class_cp.h, Class_cp.tpp, Class_cp.cpp - CPU specialization 
-           Class_cu.h, Class_cu.tpp, Class_cu.cu  - Cuda specialization
+           Class_cp.h, Class.cpp - CPU specialization 
+           Class_cu.h, Class.cu  - Cuda specialization
 
     - Class templates defined in src/rp that are defined using a base
       class ClassBase and 2 explicit specializations of Class will have 
@@ -304,27 +323,41 @@ Build System
                  ClassBase.h
                  ClassBase.tpp
              Serial CPU specialization:
-                  Class_cp.h
-                  Class_cp.cpp
+                 Class_cp.h
+                 Class.cpp
              CUDA  GPU specialization: 
-                  Class_cu.h 
-                  Class_cu.cu
-             Unified header (May not be necessary?)
-                  Class.h
+                 Class_cu.h 
+                 Class.cu
+             Unified header 
+                 Class.h
              
       The Class_cp.h and Class_cu.h header files will each contain
       explicit instantiation declarations for the relevant backend,
-      including those for ClassBase and any other required base classes.
+      including those for the required specialization of ClassBase 
+      and any other required base classes.
+
       Similarly Class_cp.cpp and Class_cu.cu will contain all required
       explicit instantiation definitions for the relevant backend.
 
-      Note: That is a lot of files. Try to minimize the number of files
-      for which this is necessary.
+      The unified header can simply conditionally include Class_cp.h
+      if PSCF_CPP is defined, and conditionally included Class_cu.h
+      if PSCF_CUDA is defined.
+
+      Note: That is a lot of files. Try to minimize the number of 
+      classes for which this use of inheritance and partial 
+      specialization is necessary.
+
+    - Class templates defined in src/rp and src/prdc/field that are 
+      defined using two partial specializations with no base class
+      follow a similar pattern but without the two files required 
+      to declare and implement the base class. Declarations of the
+      primary template can be given within each compilable source
+      file, since declarations (but not definitions) may be repeated.
 
     - For files in prdc/field, such as RField:
 
-      Place different files with the same base name in prdc/field/cpu and
-      prdc/field/cpu, giving, e.g.,
+      Place different files with the same base name in prdc/field/cpu 
+      and prdc/field/cuda, giving, e.g.,
 
                prdc/field/cpu/RField.h
                prdc/field/cpu/RField.cpp
@@ -337,29 +370,12 @@ Build System
 
       Note: The use of a unified header would allow the same header file
       to be used for both CPU and GPU specializations, and would allow
-      the header file for such classes to be included in *.tpp files, 
-      rather than requiring separate include statements in *.cpp and *.cu
-      files. By keeping the inclusion closer to the point of use, I think
-      this would make the logic clearer and easier to maintain.
+      the header file for such classes to be included in *.h and *.tpp 
+      files, rather than requiring separate include statements in *.cpp 
+      and *.cu files. By keeping the header inclusion closer to the point 
+      of use, I think this will make the logic clearer and easier to 
+      maintain.
       
-    - Unified headers in src/rp: Also consider the creation of a unified
-      header for each class template defined in src/rp that requires 
-      explicit specialization for CPU and GPU variants. This could increase
-      the number of file associated with a class templat that is defined
-      using a base class and specialized subclasses to up to 7. 
-
-    - Existing *.cpp and *.cu files include different headers for CPU 
-      and GPU variants. Some of them may continue to include different
-      *_cp.h and *_cu.h headers during the transformation to the new 
-      system to make it easier to get the new system functional.
-
-    - (Again): Strive to eventually reduce the number of classes for which 
-      we need to define a base class and two explicit specializations. The
-      complexity and number of files required for this case won't do much
-      harm if it is rarely or never used.  Transformation of explicitly
-      specialized classes to single templates can, howeverm sometimes be 
-      delayed until after the new system is functional. 
-     
 =====================================================================
 Plan (order of operations)
 -----------------------------
@@ -398,11 +414,11 @@ Stage II: (Unify templates that now require explicit specialization)
     container, by sharing a pointer, rather than an actual deep copy.  
     (Done)
 
-2)  Create template aliases named HostArray HostRField, HostRFieldDft 
-    and HostCField in the Types classes. In the Cuda version, make 
-    these specializations of FftwDArray, so that they can be used as 
-    references. In Cuda version, makes these specializations of 
-    HostDRArray.
+2)  Create template aliases named LocArray, DevArray RLocArray, and
+    RDevArray in the Types classes. In the Cuda version, make these 
+    aliases for FftwDArray or specializations thereof, so that they 
+    can be used as references. In the Cuda version, makes these aliases
+    for HostDRArray and DeviceArray or specializations thereof.
 
 3)  Create overloaded functions sendToHost and sendToDevice in the
     directories that contain the RField and RFieldDft class templates,
@@ -457,24 +473,22 @@ Stage III: (Converting subclasses in Rpc and Rpg to specializations)
 
              "typename T::Class" => Class<D,T>
 
-       - Throughout the Rpc and Rpg namespaces, globally substitute:
+       - Throughout the Rpc namespaces (for example), globally substitute:
 
-             "Class<D> => Class<D, Types<D> >
+             "Class<D> => Class<D, Rpc::Types<D> >
 
        - Change explicit references to classes with specfic values of D
-         in unit tests, for example:
+         in unit tests, for example, in rpc/tests:
 
-             "Class<3> => Class<3, Types<3> >
-
-       - Remove the associated "using" statement from both Types classes
+             "Class<3> => Class<3, Rpc::Types<3> >
 
        - Remove the associated forward declaration from both Types classes
 
-       - Add forward declarations or header includes as required to 
-         compile any code that relied on forward declarations given in
-         the Types class.
+       - Remove the associated "using" statement from both Types classes
 
-       - Add header includes to unit tests if needed.
+       - Add forward declarations or header includes as required to 
+         compile any code that is found to have relied on forward 
+         declarations given in the Types class.
 
     For each class template in Rp with non-trivial subclasses in Rpc
     and Rpg:
@@ -493,7 +507,8 @@ Stage III: (Converting subclasses in Rpc and Rpg to specializations)
        - Go through remaining steps as for a trivial subclass (above)
 
     At the end of this process, the Types classes should not contain any
-    remaining aliases for classes defined in the Rpc and Rpg namespaces.
+    remaining forward declarations or aliases for classes defined in the 
+    Rpc and Rpg namespaces.
 
     After conversion of all classes in Rpc and Rpg namespaces into
     specializations of class templates defined in Rp, the only
@@ -503,43 +518,43 @@ Stage III: (Converting subclasses in Rpc and Rpg to specializations)
 Stage IV (Change location and role of Types classes):
 
 Goal: Move renamed versions of the current Types classes out of the Rpc 
-and Rpg namespaces. New classes can be named Prdc::CpB (for C++ backend)
-and Prdc::CuB (for Cuda backend). These are defined in the Prdc namespace
+and Rpg namespaces. New classes can be named Pscf::CppTp (for C++ backend)
+and Pscf::CudaTp (for Cuda backend). These are defined in the Prdc namespace
 (rather than Pscf) because they contain information about types used by
 the FFT libraries used with each backend, and are thus specific to
 code for periodic systems.
 
-1)  Create class template Prdc::CpB by copying Pscf::Rpc::Types<D> 
-    and create Prdc::CuB by copying Pscf::Rpg::Types<D>. Place these 
+1)  Create class template Prdc::CppTp by copying Pscf::Rpc::Types<D> 
+    and create Prdc::CudaTp by copying Pscf::Rpg::Types<D>. Place these 
     in directories prdc/field/cpu and prdc/field/cuda, respectively.
 
-2)  Convert remaining aliases for field and FFT classes into aliases
-    for templates, such as (in Prdc::CpB)
+2)  Convert remaining aliases for field and FFT classes into aliases for 
+    templates, such as (in Prdc::CppTp)
 
         template <int D> using RField = Cpu::RField<D>;
 
-3)  Define an enumeration class that identifies backends and make a value 
-    of it a static member of the existing Types classes. This would allow 
-    code that takes a Types class as a template argument to ask explicitly 
-    at run time what type of backend is being used, and construct logic
-    that can execute different paths for different back ends. Place this
-    in prdc/field.
+3)  Define an enumeration class Pscf::BackendId that identifies backends 
+    and make a value of it a static member of the existing Types classes. 
+    This would allow code that takes a Types class as a template argument 
+    to ask explicitly at run time what type of backend is being used, and 
+    construct logic that can execute different paths for different back 
+    ends. Place this in pscf/backend.
 
 4)  Globally substitute:
 
-            Rpc::Types<D> => CpB 
-            Rpg::Types<D> => CuB
+            Rpc::Types<D> => CppTp 
+            Rpg::Types<D> => CudaTp
 
     throughout remaining files in the rpc/ and rpg/ directories. 
     Also change file names for the corresponding header file includes.
-    Corresponding classes for hip and openmp could be BH and BM.
+    Corresponding classes for hip and openmp could be HiTp and MpTp.
 
 Note: At this point, the rpc/ and rpg/ directories will still contain
 header and source files that contain code for explicit instantiation 
 and (in some cases) partial specialization definitions for a specific
 value of T, and thus a specific backend. For each class that does not
 require partial specialization, src/rpc will still contain a header 
-that contains explicit instantiation declarations for T = CpB and three 
+that contains explicit instantiation declarations for T = CppTp and three 
 values of D and a .cpp file that contains corresponding explicit
 instantiation definitions. For classes that still require partial
 specialization, the header will also contain a definition of the partial 
@@ -566,8 +581,8 @@ Stage V (Convert Field and FFT classes to two-parameter templates)
 
       Name changes are:
 
-         Prdc::Cpu::RField<int D>  =>  Prdc::RField<int D, CpB>
-         Prdc::Cuda::RField<int D>  =>  Prdc::RField<int D, CuB>
+         Prdc::Cpu::RField<int D>  =>  Prdc::RField<int D, CppTp>
+         Prdc::Cuda::RField<int D>  =>  Prdc::RField<int D, CudaTp>
  
       Idea: Use template parameter rather than Cpu and Cuda namespace 
       qualifiers to distinguish names of Cpu and Gpu variants of 
@@ -583,19 +598,19 @@ Stage V (Convert Field and FFT classes to two-parameter templates)
 2)  Change references to these names throughout the Prdc namespace 
     and unit tests to get this code to compile. 
 
-3)  Change aliases to Fields and FFT types in CpB and CuB classes.
+3)  Change aliases to Fields and FFT types in CppTp and CudaTp classes.
     This will immediately allow re-use throughout the class templates 
     in Rp.
 
 4)  In Rp namespace, replace references to aliases such T::RFields 
     by template specialization names, RFields<D,T>, etc.  This will 
-    allow us to get rid of the remaining aliases in the CpB and CuB 
+    allow us to get rid of the remaining aliases in the CppTp and CudaTp 
     backend/types classes.
 
 5)  In rpc/ and rpg/ directories, including unit tests, replace direct 
-    references to, e.g., RField<D> and FFT<D> by RField<D,CpB> and
-    FFT<D,CpB>, etc in src/rpc and by RField<D,CuB> and FFT<D,CuB> etc.
-    in src/rpg.
+    references to, e.g., RField<D> and FFT<D> by RField<D,CppTp> and
+    FFT<D,CppTp>, etc in src/rpc and by RField<D,CudaTp> and FFT<D,CudaTp> 
+    etc.  in src/rpg.
 
     At this point:
 
@@ -622,17 +637,25 @@ suffixes created from source files with different suffixes. Recommendation:
     *.o   for object files created from *.cpp
     *.ou  for object files created from *.cu
 
-4) Copy specialized header and implementation files from
-   rpc/ and rpg/ into rp/, with modified names.
+4) Copy specialized header and compilable source files from
+   rpc/ and rpg/ into rp/, with _cp and _cu suffixes for headers.
 
-5) Start copying *.cpp and *.cu files into src/rp, adding them to the
-   file lists in sources.mk as work progresses.
+5) Copy *.cpp and *.cu files into src/rp, adding them to the file lists 
+   in sources.mk as work progresses.
 
-Note: During the moving of the *.cpp and *.cu files, separate build
-systems will exist in rp/, rpc/ and rpg/. Files in rpc/ and rpg/ should
-be left unchanged so that the build systems in these directories remain
-functional. Files in these directories will be removed only after the
-build system in src/rp is fully functional and well tested.
+6) Add inclusion of unified header files for class members and base
+   classes into other unified header files in src/rp as necessary in 
+   order to allow parsing of the header files.
+
+7) Add inclusion of unified header files to *.tpp files in order to
+   reduce the number of headers that need to be included by compilable
+   *.cpp and *.cu source files.
+
+Note: During the copying of the *.cpp and *.cu files into src/rp, separate 
+build systems will exist in rp/, rpc/ and rpg/. Files in rpc/ and rpg/ 
+should be left completely unchanged so that the build systems in these 
+directories remain functional. These directories will be removed only 
+after the build system in src/rp is fully functional and well tested.
 
 Stage VII: Unify and move the unit tests in rp/tests
 
@@ -644,14 +667,10 @@ Stage VII: Unify and move the unit tests in rp/tests
 
    1) We should also figure out how to unify the unit tests, but have 
    not yet planned for this. As a first tstep this plan simply moves 
-   the duplicated unit tests into subdirectories of rp/tests, without 
-   change.
+   the duplicated unit tests into subdirectories of rp/tests, with
+   minimal changes.
 
-   2) At this point rpc/ and rpg/ directories are gone, and
-   prdc/cpu and prdc/cuda directories have been renamed to 
-   prdc/field/cpu and prdc/field/cuda.
-   are all gone. 
-
+   2) At this point rpc/ and rpg/ directories will no longer exist.
 
 ======================================================================
 Code snippets:
@@ -662,7 +681,7 @@ Backends
 Pscf {
 
    // Class enumeration as a simple scoped label
-   enum class Backend {
+   enum class BackendId {
       {Cpu, Cuda, Hip, OpenMp}
    }
 
@@ -681,16 +700,16 @@ Pscf {
       // Placed in Prdc because these contain information
       // about types used by FFT classes.
    
-      class CpB {
+      class CppTp {
          using Real    double;
          using Complex fftw_complex;
-         static Backend backend = Backend::Cpu;
+         static BackendId id = Backend::Cpu;
       };
    
-      class CuB {
+      class CudaTp {
          using Real    cudaReal;
          using Complex cudaComplex
-         static Backend backend = Backend::Cuda;
+         static BackendId id = BackendId::Cuda;
       };
 
    }
@@ -707,14 +726,14 @@ namespace Prdc {
    template <int D, class T>
    class RField  {};
 
-   // Explicit specialization for RField<D, CuB>
+   // Explicit specialization for RField<D, CudaTp>
    template <int D>
-   class RField<D, CuB>  : public DeviceArray<double>;
+   class RField<D,CudaTp>  : public DeviceArray<double>;
    {...}
 
-   // Explicit specialization for FFT<D, CuB>
+   // Explicit specialization for FFT<D, CudaTp>
    template <int D>
-   class FFT<D, CuB> 
+   class FFT<D,CudaTp> 
    {...}
 
    // The explicit partial specializations will be renamed versions 
