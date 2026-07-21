@@ -46,7 +46,7 @@ namespace Cpc {
    * Compute solution to MDE and block concentrations.
    */ 
    template <int D>
-   void Polymer<D>::compute(DArray< CField<D> > const & wFields)
+   void Polymer<D>::compute(DArray< CField<D, CppTp<D> > > const & wFields)
    {
       // Setup solvers for all blocks
       int monomerId;

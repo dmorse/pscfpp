@@ -37,7 +37,7 @@ void CudaFieldTest::testConstructors()
    printMethod(TEST_FUNC);
    {
       Prdc::RField<1, CudaTp<1> > r;
-      Prdc::Cuda::CField<1> c;
+      Prdc::CField<1, CudaTp<1> > c;
       Prdc::RFieldDft<1, CudaTp<1> > d;
       TEST_ASSERT(r.capacity() == 0 );
       TEST_ASSERT(!r.isAllocated() );
@@ -53,7 +53,7 @@ void CudaFieldTest::testAllocate()
    printMethod(TEST_FUNC);
    {
       Prdc::RField<2, CudaTp<2> > r;
-      Prdc::Cuda::CField<2> c;
+      Prdc::CField<2, CudaTp<2> > c;
       Prdc::RFieldDft<2, CudaTp<2> > d;
       IntVec<2> meshDims, dftDims;
       meshDims[0] = 5;
@@ -135,7 +135,7 @@ void CudaFieldTest::testCFieldRoundTrip()
       }
 
       // Copy host field vh1 to device field vd
-      Prdc::Cuda::CField<3> vd;
+      Prdc::CField<3, CudaTp<3> > vd;
       vd.allocate(d);
       vd = vh1;
       TEST_ASSERT(vd.capacity() == vh1.capacity());

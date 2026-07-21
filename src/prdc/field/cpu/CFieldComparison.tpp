@@ -31,7 +31,7 @@ namespace Cpu {
    */
    template <int D>
    double
-   CFieldComparison<D>::compare(CField<D> const& a, CField<D> const& b)
+   CFieldComparison<D>::compare(CField<D, CppTp<D> > const& a, CField<D, CppTp<D> > const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -68,8 +68,8 @@ namespace Cpu {
    * Comparator for arrays of fields.
    */
    template <int D>
-   double CFieldComparison<D>::compare(DArray< CField<D> > const & a,
-                                       DArray< CField<D> > const & b)
+   double CFieldComparison<D>::compare(DArray< CField<D, CppTp<D> > > const & a,
+                                       DArray< CField<D, CppTp<D> > > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());

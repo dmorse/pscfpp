@@ -234,7 +234,7 @@ void CpuFftTest::testTransformComplex1D()
    FFT<1, CppTp<1> > v;
    v.setup(d);
 
-   Cpu::CField<1> in;
+   CField<1, CppTp<1> > in;
    in.allocate(d);
    TEST_ASSERT(in.capacity() == n);
 
@@ -250,18 +250,18 @@ void CpuFftTest::testTransformComplex1D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   Cpu::CField<1> inCopy(in);
+   CField<1, CppTp<1> > inCopy(in);
 
    // Transform in -> out
-   Cpu::CField<1> out;
+   CField<1, CppTp<1> > out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransform is preserved)
-   Cpu::CField<1> outCopy(out);
+   CField<1, CppTp<1> > outCopy(out);
 
    // Inverse transform out -> in2
-   Cpu::CField<1> in2;
+   CField<1, CppTp<1> > in2;
    in2.allocate(d);
    v.inverseTransform(out, in2);
 
@@ -295,7 +295,7 @@ void CpuFftTest::testTransformComplex2D()
    v.setup(d);
 
    // Initialize test data
-   Cpu::CField<2> in;
+   CField<2, CppTp<2> > in;
    in.allocate(d);
    int rank = 0;
    double x, y, cx, sx, cy, sy;
@@ -315,18 +315,18 @@ void CpuFftTest::testTransformComplex2D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   Cpu::CField<2> inCopy(in);
+   CField<2, CppTp<2> > inCopy(in);
 
    // Forward transform in -> out
-   Cpu::CField<2> out;
+   CField<2, CppTp<2> > out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransform is preserved)
-   Cpu::CField<2> outCopy(out);
+   CField<2, CppTp<2> > outCopy(out);
 
    // Inverse transform out -> in2
-   Cpu::CField<2> in2;
+   CField<2, CppTp<2> > in2;
    in2.allocate(d);
 
    v.inverseTransform(out, in2);
@@ -364,8 +364,8 @@ void CpuFftTest::testTransformComplex3D()
    FFT<3, CppTp<3> > v;
    v.setup(d);
 
-   Cpu::CField<3> in;
-   Cpu::CField<3> out;
+   CField<3, CppTp<3> > in;
+   CField<3, CppTp<3> > out;
    in.allocate(d);
    out.allocate(d);
 
@@ -384,16 +384,16 @@ void CpuFftTest::testTransformComplex3D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   Cpu::CField<3> inCopy(in);
+   CField<3, CppTp<3> > inCopy(in);
 
    // Forward transform in -> out
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransform is preserved)
-   Cpu::CField<3> outCopy(out);
+   CField<3, CppTp<3> > outCopy(out);
 
    // Inverse transform out -> in2
-   Cpu::CField<3> in2;
+   CField<3, CppTp<3> > in2;
    in2.allocate(d);
    v.inverseTransform(out, in2);
 

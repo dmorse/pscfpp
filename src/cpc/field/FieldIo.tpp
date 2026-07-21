@@ -34,7 +34,7 @@ namespace Cpc {
    */
    template <int D>
    void FieldIo<D>::readFields(std::istream& in,
-                               DArray< CField<D> >& fields,
+                               DArray< CField<D, CppTp<D> > >& fields,
                                UnitCell<D>& unitCell) const
    {
       // Read header
@@ -55,7 +55,7 @@ namespace Cpc {
    */
    template <int D>
    void FieldIo<D>::readFieldsData(std::istream& in,
-                                   DArray< CField<D> >& fields,
+                                   DArray< CField<D, CppTp<D> > >& fields,
                                    int nMonomer) const
    {
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
@@ -69,7 +69,7 @@ namespace Cpc {
    */
    template <int D>
    void FieldIo<D>::readField(std::istream &in,
-                              CField<D> & field,
+                              CField<D, CppTp<D> > & field,
                               UnitCell<D>& unitCell) const
    {
       // Read header
@@ -91,7 +91,7 @@ namespace Cpc {
    */
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream& in,
-                                    DArray< CField<D> >& fields,
+                                    DArray< CField<D, CppTp<D> > >& fields,
                                     UnitCell<D>& unitCell) const
    {
       // Read header
@@ -113,7 +113,7 @@ namespace Cpc {
    template <int D>
    void FieldIo<D>::writeFields(
                               std::ostream &out,
-                              DArray<CField<D> > const & fields,
+                              DArray< CField<D, CppTp<D> > > const & fields,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool writeMeshSize) const
@@ -134,9 +134,9 @@ namespace Cpc {
       // Write data section
       // Rpg:: Allocate host arrays
       // Rpg:: Copy device -> host
-      using AT = CField<D>;
-      using CT = typename CField<D>::ValueType;
-      using RT = typename CField<D>::RealType;
+      using AT = CField<D, CppTp<D> >;
+      using CT = typename CField<D, CppTp<D> >::ValueType;
+      using RT = typename CField<D, CppTp<D> >::RealType;
       Prdc::writeCFieldsData<D,AT,CT,RT>(out, fields, meshDimensions);
    }
 
@@ -145,7 +145,7 @@ namespace Cpc {
    */
    template <int D>
    void FieldIo<D>::writeField(std::ostream &out,
-                               CField<D> const & field,
+                               CField<D, CppTp<D> > const & field,
                                UnitCell<D> const & unitCell,
                                bool writeHeader) const
    {
@@ -160,9 +160,9 @@ namespace Cpc {
       // Write data
       // Rpg:: Allocate host array
       // Rpg:: Copy device -> host
-      using AT = CField<D>;
-      using CT = typename CField<D>::ValueType;
-      using RT = typename CField<D>::RealType;
+      using AT = CField<D, CppTp<D> >;
+      using CT = typename CField<D, CppTp<D> >::ValueType;
+      using RT = typename CField<D, CppTp<D> >::RealType;
       Prdc::writeCFieldData<D,AT,CT,RT>(out, field, meshDimensions);
    }
 
@@ -171,8 +171,8 @@ namespace Cpc {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void FieldIo<D>::compareFields(DArray< CField<D> > const & field1,
-                                  DArray< CField<D> > const & field2)
+   void FieldIo<D>::compareFields(DArray< CField<D, CppTp<D> > > const & field1,
+                                  DArray< CField<D, CppTp<D> > > const & field2)
    const
    {
       CFieldComparison<D> comparison;

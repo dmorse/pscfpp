@@ -25,8 +25,8 @@ namespace Cuda {
 
    // Comparator for individual fields.
    template <int D>
-   double CFieldComparison<D>::compare(CField<D> const& a, 
-                                       CField<D> const& b)
+   double CFieldComparison<D>::compare(CField<D, CudaTp<D> > const& a, 
+                                       CField<D, CudaTp<D> > const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -63,8 +63,8 @@ namespace Cuda {
 
    // Comparator for arrays of fields
    template <int D>
-   double CFieldComparison<D>::compare(DArray< CField<D> > const & a,
-                                       DArray< CField<D> > const & b)
+   double CFieldComparison<D>::compare(DArray< CField<D, CudaTp<D> > > const & a,
+                                       DArray< CField<D, CudaTp<D> > > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());

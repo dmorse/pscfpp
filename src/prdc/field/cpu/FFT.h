@@ -18,9 +18,7 @@
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
-      namespace Cpu {
-         template <int D> class CField;
-      }
+      template <int D, class T> class CField;
    }
 }
 
@@ -140,8 +138,8 @@ namespace Prdc {
       * \param in  array of complex values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(CField<D> const & in, 
-                            CField<D>& out) const;
+      void forwardTransform(CField<D, CppTp<D> > const & in, 
+                            CField<D, CppTp<D> >& out) const;
 
       /**
       * Compute complex-to-complex inverse Fourier transform.
@@ -156,8 +154,8 @@ namespace Prdc {
       * \param in  array of complex values on k-space grid 
       * \param out  array of complex values on r-space grid
       */
-      void inverseTransform(CField<D> const & in, 
-                            CField<D>& out) const;
+      void inverseTransform(CField<D, CppTp<D> > const & in, 
+                            CField<D, CppTp<D> >& out) const;
 
       // Accessors
 
@@ -243,7 +241,7 @@ namespace Prdc {
       * Make FFTW plans for transform and inverse transform.
       */
       void makePlans(RField<D, CppTp<D> >& rField, RFieldDft<D, CppTp<D> >& kField,
-                     CField<D>& cFieldIn, CField<D>& cFieldOut);
+                     CField<D, CppTp<D> >& cFieldIn, CField<D, CppTp<D> >& cFieldOut);
 
    };
 
@@ -253,22 +251,22 @@ namespace Prdc {
    void FFT<1, CppTp<1> >::makePlans(
 		            RField<1, CppTp<1> >& rField, 
                             RFieldDft<1, CppTp<1> >& kField,
-                            CField<1>& cFieldIn, 
-                            CField<1>& cFieldOut);
+                            CField<1, CppTp<1> >& cFieldIn, 
+                            CField<1, CppTp<1> >& cFieldOut);
 
    template <>
    void FFT<2, CppTp<2> >::makePlans(
                             RField<2, CppTp<2> >& rField, 
                             RFieldDft<2, CppTp<2> >& kField,
-                            CField<2>& cFieldIn, 
-                            CField<2>& cFieldOut);
+                            CField<2, CppTp<2> >& cFieldIn, 
+                            CField<2, CppTp<2> >& cFieldOut);
 
    template <>
    void FFT<3, CppTp<3> >::makePlans(
 		            RField<3, CppTp<3> >& rField, 
                             RFieldDft<3, CppTp<3> >& kField,
-                            CField<3>& cFieldIn, 
-                            CField<3>& cFieldOut);
+                            CField<3, CppTp<3> >& cFieldIn, 
+                            CField<3, CppTp<3> >& cFieldOut);
 
    // Inline member functions
 

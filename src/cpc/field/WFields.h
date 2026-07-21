@@ -31,12 +31,12 @@ namespace Cpc {
    */
    template <int D>
    class WFields 
-     : public Cp::WFields<D, CField<D>, FieldIo<D> >
+     : public Cp::WFields<D, CField<D, CppTp<D> >, FieldIo<D> >
    {
    public:
 
       /// Alias for base class.
-      using Base = Cp::WFields< D, CField<D>, FieldIo<D> >;
+      using Base = Cp::WFields< D, CField<D, CppTp<D> >, FieldIo<D> >;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -58,12 +58,12 @@ namespace Cpc {
    private:
 
       /**
-      * Assign one CField<D> to another: lhs = rhs.
+      * Assign one CField<D, CppTp<D> > to another: lhs = rhs.
       *
       * \param lhs  left-hand side of assignment
       * \param rhs  right-hand side of assignment
       */
-      void assignField(CField<D>& lhs, CField<D> const & rhs) const 
+      void assignField(CField<D, CppTp<D> >& lhs, CField<D, CppTp<D> > const & rhs) const 
       override;
 
    };
@@ -80,11 +80,11 @@ namespace Cpc {
 namespace Pscf {
    namespace Cp {
       extern template 
-      class WFields<1, Prdc::Cpu::CField<1>, Cpc::FieldIo<1> >;
+      class WFields<1, Prdc::CField<1, CppTp<1> >, Cpc::FieldIo<1> >;
       extern template 
-      class WFields<2, Prdc::Cpu::CField<2>, Cpc::FieldIo<2> >;
+      class WFields<2, Prdc::CField<2, CppTp<2> >, Cpc::FieldIo<2> >;
       extern template 
-      class WFields<3, Prdc::Cpu::CField<3>, Cpc::FieldIo<3> >;
+      class WFields<3, Prdc::CField<3, CppTp<3> >, Cpc::FieldIo<3> >;
    } 
 } 
 #endif

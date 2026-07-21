@@ -30,11 +30,11 @@ namespace Pscf {
 
    // Explicit instantiation declarations for base class
    extern template
-   class BlockTmpl< Cpc::Propagator<1>, Prdc::Cpu::CField<1> >;
+   class BlockTmpl< Cpc::Propagator<1>, Prdc::CField<1, CppTp<1> > >;
    extern template
-   class BlockTmpl< Cpc::Propagator<2>, Prdc::Cpu::CField<2> >;
+   class BlockTmpl< Cpc::Propagator<2>, Prdc::CField<2, CppTp<2> > >;
    extern template
-   class BlockTmpl< Cpc::Propagator<3>, Prdc::Cpu::CField<3> >;
+   class BlockTmpl< Cpc::Propagator<3>, Prdc::CField<3, CppTp<3> > >;
 
 }
 
@@ -55,7 +55,7 @@ namespace Cpc {
    * \ingroup Cpc_Solver_Module
    */
    template <int D>
-   class Block : public BlockTmpl< Propagator<D>, CField<D> >
+   class Block : public BlockTmpl< Propagator<D>, CField<D, CppTp<D> > >
    {
 
    public:
@@ -63,7 +63,7 @@ namespace Cpc {
       // Public type name aliases
 
       /// Base class.
-      using Base = BlockTmpl< Propagator<D>, CField<D> >;
+      using Base = BlockTmpl< Propagator<D>, CField<D, CppTp<D> > >;
 
       /// Propagator type (inherited).
       using typename Base::PropagatorT;
@@ -163,7 +163,7 @@ namespace Cpc {
       *
       * \param w chemical potential field for this monomer type
       */
-      void setupSolver(CField<D> const & w);
+      void setupSolver(CField<D, CppTp<D> > const & w);
 
       /**
       * Compute one step of solution of MDE for the thread model.
@@ -176,7 +176,7 @@ namespace Cpc {
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, from step i+1
       */
-      void stepThread(CField<D> const & qin, CField<D>& qout) const;
+      void stepThread(CField<D, CppTp<D> > const & qin, CField<D, CppTp<D> >& qout) const;
 
       /**
       * Compute one step of solution of MDE for the bead model.
@@ -187,7 +187,7 @@ namespace Cpc {
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, for step i+1
       */
-      void stepBead(CField<D> const & qin, CField<D>& qout) const;
+      void stepBead(CField<D, CppTp<D> > const & qin, CField<D, CppTp<D> >& qout) const;
 
       /**
       * Apply the exponential field operator for the bead model.
@@ -197,7 +197,7 @@ namespace Cpc {
       *
       * \param q  slice of propagator q, modified in place
       */
-      void stepFieldBead(CField<D> & q) const;
+      void stepFieldBead(CField<D, CppTp<D> > & q) const;
 
       /**
       * Apply a bond operator for the bead model.
@@ -209,7 +209,7 @@ namespace Cpc {
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
       */
-      void stepBondBead(CField<D> const & qin, CField<D>& qout) const;
+      void stepBondBead(CField<D, CppTp<D> > const & qin, CField<D, CppTp<D> >& qout) const;
 
       /**
       * Apply a half-bond operator for the bead model.
@@ -222,7 +222,7 @@ namespace Cpc {
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
       */
-      void stepHalfBondBead(CField<D> const & qin, CField<D>& qout) const;
+      void stepHalfBondBead(CField<D, CppTp<D> > const & qin, CField<D, CppTp<D> >& qout) const;
 
       /**
       * Compute the concentration for this block, for the thread model.
@@ -326,25 +326,25 @@ namespace Cpc {
       RField<D, CppTp<D> > expKsq2_;
 
       /// Array containing exp(-W[i] ds/2) (thread) or exp(-W[i]) (bead)
-      CField<D> expW_;
+      CField<D, CppTp<D> > expW_;
 
       /// Array of elements containing exp(-W[i] (ds/2)*0.5) (thread model)
-      CField<D> expW2_;
+      CField<D, CppTp<D> > expW2_;
 
       /// Array of elements containing exp(+W[i]) (bead model)
-      CField<D> expWInv_;
+      CField<D, CppTp<D> > expWInv_;
 
       /// Work array for real-space q field (step size ds)
-      mutable CField<D> qr_;
+      mutable CField<D, CppTp<D> > qr_;
 
       /// Work array for real-space q field (step size ds/2, thread model)
-      mutable CField<D> qr2_;
+      mutable CField<D, CppTp<D> > qr2_;
 
       /// Work array for wavevector space field (step size ds)
-      mutable CField<D> qk_;
+      mutable CField<D, CppTp<D> > qk_;
 
       /// Work array for wavevector space field (step size ds/2)
-      mutable CField<D> qk2_;
+      mutable CField<D, CppTp<D> > qk2_;
 
       /// Pointer to associated Mesh<D> object
       Mesh<D> const * meshPtr_;

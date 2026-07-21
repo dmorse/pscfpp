@@ -429,7 +429,7 @@ namespace Cpc {
       double prefactor;
       int i, j;
       for (j = 0; j < nMonomer; ++j) {
-         CField<D> const & Wc = wc_[j];
+         CField<D, CppTp<D> > const & Wc = wc_[j];
          prefactor = -0.5*double(nMonomer)/evals_[j];
          for (i = 0; i < meshSize; ++i) {
             assign(w, Wc[i]);
@@ -555,7 +555,7 @@ namespace Cpc {
       for (j = 0; j < nMonomer; ++j) {
 
          // Loop over grid points to zero out field wc_[j]
-         CField<D>& Wc = wc_[j];
+         CField<D, CppTp<D> >& Wc = wc_[j];
          for (i = 0; i < meshSize; ++i) {
             assign(Wc[i], 0.0);
          }
@@ -565,7 +565,7 @@ namespace Cpc {
             vec = evecs_(j, k)/double(nMonomer);
 
             // Loop over grid points
-            CField<D> const & Wr = system().w().field(k);
+            CField<D, CppTp<D> > const & Wr = system().w().field(k);
             for (i = 0; i < meshSize; ++i) {
                mul(product, Wr[i], vec);
                addEq(Wc[i], product);
@@ -600,14 +600,14 @@ namespace Cpc {
       for (i = 0; i < nMonomer; ++i) {
 
          // Initialize field cc_[i] to zero
-         CField<D>& Cc = cc_[i];
+         CField<D, CppTp<D> >& Cc = cc_[i];
          for (k = 0; k < meshSize; ++k) {
             assign(Cc[k], 0.0);
          }
 
          // Loop over monomer types
          for (j = 0; j < nMonomer; ++j) {
-            CField<D> const & Cr = system().c().field(j);
+            CField<D, CppTp<D> > const & Cr = system().c().field(j);
             vec = evecs_(i, j);
 
             // Loop over grid points
@@ -646,9 +646,9 @@ namespace Cpc {
       // Compute derivatives for standard Hamiltonian
       // Loop over composition eigenvectors (exclude the last)
       for (i = 0; i < nMonomer - 1; ++i) {
-         CField<D>& Dc = dc_[i];
-         CField<D> const & Wc = wc_[i];
-         CField<D> const & Cc = cc_[i]; 
+         CField<D, CppTp<D> >& Dc = dc_[i];
+         CField<D, CppTp<D> > const & Wc = wc_[i];
+         CField<D, CppTp<D> > const & Cc = cc_[i]; 
          b = -1.0*double(nMonomer)/evals_[i];
          // Loop over grid points
          for (k = 0; k < meshSize; ++k) {

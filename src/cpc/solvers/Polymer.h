@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cpu/CppTp.h>            // backend class
 #include <pscf/solvers/PolymerTmpl.h>  // base class template
 
 // Forward declarations
@@ -20,9 +21,7 @@ namespace Pscf {
       template <int D> class Propagator;
    }
    namespace Prdc { 
-      namespace Cpu { 
-         template <int D> class CField;
-      }
+      template <int D, class T> class CField;
    }
 }
 
@@ -40,7 +39,6 @@ namespace Pscf {
 namespace Cpc {
 
    using namespace Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Descriptor and solver for one polymer species.
@@ -119,7 +117,7 @@ namespace Cpc {
       *
       * \param wFields array of chemical potential fields.
       */ 
-      void compute(DArray< CField<D> > const & wFields);
+      void compute(DArray< CField<D, CppTp<D> > > const & wFields);
 
       // Inherited public member functions
       

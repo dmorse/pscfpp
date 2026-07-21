@@ -1,5 +1,5 @@
-#ifndef PRDC_CL_SYSTEM_H
-#define PRDC_CL_SYSTEM_H
+#ifndef CP_SYSTEM_H
+#define CP_SYSTEM_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -10,6 +10,7 @@
 
 #include <util/param/ParamComposite.h>   // base class
 #include <pscf/chem/PolymerModel.h>      // member
+#include <pscf/cpu/CppTp.h>              // backend class
 
 // Forward declarations
 namespace Util {
@@ -19,6 +20,7 @@ namespace Util {
 namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
+      template <int D, class T> class CField;
    }
 }
 
@@ -81,7 +83,7 @@ namespace Cp {
       using DomainT = typename T::Domain;
       using WFieldsT = typename T::WFields;  // chemical pot. fields
       using CFieldsT = typename T::CFields;  // concentration fields
-      using CFieldT = typename T::CField;    // complex field type
+      using CFieldT = CField<D, CppTp<D> >;    // complex field type
 
       /// \name Construction and Destruction
       ///@{

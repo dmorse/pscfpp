@@ -52,7 +52,7 @@ namespace Cpc {
    * Compute concentration, q, and phi or mu.
    */ 
    template <int D>
-   void Solvent<D>::compute(CField<D> const & wField)
+   void Solvent<D>::compute(CField<D, CppTp<D> > const & wField)
    {
       int nx = meshPtr_->size(); // Number of grid points
       UTIL_CHECK(nx > 0);

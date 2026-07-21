@@ -127,12 +127,12 @@ namespace Prdc {
       UTIL_CHECK(meshDimensions == rField.meshDimensions());
       UTIL_CHECK(rField.capacity() == rSize_);
 
-      CField<D> cFieldIn;
+      CField<D, CppTp<D> > cFieldIn;
       cFieldIn.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == cFieldIn.meshDimensions());
       UTIL_CHECK(cFieldIn.capacity() == rSize_);
 
-      CField<D> cFieldOut;
+      CField<D, CppTp<D> > cFieldOut;
       cFieldOut.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == cFieldOut.meshDimensions());
       UTIL_CHECK(cFieldOut.capacity() == rSize_);
@@ -215,8 +215,8 @@ namespace Prdc {
    template <int D>
    void
    FFT<D, CppTp<D> >::forwardTransform(
-                           CField<D> const & rField, 
-                           CField<D>& kField) const
+                           CField<D, CppTp<D> > const & rField, 
+                           CField<D, CppTp<D> >& kField) const
    {
       UTIL_CHECK(isSetup_)
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -243,8 +243,8 @@ namespace Prdc {
    template <int D>
    void
    FFT<D, CppTp<D> >::inverseTransform(
-                           CField<D> const & kField, 
-                           CField<D>& rField)
+                           CField<D, CppTp<D> > const & kField, 
+                           CField<D, CppTp<D> >& rField)
    const
    {
       UTIL_CHECK(isSetup_)

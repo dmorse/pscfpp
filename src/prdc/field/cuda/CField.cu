@@ -9,12 +9,10 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
-   template class CField<1>;
-   template class CField<2>;
-   template class CField<3>;
+   template class CField<1, CudaTp<1> >;
+   template class CField<2, CudaTp<2> >;
+   template class CField<3, CudaTp<3> >;
 
-} // namespace Pscf::Prdc::Cuda
-} // namespace Pscf::Prdc
+} // namespace Prdc
 } // namespace Pscf

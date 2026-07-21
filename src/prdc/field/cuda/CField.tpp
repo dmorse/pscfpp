@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_C_FIELD_TPP
-#define PRDC_CUDA_C_FIELD_TPP
+#ifndef PRDC_C_FIELD_CU_TPP
+#define PRDC_C_FIELD_CU_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -12,7 +12,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
    using namespace Pscf;
@@ -21,7 +20,7 @@ namespace Cuda {
    * Default constructor.
    */
    template <int D>
-   CField<D>::CField()
+   CField<D, CudaTp<D> >::CField()
     : DeviceArray<cudaComplex>()
    {}
 
@@ -29,7 +28,7 @@ namespace Cuda {
    * Allocating constructor.
    */
    template <int D>
-   CField<D>::CField(IntVec<D> const & meshDimensions)
+   CField<D, CudaTp<D> >::CField(IntVec<D> const & meshDimensions)
     : DeviceArray<cudaComplex>()
    {  allocate(meshDimensions); }
 
@@ -37,14 +36,14 @@ namespace Cuda {
    * Destructor.
    */
    template <int D>
-   CField<D>::~CField()
+   CField<D, CudaTp<D> >::~CField()
    {}
 
    /*
    * Copy constructor.
    */
    template <int D>
-   CField<D>::CField(const CField<D>& other)
+   CField<D, CudaTp<D> >::CField(const CField<D, CudaTp<D> >& other)
     : DeviceArray<cudaComplex>(other),
       meshDimensions_(0)
    {
@@ -55,7 +54,7 @@ namespace Cuda {
    * Assignment from another RField<D, CudaTp<D> >.
    */
    template <int D>
-   CField<D>& CField<D>::operator = (const CField<D>& other)
+   CField<D, CudaTp<D> >& CField<D, CudaTp<D> >::operator = (const CField<D, CudaTp<D> >& other)
    {
       DeviceArray<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
@@ -67,14 +66,14 @@ namespace Cuda {
    * Assignment from RHS HostDArray<Data> host array.
    */
    template <int D>
-   CField<D>& CField<D>::operator = (HostDArray<cudaComplex> const & other)
+   CField<D, CudaTp<D> >& CField<D, CudaTp<D> >::operator = (HostDArray<cudaComplex> const & other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
          UTIL_THROW("Error: RHS HostDArray<cudaComplex> is not allocated.");
       }
       if (!isAllocated()) {
-         UTIL_THROW("Error: LHS CField<D> is not allocated.");
+         UTIL_THROW("Error: LHS CField<D, CudaTp<D> > is not allocated.");
       }
       if (capacity_ != other.capacity()) {
          UTIL_THROW("Cannot assign Fields of unequal capacity");
@@ -90,7 +89,7 @@ namespace Cuda {
    * Allocate the underlying C array sized for an associated mesh.
    */
    template <int D>
-   void CField<D>::allocate(IntVec<D> const & meshDimensions)
+   void CField<D, CudaTp<D> >::allocate(IntVec<D> const & meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -105,7 +104,9 @@ namespace Cuda {
    * Associate this object with a slice of another DeviceArray.
    */
    template <int D>
-   void CField<D>::associate(DeviceArray<cudaComplex>& arr, int beginId, 
+   void CField<D, CudaTp<D> >::associate(
+                             DeviceArray<cudaComplex>& arr, 
+                             int beginId, 
                              IntVec<D> const & meshDimensions)
    {
       int size = 1;
@@ -117,7 +118,6 @@ namespace Cuda {
       DeviceArray<cudaComplex>::associate(arr, beginId, size);
    }
 
-}
 }
 }
 #endif

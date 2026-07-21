@@ -9,7 +9,9 @@
 */
 
 #include <pscf/chem/SolventSpecies.h>   // base class
-#include <prdc/field/cpu/CField.h>            // member
+#include <prdc/field/cpu/CField.h>      // member
+#include <pscf/cpu/CppTp.h>             // backend class
+
 #include <complex>
 
 // Forward declaration
@@ -22,7 +24,6 @@ namespace Cpc {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
 
    /**
    * Solver and descriptor for a solvent species.
@@ -80,12 +81,12 @@ namespace Cpc {
       *
       * \param wField  monomer chemical potential field of relevant type.
       */
-      void compute(CField<D> const & wField);
+      void compute(CField<D, CppTp<D> > const & wField);
 
       /**
       * Get the monomer concentration field for this solvent.
       */
-      CField<D> const & cField() const;
+      CField<D, CppTp<D> > const & cField() const;
 
       // Inherited accessor functions
       using SpeciesT::phi;
@@ -103,7 +104,7 @@ namespace Cpc {
    private:
 
       /// Complex concentration field for this solvent.
-      CField<D> cField_;
+      CField<D, CppTp<D> > cField_;
 
       /// Pointer to associated mesh.
       Mesh<D> const *  meshPtr_;
@@ -116,7 +117,7 @@ namespace Cpc {
    * Get complex monomer concentration field for this solvent.
    */
    template <int D>
-   inline CField<D> const & Solvent<D>::cField() const
+   inline CField<D, CppTp<D> > const & Solvent<D>::cField() const
    {  return cField_;  }
 
    // Explicit instantiation declarations

@@ -226,7 +226,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
-      CField<1> w;
+      CField<1, CppTp<1> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -267,7 +267,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      CField<2> w;
+      CField<2, CppTp<2> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -310,7 +310,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      CField<2> w;
+      CField<2, CppTp<2> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -353,7 +353,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      CField<3> w;
+      CField<3, CppTp<3> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -391,7 +391,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 1.8));
 
       // Setup chemical potential field
-      CField<3> w;
+      CField<3, CppTp<3> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -430,7 +430,7 @@ public:
       block.allocate(ds);
 
       // Setup chemical potential field
-      CField<1> w;
+      CField<1, CppTp<1> > w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -531,7 +531,7 @@ public:
       block.allocate(ds);
 
       // Setup chemical potential field
-      CField<1> w;
+      CField<1, CppTp<1> > w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);

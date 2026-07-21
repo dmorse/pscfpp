@@ -46,7 +46,7 @@ void CpuCFieldTest::testConstructor()
 
    printMethod(TEST_FUNC);
    {
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
@@ -60,7 +60,7 @@ void CpuCFieldTest::testAllocateMeshDimension()
       d[0] = 2;
       d[1] = 3;
       d[2] = 4;
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 24);
       TEST_ASSERT(v.isAllocated());
@@ -77,7 +77,7 @@ void CpuCFieldTest::testSubscript1()
       d[1] = 2;
       d[2] = 3;
 
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -104,7 +104,7 @@ void CpuCFieldTest::testSubscript2()
       d[1] = 2;
       d[2] = 3;
 
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(capacity == 6);
@@ -138,7 +138,7 @@ void CpuCFieldTest::testCopyConstructor()
       d[2] = 3;
 
       // Initialize CField
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(capacity == 6);
@@ -151,7 +151,7 @@ void CpuCFieldTest::testCopyConstructor()
       }
   
       // Test copy construction of u 
-      Cpu::CField<3> u(v);
+      CField<3, CppTp<3> > u(v);
       TEST_ASSERT(u.capacity() == 6);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.meshDimensions() == v.meshDimensions());
@@ -177,13 +177,13 @@ void CpuCFieldTest::testAssignment()
       d[1] = 2;
       d[2] = 3;
 
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(capacity == 6);
 
-      Cpu::CField<3> u;
+      CField<3, CppTp<3> > u;
       u.allocate(d);
       TEST_ASSERT(u.capacity() == 6);
       TEST_ASSERT(u.isAllocated() );
@@ -224,7 +224,7 @@ void CpuCFieldTest::testSerialize1Memory()
       d[1] = 2;
       d[2] = 3;
 
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -251,7 +251,7 @@ void CpuCFieldTest::testSerialize1Memory()
       TEST_ASSERT(eq(v[1][1], 13.0));
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::CField<3> u;
+      CField<3, CppTp<3> > u;
       u.allocate(d);
    
       MemoryIArchive iArchive;
@@ -324,7 +324,7 @@ void CpuCFieldTest::testSerialize2Memory()
       d[1] = 2;
       d[2] = 3;
 
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -348,7 +348,7 @@ void CpuCFieldTest::testSerialize2Memory()
       TEST_ASSERT(eq(v[1][1], 13.0));
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::CField<3> u;
+      CField<3, CppTp<3> > u;
    
       // Note: We do not allocate CField u in this test.
       // This is the main difference from testSerialize1Memory()
@@ -378,7 +378,7 @@ void CpuCFieldTest::testSerialize1File()
       d[1] = 2;
       d[2] = 3;
 
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -404,7 +404,7 @@ void CpuCFieldTest::testSerialize1File()
       TEST_ASSERT(eq(v[1][1], 13.0));
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::CField<3> u;
+      CField<3, CppTp<3> > u;
       u.allocate(d);
    
       BinaryFileIArchive iArchive;
@@ -446,7 +446,7 @@ void CpuCFieldTest::testSerialize2File()
       d[1] = 2;
       d[2] = 3;
 
-      Cpu::CField<3> v;
+      CField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -472,7 +472,7 @@ void CpuCFieldTest::testSerialize2File()
       TEST_ASSERT(eq(v[1][1], 13.0));
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::CField<3> u;
+      CField<3, CppTp<3> > u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 

@@ -8,26 +8,28 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cpu/CppTp.h>         // backend 
 #include <pscf/cpu/FftwDRArray.h>   // base class
 #include <pscf/math/IntVec.h>       // member
-#include <pscf/cpu/CppTp.h>         // backend type
 
 #include <fftw3.h>
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
-   using namespace Pscf;
+
+   // Declare primary template
+   template <int D, class T> class CField;
 
    /**
-   * Field of complex double precision values on an FFT mesh.
+   * Field of complex double precision values on a mesh (CPU).
    * 
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class CField : public FftwDRArray<fftw_complex>
+   class CField<D, CppTp<D> > 
+    : public FftwDRArray<fftw_complex>
    {
 
    public:
@@ -117,8 +119,8 @@ namespace Cpu {
    /*
    * Return mesh dimensions by constant reference.
    */
-   template <int D>
-   inline const IntVec<D>& CField<D>::meshDimensions() const
+   template <int D> inline 
+   IntVec<D> const & CField<D, CppTp<D> >::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
@@ -126,18 +128,19 @@ namespace Cpu {
    */
    template <int D>
    template <class Archive>
-   void CField<D>::serialize(Archive& ar, const unsigned int version)
+   void CField<D, CppTp<D> >::serialize(
+                        Archive& ar, 
+                        const unsigned int version)
    {
       FftwDRArray<fftw_complex>::serialize(ar, version);
       ar & meshDimensions_;
    }
 
    // Explicit instantiation declarations
-   extern template class CField<1>;
-   extern template class CField<2>;
-   extern template class CField<3>;
+   extern template class CField<1, CppTp<1> >;
+   extern template class CField<2, CppTp<2> >;
+   extern template class CField<3, CppTp<3> >;
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

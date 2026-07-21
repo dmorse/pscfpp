@@ -65,7 +65,7 @@ namespace Cpc {
       /**
       * Field type (function of position, defined on a r-space grid).
       */
-      using FieldT = CField<D>;
+      using FieldT = CField<D, CppTp<D> >;
 
       // Member functions
 

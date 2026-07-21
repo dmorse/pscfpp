@@ -31,12 +31,12 @@ namespace Cpc {
    */
    template <int D>
    class CFields
-     : public Cp::CFields<D, CField<D>, FieldIo<D> >
+     : public Cp::CFields<D, CField<D, CppTp<D> >, FieldIo<D> >
    {
    public:
 
       /// Alias for base class.
-      using Base = Cp::CFields< D, CField<D>, FieldIo<D> >;
+      using Base = Cp::CFields< D, CField<D, CppTp<D> >, FieldIo<D> >;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -63,11 +63,11 @@ namespace Cpc {
 namespace Pscf {
    namespace Cp {
       extern template 
-      class CFields<1, Prdc::Cpu::CField<1>, Cpc::FieldIo<1> >;
+      class CFields<1, Prdc::CField<1, CppTp<1> >, Cpc::FieldIo<1> >;
       extern template 
-      class CFields<2, Prdc::Cpu::CField<2>, Cpc::FieldIo<2> >;
+      class CFields<2, Prdc::CField<2, CppTp<2> >, Cpc::FieldIo<2> >;
       extern template 
-      class CFields<3, Prdc::Cpu::CField<3>, Cpc::FieldIo<3> >;
+      class CFields<3, Prdc::CField<3, CppTp<3> >, Cpc::FieldIo<3> >;
    } 
    namespace Cpc {
       extern template class CFields<1>;

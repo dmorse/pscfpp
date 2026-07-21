@@ -16,9 +16,7 @@ namespace Util {
 }
 namespace Pscf {
    namespace Prdc {
-      namespace Cpu {
-         template <int D> class CField;
-      }
+      template <int D, class T> class CField;
    }
 }
 
@@ -57,7 +55,7 @@ namespace Cpu {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(CField<D> const& a, CField<D> const& b);
+      double compare(CField<D, CppTp<D> > const& a, CField<D, CppTp<D> > const& b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -73,8 +71,8 @@ namespace Cpu {
       * \param b  2nd DArray of field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray<CField<D> > const& a, 
-                     DArray<CField<D> > const& b);
+      double compare(DArray< CField<D, CppTp<D> > > const& a, 
+                     DArray< CField<D, CppTp<D> > > const& b);
 
       /**
       * Return the precomputed maximum element-by-element difference.

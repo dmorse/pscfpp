@@ -15,12 +15,11 @@
 #include <util/global.h>
 #include <cufft.h>
 
+// Forward declarations
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
-      namespace Cuda {
-         template <int D> class CField;
-      }
+      template <int D, class T> class CField;
    }
 }
 
@@ -28,7 +27,6 @@ namespace Pscf {
 namespace Prdc {
 
    using namespace Util;
-   using namespace Prdc::Cuda;
 
    // Declare primary template
    template <int D, class T> class FFT;
@@ -39,7 +37,7 @@ namespace Prdc {
    * This class is a wrapper for plan creation and discrete Fourier 
    * transform (DFT) functions provided by the NVIDIA cufft library, 
    * providing an interface to the field container classes RField<D, CudaTp<D> >, 
-   * RField<Dft>, and CField<D> in namespace Pscf::Prdc::Cuda.
+   * RField<Dft>, and CField<D, CudaTp<D> > in namespace Pscf::Prdc::Cuda.
    *
    * \ingroup Prdc_Cuda_Module
    */
@@ -135,7 +133,7 @@ namespace Prdc {
       * \param rField  complex values on r-space grid (input, gpu mem)
       * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransform(CField<D> const & rField, CField<D>& kField) 
+      void forwardTransform(CField<D, CudaTp<D> > const & rField, CField<D, CudaTp<D> >& kField) 
       const;
 
       /**
@@ -154,7 +152,7 @@ namespace Prdc {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  complex values on r-space grid (output, gpu mem)
       */
-      void inverseTransform(CField<D> const & kField, CField<D>& rField) 
+      void inverseTransform(CField<D, CudaTp<D> > const & kField, CField<D, CudaTp<D> >& rField) 
       const;
 
       /**

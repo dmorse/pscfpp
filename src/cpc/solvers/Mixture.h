@@ -10,13 +10,22 @@
 
 #include <cp/solvers/Mixture.h>        // base class template
 #include <cpc/system/Types.h>          // base class template argument
+#include <pscf/cpu/CppTp.h>            // backend class
+
+// Forward declarations
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class CField;
+   }
+   namespace Cpc {
+      template <int D> class Polymer;
+      template <int D> class Solvent;
+   }
+}
 
 namespace Pscf {
 namespace Cpc {
 
-   // Forward declarations
-   template <int D> class Polymer;
-   template <int D> class Solvent;
 
    using namespace Util;
    using namespace Prdc;

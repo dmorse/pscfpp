@@ -93,7 +93,7 @@ public:
    template <int D>
    void readFields(std::string filename, 
                    Domain<D>& domain,
-                   DArray< CField<D> >& fields)
+                   DArray< CField<D, CppTp<D> > >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -103,7 +103,7 @@ public:
 
    template <int D>
    void writeFields(std::string filename, Domain<D>& domain,
-                   DArray< CField<D> > const & fields)
+                   DArray< CField<D, CppTp<D> > > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -131,7 +131,7 @@ public:
          std::cout << "Ngrid = " << domain.mesh().dimensions() << "\n";
       }
 
-      DArray< CField<3> >  fc;
+      DArray< CField<3, CppTp<3> > >  fc;
       allocateFields(fc, nMonomer_, domain.mesh().dimensions());
 
    }
@@ -157,14 +157,14 @@ public:
       }
 
       // Write arbitrary values to file
-      DArray< CField<3> >  f0;
+      DArray< CField<3, CppTp<3> > >  f0;
       allocateFields(f0, nMonomer_, domain.mesh().dimensions());
       double x, y;
       int rank;
       double meshSize = (double) domain.mesh().size();
       MeshIterator<3> iter(domain.mesh().dimensions());
       for (int i=0; i < nMonomer_; ++i) {
-         CField<3>& field = f0[i];
+         CField<3, CppTp<3> >& field = f0[i];
          for (iter.begin(); !iter.atEnd(); ++iter) {
             rank = iter.rank();
             x = (double) rank/ meshSize;
@@ -177,12 +177,12 @@ public:
       }
       writeFields("out/random3D.cf", domain, f0);
 
-      DArray< CField<3> >  f1;
+      DArray< CField<3, CppTp<3> > >  f1;
       allocateFields(f1, nMonomer_, domain.mesh().dimensions());
       readFields("out/random3D.cf", domain, f1);
       for (int i=0; i < nMonomer_; ++i) {
-         CField<3>& field0= f0[i];
-         CField<3>& field1= f1[i];
+         CField<3, CppTp<3> >& field0= f0[i];
+         CField<3, CppTp<3> >& field1= f1[i];
          for (iter.begin(); !iter.atEnd(); ++iter) {
             rank = iter.rank();
             TEST_ASSERT(eq(field0[rank][0], field1[rank][0]));

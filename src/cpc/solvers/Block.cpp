@@ -9,9 +9,9 @@
 
 namespace Pscf { 
 
-   template class BlockTmpl< Cpc::Propagator<1>, Prdc::Cpu::CField<1> >;
-   template class BlockTmpl< Cpc::Propagator<2>, Prdc::Cpu::CField<2> >;
-   template class BlockTmpl< Cpc::Propagator<3>, Prdc::Cpu::CField<3> >;
+   template class BlockTmpl< Cpc::Propagator<1>, Prdc::CField<1, CppTp<1> > >;
+   template class BlockTmpl< Cpc::Propagator<2>, Prdc::CField<2, CppTp<2> > >;
+   template class BlockTmpl< Cpc::Propagator<3>, Prdc::CField<3, CppTp<3> > >;
 
    namespace Cpc {
       template class Block<1>;

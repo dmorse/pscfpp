@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_C_FIELD_TPP
-#define PRDC_CPU_C_FIELD_TPP
+#ifndef PRDC_C_FIELD_CP_TPP
+#define PRDC_C_FIELD_CP_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -13,7 +13,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
 
@@ -21,7 +20,7 @@ namespace Cpu {
    * Default constructor.
    */
    template <int D>
-   CField<D>::CField()
+   CField<D, CppTp<D> >::CField()
     : FftwDRArray<fftw_complex>(),
       meshDimensions_()
    {}
@@ -30,7 +29,7 @@ namespace Cpu {
    * Destructor.
    */
    template <int D>
-   CField<D>::~CField()
+   CField<D, CppTp<D> >::~CField()
    {}
 
    /*
@@ -39,7 +38,7 @@ namespace Cpu {
    * Allocates new memory and copies all elements by value.
    */
    template <int D>
-   CField<D>::CField(const CField<D>& other)
+   CField<D, CppTp<D> >::CField(const CField<D, CppTp<D> >& other)
     : FftwDRArray<fftw_complex>(),
       meshDimensions_()
    {
@@ -59,7 +58,7 @@ namespace Cpu {
    * This operator will allocate memory if not allocated previously.
    */
    template <int D>
-   CField<D>& CField<D>::operator = (CField<D> const & other)
+   CField<D, CppTp<D> >& CField<D, CppTp<D> >::operator = (CField<D, CppTp<D> > const & other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -88,7 +87,7 @@ namespace Cpu {
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void CField<D>::allocate(const IntVec<D>& meshDimensions)
+   void CField<D, CppTp<D> >::allocate(const IntVec<D>& meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -103,7 +102,7 @@ namespace Cpu {
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void CField<D>::deallocate()
+   void CField<D, CppTp<D> >::deallocate()
    {
       FftwDRArray<fftw_complex>::deallocate();
       for (int i = 0; i < D; ++i) {
@@ -111,7 +110,6 @@ namespace Cpu {
       }
    }
 
-}
 }
 }
 #endif

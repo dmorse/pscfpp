@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_C_FIELD_COMPARISON_H
-#define PRDC_CUDA_C_FIELD_COMPARISON_H
+#ifndef PRDC_C_FIELD_COMPARISON_CU_H
+#define PRDC_C_FIELD_COMPARISON_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -46,7 +46,7 @@ namespace Cuda {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(CField<D> const & a, CField<D> const & b);
+      double compare(CField<D, CudaTp<D> > const & a, CField<D, CudaTp<D> > const & b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -62,8 +62,8 @@ namespace Cuda {
       * \param b  2nd DArray of fields
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray< CField<D> > const & a, 
-                     DArray< CField<D> > const & b);
+      double compare(DArray< CField<D, CudaTp<D> > > const & a, 
+                     DArray< CField<D, CudaTp<D> > > const & b);
 
       /**
       * Return the precomputed maximum element-by-element difference.
@@ -93,12 +93,10 @@ namespace Cuda {
    
    };
 
-   #ifndef PRDC_CUDA_C_FIELD_COMPARISON_TPP
    // Explicit instantiation declarations
    extern template class CFieldComparison<1>;
    extern template class CFieldComparison<2>;
    extern template class CFieldComparison<3>;
-   #endif
 
 
 } // namespace Prdc::Cuda

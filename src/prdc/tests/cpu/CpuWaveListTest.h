@@ -144,7 +144,7 @@ public:
          
          TEST_ASSERT(vec == minImages[rank]);
          TEST_ASSERT(abs(val - ksq[rank]) < tolerance_);
-         TEST_ASSERT(flag == FFT<1, CppTp<1> >::hasImplicitInverse(temp, meshDims1));
+         TEST_ASSERT((flag == FFT<1, CppTp<1> >::hasImplicitInverse(temp, meshDims1)));
       }
 
    }

@@ -212,7 +212,7 @@ namespace Prdc {
    * Execute forward complex-to-complex transform.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::forwardTransform(CField<D> const & rField, CField<D>& kField)
+   void FFT<D, CudaTp<D> >::forwardTransform(CField<D, CudaTp<D> > const & rField, CField<D, CudaTp<D> >& kField)
    const
    {
       // Preconditions
@@ -245,7 +245,7 @@ namespace Prdc {
    * Execute inverse (complex-to-complex) transform.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::inverseTransform(CField<D> const & kField, CField<D>& rField) 
+   void FFT<D, CudaTp<D> >::inverseTransform(CField<D, CudaTp<D> > const & kField, CField<D, CudaTp<D> >& rField) 
    const
    {
       // Preconditions

@@ -285,7 +285,7 @@ void CudaFftTest::testTransformComplex1D()
    d[0] = n;
 
    // Instantiate and allocate objects
-   Prdc::Cuda::CField<1> rField(d), 
+   Prdc::CField<1, CudaTp<1> > rField(d), 
                          kField(d);
    HostDArray<cudaComplex> rField1_h(rSize), 
                            rField2_h(rSize), 
@@ -356,7 +356,7 @@ void CudaFftTest::testTransformComplex2D() {
    d[1] = n2;
 
    // Instantiate and allocate objects
-   Prdc::Cuda::CField<2> rField(d), 
+   Prdc::CField<2, CudaTp<2> > rField(d), 
                          kField(d);
    HostDArray<cudaComplex> rField1_h(rSize), 
                            rField2_h(rSize), 
@@ -435,7 +435,7 @@ void CudaFftTest::testTransformComplex3D() {
    d[2] = n3;
 
    // Instantiate and allocate objects
-   Prdc::Cuda::CField<3> rField(d), 
+   Prdc::CField<3, CudaTp<3> > rField(d), 
                          kField(d);
    HostDArray<cudaComplex> rField1_h(rSize), 
                            rField2_h(rSize), 

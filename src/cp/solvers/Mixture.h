@@ -20,8 +20,8 @@ namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc {
       template <int D> class UnitCell;
+      template <int D, class T> class CField;
       template <int D, class T> class FFT;
-      //template <int D, class T> class CField;
    }
 }
 
@@ -77,7 +77,7 @@ namespace Cp {
       using PropagatorT = typename T::Propagator;
 
       /// Field type, for data defined on a real-space grid.
-      using FieldT = typename T::CField;
+      using FieldT = CField<D, CppTp<D> >;
 
       /// WaveList type.
       using WaveListT = typename T::WaveList;

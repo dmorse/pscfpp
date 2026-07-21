@@ -327,8 +327,8 @@ public:
       d[2] = 3;
 
       // Allocate device arrays da and db
-      Prdc::Cuda::CField<3> da;
-      Prdc::Cuda::CField<3> db;
+      Prdc::CField<3, CudaTp<3> > da;
+      Prdc::CField<3, CudaTp<3> > db;
       da.allocate(d);
       db.allocate(d);
       int capacity = da.capacity();
@@ -386,8 +386,8 @@ public:
       dimensions[2] = 3;
 
       // Allocate device arrays da and db
-      DArray< Prdc::Cuda::CField<3> > da;
-      DArray< Prdc::Cuda::CField<3> > db;
+      DArray< Prdc::CField<3, CudaTp<3> > > da;
+      DArray< Prdc::CField<3, CudaTp<3> > > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
