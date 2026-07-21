@@ -1,11 +1,6 @@
 namespace Pscf{
 namespace Prdc{
 
-/**
-* Fields, FFTs, and utilities for periodic boundary conditions (CUDA).
-*/
-namespace Cuda{
-
    /**
    * \defgroup Prdc_Cuda_Module Fields (CUDA)
    *
@@ -14,6 +9,5 @@ namespace Cuda{
    * \ingroup Pscf_Prdc_Module
    */
 
-}
 }
 }

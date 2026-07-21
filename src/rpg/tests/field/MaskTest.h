@@ -163,7 +163,7 @@ public:
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
-      RFieldComparison<1> comparison;
+      RFieldComparison<1, CudaTp<1> > comparison;
       comparison.compare(rf, mask.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
@@ -277,7 +277,7 @@ public:
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
-      RFieldComparison<1> comparison;
+      RFieldComparison<1, CudaTp<1> > comparison;
       comparison.compare(rf, mask.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
@@ -313,7 +313,7 @@ public:
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(mask.isSymmetric());
 
-      RFieldComparison<1> comparison;
+      RFieldComparison<1, CudaTp<1> > comparison;
       comparison.compare(rf, mask.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }

@@ -31,9 +31,9 @@ namespace Prdc {
    {};
 
    // Explicit instantiation declarations
-   extern template class RFieldComparison<1>;
-   extern template class RFieldComparison<2>;
-   extern template class RFieldComparison<3>;
+   extern template class RFieldComparison<1, CppTp<1> >;
+   extern template class RFieldComparison<2, CppTp<2> >;
+   extern template class RFieldComparison<3, CppTp<3> >;
 
 } // namespace Prdc
 } // namespace Pscf

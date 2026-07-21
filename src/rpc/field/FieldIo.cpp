@@ -245,7 +245,7 @@ namespace Rp {
                           DArray< RField<D, CppTp<D> > > const & field1,
                           DArray< RField<D, CppTp<D> > > const & field2) const
    {
-      RFieldComparison<D> comparison;
+      RFieldComparison<D, CppTp<D> > comparison;
       comparison.compare(field1, field2);
 
       Log::file() << "\n Real-space field comparison results"

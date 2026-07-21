@@ -15,7 +15,6 @@ namespace Pscf {
 namespace Prdc {
 
    using namespace Util;
-   using namespace Prdc::Cpu;
 
    /*
    * Default constructor.

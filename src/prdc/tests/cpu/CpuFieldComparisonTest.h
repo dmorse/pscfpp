@@ -45,7 +45,7 @@ public:
          rf_0[i] = 2.0;
          rf_1[i] = 2.001;
       }
-      Cpu::RFieldComparison<1> comparison;
+      RFieldComparison<1, CppTp<1> > comparison;
       comparison.compare(rf_0,  rf_1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -79,7 +79,7 @@ public:
          rf_0[i] = 2.0;
          rf_1[i] = 2.001;
       }
-      Cpu::RFieldComparison<2> comparison;
+      RFieldComparison<2, CppTp<2> > comparison;
       comparison.compare(rf_0,  rf_1);
       if (verbose() > 0) {
          std::cout << "\n";

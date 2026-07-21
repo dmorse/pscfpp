@@ -117,7 +117,7 @@ public:
       readRGridFields(system,"in/w_mc_diblock_ref.rf", rf_0, unitCell);
 
       // Compare with reference fields
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CudaTp<3> > comparison;
       comparison.compare(rf_0, system.w().rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
 
@@ -145,7 +145,7 @@ public:
       readRGridFields(system,"in/w_mc_diblock_bdMove_ref.rf", rf_0, unitCell);
 
       // Compare with reference fields
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CudaTp<3> > comparison;
       comparison.compare(rf_0, system.w().rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
 
@@ -173,7 +173,7 @@ public:
       readRGridFields(system,"in/w_mc_diblock_shift_ref.rf", rf_0, unitCell);
 
       // Compare with reference fields
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CudaTp<3> > comparison;
       comparison.compare(rf_0, system.w().rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
 
@@ -201,7 +201,7 @@ public:
       readRGridFields(system,"in/w_mc_triblock_ref.rf", rf_0, unitCell);
 
       // Compare with reference fields
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CudaTp<3> > comparison;
       comparison.compare(rf_0, system.w().rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
 

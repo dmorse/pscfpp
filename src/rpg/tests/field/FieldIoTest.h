@@ -287,7 +287,7 @@ public:
       writeFields("out/w_bcc.rf", domain, d_rf_0);
       readFields("out/w_bcc.rf", domain, d_rf_1);
 
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CudaTp<3> > comparison;
       comparison.compare(d_rf_0, d_rf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 

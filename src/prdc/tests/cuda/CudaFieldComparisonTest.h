@@ -59,7 +59,7 @@ public:
       db = hb;
 
       // Make comparison
-      Prdc::Cuda::RFieldComparison<1> comparison;
+      Prdc::RFieldComparison<1, CudaTp<1> > comparison;
       comparison.compare(da, db);
 
 
@@ -110,7 +110,7 @@ public:
       db = hb;
 
       // Make comparison
-      Prdc::Cuda::RFieldComparison<2> comparison;
+      Prdc::RFieldComparison<2, CudaTp<2> > comparison;
       comparison.compare(da, db);
 
       if (verbose() > 0) {
@@ -170,7 +170,7 @@ public:
       }
 
       // Make comparison
-      Prdc::Cuda::RFieldComparison<2> comparison;
+      Prdc::RFieldComparison<2, CudaTp<2> > comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);

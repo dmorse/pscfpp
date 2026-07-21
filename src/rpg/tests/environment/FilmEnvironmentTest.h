@@ -108,7 +108,7 @@ public:
       DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef1D.rf", 
                                                 cFieldsCheck, unitCell);
-      RFieldComparison<1> rComparison; // object to compare fields
+      RFieldComparison<1, CudaTp<1> > rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       if (verbose() > 0) {
          std::cout << "\nMax error = " << rComparison.maxDiff();
@@ -153,7 +153,7 @@ public:
       DArray< RField<2, CudaTp<2> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef2D.rf", 
                                                 cFieldsCheck, unitCell);
-      RFieldComparison<2> rComparison; // object to compare fields
+      RFieldComparison<2, CudaTp<2> > rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
      
       double epsilon = 1.0E-4; 
@@ -197,7 +197,7 @@ public:
       DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRefSweep.rf", 
                                                 cFieldsCheck, unitCell);
-      RFieldComparison<1> rComparison; // object to compare fields
+      RFieldComparison<1, CudaTp<1> > rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       double diff = rComparison.maxDiff();
 
@@ -251,7 +251,7 @@ public:
       DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef1DFBulk.rf", 
                                                 cFieldsCheck, unitCell);
-      RFieldComparison<1> rComparison; // object to compare fields
+      RFieldComparison<1, CudaTp<1> > rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       double diff = rComparison.maxDiff();
       if (verbose() > 0) {
@@ -292,7 +292,7 @@ public:
       DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef1D.rf", 
                                                 cFieldsCheck, unitCell);
-      RFieldComparison<1> rComparison; // object to compare fields
+      RFieldComparison<1, CudaTp<1> > rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       if (verbose() > 0) {
          std::cout << "\nMax error = " << rComparison.maxDiff();
@@ -337,7 +337,7 @@ public:
       DArray< RField<2, CudaTp<2> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef2D.rf", 
                                                 cFieldsCheck, unitCell);
-      RFieldComparison<2> rComparison; // object to compare fields
+      RFieldComparison<2, CudaTp<2> > rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
      
       double epsilon = 1.0E-4; 
@@ -382,7 +382,7 @@ public:
       DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRefSweep.rf", 
                                                 cFieldsCheck, unitCell);
-      RFieldComparison<1> rComparison; // object to compare fields
+      RFieldComparison<1, CudaTp<1> > rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       double diff = rComparison.maxDiff();
 
@@ -438,7 +438,7 @@ public:
       DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef1DFBulk.rf", 
                                                 cFieldsCheck, unitCell);
-      RFieldComparison<1> rComparison; // object to compare fields
+      RFieldComparison<1, CudaTp<1> > rComparison; // object to compare fields
       rComparison.compare(system.c().rgrid(), cFieldsCheck);
       double diff = rComparison.maxDiff();
       if (verbose() > 0) {

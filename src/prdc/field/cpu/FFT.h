@@ -26,7 +26,6 @@ namespace Pscf {
 namespace Prdc {
 
    using namespace Util;
-   using namespace Prdc::Cpu;
 
    // Declare primary class template
    template <int D, class T> class FFT; 

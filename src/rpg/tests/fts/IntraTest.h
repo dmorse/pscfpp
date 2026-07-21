@@ -128,7 +128,7 @@ public:
       
       system.domain().fft().inverseTransformUnsafe(analyticalErrorK, analyticalError);
       
-      RFieldComparison<1> comparison;
+      RFieldComparison<1, CudaTp<1> > comparison;
       comparison.compare(error, analyticalError);
       TEST_ASSERT(comparison.maxDiff() < A* 1e-2);
    
@@ -208,7 +208,7 @@ public:
       Rp::IntraCorrelation<1, CudaTp<1> > intraHomo(systemHomo);
       intraHomo.computeOmegaTotal(intraCorrelationKHomo);
       
-      RFieldComparison<1> comparison;
+      RFieldComparison<1, CudaTp<1> > comparison;
       comparison.compare(intraCorrelationK, intraCorrelationKHomo);
       TEST_ASSERT(comparison.maxDiff() < 1e-5);
       
@@ -243,7 +243,7 @@ public:
       Rp::IntraCorrelation<1, CudaTp<1> > intraHomo(systemHomo);
       intraHomo.computeOmegaTotal(intraCorrelationKHomo);
       
-      RFieldComparison<1> comparison;
+      RFieldComparison<1, CudaTp<1> > comparison;
       comparison.compare(intraCorrelationK, intraCorrelationKHomo);
       TEST_ASSERT(comparison.maxDiff() < 1e-5);
       

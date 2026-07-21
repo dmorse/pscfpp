@@ -285,7 +285,7 @@ public:
       out.close();
       #endif 
       
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CudaTp<3> > comparison;
       comparison.compare(dc0, simulator.dc());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
       
