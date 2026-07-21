@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_R_FIELD_DFT_COMPARISON_TPP
-#define PRDC_CPU_R_FIELD_DFT_COMPARISON_TPP
+#ifndef PRDC_R_FIELD_DFT_COMPARISON_CP_TPP
+#define PRDC_R_FIELD_DFT_COMPARISON_CP_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -15,13 +15,12 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    /*
    * Default constructor.
    */
    template <int D>
-   RFieldDftComparison<D>::RFieldDftComparison()
+   RFieldDftComparison<D, CppTp<D> >::RFieldDftComparison()
     : maxDiff_(0.0),
       rmsDiff_(0.0)
    {};
@@ -30,7 +29,7 @@ namespace Cpu {
    * Comparator for individual fields.
    */
    template <int D>
-   double RFieldDftComparison<D>::compare(RFieldDft<D, CppTp<D> > const& a, 
+   double RFieldDftComparison<D, CppTp<D> >::compare(RFieldDft<D, CppTp<D> > const& a, 
                                           RFieldDft<D, CppTp<D> > const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
@@ -69,7 +68,7 @@ namespace Cpu {
    */
    template <int D>
    double 
-   RFieldDftComparison<D>::compare(DArray< RFieldDft<D, CppTp<D> > > const & a,
+   RFieldDftComparison<D, CppTp<D> >::compare(DArray< RFieldDft<D, CppTp<D> > > const & a,
                                    DArray< RFieldDft<D, CppTp<D> > > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
@@ -106,7 +105,6 @@ namespace Cpu {
       return maxDiff_;
    }
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

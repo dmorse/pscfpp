@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_R_FIELD_DFT_COMPARISON_H
-#define PRDC_CPU_R_FIELD_DFT_COMPARISON_H
+#ifndef PRDC_R_FIELD_DFT_COMPARISON_CP_H
+#define PRDC_R_FIELD_DFT_COMPARISON_CP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -22,9 +22,11 @@ namespace Pscf {
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
+
+   // Declare primary template
+   template <int D, class T> class RFieldDftComparison;
 
    /**
    * Comparator for RFieldDft (k-grid) arrays.
@@ -32,7 +34,8 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class RFieldDftComparison {
+   class RFieldDftComparison<D, CppTp<D> >
+   {
 
    public:
 
@@ -55,7 +58,8 @@ namespace Cpu {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(RFieldDft<D, CppTp<D> > const& a, RFieldDft<D, CppTp<D> > const& b);
+      double compare(RFieldDft<D, CppTp<D> > const& a, 
+                     RFieldDft<D, CppTp<D> > const& b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -103,11 +107,10 @@ namespace Cpu {
    };
 
    // Explicit instantiation declarations
-   extern template class RFieldDftComparison<1>;
-   extern template class RFieldDftComparison<2>;
-   extern template class RFieldDftComparison<3>;
+   extern template class RFieldDftComparison<1, CppTp<1> >;
+   extern template class RFieldDftComparison<2, CppTp<2> >;
+   extern template class RFieldDftComparison<3, CppTp<3> >;
 
-} // namespace Cpu
 } // namespace Prdc
 } // namespace Pscf
 #endif

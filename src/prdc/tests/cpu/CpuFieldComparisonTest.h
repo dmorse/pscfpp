@@ -116,7 +116,7 @@ public:
          f_1[i][0] = 1.999;
          f_1[i][1] = 2.001;
       }
-      Cpu::RFieldDftComparison<2> comparison;
+      RFieldDftComparison<2, CppTp<2> > comparison;
       comparison.compare(f_0,  f_1);
       if (verbose() > 0) {
          std::cout << "\n";

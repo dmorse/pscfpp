@@ -743,7 +743,7 @@ public:
       readFields("out/w_lam.kf", domain, kf_1);
 
       // Compare kf_0 and kf_1 in k-grid format
-      RFieldDftComparison<1> comparison;
+      RFieldDftComparison<1, CppTp<1> > comparison;
       comparison.compare(kf_0, kf_1);
       if (verbose() > 0) {
          std::cout  << std::endl;
@@ -774,7 +774,7 @@ public:
       writeFields("out/w_bcc.kf", domain, kf_0);
       readFields("out/w_bcc.kf", domain, kf_1);
 
-      RFieldDftComparison<3> comparison;
+      RFieldDftComparison<3, CppTp<3> > comparison;
       comparison.compare(kf_0, kf_1);
       if (verbose() > 0) {
          std::cout  << "\n";
@@ -806,7 +806,7 @@ public:
       writeFields("out/w_altG.kf", domain, kf_0);
       readFields("out/w_altG.kf", domain, kf_1);
 
-      RFieldDftComparison<3> comparison;
+      RFieldDftComparison<3, CppTp<3> > comparison;
       comparison.compare(kf_0, kf_1);
       if (verbose() > 0) {
          std::cout  << "\n";
@@ -850,7 +850,7 @@ public:
 
       #if 0
       // Demonstrate that input kf_0 is modified by above (it is)
-      RFieldDftComparison<3> check;
+      RFieldDftComparison<3, CppTp<3> > check;
       check.compare(kf_2, kf_0);
       std::cout  << std::endl;
       std::cout  << Dbl(check.maxDiff(), 21, 13) << "\n";
@@ -859,7 +859,7 @@ public:
 
       domain.fieldIo().convertRGridToKGrid(rf_0, kf_1);
 
-      RFieldDftComparison<3> comparison;
+      RFieldDftComparison<3, CppTp<3> > comparison;
       comparison.compare(kf_2, kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
       if (verbose() > 0) {
@@ -908,7 +908,7 @@ public:
 
       #if 0
       // Demonstrate that input kf_0 is modified by above (it is)
-      RFieldDftComparison<3> check;
+      RFieldDftComparison<3, CppTp<3> > check;
       check.compare(kf_2, kf_0);
       std::cout  << std::endl;
       std::cout  << Dbl(check.maxDiff(), 21, 13) << "\n";
@@ -917,7 +917,7 @@ public:
 
       domain.fieldIo().convertRGridToKGrid(rf_0, kf_1);
 
-      RFieldDftComparison<3> Bcomparison;
+      RFieldDftComparison<3, CppTp<3> > Bcomparison;
       Bcomparison.compare(kf_2, kf_1);
       TEST_ASSERT(Bcomparison.maxDiff() < 1.0E-10);
       if (verbose() > 0) {

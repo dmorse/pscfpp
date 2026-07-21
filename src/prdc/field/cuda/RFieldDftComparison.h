@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_R_FIELD_DFT_COMPARISON_H
-#define PRDC_CUDA_R_FIELD_DFT_COMPARISON_H
+#ifndef PRDC_R_FIELD_DFT_COMPARISON_CU_H
+#define PRDC_R_FIELD_DFT_COMPARISON_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,22 +8,26 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RFieldDft.h"
-#include <util/containers/DArray.h>
+#include <pscf/cuda/CudaTp.h>           // argument specialization
+#include <prdc/field/cuda/RFieldDft.h>  
+#include <util/containers/DArray.h> 
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
 
+   // Declare primary template
+   template <int D, class T> class RFieldDftComparison;
+
    /**
-   * Comparator for RFieldDft (k-grid) arrays, allocated on device.
+   * Comparator for RFieldDft (k-grid) arrays (CUDA).
    *
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class RFieldDftComparison {
+   class RFieldDftComparison<D, CudaTp<D> > 
+   {
 
    public:
 
@@ -34,7 +38,8 @@ namespace Cuda {
       */
       RFieldDftComparison();
 
-      // Use compiler defined destructor and assignment operator.
+      // Destructor
+      ~RFieldDftComparison() = default;
 
       /**
       * Compare individual fields.
@@ -46,7 +51,8 @@ namespace Cuda {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(RFieldDft<D, CudaTp<D> > const & a, RFieldDft<D, CudaTp<D> > const & b);
+      double compare(RFieldDft<D, CudaTp<D> > const & a, 
+                     RFieldDft<D, CudaTp<D> > const & b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -93,15 +99,12 @@ namespace Cuda {
    
    };
 
-   #ifndef PRDC_CUDA_R_FIELD_DFT_COMPARISON_TPP
    // Explicit instantiation declarations
-   extern template class RFieldDftComparison<1>;
-   extern template class RFieldDftComparison<2>;
-   extern template class RFieldDftComparison<3>;
-   #endif
+   extern template class RFieldDftComparison<1, CudaTp<1> >;
+   extern template class RFieldDftComparison<2, CudaTp<2> >;
+   extern template class RFieldDftComparison<3, CudaTp<3> >;
 
 
-} // namespace Prdc::Cuda
 } // namespace Prdc
 } // namespace Pscf
 #endif

@@ -25,7 +25,7 @@ namespace Pscf {
          //template <int D> class RFieldDft;
          //template <int D> class FFT;
          //template <int D> class RFieldComparison;
-         template <int D> class RFieldDftComparison;
+         //template <int D> class RFieldDftComparison;
          template <int D> class WaveList;
       }
    }
@@ -63,7 +63,7 @@ namespace Pscf {
       //using RFieldDft = Prdc::Cuda::RFieldDft<D>;
       //using FFT = Prdc::Cuda::FFT<D>;
       //using RFieldComparison = Prdc::Cuda::RFieldComparison<D>;
-      using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;
+      //using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;
       using WaveList = Prdc::Cuda::WaveList<D>;
 
       // Static members

@@ -227,7 +227,7 @@ public:
       TEST_ASSERT(da.capacity() == capacity);
 
       // Make comparison
-      Prdc::Cuda::RFieldDftComparison<3> comparison;
+      Prdc::RFieldDftComparison<3, CudaTp<3> > comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -298,7 +298,7 @@ public:
       }
 
       // Make comparison
-      Prdc::Cuda::RFieldDftComparison<3> comparison;
+      Prdc::RFieldDftComparison<3, CudaTp<3> > comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
