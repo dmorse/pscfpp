@@ -68,7 +68,7 @@ namespace Rp {
    */
    template <int D>
    void Block<D, CppTp<D> >::associate(Mesh<D> const & mesh,
-                            FFT<D> const& fft,
+                            FFT<D, CppTp<D> > const& fft,
                             UnitCell<D> const& cell,
                             WaveList<D>& waveList)
    {
@@ -100,7 +100,7 @@ namespace Rp {
       UTIL_CHECK(!isAllocated_);
 
       // Compute DFT grid dimensions kMeshDimensions_ and size kSize_
-      FFT<D>::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
+      FFT<D, CppTp<D> >::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
 
       // Allocate work arrays for MDE solution
       expKsq_.allocate(kMeshDimensions_);

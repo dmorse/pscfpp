@@ -161,7 +161,7 @@ public:
 
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(d);
 
       WaveList<1> waveList;
@@ -245,7 +245,7 @@ public:
       // Setup up associated objects and allocate
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(d);
       WaveList<1> waveList;
       waveList.allocate(mesh, unitCell);
@@ -328,7 +328,7 @@ public:
       // Create associated objects and allocate mixture
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(d);
       WaveList<2> waveList;
       waveList.allocate(mesh, unitCell);
@@ -421,7 +421,7 @@ public:
 
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(d);
 
       WaveList<2> waveList;
@@ -511,7 +511,7 @@ public:
 
       Mesh<3> mesh;
       mesh.setDimensions(d);
-      FFT<3> fft;
+      FFT<3, CppTp<3> > fft;
       fft.setup(d);
 
       WaveList<3> waveList;

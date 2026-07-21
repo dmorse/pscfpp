@@ -68,7 +68,7 @@ namespace Cpc {
    */
    template <int D>
    void Block<D>::associate(Mesh<D> const & mesh,
-                            FFT<D> const& fft,
+                            FFT<D, CppTp<D> > const& fft,
                             UnitCell<D> const& cell,
                             WaveList<D>& wavelist)
    {

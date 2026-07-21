@@ -106,7 +106,7 @@ namespace Prdc {
 
       // Compute dimensions and size of Fourier space mesh
       int size;
-      FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
+      FFT<D, CudaTp<D> >::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Allocate complex array on the GPU with size of DFT mesh
       DeviceArray<cudaComplex>::allocate(size);
@@ -129,7 +129,7 @@ namespace Prdc {
 
       // Compute dimensions and size of Fourier space mesh
       int size;
-      FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
+      FFT<D, CudaTp<D> >::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Associate data with a slice of input array arr
       DeviceArray<cudaComplex>::associate(arr, beginId, size);

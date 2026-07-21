@@ -23,6 +23,7 @@ namespace Pscf {
    namespace Prdc {
       template <int D> class SpaceGroup;
       template <int D> class Basis;
+      template <int D, class T> class FFT;
    }
    namespace Rp {
       template <int D, class T> class FieldIo;
@@ -157,12 +158,12 @@ namespace Rp {
       /**
       * Get the FFT by non-const reference.
       */
-      typename T::FFT& fft();
+      FFT<D,T>& fft();
 
       /**
       * Get the FFT object by non-const reference.
       */
-      typename T::FFT const & fft() const;
+      FFT<D,T> const & fft() const;
 
       /**
       * Get the WaveList by non-const reference.
@@ -280,7 +281,7 @@ namespace Rp {
       /**
       * Pointer to a FFT (Fast Fourier Transform) object (owned).
       */
-      typename T::FFT* fftPtr_;
+      FFT<D,T>* fftPtr_;
 
       /**
       * Pointer to a WaveList object (owned).
@@ -362,12 +363,12 @@ namespace Rp {
 
    // Get the FFT by non-const reference.
    template <int D, class T> inline 
-   typename T::FFT& Domain<D,T>::fft()
+   FFT<D,T>& Domain<D,T>::fft()
    {  return *fftPtr_; }
 
    // Get the FFT by const reference.
    template <int D, class T> inline 
-   typename T::FFT const & Domain<D,T>::fft() const
+   FFT<D,T> const & Domain<D,T>::fft() const
    {  return *fftPtr_; }
 
    // Get the WaveList by non-const reference.

@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cpu/CppTp.h>           // backend class
 #include <cp/field/FieldIo.h>         // base class template
 #include <prdc/field/cpu/CField.h>    // base class template argument
 #include <prdc/field/cpu/FFT.h>       // base class template argument
@@ -27,9 +28,9 @@ namespace Pscf {
 namespace Pscf {
    namespace Cp {
       using namespace Prdc::Cpu;
-      extern template class FieldIo<1, CField<1>, FFT<1> >;
-      extern template class FieldIo<2, CField<2>, FFT<2> >;
-      extern template class FieldIo<3, CField<3>, FFT<3> >;
+      extern template class FieldIo<1, CField<1>, FFT<1, CppTp<1> > >;
+      extern template class FieldIo<2, CField<2>, FFT<2, CppTp<2> > >;
+      extern template class FieldIo<3, CField<3>, FFT<3, CppTp<3> > >;
    }
 }
 
@@ -49,7 +50,7 @@ namespace Cpc {
    *
    * This class template is derived from a partial specialization of
    * the template Cp::FieldIo<D, CFT, FFT> using classes
-   * CFT = CField<D> and FFT = FFT<D> that are all defined in the
+   * CFT = CField<D> and FFT = FFT<D, CppTp<D> > that are all defined in the
    * Prdc::Cpu subspace, and that all use conventional CPU hardware.
    * An analogous class template named Rpg::FieldIo that is defined
    * in the Pscf::Rpg namespace instead uses a GPU.
@@ -64,7 +65,7 @@ namespace Cpc {
    */
    template <int D>
    class FieldIo
-     : public  Cp::FieldIo< D, CField<D>, FFT<D> >
+     : public  Cp::FieldIo< D, CField<D>, FFT<D, CppTp<D> > >
    {
 
    public:
@@ -186,7 +187,7 @@ namespace Cpc {
       #endif
 
       /// Alias for base class
-      using Base = Cp::FieldIo< D, CField<D>, FFT<D> >;
+      using Base = Cp::FieldIo< D, CField<D>, FFT<D, CppTp<D> > >;
 
       // Inherited public member functions
       using Base::associate;

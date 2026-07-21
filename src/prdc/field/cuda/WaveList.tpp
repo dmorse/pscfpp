@@ -504,7 +504,7 @@ namespace Cuda {
 
       // Compute kMeshDimensions_ and kSize_
       if (isRealField_) {
-         FFT<D>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+         FFT<D, CudaTp<D> >::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
       } else {
          kMeshDimensions_ = meshDimensions;
          kSize_ = mesh().size();

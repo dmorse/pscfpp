@@ -23,6 +23,7 @@ namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
       template <int D, class T> class RFieldDft;
+      template <int D, class T> class FFT;
    }
 }
 
@@ -168,7 +169,7 @@ namespace Rp {
       bool isInitialized_;
 
       // Alias for FFT wrapper class
-      using FFTT = typename T::FFT;
+      using FFTT = FFT<D,T>;
 
    };
 

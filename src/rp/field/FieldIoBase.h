@@ -21,10 +21,11 @@ namespace Util {
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc {
-      template <int D> class Basis;
-      template <int D> class SpaceGroup;
       template <int D, class T> class RField;
       template <int D, class T> class RFieldDft;
+      template <int D, class T> class FFT;
+      template <int D> class Basis;
+      template <int D> class SpaceGroup;
    }
 }
 
@@ -89,7 +90,7 @@ namespace Rp {
       * are known at this point.
       *
       * \param mesh  associated spatial discretization Mesh<D>
-      * \param fft   associated typename T::FFT object for fast transforms
+      * \param fft   associated FFT<D,T> object for fast transforms
       * \param lattice  lattice system type (enumeration value)
       * \param hasGroup  true iff a space group has been declared
       * \param groupName  space group name string
@@ -97,7 +98,7 @@ namespace Rp {
       * \param basis  associated Basis object
       */
       void associate(Mesh<D> const & mesh,
-                     typename T::FFT const & fft,
+                     FFT<D,T> const & fft,
                      typename UnitCell<D>::LatticeSystem const & lattice,
                      bool const & hasGroup,
                      std::string const & groupName,
@@ -659,7 +660,7 @@ namespace Rp {
       /**
       * Convert an array of field from k-grid to r-grid format.
       *
-      * This function simply calls the inverse typename T::FFT for an array of fields.
+      * This function simply calls the inverse FFT<D,T> for an array of fields.
       *
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
@@ -670,7 +671,7 @@ namespace Rp {
       /**
       * Convert a single field from k-grid to r-grid format.
       *
-      * This function simply calls the inverse typename T::FFT for a single field.
+      * This function simply calls the inverse FFT<D,T> for a single field.
       *
       * \param in  field in discrete Fourier format (k-grid)
       * \param out  field defined on real-space grid (r-grid)
@@ -681,7 +682,7 @@ namespace Rp {
       /**
       * Convert an array of fields from r-grid to k-grid (Fourier) format.
       *
-      * This function simply calls the forward typename T::FFT repeatedly for an
+      * This function simply calls the forward FFT<D,T> repeatedly for an
       * array of fields.
       *
       * \param in  fields defined on real-space grid (r-grid)
@@ -693,7 +694,7 @@ namespace Rp {
       /**
       * Convert a field from r-grid to k-grid (Fourier) format.
       *
-      * This function simply calls the forward typename T::FFT for a single field.
+      * This function simply calls the forward FFT<D,T> for a single field.
       *
       * \param in  field defined on real-space grid (r-grid)
       * \param out  field in discrete Fourier format (k-grid)
@@ -1304,9 +1305,9 @@ namespace Rp {
       }
 
       /**
-      * Get typename T::FFT object by const reference
+      * Get FFT<D,T> object by const reference
       */
-      typename T::FFT const & fft() const
+      FFT<D,T> const & fft() const
       {
          UTIL_ASSERT(fftPtr_);
          return *fftPtr_;
@@ -1339,7 +1340,7 @@ namespace Rp {
       Mesh<D> const * meshPtr_;
 
       /// Pointer to an FFT object
-      typename T::FFT const * fftPtr_;
+      FFT<D,T> const * fftPtr_;
 
       /// Pointer to lattice system
       typename UnitCell<D>::LatticeSystem const * latticePtr_;

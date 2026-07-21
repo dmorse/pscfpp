@@ -18,6 +18,7 @@ namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
       template <int D, class T> class RFieldDft;
+      template <int D, class T> class FFT;
    }
 }
 
@@ -127,7 +128,7 @@ namespace Rp {
       /// Dimensions of Fourier space (k-grid) mesh for a real field
       IntVec<D> kMeshDimensions_;
 
-      using FFTT = typename T::FFT;
+      using FFTT = FFT<D,T>;
    };
 
    // Primary template for subclasses

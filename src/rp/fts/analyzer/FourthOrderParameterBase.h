@@ -11,7 +11,7 @@
 #include <rp/fts/analyzer/AverageAnalyzer.h>   // base class template
 #include <pscf/math/IntVec.h>                  // member
 
-// Forward declaration
+// Forward declarations
 namespace Util {
    template <typename T> class Array;
 }
@@ -19,6 +19,7 @@ namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
       template <int D, class T> class RFieldDft;
+      template <int D, class T> class FFT;
    }
 }
 
@@ -130,7 +131,7 @@ namespace Rp {
       */
       virtual void computePrefactor() = 0;
 
-      using FFTT = typename T::FFT;
+      using FFTT = FFT<D,T>;
 
    };
 

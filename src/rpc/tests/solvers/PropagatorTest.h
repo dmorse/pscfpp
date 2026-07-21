@@ -89,7 +89,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      Cpu::FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -124,7 +124,7 @@ public:
 
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      Cpu::FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -159,7 +159,7 @@ public:
 
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      Cpu::FFT<3> fft;
+      FFT<3, CppTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -200,7 +200,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      Cpu::FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
@@ -242,7 +242,7 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      Cpu::FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
@@ -287,7 +287,7 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      Cpu::FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
@@ -331,7 +331,7 @@ public:
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      Cpu::FFT<3> fft;
+      FFT<3, CppTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;
@@ -375,7 +375,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      Cpu::FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
@@ -456,7 +456,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      Cpu::FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
@@ -555,7 +555,7 @@ public:
       Mesh<2> mesh;
       setupMesh<2>(mesh);
 
-      Cpu::FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
@@ -648,7 +648,7 @@ public:
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      Cpu::FFT<3> fft;
+      FFT<3, CppTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;

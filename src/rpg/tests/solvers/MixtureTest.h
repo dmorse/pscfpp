@@ -79,7 +79,7 @@ public:
 
       Rp::Mixture<1, CudaTp<1> > mixture;
       Mesh<1> mesh;
-      Cuda::FFT<1> fft;
+      FFT<1, CudaTp<1> > fft;
       UnitCell<1> unitCell;
       Cuda::WaveList<1> wavelist;
       IntVec<1> d;
@@ -163,7 +163,7 @@ public:
       // Set up associated objects and allocate
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      Cuda::FFT<1> fft;
+      FFT<1, CudaTp<1> > fft;
       fft.setup(d);
       Cuda::WaveList<1> wavelist;
       wavelist.allocate(mesh, unitCell);
@@ -240,7 +240,7 @@ public:
 
       Rp::Mixture<2, CudaTp<2> > mixture;
       Mesh<2> mesh;
-      Cuda::FFT<2> fft;
+      FFT<2, CudaTp<2> > fft;
       UnitCell<2> unitCell;
       Cuda::WaveList<2> wavelist;
       IntVec<2> d;
@@ -321,7 +321,7 @@ public:
       printMethod(TEST_FUNC);
       Rp::Mixture<2, CudaTp<2> > mixture;
       Mesh<2> mesh;
-      Cuda::FFT<2> fft;
+      FFT<2, CudaTp<2> > fft;
       Cuda::WaveList<2> wavelist;
       IntVec<2> d;
 
@@ -417,7 +417,7 @@ public:
 
       Mesh<3> mesh;
       mesh.setDimensions(d);
-      Cuda::FFT<3> fft;
+      FFT<3, CudaTp<3> > fft;
       fft.setup(d);
 
       // Construct wavelist

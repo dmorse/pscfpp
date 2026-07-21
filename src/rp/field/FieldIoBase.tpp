@@ -67,7 +67,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::associate(
                     Mesh<D> const & mesh,
-                    typename T::FFT const & fft,
+                    FFT<D,T> const & fft,
                     typename UnitCell<D>::LatticeSystem const & lattice,
                     bool const & hasGroup,
                     std::string const & groupName,

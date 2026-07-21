@@ -38,7 +38,7 @@ void CpuFftTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FFT<1> v;
+      FFT<1, CppTp<1> > v;
    }
 } 
 
@@ -50,7 +50,7 @@ void CpuFftTest::testTransformReal1D()
    IntVec<1> d;
    d[0] = n;
 
-   Cpu::FFT<1> v;
+   FFT<1, CppTp<1> > v;
    v.setup(d);
 
    RField<1, CppTp<1> > in;
@@ -107,7 +107,7 @@ void CpuFftTest::testTransformReal2D()
    d[1] = n2;
 
    // Instantiate and initialize FFT
-   Cpu::FFT<2> v;
+   FFT<2, CppTp<2> > v;
    v.setup(d);
 
    // Initialize input data
@@ -173,7 +173,7 @@ void CpuFftTest::testTransformReal3D()
    d[2] = n3;
 
    // Instantiate and initialize objects
-   Cpu::FFT<3> v;
+   FFT<3, CppTp<3> > v;
    v.setup(d);
 
    RField<3, CppTp<3> > in;
@@ -231,7 +231,7 @@ void CpuFftTest::testTransformComplex1D()
    IntVec<1> d;
    d[0] = n;
 
-   Cpu::FFT<1> v;
+   FFT<1, CppTp<1> > v;
    v.setup(d);
 
    Cpu::CField<1> in;
@@ -291,7 +291,7 @@ void CpuFftTest::testTransformComplex2D()
    d[0] = n1;
    d[1] = n2;
 
-   Cpu::FFT<2> v;
+   FFT<2, CppTp<2> > v;
    v.setup(d);
 
    // Initialize test data
@@ -361,7 +361,7 @@ void CpuFftTest::testTransformComplex3D()
    d[2] = n3;
 
    // Instantiate and initialize objects
-   Cpu::FFT<3> v;
+   FFT<3, CppTp<3> > v;
    v.setup(d);
 
    Cpu::CField<3> in;

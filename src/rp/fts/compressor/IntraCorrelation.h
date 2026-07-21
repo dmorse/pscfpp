@@ -15,6 +15,7 @@
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
+      template <int D, class T> class FFT;
    }
    namespace Rp {
       template <int D, class T> class System;
@@ -120,7 +121,7 @@ namespace Rp {
       /// Number of wavevectors in the k-space mesh.
       int kSize_;
 
-      using FFTT = typename T::FFT;
+      using FFTT = FFT<D,T>;
 
    };
 

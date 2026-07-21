@@ -8,9 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <cp/field/WFields.h>          // base class template
-#include <prdc/field/cpu/CField.h>     // base class template argument
-#include <cpc/field/FieldIo.h>   // base class template argument
+#include <pscf/cpu/CppTp.h>          // backend class
+#include <cp/field/WFields.h>        // base class template
+#include <prdc/field/cpu/CField.h>   // base class template argument
+#include <cpc/field/FieldIo.h>       // base class template argument
 
 namespace Pscf {
 namespace Cpc {

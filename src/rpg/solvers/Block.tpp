@@ -244,7 +244,7 @@ namespace Rp {
 
    template <int D>
    void Block<D, CudaTp<D> >::associate(Mesh<D> const & mesh, 
-                            FFT<D> const & fft,
+                            FFT<D, CudaTp<D> > const & fft,
                             UnitCell<D> const & cell, 
                             WaveList<D>& waveList)
    {
@@ -277,7 +277,7 @@ namespace Rp {
       useBatchedFFT_ = useBatchedFFT;
 
       // Compute k-space grid dimensions (kMeshDimensions_) and size_ 
-      FFT<D>::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
+      FFT<D, CudaTp<D> >::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
 
       // Allocate work arrays
       expW_.allocate(mesh().dimensions());

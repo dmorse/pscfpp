@@ -9,15 +9,15 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
 
    // Planning member functions, explicit specializations.
 
    template <>
-   void FFT<1>::makePlans(RField<1, CppTp<1> >& rField, RFieldDft<1, CppTp<1> >& kField, 
-                          CField<1>& cFieldIn, CField<1>& cFieldOut)
+   void FFT<1, CppTp<1> >::makePlans(
+                      RField<1, CppTp<1> >& rField, RFieldDft<1, CppTp<1> >& kField, 
+                      CField<1>& cFieldIn, CField<1>& cFieldOut)
    {
       int n0 = rSize_;
       unsigned int flags = FFTW_ESTIMATE;
@@ -32,8 +32,9 @@ namespace Cpu {
    }
 
    template <>
-   void FFT<2>::makePlans(RField<2, CppTp<2> >& rField, RFieldDft<2, CppTp<2> >& kField,
-                          CField<2>& cFieldIn, CField<2>& cFieldOut)
+   void FFT<2, CppTp<2> >::makePlans(RField<2, 
+                      CppTp<2> >& rField, RFieldDft<2, CppTp<2> >& kField,
+                      CField<2>& cFieldIn, CField<2>& cFieldOut)
    {
       unsigned int flags = FFTW_ESTIMATE;
       int n0 = meshDimensions_[0];
@@ -49,8 +50,9 @@ namespace Cpu {
    }
 
    template <>
-   void FFT<3>::makePlans(RField<3, CppTp<3> >& rField, RFieldDft<3, CppTp<3> >& kField,
-                          CField<3>& cFieldIn, CField<3>& cFieldOut)
+   void FFT<3, CppTp<3> >::makePlans(
+                      RField<3, CppTp<3> >& rField, RFieldDft<3, CppTp<3> >& kField,
+                      CField<3>& cFieldIn, CField<3>& cFieldOut)
    {
       unsigned int flags = FFTW_ESTIMATE;
       int n0 = meshDimensions_[0];
@@ -69,10 +71,9 @@ namespace Cpu {
    }
 
    // Explicit class instantiation definitions
-   template class FFT<1>;
-   template class FFT<2>;
-   template class FFT<3>;
+   template class FFT<1, CppTp<1> >;
+   template class FFT<2, CppTp<2> >;
+   template class FFT<3, CppTp<3> >;
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf

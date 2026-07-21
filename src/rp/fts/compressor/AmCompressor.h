@@ -16,6 +16,7 @@
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
+      template <int D, class T> class FFT;
    }
    namespace Rp {
       template <int D, class T> class System;

@@ -15,19 +15,18 @@
 namespace Pscf {
 namespace Prdc {
 
+   using namespace Util;
+
    // Declaration of primary class template
    template <int D, class T> class RField;
 
-   using namespace Util;
-
    /**
-   * Field of real double precision values on an FFT mesh.
+   * Field of real double precision values on a regular mesh.
    * 
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class RField<D, CppTp<D> >
-     : public FftwDRArray<double>
+   class RField<D, CppTp<D> > : public FftwDRArray<double>
    {
 
    public:
@@ -72,7 +71,7 @@ namespace Prdc {
       RField& operator = (RField const& other);
 
       /**
-      * Allocate the underlying C array for an FFT grid.
+      * Allocate the underlying C array for values on a regular mesh.
       *
       * \throw Exception if the RField is already allocated.
       *

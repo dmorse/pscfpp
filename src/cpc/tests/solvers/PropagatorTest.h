@@ -110,7 +110,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -141,7 +141,7 @@ public:
 
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -173,7 +173,7 @@ public:
 
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3> fft;
+      FFT<3, CppTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -209,7 +209,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
@@ -249,7 +249,7 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
@@ -292,7 +292,7 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
@@ -334,7 +334,7 @@ public:
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      FFT<3> fft;
+      FFT<3, CppTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;
@@ -375,7 +375,7 @@ public:
       TEST_ASSERT(nMonomer == 2);
       Mesh<3>& mesh = domain.mesh();
       UnitCell<3>& unitCell = domain.unitCell();
-      FFT<3>& fft = domain.fft();
+      FFT<3, CppTp<3> >& fft = domain.fft();
       WaveList<3>& waveList = domain.waveList();
 
       // Create and initialize block
@@ -415,7 +415,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
@@ -519,7 +519,7 @@ public:
       Domain<1> domain;
       Mesh<1>& mesh = domain.mesh();
       UnitCell<1>& unitCell = domain.unitCell();
-      FFT<1>& fft = domain.fft();
+      FFT<1, CppTp<1> >& fft = domain.fft();
       WaveList<1>& waveList = domain.waveList();
       block.associate(mesh, fft, unitCell, waveList);
       int nMonomer = readHeader("in/Lamellar.hdr", domain);
@@ -625,7 +625,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1> fft;
+      FFT<1, CppTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
@@ -718,7 +718,7 @@ public:
       Mesh<2> mesh;
       setupMesh<2>(mesh);
 
-      FFT<2> fft;
+      FFT<2, CppTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
@@ -807,7 +807,7 @@ public:
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      FFT<3> fft;
+      FFT<3, CppTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;

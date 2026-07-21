@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FFT_TPP
-#define PRDC_CPU_FFT_TPP
+#ifndef PRDC_FFT_CP_TPP
+#define PRDC_FFT_CP_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -48,7 +48,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
 
@@ -56,7 +55,7 @@ namespace Cpu {
    * Default constructor.
    */
    template <int D>
-   FFT<D>::FFT()
+   FFT<D, CppTp<D> >::FFT()
     : meshDimensions_(0),
       rSize_(0),
       kSize_(0),
@@ -71,7 +70,7 @@ namespace Cpu {
    * Destructor.
    */
    template <int D>
-   FFT<D>::~FFT()
+   FFT<D, CppTp<D> >::~FFT()
    {
       if (rcfPlan_) {
          fftw_destroy_plan(rcfPlan_);
@@ -91,7 +90,7 @@ namespace Cpu {
    * Setup mesh dimensions, work memory and FFT plans.
    */
    template <int D>
-   void FFT<D>::setup(IntVec<D> const & meshDimensions)
+   void FFT<D, CppTp<D> >::setup(IntVec<D> const & meshDimensions)
    {
       // Precondition
       UTIL_CHECK(!isSetup_);
@@ -150,7 +149,7 @@ namespace Cpu {
    * Execute real-to-complex forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RField<D, CppTp<D> > const & rField,
+   void FFT<D, CppTp<D> >::forwardTransform(RField<D, CppTp<D> > const & rField,
                                  RFieldDft<D, CppTp<D> >& kField)
    const
    {
@@ -178,7 +177,9 @@ namespace Cpu {
    */
    template <int D>
    void
-   FFT<D>::inverseTransformUnsafe(RFieldDft<D, CppTp<D> > & kField, RField<D, CppTp<D> >& rField)
+   FFT<D, CppTp<D> >::inverseTransformUnsafe(
+                              RFieldDft<D, CppTp<D> > & kField, 
+                              RField<D, CppTp<D> >& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -196,9 +197,9 @@ namespace Cpu {
    */
    template <int D>
    void
-   FFT<D>::inverseTransformSafe(RFieldDft<D, CppTp<D> > const & kField,
-                                RField<D, CppTp<D> >& rField)
-   const
+   FFT<D, CppTp<D> >::inverseTransformSafe(
+                              RFieldDft<D, CppTp<D> > const & kField,
+                              RField<D, CppTp<D> >& rField) const
    {
       UTIL_CHECK(kFieldCopy_.capacity() == kField.capacity());
 
@@ -213,8 +214,9 @@ namespace Cpu {
    */
    template <int D>
    void
-   FFT<D>::forwardTransform(CField<D> const & rField, CField<D>& kField)
-   const
+   FFT<D, CppTp<D> >::forwardTransform(
+                           CField<D> const & rField, 
+                           CField<D>& kField) const
    {
       UTIL_CHECK(isSetup_)
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -240,7 +242,9 @@ namespace Cpu {
    */
    template <int D>
    void
-   FFT<D>::inverseTransform(CField<D> const & kField, CField<D>& rField)
+   FFT<D, CppTp<D> >::inverseTransform(
+                           CField<D> const & kField, 
+                           CField<D>& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -261,7 +265,8 @@ namespace Cpu {
    * Compute dimensions and size of the k-size mesh (static)
    */
    template <int D>
-   void FFT<D>::computeKMesh(IntVec<D> const & rMeshDimensions,
+   void FFT<D, CppTp<D> >::computeKMesh(
+                             IntVec<D> const & rMeshDimensions,
                              IntVec<D> & kMeshDimensions,
                              int & kSize )
    {
@@ -276,7 +281,6 @@ namespace Cpu {
       }
    }
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

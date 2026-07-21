@@ -20,8 +20,8 @@ namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc{
       template <int D> class UnitCell;
+      template <int D, class T> class FFT;
       namespace Cpu {
-         template <int D> class FFT;
          template <int D> class WaveList;
       }
    }
@@ -88,12 +88,12 @@ namespace Rp {
       * It must be called before allocate().
       *
       * \param mesh  Mesh<D> object, spatial discretization meth
-      * \param fft  FFT<D> object, Fast Fourier Transform
+      * \param fft  FFT<D, CppTp<D> > object, Fast Fourier Transform
       * \param cell  UnitCell<D> object, crystallographic unit cell
       * \param waveList  WaveList<D>, container for wavevector properties
       */
       void associate(Mesh<D> const& mesh,
-                     FFT<D> const& fft,
+                     FFT<D, CppTp<D> > const& fft,
                      UnitCell<D> const& cell,
                      WaveList<D>& waveList);
 
@@ -383,8 +383,8 @@ namespace Rp {
       /// Pointer to associated Mesh<D> object
       Mesh<D> const * meshPtr_;
 
-      /// Pointer to associated FFT<D> object
-      FFT<D> const * fftPtr_;
+      /// Pointer to associated FFT<D, CppTp<D> > object
+      FFT<D, CppTp<D> > const * fftPtr_;
 
       /// Pointer to associated UnitCell<D> object
       UnitCell<D> const * unitCellPtr_;
@@ -423,7 +423,7 @@ namespace Rp {
       Mesh<D> const & mesh() const;
 
       /// Get associated FFT object by const reference (private).
-      FFT<D> const & fft() const;
+      FFT<D, CppTp<D> > const & fft() const;
 
       /// Get associated UnitCell<D> as const reference (private).
       UnitCell<D> const & unitCell() const;
@@ -465,9 +465,9 @@ namespace Rp {
       return *meshPtr_;
    }
 
-   // Get associated FFT<D> object by const reference (private).
+   // Get associated FFT<D, CppTp<D> > object by const reference (private).
    template <int D>
-   inline FFT<D> const & Block<D, CppTp<D> >::fft() const
+   inline FFT<D, CppTp<D> > const & Block<D, CppTp<D> >::fft() const
    {
       UTIL_CHECK(fftPtr_);
       return * fftPtr_;

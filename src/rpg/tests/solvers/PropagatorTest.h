@@ -96,7 +96,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      Cuda::FFT<1> fft;
+      FFT<1, CudaTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -134,7 +134,7 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      Cuda::FFT<2> fft;
+      FFT<2, CudaTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -171,7 +171,7 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      Cuda::FFT<3> fft;
+      FFT<3, CudaTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -208,7 +208,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      Cuda::FFT<1> fft;
+      FFT<1, CudaTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -259,7 +259,7 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      Cuda::FFT<2> fft;
+      FFT<2, CudaTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -314,7 +314,7 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      Cuda::FFT<2> fft;
+      FFT<2, CudaTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
@@ -359,7 +359,7 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      Cuda::FFT<3> fft;
+      FFT<3, CudaTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -413,7 +413,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      Cuda::FFT<1> fft;
+      FFT<1, CudaTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -514,7 +514,7 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      Cuda::FFT<1> fft;
+      FFT<1, CudaTp<1> > fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
@@ -622,7 +622,7 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      Cuda::FFT<2> fft;
+      FFT<2, CudaTp<2> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -730,7 +730,7 @@ public:
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      Cuda::FFT<3> fft;
+      FFT<3, CudaTp<3> > fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell

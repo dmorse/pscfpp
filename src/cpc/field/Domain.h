@@ -8,14 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <cp/field/Domain.h>        // base class template
+#include <pscf/cpu/CppTp.h>     // backend class
+#include <cp/field/Domain.h>    // base class template
 
 // Forward declarations
 namespace Pscf {
    namespace Prdc {
+      template <int D, class T> class FFT;
       namespace Cpu {
          template <int D> class WaveList;
-         template <int D> class FFT;
       }
    }
    namespace Cpc {
@@ -28,11 +29,11 @@ namespace Pscf {
    namespace Cp {
       using namespace Prdc::Cpu;
       extern template 
-      class Domain<1, FFT<1>, WaveList<1>, Cpc::FieldIo<1> >;
+      class Domain<1, FFT<1, CppTp<1> >, WaveList<1>, Cpc::FieldIo<1> >;
       extern template 
-      class Domain<2, FFT<2>, WaveList<2>, Cpc::FieldIo<2> >;
+      class Domain<2, FFT<2, CppTp<2> >, WaveList<2>, Cpc::FieldIo<2> >;
       extern template 
-      class Domain<3, FFT<3>, WaveList<3>, Cpc::FieldIo<3> >;
+      class Domain<3, FFT<3, CppTp<3> >, WaveList<3>, Cpc::FieldIo<3> >;
    }
 }
 
@@ -60,7 +61,7 @@ namespace Cpc {
    */
    template <int D>
    class Domain 
-     : public Cp::Domain< D, FFT<D>, WaveList<D>, FieldIo<D> >
+     : public Cp::Domain< D, FFT<D, CppTp<D> >, WaveList<D>, FieldIo<D> >
    {
 
    public:
@@ -73,7 +74,7 @@ namespace Cpc {
       Domain();
 
       /// Alias for base class
-      using Base = Cp::Domain< D, FFT<D>, WaveList<D>, FieldIo<D> >;
+      using Base = Cp::Domain< D, FFT<D, CppTp<D> >, WaveList<D>, FieldIo<D> >;
 
       // Inherited pubic member functions
       using Base::setFileMaster;

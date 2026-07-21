@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FFT_H
-#define PRDC_CPU_FFT_H
+#ifndef PRDC_FFT_CP_H
+#define PRDC_FFT_CP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cpu/CppTp.h>             // class template argument
 #include <prdc/field/cpu/RFieldDft.h>   // member
 #include <pscf/math/IntVec.h>           // member
-#include <pscf/cpu/CppTp.h>             // backend type
 
 #include <fftw3.h>
 
@@ -26,23 +26,25 @@ namespace Pscf {
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
-   using namespace Pscf;
+   using namespace Prdc::Cpu;
+
+   // Declare primary class template
+   template <int D, class T> class FFT; 
 
    /**
    * Fourier transform wrapper.
    *
    * This class is a wrapper for plan creation and discrete Fourier 
    * transform (DFT) functions provided by the FFTW library, providing 
-   * an interface to the field container classes RField<D, CppTp<D> >, RField<Dft>, 
-   * and CField<D>.
+   * an interface to specializations of the field container templates
+   * RField, RFieldDf, and CField with a backend T=CppTp<D>.
    *
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class FFT 
+   class FFT<D, CppTp<D> >
    {
 
    public:
@@ -80,7 +82,8 @@ namespace Cpu {
       * \param in  array of real values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(RField<D, CppTp<D> > const & in, RFieldDft<D, CppTp<D> >& out) const;
+      void forwardTransform(RField<D, CppTp<D> > const & in, 
+                            RFieldDft<D, CppTp<D> >& out) const;
 
       /**
       * Compute inverse (complex-to-real) DFT, overwriting the input.
@@ -99,7 +102,8 @@ namespace Cpu {
       * \param in  array of complex values on k-space grid (overwritten)
       * \param out  array of real values on r-space grid
       */
-      void inverseTransformUnsafe(RFieldDft<D, CppTp<D> >& in, RField<D, CppTp<D> >& out) const;
+      void inverseTransformUnsafe(RFieldDft<D, CppTp<D> >& in, 
+                                  RField<D, CppTp<D> >& out) const;
 
       /**
       * Compute inverse (complex-to-real) DFT without overwriting input.
@@ -113,8 +117,8 @@ namespace Cpu {
       * \param in  array of complex values on k-space grid 
       * \param out  array of real values on r-space grid 
       */
-      void inverseTransformSafe(RFieldDft<D, CppTp<D> > const & in, RField<D, CppTp<D> >& out) 
-      const;
+      void inverseTransformSafe(RFieldDft<D, CppTp<D> > const & in, 
+                                RField<D, CppTp<D> >& out) const;
 
       // Complex Data (Complex <-> Complex Transforms)
 
@@ -136,7 +140,8 @@ namespace Cpu {
       * \param in  array of complex values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(CField<D> const & in, CField<D>& out) const;
+      void forwardTransform(CField<D> const & in, 
+                            CField<D>& out) const;
 
       /**
       * Compute complex-to-complex inverse Fourier transform.
@@ -151,7 +156,8 @@ namespace Cpu {
       * \param in  array of complex values on k-space grid 
       * \param out  array of complex values on r-space grid
       */
-      void inverseTransform(CField<D> const & in, CField<D>& out) const;
+      void inverseTransform(CField<D> const & in, 
+                            CField<D>& out) const;
 
       // Accessors
 
@@ -244,40 +250,49 @@ namespace Cpu {
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1>::makePlans(RField<1, CppTp<1> >& rField, RFieldDft<1, CppTp<1> >& kField,
-                          CField<1>& cFieldIn, CField<1>& cFieldOut);
+   void FFT<1, CppTp<1> >::makePlans(
+		            RField<1, CppTp<1> >& rField, 
+                            RFieldDft<1, CppTp<1> >& kField,
+                            CField<1>& cFieldIn, 
+                            CField<1>& cFieldOut);
 
    template <>
-   void FFT<2>::makePlans(RField<2, CppTp<2> >& rField, RFieldDft<2, CppTp<2> >& kField,
-                          CField<2>& cFieldIn, CField<2>& cFieldOut);
+   void FFT<2, CppTp<2> >::makePlans(
+                            RField<2, CppTp<2> >& rField, 
+                            RFieldDft<2, CppTp<2> >& kField,
+                            CField<2>& cFieldIn, 
+                            CField<2>& cFieldOut);
 
    template <>
-   void FFT<3>::makePlans(RField<3, CppTp<3> >& rField, RFieldDft<3, CppTp<3> >& kField,
-                          CField<3>& cFieldIn, CField<3>& cFieldOut);
+   void FFT<3, CppTp<3> >::makePlans(
+		            RField<3, CppTp<3> >& rField, 
+                            RFieldDft<3, CppTp<3> >& kField,
+                            CField<3>& cFieldIn, 
+                            CField<3>& cFieldOut);
 
    // Inline member functions
 
    /*
    * Has this object been setup?
    */
-   template <int D>
-   inline bool FFT<D>::isSetup() const
+   template <int D> inline 
+    bool FFT<D, CppTp<D> >::isSetup() const
    {  return isSetup_; }
 
    /*
    * Return the dimensions of the grid for which this was allocated.
    */
-   template <int D>
-   inline IntVec<D> const & FFT<D>::meshDimensions() const
+   template <int D> inline 
+   IntVec<D> const & FFT<D, CppTp<D> >::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
    * Does this wavevector have an implicit inverse?
    */
-   template <int D>
-   inline
-   bool FFT<D>::hasImplicitInverse(IntVec<D> const & wavevector,
-                                   IntVec<D> const & meshDimensions)
+   template <int D> inline
+   bool FFT<D, CppTp<D> >::hasImplicitInverse(
+                              IntVec<D> const & wavevector,
+                              IntVec<D> const & meshDimensions)
    {
       int i = wavevector[D-1];
       int d = meshDimensions[D-1];
@@ -290,11 +305,10 @@ namespace Cpu {
    }
 
    // Explicit instantiation declarations
-   extern template class FFT<1>;
-   extern template class FFT<2>;
-   extern template class FFT<3>;
+   extern template class FFT<1, CppTp<1> >;
+   extern template class FFT<2, CppTp<2> >;
+   extern template class FFT<3, CppTp<3> >;
 
-} // namespace Pscf::Prdc::Cpu
-} // namespace Pscf::Prdc
+} // namespace Prdc
 } // namespace Pscf
 #endif

@@ -67,7 +67,7 @@ namespace Cpu {
 
       // Compute kMeshDimensions_ and kSize_
       if (isRealField_) {
-         FFT<D>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+         FFT<D, CppTp<D> >::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
       } else {
          kMeshDimensions_ = meshDimensions;
          kSize_ = mesh().size();
@@ -92,7 +92,7 @@ namespace Cpu {
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             rank = kItr.rank();
             implicitInverse_[rank] = 
-               FFT<D>::hasImplicitInverse(kItr.position(), meshDimensions);
+               FFT<D, CppTp<D> >::hasImplicitInverse(kItr.position(), meshDimensions);
          }
       }
 

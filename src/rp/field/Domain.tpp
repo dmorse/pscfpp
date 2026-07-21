@@ -45,7 +45,7 @@ namespace Rp {
       // Construct associated objects
       groupPtr_ = new SpaceGroup<D>();
       basisPtr_ = new Basis<D>();
-      fftPtr_ = new typename T::FFT();
+      fftPtr_ = new FFT<D,T>();
       waveListPtr_ = new typename T::WaveList();
       fieldIoPtr_ = new FieldIo<D,T>();
       signalPtr_ = new Signal<void>();

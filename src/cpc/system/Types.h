@@ -19,7 +19,7 @@ namespace Pscf {
       class Environment;
       namespace Cpu {
          template <int D> class CField;
-         template <int D> class FFT;
+         //template <int D> class FFT;
          template <int D> class CFieldComparison;
          template <int D> class WaveList;
       }
@@ -84,7 +84,7 @@ namespace Cpc {
       // using SimulatorFactory = Cpc::SimulatorFactory<D>;
 
       using CField = Prdc::Cpu::CField<D>;
-      using FFT = Prdc::Cpu::FFT<D>;
+      //using FFT = Prdc::FFT<D, CppTp<D> >;
       using CFieldComparison = Prdc::Cpu::CFieldComparison<D>;
       using WaveList = Prdc::Cpu::WaveList<D>;
 

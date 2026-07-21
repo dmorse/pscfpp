@@ -9,11 +9,10 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>      // base class template
-
 #include <pscf/cuda/CudaTp.h>            // template argument
-#include <prdc/field/cuda/RField.h>            // member
-#include <prdc/field/cuda/RFieldDft.h>         // member
-#include <prdc/field/cuda/FFTBatched.h>        // member
+#include <prdc/field/cuda/RField.h>      // member
+#include <prdc/field/cuda/RFieldDft.h>   // member
+#include <prdc/field/cuda/FFTBatched.h>  // member
 #include <pscf/cuda/DeviceArray.h>       // member
 #include <util/containers/FSArray.h>     // member
 
@@ -23,10 +22,10 @@
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc {
+      template <int D, class T> class FFT;
       template <int D> class UnitCell;
       namespace Cuda {
          template <int D> class WaveList;
-         template <int D> class FFT;
       }
    }
    namespace Rp {
@@ -69,7 +68,7 @@ namespace Rp {
       using typename BlockTmplT::FieldT;
 
       /// Fast Fourier Transform (FFT) type.
-      using FFTT = FFT<D>;
+      using FFTT = FFT<D, CudaTp<D> >;
 
       /// Wavelist type.
       using WaveListT = WaveList<D>;
@@ -97,12 +96,12 @@ namespace Rp {
       * It must be called before allocate().
       *
       * \param mesh  Mesh<D> object - spatial discretization mesh
-      * \param fft  FFT<D> object - Fourier transforms
+      * \param fft  FFT<D, CudaTp<D> > object - Fourier transforms
       * \param cell  UnitCell<D> object - crystallographic unit cell
       * \param waveList  WaveList<D> object - properties of wavevectors
       */
       void associate(Mesh<D> const & mesh,
-                     FFT<D> const & fft,
+                     FFT<D, CudaTp<D> > const & fft,
                      UnitCell<D> const & cell,
                      WaveList<D>& waveList);
 
@@ -391,8 +390,8 @@ namespace Rp {
       /// Const pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
 
-      /// Const pointer to associated FFT<D> object.
-      FFT<D> const * fftPtr_;
+      /// Const pointer to associated FFT<D, CudaTp<D> > object.
+      FFT<D, CudaTp<D> > const * fftPtr_;
 
       /// Const pointer to associated UnitCell<D> object.
       UnitCell<D> const * unitCellPtr_;
@@ -430,8 +429,8 @@ namespace Rp {
       /// Return associated spatial Mesh by const reference.
       Mesh<D> const & mesh() const;
 
-      /// Return associated FFT<D> object by const reference.
-      FFT<D> const & fft() const;
+      /// Return associated FFT<D, CudaTp<D> > object by const reference.
+      FFT<D, CudaTp<D> > const & fft() const;
 
       /// Get associated UnitCell<D> by const reference (private).
       UnitCell<D> const & unitCell() const;
@@ -471,7 +470,7 @@ namespace Rp {
 
    // Get FFT by reference.
    template <int D> inline
-   FFT<D> const & Block<D, CudaTp<D> >::fft() const
+   FFT<D, CudaTp<D> > const & Block<D, CudaTp<D> >::fft() const
    {
       UTIL_ASSERT(fftPtr_);
       return *fftPtr_;

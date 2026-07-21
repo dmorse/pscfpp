@@ -10,8 +10,8 @@
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
 
-#include <prdc/field/cpu/CField.h>              // members
-#include <prdc/field/cpu/RField.h>              // member
+#include <prdc/field/cpu/CField.h>        // members
+#include <prdc/field/cpu/RField.h>        // member
 
 namespace Pscf {
 
@@ -19,8 +19,8 @@ namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc{
       template <int D> class UnitCell;
+      template <int D, class T> class FFT;
       namespace Cpu {
-         template <int D> class FFT;
          template <int D> class WaveList;
       }
    }
@@ -48,7 +48,7 @@ namespace Cpc {
    /**
    * Block within a linear or branched block polymer.
    *
-   * A Block has two Propagator<D> members, and a CField<D> concentration
+   * A Block has two Propagator members, and a CField concentration
    * field.
    *
    * \ref user_param_block_sec "Manual Page"
@@ -91,12 +91,12 @@ namespace Cpc {
       * It must be called before allocate().
       *
       * \param mesh  Mesh<D> object, spatial discretization meth
-      * \param fft  FFT<D> object, Fast Fourier Transform
+      * \param fft  FFT<D, CppTp<D> > object, Fast Fourier Transform
       * \param cell  UnitCell<D> object, crystallographic unit cell
       * \param wavelist  WaveList<D>, container for wavevector properties
       */
       void associate(Mesh<D> const& mesh,
-                     FFT<D> const& fft,
+                     FFT<D, CppTp<D> > const& fft,
                      UnitCell<D> const& cell,
                      WaveList<D>& wavelist);
 
@@ -349,8 +349,8 @@ namespace Cpc {
       /// Pointer to associated Mesh<D> object
       Mesh<D> const * meshPtr_;
 
-      /// Pointer to associated FFT<D> object
-      FFT<D> const * fftPtr_;
+      /// Pointer to associated FFT<D, CppTp<D> > object
+      FFT<D, CppTp<D> > const * fftPtr_;
 
       /// Pointer to associated UnitCell<D> object
       UnitCell<D> const * unitCellPtr_;
@@ -389,9 +389,9 @@ namespace Cpc {
       UnitCell<D> const & unitCell() const;
 
       /**
-      * Get associated FFT<D> by const reference.
+      * Get associated FFT<D, CppTp<D> > by const reference.
       */
-      FFT<D> const & fft() const;
+      FFT<D, CppTp<D> > const & fft() const;
 
       /**
       * Get associated WaveList<D> by const reference.
@@ -432,9 +432,9 @@ namespace Cpc {
    UnitCell<D> const & Block<D>::unitCell() const
    {  return *unitCellPtr_; }
 
-   // Get associated FFT<D> by const reference.
+   // Get associated FFT<D, CppTp<D> > by const reference.
    template <int D> inline
-   FFT<D> const & Block<D>::fft() const
+   FFT<D, CppTp<D> > const & Block<D>::fft() const
    {
       UTIL_CHECK(fftPtr_);
       return * fftPtr_;

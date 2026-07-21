@@ -35,7 +35,7 @@ namespace Prdc {
       IntVec<D> kMeshDimensions;
       int kMeshSize;
       if (isRealField) {
-         Cpu::FFT<D>::computeKMesh(meshDimensions,
+         FFT<D, CppTp<D> >::computeKMesh(meshDimensions,
                                    kMeshDimensions, kMeshSize);
       } else {
          kMeshSize = 1;

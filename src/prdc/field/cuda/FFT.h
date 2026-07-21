@@ -8,20 +8,30 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RField.h"
-#include "CField.h"
-#include "RFieldDft.h"
+#include <pscf/cuda/CudaTp.h>   // class template argument
+#include "RFieldDft.h"          // member
+#include <pscf/math/IntVec.h>   // member
 
-#include <pscf/math/IntVec.h>
 #include <util/global.h>
-
 #include <cufft.h>
 
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+      namespace Cuda {
+         template <int D> class CField;
+      }
+   }
+}
+
+namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
+   using namespace Prdc::Cuda;
+
+   // Declare primary template
+   template <int D, class T> class FFT;
 
    /**
    * Fourier transform wrapper for real or complex data.
@@ -34,7 +44,7 @@ namespace Cuda {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class FFT 
+   class FFT<D, CudaTp<D> >
    {
 
    public:
@@ -232,13 +242,13 @@ namespace Cuda {
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1>::makePlans();
+   void FFT<1, CudaTp<1> >::makePlans();
 
    template <>
-   void FFT<2>::makePlans();
+   void FFT<2, CudaTp<2> >::makePlans();
 
    template <>
-   void FFT<3>::makePlans();
+   void FFT<3, CudaTp<3> >::makePlans();
 
    // Inline functions
 
@@ -246,14 +256,14 @@ namespace Cuda {
    * Return the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   inline IntVec<D> const & FFT<D>::meshDimensions() const
+   inline IntVec<D> const & FFT<D, CudaTp<D> >::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
    * Has this FFT object been setup? 
    */
    template <int D>
-   inline bool FFT<D>::isSetup() const
+   inline bool FFT<D, CudaTp<D> >::isSetup() const
    {  return isSetup_; }
 
    /*
@@ -261,7 +271,7 @@ namespace Cuda {
    */
    template <int D>
    inline
-   bool FFT<D>::hasImplicitInverse(IntVec<D> const & wavevector,
+   bool FFT<D, CudaTp<D> >::hasImplicitInverse(IntVec<D> const & wavevector,
                                    IntVec<D> const & meshDimensions)
    {
       int i = wavevector[D-1];
@@ -275,11 +285,10 @@ namespace Cuda {
    }
 
    // Explicit instantiation declarations
-   extern template class FFT<1>;
-   extern template class FFT<2>;
-   extern template class FFT<3>;
+   extern template class FFT<1, CudaTp<1> >;
+   extern template class FFT<2, CudaTp<2> >;
+   extern template class FFT<3, CudaTp<3> >;
 
-} // Cuda
-} // Prdc
-} // Pscf
+} // namespace Prdc
+} // namespace Pscf
 #endif

@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cpu/CppTp.h>             // Cpu backend
 #include <pscf/solvers/MixtureTmpl.h>   // base class template
 #include <iostream>
 
@@ -19,6 +20,8 @@ namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc {
       template <int D> class UnitCell;
+      template <int D, class T> class FFT;
+      //template <int D, class T> class CField;
    }
 }
 
@@ -47,7 +50,7 @@ namespace Cp {
    * \ingroup Cp_Solver_Module
    * \ref user_param_mixture_page "Manual Page"
    */
-   template <int D, class PT, class ST, class TT>
+   template <int D, class PT, class ST, class T>
    class Mixture : public MixtureTmpl< PT, ST, std::complex<double> >
    {
 
@@ -56,7 +59,7 @@ namespace Cp {
       // Public type name aliases
 
       /// MixtureTmpl class.
-      using MixtureTmplT = MixtureTmpl< PT, ST, std::complex<double> >;
+      using MixtureTmplT = MixtureTmpl<PT, ST, std::complex<double> >;
 
       /// Composition class.
       using CompositionT = Composition< std::complex<double> >;
@@ -68,22 +71,19 @@ namespace Cp {
       using typename MixtureTmplT::PolymerT;
 
       /// Block type, for a block in a block polymer.
-      using BlockT = typename TT::Block;
+      using BlockT = typename T::Block;
 
       /// Propagator type, for one direction within a block.
-      using PropagatorT = typename TT::Propagator;
+      using PropagatorT = typename T::Propagator;
 
       /// Field type, for data defined on a real-space grid.
-      using FieldT = typename TT::CField;
+      using FieldT = typename T::CField;
 
       /// WaveList type.
-      using FFTT = typename TT::FFT;
-
-      /// WaveList type.
-      using WaveListT = typename TT::WaveList;
+      using WaveListT = typename T::WaveList;
 
       /// FieldIo type.
-      using FieldIoT = typename TT::FieldIo;
+      using FieldIoT = typename T::FieldIo;
 
       // Public member functions
 
@@ -116,7 +116,7 @@ namespace Cp {
       *
       * The Mesh<D> object must have already been initialized, e.g., by
       * reading the dimensions from a file, so that the mesh dimensions
-      * are known on entry. The FFTT object must have been set up with
+      * are known on entry. The FFT object must have been set up with
       * mesh dimensions equal to those of the mesh. The UnitCell<D> must
       * have been assigned a non-null lattice system, but does not need
       * to have initialized lattice parameters.
@@ -127,12 +127,12 @@ namespace Cp {
       * initialized by the Domain readParameters function prior to entry.
       *
       * \param mesh  associated Mesh<D> object
-      * \param fft  associated FFTT object (Fast Fourier Transform type)
+      * \param fft  associated FFT object (Fast Fourier Transform type)
       * \param cell  associated UnitCell<D> object
       * \param waveList  associated WaveListT object
       */
       void associate(Mesh<D> const & mesh,
-                     FFTT const & fft,
+                     FFT<D, CppTp<D> > const & fft,
                      UnitCell<D> const & cell,
                      WaveListT& waveList);
 

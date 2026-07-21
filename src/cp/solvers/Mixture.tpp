@@ -26,8 +26,8 @@ namespace Cp {
    /*
    * Constructor
    */
-   template <int D, class PT, class ST, class TT>
-   Mixture<D,PT,ST,TT>::Mixture()
+   template <int D, class PT, class ST, class T>
+   Mixture<D,PT,ST,T>::Mixture()
     : ds_(-1.0),
       meshPtr_(nullptr),
       unitCellPtr_(nullptr),
@@ -37,15 +37,15 @@ namespace Cp {
    /*
    * Destructor
    */
-   template <int D, class PT, class ST, class TT>
-   Mixture<D,PT,ST,TT>::~Mixture()
+   template <int D, class PT, class ST, class T>
+   Mixture<D,PT,ST,T>::~Mixture()
    {}
 
    /*
    * Read all parameters and initialize.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::readParameters(std::istream& in)
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::readParameters(std::istream& in)
    {
       // Read standard data for a mixture
       MixtureTmplT::readParameters(in);
@@ -67,9 +67,9 @@ namespace Cp {
    /*
    * Create associations with Mesh, FFT, UnitCell, and WaveList objects.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::associate(Mesh<D> const & mesh,
-                              FFTT const & fft,
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::associate(Mesh<D> const & mesh,
+                              FFT<D, CppTp<D> > const & fft,
                               UnitCell<D> const & cell,
                               WaveListT & waveList)
    {
@@ -106,15 +106,15 @@ namespace Cp {
    /*
    * Create an association with a FieldIo object, for file output.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::setFieldIo(FieldIoT const & fieldIo)
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::setFieldIo(FieldIoT const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Allocate internal data containers in all solvers.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::allocate()
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::allocate()
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
@@ -142,8 +142,8 @@ namespace Cp {
    /*
    * Compute concentrations (but not total free energy).
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::compute(DArray<FieldT> const & wFields,
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::compute(DArray<FieldT> const & wFields,
                                       DArray<FieldT> & cFields)
    {
       UTIL_CHECK(meshPtr_);
@@ -212,8 +212,8 @@ namespace Cp {
    /*
    * Reset statistical segment length for one monomer type.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::setKuhn(int monomerId, double kuhn)
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::setKuhn(int monomerId, double kuhn)
    {
       // Set new Kuhn length for relevant Monomer object
       monomer(monomerId).setKuhn(kuhn);
@@ -232,8 +232,8 @@ namespace Cp {
    /*
    * Clear all data that depends on the unit cell parameters.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::clearUnitCellData()
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::clearUnitCellData()
    {
       if (nPolymer() > 0) {
          for (int i = 0; i < nPolymer(); ++i) {
@@ -248,8 +248,8 @@ namespace Cp {
    /*
    * Combine cFields for all blocks and solvents into one DArray
    */
-   template <int D, class PT, class ST, class TT> void 
-   Mixture<D,PT,ST,TT>::createBlockCRGrid(DArray<FieldT>& blockCFields)
+   template <int D, class PT, class ST, class T> void 
+   Mixture<D,PT,ST,T>::createBlockCRGrid(DArray<FieldT>& blockCFields)
    const
    {
       int np = nSolvent() + nBlock();
@@ -307,9 +307,9 @@ namespace Cp {
    * Output all concentration fields in real space (r-grid) format for
    * each block and solvent species to specified file.
    */
-   template <int D, class PT, class ST, class TT>
+   template <int D, class PT, class ST, class T>
    void 
-   Mixture<D,PT,ST,TT>::writeBlockCRGrid(std::string const & filename) 
+   Mixture<D,PT,ST,T>::writeBlockCRGrid(std::string const & filename) 
    const
    {
       UTIL_CHECK(fieldIoPtr_);
@@ -336,8 +336,8 @@ namespace Cp {
    /*
    * Write a specified slice of the propagator in r-grid format.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::writeQSlice(
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::writeQSlice(
                                   std::string const & filename,
                                   int polymerId, 
                                   int blockId,
@@ -362,8 +362,8 @@ namespace Cp {
    /*
    * Write the last (tail) slice of the propagator in r-grid format.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::writeQTail(
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::writeQTail(
                                   std::string const & filename,
                                   int polymerId, 
                                   int blockId, 
@@ -386,8 +386,8 @@ namespace Cp {
    /*
    * Write the entire propagator for a specified block and direction.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::writeQ(
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::writeQ(
                                   std::string const & filename,
                                   int polymerId, 
                                   int blockId, 
@@ -430,8 +430,8 @@ namespace Cp {
    /*
    * Write propagators for all blocks of all polymers to files.
    */
-   template <int D, class PT, class ST, class TT>
-   void Mixture<D,PT,ST,TT>::writeQAll(std::string const & basename)
+   template <int D, class PT, class ST, class T>
+   void Mixture<D,PT,ST,T>::writeQAll(std::string const & basename)
    {
       UTIL_CHECK(fieldIoPtr_);
       std::string filename;

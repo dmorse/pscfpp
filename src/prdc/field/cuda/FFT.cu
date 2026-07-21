@@ -9,13 +9,12 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
 
    // Forward real-to-complex transform, explicit specializations.
    template<>
-   void FFT<1>::makePlans()
+   void FFT<1, CudaTp<1> >::makePlans()
    {
       int n0 = meshDimensions_[0];
       #ifdef SINGLE_PRECISION
@@ -30,7 +29,7 @@ namespace Cuda {
    }
 
    template <>
-   void FFT<2>::makePlans()
+   void FFT<2, CudaTp<2> >::makePlans()
    {
       int n0 = meshDimensions_[0];
       int n1 = meshDimensions_[1];
@@ -46,7 +45,7 @@ namespace Cuda {
    }
 
    template <>
-   void FFT<3>::makePlans()
+   void FFT<3, CudaTp<3> >::makePlans()
    {
       int n0 = meshDimensions_[0];
       int n1 = meshDimensions_[1];
@@ -63,10 +62,9 @@ namespace Cuda {
    }
 
    // Explicit instantiation of relevant class instances
-   template class FFT<1>;
-   template class FFT<2>;
-   template class FFT<3>;
+   template class FFT<1, CudaTp<1> >;
+   template class FFT<2, CudaTp<2> >;
+   template class FFT<3, CudaTp<3> >;
 
-}
 }
 }

@@ -107,7 +107,7 @@ namespace Prdc {
 
       // Compute dimensions and size for k-space grid
       int size; 
-      FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
+      FFT<D, CppTp<D> >::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Allocate memory
       FftwDRArray<fftw_complex>::allocate(size);
