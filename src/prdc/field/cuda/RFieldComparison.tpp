@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_R_FIELD_COMPARISON_TPP
-#define PRDC_CUDA_R_FIELD_COMPARISON_TPP
+#ifndef PRDC_R_FIELD_COMPARISON_CU_TPP
+#define PRDC_R_FIELD_COMPARISON_CU_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,20 +9,25 @@
 */
 
 #include "RFieldComparison.h"
+
 #include <pscf/cuda/HostDArray.h>
+#include <prdc/field/cuda/RField.h>
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
-   // Default Constructor
+   /*
+   * Default constructor.
+   */
    template <int D>
-   RFieldComparison<D>::RFieldComparison()
+   RFieldComparison<D, CudaTp<D> >::RFieldComparison()
    {};
 
-   // Comparator for individual fields
+   /*
+   * Comparator for individual fields.
+   */
    template <int D>
-   double RFieldComparison<D>::compare(RField<D, CudaTp<D> > const& a, 
+   double RFieldComparison<D, CudaTp<D> >::compare(RField<D, CudaTp<D> > const& a, 
                                        RField<D, CudaTp<D> > const& b)
    {
       int nPoints = a.capacity();
@@ -39,9 +44,11 @@ namespace Cuda {
       return fieldComparison_.maxDiff();
    }
 
-   // Comparator for arrays of fields
+   /*
+   * Comparator for arrays of fields.
+   */
    template <int D>
-   double RFieldComparison<D>::compare(DArray< RField<D, CudaTp<D> > > const& a, 
+   double RFieldComparison<D, CudaTp<D> >::compare(DArray< RField<D, CudaTp<D> > > const& a, 
                                        DArray< RField<D, CudaTp<D> > > const& b)
    {
       int nFields = a.capacity();
@@ -63,7 +70,6 @@ namespace Cuda {
       return fieldComparison_.maxDiff();
    }
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

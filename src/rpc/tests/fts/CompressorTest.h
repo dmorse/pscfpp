@@ -177,7 +177,7 @@ public:
             w1[i][j] = system.w().rgrid(i)[j];
          }
       }
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CppTp<3> > comparison;
       comparison.compare(w0, w1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
    }

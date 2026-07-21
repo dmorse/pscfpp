@@ -242,7 +242,7 @@ public:
       TEST_ASSERT(fields.hasData());
       TEST_ASSERT(!fields.isSymmetric());
 
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CppTp<3> > comparison;
       comparison.compare(rf, fields.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
@@ -357,7 +357,7 @@ public:
       TEST_ASSERT(fields.hasData());
       TEST_ASSERT(!fields.isSymmetric());
 
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CppTp<3> > comparison;
       comparison.compare(rf, fields.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }

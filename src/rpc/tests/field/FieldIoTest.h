@@ -479,7 +479,7 @@ public:
       writeFields("out/w_lam.rf", domain, rf_0);
       readFields("out/w_lam.rf", domain, rf_1);
 
-      RFieldComparison<1> comparison;
+      RFieldComparison<1, CppTp<1> > comparison;
       comparison.compare(rf_0, rf_1);
       if (verbose() > 0) {
          std::cout  << "\n";
@@ -506,7 +506,7 @@ public:
       writeFields("out/w_hex.rf", domain, rf_0);
       readFields("out/w_hex.rf", domain, rf_1);
 
-      RFieldComparison<2> comparison;
+      RFieldComparison<2, CppTp<2> > comparison;
       comparison.compare(rf_0, rf_1);
       if (verbose() > 0) {
          std::cout  << "\n";
@@ -533,7 +533,7 @@ public:
       writeFields("out/w_bcc.rf", domain, rf_0);
       readFields("out/w_bcc.rf", domain, rf_1);
 
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CppTp<3> > comparison;
       comparison.compare(rf_0, rf_1);
       if (verbose() > 0) {
          std::cout  << "\n";

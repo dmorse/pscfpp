@@ -7,14 +7,13 @@
 
 #include "RFieldComparison.h"
 
+// Explicit instantiation definitions
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    template class RFieldComparison<1>;
    template class RFieldComparison<2>;
    template class RFieldComparison<3>;
 
-} // namespace Pscf::Prdc::Gpu
-} // namespace Pscf::Prdc
-} // namespace Pscf
+} 
+}

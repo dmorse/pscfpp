@@ -95,7 +95,7 @@ public:
                        DArray< RField<D, CppTp<D> > > const & fields2,
                        std::string message)
    {
-      RFieldComparison<D> comparison;
+      RFieldComparison<D, CppTp<D> > comparison;
       comparison.compare(fields1, fields2);
       double maxDiff = comparison.maxDiff();
       if (verbose() > 0) {

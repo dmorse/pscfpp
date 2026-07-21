@@ -23,7 +23,7 @@ namespace Pscf {
          //template <int D> class RField;
          //template <int D> class RFieldDft;
          //template <int D> class FFT;
-         template <int D> class RFieldComparison;
+         //template <int D> class RFieldComparison;
          template <int D> class RFieldDftComparison;
          template <int D> class WaveList;
       }
@@ -60,7 +60,7 @@ namespace Pscf {
       //using RField = Prdc::Cpu::RField<D>;
       //using RFieldDft = Prdc::Cpu::RFieldDft<D>;
       //using FFT = Prdc::Cpu::FFT<D>;
-      using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;
+      //using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;
       using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
       using WaveList = Prdc::Cpu::WaveList<D>;
 

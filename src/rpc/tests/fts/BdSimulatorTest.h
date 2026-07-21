@@ -132,7 +132,7 @@ public:
       readRGridFields(system,reffieldsfilename, rf_0, unitCell);
 
       // Compare with reference fields
-      RFieldComparison<3> comparison;
+      RFieldComparison<3, CppTp<3> > comparison;
       comparison.compare(rf_0, system.w().rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
    }

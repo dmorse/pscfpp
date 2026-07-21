@@ -361,7 +361,7 @@ public:
       system.w().readRGrid("out/testConversion1D_lam_w_2.rf");
 
       // Compare result to original
-      RFieldComparison<1> comparison3;
+      RFieldComparison<1, CppTp<1> > comparison3;
       comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
@@ -439,7 +439,7 @@ public:
       system.w().readRGrid("out/testConversion2D_hex_w_2.rf");
 
       // Compare result to original
-      RFieldComparison<2> comparison3;
+      RFieldComparison<2, CppTp<2> > comparison3;
       comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
@@ -521,7 +521,7 @@ public:
       system.w().readRGrid("out/testConversion3D_bcc_w_2.rf");
 
       // Compare result to original
-      RFieldComparison<3> comparison3;
+      RFieldComparison<3, CppTp<3> > comparison3;
       comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
