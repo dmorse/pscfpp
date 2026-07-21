@@ -22,7 +22,7 @@ namespace Pscf {
    namespace Prdc {
       namespace Cuda {
          //template <int D> class RField;
-         template <int D> class RFieldDft;
+         //template <int D> class RFieldDft;
          template <int D> class FFT;
          template <int D> class RFieldComparison;
          template <int D> class RFieldDftComparison;
@@ -60,7 +60,7 @@ namespace Pscf {
       using VecRandom = CudaVecRandom;
 
       //using RField = Prdc::Cuda::RField<D>;
-      using RFieldDft = Prdc::Cuda::RFieldDft<D>;
+      //using RFieldDft = Prdc::Cuda::RFieldDft<D>;
       using FFT = Prdc::Cuda::FFT<D>;
       using RFieldComparison = Prdc::Cuda::RFieldComparison<D>;
       using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;

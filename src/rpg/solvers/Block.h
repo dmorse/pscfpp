@@ -376,7 +376,7 @@ namespace Rp {
       mutable RField<D, CudaTp<D> > qr_;
 
       // K-grid work space (used for FFT of q in stepBondBead)
-      mutable RFieldDft<D> qk_;
+      mutable RFieldDft<D, CudaTp<D> > qk_;
 
       /// Container for batched FFTs of q0 (forward) in contiguous memory
       mutable DeviceArray<cudaComplex> q0kBatched_;
@@ -385,8 +385,8 @@ namespace Rp {
       mutable DeviceArray<cudaComplex> q1kBatched_;
 
       // Slices of forward and reverse propagator on a k-grid (for stress)
-      mutable RFieldDft<D> q0k_;
-      mutable RFieldDft<D> q1k_;
+      mutable RFieldDft<D, CudaTp<D> > q0k_;
+      mutable RFieldDft<D, CudaTp<D> > q1k_;
 
       /// Const pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;

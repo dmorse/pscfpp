@@ -13,15 +13,15 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
+   using namespace Prdc::Cpu;
 
    /*
    * Default constructor.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft()
+   RFieldDft<D, CppTp<D> >::RFieldDft()
     : FftwDRArray<fftw_complex>(),
       meshDimensions_(0),
       dftDimensions_(0)
@@ -31,7 +31,7 @@ namespace Cpu {
    * Destructor.
    */
    template <int D>
-   RFieldDft<D>::~RFieldDft()
+   RFieldDft<D, CppTp<D> >::~RFieldDft()
    {}
 
    /*
@@ -40,7 +40,7 @@ namespace Cpu {
    * Allocates new memory and copies all elements by value.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
+   RFieldDft<D, CppTp<D> >::RFieldDft(const RFieldDft<D, CppTp<D> >& other)
     : FftwDRArray<fftw_complex>(),
       meshDimensions_(0),
       dftDimensions_(0)
@@ -66,7 +66,7 @@ namespace Cpu {
    * \param other the rhs Field
    */
    template <int D>
-   RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
+   RFieldDft<D, CppTp<D> >& RFieldDft<D, CppTp<D> >::operator = (const RFieldDft<D, CppTp<D> >& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -97,7 +97,7 @@ namespace Cpu {
    * Allocate the underlying array for an FFT grid.
    */
    template <int D>
-   void RFieldDft<D>::allocate(IntVec<D> const & meshDimensions)
+   void RFieldDft<D, CppTp<D> >::allocate(IntVec<D> const & meshDimensions)
    {
       // Copy real space grid dimensions
       for (int i = 0; i < D; ++i) {
@@ -117,7 +117,7 @@ namespace Cpu {
    * Dellocate the underlying C array and clear dimensions.
    */
    template <int D>
-   void RFieldDft<D>::deallocate()
+   void RFieldDft<D, CppTp<D> >::deallocate()
    {
       FftwDRArray<fftw_complex>::deallocate();
       for (int i = 0; i < D; ++i) {
@@ -126,7 +126,6 @@ namespace Cpu {
       }
    }
 
-}
 }
 }
 #endif

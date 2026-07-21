@@ -151,7 +151,7 @@ namespace Cpu {
    */
    template <int D>
    void FFT<D>::forwardTransform(RField<D, CppTp<D> > const & rField,
-                                 RFieldDft<D>& kField)
+                                 RFieldDft<D, CppTp<D> >& kField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -178,7 +178,7 @@ namespace Cpu {
    */
    template <int D>
    void
-   FFT<D>::inverseTransformUnsafe(RFieldDft<D> & kField, RField<D, CppTp<D> >& rField)
+   FFT<D>::inverseTransformUnsafe(RFieldDft<D, CppTp<D> > & kField, RField<D, CppTp<D> >& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -196,7 +196,7 @@ namespace Cpu {
    */
    template <int D>
    void
-   FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField,
+   FFT<D>::inverseTransformSafe(RFieldDft<D, CppTp<D> > const & kField,
                                 RField<D, CppTp<D> >& rField)
    const
    {

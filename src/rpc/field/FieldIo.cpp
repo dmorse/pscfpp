@@ -148,7 +148,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CppTp<D> >::readFieldsKGrid(
                               std::istream &in,
-                              DArray< RFieldDft<D> >& fields,
+                              DArray< RFieldDft<D, CppTp<D> > >& fields,
                               UnitCell<D>& unitCell) const
    {
       // Read header
@@ -172,7 +172,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CppTp<D> >::writeFieldsKGrid(
                               std::ostream &out,
-                              DArray< RFieldDft<D> > const & fields,
+                              DArray< RFieldDft<D, CppTp<D> > > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -198,7 +198,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CppTp<D> >::convertBasisToKGrid(
                               DArray<double> const & in,
-                              RFieldDft<D>& out) const
+                              RFieldDft<D, CppTp<D> >& out) const
    {
       // Rpg: Allocate host array
       Prdc::convertBasisToKGrid(in, out, FieldIoBase::basis(), out.dftDimensions());
@@ -210,7 +210,7 @@ namespace Rp {
    */
    template <int D>
    void FieldIo<D, CppTp<D> >::convertKGridToBasis(
-                          RFieldDft<D> const & in,
+                          RFieldDft<D, CppTp<D> > const & in,
                           DArray<double>& out,
                           bool checkSymmetry,
                           double epsilon) const
@@ -227,7 +227,7 @@ namespace Rp {
    */
    template <int D>
    bool FieldIo<D, CppTp<D> >::hasSymmetry(
-                          RFieldDft<D> const & in,
+                          RFieldDft<D, CppTp<D> > const & in,
                           double epsilon,
                           bool verbose) const
    {

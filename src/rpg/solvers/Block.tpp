@@ -484,7 +484,7 @@ namespace Rp {
 
       // Set up associated workspace fields slices
       RField<D, CudaTp<D> > qr, qr2;
-      RFieldDft<D> qk, qk2;
+      RFieldDft<D, CudaTp<D> > qk, qk2;
       qr.associate(qrPair_, 0, mesh().dimensions());
       qr2.associate(qrPair_, nx, mesh().dimensions());
       qk.associate(qkPair_, 0, mesh().dimensions());

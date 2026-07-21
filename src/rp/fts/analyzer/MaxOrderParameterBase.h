@@ -17,6 +17,7 @@
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
+      template <int D, class T> class RFieldDft;
    }
 }
 
@@ -118,7 +119,7 @@ namespace Rp {
    private:
 
       /// Fourier transform of W_ field
-      typename T::RFieldDft wK_;
+      RFieldDft<D,T> wK_;
 
       /// Dimensions of real space (r-grid)  mesh
       IntVec<D> meshDimensions_;

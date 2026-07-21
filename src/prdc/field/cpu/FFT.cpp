@@ -16,7 +16,7 @@ namespace Cpu {
    // Planning member functions, explicit specializations.
 
    template <>
-   void FFT<1>::makePlans(RField<1, CppTp<1> >& rField, RFieldDft<1>& kField, 
+   void FFT<1>::makePlans(RField<1, CppTp<1> >& rField, RFieldDft<1, CppTp<1> >& kField, 
                           CField<1>& cFieldIn, CField<1>& cFieldOut)
    {
       int n0 = rSize_;
@@ -32,7 +32,7 @@ namespace Cpu {
    }
 
    template <>
-   void FFT<2>::makePlans(RField<2, CppTp<2> >& rField, RFieldDft<2>& kField,
+   void FFT<2>::makePlans(RField<2, CppTp<2> >& rField, RFieldDft<2, CppTp<2> >& kField,
                           CField<2>& cFieldIn, CField<2>& cFieldOut)
    {
       unsigned int flags = FFTW_ESTIMATE;
@@ -49,7 +49,7 @@ namespace Cpu {
    }
 
    template <>
-   void FFT<3>::makePlans(RField<3, CppTp<3> >& rField, RFieldDft<3>& kField,
+   void FFT<3>::makePlans(RField<3, CppTp<3> >& rField, RFieldDft<3, CppTp<3> >& kField,
                           CField<3>& cFieldIn, CField<3>& cFieldOut)
    {
       unsigned int flags = FFTW_ESTIMATE;

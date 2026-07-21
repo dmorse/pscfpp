@@ -209,7 +209,7 @@ namespace Cpc {
       if (!waveListPtr_->hasKSq()) {
          waveListPtr_->computeKSq();
       }
-      RField<D> const & kSq = waveListPtr_->kSq();
+      RField<D, CppTp<D> > const & kSq = waveListPtr_->kSq();
       UTIL_CHECK(kSq.capacity() == mesh().size());
 
       // Compute bSqFactor = b*b*ds/6

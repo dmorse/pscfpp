@@ -75,7 +75,7 @@ void CudaFftTest::testTransformReal1D()
 
    // Instantiate and allocate objects
    Prdc::RField<1, CudaTp<1> > rField(d);
-   Prdc::Cuda::RFieldDft<1> kField(d);
+   Prdc::RFieldDft<1, CudaTp<1> > kField(d);
    HostDArray<cudaReal> rField1_h(rSize), 
                         rField2_h(rSize), 
                         rField3_h(rSize);
@@ -142,7 +142,7 @@ void CudaFftTest::testTransformReal2D()
 
    // Instantiate and allocate objects
    Prdc::RField<2, CudaTp<2> > rField(d);
-   Prdc::Cuda::RFieldDft<2> kField(d);
+   Prdc::RFieldDft<2, CudaTp<2> > kField(d);
    HostDArray<cudaReal> rField1_h(rSize), 
                         rField2_h(rSize), 
                         rField3_h(rSize);
@@ -218,7 +218,7 @@ void CudaFftTest::testTransformReal3D()
 
    // Instantiate and allocate objects
    Prdc::RField<3, CudaTp<3> > rField(d);
-   Prdc::Cuda::RFieldDft<3> kField(d);
+   Prdc::RFieldDft<3, CudaTp<3> > kField(d);
    HostDArray<cudaReal> rField1_h(rSize), 
                         rField2_h(rSize), 
                         rField3_h(rSize);
@@ -541,7 +541,7 @@ void CudaFftTest::testBatchedTransformReal1D()
    altFFT.setup(d);
    Prdc::RField<1, CudaTp<1> > rFieldAlt;
    rFieldAlt.associate(rField, 0, d);
-   Prdc::Cuda::RFieldDft<1> kFieldAlt(d);
+   Prdc::RFieldDft<1, CudaTp<1> > kFieldAlt(d);
    altFFT.forwardTransform(rFieldAlt, kFieldAlt);
    HostDArray<cudaComplex> kFieldAlt_h(kFieldAlt.capacity());
    kFieldAlt_h = kFieldAlt; 
@@ -633,7 +633,7 @@ void CudaFftTest::testBatchedTransformReal2D()
    altFFT.setup(d);
    Prdc::RField<2, CudaTp<2> > rFieldAlt;
    rFieldAlt.associate(rField, 0, d);
-   Prdc::Cuda::RFieldDft<2> kFieldAlt(d);
+   Prdc::RFieldDft<2, CudaTp<2> > kFieldAlt(d);
    altFFT.forwardTransform(rFieldAlt, kFieldAlt);
    HostDArray<cudaComplex> kFieldAlt_h(kFieldAlt.capacity());
    kFieldAlt_h = kFieldAlt; 
@@ -724,7 +724,7 @@ void CudaFftTest::testBatchedTransformReal3D()
    altFFT.setup(d);
    Prdc::RField<3, CudaTp<3> > rFieldAlt;
    rFieldAlt.associate(rField, 0, d);
-   Prdc::Cuda::RFieldDft<3> kFieldAlt(d);
+   Prdc::RFieldDft<3, CudaTp<3> > kFieldAlt(d);
    altFFT.forwardTransform(rFieldAlt, kFieldAlt);
    HostDArray<cudaComplex> kFieldAlt_h(kFieldAlt.capacity());
    kFieldAlt_h = kFieldAlt; 

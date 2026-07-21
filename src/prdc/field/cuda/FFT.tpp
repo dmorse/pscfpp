@@ -132,7 +132,7 @@ namespace Cuda {
    */
    template <int D>
    void FFT<D>::forwardTransform(RField<D, CudaTp<D> > const & rField, 
-                                 RFieldDft<D>& kField) const
+                                 RFieldDft<D, CudaTp<D> >& kField) const
    {
       // Preconditions
       UTIL_CHECK(isSetup_);
@@ -162,7 +162,7 @@ namespace Cuda {
    * Compute inverse (complex-to-real) DFT, overwriting the input.
    */
    template <int D>
-   void FFT<D>::inverseTransformUnsafe(RFieldDft<D>& kField, 
+   void FFT<D>::inverseTransformUnsafe(RFieldDft<D, CudaTp<D> >& kField, 
                                        RField<D, CudaTp<D> >& rField) const
    {
       // Preconditions
@@ -188,7 +188,7 @@ namespace Cuda {
    * Compute inverse (complex-to-real) DFT without overwriting input.
    */
    template <int D>
-   void FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField, 
+   void FFT<D>::inverseTransformSafe(RFieldDft<D, CudaTp<D> > const & kField, 
                                      RField<D, CudaTp<D> >& rField) const
    {
       // if kFieldCopy_ has been previously allocated, check size is correct

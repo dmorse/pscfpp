@@ -369,7 +369,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::readFieldsKGrid(
                               std::string filename,
-                              DArray< typename T::RFieldDft >& fields,
+                              DArray< RFieldDft<D,T> >& fields,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
@@ -384,7 +384,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::writeFieldsKGrid(
                               std::string filename,
-                              DArray< typename T::RFieldDft > const & fields,
+                              DArray< RFieldDft<D,T> > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -402,7 +402,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::convertBasisToKGrid(
                               DArray< DArray <double> > const & in,
-                              DArray< typename T::RFieldDft >& out) const
+                              DArray< RFieldDft<D,T> >& out) const
    {
       // Inspect input and output field containers
       int nMonomer, nMonomerOut, capacity;
@@ -424,7 +424,7 @@ namespace Rp {
    */
    template <int D, class T>
    void FieldIoBase<D,T>::convertKGridToBasis(
-                              DArray< typename T::RFieldDft > const & in,
+                              DArray< RFieldDft<D,T> > const & in,
                               DArray< DArray <double> > & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -592,7 +592,7 @@ namespace Rp {
    */
    template <int D, class T>
    void FieldIoBase<D,T>::convertKGridToRGrid(
-                              DArray< typename T::RFieldDft > const & in,
+                              DArray< RFieldDft<D,T> > const & in,
                               DArray< RField<D,T> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
@@ -607,7 +607,7 @@ namespace Rp {
    */
    template <int D, class T>
    void FieldIoBase<D,T>::convertKGridToRGrid(
-                            typename T::RFieldDft const & in, 
+                            RFieldDft<D,T> const & in, 
                             RField<D,T>& out) 
    const
    {
@@ -620,7 +620,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::convertRGridToKGrid(
                               DArray< RField<D,T> > const & in,
-                              DArray< typename T::RFieldDft >& out) const
+                              DArray< RFieldDft<D,T> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -635,7 +635,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::convertRGridToKGrid(
                               RField<D,T> const & in,
-                              typename T::RFieldDft& out) const
+                              RFieldDft<D,T>& out) const
    {  fft().forwardTransform(in, out); }
 
    /*

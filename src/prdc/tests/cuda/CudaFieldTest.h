@@ -38,7 +38,7 @@ void CudaFieldTest::testConstructors()
    {
       Prdc::RField<1, CudaTp<1> > r;
       Prdc::Cuda::CField<1> c;
-      Prdc::Cuda::RFieldDft<1> d;
+      Prdc::RFieldDft<1, CudaTp<1> > d;
       TEST_ASSERT(r.capacity() == 0 );
       TEST_ASSERT(!r.isAllocated() );
       TEST_ASSERT(c.capacity() == 0 );
@@ -54,7 +54,7 @@ void CudaFieldTest::testAllocate()
    {
       Prdc::RField<2, CudaTp<2> > r;
       Prdc::Cuda::CField<2> c;
-      Prdc::Cuda::RFieldDft<2> d;
+      Prdc::RFieldDft<2, CudaTp<2> > d;
       IntVec<2> meshDims, dftDims;
       meshDims[0] = 5;
       meshDims[1] = 7;
@@ -167,7 +167,7 @@ void CudaFieldTest::testRFieldDftRoundTrip()
       d[2] = 3;
 
       // Allocate memory on device
-      Prdc::Cuda::RFieldDft<3> vd;
+      Prdc::RFieldDft<3, CudaTp<3> > vd;
       vd.allocate(d);
       int capacity = vd.capacity();
 

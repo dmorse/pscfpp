@@ -21,7 +21,7 @@ namespace Pscf {
    namespace Prdc {
       namespace Cpu {
          //template <int D> class RField;
-         template <int D> class RFieldDft;
+         //template <int D> class RFieldDft;
          template <int D> class FFT;
          template <int D> class RFieldComparison;
          template <int D> class RFieldDftComparison;
@@ -58,7 +58,7 @@ namespace Pscf {
       using RLocArray = LocArray<Real>;
 
       //using RField = Prdc::Cpu::RField<D>;
-      using RFieldDft = Prdc::Cpu::RFieldDft<D>;
+      //using RFieldDft = Prdc::Cpu::RFieldDft<D>;
       using FFT = Prdc::Cpu::FFT<D>;
       using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;
       using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;

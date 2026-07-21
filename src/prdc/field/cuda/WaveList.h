@@ -429,7 +429,7 @@ namespace Cuda {
       * Dimensions of the mesh in reciprocal space.
       *
       * If isRealField_ is true, kMeshDimensions_ is equal to the vector
-      * of dimensions of the reciprocal space grid used by a RFieldDft<D>
+      * of dimensions of the reciprocal space grid used by a RFieldDft<D, CudaTp<D> >
       * container to store the discrete Fourier transform of a real field.
       * One dimension of this mesh is approximately half the corresponding
       * dimension of the associated real space grid.  If isRealField_

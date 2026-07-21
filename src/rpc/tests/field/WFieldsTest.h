@@ -143,7 +143,7 @@ public:
 
    template <int D>
    void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RFieldDft<D> > const & fields)
+                   DArray< RFieldDft<D, CppTp<D> > > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);

@@ -69,12 +69,12 @@ void CpuFftTest::testTransformReal1D()
    RField<1, CppTp<1> > inCopy(in);
 
    // Transform in -> out
-   Cpu::RFieldDft<1> out;
+   RFieldDft<1, CppTp<1> > out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
-   Cpu::RFieldDft<1> outCopy(out);
+   RFieldDft<1, CppTp<1> > outCopy(out);
 
    // Inverse transform out -> in2
    RField<1, CppTp<1> > in2;
@@ -131,14 +131,14 @@ void CpuFftTest::testTransformReal2D()
    RField<2, CppTp<2> > inCopy(in);
 
    // Forward transform in -> out
-   Cpu::RFieldDft<2> out;
+   RFieldDft<2, CppTp<2> > out;
    out.allocate(d);
    TEST_ASSERT(eq(in.capacity() / in.meshDimensions()[1],
                   out.capacity() / (out.meshDimensions()[1]/2 + 1)));
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
-   Cpu::RFieldDft<2> outCopy(out);
+   RFieldDft<2, CppTp<2> > outCopy(out);
 
    // Inverse transform out -> in2
    RField<2, CppTp<2> > in2;
@@ -177,7 +177,7 @@ void CpuFftTest::testTransformReal3D()
    v.setup(d);
 
    RField<3, CppTp<3> > in;
-   Cpu::RFieldDft<3> out;
+   RFieldDft<3, CppTp<3> > out;
    in.allocate(d);
    out.allocate(d);
 
@@ -202,7 +202,7 @@ void CpuFftTest::testTransformReal3D()
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
-   Cpu::RFieldDft<3> outCopy(out);
+   RFieldDft<3, CppTp<3> > outCopy(out);
 
    // Inverse transform out -> in2
    RField<3, CppTp<3> > in2;

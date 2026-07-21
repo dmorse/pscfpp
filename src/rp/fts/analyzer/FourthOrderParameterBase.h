@@ -18,6 +18,7 @@ namespace Util {
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
+      template <int D, class T> class RFieldDft;
    }
 }
 
@@ -110,7 +111,7 @@ namespace Rp {
    private:
 
       /// Fourier transform of W_ field.
-      typename T::RFieldDft wK_;
+      RFieldDft<D,T> wK_;
 
       /// Fourth powers of Fourier magnitudes, with prefactors.
       RField<D,T> psi_;

@@ -180,8 +180,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1> > wFields;
-      DArray< RField<1> > cFields;
+      DArray< RField<1, CppTp<1> > > wFields;
+      DArray< RField<1, CppTp<1> > > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -272,8 +272,8 @@ public:
 
       // Allocate w and field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1> > wFields;
-      DArray< RField<1> > cFields;
+      DArray< RField<1, CppTp<1> > > wFields;
+      DArray< RField<1, CppTp<1> > > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -350,8 +350,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<2> > wFields;
-      DArray< RField<2> > cFields;
+      DArray< RField<2, CppTp<2> > > wFields;
+      DArray< RField<2, CppTp<2> > > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -448,8 +448,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<2> > wFields;
-      DArray< RField<2> > cFields;
+      DArray< RField<2, CppTp<2> > > wFields;
+      DArray< RField<2, CppTp<2> > > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -538,8 +538,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<3> > wFields;
-      DArray< RField<3> > cFields;
+      DArray< RField<3, CppTp<3> > > wFields;
+      DArray< RField<3, CppTp<3> > > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();

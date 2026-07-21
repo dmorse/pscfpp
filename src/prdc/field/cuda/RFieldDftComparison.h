@@ -46,7 +46,7 @@ namespace Cuda {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(RFieldDft<D> const & a, RFieldDft<D> const & b);
+      double compare(RFieldDft<D, CudaTp<D> > const & a, RFieldDft<D, CudaTp<D> > const & b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -62,8 +62,8 @@ namespace Cuda {
       * \param b  2nd DArray of fields
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray< RFieldDft<D> > const & a, 
-                     DArray< RFieldDft<D> > const & b);
+      double compare(DArray< RFieldDft<D, CudaTp<D> > > const & a, 
+                     DArray< RFieldDft<D, CudaTp<D> > > const & b);
 
       /**
       * Return the precomputed maximum element-by-element difference.

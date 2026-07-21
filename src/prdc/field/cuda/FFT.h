@@ -73,7 +73,7 @@ namespace Cuda {
       * \param rField  real values on r-space grid (input, gpu mem)
       * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransform(RField<D, CudaTp<D> > const & rField, RFieldDft<D>& kField) 
+      void forwardTransform(RField<D, CudaTp<D> > const & rField, RFieldDft<D, CudaTp<D> >& kField) 
       const;
 
       /**
@@ -89,7 +89,7 @@ namespace Cuda {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransformUnsafe(RFieldDft<D>& kField, RField<D, CudaTp<D> >& rField) 
+      void inverseTransformUnsafe(RFieldDft<D, CudaTp<D> >& kField, RField<D, CudaTp<D> >& rField) 
       const;
 
       /**
@@ -101,7 +101,7 @@ namespace Cuda {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransformSafe(RFieldDft<D> const & kField, 
+      void inverseTransformSafe(RFieldDft<D, CudaTp<D> > const & kField, 
                                 RField<D, CudaTp<D> >& rField) const;
 
       // Complex <-> Complex transforms
@@ -201,8 +201,8 @@ namespace Cuda {
       /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      /// Private RFieldDft<D> k-space array work space
-      mutable RFieldDft<D> kFieldCopy_;
+      /// Private RFieldDft<D, CudaTp<D> > k-space array work space
+      mutable RFieldDft<D, CudaTp<D> > kFieldCopy_;
 
       /// Number of points in r-space grid
       int rSize_;

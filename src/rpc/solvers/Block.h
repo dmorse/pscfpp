@@ -375,10 +375,10 @@ namespace Rp {
       mutable RField<D, CppTp<D> > qr2_;
 
       /// Work array for wavevector space field (step size ds)
-      mutable RFieldDft<D> qk_;
+      mutable RFieldDft<D, CppTp<D> > qk_;
 
       /// Work array for wavevector space field (step size ds/2)
-      mutable RFieldDft<D> qk2_;
+      mutable RFieldDft<D, CppTp<D> > qk2_;
 
       /// Pointer to associated Mesh<D> object
       Mesh<D> const * meshPtr_;

@@ -100,7 +100,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Cpu::RFieldDft<2> f_0, f_1;
+      RFieldDft<2, CppTp<2> > f_0, f_1;
       int m = 5;
       int n = 10;
       IntVec<2> dimensions;

@@ -8,32 +8,37 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/FftwDRArray.h>    // base class
-#include <pscf/math/IntVec.h>        // member
-#include <pscf/cpu/CppTp.h>          // backend type
+#include <pscf/cpu/CppTp.h>         // class template argument
+#include <pscf/cpu/FftwDRArray.h>   // base class
+#include <pscf/math/IntVec.h>       // member
 
 #include <fftw3.h>
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
-   using namespace Pscf;
+
+   // Declaration of primary template
+   template <int D, class T> class RFieldDft;
 
    /**
-   * Fourier transform of a real field on an FFT mesh.
+   * Fourier transform of a real field on an FFT mesh (CPU version).
    *
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class RFieldDft : public FftwDRArray<fftw_complex>
+   class RFieldDft<D, CppTp<D> >
+    : public FftwDRArray<fftw_complex>
    {
 
    public:
 
       // Type aliases
 
+      /**
+      * Complex type of an array element.
+      */
       using FftwDRArray<fftw_complex>::ValueType;
 
       /**
@@ -55,7 +60,7 @@ namespace Cpu {
       *
       *\param other the RFieldDft to be copied.
       */
-      RFieldDft(RFieldDft<D> const & other);
+      RFieldDft(RFieldDft<D, CppTp<D> > const & other);
 
       /**
       * Destructor.
@@ -74,7 +79,8 @@ namespace Cpu {
       *
       * \param other the RHS Field
       */
-      RFieldDft<D>& operator = (RFieldDft<D> const & other);
+      RFieldDft<D, CppTp<D> >& 
+      operator = (RFieldDft<D, CppTp<D> > const & other);
 
       /**
       * Allocate the underlying C array and set mesh dimensions.
@@ -91,12 +97,12 @@ namespace Cpu {
       virtual void deallocate();
 
       /**
-      * Return vector of spatial mesh dimensions by constant reference.
+      * Return vector of spatial mesh dimensions by const reference.
       */
       IntVec<D> const & meshDimensions() const;
 
       /**
-      * Return vector of dft (Fourier) grid dimensions by constant reference.
+      * Return vector of dft (Fourier) grid dimensions by const reference.
       *  
       * The last element of dftDimensions() and meshDimensions() differ by
       * about a factor of two: dftDimension()[D-1] = meshDimensions()/2 + 1.
@@ -126,17 +132,17 @@ namespace Cpu {
    };
 
    /*
-   * Return mesh dimensions by constant reference.
+   * Return mesh dimensions by const reference.
    */
-   template <int D>
-   inline IntVec<D> const & RFieldDft<D>::meshDimensions() const
+   template <int D> inline 
+   IntVec<D> const & RFieldDft<D, CppTp<D> >::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
-   * Return dimensions of dft grid by constant reference.
+   * Return dimensions of dft grid by const reference.
    */
-   template <int D>
-   inline IntVec<D> const & RFieldDft<D>::dftDimensions() const
+   template <int D> inline 
+   IntVec<D> const & RFieldDft<D, CppTp<D> >::dftDimensions() const
    {  return dftDimensions_; }
 
    /*
@@ -144,7 +150,8 @@ namespace Cpu {
    */
    template <int D>
    template <class Archive>
-   void RFieldDft<D>::serialize(Archive& ar, const unsigned int version)
+   void RFieldDft<D, CppTp<D> >::serialize(Archive& ar, 
+                                           const unsigned int version)
    {
       FftwDRArray<fftw_complex>::serialize(ar, version);
       ar & meshDimensions_;
@@ -152,11 +159,10 @@ namespace Cpu {
    }
 
    // Explicit instantiation declarations
-   extern template class RFieldDft<1>;
-   extern template class RFieldDft<2>;
-   extern template class RFieldDft<3>;
+   extern template class RFieldDft<1, CppTp<1> >;
+   extern template class RFieldDft<2, CppTp<2> >;
+   extern template class RFieldDft<3, CppTp<3> >;
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

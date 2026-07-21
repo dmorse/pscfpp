@@ -22,6 +22,7 @@ namespace Util {
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
+      template <int D, class T> class RFieldDft;
    }
 }
 
@@ -116,7 +117,7 @@ namespace Rp {
       void computeS(Array<typename T::Complex> const & wk);
 
       /// Discrete Fourier transform (DFT) of wm_ . 
-      typename T::RFieldDft wk_;
+      RFieldDft<D,T> wk_;
 
       /// Alias for base class
       using AnalyzerT = Analyzer<D,T>;

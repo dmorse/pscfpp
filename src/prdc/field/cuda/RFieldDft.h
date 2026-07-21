@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_R_FIELD_DFT_H
-#define PRDC_CUDA_R_FIELD_DFT_H
+#ifndef PRDC_R_FIELD_DFT_CU_H
+#define PRDC_R_FIELD_DFT_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -8,17 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/cudaTypes.h>
+#include <pscf/cuda/CudaTp.h>
 #include <pscf/cuda/DeviceArray.h>
+#include <pscf/cuda/cudaTypes.h>
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
+
+   // Declare primary template
+   template <int D, class T> class RFieldDft;
 
    /**
    * Discrete Fourier Transform (DFT) of a real field, allocated on a GPU.
@@ -30,7 +33,8 @@ namespace Cuda {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class RFieldDft : public DeviceArray<cudaComplex>
+   class RFieldDft<D, CudaTp<D> >
+    : public DeviceArray<cudaComplex>
    {
 
    public:
@@ -56,7 +60,7 @@ namespace Cuda {
       *
       *\param other the RFieldDft to be copied.
       */
-      RFieldDft(RFieldDft<D> const & other);
+      RFieldDft(RFieldDft<D, CudaTp<D> > const & other);
 
       /**
       * Destructor.
@@ -66,7 +70,7 @@ namespace Cuda {
       virtual ~RFieldDft();
 
       /**
-      * Assignment operator, assignment from another RFieldDft<D>.
+      * Assignment operator, assignment from another RFieldDft<D, CudaTp<D> >.
       *
       * If this Field is not allocated, allocates and copies all elements.
       *
@@ -75,20 +79,20 @@ namespace Cuda {
       *
       * \param other the RHS Field
       */
-      RFieldDft<D>& operator = (RFieldDft<D> const & other);
+      RFieldDft<D, CudaTp<D> >& operator = (RFieldDft<D, CudaTp<D> > const & other);
 
       /**
       * Assignment operator, assignment from a HostDArray<cudaComplex>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
-      * RFieldDft<D> from host memory to device memory.
+      * RFieldDft<D, CudaTp<D> > from host memory to device memory.
       *
-      * The RHS HostDArray<cudaComplex> and LHS RFieldDft<D> must both be 
-      * allocated and have equal capacity values on entry. 
+      * The RHS HostDArray<cudaComplex> and LHS RFieldDft<D, CudaTp<D> > must 
+      * both be allocated and have equal capacity values on entry. 
       * 
       * \param other the RHS HostDArray<cudaComplex>
       */
-      RFieldDft<D>& operator = (HostDArray<cudaComplex> const & other);
+      RFieldDft<D, CudaTp<D> >& operator = (HostDArray<cudaComplex> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -159,15 +163,15 @@ namespace Cuda {
    /*
    * Return mesh dimensions by constant reference.
    */
-   template <int D>
-   inline const IntVec<D>& RFieldDft<D>::meshDimensions() const
+   template <int D> inline 
+   const IntVec<D>& RFieldDft<D, CudaTp<D> >::meshDimensions() const
    {  return meshDimensions_; }
 
    /*  
    * Return dimensions of dft grid by constant reference. 
    */
-   template <int D>
-   inline const IntVec<D>& RFieldDft<D>::dftDimensions() const
+   template <int D> inline 
+   IntVec<D> const & RFieldDft<D, CudaTp<D> >::dftDimensions() const
    {  return dftDimensions_; }
 
    /*
@@ -175,7 +179,8 @@ namespace Cuda {
    */
    template <int D>
    template <class Archive>
-   void RFieldDft<D>::serialize(Archive& ar, const unsigned int version)
+   void RFieldDft<D, CudaTp<D> >::serialize(Archive& ar, 
+		                            const unsigned int version)
    {
       int capacity;
       if (Archive::is_saving()) {
@@ -205,13 +210,10 @@ namespace Cuda {
       ar & meshDimensions_;
    }
 
-   #ifndef PRDC_CUDA_R_FIELD_DFT_TPP
-   extern template class RFieldDft<1>;
-   extern template class RFieldDft<2>;
-   extern template class RFieldDft<3>;
-   #endif
+   extern template class RFieldDft<1, CudaTp<1> >;
+   extern template class RFieldDft<2, CudaTp<2> >;
+   extern template class RFieldDft<3, CudaTp<3> >;
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

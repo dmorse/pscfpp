@@ -17,6 +17,7 @@
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
+      template <int D, class T> class RFieldDft;
    }
    namespace Rp {
       template <int D, class T> class System;
@@ -115,7 +116,7 @@ namespace Rp {
    private:
 
       using RFieldT = RField<D,T>;
-      using RFieldDftT = typename T::RFieldDft;
+      using RFieldDftT = RFieldDft<D,T>;
       using FFTT = typename T::FFT;
 
       // IntraCorrelation object

@@ -130,7 +130,7 @@ namespace Rp {
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::istream& in,
-                           DArray< RFieldDft<D> >& fields,
+                           DArray< RFieldDft<D, CppTp<D> > >& fields,
                            UnitCell<D> & unitCell) 
       const override;
 
@@ -145,7 +145,7 @@ namespace Rp {
       * \param isSymmetric  Does this field have space group symmetry?
       */
       void writeFieldsKGrid(std::ostream& out,
-                            DArray< RFieldDft<D> > const & fields,
+                            DArray< RFieldDft<D, CppTp<D> > > const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) 
       const override;
@@ -159,7 +159,7 @@ namespace Rp {
       * \param dft  discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(DArray<double> const & components,
-                               RFieldDft<D>& dft) 
+                               RFieldDft<D, CppTp<D> >& dft) 
       const override;
 
       /**
@@ -172,7 +172,7 @@ namespace Rp {
       * \param checkSymmetry  flag indicating whether to check symmetry
       * \param epsilon  error tolerance for symmetry test (if any)
       */
-      void convertKGridToBasis(RFieldDft<D> const & in,
+      void convertKGridToBasis(RFieldDft<D, CppTp<D> > const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) 
@@ -188,7 +188,7 @@ namespace Rp {
       * \param verbose  if true, write error to Log::file()
       * \return true iff the field is symmetric to within tolerance
       */
-      bool hasSymmetry(RFieldDft<D> const & in, 
+      bool hasSymmetry(RFieldDft<D, CppTp<D> > const & in, 
                        double epsilon = 1.0e-8,
                        bool verbose = true) 
       const override;

@@ -320,10 +320,10 @@ namespace Cpc {
       // In bead model, ds=1 by definition.
 
       /// Array of elements containing exp(-K^2 b^2 ds/6)
-      RField<D> expKsq_;
+      RField<D, CppTp<D> > expKsq_;
 
       /// Array of elements containing exp(-K^2 b^2 ds/(6*2))
-      RField<D> expKsq2_;
+      RField<D, CppTp<D> > expKsq2_;
 
       /// Array containing exp(-W[i] ds/2) (thread) or exp(-W[i]) (bead)
       CField<D> expW_;

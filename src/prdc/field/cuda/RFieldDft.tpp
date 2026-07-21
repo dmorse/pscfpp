@@ -1,8 +1,8 @@
-#ifndef PRDC_CUDA_R_FIELD_DFT_TPP
-#define PRDC_CUDA_R_FIELD_DFT_TPP
+#ifndef PRDC_R_FIELD_DFT_CU_TPP
+#define PRDC_R_FIELD_DFT_CU_TPP
 
 /*
-* PSCF - Polymer Self-Consistent Field 
+* PSCF - Polymer Self-Consistent Field
 *
 * Copyright 2015 - 2025, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
@@ -13,15 +13,15 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
+   using namespace Prdc::Cuda;
 
    /*
    * Default constructor.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft()
+   RFieldDft<D, CudaTp<D> >::RFieldDft()
     : DeviceArray<cudaComplex>()
    {}
 
@@ -29,7 +29,7 @@ namespace Cuda {
    * Allocating constructor (calls allocate).
    */
    template <int D>
-   RFieldDft<D>::RFieldDft(IntVec<D> const & meshDimensions)
+   RFieldDft<D, CudaTp<D> >::RFieldDft(IntVec<D> const & meshDimensions)
     : DeviceArray<cudaComplex>()
    {  allocate(meshDimensions); }
 
@@ -37,14 +37,14 @@ namespace Cuda {
    * Destructor.
    */
    template <int D>
-   RFieldDft<D>::~RFieldDft()
+   RFieldDft<D, CudaTp<D> >::~RFieldDft()
    {}
 
    /*
    * Copy constructor.
    */
    template <int D>
-   RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
+   RFieldDft<D, CudaTp<D> >::RFieldDft(const RFieldDft<D, CudaTp<D> >& other)
     : DeviceArray<cudaComplex>(other)
    {
       meshDimensions_ = other.meshDimensions_;
@@ -52,10 +52,11 @@ namespace Cuda {
    }
 
    /*
-   * Assignment, element-by-element from another RFieldDft<D>.
+   * Assignment from another RFieldDft.
    */
    template <int D>
-   RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
+   RFieldDft<D, CudaTp<D> >&
+   RFieldDft<D, CudaTp<D> >::operator = (RFieldDft<D, CudaTp<D> > const & other)
    {
       // Assign data and size of underlying array
       DeviceArray<cudaComplex>::operator = (other);
@@ -68,18 +69,18 @@ namespace Cuda {
    }
 
    /*
-   * Assignment of RFieldDft<D> from RHS HostDArray<Data> host array.
+   * Assignment from RHS HostDArray<cudaComplex>.
    */
    template <int D>
-   RFieldDft<D>& 
-   RFieldDft<D>::operator = (HostDArray<cudaComplex> const & other)
+   RFieldDft<D, CudaTp<D> >&
+   RFieldDft<D, CudaTp<D> >::operator = (HostDArray<cudaComplex> const & other)
    {
-      // Preconditions: both arrays must be allocated with equal capacities
+      // Preconditions: Both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
          UTIL_THROW("Error: RHS HostDArray<cudaComplex> is not allocated.");
       }
       if (!isAllocated()) {
-         UTIL_THROW("Error: LHS RFieldDft<D> is not allocated.");
+         UTIL_THROW("Error: LHS RFieldDft<D, CudaTp<D> > is not allocated.");
       }
       if (capacity_ != other.capacity()) {
          UTIL_THROW("Cannot assign Fields of unequal capacity");
@@ -95,7 +96,7 @@ namespace Cuda {
    * Allocate underlying DeviceArray<cudaComplex> for the DFT mesh.
    */
    template <int D>
-   void RFieldDft<D>::allocate(const IntVec<D>& meshDimensions)
+   void RFieldDft<D, CudaTp<D> >::allocate(const IntVec<D>& meshDimensions)
    {
       // Copy and validate dimensions of real space grid
       for (int i = 0; i < D; ++i) {
@@ -103,21 +104,22 @@ namespace Cuda {
          meshDimensions_[i] = meshDimensions[i];
       }
 
-      // Compute dimensions and size of Fourier space mesh 
+      // Compute dimensions and size of Fourier space mesh
       int size;
       FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
 
-      // Allocate complex array on the GPU with size of DFT mesh 
+      // Allocate complex array on the GPU with size of DFT mesh
       DeviceArray<cudaComplex>::allocate(size);
    }
 
    /*
-   * Associate this object with a slice of another DeviceArray<cudaComplex>.
+   * Associate this with a slice of a DeviceArray<cudaComplex>.
    */
    template <int D>
-   void RFieldDft<D>::associate(DeviceArray<cudaComplex>& arr, 
-                                int beginId, 
-                                IntVec<D> const & meshDimensions)
+   void RFieldDft<D, CudaTp<D> >::associate(
+                DeviceArray<cudaComplex>& arr,
+                int beginId,
+                IntVec<D> const & meshDimensions)
    {
       // Copy and validate dimensions of real space grid
       for (int i = 0; i < D; ++i) {
@@ -125,7 +127,7 @@ namespace Cuda {
          meshDimensions_[i] = meshDimensions[i];
       }
 
-      // Compute dimensions and size of Fourier space mesh 
+      // Compute dimensions and size of Fourier space mesh
       int size;
       FFT<D>::computeKMesh(meshDimensions, dftDimensions_, size);
 
@@ -133,7 +135,6 @@ namespace Cuda {
       DeviceArray<cudaComplex>::associate(arr, beginId, size);
    }
 
-} // namespace Cuda
 } // namespace Prdc
 } // namespace Pscf
 #endif

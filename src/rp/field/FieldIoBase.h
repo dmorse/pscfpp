@@ -24,6 +24,7 @@ namespace Pscf {
       template <int D> class Basis;
       template <int D> class SpaceGroup;
       template <int D, class T> class RField;
+      template <int D, class T> class RFieldDft;
    }
 }
 
@@ -481,7 +482,7 @@ namespace Rp {
       */
       virtual
       void readFieldsKGrid(std::istream& in,
-                           DArray<typename T::RFieldDft>& fields,
+                           DArray<RFieldDft<D,T> >& fields,
                            UnitCell<D> & unitCell) const = 0;
 
       /**
@@ -497,7 +498,7 @@ namespace Rp {
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::string filename,
-                           DArray<typename T::RFieldDft>& fields,
+                           DArray<RFieldDft<D,T> >& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
@@ -515,7 +516,7 @@ namespace Rp {
       */
       virtual
       void writeFieldsKGrid(std::ostream& out,
-                            DArray<typename T::RFieldDft> const & fields,
+                            DArray<RFieldDft<D,T> > const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) const = 0;
 
@@ -532,7 +533,7 @@ namespace Rp {
       * \param isSymmetric  iff true, write space group name
       */
       void writeFieldsKGrid(std::string filename,
-                           DArray<typename T::RFieldDft> const & fields,
+                           DArray<RFieldDft<D,T> > const & fields,
                            UnitCell<D> const & unitCell,
                            bool isSymmetric = true) const;
 
@@ -548,7 +549,7 @@ namespace Rp {
       */
       virtual
       void convertBasisToKGrid(DArray<double> const & components,
-                               typename T::RFieldDft& dft) const = 0;
+                               RFieldDft<D,T>& dft) const = 0;
 
       /**
       * Convert an array of fields from basis to Fourier (k-grid) form.
@@ -560,7 +561,7 @@ namespace Rp {
       * \param out  fields defined as discrete Fourier transforms (k-grid)
       */
       void convertBasisToKGrid(DArray< DArray<double> > const & in,
-                               DArray<typename T::RFieldDft>& out) const;
+                               DArray<RFieldDft<D,T> >& out) const;
 
       /**
       * Convert a single field from Fourier (k-grid) to basis form.
@@ -576,7 +577,7 @@ namespace Rp {
       * \param epsilon  error tolerance for symmetry test (if any)
       */
       virtual
-      void convertKGridToBasis(typename T::RFieldDft const & in,
+      void convertKGridToBasis(RFieldDft<D,T> const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const = 0;
@@ -594,7 +595,7 @@ namespace Rp {
       * \param checkSymmetry  flag indicate whether to check symmetry
       * \param epsilon  error tolerance for symmetry test (if any)
       */
-      void convertKGridToBasis(DArray<typename T::RFieldDft> const & in,
+      void convertKGridToBasis(DArray<RFieldDft<D,T> > const & in,
                                DArray< DArray<double> > & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const;
@@ -663,7 +664,7 @@ namespace Rp {
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray<typename T::RFieldDft> const & in,
+      void convertKGridToRGrid(DArray<RFieldDft<D,T> > const & in,
                                DArray<RField<D,T> > & out) const;
 
       /**
@@ -674,7 +675,7 @@ namespace Rp {
       * \param in  field in discrete Fourier format (k-grid)
       * \param out  field defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(typename T::RFieldDft const & in,
+      void convertKGridToRGrid(RFieldDft<D,T> const & in,
                                RField<D,T> & out) const;
 
       /**
@@ -687,7 +688,7 @@ namespace Rp {
       * \param out  fields in discrete Fourier format (k-grid)
       */
       void convertRGridToKGrid(DArray<RField<D,T> > const & in,
-                               DArray<typename T::RFieldDft> & out) const;
+                               DArray<RFieldDft<D,T> > & out) const;
 
       /**
       * Convert a field from r-grid to k-grid (Fourier) format.
@@ -698,7 +699,7 @@ namespace Rp {
       * \param out  field in discrete Fourier format (k-grid)
       */
       void convertRGridToKGrid(RField<D,T> const & in,
-                               typename T::RFieldDft & out) const;
+                               RFieldDft<D,T> & out) const;
 
       ///@}
       /// \name Field File Format Conversion
@@ -821,7 +822,7 @@ namespace Rp {
       * \return true if the field is symmetric, false otherwise
       */
       virtual
-      bool hasSymmetry(typename T::RFieldDft const & in,
+      bool hasSymmetry(RFieldDft<D,T> const & in,
                        double epsilon = 1.0e-8,
                        bool verbose = true) const = 0;
 
@@ -1370,10 +1371,10 @@ namespace Rp {
       mutable DArray<RField<D,T> > tmpFieldsRGrid_;
 
       /// Work array of fields on Fourier grid (k-grid).
-      mutable DArray<typename T::RFieldDft> tmpFieldsKGrid_;
+      mutable DArray<RFieldDft<D,T> > tmpFieldsKGrid_;
 
       /// K-grid work space (single field)
-      mutable typename T::RFieldDft workDft_;
+      mutable RFieldDft<D,T> workDft_;
 
       /// Is tmpFieldsBasis_ allocated?
       mutable bool isAllocatedBasis_;

@@ -30,8 +30,8 @@ namespace Cpu {
    * Comparator for individual fields.
    */
    template <int D>
-   double RFieldDftComparison<D>::compare(RFieldDft<D> const& a, 
-                                          RFieldDft<D> const& b)
+   double RFieldDftComparison<D>::compare(RFieldDft<D, CppTp<D> > const& a, 
+                                          RFieldDft<D, CppTp<D> > const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -69,8 +69,8 @@ namespace Cpu {
    */
    template <int D>
    double 
-   RFieldDftComparison<D>::compare(DArray< RFieldDft<D> > const & a,
-                                   DArray< RFieldDft<D> > const & b)
+   RFieldDftComparison<D>::compare(DArray< RFieldDft<D, CppTp<D> > > const & a,
+                                   DArray< RFieldDft<D, CppTp<D> > > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());

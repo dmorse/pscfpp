@@ -644,7 +644,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      RField<1> w;
+      RField<1, CppTp<1> > w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -735,7 +735,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2> w;
+      RField<2, CppTp<2> > w;
       w.allocate(mesh.dimensions());
       MeshIterator<2> iter(mesh.dimensions());
 
@@ -825,7 +825,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      RField<3> w;
+      RField<3, CppTp<3> > w;
       w.allocate(mesh.dimensions());
       MeshIterator<3> iter(mesh.dimensions());
 

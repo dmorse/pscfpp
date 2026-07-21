@@ -201,7 +201,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CudaTp<D> >::readFieldsKGrid(
                            std::istream &in,
-                           DArray<RFieldDft<D> >& fields,
+                           DArray< RFieldDft<D, CudaTp<D> > >& fields,
                            UnitCell<D>& unitCell) const
    {
       // Read header and validate field mesh dimensions
@@ -230,7 +230,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CudaTp<D> >::writeFieldsKGrid(
                               std::ostream &out,
-                              DArray<RFieldDft<D> > const & fields,
+                              DArray< RFieldDft<D, CudaTp<D> > > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -261,7 +261,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CudaTp<D> >::convertBasisToKGrid(
                               DArray<double> const & in,
-                              RFieldDft<D>& out) const
+                              RFieldDft<D, CudaTp<D> >& out) const
    {
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
@@ -285,7 +285,7 @@ namespace Rp {
    */
    template <int D>
    void FieldIo<D, CudaTp<D> >::convertKGridToBasis(
-                              RFieldDft<D> const & in,
+                              RFieldDft<D, CudaTp<D> > const & in,
                               DArray<double>& out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -311,7 +311,7 @@ namespace Rp {
    */
    template <int D>
    bool FieldIo<D, CudaTp<D> >::hasSymmetry(
-                              RFieldDft<D> const & in,
+                              RFieldDft<D, CudaTp<D> > const & in,
                               double epsilon,
                               bool verbose) const
    {

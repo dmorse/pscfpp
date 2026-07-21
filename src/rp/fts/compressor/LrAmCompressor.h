@@ -17,6 +17,7 @@
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
+      template <int D, class T> class RFieldDft;
    }
    namespace Rp {
       template <int D, class T> class System;
@@ -143,7 +144,7 @@ namespace Rp {
       /**
       * Residual in Fourier space.
       */
-      typename T::RFieldDft residK_;
+      RFieldDft<D,T> residK_;
 
       /**
       * Intramolecular correlation function in Fourier space.

@@ -62,7 +62,7 @@ public:
       
       // Cos pressure field perturbation per chain: A * cos(2pi * f* i/meshSize)
       RField<1, CudaTp<1> > cosF;
-      RFieldDft<1> cosFK;
+      RFieldDft<1, CudaTp<1> > cosFK;
       cosF.allocate(dimensions);
       cosFK.allocate(dimensions);
       HostDArray<cudaReal> cosF_h;
@@ -120,7 +120,7 @@ public:
       
       // Compute analytical dphi using Intra
       RField<1, CudaTp<1> > analyticalError;
-      RFieldDft<1> analyticalErrorK;
+      RFieldDft<1, CudaTp<1> > analyticalErrorK;
       analyticalError.allocate(dimensions);
       analyticalErrorK.allocate(dimensions);
       VecOp::mulVV(analyticalErrorK, cosFK, intraCorrelationK);

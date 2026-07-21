@@ -63,7 +63,7 @@ public:
 
       // Cos pressure field perturbation per chain: A * cos(2pi * f* i/meshSize)
       RField<1, CppTp<1> > cosF;
-      RFieldDft<1> cosFK;
+      RFieldDft<1, CppTp<1> > cosFK;
       cosF.allocate(dimensions);
       cosFK.allocate(dimensions);
       PolymerSpecies<double> const & polymer = system.mixture().polymerSpecies(0);
@@ -118,7 +118,7 @@ public:
 
       // Compute analytical dphi using Intra
       RField<1, CppTp<1> > analyticalError;
-      RFieldDft<1> analyticalErrorK;
+      RFieldDft<1, CppTp<1> > analyticalErrorK;
       analyticalError.allocate(dimensions);
       analyticalErrorK.allocate(dimensions);
       MeshIterator<1> iter;

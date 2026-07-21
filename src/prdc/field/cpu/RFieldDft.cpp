@@ -9,12 +9,10 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
-   template class RFieldDft<1>;
-   template class RFieldDft<2>;
-   template class RFieldDft<3>;
+   template class RFieldDft<1, CppTp<1> >;
+   template class RFieldDft<2, CppTp<2> >;
+   template class RFieldDft<3, CppTp<3> >;
 
-}
 }
 }

@@ -18,9 +18,7 @@ namespace Util {
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
-      namespace Cpu {
-         template <int D> class RFieldDft;
-      }
+      template <int D, class T> class RFieldDft;
    }
 }
 

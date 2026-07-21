@@ -80,7 +80,7 @@ namespace Cpu {
       * \param in  array of real values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(RField<D, CppTp<D> > const & in, RFieldDft<D>& out) const;
+      void forwardTransform(RField<D, CppTp<D> > const & in, RFieldDft<D, CppTp<D> >& out) const;
 
       /**
       * Compute inverse (complex-to-real) DFT, overwriting the input.
@@ -99,7 +99,7 @@ namespace Cpu {
       * \param in  array of complex values on k-space grid (overwritten)
       * \param out  array of real values on r-space grid
       */
-      void inverseTransformUnsafe(RFieldDft<D>& in, RField<D, CppTp<D> >& out) const;
+      void inverseTransformUnsafe(RFieldDft<D, CppTp<D> >& in, RField<D, CppTp<D> >& out) const;
 
       /**
       * Compute inverse (complex-to-real) DFT without overwriting input.
@@ -113,7 +113,7 @@ namespace Cpu {
       * \param in  array of complex values on k-space grid 
       * \param out  array of real values on r-space grid 
       */
-      void inverseTransformSafe(RFieldDft<D> const & in, RField<D, CppTp<D> >& out) 
+      void inverseTransformSafe(RFieldDft<D, CppTp<D> > const & in, RField<D, CppTp<D> >& out) 
       const;
 
       // Complex Data (Complex <-> Complex Transforms)
@@ -207,7 +207,7 @@ namespace Cpu {
    private:
 
       /// Private k-space array for performing safe transforms.
-      mutable RFieldDft<D> kFieldCopy_;
+      mutable RFieldDft<D, CppTp<D> > kFieldCopy_;
 
       /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
@@ -236,7 +236,7 @@ namespace Cpu {
       /**
       * Make FFTW plans for transform and inverse transform.
       */
-      void makePlans(RField<D, CppTp<D> >& rField, RFieldDft<D>& kField,
+      void makePlans(RField<D, CppTp<D> >& rField, RFieldDft<D, CppTp<D> >& kField,
                      CField<D>& cFieldIn, CField<D>& cFieldOut);
 
    };
@@ -244,15 +244,15 @@ namespace Cpu {
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1>::makePlans(RField<1, CppTp<1> >& rField, RFieldDft<1>& kField,
+   void FFT<1>::makePlans(RField<1, CppTp<1> >& rField, RFieldDft<1, CppTp<1> >& kField,
                           CField<1>& cFieldIn, CField<1>& cFieldOut);
 
    template <>
-   void FFT<2>::makePlans(RField<2, CppTp<2> >& rField, RFieldDft<2>& kField,
+   void FFT<2>::makePlans(RField<2, CppTp<2> >& rField, RFieldDft<2, CppTp<2> >& kField,
                           CField<2>& cFieldIn, CField<2>& cFieldOut);
 
    template <>
-   void FFT<3>::makePlans(RField<3, CppTp<3> >& rField, RFieldDft<3>& kField,
+   void FFT<3>::makePlans(RField<3, CppTp<3> >& rField, RFieldDft<3, CppTp<3> >& kField,
                           CField<3>& cFieldIn, CField<3>& cFieldOut);
 
    // Inline member functions
