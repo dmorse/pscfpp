@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>        // backend type
+#include <pscf/cpu/CppTp.h>        // specialized template argument
 
 // Forward declarations
 namespace Util {
@@ -22,9 +22,11 @@ namespace Pscf {
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
+
+   // Declare primary template
+   template <int D, class T> class CFieldComparison;
 
    /**
    * Comparator for CField (k-grid) arrays.
@@ -32,7 +34,8 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class CFieldComparison {
+   class CFieldComparison<D, CppTp<D> >
+   {
 
    public:
 
@@ -48,13 +51,13 @@ namespace Cpu {
       /**
       * Compare individual fields.
       *
-      * Array dimensions must agree. An Exception is thrown if the 
+      * Array dimensions must agree. An Exception is thrown if the
       * capacities of fields a and b are not equal.
       *
       * \param a  1st field
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
-      */ 
+      */
       double compare(CField<D, CppTp<D> > const& a, CField<D, CppTp<D> > const& b);
 
       /**
@@ -62,16 +65,16 @@ namespace Cpu {
       *
       * All array dimensions must agree.
       *
-      * An exception is thrown if the capacities of the enclosing 
+      * An exception is thrown if the capacities of the enclosing
       * DArrays (the number of monomers) are not equal or if the
-      * capacities of any pair of individual fields  (number of grid 
+      * capacities of any pair of individual fields  (number of grid
       * points or basis functions) are not equal.
       *
       * \param a  1st DArray of field
       * \param b  2nd DArray of field
       * \return   maximum element-by-element difference (maxDiff)
-      */ 
-      double compare(DArray< CField<D, CppTp<D> > > const& a, 
+      */
+      double compare(DArray< CField<D, CppTp<D> > > const& a,
                      DArray< CField<D, CppTp<D> > > const& b);
 
       /**
@@ -82,33 +85,32 @@ namespace Cpu {
       */
       double maxDiff() const
       {  return maxDiff_; }
-   
+
       /**
       * Return the precomputed root-mean-squared difference.
       *
-      * This function returns the root-mean-squared difference between 
+      * This function returns the root-mean-squared difference between
       * corresponding elements found by the most recent comparison.
       */
       double rmsDiff() const
       {  return rmsDiff_; }
-   
+
    private:
-  
-      // Maximum element-by-element difference. 
+
+      // Maximum element-by-element difference.
       double maxDiff_;
 
-      // Room-mean-squared element-by-element difference. 
+      // Room-mean-squared element-by-element difference.
       double rmsDiff_;
-   
+
    };
 
    // Explicit instantiation declarations
-   extern template class CFieldComparison<1>;
-   extern template class CFieldComparison<2>;
-   extern template class CFieldComparison<3>;
+   extern template class CFieldComparison<1, CppTp<1> >;
+   extern template class CFieldComparison<2, CppTp<2> >;
+   extern template class CFieldComparison<3, CppTp<3> >;
 
 
-} // namespace Cpu
 } // namespace Prdc
 } // namespace Pscf
 #endif

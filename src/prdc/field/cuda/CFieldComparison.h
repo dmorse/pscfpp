@@ -8,14 +8,17 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cuda/CudaTp.h>         // specialized template argument
 #include <prdc/field/cuda/CField.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
+
+   // Declare primary template
+   template <int D, class T> class CFieldComparison;
 
    /**
    * Comparator for CField (k-grid) arrays, defined in device memory.
@@ -23,7 +26,8 @@ namespace Cuda {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class CFieldComparison {
+   class CFieldComparison<D, CudaTp<D> >
+   {
 
    public:
 
@@ -94,12 +98,11 @@ namespace Cuda {
    };
 
    // Explicit instantiation declarations
-   extern template class CFieldComparison<1>;
-   extern template class CFieldComparison<2>;
-   extern template class CFieldComparison<3>;
+   extern template class CFieldComparison<1, CudaTp<1> >;
+   extern template class CFieldComparison<2, CudaTp<2> >;
+   extern template class CFieldComparison<3, CudaTp<3> >;
 
 
-} // namespace Prdc::Cuda
 } // namespace Prdc
 } // namespace Pscf
 #endif

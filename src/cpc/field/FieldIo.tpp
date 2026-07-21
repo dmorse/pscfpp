@@ -175,7 +175,7 @@ namespace Cpc {
                                   DArray< CField<D, CppTp<D> > > const & field2)
    const
    {
-      CFieldComparison<D> comparison;
+      CFieldComparison<D, CppTp<D> > comparison;
       comparison.compare(field1, field2);
 
       Log::file() << "\n Real-space field comparison results"

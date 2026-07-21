@@ -7,14 +7,11 @@
 
 #include "CFieldComparison.tpp"
 
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Prdc {
-namespace Cuda {
-
-   template class CFieldComparison<1>;
-   template class CFieldComparison<2>;
-   template class CFieldComparison<3>;
-
-} // namespace Pscf::Prdc::Cuda
-} // namespace Pscf::Prdc
-} // namespace Pscf
+   namespace Prdc {
+      template class CFieldComparison<1, CudaTp<1> >;
+      template class CFieldComparison<2, CudaTp<2> >;
+      template class CFieldComparison<3, CudaTp<3> >;
+   }
+}

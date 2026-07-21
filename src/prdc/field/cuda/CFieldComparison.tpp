@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_C_FIELD_COMPARISON_TPP
-#define PRDC_CUDA_C_FIELD_COMPARISON_TPP
+#ifndef PRDC_C_FIELD_COMPARISON_CU_TPP
+#define PRDC_C_FIELD_COMPARISON_CU_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -14,18 +14,17 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    // Default Constructor
    template <int D>
-   CFieldComparison<D>::CFieldComparison()
+   CFieldComparison<D, CudaTp<D> >::CFieldComparison()
     : maxDiff_(0.0),
       rmsDiff_(0.0)
    {};
 
    // Comparator for individual fields.
    template <int D>
-   double CFieldComparison<D>::compare(CField<D, CudaTp<D> > const& a, 
+   double CFieldComparison<D, CudaTp<D> >::compare(CField<D, CudaTp<D> > const& a, 
                                        CField<D, CudaTp<D> > const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
@@ -63,7 +62,7 @@ namespace Cuda {
 
    // Comparator for arrays of fields
    template <int D>
-   double CFieldComparison<D>::compare(DArray< CField<D, CudaTp<D> > > const & a,
+   double CFieldComparison<D, CudaTp<D> >::compare(DArray< CField<D, CudaTp<D> > > const & a,
                                        DArray< CField<D, CudaTp<D> > > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
@@ -110,7 +109,6 @@ namespace Cuda {
       return maxDiff_;
    }
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

@@ -20,7 +20,7 @@ namespace Pscf {
       namespace Cpu {
          //template <int D> class CField;
          //template <int D> class FFT;
-         template <int D> class CFieldComparison;
+         //template <int D> class CFieldComparison;
          template <int D> class WaveList;
       }
    }
@@ -85,7 +85,7 @@ namespace Cpc {
 
       //using CField = Prdc::CField<D, CppTp<D> >;
       //using FFT = Prdc::FFT<D, CppTp<D> >;
-      using CFieldComparison = Prdc::Cpu::CFieldComparison<D>;
+      //using CFieldComparison = Prdc::CFieldComparison<D, CppTp<D> >;
       using WaveList = Prdc::Cpu::WaveList<D>;
 
    };

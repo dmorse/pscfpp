@@ -15,13 +15,12 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    /*
    * Default constructor.
    */
    template <int D>
-   CFieldComparison<D>::CFieldComparison()
+   CFieldComparison<D, CppTp<D> >::CFieldComparison()
     : maxDiff_(0.0),
       rmsDiff_(0.0)
    {};
@@ -31,7 +30,7 @@ namespace Cpu {
    */
    template <int D>
    double
-   CFieldComparison<D>::compare(CField<D, CppTp<D> > const& a, CField<D, CppTp<D> > const& b)
+   CFieldComparison<D, CppTp<D> >::compare(CField<D, CppTp<D> > const& a, CField<D, CppTp<D> > const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -68,7 +67,7 @@ namespace Cpu {
    * Comparator for arrays of fields.
    */
    template <int D>
-   double CFieldComparison<D>::compare(DArray< CField<D, CppTp<D> > > const & a,
+   double CFieldComparison<D, CppTp<D> >::compare(DArray< CField<D, CppTp<D> > > const & a,
                                        DArray< CField<D, CppTp<D> > > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
@@ -105,7 +104,6 @@ namespace Cpu {
       return maxDiff_;
    }
 
-}
 }
 }
 #endif
