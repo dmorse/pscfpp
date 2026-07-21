@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_WAVE_LIST_TPP
-#define PRDC_CPU_WAVE_LIST_TPP
+#ifndef PRDC_WAVE_LIST_CP_TPP
+#define PRDC_WAVE_LIST_CP_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -21,7 +21,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    /*
    * Constructor.
@@ -274,7 +273,6 @@ namespace Cpu {
       isSorted_ = true;
    }
 
-}
 }
 }
 #endif

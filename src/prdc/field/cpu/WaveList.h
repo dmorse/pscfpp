@@ -8,11 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/cpu/RField.h>     // member
-#include <pscf/math/IntVec.h>          // member
-#include <util/containers/DArray.h>    // member
-#include <util/containers/GArray.h>    // member
-#include <util/containers/Pair.h>      // member
+#include <pscf/cpu/CppTp.h>          // specialized template argument
+#include <prdc/field/cpu/RField.h>   // member
+#include <pscf/math/IntVec.h>        // member
+#include <util/containers/DArray.h>  // member
+#include <util/containers/GArray.h>  // member
+#include <util/containers/Pair.h>    // member
+#include <util/global.h>
 
 // Forward declarations
 namespace Pscf {
@@ -24,46 +26,48 @@ namespace Pscf {
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
+
+   // Declare primary template
+   template <int D, class T> class WaveList;
 
    /**
    * Class to compute and store properties associated with wavevectors.
    *
    * A WaveList computes and stores minimum images of wavevectors, square
    * norms of wavevectors (kSq), and derivatives of the square norms with
-   * respect to the unit cell parameters (dKSq). A WaveList can also be 
+   * respect to the unit cell parameters (dKSq). A WaveList can also be
    * used to sort wavevectors in order of increasing wavevector norm.
    *
    * A WaveList computes these properties for a mesh of grid points in
    * k-space. Different dimensions are used for this mesh depending on the
    * value of the parameter isRealField that is passed to constructor. This
    * parameter specifies whether this class will use a k-space mesh designed
-   * for real or complex fields throughout the lifetime of this WaveList 
-   * object. If isRealField == true, this class uses the k-space mesh used 
-   * by FFTW for the result of a real-to-complex discrete Fourier transform, 
-   * which is contains slightly more than half the number of grid points as 
-   * the corresponding real-space mesh. If isRealField == true, this class 
-   * uses a k-space mesh with dimensions that are the same as those of the 
+   * for real or complex fields throughout the lifetime of this WaveList
+   * object. If isRealField == true, this class uses the k-space mesh used
+   * by FFTW for the result of a real-to-complex discrete Fourier transform,
+   * which is contains slightly more than half the number of grid points as
+   * the corresponding real-space mesh. If isRealField == true, this class
+   * uses a k-space mesh with dimensions that are the same as those of the
    * associated real-space mesh. The dimensions of this k-space mesh are
    * returned as an IntVec<D> by member function kMeshDimensions().
    *
-   * In most of the arrays constructed by this class, each element 
+   * In most of the arrays constructed by this class, each element
    * corresponds to a wavevector in the associated k-space mesh, and the
-   * index of each element correspond to the rank of the associated 
+   * index of each element correspond to the rank of the associated
    * wavevector within that mesh. This applies to the arrays returned by
    * the functions minImages(), kSq(), dkSq(int i), and bunchIds().
    *
    * Any time the lattice parameters change, the clearUnitCellData() method
    * should be called. This function sets internal flags that mark some
-   * properties as being outdated, indicating that they are outdated and 
+   * properties as being outdated, indicating that they are outdated and
    * thus must be recalculated before the next use.
    *
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class WaveList
+   class WaveList<D, CppTp<D> >
    {
    public:
 
@@ -98,7 +102,7 @@ namespace Cpu {
       * Clear all internal data that depends on lattice parameters.
       *
       * Sets hasKSq_ and hasdKSq_ to false. Sets hasMinImages_ to false
-      * if the unit cell type has variable angles. Sets isSorted_ to 
+      * if the unit cell type has variable angles. Sets isSorted_ to
       * false if the unit cell has more than one unit cell parameter.
       */
       void clearUnitCellData();
@@ -145,7 +149,7 @@ namespace Cpu {
       /**
       * Sort waves in order of ascending wavevector norm.
       *
-      * This function computes the sortedIds, sortedBunches, and bunchIds 
+      * This function computes the sortedIds, sortedBunches, and bunchIds
       * arrays. Values of kSq are updated before sorting waves if hasKSq()
       * is false on entry.
       */
@@ -158,10 +162,10 @@ namespace Cpu {
       /**
       * Get the array of minimum image vectors by const reference.
       *
-      * This function returns an array of kSize elements in which each 
-      * element is an IntVec<D> containing the integer coordinates of 
+      * This function returns an array of kSize elements in which each
+      * element is an IntVec<D> containing the integer coordinates of
       * the minimum image of one wavevector in the k-space mesh used for
-      * a discrete Fourier transforms. Array indices correspond to 
+      * a discrete Fourier transforms. Array indices correspond to
       * ranks in this k-space mesh.
       */
       DArray< IntVec<D> > const & minImages() const;
@@ -184,11 +188,11 @@ namespace Cpu {
       * cell parameter number i, multiplied by a weight factor. If the
       * flag isRealField is true, then the weight factor is 2.0 for waves
       * that have an implicit inverse and and 1.0 otherwise. If isReaField
-      * is false, then the weight factor is 1.0 for all wavevectors. The 
-      * inclusion of a weight factor is designed to simplify use of this 
-      * array to compute stress. 
+      * is false, then the weight factor is 1.0 for all wavevectors. The
+      * inclusion of a weight factor is designed to simplify use of this
+      * array to compute stress.
       *
-      * Values of the grid array index j correspond to the the rank of 
+      * Values of the grid array index j correspond to the the rank of
       * the k-space mesh used for discrete Fourier transforms.
       *
       * \param i index of lattice parameter
@@ -210,7 +214,7 @@ namespace Cpu {
       * This array is defined on a k-grid mesh, with a boolean value for
       * each gridpoint. The boolean represents whether the inverse of the
       * wave at the given gridpoint is an implicit wave in the k-space
-      * mesh used for a discrete Fourier transform of a real function. 
+      * mesh used for a discrete Fourier transform of a real function.
       * The inverse is implicit if it is outside the bounds of this
       * truncated k-space mesh. Array indices correspond to ranks within
       * this k-space mesh.
@@ -233,12 +237,12 @@ namespace Cpu {
       /**
       * Get the sortedBunches array by reference.
       *
-      * Each element in this array contains a Pair<int> of two integers 
-      * that give upper and lower bounds for array indices in the 
+      * Each element in this array contains a Pair<int> of two integers
+      * that give upper and lower bounds for array indices in the
       * sortedIds array of a contiguous slice (a "bunch") of sorted
-      * waves for which the wavevector have equal vector magitudes. The 
-      * first integer in such a pair is the array index of the first 
-      * wavevector in such a bunch, and the second is one greater than 
+      * waves for which the wavevector have equal vector magitudes. The
+      * first integer in such a pair is the array index of the first
+      * wavevector in such a bunch, and the second is one greater than
       * the index of the last wavevector in the bunch.
       *
       * This method throws an Exception if isSorted == false.
@@ -259,8 +263,8 @@ namespace Cpu {
 
       /**
       * Return the dimensions of the k-grid mesh.
-      * 
-      * If isRealField() == true, the reciprocal-space grid is smaller 
+      *
+      * If isRealField() == true, the reciprocal-space grid is smaller
       * than the real-space grid. Otherwise, the two grids are identical.
       */
       IntVec<D> const & kMeshDimensions() const
@@ -280,8 +284,8 @@ namespace Cpu {
       */
       int nBunch() const
       {
-         UTIL_CHECK(isSorted_);  
-         return nBunch_; 
+         UTIL_CHECK(isSorted_);
+         return nBunch_;
       }
 
       ///@}
@@ -348,13 +352,13 @@ namespace Cpu {
       * Derivatives of kSq_ with respect to lattice parameters.
       *
       * Element kSq_[i][j] is the derivative of kSq_[j] with respect to
-      * lattice parameter i. 
+      * lattice parameter i.
       */
       DArray< RField<D, CppTp<D> > > dKSq_;
 
       /**
       * Array indicating whether a given gridpoint has an implicit partner.
-      * 
+      *
       * This array is allocated and used only if isRealField == true.
       */
       DArray<bool> implicitInverse_;
@@ -362,7 +366,7 @@ namespace Cpu {
       /**
       * Wavevector ranks, sorted in ascending wavevector magnitude.
       *
-      * For i > j, kSq_[sortedIds_[i]] >= kSq_[sortedIds_[j]]. 
+      * For i > j, kSq_[sortedIds_[i]] >= kSq_[sortedIds_[j]].
       */
       DArray<int> sortedIds_;
 
@@ -372,8 +376,8 @@ namespace Cpu {
       * Each element contains a pair of integers that give bounds of a
       * slice of the array sortedIds_ that contains ids for wavevectors
       * of equal magnitude. The first value in each pair is the index
-      * within sortedIds_ of the first element in such a "bunch" and 
-      * the second is one greater than the index of the last element 
+      * within sortedIds_ of the first element in such a "bunch" and
+      * the second is one greater than the index of the last element
       * in that bunch.
       */
       GArray< Pair<int> > sortedBunches_;
@@ -514,7 +518,6 @@ namespace Cpu {
    extern template class WaveList<2>;
    extern template class WaveList<3>;
 
-} // Cpu
 } // Prdc
 } // Pscf
 #endif
