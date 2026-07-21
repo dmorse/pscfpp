@@ -15,6 +15,7 @@
 namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
+      template <int D, class T> class RField;
    }
    namespace Rp {
       template <int D, class T> class FieldIo;
@@ -169,26 +170,26 @@ namespace Rp {
       /**
       * Get array of all fields in r-grid format (non-const).
       */
-      DArray<typename T::RField> & rgrid();
+      DArray< RField<D,T> > & rgrid();
 
       /**
       * Get array of all fields in r-grid format (const).
       */
-      DArray<typename T::RField> const & rgrid() const;
+      DArray< RField<D,T> > const & rgrid() const;
 
       /**
       * Get field for one monomer type in r-grid format (non-const)
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      typename T::RField & rgrid(int monomerId);
+      RField<D,T> & rgrid(int monomerId);
 
       /**
       * Get field for one monomer type in r-grid format (const).
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      typename T::RField const & rgrid(int monomerId) const;
+      RField<D,T> const & rgrid(int monomerId) const;
 
       ///@}
       /// \name Field Output
@@ -291,10 +292,10 @@ namespace Rp {
       /*
       * Array of fields in real-space grid (r-grid) format
       *
-      * Element basis_[i] is an typename T::RField that contains values of the
+      * Element basis_[i] is an RField<D,T> that contains values of the
       * field associated with monomer i on the nodes of a regular mesh.
       */
-      DArray<typename T::RField> rgrid_;
+      DArray< RField<D,T> > rgrid_;
 
       /*
       * Number of monomer types.
@@ -370,7 +371,7 @@ namespace Rp {
 
    // Get all fields in r-grid format (non-const)
    template <int D, class T> inline
-   DArray<typename T::RField>& CFields<D,T>::rgrid()
+   DArray< RField<D,T> >& CFields<D,T>::rgrid()
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
@@ -378,7 +379,7 @@ namespace Rp {
 
    // Get all fields in r-grid format (const)
    template <int D, class T> inline
-   DArray<typename T::RField> const & CFields<D,T>::rgrid() const
+   DArray< RField<D,T> > const & CFields<D,T>::rgrid() const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
@@ -386,7 +387,7 @@ namespace Rp {
 
    // Get one field in r-grid format (non-const)
    template <int D, class T> inline
-   typename T::RField& CFields<D,T>::rgrid(int id)
+   RField<D,T>& CFields<D,T>::rgrid(int id)
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];
@@ -394,7 +395,7 @@ namespace Rp {
 
    // Get one field in r-grid format (const)
    template <int D, class T> inline
-   typename T::RField const & CFields<D,T>::rgrid(int id) const
+   RField<D,T> const & CFields<D,T>::rgrid(int id) const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];

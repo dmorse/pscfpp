@@ -15,6 +15,9 @@
 
 // Forward declarations
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
@@ -26,6 +29,7 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Linear response compressor.
@@ -110,7 +114,7 @@ namespace Rp {
 
    private:
 
-      using RFieldT = typename T::RField;
+      using RFieldT = RField<D,T>;
       using RFieldDftT = typename T::RFieldDft;
       using FFTT = typename T::FFT;
 

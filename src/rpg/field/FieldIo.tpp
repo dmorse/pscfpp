@@ -46,7 +46,7 @@ namespace Rp {
    template <int D>
    bool FieldIo<D, CudaTp<D> >::readFieldsRGrid(
                               std::istream &in,
-                              DArray<RField<D> >& fields,
+                              DArray< RField<D, CudaTp<D> > >& fields,
                               UnitCell<D>& unitCell) const
    {
       // Read header and check fields dimensions
@@ -76,7 +76,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CudaTp<D> >::readFieldsRGridData(
                               std::istream& in,
-                              DArray< RField<D> >& fields,
+                              DArray< RField<D, CudaTp<D> > >& fields,
                               int nMonomer) const
    {
       // Precondition: Check dimensions of fields
@@ -99,7 +99,7 @@ namespace Rp {
    template <int D>
    bool FieldIo<D, CudaTp<D> >::readFieldRGrid(
                               std::istream &in,
-                              RField<D> & field,
+                              RField<D, CudaTp<D> > & field,
                               UnitCell<D>& unitCell) const
    {
 
@@ -131,7 +131,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CudaTp<D> >::writeFieldsRGrid(
                               std::ostream &out,
-                              DArray<RField<D> > const & fields,
+                              DArray< RField<D, CudaTp<D> > > const & fields,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric,
@@ -168,7 +168,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CudaTp<D> >::writeFieldRGrid(
                               std::ostream &out,
-                              RField<D> const & field,
+                              RField<D, CudaTp<D> > const & field,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric) const
@@ -332,8 +332,8 @@ namespace Rp {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::compareFieldsRGrid(DArray< RField<D> > const & field1,
-                                       DArray< RField<D> > const & field2) 
+   void FieldIo<D, CudaTp<D> >::compareFieldsRGrid(DArray< RField<D, CudaTp<D> > > const & field1,
+                                       DArray< RField<D, CudaTp<D> > > const & field2) 
    const
    {
       RFieldComparison<D> comparison;
@@ -352,7 +352,7 @@ namespace Rp {
    */
    template <int D>
    void FieldIo<D, CudaTp<D> >::scaleFieldRGrid(
-                              RField<D> & field,
+                              RField<D, CudaTp<D> > & field,
                               double factor) const
    {
       UTIL_CHECK(field.isAllocated());
@@ -365,7 +365,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CudaTp<D> >::replicateUnitCell(
                               std::ostream &out,
-                              DArray< RField<D> > const & fields,
+                              DArray< RField<D, CudaTp<D> > > const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
 
@@ -392,7 +392,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D, CudaTp<D> >::expandRGridDimension(
                               std::ostream &out,
-                              DArray< RField<D> > const & fields,
+                              DArray< RField<D, CudaTp<D> > > const & fields,
                               UnitCell<D> const & unitCell,
                               int d,
                               DArray<int> const& newGridDimensions) const

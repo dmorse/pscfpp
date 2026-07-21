@@ -8,6 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cpu/CppTp.h>        // backend type
+
 // Forward declarations
 namespace Util {
    template <typename T> class DArray;

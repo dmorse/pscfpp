@@ -8,19 +8,25 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DMatrix.h>     // member
+#include <util/containers/DMatrix.h>   // member
+#include <pscf/cpu/CppTp.h>            // backend type
 
+// Forward declaratation
 namespace Util {
    template <typename T> class DArray;
+}
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+      namespace Cpu {
+         template <int D> class RFieldDft;
+      }
+   }
 }
 
 namespace Pscf {
 namespace Prdc {
 namespace Cpu {
-
-   template <int D> class RField;
-   template <int D> class RFieldDft;
-
    using namespace Util;
 
    /**
@@ -110,8 +116,8 @@ namespace Cpu {
       * \param out  output field components, indexed by basis vector id
       * \param prefactor common scalar prefactor
       */
-      void convertToBasis(DArray< RField<D> > const & in, 
-                          DArray< RField<D> > & out,
+      void convertToBasis(DArray< RField<D, CppTp<D> > > const & in, 
+                          DArray< RField<D, CppTp<D> > > & out,
                           double prefactor = 1.0) const;
 
       /**
@@ -127,8 +133,8 @@ namespace Cpu {
       * \param out output fields, indexed by monomer type id
       * \param prefactor common scalar prefactor
       */
-      void convertFromBasis(DArray< RField<D> > const & in, 
-                            DArray< RField<D> > & out,
+      void convertFromBasis(DArray< RField<D, CppTp<D> > > const & in, 
+                            DArray< RField<D, CppTp<D> > > & out,
                             double prefactor = 1.0) const;
 
       /**

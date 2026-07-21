@@ -220,7 +220,7 @@ namespace Rp {
       if (!waveList().hasKSq()) {
          waveList().computeKSq();
       }
-      RField<D> const & kSq = waveList().kSq();
+      RField<D, CppTp<D> > const & kSq = waveList().kSq();
 
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
@@ -241,7 +241,7 @@ namespace Rp {
    */
    template <int D>
    void
-   Block<D, CppTp<D> >::setupSolver(RField<D> const& w)
+   Block<D, CppTp<D> >::setupSolver(RField<D, CppTp<D> > const& w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -277,7 +277,7 @@ namespace Rp {
    * Propagate solution by one step for the thread model.
    */
    template <int D>
-   void Block<D, CppTp<D> >::stepThread(RField<D> const & q, RField<D>& qout) const
+   void Block<D, CppTp<D> >::stepThread(RField<D, CppTp<D> > const & q, RField<D, CppTp<D> >& qout) const
    {
       UTIL_CHECK(PolymerModel::isThread());
 
@@ -353,7 +353,7 @@ namespace Rp {
    * Apply one step of MDE solution for the bead model.
    */
    template <int D>
-   void Block<D, CppTp<D> >::stepBead(RField<D> const & q, RField<D>& qout) const
+   void Block<D, CppTp<D> >::stepBead(RField<D, CppTp<D> > const & q, RField<D, CppTp<D> >& qout) const
    {
       UTIL_CHECK(PolymerModel::isBead());
       stepBondBead(q, qout);
@@ -364,7 +364,7 @@ namespace Rp {
    * Apply the bond operator for the bead model.
    */
    template <int D>
-   void Block<D, CppTp<D> >::stepBondBead(RField<D> const & q, RField<D>& qout) const
+   void Block<D, CppTp<D> >::stepBondBead(RField<D, CppTp<D> > const & q, RField<D, CppTp<D> >& qout) const
    {
       // Prereconditions 
       UTIL_CHECK(isAllocated_);
@@ -390,7 +390,7 @@ namespace Rp {
    * Apply the half-bond operator for the bead model.
    */
    template <int D>
-   void Block<D, CppTp<D> >::stepHalfBondBead(RField<D> const & q, RField<D>& qout) const
+   void Block<D, CppTp<D> >::stepHalfBondBead(RField<D, CppTp<D> > const & q, RField<D, CppTp<D> >& qout) const
    {
       // Preconditions 
       UTIL_CHECK(isAllocated_);
@@ -416,7 +416,7 @@ namespace Rp {
    * Apply the local field operator for the bead model.
    */
    template <int D>
-   void Block<D, CppTp<D> >::stepFieldBead(RField<D>& q) const
+   void Block<D, CppTp<D> >::stepFieldBead(RField<D, CppTp<D> >& q) const
    {
       // Preconditions 
       int nx = mesh().size();
@@ -466,8 +466,8 @@ namespace Rp {
       // Odd indices
       int j;
       for (j = 1; j < (ns_ -1); j += 2) {
-         RField<D> const & qf = p0.q(j);
-         RField<D> const & qr = p1.q(ns_ - 1 - j);
+         RField<D, CppTp<D> > const & qf = p0.q(j);
+         RField<D, CppTp<D> > const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
             //cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 4.0;
             cField()[i] += qf[i] * qr[i] * 4.0;
@@ -476,8 +476,8 @@ namespace Rp {
 
       // Even indices
       for (j = 2; j < (ns_ -2); j += 2) {
-         RField<D> const & qf = p0.q(j);
-         RField<D> const & qr = p1.q(ns_ - 1 - j);
+         RField<D, CppTp<D> > const & qf = p0.q(j);
+         RField<D, CppTp<D> > const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
             // cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 2.0;
             cField()[i] += qf[i] * qr[i] * 2.0;
@@ -520,8 +520,8 @@ namespace Rp {
       // Sum over beads (j = 1, ... , ns_ -2)
       int j;
       for (j = 1; j < (ns_ -1); ++j) {
-         RField<D> const & qf = p0.q(j);
-         RField<D> const & qr = p1.q(ns_ - 1 - j);
+         RField<D, CppTp<D> > const & qf = p0.q(j);
+         RField<D, CppTp<D> > const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
             cField()[i] += qf[i] * qr[i] * expWInv_[i];
          }
@@ -594,7 +594,7 @@ namespace Rp {
 
          // Loop over unit cell parameters
          for (n = 0; n < nParam ; ++n) {
-            RField<D> dKSq = waveList().dKSq(n);
+            RField<D, CppTp<D> > dKSq = waveList().dKSq(n);
             increment = 0.0;
             // Loop over wavevectors
             for (m = 0; m < kSize_ ; ++m) {
@@ -667,7 +667,7 @@ namespace Rp {
 
          // Loop over unit cell parameters
          for (int n = 0; n < nParam ; ++n) {
-            RField<D> dKSq = waveList().dKSq(n);
+            RField<D, CppTp<D> > dKSq = waveList().dKSq(n);
             increment = 0.0;
             // Loop over wavevectors
             for (int m = 0; m < kSize_ ; ++m) {
@@ -693,7 +693,7 @@ namespace Rp {
 
          // Loop over unit cell parameters
          for (int n = 0; n < nParam ; ++n) {
-            RField<D> dKSq = waveList().dKSq(n);
+            RField<D, CppTp<D> > dKSq = waveList().dKSq(n);
             increment = 0.0;
             // Loop over wavevectors
             for (int m = 0; m < kSize_ ; ++m) {
@@ -720,7 +720,7 @@ namespace Rp {
 
          // Loop over unit cell parameters
          for (int n = 0; n < nParam ; ++n) {
-            RField<D> dKSq = waveList().dKSq(n);
+            RField<D, CppTp<D> > dKSq = waveList().dKSq(n);
             increment = 0.0;
             // Loop over wavevectors
             for (int m = 0; m < kSize_ ; ++m) {

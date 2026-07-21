@@ -65,18 +65,18 @@ public:
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<D> const & dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3> > w2;
+      DArray< RField<3, CudaTp<3> > > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
-      RField<D> randomField;
+      RField<D, CudaTp<D> > randomField;
       randomField.allocate(dimensions);
       
       double stepSize = 1e-1;
       CudaVecRandom vecRandom;
       vecRandom.setSeed(0);
-      DArray< RField<3> > const & w = system.w().rgrid();
+      DArray< RField<3, CudaTp<3> > > const & w = system.w().rgrid();
       
       // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
@@ -105,14 +105,14 @@ public:
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<D> const & dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3> > w2;
+      DArray< RField<3, CudaTp<3> > > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
-      DArray< RField<3> > const & w = system.w().rgrid();
+      DArray< RField<3, CudaTp<3> > > const & w = system.w().rgrid();
       
-      RField<D> randomField;
+      RField<D, CudaTp<D> > randomField;
       randomField.allocate(dimensions);
       
       CudaVecRandom vecRandom;
@@ -158,7 +158,7 @@ public:
       IntVec<3> const & dimensions = system.domain().mesh().dimensions();
       
       // Store value of input chemical potential fields
-      DArray< RField<3> > w0;
+      DArray< RField<3, CudaTp<3> > > w0;
       w0.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w0[i].allocate(dimensions);
@@ -175,7 +175,7 @@ public:
       compressor.compress();
       
       // Compute incompressible error
-      RField<3> error;
+      RField<3, CudaTp<3> > error;
       error.allocate(dimensions);
       VecOp::eqS(error, -1.0);
       for (int i = 0; i < nMonomer; i++) {
@@ -192,7 +192,7 @@ public:
       addPressureField(system);
       
       compressor.compress();
-      DArray< RField<3> > w1;
+      DArray< RField<3, CudaTp<3> > > w1;
       w1.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w1[i].allocate(dimensions);

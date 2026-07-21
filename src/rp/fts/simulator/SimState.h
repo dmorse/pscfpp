@@ -11,10 +11,18 @@
 #include <pscf/math/IntVec.h>         // template with default parameter
 #include <util/containers/DArray.h>   // member
 
+// Forward declaration
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * SimState stores the state used by a FTS simulation.
@@ -66,7 +74,7 @@ namespace Rp {
 
       // Public data members
       
-      using FT = typename T::RField;
+      using FT = RField<D,T>;
 
       /**
       * Chemical potential fields, r-grid format, indexed by monomer.

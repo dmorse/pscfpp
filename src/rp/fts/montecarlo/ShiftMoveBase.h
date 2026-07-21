@@ -17,6 +17,9 @@ namespace Util {
    template <typename Data> class Array;
 }
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
    namespace Rp {
       template <int D, class T> class System;
    }
@@ -27,6 +30,7 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * ShiftMove rigidly translates all w fields.
@@ -106,7 +110,7 @@ namespace Rp {
                       IntVec<D> dimensions) const;
 
       /// Shifted field configurations.
-      mutable DArray< typename T::RField > w_;
+      mutable DArray< RField<D,T> > w_;
 
       // Alias for McMove base class.
       using McMoveT = McMove<D,T>;

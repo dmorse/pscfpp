@@ -198,7 +198,7 @@ namespace Rp {
       double phiTot = system().mask().phiTot();
 
       // Create the derivative field in rgrid format
-      RField<D> deriv;
+      RField<D, CudaTp<D> > deriv;
       deriv.allocate(system().domain().mesh().dimensions());
       
       // Set D-dimensional GPU configuration
@@ -212,7 +212,7 @@ namespace Rp {
           interfaceThickness(), normalVecId(), ThreadMesh::meshDims());
       
       // Get xi, the Lagrange multiplier field, in rgrid format
-      RField<D> xi;
+      RField<D, CudaTp<D> > xi;
       xi.allocate(system().domain().mesh().dimensions());
 
       if (system().h().hasData()) {
@@ -298,7 +298,7 @@ namespace Rp {
       double nvLength = system().domain().unitCell().parameter(paramId);
 
       // Setup
-      RField<D> rGrid;
+      RField<D, CudaTp<D> > rGrid;
       rGrid.allocate(system().domain().mesh().dimensions());
 
       // Set D-dimensional GPU configuration

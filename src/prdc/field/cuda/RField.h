@@ -1,35 +1,39 @@
-#ifndef PRDC_CUDA_R_FIELD_H
-#define PRDC_CUDA_R_FIELD_H
+#ifndef PRDC_R_FIELD_CU_H
+#define PRDC_R_FIELD_CU_H
 
 /*
-* PSCF - Polymer Self-Consistent Field 
+* PSCF - Polymer Self-Consistent Field
 *
 * Copyright 2015 - 2025, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cuda/CudaTp.h>         // class template argument
 #include <pscf/cuda/DeviceArray.h>    // base class template
 #include <pscf/cuda/cudaTypes.h>      // base class argument
-#include <pscf/math/IntVec.h>         // member
+#include <pscf/math/IntVec.h>         // class member
 
-#include <pscf/cuda/HostDArray.h>     
+#include <pscf/cuda/HostDArray.h>
 #include <util/global.h>
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
+
+   // Declaration of primary template
+   template <int D, class T> class RField;
 
    /**
    * Field of real values on a regular mesh, allocated on a GPU device.
    *
    * Type cudaReal is float or double, depending on preprocessor macro.
    *
-   * \ingroup Prdc_Cuda_Module 
+   * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class RField : public DeviceArray<cudaReal>
+   class RField<D, CudaTp<D> >
+    : public DeviceArray<cudaReal>
    {
 
    public:
@@ -43,7 +47,7 @@ namespace Cuda {
       * Allocating constructor.
       *
       * Allocates memory by calling allocate(meshDimensions) internally.
-      *  
+      *
       * \param meshDimensions number of grid points in each dimension
       */
       RField(IntVec<D> const & meshDimensions);
@@ -55,7 +59,7 @@ namespace Cuda {
       *
       *\param other the RField to be copied.
       */
-      RField(RField<D> const& other);
+      RField(RField<D, CudaTp<D> > const& other);
 
       /**
       * Destructor.
@@ -82,36 +86,37 @@ namespace Cuda {
       * \param beginId index in the parent array at which this array starts
       * \param meshDimensions number of grid points in each dimension
       */
-      void associate(DeviceArray<cudaReal>& arr, int beginId, 
+      void associate(DeviceArray<cudaReal>& arr, int beginId,
                      IntVec<D> const & meshDimensions);
 
       /**
-      * Assignment operator, assignment from another RField<D>.
+      * Assignment operator, assignment from another RField.
       *
-      * Performs a deep copy, by copying all elements of the RHS RField<D>
-      * from device memory to device memory, and copying the 
+      * Performs a deep copy, by copying all elements of the RHS RField
+      * from device memory to device memory, and copying the
       * meshDimensions.
       *
-      * The RHS RField<D> must be allocated on entry. If this LHS object is 
+      * The RHS RField must be allocated on entry. If this LHS object is
       * not allocated, allocate with the required capacity.  If the LHS and
       * RHS arrays are both allocated, capacity values must be equal.
-      * 
+      *
       * \param other the RHS RField
       */
-      RField<D>& operator = (const RField<D>& other);
+      RField<D, CudaTp<D> >& 
+      operator = (RField<D, CudaTp<D> > const & other);
 
       /**
       * Assignment operator, assignment from a HostDArray<cudaReal>.
       *
-      * Performs a deep copy, by copying all elements of the RHS RField<D>
+      * Performs a deep copy, by copying all elements of the RHS RField
       * from host memory to device memory.
       *
-      * The RHS HostDArray<cudaReal> and LHS RField<D> must both be 
-      * allocated with equal capacity values on entry. 
-      * 
+      * The RHS HostDArray<cudaReal> and LHS RField must both be
+      * allocated with equal capacity values on entry.
+      *
       * \param other the RHS HostDArray<cudaReal>
       */
-      RField<D>& operator = (const HostDArray<cudaReal>& other);
+      RField<D, CudaTp<D> >& operator = (const HostDArray<cudaReal>& other);
 
       /**
       * Return mesh dimensions by constant reference.
@@ -146,16 +151,17 @@ namespace Cuda {
    /*
    * Return mesh dimensions by constant reference.
    */
-   template <int D>
-   inline const IntVec<D>& RField<D>::meshDimensions() const
+   template <int D> inline 
+   IntVec<D> const & 
+   RField<D, CudaTp<D> >::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
-   * Serialize a Field to/from an Archive.
+   * Serialize an RField to/from an Archive.
    */
    template <int D>
    template <class Archive>
-   void RField<D>::serialize(Archive& ar, const unsigned int version)
+   void RField<D, CudaTp<D> >::serialize(Archive& ar, const unsigned int version)
    {
       int capacity;
       if (Archive::is_saving()) {
@@ -184,13 +190,11 @@ namespace Cuda {
       ar & meshDimensions_;
    }
 
-   #ifndef PRDC_CUDA_R_FIELD_TPP
-   extern template class RField<1>;
-   extern template class RField<2>;
-   extern template class RField<3>;
-   #endif
+   // Explicit instantiation declarations
+   extern template class RField<1, CudaTp<1> >;
+   extern template class RField<2, CudaTp<2> >;
+   extern template class RField<3, CudaTp<3> >;
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

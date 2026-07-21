@@ -11,10 +11,18 @@
 #include <rp/fts/brownian/BdStep.h>    // base class
 #include <util/containers/DArray.h>    // member
 
+// Forward declarations
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Leimkuhler-Matthews Brownian dynamics stepper.
@@ -88,7 +96,7 @@ namespace Rp {
 
    private:
 
-      using RFieldT = typename T::RField;
+      using RFieldT = RField<D,T>;
 
       // Private data members
 

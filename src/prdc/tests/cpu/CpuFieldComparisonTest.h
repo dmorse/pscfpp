@@ -33,7 +33,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Cpu::RField<1> rf_0, rf_1;
+      RField<1, CppTp<1> > rf_0, rf_1;
       int n = 10;
       IntVec<1> dimensions;
       dimensions[0] = n;
@@ -65,7 +65,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Cpu::RField<2> rf_0, rf_1;
+      RField<2, CppTp<2> > rf_0, rf_1;
       int m = 5;
       int n = 10;
       IntVec<2> dimensions;

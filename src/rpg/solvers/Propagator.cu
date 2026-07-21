@@ -60,7 +60,7 @@ namespace Rp {
       // Allocate memory in qFieldsAll_ using value of ns
       qFieldsAll_.allocate(ns * meshSize);
 
-      // Set up array of associated RField<D> arrays
+      // Set up array of associated RField<D, CudaTp<D> > arrays
       qFields_.allocate(ns);
       for (int i = 0; i < ns; ++i) {
          qFields_[i].associate(qFieldsAll_, i*meshSize, meshDimensions);
@@ -80,7 +80,7 @@ namespace Rp {
 
       // Deallocate memory previously used by this propagator.
       dissociateQFields();      // dissociate, nulliify data pointers
-      qFields_.deallocate();    // destroy RField<D> objects for slices
+      qFields_.deallocate();    // destroy RField<D, CudaTp<D> > objects for slices
       qFieldsAll_.deallocate(); // destroy contiguous data block
 
       // Store mesh properties

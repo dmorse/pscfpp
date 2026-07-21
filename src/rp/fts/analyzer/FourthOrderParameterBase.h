@@ -15,11 +15,17 @@
 namespace Util {
    template <typename T> class Array;
 }
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * FourthOrderParameterBase is used to detect an order-disorder transition.
@@ -89,7 +95,7 @@ namespace Rp {
       void computePrefactor(Array<double>& prefactor);
 
       /// Prefactor for each Fourier component.
-      typename T::RField prefactor_;
+      RField<D,T> prefactor_;
 
       /// Number of wavevectors in Fourier space (k-grid) mesh.
       int  kSize_;
@@ -107,7 +113,7 @@ namespace Rp {
       typename T::RFieldDft wK_;
 
       /// Fourth powers of Fourier magnitudes, with prefactors.
-      typename T::RField psi_;
+      RField<D,T> psi_;
 
       /// Dimensions of Fourier space (k-grid) mesh for a real field.
       IntVec<D> kMeshDimensions_;

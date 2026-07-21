@@ -62,7 +62,7 @@ public:
    */
    template <int D>
    void allocateRGridFields(Rp::System<D, CppTp<D> > const & system,
-                            DArray< RField<D> >& fields)
+                            DArray< RField<D, CppTp<D> > >& fields)
    {
       // Check and allocate outer DArray
       int nMonomer = system.mixture().nMonomer();
@@ -91,7 +91,7 @@ public:
    template <int D>
    void readRGridFields(Rp::System<D, CppTp<D> > const & system,
                         std::string filename,
-                        DArray< RField<D> >& fields,
+                        DArray< RField<D, CppTp<D> > >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
@@ -116,7 +116,7 @@ public:
       system.w().writeRGrid("out/w_mc_diblock.rf");
 
       // Read reference field
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       UnitCell<3> unitCell;
       readRGridFields(system,"in/w_mc_diblock_ref.rf", rf_0, unitCell);
 
@@ -144,7 +144,7 @@ public:
       system.w().writeRGrid("out/w_mc_diblock_bdMove.rf");
 
       // Read reference field
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       UnitCell<3> unitCell;
       readRGridFields(system,"in/w_mc_diblock_bdMove_ref.rf", rf_0, unitCell);
 
@@ -172,7 +172,7 @@ public:
       system.w().writeRGrid("out/w_mc_diblock_shift.rf");
 
       // Read reference field
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       UnitCell<3> unitCell;
       readRGridFields(system,"in/w_mc_diblock_shift_ref.rf", rf_0, unitCell);
 
@@ -200,7 +200,7 @@ public:
       system.w().writeRGrid("out/w_mc_triblock.rf");
 
       // Read reference field
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       UnitCell<3> unitCell;
       readRGridFields(system,"in/w_mc_triblock_ref.rf", rf_0, unitCell);
 

@@ -4,15 +4,6 @@
 #include <rp/fts/perturbation/Perturbation.h>  // base class template
 #include <pscf/cuda/CudaTp.h>                  // base class argument
 
-// Forward declarations
-namespace Pscf {
-   namespace Prdc {
-      namespace Cuda {
-         template <int D> class RField;
-      }
-   }
-}
-
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {

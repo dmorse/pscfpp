@@ -19,6 +19,7 @@ namespace Util {
 namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
+      template <int D, class T> class RField;
    }
    namespace Rp {
       template <int D, class T> class FieldIo;
@@ -44,7 +45,7 @@ namespace Rp {
    * <b> Field representations </b>: A Mask \<D\> contains representations
    * of the mask field in two formats:
    *
-   *  - An RField<D> object contains values of the field on the nodes of 
+   *  - An RField<D, T> object contains values of the field on the nodes of 
    *    a regular mesh. This is accessed by the rgrid() member function.
    *
    *  - A DArray \<double\> contains components of the field in a
@@ -189,7 +190,7 @@ namespace Rp {
       * \param field  new field in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
-      void setRGrid(typename T::RField const & field, bool isSymmetric = false);
+      void setRGrid(RField<D,T> const & field, bool isSymmetric = false);
 
       /**
       * Read field from input stream in symmetrized basis format.
@@ -309,7 +310,7 @@ namespace Rp {
       /**
       * Get the field in r-grid format.
       */
-      typename T::RField const & rgrid() const;
+      RField<D,T> const & rgrid() const;
 
       /**
       * Return the volume fraction of unit cell occupied by material.
@@ -407,7 +408,7 @@ namespace Rp {
       /**
       * Field in real-space grid (r-grid) format
       */
-      typename T::RField rgrid_;
+      RField<D,T> rgrid_;
 
       /**
       * Integer vector of grid dimensions.
@@ -484,7 +485,7 @@ namespace Rp {
 
    // Get field in r-grid format (const)
    template <int D, class T> inline 
-   typename T::RField const & Mask<D,T>::rgrid() const
+   RField<D,T> const & Mask<D,T>::rgrid() const
    {
       UTIL_ASSERT(hasData_);
       return rgrid_;

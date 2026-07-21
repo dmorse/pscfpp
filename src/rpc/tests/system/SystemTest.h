@@ -351,7 +351,7 @@ public:
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.w().readRGrid("out/testConversion1D_lam_w.rf");
-      DArray< RField<1> > wFieldsRGrid_check;
+      DArray< RField<1, CppTp<1> > > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
       fieldIo.convertRGridToKGrid("out/testConversion1D_lam_w.rf",
@@ -429,7 +429,7 @@ public:
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.w().readRGrid("out/testConversion2D_hex_w.rf");
-      DArray< RField<2> > wFieldsRGrid_check;
+      DArray< RField<2, CppTp<2> > > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
       fieldIo.convertRGridToKGrid("out/testConversion2D_hex_w.rf",
@@ -511,7 +511,7 @@ public:
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.w().readRGrid("out/testConversion3D_bcc_w.rf");
-      DArray< RField<3> > wFieldsRGrid_check;
+      DArray< RField<3, CppTp<3> > > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
       fieldIo.convertRGridToKGrid("out/testConversion3D_bcc_w.rf",
@@ -552,7 +552,7 @@ public:
       TEST_ASSERT(hasSymmetry);
 
       // Copy the wFieldsRGrid to a temporary container
-      RField<3> field;
+      RField<3, CppTp<3> > field;
       field.allocate(system.domain().mesh().dimensions());
       int meshSize = system.domain().mesh().size();
       for (int j = 0; j < meshSize; ++j) {

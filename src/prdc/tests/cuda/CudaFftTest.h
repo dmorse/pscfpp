@@ -74,7 +74,7 @@ void CudaFftTest::testTransformReal1D()
    d[0] = n;
 
    // Instantiate and allocate objects
-   Prdc::Cuda::RField<1> rField(d);
+   Prdc::RField<1, CudaTp<1> > rField(d);
    Prdc::Cuda::RFieldDft<1> kField(d);
    HostDArray<cudaReal> rField1_h(rSize), 
                         rField2_h(rSize), 
@@ -141,7 +141,7 @@ void CudaFftTest::testTransformReal2D()
    d[1] = n2;
 
    // Instantiate and allocate objects
-   Prdc::Cuda::RField<2> rField(d);
+   Prdc::RField<2, CudaTp<2> > rField(d);
    Prdc::Cuda::RFieldDft<2> kField(d);
    HostDArray<cudaReal> rField1_h(rSize), 
                         rField2_h(rSize), 
@@ -217,7 +217,7 @@ void CudaFftTest::testTransformReal3D()
    d[2] = n3;
 
    // Instantiate and allocate objects
-   Prdc::Cuda::RField<3> rField(d);
+   Prdc::RField<3, CudaTp<3> > rField(d);
    Prdc::Cuda::RFieldDft<3> kField(d);
    HostDArray<cudaReal> rField1_h(rSize), 
                         rField2_h(rSize), 
@@ -539,7 +539,7 @@ void CudaFftTest::testBatchedTransformReal1D()
    // First, calculate FFT using FFT<1> object
    Prdc::Cuda::FFT<1> altFFT;
    altFFT.setup(d);
-   Prdc::Cuda::RField<1> rFieldAlt;
+   Prdc::RField<1, CudaTp<1> > rFieldAlt;
    rFieldAlt.associate(rField, 0, d);
    Prdc::Cuda::RFieldDft<1> kFieldAlt(d);
    altFFT.forwardTransform(rFieldAlt, kFieldAlt);
@@ -631,7 +631,7 @@ void CudaFftTest::testBatchedTransformReal2D()
    // First, calculate FFT using FFT<2> object
    Prdc::Cuda::FFT<2> altFFT;
    altFFT.setup(d);
-   Prdc::Cuda::RField<2> rFieldAlt;
+   Prdc::RField<2, CudaTp<2> > rFieldAlt;
    rFieldAlt.associate(rField, 0, d);
    Prdc::Cuda::RFieldDft<2> kFieldAlt(d);
    altFFT.forwardTransform(rFieldAlt, kFieldAlt);
@@ -722,7 +722,7 @@ void CudaFftTest::testBatchedTransformReal3D()
    // First, calculate FFT using FFT<3> object
    Prdc::Cuda::FFT<3> altFFT;
    altFFT.setup(d);
-   Prdc::Cuda::RField<3> rFieldAlt;
+   Prdc::RField<3, CudaTp<3> > rFieldAlt;
    rFieldAlt.associate(rField, 0, d);
    Prdc::Cuda::RFieldDft<3> kFieldAlt(d);
    altFFT.forwardTransform(rFieldAlt, kFieldAlt);

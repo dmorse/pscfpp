@@ -8,8 +8,8 @@
 *Distributed under the terms of the GNU General Public License.
 */
 
-#include<rp/fts/simulator/SimState.h>  // class template
-#include<pscf/cuda/CudaTp.h>           // template argument
+#include <rp/fts/simulator/SimState.h>  // class template
+#include <pscf/cuda/CudaTp.h>           // template argument
 
 //Explicit instantiation declarations
 namespace Pscf {

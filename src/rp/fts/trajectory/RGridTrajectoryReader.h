@@ -14,10 +14,18 @@
 #include <fstream>                      // member
 #include <string>                       // function parameter
 
+// Forward declaration
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Trajectory file reader.
@@ -83,7 +91,7 @@ namespace Rp {
    private:
 
       // Field configuration
-      DArray< typename T::RField > wField_;
+      DArray< RField<D,T> > wField_;
 
       // Dimensions of computational mesh (# of points in each direction)
       IntVec<D> meshDimensions_;

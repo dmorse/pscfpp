@@ -118,22 +118,22 @@ public:
       simulator.analyzeChi();
 
       system.w().readRGrid("in/w_gyr.rf");
-      DArray< RField<3> > const & w = system.w().rgrid();
+      DArray< RField<3, CppTp<3> > > const & w = system.w().rgrid();
 
       system.compute();
-      DArray< RField<3> > const & c = system.c().rgrid();
+      DArray< RField<3, CppTp<3> > > const & c = system.c().rgrid();
 
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
 
       simulator.computeWc();
-      DArray< RField<3> > const & wc = simulator.wc();
+      DArray< RField<3, CppTp<3> > > const & wc = simulator.wc();
 
       simulator.computeCc();
-      DArray< RField<3> > const & cc = simulator.cc();
+      DArray< RField<3, CppTp<3> > > const & cc = simulator.cc();
 
       simulator.computeDc();
-      DArray< RField<3> > const & dc = simulator.dc();
+      DArray< RField<3, CppTp<3> > > const & dc = simulator.dc();
 
       // Check allocation and capacities
       TEST_ASSERT(c.capacity() == nMonomer);
@@ -260,7 +260,7 @@ public:
 
       int nMonomer = system.mixture().nMonomer();
       IntVec<3> dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3> > dc0;
+      DArray< RField<3, CppTp<3> > > dc0;
       dc0.allocate(nMonomer-1);
       for (int i = 0; i < nMonomer - 1; ++i) {
          dc0[i].allocate(dimensions);

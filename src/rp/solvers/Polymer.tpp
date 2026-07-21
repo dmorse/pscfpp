@@ -54,7 +54,7 @@ namespace Rp {
    * Compute solution to MDE and block concentrations.
    */
    template <int D, class T>
-   void Polymer<D,T>::compute(DArray< typename T::RField > const & wFields,
+   void Polymer<D,T>::compute(DArray< RField<D,T> > const & wFields,
                               double phiTot)
    {
       // Setup solvers for all blocks

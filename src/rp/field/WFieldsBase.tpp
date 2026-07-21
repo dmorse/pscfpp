@@ -205,7 +205,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFieldsBase<D,T>::setRGrid(DArray<typename T::RField> const & fields,
+   WFieldsBase<D,T>::setRGrid(DArray<RField<D,T> > const & fields,
                           bool isSymmetric)
    {
       // Allocate r-grid fields as needed

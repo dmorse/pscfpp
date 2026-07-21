@@ -439,7 +439,7 @@ namespace Rp {
    */
    template <int D>
    void
-   Block<D, CudaTp<D> >::setupSolver(RField<D> const & w)
+   Block<D, CudaTp<D> >::setupSolver(RField<D, CudaTp<D> > const & w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -466,7 +466,7 @@ namespace Rp {
    * Propagate solution by one step.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepThread(RField<D> const & qin, RField<D>& qout) const
+   void Block<D, CudaTp<D> >::stepThread(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -483,7 +483,7 @@ namespace Rp {
       UTIL_CHECK(fftBatchedPair_.isSetup());
 
       // Set up associated workspace fields slices
-      RField<D> qr, qr2;
+      RField<D, CudaTp<D> > qr, qr2;
       RFieldDft<D> qk, qk2;
       qr.associate(qrPair_, 0, mesh().dimensions());
       qr2.associate(qrPair_, nx, mesh().dimensions());
@@ -514,7 +514,7 @@ namespace Rp {
    * Apply one step of the MDE solution for the bead model. 
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepBead(RField<D> const & qin, RField<D>& qout) const
+   void Block<D, CudaTp<D> >::stepBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const
    {
       stepBondBead(qin, qout);
       stepFieldBead(qout);
@@ -524,7 +524,7 @@ namespace Rp {
    * Apply the field operator for the bead model.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepFieldBead(RField<D>& q) const
+   void Block<D, CudaTp<D> >::stepFieldBead(RField<D, CudaTp<D> >& q) const
    {
       // Preconditions
       int nx = mesh().size();
@@ -538,7 +538,7 @@ namespace Rp {
    * Apply the bond operator for the bead model.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepBondBead(RField<D> const & qin, RField<D>& qout) const
+   void Block<D, CudaTp<D> >::stepBondBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -564,7 +564,7 @@ namespace Rp {
    * Apply the half-bond operator for the bead model.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepHalfBondBead(RField<D> const & qin, RField<D>& qout) const
+   void Block<D, CudaTp<D> >::stepHalfBondBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -684,7 +684,7 @@ namespace Rp {
       normal = 3.0*6.0;
       FSArray<double, 6> dQ;
       int i, j, n;
-      RField<D> rTmp(kMeshDimensions_); // array of real values on kgrid
+      RField<D, CudaTp<D> > rTmp(kMeshDimensions_); // array of real values on kgrid
 
       // Initialize dQ and stress to 0
       stress_.clear();
@@ -822,7 +822,7 @@ namespace Rp {
          dQ.append(0.0);
       }
 
-      RField<D> rTmp(kMeshDimensions_);   // k-space work space
+      RField<D, CudaTp<D> > rTmp(kMeshDimensions_);   // k-space work space
       const double b = BlockTmplT::kuhn();
       const double bSq = b * b / 6.0;
       double increment;

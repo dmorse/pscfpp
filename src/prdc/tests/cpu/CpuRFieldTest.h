@@ -46,7 +46,7 @@ void CpuRFieldTest::testConstructor()
 
    printMethod(TEST_FUNC);
    {
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
@@ -61,7 +61,7 @@ void CpuRFieldTest::testAllocate3()
       d[1] = 3;
       d[2] = 4;
 
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -79,7 +79,7 @@ void CpuRFieldTest::testSubscript()
       d[1] = 3;
       d[2] = 4;
 
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -105,7 +105,7 @@ void CpuRFieldTest::testCopyConstructor()
       d[1] = 3;
       d[2] = 4;
 
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -116,7 +116,7 @@ void CpuRFieldTest::testCopyConstructor()
          v[i] = (i+1)*10.0;
       }
    
-      Cpu::RField<3> u(v);
+      RField<3, CppTp<3> > u(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated() );
    
@@ -136,14 +136,14 @@ void CpuRFieldTest::testAssignment()
       d[1] = 3;
       d[2] = 4;
 
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(capacity == 24);
       TEST_ASSERT(v.meshDimensions() == d);
    
-      Cpu::RField<3> u;
+      RField<3, CppTp<3> > u;
       u.allocate(d);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.capacity() == capacity);
@@ -172,7 +172,7 @@ void CpuRFieldTest::testSerialize1Memory()
       d[1] = 3;
       d[2] = 4;
 
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -198,7 +198,7 @@ void CpuRFieldTest::testSerialize1Memory()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::RField<3> u;
+      RField<3, CppTp<3> > u;
       u.allocate(d);
    
       MemoryIArchive iArchive;
@@ -263,7 +263,7 @@ void CpuRFieldTest::testSerialize2Memory()
       d[1] = 3;
       d[2] = 4;
 
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -285,7 +285,7 @@ void CpuRFieldTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::RField<3> u;
+      RField<3, CppTp<3> > u;
    
       // Note: We do not allocate RField u in this test.
       // This is the main difference from testSerialize1Memory()
@@ -314,7 +314,7 @@ void CpuRFieldTest::testSerialize1File()
       d[1] = 3;
       d[2] = 4;
 
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -338,7 +338,7 @@ void CpuRFieldTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::RField<3> u;
+      RField<3, CppTp<3> > u;
       u.allocate(d);
    
       BinaryFileIArchive iArchive;
@@ -377,7 +377,7 @@ void CpuRFieldTest::testSerialize2File()
       d[1] = 3;
       d[2] = 4;
 
-      Cpu::RField<3> v;
+      RField<3, CppTp<3> > v;
       v.allocate(d);
       int capacity = v.capacity();
       TEST_ASSERT(v.isAllocated());
@@ -401,7 +401,7 @@ void CpuRFieldTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      Cpu::RField<3> u;
+      RField<3, CppTp<3> > u;
    
       // u.allocate(d); -> 
       // Note: We do not allocate first. This is the difference 

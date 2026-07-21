@@ -9,6 +9,9 @@ namespace Util {
    template <typename T> class DArray; 
 }
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField; 
+   }
    namespace Rp {
       template <int D, class T> class System; 
       template <int D, class T> class Simulator; 
@@ -20,6 +23,7 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Base class for additive perturbations of standard FTS Hamiltonian.
@@ -90,7 +94,7 @@ namespace Rp {
       *
       * Empty default implementation.
       */
-      virtual void incrementDc(DArray< typename T::RField >& dc);
+      virtual void incrementDc(DArray< RField<D,T> >& dc);
 
       /**
       * Save any required internal state variables.

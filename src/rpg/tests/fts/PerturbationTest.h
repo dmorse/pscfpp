@@ -55,7 +55,7 @@ public:
    */
    template <int D>
    void allocateRGridFields(Rp::System<D, CudaTp<D> > const & system,
-                            DArray< RField<D> >& fields)
+                            DArray< RField<D, CudaTp<D> > >& fields)
    {
       // Check and allocate outer DArray
       int nMonomer = system.mixture().nMonomer();
@@ -84,7 +84,7 @@ public:
    template <int D>
    void readRGridFields(Rp::System<D, CudaTp<D> > const & system,
                         std::string filename,
-                        DArray< RField<D> >& fields,
+                        DArray< RField<D, CudaTp<D> > >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
@@ -115,7 +115,7 @@ public:
       system.w().writeRGrid(outfieldsfilename);
 
       // Read reference field
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CudaTp<3> > > rf_0;
       UnitCell<3> unitCell;
 
       readRGridFields(system,reffieldsfilename, rf_0, unitCell);

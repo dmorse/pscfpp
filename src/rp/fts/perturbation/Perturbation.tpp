@@ -50,7 +50,7 @@ namespace Rp {
    * Modify functional derivatives, empty default implementation.
    */
    template <int D, class T>
-   void Perturbation<D,T>::incrementDc(DArray< typename T::RField > & dc)
+   void Perturbation<D,T>::incrementDc(DArray< RField<D,T> > & dc)
    {}
 
    /*

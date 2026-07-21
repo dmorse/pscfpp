@@ -96,14 +96,14 @@ namespace Rp {
       }
 
       // Create the derivative field in rgrid format
-      RField<D> deriv;
+      RField<D, CppTp<D> > deriv;
       IntVec<3> coords;
       int x, y, z;
       int counter = 0;
       double d, maskVal;
 
       deriv.allocate(mesh.dimensions());
-      RField<D> const & maskRGrid = system().mask().rgrid();
+      RField<D, CppTp<D> > const & maskRGrid = system().mask().rgrid();
       
       for (x = 0; x < dim[0]; x++) {
          coords[0] = x;
@@ -130,7 +130,7 @@ namespace Rp {
       int nMonomer = system().mixture().nMonomer();
       int nx = mesh.size();
       double chi;
-      RField<D> xi;
+      RField<D, CppTp<D> > xi;
       xi.allocate(mesh.dimensions());
 
       for (int i = 0; i < nx; i++) {
@@ -140,7 +140,7 @@ namespace Rp {
       for (int in = 0; in < nMonomer; in++) {
          chi = system().interaction().chi(0,in);
          if (fabs(chi) > 1e-6) { // if chi is nonzero
-            RField<D> const & cfield = system().c().rgrid(in);
+            RField<D, CppTp<D> > const & cfield = system().c().rgrid(in);
             for (int i = 0; i < nx; i++) {
                //xi[i] -= system().c().rgrid(in)[i] * chi;
                xi[i] -= cfield[i] * chi;
@@ -149,7 +149,7 @@ namespace Rp {
       }
 
       if (system().h().hasData()) {
-         RField<D> const & hfield = system().h().rgrid(0);
+         RField<D, CppTp<D> > const & hfield = system().h().rgrid(0);
          for (int i = 0; i < nx; i++) {
             //xi[i] -= system().h().rgrid(0)[i];
             xi[i] -= hfield[i];
@@ -240,7 +240,7 @@ namespace Rp {
       }
 
       // Generate an r-grid representation of the walls
-      RField<D> rGrid;
+      RField<D, CppTp<D> > rGrid;
       rGrid.allocate(system().domain().mesh().dimensions());
       int x, y, z;
       int counter = 0;

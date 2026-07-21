@@ -13,10 +13,18 @@
 #include <util/containers/DArray.h>       // member
 #include <iostream>
 
+// Forward declaration
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Evaluate max of square magnitude of Fourier modes for exchange field.
@@ -92,7 +100,7 @@ namespace Rp {
       void findMaximum(Array<typename T::Real> const & psi);
 
       /// Square magnitude |W_|^2 in Fourier space.
-      typename T::RField psi_;
+      RField<D,T> psi_;
 
       /// Maximum square magnitude (value of maximum element of psi_).
       double maxPsi_;

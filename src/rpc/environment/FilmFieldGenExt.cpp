@@ -80,8 +80,8 @@ namespace Rp {
       // Setup
       int nMonomer = system().mixture().nMonomer();
       int nx = system().domain().mesh().size();
-      RField<D> const & maskRGrid = system().mask().rgrid();
-      RField<D> maskDeriv, hDeriv;
+      RField<D, CppTp<D> > const & maskRGrid = system().mask().rgrid();
+      RField<D, CppTp<D> > maskDeriv, hDeriv;
       maskDeriv.allocate(system().domain().mesh().dimensions());
       hDeriv.allocate(system().domain().mesh().dimensions());
       IntVec<3> coords;
@@ -143,7 +143,7 @@ namespace Rp {
          }
 
          // Get the integral term in the stress
-         RField<D> const & c = system().c().rgrid(i);
+         RField<D, CppTp<D> > const & c = system().c().rgrid(i);
          for (int i = 0; i < nx; i++) {
             term += c[i] * hDeriv[i];
          }
@@ -192,10 +192,10 @@ namespace Rp {
       }
 
       // Get pointer to mask RField
-      RField<D> const & maskPtr = system().mask().rgrid();
+      RField<D, CppTp<D> > const & maskPtr = system().mask().rgrid();
 
       // Generate an r-grid representation of the external fields
-      DArray< RField<D> > hRGrid;
+      DArray< RField<D, CppTp<D> > > hRGrid;
       hRGrid.allocate(nm);
       for (int i = 0; i < nm; i++) {
          hRGrid[i].allocate(system().domain().mesh().dimensions());

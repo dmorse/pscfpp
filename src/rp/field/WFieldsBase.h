@@ -20,6 +20,7 @@ namespace Util {
 namespace Pscf {
    namespace Prdc {
       template <int D> class UnitCell;
+      template <int D, class T> class RField;
    }
    namespace Rp {
       template <int D, class T> class FieldIo;
@@ -191,7 +192,7 @@ namespace Rp {
       * \param fields  array of new fields in r-grid format
       * \param isSymmetric is this field symmetric under the space group?
       */
-      void setRGrid(DArray<typename T::RField> const & fields,
+      void setRGrid(DArray<RField<D,T> > const & fields,
                     bool isSymmetric = false);
 
       /**
@@ -354,14 +355,14 @@ namespace Rp {
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<typename T::RField> const & rgrid() const;
+      DArray<RField<D,T> > const & rgrid() const;
 
       /**
       * Get the field for one monomer type in r-space grid format.
       *
       * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
-      typename T::RField const & rgrid(int monomerId) const;
+      RField<D,T> const & rgrid(int monomerId) const;
 
       ///@}
       /// \name Boolean Queries
@@ -451,7 +452,7 @@ namespace Rp {
       * Element basis_[i] is an RField that contains values of the
       * field associated with monomer i on the nodes of a regular mesh.
       */
-      DArray<typename T::RField> rgrid_;
+      DArray<RField<D,T> > rgrid_;
 
       /**
       * Integer vector of grid dimensions.
@@ -547,7 +548,7 @@ namespace Rp {
 
    // Get all fields in r-grid format (const)
    template <int D, class T> inline
-   DArray<typename T::RField> const & WFieldsBase<D,T>::rgrid() const
+   DArray<RField<D,T> > const & WFieldsBase<D,T>::rgrid() const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_;
@@ -555,7 +556,7 @@ namespace Rp {
 
    // Get one field in r-grid format (const)
    template <int D, class T> inline
-   typename T::RField const & WFieldsBase<D,T>::rgrid(int id) const
+   RField<D,T> const & WFieldsBase<D,T>::rgrid(int id) const
    {
       UTIL_ASSERT(isAllocatedRGrid_);
       return rgrid_[id];

@@ -67,7 +67,7 @@ namespace Rp {
       UTIL_CHECK(isAllocated_);
 
       // Reference to head slice of this propagator
-      typename T::RField& qh = qFields_[0];
+      RField<D,T>& qh = qFields_[0];
 
       // Initialize head slice qh to 1.0 at all grid points
       VecOp::eqS(qh, 1.0);
@@ -103,7 +103,7 @@ namespace Rp {
    * Solve the MDE with a specified initial condition at the head.
    */
    template <int D, class T>
-   void PropagatorBase<D,T>::solve(typename T::RField const & head)
+   void PropagatorBase<D,T>::solve(RField<D,T> const & head)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(head.capacity() == mesh().size());

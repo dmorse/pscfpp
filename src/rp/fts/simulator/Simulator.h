@@ -18,6 +18,9 @@ namespace Util {
    class Random; 
 }
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class SimState;
@@ -34,6 +37,7 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Base class for field theoretic PS-FTS simulator.
@@ -90,7 +94,7 @@ namespace Rp {
    public:
 
       /// Container for a real-valued periodic field
-      using RFieldT = typename T::RField;
+      using RFieldT = RField<D,T>;
 
       /// \name Construction, destruction and initialization
       ///@{
@@ -417,7 +421,7 @@ namespace Rp {
       * a chemical field component \f$ W_{a}({\bf r}) \f$ as defined in
       * the documentation of computeWc(), for a = 0, ..., nMonomer - 1.
       */
-      DArray<RFieldT> const & wc() const;
+      DArray< RField<D,T> > const & wc() const;
 
       /**
       * Get one eigenvector component of the current w fields.
@@ -426,7 +430,7 @@ namespace Rp {
       *
       * \param a eigenvector index in range 0 , ..., nMonomer -1
       */
-      RFieldT const & wc(int a) const;
+      RField<D,T> const & wc(int a) const;
 
       /**
       * Are eigen-components of the current w fields valid ?
@@ -467,7 +471,7 @@ namespace Rp {
       * intentional, and is convenient for other aspects of the
       * underlying theory.
       */
-      DArray<RFieldT> const & cc() const;
+      DArray< RField<D,T> > const & cc() const;
 
       /**
       * Get one eigenvector component of the current c fields.
@@ -477,7 +481,7 @@ namespace Rp {
       *
       * \param a eigenvector / eigenvalue index
       */
-      RFieldT const & cc(int a) const;
+      RField<D,T> const & cc(int a) const;
 
       /**
       * Are eigen-components of the current c fields valid ?
@@ -505,14 +509,14 @@ namespace Rp {
       * respect to the field component \f$ W_{a} \f$ that is returned
       * by the member function wc(a).
       */
-      DArray<RFieldT> const & dc() const;
+      DArray< RField<D,T> > const & dc() const;
 
       /**
       * Get one eigenvector component of the current d fields.
       *
       * \param i  eigenvector / eigenvalue index
       */
-      RFieldT const & dc(int i) const;
+      RField<D,T> const & dc(int i) const;
 
       /**
       * Are the current d fields valid ?
@@ -718,7 +722,7 @@ namespace Rp {
       * monomer types, nMonomer. The last component is a pressure-like
       * field.
       */
-      DArray<RFieldT> wc_;
+      DArray< RField<D,T> > wc_;
 
       /**
       * Eigenvector components of c fields on a real space grid.
@@ -729,7 +733,7 @@ namespace Rp {
       * monomer types, nMonomer. The last component must satisfy an
       * incompressibility constraint.
       */
-      DArray<RFieldT> cc_;
+      DArray< RField<D,T> > cc_;
 
       /**
       * Components of d fields on a real space grid.
@@ -737,7 +741,7 @@ namespace Rp {
       * Each field component is the functional derivative of H[W]
       * with respect to one eigenvector w-field component.
       */
-      DArray<RFieldT> dc_;
+      DArray< RField<D,T> > dc_;
 
       /**
       * Previous state saved at the beginning of a step.
@@ -858,7 +862,7 @@ namespace Rp {
       /**
       * Field used as temporary work space.
       */
-      mutable RFieldT tmpField_;
+      mutable RField<D,T> tmpField_;
 
       // Pointers to associated objects
 
@@ -1090,12 +1094,12 @@ namespace Rp {
 
    // Return all eigencomponents of the w fields.
    template <int D, class T> inline 
-   DArray<typename T::RField> const & Simulator<D,T>::wc() const
+   DArray<RField<D,T> > const & Simulator<D,T>::wc() const
    {  return wc_; }
 
    // Return a single eigenvector component of the w fields.
    template <int D, class T> inline 
-   typename T::RField const & Simulator<D,T>::wc(int a) const
+   RField<D,T> const & Simulator<D,T>::wc(int a) const
    {  return wc_[a]; }
 
    // Have eigenvector components of the current c fields been computed?
@@ -1105,12 +1109,12 @@ namespace Rp {
 
    // Return all eigenvector components of the current c fields.
    template <int D, class T> inline 
-   DArray<typename T::RField> const & Simulator<D,T>::cc() const
+   DArray<RField<D,T> > const & Simulator<D,T>::cc() const
    {  return cc_; }
 
    // Return a single eigenvector component of the current c fields.
    template <int D, class T> inline 
-   typename T::RField const & Simulator<D,T>::cc(int a) const
+   RField<D,T> const & Simulator<D,T>::cc(int a) const
    {  return cc_[a]; }
 
    // Have eigenvector components of the current d fields been computed?
@@ -1120,12 +1124,12 @@ namespace Rp {
 
    // Return all eigenvector components of the current d fields.
    template <int D, class T> inline 
-   DArray<typename T::RField> const & Simulator<D,T>::dc() const
+   DArray<RField<D,T> > const & Simulator<D,T>::dc() const
    {  return dc_; }
 
    // Return a single eigenvector component of the current d fields.
    template <int D, class T> inline 
-   typename T::RField const & Simulator<D,T>::dc(int a) const
+   RField<D,T> const & Simulator<D,T>::dc(int a) const
    {  return dc_[a]; }
 
    // Return the current converged simulation step index.

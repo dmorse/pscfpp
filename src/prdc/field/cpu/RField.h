@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_R_FIELD_H
-#define PRDC_CPU_R_FIELD_H
+#ifndef PRDC_R_FIELD_CP_H
+#define PRDC_R_FIELD_CP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -8,12 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/FftwDRArray.h>   // base class
-#include <pscf/math/IntVec.h>       // member
+#include <pscf/cpu/CppTp.h>        // template argument (backend)
+#include <pscf/cpu/FftwDRArray.h>  // base class
+#include <pscf/math/IntVec.h>      // member
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
+
+   // Declaration of primary class template
+   template <int D, class T> class RField;
 
    using namespace Util;
 
@@ -23,7 +26,8 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class RField : public FftwDRArray<double>
+   class RField<D, CppTp<D> >
+     : public FftwDRArray<double>
    {
 
    public:
@@ -65,7 +69,7 @@ namespace Cpu {
       *
       * \param other the RHS RField
       */
-      RField& operator = (const RField& other);
+      RField& operator = (RField const& other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -107,8 +111,9 @@ namespace Cpu {
    /*
    * Return mesh dimensions by constant reference.
    */
-   template <int D>
-   inline const IntVec<D>& RField<D>::meshDimensions() const
+   template <int D> inline 
+   IntVec<D> const & 
+   RField<D, CppTp<D> >::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
@@ -116,18 +121,18 @@ namespace Cpu {
    */
    template <int D>
    template <class Archive>
-   void RField<D>::serialize(Archive& ar, const unsigned int version)
+   void RField<D, CppTp<D> >::serialize(Archive& ar, 
+		                        const unsigned int version)
    {
       FftwDRArray<double>::serialize(ar, version);
       ar & meshDimensions_;
    }
 
    // Explicit instantiation declarations
-   extern template class RField<1>;
-   extern template class RField<2>;
-   extern template class RField<3>;
+   extern template class RField<1, CppTp<1> >;
+   extern template class RField<2, CppTp<2> >;
+   extern template class RField<3, CppTp<3> >;
 
-} // namespace Cpu
 } // namespace Prdc
 } // namespace Pscf
 #endif

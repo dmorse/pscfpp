@@ -42,10 +42,10 @@ namespace Rp {
    */
    template<int D>
    void ForceBiasMove<D, CppTp<D> >::computeForceBias(
-                               RField<D>& result,
-                               RField<D> const & di,
-                               RField<D> const & df,
-                               RField<D> const & dwc,
+                               RField<D, CppTp<D> >& result,
+                               RField<D, CppTp<D> > const & di,
+                               RField<D, CppTp<D> > const & df,
+                               RField<D, CppTp<D> > const & dwc,
                                double mobility)
    {
       const int n

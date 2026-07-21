@@ -93,7 +93,7 @@ public:
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                       DArray< RField<D> >& fields)
+                       DArray< RField<D, CppTp<D> > >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -113,7 +113,7 @@ public:
 
    template <int D>
    void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RField<D> >& fields)
+                   DArray< RField<D, CppTp<D> > >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -133,7 +133,7 @@ public:
 
    template <int D>
    void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RField<D> > const & fields)
+                   DArray< RField<D, CppTp<D> > > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -222,7 +222,7 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RField<3> > rf;
+      DArray< RField<3, CppTp<3> > > rf;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
@@ -260,7 +260,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      DArray< RField<3> > rf;
+      DArray< RField<3, CppTp<3> > > rf;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
@@ -335,7 +335,7 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RField<3> > rf;
+      DArray< RField<3, CppTp<3> > > rf;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
@@ -375,7 +375,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      DArray< RField<3> > rf;
+      DArray< RField<3, CppTp<3> > > rf;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);

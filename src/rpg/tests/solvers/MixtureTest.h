@@ -101,8 +101,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< Cuda::RField<1> > wFields;
-      DArray< Cuda::RField<1> > cFields;
+      DArray< RField<1, CudaTp<1> > > wFields;
+      DArray< RField<1, CudaTp<1> > > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -188,8 +188,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< Cuda::RField<1> > wFields;
-      DArray< Cuda::RField<1> > cFields;
+      DArray< RField<1, CudaTp<1> > > wFields;
+      DArray< RField<1, CudaTp<1> > > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -263,8 +263,8 @@ public:
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
 
       // Allocate w and c field arrays on device and host
-      DArray< Cuda::RField<2> > wFields;
-      DArray< Cuda::RField<2> > cFields;
+      DArray< RField<2, CudaTp<2> > > wFields;
+      DArray< RField<2, CudaTp<2> > > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -344,8 +344,8 @@ public:
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
 
       // Allocate w and c field arrays on device and host
-      DArray< Cuda::RField<2> > wFields;
-      DArray< Cuda::RField<2> > cFields;
+      DArray< RField<2, CudaTp<2> > > wFields;
+      DArray< RField<2, CudaTp<2> > > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -429,8 +429,8 @@ public:
       mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
-      DArray< Cuda::RField<3> > wFields;
-      DArray< Cuda::RField<3> > cFields;
+      DArray< RField<3, CudaTp<3> > > wFields;
+      DArray< RField<3, CudaTp<3> > > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);

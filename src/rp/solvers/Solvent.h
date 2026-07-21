@@ -13,10 +13,15 @@
 // Forward declaration
 namespace Pscf {
    template <int D> class Mesh;
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
 }
 
 namespace Pscf {
 namespace Rp {
+
+   using namespace Prdc;
 
    /**
    * Solver and descriptor for a solvent species.
@@ -97,7 +102,7 @@ namespace Rp {
       * \param wField  monomer chemical potential field of relevant type.
       * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void compute(typename T::RField const & wField, double phiTot = 1.0);
+      void compute(RField<D,T> const & wField, double phiTot = 1.0);
 
       /**
       * Get the monomer concentration field for this solvent.
@@ -105,12 +110,12 @@ namespace Rp {
       * This function retrieves the concentration field computed by the
       * compute() function.
       */
-      typename T::RField const & cField() const;
+      RField<D,T> const & cField() const;
 
    private:
 
       /// Concentration field for this solvent.
-      typename T::RField cField_;
+      RField<D,T> cField_;
 
       /// Pointer to associated mesh.
       Mesh<D> const *  meshPtr_;
@@ -121,7 +126,7 @@ namespace Rp {
    * Get monomer concentration field for this solvent.
    */
    template <int D, class T> inline
-   typename T::RField const & Solvent<D,T>::cField() const
+   RField<D,T> const & Solvent<D,T>::cField() const
    {  return cField_;  }
 
 }

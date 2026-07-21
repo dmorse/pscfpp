@@ -300,7 +300,7 @@ namespace Rp {
    template <int D, class T>
    bool FieldIoBase<D,T>::readFieldsRGrid(
                               std::string filename,
-                              DArray< typename T::RField >& fields,
+                              DArray< RField<D,T> >& fields,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
@@ -317,7 +317,7 @@ namespace Rp {
    template <int D, class T>
    bool FieldIoBase<D,T>::readFieldRGrid(
                               std::string filename,
-                              typename T::RField & field,
+                              RField<D,T> & field,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
@@ -334,7 +334,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::writeFieldsRGrid(
                               std::string filename,
-                              DArray< typename T::RField > const & fields,
+                              DArray< RField<D,T> > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -353,7 +353,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::writeFieldRGrid(
                               std::string filename,
-                              typename T::RField const & field,
+                              RField<D,T> const & field,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -482,7 +482,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::convertBasisToRGrid(
                               DArray<double> const & in,
-                              typename T::RField& out) const
+                              RField<D,T>& out) const
    {
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
@@ -497,7 +497,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::convertBasisToRGrid(
                               DArray< DArray <double> > const & in,
-                              DArray< typename T::RField >& out) const
+                              DArray< RField<D,T> >& out) const
    {
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
@@ -516,7 +516,7 @@ namespace Rp {
    */
    template <int D, class T>
    void FieldIoBase<D,T>::convertRGridToBasis(
-                              typename T::RField const & in,
+                              RField<D,T> const & in,
                               DArray<double> & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -531,7 +531,7 @@ namespace Rp {
    */
    template <int D, class T>
    void FieldIoBase<D,T>::convertRGridToBasis(
-                              DArray< typename T::RField > const & in,
+                              DArray< RField<D,T> > const & in,
                               DArray< DArray <double> > & out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -593,7 +593,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::convertKGridToRGrid(
                               DArray< typename T::RFieldDft > const & in,
-                              DArray< typename T::RField >& out) const
+                              DArray< RField<D,T> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -608,7 +608,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::convertKGridToRGrid(
                             typename T::RFieldDft const & in, 
-                            typename T::RField& out) 
+                            RField<D,T>& out) 
    const
    {
       fft().inverseTransformSafe(in, out);
@@ -619,7 +619,7 @@ namespace Rp {
    */
    template <int D, class T>
    void FieldIoBase<D,T>::convertRGridToKGrid(
-                              DArray< typename T::RField > const & in,
+                              DArray< RField<D,T> > const & in,
                               DArray< typename T::RFieldDft >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
@@ -634,7 +634,7 @@ namespace Rp {
    */
    template <int D, class T>
    void FieldIoBase<D,T>::convertRGridToKGrid(
-                              typename T::RField const & in,
+                              RField<D,T> const & in,
                               typename T::RFieldDft& out) const
    {  fft().forwardTransform(in, out); }
 
@@ -682,7 +682,7 @@ namespace Rp {
    */
    template <int D, class T>
    bool FieldIoBase<D,T>::hasSymmetry(
-                              typename T::RField const & in,
+                              RField<D,T> const & in,
                               double epsilon,
                               bool verbose) const
    {
@@ -753,7 +753,7 @@ namespace Rp {
                                 std::string const & filename1,
                                 std::string const & filename2) const
    {
-      DArray< typename T::RField > fields1, fields2;
+      DArray< RField<D,T> > fields1, fields2;
       UnitCell<D> tmpUnitCell;
       // Unallocated arrays will be allocated in readFieldsRGrid
       readFieldsRGrid(filename1, fields1, tmpUnitCell);
@@ -816,7 +816,7 @@ namespace Rp {
    */
    template <int D, class T>
    void FieldIoBase<D,T>::scaleFieldsRGrid(
-                              DArray< typename T::RField > & fields,
+                              DArray< RField<D,T> > & fields,
                               double factor) const
    {
       int n = fields.capacity();
@@ -938,7 +938,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::replicateUnitCell(
                               std::string filename,
-                              DArray<typename T::RField> const & fields,
+                              DArray<RField<D,T> > const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
    {
@@ -970,7 +970,7 @@ namespace Rp {
    template <int D, class T>
    void FieldIoBase<D,T>::expandRGridDimension(
                               std::string filename,
-                              DArray<typename T::RField> const & fields,
+                              DArray<RField<D,T> > const & fields,
                               UnitCell<D> const & unitCell, int d,
                               DArray<int> newGridDimensions) const
    {

@@ -105,7 +105,7 @@ public:
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< RField<1> > cFieldsCheck; // reference fields
+      DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef1D.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
@@ -150,7 +150,7 @@ public:
 
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< RField<2> > cFieldsCheck; // reference fields
+      DArray< RField<2, CudaTp<2> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef2D.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<2> rComparison; // object to compare fields
@@ -194,7 +194,7 @@ public:
 
       // Check converged field is correct by comparing to reference
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< RField<1> > cFieldsCheck; // reference fields
+      DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRefSweep.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
@@ -248,7 +248,7 @@ public:
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< RField<1> > cFieldsCheck; // reference fields
+      DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef1DFBulk.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
@@ -289,7 +289,7 @@ public:
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< RField<1> > cFieldsCheck; // reference fields
+      DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef1D.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
@@ -334,7 +334,7 @@ public:
 
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< RField<2> > cFieldsCheck; // reference fields
+      DArray< RField<2, CudaTp<2> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef2D.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<2> rComparison; // object to compare fields
@@ -379,7 +379,7 @@ public:
       #if 0
       // Check converged field is correct by comparing to reference
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< RField<1> > cFieldsCheck; // reference fields
+      DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRefSweep.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields
@@ -435,7 +435,7 @@ public:
 
       // Check converged field is correct by comparing to ref files in in/
       UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
-      DArray< RField<1> > cFieldsCheck; // reference fields
+      DArray< RField<1, CudaTp<1> > > cFieldsCheck; // reference fields
       system.domain().fieldIo().readFieldsRGrid("in/cRef1DFBulk.rf", 
                                                 cFieldsCheck, unitCell);
       RFieldComparison<1> rComparison; // object to compare fields

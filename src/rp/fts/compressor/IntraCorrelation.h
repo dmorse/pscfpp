@@ -13,6 +13,9 @@
 
 // Forward declarations
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
@@ -26,6 +29,7 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Intramolecular correlation analyzer.
@@ -56,7 +60,7 @@ namespace Rp {
       * \param correlations  omega values on a k-space mesh
       */
       virtual
-      void computeOmegaTotal(typename T::RField& correlations);
+      void computeOmegaTotal(RField<D,T>& correlations);
 
    protected:
 

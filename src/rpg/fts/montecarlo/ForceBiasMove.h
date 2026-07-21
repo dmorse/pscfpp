@@ -56,10 +56,10 @@ namespace Rp {
       /**
       * Compute force bias field.
       */
-      void computeForceBias(RField<D> & result,
-                            RField<D> const & di,
-                            RField<D> const & df,
-                            RField<D> const & dwc,
+      void computeForceBias(RField<D, CudaTp<D> > & result,
+                            RField<D, CudaTp<D> > const & di,
+                            RField<D, CudaTp<D> > const & df,
+                            RField<D, CudaTp<D> > const & dwc,
                             double mobility);
 
    };

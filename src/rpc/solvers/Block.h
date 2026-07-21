@@ -25,7 +25,7 @@ namespace Pscf {
          template <int D> class WaveList;
       }
    }
-   namespace Rp{
+   namespace Rp {
       template <int D, class T> class Propagator;
       template <int D, class T> class Block;
    }
@@ -42,14 +42,14 @@ namespace Rp {
    * Block within a linear or branched block polymer.
    *
    * A Block has two Propagator<D, Types<D> > members, and an 
-   * RField<D> concentration field.
+   * RField<D, CppTp<D> > concentration field.
    *
    * \ref user_param_block_sec "Manual Page"
    * \ingroup Rp_Solver_Module
    */
    template <int D>
    class Block<D, CppTp<D> > 
-    : public BlockTmpl< Rp::Propagator<D, CppTp<D> >, RField<D> >
+    : public BlockTmpl< Rp::Propagator<D, CppTp<D> >, RField<D, CppTp<D> > >
    {
 
    public:
@@ -57,7 +57,7 @@ namespace Rp {
       // Public type name aliases
 
       /// Direct (parent) base class.
-      using BlockTmplT = BlockTmpl< Rp::Propagator<D, CppTp<D> >, RField<D> >;
+      using BlockTmplT = BlockTmpl< Rp::Propagator<D, CppTp<D> >, RField<D, CppTp<D> > >;
 
       /// Propagator type (inherited).
       using typename BlockTmplT::PropagatorT;
@@ -160,7 +160,7 @@ namespace Rp {
       *
       * \param w chemical potential field for this monomer type
       */
-      void setupSolver(RField<D> const & w);
+      void setupSolver(RField<D, CppTp<D> > const & w);
 
       ///@}
       /// \name MDE Step Functions
@@ -177,7 +177,7 @@ namespace Rp {
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, from step i+1
       */
-      void stepThread(RField<D> const & qin, RField<D>& qout) const;
+      void stepThread(RField<D, CppTp<D> > const & qin, RField<D, CppTp<D> >& qout) const;
 
       /**
       * Compute one step of solution of MDE for the bead model.
@@ -190,7 +190,7 @@ namespace Rp {
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, for step i+1
       */
-      void stepBead(RField<D> const & qin, RField<D>& qout) const;
+      void stepBead(RField<D, CppTp<D> > const & qin, RField<D, CppTp<D> >& qout) const;
 
       /**
       * Apply the exponential field operator for the bead model.
@@ -200,7 +200,7 @@ namespace Rp {
       *
       * \param q  slice of propagator q, modified in place
       */
-      void stepFieldBead(RField<D> & q) const;
+      void stepFieldBead(RField<D, CppTp<D> > & q) const;
 
       /**
       * Apply a bond operator for the bead model.
@@ -212,7 +212,7 @@ namespace Rp {
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
       */
-      void stepBondBead(RField<D> const & qin, RField<D>& qout) const;
+      void stepBondBead(RField<D, CppTp<D> > const & qin, RField<D, CppTp<D> >& qout) const;
 
       /**
       * Apply a half-bond operator for the bead model.
@@ -225,7 +225,7 @@ namespace Rp {
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
       */
-      void stepHalfBondBead(RField<D> const & qin, RField<D>& qout) const;
+      void stepHalfBondBead(RField<D, CppTp<D> > const & qin, RField<D, CppTp<D> >& qout) const;
 
       ///@}
       /// \name Monomer Concentration Computation
@@ -354,25 +354,25 @@ namespace Rp {
       FSArray<double, 6> stress_;
 
       /// Array of elements containing exp(-K^2 b^2 ds/6)
-      RField<D> expKsq_;
+      RField<D, CppTp<D> > expKsq_;
 
       /// Array containing exp(-W[i] ds/2) (thread) or exp(-W[i]) (bead)
-      RField<D> expW_;
+      RField<D, CppTp<D> > expW_;
 
       /// Array of elements containing exp(-K^2 b^2 ds/(6*2))
-      RField<D> expKsq2_;
+      RField<D, CppTp<D> > expKsq2_;
 
       /// Array of elements containing exp(-W[i] (ds/2)*0.5) (thread model)
-      RField<D> expW2_;
+      RField<D, CppTp<D> > expW2_;
 
       /// Array of elements containing exp(+W[i]) (bead model)
-      RField<D> expWInv_;
+      RField<D, CppTp<D> > expWInv_;
 
       /// Work array for real-space q field (step size ds)
-      mutable RField<D> qr_;
+      mutable RField<D, CppTp<D> > qr_;
 
       /// Work array for real-space q field (step size ds/2, thread model)
-      mutable RField<D> qr2_;
+      mutable RField<D, CppTp<D> > qr2_;
 
       /// Work array for wavevector space field (step size ds)
       mutable RFieldDft<D> qk_;
@@ -496,11 +496,11 @@ namespace Rp {
 namespace Pscf {
 
    extern template
-   class BlockTmpl< Rp::Propagator<1, CppTp<1> >, Prdc::Cpu::RField<1> >;
+   class BlockTmpl< Rp::Propagator<1, CppTp<1> >, Prdc::RField<1, CppTp<1> > >;
    extern template
-   class BlockTmpl< Rp::Propagator<2, CppTp<2> >, Prdc::Cpu::RField<2> >;
+   class BlockTmpl< Rp::Propagator<2, CppTp<2> >, Prdc::RField<2, CppTp<2> > >;
    extern template
-   class BlockTmpl< Rp::Propagator<3, CppTp<3> >, Prdc::Cpu::RField<3> >;
+   class BlockTmpl< Rp::Propagator<3, CppTp<3> >, Prdc::RField<3, CppTp<3> > >;
 
    namespace Rp {
       extern template class Block<1, CppTp<1> >;

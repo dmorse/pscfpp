@@ -7,14 +7,11 @@
 
 #include "RField.tpp"
 
+// Explicit instantiation definitions
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
-
-   template class RField<1>;
-   template class RField<2>;
-   template class RField<3>;
-
-} // namespace Pscf::Prdc::Cuda
-} // namespace Pscf::Prdc
-} // namespace Pscf
+   template class RField<1, CudaTp<1> >;
+   template class RField<2, CudaTp<2> >;
+   template class RField<3, CudaTp<3> >;
+}
+}

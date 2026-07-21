@@ -46,13 +46,13 @@ namespace Rp {
    * Block within a branched polymer, for Cpp backend.
    *
    * A Block has two Propagator<D, CudaTp<D> > members and an 
-   * RField<D> monomer concentration field. 
+   * RField<D, CudaTp<D> > monomer concentration field. 
    *
    * \ingroup Rp_Solver_Module
    */
    template <int D>
    class Block<D, CudaTp<D> > 
-     : public BlockTmpl< Rp::Propagator<D, CudaTp<D> >, RField<D> >
+     : public BlockTmpl< Rp::Propagator<D, CudaTp<D> >, RField<D, CudaTp<D> > >
    {
 
    public:
@@ -60,7 +60,7 @@ namespace Rp {
       // Public type name aliases
 
       /// Direct (parent) base class.
-      using BlockTmplT = BlockTmpl< Rp::Propagator<D, CudaTp<D> >, RField<D> > ;
+      using BlockTmplT = BlockTmpl< Rp::Propagator<D, CudaTp<D> >, RField<D, CudaTp<D> > > ;
 
       /// Propagator type (inherited).
       using typename BlockTmplT::PropagatorT;
@@ -168,7 +168,7 @@ namespace Rp {
       *
       * \param w  chemical potential field for this monomer type
       */
-      void setupSolver(RField<D> const & w);
+      void setupSolver(RField<D, CudaTp<D> > const & w);
 
       ///@}
       /// \name MDE Step Functions
@@ -185,7 +185,7 @@ namespace Rp {
       * \param qin  slice i of propagator q (input)
       * \param qout  slice i+1 of propagator q (output)
       */
-      void stepThread(RField<D> const & qin, RField<D>& qout) const;
+      void stepThread(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const;
 
       /**
       * Compute one step of solution of MDE for the bead model.
@@ -198,7 +198,7 @@ namespace Rp {
       * \param qin  slice i of propagator q (input)
       * \param qout  slice i+1 of propagator q (output)
       */
-      void stepBead(RField<D> const & qin, RField<D>& qout) const;
+      void stepBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const;
 
       /**
       * Apply the exponential field operator for the bead model.
@@ -208,7 +208,7 @@ namespace Rp {
       *
       * \param q  slice of propagator q, modified in placde
       */
-      void stepFieldBead(RField<D> & q) const;
+      void stepFieldBead(RField<D, CudaTp<D> > & q) const;
 
       /**
       * Compute a bond operator for the bead model.
@@ -220,7 +220,7 @@ namespace Rp {
       * \param qin  slice i of propagator q (input)
       * \param qout  slice i+1 of propagator q (output)
       */
-      void stepBondBead(RField<D> const & qin, RField<D>& qout) const;
+      void stepBondBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const;
 
       /**
       * Compute a half-bond operator for the bead model.
@@ -232,7 +232,7 @@ namespace Rp {
       * \param qin  slice i of propagator q (input)
       * \param qout  slice i+1 of propagator q (output)
       */
-      void stepHalfBondBead(RField<D> const & qin, RField<D>& qout) const;
+      void stepHalfBondBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const;
 
       ///@}
       /// \name Monomer Concentration Computation
@@ -339,20 +339,20 @@ namespace Rp {
 
       /// Array containing exp(-K^2 b^2 ds / 6) for the thread model
       /// or exp(-K^2 b^2 /6) for the bead model
-      RField<D> expKsq_;
+      RField<D, CudaTp<D> > expKsq_;
 
       /// Array containing exp(-W[i] ds/2) for the thread model
       /// or exp(-W[i]) for the bead model
-      RField<D> expW_;
+      RField<D, CudaTp<D> > expW_;
 
       /// Array containing exp(-K^2 b^2 ds/12) (thread model)
-      RField<D> expKsq2_;
+      RField<D, CudaTp<D> > expKsq2_;
 
       /// Array containing exp(-W[i] ds/4) (thread model)
-      RField<D> expW2_;
+      RField<D, CudaTp<D> > expW2_;
 
       /// Array containing exp(+W[i]) (bead model)
-      RField<D> expWInv_;
+      RField<D, CudaTp<D> > expWInv_;
 
       /**
       * Workspace array containing two r-grid fields, stored on the device.
@@ -373,7 +373,7 @@ namespace Rp {
       mutable DeviceArray<cudaComplex> qkPair_;
 
       // R-grid work space (used in productAverage)
-      mutable RField<D> qr_;
+      mutable RField<D, CudaTp<D> > qr_;
 
       // K-grid work space (used for FFT of q in stepBondBead)
       mutable RFieldDft<D> qk_;
@@ -494,11 +494,11 @@ namespace Rp {
 namespace Pscf {
 
    extern template
-   class BlockTmpl< Rp::Propagator<1, CudaTp<1> >, Prdc::Cuda::RField<1> >;
+   class BlockTmpl< Rp::Propagator<1, CudaTp<1> >, Prdc::RField<1, CudaTp<1> > >;
    extern template
-   class BlockTmpl< Rp::Propagator<2, CudaTp<2> >, Prdc::Cuda::RField<2> >;
+   class BlockTmpl< Rp::Propagator<2, CudaTp<2> >, Prdc::RField<2, CudaTp<2> > >;
    extern template
-   class BlockTmpl< Rp::Propagator<3, CudaTp<3> >, Prdc::Cuda::RField<3> >;
+   class BlockTmpl< Rp::Propagator<3, CudaTp<3> >, Prdc::RField<3, CudaTp<3> > >;
 
    namespace Rp {
       extern template class Block<1, CudaTp<1> >;

@@ -157,7 +157,7 @@ namespace Rp {
    * Set new field values, in r-grid form.
    */
    template <int D, class T>
-   void Mask<D,T>::setRGrid(typename T::RField const & field,
+   void Mask<D,T>::setRGrid(RField<D,T> const & field,
                             bool isSymmetric)
    {
       // Allocate rgrid_ field as needed

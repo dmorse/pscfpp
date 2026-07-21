@@ -27,12 +27,12 @@ namespace Rp {
    template <int D>
    void WFields<D, CudaTp<D> >::setRGrid(DeviceArray<cudaReal>& fields)
    {
-      // Create DArray tmp with RField<D> elements
-      DArray< RField<D> > tmp;
+      // Create DArray tmp with RField<D, CudaTp<D> > elements
+      DArray< RField<D, CudaTp<D> > > tmp;
       const int nMonomer = RpWFields::nMonomer();
       tmp.allocate(nMonomer);
 
-      // Associate each RField<D> with a slice of the unfolded array
+      // Associate each RField<D, CudaTp<D> > with a slice of the unfolded array
       IntVec<D> const & meshDimensions = RpWFields::meshDimensions();
       const int meshSize = RpWFields::meshSize();
       for (int i = 0; i < nMonomer; i++) {

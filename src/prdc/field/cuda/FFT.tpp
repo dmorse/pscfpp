@@ -131,7 +131,7 @@ namespace Cuda {
    * Compute forward (real-to-complex) discrete Fourier transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RField<D> const & rField, 
+   void FFT<D>::forwardTransform(RField<D, CudaTp<D> > const & rField, 
                                  RFieldDft<D>& kField) const
    {
       // Preconditions
@@ -163,7 +163,7 @@ namespace Cuda {
    */
    template <int D>
    void FFT<D>::inverseTransformUnsafe(RFieldDft<D>& kField, 
-                                       RField<D>& rField) const
+                                       RField<D, CudaTp<D> >& rField) const
    {
       // Preconditions
       UTIL_CHECK(isSetup_);
@@ -189,7 +189,7 @@ namespace Cuda {
    */
    template <int D>
    void FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField, 
-                                     RField<D>& rField) const
+                                     RField<D, CudaTp<D> >& rField) const
    {
       // if kFieldCopy_ has been previously allocated, check size is correct
       if (kFieldCopy_.isAllocated()) { 

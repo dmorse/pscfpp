@@ -9,9 +9,9 @@
 */
 
 #include <rp/fts/simulator/Simulator.h>    // base class template
-#include <pscf/cpu/CppTp.h>              // template argument
+#include <pscf/cpu/CppTp.h>                // template argument
 #include <rpc/fts/simulator/SimState.h>    // member
-#include <prdc/field/cpu/RField.h>               // member (template arg)
+#include <prdc/field/cpu/RField.h>         // member (template arg)
 
 // Explicit instantiation declarations
 namespace Pscf {

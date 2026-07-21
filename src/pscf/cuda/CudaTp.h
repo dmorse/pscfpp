@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_H
-#define PRDC_CUDA_H
+#ifndef PSCF_CUDA_TP_H
+#define PSCF_CUDA_TP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -21,7 +21,7 @@ namespace Pscf {
    template <typename T> class HostDArray;
    namespace Prdc {
       namespace Cuda {
-         template <int D> class RField;
+         //template <int D> class RField;
          template <int D> class RFieldDft;
          template <int D> class FFT;
          template <int D> class RFieldComparison;
@@ -59,7 +59,7 @@ namespace Pscf {
 
       using VecRandom = CudaVecRandom;
 
-      using RField = Prdc::Cuda::RField<D>;
+      //using RField = Prdc::Cuda::RField<D>;
       using RFieldDft = Prdc::Cuda::RFieldDft<D>;
       using FFT = Prdc::Cuda::FFT<D>;
       using RFieldComparison = Prdc::Cuda::RFieldComparison<D>;

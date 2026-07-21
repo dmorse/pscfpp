@@ -14,6 +14,9 @@
 
 // Forward declarations
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
@@ -25,6 +28,7 @@ namespace Rp {
 
    // Namespaces that can be used implicitly
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Anderson mixing compressor.
@@ -121,12 +125,12 @@ namespace Rp {
       /**
       * Initial values of all fields.
       */
-      DArray< typename T::RField > w0_;
+      DArray< RField<D,T> > w0_;
 
       /**
       * Temporary array of w fields used in update function.
       */
-      DArray< typename T::RField > wFieldTmp_;
+      DArray< RField<D,T> > wFieldTmp_;
 
       /**
       * Has required memory been allocated?

@@ -20,7 +20,7 @@ namespace Pscf {
    class CpuVecRandom;
    namespace Prdc {
       namespace Cpu {
-         template <int D> class RField;
+         //template <int D> class RField;
          template <int D> class RFieldDft;
          template <int D> class FFT;
          template <int D> class RFieldComparison;
@@ -57,7 +57,7 @@ namespace Pscf {
       using RDevArray = DevArray<Real>;
       using RLocArray = LocArray<Real>;
 
-      using RField = Prdc::Cpu::RField<D>;
+      //using RField = Prdc::Cpu::RField<D>;
       using RFieldDft = Prdc::Cpu::RFieldDft<D>;
       using FFT = Prdc::Cpu::FFT<D>;
       using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;

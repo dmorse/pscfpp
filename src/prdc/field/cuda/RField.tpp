@@ -12,7 +12,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
    using namespace Pscf;
@@ -21,7 +20,7 @@ namespace Cuda {
    * Default constructor.
    */
    template <int D>
-   RField<D>::RField()
+   RField<D, CudaTp<D> >::RField()
     : DeviceArray<cudaReal>()
    {}
 
@@ -29,7 +28,7 @@ namespace Cuda {
    * Allocating constructor.
    */
    template <int D>
-   RField<D>::RField(IntVec<D> const & meshDimensions)
+   RField<D, CudaTp<D> >::RField(IntVec<D> const & meshDimensions)
     : DeviceArray<cudaReal>()
    {  allocate(meshDimensions); }
 
@@ -37,7 +36,7 @@ namespace Cuda {
    * Copy constructor.
    */
    template <int D>
-   RField<D>::RField(const RField<D>& other)
+   RField<D, CudaTp<D> >::RField(RField<D, CudaTp<D> > const & other)
     : DeviceArray<cudaReal>(other),
       meshDimensions_(0)
    {  meshDimensions_ = other.meshDimensions_; }
@@ -46,14 +45,14 @@ namespace Cuda {
    * Destructor.
    */
    template <int D>
-   RField<D>::~RField()
+   RField<D, CudaTp<D> >::~RField()
    {}
 
    /*
    * Allocate the underlying C array for data on a regular mesh.
    */
    template <int D>
-   void RField<D>::allocate(IntVec<D> const & meshDimensions)
+   void RField<D, CudaTp<D> >::allocate(IntVec<D> const & meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -68,7 +67,7 @@ namespace Cuda {
    * Associate this object with a slice of another DeviceArray.
    */
    template <int D>
-   void RField<D>::associate(DeviceArray<cudaReal>& arr, int beginId, 
+   void RField<D, CudaTp<D> >::associate(DeviceArray<cudaReal>& arr, int beginId, 
                              IntVec<D> const & meshDimensions)
    {
       int size = 1;
@@ -81,10 +80,11 @@ namespace Cuda {
    }
 
    /*
-   * Assignment from another RField<D>.
+   * Assignment from another RField.
    */
    template <int D>
-   RField<D>& RField<D>::operator = (const RField<D>& other)
+   RField<D, CudaTp<D> >& 
+   RField<D, CudaTp<D> >::operator = (const RField<D, CudaTp<D> >& other)
    {
       DeviceArray<cudaReal>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
@@ -93,17 +93,18 @@ namespace Cuda {
    }
 
    /*
-   * Assignment of this RField<D> from RHS HostDArray<Data> host array.
+   * Assignment of this RField from RHS HostDArray.
    */
    template <int D>
-   RField<D>& RField<D>::operator = (const HostDArray<cudaReal>& other)
+   RField<D, CudaTp<D> >& 
+   RField<D, CudaTp<D> >::operator = (const HostDArray<cudaReal>& other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
          UTIL_THROW("Error: RHS HostDArray<cudaReal> is not allocated.");
       }
       if (!isAllocated()) {
-         UTIL_THROW("Error: LHS RField<D> is not allocated.");
+         UTIL_THROW("Error: LHS RField is not allocated.");
       }
       if (capacity_ != other.capacity()) {
          UTIL_THROW("Cannot assign Fields of unequal capacity");
@@ -115,7 +116,6 @@ namespace Cuda {
       return *this;
    }
 
-}
 }
 }
 #endif

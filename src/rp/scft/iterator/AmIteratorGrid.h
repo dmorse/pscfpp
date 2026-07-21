@@ -14,10 +14,18 @@
 
 #include <iostream>
 
+// Forward declarations
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Anderson mixing iterator on grid (no space-group symmetry).
@@ -144,7 +152,7 @@ namespace Rp {
 
       // Private type aliases
       using RealT = double;
-      using RFieldT = typename T::RField;
+      using RFieldT = RField<D,T>;
 
    };
 

@@ -100,7 +100,7 @@ namespace Rp {
       * to be performed on all contour steps simultaneously, which occurs
       * in Block::computeStress.
       * 
-      * Each element of the qFields_ container is an RField<D> that acts
+      * Each element of the qFields_ container is an RField<D, CudaTp<D> > that acts
       * as a reference array that points to a slice of the contiguous
       * array qFieldsAll_.  This association is created in the allocate
       * or de-allocate functions, and destroyed by the dissociateQFields

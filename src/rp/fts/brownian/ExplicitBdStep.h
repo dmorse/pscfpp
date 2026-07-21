@@ -11,10 +11,18 @@
 #include <rp/fts/brownian/BdStep.h>    // base class
 #include <util/containers/DArray.h>    // member
 
+// Forward declarations
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Explicit Euler-Maruyama Brownian dynamics step.
@@ -73,13 +81,13 @@ namespace Rp {
    private:
 
       // Local copy of w fields
-      DArray< typename T::RField > w_;
+      DArray< RField<D,T> > w_;
 
       // Change in one component of wc
-      typename T::RField dwc_;
+      RField<D,T> dwc_;
 
       // Normal distributed random numbers
-      typename T::RField gaussianField_;
+      RField<D,T> gaussianField_;
 
       // Prefactor of -dc_ in deterministic drift term
       double mobility_;

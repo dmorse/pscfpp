@@ -86,7 +86,7 @@ public:
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                       DArray< RField<D> >& fields)
+                       DArray< RField<D, CudaTp<D> > >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -117,7 +117,7 @@ public:
 
    template <int D>
    void readFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
-                   DArray< RField<D> >& fields)
+                   DArray< RField<D, CudaTp<D> > >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -147,7 +147,7 @@ public:
 
    template <int D>
    void writeFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
-                   DArray< RField<D> > const & fields)
+                   DArray< RField<D, CudaTp<D> > > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -192,7 +192,7 @@ public:
       DArray< DArray<double> > fb;
       allocateFields(nMonomer_, domain.basis().nBasis(), fb);
 
-      DArray< RField<3> >  fr;
+      DArray< RField<3, CudaTp<3> > >  fr;
       allocateFields(nMonomer_, domain.mesh().dimensions(), fr);
 
       DArray< RFieldDft<3> > fk;
@@ -278,9 +278,9 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RField<3> > d_rf_0;
+      DArray< RField<3, CudaTp<3> > > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
-      DArray< RField<3> > d_rf_1;
+      DArray< RField<3, CudaTp<3> > > d_rf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_1);
 
       readFields("in/w_bcc.rf", domain, d_rf_0);
@@ -350,7 +350,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RField<3> > d_rf_0;
+      DArray< RField<3, CudaTp<3> > > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -612,7 +612,7 @@ public:
       DArray< RFieldDft<3> > d_kf_2;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_2);
 
-      DArray< RField<3> > d_rf_0;
+      DArray< RField<3, CudaTp<3> > > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -665,7 +665,7 @@ public:
       DArray< RFieldDft<3> > d_kf_2;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_2);
 
-      DArray< RField<3> > d_rf_0;
+      DArray< RField<3, CudaTp<3> > > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_c15_1.bf", domain, d_bf_0);

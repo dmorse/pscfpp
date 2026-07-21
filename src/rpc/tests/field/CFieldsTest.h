@@ -91,7 +91,7 @@ public:
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> const & dimensions,
-                       DArray< RField<D> >& fields)
+                       DArray< RField<D, CppTp<D> > >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -111,7 +111,7 @@ public:
 
    template <int D>
    void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RField<D> >& fields)
+                   DArray< RField<D, CppTp<D> > >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);

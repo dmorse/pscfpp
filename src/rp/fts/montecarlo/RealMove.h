@@ -12,10 +12,18 @@
 #include <util/containers/DArray.h>    // member
 #include <iostream>
 
+// Forward declaration
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * RealMove generates spatially uncorrelated random field changes.
@@ -79,7 +87,7 @@ namespace Rp {
 
    private:
 
-      using RFieldT = typename T::RField;
+      using RFieldT = RField<D,T>;
 
       /// New field values, indexed by monomer type.
       DArray< RFieldT > w_;

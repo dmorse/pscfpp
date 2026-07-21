@@ -217,7 +217,7 @@ namespace Rp {
       // Setup
       int nMonomer = system().mixture().nMonomer();
 
-      DArray< RField<D> > hDerivatives;
+      DArray< RField<D, CudaTp<D> > > hDerivatives;
       HostDArray<cudaReal*> hDerivPtrs_h(nMonomer);
       DeviceArray<cudaReal*> hDerivPtrs(nMonomer);
 
@@ -286,7 +286,7 @@ namespace Rp {
       // Setup
       int nMonomer = system().mixture().nMonomer();
 
-      DArray< RField<D> > hFields;
+      DArray< RField<D, CudaTp<D> > > hFields;
       HostDArray<cudaReal*> hPtrs_h(nMonomer);
       DeviceArray<cudaReal*> hPtrs(nMonomer);
 

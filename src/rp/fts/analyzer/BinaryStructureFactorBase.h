@@ -19,11 +19,17 @@
 namespace Util {
    template <typename T> class Array;
 }
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Spherically averaged structure factor for a two-monomer system.
@@ -122,7 +128,7 @@ namespace Rp {
    private:
 
       /// Exchange field W_(r):  wm = (wa-wb)/2  .
-      typename T::RField wm_;
+      RField<D,T> wm_;
 
       /// Bunch ids, indexed by wave id (id of bunch containing a wave).
       DArray<int> waveBunchIds_;

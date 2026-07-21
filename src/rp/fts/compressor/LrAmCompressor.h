@@ -15,6 +15,9 @@
 
 // Forward declarations
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
@@ -27,6 +30,7 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Anderson mixing compressor with linear-response correction step.
@@ -124,17 +128,17 @@ namespace Rp {
       /**
       * Initial values of all w fields.
       */
-      DArray< typename T::RField > w0_;
+      DArray< RField<D,T> > w0_;
 
       /**
       * Temporary array of w fields used in update function.
       */
-      DArray< typename T::RField > wFieldTmp_;
+      DArray< RField<D,T> > wFieldTmp_;
 
       /**
       * Residual in real space.
       */
-      typename T::RField resid_;
+      RField<D,T> resid_;
 
       /**
       * Residual in Fourier space.
@@ -144,7 +148,7 @@ namespace Rp {
       /**
       * Intramolecular correlation function in Fourier space.
       */
-      typename T::RField intraCorrelationK_;
+      RField<D,T> intraCorrelationK_;
 
       /**
       * IntraCorrelation object, used to compute intraCorrelationK_.

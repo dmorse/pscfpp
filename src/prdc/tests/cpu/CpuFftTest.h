@@ -53,7 +53,7 @@ void CpuFftTest::testTransformReal1D()
    Cpu::FFT<1> v;
    v.setup(d);
 
-   Cpu::RField<1> in;
+   RField<1, CppTp<1> > in;
    in.allocate(d);
    TEST_ASSERT(in.capacity() == n);
 
@@ -66,7 +66,7 @@ void CpuFftTest::testTransformReal1D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   Cpu::RField<1> inCopy(in);
+   RField<1, CppTp<1> > inCopy(in);
 
    // Transform in -> out
    Cpu::RFieldDft<1> out;
@@ -77,7 +77,7 @@ void CpuFftTest::testTransformReal1D()
    Cpu::RFieldDft<1> outCopy(out);
 
    // Inverse transform out -> in2
-   Cpu::RField<1> in2;
+   RField<1, CppTp<1> > in2;
    in2.allocate(d);
    v.inverseTransformSafe(out, in2);
 
@@ -111,7 +111,7 @@ void CpuFftTest::testTransformReal2D()
    v.setup(d);
 
    // Initialize input data
-   Cpu::RField<2> in;
+   RField<2, CppTp<2> > in;
    in.allocate(d);
    int rank = 0;
    double x, y, cx, sy;
@@ -128,7 +128,7 @@ void CpuFftTest::testTransformReal2D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   Cpu::RField<2> inCopy(in);
+   RField<2, CppTp<2> > inCopy(in);
 
    // Forward transform in -> out
    Cpu::RFieldDft<2> out;
@@ -141,7 +141,7 @@ void CpuFftTest::testTransformReal2D()
    Cpu::RFieldDft<2> outCopy(out);
 
    // Inverse transform out -> in2
-   Cpu::RField<2> in2;
+   RField<2, CppTp<2> > in2;
    in2.allocate(d);
    v.inverseTransformSafe(out, in2);
 
@@ -176,7 +176,7 @@ void CpuFftTest::testTransformReal3D()
    Cpu::FFT<3> v;
    v.setup(d);
 
-   Cpu::RField<3> in;
+   RField<3, CppTp<3> > in;
    Cpu::RFieldDft<3> out;
    in.allocate(d);
    out.allocate(d);
@@ -196,7 +196,7 @@ void CpuFftTest::testTransformReal3D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   Cpu::RField<3> inCopy(in);
+   RField<3, CppTp<3> > inCopy(in);
 
    // Forward transform in -> out
    v.forwardTransform(in, out);
@@ -205,7 +205,7 @@ void CpuFftTest::testTransformReal3D()
    Cpu::RFieldDft<3> outCopy(out);
 
    // Inverse transform out -> in2
-   Cpu::RField<3> in2;
+   RField<3, CppTp<3> > in2;
    in2.allocate(d);
    v.inverseTransformSafe(out, in2);
 

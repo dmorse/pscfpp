@@ -22,8 +22,8 @@ namespace Cuda {
 
    // Comparator for individual fields
    template <int D>
-   double RFieldComparison<D>::compare(RField<D> const& a, 
-                                       RField<D> const& b)
+   double RFieldComparison<D>::compare(RField<D, CudaTp<D> > const& a, 
+                                       RField<D, CudaTp<D> > const& b)
    {
       int nPoints = a.capacity();
 
@@ -41,8 +41,8 @@ namespace Cuda {
 
    // Comparator for arrays of fields
    template <int D>
-   double RFieldComparison<D>::compare(DArray<RField<D>> const& a, 
-                                       DArray<RField<D>> const& b)
+   double RFieldComparison<D>::compare(DArray< RField<D, CudaTp<D> > > const& a, 
+                                       DArray< RField<D, CudaTp<D> > > const& b)
    {
       int nFields = a.capacity();
       int nPoints = a[0].capacity();

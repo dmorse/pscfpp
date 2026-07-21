@@ -220,7 +220,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
-      Cpu::RField<1> w;
+      RField<1, CppTp<1> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -263,7 +263,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      Cpu::RField<2> w;
+      RField<2, CppTp<2> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -308,7 +308,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      Cpu::RField<2> w;
+      RField<2, CppTp<2> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -353,7 +353,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      Cpu::RField<3> w;
+      RField<3, CppTp<3> > w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -394,7 +394,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      Cpu::RField<1> w;
+      RField<1, CppTp<1> > w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -407,8 +407,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      Cpu::RField<1> qin;
-      Cpu::RField<1> qout;
+      RField<1, CppTp<1> > qin;
+      RField<1, CppTp<1> > qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -475,7 +475,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      Cpu::RField<1> w;
+      RField<1, CppTp<1> > w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -488,8 +488,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      Cpu::RField<1> qin;
-      Cpu::RField<1> qout;
+      RField<1, CppTp<1> > qin;
+      RField<1, CppTp<1> > qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -576,7 +576,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      Cpu::RField<2> w;
+      RField<2, CppTp<2> > w;
       w.allocate(mesh.dimensions());
       MeshIterator<2> iter(mesh.dimensions());
 
@@ -590,8 +590,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      Cpu::RField<2> qin;
-      Cpu::RField<2> qout;
+      RField<2, CppTp<2> > qin;
+      RField<2, CppTp<2> > qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -670,7 +670,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      Cpu::RField<3> w;
+      RField<3, CppTp<3> > w;
       w.allocate(mesh.dimensions());
       MeshIterator<3> iter(mesh.dimensions());
 
@@ -684,8 +684,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      Cpu::RField<3> qin;
-      Cpu::RField<3> qout;
+      RField<3, CppTp<3> > qin;
+      RField<3, CppTp<3> > qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 

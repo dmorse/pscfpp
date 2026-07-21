@@ -123,7 +123,7 @@ namespace Cpu {
       UTIL_CHECK(kFieldCopy_.capacity() == kSize_);
 
       // Create temporary RField and CField objects used for plans
-      RField<D> rField;
+      RField<D, CppTp<D> > rField;
       rField.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == rField.meshDimensions());
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -150,7 +150,7 @@ namespace Cpu {
    * Execute real-to-complex forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RField<D> const & rField,
+   void FFT<D>::forwardTransform(RField<D, CppTp<D> > const & rField,
                                  RFieldDft<D>& kField)
    const
    {
@@ -178,7 +178,7 @@ namespace Cpu {
    */
    template <int D>
    void
-   FFT<D>::inverseTransformUnsafe(RFieldDft<D> & kField, RField<D>& rField)
+   FFT<D>::inverseTransformUnsafe(RFieldDft<D> & kField, RField<D, CppTp<D> >& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -197,7 +197,7 @@ namespace Cpu {
    template <int D>
    void
    FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField,
-                                RField<D>& rField)
+                                RField<D, CppTp<D> >& rField)
    const
    {
       UTIL_CHECK(kFieldCopy_.capacity() == kField.capacity());

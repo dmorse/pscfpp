@@ -66,7 +66,7 @@ namespace Rp {
       * \return true iff the header contains a space group (isSymmetric)
       */
       bool readFieldsRGrid(std::istream& in,
-                           DArray< RField<D> >& fields,
+                           DArray< RField<D, CudaTp<D> > >& fields,
                            UnitCell<D> & unitCell)
       const override;
 
@@ -80,7 +80,7 @@ namespace Rp {
       * \param nMonomer  number of monomer types
       */
       void readFieldsRGridData(std::istream& in,
-                               DArray< RField<D> >& fields,
+                               DArray< RField<D, CudaTp<D> > >& fields,
                                int nMonomer)
       const override;
 
@@ -95,7 +95,7 @@ namespace Rp {
       * \return true iff the header contains a space group (isSymmetric)
       */
       bool readFieldRGrid(std::istream &in,
-                          RField<D> & field,
+                          RField<D, CudaTp<D> > & field,
                           UnitCell<D>& unitCell)
       const override;
 
@@ -112,7 +112,7 @@ namespace Rp {
       * \param writeMeshSize  Should mesh size be written in header?
       */
       void writeFieldsRGrid(std::ostream& out,
-                            DArray< RField<D> > const & fields,
+                            DArray< RField<D, CudaTp<D> > > const & fields,
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
@@ -131,7 +131,7 @@ namespace Rp {
       * \param isSymmetric  Does the field have a space group symmetry?
       */
       void writeFieldRGrid(std::ostream &out,
-                           RField<D> const & field,
+                           RField<D, CudaTp<D> > const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
                            bool isSymmetric = true)
@@ -219,8 +219,8 @@ namespace Rp {
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
-      void compareFieldsRGrid(DArray< RField<D> > const & field1,
-                              DArray< RField<D> > const & field2)
+      void compareFieldsRGrid(DArray< RField<D, CudaTp<D> > > const & field1,
+                              DArray< RField<D, CudaTp<D> > > const & field2)
       const override;
 
       /**
@@ -232,7 +232,7 @@ namespace Rp {
       * \param field  real space (r-grid) field (in-out)
       * \param factor  real scalar by which to multiply all elements
       */
-      void scaleFieldRGrid(RField<D>& field, double factor)
+      void scaleFieldRGrid(RField<D, CudaTp<D> >& field, double factor)
       const override;
 
       /**
@@ -248,7 +248,7 @@ namespace Rp {
       */
       void expandRGridDimension(
                           std::ostream &out,
-                          DArray<RField<D> > const & fields,
+                          DArray< RField<D, CudaTp<D> > > const & fields,
                           UnitCell<D> const & unitCell,
                           int d,
                           DArray<int> const& newGridDimensions)
@@ -266,7 +266,7 @@ namespace Rp {
       */
       void replicateUnitCell(
                           std::ostream& out,
-                          DArray< RField<D> > const & fields,
+                          DArray< RField<D, CudaTp<D> > > const & fields,
                           UnitCell<D> const & unitCell,
                           IntVec<D> const & replicas)
       const override;

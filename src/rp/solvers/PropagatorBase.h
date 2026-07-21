@@ -17,6 +17,9 @@ namespace Pscf {
    template <int D> class Mesh;
 }
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
    namespace Rp {
       template <int D, class T> class Propagator;
       template <int D, class T> class Block;
@@ -27,6 +30,7 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * MDE solver for one direction of one block.
@@ -123,7 +127,7 @@ namespace Rp {
       *
       * \param head  initial condition of q-field at head of block
       */
-      void solve(typename T::RField const & head);
+      void solve(RField<D,T> const & head);
 
       /**
       * Compute and return partition function for the polymer molecule.
@@ -141,12 +145,12 @@ namespace Rp {
       *
       * \param i  step index, 0 <= i < ns
       */
-      const typename T::RField& q(int i) const;
+      const RField<D,T>& q(int i) const;
 
       /**
       * Return q-field at the initial (head) vertex.
       */
-      const typename T::RField& head() const;
+      const RField<D,T>& head() const;
 
       /**
       * Return q-field at the terminal (tail) vertex.
@@ -156,7 +160,7 @@ namespace Rp {
       * for this propagator is a chain end (i.e., if isTailEnd() == true).
       * In this case, the tail slice is not needed, and so is not computed.
       */
-      const typename T::RField& tail() const;
+      const RField<D,T>& tail() const;
 
       /**
       * Get the associated Block object by const reference.
@@ -194,7 +198,7 @@ namespace Rp {
    protected:
 
       /// Array of propagator slices at different contour variable values.
-      DArray<typename T::RField> qFields_;
+      DArray<RField<D,T> > qFields_;
 
       /// Number of slices, including head and tail slices.
       int ns_;
@@ -251,7 +255,7 @@ namespace Rp {
    * Return q-field at beginning of block.
    */
    template <int D, class T> inline
-   typename T::RField const& PropagatorBase<D,T>::head() const
+   RField<D,T> const& PropagatorBase<D,T>::head() const
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFields_[0];
@@ -261,7 +265,7 @@ namespace Rp {
    * Return q-field at end of block.
    */
    template <int D, class T> inline
-   typename T::RField const& PropagatorBase<D,T>::tail() const
+   RField<D,T> const& PropagatorBase<D,T>::tail() const
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       UTIL_CHECK(PolymerModel::isThread() || !PropagatorTmplT::isTailEnd());
@@ -272,7 +276,7 @@ namespace Rp {
    * Return q-field at specified step.
    */
    template <int D, class T> inline
-   typename T::RField const& PropagatorBase<D,T>::q(int i) const
+   RField<D,T> const& PropagatorBase<D,T>::q(int i) const
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFields_[i];

@@ -70,10 +70,10 @@ namespace Rp {
    */
    template<int D>
    void ForceBiasMove<D, CudaTp<D> >::computeForceBias(
-                               RField<D>& result,
-                               RField<D> const & di,
-                               RField<D> const & df,
-                               RField<D> const & dwc,
+                               RField<D, CudaTp<D> >& result,
+                               RField<D, CudaTp<D> > const & di,
+                               RField<D, CudaTp<D> > const & df,
+                               RField<D, CudaTp<D> > const & dwc,
                                double mobility)
    {
       const int n = result.capacity();

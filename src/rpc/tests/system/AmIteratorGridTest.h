@@ -49,7 +49,7 @@ public:
    */
    template <int D>
    void allocateRGridFields(Rp::System<D, CppTp<D> > const & system,
-                            DArray< RField<D> >& fields)
+                            DArray< RField<D, CppTp<D> > >& fields)
    {
       // Check and allocate outer DArray
       int nMonomer = system.mixture().nMonomer();
@@ -79,7 +79,7 @@ public:
    template <int D>
    void readRGridFields(Rp::System<D, CppTp<D> > const & system,
                         std::string filename,
-                        DArray< RField<D> >& fields,
+                        DArray< RField<D, CppTp<D> > >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
@@ -91,8 +91,8 @@ public:
    * Compare rgrid fields.
    */
    template <int D>
-   double compareRGrid(DArray< RField<D> > const & fields1,
-                       DArray< RField<D> > const & fields2,
+   double compareRGrid(DArray< RField<D, CppTp<D> > > const & fields1,
+                       DArray< RField<D, CppTp<D> > > const & fields2,
                        std::string message)
    {
       RFieldComparison<D> comparison;
@@ -112,7 +112,7 @@ public:
    double readCompareWRGrid(Rp::System<D, CppTp<D> > const & system,
                             std::string filename)
    {
-      DArray< RField<D> > fields;
+      DArray< RField<D, CppTp<D> > > fields;
       UnitCell<D> unitCell;
       readRGridFields(system, filename, fields, unitCell);
       std::string message = "max w field error = ";
@@ -126,7 +126,7 @@ public:
    double readCompareCRGrid(Rp::System<D, CppTp<D> > const & system,
                             std::string filename)
    {
-      DArray< RField<D> > fields;
+      DArray< RField<D, CppTp<D> > > fields;
       UnitCell<D> unitCell;
       readRGridFields(system, filename, fields, unitCell);
       std::string message = "max c field error = ";

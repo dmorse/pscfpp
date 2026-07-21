@@ -51,7 +51,7 @@ namespace Rp {
    */
    template<int D, class T>
    void
-   IntraCorrelation<D,T>::computeOmegaTotal(typename T::RField& correlations)
+   IntraCorrelation<D,T>::computeOmegaTotal(RField<D,T>& correlations)
    {
       getMeshDimensions();
       int nk = kSize();

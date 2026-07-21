@@ -54,7 +54,7 @@ namespace Rp {
    * Compute concentration, q, and phi or mu.
    */
    template <int D, class T>
-   void Solvent<D,T>::compute(typename T::RField const & wField, 
+   void Solvent<D,T>::compute(RField<D,T> const & wField, 
                               double phiTot)
    {
       // Local constants

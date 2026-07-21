@@ -28,7 +28,7 @@ namespace Cuda {
    *
    * This class is a wrapper for plan creation and discrete Fourier 
    * transform (DFT) functions provided by the NVIDIA cufft library, 
-   * providing an interface to the field container classes RField<D>, 
+   * providing an interface to the field container classes RField<D, CudaTp<D> >, 
    * RField<Dft>, and CField<D> in namespace Pscf::Prdc::Cuda.
    *
    * \ingroup Prdc_Cuda_Module
@@ -73,7 +73,7 @@ namespace Cuda {
       * \param rField  real values on r-space grid (input, gpu mem)
       * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransform(RField<D> const & rField, RFieldDft<D>& kField) 
+      void forwardTransform(RField<D, CudaTp<D> > const & rField, RFieldDft<D>& kField) 
       const;
 
       /**
@@ -89,7 +89,7 @@ namespace Cuda {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransformUnsafe(RFieldDft<D>& kField, RField<D>& rField) 
+      void inverseTransformUnsafe(RFieldDft<D>& kField, RField<D, CudaTp<D> >& rField) 
       const;
 
       /**
@@ -102,7 +102,7 @@ namespace Cuda {
       * \param rField  real values on r-space grid (output, gpu mem)
       */
       void inverseTransformSafe(RFieldDft<D> const & kField, 
-                                RField<D>& rField) const;
+                                RField<D, CudaTp<D> >& rField) const;
 
       // Complex <-> Complex transforms
       

@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_R_FIELD_TPP
-#define PRDC_CPU_R_FIELD_TPP
+#ifndef PRDC_R_FIELD_CP_TPP
+#define PRDC_R_FIELD_CP_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -11,9 +11,10 @@
 #include "RField.h"
 #include <util/global.h>
 
+#include <pscf/cpu/FftwDRArray.tpp>  // base class implementation
+
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
 
@@ -21,7 +22,7 @@ namespace Cpu {
    * Default constructor.
    */
    template <int D>
-   RField<D>::RField()
+   RField<D, CppTp<D> >::RField()
     : FftwDRArray<double>(),
       meshDimensions_(0)
    {}
@@ -30,7 +31,7 @@ namespace Cpu {
    * Destructor.
    */
    template <int D>
-   RField<D>::~RField()
+   RField<D, CppTp<D> >::~RField()
    {}
 
    /*
@@ -41,7 +42,7 @@ namespace Cpu {
    *\param other the Field to be copied.
    */
    template <int D>
-   RField<D>::RField(const RField<D>& other)
+   RField<D, CppTp<D> >::RField(RField<D, CppTp<D> > const & other)
     : FftwDRArray<double>(),
       meshDimensions_(0)
    {
@@ -64,7 +65,8 @@ namespace Cpu {
    * \param other the rhs Field
    */
    template <int D>
-   RField<D>& RField<D>::operator = (const RField<D>& other)
+   RField<D, CppTp<D> >& 
+   RField<D, CppTp<D> >::operator = (RField<D, CppTp<D> > const & other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -92,7 +94,7 @@ namespace Cpu {
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void RField<D>::allocate(const IntVec<D>& meshDimensions)
+   void RField<D, CppTp<D> >::allocate(const IntVec<D>& meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -107,7 +109,7 @@ namespace Cpu {
    * Dellocate the underlying C array and clear meshDimensions.
    */
    template <int D>
-   void RField<D>::deallocate()
+   void RField<D, CppTp<D> >::deallocate()
    {
       FftwDRArray<double>::deallocate();
       for (int i = 0; i < D; ++i) {
@@ -115,7 +117,6 @@ namespace Cpu {
       }
    }
 
-}
 }
 }
 #endif

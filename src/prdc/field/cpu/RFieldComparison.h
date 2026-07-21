@@ -10,6 +10,7 @@
 
 #include <pscf/math/FieldComparison.h>  // base class template
 #include "RField.h"                     // base class template argument
+#include <pscf/cpu/CppTp.h>             // backend type
 
 namespace Pscf {
 namespace Prdc {
@@ -23,7 +24,7 @@ namespace Cpu {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class RFieldComparison : public FieldComparison< RField<D> >
+   class RFieldComparison : public FieldComparison< RField<D, CppTp<D> > >
    {};
 
    // Explicit instantiation declarations

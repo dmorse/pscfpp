@@ -12,10 +12,18 @@
 #include <util/containers/DArray.h>      // member
 #include <iostream>
 
+// Forward declaration
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
+
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * ForceBiasMoveBase attempts a Brownian dynamics move.
@@ -96,7 +104,7 @@ namespace Rp {
    private:
 
       /// Alias for RField type.
-      using RFieldT = typename T::RField;
+      using RFieldT = RField<D,T>;
 
       /// Local copy of w fields
       DArray< RFieldT > w_;

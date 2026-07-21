@@ -468,7 +468,7 @@ namespace Rp {
       for (i = 0; i < nMonomer; ++i) {
 
          // Initialize field wc_[i] to zero
-         typename T::RField& Wc = wc_[i];
+         RField<D,T>& Wc = wc_[i];
          VecOp::eqS(Wc, 0.0);
 
          // Loop over monomer types (j is a monomer index)
@@ -501,7 +501,7 @@ namespace Rp {
       for (i = 0; i < nMonomer; ++i) {
 
          // Initialize field cc_[i] to zero
-         typename T::RField& Cc = cc_[i];
+         RField<D,T>& Cc = cc_[i];
          VecOp::eqS(Cc, 0.0);
 
          // Loop over monomer types (j is a monomer index)
@@ -533,9 +533,9 @@ namespace Rp {
 
       // Loop over composition eigenvectors (exclude the last)
       for (int i = 0; i < nMonomer - 1; ++i) {
-         typename T::RField& Dc = dc_[i];
-         typename T::RField const & Wc = wc_[i];
-         typename T::RField const & Cc = cc_[i];
+         RField<D,T>& Dc = dc_[i];
+         RField<D,T> const & Wc = wc_[i];
+         RField<D,T> const & Cc = cc_[i];
          b = -1.0*a*double(nMonomer)/chiEvals_[i];
          s = -1.0*b*sc_[i];
          VecOp::addVcVcS(Dc, Cc, a, Wc, b, s);

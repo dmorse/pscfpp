@@ -1,14 +1,22 @@
 #ifndef RP_EINSTEIN_CRYSTAL_PERTURBATION_H
 #define RP_EINSTEIN_CRYSTAL_PERTURBATION_H
 
-#include <rp/fts/perturbation/Perturbation.h> // base class template
-#include <util/containers/DArray.h>           // member
+#include <rp/fts/perturbation/Perturbation.h>  // base class template
+#include <util/containers/DArray.h>            // member
 #include <iostream>
+
+// Forward declaration
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Perturbation for Einstein crystal thermodynamic integration.
@@ -69,7 +77,7 @@ namespace Rp {
       *
       * \param dc  functional derivatives of Hamiltonian (in/out)
       */
-      virtual void incrementDc(DArray<typename T::RField>& dc);
+      virtual void incrementDc(DArray< RField<D,T> >& dc);
 
       /**
       * Compute and return derivative of free energy w/ respect to lambda.
@@ -98,7 +106,7 @@ namespace Rp {
 
    private:
 
-      using RFieldT = typename T::RField;
+      using RFieldT = RField<D,T>;
 
       // Parameters used in Einstein crystal integration
       DArray<double> epsilon_;

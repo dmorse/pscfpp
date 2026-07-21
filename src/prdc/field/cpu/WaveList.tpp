@@ -199,7 +199,7 @@ namespace Cpu {
       MeshIterator<D> kItr(kMeshDimensions_);
       int i, rank;
       for (i = 0 ; i < unitCell().nParameter(); ++i) {
-         RField<D>& dksq = dKSq_[i];
+         RField<D, CppTp<D> >& dksq = dKSq_[i];
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             rank = kItr.rank();
             dksq[rank] = unitCell().dksq(minImages_[rank], i);

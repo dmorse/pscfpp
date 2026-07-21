@@ -99,7 +99,7 @@ public:
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                            DArray< RField<D> >& fields)
+                            DArray< RField<D, CppTp<D> > >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -130,7 +130,7 @@ public:
 
    template <int D>
    void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RField<D> >& fields)
+                   DArray< RField<D, CppTp<D> > >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -160,7 +160,7 @@ public:
 
    template <int D>
    void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RField<D> > const & fields)
+                   DArray< RField<D, CppTp<D> > > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -205,7 +205,7 @@ public:
       DArray< DArray<double> > fb;
       allocateFields(nMonomer_, domain.basis().nBasis(), fb);
 
-      DArray< RField<3> >  fr;
+      DArray< RField<3, CppTp<3> > >  fr;
       allocateFields(nMonomer_, domain.mesh().dimensions(), fr);
 
       DArray< RFieldDft<3> > fk;
@@ -470,9 +470,9 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
-      DArray< RField<1> > rf_0;
+      DArray< RField<1, CppTp<1> > > rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
-      DArray< RField<1> > rf_1;
+      DArray< RField<1, CppTp<1> > > rf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_1);
 
       readFields("in/w_lam.rf", domain, rf_0);
@@ -497,9 +497,9 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_hex.rf", domain);
 
-      DArray< RField<2> > rf_0;
+      DArray< RField<2, CppTp<2> > > rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
-      DArray< RField<2> > rf_1;
+      DArray< RField<2, CppTp<2> > > rf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_1);
 
       readFields("in/w_hex.rf", domain, rf_0);
@@ -524,9 +524,9 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
-      DArray< RField<3> > rf_1;
+      DArray< RField<3, CppTp<3> > > rf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_1);
 
       readFields("in/w_bcc.rf", domain, rf_0);
@@ -586,7 +586,7 @@ public:
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
       DArray< DArray<double> > bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
 
       readFields("in/w_bcc.bf", domain, bf_0);
@@ -839,7 +839,7 @@ public:
       DArray< RFieldDft<3> > kf_2;
       allocateFields(nMonomer_, domain.mesh().dimensions(), kf_2);
 
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
 
       readFields("in/w_bcc.bf", domain, bf_0);
@@ -894,7 +894,7 @@ public:
       DArray< RFieldDft<3> > kf_2;
       allocateFields(nMonomer_, domain.mesh().dimensions(), kf_2);
 
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
 
       // Read fields in basis format 
@@ -942,7 +942,7 @@ public:
       readHeader("in/w_bcc.rf", domain);
       IntVec<3> dimensions = domain.mesh().dimensions();
 
-      DArray< RField<3> > rf_0;
+      DArray< RField<3, CppTp<3> > > rf_0;
       allocateFields(nMonomer_, dimensions, rf_0);
       readFields("in/w_bcc.rf", domain, rf_0);
 
@@ -970,7 +970,7 @@ public:
       }
 
       // Read replicated field
-      DArray< RField<3> > rf_1;
+      DArray< RField<3, CppTp<3> > > rf_1;
       allocateFields(nMonomer_, dimensions_rep, rf_1);
       readFields("out/w_bcc_replica.rf", domain_rep, rf_1);
 
@@ -1010,7 +1010,7 @@ public:
       readHeader("in/w_lam.rf", domain);
       IntVec<1> dimensions = domain.mesh().dimensions();
 
-      DArray< RField<1> > rf_0;
+      DArray< RField<1, CppTp<1> > > rf_0;
       allocateFields(nMonomer_, dimensions, rf_0);
       readFields("in/w_lam.rf", domain, rf_0);
 
@@ -1036,7 +1036,7 @@ public:
       dimensions_exp[2] = newGridDimensions[1];
 
       // Read data for expanded field (d=3)
-      DArray< RField<3> > rf_1;
+      DArray< RField<3, CppTp<3> > > rf_1;
       allocateFields(nMonomer_, dimensions_exp, rf_1);
       readFields("out/w_lam_exp.rf", domain_exp, rf_1);
 
@@ -1071,7 +1071,7 @@ public:
       IntVec<2> dimensions = domain.mesh().dimensions();
 
       // Read fields into container rf_0
-      DArray< RField<2> > rf_0;
+      DArray< RField<2, CppTp<2> > > rf_0;
       allocateFields(nMonomer_, dimensions, rf_0);
       readFields("in/w_hex.rf", domain, rf_0);
 
@@ -1098,7 +1098,7 @@ public:
       TEST_ASSERT(dimensions_exp[2] == newGridDimensions[0]);
 
       // Read data for expanded field (d=3)
-      DArray< RField<3> > rf_1;
+      DArray< RField<3, CppTp<3> > > rf_1;
       allocateFields(nMonomer_, dimensions_exp, rf_1);
       readFields("out/w_hex_exp.rf", domain_exp, rf_1);
 

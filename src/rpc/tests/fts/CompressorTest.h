@@ -64,13 +64,13 @@ public:
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<D> const & dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3> > w2;
+      DArray< RField<3, CppTp<3> > > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
       
-      DArray< RField<3> > const & w = system.w().rgrid();
+      DArray< RField<3, CppTp<3> > > const & w = system.w().rgrid();
       double stepSize = 1e-1;
       Random random;
       random.setSeed(0);
@@ -90,13 +90,13 @@ public:
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<D> const & dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3> > w2;
+      DArray< RField<3, CppTp<3> > > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
       
-      DArray< RField<3> > const & w = system.w().rgrid();
+      DArray< RField<3, CppTp<3> > > const & w = system.w().rgrid();
       double stepSize = 1e-1;
       Random random;
       random.setSeed(0);
@@ -137,7 +137,7 @@ public:
       IntVec<3> const & dimensions = system.domain().mesh().dimensions();
       
       // Store value of input chemical potential fields
-      DArray< RField<3> > w0;
+      DArray< RField<3, CppTp<3> > > w0;
       w0.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w0[i].allocate(dimensions);
@@ -167,7 +167,7 @@ public:
       // Apply pressure field
       addPressureField(system);
       compressor.compress();
-      DArray< RField<3> > w1;
+      DArray< RField<3, CppTp<3> > > w1;
       w1.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w1[i].allocate(dimensions);

@@ -88,7 +88,7 @@ public:
 
    template <int D>
    void readField(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                  RField<D>& field)
+                  RField<D, CppTp<D> >& field)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -144,7 +144,7 @@ public:
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
-      RField<1> rf;
+      RField<1, CppTp<1> > rf;
       rf.allocate(dimensions);
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
@@ -181,7 +181,7 @@ public:
       bf.allocate(nBasis);
       readField("in/mask.bf", domain, bf);
 
-      RField<1> rf;
+      RField<1, CppTp<1> > rf;
       rf.allocate(dimensions);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
@@ -255,7 +255,7 @@ public:
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
-      RField<1> rf;
+      RField<1, CppTp<1> > rf;
       rf.allocate(dimensions);
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
@@ -291,7 +291,7 @@ public:
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
-      RField<1> rf;
+      RField<1, CppTp<1> > rf;
       rf.allocate(dimensions);
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);

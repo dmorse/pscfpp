@@ -181,17 +181,17 @@ namespace Cuda {
       /**
       * Get the kSq array on the device by reference.
       *
-      * This method returns an RField<D> in which each element is the 
+      * This method returns an RField<D, CudaTp<D> > in which each element is the 
       * square magnitude |k|^2 of a wavevector k in the k-space mesh used 
       * for a DFT. If isRealField is true, this k-space mesh is smaller 
       * than the real-space mesh. Otherwise, it is the same size.
       */
-      RField<D> const & kSq() const;
+      RField<D, CudaTp<D> > const & kSq() const;
 
       /**
       * Get derivatives of |k|^2 with respect to lattice parameter i.
       *
-      * This method returns an RField<D> in which each element is the
+      * This method returns an RField<D, CudaTp<D> > in which each element is the
       * derivative of the square-wavevector with respect to unit cell
       * parameter i, multiplied by a prefactor. The prefactor is 2.0 for
       * waves that have an implicit inverse and 1.0 otherwise. The choice
@@ -206,7 +206,7 @@ namespace Cuda {
       *
       * \param i index of lattice parameter
       */
-      RField<D> const & dKSq(int i) const;
+      RField<D, CudaTp<D> > const & dKSq(int i) const;
 
       /**
       * Get the implicitInverse array by reference.
@@ -361,7 +361,7 @@ namespace Cuda {
       *
       * The mesh dimensions are those of the reciprocal space mesh.
       */
-      RField<D> kSq_;
+      RField<D, CudaTp<D> > kSq_;
 
       /**
       * Array containing all values of dKSq_, stored on the device.
@@ -375,7 +375,7 @@ namespace Cuda {
       * Array of RFields, where each RField is a slice of the dKSq_ array.
       *
       * The number of elements is equal to nParam, the number of unit cell
-      * parameters.  Element dKSqSlices_[i] is an  RField<D> element that
+      * parameters.  Element dKSqSlices_[i] is an  RField<D, CudaTp<D> > element that
       * is associated with a slice of the larger dKSq_ device array, and
       * that contains derivatives of square wavevectors with respect to
       * unit cell parameter number i.
@@ -385,7 +385,7 @@ namespace Cuda {
       * elements of dkSqSlices_ will be destroyed before the dKSq_
       * container that owns the data.
       */
-      DArray< RField<D> > dKSqSlices_;
+      DArray< RField<D, CudaTp<D> > > dKSqSlices_;
 
       /**
       * Array indicating whether a given gridpoint has an implicit partner.
@@ -504,7 +504,7 @@ namespace Cuda {
 
    // Get the kSq array on the device by reference.
    template <int D> inline
-   RField<D> const & WaveList<D>::kSq() const
+   RField<D, CudaTp<D> > const & WaveList<D>::kSq() const
    {
       UTIL_CHECK(hasKSq_);
       return kSq_;
@@ -512,7 +512,7 @@ namespace Cuda {
 
    // Get a slice of the dKSq array on the device by reference.
    template <int D> inline 
-   RField<D> const & WaveList<D>::dKSq(int i) const
+   RField<D, CudaTp<D> > const & WaveList<D>::dKSq(int i) const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSqSlices_[i];

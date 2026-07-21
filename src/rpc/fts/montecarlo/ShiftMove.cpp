@@ -39,8 +39,8 @@ namespace Rp {
       IntVec<D> const& dimensions = system().domain().mesh().dimensions();
       const int nMonomer = system().mixture().nMonomer();
       for (int j = 0; j< nMonomer; ++j) {
-         RField<D> const & wOld = system().w().rgrid(j);
-         RField<D> & wNew = ShiftMoveBaseT::w_[j];
+         RField<D, CppTp<D> > const & wOld = system().w().rgrid(j);
+         RField<D, CppTp<D> > & wNew = ShiftMoveBaseT::w_[j];
 	 ShiftMoveBaseT::shiftField(wNew, wOld, shift, dimensions);
       }
    }

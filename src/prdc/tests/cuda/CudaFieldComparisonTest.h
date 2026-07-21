@@ -52,7 +52,7 @@ public:
       }
 
       // Copy data to fields on the device
-      Prdc::Cuda::RField<1> da, db;
+      Prdc::RField<1, CudaTp<1> > da, db;
       da.allocate(dimensions);
       db.allocate(dimensions);
       da = ha;
@@ -103,7 +103,7 @@ public:
       }
 
       // Copy data to fields da and db on the GPU device
-      Prdc::Cuda::RField<2> da, db;
+      Prdc::RField<2, CudaTp<2> > da, db;
       da.allocate(dimensions);
       db.allocate(dimensions);
       da = ha;
@@ -158,8 +158,8 @@ public:
       }
 
       // Copy data to fields da and db on the GPU device
-      DArray< Prdc::Cuda::RField<2> > da;
-      DArray< Prdc::Cuda::RField<2> > db;
+      DArray< Prdc::RField<2, CudaTp<2> > > da;
+      DArray< Prdc::RField<2, CudaTp<2> > > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {

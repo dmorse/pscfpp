@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/cpu/RField.h>           // member
+#include <prdc/field/cpu/RField.h>     // member
 #include <pscf/math/IntVec.h>          // member
 #include <util/containers/DArray.h>    // member
 #include <util/containers/GArray.h>    // member
@@ -174,7 +174,7 @@ namespace Cpu {
       * discrete Fourier transform. Array indices correspond to ranks
       * within this k-space mesh.
       */
-      RField<D> const & kSq() const;
+      RField<D, CppTp<D> > const & kSq() const;
 
       /**
       * Get derivatives of kSq with respect to unit cell parameter i.
@@ -193,16 +193,16 @@ namespace Cpu {
       *
       * \param i index of lattice parameter
       */
-      RField<D> const & dKSq(int i) const;
+      RField<D, CppTp<D> > const & dKSq(int i) const;
 
       /**
       * Get all derivatives of kSq with respect to unit cell parameters.
       *
-      * Element i of the DArray is the RField<D> that can also be obtained
+      * Element i of the DArray is the RField<D, CppTp<D> > that can also be obtained
       * from member function dKSq(int i). See documentation of that
       * function.
       */
-      DArray< RField<D> > const & dKSq() const;
+      DArray< RField<D, CppTp<D> > > const & dKSq() const;
 
       /**
       * Get the implicitInverse array by reference.
@@ -342,7 +342,7 @@ namespace Cpu {
       /**
       * Array of square-magnitude values for wavevectors.
       */
-      RField<D> kSq_;
+      RField<D, CppTp<D> > kSq_;
 
       /**
       * Derivatives of kSq_ with respect to lattice parameters.
@@ -350,7 +350,7 @@ namespace Cpu {
       * Element kSq_[i][j] is the derivative of kSq_[j] with respect to
       * lattice parameter i. 
       */
-      DArray< RField<D> > dKSq_;
+      DArray< RField<D, CppTp<D> > > dKSq_;
 
       /**
       * Array indicating whether a given gridpoint has an implicit partner.
@@ -454,7 +454,7 @@ namespace Cpu {
 
    // Get the kSq array on the device by reference.
    template <int D> inline
-   RField<D> const & WaveList<D>::kSq() const
+   RField<D, CppTp<D> > const & WaveList<D>::kSq() const
    {
       UTIL_CHECK(hasKSq_);
       return kSq_;
@@ -462,7 +462,7 @@ namespace Cpu {
 
    // Get dKSq for unit cell parameter array i.
    template <int D> inline
-   RField<D> const & WaveList<D>::dKSq(int i) const
+   RField<D, CppTp<D> > const & WaveList<D>::dKSq(int i) const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSq_[i];
@@ -470,7 +470,7 @@ namespace Cpu {
 
    // Get entire dKSq container by const reference.
    template <int D> inline
-   DArray< RField<D> > const & WaveList<D>::dKSq() const
+   DArray< RField<D, CppTp<D> > > const & WaveList<D>::dKSq() const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSq_;

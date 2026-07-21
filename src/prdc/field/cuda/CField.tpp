@@ -52,7 +52,7 @@ namespace Cuda {
    }
 
    /*
-   * Assignment from another RField<D>.
+   * Assignment from another RField<D, CudaTp<D> >.
    */
    template <int D>
    CField<D>& CField<D>::operator = (const CField<D>& other)

@@ -16,12 +16,14 @@
 namespace Util {
    class FileMaster;
    template <typename T> class DMatrix;
+   template <typename T> class DArray;
 }
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc {
       template <int D> class Basis;
       template <int D> class SpaceGroup;
+      template <int D, class T> class RField;
    }
 }
 
@@ -299,7 +301,7 @@ namespace Rp {
       */
       virtual
       bool readFieldsRGrid(std::istream& in,
-                           DArray<typename T::RField>& fields,
+                           DArray<RField<D,T> >& fields,
                            UnitCell<D> & unitCell) const = 0;
 
       /**
@@ -317,7 +319,7 @@ namespace Rp {
       * \return  true iff header declares a space group
       */
       bool readFieldsRGrid(std::string filename,
-                           DArray<typename T::RField>& fields,
+                           DArray<RField<D,T> >& fields,
                            UnitCell<D> & unitCell) const;
 
       /**
@@ -337,7 +339,7 @@ namespace Rp {
       */
       virtual
       void readFieldsRGridData(std::istream& in,
-                               DArray<typename T::RField>& fields,
+                               DArray<RField<D,T> >& fields,
                                int nMonomer) const = 0;
 
       /**
@@ -354,7 +356,7 @@ namespace Rp {
       */
       virtual
       bool readFieldRGrid(std::istream &in,
-                          typename T::RField & field,
+                          RField<D,T> & field,
                           UnitCell<D>& unitCell) const = 0;
 
       /**
@@ -372,7 +374,7 @@ namespace Rp {
       * \return  true iff header has a space group (isSymmetric flag)
       */
       bool readFieldRGrid(std::string filename,
-                          typename T::RField & field,
+                          RField<D,T> & field,
                           UnitCell<D>& unitCell) const;
 
       /**
@@ -393,7 +395,7 @@ namespace Rp {
       */
       virtual
       void writeFieldsRGrid(std::ostream& out,
-                            DArray<typename T::RField> const & fields,
+                            DArray<RField<D,T> > const & fields,
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
@@ -413,7 +415,7 @@ namespace Rp {
       * \param isSymmetric  iff true, write space group name
       */
       void writeFieldsRGrid(std::string filename,
-                            DArray<typename T::RField> const & fields,
+                            DArray<RField<D,T> > const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) const;
 
@@ -433,7 +435,7 @@ namespace Rp {
       */
       virtual
       void writeFieldRGrid(std::ostream &out,
-                           typename T::RField const & field,
+                           RField<D,T> const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
                            bool isSymmetric = true) const = 0;
@@ -453,7 +455,7 @@ namespace Rp {
       * \param isSymmetric  iff true, write space group name
       */
       void writeFieldRGrid(std::string filename,
-                           typename T::RField const & field,
+                           RField<D,T> const & field,
                            UnitCell<D> const & unitCell,
                            bool isSymmetric = true) const;
 
@@ -604,7 +606,7 @@ namespace Rp {
       * \param out  field defined on real-space grid
       */
       void convertBasisToRGrid(DArray<double> const & in,
-                               typename T::RField & out) const;
+                               RField<D,T> & out) const;
 
       /**
       * Convert an array of fields from basis to r-grid format.
@@ -613,7 +615,7 @@ namespace Rp {
       * \param out fields defined on real-space grid
       */
       void convertBasisToRGrid(DArray< DArray<double> > const & in,
-                               DArray<typename T::RField> & out) const ;
+                               DArray<RField<D,T> > & out) const ;
 
       /**
       * Convert a single field from r-grid to basis form.
@@ -629,7 +631,7 @@ namespace Rp {
       * \param checkSymmetry  if true, check space group symmetry
       * \param epsilon error threshhold for symmetry test
       */
-      void convertRGridToBasis(typename T::RField const & in,
+      void convertRGridToBasis(RField<D,T> const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const;
@@ -648,7 +650,7 @@ namespace Rp {
       * \param checkSymmetry  if true, check space group symmetry
       * \param epsilon error threshhold for symmetry test
       */
-      void convertRGridToBasis(DArray<typename T::RField> const & in,
+      void convertRGridToBasis(DArray<RField<D,T> > const & in,
                                DArray< DArray<double> > & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) const;
@@ -662,7 +664,7 @@ namespace Rp {
       * \param out  fields defined on real-space grid (r-grid)
       */
       void convertKGridToRGrid(DArray<typename T::RFieldDft> const & in,
-                               DArray<typename T::RField> & out) const;
+                               DArray<RField<D,T> > & out) const;
 
       /**
       * Convert a single field from k-grid to r-grid format.
@@ -673,7 +675,7 @@ namespace Rp {
       * \param out  field defined on real-space grid (r-grid)
       */
       void convertKGridToRGrid(typename T::RFieldDft const & in,
-                               typename T::RField & out) const;
+                               RField<D,T> & out) const;
 
       /**
       * Convert an array of fields from r-grid to k-grid (Fourier) format.
@@ -684,7 +686,7 @@ namespace Rp {
       * \param in  fields defined on real-space grid (r-grid)
       * \param out  fields in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(DArray<typename T::RField> const & in,
+      void convertRGridToKGrid(DArray<RField<D,T> > const & in,
                                DArray<typename T::RFieldDft> & out) const;
 
       /**
@@ -695,7 +697,7 @@ namespace Rp {
       * \param in  field defined on real-space grid (r-grid)
       * \param out  field in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(typename T::RField const & in,
+      void convertRGridToKGrid(RField<D,T> const & in,
                                typename T::RFieldDft & out) const;
 
       ///@}
@@ -839,7 +841,7 @@ namespace Rp {
       *
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(typename T::RField const & in,
+      bool hasSymmetry(RField<D,T> const & in,
                        double epsilon = 1.0e-8,
                        bool verbose = true) const;
 
@@ -889,8 +891,8 @@ namespace Rp {
       * \param field2  second array of fields (r-grid form)
       */
       virtual
-      void compareFieldsRGrid(DArray< typename T::RField > const & field1,
-                              DArray< typename T::RField > const & field2) const = 0;
+      void compareFieldsRGrid(DArray< RField<D,T> > const & field1,
+                              DArray< RField<D,T> > const & field2) const = 0;
 
       /**
       * Compare two r-grid field files, write a report to Log file.
@@ -954,7 +956,7 @@ namespace Rp {
       * \param factor  factor by which to multiply every field element
       */
       virtual
-      void scaleFieldRGrid(typename T::RField& field, double factor) const = 0;
+      void scaleFieldRGrid(RField<D,T>& field, double factor) const = 0;
 
       /**
       * Scale an array of r-grid fields by a scalar.
@@ -966,7 +968,7 @@ namespace Rp {
       * \param fields  array of r-grid fields to be rescaled
       * \param factor  factor by which to multiply every field element
       */
-      void scaleFieldsRGrid(DArray<typename T::RField> & fields, double factor) const;
+      void scaleFieldsRGrid(DArray<RField<D,T> > & fields, double factor) const;
 
       /**
       * Multiply all fields in an r-grid field file by a scalar.
@@ -1049,7 +1051,7 @@ namespace Rp {
       */
       virtual
       void replicateUnitCell(std::ostream& out,
-                             DArray<typename T::RField> const & fields,
+                             DArray<RField<D,T> > const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const = 0;
 
@@ -1067,7 +1069,7 @@ namespace Rp {
       * \param replicas  number of unit cell replicas in each direction
       */
       void replicateUnitCell(std::string filename,
-                             DArray<typename T::RField> const & fields,
+                             DArray<RField<D,T> > const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const;
 
@@ -1109,7 +1111,7 @@ namespace Rp {
       */
       virtual
       void expandRGridDimension(std::ostream &out,
-                                DArray<typename T::RField > const & fields,
+                                DArray<RField<D,T> > const & fields,
                                 UnitCell<D> const & unitCell,
                                 int d,
                                 DArray<int> const& newGridDimensions)
@@ -1130,7 +1132,7 @@ namespace Rp {
       * \param newGridDimensions  number of grid points in added dimensions
       */
       void expandRGridDimension(std::string filename,
-                                DArray<typename T::RField > const & fields,
+                                DArray<RField<D,T> > const & fields,
                                 UnitCell<D> const & unitCell,
                                 int d,
                                 DArray<int> newGridDimensions) const;
@@ -1365,7 +1367,7 @@ namespace Rp {
       mutable DArray< DArray<double> > tmpFieldsBasis_;
 
       /// Work array of fields on real space grid (r-grid).
-      mutable DArray<typename T::RField> tmpFieldsRGrid_;
+      mutable DArray<RField<D,T> > tmpFieldsRGrid_;
 
       /// Work array of fields on Fourier grid (k-grid).
       mutable DArray<typename T::RFieldDft> tmpFieldsKGrid_;

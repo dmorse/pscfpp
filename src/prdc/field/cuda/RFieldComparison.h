@@ -40,7 +40,7 @@ namespace Cuda {
       * \param a first array of fields
       * \param b second array of fields
       */
-      double compare(RField<D> const& a, RField<D> const& b);
+      double compare(RField<D, CudaTp<D> > const& a, RField<D, CudaTp<D> > const& b);
 
       /**
       * Comparator for arrays of fields.
@@ -49,7 +49,7 @@ namespace Cuda {
       * \param b second array of fields
       */
       double 
-      compare(DArray< RField<D> > const& a, DArray< RField<D> > const& b);
+      compare(DArray< RField<D, CudaTp<D> > > const& a, DArray< RField<D, CudaTp<D> > > const& b);
 
       /**
       * Get precomputed maximum element-by-element difference.

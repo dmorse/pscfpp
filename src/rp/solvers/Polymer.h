@@ -16,6 +16,9 @@ namespace Util {
    template <typename T> class DArray;
 }
 namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class RField;
+   }
    namespace Rp {
       template <int D, class T> class Propagator;
       template <int D, class T> class Block;
@@ -26,6 +29,7 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+   using namespace Prdc;
 
    /**
    * Descriptor and MDE solver for one polymer species.
@@ -118,7 +122,7 @@ namespace Rp {
       * \param wFields array of chemical potential fields.
       * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void compute(DArray<typename T::RField> const & wFields,
+      void compute(DArray< RField<D,T> > const & wFields,
                    double phiTot = 1.0);
 
       /**

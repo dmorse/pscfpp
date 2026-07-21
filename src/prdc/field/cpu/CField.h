@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/FftwDRArray.h>    // base class
+#include <pscf/cpu/FftwDRArray.h>   // base class
 #include <pscf/math/IntVec.h>       // member
+#include <pscf/cpu/CppTp.h>         // backend type
+
 #include <fftw3.h>
 
 namespace Pscf {

@@ -227,8 +227,8 @@ namespace Rp {
       UTIL_CHECK(wk_.capacity() == nWave_);
 
       // Compute W_{-}(r)
-      typename T::RField const & wa = system().w().rgrid(0);
-      typename T::RField const & wb = system().w().rgrid(1);
+      RField<D,T> const & wa = system().w().rgrid(0);
+      RField<D,T> const & wb = system().w().rgrid(1);
       VecOp::subVV(wm_, wa, wb);
       VecOp::mulEqS(wm_, 0.5);
 

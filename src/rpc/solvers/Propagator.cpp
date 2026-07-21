@@ -64,11 +64,11 @@ namespace Rp {
       // Deallocate all memory previously used by this propagator.
       qFields_.deallocate();
 
-      // NOTE: Variable qFields_ is a DArray< RField<D> > container.
+      // NOTE: Variable qFields_ is a DArray< RField<D, CppTp<D> > > container.
       // The DArray::deallocate() function calls "delete [] ptr", where 
       // ptr is a pointer to the underlying C array. The C++ delete [] 
-      // command calls the destructor for each RField<D> array element
-      // before deleting the parent array. The RField<D> destructor 
+      // command calls the destructor for each RField<D, CppTp<D> > array element
+      // before deleting the parent array. The RField<D, CppTp<D> > destructor 
       // deletes the double* array that stores the field associated 
       // with each slice of the propagator. All memory is thus released.
 
