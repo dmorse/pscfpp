@@ -7,14 +7,11 @@
 
 #include "FFTBatched.tpp"
 
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Prdc {
-namespace Cuda {
-
-   template class FFTBatched<1>;
-   template class FFTBatched<2>;
-   template class FFTBatched<3>;
-
-} // namespace Pscf::Prdc::Cuda
-} // namespace Pscf::Prdc
-} // namespace Pscf
+   namespace Prdc {
+      template class FFTBatched<1>;
+      template class FFTBatched<2>;
+      template class FFTBatched<3>;
+   } 
+} 

@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_WAVE_LIST_H
-#define PRDC_CUDA_WAVE_LIST_H
+#ifndef PRDC_WAVE_LIST_CU_H
+#define PRDC_WAVE_LIST_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/cuda/RField.h>        // member
+#include <pscf/cuda/CudaTp.h>        // specialized template argument
+#include <prdc/field/cuda/RField.h>  // member
 #include <pscf/cuda/DeviceArray.h>   // member
 #include <pscf/cuda/HostDArray.h>    // member
 #include <pscf/math/IntVec.h>        // member
@@ -21,12 +22,12 @@ namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc {
       template <int D> class UnitCell;
+      template <int D, class T> class WaveList;
    }
 }
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
 
@@ -35,42 +36,42 @@ namespace Cuda {
    *
    * A WaveList computes and stores minimum images of wavevectors, square
    * norms of wavevectors (kSq), and derivatives of the square norms with
-   * respect to the unit cell parameters (dKSq). A WaveList can also be 
+   * respect to the unit cell parameters (dKSq). A WaveList can also be
    * used to sort wavevectors in order of increasing wavevector norm.
    *
    * A WaveList computes these properties for a mesh of grid points in
    * k-space. Different dimensions are used for this mesh depending on the
    * value of the parameter isRealField that is passed to constructor. This
    * parameter specifies whether this class will use a k-space mesh designed
-   * for real or complex fields throughout the lifetime of this WaveList 
-   * object. If isRealField == true, this class uses the k-space mesh used 
-   * by FFTW for the result of a real-to-complex discrete Fourier transform, 
-   * which is contains slightly more than half the number of grid points as 
-   * the corresponding real-space mesh. If isRealField == true, this class 
-   * uses a k-space mesh with dimensions that are the same as those of the 
+   * for real or complex fields throughout the lifetime of this WaveList
+   * object. If isRealField == true, this class uses the k-space mesh used
+   * by FFTW for the result of a real-to-complex discrete Fourier transform,
+   * which is contains slightly more than half the number of grid points as
+   * the corresponding real-space mesh. If isRealField == true, this class
+   * uses a k-space mesh with dimensions that are the same as those of the
    * associated real-space mesh. The dimensions of this k-space mesh are
    * returned as an IntVec<D> by member function kMeshDimensions().
    *
-   * In most of the arrays constructed by this class, each element 
+   * In most of the arrays constructed by this class, each element
    * corresponds to a wavevector in the associated k-space mesh, and the
-   * index of each element correspond to the rank of the associated 
+   * index of each element correspond to the rank of the associated
    * wavevector within that mesh. This applies to the arrays returned by
    * the functions minImages(), kSq(), dkSq(int i), and bunchIds().
    *
    * Any time the lattice parameters change, the clearUnitCellData() method
    * should be called. This function sets internal flags that mark some
-   * properties as being outdated, indicating that they are outdated and 
+   * properties as being outdated, indicating that they are outdated and
    * thus must be recalculated before the next use.
    *
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class WaveList
+   class WaveList<D, CudaTp<D> >
    {
    public:
 
       /// \name Construction, Destruction and Initialization
-      ///@{ 
+      ///@{
 
       /**
       * Constructor.
@@ -94,7 +95,7 @@ namespace Cuda {
 
       ///@}
       /// \name Computation
-      ///@{ 
+      ///@{
 
       /**
       * Clear all internal data that depends on lattice parameters.
@@ -126,10 +127,10 @@ namespace Cuda {
       /**
       * Compute square norm |k|^2 for all wavevectors.
       *
-      * This function recomputes values of the square norm for all 
+      * This function recomputes values of the square norm for all
       * wavevectors if necessary (i.e., if hasKSq() == false), and does
       * nothing if these values are up to date (if hasKSq() ==  true).
-      * Mininum image values are updated if necessary. 
+      * Mininum image values are updated if necessary.
       */
       void computeKSq();
 
@@ -146,7 +147,7 @@ namespace Cuda {
       /**
       * Sort waves in order of ascending wavevector norm.
       *
-      * This function computes the sortedIds, sortedBunches, and bunchIds 
+      * This function computes the sortedIds, sortedBunches, and bunchIds
       * arrays. Values of kSq are updated before sorting waves if hasKSq()
       * is false on entry.
       */
@@ -154,7 +155,7 @@ namespace Cuda {
 
       ///@}
       /// \name Data Access
-      ///@{ 
+      ///@{
 
       /**
       * Get the array of minimum images on the device by reference.
@@ -172,7 +173,7 @@ namespace Cuda {
       * Get minimum images as IntVec<D> objects on the host.
       *
       * This function returns an array of kSize elements in which each
-      * element is an IntVec<D> containing the integer coordinates of 
+      * element is an IntVec<D> containing the integer coordinates of
       * the minimum image of one wavevector in the k-space mesh used for
       * discrete Fourier transforms.
       */
@@ -181,9 +182,9 @@ namespace Cuda {
       /**
       * Get the kSq array on the device by reference.
       *
-      * This method returns an RField<D, CudaTp<D> > in which each element is the 
-      * square magnitude |k|^2 of a wavevector k in the k-space mesh used 
-      * for a DFT. If isRealField is true, this k-space mesh is smaller 
+      * This method returns an RField<D, CudaTp<D> > in which each element is the
+      * square magnitude |k|^2 of a wavevector k in the k-space mesh used
+      * for a DFT. If isRealField is true, this k-space mesh is smaller
       * than the real-space mesh. Otherwise, it is the same size.
       */
       RField<D, CudaTp<D> > const & kSq() const;
@@ -234,11 +235,11 @@ namespace Cuda {
       /**
       * Get the sortedBunches array by reference.
       *
-      * Each element in this array contains a Pair<int> of two integers 
+      * Each element in this array contains a Pair<int> of two integers
       * that give upper and lower index bounds of a contiguous slice
       * (a "bunch") that contains ids of wavevectors of equal magnitude.
-      * The first value in such a pair is the array index in sortIds_ of 
-      * the first element of such bunch, and the second is one greater 
+      * The first value in such a pair is the array index in sortIds_ of
+      * the first element of such bunch, and the second is one greater
       * than the index of the last element in that bunch.
       *
       * This method throws an Exception if isSorted == false.
@@ -271,7 +272,7 @@ namespace Cuda {
       *
       * If isRealField() == true, kSize is approximately half the size
       * of the real-space grid.  Otherwise, the two grids are identical.
-      * 
+      *
       */
       int kSize() const
       {  return kSize_; }
@@ -281,13 +282,13 @@ namespace Cuda {
       */
       int nBunch() const
       {
-         UTIL_CHECK(isSorted_);  
-         return nBunch_; 
+         UTIL_CHECK(isSorted_);
+         return nBunch_;
       }
 
       ///@}
       /// \name Boolean Queries
-      ///@{ 
+      ///@{
 
       /**
       * Has memory been allocated for arrays?
@@ -398,7 +399,7 @@ namespace Cuda {
       /**
       * Wavevector ranks, sorted in ascending wavevector magnitude.
       *
-      * For i > j, kSq_[sortedIds_[i]] >= kSq_[sortedIds_[j]]. 
+      * For i > j, kSq_[sortedIds_[i]] >= kSq_[sortedIds_[j]].
       */
       DArray<int> sortedIds_;
 
@@ -408,8 +409,8 @@ namespace Cuda {
       * Each element contains a pair of integers that give bounds of a
       * slice of the array sortedIds_ that contains ids for wavevectors
       * of equal magnitude. The first value in each pair is the index
-      * within sortedIds_ of the first element in such a "bunch" and 
-      * the second is one greater than the index of the last element 
+      * within sortedIds_ of the first element in such a "bunch" and
+      * the second is one greater than the index of the last element
       * in that bunch.
       */
       GArray< Pair<int> > sortedBunches_;
@@ -496,7 +497,7 @@ namespace Cuda {
 
    // Get the array of minimum images on the device by reference.
    template <int D> inline
-   DeviceArray<int> const & WaveList<D>::minImages_d() const
+   DeviceArray<int> const & WaveList<D, CudaTp<D> >::minImages_d() const
    {
       UTIL_CHECK(hasMinImages_);
       return minImages_;
@@ -504,15 +505,15 @@ namespace Cuda {
 
    // Get the kSq array on the device by reference.
    template <int D> inline
-   RField<D, CudaTp<D> > const & WaveList<D>::kSq() const
+   RField<D, CudaTp<D> > const & WaveList<D, CudaTp<D> >::kSq() const
    {
       UTIL_CHECK(hasKSq_);
       return kSq_;
    }
 
    // Get a slice of the dKSq array on the device by reference.
-   template <int D> inline 
-   RField<D, CudaTp<D> > const & WaveList<D>::dKSq(int i) const
+   template <int D> inline
+   RField<D, CudaTp<D> > const & WaveList<D, CudaTp<D> >::dKSq(int i) const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSqSlices_[i];
@@ -520,7 +521,7 @@ namespace Cuda {
 
    // Get the implicitInverse array by reference.
    template <int D> inline
-   DeviceArray<bool> const & WaveList<D>::implicitInverse() const
+   DeviceArray<bool> const & WaveList<D, CudaTp<D> >::implicitInverse() const
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);
@@ -530,7 +531,7 @@ namespace Cuda {
    // Get the sortedIds array by const reference.
    template <int D>
    inline
-   DArray<int> const & WaveList<D>::sortedIds() const
+   DArray<int> const & WaveList<D, CudaTp<D> >::sortedIds() const
    {
       UTIL_CHECK(isSorted_);
       return sortedIds_;
@@ -538,7 +539,7 @@ namespace Cuda {
 
    // Get the sortedBunches array by const reference.
    template <int D> inline
-   GArray< Pair<int> > const & WaveList<D>::sortedBunches() const
+   GArray< Pair<int> > const & WaveList<D, CudaTp<D> >::sortedBunches() const
    {
       UTIL_CHECK(isSorted_);
       return sortedBunches_;
@@ -546,18 +547,17 @@ namespace Cuda {
 
    // Get the bunchIds array by const reference.
    template <int D> inline
-   DArray<int> const & WaveList<D>::bunchIds() const
+   DArray<int> const & WaveList<D, CudaTp<D> >::bunchIds() const
    {
       UTIL_CHECK(isSorted_);
       return bunchIds_;
    }
 
    // Explicit instantiation declarations
-   extern template class WaveList<1>;
-   extern template class WaveList<2>;
-   extern template class WaveList<3>;
+   extern template class WaveList<1, CudaTp<1> >;
+   extern template class WaveList<2, CudaTp<2> >;
+   extern template class WaveList<3, CudaTp<3> >;
 
-} // namespace Cuda
 } // namespace Prdc
 } // namespace Pscf
 #endif

@@ -7,14 +7,11 @@
 
 #include "WaveList.tpp"
 
+// Explicit instantation definitions
 namespace Pscf { 
-namespace Prdc { 
-namespace Cuda { 
-
-   template class WaveList<1>;
-   template class WaveList<2>;
-   template class WaveList<3>;
-
-} // Cuda
-} // Prdc
-} // Pscf
+   namespace Prdc { 
+      template class WaveList<1, CudaTp<1> >;
+      template class WaveList<2, CudaTp<2> >;
+      template class WaveList<3, CudaTp<3> >;
+   }
+}

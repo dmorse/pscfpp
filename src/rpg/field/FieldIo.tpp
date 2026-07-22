@@ -36,7 +36,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    // Field Io in r-grid format
 

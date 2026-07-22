@@ -32,7 +32,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    // CUDA kernels (anonymous namespace - used only in this file)
    namespace {

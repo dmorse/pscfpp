@@ -28,7 +28,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cuda;
 
    /**
    * File input/output operations and format conversions for fields.
@@ -328,7 +327,6 @@ namespace Rp {
 // Explicit instantation declarations
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cuda;
       extern template class FieldIoBase<1, CudaTp<1> >;
       extern template class FieldIoBase<2, CudaTp<2> >;
       extern template class FieldIoBase<3, CudaTp<3> >;

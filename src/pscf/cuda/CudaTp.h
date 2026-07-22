@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/cudaTypes.h>
 #include <prdc/field/BackendId.h>
+#include <pscf/cuda/cudaTypes.h>
+#include <pscf/cuda/DeviceArray.h>
+#include <pscf/cuda/HostDArray.h>
 
 // Forward declarations
 namespace Util {
@@ -17,18 +19,6 @@ namespace Util {
 }
 namespace Pscf {
    class CudaVecRandom;
-   template <typename T> class DeviceArray;
-   template <typename T> class HostDArray;
-   namespace Prdc {
-      namespace Cuda {
-         //template <int D> class RField;
-         //template <int D> class RFieldDft;
-         //template <int D> class FFT;
-         //template <int D> class RFieldComparison;
-         //template <int D> class RFieldDftComparison;
-         template <int D> class WaveList;
-      }
-   }
 }
 
 namespace Pscf {
@@ -58,13 +48,6 @@ namespace Pscf {
       using RLocArray = LocArray<Real>;
 
       using VecRandom = CudaVecRandom;
-
-      //using RField = Prdc::Cuda::RField<D>;
-      //using RFieldDft = Prdc::Cuda::RFieldDft<D>;
-      //using FFT = Prdc::Cuda::FFT<D>;
-      //using RFieldComparison = Prdc::Cuda::RFieldComparison<D>;
-      //using RFieldDftComparison = Prdc::Cuda::RFieldDftComparison<D>;
-      using WaveList = Prdc::Cuda::WaveList<D>;
 
       // Static members
 

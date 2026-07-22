@@ -13,7 +13,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
 
@@ -85,7 +84,6 @@ namespace Cuda {
 
    };
 
-} // namespace Cuda
 } // namespace Prdc
 } // namespace Pscf
 #endif

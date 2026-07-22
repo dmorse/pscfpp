@@ -22,8 +22,6 @@ using namespace Pscf::Prdc;
 class CudaWaveListTest : public UnitTest
 {
 
-//using namespace Pscf::Prdc::Cuda;
-
 private:
 
    // Error tolerance for array equality
@@ -96,19 +94,17 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      using namespace Pscf::Prdc::Cuda;
-
-      Cuda::WaveList<1> wavelist1;
+      WaveList<1, CudaTp<1> > wavelist1;
       wavelist1.allocate(mesh1, cell1);
       TEST_ASSERT(wavelist1.isAllocated());
       TEST_ASSERT(!wavelist1.hasMinImages());
 
-      Cuda::WaveList<2> wavelist2;
+      WaveList<2, CudaTp<2> > wavelist2;
       wavelist2.allocate(mesh2, cell2);
       TEST_ASSERT(wavelist2.isAllocated());
       TEST_ASSERT(!wavelist2.hasMinImages());
 
-      Cuda::WaveList<3> wavelist3;
+      WaveList<3, CudaTp<3> > wavelist3;
       wavelist3.allocate(mesh3, cell3);
       TEST_ASSERT(wavelist3.isAllocated());
       TEST_ASSERT(!wavelist3.hasMinImages());
@@ -117,10 +113,9 @@ public:
    void testComputeMinimumImages1D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // compute minimum images (and ksq) on device, transfer to host
@@ -148,10 +143,9 @@ public:
    void testComputeMinimumImages2D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
       wavelist.allocate(mesh2, cell2);
 
       // compute minimum images (and ksq) on device, transfer to host
@@ -180,10 +174,9 @@ public:
    void testComputeMinimumImages3D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      Cuda::WaveList<3> wavelist;
+      WaveList<3, CudaTp<3> > wavelist;
       wavelist.allocate(mesh3, cell3);
 
       // compute minimum images (and ksq) on device, transfer to host
@@ -213,10 +206,9 @@ public:
    void testComputeKSq1D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // compute kSq on device two different ways, transfer to host
@@ -245,7 +237,6 @@ public:
    void testComputeKSq2D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up unit cell with no flexible angles
       // (if there are flexible angles, computeKSq never gets to run,
@@ -256,7 +247,7 @@ public:
       in >> cell;
 
       // set up wavelist object
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
       wavelist.allocate(mesh2, cell);
 
       // compute kSq on device two different ways, transfer to host
@@ -285,7 +276,6 @@ public:
    void testComputeKSq3D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up unit cell with no flexible angles
       // (if there are flexible angles, computeKSq never gets to run,
@@ -296,7 +286,7 @@ public:
       in >> cell;
 
       // set up wavelist object
-      Cuda::WaveList<3> wavelist;
+      WaveList<3, CudaTp<3> > wavelist;
       wavelist.allocate(mesh3, cell);
 
       // compute kSq on device two different ways, transfer to host
@@ -325,10 +315,9 @@ public:
    void testComputedKSq1D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // compute dKSq on device, transfer to host
@@ -355,10 +344,9 @@ public:
    void testComputedKSq2D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
       wavelist.allocate(mesh2, cell2);
 
       // compute dKSq on device, transfer to host
@@ -392,10 +380,9 @@ public:
    void testComputedKSq3D()
    {
       printMethod(TEST_FUNC);
-      using namespace Pscf::Prdc::Cuda;
 
       // set up wavelist object
-      Cuda::WaveList<3> wavelist;
+      WaveList<3, CudaTp<3> > wavelist;
       wavelist.allocate(mesh3, cell3);
 
       // compute dKSq on device, transfer to host
@@ -439,7 +426,7 @@ public:
       in >> cell;
 
       // Set up wavelist object
-      Cuda::WaveList<3> wavelist;
+      WaveList<3, CudaTp<3> > wavelist;
       wavelist.allocate(mesh3, cell);
 
       // Compute kSq 
@@ -507,7 +494,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Cuda::WaveList<3> wavelist(false);
+      WaveList<3, CudaTp<3> > wavelist(false);
       wavelist.allocate(mesh3, cell3);
       wavelist.computedKSq(); // computes min images, ksq, and dksq
 

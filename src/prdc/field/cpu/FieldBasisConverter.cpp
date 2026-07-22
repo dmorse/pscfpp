@@ -9,7 +9,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
 
@@ -18,6 +17,5 @@ namespace Cpu {
    template class FieldBasisConverter<2>;
    template class FieldBasisConverter<3>;
 
-}
 }
 }

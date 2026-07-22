@@ -27,7 +27,6 @@ namespace Cpc {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
 
    /*
    * Read an array of fields in r-grid format.

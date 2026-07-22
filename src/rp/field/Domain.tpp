@@ -46,7 +46,7 @@ namespace Rp {
       groupPtr_ = new SpaceGroup<D>();
       basisPtr_ = new Basis<D>();
       fftPtr_ = new FFT<D,T>();
-      waveListPtr_ = new typename T::WaveList();
+      waveListPtr_ = new WaveList<D,T>();
       fieldIoPtr_ = new FieldIo<D,T>();
       signalPtr_ = new Signal<void>();
 

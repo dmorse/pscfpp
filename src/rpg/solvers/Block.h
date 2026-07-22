@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cuda/CudaTp.h>            // specialized template argument
 #include <pscf/solvers/BlockTmpl.h>      // base class template
-#include <pscf/cuda/CudaTp.h>            // template argument
 #include <prdc/field/cuda/RField.h>      // member
 #include <prdc/field/cuda/RFieldDft.h>   // member
 #include <prdc/field/cuda/FFTBatched.h>  // member
@@ -22,11 +22,9 @@
 namespace Pscf {
    template <int D> class Mesh;
    namespace Prdc {
-      template <int D, class T> class FFT;
       template <int D> class UnitCell;
-      namespace Cuda {
-         template <int D> class WaveList;
-      }
+      template <int D, class T> class FFT;
+      template <int D, class T> class WaveList;
    }
    namespace Rp {
       template <int D, class T> class Propagator;
@@ -39,7 +37,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /**
    * Block within a branched polymer, for Cpp backend.
@@ -71,7 +68,7 @@ namespace Rp {
       using FFTT = FFT<D, CudaTp<D> >;
 
       /// Wavelist type.
-      using WaveListT = WaveList<D>;
+      using WaveListT = WaveList<D, CudaTp<D> >;
 
       // Public member functions
 
@@ -98,12 +95,12 @@ namespace Rp {
       * \param mesh  Mesh<D> object - spatial discretization mesh
       * \param fft  FFT<D, CudaTp<D> > object - Fourier transforms
       * \param cell  UnitCell<D> object - crystallographic unit cell
-      * \param waveList  WaveList<D> object - properties of wavevectors
+      * \param waveList  WaveList<D, CudaTp<D> > object - properties of wavevectors
       */
       void associate(Mesh<D> const & mesh,
                      FFT<D, CudaTp<D> > const & fft,
                      UnitCell<D> const & cell,
-                     WaveList<D>& waveList);
+                     WaveList<D, CudaTp<D> >& waveList);
 
       /**
       * Allocate memory and set contour step size for thread model.
@@ -396,8 +393,8 @@ namespace Rp {
       /// Const pointer to associated UnitCell<D> object.
       UnitCell<D> const * unitCellPtr_;
 
-      /// Pointer to associated WaveList<D> object.
-      WaveList<D> * waveListPtr_;
+      /// Pointer to associated WaveList<D, CudaTp<D> > object.
+      WaveList<D, CudaTp<D> > * waveListPtr_;
 
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
@@ -436,7 +433,7 @@ namespace Rp {
       UnitCell<D> const & unitCell() const;
 
       /// Get the WaveList by non-const reference (private).
-      WaveList<D> & waveList();
+      WaveList<D, CudaTp<D> > & waveList();
 
       /// Compute expKSq_ arrays.
       void computeExpKsq();
@@ -483,7 +480,7 @@ namespace Rp {
 
    // Get the WaveList by non-const reference (private).
    template <int D> inline
-   WaveList<D> & Block<D, CudaTp<D> >::waveList()
+   WaveList<D, CudaTp<D> > & Block<D, CudaTp<D> >::waveList()
    {  return *waveListPtr_; }
 
 } // namespace Rp

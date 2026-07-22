@@ -22,6 +22,7 @@ namespace Pscf {
       template <int D> class UnitCell;
       template <int D, class T> class CField;
       template <int D, class T> class FFT;
+      template <int D, class T> class WaveList;
    }
 }
 
@@ -80,7 +81,7 @@ namespace Cp {
       using FieldT = CField<D, CppTp<D> >;
 
       /// WaveList type.
-      using WaveListT = typename T::WaveList;
+      using WaveListT = WaveList<D, CppTp<D> >;
 
       /// FieldIo type.
       using FieldIoT = typename T::FieldIo;

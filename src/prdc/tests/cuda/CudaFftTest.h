@@ -60,7 +60,7 @@ void CudaFftTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    Prdc::FFT<3, CudaTp<3> > v1;
-   Prdc::Cuda::FFTBatched<3> v2;
+   Prdc::FFTBatched<3> v2;
 } 
 
 void CudaFftTest::testTransformReal1D() 
@@ -519,7 +519,7 @@ void CudaFftTest::testBatchedTransformReal1D()
                         rField3_h(rField.capacity());
    HostDArray<cudaComplex> kField_h(kField.capacity());
 
-   Prdc::Cuda::FFTBatched<1> v;
+   Prdc::FFTBatched<1> v;
    v.setup(d, batchSize);
 
    // Initialize input data in host memory 
@@ -604,7 +604,7 @@ void CudaFftTest::testBatchedTransformReal2D()
                         rField3_h(rField.capacity());
    HostDArray<cudaComplex> kField_h(kField.capacity());
 
-   Prdc::Cuda::FFTBatched<2> v;
+   Prdc::FFTBatched<2> v;
    v.setup(d, batchSize);
 
    // Initialize input data in host memory 
@@ -698,7 +698,7 @@ void CudaFftTest::testBatchedTransformReal3D()
                         rField3_h(rField.capacity());
    HostDArray<cudaComplex> kField_h(kField.capacity());
 
-   Prdc::Cuda::FFTBatched<3> v;
+   Prdc::FFTBatched<3> v;
    v.setup(d, batchSize);
 
    // Initialize input data in host memory 

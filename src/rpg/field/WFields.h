@@ -16,7 +16,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cuda;
 
    /**
    * A container of fields stored in both basis and r-grid format.

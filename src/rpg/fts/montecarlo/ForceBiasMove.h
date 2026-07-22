@@ -19,7 +19,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    /**
    * ForceBiasMove attempts a Brownian dynamics move.

@@ -26,7 +26,7 @@ namespace Prdc {
    * Constructor.
    */
    template <int D>
-   WaveList<D>::WaveList(bool isRealField)
+   WaveList<D, CppTp<D> >::WaveList(bool isRealField)
     : kSize_(0),
       nBunch_(0),
       isAllocated_(false),
@@ -43,14 +43,14 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   WaveList<D>::~WaveList() 
+   WaveList<D, CppTp<D> >::~WaveList() 
    {}
 
    /*
    * Allocate memory used by WaveList.
    */
    template <int D>
-   void WaveList<D>::allocate(Mesh<D> const & m, UnitCell<D> const & c) 
+   void WaveList<D, CppTp<D> >::allocate(Mesh<D> const & m, UnitCell<D> const & c) 
    {
       UTIL_CHECK(m.size() > 0);
       UTIL_CHECK(c.nParameter() > 0);
@@ -103,7 +103,7 @@ namespace Prdc {
    * Clear all data that depends on unit cell parameters.
    */
    template <int D>
-   void WaveList<D>::clearUnitCellData()
+   void WaveList<D, CppTp<D> >::clearUnitCellData()
    {
       hasKSq_ = false;
       hasdKSq_ = false;
@@ -121,7 +121,7 @@ namespace Prdc {
    * Compute minimum image vectors for all wavevectors.
    */
    template <int D>
-   void WaveList<D>::computeMinimumImages() 
+   void WaveList<D, CppTp<D> >::computeMinimumImages() 
    {
       if (hasMinImages_) return; // min images already calculated
 
@@ -148,7 +148,7 @@ namespace Prdc {
    * Compute array of value of |k|^2
    */
    template <int D>
-   void WaveList<D>::computeKSq() 
+   void WaveList<D, CppTp<D> >::computeKSq() 
    {
       // If kSq_ is valid, return immediately without recomputing
       if (hasKSq_) return; 
@@ -180,7 +180,7 @@ namespace Prdc {
    * Compute derivatives of |k|^2 w/ respect to unit cell parameters.
    */
    template <int D>
-   void WaveList<D>::computedKSq()
+   void WaveList<D, CppTp<D> >::computedKSq()
    {
       if (hasdKSq_) return; // dKSq already calculated
 
@@ -217,7 +217,7 @@ namespace Prdc {
    * Sort waves by magnitude.
    */
    template <int D>
-   void WaveList<D>::sortWaves()
+   void WaveList<D, CppTp<D> >::sortWaves()
    {
       if (isSorted_) return;
 

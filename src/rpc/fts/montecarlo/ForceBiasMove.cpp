@@ -26,7 +26,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
 
    /*
    * Constructor.

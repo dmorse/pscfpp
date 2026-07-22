@@ -11,23 +11,11 @@
 #include <fftw3.h>
 #include <prdc/field/BackendId.h>
 #include <pscf/cpu/FftwDRArray.h>
+#include <pscf/cpu/CpuVecRandom.h>
 
 // Forward declarations
 namespace Util {
    class Random;
-}
-namespace Pscf {
-   class CpuVecRandom;
-   namespace Prdc {
-      namespace Cpu {
-         //template <int D> class RField;
-         //template <int D> class RFieldDft;
-         //template <int D> class FFT;
-         //template <int D> class RFieldComparison;
-         //template <int D> class RFieldDftComparison;
-         //template <int D> class WaveList;
-      }
-   }
 }
 
 namespace Pscf {

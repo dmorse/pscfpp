@@ -21,9 +21,7 @@ namespace Pscf {
    namespace Prdc{
       template <int D> class UnitCell;
       template <int D, class T> class FFT;
-      namespace Cpu {
-         template <int D> class WaveList;
-      }
+      template <int D, class T> class WaveList;
    }
    namespace Rp {
       template <int D, class T> class Propagator;
@@ -36,7 +34,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Block within a linear or branched block polymer.
@@ -90,12 +87,12 @@ namespace Rp {
       * \param mesh  Mesh<D> object, spatial discretization meth
       * \param fft  FFT<D, CppTp<D> > object, Fast Fourier Transform
       * \param cell  UnitCell<D> object, crystallographic unit cell
-      * \param waveList  WaveList<D>, container for wavevector properties
+      * \param waveList  WaveList<D, CppTp<D> >, container for wavevector properties
       */
       void associate(Mesh<D> const& mesh,
                      FFT<D, CppTp<D> > const& fft,
                      UnitCell<D> const& cell,
-                     WaveList<D>& waveList);
+                     WaveList<D, CppTp<D> >& waveList);
 
       /**
       * Allocate memory and set contour step size.
@@ -389,8 +386,8 @@ namespace Rp {
       /// Pointer to associated UnitCell<D> object
       UnitCell<D> const * unitCellPtr_;
 
-      /// Pointer to associated WaveList<D> object (non-const)
-      WaveList<D> * waveListPtr_;
+      /// Pointer to associated WaveList<D, CppTp<D> > object (non-const)
+      WaveList<D, CppTp<D> > * waveListPtr_;
 
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
@@ -428,8 +425,8 @@ namespace Rp {
       /// Get associated UnitCell<D> as const reference (private).
       UnitCell<D> const & unitCell() const;
 
-      /// Get associated WaveList<D> by non-const reference (private).
-      WaveList<D> & waveList();
+      /// Get associated WaveList<D, CppTp<D> > by non-const reference (private).
+      WaveList<D, CppTp<D> > & waveList();
 
       /**
       * Compute expKSq arrays.
@@ -481,9 +478,9 @@ namespace Rp {
       return *unitCellPtr_;
    }
 
-   // Get associated WaveList<D> by reference (private).
+   // Get associated WaveList<D, CppTp<D> > by reference (private).
    template <int D>
-   WaveList<D>& Block<D, CppTp<D> >::waveList()
+   WaveList<D, CppTp<D> >& Block<D, CppTp<D> >::waveList()
    {
       UTIL_CHECK(waveListPtr_);
       return *waveListPtr_;

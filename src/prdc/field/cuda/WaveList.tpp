@@ -22,7 +22,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    // CUDA kernels:
    // (defined in an anonymous namespace, used only in this file)
@@ -438,7 +437,7 @@ namespace Cuda {
    * Constructor.
    */
    template <int D>
-   WaveList<D>::WaveList(bool isRealField)
+   WaveList<D, CudaTp<D> >::WaveList(bool isRealField)
     : kSize_(0),
       nBunch_(0),
       isAllocated_(false),
@@ -456,7 +455,7 @@ namespace Cuda {
    * Destructor.
    */
    template <int D>
-   WaveList<D>::~WaveList()
+   WaveList<D, CudaTp<D> >::~WaveList()
    {
 
       if (dKSqSlices_.isAllocated()) {
@@ -489,7 +488,7 @@ namespace Cuda {
    * only if isRealField_ == true.
    */
    template <int D>
-   void WaveList<D>::allocate(Mesh<D> const & m, UnitCell<D> const & c)
+   void WaveList<D, CudaTp<D> >::allocate(Mesh<D> const & m, UnitCell<D> const & c)
    {
       UTIL_CHECK(m.size() > 0);
       UTIL_CHECK(c.nParameter() > 0);
@@ -549,7 +548,7 @@ namespace Cuda {
    * Clear data that depends on unit cell parameters.
    */
    template <int D>
-   void WaveList<D>::clearUnitCellData()
+   void WaveList<D, CudaTp<D> >::clearUnitCellData()
    {
       hasKSq_ = false;
       hasdKSq_ = false;
@@ -568,7 +567,7 @@ namespace Cuda {
    * Compute minimum image vectors and kSq.
    */
    template <int D>
-   void WaveList<D>::computeMinimumImages()
+   void WaveList<D, CudaTp<D> >::computeMinimumImages()
    {
       // If min images are valid, return immediately
       if (hasMinImages_) return;
@@ -647,7 +646,7 @@ namespace Cuda {
    * Compute values of k^2, using existing minImages if possible.
    */
    template <int D>
-   void WaveList<D>::computeKSq()
+   void WaveList<D, CudaTp<D> >::computeKSq()
    {
       // If kSq values are valid, return immediately without recomputing
       if (hasKSq_) return;
@@ -696,7 +695,7 @@ namespace Cuda {
    * Compute derivatives of k^2 with respect to unit cell parameters.
    */
    template <int D>
-   void WaveList<D>::computedKSq()
+   void WaveList<D, CudaTp<D> >::computedKSq()
    {
       if (hasdKSq_) return; // dKSq already calculated
 
@@ -756,7 +755,7 @@ namespace Cuda {
    * Sort waves by magnitude.
    */
    template <int D>
-   void WaveList<D>::sortWaves()
+   void WaveList<D, CudaTp<D> >::sortWaves()
    {
       // If waves are already sorted, return immediately
       if (isSorted_) return;
@@ -824,7 +823,7 @@ namespace Cuda {
    * Gather data from device and re-arrange if necessary.
    */
    template <int D>
-   HostDArray< IntVec<D> > const & WaveList<D>::minImages_h() const
+   HostDArray< IntVec<D> > const & WaveList<D, CudaTp<D> >::minImages_h() const
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {
@@ -842,7 +841,6 @@ namespace Cuda {
       return minImages_h_;
    }
 
-} // Cuda
-} // Prdc
-} // Pscf
+} // namespace Prdc
+} // namespace Pscf
 #endif

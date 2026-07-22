@@ -32,7 +32,6 @@ namespace Rp {
    // Namespaces from which names may be used without qualification
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Constructor.
@@ -70,7 +69,7 @@ namespace Rp {
    void Block<D, CppTp<D> >::associate(Mesh<D> const & mesh,
                             FFT<D, CppTp<D> > const& fft,
                             UnitCell<D> const& cell,
-                            WaveList<D>& waveList)
+                            WaveList<D, CppTp<D> >& waveList)
    {
       // Preconditions
       UTIL_CHECK(!isAllocated_);

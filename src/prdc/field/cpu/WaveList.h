@@ -450,7 +450,7 @@ namespace Prdc {
 
    // Get the array of minimum images on the device by reference.
    template <int D> inline
-   DArray< IntVec<D> > const & WaveList<D>::minImages() const
+   DArray< IntVec<D> > const & WaveList<D, CppTp<D> >::minImages() const
    {
       UTIL_CHECK(hasMinImages_);
       return minImages_;
@@ -458,7 +458,7 @@ namespace Prdc {
 
    // Get the kSq array on the device by reference.
    template <int D> inline
-   RField<D, CppTp<D> > const & WaveList<D>::kSq() const
+   RField<D, CppTp<D> > const & WaveList<D, CppTp<D> >::kSq() const
    {
       UTIL_CHECK(hasKSq_);
       return kSq_;
@@ -466,7 +466,7 @@ namespace Prdc {
 
    // Get dKSq for unit cell parameter array i.
    template <int D> inline
-   RField<D, CppTp<D> > const & WaveList<D>::dKSq(int i) const
+   RField<D, CppTp<D> > const & WaveList<D, CppTp<D> >::dKSq(int i) const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSq_[i];
@@ -474,7 +474,7 @@ namespace Prdc {
 
    // Get entire dKSq container by const reference.
    template <int D> inline
-   DArray< RField<D, CppTp<D> > > const & WaveList<D>::dKSq() const
+   DArray< RField<D, CppTp<D> > > const & WaveList<D, CppTp<D> >::dKSq() const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSq_;
@@ -482,7 +482,7 @@ namespace Prdc {
 
    // Get the implicitInverse array by const reference.
    template <int D> inline
-   DArray<bool> const & WaveList<D>::implicitInverse() const
+   DArray<bool> const & WaveList<D, CppTp<D> >::implicitInverse() const
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);
@@ -491,7 +491,7 @@ namespace Prdc {
 
    // Get the sortedIds array by const reference.
    template <int D> inline
-   DArray<int> const & WaveList<D>::sortedIds() const
+   DArray<int> const & WaveList<D, CppTp<D> >::sortedIds() const
    {
       UTIL_CHECK(isSorted_);
       return sortedIds_;
@@ -499,7 +499,7 @@ namespace Prdc {
 
    // Get the sortedBunches array by const reference.
    template <int D> inline
-   GArray< Pair<int> > const & WaveList<D>::sortedBunches() const
+   GArray< Pair<int> > const & WaveList<D, CppTp<D> >::sortedBunches() const
    {
       UTIL_CHECK(isSorted_);
       return sortedBunches_;
@@ -507,16 +507,16 @@ namespace Prdc {
 
    // Get the bunchIds array by const reference.
    template <int D> inline
-   DArray<int> const & WaveList<D>::bunchIds() const
+   DArray<int> const & WaveList<D, CppTp<D> >::bunchIds() const
    {
       UTIL_CHECK(isSorted_);
       return bunchIds_;
    }
 
    // Explicit instantiation declarations
-   extern template class WaveList<1>;
-   extern template class WaveList<2>;
-   extern template class WaveList<3>;
+   extern template class WaveList<1, CppTp<1> >;
+   extern template class WaveList<2, CppTp<2> >;
+   extern template class WaveList<3, CppTp<3> >;
 
 } // Prdc
 } // Pscf

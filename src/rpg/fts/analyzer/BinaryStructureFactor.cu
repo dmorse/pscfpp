@@ -49,7 +49,7 @@ namespace Rp {
          wkHost_.allocate(wk_.capacity());
       }
 
-      Cuda::WaveList<D> const & waveList = AnalyzerT::system().waveList();
+      WaveList<D, CudaTp<D> > const & waveList = AnalyzerT::system().waveList();
       HostDArray<double> kSq = waveList.kSq();
       HostDArray<bool> implicit = waveList.implicitInverse();
       Base::findWaveBunches(kSq, implicit);

@@ -20,6 +20,7 @@ namespace Pscf {
    class Interaction;
    namespace Prdc {
       template <int D> class UnitCell;
+      template <int D, class T> class WaveList;
       class Environment;
    }
    namespace Rp {
@@ -437,7 +438,7 @@ namespace Rp {
       * that update data structures that are maintained by the WaveList
       * via a reference to the parent system.
       */
-      typename T::WaveList & waveList();
+      WaveList<D,T> & waveList();
 
       /**
       * Does this system have an %Environment?
@@ -764,7 +765,7 @@ namespace Rp {
 
    // Get the WaveList (non-const).
    template <int D, class T> inline
-   typename T::WaveList& System<D,T>::waveList()
+   WaveList<D,T>& System<D,T>::waveList()
    {
       UTIL_ASSERT(domainPtr_);
       return domainPtr_->waveList();

@@ -95,7 +95,7 @@ void CpuFieldBasisConverterTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FieldBasisConverter<1> converter;
+      FieldBasisConverter<1> converter;
    }
 }
 
@@ -103,7 +103,7 @@ void CpuFieldBasisConverterTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FieldBasisConverter<1> converter(basis);
+      FieldBasisConverter<1> converter(basis);
 
       // Test Basis
       double normSq = 3.0;
@@ -118,7 +118,7 @@ void CpuFieldBasisConverterTest::testRoundTrip()
 {
    printMethod(TEST_FUNC);
    {
-      Cpu::FieldBasisConverter<1> converter(basis);
+      FieldBasisConverter<1> converter(basis);
       allocate();
 
       // Round trip conversion 

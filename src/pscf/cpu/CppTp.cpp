@@ -7,7 +7,6 @@
 
 
 #include "CppTp.h"
-#include <pscf/cpu/CpuVecRandom.h>
 #include <util/random/Random.h>
 
 namespace Pscf {

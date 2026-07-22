@@ -26,7 +26,6 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
 
 class MixtureTest : public UnitTest
 {
@@ -164,7 +163,7 @@ public:
       FFT<1, CppTp<1> > fft;
       fft.setup(d);
 
-      WaveList<1> waveList;
+      WaveList<1, CppTp<1> > waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);
@@ -247,7 +246,7 @@ public:
       mesh.setDimensions(d);
       FFT<1, CppTp<1> > fft;
       fft.setup(d);
-      WaveList<1> waveList;
+      WaveList<1, CppTp<1> > waveList;
       waveList.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
@@ -330,7 +329,7 @@ public:
       mesh.setDimensions(d);
       FFT<2, CppTp<2> > fft;
       fft.setup(d);
-      WaveList<2> waveList;
+      WaveList<2, CppTp<2> > waveList;
       waveList.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
@@ -424,7 +423,7 @@ public:
       FFT<2, CppTp<2> > fft;
       fft.setup(d);
 
-      WaveList<2> waveList;
+      WaveList<2, CppTp<2> > waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);
@@ -514,7 +513,7 @@ public:
       FFT<3, CppTp<3> > fft;
       fft.setup(d);
 
-      WaveList<3> waveList;
+      WaveList<3, CppTp<3> > waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);

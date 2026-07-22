@@ -35,7 +35,6 @@ namespace Cpc {
    // Namespaces from which names may be used without qualification
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Constructor.
@@ -70,7 +69,7 @@ namespace Cpc {
    void Block<D>::associate(Mesh<D> const & mesh,
                             FFT<D, CppTp<D> > const& fft,
                             UnitCell<D> const& cell,
-                            WaveList<D>& wavelist)
+                            WaveList<D, CppTp<D> >& wavelist)
    {
       // Preconditions
       UTIL_CHECK(!isAllocated_);

@@ -13,7 +13,6 @@ namespace Cpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    template <int D>
    void WFields<D>::assignField(CField<D, CppTp<D> >& lhs, 

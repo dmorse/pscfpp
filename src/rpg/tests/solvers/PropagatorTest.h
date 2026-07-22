@@ -30,7 +30,6 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cuda;
 
 class PropagatorTest : public UnitTest
 {
@@ -104,7 +103,7 @@ public:
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
       // Create wavelist
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -142,7 +141,7 @@ public:
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       // Create wavelist 
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -179,7 +178,7 @@ public:
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
       // Create wavelist 
-      Cuda::WaveList<3> wavelist;
+      WaveList<3, CudaTp<3> > wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -217,7 +216,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Construct wavelist
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -270,7 +269,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Construct wavelist
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -321,7 +320,7 @@ public:
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       // Create wavelist 
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       double ds = 0.5;
@@ -371,7 +370,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Construct wavelist
-      Cuda::WaveList<3> wavelist;
+      WaveList<3, CudaTp<3> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -422,7 +421,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Construct wavelist
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -520,7 +519,7 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       double ds = 1.00;
@@ -632,7 +631,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Construct wavelist
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -741,7 +740,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Construct wavelist
-      Cuda::WaveList<3> wavelist;
+      WaveList<3, CudaTp<3> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block

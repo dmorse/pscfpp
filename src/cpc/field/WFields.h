@@ -18,7 +18,6 @@ namespace Cpc {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
 
    /**
    * A container of w fields.

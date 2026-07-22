@@ -27,7 +27,6 @@ namespace Pscf {
 // Explicit instantiation declaration for base class
 namespace Pscf {
    namespace Cp {
-      using namespace Prdc::Cpu;
       extern template class FieldIo<1, CField<1, CppTp<1> >, FFT<1, CppTp<1> > >;
       extern template class FieldIo<2, CField<2, CppTp<2> >, FFT<2, CppTp<2> > >;
       extern template class FieldIo<3, CField<3, CppTp<3> >, FFT<3, CppTp<3> > >;
@@ -39,7 +38,6 @@ namespace Cpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /**
    * File input/output operations for fields.
@@ -50,10 +48,8 @@ namespace Cpc {
    *
    * This class template is derived from a partial specialization of
    * the template Cp::FieldIo<D, CFT, FFT> using classes
-   * CFT = CField<D, CppTp<D> > and FFT = FFT<D, CppTp<D> > that are all defined in the
-   * Prdc::Cpu subspace, and that all use conventional CPU hardware.
-   * An analogous class template named Rpg::FieldIo that is defined
-   * in the Pscf::Rpg namespace instead uses a GPU.
+   * CFT = CField<D, CppTp<D> > and FFT = FFT<D, CppTp<D> > that all 
+   * use conventional CPU hardware.
    *
    * The member functions defined in this class are all implementations of
    * pure virtual functions declared in the base class, Cp::FieldIo.

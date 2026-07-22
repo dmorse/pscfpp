@@ -13,32 +13,10 @@ Subdirectories:
 ---------------
 
   cpu/         - field containers etc. for CPU
-  cuda/        - field containers etc. for GPU
+  cuda/        - field containers etc. for CUDA 
   crystal/     - unit cells, space groups, and symmetry adapted basis
   environment/ - generation of imposed mask and external fields
   tests/       - unit tests for code in src/prdc
-
-Enclosed namespaces:
---------------------
-
-  Namespace Pscf::Prdc encloses two sub-namespaces that contain
-  analogous code designed to use different hardware:
-
-  - Code in prdc/cpu is defined in namespace Pscf::Prdc::Cpu
-  - Code in prdc/cuda is defined in namespace Pscf::Prdc::Cuda
-
-  Namespaces Pscf::Prdc::Cpu and Pscf::Prdc::Cuda contain analogous
-  definitions of classes that are designed for use on code that runs on 
-  a Cpu or that uses an NVIDIA GPU, respectively. Analogous classes in 
-  these namespaces generally have the same name.  For example, each 
-  defines a class template named RField that stores data for a real-valued 
-  field defined on the nodes of a regular grid. The memory used by class
-  Pscf::Prdc::Cpu::RField is allocated on the CPU while memory used by
-  by class Pscf::Prdc::Cuda::RField is allocated in global GPU memory.  
-  Classes defined in Pscf::Prdc::Cpu are used in namespaces Pscf::Rpc 
-  and Pscf::Cpc to construct programs that use only CPU hardware, while
-  those defined in Pscf::Prdc::Gpu are used in namespaces Pscf::Rpg and
-  Pscf::Cpg to construct GPU-accelerated programs.
 
 Makefile and makefile fragments:
 --------------------------------

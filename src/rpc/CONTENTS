@@ -7,11 +7,10 @@ All classes and functions defined in this directory (src/rpc) are in
 namespace Pscf::Rpc. The name Rpc stands for 'real periodic CPU'. Code 
 defined in this namespace may use classes and functions defined in 
 namespace Util (directory src/util), namespace Pscf::Prdc (directory 
-src/prdc), namespace Pscf::Prdc::Cpu (directory src/prdc/cpu), and
-namespace Pscf::Pr (directory src/pr). Source files in src/rpc often
-contain "using namespace ..." statements that allow names from 
-namespaces Util, Pscf::Prdc, and Pscf::Prdc::Cpu to be used without 
-explicit namespace qualifiers.
+src/prdc), and namespace Pscf::Rp (directory src/rp). Source files in 
+src/rpc often contain "using namespace ..." statements that allow names 
+from namespaces Util and Pscf::Prdc to be used without explicit 
+namespace qualifiers.
 
 Subdirectories:
 ---------------

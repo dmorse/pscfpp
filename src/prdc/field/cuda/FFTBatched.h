@@ -19,7 +19,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
 
@@ -158,7 +157,6 @@ namespace Cuda {
    extern template class FFTBatched<3>;
    #endif
 
-}
 }
 }
 

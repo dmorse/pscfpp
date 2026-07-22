@@ -81,7 +81,7 @@ public:
       Mesh<1> mesh;
       FFT<1, CudaTp<1> > fft;
       UnitCell<1> unitCell;
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
       IntVec<1> d;
 
       // Read parameter block, unit cell and mesh dimensions
@@ -165,7 +165,7 @@ public:
       mesh.setDimensions(d);
       FFT<1, CudaTp<1> > fft;
       fft.setup(d);
-      Cuda::WaveList<1> wavelist;
+      WaveList<1, CudaTp<1> > wavelist;
       wavelist.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, wavelist);
       mixture.allocate();
@@ -242,7 +242,7 @@ public:
       Mesh<2> mesh;
       FFT<2, CudaTp<2> > fft;
       UnitCell<2> unitCell;
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
       IntVec<2> d;
 
       // Read parameter block, unit cell and mesh dimensions
@@ -322,7 +322,7 @@ public:
       Rp::Mixture<2, CudaTp<2> > mixture;
       Mesh<2> mesh;
       FFT<2, CudaTp<2> > fft;
-      Cuda::WaveList<2> wavelist;
+      WaveList<2, CudaTp<2> > wavelist;
       IntVec<2> d;
 
       // Read file: param block, unit cell and mesh dimensions
@@ -421,7 +421,7 @@ public:
       fft.setup(d);
 
       // Construct wavelist
-      Cuda::WaveList<3> wavelist;
+      WaveList<3, CudaTp<3> > wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Set up mixture

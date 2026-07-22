@@ -94,17 +94,17 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Cpu::WaveList<1> wavelist1;
+      WaveList<1, CppTp<1> > wavelist1;
       wavelist1.allocate(mesh1, cell1);
       TEST_ASSERT(wavelist1.isAllocated());
       TEST_ASSERT(!wavelist1.hasMinImages());
 
-      Cpu::WaveList<2> wavelist2;
+      WaveList<2, CppTp<2> > wavelist2;
       wavelist2.allocate(mesh2, cell2);
       TEST_ASSERT(wavelist2.isAllocated());
       TEST_ASSERT(!wavelist2.hasMinImages());
 
-      Cpu::WaveList<3> wavelist3;
+      WaveList<3, CppTp<3> > wavelist3;
       wavelist3.allocate(mesh3, cell3);
       TEST_ASSERT(wavelist3.isAllocated());
       TEST_ASSERT(!wavelist3.hasMinImages());
@@ -119,7 +119,7 @@ public:
       TEST_ASSERT(kSize1 == 17);
 
       // set up wavelist object
-      Cpu::WaveList<1> wavelist;
+      WaveList<1, CppTp<1> > wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // Compute minimum images (and ksq)
@@ -160,7 +160,7 @@ public:
       TEST_ASSERT(kSize2 == 32*25);
 
       // Set up wavelist object
-      Cpu::WaveList<2> wavelist;
+      WaveList<2, CppTp<2> > wavelist;
       wavelist.allocate(mesh2, cell2);
 
       // compute minimum images (and ksq)
@@ -198,7 +198,7 @@ public:
       TEST_ASSERT(kSize3 == 24*64*11);
 
       // Set up wavelist object
-      Cpu::WaveList<3> wavelist;
+      WaveList<3, CppTp<3> > wavelist;
       wavelist.allocate(mesh3, cell3);
 
       // Compute minimum images (and ksq)
@@ -230,7 +230,7 @@ public:
       TEST_ASSERT(kSize1 == 17);
 
       // set up wavelist object
-      Cpu::WaveList<1> wavelist;
+      WaveList<1, CppTp<1> > wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // Compute kSq two different ways
@@ -274,7 +274,7 @@ public:
       in >> cell;
 
       // Set up wavelist object
-      Cpu::WaveList<2> wavelist;
+      WaveList<2, CppTp<2> > wavelist;
       wavelist.allocate(mesh2, cell);
 
       // Compute kSq two different ways
@@ -312,7 +312,7 @@ public:
       in >> cell;
 
       // Set up wavelist object
-      Cpu::WaveList<3> wavelist;
+      WaveList<3, CppTp<3> > wavelist;
       wavelist.allocate(mesh3, cell);
 
       // Compute kSq two different ways
@@ -342,7 +342,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up wavelist object
-      Cpu::WaveList<1> wavelist;
+      WaveList<1, CppTp<1> > wavelist;
       wavelist.allocate(mesh1, cell1);
 
       // Compute dKSq
@@ -371,7 +371,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Cpu::WaveList<2> wavelist;
+      WaveList<2, CppTp<2> > wavelist;
       wavelist.allocate(mesh2, cell2);
       wavelist.computedKSq();
 
@@ -400,7 +400,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Cpu::WaveList<3> wavelist;
+      WaveList<3, CppTp<3> > wavelist;
       wavelist.allocate(mesh3, cell3);
       wavelist.computedKSq();
 
@@ -438,7 +438,7 @@ public:
       in >> cell;
 
       // Set up wavelist object
-      Cpu::WaveList<3> wavelist;
+      WaveList<3, CppTp<3> > wavelist;
       wavelist.allocate(mesh3, cell);
 
       // Compute kSq 
@@ -506,7 +506,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Cpu::WaveList<3> wavelist(false);
+      WaveList<3, CppTp<3> > wavelist(false);
       wavelist.allocate(mesh3, cell3);
       wavelist.computedKSq(); // computes min images, ksq, and dksq
 

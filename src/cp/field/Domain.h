@@ -18,6 +18,11 @@ namespace Util {
    template <typename T> class Signal;
    template <> class Signal<void>;
 }
+namespace Pscf {
+   namespace Prdc {
+      template <int D, class T> class WaveList;
+   }
+}
 
 namespace Pscf {
 namespace Cp {

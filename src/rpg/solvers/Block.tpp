@@ -25,7 +25,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    // CUDA kernels (anonymous namespace - only used in this file)
    namespace {
@@ -246,7 +245,7 @@ namespace Rp {
    void Block<D, CudaTp<D> >::associate(Mesh<D> const & mesh, 
                             FFT<D, CudaTp<D> > const & fft,
                             UnitCell<D> const & cell, 
-                            WaveList<D>& waveList)
+                            WaveList<D, CudaTp<D> >& waveList)
    {
       UTIL_CHECK(!isAllocated_);
       UTIL_CHECK(mesh.size() > 1);

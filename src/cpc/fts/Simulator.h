@@ -25,7 +25,6 @@ namespace Cpc {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
 
    /**
    * Simulator for complex Langevin field theoretic simulation.

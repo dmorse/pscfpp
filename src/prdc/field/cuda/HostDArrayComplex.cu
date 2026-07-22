@@ -9,7 +9,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cuda {
 
    using namespace Util;
 
@@ -40,6 +39,5 @@ namespace Cuda {
    HostDArrayComplex::~HostDArrayComplex()
    {}
 
-} // namespace Cuda
 } // namespace Prdc
 } // namespace Pscf

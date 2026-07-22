@@ -14,7 +14,6 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      using namespace Prdc::Cuda;
       extern template class Rp::CFields<1, CudaTp<1> >;
       extern template class Rp::CFields<2, CudaTp<2> >;
       extern template class Rp::CFields<3, CudaTp<3> >;

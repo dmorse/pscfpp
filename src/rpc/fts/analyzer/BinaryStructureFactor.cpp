@@ -45,7 +45,7 @@ namespace Rp {
    void BinaryStructureFactor<D, CppTp<D> >::setup()
    {
       allocate();
-      Cpu::WaveList<D> const & waveList = AnalyzerT::system().waveList();
+      WaveList<D, CppTp<D> > const & waveList = AnalyzerT::system().waveList();
       findWaveBunches(waveList.kSq(), waveList.implicitInverse());
    }
 

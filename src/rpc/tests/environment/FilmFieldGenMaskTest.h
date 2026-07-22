@@ -25,7 +25,6 @@
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
 
 class FilmFieldGenMaskTest : public UnitTest
 {

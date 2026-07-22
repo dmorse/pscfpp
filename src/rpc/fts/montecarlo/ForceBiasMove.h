@@ -16,11 +16,11 @@
 namespace Pscf {
 namespace Rp {
 
-   template <int D, class T> class ForceBiasMove;
-
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
+
+   // Declare primary template
+   template <int D, class T> class ForceBiasMove;
 
    /**
    * ForceBiasMove attempts a Brownian dynamics move.

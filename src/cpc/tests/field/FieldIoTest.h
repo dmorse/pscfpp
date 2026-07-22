@@ -29,9 +29,8 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Cpc;
 using namespace Pscf::Prdc;
-using namespace Pscf::Prdc::Cpu;
+using namespace Pscf::Cpc;
 
 class FieldIoTest : public UnitTest 
 {

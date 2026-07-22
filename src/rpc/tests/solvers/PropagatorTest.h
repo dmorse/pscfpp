@@ -96,7 +96,7 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      Cpu::WaveList<1> waveList;
+      WaveList<1, CppTp<1> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -131,7 +131,7 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      Cpu::WaveList<2> waveList;
+      WaveList<2, CppTp<2> > waveList;
       waveList.allocate(mesh, unitCell);
 
       block.associate(mesh, fft, unitCell, waveList);
@@ -166,7 +166,7 @@ public:
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
-      Cpu::WaveList<3> waveList;
+      WaveList<3, CppTp<3> > waveList;
       waveList.allocate(mesh, unitCell);
 
       // Associate block
@@ -206,7 +206,7 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      Cpu::WaveList<1> waveList;
+      WaveList<1, CppTp<1> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -248,7 +248,7 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      Cpu::WaveList<2> waveList;
+      WaveList<2, CppTp<2> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -293,7 +293,7 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      Cpu::WaveList<2> waveList;
+      WaveList<2, CppTp<2> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.5;
@@ -337,7 +337,7 @@ public:
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
-      Cpu::WaveList<3> waveList;
+      WaveList<3, CppTp<3> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -382,7 +382,7 @@ public:
       setupUnitCell<1>(unitCell, "in/Lamellar");
       double a = unitCell.parameter(0);
 
-      Cpu::WaveList<1> waveList;
+      WaveList<1, CppTp<1> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -462,7 +462,7 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      Cpu::WaveList<1> waveList;
+      WaveList<1, CppTp<1> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 1.00;
@@ -561,7 +561,7 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      Cpu::WaveList<2> waveList;
+      WaveList<2, CppTp<2> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -654,7 +654,7 @@ public:
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
-      Cpu::WaveList<3> waveList;
+      WaveList<3, CppTp<3> > waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;

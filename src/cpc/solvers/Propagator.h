@@ -25,7 +25,6 @@ namespace Cpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /**
    * MDE solver for one direction of one block.

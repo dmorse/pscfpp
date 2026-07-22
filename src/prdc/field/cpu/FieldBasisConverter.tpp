@@ -15,7 +15,6 @@
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
 
    using namespace Util;
 
@@ -181,7 +180,6 @@ namespace Cpu {
 
    }
 
-}
-}
-}
+} // namespace Prdc
+} // namespace Pscf
 #endif

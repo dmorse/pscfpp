@@ -20,9 +20,7 @@ namespace Pscf {
    namespace Prdc{
       template <int D> class UnitCell;
       template <int D, class T> class FFT;
-      namespace Cpu {
-         template <int D> class WaveList;
-      }
+      template <int D, class T> class WaveList;
    }
    namespace Cpc{
       template <int D> class Propagator;
@@ -43,7 +41,6 @@ namespace Cpc {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /**
    * Block within a linear or branched block polymer.
@@ -93,12 +90,12 @@ namespace Cpc {
       * \param mesh  Mesh<D> object, spatial discretization meth
       * \param fft  FFT<D, CppTp<D> > object, Fast Fourier Transform
       * \param cell  UnitCell<D> object, crystallographic unit cell
-      * \param wavelist  WaveList<D>, container for wavevector properties
+      * \param wavelist  WaveList<D, CppTp<D> >, container for wavevector properties
       */
       void associate(Mesh<D> const& mesh,
                      FFT<D, CppTp<D> > const& fft,
                      UnitCell<D> const& cell,
-                     WaveList<D>& wavelist);
+                     WaveList<D, CppTp<D> >& wavelist);
 
       /**
       * Allocate memory and set number of counter steps.
@@ -355,8 +352,8 @@ namespace Cpc {
       /// Pointer to associated UnitCell<D> object
       UnitCell<D> const * unitCellPtr_;
 
-      /// Pointer to associated WaveList<D> object (non-const)
-      WaveList<D> * waveListPtr_;
+      /// Pointer to associated WaveList<D, CppTp<D> > object (non-const)
+      WaveList<D, CppTp<D> > * waveListPtr_;
 
       /// Contour length step size (actual step size for this block)
       double ds_;
@@ -394,9 +391,9 @@ namespace Cpc {
       FFT<D, CppTp<D> > const & fft() const;
 
       /**
-      * Get associated WaveList<D> by const reference.
+      * Get associated WaveList<D, CppTp<D> > by const reference.
       */
-      WaveList<D> const & wavelist() const;
+      WaveList<D, CppTp<D> > const & wavelist() const;
 
       /**
       * Compute expKSq arrays.
@@ -440,9 +437,9 @@ namespace Cpc {
       return * fftPtr_;
    }
 
-   // Get associated WaveList<D> by const reference.
+   // Get associated WaveList<D, CppTp<D> > by const reference.
    template <int D> inline
-   WaveList<D> const & Block<D>::wavelist() const
+   WaveList<D, CppTp<D> > const & Block<D>::wavelist() const
    {  return *waveListPtr_; }
 
    // Explicit instantiation declarations

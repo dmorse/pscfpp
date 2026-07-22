@@ -106,7 +106,7 @@ namespace Rp {
       UTIL_CHECK(implicit.capacity() == nWave_);
 
       // Sort waves in WaveList and set nBunch_
-      typename T::WaveList& waveList = system().waveList();
+      WaveList<D,T>& waveList = system().waveList();
       UTIL_CHECK(waveList.isRealField());
       if (!waveList.hasKSq()) {
          waveList.computeKSq();

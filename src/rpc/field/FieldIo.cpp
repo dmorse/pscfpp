@@ -19,7 +19,6 @@ namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Read an array of fields in r-grid format.

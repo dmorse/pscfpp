@@ -117,7 +117,7 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1> waveList(false);
+      WaveList<1, CppTp<1> > waveList(false);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -148,7 +148,7 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2> waveList(false);
+      WaveList<2, CppTp<2> > waveList(false);
       waveList.allocate(mesh, unitCell);
 
       block.associate(mesh, fft, unitCell, waveList);
@@ -180,7 +180,7 @@ public:
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
-      WaveList<3> waveList(false);
+      WaveList<3, CppTp<3> > waveList(false);
       waveList.allocate(mesh, unitCell);
 
       // Associate block
@@ -216,7 +216,7 @@ public:
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
       bool isRealField = false;
-      WaveList<1> waveList(isRealField);
+      WaveList<1, CppTp<1> > waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -256,7 +256,7 @@ public:
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       bool isRealField = false;
-      WaveList<2> waveList(isRealField);
+      WaveList<2, CppTp<2> > waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -299,7 +299,7 @@ public:
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       bool isRealField = false;
-      WaveList<2> waveList(isRealField);
+      WaveList<2, CppTp<2> > waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.5;
@@ -341,7 +341,7 @@ public:
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
       bool isRealField = false;
-      WaveList<3> waveList(isRealField);
+      WaveList<3, CppTp<3> > waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -376,7 +376,7 @@ public:
       Mesh<3>& mesh = domain.mesh();
       UnitCell<3>& unitCell = domain.unitCell();
       FFT<3, CppTp<3> >& fft = domain.fft();
-      WaveList<3>& waveList = domain.waveList();
+      WaveList<3, CppTp<3> >& waveList = domain.waveList();
 
       // Create and initialize block
       Block<3> block;
@@ -422,7 +422,7 @@ public:
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
       bool isRealField = false;
-      WaveList<1> waveList(isRealField);
+      WaveList<1, CppTp<1> > waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -520,7 +520,7 @@ public:
       Mesh<1>& mesh = domain.mesh();
       UnitCell<1>& unitCell = domain.unitCell();
       FFT<1, CppTp<1> >& fft = domain.fft();
-      WaveList<1>& waveList = domain.waveList();
+      WaveList<1, CppTp<1> >& waveList = domain.waveList();
       block.associate(mesh, fft, unitCell, waveList);
       int nMonomer = readHeader("in/Lamellar.hdr", domain);
       TEST_ASSERT(nMonomer == 2);
@@ -631,7 +631,7 @@ public:
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1> waveList(false);
+      WaveList<1, CppTp<1> > waveList(false);
       waveList.allocate(mesh, unitCell);
 
       double ds = 1.00;
@@ -724,7 +724,7 @@ public:
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2> waveList(false);
+      WaveList<2, CppTp<2> > waveList(false);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -813,7 +813,7 @@ public:
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
-      WaveList<3> waveList(false);
+      WaveList<3, CppTp<3> > waveList(false);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;

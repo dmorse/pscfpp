@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FIELD_BASIS_CONVERTER_H
-#define PRDC_CPU_FIELD_BASIS_CONVERTER_H
+#ifndef PRDC_FIELD_BASIS_CONVERTER_H
+#define PRDC_FIELD_BASIS_CONVERTER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -24,7 +24,7 @@ namespace Pscf {
 
 namespace Pscf {
 namespace Prdc {
-namespace Cpu {
+
    using namespace Util;
 
    /**
@@ -171,7 +171,6 @@ namespace Cpu {
    extern template class FieldBasisConverter<2>;
    extern template class FieldBasisConverter<3>;
 
-} // namespace Pscf::Prdc::Cpu
 } // namespace Pscf::Prdc
 } // namespace Pscf
 #endif

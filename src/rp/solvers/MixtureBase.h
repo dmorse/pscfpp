@@ -22,6 +22,7 @@ namespace Pscf {
       template <int D> class UnitCell;
       template <int D, class T> class RField; 
       template <int D, class T> class FFT; 
+      template <int D, class T> class WaveList; 
    }
    namespace Rp {
       template <int D, class T> class Solvent; 
@@ -91,7 +92,7 @@ namespace Rp {
       using FFTT = FFT<D,T>;
 
       /// WaveList type.
-      using WaveListT = typename T::WaveList;
+      using WaveListT = WaveList<D,T>;
 
       /// FieldIo type.
       using FieldIoT = FieldIo<D,T>;

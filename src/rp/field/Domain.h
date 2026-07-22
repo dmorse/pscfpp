@@ -24,6 +24,7 @@ namespace Pscf {
       template <int D> class SpaceGroup;
       template <int D> class Basis;
       template <int D, class T> class FFT;
+      template <int D, class T> class WaveList;
    }
    namespace Rp {
       template <int D, class T> class FieldIo;
@@ -168,12 +169,12 @@ namespace Rp {
       /**
       * Get the WaveList by non-const reference.
       */
-      typename T::WaveList& waveList();
+      WaveList<D,T>& waveList();
 
       /**
       * Get the WaveList by const reference.
       */
-      typename T::WaveList const & waveList() const;
+      WaveList<D,T> const & waveList() const;
 
       /**
       * Get the FieldIo by non-const reference.
@@ -286,7 +287,7 @@ namespace Rp {
       /**
       * Pointer to a WaveList object (owned).
       */
-      typename T::WaveList* waveListPtr_;
+      WaveList<D,T>* waveListPtr_;
 
       /**
       * Pointer to a FieldIo object (owned).
@@ -373,12 +374,12 @@ namespace Rp {
 
    // Get the WaveList by non-const reference.
    template <int D, class T> inline 
-   typename T::WaveList& Domain<D,T>::waveList()
+   WaveList<D,T>& Domain<D,T>::waveList()
    {  return *waveListPtr_; }
 
    // Get the WaveList by const reference.
    template <int D, class T> inline 
-   typename T::WaveList const & Domain<D,T>::waveList() const
+   WaveList<D,T> const & Domain<D,T>::waveList() const
    {  return *waveListPtr_; }
 
    // Get the FieldIo by const reference.
