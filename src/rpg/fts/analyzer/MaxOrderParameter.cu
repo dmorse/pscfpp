@@ -30,17 +30,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   MaxOrderParameter<D, CudaTp<D> >::MaxOrderParameter(
-                           Simulator<D, CudaTp<D> >& simulator,
-                           System<D, CudaTp<D> >& system)
-    : MaxOrderParameterBase<D, CudaTp<D> >(simulator, system)
+   MaxOrderParameter<D,CUT>::MaxOrderParameter(
+                           Simulator<D,CUT>& simulator,
+                           System<D,CUT>& system)
+    : MaxOrderParameterBase<D,CUT>(simulator, system)
    {}
 
    /*
    * Compute and return maximum of square magnitude Fourier amplitude.
    */
    template <int D>
-   void MaxOrderParameter<D, CudaTp<D> >::setup()
+   void MaxOrderParameter<D,CUT>::setup()
    {
       // Setup base class
       Base::setup();
@@ -59,7 +59,7 @@ namespace Rp {
    * Compute and return maximum of square magnitude Fourier amplitude.
    */
    template <int D>
-   double MaxOrderParameter<D, CudaTp<D> >::compute()
+   double MaxOrderParameter<D,CUT>::compute()
    {
       // Compute device array psi_ of squared Fourier magnitudes
       Base::computePsi();
@@ -79,11 +79,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class MaxOrderParameterBase<1, CudaTp<1> >;
-      template class MaxOrderParameterBase<2, CudaTp<2> >;
-      template class MaxOrderParameterBase<3, CudaTp<3> >;
-      template class MaxOrderParameter<1, CudaTp<1> >;
-      template class MaxOrderParameter<2, CudaTp<2> >;
-      template class MaxOrderParameter<3, CudaTp<3> >;
+      template class MaxOrderParameterBase<1,CUT>;
+      template class MaxOrderParameterBase<2,CUT>;
+      template class MaxOrderParameterBase<3,CUT>;
+      template class MaxOrderParameter<1,CUT>;
+      template class MaxOrderParameter<2,CUT>;
+      template class MaxOrderParameter<3,CUT>;
    }
 }

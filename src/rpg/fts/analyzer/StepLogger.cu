@@ -11,8 +11,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class StepLogger< 1, CudaTp<1> >;
-      template class StepLogger< 2, CudaTp<2> >;
-      template class StepLogger< 3, CudaTp<3> >;
+      template class StepLogger<1,CUT>;
+      template class StepLogger<2,CUT>;
+      template class StepLogger<3,CUT>;
    }
 }

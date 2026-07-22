@@ -12,8 +12,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class SweepFactory<1, CppTp<1> >;
-      template class SweepFactory<2, CppTp<2> >;
-      template class SweepFactory<3, CppTp<3> >;
+      template class SweepFactory<1,CPT>;
+      template class SweepFactory<2,CPT>;
+      template class SweepFactory<3,CPT>;
    }
 }

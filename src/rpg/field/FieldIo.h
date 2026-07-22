@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/FieldIoBase.h>   // base class template
-#include <pscf/cuda/CudaTp.h>       // base class template argument
+#include <pscf/backends/CUT.h>       // base class template argument
 #include <prdc/field/cuda/RFieldDft.h>    // base class member
 
 // Forward declarations for classes used only via references or pointers
@@ -46,8 +46,8 @@ namespace Rp {
    * \ingroup Rp_Field_Module
    */
    template <int D>
-   class FieldIo<D, CudaTp<D> >
-     : public  FieldIoBase< D, CudaTp<D> >
+   class FieldIo<D,CUT>
+     : public  FieldIoBase<D,CUT>
    {
    public:
 
@@ -65,7 +65,7 @@ namespace Rp {
       * \return true iff the header contains a space group (isSymmetric)
       */
       bool readFieldsRGrid(std::istream& in,
-                           DArray< RField<D, CudaTp<D> > >& fields,
+                           DArray< RField<D,CUT> >& fields,
                            UnitCell<D> & unitCell)
       const override;
 
@@ -79,7 +79,7 @@ namespace Rp {
       * \param nMonomer  number of monomer types
       */
       void readFieldsRGridData(std::istream& in,
-                               DArray< RField<D, CudaTp<D> > >& fields,
+                               DArray< RField<D,CUT> >& fields,
                                int nMonomer)
       const override;
 
@@ -94,7 +94,7 @@ namespace Rp {
       * \return true iff the header contains a space group (isSymmetric)
       */
       bool readFieldRGrid(std::istream &in,
-                          RField<D, CudaTp<D> > & field,
+                          RField<D,CUT> & field,
                           UnitCell<D>& unitCell)
       const override;
 
@@ -111,7 +111,7 @@ namespace Rp {
       * \param writeMeshSize  Should mesh size be written in header?
       */
       void writeFieldsRGrid(std::ostream& out,
-                            DArray< RField<D, CudaTp<D> > > const & fields,
+                            DArray< RField<D,CUT> > const & fields,
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
@@ -130,7 +130,7 @@ namespace Rp {
       * \param isSymmetric  Does the field have a space group symmetry?
       */
       void writeFieldRGrid(std::ostream &out,
-                           RField<D, CudaTp<D> > const & field,
+                           RField<D,CUT> const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
                            bool isSymmetric = true)
@@ -146,7 +146,7 @@ namespace Rp {
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::istream& in,
-                           DArray< RFieldDft<D, CudaTp<D> > >& fields,
+                           DArray< RFieldDft<D,CUT> >& fields,
                            UnitCell<D> & unitCell)
       const override;
 
@@ -161,7 +161,7 @@ namespace Rp {
       * \param isSymmetric  Does this field have space group symmetry?
       */
       void writeFieldsKGrid(std::ostream& out,
-                            DArray< RFieldDft<D, CudaTp<D> > > const & fields,
+                            DArray< RFieldDft<D,CUT> > const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true)
       const override;
@@ -175,7 +175,7 @@ namespace Rp {
       * \param dft  discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(DArray<double> const & components,
-                               RFieldDft<D, CudaTp<D> >& dft)
+                               RFieldDft<D,CUT>& dft)
       const override;
 
       /**
@@ -188,7 +188,7 @@ namespace Rp {
       * \param checkSymmetry  flag indicating whether to check symmetry
       * \param epsilon  error tolerance for symmetry test (if any)
       */
-      void convertKGridToBasis(RFieldDft<D, CudaTp<D> > const & in,
+      void convertKGridToBasis(RFieldDft<D,CUT> const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8)
@@ -204,7 +204,7 @@ namespace Rp {
       * \param verbose  if true, write error to Log::file()
       * \return true iff the field is symmetric to within tolerance
       */
-      bool hasSymmetry(RFieldDft<D, CudaTp<D> > const & in,
+      bool hasSymmetry(RFieldDft<D,CUT> const & in,
                        double epsilon = 1.0e-8,
                        bool verbose = true)
       const override;
@@ -218,8 +218,8 @@ namespace Rp {
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
-      void compareFieldsRGrid(DArray< RField<D, CudaTp<D> > > const & field1,
-                              DArray< RField<D, CudaTp<D> > > const & field2)
+      void compareFieldsRGrid(DArray< RField<D,CUT> > const & field1,
+                              DArray< RField<D,CUT> > const & field2)
       const override;
 
       /**
@@ -231,7 +231,7 @@ namespace Rp {
       * \param field  real space (r-grid) field (in-out)
       * \param factor  real scalar by which to multiply all elements
       */
-      void scaleFieldRGrid(RField<D, CudaTp<D> >& field, double factor)
+      void scaleFieldRGrid(RField<D,CUT>& field, double factor)
       const override;
 
       /**
@@ -247,7 +247,7 @@ namespace Rp {
       */
       void expandRGridDimension(
                           std::ostream &out,
-                          DArray< RField<D, CudaTp<D> > > const & fields,
+                          DArray< RField<D,CUT> > const & fields,
                           UnitCell<D> const & unitCell,
                           int d,
                           DArray<int> const& newGridDimensions)
@@ -265,7 +265,7 @@ namespace Rp {
       */
       void replicateUnitCell(
                           std::ostream& out,
-                          DArray< RField<D, CudaTp<D> > > const & fields,
+                          DArray< RField<D,CUT> > const & fields,
                           UnitCell<D> const & unitCell,
                           IntVec<D> const & replicas)
       const override;
@@ -274,7 +274,7 @@ namespace Rp {
       /**
       * Alias for base class (partial template specialization)
       */
-      using FieldIoBase = Rp::FieldIoBase<D, CudaTp<D> >;
+      using FieldIoBase = Rp::FieldIoBase<D,CUT>;
 
       // Inherited public member functions
       using FieldIoBase::associate;
@@ -327,12 +327,12 @@ namespace Rp {
 // Explicit instantation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class FieldIoBase<1, CudaTp<1> >;
-      extern template class FieldIoBase<2, CudaTp<2> >;
-      extern template class FieldIoBase<3, CudaTp<3> >;
-      extern template class FieldIo<1, CudaTp<1> >;
-      extern template class FieldIo<2, CudaTp<2> >;
-      extern template class FieldIo<3, CudaTp<3> >;
+      extern template class FieldIoBase<1,CUT>;
+      extern template class FieldIoBase<2,CUT>;
+      extern template class FieldIoBase<3,CUT>;
+      extern template class FieldIo<1,CUT>;
+      extern template class FieldIo<2,CUT>;
+      extern template class FieldIo<3,CUT>;
    }
 }
 #endif

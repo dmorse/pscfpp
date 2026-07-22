@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.h> // base template
-#include <pscf/cpu/CppTp.h>                         // base argument
+#include <pscf/backends/CPT.h>                         // base argument
 #include <rpc/fts/analyzer/AverageAnalyzer.h>         // indirect base 
 #include <prdc/field/cpu/RField.h>                    // base member
 #include <prdc/field/cpu/RFieldDft.h>                 // base member
@@ -36,8 +36,8 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class FourthOrderParameter<D, CppTp<D> >
-    : public FourthOrderParameterBase< D, CppTp<D> >
+   class FourthOrderParameter<D,CPT>
+    : public FourthOrderParameterBase<D,CPT>
    {
 
    public:
@@ -49,8 +49,8 @@ namespace Rp {
       * \param system  parent System object
       */
       FourthOrderParameter(
-                 Simulator<D, CppTp<D> >& simulator, 
-                 System<D, CppTp<D> >& system);
+                 Simulator<D,CPT>& simulator, 
+                 System<D,CPT>& system);
 
    private:
 
@@ -60,7 +60,7 @@ namespace Rp {
       void computePrefactor() override;
 
       //  Private aliase for base class
-      using Base = FourthOrderParameterBase< D, CppTp<D> >;
+      using Base = FourthOrderParameterBase<D,CPT>;
 
    };
 
@@ -70,12 +70,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class FourthOrderParameterBase<1, CppTp<1> >;
-      extern template class FourthOrderParameterBase<2, CppTp<2> >;
-      extern template class FourthOrderParameterBase<3, CppTp<3> >;
-      extern template class FourthOrderParameter<1, CppTp<1> >;
-      extern template class FourthOrderParameter<2, CppTp<2> >;
-      extern template class FourthOrderParameter<3, CppTp<3> >;
+      extern template class FourthOrderParameterBase<1,CPT>;
+      extern template class FourthOrderParameterBase<2,CPT>;
+      extern template class FourthOrderParameterBase<3,CPT>;
+      extern template class FourthOrderParameter<1,CPT>;
+      extern template class FourthOrderParameter<2,CPT>;
+      extern template class FourthOrderParameter<3,CPT>;
    }
 }
 #endif

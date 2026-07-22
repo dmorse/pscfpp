@@ -53,7 +53,7 @@ public:
    * Allocate an array of basis fields.
    */
    template <int D>
-   void allocateBasisFields(Rp::System<D, CppTp<D> > const & system,
+   void allocateBasisFields(Rp::System<D,CPT> const & system,
                             DArray< DArray<double> >& fields)
    {
       int nMonomer = system.mixture().nMonomer();
@@ -80,13 +80,13 @@ public:
    * Read basis fields into an array.
    */
    template <int D>
-   void readBasisFields(Rp::System<D, CppTp<D> > const & system,
+   void readBasisFields(Rp::System<D,CPT> const & system,
                         std::string filename,
                         DArray< DArray<double> >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateBasisFields(system, fields);
-      Rp::FieldIo<D, CppTp<D> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D,CPT> const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsBasis(filename, fields, unitCell);
    }
 
@@ -111,7 +111,7 @@ public:
    * Compare system w fields to reference fields from a file.
    */
    template <int D>
-   double readCompareWBasis(Rp::System<D, CppTp<D> > const & system,
+   double readCompareWBasis(Rp::System<D,CPT> const & system,
                             std::string filename)
    {
       DArray< DArray<double> > fields;
@@ -125,7 +125,7 @@ public:
    * Compare system c fields to reference fields from a file.
    */
    template <int D>
-   double readCompareCBasis(Rp::System<D, CppTp<D> > const & system,
+   double readCompareCBasis(Rp::System<D,CPT> const & system,
                             std::string filename)
    {
       DArray< DArray<double> > fields;
@@ -142,7 +142,7 @@ public:
    * On output, fHelhmoltz and pressure contain absolute differences
    */
    template <int D>
-   void compareFreeEnergies(Rp::System<D, CppTp<D> > const & system,
+   void compareFreeEnergies(Rp::System<D,CPT> const & system,
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
@@ -164,7 +164,7 @@ public:
    * Setup a system, and read parameter file.
    */
    template <int D>
-   void setupSystem(Rp::System<D, CppTp<D> >& system,
+   void setupSystem(Rp::System<D,CPT>& system,
                    std::string paramFileName)
    {
       system.fileMaster().setInputPrefix(filePrefix());
@@ -181,7 +181,7 @@ public:
    * Initialize system - read parameter file and w-field basis file. 
    */
    template <int D>
-   void initSystem(Rp::System<D, CppTp<D> >& system,
+   void initSystem(Rp::System<D,CPT>& system,
                    std::string paramFileName,
                    std::string wFileName)
    {
@@ -205,7 +205,7 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void testIterate(Rp::System<D, CppTp<D> >& system,
+   void testIterate(Rp::System<D,CPT>& system,
                     std::string paramFileName,
                     std::string wFileName,
                     std::string outSuffix,
@@ -255,7 +255,7 @@ public:
    * Compute and return stress.
    */
    template <int D>
-   FSArray<double, 6> computeStress(Rp::System<D, CppTp<D> >& system)
+   FSArray<double, 6> computeStress(Rp::System<D,CPT>& system)
    {
       FSArray<double, 6> stress;
       int nParameter = system.domain().unitCell().nParameter();
@@ -280,7 +280,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -318,7 +318,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -371,7 +371,7 @@ public:
       openLogFile(outFileRoot + ".log");
 
       // Initialize, read reference solution
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       initSystem(system, 
                  "in/diblock/lam/param.rigid",
                  "ref/testIterate1D_lam_flex_w.bf");
@@ -426,7 +426,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -472,7 +472,7 @@ public:
       openLogFile(outFileRoot + ".log");
 
       // Initialize, read reference solution
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       initSystem(system, 
                  "in/diblock/lam_bead/param.rigid",
                  "ref/testIterate1D_lam_bead_flex_w.bf");
@@ -527,7 +527,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -563,7 +563,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -599,7 +599,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -636,7 +636,7 @@ public:
       openLogFile("out/testIterate1D_lam_open_shift.log");
 
       // Process system
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       initSystem(system,
                  "in/solution/lam_open/param",
                  "in/solution/lam_open/w.bf");
@@ -646,7 +646,7 @@ public:
       }
 
       // Initialize systemShift
-      Rp::System<1, CppTp<1> > systemShift;
+      Rp::System<1,CPT> systemShift;
       initSystem(systemShift,
                  "in/solution/lam_open/param",
                  "in/solution/lam_open/w.bf");
@@ -704,7 +704,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<2, CppTp<2> > system;
+      Rp::System<2,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -740,7 +740,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<2, CppTp<2> > system;
+      Rp::System<2,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -771,7 +771,7 @@ public:
 
       // v1.1 test used omega.in as input, compared to omega.ref
 
-      Rp::FieldIo<2, CppTp<2> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<2,CPT> const & fieldIo = system.domain().fieldIo();
       fieldIo.scaleFieldsBasis("out/testIterateBasis2D_hex_flex_w.bf",
                                "out/testIterateBasis2D_hex_flex_w_scaled.bf",
                                0.01);
@@ -787,7 +787,7 @@ public:
       openLogFile(outFileRoot + ".log");
 
       // Initialize, read reference solution
-      Rp::System<2, CppTp<2> > system;
+      Rp::System<2,CPT> system;
       initSystem(system, 
                  "in/diblock/hex/param.rigid",
                  "ref/testIterate2D_hex_flex_w.bf");
@@ -843,7 +843,7 @@ public:
       //setVerbose(1);
 
       double wMaxDiff, cMaxDiff;
-      Rp::System<2, CppTp<2> > system;
+      Rp::System<2,CPT> system;
       int error;
       testIterate(system,
                   "in/diblock/hex_bead/param.flex",
@@ -876,7 +876,7 @@ public:
       openLogFile(outFileRoot + ".log");
 
       // Initialize, read reference solution
-      Rp::System<2, CppTp<2> > system;
+      Rp::System<2,CPT> system;
       initSystem(system, 
                  "in/diblock/hex_bead/param.rigid",
                  "ref/testIterate2D_hex_bead_flex_w.bf");
@@ -933,7 +933,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -968,7 +968,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -1018,7 +1018,7 @@ public:
       outFileRoot = makeFileRoot("out/testIterateBasis", "bcc_stress", 3);
       openLogFile(outFileRoot + ".log");
 
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       initSystem(system,
                  "in/diblock/bcc/param.rigid",
                  "in/diblock/bcc/omega.in");
@@ -1068,7 +1068,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -1121,7 +1121,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -1158,7 +1158,7 @@ public:
       openLogFile("out/testIterateWithMaskAndH.log");
 
       // Set up system
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       initSystem(system,"in/maskAndH/param", "in/maskAndH/w.bf");
 
       // Read in the mask and external fields from file

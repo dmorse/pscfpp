@@ -31,17 +31,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   BinaryStructureFactor<D, CudaTp<D> >::BinaryStructureFactor(
-              Simulator<D, CudaTp<D> >& simulator,
-              System<D, CudaTp<D> >& system)
-    : BinaryStructureFactorBase< D, CudaTp<D> >(simulator, system)
+   BinaryStructureFactor<D,CUT>::BinaryStructureFactor(
+              Simulator<D,CUT>& simulator,
+              System<D,CUT>& system)
+    : BinaryStructureFactorBase<D,CUT>(simulator, system)
    {}
 
    /*
    * Setup before entering main loop.
    */
    template <int D>
-   void BinaryStructureFactor<D, CudaTp<D> >::setup()
+   void BinaryStructureFactor<D,CUT>::setup()
    {
       allocate();
       UTIL_CHECK(wk_.isAllocated());
@@ -49,7 +49,7 @@ namespace Rp {
          wkHost_.allocate(wk_.capacity());
       }
 
-      WaveList<D, CudaTp<D> > const & waveList = AnalyzerT::system().waveList();
+      WaveList<D,CUT> const & waveList = AnalyzerT::system().waveList();
       HostDArray<double> kSq = waveList.kSq();
       HostDArray<bool> implicit = waveList.implicitInverse();
       Base::findWaveBunches(kSq, implicit);
@@ -59,7 +59,7 @@ namespace Rp {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D>
-   void BinaryStructureFactor<D, CudaTp<D> >::sample(long iStep)
+   void BinaryStructureFactor<D,CUT>::sample(long iStep)
    {
       if (AnalyzerT::isAtInterval(iStep)) {
          Base::computeW();
@@ -74,11 +74,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BinaryStructureFactorBase<1, CudaTp<1> >;
-      template class BinaryStructureFactorBase<2, CudaTp<2> >;
-      template class BinaryStructureFactorBase<3, CudaTp<3> >;
-      template class BinaryStructureFactor<1, CudaTp<1> >;
-      template class BinaryStructureFactor<2, CudaTp<2> >;
-      template class BinaryStructureFactor<3, CudaTp<3> >;
+      template class BinaryStructureFactorBase<1,CUT>;
+      template class BinaryStructureFactorBase<2,CUT>;
+      template class BinaryStructureFactorBase<3,CUT>;
+      template class BinaryStructureFactor<1,CUT>;
+      template class BinaryStructureFactor<2,CUT>;
+      template class BinaryStructureFactor<3,CUT>;
    }
 }

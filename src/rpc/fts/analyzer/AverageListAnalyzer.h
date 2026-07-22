@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/AverageListAnalyzer.h> // class template
-#include <pscf/cpu/CppTp.h>                    // template argument
+#include <pscf/backends/CPT.h>                    // template argument
 #include <rpc/fts/analyzer/Analyzer.h>           // base class
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class AverageListAnalyzer<1, CppTp<1> >;
-      extern template class AverageListAnalyzer<2, CppTp<2> >;
-      extern template class AverageListAnalyzer<3, CppTp<3> >;
+      extern template class AverageListAnalyzer<1,CPT>;
+      extern template class AverageListAnalyzer<2,CPT>;
+      extern template class AverageListAnalyzer<3,CPT>;
    }
 }
 #endif

@@ -15,8 +15,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Solvent<1, CudaTp<1> >;
-      template class Solvent<2, CudaTp<2> >;
-      template class Solvent<3, CudaTp<3> >;
+      template class Solvent<1,CUT>;
+      template class Solvent<2,CUT>;
+      template class Solvent<3,CUT>;
    }
 }

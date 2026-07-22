@@ -14,7 +14,7 @@ namespace Prdc {
 
    // Forward real-to-complex transform, explicit specializations.
    template<>
-   void FFT<1, CudaTp<1> >::makePlans()
+   void FFT<1,CUT>::makePlans()
    {
       int n0 = meshDimensions_[0];
       #ifdef SINGLE_PRECISION
@@ -29,7 +29,7 @@ namespace Prdc {
    }
 
    template <>
-   void FFT<2, CudaTp<2> >::makePlans()
+   void FFT<2,CUT>::makePlans()
    {
       int n0 = meshDimensions_[0];
       int n1 = meshDimensions_[1];
@@ -45,7 +45,7 @@ namespace Prdc {
    }
 
    template <>
-   void FFT<3, CudaTp<3> >::makePlans()
+   void FFT<3,CUT>::makePlans()
    {
       int n0 = meshDimensions_[0];
       int n1 = meshDimensions_[1];
@@ -62,9 +62,9 @@ namespace Prdc {
    }
 
    // Explicit instantiation of relevant class instances
-   template class FFT<1, CudaTp<1> >;
-   template class FFT<2, CudaTp<2> >;
-   template class FFT<3, CudaTp<3> >;
+   template class FFT<1,CUT>;
+   template class FFT<2,CUT>;
+   template class FFT<3,CUT>;
 
 }
 }

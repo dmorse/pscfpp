@@ -57,9 +57,9 @@ public:
       Log::setFile(logFile_);
    }
 
-   // Open and read parameter header to initialize Rp::Domain<D, CppTp<D> > system.
+   // Open and read parameter header to initialize Rp::Domain<D,CPT> system.
    template <int D>
-   void readParam(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
+   void readParam(std::string filename, Rp::Domain<D,CPT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -67,9 +67,9 @@ public:
       in.close();
    }
 
-   // Open and read file header to initialize Rp::Domain<D, CppTp<D> > system.
+   // Open and read file header to initialize Rp::Domain<D,CPT> system.
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D,CPT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -90,7 +90,7 @@ public:
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> const & dimensions,
-                       DArray< RField<D, CppTp<D> > >& fields)
+                       DArray< RField<D,CPT> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -99,7 +99,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D,CPT>& domain,
                    DArray< DArray<double> >& fields)
    {
       std::ifstream in;
@@ -109,8 +109,8 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RField<D, CppTp<D> > >& fields)
+   void readFields(std::string filename, Rp::Domain<D,CPT>& domain,
+                   DArray< RField<D,CPT> >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -119,7 +119,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D,CPT>& domain,
                    DArray< DArray<double> > const & fields)
    {
       std::ofstream out;
@@ -132,11 +132,11 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CppTp<3> > domain;
+      Rp::Domain<3,CPT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      Rp::CFields<3, CppTp<3> > fields;
+      Rp::CFields<3,CPT> fields;
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
       TEST_ASSERT(fields.isAllocatedRGrid());

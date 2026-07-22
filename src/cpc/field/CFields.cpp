@@ -11,9 +11,9 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Cp {
-      template class CFields<1, Prdc::CField<1, CppTp<1> >, Cpc::FieldIo<1> >;
-      template class CFields<2, Prdc::CField<2, CppTp<2> >, Cpc::FieldIo<2> >;
-      template class CFields<3, Prdc::CField<3, CppTp<3> >, Cpc::FieldIo<3> >;
+      template class CFields<1, Prdc::CField<1,CPT>, Cpc::FieldIo<1> >;
+      template class CFields<2, Prdc::CField<2,CPT>, Cpc::FieldIo<2> >;
+      template class CFields<3, Prdc::CField<3,CPT>, Cpc::FieldIo<3> >;
    }
    namespace Cpc {
       template class CFields<1>;

@@ -9,20 +9,20 @@
 */
 
 #include <rp/solvers/Polymer.h>    // base class template
-#include <pscf/cpu/CppTp.h>      // base class template argument
+#include <pscf/backends/CPT.h>      // base class template argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
-   class PolymerTmpl< Rp::Block<1, CppTp<1> >, Rp::Propagator<1, CppTp<1> > >;
+   class PolymerTmpl< Rp::Block<1,CPT>, Rp::Propagator<1,CPT> >;
    extern template 
-   class PolymerTmpl< Rp::Block<2, CppTp<2> >, Rp::Propagator<2, CppTp<2> > >;
+   class PolymerTmpl< Rp::Block<2,CPT>, Rp::Propagator<2,CPT> >;
    extern template 
-   class PolymerTmpl< Rp::Block<3, CppTp<3> >, Rp::Propagator<3, CppTp<3> > >;
+   class PolymerTmpl< Rp::Block<3,CPT>, Rp::Propagator<3,CPT> >;
    namespace Rp {
-      extern template class Polymer<1, CppTp<1> >;
-      extern template class Polymer<2, CppTp<2> >;
-      extern template class Polymer<3, CppTp<3> >;
+      extern template class Polymer<1,CPT>;
+      extern template class Polymer<2,CPT>;
+      extern template class Polymer<3,CPT>;
    }
 }
 #endif

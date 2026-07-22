@@ -9,14 +9,14 @@
 */
 
 #include <rp/field/CFields.h>       // base class template
-#include <pscf/cpu/CppTp.h>       // base class parameter
+#include <pscf/backends/CPT.h>       // base class parameter
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class CFields<1, CppTp<1> >;
-      extern template class CFields<2, CppTp<2> >;
-      extern template class CFields<3, CppTp<3> >;
+      extern template class CFields<1,CPT>;
+      extern template class CFields<2,CPT>;
+      extern template class CFields<3,CPT>;
    }
 }
 #endif

@@ -9,18 +9,18 @@
 */
 
 #include <rp/scft/sweep/Sweep.h>             // base class template
-#include <pscf/cuda/CudaTp.h>                // base class argument
+#include <pscf/backends/CUT.h>                // base class argument
 #include <rpg/scft/sweep/BasisFieldState.h>  // indirect base argument
 
 // Explicit instantiation declarations
 namespace Pscf {
-   extern template class SweepTmpl< Rp::BasisFieldState<1, CudaTp<1> > >;
-   extern template class SweepTmpl< Rp::BasisFieldState<2, CudaTp<2> > >;
-   extern template class SweepTmpl< Rp::BasisFieldState<3, CudaTp<3> > >;
+   extern template class SweepTmpl< Rp::BasisFieldState<1,CUT> >;
+   extern template class SweepTmpl< Rp::BasisFieldState<2,CUT> >;
+   extern template class SweepTmpl< Rp::BasisFieldState<3,CUT> >;
    namespace Rp {
-      extern template class Sweep<1, CudaTp<1> >;
-      extern template class Sweep<2, CudaTp<2> >;
-      extern template class Sweep<3, CudaTp<3> >;
+      extern template class Sweep<1,CUT>;
+      extern template class Sweep<2,CUT>;
+      extern template class Sweep<3,CUT>;
    }
 }
 #endif

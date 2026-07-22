@@ -59,9 +59,9 @@ public:
       Log::setFile(logFile_);
    }
 
-   // Open and read parameter header to initialize Rp::Domain<D, CppTp<D> > system.
+   // Open and read parameter header to initialize Rp::Domain<D,CPT> system.
    template <int D>
-   void readParam(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
+   void readParam(std::string filename, Rp::Domain<D,CPT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -69,9 +69,9 @@ public:
       in.close();
    }
 
-   // Open and read file header to initialize Rp::Domain<D, CppTp<D> > system.
+   // Open and read file header to initialize Rp::Domain<D,CPT> system.
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, CppTp<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D,CPT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -92,7 +92,7 @@ public:
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                       DArray< RField<D, CppTp<D> > >& fields)
+                       DArray< RField<D,CPT> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -101,7 +101,7 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
+   void readFields(std::string filename, Rp::Domain<D,CPT>& domain,
                    DArray< DArray<double> >& fields)
    {
       std::ifstream in;
@@ -111,8 +111,8 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RField<D, CppTp<D> > >& fields)
+   void readFields(std::string filename, Rp::Domain<D,CPT>& domain,
+                   DArray< RField<D,CPT> >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -121,7 +121,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D,CPT>& domain,
                    DArray< DArray<double> > const & fields)
    {
       std::ofstream out;
@@ -131,8 +131,8 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RField<D, CppTp<D> > > const & fields)
+   void writeFields(std::string filename, Rp::Domain<D,CPT>& domain,
+                   DArray< RField<D,CPT> > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -141,8 +141,8 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, CppTp<D> >& domain,
-                   DArray< RFieldDft<D, CppTp<D> > > const & fields)
+   void writeFields(std::string filename, Rp::Domain<D,CPT>& domain,
+                   DArray< RFieldDft<D,CPT> > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -154,11 +154,11 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CppTp<3> > domain;
+      Rp::Domain<3,CPT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      Rp::WFields<3, CppTp<3> > fields;
+      Rp::WFields<3,CPT> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -174,7 +174,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CppTp<3> > domain;
+      Rp::Domain<3,CPT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -186,7 +186,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      Rp::WFields<3, CppTp<3> > fields;
+      Rp::WFields<3,CPT> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -217,16 +217,16 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CppTp<3> > domain;
+      Rp::Domain<3,CPT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RField<3, CppTp<3> > > rf;
+      DArray< RField<3,CPT> > rf;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
 
-      Rp::WFields<3, CppTp<3> > fields;
+      Rp::WFields<3,CPT> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -241,7 +241,7 @@ public:
       TEST_ASSERT(fields.hasData());
       TEST_ASSERT(!fields.isSymmetric());
 
-      RFieldComparison<3, CppTp<3> > comparison;
+      RFieldComparison<3,CPT> comparison;
       comparison.compare(rf, fields.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
@@ -250,7 +250,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CppTp<3> > domain;
+      Rp::Domain<3,CPT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -259,12 +259,12 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      DArray< RField<3, CppTp<3> > > rf;
+      DArray< RField<3,CPT> > rf;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      Rp::WFields<3, CppTp<3> > fields;
+      Rp::WFields<3,CPT> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -289,7 +289,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CppTp<3> > domain;
+      Rp::Domain<3,CPT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -298,7 +298,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      Rp::WFields<3, CppTp<3> > fields;
+      Rp::WFields<3,CPT> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -330,16 +330,16 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CppTp<3> > domain;
+      Rp::Domain<3,CPT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RField<3, CppTp<3> > > rf;
+      DArray< RField<3,CPT> > rf;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
 
-      Rp::WFields<3, CppTp<3> > fields;
+      Rp::WFields<3,CPT> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -356,7 +356,7 @@ public:
       TEST_ASSERT(fields.hasData());
       TEST_ASSERT(!fields.isSymmetric());
 
-      RFieldComparison<3, CppTp<3> > comparison;
+      RFieldComparison<3,CPT> comparison;
       comparison.compare(rf, fields.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
@@ -365,7 +365,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CppTp<3> > domain;
+      Rp::Domain<3,CPT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -374,12 +374,12 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      DArray< RField<3, CppTp<3> > > rf;
+      DArray< RField<3,CPT> > rf;
       allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      Rp::WFields<3, CppTp<3> > fields;
+      Rp::WFields<3,CPT> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());

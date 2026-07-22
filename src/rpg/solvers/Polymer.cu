@@ -17,14 +17,14 @@
 
 namespace Pscf {
    template 
-   class PolymerTmpl< Rp::Block<1, CudaTp<1> >, Rp::Propagator<1, CudaTp<1> > >;
+   class PolymerTmpl< Rp::Block<1,CUT>, Rp::Propagator<1,CUT> >;
    template 
-   class PolymerTmpl< Rp::Block<2, CudaTp<2> >, Rp::Propagator<2, CudaTp<2> > >;
+   class PolymerTmpl< Rp::Block<2,CUT>, Rp::Propagator<2,CUT> >;
    template 
-   class PolymerTmpl< Rp::Block<3, CudaTp<3> >, Rp::Propagator<3, CudaTp<3> > >;
+   class PolymerTmpl< Rp::Block<3,CUT>, Rp::Propagator<3,CUT> >;
    namespace Rp {
-      template class Polymer< 1, CudaTp<1> >;
-      template class Polymer< 2, CudaTp<2> >;
-      template class Polymer< 3, CudaTp<3> >;
+      template class Polymer<1,CUT>;
+      template class Polymer<2,CUT>;
+      template class Polymer<3,CUT>;
    }
 }

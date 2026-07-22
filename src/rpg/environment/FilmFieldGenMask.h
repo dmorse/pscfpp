@@ -9,7 +9,7 @@
 */
 
 #include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
-#include <pscf/cuda/CudaTp.h>                       // template argument
+#include <pscf/backends/CUT.h>                       // template argument
 #include <rpg/system/System.h>
 
 // Forward declarations
@@ -40,7 +40,7 @@ namespace Rp {
    * \ingroup Rp_Field_Module
    */
    template <int D>
-   class FilmFieldGenMask<D, CudaTp<D> > 
+   class FilmFieldGenMask<D,CUT> 
     : public FilmFieldGenMaskBase<D>
    {
 
@@ -56,7 +56,7 @@ namespace Rp {
       * 
       * \param sys  System parent object
       */
-      FilmFieldGenMask(System<D, CudaTp<D> >& sys);
+      FilmFieldGenMask(System<D,CUT>& sys);
 
       /**
       * Destructor
@@ -115,11 +115,11 @@ namespace Rp {
       /**
       * Get the System associated with this object by reference.
       */
-      System<D, CudaTp<D> >& system();
+      System<D,CUT>& system();
       /**
       * Get the System associated with this object by const reference.
       */
-      System<D, CudaTp<D> > const & system() const;
+      System<D,CUT> const & system() const;
 
       /**
       * Get the space group name for this system.
@@ -141,7 +141,7 @@ namespace Rp {
    private:
 
       /// Pointer to the associated system object.
-      System<D, CudaTp<D> >* sysPtr_;
+      System<D,CUT>* sysPtr_;
 
    };
 
@@ -149,8 +149,8 @@ namespace Rp {
 
    // Get parent System by non-const reference.
    template <int D> inline
-   System<D, CudaTp<D> >& 
-   FilmFieldGenMask<D, CudaTp<D> >::system() 
+   System<D,CUT>& 
+   FilmFieldGenMask<D,CUT>::system() 
    {  
       UTIL_CHECK(sysPtr_);
       return *sysPtr_; 
@@ -158,8 +158,8 @@ namespace Rp {
 
    // Get parent System by const reference.
    template <int D> inline
-   System<D, CudaTp<D> > const & 
-   FilmFieldGenMask<D, CudaTp<D> >::system() const
+   System<D,CUT> const & 
+   FilmFieldGenMask<D,CUT>::system() const
    {
       UTIL_CHECK(sysPtr_);
       return *sysPtr_; 
@@ -168,19 +168,19 @@ namespace Rp {
    // Get space group name for this system.
    template <int D> inline 
    std::string 
-   FilmFieldGenMask<D, CudaTp<D> >::systemSpaceGroup() const
+   FilmFieldGenMask<D,CUT>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    // Get one of the lattice vectors for this system.
    template <int D> inline 
    RealVec<D> 
-   FilmFieldGenMask<D, CudaTp<D> >::systemLatticeVector(int id) const
+   FilmFieldGenMask<D,CUT>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    // Explicit instantiation declarations
-   extern template class FilmFieldGenMask<1, CudaTp<1> >;
-   extern template class FilmFieldGenMask<2, CudaTp<2> >;
-   extern template class FilmFieldGenMask<3, CudaTp<3> >;
+   extern template class FilmFieldGenMask<1,CUT>;
+   extern template class FilmFieldGenMask<2,CUT>;
+   extern template class FilmFieldGenMask<3,CUT>;
 
 } // namespace Rp
 } // namespace Pscf

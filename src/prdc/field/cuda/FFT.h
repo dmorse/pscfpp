@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaTp.h>   // class template argument
+#include <pscf/backends/CUT.h>   // class template argument
 #include "RFieldDft.h"          // member
 #include <pscf/math/IntVec.h>   // member
 
@@ -36,13 +36,13 @@ namespace Prdc {
    *
    * This class is a wrapper for plan creation and discrete Fourier 
    * transform (DFT) functions provided by the NVIDIA cufft library, 
-   * providing an interface to the field container classes RField<D, CudaTp<D> >, 
-   * RField<Dft>, and CField<D, CudaTp<D> > in namespace Pscf::Prdc::Cuda.
+   * providing an interface to the field container classes RField<D,CUT>, 
+   * RField<Dft>, and CField<D,CUT> in namespace Pscf::Prdc::Cuda.
    *
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class FFT<D, CudaTp<D> >
+   class FFT<D,CUT>
    {
 
    public:
@@ -81,7 +81,7 @@ namespace Prdc {
       * \param rField  real values on r-space grid (input, gpu mem)
       * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransform(RField<D, CudaTp<D> > const & rField, RFieldDft<D, CudaTp<D> >& kField) 
+      void forwardTransform(RField<D,CUT> const & rField, RFieldDft<D,CUT>& kField) 
       const;
 
       /**
@@ -97,7 +97,7 @@ namespace Prdc {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransformUnsafe(RFieldDft<D, CudaTp<D> >& kField, RField<D, CudaTp<D> >& rField) 
+      void inverseTransformUnsafe(RFieldDft<D,CUT>& kField, RField<D,CUT>& rField) 
       const;
 
       /**
@@ -109,8 +109,8 @@ namespace Prdc {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransformSafe(RFieldDft<D, CudaTp<D> > const & kField, 
-                                RField<D, CudaTp<D> >& rField) const;
+      void inverseTransformSafe(RFieldDft<D,CUT> const & kField, 
+                                RField<D,CUT>& rField) const;
 
       // Complex <-> Complex transforms
       
@@ -133,7 +133,7 @@ namespace Prdc {
       * \param rField  complex values on r-space grid (input, gpu mem)
       * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransform(CField<D, CudaTp<D> > const & rField, CField<D, CudaTp<D> >& kField) 
+      void forwardTransform(CField<D,CUT> const & rField, CField<D,CUT>& kField) 
       const;
 
       /**
@@ -152,7 +152,7 @@ namespace Prdc {
       * \param kField  complex values on k-space grid (input, gpu mem)
       * \param rField  complex values on r-space grid (output, gpu mem)
       */
-      void inverseTransform(CField<D, CudaTp<D> > const & kField, CField<D, CudaTp<D> >& rField) 
+      void inverseTransform(CField<D,CUT> const & kField, CField<D,CUT>& rField) 
       const;
 
       /**
@@ -209,8 +209,8 @@ namespace Prdc {
       /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      /// Private RFieldDft<D, CudaTp<D> > k-space array work space
-      mutable RFieldDft<D, CudaTp<D> > kFieldCopy_;
+      /// Private RFieldDft<D,CUT> k-space array work space
+      mutable RFieldDft<D,CUT> kFieldCopy_;
 
       /// Number of points in r-space grid
       int rSize_;
@@ -240,13 +240,13 @@ namespace Prdc {
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1, CudaTp<1> >::makePlans();
+   void FFT<1,CUT>::makePlans();
 
    template <>
-   void FFT<2, CudaTp<2> >::makePlans();
+   void FFT<2,CUT>::makePlans();
 
    template <>
-   void FFT<3, CudaTp<3> >::makePlans();
+   void FFT<3,CUT>::makePlans();
 
    // Inline functions
 
@@ -254,14 +254,14 @@ namespace Prdc {
    * Return the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   inline IntVec<D> const & FFT<D, CudaTp<D> >::meshDimensions() const
+   inline IntVec<D> const & FFT<D,CUT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
    * Has this FFT object been setup? 
    */
    template <int D>
-   inline bool FFT<D, CudaTp<D> >::isSetup() const
+   inline bool FFT<D,CUT>::isSetup() const
    {  return isSetup_; }
 
    /*
@@ -269,7 +269,7 @@ namespace Prdc {
    */
    template <int D>
    inline
-   bool FFT<D, CudaTp<D> >::hasImplicitInverse(IntVec<D> const & wavevector,
+   bool FFT<D,CUT>::hasImplicitInverse(IntVec<D> const & wavevector,
                                    IntVec<D> const & meshDimensions)
    {
       int i = wavevector[D-1];
@@ -283,9 +283,9 @@ namespace Prdc {
    }
 
    // Explicit instantiation declarations
-   extern template class FFT<1, CudaTp<1> >;
-   extern template class FFT<2, CudaTp<2> >;
-   extern template class FFT<3, CudaTp<3> >;
+   extern template class FFT<1,CUT>;
+   extern template class FFT<2,CUT>;
+   extern template class FFT<3,CUT>;
 
 } // namespace Prdc
 } // namespace Pscf

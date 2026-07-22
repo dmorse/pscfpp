@@ -110,14 +110,14 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1, CppTp<1> > waveList(false);
+      WaveList<1,CPT> waveList(false);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -141,14 +141,14 @@ public:
 
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2, CppTp<2> > waveList(false);
+      WaveList<2,CPT> waveList(false);
       waveList.allocate(mesh, unitCell);
 
       block.associate(mesh, fft, unitCell, waveList);
@@ -173,14 +173,14 @@ public:
 
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3, CppTp<3> > fft;
+      FFT<3,CPT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
-      WaveList<3, CppTp<3> > waveList(false);
+      WaveList<3,CPT> waveList(false);
       waveList.allocate(mesh, unitCell);
 
       // Associate block
@@ -209,14 +209,14 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
       bool isRealField = false;
-      WaveList<1, CppTp<1> > waveList(isRealField);
+      WaveList<1,CPT> waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -226,7 +226,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
-      CField<1, CppTp<1> > w;
+      CField<1,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -249,14 +249,14 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       bool isRealField = false;
-      WaveList<2, CppTp<2> > waveList(isRealField);
+      WaveList<2,CPT> waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -267,7 +267,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      CField<2, CppTp<2> > w;
+      CField<2,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -292,14 +292,14 @@ public:
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       bool isRealField = false;
-      WaveList<2, CppTp<2> > waveList(isRealField);
+      WaveList<2,CPT> waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.5;
@@ -310,7 +310,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      CField<2, CppTp<2> > w;
+      CField<2,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -334,14 +334,14 @@ public:
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      FFT<3, CppTp<3> > fft;
+      FFT<3,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
       bool isRealField = false;
-      WaveList<3, CppTp<3> > waveList(isRealField);
+      WaveList<3,CPT> waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -353,7 +353,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      CField<3, CppTp<3> > w;
+      CField<3,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -375,8 +375,8 @@ public:
       TEST_ASSERT(nMonomer == 2);
       Mesh<3>& mesh = domain.mesh();
       UnitCell<3>& unitCell = domain.unitCell();
-      FFT<3, CppTp<3> >& fft = domain.fft();
-      WaveList<3, CppTp<3> >& waveList = domain.waveList();
+      FFT<3,CPT>& fft = domain.fft();
+      WaveList<3,CPT>& waveList = domain.waveList();
 
       // Create and initialize block
       Block<3> block;
@@ -391,7 +391,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 1.8));
 
       // Setup chemical potential field
-      CField<3, CppTp<3> > w;
+      CField<3,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -415,14 +415,14 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
       bool isRealField = false;
-      WaveList<1, CppTp<1> > waveList(isRealField);
+      WaveList<1,CPT> waveList(isRealField);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -430,7 +430,7 @@ public:
       block.allocate(ds);
 
       // Setup chemical potential field
-      CField<1, CppTp<1> > w;
+      CField<1,CPT> w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -519,8 +519,8 @@ public:
       Domain<1> domain;
       Mesh<1>& mesh = domain.mesh();
       UnitCell<1>& unitCell = domain.unitCell();
-      FFT<1, CppTp<1> >& fft = domain.fft();
-      WaveList<1, CppTp<1> >& waveList = domain.waveList();
+      FFT<1,CPT>& fft = domain.fft();
+      WaveList<1,CPT>& waveList = domain.waveList();
       block.associate(mesh, fft, unitCell, waveList);
       int nMonomer = readHeader("in/Lamellar.hdr", domain);
       TEST_ASSERT(nMonomer == 2);
@@ -531,7 +531,7 @@ public:
       block.allocate(ds);
 
       // Setup chemical potential field
-      CField<1, CppTp<1> > w;
+      CField<1,CPT> w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -625,13 +625,13 @@ public:
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1, CppTp<1> > waveList(false);
+      WaveList<1,CPT> waveList(false);
       waveList.allocate(mesh, unitCell);
 
       double ds = 1.00;
@@ -644,7 +644,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      RField<1, CppTp<1> > w;
+      RField<1,CPT> w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -718,13 +718,13 @@ public:
       Mesh<2> mesh;
       setupMesh<2>(mesh);
 
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2, CppTp<2> > waveList(false);
+      WaveList<2,CPT> waveList(false);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -735,7 +735,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2, CppTp<2> > w;
+      RField<2,CPT> w;
       w.allocate(mesh.dimensions());
       MeshIterator<2> iter(mesh.dimensions());
 
@@ -807,13 +807,13 @@ public:
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      FFT<3, CppTp<3> > fft;
+      FFT<3,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
-      WaveList<3, CppTp<3> > waveList(false);
+      WaveList<3,CPT> waveList(false);
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -825,7 +825,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      RField<3, CppTp<3> > w;
+      RField<3,CPT> w;
       w.allocate(mesh.dimensions());
       MeshIterator<3> iter(mesh.dimensions());
 

@@ -33,7 +33,7 @@ using namespace Pscf::Prdc;
 class CompressorTest : public LogFileUnitTest
 {
 
-   Rp::System<3, CppTp<3> > system;
+   Rp::System<3,CPT> system;
    
 public:
    
@@ -44,7 +44,7 @@ public:
    {  setVerbose(0); }
    
    template <int D>
-   void initSystem(Rp::System<D, CppTp<D> >& system, std::string filename)
+   void initSystem(Rp::System<D,CPT>& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -57,19 +57,19 @@ public:
    }
    
    template <int D>
-   void randomStep(Rp::System<D, CppTp<D> >& system)
+   void randomStep(Rp::System<D,CPT>& system)
    {
       // Random change in pressure field
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<D> const & dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3, CppTp<3> > > w2;
+      DArray< RField<3,CPT> > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
       
-      DArray< RField<3, CppTp<3> > > const & w = system.w().rgrid();
+      DArray< RField<3,CPT> > const & w = system.w().rgrid();
       double stepSize = 1e-1;
       Random random;
       random.setSeed(0);
@@ -83,19 +83,19 @@ public:
    }
    
    template <int D>
-   void addPressureField(Rp::System<D, CppTp<D> >& system)
+   void addPressureField(Rp::System<D,CPT>& system)
    {
       // Random change in pressure field
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<D> const & dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3, CppTp<3> > > w2;
+      DArray< RField<3,CPT> > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
       
-      DArray< RField<3, CppTp<3> > > const & w = system.w().rgrid();
+      DArray< RField<3,CPT> > const & w = system.w().rgrid();
       double stepSize = 1e-1;
       Random random;
       random.setSeed(0);
@@ -122,7 +122,7 @@ public:
    */ 
    template <typename Compressor>
    void testCompressor(Compressor& compressor, 
-                       Rp::System<3, CppTp<3> >& system, 
+                       Rp::System<3,CPT>& system, 
                        std::string infilename, 
                        char const * outfilename)
    {
@@ -136,7 +136,7 @@ public:
       IntVec<3> const & dimensions = system.domain().mesh().dimensions();
       
       // Store value of input chemical potential fields
-      DArray< RField<3, CppTp<3> > > w0;
+      DArray< RField<3,CPT> > w0;
       w0.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w0[i].allocate(dimensions);
@@ -166,7 +166,7 @@ public:
       // Apply pressure field
       addPressureField(system);
       compressor.compress();
-      DArray< RField<3, CppTp<3> > > w1;
+      DArray< RField<3,CPT> > w1;
       w1.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w1[i].allocate(dimensions);
@@ -176,7 +176,7 @@ public:
             w1[i][j] = system.w().rgrid(i)[j];
          }
       }
-      RFieldComparison<3, CppTp<3> > comparison;
+      RFieldComparison<3,CPT> comparison;
       comparison.compare(w0, w1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
    }
@@ -185,8 +185,8 @@ public:
    void testAmCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CppTp<3> > system;
-      Rp::AmCompressor<3, CppTp<3> > amCompressor(system);
+      Rp::System<3,CPT> system;
+      Rp::AmCompressor<3,CPT> amCompressor(system);
       testCompressor(amCompressor, system, 
                      "in/param_AmCompressor",
                      "out/testAmCompressor.log");
@@ -195,8 +195,8 @@ public:
    void testLrCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CppTp<3> > system;
-      Rp::LrCompressor<3, CppTp<3> > lrCompressor(system);
+      Rp::System<3,CPT> system;
+      Rp::LrCompressor<3,CPT> lrCompressor(system);
       testCompressor(lrCompressor,  system, 
                      "in/param_LrCompressor", 
                      "out/testLrCompressor.log");
@@ -206,7 +206,7 @@ public:
    void testLrAmPreCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       LrAmPreCompressor<3> lrAmPreCompressor(system);
       testCompressor(lrAmPreCompressor, system, 
                      "in/param_LrAmPreCompressor",
@@ -217,8 +217,8 @@ public:
    void testLrAmCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CppTp<3> > system;
-      Rp::LrAmCompressor<3, CppTp<3> > lrAmCompressor(system);
+      Rp::System<3,CPT> system;
+      Rp::LrAmCompressor<3,CPT> lrAmCompressor(system);
       testCompressor(lrAmCompressor, system, 
                      "in/param_LrAmCompressor",
                      "out/testLrAmCompressor.log");

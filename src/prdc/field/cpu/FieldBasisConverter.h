@@ -9,7 +9,7 @@
 */
 
 #include <util/containers/DMatrix.h>   // member
-#include <pscf/cpu/CppTp.h>            // backend type
+#include <pscf/backends/CPT.h>            // backend type
 
 // Forward declaratation
 namespace Util {
@@ -114,8 +114,8 @@ namespace Prdc {
       * \param out  output field components, indexed by basis vector id
       * \param prefactor common scalar prefactor
       */
-      void convertToBasis(DArray< RField<D, CppTp<D> > > const & in, 
-                          DArray< RField<D, CppTp<D> > > & out,
+      void convertToBasis(DArray< RField<D,CPT> > const & in, 
+                          DArray< RField<D,CPT> > & out,
                           double prefactor = 1.0) const;
 
       /**
@@ -131,8 +131,8 @@ namespace Prdc {
       * \param out output fields, indexed by monomer type id
       * \param prefactor common scalar prefactor
       */
-      void convertFromBasis(DArray< RField<D, CppTp<D> > > const & in, 
-                            DArray< RField<D, CppTp<D> > > & out,
+      void convertFromBasis(DArray< RField<D,CPT> > const & in, 
+                            DArray< RField<D,CPT> > & out,
                             double prefactor = 1.0) const;
 
       /**

@@ -49,7 +49,7 @@ public:
       dimensions[2] = 8;
       IntVec<3> kDimensions;
       int kSize;
-      FFT<3, CppTp<3> >::computeKMesh(dimensions, kDimensions, kSize);
+      FFT<3,CPT>::computeKMesh(dimensions, kDimensions, kSize);
       Mesh<3> kMesh(kDimensions);
 
       std::vector< Sort::Item<double> > items;

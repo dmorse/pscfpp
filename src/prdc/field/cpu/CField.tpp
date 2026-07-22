@@ -20,7 +20,7 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   CField<D, CppTp<D> >::CField()
+   CField<D,CPT>::CField()
     : FftwDRArray<fftw_complex>(),
       meshDimensions_()
    {}
@@ -29,7 +29,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   CField<D, CppTp<D> >::~CField()
+   CField<D,CPT>::~CField()
    {}
 
    /*
@@ -38,7 +38,7 @@ namespace Prdc {
    * Allocates new memory and copies all elements by value.
    */
    template <int D>
-   CField<D, CppTp<D> >::CField(const CField<D, CppTp<D> >& other)
+   CField<D,CPT>::CField(const CField<D,CPT>& other)
     : FftwDRArray<fftw_complex>(),
       meshDimensions_()
    {
@@ -58,7 +58,7 @@ namespace Prdc {
    * This operator will allocate memory if not allocated previously.
    */
    template <int D>
-   CField<D, CppTp<D> >& CField<D, CppTp<D> >::operator = (CField<D, CppTp<D> > const & other)
+   CField<D,CPT>& CField<D,CPT>::operator = (CField<D,CPT> const & other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -87,7 +87,7 @@ namespace Prdc {
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void CField<D, CppTp<D> >::allocate(const IntVec<D>& meshDimensions)
+   void CField<D,CPT>::allocate(const IntVec<D>& meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -102,7 +102,7 @@ namespace Prdc {
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void CField<D, CppTp<D> >::deallocate()
+   void CField<D,CPT>::deallocate()
    {
       FftwDRArray<fftw_complex>::deallocate();
       for (int i = 0; i < D; ++i) {

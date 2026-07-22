@@ -35,7 +35,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, CppTp<D> >& system, std::string filename)
+   void initSystem(Rp::System<D,CPT>& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -51,7 +51,7 @@ public:
                   char const * outfilename)
    {
       openLogFile(outfilename);
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       initSystem(system, paramFilename);
       system.w().readRGrid(inFieldFilename);
 
@@ -61,8 +61,8 @@ public:
       double vMonomer = system.mixture().vMonomer();
 
       // Cos pressure field perturbation per chain: A * cos(2pi * f* i/meshSize)
-      RField<1, CppTp<1> > cosF;
-      RFieldDft<1, CppTp<1> > cosFK;
+      RField<1,CPT> cosF;
+      RFieldDft<1,CPT> cosFK;
       cosF.allocate(dimensions);
       cosFK.allocate(dimensions);
       PolymerSpecies<double> const & polymer = system.mixture().polymerSpecies(0);
@@ -80,7 +80,7 @@ public:
       // Convert to Fourier Space
       system.domain().fft().forwardTransform(cosF, cosFK);
 
-      DArray< RField<1, CppTp<1> > > w2;
+      DArray< RField<1,CPT> > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
@@ -98,7 +98,7 @@ public:
       system.compute();
 
       // Incompressibility error
-      RField<1, CppTp<1> > error;
+      RField<1,CPT> error;
       error.allocate(dimensions);
       for (int k = 0; k <  meshSize; k++){
          error[k] = -1.0;
@@ -110,14 +110,14 @@ public:
       // Intra analytical
       IntVec<1> kMeshDimensions;
       kMeshDimensions[0] = dimensions[0]/2 + 1;
-      RField<1, CppTp<1> > intraCorrelationK;
+      RField<1,CPT> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, CppTp<1> > intra_(system);
+      Rp::IntraCorrelation<1,CPT> intra_(system);
       intra_.computeOmegaTotal(intraCorrelationK);
 
       // Compute analytical dphi using Intra
-      RField<1, CppTp<1> > analyticalError;
-      RFieldDft<1, CppTp<1> > analyticalErrorK;
+      RField<1,CPT> analyticalError;
+      RFieldDft<1,CPT> analyticalErrorK;
       analyticalError.allocate(dimensions);
       analyticalErrorK.allocate(dimensions);
       MeshIterator<1> iter;
@@ -129,7 +129,7 @@ public:
 
       system.domain().fft().inverseTransformUnsafe(analyticalErrorK, analyticalError);
 
-      RFieldComparison<1, CppTp<1> > comparison;
+      RFieldComparison<1,CPT> comparison;
       comparison.compare(error, analyticalError);
       TEST_ASSERT(comparison.maxDiff() < A* 1e-2);
 
@@ -186,7 +186,7 @@ public:
       printMethod(TEST_FUNC);
 
       openLogFile("out/testIntraHomoThread.log");
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       initSystem(system, "in/param_system_1D_diblock_thread");
       system.w().readRGrid("in/w_diblock_homogenous.rf");
 
@@ -195,21 +195,21 @@ public:
       // The intracorrelation function of conformational diblock
       IntVec<1> kMeshDimensions;
       kMeshDimensions[0] = dimensions[0]/2 + 1;
-      RField<1, CppTp<1> > intraCorrelationK;
+      RField<1,CPT> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, CppTp<1> > intra(system);
+      Rp::IntraCorrelation<1,CPT> intra(system);
       intra.computeOmegaTotal(intraCorrelationK);
 
       // The intracorrelation function of conformational homo
-      Rp::System<1, CppTp<1> > systemHomo;
+      Rp::System<1,CPT> systemHomo;
       initSystem(systemHomo, "in/param_system_1D_homo_thread");
       systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
-      RField<1, CppTp<1> > intraCorrelationKHomo;
+      RField<1,CPT> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, CppTp<1> > intraHomo(systemHomo);
+      Rp::IntraCorrelation<1,CPT> intraHomo(systemHomo);
       intraHomo.computeOmegaTotal(intraCorrelationKHomo);
 
-      RFieldComparison<1, CppTp<1> > comparison;
+      RFieldComparison<1,CPT> comparison;
       comparison.compare(intraCorrelationK, intraCorrelationKHomo);
       TEST_ASSERT(comparison.maxDiff() < 1e-5);
 
@@ -221,7 +221,7 @@ public:
       printMethod(TEST_FUNC);
 
       openLogFile("out/testIntraHomoBead.log");
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       initSystem(system, "in/param_system_1D_diblock_bead");
       system.w().readRGrid("in/w_diblock_homogenous.rf");
 
@@ -230,21 +230,21 @@ public:
       // The intracorrelation function of conformational diblock
       IntVec<1> kMeshDimensions;
       kMeshDimensions[0] = dimensions[0]/2 + 1;
-      RField<1, CppTp<1> > intraCorrelationK;
+      RField<1,CPT> intraCorrelationK;
       intraCorrelationK.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, CppTp<1> > intra(system);
+      Rp::IntraCorrelation<1,CPT> intra(system);
       intra.computeOmegaTotal(intraCorrelationK);
 
       // The intracorrelation function of conformational homo
-      Rp::System<1, CppTp<1> > systemHomo;
+      Rp::System<1,CPT> systemHomo;
       initSystem(systemHomo, "in/param_system_1D_homo_bead");
       systemHomo.w().readRGrid("in/w_homo_homogenous.rf");
-      RField<1, CppTp<1> > intraCorrelationKHomo;
+      RField<1,CPT> intraCorrelationKHomo;
       intraCorrelationKHomo.allocate(kMeshDimensions);
-      Rp::IntraCorrelation<1, CppTp<1> > intraHomo(systemHomo);
+      Rp::IntraCorrelation<1,CPT> intraHomo(systemHomo);
       intraHomo.computeOmegaTotal(intraCorrelationKHomo);
 
-      RFieldComparison<1, CppTp<1> > comparison;
+      RFieldComparison<1,CPT> comparison;
       comparison.compare(intraCorrelationK, intraCorrelationKHomo);
       TEST_ASSERT(comparison.maxDiff() < 1e-5);
 

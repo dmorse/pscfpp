@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>         // class template argument
+#include <pscf/backends/CPT.h>         // class template argument
 #include <pscf/cpu/FftwDRArray.h>   // base class
 #include <pscf/math/IntVec.h>       // member
 
@@ -28,7 +28,7 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class RFieldDft<D, CppTp<D> >
+   class RFieldDft<D,CPT>
     : public FftwDRArray<fftw_complex>
    {
 
@@ -60,7 +60,7 @@ namespace Prdc {
       *
       *\param other the RFieldDft to be copied.
       */
-      RFieldDft(RFieldDft<D, CppTp<D> > const & other);
+      RFieldDft(RFieldDft<D,CPT> const & other);
 
       /**
       * Destructor.
@@ -79,8 +79,8 @@ namespace Prdc {
       *
       * \param other the RHS Field
       */
-      RFieldDft<D, CppTp<D> >& 
-      operator = (RFieldDft<D, CppTp<D> > const & other);
+      RFieldDft<D,CPT>& 
+      operator = (RFieldDft<D,CPT> const & other);
 
       /**
       * Allocate the underlying C array and set mesh dimensions.
@@ -135,14 +135,14 @@ namespace Prdc {
    * Return mesh dimensions by const reference.
    */
    template <int D> inline 
-   IntVec<D> const & RFieldDft<D, CppTp<D> >::meshDimensions() const
+   IntVec<D> const & RFieldDft<D,CPT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
    * Return dimensions of dft grid by const reference.
    */
    template <int D> inline 
-   IntVec<D> const & RFieldDft<D, CppTp<D> >::dftDimensions() const
+   IntVec<D> const & RFieldDft<D,CPT>::dftDimensions() const
    {  return dftDimensions_; }
 
    /*
@@ -150,7 +150,7 @@ namespace Prdc {
    */
    template <int D>
    template <class Archive>
-   void RFieldDft<D, CppTp<D> >::serialize(Archive& ar, 
+   void RFieldDft<D,CPT>::serialize(Archive& ar, 
                                            const unsigned int version)
    {
       FftwDRArray<fftw_complex>::serialize(ar, version);
@@ -159,9 +159,9 @@ namespace Prdc {
    }
 
    // Explicit instantiation declarations
-   extern template class RFieldDft<1, CppTp<1> >;
-   extern template class RFieldDft<2, CppTp<2> >;
-   extern template class RFieldDft<3, CppTp<3> >;
+   extern template class RFieldDft<1,CPT>;
+   extern template class RFieldDft<2,CPT>;
+   extern template class RFieldDft<3,CPT>;
 
 } // namespace Prdc
 } // namespace Pscf

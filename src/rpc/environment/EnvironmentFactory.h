@@ -9,14 +9,14 @@
 */
 
 #include <rp/environment/EnvironmentFactory.h>
-#include <pscf/cpu/CppTp.h>
+#include <pscf/backends/CPT.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class EnvironmentFactory<1, CppTp<1> >;
-      extern template class EnvironmentFactory<2, CppTp<2> >;
-      extern template class EnvironmentFactory<3, CppTp<3> >;
+      extern template class EnvironmentFactory<1,CPT>;
+      extern template class EnvironmentFactory<2,CPT>;
+      extern template class EnvironmentFactory<3,CPT>;
    }
 }
 #endif

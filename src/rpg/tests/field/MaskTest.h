@@ -55,9 +55,9 @@ public:
       Log::setFile(logFile_);
    }
 
-   // Open and read parameter header to initialize Rp::Domain<D, CudaTp<D> > system.
+   // Open and read parameter header to initialize Rp::Domain<D,CUT> system.
    template <int D>
-   void readParam(std::string filename, Rp::Domain<D, CudaTp<D> >& domain)
+   void readParam(std::string filename, Rp::Domain<D,CUT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -65,9 +65,9 @@ public:
       in.close();
    }
 
-   // Open and read file header to initialize Rp::Domain<D, CudaTp<D> > system.
+   // Open and read file header to initialize Rp::Domain<D,CUT> system.
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, CudaTp<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D,CUT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -77,7 +77,7 @@ public:
    }
 
    template <int D>
-   void readField(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
+   void readField(std::string filename, Rp::Domain<D,CUT>& domain,
                    DArray<double>& field)
    {
       std::ifstream in;
@@ -87,8 +87,8 @@ public:
    }
 
    template <int D>
-   void readField(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
-                  RField<D, CudaTp<D> >& field)
+   void readField(std::string filename, Rp::Domain<D,CUT>& domain,
+                  RField<D,CUT>& field)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -100,7 +100,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, CudaTp<1> > domain;
+      Rp::Domain<1,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -110,7 +110,7 @@ public:
       bf.allocate(nBasis);
       readField("in/mask.bf", domain, bf);
 
-      Rp::Mask<1, CudaTp<1> > mask;
+      Rp::Mask<1,CUT> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -138,18 +138,18 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, CudaTp<1> > domain;
+      Rp::Domain<1,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
-      RField<1, CudaTp<1> > rf;
+      RField<1,CUT> rf;
       rf.allocate(dimensions);
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Rp::Mask<1, CudaTp<1> > mask;
+      Rp::Mask<1,CUT> mask;
       mask.setFieldIo(domain.fieldIo());
       
       mask.allocateBasis(nBasis);
@@ -163,7 +163,7 @@ public:
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
-      RFieldComparison<1, CudaTp<1> > comparison;
+      RFieldComparison<1,CUT> comparison;
       comparison.compare(rf, mask.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
@@ -172,7 +172,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, CudaTp<1> > domain;
+      Rp::Domain<1,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -182,11 +182,11 @@ public:
       bf.allocate(nBasis);
       readField("in/mask.bf", domain, bf);
 
-      RField<1, CudaTp<1> > rf;
+      RField<1,CUT> rf;
       rf.allocate(dimensions);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      Rp::Mask<1, CudaTp<1> > mask;
+      Rp::Mask<1,CUT> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -209,7 +209,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, CudaTp<1> > domain;
+      Rp::Domain<1,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
@@ -219,7 +219,7 @@ public:
       bf.allocate(nBasis);
       readField("in/mask.bf", domain, bf);
 
-      Rp::Mask<1, CudaTp<1> > mask;
+      Rp::Mask<1,CUT> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -250,18 +250,18 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, CudaTp<1> > domain;
+      Rp::Domain<1,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
-      RField<1, CudaTp<1> > rf;
+      RField<1,CUT> rf;
       rf.allocate(dimensions);
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Rp::Mask<1, CudaTp<1> > mask;
+      Rp::Mask<1,CUT> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -277,7 +277,7 @@ public:
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
-      RFieldComparison<1, CudaTp<1> > comparison;
+      RFieldComparison<1,CUT> comparison;
       comparison.compare(rf, mask.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
@@ -286,18 +286,18 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, CudaTp<1> > domain;
+      Rp::Domain<1,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
-      RField<1, CudaTp<1> > rf;
+      RField<1,CUT> rf;
       rf.allocate(dimensions);
       TEST_ASSERT(rf.capacity() == domain.mesh().size());
       readField("in/mask.rf", domain, rf);
 
-      Rp::Mask<1, CudaTp<1> > mask;
+      Rp::Mask<1,CUT> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);
@@ -313,7 +313,7 @@ public:
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(mask.isSymmetric());
 
-      RFieldComparison<1, CudaTp<1> > comparison;
+      RFieldComparison<1,CUT> comparison;
       comparison.compare(rf, mask.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
@@ -322,14 +322,14 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, CudaTp<1> > domain;
+      Rp::Domain<1,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
       IntVec<1> dimensions = domain.mesh().dimensions();
 
       // Create empty mask object, check phiTot
-      Rp::Mask<1, CudaTp<1> > mask;
+      Rp::Mask<1,CUT> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocateBasis(nBasis);
       mask.allocateRGrid(dimensions);

@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaTp.h>           // argument specialization
+#include <pscf/backends/CUT.h>           // argument specialization
 #include <prdc/field/cuda/RFieldDft.h>  
 #include <util/containers/DArray.h> 
 
@@ -26,7 +26,7 @@ namespace Prdc {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class RFieldDftComparison<D, CudaTp<D> > 
+   class RFieldDftComparison<D,CUT> 
    {
 
    public:
@@ -51,8 +51,8 @@ namespace Prdc {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(RFieldDft<D, CudaTp<D> > const & a, 
-                     RFieldDft<D, CudaTp<D> > const & b);
+      double compare(RFieldDft<D,CUT> const & a, 
+                     RFieldDft<D,CUT> const & b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -68,8 +68,8 @@ namespace Prdc {
       * \param b  2nd DArray of fields
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray< RFieldDft<D, CudaTp<D> > > const & a, 
-                     DArray< RFieldDft<D, CudaTp<D> > > const & b);
+      double compare(DArray< RFieldDft<D,CUT> > const & a, 
+                     DArray< RFieldDft<D,CUT> > const & b);
 
       /**
       * Return the precomputed maximum element-by-element difference.
@@ -100,9 +100,9 @@ namespace Prdc {
    };
 
    // Explicit instantiation declarations
-   extern template class RFieldDftComparison<1, CudaTp<1> >;
-   extern template class RFieldDftComparison<2, CudaTp<2> >;
-   extern template class RFieldDftComparison<3, CudaTp<3> >;
+   extern template class RFieldDftComparison<1,CUT>;
+   extern template class RFieldDftComparison<2,CUT>;
+   extern template class RFieldDftComparison<3,CUT>;
 
 
 } // namespace Prdc

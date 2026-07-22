@@ -1,5 +1,5 @@
-#ifndef PRDC_CPP_TYPE_H
-#define PRDC_CPP_TYPE_H
+#ifndef PSCF_CPT_H
+#define PSCF_CPT_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -27,8 +27,7 @@ namespace Pscf {
    /**
    * Type class for the C++ serial CPU backend.
    */
-   template <int D>
-   class CppTp
+   class CPT
    {
 
    public:
@@ -44,13 +43,6 @@ namespace Pscf {
       template <typename T> using LocArray = FftwDRArray<T>;
       using RDevArray = DevArray<Real>;
       using RLocArray = LocArray<Real>;
-
-      //using RField = Prdc::Cpu::RField<D>;
-      //using RFieldDft = Prdc::Cpu::RFieldDft<D>;
-      //using FFT = Prdc::Cpu::FFT<D>;
-      //using RFieldComparison = Prdc::Cpu::RFieldComparison<D>;
-      //using RFieldDftComparison = Prdc::Cpu::RFieldDftComparison<D>;
-      //using WaveList = Prdc::Cpu::WaveList<D>;
 
       // Static members
 
@@ -96,11 +88,6 @@ namespace Pscf {
       void seedVecRandom(VecRandom& vr, long seed);
 
    };
-
-   // Explicit instantiation declarations
-   extern template class CppTp<1>;
-   extern template class CppTp<2>;
-   extern template class CppTp<3>;
 
 } // namespace Pscf
 #endif

@@ -20,7 +20,7 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   RField<D, CudaTp<D> >::RField()
+   RField<D,CUT>::RField()
     : DeviceArray<cudaReal>()
    {}
 
@@ -28,7 +28,7 @@ namespace Prdc {
    * Allocating constructor.
    */
    template <int D>
-   RField<D, CudaTp<D> >::RField(IntVec<D> const & meshDimensions)
+   RField<D,CUT>::RField(IntVec<D> const & meshDimensions)
     : DeviceArray<cudaReal>()
    {  allocate(meshDimensions); }
 
@@ -36,7 +36,7 @@ namespace Prdc {
    * Copy constructor.
    */
    template <int D>
-   RField<D, CudaTp<D> >::RField(RField<D, CudaTp<D> > const & other)
+   RField<D,CUT>::RField(RField<D,CUT> const & other)
     : DeviceArray<cudaReal>(other),
       meshDimensions_(0)
    {  meshDimensions_ = other.meshDimensions_; }
@@ -45,14 +45,14 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   RField<D, CudaTp<D> >::~RField()
+   RField<D,CUT>::~RField()
    {}
 
    /*
    * Allocate the underlying C array for data on a regular mesh.
    */
    template <int D>
-   void RField<D, CudaTp<D> >::allocate(IntVec<D> const & meshDimensions)
+   void RField<D,CUT>::allocate(IntVec<D> const & meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -67,7 +67,7 @@ namespace Prdc {
    * Associate this object with a slice of another DeviceArray.
    */
    template <int D>
-   void RField<D, CudaTp<D> >::associate(DeviceArray<cudaReal>& arr, int beginId, 
+   void RField<D,CUT>::associate(DeviceArray<cudaReal>& arr, int beginId, 
                              IntVec<D> const & meshDimensions)
    {
       int size = 1;
@@ -83,8 +83,8 @@ namespace Prdc {
    * Assignment from another RField.
    */
    template <int D>
-   RField<D, CudaTp<D> >& 
-   RField<D, CudaTp<D> >::operator = (const RField<D, CudaTp<D> >& other)
+   RField<D,CUT>& 
+   RField<D,CUT>::operator = (const RField<D,CUT>& other)
    {
       DeviceArray<cudaReal>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
@@ -96,8 +96,8 @@ namespace Prdc {
    * Assignment of this RField from RHS HostDArray.
    */
    template <int D>
-   RField<D, CudaTp<D> >& 
-   RField<D, CudaTp<D> >::operator = (const HostDArray<cudaReal>& other)
+   RField<D,CUT>& 
+   RField<D,CUT>::operator = (const HostDArray<cudaReal>& other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {

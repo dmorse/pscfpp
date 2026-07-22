@@ -26,7 +26,7 @@ namespace Prdc {
    * Constructor.
    */
    template <int D>
-   WaveList<D, CppTp<D> >::WaveList(bool isRealField)
+   WaveList<D,CPT>::WaveList(bool isRealField)
     : kSize_(0),
       nBunch_(0),
       isAllocated_(false),
@@ -43,14 +43,14 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   WaveList<D, CppTp<D> >::~WaveList() 
+   WaveList<D,CPT>::~WaveList() 
    {}
 
    /*
    * Allocate memory used by WaveList.
    */
    template <int D>
-   void WaveList<D, CppTp<D> >::allocate(Mesh<D> const & m, UnitCell<D> const & c) 
+   void WaveList<D,CPT>::allocate(Mesh<D> const & m, UnitCell<D> const & c) 
    {
       UTIL_CHECK(m.size() > 0);
       UTIL_CHECK(c.nParameter() > 0);
@@ -66,7 +66,7 @@ namespace Prdc {
 
       // Compute kMeshDimensions_ and kSize_
       if (isRealField_) {
-         FFT<D, CppTp<D> >::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+         FFT<D,CPT>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
       } else {
          kMeshDimensions_ = meshDimensions;
          kSize_ = mesh().size();
@@ -91,7 +91,7 @@ namespace Prdc {
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             rank = kItr.rank();
             implicitInverse_[rank] = 
-               FFT<D, CppTp<D> >::hasImplicitInverse(kItr.position(), meshDimensions);
+               FFT<D,CPT>::hasImplicitInverse(kItr.position(), meshDimensions);
          }
       }
 
@@ -103,7 +103,7 @@ namespace Prdc {
    * Clear all data that depends on unit cell parameters.
    */
    template <int D>
-   void WaveList<D, CppTp<D> >::clearUnitCellData()
+   void WaveList<D,CPT>::clearUnitCellData()
    {
       hasKSq_ = false;
       hasdKSq_ = false;
@@ -121,7 +121,7 @@ namespace Prdc {
    * Compute minimum image vectors for all wavevectors.
    */
    template <int D>
-   void WaveList<D, CppTp<D> >::computeMinimumImages() 
+   void WaveList<D,CPT>::computeMinimumImages() 
    {
       if (hasMinImages_) return; // min images already calculated
 
@@ -148,7 +148,7 @@ namespace Prdc {
    * Compute array of value of |k|^2
    */
    template <int D>
-   void WaveList<D, CppTp<D> >::computeKSq() 
+   void WaveList<D,CPT>::computeKSq() 
    {
       // If kSq_ is valid, return immediately without recomputing
       if (hasKSq_) return; 
@@ -180,7 +180,7 @@ namespace Prdc {
    * Compute derivatives of |k|^2 w/ respect to unit cell parameters.
    */
    template <int D>
-   void WaveList<D, CppTp<D> >::computedKSq()
+   void WaveList<D,CPT>::computedKSq()
    {
       if (hasdKSq_) return; // dKSq already calculated
 
@@ -198,7 +198,7 @@ namespace Prdc {
       MeshIterator<D> kItr(kMeshDimensions_);
       int i, rank;
       for (i = 0 ; i < unitCell().nParameter(); ++i) {
-         RField<D, CppTp<D> >& dksq = dKSq_[i];
+         RField<D,CPT>& dksq = dKSq_[i];
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             rank = kItr.rank();
             dksq[rank] = unitCell().dksq(minImages_[rank], i);
@@ -217,7 +217,7 @@ namespace Prdc {
    * Sort waves by magnitude.
    */
    template <int D>
-   void WaveList<D, CppTp<D> >::sortWaves()
+   void WaveList<D,CPT>::sortWaves()
    {
       if (isSorted_) return;
 

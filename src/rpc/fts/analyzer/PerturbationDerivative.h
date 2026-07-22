@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/PerturbationDerivative.h> // base class template
-#include <pscf/cpu/CppTp.h>                       // base class argument
+#include <pscf/backends/CPT.h>                       // base class argument
 #include <rp/fts/analyzer/AverageAnalyzer.h>        // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class PerturbationDerivative< 1, CppTp<1> >;
-      extern template class PerturbationDerivative< 2, CppTp<2> >;
-      extern template class PerturbationDerivative< 3, CppTp<3> >;
+      extern template class PerturbationDerivative<1,CPT>;
+      extern template class PerturbationDerivative<2,CPT>;
+      extern template class PerturbationDerivative<3,CPT>;
    }
 }
 #endif

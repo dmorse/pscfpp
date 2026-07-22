@@ -7,7 +7,7 @@
 
 #include "WFields.h"                // class template header
 
-#include <pscf/cpu/CppTp.h>
+#include <pscf/backends/CPT.h>
 #include <rpc/field/FieldIo.h>
 #include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
@@ -17,11 +17,11 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class WFieldsBase<1, CppTp<1> >;
-      template class WFieldsBase<2, CppTp<2> >;
-      template class WFieldsBase<3, CppTp<3> >;
-      template class WFields<1, CppTp<1> >;
-      template class WFields<2, CppTp<2> >;
-      template class WFields<3, CppTp<3> >;
+      template class WFieldsBase<1,CPT>;
+      template class WFieldsBase<2,CPT>;
+      template class WFieldsBase<3,CPT>;
+      template class WFields<1,CPT>;
+      template class WFields<2,CPT>;
+      template class WFields<3,CPT>;
    }
 }

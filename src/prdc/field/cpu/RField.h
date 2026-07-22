@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>        // template argument (backend)
+#include <pscf/backends/CPT.h>        // template argument (backend)
 #include <pscf/cpu/FftwDRArray.h>  // base class
 #include <pscf/math/IntVec.h>      // member
 
@@ -26,7 +26,7 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class RField<D, CppTp<D> > : public FftwDRArray<double>
+   class RField<D,CPT> : public FftwDRArray<double>
    {
 
    public:
@@ -112,7 +112,7 @@ namespace Prdc {
    */
    template <int D> inline 
    IntVec<D> const & 
-   RField<D, CppTp<D> >::meshDimensions() const
+   RField<D,CPT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
@@ -120,7 +120,7 @@ namespace Prdc {
    */
    template <int D>
    template <class Archive>
-   void RField<D, CppTp<D> >::serialize(Archive& ar, 
+   void RField<D,CPT>::serialize(Archive& ar, 
 		                        const unsigned int version)
    {
       FftwDRArray<double>::serialize(ar, version);
@@ -128,9 +128,9 @@ namespace Prdc {
    }
 
    // Explicit instantiation declarations
-   extern template class RField<1, CppTp<1> >;
-   extern template class RField<2, CppTp<2> >;
-   extern template class RField<3, CppTp<3> >;
+   extern template class RField<1,CPT>;
+   extern template class RField<2,CPT>;
+   extern template class RField<3,CPT>;
 
 } // namespace Prdc
 } // namespace Pscf

@@ -20,8 +20,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class EinsteinCrystalPerturbation<1, CppTp<1> >;
-      template class EinsteinCrystalPerturbation<2, CppTp<2> >;
-      template class EinsteinCrystalPerturbation<3, CppTp<3> >;
+      template class EinsteinCrystalPerturbation<1,CPT>;
+      template class EinsteinCrystalPerturbation<2,CPT>;
+      template class EinsteinCrystalPerturbation<3,CPT>;
    }
 }

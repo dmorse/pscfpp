@@ -52,14 +52,14 @@ public:
       }
 
       // Copy data to fields on the device
-      Prdc::RField<1, CudaTp<1> > da, db;
+      Prdc::RField<1,CUT> da, db;
       da.allocate(dimensions);
       db.allocate(dimensions);
       da = ha;
       db = hb;
 
       // Make comparison
-      Prdc::RFieldComparison<1, CudaTp<1> > comparison;
+      Prdc::RFieldComparison<1,CUT> comparison;
       comparison.compare(da, db);
 
 
@@ -103,14 +103,14 @@ public:
       }
 
       // Copy data to fields da and db on the GPU device
-      Prdc::RField<2, CudaTp<2> > da, db;
+      Prdc::RField<2,CUT> da, db;
       da.allocate(dimensions);
       db.allocate(dimensions);
       da = ha;
       db = hb;
 
       // Make comparison
-      Prdc::RFieldComparison<2, CudaTp<2> > comparison;
+      Prdc::RFieldComparison<2,CUT> comparison;
       comparison.compare(da, db);
 
       if (verbose() > 0) {
@@ -158,8 +158,8 @@ public:
       }
 
       // Copy data to fields da and db on the GPU device
-      DArray< Prdc::RField<2, CudaTp<2> > > da;
-      DArray< Prdc::RField<2, CudaTp<2> > > db;
+      DArray< Prdc::RField<2,CUT> > da;
+      DArray< Prdc::RField<2,CUT> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -170,7 +170,7 @@ public:
       }
 
       // Make comparison
-      Prdc::RFieldComparison<2, CudaTp<2> > comparison;
+      Prdc::RFieldComparison<2,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -199,8 +199,8 @@ public:
       d[2] = 3;
 
       // Allocate device arrays da and db
-      Prdc::RFieldDft<3, CudaTp<3> > da;
-      Prdc::RFieldDft<3, CudaTp<3> > db;
+      Prdc::RFieldDft<3,CUT> da;
+      Prdc::RFieldDft<3,CUT> db;
       da.allocate(d);
       db.allocate(d);
       int capacity = da.capacity();
@@ -227,7 +227,7 @@ public:
       TEST_ASSERT(da.capacity() == capacity);
 
       // Make comparison
-      Prdc::RFieldDftComparison<3, CudaTp<3> > comparison;
+      Prdc::RFieldDftComparison<3,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -258,8 +258,8 @@ public:
       dimensions[2] = 3;
 
       // Allocate device arrays da and db
-      DArray< Prdc::RFieldDft<3, CudaTp<3> > > da;
-      DArray< Prdc::RFieldDft<3, CudaTp<3> > > db;
+      DArray< Prdc::RFieldDft<3,CUT> > da;
+      DArray< Prdc::RFieldDft<3,CUT> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -298,7 +298,7 @@ public:
       }
 
       // Make comparison
-      Prdc::RFieldDftComparison<3, CudaTp<3> > comparison;
+      Prdc::RFieldDftComparison<3,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -327,8 +327,8 @@ public:
       d[2] = 3;
 
       // Allocate device arrays da and db
-      Prdc::CField<3, CudaTp<3> > da;
-      Prdc::CField<3, CudaTp<3> > db;
+      Prdc::CField<3,CUT> da;
+      Prdc::CField<3,CUT> db;
       da.allocate(d);
       db.allocate(d);
       int capacity = da.capacity();
@@ -355,7 +355,7 @@ public:
       TEST_ASSERT(da.capacity() == capacity);
 
       // Make comparison
-      Prdc::CFieldComparison<3, CudaTp<3> > comparison;
+      Prdc::CFieldComparison<3,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -386,8 +386,8 @@ public:
       dimensions[2] = 3;
 
       // Allocate device arrays da and db
-      DArray< Prdc::CField<3, CudaTp<3> > > da;
-      DArray< Prdc::CField<3, CudaTp<3> > > db;
+      DArray< Prdc::CField<3,CUT> > da;
+      DArray< Prdc::CField<3,CUT> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -426,7 +426,7 @@ public:
       }
 
       // Make comparison
-      Prdc::CFieldComparison<3, CudaTp<3> > comparison;
+      Prdc::CFieldComparison<3,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);

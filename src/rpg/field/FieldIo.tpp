@@ -43,9 +43,9 @@ namespace Rp {
    * Read an array of fields in r-grid format.
    */
    template <int D>
-   bool FieldIo<D, CudaTp<D> >::readFieldsRGrid(
+   bool FieldIo<D,CUT>::readFieldsRGrid(
                               std::istream &in,
-                              DArray< RField<D, CudaTp<D> > >& fields,
+                              DArray< RField<D,CUT> >& fields,
                               UnitCell<D>& unitCell) const
    {
       // Read header and check fields dimensions
@@ -73,9 +73,9 @@ namespace Rp {
    * Read the data section of an array of fields in r-grid format.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::readFieldsRGridData(
+   void FieldIo<D,CUT>::readFieldsRGridData(
                               std::istream& in,
-                              DArray< RField<D, CudaTp<D> > >& fields,
+                              DArray< RField<D,CUT> >& fields,
                               int nMonomer) const
    {
       // Precondition: Check dimensions of fields
@@ -96,9 +96,9 @@ namespace Rp {
    * Read a single field in r-grid format.
    */
    template <int D>
-   bool FieldIo<D, CudaTp<D> >::readFieldRGrid(
+   bool FieldIo<D,CUT>::readFieldRGrid(
                               std::istream &in,
-                              RField<D, CudaTp<D> > & field,
+                              RField<D,CUT> & field,
                               UnitCell<D>& unitCell) const
    {
 
@@ -128,9 +128,9 @@ namespace Rp {
    * Write an array of fields in r-grid format.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::writeFieldsRGrid(
+   void FieldIo<D,CUT>::writeFieldsRGrid(
                               std::ostream &out,
-                              DArray< RField<D, CudaTp<D> > > const & fields,
+                              DArray< RField<D,CUT> > const & fields,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric,
@@ -165,9 +165,9 @@ namespace Rp {
    * Write a single field in r-grid format.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::writeFieldRGrid(
+   void FieldIo<D,CUT>::writeFieldRGrid(
                               std::ostream &out,
-                              RField<D, CudaTp<D> > const & field,
+                              RField<D,CUT> const & field,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric) const
@@ -198,9 +198,9 @@ namespace Rp {
    * Read an array of fields in k-grid format
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::readFieldsKGrid(
+   void FieldIo<D,CUT>::readFieldsKGrid(
                            std::istream &in,
-                           DArray< RFieldDft<D, CudaTp<D> > >& fields,
+                           DArray< RFieldDft<D,CUT> >& fields,
                            UnitCell<D>& unitCell) const
    {
       // Read header and validate field mesh dimensions
@@ -227,9 +227,9 @@ namespace Rp {
    * Write an array of fields in k-grid format
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::writeFieldsKGrid(
+   void FieldIo<D,CUT>::writeFieldsKGrid(
                               std::ostream &out,
-                              DArray< RFieldDft<D, CudaTp<D> > > const & fields,
+                              DArray< RFieldDft<D,CUT> > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -258,9 +258,9 @@ namespace Rp {
    * Convert a single field from basis to k-grid format.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::convertBasisToKGrid(
+   void FieldIo<D,CUT>::convertBasisToKGrid(
                               DArray<double> const & in,
-                              RFieldDft<D, CudaTp<D> >& out) const
+                              RFieldDft<D,CUT>& out) const
    {
       UTIL_CHECK(in.isAllocated());
       UTIL_CHECK(out.isAllocated());
@@ -283,8 +283,8 @@ namespace Rp {
    * Write an array of fields from k-grid to basis format.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::convertKGridToBasis(
-                              RFieldDft<D, CudaTp<D> > const & in,
+   void FieldIo<D,CUT>::convertKGridToBasis(
+                              RFieldDft<D,CUT> const & in,
                               DArray<double>& out,
                               bool checkSymmetry,
                               double epsilon) const
@@ -309,8 +309,8 @@ namespace Rp {
    * Test if an real field DFT has the declared space group symmetry.
    */
    template <int D>
-   bool FieldIo<D, CudaTp<D> >::hasSymmetry(
-                              RFieldDft<D, CudaTp<D> > const & in,
+   bool FieldIo<D,CUT>::hasSymmetry(
+                              RFieldDft<D,CUT> const & in,
                               double epsilon,
                               bool verbose) const
    {
@@ -331,11 +331,11 @@ namespace Rp {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::compareFieldsRGrid(DArray< RField<D, CudaTp<D> > > const & field1,
-                                       DArray< RField<D, CudaTp<D> > > const & field2) 
+   void FieldIo<D,CUT>::compareFieldsRGrid(DArray< RField<D,CUT> > const & field1,
+                                       DArray< RField<D,CUT> > const & field2) 
    const
    {
-      RFieldComparison<D, CudaTp<D> > comparison;
+      RFieldComparison<D,CUT> comparison;
       comparison.compare(field1, field2);
 
       Log::file() << "\n Real-space field comparison results"
@@ -350,8 +350,8 @@ namespace Rp {
    * Multiply a field in r-grid format by a constant factor. 
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::scaleFieldRGrid(
-                              RField<D, CudaTp<D> > & field,
+   void FieldIo<D,CUT>::scaleFieldRGrid(
+                              RField<D,CUT> & field,
                               double factor) const
    {
       UTIL_CHECK(field.isAllocated());
@@ -362,9 +362,9 @@ namespace Rp {
    * Replicate the unit cell for an array of r-grid fields.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::replicateUnitCell(
+   void FieldIo<D,CUT>::replicateUnitCell(
                               std::ostream &out,
-                              DArray< RField<D, CudaTp<D> > > const & fields,
+                              DArray< RField<D,CUT> > const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
 
@@ -389,9 +389,9 @@ namespace Rp {
    * Expand spatial dimension of an array of r-grid fields.
    */
    template <int D>
-   void FieldIo<D, CudaTp<D> >::expandRGridDimension(
+   void FieldIo<D,CUT>::expandRGridDimension(
                               std::ostream &out,
-                              DArray< RField<D, CudaTp<D> > > const & fields,
+                              DArray< RField<D,CUT> > const & fields,
                               UnitCell<D> const & unitCell,
                               int d,
                               DArray<int> const& newGridDimensions) const

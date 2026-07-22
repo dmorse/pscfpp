@@ -22,8 +22,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class AmCompressor<1, CudaTp<1> >;
-      template class AmCompressor<2, CudaTp<2> >;
-      template class AmCompressor<3, CudaTp<3> >;
+      template class AmCompressor<1,CUT>;
+      template class AmCompressor<2,CUT>;
+      template class AmCompressor<3,CUT>;
    }
 }

@@ -19,15 +19,15 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   RFieldComparison<D, CudaTp<D> >::RFieldComparison()
+   RFieldComparison<D,CUT>::RFieldComparison()
    {};
 
    /*
    * Comparator for individual fields.
    */
    template <int D>
-   double RFieldComparison<D, CudaTp<D> >::compare(RField<D, CudaTp<D> > const& a, 
-                                       RField<D, CudaTp<D> > const& b)
+   double RFieldComparison<D,CUT>::compare(RField<D,CUT> const& a, 
+                                       RField<D,CUT> const& b)
    {
       int nPoints = a.capacity();
 
@@ -47,8 +47,8 @@ namespace Prdc {
    * Comparator for arrays of fields.
    */
    template <int D>
-   double RFieldComparison<D, CudaTp<D> >::compare(DArray< RField<D, CudaTp<D> > > const& a, 
-                                       DArray< RField<D, CudaTp<D> > > const& b)
+   double RFieldComparison<D,CUT>::compare(DArray< RField<D,CUT> > const& a, 
+                                       DArray< RField<D,CUT> > const& b)
    {
       int nFields = a.capacity();
       int nPoints = a[0].capacity();

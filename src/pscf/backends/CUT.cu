@@ -6,10 +6,9 @@
 */
 
 
-#include "CudaTp.h"
+#include "CUT.h"
 #include <pscf/cuda/ThreadArray.h>
 #include <pscf/cuda/ThreadMesh.h>
-#include <pscf/cuda/CudaVecRandom.h>
 #include <util/random/Random.h>
 
 namespace Pscf {
@@ -17,15 +16,13 @@ namespace Pscf {
    /*
    * Initialize backend.
    */
-   template <int D>
-   void CudaTp<D>::init()
+   void CUT::init()
    {  ThreadArray::init(); }
 
    /*
    * Set thread count in backend.
    */
-   template <int D>
-   void CudaTp<D>::setThreadCount(int nThread)
+   void CUT::setThreadCount(int nThread)
    {
       ThreadArray::setThreadsPerBlock(nThread);
       ThreadMesh::setThreadsPerBlock(nThread);
@@ -38,8 +35,7 @@ namespace Pscf {
    * RNGs are are independent for this code. The CPU implementation would
    * link the two RNGs.
    */
-   template <int D>
-   void CudaTp<D>::linkVecRandom(VecRandom& vr, Random & sr)
+   void CUT::linkVecRandom(VecRandom& vr, Random & sr)
    {}
 
    /*
@@ -49,13 +45,7 @@ namespace Pscf {
    * The CPU implementation would do nothing, because the RNGs are linked
    * in this case.
    */
-   template <int D>
-   void CudaTp<D>::seedVecRandom(VecRandom& vr, long seed)
+   void CUT::seedVecRandom(VecRandom& vr, long seed)
    {  vr.setSeed(seed); }
-
-   // Explicit instantiation definitions
-   template class CudaTp<1>;
-   template class CudaTp<2>;
-   template class CudaTp<3>;
 
 }

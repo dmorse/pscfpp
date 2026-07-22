@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaTp.h>        // class template argument
+#include <pscf/backends/CUT.h>        // class template argument
 #include <pscf/cuda/DeviceArray.h>   // base class template
 #include <pscf/cuda/cudaTypes.h>     // base class argument
 
@@ -30,7 +30,7 @@ namespace Prdc {
    * \ingroup Prdc_Cuda_Module 
    */
    template <int D>
-   class CField<D, CudaTp<D> >
+   class CField<D,CUT>
     : public DeviceArray<cudaComplex>
    {
    
@@ -67,32 +67,32 @@ namespace Prdc {
       virtual ~CField();
 
       /**
-      * Assignment operator, assignment from another CField<D, CudaTp<D> >.
+      * Assignment operator, assignment from another CField<D,CUT>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
-      * CField<D, CudaTp<D> > from device memory to device memory.
+      * CField<D,CUT> from device memory to device memory.
       *
       * The RHS CField must be allocated. If this LHS CField is not 
       * allocated on entry, allocate it before copying elements. If 
       * both LHS and RHS objects are allocated on entry, the 
       * capacities must be equal. 
       * 
-      * \param other the RHS CField<D, CudaTp<D> >
+      * \param other the RHS CField<D,CUT>
       */
-      CField<D, CudaTp<D> >& operator = (CField<D, CudaTp<D> > const & other);
+      CField<D,CUT>& operator = (CField<D,CUT> const & other);
 
       /**
       * Assignment operator, assignment from a HostDArray<cudaComplex>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
-      * CField<D, CudaTp<D> > from host memory to device memory.
+      * CField<D,CUT> from host memory to device memory.
       *
-      * The RHS HostDArray<cudaComplex> and LHS CField<D, CudaTp<D> > must both be 
+      * The RHS HostDArray<cudaComplex> and LHS CField<D,CUT> must both be 
       * allocated with equal capacity values on entry. 
       * 
       * \param other the RHS HostDArray<cudaComplex>
       */
-      CField<D, CudaTp<D> >& operator = (HostDArray<cudaComplex> const & other);
+      CField<D,CUT>& operator = (HostDArray<cudaComplex> const & other);
 
       /**
       * Allocate the underlying C array for data on a regular mesh.
@@ -149,7 +149,7 @@ namespace Prdc {
    * Return mesh dimensions by constant reference.
    */
    template <int D>
-   inline const IntVec<D>& CField<D, CudaTp<D> >::meshDimensions() const
+   inline const IntVec<D>& CField<D,CUT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
@@ -157,7 +157,7 @@ namespace Prdc {
    */
    template <int D>
    template <class Archive>
-   void CField<D, CudaTp<D> >::serialize(Archive& ar, const unsigned int version)
+   void CField<D,CUT>::serialize(Archive& ar, const unsigned int version)
    {
       int capacity;
       if (Archive::is_saving()) {
@@ -187,9 +187,9 @@ namespace Prdc {
       ar & meshDimensions_;
    }
 
-   extern template class CField<1, CudaTp<1> >;
-   extern template class CField<2, CudaTp<2> >;
-   extern template class CField<3, CudaTp<3> >;
+   extern template class CField<1,CUT>;
+   extern template class CField<2,CUT>;
+   extern template class CField<3,CUT>;
 
 }
 }

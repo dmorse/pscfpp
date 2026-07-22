@@ -15,8 +15,8 @@
 
 namespace Pscf {
    namespace Rp { 
-      template class MixtureModifier< 1, CppTp<1> >;
-      template class MixtureModifier< 2, CppTp<2> >;
-      template class MixtureModifier< 3, CppTp<3> >;
+      template class MixtureModifier<1,CPT>;
+      template class MixtureModifier<2,CPT>;
+      template class MixtureModifier<3,CPT>;
    }
 }

@@ -23,7 +23,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   Propagator<D, CppTp<D> >::Propagator()
+   Propagator<D,CPT>::Propagator()
     : RpPropagatorT()
    {}
 
@@ -31,14 +31,14 @@ namespace Rp {
    * Destructor.
    */
    template <int D>
-   Propagator<D, CppTp<D> >::~Propagator()
+   Propagator<D,CPT>::~Propagator()
    {}
 
    /*
    * Allocate memory used by this propagator.
    */
    template <int D>
-   void Propagator<D, CppTp<D> >::allocate(int ns, const Mesh<D>& mesh)
+   void Propagator<D,CPT>::allocate(int ns, const Mesh<D>& mesh)
    {
       RpPropagatorT::allocate(ns, mesh);
       UTIL_CHECK(RpPropagatorT::ns() == ns);
@@ -56,7 +56,7 @@ namespace Rp {
    * Reallocate memory used by this propagator using new ns value.
    */
    template <int D>
-   void Propagator<D, CppTp<D> >::reallocate(int ns)
+   void Propagator<D,CPT>::reallocate(int ns)
    {
       RpPropagatorT::reallocate(ns);
       UTIL_CHECK(RpPropagatorT::ns() == ns);
@@ -64,11 +64,11 @@ namespace Rp {
       // Deallocate all memory previously used by this propagator.
       qFields_.deallocate();
 
-      // NOTE: Variable qFields_ is a DArray< RField<D, CppTp<D> > > container.
+      // NOTE: Variable qFields_ is a DArray< RField<D,CPT> > container.
       // The DArray::deallocate() function calls "delete [] ptr", where 
       // ptr is a pointer to the underlying C array. The C++ delete [] 
-      // command calls the destructor for each RField<D, CppTp<D> > array element
-      // before deleting the parent array. The RField<D, CppTp<D> > destructor 
+      // command calls the destructor for each RField<D,CPT> array element
+      // before deleting the parent array. The RField<D,CPT> destructor 
       // deletes the double* array that stores the field associated 
       // with each slice of the propagator. All memory is thus released.
 
@@ -87,11 +87,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf { 
    namespace Rp {
-      template class PropagatorBase<1, CppTp<1> >;
-      template class PropagatorBase<2, CppTp<2> >;
-      template class PropagatorBase<3, CppTp<3> >;
-      template class Propagator<1, CppTp<1> >;
-      template class Propagator<2, CppTp<2> >;
-      template class Propagator<3, CppTp<3> >;
+      template class PropagatorBase<1,CPT>;
+      template class PropagatorBase<2,CPT>;
+      template class PropagatorBase<3,CPT>;
+      template class Propagator<1,CPT>;
+      template class Propagator<2,CPT>;
+      template class Propagator<3,CPT>;
    }
 }

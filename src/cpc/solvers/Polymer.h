@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>            // backend class
+#include <pscf/backends/CPT.h>            // backend class
 #include <pscf/solvers/PolymerTmpl.h>  // base class template
 
 // Forward declarations
@@ -117,7 +117,7 @@ namespace Cpc {
       *
       * \param wFields array of chemical potential fields.
       */ 
-      void compute(DArray< CField<D, CppTp<D> > > const & wFields);
+      void compute(DArray< CField<D,CPT> > const & wFields);
 
       // Inherited public member functions
       

@@ -14,9 +14,9 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class MixtureModifier< 1, CudaTp<1> >;
-      extern template class MixtureModifier< 2, CudaTp<2> >;
-      extern template class MixtureModifier< 3, CudaTp<3> >;
+      extern template class MixtureModifier<1,CUT>;
+      extern template class MixtureModifier<2,CUT>;
+      extern template class MixtureModifier<3,CUT>;
    }
 }
 #endif

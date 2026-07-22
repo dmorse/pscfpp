@@ -22,8 +22,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class RealMove<1, CudaTp<1> >;
-      template class RealMove<2, CudaTp<2> >;
-      template class RealMove<3, CudaTp<3> >;
+      template class RealMove<1,CUT>;
+      template class RealMove<2,CUT>;
+      template class RealMove<3,CUT>;
    }
 }

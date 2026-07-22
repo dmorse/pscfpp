@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/WFieldsBase.h> // base class template
-#include <pscf/cpu/CppTp.h>     // base class member
+#include <pscf/backends/CPT.h>     // base class member
 
 namespace Pscf {
 namespace Rp {
@@ -29,8 +29,8 @@ namespace Rp {
    * \ingroup Rp_Field_Module
    */
    template <int D>
-   class WFields<D, CppTp<D> > 
-    : public Rp::WFieldsBase<D, CppTp<D> >
+   class WFields<D,CPT> 
+    : public Rp::WFieldsBase<D,CPT>
    {};
 
 } // namespace Rp
@@ -39,12 +39,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class WFieldsBase< 1, CppTp<1> >;
-      extern template class WFieldsBase< 2, CppTp<2> >;
-      extern template class WFieldsBase< 3, CppTp<3> >;
-      extern template class WFields< 1, CppTp<1> >;
-      extern template class WFields< 2, CppTp<2> >;
-      extern template class WFields< 3, CppTp<3> >;
+      extern template class WFieldsBase<1,CPT>;
+      extern template class WFieldsBase<2,CPT>;
+      extern template class WFieldsBase<3,CPT>;
+      extern template class WFields<1,CPT>;
+      extern template class WFields<2,CPT>;
+      extern template class WFields<3,CPT>;
    }
 }
 #endif

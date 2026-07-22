@@ -31,8 +31,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class McSimulator< 1, CppTp<1> >;
-      template class McSimulator< 2, CppTp<2> >;
-      template class McSimulator< 3, CppTp<3> >;
+      template class McSimulator<1,CPT>;
+      template class McSimulator<2,CPT>;
+      template class McSimulator<3,CPT>;
    }
 }

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
-#include <pscf/cpu/CppTp.h>                          // base argument
+#include <pscf/backends/CPT.h>                          // base argument
 #include <rpc/fts/analyzer/Analyzer.h>                 // indirect base
 #include <prdc/field/cpu/RField.h>                     // base member
 #include <prdc/field/cpu/RFieldDft.h>                  // base member
@@ -31,8 +31,8 @@ namespace Rp {
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D>
-   class BinaryStructureFactor<D, CppTp<D> >
-    : public BinaryStructureFactorBase<D, CppTp<D> >
+   class BinaryStructureFactor<D,CPT>
+    : public BinaryStructureFactorBase<D,CPT>
    {
 
    public:
@@ -43,8 +43,8 @@ namespace Rp {
       * \param simulator  parent Simulator object
       * \param system  parent System object
       */
-      BinaryStructureFactor(Simulator<D, CppTp<D> >& simulator, 
-                            System<D, CppTp<D> >& system);
+      BinaryStructureFactor(Simulator<D,CPT>& simulator, 
+                            System<D,CPT>& system);
 
       /**
       * Setup before the main loop.
@@ -60,8 +60,8 @@ namespace Rp {
 
    protected:
 
-      using Base = BinaryStructureFactorBase<D, CppTp<D> >;
-      using AnalyzerT = Analyzer<D, CppTp<D> >;
+      using Base = BinaryStructureFactorBase<D,CPT>;
+      using AnalyzerT = Analyzer<D,CPT>;
 
       using Base::wk_;
       using Base::allocate;
@@ -77,12 +77,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BinaryStructureFactorBase<1, CppTp<1> >;
-      extern template class BinaryStructureFactorBase<2, CppTp<2> >;
-      extern template class BinaryStructureFactorBase<3, CppTp<3> >;
-      extern template class BinaryStructureFactor<1, CppTp<1> >;
-      extern template class BinaryStructureFactor<2, CppTp<2> >;
-      extern template class BinaryStructureFactor<3, CppTp<3> >;
+      extern template class BinaryStructureFactorBase<1,CPT>;
+      extern template class BinaryStructureFactorBase<2,CPT>;
+      extern template class BinaryStructureFactorBase<3,CPT>;
+      extern template class BinaryStructureFactor<1,CPT>;
+      extern template class BinaryStructureFactor<2,CPT>;
+      extern template class BinaryStructureFactor<3,CPT>;
    }
 }
 #endif

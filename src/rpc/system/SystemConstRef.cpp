@@ -14,8 +14,8 @@
 // Explicit initialization definitions
 namespace Pscf {
    namespace Rp {
-      template class SystemConstRef<1, CppTp<1> >;
-      template class SystemConstRef<2, CppTp<2> >;
-      template class SystemConstRef<3, CppTp<3> >;
+      template class SystemConstRef<1,CPT>;
+      template class SystemConstRef<2,CPT>;
+      template class SystemConstRef<3,CPT>;
    }
 } 

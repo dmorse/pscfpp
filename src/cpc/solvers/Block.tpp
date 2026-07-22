@@ -67,9 +67,9 @@ namespace Cpc {
    */
    template <int D>
    void Block<D>::associate(Mesh<D> const & mesh,
-                            FFT<D, CppTp<D> > const& fft,
+                            FFT<D,CPT> const& fft,
                             UnitCell<D> const& cell,
-                            WaveList<D, CppTp<D> >& wavelist)
+                            WaveList<D,CPT>& wavelist)
    {
       // Preconditions
       UTIL_CHECK(!isAllocated_);
@@ -208,7 +208,7 @@ namespace Cpc {
       if (!waveListPtr_->hasKSq()) {
          waveListPtr_->computeKSq();
       }
-      RField<D, CppTp<D> > const & kSq = waveListPtr_->kSq();
+      RField<D,CPT> const & kSq = waveListPtr_->kSq();
       UTIL_CHECK(kSq.capacity() == mesh().size());
 
       // Compute bSqFactor = b*b*ds/6
@@ -238,7 +238,7 @@ namespace Cpc {
    */
    template <int D>
    void
-   Block<D>::setupSolver(CField<D, CppTp<D> > const& w)
+   Block<D>::setupSolver(CField<D,CPT> const& w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -288,7 +288,7 @@ namespace Cpc {
    * Propagate solution by one step for the thread model.
    */
    template <int D>
-   void Block<D>::stepThread(CField<D, CppTp<D> > const & q, CField<D, CppTp<D> >& qout) const
+   void Block<D>::stepThread(CField<D,CPT> const & q, CField<D,CPT>& qout) const
    {
       UTIL_CHECK(PolymerModel::isThread());
 
@@ -372,7 +372,7 @@ namespace Cpc {
    * Apply one step of MDE solution for the bead model.
    */
    template <int D>
-   void Block<D>::stepBead(CField<D, CppTp<D> > const & q, CField<D, CppTp<D> >& qout) const
+   void Block<D>::stepBead(CField<D,CPT> const & q, CField<D,CPT>& qout) const
    {
       UTIL_CHECK(PolymerModel::isBead());
       stepBondBead(q, qout);
@@ -383,8 +383,8 @@ namespace Cpc {
    * Apply the bond operator for the bead model.
    */
    template <int D>
-   void Block<D>::stepBondBead(CField<D, CppTp<D> > const & q,
-                               CField<D, CppTp<D> > & qout) const
+   void Block<D>::stepBondBead(CField<D,CPT> const & q,
+                               CField<D,CPT> & qout) const
    {
       // Prereconditions
       UTIL_CHECK(isAllocated_);
@@ -408,8 +408,8 @@ namespace Cpc {
    * Apply the half-bond operator for the bead model.
    */
    template <int D>
-   void Block<D>::stepHalfBondBead(CField<D, CppTp<D> > const & q,
-                                   CField<D, CppTp<D> > & qout) const
+   void Block<D>::stepHalfBondBead(CField<D,CPT> const & q,
+                                   CField<D,CPT> & qout) const
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -434,7 +434,7 @@ namespace Cpc {
    * Apply the local field operator for the bead model.
    */
    template <int D>
-   void Block<D>::stepFieldBead(CField<D, CppTp<D> >& q) const
+   void Block<D>::stepFieldBead(CField<D,CPT>& q) const
    {
       // Preconditions
       int nx = mesh().size();
@@ -465,7 +465,7 @@ namespace Cpc {
       UTIL_CHECK(propagator(1).isSolved());
       UTIL_CHECK(cField().capacity() == nx);
 
-      CField<D, CppTp<D> > & c = cField();
+      CField<D,CPT> & c = cField();
       double d;
       int i, j;
 
@@ -484,8 +484,8 @@ namespace Cpc {
 
       // Initial (head) endpoint contribution
       {
-         CField<D, CppTp<D> > const & hf = p0.q(0);
-         CField<D, CppTp<D> > const & hr = p1.q(ns_ - 1);
+         CField<D,CPT> const & hf = p0.q(0);
+         CField<D,CPT> const & hr = p1.q(ns_ - 1);
          for (i = 0; i < nx; ++i) {
             mul(z, hf[i], hr[i]);
             addEq(c[i], z);
@@ -494,8 +494,8 @@ namespace Cpc {
 
       // Final (tail) endpoint contribution
       {
-         CField<D, CppTp<D> > const & tf = p0.q(ns_ - 1);
-         CField<D, CppTp<D> > const & tr = p1.q(0);
+         CField<D,CPT> const & tf = p0.q(ns_ - 1);
+         CField<D,CPT> const & tr = p1.q(0);
          for (i = 0; i < nx; ++i) {
             mul(z, tf[i], tr[i]);
             addEq(c[i], z);
@@ -505,8 +505,8 @@ namespace Cpc {
       // Odd indices
       d = 4.0;
       for (j = 1; j < (ns_ - 1); j += 2) {
-         CField<D, CppTp<D> > const & qf = p0.q(j);
-         CField<D, CppTp<D> > const & qr = p1.q(ns_ - 1 - j);
+         CField<D,CPT> const & qf = p0.q(j);
+         CField<D,CPT> const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
             mul(z, qf[i], qr[i]);
             mulEq(z, d);
@@ -518,8 +518,8 @@ namespace Cpc {
       // Even indices
       d = 2.0;
       for (j = 2; j < (ns_ - 2); j += 2) {
-         CField<D, CppTp<D> > const & qf = p0.q(j);
-         CField<D, CppTp<D> > const & qr = p1.q(ns_ - 1 - j);
+         CField<D,CPT> const & qf = p0.q(j);
+         CField<D,CPT> const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
             mul(z, qf[i], qr[i]);
             mulEq(z, d);
@@ -554,7 +554,7 @@ namespace Cpc {
       UTIL_CHECK(propagator(1).isSolved());
       UTIL_CHECK(cField().capacity() == nx);
 
-      CField<D, CppTp<D> > & c = cField();
+      CField<D,CPT> & c = cField();
       fftw_complex z;
       double d;
       int i, j;
@@ -572,8 +572,8 @@ namespace Cpc {
 
       // Sum over interior beads (j = 1, ... , ns_ -2)
       for (j = 1; j < (ns_ -1); ++j) {
-         CField<D, CppTp<D> > const & qf = p0.q(j);
-         CField<D, CppTp<D> > const & qr = p1.q(ns_ - 1 - j);
+         CField<D,CPT> const & qf = p0.q(j);
+         CField<D,CPT> const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
             mul(z, qf[i], qr[i]);
             mulEq(z, expWInv_[i]);

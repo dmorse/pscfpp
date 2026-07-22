@@ -65,7 +65,7 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   FFT<D, CudaTp<D> >::FFT()
+   FFT<D,CUT>::FFT()
     : meshDimensions_(0),
       rSize_(0),
       kSize_(0),
@@ -79,7 +79,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   FFT<D, CudaTp<D> >::~FFT()
+   FFT<D,CUT>::~FFT()
    {
       if (rcfPlan_) {
          cufftDestroy(rcfPlan_);
@@ -96,7 +96,7 @@ namespace Prdc {
    * Setup grid dimensions, plans and work space.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::setup(IntVec<D> const & meshDimensions)
+   void FFT<D,CUT>::setup(IntVec<D> const & meshDimensions)
    {
       // Precondition
       UTIL_CHECK(!isSetup_);
@@ -133,8 +133,8 @@ namespace Prdc {
    * Compute forward (real-to-complex) discrete Fourier transform.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::forwardTransform(RField<D, CudaTp<D> > const & rField, 
-                                 RFieldDft<D, CudaTp<D> >& kField) const
+   void FFT<D,CUT>::forwardTransform(RField<D,CUT> const & rField, 
+                                 RFieldDft<D,CUT>& kField) const
    {
       // Preconditions
       UTIL_CHECK(isSetup_);
@@ -164,8 +164,8 @@ namespace Prdc {
    * Compute inverse (complex-to-real) DFT, overwriting the input.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::inverseTransformUnsafe(RFieldDft<D, CudaTp<D> >& kField, 
-                                       RField<D, CudaTp<D> >& rField) const
+   void FFT<D,CUT>::inverseTransformUnsafe(RFieldDft<D,CUT>& kField, 
+                                       RField<D,CUT>& rField) const
    {
       // Preconditions
       UTIL_CHECK(isSetup_);
@@ -190,8 +190,8 @@ namespace Prdc {
    * Compute inverse (complex-to-real) DFT without overwriting input.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::inverseTransformSafe(RFieldDft<D, CudaTp<D> > const & kField, 
-                                     RField<D, CudaTp<D> >& rField) const
+   void FFT<D,CUT>::inverseTransformSafe(RFieldDft<D,CUT> const & kField, 
+                                     RField<D,CUT>& rField) const
    {
       // if kFieldCopy_ has been previously allocated, check size is correct
       if (kFieldCopy_.isAllocated()) { 
@@ -212,7 +212,7 @@ namespace Prdc {
    * Execute forward complex-to-complex transform.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::forwardTransform(CField<D, CudaTp<D> > const & rField, CField<D, CudaTp<D> >& kField)
+   void FFT<D,CUT>::forwardTransform(CField<D,CUT> const & rField, CField<D,CUT>& kField)
    const
    {
       // Preconditions
@@ -245,7 +245,7 @@ namespace Prdc {
    * Execute inverse (complex-to-complex) transform.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::inverseTransform(CField<D, CudaTp<D> > const & kField, CField<D, CudaTp<D> >& rField) 
+   void FFT<D,CUT>::inverseTransform(CField<D,CUT> const & kField, CField<D,CUT>& rField) 
    const
    {
       // Preconditions
@@ -277,7 +277,7 @@ namespace Prdc {
    * Compute dimensions and size of the mesh for the DFT of real data.
    */
    template <int D>
-   void FFT<D, CudaTp<D> >::computeKMesh(IntVec<D> const & rMeshDimensions,
+   void FFT<D,CUT>::computeKMesh(IntVec<D> const & rMeshDimensions,
                              IntVec<D> & kMeshDimensions,
                              int & kSize )
    {

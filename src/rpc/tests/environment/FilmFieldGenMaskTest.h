@@ -55,8 +55,8 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/maskTestConstructor.log");
-      Rp::System<1, CppTp<1> > system;
-      Rp::FilmFieldGenMask<1, CppTp<1> > mask(system);
+      Rp::System<1,CPT> system;
+      Rp::FilmFieldGenMask<1,CPT> mask(system);
    }
 
    void testReadParameters() // test FilmFieldGenMaskBase::readParameters()
@@ -65,8 +65,8 @@ public:
       openLogFile("out/maskTestReadParameters.log");
 
       // Set up mask from file
-      Rp::System<2, CppTp<2> > system;
-      Rp::FilmFieldGenMask<2, CppTp<2> > mask(system);
+      Rp::System<2,CPT> system;
+      Rp::FilmFieldGenMask<2,CPT> mask(system);
 
       std::ifstream in;
       openInputFile("in/filmMask1", in);
@@ -97,7 +97,7 @@ public:
       openLogFile("out/maskTestCheckCompatibility.log");
 
       // Set up 1D mask with a compatible system and check compatibility
-      Rp::System<1, CppTp<1> > system1;
+      Rp::System<1,CPT> system1;
       createSystem(system1, "in/system1D");
 
       // Set unit cell parameter
@@ -106,7 +106,7 @@ public:
       //system1.setUnitCell(UnitCell<1>::Lamellar, parameters);
       system1.setUnitCell(parameters);
       
-      Rp::FilmFieldGenMask<1, CppTp<1> > mask1(system1);
+      Rp::FilmFieldGenMask<1,CPT> mask1(system1);
       createFilmFieldGenMask(mask1, "in/filmMask1");
       
       Log::file() << "Testing system 1:" << std::endl;
@@ -118,7 +118,7 @@ public:
 
 
       // Set up 2D mask with a compatible system and check compatibility
-      Rp::System<2, CppTp<2> > system2;
+      Rp::System<2,CPT> system2;
       createSystem(system2, "in/system2D_1");
 
       // Set unit cell parameters
@@ -128,7 +128,7 @@ public:
       //system2.setUnitCell(UnitCell<2>::Rectangular, parameters);
       system2.setUnitCell(parameters);
 
-      Rp::FilmFieldGenMask<2, CppTp<2> > mask2(system2);
+      Rp::FilmFieldGenMask<2,CPT> mask2(system2);
       createFilmFieldGenMask(mask2, "in/filmMask2");
 
       Log::file() << "Testing system 2:" << std::endl;
@@ -139,7 +139,7 @@ public:
       TEST_ASSERT(system2.iterator().flexibleParams()[1] == false);
 
       // Set up 2D mask with an incompatible system and check compatibility
-      Rp::System<2, CppTp<2> > system3;
+      Rp::System<2,CPT> system3;
       createSystem(system3, "in/system2D_2");
 
       // Set unit cell parameters
@@ -148,7 +148,7 @@ public:
       //system3.setUnitCell(UnitCell<2>::Square, parameters);
       system3.setUnitCell(parameters);
 
-      Rp::FilmFieldGenMask<2, CppTp<2> > mask3(system3);
+      Rp::FilmFieldGenMask<2,CPT> mask3(system3);
       createFilmFieldGenMask(mask3, "in/filmMask2");
 
       Log::file() << "Testing system 3:" << std::endl;
@@ -156,7 +156,7 @@ public:
 
 
       // Set up 3D mask with a compatible system and check compatibility
-      Rp::System<3, CppTp<3> > system4;
+      Rp::System<3,CPT> system4;
       createSystem(system4, "in/system3D_1");
 
       // Set unit cell parameters
@@ -166,7 +166,7 @@ public:
       //system4.setUnitCell(UnitCell<3>::Tetragonal, parameters);
       system4.setUnitCell(parameters);
 
-      Rp::FilmFieldGenMask<3, CppTp<3> > mask4(system4);
+      Rp::FilmFieldGenMask<3,CPT> mask4(system4);
       createFilmFieldGenMask(mask4, "in/filmMask3");
 
       Log::file() << "Testing system 4:" << std::endl;
@@ -178,7 +178,7 @@ public:
    
 
       // Set up another 3D mask with a compatible system
-      Rp::System<3, CppTp<3> > system5;
+      Rp::System<3,CPT> system5;
       createSystem(system5, "in/system3D_2");
 
       // Set unit cell parameters
@@ -190,7 +190,7 @@ public:
       //system5.setUnitCell(UnitCell<3>::Monoclinic, parameters);
       system5.setUnitCell(parameters);
 
-      Rp::FilmFieldGenMask<3, CppTp<3> > mask5(system5);
+      Rp::FilmFieldGenMask<3,CPT> mask5(system5);
       createFilmFieldGenMask(mask5, "in/filmMask3");
 
       // Test compatibility
@@ -212,7 +212,7 @@ public:
 
       // Try a different mask with normalVecId == 1, which is incompatible
       // due to the space group
-      Rp::FilmFieldGenMask<3, CppTp<3> > mask6(system5);
+      Rp::FilmFieldGenMask<3,CPT> mask6(system5);
       createFilmFieldGenMask(mask6, "in/filmMask2");
       Log::file() << "Testing system 7:" << std::endl;
       TEST_ASSERT(checkCheckCompatibility(mask6,true));
@@ -225,7 +225,7 @@ public:
       openLogFile("out/maskTestGenerate.log");
 
       // Set up 2D mask with a compatible system
-      Rp::System<2, CppTp<2> > system;
+      Rp::System<2,CPT> system;
       createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
@@ -236,7 +236,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      Rp::FilmFieldGenMask<2, CppTp<2> > mask(system);
+      Rp::FilmFieldGenMask<2,CPT> mask(system);
       createFilmFieldGenMask(mask, "in/filmMask2");
       Log::file() << "1" << std::endl;
       mask.generate();
@@ -267,7 +267,7 @@ public:
       openLogFile("out/maskTestRegenerate.log");
 
       // Set up 1D mask with a compatible system
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       createSystem(system, "in/system1D");
 
       // Set unit cell parameter
@@ -277,7 +277,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      Rp::FilmFieldGenMask<1, CppTp<1> > mask(system);
+      Rp::FilmFieldGenMask<1,CPT> mask(system);
       createFilmFieldGenMask(mask, "in/filmMask1");
       mask.generate();
       TEST_ASSERT(!mask.needsUpdate());
@@ -308,7 +308,7 @@ public:
       openLogFile("out/maskTestStress.log");
 
       // Set up 2D mask with a compatible system
-      Rp::System<2, CppTp<2> > system;
+      Rp::System<2,CPT> system;
       createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
@@ -319,7 +319,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      Rp::FilmFieldGenMask<2, CppTp<2> > mask(system);
+      Rp::FilmFieldGenMask<2,CPT> mask(system);
       createFilmFieldGenMask(mask, "in/filmMask2");
       mask.generate();
 
@@ -338,7 +338,7 @@ public:
       openLogFile("out/maskTestModifyStress.log");
 
       // Set up 1D mask with a compatible system
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       createSystem(system, "in/system1D");
 
       // Set unit cell parameter
@@ -348,7 +348,7 @@ public:
       system.setUnitCell(parameters);
 
       // Set up mask
-      Rp::FilmFieldGenMask<1, CppTp<1> > mask(system);
+      Rp::FilmFieldGenMask<1,CPT> mask(system);
       createFilmFieldGenMask(mask, "in/filmMask1");
       mask.generate();
 
@@ -363,7 +363,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void createSystem(Rp::System<D, CppTp<D> >& system, std::string fname)
+   void createSystem(Rp::System<D,CPT>& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -375,7 +375,7 @@ public:
 
    // Read parameter file section to create a FilmFieldGenMask object
    template <int D>
-   void createFilmFieldGenMask(Rp::FilmFieldGenMask<D, CppTp<D> >& mask, std::string fname)
+   void createFilmFieldGenMask(Rp::FilmFieldGenMask<D,CPT>& mask, std::string fname)
    {
       std::ifstream in;
       openInputFile(fname, in);
@@ -388,7 +388,7 @@ public:
    // an error or not, and returns a boolean indicating whether the 
    // function demonstrated the expected behavior.
    template <int D>
-   bool checkCheckCompatibility(Rp::FilmFieldGenMask<D, CppTp<D> >& mask, bool expectError)
+   bool checkCheckCompatibility(Rp::FilmFieldGenMask<D,CPT>& mask, bool expectError)
    {
       bool pass = true;
       if (expectError) {

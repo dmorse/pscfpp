@@ -9,8 +9,8 @@
 
 namespace Pscf {
    namespace Prdc {
-      template class RFieldDftComparison<1, CppTp<1> >;
-      template class RFieldDftComparison<2, CppTp<2> >;
-      template class RFieldDftComparison<3, CppTp<3> >;
+      template class RFieldDftComparison<1,CPT>;
+      template class RFieldDftComparison<2,CPT>;
+      template class RFieldDftComparison<3,CPT>;
    }
 }

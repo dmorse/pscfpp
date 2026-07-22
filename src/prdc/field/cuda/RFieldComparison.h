@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaTp.h>           // specialized argument
+#include <pscf/backends/CUT.h>           // specialized argument
 #include <pscf/math/FieldComparison.h>  // member
 #include "RField.h"
 
@@ -26,7 +26,7 @@ namespace Prdc {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class RFieldComparison<D, CudaTp<D> >
+   class RFieldComparison<D,CUT>
    {
    public:
 
@@ -41,8 +41,8 @@ namespace Prdc {
       * \param a first array of fields
       * \param b second array of fields
       */
-      double compare(RField<D, CudaTp<D> > const& a,
-                     RField<D, CudaTp<D> > const& b);
+      double compare(RField<D,CUT> const& a,
+                     RField<D,CUT> const& b);
 
       /**
       * Comparator for arrays of fields.
@@ -51,8 +51,8 @@ namespace Prdc {
       * \param b second array of fields
       */
       double
-      compare(DArray< RField<D, CudaTp<D> > > const& a,
-              DArray< RField<D, CudaTp<D> > > const& b);
+      compare(DArray< RField<D,CUT> > const& a,
+              DArray< RField<D,CUT> > const& b);
 
       /**
       * Get precomputed maximum element-by-element difference.
@@ -76,9 +76,9 @@ namespace Prdc {
 
    };
 
-   extern template class RFieldComparison<1, CudaTp<1> >;
-   extern template class RFieldComparison<2, CudaTp<2> >;
-   extern template class RFieldComparison<3, CudaTp<3> >;
+   extern template class RFieldComparison<1,CUT>;
+   extern template class RFieldComparison<2,CUT>;
+   extern template class RFieldComparison<3,CUT>;
 
 } // namespace Prdc
 } // namespace Pscf

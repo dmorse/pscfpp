@@ -9,16 +9,16 @@
 */
 
 #include <rp/fts/montecarlo/McMoveManager.h> // base class template
-#include <pscf/cuda/CudaTp.h>                // base class template argument
+#include <pscf/backends/CUT.h>                // base class template argument
 #include <util/param/Manager.h>              // indirect base class
 #include <util/containers/DArray.h>          // member
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class McMoveManager<1, CudaTp<1> >;
-      extern template class McMoveManager<2, CudaTp<2> >;
-      extern template class McMoveManager<3, CudaTp<3> >;
+      extern template class McMoveManager<1,CUT>;
+      extern template class McMoveManager<2,CUT>;
+      extern template class McMoveManager<3,CUT>;
    }
 }
 #endif

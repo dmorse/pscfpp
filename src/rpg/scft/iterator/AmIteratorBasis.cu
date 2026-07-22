@@ -20,14 +20,14 @@
 // Explicit instantiation definitions
 namespace Pscf {
    template class 
-   AmIteratorTmpl< Rp::Iterator<1, CudaTp<1> >, DArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<1,CUT>, DArray<double> >;
    template class 
-   AmIteratorTmpl< Rp::Iterator<2, CudaTp<2> >, DArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<2,CUT>, DArray<double> >;
    template class 
-   AmIteratorTmpl< Rp::Iterator<3, CudaTp<3> >, DArray<double> >;
+   AmIteratorTmpl< Rp::Iterator<3,CUT>, DArray<double> >;
    namespace Rp {
-      template class AmIteratorBasis<1, CudaTp<1> >;
-      template class AmIteratorBasis<2, CudaTp<2> >;
-      template class AmIteratorBasis<3, CudaTp<3> >;
+      template class AmIteratorBasis<1,CUT>;
+      template class AmIteratorBasis<2,CUT>;
+      template class AmIteratorBasis<3,CUT>;
    }
 }

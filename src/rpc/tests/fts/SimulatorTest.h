@@ -33,7 +33,7 @@ using namespace Pscf::Prdc;
 class SimulatorTest : public LogFileUnitTest
 {
 
-   Rp::System<3, CppTp<3> > system;
+   Rp::System<3,CPT> system;
 
 public:
 
@@ -67,7 +67,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_Simulator");
-      Rp::Simulator<3, CppTp<3> > simulator(system);
+      Rp::Simulator<3,CPT> simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
       double const eps = 1.0E-8;
@@ -112,27 +112,27 @@ public:
       openLogFile("out/testSaddlePointField.log");
 
       initSystem("in/param_Simulator");
-      Rp::Simulator<3, CppTp<3> > simulator(system);
+      Rp::Simulator<3,CPT> simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
       system.w().readRGrid("in/w_gyr.rf");
-      DArray< RField<3, CppTp<3> > > const & w = system.w().rgrid();
+      DArray< RField<3,CPT> > const & w = system.w().rgrid();
 
       system.compute();
-      DArray< RField<3, CppTp<3> > > const & c = system.c().rgrid();
+      DArray< RField<3,CPT> > const & c = system.c().rgrid();
 
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
 
       simulator.computeWc();
-      DArray< RField<3, CppTp<3> > > const & wc = simulator.wc();
+      DArray< RField<3,CPT> > const & wc = simulator.wc();
 
       simulator.computeCc();
-      DArray< RField<3, CppTp<3> > > const & cc = simulator.cc();
+      DArray< RField<3,CPT> > const & cc = simulator.cc();
 
       simulator.computeDc();
-      DArray< RField<3, CppTp<3> > > const & dc = simulator.dc();
+      DArray< RField<3,CPT> > const & dc = simulator.dc();
 
       // Check allocation and capacities
       TEST_ASSERT(c.capacity() == nMonomer);
@@ -206,7 +206,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_system_disordered");
-      Rp::Simulator<3, CppTp<3> > simulator(system);
+      Rp::Simulator<3,CPT> simulator(system);
 
       simulator.allocate();
       simulator.analyzeChi();
@@ -246,7 +246,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param_system_disordered");
-      Rp::Simulator<3, CppTp<3> > simulator(system);
+      Rp::Simulator<3,CPT> simulator(system);
 
       simulator.allocate();
       simulator.analyzeChi();
@@ -259,7 +259,7 @@ public:
 
       int nMonomer = system.mixture().nMonomer();
       IntVec<3> dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3, CppTp<3> > > dc0;
+      DArray< RField<3,CPT> > dc0;
       dc0.allocate(nMonomer-1);
       for (int i = 0; i < nMonomer - 1; ++i) {
          dc0[i].allocate(dimensions);
@@ -279,7 +279,7 @@ public:
       out.close();
       #endif
 
-      RFieldComparison<3, CppTp<3> > comparison;
+      RFieldComparison<3,CPT> comparison;
       comparison.compare(dc0, simulator.dc());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
 

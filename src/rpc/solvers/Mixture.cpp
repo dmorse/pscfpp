@@ -28,7 +28,7 @@ namespace Rp {
    * Allocate memory for all blocks.
    */
    template <int D>
-   void Mixture<D, CppTp<D> >::allocateBlocks()
+   void Mixture<D,CPT>::allocateBlocks()
    {
       const double ds = RpMixtureT::ds();
       const int np = CompositionT::nPolymer();
@@ -46,17 +46,17 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    template 
-   class MixtureTmpl< Rp::Polymer<1, CppTp<1> >, Rp::Solvent<1, CppTp<1> > >;
+   class MixtureTmpl< Rp::Polymer<1,CPT>, Rp::Solvent<1,CPT> >;
    template 
-   class MixtureTmpl< Rp::Polymer<2, CppTp<2> >, Rp::Solvent<2, CppTp<2> > >;
+   class MixtureTmpl< Rp::Polymer<2,CPT>, Rp::Solvent<2,CPT> >;
    template 
-   class MixtureTmpl< Rp::Polymer<3, CppTp<3> >, Rp::Solvent<3, CppTp<3> > >;
+   class MixtureTmpl< Rp::Polymer<3,CPT>, Rp::Solvent<3,CPT> >;
    namespace Rp { 
-      template class MixtureBase<1, CppTp<1> >;
-      template class MixtureBase<2, CppTp<2> >;
-      template class MixtureBase<3, CppTp<3> >;
-      template class Mixture<1, CppTp<1> >;
-      template class Mixture<2, CppTp<2> >;
-      template class Mixture<3, CppTp<3> >;
+      template class MixtureBase<1,CPT>;
+      template class MixtureBase<2,CPT>;
+      template class MixtureBase<3,CPT>;
+      template class Mixture<1,CPT>;
+      template class Mixture<2,CPT>;
+      template class Mixture<3,CPT>;
    }
 }

@@ -28,9 +28,9 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   FourthOrderParameter<D, CudaTp<D> >::FourthOrderParameter(
-                                   Rp::Simulator<D, CudaTp<D> >& simulator,
-                                   Rp::System<D, CudaTp<D> >& system)
+   FourthOrderParameter<D,CUT>::FourthOrderParameter(
+                                   Rp::Simulator<D,CUT>& simulator,
+                                   Rp::System<D,CUT>& system)
     : Base(simulator, system)
    {}
 
@@ -38,7 +38,7 @@ namespace Rp {
    * Initialize Base::prefactor_ protected member variable.
    */
    template <int D>
-   void FourthOrderParameter<D, CudaTp<D> >::computePrefactor()
+   void FourthOrderParameter<D,CUT>::computePrefactor()
    {
       // Allocate CPU host array
       HostDArray<cudaReal> prefactor_h(Base::kSize_);
@@ -57,11 +57,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FourthOrderParameterBase<1, CudaTp<1> >;
-      template class FourthOrderParameterBase<2, CudaTp<2> >;
-      template class FourthOrderParameterBase<3, CudaTp<3> >;
-      template class FourthOrderParameter<1, CudaTp<1> >;
-      template class FourthOrderParameter<2, CudaTp<2> >;
-      template class FourthOrderParameter<3, CudaTp<3> >;
+      template class FourthOrderParameterBase<1,CUT>;
+      template class FourthOrderParameterBase<2,CUT>;
+      template class FourthOrderParameterBase<3,CUT>;
+      template class FourthOrderParameter<1,CUT>;
+      template class FourthOrderParameter<2,CUT>;
+      template class FourthOrderParameter<3,CUT>;
    }
 }

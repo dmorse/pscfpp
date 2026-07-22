@@ -31,7 +31,7 @@ namespace Rp {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenExt<D, CppTp<D> >::FilmFieldGenExt()
+   FilmFieldGenExt<D,CPT>::FilmFieldGenExt()
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(nullptr)
    {  ParamComposite::setClassName("FilmFieldGenExt"); }
@@ -40,8 +40,8 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   FilmFieldGenExt<D, CppTp<D> >::FilmFieldGenExt(
-         Rp::System<D, CppTp<D> >& sys)
+   FilmFieldGenExt<D,CPT>::FilmFieldGenExt(
+         Rp::System<D,CPT>& sys)
     : FilmFieldGenExtBase<D>::FilmFieldGenExtBase(),
       sysPtr_(&sys)
    {  ParamComposite::setClassName("FilmFieldGenExt"); }
@@ -50,14 +50,14 @@ namespace Rp {
    * Destructor
    */
    template <int D>
-   FilmFieldGenExt<D, CppTp<D> >::~FilmFieldGenExt()
+   FilmFieldGenExt<D,CPT>::~FilmFieldGenExt()
    {}
 
    /*
    * Get contribution to the stress from these external fields
    */
    template <int D>
-   double FilmFieldGenExt<D, CppTp<D> >::stress(int paramId) const
+   double FilmFieldGenExt<D,CPT>::stress(int paramId) const
    {
       // If walls are athermal then there is no external field, so no
       // contribution to the stress.
@@ -79,8 +79,8 @@ namespace Rp {
       // Setup
       int nMonomer = system().mixture().nMonomer();
       int nx = system().domain().mesh().size();
-      RField<D, CppTp<D> > const & maskRGrid = system().mask().rgrid();
-      RField<D, CppTp<D> > maskDeriv, hDeriv;
+      RField<D,CPT> const & maskRGrid = system().mask().rgrid();
+      RField<D,CPT> maskDeriv, hDeriv;
       maskDeriv.allocate(system().domain().mesh().dimensions());
       hDeriv.allocate(system().domain().mesh().dimensions());
       IntVec<3> coords;
@@ -142,7 +142,7 @@ namespace Rp {
          }
 
          // Get the integral term in the stress
-         RField<D, CppTp<D> > const & c = system().c().rgrid(i);
+         RField<D,CPT> const & c = system().c().rgrid(i);
          for (int i = 0; i < nx; i++) {
             term += c[i] * hDeriv[i];
          }
@@ -155,7 +155,7 @@ namespace Rp {
    * Compute the fields and store where the System can access.
    */
    template <int D>
-   void FilmFieldGenExt<D, CppTp<D> >::compute()
+   void FilmFieldGenExt<D,CPT>::compute()
    {
       // Set chiBottomCurrent_, chiTopCurrent_, and parametersCurrent_
       chiBottomCurrent_ = chiBottom();
@@ -191,10 +191,10 @@ namespace Rp {
       }
 
       // Get pointer to mask RField
-      RField<D, CppTp<D> > const & maskPtr = system().mask().rgrid();
+      RField<D,CPT> const & maskPtr = system().mask().rgrid();
 
       // Generate an r-grid representation of the external fields
-      DArray< RField<D, CppTp<D> > > hRGrid;
+      DArray< RField<D,CPT> > hRGrid;
       hRGrid.allocate(nm);
       for (int i = 0; i < nm; i++) {
          hRGrid[i].allocate(system().domain().mesh().dimensions());
@@ -236,7 +236,7 @@ namespace Rp {
    */
    template <int D>
    std::string 
-   FilmFieldGenExt<D, CppTp<D> >::systemSpaceGroup() const
+   FilmFieldGenExt<D,CPT>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    /*
@@ -244,14 +244,14 @@ namespace Rp {
    */
    template <int D>
    RealVec<D> 
-   FilmFieldGenExt<D, CppTp<D> >::systemLatticeVector(int id) const
+   FilmFieldGenExt<D,CPT>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    /*
    * Get the number of monomer species for this system.
    */
    template <int D>
-   int FilmFieldGenExt<D, CppTp<D> >::systemNMonomer() const
+   int FilmFieldGenExt<D,CPT>::systemNMonomer() const
    {  return system().mixture().nMonomer(); }
 
 }
@@ -260,8 +260,8 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FilmFieldGenExt<1, CppTp<1> >;
-      template class FilmFieldGenExt<2, CppTp<2> >;
-      template class FilmFieldGenExt<3, CppTp<3> >;
+      template class FilmFieldGenExt<1,CPT>;
+      template class FilmFieldGenExt<2,CPT>;
+      template class FilmFieldGenExt<3,CPT>;
    }
 }

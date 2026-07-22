@@ -29,7 +29,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, CppTp<D> >& system, std::string filename)
+   void initSystem(Rp::System<D,CPT>& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -41,10 +41,10 @@ public:
    }
 
    template <int D>
-   void initSimulator(Rp::BdSimulator<D, CppTp<D> >& simulator, std::string filename)
+   void initSimulator(Rp::BdSimulator<D,CPT>& simulator, std::string filename)
    {
-      Rp::Analyzer<D, CppTp<D> >::initStatic();
-      int baseInterval = Rp::Analyzer<D, CppTp<D> >::baseInterval;
+      Rp::Analyzer<D,CPT>::initStatic();
+      int baseInterval = Rp::Analyzer<D,CPT>::baseInterval;
       TEST_ASSERT(baseInterval == 1);
       std::ifstream in;
       openInputFile(filename, in);
@@ -54,9 +54,9 @@ public:
 
    void analyzeTrajectory()
    {
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       initSystem(system, "in/param_system_disordered");
-      Rp::BdSimulator<3, CppTp<3> > simulator(system);
+      Rp::BdSimulator<3,CPT> simulator(system);
       initSimulator(simulator, "in/param_BdSimulator_analyzer");
       std::string filename = filePrefix() + "in/w_dis_trajectory.rf";
       simulator.analyze(0, 50, "RGridTrajectoryReader", filename);

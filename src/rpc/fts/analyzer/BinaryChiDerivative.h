@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/BinaryChiDerivative.h>  // base class template
-#include <pscf/cpu/CppTp.h>                     // base template argument
+#include <pscf/backends/CPT.h>                     // base template argument
 #include <rpc/fts/analyzer/AverageAnalyzer.h>     // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BinaryChiDerivative<1, CppTp<1> >;
-      extern template class BinaryChiDerivative<2, CppTp<2> >;
-      extern template class BinaryChiDerivative<3, CppTp<3> >;
+      extern template class BinaryChiDerivative<1,CPT>;
+      extern template class BinaryChiDerivative<2,CPT>;
+      extern template class BinaryChiDerivative<3,CPT>;
    }
 }
 #endif

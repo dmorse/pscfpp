@@ -21,8 +21,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class RampParameter<1, CppTp<1> >;
-      template class RampParameter<2, CppTp<2> >;
-      template class RampParameter<3, CppTp<3> >;
+      template class RampParameter<1,CPT>;
+      template class RampParameter<2,CPT>;
+      template class RampParameter<3,CPT>;
    }
 }

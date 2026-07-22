@@ -215,7 +215,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   Block<D, CudaTp<D> >::Block()
+   Block<D,CUT>::Block()
     : meshPtr_(nullptr),
       fftPtr_(nullptr),
       unitCellPtr_(nullptr),
@@ -238,14 +238,14 @@ namespace Rp {
    * Destructor.
    */
    template <int D>
-   Block<D, CudaTp<D> >::~Block()
+   Block<D,CUT>::~Block()
    {}
 
    template <int D>
-   void Block<D, CudaTp<D> >::associate(Mesh<D> const & mesh, 
-                            FFT<D, CudaTp<D> > const & fft,
+   void Block<D,CUT>::associate(Mesh<D> const & mesh, 
+                            FFT<D,CUT> const & fft,
                             UnitCell<D> const & cell, 
-                            WaveList<D, CudaTp<D> >& waveList)
+                            WaveList<D,CUT>& waveList)
    {
       UTIL_CHECK(!isAllocated_);
       UTIL_CHECK(mesh.size() > 1);
@@ -265,7 +265,7 @@ namespace Rp {
    }
 
    template <int D>
-   void Block<D, CudaTp<D> >::allocate(double ds, bool useBatchedFFT)
+   void Block<D,CUT>::allocate(double ds, bool useBatchedFFT)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(unitCellPtr_);
@@ -276,7 +276,7 @@ namespace Rp {
       useBatchedFFT_ = useBatchedFFT;
 
       // Compute k-space grid dimensions (kMeshDimensions_) and size_ 
-      FFT<D, CudaTp<D> >::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
+      FFT<D,CUT>::computeKMesh(mesh().dimensions(), kMeshDimensions_, kSize_);
 
       // Allocate work arrays
       expW_.allocate(mesh().dimensions());
@@ -342,7 +342,7 @@ namespace Rp {
    * Set or reset the the block length.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::setLength(double newLength)
+   void Block<D,CUT>::setLength(double newLength)
    {
       // Precondition
       UTIL_CHECK(PolymerModel::isThread());
@@ -387,7 +387,7 @@ namespace Rp {
    * Set or reset monomer statistical segment length.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::setKuhn(double kuhn)
+   void Block<D,CUT>::setKuhn(double kuhn)
    {
       BlockTmplT::setKuhn(kuhn);
       hasExpKsq_ = false;
@@ -397,7 +397,7 @@ namespace Rp {
    * Clear all internal data that depends on lattice parameters.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::clearUnitCellData()
+   void Block<D,CUT>::clearUnitCellData()
    {
       UTIL_CHECK(unitCellPtr_);
       UTIL_CHECK(nParams_ == unitCell().nParameter());
@@ -409,7 +409,7 @@ namespace Rp {
    * Compute all elements of expKsq_ and expKsq2_ arrays
    */
    template <int D>
-   void Block<D, CudaTp<D> >::computeExpKsq()
+   void Block<D,CUT>::computeExpKsq()
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(waveListPtr_);
@@ -438,7 +438,7 @@ namespace Rp {
    */
    template <int D>
    void
-   Block<D, CudaTp<D> >::setupSolver(RField<D, CudaTp<D> > const & w)
+   Block<D,CUT>::setupSolver(RField<D,CUT> const & w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -465,7 +465,7 @@ namespace Rp {
    * Propagate solution by one step.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepThread(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const
+   void Block<D,CUT>::stepThread(RField<D,CUT> const & qin, RField<D,CUT>& qout) const
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -482,8 +482,8 @@ namespace Rp {
       UTIL_CHECK(fftBatchedPair_.isSetup());
 
       // Set up associated workspace fields slices
-      RField<D, CudaTp<D> > qr, qr2;
-      RFieldDft<D, CudaTp<D> > qk, qk2;
+      RField<D,CUT> qr, qr2;
+      RFieldDft<D,CUT> qk, qk2;
       qr.associate(qrPair_, 0, mesh().dimensions());
       qr2.associate(qrPair_, nx, mesh().dimensions());
       qk.associate(qkPair_, 0, mesh().dimensions());
@@ -513,7 +513,7 @@ namespace Rp {
    * Apply one step of the MDE solution for the bead model. 
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const
+   void Block<D,CUT>::stepBead(RField<D,CUT> const & qin, RField<D,CUT>& qout) const
    {
       stepBondBead(qin, qout);
       stepFieldBead(qout);
@@ -523,7 +523,7 @@ namespace Rp {
    * Apply the field operator for the bead model.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepFieldBead(RField<D, CudaTp<D> >& q) const
+   void Block<D,CUT>::stepFieldBead(RField<D,CUT>& q) const
    {
       // Preconditions
       int nx = mesh().size();
@@ -537,7 +537,7 @@ namespace Rp {
    * Apply the bond operator for the bead model.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepBondBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const
+   void Block<D,CUT>::stepBondBead(RField<D,CUT> const & qin, RField<D,CUT>& qout) const
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -563,7 +563,7 @@ namespace Rp {
    * Apply the half-bond operator for the bead model.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::stepHalfBondBead(RField<D, CudaTp<D> > const & qin, RField<D, CudaTp<D> >& qout) const
+   void Block<D,CUT>::stepHalfBondBead(RField<D,CUT> const & qin, RField<D,CUT>& qout) const
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
@@ -586,7 +586,7 @@ namespace Rp {
    * Integrate to calculate monomer concentration for this block
    */
    template <int D>
-   void Block<D, CudaTp<D> >::computeConcentrationThread(double prefactor)
+   void Block<D,CUT>::computeConcentrationThread(double prefactor)
    {
       // Preconditions
       int nx = mesh().size();
@@ -600,8 +600,8 @@ namespace Rp {
       VecOp::eqS(cField(), 0.0);
 
       // References to forward and reverse propagators
-      Rp::Propagator<D, CudaTp<D> > const & p0 = propagator(0);
-      Rp::Propagator<D, CudaTp<D> > const & p1 = propagator(1);
+      Rp::Propagator<D,CUT> const & p0 = propagator(0);
+      Rp::Propagator<D,CUT> const & p1 = propagator(1);
 
       addEqMulVVc(cField(), p0.q(0), p1.q(ns_ - 1), 1.0);
       addEqMulVVc(cField(), p0.q(ns_ - 1), p1.q(0), 1.0);
@@ -622,7 +622,7 @@ namespace Rp {
    * Integrate to calculate monomer concentration for this block
    */
    template <int D>
-   void Block<D, CudaTp<D> >::computeConcentrationBead(double prefactor)
+   void Block<D,CUT>::computeConcentrationBead(double prefactor)
    {
       // Preconditions
       int nx = mesh().size();
@@ -636,8 +636,8 @@ namespace Rp {
       VecOp::eqS(cField(), 0.0);
 
       // References to forward and reverse propagators
-      Rp::Propagator<D, CudaTp<D> > const & p0 = propagator(0);
-      Rp::Propagator<D, CudaTp<D> > const & p1 = propagator(1);
+      Rp::Propagator<D,CUT> const & p0 = propagator(0);
+      Rp::Propagator<D,CUT> const & p1 = propagator(1);
 
       // Internal beads (j = 1, ..., nbead, with nbead = ns_ -2)
       for (int j = 1; j < ns_ - 1; ++j) {
@@ -652,7 +652,7 @@ namespace Rp {
    * Compute stress contribution from this block.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::computeStressThread(double prefactor)
+   void Block<D,CUT>::computeStressThread(double prefactor)
    {
       UTIL_CHECK(PolymerModel::isThread());
       UTIL_CHECK(meshPtr_);
@@ -668,8 +668,8 @@ namespace Rp {
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
 
       // References to forward and reverse propagators
-      Rp::Propagator<D, CudaTp<D> >& p0 = propagator(0);
-      Rp::Propagator<D, CudaTp<D> >& p1 = propagator(1);
+      Rp::Propagator<D,CUT>& p0 = propagator(0);
+      Rp::Propagator<D,CUT>& p1 = propagator(1);
       UTIL_CHECK(p0.isSolved());
       UTIL_CHECK(p1.isSolved());
 
@@ -683,7 +683,7 @@ namespace Rp {
       normal = 3.0*6.0;
       FSArray<double, 6> dQ;
       int i, j, n;
-      RField<D, CudaTp<D> > rTmp(kMeshDimensions_); // array of real values on kgrid
+      RField<D,CUT> rTmp(kMeshDimensions_); // array of real values on kgrid
 
       // Initialize dQ and stress to 0
       stress_.clear();
@@ -771,7 +771,7 @@ namespace Rp {
    * Compute stress contribution from this block, in bead model.
    */
    template <int D>
-   void Block<D, CudaTp<D> >::computeStressBead(double prefactor)
+   void Block<D,CUT>::computeStressBead(double prefactor)
    {
       // Preconditions
       UTIL_CHECK(PolymerModel::isBead());
@@ -785,8 +785,8 @@ namespace Rp {
       UTIL_CHECK(ns_ > 0);
 
       // References to forward and reverse propagators
-      Rp::Propagator<D, CudaTp<D> >& p0 = propagator(0);
-      Rp::Propagator<D, CudaTp<D> >& p1 = propagator(1);
+      Rp::Propagator<D,CUT>& p0 = propagator(0);
+      Rp::Propagator<D,CUT>& p1 = propagator(1);
       UTIL_CHECK(p0.isSolved());
       UTIL_CHECK(p1.isSolved());
 
@@ -821,7 +821,7 @@ namespace Rp {
          dQ.append(0.0);
       }
 
-      RField<D, CudaTp<D> > rTmp(kMeshDimensions_);   // k-space work space
+      RField<D,CUT> rTmp(kMeshDimensions_);   // k-space work space
       const double b = BlockTmplT::kuhn();
       const double bSq = b * b / 6.0;
       double increment;

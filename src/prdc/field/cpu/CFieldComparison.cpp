@@ -10,8 +10,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Prdc {
-      template class CFieldComparison<1, CppTp<1> >;
-      template class CFieldComparison<2, CppTp<2> >;
-      template class CFieldComparison<3, CppTp<3> >;
+      template class CFieldComparison<1,CPT>;
+      template class CFieldComparison<2,CPT>;
+      template class CFieldComparison<3,CPT>;
    }
 }

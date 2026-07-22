@@ -9,13 +9,13 @@
 
 namespace Pscf { 
 
-   template class BlockTmpl< Rp::Propagator<1, CppTp<1> >, Prdc::RField<1, CppTp<1> > >;
-   template class BlockTmpl< Rp::Propagator<2, CppTp<2> >, Prdc::RField<2, CppTp<2> > >;
-   template class BlockTmpl< Rp::Propagator<3, CppTp<3> >, Prdc::RField<3, CppTp<3> > >;
+   template class BlockTmpl< Rp::Propagator<1,CPT>, Prdc::RField<1,CPT> >;
+   template class BlockTmpl< Rp::Propagator<2,CPT>, Prdc::RField<2,CPT> >;
+   template class BlockTmpl< Rp::Propagator<3,CPT>, Prdc::RField<3,CPT> >;
 
    namespace Rp {
-      template class Block<1, CppTp<1> >;
-      template class Block<2, CppTp<2> >;
-      template class Block<3, CppTp<3> >;
+      template class Block<1,CPT>;
+      template class Block<2,CPT>;
+      template class Block<3,CPT>;
    }
 }

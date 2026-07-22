@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/ConcentrationDerivative.h> // base class template
-#include <pscf/cuda/CudaTp.h>                        // base argument
+#include <pscf/backends/CUT.h>                        // base argument
 #include <rpg/fts/analyzer/AverageAnalyzer.h>        // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class ConcentrationDerivative<1, CudaTp<1> >;
-      extern template class ConcentrationDerivative<2, CudaTp<2> >;
-      extern template class ConcentrationDerivative<3, CudaTp<3> >;
+      extern template class ConcentrationDerivative<1,CUT>;
+      extern template class ConcentrationDerivative<2,CUT>;
+      extern template class ConcentrationDerivative<3,CUT>;
    }
 }
 #endif

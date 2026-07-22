@@ -33,7 +33,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      RField<1, CppTp<1> > rf_0, rf_1;
+      RField<1,CPT> rf_0, rf_1;
       int n = 10;
       IntVec<1> dimensions;
       dimensions[0] = n;
@@ -45,7 +45,7 @@ public:
          rf_0[i] = 2.0;
          rf_1[i] = 2.001;
       }
-      RFieldComparison<1, CppTp<1> > comparison;
+      RFieldComparison<1,CPT> comparison;
       comparison.compare(rf_0,  rf_1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -65,7 +65,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      RField<2, CppTp<2> > rf_0, rf_1;
+      RField<2,CPT> rf_0, rf_1;
       int m = 5;
       int n = 10;
       IntVec<2> dimensions;
@@ -79,7 +79,7 @@ public:
          rf_0[i] = 2.0;
          rf_1[i] = 2.001;
       }
-      RFieldComparison<2, CppTp<2> > comparison;
+      RFieldComparison<2,CPT> comparison;
       comparison.compare(rf_0,  rf_1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -100,7 +100,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      RFieldDft<2, CppTp<2> > f_0, f_1;
+      RFieldDft<2,CPT> f_0, f_1;
       int m = 5;
       int n = 10;
       IntVec<2> dimensions;
@@ -116,7 +116,7 @@ public:
          f_1[i][0] = 1.999;
          f_1[i][1] = 2.001;
       }
-      RFieldDftComparison<2, CppTp<2> > comparison;
+      RFieldDftComparison<2,CPT> comparison;
       comparison.compare(f_0,  f_1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -137,7 +137,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      CField<2, CppTp<2> > f_0, f_1;
+      CField<2,CPT> f_0, f_1;
       int m = 5;
       int n = 10;
       IntVec<2> dimensions;
@@ -153,7 +153,7 @@ public:
          f_1[i][0] = 1.999;
          f_1[i][1] = 2.001;
       }
-      CFieldComparison<2, CppTp<2> > comparison;
+      CFieldComparison<2,CPT> comparison;
       comparison.compare(f_0,  f_1);
       if (verbose() > 0) {
          std::cout << "\n";

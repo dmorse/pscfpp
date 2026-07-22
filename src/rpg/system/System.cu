@@ -42,9 +42,9 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class System< 1, CudaTp<1> >;
-      template class System< 2, CudaTp<2> >;
-      template class System< 3, CudaTp<3> >;
+      template class System<1,CUT>;
+      template class System<2,CUT>;
+      template class System<3,CUT>;
    }
 }
 #endif

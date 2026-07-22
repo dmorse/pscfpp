@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>             // class template argument
+#include <pscf/backends/CPT.h>             // class template argument
 #include <prdc/field/cpu/RFieldDft.h>   // member
 #include <pscf/math/IntVec.h>           // member
 
@@ -41,7 +41,7 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class FFT<D, CppTp<D> >
+   class FFT<D,CPT>
    {
 
    public:
@@ -79,8 +79,8 @@ namespace Prdc {
       * \param in  array of real values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(RField<D, CppTp<D> > const & in, 
-                            RFieldDft<D, CppTp<D> >& out) const;
+      void forwardTransform(RField<D,CPT> const & in, 
+                            RFieldDft<D,CPT>& out) const;
 
       /**
       * Compute inverse (complex-to-real) DFT, overwriting the input.
@@ -99,8 +99,8 @@ namespace Prdc {
       * \param in  array of complex values on k-space grid (overwritten)
       * \param out  array of real values on r-space grid
       */
-      void inverseTransformUnsafe(RFieldDft<D, CppTp<D> >& in, 
-                                  RField<D, CppTp<D> >& out) const;
+      void inverseTransformUnsafe(RFieldDft<D,CPT>& in, 
+                                  RField<D,CPT>& out) const;
 
       /**
       * Compute inverse (complex-to-real) DFT without overwriting input.
@@ -114,8 +114,8 @@ namespace Prdc {
       * \param in  array of complex values on k-space grid 
       * \param out  array of real values on r-space grid 
       */
-      void inverseTransformSafe(RFieldDft<D, CppTp<D> > const & in, 
-                                RField<D, CppTp<D> >& out) const;
+      void inverseTransformSafe(RFieldDft<D,CPT> const & in, 
+                                RField<D,CPT>& out) const;
 
       // Complex Data (Complex <-> Complex Transforms)
 
@@ -137,8 +137,8 @@ namespace Prdc {
       * \param in  array of complex values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(CField<D, CppTp<D> > const & in, 
-                            CField<D, CppTp<D> >& out) const;
+      void forwardTransform(CField<D,CPT> const & in, 
+                            CField<D,CPT>& out) const;
 
       /**
       * Compute complex-to-complex inverse Fourier transform.
@@ -153,8 +153,8 @@ namespace Prdc {
       * \param in  array of complex values on k-space grid 
       * \param out  array of complex values on r-space grid
       */
-      void inverseTransform(CField<D, CppTp<D> > const & in, 
-                            CField<D, CppTp<D> >& out) const;
+      void inverseTransform(CField<D,CPT> const & in, 
+                            CField<D,CPT>& out) const;
 
       // Accessors
 
@@ -210,7 +210,7 @@ namespace Prdc {
    private:
 
       /// Private k-space array for performing safe transforms.
-      mutable RFieldDft<D, CppTp<D> > kFieldCopy_;
+      mutable RFieldDft<D,CPT> kFieldCopy_;
 
       /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
@@ -239,33 +239,33 @@ namespace Prdc {
       /**
       * Make FFTW plans for transform and inverse transform.
       */
-      void makePlans(RField<D, CppTp<D> >& rField, RFieldDft<D, CppTp<D> >& kField,
-                     CField<D, CppTp<D> >& cFieldIn, CField<D, CppTp<D> >& cFieldOut);
+      void makePlans(RField<D,CPT>& rField, RFieldDft<D,CPT>& kField,
+                     CField<D,CPT>& cFieldIn, CField<D,CPT>& cFieldOut);
 
    };
 
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1, CppTp<1> >::makePlans(
-		            RField<1, CppTp<1> >& rField, 
-                            RFieldDft<1, CppTp<1> >& kField,
-                            CField<1, CppTp<1> >& cFieldIn, 
-                            CField<1, CppTp<1> >& cFieldOut);
+   void FFT<1,CPT>::makePlans(
+		            RField<1,CPT>& rField, 
+                            RFieldDft<1,CPT>& kField,
+                            CField<1,CPT>& cFieldIn, 
+                            CField<1,CPT>& cFieldOut);
 
    template <>
-   void FFT<2, CppTp<2> >::makePlans(
-                            RField<2, CppTp<2> >& rField, 
-                            RFieldDft<2, CppTp<2> >& kField,
-                            CField<2, CppTp<2> >& cFieldIn, 
-                            CField<2, CppTp<2> >& cFieldOut);
+   void FFT<2,CPT>::makePlans(
+                            RField<2,CPT>& rField, 
+                            RFieldDft<2,CPT>& kField,
+                            CField<2,CPT>& cFieldIn, 
+                            CField<2,CPT>& cFieldOut);
 
    template <>
-   void FFT<3, CppTp<3> >::makePlans(
-		            RField<3, CppTp<3> >& rField, 
-                            RFieldDft<3, CppTp<3> >& kField,
-                            CField<3, CppTp<3> >& cFieldIn, 
-                            CField<3, CppTp<3> >& cFieldOut);
+   void FFT<3,CPT>::makePlans(
+		            RField<3,CPT>& rField, 
+                            RFieldDft<3,CPT>& kField,
+                            CField<3,CPT>& cFieldIn, 
+                            CField<3,CPT>& cFieldOut);
 
    // Inline member functions
 
@@ -273,21 +273,21 @@ namespace Prdc {
    * Has this object been setup?
    */
    template <int D> inline 
-    bool FFT<D, CppTp<D> >::isSetup() const
+    bool FFT<D,CPT>::isSetup() const
    {  return isSetup_; }
 
    /*
    * Return the dimensions of the grid for which this was allocated.
    */
    template <int D> inline 
-   IntVec<D> const & FFT<D, CppTp<D> >::meshDimensions() const
+   IntVec<D> const & FFT<D,CPT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
    * Does this wavevector have an implicit inverse?
    */
    template <int D> inline
-   bool FFT<D, CppTp<D> >::hasImplicitInverse(
+   bool FFT<D,CPT>::hasImplicitInverse(
                               IntVec<D> const & wavevector,
                               IntVec<D> const & meshDimensions)
    {
@@ -302,9 +302,9 @@ namespace Prdc {
    }
 
    // Explicit instantiation declarations
-   extern template class FFT<1, CppTp<1> >;
-   extern template class FFT<2, CppTp<2> >;
-   extern template class FFT<3, CppTp<3> >;
+   extern template class FFT<1,CPT>;
+   extern template class FFT<2,CPT>;
+   extern template class FFT<3,CPT>;
 
 } // namespace Prdc
 } // namespace Pscf

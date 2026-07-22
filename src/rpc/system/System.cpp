@@ -34,8 +34,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class System< 1, CppTp<1> >;
-      template class System< 2, CppTp<2> >;
-      template class System< 3, CppTp<3> >;
+      template class System<1,CPT>;
+      template class System<2,CPT>;
+      template class System<3,CPT>;
    }
 }

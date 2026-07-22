@@ -9,16 +9,16 @@
 */
 
 #include <rp/field/Mask.h>            // lass template
-#include <pscf/cuda/CudaTp.h>         // class template argument
+#include <pscf/backends/CUT.h>         // class template argument
 #include <prdc/field/cuda/RField.h>   // base class member
 
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Mask< 1, CudaTp<1> >;
-      extern template class Mask< 2, CudaTp<2> >;
-      extern template class Mask< 3, CudaTp<3> >;
+      extern template class Mask<1,CUT>;
+      extern template class Mask<2,CUT>;
+      extern template class Mask<3,CUT>;
    }
 }
 #endif

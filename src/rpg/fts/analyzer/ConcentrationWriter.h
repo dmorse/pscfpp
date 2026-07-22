@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/ConcentrationWriter.h>  // base template
-#include <pscf/cuda/CudaTp.h>                     // template argument
+#include <pscf/backends/CUT.h>                     // template argument
 #include <rpg/fts/analyzer/Analyzer.h>            // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class ConcentrationWriter<1, CudaTp<1> >;
-      extern template class ConcentrationWriter<2, CudaTp<2> >;
-      extern template class ConcentrationWriter<3, CudaTp<3> >;
+      extern template class ConcentrationWriter<1,CUT>;
+      extern template class ConcentrationWriter<2,CUT>;
+      extern template class ConcentrationWriter<3,CUT>;
    }
 }
 #endif

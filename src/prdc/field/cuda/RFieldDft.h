@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaTp.h>
+#include <pscf/backends/CUT.h>
 #include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/cudaTypes.h>
 #include <pscf/cuda/HostDArray.h>
@@ -33,7 +33,7 @@ namespace Prdc {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class RFieldDft<D, CudaTp<D> >
+   class RFieldDft<D,CUT>
     : public DeviceArray<cudaComplex>
    {
 
@@ -60,7 +60,7 @@ namespace Prdc {
       *
       *\param other the RFieldDft to be copied.
       */
-      RFieldDft(RFieldDft<D, CudaTp<D> > const & other);
+      RFieldDft(RFieldDft<D,CUT> const & other);
 
       /**
       * Destructor.
@@ -70,7 +70,7 @@ namespace Prdc {
       virtual ~RFieldDft();
 
       /**
-      * Assignment operator, assignment from another RFieldDft<D, CudaTp<D> >.
+      * Assignment operator, assignment from another RFieldDft<D,CUT>.
       *
       * If this Field is not allocated, allocates and copies all elements.
       *
@@ -79,20 +79,20 @@ namespace Prdc {
       *
       * \param other the RHS Field
       */
-      RFieldDft<D, CudaTp<D> >& operator = (RFieldDft<D, CudaTp<D> > const & other);
+      RFieldDft<D,CUT>& operator = (RFieldDft<D,CUT> const & other);
 
       /**
       * Assignment operator, assignment from a HostDArray<cudaComplex>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
-      * RFieldDft<D, CudaTp<D> > from host memory to device memory.
+      * RFieldDft<D,CUT> from host memory to device memory.
       *
-      * The RHS HostDArray<cudaComplex> and LHS RFieldDft<D, CudaTp<D> > must 
+      * The RHS HostDArray<cudaComplex> and LHS RFieldDft<D,CUT> must 
       * both be allocated and have equal capacity values on entry. 
       * 
       * \param other the RHS HostDArray<cudaComplex>
       */
-      RFieldDft<D, CudaTp<D> >& operator = (HostDArray<cudaComplex> const & other);
+      RFieldDft<D,CUT>& operator = (HostDArray<cudaComplex> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -164,14 +164,14 @@ namespace Prdc {
    * Return mesh dimensions by constant reference.
    */
    template <int D> inline 
-   const IntVec<D>& RFieldDft<D, CudaTp<D> >::meshDimensions() const
+   const IntVec<D>& RFieldDft<D,CUT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*  
    * Return dimensions of dft grid by constant reference. 
    */
    template <int D> inline 
-   IntVec<D> const & RFieldDft<D, CudaTp<D> >::dftDimensions() const
+   IntVec<D> const & RFieldDft<D,CUT>::dftDimensions() const
    {  return dftDimensions_; }
 
    /*
@@ -179,7 +179,7 @@ namespace Prdc {
    */
    template <int D>
    template <class Archive>
-   void RFieldDft<D, CudaTp<D> >::serialize(Archive& ar, 
+   void RFieldDft<D,CUT>::serialize(Archive& ar, 
 		                            const unsigned int version)
    {
       int capacity;
@@ -210,9 +210,9 @@ namespace Prdc {
       ar & meshDimensions_;
    }
 
-   extern template class RFieldDft<1, CudaTp<1> >;
-   extern template class RFieldDft<2, CudaTp<2> >;
-   extern template class RFieldDft<3, CudaTp<3> >;
+   extern template class RFieldDft<1,CUT>;
+   extern template class RFieldDft<2,CUT>;
+   extern template class RFieldDft<3,CUT>;
 
 } // namespace Prdc
 } // namespace Pscf

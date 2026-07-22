@@ -92,8 +92,8 @@ namespace Prdc {
    */
    template <int D> 
    void 
-   FieldBasisConverter<D>::convertToBasis(DArray< RField<D, CppTp<D> > > const & in,
-                                          DArray< RField<D, CppTp<D> > > & out,
+   FieldBasisConverter<D>::convertToBasis(DArray< RField<D,CPT> > const & in,
+                                          DArray< RField<D,CPT> > & out,
                                           double prefactor) const
    {
       // Preconditions
@@ -113,7 +113,7 @@ namespace Prdc {
 
       // Loop over components in basis
       for (i = 0; i < nMonomer_; ++i) {
-         RField<D, CppTp<D> >& wo = out[i];
+         RField<D,CPT>& wo = out[i];
 
          // Initialize wo = out[i] to zero
          for (k = 0; k < meshSize; ++k) {
@@ -123,7 +123,7 @@ namespace Prdc {
          // Loop over monomer types and mesh points
          for (j = 0; j < nMonomer_; ++j) {
             vec = basis_(i, j)*prefactor;
-            RField<D, CppTp<D> > const & wi = in[j];
+            RField<D,CPT> const & wi = in[j];
             for (k = 0; k < meshSize; ++k) {
                wo[k] += vec*wi[k];
             }
@@ -138,8 +138,8 @@ namespace Prdc {
    */
    template <int D> 
    void 
-   FieldBasisConverter<D>::convertFromBasis(DArray< RField<D, CppTp<D> > > const & in,
-                                            DArray< RField<D, CppTp<D> > > & out,
+   FieldBasisConverter<D>::convertFromBasis(DArray< RField<D,CPT> > const & in,
+                                            DArray< RField<D,CPT> > & out,
                                             double prefactor) const
    {
       // Preconditions
@@ -159,7 +159,7 @@ namespace Prdc {
 
       // Loop over monomer types
       for (i = 0; i < nMonomer_; ++i) {
-         RField<D, CppTp<D> >& wo = out[i];
+         RField<D,CPT>& wo = out[i];
 
          // Initialize wo = out[i] to zero
          for (k = 0; k < meshSize; ++k) {
@@ -169,7 +169,7 @@ namespace Prdc {
          // Loop over components in basis 
          for (j = 0; j < nMonomer_; ++j) {
             vec = basis_(j, i)*prefactor;
-            RField<D, CppTp<D> > const & wi = in[j];
+            RField<D,CPT> const & wi = in[j];
             // Loop over mesh points
             for (k = 0; k < meshSize; ++k) {
                wo[k] += vec*wi[k];

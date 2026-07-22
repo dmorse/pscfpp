@@ -42,7 +42,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D>
-   bool tracePath(Rp::Polymer<D, CppTp<D> > const & polymer, int is, int it)
+   bool tracePath(Rp::Polymer<D,CPT> const & polymer, int is, int it)
    {
       if (is == it) return true;
 
@@ -75,27 +75,27 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, CppTp<1> > mixture;
+      Rp::Mixture<1,CPT> mixture;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, CppTp<1> > mixture;
+      Rp::Mixture<1,CPT> mixture;
     
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
       mixture.readParam(in);
       in.close();
 
-      Rp::Polymer<1, CppTp<1> >& polymer = mixture.polymer(0);
+      Rp::Polymer<1,CPT>& polymer = mixture.polymer(0);
       TEST_ASSERT(tracePath(polymer, 2, 0));
    }
 
    void testReadParameters1DBranched()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, CppTp<1> > mixture;
+      Rp::Mixture<1,CPT> mixture;
 
       std::ifstream in;
       openInputFile("in/MixtureBranched", in);
@@ -113,7 +113,7 @@ public:
       * 
       */
 
-      Rp::Polymer<1, CppTp<1> >& polymer = mixture.polymer(0);
+      Rp::Polymer<1,CPT>& polymer = mixture.polymer(0);
       Pair<int> pair;
 
       pair = polymer.path(0, 1);
@@ -133,7 +133,7 @@ public:
    void testReadParameters1D_bead()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, CppTp<1> > mixture;
+      Rp::Mixture<1,CPT> mixture;
       PolymerModel::setModel(PolymerModel::Bead); 
 
       std::ifstream in;
@@ -147,7 +147,7 @@ public:
    void testSolver1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, CppTp<1> > mixture;
+      Rp::Mixture<1,CPT> mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
@@ -160,10 +160,10 @@ public:
 
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(d);
 
-      WaveList<1, CppTp<1> > waveList;
+      WaveList<1,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);
@@ -177,8 +177,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1, CppTp<1> > > wFields;
-      DArray< RField<1, CppTp<1> > > cFields;
+      DArray< RField<1,CPT> > wFields;
+      DArray< RField<1,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -233,7 +233,7 @@ public:
       // Read parameter block, unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture1d_bead", in);
-      Rp::Mixture<1, CppTp<1> > mixture;
+      Rp::Mixture<1,CPT> mixture;
       mixture.readParam(in);
       UnitCell<1> unitCell;
       in >> unitCell;
@@ -244,15 +244,15 @@ public:
       // Setup up associated objects and allocate
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(d);
-      WaveList<1, CppTp<1> > waveList;
+      WaveList<1,CPT> waveList;
       waveList.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
 
       // Check polymer block sizes
-      Rp::Polymer<1, CppTp<1> >& polymer = mixture.polymer(0);
+      Rp::Polymer<1,CPT>& polymer = mixture.polymer(0);
       TEST_ASSERT(polymer.block(0).nBead() == 20);
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);
@@ -269,8 +269,8 @@ public:
 
       // Allocate w and field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1, CppTp<1> > > wFields;
-      DArray< RField<1, CppTp<1> > > cFields;
+      DArray< RField<1,CPT> > wFields;
+      DArray< RField<1,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -312,7 +312,7 @@ public:
    void testSolver2D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<2, CppTp<2> > mixture;
+      Rp::Mixture<2,CPT> mixture;
 
       // Read param file block unit cell and mesh dimensions
       std::ifstream in;
@@ -327,9 +327,9 @@ public:
       // Create associated objects and allocate mixture
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(d);
-      WaveList<2, CppTp<2> > waveList;
+      WaveList<2,CPT> waveList;
       waveList.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
@@ -343,8 +343,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<2, CppTp<2> > > wFields;
-      DArray< RField<2, CppTp<2> > > cFields;
+      DArray< RField<2,CPT> > wFields;
+      DArray< RField<2,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -407,7 +407,7 @@ public:
    void testSolver2D_hex()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<2, CppTp<2> > mixture;
+      Rp::Mixture<2,CPT> mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture2d_hex", in);
@@ -420,10 +420,10 @@ public:
 
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(d);
 
-      WaveList<2, CppTp<2> > waveList;
+      WaveList<2,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);
@@ -437,8 +437,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<2, CppTp<2> > > wFields;
-      DArray< RField<2, CppTp<2> > > cFields;
+      DArray< RField<2,CPT> > wFields;
+      DArray< RField<2,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -497,7 +497,7 @@ public:
    void testSolver3D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<3, CppTp<3> > mixture;
+      Rp::Mixture<3,CPT> mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture3d", in);
@@ -510,10 +510,10 @@ public:
 
       Mesh<3> mesh;
       mesh.setDimensions(d);
-      FFT<3, CppTp<3> > fft;
+      FFT<3,CPT> fft;
       fft.setup(d);
 
-      WaveList<3, CppTp<3> > waveList;
+      WaveList<3,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);
@@ -527,8 +527,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<3, CppTp<3> > > wFields;
-      DArray< RField<3, CppTp<3> > > cFields;
+      DArray< RField<3,CPT> > wFields;
+      DArray< RField<3,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();

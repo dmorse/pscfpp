@@ -12,8 +12,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class LinearRamp<1, CudaTp<1> >;
-      template class LinearRamp<2, CudaTp<2> >;
-      template class LinearRamp<3, CudaTp<3> >;
+      template class LinearRamp<1,CUT>;
+      template class LinearRamp<2,CUT>;
+      template class LinearRamp<3,CUT>;
    }
 }

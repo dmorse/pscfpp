@@ -21,8 +21,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class ConcentrationWriter<1, CppTp<1> >;
-      template class ConcentrationWriter<2, CppTp<2> >;
-      template class ConcentrationWriter<3, CppTp<3> >;
+      template class ConcentrationWriter<1,CPT>;
+      template class ConcentrationWriter<2,CPT>;
+      template class ConcentrationWriter<3,CPT>;
    }
 }

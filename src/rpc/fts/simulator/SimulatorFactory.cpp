@@ -16,8 +16,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class SimulatorFactory<1, CppTp<1> >;
-      template class SimulatorFactory<2, CppTp<2> >;
-      template class SimulatorFactory<3, CppTp<3> >;
+      template class SimulatorFactory<1,CPT>;
+      template class SimulatorFactory<2,CPT>;
+      template class SimulatorFactory<3,CPT>;
    }
 }

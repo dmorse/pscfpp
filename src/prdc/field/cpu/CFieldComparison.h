@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>        // specialized template argument
+#include <pscf/backends/CPT.h>        // specialized template argument
 
 // Forward declarations
 namespace Util {
@@ -34,7 +34,7 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class CFieldComparison<D, CppTp<D> >
+   class CFieldComparison<D,CPT>
    {
 
    public:
@@ -58,7 +58,7 @@ namespace Prdc {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */
-      double compare(CField<D, CppTp<D> > const& a, CField<D, CppTp<D> > const& b);
+      double compare(CField<D,CPT> const& a, CField<D,CPT> const& b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -74,8 +74,8 @@ namespace Prdc {
       * \param b  2nd DArray of field
       * \return   maximum element-by-element difference (maxDiff)
       */
-      double compare(DArray< CField<D, CppTp<D> > > const& a,
-                     DArray< CField<D, CppTp<D> > > const& b);
+      double compare(DArray< CField<D,CPT> > const& a,
+                     DArray< CField<D,CPT> > const& b);
 
       /**
       * Return the precomputed maximum element-by-element difference.
@@ -106,9 +106,9 @@ namespace Prdc {
    };
 
    // Explicit instantiation declarations
-   extern template class CFieldComparison<1, CppTp<1> >;
-   extern template class CFieldComparison<2, CppTp<2> >;
-   extern template class CFieldComparison<3, CppTp<3> >;
+   extern template class CFieldComparison<1,CPT>;
+   extern template class CFieldComparison<2,CPT>;
+   extern template class CFieldComparison<3,CPT>;
 
 
 } // namespace Prdc

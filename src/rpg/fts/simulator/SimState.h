@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/simulator/SimState.h>  // class template
-#include <pscf/cuda/CudaTp.h>           // template argument
+#include <pscf/backends/CUT.h>           // template argument
 
 //Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class SimState<1, CudaTp<1> >;
-      extern template class SimState<2, CudaTp<2> >;
-      extern template class SimState<3, CudaTp<3> >;
+      extern template class SimState<1,CUT>;
+      extern template class SimState<2,CUT>;
+      extern template class SimState<3,CUT>;
    }
 }
 #endif

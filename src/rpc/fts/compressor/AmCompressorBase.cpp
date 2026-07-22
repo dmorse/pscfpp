@@ -14,7 +14,7 @@
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class AmIteratorTmpl< Rp::Compressor<1, CppTp<1> >, FftwDRArray<double> >;
-   template class AmIteratorTmpl< Rp::Compressor<2, CppTp<2> >, FftwDRArray<double> >; 
-   template class AmIteratorTmpl< Rp::Compressor<3, CppTp<3> >, FftwDRArray<double> >;
+   template class AmIteratorTmpl< Rp::Compressor<1,CPT>, FftwDRArray<double> >;
+   template class AmIteratorTmpl< Rp::Compressor<2,CPT>, FftwDRArray<double> >; 
+   template class AmIteratorTmpl< Rp::Compressor<3,CPT>, FftwDRArray<double> >;
 }

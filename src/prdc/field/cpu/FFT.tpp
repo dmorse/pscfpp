@@ -55,7 +55,7 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   FFT<D, CppTp<D> >::FFT()
+   FFT<D,CPT>::FFT()
     : meshDimensions_(0),
       rSize_(0),
       kSize_(0),
@@ -70,7 +70,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   FFT<D, CppTp<D> >::~FFT()
+   FFT<D,CPT>::~FFT()
    {
       if (rcfPlan_) {
          fftw_destroy_plan(rcfPlan_);
@@ -90,7 +90,7 @@ namespace Prdc {
    * Setup mesh dimensions, work memory and FFT plans.
    */
    template <int D>
-   void FFT<D, CppTp<D> >::setup(IntVec<D> const & meshDimensions)
+   void FFT<D,CPT>::setup(IntVec<D> const & meshDimensions)
    {
       // Precondition
       UTIL_CHECK(!isSetup_);
@@ -122,17 +122,17 @@ namespace Prdc {
       UTIL_CHECK(kFieldCopy_.capacity() == kSize_);
 
       // Create temporary RField and CField objects used for plans
-      RField<D, CppTp<D> > rField;
+      RField<D,CPT> rField;
       rField.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == rField.meshDimensions());
       UTIL_CHECK(rField.capacity() == rSize_);
 
-      CField<D, CppTp<D> > cFieldIn;
+      CField<D,CPT> cFieldIn;
       cFieldIn.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == cFieldIn.meshDimensions());
       UTIL_CHECK(cFieldIn.capacity() == rSize_);
 
-      CField<D, CppTp<D> > cFieldOut;
+      CField<D,CPT> cFieldOut;
       cFieldOut.allocate(meshDimensions);
       UTIL_CHECK(meshDimensions == cFieldOut.meshDimensions());
       UTIL_CHECK(cFieldOut.capacity() == rSize_);
@@ -149,8 +149,8 @@ namespace Prdc {
    * Execute real-to-complex forward transform.
    */
    template <int D>
-   void FFT<D, CppTp<D> >::forwardTransform(RField<D, CppTp<D> > const & rField,
-                                 RFieldDft<D, CppTp<D> >& kField)
+   void FFT<D,CPT>::forwardTransform(RField<D,CPT> const & rField,
+                                 RFieldDft<D,CPT>& kField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -177,9 +177,9 @@ namespace Prdc {
    */
    template <int D>
    void
-   FFT<D, CppTp<D> >::inverseTransformUnsafe(
-                              RFieldDft<D, CppTp<D> > & kField, 
-                              RField<D, CppTp<D> >& rField)
+   FFT<D,CPT>::inverseTransformUnsafe(
+                              RFieldDft<D,CPT> & kField, 
+                              RField<D,CPT>& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -197,9 +197,9 @@ namespace Prdc {
    */
    template <int D>
    void
-   FFT<D, CppTp<D> >::inverseTransformSafe(
-                              RFieldDft<D, CppTp<D> > const & kField,
-                              RField<D, CppTp<D> >& rField) const
+   FFT<D,CPT>::inverseTransformSafe(
+                              RFieldDft<D,CPT> const & kField,
+                              RField<D,CPT>& rField) const
    {
       UTIL_CHECK(kFieldCopy_.capacity() == kField.capacity());
 
@@ -214,9 +214,9 @@ namespace Prdc {
    */
    template <int D>
    void
-   FFT<D, CppTp<D> >::forwardTransform(
-                           CField<D, CppTp<D> > const & rField, 
-                           CField<D, CppTp<D> >& kField) const
+   FFT<D,CPT>::forwardTransform(
+                           CField<D,CPT> const & rField, 
+                           CField<D,CPT>& kField) const
    {
       UTIL_CHECK(isSetup_)
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -242,9 +242,9 @@ namespace Prdc {
    */
    template <int D>
    void
-   FFT<D, CppTp<D> >::inverseTransform(
-                           CField<D, CppTp<D> > const & kField, 
-                           CField<D, CppTp<D> >& rField)
+   FFT<D,CPT>::inverseTransform(
+                           CField<D,CPT> const & kField, 
+                           CField<D,CPT>& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -265,7 +265,7 @@ namespace Prdc {
    * Compute dimensions and size of the k-size mesh (static)
    */
    template <int D>
-   void FFT<D, CppTp<D> >::computeKMesh(
+   void FFT<D,CPT>::computeKMesh(
                              IntVec<D> const & rMeshDimensions,
                              IntVec<D> & kMeshDimensions,
                              int & kSize )

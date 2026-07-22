@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/compressor/CompressorFactory.h>  // base class template
-#include <pscf/cuda/CudaTp.h>                     // base class argument
+#include <pscf/backends/CUT.h>                     // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {
 namespace Rp {
-   extern template class CompressorFactory<1, CudaTp<1> >;
-   extern template class CompressorFactory<2, CudaTp<2> >;
-   extern template class CompressorFactory<3, CudaTp<3> >;
+   extern template class CompressorFactory<1,CUT>;
+   extern template class CompressorFactory<2,CUT>;
+   extern template class CompressorFactory<3,CUT>;
 }
 }
 #endif

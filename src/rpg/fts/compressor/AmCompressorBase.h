@@ -16,16 +16,16 @@
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/fts/compressor/Compressor.h>   // base class argument
-#include <pscf/cuda/CudaTp.h>               // base class argument
+#include <pscf/backends/CUT.h>               // base class argument
 #include <pscf/cuda/DeviceArray.h>          // base class argument
 #include <pscf/cuda/cudaTypes.h>            // base class argument
 
 namespace Pscf {
    extern template
-   class AmIteratorTmpl< Rp::Compressor<1, CudaTp<1> >, DeviceArray<cudaReal> >;
+   class AmIteratorTmpl< Rp::Compressor<1,CUT>, DeviceArray<cudaReal> >;
    extern template
-   class AmIteratorTmpl< Rp::Compressor<2, CudaTp<2> >, DeviceArray<cudaReal> >;
+   class AmIteratorTmpl< Rp::Compressor<2,CUT>, DeviceArray<cudaReal> >;
    extern template
-   class AmIteratorTmpl< Rp::Compressor<3, CudaTp<3> >, DeviceArray<cudaReal> >;
+   class AmIteratorTmpl< Rp::Compressor<3,CUT>, DeviceArray<cudaReal> >;
 }
 #endif

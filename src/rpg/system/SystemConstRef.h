@@ -9,14 +9,14 @@
 */
 
 #include <rp/system/SystemConstRef.h>   // base class template
-#include <pscf/cuda/CudaTp.h>           // base class parameter
+#include <pscf/backends/CUT.h>           // base class parameter
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class SystemConstRef<1, CudaTp<1> >;
-      extern template class SystemConstRef<2, CudaTp<2> >;
-      extern template class SystemConstRef<3, CudaTp<3> >;
+      extern template class SystemConstRef<1,CUT>;
+      extern template class SystemConstRef<2,CUT>;
+      extern template class SystemConstRef<3,CUT>;
    }
 }
 #endif

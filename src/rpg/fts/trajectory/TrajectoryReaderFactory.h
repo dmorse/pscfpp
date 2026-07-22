@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/trajectory/TrajectoryReaderFactory.h>
-#include <pscf/cuda/CudaTp.h>
+#include <pscf/backends/CUT.h>
 
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class TrajectoryReaderFactory<1, CudaTp<1> >;
-      extern template class TrajectoryReaderFactory<2, CudaTp<2> >;
-      extern template class TrajectoryReaderFactory<3, CudaTp<3> >;
+      extern template class TrajectoryReaderFactory<1,CUT>;
+      extern template class TrajectoryReaderFactory<2,CUT>;
+      extern template class TrajectoryReaderFactory<3,CUT>;
    }
 }
 #endif

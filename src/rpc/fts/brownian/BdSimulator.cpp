@@ -28,8 +28,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BdSimulator<1, CppTp<1> >;
-      template class BdSimulator<2, CppTp<2> >;
-      template class BdSimulator<3, CppTp<3> >;
+      template class BdSimulator<1,CPT>;
+      template class BdSimulator<2,CPT>;
+      template class BdSimulator<3,CPT>;
    }
 }

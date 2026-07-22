@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/compressor/LrAmCompressor.h>    // base class template
-#include <pscf/cuda/CudaTp.h>                    // base class argument
+#include <pscf/backends/CUT.h>                    // base class argument
 
 #include <rpg/fts/compressor/AmCompressorBase.h> // indirect base
 #include <rpg/fts/compressor/IntraCorrelation.h> // base member
@@ -20,9 +20,9 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class LrAmCompressor<1, CudaTp<1> >;
-      extern template class LrAmCompressor<2, CudaTp<2> >;
-      extern template class LrAmCompressor<3, CudaTp<3> >;
+      extern template class LrAmCompressor<1,CUT>;
+      extern template class LrAmCompressor<2,CUT>;
+      extern template class LrAmCompressor<3,CUT>;
    }
 }
 #endif

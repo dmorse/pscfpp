@@ -37,7 +37,7 @@ using namespace Pscf::Prdc;
 class CompressorTest : public LogFileUnitTest
 {
 
-   Rp::System<3, CudaTp<3> > system;
+   Rp::System<3,CUT> system;
    
 public:
    
@@ -45,7 +45,7 @@ public:
    {  setVerbose(0); }
    
    template <int D>
-   void initSystem(Rp::System<D, CudaTp<D> >& system, std::string filename)
+   void initSystem(Rp::System<D,CUT>& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -58,24 +58,24 @@ public:
    }
    
    template <int D>
-   void randomStep(Rp::System<D, CudaTp<D> >& system)
+   void randomStep(Rp::System<D,CUT>& system)
    {
       // Random change in pressure field
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<D> const & dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3, CudaTp<3> > > w2;
+      DArray< RField<3,CUT> > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
-      RField<D, CudaTp<D> > randomField;
+      RField<D,CUT> randomField;
       randomField.allocate(dimensions);
       
       double stepSize = 1e-1;
       CudaVecRandom vecRandom;
       vecRandom.setSeed(0);
-      DArray< RField<3, CudaTp<3> > > const & w = system.w().rgrid();
+      DArray< RField<3,CUT> > const & w = system.w().rgrid();
       
       // For multi-component copolymer
       for (int i = 0; i < nMonomer; i++){
@@ -98,20 +98,20 @@ public:
    }
    
    template <int D>
-   void addPressureField(Rp::System<D, CudaTp<D> >& system)
+   void addPressureField(Rp::System<D,CUT>& system)
    {
       // Random change in pressure field
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<D> const & dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3, CudaTp<3> > > w2;
+      DArray< RField<3,CUT> > w2;
       w2.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w2[i].allocate(dimensions);
       }
-      DArray< RField<3, CudaTp<3> > > const & w = system.w().rgrid();
+      DArray< RField<3,CUT> > const & w = system.w().rgrid();
       
-      RField<D, CudaTp<D> > randomField;
+      RField<D,CUT> randomField;
       randomField.allocate(dimensions);
       
       CudaVecRandom vecRandom;
@@ -143,7 +143,7 @@ public:
    */ 
    template <typename Compressor>
    void testCompressor(Compressor& compressor, 
-                       Rp::System<3, CudaTp<3> >& system, 
+                       Rp::System<3,CUT>& system, 
                        std::string infilename, 
                        char const * outfilename)
    {
@@ -157,7 +157,7 @@ public:
       IntVec<3> const & dimensions = system.domain().mesh().dimensions();
       
       // Store value of input chemical potential fields
-      DArray< RField<3, CudaTp<3> > > w0;
+      DArray< RField<3,CUT> > w0;
       w0.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w0[i].allocate(dimensions);
@@ -174,7 +174,7 @@ public:
       compressor.compress();
       
       // Compute incompressible error
-      RField<3, CudaTp<3> > error;
+      RField<3,CUT> error;
       error.allocate(dimensions);
       VecOp::eqS(error, -1.0);
       for (int i = 0; i < nMonomer; i++) {
@@ -191,7 +191,7 @@ public:
       addPressureField(system);
       
       compressor.compress();
-      DArray< RField<3, CudaTp<3> > > w1;
+      DArray< RField<3,CUT> > w1;
       w1.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          w1[i].allocate(dimensions);
@@ -201,7 +201,7 @@ public:
          VecOp::eqV(w1[i], system.w().rgrid(i));
       }
       
-      RFieldComparison<3, CudaTp<3> > comparison;
+      RFieldComparison<3,CUT> comparison;
       comparison.compare(w0, w1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
       
@@ -211,8 +211,8 @@ public:
    void testAmCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CudaTp<3> > system;
-      Rp::AmCompressor<3, CudaTp<3> > amCompressor(system);
+      Rp::System<3,CUT> system;
+      Rp::AmCompressor<3,CUT> amCompressor(system);
       testCompressor(amCompressor, system, 
                      "in/param_AmCompressor",
                      "out/testAmCompressor.log");
@@ -221,8 +221,8 @@ public:
    void testLrCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CudaTp<3> > system;
-      Rp::LrCompressor<3, CudaTp<3> > lrCompressor(system);
+      Rp::System<3,CUT> system;
+      Rp::LrCompressor<3,CUT> lrCompressor(system);
       testCompressor(lrCompressor,  system, 
                      "in/param_LrCompressor", 
                      "out/testLrCompressor.log");
@@ -231,8 +231,8 @@ public:
    void testLrAmCompressor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CudaTp<3> > system;
-      Rp::LrAmCompressor<3, CudaTp<3> > lrAmCompressor(system);
+      Rp::System<3,CUT> system;
+      Rp::LrAmCompressor<3,CUT> lrAmCompressor(system);
       testCompressor(lrAmCompressor, system, 
                      "in/param_LrAmCompressor",
                      "out/testLrAmCompressor.log");

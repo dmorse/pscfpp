@@ -10,11 +10,11 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FieldIoBase<1, CudaTp<1> >;
-      template class FieldIoBase<2, CudaTp<2> >;
-      template class FieldIoBase<3, CudaTp<3> >;
-      template class FieldIo<1, CudaTp<1> >;
-      template class FieldIo<2, CudaTp<2> >;
-      template class FieldIo<3, CudaTp<3> >;
+      template class FieldIoBase<1,CUT>;
+      template class FieldIoBase<2,CUT>;
+      template class FieldIoBase<3,CUT>;
+      template class FieldIo<1,CUT>;
+      template class FieldIo<2,CUT>;
+      template class FieldIo<3,CUT>;
    }
 }

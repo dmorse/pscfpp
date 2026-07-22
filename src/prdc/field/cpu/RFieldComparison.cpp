@@ -11,9 +11,9 @@
 namespace Pscf {
 namespace Prdc {
 
-   template class RFieldComparison<1, CppTp<1> >;
-   template class RFieldComparison<2, CppTp<2> >;
-   template class RFieldComparison<3, CppTp<3> >;
+   template class RFieldComparison<1,CPT>;
+   template class RFieldComparison<2,CPT>;
+   template class RFieldComparison<3,CPT>;
 
 } 
 }

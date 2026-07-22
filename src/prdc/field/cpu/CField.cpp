@@ -10,9 +10,9 @@
 namespace Pscf {
 namespace Prdc {
 
-   template class CField<1, CppTp<1> >;
-   template class CField<2, CppTp<2> >;
-   template class CField<3, CppTp<3> >;
+   template class CField<1,CPT>;
+   template class CField<2,CPT>;
+   template class CField<3,CPT>;
 
 }
 }

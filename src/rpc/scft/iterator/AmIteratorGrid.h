@@ -9,7 +9,7 @@
 */
 
 #include <rp/scft/iterator/AmIteratorGrid.h>  // direct base class 
-#include <pscf/cpu/CppTp.h>                 // direct base argument
+#include <pscf/backends/CPT.h>                 // direct base argument
 #include <rpc/scft/iterator/Iterator.h>       // tertiary base class
 //#include <pscf/iterator/AmIteratorTmpl.h>     // secondary base class
 #include <pscf/cpu/FftwDRArray.h>       // indirect base argument
@@ -17,15 +17,15 @@
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
-   class AmIteratorTmpl<Rp::Iterator<1, CppTp<1> >, FftwDRArray<double> >;
+   class AmIteratorTmpl<Rp::Iterator<1,CPT>, FftwDRArray<double> >;
    extern template 
-   class AmIteratorTmpl<Rp::Iterator<2, CppTp<2> >, FftwDRArray<double> >;
+   class AmIteratorTmpl<Rp::Iterator<2,CPT>, FftwDRArray<double> >;
    extern template 
-   class AmIteratorTmpl<Rp::Iterator<3, CppTp<3> >, FftwDRArray<double> >;
+   class AmIteratorTmpl<Rp::Iterator<3,CPT>, FftwDRArray<double> >;
    namespace Rp {
-      extern template class AmIteratorGrid<1, CppTp<1> >;
-      extern template class AmIteratorGrid<2, CppTp<2> >;
-      extern template class AmIteratorGrid<3, CppTp<3> >;
+      extern template class AmIteratorGrid<1,CPT>;
+      extern template class AmIteratorGrid<2,CPT>;
+      extern template class AmIteratorGrid<3,CPT>;
    } 
 }
 #endif

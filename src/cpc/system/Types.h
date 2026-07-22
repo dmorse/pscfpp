@@ -83,10 +83,10 @@ namespace Cpc {
       // using Simulator = Cpc::Simulator<D>;
       // using SimulatorFactory = Cpc::SimulatorFactory<D>;
 
-      //using CField = Prdc::CField<D, CppTp<D> >;
-      //using FFT = Prdc::FFT<D, CppTp<D> >;
-      //using CFieldComparison = Prdc::CFieldComparison<D, CppTp<D> >;
-      //using WaveList = Prdc::WaveList<D, CppTp<D> >;
+      //using CField = Prdc::CField<D,CPT>;
+      //using FFT = Prdc::FFT<D,CPT>;
+      //using CFieldComparison = Prdc::CFieldComparison<D,CPT>;
+      //using WaveList = Prdc::WaveList<D,CPT>;
 
    };
 

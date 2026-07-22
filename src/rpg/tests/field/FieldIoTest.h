@@ -49,10 +49,10 @@ public:
    }
 
    /*
-   * Open and read parameter header to initialize Rp::Domain<D, CudaTp<D> > system.
+   * Open and read parameter header to initialize Rp::Domain<D,CUT> system.
    */
    template <int D>
-   void readParam(std::string filename, Rp::Domain<D, CudaTp<D> >& domain)
+   void readParam(std::string filename, Rp::Domain<D,CUT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -61,10 +61,10 @@ public:
    }
 
    /*
-   * Open and read file header to initialize Rp::Domain<D, CudaTp<D> > system.
+   * Open and read file header to initialize Rp::Domain<D,CUT> system.
    */
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, CudaTp<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D,CUT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -85,7 +85,7 @@ public:
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                       DArray< RField<D, CudaTp<D> > >& fields)
+                       DArray< RField<D,CUT> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -96,7 +96,7 @@ public:
    // Allocate an array of k-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                            DArray< RFieldDft<D, CudaTp<D> > >& fields)
+                            DArray< RFieldDft<D,CUT> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -105,7 +105,7 @@ public:
    }
 
    template <int D>
-   void readFieldsBasis(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
+   void readFieldsBasis(std::string filename, Rp::Domain<D,CUT>& domain,
                    DArray< DArray<double> >& fields)
    {
       std::ifstream in;
@@ -115,8 +115,8 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
-                   DArray< RField<D, CudaTp<D> > >& fields)
+   void readFields(std::string filename, Rp::Domain<D,CUT>& domain,
+                   DArray< RField<D,CUT> >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -125,8 +125,8 @@ public:
    }
 
    template <int D>
-   void readFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
-                   DArray< RFieldDft<D, CudaTp<D> > >& fields)
+   void readFields(std::string filename, Rp::Domain<D,CUT>& domain,
+                   DArray< RFieldDft<D,CUT> >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -135,7 +135,7 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
+   void writeFields(std::string filename, Rp::Domain<D,CUT>& domain,
                    DArray< DArray<double> > const & fields)
    {
       std::ofstream out;
@@ -145,8 +145,8 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
-                   DArray< RField<D, CudaTp<D> > > const & fields)
+   void writeFields(std::string filename, Rp::Domain<D,CUT>& domain,
+                   DArray< RField<D,CUT> > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -155,8 +155,8 @@ public:
    }
 
    template <int D>
-   void writeFields(std::string filename, Rp::Domain<D, CudaTp<D> >& domain,
-                   DArray< RFieldDft<D, CudaTp<D> > > const & fields)
+   void writeFields(std::string filename, Rp::Domain<D,CUT>& domain,
+                   DArray< RFieldDft<D,CUT> > const & fields)
    {
       std::ofstream out;
       openOutputFile(filename, out);
@@ -168,7 +168,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -191,17 +191,17 @@ public:
       DArray< DArray<double> > fb;
       allocateFields(nMonomer_, domain.basis().nBasis(), fb);
 
-      DArray< RField<3, CudaTp<3> > >  fr;
+      DArray< RField<3,CUT> >  fr;
       allocateFields(nMonomer_, domain.mesh().dimensions(), fr);
 
-      DArray< RFieldDft<3, CudaTp<3> > > fk;
+      DArray< RFieldDft<3,CUT> > fk;
       allocateFields(nMonomer_, domain.mesh().dimensions(), fk);
 
    }
 
    void testBasisIo3D(std::string rf, std::string bf)
    {
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/" + rf, domain);
 
@@ -273,20 +273,20 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RField<3, CudaTp<3> > > d_rf_0;
+      DArray< RField<3,CUT> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
-      DArray< RField<3, CudaTp<3> > > d_rf_1;
+      DArray< RField<3,CUT> > d_rf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_1);
 
       readFields("in/w_bcc.rf", domain, d_rf_0);
       writeFields("out/w_bcc.rf", domain, d_rf_0);
       readFields("out/w_bcc.rf", domain, d_rf_1);
 
-      RFieldComparison<3, CudaTp<3> > comparison;
+      RFieldComparison<3,CUT> comparison;
       comparison.compare(d_rf_0, d_rf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
@@ -301,7 +301,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -311,7 +311,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_0;
+      DArray< RFieldDft<3,CUT> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -339,7 +339,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -349,7 +349,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RField<3, CudaTp<3> > > d_rf_0;
+      DArray< RField<3,CUT> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -372,7 +372,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 3;
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
@@ -387,7 +387,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_0;
+      DArray< RFieldDft<3,CUT> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
       readFieldsBasis("in/w_altG.bf", domain, d_bf_0);
@@ -415,7 +415,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -425,7 +425,7 @@ public:
       allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_0;
+      DArray< RFieldDft<3,CUT> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
       readFieldsBasis("in/w_c15_1.bf", domain, d_bf_0);
@@ -454,7 +454,7 @@ public:
       printMethod(TEST_FUNC);
       nMonomer_ = 2;
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       domain.fieldIo().setNMonomer(nMonomer_);
       readHeader("in/c_c15_1.rf", domain);
@@ -490,17 +490,17 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
       DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_0;
+      DArray< RFieldDft<3,CUT> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_1;
+      DArray< RFieldDft<3,CUT> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -509,7 +509,7 @@ public:
       writeFields("out/w_bcc.kf", domain, d_kf_0);
       readFields("out/w_bcc.kf", domain, d_kf_1);
 
-      RFieldDftComparison<3, CudaTp<3> > comparison;
+      RFieldDftComparison<3,CUT> comparison;
       comparison.compare(d_kf_0, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
 
@@ -524,17 +524,17 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
       DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_0;
+      DArray< RFieldDft<3,CUT> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_1;
+      DArray< RFieldDft<3,CUT> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
       readFieldsBasis("in/w_altG.bf", domain, d_bf_0);
@@ -543,7 +543,7 @@ public:
       writeFields("out/w_altG.kf", domain, d_kf_0);
       readFields("out/w_altG.kf", domain, d_kf_1);
 
-      RFieldDftComparison<3, CudaTp<3> > comparison;
+      RFieldDftComparison<3,CUT> comparison;
       comparison.compare(d_kf_0, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
 
@@ -558,17 +558,17 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<1, CudaTp<1> > domain;
+      Rp::Domain<1,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
       DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
-      DArray< RFieldDft<1, CudaTp<1> > > d_kf_0;
+      DArray< RFieldDft<1,CUT> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RFieldDft<1, CudaTp<1> > > d_kf_1;
+      DArray< RFieldDft<1,CUT> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
       readFieldsBasis("in/w_lam.bf", domain, d_bf_0);
@@ -577,7 +577,7 @@ public:
       writeFields("out/w_lam.kf", domain, d_kf_0);
       readFields("out/w_lam.kf", domain, d_kf_1);
 
-      RFieldDftComparison<1, CudaTp<1> > comparison;
+      RFieldDftComparison<1,CUT> comparison;
       comparison.compare(d_kf_0, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
@@ -592,7 +592,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
@@ -602,16 +602,16 @@ public:
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_1);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_0;
+      DArray< RFieldDft<3,CUT> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_1;
+      DArray< RFieldDft<3,CUT> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_2;
+      DArray< RFieldDft<3,CUT> > d_kf_2;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_2);
 
-      DArray< RField<3, CudaTp<3> > > d_rf_0;
+      DArray< RField<3,CUT> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_bcc.bf", domain, d_bf_0);
@@ -622,7 +622,7 @@ public:
 
       #if 0
       // Demonstrate that input d_kf_0 is destroyed/overwritten by above
-      RFieldDftComparison<3, CudaTp<3> > check;
+      RFieldDftComparison<3,CUT> check;
       check.compare(d_kf_2, d_kf_0);
       std::cout  << std::endl;
       std::cout  << Dbl(check.maxDiff(), 21, 13) << "\n";
@@ -631,7 +631,7 @@ public:
 
       domain.fieldIo().convertRGridToKGrid(d_rf_0, d_kf_1);
 
-      RFieldDftComparison<3, CudaTp<3> > comparison;
+      RFieldDftComparison<3,CUT> comparison;
       comparison.compare(d_kf_2, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
       if (verbose() > 0) {
@@ -645,7 +645,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
@@ -655,16 +655,16 @@ public:
       DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_1);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_0;
+      DArray< RFieldDft<3,CUT> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_1;
+      DArray< RFieldDft<3,CUT> > d_kf_1;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
 
-      DArray< RFieldDft<3, CudaTp<3> > > d_kf_2;
+      DArray< RFieldDft<3,CUT> > d_kf_2;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_2);
 
-      DArray< RField<3, CudaTp<3> > > d_rf_0;
+      DArray< RField<3,CUT> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
       readFieldsBasis("in/w_c15_1.bf", domain, d_bf_0);
@@ -675,7 +675,7 @@ public:
 
       #if 0
       // Demonstrate that input d_kf_0 is destroyed/overwritten by above
-      RFieldDftComparison<3, CudaTp<3> > check;
+      RFieldDftComparison<3,CUT> check;
       check.compare(d_kf_2, d_kf_0);
       std::cout  << std::endl;
       std::cout  << Dbl(check.maxDiff(), 21, 13) << "\n";
@@ -684,7 +684,7 @@ public:
 
       domain.fieldIo().convertRGridToKGrid(d_rf_0, d_kf_1);
 
-      RFieldDftComparison<3, CudaTp<3> > comparison;
+      RFieldDftComparison<3,CUT> comparison;
       comparison.compare(d_kf_2, d_kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
       if (verbose() > 0) {

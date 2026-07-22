@@ -27,9 +27,9 @@ private:
 
    typedef double Data;
 
-   DArray< RField<1, CppTp<1> > > ref;
-   DArray< RField<1, CppTp<1> > > in;
-   DArray< RField<1, CppTp<1> > > out;
+   DArray< RField<1,CPT> > ref;
+   DArray< RField<1,CPT> > in;
+   DArray< RField<1,CPT> > out;
 
 public:
 

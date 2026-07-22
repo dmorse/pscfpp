@@ -2,14 +2,14 @@
 #define RPG_ANALYZER_H
 
 #include <rp/fts/analyzer/Analyzer.h>   // class template
-#include <pscf/cuda/CudaTp.h>           // class argument
+#include <pscf/backends/CUT.h>           // class argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Analyzer<1, CudaTp<1> >;
-      extern template class Analyzer<2, CudaTp<2> >;
-      extern template class Analyzer<3, CudaTp<3> >;
+      extern template class Analyzer<1,CUT>;
+      extern template class Analyzer<2,CUT>;
+      extern template class Analyzer<3,CUT>;
    }
 }
 #endif

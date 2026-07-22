@@ -14,8 +14,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class CFields<1, CudaTp<1> >;
-      template class CFields<2, CudaTp<2> >;
-      template class CFields<3, CudaTp<3> >;
+      template class CFields<1,CUT>;
+      template class CFields<2,CUT>;
+      template class CFields<3,CUT>;
    } 
 }

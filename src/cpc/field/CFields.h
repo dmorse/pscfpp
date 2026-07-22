@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>         // backend class
+#include <pscf/backends/CPT.h>         // backend class
 #include <cp/field/CFields.h>       // base class template
 #include <prdc/field/cpu/CField.h>  // base class template argument
 #include <cpc/field/FieldIo.h>      // base class template argument
@@ -30,12 +30,12 @@ namespace Cpc {
    */
    template <int D>
    class CFields
-     : public Cp::CFields<D, CField<D, CppTp<D> >, FieldIo<D> >
+     : public Cp::CFields<D, CField<D,CPT>, FieldIo<D> >
    {
    public:
 
       /// Alias for base class.
-      using Base = Cp::CFields< D, CField<D, CppTp<D> >, FieldIo<D> >;
+      using Base = Cp::CFields< D, CField<D,CPT>, FieldIo<D> >;
 
       // Inherited public member functions
       using Base::setFieldIo;
@@ -62,11 +62,11 @@ namespace Cpc {
 namespace Pscf {
    namespace Cp {
       extern template 
-      class CFields<1, Prdc::CField<1, CppTp<1> >, Cpc::FieldIo<1> >;
+      class CFields<1, Prdc::CField<1,CPT>, Cpc::FieldIo<1> >;
       extern template 
-      class CFields<2, Prdc::CField<2, CppTp<2> >, Cpc::FieldIo<2> >;
+      class CFields<2, Prdc::CField<2,CPT>, Cpc::FieldIo<2> >;
       extern template 
-      class CFields<3, Prdc::CField<3, CppTp<3> >, Cpc::FieldIo<3> >;
+      class CFields<3, Prdc::CField<3,CPT>, Cpc::FieldIo<3> >;
    } 
    namespace Cpc {
       extern template class CFields<1>;

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ShiftMoveBase.h> // base class template
-#include <pscf/cuda/CudaTp.h>                // base class argument
+#include <pscf/backends/CUT.h>                // base class argument
 #include <rpg/fts/montecarlo/McMove.h>       // indirect base class
 #include <prdc/field/cuda/RField.h>          // base class member
 #include <pscf/cuda/HostDArray.h>            // member
@@ -28,8 +28,8 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ShiftMove<D, CudaTp<D> >
-    : public ShiftMoveBase<D, CudaTp<D> >
+   class ShiftMove<D,CUT>
+    : public ShiftMoveBase<D,CUT>
    {
 
    public:
@@ -39,7 +39,7 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator
       */
-      ShiftMove(McSimulator<D, CudaTp<D> >& simulator);
+      ShiftMove(McSimulator<D,CUT>& simulator);
 
       /**
       * Setup before simulation.
@@ -48,7 +48,7 @@ namespace Rp {
 
    protected:
 
-      using McMove<D, CudaTp<D> >::system;
+      using McMove<D,CUT>::system;
     
       /**
       * Compute and store shifted w fields.
@@ -68,7 +68,7 @@ namespace Rp {
       // Work space on CPU for a shifted field
       HostDArray<cudaReal> wNew_;
 
-      using ShiftMoveBaseT = ShiftMoveBase<D, CudaTp<D> >;
+      using ShiftMoveBaseT = ShiftMoveBase<D,CUT>;
 
    };
 
@@ -79,12 +79,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class ShiftMoveBase<1, CudaTp<1> >;
-      extern template class ShiftMoveBase<2, CudaTp<2> >;
-      extern template class ShiftMoveBase<3, CudaTp<3> >;
-      extern template class ShiftMove<1, CudaTp<1> >;
-      extern template class ShiftMove<2, CudaTp<2> >;
-      extern template class ShiftMove<3, CudaTp<3> >;
+      extern template class ShiftMoveBase<1,CUT>;
+      extern template class ShiftMoveBase<2,CUT>;
+      extern template class ShiftMoveBase<3,CUT>;
+      extern template class ShiftMove<1,CUT>;
+      extern template class ShiftMove<2,CUT>;
+      extern template class ShiftMove<3,CUT>;
    }
 }
 #endif

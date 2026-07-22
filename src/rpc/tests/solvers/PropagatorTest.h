@@ -37,7 +37,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D> 
-   void setupBlock(Rp::Block<D, CppTp<D> >& block)
+   void setupBlock(Rp::Block<D,CPT>& block)
    {
       block.setId(0);
       if (PolymerModel::isThread()) {
@@ -75,7 +75,7 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Block<1, CppTp<1> > block;
+      Rp::Block<1,CPT> block;
    }
 
    void testSetup1D()
@@ -83,20 +83,20 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<1, CppTp<1> > block;
+      Rp::Block<1,CPT> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1, CppTp<1> > waveList;
+      WaveList<1,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -119,19 +119,19 @@ public:
       printMethod(TEST_FUNC);
 
       //Create and initialize block
-      Rp::Block<2, CppTp<2> > block;
+      Rp::Block<2,CPT> block;
       setupBlock<2>(block);
 
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2, CppTp<2> > waveList;
+      WaveList<2,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       block.associate(mesh, fft, unitCell, waveList);
@@ -154,19 +154,19 @@ public:
       printMethod(TEST_FUNC);
 
       //Create and initialize block
-      Rp::Block<3, CppTp<3> > block;
+      Rp::Block<3,CPT> block;
       setupBlock<3>(block);
 
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3, CppTp<3> > fft;
+      FFT<3,CPT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
-      WaveList<3, CppTp<3> > waveList;
+      WaveList<3,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       // Associate block
@@ -194,19 +194,19 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<1, CppTp<1> > block;
+      Rp::Block<1,CPT> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1, CppTp<1> > waveList;
+      WaveList<1,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -220,7 +220,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
-      RField<1, CppTp<1> > w;
+      RField<1,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -236,19 +236,19 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<2, CppTp<2> > block;
+      Rp::Block<2,CPT> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2, CppTp<2> > waveList;
+      WaveList<2,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -263,7 +263,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2, CppTp<2> > w;
+      RField<2,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -281,19 +281,19 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Rp::Block<2, CppTp<2> > block;
+      Rp::Block<2,CPT> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2, CppTp<2> > waveList;
+      WaveList<2,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.5;
@@ -308,7 +308,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2, CppTp<2> > w;
+      RField<2,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -324,20 +324,20 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<3, CppTp<3> > block;
+      Rp::Block<3,CPT> block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      FFT<3, CppTp<3> > fft;
+      FFT<3,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
-      WaveList<3, CppTp<3> > waveList;
+      WaveList<3,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -353,7 +353,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      RField<3, CppTp<3> > w;
+      RField<3,CPT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       for (int i=0; i < w.capacity(); ++i) {
@@ -369,20 +369,20 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<1, CppTp<1> > block;
+      Rp::Block<1,CPT> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
       double a = unitCell.parameter(0);
 
-      WaveList<1, CppTp<1> > waveList;
+      WaveList<1,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -394,7 +394,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      RField<1, CppTp<1> > w;
+      RField<1,CPT> w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -407,8 +407,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<1, CppTp<1> > qin;
-      RField<1, CppTp<1> > qout;
+      RField<1,CPT> qin;
+      RField<1,CPT> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -449,20 +449,20 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Rp::Block<1, CppTp<1> > block;
+      Rp::Block<1,CPT> block;
       setupBlock<1>(block);
       int nBead = block.nBead();
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1, CppTp<1> > waveList;
+      WaveList<1,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 1.00;
@@ -475,7 +475,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      RField<1, CppTp<1> > w;
+      RField<1,CPT> w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -488,8 +488,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<1, CppTp<1> > qin;
-      RField<1, CppTp<1> > qout;
+      RField<1,CPT> qin;
+      RField<1,CPT> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -510,7 +510,7 @@ public:
       }
   
       // Test propagator solve, block owns both vertices
-      Rp::Propagator<1, CppTp<1> >& p0 = block.propagator(0);
+      Rp::Propagator<1,CPT>& p0 = block.propagator(0);
       p0.solve();
 
       // Check head slice
@@ -531,7 +531,7 @@ public:
          TEST_ASSERT(eq(p0.q(nBead)[i], expected));
       }
 
-      Rp::Propagator<1, CppTp<1> >& p1 = block.propagator(1);
+      Rp::Propagator<1,CPT>& p1 = block.propagator(1);
       p1.solve();
 
       #if 0
@@ -548,20 +548,20 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<2, CppTp<2> > block;
+      Rp::Block<2,CPT> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
 
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
-      WaveList<2, CppTp<2> > waveList;
+      WaveList<2,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -576,7 +576,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2, CppTp<2> > w;
+      RField<2,CPT> w;
       w.allocate(mesh.dimensions());
       MeshIterator<2> iter(mesh.dimensions());
 
@@ -590,8 +590,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<2, CppTp<2> > qin;
-      RField<2, CppTp<2> > qout;
+      RField<2,CPT> qin;
+      RField<2,CPT> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -641,20 +641,20 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Rp::Block<3, CppTp<3> > block;
+      Rp::Block<3,CPT> block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
 
-      FFT<3, CppTp<3> > fft;
+      FFT<3,CPT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<3> unitCell;
       setupUnitCell<3>(unitCell, "in/Orthorhombic");
 
-      WaveList<3, CppTp<3> > waveList;
+      WaveList<3,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       double ds = 0.02;
@@ -670,7 +670,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      RField<3, CppTp<3> > w;
+      RField<3,CPT> w;
       w.allocate(mesh.dimensions());
       MeshIterator<3> iter(mesh.dimensions());
 
@@ -684,8 +684,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<3, CppTp<3> > qin;
-      RField<3, CppTp<3> > qout;
+      RField<3,CPT> qin;
+      RField<3,CPT> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 

@@ -20,7 +20,7 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   RFieldDft<D, CppTp<D> >::RFieldDft()
+   RFieldDft<D,CPT>::RFieldDft()
     : FftwDRArray<fftw_complex>(),
       meshDimensions_(0),
       dftDimensions_(0)
@@ -30,7 +30,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   RFieldDft<D, CppTp<D> >::~RFieldDft()
+   RFieldDft<D,CPT>::~RFieldDft()
    {}
 
    /*
@@ -39,7 +39,7 @@ namespace Prdc {
    * Allocates new memory and copies all elements by value.
    */
    template <int D>
-   RFieldDft<D, CppTp<D> >::RFieldDft(const RFieldDft<D, CppTp<D> >& other)
+   RFieldDft<D,CPT>::RFieldDft(const RFieldDft<D,CPT>& other)
     : FftwDRArray<fftw_complex>(),
       meshDimensions_(0),
       dftDimensions_(0)
@@ -65,7 +65,7 @@ namespace Prdc {
    * \param other the rhs Field
    */
    template <int D>
-   RFieldDft<D, CppTp<D> >& RFieldDft<D, CppTp<D> >::operator = (const RFieldDft<D, CppTp<D> >& other)
+   RFieldDft<D,CPT>& RFieldDft<D,CPT>::operator = (const RFieldDft<D,CPT>& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -96,7 +96,7 @@ namespace Prdc {
    * Allocate the underlying array for an FFT grid.
    */
    template <int D>
-   void RFieldDft<D, CppTp<D> >::allocate(IntVec<D> const & meshDimensions)
+   void RFieldDft<D,CPT>::allocate(IntVec<D> const & meshDimensions)
    {
       // Copy real space grid dimensions
       for (int i = 0; i < D; ++i) {
@@ -106,7 +106,7 @@ namespace Prdc {
 
       // Compute dimensions and size for k-space grid
       int size; 
-      FFT<D, CppTp<D> >::computeKMesh(meshDimensions, dftDimensions_, size);
+      FFT<D,CPT>::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Allocate memory
       FftwDRArray<fftw_complex>::allocate(size);
@@ -116,7 +116,7 @@ namespace Prdc {
    * Dellocate the underlying C array and clear dimensions.
    */
    template <int D>
-   void RFieldDft<D, CppTp<D> >::deallocate()
+   void RFieldDft<D,CPT>::deallocate()
    {
       FftwDRArray<fftw_complex>::deallocate();
       for (int i = 0; i < D; ++i) {

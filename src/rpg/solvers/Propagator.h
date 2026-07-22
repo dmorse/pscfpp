@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/PropagatorBase.h>   // base class template
-#include <pscf/cuda/CudaTp.h>            // base class template argument
+#include <pscf/backends/CUT.h>            // base class template argument
 #include <pscf/cuda/DeviceArray.h>       // member
 
 namespace Pscf {
@@ -26,8 +26,8 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Propagator<D, CudaTp<D> > 
-    : public Rp::PropagatorBase< D, CudaTp<D> >
+   class Propagator<D,CUT> 
+    : public Rp::PropagatorBase<D,CUT>
    {
 
    public:
@@ -81,7 +81,7 @@ namespace Rp {
    protected:
 
       /// Direct base class.
-      using RpPropagatorT = Rp::PropagatorBase<D, CudaTp<D> >;
+      using RpPropagatorT = Rp::PropagatorBase<D,CUT>;
 
       // Inherited typename alias
       using typename RpPropagatorT::PropagatorTmplT;
@@ -100,7 +100,7 @@ namespace Rp {
       * to be performed on all contour steps simultaneously, which occurs
       * in Block::computeStress.
       * 
-      * Each element of the qFields_ container is an RField<D, CudaTp<D> > that acts
+      * Each element of the qFields_ container is an RField<D,CUT> that acts
       * as a reference array that points to a slice of the contiguous
       * array qFieldsAll_.  This association is created in the allocate
       * or de-allocate functions, and destroyed by the dissociateQFields
@@ -121,7 +121,7 @@ namespace Rp {
    * Return the full array of q-fields.
    */
    template <int D> inline
-   DeviceArray<cudaReal> const & Propagator<D, CudaTp<D> >::qAll()
+   DeviceArray<cudaReal> const & Propagator<D,CUT>::qAll()
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFieldsAll_;
@@ -133,12 +133,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class PropagatorBase<1, CudaTp<1> >;
-      extern template class PropagatorBase<2, CudaTp<2> >;
-      extern template class PropagatorBase<3, CudaTp<3> >;
-      extern template class Propagator<1, CudaTp<1> >;
-      extern template class Propagator<2, CudaTp<2> >;
-      extern template class Propagator<3, CudaTp<3> >;
+      extern template class PropagatorBase<1,CUT>;
+      extern template class PropagatorBase<2,CUT>;
+      extern template class PropagatorBase<3,CUT>;
+      extern template class Propagator<1,CUT>;
+      extern template class Propagator<2,CUT>;
+      extern template class Propagator<3,CUT>;
    }
 }
 #endif

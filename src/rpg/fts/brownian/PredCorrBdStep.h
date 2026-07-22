@@ -9,16 +9,16 @@
 */
 
 #include <rp/fts/brownian/PredCorrBdStep.h> // base class template
-#include <pscf/cuda/CudaTp.h>               // base class template argument 
+#include <pscf/backends/CUT.h>               // base class template argument 
 #include <prdc/field/cuda/RField.h>               // base class member
 #include <rpg/fts/brownian/BdStep.h>        // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Rp::PredCorrBdStep<1, CudaTp<1> >;
-      extern template class Rp::PredCorrBdStep<2, CudaTp<2> >;
-      extern template class Rp::PredCorrBdStep<3, CudaTp<3> >;
+      extern template class Rp::PredCorrBdStep<1,CUT>;
+      extern template class Rp::PredCorrBdStep<2,CUT>;
+      extern template class Rp::PredCorrBdStep<3,CUT>;
    }
 }
 #endif

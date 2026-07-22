@@ -29,17 +29,17 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   MaxOrderParameter<D, CppTp<D> >::MaxOrderParameter(
-                           Simulator<D, CppTp<D> >& simulator,
-                           System<D, CppTp<D> >& system)
-    : MaxOrderParameterBase<D, CppTp<D> >(simulator, system)
+   MaxOrderParameter<D,CPT>::MaxOrderParameter(
+                           Simulator<D,CPT>& simulator,
+                           System<D,CPT>& system)
+    : MaxOrderParameterBase<D,CPT>(simulator, system)
    {}
 
    /*
    * Compute and return maximum of square magnitude Fourier amplitude.
    */
    template <int D>
-   double MaxOrderParameter<D, CppTp<D> >::compute()
+   double MaxOrderParameter<D,CPT>::compute()
    {
       Base::computePsi();
       Base::findMaximum(Base::psi_);
@@ -52,11 +52,11 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class MaxOrderParameterBase<1, CppTp<1> >;
-      template class MaxOrderParameterBase<2, CppTp<2> >;
-      template class MaxOrderParameterBase<3, CppTp<3> >;
-      template class MaxOrderParameter<1, CppTp<1> >;
-      template class MaxOrderParameter<2, CppTp<2> >;
-      template class MaxOrderParameter<3, CppTp<3> >;
+      template class MaxOrderParameterBase<1,CPT>;
+      template class MaxOrderParameterBase<2,CPT>;
+      template class MaxOrderParameterBase<3,CPT>;
+      template class MaxOrderParameter<1,CPT>;
+      template class MaxOrderParameter<2,CPT>;
+      template class MaxOrderParameter<3,CPT>;
    }
 }

@@ -20,7 +20,7 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   RFieldDft<D, CudaTp<D> >::RFieldDft()
+   RFieldDft<D,CUT>::RFieldDft()
     : DeviceArray<cudaComplex>()
    {}
 
@@ -28,7 +28,7 @@ namespace Prdc {
    * Allocating constructor (calls allocate).
    */
    template <int D>
-   RFieldDft<D, CudaTp<D> >::RFieldDft(IntVec<D> const & meshDimensions)
+   RFieldDft<D,CUT>::RFieldDft(IntVec<D> const & meshDimensions)
     : DeviceArray<cudaComplex>()
    {  allocate(meshDimensions); }
 
@@ -36,14 +36,14 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   RFieldDft<D, CudaTp<D> >::~RFieldDft()
+   RFieldDft<D,CUT>::~RFieldDft()
    {}
 
    /*
    * Copy constructor.
    */
    template <int D>
-   RFieldDft<D, CudaTp<D> >::RFieldDft(const RFieldDft<D, CudaTp<D> >& other)
+   RFieldDft<D,CUT>::RFieldDft(const RFieldDft<D,CUT>& other)
     : DeviceArray<cudaComplex>(other)
    {
       meshDimensions_ = other.meshDimensions_;
@@ -54,8 +54,8 @@ namespace Prdc {
    * Assignment from another RFieldDft.
    */
    template <int D>
-   RFieldDft<D, CudaTp<D> >&
-   RFieldDft<D, CudaTp<D> >::operator = (RFieldDft<D, CudaTp<D> > const & other)
+   RFieldDft<D,CUT>&
+   RFieldDft<D,CUT>::operator = (RFieldDft<D,CUT> const & other)
    {
       // Assign data and size of underlying array
       DeviceArray<cudaComplex>::operator = (other);
@@ -71,15 +71,15 @@ namespace Prdc {
    * Assignment from RHS HostDArray<cudaComplex>.
    */
    template <int D>
-   RFieldDft<D, CudaTp<D> >&
-   RFieldDft<D, CudaTp<D> >::operator = (HostDArray<cudaComplex> const & other)
+   RFieldDft<D,CUT>&
+   RFieldDft<D,CUT>::operator = (HostDArray<cudaComplex> const & other)
    {
       // Preconditions: Both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
          UTIL_THROW("Error: RHS HostDArray<cudaComplex> is not allocated.");
       }
       if (!isAllocated()) {
-         UTIL_THROW("Error: LHS RFieldDft<D, CudaTp<D> > is not allocated.");
+         UTIL_THROW("Error: LHS RFieldDft<D,CUT> is not allocated.");
       }
       if (capacity_ != other.capacity()) {
          UTIL_THROW("Cannot assign Fields of unequal capacity");
@@ -95,7 +95,7 @@ namespace Prdc {
    * Allocate underlying DeviceArray<cudaComplex> for the DFT mesh.
    */
    template <int D>
-   void RFieldDft<D, CudaTp<D> >::allocate(const IntVec<D>& meshDimensions)
+   void RFieldDft<D,CUT>::allocate(const IntVec<D>& meshDimensions)
    {
       // Copy and validate dimensions of real space grid
       for (int i = 0; i < D; ++i) {
@@ -105,7 +105,7 @@ namespace Prdc {
 
       // Compute dimensions and size of Fourier space mesh
       int size;
-      FFT<D, CudaTp<D> >::computeKMesh(meshDimensions, dftDimensions_, size);
+      FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Allocate complex array on the GPU with size of DFT mesh
       DeviceArray<cudaComplex>::allocate(size);
@@ -115,7 +115,7 @@ namespace Prdc {
    * Associate this with a slice of a DeviceArray<cudaComplex>.
    */
    template <int D>
-   void RFieldDft<D, CudaTp<D> >::associate(
+   void RFieldDft<D,CUT>::associate(
                 DeviceArray<cudaComplex>& arr,
                 int beginId,
                 IntVec<D> const & meshDimensions)
@@ -128,7 +128,7 @@ namespace Prdc {
 
       // Compute dimensions and size of Fourier space mesh
       int size;
-      FFT<D, CudaTp<D> >::computeKMesh(meshDimensions, dftDimensions_, size);
+      FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Associate data with a slice of input array arr
       DeviceArray<cudaComplex>::associate(arr, beginId, size);

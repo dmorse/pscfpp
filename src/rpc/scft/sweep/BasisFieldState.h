@@ -9,14 +9,14 @@
 */
 
 #include <rp/scft/sweep/BasisFieldState.h>
-#include <pscf/cpu/CppTp.h>
+#include <pscf/backends/CPT.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class BasisFieldState< 1, CppTp<1> >;
-      extern template class BasisFieldState< 2, CppTp<2> >;
-      extern template class BasisFieldState< 3, CppTp<3> >;
+      extern template class BasisFieldState<1,CPT>;
+      extern template class BasisFieldState<2,CPT>;
+      extern template class BasisFieldState<3,CPT>;
    }
 }
 #endif

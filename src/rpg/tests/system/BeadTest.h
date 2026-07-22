@@ -25,7 +25,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, CudaTp<D> >& system, std::string filename)
+   void initSystem(Rp::System<D,CUT>& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -43,7 +43,7 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputeFreeEnergyBead.log");
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       initSystem(system, "in/bead/param_system_1D_N100");
       system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
@@ -59,11 +59,11 @@ public:
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testComputelnqBead.log");
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       initSystem(system, "in/bead/param_system_1D_N100");
       system.w().readBasis("in/bead/omegaN100.in");
       system.compute();
-      Rp::Polymer<1, CudaTp<1> > const & polymer = system.mixture().polymer(0);
+      Rp::Polymer<1,CUT> const & polymer = system.mixture().polymer(0);
       double q; double lnq;
       q = polymer.q();
       lnq = log(q);

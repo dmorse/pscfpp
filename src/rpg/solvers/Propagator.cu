@@ -25,7 +25,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D>
-   Propagator<D, CudaTp<D> >::Propagator()
+   Propagator<D,CUT>::Propagator()
     : RpPropagatorT()
    {}
 
@@ -33,7 +33,7 @@ namespace Rp {
    * Destructor.
    */
    template <int D>
-   Propagator<D, CudaTp<D> >::~Propagator()
+   Propagator<D,CUT>::~Propagator()
    {
       dissociateQFields();
 
@@ -50,7 +50,7 @@ namespace Rp {
    * Allocate memory used by this propagator.
    */
    template <int D>
-   void Propagator<D, CudaTp<D> >::allocate(int ns, const Mesh<D>& mesh)
+   void Propagator<D,CUT>::allocate(int ns, const Mesh<D>& mesh)
    {
       RpPropagatorT::allocate(ns, mesh);
 
@@ -60,7 +60,7 @@ namespace Rp {
       // Allocate memory in qFieldsAll_ using value of ns
       qFieldsAll_.allocate(ns * meshSize);
 
-      // Set up array of associated RField<D, CudaTp<D> > arrays
+      // Set up array of associated RField<D,CUT> arrays
       qFields_.allocate(ns);
       for (int i = 0; i < ns; ++i) {
          qFields_[i].associate(qFieldsAll_, i*meshSize, meshDimensions);
@@ -74,13 +74,13 @@ namespace Rp {
    * Reallocate memory used by this propagator using new ns value.
    */
    template <int D>
-   void Propagator<D, CudaTp<D> >::reallocate(int ns)
+   void Propagator<D,CUT>::reallocate(int ns)
    {
       RpPropagatorT::reallocate(ns);
 
       // Deallocate memory previously used by this propagator.
       dissociateQFields();      // dissociate, nulliify data pointers
-      qFields_.deallocate();    // destroy RField<D, CudaTp<D> > objects for slices
+      qFields_.deallocate();    // destroy RField<D,CUT> objects for slices
       qFieldsAll_.deallocate(); // destroy contiguous data block
 
       // Store mesh properties
@@ -120,7 +120,7 @@ namespace Rp {
    * to this ReferenceCounter.
    */
    template <int D>
-   void Propagator<D, CudaTp<D> >::dissociateQFields()
+   void Propagator<D,CUT>::dissociateQFields()
    {
       if (qFields_.isAllocated()) {
          int ns = qFields_.capacity();
@@ -138,11 +138,11 @@ namespace Rp {
 // Explicit Instantiation definitions
 namespace Pscf { 
    namespace Rp {
-      template class PropagatorBase<1, CudaTp<1> >;
-      template class PropagatorBase<2, CudaTp<2> >;
-      template class PropagatorBase<3, CudaTp<3> >;
-      template class Propagator<1, CudaTp<1> >;
-      template class Propagator<2, CudaTp<2> >;
-      template class Propagator<3, CudaTp<3> >;
+      template class PropagatorBase<1,CUT>;
+      template class PropagatorBase<2,CUT>;
+      template class PropagatorBase<3,CUT>;
+      template class Propagator<1,CUT>;
+      template class Propagator<2,CUT>;
+      template class Propagator<3,CUT>;
    }
 }

@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>         // backend 
+#include <pscf/backends/CPT.h>         // backend 
 #include <pscf/cpu/FftwDRArray.h>   // base class
 #include <pscf/math/IntVec.h>       // member
 
@@ -28,7 +28,7 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class CField<D, CppTp<D> > 
+   class CField<D,CPT> 
     : public FftwDRArray<fftw_complex>
    {
 
@@ -120,7 +120,7 @@ namespace Prdc {
    * Return mesh dimensions by constant reference.
    */
    template <int D> inline 
-   IntVec<D> const & CField<D, CppTp<D> >::meshDimensions() const
+   IntVec<D> const & CField<D,CPT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
@@ -128,7 +128,7 @@ namespace Prdc {
    */
    template <int D>
    template <class Archive>
-   void CField<D, CppTp<D> >::serialize(
+   void CField<D,CPT>::serialize(
                         Archive& ar, 
                         const unsigned int version)
    {
@@ -137,9 +137,9 @@ namespace Prdc {
    }
 
    // Explicit instantiation declarations
-   extern template class CField<1, CppTp<1> >;
-   extern template class CField<2, CppTp<2> >;
-   extern template class CField<3, CppTp<3> >;
+   extern template class CField<1,CPT>;
+   extern template class CField<2,CPT>;
+   extern template class CField<3,CPT>;
 
 } // namespace Prdc
 } // namespace Pscf

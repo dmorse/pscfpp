@@ -15,8 +15,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class TrajectoryReaderFactory<1, CppTp<1> >;
-      template class TrajectoryReaderFactory<2, CppTp<2> >;
-      template class TrajectoryReaderFactory<3, CppTp<3> >;
+      template class TrajectoryReaderFactory<1,CPT>;
+      template class TrajectoryReaderFactory<2,CPT>;
+      template class TrajectoryReaderFactory<3,CPT>;
    }
 }

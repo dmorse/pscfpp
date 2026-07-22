@@ -20,7 +20,7 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   CFieldComparison<D, CppTp<D> >::CFieldComparison()
+   CFieldComparison<D,CPT>::CFieldComparison()
     : maxDiff_(0.0),
       rmsDiff_(0.0)
    {};
@@ -30,7 +30,7 @@ namespace Prdc {
    */
    template <int D>
    double
-   CFieldComparison<D, CppTp<D> >::compare(CField<D, CppTp<D> > const& a, CField<D, CppTp<D> > const& b)
+   CFieldComparison<D,CPT>::compare(CField<D,CPT> const& a, CField<D,CPT> const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -67,8 +67,8 @@ namespace Prdc {
    * Comparator for arrays of fields.
    */
    template <int D>
-   double CFieldComparison<D, CppTp<D> >::compare(DArray< CField<D, CppTp<D> > > const & a,
-                                       DArray< CField<D, CppTp<D> > > const & b)
+   double CFieldComparison<D,CPT>::compare(DArray< CField<D,CPT> > const & a,
+                                       DArray< CField<D,CPT> > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());

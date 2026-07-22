@@ -36,14 +36,14 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       setupSystem<1>(system,"in/diblock/lam/param.flex"); 
    }
 
@@ -52,7 +52,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testConversion1D_lam.log");
       
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       setupSystem<1>(system,"in/diblock/lam/param.flex"); 
 
       // Read w-fields (reference solution, solved by Fortran PSCF)
@@ -65,7 +65,7 @@ public:
       b_wFields_check = system.w().basis();
 
       // Round trip conversion basis -> rgrid -> basis, read result
-      Rp::FieldIo<1, CudaTp<1> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<1,CUT> const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/lam/omega.in",
                                   "out/testConversion1D_lam_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion1D_lam_w.rf",
@@ -91,7 +91,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testConversion2D_hex.log");
 
-      Rp::System<2, CudaTp<2> > system;
+      Rp::System<2,CUT> system;
       setupSystem<2>(system,"in/diblock/hex/param.flex"); 
 
       // Read w fields
@@ -104,7 +104,7 @@ public:
       b_wFields_check = system.w().basis();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
-      Rp::FieldIo<2, CudaTp<2> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<2,CUT> const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/hex/omega.in",
                                   "out/testConversion2D_hex_w.rf");
 
@@ -131,7 +131,7 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testConversion3D_bcc.log");
 
-      Rp::System<3, CudaTp<3> > system;
+      Rp::System<3,CUT> system;
       setupSystem<3>(system,"in/diblock/bcc/param.flex"); 
 
       // Read w fields in system.wFields
@@ -142,7 +142,7 @@ public:
       b_wFields_check = system.w().basis();
 
       // Complete round trip basis -> rgrid -> basis
-      Rp::FieldIo<3, CudaTp<3> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<3,CUT> const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/bcc/omega.in",
                                   "out/testConversion3D_bcc_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion3D_bcc_w.rf",
@@ -166,7 +166,7 @@ public:
 /*   void testCheckSymmetry3D_bcc()
 *   {
 *      printMethod(TEST_FUNC);
-*      Rp::System<3, CudaTp<3> > system;
+*      Rp::System<3,CUT> system;
 *      system.fileMaster().setInputPrefix(filePrefix());
 *      system.fileMaster().setOutputPrefix(filePrefix());
 *
@@ -191,7 +191,7 @@ public:
 */
 
    template <int D>
-   void setupSystem(Rp::System<D, CudaTp<D> >& system, std::string fname)
+   void setupSystem(Rp::System<D,CUT>& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());

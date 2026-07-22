@@ -12,8 +12,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class AverageListAnalyzer<1, CudaTp<1> >;
-      template class AverageListAnalyzer<2, CudaTp<2> >;
-      template class AverageListAnalyzer<3, CudaTp<3> >;
+      template class AverageListAnalyzer<1,CUT>;
+      template class AverageListAnalyzer<2,CUT>;
+      template class AverageListAnalyzer<3,CUT>;
    }
 }

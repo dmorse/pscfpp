@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>          // specialized template argument
+#include <pscf/backends/CPT.h>          // specialized template argument
 #include <prdc/field/cpu/RField.h>   // member
 #include <pscf/math/IntVec.h>        // member
 #include <util/containers/DArray.h>  // member
@@ -67,7 +67,7 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class WaveList<D, CppTp<D> >
+   class WaveList<D,CPT>
    {
    public:
 
@@ -178,7 +178,7 @@ namespace Prdc {
       * discrete Fourier transform. Array indices correspond to ranks
       * within this k-space mesh.
       */
-      RField<D, CppTp<D> > const & kSq() const;
+      RField<D,CPT> const & kSq() const;
 
       /**
       * Get derivatives of kSq with respect to unit cell parameter i.
@@ -197,16 +197,16 @@ namespace Prdc {
       *
       * \param i index of lattice parameter
       */
-      RField<D, CppTp<D> > const & dKSq(int i) const;
+      RField<D,CPT> const & dKSq(int i) const;
 
       /**
       * Get all derivatives of kSq with respect to unit cell parameters.
       *
-      * Element i of the DArray is the RField<D, CppTp<D> > that can also be obtained
+      * Element i of the DArray is the RField<D,CPT> that can also be obtained
       * from member function dKSq(int i). See documentation of that
       * function.
       */
-      DArray< RField<D, CppTp<D> > > const & dKSq() const;
+      DArray< RField<D,CPT> > const & dKSq() const;
 
       /**
       * Get the implicitInverse array by reference.
@@ -346,7 +346,7 @@ namespace Prdc {
       /**
       * Array of square-magnitude values for wavevectors.
       */
-      RField<D, CppTp<D> > kSq_;
+      RField<D,CPT> kSq_;
 
       /**
       * Derivatives of kSq_ with respect to lattice parameters.
@@ -354,7 +354,7 @@ namespace Prdc {
       * Element kSq_[i][j] is the derivative of kSq_[j] with respect to
       * lattice parameter i.
       */
-      DArray< RField<D, CppTp<D> > > dKSq_;
+      DArray< RField<D,CPT> > dKSq_;
 
       /**
       * Array indicating whether a given gridpoint has an implicit partner.
@@ -450,7 +450,7 @@ namespace Prdc {
 
    // Get the array of minimum images on the device by reference.
    template <int D> inline
-   DArray< IntVec<D> > const & WaveList<D, CppTp<D> >::minImages() const
+   DArray< IntVec<D> > const & WaveList<D,CPT>::minImages() const
    {
       UTIL_CHECK(hasMinImages_);
       return minImages_;
@@ -458,7 +458,7 @@ namespace Prdc {
 
    // Get the kSq array on the device by reference.
    template <int D> inline
-   RField<D, CppTp<D> > const & WaveList<D, CppTp<D> >::kSq() const
+   RField<D,CPT> const & WaveList<D,CPT>::kSq() const
    {
       UTIL_CHECK(hasKSq_);
       return kSq_;
@@ -466,7 +466,7 @@ namespace Prdc {
 
    // Get dKSq for unit cell parameter array i.
    template <int D> inline
-   RField<D, CppTp<D> > const & WaveList<D, CppTp<D> >::dKSq(int i) const
+   RField<D,CPT> const & WaveList<D,CPT>::dKSq(int i) const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSq_[i];
@@ -474,7 +474,7 @@ namespace Prdc {
 
    // Get entire dKSq container by const reference.
    template <int D> inline
-   DArray< RField<D, CppTp<D> > > const & WaveList<D, CppTp<D> >::dKSq() const
+   DArray< RField<D,CPT> > const & WaveList<D,CPT>::dKSq() const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSq_;
@@ -482,7 +482,7 @@ namespace Prdc {
 
    // Get the implicitInverse array by const reference.
    template <int D> inline
-   DArray<bool> const & WaveList<D, CppTp<D> >::implicitInverse() const
+   DArray<bool> const & WaveList<D,CPT>::implicitInverse() const
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);
@@ -491,7 +491,7 @@ namespace Prdc {
 
    // Get the sortedIds array by const reference.
    template <int D> inline
-   DArray<int> const & WaveList<D, CppTp<D> >::sortedIds() const
+   DArray<int> const & WaveList<D,CPT>::sortedIds() const
    {
       UTIL_CHECK(isSorted_);
       return sortedIds_;
@@ -499,7 +499,7 @@ namespace Prdc {
 
    // Get the sortedBunches array by const reference.
    template <int D> inline
-   GArray< Pair<int> > const & WaveList<D, CppTp<D> >::sortedBunches() const
+   GArray< Pair<int> > const & WaveList<D,CPT>::sortedBunches() const
    {
       UTIL_CHECK(isSorted_);
       return sortedBunches_;
@@ -507,16 +507,16 @@ namespace Prdc {
 
    // Get the bunchIds array by const reference.
    template <int D> inline
-   DArray<int> const & WaveList<D, CppTp<D> >::bunchIds() const
+   DArray<int> const & WaveList<D,CPT>::bunchIds() const
    {
       UTIL_CHECK(isSorted_);
       return bunchIds_;
    }
 
    // Explicit instantiation declarations
-   extern template class WaveList<1, CppTp<1> >;
-   extern template class WaveList<2, CppTp<2> >;
-   extern template class WaveList<3, CppTp<3> >;
+   extern template class WaveList<1,CPT>;
+   extern template class WaveList<2,CPT>;
+   extern template class WaveList<3,CPT>;
 
 } // Prdc
 } // Pscf

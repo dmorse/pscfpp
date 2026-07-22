@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>             // Cpu backend
+#include <pscf/backends/CPT.h>             // Cpu backend
 #include <pscf/solvers/MixtureTmpl.h>   // base class template
 #include <iostream>
 
@@ -78,10 +78,10 @@ namespace Cp {
       using PropagatorT = typename T::Propagator;
 
       /// Field type, for data defined on a real-space grid.
-      using FieldT = CField<D, CppTp<D> >;
+      using FieldT = CField<D,CPT>;
 
       /// WaveList type.
-      using WaveListT = WaveList<D, CppTp<D> >;
+      using WaveListT = WaveList<D,CPT>;
 
       /// FieldIo type.
       using FieldIoT = typename T::FieldIo;
@@ -133,7 +133,7 @@ namespace Cp {
       * \param waveList  associated WaveListT object
       */
       void associate(Mesh<D> const & mesh,
-                     FFT<D, CppTp<D> > const & fft,
+                     FFT<D,CPT> const & fft,
                      UnitCell<D> const & cell,
                      WaveListT& waveList);
 

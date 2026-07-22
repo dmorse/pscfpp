@@ -1,5 +1,5 @@
-#ifndef PSCF_CUDA_TP_H
-#define PSCF_CUDA_TP_H
+#ifndef PSCF_CUT_H
+#define PSCF_CUT_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -12,13 +12,11 @@
 #include <pscf/cuda/cudaTypes.h>
 #include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/HostDArray.h>
+#include <pscf/cuda/CudaVecRandom.h>
 
 // Forward declarations
 namespace Util {
    class Random;
-}
-namespace Pscf {
-   class CudaVecRandom;
 }
 
 namespace Pscf {
@@ -31,8 +29,7 @@ namespace Pscf {
    *
    * \ingroup Prdc_Field_Module
    */
-   template <int D>
-   class CudaTp {
+   class CUT {
 
    public:
 
@@ -92,11 +89,6 @@ namespace Pscf {
       void seedVecRandom(VecRandom& vr, long seed);
 
    };
-
-   // Explicit instantiation declarations
-   extern template class CudaTp<1>;
-   extern template class CudaTp<2>;
-   extern template class CudaTp<3>;
 
 } // namespace Pscf
 #endif

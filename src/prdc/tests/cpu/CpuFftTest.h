@@ -38,7 +38,7 @@ void CpuFftTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      FFT<1, CppTp<1> > v;
+      FFT<1,CPT> v;
    }
 } 
 
@@ -50,10 +50,10 @@ void CpuFftTest::testTransformReal1D()
    IntVec<1> d;
    d[0] = n;
 
-   FFT<1, CppTp<1> > v;
+   FFT<1,CPT> v;
    v.setup(d);
 
-   RField<1, CppTp<1> > in;
+   RField<1,CPT> in;
    in.allocate(d);
    TEST_ASSERT(in.capacity() == n);
 
@@ -66,18 +66,18 @@ void CpuFftTest::testTransformReal1D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   RField<1, CppTp<1> > inCopy(in);
+   RField<1,CPT> inCopy(in);
 
    // Transform in -> out
-   RFieldDft<1, CppTp<1> > out;
+   RFieldDft<1,CPT> out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
-   RFieldDft<1, CppTp<1> > outCopy(out);
+   RFieldDft<1,CPT> outCopy(out);
 
    // Inverse transform out -> in2
-   RField<1, CppTp<1> > in2;
+   RField<1,CPT> in2;
    in2.allocate(d);
    v.inverseTransformSafe(out, in2);
 
@@ -107,11 +107,11 @@ void CpuFftTest::testTransformReal2D()
    d[1] = n2;
 
    // Instantiate and initialize FFT
-   FFT<2, CppTp<2> > v;
+   FFT<2,CPT> v;
    v.setup(d);
 
    // Initialize input data
-   RField<2, CppTp<2> > in;
+   RField<2,CPT> in;
    in.allocate(d);
    int rank = 0;
    double x, y, cx, sy;
@@ -128,20 +128,20 @@ void CpuFftTest::testTransformReal2D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   RField<2, CppTp<2> > inCopy(in);
+   RField<2,CPT> inCopy(in);
 
    // Forward transform in -> out
-   RFieldDft<2, CppTp<2> > out;
+   RFieldDft<2,CPT> out;
    out.allocate(d);
    TEST_ASSERT(eq(in.capacity() / in.meshDimensions()[1],
                   out.capacity() / (out.meshDimensions()[1]/2 + 1)));
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
-   RFieldDft<2, CppTp<2> > outCopy(out);
+   RFieldDft<2,CPT> outCopy(out);
 
    // Inverse transform out -> in2
-   RField<2, CppTp<2> > in2;
+   RField<2,CPT> in2;
    in2.allocate(d);
    v.inverseTransformSafe(out, in2);
 
@@ -173,11 +173,11 @@ void CpuFftTest::testTransformReal3D()
    d[2] = n3;
 
    // Instantiate and initialize objects
-   FFT<3, CppTp<3> > v;
+   FFT<3,CPT> v;
    v.setup(d);
 
-   RField<3, CppTp<3> > in;
-   RFieldDft<3, CppTp<3> > out;
+   RField<3,CPT> in;
+   RFieldDft<3,CPT> out;
    in.allocate(d);
    out.allocate(d);
 
@@ -196,16 +196,16 @@ void CpuFftTest::testTransformReal3D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   RField<3, CppTp<3> > inCopy(in);
+   RField<3,CPT> inCopy(in);
 
    // Forward transform in -> out
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransformSafe is preserved)
-   RFieldDft<3, CppTp<3> > outCopy(out);
+   RFieldDft<3,CPT> outCopy(out);
 
    // Inverse transform out -> in2
-   RField<3, CppTp<3> > in2;
+   RField<3,CPT> in2;
    in2.allocate(d);
    v.inverseTransformSafe(out, in2);
 
@@ -231,10 +231,10 @@ void CpuFftTest::testTransformComplex1D()
    IntVec<1> d;
    d[0] = n;
 
-   FFT<1, CppTp<1> > v;
+   FFT<1,CPT> v;
    v.setup(d);
 
-   CField<1, CppTp<1> > in;
+   CField<1,CPT> in;
    in.allocate(d);
    TEST_ASSERT(in.capacity() == n);
 
@@ -250,18 +250,18 @@ void CpuFftTest::testTransformComplex1D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   CField<1, CppTp<1> > inCopy(in);
+   CField<1,CPT> inCopy(in);
 
    // Transform in -> out
-   CField<1, CppTp<1> > out;
+   CField<1,CPT> out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransform is preserved)
-   CField<1, CppTp<1> > outCopy(out);
+   CField<1,CPT> outCopy(out);
 
    // Inverse transform out -> in2
-   CField<1, CppTp<1> > in2;
+   CField<1,CPT> in2;
    in2.allocate(d);
    v.inverseTransform(out, in2);
 
@@ -291,11 +291,11 @@ void CpuFftTest::testTransformComplex2D()
    d[0] = n1;
    d[1] = n2;
 
-   FFT<2, CppTp<2> > v;
+   FFT<2,CPT> v;
    v.setup(d);
 
    // Initialize test data
-   CField<2, CppTp<2> > in;
+   CField<2,CPT> in;
    in.allocate(d);
    int rank = 0;
    double x, y, cx, sx, cy, sy;
@@ -315,18 +315,18 @@ void CpuFftTest::testTransformComplex2D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   CField<2, CppTp<2> > inCopy(in);
+   CField<2,CPT> inCopy(in);
 
    // Forward transform in -> out
-   CField<2, CppTp<2> > out;
+   CField<2,CPT> out;
    out.allocate(d);
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransform is preserved)
-   CField<2, CppTp<2> > outCopy(out);
+   CField<2,CPT> outCopy(out);
 
    // Inverse transform out -> in2
-   CField<2, CppTp<2> > in2;
+   CField<2,CPT> in2;
    in2.allocate(d);
 
    v.inverseTransform(out, in2);
@@ -361,11 +361,11 @@ void CpuFftTest::testTransformComplex3D()
    d[2] = n3;
 
    // Instantiate and initialize objects
-   FFT<3, CppTp<3> > v;
+   FFT<3,CPT> v;
    v.setup(d);
 
-   CField<3, CppTp<3> > in;
-   CField<3, CppTp<3> > out;
+   CField<3,CPT> in;
+   CField<3,CPT> out;
    in.allocate(d);
    out.allocate(d);
 
@@ -384,16 +384,16 @@ void CpuFftTest::testTransformComplex3D()
    }
 
    // Save a copy of in (to ensure input to forwardTransform is preserved)
-   CField<3, CppTp<3> > inCopy(in);
+   CField<3,CPT> inCopy(in);
 
    // Forward transform in -> out
    v.forwardTransform(in, out);
 
    // Save a copy of out (to ensure input to inverseTransform is preserved)
-   CField<3, CppTp<3> > outCopy(out);
+   CField<3,CPT> outCopy(out);
 
    // Inverse transform out -> in2
-   CField<3, CppTp<3> > in2;
+   CField<3,CPT> in2;
    in2.allocate(d);
    v.inverseTransform(out, in2);
 

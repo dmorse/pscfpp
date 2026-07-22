@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ForceBiasMoveBase.h> // base class template
-#include <pscf/cuda/CudaTp.h>                    // base class argument
+#include <pscf/backends/CUT.h>                    // base class argument
 #include <prdc/field/cuda/RField.h>              // base class member
 #include <util/containers/DArray.h>              // base base member
 #include <rp/fts/montecarlo/McMove.h>            // indirect base class
@@ -37,8 +37,8 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ForceBiasMove<D, CudaTp<D> >
-    : public ForceBiasMoveBase<D, CudaTp<D> >
+   class ForceBiasMove<D,CUT>
+    : public ForceBiasMoveBase<D,CUT>
    {
 
    public:
@@ -48,17 +48,17 @@ namespace Rp {
       *
       * \param simulator  parent McSimulator
       */
-      ForceBiasMove(McSimulator<D, CudaTp<D> >& simulator);
+      ForceBiasMove(McSimulator<D,CUT>& simulator);
 
    private:
 
       /**
       * Compute force bias field.
       */
-      void computeForceBias(RField<D, CudaTp<D> > & result,
-                            RField<D, CudaTp<D> > const & di,
-                            RField<D, CudaTp<D> > const & df,
-                            RField<D, CudaTp<D> > const & dwc,
+      void computeForceBias(RField<D,CUT> & result,
+                            RField<D,CUT> const & di,
+                            RField<D,CUT> const & df,
+                            RField<D,CUT> const & dwc,
                             double mobility);
 
    };
@@ -69,12 +69,12 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class ForceBiasMoveBase<1, CudaTp<1> >;
-      extern template class ForceBiasMoveBase<2, CudaTp<2> >;
-      extern template class ForceBiasMoveBase<3, CudaTp<3> >;
-      extern template class ForceBiasMove<1, CudaTp<1> >;
-      extern template class ForceBiasMove<2, CudaTp<2> >;
-      extern template class ForceBiasMove<3, CudaTp<3> >;
+      extern template class ForceBiasMoveBase<1,CUT>;
+      extern template class ForceBiasMoveBase<2,CUT>;
+      extern template class ForceBiasMoveBase<3,CUT>;
+      extern template class ForceBiasMove<1,CUT>;
+      extern template class ForceBiasMove<2,CUT>;
+      extern template class ForceBiasMove<3,CUT>;
    }
 }
 #endif

@@ -9,16 +9,16 @@
 */
 
 #include <rp/scft/sweep/LinearSweep.h>      // direct base class template
-#include <pscf/cuda/CudaTp.h>               // base class argument
+#include <pscf/backends/CUT.h>               // base class argument
 #include <rpg/scft/sweep/Sweep.h>           // indirect base class
 #include <rpg/scft/sweep/SweepParameter.h>  // indirect base member
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class LinearSweep<1, CudaTp<1> >;
-      extern template class LinearSweep<2, CudaTp<2> >;
-      extern template class LinearSweep<3, CudaTp<3> >;
+      extern template class LinearSweep<1,CUT>;
+      extern template class LinearSweep<2,CUT>;
+      extern template class LinearSweep<3,CUT>;
    }
 }
 #endif

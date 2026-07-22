@@ -15,8 +15,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class PerturbationFactory<1, CudaTp<1> >;
-      template class PerturbationFactory<2, CudaTp<2> >;
-      template class PerturbationFactory<3, CudaTp<3> >;
+      template class PerturbationFactory<1,CUT>;
+      template class PerturbationFactory<2,CUT>;
+      template class PerturbationFactory<3,CUT>;
    }
 }

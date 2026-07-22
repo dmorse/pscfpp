@@ -22,7 +22,7 @@ namespace Prdc {
    * Default constructor.
    */
    template <int D>
-   RField<D, CppTp<D> >::RField()
+   RField<D,CPT>::RField()
     : FftwDRArray<double>(),
       meshDimensions_(0)
    {}
@@ -31,7 +31,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   RField<D, CppTp<D> >::~RField()
+   RField<D,CPT>::~RField()
    {}
 
    /*
@@ -42,7 +42,7 @@ namespace Prdc {
    *\param other the Field to be copied.
    */
    template <int D>
-   RField<D, CppTp<D> >::RField(RField<D, CppTp<D> > const & other)
+   RField<D,CPT>::RField(RField<D,CPT> const & other)
     : FftwDRArray<double>(),
       meshDimensions_(0)
    {
@@ -65,8 +65,8 @@ namespace Prdc {
    * \param other the rhs Field
    */
    template <int D>
-   RField<D, CppTp<D> >& 
-   RField<D, CppTp<D> >::operator = (RField<D, CppTp<D> > const & other)
+   RField<D,CPT>& 
+   RField<D,CPT>::operator = (RField<D,CPT> const & other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -94,7 +94,7 @@ namespace Prdc {
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void RField<D, CppTp<D> >::allocate(const IntVec<D>& meshDimensions)
+   void RField<D,CPT>::allocate(const IntVec<D>& meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -109,7 +109,7 @@ namespace Prdc {
    * Dellocate the underlying C array and clear meshDimensions.
    */
    template <int D>
-   void RField<D, CppTp<D> >::deallocate()
+   void RField<D,CPT>::deallocate()
    {
       FftwDRArray<double>::deallocate();
       for (int i = 0; i < D; ++i) {

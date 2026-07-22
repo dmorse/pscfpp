@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>           // backend class
+#include <pscf/backends/CPT.h>           // backend class
 #include <cp/field/FieldIo.h>         // base class template
 #include <prdc/field/cpu/CField.h>    // base class template argument
 #include <prdc/field/cpu/FFT.h>       // base class template argument
@@ -27,9 +27,9 @@ namespace Pscf {
 // Explicit instantiation declaration for base class
 namespace Pscf {
    namespace Cp {
-      extern template class FieldIo<1, CField<1, CppTp<1> >, FFT<1, CppTp<1> > >;
-      extern template class FieldIo<2, CField<2, CppTp<2> >, FFT<2, CppTp<2> > >;
-      extern template class FieldIo<3, CField<3, CppTp<3> >, FFT<3, CppTp<3> > >;
+      extern template class FieldIo<1, CField<1,CPT>, FFT<1,CPT> >;
+      extern template class FieldIo<2, CField<2,CPT>, FFT<2,CPT> >;
+      extern template class FieldIo<3, CField<3,CPT>, FFT<3,CPT> >;
    }
 }
 
@@ -48,7 +48,7 @@ namespace Cpc {
    *
    * This class template is derived from a partial specialization of
    * the template Cp::FieldIo<D, CFT, FFT> using classes
-   * CFT = CField<D, CppTp<D> > and FFT = FFT<D, CppTp<D> > that all 
+   * CFT = CField<D,CPT> and FFT = FFT<D,CPT> that all 
    * use conventional CPU hardware.
    *
    * The member functions defined in this class are all implementations of
@@ -61,7 +61,7 @@ namespace Cpc {
    */
    template <int D>
    class FieldIo
-     : public  Cp::FieldIo< D, CField<D, CppTp<D> >, FFT<D, CppTp<D> > >
+     : public  Cp::FieldIo< D, CField<D,CPT>, FFT<D,CPT> >
    {
 
    public:
@@ -79,7 +79,7 @@ namespace Cpc {
       * \param unitCell  associated crystallographic unit cell
       */
       void readFields(std::istream& in,
-                      DArray< CField<D, CppTp<D> > >& fields,
+                      DArray< CField<D,CPT> >& fields,
                       UnitCell<D> & unitCell) const override;
 
       /**
@@ -92,7 +92,7 @@ namespace Cpc {
       * \param nMonomer  number of monomer types
       */
       void readFieldsData(std::istream& in,
-                          DArray< CField<D, CppTp<D> > >& fields,
+                          DArray< CField<D,CPT> >& fields,
                           int nMonomer) const override;
 
       /**
@@ -105,7 +105,7 @@ namespace Cpc {
       * \param unitCell  associated crystallographic unit cell
       */
       void readField(std::istream &in,
-                     CField<D, CppTp<D> > & field,
+                     CField<D,CPT> & field,
                      UnitCell<D>& unitCell) const override;
 
       /**
@@ -113,7 +113,7 @@ namespace Cpc {
       *
       * This function is designed to read a real-valued field file written 
       * in the the r-grid file format used by the programs pscf_rpc and 
-      * pscf_rpg, but stores data for each field in a CField<D, CppTp<D> > container
+      * pscf_rpg, but stores data for each field in a CField<D,CPT> container
       * designed for complex-valued fields. On return, each field value in
       * this container is a complex number with a zero imaginary part and
       * a real part equal to the value given in the field file for the
@@ -124,7 +124,7 @@ namespace Cpc {
       * \param unitCell  associated crystallographic unit cell (out)
       */
       void readFieldsRGrid(std::istream &in,
-                           DArray< CField<D, CppTp<D> > > & fields,
+                           DArray< CField<D,CPT> > & fields,
                            UnitCell<D>& unitCell) const;
 
       ///@}
@@ -143,7 +143,7 @@ namespace Cpc {
       * \param writeMeshSize  Should mesh size be written in header?
       */
       void writeFields(std::ostream& out,
-                       DArray< CField<D, CppTp<D> > > const & fields,
+                       DArray< CField<D,CPT> > const & fields,
                        UnitCell<D> const & unitCell,
                        bool writeHeader = true,
                        bool writeMeshSize = true) const override;
@@ -159,7 +159,7 @@ namespace Cpc {
       * \param writeHeader  Should a file header be written?
       */
       void writeField(std::ostream &out,
-                      CField<D, CppTp<D> > const & field,
+                      CField<D,CPT> const & field,
                       UnitCell<D> const & unitCell,
                       bool writeHeader = true) const override;
 
@@ -177,13 +177,13 @@ namespace Cpc {
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
-      void compareFields(DArray< CField<D, CppTp<D> > > const & field1,
-                         DArray< CField<D, CppTp<D> > > const & field2)
+      void compareFields(DArray< CField<D,CPT> > const & field1,
+                         DArray< CField<D,CPT> > const & field2)
       const override;
       #endif
 
       /// Alias for base class
-      using Base = Cp::FieldIo< D, CField<D, CppTp<D> >, FFT<D, CppTp<D> > >;
+      using Base = Cp::FieldIo< D, CField<D,CPT>, FFT<D,CPT> >;
 
       // Inherited public member functions
       using Base::associate;

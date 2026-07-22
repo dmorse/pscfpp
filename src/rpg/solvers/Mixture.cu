@@ -27,8 +27,8 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   Mixture<D, CudaTp<D> >::Mixture()
-    : Rp::MixtureBase<D, CudaTp<D> >(),
+   Mixture<D,CUT>::Mixture()
+    : Rp::MixtureBase<D,CUT>(),
       useBatchedFFT_(true)
    {}
 
@@ -36,7 +36,7 @@ namespace Rp {
    * Read all parameters and initialize.
    */
    template <int D>
-   void Mixture<D, CudaTp<D> >::readParameters(std::istream& in)
+   void Mixture<D,CUT>::readParameters(std::istream& in)
    {
       RpMixtureT::readParameters(in);
 
@@ -49,7 +49,7 @@ namespace Rp {
    * Allocate memory for all blocks.
    */
    template <int D>
-   void Mixture<D, CudaTp<D> >::allocateBlocks()
+   void Mixture<D,CUT>::allocateBlocks()
    {
       const double ds = RpMixtureT::ds();
       const int np = Composition<cudaReal>::nPolymer();
@@ -67,17 +67,17 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    template 
-   class MixtureTmpl< Rp::Polymer<1, CudaTp<1> >, Rp::Solvent<1, CudaTp<1> > >;
+   class MixtureTmpl< Rp::Polymer<1,CUT>, Rp::Solvent<1,CUT> >;
    template 
-   class MixtureTmpl< Rp::Polymer<2, CudaTp<2> >, Rp::Solvent<2, CudaTp<2> > >;
+   class MixtureTmpl< Rp::Polymer<2,CUT>, Rp::Solvent<2,CUT> >;
    template 
-   class MixtureTmpl< Rp::Polymer<3, CudaTp<3> >, Rp::Solvent<3, CudaTp<3> > >;
+   class MixtureTmpl< Rp::Polymer<3,CUT>, Rp::Solvent<3,CUT> >;
    namespace Rp {
-      template class MixtureBase<1, CudaTp<1> >;
-      template class MixtureBase<2, CudaTp<2> >;
-      template class MixtureBase<3, CudaTp<3> >;
-      template class Mixture<1, CudaTp<1> >;
-      template class Mixture<2, CudaTp<2> >;
-      template class Mixture<3, CudaTp<3> >;
+      template class MixtureBase<1,CUT>;
+      template class MixtureBase<2,CUT>;
+      template class MixtureBase<3,CUT>;
+      template class Mixture<1,CUT>;
+      template class Mixture<2,CUT>;
+      template class Mixture<3,CUT>;
    }
 }

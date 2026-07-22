@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/compressor/IntraCorrelation.h>  // class template
-#include <pscf/cpu/CppTp.h>                    // class argument
+#include <pscf/backends/CPT.h>                    // class argument
 #include <pscf/cpu/FftwDRArray.h>          // class member
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class IntraCorrelation<1, CppTp<1> >;
-      extern template class IntraCorrelation<2, CppTp<2> >;
-      extern template class IntraCorrelation<3, CppTp<3> >;
+      extern template class IntraCorrelation<1,CPT>;
+      extern template class IntraCorrelation<2,CPT>;
+      extern template class IntraCorrelation<3,CPT>;
    }
 }
 #endif

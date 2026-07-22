@@ -14,9 +14,9 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class SimulatorFactory<1, CudaTp<1> >;
-      extern template class SimulatorFactory<2, CudaTp<2> >;
-      extern template class SimulatorFactory<3, CudaTp<3> >;
+      extern template class SimulatorFactory<1,CUT>;
+      extern template class SimulatorFactory<2,CUT>;
+      extern template class SimulatorFactory<3,CUT>;
    }
 }
 #endif

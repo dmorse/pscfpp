@@ -2,14 +2,14 @@
 #define RPG_PERTURBATION_H
 
 #include <rp/fts/perturbation/Perturbation.h>  // base class template
-#include <pscf/cuda/CudaTp.h>                  // base class argument
+#include <pscf/backends/CUT.h>                  // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class Perturbation<1, CudaTp<1> >;
-      extern template class Perturbation<2, CudaTp<2> >;
-      extern template class Perturbation<3, CudaTp<3> >;
+      extern template class Perturbation<1,CUT>;
+      extern template class Perturbation<2,CUT>;
+      extern template class Perturbation<3,CUT>;
    }
 }
 #endif

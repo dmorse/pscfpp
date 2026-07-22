@@ -35,7 +35,7 @@ using namespace Pscf::Prdc;
 class SimulatorTest : public LogFileUnitTest
 {
 
-   Rp::System<3, CudaTp<3> > system;
+   Rp::System<3,CUT> system;
 
 public:
 
@@ -67,7 +67,7 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param1_simulator");
-      Rp::Simulator<3, CudaTp<3> > simulator(system);
+      Rp::Simulator<3,CUT> simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
@@ -107,28 +107,28 @@ public:
       printMethod(TEST_FUNC);
 
       initSystem("in/param1_simulator");
-      Rp::Simulator<3, CudaTp<3> > simulator(system);
+      Rp::Simulator<3,CUT> simulator(system);
       simulator.allocate();
       simulator.analyzeChi();
 
       system.w().readRGrid("in/w_gyr.rf");
-      DArray< RField<3, CudaTp<3> > > const & w = system.w().rgrid();
+      DArray< RField<3,CUT> > const & w = system.w().rgrid();
 
       system.compute();
-      DArray< RField<3, CudaTp<3> > > const & c = system.c().rgrid();
+      DArray< RField<3,CUT> > const & c = system.c().rgrid();
 
       int nMonomer = system.mixture().nMonomer();
       int meshSize = system.domain().mesh().size();
       IntVec<3> dimensions = system.domain().mesh().dimensions();
 
       simulator.computeWc();
-      DArray< RField<3, CudaTp<3> > > const & wc = simulator.wc();
+      DArray< RField<3,CUT> > const & wc = simulator.wc();
 
       simulator.computeCc();
-      DArray< RField<3, CudaTp<3> > > const & cc = simulator.cc();
+      DArray< RField<3,CUT> > const & cc = simulator.cc();
 
       simulator.computeDc();
-      DArray< RField<3, CudaTp<3> > > const & dc = simulator.dc();
+      DArray< RField<3,CUT> > const & dc = simulator.dc();
 
       // Check allocation and capacities
       TEST_ASSERT(c.capacity() == nMonomer);
@@ -148,9 +148,9 @@ public:
       }
 
       // Test wc field
-      RField<3, CudaTp<3> > wcTest1;
+      RField<3,CUT> wcTest1;
       wcTest1.allocate(dimensions);
-      RField<3, CudaTp<3> > wcTest2;
+      RField<3,CUT> wcTest2;
       wcTest2.allocate(dimensions);
 
       // wcTest1 = w[0] - wc[0] - wc[1]
@@ -162,7 +162,7 @@ public:
       TEST_ASSERT(Reduce::maxAbs(wcTest2) < 1.0E-6);
 
       // Test cc field
-      RField<3, CudaTp<3> > ccTest;
+      RField<3,CUT> ccTest;
       ccTest.allocate(dimensions);
       
       // ccTest = c[0] - c[1] - cc[0]
@@ -215,7 +215,7 @@ public:
       printMethod(TEST_FUNC);
       
       initSystem("in/param_system_disordered");
-      Rp::Simulator<3, CudaTp<3> > simulator(system);
+      Rp::Simulator<3,CUT> simulator(system);
       
       simulator.allocate();
       simulator.analyzeChi();
@@ -253,7 +253,7 @@ public:
       printMethod(TEST_FUNC);
       
       initSystem("in/param_system_disordered");
-      Rp::Simulator<3, CudaTp<3> > simulator(system);
+      Rp::Simulator<3,CUT> simulator(system);
       
       simulator.allocate();
       simulator.analyzeChi();
@@ -266,7 +266,7 @@ public:
       
       int nMonomer = system.mixture().nMonomer();
       IntVec<3> dimensions = system.domain().mesh().dimensions();
-      DArray< RField<3, CudaTp<3> > > dc0;
+      DArray< RField<3,CUT> > dc0;
       dc0.allocate(nMonomer-1);
       for (int i = 0; i < nMonomer - 1; ++i) {
          dc0[i].allocate(dimensions);
@@ -284,7 +284,7 @@ public:
       out.close();
       #endif 
       
-      RFieldComparison<3, CudaTp<3> > comparison;
+      RFieldComparison<3,CUT> comparison;
       comparison.compare(dc0, simulator.dc());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
       

@@ -19,8 +19,8 @@
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      template class RGridTrajectoryReader<1, CppTp<1> >;
-      template class RGridTrajectoryReader<2, CppTp<2> >;
-      template class RGridTrajectoryReader<3, CppTp<3> >;
+      template class RGridTrajectoryReader<1,CPT>;
+      template class RGridTrajectoryReader<2,CPT>;
+      template class RGridTrajectoryReader<3,CPT>;
    }
 }

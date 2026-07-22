@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaTp.h>         // specialized template argument
+#include <pscf/backends/CUT.h>         // specialized template argument
 #include <prdc/field/cuda/CField.h>
 #include <util/containers/DArray.h>
 
@@ -26,7 +26,7 @@ namespace Prdc {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class CFieldComparison<D, CudaTp<D> >
+   class CFieldComparison<D,CUT>
    {
 
    public:
@@ -50,7 +50,7 @@ namespace Prdc {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(CField<D, CudaTp<D> > const & a, CField<D, CudaTp<D> > const & b);
+      double compare(CField<D,CUT> const & a, CField<D,CUT> const & b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -66,8 +66,8 @@ namespace Prdc {
       * \param b  2nd DArray of fields
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray< CField<D, CudaTp<D> > > const & a, 
-                     DArray< CField<D, CudaTp<D> > > const & b);
+      double compare(DArray< CField<D,CUT> > const & a, 
+                     DArray< CField<D,CUT> > const & b);
 
       /**
       * Return the precomputed maximum element-by-element difference.
@@ -98,9 +98,9 @@ namespace Prdc {
    };
 
    // Explicit instantiation declarations
-   extern template class CFieldComparison<1, CudaTp<1> >;
-   extern template class CFieldComparison<2, CudaTp<2> >;
-   extern template class CFieldComparison<3, CudaTp<3> >;
+   extern template class CFieldComparison<1,CUT>;
+   extern template class CFieldComparison<2,CUT>;
+   extern template class CFieldComparison<3,CUT>;
 
 
 } // namespace Prdc

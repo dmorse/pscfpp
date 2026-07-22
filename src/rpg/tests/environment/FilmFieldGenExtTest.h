@@ -53,8 +53,8 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, CudaTp<1> > system;
-      Rp::FilmFieldGenExt<1, CudaTp<1> > ext(system);
+      Rp::System<1,CUT> system;
+      Rp::FilmFieldGenExt<1,CUT> ext(system);
    }
 
    void testReadParameters() // test FilmFieldGenExtBase::readParameters()
@@ -62,9 +62,9 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up external field generator from file
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       createSystem(system, "in/system1D");
-      Rp::FilmFieldGenExt<1, CudaTp<1> > ext(system);
+      Rp::FilmFieldGenExt<1,CUT> ext(system);
 
       std::ifstream in;
       openInputFile("in/filmExt1Asym", in);
@@ -90,10 +90,10 @@ public:
       openLogFile("out/extTestCheckCompatibility.log");
 
       // Set up 1D external field with symmetric walls
-      Rp::System<1, CudaTp<1> > system1;
+      Rp::System<1,CUT> system1;
       createSystem(system1, "in/system1D");
       
-      Rp::FilmFieldGenExt<1, CudaTp<1> > ext1(system1);
+      Rp::FilmFieldGenExt<1,CUT> ext1(system1);
       createFilmFieldGenExt(ext1, "in/filmExt1Sym");
       
       Log::file() << "Testing system 1:" << std::endl;
@@ -104,10 +104,10 @@ public:
 
       // Set up 2D external field with asymmetric walls and an 
       // incompatible space group
-      Rp::System<2, CudaTp<2> > system2;
+      Rp::System<2,CUT> system2;
       createSystem(system2, "in/system2D_1");
 
-      Rp::FilmFieldGenExt<2, CudaTp<2> > ext2(system2);
+      Rp::FilmFieldGenExt<2,CUT> ext2(system2);
       createFilmFieldGenExt(ext2, "in/filmExt2Asym");
 
       Log::file() << "Testing system 2:" << std::endl;
@@ -116,10 +116,10 @@ public:
 
       // Set up 3D external field with asymmetric walls and a compatible
       // space group
-      Rp::System<3, CudaTp<3> > system3;
+      Rp::System<3,CUT> system3;
       createSystem(system3, "in/system3D_3");
 
-      Rp::FilmFieldGenExt<3, CudaTp<3> > ext3(system3);
+      Rp::FilmFieldGenExt<3,CUT> ext3(system3);
       createFilmFieldGenExt(ext3, "in/filmExt3Asym");
 
       Log::file() << "Testing system 3:" << std::endl;
@@ -136,7 +136,7 @@ public:
       openLogFile("out/extTestGenerate.log");
 
       // Set up 3D external field with a compatible system
-      Rp::System<3, CudaTp<3> > system1;
+      Rp::System<3,CUT> system1;
       createSystem(system1, "in/system3D_3");
       system1.mask().allocateBasis(1920);
       system1.mask().allocateRGrid(system1.domain().mesh().dimensions());
@@ -151,7 +151,7 @@ public:
       system1.setUnitCell(parameters);
 
       // Set up external field
-      Rp::FilmFieldGenExt<3, CudaTp<3> > ext1(system1);
+      Rp::FilmFieldGenExt<3,CUT> ext1(system1);
       createFilmFieldGenExt(ext1, "in/filmExt3Asym");
       ext1.generate();
       TEST_ASSERT(!ext1.needsUpdate());
@@ -174,7 +174,7 @@ public:
 
 
       // Set up 3D system with athermal walls
-      Rp::System<3, CudaTp<3> > system2;
+      Rp::System<3,CUT> system2;
       createSystem(system2, "in/system3D_3");
       system2.mask().allocateBasis(1920);
       system2.mask().allocateRGrid(system2.domain().mesh().dimensions());
@@ -182,7 +182,7 @@ public:
       system2.setUnitCell(parameters);
 
       // Set up external field
-      Rp::FilmFieldGenExt<3, CudaTp<3> > ext2(system2);
+      Rp::FilmFieldGenExt<3,CUT> ext2(system2);
       createFilmFieldGenExt(ext2, "in/filmExt3Athermal");
       ext2.generate();
 
@@ -202,7 +202,7 @@ public:
       openLogFile("out/extTestRegenerate.log");
 
       // Set up 1D external field with a compatible system
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       createSystem(system, "in/system1D");
 
       // Set unit cell parameter
@@ -216,7 +216,7 @@ public:
       system.mask().readBasis("in/maskRef1.bf");
 
       // Set up external field generator
-      Rp::FilmFieldGenExt<1, CudaTp<1> > ext(system);
+      Rp::FilmFieldGenExt<1,CUT> ext(system);
       createFilmFieldGenExt(ext, "in/filmExt1Sym");
       ext.generate();
 
@@ -276,7 +276,7 @@ public:
       openLogFile("out/extTestStress.log");
 
       // Set up 2D field generator with a compatible system
-      Rp::System<2, CudaTp<2> > system;
+      Rp::System<2,CUT> system;
       createSystem(system, "in/system2D_1");
 
       // Set unit cell parameter
@@ -293,7 +293,7 @@ public:
       system.mask().readBasis("in/maskRef2.bf");
 
       // Set up external field generator
-      Rp::FilmFieldGenExt<2, CudaTp<2> > ext(system);
+      Rp::FilmFieldGenExt<2,CUT> ext(system);
       createFilmFieldGenExt(ext, "in/filmExt2Sym");
       ext.generate();
 
@@ -308,7 +308,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void createSystem(Rp::System<D, CudaTp<D> >& system, std::string fname)
+   void createSystem(Rp::System<D,CUT>& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -320,7 +320,7 @@ public:
 
    // Read parameter file section to create a FilmFieldGenExt object
    template <int D>
-   void createFilmFieldGenExt(Rp::FilmFieldGenExt<D, CudaTp<D> >& ext, std::string fname)
+   void createFilmFieldGenExt(Rp::FilmFieldGenExt<D,CUT>& ext, std::string fname)
    {
       std::ifstream in;
       openInputFile(fname, in);
@@ -333,7 +333,7 @@ public:
    // an error or not, and returns a boolean indicating whether the 
    // function demonstrated the expected behavior.
    template <int D>
-   bool checkCheckCompatibility(Rp::FilmFieldGenExt<D, CudaTp<D> >& ext, bool expectError)
+   bool checkCheckCompatibility(Rp::FilmFieldGenExt<D,CUT>& ext, bool expectError)
    {
       bool pass = true;
       if (expectError) {

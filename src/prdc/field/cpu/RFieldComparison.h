@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>             // specialized argument
+#include <pscf/backends/CPT.h>             // specialized argument
 #include <pscf/math/FieldComparison.h>  // base class template
 #include "RField.h"                     // base class template argument
 
@@ -26,14 +26,14 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class RFieldComparison<D, CppTp<D> >
-    : public FieldComparison< RField<D, CppTp<D> > >
+   class RFieldComparison<D,CPT>
+    : public FieldComparison< RField<D,CPT> >
    {};
 
    // Explicit instantiation declarations
-   extern template class RFieldComparison<1, CppTp<1> >;
-   extern template class RFieldComparison<2, CppTp<2> >;
-   extern template class RFieldComparison<3, CppTp<3> >;
+   extern template class RFieldComparison<1,CPT>;
+   extern template class RFieldComparison<2,CPT>;
+   extern template class RFieldComparison<3,CPT>;
 
 } // namespace Prdc
 } // namespace Pscf

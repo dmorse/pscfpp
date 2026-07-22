@@ -53,7 +53,7 @@ public:
    * Allocate an array of basis fields.
    */
    template <int D>
-   void allocateBasisFields(Rp::System<D, CppTp<D> > const & system,
+   void allocateBasisFields(Rp::System<D,CPT> const & system,
                             DArray< DArray<double> >& fields)
    {
       int nMonomer = system.mixture().nMonomer();
@@ -80,13 +80,13 @@ public:
    * Read basis fields into an array.
    */
    template <int D>
-   void readBasisFields(Rp::System<D, CppTp<D> > const & system,
+   void readBasisFields(Rp::System<D,CPT> const & system,
                         std::string filename,
                         DArray< DArray<double> >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateBasisFields(system, fields);
-      Rp::FieldIo<D, CppTp<D> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D,CPT> const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsBasis(filename, fields, unitCell);
    }
 
@@ -111,7 +111,7 @@ public:
    * Compare system w fields to reference fields from a file.
    */
    template <int D>
-   double readCompareWBasis(Rp::System<D, CppTp<D> > const & system,
+   double readCompareWBasis(Rp::System<D,CPT> const & system,
                             std::string filename)
    {
       DArray< DArray<double> > fields;
@@ -125,7 +125,7 @@ public:
    * Compare system c fields to reference fields from a file.
    */
    template <int D>
-   double readCompareCBasis(Rp::System<D, CppTp<D> > const & system,
+   double readCompareCBasis(Rp::System<D,CPT> const & system,
                             std::string filename)
    {
       DArray< DArray<double> > fields;
@@ -141,7 +141,7 @@ public:
    * On output, fHelhmoltz and pressure contain absolute differences
    */
    template <int D>
-   void compareFreeEnergies(Rp::System<D, CppTp<D> > const & system,
+   void compareFreeEnergies(Rp::System<D,CPT> const & system,
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
@@ -157,7 +157,7 @@ public:
    * Setup a system, and read parameter file.
    */
    template <int D>
-   void setupSystem(Rp::System<D, CppTp<D> >& system,
+   void setupSystem(Rp::System<D,CPT>& system,
                    std::string paramFileName,
                    std::string wFileName)
    {
@@ -175,7 +175,7 @@ public:
    * Setup system - read parameter file and basis file. 
    */
    template <int D>
-   void initSystem(Rp::System<D, CppTp<D> >& system,
+   void initSystem(Rp::System<D,CPT>& system,
                    std::string paramFileName,
                    std::string wFileName)
    {
@@ -208,7 +208,7 @@ public:
    * Iterate and output final fields.
    */
    template <int D>
-   void iterate(Rp::System<D, CppTp<D> >& system,
+   void iterate(Rp::System<D,CPT>& system,
                 std::string const & outFileRoot)
    {
       // Iterate
@@ -227,7 +227,7 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void testIterate(Rp::System<D, CppTp<D> >& system,
+   void testIterate(Rp::System<D,CPT>& system,
                     std::string paramFileName,
                     std::string wFileName,
                     std::string outSuffix,
@@ -258,7 +258,7 @@ public:
    * Compute and return stress.
    */
    template <int D>
-   FSArray<double, 6> computeStress(Rp::System<D, CppTp<D> >& system)
+   FSArray<double, 6> computeStress(Rp::System<D,CPT>& system)
    {
       FSArray<double, 6> stress;
       int nParameter = system.domain().unitCell().nParameter();
@@ -282,13 +282,13 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -306,11 +306,11 @@ public:
       outFileRoot = makeFileRoot("out/testConversion","lam", 1);
       openLogFile(outFileRoot + ".log");
 
-      Rp::System<1, CppTp<1> > system;
+      Rp::System<1,CPT> system;
       initSystem(system,
                  "in/diblock/lam/param.flex", 
                  "in/diblock/lam/omega.in");
-      Rp::FieldIo<1, CppTp<1> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<1,CPT> const & fieldIo = system.domain().fieldIo();
 
       // Copy w field components to wFields_check after reading
       DArray< DArray<double> > wFields_check;
@@ -350,7 +350,7 @@ public:
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.w().readRGrid("out/testConversion1D_lam_w.rf");
-      DArray< RField<1, CppTp<1> > > wFieldsRGrid_check;
+      DArray< RField<1,CPT> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
       fieldIo.convertRGridToKGrid("out/testConversion1D_lam_w.rf",
@@ -360,7 +360,7 @@ public:
       system.w().readRGrid("out/testConversion1D_lam_w_2.rf");
 
       // Compare result to original
-      RFieldComparison<1, CppTp<1> > comparison3;
+      RFieldComparison<1,CPT> comparison3;
       comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
@@ -378,11 +378,11 @@ public:
       outFileRoot = makeFileRoot("out/testConversion","hex", 2);
       openLogFile(outFileRoot + ".log");
 
-      Rp::System<2, CppTp<2> > system;
+      Rp::System<2,CPT> system;
       initSystem(system,
                  "in/diblock/hex/param.flex", 
                  "in/diblock/hex/omega.in");
-      Rp::FieldIo<2, CppTp<2> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<2,CPT> const & fieldIo = system.domain().fieldIo();
 
       // Store components in wFields_check for later comparison
       DArray< DArray<double> > wFields_check;
@@ -428,7 +428,7 @@ public:
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.w().readRGrid("out/testConversion2D_hex_w.rf");
-      DArray< RField<2, CppTp<2> > > wFieldsRGrid_check;
+      DArray< RField<2,CPT> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
       fieldIo.convertRGridToKGrid("out/testConversion2D_hex_w.rf",
@@ -438,7 +438,7 @@ public:
       system.w().readRGrid("out/testConversion2D_hex_w_2.rf");
 
       // Compare result to original
-      RFieldComparison<2, CppTp<2> > comparison3;
+      RFieldComparison<2,CPT> comparison3;
       comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
@@ -451,7 +451,7 @@ public:
    void testConversion3D_bcc()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -471,7 +471,7 @@ public:
       wFields_check = system.w().basis();
 
       // Complete round trip basis -> rgrid -> basis
-      Rp::FieldIo<3, CppTp<3> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<3,CPT> const & fieldIo = system.domain().fieldIo();
       fieldIo.convertBasisToRGrid("in/diblock/bcc/omega.in",
                           "out/testConversion3D_bcc_w.rf");
       fieldIo.convertRGridToBasis("out/testConversion3D_bcc_w.rf",
@@ -510,7 +510,7 @@ public:
 
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.w().readRGrid("out/testConversion3D_bcc_w.rf");
-      DArray< RField<3, CppTp<3> > > wFieldsRGrid_check;
+      DArray< RField<3,CPT> > wFieldsRGrid_check;
       wFieldsRGrid_check = system.w().rgrid();
 
       fieldIo.convertRGridToKGrid("out/testConversion3D_bcc_w.rf",
@@ -520,7 +520,7 @@ public:
       system.w().readRGrid("out/testConversion3D_bcc_w_2.rf");
 
       // Compare result to original
-      RFieldComparison<3, CppTp<3> > comparison3;
+      RFieldComparison<3,CPT> comparison3;
       comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
@@ -533,7 +533,7 @@ public:
    void testCheckSymmetry3D_bcc()
    {
       printMethod(TEST_FUNC);
-      Rp::System<3, CppTp<3> > system;
+      Rp::System<3,CPT> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -551,7 +551,7 @@ public:
       TEST_ASSERT(hasSymmetry);
 
       // Copy the wFieldsRGrid to a temporary container
-      RField<3, CppTp<3> > field;
+      RField<3,CPT> field;
       field.allocate(system.domain().mesh().dimensions());
       int meshSize = system.domain().mesh().size();
       for (int j = 0; j < meshSize; ++j) {

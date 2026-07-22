@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaTp.h>         // class template argument
+#include <pscf/backends/CUT.h>         // class template argument
 #include <pscf/cuda/DeviceArray.h>    // base class template
 #include <pscf/cuda/cudaTypes.h>      // base class argument
 #include <pscf/math/IntVec.h>         // class member
@@ -32,7 +32,7 @@ namespace Prdc {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class RField<D, CudaTp<D> >
+   class RField<D,CUT>
     : public DeviceArray<cudaReal>
    {
 
@@ -59,7 +59,7 @@ namespace Prdc {
       *
       *\param other the RField to be copied.
       */
-      RField(RField<D, CudaTp<D> > const& other);
+      RField(RField<D,CUT> const& other);
 
       /**
       * Destructor.
@@ -102,8 +102,8 @@ namespace Prdc {
       *
       * \param other the RHS RField
       */
-      RField<D, CudaTp<D> >& 
-      operator = (RField<D, CudaTp<D> > const & other);
+      RField<D,CUT>& 
+      operator = (RField<D,CUT> const & other);
 
       /**
       * Assignment operator, assignment from a HostDArray<cudaReal>.
@@ -116,7 +116,7 @@ namespace Prdc {
       *
       * \param other the RHS HostDArray<cudaReal>
       */
-      RField<D, CudaTp<D> >& operator = (const HostDArray<cudaReal>& other);
+      RField<D,CUT>& operator = (const HostDArray<cudaReal>& other);
 
       /**
       * Return mesh dimensions by constant reference.
@@ -153,7 +153,7 @@ namespace Prdc {
    */
    template <int D> inline 
    IntVec<D> const & 
-   RField<D, CudaTp<D> >::meshDimensions() const
+   RField<D,CUT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
@@ -161,7 +161,7 @@ namespace Prdc {
    */
    template <int D>
    template <class Archive>
-   void RField<D, CudaTp<D> >::serialize(Archive& ar, const unsigned int version)
+   void RField<D,CUT>::serialize(Archive& ar, const unsigned int version)
    {
       int capacity;
       if (Archive::is_saving()) {
@@ -191,9 +191,9 @@ namespace Prdc {
    }
 
    // Explicit instantiation declarations
-   extern template class RField<1, CudaTp<1> >;
-   extern template class RField<2, CudaTp<2> >;
-   extern template class RField<3, CudaTp<3> >;
+   extern template class RField<1,CUT>;
+   extern template class RField<2,CUT>;
+   extern template class RField<3,CUT>;
 
 } // namespace Prdc
 } // namespace Pscf

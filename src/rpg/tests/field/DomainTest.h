@@ -37,10 +37,10 @@ public:
    {  setVerbose(0); }
 
    /*
-   * Open and read file header to initialize Rp::Domain<D, CudaTp<D> > system.
+   * Open and read file header to initialize Rp::Domain<D,CUT> system.
    */
    template <int D>
-   void readHeader(std::string filename, Rp::Domain<D, CudaTp<D> >& domain)
+   void readHeader(std::string filename, Rp::Domain<D,CUT>& domain)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -52,7 +52,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
 
       std::ifstream in;
@@ -74,7 +74,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Domain<3, CudaTp<3> > domain;
+      Rp::Domain<3,CUT> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 

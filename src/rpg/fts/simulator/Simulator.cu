@@ -31,8 +31,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Simulator<1, CudaTp<1> >;
-      template class Simulator<2, CudaTp<2> >;
-      template class Simulator<3, CudaTp<3> >;
+      template class Simulator<1,CUT>;
+      template class Simulator<2,CUT>;
+      template class Simulator<3,CUT>;
    }
 }

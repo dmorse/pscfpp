@@ -36,7 +36,7 @@ namespace Rp {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenMask<D, CppTp<D> >::FilmFieldGenMask()
+   FilmFieldGenMask<D,CPT>::FilmFieldGenMask()
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(nullptr)
    {  ParamComposite::setClassName("FilmFieldGenMask"); }
@@ -45,8 +45,8 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   FilmFieldGenMask<D, CppTp<D> >::FilmFieldGenMask(
-         Rp::System<D, CppTp<D> >& sys)
+   FilmFieldGenMask<D,CPT>::FilmFieldGenMask(
+         Rp::System<D,CPT>& sys)
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(&sys)
    {  ParamComposite::setClassName("FilmFieldGenMask"); }
@@ -55,17 +55,17 @@ namespace Rp {
    * Destructor
    */
    template <int D>
-   FilmFieldGenMask<D, CppTp<D> >::~FilmFieldGenMask()
+   FilmFieldGenMask<D,CPT>::~FilmFieldGenMask()
    {}
 
    /*
    * Get contribution to the stress from this mask
    */
    template <int D>
-   double FilmFieldGenMask<D, CppTp<D> >::stress(int paramId) const
+   double FilmFieldGenMask<D,CPT>::stress(int paramId) const
    {
       UTIL_CHECK(sysPtr_);
-      Rp::Domain<D, CppTp<D> > const & domain = system().domain();
+      Rp::Domain<D,CPT> const & domain = system().domain();
       Mesh<D> const & mesh = domain.mesh();
 
       int normalVecParamId = convertFullParamIdToReduced<D>(normalVecId(),
@@ -95,14 +95,14 @@ namespace Rp {
       }
 
       // Create the derivative field in rgrid format
-      RField<D, CppTp<D> > deriv;
+      RField<D,CPT> deriv;
       IntVec<3> coords;
       int x, y, z;
       int counter = 0;
       double d, maskVal;
 
       deriv.allocate(mesh.dimensions());
-      RField<D, CppTp<D> > const & maskRGrid = system().mask().rgrid();
+      RField<D,CPT> const & maskRGrid = system().mask().rgrid();
       
       for (x = 0; x < dim[0]; x++) {
          coords[0] = x;
@@ -129,7 +129,7 @@ namespace Rp {
       int nMonomer = system().mixture().nMonomer();
       int nx = mesh.size();
       double chi;
-      RField<D, CppTp<D> > xi;
+      RField<D,CPT> xi;
       xi.allocate(mesh.dimensions());
 
       for (int i = 0; i < nx; i++) {
@@ -139,7 +139,7 @@ namespace Rp {
       for (int in = 0; in < nMonomer; in++) {
          chi = system().interaction().chi(0,in);
          if (fabs(chi) > 1e-6) { // if chi is nonzero
-            RField<D, CppTp<D> > const & cfield = system().c().rgrid(in);
+            RField<D,CPT> const & cfield = system().c().rgrid(in);
             for (int i = 0; i < nx; i++) {
                //xi[i] -= system().c().rgrid(in)[i] * chi;
                xi[i] -= cfield[i] * chi;
@@ -148,7 +148,7 @@ namespace Rp {
       }
 
       if (system().h().hasData()) {
-         RField<D, CppTp<D> > const & hfield = system().h().rgrid(0);
+         RField<D,CPT> const & hfield = system().h().rgrid(0);
          for (int i = 0; i < nx; i++) {
             //xi[i] -= system().h().rgrid(0)[i];
             xi[i] -= hfield[i];
@@ -175,7 +175,7 @@ namespace Rp {
 
    template <int D>
    double 
-   FilmFieldGenMask<D, CppTp<D> >::modifyStress(
+   FilmFieldGenMask<D,CPT>::modifyStress(
         int paramId, 
         double stress) const
    {
@@ -211,7 +211,7 @@ namespace Rp {
    * Compute the field and store where the System can access
    */
    template <int D>
-   void FilmFieldGenMask<D, CppTp<D> >::compute()
+   void FilmFieldGenMask<D,CPT>::compute()
    {
       UTIL_CHECK(sysPtr_);
       UTIL_CHECK(interfaceThickness() > 0);
@@ -239,7 +239,7 @@ namespace Rp {
       }
 
       // Generate an r-grid representation of the walls
-      RField<D, CppTp<D> > rGrid;
+      RField<D,CPT> rGrid;
       rGrid.allocate(system().domain().mesh().dimensions());
       int x, y, z;
       int counter = 0;
@@ -277,7 +277,7 @@ namespace Rp {
    * Sets flexible lattice parameters to be compatible with the mask.
    */
    template <int D>
-   void FilmFieldGenMask<D, CppTp<D> >::setFlexibleParams() const
+   void FilmFieldGenMask<D,CPT>::setFlexibleParams() const
    {
       UTIL_CHECK(sysPtr_);
       if (system().iterator().isFlexible()) {
@@ -294,8 +294,8 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FilmFieldGenMask<1, CppTp<1> >;
-      template class FilmFieldGenMask<2, CppTp<2> >;
-      template class FilmFieldGenMask<3, CppTp<3> >;
+      template class FilmFieldGenMask<1,CPT>;
+      template class FilmFieldGenMask<2,CPT>;
+      template class FilmFieldGenMask<3,CPT>;
    }
 }

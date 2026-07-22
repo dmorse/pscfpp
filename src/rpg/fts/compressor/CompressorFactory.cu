@@ -17,8 +17,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
 namespace Rp {
-   template class CompressorFactory<1, CudaTp<1> >;
-   template class CompressorFactory<2, CudaTp<2> >;
-   template class CompressorFactory<3, CudaTp<3> >;
+   template class CompressorFactory<1,CUT>;
+   template class CompressorFactory<2,CUT>;
+   template class CompressorFactory<3,CUT>;
 }
 }

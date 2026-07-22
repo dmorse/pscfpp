@@ -43,7 +43,7 @@ public:
    {  PolymerModel::setModel(PolymerModel::Thread); }
 
    template <int D> 
-   void setupBlock(Rp::Block<D, CudaTp<D> >& block)
+   void setupBlock(Rp::Block<D,CUT>& block)
    {
       block.setId(0);
       if (PolymerModel::isThread()) {
@@ -81,7 +81,7 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Pscf::Rp::Block<1, CudaTp<1> > block;
+      Pscf::Rp::Block<1,CUT> block;
    }
 
    void testSetup1D() // test allocate and associate methods
@@ -89,13 +89,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<1, CudaTp<1> > block;
+      Pscf::Rp::Block<1,CUT> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CudaTp<1> > fft;
+      FFT<1,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -103,7 +103,7 @@ public:
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
       // Create wavelist
-      WaveList<1, CudaTp<1> > wavelist;
+      WaveList<1,CUT> wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -127,13 +127,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<2, CudaTp<2> > block;
+      Pscf::Rp::Block<2,CUT> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CudaTp<2> > fft;
+      FFT<2,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -141,7 +141,7 @@ public:
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       // Create wavelist 
-      WaveList<2, CudaTp<2> > wavelist;
+      WaveList<2,CUT> wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -164,13 +164,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<3, CudaTp<3> > block;
+      Pscf::Rp::Block<3,CUT> block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3, CudaTp<3> > fft;
+      FFT<3,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -178,7 +178,7 @@ public:
       setupUnitCell<3>(unitCell, "in/Hexagonal");
 
       // Create wavelist 
-      WaveList<3, CudaTp<3> > wavelist;
+      WaveList<3,CUT> wavelist;
 
       // Associate block
       block.associate(mesh, fft, unitCell, wavelist);
@@ -201,13 +201,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<1, CudaTp<1> > block;
+      Pscf::Rp::Block<1,CUT> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CudaTp<1> > fft;
+      FFT<1,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -216,7 +216,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Construct wavelist
-      WaveList<1, CudaTp<1> > wavelist;
+      WaveList<1,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -232,7 +232,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RField<1, CudaTp<1> > w;
+      RField<1,CUT> w;
       w.allocate(mesh.dimensions());
       HostDArray<cudaReal> w_h(nx);
 
@@ -252,13 +252,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<2, CudaTp<2> > block;
+      Pscf::Rp::Block<2,CUT> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CudaTp<2> > fft;
+      FFT<2,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -269,7 +269,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Construct wavelist
-      WaveList<2, CudaTp<2> > wavelist;
+      WaveList<2,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -285,7 +285,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RField<2, CudaTp<2> > w;
+      RField<2,CUT> w;
       w.allocate(mesh.dimensions());
       HostDArray<cudaReal> w_h(nx);
 
@@ -307,20 +307,20 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Pscf::Rp::Block<2, CudaTp<2> > block;
+      Pscf::Rp::Block<2,CUT> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CudaTp<2> > fft;
+      FFT<2,CUT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<2> unitCell;
       setupUnitCell<2>(unitCell, "in/Rectangular");
 
       // Create wavelist 
-      WaveList<2, CudaTp<2> > wavelist;
+      WaveList<2,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       double ds = 0.5;
@@ -335,7 +335,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2, CudaTp<2> > w;
+      RField<2,CUT> w;
       w.allocate(mesh.dimensions());
       TEST_ASSERT(w.capacity() == mesh.size());
       VecOp::eqS(w, 1.0);
@@ -352,13 +352,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<3, CudaTp<3> > block;
+      Pscf::Rp::Block<3,CUT> block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3, CudaTp<3> > fft;
+      FFT<3,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -370,7 +370,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Construct wavelist
-      WaveList<3, CudaTp<3> > wavelist;
+      WaveList<3,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -386,7 +386,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RField<3, CudaTp<3> > w;
+      RField<3,CUT> w;
       w.allocate(mesh.dimensions());
       HostDArray<cudaReal> w_h(nx);
 
@@ -406,13 +406,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<1, CudaTp<1> > block;
+      Pscf::Rp::Block<1,CUT> block;
       setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CudaTp<1> > fft;
+      FFT<1,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -421,7 +421,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Construct wavelist
-      WaveList<1, CudaTp<1> > wavelist;
+      WaveList<1,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -437,7 +437,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RField<1, CudaTp<1> > w;
+      RField<1,CUT> w;
       w.allocate(mesh.dimensions());
       HostDArray<cudaReal> w_h(nx);
 
@@ -452,7 +452,7 @@ public:
       block.setupSolver(w);
 
       // Setup fields on host and device
-      RField<1, CudaTp<1> > d_qin, d_qout;
+      RField<1,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostDArray<cudaReal> qin(nx);
@@ -506,20 +506,20 @@ public:
       PolymerModel::setModel(PolymerModel::Bead);
 
       // Create and initialize block
-      Pscf::Rp::Block<1, CudaTp<1> > block;
+      Pscf::Rp::Block<1,CUT> block;
       setupBlock<1>(block);
       int nBead = block.nBead();
 
       // Create and initialize mesh
       Mesh<1> mesh;
       setupMesh<1>(mesh);
-      FFT<1, CudaTp<1> > fft;
+      FFT<1,CUT> fft;
       fft.setup(mesh.dimensions());
 
       UnitCell<1> unitCell;
       setupUnitCell<1>(unitCell, "in/Lamellar");
 
-      WaveList<1, CudaTp<1> > wavelist;
+      WaveList<1,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       double ds = 1.00;
@@ -532,7 +532,7 @@ public:
       block.propagator(1).setEndFlags(isEnd1, isEnd0);
 
       // Setup chemical potential field
-      RField<1, CudaTp<1> > w;
+      RField<1,CUT> w;
       w.allocate(mesh.dimensions());
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
@@ -543,8 +543,8 @@ public:
       block.setupSolver(w);
 
       // Test step
-      RField<1, CudaTp<1> > qin;
-      RField<1, CudaTp<1> > qout;
+      RField<1,CUT> qin;
+      RField<1,CUT> qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
 
@@ -573,7 +573,7 @@ public:
       }
    
       // Test propagator solve, block owns both vertices
-      Rp::Propagator<1, CudaTp<1> >& p0 = block.propagator(0);
+      Rp::Propagator<1,CUT>& p0 = block.propagator(0);
       p0.solve();
 
       // Check head slice
@@ -599,7 +599,7 @@ public:
          TEST_ASSERT(eq(qt_h[i], expected));
       }
 
-      Rp::Propagator<1, CudaTp<1> >& p1 = block.propagator(1);
+      Rp::Propagator<1,CUT>& p1 = block.propagator(1);
       p1.solve();
 
       #if 0
@@ -615,13 +615,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<2, CudaTp<2> > block;
+      Pscf::Rp::Block<2,CUT> block;
       setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
       setupMesh<2>(mesh);
-      FFT<2, CudaTp<2> > fft;
+      FFT<2,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -631,7 +631,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Construct wavelist
-      WaveList<2, CudaTp<2> > wavelist;
+      WaveList<2,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -647,7 +647,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RField<2, CudaTp<2> > w;
+      RField<2,CUT> w;
       w.allocate(mesh.dimensions());
       HostDArray<cudaReal> w_h(nx);
 
@@ -662,7 +662,7 @@ public:
       block.setupSolver(w);
 
       // Setup fields on host and device
-      RField<2, CudaTp<2> > d_qin, d_qout;
+      RField<2,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostDArray<cudaReal> qin(nx);
@@ -723,13 +723,13 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Pscf::Rp::Block<3, CudaTp<3> > block;
+      Pscf::Rp::Block<3,CUT> block;
       setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
       setupMesh<3>(mesh);
-      FFT<3, CudaTp<3> > fft;
+      FFT<3,CUT> fft;
       fft.setup(mesh.dimensions());
 
       // Set up unit cell
@@ -740,7 +740,7 @@ public:
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Construct wavelist
-      WaveList<3, CudaTp<3> > wavelist;
+      WaveList<3,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Associate block
@@ -756,7 +756,7 @@ public:
 
       // Setup chemical potential field
       int nx = mesh.size();
-      RField<3, CudaTp<3> > w;
+      RField<3,CUT> w;
       w.allocate(mesh.dimensions());
       HostDArray<cudaReal> w_h(nx);
 
@@ -771,7 +771,7 @@ public:
       block.setupSolver(w);
 
       // Setup fields on host and device
-      RField<3, CudaTp<3> > d_qin, d_qout;
+      RField<3,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostDArray<cudaReal> qin(nx);

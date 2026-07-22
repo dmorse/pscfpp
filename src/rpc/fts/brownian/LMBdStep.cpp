@@ -22,8 +22,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class LMBdStep<1, CppTp<1> >;
-      template class LMBdStep<2, CppTp<2> >;
-      template class LMBdStep<3, CppTp<3> >;
+      template class LMBdStep<1,CPT>;
+      template class LMBdStep<2,CPT>;
+      template class LMBdStep<3,CPT>;
    }
 }

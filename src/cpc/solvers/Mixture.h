@@ -10,7 +10,7 @@
 
 #include <cp/solvers/Mixture.h>        // base class template
 #include <cpc/system/Types.h>          // base class template argument
-#include <pscf/cpu/CppTp.h>            // backend class
+#include <pscf/backends/CPT.h>            // backend class
 
 // Forward declarations
 namespace Pscf {

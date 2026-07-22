@@ -20,8 +20,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Rp::ExplicitBdStep<1, CudaTp<1> >;
-      template class Rp::ExplicitBdStep<2, CudaTp<2> >;
-      template class Rp::ExplicitBdStep<3, CudaTp<3> >;
+      template class Rp::ExplicitBdStep<1,CUT>;
+      template class Rp::ExplicitBdStep<2,CUT>;
+      template class Rp::ExplicitBdStep<3,CUT>;
    }
 }

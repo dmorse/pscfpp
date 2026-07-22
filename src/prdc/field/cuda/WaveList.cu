@@ -10,8 +10,8 @@
 // Explicit instantation definitions
 namespace Pscf { 
    namespace Prdc { 
-      template class WaveList<1, CudaTp<1> >;
-      template class WaveList<2, CudaTp<2> >;
-      template class WaveList<3, CudaTp<3> >;
+      template class WaveList<1,CUT>;
+      template class WaveList<2,CUT>;
+      template class WaveList<3,CUT>;
    }
 }

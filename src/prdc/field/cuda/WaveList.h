@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaTp.h>        // specialized template argument
+#include <pscf/backends/CUT.h>        // specialized template argument
 #include <prdc/field/cuda/RField.h>  // member
 #include <pscf/cuda/DeviceArray.h>   // member
 #include <pscf/cuda/HostDArray.h>    // member
@@ -66,7 +66,7 @@ namespace Prdc {
    * \ingroup Prdc_Cuda_Module
    */
    template <int D>
-   class WaveList<D, CudaTp<D> >
+   class WaveList<D,CUT>
    {
    public:
 
@@ -182,17 +182,17 @@ namespace Prdc {
       /**
       * Get the kSq array on the device by reference.
       *
-      * This method returns an RField<D, CudaTp<D> > in which each element is the
+      * This method returns an RField<D,CUT> in which each element is the
       * square magnitude |k|^2 of a wavevector k in the k-space mesh used
       * for a DFT. If isRealField is true, this k-space mesh is smaller
       * than the real-space mesh. Otherwise, it is the same size.
       */
-      RField<D, CudaTp<D> > const & kSq() const;
+      RField<D,CUT> const & kSq() const;
 
       /**
       * Get derivatives of |k|^2 with respect to lattice parameter i.
       *
-      * This method returns an RField<D, CudaTp<D> > in which each element is the
+      * This method returns an RField<D,CUT> in which each element is the
       * derivative of the square-wavevector with respect to unit cell
       * parameter i, multiplied by a prefactor. The prefactor is 2.0 for
       * waves that have an implicit inverse and 1.0 otherwise. The choice
@@ -207,7 +207,7 @@ namespace Prdc {
       *
       * \param i index of lattice parameter
       */
-      RField<D, CudaTp<D> > const & dKSq(int i) const;
+      RField<D,CUT> const & dKSq(int i) const;
 
       /**
       * Get the implicitInverse array by reference.
@@ -362,7 +362,7 @@ namespace Prdc {
       *
       * The mesh dimensions are those of the reciprocal space mesh.
       */
-      RField<D, CudaTp<D> > kSq_;
+      RField<D,CUT> kSq_;
 
       /**
       * Array containing all values of dKSq_, stored on the device.
@@ -376,7 +376,7 @@ namespace Prdc {
       * Array of RFields, where each RField is a slice of the dKSq_ array.
       *
       * The number of elements is equal to nParam, the number of unit cell
-      * parameters.  Element dKSqSlices_[i] is an  RField<D, CudaTp<D> > element that
+      * parameters.  Element dKSqSlices_[i] is an  RField<D,CUT> element that
       * is associated with a slice of the larger dKSq_ device array, and
       * that contains derivatives of square wavevectors with respect to
       * unit cell parameter number i.
@@ -386,7 +386,7 @@ namespace Prdc {
       * elements of dkSqSlices_ will be destroyed before the dKSq_
       * container that owns the data.
       */
-      DArray< RField<D, CudaTp<D> > > dKSqSlices_;
+      DArray< RField<D,CUT> > dKSqSlices_;
 
       /**
       * Array indicating whether a given gridpoint has an implicit partner.
@@ -430,7 +430,7 @@ namespace Prdc {
       * Dimensions of the mesh in reciprocal space.
       *
       * If isRealField_ is true, kMeshDimensions_ is equal to the vector
-      * of dimensions of the reciprocal space grid used by a RFieldDft<D, CudaTp<D> >
+      * of dimensions of the reciprocal space grid used by a RFieldDft<D,CUT>
       * container to store the discrete Fourier transform of a real field.
       * One dimension of this mesh is approximately half the corresponding
       * dimension of the associated real space grid.  If isRealField_
@@ -497,7 +497,7 @@ namespace Prdc {
 
    // Get the array of minimum images on the device by reference.
    template <int D> inline
-   DeviceArray<int> const & WaveList<D, CudaTp<D> >::minImages_d() const
+   DeviceArray<int> const & WaveList<D,CUT>::minImages_d() const
    {
       UTIL_CHECK(hasMinImages_);
       return minImages_;
@@ -505,7 +505,7 @@ namespace Prdc {
 
    // Get the kSq array on the device by reference.
    template <int D> inline
-   RField<D, CudaTp<D> > const & WaveList<D, CudaTp<D> >::kSq() const
+   RField<D,CUT> const & WaveList<D,CUT>::kSq() const
    {
       UTIL_CHECK(hasKSq_);
       return kSq_;
@@ -513,7 +513,7 @@ namespace Prdc {
 
    // Get a slice of the dKSq array on the device by reference.
    template <int D> inline
-   RField<D, CudaTp<D> > const & WaveList<D, CudaTp<D> >::dKSq(int i) const
+   RField<D,CUT> const & WaveList<D,CUT>::dKSq(int i) const
    {
       UTIL_CHECK(hasdKSq_);
       return dKSqSlices_[i];
@@ -521,7 +521,7 @@ namespace Prdc {
 
    // Get the implicitInverse array by reference.
    template <int D> inline
-   DeviceArray<bool> const & WaveList<D, CudaTp<D> >::implicitInverse() const
+   DeviceArray<bool> const & WaveList<D,CUT>::implicitInverse() const
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);
@@ -531,7 +531,7 @@ namespace Prdc {
    // Get the sortedIds array by const reference.
    template <int D>
    inline
-   DArray<int> const & WaveList<D, CudaTp<D> >::sortedIds() const
+   DArray<int> const & WaveList<D,CUT>::sortedIds() const
    {
       UTIL_CHECK(isSorted_);
       return sortedIds_;
@@ -539,7 +539,7 @@ namespace Prdc {
 
    // Get the sortedBunches array by const reference.
    template <int D> inline
-   GArray< Pair<int> > const & WaveList<D, CudaTp<D> >::sortedBunches() const
+   GArray< Pair<int> > const & WaveList<D,CUT>::sortedBunches() const
    {
       UTIL_CHECK(isSorted_);
       return sortedBunches_;
@@ -547,16 +547,16 @@ namespace Prdc {
 
    // Get the bunchIds array by const reference.
    template <int D> inline
-   DArray<int> const & WaveList<D, CudaTp<D> >::bunchIds() const
+   DArray<int> const & WaveList<D,CUT>::bunchIds() const
    {
       UTIL_CHECK(isSorted_);
       return bunchIds_;
    }
 
    // Explicit instantiation declarations
-   extern template class WaveList<1, CudaTp<1> >;
-   extern template class WaveList<2, CudaTp<2> >;
-   extern template class WaveList<3, CudaTp<3> >;
+   extern template class WaveList<1,CUT>;
+   extern template class WaveList<2,CUT>;
+   extern template class WaveList<3,CUT>;
 
 } // namespace Prdc
 } // namespace Pscf

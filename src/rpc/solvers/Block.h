@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pscf/cpu/CppTp.h>           // template argument
+#include <pscf/backends/CPT.h>           // template argument
 
 #include <prdc/field/cpu/RField.h>        // member
 #include <prdc/field/cpu/RFieldDft.h>     // member
@@ -39,14 +39,14 @@ namespace Rp {
    * Block within a linear or branched block polymer.
    *
    * A Block has two Propagator<D, Types<D> > members, and an 
-   * RField<D, CppTp<D> > concentration field.
+   * RField<D,CPT> concentration field.
    *
    * \ref user_param_block_sec "Manual Page"
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Block<D, CppTp<D> > 
-    : public BlockTmpl< Rp::Propagator<D, CppTp<D> >, RField<D, CppTp<D> > >
+   class Block<D,CPT> 
+    : public BlockTmpl< Rp::Propagator<D,CPT>, RField<D,CPT> >
    {
 
    public:
@@ -54,7 +54,7 @@ namespace Rp {
       // Public type name aliases
 
       /// Direct (parent) base class.
-      using BlockTmplT = BlockTmpl< Rp::Propagator<D, CppTp<D> >, RField<D, CppTp<D> > >;
+      using BlockTmplT = BlockTmpl< Rp::Propagator<D,CPT>, RField<D,CPT> >;
 
       /// Propagator type (inherited).
       using typename BlockTmplT::PropagatorT;
@@ -85,14 +85,14 @@ namespace Rp {
       * It must be called before allocate().
       *
       * \param mesh  Mesh<D> object, spatial discretization meth
-      * \param fft  FFT<D, CppTp<D> > object, Fast Fourier Transform
+      * \param fft  FFT<D,CPT> object, Fast Fourier Transform
       * \param cell  UnitCell<D> object, crystallographic unit cell
-      * \param waveList  WaveList<D, CppTp<D> >, container for wavevector properties
+      * \param waveList  WaveList<D,CPT>, container for wavevector properties
       */
       void associate(Mesh<D> const& mesh,
-                     FFT<D, CppTp<D> > const& fft,
+                     FFT<D,CPT> const& fft,
                      UnitCell<D> const& cell,
-                     WaveList<D, CppTp<D> >& waveList);
+                     WaveList<D,CPT>& waveList);
 
       /**
       * Allocate memory and set contour step size.
@@ -157,7 +157,7 @@ namespace Rp {
       *
       * \param w chemical potential field for this monomer type
       */
-      void setupSolver(RField<D, CppTp<D> > const & w);
+      void setupSolver(RField<D,CPT> const & w);
 
       ///@}
       /// \name MDE Step Functions
@@ -174,7 +174,7 @@ namespace Rp {
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, from step i+1
       */
-      void stepThread(RField<D, CppTp<D> > const & qin, RField<D, CppTp<D> >& qout) const;
+      void stepThread(RField<D,CPT> const & qin, RField<D,CPT>& qout) const;
 
       /**
       * Compute one step of solution of MDE for the bead model.
@@ -187,7 +187,7 @@ namespace Rp {
       * \param qin  input slice of q, from step i
       * \param qout  output slice of q, for step i+1
       */
-      void stepBead(RField<D, CppTp<D> > const & qin, RField<D, CppTp<D> >& qout) const;
+      void stepBead(RField<D,CPT> const & qin, RField<D,CPT>& qout) const;
 
       /**
       * Apply the exponential field operator for the bead model.
@@ -197,7 +197,7 @@ namespace Rp {
       *
       * \param q  slice of propagator q, modified in place
       */
-      void stepFieldBead(RField<D, CppTp<D> > & q) const;
+      void stepFieldBead(RField<D,CPT> & q) const;
 
       /**
       * Apply a bond operator for the bead model.
@@ -209,7 +209,7 @@ namespace Rp {
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
       */
-      void stepBondBead(RField<D, CppTp<D> > const & qin, RField<D, CppTp<D> >& qout) const;
+      void stepBondBead(RField<D,CPT> const & qin, RField<D,CPT>& qout) const;
 
       /**
       * Apply a half-bond operator for the bead model.
@@ -222,7 +222,7 @@ namespace Rp {
       * \param qin  input slice of q, from step i
       * \param qout  ouptut slice of q, for step i+1
       */
-      void stepHalfBondBead(RField<D, CppTp<D> > const & qin, RField<D, CppTp<D> >& qout) const;
+      void stepHalfBondBead(RField<D,CPT> const & qin, RField<D,CPT>& qout) const;
 
       ///@}
       /// \name Monomer Concentration Computation
@@ -351,43 +351,43 @@ namespace Rp {
       FSArray<double, 6> stress_;
 
       /// Array of elements containing exp(-K^2 b^2 ds/6)
-      RField<D, CppTp<D> > expKsq_;
+      RField<D,CPT> expKsq_;
 
       /// Array containing exp(-W[i] ds/2) (thread) or exp(-W[i]) (bead)
-      RField<D, CppTp<D> > expW_;
+      RField<D,CPT> expW_;
 
       /// Array of elements containing exp(-K^2 b^2 ds/(6*2))
-      RField<D, CppTp<D> > expKsq2_;
+      RField<D,CPT> expKsq2_;
 
       /// Array of elements containing exp(-W[i] (ds/2)*0.5) (thread model)
-      RField<D, CppTp<D> > expW2_;
+      RField<D,CPT> expW2_;
 
       /// Array of elements containing exp(+W[i]) (bead model)
-      RField<D, CppTp<D> > expWInv_;
+      RField<D,CPT> expWInv_;
 
       /// Work array for real-space q field (step size ds)
-      mutable RField<D, CppTp<D> > qr_;
+      mutable RField<D,CPT> qr_;
 
       /// Work array for real-space q field (step size ds/2, thread model)
-      mutable RField<D, CppTp<D> > qr2_;
+      mutable RField<D,CPT> qr2_;
 
       /// Work array for wavevector space field (step size ds)
-      mutable RFieldDft<D, CppTp<D> > qk_;
+      mutable RFieldDft<D,CPT> qk_;
 
       /// Work array for wavevector space field (step size ds/2)
-      mutable RFieldDft<D, CppTp<D> > qk2_;
+      mutable RFieldDft<D,CPT> qk2_;
 
       /// Pointer to associated Mesh<D> object
       Mesh<D> const * meshPtr_;
 
-      /// Pointer to associated FFT<D, CppTp<D> > object
-      FFT<D, CppTp<D> > const * fftPtr_;
+      /// Pointer to associated FFT<D,CPT> object
+      FFT<D,CPT> const * fftPtr_;
 
       /// Pointer to associated UnitCell<D> object
       UnitCell<D> const * unitCellPtr_;
 
-      /// Pointer to associated WaveList<D, CppTp<D> > object (non-const)
-      WaveList<D, CppTp<D> > * waveListPtr_;
+      /// Pointer to associated WaveList<D,CPT> object (non-const)
+      WaveList<D,CPT> * waveListPtr_;
 
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
@@ -420,13 +420,13 @@ namespace Rp {
       Mesh<D> const & mesh() const;
 
       /// Get associated FFT object by const reference (private).
-      FFT<D, CppTp<D> > const & fft() const;
+      FFT<D,CPT> const & fft() const;
 
       /// Get associated UnitCell<D> as const reference (private).
       UnitCell<D> const & unitCell() const;
 
-      /// Get associated WaveList<D, CppTp<D> > by non-const reference (private).
-      WaveList<D, CppTp<D> > & waveList();
+      /// Get associated WaveList<D,CPT> by non-const reference (private).
+      WaveList<D,CPT> & waveList();
 
       /**
       * Compute expKSq arrays.
@@ -439,32 +439,32 @@ namespace Rp {
 
    // Get number of contour grid points, including end points.
    template <int D>
-   inline int Block<D, CppTp<D> >::ns() const
+   inline int Block<D,CPT>::ns() const
    {  return ns_; }
 
    // Get contour step size.
    template <int D>
-   inline double Block<D, CppTp<D> >::ds() const
+   inline double Block<D,CPT>::ds() const
    {  return ds_; }
 
    // Stress with respect to unit cell parameter n.
    template <int D>
-   inline double Block<D, CppTp<D> >::stress(int n) const
+   inline double Block<D,CPT>::stress(int n) const
    {  return stress_[n]; }
 
    // Private inline member function definitions
 
    // Get associated Mesh<D> object by const reference (private).
    template <int D>
-   inline Mesh<D> const & Block<D, CppTp<D> >::mesh() const
+   inline Mesh<D> const & Block<D,CPT>::mesh() const
    {
       UTIL_CHECK(meshPtr_);
       return *meshPtr_;
    }
 
-   // Get associated FFT<D, CppTp<D> > object by const reference (private).
+   // Get associated FFT<D,CPT> object by const reference (private).
    template <int D>
-   inline FFT<D, CppTp<D> > const & Block<D, CppTp<D> >::fft() const
+   inline FFT<D,CPT> const & Block<D,CPT>::fft() const
    {
       UTIL_CHECK(fftPtr_);
       return * fftPtr_;
@@ -472,15 +472,15 @@ namespace Rp {
 
    // Get associated UnitCell<D> by const reference (private).
    template <int D>
-   UnitCell<D> const & Block<D, CppTp<D> >::unitCell() const
+   UnitCell<D> const & Block<D,CPT>::unitCell() const
    {
       UTIL_CHECK(unitCellPtr_);
       return *unitCellPtr_;
    }
 
-   // Get associated WaveList<D, CppTp<D> > by reference (private).
+   // Get associated WaveList<D,CPT> by reference (private).
    template <int D>
-   WaveList<D, CppTp<D> >& Block<D, CppTp<D> >::waveList()
+   WaveList<D,CPT>& Block<D,CPT>::waveList()
    {
       UTIL_CHECK(waveListPtr_);
       return *waveListPtr_;
@@ -493,16 +493,16 @@ namespace Rp {
 namespace Pscf {
 
    extern template
-   class BlockTmpl< Rp::Propagator<1, CppTp<1> >, Prdc::RField<1, CppTp<1> > >;
+   class BlockTmpl< Rp::Propagator<1,CPT>, Prdc::RField<1,CPT> >;
    extern template
-   class BlockTmpl< Rp::Propagator<2, CppTp<2> >, Prdc::RField<2, CppTp<2> > >;
+   class BlockTmpl< Rp::Propagator<2,CPT>, Prdc::RField<2,CPT> >;
    extern template
-   class BlockTmpl< Rp::Propagator<3, CppTp<3> >, Prdc::RField<3, CppTp<3> > >;
+   class BlockTmpl< Rp::Propagator<3,CPT>, Prdc::RField<3,CPT> >;
 
    namespace Rp {
-      extern template class Block<1, CppTp<1> >;
-      extern template class Block<2, CppTp<2> >;
-      extern template class Block<3, CppTp<3> >;
+      extern template class Block<1,CPT>;
+      extern template class Block<2,CPT>;
+      extern template class Block<3,CPT>;
    }
 
 }

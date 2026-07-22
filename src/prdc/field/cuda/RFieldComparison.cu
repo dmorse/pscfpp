@@ -10,8 +10,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Prdc {
-      template class RFieldComparison<1, CudaTp<1> >;
-      template class RFieldComparison<2, CudaTp<2> >;
-      template class RFieldComparison<3, CudaTp<3> >;
+      template class RFieldComparison<1,CUT>;
+      template class RFieldComparison<2,CUT>;
+      template class RFieldComparison<3,CUT>;
    }
 }

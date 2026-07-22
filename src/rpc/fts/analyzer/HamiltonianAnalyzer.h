@@ -9,15 +9,15 @@
 */
 
 #include <rp/fts/analyzer/HamiltonianAnalyzer.h>  // base class template
-#include <pscf/cpu/CppTp.h>                     // template argument
+#include <pscf/backends/CPT.h>                     // template argument
 #include "AverageListAnalyzer.h"                  // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class HamiltonianAnalyzer< 1, CppTp<1> >;
-      extern template class HamiltonianAnalyzer< 2, CppTp<2> >;
-      extern template class HamiltonianAnalyzer< 3, CppTp<3> >;
+      extern template class HamiltonianAnalyzer<1,CPT>;
+      extern template class HamiltonianAnalyzer<2,CPT>;
+      extern template class HamiltonianAnalyzer<3,CPT>;
    }
 }
 #endif

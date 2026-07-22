@@ -315,7 +315,7 @@ namespace Cpc {
       * a chemical field component \f$ W_{a}({\bf r}) \f$ as defined in
       * the documentation of computeWc(), for a = 0, ..., nMonomer - 1.
       */
-      DArray< CField<D, CppTp<D> > > const & wc() const;
+      DArray< CField<D,CPT> > const & wc() const;
 
       /**
       * Get one eigenvector component of the current w fields.
@@ -324,7 +324,7 @@ namespace Cpc {
       *
       * \param a eigenvector index in range 0 , ..., nMonomer -1
       */
-      CField<D, CppTp<D> > const & wc(int a) const;
+      CField<D,CPT> const & wc(int a) const;
 
       /**
       * Are eigen-components of current w fields valid ?
@@ -365,7 +365,7 @@ namespace Cpc {
       * intentional, and is convenient for other aspects of the 
       * underlying theory.
       */
-      DArray< CField<D, CppTp<D> > > const & cc() const;
+      DArray< CField<D,CPT> > const & cc() const;
 
       /**
       * Get one eigenvector component of the current c fields.
@@ -375,7 +375,7 @@ namespace Cpc {
       *
       * \param a eigenvector / eigenvalue index
       */
-      CField<D, CppTp<D> > const & cc(int a) const;
+      CField<D,CPT> const & cc(int a) const;
 
       /**
       * Are eigen-components of current c fields valid ?
@@ -403,14 +403,14 @@ namespace Cpc {
       * respect to the field component \f$ W_{a} \f$ that is returned
       * by the function wc(a).
       */
-      DArray< CField<D, CppTp<D> > > const & dc() const;
+      DArray< CField<D,CPT> > const & dc() const;
 
       /**
       * Get one eigenvector component of the current d fields.
       *
       * \param i eigenvector / eigenvalue index
       */
-      CField<D, CppTp<D> > const & dc(int i) const;
+      CField<D,CPT> const & dc(int i) const;
 
       /**
       * Are the current d fields valid ?
@@ -480,7 +480,7 @@ namespace Cpc {
       * monomer types, nMonomer. The last component is a pressure-like
       * field.
       */
-      DArray< CField<D, CppTp<D> > > wc_;
+      DArray< CField<D,CPT> > wc_;
 
       /**
       * Eigenvector components of c fields on a real space grid.
@@ -491,7 +491,7 @@ namespace Cpc {
       * monomer types, nMonomer. The last component must satisfy an
       * incompressibility constraint.
       */
-      DArray< CField<D, CppTp<D> > > cc_;
+      DArray< CField<D,CPT> > cc_;
 
       /**
       * Components of d fields on a real space grid.
@@ -499,7 +499,7 @@ namespace Cpc {
       * Each field component is the functional derivative of H[W]
       * with respect to one eigenvector w-field component.
       */
-      DArray< CField<D, CppTp<D> > > dc_;
+      DArray< CField<D,CPT> > dc_;
      
       // Interaction matrix and eigen-properties
 
@@ -748,12 +748,12 @@ namespace Cpc {
 
    // Return all eigencomponents of the w fields.
    template <int D>
-   inline DArray< CField<D, CppTp<D> > > const & Simulator<D>::wc() const
+   inline DArray< CField<D,CPT> > const & Simulator<D>::wc() const
    {  return wc_; }
 
    // Return a single eigenvector component of the w fields.
    template <int D>
-   inline CField<D, CppTp<D> > const & Simulator<D>::wc(int a) const
+   inline CField<D,CPT> const & Simulator<D>::wc(int a) const
    {  return wc_[a]; }
 
    // Have eigenvector components of current w fields been computed?
@@ -763,12 +763,12 @@ namespace Cpc {
 
    // Return all eigenvector components of the current c fields.
    template <int D>
-   inline DArray< CField<D, CppTp<D> > > const & Simulator<D>::cc() const
+   inline DArray< CField<D,CPT> > const & Simulator<D>::cc() const
    {  return cc_; }
 
    // Return a single eigenvector component of the current c fields.
    template <int D>
-   inline CField<D, CppTp<D> > const & Simulator<D>::cc(int a) const
+   inline CField<D,CPT> const & Simulator<D>::cc(int a) const
    {  return cc_[a]; }
 
    // Have eigenvector components of current c fields been computed?
@@ -778,12 +778,12 @@ namespace Cpc {
 
    // Return all eigenvector components of the current d fields.
    template <int D>
-   inline DArray< CField<D, CppTp<D> > > const & Simulator<D>::dc() const
+   inline DArray< CField<D,CPT> > const & Simulator<D>::dc() const
    {  return dc_; }
 
    // Return a single eigenvector component of the current d fields.
    template <int D>
-   inline CField<D, CppTp<D> > const & Simulator<D>::dc(int a) const
+   inline CField<D,CPT> const & Simulator<D>::dc(int a) const
    {  return dc_[a]; }
 
    // Have eigenvector components of current d fields been computed?

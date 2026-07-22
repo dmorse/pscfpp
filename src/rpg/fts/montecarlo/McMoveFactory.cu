@@ -18,8 +18,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class McMoveFactory<1, CudaTp<1> >;
-      template class McMoveFactory<2, CudaTp<2> >;
-      template class McMoveFactory<3, CudaTp<3> >;
+      template class McMoveFactory<1,CUT>;
+      template class McMoveFactory<2,CUT>;
+      template class McMoveFactory<3,CUT>;
    }
 }

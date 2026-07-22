@@ -45,18 +45,18 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, CudaTp<3> > system;
-      Rp::LinearSweep<3, CudaTp<3> > ls(system);
-      Rp::SweepFactory<3, CudaTp<3> > sf(system);
+      Rp::System<3,CUT> system;
+      Rp::LinearSweep<3,CUT> ls(system);
+      Rp::SweepFactory<3,CUT> sf(system);
    }
 
    void testFactory() 
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, CudaTp<3> > system;
-      Rp::SweepFactory<3, CudaTp<3> > sf(system);
-      Rp::Sweep<3, CudaTp<3> >* sweepPtr;
+      Rp::System<3,CUT> system;
+      Rp::SweepFactory<3,CUT> sf(system);
+      Rp::Sweep<3,CUT>* sweepPtr;
       
       sweepPtr = sf.factory("LinearSweep");
       TEST_ASSERT(sweepPtr != 0);
@@ -67,11 +67,11 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up system with some data
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
       // Set up SweepParameter objects 
-      DArray< Rp::SweepParameter<1, CudaTp<1> > > ps;
+      DArray< Rp::SweepParameter<1,CUT> > ps;
       ps.allocate(4);
       for (int i = 0; i < 4; ++i) {
          ps[i].setSystem(system);
@@ -111,11 +111,11 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up system
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
       // Set up SweepParameter objects 
-      DArray< Rp::SweepParameter<1, CudaTp<1> > > ps;
+      DArray< Rp::SweepParameter<1,CUT> > ps;
       ps.allocate(4);
       std::ifstream in;
       openInputFile("in/param.test", in);
@@ -149,11 +149,11 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up system
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
       // Set up SweepParameter objects 
-      DArray< Rp::SweepParameter<1, CudaTp<1> > > ps;
+      DArray< Rp::SweepParameter<1,CUT> > ps;
       ps.allocate(4);
       std::ifstream in;
       openInputFile("in/param.test", in);
@@ -216,7 +216,7 @@ public:
       Log::file() << pTypes.size() << std::endl;
 
       // Set up SweepParameter objects 
-      DArray< Rp::SweepParameter<1, CudaTp<1> > > ps;
+      DArray< Rp::SweepParameter<1,CUT> > ps;
       ps.allocate(3);
       std::ifstream in;
       openInputFile("in/special/param.test", in);
@@ -257,7 +257,7 @@ public:
       printMethod(TEST_FUNC);
 
       // Set up system with Linear Sweep Object
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       SweepTest::SetUpSystem(system, "in/block/param");
    }
 
@@ -311,7 +311,7 @@ public:
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
-   void SetUpSystem(Rp::System<1, CudaTp<1> >& system, std::string fname)
+   void SetUpSystem(Rp::System<1,CUT>& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -328,11 +328,11 @@ public:
    double testLinearSweepParam(std::string paramname)
    {
       // Set up system with a LinearSweep object
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       SweepTest::SetUpSystem(system, "in/" + paramname + "/param");
       
       // Read expected w fields
-      DArray< Rp::BasisFieldState<1, CudaTp<1> > > fieldsRef;
+      DArray< Rp::BasisFieldState<1,CUT> > fieldsRef;
       fieldsRef.allocate(5);
       for (int i = 0; i < 5; ++i) {
          fieldsRef[i].setSystem(system);
@@ -350,7 +350,7 @@ public:
       }
 
       // Read outputted fields
-      DArray< Rp::BasisFieldState<1, CudaTp<1> > > fieldsOut;
+      DArray< Rp::BasisFieldState<1,CUT> > fieldsOut;
       fieldsOut.allocate(5);
       for (int i = 0; i < 5; ++i) {
          fieldsOut[i].setSystem(system);

@@ -437,7 +437,7 @@ namespace Prdc {
    * Constructor.
    */
    template <int D>
-   WaveList<D, CudaTp<D> >::WaveList(bool isRealField)
+   WaveList<D,CUT>::WaveList(bool isRealField)
     : kSize_(0),
       nBunch_(0),
       isAllocated_(false),
@@ -455,7 +455,7 @@ namespace Prdc {
    * Destructor.
    */
    template <int D>
-   WaveList<D, CudaTp<D> >::~WaveList()
+   WaveList<D,CUT>::~WaveList()
    {
 
       if (dKSqSlices_.isAllocated()) {
@@ -488,7 +488,7 @@ namespace Prdc {
    * only if isRealField_ == true.
    */
    template <int D>
-   void WaveList<D, CudaTp<D> >::allocate(Mesh<D> const & m, UnitCell<D> const & c)
+   void WaveList<D,CUT>::allocate(Mesh<D> const & m, UnitCell<D> const & c)
    {
       UTIL_CHECK(m.size() > 0);
       UTIL_CHECK(c.nParameter() > 0);
@@ -503,7 +503,7 @@ namespace Prdc {
 
       // Compute kMeshDimensions_ and kSize_
       if (isRealField_) {
-         FFT<D, CudaTp<D> >::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
+         FFT<D,CUT>::computeKMesh(meshDimensions, kMeshDimensions_, kSize_);
       } else {
          kMeshDimensions_ = meshDimensions;
          kSize_ = mesh().size();
@@ -548,7 +548,7 @@ namespace Prdc {
    * Clear data that depends on unit cell parameters.
    */
    template <int D>
-   void WaveList<D, CudaTp<D> >::clearUnitCellData()
+   void WaveList<D,CUT>::clearUnitCellData()
    {
       hasKSq_ = false;
       hasdKSq_ = false;
@@ -567,7 +567,7 @@ namespace Prdc {
    * Compute minimum image vectors and kSq.
    */
    template <int D>
-   void WaveList<D, CudaTp<D> >::computeMinimumImages()
+   void WaveList<D,CUT>::computeMinimumImages()
    {
       // If min images are valid, return immediately
       if (hasMinImages_) return;
@@ -646,7 +646,7 @@ namespace Prdc {
    * Compute values of k^2, using existing minImages if possible.
    */
    template <int D>
-   void WaveList<D, CudaTp<D> >::computeKSq()
+   void WaveList<D,CUT>::computeKSq()
    {
       // If kSq values are valid, return immediately without recomputing
       if (hasKSq_) return;
@@ -695,7 +695,7 @@ namespace Prdc {
    * Compute derivatives of k^2 with respect to unit cell parameters.
    */
    template <int D>
-   void WaveList<D, CudaTp<D> >::computedKSq()
+   void WaveList<D,CUT>::computedKSq()
    {
       if (hasdKSq_) return; // dKSq already calculated
 
@@ -755,7 +755,7 @@ namespace Prdc {
    * Sort waves by magnitude.
    */
    template <int D>
-   void WaveList<D, CudaTp<D> >::sortWaves()
+   void WaveList<D,CUT>::sortWaves()
    {
       // If waves are already sorted, return immediately
       if (isSorted_) return;
@@ -823,7 +823,7 @@ namespace Prdc {
    * Gather data from device and re-arrange if necessary.
    */
    template <int D>
-   HostDArray< IntVec<D> > const & WaveList<D, CudaTp<D> >::minImages_h() const
+   HostDArray< IntVec<D> > const & WaveList<D,CUT>::minImages_h() const
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {

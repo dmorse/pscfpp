@@ -26,7 +26,7 @@ public:
    {  setVerbose(0); }
 
    template <int D>
-   void initSystem(Rp::System<D, CudaTp<D> >& system, std::string filename)
+   void initSystem(Rp::System<D,CUT>& system, std::string filename)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -38,7 +38,7 @@ public:
    }
    
    template <int D>
-   void initSimulator(Rp::BdSimulator<D, CudaTp<D> >& simulator, std::string filename)
+   void initSimulator(Rp::BdSimulator<D,CUT>& simulator, std::string filename)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -48,9 +48,9 @@ public:
    
    void analyzeTrajectory()
    {
-      Rp::System<3, CudaTp<3> > system;
+      Rp::System<3,CUT> system;
       initSystem(system, "in/param_system_disordered");
-      Rp::BdSimulator<3, CudaTp<3> > simulator(system);
+      Rp::BdSimulator<3,CUT> simulator(system);
       initSimulator(simulator, "in/param_BdSimulator_analyzer");
       std::string filename = filePrefix() + "in/w_dis_trajectory.rf";
       simulator.analyze(0, 50, "RGridTrajectoryReader", filename);

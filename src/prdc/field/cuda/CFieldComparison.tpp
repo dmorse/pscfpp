@@ -17,15 +17,15 @@ namespace Prdc {
 
    // Default Constructor
    template <int D>
-   CFieldComparison<D, CudaTp<D> >::CFieldComparison()
+   CFieldComparison<D,CUT>::CFieldComparison()
     : maxDiff_(0.0),
       rmsDiff_(0.0)
    {};
 
    // Comparator for individual fields.
    template <int D>
-   double CFieldComparison<D, CudaTp<D> >::compare(CField<D, CudaTp<D> > const& a, 
-                                       CField<D, CudaTp<D> > const& b)
+   double CFieldComparison<D,CUT>::compare(CField<D,CUT> const& a, 
+                                       CField<D,CUT> const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
@@ -62,8 +62,8 @@ namespace Prdc {
 
    // Comparator for arrays of fields
    template <int D>
-   double CFieldComparison<D, CudaTp<D> >::compare(DArray< CField<D, CudaTp<D> > > const & a,
-                                       DArray< CField<D, CudaTp<D> > > const & b)
+   double CFieldComparison<D,CUT>::compare(DArray< CField<D,CUT> > const & a,
+                                       DArray< CField<D,CUT> > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());

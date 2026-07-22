@@ -14,8 +14,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class McMove<1, CppTp<1> >;
-      template class McMove<2, CppTp<2> >;
-      template class McMove<3, CppTp<3> >;
+      template class McMove<1,CPT>;
+      template class McMove<2,CPT>;
+      template class McMove<3,CPT>;
    }
 }

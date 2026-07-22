@@ -6,7 +6,7 @@
 */
 
 
-#include "CppTp.h"
+#include "CPT.h"
 #include <util/random/Random.h>
 
 namespace Pscf {
@@ -14,15 +14,13 @@ namespace Pscf {
    /*
    * Initialize backend.
    */
-   template <int D>
-   void CppTp<D>::init()
+   void CPT::init()
    {}
 
    /*
    * Set thread count in backend.
    */
-   template <int D>
-   void CppTp<D>::setThreadCount(int nThread)
+   void CPT::setThreadCount(int nThread)
    {}
 
    /*
@@ -30,8 +28,7 @@ namespace Pscf {
    *
    * GPU-enabled code would instead do nothing.
    */
-   template <int D>
-   void CppTp<D>::linkVecRandom(VecRandom& vr, Random & sr)
+   void CPT::linkVecRandom(VecRandom& vr, Random & sr)
    {  vr.associate(sr); }
 
    /*
@@ -39,13 +36,7 @@ namespace Pscf {
    *
    * GPU-enabled code would instead set the seed.
    */
-   template <int D>
-   void CppTp<D>::seedVecRandom(VecRandom& vr, long seed)
+   void CPT::seedVecRandom(VecRandom& vr, long seed)
    {}
-
-   // Explicit instantiation definitions
-   template class CppTp<1>;
-   template class CppTp<2>;
-   template class CppTp<3>;
 
 }

@@ -152,7 +152,7 @@ namespace Rp {
    * Default constructor
    */
    template <int D>
-   FilmFieldGenMask<D, CudaTp<D> >::FilmFieldGenMask()
+   FilmFieldGenMask<D,CUT>::FilmFieldGenMask()
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(0)
    {  ParamComposite::setClassName("FilmFieldGenMask"); }
@@ -161,8 +161,8 @@ namespace Rp {
    * Constructor
    */
    template <int D>
-   FilmFieldGenMask<D, CudaTp<D> >::FilmFieldGenMask(
-         Rp::System<D, CudaTp<D> >& sys)
+   FilmFieldGenMask<D,CUT>::FilmFieldGenMask(
+         Rp::System<D,CUT>& sys)
     : FilmFieldGenMaskBase<D>::FilmFieldGenMaskBase(),
       sysPtr_(&sys)
    {  ParamComposite::setClassName("FilmFieldGenMask"); }
@@ -171,14 +171,14 @@ namespace Rp {
    * Destructor
    */
    template <int D>
-   FilmFieldGenMask<D, CudaTp<D> >::~FilmFieldGenMask()
+   FilmFieldGenMask<D,CUT>::~FilmFieldGenMask()
    {}
 
    /*
    * Get contribution to the stress from this mask
    */
    template <int D>
-   double FilmFieldGenMask<D, CudaTp<D> >::stress(int paramId) const
+   double FilmFieldGenMask<D,CUT>::stress(int paramId) const
    {
       // If paramId is not normalVecId, there is no stress contribution
       UTIL_CHECK(normalVecId() >= 0);
@@ -197,7 +197,7 @@ namespace Rp {
       double phiTot = system().mask().phiTot();
 
       // Create the derivative field in rgrid format
-      RField<D, CudaTp<D> > deriv;
+      RField<D,CUT> deriv;
       deriv.allocate(system().domain().mesh().dimensions());
       
       // Set D-dimensional GPU configuration
@@ -211,7 +211,7 @@ namespace Rp {
           interfaceThickness(), normalVecId(), ThreadMesh::meshDims());
       
       // Get xi, the Lagrange multiplier field, in rgrid format
-      RField<D, CudaTp<D> > xi;
+      RField<D,CUT> xi;
       xi.allocate(system().domain().mesh().dimensions());
 
       if (system().h().hasData()) {
@@ -245,7 +245,7 @@ namespace Rp {
 
    template <int D>
    double 
-   FilmFieldGenMask<D, CudaTp<D> >::modifyStress(
+   FilmFieldGenMask<D,CUT>::modifyStress(
          int paramId, 
          double stress) const
    {
@@ -281,7 +281,7 @@ namespace Rp {
    * Compute the field and store where the System can access
    */
    template <int D>
-   void FilmFieldGenMask<D, CudaTp<D> >::compute()
+   void FilmFieldGenMask<D,CUT>::compute()
    {
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(interfaceThickness() > 0);
@@ -297,7 +297,7 @@ namespace Rp {
       double nvLength = system().domain().unitCell().parameter(paramId);
 
       // Setup
-      RField<D, CudaTp<D> > rGrid;
+      RField<D,CUT> rGrid;
       rGrid.allocate(system().domain().mesh().dimensions());
 
       // Set D-dimensional GPU configuration
@@ -321,7 +321,7 @@ namespace Rp {
    * Sets flexible lattice parameters to be compatible with the mask.
    */
    template <int D>
-   void FilmFieldGenMask<D, CudaTp<D> >::setFlexibleParams() const
+   void FilmFieldGenMask<D,CUT>::setFlexibleParams() const
    {
       if (system().iterator().isFlexible()) {
          FSArray<bool,6> updated;
@@ -337,8 +337,8 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FilmFieldGenMask<1, CudaTp<1> >;
-      template class FilmFieldGenMask<2, CudaTp<2> >;
-      template class FilmFieldGenMask<3, CudaTp<3> >;
+      template class FilmFieldGenMask<1,CUT>;
+      template class FilmFieldGenMask<2,CUT>;
+      template class FilmFieldGenMask<3,CUT>;
    }
 }

@@ -9,15 +9,15 @@
 */
 
 #include <rp/solvers/MixtureModifier.h>  // base class template
-#include <pscf/cpu/CppTp.h>            // base class argument
+#include <pscf/backends/CPT.h>            // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
       using namespace Pscf::Prdc;
-      extern template class MixtureModifier<1, CppTp<1> >;
-      extern template class MixtureModifier<2, CppTp<2> >;
-      extern template class MixtureModifier<3, CppTp<3> >;
+      extern template class MixtureModifier<1,CPT>;
+      extern template class MixtureModifier<2,CPT>;
+      extern template class MixtureModifier<3,CPT>;
    }
 } 
 #endif

@@ -45,13 +45,13 @@ public:
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, CudaTp<1> > mixture;
+      Rp::Mixture<1,CUT> mixture;
    }
 
    void testReadParameters1D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, CudaTp<1> > mixture;
+      Rp::Mixture<1,CUT> mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture1d", in);
@@ -62,7 +62,7 @@ public:
    void testReadParameters1D_bead()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<1, CudaTp<1> > mixture;
+      Rp::Mixture<1,CUT> mixture;
       PolymerModel::setModel(PolymerModel::Bead);
 
       std::ifstream in;
@@ -77,11 +77,11 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Mixture<1, CudaTp<1> > mixture;
+      Rp::Mixture<1,CUT> mixture;
       Mesh<1> mesh;
-      FFT<1, CudaTp<1> > fft;
+      FFT<1,CUT> fft;
       UnitCell<1> unitCell;
-      WaveList<1, CudaTp<1> > wavelist;
+      WaveList<1,CUT> wavelist;
       IntVec<1> d;
 
       // Read parameter block, unit cell and mesh dimensions
@@ -101,8 +101,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1, CudaTp<1> > > wFields;
-      DArray< RField<1, CudaTp<1> > > cFields;
+      DArray< RField<1,CUT> > wFields;
+      DArray< RField<1,CUT> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -152,7 +152,7 @@ public:
       // Read parameter block, unit cell and mesh dimensions
       std::ifstream in;
       openInputFile("in/Mixture1d_bead", in);
-      Rp::Mixture<1, CudaTp<1> > mixture;
+      Rp::Mixture<1,CUT> mixture;
       mixture.readParam(in);
       UnitCell<1> unitCell;
       in >> unitCell;
@@ -163,15 +163,15 @@ public:
       // Set up associated objects and allocate
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      FFT<1, CudaTp<1> > fft;
+      FFT<1,CUT> fft;
       fft.setup(d);
-      WaveList<1, CudaTp<1> > wavelist;
+      WaveList<1,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, wavelist);
       mixture.allocate();
 
       // Check polymer block sizes
-      Rp::Polymer<1, CudaTp<1> >& polymer = mixture.polymer(0);
+      Rp::Polymer<1,CUT>& polymer = mixture.polymer(0);
       TEST_ASSERT(polymer.block(0).nBead() == 20);
       TEST_ASSERT(polymer.block(1).nBead() == 30);
       TEST_ASSERT(polymer.nBead() == 50);
@@ -188,8 +188,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1, CudaTp<1> > > wFields;
-      DArray< RField<1, CudaTp<1> > > cFields;
+      DArray< RField<1,CUT> > wFields;
+      DArray< RField<1,CUT> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -238,11 +238,11 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::Mixture<2, CudaTp<2> > mixture;
+      Rp::Mixture<2,CUT> mixture;
       Mesh<2> mesh;
-      FFT<2, CudaTp<2> > fft;
+      FFT<2,CUT> fft;
       UnitCell<2> unitCell;
-      WaveList<2, CudaTp<2> > wavelist;
+      WaveList<2,CUT> wavelist;
       IntVec<2> d;
 
       // Read parameter block, unit cell and mesh dimensions
@@ -263,8 +263,8 @@ public:
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
 
       // Allocate w and c field arrays on device and host
-      DArray< RField<2, CudaTp<2> > > wFields;
-      DArray< RField<2, CudaTp<2> > > cFields;
+      DArray< RField<2,CUT> > wFields;
+      DArray< RField<2,CUT> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -319,10 +319,10 @@ public:
    void testSolver2D_hex()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<2, CudaTp<2> > mixture;
+      Rp::Mixture<2,CUT> mixture;
       Mesh<2> mesh;
-      FFT<2, CudaTp<2> > fft;
-      WaveList<2, CudaTp<2> > wavelist;
+      FFT<2,CUT> fft;
+      WaveList<2,CUT> wavelist;
       IntVec<2> d;
 
       // Read file: param block, unit cell and mesh dimensions
@@ -344,8 +344,8 @@ public:
       UTIL_CHECK(nMonomer == 2); // Hard-coded in here!
 
       // Allocate w and c field arrays on device and host
-      DArray< RField<2, CudaTp<2> > > wFields;
-      DArray< RField<2, CudaTp<2> > > cFields;
+      DArray< RField<2,CUT> > wFields;
+      DArray< RField<2,CUT> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
@@ -402,7 +402,7 @@ public:
    void testSolver3D()
    {
       printMethod(TEST_FUNC);
-      Rp::Mixture<3, CudaTp<3> > mixture;
+      Rp::Mixture<3,CUT> mixture;
 
       std::ifstream in;
       openInputFile("in/Mixture3d", in);
@@ -417,11 +417,11 @@ public:
 
       Mesh<3> mesh;
       mesh.setDimensions(d);
-      FFT<3, CudaTp<3> > fft;
+      FFT<3,CUT> fft;
       fft.setup(d);
 
       // Construct wavelist
-      WaveList<3, CudaTp<3> > wavelist;
+      WaveList<3,CUT> wavelist;
       wavelist.allocate(mesh, unitCell);
 
       // Set up mixture
@@ -429,8 +429,8 @@ public:
       mixture.allocate();
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<3, CudaTp<3> > > wFields;
-      DArray< RField<3, CudaTp<3> > > cFields;
+      DArray< RField<3,CUT> > wFields;
+      DArray< RField<3,CUT> > cFields;
       DArray< HostDArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);

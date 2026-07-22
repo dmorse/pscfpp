@@ -23,8 +23,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class PredCorrBdStep<1, CudaTp<1> >;
-      template class PredCorrBdStep<2, CudaTp<2> >;
-      template class PredCorrBdStep<3, CudaTp<3> >;
+      template class PredCorrBdStep<1,CUT>;
+      template class PredCorrBdStep<2,CUT>;
+      template class PredCorrBdStep<3,CUT>;
    }
 }

@@ -69,7 +69,7 @@ namespace Cp {
    */
    template <int D, class PT, class ST, class T>
    void Mixture<D,PT,ST,T>::associate(Mesh<D> const & mesh,
-                              FFT<D, CppTp<D> > const & fft,
+                              FFT<D,CPT> const & fft,
                               UnitCell<D> const & cell,
                               WaveListT & waveList)
    {

@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/MixtureBase.h>  // base class template
-#include <pscf/cuda/CudaTp.h>        // base class template argument
+#include <pscf/backends/CUT.h>        // base class template argument
 
 // Forward declarations
 namespace Pscf {
@@ -39,8 +39,8 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Mixture<D, CudaTp<D> > 
-     : public Rp::MixtureBase<D, CudaTp<D> >
+   class Mixture<D,CUT> 
+     : public Rp::MixtureBase<D,CUT>
    {
 
    public:
@@ -60,7 +60,7 @@ namespace Rp {
       void readParameters(std::istream& in) override;
 
       /// Base class type aliases
-      using RpMixtureT = typename Rp::MixtureBase<D, CudaTp<D> >;
+      using RpMixtureT = typename Rp::MixtureBase<D,CUT>;
       using typename RpMixtureT::MixtureTmplT;
       using typename RpMixtureT::CompositionT;
       using typename RpMixtureT::FieldT;
@@ -85,18 +85,18 @@ namespace Rp {
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
-   class MixtureTmpl< Rp::Polymer<1, CudaTp<1> >, Rp::Solvent<1, CudaTp<1> > >;
+   class MixtureTmpl< Rp::Polymer<1,CUT>, Rp::Solvent<1,CUT> >;
    extern template 
-   class MixtureTmpl< Rp::Polymer<2, CudaTp<2> >, Rp::Solvent<2, CudaTp<2> > >;
+   class MixtureTmpl< Rp::Polymer<2,CUT>, Rp::Solvent<2,CUT> >;
    extern template 
-   class MixtureTmpl< Rp::Polymer<3, CudaTp<3> >, Rp::Solvent<3, CudaTp<3> > >;
+   class MixtureTmpl< Rp::Polymer<3,CUT>, Rp::Solvent<3,CUT> >;
    namespace Rp {
-      extern template class MixtureBase<1, CudaTp<1> >;
-      extern template class MixtureBase<2, CudaTp<2> >;
-      extern template class MixtureBase<3, CudaTp<3> >;
-      extern template class Mixture<1, CudaTp<1> >;
-      extern template class Mixture<2, CudaTp<2> >;
-      extern template class Mixture<3, CudaTp<3> >;
+      extern template class MixtureBase<1,CUT>;
+      extern template class MixtureBase<2,CUT>;
+      extern template class MixtureBase<3,CUT>;
+      extern template class Mixture<1,CUT>;
+      extern template class Mixture<2,CUT>;
+      extern template class Mixture<3,CUT>;
    }
 }
 #endif

@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/Polymer.h>    // base class template
-#include <pscf/cuda/CudaTp.h>      // base class template parameter
+#include <pscf/backends/CUT.h>      // base class template parameter
 
 namespace Pscf {
    namespace Rp {
@@ -21,15 +21,15 @@ namespace Pscf {
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
-   class PolymerTmpl< Rp::Block<1, CudaTp<1> >, Rp::Propagator<1, CudaTp<1> > >;
+   class PolymerTmpl< Rp::Block<1,CUT>, Rp::Propagator<1,CUT> >;
    extern template 
-   class PolymerTmpl< Rp::Block<2, CudaTp<2> >, Rp::Propagator<2, CudaTp<2> > >;
+   class PolymerTmpl< Rp::Block<2,CUT>, Rp::Propagator<2,CUT> >;
    extern template 
-   class PolymerTmpl< Rp::Block<3, CudaTp<3> >, Rp::Propagator<3, CudaTp<3> > >;
+   class PolymerTmpl< Rp::Block<3,CUT>, Rp::Propagator<3,CUT> >;
    namespace Rp {
-      extern template class Polymer<1, CudaTp<1> >;
-      extern template class Polymer<2, CudaTp<2> >;
-      extern template class Polymer<3, CudaTp<3> >;
+      extern template class Polymer<1,CUT>;
+      extern template class Polymer<2,CUT>;
+      extern template class Polymer<3,CUT>;
    }
 }
 #endif

@@ -162,10 +162,10 @@ public:
 
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(d);
 
-      WaveList<1, CppTp<1> > waveList;
+      WaveList<1,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);
@@ -179,8 +179,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1, CppTp<1> > > wFields;
-      DArray< RField<1, CppTp<1> > > cFields;
+      DArray< RField<1,CPT> > wFields;
+      DArray< RField<1,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -246,9 +246,9 @@ public:
       // Setup up associated objects and allocate
       Mesh<1> mesh;
       mesh.setDimensions(d);
-      FFT<1, CppTp<1> > fft;
+      FFT<1,CPT> fft;
       fft.setup(d);
-      WaveList<1, CppTp<1> > waveList;
+      WaveList<1,CPT> waveList;
       waveList.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
@@ -271,8 +271,8 @@ public:
 
       // Allocate w and field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<1, CppTp<1> > > wFields;
-      DArray< RField<1, CppTp<1> > > cFields;
+      DArray< RField<1,CPT> > wFields;
+      DArray< RField<1,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -333,9 +333,9 @@ public:
       // Create associated objects and allocate mixture
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(d);
-      WaveList<2, CppTp<2> > waveList;
+      WaveList<2,CPT> waveList;
       waveList.allocate(mesh, unitCell);
       mixture.associate(mesh, fft, unitCell, waveList);
       mixture.allocate();
@@ -349,8 +349,8 @@ public:
 
       // Allocate w and c field arrays
       int nMonomer = mixture.nMonomer();
-      DArray< RField<2, CppTp<2> > > wFields;
-      DArray< RField<2, CppTp<2> > > cFields;
+      DArray< RField<2,CPT> > wFields;
+      DArray< RField<2,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -430,10 +430,10 @@ public:
 
       Mesh<2> mesh;
       mesh.setDimensions(d);
-      FFT<2, CppTp<2> > fft;
+      FFT<2,CPT> fft;
       fft.setup(d);
 
-      WaveList<2, CppTp<2> > waveList;
+      WaveList<2,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);
@@ -447,8 +447,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<2, CppTp<2> > > wFields;
-      DArray< RField<2, CppTp<2> > > cFields;
+      DArray< RField<2,CPT> > wFields;
+      DArray< RField<2,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();
@@ -520,10 +520,10 @@ public:
 
       Mesh<3> mesh;
       mesh.setDimensions(d);
-      FFT<3, CppTp<3> > fft;
+      FFT<3,CPT> fft;
       fft.setup(d);
 
-      WaveList<3, CppTp<3> > waveList;
+      WaveList<3,CPT> waveList;
       waveList.allocate(mesh, unitCell);
 
       mixture.associate(mesh, fft, unitCell, waveList);
@@ -537,8 +537,8 @@ public:
       #endif
 
       int nMonomer = mixture.nMonomer();
-      DArray< RField<3, CppTp<3> > > wFields;
-      DArray< RField<3, CppTp<3> > > cFields;
+      DArray< RField<3,CPT> > wFields;
+      DArray< RField<3,CPT> > cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       double nx = (double)mesh.size();

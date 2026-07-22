@@ -24,9 +24,9 @@ namespace Rp {
    * Read an array of fields in r-grid format.
    */
    template <int D>
-   bool FieldIo<D, CppTp<D> >::readFieldsRGrid(
+   bool FieldIo<D,CPT>::readFieldsRGrid(
                               std::istream &in,
-                              DArray< RField<D, CppTp<D> > >& fields,
+                              DArray< RField<D,CPT> >& fields,
                               UnitCell<D>& unitCell) const
    {
       // Read header
@@ -48,9 +48,9 @@ namespace Rp {
    * Read the data section of an array of fields in r-grid format.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::readFieldsRGridData(
+   void FieldIo<D,CPT>::readFieldsRGridData(
                               std::istream& in,
-                              DArray< RField<D, CppTp<D> > >& fields,
+                              DArray< RField<D,CPT> >& fields,
                               int nMonomer) const
    {
       checkAllocateFields(fields, nMonomer, FieldIoBase::mesh().dimensions());
@@ -64,9 +64,9 @@ namespace Rp {
    * Read a single field in r-grid format.
    */
    template <int D>
-   bool FieldIo<D, CppTp<D> >::readFieldRGrid(
+   bool FieldIo<D,CPT>::readFieldRGrid(
                               std::istream &in,
-                              RField<D, CppTp<D> > & field,
+                              RField<D,CPT> & field,
                               UnitCell<D>& unitCell) const
    {
       // Read header
@@ -89,9 +89,9 @@ namespace Rp {
    * Write an array of fields in r-grid format.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::writeFieldsRGrid(
+   void FieldIo<D,CPT>::writeFieldsRGrid(
                               std::ostream &out,
-                              DArray< RField<D, CppTp<D> > > const & fields,
+                              DArray< RField<D,CPT> > const & fields,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric,
@@ -120,9 +120,9 @@ namespace Rp {
    * Write a single field in r-grid format.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::writeFieldRGrid(
+   void FieldIo<D,CPT>::writeFieldRGrid(
                               std::ostream &out,
-                              RField<D, CppTp<D> > const & field,
+                              RField<D,CPT> const & field,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric) const
@@ -145,9 +145,9 @@ namespace Rp {
    * Read an array of fields in k-grid format
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::readFieldsKGrid(
+   void FieldIo<D,CPT>::readFieldsKGrid(
                               std::istream &in,
-                              DArray< RFieldDft<D, CppTp<D> > >& fields,
+                              DArray< RFieldDft<D,CPT> >& fields,
                               UnitCell<D>& unitCell) const
    {
       // Read header
@@ -169,9 +169,9 @@ namespace Rp {
    * Write an array of fields in k-grid format
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::writeFieldsKGrid(
+   void FieldIo<D,CPT>::writeFieldsKGrid(
                               std::ostream &out,
-                              DArray< RFieldDft<D, CppTp<D> > > const & fields,
+                              DArray< RFieldDft<D,CPT> > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -195,9 +195,9 @@ namespace Rp {
    * Convert an array of fields from basis to k-grid format.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::convertBasisToKGrid(
+   void FieldIo<D,CPT>::convertBasisToKGrid(
                               DArray<double> const & in,
-                              RFieldDft<D, CppTp<D> >& out) const
+                              RFieldDft<D,CPT>& out) const
    {
       // Rpg: Allocate host array
       Prdc::convertBasisToKGrid(in, out, FieldIoBase::basis(), out.dftDimensions());
@@ -208,8 +208,8 @@ namespace Rp {
    * Convert an array of fields from k-grid to basis format.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::convertKGridToBasis(
-                          RFieldDft<D, CppTp<D> > const & in,
+   void FieldIo<D,CPT>::convertKGridToBasis(
+                          RFieldDft<D,CPT> const & in,
                           DArray<double>& out,
                           bool checkSymmetry,
                           double epsilon) const
@@ -225,8 +225,8 @@ namespace Rp {
    * Test if an real field DFT has the declared space group symmetry.
    */
    template <int D>
-   bool FieldIo<D, CppTp<D> >::hasSymmetry(
-                          RFieldDft<D, CppTp<D> > const & in,
+   bool FieldIo<D,CPT>::hasSymmetry(
+                          RFieldDft<D,CPT> const & in,
                           double epsilon,
                           bool verbose) const
    {
@@ -240,11 +240,11 @@ namespace Rp {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::compareFieldsRGrid(
-                          DArray< RField<D, CppTp<D> > > const & field1,
-                          DArray< RField<D, CppTp<D> > > const & field2) const
+   void FieldIo<D,CPT>::compareFieldsRGrid(
+                          DArray< RField<D,CPT> > const & field1,
+                          DArray< RField<D,CPT> > const & field2) const
    {
-      RFieldComparison<D, CppTp<D> > comparison;
+      RFieldComparison<D,CPT> comparison;
       comparison.compare(field1, field2);
 
       Log::file() << "\n Real-space field comparison results"
@@ -259,8 +259,8 @@ namespace Rp {
    * Multiply a field in r-grid format by a constant factor.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::scaleFieldRGrid(
-                              RField<D, CppTp<D> > & field,
+   void FieldIo<D,CPT>::scaleFieldRGrid(
+                              RField<D,CPT> & field,
                               double factor) const
    {
       int n = field.capacity();
@@ -273,9 +273,9 @@ namespace Rp {
    * Replicate the unit cell for an array of r-grid fields.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::replicateUnitCell(
+   void FieldIo<D,CPT>::replicateUnitCell(
                               std::ostream &out,
-                              DArray< RField<D, CppTp<D> > > const & fields,
+                              DArray< RField<D,CPT> > const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
 
@@ -295,9 +295,9 @@ namespace Rp {
    * Expand spatial dimension of an array of r-grid fields.
    */
    template <int D>
-   void FieldIo<D, CppTp<D> >::expandRGridDimension(
+   void FieldIo<D,CPT>::expandRGridDimension(
                               std::ostream &out,
-                              DArray< RField<D, CppTp<D> > > const & fields,
+                              DArray< RField<D,CPT> > const & fields,
                               UnitCell<D> const & unitCell,
                               int d,
                               DArray<int> const& newGridDimensions) const
@@ -316,11 +316,11 @@ namespace Rp {
 // Explicit specialization definitions
 namespace Pscf {
    namespace Rp {
-      template class Rp::FieldIoBase<1, CppTp<1> >;
-      template class Rp::FieldIoBase<2, CppTp<2> >;
-      template class Rp::FieldIoBase<3, CppTp<3> >;
-      template class Rp::FieldIo<1, CppTp<1> >;
-      template class Rp::FieldIo<2, CppTp<2> >;
-      template class Rp::FieldIo<3, CppTp<3> >;
+      template class Rp::FieldIoBase<1,CPT>;
+      template class Rp::FieldIoBase<2,CPT>;
+      template class Rp::FieldIoBase<3,CPT>;
+      template class Rp::FieldIo<1,CPT>;
+      template class Rp::FieldIo<2,CPT>;
+      template class Rp::FieldIo<3,CPT>;
    }
 }

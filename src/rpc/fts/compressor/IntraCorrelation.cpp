@@ -20,8 +20,8 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class IntraCorrelation<1, CppTp<1> >;
-      template class IntraCorrelation<2, CppTp<2> >;
-      template class IntraCorrelation<3, CppTp<3> >;
+      template class IntraCorrelation<1,CPT>;
+      template class IntraCorrelation<2,CPT>;
+      template class IntraCorrelation<3,CPT>;
    }
 }

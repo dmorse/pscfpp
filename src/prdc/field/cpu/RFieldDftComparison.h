@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CppTp.h>        // backend type
+#include <pscf/backends/CPT.h>        // backend type
 
 // Forward declarations
 namespace Util {
@@ -34,7 +34,7 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module
    */
    template <int D>
-   class RFieldDftComparison<D, CppTp<D> >
+   class RFieldDftComparison<D,CPT>
    {
 
    public:
@@ -58,8 +58,8 @@ namespace Prdc {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(RFieldDft<D, CppTp<D> > const& a, 
-                     RFieldDft<D, CppTp<D> > const& b);
+      double compare(RFieldDft<D,CPT> const& a, 
+                     RFieldDft<D,CPT> const& b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -75,8 +75,8 @@ namespace Prdc {
       * \param b  2nd DArray of field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray< RFieldDft<D, CppTp<D> > > const& a, 
-                     DArray< RFieldDft<D, CppTp<D> > > const& b);
+      double compare(DArray< RFieldDft<D,CPT> > const& a, 
+                     DArray< RFieldDft<D,CPT> > const& b);
 
       /**
       * Return the precomputed maximum element-by-element difference.
@@ -107,9 +107,9 @@ namespace Prdc {
    };
 
    // Explicit instantiation declarations
-   extern template class RFieldDftComparison<1, CppTp<1> >;
-   extern template class RFieldDftComparison<2, CppTp<2> >;
-   extern template class RFieldDftComparison<3, CppTp<3> >;
+   extern template class RFieldDftComparison<1,CPT>;
+   extern template class RFieldDftComparison<2,CPT>;
+   extern template class RFieldDftComparison<3,CPT>;
 
 } // namespace Prdc
 } // namespace Pscf

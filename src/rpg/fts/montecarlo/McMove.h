@@ -9,14 +9,14 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>
-#include <pscf/cuda/CudaTp.h>
+#include <pscf/backends/CUT.h>
 
 // Explicit instantiation declarations
 namespace Pscf {
    namespace Rp {
-      extern template class McMove<1, CudaTp<1> >;
-      extern template class McMove<2, CudaTp<2> >;
-      extern template class McMove<3, CudaTp<3> >;
+      extern template class McMove<1,CUT>;
+      extern template class McMove<2,CUT>;
+      extern template class McMove<3,CUT>;
    }
 }
 #endif

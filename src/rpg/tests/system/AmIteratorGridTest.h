@@ -48,8 +48,8 @@ public:
    * Allocate an array of rgrid fields.
    */
    template <int D>
-   void allocateRGridFields(Rp::System<D, CudaTp<D> > const & system,
-                            DArray< RField<D, CudaTp<D> > >& fields)
+   void allocateRGridFields(Rp::System<D,CUT> const & system,
+                            DArray< RField<D,CUT> >& fields)
    {
       // Check and allocate outer DArray
       int nMonomer = system.mixture().nMonomer();
@@ -77,13 +77,13 @@ public:
    * Read r-grid fields into an array.
    */
    template <int D>
-   void readRGridFields(Rp::System<D, CudaTp<D> > const & system,
+   void readRGridFields(Rp::System<D,CUT> const & system,
                         std::string filename,
-                        DArray< RField<D, CudaTp<D> > >& fields,
+                        DArray< RField<D,CUT> >& fields,
                         UnitCell<D>& unitCell)
    {
       allocateRGridFields(system, fields);
-      Rp::FieldIo<D, CudaTp<D> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<D,CUT> const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
    }
 
@@ -91,11 +91,11 @@ public:
    * Compare rgrid fields.
    */
    template <int D>
-   double compareRGrid(DArray< RField<D, CudaTp<D> > > const & fields1,
-                       DArray< RField<D, CudaTp<D> > > const & fields2,
+   double compareRGrid(DArray< RField<D,CUT> > const & fields1,
+                       DArray< RField<D,CUT> > const & fields2,
                        std::string message)
    {
-      RFieldComparison<D, CudaTp<D> > comparison;
+      RFieldComparison<D,CUT> comparison;
       comparison.compare(fields1, fields2);
       double maxDiff = comparison.maxDiff();
       if (verbose() > 0) {
@@ -108,10 +108,10 @@ public:
    * Compare system w fields to reference fields from a file.
    */
    template <int D>
-   double readCompareWRGrid(Rp::System<D, CudaTp<D> > const & system,
+   double readCompareWRGrid(Rp::System<D,CUT> const & system,
                             std::string filename)
    {
-      DArray< RField<D, CudaTp<D> > > fields;
+      DArray< RField<D,CUT> > fields;
       UnitCell<D> unitCell;
       readRGridFields(system, filename, fields, unitCell);
       std::string message = "max w field error = ";
@@ -122,10 +122,10 @@ public:
    * Compare system w fields to reference fields from a file.
    */
    template <int D>
-   double readCompareCRGrid(Rp::System<D, CudaTp<D> > const & system,
+   double readCompareCRGrid(Rp::System<D,CUT> const & system,
                             std::string filename)
    {
-      DArray< RField<D, CudaTp<D> > > fields;
+      DArray< RField<D,CUT> > fields;
       UnitCell<D> unitCell;
       readRGridFields(system, filename, fields, unitCell);
       std::string message = "max c field error = ";
@@ -133,7 +133,7 @@ public:
    }
 
    template <int D>
-   void setupSystem(Rp::System<D, CudaTp<D> >& system, std::string paramFileName)
+   void setupSystem(Rp::System<D,CUT>& system, std::string paramFileName)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -160,7 +160,7 @@ public:
    * Template for an iteration test, with regression testing.
    */
    template <int D>
-   void testIterate(Rp::System<D, CudaTp<D> >& system,
+   void testIterate(Rp::System<D,CUT>& system,
                     std::string paramFileName,
                     std::string wFileName,
                     std::string outSuffix,
@@ -188,7 +188,7 @@ public:
          std::string refFileRoot;
          refFileRoot = makeFileRoot("ref/testIterate", outSuffix, D);
    
-         Rp::FieldIo<D, CudaTp<D> > const & fieldIo = system.domain().fieldIo();
+         Rp::FieldIo<D,CUT> const & fieldIo = system.domain().fieldIo();
          
          // Compare w fields
          std::string refFileBasis;
@@ -216,7 +216,7 @@ public:
    * On output, fHelhmoltz and pressure contain absolute differences
    */
    template <int D>
-   void compareFreeEnergies(Rp::System<D, CudaTp<D> > const & system,
+   void compareFreeEnergies(Rp::System<D,CUT> const & system,
                             double& fHelmholtz, double& pressure)
    {
       UTIL_CHECK(system.scft().hasData());
@@ -236,7 +236,7 @@ public:
    * Compute and return stress.
    */
    template <int D>
-   FSArray<double, 6> computeStress(Rp::System<D, CudaTp<D> >& system)
+   FSArray<double, 6> computeStress(Rp::System<D,CUT>& system)
    {
       FSArray<double, 6> stress;
       int nParameter = system.domain().unitCell().nParameter();
@@ -260,7 +260,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -294,7 +294,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -336,7 +336,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -373,7 +373,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -406,7 +406,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -441,7 +441,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -476,7 +476,7 @@ public:
       openLogFile("out/testIterate1D_lam_open_shift.log");
 
       // Process system
-      Rp::System<1, CudaTp<1> > system;
+      Rp::System<1,CUT> system;
       initSystem(system,
                  "in/solution/lam_open/param",
                  "in/solution/lam_open/w.bf");
@@ -486,7 +486,7 @@ public:
       }
 
       // Initialize systemShift
-      Rp::System<1, CudaTp<1> > systemShift;
+      Rp::System<1,CUT> systemShift;
       initSystem(systemShift,
                  "in/solution/lam_open/param",
                  "in/solution/lam_open/w.bf");
@@ -545,7 +545,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<2, CudaTp<2> > system;
+      Rp::System<2,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -578,7 +578,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<2, CudaTp<2> > system;
+      Rp::System<2,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -605,7 +605,7 @@ public:
 
       // v1.1 test used omega.in as input, compared to omega.ref
 
-      Rp::FieldIo<2, CudaTp<2> > const & fieldIo = system.domain().fieldIo();
+      Rp::FieldIo<2,CUT> const & fieldIo = system.domain().fieldIo();
       fieldIo.scaleFieldsBasis("out/testIterateBasis2D_hex_flex_w.bf",
                                "out/testIterateBasis2D_hex_flex_w_scaled.bf",
                                0.01);
@@ -617,7 +617,7 @@ public:
       //setVerbose(1);
 
       double wMaxDiff, cMaxDiff;
-      Rp::System<2, CudaTp<2> > system;
+      Rp::System<2,CUT> system;
       int error;
       testIterate(system,
                   "in/diblock/hex_bead/param.flex",
@@ -647,7 +647,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<3, CudaTp<3> > system;
+      Rp::System<3,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -680,7 +680,7 @@ public:
       printMethod(TEST_FUNC);
       //setVerbose(1);
 
-      Rp::System<3, CudaTp<3> > system;
+      Rp::System<3,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,
@@ -721,7 +721,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      Rp::System<3, CudaTp<3> > system;
+      Rp::System<3,CUT> system;
       double wMaxDiff, cMaxDiff;
       int error;
       testIterate(system,

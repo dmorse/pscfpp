@@ -19,9 +19,9 @@
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class TrajectoryWriter<1, CppTp<1> >;
-      template class TrajectoryWriter<2, CppTp<2> >;
-      template class TrajectoryWriter<3, CppTp<3> >;
+      template class TrajectoryWriter<1,CPT>;
+      template class TrajectoryWriter<2,CPT>;
+      template class TrajectoryWriter<3,CPT>;
    }
 }
 

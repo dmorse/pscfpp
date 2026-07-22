@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>   // base class
 #include <pscf/chem/PolymerModel.h>      // member
-#include <pscf/cpu/CppTp.h>              // backend class
+#include <pscf/backends/CPT.h>              // backend class
 
 // Forward declarations
 namespace Util {
@@ -83,7 +83,7 @@ namespace Cp {
       using DomainT = typename T::Domain;
       using WFieldsT = typename T::WFields;  // chemical pot. fields
       using CFieldsT = typename T::CFields;  // concentration fields
-      using CFieldT = CField<D, CppTp<D> >;    // complex field type
+      using CFieldT = CField<D,CPT>;    // complex field type
 
       /// \name Construction and Destruction
       ///@{
