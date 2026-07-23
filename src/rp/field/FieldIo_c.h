@@ -9,15 +9,16 @@
 */
 
 #include <rp/field/FieldIoBase.h>      // base class template
-#include <pscf/backends/CPT.h>          // base class template
-#include <prdc/field/cpu/RFieldDft.h>  // base class member
+#include <pscf/backends/CPT.h>         // template argument
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cpu;
+
+   // Declare base class template
+   template <int D, class T> class FieldIo;
 
    /**
    * File input/output operations and format conversions for fields.
@@ -53,7 +54,7 @@ namespace Rp {
       * \return true iff the header contains a space group (isSymmetric)
       */
       bool readFieldsRGrid(std::istream& in,
-                           DArray< RField<D> >& fields,
+                           DArray< RField<D,CPT> >& fields,
                            UnitCell<D> & unitCell) const override;
 
       /**
@@ -66,7 +67,7 @@ namespace Rp {
       * \param nMonomer  number of monomer types
       */
       void readFieldsRGridData(std::istream& in,
-                               DArray< RField<D> >& fields,
+                               DArray< RField<D,CPT> >& fields,
                                int nMonomer) const override;
 
       /**
@@ -80,7 +81,7 @@ namespace Rp {
       * \return true iff the header contains a space group (isSymmetric)
       */
       bool readFieldRGrid(std::istream &in,
-                          RField<D> & field,
+                          RField<D,CPT> & field,
                           UnitCell<D>& unitCell) const override;
 
       /**
@@ -96,7 +97,7 @@ namespace Rp {
       * \param writeMeshSize  Should mesh size be written in header?
       */
       void writeFieldsRGrid(std::ostream& out,
-                            DArray< RField<D> > const & fields,
+                            DArray< RField<D,CPT> > const & fields,
                             UnitCell<D> const & unitCell,
                             bool writeHeader = true,
                             bool isSymmetric = true,
@@ -114,7 +115,7 @@ namespace Rp {
       * \param isSymmetric  Does the field have a space group symmetry?
       */
       void writeFieldRGrid(std::ostream &out,
-                           RField<D> const & field,
+                           RField<D,CPT> const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
                            bool isSymmetric = true) 
@@ -130,7 +131,7 @@ namespace Rp {
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::istream& in,
-                           DArray< RFieldDft<D> >& fields,
+                           DArray< RFieldDft<D,CPT> >& fields,
                            UnitCell<D> & unitCell) 
       const override;
 
@@ -145,7 +146,7 @@ namespace Rp {
       * \param isSymmetric  Does this field have space group symmetry?
       */
       void writeFieldsKGrid(std::ostream& out,
-                            DArray< RFieldDft<D> > const & fields,
+                            DArray< RFieldDft<D,CPT> > const & fields,
                             UnitCell<D> const & unitCell,
                             bool isSymmetric = true) 
       const override;
@@ -159,7 +160,7 @@ namespace Rp {
       * \param dft  discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(DArray<double> const & components,
-                               RFieldDft<D>& dft) 
+                               RFieldDft<D,CPT>& dft) 
       const override;
 
       /**
@@ -172,7 +173,7 @@ namespace Rp {
       * \param checkSymmetry  flag indicating whether to check symmetry
       * \param epsilon  error tolerance for symmetry test (if any)
       */
-      void convertKGridToBasis(RFieldDft<D> const & in,
+      void convertKGridToBasis(RFieldDft<D,CPT> const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
                                double epsilon = 1.0e-8) 
@@ -188,7 +189,7 @@ namespace Rp {
       * \param verbose  if true, write error to Log::file()
       * \return true iff the field is symmetric to within tolerance
       */
-      bool hasSymmetry(RFieldDft<D> const & in, 
+      bool hasSymmetry(RFieldDft<D,CPT> const & in, 
                        double epsilon = 1.0e-8,
                        bool verbose = true) 
       const override;
@@ -202,8 +203,8 @@ namespace Rp {
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
-      void compareFieldsRGrid(DArray< RField<D> > const & field1,
-                              DArray< RField<D> > const & field2) 
+      void compareFieldsRGrid(DArray< RField<D,CPT> > const & field1,
+                              DArray< RField<D,CPT> > const & field2) 
       const override;
 
       /**
@@ -215,7 +216,7 @@ namespace Rp {
       * \param field  real space (r-grid) field (in-out)
       * \param factor  real scalar by which to multiply all elements
       */
-      void scaleFieldRGrid(RField<D>& field, double factor) 
+      void scaleFieldRGrid(RField<D,CPT>& field, double factor) 
       const override;
 
       /**
@@ -231,7 +232,7 @@ namespace Rp {
       */
       void expandRGridDimension(
                           std::ostream &out,
-                          DArray<RField<D> > const & fields,
+                          DArray< RField<D,CPT> > const & fields,
                           UnitCell<D> const & unitCell,
                           int d,
                           DArray<int> const& newGridDimensions) 
@@ -249,7 +250,7 @@ namespace Rp {
       */ 
       void replicateUnitCell(
                           std::ostream& out,
-                          DArray< RField<D> > const & fields,
+                          DArray< RField<D,CPT> > const & fields,
                           UnitCell<D> const & unitCell,
                           IntVec<D> const & replicas) 
       const override;

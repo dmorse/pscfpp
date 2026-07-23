@@ -5,28 +5,17 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo.h"               // class header
+#include "FieldIo_u.h"                // class header
 
 #include <prdc/field/cuda/HostDArrayComplex.h>
-#include <prdc/field/cuda/RFieldComparison.h>
-#include <prdc/fieldIo/fieldCheck.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
-
-#include <prdc/field/cuda/RField.h>
-#include <prdc/field/cuda/FFT.h>
+//#include <prdc/fieldIo/fieldCheck.h>
 
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/complex.h>
-#include <pscf/cuda/cudaTypes.h>
-#include <pscf/mesh/Mesh.h>
-#include <pscf/math/IntVec.h>
-#include <pscf/math/arithmetic.h>
 
 // Templates that require declarations given above
 #include <rp/field/FieldIoBase.tpp>   // base class implementation
-#include <prdc/fieldIo/rFieldIo.h>    // templates for field IO 
 
 namespace Pscf {
 namespace Rp {

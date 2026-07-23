@@ -44,7 +44,8 @@ endif
 
 .PHONY: all clean
 
-all: $(rp_OBJS) $(rp_LIB) $(PSCF_RP_EXES)
+#all: $(rp_OBJS) $(rp_LIB) $(PSCF_RP_EXES)
+all: $(rp_OBJS) $(rp_LIB) 
 
 clean:
 	rm -f $(rp_OBJS) $(rp_OBJS:.o=.d)

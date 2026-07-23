@@ -5,21 +5,17 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFields.h"                  // class header
-
-#include <rpg/field/FieldIo.h>
-#include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/DeviceArray.h>
 
-#include <rp/field/WFieldsBase.tpp>   // template implementation
+#include <rp/field/WFieldsBase.tpp>   // base class implementation
+#include "WFields.h"                  // class header
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cuda;
 
    // Public member function
 
@@ -29,12 +25,12 @@ namespace Rp {
    template <int D>
    void WFields<D,CUT>::setRGrid(DeviceArray<cudaReal>& fields)
    {
-      // Create DArray tmp with RField<D> elements
-      DArray< RField<D> > tmp;
+      // Create DArray tmp with RField<D,CUT> elements
+      DArray< RField<D,CUT> > tmp;
       const int nMonomer = RpWFields::nMonomer();
       tmp.allocate(nMonomer);
 
-      // Associate each RField<D> with a slice of the unfolded array
+      // Associate each RField<D,CUT> with a slice of the unfolded array
       IntVec<D> const & meshDimensions = RpWFields::meshDimensions();
       const int meshSize = RpWFields::meshSize();
       for (int i = 0; i < nMonomer; i++) {
@@ -46,17 +42,16 @@ namespace Rp {
       RpWFields::setRGrid(tmp, isSymmetric);
    }
 
+   // Explicit instantiation definitions - base class
+   template class WFieldsBase<1,CUT>;
+   template class WFieldsBase<2,CUT>;
+   template class WFieldsBase<3,CUT>;
+
+   // Explicit instantiation definitions - subclass
+   template class WFields<1,CUT>;
+   template class WFields<2,CUT>;
+   template class WFields<3,CUT>;
+
 } // namespace Rp
 } // namespace Pscf
 
-// Explicit instantiation definitions
-namespace Pscf {
-   namespace Rp {
-      template class WFieldsBase<1,CUT>;
-      template class WFieldsBase<2,CUT>;
-      template class WFieldsBase<3,CUT>;
-      template class WFields<1,CUT>;
-      template class WFields<2,CUT>;
-      template class WFields<3,CUT>;
-   }
-}

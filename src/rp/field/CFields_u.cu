@@ -5,10 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CFields.h"              // class header
-#include <rpg/field/FieldIo.tpp> 
-#include <prdc/field/cuda/RField.tpp> 
-
 #include <rp/field/CFields.tpp>   // implementation
 
 // Explicit instantiation definitions

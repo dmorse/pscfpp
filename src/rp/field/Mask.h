@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <prdc/field/RField.h>             // member
 #include <pscf/math/IntVec.h>              // member
 #include <util/containers/DArray.h>        // member template
 
@@ -77,12 +78,7 @@ namespace Rp {
    * <b> Template parameters </b>:
    *
    *   - D   : dimension of space
-   *   - T   : a Types class (CppTp<D> or CudaTp<D>)
-   *
-   * <b> Subclasses </b>: Specializations of the class template
-   * Mask \<D, T\> are used as base classes for specializations of the 
-   * class templates templates Rpc::Mask \<D \> and Rpg::Mask \<D\> that 
-   * are used by the pscf_rpc and pscf_rpg programs, respectively.
+   *   - T   : a Types class (CPT or CUT)
    *
    * \ingroup Rp_Field_Module
    */

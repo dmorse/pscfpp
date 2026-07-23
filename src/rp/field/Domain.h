@@ -8,10 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>    // base class
-#include <prdc/crystal/UnitCell.h>        // member
-#include <pscf/mesh/Mesh.h>               // member
-#include <string>                         // member (groupName)
+#include <util/param/ParamComposite.h>  // base class
+#include <prdc/crystal/UnitCell.h>      // member
+#include <pscf/mesh/Mesh.h>             // member
+#include <pscf/backends/TmplDeclare.h>  // template declaration macros
+
+#include <string>                       // member 
 
 // Forward declarations
 namespace Util {
@@ -417,6 +419,9 @@ namespace Rp {
       UTIL_CHECK(fileMasterPtr_);
       return * fileMasterPtr_;
    }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(Domain)
 
 } // namespace Rp
 } // namespace Pscf

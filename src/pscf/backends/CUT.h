@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/BackendId.h>
+#include <pscf/backends/BackendId.h>
 #include <pscf/cuda/cudaTypes.h>
 #include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/HostDArray.h>

@@ -8,10 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <fftw3.h>
-#include <prdc/field/BackendId.h>
+#include <pscf/backends/BackendId.h>
 #include <pscf/cpu/FftwDRArray.h>
 #include <pscf/cpu/CpuVecRandom.h>
+
+#include <fftw3.h>
 
 // Forward declarations
 namespace Util {

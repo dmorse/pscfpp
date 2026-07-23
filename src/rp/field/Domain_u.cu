@@ -5,13 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Domain.h"               // class header
-
-#include <rpg/field/FieldIo.h>
-#include <prdc/field/cuda/WaveList.h>
-#include <prdc/field/cuda/FFT.h>
-
-#include <rp/field/Domain.tpp>    // template implementation
+#include <rp/field/Domain.tpp> 
 
 // Explicit instantiation definitions
 namespace Pscf {

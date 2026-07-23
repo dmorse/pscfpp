@@ -18,6 +18,10 @@
 #include <prdc/crystal/SpaceGroup.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/BFieldComparison.h>
+#include <prdc/field/FFT.h>
+#include <prdc/field/RFieldComparison.h>
+#include <prdc/field/RField.h>
+#include <prdc/fieldIo/rFieldIo.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>

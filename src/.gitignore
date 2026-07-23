@@ -1,4 +1,5 @@
 *.o
+*.ou
 *.d
 config.mk
 temp*

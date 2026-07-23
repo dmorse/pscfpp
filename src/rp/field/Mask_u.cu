@@ -5,16 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo.tpp"
+
+#include <pscf/cuda/Reduce.h>
+#include <rp/field/Mask.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FieldIoBase<1,CUT>;
-      template class FieldIoBase<2,CUT>;
-      template class FieldIoBase<3,CUT>;
-      template class FieldIo<1,CUT>;
-      template class FieldIo<2,CUT>;
-      template class FieldIo<3,CUT>;
+      template class Mask<1,CUT>;
+      template class Mask<2,CUT>;
+      template class Mask<3,CUT>;
    }
 }

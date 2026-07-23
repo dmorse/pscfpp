@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>   // member template
-#include <pscf/math/IntVec.h>         // template with defaults
+#include <util/containers/DArray.h>     // member template
+#include <pscf/math/IntVec.h>           // template with defaults
+#include <pscf/backends/TmplDeclare.h>  // template declaration macros
 
 // Forward declarations
 namespace Pscf {
@@ -52,11 +53,6 @@ namespace Rp {
    * The CFields container provides public non-const (read/write) access 
    * to both field representations, and does not automatically update one 
    * of these field representations when the other is modified. 
-   *
-   * <b> Subclasses </b>: Specializations of this class template are used
-   * as base classes for two closely analogous class templates, also named 
-   * CFields, that are defined in Rpc and Rpg namespaces for use in the 
-   * pscf_rpc and pscf_rpg programs, respectively.
    *
    * \ingroup Rp_Field_Module
    */
@@ -430,6 +426,9 @@ namespace Rp {
       UTIL_CHECK(fieldIoPtr_);
       return *fieldIoPtr_;
    }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(CFields)
 
 } // namespace Rp
 } // namespace Pscf

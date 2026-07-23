@@ -10,6 +10,7 @@
 
 #include <pscf/math/IntVec.h>            // member
 #include <util/containers/DArray.h>      // member
+#include <pscf/backends/TmplDeclare.h>   // template declaration macros
 #include <util/global.h>
 
 // Forward declarations
@@ -39,7 +40,7 @@ namespace Rp {
    * <b> Template parameters </b>: The template parameters represent:
    *
    *     - D  : integer dimensionality of space, D=1,2, or 3
-   *     - T  : a "Types" class (CppTp<D> or CudaTp<D>))
+   *     - T  : a backend type class (e.g., CPT or CUT)
    *
    * <b> Subclasses </b>: Specializations of Rp::WFieldsBase are used as 
    * base classes for corresponding specializations of Rp::WFields.
@@ -622,6 +623,8 @@ namespace Rp {
    */
    template <int D, class T> class WFields;
 
+   // Explicit instantiation declarations for WFieldsBase
+   PSCF_TMPL_DECLARE(WFieldsBase)
 
 } // namespace Rp
 } // namespace Pscf

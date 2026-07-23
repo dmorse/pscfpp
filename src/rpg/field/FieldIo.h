@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/FieldIoBase.h>   // base class template
-#include <pscf/backends/CUT.h>       // base class template argument
-#include <prdc/field/cuda/RFieldDft.h>    // base class member
+#include <rp/field/FieldIoBase.h>       // base class template
+#include <pscf/backends/CUT.h>          // base class template argument
+#include <prdc/field/cuda/RFieldDft.h>  // base class member
 
 // Forward declarations for classes used only via references or pointers
 namespace Util {

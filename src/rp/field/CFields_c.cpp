@@ -5,12 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CFields.h"             // header
-
-#include <rpc/field/FieldIo.h>
-#include <prdc/field/cpu/RField.h>
-
-#include <rp/field/CFields.tpp>   // template implementation
+#include "CFields.tpp"
 
 // Explicit instantiation definitions
 namespace Pscf {

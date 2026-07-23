@@ -9,6 +9,8 @@
 */
 
 #include "CFields.h"
+#include <rp/field/FieldIo.h>
+#include <prdc/field/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <util/misc/FileMaster.h>
 

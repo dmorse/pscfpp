@@ -8,9 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/UnitCell.h>     // nested LatticeSystem enum
-#include <pscf/math/IntVec.h>          // template with default
-#include <util/containers/DArray.h>    // member
+#include <prdc/field/RFieldDft.h>       // member
+#include <prdc/crystal/UnitCell.h>      // nested LatticeSystem enum
+#include <pscf/math/IntVec.h>           // template with default
+#include <util/containers/DArray.h>     // member
+#include <pscf/backends/TmplDeclare.h>  // template declaration macros
 
 // Forward declarations
 namespace Util {
@@ -1100,10 +1102,9 @@ namespace Rp {
       * 1D or 2D field to be transformed into a field defined in a higher
       * dimension (2D or 3D) space in which field values are indepedendent
       * of the values of coordinates associated with the added dimensions.
-      * For example, when invoked with D=1, it can transform a lamellar
-      * field computed with D=1 to a lamellar field defined on a 3D grid
-      * (d=3), written in a format that can be read by pscf_rpc when
-      * invoked with D=3.
+      * For example, when invoked with D=1, it can write lamellar field
+      * that was computed with D=1 to a lamellar field defined on a 3D 
+      * grid (d=3), in the format used for a 3D field..
       *
       * \param out  output stream (i.e., output file)
       * \param fields  input array of RField fields (r-space grid)
@@ -1388,14 +1389,8 @@ namespace Rp {
 
    };
 
-   /**
-   * File IO, format conversions and other utilities for fields.
-   *
-   * The implementation of this primary template. It exists to allow
-   * definition of partial specialziations.
-   */
-   template <int D, class T>
-   class FieldIo {};
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(FieldIoBase)
 
 } // namespace Rp
 } // namespace Pscf

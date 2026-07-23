@@ -5,21 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo_cp.h"              // partial specialization header
-
-#include <prdc/field/cpu/FFT.h>
-#include <prdc/field/cpu/RField.h>
-#include <prdc/field/cpu/RFieldComparison.h>
 #include <pscf/cpu/complex.h>
-
-#include <rp/field/FieldIoBase.tpp>  // base class implementation
+#include <rp/field/FieldIoBase.tpp>   // base class implementation
+#include "FieldIo_c.h"                // class header
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
    using namespace Pscf::Prdc;
-   using namespace Pscf::Prdc::Cpu;
 
    /*
    * Read an array of fields in r-grid format.
@@ -27,7 +21,7 @@ namespace Rp {
    template <int D>
    bool FieldIo<D,CPT>::readFieldsRGrid(
                               std::istream &in,
-                              DArray< RField<D> >& fields,
+                              DArray< RField<D,CPT> >& fields,
                               UnitCell<D>& unitCell) const
    {
       // Read header
@@ -51,7 +45,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D,CPT>::readFieldsRGridData(
                               std::istream& in,
-                              DArray< RField<D> >& fields,
+                              DArray< RField<D,CPT> >& fields,
                               int nMonomer) const
    {
       checkAllocateFields(fields, nMonomer, FieldIoBase::mesh().dimensions());
@@ -67,7 +61,7 @@ namespace Rp {
    template <int D>
    bool FieldIo<D,CPT>::readFieldRGrid(
                               std::istream &in,
-                              RField<D> & field,
+                              RField<D,CPT> & field,
                               UnitCell<D>& unitCell) const
    {
       // Read header
@@ -92,7 +86,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D,CPT>::writeFieldsRGrid(
                               std::ostream &out,
-                              DArray< RField<D> > const & fields,
+                              DArray< RField<D,CPT> > const & fields,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric,
@@ -123,7 +117,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D,CPT>::writeFieldRGrid(
                               std::ostream &out,
-                              RField<D> const & field,
+                              RField<D,CPT> const & field,
                               UnitCell<D> const & unitCell,
                               bool writeHeader,
                               bool isSymmetric) const
@@ -148,7 +142,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D,CPT>::readFieldsKGrid(
                               std::istream &in,
-                              DArray< RFieldDft<D> >& fields,
+                              DArray< RFieldDft<D,CPT> >& fields,
                               UnitCell<D>& unitCell) const
    {
       // Read header
@@ -172,7 +166,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D,CPT>::writeFieldsKGrid(
                               std::ostream &out,
-                              DArray< RFieldDft<D> > const & fields,
+                              DArray< RFieldDft<D,CPT> > const & fields,
                               UnitCell<D> const & unitCell,
                               bool isSymmetric) const
    {
@@ -198,7 +192,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D,CPT>::convertBasisToKGrid(
                               DArray<double> const & in,
-                              RFieldDft<D>& out) const
+                              RFieldDft<D,CPT>& out) const
    {
       // Rpg: Allocate host array
       Prdc::convertBasisToKGrid(in, out, FieldIoBase::basis(), out.dftDimensions());
@@ -210,7 +204,7 @@ namespace Rp {
    */
    template <int D>
    void FieldIo<D,CPT>::convertKGridToBasis(
-                          RFieldDft<D> const & in,
+                          RFieldDft<D,CPT> const & in,
                           DArray<double>& out,
                           bool checkSymmetry,
                           double epsilon) const
@@ -227,7 +221,7 @@ namespace Rp {
    */
    template <int D>
    bool FieldIo<D,CPT>::hasSymmetry(
-                          RFieldDft<D> const & in,
+                          RFieldDft<D,CPT> const & in,
                           double epsilon,
                           bool verbose) const
    {
@@ -242,10 +236,10 @@ namespace Rp {
    */
    template <int D>
    void FieldIo<D,CPT>::compareFieldsRGrid(
-                          DArray< RField<D> > const & field1,
-                          DArray< RField<D> > const & field2) const
+                          DArray< RField<D,CPT> > const & field1,
+                          DArray< RField<D,CPT> > const & field2) const
    {
-      RFieldComparison<D> comparison;
+      RFieldComparison<D,CPT> comparison;
       comparison.compare(field1, field2);
 
       Log::file() << "\n Real-space field comparison results"
@@ -261,7 +255,7 @@ namespace Rp {
    */
    template <int D>
    void FieldIo<D,CPT>::scaleFieldRGrid(
-                              RField<D> & field,
+                              RField<D,CPT> & field,
                               double factor) const
    {
       int n = field.capacity();
@@ -276,7 +270,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D,CPT>::replicateUnitCell(
                               std::ostream &out,
-                              DArray< RField<D> > const & fields,
+                              DArray< RField<D,CPT> > const & fields,
                               UnitCell<D> const & unitCell,
                               IntVec<D> const & replicas) const
 
@@ -298,7 +292,7 @@ namespace Rp {
    template <int D>
    void FieldIo<D,CPT>::expandRGridDimension(
                               std::ostream &out,
-                              DArray< RField<D> > const & fields,
+                              DArray< RField<D,CPT> > const & fields,
                               UnitCell<D> const & unitCell,
                               int d,
                               DArray<int> const& newGridDimensions) const

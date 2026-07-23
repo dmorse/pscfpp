@@ -1,5 +1,5 @@
-#ifndef RP_W_FIELDS_CU_H
-#define RP_W_FIELDS_CU_H
+#ifndef RPG_W_FIELDS_H
+#define RPG_W_FIELDS_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,15 +9,16 @@
 */
 
 #include <rp/field/WFieldsBase.h>  // base class template
-#include <rp/field/WFields.h>      // primary template
-#include <pscf/backends/CUT.h>      // class template argument
+#include <pscf/backends/CUT.h>      // base class template argument
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
-   using namespace Prdc::Cuda;
+
+   // Declare primary template
+   template <int D, class T> class WFields;
 
    /**
    * A container of fields stored in both basis and r-grid format.
@@ -28,7 +29,7 @@ namespace Rp {
    * from this base class.
    *
    * \see Rp::WFields
-   * \ingroup Rpg_Field_Module
+   * \ingroup Rp_Field_Module
    */
    template <int D>
    class WFields<D,CUT> 
@@ -58,18 +59,9 @@ namespace Rp {
 
    };
 
-} // namespace Rpg
-} // namespace Pscf
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE_CUDA(WFieldsBase);
 
-// Explicit instantiation declarations
-namespace Pscf {
-   namespace Rp {
-      extern template class WFieldsBase<1,CUT>;
-      extern template class WFieldsBase<2,CUT>;
-      extern template class WFieldsBase<3,CUT>;
-      extern template class WFields<1,CUT>;
-      extern template class WFields<2,CUT>;
-      extern template class WFields<3,CUT>;
-   }
-}
+} // namespace Rp
+} // namespace Pscf
 #endif

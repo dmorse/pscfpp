@@ -9,11 +9,11 @@
 */
 
 #ifdef PSCF_CPP
-#include <rp/field/FieldIo_cp.h>
+#include <rp/field/FieldIo_c.h>
 #endif
 
 #ifdef PSCF_CUDA
-#include <rp/field/FieldIo_cu.h>
+#include <rp/field/FieldIo_u.h>
 #endif
 
 #endif

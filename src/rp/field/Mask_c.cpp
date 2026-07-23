@@ -5,12 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Mask.h"               // template header
-
-#include <rpc/field/FieldIo.h>
 #include <pscf/cpu/Reduce.h>
-
-#include <rp/field/Mask.tpp>    // template implementation
+#include <rp/field/Mask.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {

@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/WFieldsBase.h>    // base class template
-#include <prdc/field/TmplDeclare.h>  // explicit declaration macros
+#include <rp/field/WFieldsBase.h>       // base class template
+#include <pscf/backends/TmplDeclare.h>  // explicit declaration macros
 
 namespace Pscf {
 namespace Rp {
@@ -31,13 +31,13 @@ namespace Rp {
    {};
 
    // Declare explicit specializations for CPU backend
-   PRDC_TMPL_DECLARE_CPP(WFields);
+   PSCF_TMPL_DECLARE_CPP(WFields);
 
 } // namespace Rp
 } // namespace Pscf
 
 #ifdef PSCF_CUDA
-#include <rp/field/WFields_cu.h>
+#include <rp/field/WFields_u.h>
 #endif
 
 #endif
