@@ -9,6 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
+#include <pscf/backends/TmplDeclare.h>    // preprocessor macros
 #include <util/global.h>
 
 // Forward declarations
@@ -108,38 +109,6 @@ namespace Rp {
    };
 
    // Member functions (all inline)
- 
-   /*
-   * Default constructor.
-   */
-   template <int D, class T> inline
-   Compressor<D,T>::Compressor()
-    : mdeCounter_(0),
-      sysPtr_(nullptr)
-   {  setClassName("Compressor"); }
-
-   /*
-   * Constructor (creates association with parent system)
-   */
-   template <int D, class T> inline
-   Compressor<D,T>::Compressor(System<D,T>& system)
-    : mdeCounter_(0),
-      sysPtr_(&system)
-   {  setClassName("Compressor"); }
-
-   /*
-   * Create association with the parent system.
-   */
-   template <int D, class T> inline
-   void Compressor<D,T>::setSystem(System<D,T>& system)
-   {  sysPtr_ = &system; }
-
-   /*
-   * Get number of times MDE has been solved.
-   */
-   template <int D, class T> inline
-   int Compressor<D,T>::mdeCounter() const
-   {  return mdeCounter_; }
 
    /*
    * Return parent system by const reference.
@@ -160,6 +129,9 @@ namespace Rp {
       UTIL_ASSERT(sysPtr_);
       return *sysPtr_;
    }
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(Compressor)
 
 } // namespace Rp
 } // namespace Pscf

@@ -7,26 +7,19 @@
 
 #include "Simulator.h"
 
-#include <rpg/fts/simulator/SimState.h>
+//#include <rpg/fts/simulator/SimState.h>
 #include <rpg/fts/compressor/CompressorFactory.h>
 #include <rpg/fts/perturbation/Perturbation.h>
 #include <rpg/fts/perturbation/PerturbationFactory.h>
 #include <rpg/fts/ramp/Ramp.h>
 #include <rpg/fts/ramp/RampFactory.h>
 
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/CFields.h>
-
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 #include <pscf/cuda/CudaVecRandom.h>
 
-#include <rp/fts/simulator/Simulator.tpp>  // base class implementation
+#include <rp/fts/simulator/Simulator.tpp> // base class implementation
+#include <pscf/backends/CUT.h>            // backend type class
 
 // Explicit instantiation definitions
 namespace Pscf {

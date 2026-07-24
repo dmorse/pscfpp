@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo.h"                 // class header
 
 #include <prdc/field/cpu/FFT.h>
 #include <prdc/field/cpu/RField.h>
 #include <prdc/field/cpu/RFieldComparison.h>
 #include <pscf/cpu/complex.h>
 
-#include <rp/field/FieldIoBase.tpp>  // base class template implementation
+#include <rp/field/FieldIoBase.tpp>  // base class implementation
+#include <rp/field/FieldIo.h>        // class header
 
 namespace Pscf {
 namespace Rp {

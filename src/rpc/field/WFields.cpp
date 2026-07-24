@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFields.h"                // class header
-#include <rpc/field/FieldIo.h>
+#include <rp/field/WFields.h>       // class header
+#include <rp/field/FieldIo.h>
 #include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
 #include <rp/field/WFieldsBase.tpp> // base class implementation

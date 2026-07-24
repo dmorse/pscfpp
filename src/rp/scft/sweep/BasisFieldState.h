@@ -8,7 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/fieldIo/FieldState.h>
+#include <prdc/fieldIo/FieldState.h>      // base class
+#include <pscf/backends/TmplDeclare.h>    // preprocessor macros
+
 #include <string>
 
 // Forward declarations
@@ -28,15 +30,10 @@ namespace Rp {
    /**
    * FieldState for fields in symmetry-adapted basis format.
    *
-   * Instantiations of this class template are used as base classes for 
-   * two closely analogous class templates, also named BasisFieldState,
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *   - D : dimension of space (1, 2, or 3)
-   *   - T : Types class (CppTp<D> or CudaTp<D>)
+   *   - T : Types class (e.g., CPT or CUT)
    *
    * \ingroup Rp_Scft_Sweep_Module
    */
@@ -108,6 +105,9 @@ namespace Rp {
       using FieldIoT = FieldIo<D,T>;
 
    };
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(BasisFieldState)
 
 } // namespace Rp
 } // namespace Pscf

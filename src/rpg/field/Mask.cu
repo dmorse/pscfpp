@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Mask.h"
+#include <rp/field/Mask.h>
 
-#include <rpg/field/FieldIo.h>
+#include <rp/field/FieldIo.h>
 #include <pscf/cuda/Reduce.h>
 
 #include <rp/field/Mask.tpp>    // class template implementation

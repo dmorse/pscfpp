@@ -9,6 +9,15 @@
 */
 
 #include "MixtureBase.h"
+
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/solvers/Block.h>
+#include <rp/solvers/Propagator.h>
+#include <rp/field/FieldIo.h>
+#include <prdc/field/FFT.h>
+#include <prdc/field/RField.h>
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/solvers/MixtureTmpl.tpp>
 #include <pscf/mesh/Mesh.h>

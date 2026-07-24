@@ -10,11 +10,14 @@
 
 #include "Simulator.h"
 
-//#include <rp/field/CFields.h>
-//#include <rp/field/Domain.h>
-//#include <rp/system/System.h>
-//#include <rp/fts/simulator/SimState.h>
-//#include <rp/fts/compressor/Compressor.h>
+#include <rp/fts/compressor/Compressor.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
 
 #include <pscf/interaction/Interaction.h>
 #include <pscf/chem/PolymerModel.h>

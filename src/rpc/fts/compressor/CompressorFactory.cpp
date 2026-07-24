@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CompressorFactory.h"  
+//#include "CompressorFactory.h"  
 
 // Subclasses of Compressor 
 #include <rpc/fts/compressor/AmCompressor.h>

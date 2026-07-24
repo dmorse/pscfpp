@@ -10,7 +10,8 @@
 
 #include <util/param/ParamComposite.h>    // base class
 #include <util/containers/FSArray.h>      // member
-#include <util/global.h>
+#include <pscf/backends/TmplDeclare.h>    // declaration macros
+#include <util/global.h>                  // inline functions
 
 // Forward declarations
 namespace Pscf {
@@ -182,6 +183,9 @@ namespace Rp {
       UTIL_CHECK(sysPtr_);
       return *sysPtr_;
    }
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(Iterator)
 
 } // namespace Rp
 } // namespace Pscf

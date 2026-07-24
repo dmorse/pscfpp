@@ -6,7 +6,7 @@
 */
 
 #include "SimulatorFactory.h"
-//#include <rpc/system/System.h>
+#include <rp/system/System.h>
 
 //#include <rp/fts/brownian/BdSimulator.h>
 //#include <rp/fts/montecarlo/McSimulator.h>

@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFields.h"                  // class header
-#include <rpg/field/FieldIo.h>
+#include <rp/field/WFields_u.h>       // class header
+#include <rp/field/FieldIo_u.h>
 #include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/DeviceArray.h>

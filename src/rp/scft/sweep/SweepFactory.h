@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>
-#include "Sweep.h"
+#include <util/param/Factory.h>           // base class template
+#include <rp/scft/sweep/Sweep.h>          // base class argument
+#include <pscf/backends/TmplDeclare.h>    // declaration macros
 
 #include <string>
 
@@ -54,6 +55,9 @@ namespace Rp {
 
    };
 
-}
-}
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(SweepFactory)
+
+} // namespace Rp
+} // namespace Pscf
 #endif

@@ -5,9 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SimState.h"
-#include <prdc/field/cuda/RField.h>
 #include <rp/fts/simulator/SimState.tpp>
+#include <pscf/backends/CUT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

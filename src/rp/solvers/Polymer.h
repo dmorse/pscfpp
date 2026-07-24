@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/solvers/PolymerTmpl.h>    // base class template
-#include <util/containers/FSArray.h>     // member template
+#include <pscf/solvers/PolymerTmpl.h>   // base class template
+#include <util/containers/FSArray.h>    // member template
+#include <pscf/backends/TmplDeclare.h>  // template declaration macros
 
 // Forward declarations
 namespace Util {
@@ -175,6 +176,9 @@ namespace Rp {
    template <int D, class T> inline
    double Polymer<D,T>::stress(int n) const
    {  return stress_[n]; }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(Polymer)
 
 } // namespace Rp
 } // namespace Pscf

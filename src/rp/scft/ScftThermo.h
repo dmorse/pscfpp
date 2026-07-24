@@ -8,9 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/system/SystemConstRef.h>
-#include <util/global.h>
+#include <rp/system/SystemConstRef.h>    // base class
+#include <util/global.h>                 // inline functions
+#include <pscf/backends/TmplDeclare.h>   // declaration macros
 #include <iostream>
+
 
 namespace Pscf {
 namespace Rp {
@@ -247,6 +249,9 @@ namespace Rp {
    template <int D, class T>
    inline bool ScftThermo<D,T>::hasData() const
    {  return hasData_; }
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(ScftThermo)
 
 } // namespace Rp
 } // namespace Pscf

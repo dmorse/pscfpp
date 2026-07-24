@@ -1,0 +1,21 @@
+/*
+* PSCF - Polymer Self-Consistent Field
+*
+* Copyright 2015 - 2025, The Regents of the University of Minnesota
+* Distributed under the terms of the GNU General Public License.
+*/
+
+#include <rpc/system/System.h>
+#include <rpc/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+
+#include <rp/scft/iterator/Iterator.tpp>
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class Iterator<1,CPT>;
+      template class Iterator<2,CPT>;
+      template class Iterator<3,CPT>;
+   }
+}

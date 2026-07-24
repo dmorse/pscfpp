@@ -8,8 +8,8 @@
 *Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/simulator/SimState.h>  // class template
-#include <pscf/backends/CUT.h>           // template argument
+#include <pscf/backends/CUT.h>            // template argument
+#include <rp/fts/simulator/SimState.tpp>  // class template
 
 //Explicit instantiation declarations
 namespace Pscf {

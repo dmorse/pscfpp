@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SystemConstRef.h"
+#include <rp/system/System.h>
+#include <rp/system/SystemConstRef.h>
 
 namespace Pscf {
 namespace Rp {

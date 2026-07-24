@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/FieldIoBase.h>      // base class template
-#include <pscf/backends/CPT.h>         // template argument
+#include <rp/field/FieldIoBase.h>       // base class template
+#include <pscf/backends/CPT.h>          // backend type class
+#include <pscf/backends/TmplDeclare.h>  // template declare macros
 
 namespace Pscf {
 namespace Rp {
@@ -278,18 +279,10 @@ namespace Rp {
 
    };
 
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE_CPP(FieldIoBase)
+   PSCF_TMPL_DECLARE_CPP(FieldIo)
+
 } // namespace Rp
 } // namespace Pscf 
-
-// Explicit instantiation declarations
-namespace Pscf {
-   namespace Rp {
-      extern template class FieldIoBase<1,CPT>;
-      extern template class FieldIoBase<2,CPT>;
-      extern template class FieldIoBase<3,CPT>;
-      extern template class FieldIo<1,CPT>;
-      extern template class FieldIo<2,CPT>;
-      extern template class FieldIo<3,CPT>;
-   }
-} 
 #endif

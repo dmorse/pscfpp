@@ -6,8 +6,8 @@
 */
 
 #include "Polymer.h"
-#include <rpc/solvers/Block.h>
-#include <rpc/solvers/Propagator.h>
+#include <rp/solvers/Block_c.h>
+#include <rp/solvers/Propagator_c.h>
 #include <prdc/field/cpu/RField.h>
 #include <pscf/solvers/PolymerTmpl.tpp>
 #include <pscf/chem/PolymerModel.h>

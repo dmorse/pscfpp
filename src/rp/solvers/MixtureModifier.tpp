@@ -9,6 +9,10 @@
 */
 
 #include "MixtureModifier.h"
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/solvers/Block.h>
 #include <pscf/chem/Monomer.h>
 
 namespace Pscf {

@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
-#include <rp/fts/simulator/Simulator.h>
+#include <util/param/Factory.h>          // base class template
+#include <rp/fts/simulator/Simulator.h>  // base class argument
+#include <pscf/backends/TmplDeclare.h>   // declaration macros
 
 #include <string>
 
@@ -61,6 +62,9 @@ namespace Rp {
       System<D,T>* systemPtr_;
 
    };
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(SimulatorFactory)
 
 }
 }

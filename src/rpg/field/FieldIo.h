@@ -29,6 +29,9 @@ namespace Rp {
    using namespace Util;
    using namespace Prdc;
 
+   // Declare primary template
+   template <int D, class T> class FieldIo;
+
    /**
    * File input/output operations and format conversions for fields.
    *

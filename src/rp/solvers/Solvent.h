@@ -8,14 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/SolventSpecies.h>  // base class
+#include <pscf/chem/SolventSpecies.h>   // base class
+#include <prdc/field/RField.h>          // member
+#include <pscf/backends/TmplDeclare.h>  // template declaration macros
 
 // Forward declaration
 namespace Pscf {
    template <int D> class Mesh;
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
 }
 
 namespace Pscf {
@@ -27,10 +26,6 @@ namespace Rp {
    * Solver and descriptor for a solvent species.
    *
    * \ref user_param_solvent_sec "Manual Page"
-   *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, Rpc::Solvent and Rpg::Solvent,
-   * that are used in the pscf_rpc and pscf_rpg programs, respectively. 
    *
    * <b> Template parameters </b>:
    *
@@ -129,6 +124,8 @@ namespace Rp {
    RField<D,T> const & Solvent<D,T>::cField() const
    {  return cField_;  }
 
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(Solvent)
 }
 }
 #endif

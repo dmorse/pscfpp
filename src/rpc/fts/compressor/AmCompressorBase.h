@@ -10,14 +10,14 @@
 
 /*
 * Instantiatied class template specializations used as base classes 
-* for specializations of the class templates Rpc::AmCompressor and 
-* Rpc::LrAmCompressor.
+* for specializations of the class templates AmCompressor and 
+* LrAmCompressor.
 */
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/fts/compressor/Compressor.h>   // base class argument
-#include <pscf/backends/CPT.h>                 // base class argument
-#include <pscf/cpu/FftwDRArray.h>     // base class argument
+#include <pscf/backends/CPT.h>              // base class argument
+#include <pscf/cpu/FftwDRArray.h>           // base class argument
 
 namespace Pscf {
    extern template 

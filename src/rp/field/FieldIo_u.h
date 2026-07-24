@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/FieldIoBase.h>   // base class template
-#include <pscf/backends/CUT.h>      // template argument
+#include <rp/field/FieldIoBase.h>      // base class template
+#include <pscf/backends/CUT.h>         // backend type class
+#include <pscf/backends/TmplDeclare.h> // template declare macros
 
 // Forward declarations for classes used only via references or pointers
 namespace Util {
@@ -323,18 +324,10 @@ namespace Rp {
 
    };
 
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE_CUDA(FieldIoBase);
+   PSCF_TMPL_DECLARE_CUDA(FieldIo);
+
 } // namespace Rp
 } // namespace Pscf
-
-// Explicit instantation declarations
-namespace Pscf {
-   namespace Rp {
-      extern template class FieldIoBase<1,CUT>;
-      extern template class FieldIoBase<2,CUT>;
-      extern template class FieldIoBase<3,CUT>;
-      extern template class FieldIo<1,CUT>;
-      extern template class FieldIo<2,CUT>;
-      extern template class FieldIo<3,CUT>;
-   }
-}
 #endif

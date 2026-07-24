@@ -8,15 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>            // base class template
-#include <rp/fts/compressor/Compressor.h>  // base template argument
+#include <util/param/Factory.h>             // base class template
+#include <rp/fts/compressor/Compressor.h>   // base class argument
+#include <pscf/backends/TmplDeclare.h>      // preprocessor macros
 
 #include <string>
 
 namespace Pscf {
 namespace Rp {
 
-   // Forward declarations
+   // Forward declaration
    template <int D, class T> class System;
 
    using namespace Util;
@@ -56,6 +57,9 @@ namespace Rp {
       using FactoryT = Factory< Compressor<D,T> >;
 
    };
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(CompressorFactory)
 
 }
 }

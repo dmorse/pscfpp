@@ -5,18 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Mixture.h"                    // class header
-
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/solvers/Block.h>
-#include <rpg/solvers/Propagator.h>
-#include <rpg/field/FieldIo.h>
-#include <prdc/field/cuda/FFT.h>
-#include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 
-#include <rp/solvers/MixtureBase.tpp>   // base class template implementation
+#include <rp/solvers/MixtureBase.tpp>   // base class implementation
+#include <rp/solvers/Mixture.h>         // class header
 
 namespace Pscf {
 namespace Rp {

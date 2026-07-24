@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>         // template with default parameter
-#include <util/containers/DArray.h>   // member
+#include <pscf/math/IntVec.h>           // template with default parameter
+#include <util/containers/DArray.h>     // member
+#include <pscf/backends/TmplDeclare.h>  // preprocessor macros
 
 // Forward declaration
 namespace Pscf {
@@ -35,14 +36,9 @@ namespace Rp {
    * algorithm (the search for a partial saddle point) fails to converge 
    * after an attempted unconstrained BD step.
    * 
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named SimState, that
-   * are defined in Rpc and Rpg namespaces and used in the pscf_rpc and
-   * pscf_rpg programs, respectively.
-   *
    * Template parameters:
-   *   - D  : dimension of space
-   *   - FT : field type, Rpc::RField<D> or Rpg::RField<D> 
+   *   - D : dimension of space
+   *   - T : backend type class (e.g., CPT or CUT)
    *
    * \ingroup Rp_Fts_Simulator_Module
    */
@@ -138,6 +134,9 @@ namespace Rp {
       bool isAllocated;
 
    };
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(SimState)
 
 }
 }

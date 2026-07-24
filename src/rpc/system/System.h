@@ -10,7 +10,7 @@
 
 // Header file includes
 #include <rp/system/System.h>      // base class template
-#include <pscf/backends/CPT.h>      // base class argument
+#include <pscf/backends/CPT.h>     // base class argument
 
 // Explicit instantiation declarations
 namespace Pscf {

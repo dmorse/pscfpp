@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/simulator/Simulator.h>    // base class template
-#include <pscf/backends/CPT.h>                // template argument
+#include <pscf/backends/CPT.h>             // template argument
 #include <rpc/fts/simulator/SimState.h>    // member
 #include <prdc/field/cpu/RField.h>         // member (template arg)
 

@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"
-#include "Block.h"
+#include <rp/solvers/Propagator.h>
+#include <rp/solvers/Block.h>
 #include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>

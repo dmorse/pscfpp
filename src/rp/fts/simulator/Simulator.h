@@ -8,9 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>     // base class
-#include <util/containers/DArray.h>        // member (template)
-#include <util/containers/DMatrix.h>       // member (template)
+#include <util/param/ParamComposite.h>    // base class
+#include <rp/fts/simulator/SimState.h>    // member
+#include <prdc/field/RField.h>            // member
+#include <util/containers/DArray.h>       // member (template)
+#include <util/containers/DMatrix.h>      // member (template)
+#include <pscf/backends/TmplDeclare.h>    // declaration macros
+
 #include <iostream>
 
 // Forward declaration
@@ -18,12 +22,8 @@ namespace Util {
    class Random; 
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
    namespace Rp {
       template <int D, class T> class System;
-      template <int D, class T> class SimState;
       template <int D, class T> class Compressor;
       template <int D, class T> class CompressorFactory;
       template <int D, class T> class Perturbation;
@@ -1141,6 +1141,9 @@ namespace Rp {
    template <int D, class T>
    inline long Simulator<D,T>::iTotalStep()
    {  return iTotalStep_; }
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(Simulator)
 
 }
 }

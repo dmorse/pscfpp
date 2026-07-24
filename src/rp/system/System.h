@@ -10,6 +10,7 @@
 
 #include <util/param/ParamComposite.h>   // base class
 #include <pscf/chem/PolymerModel.h>      // member
+#include <pscf/backends/TmplDeclare.h>   // declaration macros
 
 // Forward declarations
 namespace Util {
@@ -926,6 +927,9 @@ namespace Rp {
    template <int D, class T> inline
    CFields<D,T> & System<D,T>::c_()
    {  return *cPtr_; }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(System)
 
 } // namespace Rp
 } // namespace Pscf

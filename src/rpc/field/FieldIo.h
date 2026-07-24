@@ -9,14 +9,17 @@
 */
 
 #include <rp/field/FieldIoBase.h>      // base class template
-#include <pscf/backends/CPT.h>          // base class template
-#include <prdc/field/cpu/RFieldDft.h>  // base class member
+#include <pscf/backends/CPT.h>        
+#include <prdc/field/cpu/RFieldDft.h> 
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
+
+   // Declare primary template
+   template <int D, class T> class FieldIo; 
 
    /**
    * File input/output operations and format conversions for fields.

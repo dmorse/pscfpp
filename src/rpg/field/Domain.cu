@@ -6,7 +6,7 @@
 */
 
 #include "Domain.h"               // class header
-#include <rpg/field/FieldIo.h>
+#include <rp/field/FieldIo.h>
 #include <prdc/field/cuda/WaveList.h>
 #include <prdc/field/cuda/FFT.h>
 

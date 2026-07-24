@@ -9,6 +9,7 @@
 */
 
 #include "Solvent.h"
+#include <prdc/field/RField.h>
 #include <pscf/mesh/Mesh.h>
 
 namespace Pscf {

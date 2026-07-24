@@ -5,8 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SimulatorFactory.h"
-
 // Subclasses of Simulator
 #include <rpc/fts/montecarlo/McSimulator.h>
 #include <rpc/fts/brownian/BdSimulator.h>

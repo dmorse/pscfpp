@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo.h"               // class header
+#include <rp/field/FieldIo_u.h>           // class header
 
 #include <prdc/field/cuda/HostDArrayComplex.h>
 #include <prdc/field/cuda/RFieldComparison.h>

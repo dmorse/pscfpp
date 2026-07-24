@@ -11,18 +11,28 @@
 #include "System.h"
 
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/simulator/SimulatorFactory.h>
 #include <rp/fts/compressor/Compressor.h>
-#include <rp/scft/sweep/SweepFactory.h>
+#include <rp/fts/compressor/CompressorFactory.h>
 #include <rp/scft/sweep/Sweep.h>
-#include <rp/scft/iterator/IteratorFactory.h>
+#include <rp/scft/sweep/SweepFactory.h>
 #include <rp/scft/iterator/Iterator.h>
+#include <rp/scft/iterator/IteratorFactory.h>
 #include <rp/scft/ScftThermo.h>
-//#include <rp/solvers/Mixture.h>
+#include <rp/environment/EnvironmentFactory.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/MixtureModifier.h>
 #include <rp/field/Domain.h>
-#include <rp/field/CFields.h>
-//#include <rp/field/WFields.h>
+#include <rp/field/FieldIo.h>
 #include <rp/field/Mask.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
 
+#include <prdc/field/WaveList.h>
+#include <prdc/field/FFT.h>
+#include <prdc/field/RField.h>
+#include <prdc/field/RFieldDft.h>
 #include <prdc/environment/Environment.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>

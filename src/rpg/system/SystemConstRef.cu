@@ -5,9 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SystemConstRef.h"
-#include <rpg/system/System.h>
-
+#include <pscf/backends/CUT.h>
 #include <rp/system/SystemConstRef.tpp>
 
 // Explicit initialization definitions

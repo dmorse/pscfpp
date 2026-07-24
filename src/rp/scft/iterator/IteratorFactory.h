@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>         // base class template
-#include <rp/scft/iterator/Iterator.h>  // class template argument
+#include <util/param/Factory.h>          // base class template
+#include <rp/scft/iterator/Iterator.h>   // class template argument
+#include <pscf/backends/TmplDeclare.h>   // declaration macros
 
 #include <string>
 
@@ -62,6 +63,9 @@ namespace Rp {
       System<D,T>* sysPtr_;
 
    };
+
+   // Explicit instantation declarations
+   PSCF_TMPL_DECLARE(IteratorFactory)
 
 }
 }

@@ -1,6 +1,3 @@
-#ifndef RPC_BLOCK_TPP
-#define RPC_BLOCK_TPP
-
 /*
 * PSCF - Polymer Self-Consistent Field
 *
@@ -8,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Block.h"
-#include "Propagator.h"
+#include "Block_c.h"
+#include "Propagator_c.h"
 
 #include <prdc/field/cpu/WaveList.h>
 #include <prdc/field/cpu/FFT.h>
@@ -743,4 +740,18 @@ namespace Rp {
 
 }
 }
-#endif
+
+// Explicit instantiation definitions
+namespace Pscf { 
+
+   template class BlockTmpl< Rp::Propagator<1,CPT>, Prdc::RField<1,CPT> >;
+   template class BlockTmpl< Rp::Propagator<2,CPT>, Prdc::RField<2,CPT> >;
+   template class BlockTmpl< Rp::Propagator<3,CPT>, Prdc::RField<3,CPT> >;
+
+   namespace Rp {
+      template class Block<1,CPT>;
+      template class Block<2,CPT>;
+      template class Block<3,CPT>;
+   }
+
+}

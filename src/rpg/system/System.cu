@@ -8,36 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "System.h"               // class header
-
-#include <rpg/environment/EnvironmentFactory.h>
-#include <rpg/fts/simulator/Simulator.h>
-#include <rpg/fts/simulator/SimulatorFactory.h>
-#include <rpg/scft/ScftThermo.h>
-#include <rpg/scft/iterator/Iterator.h>
-#include <rpg/scft/iterator/IteratorFactory.h>
-#include <rpg/scft/sweep/Sweep.h>
-#include <rpg/scft/sweep/SweepFactory.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/solvers/MixtureModifier.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/FieldIo.h>
-#include <rpg/field/CFields.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/Mask.h>
-
-#include <prdc/field/cuda/RField.h>
-#include <prdc/field/cuda/RFieldDft.h>
-#include <prdc/field/cuda/WaveList.h>
-#include <prdc/environment/Environment.h>
-
-#include <pscf/interaction/Interaction.h>
 #include <pscf/cuda/ThreadArray.h>
 #include <pscf/cuda/ThreadMesh.h>
+#include <pscf/backends/CUT.h>    // backend type class
 
-#include <rp/system/System.tpp>   // base class template implementation
+#include <rp/system/System.tpp>   // class implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

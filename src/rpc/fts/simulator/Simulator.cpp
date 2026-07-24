@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Simulator.h"
+#include <pscf/backends/CPT.h>
 
 #include <rpc/system/System.h>
 #include <rpc/solvers/Mixture.h>

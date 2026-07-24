@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SimState.h"
+#include <prdc/field/RField.h>
 #include <pscf/math/IntVec.h>
+
+#include "SimState.h"
 
 namespace Pscf {
 namespace Rp {

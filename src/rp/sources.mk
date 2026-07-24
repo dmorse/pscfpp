@@ -3,40 +3,20 @@
 
 # Include source list files from subdirectories
 include $(SRC_DIR)/rp/field/sources.mk
-#include $(SRC_DIR)/rp/solvers/sources.mk
+include $(SRC_DIR)/rp/solvers/sources.mk
+include $(SRC_DIR)/rp/system/sources.mk
 #include $(SRC_DIR)/rp/environment/sources.mk
 #include $(SRC_DIR)/rp/scft/sources.mk
 #include $(SRC_DIR)/rp/fts/sources.mk
-#include $(SRC_DIR)/rp/system/sources.mk
 
-rp_OBJS=
+rp_OBJS= \
+     $(rp_field_OBJS) \
+     $(rp_solvers_OBJS) \
+     $(rp_system_OBJS) 
+   #  $(rp_environment_OBJS) \
+   #  $(rp_scft_OBJS) \
+   #  $(rp_fts_OBJS) \
 
-# C++ source files in src/rp
-ifdef PSCF_CPP
-   rp_CPP= \
-     $(rp_field_CPP) 
-   #  $(rp_solvers_CPP) \
-   #  $(rp_environment_CPP) \
-   #  $(rp_scft_CPP) \
-   #  $(rp_fts_CPP) \
-   #  $(rp_system_CPP) 
-
-   rp_OBJS+= \
-       $(addprefix $(BLD_DIR)/, $(rp_CPP:.cpp=.o))
-endif
-
-# CUDA source files
-ifdef PSCF_CUDA
-   rp_CUDA= \
-     $(rp_field_CUDA) 
-   #  $(rp_solvers_CUDA) \
-   #  $(rp_environment_CUDA) \
-   #  $(rp_scft_CUDA) \
-   #  $(rp_fts_CUDA) \
-   #  $(rp_system_CUDA) 
-   rp_OBJS+= \
-       $(addprefix $(BLD_DIR)/, $(rp_CUDA:.cu=.ou))
-endif
 
 #-----------------------------------------------------------------------
 # Path and makefile target for the rp/librp.a library file
