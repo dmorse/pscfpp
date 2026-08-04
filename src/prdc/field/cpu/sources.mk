@@ -1,4 +1,4 @@
-prdc_field_cpu_= \
+prdc_field_cpu_CPP= \
   prdc/field/cpu/RField.cpp \
   prdc/field/cpu/RFieldDft.cpp \
   prdc/field/cpu/CField.cpp \
@@ -10,5 +10,5 @@ prdc_field_cpu_= \
   prdc/field/cpu/WaveList.cpp
 
 prdc_field_cpu_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(prdc_field_cpu_:.cpp=.o))
+  $(addprefix $(BLD_DIR)/, $(prdc_field_cpu_CPP:.cpp=.o))
 

@@ -1,4 +1,4 @@
-prdc_crystal_= \
+prdc_crystal_CPP= \
   prdc/crystal/UnitCellBase.cpp \
   prdc/crystal/UnitCell1.cpp \
   prdc/crystal/UnitCell2.cpp \
@@ -17,5 +17,5 @@ prdc_crystal_= \
   prdc/crystal/sortWaves.cpp
 
 prdc_crystal_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(prdc_crystal_:.cpp=.o))
+  $(addprefix $(BLD_DIR)/, $(prdc_crystal_CPP:.cpp=.o))
 

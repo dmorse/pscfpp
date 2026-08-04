@@ -17,7 +17,8 @@ include $(SRC_DIR)/pscf/patterns.mk
 all: $(pscf_OBJS) $(pscf_LIB)
 
 clean:
-	rm -f $(pscf_OBJS) $(pscf_OBJS:.o=.d) 
+	rm -f $(pscf_OBJS)
+	rm -f $(pscf_DEPS)
 	rm -f $(pscf_LIB)
 	rm -f *.o */*.o
 	rm -f *.d */*.d
@@ -34,4 +35,4 @@ endif
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_OBJS:.o=.d)
+-include $(pscf_DEPS)

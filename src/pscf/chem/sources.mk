@@ -1,4 +1,4 @@
-pscf_chem_= \
+pscf_chem_CPP= \
   pscf/chem/Monomer.cpp \
   pscf/chem/Edge.cpp \
   pscf/chem/Vertex.cpp \
@@ -13,5 +13,5 @@ pscf_chem_= \
   pscf/chem/EdgeIterator.cpp 
 
 pscf_chem_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(pscf_chem_:.cpp=.o))
+     $(addprefix $(BLD_DIR)/, $(pscf_chem_CPP:.cpp=.o))
 

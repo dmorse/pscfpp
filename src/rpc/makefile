@@ -54,7 +54,7 @@ pscf_rpc:
 # Include dependency files
 
 -include $(util_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
+-include $(pscf_DEPS)
+-include $(prdc_DEPS)
 -include $(rpc_OBJS:.o=.d)
 -include $(PSCF_RPC).d 

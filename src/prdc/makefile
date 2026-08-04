@@ -17,7 +17,8 @@ include $(SRC_DIR)/prdc/patterns.mk
 all: $(prdc_OBJS) $(prdc_LIB) 
 
 clean:
-	rm -f $(prdc_OBJS) $(prdc_OBJS:.o=.d)
+	rm -f $(prdc_OBJS)
+	rm -f $(prdc_DEPS)
 	rm -f $(prdc_LIB)
 	rm -f *.o */*.o */*/*.o
 	rm -f *.d */*.d */*/*.d
@@ -28,4 +29,4 @@ clean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(prdc_OBJS:.o=.d)
+-include $(prdc_DEPS)

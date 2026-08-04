@@ -1,8 +1,8 @@
-pscf_mesh_= \
+pscf_mesh_CPP= \
   pscf/mesh/Mesh.cpp \
   pscf/mesh/MeshIterator.cpp \
   pscf/mesh/MeshIteratorFortran.cpp 
 
 pscf_mesh_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(pscf_mesh_:.cpp=.o))
+     $(addprefix $(BLD_DIR)/, $(pscf_mesh_CPP:.cpp=.o))
 

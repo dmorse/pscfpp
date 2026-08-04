@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------
 # Source and object file lists for src/pscf 
 
-# Directories with only *.cpp source files
+include $(SRC_DIR)/pscf/backends/sources.mk
 include $(SRC_DIR)/pscf/cpu/sources.mk
 include $(SRC_DIR)/pscf/math/sources.mk
 include $(SRC_DIR)/pscf/mesh/sources.mk
@@ -13,27 +13,28 @@ include $(SRC_DIR)/pscf/environment/sources.mk
 include $(SRC_DIR)/pscf/iterator/sources.mk
 include $(SRC_DIR)/pscf/sweep/sources.mk
 
+# Serial C++ files
 pscf_CPP= \
-  $(pscf_cpu_) \
-  $(pscf_math_) $(pscf_mesh_) \
-  $(pscf_chem_) $(pscf_interaction_) \
-  $(pscf_floryHuggins_) $(pscf_correlation_) \
-  $(pscf_environment_) $(pscf_iterator_) \
-  $(pscf_sweep_)
-
+  $(pscf_backends_CPP) $(pscf_cpu_CPP) \
+  $(pscf_math_CPP) $(pscf_mesh_CPP) \
+  $(pscf_chem_CPP) $(pscf_interaction_CPP) \
+  $(pscf_floryHuggins_CPP) $(pscf_correlation_CPP) \
+  $(pscf_environment_CPP) $(pscf_iterator_CPP) \
+  $(pscf_sweep_CPP)
 pscf_OBJS=\
-    $(addprefix $(BLD_DIR)/, $(pscf_CPP:.cpp=.o))
+  $(addprefix $(BLD_DIR)/, $(pscf_CPP:.cpp=.o))
+pscf_DEPS=\
+  $(addprefix $(BLD_DIR)/, $(pscf_CPP:.cpp=.d))
 
-# Directories with mixed file types
 
-include $(SRC_DIR)/pscf/backends/sources.mk
-pscf_OBJS+= $(pscf_backends_OBJS)
-
-# Directories with only CUDA source files
-
+# CUDA C++ files
 ifdef PSCF_CUDA
   include $(SRC_DIR)/pscf/cuda/sources.mk
-  pscf_OBJS+=$(pscf_cuda_OBJS)
+  pscf_CU= $(pscf_backends_CU) $(pscf_cuda_CU)
+  pscf_OBJS+=\
+    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.o))
+  pscf_DEPS=\
+    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.d))
 endif
 
 #-----------------------------------------------------------------------
