@@ -24,16 +24,15 @@ namespace Rp {
    * A container of fields stored in both basis and r-grid format.
    *
    * Specializations of this template with D=1, 2, and 3 are derived from
-   * corresponding specializations of base class template Rp::Class, and
+   * corresponding specializations of base class template WFieldsBase, and
    * inherit their public interface and almost all of their source code
-   * from this base class.
+   * from this base class. 
    *
-   * \see Rp::WFields
+   * \see WFieldsBase
    * \ingroup Rp_Field_Module
    */
    template <int D>
-   class WFields<D,CUT> 
-    : public WFieldsBase<D,CUT>
+   class WFields<D,CUT> : public WFieldsBase<D,CUT>
    {
 
    public:
@@ -51,16 +50,19 @@ namespace Rp {
       */
       void setRGrid(DeviceArray<cudaReal>& fields);
 
-      /// Alias for base class.
-      using RpWFields = Rp::WFieldsBase<D,CUT>;
-
       // Declaration to avoid hiding overloaded base class method 
-      using RpWFields::setRGrid;
+      using WFieldsBase<D,CUT>::setRGrid;
+
+   private:
+
+      /// Alias for base class (implementation convenience).
+      using Base = WFieldsBase<D,CUT>;
 
    };
 
    // Explicit instantiation declarations
    PSCF_TMPL_DECLARE_CUDA(WFieldsBase);
+   PSCF_TMPL_DECLARE_CUDA(WFields);
 
 } // namespace Rp
 } // namespace Pscf

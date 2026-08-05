@@ -1,5 +1,5 @@
-#ifndef RP_FIELD_IO_CP_H
-#define RP_FIELD_IO_CP_H
+#ifndef RP_FIELD_IO_C_H
+#define RP_FIELD_IO_C_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -18,25 +18,22 @@ namespace Rp {
    using namespace Util;
    using namespace Prdc;
 
-   // Declare base class template
+   // Declare primary class template
    template <int D, class T> class FieldIo;
 
    /**
    * File input/output operations and format conversions for fields.
    *
-   * The public interface of this subclass is identical to that of the 
-   * base class, Rp::FieldIoBase. Member functions defined in this class 
-   * all implement pure virtual functions declared by the base class for 
-   * which CPU and GPU partial specializations of derived class template
-   * Rp::FieldIo require different implementations. Specialization is 
-   * often required because the GPU implementation requires data transfer 
-   * bewteen the between CPU and GPU.
+   * Member functions defined in this template specialization are all 
+   * implementations of pure virtual functions declared in FieldIoBase 
+   * for which different implementations are required for the CPU and GPU.
+   * Such differences are usually required because the GPU version must
+   * transfer r-grid field data between the GPU device and the CPU host.
    *
    * \ingroup Rp_Field_Module
    */
    template <int D>
-   class FieldIo<D,CPT> 
-    : public  FieldIoBase<D,CPT>
+   class FieldIo<D,CPT> : public  FieldIoBase<D,CPT>
    {
 
    public:
@@ -47,7 +44,7 @@ namespace Rp {
       /**
       * Read array of RField objects (r-grid fields) from a stream.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param in  input file stream 
       * \param fields  array of RField fields (r-space grid)
@@ -61,7 +58,7 @@ namespace Rp {
       /**
       * Read data for an array of r-grid fields, with no header section.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param in  input file stream
       * \param fields  array of RField fields (r-space grid)
@@ -74,7 +71,7 @@ namespace Rp {
       /**
       * Read a single RField (field on an r-space grid) from a stream.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param in  input file stream 
       * \param field  fields defined on r-space grid
@@ -88,7 +85,7 @@ namespace Rp {
       /**
       * Write array of RField objects (fields on r-space grid) to a stream.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RField objects (fields on r-space grid)
@@ -107,7 +104,7 @@ namespace Rp {
       /**
       * Write a single RField (field on an r-space grid) to a stream.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param out  output stream
       * \param field  field defined on r-space grid
@@ -125,7 +122,7 @@ namespace Rp {
       /**
       * Read array of RFieldDft objects (k-space fields) from a stream.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param in  input stream (i.e., input file)
       * \param fields  array of RFieldDft fields (k-space grid)
@@ -139,7 +136,7 @@ namespace Rp {
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param out  output stream (i.e., output file)
       * \param fields  array of RFieldDft fields
@@ -155,7 +152,7 @@ namespace Rp {
       /**
       * Convert a field from symmetrized basis to Fourier grid (k-grid).
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param components  coefficients of in symmetry-adapted basis
       * \param dft  discrete Fourier transform of a real field
@@ -167,7 +164,7 @@ namespace Rp {
       /**
       * Convert a field from Fourier (k-grid) to symmetrized basis form.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param in  discrete Fourier transform (k-grid) of a field
       * \param out  components of field in asymmetry-adapted Fourier basis
@@ -183,7 +180,7 @@ namespace Rp {
       /**
       * Check if a k-grid field has the declared space group symmetry.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param in field in real space grid (r-grid) format
       * \param epsilon error threshold used to test for symmetry
@@ -211,7 +208,7 @@ namespace Rp {
       /**
       * Rescale a single r-grid field by a scalar factor.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       * Multiplication is done in-place, and so modifies the input.
       *
       * \param field  real space (r-grid) field (in-out)
@@ -223,7 +220,7 @@ namespace Rp {
       /**
       * Expand spatial dimension of an array of r-grid fields.
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param out  output file stream 
       * \param fields  input array of D-dimensional r-grid fields
@@ -242,7 +239,7 @@ namespace Rp {
       /**
       * Write r-grid fields in a replicated unit cell to std::ostream.  
       *
-      * See documentation of analogous function in Rp::FieldIoBase.
+      * See documentation of analogous function in FieldIoBase.
       *
       * \param out  output file stream 
       * \param fields  array of RField (r-space) fields to be replicated
@@ -257,30 +254,29 @@ namespace Rp {
       const override;
 
       /// Alias for base class
-      using FieldIoBase =  Rp::FieldIoBase<D,CPT>;
+      using Base =  Rp::FieldIoBase<D,CPT>;
 
       // Inherited public member functions (to avoid hiding)
-      using FieldIoBase::writeFieldBasis;
-      using FieldIoBase::writeFieldsBasis;
-      using FieldIoBase::readFieldsRGrid;
-      using FieldIoBase::readFieldsRGridData;
-      using FieldIoBase::readFieldRGrid;
-      using FieldIoBase::writeFieldsRGrid;
-      using FieldIoBase::writeFieldRGrid;
-      using FieldIoBase::readFieldsKGrid;
-      using FieldIoBase::writeFieldsKGrid;
-      using FieldIoBase::replicateUnitCell;
-      using FieldIoBase::expandRGridDimension;
-      using FieldIoBase::convertBasisToKGrid;
-      using FieldIoBase::convertKGridToBasis;
-      using FieldIoBase::hasSymmetry;
-      using FieldIoBase::compareFieldsRGrid;
-      using FieldIoBase::scaleFieldsRGrid;
+      using Base::writeFieldBasis;
+      using Base::writeFieldsBasis;
+      using Base::readFieldsRGrid;
+      using Base::readFieldsRGridData;
+      using Base::readFieldRGrid;
+      using Base::writeFieldsRGrid;
+      using Base::writeFieldRGrid;
+      using Base::readFieldsKGrid;
+      using Base::writeFieldsKGrid;
+      using Base::replicateUnitCell;
+      using Base::expandRGridDimension;
+      using Base::convertBasisToKGrid;
+      using Base::convertKGridToBasis;
+      using Base::hasSymmetry;
+      using Base::compareFieldsRGrid;
+      using Base::scaleFieldsRGrid;
 
    };
 
    // Explicit instantiation declarations
-   PSCF_TMPL_DECLARE_CPP(FieldIoBase)
    PSCF_TMPL_DECLARE_CPP(FieldIo)
 
 } // namespace Rp

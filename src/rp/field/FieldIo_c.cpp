@@ -7,7 +7,7 @@
 
 #include <pscf/cpu/complex.h>
 #include <rp/field/FieldIoBase.tpp>   // base class implementation
-#include "FieldIo_c.h"                // class header
+#include <rp/field/FieldIo_c.h>       // class header
 
 namespace Pscf {
 namespace Rp {
@@ -27,13 +27,13 @@ namespace Rp {
       // Read header
       int nMonomer;
       bool isSymmetric;
-      FieldIoBase::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-      readMeshDimensions(in, FieldIoBase::mesh().dimensions());
-      checkAllocateFields(fields, nMonomer, FieldIoBase::mesh().dimensions());
+      Base::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
+      readMeshDimensions(in, Base::mesh().dimensions());
+      checkAllocateFields(fields, nMonomer, Base::mesh().dimensions());
 
       // Read data
       // Rpg:: Allocate host arrays
-      Prdc::readRGridData(in, fields, nMonomer, FieldIoBase::mesh().dimensions());
+      Prdc::readRGridData(in, fields, nMonomer, Base::mesh().dimensions());
       // Rpg:: Copy host -> device
 
       return isSymmetric;
@@ -48,10 +48,10 @@ namespace Rp {
                               DArray< RField<D,CPT> >& fields,
                               int nMonomer) const
    {
-      checkAllocateFields(fields, nMonomer, FieldIoBase::mesh().dimensions());
+      checkAllocateFields(fields, nMonomer, Base::mesh().dimensions());
       // Rpg:: Allocate host arrays
       Prdc::readRGridData(in, fields, nMonomer, 
-                          FieldIoBase::mesh().dimensions());
+                          Base::mesh().dimensions());
       // Rpg:: Copy host -> device
    }
 
@@ -67,14 +67,14 @@ namespace Rp {
       // Read header
       int nMonomer;
       bool isSymmetric;
-      FieldIoBase::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
+      Base::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
       UTIL_CHECK(nMonomer == 1);
-      readMeshDimensions(in, FieldIoBase::mesh().dimensions());
+      readMeshDimensions(in, Base::mesh().dimensions());
 
       // Read data
       // Rpg:: Allocate host arrays
-      checkAllocateField(field, FieldIoBase::mesh().dimensions());
-      Prdc::readRGridData(in, field, FieldIoBase::mesh().dimensions());
+      checkAllocateField(field, Base::mesh().dimensions());
+      Prdc::readRGridData(in, field, Base::mesh().dimensions());
       // Rpg:: Copy host -> device
 
       return isSymmetric;
@@ -99,7 +99,7 @@ namespace Rp {
 
       // Write header
       if (writeHeader){
-         FieldIoBase::writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
+         Base::writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       }
       if (writeMeshSize){
          writeMeshDimensions(out, meshDimensions);
@@ -126,7 +126,7 @@ namespace Rp {
 
       // Write header
       if (writeHeader) {
-         FieldIoBase::writeFieldHeader(out, 1, unitCell, isSymmetric);
+         Base::writeFieldHeader(out, 1, unitCell, isSymmetric);
          writeMeshDimensions(out, meshDimensions);
       }
 
@@ -148,10 +148,10 @@ namespace Rp {
       // Read header
       int nMonomer;
       bool isSymmetric;
-      FieldIoBase::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
-      readMeshDimensions(in, FieldIoBase::mesh().dimensions());
+      Base::readFieldHeader(in, nMonomer, unitCell, isSymmetric);
+      readMeshDimensions(in, Base::mesh().dimensions());
 
-      checkAllocateFields(fields, nMonomer, FieldIoBase::mesh().dimensions());
+      checkAllocateFields(fields, nMonomer, Base::mesh().dimensions());
       IntVec<D> dftDimensions = fields[0].dftDimensions();
 
       // Read data
@@ -177,7 +177,7 @@ namespace Rp {
       IntVec<D> dftDimensions = fields[0].dftDimensions();
 
       // Write file
-      FieldIoBase::writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
+      Base::writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
       writeMeshDimensions(out, meshDimensions);
 
       // Write data
@@ -195,7 +195,7 @@ namespace Rp {
                               RFieldDft<D,CPT>& out) const
    {
       // Rpg: Allocate host array
-      Prdc::convertBasisToKGrid(in, out, FieldIoBase::basis(), out.dftDimensions());
+      Prdc::convertBasisToKGrid(in, out, Base::basis(), out.dftDimensions());
       // Rpg: Copy host -> device
    }
 
@@ -211,7 +211,7 @@ namespace Rp {
    {
       // Rpg: Allocate host arrays
       // Rpg: Copy device -> host
-      Prdc::convertKGridToBasis(in, out, FieldIoBase::basis(), 
+      Prdc::convertKGridToBasis(in, out, Base::basis(), 
                           in.dftDimensions(),
                           checkSymmetry, epsilon);
    }
@@ -227,7 +227,7 @@ namespace Rp {
    {
       // Rpg:: Allocate host array
       // Rpg: Copy device -> host
-      return Prdc::hasSymmetry(in, FieldIoBase::basis(), in.dftDimensions(),
+      return Prdc::hasSymmetry(in, Base::basis(), in.dftDimensions(),
                                epsilon, verbose);
    }
 

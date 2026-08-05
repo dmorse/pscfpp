@@ -8,13 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>    // base class template
-#include <rp/scft/iterator/Iterator.h>       // base class argument
-#include <pscf/iterator/AmbdInteraction.h>   // member
+#include <pscf/iterator/AmIteratorTmpl.h>   // base class template
+#include <rp/scft/iterator/Iterator.h>      // base class argument
+#include <pscf/iterator/AmbdInteraction.h>  // member
+#include <pscf/backends/TmplDeclare.h>      // declaration macros
 
 #include <iostream>
 
-// Forward declarations
+// Forward declaration
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
@@ -155,6 +156,9 @@ namespace Rp {
       using RFieldT = RField<D,T>;
 
    };
+
+   // Explicit instantiation declarations
+   //PSCF_TMPL_DECLARE(AmIteratorGrid)
 
 } // namespace Rp
 } // namespace Pscf

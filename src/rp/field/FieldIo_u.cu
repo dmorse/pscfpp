@@ -5,17 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo_u.h"                // class header
-
 #include <prdc/field/cuda/HostDArrayComplex.h>
 //#include <prdc/fieldIo/fieldCheck.h>
-
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/complex.h>
 
-// Templates that require declarations given above
 #include <rp/field/FieldIoBase.tpp>   // base class implementation
+#include <rp/field/FieldIo_u.h>       // class header
 
 namespace Pscf {
 namespace Rp {
@@ -317,9 +314,9 @@ namespace Rp {
    * Compare two fields in r-grid format, output report to Log file.
    */
    template <int D>
-   void FieldIo<D,CUT>::compareFieldsRGrid(DArray< RField<D,CUT> > const & field1,
-                                       DArray< RField<D,CUT> > const & field2) 
-   const
+   void FieldIo<D,CUT>::compareFieldsRGrid(
+                             DArray< RField<D,CUT> > const & field1,
+                             DArray< RField<D,CUT> > const & field2) const
    {
       RFieldComparison<D,CUT> comparison;
       comparison.compare(field1, field2);

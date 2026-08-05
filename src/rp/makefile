@@ -25,18 +25,18 @@ PSCF_RP_EXES=
 
 # Paths for pscf_rpc
 ifdef PSCF_CPP
-PSCF_RPC=$(BLD_DIR)/rp/pscf_rpc
-PSCF_RPC_EXE=$(BIN_DIR)/pscf_rpc
-PSCF_RP_OBJS+= $(PSCF_RPC).o
-PSCF_RP_EXES+= PSCF_RPC_EXE
+  PSCF_RPC=$(BLD_DIR)/rp/pscf_rpc
+  PSCF_RPC_EXE=$(BIN_DIR)/pscf_rpc
+  PSCF_RP_OBJS+= $(PSCF_RPC).o
+  PSCF_RP_EXES+= PSCF_RPC_EXE
 endif
 
 # Paths for pscf_rpg
 ifdef PSCF_CUDA
-PSCF_RPG=$(BLD_DIR)/rp/pscf_rpg
-PSCF_RPG_EXE=$(BIN_DIR)/pscf_rpg
-PSCF_RP_OBJS+= $(PSCF_RPG).o
-PSCF_RP_EXES+= PSCF_RPG_EXE
+  PSCF_RPG=$(BLD_DIR)/rp/pscf_rpg
+  PSCF_RPG_EXE=$(BIN_DIR)/pscf_rpg
+  PSCF_RP_OBJS+= $(PSCF_RPG).o
+  PSCF_RP_EXES+= PSCF_RPG_EXE
 endif
 
 #-----------------------------------------------------------------------
@@ -48,38 +48,39 @@ endif
 all: $(rp_OBJS) $(rp_LIB) 
 
 clean:
-	rm -f $(rp_OBJS) $(rp_OBJS:.o=.d)
+	rm -f $(rp_OBJS)
+	rm -f $(rp_DEPS)
 	rm -f $(rp_LIB)
 	rm -f $(PSCF_RP_OBJS) $(PSCF_RP_OBJS:.o=.d)
 	rm -f *.o */*.o */*/*.o
 	rm -f *.d */*.d */*/*.d
 	rm -f lib*.a 
-	cd tests; $(MAKE) clean
+	#cd tests; $(MAKE) clean
 
 # C++ CPU backend
 ifdef PSCF_CPP
 
-# Main pscf_rpc executable
-$(PSCF_RPC_EXE): $(PSCF_RPC).o $(PSCF_LIBS)
+  # Main pscf_rpc executable
+  $(PSCF_RPC_EXE): $(PSCF_RPC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_RPC_EXE) $(PSCF_RPC).o $(LIBS)
 
-.PHONY: pscf_rpc
-pscf_rpc:
+  pscf_rpc:
 	$(MAKE) $(PSCF_RPC_EXE)
 
+  .PHONY: pscf_rpc
 endif
 
-# Cuda GPU backend
+# CUDA GPU backend
 ifdef PSCF_CUDA
 
-# Main pscf_rpg executable 
-$(PSCF_RPG_EXE): $(PSCF_RPG).o $(PSCF_LIBS)
+  # Main pscf_rpg executable 
+  $(PSCF_RPG_EXE): $(PSCF_RPG).o $(PSCF_LIBS)
 	$(NVXX) $(LDFLAGS) -o $(PSCF_RPG_EXE) $(PSCF_RPG).o $(LIBS)
 
-.PHONY: pscf_rpg
-pscf_rpg:
+  pscf_rpg:
 	$(MAKE) $(PSCF_RPG_EXE)
 
+  .PHONY: pscf_rpg
 endif
 
 # Note: In linking rules for executables, the prerequisite list contains
@@ -88,10 +89,10 @@ endif
 # libraries.
 
 #-----------------------------------------------------------------------
-# Include dependency files
+# Include all relevant dependency files
 
 -include $(util_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(rp_OBJS:.o=.d)
+-include $(pscf_DEPS:.o=.d)
+-include $(prdc_DEPS:.o=.d)
+-include $(rp_DEPS:.o=.d)
 -include $(PSCF_RP_OBJS:.o=.d)

@@ -35,9 +35,9 @@ namespace Rp {
    * <b> Template parameters </b>: The template parameters represent:
    *
    *   - D   : integer dimensionality of space (D=1, 2, or 3)
-   *   - T   : a "Types" class (CppTp<D> or CudaTp<D>)
+   *   - T   : a backend type class (e.g., CPT or CUT)
    *
-   * <b> Field Representations </b>: A CFields container has a list of
+   * <b> Field Representations </b>: A CFields container has a set of
    * nMonomer fields that are each associated with a monomer type. The
    * fields may be stored in two different formats:
    *
@@ -51,8 +51,8 @@ namespace Rp {
    *    functions.
    *
    * The CFields container provides public non-const (read/write) access 
-   * to both field representations, and does not automatically update one 
-   * of these field representations when the other is modified. 
+   * to both field representations, and does not automatically update 
+   * one of these field representations when the other is modified. 
    *
    * \ingroup Rp_Field_Module
    */

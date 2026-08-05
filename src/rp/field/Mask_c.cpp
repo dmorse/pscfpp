@@ -6,7 +6,9 @@
 */
 
 #include <pscf/cpu/Reduce.h>
-#include <rp/field/Mask.tpp>
+#include <pscf/backends/CPT.h>
+
+#include <rp/field/Mask.tpp>        // class template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

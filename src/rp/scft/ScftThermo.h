@@ -9,8 +9,9 @@
 */
 
 #include <rp/system/SystemConstRef.h>    // base class
-#include <util/global.h>                 // inline functions
 #include <pscf/backends/TmplDeclare.h>   // declaration macros
+#include <util/global.h>                 // inline functions
+
 #include <iostream>
 
 

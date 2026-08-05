@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CPT.h>   // backend type class
-#include <rp/system/System.tpp>  // base class implementation
+#include <rp/system/System.tpp>         // class implementation
+#include <pscf/backends/CPT.h>          // backend type class
 
 // Explicit instantiation definitions
 namespace Pscf {

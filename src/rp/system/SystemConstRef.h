@@ -8,7 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-// Forward declaration
+#include <pscf/backends/TmplDeclare.h>   // declaration macros
+
+// Forward declarations
 namespace Util {
    class FileMaster;
 }
@@ -159,6 +161,9 @@ namespace Rp {
       FileMaster const * fileMasterPtr_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(SystemConstRef)
 
 } // namespace Rp
 } // namespace Pscf

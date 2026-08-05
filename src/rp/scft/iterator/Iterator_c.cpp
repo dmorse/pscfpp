@@ -5,9 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rp/field/Domain.h>
+#include <pscf/backends/CPT.h>
 
 #include <rp/scft/iterator/Iterator.tpp>
 

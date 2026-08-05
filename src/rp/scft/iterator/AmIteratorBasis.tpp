@@ -11,10 +11,10 @@
 #include "AmIteratorBasis.h"
 
 #include <rp/system/System.h>
-//#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
-//#include <rp/field/WFields.h>
+#include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
 #include <prdc/crystal/Basis.h>

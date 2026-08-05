@@ -5,14 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorBasis.h"
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/CFields.h>
-#include <rp/field/WFields.h>
-#include <rp/field/Mask.h>
-
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
@@ -21,7 +13,7 @@
 // Explicit instantiation definitions
 namespace Pscf {
 
-   // Base class instantiation definitions
+   // Base class 
    template class 
    AmIteratorTmpl< Rp::Iterator<1,CPT>, DArray<double> >;
    template class 

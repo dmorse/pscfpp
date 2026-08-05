@@ -8,9 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/RField.h>             // member
-#include <pscf/math/IntVec.h>              // member
-#include <util/containers/DArray.h>        // member template
+#include <prdc/field/RField.h>            // member
+#include <pscf/math/IntVec.h>             // member
+#include <util/containers/DArray.h>       // member template
+#include <pscf/backends/TmplDeclare.h>    // declaration macros
 
 // Forward declarations
 namespace Util {
@@ -46,7 +47,7 @@ namespace Rp {
    * <b> Field representations </b>: A Mask \<D\> contains representations
    * of the mask field in two formats:
    *
-   *  - An RField<D, T> object contains values of the field on the nodes of 
+   *  - An RField \<D, T\> object contains values of the field on nodes of 
    *    a regular mesh. This is accessed by the rgrid() member function.
    *
    *  - A DArray \<double\> contains components of the field in a
@@ -506,6 +507,9 @@ namespace Rp {
    template <int D, class T>
    inline bool Mask<D,T>::isSymmetric() const
    {  return isSymmetric_; }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(Mask)
 
 } // namespace Rp
 } // namespace Pscf

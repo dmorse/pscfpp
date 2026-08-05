@@ -8,14 +8,15 @@ include $(SRC_DIR)/rp/patterns.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(rp_system_OBJS) 
+all: $(rp_scft_OBJS) 
 
 clean:
-	rm -f $(rp_system_OBJS) $(rp_system_OBJS:.o=.d) 
+	rm -f $(rp_scft_OBJS)
+	rm -f $(rp_scft_DEPS)
 
 .PHONY: all clean
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(rp_system_DEPS:.o=.d)
+-include $(rp_scft_DEPS)
