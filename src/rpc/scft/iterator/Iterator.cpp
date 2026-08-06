@@ -5,11 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.h"
-
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
 
 #include <rp/scft/iterator/Iterator.tpp>
 
