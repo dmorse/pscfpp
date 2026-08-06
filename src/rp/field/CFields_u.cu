@@ -5,7 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/CFields.tpp>   // implementation
+#include <rp/field/CFields.tpp>   // clas template implementation
+#include <pscf/backend/CUT.tpp>   // backend type class
 
 // Explicit instantiation definitions
 namespace Pscf {

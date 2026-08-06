@@ -11,22 +11,21 @@
 #include "AmIteratorGrid.h"
 
 #include <rp/system/System.h>
-//#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
-//#include <rp/field/WFields.h>
+#include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
+#include <prdc/field/RField.h>
 #include <prdc/crystal/UnitCell.h>
-#include <pscf/mesh/Mesh.h>
 
+#include <pscf/mesh/Mesh.h>
 #include <pscf/interaction/Interaction.h>
 
 #include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
-
-#include <cmath>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp> // base template impl.
 

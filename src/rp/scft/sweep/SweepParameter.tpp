@@ -10,9 +10,19 @@
 
 #include <rp/scft/sweep/SweepParameter.h>
 
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/MixtureModifier.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/solvers/Block.h>
+#include <rp/field/Domain.h>
+
 #include <prdc/crystal/UnitCell.h>
+
 #include <pscf/interaction/Interaction.h>
 #include <pscf/sweep/ParameterModifier.h>
+
 #include <util/containers/FSArray.h>
 #include <util/global.h>
 

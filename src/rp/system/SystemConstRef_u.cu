@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/system/System.tpp>  // class implementation
-#include <pscf/backends/CUT.h>   // backend type class
+#include <rp/system/SystemConstRef.tpp>  // class implementation
+#include <pscf/backends/CUT.h>           // backend type class
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class System<1,CUT>;
-      template class System<2,CUT>;
-      template class System<3,CUT>;
+      template class SystemConstRef<1,CUT>;
+      template class SystemConstRef<2,CUT>;
+      template class SystemConstRef<3,CUT>;
    }
 }

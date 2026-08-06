@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/FieldIo_c.h>
 #include <rp/field/Domain.tpp>
+#include <pscf/backends/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

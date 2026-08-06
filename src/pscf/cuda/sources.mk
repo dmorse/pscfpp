@@ -1,4 +1,4 @@
-pscf_cuda_ =\
+pscf_cuda_CU =\
    pscf/cuda/ThreadArray.cu \
    pscf/cuda/ThreadMesh.cu \
    pscf/cuda/DeviceMemory.cu \
@@ -8,5 +8,5 @@ pscf_cuda_ =\
    pscf/cuda/VecOpMisc.cu 
 
 pscf_cuda_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(pscf_cuda_:.cu=.o))
+   $(addprefix $(BLD_DIR)/, $(pscf_cuda_CU:.cu=.o))
 

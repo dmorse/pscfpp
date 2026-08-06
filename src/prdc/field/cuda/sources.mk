@@ -1,4 +1,4 @@
-prdc_field_cuda_= \
+prdc_field_cuda_CU= \
   prdc/field/cuda/RField.cu \
   prdc/field/cuda/RFieldDft.cu \
   prdc/field/cuda/CField.cu \
@@ -11,5 +11,5 @@ prdc_field_cuda_= \
   prdc/field/cuda/WaveList.cu 
 
 prdc_field_cuda_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(prdc_field_cuda_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(prdc_field_cuda_CU:.cu=.o))
 

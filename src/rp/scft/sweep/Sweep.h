@@ -8,9 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/SweepTmpl.h>           // base class template
 #include <rp/scft/sweep/BasisFieldState.h>  // member
+#include <pscf/sweep/SweepTmpl.h>           // base class template
 #include <util/containers/FSArray.h>        // member
+
 #include <pscf/backends/TmplDeclare.h>      // declaration macros
 #include <util/global.h>                    // inline functions
 

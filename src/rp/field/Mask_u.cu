@@ -7,7 +7,9 @@
 
 
 #include <pscf/cuda/Reduce.h>
-#include <rp/field/Mask.tpp>
+#include <pscf/backends/CUT.h>
+
+#include <rp/field/Mask.tpp> // class template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

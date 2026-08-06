@@ -615,12 +615,7 @@ namespace Rp {
       return *fieldIoPtr_;
    }
 
-   /**
-   * A container of w fields stored in both basis and r-grid format.
-   *
-   * Empty primary template - exists to allow definition of partial 
-   * specializations.
-   */
+   // Primary template declaration for subclass.
    template <int D, class T> class WFields;
 
    // Explicit instantiation declarations for WFieldsBase

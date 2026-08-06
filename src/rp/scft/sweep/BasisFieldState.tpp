@@ -10,13 +10,11 @@
 
 #include "BasisFieldState.h"
 
-#if 0
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/FieldIo.h>
-#endif
-
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
+#include <rp/field/WFields.h>
 #include <prdc/crystal/Basis.h>
 #include <util/global.h>
 

@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/system/System.tpp>  // class implementation
-#include <pscf/backends/CUT.h>   // backend type class
+#include <pscf/backends/CPT.h>
+#include <rp/scft/sweep/LinearSweep.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class System<1,CUT>;
-      template class System<2,CUT>;
-      template class System<3,CUT>;
+      template class LinearSweep<1,CPT>;
+      template class LinearSweep<2,CPT>;
+      template class LinearSweep<3,CPT>;
    }
 }

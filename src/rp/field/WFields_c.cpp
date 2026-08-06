@@ -6,8 +6,9 @@
 */
 
 #include <pscf/cpu/VecOp.h>
+
 #include <rp/field/WFieldsBase.tpp> // base class implementation
-#include <rp/field/WFields.h>       // class header
+#include <rp/field/WFields_c.h>     // class specialization
 
 // Explicit instantiation definitions
 namespace Pscf {

@@ -10,10 +10,20 @@
 
 #include "Sweep.h"                   // class template header
 
+#include <rp/scft/iterator/Iterator.h>
+#include <rpc/scft/ScftThermo.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
+
 #include <prdc/environment/Environment.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+
 #include <pscf/interaction/Interaction.h>
+
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 

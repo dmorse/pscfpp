@@ -5,12 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "IteratorFactory.h"
-
 // Subclasses of Rpc::Iterator 
 #include <rp/scft/iterator/AmIteratorBasis.h>
 #include <rp/scft/iterator/AmIteratorGrid.h>
 
+#include <pscf/backends/CPT.h>
 #include <rp/scft/iterator/IteratorFactory.tpp> // template implementation
 
 // Explicit instantiation definitions
