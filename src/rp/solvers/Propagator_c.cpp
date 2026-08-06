@@ -5,14 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator_c.h"
-#include "Block_c.h"
-#include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
-#include <pscf/mesh/Mesh.h>
 
+#include <pscf/backends/CPT.h>
 #include <rp/solvers/PropagatorBase.tpp>
+#include "Propagator_c.h"
 
 namespace Pscf {
 namespace Rp {

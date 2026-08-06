@@ -8,7 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "PropagatorBase.h"
+#include <rp/solvers/PropagatorBase.h>
+#include <rp/solvers/Block.h>
+#include <prdc/field/RField.h>
 #include <pscf/mesh/Mesh.h>
 
 namespace Pscf {

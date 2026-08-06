@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>    // backend type class
 
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 
-#include <rp/solvers/Solvent.tpp>
+#include <pscf/backends/CUT.h>    // backend type class
+#include <rp/solvers/Solvent.tpp> // class implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

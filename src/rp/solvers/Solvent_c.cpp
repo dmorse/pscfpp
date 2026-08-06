@@ -5,14 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CPT.h>  // backend type class
-
-//#include <prdc/field/cpu/RField.h>
-//#include <pscf/mesh/Mesh.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
-#include <rp/solvers/Solvent.tpp>
+#include <pscf/backends/CPT.h>     // backend type class
+#include <rp/solvers/Solvent.tpp>  // class implementation
 
 namespace Pscf {
    namespace Rp {
