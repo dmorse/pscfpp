@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/system/SystemConstRef.h>   // base class template
-#include <pscf/backends/CUT.h>           // base class parameter
+#include <pscf/backends/CUT.h>          // template parameter
+#include <rp/system/SystemConstRef.h>   // class template
 
 // Explicit instantiation declarations
 namespace Pscf {

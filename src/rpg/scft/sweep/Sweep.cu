@@ -5,16 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Sweep.h"
-
-#include <rpg/system/System.h>
-#include <rpg/scft/iterator/Iterator.h>
-#include <rpg/scft/ScftThermo.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/CFields.h>
-
+#include <pscf/backends/CUT.h>
 #include <rp/scft/sweep/Sweep.tpp>
 
 // Explicit instantiation definitions

@@ -5,6 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#if 0
 #include "AmIteratorGrid.h"
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
@@ -12,10 +13,13 @@
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
 #include <rpg/field/Mask.h>
-#include <prdc/field/cuda/RField.h>
+#include <prdc/field/RField.h>
+#endif
+
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 
+#include <pscf/backends/CUT.h>
 #include <rp/scft/iterator/AmIteratorGrid.tpp>
 
 // Explicit instantiation definitions

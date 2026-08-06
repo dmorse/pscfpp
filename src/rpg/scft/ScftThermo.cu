@@ -5,17 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ScftThermo.h"                // header
-
-#include <rpg/solvers/Mixture.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/CFields.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/Mask.h>
-
 #include <pscf/cuda/Reduce.h>
+#include <pscf/backends/CUT.h>
 
 #include <rp/scft/ScftThermo.tpp>      // implementation
 

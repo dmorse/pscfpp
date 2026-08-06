@@ -5,9 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "LinearSweep.h"
-#include <rpg/system/System.h>
-
+#include <pscf/backends/CUT.h>
 #include <rp/scft/sweep/LinearSweep.tpp>
 
 // Explicit instantiation definitions

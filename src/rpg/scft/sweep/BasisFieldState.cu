@@ -5,15 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BasisFieldState.h"
-
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/FieldIo.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/CFields.h>
-
+#include <pscf/backends/CUT.h>
 #include <rp/scft/sweep/BasisFieldState.tpp>
 
 // Explicit instantiation definitions

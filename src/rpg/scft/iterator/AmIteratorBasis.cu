@@ -5,6 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#if 0
 #include "AmIteratorBasis.h"
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
@@ -12,9 +13,12 @@
 #include <rpg/field/CFields.h>
 #include <rpg/field/WFields.h>
 #include <rpg/field/Mask.h>
+#endif
+
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
+#include <pscf/backends/CUT.h>
 #include <rp/scft/iterator/AmIteratorBasis.tpp>     // implementation
 
 // Explicit instantiation definitions

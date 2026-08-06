@@ -8,10 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/ThreadArray.h>
-#include <pscf/cuda/ThreadMesh.h>
 #include <pscf/backends/CUT.h>    // backend type class
-
 #include <rp/system/System.tpp>   // class implementation
 
 // Explicit instantiation definitions

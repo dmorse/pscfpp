@@ -28,19 +28,19 @@ namespace Rp {
    {
       // Create DArray tmp with RField<D,CUT> elements
       DArray< RField<D,CUT> > tmp;
-      const int nMonomer = RpWFields::nMonomer();
+      const int nMonomer = Base::nMonomer();
       tmp.allocate(nMonomer);
 
       // Associate each RField<D,CUT> with a slice of the unfolded array
-      IntVec<D> const & meshDimensions = RpWFields::meshDimensions();
-      const int meshSize = RpWFields::meshSize();
+      IntVec<D> const & meshDimensions = Base::meshDimensions();
+      const int meshSize = Base::meshSize();
       for (int i = 0; i < nMonomer; i++) {
          tmp[i].associate(fields, i*meshSize, meshDimensions);
       }
 
       // Use tmp array to set w-fields for all monomer types
       bool isSymmetric = false;
-      RpWFields::setRGrid(tmp, isSymmetric);
+      Base::setRGrid(tmp, isSymmetric);
    }
 
 } // namespace Rp

@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/scft/sweep/SweepFactory.h>     // header
-#include <rpg/scft/sweep/LinearSweep.h>
+#include <rp/scft/sweep/LinearSweep.h>
+#include <pscf/backends/CUT.h>
 #include <rp/scft/sweep/SweepFactory.tpp>    // template implementation
 
 // Explicit instantiation definitions
