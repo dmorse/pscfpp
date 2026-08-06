@@ -5,11 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/WFields.h>       // class header
 #include <rp/field/FieldIo.h>
 #include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOp.h>
+
 #include <rp/field/WFieldsBase.tpp> // base class implementation
+#include <rp/field/WFields.h>       // class header
 
 // Explicit instantiation definitions
 namespace Pscf {

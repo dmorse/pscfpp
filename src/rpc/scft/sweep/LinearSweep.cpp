@@ -6,7 +6,7 @@
 */
 
 #include "LinearSweep.h"
-#include <rpc/system/System.h>
+#include <rp/system/System.h>
 
 #include <rp/scft/sweep/LinearSweep.tpp>
 

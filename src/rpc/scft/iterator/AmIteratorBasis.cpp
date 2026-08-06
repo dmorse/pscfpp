@@ -6,12 +6,12 @@
 */
 
 #include "AmIteratorBasis.h"
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/CFields.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/Mask.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
 
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>

@@ -6,7 +6,7 @@
 */
 
 #include "SweepFactory.h"                   // header
-#include <rpc/scft/sweep/LinearSweep.h>
+#include <rp/scft/sweep/LinearSweep.h>
 #include <rp/scft/sweep/SweepFactory.tpp>   // template implementation
 
 // Explicit instantiation definitions

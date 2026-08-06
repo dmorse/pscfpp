@@ -116,8 +116,7 @@ namespace Rp {
                            RField<D,CPT> const & field,
                            UnitCell<D> const & unitCell,
                            bool writeHeader = true,
-                           bool isSymmetric = true) 
-      const override;
+                           bool isSymmetric = true) const override;
 
       /**
       * Read array of RFieldDft objects (k-space fields) from a stream.
@@ -130,8 +129,7 @@ namespace Rp {
       */
       void readFieldsKGrid(std::istream& in,
                            DArray< RFieldDft<D,CPT> >& fields,
-                           UnitCell<D> & unitCell) 
-      const override;
+                           UnitCell<D> & unitCell) const override;
 
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
@@ -146,8 +144,7 @@ namespace Rp {
       void writeFieldsKGrid(std::ostream& out,
                             DArray< RFieldDft<D,CPT> > const & fields,
                             UnitCell<D> const & unitCell,
-                            bool isSymmetric = true) 
-      const override;
+                            bool isSymmetric = true) const override;
 
       /**
       * Convert a field from symmetrized basis to Fourier grid (k-grid).
@@ -158,8 +155,7 @@ namespace Rp {
       * \param dft  discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(DArray<double> const & components,
-                               RFieldDft<D,CPT>& dft) 
-      const override;
+                               RFieldDft<D,CPT>& dft) const override;
 
       /**
       * Convert a field from Fourier (k-grid) to symmetrized basis form.
@@ -174,8 +170,7 @@ namespace Rp {
       void convertKGridToBasis(RFieldDft<D,CPT> const & in,
                                DArray<double> & out,
                                bool checkSymmetry = true,
-                               double epsilon = 1.0e-8) 
-      const override;
+                               double epsilon = 1.0e-8) const override;
 
       /**
       * Check if a k-grid field has the declared space group symmetry.
@@ -189,8 +184,7 @@ namespace Rp {
       */
       bool hasSymmetry(RFieldDft<D,CPT> const & in, 
                        double epsilon = 1.0e-8,
-                       bool verbose = true) 
-      const override;
+                       bool verbose = true) const override;
 
       /**
       * Compare two fields in r-grid format, output a report.
@@ -218,6 +212,23 @@ namespace Rp {
       const override;
 
       /**
+      * Write r-grid fields in a replicated unit cell to std::ostream.  
+      *
+      * See documentation of analogous function in FieldIoBase.
+      *
+      * \param out  output file stream 
+      * \param fields  array of RField (r-space) fields to be replicated
+      * \param unitCell  original crystallographic unit cell
+      * \param replicas  number of unit cell replicas in each direction
+      */ 
+      void replicateUnitCell(
+                          std::ostream& out,
+                          DArray< RField<D,CPT> > const & fields,
+                          UnitCell<D> const & unitCell,
+                          IntVec<D> const & replicas) 
+      const override;
+
+      /**
       * Expand spatial dimension of an array of r-grid fields.
       *
       * See documentation of analogous function in FieldIoBase.
@@ -236,27 +247,11 @@ namespace Rp {
                           DArray<int> const& newGridDimensions) 
       const override;
 
-      /**
-      * Write r-grid fields in a replicated unit cell to std::ostream.  
-      *
-      * See documentation of analogous function in FieldIoBase.
-      *
-      * \param out  output file stream 
-      * \param fields  array of RField (r-space) fields to be replicated
-      * \param unitCell  original crystallographic unit cell
-      * \param replicas  number of unit cell replicas in each direction
-      */ 
-      void replicateUnitCell(
-                          std::ostream& out,
-                          DArray< RField<D,CPT> > const & fields,
-                          UnitCell<D> const & unitCell,
-                          IntVec<D> const & replicas) 
-      const override;
-
       /// Alias for base class
       using Base =  Rp::FieldIoBase<D,CPT>;
 
-      // Inherited public member functions (to avoid hiding)
+      // Inherited public member functions: Declared to avoid hiding
+      // overloaded functions with string file name parameters
       using Base::writeFieldBasis;
       using Base::writeFieldsBasis;
       using Base::readFieldsRGrid;
@@ -266,13 +261,13 @@ namespace Rp {
       using Base::writeFieldRGrid;
       using Base::readFieldsKGrid;
       using Base::writeFieldsKGrid;
+      using Base::scaleFieldsRGrid;
       using Base::replicateUnitCell;
       using Base::expandRGridDimension;
       using Base::convertBasisToKGrid;
       using Base::convertKGridToBasis;
       using Base::hasSymmetry;
       using Base::compareFieldsRGrid;
-      using Base::scaleFieldsRGrid;
 
    };
 
