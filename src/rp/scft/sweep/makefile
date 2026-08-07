@@ -13,6 +13,8 @@ all: $(rp_scft_sweep_OBJS)
 clean:
 	rm -f $(rp_scft_sweep_OBJS)
 	rm -f $(rp_scft_sweep_DEPS)
+	rm -f *.o *.d
+	rm -f *.ou *.du
 
 .PHONY: all clean
 

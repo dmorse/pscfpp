@@ -13,7 +13,8 @@ all: $(rp_solvers_OBJS)
 clean:
 	rm -f $(rp_solvers_OBJS)
 	rm -f $(rp_solvers_DEPS)
-	rm -f *.o* *.d*
+	rm -f *.o *.d
+	rm -f *.ou *.du
 
 .PHONY: all clean
 

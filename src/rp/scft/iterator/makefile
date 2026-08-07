@@ -13,6 +13,8 @@ all: $(rp_scft_iterator_OBJS)
 clean:
 	rm -f $(rp_scft_iterator_OBJS)
 	rm -f $(rp_scft_iterator_DEPS)
+	rm -f *.o *.d
+	rm -f *.ou *.du
 
 .PHONY: all clean
 

@@ -13,6 +13,8 @@ all: $(rp_field_OBJS)
 clean:
 	rm -f $(rp_field_OBJS)
 	rm -f $(rp_field_DEPS) 
+	rm -f *.o *.d
+	rm -f *.ou *.du
 
 .PHONY: all clean
 
