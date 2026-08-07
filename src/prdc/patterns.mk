@@ -54,14 +54,27 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 
 # Pattern rule to compile *.cu class source files in src/prdc
 # Note: Creates a *.d dependency file as a side effect of compilation
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+$(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 
 # Pattern rule to create executable Test programs in src/prdc/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)
-	$(CXXTEST) $(LDFLAGS) -o $@ $< $(LIBS)
+#$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)
+#	$(CXXTEST) $(LDFLAGS) -o $@ $< $(LIBS)
+
+
+# Pattern rules to create exectuable Test programs in src/pscf/tests
+$(BLD_DIR)/%/Test: $(BLD_DIR)/%/Test.o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
+
+$(BLD_DIR)/%/cpuTest: $(BLD_DIR)/%/cpuTest.o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
+
+$(BLD_DIR)/%/cudaTest: $(BLD_DIR)/%/cudaTest.ou $(PSCF_LIBS)
+	cp $< cudaTmp.o
+	$(NVXX) $(LDFLAGS) -o $@ cudaTmp.o $(LIBS)
+	rm cudaTmp.o
 
 # Note: We use $(LIBS) in the recipe for unit test executables but
 # $(PSCF_LIBS) in the prerequisite list, so that all libraries are

@@ -11,7 +11,7 @@ prdc_field_cuda_CU= \
   prdc/field/cuda/WaveList.cu 
 
 prdc_field_cuda_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(prdc_field_cuda_CU:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(prdc_field_cuda_CU:.cu=.ou))
 
 prdc_field_cuda_DEPS=\
      $(addprefix $(BLD_DIR)/, $(prdc_field_cuda_CU:.cu=.du))

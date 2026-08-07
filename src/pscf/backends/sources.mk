@@ -7,7 +7,7 @@ pscf_backends_DEPS=\
 ifdef PSCF_CUDA
 pscf_backends_CU = pscf/backends/CUT.cu 
 pscf_backends_OBJS+=\
-     $(addprefix $(BLD_DIR)/, $(pscf_backends_CU:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(pscf_backends_CU:.cu=.ou))
 pscf_backends_DEPS+=\
      $(addprefix $(BLD_DIR)/, $(pscf_backends_CU:.cu=.du))
 endif

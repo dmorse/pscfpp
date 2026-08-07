@@ -31,7 +31,7 @@ ifdef PSCF_CUDA
   include $(SRC_DIR)/pscf/cuda/sources.mk
   pscf_CU= $(pscf_backends_CU) $(pscf_cuda_CU)
   pscf_OBJS+=\
-    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.o))
+    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.ou))
   pscf_DEPS+=\
     $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.du))
 endif

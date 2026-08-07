@@ -22,7 +22,7 @@ prdc_DEPS=\
 ifdef PSCF_CUDA
   prdc_CU= $(prdc_field_CU)
   prdc_OBJS +=\
-    $(addprefix $(BLD_DIR)/, $(prdc_CU:.cu=.o))
+    $(addprefix $(BLD_DIR)/, $(prdc_CU:.cu=.ou))
   prdc_DEPS +=\
     $(addprefix $(BLD_DIR)/, $(prdc_CU:.cu=.du))
 endif

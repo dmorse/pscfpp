@@ -44,8 +44,9 @@ clean-outputs:
 clean:
 	rm -f *Test
 	rm -f $(pscf_tests_OBJS) $(pscf_tests_DEPS)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
+	rm -f $(BLD_DIR)/$(TEST)
 	rm -f *.o *.d 
+	rm -f *.ou *.du
 	rm -f log count 
 	-cd $(SRC_DIR)/pscf/tests/chem; $(MAKE) clean
 	-cd $(SRC_DIR)/pscf/tests/floryHuggins; $(MAKE) clean
