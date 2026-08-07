@@ -29,5 +29,5 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(pscf_tests_cuda_OBJS:.o=.d)
--include $(pscf_util_OBJS:.o=.d)
--include $(pscf_pscf_OBJS:.o=.d)
+-include $(pscf_util_DEPS)
+-include $(pscf_pscf_DEPS)

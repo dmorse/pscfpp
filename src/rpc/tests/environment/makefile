@@ -31,7 +31,7 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(TEST).d
--include $(rpc_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(rpc_DEPS)
+-include $(prdc_DEPS)
+-include $(pscf_DEPS)
+-include $(util_DEPS)

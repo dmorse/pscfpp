@@ -30,8 +30,8 @@ clean:
 
 .PHONY: all run run-quiet clean-outputs clean
 
--include $(util_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(rpg_OBJS:.o=.d)
+-include $(util_DEPS)
+-include $(pscf_DEPS)
+-include $(prdc_DEPS)
+-include $(rpg_DEPS)
 -include $(rpg_tests_environment_OBJS:.o=.d)

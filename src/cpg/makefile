@@ -54,8 +54,8 @@ pscf_cpg:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(util_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
+-include $(util_DEPS)
+-include $(pscf_DEPS)
+-include $(prdc_DEPS)
 -include $(cpg_OBJS:.o=.d)
 -include $(PSCF_CPG).d 

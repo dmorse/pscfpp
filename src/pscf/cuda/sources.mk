@@ -10,3 +10,5 @@ pscf_cuda_CU =\
 pscf_cuda_OBJS=\
    $(addprefix $(BLD_DIR)/, $(pscf_cuda_CU:.cu=.o))
 
+pscf_cuda_DEPS=\
+   $(addprefix $(BLD_DIR)/, $(pscf_cuda_CU:.cu=.d))

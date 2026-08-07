@@ -58,5 +58,5 @@ clean:
 	-cd $(SRC_DIR)/pscf/tests/cuda; $(MAKE) clean
 
 -include $(pscf_tests_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(pscf_DEPS)
+-include $(util_DEPS)

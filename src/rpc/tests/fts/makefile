@@ -38,7 +38,7 @@ clean:
 # Include dependency files
 
 -include $(rpc_tests_fts_OBJS:.o=.d)
--include $(rpc_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(rpc_DEPS)
+-include $(prdc_DEPS)
+-include $(pscf_DEPS)
+-include $(util_DEPS)

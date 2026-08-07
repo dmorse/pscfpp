@@ -29,8 +29,8 @@ clean:
 
 .PHONY: all run run-quiet clean-outputs clean
 
--include $(prdc_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(prdc_DEPS)
+-include $(pscf_DEPS)
+-include $(util_DEPS)
 -include $(prdc_tests_crystal_OBJS:.o=.d)
 -include $(prdc_tests_crystal_OBJS:.o=.d)

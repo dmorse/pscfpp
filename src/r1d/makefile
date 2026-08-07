@@ -52,7 +52,7 @@ pscf_r1d:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(util_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(r1d_OBJS:.o=.d)
+-include $(util_DEPS)
+-include $(pscf_DEPS)
+-include $(r1d_DEPS)
 -include $(PSCF_R1D).d

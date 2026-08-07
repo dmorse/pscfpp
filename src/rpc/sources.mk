@@ -22,6 +22,9 @@ rpc_= \
 rpc_OBJS=\
      $(addprefix $(BLD_DIR)/, $(rpc_:.cpp=.o))
 
+# List of object file targets
+rpc_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(rpc_:.cpp=.d))
 #-----------------------------------------------------------------------
 # Path and rule for the rpc/librpc.a library 
 

@@ -33,8 +33,8 @@ ifdef PSCF_CUDA
   pscf_CU= $(pscf_backends_CU) $(pscf_cuda_CU)
   pscf_OBJS+=\
     $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.o))
-  pscf_DEPS=\
-    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.d))
+  pscf_DEPS+=\
+    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.du))
 endif
 
 #-----------------------------------------------------------------------

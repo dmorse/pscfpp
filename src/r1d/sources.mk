@@ -20,6 +20,10 @@ r1d_=\
 r1d_OBJS=\
      $(addprefix $(BLD_DIR)/, $(r1d_:.cpp=.o))
 
+# List of dependency files
+r1d_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(r1d_:.cpp=.d))
+
 #-----------------------------------------------------------------------
 # Path and rule for the r1d/libr1d.a library 
 

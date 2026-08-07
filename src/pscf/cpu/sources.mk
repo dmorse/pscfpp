@@ -9,3 +9,5 @@ pscf_cpu_CPP= \
 pscf_cpu_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_cpu_CPP:.cpp=.o))
 
+pscf_cpu_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(pscf_cpu_CPP:.cpp=.d))

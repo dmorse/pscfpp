@@ -91,7 +91,7 @@ endif
 #-----------------------------------------------------------------------
 # Include all relevant dependency files
 
--include $(util_OBJS:.o=.d)
+-include $(util_DEPS)
 -include $(pscf_DEPS:.o=.d)
 -include $(prdc_DEPS:.o=.d)
 -include $(rp_DEPS:.o=.d)

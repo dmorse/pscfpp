@@ -29,7 +29,7 @@ PSCF_RPG_EXE=$(BIN_DIR)/pscf_rpg
 all: $(rpg_OBJS) $(rpg_LIB) $(PSCF_RPG_EXE)
 
 clean:
-	rm -f $(rpg_OBJS) $(rpg_OBJS:.o=.d)
+	rm -f $(rpg_OBJS) $(rpg_DEPS)
 	rm -f $(rpg_LIB)
 	rm -f $(PSCF_RPG).o $(PSCF_RPG).d
 	rm -f *.o */*.o */*/*.o
@@ -54,8 +54,8 @@ pscf_rpg:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(util_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(prdc_OBJS:.o=.d)
--include $(rpg_OBJS:.o=.d)
+-include $(util_DEPS)
+-include $(pscf_DEPS)
+-include $(prdc_DEPS)
+-include $(rpg_DEPS)
 -include $(PSCF_RPG).d 

@@ -29,7 +29,7 @@ PSCF_RPC_EXE=$(BIN_DIR)/pscf_rpc
 all: $(rpc_OBJS) $(rpc_LIB) $(PSCF_RPC_EXE)
 
 clean:
-	rm -f $(rpc_OBJS) $(rpc_OBJS:.o=.d)
+	rm -f $(rpc_OBJS) $(rpc_DEPS)
 	rm -f $(rpc_LIB)
 	rm -f $(PSCF_RPC).o $(PSCF_RPC).d
 	rm -f *.o */*.o */*/*.o
@@ -53,8 +53,8 @@ pscf_rpc:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(util_OBJS:.o=.d)
+-include $(util_DEPS)
 -include $(pscf_DEPS)
 -include $(prdc_DEPS)
--include $(rpc_OBJS:.o=.d)
+-include $(rpc_DEPS)
 -include $(PSCF_RPC).d 

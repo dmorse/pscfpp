@@ -27,5 +27,5 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(pscf_tests_interaction_OBJS:.o=.d)
--include $(pscf_OBJS:.o=.d)
--include $(util_OBJS:.o=.d)
+-include $(pscf_DEPS)
+-include $(util_DEPS)

@@ -11,7 +11,8 @@ include $(SRC_DIR)/rpg/patterns.mk
 all: $(rpg_environment_OBJS) 
 
 clean:
-	rm -f $(rpg_environment_OBJS) $(rpg_environment_OBJS:.o=.d) 
+	rm -f $(rpg_environment_OBJS)
+	rm -f $(rpg_environment_OBJS:.o=.d) 
 
 .PHONY: all clean
 

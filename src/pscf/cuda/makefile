@@ -14,9 +14,10 @@ include $(SRC_DIR)/pscf/patterns.mk
 all: $(pscf_cuda_OBJS)
 
 clean:
-	rm -f $(pscf_cuda_OBJS) $(pscf_cuda_OBJS:.o=.d)
+	rm -f $(pscf_cuda_OBJS)
+	rm -f $(pscf_cuda_DEPS)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_cuda_OBJS:.o=.d)
+-include $(pscf_cuda_DEPS)

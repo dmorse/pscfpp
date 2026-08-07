@@ -106,7 +106,7 @@ def createDependencyFileCuda(processor, options, cfile, srcdir, blddir, extraDep
    # pfile - temporary file created by the compiler (erased)
    # dfile - final dependnecy file
    pfile = os.path.normpath(os.path.join(srcdir, base)) + '.p'
-   dfile = os.path.normpath(os.path.join(blddir, base)) + '.d'
+   dfile = os.path.normpath(os.path.join(blddir, base)) + '.du'
 
    # Create and execute compiler command to calculate dependencies
    command = processor + ' '
