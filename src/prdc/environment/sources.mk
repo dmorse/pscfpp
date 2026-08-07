@@ -8,3 +8,6 @@ prdc_environment_CPP= \
 prdc_environment_OBJS=\
   $(addprefix $(BLD_DIR)/, $(prdc_environment_CPP:.cpp=.o))
 
+prdc_environment_DEPS=\
+  $(addprefix $(BLD_DIR)/, $(prdc_environment_CPP:.cpp=.d))
+

@@ -29,10 +29,11 @@ clean-outputs:
 	-cd $(SRC_DIR)/prdc/tests/cuda; $(MAKE) clean-outputs
 
 clean:
-	rm -f $(prdc_tests_OBJS) $(prdc_tests_OBJS:.o=.d)
+	rm -f $(prdc_tests_OBJS) $(prdc_tests_DEPS)
 	rm -f $(BLD_DIR)/$(TEST)
 	rm -f cpuTest cudaTest
 	rm -f *Test.o *Test.d
+	rm -f *Test.ou *Test.du
 	rm -f log count
 	-cd $(SRC_DIR)/prdc/tests/crystal; $(MAKE) clean
 	-cd $(SRC_DIR)/prdc/tests/cpu; $(MAKE) clean
@@ -40,7 +41,7 @@ clean:
 
 .PHONY: all run run-quiet clean-outputs clean
 
--include $(prdc_tests_OBJS:.o=.d)
--include $(prdc_DEPS)
 -include $(util_DEPS)
 -include $(pscf_DEPS)
+-include $(prdc_DEPS)
+-include $(prdc_tests_DEPS)

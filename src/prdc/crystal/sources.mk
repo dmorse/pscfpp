@@ -19,3 +19,6 @@ prdc_crystal_CPP= \
 prdc_crystal_OBJS=\
   $(addprefix $(BLD_DIR)/, $(prdc_crystal_CPP:.cpp=.o))
 
+prdc_crystal_DEPS=\
+  $(addprefix $(BLD_DIR)/, $(prdc_crystal_CPP:.cpp=.d))
+

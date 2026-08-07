@@ -19,18 +19,18 @@ run-quiet: $(prdc_tests_crystal_OBJS) $(BLD_DIR)/$(TEST)
 	@cat count
 
 clean-outputs:
-	rm -f log count 
+	rm -f log count
 	rm -f out/*
 
 clean:
-	rm -f $(prdc_tests_crystal_OBJS) $(prdc_tests_crystal_OBJS:.o=.d)
+	rm -f $(prdc_tests_crystal_OBJS)
+	rm -f $(prdc_tests_crystal_DEPS)
 	rm -f $(BLD_DIR)/$(TEST)
 	$(MAKE) clean-outputs
 
 .PHONY: all run run-quiet clean-outputs clean
 
--include $(prdc_DEPS)
--include $(pscf_DEPS)
 -include $(util_DEPS)
--include $(prdc_tests_crystal_OBJS:.o=.d)
--include $(prdc_tests_crystal_OBJS:.o=.d)
+-include $(pscf_DEPS)
+-include $(prdc_DEPS)
+-include $(prdc_tests_crystal_DEPS)

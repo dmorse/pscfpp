@@ -13,5 +13,5 @@ prdc_field_cuda_CU= \
 prdc_field_cuda_OBJS=\
      $(addprefix $(BLD_DIR)/, $(prdc_field_cuda_CU:.cu=.o))
 
-prdc_field_cuda_DEPSS=\
+prdc_field_cuda_DEPS=\
      $(addprefix $(BLD_DIR)/, $(prdc_field_cuda_CU:.cu=.du))

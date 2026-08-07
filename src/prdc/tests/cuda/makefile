@@ -22,13 +22,14 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(prdc_tests_cuda_OBJS) $(prdc_tests_cuda_OBJS:.o=.d)
-	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
+	rm -f $(prdc_tests_cuda_OBJS)
+	rm -f $(prdc_tests_cuda_DEPS)
+	rm -f $(BLD_DIR)/$(TEST)
 	$(MAKE) clean-outputs
 
 .PHONY: all run run-quiet clean-outputs clean
 
--include $(prdc_tests_cuda_OBJS:.o=.d)
+-include $(prdc_tests_cuda_DEPS)
 -include $(prdc_DEPS)
 -include $(util_DEPS)
 -include $(pscf_DEPS)

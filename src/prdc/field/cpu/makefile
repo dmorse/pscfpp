@@ -11,9 +11,9 @@ include $(SRC_DIR)/prdc/patterns.mk
 all: $(prdc_field_cpu_OBJS) 
 
 clean:
-	rm -f $(prdc_field_cpu_OBJS) $(prdc_field_cpu_OBJS:.o=.d) 
+	rm -f $(prdc_field_cpu_OBJS) $(prdc_field_cpu_DEPS) 
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(prdc_field_cpu_OBJS:.o=.d)
+-include $(prdc_field_cpu_DEPS)

@@ -11,11 +11,11 @@ include $(SRC_DIR)/prdc/patterns.mk
 all: $(prdc_field_cuda_OBJS) 
 
 clean:
-	rm -f $(prdc_field_cuda_OBJS) $(prdc_field_cuda_OBJS:.o=.d) 
+	rm -f $(prdc_field_cuda_OBJS) $(prdc_field_cuda_DEPS) 
 
 .PHONY: all clean
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(prdc_field_cuda_OBJS:.o=.d)
+-include $(prdc_field_cuda_DEPS)

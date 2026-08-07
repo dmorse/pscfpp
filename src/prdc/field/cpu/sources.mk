@@ -12,3 +12,6 @@ prdc_field_cpu_CPP= \
 prdc_field_cpu_OBJS=\
   $(addprefix $(BLD_DIR)/, $(prdc_field_cpu_CPP:.cpp=.o))
 
+prdc_field_cpu_DEPS=\
+  $(addprefix $(BLD_DIR)/, $(prdc_field_cpu_CPP:.cpp=.d))
+
