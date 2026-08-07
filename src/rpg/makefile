@@ -29,9 +29,10 @@ PSCF_RPG_EXE=$(BIN_DIR)/pscf_rpg
 all: $(rpg_OBJS) $(rpg_LIB) $(PSCF_RPG_EXE)
 
 clean:
-	rm -f $(rpg_OBJS) $(rpg_DEPS)
+	rm -f $(rpg_OBJS)
+	rm -f $(rpg_DEPS)
 	rm -f $(rpg_LIB)
-	rm -f $(PSCF_RPG).o $(PSCF_RPG).d
+	rm -f $(PSCF_RPG).o $(PSCF_RPG).du
 	rm -f *.o */*.o */*/*.o
 	rm -f *.d */*.d */*/*.d
 	rm -f lib*.a 
@@ -58,4 +59,4 @@ pscf_rpg:
 -include $(pscf_DEPS)
 -include $(prdc_DEPS)
 -include $(rpg_DEPS)
--include $(PSCF_RPG).d 
+-include $(PSCF_RPG).du

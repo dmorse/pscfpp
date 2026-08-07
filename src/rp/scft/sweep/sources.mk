@@ -25,6 +25,6 @@ ifdef PSCF_CUDA
   rp_scft_sweep_OBJS+= \
        $(addprefix $(BLD_DIR)/, $(rp_scft_sweep_CU:.cu=.o))
   rp_scft_sweep_DEPS+= \
-       $(addprefix $(BLD_DIR)/, $(rp_scft_sweep_CU:.cu=.d))
+       $(addprefix $(BLD_DIR)/, $(rp_scft_sweep_CU:.cu=.du))
 endif
 

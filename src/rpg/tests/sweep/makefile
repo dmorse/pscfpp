@@ -27,9 +27,9 @@ clean-outputs:
 	find out -type f \( ! -iname ".*" \) -exec rm -f {} \;
 
 clean:
-	rm -f $(rpg_tests_sweep_OBJS) $(rpg_tests_sweep_OBJS:.o=.d)
+	rm -f $(rpg_tests_sweep_OBJS) $(rpg_tests_sweep_OBJS:.o=.du)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
--include $(rpg_tests_sweep_OBJS:.o=.d)
--include $(rpg_tests_sweep_OBJS:.o=.d)
+-include $(rpg_tests_sweep_OBJS:.o=.du)
+-include $(rpg_tests_sweep_OBJS:.o=.du)

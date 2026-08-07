@@ -11,11 +11,11 @@ include $(SRC_DIR)/rpg/patterns.mk
 all: $(rpg_field_OBJS) 
 
 clean:
-	rm -f $(rpg_field_OBJS) $(rpg_field_OBJS:.o=.d) 
+	rm -f $(rpg_field_OBJS) $(rpg_field_OBJS:.o=.du) 
 
 .PHONY: all clean
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_field_OBJS:.o=.d)
+-include $(rpg_field_OBJS:.o=.du)

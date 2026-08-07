@@ -11,11 +11,11 @@ include $(SRC_DIR)/rpg/patterns.mk
 all: $(rpg_fts_simulator_OBJS) 
 
 clean:
-	rm -f $(rpg_fts_simulator_OBJS) $(rpg_fts_simulator_OBJS:.o=.d) 
+	rm -f $(rpg_fts_simulator_OBJS) $(rpg_fts_simulator_OBJS:.o=.du) 
 
 .PHONY: all clean
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_fts_simulator_OBJS:.o=.d)
+-include $(rpg_fts_simulator_OBJS:.o=.du)

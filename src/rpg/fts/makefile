@@ -14,9 +14,9 @@ includes:
 	@echo $(INCLUDES)
 
 clean:
-	rm -f $(rpg_fts_OBJS) $(rpg_fts_OBJS:.o=.d) 
+	rm -f $(rpg_fts_OBJS) $(rpg_fts_OBJS:.o=.du) 
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_fts_OBJS:.o=.d)
+-include $(rpg_fts_OBJS:.o=.du)

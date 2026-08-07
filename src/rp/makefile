@@ -92,7 +92,8 @@ endif
 # Include all relevant dependency files
 
 -include $(util_DEPS)
--include $(pscf_DEPS:.o=.d)
--include $(prdc_DEPS:.o=.d)
--include $(rp_DEPS:.o=.d)
--include $(PSCF_RP_OBJS:.o=.d)
+-include $(pscf_DEPS)
+-include $(prdc_DEPS)
+-include $(rp_DEPS)
+-include $(PSCF_RPC).d
+-include $(PSCF_RPG).d

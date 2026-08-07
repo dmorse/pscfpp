@@ -16,11 +16,11 @@ include $(SRC_DIR)/rpg/patterns.mk
 all: $(rpg_scft_sweep_OBJS) 
 
 clean:
-	rm -f $(rpg_scft_sweep_OBJS) $(rpg_scft_sweep_OBJS:.o=.d)
+	rm -f $(rpg_scft_sweep_OBJS) $(rpg_scft_sweep_OBJS:.o=.du)
 
 .PHONY: all clean
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_scft_sweep_OBJS:.o=.d)
+-include $(rpg_scft_sweep_OBJS:.o=.du)

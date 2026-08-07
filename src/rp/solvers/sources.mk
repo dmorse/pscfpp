@@ -26,6 +26,6 @@ ifdef PSCF_CUDA
   rp_solvers_OBJS+=\
        $(addprefix $(BLD_DIR)/, $(rp_solvers_CU:.cu=.o))
   rp_solvers_DEPS+=\
-     $(addprefix $(BLD_DIR)/, $(rp_solvers_CU:.cu=.d))
+     $(addprefix $(BLD_DIR)/, $(rp_solvers_CU:.cu=.du))
 endif
 

@@ -24,5 +24,5 @@ ifdef PSCF_CUDA
   rp_field_OBJS+= \
      $(addprefix $(BLD_DIR)/, $(rp_field_CU:.cu=.o))
   rp_field_DEPS+= \
-       $(addprefix $(BLD_DIR)/, $(rp_field_CU:.cu=.d))
+       $(addprefix $(BLD_DIR)/, $(rp_field_CU:.cu=.du))
 endif

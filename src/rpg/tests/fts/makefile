@@ -27,9 +27,9 @@ clean-outputs:
 	rm -f out/*
 
 clean:
-	rm -f $(rpg_tests_fts_OBJS) $(rpg_tests_fts_OBJS:.o=.d)
+	rm -f $(rpg_tests_fts_OBJS) $(rpg_tests_fts_OBJS:.o=.du)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
--include $(rpg_tests_fts_OBJS:.o=.d)
--include $(rpg_tests_fts_OBJS:.o=.d)
+-include $(rpg_tests_fts_OBJS:.o=.du)
+-include $(rpg_tests_fts_OBJS:.o=.du)

@@ -11,7 +11,7 @@ include $(SRC_DIR)/rpg/patterns.mk
 all: $(rpg_solvers_OBJS) 
 
 clean:
-	rm -f $(rpg_solvers_OBJS) $(rpg_solvers_OBJS:.o=.d)
+	rm -f $(rpg_solvers_OBJS) $(rpg_solvers_OBJS:.o=.du)
 
 veryclean:
 	$(MAKE) clean
@@ -23,4 +23,4 @@ veryclean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_solvers_OBJS:.o=.d)
+-include $(rpg_solvers_OBJS:.o=.du)

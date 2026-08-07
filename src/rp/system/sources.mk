@@ -18,5 +18,5 @@ ifdef PSCF_CUDA
   rp_system_OBJS +=\
        $(addprefix $(BLD_DIR)/, $(rp_system_CU:.cu=.o))
   rp_system_DEPS +=\
-       $(addprefix $(BLD_DIR)/, $(rp_system_CU:.cu=.d))
+       $(addprefix $(BLD_DIR)/, $(rp_system_CU:.cu=.du))
 endif

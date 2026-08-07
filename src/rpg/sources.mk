@@ -24,7 +24,7 @@ rpg_OBJS=\
 
 # List of dependency files
 rpg_DEPS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_:.cu=.d))
+     $(addprefix $(BLD_DIR)/, $(rpg_:.cu=.du))
 
 #-----------------------------------------------------------------------
 # Path and makefile target for the rpg/librpg.a library file

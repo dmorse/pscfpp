@@ -29,7 +29,7 @@ clean-outputs:
 	-cd $(SRC_DIR)/rpg/tests/fts; $(MAKE) clean-outputs
 
 clean:
-	rm -f $(rpg_tests_OBJS) $(rpg_tests_OBJS:.o=.d)
+	rm -f $(rpg_tests_OBJS) $(rpg_tests_OBJS:.o=.du)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	rm -f log count 
 	-cd $(SRC_DIR)/rpg/tests/field; $(MAKE) clean
@@ -48,4 +48,4 @@ clean:
 -include $(pscf_DEPS)
 -include $(prdc_DEPS)
 -include $(rpg_DEPS)
--include $(rpg_tests_OBJS:.o=.d)
+-include $(rpg_tests_OBJS:.o=.du)
