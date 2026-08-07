@@ -11,9 +11,10 @@ include $(SRC_DIR)/pscf/patterns.mk
 all: $(pscf_floryHuggins_OBJS) 
 
 clean:
-	rm -f $(pscf_floryHuggins_OBJS) $(pscf_floryHuggins_OBJS:.o=.d) 
+	rm -f $(pscf_floryHuggins_OBJS)
+	rm -f $(pscf_floryHuggins_DEPS)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_floryHuggins_OBJS:.o=.d)
+-include $(pscf_floryHuggins_DEPS)

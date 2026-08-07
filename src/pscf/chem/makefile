@@ -6,14 +6,15 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
 #-----------------------------------------------------------------------
-# Main targets 
+# Main targets
 
-all: $(pscf_chem_OBJS) 
+all: $(pscf_chem_OBJS)
 
 clean:
-	rm -f $(pscf_chem_OBJS) $(pscf_chem_OBJS:.o=.d) 
+	rm -f $(pscf_chem_OBJS)
+	rm -f $(pscf_chem_DEPS)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_chem_OBJS:.o=.d)
+-include $(pscf_chem_DEPS)

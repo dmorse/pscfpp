@@ -6,3 +6,6 @@ pscf_mesh_CPP= \
 pscf_mesh_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_mesh_CPP:.cpp=.o))
 
+pscf_mesh_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(pscf_mesh_CPP:.cpp=.d))
+

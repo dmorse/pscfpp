@@ -43,7 +43,7 @@ clean-outputs:
 
 clean:
 	rm -f *Test
-	rm -f $(pscf_tests_OBJS) $(pscf_tests_OBJS:.o=.d)
+	rm -f $(pscf_tests_OBJS) $(pscf_tests_DEPS)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	rm -f *.o *.d 
 	rm -f log count 
@@ -57,6 +57,6 @@ clean:
 	-cd $(SRC_DIR)/pscf/tests/cpu; $(MAKE) clean
 	-cd $(SRC_DIR)/pscf/tests/cuda; $(MAKE) clean
 
--include $(pscf_tests_OBJS:.o=.d)
+-include $(pscf_tests_DEPS)
 -include $(pscf_DEPS)
 -include $(util_DEPS)

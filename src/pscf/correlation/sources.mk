@@ -6,3 +6,6 @@ pscf_correlation_CPP= \
 pscf_correlation_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_correlation_CPP:.cpp=.o))
 
+pscf_correlation_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(pscf_correlation_CPP:.cpp=.d))
+

@@ -15,3 +15,5 @@ pscf_chem_CPP= \
 pscf_chem_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_chem_CPP:.cpp=.o))
 
+pscf_chem_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(pscf_chem_CPP:.cpp=.d))

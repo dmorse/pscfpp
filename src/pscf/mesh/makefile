@@ -6,14 +6,15 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
 #-----------------------------------------------------------------------
-# Main targets 
+# Main targets
 
-all: $(pscf_mesh_OBJS) 
+all: $(pscf_mesh_OBJS)
 
 clean:
-	rm -f $(pscf_mesh_OBJS) $(pscf_mesh_OBJS:.o=.d) 
+	rm -f $(pscf_mesh_OBJS)
+	rm -f $(pscf_mesh_DEPS)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_mesh_OBJS:.o=.d)
+-include $(pscf_mesh_DEPS)

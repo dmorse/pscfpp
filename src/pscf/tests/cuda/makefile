@@ -4,7 +4,7 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/tests/cuda/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
-TEST=pscf/tests/cuda/Test
+TEST=pscf/tests/cuda/cudaTest
 
 all: $(pscf_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
 
@@ -24,10 +24,11 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_cuda_OBJS) $(pscf_tests_cuda_OBJS:.o=.d)
+	rm -f $(pscf_tests_cuda_OBJS)
+	rm -f $(pscf_tests_cuda_DEPS)
 	rm -f $(BLD_DIR)/$(TEST)
 	$(MAKE) clean-outputs
 
--include $(pscf_tests_cuda_OBJS:.o=.d)
+-include $(pscf_tests_cuda_DEPS)
 -include $(pscf_util_DEPS)
 -include $(pscf_pscf_DEPS)

@@ -24,10 +24,10 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_chem_OBJS) $(pscf_tests_chem_OBJS:.o=.d)
+	rm -f $(pscf_tests_chem_OBJS) $(pscf_tests_chem_DEPS)
 	rm -f $(BLD_DIR)/$(TEST)
 	$(MAKE) clean-outputs
 
--include $(pscf_tests_chem_OBJS:.o=.d)
+-include $(pscf_tests_chem_DEPS)
 -include $(pscf_DEPS)
 -include $(util_DEPS)

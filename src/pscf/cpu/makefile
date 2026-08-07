@@ -6,14 +6,15 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
 #-----------------------------------------------------------------------
-# Main targets 
+# Main targets
 
-all: $(pscf_cpu_OBJS) 
+all: $(pscf_cpu_OBJS)
 
 clean:
-	rm -f $(pscf_cpu_OBJS) $(pscf_cpu_OBJS:.o=.d) 
+	rm -f $(pscf_cpu_OBJS)
+	rm -f $(pscf_cpu_DEPS)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_cpu_OBJS:.o=.d)
+-include $(pscf_cpu_DEPS)

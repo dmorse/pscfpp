@@ -6,14 +6,16 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
 #-----------------------------------------------------------------------
-# Main targets 
+# Main targets
 
-all: $(pscf_interaction_OBJS) 
+all: $(pscf_interaction_OBJS)
 
 clean:
-	rm -f $(pscf_interaction_OBJS) $(pscf_interaction_OBJS:.o=.d) 
+	rm -f $(pscf_interaction_OBJS)
+	rm -f $(pscf_interaction_DEPS)
+
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_interaction_OBJS:.o=.d)
+-include $(pscf_interaction_DEPS)

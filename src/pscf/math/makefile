@@ -11,9 +11,10 @@ include $(SRC_DIR)/pscf/patterns.mk
 all: $(pscf_math_OBJS) 
 
 clean:
-	rm -f $(pscf_math_OBJS) $(pscf_math_OBJS:.o=.d) 
+	rm -f $(pscf_math_OBJS)
+	rm -f $(pscf_math_DEPS)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_math_OBJS:.o=.d)
+-include $(pscf_math_DEPS)

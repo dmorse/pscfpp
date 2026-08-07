@@ -11,9 +11,10 @@ include $(SRC_DIR)/pscf/patterns.mk
 all: $(pscf_backends_OBJS) 
 
 clean:
-	rm -f $(pscf_backends_OBJS) $(pscf_backends_OBJS:.o=.d) 
+	rm -f $(pscf_backends_OBJS) 
+	rm -f $(pscf_backends_DEPS) 
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_backends_OBJS:.o=.d)
+-include $(pscf_backends_DEPS)

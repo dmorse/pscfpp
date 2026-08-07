@@ -24,10 +24,11 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_cpu_OBJS) $(pscf_tests_cpu_OBJS:.o=.d)
+	rm -f $(pscf_tests_cpu_OBJS)
+	rm -f $(pscf_tests_cpu_DEPS)
 	rm -f $(BLD_DIR)/$(TEST)
 	$(MAKE) clean-outputs
 
--include $(pscf_tests_cpu_OBJS:.o=.d)
+-include $(pscf_tests_cpu_DEPS)
 -include $(pscf_util_DEPS)
 -include $(pscf_pscf_DEPS)

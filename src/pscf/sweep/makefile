@@ -8,13 +8,13 @@ include $(SRC_DIR)/pscf/patterns.mk
 #-----------------------------------------------------------------------
 # Main targets
 
-all: $(pscf_iterator_OBJS)
+all: $(pscf_sweep_OBJS)
 
 clean:
-	rm -f $(pscf_iterator_OBJS)
-	rm -f $(pscf_iterator_DEPS)
+	rm -f $(pscf_sweep_OBJS)
+	rm -f $(pscf_sweep_DEPS)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_iterator_DEPS)
+-include $(pscf_sweep_DEPS)

@@ -25,10 +25,10 @@ clean-outputs:
 
 clean:
 	rm -f $(pscf_tests_floryHuggins_OBJS)
-	rm -f $(pscf_tests_floryHuggins_OBJS:.o=.d)
+	rm -f $(pscf_tests_floryHuggins_DEPS)
 	rm -f $(BLD_DIR)/$(TEST)
 	$(MAKE) clean-outputs
 
--include $(pscf_tests_floryHuggins_OBJS:.o=.d)
+-include $(pscf_tests_floryHuggins_DEPS)
 -include $(pscf_DEPS)
 -include $(util_DEPS)

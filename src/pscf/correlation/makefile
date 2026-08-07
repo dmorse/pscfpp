@@ -6,14 +6,15 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
 #-----------------------------------------------------------------------
-# Main targets 
+# Main targets
 
-all: $(pscf_correlation_OBJS) 
+all: $(pscf_correlation_OBJS)
 
 clean:
-	rm -f $(pscf_correlation_OBJS) $(pscf_correlation_OBJS:.o=.d) 
+	rm -f $(pscf_correlation_OBJS)
+	rm -f $(pscf_correlation_DEPS)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_correlation_OBJS:.o=.d)
+-include $(pscf_correlation_DEPS)

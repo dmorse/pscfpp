@@ -7,3 +7,6 @@ pscf_math_CPP= \
 pscf_math_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_math_CPP:.cpp=.o))
 
+pscf_math_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(pscf_math_CPP:.cpp=.d))
+

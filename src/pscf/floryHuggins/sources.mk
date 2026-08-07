@@ -7,3 +7,6 @@ pscf_floryHuggins_CPP= \
 pscf_floryHuggins_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_floryHuggins_CPP:.cpp=.o))
 
+pscf_floryHuggins_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(pscf_floryHuggins_CPP:.cpp=.d))
+
