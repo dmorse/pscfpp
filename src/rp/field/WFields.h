@@ -1,5 +1,5 @@
-#ifndef RP_W_FIELDS_H
-#define RP_W_FIELDS_H
+#ifndef RP_W_FIELDS_C_H
+#define RP_W_FIELDS_C_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -30,8 +30,10 @@ namespace Rp {
    class WFields : public Rp::WFieldsBase<D,T>
    {};
 
+   #ifdef PSCF_CPP
    // Declare explicit specializations for CPU backend
    PSCF_TMPL_DECLARE_CPP(WFields);
+   #endif
 
 } // namespace Rp
 } // namespace Pscf

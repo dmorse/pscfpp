@@ -3,11 +3,11 @@ rp_field_DEPS_=
 
 ifdef PSCF_CPP
   rp_field_CPP= \
-     rp/field/CFields_c.cpp \
-     rp/field/WFields_c.cpp \
-     rp/field/Mask_c.cpp \
-     rp/field/FieldIo_c.cpp \
-     rp/field/Domain_c.cpp
+     rp/field/CFields.cpp \
+     rp/field/WFields.cpp \
+     rp/field/Mask.cpp \
+     rp/field/FieldIo.cpp \
+     rp/field/Domain.cpp
   rp_field_OBJS+= \
        $(addprefix $(BLD_DIR)/, $(rp_field_CPP:.cpp=.o))
   rp_field_DEPS+= \
@@ -16,13 +16,13 @@ endif
 
 ifdef PSCF_CUDA
   rp_field_CU= \
-     rp/field/CFields_u.cu \
-     rp/field/WFields_u.cu \
-     rp/field/Mask_u.cu \
-     rp/field/FieldIo_u.cu \
-     rp/field/Domain_u.cu
+     rp/field/CFields.cu \
+     rp/field/WFields.cu \
+     rp/field/Mask.cu \
+     rp/field/FieldIo.cu \
+     rp/field/Domain.cu
   rp_field_OBJS+= \
-     $(addprefix $(BLD_DIR)/, $(rp_field_CU:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rp_field_CU:.cu=.ou))
   rp_field_DEPS+= \
-       $(addprefix $(BLD_DIR)/, $(rp_field_CU:.cu=.du))
+     $(addprefix $(BLD_DIR)/, $(rp_field_CU:.cu=.du))
 endif

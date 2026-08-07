@@ -13,17 +13,17 @@ rp_OBJS= \
      $(rp_field_OBJS) \
      $(rp_solvers_OBJS) \
      $(rp_system_OBJS) \
-     $(rp_scft_OBJS) 
-   # $(rp_environment_OBJS) \
+     $(rp_scft_OBJS)
+   #  $(rp_environment_OBJS) \
    #  $(rp_fts_OBJS) \
 
 rp_DEPS= \
      $(rp_field_DEPS) \
      $(rp_solvers_DEPS) \
      $(rp_system_DEPS) \
-     $(rp_scft_DEPS) 
-   # $(rp_environment_DEPS) \
-   # $(rp_fts_DEPS) \
+     $(rp_scft_DEPS)
+   #  $(rp_environment_DEPS) \
+   #  $(rp_fts_DEPS) \
 
 #-----------------------------------------------------------------------
 # Path and makefile target for the rp/librp.a library file

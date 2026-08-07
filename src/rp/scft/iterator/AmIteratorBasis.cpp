@@ -8,6 +8,7 @@
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
+#include <pscf/backends/CPT.h>
 #include <rp/scft/iterator/AmIteratorBasis.tpp> // template implementation
 
 // Explicit instantiation definitions

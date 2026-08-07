@@ -26,7 +26,6 @@ pscf_OBJS=\
 pscf_DEPS=\
   $(addprefix $(BLD_DIR)/, $(pscf_CPP:.cpp=.d))
 
-
 # CUDA C++ files
 ifdef PSCF_CUDA
   include $(SRC_DIR)/pscf/cuda/sources.mk

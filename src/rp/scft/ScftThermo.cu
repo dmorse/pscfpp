@@ -5,14 +5,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SweepFactory.h"                   // header
-#include <rp/scft/sweep/SweepFactory.tpp>   // template implementation
+#include <pscf/cuda/Reduce.h>
+#include <pscf/backends/CUT.h>
+
+#include <rp/scft/ScftThermo.tpp>     // base class implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class SweepFactory<1,CPT>;
-      template class SweepFactory<2,CPT>;
-      template class SweepFactory<3,CPT>;
+      template class ScftThermo<1,CUT>;
+      template class ScftThermo<2,CUT>;
+      template class ScftThermo<3,CUT>;
    }
 }

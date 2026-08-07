@@ -47,7 +47,7 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 
 # Pattern rule to compile *.cu CUDA source files in src/rp
 # Note: Creates a *.d dependency file as a side effect 
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+$(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<

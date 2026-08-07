@@ -5,22 +5,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-//#include "AmIteratorGrid.h"                    // class header
-
-//#include <rpc/system/System.h>
-//#include <rpc/solvers/Mixture.h>
-//#include <rp/field/Domain.h>
-//#include <rp/field/CFields.h>
-//#include <rp/field/WFields.h>
-//#include <rp/field/Mask.h>
-
 #include <prdc/field/RField.h>
 #include <pscf/cpu/FftwDRArray.h>
 
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
-#include <pscf/backends/CPT.h>
 
+#include <pscf/backends/CPT.h>
 #include <rp/scft/iterator/AmIteratorGrid.tpp> // template implementation
 
 // Explicit instantiation definitions

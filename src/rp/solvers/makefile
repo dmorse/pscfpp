@@ -11,11 +11,13 @@ include $(SRC_DIR)/rp/patterns.mk
 all: $(rp_solvers_OBJS) 
 
 clean:
-	rm -f $(rp_solvers_OBJS) $(rp_solvers_OBJS:.o=.d)
+	rm -f $(rp_solvers_OBJS)
+	rm -f $(rp_solvers_DEPS)
+	rm -f *.o* *.d*
 
 .PHONY: all clean
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rp_solvers_OBJS:.o=.d)
+-include $(rp_solvers_DEPS)

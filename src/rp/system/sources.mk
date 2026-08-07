@@ -3,8 +3,8 @@ rp_system_DEPS=
 
 ifdef PSCF_CPP
   rp_system_CPP= \
-    rp/system/System_c.cpp \
-    rp/system/SystemConstRef_c.cpp
+    rp/system/System.cpp \
+    rp/system/SystemConstRef.cpp
   rp_system_OBJS += \
        $(addprefix $(BLD_DIR)/, $(rp_system_CPP:.cpp=.o))
   rp_system_DEPS += \
@@ -13,10 +13,10 @@ endif
 
 ifdef PSCF_CUDA
   rp_system_CU= \
-    rp/system/System_u.cu \
-    rp/system/SystemConstRef_u.cu
+    rp/system/System.cu \
+    rp/system/SystemConstRef.cu
   rp_system_OBJS +=\
-       $(addprefix $(BLD_DIR)/, $(rp_system_CU:.cu=.o))
+       $(addprefix $(BLD_DIR)/, $(rp_system_CU:.cu=.ou))
   rp_system_DEPS +=\
        $(addprefix $(BLD_DIR)/, $(rp_system_CU:.cu=.du))
 endif
