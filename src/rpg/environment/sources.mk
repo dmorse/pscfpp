@@ -5,5 +5,5 @@ rpg_environment_= \
   rpg/environment/FilmEnvironment.cu
 
 rpg_environment_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_environment_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_environment_:.cu=.ou))
 

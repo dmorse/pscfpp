@@ -59,12 +59,7 @@ $(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 
-# Pattern rule to create executable Test programs in src/prdc/tests
-#$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PRDC_LIBS)
-#	$(CXXTEST) $(LDFLAGS) -o $@ $< $(LIBS)
-
-
-# Pattern rules to create exectuable Test programs in src/pscf/tests
+# Pattern rules to create exectuable Test programs in src/prdc/tests
 $(BLD_DIR)/%/Test: $(BLD_DIR)/%/Test.o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
 

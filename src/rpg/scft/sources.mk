@@ -8,5 +8,5 @@ rpg_scft_= \
   rpg/scft/ScftThermo.cu
   
 rpg_scft_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_scft_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_scft_:.cu=.ou))
 

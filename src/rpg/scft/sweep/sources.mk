@@ -6,5 +6,5 @@ rpg_scft_sweep_= \
   rpg/scft/sweep/SweepFactory.cu
 
 rpg_scft_sweep_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_scft_sweep_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_scft_sweep_:.cu=.ou))
 

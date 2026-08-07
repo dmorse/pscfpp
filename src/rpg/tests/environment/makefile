@@ -25,7 +25,7 @@ clean-outputs:
 
 clean:
 	rm -f $(BLD_DIR)/$(TEST)
-	rm -f $(rpg_tests_environment_OBJS) $(rpg_tests_environment_OBJS:.o=.du)
+	rm -f $(rpg_tests_environment_OBJS) $(rpg_tests_environment_OBJS:.ou=.du)
 	$(MAKE) clean-outputs
 
 .PHONY: all run run-quiet clean-outputs clean
@@ -34,4 +34,4 @@ clean:
 -include $(pscf_DEPS)
 -include $(prdc_DEPS)
 -include $(rpg_DEPS)
--include $(rpg_tests_environment_OBJS:.o=.du)
+-include $(rpg_tests_environment_OBJS:.ou=.du)

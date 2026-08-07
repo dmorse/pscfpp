@@ -14,9 +14,9 @@ includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(rpg_fts_perturbation_OBJS) $(rpg_fts_perturbation_OBJS:.o=.du) 
+	rm -f $(rpg_fts_perturbation_OBJS) $(rpg_fts_perturbation_OBJS:.ou=.du) 
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_fts_perturbation_OBJS:.o=.du)
+-include $(rpg_fts_perturbation_OBJS:.ou=.du)

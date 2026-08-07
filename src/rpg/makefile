@@ -32,15 +32,17 @@ clean:
 	rm -f $(rpg_OBJS)
 	rm -f $(rpg_DEPS)
 	rm -f $(rpg_LIB)
-	rm -f $(PSCF_RPG).o $(PSCF_RPG).du
-	rm -f *.o */*.o */*/*.o
-	rm -f *.d */*.d */*/*.d
+	rm -f $(PSCF_RPG).ou $(PSCF_RPG).du
+	rm -f *.ou */*.ou */*/*.ou
+	rm -f *.du */*.du */*/*.du
 	rm -f lib*.a 
 	cd tests; $(MAKE) clean
 
 # Main pscf_rpg executable file
-$(PSCF_RPG_EXE): $(PSCF_RPG).o $(PSCF_LIBS)
+$(PSCF_RPG_EXE): $(PSCF_RPG).ou $(PSCF_LIBS)
+	cp $(PSCF_RPG).ou $(PSCF_RPG).o
 	$(NVXX) $(LDFLAGS) -o $(PSCF_RPG_EXE) $(PSCF_RPG).o $(LIBS)
+	rm $(PSCF_RPG).o
 
 # Short phony target for executable file (for convenience)
 pscf_rpg:

@@ -20,5 +20,5 @@ rpg_fts_= \
   
   
 rpg_fts_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_fts_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_fts_:.cu=.ou))
 

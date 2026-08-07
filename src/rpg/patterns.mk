@@ -39,14 +39,16 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 
 # Pattern rule to compile *.cu CUDA source files in src/rpg
 # Note: Creates a *.d dependency file as a side effect 
-$(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
+$(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 
 # Pattern rule to link executable Test programs in src/rpg/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSCF_LIBS)
-	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.ou  $(PSCF_LIBS)
+	cp $< cudaTmp.o
+	$(NVXX) $(LDFLAGS) -o $@ cudaTmp.o $(LIBS)
+	rm cudaTmp.o
 
 # Note: In the linking rule for unit test programs, we include the list 
 # $(PSCF_LIBS) of PSCF-specific libraries as prerequisites but link to 

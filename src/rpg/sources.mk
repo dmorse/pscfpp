@@ -20,7 +20,7 @@ rpg_= \
 
 # List of object file targets
 rpg_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_:.cu=.ou))
 
 # List of dependency files
 rpg_DEPS=\

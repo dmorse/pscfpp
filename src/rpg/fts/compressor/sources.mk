@@ -8,5 +8,5 @@ rpg_fts_compressor_= \
   rpg/fts/compressor/CompressorFactory.cu
 
 rpg_fts_compressor_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_fts_compressor_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_fts_compressor_:.cu=.ou))
 

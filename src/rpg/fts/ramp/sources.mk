@@ -5,5 +5,5 @@ rpg_fts_ramp_= \
   rpg/fts/ramp/RampFactory.cu 
   
 rpg_fts_ramp_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_fts_ramp_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_fts_ramp_:.cu=.ou))
 

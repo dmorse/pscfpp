@@ -7,5 +7,5 @@ rpg_solvers_= \
      rpg/solvers/MixtureModifier.cu
 
 rpg_solvers_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_solvers_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_solvers_:.cu=.ou))
 

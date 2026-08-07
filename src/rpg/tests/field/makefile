@@ -23,7 +23,7 @@ clean-outputs:
 	rm -f log count out/*
 
 clean:
-	rm -f $(rpg_tests_field_OBJS) $(rpg_tests_field_OBJS:.o=.du)
+	rm -f $(rpg_tests_field_OBJS) $(rpg_tests_field_OBJS:.ou=.du)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
@@ -33,4 +33,4 @@ clean:
 -include $(pscf_DEPS)
 -include $(prdc_DEPS)
 -include $(rpg_DEPS)
--include $(rpg_tests_field_OBJS:.o=.du)
+-include $(rpg_tests_field_OBJS:.ou=.du)

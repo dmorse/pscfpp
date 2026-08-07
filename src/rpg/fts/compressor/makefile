@@ -11,11 +11,11 @@ include $(SRC_DIR)/rpg/patterns.mk
 all: $(rpg_fts_compressor_OBJS) 
 
 clean:
-	rm -f $(rpg_fts_compressor_OBJS) $(rpg_fts_compressor_OBJS:.o=.du) 
+	rm -f $(rpg_fts_compressor_OBJS) $(rpg_fts_compressor_OBJS:.ou=.du) 
 
 .PHONY: all clean
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_fts_compressor_OBJS:.o=.du)
+-include $(rpg_fts_compressor_OBJS:.ou=.du)

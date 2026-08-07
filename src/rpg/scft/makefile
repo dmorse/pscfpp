@@ -14,9 +14,9 @@ includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(rpg_scft_OBJS) $(rpg_scft_OBJS:.o=.du) 
+	rm -f $(rpg_scft_OBJS) $(rpg_scft_OBJS:.ou=.du) 
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_scft_OBJS:.o=.du)
+-include $(rpg_scft_OBJS:.ou=.du)

@@ -7,5 +7,5 @@ rpg_fts_brownian_= \
   rpg/fts/brownian/LMBdStep.cu 
   
 rpg_fts_brownian_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_fts_brownian_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_fts_brownian_:.cu=.ou))
 

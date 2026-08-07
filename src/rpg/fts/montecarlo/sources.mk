@@ -9,5 +9,5 @@ rpg_fts_montecarlo_= \
   rpg/fts/montecarlo/ShiftMove.cu
   
 rpg_fts_montecarlo_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_fts_montecarlo_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_fts_montecarlo_:.cu=.ou))
 

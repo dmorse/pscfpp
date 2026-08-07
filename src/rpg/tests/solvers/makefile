@@ -26,8 +26,8 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(rpg_tests_solvers_OBJS) $(rpg_tests_solvers_OBJS:.o=.du)
+	rm -f $(rpg_tests_solvers_OBJS) $(rpg_tests_solvers_OBJS:.ou=.du)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	$(MAKE) clean-outputs
 
--include $(rpg_tests_solvers_OBJS:.o=.du)
+-include $(rpg_tests_solvers_OBJS:.ou=.du)

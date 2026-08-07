@@ -6,5 +6,5 @@ rpg_field_= \
   rpg/field/Mask.cu
 
 rpg_field_OBJS=\
-	  $(addprefix $(BLD_DIR)/, $(rpg_field_:.cu=.o))
+	  $(addprefix $(BLD_DIR)/, $(rpg_field_:.cu=.ou))
 

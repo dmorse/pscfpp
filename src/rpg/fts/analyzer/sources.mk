@@ -17,5 +17,5 @@ rpg_fts_analyzer_= \
   rpg/fts/analyzer/CubicLengthDerivative.cu
   
 rpg_fts_analyzer_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpg_fts_analyzer_:.cu=.o))
+     $(addprefix $(BLD_DIR)/, $(rpg_fts_analyzer_:.cu=.ou))
 

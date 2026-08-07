@@ -12,11 +12,11 @@ all: $(rpg_environment_OBJS)
 
 clean:
 	rm -f $(rpg_environment_OBJS)
-	rm -f $(rpg_environment_OBJS:.o=.du) 
+	rm -f $(rpg_environment_OBJS:.ou=.du) 
 
 .PHONY: all clean
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rpg_environment_OBJS:.o=.du)
+-include $(rpg_environment_OBJS:.ou=.du)
