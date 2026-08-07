@@ -1,26 +1,28 @@
 include config.mk
 
-.PHONY: all all-cpu util pscf prdc r1d rpc rpg cpc \
+.PHONY: all all-common util pscf prdc r1d rpc rpg cpc \
         test test-cpu test-gpu \
         clean clean-tests veryclean
 # ======================================================================
 # Main build targets
 
-# Build all CPU and GPU programs
+# Build all enabled code
 all:
-	$(MAKE) all-cpu
+	$(MAKE) all-common
+ifdef PSCF_CPP
+	cd rpc; $(MAKE) all
+endif
 ifdef PSCF_CUDA
 	cd rpg; $(MAKE) all
 endif
 
-# Build all programs that uses exclusively CPU hardware
-all-cpu: 
+# Build code that is always compiled
+all-common: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd r1d; $(MAKE) all
 	cd prdc; $(MAKE) all
-	cd rpc; $(MAKE) all
-	cd cpc; $(MAKE) all
+	cd rp; $(MAKE) all
 
 # Build code in Util names (general scientific utilities)
 util: 
@@ -36,6 +38,13 @@ prdc:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd prdc; $(MAKE) all
+
+# Build common code for PSCF in Util, Pscf, and Prdc namespaces
+rp: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+	cd prdc; $(MAKE) all
+	cd rp; $(MAKE) all
 
 # Build pscf_r1d 1D finite difference SCFT program (install in BIN_DIR)
 pscf_r1d: 

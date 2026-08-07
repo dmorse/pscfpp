@@ -1,5 +1,7 @@
 *.o
+*.ou
 *.d
+*.du
 makefile
 config.mk
 setopts

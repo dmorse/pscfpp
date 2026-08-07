@@ -1,6 +1,6 @@
 include bld/config.mk
 # =========================================================================
-.PHONY:  all-cpu  all r1d rpc rpg \
+.PHONY:  all pscf_r1d pscf_rpc pscf_rpg \
          html html-dev \
          clean clean-tests clean-bin clean-html veryclean 
 
@@ -17,10 +17,6 @@ include bld/config.mk
 # Compile all code, including CUDA code if possible
 all:
 	cd bld; $(MAKE) all
-
-# Build all programs that runs on a conventional cpu 
-all-cpu:
-	cd bld; $(MAKE) all-cpu
 
 # Build the pscf_1d 1D finite element SCFT program
 pscf_1d:
