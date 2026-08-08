@@ -113,6 +113,7 @@ def createDependencyFileCuda(processor, options, cfile, srcdir, blddir, extraDep
    command += options + ' '
    command += cfile
    command += ' > ' + pfile
+   print(command)
    os.system(command)
 
    # Edit dependency file and remove temporary pfile
@@ -195,6 +196,11 @@ def editDependLocal(pfile, dfile, blddir, srcroot, extraDependencies):
    groups   = lines[0].split(":")
    target   = groups[0]
    lines[0] = groups[1]
+
+   # Change target suffix from .o to .ou
+   target = target.strip()
+   if target[-2:] == '.o':
+       target += 'u'
 
    # Replace target by file in build directory
    base = os.path.basename(target)
