@@ -10,10 +10,10 @@
 #include <rpg/system/System.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/CFields.cu>
-#include <rpg/field/WFields.cu>
-#include <rpg/field/Mask.cu>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.cu>
+#include <rp/field/WFields.cu>
+#include <rp/field/Mask.cu>
 
 #include <prdc/field/cpu/RField.h>
 #include <prdc/field/cuda/resources.h>

@@ -10,11 +10,11 @@
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Block.h>
 #include <rpg/solvers/Solvent.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/FieldIo.h>
-#include <rpg/field/CFields.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/Mask.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
 
 #include <prdc/field/cuda/RField.h>
 #include <prdc/field/cuda/RFieldComparison.h>

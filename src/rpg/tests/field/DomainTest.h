@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/field/Domain.h>
-#include <rpg/field/FieldIo.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
 
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/crystal/Basis.h>

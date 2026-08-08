@@ -7,7 +7,7 @@
 #include <rpg/fts/compressor/IntraCorrelation.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/system/System.h>
-#include <rpg/field/CFields.h>
+#include <rp/field/CFields.h>
 
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/field/cuda/RField.h>

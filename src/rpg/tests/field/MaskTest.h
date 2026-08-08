@@ -4,9 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/field/Mask.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/FieldIo.h>
+#include <rp/field/Mask.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
 
 #include <prdc/field/cpu/RField.h>
 #include <prdc/field/cpu/RFieldDft.h>

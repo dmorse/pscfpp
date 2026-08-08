@@ -9,7 +9,7 @@
 
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
+#include <rp/field/Domain.h>
 
 #include <rp/scft/iterator/Iterator.tpp>
 

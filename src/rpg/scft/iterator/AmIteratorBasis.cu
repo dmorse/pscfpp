@@ -9,10 +9,10 @@
 #include "AmIteratorBasis.h"
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/CFields.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/Mask.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
 #endif
 
 #include <pscf/cpu/VecOp.h>

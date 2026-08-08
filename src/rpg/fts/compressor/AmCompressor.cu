@@ -9,9 +9,9 @@
 
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/CFields.h>
-#include <rpg/field/WFields.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
 
 #include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>

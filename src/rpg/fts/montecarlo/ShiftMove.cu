@@ -10,8 +10,8 @@
 #include <rpg/fts/montecarlo/McSimulator.h>
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/WFields.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
 #include <pscf/mesh/Mesh.h>
 
 #include <rp/fts/montecarlo/ShiftMoveBase.tpp>

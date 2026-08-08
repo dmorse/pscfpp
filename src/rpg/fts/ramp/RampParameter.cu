@@ -14,7 +14,7 @@
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Solvent.h>
 #include <rpg/solvers/Block.h>
-#include <rpg/field/Domain.h>
+#include <rp/field/Domain.h>
 
 #include <rp/fts/ramp/RampParameter.tpp>    // base class implementation
 

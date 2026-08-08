@@ -6,7 +6,7 @@
 
 #include <rpg/system/System.h>
 #include <rpg/scft/sweep/BasisFieldState.h>
-#include <rpg/field/WFields.h>
+#include <rp/field/WFields.h>
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>

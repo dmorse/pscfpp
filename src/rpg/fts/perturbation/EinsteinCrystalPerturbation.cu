@@ -9,9 +9,9 @@
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/system/System.h>
 #include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/FieldIo.h>
-#include <rpg/field/WFields.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
+#include <rp/field/WFields.h>
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 

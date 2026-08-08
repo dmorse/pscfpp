@@ -4,13 +4,13 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/environment/FilmFieldGenMask.h>
+#include <rp/environment/FilmFieldGenMask.h>
 #include <rpg/scft/iterator/Iterator.h>
 #include <rpg/system/System.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/FieldIo.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/Mask.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
+#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>

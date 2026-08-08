@@ -8,8 +8,8 @@
 #include <rpg/solvers/Mixture.h>
 #include <rpg/solvers/Polymer.h>
 #include <rpg/solvers/Block.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/WFields.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
 #include <rpg/scft/sweep/SweepFactory.h>
 #include <rpg/scft/sweep/LinearSweep.h>
 
