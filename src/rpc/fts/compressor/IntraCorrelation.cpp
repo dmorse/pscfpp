@@ -7,9 +7,9 @@
 
 #include "IntraCorrelation.h"
 
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
 
 #include <prdc/field/cpu/FFT.h>
 #include <prdc/field/cpu/RField.h>

@@ -6,11 +6,11 @@
 */
 
 #include "LrCompressor.h"
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/CFields.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
 #include <prdc/field/cpu/FFT.h>
 #include <pscf/cpu/VecOpCx.h>
 #include <pscf/cpu/Reduce.h>

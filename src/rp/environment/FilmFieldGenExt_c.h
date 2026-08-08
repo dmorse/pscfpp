@@ -1,5 +1,5 @@
-#ifndef RPC_EXT_GEN_FILM_H
-#define RPC_EXT_GEN_FILM_H
+#ifndef RP_EXT_GEN_FILM_C_H
+#define RP_EXT_GEN_FILM_C_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

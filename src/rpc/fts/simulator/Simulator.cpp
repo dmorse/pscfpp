@@ -7,13 +7,13 @@
 
 #include <pscf/backends/CPT.h>
 
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/solvers/Polymer.h>
-#include <rpc/solvers/Solvent.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/CFields.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
 #include <rpc/fts/simulator/SimState.h>
 #include <rpc/fts/compressor/CompressorFactory.h>
 #include <rpc/fts/perturbation/Perturbation.h>

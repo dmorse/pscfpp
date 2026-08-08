@@ -6,7 +6,7 @@
 */
 
 #include "McMoveFactory.h"
-//#include <rpc/fts/montecarlo/McSimulator.h>
+//#include <rp/fts/montecarlo/McSimulator.h>
 
 // Subclasses of McMove
 #include <rp/fts/montecarlo/RealMove.h>

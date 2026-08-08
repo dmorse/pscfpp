@@ -5,9 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SystemConstRef.h"
-#include <rpc/system/System.h>
-#include <rpc/field/Domain.h>
+#include <rp/system/System.h>
+#include <rp/field/Domain.h>
 
 #include <rp/system/SystemConstRef.tpp>
 

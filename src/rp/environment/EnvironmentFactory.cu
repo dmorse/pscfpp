@@ -5,17 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BdStep.h"
-#include <rpc/fts/brownian/BdSimulator.h>
-#include <rp/system/System.h>
 
-#include <rp/fts/brownian/BdStep.tpp>
+#include <pscf/backends/CUT.h>
+#include <rp/environment/EnvironmentFactory.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class BdStep<1,CPT>;
-      template class BdStep<2,CPT>;
-      template class BdStep<3,CPT>;
+      template class EnvironmentFactory<1,CUT>;
+      template class EnvironmentFactory<2,CUT>;
+      template class EnvironmentFactory<3,CUT>;
    }
 }

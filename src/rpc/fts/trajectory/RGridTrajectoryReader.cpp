@@ -7,12 +7,12 @@
 
 #include "RGridTrajectoryReader.h"
 
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/FieldIo.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/CFields.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
 
 #include <rp/fts/trajectory/RGridTrajectoryReader.tpp>
 

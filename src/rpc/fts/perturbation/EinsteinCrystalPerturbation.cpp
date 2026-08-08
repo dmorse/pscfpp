@@ -8,10 +8,10 @@
 #include "EinsteinCrystalPerturbation.h"
 
 #include <rpc/fts/simulator/Simulator.h>
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/FieldIo.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 

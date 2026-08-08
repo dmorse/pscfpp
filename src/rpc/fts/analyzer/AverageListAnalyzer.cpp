@@ -6,7 +6,7 @@
 */
 
 #include <rpc/fts/analyzer/AverageListAnalyzer.h>
-#include <rpc/system/System.h>
+#include <rp/system/System.h>
 
 #include <rp/fts/analyzer/AverageListAnalyzer.tpp> // implementation
 

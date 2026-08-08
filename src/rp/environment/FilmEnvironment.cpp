@@ -5,16 +5,17 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/system/System.h>
+#include <rp/environment/FilmFieldGenMask_c.h>
+#include <rp/environment/FilmFieldGenExt_c.h>
 
 #include <pscf/backends/CPT.h>
-#include <rp/scft/sweep/LinearSweep.tpp>
+#include <rp/environment/FilmEnvironment.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class LinearSweep<1,CPT>;
-      template class LinearSweep<2,CPT>;
-      template class LinearSweep<3,CPT>;
+      template class FilmEnvironment<1,CPT>;
+      template class FilmEnvironment<2,CPT>;
+      template class FilmEnvironment<3,CPT>;
    }
 }

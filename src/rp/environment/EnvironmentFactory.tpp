@@ -6,6 +6,7 @@
 */
 
 #include "EnvironmentFactory.h"  
+#include "FilmEnvironment.h"
 
 namespace Pscf {
 namespace Rp {

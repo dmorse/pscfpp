@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/system/System.h>
+#include <rp/system/System.h>
 #include <pscf/backends/CPT.h>
 #include <prdc/crystal/getDimension.h>
 #include <pscf/chem/PolymerModel.h>

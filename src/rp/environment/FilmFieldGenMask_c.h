@@ -1,5 +1,5 @@
-#ifndef RP_FILM_FIELD_MASK_GEN_H
-#define RP_FILM_FIELD_MASK_GEN_H
+#ifndef RP_FILM_FIELD_MASK_GEN_C_H
+#define RP_FILM_FIELD_MASK_GEN_C_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

@@ -1,5 +1,5 @@
-#ifndef RPC_EXT_GEN_FILM_H
-#define RPC_EXT_GEN_FILM_H
+#ifndef RPG_EXT_GEN_FILM_U_H
+#define RPG_EXT_GEN_FILM_U_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,8 +9,8 @@
 */
 
 #include <prdc/environment/FilmFieldGenExtBase.h>  // base class template
-#include <pscf/backends/CPT.h>                      // base class argument
-#include <rp/system/System.h>
+#include <pscf/backends/CUT.h>                      // base class argument
+#include <rpg/system/System.h>
 
 // Forward declarations
 namespace Pscf {
@@ -29,22 +29,23 @@ namespace Rp {
    /**
    * Field Generator for external fields in thin-film systems.
    *
-   * The parent FilmFieldGenExtBase class template defines all traits of a 
-   * FilmFieldGenExt that do not require access to the System. This subclass
-   * defines all methods that need System access.
+   * The parent FilmFieldGenExtBase class template defines all traits of
+   * a FilmFieldGenExt that do not require access to the System. This 
+   * subclass defines all methods that need System access.
    * 
-   * If the user chooses an FilmFieldGenExt object to generate external 
-   * fields, the external fields will have the same shape as the mask, 
-   * with a magnitude defined by a Flory--Huggins-like chi parameter. This 
-   * class is specific to thin-film systems because it also allows for a 
-   * different chi parameter to be defined on the top boundary than on
-   * the bottom, through user input arrays chi_bottom and chi_top. See 
+   * If the user chooses a FilmFieldGenExt object to generate external 
+   * fields, each external fields will have the same dependence on the
+   * normal coordinate  as the mask, with a prefactor defined by a 
+   * Flory--Huggins-like chi parameter.  This class is specific to 
+   * thin-film systems because it also allows for a different chi 
+   * parameter to be defined on the top boundary than on the bottom, 
+   * through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
    *
-   * \ingroup Rp_Environment_Module
+   * \ingroup Rp_Field_Module
    */
    template <int D>
-   class FilmFieldGenExt<D,CPT> 
+   class FilmFieldGenExt<D,CUT> 
      : public FilmFieldGenExtBase<D>
    {
 
@@ -58,9 +59,9 @@ namespace Rp {
       /**
       * Constructor
       * 
-      * \param sys  parent System object
+      * \param sys  System parent object
       */
-      FilmFieldGenExt(System<D,CPT>& sys);
+      FilmFieldGenExt(System<D,CUT>& sys);
 
       /**
       * Destructor
@@ -96,14 +97,14 @@ namespace Rp {
       void compute();
 
       /**
-      * Get the parent System by non-const reference.
+      * Get the System associated with this object by reference.
       */
-      System<D,CPT> & system();
+      System<D,CUT> & system();
 
       /**
-      * Get the parent System by const reference.
+      * Get the System associated with this object by const reference.
       */
-      System<D,CPT> const & system() const;
+      System<D,CUT> const & system() const;
 
       /**
       * Get the space group name for this system.
@@ -130,9 +131,9 @@ namespace Rp {
    private:
 
       /// Pointer to the associated system object.
-      System<D,CPT>* sysPtr_;
+      System<D,CUT>* sysPtr_;
 
-      /// Mask interfaceThickness, obtained via maskInterfaceThickness
+      /// interfaceThickness of the mask, obtained via maskInterfaceThickness
       double interfaceThickness_;
 
    };
@@ -141,28 +142,38 @@ namespace Rp {
 
    // Get parent System by non-const reference.
    template <int D> inline
-   System<D,CPT>& 
-   FilmFieldGenExt<D,CPT>::system() 
-   {
-      UTIL_CHECK(sysPtr_);  
-      return *sysPtr_; 
-   }
+   System<D,CUT>& 
+   FilmFieldGenExt<D,CUT>::system() 
+   {  return *sysPtr_; }
 
    // Get parent System by const reference.
    template <int D> inline
-   System<D,CPT> const & 
-   FilmFieldGenExt<D,CPT>::system() const
-   {  
-      UTIL_CHECK(sysPtr_);  
-      return *sysPtr_; 
-   }
+   System<D,CUT> const & 
+   FilmFieldGenExt<D,CUT>::system() const
+   {  return *sysPtr_; }
+
+   // Get space group name for this system.
+   template <int D> inline 
+   std::string 
+   FilmFieldGenExt<D,CUT>::systemSpaceGroup() const
+   {  return system().domain().groupName(); }
+
+   // Get one of the lattice vectors for this system.
+   template <int D> inline 
+   RealVec<D> 
+   FilmFieldGenExt<D,CUT>::systemLatticeVector(int id) const
+   {  return system().domain().unitCell().rBasis(id); }
+
+   // Get the number of monomer species for this system.
+   template <int D> inline 
+   int FilmFieldGenExt<D,CUT>::systemNMonomer() const
+   {  return system().mixture().nMonomer(); }
 
    // Explicit instantiation declarations
-   extern template class FilmFieldGenExt<1,CPT>;
-   extern template class FilmFieldGenExt<2,CPT>;
-   extern template class FilmFieldGenExt<3,CPT>;
+   extern template class FilmFieldGenExt<1,CUT>;
+   extern template class FilmFieldGenExt<2,CUT>;
+   extern template class FilmFieldGenExt<3,CUT>;
 
 } // namespace Rp
 } // namespace Pscf
-
 #endif

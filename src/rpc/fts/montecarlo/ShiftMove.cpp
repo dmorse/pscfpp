@@ -7,10 +7,10 @@
 
 #include "ShiftMove.h"
 #include <rpc/fts/montecarlo/McSimulator.h>
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
 #include <pscf/mesh/Mesh.h>
 
 #include <rp/fts/montecarlo/ShiftMoveBase.tpp>

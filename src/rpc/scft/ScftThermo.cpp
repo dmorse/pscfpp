@@ -5,14 +5,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ScftThermo.h"                     // class header
-#include <rpc/solvers/Mixture.h>
-#include <rpc/solvers/Polymer.h>
-#include <rpc/solvers/Solvent.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/CFields.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/Mask.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/cpu/Reduce.h>
 

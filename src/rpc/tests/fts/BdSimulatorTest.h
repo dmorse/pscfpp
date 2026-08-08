@@ -9,8 +9,8 @@
 #include <rpc/fts/brownian/ExplicitBdStep.h>
 #include <rpc/fts/brownian/PredCorrBdStep.h>
 #include <rpc/fts/brownian/LMBdStep.h>
-#include <rpc/system/System.h>
-#include <rpc/field/WFields.h>
+#include <rp/system/System.h>
+#include <rp/field/WFields.h>
 
 #include <rp/fts/compressor/Compressor.h>
 

@@ -5,8 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIteratorGrid.h"                    // class header
-
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>

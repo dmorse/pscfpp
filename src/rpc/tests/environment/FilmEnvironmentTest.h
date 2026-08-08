@@ -6,11 +6,11 @@
 
 #include <rpc/environment/FilmEnvironment.h>
 
-#include <rpc/system/System.h>
-#include <rpc/scft/ScftThermo.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/Mask.h>
+#include <rp/system/System.h>
+#include <rp/scft/ScftThermo.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>

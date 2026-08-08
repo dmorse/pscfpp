@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FilmFieldGenMask.h"
+#include "FilmFieldGenMask_c.h"
 
 #include <rp/solvers/Mixture.h>
 #include <rp/scft/iterator/Iterator.h>

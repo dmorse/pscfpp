@@ -5,11 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/Mixture_c.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/solvers/Polymer.h>
 #include <rp/solvers/Solvent.h>
-#include <rp/solvers/Block_c.h>
-#include <rp/solvers/Propagator_c.h>
+#include <rp/solvers/Block.h>
+#include <rp/solvers/Propagator.h>
 #include <rp/field/FieldIo.h>
 
 #include <prdc/field/cpu/FFT.h>

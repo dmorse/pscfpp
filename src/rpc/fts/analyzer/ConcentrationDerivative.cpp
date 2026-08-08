@@ -6,12 +6,12 @@
 */
 
 #include "ConcentrationDerivative.h"                    // header
-#include <rpc/system/System.h>
+#include <rp/system/System.h>
 #include <rpc/fts/simulator/Simulator.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/CFields.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
 
 #include <rp/fts/analyzer/ConcentrationDerivative.tpp>  // implementation
 

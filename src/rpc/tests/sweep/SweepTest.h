@@ -4,13 +4,13 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/system/System.h>
-#include <rpc/scft/sweep/SweepFactory.h>
-#include <rpc/scft/sweep/LinearSweep.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/solvers/Polymer.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
+#include <rp/system/System.h>
+#include <rp/scft/sweep/SweepFactory.h>
+#include <rp/scft/sweep/LinearSweep.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
 
 #include <prdc/crystal/BFieldComparison.h>
 

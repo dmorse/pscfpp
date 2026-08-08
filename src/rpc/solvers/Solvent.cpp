@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Solvent.h"
+#include <rp/solvers/Solvent.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>

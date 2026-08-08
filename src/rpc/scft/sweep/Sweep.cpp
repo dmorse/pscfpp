@@ -5,8 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Sweep.h"
-
 #include <rp/system/System.h>
 #include <rp/scft/iterator/Iterator.h>
 #include <rp/scft/ScftThermo.h>
@@ -15,6 +13,7 @@
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
 
+#include <pscf/backends/CPT.h>
 #include <rp/scft/sweep/Sweep.tpp>
 
 // Explicit instantiation definitions

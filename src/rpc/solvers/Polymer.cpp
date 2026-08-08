@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Polymer.h"
-#include <rp/solvers/Block_c.h>
-#include <rp/solvers/Propagator_c.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Block.h>
+#include <rp/solvers/Propagator.h>
 #include <prdc/field/cpu/RField.h>
 #include <pscf/solvers/PolymerTmpl.tpp>
 #include <pscf/chem/PolymerModel.h>

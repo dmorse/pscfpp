@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/solvers/Block.h>
-#include <rpc/solvers/Propagator.h>
+#include <rp/solvers/Block.h>
+#include <rp/solvers/Propagator.h>
 
 #include <prdc/field/cpu/RField.h>
 #include <prdc/field/cpu/FFT.h>

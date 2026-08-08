@@ -4,13 +4,13 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/scft/sweep/BasisFieldState.h>
-#include <rpc/system/System.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/solvers/Polymer.h>
-#include <rpc/solvers/Block.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
+#include <rp/scft/sweep/BasisFieldState.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Block.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>

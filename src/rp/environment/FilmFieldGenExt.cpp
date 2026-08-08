@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FilmFieldGenExt.h"
+#include "FilmFieldGenExt_c.h"
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>

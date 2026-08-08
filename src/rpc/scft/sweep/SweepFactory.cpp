@@ -5,7 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SweepFactory.h"                   // header
 #include <rp/scft/sweep/LinearSweep.h>
 #include <rp/scft/sweep/SweepFactory.tpp>   // template implementation
 

@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Block.h"
-#include "Propagator.h"
+#include <rp/solvers/Block.h>
+#include <rp/solvers/Propagator.h>
 
 #include <prdc/field/cpu/WaveList.h>
 #include <prdc/field/cpu/FFT.h>

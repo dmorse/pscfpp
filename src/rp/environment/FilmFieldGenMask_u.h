@@ -1,5 +1,5 @@
-#ifndef RP_FILM_FIELD_MASK_GEN_H
-#define RP_FILM_FIELD_MASK_GEN_H
+#ifndef RPG_MASK_GEN_FILM_U_H
+#define RPG_MASK_GEN_FILM_U_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -9,8 +9,8 @@
 */
 
 #include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
-#include <pscf/backends/CPT.h>                       // template parameter
-#include <rp/system/System.h>
+#include <pscf/backends/CUT.h>                       // template argument
+#include <rpg/system/System.h>
 
 // Forward declarations
 namespace Pscf {
@@ -27,21 +27,21 @@ namespace Rp {
    using namespace Pscf::Prdc;
 
    /**
-   * Field Generator for thin-film masks.
+   * Field generator for thin-film masks.
    *
    * The parent FilmFieldGenMaskBase class template defines all traits of 
    * a FilmFieldGenMask that do not require access to the System. This 
    * subclass defines all methods that need System access.
    * 
-   * If a MixAndMatchEnv contains a FilmFieldGenMask, then the system 
-   * will contain two parallel hard surfaces ("walls"), confining the
+   * If a MixAndMatchEnv contains a FilmFieldGenMask, then the system will
+   * contain two parallel hard surfaces ("walls"), confining the
    * polymers/solvents to a "thin film" region of the unit cell.
    *
-   * \ingroup Rp_Environment_Module
+   * \ingroup Rp_Field_Module
    */
    template <int D>
-   class FilmFieldGenMask<D,CPT>
-     : public FilmFieldGenMaskBase<D>
+   class FilmFieldGenMask<D,CUT> 
+    : public FilmFieldGenMaskBase<D>
    {
 
    public:
@@ -56,7 +56,7 @@ namespace Rp {
       * 
       * \param sys  System parent object
       */
-      FilmFieldGenMask(Rp::System<D,CPT>& sys);
+      FilmFieldGenMask(System<D,CUT>& sys);
 
       /**
       * Destructor
@@ -113,14 +113,13 @@ namespace Rp {
       void setFlexibleParams() const;
 
       /**
-      * Get the parent System by non-const reference.
+      * Get the System associated with this object by reference.
       */
-      Rp::System<D,CPT>& system();
-
+      System<D,CUT>& system();
       /**
-      * Get the parent System by const reference.
+      * Get the System associated with this object by const reference.
       */
-      Rp::System<D,CPT> const & system() const;
+      System<D,CUT> const & system() const;
 
       /**
       * Get the space group name for this system.
@@ -142,46 +141,46 @@ namespace Rp {
    private:
 
       /// Pointer to the associated system object.
-      Rp::System<D,CPT>* sysPtr_;
+      System<D,CUT>* sysPtr_;
 
    };
 
    // Inline member functions
 
    // Get parent System by non-const reference.
-   template <int D>
-   Rp::System<D,CPT>& 
-   FilmFieldGenMask<D,CPT>::system() 
-   {
-      UTIL_CHECK(sysPtr_);  
+   template <int D> inline
+   System<D,CUT>& 
+   FilmFieldGenMask<D,CUT>::system() 
+   {  
+      UTIL_CHECK(sysPtr_);
       return *sysPtr_; 
    }
 
    // Get parent System by const reference.
-   template <int D>
-   Rp::System<D,CPT> const & 
-   FilmFieldGenMask<D,CPT>::system() const
-   {  
-      UTIL_CHECK(sysPtr_);  
+   template <int D> inline
+   System<D,CUT> const & 
+   FilmFieldGenMask<D,CUT>::system() const
+   {
+      UTIL_CHECK(sysPtr_);
       return *sysPtr_; 
    }
 
    // Get space group name for this system.
    template <int D> inline 
    std::string 
-   FilmFieldGenMask<D,CPT>::systemSpaceGroup() const
+   FilmFieldGenMask<D,CUT>::systemSpaceGroup() const
    {  return system().domain().groupName(); }
 
    // Get one of the lattice vectors for this system.
    template <int D> inline 
    RealVec<D> 
-   FilmFieldGenMask<D,CPT>::systemLatticeVector(int id) const
+   FilmFieldGenMask<D,CUT>::systemLatticeVector(int id) const
    {  return system().domain().unitCell().rBasis(id); }
 
    // Explicit instantiation declarations
-   extern template class FilmFieldGenMask<1,CPT>;
-   extern template class FilmFieldGenMask<2,CPT>;
-   extern template class FilmFieldGenMask<3,CPT>;
+   extern template class FilmFieldGenMask<1,CUT>;
+   extern template class FilmFieldGenMask<2,CUT>;
+   extern template class FilmFieldGenMask<3,CUT>;
 
 } // namespace Rp
 } // namespace Pscf

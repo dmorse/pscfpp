@@ -11,7 +11,7 @@
 #include "Sweep.h"                   // class template header
 
 #include <rp/scft/iterator/Iterator.h>
-#include <rpc/scft/ScftThermo.h>
+#include <rp/scft/ScftThermo.h>
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>

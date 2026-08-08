@@ -4,18 +4,18 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/system/System.h>
-#include <rpc/field/Domain.h>
-#include <rpc/scft/ScftThermo.h>
-#include <rpc/solvers/MixtureModifier.h>
-#include <rpc/solvers/Mixture.h>
-#include <rpc/solvers/Polymer.h>
-#include <rpc/solvers/Solvent.h>
-#include <rpc/field/Domain.h>
-#include <rpc/field/WFields.h>
-#include <rpc/field/CFields.h>
-#include <rpc/field/Mask.h>
-#include <rpc/field/FieldIo.h>
+#include <rp/system/System.h>
+#include <rp/field/Domain.h>
+#include <rp/scft/ScftThermo.h>
+#include <rp/solvers/MixtureModifier.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
+#include <rp/field/Mask.h>
+#include <rp/field/FieldIo.h>
 
 #include <prdc/field/cpu/RField.h>
 #include <prdc/field/cpu/RFieldComparison.h>
