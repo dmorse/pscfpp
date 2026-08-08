@@ -9,14 +9,10 @@
 */
 
 #include <rp/fts/brownian/BdStep.h>    // base class
+#include <prdc/field/RField.h>         // member
 #include <util/containers/DArray.h>    // member
 
-// Forward declarations
-namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
-}
+#include <pscf/backends/TmplDeclare.h>
 
 namespace Pscf {
 namespace Rp {
@@ -93,6 +89,9 @@ namespace Rp {
       double mobility_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(ExplicitBdStep)
 
 }
 }

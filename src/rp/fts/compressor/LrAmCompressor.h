@@ -13,6 +13,10 @@
 #include <pscf/math/IntVec.h>              // member
 #include <util/containers/DArray.h>        // member
 
+#include <pscf/backends/TmplDeclare.h>     // template declaration macros
+#include <pscf/backends/CPT.h>
+#include <pscf/backends/CUT.h>
+
 // Forward declarations
 namespace Pscf {
    namespace Prdc {
@@ -234,7 +238,11 @@ namespace Rp {
       */
       void outputToLog() override;
 
+
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(LrAmCompressor)
 
 } // namespace Rp
 } // namespace Pscf

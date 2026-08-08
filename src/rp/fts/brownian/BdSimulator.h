@@ -8,7 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/simulator/Simulator.h>
+#include <pscf/backends/TmplDeclare.h>
+
 #include <util/global.h>
+
 #include <iostream>
 #include <string>
 
@@ -19,7 +23,6 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
-      template <int D, class T> class Simulator;
       template <int D, class T> class BdStep;
       template <int D, class T> class Analyzer;
       template <int D, class T> class AnalyzerManager;
@@ -214,6 +217,9 @@ namespace Rp {
    template <int D, class T> inline
    AnalyzerManager<D,T>& BdSimulator<D,T>::analyzerManager()
    {  return *analyzerManagerPtr_; }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(BdSimulator)
 
 }
 }

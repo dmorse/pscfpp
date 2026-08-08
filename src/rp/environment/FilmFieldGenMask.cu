@@ -7,17 +7,16 @@
 
 #include "FilmFieldGenMask_u.h"
 
-#include <rpg/system/System.h>
-#include <rpg/scft/ScftThermo.h>
-#include <rpg/scft/iterator/Iterator.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/field/Domain.h>
-#include <rpg/field/CFields.h>
-#include <rpg/field/WFields.h>
-#include <rpg/field/Mask.h>
+#include <rp/system/System.h>
+#include <rp/scft/ScftThermo.h>
+#include <rp/scft/iterator/Iterator.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
 
-#include <prdc/field/cpu/RField.h>
-
+#include <prdc/field/RField.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/paramIdConversions.h>

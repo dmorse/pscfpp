@@ -11,6 +11,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/fts/compressor/Compressor.h>   // template argument
 #include <util/containers/DArray.h>         // member
+#include <pscf/backends/TmplDeclare.h>      // declaration macros
 
 // Forward declarations
 namespace Pscf {
@@ -187,6 +188,9 @@ namespace Rp {
       void outputToLog() override;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(AmCompressor);
 
 } // namespace Rp
 } // namespace Pscf

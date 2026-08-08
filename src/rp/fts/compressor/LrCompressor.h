@@ -8,22 +8,24 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/compressor/Compressor.h>    // base class
-#include <pscf/math/IntVec.h>                // member
-#include <util/containers/DArray.h>          // member
-#include <util/misc/Timer.h>                 // member
+#include <rp/fts/compressor/Compressor.h>        // base class
+#include <rp/fts/compressor/IntraCorrelation.h>  // member
+#include <prdc/field/RField.h>                   // member
+#include <prdc/field/RFieldDft.h>                // member
+#include <pscf/math/IntVec.h>                    // member
+#include <util/containers/DArray.h>              // member
+#include <util/misc/Timer.h>                     // member
+
+#include <pscf/backends/TmplDeclare.h>
 
 // Forward declarations
 namespace Pscf {
    namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class RFieldDft;
       template <int D, class T> class FFT;
    }
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
-      template <int D, class T> class IntraCorrelation;
    }
 }
 
@@ -41,7 +43,7 @@ namespace Rp {
    * calculated linear response of a homogeneous liquid with the same
    * composition as the system of interest.
 
-   * Specializations of this class template are used as base classes for 
+   * Specializations of this class template are used as base classes for
    * two closely analogous class templates, also both named LrCompressor,
    * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
    * and pscf_rpg programs, respectively.
@@ -116,24 +118,20 @@ namespace Rp {
 
    private:
 
-      using RFieldT = RField<D,T>;
-      using RFieldDftT = RFieldDft<D,T>;
-      using FFTT = FFT<D,T>;
-
       // IntraCorrelation object
       IntraCorrelation<D,T> intra_;
 
       // Template w Field used in update function
-      DArray< RFieldT > wFieldTmp_;
+      DArray< RField<D,T> > wFieldTmp_;
 
       // Residual in real space
-      RFieldT resid_;
+      RField<D,T> resid_;
 
       // Residual in Fourier space
-      RFieldDftT residK_;
+      RFieldDft<D,T> residK_;
 
       // Intramolecular correlation in Fourier space
-      RFieldT intraCorrelationK_;
+      RField<D,T> intraCorrelationK_;
 
       // Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
@@ -192,6 +190,9 @@ namespace Rp {
       void outputToLog();
 
    };
+
+   // Explicit instantiation declaration
+   PSCF_TMPL_DECLARE(LrCompressor)
 
 } // namespace Rp
 } // namespace Pscf

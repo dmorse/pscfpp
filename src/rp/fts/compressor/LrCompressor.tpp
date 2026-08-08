@@ -9,9 +9,19 @@
 */
 
 #include "LrCompressor.h"
+
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
+
+#include <prdc/field/FFT.h>
 #include <prdc/crystal/shiftToMinimum.h>
+
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/iterator/NanException.h>
+
 #include <util/format/Dbl.h>
 #include <util/global.h>
 
@@ -63,7 +73,7 @@ namespace Rp {
    {
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
       int kSize;
-      FFTT::computeKMesh(dimensions, kMeshDimensions_, kSize);
+      FFT<D,T>::computeKMesh(dimensions, kMeshDimensions_, kSize);
 
       // Allocate memory required by AM algorithm if not done earlier.
       if (!isAllocated_) {

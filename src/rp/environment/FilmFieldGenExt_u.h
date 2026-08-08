@@ -10,7 +10,7 @@
 
 #include <prdc/environment/FilmFieldGenExtBase.h>  // base class template
 #include <pscf/backends/CUT.h>                      // base class argument
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 
 // Forward declarations
 namespace Pscf {

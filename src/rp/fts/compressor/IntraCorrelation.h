@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>         // member
-#include <util/containers/DArray.h>   // member
+#include <pscf/math/IntVec.h>            // member
+#include <util/containers/DArray.h>      // member
+#include <pscf/backends/TmplDeclare.h>   // declaration macros
 
 // Forward declarations
 namespace Pscf {
@@ -134,6 +135,9 @@ namespace Rp {
    template <int D, class T> inline
    System<D,T> const & IntraCorrelation<D,T>::system() const
    {  return *systemPtr_; }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(IntraCorrelation);
 
 } // namespace Rp
 } // namespace Pscf

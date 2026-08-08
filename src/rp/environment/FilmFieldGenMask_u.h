@@ -10,7 +10,7 @@
 
 #include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
 #include <pscf/backends/CUT.h>                       // template argument
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 
 // Forward declarations
 namespace Pscf {

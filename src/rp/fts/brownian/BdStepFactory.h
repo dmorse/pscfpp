@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
 #include <rp/fts/brownian/BdStep.h>
+#include <util/param/Factory.h>  
+#include <pscf/backends/TmplDeclare.h>
 
 namespace Pscf {
 namespace Rp {
@@ -53,6 +54,9 @@ namespace Rp {
       BdSimulator<D,T>* simulatorPtr_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(BdStepFactory)
 
 }
 }

@@ -10,6 +10,7 @@
 
 #include <util/param/ParamComposite.h>    // base class
 #include <util/global.h>
+#include <pscf/backends/TmplDeclare.h>
 
 // Forward declaration
 namespace Util {
@@ -80,11 +81,11 @@ namespace Rp {
 
       /**
       * Take a single Brownian dynamics step.
-      * 
+      *
       * \return true if the compressor converged, false if it failed.
       */
       virtual bool step() = 0;
-      
+
       /**
       * Do cc concentration components need to be saved before a step?
       *
@@ -94,7 +95,7 @@ namespace Rp {
       */
       virtual bool needsCc()
       {  return false; }
-      
+
       /**
       * Do dc derivative components need to be saved before a step?
       *
@@ -104,7 +105,7 @@ namespace Rp {
       */
       virtual bool needsDc()
       {  return true; }
-      
+
       /**
       * Output any timing results to ostream.
       *
@@ -113,14 +114,14 @@ namespace Rp {
       * \param out output stream
       */
       virtual void outputTimers(std::ostream& out);
-      
+
       /**
-      * Clear timers. 
+      * Clear timers.
       *
       * Default implementation does nothing.
       */
       virtual void clearTimers();
-      
+
       /**
       * Output statistics for this stepper (after end of simulation).
       *
@@ -129,7 +130,7 @@ namespace Rp {
       virtual void output();
 
    protected:
-      
+
       /**
       * Get parent System object.
       */
@@ -151,7 +152,7 @@ namespace Rp {
       typename T::VecRandom& vecRandom();
 
    private:
-      
+
       /// Pointer to parent BdSimulator object
       BdSimulator<D,T>* simulatorPtr_;
 
@@ -167,35 +168,37 @@ namespace Rp {
    };
 
    // Protected inline methods
-   
+
    /*
    * Get parent System object.
    */
-   template <int D, class T> inline 
+   template <int D, class T> inline
    System<D,T>& BdStep<D,T>::system()
    {  return *systemPtr_; }
 
    /*
    * Get parent BdSimulator object.
    */
-   template <int D, class T> inline 
+   template <int D, class T> inline
    BdSimulator<D,T>& BdStep<D,T>::simulator()
    {  return *simulatorPtr_; }
 
    /*
    * Get the scalar random number generator.
    */
-   template <int D, class T> inline 
+   template <int D, class T> inline
    Random& BdStep<D,T>::random()
    {  return *randomPtr_; }
 
    /*
    * Get the vector random number generator.
    */
-   template <int D, class T> inline 
+   template <int D, class T> inline
    typename T::VecRandom& BdStep<D,T>::vecRandom()
    {  return *vecRandomPtr_; }
 
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(BdStep)
 }
 }
 #endif

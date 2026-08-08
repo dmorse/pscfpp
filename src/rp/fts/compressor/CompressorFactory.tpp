@@ -7,6 +7,10 @@
 
 #include "CompressorFactory.h"  
 
+#include "LrCompressor.h"
+#include "AmCompressor.h"
+#include "LrAmCompressor.h"
+
 namespace Pscf {
 namespace Rp {
 

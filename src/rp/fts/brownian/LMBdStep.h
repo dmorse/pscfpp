@@ -8,15 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/brownian/BdStep.h>    // base class
-#include <util/containers/DArray.h>    // member
+#include <rp/fts/brownian/BdStep.h>      // base class
+#include <prdc/field/RField.h>           // member
+#include <util/containers/DArray.h>      // member
 
+#include <pscf/backends/TmplDeclare.h>
+
+#if 0
 // Forward declarations
 namespace Pscf {
    namespace Prdc {
       template <int D, class T> class RField;
    }
 }
+#endif
 
 namespace Pscf {
 namespace Rp {
@@ -136,6 +141,9 @@ namespace Rp {
       void exchangeOldNew();
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(LMBdStep)
 
 }
 }

@@ -6,7 +6,6 @@
 */
 
 #include "BdStepFactory.h"
-//#include <rp/fts/brownian/BdSimulator.h>
 
 // Subclasses of BdStep
 #include <rp/fts/brownian/ExplicitBdStep.h>

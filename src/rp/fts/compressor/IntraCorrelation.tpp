@@ -10,6 +10,12 @@
 
 #include "IntraCorrelation.h"
 
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+
+#include <prdc/field/FFT.h>
+#include <prdc/field/RField.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 

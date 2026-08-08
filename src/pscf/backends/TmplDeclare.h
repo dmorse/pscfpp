@@ -1,16 +1,12 @@
 #ifndef PSCF_TMPL_DECLARE_H
 #define PSCF_TMPL_DECLARE_H
 
-// Forward declaration of backend type classes
+// Include required backend type classes
 #ifdef PSCF_CPP
-namespace Pscf {
-   class CPT;
-}
+#include <pscf/backends/CPT.h>
 #endif
 #ifdef PSCF_CUDA
-namespace Pscf {
-   class CUT;
-}
+#include <pscf/backends/CUT.h>
 #endif
 
 // Return an input unchanged ifdef PSCF_CPP, or nothing otherwise

@@ -158,7 +158,7 @@ namespace Rp {
    };
 
    // Explicit instantiation declarations
-   //PSCF_TMPL_DECLARE(AmIteratorGrid)
+   PSCF_TMPL_DECLARE(AmIteratorGrid)
 
 } // namespace Rp
 } // namespace Pscf
