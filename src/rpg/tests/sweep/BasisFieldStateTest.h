@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rp/system/System.h>
-#include <rpg/scft/sweep/BasisFieldState.h>
+#include <rp/scft/sweep/BasisFieldState.h>
 #include <rp/field/WFields.h>
 
 #include <prdc/crystal/Basis.h>

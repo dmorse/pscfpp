@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rp/environment/FilmFieldGenMask.h>
-#include <rpg/scft/iterator/Iterator.h>
+#include <rp/scft/iterator/Iterator.h>
 #include <rp/system/System.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>

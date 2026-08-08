@@ -8,7 +8,7 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
-#include <rpg/scft/ScftThermo.h>
+#include <rp/scft/ScftThermo.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 #include <rp/field/WFields.h>

@@ -10,8 +10,8 @@
 #include <rp/solvers/Block.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
-#include <rpg/scft/sweep/SweepFactory.h>
-#include <rpg/scft/sweep/LinearSweep.h>
+#include <rp/scft/sweep/SweepFactory.h>
+#include <rp/scft/sweep/LinearSweep.h>
 
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/BFieldComparison.h>

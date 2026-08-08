@@ -8,7 +8,7 @@
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rpg/fts/simulator/Simulator.h>
-#include <rpg/scft/ScftThermo.h>
+#include <rp/scft/ScftThermo.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
