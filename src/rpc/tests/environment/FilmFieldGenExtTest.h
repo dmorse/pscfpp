@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/environment/FilmFieldGenExt.h>
+#include <rp/environment/FilmFieldGenExt.h>
 #include <rp/system/System.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>

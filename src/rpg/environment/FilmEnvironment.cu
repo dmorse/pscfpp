@@ -5,10 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpg/environment/FilmEnvironment.h>
+#include <rp/environment/FilmEnvironment.h>
 
-#include <rpg/environment/FilmFieldGenMask.h>
-#include <rpg/environment/FilmFieldGenExt.h>
+#include <rp/environment/FilmFieldGenMask.h>
+#include <rp/environment/FilmFieldGenExt.h>
 
 #include <rp/environment/FilmEnvironment.tpp>
 

@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/environment/FilmEnvironment.h>
+#include <rp/environment/FilmEnvironment.h>
 
 #include <rp/system/System.h>
 #include <rp/scft/ScftThermo.h>

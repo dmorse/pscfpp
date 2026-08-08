@@ -5,11 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "EnvironmentFactory.h"
-
-#include "FilmEnvironment.h"
-
+#include <rp/environment/EnvironmentFactory.h>
+#include <rp/environment/FilmEnvironment.h>
 #include <rp/environment/EnvironmentFactory.tpp>
+#include <pscf/backends/CUT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

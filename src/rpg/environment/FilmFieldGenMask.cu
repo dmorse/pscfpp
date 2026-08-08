@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FilmFieldGenMask.h"
+#include <rp/environment/FilmFieldGenMask.h>
 
 #include <rpg/system/System.h>
 #include <rpg/scft/ScftThermo.h>

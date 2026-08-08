@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/environment/EnvironmentFactory.h>  // header
+#include <rp/environment/EnvironmentFactory.h>  // header
 
-#include "FilmEnvironment.h"
+#include <rp/environment/FilmEnvironment.h>
 
 #include <rp/environment/EnvironmentFactory.tpp> // implementation
 

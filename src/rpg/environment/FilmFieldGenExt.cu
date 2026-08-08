@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FilmFieldGenExt.h"
+#include <rp/environment/FilmFieldGenExt.h>
 
 #include <rpg/system/System.h>
 #include <rpg/scft/iterator/Iterator.h>
