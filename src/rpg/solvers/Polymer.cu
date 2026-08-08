@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Polymer.h"
+#include <rp/solvers/Polymer.h>
 #include <rp/solvers/Block.h>
 #include <rp/solvers/Propagator.h>
 #include <prdc/field/RField.h>

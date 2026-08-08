@@ -5,11 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MixtureModifier.h"
-#include <rpg/solvers/Mixture.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/solvers/Block.h>
+#include <rp/solvers/MixtureModifier.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/solvers/Block.h>
 
 #include <rp/solvers/MixtureModifier.tpp>
 

@@ -7,13 +7,13 @@
 
 #include "RampParameter.h"
 #include <rpg/fts/simulator/Simulator.h>
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rpg/fts/perturbation/Perturbation.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/solvers/MixtureModifier.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/solvers/Block.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/MixtureModifier.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/solvers/Block.h>
 #include <rp/field/Domain.h>
 
 #include <rp/fts/ramp/RampParameter.tpp>    // base class implementation

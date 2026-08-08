@@ -7,7 +7,7 @@
 
 #include "BdStep.h"
 #include <rpg/fts/brownian/BdSimulator.h>
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 
 #include <rp/fts/brownian/BdStep.tpp>
 

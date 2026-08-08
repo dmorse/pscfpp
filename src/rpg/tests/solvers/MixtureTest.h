@@ -4,11 +4,11 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/solvers/Mixture.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Solvent.h>
-#include <rpg/solvers/Block.h>
-#include <rpg/solvers/Propagator.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/solvers/Block.h>
+#include <rp/solvers/Propagator.h>
 
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/cudaTypes.h>

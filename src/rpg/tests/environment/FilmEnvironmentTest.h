@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <rp/environment/FilmEnvironment.h>
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rpg/scft/ScftThermo.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>

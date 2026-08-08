@@ -10,7 +10,7 @@
 
 #include <rp/scft/ScftThermo.h>         // class template
 #include <pscf/backends/CUT.h>           // template argument
-#include <rpg/system/SystemConstRef.h>  // base class
+#include <rp/system/SystemConstRef.h>  // base class
 
 // Explicit instantiation declarations
 namespace Pscf {

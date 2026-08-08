@@ -4,12 +4,12 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rpg/fts/simulator/Simulator.h>
 #include <rpg/scft/ScftThermo.h>
-#include <rpg/solvers/Mixture.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>

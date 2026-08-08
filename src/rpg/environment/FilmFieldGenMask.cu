@@ -7,10 +7,10 @@
 
 #include <rp/environment/FilmFieldGenMask.h>
 
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rpg/scft/ScftThermo.h>
 #include <rpg/scft/iterator/Iterator.h>
-#include <rpg/solvers/Mixture.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>

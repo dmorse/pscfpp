@@ -6,7 +6,7 @@
 */
 
 #include "AverageAnalyzer.h"
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rpg/fts/simulator/Simulator.h>
 
 #include <rp/fts/analyzer/AverageAnalyzer.tpp>

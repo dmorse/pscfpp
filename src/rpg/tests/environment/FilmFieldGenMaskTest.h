@@ -6,7 +6,7 @@
 
 #include <rp/environment/FilmFieldGenMask.h>
 #include <rpg/scft/iterator/Iterator.h>
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 #include <rp/field/WFields.h>

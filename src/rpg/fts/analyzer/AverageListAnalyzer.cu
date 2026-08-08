@@ -6,7 +6,7 @@
 */
 
 #include "AverageListAnalyzer.h"                    // header
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rp/fts/analyzer/AverageListAnalyzer.tpp>  // implementation
 
 // Explicit instantiation definitions

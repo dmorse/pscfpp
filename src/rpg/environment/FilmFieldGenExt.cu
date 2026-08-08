@@ -7,9 +7,9 @@
 
 #include <rp/environment/FilmFieldGenExt.h>
 
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rpg/scft/iterator/Iterator.h>
-#include <rpg/solvers/Mixture.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.cu>
 #include <rp/field/WFields.cu>

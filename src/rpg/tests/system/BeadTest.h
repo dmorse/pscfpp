@@ -4,9 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rpg/scft/ScftThermo.h>
-#include <rpg/solvers/Polymer.h>
+#include <rp/solvers/Polymer.h>
 
 #include <util/tests/LogFileUnitTest.h>
 

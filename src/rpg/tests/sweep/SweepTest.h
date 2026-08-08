@@ -4,10 +4,10 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
-#include <rpg/solvers/Polymer.h>
-#include <rpg/solvers/Block.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Block.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <rpg/scft/sweep/SweepFactory.h>

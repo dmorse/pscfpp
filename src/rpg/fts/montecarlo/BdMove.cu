@@ -7,8 +7,8 @@
 
 #include "BdMove.h"                         // class header
 #include <rpg/fts/montecarlo/McSimulator.h>
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>

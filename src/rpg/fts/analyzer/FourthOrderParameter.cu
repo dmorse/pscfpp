@@ -7,9 +7,9 @@
 
 #include "FourthOrderParameter.h"
 
-#include <rpg/system/System.h>
+#include <rp/system/System.h>
 #include <rpg/fts/simulator/Simulator.h>
-#include <rpg/solvers/Mixture.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <prdc/field/cuda/FFT.h>

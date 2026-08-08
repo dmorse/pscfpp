@@ -7,8 +7,8 @@
 
 #include "IntraCorrelation.h"
 
-#include <rpg/system/System.h>
-#include <rpg/solvers/Mixture.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 
 #include <prdc/field/cuda/FFT.h>
