@@ -2,6 +2,8 @@
 #define RP_RAMP_TPP
 
 #include "Ramp.h"
+
+#include <rp/fts/simulator/Simulator.h>
 #include <util/containers/DArray.h>
 #include <util/global.h>
 

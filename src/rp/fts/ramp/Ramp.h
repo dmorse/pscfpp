@@ -2,7 +2,9 @@
 #define RP_RAMP_H
 
 #include <util/param/ParamComposite.h>  // base class
-#include <util/global.h>                // inline functions
+
+#include <pscf/backends/TmplDeclare.h>
+#include <util/global.h>
 
 // Forward declarations
 namespace Pscf {
@@ -120,6 +122,9 @@ namespace Rp {
       UTIL_ASSERT(simulatorPtr_);
       return *simulatorPtr_; 
    }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(Ramp)
 
 }
 }

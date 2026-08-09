@@ -9,6 +9,17 @@
 */
 
 #include "RampParameter.h"
+
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/system/System.h>
+#include <rp/fts/perturbation/Perturbation.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/solvers/MixtureModifier.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <rp/solvers/Block.h>
+#include <rp/field/Domain.h>
+
 #include <prdc/crystal/UnitCell.h>
 #include <pscf/chem/Monomer.h>
 #include <pscf/chem/PolymerModel.h>

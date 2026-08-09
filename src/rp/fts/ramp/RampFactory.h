@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
-#include <rpc/fts/ramp/Ramp.h>
+#include <util/param/Factory.h>    // base class template
+#include <rpc/fts/ramp/Ramp.h>     // base class argument
+
+#include <pscf/backends/TmplDeclare.h>
 #include <string>
 
 // Forward declaration
@@ -30,7 +32,7 @@ namespace Rp {
    * \ingroup Rp_Fts_Ramp_Module
    */
    template <int D, class T>
-   class RampFactory : public Factory< Ramp<D,T> > 
+   class RampFactory : public Factory< Ramp<D,T> >
    {
 
    public:
@@ -53,12 +55,15 @@ namespace Rp {
       using Factory< Ramp<D,T> >::trySubfactories;
 
    private:
-      
+
       /// Pointer to the parent simulator.
       Simulator<D,T>* simulatorPtr_;
 
    };
 
-}
-}
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(RampFactory)
+
+} // namespace Rp
+} // namespace Pscf
 #endif

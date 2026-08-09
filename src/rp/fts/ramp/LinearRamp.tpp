@@ -2,6 +2,7 @@
 #define RP_LINEAR_RAMP_TPP
 
 #include "LinearRamp.h"
+#include <rp/fts/simulator/Simulator.h>
 #include <util/global.h>
 
 namespace Pscf {

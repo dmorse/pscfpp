@@ -1,8 +1,11 @@
 #ifndef RP_LINEAR_RAMP_H
 #define RP_LINEAR_RAMP_H
 
-#include <rp/fts/ramp/Ramp.h>         // base class template
-#include <util/containers/DArray.h>   // member
+#include <rp/fts/ramp/Ramp.h>          // base class template
+#include <rp/fts/ramp/RampParameter.h> // member
+#include <util/containers/DArray.h>    // member
+
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 // Forward declaration
@@ -95,6 +98,9 @@ namespace Rp {
 
    };
 
-}
-}
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(LinearRamp)
+
+} // namespace Rp
+} // namespace Pscf
 #endif

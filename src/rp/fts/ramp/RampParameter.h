@@ -9,6 +9,8 @@
 */
 
 #include <util/containers/DArray.h>         // member
+
+#include <pscf/backends/TmplDeclare.h>
 #include <util/global.h>
 
 #include <iostream>
@@ -360,6 +362,9 @@ namespace Rp {
       return out;
    }
 
-}
-}
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(RampParameter)
+
+} // namespace Rp
+} // namespace Pscf
 #endif
