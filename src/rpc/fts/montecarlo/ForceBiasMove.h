@@ -10,7 +10,7 @@
 
 #include <rp/fts/montecarlo/ForceBiasMoveBase.h>   // base class template
 #include <pscf/backends/CPT.h>                      // base class argument
-#include <rpc/fts/montecarlo/McMove.h>             // indirect base class
+#include <rp/fts/montecarlo/McMove.h>             // indirect base class
 #include <prdc/field/cpu/RField.h>                 // base class member
 
 namespace Pscf {

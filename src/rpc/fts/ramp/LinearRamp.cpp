@@ -6,7 +6,7 @@
 */
 
 #include "LinearRamp.h"
-#include <rpc/fts/simulator/Simulator.h>
+#include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/ramp/LinearRamp.tpp>     // base class implementation
 
 

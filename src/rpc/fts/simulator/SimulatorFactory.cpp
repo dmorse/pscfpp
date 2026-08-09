@@ -6,8 +6,8 @@
 */
 
 // Subclasses of Simulator
-#include <rpc/fts/montecarlo/McSimulator.h>
-#include <rpc/fts/brownian/BdSimulator.h>
+#include <rp/fts/montecarlo/McSimulator.h>
+#include <rp/fts/brownian/BdSimulator.h>
 
 #include <rp/fts/simulator/SimulatorFactory.tpp>
 

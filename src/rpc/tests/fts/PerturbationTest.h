@@ -5,8 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <rp/system/System.h>
-#include <rpc/fts/simulator/Simulator.h>
-#include <rpc/fts/brownian/BdSimulator.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/brownian/BdSimulator.h>
 
 #include <prdc/field/cpu/RField.h>
 #include <prdc/field/cpu/RFieldComparison.h>

@@ -3,7 +3,7 @@
 
 #include <rp/fts/perturbation/EinsteinCrystalPerturbation.h> // base class
 #include <pscf/backends/CPT.h>                                // base argument
-#include <rpc/fts/perturbation/Perturbation.h>               // indirect base
+#include <rp/fts/perturbation/Perturbation.h>               // indirect base
 #include <prdc/field/cpu/RField.h>                           // base member
 
 // Explicit instantiation declarations

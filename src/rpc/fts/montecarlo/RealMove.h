@@ -10,7 +10,7 @@
 
 #include <rp/fts/montecarlo/RealMove.h>    // base class template
 #include <pscf/backends/CPT.h>              // template argument
-#include <rpc/fts/montecarlo/McMove.h>     // indirect base class
+#include <rp/fts/montecarlo/McMove.h>     // indirect base class
 #include <prdc/field/cpu/RField.h>         // base class member
 
 // Explicit instantiation declarations

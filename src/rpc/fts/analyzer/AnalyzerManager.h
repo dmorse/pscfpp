@@ -4,7 +4,7 @@
 #include <rp/fts/analyzer/AnalyzerManager.h> // class template
 #include <pscf/backends/CPT.h>                // template argument
 #include <util/param/Manager.h>              // base class template
-#include <rpc/fts/analyzer/Analyzer.h>       // base class member
+#include <rp/fts/analyzer/Analyzer.h>       // base class member
 
 // Explicit instantiation declarations
 namespace Pscf {

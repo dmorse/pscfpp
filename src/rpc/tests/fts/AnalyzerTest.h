@@ -5,9 +5,9 @@
 #include <test/UnitTestRunner.h>
 
 #include <rp/system/System.h>
-#include <rpc/fts/simulator/Simulator.h>
-#include <rpc/fts/brownian/BdSimulator.h>
-#include <rpc/fts/analyzer/AnalyzerManager.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/brownian/BdSimulator.h>
+#include <rp/fts/analyzer/AnalyzerManager.h>
 
 #include <util/format/Dbl.h>
 #include <util/tests/LogFileUnitTest.h>

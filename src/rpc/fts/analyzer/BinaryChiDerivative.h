@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/BinaryChiDerivative.h>  // base class template
 #include <pscf/backends/CPT.h>                     // base template argument
-#include <rpc/fts/analyzer/AverageAnalyzer.h>     // indirect base class
+#include <rp/fts/analyzer/AverageAnalyzer.h>     // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {

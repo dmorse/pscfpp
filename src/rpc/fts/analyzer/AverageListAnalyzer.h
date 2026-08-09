@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/AverageListAnalyzer.h> // class template
 #include <pscf/backends/CPT.h>                    // template argument
-#include <rpc/fts/analyzer/Analyzer.h>           // base class
+#include <rp/fts/analyzer/Analyzer.h>           // base class
 
 // Explicit instantiation declarations
 namespace Pscf {

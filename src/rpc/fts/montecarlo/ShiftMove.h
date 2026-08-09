@@ -11,7 +11,7 @@
 #include <rp/fts/montecarlo/ShiftMoveBase.h> // base class template
 #include <pscf/backends/CPT.h>                // base class argument
 #include <prdc/field/cpu/RField.h>           // base class member
-#include <rpc/fts/montecarlo/McMove.h>       // indirect base class
+#include <rp/fts/montecarlo/McMove.h>       // indirect base class
 
 namespace Pscf {
 namespace Rp {

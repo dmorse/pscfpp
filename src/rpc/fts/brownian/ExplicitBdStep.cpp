@@ -7,7 +7,7 @@
 
 #include "ExplicitBdStep.h"                   // class header
 
-#include <rpc/fts/brownian/BdSimulator.h>
+#include <rp/fts/brownian/BdSimulator.h>
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>

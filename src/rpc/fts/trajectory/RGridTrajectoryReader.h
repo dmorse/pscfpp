@@ -11,7 +11,7 @@
 #include <rp/fts/trajectory/RGridTrajectoryReader.h> // direct base class 
 #include <pscf/backends/CPT.h>                        // base class argument
 #include <prdc/field/cpu/RField.h>                   // base class member
-#include <rpc/fts/trajectory/TrajectoryReader.h>     // indirect base class 
+#include <rp/fts/trajectory/TrajectoryReader.h>     // indirect base class 
 
 // Explicit instantiation declarations
 namespace Pscf {

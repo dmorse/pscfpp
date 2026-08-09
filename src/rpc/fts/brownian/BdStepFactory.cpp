@@ -8,10 +8,10 @@
 #include "BdStepFactory.h"
 
 // Subclasses of BdStep
-#include <rpc/fts/brownian/ExplicitBdStep.h>
-#include <rpc/fts/brownian/PredCorrBdStep.h>
-#include <rpc/fts/brownian/LMBdStep.h>
-//#include <rpc/fts/brownian/BdSimulator.h>
+#include <rp/fts/brownian/ExplicitBdStep.h>
+#include <rp/fts/brownian/PredCorrBdStep.h>
+#include <rp/fts/brownian/LMBdStep.h>
+//#include <rp/fts/brownian/BdSimulator.h>
 
 #include <rp/fts/brownian/BdStepFactory.tpp>
 

@@ -6,9 +6,9 @@
 */
 
 #include "RampParameter.h"
-#include <rpc/fts/simulator/Simulator.h>
+#include <rp/fts/simulator/Simulator.h>
 #include <rp/system/System.h>
-#include <rpc/fts/perturbation/Perturbation.h>
+#include <rp/fts/perturbation/Perturbation.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/solvers/MixtureModifier.h>
 #include <rp/solvers/Polymer.h>

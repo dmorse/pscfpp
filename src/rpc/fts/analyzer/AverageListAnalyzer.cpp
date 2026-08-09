@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/analyzer/AverageListAnalyzer.h>
+#include <rp/fts/analyzer/AverageListAnalyzer.h>
 #include <rp/system/System.h>
 
 #include <rp/fts/analyzer/AverageListAnalyzer.tpp> // implementation

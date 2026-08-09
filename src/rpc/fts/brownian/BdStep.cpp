@@ -6,7 +6,7 @@
 */
 
 #include "BdStep.h"
-#include <rpc/fts/brownian/BdSimulator.h>
+#include <rp/fts/brownian/BdSimulator.h>
 #include <rp/system/System.h>
 
 #include <rp/fts/brownian/BdStep.tpp>

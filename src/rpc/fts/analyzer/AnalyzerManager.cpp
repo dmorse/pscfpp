@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/analyzer/AnalyzerManager.h>
-#include <rpc/fts/analyzer/AnalyzerFactory.h>
+#include <rp/fts/analyzer/AnalyzerManager.h>
+#include <rp/fts/analyzer/AnalyzerFactory.h>
 
 #include <rp/fts/analyzer/AnalyzerManager.tpp> // class implementation
 

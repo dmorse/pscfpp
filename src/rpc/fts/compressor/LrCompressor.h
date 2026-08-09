@@ -10,7 +10,7 @@
 
 #include <rp/fts/compressor/LrCompressor.h>       // base class template
 #include <pscf/backends/CPT.h>                     // base class argument
-#include <rpc/fts/compressor/IntraCorrelation.h>  // base member
+#include <rp/fts/compressor/IntraCorrelation.h>  // base member
 #include <prdc/field/cpu/RField.h>                // base member
 #include <prdc/field/cpu/RFieldDft.h>             // base member
 #include <rp/fts/compressor/Compressor.h>         // indirect base class

@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/MaxOrderParameterBase.h>  // base class template
 #include <pscf/backends/CPT.h>                       // base class argument
-#include <rpc/fts/analyzer/AverageAnalyzer.h>       // indirect base
+#include <rp/fts/analyzer/AverageAnalyzer.h>       // indirect base
 #include <prdc/field/cpu/RField.h>                  // direct base member
 #include <prdc/field/cpu/RFieldDft.h>               // direct base member
 

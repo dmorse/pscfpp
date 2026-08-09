@@ -10,8 +10,8 @@
 
 #include <rp/fts/ramp/LinearRamp.h>      // direct base class template
 #include <pscf/backends/CPT.h>            // base class template argument
-#include <rpc/fts/ramp/RampParameter.h>  // base class member
-#include <rpc/fts/ramp/Ramp.h>           // indirect base class
+#include <rp/fts/ramp/RampParameter.h>  // base class member
+#include <rp/fts/ramp/Ramp.h>           // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {

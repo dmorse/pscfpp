@@ -7,7 +7,7 @@
 
 #include "TrajectoryWriter.h"                    // header
 
-#include <rpc/fts/simulator/Simulator.h>
+#include <rp/fts/simulator/Simulator.h>
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>

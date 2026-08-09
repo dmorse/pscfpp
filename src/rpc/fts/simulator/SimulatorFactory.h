@@ -10,7 +10,7 @@
 
 #include <rp/fts/simulator/SimulatorFactory.h>
 #include <pscf/backends/CPT.h>
-//#include <rpc/fts/simulator/Simulator.h>
+//#include <rp/fts/simulator/Simulator.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

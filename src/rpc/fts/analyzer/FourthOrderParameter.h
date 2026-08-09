@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.h> // base template
 #include <pscf/backends/CPT.h>                         // base argument
-#include <rpc/fts/analyzer/AverageAnalyzer.h>         // indirect base 
+#include <rp/fts/analyzer/AverageAnalyzer.h>         // indirect base 
 #include <prdc/field/cpu/RField.h>                    // base member
 #include <prdc/field/cpu/RFieldDft.h>                 // base member
 

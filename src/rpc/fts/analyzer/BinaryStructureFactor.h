@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
 #include <pscf/backends/CPT.h>                          // base argument
-#include <rpc/fts/analyzer/Analyzer.h>                 // indirect base
+#include <rp/fts/analyzer/Analyzer.h>                 // indirect base
 #include <prdc/field/cpu/RField.h>                     // base member
 #include <prdc/field/cpu/RFieldDft.h>                  // base member
 

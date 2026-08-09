@@ -10,7 +10,7 @@
 
 #include <rp/fts/brownian/BdSimulator.h>       // base class template
 #include <pscf/backends/CPT.h>                  // template argument
-#include <rpc/fts/simulator/Simulator.h>       // indirect base class
+#include <rp/fts/simulator/Simulator.h>       // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {

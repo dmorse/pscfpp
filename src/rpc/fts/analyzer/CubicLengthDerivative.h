@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/CubicLengthDerivative.h>  // base class template
 #include <pscf/backends/CPT.h>                       // base class argument
-#include <rpc/fts/analyzer/AverageAnalyzer.h>       // indirect base
+#include <rp/fts/analyzer/AverageAnalyzer.h>       // indirect base
 
 // Explicit instantiation declarations
 namespace Pscf {

@@ -6,7 +6,7 @@
 */
 
 #include "HamiltonianAnalyzer.h"                    // header
-#include <rpc/fts/simulator/Simulator.h>
+#include <rp/fts/simulator/Simulator.h>
 #include <rp/system/System.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>

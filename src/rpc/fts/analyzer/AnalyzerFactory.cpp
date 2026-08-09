@@ -8,17 +8,17 @@
 #include "AnalyzerFactory.h"
 
 // Subclasses of Analyzer
-#include <rpc/fts/analyzer/StepLogger.h>
-#include <rpc/fts/analyzer/TrajectoryWriter.h>
-#include <rpc/fts/analyzer/ConcentrationWriter.h>
-#include <rpc/fts/analyzer/HamiltonianAnalyzer.h>
-#include <rpc/fts/analyzer/BinaryStructureFactor.h>
-#include <rpc/fts/analyzer/MaxOrderParameter.h>
-#include <rpc/fts/analyzer/FourthOrderParameter.h>
-#include <rpc/fts/analyzer/BinaryChiDerivative.h>
-#include <rpc/fts/analyzer/CubicLengthDerivative.h>
-#include <rpc/fts/analyzer/ConcentrationDerivative.h>
-#include <rpc/fts/analyzer/PerturbationDerivative.h>
+#include <rp/fts/analyzer/StepLogger.h>
+#include <rp/fts/analyzer/TrajectoryWriter.h>
+#include <rp/fts/analyzer/ConcentrationWriter.h>
+#include <rp/fts/analyzer/HamiltonianAnalyzer.h>
+#include <rp/fts/analyzer/BinaryStructureFactor.h>
+#include <rp/fts/analyzer/MaxOrderParameter.h>
+#include <rp/fts/analyzer/FourthOrderParameter.h>
+#include <rp/fts/analyzer/BinaryChiDerivative.h>
+#include <rp/fts/analyzer/CubicLengthDerivative.h>
+#include <rp/fts/analyzer/ConcentrationDerivative.h>
+#include <rp/fts/analyzer/PerturbationDerivative.h>
 
 #include <rp/fts/analyzer/AnalyzerFactory.tpp>
 

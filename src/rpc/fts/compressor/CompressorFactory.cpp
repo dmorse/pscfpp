@@ -8,9 +8,9 @@
 //#include "CompressorFactory.h"  
 
 // Subclasses of Compressor 
-#include <rpc/fts/compressor/AmCompressor.h>
-#include <rpc/fts/compressor/LrCompressor.h>
-#include <rpc/fts/compressor/LrAmCompressor.h>
+#include <rp/fts/compressor/AmCompressor.h>
+#include <rp/fts/compressor/LrCompressor.h>
+#include <rp/fts/compressor/LrAmCompressor.h>
 
 #include <rp/fts/compressor/CompressorFactory.tpp>
 

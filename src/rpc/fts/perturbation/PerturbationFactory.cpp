@@ -5,10 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/perturbation/PerturbationFactory.h>
+#include <rp/fts/perturbation/PerturbationFactory.h>
 
 // Subclasses of Perturbation
-#include <rpc/fts/perturbation/EinsteinCrystalPerturbation.h>
+#include <rp/fts/perturbation/EinsteinCrystalPerturbation.h>
 
 #include <rp/fts/perturbation/PerturbationFactory.tpp>
 

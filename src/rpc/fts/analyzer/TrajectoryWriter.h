@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/TrajectoryWriter.h> // base class template
 #include <pscf/backends/CPT.h>                 // base class argument
-#include <rpc/fts/analyzer/Analyzer.h>        // indirect base class
+#include <rp/fts/analyzer/Analyzer.h>        // indirect base class
 
 // Explicit instantiation declarations
 namespace Pscf {

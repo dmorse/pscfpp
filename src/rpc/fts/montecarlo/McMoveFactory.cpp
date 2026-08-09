@@ -8,10 +8,10 @@
 #include "McMoveFactory.h"
 
 // Subclasses of McMove
-#include <rpc/fts/montecarlo/RealMove.h>
-#include <rpc/fts/montecarlo/ForceBiasMove.h>
-#include <rpc/fts/montecarlo/BdMove.h>
-#include <rpc/fts/montecarlo/ShiftMove.h>
+#include <rp/fts/montecarlo/RealMove.h>
+#include <rp/fts/montecarlo/ForceBiasMove.h>
+#include <rp/fts/montecarlo/BdMove.h>
+#include <rp/fts/montecarlo/ShiftMove.h>
 
 #include <rp/fts/montecarlo/McMoveFactory.tpp> // class implementation
 

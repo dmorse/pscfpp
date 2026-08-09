@@ -9,8 +9,8 @@
 */
 
 #include <rp/fts/compressor/LrAmCompressor.h>     // base class template
-#include <pscf/backends/CPT.h>                     // base class argument
-#include <rpc/fts/compressor/IntraCorrelation.h>  // base member
+#include <pscf/backends/CPT.h>                    // base class argument
+#include <rp/fts/compressor/IntraCorrelation.h>   // base member
 #include <rpc/fts/compressor/AmCompressorBase.h>  // indirect base
 #include <prdc/field/cpu/RField.h>                // base member
 #include <prdc/field/cpu/RFieldDft.h>             // base member

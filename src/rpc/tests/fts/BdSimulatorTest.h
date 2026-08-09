@@ -4,11 +4,11 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpc/fts/brownian/BdSimulator.h>
-#include <rpc/fts/simulator/Simulator.h>
-#include <rpc/fts/brownian/ExplicitBdStep.h>
-#include <rpc/fts/brownian/PredCorrBdStep.h>
-#include <rpc/fts/brownian/LMBdStep.h>
+#include <rp/fts/brownian/BdSimulator.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/brownian/ExplicitBdStep.h>
+#include <rp/fts/brownian/PredCorrBdStep.h>
+#include <rp/fts/brownian/LMBdStep.h>
 #include <rp/system/System.h>
 #include <rp/field/WFields.h>
 

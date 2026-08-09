@@ -6,7 +6,7 @@
 */
 
 #include "Ramp.h"
-#include <rpc/fts/simulator/Simulator.h>
+#include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/ramp/Ramp.tpp>     // base class implementation
 
 // Explicit instantiation definitions

@@ -8,7 +8,7 @@
 #include "TrajectoryReaderFactory.h"
 
 // Subclasses of TrajectoryReader
-#include <rpc/fts/trajectory/RGridTrajectoryReader.h>
+#include <rp/fts/trajectory/RGridTrajectoryReader.h>
 
 #include <rp/fts/trajectory/TrajectoryReaderFactory.tpp>
 

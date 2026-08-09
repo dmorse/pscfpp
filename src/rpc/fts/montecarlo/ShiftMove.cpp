@@ -6,7 +6,7 @@
 */
 
 #include "ShiftMove.h"
-#include <rpc/fts/montecarlo/McSimulator.h>
+#include <rp/fts/montecarlo/McSimulator.h>
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>

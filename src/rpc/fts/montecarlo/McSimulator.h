@@ -10,9 +10,9 @@
 
 #include <rp/fts/montecarlo/McSimulator.h>      // base class template
 #include <pscf/backends/CPT.h>                   // template argument
-#include <rpc/fts/simulator/Simulator.h>        // indirect base class
-#include <rpc/fts/montecarlo/McMoveManager.h>   // member of base class
-#include <rpc/fts/analyzer/AnalyzerManager.h>   // member of base class
+#include <rp/fts/simulator/Simulator.h>        // indirect base class
+#include <rp/fts/montecarlo/McMoveManager.h>   // member of base class
+#include <rp/fts/analyzer/AnalyzerManager.h>   // member of base class
 
 // Explicit instantiation declarations
 namespace Pscf {

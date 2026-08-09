@@ -6,7 +6,7 @@
 */
 
 #include "McMove.h"
-#include <rpc/fts/simulator/SimState.h>
+#include <rp/fts/simulator/SimState.h>
 #include <prdc/field/cpu/RField.h>
 
 #include <rp/fts/montecarlo/McMove.tpp>     // base class implementation
