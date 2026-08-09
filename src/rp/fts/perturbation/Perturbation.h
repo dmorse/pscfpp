@@ -2,6 +2,8 @@
 #define RP_PERTURBATION_H
 
 #include <util/param/ParamComposite.h>      // base class
+
+#include <pscf/backends/TmplDeclare.h>
 #include <util/global.h>
 
 // Forward declarations
@@ -207,6 +209,9 @@ namespace Rp {
       UTIL_ASSERT(systemPtr_);
       return *systemPtr_;
    }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(Perturbation)
 
 }
 }

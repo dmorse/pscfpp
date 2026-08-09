@@ -1,17 +1,19 @@
 #ifndef RP_EINSTEIN_CRYSTAL_PERTURBATION_TPP
 #define RP_EINSTEIN_CRYSTAL_PERTURBATION_TPP
 
-// Derived classes must include headers for:
-//  T::Simulator
-//  T::System
-//  T::Mixture
-//  T::Domain
-//  T::VecOp
-//  T::Reduce
 
 #include "EinsteinCrystalPerturbation.h"
+
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
+
 #include <prdc/crystal/UnitCell.h>
 #include <util/global.h>
+
+// Also need VecOp and Reduce classes
 
 namespace Pscf {
 namespace Rp {
@@ -136,7 +138,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   EinsteinCrystalPerturbation<D,T>::incrementDc(DArray<RFieldT> & dc)
+   EinsteinCrystalPerturbation<D,T>::incrementDc(DArray< RField<D,T> > & dc)
    {
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();

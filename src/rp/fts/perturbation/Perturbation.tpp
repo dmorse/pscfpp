@@ -1,11 +1,9 @@
 #ifndef RP_PERTURBATION_TPP
 #define RP_PERTURBATION_TPP
 
-//Headers to be included in derived class implementation
-// T::Simulator
-// T::RField
-
 #include "Perturbation.h"
+#include <rpc/fts/simulator/Simulator.h>
+#include <prdc/field/RField.h>
 #include <util/containers/DArray.h>
 #include <util/global.h>
 

@@ -2,7 +2,10 @@
 #define RP_EINSTEIN_CRYSTAL_PERTURBATION_H
 
 #include <rp/fts/perturbation/Perturbation.h>  // base class template
+#include <prdc/field/RField.h>                 // member
 #include <util/containers/DArray.h>            // member
+
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 // Forward declaration
@@ -106,19 +109,17 @@ namespace Rp {
 
    private:
 
-      using RFieldT = RField<D,T>;
-
       // Parameters used in Einstein crystal integration
       DArray<double> epsilon_;
 
       // Reference w field
-      DArray< RFieldT > w0_;
+      DArray< RField<D,T> > w0_;
 
       // Eigenvector components of the reference w fields
-      DArray< RFieldT > wc0_;
+      DArray< RField<D,T> > wc0_;
 
       // Work space
-      RFieldT dw_;
+      RField<D,T> dw_;
 
       // Current Einstein crystal Hamiltonian
       double ecHamiltonian_;
@@ -142,6 +143,9 @@ namespace Rp {
       void computeWcReference();
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(EinsteinCrystalPerturbation)
 
 }
 }
