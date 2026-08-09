@@ -9,15 +9,11 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>    // base class
+#include <prdc/field/RField.h>           // member
 #include <util/containers/DArray.h>      // member
-#include <iostream>
 
-// Forward declaration
-namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
-}
+#include <pscf/backends/TmplDeclare.h>
+#include <iostream>
 
 namespace Pscf {
 namespace Rp {
@@ -107,19 +103,19 @@ namespace Rp {
       using RFieldT = RField<D,T>;
 
       /// Local copy of w fields
-      DArray< RFieldT > w_;
+      DArray< RField<D,T> > w_;
 
       /// Copy of initial dc field
-      DArray< RFieldT > dc_;
+      DArray< RField<D,T> > dc_;
 
       /// Change in wc
-      DArray<RFieldT >  dwc_;
+      DArray< RField<D,T> >  dwc_;
 
       /// Normal-distributed random field
-      RFieldT eta_;
+      RField<D,T> eta_;
 
       /// Field used to compute bias for Metropolis criterion
-      RFieldT biasField_;
+      RField<D,T> biasField_;
 
       /// Prefactor of -dc_ in deterministic drift term
       double mobility_;
@@ -128,25 +124,29 @@ namespace Rp {
       * Compute force bias field.
       */
       virtual
-      void computeForceBias(RFieldT& result,
-                            RFieldT const & di,
-                            RFieldT const & df,
-                            RFieldT const & dwc,
+      void computeForceBias(RField<D,T>& result,
+                            RField<D,T> const & di,
+                            RField<D,T> const & df,
+                            RField<D,T> const & dwc,
                             double mobility) = 0;
 
    };
 
-   // Public inline methods
+   // Public inline method
 
    /*
    * Specify if dc fields need to be saved.
    */
-   template <int D, class T>
-   inline bool ForceBiasMoveBase<D,T>::needsDc()
+   template <int D, class T> inline 
+   bool ForceBiasMoveBase<D,T>::needsDc()
    {  return true; }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(ForceBiasMoveBase)
 
    // Primary template declaration for subclasses
    template <int D, class T> class ForceBiasMove;
+
 }
 }
 #endif

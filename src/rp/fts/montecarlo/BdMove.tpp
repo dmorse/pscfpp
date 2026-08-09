@@ -10,11 +10,14 @@
 
 #include "BdMove.h"
 
-#include <rp/field/CFields.h>
-//#include <rp/field/WFields.h>
-#include <rp/field/Domain.h>
+#include <rp/fts/montecarlo/McSimulator.h>
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/compressor/Compressor.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
 #include <pscf/math/IntVec.h>
 
 namespace Pscf {

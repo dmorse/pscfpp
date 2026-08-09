@@ -9,17 +9,17 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>  // base class
-#include <util/containers/DArray.h>    // member
+#include <prdc/field/RField.h>         // member
 #include <pscf/math/IntVec.h>          // template with defaults
+#include <util/containers/DArray.h>    // member
+
+#include <pscf/backends/TmplDeclare.h>
 
 // Forward declaration
 namespace Util {
    template <typename Data> class Array;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
    namespace Rp {
       template <int D, class T> class System;
    }
@@ -128,6 +128,9 @@ namespace Rp {
       bool isAllocated_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(ShiftMoveBase)
 
    // Declaration of primary ShiftMove template
    template <int D, class T> class ShiftMove;

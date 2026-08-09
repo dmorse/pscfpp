@@ -9,11 +9,12 @@
 */
 
 #include "RealMove.h"
-//#include <rp/field/WFields.h>
-#include <rp/field/Domain.h>
-//#include <rp/solvers/mixture.h>
-#include <rp/system/System.h>
+#include <rp/fts/montecarlo/McSimulator.h>
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
 #include <pscf/math/IntVec.h>
 
 namespace Pscf {

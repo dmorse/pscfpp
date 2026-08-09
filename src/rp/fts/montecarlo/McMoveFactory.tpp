@@ -6,13 +6,14 @@
 */
 
 #include "McMoveFactory.h"
-//#include <rp/fts/montecarlo/McSimulator.h>
+
+#include <rp/fts/montecarlo/McSimulator.h>
 
 // Subclasses of McMove
 #include <rp/fts/montecarlo/RealMove.h>
-//#include <rp/fts/montecarlo/ForceBiasMove.h>
+#include <rp/fts/montecarlo/ForceBiasMove.h>
 #include <rp/fts/montecarlo/BdMove.h>
-//#include <rp/fts/montecarlo/ShiftMove.h>
+#include <rp/fts/montecarlo/ShiftMove.h>
 
 namespace Pscf {
 namespace Rp {

@@ -1,0 +1,23 @@
+/*
+* PSCF - Polymer Self-Consistent Field
+*
+* Copyright 2015 - 2025, The Regents of the University of Minnesota
+* Distributed under the terms of the GNU General Public License.
+*/
+
+#include <rpg/fts/montecarlo/McMoveManager.h>  // class header
+#include <rpg/fts/montecarlo/McMoveFactory.h>
+#include <rpg/fts/montecarlo/McSimulator.h>
+#include <util/random/Random.h>
+#include <util/global.h>
+
+#include <rp/fts/montecarlo/McMoveManager.tpp> // template implementation
+
+// Explicit instantiation definitions
+namespace Pscf {
+   namespace Rp {
+      template class McMoveManager<1,CUT>;
+      template class McMoveManager<2,CUT>;
+      template class McMoveManager<3,CUT>;
+   }
+}

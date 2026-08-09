@@ -10,12 +10,14 @@
 
 #include "ForceBiasMoveBase.h"
 
+#include <rp/fts/montecarlo/McSimulator.h>
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/compressor/Compressor.h>
 #include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
-//#include <rp/field/WFields.h>
+#include <rp/field/WFields.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
@@ -190,8 +192,8 @@ namespace Rp {
          // Compute force bias used in acceptance criterion
          double bias = 0.0;
          for (j = 0; j < nMonomer - 1; ++j) {
-            RFieldT const & di = dc_[j];
-            RFieldT const & df = simulator().dc(j);
+            RField<D,T> const & di = dc_[j];
+            RField<D,T> const & df = simulator().dc(j);
             computeForceBias(biasField_, di, df, dwc_[j], mobility_);
             bias += Reduce::sum(biasField_);
          }

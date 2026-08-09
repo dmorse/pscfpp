@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>  
-#include <rp/fts/montecarlo/McMove.h>
+#include <util/param/Factory.h>          // base class template
+#include <rp/fts/montecarlo/McMove.h>    // base class argument
+
+#include <pscf/backends/TmplDeclare.h>
 
 #include <string>
 
@@ -55,6 +57,9 @@ namespace Rp {
       McSimulator<D,T>* simulatorPtr_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(McMoveFactory)
 
 }
 }

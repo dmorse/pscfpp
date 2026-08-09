@@ -9,15 +9,11 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>  // base class
+#include <prdc/field/RField.h>         // member
 #include <util/containers/DArray.h>    // member
-#include <iostream>
 
-// Forward declaration
-namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
-}
+#include <pscf/backends/TmplDeclare.h>
+#include <iostream>
 
 namespace Pscf {
 namespace Rp {
@@ -153,6 +149,9 @@ namespace Rp {
       void exchangeOldNew();
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(BdMove)
 
 }
 }

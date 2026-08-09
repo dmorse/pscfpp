@@ -8,6 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/montecarlo/McMoveManager.h>
+#include <rp/fts/montecarlo/McMoveFactory.h>
+#include <rp/fts/montecarlo/McSimulator.h>
 #include <util/random/Random.h>
 #include <util/global.h>
 

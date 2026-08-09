@@ -10,6 +10,9 @@
 
 #include <rp/fts/montecarlo/McMove.h>  // base class
 #include <util/containers/DArray.h>    // member
+#include <prdc/field/RField.h>         // member
+
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 // Forward declaration
@@ -87,13 +90,11 @@ namespace Rp {
 
    private:
 
-      using RFieldT = RField<D,T>;
-
       /// New field values, indexed by monomer type.
-      DArray< RFieldT > w_;
+      DArray< RField<D,T> > w_;
 
       /// Change in one field component.
-      RFieldT dwc_;
+      RField<D,T> dwc_;
 
       /// Standard deviation of field changes.
       double sigma_;
@@ -102,6 +103,9 @@ namespace Rp {
       bool isAllocated_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(RealMove)
 
 }
 }

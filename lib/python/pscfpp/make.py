@@ -113,7 +113,7 @@ def createDependencyFileCuda(processor, options, cfile, srcdir, blddir, extraDep
    command += options + ' '
    command += cfile
    command += ' > ' + pfile
-   print(command)
+   #print('\n' + command + '\n')
    os.system(command)
 
    # Edit dependency file and remove temporary pfile

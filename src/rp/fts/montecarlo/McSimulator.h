@@ -8,6 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/fts/simulator/Simulator.h> // base class
+
+#include <pscf/backends/TmplDeclare.h>
 #include <util/global.h>
 #include <iostream>
 #include <string>
@@ -19,7 +22,6 @@ namespace Util {
 namespace Pscf {
    namespace Rp {
       template <int D, class T> class System; 
-      template <int D, class T> class Simulator; 
       template <int D, class T> class McMoveManager; 
       template <int D, class T> class AnalyzerManager; 
       template <int D, class T> class TrajectoryReader; 
@@ -277,6 +279,9 @@ namespace Rp {
    template <int D, class T> inline
    bool McSimulator<D,T>::needsDc()
    {  return state().needsDc; }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(McSimulator)
 
 }
 }
