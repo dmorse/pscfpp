@@ -6,16 +6,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#if 0
-#include "RealMove.h"                       // header
-#include "McMove.h"
-#include <rpc/fts/montecarlo/McSimulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#endif
-
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/CpuVecRandom.h>
 #include <pscf/backends/CPT.h>

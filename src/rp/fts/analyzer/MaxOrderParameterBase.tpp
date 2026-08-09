@@ -3,6 +3,13 @@
 
 #include "MaxOrderParameterBase.h"
 
+#include <rp/system/System.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+
+#include <prdc/field/FFT.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 

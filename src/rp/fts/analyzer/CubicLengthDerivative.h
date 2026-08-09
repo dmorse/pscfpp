@@ -9,6 +9,7 @@
 */
 
 #include <rp/fts/analyzer/AverageAnalyzer.h> // base class template
+#include <pscf/backends/TmplDeclare.h>
 
 namespace Pscf {
 namespace Rp {
@@ -49,6 +50,9 @@ namespace Rp {
 
    };
 
-}
-}
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(CubicLengthDerivative)
+
+} // namespace Rp
+} // namespace Pscf
 #endif

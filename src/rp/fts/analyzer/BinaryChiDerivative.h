@@ -10,6 +10,7 @@
 
 #include <rp/fts/analyzer/AverageAnalyzer.h> // base class template
 
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 namespace Pscf {
@@ -64,6 +65,9 @@ namespace Rp {
 
    };
 
-}
-}
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(BinaryChiDerivative)
+
+} // namespace Rp
+} // namespace Pscf
 #endif

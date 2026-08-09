@@ -5,23 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/simulator/SimState.h>
-#include <rpc/fts/compressor/CompressorFactory.h>
-#include <rpc/fts/perturbation/Perturbation.h>
-#include <rpc/fts/perturbation/PerturbationFactory.h>
-#include <rpc/fts/ramp/Ramp.h>
-#include <rpc/fts/ramp/RampFactory.h>
-
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/solvers/Polymer.h>
-#include <rp/solvers/Solvent.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-
-#include <prdc/field/cpu/RField.h>
-
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 #include <pscf/cpu/CpuVecRandom.h>

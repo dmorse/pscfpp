@@ -1,7 +1,10 @@
 #ifndef RP_ANALYZER_MANAGER_H
 #define RP_ANALYZER_MANAGER_H
 
-#include <util/param/Manager.h>        // base class template
+#include <util/param/Manager.h>             // base class template
+#include <rp/fts/analyzer/Analyzer.h>       // base class argument
+
+#include <pscf/backends/TmplDeclare.h>
 
 // Forward declarations
 namespace Util {
@@ -11,7 +14,6 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
-      template <int D, class T> class Analyzer;
       template <int D, class T> class AnalyzerFactory;
    }
 }
@@ -110,6 +112,9 @@ namespace Rp {
       Factory< Analyzer<D,T> >* newDefaultFactory() const override;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(AnalyzerManager)
 
 }
 }

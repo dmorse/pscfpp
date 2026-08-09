@@ -3,6 +3,14 @@
 
 #include "FourthOrderParameterBase.h"
 
+#include <rp/system/System.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
+
+#include <prdc/field/FFT.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
 #include <pscf/interaction/Interaction.h>

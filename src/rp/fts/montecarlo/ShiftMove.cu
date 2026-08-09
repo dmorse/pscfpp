@@ -6,16 +6,6 @@
 */
 
 #include "ShiftMove_u.h"
-
-#if 0
-#include <rpg/fts/montecarlo/McSimulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#include <pscf/mesh/Mesh.h>
-#endif
-
 #include <rp/fts/montecarlo/ShiftMoveBase.tpp>
 
 namespace Pscf {

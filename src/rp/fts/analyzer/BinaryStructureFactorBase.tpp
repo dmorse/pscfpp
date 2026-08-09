@@ -3,6 +3,15 @@
 
 #include "BinaryStructureFactorBase.h"
 
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/WFields.h>
+
+#include <prdc/field/FFT.h>
+#include <prdc/field/WaveList.h>
+
 #include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>

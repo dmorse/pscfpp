@@ -5,16 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#if 0
-#include "BdMove.h"                         // class header
-#include <rpc/fts/montecarlo/McSimulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-#endif
-
 #include <pscf/cpu/CpuVecRandom.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/backends/CPT.h>

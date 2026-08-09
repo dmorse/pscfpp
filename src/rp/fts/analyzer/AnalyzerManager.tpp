@@ -1,7 +1,9 @@
 #ifndef RP_ANALYZER_MANAGER_TPP
 #define RP_ANALYZER_MANAGER_TPP
 
-#include "AnalyzerManager.h"
+#include <rp/fts/analyzer/AnalyzerManager.h>
+#include <rp/fts/analyzer/AnalyzerFactory.h>
+
 #include <util/param/Factory.h>
 #include <util/param/ParamComposite.h>
 

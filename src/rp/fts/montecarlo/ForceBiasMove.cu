@@ -5,16 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#if 0
-#include <rp/fts/montecarlo/McMove.h>
-#include <rp/fts/montecarlo/McSimulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/CFields.h>
-#include <rp/field/WFields.h>
-#endif
-
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 #include <pscf/cuda/CudaVecRandom.h>

@@ -9,6 +9,8 @@
 */
 
 #include "AverageAnalyzer.h"
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/system/System.h>
 
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>

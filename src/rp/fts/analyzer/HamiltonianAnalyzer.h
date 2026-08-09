@@ -10,6 +10,7 @@
 
 #include <rp/fts/analyzer/AverageListAnalyzer.h> // base class template
 
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 namespace Pscf {
@@ -85,6 +86,9 @@ namespace Rp {
       int totalId_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(HamiltonianAnalyzer)
 
 }
 }

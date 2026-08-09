@@ -10,6 +10,7 @@
 
 #include <rp/fts/analyzer/Analyzer.h>
 
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 namespace Pscf {
@@ -62,6 +63,10 @@ namespace Rp {
 
    };
 
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(StepLogger)
+
 }
 }
 #endif
+

@@ -9,7 +9,11 @@
 */
 
 #include <rp/fts/analyzer/AverageAnalyzer.h>   // base class template
+#include <prdc/field/RField.h>                 // member
+#include <prdc/field/RFieldDft.h>              // member
 #include <pscf/math/IntVec.h>                  // member
+
+#include <pscf/backends/TmplDeclare.h>
 
 // Forward declarations
 namespace Util {
@@ -17,8 +21,6 @@ namespace Util {
 }
 namespace Pscf {
    namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class RFieldDft;
       template <int D, class T> class FFT;
    }
 }
@@ -134,6 +136,9 @@ namespace Rp {
       using FFTT = FFT<D,T>;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(FourthOrderParameterBase)
 
    // Primary template declaration for subclasses
    template <int D, class t> class FourthOrderParameter;

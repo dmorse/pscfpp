@@ -10,6 +10,7 @@
 
 #include <rp/fts/analyzer/Analyzer.h> // base class template
 
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 #include <fstream>
 
@@ -97,6 +98,9 @@ namespace Rp {
       void writeFrame(std::ofstream& out, long iStep);
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(ConcentrationWriter)
 
 }
 }

@@ -5,24 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-//#include <rpg/fts/montecarlo/McMove.h>
-//#include <rpg/fts/montecarlo/McMoveFactory.h>
-//#include <rpg/fts/montecarlo/McMoveManager.h>
 #include <rpg/fts/analyzer/Analyzer.h>
 #include <rpg/fts/analyzer/AnalyzerFactory.h>
 #include <rpg/fts/analyzer/AnalyzerManager.h>
-#include <rpg/fts/trajectory/TrajectoryReaderFactory.h>
-#include <rpg/fts/trajectory/TrajectoryReader.h>
-#include <rpg/fts/perturbation/Perturbation.h>
-#include <rpg/fts/ramp/Ramp.h>
 
-//#include <rpg/fts/simulator/Simulator.h>
-//#include <rp/system/System.h>
-//#include <rp/field/Domain.h>
-//#include <rp/field/CFields.h>
-//#include <rp/field/WFields.h>
-
-#include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/CudaVecRandom.h>
 #include <pscf/backends/CUT.h>
 

@@ -9,6 +9,14 @@
 */
 
 #include "TrajectoryWriter.h"
+
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/FieldIo.h>
+#include <rp/field/WFields.h>
+
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
 

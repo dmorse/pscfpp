@@ -10,9 +10,12 @@
 
 #include <rp/fts/analyzer/Analyzer.h>         // base class
 #include <pscf/math/IntVec.h>                 // member
+#include <prdc/field/RField.h>                // member
+#include <prdc/field/RFieldDft.h>             // member
 #include <util/accumulators/Average.h>        // member
 #include <util/containers/DArray.h>           // member
 
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 // Forward declaration
@@ -172,6 +175,9 @@ namespace Rp {
       using FFTT = FFT<D,T>;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(BinaryStructureFactorBase)
 
    // Declaration of primary template for subclasses
    template <int D, class T> class BinaryStructureFactor;

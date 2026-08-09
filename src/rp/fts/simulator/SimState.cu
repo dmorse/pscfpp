@@ -6,7 +6,6 @@
 */
 
 #include <pscf/backends/CUT.h>
-
 #include <rp/fts/simulator/SimState.tpp>
 
 // Explicit instantiation definitions

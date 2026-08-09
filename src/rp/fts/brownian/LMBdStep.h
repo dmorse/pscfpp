@@ -14,15 +14,6 @@
 
 #include <pscf/backends/TmplDeclare.h>
 
-#if 0
-// Forward declarations
-namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
-}
-#endif
-
 namespace Pscf {
 namespace Rp {
 

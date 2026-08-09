@@ -16,9 +16,9 @@
 #include <rp/fts/analyzer/CubicLengthDerivative.h>
 #include <rp/fts/analyzer/ConcentrationDerivative.h>
 #include <rp/fts/analyzer/PerturbationDerivative.h>
-//#include <rp/fts/analyzer/BinaryStructureFactor.h>
-//#include <rp/fts/analyzer/MaxOrderParameter.h>
-//#include <rp/fts/analyzer/FourthOrderParameter.h>
+#include <rp/fts/analyzer/BinaryStructureFactor.h>
+#include <rp/fts/analyzer/MaxOrderParameter.h>
+#include <rp/fts/analyzer/FourthOrderParameter.h>
 
 namespace Pscf {
 namespace Rp {

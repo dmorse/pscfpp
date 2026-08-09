@@ -12,18 +12,14 @@
 
 #include <rp/fts/brownian/BdStep.h>
 #include <rp/fts/brownian/BdStepFactory.h>
-#include <rp/fts/simulator/Simulator.h>
-
-#if 0
-#include <rpc/fts/analyzer/AnalyzerManager.h>
-#include <rpc/fts/analyzer/AnalyzerFactory.h>
-#include <rpc/fts/trajectory/TrajectoryReader.h>
-#include <rpc/fts/trajectory/TrajectoryReaderFactory.h>
-#include <rpc/fts/perturbation/Perturbation.h>
-#include <rpc/fts/ramp/Ramp.h>
-#endif
 
 #include <rp/fts/simulator/Simulator.h>
+//#include <rp/fts/analyzer/AnalyzerManager.h>
+//#include <rp/fts/analyzer/AnalyzerFactory.h>
+#include <rp/fts/trajectory/TrajectoryReader.h>
+#include <rp/fts/trajectory/TrajectoryReaderFactory.h>
+#include <rp/fts/perturbation/Perturbation.h>
+#include <rp/fts/ramp/Ramp.h>
 #include <rp/fts/compressor/Compressor.h>
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>

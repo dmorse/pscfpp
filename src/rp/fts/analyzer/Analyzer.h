@@ -2,6 +2,8 @@
 #define RP_ANALYZER_H
 
 #include <util/param/ParamComposite.h>      // base class
+
+#include <pscf/backends/TmplDeclare.h>
 #include <string>
 #include <iostream>
 
@@ -243,6 +245,9 @@ namespace Rp {
       UTIL_ASSERT(systemPtr_);
       return *systemPtr_;
    }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(Analyzer)
 
 } // namespace Rp
 } // namespace Pscf

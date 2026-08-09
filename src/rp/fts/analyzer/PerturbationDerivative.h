@@ -9,6 +9,7 @@
 */
 
 #include <rp/fts/analyzer/AverageAnalyzer.h>  // base class template
+#include <pscf/backends/TmplDeclare.h>
 
 namespace Pscf {
 namespace Rp {
@@ -60,6 +61,9 @@ namespace Rp {
       using Analyzer<D,T>::system;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(PerturbationDerivative)
 
 } // namespace Rp
 } // namespace Pscf

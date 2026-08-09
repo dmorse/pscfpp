@@ -6,7 +6,7 @@
 */
 
 // Subclasses of Simulator
-#include <rpg/fts/montecarlo/McSimulator.h>
+#include <rp/fts/montecarlo/McSimulator.h>
 #include <rp/fts/brownian/BdSimulator.h>
 
 #include <pscf/backends/CUT.h>

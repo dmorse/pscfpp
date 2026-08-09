@@ -14,13 +14,10 @@
 #include <rp/fts/montecarlo/McMoveFactory.h>
 #include <rp/fts/montecarlo/McMoveManager.h>
 
-#include <rpc/fts/analyzer/Analyzer.h>
-#include <rpc/fts/analyzer/AnalyzerFactory.h>
-#include <rpc/fts/analyzer/AnalyzerManager.h>
-#include <rpc/fts/trajectory/TrajectoryReaderFactory.h>
-#include <rpc/fts/trajectory/TrajectoryReader.h>
-#include <rpc/fts/perturbation/Perturbation.h>
-#include <rpc/fts/ramp/Ramp.h>
+#include <rp/fts/trajectory/TrajectoryReaderFactory.h>
+#include <rp/fts/trajectory/TrajectoryReader.h>
+#include <rp/fts/perturbation/Perturbation.h>
+#include <rp/fts/ramp/Ramp.h>
 
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/simulator/SimState.h>
@@ -28,6 +25,8 @@
 #include <rp/system/System.h>
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
+
+#include <prdc/field/RField.h>
 
 #include <util/param/Factory.h>
 #include <util/param/ParamComposite.h>

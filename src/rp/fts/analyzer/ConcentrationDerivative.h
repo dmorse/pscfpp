@@ -9,6 +9,7 @@
 */
 
 #include <rp/fts/analyzer/AverageAnalyzer.h> // base class template
+#include <pscf/backends/TmplDeclare.h>
 
 namespace Pscf {
 namespace Rp {
@@ -52,14 +53,17 @@ namespace Rp {
       double compute() override;
 
       // Aliases for base classes.
-      using AnalyzerT = Analyzer<D,T>;
-      using AverageAnalyzerT = AverageAnalyzer<D,T>;
+      //using AnalyzerT = Analyzer<D,T>;
+      //using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).
       using Analyzer<D,T>::simulator;
       using Analyzer<D,T>::system;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(ConcentrationDerivative)
 
 } // namespace Rp
 } // namespace Pscf

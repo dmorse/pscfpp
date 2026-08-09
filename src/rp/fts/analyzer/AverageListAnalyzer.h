@@ -10,6 +10,9 @@
 
 #include <rp/fts/analyzer/Analyzer.h>    // base class
 #include <util/accumulators/Average.h>   // member
+#include <util/containers/DArray.h>      // member
+
+#include <pscf/backends/TmplDeclare.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -256,6 +259,9 @@ namespace Rp {
       UTIL_CHECK(i >= 0 && i < nValue_);
       values_[i] = value;
    }
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(AverageListAnalyzer)
 
 }
 }

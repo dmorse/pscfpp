@@ -10,6 +10,8 @@
 
 #include <rp/fts/analyzer/Analyzer.h>     // base class
 #include <util/accumulators/Average.h>    // member
+
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 namespace Pscf {
@@ -134,13 +136,16 @@ namespace Rp {
 
    };
 
-   // Inline functions
+   // Inline function
 
    // Get nSamplePerOutput.
    template <int D, class T> inline 
    int AverageAnalyzer<D,T>::nSamplePerOutput() const
    {  return nSamplePerOutput_; }
 
-}
-}
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(AverageAnalyzer)
+
+} // namespace Rp
+} // namespace Pscf
 #endif

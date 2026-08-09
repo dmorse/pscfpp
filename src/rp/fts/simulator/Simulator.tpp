@@ -10,7 +10,14 @@
 
 #include "Simulator.h"
 
+#include <rp/fts/simulator/SimState.h>
 #include <rp/fts/compressor/Compressor.h>
+#include <rp/fts/compressor/CompressorFactory.h>
+#include <rp/fts/perturbation/Perturbation.h>
+#include <rp/fts/perturbation/PerturbationFactory.h>
+#include <rp/fts/ramp/Ramp.h>
+#include <rp/fts/ramp/RampFactory.h>
+
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/solvers/Polymer.h>
@@ -18,6 +25,8 @@
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
+
+#include <prdc/field/RField.h>
 
 #include <pscf/interaction/Interaction.h>
 #include <pscf/chem/PolymerModel.h>

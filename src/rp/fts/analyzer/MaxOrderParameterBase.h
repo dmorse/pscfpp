@@ -9,15 +9,17 @@
 */
 
 #include "AverageAnalyzer.h"              // base class template
+#include <prdc/field/RField.h>            // member
+#include <prdc/field/RFieldDft.h>         // member
 #include <pscf/math/IntVec.h>             // member
 #include <util/containers/DArray.h>       // member
+
+#include <pscf/backends/TmplDeclare.h>
 #include <iostream>
 
 // Forward declaration
 namespace Pscf {
    namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class RFieldDft;
       template <int D, class T> class FFT;
    }
 }
@@ -130,6 +132,9 @@ namespace Rp {
 
       using FFTT = FFT<D,T>;
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(MaxOrderParameterBase)
 
    // Primary template for subclasses
    template <int D, class T> class MaxOrderParameter;

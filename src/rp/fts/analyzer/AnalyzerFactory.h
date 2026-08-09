@@ -10,6 +10,8 @@
 
 #include <util/param/Factory.h>         // base class template
 #include <rp/fts/analyzer/Analyzer.h>   // base class argument
+
+#include <pscf/backends/TmplDeclare.h>
 #include <string>
 
 namespace Pscf {
@@ -57,6 +59,9 @@ namespace Rp {
       
    };
 
-}
-}
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(AnalyzerFactory)
+
+} // namespace Rp
+} // namespace Pscf
 #endif

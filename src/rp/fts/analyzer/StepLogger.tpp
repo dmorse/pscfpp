@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "StepLogger.h"
 #include <util/format/Int.h>
 #include <util/misc/Log.h>
 
@@ -21,7 +22,7 @@ namespace Rp {
    */
    template <int D, class T>
    StepLogger<D,T>::StepLogger(Simulator<D,T>& simulator, 
-                             System<D,T>& system)
+                               System<D,T>& system)
     : Analyzer<D,T>(simulator, system)
    {  ParamComposite::setClassName("StepLogger"); }
 

@@ -7,18 +7,11 @@
 
 #include "BdSimulator.h"
 
-//#include <rp/fts/brownian/BdStep.h>
-//#include <rp/fts/brownian/BdStepFactory.h>
-
 #include <rpg/fts/analyzer/AnalyzerManager.h>
 #include <rpg/fts/analyzer/AnalyzerFactory.h>
-#include <rpg/fts/trajectory/TrajectoryReader.h>
-#include <rpg/fts/trajectory/TrajectoryReaderFactory.h>
-#include <rpg/fts/perturbation/Perturbation.h>
-#include <rpg/fts/ramp/Ramp.h>
 
-#include <prdc/field/RField.h>
 #include <pscf/cuda/CudaVecRandom.h>
+#include <pscf/backends/CUT.h>
 
 #include <rp/fts/brownian/BdSimulator.tpp>
 
