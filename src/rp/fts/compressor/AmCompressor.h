@@ -10,13 +10,14 @@
 
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/fts/compressor/Compressor.h>   // template argument
+#include <prdc/field/RField.h>              // member
 #include <util/containers/DArray.h>         // member
+
 #include <pscf/backends/TmplDeclare.h>      // declaration macros
 
 // Forward declarations
 namespace Pscf {
    namespace Prdc {
-      template <int D, class T> class RField;
       template <int D, class T> class FFT;
    }
    namespace Rp {

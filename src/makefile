@@ -1,6 +1,6 @@
 include config.mk
 
-.PHONY: all all-common util pscf prdc r1d rpc rpg cpc \
+.PHONY: all all-common util pscf prdc r1d rp rpc rpg cpc \
         test test-cpu test-gpu \
         clean clean-tests veryclean
 # ======================================================================

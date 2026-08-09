@@ -57,19 +57,12 @@ namespace Rp {
 
    };
 
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE_CPP(ShiftMove)
+   //extern template class ShiftMove<1,CPT>;
+   //extern template class ShiftMove<2,CPT>;
+   //extern template class ShiftMove<3,CPT>;
 
-}
-}
-
-// Explicit instantiation declarations
-namespace Pscf {
-   namespace Rp {
-      extern template class ShiftMoveBase<1,CPT>;
-      extern template class ShiftMoveBase<2,CPT>;
-      extern template class ShiftMoveBase<3,CPT>;
-      extern template class ShiftMove<1,CPT>;
-      extern template class ShiftMove<2,CPT>;
-      extern template class ShiftMove<3,CPT>;
-   }
-}
+} // namespace Rp
+} // namespace Pscf
 #endif

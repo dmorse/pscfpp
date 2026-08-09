@@ -5,40 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <rp/run.h>
 #include <prdc/crystal/getDimension.h>
-#include <rpg/system/System.h>
+#include <pscf/backends/CUT.h>
 #include <iostream>
-
-namespace Pscf {
-namespace Rpg {
-
-   /**
-   * Function template for main pscf_rpg program.
-   *
-   * \ingroup Pscf_Rp_Module
-   *
-   * \param argc  number of command line parameters
-   * \param argv  array of command line parameter strings
-   */
-   template <int D>
-   void run(int argc, char **argv) {
-
-      // Construct System object for specific dimension D.
-      Rp::System<D,CUT> system;
-
-      // Process command line options
-      system.setOptions(argc, argv);
-
-      // Read parameters from default parameter file
-      system.readParam();
-
-      // Read command script to run system
-      system.readCommands();
-
-   }
-
-}
-}
 
 /**
 * Main pscf_rpg program.
@@ -55,13 +25,13 @@ int main(int argc, char **argv)
    std::cout << "dimension    " << D << std::endl;
 
    if (1 == D) {
-      Pscf::Rpg::run<1>(argc, argv);
+      Pscf::Rp::run<1, Pscf::CUT>(argc, argv);
    } else
    if (2 == D) {
-      Pscf::Rpg::run<2>(argc, argv);
+      Pscf::Rp::run<1, Pscf::CUT>(argc, argv);
    } else
    if (3 == D) {
-      Pscf::Rpg::run<3>(argc, argv);
+      Pscf::Rp::run<1, Pscf::CUT>(argc, argv);
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
    }

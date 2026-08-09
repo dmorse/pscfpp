@@ -5,6 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/cpu/FftwDRArray.h>
 #include <pscf/cpu/send.h>
 #include <pscf/backends/CPT.h>
 

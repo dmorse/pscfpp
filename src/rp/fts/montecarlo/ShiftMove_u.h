@@ -26,8 +26,7 @@ namespace Rp {
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ShiftMove<D,CUT>
-    : public ShiftMoveBase<D,CUT>
+   class ShiftMove<D,CUT> : public ShiftMoveBase<D,CUT>
    {
 
    public:
@@ -70,19 +69,12 @@ namespace Rp {
 
    };
 
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE_CUDA(ShiftMove)
+   //extern template class ShiftMove<1,CUT>;
+   //extern template class ShiftMove<2,CUT>;
+   //extern template class ShiftMove<3,CUT>;
 
-}
-}
-
-// Explicit instantiation declarations
-namespace Pscf {
-   namespace Rp {
-      extern template class ShiftMoveBase<1,CUT>;
-      extern template class ShiftMoveBase<2,CUT>;
-      extern template class ShiftMoveBase<3,CUT>;
-      extern template class ShiftMove<1,CUT>;
-      extern template class ShiftMove<2,CUT>;
-      extern template class ShiftMove<3,CUT>;
-   }
-}
+} // namespace Rp
+} // namespace Pscf
 #endif

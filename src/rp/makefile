@@ -28,15 +28,15 @@ ifdef PSCF_CPP
   PSCF_RPC=$(BLD_DIR)/rp/pscf_rpc
   PSCF_RPC_EXE=$(BIN_DIR)/pscf_rpc
   PSCF_RP_OBJS+= $(PSCF_RPC).o
-  PSCF_RP_EXES+= PSCF_RPC_EXE
+  PSCF_RP_EXES+= $(PSCF_RPC_EXE)
 endif
 
 # Paths for pscf_rpg
 ifdef PSCF_CUDA
   PSCF_RPG=$(BLD_DIR)/rp/pscf_rpg
   PSCF_RPG_EXE=$(BIN_DIR)/pscf_rpg
-  PSCF_RP_OBJS+= $(PSCF_RPG).o
-  PSCF_RP_EXES+= PSCF_RPG_EXE
+  PSCF_RP_OBJS+= $(PSCF_RPG).ou
+  PSCF_RP_EXES+= $(PSCF_RPG_EXE)
 endif
 
 #-----------------------------------------------------------------------
@@ -44,8 +44,7 @@ endif
 
 .PHONY: all clean
 
-#all: $(rp_OBJS) $(rp_LIB) $(PSCF_RP_EXES)
-all: $(rp_OBJS) $(rp_LIB) 
+all: $(rp_OBJS) $(rp_LIB) $(PSCF_RP_EXES)
 
 clean:
 	rm -f $(rp_OBJS)
@@ -54,6 +53,8 @@ clean:
 	rm -f $(PSCF_RP_OBJS) $(PSCF_RP_OBJS:.o=.d)
 	rm -f *.o */*.o */*/*.o
 	rm -f *.d */*.d */*/*.d
+	rm -f *.ou */*.ou */*/*.ou
+	rm -f *.du */*.du */*/*.du
 	rm -f lib*.a 
 	#cd tests; $(MAKE) clean
 
@@ -74,8 +75,10 @@ endif
 ifdef PSCF_CUDA
 
   # Main pscf_rpg executable 
-  $(PSCF_RPG_EXE): $(PSCF_RPG).o $(PSCF_LIBS)
+  $(PSCF_RPG_EXE): $(PSCF_RPG).ou $(PSCF_LIBS)
+	cp $(PSCF_RPG).ou $(PSCF_RPG).o
 	$(NVXX) $(LDFLAGS) -o $(PSCF_RPG_EXE) $(PSCF_RPG).o $(LIBS)
+	rm $(PSCF_RPG).o
 
   pscf_rpg:
 	$(MAKE) $(PSCF_RPG_EXE)

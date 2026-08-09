@@ -8,19 +8,19 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>  // base class template
-#include <rp/fts/compressor/Compressor.h>  // base template argument
-#include <pscf/math/IntVec.h>              // member
-#include <util/containers/DArray.h>        // member
+#include <pscf/iterator/AmIteratorTmpl.h>       // base class template
+#include <rp/fts/compressor/Compressor.h>       // base template argument
+#include <rp/fts/compressor/IntraCorrelation.h> // base template argument
+#include <prdc/field/RField.h>                  // member
+#include <prdc/field/RFieldDft.h>               // member
+#include <pscf/math/IntVec.h>                   // member
+#include <util/containers/DArray.h>             // member
 
-#include <pscf/backends/TmplDeclare.h>     // template declaration macros
-#include <pscf/backends/CPT.h>
-#include <pscf/backends/CUT.h>
+#include <pscf/backends/TmplDeclare.h>          // declaration macros
 
 // Forward declarations
 namespace Pscf {
    namespace Prdc {
-      template <int D, class T> class RField;
       template <int D, class T> class RFieldDft;
       template <int D, class T> class FFT;
    }
