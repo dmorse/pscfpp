@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>
-#include <rp/fts/trajectory/TrajectoryReader.h>
+#include <util/param/Factory.h>                  // base class template
+#include <rp/fts/trajectory/TrajectoryReader.h>  // template argument
+
+#include <pscf/backends/TmplDeclare.h>
 #include <string>
 
 // Forward declarations
@@ -59,6 +61,9 @@ namespace Rp {
       System<D,T>* sysPtr_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(TrajectoryReaderFactory)
 
 }
 }

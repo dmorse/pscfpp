@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/backends/TmplDeclare.h>
 #include <string>
 
 // Forward declarations
@@ -102,6 +103,9 @@ namespace Rp {
       System<D,T>* systemPtr_;
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(TrajectoryReader)
 
 }
 }

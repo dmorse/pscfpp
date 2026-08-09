@@ -9,17 +9,13 @@
 */
 
 #include "TrajectoryReader.h"           // base class
+#include <prdc/field/RField.h>          // member
 #include <pscf/math/IntVec.h>           // member
 #include <util/containers/DArray.h>     // member
-#include <fstream>                      // member
-#include <string>                       // function parameter
 
-// Forward declaration
-namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
-}
+#include <pscf/backends/TmplDeclare.h>
+#include <fstream>
+#include <string>
 
 namespace Pscf {
 namespace Rp {
@@ -108,6 +104,9 @@ namespace Rp {
       void allocate();
 
    };
+
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(RGridTrajectoryReader)
 
 }
 }
