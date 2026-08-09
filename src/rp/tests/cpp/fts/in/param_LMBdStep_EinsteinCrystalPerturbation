@@ -1,0 +1,44 @@
+BdSimulator{
+   seed		486394701
+   LMBdStep{
+      mobility		1.0E-3
+   }
+   LrAmCompressor{
+      epsilon		1.0e-4
+      maxItr		200
+      maxHist		30
+      verbose		0
+      errorType		rms
+   }
+   EinsteinCrystalPerturbation{
+      lambda 0.25
+      fieldFileName  in/w_dis_3D_homogenous.rf
+   }
+   AnalyzerManager{
+      baseInterval	1
+      PerturbationDerivative{
+         outputFileName  out/perturbationDerivative
+      }
+      MaxOrderParameter{
+         outputFileName  out/maxOrder
+      }
+      FourthOrderParameter{
+         outputFileName  out/fourthOrder
+      }
+      ConcentrationDerivative{
+         outputFileName  out/concentrationDerivative
+      }
+      BinaryChiDerivative{
+         outputFileName  out/chiDerivative
+      }
+      HamiltonianAnalyzer{
+         outputFileName  out/hamiltonian
+      }
+      TrajectoryWriter{
+         outputFileName  out/trajectory
+      }
+      StepLogger{
+         interval        5
+      }
+   }
+}
