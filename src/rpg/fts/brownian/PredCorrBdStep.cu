@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "PredCorrBdStep.h"
-
-#include <rpg/fts/brownian/BdSimulator.h>
+#if 0
+#include <rp/fts/brownian/BdSimulator.h>
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
+#endif
 
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/CudaVecRandom.h>

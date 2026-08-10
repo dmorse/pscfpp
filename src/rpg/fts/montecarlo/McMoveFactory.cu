@@ -5,14 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMoveFactory.h"
-
-// Subclasses of McMove
-#include <rpg/fts/montecarlo/RealMove.h>
-#include <rpg/fts/montecarlo/ForceBiasMove.h>
-#include <rpg/fts/montecarlo/BdMove.h>
-#include <rpg/fts/montecarlo/ShiftMove.h>
-
 #include <rp/fts/montecarlo/McMoveFactory.tpp> // class implementation
 
 // Explicit instantiation definitions

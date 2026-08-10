@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BdStepFactory.h"
-
+#if 0
 // Subclasses of BdStep
-#include <rpg/fts/brownian/ExplicitBdStep.h>
-#include <rpg/fts/brownian/PredCorrBdStep.h>
-#include <rpg/fts/brownian/LMBdStep.h>
+#include <rp/fts/brownian/ExplicitBdStep.h>
+#include <rp/fts/brownian/PredCorrBdStep.h>
+#include <rp/fts/brownian/LMBdStep.h>
+#endif
 
 #include <rp/fts/brownian/BdStepFactory.tpp>
 

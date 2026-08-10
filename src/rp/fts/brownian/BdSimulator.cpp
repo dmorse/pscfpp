@@ -5,11 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BdSimulator.h"
-
-#include <rpc/fts/analyzer/AnalyzerManager.h>
-#include <rpc/fts/analyzer/AnalyzerFactory.h>
-
 #include <pscf/cpu/CpuVecRandom.h>
 #include <pscf/backends/CPT.h>
 

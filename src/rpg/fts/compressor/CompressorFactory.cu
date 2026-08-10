@@ -5,13 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CompressorFactory.h"  
-
-// Subclasses of Compressor 
-#include <rpg/fts/compressor/AmCompressor.h>
-#include <rpg/fts/compressor/LrCompressor.h>
-#include <rpg/fts/compressor/LrAmCompressor.h>
-
 #include <rp/fts/compressor/CompressorFactory.tpp>
 
 // Explicit instantiation definitions

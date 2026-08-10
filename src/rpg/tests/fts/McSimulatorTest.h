@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/fts/simulator/Simulator.h>
-#include <rpg/fts/montecarlo/McSimulator.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/montecarlo/McSimulator.h>
 #include <rp/system/System.h>
 #include <rp/field/FieldIo.h>
 

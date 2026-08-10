@@ -5,16 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ForceBiasMove.h"
-
-#include <rpg/fts/montecarlo/McMove.h>
-#include <rpg/fts/montecarlo/McSimulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/CFields.h>
-#include <rp/field/WFields.h>
-
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 #include <pscf/cuda/CudaVecRandom.h>
@@ -24,6 +14,7 @@
 #include <pscf/cuda/cudaTypes.h>
 
 #include <rp/fts/montecarlo/ForceBiasMoveBase.tpp>
+#include <rp/fts/montecarlo/ForceBiasMove_u.h>
 
 // Anonymous namespace for CUDA kernel
 namespace Pscf {

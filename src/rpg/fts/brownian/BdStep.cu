@@ -5,9 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BdStep.h"
-#include <rpg/fts/brownian/BdSimulator.h>
-#include <rp/system/System.h>
+//#include <rp/fts/brownian/BdSimulator.h>
+//#include <rp/system/System.h>
 
 #include <rp/fts/brownian/BdStep.tpp>
 

@@ -5,14 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "IntraCorrelation.h"
-
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-
-#include <prdc/field/cuda/FFT.h>
-#include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/send.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>

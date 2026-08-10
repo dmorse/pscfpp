@@ -5,11 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SimulatorFactory.h"
-#include <rp/system/System.h>
-
+#include <rp/fts/simulator/SimulatorFactory.h>
 #include <rp/fts/brownian/BdSimulator.h>
-//#include <rp/fts/montecarlo/McSimulator.h>
+#include <rp/fts/montecarlo/McSimulator.h>
+#include <rp/system/System.h>
 
 namespace Pscf {
 namespace Rp {

@@ -59,6 +59,7 @@ clean:
 	rm -f *.du */*.du */*/*.du
 	rm -f lib*.a 
 	cd tests/cpp; $(MAKE) clean
+	cd tests/cuda; $(MAKE) clean
 
 # C++ CPU backend
 ifdef PSCF_CPP

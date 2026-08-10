@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/compressor/Compressor.tpp>
 #include <pscf/backends/CUT.h>
+#include <rp/fts/compressor/Compressor.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {

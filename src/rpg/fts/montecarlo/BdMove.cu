@@ -5,18 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BdMove.h"                         // class header
-#include <rpg/fts/montecarlo/McSimulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/CFields.h>
-#include <rp/field/WFields.h>
-
 #include <pscf/cuda/CudaVecRandom.h>
 #include <pscf/cuda/VecOp.h>
 
-#include <rp/fts/montecarlo/BdMove.tpp>     // base class implementation
+#include <rp/fts/montecarlo/BdMove.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {

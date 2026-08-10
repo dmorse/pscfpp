@@ -5,14 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"
-
-#include <rpg/fts/montecarlo/McSimulator.h>
-#include <rp/system/System.h>
-#include <rp/field/Domain.h>
-#include <rp/field/CFields.h>
-#include <rp/field/WFields.h>
-
 #include <rp/fts/montecarlo/McMove.tpp>     // base class implementation
 
 // Explicit instantiation definitions

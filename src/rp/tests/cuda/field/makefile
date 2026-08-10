@@ -10,15 +10,15 @@ TEST=$(BLD_DIR)/rp/tests/cuda/field/Test
 all: $(TEST)
 
 $(TEST): $(TEST).ou $(PSCF_LIBS)
-	cp $(TEST).ou $(TEST).o
+	@cp $(TEST).ou $(TEST).o
 	$(NVXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
-	rm $(TEST).o
+	@rm $(TEST).o
 
 run: $(TEST)
-	$(TEST) $(SRC_DIR)/rpg/tests/field/
+	$(TEST) $(SRC_DIR)/rp/tests/cuda/field/
 
 run-quiet: $(TEST)
-	@$(TEST) $(SRC_DIR)/rpg/tests/ > log
+	@$(TEST) $(SRC_DIR)/rp/tests/cuda/field/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in rpg/tests/field/log" > count
 	@cat count
@@ -27,14 +27,15 @@ clean-outputs:
 	rm -f log count out/*
 
 clean:
-	rm -f $(TEST).ou $(rpg_tests_field_OBJS:.ou=.du)
-	rm -f $(TEST) $(TEST).d
+	rm -f $(TEST)
+	rm -f $(TEST).ou
+	rm -f $(TEST).du
 	$(MAKE) clean-outputs
 
 .PHONY: all run run-quiet clean-outputs clean
 
--include $(util_DEPS)
--include $(pscf_DEPS)
--include $(prdc_DEPS)
--include $(rp_DEPS)
 -include $(TEST).du
+-include $(rp_DEPS)
+-include $(prdc_DEPS)
+-include $(pscf_DEPS)
+-include $(util_DEPS)

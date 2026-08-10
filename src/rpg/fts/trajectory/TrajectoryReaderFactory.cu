@@ -5,11 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "TrajectoryReaderFactory.h"
-
-// Subclasses of TrajectoryReader
-#include <rpg/fts/trajectory/RGridTrajectoryReader.h>
-
 #include <rp/fts/trajectory/TrajectoryReaderFactory.tpp>
 
 // Explicit instantiation definitions

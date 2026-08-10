@@ -6,9 +6,9 @@ TEST=$(BLD_DIR)/rp/tests/cuda/system/Test
 all: $(TEST)
 
 $(TEST): $(TEST).ou $(PSCF_LIBS)
-	cp $(TEST).ou $(TEST).o
+	@cp $(TEST).ou $(TEST).o
 	$(NVXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
-	rm $(TEST).o
+	@rm $(TEST).o
 
 run: $(TEST).o $(TEST)
 	@$(TEST) $(SRC_DIR)/rpg/tests/system/
@@ -30,3 +30,7 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(TEST).du
+-include $(rp_DEPS)
+-include $(prdc_DEPS)
+-include $(pscf_DEPS)
+-include $(util_DEPS)

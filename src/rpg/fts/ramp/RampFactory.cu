@@ -5,10 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RampFactory.h"  
-
-#include "LinearRamp.h"
-
 #include <rp/fts/ramp/RampFactory.tpp>
 
 // Explicit instantiation definitions

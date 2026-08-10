@@ -46,9 +46,9 @@ $(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
 
 # Pattern rule to link executable Test programs in src/rpg/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.ou  $(PSCF_LIBS)
-	cp $< cudaTmp.o
+	@cp $< cudaTmp.o
 	$(NVXX) $(LDFLAGS) -o $@ cudaTmp.o $(LIBS)
-	rm cudaTmp.o
+	@rm cudaTmp.o
 
 # Note: In the linking rule for unit test programs, we include the list 
 # $(PSCF_LIBS) of PSCF-specific libraries as prerequisites but link to 

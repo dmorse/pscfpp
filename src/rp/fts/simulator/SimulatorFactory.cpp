@@ -5,10 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-// Subclasses of Simulator
-#include <rpc/fts/montecarlo/McSimulator.h>
-#include <rpc/fts/brownian/BdSimulator.h>
-
 #include <pscf/backends/CPT.h>
 #include <rp/fts/simulator/SimulatorFactory.tpp>
 

@@ -5,20 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MaxOrderParameter.h"
-
-#include <rp/system/System.h>
-#include <rpg/fts/simulator/Simulator.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-
-#include <prdc/field/cuda/FFT.h>
-#include <prdc/field/cuda/RField.h>
 #include <pscf/cuda/VecOp.h>
 
 #include <rp/fts/analyzer/MaxOrderParameterBase.tpp>
+#include <rp/fts/analyzer/MaxOrderParameter_u.h>
 
 namespace Pscf {
 namespace Rp {

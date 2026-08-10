@@ -41,18 +41,18 @@ prdc:
 	cd pscf; $(MAKE) all
 	cd prdc; $(MAKE) all
 
-# Build code required by rp
-rp: 
-	cd util; $(MAKE) all
-	cd pscf; $(MAKE) all
-	cd prdc; $(MAKE) all
-	cd rp; $(MAKE) all
-
 # Build pscf_r1d 1D finite difference SCFT program (install in BIN_DIR)
 pscf_r1d: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd r1d; $(MAKE) all
+
+# Build pscf_rpc and/or pscf_rpg in rp (install in BIN_DIR)
+rp: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+	cd prdc; $(MAKE) all
+	cd rp; $(MAKE) all
 
 # Build pscf_rpc CPU code for real periodic fields (install in BIN_DIR)
 pscf_rpc: 
@@ -80,28 +80,34 @@ pscf_cpc:
 # ======================================================================
 # Test targets
 
-# Run all CPU and GPU unit tests
+# Run all unit tests
 test:
 	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
+	#@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
+ifdef PSCF_CPP
 	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
-	@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd cpc/tests; $(MAKE) all; $(MAKE) run-quiet
-ifdef PSCF_CUDA
-	@cd rpg/tests; $(MAKE) all; $(MAKE) run-quiet
 endif
+ifdef PSCF_CUDA
+	#@cd rpg/tests; $(MAKE) all; $(MAKE) run-quiet
+	@cd rp/tests/cuda; $(MAKE) all; $(MAKE) run-quiet
+endif
+	@cd cpc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
 	@cat prdc/tests/count >> count
 	@cat r1d/tests/count >> count
-	@cat rp/tests/count >> count
-	@cat rpc/tests/count >> count
-	@cat cpc/tests/count >> count
-ifdef PSCF_CUDA
-	@cat rpg/tests/count >> count
+	#@cat rpc/tests/count >> count
+ifdef PSCF_CPP
+	@cat rp/tests/cpp/count >> count
 endif
+ifdef PSCF_CUDA
+	#@cat rpg/tests/count >> count
+	@cat rp/tests/cuda/count >> count
+endif
+	@cat cpc/tests/count >> count
 	@echo " "
 	@echo "Summary"
 	@cat count
@@ -113,13 +119,19 @@ test-cpu:
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
+	#@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
+ifdef PSCF_CPP
+	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
+endif
 	@cd cpc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
 	@cat prdc/tests/count >> count
 	@cat r1d/tests/count >> count
-	@cat rpc/tests/count >> count
+	#@cat rpc/tests/count >> count
+ifdef PSCF_CPP
+	@cat rp/tests/cpp/count >> count
+endif
 	@cat cpc/tests/count >> count
 	@echo " "
 	@echo "Summary"
@@ -127,7 +139,8 @@ test-cpu:
 	@rm -f count
 
 test-gpu:
-	@cd rpg/tests; @$(MAKE) all; $(MAKE) run-quiet
+	@cd rp/tests/cuda; @$(MAKE) all; $(MAKE) run-quiet
+	#@cd rpg/tests; @$(MAKE) all; $(MAKE) run-quiet
 
 # ======================================================================
 # Clean targets
@@ -137,11 +150,11 @@ clean:
 	cd util; $(MAKE) clean
 	cd pscf; $(MAKE) clean
 	cd prdc; $(MAKE) clean
-	cd r1d; $(MAKE) clean
-	cd rp;  $(MAKE) clean
-	cd rpc; $(MAKE) clean
-	cd rpg; $(MAKE) clean
-	cd cpc; $(MAKE) clean
+	cd r1d;  $(MAKE) clean
+	cd rp;   $(MAKE) clean
+	cd rpc;  $(MAKE) clean
+	cd rpg;  $(MAKE) clean
+	cd cpc;  $(MAKE) clean
 
 # Clean unit tests
 clean-tests:
@@ -149,7 +162,8 @@ clean-tests:
 	cd pscf/tests; $(MAKE) clean
 	cd prdc/tests; $(MAKE) clean
 	cd r1d/tests; $(MAKE) clean
-	cd rp/tests;  $(MAKE) clean
+	cd rp/tests/cpp;  $(MAKE) clean
+	cd rp/tests/cuda;  $(MAKE) clean
 	cd rpc/tests; $(MAKE) clean
 	cd rpg/tests; $(MAKE) clean
 	cd cpc/tests; $(MAKE) clean
@@ -179,6 +193,7 @@ ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f prdc/tests/makefile
 	rm -f r1d/tests/makefile
 	rm -f rp/tests/cpp/makefile
+	rm -f rp/tests/cuda/makefile
 	rm -f rpc/tests/makefile
 	rm -f rpg/tests/makefile
 	rm -f cpc/tests/makefile

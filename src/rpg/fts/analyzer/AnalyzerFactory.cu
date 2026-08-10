@@ -5,20 +5,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AnalyzerFactory.h"
-
 // Subclasses of Analyzer
-#include <rpg/fts/analyzer/StepLogger.h>
-#include <rpg/fts/analyzer/TrajectoryWriter.h>
-#include <rpg/fts/analyzer/ConcentrationWriter.h>
-#include <rpg/fts/analyzer/HamiltonianAnalyzer.h>
-#include <rpg/fts/analyzer/BinaryStructureFactor.h>
-#include <rpg/fts/analyzer/MaxOrderParameter.h>
-#include <rpg/fts/analyzer/FourthOrderParameter.h>
-#include <rpg/fts/analyzer/BinaryChiDerivative.h>
-#include <rpg/fts/analyzer/CubicLengthDerivative.h>
-#include <rpg/fts/analyzer/ConcentrationDerivative.h>
-#include <rpg/fts/analyzer/PerturbationDerivative.h>
+#include <rp/fts/analyzer/StepLogger.h>
+#include <rp/fts/analyzer/TrajectoryWriter.h>
+#include <rp/fts/analyzer/ConcentrationWriter.h>
+#include <rp/fts/analyzer/HamiltonianAnalyzer.h>
+#include <rp/fts/analyzer/BinaryStructureFactor.h>
+#include <rp/fts/analyzer/MaxOrderParameter.h>
+#include <rp/fts/analyzer/FourthOrderParameter.h>
+#include <rp/fts/analyzer/BinaryChiDerivative.h>
+#include <rp/fts/analyzer/CubicLengthDerivative.h>
+#include <rp/fts/analyzer/ConcentrationDerivative.h>
+#include <rp/fts/analyzer/PerturbationDerivative.h>
 
 #include <rp/fts/analyzer/AnalyzerFactory.tpp>
 

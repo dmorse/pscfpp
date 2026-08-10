@@ -5,8 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "LinearRamp.h"
-#include <rpg/fts/simulator/Simulator.h>
 #include <rp/fts/ramp/LinearRamp.tpp>      // base class implementation
 
 // Explicit instantiation definitions

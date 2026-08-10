@@ -14,6 +14,9 @@
 #include <rp/fts/montecarlo/McMoveFactory.h>
 #include <rp/fts/montecarlo/McMoveManager.h>
 
+#include <rp/fts/analyzer/Analyzer.h>
+#include <rp/fts/analyzer/AnalyzerFactory.h>
+#include <rp/fts/analyzer/AnalyzerManager.h>
 #include <rp/fts/trajectory/TrajectoryReaderFactory.h>
 #include <rp/fts/trajectory/TrajectoryReader.h>
 #include <rp/fts/perturbation/Perturbation.h>

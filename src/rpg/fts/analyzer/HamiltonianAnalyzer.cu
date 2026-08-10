@@ -5,14 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "HamiltonianAnalyzer.h"
-#include <rpg/fts/simulator/Simulator.h>
-#include <rp/system/System.h>
-#include <rp/field/Domain.h>
-#include <rp/field/CFields.h>
-#include <rp/field/WFields.h>
-
-#include <rp/fts/analyzer/HamiltonianAnalyzer.tpp>  // implementation
+#include <rp/fts/analyzer/HamiltonianAnalyzer.tpp> 
 
 // Explicit instantiation definitions
 namespace Pscf {

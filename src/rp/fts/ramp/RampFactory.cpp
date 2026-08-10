@@ -5,7 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
 #include <pscf/backends/CPT.h>
 #include <rp/fts/ramp/RampFactory.tpp>
 

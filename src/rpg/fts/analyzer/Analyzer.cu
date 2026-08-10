@@ -5,7 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Analyzer.h"
 #include <rp/fts/analyzer/Analyzer.tpp>
 
 // Explicit instantiation declarations

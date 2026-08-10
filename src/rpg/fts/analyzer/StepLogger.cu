@@ -5,7 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "StepLogger.h"
 #include <rp/fts/analyzer/StepLogger.tpp>
 
 // Explicit instantiation definitions

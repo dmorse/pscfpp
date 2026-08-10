@@ -5,8 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AnalyzerManager.h"
-#include "AnalyzerFactory.h"
 #include <rp/fts/analyzer/AnalyzerManager.tpp> // class implementation
 
 // Explicit instantiation declarations

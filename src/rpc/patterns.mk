@@ -31,12 +31,19 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 #-----------------------------------------------------------------------
 # Pattern rules
 
-# Pattern rule to compile *.cpp class source files in src/rpc
+# Pattern rule to compile a *.cpp C++ file to create a *.o object file
 # Note: Creates a *.d dependency file as a side effect
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
 	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
+
+# Pattern rule to compile a *.cu CUDA file to create *.ou object file
+# Note: Creates a *.du dependency file as a side effect 
+$(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
+	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
+	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
+	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 
 # Pattern rule to link executable Test programs in src/rpc/tests
 $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
@@ -46,6 +53,7 @@ $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
 # of PSCF-specific libraries as prerequisites but link to the list 
 # $(LIBS) of libraries that includes external libraries
 
-# Note: There are no *.cu CUDA source files in src/rpc, and so no rule to 
-# compile them is defined in this directory.
+# Note: Though there are no *.cu CUDA source files in src/rpc, we 
+# include a rule compile them in order to construct an CUDA files
+# required to construct the libraries in src/pscf and src/prdc.
 

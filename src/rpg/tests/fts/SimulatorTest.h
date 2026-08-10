@@ -7,7 +7,7 @@
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
-#include <rpg/fts/simulator/Simulator.h>
+#include <rp/fts/simulator/Simulator.h>
 #include <rp/scft/ScftThermo.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>

@@ -4,11 +4,11 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/fts/simulator/Simulator.h>
-#include <rpg/fts/brownian/BdSimulator.h>
-#include <rpg/fts/compressor/AmCompressor.h>
-#include <rpg/fts/compressor/LrCompressor.h>
-#include <rpg/fts/compressor/LrAmCompressor.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/brownian/BdSimulator.h>
+#include <rp/fts/compressor/AmCompressor.h>
+#include <rp/fts/compressor/LrCompressor.h>
+#include <rp/fts/compressor/LrAmCompressor.h>
 
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>

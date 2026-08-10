@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <rpg/fts/compressor/IntraCorrelation.h>
-#include <rpg/fts/simulator/Simulator.h>
+#include <rp/fts/compressor/IntraCorrelation.h>
+#include <rp/fts/simulator/Simulator.h>
 #include <rp/system/System.h>
 #include <rp/field/CFields.h>
 

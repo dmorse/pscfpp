@@ -5,9 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AverageAnalyzer.h"
-#include <rp/system/System.h>
-#include <rpg/fts/simulator/Simulator.h>
+//#include <rp/system/System.h>
+//#include <rp/fts/simulator/Simulator.h>
 
 #include <rp/fts/analyzer/AverageAnalyzer.tpp>
 

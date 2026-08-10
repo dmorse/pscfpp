@@ -5,27 +5,27 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BdSimulator.h"
 
-#include <rpg/fts/brownian/BdStep.h>
-#include <rpg/fts/brownian/BdStepFactory.h>
-#include <rpg/fts/analyzer/AnalyzerManager.h>
-#include <rpg/fts/analyzer/AnalyzerFactory.h>
-#include <rpg/fts/trajectory/TrajectoryReader.h>
-#include <rpg/fts/trajectory/TrajectoryReaderFactory.h>
-#include <rpg/fts/simulator/Simulator.h>
-#include <rpg/fts/perturbation/Perturbation.h>
-#include <rpg/fts/ramp/Ramp.h>
+#if 0
+#include <rp/fts/brownian/BdStep.h>
+#include <rp/fts/brownian/BdStepFactory.h>
+#include <rp/fts/analyzer/AnalyzerManager.h>
+#include <rp/fts/analyzer/AnalyzerFactory.h>
+#include <rp/fts/trajectory/TrajectoryReader.h>
+#include <rp/fts/trajectory/TrajectoryReaderFactory.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/perturbation/Perturbation.h>
+#include <rp/fts/ramp/Ramp.h>
 #include <rp/system/System.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
-
 #include <prdc/field/cuda/RField.h>
+#endif
+
 #include <pscf/cuda/CudaVecRandom.h>
 
 #include <rp/fts/brownian/BdSimulator.tpp>
-
 
 // Explicit instantiation definitions
 namespace Pscf {

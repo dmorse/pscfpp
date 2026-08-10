@@ -5,9 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Ramp.h"
-#include <rpg/fts/simulator/Simulator.h>
-#include <rp/fts/ramp/Ramp.tpp>     // base class implementation
+#include <rp/fts/ramp/Ramp.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {

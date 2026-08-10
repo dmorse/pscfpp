@@ -5,15 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rpc/fts/analyzer/Analyzer.h>
-#include <rpc/fts/analyzer/AnalyzerFactory.h>
-#include <rpc/fts/analyzer/AnalyzerManager.h>
-#include <rpc/fts/trajectory/TrajectoryReaderFactory.h>
-#include <rpc/fts/trajectory/TrajectoryReader.h>
-#include <rpc/fts/perturbation/Perturbation.h>
-#include <rpc/fts/ramp/Ramp.h>
-
 #include <pscf/cpu/CpuVecRandom.h>
+#include <pscf/backends/CPT.h>
 
 #include <rp/fts/montecarlo/McSimulator.tpp>
 

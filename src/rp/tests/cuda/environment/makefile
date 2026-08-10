@@ -10,9 +10,9 @@ TEST=$(BLD_DIR)/rp/tests/cuda/environment/Test
 all: $(TEST)
 
 $(TEST): $(TEST).ou $(PSCF_LIBS)
-	cp $(TEST).ou $(TEST).o
+	@cp $(TEST).ou $(TEST).o
 	$(NVXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
-	rm $(TEST).o
+	@rm $(TEST).o
 
 run: $(TEST).ou $(TEST)
 	$(TEST) $(SRC_DIR)/rp/tests/cuda/ 

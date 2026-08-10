@@ -5,18 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ConcentrationWriter.h"
-
-#include <rpg/fts/simulator/Simulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/FieldIo.h>
-#include <rp/field/CFields.h>
-#include <rp/field/WFields.h>
-
-#include <prdc/field/cuda/RField.h>
-
 #include <rp/fts/analyzer/ConcentrationWriter.tpp>
 
 // Explicit instantiation definitions

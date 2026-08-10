@@ -5,21 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BinaryStructureFactor.h"
-
-#include <rpg/fts/simulator/Simulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-
-#include <prdc/field/cuda/FFT.h>
-#include <prdc/field/cuda/WaveList.h>
-
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/complex.h>
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.tpp>
+#include <rp/fts/analyzer/BinaryStructureFactor_u.h>
 
 namespace Pscf {
 namespace Rp {

@@ -5,21 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Simulator.h"
-
-//#include <rpg/fts/simulator/SimState.h>
-#include <rpg/fts/compressor/CompressorFactory.h>
-#include <rpg/fts/perturbation/Perturbation.h>
-#include <rpg/fts/perturbation/PerturbationFactory.h>
-#include <rpg/fts/ramp/Ramp.h>
-#include <rpg/fts/ramp/RampFactory.h>
-
 #include <pscf/cuda/VecOp.h>
 #include <pscf/cuda/Reduce.h>
 #include <pscf/cuda/CudaVecRandom.h>
+#include <pscf/backends/CUT.h>  
 
-#include <rp/fts/simulator/Simulator.tpp> // base class implementation
-#include <pscf/backends/CUT.h>            // backend type class
+#include <rp/fts/simulator/Simulator.tpp> 
 
 // Explicit instantiation definitions
 namespace Pscf {

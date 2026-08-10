@@ -40,9 +40,9 @@ clean:
 
 # Main pscf_rpg executable file
 $(PSCF_RPG_EXE): $(PSCF_RPG).ou $(PSCF_LIBS)
-	cp $(PSCF_RPG).ou $(PSCF_RPG).o
+	@cp $(PSCF_RPG).ou $(PSCF_RPG).o
 	$(NVXX) $(LDFLAGS) -o $(PSCF_RPG_EXE) $(PSCF_RPG).o $(LIBS)
-	rm $(PSCF_RPG).o
+	@rm $(PSCF_RPG).o
 
 # Short phony target for executable file (for convenience)
 pscf_rpg:

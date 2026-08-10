@@ -187,6 +187,7 @@ cp src/pscf/tests/makefile bld/pscf/tests/makefile
 cp src/prdc/tests/makefile bld/prdc/tests/makefile
 cp src/r1d/tests/makefile bld/r1d/tests/makefile
 cp src/rp/tests/cpp/makefile bld/rp/tests/cpp/makefile
+cp src/rp/tests/cuda/makefile bld/rp/tests/cuda/makefile
 cp src/rpc/tests/makefile bld/rpc/tests/makefile
 cp src/rpg/tests/makefile bld/rpg/tests/makefile
 cp src/cpc/tests/makefile bld/cpc/tests/makefile

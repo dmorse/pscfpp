@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/Factory.h>    // base class template
-#include <rpc/fts/ramp/Ramp.h>     // base class argument
+#include <util/param/Factory.h>   // base class template
+#include <rp/fts/ramp/Ramp.h>     // base class argument
 
 #include <pscf/backends/TmplDeclare.h>
 #include <string>
