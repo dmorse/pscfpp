@@ -138,6 +138,7 @@ clean:
 	cd pscf; $(MAKE) clean
 	cd prdc; $(MAKE) clean
 	cd r1d; $(MAKE) clean
+	cd rp;  $(MAKE) clean
 	cd rpc; $(MAKE) clean
 	cd rpg; $(MAKE) clean
 	cd cpc; $(MAKE) clean
@@ -148,6 +149,7 @@ clean-tests:
 	cd pscf/tests; $(MAKE) clean
 	cd prdc/tests; $(MAKE) clean
 	cd r1d/tests; $(MAKE) clean
+	cd rp/tests;  $(MAKE) clean
 	cd rpc/tests; $(MAKE) clean
 	cd rpg/tests; $(MAKE) clean
 	cd cpc/tests; $(MAKE) clean
@@ -158,6 +160,7 @@ veryclean:
 	cd pscf; $(MAKE) veryclean
 	cd prdc; $(MAKE) clean
 	cd r1d; $(MAKE) clean
+	cd rp;  $(MAKE) clean
 	cd rpc; $(MAKE) clean
 	cd rpg; $(MAKE) clean
 	cd cpc; $(MAKE) clean
@@ -167,6 +170,7 @@ ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f pscf/makefile
 	rm -f prdc/makefile
 	rm -f r1d/makefile
+	rm -f rp/makefile
 	rm -f rpc/makefile
 	rm -f rpg/makefile
 	rm -f cpc/makefile

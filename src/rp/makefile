@@ -17,10 +17,9 @@ include $(SRC_DIR)/rp/patterns.mk
 #-----------------------------------------------------------------------
 # Paths to executable program files
 
-# List of object files for pscf_rp* programs
+# Lists of object, dependency and executabe files for programs
 PSCF_RP_OBJS=
-
-# List of executable files for pscf_rp* programs
+PSCF_RP_DEPS=
 PSCF_RP_EXES=
 
 # Paths for pscf_rpc
@@ -28,6 +27,7 @@ ifdef PSCF_CPP
   PSCF_RPC=$(BLD_DIR)/rp/pscf_rpc
   PSCF_RPC_EXE=$(BIN_DIR)/pscf_rpc
   PSCF_RP_OBJS+= $(PSCF_RPC).o
+  PSCF_RP_DEPS+= $(PSCF_RPC).d
   PSCF_RP_EXES+= $(PSCF_RPC_EXE)
 endif
 
@@ -36,6 +36,7 @@ ifdef PSCF_CUDA
   PSCF_RPG=$(BLD_DIR)/rp/pscf_rpg
   PSCF_RPG_EXE=$(BIN_DIR)/pscf_rpg
   PSCF_RP_OBJS+= $(PSCF_RPG).ou
+  PSCF_RP_DEPS+= $(PSCF_RPG).du
   PSCF_RP_EXES+= $(PSCF_RPG_EXE)
 endif
 
@@ -50,7 +51,8 @@ clean:
 	rm -f $(rp_OBJS)
 	rm -f $(rp_DEPS)
 	rm -f $(rp_LIB)
-	rm -f $(PSCF_RP_OBJS) $(PSCF_RP_OBJS:.o=.d)
+	rm -f $(PSCF_RP_OBJS)
+	rm -f $(PSCF_RP_DEPS)
 	rm -f *.o */*.o */*/*.o
 	rm -f *.d */*.d */*/*.d
 	rm -f *.ou */*.ou */*/*.ou
