@@ -1,14 +1,24 @@
 include config.mk
 
-.PHONY: all all-common util pscf prdc r1d rp rpc rpg cpc \
+.PHONY: all all-old util pscf prdc r1d rp rpc rpg cpc \
         test test-cpu test-gpu \
         clean clean-tests veryclean
 # ======================================================================
 # Main build targets
 
+# Build all code
+all: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+	cd r1d; $(MAKE) all
+	cd prdc; $(MAKE) all
+	cd rp; $(MAKE) all
+
 # Build all enabled code
-all:
-	$(MAKE) all-common
+all-old:
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+	cd r1d; $(MAKE) all
 ifdef PSCF_CPP
 	cd rpc; $(MAKE) all
 endif
@@ -16,30 +26,22 @@ ifdef PSCF_CUDA
 	cd rpg; $(MAKE) all
 endif
 
-# Build code that is always compiled
-all-common: 
-	cd util; $(MAKE) all
-	cd pscf; $(MAKE) all
-	cd r1d; $(MAKE) all
-	cd prdc; $(MAKE) all
-	cd rp; $(MAKE) all
-
 # Build code in Util names (general scientific utilities)
 util: 
 	cd util; $(MAKE) all
 
-# Build common code for PSCF in Util and Pscf namespaces
+# Build code required by pscf
 pscf: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 
-# Build common code for PSCF in Util, Pscf, and Prdc namespaces
+# Build code required by prdc
 prdc: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd prdc; $(MAKE) all
 
-# Build common code for PSCF in Util, Pscf, and Prdc namespaces
+# Build code required by rp
 rp: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
@@ -59,13 +61,6 @@ pscf_rpc:
 	cd prdc; $(MAKE) all
 	cd rpc; $(MAKE) all
 
-# Build pscf_cpc CPU code for real periodic fields (install in BIN_DIR)
-pscf_cpc: 
-	cd util; $(MAKE) all
-	cd pscf; $(MAKE) all
-	cd prdc; $(MAKE) all
-	cd cpc; $(MAKE) all
-
 ifdef PSCF_CUDA
 # Build pscf_rpc GPU code for real periodic fields (install in BIN_DIR)
 pscf_rpg:
@@ -74,6 +69,13 @@ pscf_rpg:
 	cd prdc; $(MAKE) all
 	cd rpg; $(MAKE) all
 endif
+
+# Build pscf_cpc CPU code for real periodic fields (install in BIN_DIR)
+pscf_cpc: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+	cd prdc; $(MAKE) all
+	cd cpc; $(MAKE) all
 
 # ======================================================================
 # Test targets
@@ -84,6 +86,7 @@ test:
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
+	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
 	@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd cpc/tests; $(MAKE) all; $(MAKE) run-quiet
 ifdef PSCF_CUDA
@@ -93,6 +96,7 @@ endif
 	@cat pscf/tests/count >> count
 	@cat prdc/tests/count >> count
 	@cat r1d/tests/count >> count
+	@cat rp/tests/count >> count
 	@cat rpc/tests/count >> count
 	@cat cpc/tests/count >> count
 ifdef PSCF_CUDA
@@ -170,6 +174,7 @@ ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f pscf/tests/makefile
 	rm -f prdc/tests/makefile
 	rm -f r1d/tests/makefile
+	rm -f rp/tests/cpp/makefile
 	rm -f rpc/tests/makefile
 	rm -f rpg/tests/makefile
 	rm -f cpc/tests/makefile

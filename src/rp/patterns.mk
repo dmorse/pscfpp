@@ -35,6 +35,8 @@ MAKEDEP_ARGS+= -A$(BLD_DIR)/config.mk
 MAKEDEP_ARGS+= -S$(SRC_DIR)
 MAKEDEP_ARGS+= -B$(BLD_DIR)
 
+TEST_CPP_DIR=$(SRC_DIR)/rp/tests/cpp
+TEST_CUDA_DIR=$(SRC_DIR)/rp/tests/cuda
 #-----------------------------------------------------------------------
 # Pattern rules
 
@@ -52,11 +54,3 @@ $(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 
-# Pattern rule to link executable Test programs in src/rp/tests
-$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o  $(PSCF_LIBS)
-	$(NVXX) $(LDFLAGS) -o $@ $< $(LIBS)
-
-# Note: In the linking rule for unit test programs, the prerequisite list
-# contains the list $(PSCF_LIBS) of PSCF-specific libraries, but the action
-# links to the full list $(LIBS) of libraries that includes all relevant 
-# external libraries.

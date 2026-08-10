@@ -7,20 +7,20 @@ include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/rp/sources.mk
 include $(SRC_DIR)/rp/patterns.mk
-include $(SRC_DIR)/rp/tests/cpp/system/sources.mk
 
 # -----------------------------------------------------------------------
 # Main targets
 
-TEST=rp/tests/cpp/system/Test
+all: Test.o Test
 
-all: $(rpc_tests_system_OBJS) $(BLD_DIR)/$(TEST)
+Test: Test.o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o Test Test.o $(LIBS)
 
-run: $(rpc_tests_system_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/rp/tests/cpp/system/
+run: Test.o Test
+	./Test $(SRC_DIR)/rp/tests/cpp/system/
 
-run-quiet: $(rpc_tests_system_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/rp/tests/cpp/system/ > log
+run-quiet: Test.o Test
+	@.Test $(SRC_DIR)/rp/tests/cpp/system/ > log
 	@echo `grep failed log` ", "\
              `grep successful log` "in rp/tests/cpp/system/log" > count
 	@cat count
@@ -30,14 +30,15 @@ clean-outputs:
 	rm -f out/*
 
 clean:
-	rm -f $(BLD_DIR)/$(TEST)
-	rm -f $(rpc_tests_system_OBJS) $(rpc_tests_system_OBJS:.o=.d)
+	rm -f Test
+	rm -f Test.o Test.d
 	$(MAKE) clean-outputs
 
+.PHONY= all run run-quiet clean-outputs clean
 # -----------------------------------------------------------------------
 # Include dependency files
 
--include $(rpc_tests_system_OBJS:.o=.d)
+-include Test.d
 -include $(rp_DEPS)
 -include $(prdc_DEPS)
 -include $(pscf_DEPS)

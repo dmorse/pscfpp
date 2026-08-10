@@ -3,20 +3,17 @@ include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/rp/sources.mk
-include $(SRC_DIR)/rp/tests/cpp/environment/sources.mk
 include $(SRC_DIR)/rp/patterns.mk
-
-TEST=rp/tests/cpp/environment/Test
 
 .PHONY: all run run-quiet clean-outputs clean
 
-all: $(rpc_tests_environment_OBJS) $(BLD_DIR)/$(TEST)
+all: Test.o Test
 
-run: $(rpc_tests_environment_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/rp/tests/cpp/
+run: Test.o Test
+	./Test $(SRC_DIR)/rp/tests/cpp/
 
-run-quiet: $(rpc_tests_environment_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/rp/tests/cpp/ > log
+run-quiet: Test.o Test
+	./Test $(SRC_DIR)/rp/tests/cpp/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in rp/tests/cpp/log" > count
 	@cat count
@@ -26,8 +23,8 @@ clean-outputs:
 	rm -f out/sweep/*
 
 clean:
-	rm -f $(BLD_DIR)/$(TEST)
-	rm -f $(rpc_tests_environment_OBJS) $(rpc_tests_environment_OBJS:.o=.d)
+	rm -f Test
+	rm -f Test.o $(rpc_tests_environment_OBJS:.o=.d)
 	$(MAKE) clean-outputs
 
 -include $(TEST).d

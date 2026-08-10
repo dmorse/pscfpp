@@ -56,7 +56,7 @@ clean:
 	rm -f *.ou */*.ou */*/*.ou
 	rm -f *.du */*.du */*/*.du
 	rm -f lib*.a 
-	#cd tests; $(MAKE) clean
+	cd tests/cpp; $(MAKE) clean
 
 # C++ CPU backend
 ifdef PSCF_CPP
@@ -99,4 +99,4 @@ endif
 -include $(prdc_DEPS)
 -include $(rp_DEPS)
 -include $(PSCF_RPC).d
--include $(PSCF_RPG).d
+-include $(PSCF_RPG).du

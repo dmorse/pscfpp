@@ -5,8 +5,8 @@
 include $(SRC_DIR)/rp/field/sources.mk
 include $(SRC_DIR)/rp/solvers/sources.mk
 include $(SRC_DIR)/rp/system/sources.mk
-include $(SRC_DIR)/rp/scft/sources.mk
 include $(SRC_DIR)/rp/environment/sources.mk
+include $(SRC_DIR)/rp/scft/sources.mk
 include $(SRC_DIR)/rp/fts/sources.mk
 
 rp_OBJS= \
