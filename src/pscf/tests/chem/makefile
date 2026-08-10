@@ -2,20 +2,19 @@ include ../../../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
-include $(SRC_DIR)/pscf/tests/chem/sources.mk
 
-TEST=pscf/tests/chem/Test
+TEST=$(BLD_DIR)/pscf/tests/chem/Test
 
-all: $(pscf_tests_chem_OBJS) $(BLD_DIR)/$(TEST)
+all: $(TEST).o $(TEST)
 
-includes:
-	echo $(INCLUDES)
+$(TEST): $(TEST).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
-run:    $(pscf_tests_chem_OBJS) $(BLD_DIR)/$(TEST)
-	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/chem/ 
+run:    $(TEST).o $(TEST)
+	@$(TEST) $(SRC_DIR)/pscf/tests/chem/ 
 
-run-quiet: $(pscf_tests_chem_OBJS) $(BLD_DIR)/$(TEST)
-	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/chem/ > log
+run-quiet: $(TEST).o $(TEST)
+	@$(TEST) $(SRC_DIR)/pscf/tests/chem/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pscf/tests/log" > count
 	@cat count
@@ -24,10 +23,12 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_chem_OBJS) $(pscf_tests_chem_DEPS)
-	rm -f $(BLD_DIR)/$(TEST)
+	rm -f $(TEST).o $(TEST).d
+	rm -f $(TEST)
 	$(MAKE) clean-outputs
 
--include $(pscf_tests_chem_DEPS)
+.PHONY= all run run-quiet clean-outputs clean
+
+-include $(TEST).d
 -include $(pscf_DEPS)
 -include $(util_DEPS)

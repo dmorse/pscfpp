@@ -47,18 +47,3 @@ $(BLD_DIR)/%.ou: $(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 
-# Pattern rules to create exectuable Test programs in src/pscf/tests
-$(BLD_DIR)/%/Test: $(BLD_DIR)/%/Test.o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
-
-$(BLD_DIR)/%/cpuTest: $(BLD_DIR)/%/cpuTest.o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
-
-$(BLD_DIR)/%/cudaTest: $(BLD_DIR)/%/cudaTest.ou $(PSCF_LIBS)
-	cp $< cudaTmp.o
-	$(NVXX) $(LDFLAGS) -o $@ cudaTmp.o $(LIBS)
-	rm cudaTmp.o
-
-# Note: In the linking rule for tests, we include the list $(PSCF_LIBS) of 
-# PSCF-specific libraries as dependencies but link to the list $(LIBS) that
-# includes any required external libraries

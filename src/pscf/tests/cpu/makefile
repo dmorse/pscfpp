@@ -1,21 +1,20 @@
 include ../../../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/pscf/tests/cpu/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
-TEST=pscf/tests/cpu/Test
+TEST=$(BLD_DIR)/pscf/tests/cpu/Test
 
-all: $(pscf_tests_cpu_OBJS) $(BLD_DIR)/$(TEST)
+all: $(TEST).o $(TEST)
 
-includes:
-	echo $(INCLUDES)
+$(TEST): $(TEST).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
-run: $(pscf_tests_cpu_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/cpu 
+run: $(TEST).o $(TEST)
+	$(TEST) $(SRC_DIR)/pscf/tests/cpu 
 
-run-quiet: $(pscf_tests_cpu_OBJS) $(BLD_DIR)/$(TEST)
-	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/cpu > log
+run-quiet: $(TEST).o $(TEST)
+	@$(TEST) $(SRC_DIR)/pscf/tests/cpu > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pscf/tests/log" > count
 	@cat count
@@ -24,11 +23,11 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_cpu_OBJS)
-	rm -f $(pscf_tests_cpu_DEPS)
-	rm -f $(BLD_DIR)/$(TEST)
+	rm -f $(TEST).o
+	rm -f $(TEST).d
+	rm -f $(TEST)
 	$(MAKE) clean-outputs
 
--include $(pscf_tests_cpu_DEPS)
--include $(pscf_util_DEPS)
--include $(pscf_pscf_DEPS)
+-include $(TEST).d
+-include $(util_DEPS)
+-include $(pscf_DEPS)

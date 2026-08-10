@@ -1,63 +1,74 @@
 include ../../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/pscf/tests/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
+TEST_CUDA=$(BLD_DIR)/pscf/tests/cudaTest
+TEST_CPU=$(BLD_DIR)/pscf/tests/cpuTest
+TEST_DIR=$(SRC_DIR)/pscf/tests
+
 ifdef PSCF_CUDA
-TEST=pscf/tests/cudaTest
+TEST=$(TEST_CUDA)
+TEST_OBJ=$(TEST).ou
+TEST_DEP=$(TEST).du
 else
-TEST=pscf/tests/cpuTest
+TEST=$(TEST_CPU)
+TEST_OBJ=$(TEST).o
+TEST_DEP=$(TEST).d
 endif
 
-.PHONY: all libs includes run run-quiet clean-outputs clean
+all: $(TEST)
 
-all: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
+$(TEST_CPU): $(TEST_CPU).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST_CPU) $(TEST_CPU).o $(LIBS)
 
-libs:
-	@echo $(LIBS)
+$(TEST_CUDA): $(TEST_CUDA).ou $(PSCF_LIBS)
+	@cp $(TEST_CUDA).ou $(TEST_CUDA).o
+	$(NVXX) $(LDFLAGS) -o $(TEST_CUDA) $(TEST_CUDA).o $(LIBS)
+	@rm $(TEST_CUDA).o
 
-includes:
-	@echo $(INCLUDES)
+run: $(TEST)
+	@$(TEST) $(SRC_DIR)/pscf/tests/ 
 
-run: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ 
-
-run-quiet: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
-	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ > log
+run-quiet: $(TEST_OBJ) $(TEST)
+	@$(TEST) $(SRC_DIR)/pscf/tests/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pscf/tests/log" > count
 	@cat count
 
 clean-outputs:
 	rm -f log count 
-	-cd $(SRC_DIR)/pscf/tests/chem; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/pscf/tests/floryHuggins; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/pscf/tests/correlation; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/pscf/tests/interaction; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/pscf/tests/math; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/pscf/tests/mesh; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/pscf/tests/solvers; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/pscf/tests/cpu; $(MAKE) clean-outputs
-	-cd $(SRC_DIR)/pscf/tests/cuda; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/chem; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/floryHuggins; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/correlation; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/interaction; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/math; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/mesh; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/solvers; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/cpu; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/cuda; $(MAKE) clean-outputs
 
 clean:
-	rm -f *Test
-	rm -f $(pscf_tests_OBJS) $(pscf_tests_DEPS)
-	rm -f $(BLD_DIR)/$(TEST)
+	rm -f $(TEST_OBJ)
+	rm -f $(TEST_DEP)
+	rm -f $(TEST)
+	rm -f cpuTest cudaTest
 	rm -f *.o *.d 
 	rm -f *.ou *.du
 	rm -f log count 
-	-cd $(SRC_DIR)/pscf/tests/chem; $(MAKE) clean
-	-cd $(SRC_DIR)/pscf/tests/floryHuggins; $(MAKE) clean
-	-cd $(SRC_DIR)/pscf/tests/correlation; $(MAKE) clean
-	-cd $(SRC_DIR)/pscf/tests/interaction; $(MAKE) clean
-	-cd $(SRC_DIR)/pscf/tests/math; $(MAKE) clean
-	-cd $(SRC_DIR)/pscf/tests/mesh; $(MAKE) clean
-	-cd $(SRC_DIR)/pscf/tests/solvers; $(MAKE) clean
-	-cd $(SRC_DIR)/pscf/tests/cpu; $(MAKE) clean
-	-cd $(SRC_DIR)/pscf/tests/cuda; $(MAKE) clean
+	-cd $(TEST_DIR)/chem; $(MAKE) clean
+	-cd $(TEST_DIR)/floryHuggins; $(MAKE) clean
+	-cd $(TEST_DIR)/correlation; $(MAKE) clean
+	-cd $(TEST_DIR)/interaction; $(MAKE) clean
+	-cd $(TEST_DIR)/math; $(MAKE) clean
+	-cd $(TEST_DIR)/mesh; $(MAKE) clean
+	-cd $(TEST_DIR)/solvers; $(MAKE) clean
+	-cd $(TEST_DIR)/cpu; $(MAKE) clean
+	-cd $(TEST_DIR)/cuda; $(MAKE) clean
 
--include $(pscf_tests_DEPS)
--include $(pscf_DEPS)
+.PHONY: all run run-quiet clean-outputs clean
+
+# Include all relevant dependency files
 -include $(util_DEPS)
+-include $(pscf_DEPS)
+-include $(TEST_DEP)

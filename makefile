@@ -18,18 +18,22 @@ include bld/config.mk
 all:
 	cd bld; $(MAKE) all
 
-# Build the pscf_1d 1D finite element SCFT program
-pscf_1d:
-	cd bld; $(MAKE) pscf_1d
+# Build the pscf_r1d 1D finite element SCFT program
+pscf_r1d:
+	cd bld; $(MAKE) pscf_r1d
 
-# Build the pscf_pc cpu program for periodic structures 
-pscf_pc:
-	cd bld; $(MAKE) pscf_pc
+# Build the pscf_rpc and/or pscf_rpg codes for periodic systems
+pscf_rp:
+	cd bld; $(MAKE) pscf_rp
+
+# Build the pscf_pc cpu program in the rpc subdirectory
+pscf_rpc:
+	cd bld; $(MAKE) pscf_rpc
 
 ifdef PSCF_CUDA
-# Build the pscf_pg gpu program for periodic structures
-pscf_pg:
-	cd bld; $(MAKE) pscf_pg
+# Build the pscf_pg gpu program in the rpg directory
+pscf_rpg:
+	cd bld; $(MAKE) pscf_rpg
 endif
 
 # =========================================================================
@@ -76,7 +80,7 @@ clean-tests:
 
 # Remove all executable files in $(BIN_DIR)
 clean-bin:
-	rm -f $(BIN_DIR)/pscf*
+	rm -f $(BIN_DIR)/pscf_*
 
 # Remove user-generated documentation files
 clean-docs:

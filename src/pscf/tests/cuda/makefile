@@ -1,21 +1,22 @@
 include ../../../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/pscf/tests/cuda/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
-TEST=pscf/tests/cuda/cudaTest
+TEST=$(BLD_DIR)/pscf/tests/cuda/cudaTest
 
-all: $(pscf_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
+all: $(TEST)
 
-includes:
-	echo $(INCLUDES)
+$(TEST): $(TEST).ou $(PSCF_LIBS)
+	@cp $(TEST).ou $(TEST).o
+	$(NVXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
+	@rm $(TEST).o
 
-run: $(pscf_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/cuda 
+run: $(TEST)
+	$(TEST) $(SRC_DIR)/pscf/tests/cuda 
 
-run-quiet: $(pscf_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
-	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/cuda > log
+run-quiet: $(TEST)
+	@$(TEST) $(SRC_DIR)/pscf/tests/cuda > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pscf/tests/log" > count
 	@cat count
@@ -24,11 +25,11 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_cuda_OBJS)
-	rm -f $(pscf_tests_cuda_DEPS)
-	rm -f $(BLD_DIR)/$(TEST)
+	rm -f $(TEST).ou
+	rm -f $(TEST).du
+	rm -f $(TEST)
 	$(MAKE) clean-outputs
 
--include $(pscf_tests_cuda_DEPS)
--include $(pscf_util_DEPS)
--include $(pscf_pscf_DEPS)
+-include $(TEST).du
+-include $(util_DEPS)
+-include $(pscf_DEPS)

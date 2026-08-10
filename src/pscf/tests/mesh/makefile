@@ -1,21 +1,20 @@
 include ../../../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/pscf/tests/mesh/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
-TEST=pscf/tests/mesh/Test
+TEST=$(BLD_DIR)/pscf/tests/mesh/Test
 
-all: $(pscf_tests_mesh_OBJS) $(BLD_DIR)/$(TEST)
+all: $(TEST)
 
-includes:
-	echo $(INCLUDES)
+$(TEST): $(TEST).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
-run: $(pscf_tests_mesh_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/mesh/ 
+run: $(TEST)
+	$(TEST) $(SRC_DIR)/pscf/tests/mesh/ 
 
-run-quiet: $(pscf_tests_mesh_OBJS) $(BLD_DIR)/$(TEST)
-	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/mesh/ > log
+run-quiet: $(TEST)
+	@$(TEST) $(SRC_DIR)/pscf/tests/mesh/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pscf/tests/log" > count
 	@cat count
@@ -24,11 +23,11 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(pscf_tests_mesh_OBJS)
-	rm -f $(pscf_tests_mesh_DEPS)
-	rm -f $(BLD_DIR)/$(TEST) 
+	rm -f $(TEST).o
+	rm -f $(TEST).d
+	rm -f $(TEST) 
 	$(MAKE) clean-outputs
 
--include $(pscf_tests_mesh_DEPS)
+-include $(TEST).d
 -include $(pscf_DEPS)
 -include $(util_DEPS)

@@ -14,18 +14,6 @@ all:
 	cd prdc; $(MAKE) all
 	cd rp; $(MAKE) all
 
-# Build all enabled code
-all-old:
-	cd util; $(MAKE) all
-	cd pscf; $(MAKE) all
-	cd r1d; $(MAKE) all
-ifdef PSCF_CPP
-	cd rpc; $(MAKE) all
-endif
-ifdef PSCF_CUDA
-	cd rpg; $(MAKE) all
-endif
-
 # Build code in Util names (general scientific utilities)
 util: 
 	cd util; $(MAKE) all
@@ -86,28 +74,22 @@ test:
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
-	#@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
 ifdef PSCF_CPP
 	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
 endif
 ifdef PSCF_CUDA
-	#@cd rpg/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd rp/tests/cuda; $(MAKE) all; $(MAKE) run-quiet
 endif
-	@cd cpc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
 	@cat prdc/tests/count >> count
 	@cat r1d/tests/count >> count
-	#@cat rpc/tests/count >> count
 ifdef PSCF_CPP
 	@cat rp/tests/cpp/count >> count
 endif
 ifdef PSCF_CUDA
-	#@cat rpg/tests/count >> count
 	@cat rp/tests/cuda/count >> count
 endif
-	@cat cpc/tests/count >> count
 	@echo " "
 	@echo "Summary"
 	@cat count
@@ -119,20 +101,16 @@ test-cpu:
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
-	#@cd rpc/tests; $(MAKE) all; $(MAKE) run-quiet
 ifdef PSCF_CPP
 	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
 endif
-	@cd cpc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
 	@cat prdc/tests/count >> count
 	@cat r1d/tests/count >> count
-	#@cat rpc/tests/count >> count
 ifdef PSCF_CPP
 	@cat rp/tests/cpp/count >> count
 endif
-	@cat cpc/tests/count >> count
 	@echo " "
 	@echo "Summary"
 	@cat count

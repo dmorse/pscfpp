@@ -10,10 +10,10 @@
 
 # Local PSCF static libraries needed in src/prdc
 # Variables *_LIB give library paths, are defined in sources.mk files
-PRDC_LIBS=$(prdc_LIB) $(pscf_LIB) $(util_LIB)
+PSCF_LIBS=$(prdc_LIB) $(pscf_LIB) $(util_LIB)
 
 # All libraries needed by executables in src/prdc (including external)
-LIBS=$(PRDC_LIBS)
+LIBS=$(PSCF_LIBS)
 
 # Add header include and library paths to Gnu scientific library (GSL)
 INCLUDES+=$(GSL_INC)
@@ -59,19 +59,3 @@ $(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 
-# Pattern rules to create exectuable Test programs in src/prdc/tests
-$(BLD_DIR)/%/Test: $(BLD_DIR)/%/Test.o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
-
-$(BLD_DIR)/%/cpuTest: $(BLD_DIR)/%/cpuTest.o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
-
-$(BLD_DIR)/%/cudaTest: $(BLD_DIR)/%/cudaTest.ou $(PSCF_LIBS)
-	cp $< cudaTmp.o
-	$(NVXX) $(LDFLAGS) -o $@ cudaTmp.o $(LIBS)
-	rm cudaTmp.o
-
-# Note: We use $(LIBS) in the recipe for unit test executables but
-# $(PSCF_LIBS) in the prerequisite list, so that all libraries are
-# linked but the build system is only responsible for updating those
-# that are part of PSCF.

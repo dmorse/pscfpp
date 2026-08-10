@@ -1,8 +1,0 @@
-pscf_tests_math_=pscf/tests/math/Test.cpp
-
-pscf_tests_math_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(pscf_tests_math_:.cpp=.o))
-
-pscf_tests_math_DEPS=\
-     $(addprefix $(BLD_DIR)/, $(pscf_tests_math_:.cpp=.d))
-

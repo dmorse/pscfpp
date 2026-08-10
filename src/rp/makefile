@@ -79,9 +79,9 @@ ifdef PSCF_CUDA
 
   # Main pscf_rpg executable 
   $(PSCF_RPG_EXE): $(PSCF_RPG).ou $(PSCF_LIBS)
-	cp $(PSCF_RPG).ou $(PSCF_RPG).o
+	@cp $(PSCF_RPG).ou $(PSCF_RPG).o
 	$(NVXX) $(LDFLAGS) -o $(PSCF_RPG_EXE) $(PSCF_RPG).o $(LIBS)
-	rm $(PSCF_RPG).o
+	@rm $(PSCF_RPG).o
 
   pscf_rpg:
 	$(MAKE) $(PSCF_RPG_EXE)
