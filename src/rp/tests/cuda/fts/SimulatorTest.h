@@ -1,0 +1,303 @@
+#ifndef RPG_SIMULATOR_TEST_H
+#define RPG_SIMULATOR_TEST_H
+
+#include <test/UnitTest.h>
+#include <test/UnitTestRunner.h>
+
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/fts/simulator/Simulator.h>
+#include <rp/scft/ScftThermo.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
+#include <rp/field/WFields.h>
+#include <rp/field/FieldIo.h>
+
+#include <prdc/field/cuda/RField.h> 
+#include <prdc/field/cuda/RFieldComparison.h>
+
+#include <prdc/field/cuda/resources.h>
+#include <pscf/math/IntVec.h>
+#include <pscf/interaction/Interaction.h>
+
+#include <util/misc/FileMaster.h>  
+#include <util/tests/LogFileUnitTest.h>
+#include <util/containers/DArray.h>  
+
+#include <fstream>
+
+using namespace Util;
+using namespace Pscf;
+using namespace Pscf::Prdc;
+
+class SimulatorTest : public LogFileUnitTest
+{
+
+   Rp::System<3,CUT> system;
+
+public:
+
+
+   SimulatorTest()
+    : system()
+   {}
+
+   void setUp()
+   {  setVerbose(0); }
+
+   void initSystem(std::string filename)
+   {
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      openLogFile("out/testSystem.log");
+      ParamComponent::setEcho(true);
+
+      std::ifstream in;
+      openInputFile(filename, in);
+      system.readParam(in);
+      in.close();
+
+   }
+
+   void testAnalyzeChi()
+   {
+      printMethod(TEST_FUNC);
+
+      initSystem("in/param1_simulator");
+      Rp::Simulator<3,CUT> simulator(system);
+      simulator.allocate();
+      simulator.analyzeChi();
+
+      double chi = system.interaction().chi(0,1);
+      TEST_ASSERT( fabs(system.interaction().chi(0,0)) < 1.0E-8);
+      TEST_ASSERT( fabs(system.interaction().chi(1,1)) < 1.0E-8);
+
+      DArray<double> vals = simulator.chiEvals();
+      TEST_ASSERT( fabs((vals[0] - simulator.chiEval(0))/chi) < 1.0E-8);
+      TEST_ASSERT( fabs((vals[1] - simulator.chiEval(1))/chi) < 1.0E-8);
+      TEST_ASSERT(fabs((vals[0] + chi)/chi) < 1.0E-8);
+      TEST_ASSERT(fabs(vals[1]/chi) < 1.0E-8);
+
+      DMatrix<double> vecs = simulator.chiEvecs();
+      TEST_ASSERT(fabs(vecs(0,0) - 1.0) < 1.0E-8);
+      TEST_ASSERT(fabs(vecs(0,1) + 1.0) < 1.0E-8);
+      TEST_ASSERT(fabs(vecs(1,0) - 1.0) < 1.0E-8);
+      TEST_ASSERT(fabs(vecs(1,1) - 1.0) < 1.0E-8);
+
+      DArray<double>  sc = simulator.sc();
+      TEST_ASSERT( fabs((sc[0] - simulator.sc(0))/chi) < 1.0E-8);
+      TEST_ASSERT( fabs((sc[1] - simulator.sc(1))/chi) < 1.0E-8);
+      TEST_ASSERT( fabs(simulator.sc(0)/chi) < 1.0E-8);
+      TEST_ASSERT( fabs(simulator.sc(1)/chi - 0.5) < 1.0E-8);
+
+      #if 0
+      std::cout << std::endl;
+      std::cout << "vals  = " << vals[0] << "  " << vals[1] << std::endl;
+      std::cout << "vec0  = " << vecs(0,0) << "  " << vecs(0,1) << std::endl;
+      std::cout << "vec1  = " << vecs(1,0) << "  " << vecs(1,1) << std::endl;
+      #endif
+
+   }
+
+   void testSaddlePointField()
+   {
+      printMethod(TEST_FUNC);
+
+      initSystem("in/param1_simulator");
+      Rp::Simulator<3,CUT> simulator(system);
+      simulator.allocate();
+      simulator.analyzeChi();
+
+      system.w().readRGrid("in/w_gyr.rf");
+      DArray< RField<3,CUT> > const & w = system.w().rgrid();
+
+      system.compute();
+      DArray< RField<3,CUT> > const & c = system.c().rgrid();
+
+      int nMonomer = system.mixture().nMonomer();
+      int meshSize = system.domain().mesh().size();
+      IntVec<3> dimensions = system.domain().mesh().dimensions();
+
+      simulator.computeWc();
+      DArray< RField<3,CUT> > const & wc = simulator.wc();
+
+      simulator.computeCc();
+      DArray< RField<3,CUT> > const & cc = simulator.cc();
+
+      simulator.computeDc();
+      DArray< RField<3,CUT> > const & dc = simulator.dc();
+
+      // Check allocation and capacities
+      TEST_ASSERT(c.capacity() == nMonomer);
+      TEST_ASSERT(w.capacity() == nMonomer);
+      TEST_ASSERT(wc.capacity() == nMonomer);
+      TEST_ASSERT(cc.capacity() == nMonomer);
+      int i;
+      for (i=0; i < nMonomer; ++i) {
+         TEST_ASSERT(c[i].capacity() == meshSize);
+         TEST_ASSERT(w[i].capacity() == meshSize);
+         TEST_ASSERT(wc[i].capacity() == meshSize);
+         TEST_ASSERT(cc[i].capacity() == meshSize);
+      }
+      TEST_ASSERT(dc.capacity() == nMonomer - 1);
+      for (i=0; i < nMonomer - 1; ++i) {
+         TEST_ASSERT(dc[i].capacity() == meshSize);
+      }
+
+      // Test wc field
+      RField<3,CUT> wcTest1;
+      wcTest1.allocate(dimensions);
+      RField<3,CUT> wcTest2;
+      wcTest2.allocate(dimensions);
+
+      // wcTest1 = w[0] - wc[0] - wc[1]
+      VecOp::addVcVcVc(wcTest1, w[0], 1.0, wc[0], -1.0, wc[1], -1.0);
+      TEST_ASSERT(Reduce::maxAbs(wcTest1) < 1.0E-6);
+      
+      // wcTest2 = w[0] - w[1] - 2.0*wc[0]
+      VecOp::addVcVcVc(wcTest2, w[0], 1.0, w[1], -1.0, wc[0], -2.0);
+      TEST_ASSERT(Reduce::maxAbs(wcTest2) < 1.0E-6);
+
+      // Test cc field
+      RField<3,CUT> ccTest;
+      ccTest.allocate(dimensions);
+      
+      // ccTest = c[0] - c[1] - cc[0]
+      VecOp::addVcVcVc(ccTest, c[0], 1.0, c[1], -1.0, cc[0], -1.0);
+      TEST_ASSERT(Reduce::maxAbs(ccTest) < 1.0E-6);
+      
+      // Test dc field
+      TEST_ASSERT(Reduce::maxAbs(dc[0]) < 1.0E-6);
+
+      #if 0
+      std::cout << std::endl;
+      std::cout << "Maximum derivative " << diff << std::endl;
+      std::cout << std::endl;
+      std::cout << system.domain().mesh().dimensions() << std::endl;
+      std::cout << system.domain().mesh().size() << std::endl;
+      #endif
+
+      double volume = system.domain().unitCell().volume();
+      double vMonomer = system.mixture().vMonomer();
+      double ratio = volume/vMonomer;
+
+      // SCFT free energy for converged solution
+      system.scft().compute();
+      double fHelmholtz = system.scft().fHelmholtz();
+
+      // FTS Hamiltonian at saddle-point
+      simulator.computeHamiltonian();
+      double hamiltonian = simulator.hamiltonian();
+
+      // Compare FTS Hamiltonian to SCFT free energy
+      double diff;
+      diff = fabs((hamiltonian - ratio*fHelmholtz)/hamiltonian);
+      TEST_ASSERT( diff < 1.0E-8);
+
+      #if 0
+      std::cout << "Hamiltonian different (fractional) = " 
+                << diff << std::endl;
+
+      std::cout << "fHelmholtz = " << fHelmholtz << "  " 
+                << ratio*fHelmholtz  << std::endl;
+
+      std::cout << "Hamiltonian = " << hamiltonian/ratio << "  " 
+                << hamiltonian << std::endl;
+      #endif
+     
+   }
+   
+   void testComputeHamiltonian()
+   {
+      printMethod(TEST_FUNC);
+      
+      initSystem("in/param_system_disordered");
+      Rp::Simulator<3,CUT> simulator(system);
+      
+      simulator.allocate();
+      simulator.analyzeChi();
+      
+      system.w().readRGrid("in/w_dis.rf");
+      system.compute();
+      simulator.computeWc();
+      simulator.computeCc();
+      
+      // ComputeHamiltonian
+      simulator.computeHamiltonian();
+      
+      double diff;
+      double idealHamiltonian = simulator.idealHamiltonian();
+      diff = fabs(-4784.86 - idealHamiltonian);
+      TEST_ASSERT(diff < 1.0E-1);
+   
+      double fieldHamiltonian = simulator.fieldHamiltonian();
+      diff = fabs(12081.8 - fieldHamiltonian);
+      TEST_ASSERT(diff < 1.0E-1);
+      
+      double totalHamiltonian = simulator.hamiltonian();
+      diff = fabs(7296.89 - totalHamiltonian);
+      TEST_ASSERT(diff < 1.0E-1);
+      
+      #if 0
+      std::cout << "ideal Hamiltonian: " << idealHamiltonian<< std::endl;
+      std::cout << "field Hamiltonian: " << fieldHamiltonian<< std::endl;
+      std::cout << "total Hamiltonian: " << totalHamiltonian<< std::endl;
+      #endif
+   }
+   
+   void testDc()
+   {
+      printMethod(TEST_FUNC);
+      
+      initSystem("in/param_system_disordered");
+      Rp::Simulator<3,CUT> simulator(system);
+      
+      simulator.allocate();
+      simulator.analyzeChi();
+      
+      system.w().readRGrid("in/w_dis.rf");
+      system.compute();
+      simulator.computeWc();
+      simulator.computeCc();
+      simulator.computeDc();
+      
+      int nMonomer = system.mixture().nMonomer();
+      IntVec<3> dimensions = system.domain().mesh().dimensions();
+      DArray< RField<3,CUT> > dc0;
+      dc0.allocate(nMonomer-1);
+      for (int i = 0; i < nMonomer - 1; ++i) {
+         dc0[i].allocate(dimensions);
+      }
+      UnitCell<3> refUnitCell;
+      system.domain().fieldIo().readFieldsRGrid("in/dc_dis.rf", dc0, refUnitCell);
+      
+      #if 0
+      // Gernerate reference dc
+      std::ofstream out;
+      openOutputFile("in/dc_dis.rf", out);
+      system.domain().fieldIo().writeFieldsRGrid(out, simulator.dc(),
+                                                 system.domain().unitCell(),
+                                                 true, false, true);
+      out.close();
+      #endif 
+      
+      RFieldComparison<3,CUT> comparison;
+      comparison.compare(dc0, simulator.dc());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-2);
+      
+   }
+   
+   
+};
+
+TEST_BEGIN(SimulatorTest)
+TEST_ADD(SimulatorTest, testAnalyzeChi)
+TEST_ADD(SimulatorTest, testSaddlePointField)
+TEST_ADD(SimulatorTest, testComputeHamiltonian)
+TEST_ADD(SimulatorTest, testDc)
+TEST_END(SimulatorTest)
+
+#endif

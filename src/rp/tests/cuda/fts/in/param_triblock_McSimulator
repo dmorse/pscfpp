@@ -1,0 +1,37 @@
+McSimulator{
+   seed              1784106389
+   McMoveManager{
+      ForceBiasMove{
+        probability     0.50
+        mobility        2.0E-3
+      }
+      
+      RealMove{
+        probability     0.5
+        sigma           0.06
+      }
+      
+   }
+   LrAmCompressor{
+      epsilon      1.0e-4
+      maxItr       200
+      maxHist      30     
+      verbose	   0
+      errorType    normResid
+   }
+   AnalyzerManager{
+      baseInterval    10
+
+      HamiltonianAnalyzer{
+        interval        10
+        outputFileName  out/hamiltonian
+        nSamplePerOutput 2
+      }
+
+      StepLogger{
+        interval        20
+      }
+
+   }
+}
+

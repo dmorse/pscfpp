@@ -4,7 +4,6 @@
 # directory (referred to by a relative path), which defines values for   #
 # the macros $(BLD_DIR) and $(SRC_DIR) that are used below.              #
 # ---------------------------------------------------------------------- #
-include $(BLD_DIR)/util/config.mk
 
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk

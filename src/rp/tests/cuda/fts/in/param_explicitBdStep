@@ -1,0 +1,21 @@
+BdSimulator{
+   seed		486394701
+   ExplicitBdStep{
+      mobility		1.0E-3
+   }
+   LrAmCompressor{
+      epsilon		1.0e-4
+      maxItr		200
+      maxHist		30
+      verbose		0
+      errorType		rms
+   }
+   AnalyzerManager{
+      baseInterval    1
+      HamiltonianAnalyzer{
+         interval        1
+         outputFileName  out/hamiltonian
+         nSamplePerOutput 1
+      }
+   }
+}

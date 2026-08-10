@@ -1,0 +1,30 @@
+System{
+  polymerModel  Bead
+  Mixture{
+     nMonomer  1
+     monomers[
+               0.1  
+     ]
+     nPolymer  1
+     Polymer{
+        type    linear
+        nBlock  1
+        blocks[
+                0   100
+        ]
+        phi     1.0
+     }
+     vMonomer  0.0001
+  }
+   Interaction{
+     chi(
+          0   0   0.00000001
+     )
+  }
+  Domain{
+    mesh        40
+    lattice     lamellar  
+  }
+}
+
+    unitCell Lamellar   1.3835952906
