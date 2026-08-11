@@ -151,8 +151,8 @@ header file named src/pscf/paths.h that is included by other C++ files.
 
 \section developer_build_config_features_sec Variables that enable optional features
 
-The variables UTIL_DEBUG and PSCF_CUDA are each used to control whether
-a specific feature is enabled or disabled when PSCF is compiled.
+The variables UTIL_DEBUG, PSCF_CUDA, and PSCF_CPP are each used to control 
+whether a specific feature is enabled or disabled when PSCF is compiled.
 Specifically:
 
   - Defining UTIL_DEBUG enables a set of optional run-time checks
@@ -162,31 +162,41 @@ Specifically:
   - Defining PSCF_CUDA enables compilation of code that uses an NVIDIA
     GPU, and creation of the pscf_rpg executable.
 
-The config.mk code contains two statements that can each be used to
+  - Defining PSCF_CPP enables creation of the pscf_rpc executable, and
+    of source files in src/rp directory that are only used to construct
+    this executable. 
+
+The config.mk code contains three statements that can each be used to
 define one of these variables, in order to enable the associated feature,
 or that can be commented out in order disable the associated feature.
-The lines that define these two variables are commented out by default,
-by placing a point (\#) symbol at the beginning of each line, so both
-of these features are disabled by default. For example, in the default
+The lines that define UTIL_DEBUG and PSCF_CUDA are commented out by 
+default, by placing a point (\#) symbol at the beginning of each line, 
+so both of these features are disabled by default. The lines that defines
+PSCF_CPP is instead enabled by default.  For example, in the default 
 state of either of the config.mk files created by the configure script,
 the line that defines UTIL_DEBUG looks like
 \verbatim
 #UTIL_DEBUG = 1
 \endverbatim
-Either feature may enabled by removing the \# symbol at the beginning
-of the relevant line, to enable the definition of the corresponding
-makefile variable. Both of these variables are assigned default values
-of 1, but the value is irrelevant - the behavior of the makefile system
-only depends on whether these variables are defined or not, and does
-not depend on the value assigned to either.
+Either feature of the two features that is disabled by default may be
+enabled by removing the \# symbol at the beginning of the relevant 
+line, to enable the definition of the corresponding makefile variable. 
+Conversely, building of the pscf_rpc executable may be disabled by 
+adding a hash symbol to comment out the line that defines PSCF_CPP.
 
-The debugging and CUDA features of PSCF may also be enabled or disabled
-by using the -d or -c options of the setopts script, respectively. The
-setopts script actually functions by using a stream editor to uncomment
-or comment out the relevant line or lines of the appropriate config.mk
-file. Invoking the setopts script in the scr directory modifies the file
-src/config.mk, while invoking the corresponding script in the bld
-directory modifies the file bld/config.mk.
+All three of these variables are assigned default values of 1, but the 
+value is irrelevant - the behavior of the makefile system only depends 
+on whether these variables are defined or not, and does not depend on 
+the value assigned to any of them.
+
+The debugging, CUDA, and CPP features of PSCF may also be enabled or 
+disabled by using the -d, -u and -c options of the setopts script, 
+respectively. The setopts script actually functions by using a stream 
+editor to uncomment or comment out the relevant line or lines of the 
+appropriate config.mk file. Invoking the setopts script in the scr 
+directory modifies the file src/config.mk, and thus only affects 
+code that is built in source, while invoking the corresponding script 
+in the bld directory modifies the file bld/config.mk.
 
 \section developer_build_config_rules_sec Variables used in makefile rules
 
@@ -200,7 +210,6 @@ types of makefile rules that are defined in
 \ref developer_build_pattern_page "pattern rule files",
 \ref developer_build_source_page "source list files", or
 \ref developer_build_makefile_page "makefiles".
-
 
 <BR>
 \ref developer_build_files_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

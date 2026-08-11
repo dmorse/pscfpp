@@ -50,15 +50,16 @@ into makefiles.
 
 \section developer_build_files_types_sec Makefile fragment file types
 
-The names and contents of different types of makefile fragments used in the
-build system are summarized in the table below:
+The names and contents of different types of makefile fragments used 
+in the build system are summarized in the table below:
 
- | Type        | Filename  | Contents                                     |
- |-------------|-----------| ---------------------------------------------|
- |configuration|config.mk  | configuration file, defines global variables |
- |source list  |sources.mk | list source files and object file targets    |
- |pattern rule |patterns.mk| pattern rules for object files targets       |
- |dependency   | *.d       | list prerequisites of a single *.o target   |
+ | Type        | Filename   | Contents                                     |
+ |-------------|------------| ---------------------------------------------|
+ |configuration|config.mk   | configuration file, defines global variables |
+ |source list  |sources.mk  | list source files and object file targets    |
+ |pattern rule |patterns.mk | pattern rules for object files targets       |
+ |dependency   |*.d         | list prerequisites of a single *.o target    |
+ |dependency   |*.du        | list prerequisites of a single *.ou target   |
 
 Each of these types of file is described in a bit more detail below, and
 then in greater detail in subsequent pages about different types of file:
@@ -88,15 +89,19 @@ then in greater detail in subsequent pages about different types of file:
      subdirectories.
 
    - \ref developer_build_dependency_page :
-     The *.d dependency file that is created whenever a source file is
+     The dependency file that is created whenever a source file is
      compiled contains a single makefile rule that lists all of the
      required prerequisites of the associated object file, with no
-     associated recipe.
+     associated recipe. A dependency file with suffix \*.d contains
+     dependencies of a \*.o object file that is created by compiling
+     a standard \*.cpp C++ file. A dependency file with suffix \*.du 
+     contains dependencies of a \*.ou object file that is created by 
+     compiling a \*.cu CUDA C++ file
 
 Every makefile within a namespace-level subdirectory of the src or bld
 directory includes a single config.mk configuration file, a single
 patterns.mk pattern rule file, one or more sources.mk source list files,
-and multiple *.d dependency files.
+and multiple dependency files.
 
 <BR>
 \ref developer_build_make_page   (Prev)&nbsp; &nbsp; &nbsp; &nbsp;

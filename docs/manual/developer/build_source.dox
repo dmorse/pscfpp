@@ -5,77 +5,180 @@
 <BR>
 
 Almost every subdirectory of the  src/ directory tree contain a source
-list file named "sources.mk". This file is a makefile fragment that is
-included into other makefiles. The primary purpose of each such file is
-to maintain a list of all of the compilable source files in that
-directory. Source list files in namespace-level directories also define
-a makefile rule for constructing an associated static library.
+list file named "sources.mk", which we refer to as a source list file. 
+This file is a makefile fragment that is included into other makefiles. 
+The primary purpose of each such file is to maintain makefile variables
+that contain lists of the object files and dependency files that will
+be created by compiling the source files in that directory. The source 
+list file in each namespace-level directories also define a makefile 
+rule for constructing an associated static library.
 
 \section developer_build_list_sources_sec Source and object file lists
 
-Every sources.mk source list file defines a makefile variable whose
-value is a list of all of the compilable source files that are located
-in that directory and all of its subdirectories.  The name of variable
-is always a string of the form
+Every sources.mk source list file that contains compilable \*.cpp C++ 
+source contains a makefile variable whose value is a list of all of 
+the *.cpp source files that are located in that directory.  The name 
+of that variable is always a string of the form
 \verbatim
-[directory]_
+[directory]_CPP
 \endverbatim
-in which the symbol "[directory]" represents a mangled form of the name
-of the subdirectory of src that contains the source list file.  Specifically,
-the [directory] string in each such variable name is constructed by taking
-the relative path from the src/ directory to a subdirectory of interest
-and replacing each "/" directory separator in this path an underscore
-("_").  As an example, the file src/pscf/chem/sources.mk defines a variable
-named
+in which the symbol "[directory]" represents a mangled form of the 
+name of the subdirectory of src that contains the source list file.  
+Specifically, the [directory] string in each such variable name is 
+constructed by taking the relative path from the src/ directory to a 
+subdirectory of interest and replacing each "/" directory separator 
+in this path an underscore ("_").  As an example, the file 
+src/pscf/chem/sources.mk defines a variable named
 \verbatim
-   pscf_chem_
+   pscf_chem_CPP
 \endverbatim
 Here, the directory path pscf/chem defined relative to the src directory
 has been converted into the variable name pscf_chem_ . The value of this
 variable is a list of paths to all compilable source files that are located
 in the directory tree rooted at the directory that contains this sources.mk
 file. Each path in this list must be given as a relative path, defined
-relative to the src directory.
+relative to the root of the src directory tree.
 
-Every sources.mk file also defines a second makefile variable with a name
-of the form [directory]_OBJS that contains a list of paths to corresponding
-\*.o object file targets.  For example, the file src/pscf/chem/sources.mk
-defines a variable named
+Each directory that contain \*.cu CUDA C++ files also contains an analogous 
+variable whose value is a list of all of the \*.cu source files in that 
+directory and all nested subdirectories. The name of this variable is a 
+string of the form
+\verbatim
+[directory]_CU
+\endverbatim
+in which "[directory]" denotes a mangled form fo the directory name of
+the same form as that used to construct the [directory]_CPP variable.
+
+If a directory with the src directory tree contains both standard \*.cpp 
+C++ files and \*.cu CUDA C++ files, then the source file list in that 
+directory will define two different makefile variables, with suffixes 
+_CPP and _CU, that contain lists of these two different types of file. 
+
+\section developer_build_list_objdep_sec Object file lists
+
+The sources.mk file in each source file directory also defines a single
+makefile variable with a name of the form 
+\verbatim
+  [directory]_OBJS 
+\endverbatim
+in which [directory]_OBJS is a mangled form of the path to the 
+directory.  For example, the file src/pscf/chem/sources.mk defines a 
+variable named
 \verbatim
 pscf_chem_OBJS
 \endverbatim
-The value of this variable is a list of paths to all of the object file
-targets that are created by compiling source files listed in the list
-corresponding source file list.  Every path in this list must be an
-absolute path, defined relative to the root of the entire file system.
+The value of this variable contains a list of paths to corresponding 
+object files that are created by compiling the source files contained
+in this directory and in any nested subdirectories that it contains.
+In what follows, we refer to the [directory]_OBJS file in each directory 
+as an object file list.
 
-In what follows, we refer to the [directory]_ variable in each such
-file as a source file list, and the [directory]_OBJS variable as an
-object file list. The source file list must be maintained by developers.
-The object file list is created automatically by applying some simple
-text manipulation operations to the source file list, as shown below.
+Every path in an object file list must be an absolute path to a file
+in the build directory, defined relative to the root of the entire 
+file system. Note that this is different from the convention used for 
+source file lists, in which the path to each file is a relative path, 
+defined relative to the root of the src directory tree. 
 
-In the remainder of this page, we discuss examples of sources.mk source list
-files located at three different levels of the src directory tree:
+The object file is in each directory is created automatically by 
+applying some simple text manipulation operations to the source file 
+lists. In a directory that contains source files but contains no
+subdirectories, the object file list is constructed from corresponding
+source files lists by operations that prepend absolute path to the
+build directory to each relative path a source file list and changing
+the file name suffix from .cpp or .cu to .o or .ou. Because it is
+automatically generated, the object file list thus does not need to
+be manually modified by a developer when a source file is added to 
+or removed from a directory. Developers are only responsbile for
+maintaining source file lists.
 
-   - Directories that are not namespace-level directories, and have no
-     enclosed subdirectories
+If a directory contains both standard \*.cpp C++ files and \*.cu CUDA 
+C++ files, then the object file list will contain object files created 
+by compiling both types of source file. Object files created by 
+compiling these different types of source files are created by different 
+pattern rules, using different compilers, and have different file name 
+suffixes:
 
-   - Directories that are not namespace-level directories, and have
-     enclosed subdirectories
+  - Names of object files created by compiling standard \*.cpp C++ files 
+    end with a suffix .o,  
+
+  - Names of object files that are created by compiling \*.cu CUDA C++ 
+    files end with a suffix .ou. 
+
+Each of the object files listed in an object file list is a target of 
+an associated makefile rule. The list of pre-requisites of each such 
+target is contained in an associated dependency file, as discussed 
+below.
+
+\section developer_build_list_dep_sec Dependency file lists
+
+In addition to source file and object file lists, the source file in 
+each source file directory defines a single make variable with a 
+name of the file
+\verbatim
+  [directory]_DEPS 
+\endverbatim
+This variable, which we refer to as a dependency file list, contains
+a list of absolute paths to dependency files that are created by
+creating all of the source files in the relevant directory and its
+subdirectories. 
+
+The paths in a dependency file list are absolute paths to files that
+are created in the build directory. Each dependency file list is 
+created automatically by applying text manipulation functions to the 
+relevant source file list or lists.
+
+If a directory contains both \*.cpp C++ source files and \*.cu CUDA 
+C++ files, then the [directory]_DEPS variable will contain names of 
+dependency files created by compiling both types of source file, 
+which have different file name suffixes:
+
+  - The name of a dependency file that is created as a side effect
+    of the rule that compiles a standard \*.cpp C++ files end with a 
+    suffix .d
+
+  - Names of a dependency file that is created as a side effect of 
+    the rule that compiles \*.cu CUDA C++ files end with a suffix 
+    .du
+
+Each dependency file contains a makefile rule in which the target is 
+the path to the associated object file.  The pre-requisites of each 
+object file target include all of the *.h and *.tpp files in the src 
+directory that are directly or indirectly included by the source file 
+that is compiled to create the object file target. The dependency 
+file associated with each source and object file is generated by 
+the build system by using the compiler to generate a list of these
+included files. 
+
+In the remainder of this page, we discuss examples of sources.mk source 
+list files located at three different levels of the src directory tree:
+
+   - Directories that do not contain any enclosed subdirectories, 
+     and that are not namespace-level directories.
+
+   - Directories that contain enclosed subdirectories, but that are not 
+     namespace-level directories.
 
    - Namepace-level subdirectories of the src directory
 
 \section developer_build_list_example1_sec Directories with no enclosed subdirectories (not namespace-level)
 
-The simplest type of sources.mk files occur in directories that are are
-not namespace level directories, but that that contain source files, and
-do not contain any enclosed subdirectories.
+The lowest level type of source list files occur in directories that 
+contain source files, but do not contain any enclosed subdirectories, and 
+that are not namespace-level directories. In what follows, we display and 
+discuss two examples of such source list files. The first example 
+discusses the source list file in a subdirectory of the src/pscf directory 
+that contains only standard *.cpp C++ source files.  The second, more 
+complicated example discusses the sources.mk for a subdirectory of the 
+src/rp directory that contains both *.cpp and .cu files, and that also 
+contains with some logic to control conditional compilation of different 
+types of source files. 
 
-<b> Example </b>: As an example of this case, the contents of the file
-src/pscf/chem/sources.mk is shown below:
+<b> Example 1 </b>: As our first example, the contents of the file 
+src/pscf/chem/sources.mk is shown below. This is a directory with no
+enclosed subdirectories that contains several \*.cpp C++ files, but
+no \*.cu CUDA C++ files.
 \verbatim
-pscf_chem_= \
+pscf_chem_CPP= \
   pscf/chem/Monomer.cpp \
   pscf/chem/Vertex.cpp \
   pscf/chem/Edge.cpp \
@@ -90,78 +193,211 @@ pscf_chem_= \
   pscf/chem/EdgeIterator.cpp
 
 pscf_chem_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(pscf_chem_:.cpp=.o))
+     $(addprefix $(BLD_DIR)/, $(pscf_chem_CPP:.cpp=.o))
+
+pscf_chem_DEPS=\
+     $(addprefix $(BLD_DIR)/, $(pscf_chem_CPP:.cpp=.d))
 
 \endverbatim
-The value assigned to pscf_chem_ in this example uses a makefile syntax
+The value assigned to pscf_chem_CPP in this example uses a makefile syntax
 in which a backslash (\\) character is used to continue a statement to the
 next line. Lines 2 - 12 of this example thus assign a value to pscf_chem
 that is simply a list of file paths separated by spaces.
 
-The value assigned to pscf_chem_ in this example is a list of all of the
-compilable source files in the relevant subdirectory, src/pscf/chem.  All
-paths in this list must be given as relative paths, defined relative to
-the src/ directory. In this example, these source files are all standard
-C++ source files with a file name suffix .cpp. Source file lists in
-other directories may, however, also contain CUDA C++ files with file
-name suffix *.cu.
+The value assigned to pscf_chem_CPP in this example is a list of all of 
+the compilable \*.cpp files in the relevant subdirectory, src/pscf/chem.  
+All paths in a source file list must be given as relative paths, defined 
+relative to the src/ directory, as done in this example.
 
-The object file list variable pscf_chem_OBJS_ is constructed in the last
-two lines of this example.  The value that is assigned to pscf_chem_OBJS
-is a corresponding list of absolute paths for object files, with
-filename suffix *.o.  This list is constructed here by applying two
-makefile text manipulation functions to the value of the source file
-list pscf_chem_. First, the ":" operator is used in the expression
-\$(pscf_chem_:.cpp=.o) to replace the .cpp suffix with .o in each of
-the relative paths in \$(pscf_chem_).  The built in "addprefix" function
-is then used to add the value $(BLD_DIR)/ as a common prefix to every
-name in the list. Here, $(BLD_DIR) is the absolute path to the build
-directory, which is defined in the relevant config.mk configuration
-file. These manipulations yield a list of absolute paths to all of
-the *.o object files that should be created by compiling the files
+The object file list variable pscf_chem_OBJS and dependency file list
+pscf_CHEM_DEPS are constructed in the last few lines of this example by 
+applying some standard text manipulation functions.
+
+Consider the command that assigns a value to the object list variable
+pscf_chem_OBJS.  The value that is assigned to this variable is a list 
+of absolute paths for object files, with filename suffix *.o.  This 
+list is constructed here by applying two makefile text manipulation 
+functions to the value of source file list pscf_chem_CPP. First, the 
+":" substitution operator is used in the expression 
+\code
+  $(pscf_chem_:.cpp=.o) 
+\endcode 
+to replace the .cpp suffix with a .o suffix in each of the relative 
+paths in \$(pscf_chem_).  Then, the built in "addprefix" function is 
+used to add the value $(BLD_DIR)/ as a common prefix to every name 
+in the list. Here, $(BLD_DIR) is the absolute path to the build 
+directory, which is defined in the relevant config.mk configuration 
+file. These manipulations yield a list of absolute paths to all of 
+the *.o object files that should be created by compiling the files 
 in the source file list.
+
+<b> Example 2 </b>: As a second example, we consider the contents 
+of the file src/rp/fts/brownian/sources.mk, which is located in a
+lower-level subdirectory of the src/rp directory tree.
+
+The src/rp directory is somewhat special in that it contains both 
+standard C++ *.cpp files that are used to construct the pscf_rpc 
+program and closely analogous \*.cu CUDA C++ files that are used 
+to construct the pscf_rpg program.  Throughout this directory tree, 
+\*.cpp and \*.cu source files exist as pairs of files with the 
+same base name but different suffixes. For example, the directory
+src/rp/fts/brownian contains a pair of files named LMBdStep.cpp 
+and LMBdStep.cu, with the same base LMBdStep but different file
+name suffixes. Each of the two files in each such pair contains
+code that instantiates a different specialization of a common 
+class template, in which shared base name is the name of the 
+class template. These two different specializations of each such
+class template are designed to use different hardware.
+
+For concreteness, consider the the two files named LMBdStep.cpp 
+and LMBdStep.cu in directory src/rp/fts/brownian. These two files 
+instantiate two different specializations of a class template 
+named LMBdStep. The implementation of this class template, which 
+is define in a file named LMBdStep.tpp, defines an algorithm for
+the Leimkuhler-Matthews Brownian dynamics step algorithm used in 
+PS-FTS simulations. The file LMBDStep.cpp, which is compiled by 
+a standard C++ compiler, instantiates a specialization of a the 
+LMBDStep class template that is designed to be used as part of 
+the pscf_rpc program, and to use standard CPU hardware.  The file 
+BdStep.cu instead instantiates a specialization of the LMBDStep 
+template that is designed to be used as part of the pscf_rpg 
+program, and that is designed to use a GPU.
+
+Conditional compilation of the \*.cpp and \*.cu files in the src/rp 
+directory tree is controlled by the makefile variables PSCF_CPP and 
+PSCF_CUDA that are introduced in the relevant config.mk configuration
+file. These two variables also control construction of the pscf_rpc 
+and and pscf_rpg programs, respectively.  The \*.cu files in the 
+src/rp directory tree are all compiled if and only if PSCF_CUDA is 
+defined, thus enabling construction of the pscf_rpg program. The 
+\*.cpp files in this directory tree are all compiled if and only 
+if PSCF_CPP is defined, thus enabling construction of the pscf_rpc 
+program.  Understanding of this logic is necessary to understand the 
+structure of the source list files in this directory tree.
+
+The content of the file src/rp/fts/brownian/sources.mk is shown
+below as an example:
+\verbatim
+rp_fts_brownian_OBJS=
+rp_fts_brownian_DEPS=
+
+ifdef PSCF_CPP
+  rp_fts_brownian_CPP= \
+    rp/fts/brownian/BdStep.cpp \
+    rp/fts/brownian/BdSimulator.cpp \
+    rp/fts/brownian/ExplicitBdStep.cpp \
+    rp/fts/brownian/PredCorrBdStep.cpp \
+    rp/fts/brownian/LMBdStep.cpp \
+    rp/fts/brownian/BdStepFactory.cpp
+  rp_fts_brownian_OBJS+=\
+       $(addprefix $(BLD_DIR)/, $(rp_fts_brownian_CPP:.cpp=.o))
+  rp_fts_brownian_DEPS+=\
+       $(addprefix $(BLD_DIR)/, $(rp_fts_brownian_CPP:.cpp=.d))
+endif
+
+ifdef PSCF_CUDA
+  rp_fts_brownian_CU= \
+    rp/fts/brownian/BdStep.cu \
+    rp/fts/brownian/BdSimulator.cu \
+    rp/fts/brownian/ExplicitBdStep.cu \
+    rp/fts/brownian/PredCorrBdStep.cu \
+    rp/fts/brownian/LMBdStep.cu \
+    rp/fts/brownian/BdStepFactory.cu
+  rp_fts_brownian_OBJS+=\
+      $(addprefix $(BLD_DIR)/, $(rp_fts_brownian_CU:.cu=.ou))
+  rp_fts_brownian_DEPS+=\
+      $(addprefix $(BLD_DIR)/, $(rp_fts_brownian_CU:.cu=.du))
+endif
+\endverbatim
+The first two lines of this file initialize the object file list
+rp_fts_brownian_OBJS and dependency file lists rp_fts_brownian_DEPS
+variables to empty strings. The remainder of the file contains two 
+blocks that are each executed only if a make variable or PSCF_CPP 
+or PSCF_CUDA is defined. Each of these blocks conditionally 
+processes names of a single type of source file.
+
+The block that is executed only if PSCF_CPP is defined creates a 
+source list rp_fts_brownian_CPP that contains relative paths to all 
+of the \*.cpp C++ files in this directory. This is followed by two 
+commands that add the absolute paths to corresponding object and 
+dependency files to the object and dependency file lists.
+
+The block that is executed only if PSCF_CUDA is defined instead 
+creates a source list rp_fts_brownian_CU that contains relative paths 
+to all of the \*.cu CUDA files in this directory. The definition of
+this variable is followed within this block by two commands that add 
+paths to the corresponding object and dependency files to the object 
+and dependency file lists.
+
+Observe that the commands that create lists of object and dependency 
+files use different file name suffixes for object and dependency files 
+that are created by compiling different types of source files. The 
+commands that manipulate the variable rp_fts_brownian_CPP use a suffix 
+.o for object files and .d for dependency files.  The corresponding 
+commands that manipulate rp_fts_brownian_CU instead use a suffix .ou
+for object files and .du for dependency files.
 
 \section developer_build_list_example2_sec Directories with subdirectories (not namespace-level)
 
-We now consider sources.mk file for a subdirectory of src/ that is not
+We now consider sources.mk file for a subdirectory of src/ that is not 
 a namespace-level directory, but that contains one or more enclosed
-subdirectories.  In this case, the value of the source file list variable
-[directory]_ must be a list of paths for all of the source files in the
-directory tree rooted at the directory that contains the source.mk file.
-This list is created by including source.mk files in enclosed
+subdirectories. In this case, the value of the source file list variable
+[directory]_OBJS must be a list of paths for all of the source files in 
+the directory tree rooted at the directory that contains the source.mk 
+file. This list is created by including source.mk files in enclosed
 subdirectories and concatenating values of the source file list variables
 that are defined in those subdirectories.
 
 <b> Example </b>:
-Here is the content of the file src/rpc/fts//sources.mk in a directory
-src/rpc/fts that contains several subirectories, but that is not a
+Here is the content of the file src/rp/fts//sources.mk in a directory
+src/rp/fts that contains several subirectories, but that is not a
 namespace-level directory:
 
 \verbatim
-# Include source list files from subdirectories
-include $(SRC_DIR)/rpc/fts/simulator/sources.mk
-include $(SRC_DIR)/rpc/fts/compressor/sources.mk
-include $(SRC_DIR)/rpc/fts/montecarlo/sources.mk
-include $(SRC_DIR)/rpc/fts/brownian/sources.mk
-include $(SRC_DIR)/rpc/fts/perturbation/sources.mk
-include $(SRC_DIR)/rpc/fts/ramp/sources.mk
-include $(SRC_DIR)/rpc/fts/analyzer/sources.mk
-include $(SRC_DIR)/rpc/fts/trajectory/sources.mk
+# Include source files lists from subdirectories
+include $(SRC_DIR)/rp/fts/simulator/sources.mk
+include $(SRC_DIR)/rp/fts/compressor/sources.mk
+include $(SRC_DIR)/rp/fts/brownian/sources.mk
+include $(SRC_DIR)/rp/fts/montecarlo/sources.mk
+include $(SRC_DIR)/rp/fts/perturbation/sources.mk
+include $(SRC_DIR)/rp/fts/ramp/sources.mk
+include $(SRC_DIR)/rp/fts/trajectory/sources.mk
+include $(SRC_DIR)/rp/fts/analyzer/sources.mk
 
-# List of source files in src/rpc/fts
-rpc_fts_= \
-  $(rpc_fts_simulator_) \
-  $(rpc_fts_compressor_) \
-  $(rpc_fts_montecarlo_) \
-  $(rpc_fts_brownian_) \
-  $(rpc_fts_perturbation_) \
-  $(rpc_fts_ramp_) \
-  $(rpc_fts_analyzer_) \
-  $(rpc_fts_trajectory_)
+rp_fts_OBJS=
+rp_fts_DEPS=
 
-# List of object files in src/rpc/fts
-rpc_fts_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(rpc_fts_:.cpp=.o))
+ifdef PSCF_CPP
+  rp_fts_CPP= \
+    $(rp_fts_simulator_CPP) \
+    $(rp_fts_compressor_CPP) \
+    $(rp_fts_brownian_CPP) \
+    $(rp_fts_montecarlo_CPP) \
+    $(rp_fts_perturbation_CPP) \
+    $(rp_fts_ramp_CPP) \
+    $(rp_fts_trajectory_CPP) \
+    $(rp_fts_analyzer_CPP)
+  rp_fts_OBJS+= \
+      $(addprefix $(BLD_DIR)/, $(rp_fts_CPP:.cpp=.o))
+  rp_fts_DEPS+= \
+      $(addprefix $(BLD_DIR)/, $(rp_fts_CPP:.cpp=.d))
+endif
+
+ifdef PSCF_CUDA
+  rp_fts_CU= \
+    $(rp_fts_simulator_CU) \
+    $(rp_fts_compressor_CU) \
+    $(rp_fts_brownian_CU) \
+    $(rp_fts_montecarlo_CU) \
+    $(rp_fts_perturbation_CU) \
+    $(rp_fts_ramp_CU) \
+    $(rp_fts_trajectory_CU)\
+    $(rp_fts_analyzer_CU)
+  rp_fts_OBJS += \
+      $(addprefix $(BLD_DIR)/, $(rp_fts_CU:.cu=.ou))
+  rp_fts_DEPS+= \
+      $(addprefix $(BLD_DIR)/, $(rp_fts_CU:.cu=.du))
+endif
 
 \endverbatim
 The first section of this file is a set of include directives that
@@ -172,19 +408,34 @@ to paste the contents of another file into the current file, verbatim,
 before parsing the current file.
 
 The next section of this file assigns a value to the source file list
-variable rpc_fts_ by simply concatenating the values of the corresponding
-source file list variables defined in the enclosed subdirectories.  For
-example, the file scf/rpc/fts/brownian/sources.mk defines a variable
-rpc_fts_brownian_ whose value is a list of all of the source files in
-subdirectory src/rpc/fts/brownian. The concatenation of values of these
-subdirectory source list variables yields a list of paths to all of the
-source files in the tree rooted at the relevant directory, in which all
-paths are expressed relative to the src directory.
+variable rpc_fts_CPP and rpc_fts_CU by simply concatenating the values 
+of the corresponding _CPP and _CU source file list variables defined 
+in the enclosed subdirectories.  For example, the file 
+scf/rpc/fts/brownian/sources.mk defines a pair of variable named
+rpc_fts_brownian_CPP and rpc_fts_brownian_CU whose values are lists 
+of all of the \*.cpp and \*.cu files in subdirectory src/rpc/fts/brownian,
+respectively. Each concatenation of values of source list variables that
+are defined in subdirectories yields a list of paths to all of the
+corresponding source files of a particular type in the tree rooted 
+at the relevant directory. All paths in each such source file list 
+are expressed as relatively paths, relative to the src directory.
 
-The statement that defines r1d_OBJS creates a corresponding object file
-list by processing the source file list, using the same text processing
-operations as those used in the simpler example given above for a
-directory with no subdirectories.
+Note that if statements that query whether PSCF_CPP or PSCF_CUDA are
+defined are used to determine which of these lists is constructed:
+The list of \*.cu files is constructed if and only if PSCF_CUDA is
+defined, while the list of \*.cpp files is constructed if and only
+if PSCF_CPP is defined. 
+
+Each of ifdef statement blocks also contains two statements that 
+add the names of corresponding object and dependency files to the 
+object file list rp_fts_OBJS and the dependency file list rp_fts_DEPS, 
+respectively. These statements rely on text processing operations 
+similar to those used in the simpler example given above.  Note that 
+the statements that construct lists of object and dependency files
+use file name suffixes .o and .d for object and dependency files that 
+are generated by compiling \*.cpp files, but use suffixes .ou
+and .du for object and dependency files that are generated by
+compiling \*.cu CUDA files. 
 
 \section developer_build_list_example3_sec Namespace-level directories
 
