@@ -5,9 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Perturbation.h"
-#include <rp/fts/simulator/Simulator.h>
-#include <prdc/field/cpu/RField.h>
 
 #include <rp/fts/perturbation/Perturbation.tpp> // base class implementation
 

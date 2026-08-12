@@ -5,8 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Ramp.h"
-#include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/ramp/Ramp.tpp>     // base class implementation
 
 // Explicit instantiation definitions

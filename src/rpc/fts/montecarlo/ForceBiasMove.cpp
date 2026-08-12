@@ -5,21 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ForceBiasMove.h"
-
-#include <rp/fts/montecarlo/McMove.h>
-#include <rp/fts/montecarlo/McSimulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 #include <pscf/cpu/CpuVecRandom.h>
 
 #include <rp/fts/montecarlo/ForceBiasMoveBase.tpp>
+#include <rp/fts/montecarlo/ForceBiasMove_c.h>
 
 namespace Pscf {
 namespace Rp {

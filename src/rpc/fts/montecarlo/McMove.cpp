@@ -5,10 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"
-#include <rp/fts/simulator/SimState.h>
-#include <prdc/field/cpu/RField.h>
-
 #include <rp/fts/montecarlo/McMove.tpp>     // base class implementation
 
 // Explicit instantiation definitions

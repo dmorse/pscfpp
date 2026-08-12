@@ -5,13 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "EinsteinCrystalPerturbation.h"
-
-#include <rp/fts/simulator/Simulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/FieldIo.h>
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 

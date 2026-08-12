@@ -5,6 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#if 0
 #include "BinaryChiDerivative.h"                    // header
 #include <rp/system/System.h>
 #include <rp/fts/simulator/Simulator.h>
@@ -12,8 +13,9 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
+#endif
 
-#include <rp/fts/analyzer/BinaryChiDerivative.tpp>  // base class implementation
+#include <rp/fts/analyzer/BinaryChiDerivative.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {

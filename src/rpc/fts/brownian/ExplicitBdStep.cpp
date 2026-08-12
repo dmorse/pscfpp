@@ -5,19 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ExplicitBdStep.h"                   // class header
-
-#include <rp/fts/brownian/BdSimulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-
 #include <pscf/cpu/CpuVecRandom.h>
 #include <pscf/cpu/VecOp.h>
 
-#include <rp/fts/brownian/ExplicitBdStep.tpp> // base class implementation
+#include <rp/fts/brownian/ExplicitBdStep.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {

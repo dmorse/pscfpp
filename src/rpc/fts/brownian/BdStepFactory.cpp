@@ -5,14 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "BdStepFactory.h"
-
-// Subclasses of BdStep
-#include <rp/fts/brownian/ExplicitBdStep.h>
-#include <rp/fts/brownian/PredCorrBdStep.h>
-#include <rp/fts/brownian/LMBdStep.h>
-//#include <rp/fts/brownian/BdSimulator.h>
-
 #include <rp/fts/brownian/BdStepFactory.tpp>
 
 // Explicit instantiation definitions

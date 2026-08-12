@@ -5,12 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#if 0
 #include "HamiltonianAnalyzer.h"                    // header
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/system/System.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
+#endif
+
 #include <rp/fts/analyzer/HamiltonianAnalyzer.tpp>  // implementation
 
 // Explicit instantiation definitions

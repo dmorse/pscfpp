@@ -5,16 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "TrajectoryWriter.h"                    // header
-
-#include <rp/fts/simulator/Simulator.h>
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/FieldIo.h>
-#include <rp/field/WFields.h>
-
-#include <rp/fts/analyzer/TrajectoryWriter.tpp>  // implementation
+#include <rp/fts/analyzer/TrajectoryWriter.tpp> 
 
 // Explicit instantiation definitions
 namespace Pscf {

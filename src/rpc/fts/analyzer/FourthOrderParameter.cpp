@@ -5,21 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FourthOrderParameter.h"
-
-#include <rp/system/System.h>
-#include <rp/fts/simulator/Simulator.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-
-#include <prdc/field/cpu/FFT.h>
-
 #include <pscf/cpu/VecOpCx.h>
 #include <pscf/cpu/ReduceCx.h>
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.tpp>
+#include <rp/fts/analyzer/FourthOrderParameter_c.h>
 
 namespace Pscf {
 namespace Rp {

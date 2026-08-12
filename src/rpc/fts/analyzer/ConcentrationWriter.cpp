@@ -5,6 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#if 0
 #include "ConcentrationWriter.h"
 
 #include <rp/fts/simulator/Simulator.h>
@@ -15,6 +16,7 @@
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
 #include <prdc/field/cpu/RField.h>
+#endif
 
 #include <rp/fts/analyzer/ConcentrationWriter.tpp>
 

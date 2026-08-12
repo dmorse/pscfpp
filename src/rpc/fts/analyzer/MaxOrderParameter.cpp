@@ -5,6 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#if 0
 #include "MaxOrderParameter.h"
 
 #include <rp/system/System.h>
@@ -12,12 +13,14 @@
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
+#endif
 
 #include <prdc/field/cpu/FFT.h>
 #include <prdc/field/cpu/RField.h>
 #include <pscf/cpu/VecOpCx.h>
 
 #include <rp/fts/analyzer/MaxOrderParameterBase.tpp>
+#include <rp/fts/analyzer/MaxOrderParameter_c.h>
 
 namespace Pscf {
 namespace Rp {

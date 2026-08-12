@@ -5,6 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#if 0
 #include "AnalyzerFactory.h"
 
 // Subclasses of Analyzer
@@ -19,6 +20,7 @@
 #include <rp/fts/analyzer/CubicLengthDerivative.h>
 #include <rp/fts/analyzer/ConcentrationDerivative.h>
 #include <rp/fts/analyzer/PerturbationDerivative.h>
+#endif
 
 #include <rp/fts/analyzer/AnalyzerFactory.tpp>
 

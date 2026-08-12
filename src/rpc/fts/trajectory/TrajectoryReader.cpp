@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "TrajectoryReader.h"
+#include <rp/fts/trajectory/TrajectoryReader.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

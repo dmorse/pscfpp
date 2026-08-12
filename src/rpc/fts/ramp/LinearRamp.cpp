@@ -5,10 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "LinearRamp.h"
-#include <rp/fts/simulator/Simulator.h>
-#include <rp/fts/ramp/LinearRamp.tpp>     // base class implementation
+//#include "LinearRamp.h"
+//#include <rp/fts/simulator/Simulator.h>
 
+#include <rp/fts/ramp/LinearRamp.tpp>     // base class implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

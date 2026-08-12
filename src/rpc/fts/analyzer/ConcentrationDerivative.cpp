@@ -5,15 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ConcentrationDerivative.h"                    // header
-#include <rp/system/System.h>
-#include <rp/fts/simulator/Simulator.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-
-#include <rp/fts/analyzer/ConcentrationDerivative.tpp>  // implementation
+#include <rp/fts/analyzer/ConcentrationDerivative.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {

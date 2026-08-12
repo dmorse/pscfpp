@@ -5,15 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RGridTrajectoryReader.h"
-
-#include <rp/system/System.h>
-#include <rp/solvers/Mixture.h>
-#include <rp/field/Domain.h>
-#include <rp/field/FieldIo.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-
 #include <rp/fts/trajectory/RGridTrajectoryReader.tpp>
 
 // Explicit instantiation declarations

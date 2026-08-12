@@ -5,13 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "PerturbationDerivative.h"
-#include <rp/fts/perturbation/Perturbation.h>
 #include <rp/fts/analyzer/PerturbationDerivative.tpp>
-#include <rp/system/System.h>
-#include <rp/field/WFields.h>
-#include <rp/field/CFields.h>
-#include <rp/fts/simulator/Simulator.h>
 
 // Explicit instantiation definitions
 namespace Pscf {
