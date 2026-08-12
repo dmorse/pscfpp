@@ -1,4 +1,5 @@
 # Include source files lists from subdirectories
+
 include $(SRC_DIR)/rp/fts/simulator/sources.mk
 include $(SRC_DIR)/rp/fts/compressor/sources.mk
 include $(SRC_DIR)/rp/fts/brownian/sources.mk
@@ -9,8 +10,6 @@ include $(SRC_DIR)/rp/fts/trajectory/sources.mk
 include $(SRC_DIR)/rp/fts/analyzer/sources.mk
 
 # Define object and dependency list variables for rp/fts
-rp_fts_OBJS=
-rp_fts_DEPS=
 
 rp_fts_OBJS= \
   $(rp_fts_simulator_OBJS) \
