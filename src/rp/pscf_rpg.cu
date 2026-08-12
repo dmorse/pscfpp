@@ -28,10 +28,10 @@ int main(int argc, char **argv)
       Pscf::Rp::run<1, Pscf::CUT>(argc, argv);
    } else
    if (2 == D) {
-      Pscf::Rp::run<1, Pscf::CUT>(argc, argv);
+      Pscf::Rp::run<2, Pscf::CUT>(argc, argv);
    } else
    if (3 == D) {
-      Pscf::Rp::run<1, Pscf::CUT>(argc, argv);
+      Pscf::Rp::run<3, Pscf::CUT>(argc, argv);
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
    }
