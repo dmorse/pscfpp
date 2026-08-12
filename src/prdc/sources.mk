@@ -1,31 +1,25 @@
 #-----------------------------------------------------------------------
-# Source and object file lists for src/prdc
-
 # Include source list files from subdirectories
+
 include $(SRC_DIR)/prdc/crystal/sources.mk
 include $(SRC_DIR)/prdc/field/sources.mk
 include $(SRC_DIR)/prdc/fieldIo/sources.mk
 include $(SRC_DIR)/prdc/environment/sources.mk
 
-# Standard C++ source files
-prdc_CPP= \
-  $(prdc_crystal_CPP) \
-  $(prdc_field_CPP) \
-  $(prdc_fieldIo_CPP) \
-  $(prdc_environment_CPP)
-prdc_OBJS=\
-  $(addprefix $(BLD_DIR)/, $(prdc_CPP:.cpp=.o))
-prdc_DEPS=\
-  $(addprefix $(BLD_DIR)/, $(prdc_CPP:.cpp=.d))
+#-----------------------------------------------------------------------
+# Object and dependency file lists for src/prdc
 
-# CUDA C++ source files
-ifdef PSCF_CUDA
-  prdc_CU= $(prdc_field_CU)
-  prdc_OBJS +=\
-    $(addprefix $(BLD_DIR)/, $(prdc_CU:.cu=.ou))
-  prdc_DEPS +=\
-    $(addprefix $(BLD_DIR)/, $(prdc_CU:.cu=.du))
-endif
+prdc_OBJS= \
+  $(prdc_crystal_OBJS) \
+  $(prdc_field_OBJS) \
+  $(prdc_fieldIo_OBJS) \
+  $(prdc_environment_OBJS)
+
+prdc_DEPS= \
+  $(prdc_crystal_DEPS) \
+  $(prdc_field_DEPS) \
+  $(prdc_fieldIo_DEPS) \
+  $(prdc_environment_DEPS)
 
 #-----------------------------------------------------------------------
 # Path and rule for the prdc/libprdc.a library

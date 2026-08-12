@@ -1,24 +1,18 @@
-#-----------------------------------------------------------------------
-# Source and object file lists for src/prdc
 
-# Include source list files from subdirectories
+# Standard C++ source files from directory prdc/field/cpu
 include $(SRC_DIR)/prdc/field/cpu/sources.mk
-include $(SRC_DIR)/prdc/field/cuda/sources.mk
+prdc_field_OBJS=$(prdc_field_cpu_OBJS)
+prdc_field_DEPS=$(prdc_field_cpu_DEPS)
 
-# Standard C++ source files
-prdc_field_CPP= \
-  $(prdc_field_cpu_CPP)
-prdc_field_OBJS=\
-  $(addprefix $(BLD_DIR)/, $(prdc_field_CPP:.cpp=.o))
-prdc_field_DEPS=\
-  $(addprefix $(BLD_DIR)/, $(prdc_field_CPP:.cpp=.d))
-
-# CUDA C++ source files
+# CUDA C++ source files from directory prdc/field/cuda
 ifdef PSCF_CUDA
-  prdc_field_CU= $(prdc_field_cuda_CU)
-  prdc_field_OBJS +=\
-    $(addprefix $(BLD_DIR)/, $(prdc_field_CU:.cu=.ou))
-  prdc_field_DEPS +=\
-    $(addprefix $(BLD_DIR)/, $(prdc_field_CU:.cu=.du))
+  include $(SRC_DIR)/prdc/field/cuda/sources.mk
+  prdc_field_OBJS+= $(prdc_field_cuda_OBJS)
+  prdc_field_DEPS+= $(prdc_field_cuda_DEPS)
 endif
 
+# - Subdirectory prdc/field/cuda contains only *.cpp  C++ files,
+#   which are always compiled.
+#
+# - Subdirectory prdc/field/cuda contains only *.cu CUDA files,
+#   which are compiled only if PSCF_CUDA is defined.
