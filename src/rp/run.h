@@ -6,13 +6,12 @@
 */
 
 #include <rp/system/System.h>
-#include <iostream>
 
 namespace Pscf {
 namespace Rp {
 
    /**
-   * Function template for main pscf_rpg program.
+   * Function template for main pscf_rp* programs.
    *
    * \ingroup Pscf_Rp_Module
    *

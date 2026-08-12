@@ -2,28 +2,23 @@
 include $(SRC_DIR)/rp/scft/iterator/sources.mk
 include $(SRC_DIR)/rp/scft/sweep/sources.mk
 
-rp_scft_OBJS=
-rp_scft_DEPS=
+# Combine object and dependency file lists from subdirectories
+rp_scft_OBJS= \
+    $(rp_scft_iterator_OBJS) \
+    $(rp_scft_sweep_OBJS) 
 
+rp_scft_DEPS= \
+    $(rp_scft_iterator_DEPS) \
+    $(rp_scft_sweep_DEPS) 
+
+# Add files associated with the ScftThermo class template
 ifdef PSCF_CPP
-  rp_scft_CPP= \
-    $(rp_scft_iterator_CPP) \
-    $(rp_scft_sweep_CPP) \
-    rp/scft/ScftThermo.cpp
-  rp_scft_OBJS+= \
-      $(addprefix $(BLD_DIR)/, $(rp_scft_CPP:.cpp=.o))
-  rp_scft_DEPS+= \
-      $(addprefix $(BLD_DIR)/, $(rp_scft_CPP:.cpp=.d))
+  rp_scft_OBJS+= $(BLD_DIR)/rp/scft/ScftThermo.o
+  rp_scft_DEPS+= $(BLD_DIR)/rp/scft/ScftThermo.d
 endif
 
 ifdef PSCF_CUDA
-  rp_scft_CU= \
-    $(rp_scft_iterator_CU) \
-    $(rp_scft_sweep_CU) \
-    rp/scft/ScftThermo.cu
-  rp_scft_OBJS += \
-      $(addprefix $(BLD_DIR)/, $(rp_scft_CU:.cu=.ou))
-  rp_scft_DEPS+= \
-      $(addprefix $(BLD_DIR)/, $(rp_scft_CU:.cu=.du))
+  rp_scft_OBJS+= $(BLD_DIR)/rp/scft/ScftThermo.ou
+  rp_scft_DEPS+= $(BLD_DIR)/rp/scft/ScftThermo.du
 endif
 

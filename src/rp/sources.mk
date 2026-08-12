@@ -1,6 +1,4 @@
 #-----------------------------------------------------------------------
-# Source and object file lists for src/rp
-
 # Include source list files from subdirectories
 include $(SRC_DIR)/rp/field/sources.mk
 include $(SRC_DIR)/rp/solvers/sources.mk
@@ -8,6 +6,9 @@ include $(SRC_DIR)/rp/system/sources.mk
 include $(SRC_DIR)/rp/environment/sources.mk
 include $(SRC_DIR)/rp/scft/sources.mk
 include $(SRC_DIR)/rp/fts/sources.mk
+
+#-----------------------------------------------------------------------
+# Object and dependency file list variables for src/rp
 
 rp_OBJS= \
      $(rp_field_OBJS) \

@@ -1,52 +1,40 @@
 
-This directory contains a set of class templates that are defined in 
-namespace Pscf::Rp and used in the program-level namespaces Pscf::Rpc 
-and Rpg. Instantiated specializations of each class template in namespace 
-Pscf::Rp are used as base classes for corresponding specializations of 
-two closely analogous class templates defined in Pscf::Rpc and Pscf::Rpg. 
-Generally, the base class template in Pscf::Rp and the derived class 
-templates in Pscf::Rpc and Rpg::Rpg all share the same name. For example, 
-each specialization of the template <int D> class Pscf::Rpc::System with 
-an integer argument D=1, 2, or 3 is derived from a corresponding
-specialization of a class template defined in the Pscf::Rp namespace 
-that is also named "System". 
+The src/rp directory is a program-level directory contains a set of 
+class templates that are defined in namespace Pscf::Rp, and that are used 
+to construct the pscf_rpc and pscf_rpg programs for SCFT and PS-FTS 
+calculations that involve real periodic fields. 
 
-Types classes:
+This directory and the associated namespace define of a set of class 
+templates that are designed so that different specializations of each
+template can be to construct programs that use different hardware.
+Almost every class in this namespace takes two template parameters,
+denoted by D and T. Parameter D is an integer parameter that represents
+the dimension of space, which has allowed values D=1, 2, and 3. Parameter 
+T is typename parameter that can be used to represent two "backend type" 
+classes, named CPT and CUT, that are used to control what type of 
+"backend" a specialization of the class will use for parallelizable 
+operations. Template specializations with T=CUT use a GPU backend that 
+is coded in CUDA, and are used to construct the pscf_rpg GPU-enabled 
+program. Template specializations with T=CPT instead use only standard 
+CPU hardware, and are used to construct the pscf_rpc CPU program. 
 
-All of the templates defined in namespace Pscf::Rp take the dimension D of 
-space as an integer template parameter. Most also take a class parameter 
-named "T" as an additional parameter. In specializations of such templates,
-the argument associated with parameter T should either be a specialization
-Rpc::Types<D> defined of the template defined in src/rpc/system/Types.h, 
-for specializations used used in namespace Pscf::Rpc, or a specialization 
-Pscf::Rpg::Types<D> of the template defined in file src/rpg/system/Types.h, 
-for specializations used in namespace Pscf::Rpg. The "Types" class templates 
-defined in the Pscf::Rpc and Pscf::Rpg program-level namespaces each take 
-the spatial dimension D as a single template parameter, and define a set 
-of typename aliases for classes used only in the enclosing program-level 
-namespace for the specified value of D. 
-
-Typename aliases defined in each such "Types" class are used in class
-templates defined in Pscf::Rp to create generic class definitions that 
-can be adapted for use in either pscf_rpc or pscf_rpg by simply using 
-a different "Types" class as a template argument. As an example, consider 
-the class Pscf::Rpc::System<3>, which is the type of the main system 
-object used in the pscf_rpc CPU program for problems involving 
-three-dimensional fields. This class is a specialization of the class
-template Pscf::Rpc::System<int D>, and is a subclass of a template
-specialization Pscf::Rp::System<3, Pscf::Rpc::Types<3> > of the 
-System class template defined in namespace Rp, using an argument 
-T = Pscf::Rpc::Types<3> that contains type definitions appropriate for
-use in namespace Pscf::Rpc.
+The CPT and CUT classes are defined in namespace Pscf, in files that are 
+located in the pscf/backends directory.  
 
 Subdirectories:
 
 The src/rp directory has the subjectories listed below, giving a 
 structure analogous to that of both the src/rpc and src/rpg directories:
   
-field/      - fields and spatial domain
-fts/        - partial saddle-point field theoretic simulation (PS-FTS)
-scft/       - self-consistent field theory (SCFT)
-solvers/    - modified diffusion equation (MDE) solvers
-system/     - main System class template
+field/        - fields and spatial domain
+solvers/      - modified diffusion equation (MDE) solvers
+system/       - main System class template
+environment/  - mask and external fields for inhomogeneous environments
+scft/         - self-consistent field theory (SCFT)
+fts/          - partial saddle-point field theoretic simulation (PS-FTS)
 
+Main programs:
+
+The files pscf_rpc.cpp and pscf_rpg.cpp contain main functions for the
+pscf_rpc and pscf_rpg programs. Both of these functions use a function
+template that is defined in the file run.h.

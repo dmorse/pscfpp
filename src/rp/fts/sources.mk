@@ -8,38 +8,27 @@ include $(SRC_DIR)/rp/fts/ramp/sources.mk
 include $(SRC_DIR)/rp/fts/trajectory/sources.mk
 include $(SRC_DIR)/rp/fts/analyzer/sources.mk
 
+# Define object and dependency list variables for rp/fts
 rp_fts_OBJS=
 rp_fts_DEPS=
 
-ifdef PSCF_CPP
-  rp_fts_CPP= \
-    $(rp_fts_simulator_CPP) \
-    $(rp_fts_compressor_CPP) \
-    $(rp_fts_brownian_CPP) \
-    $(rp_fts_montecarlo_CPP) \
-    $(rp_fts_perturbation_CPP) \
-    $(rp_fts_ramp_CPP) \
-    $(rp_fts_trajectory_CPP) \
-    $(rp_fts_analyzer_CPP)
-  rp_fts_OBJS+= \
-      $(addprefix $(BLD_DIR)/, $(rp_fts_CPP:.cpp=.o))
-  rp_fts_DEPS+= \
-      $(addprefix $(BLD_DIR)/, $(rp_fts_CPP:.cpp=.d))
-endif
+rp_fts_OBJS= \
+  $(rp_fts_simulator_OBJS) \
+  $(rp_fts_compressor_OBJS) \
+  $(rp_fts_brownian_OBJS) \
+  $(rp_fts_montecarlo_OBJS) \
+  $(rp_fts_perturbation_OBJS) \
+  $(rp_fts_ramp_OBJS) \
+  $(rp_fts_trajectory_OBJS) \
+  $(rp_fts_analyzer_OBJS)
 
-ifdef PSCF_CUDA
-  rp_fts_CU= \
-    $(rp_fts_simulator_CU) \
-    $(rp_fts_compressor_CU) \
-    $(rp_fts_brownian_CU) \
-    $(rp_fts_montecarlo_CU) \
-    $(rp_fts_perturbation_CU) \
-    $(rp_fts_ramp_CU) \
-    $(rp_fts_trajectory_CU)\
-    $(rp_fts_analyzer_CU)
-  rp_fts_OBJS += \
-      $(addprefix $(BLD_DIR)/, $(rp_fts_CU:.cu=.ou))
-  rp_fts_DEPS+= \
-      $(addprefix $(BLD_DIR)/, $(rp_fts_CU:.cu=.du))
-endif
+rp_fts_DEPS= \
+  $(rp_fts_simulator_DEPS) \
+  $(rp_fts_compressor_DEPS) \
+  $(rp_fts_brownian_DEPS) \
+  $(rp_fts_montecarlo_DEPS) \
+  $(rp_fts_perturbation_DEPS) \
+  $(rp_fts_ramp_DEPS) \
+  $(rp_fts_trajectory_DEPS) \
+  $(rp_fts_analyzer_DEPS)
 
