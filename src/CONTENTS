@@ -1,10 +1,10 @@
 This src/ directory contains all C++ and CUDA C++ source code for the PSCF 
-package.  The subdirectories util, pscf, r1d, prdc, rp, rpc/, rpg, cp, cpc,
-and cpg each contain source code for classes and functions defined in a 
-particular C++ namespace. The test subdirectory contains source code for a
-unit test framework. Subdirectories util/ and test/ are maintained as 
-separate github repositories that are installed as submodules of the pscfpp
-git repository when the repository is cloned using the --recursive option.
+package.  The subdirectories util, pscf, r1d, prdc, and rp, each contain 
+source code for classes and functions defined in a particular C++ 
+namespace.  The test subdirectory contains source code for a unit test 
+framework.  Subdirectories util/ and test/ are maintained as separate 
+github repositories that are installed as submodules of the pscfpp git 
+repository when the repository is cloned using the --recursive option.
 
 Subdirectories (with corresponding C++ namespace names in parentheses):
 
@@ -16,20 +16,16 @@ Subdirectories (with corresponding C++ namespace names in parentheses):
   test - unit testing framework (base classes)
 
   Program-level directories:
-  Directories r1d and rp are "program level" directories that each contain 
-  code that is only accessible to and used by a particular executable 
-  program or programs.  By convention, source files in one program-level 
-  directory may never include files from a different program-level 
-  directory.
+  Directories r1d and rp are "program level" directories, which each 
+  contain files that generate one or more executables.  By convention, 
+  source files in one program-level directory may never include files 
+  from a different program-level directory.
 
   Dependencies among directories:
-  Directories util, pscf, prdc, and rp cp each contain code that is used
-  in two or more programs. Names of classes and other entitites defined 
-  in files located in the util and pscf directories may be used anywhere 
-  in the PSCF package. Names defined in the prdc directory are accessible 
-  in the other directories containing code designed for periodic boundary 
-  conditions (i.e., the rp directory), but are not used in the r1d 
-  directory. 
+  Names of classes and other entitites defined in files located in the 
+  util and pscf directories may be used anywhere in the PSCF package. 
+  Names defined in the prdc directory are used in the rp program-level 
+  directory but not in the r1d directory.
 
 Files (maintained in the git repository):
 

@@ -1,7 +1,6 @@
 include bld/config.mk
 # =========================================================================
-.PHONY:  all pscf_r1d pscf_rpc pscf_rpg \
-         html html-dev \
+.PHONY:  all pscf_r1d pscf_rp html html-dev \
          clean clean-tests clean-bin clean-html veryclean 
 
 # =========================================================================
@@ -18,23 +17,13 @@ include bld/config.mk
 all:
 	cd bld; $(MAKE) all
 
-# Build the pscf_r1d 1D finite element SCFT program
+# Build the pscf_r1d 1D SCFT program
 pscf_r1d:
 	cd bld; $(MAKE) pscf_r1d
 
-# Build the pscf_rpc and/or pscf_rpg codes for periodic systems
+# Build the pscf_rpc and/or pscf_rpg programs for periodic systems
 pscf_rp:
 	cd bld; $(MAKE) pscf_rp
-
-# Build the pscf_pc cpu program in the rpc subdirectory
-pscf_rpc:
-	cd bld; $(MAKE) pscf_rpc
-
-ifdef PSCF_CUDA
-# Build the pscf_pg gpu program in the rpg directory
-pscf_rpg:
-	cd bld; $(MAKE) pscf_rpg
-endif
 
 # =========================================================================
 # Test Targets 

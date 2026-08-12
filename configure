@@ -176,10 +176,7 @@ cp src/util/makefile bld/util/makefile
 cp src/pscf/makefile bld/pscf/makefile
 cp src/prdc/makefile bld/prdc/makefile
 cp src/r1d/makefile bld/r1d/makefile
-cp src/rp/makefile  bld/rp/makefile
-cp src/rpc/makefile bld/rpc/makefile
-cp src/rpg/makefile bld/rpg/makefile
-cp src/cpc/makefile bld/cpc/makefile
+cp src/rp/makefile bld/rp/makefile
 
 # Copy makefiles in namespace level test directories
 cp src/util/tests/makefile bld/util/tests/makefile
@@ -188,9 +185,6 @@ cp src/prdc/tests/makefile bld/prdc/tests/makefile
 cp src/r1d/tests/makefile bld/r1d/tests/makefile
 cp src/rp/tests/cpp/makefile bld/rp/tests/cpp/makefile
 cp src/rp/tests/cuda/makefile bld/rp/tests/cuda/makefile
-cp src/rpc/tests/makefile bld/rpc/tests/makefile
-cp src/rpg/tests/makefile bld/rpg/tests/makefile
-cp src/cpc/tests/makefile bld/cpc/tests/makefile
 
 # Copy setopts script
 cp src/setopts bld/setopts

@@ -41,7 +41,7 @@
 # feature or 0 to disable it:
 #
 #   -d (0|1)   debugging           (defines/undefines UTIL_DEBUG)
-#   -c (0|1)   C++ backend         (defines/undefines PSCF_CUDA)
+#   -c (0|1)   C++ backend         (defines/undefines PSCF_CPP)
 #   -u (0|1)   CUDA backend        (defines/undefines PSCF_CUDA)
 #
 # This -a option sets an identifier for the NVIDIA GPU architecture to be
@@ -119,7 +119,7 @@ while getopts "d:c:u:a:qh" opt; do
       echo " to enable the feature or 0 to disable it:"
       echo "  "
       echo "   -d (0|1)   debugging     (defines/undefines UTIL_DEBUG)"
-      echo "   -c (0|1)   C++ backend   (defines/undefines PSCF_CUDA)"
+      echo "   -c (0|1)   C++ backend   (defines/undefines PSCF_CPP)"
       echo "   -u (0|1)   CUDA backend  (defines/undefines PSCF_CUDA)"
       echo "  "
       echo " The -a option sets a string identifier for the NVIDIA GPU"
@@ -152,7 +152,7 @@ while getopts "d:c:u:a:qh" opt; do
       echo " default) and set the GPU architecture option to sm_70 (compute"
       echo " capability 7.0, appropriate for a V100 chip) one could enter"
       echo " "
-      echo "   >  ./setopts -c1  -a sm_70"
+      echo "   >  ./setopts -u1  -a sm_70"
       echo "  "
     fi
   fi
