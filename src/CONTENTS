@@ -13,38 +13,23 @@ Subdirectories (with corresponding C++ namespace names in parentheses):
   r1d  - real fields, one-dimensional SCFT (Pscf::R1d)
   prdc - periodic systems (Pscf::Prdc)
   rp   - SCFT & PS-FTS with real periodic fields, CPU & GPU (Pscf::Rp)
-  rpc  - SCFT & PS-FTS with real periodic fields, CPU  (Pscf::Rpc)
-  rpg  - SCFT & PS-FTS with real periodic fields, GPU  (Pscf::Rpc)
-  cp   - CL-FTS with complex periodic fields, CPU & GPU (Pscf:Cp)
-  cpc  - CL-FTS with complex periodic fields, CPU (Pscf:Cpc)
-  cpg  - CL-FTS with complex periodic fields, GPU (Pscf:Cpg)
   test - unit testing framework (base classes)
 
   Program-level directories:
-  Directories r1d, rpc, rpg, cpc, and cpg are "program level" directories 
-  that each contain code that is only accessible to and used by a single 
-  executable program, i.e., one of pscf_r1d, pscf_rpc, pscf_rpg, pscf_cpc, 
-  or pscf_cpg. By convention, source files in one program-level directory 
-  may never include files from a different program-level directory.
+  Directories r1d and rp are "program level" directories that each contain 
+  code that is only accessible to and used by a particular executable 
+  program or programs.  By convention, source files in one program-level 
+  directory may never include files from a different program-level 
+  directory.
 
   Dependencies among directories:
-  Directories util, pscf, prdc, rp, and cp each contain code that is used
+  Directories util, pscf, prdc, and rp cp each contain code that is used
   in two or more programs. Names of classes and other entitites defined 
   in files located in the util and pscf directories may be used anywhere 
   in the PSCF package. Names defined in the prdc directory are accessible 
   in the other directories containing code designed for periodic boundary 
-  conditions (i.e., the rp, rpc, rpg, cp, cpc, and cpg directories), but 
-  are not used in the r1d directory. Names defined in the rp directory are
-  used only in the rpc and rpg program-level directories, for programs 
-  that use real periodic fields. Names defined in the cp directory are used 
-  only in the cpc and cpg program-level directories, for programs that use
-  complex periodic fields.
-
-  State of work in progress: 
-  The code for complex periodic fields in the cp, cpc, and cpg 
-  directories is currently very fragmentary, and is not ready for prime 
-  time.  Code in all other subdirectories of src is mature and ready 
-  for general use.
+  conditions (i.e., the rp directory), but are not used in the r1d 
+  directory. 
 
 Files (maintained in the git repository):
 
