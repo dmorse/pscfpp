@@ -1,0 +1,54 @@
+/*!
+\page pscf_rp_page pscf_rp - SCFT and PS-FTS with Periodic Fields
+
+Main program for self-consistent field theory (SCFT) and partial-saddle 
+point field-theoretic simulation (PS-FTS) of polymer liquids in a 
+domain with periodic boundary conditions, using real fields.
+
+The file pscf_rpc is the executable for version of the program that uses 
+standard CPU hardware, while pscf_rpg runs a functionally equivalent 
+version that uses an NVIDIA GPU.
+
+\section pscf_rpc_usage_section Usage
+
+The command line interfaces for pscf_rpc and pscf_rpg are identical, except
+for the use of different executable file names.  Options are shown below 
+for the pscf_rpc executable, as an example:
+
+    pscf_rpc -d dimension -p file -c file [-i prefix] [-o prefix] [-e]
+
+\section pscf_rpc_options_section Command Line Options
+
+The -d, -p and -c options are required. The -i, -o, and -e options are 
+optional. 
+
+  -d dimension
+
+   Set the spatial dimension (# of periodic coordinates) of the 
+   structure of interest, given by the integer argument "dimension", 
+   which must equal 1, 2 or 3. For example, set dimension equal to 1
+   for a lamellar phase, 2 for a hexagonal phase, and 3 for any fully
+   three-dimensional structure. (required)
+
+  -p file
+
+   Set the parameter file name, given by the argument "file" (required).
+
+  -c file
+
+   Set the command file name, given by the argument "file" (required).
+
+  -i prefix
+
+   Set the input file path prefix, given by the argument "prefix" (optional)
+
+  -o prefix
+
+   Set the output file path prefix, given by the argument "prefix" (optional)
+
+  -e  
+
+   Enable echoing of parameter file to standard output as it is read. 
+   This option is useful for debugging the parameter file. (optional)
+
+*/

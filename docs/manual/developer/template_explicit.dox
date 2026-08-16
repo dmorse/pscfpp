@@ -1,7 +1,7 @@
 /*! \page developer_template_explicit_page Implicit vs. Explicit Templates
 
 \ref developer_template_defs_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_periodic_page          (Next)
+\ref developer_containers_page          (Next)
 <BR>
 
 The PSCF source code contains two different types of class templates,
@@ -601,8 +601,8 @@ instantiation declarations (as required to suppress implicit
 instantiation).
 
 <BR>
-\ref developer_template_defs_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_page      (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_periodic_page      (Next)
+\ref developer_template_defs_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page      (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_containers_page    (Next)
 
 */

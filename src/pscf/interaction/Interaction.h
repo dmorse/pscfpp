@@ -18,7 +18,7 @@ namespace Pscf {
    /**
    * Interaction model for complex Langevin FTS.
    *
-   * \ingroup Cpc_System_Module
+   * \ingroup Pscf_Interaction_Module
    */
    class Interaction : public ParamComposite
    {

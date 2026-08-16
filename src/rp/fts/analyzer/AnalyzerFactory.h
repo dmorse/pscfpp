@@ -40,10 +40,10 @@ namespace Rp {
 		      System<D,T>& system);
 
       /**
-      * Create an instance of a specified subclass of Analyzer..
+      * Create an instance of a specified subclass of Analyzer.
       *
       * \param className  name of the desired subclass of Analyzer<D,T>
-      * \return pointer to new instance of the specified class
+      * \return pointer to a new instance of the specified class
       */
       Analyzer<D,T>* factory(const std::string &className) const;
 

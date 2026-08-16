@@ -12,10 +12,10 @@ familiarity with the discussion of the build process given on the
 \section developer_build_compile_all_page Compiling with "make all"
 
 To compile a set of PSCF source files, one generally must invoke the
-command "make all" from a working directory within either the src or bld
+command "make all" from a directory within either the src or bld
 directory tree.  The choice of which source files will be compiled, and
 whether they are compiled in-source or out-of-source, is determined by
-the location of the working directory from which "make all" is invoked.
+the location of the directory from which "make all" is invoked.
 
 Invoking "make all" from within the src directory tree results in
 in-source compilation. Invoking it from within the bld directory instead
@@ -86,23 +86,23 @@ does what one wants.
 
 \section developer_build_compile_clean_page Cleaning up
 
-Invoking the command "make clean" from any working directory in the src
+Invoking the command "make clean" from within any directory in the src
 or bld directory tree that contains a makefile will remove all of the
 intermediate files that would be created by invoking "make all" from the
 same directory. Invoking "make clean" from the PSCF root directory removes
 all intermediate files (i.e., object, dependency and library files) from
 both the bld and src directories.  The  "make clean" command does not,
 however, remove any final executable files that are installed in the bin
-directory, and does not remove any files that were created by the
+directory, and it does not remove any files that were created by the
 configure script.
 
 Invoking the command "make veryclean" from the pscfpp root directory
 removes all of the intermediate files that would be removed by the
-"make clean" command, and also removes the primary executable files and
-all files that were created by the configure script. This command thus
-returns a users PSCF repository to a state similar to that obtained
-immediately after the repository was created by cloning the pscfpp github
-repository.
+"make clean" command, and also removes all files that were created by 
+the configure script, and executables that were installed in the bld 
+directory after configuration. This command thus returns a users PSCF 
+repository to a state similar to the state it had immediately after 
+the repository was created by cloning the pscfpp github repository.
 
 <BR>
 \ref developer_build_process_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

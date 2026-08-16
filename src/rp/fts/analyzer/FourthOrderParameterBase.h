@@ -50,7 +50,7 @@ namespace Rp {
    *    - D : dimension of space
    *    - T : Types class, CppTp<D> or CudaTp<D>
    *
-   * \see \ref rp_FourthOrderParameterBase_page "Manual Page"
+   * \see \ref rp_FourthOrderParameter_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>

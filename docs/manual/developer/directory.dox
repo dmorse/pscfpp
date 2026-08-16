@@ -139,75 +139,69 @@ These namespace-level subdirectories are listed below:
   <td> Pscf::Rp </td>
   <td> Class templates used in programs for real periodic fields </td>
 </tr>
-<tr>
-  <td> cp </td>
-  <td> Pscf::Cp </td>
-  <td> Class templates used in programs for complex periodic fields </td>
-</tr>
 </table>
 The src/pscf directory contains files that contain code for classes and
 functions that are accessible throughout the package, most of which are
-defined directly in the Pscf namespace. The src/prdc, src/r1d, src/rp, 
-and src/cp directories instead each contain code for entities that are 
-defined in a specific enclosed namespace of Pscf, and that are used in 
-only some of the main programs constructed by the package.
+defined directly in the Pscf namespace. The src/prdc, src/r1d and src/rp
+directories instead each contain code for entities that are defined in a 
+specific enclosed sub-namespace of Pscf, and that are used in only some 
+of the programs constructed by the package.
 
 The PSCF makefile system constructs a static library file each of the 
-namespace level directories that contains compilable source files.
-Specifically, static libraries are constructed in the pscf, r1d, prdc,
-rp and cp namespace level directories. Each such static library contains 
+namespace-level directories that contains compilable source files.
+Specifically, static libraries are constructed in the pscf, r1d, prdc, and
+rp namespace-level directories. Each such static library contains 
 the object code created by compiling all of the compilable source files 
 (with file extension .cpp or .cu) in the asssociated namespace-level 
 directory.  Each static library is a file with a name of the form 
 lib[namespace].a, where [namespace] represents the name of the relevant 
-namespace level directory. For example, a library named libprdc.a is 
+namespace-level directory. For example, a library named libprdc.a is 
 created in the src/prdc directory.  
 
 * **Program-level namespaces and directories:**
 
-The Pscf::R1d and Pscf::Rp namespaces and the corresponding r1d and
-rp namespace-level subdirectories of src each contain code is only used 
-either with only on executable program or (in the case of namespace
-Rp and directory src/rp) two or more very closely related programs
-that offer the same functionality but use different hardware.  These 
-two namespaces and corresponding directories are referred to hereafter 
-as program-level namespaces and program-level directories, respectively. 
+The Pscf::R1d and Pscf::Rp namespaces and the corresponding src/r1d and
+src/rp namespace-level subdirectories of src each contain code is used
+within a single executable program or (in the case of the Pscf::Rp
+namespace and directory src/rp) two or more very closely related programs
+that use different hardware (CPU vs. GPU).  These namespaces and 
+corresponding directories are referred to hereafter as program-level 
+namespaces and program-level directories, respectively. 
 
-Subdirectory r1d contains code that is only used by the pscf_r1d 
+Subdirectory src/r1d contains code that is only used by the pscf_r1d 
 program. 
 
-Subdirectories rp contains code that is used to construct the
-pscf_rpc and pscf_rpc programs for SCFT and PS-FTS calculations
-that involve real fields. These two programs offer identical
-functionality and identical user interfaces, and are simply
-variants of the same program that are designed to make use of
+Subdirectory src/rp contains code that is used to construct the pscf_rpc 
+and pscf_rpc programs for SCFT and PS-FTS calculations that involve real 
+perodic fields. These two programs offer identical functionality, and
+are simply variants of the same program that are specialized to use 
 different hardware.
 
-By convention, code within in any program-level PSCF namespace may 
-not use named entities (e.g., classes or functions) that are defined 
-in any other program-level namespace.
+By convention, code within in any program-level PSCF namespace may not 
+use named entities (e.g., classes or functions) that are defined in a
+different program-level namespace. This rule allows the same name to be 
+used for analogous classes defined for use in different programs without 
+causing name clashes.
 
-Each of these namespace-level directories contains one or more
-main program files that each defines the main C++ function for an
-associated program. The base name of each such file is the same 
-as the executable name, followed by a suffix .cpp or .cu. For 
-example, the main function for program pscf_rpc is defined in 
-the file src/rp/pscf_rpc.cpp.
+Each of the two program-level directories contains one or more main 
+program source files that each defines a main C++ function for an 
+associated executable program. The base name of each such main program
+file is the same as the executable name, followed by a suffix .cpp or 
+.cu. For example, the file src/rp/pscf_rpc.cpp is the main program 
+file for pscf_rpc program.
 
-Subdirectories util, pscf, prdc, rp and rc are namespace-level 
-directories but are not also program-level directories. Each of
-these directories contains code for classes and functions that 
-can be used as building blocks for programs defined in more
-than one program-level namespace.
+Subdirectories util, pscf, and prdc are namespace-level directories 
+but do not contain any main program files, and so are not also 
+program-level directories. 
 
-* **Dependencies among namespace level directories:**
+* **Dependencies among namespace-level directories:**
 
-PSCF imposes a set of rules for dependencies among the namespace level
-directories. A namespace level directory named A is said to **depend** on 
+PSCF imposes a set of rules for dependencies among the namespace-level
+directories. A namespace-level directory named A is said to **depend** on 
 another such directory named B if source code files in directory A are
 allowed to use named entities (i.e., classes, class templates, functions,
 etc.) that are defined by files in directory B.  The following table 
-lists the other directories that each namespace level directory depends 
+lists the other directories that each namespace-level directory depends 
 upon in this sense:
 <table>
 <tr>
@@ -234,21 +228,15 @@ upon in this sense:
   <td> rp </td>
   <td> prdc, pscf, util </td>
 </tr>
-<tr>
-  <td> cp </td>
-  <td> prdc, pscf, util </td>
-</tr>
 </table>
 Note that every directory other than util depends on util, and all
-directories other than util and pscf depend on both util and pscf. These
-two directories thus contain code that is available for use through the
-PSCF source code. The prdc directory contains code may be used throughout
-the pscf_rp and pscf_cp  program-level namespaces for programs that treat
-systems with periodic boundary conditions. 
+directories other than util and pscf depend on both util and pscf. 
+The pr directory depends on the prdc diretory in addition to pscf
+and util.
 
 * **Unit test framework:**
 
-In addition to these namespace level subdirectories, the src directory
+In addition to these namespace-level subdirectories, the src directory
 has one additional top-level subdirectory named "test". This directory
 contains files that define a C++ unit test framework that is used
 throughout PSCF to construct unit tests. This framework contains only
@@ -261,7 +249,7 @@ directory of the PSCF repository as a submodule.
 
 * **Namespace-level unit test directories:**
 
-Each of the namespace level directories that contains compilable source
+Each of the namespace-level directories that contains compilable source
 code files contains a subdirectory named "tests". Each such directory 
 contains unit tests for classes and functions defined in the parent 
 namespace-level directory.  These unit tests are not automatically 
@@ -277,8 +265,8 @@ make test
 All of the tests associated with any single namespace-level directory
 can be compiled and run by changing directory to the subdirectory named
 "tests" within that namespace directory in the relevant build directory 
-(i.e., within the bld directory tree for an out-of source build, or 
-the src directory tree for an in-source-build), and then entering
+(i.e., within the bld directory tree for an out-of source build, or the 
+src directory tree for an in-source-build), and then entering
 \code
 make run
 \endcode

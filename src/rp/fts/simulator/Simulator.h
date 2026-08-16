@@ -103,7 +103,6 @@ namespace Rp {
       * Constructor.
       *
       * \param system  parent System
-      * \param simulator  enclosing instance of a subclass
       */
       Simulator(System<D,T>& system);
 

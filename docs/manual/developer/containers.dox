@@ -1,0 +1,43 @@
+/*! \page developer_containers_page Use Cases
+
+\ref developer_template_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_periodic_page  (Next)
+<BR>
+
+The most conventional use of templates in PSCF is their use to define
+generic data containers. This is analogous to the use of templates in the
+C++ standard library to define container templatess such as std::vector.
+Rather than using the container templates defined in the standard library,
+however, PSCF relies primarily on a set of container templates that are
+distributed with the package.
+
+For example, most one-dimensional arrays used in PSCF are defined as
+specializations of a class template named Util::DArray. This template takes 
+the type name of a single array element as a template parameter. Thus, for 
+example, Util::DArray<double> is an array of double precision real numbers. 
+The source code for DArray and other container templates used in PSCF is 
+located in directory src/util/containers.
+
+The DArray class template defines a simple dynamically allocated array
+that allows individual elements to be access via an overloaded subscript
+[] operator, using the same syntax for this as that used by built-in
+C-arrays.  A DArray holds data in a contiguous block of memory that may
+be dynamically allocated by invoking a member function named "allocate" 
+at some point after construction.  The decision to rely primarily on 
+DArray and other home-grown containers throughout PSCF was based in part 
+on a preference for this type of interface for memory management, in which 
+allocation is separate from both object construction and addition of 
+elements. Note that this is different from the interfaces used by either 
+a std::vector (which is a dynamic array whose size can grow at any time 
+by pushing elements to the end of the array) or by std::array (for which 
+the array size must be known at compile time). The container classes used 
+by PSCF also provide a mechanism to either enable run-time checking of 
+array bounds, to facilitate debugging, or disable these additional checks 
+to maximize performance in production code.
+
+<BR>
+\ref developer_template_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page            (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_periodic_page   (Next)
+
+*/

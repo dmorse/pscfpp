@@ -15,14 +15,14 @@ include $(SRC_DIR)/rp/sources.mk
 include $(SRC_DIR)/rp/patterns.mk
 
 #-----------------------------------------------------------------------
-# Paths to executable program files
+# Paths associated with main program files
 
-# Lists of object, dependency and executabe files for programs
+# Lists of object, dependency and executable files for programs
 PSCF_RP_OBJS=
 PSCF_RP_DEPS=
 PSCF_RP_EXES=
 
-# Paths for pscf_rpc
+# Paths for pscf_rpc CPU program
 ifdef PSCF_CPP
   PSCF_RPC=$(BLD_DIR)/rp/pscf_rpc
   PSCF_RPC_EXE=$(BIN_DIR)/pscf_rpc
@@ -31,7 +31,7 @@ ifdef PSCF_CPP
   PSCF_RP_EXES+= $(PSCF_RPC_EXE)
 endif
 
-# Paths for pscf_rpg
+# Paths for pscf_rpg GPU program
 ifdef PSCF_CUDA
   PSCF_RPG=$(BLD_DIR)/rp/pscf_rpg
   PSCF_RPG_EXE=$(BIN_DIR)/pscf_rpg
@@ -43,9 +43,7 @@ endif
 #-----------------------------------------------------------------------
 # Main targets 
 
-.PHONY: all clean
-
-all: $(rp_OBJS) $(rp_LIB) $(PSCF_RP_EXES)
+all: $(PSCF_RP_EXES)
 
 clean:
 	rm -f $(rp_OBJS)
@@ -61,38 +59,30 @@ clean:
 	cd tests/cpp; $(MAKE) clean
 	cd tests/cuda; $(MAKE) clean
 
-# C++ CPU backend
 ifdef PSCF_CPP
 
-  # Main pscf_rpc executable
+  # Main pscf_rpc executable (linking)
   $(PSCF_RPC_EXE): $(PSCF_RPC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_RPC_EXE) $(PSCF_RPC).o $(LIBS)
 
-  pscf_rpc:
-	$(MAKE) $(PSCF_RPC_EXE)
-
-  .PHONY: pscf_rpc
 endif
 
-# CUDA GPU backend
 ifdef PSCF_CUDA
 
-  # Main pscf_rpg executable 
+  # Main pscf_rpg executable (linking)
   $(PSCF_RPG_EXE): $(PSCF_RPG).ou $(PSCF_LIBS)
 	@cp $(PSCF_RPG).ou $(PSCF_RPG).o
 	$(NVXX) $(LDFLAGS) -o $(PSCF_RPG_EXE) $(PSCF_RPG).o $(LIBS)
 	@rm $(PSCF_RPG).o
 
-  pscf_rpg:
-	$(MAKE) $(PSCF_RPG_EXE)
-
-  .PHONY: pscf_rpg
 endif
 
 # Note: In linking rules for executables, the prerequisite list contains
 # only the list $(PSCF_LIBS) of relevant PSCF-specific libraries, but the 
 # action links the full list $(LIBS) that also includes relevant external
 # libraries.
+
+.PHONY= all clean
 
 #-----------------------------------------------------------------------
 # Include all relevant dependency files
@@ -101,5 +91,4 @@ endif
 -include $(pscf_DEPS)
 -include $(prdc_DEPS)
 -include $(rp_DEPS)
--include $(PSCF_RPC).d
--include $(PSCF_RPG).du
+-include $(PSCF_RP_DEPS)

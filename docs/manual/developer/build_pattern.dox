@@ -353,20 +353,6 @@ Values of NVXX, NVXXFLAGS, MAKEDEP_CUDA and MAKEDEP_CUDA_CMD are all
 defined in the config.mk file, while the value of MAKE_DEP_ARGS is defined
 in the patterns.mk file.
 
-\subsection developer_build_pattern_test_sub Rule: Creating unit test executable files
-
-Every namespace-level subdirectory of the src directory has a subdirectory
-named "tests" that contains code for unit tests. Within each such "tests"
-directory are one or more source files that can be compiled and linked to
-create executables that run unit tests. By convention, such files are
-compiled and linked to create executable files with names that end in
-Test (e.g., Test, cpuTest or cudaTest). The name of the object file used
-to create each such executable is given by the name of the executable
-followed by a .o filename suffix. Each tests directory may contain
-multiple source files for unit tests, some which may be located in
-subdirectories of the "tests" directory, each of which is designed to
-run a different subset of the available unit tests. 
-
 <BR>
 \ref developer_build_dependency_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_build_page            (Up)   &nbsp; &nbsp; &nbsp; &nbsp;

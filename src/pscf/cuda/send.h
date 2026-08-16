@@ -18,28 +18,31 @@ namespace Pscf {
    /**
    * Setup host array for use.
    *
-   * GPU specializatin allocate host array if not done previously. 
+   * GPU specialization allocates host array if not done previously. 
    *
-   * \param in  input array to be copied
-   * \param out  output array into which data is copied
+   * \param hostArray host array that should be allocated if necessary
+   * \param deviceArray  device array, which must be allocated on entry
    */
    template <typename T>
    void setupHostArray(HostDArray<T> & hostArray, 
 		       DeviceArray<T> const & deviceArray)
    {
+      UTIL_CHECK(deviceArray.isAllocated());
+      const int n = deviceArray.capacity();
       if (!hostArray.isAllocated()) {
-         int n = deviceArray.capacity();
          hostArray.allocate(n);
       }
+      UTIL_CHECK(hostArray.capacity() == n);
    }
 
    /**
    * Copy data from device to host.
    *
-   * This specialization for GPU hardware actually copies data.
+   * This specialization for GPU hardware actually copies data from 
+   * GPU device memory to CPU host memory.
    *
-   * \param in  input array to be copied
-   * \param out  output array into which data is copied
+   * \param in  input device array to be copied
+   * \param out  output host array into which data is copied
    */
    template <typename T>
    void sendToHost(HostDArray<T>& out, DeviceArray<T> const & in)
@@ -48,10 +51,11 @@ namespace Pscf {
    /**
    * Copy data from host to device.
    *
-   * This specialization for GPU hardware actually copies data.
+   * This specialization for GPU hardware actually copies data from
+   * CPU host memory to GPU device memory.
    *
-   * \param in  input array to be copied
-   * \param out  output array into which data is copied
+   * \param in  input host array to be copied
+   * \param out  output device array into which data is copied
    */
    template <typename T>
    void sendToDevice(DeviceArray<T> & out, HostDArray<T> const & in)
@@ -61,9 +65,11 @@ namespace Pscf {
    * Release host array for re-use.
    *
    * This specialization for GPU hardware does nothing. The host array
-   * will be be de-allocated when it goes out of scope.
+   * will be be de-allocated when it goes out of scope. This pattern
+   * allows use of a host array that is a class member that is only
+   * allocated once.
    *
-   * \param array  array to be released
+   * \param array  host array to be released
    */
    template <typename T>
    void releaseHostArray(HostDArray<T> & array)

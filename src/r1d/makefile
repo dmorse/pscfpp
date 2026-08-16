@@ -25,10 +25,11 @@ PSCF_R1D_EXE=$(BIN_DIR)/pscf_r1d
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(r1d_OBJS) $(r1d_LIB) $(PSCF_R1D_EXE)
+all: $(PSCF_R1D_EXE)
 
 clean:
-	rm -f $(r1d_OBJS) $(r1d_OBJS:.o=.d)
+	rm -f $(r1d_OBJS)
+	rm -f $(r1d_DEPS)
 	rm -f $(r1d_LIB)
 	rm -f $(PSCF_R1D).o $(PSCF_R1D).d
 	rm -f *.o */*.o
@@ -38,10 +39,6 @@ clean:
 # Executable pscf_r1d file (linking)
 $(PSCF_R1D_EXE): $(PSCF_R1D).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_R1D_EXE) $(PSCF_R1D).o $(LIBS) 
-
-# Short phony target for pscf_r1d executable file (for convenience)
-pscf_r1d:
-	$(MAKE) $(PSCF_R1D_EXE)
 
 # Note: In the rule for pcsf_r1d, we include the list $(PSCF_LIBS) of 
 # PSCF-specific static libraries as prerequisiites, but link to the list 

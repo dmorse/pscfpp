@@ -23,7 +23,9 @@ namespace Pscf {
    * for use with a GPU actually copy memory between the device and host. 
    * The specializations defined here, which are designed to use only a
    * CPU, instead create a temporary association between the two arrays 
-   * without copying any data.
+   * without copying any data. In this pattern, the "device array" is the 
+   * array that owns the underlying C array, while the "host" array is a 
+   * shallow copy that is associated with the device array. 
    */
 
    /**
@@ -31,8 +33,8 @@ namespace Pscf {
    *
    * CPU specialization associates host array with a device array.
    *
-   * \param in  input array to be copied
-   * \param out  output array into which data is copied
+   * \param hostArray  host array (data user)
+   * \param deviceArray  device array (data owner)
    */
    template <typename T>
    void setupHostArray(FftwDRArray<T> & hostArray, 
@@ -52,7 +54,9 @@ namespace Pscf {
    * Copy data from device array to host array.
    *
    * This specialization for CPU hardware does nothing, since the two
-   * arrays must be associated on input.
+   * arrays must be associated on entry to this function. An Exception is 
+   * thrown if the input is not a data owner, or if the output host array
+   * is not already associated with the input.
    *
    * \param in  input device array
    * \param out  output host array 
@@ -68,7 +72,9 @@ namespace Pscf {
    * Copy data from host array to device array.
    *
    * This specialization for CPU hardware does nothing, since the two
-   * arrays must be associated on input.
+   * arrays must be associated on entry to this function. An Exception is 
+   * thrown if the output device array is not a data owner, or if the 
+   * input host array is not already associated with the output.
    *
    * \param in  input host array
    * \param out  output device array
@@ -86,7 +92,7 @@ namespace Pscf {
    * This specialization for CPU hardware dissociates the user host array
    * from an associated data owner.
    *
-   * \param array  array to be released
+   * \param array  host array to be released
    */
    template <typename T>
    void releaseHostArray(FftwDRArray<T> & array)

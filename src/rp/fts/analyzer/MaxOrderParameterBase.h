@@ -49,7 +49,7 @@ namespace Rp {
    *   - D : dimension of space (D=1, 2, or 3)
    *   - T : Types class (CppTp<D> or CudaTp<D>)
    *
-   * \see \ref rp_MaxOrderParameterBase_page "Manual Page"
+   * \see \ref rp_MaxOrderParameter_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module
    */
    template <int D, class T>
