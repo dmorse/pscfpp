@@ -29,7 +29,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension of space (1, 2, or 3)
-   *   - T : Types class (CppTp<D> or CudaTp<D>)
+   *   - T : backend identifier class (CPT or CUT)
    *
    * \see \ref rp_AnalyzerManager_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module

@@ -51,7 +51,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension of space (D=1, 2, or 3)
-   *   - T : Types class (CppTp<D> or CudaTp<D>)
+   *   - T : backend identifier class (CPT or CUT)
    *
    * \see \ref rp_LrCompressor_page
    * \ingroup Rp_Fts_Compressor_Module

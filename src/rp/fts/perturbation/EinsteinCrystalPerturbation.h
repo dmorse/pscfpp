@@ -32,7 +32,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, CppTp<D> or CudaTp<D>
+   *   - T : backend identifier class (CPT or CUT)
    *
    * \see \ref rp_EinsteinCrystalPerturbation_page "Einstein Crystal"
    * \see \ref psfts_perturb_page "Perturbations"

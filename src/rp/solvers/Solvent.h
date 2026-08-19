@@ -30,7 +30,7 @@ namespace Rp {
    * <b> Template parameters </b>:
    *
    *   - D : dimension of space (1, 2, or 3)
-   *   - T : Types class (CppTp<D> or CudaTp<D>)
+   *   - T : backend identifier class (CPT or CUT)
    *
    * \ingroup Rp_Solver_Module
    */

@@ -41,7 +41,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, CppTp<D> or CudaTp<D>
+   *   - T : backend identifier class (CPT or CUT)
    *
    * \see \ref scft_sweep_page "Manual page"
    * \ingroup Rp_Scft_Sweep_Module

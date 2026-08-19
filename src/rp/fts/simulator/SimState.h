@@ -38,7 +38,7 @@ namespace Rp {
    * 
    * Template parameters:
    *   - D : dimension of space
-   *   - T : backend type class (e.g., CPT or CUT)
+   *   - T : backend type class (e.g. (CPT or CUT))
    *
    * \ingroup Rp_Fts_Simulator_Module
    */

@@ -49,7 +49,7 @@ namespace Rp {
    * <b>Template parameters:</b>
    *
    *    - D    : integer dimension of space, i.e., 1, 2, or 3
-   *    - T    : Types class (CppTp<D> or CudaTp<D>)
+   *    - T : backend identifier class (CPT or CUT)
    *
    * <b>Subclasses:</b>
    * The FieldIoBase template is a base class for specializations of a

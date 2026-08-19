@@ -1,6 +1,6 @@
 /*! \page developer_param_page Parameter File I/O
 
-\ref developer_periodic_page  (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page  (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page      (Next)
 <BR>
 
@@ -333,7 +333,7 @@ file block. In this example, all constructors of class B are
 thus assumed to contain the statement setClassName("B").
 
 <BR>
-\ref developer_periodic_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page          (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page     (Next)
 

@@ -37,7 +37,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, CppTp<D> or CudaTp<D>
+   *   - T : backend identifier class (CPT or CUT)
    *
    * This class stores the information required to sweep a single
    * parameter value of any of several types.  The type of parameter

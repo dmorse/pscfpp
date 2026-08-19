@@ -39,7 +39,7 @@ namespace Rp {
    * Template parameters:
    *
    *    - D : spatial dimension
-   *    - T : Types class, CppTp<D> or CudaTp<D>
+   *    - T : backend identifier class (CPT or CUT)
    *
    * \see \ref rp_RealMove_page "Manual Page"
    * \ingroup Rp_Fts_MonteCarlo_Module

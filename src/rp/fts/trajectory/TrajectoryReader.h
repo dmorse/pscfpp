@@ -28,7 +28,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, CppTp<D> or CudaTp<D>
+   *   - T : backend identifier class (CPT or CUT)
    *
    * \ingroup Rp_Fts_Trajectory_Module
    */

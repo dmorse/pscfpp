@@ -27,7 +27,7 @@ namespace Rp {
    * Template parameters:
    *
    *    - D : dimension of space
-   *    - T : Types class, CppTp<D> or CudaTp<D>
+   *    - T : backend identifier class (CPT or CUT)
    *
    * \see \ref rp_HamiltonianAnalyzer_page "Manual Page"
    * \ingroup Rp_Fts_Analyzer_Module

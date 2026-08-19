@@ -32,7 +32,7 @@ namespace Rp {
    * Template parameters:
    *
    *    - D : dimension of space
-   *    - T : collection of type aliases, e.g., CppTp<D>
+   *    - T : collection of type aliases, e.g., CPT
    *
    * \ingroup Rp_Fts_Analyzer_Module
    */

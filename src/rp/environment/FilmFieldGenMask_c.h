@@ -54,7 +54,7 @@ namespace Rp {
       /**
       * Constructor
       * 
-      * \param sys  System parent object
+      * \param sys  parent System object
       */
       FilmFieldGenMask(Rp::System<D,CPT>& sys);
 

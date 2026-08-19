@@ -43,19 +43,18 @@ namespace Rp {
 
       /**
       * Constructor.
+      *
+      * \param system  parent system
       */
       EnvironmentFactory(System<D,T>& system);
 
       /**
       * Method to create any Environment supplied with PSCF.
       *
-      * \param className name of the Environment subclass
+      * \param className  name of the Environment subclass
       * \return Environment* pointer to new instance of className
       */
       Environment* factory(const std::string &className) const;
-
-      //using Factory<Environment>::trySubfactories;
-      //using Factory<Environment>::readObjectOptional;
 
    private:
 

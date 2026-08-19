@@ -33,7 +33,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension of space (1, 2, or 3)
-   *   - T : Types class (e.g., CPT or CUT)
+   *   - T : backend identifier class (e.g. (CPT or CUT))
    *
    * \ingroup Rp_Scft_Sweep_Module
    */

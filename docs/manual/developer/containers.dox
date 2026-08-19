@@ -1,7 +1,7 @@
-/*! \page developer_containers_page Use Cases
+/*! \page developer_containers_page Container Templates
 
 \ref developer_template_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_periodic_page  (Next)
+\ref developer_backend_page  (Next)
 <BR>
 
 PSCF makes heavy use of a use a set of container templates that are 
@@ -18,7 +18,7 @@ Util::Array that is defined in the file src/util/Array.h.
 This class template has a template declaration signature
 \code
    template <typename Data> class Array;
-\enddcode
+\endcode
 in which the typename parameter Data is the data type of each element of 
 an array. For example, an instance of the class Array<double> is thus an 
 array of double precision numbers. The Array class template is a simple 
@@ -38,10 +38,10 @@ of the class template Util::DArray. This template is defined in the file
 src/util/containers/DArray.h, and has a template declaration signature
 \code
    template <type Data> class DArray
-\enddcode
+\endcode
 in which Data is the type of each array element. Each specialization of
-DArray<Data> is a subclass of Array<Data>, and inherits the subscript
-operator defined by the Array template. An object of type DArray<Data> 
+DArray\<Data\> is a subclass of Array\<Data\>, and inherits the subscript
+operator defined by the Array template. An object of type DArray\<Data\> 
 is a simple dynamically allocated array that wraps a contiguous block
 of memory that is allocated on the heap. The block of memory that is
 owned by a DArray can be allocated by invoking a member function named 
@@ -81,9 +81,9 @@ of FFTW.
 
 The FfftwDArary container is also designed to allow one container
 to act as a shallow copy of a slice of another container of the
-same type: An FftwDArray<Data> container may act as a "data view" 
+same type: An FftwDArray\<Data\> container may act as a "data view" 
 (or shallow copy) of a slice of a data block that is owned by another 
-FftwDArray<Data> container, known as the "data owner". When such 
+FftwDArray\<Data\> container, known as the "data owner". When such 
 an association is created between two such containers, a pointer
 owned by the data view is assigned the address of the first element 
 of a slice of memory owned by the data owner, and internal flags are 
@@ -149,25 +149,19 @@ not portable.
 The percieved need for optional, portable bounds checking was the most 
 important reason to prefer use of home-grown array containers such as 
 DArray in over C++ standard library sequence containers such as std::vector.
-Standard library associated containers such as std::map are, however, 
-used in PSCF whenever an associative container is needed. Standard 
-library sequence containers such as std::vector are also used in a few 
-places to provide convenient access to standard library algorithms such 
-as the sorting algorithm. Generally, however, PSCF developers should use 
-prefer use of DArray or another homegrown sequence container preference 
-to std::vector whenever feasible for consistency with existing code, and 
-to allow the maintenance of a system that allows bounds checking to be 
-globally enabled when needed.
-
-\section developer_containers_GPU_sec GPU Arrays (pscf/cuda)
-
-
-\section developer_containers_field_sec Field Array Containers (prdc/field)
+Standard library associated containers such as std::map are, however, used 
+in PSCF whenever an associative container is needed. Standard library 
+sequence containers such as std::vector are also used in a few places 
+to provide convenient access to standard library algorithms such as the 
+sorting algorithm. Generally, however, PSCF developers should use prefer 
+DArray or another homegrown sequence container to std::vector whenever 
+feasible, both for consistency with existing code and to maintain the
+ability to enable bounds checking during debuggin.
 
 
 <BR>
 \ref developer_template_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page            (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_periodic_page   (Next)
+\ref developer_backend_page   (Next)
 
 */

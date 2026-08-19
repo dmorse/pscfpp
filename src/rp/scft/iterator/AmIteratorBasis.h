@@ -33,7 +33,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, CppTp<D> or CudaTp<D>
+   *   - T : backend identifier class (CPT or CUT)
    *
    * \see \ref rp_AmIteratorBasis_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"

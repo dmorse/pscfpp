@@ -40,7 +40,7 @@ namespace Rp {
    * <b> Template parameters </b>: The template parameters represent:
    *
    *     - D  : integer dimensionality of space, D=1,2, or 3
-   *     - T  : a backend type class (e.g., CPT or CUT)
+   *     - T  : a backend type class (e.g. (CPT or CUT))
    *
    * <b> Subclasses </b>: Specializations of Rp::WFieldsBase are used as 
    * base classes for corresponding specializations of Rp::WFields.

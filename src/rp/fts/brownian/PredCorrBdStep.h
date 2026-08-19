@@ -30,7 +30,7 @@ namespace Rp {
    * Template parameters:
    *
    *   - D : dimension
-   *   - T : Types class, CppTp<D> or CudaTp<D>
+   *   - T : backend identifier class (CPT or CUT)
    *
    * \see \ref rp_PredCorrBdStep_page "Manual Page"
    * \ingroup Rp_Fts_Brownian_Module
