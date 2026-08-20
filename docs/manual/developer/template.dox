@@ -14,7 +14,6 @@ conventions used for templates that are designed to be explicitly
 instantiated.
 
 <ol>
- <li> \subpage developer_template_uses_page </li>
  <li> \subpage developer_template_defs_page </li>
  <li> \subpage developer_template_explicit_page </li>
 </ol>

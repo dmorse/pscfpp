@@ -1,6 +1,6 @@
 /*! \page developer_template_defs_page Concepts and Definitions
 
-\ref developer_template_uses_page   (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page   (Prev\Up)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_template_explicit_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
@@ -220,8 +220,7 @@ included by the header file. This alternate pattern is used heavily in
 the PSCF source code, and discussed in detail on the next page.
 
 <BR>
-\ref developer_template_uses_page      (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_template_page           (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_template_page        (Prev/Up)    &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_template_explicit_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

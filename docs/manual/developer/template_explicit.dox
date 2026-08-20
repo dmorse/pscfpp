@@ -26,11 +26,9 @@ and build system:
 </ol>
 The use of an "explicit" class template is generally feasible only for 
 class templates that are designed to only be used with only a small, 
-foreseeable set of choices of template parameters. It is only in this
-case that is may be practical to explicitly instantiate all required 
-specializations. In the PSCF code base, implicit class templates are 
-used throughout the Util namespace, while explicit templates are used 
-for many of the class templates defined in the Pscf namespace.
+foreseeable set of possible choices of template parameters. It is only in 
+this case that is may be practical to explicitly instantiate all required 
+specializations. 
 
 For a standard "implicit" template, a preprocessor directive that 
 includes the header file for that template must include definitions 
@@ -47,28 +45,33 @@ header file, much like the division of class definition and member
 function definitions into separate files that is usually used for
 non-templated classes.
 
-The simplest use of explicit class templates in PSCF is for classes
-that are designed for systems with periodic boundary conditions, and
-for which the the dimension of space D is the only template parameter.
-Three specializations of such class template with D=1, 2 and 3 are 
-compiled by explicit instantiation and later linked to create 
-executables.
+In the PSCF code base, implicit class templates are used throughout the 
+Util namespace, while many explicit templates are used in the Pscf::Prdc 
+and Pscf::Rp namespaces in code that is used to model periodic systems.
+The simplest use of explicit class templates in PSCF is for classes in
+the Pscf::Prdc for which the the dimension of space D is the only template 
+parameter. Specializations of such class template with D=1, 2 and 3 are 
+compiled by explicit instantiation and later linked to create executables. 
+Almost all of the class templates in namespace Pscf::Rp are explicit 
+templates instead take the dimension of space as a first template 
+parameter, and also take a second template parameter that is used to 
+specify a choice of the computational "backend" that will be used for 
+mathematical operations that are performed on large arrays of data. 
+This usage is discussed in detail elsewhere.
 
 By allowing template instantiations to be treated much like non-template
 classes, the use of explicit class templates in PSCF avoids some of the
-most common disadvantages of templates in C++.  This usage can reduce
-compilation times of template heavy code base, because it reduces the 
-amount of source code that must be included files that include the 
-header for each class template. It also tends to simplify
-debugging of errors during development, because it breaks the build
-process into smaller steps, often allows the compiler to generate more
-easily interpretable error messages in response to syntax errors. 
-The main costs are the need for a bit more thought about what files 
-need to be included by others, and about where to place explicit 
-instantiation declarations that are required to suppress implicit
-instantiation.
+most important disadvantages of templates in C++. By reducing the amount
+of template code that must be included into other files and avoiding
+repeated re-compilation of each specialization, use of explicit 
+instantiation tends reduce compilation times in a template-heavy code 
+base. By breaking the build process into smaller steps, it also tends
+to simplify debugging of errors during development, often allows the 
+compiler to generate more easily interpretable error messages in 
+response to syntax errors.  The main costs are the need for explicit
+instantiation declarations.
 
-\section developer_template_div_standard_sec A. Implicit templates
+\section developer_template_explicit_imp_sec A. Implicit templates
 
 Implicit class templates are designed allow the safe use of implicit
 instantiation.  All of the container class templates that are defined
@@ -101,7 +104,7 @@ In case 2, the .tpp implementation file for such an implicit template
 may never be directly included by any file other than the associated 
 header file. 
 
-\section developer_template_div_explicit_sec B. Explicit class templates
+\section developer_template_explicit_exp_sec B. Explicit class templates
 
 The source code for the PSCF programs for periodic functions contains many
 class templates for which there exist only a few valid choices of values
@@ -134,57 +137,48 @@ pure C++ code) or .cu (for CUDA C++ code).  This file is compiled by
 the build system to create object code for the specified template 
 specializations. 
 
-To avoid compiler or linker errors, the organization of source code for 
-such class template named A must satisfy the following requirements:
+Explicit instantiation declarations must be included by any code that 
+uses an instance of a template specialization in order to suppress 
+implicit instantiation, which is the default behavior of C++. A 
+declaration for a particular specialization instructs the compiler to 
+**not** immediately compile code that specialization the first time it 
+is encountered in a translation unit, and instead wait and look for 
+object code for that specialization during the linking state. 
 
-  - Any file that contains explicit instantiation definitions for one 
-    or more specializations of class template A must include or contain 
-    both the definition of class A (usually given in a \*.h header file) 
-    and the definitions of all template member functions (often given 
-    in an implementation file). 
+In PSCF, code for most explicit class templates is organized as follows:
 
-  - Any file in which a class or function definition uses an instance
-    of template specialization, as either a class member or a local 
-    variable, must include an explicit instantiation declaration for 
-    the required specialization.
+  - A \*.h header file contains the class template definition, any 
+    inline member functions, and explicit specialization declarations of 
+    all relevant specializations that may be used elsewhere. 
 
-Explicit instantiation declarations are required in any code that uses
-an instance of a template specialization in order to suppress implicit 
-instantiation, which is the default behavior of C++. A declaration for 
-a particular specialization instructs the compiler to **not** 
-immediately compile code that specialization the first time it is 
-encountered in a translation unit, and instead wait and look for object 
-code for that specialization during the linking state. 
+  - A \*.tpp template implementation file includes the header file, 
+    and contains definitions of all non-lineline member functions.
 
-The simplest and most common way of satisfying the code for a class 
-template so as to satisfy these requirements is to divde the required
-code as follows:
-
-  - Create a \*.h header file that contains the class template definition, 
-    any inline member functions, and explicit specialization declarations 
-    of all relevant specializations that may be used elsewhere. 
-
-  - Create a \*.tpp template implementation file that includes the header
-    file, and that contains definitions of all non-lineline member functions.
-
-  - Create one or more compilable \*.cpp and/or \*.cu that include the
+  - One or more compilable \*.cpp and/or \*.cu files include the
     implementation file (and thus indirectly include the header), and
-    that contain explicit specialization definitions for several 
+    each contain explicit specialization definitions for several 
     specializations. 
 
-Most of the class templates in the src/prdc and rp namespace have code
-that is organized as described above.
+Putting explicit specialization declarations for all relevant 
+specializations in the header file guarantees that implicit instantiation
+will be suppressed in any file that includes the header file.  Most of 
+the class templates in the src/prdc and rp namespace have code that is 
+organized as described above.
+Separate \*.cpp and \*.cu files are created for classes for which it is
+necessary to compile different specializations that use different 
+computational backends, and that must be compiled by different compilers.
 
+\section developer_template_explicit_example_sec Example
 
-<b> Example </b>: Class templates for which the dimension of space, D, 
-is the only template parameter are always written using the simple 
-pattern described above.  As an an example of this, consider the source 
-code files associated with the class template Pscf::Prdc::Basis. 
+Class templates for which the dimension of space, D, is the only template 
+parameter are always written using the simple pattern described above.  As 
+an an example of this, consider the source code files associated with the 
+class template Pscf::Prdc::Basis. 
 
-The header file src/prdc/crystal/Basis.h contains a definition of the
-class template Pscf::Prdc::Basis, but does not contain definitions of 
-any non-inline member functions.  The key contents of this file, in 
-skeleton form, look like this:
+The header file src/prdc/crystal/Basis.h contains a definition of the class 
+template Pscf::Prdc::Basis, but does not contain definitions of any 
+non-inline member functions.  The key contents of this file, in skeleton 
+form, look like this:
 \code
 #ifndef PRDC_BASIS_H
 #define PRDC_BASIS_H
@@ -210,13 +204,12 @@ namespace Rp {
 }
 #endif
 \endcode
-Note that the header file contains explicit instantiation declarations
-for the only three possible valid specializations.
+Note that the header file contains explicit instantiation declarations for 
+all three possible valid specializations.
 
-An associated template implementation file, src/rp/crystal/Basis.tpp,
-contains definitions of all non-inline member functions for the Basis 
-class template. A skeleton version of this file looks something like 
-this:
+An associated template implementation file, src/rp/crystal/Basis.tpp, contains 
+definitions of all non-inline member functions for the Basis class template. A 
+skeleton version of this file looks something like this:
 \code
 
 #include "Basis.h"
@@ -230,13 +223,12 @@ namespace Rp {
 }
 }
 \endcode
-Note that this implementation file includes the header file. The
-usage pattern for an implicit class template would instead require
-the header file to include the implementation file. 
+Note that this implementation file includes the header file. This is different
+from the usage pattern for an implicit class template, which would instead 
+require the header file to include the implementation file.
 
-The compilable source file src/rp/crystal/Basis.cpp includes
-Basis.tpp and explicit instantiation definitions for D=1, D=2, and
-D=3:
+The compilable source file src/rp/crystal/Basis.cpp includes the file Basis.tpp 
+and contains explicit instantiation definitions for D=1, D=2, and D=3:
 \code
 #include "Basis.tpp"
 
@@ -251,42 +243,41 @@ namespace Rp {
 }
 }
 \endcode
-Note that this file explicitly includes the implementation file 
-(Basis.tpp), and thereby also indirectly includes the header file 
-(Basis.h).
+By including the implementation file (Basis.tpp), this file also indirectly 
+includes the header file (Basis.h).
 
-The PSCF build system compiles the file src/rp/crystal/Basis.cpp, 
-places the resulting object code for the three valid specializations 
-in a file named Basis.o, and later incorporates the contents of this 
-object file into a static library file named rplib.a. The resulting 
-library then contains object code for three separate instantiations 
-of the Basis template with D=1, 2 and 3.
+The PSCF build system compiles the file src/rp/crystal/Basis.cpp, places the 
+resulting object code for all three valid specializations in an object file 
+named Basis.o. The contents of this object file are then incorporated into a 
+static library file named rplib.a. 
 
-In the example discussed above, definitions of non-inlined member
-functions have been placed in a separate \*.tpp implementation file
-that is included into the compilable source file. This results in
-a file organization in which code for this class template is spread 
-over three files: a header, an implementation file, and a compilable 
-source file. Definitions of non-lnline functions could also be placed
-directly the \*.cpp file, resulting in an organization that contains
-only a header file and source file. 
+Separation of the code for this sort of class template into three files, as in 
+the above example, is common in PSCF but is not the only possibility. For the
+example shown above, definitions of the non-line fucntions could instead have 
+been placed directly in the \*.cpp file, thus combining the contents of the 
+*.tpp and *.cpp file. 
 
-<b> Exceptions </b>:
+\section developer_template_div_special_sec Special Cases
 
-Exceptions to this simple pattern arise primarily in two cases:
+Exceptions to the simple file organization for explict class templates that is 
+described above arise primarily in two special cases:
 
-   - Class templates for which the primary template is not defined, 
-     and for which all relevant specializations are instead defined 
-     as explicit specializations or explicit partial specializations. 
-
-   - Class templates that are designed to be used only as base 
+   - Case 1: Class templates that are designed to be used only as base 
      classes for a small number of subclasses, and for which the header 
-     file is only included by the header files for these subclasses. 
+     file will only be included by the header files for these subclasses. 
 
-In the latter case of class templates that are only used as base 
-classes, explicit specializations declarations for particular
-specializations of the base class may sometimes be placed in the
-header file of the subclass that uses them.
+   - Case 2: Class templates for which the primary template is not defined, 
+     and for which all relevant specializations are instead defined as 
+     explicit specializations or explicit partial specializations. 
+
+In case 1 (class templates that are only used as base classes), explicit 
+intantiations declarations for particular specializations of the base class 
+in the header file of a subclass that uses those specializations, rather than
+in the header file for the base class.
+
+Case 2 arises for some class templates for which explicit partial 
+specializations are defined for specializations that use CPU and GPU 
+backends, as discussed elsewhere.
 
 <BR>
 \ref developer_template_defs_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
