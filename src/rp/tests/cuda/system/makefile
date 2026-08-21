@@ -1,5 +1,9 @@
 include ../../../../config.mk
-include $(SRC_DIR)/rp/include.mk
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/rp/sources.mk
+include $(SRC_DIR)/rp/patterns.mk
 
 TEST=$(BLD_DIR)/rp/tests/cuda/system/Test
 
@@ -10,13 +14,13 @@ $(TEST): $(TEST).ou $(PSCF_LIBS)
 	$(NVXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 	@rm $(TEST).o
 
-run: $(TEST).o $(TEST)
-	@$(TEST) $(SRC_DIR)/rpg/tests/system/
+run: $(TEST).ou $(TEST)
+	@$(TEST) $(SRC_DIR)/rp/tests/cuda/system/
 
-run-quiet: $(TEST).o $(TEST)
-	@$(TEST) $(SRC_DIR)/rpg/tests/system/ > log
+run-quiet: $(TEST).ou $(TEST)
+	@$(TEST) $(SRC_DIR)/rp/tests/cuda/system/ > log
 	@echo `grep failed log` ", "\
-              `grep successful log` "in rpg/tests/system/log" > count
+              `grep successful log` "in rp/tests/cuda/system/log" > count
 	@cat count
 
 clean-outputs:

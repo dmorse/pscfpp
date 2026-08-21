@@ -1,6 +1,9 @@
 include ../../../../config.mk
-include $(SRC_DIR)/rp/include.mk
-
+include $(SRC_DIR)/util/sources.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
+include $(SRC_DIR)/rp/sources.mk
+include $(SRC_DIR)/rp/patterns.mk
 TEST=$(BLD_DIR)/rp/tests/cuda/sweep/Test
 
 all: $(TEST)
