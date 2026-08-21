@@ -31,7 +31,7 @@ System{
     McMoveManager{
 
       ForceBiasMove{
-        probability     0.50
+        probability     0.75
         mobility        5.0E-3
       }
 
