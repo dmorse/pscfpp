@@ -1,252 +1,34 @@
-/*! \page developer_backend_page Backend Identifier Classes
+/*! \page developer_backend_page Supporting Multiple Backends
 
-\ref developer_containers_page (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_containers_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_param_page      (Next)
 <BR>
 
-The PSCF package builds two executable files, named pscf_rpc and pscf_rpg,
-that are variants of the same program, but that are specialized to use 
-different hardware. The pscf_rpc executable uses only standard CPU 
-hardware, and is constructed using only standard C++ source code.  
-The pscf_rpg executable instead makes use of an NVIDIA GPU for some
-operations, and built using some CUDA C++ code.  
+The PSCF package builds two executable files, that are pscf_rpc and 
+pscf_rpg, that are designed to solve the same set of problems involving 
+real periodic fields, but that are specialized to use different hardware. 
+The pscf_rpg executable performs makes use of a GPU, while the pscf_rpg 
+executable uses only a CPU. The primary difference in the implementation 
+of these two programs arises differences in code that implements a few 
+basic mathematical operations that are performed on large arrays, such 
+as elementwise linear algebra operations on arrays, array reductions, and 
+fast Fourier transforms.  In pscf_rpg, these operations are performed on 
+a GPU, where in pscf_rpc they are performed on the CPU.  
 
-The source code from which these two executables are built differs 
-primarily in the treatment of a few basic mathematical operations that 
-are performed on large arrays. Among these are elementwise linear algebra 
-operations, array reductions such as inner products, and fast Fourier 
-transform (FFT) operations.  In code that is designed to use a GPU, these 
-basic operations are performed on the GPU, by kernel functions that are 
-coded in CUDA C++.  In analogous code that is designed for CPU hardware, 
-these mathematical operations are performed on the CPU, by functions 
-that are written in standard C++.  The use of different hardware for 
-computation also affects where data is stored: PSCF stores key data 
-structures such as the arrays that contain the w-fields and c-fields 
-in GPU global memory in code that uses a GPU, but in in CPU main memory 
-in code that uses a CPU. We describe these differences in what follows 
-by saying that analogous executable files use different computational 
-"backends" for core computations.
+We describe these differences in what follows by saying that analogous 
+executable files use different computational "backends" for these core
+mathematical operations. The subpages linked below describe the design 
+of the conventions used in the PSCF source to allow the use of different 
+backends with minimal code duplication. As described in more detail in 
+these subpages, the system used by PSCF relies heavily on the use of 
+C++ templates.
 
-\section backend_id_class_sec Identifier Classes
+<ol>
+ <li> \subpage developer_backend_id_page </li>
+ <li> \subpage developer_backend_field_page </li>
+ <li> \subpage developer_backend_rp_page </li>
+</ol>
 
-PSCF relies on the use templates to define closely analogous classes 
-that use different computational backends. All classes and functions 
-that must be specialized to allow the use of more than one possible 
-backend are defined as templates that accept a special type of template
-parameter that is used to specify the choice of backend. 
-
-PSCF defines two classes named Pscf:CPT and Pscf::CUT that are designed 
-to be used as template parameter arguments in order to specify a choice
-of computational backend:
-  - Use of the class Pscf::CUT in this role indicates a template
-    specialization that uses a CUDA backend, which uses a GPU.
-  - Use of the class Pscf::CPT in this role indicates a template 
-    specialization that uses a C++ backend, on uses only a CPU.
-
-We refer to these two classes as backend identifier classes.  A template 
-parameter that is designed to take one of the backend identifier classes
-as its argument is referredt to a a backend identifier template 
-parameter, or simply a backend identifier parameter  By convention, a
-backend identifier parameter is always denoted by the symbol "T" in any
-template definition.
-
-Many of the class templates that accept a backend identifier template
-parameter also take the integer dimension of spaced, denoted by D,
-as an additional parameter. In such templates, the integer parameter 
-D is always listed as the first parameter, and backend template parameter
-T as a second.  Almost all of the class templates defined in namespace 
-Pscf::Rp follow this pattern. 
-
-For example, the Pscf::Rp::System class template, which represents
-the highest level object in a SCFT or PS-SCFT calculation, is declared 
-within the Pscf::Rp namespace by a template with an signature
-\code
-    template <int D, class T> class System;
-\endcode
-An instantiation of this template must use an integer argument D=1, 2, 
-or 3 for the int parameter D, and one of the template identifier classes 
-as the argument for the class parameter T.  In code that is defined 
-within the Pscf::Rp namespace, System \<3, CUT\> is thus the name of
-a specialization of the System template that uses a CUDA GPU backend 
-to simulate a physical model that uses 3-dimensional periodic fields. 
-
-\section developer_periodic_field_sec Field and FFT classes
-
-The most basic data structures used by PSCF programs for periodic 
-systems are arrays that store periodic fields (i.e., functions of 
-position) that are defined on the nodes of a regular periodic mesh.
-The PSCF package defines a set of class templates in namespace 
-Pscf::Prdc that represent such fields and Fourier transforms of 
-such fields.  This namespace also contains a definition of a 
-template for a class named Prdc::FFT that performs forward and
-inverse fast Fourier transform on such fields.  All of these 
-field and FFT templates are defined using the template pattern 
-described above. 
-
-For example, the class template RField represents a real-valued 
-field defined on the nodes of periodic mesh. It is defined in 
-namespace Pscf::Prdc as template with a declaration 
-\code
-  template <int D, class T> class RField;
-\endcode
-A specialization RField \<3, CUT\> thus represents a real field 
-defined on a 3-dimensional periodic mesh that is designed to allow 
-use of a GPU, while RField \<2, CPT\> represents a 2D real field 
-that is designed to use only CPU hardware.
-
-The Pscf::Prdc namespace defines four basic class templates named 
-RField, RFieldDft, CField, and FFT to store and manipulate periodic 
-fields. Each of these four class templates takes the dimension of 
-space, D, and a backend parameter T as template parameters. These
-classes are:
-
-   - An RField \<D, T\> object contains values of a real-valued 
-     periodic field on the nodes of a regular periodic D-dimensional 
-     mesh.
-
-   - An RFieldDft \<D, T\> object contains values of the complex-valued 
-     discrete Fourier transform (DFT) of a real-valued periodic field.
-
-   - A CField \<D, T\> can contain values of complex-valued field on
-     the nodes of a D-dimensional periodic mesh, or the DFT of such
-     a field. 
-
-   - FFT \<D,T\> is a wrapper around a fast Fourier transform library
-     that can transform a RField \<D,T\> to or from an RFieldDft \<D,T\>, 
-     or that can apply a forward or inverse complex-to-complex Fourier 
-     transform to a CField \<D, T\> object.
-
-Each of the field classes stores information about the dimensions of 
-the mesh on which the field is defined, which is stored as an instance 
-of IntVec \<D\>. An instance of FFT \<D,T\> with a specific pair of 
-arguments for D and T provides functions that take specializations 
-of the field class templates  with the same two template arguments.  
-
-The field and FFT classes described above are actually implemented
-by defining completely separate partial specializations for different 
-values of the backend parameter T.  The directory src/prdc/cuda 
-contains a set of partial specializations of these classes for a 
-template argument T=CUT, which are written in CUDA C++ and designed
-to use a GPU. The directory src/prdc/cpu contains an analogous set of 
-partial specializations for specializations with a template argument 
-T=CPU, which are written in standard C++ and designed to use standard 
-CPU hardware.  
-
-For example, the partial specialization of RField \<D,T\> for T=CPT is
-defined in the file prdc/field/cpu/RField.h as a template
-\code
-    template <int D>
-    class RField<D, CPT> : public FftwDArray<double>
-    {
-      ....
-    }
-\endcode
-Each specializations of this template with D=1, 2, or 3 is a subclass
-subclasses of FftwDArray \<double\>, which is a dynamically allocated 
-array of double precision numbers with a memory alignment designed 
-to optimize performance of the FFTW. The class FftwDArray \<double\> is,
-in turn, a subclass of Array \<double\>, which defines an interface that
-allows access to individual elements using a square-bracket subscript
-operator.
-
-Partial specializations of the field class templates RField, RFieldDft
-and CField that are defined to use different backends use blocks of 
-memory that are allocated in different locations: Specializations of 
-these templates with T=CPT, which use a C++ backend, allocate underlying 
-arrays in CPU main memory.  Corresponding specializations with T=CUT 
-instead store field data in global CPU memory in order to avoid minimize 
-the need for operations that copy data between GPU and CPU memory.  As 
-a result of this difference, specializations of the field classes with 
-T=CUT allow access to individual elements only within CUDA kernels, 
-not in C++ code that is executed on the host CPU. Specializations with 
-T=CPT instead allow access to individual elements in C++ code via a 
-conventional subscript operator.
-
-The partial specializations of the template FFT \<D,T\> for arguments
-T=CPT and T=CUT are wrappers around different underlying FFT libraries. 
-An instance of FFT \<D, CPT\> with D=1,2, or 3 is a wrapper for the 
-open-source FFTW library, which runs on standard CPU hardware.  
-A corresponding instance of Pscf::Cuda::FFT \<D, CUT\> is instead a 
-wrapper around the NVIDIA cuFFT library, which performs FFT 
-operations on a GPU. These two specializations provide closely
-analogous interfaces for D-dimensional real-to-complex, 
-complex-to-real, and complex-to-complex transforms.  
-
-\section developer_periodic_complex_sec Complex number types
-
-The different FFT libraries used by pscf_rpc and pscf_rpg use 
-different, incompatible data types to represent complex numbers.
-
-The FFTW library uses a type named fftw_complex, that is defined in 
-the "fftw3.h" FFTW header file. This typename is an alias for a 
-two-element array, type double[2], in which the real and imaginary 
-parts are stored in elements 0 and 1, respectively.  
-
-The cuFFT library instead uses a struct to represent complex numbers, 
-in which the real and imaginary parts are stored as member variables 
-named x and y, respectively.  The struct type used by cuFFT for this 
-purpose is referred to throughout the source code for PSCF by an 
-alias named "cudaComplex", which defined in the file 
-src/pscf/cuda/cudaTypes.h.  
-
-To accomodate these differences, partial specializations of the 
-RFieldDft and CField each use the same data type to represent an
-individual complex number as that used in the associated FFT library. 
-The partial specializations RFieldDft \<D,T\> and CField \<3,T\> with 
-T=CPUT are thus wrappers around bare arrays of fftw_complex elements 
-that are allocated in CPU memory, for compatability with the FFTW 
-library. The corresponding specializations with T=CUT are instead 
-wrappers around arrays of cudaComplex elements that are allocated 
-in global GPU memory, for compatability with the cuFFT library.
-
-To facilitate creation of template code that uses these different types, 
-the classes Pscf::CPT and Pscf::CUT each also define a pair of type 
-aliases named Real and Complex that are aliases for the data types 
-used to represent real and complex number in code that uses a 
-particular backend.
-
-\section developer_periodic_programs_sec Rp namespace
-
-The Rp namespace contains a set of class templates that are used to
-construct the pscf_rpc and pscf_rpg executables. Every class template
-in this namespaces takes the dimension of space, D, and a backend
-parameter, T, as template parameters.  The pscf_rpc executable is
-constructed using a set of specializations of these templates that
-all have a backend template argument T=CPT, while pscf_rpg is built 
-using specializations with T=CUT.
-
-Each of executable programs constructed by the PSCF package is 
-designed using a hierarchical system of object ownership. Almost every 
-object used in a PSCF program is a "child" that is owned by an instance 
-of some higher-level "parent" class.  In this system, each "child" object 
-is either a member variable of its parent, or is a dynamically allocated 
-object that is accessed through a pointer that is a member of the parent 
-object, which the parent is responsible for creating and destroying the 
-child.  The top of this ownership hierarchy for pscf_rpc and pscf_rpc is 
-a class template named System \<D,T\> that directly or indirectly owns 
-every object used by the program.  
-
-In this design, the same arguments for the parameters D and T are used 
-through this ownership hierarchy: 
-An object that is an instantiation of a class template with arguments
-arguments D and T is generally owned by a parent that is an instantiation 
-of another template with the same two values for these two parameter, 
-and may own children that are also template instantiation with these 
-two template arguments. An instance of System \<D,T\> with a specific
-choice of values for the template parameters (e.g., D=3 and T=CUT) thus
-directly or indirectly a set of other objects that are all instances of
-class specializations that are use the same value for the dimension of 
-space and use the same backend. In particular, a System \<D,T\> object
-indirectly owns a set of RField \<D,T\> objects that are used to 
-represent chemical potential and monomer concentration fields. 
-
-When PSCF is compiled, instantiation of template specializations in
-the Rp namespaces that use a particular backend is controlled by a 
-system of makefile variables and associated preprocessor macros:
-GPU-enabled specializations with T=CUT are instantiated (i.e., compiled) 
-for  possible values of D=1,2 and 3 if and only if the preprocessor 
-macro PSCF_CUDA is defined.  Specializations with T=CPT and D=1,2, 
-and 3 are instantiated if and only if the macro PSCF_CPP is defined.
 
 <BR>
 \ref developer_containers_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

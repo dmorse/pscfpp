@@ -1,0 +1,112 @@
+/*! \page developer_backend_field_page Field and FFT Classes
+
+\ref developer_backend_id_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_rp_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+The most basic data structures used by PSCF programs for periodic 
+systems are arrays that store periodic fields (i.e., functions of 
+position) that are defined on the nodes of a regular periodic mesh.
+The PSCF package defines a set of class templates in namespace 
+Pscf::Prdc that represent such fields and Fourier transforms of 
+such fields.  This namespace also contains a definition of a 
+template for a class named Prdc::FFT that performs forward and
+inverse fast Fourier transform on such fields.  All of these 
+field and FFT templates are defined using the template pattern 
+described above. 
+
+For example, the class template RField represents a real-valued 
+field defined on the nodes of periodic mesh. It is defined in 
+namespace Pscf::Prdc as template with a declaration 
+\code
+  template <int D, class T> class RField;
+\endcode
+A specialization RField \<3, CUT\> thus represents a real field 
+defined on a 3-dimensional periodic mesh that is designed to allow 
+use of a GPU, while RField \<2, CPT\> represents a 2D real field 
+that is designed to use only CPU hardware.
+
+The Pscf::Prdc namespace defines four basic class templates named 
+RField, RFieldDft, CField, and FFT to store and manipulate periodic 
+fields. Each of these four class templates takes the dimension of 
+space, D, and a backend parameter T as template parameters. These
+classes are:
+
+   - An RField \<D, T\> object contains values of a real-valued 
+     periodic field on the nodes of a regular periodic D-dimensional 
+     mesh.
+
+   - An RFieldDft \<D, T\> object contains values of the complex-valued 
+     discrete Fourier transform (DFT) of a real-valued periodic field.
+
+   - A CField \<D, T\> can contain values of complex-valued field on
+     the nodes of a D-dimensional periodic mesh, or the DFT of such
+     a field. 
+
+   - FFT \<D,T\> is a wrapper around a fast Fourier transform library
+     that can transform a RField \<D,T\> to or from an RFieldDft \<D,T\>, 
+     or that can apply a forward or inverse complex-to-complex Fourier 
+     transform to a CField \<D, T\> object.
+
+Each of the field classes stores information about the dimensions of 
+the mesh on which the field is defined, which is stored as an instance 
+of IntVec \<D\>. An instance of FFT \<D,T\> with a specific pair of 
+arguments for D and T provides functions that take specializations 
+of the field class templates  with the same two template arguments.  
+
+The field and FFT classes described above are actually implemented
+by defining completely separate partial specializations for different 
+values of the backend parameter T.  The directory src/prdc/cuda 
+contains a set of partial specializations of these classes for a 
+template argument T=CUT, which are written in CUDA C++ and designed
+to use a GPU. The directory src/prdc/cpu contains an analogous set of 
+partial specializations for specializations with a template argument 
+T=CPU, which are written in standard C++ and designed to use standard 
+CPU hardware.  
+
+For example, the partial specialization of RField \<D,T\> for T=CPT is
+defined in the file prdc/field/cpu/RField.h as a template
+\code
+    template <int D>
+    class RField<D, CPT> : public FftwDArray<double>
+    {
+      ....
+    }
+\endcode
+Each specializations of this template with D=1, 2, or 3 is a subclass
+subclasses of FftwDArray \<double\>, which is a dynamically allocated 
+array of double precision numbers with a memory alignment designed 
+to optimize performance of the FFTW. The class FftwDArray \<double\> is,
+in turn, a subclass of Array \<double\>, which defines an interface that
+allows access to individual elements using a square-bracket subscript
+operator.
+
+Partial specializations of the field class templates RField, RFieldDft
+and CField that are defined to use different backends use blocks of 
+memory that are allocated in different locations: Specializations of 
+these templates with T=CPT, which use a C++ backend, allocate underlying 
+arrays in CPU main memory.  Corresponding specializations with T=CUT 
+instead store field data in global CPU memory in order to avoid minimize 
+the need for operations that copy data between GPU and CPU memory.  As 
+a result of this difference, specializations of the field classes with 
+T=CUT allow access to individual elements only within CUDA kernels, 
+not in C++ code that is executed on the host CPU. Specializations with 
+T=CPT instead allow access to individual elements in C++ code via a 
+conventional subscript operator.
+
+The partial specializations of the template FFT \<D,T\> for arguments
+T=CPT and T=CUT are wrappers around different underlying FFT libraries. 
+An instance of FFT \<D, CPT\> with D=1,2, or 3 is a wrapper for the 
+open-source FFTW library, which runs on standard CPU hardware.  
+A corresponding instance of Pscf::Cuda::FFT \<D, CUT\> is instead a 
+wrapper around the NVIDIA cuFFT library, which performs FFT 
+operations on a GPU. These two specializations provide closely
+analogous interfaces for D-dimensional real-to-complex, 
+complex-to-real, and complex-to-complex transforms.  
+
+<BR>
+\ref developer_backend_id_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_rp_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

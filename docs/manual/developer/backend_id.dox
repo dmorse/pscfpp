@@ -1,0 +1,55 @@
+/*! \page developer_backend_id_page Backend Identifier Classes
+
+\ref developer_backend_page       (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_field_page (Next)    &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+PSCF uses C++ templates to define closely analogous classes that use 
+different computational backends. All classes and functions that must 
+be specialized to allow the use of more than one possible backend are 
+defined as templates that accept a special type of template parameter
+that is used to identify a choice of computational backend.
+that we refer to as a template identifier class.
+
+PSCF defines two classes, named Pscf:CPT and Pscf::CUT, that we refer to
+as template identifier classes.  These classes are designed specifically
+to be used as template parameter arguments in order to specify a choice 
+of computational backend:
+  - Use of the class Pscf::CPT as a template argument indicates a template 
+    specialization that uses only CPU hardware, and that contains only 
+    standard C++ code.
+  - Use of the class Pscf::CUT as a template argument indicates a template 
+    specialization that uses GPU hardware, and that relies on some code
+    that is programmed in CUDA C++.
+
+A template parameter that is designed to take one of these backend 
+identifier classes as its argument is referredt to a a backend identifier 
+template parameter, or simply a backend identifier parameter  By convention, 
+backend identifier parameters are always denoted by the symbol "T" in 
+template definitions.
+
+Many of the class templates that accept a backend identifier template
+parameter also take the integer dimension of spaced, denoted by D, as an 
+additional parameter parameter. In such templates, the int parameter D 
+is always listed as the first template parameter, and a backend template 
+parameter T as a second.  Almost all of the class templates defined in 
+namespace Pscf::Rp are templates with these two template parameters.
+
+For example, the Pscf::Rp::System class template, which represents the 
+highest level object in a SCFT or PS-SCFT calculation, is declared 
+within the Pscf::Rp namespace by a template with an signature
+\code
+    template <int D, class T> class System;
+\endcode
+An instantiation of this template must use an integer argument D=1, 2, 
+or 3 for the int parameter D, and one of the template identifier classes 
+as the argument for the class parameter T.  In code that is defined 
+within the Pscf::Rp namespace, System \<3, CUT\> is thus the name of
+a specialization of the System template that uses a CUDA GPU backend 
+to simulate a physical model that uses 3-dimensional periodic fields. 
+
+<BR>
+\ref developer_backend_page       (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_field_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

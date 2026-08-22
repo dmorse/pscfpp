@@ -1,0 +1,56 @@
+/*! \page developer_backend_rp_page Rp Namespace
+
+\ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page         (Next)
+<BR>
+
+The Rp namespace contains a set of class templates that are used to
+construct the pscf_rpc and pscf_rpg executables. Every class template
+defined in this namespaces takes the dimension of space, D, and a 
+backend parameter, T, as template parameters.  The pscf_rpc executable 
+is constructed using a set of specializations of these templates that
+all have a backend template argument T=CPT, while pscf_rpg is built 
+using specializations with T=CUT.
+
+Each of executable programs constructed by the PSCF package is 
+designed using a hierarchical system of object ownership. Almost every 
+object used in a PSCF program is a "child" that is owned by an instance 
+of some higher-level "parent" class.  In this system, each "child" object 
+is either a member variable of its parent, or is a dynamically allocated 
+object that is accessed through a pointer that is a member of the parent 
+object, which the parent is responsible for creating and destroying the 
+child.  The top of this ownership hierarchy for pscf_rpc and pscf_rpc is 
+a class template named System \<D,T\> that directly or indirectly owns 
+every object used by the program.  
+
+In the Rp namespace, the same arguments for the parameters D and T 
+are used through objects in this ownership hierarchy: 
+An object that is an instance of a class template specialization with 
+a specific pair of arguments for D and T may be owned by a parent 
+that is an instance of another class template specialization with the 
+same two values for these two parameter, and may own children that are 
+instantiated using the same two template arguments.  An instance of 
+System \<D,T\> with a specific choice of values for these template 
+parameters (e.g., D=3 and T=CUT) thus directly or indirectly a set of 
+other objects that are instances of class template specializations that 
+use the same two arguments for these parameters.  Specifically, such a 
+System \<D,T\> object indirectly owns a set of RField \<D,T\> defined 
+using the same values of D and T, and is thus designed for the same
+dimension of space and the same backend.
+
+When PSCF is compiled, instantiation of template specializations in
+the Rp namespaces that use a particular backend is controlled by a 
+system of makefile variables and associated preprocessor macros:
+GPU-enabled specializations with T=CUT are instantiated (i.e., compiled) 
+for  possible values of D=1,2 and 3 if and only if the preprocessor 
+macro PSCF_CUDA is defined.  Specializations with T=CPT and D=1,2, 
+and 3 are instantiated if and only if the macro PSCF_CPP is defined.
+If both backends are enabled, 6 specializations of each class
+template in namespace Rp are thus compiled when the package is built.
+
+<BR>
+\ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page         (Next)
+
+*/
