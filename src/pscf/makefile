@@ -14,7 +14,7 @@ include $(SRC_DIR)/pscf/patterns.mk
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(pscf_OBJS) $(pscf_LIB)
+all: $(pscf_LIB)
 
 clean:
 	rm -f $(pscf_OBJS)

@@ -17,7 +17,6 @@ clean:
 	rm -f *.d */*.d 
 
 .PHONY: all clean
-
 #-----------------------------------------------------------------------
 # Include dependency files
 

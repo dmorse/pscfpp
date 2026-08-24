@@ -1,16 +1,16 @@
 /*! \page developer_template_page C++ Templates
 
 \ref developer_standards_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_containers_page   (Next)
+\ref developer_param_page      (Next)
 <BR>
 
-The PSCF source code makes extensive use of C++ class templates to
-avoid duplication of code for closely analogous classes. To reduce
-compilation times, PSCF also relies heavily on explicit instantiation
-of templates in cases for which there are only a few possible valid
-values of the template parameters. The subpages linked below explain 
-some of the ways in which templates are used in PSCF, and explain
-conventions used for templates that are designed to be explicitly 
+The PSCF source code makes extensive use of C++ class templates for a 
+variety of purposes.  PSCF also relies heavily on explicit instantiation 
+of templates in cases for which there are only a few possible valid values 
+of the template parameters. The first of the two subpages linked below 
+reviews some standard concepts and language related to C++ templates. 
+The second explains conventions used in PSCF for templates that are 
+designed such that all required specializations can be explicitly 
 instantiated.
 
 <ol>
@@ -19,8 +19,8 @@ instantiated.
 </ol>
 
 <BR>
-\ref developer_standards_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page            (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_containers_page (Next)
+\ref developer_standards_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page           (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page     (Next)
 
 */

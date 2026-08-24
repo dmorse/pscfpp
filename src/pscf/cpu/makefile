@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_cpu_OBJS)
 	rm -f $(pscf_cpu_DEPS)
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

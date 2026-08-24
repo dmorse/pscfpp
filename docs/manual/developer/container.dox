@@ -1,6 +1,6 @@
-/*! \page developer_containers_page Container Templates
+/*! \page developer_container_page Container Templates
 
-\ref developer_template_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page    (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_page  (Next)
 <BR>
 
@@ -10,7 +10,7 @@ to the container templates provided by the C++ standard library
 (namespace std), such as the std::vector template, but differ in 
 some important details, as discussed below.
 
-\section developer_containers_array_sec Array containers (src/util/containers)
+\section developer_container_array_sec Array containers (src/util/containers)
 
 Most one-dimensional array containers that store data in CPU memory 
 (rather than GPU global memory) are subclasses of a class template 
@@ -96,7 +96,7 @@ counting system, and halts execution in response to any attempt
 to delete memory that is still referred to by one or more other 
 containers.
 
-\section developer_containers_rationale_sec Rational for using home-grown containers
+\section developer_container_rationale_sec Rational for using home-grown containers
 
 The decision to rely primarily on DArray and other home-grown containers
 rather than those provided by the C++ standard library was driven by 
@@ -160,8 +160,8 @@ ability to enable bounds checking during debuggin.
 
 
 <BR>
-\ref developer_template_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page            (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_param_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page           (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_page   (Next)
 
 */

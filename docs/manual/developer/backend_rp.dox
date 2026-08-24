@@ -1,7 +1,7 @@
 /*! \page developer_backend_rp_page Rp Namespace
 
 \ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page         (Next)
+\ref developer_test_page         (Next)
 <BR>
 
 The Rp namespace contains a set of class templates that are used to
@@ -51,6 +51,6 @@ template in namespace Rp are thus compiled when the package is built.
 <BR>
 \ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_param_page         (Next)
+\ref developer_test_page          (Next)
 
 */

@@ -59,22 +59,18 @@ clean:
 	cd tests/cpp; $(MAKE) clean
 	cd tests/cuda; $(MAKE) clean
 
+# Main pscf_rpc executable (linking)
 ifdef PSCF_CPP
-
-  # Main pscf_rpc executable (linking)
   $(PSCF_RPC_EXE): $(PSCF_RPC).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_RPC_EXE) $(PSCF_RPC).o $(LIBS)
-
 endif
 
+# Main pscf_rpg executable (linking)
 ifdef PSCF_CUDA
-
-  # Main pscf_rpg executable (linking)
   $(PSCF_RPG_EXE): $(PSCF_RPG).ou $(PSCF_LIBS)
 	@cp $(PSCF_RPG).ou $(PSCF_RPG).o
 	$(NVXX) $(LDFLAGS) -o $(PSCF_RPG_EXE) $(PSCF_RPG).o $(LIBS)
 	@rm $(PSCF_RPG).o
-
 endif
 
 # Note: In linking rules for executables, the prerequisite list contains

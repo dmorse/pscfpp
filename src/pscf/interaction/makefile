@@ -14,7 +14,7 @@ clean:
 	rm -f $(pscf_interaction_OBJS)
 	rm -f $(pscf_interaction_DEPS)
 
-
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_correlation_OBJS)
 	rm -f $(pscf_correlation_DEPS)
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

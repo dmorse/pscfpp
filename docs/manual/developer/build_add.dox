@@ -20,12 +20,13 @@ build system to compile a new source file, this file simply needs to be
 added to this list in the sources.mk file within the directory that
 contains the new source file.
 
+<b> Example 1 </b>:
 For example, consider the sources.mk file in the directory src/r1d/iterator.
 This directory contains source code files for several classes that
 implement different SCFT iteration algorithms that can used by the pscf_r1d
-program, and a few related classses.  The relevant part of in this
-directory, which appears at the top of the file, is a makefile statement
-that looks like this:
+program, and a few related classses.  The relevant part of the sources file
+in this directory, which appears at the top of the file, is a makefile 
+statement that looks like this:
 \code
 r1d_iterator_=\
   r1d/iterator/Iterator.cpp \
@@ -79,9 +80,67 @@ The content of sources.mk files, including elements that are
 not shown here, is discussed in more detail on a
 \ref developer_build_source_page "separate page".
 
+<b> Example 2 </b>:
+
+The src/rp directory contains code for two closely analogous executable 
+programs, pscf_rpc and pscf_rpg, that can perform identical calculations,
+but simply use different hardware: The pscf_rpc executable uses standard 
+CPU hardware, whereas pscf_rpg uses a GPU and uses some classes and 
+functions that are programmed in CUDA. The src/rp directory and its 
+subdirectories contain a set of class templates that are designed so that 
+different specializations of each class template are used different 
+hardware . Within this directory, each class template is associated with 
+two compilable source files that have the same base name but different 
+filename suffixes, \*.cpp and \*.cu.  The \*.cpp file associated with 
+each such class template is used within the pscf_rpc executable, and is
+compiled by a C++ compiler, while whereas the associated \*.cpp is used 
+within the pscf_rpg executable, and is compiled by the NVIDIA CUDA C++
+compiler. 
+
+To accomodate this, the sources.mk file in each subdirectory in the src/rp
+directory defines two makefile variables to store the names of the \*.cpp
+and \*.cu files in that directory.  As a second example, we consider the 
+sources.mk file in the directory src/rp/scft/iterator. The essential parts
+of this file are shown below, using vertical dots to indicate parts of the
+file that have been omittted.
+\code
+
+  rp_scft_iterator_CPP= \
+    rp/scft/iterator/Iterator.cpp \
+    rp/scft/iterator/AmIteratorBasis.cpp \
+    rp/scft/iterator/AmIteratorGrid.cpp \
+    rp/scft/iterator/IteratorFactory.cpp
+    .
+    .
+    .
+
+  rp_scft_iterator_CU= \
+    rp/scft/iterator/Iterator.cu \
+    rp/scft/iterator/AmIteratorBasis.cu \
+    rp/scft/iterator/AmIteratorGrid.cu \
+    rp/scft/iterator/IteratorFactory.cu
+    .
+    .
+    .
+
+\endcode
+As shown above, this sources.mk file defines two makefile variables, named 
+rp_scft_iterator_CPP and rp_scf_iterator_CU, that contain names of \*.cpp 
+and \*.cu files, respectively. 
+Within sources.mk files in the src/rp directory, these two lists generally
+contain file names that are identical except for the use of different 
+filename suffixes for file names in these two lists, as in the above example.
+
+To add a new class within the src/rp directory one must generally define 
+a class template that has two associated compilable files, with suffixes 
+\*.cpp and \*.cu, and add each of them to the appropriate list. 
+Programming conventions used in src/rp directory to enable the maintenance 
+of code that uses different types of hardware are discussed in detail in a 
+separate set of pages.
+
 <BR>
-\ref developer_build_compile_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_page           (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_build_make_page (Next)
+\ref developer_build_compile_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_page          (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_build_make_page     (Next)
 
 */

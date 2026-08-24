@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_chem_OBJS)
 	rm -f $(pscf_chem_DEPS)
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

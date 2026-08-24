@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_sweep_OBJS)
 	rm -f $(pscf_sweep_DEPS)
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

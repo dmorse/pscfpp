@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_iterator_OBJS)
 	rm -f $(pscf_iterator_DEPS)
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

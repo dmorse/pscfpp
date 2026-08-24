@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_backends_OBJS) 
 	rm -f $(pscf_backends_DEPS) 
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

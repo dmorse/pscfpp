@@ -41,7 +41,7 @@ $(PSCF_R1D_EXE): $(PSCF_R1D).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_R1D_EXE) $(PSCF_R1D).o $(LIBS) 
 
 # Note: In the rule for pcsf_r1d, we include the list $(PSCF_LIBS) of 
-# PSCF-specific static libraries as prerequisiites, but link to the list 
+# PSCF-specific libraries as prerequisiites, but link to the list 
 # $(LIBS) that also includes relevant external libraries.
 
 .PHONY: all clean pscf_r1d

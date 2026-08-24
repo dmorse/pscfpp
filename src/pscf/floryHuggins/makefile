@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_floryHuggins_OBJS)
 	rm -f $(pscf_floryHuggins_DEPS)
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

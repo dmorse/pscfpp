@@ -13,6 +13,7 @@ all: $(prdc_field_OBJS)
 clean:
 	rm -f $(prdc_field_OBJS) $(prdc_field_DEPS) 
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

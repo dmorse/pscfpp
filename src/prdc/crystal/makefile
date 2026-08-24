@@ -13,6 +13,7 @@ all: $(prdc_crystal_OBJS)
 clean:
 	rm -f $(prdc_crystal_OBJS) $(prdc_crystal_DEPS) 
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

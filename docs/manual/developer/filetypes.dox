@@ -35,7 +35,7 @@ PSCF uses the following file name suffixes for C++ and CUDA C++ files:
    </tr>
    <tr>
      <td> \*.cpp </td>
-     <td> compilable C++ source file </td>
+     <td> compilable standard C++ source file </td>
    </tr>
    <tr>
      <td> \*.cu </td>
@@ -56,8 +56,8 @@ Compilable source files that contain and include only standard C++ code
 may be given file suffix .cpp. Compilable source files that contain or 
 include any CUDA C++ code must instead use file suffix .cu.
 Different makefile pattern rules are used to compile files with filename
-suffix .cpp and .cu, using different compilers, using the NVIDIA nvcc
-compiler to compile files with file suffix .cu.
+suffix .cpp and .cu, using the NVIDIA nvcc compiler to compile files 
+with suffix .cu.
 
 Compilable *.cpp and *.cu source files usually contain definitions of 
 non-inlined functions that are declared in header file with the same 

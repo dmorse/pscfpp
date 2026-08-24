@@ -71,7 +71,7 @@ modifies these search paths is provided as part of PSCF, as discussed
 \section install_require_module Linux software modules
 
 At the University of Minnesota, PSCF is often run on a cluster provided
-by the Minnesota Supercomputer Institute (MSI). The computer clusters at
+by the Minnesota Supercomputing Institute (MSI). The computer clusters at
 MSI, and at many similar multi-user facilities, use the linux "module"
 command to allow users to load particular software packages, or particular
 choices of compiler. The module command is the user interface to the

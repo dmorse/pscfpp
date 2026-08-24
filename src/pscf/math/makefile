@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_math_OBJS)
 	rm -f $(pscf_math_DEPS)
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 

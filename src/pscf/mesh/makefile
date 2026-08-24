@@ -14,6 +14,7 @@ clean:
 	rm -f $(pscf_mesh_OBJS)
 	rm -f $(pscf_mesh_DEPS)
 
+.PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 
