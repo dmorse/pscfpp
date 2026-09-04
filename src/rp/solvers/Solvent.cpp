@@ -8,8 +8,8 @@
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/Reduce.h>
 
-#include <pscf/backend/CPT.h>     // backend type class
 #include <rp/solvers/Solvent.tpp>  // class implementation
+#include <pscf/backend/cpp/CPT.h>      // backend identifier class
 
 namespace Pscf {
    namespace Rp {

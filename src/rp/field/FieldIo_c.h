@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/FieldIoBase.h>       // base class template
-#include <pscf/backend/CPT.h>          // backend type class
+#include <pscf/backend/cpp/CPT.h>          // backend type class
 #include <pscf/backend/TmplDeclare.h>  // template declare macros
 
 namespace Pscf {

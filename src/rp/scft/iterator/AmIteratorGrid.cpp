@@ -11,7 +11,7 @@
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/Reduce.h>
 
-#include <pscf/backend/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 #include <rp/scft/iterator/AmIteratorGrid.tpp> // template implementation
 
 // Explicit instantiation definitions

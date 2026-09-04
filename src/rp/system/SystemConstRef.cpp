@@ -6,7 +6,7 @@
 */
 
 #include <rp/system/SystemConstRef.tpp>   // class implementation
-#include <pscf/backend/CPT.h>            // backend type class
+#include <pscf/backend/cpp/CPT.h>         // backend identifier class
 
 // Explicit instantiation definitions
 namespace Pscf {

@@ -6,7 +6,7 @@
 */
 
 
-#include <pscf/backend/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 #include <rp/fts/montecarlo/McMoveFactory.tpp>
 
 // Explicit instantiation definitions

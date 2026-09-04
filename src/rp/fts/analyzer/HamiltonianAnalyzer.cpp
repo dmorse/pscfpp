@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 #include <rp/fts/analyzer/HamiltonianAnalyzer.tpp>  // implementation
 
 // Explicit instantiation definitions

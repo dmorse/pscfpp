@@ -3,7 +3,7 @@
 
 // Include required backend type classes
 #ifdef PSCF_CPP
-#include <pscf/backend/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 #endif
 #ifdef PSCF_CUDA
 #include <pscf/backend/CUT.h>

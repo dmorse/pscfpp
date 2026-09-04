@@ -7,7 +7,7 @@
 
 #include <pscf/backend/cpp/FftwDRArray.h>
 #include <pscf/backend/cpp/send.h>
-#include <pscf/backend/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 

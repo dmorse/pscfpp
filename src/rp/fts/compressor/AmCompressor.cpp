@@ -8,7 +8,7 @@
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/Reduce.h>
 #include <pscf/backend/cpp/FftwDArray.h>
-#include <pscf/backend/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp>
 #include <rp/fts/compressor/AmCompressor.tpp>

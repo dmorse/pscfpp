@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/CPT.h>         // class template argument
+#include <pscf/backend/cpp/CPT.h>         // class template argument
 #include <pscf/backend/cpp/FftwDRArray.h>   // base class
 #include <pscf/math/IntVec.h>       // member
 

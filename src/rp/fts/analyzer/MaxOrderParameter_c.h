@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/MaxOrderParameterBase.h>  // base class template
-#include <pscf/backend/CPT.h>                       // base class argument
+#include <pscf/backend/cpp/CPT.h>                       // base class argument
 
 namespace Pscf {
 namespace Rp {

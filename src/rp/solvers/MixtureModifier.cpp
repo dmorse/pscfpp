@@ -6,7 +6,7 @@
 */
 
 #include <rp/solvers/MixtureModifier.tpp>
-#include <pscf/backend/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions (CPU)
 namespace Pscf {

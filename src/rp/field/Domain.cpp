@@ -6,7 +6,7 @@
 */
 
 #include <rp/field/Domain.tpp>
-#include <pscf/backend/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

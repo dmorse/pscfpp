@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/CPT.h>             // backend type class
+#include <pscf/backend/cpp/CPT.h>          // backend identifier class
 #include <rp/scft/sweep/SweepFactory.tpp>  // template implementation
 
 // Explicit instantiation definitions

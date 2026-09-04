@@ -9,7 +9,7 @@
 */
 
 #include <util/containers/DMatrix.h>   // member
-#include <pscf/backend/CPT.h>            // backend type
+#include <pscf/backend/cpp/CPT.h>            // backend type
 
 // Forward declaratation
 namespace Util {

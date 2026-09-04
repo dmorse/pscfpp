@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/CPT.h>        // backend type
+#include <pscf/backend/cpp/CPT.h>        // backend type
 
 // Forward declarations
 namespace Util {
