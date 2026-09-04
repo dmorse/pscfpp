@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 #include <rp/fts/ramp/RampParameter.tpp>
 
 // Explicit instantiation definitions

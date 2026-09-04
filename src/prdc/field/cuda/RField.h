@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>         // class template argument
+#include <pscf/backend/CUT.h>         // class template argument
 #include <pscf/cuda/DeviceArray.h>    // base class template
 #include <pscf/cuda/cudaTypes.h>      // base class argument
 #include <pscf/math/IntVec.h>         // class member

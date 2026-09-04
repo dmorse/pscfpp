@@ -9,7 +9,7 @@
 */
 
 #include <prdc/fieldIo/FieldState.h>      // base class
-#include <pscf/backends/TmplDeclare.h>    // preprocessor macros
+#include <pscf/backend/TmplDeclare.h>    // preprocessor macros
 
 #include <string>
 

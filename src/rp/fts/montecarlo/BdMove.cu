@@ -7,7 +7,7 @@
 
 #include <pscf/cuda/CudaVecRandom.h>
 #include <pscf/cuda/VecOp.h>
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 
 #include <rp/fts/montecarlo/BdMove.tpp>     // base class implementation
 

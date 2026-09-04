@@ -7,7 +7,7 @@
 
 
 #include <pscf/cuda/Reduce.h>
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 
 #include <rp/field/Mask.tpp> // class template implementation
 

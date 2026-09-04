@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/TmplDeclare.h>   // declaration macros
+#include <pscf/backend/TmplDeclare.h>   // declaration macros
 
 // Forward declarations
 namespace Util {

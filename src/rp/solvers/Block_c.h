@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pscf/backends/CPT.h>           // template argument
+#include <pscf/backend/CPT.h>           // template argument
 
 #include <prdc/field/cpu/RField.h>        // member
 #include <prdc/field/cpu/RFieldDft.h>     // member

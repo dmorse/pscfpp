@@ -6,7 +6,7 @@
 */
 
 #include "CFields.tpp"           // class template implementation
-#include <pscf/backends/CPT.h>   // backend type class
+#include <pscf/backend/CPT.h>   // backend type class
 
 // Explicit instantiation definitions
 namespace Pscf {

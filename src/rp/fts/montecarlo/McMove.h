@@ -11,7 +11,7 @@
 #include <util/param/ParamComposite.h>  // base class
 #include <util/misc/Timer.h>            // member
 #include <util/global.h>
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 // Forward declarations
 namespace Util { 

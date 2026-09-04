@@ -10,7 +10,7 @@
 
 #include <util/param/Factory.h>          // base class template
 #include <rp/fts/simulator/Simulator.h>  // base class argument
-#include <pscf/backends/TmplDeclare.h>   // declaration macros
+#include <pscf/backend/TmplDeclare.h>   // declaration macros
 
 #include <string>
 

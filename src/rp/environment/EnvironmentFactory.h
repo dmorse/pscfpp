@@ -10,7 +10,7 @@
 
 #include <util/param/Factory.h>            // base class template
 #include <prdc/environment/Environment.h>  // base class argument
-#include <pscf/backends/TmplDeclare.h>     // preprocessor macros
+#include <pscf/backend/TmplDeclare.h>     // preprocessor macros
 
 #include <string>
 

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ShiftMoveBase.h> // base class template
-#include <pscf/backends/CPT.h>               // base class argument
+#include <pscf/backend/CPT.h>               // base class argument
 
 namespace Pscf {
 namespace Rp {

@@ -8,7 +8,7 @@
 
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/CpuVecRandom.h>
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/CPT.h>
 
 #include <rp/fts/montecarlo/RealMove.tpp>  // base class implementation
 

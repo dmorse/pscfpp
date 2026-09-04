@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/PropagatorBase.h>   // base class template
-#include <pscf/backends/CUT.h>           // specialized argument
+#include <pscf/backend/CUT.h>           // specialized argument
 #include <pscf/cuda/DeviceArray.h>       // member
 
 namespace Pscf {

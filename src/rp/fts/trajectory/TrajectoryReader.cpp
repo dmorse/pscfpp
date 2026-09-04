@@ -6,7 +6,7 @@
 */
 
 #include "TrajectoryReader.h"
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/CPT.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

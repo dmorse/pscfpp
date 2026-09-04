@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CPT.h>          // specialized template argument
+#include <pscf/backend/CPT.h>          // specialized template argument
 #include <prdc/field/cpu/RField.h>   // member
 #include <pscf/math/IntVec.h>        // member
 #include <util/containers/DArray.h>  // member

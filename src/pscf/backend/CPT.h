@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/BackendId.h>
+#include <pscf/backend/BackendId.h>
 #include <pscf/cpu/FftwDRArray.h>
 #include <pscf/cpu/CpuVecRandom.h>
 

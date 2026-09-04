@@ -6,7 +6,7 @@
 */
 
 #include <pscf/cuda/CudaVecRandom.h>
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 
 #include <rp/fts/brownian/BdSimulator.tpp>
 

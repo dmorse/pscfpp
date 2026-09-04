@@ -16,7 +16,7 @@
 #include <rp/field/CFields.h>
 #endif
 
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/CPT.h>
 #include <rp/fts/trajectory/RGridTrajectoryReader.tpp>
 
 // Explicit instantiation declarations

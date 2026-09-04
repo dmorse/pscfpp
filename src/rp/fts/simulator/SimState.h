@@ -10,7 +10,7 @@
 
 #include <pscf/math/IntVec.h>           // template with default parameter
 #include <util/containers/DArray.h>     // member
-#include <pscf/backends/TmplDeclare.h>  // preprocessor macros
+#include <pscf/backend/TmplDeclare.h>  // preprocessor macros
 
 // Forward declaration
 namespace Pscf {

@@ -7,7 +7,7 @@
 
 #include <pscf/cuda/send.h>
 #include <pscf/cuda/HostDArray.h>
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 

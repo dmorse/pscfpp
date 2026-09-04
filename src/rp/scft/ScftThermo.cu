@@ -6,7 +6,7 @@
 */
 
 #include <pscf/cuda/Reduce.h>
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 
 #include <rp/scft/ScftThermo.tpp>     // base class implementation
 

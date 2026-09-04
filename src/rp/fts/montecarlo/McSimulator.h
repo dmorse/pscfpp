@@ -10,7 +10,7 @@
 
 #include <rp/fts/simulator/Simulator.h> // base class
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 #include <util/global.h>
 #include <iostream>
 #include <string>

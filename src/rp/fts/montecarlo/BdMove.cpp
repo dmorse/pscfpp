@@ -7,7 +7,7 @@
 
 #include <pscf/cpu/CpuVecRandom.h>
 #include <pscf/cpu/VecOp.h>
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/CPT.h>
 
 #include <rp/fts/montecarlo/BdMove.tpp>     // base class implementation
 

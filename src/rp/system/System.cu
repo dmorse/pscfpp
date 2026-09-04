@@ -6,7 +6,7 @@
 */
 
 #include <rp/system/System.tpp>  // class implementation
-#include <pscf/backends/CUT.h>   // backend type class
+#include <pscf/backend/CUT.h>   // backend type class
 
 // Explicit instantiation definitions
 namespace Pscf {

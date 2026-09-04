@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------
 # Source and object file lists for src/pscf 
 
-include $(SRC_DIR)/pscf/backends/sources.mk
+include $(SRC_DIR)/pscf/backend/sources.mk
 include $(SRC_DIR)/pscf/cpu/sources.mk
 include $(SRC_DIR)/pscf/math/sources.mk
 include $(SRC_DIR)/pscf/mesh/sources.mk
@@ -15,7 +15,7 @@ include $(SRC_DIR)/pscf/sweep/sources.mk
 
 # Standard C++ files
 pscf_OBJS= \
-  $(pscf_backends_OBJS) $(pscf_cpu_OBJS) \
+  $(pscf_backend_OBJS) $(pscf_cpu_OBJS) \
   $(pscf_math_OBJS) $(pscf_mesh_OBJS) \
   $(pscf_chem_OBJS) $(pscf_interaction_OBJS) \
   $(pscf_floryHuggins_OBJS) $(pscf_correlation_OBJS) \
@@ -23,7 +23,7 @@ pscf_OBJS= \
   $(pscf_sweep_OBJS)
 
 pscf_DEPS= \
-  $(pscf_backends_DEPS) $(pscf_cpu_DEPS) \
+  $(pscf_backend_DEPS) $(pscf_cpu_DEPS) \
   $(pscf_math_DEPS) $(pscf_mesh_DEPS) \
   $(pscf_chem_DEPS) $(pscf_interaction_DEPS) \
   $(pscf_floryHuggins_DEPS) $(pscf_correlation_DEPS) \
@@ -39,7 +39,7 @@ endif
 
 ## Serial C++ files
 #pscf_CPP= \
-#  $(pscf_backends_CPP) $(pscf_cpu_CPP) \
+#  $(pscf_backend_CPP) $(pscf_cpu_CPP) \
 #  $(pscf_math_CPP) $(pscf_mesh_CPP) \
 #  $(pscf_chem_CPP) $(pscf_interaction_CPP) \
 #  $(pscf_floryHuggins_CPP) $(pscf_correlation_CPP) \
@@ -53,7 +53,7 @@ endif
 ## CUDA C++ files
 #ifdef PSCF_CUDA
 #  include $(SRC_DIR)/pscf/cuda/sources.mk
-#  pscf_CU= $(pscf_backends_CU) $(pscf_cuda_CU)
+#  pscf_CU= $(pscf_backend_CU) $(pscf_cuda_CU)
 #  pscf_OBJS+=\
 #    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.ou))
 #  pscf_DEPS+=\

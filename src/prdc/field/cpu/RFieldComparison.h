@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CPT.h>             // specialized argument
+#include <pscf/backend/CPT.h>             // specialized argument
 #include <pscf/math/FieldComparison.h>  // base class template
 #include "RField.h"                     // base class template argument
 

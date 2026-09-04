@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/MixtureBase.h>  // base class template
-#include <pscf/backends/CPT.h>      // base class template argument
+#include <pscf/backend/CPT.h>      // base class template argument
 
 namespace Pscf {
 namespace Rp {

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/AverageAnalyzer.h>  // base class template
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 namespace Pscf {
 namespace Rp {

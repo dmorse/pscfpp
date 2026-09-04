@@ -9,8 +9,8 @@
 */
 
 #include <rp/field/WFieldsBase.h>       // base class template
-#include <pscf/backends/CPT.h>          // template argument
-#include <pscf/backends/TmplDeclare.h>  // template declaration macros
+#include <pscf/backend/CPT.h>          // template argument
+#include <pscf/backend/TmplDeclare.h>  // template declaration macros
 
 namespace Pscf {
 namespace Rp {

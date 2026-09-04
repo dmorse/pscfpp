@@ -8,7 +8,7 @@
 #include <pscf/cpu/VecOp.h>
 #include <pscf/cpu/Reduce.h>
 
-#include <pscf/backends/CPT.h>     // backend type class
+#include <pscf/backend/CPT.h>     // backend type class
 #include <rp/solvers/Solvent.tpp>  // class implementation
 
 namespace Pscf {

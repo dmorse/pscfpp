@@ -8,7 +8,7 @@
 #include "CubicLengthDerivative.h"
 
 #include <pscf/cuda/Reduce.h>
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 
 #include <rp/fts/analyzer/CubicLengthDerivative.tpp>
 

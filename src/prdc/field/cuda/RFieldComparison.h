@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>           // specialized argument
+#include <pscf/backend/CUT.h>           // specialized argument
 #include <pscf/math/FieldComparison.h>  // member
 #include "RField.h"
 

@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>    // backend type class
+#include <pscf/backend/CUT.h>    // backend type class
 #include <rp/field/CFields.tpp>   // clas template implementation
 
 // Explicit instantiation definitions

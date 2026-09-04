@@ -13,7 +13,7 @@
 #include <prdc/field/RFieldDft.h>              // member
 #include <pscf/math/IntVec.h>                  // member
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 // Forward declarations
 namespace Util {

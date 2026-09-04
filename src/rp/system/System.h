@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>   // base class
 #include <pscf/chem/PolymerModel.h>      // member
-#include <pscf/backends/TmplDeclare.h>   // declaration macros
+#include <pscf/backend/TmplDeclare.h>   // declaration macros
 
 // Forward declarations
 namespace Util {

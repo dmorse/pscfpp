@@ -7,7 +7,7 @@
 
 #include <rp/run.h>
 #include <prdc/crystal/getDimension.h>
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 #include <iostream>
 
 /**

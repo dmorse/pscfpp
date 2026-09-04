@@ -6,7 +6,7 @@
 */
 
 #include <rp/solvers/MixtureModifier.tpp>
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/CUT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

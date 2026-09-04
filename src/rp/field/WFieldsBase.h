@@ -10,7 +10,7 @@
 
 #include <pscf/math/IntVec.h>            // member
 #include <util/containers/DArray.h>      // member
-#include <pscf/backends/TmplDeclare.h>   // template declaration macros
+#include <pscf/backend/TmplDeclare.h>   // template declaration macros
 #include <util/global.h>
 
 // Forward declarations

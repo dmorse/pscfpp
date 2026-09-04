@@ -9,7 +9,7 @@
 */
 
 #include <rp/solvers/PropagatorBase.h>  // base class template
-#include <pscf/backends/CPT.h>          // specialized argument
+#include <pscf/backend/CPT.h>          // specialized argument
 
 namespace Pscf {
 namespace Rp {

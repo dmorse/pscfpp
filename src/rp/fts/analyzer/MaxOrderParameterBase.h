@@ -14,7 +14,7 @@
 #include <pscf/math/IntVec.h>             // member
 #include <util/containers/DArray.h>       // member
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 #include <iostream>
 
 // Forward declaration

@@ -4,7 +4,7 @@
 #include <util/param/Manager.h>             // base class template
 #include <rp/fts/analyzer/Analyzer.h>       // base class argument
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 // Forward declarations
 namespace Util {

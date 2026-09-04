@@ -12,7 +12,7 @@
 #include <prdc/crystal/UnitCell.h>      // nested LatticeSystem enum
 #include <pscf/math/IntVec.h>           // template with default
 #include <util/containers/DArray.h>     // member
-#include <pscf/backends/TmplDeclare.h>  // template declaration macros
+#include <pscf/backend/TmplDeclare.h>  // template declaration macros
 
 // Forward declarations
 namespace Util {

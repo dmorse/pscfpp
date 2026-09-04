@@ -12,7 +12,7 @@
 #include <util/accumulators/Average.h>   // member
 #include <util/containers/DArray.h>      // member
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 #include <util/global.h>
 
 namespace Pscf {

@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/CPT.h>
 #include <rp/fts/trajectory/TrajectoryReaderFactory.tpp>
 
 // Explicit instantiation definitions

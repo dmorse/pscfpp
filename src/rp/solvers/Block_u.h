@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>            // specialized template argument
+#include <pscf/backend/CUT.h>            // specialized template argument
 #include <pscf/solvers/BlockTmpl.h>      // base class template
 #include <prdc/field/cuda/RField.h>      // member
 #include <prdc/field/cuda/RFieldDft.h>   // member

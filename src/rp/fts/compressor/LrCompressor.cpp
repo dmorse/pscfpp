@@ -7,7 +7,7 @@
 
 #include <pscf/cpu/VecOpCx.h>
 #include <pscf/cpu/Reduce.h>
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/CPT.h>
 
 #include <rp/fts/compressor/LrCompressor.tpp>
 
