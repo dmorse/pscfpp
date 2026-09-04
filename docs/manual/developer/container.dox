@@ -10,7 +10,7 @@ to the container templates provided by the C++ standard library
 (namespace std), such as the std::vector template, but differ in 
 some important details, as discussed below.
 
-\section developer_container_array_sec Array containers (src/util/containers)
+\section developer_container_array_util_sec Sequence containers (Util namespace)
 
 Most one-dimensional array containers that store data in CPU memory 
 (rather than GPU global memory) are subclasses of a class template 
@@ -66,20 +66,27 @@ of other types of arrays and other containers. Among these are:
 
    - A templated named Matrix that represents a two-dimensional 
      array, or matrix, for which elements are accessed using a 
-     pair of indices, but stored in a contiguous 1D block. 
+     pair of indices, but are stored in a contiguous memory block. 
 
-Users are referred to documentation of the Util::Containers module
-in the web manual and the source files in the src/util/containers 
-directory for more information about these and other containers.
+Users may consult the \ref Container_Module "Container Templates" 
+topic in the web manual and the source files in the src/util/containers 
+directory for more information about these and other containers that
+are defined in the Util namespace.
 
-The directory pscf/cuda/ contains one important additional array 
-container template named FftwDArray. This is a variant of DArray 
-that is designed to be used with the FFTW Fast Fourier transform 
-library. This template uses a function provided by the FFTW library 
-to allocate memory that is aligned so as to optimize performance 
-of FFTW.
+\see Container_Module
 
-The FfftwDArary container is also designed to allow one container
+\section developer_container_array_pscf_sec Sequence containers (Pscf)
+
+The Pscf namespace defines several other types of more specialized array 
+containers.
+
+The class template Pscf::FftwDArray is a variant of DArray that is 
+designed to be used with the FFTW Fast Fourier transform library. 
+This template uses a function provided by the FFTW library to allocate 
+memory that is aligned so as to optimize performance of FFTW. It is
+otherwise similar in most respects to DArray.
+
+The FfftwDArray container is also designed to allow one container
 to act as a shallow copy of a slice of another container of the
 same type: An FftwDArray\<Data\> container may act as a "data view" 
 (or shallow copy) of a slice of a data block that is owned by another 
@@ -96,68 +103,68 @@ counting system, and halts execution in response to any attempt
 to delete memory that is still referred to by one or more other 
 containers.
 
-\section developer_container_rationale_sec Rational for using home-grown containers
+\section developer_container_rationale_sec Rationale for home-grown containers
 
 The decision to rely primarily on DArray and other home-grown containers
-rather than those provided by the C++ standard library was driven by 
-two considerations. These were: (1) A preference for the type of 
-interface for memory management that is used by DArray and other array 
-containers, which is different from that used by any of the C++ standard 
-library containers, (2) a need for a portable mechanism to optionally 
-enforce checking of all array bounds. Both are discussed below.
+rather than those provided by the C++ standard library was driven by two 
+considerations. These were: 
+ 
+   -  A need for a portable mechanism to optionally enforce run-time
+      checking of all array bounds to facilitate debugging. 
 
-The interface for memory management used by DArray and most other array
-containers used by PSCF treats allocation as a one-time event that is
-separate from both construction of the array object and from the 
-addition of individual elements.  This is different from the interfaces 
-used by either a C++ std::vector, which is a fully dynamic array whose 
-size can grow at any time by appending elements to the end of the array, 
-or by a std::array, for which is fixed size array for which the size 
-must be known at compile time. 
-The explicit allocate/deallocate interface used by DArray is instead
-very similar to the interface used by the built-in arrays provided by
-Fortran 90/95, which were used in the Fortran version of PSCF. This
-explicit allocate/deallocate interface appears to us to provides a 
-natural fit to a very common situation in scientific computing, in 
-which the information needed to determine the size of the arrays needed 
-to solve a problem is not known at compile time, but is obtained by 
-reading an input parameter file as one of the first steps taken during 
-execution.
+   -  A preference for the type of interface for memory management that 
+      is used by DArray and other array containers, which is different 
+      from that used by any of the C++ standard library containers, 
 
-The containers used by PSCF also provide a mechanism to globally either 
+Both considerations are discussed below.
+
+<b> Bounds checking </b>:
+
+The containers used by PSCF provide a mechanism to globally either 
 enable run-time checking of array bounds, for safety, or disable these 
-additional checks to maximize performance. In PSCF, run-time checking
+additional checks, to maximize performance. In PSCF, run-time checking
 of array bounds during element access can be globally enabled or disabled 
 for all indexed array containers at compile time by using the -d option 
 of the setopts script to define or undefine a C/C++ preprocessor macro 
-named UTIL_DEBUG.  The ability to optionally enable run-time bounds 
-checking at compile time can be an enormous help during development.
-This feature allows a developer to enable bounds-checking during debugging 
-and testing, e.g., to help help track the origin of a crash, and then 
-disable this feature in well-tested production code to maximize performance.  
+named UTIL_DEBUG.  This feature allows developers to globally enable 
+bounds-checking during debugging and testing (e.g., to help track the 
+origin of a segmentation fault), and then disable it in production code 
+to maximize performance.  
+
 The sequence containers in the C++ standard library, such as std::vector, 
-favor performance over safety, and do not check array bounds by default. 
-As a result, these containers are subject to segmentation faults caused 
-by out-of-bounds element access, much like bare C arrays.  At the time 
-of writing, the C++ language standard does not define a standard, 
-portable way to globally enable or disable bounds checking of sequence
-containers at compile time. Some implementations of the standard library 
-do provide a non-standard mechanism to "harden" the library in precisely 
-this manner, but mechanisms that are not defined by the C++ standard are 
-not portable. 
+do not check array bounds by default.  As a result, these containers are 
+subject to segmentation faults caused by out-of-bounds element access, 
+much like bare C arrays.  At the time of writing, the C++ language standard 
+does not define a convenient, portable way to globally enable or disable 
+bounds checking of sequence containers at compile time.  The perceived
+need for optional bounds checking was the most important reason for the
+decision to prefer home-grown sequence containers such as DArray over 
+C++ standard library sequence containers such as std::vector in PSCF.
 
-The percieved need for optional, portable bounds checking was the most 
-important reason to prefer use of home-grown array containers such as 
-DArray in over C++ standard library sequence containers such as std::vector.
-Standard library associated containers such as std::map are, however, used 
-in PSCF whenever an associative container is needed. Standard library 
-sequence containers such as std::vector are also used in a few places 
-to provide convenient access to standard library algorithms such as the 
-sorting algorithm. Generally, however, PSCF developers should use prefer 
-DArray or another homegrown sequence container to std::vector whenever 
-feasible, both for consistency with existing code and to maintain the
-ability to enable bounds checking during debuggin.
+Associative containers such as std::map that are provided by the standard 
+library, are, however, used in PSCF whenever an associative container is 
+needed. 
 
+<b> Memory management interface </b>:
+
+The interface for memory management used by DArray and most other array
+containers used by PSCF treats allocation as a one-time event that is
+separate from both construction of a container object and from the 
+addition of individual elements.  This is different from the interfaces 
+used by either a C++ std::vector, which is a dynamic array that can grow
+or be moved at any time by appending elements to the array, or by a 
+std::array, which is fixed size array whose size must be known at compile 
+time. 
+
+The explicit allocate/deallocate interface used by DArray is similar to 
+the interface used by the built-in arrays provided by Fortran 90/95, which 
+were used in the older Fortran version of PSCF. This type of explicit 
+allocate/deallocate interface appears to us to provide a natural fit for 
+many scientific computing problems. Specifically, it is a natural fit
+for problems in which the information needed to determine the size of 
+the arrays is obtained from a parameter file that is read as one of the 
+first stages of program execution, and does not change during later 
+stages of execution.
 
 <BR>
 \ref developer_param_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

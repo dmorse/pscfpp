@@ -6,51 +6,47 @@
 
 \section developer_param_overview_sec Overview
 
-The format of PSCF parameter file (discussed \ref user_param_page "here" )
-consists of a set of nested blocks. Each block in this format contains the 
-data required to initialize an instance of a particular class. 
+The format of PSCF parameter file consists of a set of nested blocks, as 
+discussed \ref user_param_page "here". Each block in this format contains 
+the data required to initialize an instance of a particular class. 
 
-The system used by PSCF to read a parameter file relies on inheritance.
+The system used by PSCF to read a parameter file relies on C++ inheritance.
 Every class that reads a block of the parameter file must be directly or 
-indirectly derived from the ParamComposite base class, which is defined
-in namespace Util. This base class provides inherited functions that can
-be used by subclasses to read different types of parameters, and to 
-read nested subblocks.
+indirectly derived from the Util::ParamComposite base class.  Each such 
+class must override a virtual function that reads the associated parameter 
+file block. The implementation of this function defines the format of the
+associated parameter file block, and uses other functions inherited from 
+ParamComposite to read individual parameters and nested subblocks.
 
-The format of the parameter file and the system that are used to read 
-it are designed to encourage data encapsulation. Many of the parameters
-that are read from the parameter file are stored in private class member
-variables. This privacy is possible because each class responsible for 
-reading the initialization data that it requires. 
+This design encourages data encapsulation. Most parameters that are read 
+from the parameter file are stored in private class member variables. 
+Data privacy is maintained because each class is responsible for reading 
+the initialization data that it requires.
 
 The format of the parameter file is intentionally designed to mimic 
 the ownership hierarchy of objects in the underlying source code. This
-connection is reinforced by the use of block labels that correspond 
-to the names of classes and class labels. This labelling of blocks 
-by class names is designed, in part, to make it easy for users and 
+connection is reinforced by the use of block labels that correspond to 
+the names of classes and class labels. This labelling of blocks by 
+class names is designed, in part, to make it easy for users and 
 developers to find the code that reads a particular block when needed.
 
-The parameter file format used by PSCF is basically a fixed format 
+The parameter file format used by PSCF is primarily a fixed format 
 file, with some flexibility provided by the use of optional and 
 polymorphic blocks. Because the system that reads a parameter file 
 knows what item or set of possible options to expect at each position 
 in the file, it can immediately detect most syntax errors, and can
 usually provide a clear error message that explains the nature of 
-the problem.  This design favors a predictable format, strict error 
-checking and meaningful error messages over greater flexibility. 
-
-The decision to use a file format in which data is entered in a
-predictable order made chosen, in part, to simplify design and 
-maintenance of code that initializes the state of a program. PSCF
-uses a relatively rigid format for the parameter file, which is 
-used only for initialization, and a more flexible format for a
-separate command file.
+the problem.  The decision to use a relatively rigid file format 
+for the parameter file was made chosen, in part, to simplify design 
+and maintenance of code that initializes a PSCF program.  A more 
+flexible format is used for the command file, which is read and
+processed after the parameter file.
 
 The ParamComposite class contains a data structure that stores a record 
-of the format of a parameter file while it is being read. The format is 
-stored as a tree of objects that each represent an item in a parameter
-file. Each such item stores the label associtaed with a parameter and 
-a pointer to the variable that holds the associated data. This 
+of the format of a parameter file block while it is being read. The format 
+is stored as a tree of nodes, in which each node represents an item in a
+parameter file. A node associated with a parameter stores the associated 
+label and a pointer to the variable that holds the parameter value.  This 
 mechanism can be used to print a parameter file block or an entire 
 parameter file after it has been read.
 
@@ -75,7 +71,7 @@ value, and halts execution if these strings do not exactly match.
 
 The expected value for the class name label that appears in this opening 
 line is set by a function named "setClassName" that is inherited from 
-the ParamComposite base class. This function has the interface
+the Util::ParamComposite base class. This function has the interface
 \code
   void setClassName(char const * className)
 \endcode
@@ -84,61 +80,60 @@ label. The setClassName function is usually called in the constructor of
 a subclass of ParamComposite, and passed a literal string argument that 
 is normally the name of the relevant class or class template. 
 
-\section developer_param_readparameters_sec Parameter block format
+\section developer_param_readparameters_sec The readParameters function
 
-The format of the body of a parameter file block that is read by a 
-subclass of ParamComposite is usually defined by the implementation 
-of an overridden virtual function ParamComposite::readParameters.
-The interface of this function is
+The format of the body of a parameter file block that is read by a subclass 
+of ParamComposite is usually defined by the implementation of an overridden 
+virtual function Util::ParamComposite::readParameters.  The interface of 
+this function is
 \code
    virtual void readParameters(std::istream& in);
 \endcode
-The ParamComposite class defines an empty (do-nothing) default implementation.
-Each subclass of ParamComposite may override this by defining non-trivial 
-implementation in order to define the required format of the body of the 
-associated parameter file block. 
+The ParamComposite class defines an empty (do-nothing) default 
+implementation for this function.  Each subclass of ParamComposite may 
+override this by defining non-trivial implementation in order to define 
+a format for the body of the associated parameter file block. 
 
-The readParameters function is usually called by another protected member 
-function of ParamComposite named ParamComposite::readParam.  Like the 
-readParameters function, the readParam function takes a std::iostream as 
-its only parameter. The difference is that the readParam function reads the 
-lines containing the opening and closing braces of a parameter file block, 
-while readParameters only reads the body of the block, between the opening 
-and closing lines. ParamComposite defines a default implementation of the
-readParam function that reads the opening line of a parameter file block, 
-calls the virtual readParameters function to read the body of the block, 
-and then reads the line containing a closing brace. The readParam method 
-is also declared virtual, but most subclasses use the default 
-implementation.
+The readParameters function is usually called by another virtual protected 
+member function of ParamComposite named Util::ParamComposite::readParam. 
+Like the readParameters function, the readParam function takes a 
+std::iostream input stream as its only parameter. The difference is that 
+the readParam function reads the lines containing the opening and closing 
+braces of a parameter file block, in addition to the body of the block, 
+while readParameters only reads the body of the block that appears indented
+between the opening and closing lines. ParamComposite defines a default 
+implementation of the readParam function that reads the opening line of 
+a parameter file block, checks the block label, calls the virtual 
+readParameters function to read the body of the block, and then reads 
+the line containing a closing brace.  The readParam method is also 
+declared virtual, but most subclasses use the default implementation.
 
-Typical usage is thus for a subclass to override the readParameters 
-function to define the format for the body of the parameter block, and 
-use the default implementation of the readParam function to add opening 
-and closing lines.  In this case, the source code of the readParameters
-function is the most complete documentation of the format of the 
-associated parameter file block.
+Most subclasses of ParamComposite override the readParameters function 
+to define the format for the body of the parameter block, and simply use 
+the default implementation of the inherited readParam function to add 
+opening and closing lines.  
 
-\section developer_param_parameters_sec Reading parameters
+\section developer_param_parameters_sec Reading individual parameters
 
-The implementation of the readParameters() function typically uses 
-a set of protected function templates that are inherited from the 
-Util::ParamComposite class. The simplest of these are the read and
-readOptional function templates, either of which can be used to read
-a single parameter of any type.
+The implementation of an overridden readParameters() function normally
+uses a set of protected function templates that are inherited from the 
+Util::ParamComposite class to read parameters and subblocks. The simplest 
+of these are the read and readOptional function templates, either of 
+which can be used to read a single parameter of any type.
 
-ParamComposite::read is a function template that takes the data type of 
-a required parameter value as its only template parameter. 
-The interface for this function template is given by
+Util::ParamComposite::read is a function template that takes the type
+of the value of a parameter as a template parameter.  The input interface 
+for this function template is given by
 \code
    template <int T>
    read(std::istream& in, const char* label, T& data)
 \endcode
-where template parameter T denotes the relevant data type. The function
+where template parameter T denotes the relevant data type. This function
 template is used to read a required parameter.
 
 The ParamComposite::readOptional function template is used to read an
 optional parameter but is otherwise identical to the read template.
-This function template has a signature
+This function template has an input interface 
 \code
    template <int T>
    readOptional(std::istream& in, const char* label, T& data)
@@ -155,21 +150,34 @@ For both of these function templates:
    - parameter "data" is a reference to the variable that will hold 
      the parameter value extracted from the parameter file.
 
-For simplicity, the type of the value that is returned by either 
-of these functions has omitted from both of the above function
-signatures.  This is because the return value is actually almost 
-never retained or used, and the actual return value is an instance
-of somewhat a specialized type, Util::ScalarParam<T>.  Both of these 
-function templates are thus usually used as if they were void 
-functions.
+For simplicity, the type of the value that is returned by either of 
+these functions has been omitted from both of the above function
+signatures.  The return type has been hidden in the above descriptions
+the return value is actually almost never retained or used, and because
+the return value is an instance of somewhat a specialized type, 
+Util::ScalarParam<T>.  Both of these function templates are thus 
+usually used as if they were void functions, with no return value.
 
-The read template is used for required parameters, and throws an 
-Exception if the part of the stream that it reads does not begin
-with a string that exactly matches the "label" parameter. The
-readOptional template is used for optional parametrs, and so will 
-exit without throwing an Exception if it does not encounter a 
-label string that matches the label parameter, since this 
-indicates only that the relevant optional parameter was omitted.
+The Util::ParamComposite::read function template is used for required 
+parameters. If this function reads a line that begins with a string that 
+does not exactly match the string passed as the "label" parameter, it 
+prints a message that shows both the expected label and the label that 
+was actually read, and then throws an Exception to halt program execution.
+The readOptional function template is used for optional parametrs, and so 
+will exit without throwing an Exception if it reads a label that does not
+match the "label" parameter, allowing the program to continue processing
+the parameter file block. When the readOptional reads a label that does
+not match its "label" parameter, it stores the label was read from file
+in a buffer that is accessed by other functions that read parameters or 
+subblocks, until one such function either matches that label or throws
+an Exception. 
+
+The read and readOptional function templates can be used to read a 
+parameter of any primitive C/C++ type such as int or double, or parameters 
+that are instances of any class for which there exists overloaded stream 
+input (\>\>) and stream output (\<\<) operators. A separate set of 
+inherited function templates are used for array-valued parameters, as 
+discussed below.
 
 <b>Example</b>: As a simple example, consider the following 
 skeleton of the definition for a class named A: 
@@ -344,11 +352,9 @@ subblock that is associated with the variable varB_ of type B,
 giving the following parameter file format:
 \verbatim
 A{
-  var1    [int]
-  var2*   [double]
-  B{ 
-    ...  
-  }
+  var1    int
+  var2*   double
+  B{ ... }
 }
 \endverbatim
 Here, ellipses (...) are used to indicate the omitted indented body 
