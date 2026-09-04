@@ -14,7 +14,7 @@
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/hasVariableAngle.h>
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/Sort.h>

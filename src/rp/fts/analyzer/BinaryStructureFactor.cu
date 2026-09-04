@@ -7,8 +7,8 @@
 
 #include "BinaryStructureFactor_u.h"
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/complex.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/complex.h>
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.tpp>
 

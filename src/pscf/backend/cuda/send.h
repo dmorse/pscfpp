@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/DeviceArray.h> 
-#include <pscf/cuda/HostDArray.h> 
+#include <pscf/backend/cuda/DeviceArray.h> 
+#include <pscf/backend/cuda/HostDArray.h> 
 
 namespace Pscf {
 

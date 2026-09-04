@@ -29,36 +29,6 @@ pscf_DEPS= \
   $(pscf_environment_DEPS) $(pscf_iterator_DEPS) \
   $(pscf_sweep_DEPS)
 
-# CUDA C++ files
-ifdef PSCF_CUDA
-  include $(SRC_DIR)/pscf/cuda/sources.mk
-  pscf_OBJS+= $(pscf_cuda_OBJS)
-  pscf_DEPS+= $(pscf_cuda_DEPS)
-endif
-
-## Serial C++ files
-#pscf_CPP= \
-#  $(pscf_backend_CPP) $(pscf_cpu_CPP) \
-#  $(pscf_math_CPP) $(pscf_mesh_CPP) \
-#  $(pscf_chem_CPP) $(pscf_interaction_CPP) \
-#  $(pscf_floryHuggins_CPP) $(pscf_correlation_CPP) \
-#  $(pscf_environment_CPP) $(pscf_iterator_CPP) \
-#  $(pscf_sweep_CPP)
-#pscf_OBJS=\
-#  $(addprefix $(BLD_DIR)/, $(pscf_CPP:.cpp=.o))
-#pscf_DEPS=\
-#  $(addprefix $(BLD_DIR)/, $(pscf_CPP:.cpp=.d))
-#
-## CUDA C++ files
-#ifdef PSCF_CUDA
-#  include $(SRC_DIR)/pscf/cuda/sources.mk
-#  pscf_CU= $(pscf_backend_CU) $(pscf_cuda_CU)
-#  pscf_OBJS+=\
-#    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.ou))
-#  pscf_DEPS+=\
-#    $(addprefix $(BLD_DIR)/, $(pscf_CU:.cu=.du))
-#endif
-
 #-----------------------------------------------------------------------
 # Path and rule for libpscf.a library 
 

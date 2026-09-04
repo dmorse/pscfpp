@@ -7,10 +7,10 @@
 
 #include "FourthOrderParameter_u.h"
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/Reduce.h>
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/Reduce.h>
+#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cpp/VecOp.h>
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.tpp>

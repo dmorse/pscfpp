@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/Reduce.h>
+#include <pscf/backend/cuda/Reduce.h>
 #include <pscf/backend/CUT.h>
 
 #include <rp/scft/ScftThermo.tpp>     // base class implementation

@@ -9,9 +9,9 @@
 */
 
 #include <pscf/backend/CUT.h>
-#include <pscf/cuda/DeviceArray.h>
-#include <pscf/cuda/cudaTypes.h>
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/HostDArray.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 

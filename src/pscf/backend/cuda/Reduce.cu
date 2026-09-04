@@ -7,11 +7,11 @@
 
 #include "Reduce.h"
 #include "VecOp.h"
-#include <pscf/cuda/ThreadArray.h>
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/DeviceMemory.h>
-#include <pscf/cuda/cudaErrorCheck.h>
-#include <pscf/cuda/complex.h>
+#include <pscf/backend/cuda/ThreadArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/DeviceMemory.h>
+#include <pscf/backend/cuda/cudaErrorCheck.h>
+#include <pscf/backend/cuda/complex.h>
 #include <util/misc/Log.h>
 
 //#include <thrust/reduce.h>

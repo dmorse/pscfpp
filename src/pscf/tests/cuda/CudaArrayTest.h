@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cuda/DeviceArray.h>
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
 #include <util/math/Constants.h>
 
 using namespace Util;

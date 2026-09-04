@@ -16,8 +16,8 @@
 #include <prdc/crystal/UnitCell.h>
 //#include <prdc/field/cuda/resources.h>
 
-#include <pscf/cuda/cudaTypes.h>
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/backend/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/HostDArray.h>
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>

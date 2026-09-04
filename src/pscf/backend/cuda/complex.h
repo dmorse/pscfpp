@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/math/arithmetic.h>
 #include <complex>
 

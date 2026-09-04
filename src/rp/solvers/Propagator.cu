@@ -8,8 +8,8 @@
 #include "Propagator_u.h"
 #include "Block_u.h"
 #include <prdc/field/cuda/RField.h>
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/Reduce.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/Reduce.h>
 #include <pscf/mesh/Mesh.h>
 
 #include <rp/solvers/PropagatorBase.tpp>  // base class implementation

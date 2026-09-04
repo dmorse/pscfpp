@@ -6,8 +6,8 @@
 */
 
 #include "VecOp.h"
-#include <pscf/cuda/ThreadArray.h>
-#include <pscf/cuda/cudaErrorCheck.h>
+#include <pscf/backend/cuda/ThreadArray.h>
+#include <pscf/backend/cuda/cudaErrorCheck.h>
 #include <cmath>
 
 namespace Pscf {

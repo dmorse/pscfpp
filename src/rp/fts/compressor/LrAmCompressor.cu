@@ -15,9 +15,9 @@
 #include <prdc/field/FFT.h>
 #include <prdc/field/RField.h>
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/VecOpMisc.h>
-#include <pscf/cuda/Reduce.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/VecOpMisc.h>
+#include <pscf/backend/cuda/Reduce.h>
 #include <pscf/backend/CUT.h>
 
 #include <rp/fts/compressor/LrAmCompressor.tpp>

@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/CudaVecRandom.h>
 #include <pscf/backend/CUT.h>
 
 #include <rp/fts/montecarlo/McSimulator.tpp>  // class implementation

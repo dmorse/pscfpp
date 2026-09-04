@@ -9,10 +9,10 @@
 */
 
 #include <pscf/backend/BackendId.h>
-#include <pscf/cuda/cudaTypes.h>
-#include <pscf/cuda/DeviceArray.h>
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/CudaVecRandom.h>
 
 // Forward declarations
 namespace Util {

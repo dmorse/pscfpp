@@ -7,9 +7,9 @@
 
 #include "VecOpMisc.h"
 #include "VecOp.h"
-#include <pscf/cuda/ThreadArray.h>
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/cudaErrorCheck.h>
+#include <pscf/backend/cuda/ThreadArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/cudaErrorCheck.h>
 #include <cmath>
 
 namespace Pscf {

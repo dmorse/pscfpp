@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/CudaVecRandom.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 

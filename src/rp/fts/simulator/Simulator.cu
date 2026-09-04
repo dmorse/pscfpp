@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/Reduce.h>
-#include <pscf/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/Reduce.h>
+#include <pscf/backend/cuda/CudaVecRandom.h>
 #include <pscf/backend/CUT.h>            // backend type class
 
 #include <rp/fts/simulator/Simulator.tpp> // base class implementation

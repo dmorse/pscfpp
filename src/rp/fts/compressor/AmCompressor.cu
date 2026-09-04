@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/Reduce.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/Reduce.h>
 #include <pscf/backend/CUT.h>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp>

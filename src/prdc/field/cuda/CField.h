@@ -9,10 +9,10 @@
 */
 
 #include <pscf/backend/CUT.h>        // class template argument
-#include <pscf/cuda/DeviceArray.h>   // base class template
-#include <pscf/cuda/cudaTypes.h>     // base class argument
+#include <pscf/backend/cuda/DeviceArray.h>   // base class template
+#include <pscf/backend/cuda/cudaTypes.h>     // base class argument
 
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 

@@ -5,13 +5,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/Reduce.h>
-#include <pscf/cuda/CudaVecRandom.h>
-#include <pscf/cuda/ThreadArray.h>
-#include <pscf/cuda/DeviceArray.h>
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/Reduce.h>
+#include <pscf/backend/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/ThreadArray.h>
+#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/cudaTypes.h>
 
 #include <rp/fts/montecarlo/ForceBiasMove_u.h>
 #include <rp/fts/montecarlo/ForceBiasMoveBase.tpp>

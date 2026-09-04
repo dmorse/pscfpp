@@ -10,8 +10,8 @@
 
 //#include "RField.h"
 //#include "RFieldDft.h"
-#include <pscf/cuda/cudaTypes.h>
-#include <pscf/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 

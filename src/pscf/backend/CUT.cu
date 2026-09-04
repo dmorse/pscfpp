@@ -7,8 +7,8 @@
 
 
 #include "CUT.h"
-#include <pscf/cuda/ThreadArray.h>
-#include <pscf/cuda/ThreadMesh.h>
+#include <pscf/backend/cuda/ThreadArray.h>
+#include <pscf/backend/cuda/ThreadMesh.h>
 #include <util/random/Random.h>
 
 namespace Pscf {

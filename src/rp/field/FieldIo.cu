@@ -7,9 +7,9 @@
 
 #include <prdc/field/cuda/HostDArrayComplex.h>
 //#include <prdc/fieldIo/fieldCheck.h>
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/complex.h>
+#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/complex.h>
 
 #include <rp/field/FieldIoBase.tpp>   // base class implementation
 #include <rp/field/FieldIo_u.h>       // class header
