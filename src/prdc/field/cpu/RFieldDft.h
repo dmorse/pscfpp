@@ -9,7 +9,7 @@
 */
 
 #include <pscf/backend/CPT.h>         // class template argument
-#include <pscf/cpu/FftwDRArray.h>   // base class
+#include <pscf/backend/cpp/FftwDRArray.h>   // base class
 #include <pscf/math/IntVec.h>       // member
 
 #include <fftw3.h>

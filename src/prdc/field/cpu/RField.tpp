@@ -11,7 +11,7 @@
 #include "RField.h"
 #include <util/global.h>
 
-#include <pscf/cpu/FftwDRArray.tpp>  // base class implementation
+#include <pscf/backend/cpp/FftwDRArray.tpp>  // base class implementation
 
 namespace Pscf {
 namespace Prdc {

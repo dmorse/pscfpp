@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/CpuVecRandom.h>
+#include <pscf/backend/cpp/CpuVecRandom.h>
 #include <pscf/backend/CPT.h>
 
 #include <rp/fts/brownian/BdSimulator.tpp>  // base class implementation

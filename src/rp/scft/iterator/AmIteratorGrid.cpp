@@ -6,10 +6,10 @@
 */
 
 #include <prdc/field/RField.h>
-#include <pscf/cpu/FftwDRArray.h>
+#include <pscf/backend/cpp/FftwDRArray.h>
 
-#include <pscf/cpu/VecOp.h>
-#include <pscf/cpu/Reduce.h>
+#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/Reduce.h>
 
 #include <pscf/backend/CPT.h>
 #include <rp/scft/iterator/AmIteratorGrid.tpp> // template implementation

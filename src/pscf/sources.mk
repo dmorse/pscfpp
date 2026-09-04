@@ -2,7 +2,6 @@
 # Source and object file lists for src/pscf 
 
 include $(SRC_DIR)/pscf/backend/sources.mk
-include $(SRC_DIR)/pscf/cpu/sources.mk
 include $(SRC_DIR)/pscf/math/sources.mk
 include $(SRC_DIR)/pscf/mesh/sources.mk
 include $(SRC_DIR)/pscf/chem/sources.mk
@@ -15,7 +14,7 @@ include $(SRC_DIR)/pscf/sweep/sources.mk
 
 # Standard C++ files
 pscf_OBJS= \
-  $(pscf_backend_OBJS) $(pscf_cpu_OBJS) \
+  $(pscf_backend_OBJS) \
   $(pscf_math_OBJS) $(pscf_mesh_OBJS) \
   $(pscf_chem_OBJS) $(pscf_interaction_OBJS) \
   $(pscf_floryHuggins_OBJS) $(pscf_correlation_OBJS) \
@@ -23,7 +22,7 @@ pscf_OBJS= \
   $(pscf_sweep_OBJS)
 
 pscf_DEPS= \
-  $(pscf_backend_DEPS) $(pscf_cpu_DEPS) \
+  $(pscf_backend_DEPS) \
   $(pscf_math_DEPS) $(pscf_mesh_DEPS) \
   $(pscf_chem_DEPS) $(pscf_interaction_DEPS) \
   $(pscf_floryHuggins_DEPS) $(pscf_correlation_DEPS) \

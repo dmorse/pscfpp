@@ -12,7 +12,6 @@
 
 #include <rp/field/FieldIo.h>
 #include <prdc/field/RField.h>
-//#include <pscf/cpu/VecOp.h>
 #include <prdc/fieldIo/rFieldIo.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>

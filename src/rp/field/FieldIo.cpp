@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/complex.h>
+#include <pscf/backend/cpp/complex.h>
 #include <rp/field/FieldIoBase.tpp>   // base class implementation
 #include <rp/field/FieldIo_c.h>       // class header
 

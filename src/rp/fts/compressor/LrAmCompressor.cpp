@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/VecOp.h>
-#include <pscf/cpu/VecOpCx.h>
-#include <pscf/cpu/Reduce.h>
+#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/VecOpCx.h>
+#include <pscf/backend/cpp/Reduce.h>
 #include <pscf/backend/CPT.h>
 
 #include <rp/fts/compressor/LrAmCompressor.tpp> // implementation

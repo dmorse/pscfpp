@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/VecOp.h>
-#include <pscf/cpu/CpuVecRandom.h>
+#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/CpuVecRandom.h>
 
 #include <rp/fts/brownian/PredCorrBdStep.tpp>  // class implementation
 

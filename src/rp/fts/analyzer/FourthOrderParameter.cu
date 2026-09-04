@@ -11,7 +11,7 @@
 #include <pscf/cuda/Reduce.h>
 #include <pscf/cuda/HostDArray.h>
 #include <pscf/cuda/cudaTypes.h>
-#include <pscf/cpu/VecOp.h>
+#include <pscf/backend/cpp/VecOp.h>
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.tpp>
 

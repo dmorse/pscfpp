@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cpu/CpuVecRandom.h>
+#include <pscf/backend/cpp/CpuVecRandom.h>
 #include <util/random/Random.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>

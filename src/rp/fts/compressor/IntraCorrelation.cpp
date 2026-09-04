@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/FftwDRArray.h>
-#include <pscf/cpu/send.h>
+#include <pscf/backend/cpp/FftwDRArray.h>
+#include <pscf/backend/cpp/send.h>
 #include <pscf/backend/CPT.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>

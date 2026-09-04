@@ -8,14 +8,14 @@ include $(SRC_DIR)/pscf/patterns.mk
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(pscf_backends_OBJS) 
+all: $(pscf_backend_OBJS) 
 
 clean:
-	rm -f $(pscf_backends_OBJS) 
-	rm -f $(pscf_backends_DEPS) 
+	rm -f $(pscf_backend_OBJS) 
+	rm -f $(pscf_backend_DEPS) 
 
 .PHONY: all clean
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pscf_backends_DEPS)
+-include $(pscf_backend_DEPS)

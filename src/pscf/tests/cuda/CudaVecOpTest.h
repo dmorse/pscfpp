@@ -8,7 +8,7 @@
 #include <pscf/cuda/DeviceArray.h>
 #include <pscf/cuda/complex.h>
 #include <pscf/cuda/cudaTypes.h>
-#include <pscf/cpu/VecOp.h>
+#include <pscf/backend/cpp/VecOp.h>
 #include <pscf/math/FieldComparison.h>
 
 #include <util/math/Constants.h>

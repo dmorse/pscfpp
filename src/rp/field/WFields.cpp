@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/VecOp.h>
+#include <pscf/backend/cpp/VecOp.h>
 
 #include <rp/field/WFieldsBase.tpp> // base class implementation
 #include <rp/field/WFields_c.h>     // class specialization

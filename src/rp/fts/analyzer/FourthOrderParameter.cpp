@@ -7,8 +7,8 @@
 
 #include "FourthOrderParameter_c.h"
 
-#include <pscf/cpu/VecOpCx.h>
-#include <pscf/cpu/ReduceCx.h>
+#include <pscf/backend/cpp/VecOpCx.h>
+#include <pscf/backend/cpp/ReduceCx.h>
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.tpp>
 

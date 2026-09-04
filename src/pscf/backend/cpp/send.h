@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/FftwDRArray.h> 
+#include <pscf/backend/cpp/FftwDRArray.h> 
 #include <util/global.h> 
 
 namespace Pscf {

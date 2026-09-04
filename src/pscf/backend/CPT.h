@@ -9,8 +9,8 @@
 */
 
 #include <pscf/backend/BackendId.h>
-#include <pscf/cpu/FftwDRArray.h>
-#include <pscf/cpu/CpuVecRandom.h>
+#include <pscf/backend/cpp/FftwDRArray.h>
+#include <pscf/backend/cpp/CpuVecRandom.h>
 
 #include <fftw3.h>
 
