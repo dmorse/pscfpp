@@ -6,7 +6,7 @@
 #include <pscf/backend/cpp/CPT.h>
 #endif
 #ifdef PSCF_CUDA
-#include <pscf/backend/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #endif
 
 // Return an input unchanged ifdef PSCF_CPP, or nothing otherwise

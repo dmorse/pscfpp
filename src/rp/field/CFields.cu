@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/CUT.h>    // backend type class
-#include <rp/field/CFields.tpp>   // clas template implementation
+#include <pscf/backend/cuda/CUT.h>
+#include <rp/field/CFields.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -14,5 +14,5 @@ namespace Pscf {
       template class CFields<1,CUT>;
       template class CFields<2,CUT>;
       template class CFields<3,CUT>;
-   } 
+   }
 }

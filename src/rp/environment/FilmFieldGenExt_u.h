@@ -9,7 +9,7 @@
 */
 
 #include <prdc/environment/FilmFieldGenExtBase.h>  // base class template
-#include <pscf/backend/CUT.h>                     // base class argument
+#include <pscf/backend/cuda/CUT.h>                     // base class argument
 #include <rp/system/System.h>
 
 // Forward declarations

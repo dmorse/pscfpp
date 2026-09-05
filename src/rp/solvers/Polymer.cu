@@ -6,7 +6,7 @@
 */
 
 #include <rp/solvers/Polymer.tpp>
-#include <pscf/backend/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 
 namespace Pscf {
 

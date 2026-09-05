@@ -16,7 +16,7 @@
 #include <rp/field/WFields.h>
 #endif
 
-#include <pscf/backend/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <rp/fts/trajectory/RGridTrajectoryReader.tpp>
 
 // Explicit instantiation declarations

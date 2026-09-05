@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/FieldIoBase.h>      // base class template
-#include <pscf/backend/CUT.h>         // backend type class
+#include <pscf/backend/cuda/CUT.h>         // backend type class
 #include <pscf/backend/TmplDeclare.h> // template declare macros
 
 // Forward declarations

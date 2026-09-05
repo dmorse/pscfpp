@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cuda/HostDArray.h>

@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/MixtureBase.h>  // base class template
-#include <pscf/backend/CUT.h>        // base class template argument
+#include <rp/solvers/MixtureBase.h>   // base class template
+#include <pscf/backend/cuda/CUT.h>    // template argument
 
 // Forward declarations
 namespace Pscf {

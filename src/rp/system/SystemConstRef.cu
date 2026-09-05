@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/system/SystemConstRef.tpp>  // class implementation
-#include <pscf/backend/CUT.h>           // backend type class
+#include <rp/system/SystemConstRef.tpp>
+#include <pscf/backend/cuda/CUT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

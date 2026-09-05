@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
-#include <pscf/backend/CUT.h>                         // base argument
+#include <pscf/backend/cuda/CUT.h>                         // base argument
 #include <pscf/backend/cuda/HostDArray.h>                      // member
 #include <pscf/backend/cuda/cudaTypes.h>                       // member
 

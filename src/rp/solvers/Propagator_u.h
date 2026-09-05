@@ -8,15 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/solvers/PropagatorBase.h>   // base class template
-#include <pscf/backend/CUT.h>           // specialized argument
-#include <pscf/backend/cuda/DeviceArray.h>       // member
+#include <rp/solvers/PropagatorBase.h>       // base class template
+#include <pscf/backend/cuda/CUT.h>           // template argument
+#include <pscf/backend/cuda/DeviceArray.h>   // member
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    // Declare primary template
    template <int D, class T> class Propagator;

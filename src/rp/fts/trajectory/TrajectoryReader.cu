@@ -6,7 +6,7 @@
 */
 
 #include "TrajectoryReader.h"
-#include <pscf/backend/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

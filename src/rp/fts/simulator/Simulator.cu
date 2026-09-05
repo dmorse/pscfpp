@@ -8,7 +8,7 @@
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/Reduce.h>
 #include <pscf/backend/cuda/CudaVecRandom.h>
-#include <pscf/backend/CUT.h>            // backend type class
+#include <pscf/backend/cuda/CUT.h>
 
 #include <rp/fts/simulator/Simulator.tpp> // base class implementation
 

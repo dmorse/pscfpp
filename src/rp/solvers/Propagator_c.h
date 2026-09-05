@@ -9,13 +9,12 @@
 */
 
 #include <rp/solvers/PropagatorBase.h>  // base class template
-#include <pscf/backend/cpp/CPT.h>           // template argument
+#include <pscf/backend/cpp/CPT.h>       // template argument
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    // Declare primary template
    template <int D, class T> class Propagator;

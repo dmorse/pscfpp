@@ -1,4 +1,5 @@
 pscf_backend_cuda_CU =\
+   pscf/backend/cuda/CUT.cu \
    pscf/backend/cuda/ThreadArray.cu \
    pscf/backend/cuda/ThreadMesh.cu \
    pscf/backend/cuda/DeviceMemory.cu \

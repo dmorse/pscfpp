@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/CUT.h>             // backend type class
+#include <pscf/backend/cuda/CUT.h>             // backend type class
 #include <rp/scft/sweep/SweepFactory.tpp>  // template implementation
 
 // Explicit instantiation definitions

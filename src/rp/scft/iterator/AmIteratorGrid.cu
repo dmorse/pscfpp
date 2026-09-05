@@ -11,7 +11,7 @@
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/Reduce.h>
 
-#include <pscf/backend/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <rp/scft/iterator/AmIteratorGrid.tpp> // template implementation
 
 // Explicit instantiation definitions

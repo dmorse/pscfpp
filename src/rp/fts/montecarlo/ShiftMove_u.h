@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ShiftMoveBase.h>  // base class template
-#include <pscf/backend/CUT.h>                // base class argument
+#include <pscf/backend/cuda/CUT.h>                // base class argument
 #include <pscf/backend/cuda/HostDArray.h>             // member
 #include <pscf/backend/cuda/cudaTypes.h>              // member
 

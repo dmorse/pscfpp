@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/WFieldsBase.h>  // base class template
-#include <pscf/backend/CUT.h>      // base class template argument
+#include <pscf/backend/cuda/CUT.h>      // base class template argument
 
 namespace Pscf {
 namespace Rp {

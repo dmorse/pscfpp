@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <rp/fts/analyzer/HamiltonianAnalyzer.tpp> 
 
 // Explicit instantiation definitions
