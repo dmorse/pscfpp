@@ -10,7 +10,7 @@
 
 #include "WaveList.h"
 
-#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpp/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/hasVariableAngle.h>

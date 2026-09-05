@@ -9,8 +9,8 @@
 */
 
 #include "FieldBasisConverter.h"
-#include <prdc/field/cpu/RField.h>
-#include <prdc/field/cpu/RFieldDft.h>
+#include <prdc/field/cpp/RField.h>
+#include <prdc/field/cpp/RFieldDft.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {

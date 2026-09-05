@@ -9,10 +9,10 @@
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/brownian/BdSimulator.h>
 #include <rp/fts/compressor/IntraCorrelation.h>
-#include <prdc/field/cpu/RField.h>
-#include <prdc/field/cpu/RFieldDft.h>
-#include <prdc/field/cpu/FFT.h>
-#include <prdc/field/cpu/RFieldComparison.h>
+#include <prdc/field/cpp/RField.h>
+#include <prdc/field/cpp/RFieldDft.h>
+#include <prdc/field/cpp/FFT.h>
+#include <prdc/field/cpp/RFieldComparison.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/chem/PolymerSpecies.h>
 #include <pscf/chem/PolymerModel.h>

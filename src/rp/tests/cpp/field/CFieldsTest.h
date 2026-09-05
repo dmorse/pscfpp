@@ -8,9 +8,9 @@
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/cpu/RField.h>
-#include <prdc/field/cpu/RFieldDft.h>
-#include <prdc/field/cpu/RFieldComparison.h>
+#include <prdc/field/cpp/RField.h>
+#include <prdc/field/cpp/RFieldDft.h>
+#include <prdc/field/cpp/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>

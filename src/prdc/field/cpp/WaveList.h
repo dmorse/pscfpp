@@ -9,7 +9,7 @@
 */
 
 #include <pscf/backend/cpp/CPT.h>          // specialized template argument
-#include <prdc/field/cpu/RField.h>   // member
+#include <prdc/field/cpp/RField.h>   // member
 #include <pscf/math/IntVec.h>        // member
 #include <util/containers/DArray.h>  // member
 #include <util/containers/GArray.h>  // member

@@ -4,10 +4,10 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/field/cpu/FFT.h>
-#include <prdc/field/cpu/RField.h>
-#include <prdc/field/cpu/RFieldDft.h>
-#include <prdc/field/cpu/RFieldComparison.h>
+#include <prdc/field/cpp/FFT.h>
+#include <prdc/field/cpp/RField.h>
+#include <prdc/field/cpp/RFieldDft.h>
+#include <prdc/field/cpp/RFieldComparison.h>
 
 #include <util/math/Constants.h>
 #include <util/format/Dbl.h>

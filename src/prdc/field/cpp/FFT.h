@@ -9,7 +9,7 @@
 */
 
 #include <pscf/backend/cpp/CPT.h>             // class template argument
-#include <prdc/field/cpu/RFieldDft.h>   // member
+#include <prdc/field/cpp/RFieldDft.h>   // member
 #include <pscf/math/IntVec.h>           // member
 
 #include <fftw3.h>
