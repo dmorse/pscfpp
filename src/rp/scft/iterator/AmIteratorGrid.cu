@@ -6,12 +6,12 @@
 */
 
 #include <prdc/field/RField.h>
-#include <pscf/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/DeviceArray.h>
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/Reduce.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/Reduce.h>
 
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <rp/scft/iterator/AmIteratorGrid.tpp> // template implementation
 
 // Explicit instantiation definitions

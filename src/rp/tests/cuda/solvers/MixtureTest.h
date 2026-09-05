@@ -10,8 +10,8 @@
 #include <rp/solvers/Block.h>
 #include <rp/solvers/Propagator.h>
 
-#include <pscf/cuda/HostDArray.h>
-#include <pscf/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/cudaTypes.h>
 
 #include <prdc/field/cuda/RField.h>
 #include <prdc/field/cuda/FFT.h>

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ForceBiasMoveBase.h> // base class template
-#include <pscf/backends/CUT.h>                   // template argument
+#include <pscf/backend/cuda/CUT.h>                   // template argument
 
 namespace Pscf {
 namespace Rp {

@@ -9,7 +9,7 @@
 */
 
 #include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
-#include <pscf/backends/CPT.h>                       // template parameter
+#include <pscf/backend/cpp/CPT.h>                       // template parameter
 #include <rp/system/System.h>
 
 // Forward declarations

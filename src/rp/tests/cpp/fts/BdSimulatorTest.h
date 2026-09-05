@@ -14,8 +14,8 @@
 
 #include <rp/fts/compressor/Compressor.h>
 
-#include <prdc/field/cpu/RField.h>
-#include <prdc/field/cpu/RFieldComparison.h>
+#include <prdc/field/cpp/RField.h>
+#include <prdc/field/cpp/RFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>

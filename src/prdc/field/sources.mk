@@ -1,8 +1,8 @@
 
-# Standard C++ source files from directory prdc/field/cpu
-include $(SRC_DIR)/prdc/field/cpu/sources.mk
-prdc_field_OBJS=$(prdc_field_cpu_OBJS)
-prdc_field_DEPS=$(prdc_field_cpu_DEPS)
+# Standard C++ source files from directory prdc/field/cpp
+include $(SRC_DIR)/prdc/field/cpp/sources.mk
+prdc_field_OBJS=$(prdc_field_cpp_OBJS)
+prdc_field_DEPS=$(prdc_field_cpp_DEPS)
 
 # CUDA C++ source files from directory prdc/field/cuda
 ifdef PSCF_CUDA

@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CFields.tpp"           // class template implementation
-#include <pscf/backends/CPT.h>   // backend type class
+#include <pscf/backend/cpp/CPT.h>
+#include "CFields.tpp"
 
 // Explicit instantiation definitions
 namespace Pscf {

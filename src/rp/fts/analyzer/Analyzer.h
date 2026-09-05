@@ -3,7 +3,7 @@
 
 #include <util/param/ParamComposite.h>      // base class
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 #include <string>
 #include <iostream>
 

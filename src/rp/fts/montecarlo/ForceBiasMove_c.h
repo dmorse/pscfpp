@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/ForceBiasMoveBase.h>   // base class template
-#include <pscf/backends/CPT.h>           
+#include <pscf/backend/cpp/CPT.h>           
 
 namespace Pscf {
 namespace Rp {

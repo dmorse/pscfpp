@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/analyzer/FourthOrderParameterBase.h> // base template
-#include <pscf/backends/CPT.h>                        // base argument
+#include <pscf/backend/cpp/CPT.h>                        // base argument
 
 namespace Pscf {
 namespace Rp {

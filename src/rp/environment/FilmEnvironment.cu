@@ -8,7 +8,7 @@
 #include <rp/environment/FilmFieldGenMask_u.h>
 #include <rp/environment/FilmFieldGenExt_u.h>
 
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <rp/environment/FilmEnvironment.tpp>
 
 // Explicit instantiation definitions

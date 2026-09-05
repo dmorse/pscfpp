@@ -12,7 +12,7 @@
 #include <pscf/sweep/SweepTmpl.h>           // base class template
 #include <util/containers/FSArray.h>        // member
 
-#include <pscf/backends/TmplDeclare.h>      // declaration macros
+#include <pscf/backend/TmplDeclare.h>      // declaration macros
 #include <util/global.h>                    // inline functions
 
 #include <fstream>

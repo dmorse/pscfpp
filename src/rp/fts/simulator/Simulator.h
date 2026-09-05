@@ -13,7 +13,7 @@
 #include <prdc/field/RField.h>            // member
 #include <util/containers/DArray.h>       // member (template)
 #include <util/containers/DMatrix.h>      // member (template)
-#include <pscf/backends/TmplDeclare.h>    // declaration macros
+#include <pscf/backend/TmplDeclare.h>    // declaration macros
 
 #include <iostream>
 

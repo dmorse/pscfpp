@@ -7,9 +7,9 @@
 
 #include "BinaryStructureFactor_c.h"
 
-#include <pscf/cpu/VecOp.h>
-#include <pscf/cpu/VecOpCx.h>
-#include <pscf/cpu/complex.h>
+#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/VecOpCx.h>
+#include <pscf/backend/cpp/complex.h>
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.tpp>
 

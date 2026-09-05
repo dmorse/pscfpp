@@ -12,7 +12,7 @@
 #include <rp/scft/iterator/Iterator.h>       // base template argument
 #include <util/containers/DArray.h>          // base template argument
 #include <pscf/iterator/AmbdInteraction.h>   // direct base member 
-#include <pscf/backends/TmplDeclare.h>       // declaration macros
+#include <pscf/backend/TmplDeclare.h>       // declaration macros
 
 namespace Pscf {
 namespace Rp {

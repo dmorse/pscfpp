@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>   // class template argument
+#include <pscf/backend/cuda/CUT.h>   // class template argument
 #include "RFieldDft.h"          // member
 #include <pscf/math/IntVec.h>   // member
 

@@ -9,7 +9,7 @@
 */
 
 #include <rp/field/WFieldsBase.h>       // base class template
-#include <pscf/backends/TmplDeclare.h>  // explicit declaration macros
+#include <pscf/backend/TmplDeclare.h>  // explicit declaration macros
 
 namespace Pscf {
 namespace Rp {

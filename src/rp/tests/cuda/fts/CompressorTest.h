@@ -21,8 +21,8 @@
 #include <prdc/field/cuda/RFieldComparison.h>
 #include <prdc/field/cuda/resources.h>
 
-#include <pscf/cuda/VecOp.h> 
-#include <pscf/cuda/CudaVecRandom.h> 
+#include <pscf/backend/cuda/VecOp.h> 
+#include <pscf/backend/cuda/CudaVecRandom.h> 
 
 #include <util/misc/FileMaster.h> 
 #include <util/random/Random.h> 

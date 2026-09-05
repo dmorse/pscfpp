@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>    // base class
 #include <util/global.h>
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 // Forward declaration
 namespace Util {

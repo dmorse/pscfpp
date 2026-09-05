@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/Reduce.h>
+#include <pscf/backend/cpp/Reduce.h>
 
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 #include <rp/scft/ScftThermo.tpp>     // base class implementation
 
 // Explicit instantiation definitions

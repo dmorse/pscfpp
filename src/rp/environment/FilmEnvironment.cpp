@@ -8,7 +8,7 @@
 #include <rp/environment/FilmFieldGenMask_c.h>
 #include <rp/environment/FilmFieldGenExt_c.h>
 
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 #include <rp/environment/FilmEnvironment.tpp>
 
 // Explicit instantiation definitions

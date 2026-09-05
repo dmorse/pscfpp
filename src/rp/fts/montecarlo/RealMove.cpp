@@ -6,9 +6,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/VecOp.h>
-#include <pscf/cpu/CpuVecRandom.h>
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/CpuVecRandom.h>
+#include <pscf/backend/cpp/CPT.h>
 
 #include <rp/fts/montecarlo/RealMove.tpp>  // base class implementation
 

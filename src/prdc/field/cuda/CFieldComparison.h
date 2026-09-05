@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>         // specialized template argument
+#include <pscf/backend/cuda/CUT.h>         // specialized template argument
 #include <prdc/field/cuda/CField.h>
 #include <util/containers/DArray.h>
 

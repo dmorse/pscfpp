@@ -4,9 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cpu/VecOp.h>
-#include <pscf/cpu/VecOpCx.h>
-#include <pscf/cpu/complex.h>
+#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/VecOpCx.h>
+#include <pscf/backend/cpp/complex.h>
 
 #include <util/math/Constants.h>
 #include <util/containers/DArray.h>

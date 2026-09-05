@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>        // specialized template argument
+#include <pscf/backend/cuda/CUT.h>        // specialized template argument
 #include <prdc/field/cuda/RField.h>  // member
-#include <pscf/cuda/DeviceArray.h>   // member
-#include <pscf/cuda/HostDArray.h>    // member
+#include <pscf/backend/cuda/DeviceArray.h>   // member
+#include <pscf/backend/cuda/HostDArray.h>    // member
 #include <pscf/math/IntVec.h>        // member
 #include <util/containers/DArray.h>  // member
 #include <util/containers/GArray.h>  // member

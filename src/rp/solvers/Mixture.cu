@@ -6,7 +6,7 @@
 */
 
 
-#include <pscf/cuda/VecOp.h>
+#include <pscf/backend/cuda/VecOp.h>
 
 #include <rp/solvers/MixtureBase.tpp>  // base class implementation
 #include <rp/solvers/Mixture_u.h>      // class header

@@ -9,8 +9,8 @@
 */
 
 #include <rp/field/FieldIoBase.h>      // base class template
-#include <pscf/backends/CUT.h>         // backend type class
-#include <pscf/backends/TmplDeclare.h> // template declare macros
+#include <pscf/backend/cuda/CUT.h>         // backend type class
+#include <pscf/backend/TmplDeclare.h> // template declare macros
 
 // Forward declarations
 namespace Util {

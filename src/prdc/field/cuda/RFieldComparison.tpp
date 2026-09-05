@@ -10,7 +10,7 @@
 
 #include "RFieldComparison.h"
 
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
 
 namespace Pscf {
 namespace Prdc {

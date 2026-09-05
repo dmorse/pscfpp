@@ -9,10 +9,10 @@
 */
 
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pscf/backends/CPT.h>           // template argument
+#include <pscf/backend/cpp/CPT.h>         // template argument
 
-#include <prdc/field/cpu/RField.h>        // member
-#include <prdc/field/cpu/RFieldDft.h>     // member
+#include <prdc/field/cpp/RField.h>        // member
+#include <prdc/field/cpp/RFieldDft.h>     // member
 #include <util/containers/FSArray.h>      // member
 
 // Forward declarations

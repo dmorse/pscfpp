@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/DeviceArray.h>
 
 #include <rp/field/WFieldsBase.tpp>   // base class implementation
 #include <rp/field/WFields_u.h>       // class specialziation

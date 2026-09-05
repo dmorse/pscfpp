@@ -8,13 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>            // specialized template argument
-#include <pscf/solvers/BlockTmpl.h>      // base class template
-#include <prdc/field/cuda/RField.h>      // member
-#include <prdc/field/cuda/RFieldDft.h>   // member
-#include <prdc/field/cuda/FFTBatched.h>  // member
-#include <pscf/cuda/DeviceArray.h>       // member
-#include <util/containers/FSArray.h>     // member
+#include <pscf/solvers/BlockTmpl.h>         // base class template
+#include <pscf/backend/cuda/CUT.h>          // template argument
+#include <prdc/field/cuda/RField.h>         // member
+#include <prdc/field/cuda/RFieldDft.h>      // member
+#include <prdc/field/cuda/FFTBatched.h>     // member
+#include <pscf/backend/cuda/DeviceArray.h>  // member
+#include <util/containers/FSArray.h>        // member
 
 #include <prdc/field/cuda/resources.h>
 

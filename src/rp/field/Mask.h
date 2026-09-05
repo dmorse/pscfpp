@@ -11,7 +11,7 @@
 #include <prdc/field/RField.h>            // member
 #include <pscf/math/IntVec.h>             // member
 #include <util/containers/DArray.h>       // member template
-#include <pscf/backends/TmplDeclare.h>    // declaration macros
+#include <pscf/backend/TmplDeclare.h>    // declaration macros
 
 // Forward declarations
 namespace Util {

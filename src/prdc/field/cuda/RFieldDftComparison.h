@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>           // argument specialization
+#include <pscf/backend/cuda/CUT.h>           // argument specialization
 #include <prdc/field/cuda/RFieldDft.h>  
 #include <util/containers/DArray.h> 
 

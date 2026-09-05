@@ -6,10 +6,10 @@
 */
 
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/Reduce.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/Reduce.h>
 
-#include <pscf/backends/CUT.h>    // backend type class
+#include <pscf/backend/cuda/CUT.h>    // backend type class
 #include <rp/solvers/Solvent.tpp> // class implementation
 
 // Explicit instantiation definitions

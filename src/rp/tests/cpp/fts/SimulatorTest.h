@@ -14,7 +14,7 @@
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/field/cpu/RFieldComparison.h>
+#include <prdc/field/cpp/RFieldComparison.h>
 #include <prdc/crystal/BFieldComparison.h>
 #include <prdc/crystal/UnitCell.h>
 

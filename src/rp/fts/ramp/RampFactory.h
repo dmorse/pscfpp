@@ -11,7 +11,7 @@
 #include <util/param/Factory.h>   // base class template
 #include <rp/fts/ramp/Ramp.h>     // base class argument
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 #include <string>
 
 // Forward declaration

@@ -10,7 +10,7 @@
 
 #include <pscf/solvers/PolymerTmpl.h>   // base class template
 #include <util/containers/FSArray.h>    // member template
-#include <pscf/backends/TmplDeclare.h>  // template declaration macros
+#include <pscf/backend/TmplDeclare.h>  // template declaration macros
 
 // Forward declarations
 namespace Util {

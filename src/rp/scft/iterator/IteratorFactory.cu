@@ -9,7 +9,7 @@
 #include <rp/scft/iterator/AmIteratorBasis.h>
 #include <rp/scft/iterator/AmIteratorGrid.h>
 
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <rp/scft/iterator/IteratorFactory.tpp> // template implementation
 
 // Explicit instantiation definitions

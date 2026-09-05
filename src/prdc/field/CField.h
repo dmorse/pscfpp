@@ -13,7 +13,7 @@
 // for use by the build system.
 
 #ifdef PSCF_CPP
-#include <prdc/field/cpu/CField.h>
+#include <prdc/field/cpp/CField.h>
 #endif
 
 #ifdef PSCF_CUDA

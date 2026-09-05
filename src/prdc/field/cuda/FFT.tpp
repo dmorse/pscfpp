@@ -11,7 +11,7 @@
 #include "FFT.h"
 #include "RField.h"
 #include "CField.h"
-#include <pscf/cuda/VecOp.h>
+#include <pscf/backend/cuda/VecOp.h>
 #include <util/global.h>
 
 /*

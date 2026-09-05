@@ -10,7 +10,7 @@
 #include <prdc/field/cuda/RFieldDft.h>
 #include <prdc/field/cuda/CField.h>
 
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
 #include <pscf/math/IntVec.h>
 
 #include <util/math/Constants.h>

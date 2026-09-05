@@ -11,7 +11,7 @@
 #include <rp/fts/analyzer/Analyzer.h>     // base class
 #include <util/accumulators/Average.h>    // member
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 #include <iostream>
 
 namespace Pscf {

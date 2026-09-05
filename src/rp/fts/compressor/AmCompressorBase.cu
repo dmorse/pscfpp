@@ -12,8 +12,8 @@
 
 #include "AmCompressorBase.h"
 
-#include <pscf/cuda/VecOp.h>
-#include <pscf/cuda/Reduce.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/Reduce.h>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp>
 

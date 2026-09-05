@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/simulator/Simulator.h>
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 #include <util/global.h>
 

@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>    // base class
 #include <util/containers/FSArray.h>      // member
-#include <pscf/backends/TmplDeclare.h>    // declaration macros
+#include <pscf/backend/TmplDeclare.h>    // declaration macros
 #include <util/global.h>                  // inline functions
 
 // Forward declarations

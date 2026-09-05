@@ -9,8 +9,8 @@
 */
 
 #include <rp/field/FieldIoBase.h>       // base class template
-#include <pscf/backends/CPT.h>          // backend type class
-#include <pscf/backends/TmplDeclare.h>  // template declare macros
+#include <pscf/backend/cpp/CPT.h>          // backend type class
+#include <pscf/backend/TmplDeclare.h>  // template declare macros
 
 namespace Pscf {
 namespace Rp {

@@ -8,8 +8,8 @@
 #include "Block_c.h"
 #include "Propagator_c.h"
 
-#include <prdc/field/cpu/WaveList.h>
-#include <prdc/field/cpu/FFT.h>
+#include <prdc/field/cpp/WaveList.h>
+#include <prdc/field/cpp/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/shiftToMinimum.h>
 

@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/Analyzer.h> // base class template
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 #include <iostream>
 #include <fstream>
 

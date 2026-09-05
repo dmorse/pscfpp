@@ -6,7 +6,7 @@
 */
 
 #include "MaxOrderParameter_u.h"
-#include <pscf/cuda/VecOp.h>
+#include <pscf/backend/cuda/VecOp.h>
 
 #include <rp/fts/analyzer/MaxOrderParameterBase.tpp>
 

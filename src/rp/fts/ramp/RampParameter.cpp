@@ -6,7 +6,7 @@
 */
 
 
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 #include <rp/fts/ramp/RampParameter.tpp>
 
 // Explicit instantiation definitions

@@ -16,7 +16,7 @@
 #include <util/containers/DArray.h>              // member
 #include <util/misc/Timer.h>                     // member
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 // Forward declarations
 namespace Pscf {

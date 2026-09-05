@@ -10,7 +10,7 @@
 
 #include <rp/fts/brownian/BdStep.h>
 #include <util/param/Factory.h>  
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 namespace Pscf {
 namespace Rp {

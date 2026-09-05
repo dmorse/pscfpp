@@ -10,7 +10,7 @@
 #include <prdc/field/cuda/RFieldDftComparison.h>
 #include <prdc/field/cuda/CFieldComparison.h>
 
-#include <pscf/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostDArray.h>
 
 #include <util/format/Dbl.h>
 

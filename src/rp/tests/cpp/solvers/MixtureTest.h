@@ -9,9 +9,9 @@
 #include <rp/solvers/Block.h>
 #include <rp/solvers/Propagator.h>
 
-#include <prdc/field/cpu/RField.h>
-#include <prdc/field/cpu/FFT.h>
-#include <prdc/field/cpu/WaveList.h>
+#include <prdc/field/cpp/RField.h>
+#include <prdc/field/cpp/FFT.h>
+#include <prdc/field/cpp/WaveList.h>
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>

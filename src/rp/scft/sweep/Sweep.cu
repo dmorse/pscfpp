@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <rp/scft/sweep/Sweep.tpp>
 
 // Explicit instantiation definitions

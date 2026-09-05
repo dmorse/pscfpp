@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/cuda/ThreadArray.h>
-#include <pscf/cuda/ThreadMesh.h>
+#include <pscf/backend/cuda/ThreadArray.h>
+#include <pscf/backend/cuda/ThreadMesh.h>
 #include <cuda_runtime.h>
 
 using namespace Util;

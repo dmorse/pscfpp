@@ -11,7 +11,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/scft/iterator/Iterator.h>      // base class argument
 #include <pscf/iterator/AmbdInteraction.h>  // member
-#include <pscf/backends/TmplDeclare.h>      // declaration macros
+#include <pscf/backend/TmplDeclare.h>      // declaration macros
 
 #include <iostream>
 

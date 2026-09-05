@@ -5,11 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/cpu/VecOp.h>
-#include <pscf/cpu/Reduce.h>
+#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/Reduce.h>
 
-#include <pscf/backends/CPT.h>     // backend type class
 #include <rp/solvers/Solvent.tpp>  // class implementation
+#include <pscf/backend/cpp/CPT.h>      // backend identifier class
 
 namespace Pscf {
    namespace Rp {

@@ -6,7 +6,7 @@
 */
 
 
-#include <pscf/backends/CUT.h>
+#include <pscf/backend/cuda/CUT.h>
 #include <rp/environment/EnvironmentFactory.tpp>
 
 // Explicit instantiation definitions

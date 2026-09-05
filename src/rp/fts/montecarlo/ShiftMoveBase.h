@@ -13,7 +13,7 @@
 #include <pscf/math/IntVec.h>          // template with defaults
 #include <util/containers/DArray.h>    // member
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 
 // Forward declaration
 namespace Util {

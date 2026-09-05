@@ -11,7 +11,7 @@
 #include <util/param/Factory.h>         // base class template
 #include <rp/fts/analyzer/Analyzer.h>   // base class argument
 
-#include <pscf/backends/TmplDeclare.h>
+#include <pscf/backend/TmplDeclare.h>
 #include <string>
 
 namespace Pscf {

@@ -6,7 +6,7 @@
 */
 
 #include <rp/solvers/Polymer.tpp>
-#include <pscf/backends/CPT.h>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

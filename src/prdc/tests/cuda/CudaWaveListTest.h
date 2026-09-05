@@ -5,11 +5,11 @@
 #include <test/UnitTestRunner.h>
 
 #include <prdc/field/cuda/WaveList.h>
-#include <pscf/cuda/cudaTypes.h>
+#include <pscf/backend/cuda/cudaTypes.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 
-#include <pscf/cuda/HostDArray.h> 
+#include <pscf/backend/cuda/HostDArray.h> 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 
