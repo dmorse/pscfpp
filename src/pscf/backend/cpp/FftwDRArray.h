@@ -204,15 +204,6 @@ namespace Pscf {
       void serialize(Archive& ar, const unsigned int version);
 
       /**
-      * Return true if this container has data, false otherwise.
-      *
-      * A FftwDRArray is considered allocated if it has non-null pointer
-      * to a C array, which may either be an array that it owns or a
-      * slice of an array that is owned by another FftwDRArray object.
-      */
-      bool isAllocated() const;
-
-      /**
       * Does this container own a dynamically allocated C array?
       *
       * If isAllocated() is false, isOwner() is also false.
@@ -227,6 +218,13 @@ namespace Pscf {
       * If isAllocated() is false, isAssociated() is also false.
       */
       bool isAssociated() const;
+
+      /*
+      * A FftwDRArray is considered allocated if it has non-null pointer
+      * to a C array, which may either be an array that it owns or a
+      * slice of an array that is owned by another FftwDRArray object.
+      */
+      using Array<Data>::isAllocated;
 
    protected:
 
@@ -244,13 +242,6 @@ namespace Pscf {
    };
 
    // Inline member function definitions
-
-   /*
-   * Does this FftwDRArray have data (either owned or associated) ?
-   */
-   template <typename Data> inline
-   bool FftwDRArray<Data>::isAllocated() const
-   {  return (bool)data_; }
 
    /*
    * Does this object own data?

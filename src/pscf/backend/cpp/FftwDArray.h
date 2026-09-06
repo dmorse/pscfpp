@@ -65,10 +65,7 @@ namespace Pscf {
       */
       virtual void deallocate();
 
-      /**
-      * Return true if the FftwDArray has been allocated, false otherwise.
-      */
-      bool isAllocated() const;
+      using Array<Data>::isAllocated;
 
       /**
       * Serialize a FftwDArray to/from an Archive.
@@ -94,13 +91,6 @@ namespace Pscf {
        using Array<Data>:: data_;
        using Array<Data>:: capacity_;
    };
-
-   /*
-   * Return true if the FftwDArray has been allocated, false otherwise.
-   */
-   template <typename Data>
-   inline bool FftwDArray<Data>::isAllocated() const
-   {  return (bool) data_; }
 
    /*
    * Serialize a FftwDArray to/from an Archive.
