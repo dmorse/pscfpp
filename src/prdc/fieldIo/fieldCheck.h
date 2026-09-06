@@ -88,7 +88,7 @@ namespace Prdc {
    * Inspect dimensions of a DArray of fields, each of type FT.
    *
    * Template parameter AT is an allocatable array type, such as
-   * Util::DArray<double> or Pscf::HostDArray<double>, that has an allocate
+   * Util::DArray<double> or Pscf::HostArray<double>, that has an allocate
    * function that takes an integer capacity as its only parameter.
    *
    * An Exception is thrown if fields is not allocated, or if the fields
@@ -121,7 +121,7 @@ namespace Prdc {
    * Check allocation of a DArray of 1D arrays, allocate if necessary.
    *
    * Template parameter AT is an allocatable array type, such as
-   * Util::DArray<double> or Pscf::HostDArray<double>, that has an allocate
+   * Util::DArray<double> or Pscf::HostArray<double>, that has an allocate
    * function that takes an integer capacity as its only parameter.
    *
    * On successful exit, the capacity of the arrays container is equal to

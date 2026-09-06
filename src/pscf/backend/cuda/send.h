@@ -9,7 +9,7 @@
 */
 
 #include <pscf/backend/cuda/DeviceArray.h> 
-#include <pscf/backend/cuda/HostDArray.h> 
+#include <pscf/backend/cuda/HostArray.h> 
 
 namespace Pscf {
 
@@ -24,7 +24,7 @@ namespace Pscf {
    * \param deviceArray  device array, which must be allocated on entry
    */
    template <typename T>
-   void setupHostArray(HostDArray<T> & hostArray, 
+   void setupHostArray(HostArray<T> & hostArray, 
 		       DeviceArray<T> const & deviceArray)
    {
       UTIL_CHECK(deviceArray.isAllocated());
@@ -45,7 +45,7 @@ namespace Pscf {
    * \param out  output host array into which data is copied
    */
    template <typename T>
-   void sendToHost(HostDArray<T>& out, DeviceArray<T> const & in)
+   void sendToHost(HostArray<T>& out, DeviceArray<T> const & in)
    {  out = in; }
 
    /**
@@ -58,7 +58,7 @@ namespace Pscf {
    * \param out  output device array into which data is copied
    */
    template <typename T>
-   void sendToDevice(DeviceArray<T> & out, HostDArray<T> const & in)
+   void sendToDevice(DeviceArray<T> & out, HostArray<T> const & in)
    {  out = in; }
 
    /**
@@ -72,7 +72,7 @@ namespace Pscf {
    * \param array  host array to be released
    */
    template <typename T>
-   void releaseHostArray(HostDArray<T> & array)
+   void releaseHostArray(HostArray<T> & array)
    {}
 
 }

@@ -10,7 +10,7 @@
 #include <rp/solvers/Block.h>
 #include <rp/solvers/Propagator.h>
 
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 
 #include <prdc/field/cuda/RField.h>
@@ -103,7 +103,7 @@ public:
       int nMonomer = mixture.nMonomer();
       DArray< RField<1,CUT> > wFields;
       DArray< RField<1,CUT> > cFields;
-      DArray< HostDArray<cudaReal> > wFields_h;
+      DArray< HostArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       wFields_h.allocate(nMonomer);
@@ -190,7 +190,7 @@ public:
       int nMonomer = mixture.nMonomer();
       DArray< RField<1,CUT> > wFields;
       DArray< RField<1,CUT> > cFields;
-      DArray< HostDArray<cudaReal> > wFields_h;
+      DArray< HostArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       wFields_h.allocate(nMonomer);
@@ -265,7 +265,7 @@ public:
       // Allocate w and c field arrays on device and host
       DArray< RField<2,CUT> > wFields;
       DArray< RField<2,CUT> > cFields;
-      DArray< HostDArray<cudaReal> > wFields_h;
+      DArray< HostArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       wFields_h.allocate(nMonomer);
@@ -346,7 +346,7 @@ public:
       // Allocate w and c field arrays on device and host
       DArray< RField<2,CUT> > wFields;
       DArray< RField<2,CUT> > cFields;
-      DArray< HostDArray<cudaReal> > wFields_h;
+      DArray< HostArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       wFields_h.allocate(nMonomer);
@@ -431,7 +431,7 @@ public:
       int nMonomer = mixture.nMonomer();
       DArray< RField<3,CUT> > wFields;
       DArray< RField<3,CUT> > cFields;
-      DArray< HostDArray<cudaReal> > wFields_h;
+      DArray< HostArray<cudaReal> > wFields_h;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
       wFields_h.allocate(nMonomer);

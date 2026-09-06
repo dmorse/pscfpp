@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/MaxOrderParameterBase.h>   // base class template
 #include <pscf/backend/cuda/CUT.h>                       // base class argument
-#include <pscf/backend/cuda/HostDArray.h>                    // member
+#include <pscf/backend/cuda/HostArray.h>                    // member
 #include <pscf/backend/cuda/cudaTypes.h>
 
 namespace Pscf {
@@ -56,7 +56,7 @@ namespace Rp {
 
    private:
 
-      HostDArray<cudaReal> psiHost_;
+      HostArray<cudaReal> psiHost_;
 
       /// Alias for base class.
       using Base = MaxOrderParameterBase<D,CUT>;

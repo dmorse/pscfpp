@@ -33,7 +33,7 @@ namespace Prdc {
    * some type CT, where CT supports assignment from real and imaginary
    * parts via a function assign(CT&, double const&, double const&). 
    * Valid complex array types include DArray<fftw_complex> and 
-   * HostDArray<cudaReal>.
+   * HostArray<cudaReal>.
    *
    * \ingroup Prdc_Field_Module
    *

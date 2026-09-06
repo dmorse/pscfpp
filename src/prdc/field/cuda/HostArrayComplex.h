@@ -9,7 +9,7 @@
 */
 
 #include <pscf/backend/cuda/cudaTypes.h>     // template parameter
-#include <pscf/backend/cuda/HostDArray.h>    // base class
+#include <pscf/backend/cuda/HostArray.h>    // base class
 
 namespace Pscf {
 namespace Prdc {
@@ -17,11 +17,11 @@ namespace Prdc {
    using namespace Util;
 
    /**
-   * HostDArray containing cudaComplex elements.
+   * HostArray containing cudaComplex elements.
    *
    * Defined to add typedefs.
    */
-   class HostDArrayComplex : public HostDArray<cudaComplex>
+   class HostArrayComplex : public HostArray<cudaComplex>
    {
 
    public:
@@ -41,14 +41,14 @@ namespace Prdc {
       /**
       * Base class type.
       */
-      using Base = HostDArray<cudaComplex>;
+      using Base = HostArray<cudaComplex>;
 
       // Member functions
 
       /**
       * Default constructor.
       */
-      HostDArrayComplex();
+      HostArrayComplex();
 
       /**
       * Allocating constructor.
@@ -57,7 +57,7 @@ namespace Prdc {
       *
       * \param capacity  desired capacity of array
       */
-      HostDArrayComplex(int capacity);
+      HostArrayComplex(int capacity);
 
       /**
       * Copy constructor.
@@ -66,12 +66,12 @@ namespace Prdc {
       *
       * \param other  other object being copied to this one.
       */
-      HostDArrayComplex(HostDArrayComplex const & other);
+      HostArrayComplex(HostArrayComplex const & other);
 
       /**
       * Destructor.
       */
-      ~HostDArrayComplex();
+      ~HostArrayComplex();
 
       // Inherited member functions
       using Base::allocate;

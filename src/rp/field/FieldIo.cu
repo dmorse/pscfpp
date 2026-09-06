@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/cuda/HostDArrayComplex.h>
+#include <prdc/field/cuda/HostArrayComplex.h>
 //#include <prdc/fieldIo/fieldCheck.h>
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/complex.h>
 
@@ -39,7 +39,7 @@ namespace Rp {
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Allocate host arrays
-      DArray< HostDArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal> > hostFields;
       allocateArrays(hostFields, nMonomer, mesh().size());
 
       // Read data
@@ -65,7 +65,7 @@ namespace Rp {
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Allocate host arrays
-      DArray< HostDArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal> > hostFields;
       allocateArrays(hostFields, nMonomer, mesh().size());
 
       // Read data section of file
@@ -94,7 +94,7 @@ namespace Rp {
       checkAllocateField(field, mesh().dimensions());
 
       // Allocate host field
-      HostDArray<cudaReal> hostField;
+      HostArray<cudaReal> hostField;
       hostField.allocate(mesh().size());
 
       // Read data section with one field
@@ -136,7 +136,7 @@ namespace Rp {
       }
 
       // Copy field data to host container
-      DArray< HostDArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal> > hostFields;
       allocateArrays(hostFields, nMonomer, meshSize);
       copyArrays(hostFields, fields);
 
@@ -167,7 +167,7 @@ namespace Rp {
       }
 
       // Copy field (device) to hostField
-      HostDArray<cudaReal> hostField;
+      HostArray<cudaReal> hostField;
       hostField.allocate(meshSize);
       hostField = field;
 
@@ -196,7 +196,7 @@ namespace Rp {
       int capacity = fields[0].capacity();
 
       // Allocate hostFields
-      DArray< HostDArrayComplex > hostFields;
+      DArray< HostArrayComplex > hostFields;
       allocateArrays(hostFields, nMonomer, capacity);
 
       // Read data into hostFields
@@ -229,7 +229,7 @@ namespace Rp {
       writeMeshDimensions(out, meshDimensions);
 
       // Copy data from device to hostFields
-      DArray< HostDArrayComplex > hostFields;
+      DArray< HostArrayComplex > hostFields;
       allocateArrays(hostFields, nMonomer, capacity);
       copyArrays(hostFields, fields);
 
@@ -251,7 +251,7 @@ namespace Rp {
       UTIL_CHECK(out.meshDimensions() == mesh().dimensions());
 
       // Allocate hostField
-      HostDArrayComplex hostField;
+      HostArrayComplex hostField;
       hostField.allocate(out.capacity());
 
       // Convert basis to k-grid on hostField
@@ -278,7 +278,7 @@ namespace Rp {
       UTIL_CHECK(out.capacity() > 0);
 
       // Copy k-grid input to hostField
-      HostDArrayComplex hostField;
+      HostArrayComplex hostField;
       hostField.allocate(in.capacity());
       hostField = in;
 
@@ -301,7 +301,7 @@ namespace Rp {
       UTIL_CHECK(in.meshDimensions() == mesh().dimensions());
 
       // Copy k-grid input to hostField
-      HostDArrayComplex hostField;
+      HostArrayComplex hostField;
       hostField.allocate(in.capacity());
       hostField = in;
 
@@ -360,7 +360,7 @@ namespace Rp {
       int capacity = fields[0].capacity();
 
       // Copy k-grid input to hostField
-      DArray< HostDArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal> > hostFields;
       allocateArrays(hostFields, nMonomer, capacity);
       copyArrays(hostFields, fields);
 
@@ -387,7 +387,7 @@ namespace Rp {
       int capacity = fields[0].capacity();
 
       // Copy k-grid input fields to hostFields
-      DArray< HostDArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal> > hostFields;
       allocateArrays(hostFields, nMonomer, capacity);
       copyArrays(hostFields, fields);
 

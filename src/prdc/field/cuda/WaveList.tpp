@@ -14,7 +14,7 @@
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/hasVariableAngle.h>
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/Sort.h>
@@ -523,7 +523,7 @@ namespace Prdc {
       if (isRealField_) {
          implicitInverse_.allocate(kSize_);
          MeshIterator<D> kItr(kMeshDimensions_);
-         HostDArray<bool> implicitInverse_h(kSize_);
+         HostArray<bool> implicitInverse_h(kSize_);
          int inverseId;
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             if (kItr.position(D-1) == 0) {
@@ -579,7 +579,7 @@ namespace Prdc {
       UTIL_CHECK(minImages_.capacity() == kSize_ * D);
 
       // Set initial array of images to contain the k-grid points
-      HostDArray<int> imagesTmp(D*kSize_);
+      HostArray<int> imagesTmp(D*kSize_);
       MeshIterator<D> kItr(kMeshDimensions_);
       for (int i = 0; i < D; i++) {
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
@@ -589,8 +589,8 @@ namespace Prdc {
       minImages_ = imagesTmp; // copy to device
 
       // Get kBasis and meshDims and store on device
-      HostDArray<cudaReal> kBasis_h(D*D);
-      HostDArray<int> meshDims_h(D);
+      HostArray<cudaReal> kBasis_h(D*D);
+      HostArray<int> meshDims_h(D);
       DeviceArray<cudaReal> kBasis(D*D);
       DeviceArray<int> meshDims(D);
       int idx = 0;
@@ -666,7 +666,7 @@ namespace Prdc {
       UTIL_CHECK(isAllocated_);
 
       // Get kBasis and store on device
-      HostDArray<cudaReal> kBasis_h(D*D);
+      HostArray<cudaReal> kBasis_h(D*D);
       DeviceArray<cudaReal> kBasis(D*D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
@@ -712,7 +712,7 @@ namespace Prdc {
 
       // Calculate dkkBasis and store on device
       int idx;
-      HostDArray<cudaReal> dkkBasis_h(unitCell().nParameter() * D * D);
+      HostArray<cudaReal> dkkBasis_h(unitCell().nParameter() * D * D);
       DeviceArray<cudaReal> dkkBasis;
       for (int i = 0 ; i < unitCell().nParameter(); ++i) {
          for (int j = 0; j < D; ++j) {
@@ -767,7 +767,7 @@ namespace Prdc {
       }
 
       // Copy values of kSq to host
-      HostDArray<cudaReal> kSq_h = kSq_;
+      HostArray<cudaReal> kSq_h = kSq_;
 
       // Construct Sort::Item objects with value = kSq, id = wave id
       std::vector< Sort::Item<double> > items;
@@ -823,11 +823,11 @@ namespace Prdc {
    * Gather data from device and re-arrange if necessary.
    */
    template <int D>
-   HostDArray< IntVec<D> > const & WaveList<D,CUT>::minImages_h() const
+   HostArray< IntVec<D> > const & WaveList<D,CUT>::minImages_h() const
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {
-         HostDArray<int> minImages_temp;
+         HostArray<int> minImages_temp;
          minImages_temp = minImages_;
          int i, j, k;
          for (j = 0; j < D; ++j) {

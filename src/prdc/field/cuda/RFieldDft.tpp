@@ -68,15 +68,15 @@ namespace Prdc {
    }
 
    /*
-   * Assignment from RHS HostDArray<cudaComplex>.
+   * Assignment from RHS HostArray<cudaComplex>.
    */
    template <int D>
    RFieldDft<D,CUT>&
-   RFieldDft<D,CUT>::operator = (HostDArray<cudaComplex> const & other)
+   RFieldDft<D,CUT>::operator = (HostArray<cudaComplex> const & other)
    {
       // Preconditions: Both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostDArray<cudaComplex> is not allocated.");
+         UTIL_THROW("Error: RHS HostArray<cudaComplex> is not allocated.");
       }
       if (!isAllocated()) {
          UTIL_THROW("Error: LHS RFieldDft<D,CUT> is not allocated.");

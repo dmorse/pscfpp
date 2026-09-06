@@ -13,7 +13,7 @@
 #include <pscf/backend/cuda/cudaTypes.h>      // base class argument
 #include <pscf/math/IntVec.h>         // class member
 
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -106,17 +106,17 @@ namespace Prdc {
       operator = (RField<D,CUT> const & other);
 
       /**
-      * Assignment operator, assignment from a HostDArray<cudaReal>.
+      * Assignment operator, assignment from a HostArray<cudaReal>.
       *
       * Performs a deep copy, by copying all elements of the RHS RField
       * from host memory to device memory.
       *
-      * The RHS HostDArray<cudaReal> and LHS RField must both be
+      * The RHS HostArray<cudaReal> and LHS RField must both be
       * allocated with equal capacity values on entry.
       *
-      * \param other the RHS HostDArray<cudaReal>
+      * \param other the RHS HostArray<cudaReal>
       */
-      RField<D,CUT>& operator = (const HostDArray<cudaReal>& other);
+      RField<D,CUT>& operator = (const HostArray<cudaReal>& other);
 
       /**
       * Return mesh dimensions by constant reference.
@@ -181,7 +181,7 @@ namespace Prdc {
       }
 
       if (isAllocated()) {
-         HostDArray<cudaReal> tempData(capacity);
+         HostArray<cudaReal> tempData(capacity);
          tempData = this; // copy this object's data from device to host
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];

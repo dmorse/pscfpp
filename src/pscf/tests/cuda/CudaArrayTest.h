@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/backend/cuda/DeviceArray.h>
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <util/math/Constants.h>
 
 using namespace Util;
@@ -25,7 +25,7 @@ public:
    void testConstructors()
    {
       printMethod(TEST_FUNC);
-      HostDArray<double> h;
+      HostArray<double> h;
       DeviceArray<double> d;
 
       TEST_ASSERT(h.capacity() == 0 );
@@ -38,7 +38,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      HostDArray<double> h;
+      HostArray<double> h;
       DeviceArray<double> d;
 
       int capacity = 32;
@@ -92,10 +92,10 @@ public:
       // Host arrays
       DArray<double> in;
       in.allocate(nx);
-      HostDArray<double> out1(nx);
-      HostDArray<double> out2(nx);
-      HostDArray<double> out3(nx);
-      HostDArray<double> out4(nx/2);
+      HostArray<double> out1(nx);
+      HostArray<double> out2(nx);
+      HostArray<double> out3(nx);
+      HostArray<double> out4(nx/2);
 
       // Generate data
       double twoPi = 2.0*Constants::Pi;

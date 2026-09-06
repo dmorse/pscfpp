@@ -9,7 +9,7 @@
 
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/Reduce.h>
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cpp/VecOp.h>
 
@@ -35,7 +35,7 @@ namespace Rp {
    void FourthOrderParameter<D,CUT>::computePrefactor()
    {
       // Allocate CPU host array
-      HostDArray<cudaReal> prefactor_h(Base::kSize_);
+      HostArray<cudaReal> prefactor_h(Base::kSize_);
       VecOp::eqS(prefactor_h, 0.0);
 
       // Perform computation on host

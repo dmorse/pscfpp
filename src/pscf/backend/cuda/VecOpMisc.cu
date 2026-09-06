@@ -8,7 +8,7 @@
 #include "VecOpMisc.h"
 #include "VecOp.h"
 #include <pscf/backend/cuda/ThreadArray.h>
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/backend/cuda/cudaErrorCheck.h>
 #include <cmath>
 
@@ -585,7 +585,7 @@ namespace VecOp {
       }
 
       // Create array of pointers to arrays on host
-      HostDArray<cudaReal const *> vecs_h(nVecs);
+      HostArray<cudaReal const *> vecs_h(nVecs);
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i].cArray();
       }
@@ -618,7 +618,7 @@ namespace VecOp {
       }
 
       // Create array of pointers to arrays on host
-      HostDArray<cudaReal const *> vecs_h(nVecs);
+      HostArray<cudaReal const *> vecs_h(nVecs);
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i]->cArray();
       }
@@ -651,7 +651,7 @@ namespace VecOp {
       }
 
       // Create array of pointers to arrays on host
-      HostDArray<cudaReal const *> vecs_h(nVecs);
+      HostArray<cudaReal const *> vecs_h(nVecs);
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i].cArray();
       }
@@ -684,7 +684,7 @@ namespace VecOp {
       }
 
       // Create array of pointers to arrays on host
-      HostDArray<cudaReal const *> vecs_h(nVecs);
+      HostArray<cudaReal const *> vecs_h(nVecs);
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i]->cArray();
       }

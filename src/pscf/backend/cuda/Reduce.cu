@@ -8,7 +8,7 @@
 #include "Reduce.h"
 #include "VecOp.h"
 #include <pscf/backend/cuda/ThreadArray.h>
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/backend/cuda/DeviceMemory.h>
 #include <pscf/backend/cuda/cudaErrorCheck.h>
 #include <pscf/backend/cuda/complex.h>
@@ -96,7 +96,7 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
 
          // Copy to host and return value
-         HostDArray<cudaReal> out_h;
+         HostArray<cudaReal> out_h;
          out_h.allocate(1);
          out_h = out;
          return out_h[0];
@@ -131,7 +131,7 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
 
          // Copy to host and return value
-         HostDArray<cudaComplex> out_h(1);
+         HostArray<cudaComplex> out_h(1);
          out_h = out;
          return std::complex<cudaReal>(out_h[0].x, out_h[0].y);
       }
@@ -161,7 +161,7 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
 
          // Copy to host and return value
-         HostDArray<cudaReal> out_h(1);
+         HostArray<cudaReal> out_h(1);
          out_h = out;
          return out_h[0];
       }
@@ -191,7 +191,7 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
 
          // Copy to host and return value
-         HostDArray<cudaReal> out_h(1);
+         HostArray<cudaReal> out_h(1);
          out_h = out;
          return out_h[0];
       }

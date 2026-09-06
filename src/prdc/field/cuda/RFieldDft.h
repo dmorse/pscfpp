@@ -11,7 +11,7 @@
 #include <pscf/backend/cuda/CUT.h>
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -82,17 +82,17 @@ namespace Prdc {
       RFieldDft<D,CUT>& operator = (RFieldDft<D,CUT> const & other);
 
       /**
-      * Assignment operator, assignment from a HostDArray<cudaComplex>.
+      * Assignment operator, assignment from a HostArray<cudaComplex>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
       * RFieldDft<D,CUT> from host memory to device memory.
       *
-      * The RHS HostDArray<cudaComplex> and LHS RFieldDft<D,CUT> must 
+      * The RHS HostArray<cudaComplex> and LHS RFieldDft<D,CUT> must 
       * both be allocated and have equal capacity values on entry. 
       * 
-      * \param other the RHS HostDArray<cudaComplex>
+      * \param other the RHS HostArray<cudaComplex>
       */
-      RFieldDft<D,CUT>& operator = (HostDArray<cudaComplex> const & other);
+      RFieldDft<D,CUT>& operator = (HostArray<cudaComplex> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -200,7 +200,7 @@ namespace Prdc {
       }
 
       if (isAllocated()) {
-         HostDArray<cudaComplex> tempData(capacity);
+         HostArray<cudaComplex> tempData(capacity);
          tempData = this; // copy this object's data from device to host
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i].x;

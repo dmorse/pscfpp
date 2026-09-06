@@ -10,7 +10,7 @@
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
 #include <pscf/backend/cuda/CUT.h>                         // base argument
-#include <pscf/backend/cuda/HostDArray.h>                      // member
+#include <pscf/backend/cuda/HostArray.h>                      // member
 #include <pscf/backend/cuda/cudaTypes.h>                       // member
 
 namespace Pscf {
@@ -73,7 +73,7 @@ namespace Rp {
    private:
 
       // Copy of wk_ on host CPU
-      HostDArray<cudaComplex> wkHost_;
+      HostArray<cudaComplex> wkHost_;
 
    };
 

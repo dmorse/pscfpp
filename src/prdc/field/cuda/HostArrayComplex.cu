@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "HostDArrayComplex.h"
+#include "HostArrayComplex.h"
 
 namespace Pscf {
 namespace Prdc {
@@ -15,28 +15,28 @@ namespace Prdc {
    /*
    * Default constructor.
    */
-   HostDArrayComplex::HostDArrayComplex() 
-    : HostDArray<cudaComplex>()
+   HostArrayComplex::HostArrayComplex() 
+    : HostArray<cudaComplex>()
    {}
 
    /*
    * Allocating constructor.
    */
-   HostDArrayComplex::HostDArrayComplex(int capacity)
-    : HostDArray<cudaComplex>(capacity)
+   HostArrayComplex::HostArrayComplex(int capacity)
+    : HostArray<cudaComplex>(capacity)
    {}
 
    /*
    * Copy constructor.
    */
-   HostDArrayComplex::HostDArrayComplex(HostDArrayComplex const& other)
-    : HostDArray<cudaComplex>(other)
+   HostArrayComplex::HostArrayComplex(HostArrayComplex const& other)
+    : HostArray<cudaComplex>(other)
    {}
 
    /*
    * Destructor.
    */
-   HostDArrayComplex::~HostDArrayComplex()
+   HostArrayComplex::~HostArrayComplex()
    {}
 
 } // namespace Prdc

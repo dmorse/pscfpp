@@ -40,7 +40,7 @@ public:
 
       int n = 100000;
       DeviceArray<float> d_(n);
-      HostDArray<float> h_(n);
+      HostArray<float> h_(n);
 
       random.uniform(d_);
 
@@ -91,7 +91,7 @@ public:
 
       int n = 100000;
       DeviceArray<float> df_(n);
-      HostDArray<float> hf_(n);
+      HostArray<float> hf_(n);
 
       random.uniform(df_);
 
@@ -141,7 +141,7 @@ public:
 
       int n = 100000;
       DeviceArray<float> d_(n);
-      HostDArray<float> h_(n);
+      HostArray<float> h_(n);
 
       const double min = -1.34;
       const double max =  3.57;
@@ -195,7 +195,7 @@ public:
       
       int n = 100000;
       DeviceArray<float> d_(n);
-      HostDArray<float> h_(n);
+      HostArray<float> h_(n);
 
       double mean = 1.0;
       double stddev = 0.5; 
@@ -238,7 +238,7 @@ public:
 
       int n = 100000;
       DeviceArray<float> df_(n);
-      HostDArray<float> hf_(n);
+      HostArray<float> hf_(n);
 
       float mean = 1.0;
       float stddev = 0.5; 

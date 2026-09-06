@@ -2,7 +2,7 @@ prdc_field_cuda_CU= \
   prdc/field/cuda/RField.cu \
   prdc/field/cuda/RFieldDft.cu \
   prdc/field/cuda/CField.cu \
-  prdc/field/cuda/HostDArrayComplex.cu \
+  prdc/field/cuda/HostArrayComplex.cu \
   prdc/field/cuda/RFieldComparison.cu \
   prdc/field/cuda/RFieldDftComparison.cu \
   prdc/field/cuda/CFieldComparison.cu \

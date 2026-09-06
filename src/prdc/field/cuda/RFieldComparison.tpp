@@ -10,7 +10,7 @@
 
 #include "RFieldComparison.h"
 
-#include <pscf/backend/cuda/HostDArray.h>
+#include <pscf/backend/cuda/HostArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -32,8 +32,8 @@ namespace Prdc {
       int nPoints = a.capacity();
 
       // Copy fields a,b to local arrays ha, hb on the host CPU
-      HostDArray<cudaReal> ha(nPoints);
-      HostDArray<cudaReal> hb(nPoints);
+      HostArray<cudaReal> ha(nPoints);
+      HostArray<cudaReal> hb(nPoints);
       ha = a;
       hb = b;
 
@@ -53,8 +53,8 @@ namespace Prdc {
       int nFields = a.capacity();
       int nPoints = a[0].capacity();
 
-      // Copy fields to HostDArray containers on CPU host
-      DArray< HostDArray<cudaReal> > ha, hb;
+      // Copy fields to HostArray containers on CPU host
+      DArray< HostArray<cudaReal> > ha, hb;
       ha.allocate(nFields);
       hb.allocate(nFields);
       for (int i = 0; i < nFields; i++) {

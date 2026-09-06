@@ -93,15 +93,15 @@ namespace Prdc {
    }
 
    /*
-   * Assignment of this RField from RHS HostDArray.
+   * Assignment of this RField from RHS HostArray.
    */
    template <int D>
    RField<D,CUT>& 
-   RField<D,CUT>::operator = (const HostDArray<cudaReal>& other)
+   RField<D,CUT>::operator = (const HostArray<cudaReal>& other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostDArray<cudaReal> is not allocated.");
+         UTIL_THROW("Error: RHS HostArray<cudaReal> is not allocated.");
       }
       if (!isAllocated()) {
          UTIL_THROW("Error: LHS RField is not allocated.");
