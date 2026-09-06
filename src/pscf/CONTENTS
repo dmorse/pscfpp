@@ -5,10 +5,9 @@ in the PSCF package.
 Subdirectories:
 ---------------
 
+   backend/      - utilities for different computational backends
    chem/         - molecular structure descriptors
    correlation/  - correlation functions for homogeneous gas
-   cuda/         - utilities and cufft complex type for GPUs
-   cpu/          - utilities that use FFTW complex type for CPUs
    environment/  - generation of imposed mask and external fields
    floryHuggins/ - Flory-Huggins theory for homogeneous mixtures
    inter/        - interaction (excess) free energy 

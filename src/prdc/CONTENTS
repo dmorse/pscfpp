@@ -12,10 +12,10 @@ programs for systems with periodic boundary conditions.
 Subdirectories:
 ---------------
 
-  cpu/         - field containers etc. for CPU
-  cuda/        - field containers etc. for CUDA 
   crystal/     - unit cells, space groups, and symmetry adapted basis
   environment/ - generation of imposed mask and external fields
+  field/       - field containers for different backends
+  fieldIo/     - utilities for field input and output
   tests/       - unit tests for code in src/prdc
 
 Makefile and makefile fragments:

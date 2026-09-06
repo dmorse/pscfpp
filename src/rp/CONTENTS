@@ -12,26 +12,26 @@ denoted by D and T. Parameter D is an integer parameter that represents
 the dimension of space, which has allowed values D=1, 2, and 3. Parameter 
 T is typename parameter that can be used to represent two "backend type" 
 classes, named CPT and CUT, that are used to control what type of 
-"backend" a specialization of the class will use for parallelizable 
-operations. Template specializations with T=CUT use a GPU backend that 
-is coded in CUDA, and are used to construct the pscf_rpg GPU-enabled 
-program. Template specializations with T=CPT instead use only standard 
-CPU hardware, and are used to construct the pscf_rpc CPU program. 
+"backend" a specialization of the class will use for computationally
+expensive mathematical operations. Template specializations with T=CUT 
+use a GPU backend that is coded in CUDA, and are used to construct the 
+pscf_rpg GPU-enabled program. Template specializations with T=CPT instead 
+use only standard CPU hardware, and are used to construct the pscf_rpc 
+CPU program. 
 
 The CPT and CUT classes are defined in namespace Pscf, in files that are 
 located in the pscf/backends directory.  
 
 Subdirectories:
 
-The src/rp directory has the subjectories listed below, giving a 
-structure analogous to that of both the src/rpc and src/rpg directories:
+The src/rp directory has the subjectories listed below:
   
+environment/  - mask and external fields for inhomogeneous environments
 field/        - fields and spatial domain
+fts/          - partial saddle-point field theoretic simulation (PS-FTS)
+scft/         - self-consistent field theory (SCFT)
 solvers/      - modified diffusion equation (MDE) solvers
 system/       - main System class template
-environment/  - mask and external fields for inhomogeneous environments
-scft/         - self-consistent field theory (SCFT)
-fts/          - partial saddle-point field theoretic simulation (PS-FTS)
 
 Main programs:
 
