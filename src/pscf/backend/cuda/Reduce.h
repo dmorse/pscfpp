@@ -40,12 +40,12 @@ namespace Pscf {
    * take standard Array containers as inputs and perform calculations
    * on the CPU.
    *
-   * \defgroup Pscf_Cuda_Reduce_Module Reduce (GPU)
+   * \defgroup Pscf_Cuda_Reduce_Module Reduce (Cuda)
    * \ingroup Pscf_Backend_Cuda_Module
    */
 
    /**
-   * Reduction operations performed on a CPU or GPU.
+   * Array reduction operations.
    *
    * \ingroup Pscf_Backend_Module
    */

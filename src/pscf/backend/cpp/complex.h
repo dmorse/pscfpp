@@ -17,7 +17,7 @@
 namespace Pscf {
 
    /**
-   * \defgroup Pscf_Cpp_Complex_Module Complex Arithmetic (CPU)
+   * \defgroup Pscf_Cpp_Complex_Module Complex Arithmetic (C++)
    *
    * Complex arithmetic functions using the complex type fftw_complex 
    * defined by the FFTW fast Fourier transform library.

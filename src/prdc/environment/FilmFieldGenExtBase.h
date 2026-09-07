@@ -44,7 +44,7 @@ namespace Prdc {
    * the bottom, through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
    * 
-   * \ingroup Prdc_Field_Module
+   * \ingroup Prdc_Environment_Module
    */
    template <int D>
    class FilmFieldGenExtBase : public FieldGenerator

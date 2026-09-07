@@ -18,7 +18,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Element-wise vector operations on Cpu arrays.
+   * Element-wise vector operations on CPU arrays.
    *
    * Operations that are performed by these functions include addition,
    * subtraction, multiplication, division, exponentiation, and assignment.
@@ -56,7 +56,7 @@ namespace Pscf {
    * c1 and c2 are scalar coefficients, performs the linear combination
    * a[i] = b1[i]*c1 + b2[i}*c2 for every value of the element index i.
    *
-   * \defgroup Pscf_Cpp_VecOp_Module VecOp (CPU)
+   * \defgroup Pscf_Cpp_VecOp_Module VecOp (C++)
    * \ingroup Pscf_Backend_Cpp_Module
    */
    namespace VecOp {

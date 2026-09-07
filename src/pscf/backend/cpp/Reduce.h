@@ -25,7 +25,7 @@ namespace Pscf {
    * Examples include taking the sum or finding the maximum of all 
    * array elements, or taking an inner product of two arrays.
    *
-   * \defgroup Pscf_Cpp_Reduce_Module Reduce (C++ backend)
+   * \defgroup Pscf_Cpp_Reduce_Module Reduce (C++)
    * \ingroup Pscf_Backend_Cpp_Module
    */
 

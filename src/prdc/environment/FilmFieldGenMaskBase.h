@@ -33,7 +33,7 @@ namespace Prdc {
    * excludedThickness, and interfaceThickness. See \ref 
    * scft_thin_films_page for more information. 
    * 
-   * \ingroup Prdc_Field_Module
+   * \ingroup Prdc_Environment_Module
    */
    template <int D>
    class FilmFieldGenMaskBase : public FieldGenerator

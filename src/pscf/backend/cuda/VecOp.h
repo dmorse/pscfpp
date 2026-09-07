@@ -70,7 +70,7 @@ namespace Pscf {
    * source file.
    *
    * \ingroup Pscf_Backend_Cuda_Module
-   * \defgroup Pscf_Cuda_VecOp_Module VecOp (GPU)
+   * \defgroup Pscf_Cuda_VecOp_Module VecOp (Cuda)
    */
 
    /**
