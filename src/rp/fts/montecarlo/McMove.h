@@ -224,7 +224,7 @@ namespace Rp {
       /**
       * Get the vector random number generator.
       */
-      typename T::VecRandom& vecRandom();
+      VecRandom<T>& vecRandom();
 
       /**
       * Read the probability from file.
@@ -264,7 +264,7 @@ namespace Rp {
       Random* randomPtr_;
 
       /// Pointer to the vector random number generator.
-      typename T::VecRandom* vecRandomPtr_;
+      VecRandom<T>* vecRandomPtr_;
 
       /// Probability of choosing this move
       double probability_;
@@ -365,7 +365,7 @@ namespace Rp {
    * Get the vector random number generator.
    */
    template <int D, class T> inline
-   typename T::VecRandom& McMove<D,T>::vecRandom()
+   VecRandom<T>& McMove<D,T>::vecRandom()
    {  return *vecRandomPtr_; }
 
    /*

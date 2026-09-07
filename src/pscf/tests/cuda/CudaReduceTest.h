@@ -36,7 +36,7 @@ private:
    #endif
 
    // Random number generator on the GPU
-   CudaVecRandom rand_;
+   VecRandom<CUT> rand_;
 
 public:
 

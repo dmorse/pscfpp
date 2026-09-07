@@ -7,6 +7,7 @@
 
 
 #include "CPT.h"
+#include "VecRandom.h"
 #include <util/random/Random.h>
 
 namespace Pscf {
@@ -28,7 +29,7 @@ namespace Pscf {
    *
    * GPU-enabled code would instead do nothing.
    */
-   void CPT::linkVecRandom(VecRandom& vr, Random & sr)
+   void CPT::linkVecRandom(VecRandom<CPT>& vr, Random & sr)
    {  vr.associate(sr); }
 
    /*
@@ -36,7 +37,7 @@ namespace Pscf {
    *
    * GPU-enabled code would instead set the seed.
    */
-   void CPT::seedVecRandom(VecRandom& vr, long seed)
+   void CPT::seedVecRandom(VecRandom<CPT>& vr, long seed)
    {}
 
 }

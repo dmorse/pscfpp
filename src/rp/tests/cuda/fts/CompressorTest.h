@@ -22,7 +22,7 @@
 #include <prdc/field/cuda/resources.h>
 
 #include <pscf/backend/cuda/VecOp.h> 
-#include <pscf/backend/cuda/CudaVecRandom.h> 
+#include <pscf/backend/cuda/VecRandom.h> 
 
 #include <util/misc/FileMaster.h> 
 #include <util/random/Random.h> 
@@ -73,7 +73,7 @@ public:
       randomField.allocate(dimensions);
       
       double stepSize = 1e-1;
-      CudaVecRandom vecRandom;
+      VecRandom<CUT> vecRandom;
       vecRandom.setSeed(0);
       DArray< RField<3,CUT> > const & w = system.w().rgrid();
       
@@ -114,7 +114,7 @@ public:
       RField<D,CUT> randomField;
       randomField.allocate(dimensions);
       
-      CudaVecRandom vecRandom;
+      VecRandom<CUT> vecRandom;
       vecRandom.setSeed(0);
       vecRandom.uniform(randomField);
       double stepSize = 1e-1;

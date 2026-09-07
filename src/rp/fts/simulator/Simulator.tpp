@@ -72,7 +72,7 @@ namespace Rp {
    {
       ParamComposite::setClassName("Simulator");
       randomPtr_ = new Random();
-      vecRandomPtr_ = new typename T::VecRandom();
+      vecRandomPtr_ = new VecRandom<T>();
       compressorFactoryPtr_ = new CompressorFactory<D,T>(system);
       perturbationFactoryPtr_ 
              = new PerturbationFactory<D,T>(*this);

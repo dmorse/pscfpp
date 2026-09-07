@@ -7,6 +7,7 @@
 
 
 #include "CUT.h"
+#include "VecRandom.h"
 #include <pscf/backend/cuda/ThreadArray.h>
 #include <pscf/backend/cuda/ThreadMesh.h>
 #include <util/random/Random.h>
@@ -35,7 +36,7 @@ namespace Pscf {
    * RNGs are are independent for this code. The CPU implementation would
    * link the two RNGs.
    */
-   void CUT::linkVecRandom(VecRandom& vr, Random & sr)
+   void CUT::linkVecRandom(VecRandom<CUT>& vr, Random & sr)
    {}
 
    /*
@@ -45,7 +46,7 @@ namespace Pscf {
    * The CPU implementation would do nothing, because the RNGs are linked
    * in this case.
    */
-   void CUT::seedVecRandom(VecRandom& vr, long seed)
+   void CUT::seedVecRandom(VecRandom<CUT>& vr, long seed)
    {  vr.setSeed(seed); }
 
 }

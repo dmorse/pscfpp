@@ -12,16 +12,17 @@
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/HostArray.h>
-#include <pscf/backend/cuda/CudaVecRandom.h>
 
 // Forward declarations
 namespace Util {
    class Random;
 }
+namespace Pscf {
+   template <typename T> class VecRandom;
+}
 
 namespace Pscf {
 
-   // Namespace that may be used implicitly
    using namespace Util;
 
    /**
@@ -43,8 +44,6 @@ namespace Pscf {
 
       using RDevArray = DevArray<Real>;
       using RLocArray = LocArray<Real>;
-
-      using VecRandom = CudaVecRandom;
 
       // Static members
 
@@ -75,7 +74,7 @@ namespace Pscf {
       * \param sr  scalar RNG
       */
       static
-      void linkVecRandom(VecRandom& vr, Random & sr);
+      void linkVecRandom(VecRandom<CUT>& vr, Random & sr);
 
       /**
       * Set the vector random number generator seed, if needed.
@@ -86,7 +85,7 @@ namespace Pscf {
       * \param seed  random seed value
       */
       static
-      void seedVecRandom(VecRandom& vr, long seed);
+      void seedVecRandom(VecRandom<CUT>& vr, long seed);
 
    };
 

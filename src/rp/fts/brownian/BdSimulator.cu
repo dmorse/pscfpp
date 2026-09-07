@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/VecRandom.h>
 #include <pscf/backend/cuda/CUT.h>
 
 #include <rp/fts/brownian/BdSimulator.tpp>

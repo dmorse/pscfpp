@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cpp/CpuVecRandom.h>
+#include <pscf/backend/cpp/VecRandom.h>
 #include <util/random/Random.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -20,7 +20,7 @@ class CpuVecRandomTest : public UnitTest
 private:
 
    Util::Random sRandom_;
-   Pscf::CpuVecRandom vRandom_;
+   Pscf::VecRandom<CPT> vRandom_;
    DArray<double> data_;
 
 public:

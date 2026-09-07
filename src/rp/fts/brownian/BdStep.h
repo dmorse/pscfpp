@@ -149,7 +149,7 @@ namespace Rp {
       /**
       * Get vector random number generator of parent simulator.
       */
-      typename T::VecRandom& vecRandom();
+      VecRandom<T>& vecRandom();
 
    private:
 
@@ -163,7 +163,7 @@ namespace Rp {
       Random  *randomPtr_;
 
       /// Pointer to the vector random number generator
-      typename T::VecRandom  *vecRandomPtr_;
+      VecRandom<T>  *vecRandomPtr_;
 
    };
 
@@ -194,7 +194,7 @@ namespace Rp {
    * Get the vector random number generator.
    */
    template <int D, class T> inline
-   typename T::VecRandom& BdStep<D,T>::vecRandom()
+   VecRandom<T>& BdStep<D,T>::vecRandom()
    {  return *vecRandomPtr_; }
 
    // Explicit instantiation declarations

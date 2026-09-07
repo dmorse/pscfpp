@@ -10,13 +10,15 @@
 
 #include <pscf/backend/BackendId.h>
 #include <pscf/backend/cpp/FftwDRArray.h>
-#include <pscf/backend/cpp/CpuVecRandom.h>
 
 #include <fftw3.h>
 
 // Forward declarations
 namespace Util {
    class Random;
+}
+namespace Pscf {
+   template <typename T> class VecRandom;
 }
 
 namespace Pscf {
@@ -36,7 +38,7 @@ namespace Pscf {
       using Real = double;
       using Complex = fftw_complex;
 
-      using VecRandom = CpuVecRandom;
+      //using VecRandom = CpuVecRandom;
 
       template <typename T> using DevArray = FftwDRArray<T>;
       template <typename T> using LocArray = FftwDRArray<T>;
@@ -72,7 +74,7 @@ namespace Pscf {
       * \param sr scalar RNG
       */
       static
-      void linkVecRandom(VecRandom& vr, Random & sr);
+      void linkVecRandom(VecRandom<CPT>& vr, Random & sr);
 
       /**
       * Set the vector random number generator seed, if needed.
@@ -84,7 +86,7 @@ namespace Pscf {
       * \param seed  random seed value
       */
       static
-      void seedVecRandom(VecRandom& vr, long seed);
+      void seedVecRandom(VecRandom<CPT>& vr, long seed);
 
    };
 

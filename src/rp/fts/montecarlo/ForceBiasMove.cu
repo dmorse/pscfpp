@@ -8,6 +8,7 @@
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/Reduce.h>
 #include <pscf/backend/cuda/ThreadArray.h>
+#include <pscf/backend/cuda/VecRandom.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 
 #include <rp/fts/montecarlo/ForceBiasMove_u.h>

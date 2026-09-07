@@ -6,7 +6,6 @@ pscf_backend_cuda_CU =\
    pscf/backend/cuda/Reduce.cu \
    pscf/backend/cuda/VecOp.cu \
    pscf/backend/cuda/VecOpMisc.cu \
-   pscf/backend/cuda/CudaVecRandom.cu \
    pscf/backend/cuda/VecRandom.cu 
 
 pscf_backend_cuda_OBJS=\

@@ -6,7 +6,7 @@
 */
 
 #include <pscf/backend/cpp/VecOp.h>
-#include <pscf/backend/cpp/CpuVecRandom.h>
+#include <pscf/backend/cpp/VecRandom.h>
 
 #include <rp/fts/brownian/PredCorrBdStep.tpp>  // class implementation
 

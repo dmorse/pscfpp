@@ -578,7 +578,7 @@ namespace Rp {
       /**
       * Get the vector random number generator by reference.
       */
-      typename T::VecRandom& vecRandom();
+      VecRandom<T>& vecRandom();
 
       /**
       * Does this Simulator have a Compressor?
@@ -878,7 +878,7 @@ namespace Rp {
       /**
       * Pointer to a vector random number generator.
       */
-      typename T::VecRandom* vecRandomPtr_;
+      VecRandom<T>* vecRandomPtr_;
 
       /**
       * Pointer to a Compressor factory.
@@ -939,7 +939,7 @@ namespace Rp {
 
    // Get the vector random number generator by reference.
    template <int D, class T> inline 
-   typename T::VecRandom& Simulator<D,T>::vecRandom()
+   VecRandom<T>& Simulator<D,T>::vecRandom()
    {
       UTIL_ASSERT(vecRandomPtr_);
       return *vecRandomPtr_;

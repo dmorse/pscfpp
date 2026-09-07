@@ -6,7 +6,7 @@
 */
 
 #include <pscf/backend/cuda/VecOp.h>
-#include <pscf/backend/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/VecRandom.h>
 
 #include <rp/fts/brownian/PredCorrBdStep.tpp>  // base class implementation
 

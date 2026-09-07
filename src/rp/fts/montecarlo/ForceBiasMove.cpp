@@ -8,7 +8,7 @@
 
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/Reduce.h>
-#include <pscf/backend/cpp/CpuVecRandom.h>
+#include <pscf/backend/cpp/VecRandom.h>
 
 #include "ForceBiasMove_c.h"
 #include <rp/fts/montecarlo/ForceBiasMoveBase.tpp>

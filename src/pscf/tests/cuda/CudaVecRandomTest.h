@@ -4,7 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/CUT.h>
+#include <pscf/backend/cuda/VecRandom.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
@@ -28,14 +29,14 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      CudaVecRandom random;
+      VecRandom<CUT> random;
       random.setSeed(6712983651284);
    }
 
    void testUniformDouble()
    {
       printMethod(TEST_FUNC);
-      CudaVecRandom random;
+      VecRandom<CUT> random;
       random.setSeed(6712983651284);
 
       int n = 100000;
@@ -86,7 +87,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      CudaVecRandom random;
+      VecRandom<CUT> random;
       random.setSeed(6712983651284);
 
       int n = 100000;
@@ -136,7 +137,7 @@ public:
    void testUniformRangeDouble()
    {
       printMethod(TEST_FUNC);
-      CudaVecRandom random;
+      VecRandom<CUT> random;
       random.setSeed(6712983651284);
 
       int n = 100000;
@@ -190,7 +191,7 @@ public:
    void testNormalDouble()
    {
       printMethod(TEST_FUNC);
-      CudaVecRandom random;
+      VecRandom<CUT> random;
       random.setSeed(6712983651284);
       
       int n = 100000;
@@ -233,7 +234,7 @@ public:
    void testNormalFloat()
    {
       printMethod(TEST_FUNC);
-      CudaVecRandom random;
+      VecRandom<CUT> random;
       random.setSeed(6712983651284);
 
       int n = 100000;
