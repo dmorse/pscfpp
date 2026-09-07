@@ -41,13 +41,13 @@ namespace Pscf {
    * on the CPU.
    *
    * \defgroup Pscf_Cuda_Reduce_Module Reduce (GPU)
-   * \ingroup Pscf_Cuda_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    */
 
    /**
    * Reduction operations performed on a CPU or GPU.
    *
-   * \ingroup Pscf_Math_Module
+   * \ingroup Pscf_Backend_Module
    */
    namespace Reduce {
 

@@ -18,12 +18,17 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Block of bare memory allocated on the GPU device.
+   * Block of bare memory allocated on the GPU.
    *
    * This class wraps a void* C array that is allocated in GPU device 
    * global memory, and also contains the number of bytes allocated.
    *
-   * \ingroup Pscf_Cuda_Containers_Module
+   * Slices of this memory can be referred to other objects by passing a
+   * CountedReference to the addReference function. This class maintains
+   * a ReferenceCounter member, and throws an Exception or prints an error
+   * message if the memory block is deleted when references still exist.
+   *
+   * \ingroup Pscf_Backend_Cuda_Module
    */
    class DeviceMemory
    {

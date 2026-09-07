@@ -27,6 +27,8 @@ namespace Pscf {
 
    /**
    * Type class for the C++ serial CPU backend.
+   *
+   * \ingroup Pscf_Backend_Cpp_Module
    */
    class CPT
    {

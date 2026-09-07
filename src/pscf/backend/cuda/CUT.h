@@ -28,7 +28,7 @@ namespace Pscf {
    /**
    * Type class for the Cuda GPU backend.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    */
    class CUT {
 

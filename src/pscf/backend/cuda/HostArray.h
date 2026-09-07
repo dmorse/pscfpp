@@ -34,7 +34,7 @@ namespace Pscf {
    * Otherwise, this class is identical to Util::DArray, with the
    * addition of an allocating constructor.
    *
-   * \ingroup Pscf_Cuda_Containers_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    */
    template <typename Data>
    class HostArray : public DArray<Data>

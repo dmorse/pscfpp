@@ -32,7 +32,7 @@ namespace Pscf {
    * random number object interchangably for use in analogous programs 
    * that run on CPU or GPU-accelerated hardware.
    *
-   * \ingroup Pscf_Cpu_Module
+   * \ingroup Pscf_Backend_Cpp_Module
    */
    class CpuVecRandom
    {

@@ -25,7 +25,7 @@ namespace Pscf {
    *
    * The allocate and deallocate functions of this class use functions
    * provided by the FFTW library to allocate and free aligned memory.
-   * The class is otherwise identical tot he Util::DRArray class.
+   * This class is otherwise identical to the Util::DRArray class.
    *
    * A FftwDRArray may be in any of three states:
    *
@@ -65,7 +65,7 @@ namespace Pscf {
    * to attempt to deallocate an FftwDRArray that is referenced by one
    * other associated FftwDRArray data users.
    *
-   * \ingroup Prdc_Cpu_Module
+   * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
    class FftwDRArray : public Array<Data>

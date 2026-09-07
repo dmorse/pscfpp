@@ -27,7 +27,7 @@ namespace Pscf {
    * that value to be used as a seed, but inputting a value of 0 causes
    * the use of a seed that is generated from the system clock. 
    *
-   * \ingroup Pscf_Cuda_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    */
    template<>
    class VecRandom<CUT>

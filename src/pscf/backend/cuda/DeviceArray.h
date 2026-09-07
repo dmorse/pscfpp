@@ -89,7 +89,7 @@ namespace Pscf {
    * must thus be released, by calling the dissociate() member function
    * of each data user, before the data owner can be safely destroyed.
    *
-   * \ingroup Pscf_Cuda_Containers_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    */
    template <typename Data>
    class DeviceArray

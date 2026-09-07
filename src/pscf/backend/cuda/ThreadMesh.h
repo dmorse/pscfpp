@@ -15,7 +15,7 @@
 namespace Pscf {
 
 /**
-* Management of multidimensional GPU thread execution configurations.
+* Multidimensional GPU thread execution configurations.
 *
 * For calculations involving data defined on a multidimensional mesh 
 * (e.g. a field on a real-space grid), it is often useful to use a 
@@ -24,14 +24,16 @@ namespace Pscf {
 * divisible by powers of 2). This way, within the CUDA kernel, it is 
 * easy to identify the grid point that corresponds to a given thread 
 * using threadIdx and blockIdx. 
+*
+* \ingroup Pscf_Backend_Cuda_Module
 */
 namespace ThreadMesh {
 
    /**
-   * Management of multidimensional GPU thread execution configurations.
+   * Management of multidimensional GPU thread configurations.
    *
    * \defgroup Pscf_Cuda_ThreadMesh_Module ThreadMesh
-   * \ingroup Pscf_Cuda_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    */
 
    /**

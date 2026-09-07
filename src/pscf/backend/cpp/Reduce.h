@@ -25,8 +25,8 @@ namespace Pscf {
    * Examples include taking the sum or finding the maximum of all 
    * array elements, or taking an inner product of two arrays.
    *
-   * \defgroup Pscf_Cpu_Reduce_Module Reduce (CPU)
-   * \ingroup Pscf_Cpu_Module
+   * \defgroup Pscf_Cpp_Reduce_Module Reduce (C++ backend)
+   * \ingroup Pscf_Backend_Cpp_Module
    */
 
    namespace Reduce {
@@ -43,7 +43,7 @@ namespace Pscf {
       /**
       * Compute sum of array elements (real).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       * \return  sum of all array elements
@@ -53,7 +53,7 @@ namespace Pscf {
       /**
       * Compute sum of elements of an array slice (real).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       * \param begin  index of first element in slice
@@ -65,7 +65,7 @@ namespace Pscf {
       /**
       * Compute sum of of squares of array elements (real).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       */
@@ -76,7 +76,7 @@ namespace Pscf {
       /**
       * Compute Euclidean inner product of two real arrays .
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param a  first input array
       * \param b  second input array
@@ -89,7 +89,7 @@ namespace Pscf {
       /**
       * Get maximum of array elements (real).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       */
@@ -98,7 +98,7 @@ namespace Pscf {
       /**
       * Get value of maximum element in an array slice (real).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       * \param begin  index of first element in slice
@@ -110,7 +110,7 @@ namespace Pscf {
       /**
       * Get maximum absolute magnitude of array elements .
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       * \return  maximum absolute value
@@ -122,7 +122,7 @@ namespace Pscf {
       /**
       * Get minimum of array elements .
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       * \return  value of minimum element
@@ -132,7 +132,7 @@ namespace Pscf {
       /**
       * Get value of minimum element in an array slice (real).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       * \param begin  index of first element in slice
@@ -144,7 +144,7 @@ namespace Pscf {
       /**
       * Get minimum absolute magnitude of array elements .
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param in  input array
       * \return  value of minimum absolute value of all elements

@@ -37,7 +37,7 @@ namespace Pscf {
       /**
       * Compute sum of all elements of an array (complex).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param a  input array
       * \return sum of all elements of complex array a
@@ -47,7 +47,7 @@ namespace Pscf {
       /**
       * Compute sum of elements of an array slice (complex).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param a  input array
       * \param begin  index of first element of slice
@@ -60,7 +60,7 @@ namespace Pscf {
       /**
       * Compute sum of squares of elements of a complex array.
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param a  input array
       * \return complex sum of squares of elements of array a
@@ -70,7 +70,7 @@ namespace Pscf {
       /**
       * Compute sum of complex products of elements of two arrays (complex).
       *
-      * \ingroup Pscf_Cpu_Reduce_Module
+      * \ingroup Pscf_Cpp_Reduce_Module
       *
       * \param a  first input array
       * \param b  second input array

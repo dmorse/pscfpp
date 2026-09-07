@@ -11,10 +11,10 @@ namespace Pscf {
 namespace ThreadArray {
 
    /**
-   * Management of GPU resources and setting of execution configurations.
+   * Management of GPU thread execution configurations.
    *
    * \defgroup Pscf_Cuda_ThreadArray_Module ThreadArray
-   * \ingroup Pscf_Cuda_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    * @{
    */
  

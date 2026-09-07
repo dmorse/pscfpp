@@ -15,12 +15,12 @@
 namespace Pscf {
 
    /**
-   * \defgroup Pscf_Cuda_Complex_Module Complex Arithmetic (GPU)
+   * \defgroup Pscf_Cuda_Complex_Module Complex Arithmetic (Cuda)
    *
    * Complex arithmetic functions using the complex type cudaComplex
    * used in GPU code that interfaces with cufft.
    *
-   * \ingroup Pscf_Cuda_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    */
 
    /*

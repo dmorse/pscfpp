@@ -24,7 +24,7 @@ namespace Pscf {
    * provided by the FFTW library to allocate and free aligned memory. 
    * The class is otherwise similar in most respects to a Util::DArray.
    *
-   * \ingroup Pscf_Cpu_Module
+   * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
    class FftwDArray : public Array<Data>

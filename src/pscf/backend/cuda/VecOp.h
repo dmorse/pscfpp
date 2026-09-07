@@ -69,14 +69,14 @@ namespace Pscf {
    * the file VecOp.cu, and are thus only accessible for use within that 
    * source file.
    *
-   * \ingroup Pscf_Cuda_Module
+   * \ingroup Pscf_Backend_Cuda_Module
    * \defgroup Pscf_Cuda_VecOp_Module VecOp (GPU)
    */
 
    /**
-   *  Vector operations on GPU or CPU.
+   *  Elementwise vector operations.
    * 
-   * \ingroup Pscf_Math_Module
+   * \ingroup Pscf_Backend_Module
    */
    namespace VecOp {
 

@@ -30,7 +30,7 @@ namespace Pscf {
    * It uses an associated Util::Random scalar random number generator
    * to generate these random numbers. 
    *
-   * \ingroup Pscf_Cpu_Module
+   * \ingroup Pscf_Backend_Cpp_Module
    */
    template <>
    class VecRandom<CPT>

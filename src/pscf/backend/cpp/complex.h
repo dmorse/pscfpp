@@ -17,12 +17,12 @@
 namespace Pscf {
 
    /**
-   * \defgroup Pscf_Cpu_Complex_Module Complex Arithmetic (CPU)
+   * \defgroup Pscf_Cpp_Complex_Module Complex Arithmetic (CPU)
    *
    * Complex arithmetic functions using the complex type fftw_complex 
    * defined by the FFTW fast Fourier transform library.
    *
-   * \ingroup Pscf_Cpu_Module
+   * \ingroup Pscf_Backend_Cpp_Module
    */
 
    // Real and imaginary components of fftw_complex numbers
@@ -30,7 +30,7 @@ namespace Pscf {
    /**
    * Return the real part of an fftw_complex number.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex argument (in)
    */
@@ -41,7 +41,7 @@ namespace Pscf {
    /**
    * Return the imaginary part of an fftw_complex number.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex argument (in)
    */
@@ -54,7 +54,7 @@ namespace Pscf {
    /**
    * Return absolute magnitude of an fftw_complex number.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex argument (in)
    */
@@ -65,7 +65,7 @@ namespace Pscf {
    /**
    * Return square of absolute magnitude of an fftw_complex number.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex argument (in)
    */
@@ -78,7 +78,7 @@ namespace Pscf {
    /**
    * Complex conjugate of an fftw_complex, z = a^*.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex conjugate of argument (out)
    * \param a complex argument (in)
@@ -93,7 +93,7 @@ namespace Pscf {
    /**
    * In-place complex conjugation of an fftw_complex number, a = a^* .
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a argument and output (in/out)
    */
@@ -109,7 +109,7 @@ namespace Pscf {
    /**
    * Create an fftw_complex from real and imaginary parts, z = a + ib.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex (out)
    * \param a real part (in)
@@ -125,7 +125,7 @@ namespace Pscf {
    /**
    * Assign a real input to an fftw_complex variable.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex (out)
    * \param a real (in)
@@ -140,7 +140,7 @@ namespace Pscf {
    /**
    * Assign an fftw_complex input to an fftw_complex variable.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex (out)
    * \param a complex (in)
@@ -155,7 +155,7 @@ namespace Pscf {
    /**
    * Assign a std::complex input to an fftw_complex variable.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex (out)
    * \param a std::complex (in)
@@ -170,7 +170,7 @@ namespace Pscf {
    /**
    * Assign an fftw_complex input to a std::complex variable.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z std::complex (out)
    * \param a complex (in)
@@ -184,7 +184,7 @@ namespace Pscf {
    /**
    * Addition of fftw_complex numbers, z = a + b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex sum (out)
    * \param a complex summand (in)
@@ -200,7 +200,7 @@ namespace Pscf {
    /**
    * Addition of a complex and real number, z = a + b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex sum (out)
    * \param a complex summand (in)
@@ -216,7 +216,7 @@ namespace Pscf {
    /**
    * In-place addition of fftw_complex numbers, a += b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex summand (in) and sum (out)
    * \param b complex summand (in)
@@ -231,7 +231,7 @@ namespace Pscf {
    /**
    * In-place addition of a complex and real number, a += b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex summand (in) and sum (out)
    * \param b real summand (in)
@@ -247,7 +247,7 @@ namespace Pscf {
    /**
    * Subtraction of fftw_complex numbers, z = a - b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex difference (out)
    * \param a complex 1st argument (in)
@@ -263,7 +263,7 @@ namespace Pscf {
    /**
    * Subtraction of a real number from an fftw_complex number, z = a - b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex difference (out)
    * \param a complex 1st argument (in)
@@ -279,7 +279,7 @@ namespace Pscf {
    /**
    * In-place subtraction of fftw_complex numbers, a -= b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex argument (in) and difference (out)
    * \param b complex argument (in)
@@ -294,7 +294,7 @@ namespace Pscf {
    /**
    * In-place subtraction of real from an fftw_complex number, a -= b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex argument (in) and difference (out)
    * \param b real argument (in)
@@ -310,7 +310,7 @@ namespace Pscf {
    *
    * This function returns |a-b|^2 for complex a and b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex 1st argument (in)
    * \param b complex 2nd argument (in)
@@ -328,7 +328,7 @@ namespace Pscf {
    /**
    * Multiplication of fftw_complex numbers, z = a * b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex product (out)
    * \param a complex factor (in)
@@ -344,7 +344,7 @@ namespace Pscf {
    /**
    * Multiplication of an fftw_complex and real number, z = a * b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex product (out)
    * \param a complex factor (in)
@@ -360,7 +360,7 @@ namespace Pscf {
    /**
    * In-place multiplication of two complex number, a *= b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex factor (in) and product (out)
    * \param b complex factor (in)
@@ -377,7 +377,7 @@ namespace Pscf {
    /**
    * In-place multiplication of a complex and real number, a *= b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex factor (in) and product (out)
    * \param b real factor (in)
@@ -392,7 +392,7 @@ namespace Pscf {
    /**
    * Complex square of an fftw_complex number, z = a * a.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex product (out)
    * \param a complex factor (in)
@@ -409,7 +409,7 @@ namespace Pscf {
    /**
    * Division of fftw_complex numbers, z = a / b .
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex ratio (out)
    * \param a complex numerator (in)
@@ -426,7 +426,7 @@ namespace Pscf {
    /**
    * Division of an fftw_complex number by a real number, z = a / b .
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z complex ratio (out)
    * \param a complex numerator (in)
@@ -442,7 +442,7 @@ namespace Pscf {
    /**
    * In-place division of fftw_complex numbers, a /= b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex numerator (in) and ratio (out)
    * \param b complex denominator (in)
@@ -459,7 +459,7 @@ namespace Pscf {
    /**
    * In-place division of an fftw_complex number by a real number, a /= b.
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param a complex numerator (in) and ratio (out)
    * \param b real denominator (in)
@@ -476,7 +476,7 @@ namespace Pscf {
    /**
    * Inversion of an fftw_complex number, z = 1 / a .
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z inverse (out)
    * \param a argument (in)
@@ -494,7 +494,7 @@ namespace Pscf {
    /**
    * Exponentation of a ffts_complex variable, z = exp(a).
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z exponent (out)
    * \param a argument (in)
@@ -513,7 +513,7 @@ namespace Pscf {
    /**
    * Logarithm of an fftw_complex variable, z = log(a).
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param z logarithm (out)
    * \param a argument (in)
@@ -534,7 +534,7 @@ namespace Pscf {
    /**
    * Stream extraction operator for fftw_complex
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param is  input stream
    * \param z   complex number
@@ -544,7 +544,7 @@ namespace Pscf {
    /**
    * Stream insertion operator for fftw_complex
    *
-   * \ingroup Pscf_Cpu_Complex_Module
+   * \ingroup Pscf_Cpp_Complex_Module
    *
    * \param os  output stream
    * \param z  complex number
