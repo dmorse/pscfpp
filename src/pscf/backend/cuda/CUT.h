@@ -51,7 +51,7 @@ namespace Pscf {
       /**
       * Identifier for computational backend.
       */
-      static const Prdc::BackendId id = Prdc::BackendId::Cpp;
+      static const BackendId id = BackendId::Cpp;
 
       /**
       * Initialize backend thread array.

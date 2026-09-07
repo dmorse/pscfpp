@@ -9,7 +9,6 @@
 */
 
 namespace Pscf {
-namespace Prdc {
 
    /**
    * Enum that identifies a computational "backend".
@@ -22,13 +21,11 @@ namespace Prdc {
    *
    *    - Cpp  : serial Cpu backend, programmed in standard C++
    *    - Cuda : Gpu backend, programmed in C++ Cuda
-   *    - None : default null value
    */
    enum class BackendId {
-      Cpp, Cuda, None
+      Cpp, Cuda
    };
 
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

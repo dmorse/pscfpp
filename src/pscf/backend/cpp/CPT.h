@@ -21,9 +21,7 @@ namespace Util {
 
 namespace Pscf {
 
-   // Namespaces that may be used implicitly
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Type class for the C++ serial CPU backend.
@@ -50,7 +48,7 @@ namespace Pscf {
       /**
       * Identifier for computational backend.
       */
-      static const Prdc::BackendId id = BackendId::Cpp;
+      static const BackendId id = BackendId::Cpp;
 
       /**
       * Initialize backend.

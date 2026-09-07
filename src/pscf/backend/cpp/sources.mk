@@ -5,7 +5,8 @@ pscf_backend_cpp_CPP= \
   pscf/backend/cpp/VecOpCx.cpp \
   pscf/backend/cpp/Reduce.cpp \
   pscf/backend/cpp/ReduceCx.cpp \
-  pscf/backend/cpp/CpuVecRandom.cpp 
+  pscf/backend/cpp/CpuVecRandom.cpp \
+  pscf/backend/cpp/VecRandom.cpp 
 
 pscf_backend_cpp_OBJS=\
      $(addprefix $(BLD_DIR)/, $(pscf_backend_cpp_CPP:.cpp=.o))
