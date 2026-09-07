@@ -26,7 +26,7 @@ public:
    {
       printMethod(TEST_FUNC);
       HostArray<double> h;
-      DeviceArray<double> d;
+      DeviceArray<double,CUT> d;
 
       TEST_ASSERT(h.capacity() == 0 );
       TEST_ASSERT(!h.isAllocated() );
@@ -39,7 +39,7 @@ public:
       printMethod(TEST_FUNC);
 
       HostArray<double> h;
-      DeviceArray<double> d;
+      DeviceArray<double,CUT> d;
 
       int capacity = 32;
       h.allocate(capacity);
@@ -63,8 +63,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      DeviceArray<double> d1;
-      DeviceArray<double> d2;
+      DeviceArray<double,CUT> d1;
+      DeviceArray<double,CUT> d2;
 
       int capacity = 128;
       d1.allocate(capacity);
@@ -86,8 +86,8 @@ public:
       int nx = 10;
 
       // Device arrays
-      DeviceArray<double> d1(nx);
-      DeviceArray<double> d2(nx);
+      DeviceArray<double,CUT> d1(nx);
+      DeviceArray<double,CUT> d2(nx);
 
       // Host arrays
       DArray<double> in;

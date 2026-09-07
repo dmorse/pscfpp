@@ -34,7 +34,7 @@ namespace Prdc {
    */
    template <int D>
    class RFieldDft<D,CUT>
-    : public DeviceArray<cudaComplex>
+    : public DeviceArray<cudaComplex,CUT>
    {
 
    public:
@@ -112,7 +112,7 @@ namespace Prdc {
       * \param beginId index in the parent array at which this array starts
       * \param meshDimensions number of grid points in each dimension
       */
-      void associate(DeviceArray<cudaComplex>& arr, int beginId, 
+      void associate(DeviceArray<cudaComplex,CUT>& arr, int beginId, 
                      IntVec<D> const & meshDimensions);
 
       /**
@@ -148,13 +148,13 @@ namespace Prdc {
       IntVec<D> dftDimensions_;
 
       // Make private to prevent allocation without setting meshDimensions.
-      using DeviceArray<cudaComplex>::allocate;
+      using DeviceArray<cudaComplex,CUT>::allocate;
 
       // Make private to prevent association without setting meshDimensions.
-      using DeviceArray<cudaComplex>::associate;
+      using DeviceArray<cudaComplex,CUT>::associate;
 
       // Make private to prevent assignment without setting meshDimensions.
-      using DeviceArray<cudaComplex>::operator =;
+      using DeviceArray<cudaComplex,CUT>::operator =;
 
    };
 

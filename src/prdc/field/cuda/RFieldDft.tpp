@@ -21,7 +21,7 @@ namespace Prdc {
    */
    template <int D>
    RFieldDft<D,CUT>::RFieldDft()
-    : DeviceArray<cudaComplex>()
+    : DeviceArray<cudaComplex,CUT>()
    {}
 
    /*
@@ -29,7 +29,7 @@ namespace Prdc {
    */
    template <int D>
    RFieldDft<D,CUT>::RFieldDft(IntVec<D> const & meshDimensions)
-    : DeviceArray<cudaComplex>()
+    : DeviceArray<cudaComplex,CUT>()
    {  allocate(meshDimensions); }
 
    /*
@@ -44,7 +44,7 @@ namespace Prdc {
    */
    template <int D>
    RFieldDft<D,CUT>::RFieldDft(const RFieldDft<D,CUT>& other)
-    : DeviceArray<cudaComplex>(other)
+    : DeviceArray<cudaComplex,CUT>(other)
    {
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
@@ -58,7 +58,7 @@ namespace Prdc {
    RFieldDft<D,CUT>::operator = (RFieldDft<D,CUT> const & other)
    {
       // Assign data and size of underlying array
-      DeviceArray<cudaComplex>::operator = (other);
+      DeviceArray<cudaComplex,CUT>::operator = (other);
 
       // Assign more specialized data members
       meshDimensions_ = other.meshDimensions_;
@@ -86,13 +86,13 @@ namespace Prdc {
       }
 
       // Use base class assignment operator to copy elements
-      DeviceArray<cudaComplex>::operator = (other);
+      DeviceArray<cudaComplex,CUT>::operator = (other);
 
       return *this;
    }
 
    /*
-   * Allocate underlying DeviceArray<cudaComplex> for the DFT mesh.
+   * Allocate underlying DeviceArray<cudaComplex,CUT> for the DFT mesh.
    */
    template <int D>
    void RFieldDft<D,CUT>::allocate(const IntVec<D>& meshDimensions)
@@ -108,15 +108,15 @@ namespace Prdc {
       FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Allocate complex array on the GPU with size of DFT mesh
-      DeviceArray<cudaComplex>::allocate(size);
+      DeviceArray<cudaComplex,CUT>::allocate(size);
    }
 
    /*
-   * Associate this with a slice of a DeviceArray<cudaComplex>.
+   * Associate this with a slice of a DeviceArray<cudaComplex,CUT>.
    */
    template <int D>
    void RFieldDft<D,CUT>::associate(
-                DeviceArray<cudaComplex>& arr,
+                DeviceArray<cudaComplex,CUT>& arr,
                 int beginId,
                 IntVec<D> const & meshDimensions)
    {
@@ -131,7 +131,7 @@ namespace Prdc {
       FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Associate data with a slice of input array arr
-      DeviceArray<cudaComplex>::associate(arr, beginId, size);
+      DeviceArray<cudaComplex,CUT>::associate(arr, beginId, size);
    }
 
 } // namespace Prdc

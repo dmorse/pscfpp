@@ -41,7 +41,7 @@ namespace Pscf {
       /*
       * Linear array transformation a[i] => c*a[i] + s (float).
       */
-      void linearScale(DeviceArray<float>& a, float c, float s)
+      void linearScale(DeviceArray<float,CUT>& a, float c, float s)
       {
          const int n = a.capacity();
 
@@ -56,7 +56,7 @@ namespace Pscf {
       /*
       * Linear array transformation a[i] => c*a[i] + s (double).
       */
-      void linearScale(DeviceArray<double>& a, double c, double s)
+      void linearScale(DeviceArray<double,CUT>& a, double c, double s)
       {
          const int n = a.capacity();
 
@@ -116,7 +116,7 @@ namespace Pscf {
    /*
    * Populate array with uniform random floats in (0, 1].
    */
-   void VecRandom<CUT>::uniform(DeviceArray<float>& data)
+   void VecRandom<CUT>::uniform(DeviceArray<float,CUT>& data)
    {
       const int n = data.capacity();
       UTIL_CHECK(n > 0);
@@ -132,7 +132,7 @@ namespace Pscf {
    /*
    * Populate array with uniform random doubles in (0, 1].
    */
-   void VecRandom<CUT>::uniform(DeviceArray<double>& data)
+   void VecRandom<CUT>::uniform(DeviceArray<double,CUT>& data)
    {
       const int n = data.capacity();
       UTIL_CHECK(n > 0);
@@ -148,7 +148,7 @@ namespace Pscf {
    /*
    * Populate array with uniform random floats in (min, max].
    */
-   void VecRandom<CUT>::uniform(DeviceArray<float>& data, 
+   void VecRandom<CUT>::uniform(DeviceArray<float,CUT>& data, 
                             float min, float max)
    {
       UTIL_CHECK(max > min);
@@ -159,7 +159,7 @@ namespace Pscf {
    /*
    * Populate array with uniform random doubles in (min, max].
    */
-   void VecRandom<CUT>::uniform(DeviceArray<double>& data,
+   void VecRandom<CUT>::uniform(DeviceArray<double,CUT>& data,
                             double min, double max)
    {
       UTIL_CHECK(max > min);
@@ -170,7 +170,7 @@ namespace Pscf {
    /*
    * Populate array with normal-distributed random floats.
    */
-   void VecRandom<CUT>::normal(DeviceArray<float>& data,
+   void VecRandom<CUT>::normal(DeviceArray<float,CUT>& data,
                            float stddev, float mean)
    {
       UTIL_CHECK(data.capacity() > 0);
@@ -191,7 +191,7 @@ namespace Pscf {
    /*
    * Populate array with normal-distributed random doubles.
    */
-   void VecRandom<CUT>::normal(DeviceArray<double>& data,
+   void VecRandom<CUT>::normal(DeviceArray<double,CUT>& data,
                                double stddev, double mean)
    {
       UTIL_CHECK(data.capacity() > 0);

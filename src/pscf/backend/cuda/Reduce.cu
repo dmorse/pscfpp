@@ -78,7 +78,7 @@ namespace Reduce {
          UTIL_CHECK(n > 0);
 
          // Create output pointer
-         DeviceArray<cudaReal> out(1);
+         DeviceArray<cudaReal,CUT> out(1);
          cudaReal* outPtr = out.cArray();
 
          // Determine size of required workspace, allocate if needed
@@ -112,7 +112,7 @@ namespace Reduce {
          UTIL_CHECK(n > 0);
 
          // Create output pointer
-         DeviceArray<cudaComplex> out(1);
+         DeviceArray<cudaComplex,CUT> out(1);
          cudaComplex* outPtr = out.cArray();
 
          // Determine size of required workspace and allocate if necessary
@@ -144,7 +144,7 @@ namespace Reduce {
          UTIL_CHECK(n > 0);
 
          // Create input and output pointers
-         DeviceArray<cudaReal> out(1);
+         DeviceArray<cudaReal,CUT> out(1);
          cudaReal* outPtr = out.cArray();
 
          // Determine size of required workspace, allocated if needed
@@ -174,7 +174,7 @@ namespace Reduce {
          UTIL_CHECK(n > 0);
 
          // Create output pointer
-         DeviceArray<cudaReal> out(1);
+         DeviceArray<cudaReal,CUT> out(1);
          cudaReal* outPtr = out.cArray();
 
          // Determine size of required workspace, allocated if needed
@@ -213,7 +213,7 @@ namespace Reduce {
    *
    * This implementation uses Nvidia CUB Library functions.
    */
-   cudaReal sum(DeviceArray<cudaReal> const & a)
+   cudaReal sum(DeviceArray<cudaReal,CUT> const & a)
    {
       UTIL_CHECK(a.isAllocated());
       const int n = a.capacity();
@@ -228,7 +228,7 @@ namespace Reduce {
    *
    * This implementation uses Nvidia CUB Library functions.
    */
-   cudaReal sum(DeviceArray<cudaReal> const & a, int begin, int end)
+   cudaReal sum(DeviceArray<cudaReal,CUT> const & a, int begin, int end)
    {
       UTIL_CHECK(a.isAllocated());
       UTIL_CHECK(begin >= 0);
@@ -246,7 +246,7 @@ namespace Reduce {
    *
    * Implementation uses Nvidia CUB Library functions.
    */
-   std::complex<cudaReal> sum(DeviceArray<cudaComplex> const & a)
+   std::complex<cudaReal> sum(DeviceArray<cudaComplex,CUT> const & a)
    {
       UTIL_CHECK(a.isAllocated());
       const int n = a.capacity();
@@ -261,7 +261,7 @@ namespace Reduce {
    *
    * This implementation uses Nvidia CUB Library functions.
    */
-   std::complex<cudaReal> sum(DeviceArray<cudaComplex> const & a,
+   std::complex<cudaReal> sum(DeviceArray<cudaComplex,CUT> const & a,
                               int begin, int end)
    {
       UTIL_CHECK(a.isAllocated());
@@ -278,7 +278,7 @@ namespace Reduce {
    /*
    * Return the sum of squares of elements of a real array.
    */
-   cudaReal sumSq(DeviceArray<cudaReal> const & in)
+   cudaReal sumSq(DeviceArray<cudaReal,CUT> const & in)
    {
       UTIL_CHECK(in.isAllocated());
       int n = in.capacity();
@@ -286,7 +286,7 @@ namespace Reduce {
       // Set up temporary array for result of vector operation
       int workSize = n * sizeof(cudaReal);
       transformSpace_.resize(workSize);
-      DeviceArray<cudaReal> temp;
+      DeviceArray<cudaReal,CUT> temp;
       temp.associate(transformSpace_, n);
 
       // Compute an array of element-wise squares
@@ -301,7 +301,7 @@ namespace Reduce {
    /*
    * Return the sum of squares of elements of a complex array.
    */
-   std::complex<cudaReal> sumSq(DeviceArray<cudaComplex> const & in)
+   std::complex<cudaReal> sumSq(DeviceArray<cudaComplex,CUT> const & in)
    {
       UTIL_CHECK(in.isAllocated());
       int n = in.capacity();
@@ -309,7 +309,7 @@ namespace Reduce {
       // Set up temporary array for result of vector operation
       int workSize = n * sizeof(cudaComplex);
       transformSpace_.resize(workSize);
-      DeviceArray<cudaComplex> temp;
+      DeviceArray<cudaComplex,CUT> temp;
       temp.associate(transformSpace_, n);
 
       // Compute an array of element-wise squares
@@ -325,7 +325,7 @@ namespace Reduce {
    /*
    * Return the sum of square absolute magnitudes for a complex array.
    */
-   cudaReal sumSqAbs(DeviceArray<cudaComplex> const & in)
+   cudaReal sumSqAbs(DeviceArray<cudaComplex,CUT> const & in)
    {
       UTIL_CHECK(in.isAllocated());
       int n = in.capacity();
@@ -333,7 +333,7 @@ namespace Reduce {
       // Set up temporary array for result of vector operation
       int workSize = n * sizeof(cudaReal);
       transformSpace_.resize(workSize);
-      DeviceArray<cudaReal> temp;
+      DeviceArray<cudaReal,CUT> temp;
       temp.associate(transformSpace_, n);
 
       // Compute an array of element-wise square absolute magnitudes
@@ -349,8 +349,8 @@ namespace Reduce {
    /*
    * Compute inner product of two real arrays.
    */
-   cudaReal innerProduct(DeviceArray<cudaReal> const & a,
-                         DeviceArray<cudaReal> const & b)
+   cudaReal innerProduct(DeviceArray<cudaReal,CUT> const & a,
+                         DeviceArray<cudaReal,CUT> const & b)
    {
       UTIL_CHECK(a.isAllocated());
       UTIL_CHECK(b.isAllocated());
@@ -360,7 +360,7 @@ namespace Reduce {
       // Set up temporary array for result of vector operation
       int workSize = n * sizeof(cudaReal);
       transformSpace_.resize(workSize);
-      DeviceArray<cudaReal> temp;
+      DeviceArray<cudaReal,CUT> temp;
       temp.associate(transformSpace_, n);
 
       // Perform element-wise multiplication v[i] = a[i] * b[i]
@@ -378,7 +378,7 @@ namespace Reduce {
    /*
    * Compute max of elements of a real array.
    */
-   cudaReal max(DeviceArray<cudaReal> const & a)
+   cudaReal max(DeviceArray<cudaReal,CUT> const & a)
    {
       UTIL_CHECK(a.isAllocated());
       const int n = a.capacity();
@@ -391,7 +391,7 @@ namespace Reduce {
    /*
    * Compute max of elements of a real array slice.
    */
-   cudaReal max(DeviceArray<cudaReal> const & a, int begin, int end)
+   cudaReal max(DeviceArray<cudaReal,CUT> const & a, int begin, int end)
    {
       UTIL_CHECK(a.isAllocated());
       UTIL_CHECK(begin >= 0);
@@ -407,7 +407,7 @@ namespace Reduce {
    /*
    * Return the maximum absolute magnitude of array elements.
    */
-   cudaReal maxAbs(DeviceArray<cudaReal> const & in)
+   cudaReal maxAbs(DeviceArray<cudaReal,CUT> const & in)
    {
       UTIL_CHECK(in.isAllocated());
       int n = in.capacity();
@@ -415,7 +415,7 @@ namespace Reduce {
       // Set up temporary array for result of vector operation
       int workSize = n * sizeof(cudaReal);
       transformSpace_.resize(workSize);
-      DeviceArray<cudaReal> temp;
+      DeviceArray<cudaReal,CUT> temp;
       temp.associate(transformSpace_, n);
 
       // Compute an array of absolute magnitudes
@@ -433,7 +433,7 @@ namespace Reduce {
    /*
    * Compute minimum of all elements of a real array.
    */
-   cudaReal min(DeviceArray<cudaReal> const & a)
+   cudaReal min(DeviceArray<cudaReal,CUT> const & a)
    {
       UTIL_CHECK(a.isAllocated());
       const int n = a.capacity();
@@ -446,7 +446,7 @@ namespace Reduce {
    /*
    * Compute minimum of elements of a real array slice.
    */
-   cudaReal min(DeviceArray<cudaReal> const & a, int begin, int end)
+   cudaReal min(DeviceArray<cudaReal,CUT> const & a, int begin, int end)
    {
       UTIL_CHECK(a.isAllocated());
       UTIL_CHECK(begin >= 0);
@@ -462,7 +462,7 @@ namespace Reduce {
    /*
    * Return the minimum absolute magnitude of array elements.
    */
-   cudaReal minAbs(DeviceArray<cudaReal> const & in)
+   cudaReal minAbs(DeviceArray<cudaReal,CUT> const & in)
    {
       UTIL_CHECK(in.isAllocated());
       int n = in.capacity();
@@ -470,7 +470,7 @@ namespace Reduce {
       // Set up temporary array for result of vector operation
       int workSize = n * sizeof(cudaReal);
       transformSpace_.resize(workSize);
-      DeviceArray<cudaReal> temp;
+      DeviceArray<cudaReal,CUT> temp;
       temp.associate(transformSpace_, n);
 
       // Compute an array of absolute magnitudes

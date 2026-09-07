@@ -591,8 +591,8 @@ namespace Prdc {
       // Get kBasis and meshDims and store on device
       HostArray<cudaReal> kBasis_h(D*D);
       HostArray<int> meshDims_h(D);
-      DeviceArray<cudaReal> kBasis(D*D);
-      DeviceArray<int> meshDims(D);
+      DeviceArray<cudaReal,CUT> kBasis(D*D);
+      DeviceArray<int,CUT> meshDims(D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
          for (int k = 0; k < D; ++k) {
@@ -667,7 +667,7 @@ namespace Prdc {
 
       // Get kBasis and store on device
       HostArray<cudaReal> kBasis_h(D*D);
-      DeviceArray<cudaReal> kBasis(D*D);
+      DeviceArray<cudaReal,CUT> kBasis(D*D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
          for (int k = 0; k < D; ++k) {
@@ -713,7 +713,7 @@ namespace Prdc {
       // Calculate dkkBasis and store on device
       int idx;
       HostArray<cudaReal> dkkBasis_h(unitCell().nParameter() * D * D);
-      DeviceArray<cudaReal> dkkBasis;
+      DeviceArray<cudaReal,CUT> dkkBasis;
       for (int i = 0 ; i < unitCell().nParameter(); ++i) {
          for (int j = 0; j < D; ++j) {
             for (int k = 0; k < D; ++k) {

@@ -21,7 +21,7 @@ namespace Prdc {
    */
    template <int D>
    RField<D,CUT>::RField()
-    : DeviceArray<cudaReal>()
+    : DeviceArray<cudaReal,CUT>()
    {}
 
    /**
@@ -29,7 +29,7 @@ namespace Prdc {
    */
    template <int D>
    RField<D,CUT>::RField(IntVec<D> const & meshDimensions)
-    : DeviceArray<cudaReal>()
+    : DeviceArray<cudaReal,CUT>()
    {  allocate(meshDimensions); }
 
    /*
@@ -37,7 +37,7 @@ namespace Prdc {
    */
    template <int D>
    RField<D,CUT>::RField(RField<D,CUT> const & other)
-    : DeviceArray<cudaReal>(other),
+    : DeviceArray<cudaReal,CUT>(other),
       meshDimensions_(0)
    {  meshDimensions_ = other.meshDimensions_; }
 
@@ -60,14 +60,14 @@ namespace Prdc {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<cudaReal>::allocate(size);
+      DeviceArray<cudaReal,CUT>::allocate(size);
    }
 
    /*
    * Associate this object with a slice of another DeviceArray.
    */
    template <int D>
-   void RField<D,CUT>::associate(DeviceArray<cudaReal>& arr, int beginId, 
+   void RField<D,CUT>::associate(DeviceArray<cudaReal,CUT>& arr, int beginId, 
                              IntVec<D> const & meshDimensions)
    {
       int size = 1;
@@ -76,7 +76,7 @@ namespace Prdc {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<cudaReal>::associate(arr, beginId, size);
+      DeviceArray<cudaReal,CUT>::associate(arr, beginId, size);
    }
 
    /*
@@ -86,7 +86,7 @@ namespace Prdc {
    RField<D,CUT>& 
    RField<D,CUT>::operator = (const RField<D,CUT>& other)
    {
-      DeviceArray<cudaReal>::operator = (other);
+      DeviceArray<cudaReal,CUT>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
@@ -111,7 +111,7 @@ namespace Prdc {
       }
 
       // Use base class assignment operator to copy elements
-      DeviceArray<cudaReal>::operator = (other);
+      DeviceArray<cudaReal,CUT>::operator = (other);
 
       return *this;
    }

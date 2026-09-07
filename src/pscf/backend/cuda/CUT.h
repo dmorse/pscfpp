@@ -10,8 +10,6 @@
 
 #include <pscf/backend/BackendId.h>
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <pscf/backend/cuda/DeviceArray.h>
-#include <pscf/backend/cuda/HostArray.h>
 
 // Forward declarations
 namespace Util {
@@ -19,6 +17,8 @@ namespace Util {
 }
 namespace Pscf {
    template <typename T> class VecRandom;
+   template <typename Data> class HostArray;
+   template <typename Data, typename T> class DeviceArray;
 }
 
 namespace Pscf {
@@ -39,7 +39,7 @@ namespace Pscf {
       using Real = cudaReal;
       using Complex = cudaComplex;
 
-      template <typename T> using DevArray = DeviceArray<T>;
+      template <typename T> using DevArray = DeviceArray<T,CUT>;
       template <typename T> using LocArray = HostArray<T>;
 
       using RDevArray = DevArray<Real>;

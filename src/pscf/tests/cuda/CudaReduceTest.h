@@ -73,7 +73,7 @@ public:
 
          // Generate random test data,
          // normally distributed about 0.5 with stdev = 2
-         DeviceArray<cudaReal> num(n);
+         DeviceArray<cudaReal,CUT> num(n);
          rand_.normal(num, (cudaReal)2.0, (cudaReal)0.5);
 
          // Copy test data to host
@@ -154,7 +154,7 @@ public:
 
          // Generate random test data,
          // normally distributed about 0.5 with stdev = 2
-         DeviceArray<cudaReal> num(n);
+         DeviceArray<cudaReal,CUT> num(n);
          rand_.normal(num, (cudaReal)2.0, (cudaReal)0.5);
 
          // Copy test data to host
@@ -228,14 +228,14 @@ public:
 
          // Generate random test data,
          // normally distributed about 0.5 with stdev = 2
-         DeviceArray<cudaReal> num_dr(2*n);
+         DeviceArray<cudaReal,CUT> num_dr(2*n);
          HostArray<cudaReal>  num_hr(2*n);
          rand_.normal(num_dr, (cudaReal)2.0, (cudaReal)0.5);
          num_hr = num_dr;
 
           // Copy data to cudaComplex arrays
          HostArray<cudaComplex>  num_h(n);
-         DeviceArray<cudaComplex> num_d(n);
+         DeviceArray<cudaComplex,CUT> num_d(n);
          //cudaComplex sum0 = makeComplex(0.0, 0.0);
          for (int i = 0; i < n; ++i) {
             num_h[i].x = num_hr[2*i];
@@ -332,14 +332,14 @@ public:
 
          // Generate random test data,
          // normally distributed about 0.5 with stdev = 2
-         DeviceArray<cudaReal> num_dr(2*n);
+         DeviceArray<cudaReal,CUT> num_dr(2*n);
          HostArray<cudaReal>  num_hr(2*n);
          rand_.normal(num_dr, (cudaReal)2.0, (cudaReal)0.5);
          num_hr = num_dr;
 
           // Copy data to cudaComplex arrays
          HostArray<cudaComplex>  num_h(n);
-         DeviceArray<cudaComplex> num_d(n);
+         DeviceArray<cudaComplex,CUT> num_d(n);
          //cudaComplex sum0 = makeComplex(0.0, 0.0);
          for (int i = 0; i < n; ++i) {
             num_h[i].x = num_hr[2*i];
@@ -417,7 +417,7 @@ public:
          // Generate random test data on host and device,
          // normally distributed about 0.001 with stdev = 1.0
          HostArray<cudaReal> num_h(n);
-         DeviceArray<cudaReal> num_d(n);
+         DeviceArray<cudaReal,CUT> num_d(n);
          rand_.normal(num_d, (cudaReal)1.0, (cudaReal)0.01);
          num_h = num_d;
 
@@ -511,14 +511,14 @@ public:
 
          // Generate random test data,
          // normally distributed about 0.001 with stdev = 1.0
-         DeviceArray<cudaReal> num_dr(2*n);
+         DeviceArray<cudaReal,CUT> num_dr(2*n);
          HostArray<cudaReal>  num_hr(2*n);
          rand_.normal(num_dr, (cudaReal)1.0, (cudaReal)0.001);
          num_hr = num_dr;
 
           // Copy data to cudaComplex arrays num_h and num_d
          HostArray<cudaComplex>  num_h(n);
-         DeviceArray<cudaComplex> num_d(n);
+         DeviceArray<cudaComplex,CUT> num_d(n);
 	 cudaReal valx, valy;
 	 cudaComplex valSq;
          cudaComplex sum0 = makeComplex(0.0, 0.0);
@@ -625,7 +625,7 @@ public:
          }
 
          // Generate random test data, normally distributed
-         DeviceArray<cudaReal> a(n), b(n);
+         DeviceArray<cudaReal,CUT> a(n), b(n);
          rand_.normal(a, (cudaReal)2.0, (cudaReal)0.5);
          rand_.normal(b, (cudaReal)1.0, (cudaReal)2.0);
 
@@ -708,7 +708,7 @@ public:
 
          // Generate random test data,
          // normally distributed about 7.0 with stdev = 3
-         DeviceArray<cudaReal> num(n);
+         DeviceArray<cudaReal,CUT> num(n);
          rand_.normal(num, (cudaReal)3.0, (cudaReal)7.0);
 
          // Copy test data to host
@@ -772,7 +772,7 @@ public:
 
          // Generate random test data,
          // normally distributed about 7.0 with stdev = 3
-         DeviceArray<cudaReal> num(n);
+         DeviceArray<cudaReal,CUT> num(n);
          rand_.normal(num, (cudaReal)3.0, (cudaReal)7.0);
 
          // Copy test data to host
@@ -838,7 +838,7 @@ public:
 
          // Generate random test data,
          // normally distributed about -1.0 with stdev = 3
-         DeviceArray<cudaReal> num(n);
+         DeviceArray<cudaReal,CUT> num(n);
          rand_.normal(num, (cudaReal)3.0, (cudaReal)-1.0);
 
          // Copy test data to host
@@ -902,7 +902,7 @@ public:
 
          // Generate random test data,
          // normally distributed about 7.0 with stdev = 3
-         DeviceArray<cudaReal> num(n);
+         DeviceArray<cudaReal,CUT> num(n);
          rand_.normal(num, (cudaReal)3.0, (cudaReal)7.0);
 
          // Copy test data to host
@@ -965,7 +965,7 @@ public:
 
          // Random data -
          // normal distribution about -1.0 with stdev = 3
-         DeviceArray<cudaReal> num(n);
+         DeviceArray<cudaReal,CUT> num(n);
          rand_.normal(num, (cudaReal)3.0, (cudaReal)-1.0);
 
          // Copy test data to host
