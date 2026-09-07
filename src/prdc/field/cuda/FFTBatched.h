@@ -69,8 +69,8 @@ namespace Prdc {
       * \param rFields  real values on r-grid (input, gpu mem)
       * \param kFields  complex values on k-grid (output, gpu mem)
       */
-      void forwardTransform(DeviceArray<cudaReal> const & rFields, 
-                            DeviceArray<cudaComplex>& kFields) const;
+      void forwardTransform(DeviceArray<cudaReal,CUT> const & rFields, 
+                            DeviceArray<cudaComplex,CUT>& kFields) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
@@ -85,8 +85,8 @@ namespace Prdc {
       * \param kFields  complex values on k-grid (input, gpu mem)
       * \param rFields  real values on r-grid (output, gpu mem)
       */
-      void inverseTransformUnsafe(DeviceArray<cudaComplex>& kFields, 
-                                  DeviceArray<cudaReal>& rFields) const;
+      void inverseTransformUnsafe(DeviceArray<cudaComplex,CUT>& kFields, 
+                                  DeviceArray<cudaReal,CUT>& rFields) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.

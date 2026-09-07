@@ -80,9 +80,9 @@ namespace VecOp {
    * \param b2  real input array 2 (RHS)
    * \param c2  real coefficent of b2 (RHS)
    */
-   void addVcVc(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaReal> const & b1, cudaReal const c1,
-                DeviceArray<cudaReal> const & b2, cudaReal const c2);
+   void addVcVc(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b1, cudaReal const c1,
+                DeviceArray<cudaReal,CUT> const & b2, cudaReal const c2);
 
    /**
    * Add a scaled vector and a scalar, a[i] = b[i]*c + s (real).
@@ -94,8 +94,8 @@ namespace VecOp {
    * \param c  real coefficient of b (RHS)
    * \param s  real scalar summand (RHS)
    */
-   void addVcS(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b, cudaReal const c,
+   void addVcS(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b, cudaReal const c,
                cudaReal const s);
 
    /**
@@ -107,8 +107,8 @@ namespace VecOp {
    * \param b  real input array (RHS)
    * \param c  real scalar coefficient of b (RHS)
    */
-   void addEqVc(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaReal> const & b,
+   void addEqVc(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b,
                 cudaReal const c);
 
    /**
@@ -124,10 +124,10 @@ namespace VecOp {
    * \param b3  real input array 3 (RHS)
    * \param c3  real coefficient of b3 (RHS)
    */
-   void addVcVcVc(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b1, cudaReal const c1,
-                  DeviceArray<cudaReal> const & b2, cudaReal const c2,
-                  DeviceArray<cudaReal> const & b3, cudaReal const c3);
+   void addVcVcVc(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b1, cudaReal const c1,
+                  DeviceArray<cudaReal,CUT> const & b2, cudaReal const c2,
+                  DeviceArray<cudaReal,CUT> const & b3, cudaReal const c3);
 
    /**
    * Add 2 scaled vectors + scalar, a[i] = b1[i]*c1 + b2[i]*c2 + s (real).
@@ -141,9 +141,9 @@ namespace VecOp {
    * \param c2  real coefficient of b2 (RHS)
    * \param s  real scalar summand (RHS)
    */
-   void addVcVcS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b1, cudaReal const c1,
-                 DeviceArray<cudaReal> const & b2, cudaReal const c2,
+   void addVcVcS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b1, cudaReal const c1,
+                 DeviceArray<cudaReal,CUT> const & b2, cudaReal const c2,
                  cudaReal const s);
 
    /**
@@ -155,8 +155,8 @@ namespace VecOp {
    * \param b  real array (RHS)
    * \param c  input scalar (RHS)
    */
-   void divEqVc(DeviceArray<cudaComplex>& a,
-                DeviceArray<cudaReal> const & b,
+   void divEqVc(DeviceArray<cudaComplex,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b,
                 cudaReal const c);
 
    /**
@@ -168,8 +168,8 @@ namespace VecOp {
    * \param b  real array (RHS)
    * \param c  input scalar
    */
-   void expVc(DeviceArray<cudaReal>& a, 
-              DeviceArray<cudaReal> const & b,
+   void expVc(DeviceArray<cudaReal,CUT>& a, 
+              DeviceArray<cudaReal,CUT> const & b,
               cudaReal const c);
 
 
@@ -184,9 +184,9 @@ namespace VecOp {
    * \param a2  real array 2 (LHS)
    * \param s  shared real array to be assigned to both a1 and a2
    */
-   void eqVPair(DeviceArray<cudaReal>& a1, 
-                DeviceArray<cudaReal>& a2,
-                DeviceArray<cudaReal> const & s);
+   void eqVPair(DeviceArray<cudaReal,CUT>& a1, 
+                DeviceArray<cudaReal,CUT>& a2,
+                DeviceArray<cudaReal,CUT> const & s);
 
    /**
    * Vector multiplication in pairs, ax[i] = bx[i] * s[i], x=1,2 (real).
@@ -199,10 +199,10 @@ namespace VecOp {
    * \param b2  real array 2 (RHS)
    * \param s  shared real array to be multiplied by both b1 and b2
    */
-   void mulVVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2,
-                  DeviceArray<cudaReal> const & b1,
-                  DeviceArray<cudaReal> const & b2,
-                  DeviceArray<cudaReal> const & s);
+   void mulVVPair(DeviceArray<cudaReal,CUT>& a1, DeviceArray<cudaReal,CUT>& a2,
+                  DeviceArray<cudaReal,CUT> const & b1,
+                  DeviceArray<cudaReal,CUT> const & b2,
+                  DeviceArray<cudaReal,CUT> const & s);
 
    /**
    * In-place vector multiplication in pairs, ax[i] *= s[i], x=1,2 (real).
@@ -213,9 +213,9 @@ namespace VecOp {
    * \param a2  real array 2 (LHS)
    * \param s  shared real array to multiply both a1 and a2 (RHS)
    */
-   void mulEqVPair(DeviceArray<cudaReal>& a1, 
-                   DeviceArray<cudaReal>& a2,
-                   DeviceArray<cudaReal> const & s);
+   void mulEqVPair(DeviceArray<cudaReal,CUT>& a1, 
+                   DeviceArray<cudaReal,CUT>& a2,
+                   DeviceArray<cudaReal,CUT> const & s);
 
    // Functions of "many" vectors
 
@@ -231,8 +231,8 @@ namespace VecOp {
    * \param a  real array (LHS)
    * \param vecs  array of DeviceArrays to be added (RHS)
    */
-   void addVMany(DeviceArray<cudaReal>& a,
-                 DArray<DeviceArray<cudaReal> > const & vecs);
+   void addVMany(DeviceArray<cudaReal,CUT>& a,
+                 DArray<DeviceArray<cudaReal,CUT> > const & vecs);
 
    /**
    * Add an arbitrary number of vectors pointwise (real).
@@ -251,8 +251,8 @@ namespace VecOp {
    * \param a  real array (LHS)
    * \param vecs  array of pointers to DeviceArrays to be added
    */
-   void addVMany(DeviceArray<cudaReal>& a,
-                 DArray<DeviceArray<cudaReal> const *> const & vecs);
+   void addVMany(DeviceArray<cudaReal,CUT>& a,
+                 DArray<DeviceArray<cudaReal,CUT> const *> const & vecs);
 
    /**
    * Multiply an undefined number of vectors pointwise (real).
@@ -266,8 +266,8 @@ namespace VecOp {
    * \param a  real array (LHS)
    * \param vecs  array of DeviceArrays to be multiplied (RHS)
    */
-   void mulVMany(DeviceArray<cudaReal>& a,
-                 DArray<DeviceArray<cudaReal> > const & vecs);
+   void mulVMany(DeviceArray<cudaReal,CUT>& a,
+                 DArray<DeviceArray<cudaReal,CUT> > const & vecs);
 
    /**
    * Multiply an undefined number of vectors pointwise.
@@ -286,8 +286,8 @@ namespace VecOp {
    * \param a  real array (LHS)
    * \param vecs  array of real arrays to be multiplied (RHS)
    */
-   void mulVMany(DeviceArray<cudaReal>& a,
-                 DArray<DeviceArray<cudaReal> const *> const & vecs);
+   void mulVMany(DeviceArray<cudaReal,CUT>& a,
+                 DArray<DeviceArray<cudaReal,CUT> const *> const & vecs);
 
    // Other useful functions
 
@@ -299,8 +299,8 @@ namespace VecOp {
    * \param a  real array (LHS)
    * \param b  complex array (RHS)
    */
-   void sqSqAbsV(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaComplex> const & b);
+   void sqSqAbsV(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b);
 
 } // namespace VecOp
 } // namespace Pscf

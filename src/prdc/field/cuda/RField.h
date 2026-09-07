@@ -33,7 +33,7 @@ namespace Prdc {
    */
    template <int D>
    class RField<D,CUT>
-    : public DeviceArray<cudaReal>
+    : public DeviceArray<cudaReal,CUT>
    {
 
    public:
@@ -86,7 +86,7 @@ namespace Prdc {
       * \param beginId index in the parent array at which this array starts
       * \param meshDimensions number of grid points in each dimension
       */
-      void associate(DeviceArray<cudaReal>& arr, int beginId,
+      void associate(DeviceArray<cudaReal,CUT>& arr, int beginId,
                      IntVec<D> const & meshDimensions);
 
       /**
@@ -138,13 +138,13 @@ namespace Prdc {
       IntVec<D> meshDimensions_;
 
       // Make private to prevent allocation without mesh dimensions.
-      using DeviceArray<cudaReal>::allocate;
+      using DeviceArray<cudaReal,CUT>::allocate;
 
       // Make private to prevent association without mesh dimensions.
-      using DeviceArray<cudaReal>::associate;
+      using DeviceArray<cudaReal,CUT>::associate;
 
       // Make private to prevent assignment without mesh dimensions.
-      using DeviceArray<cudaReal>::operator=;
+      using DeviceArray<cudaReal,CUT>::operator=;
 
    };
 

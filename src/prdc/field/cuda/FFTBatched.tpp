@@ -187,8 +187,8 @@ namespace Prdc {
    * Execute forward transform.
    */
    template <int D>
-   void FFTBatched<D>::forwardTransform(DeviceArray<cudaReal> const & rFields, 
-                                        DeviceArray<cudaComplex>& kFields) 
+   void FFTBatched<D>::forwardTransform(DeviceArray<cudaReal,CUT> const & rFields, 
+                                        DeviceArray<cudaComplex,CUT>& kFields) 
    const
    {
       // Preconditions
@@ -221,8 +221,8 @@ namespace Prdc {
    */
    template <int D>
    void 
-   FFTBatched<D>::inverseTransformUnsafe(DeviceArray<cudaComplex>& kFields, 
-                                         DeviceArray<cudaReal>& rFields) 
+   FFTBatched<D>::inverseTransformUnsafe(DeviceArray<cudaComplex,CUT>& kFields, 
+                                         DeviceArray<cudaReal,CUT>& rFields) 
    const
    {
       // Preconditions

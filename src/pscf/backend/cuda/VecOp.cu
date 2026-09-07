@@ -1228,8 +1228,8 @@ namespace {
    /*
    * Vector assignment, a[i] = b[i] (real).
    */
-   void eqV(DeviceArray<cudaReal>& a,
-            DeviceArray<cudaReal> const & b,
+   void eqV(DeviceArray<cudaReal,CUT>& a,
+            DeviceArray<cudaReal,CUT> const & b,
             const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1258,7 +1258,7 @@ namespace {
    * Vector assignment, a[i] = b[i] (real, device to host).
    */
    void eqV(Array<cudaReal>& a,
-            DeviceArray<cudaReal> const & b,
+            DeviceArray<cudaReal,CUT> const & b,
             const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1279,7 +1279,7 @@ namespace {
    /*
    * Vector assignment, a[i] = b[i] (real, device to host).
    */
-   void eqV(DeviceArray<cudaReal>& a,
+   void eqV(DeviceArray<cudaReal,CUT>& a,
             Array<cudaReal> const & b,
             const int beginIdA, const int beginIdB, const int n)
    {
@@ -1301,8 +1301,8 @@ namespace {
    /*
    * Vector assignment, a[i] = b[i] (complex).
    */
-   void eqV(DeviceArray<cudaComplex>& a,
-            DeviceArray<cudaComplex> const & b,
+   void eqV(DeviceArray<cudaComplex,CUT>& a,
+            DeviceArray<cudaComplex,CUT> const & b,
             const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1321,9 +1321,9 @@ namespace {
    /*
    * Vector assignment, a[i] = (b[i], c[i]) (complex, real & imaginary).
    */
-   void eqV(DeviceArray<cudaComplex>& a,
-            DeviceArray<cudaReal> const & b,  // real part
-            DeviceArray<cudaReal> const & c,  // imaginary part
+   void eqV(DeviceArray<cudaComplex,CUT>& a,
+            DeviceArray<cudaReal,CUT> const & b,  // real part
+            DeviceArray<cudaReal,CUT> const & c,  // imaginary part
             const int beginIdA, const int beginIdB, const int beginIdC,
 	    const int n)
    {
@@ -1345,7 +1345,7 @@ namespace {
    /*
    * Vector-scalar assignment, a[i] = b (real).
    */
-   void eqS(DeviceArray<cudaReal>& a,
+   void eqS(DeviceArray<cudaReal,CUT>& a,
             const cudaReal b,
             const int beginIdA, const int n)
    {
@@ -1363,7 +1363,7 @@ namespace {
    /*
    * Vector-scalar assignment, a[i] = b (complex).
    */
-   void eqS(DeviceArray<cudaComplex>& a,
+   void eqS(DeviceArray<cudaComplex,CUT>& a,
             const cudaComplex b,
             const int beginIdA, const int n)
    {
@@ -1383,9 +1383,9 @@ namespace {
    /*
    * Vector addition, a[i] = b[i] + c[i] (real).
    */
-   void addVV(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b,
-              DeviceArray<cudaReal> const & c,
+   void addVV(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
+              DeviceArray<cudaReal,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1407,9 +1407,9 @@ namespace {
    /*
    * Vector addition, a[i] = b[i] + c[i] (complex).
    */
-   void addVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
-              DeviceArray<cudaComplex> const & c,
+   void addVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
+              DeviceArray<cudaComplex,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1431,9 +1431,9 @@ namespace {
    /*
    * Vector addition, a[i] = b[i] + c[i] (mixed, b real).
    */
-   void addVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaReal> const & b,
-              DeviceArray<cudaComplex> const & c,
+   void addVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
+              DeviceArray<cudaComplex,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1455,9 +1455,9 @@ namespace {
    /*
    * Vector addition, a[i] = b[i] + c[i] (mixed, c real).
    */
-   void addVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
-              DeviceArray<cudaReal> const & c,
+   void addVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
+              DeviceArray<cudaReal,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1479,8 +1479,8 @@ namespace {
    /*
    * Vector-scalar addition, a[i] = b[i] + c (real).
    */
-   void addVS(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b,
+   void addVS(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
               const cudaReal c,
               const int beginIdA, const int beginIdB,int n)
    {
@@ -1499,8 +1499,8 @@ namespace {
    }
 
    // Vector-scalar addition, a[i] = b[i] + c (complex).
-   void addVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
+   void addVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
               const cudaComplex c,
               const int beginIdA, const int beginIdB,int n)
    {
@@ -1519,8 +1519,8 @@ namespace {
    }
 
    // Vector addition, a[i] = b[i] + c (mixed, b real).
-   void addVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaReal> const & b,
+   void addVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
               const cudaComplex c,
               const int beginIdA, const int beginIdB,int n)
    {
@@ -1539,8 +1539,8 @@ namespace {
    }
 
    // Vector addition, a[i] = b[i] + c (mixed, c real).
-   void addVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
+   void addVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
               const cudaReal c,
               const int beginIdA, const int beginIdB,int n)
    {
@@ -1559,9 +1559,9 @@ namespace {
    }
 
    // Vector subtraction, a[i] = b[i] - c[i] (real).
-   void subVV(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b,
-              DeviceArray<cudaReal> const & c,
+   void subVV(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
+              DeviceArray<cudaReal,CUT> const & c,
               const int beginIdA,
               const int beginIdB, const int beginIdC,
               const int n)
@@ -1581,9 +1581,9 @@ namespace {
    }
 
    // Vector subtraction, a[i] = b[i] - c[i] (cudaComplex).
-   void subVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
-              DeviceArray<cudaComplex> const & c,
+   void subVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
+              DeviceArray<cudaComplex,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1603,9 +1603,9 @@ namespace {
    }
 
    // Vector subtraction, a[i]=b[i]-c[i] (mixed).
-   void subVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaReal> const & b,
-              DeviceArray<cudaComplex> const & c,
+   void subVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
+              DeviceArray<cudaComplex,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1625,9 +1625,9 @@ namespace {
    }
 
    // Vector subtraction, a[i]=b[i]-c[i] (mixed).
-   void subVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
-              DeviceArray<cudaReal> const & c,
+   void subVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
+              DeviceArray<cudaReal,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1647,8 +1647,8 @@ namespace {
    }
 
    // Vector subtraction, a[i] = b[i] - c (cudaReal).
-   void subVS(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b,
+   void subVS(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
               const cudaReal c,
               const int beginIdA, const int beginIdB,
                const int n)
@@ -1668,8 +1668,8 @@ namespace {
    }
 
    // Vector subtraction, a[i] = b[i] - c (complex).
-   void subVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
+   void subVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
               const cudaComplex c, const int beginIdA, const int beginIdB,
               const int n)
    {
@@ -1688,8 +1688,8 @@ namespace {
    }
 
    // Vector-scalar subtraction, a[i] = b[i] - c (mixed).
-   void subVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaReal> const & b,
+   void subVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
               const cudaComplex c, const int beginIdA, const int beginIdB,
               const int n)
    {
@@ -1707,8 +1707,8 @@ namespace {
    }
 
    // Vector-scalar subtraction, a[i] = b[i] - c (mixed).
-   void subVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
+   void subVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
               const cudaReal c,
               const int beginIdA, const int beginIdB,
               const int n)
@@ -1727,9 +1727,9 @@ namespace {
    }
 
    // Vector multiplication, a[i] = b[i] * c[i] (real).
-   void mulVV(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b,
-              DeviceArray<cudaReal> const & c,
+   void mulVV(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
+              DeviceArray<cudaReal,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1748,9 +1748,9 @@ namespace {
    }
 
    // Vector multiplication, a[i] = b[i] * c[i] (cudaComplex).
-   void mulVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
-              DeviceArray<cudaComplex> const & c,
+   void mulVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
+              DeviceArray<cudaComplex,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1770,9 +1770,9 @@ namespace {
    }
 
    // Vector multiplication, a[i]=b[i]*c[i] (mixed).
-   void mulVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaReal> const & b,
-              DeviceArray<cudaComplex> const & c,
+   void mulVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
+              DeviceArray<cudaComplex,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1792,9 +1792,9 @@ namespace {
    }
 
    // Vector multiplication, a[i]=b[i]*c[i] (mixed).
-   void mulVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
-              DeviceArray<cudaReal> const & c,
+   void mulVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
+              DeviceArray<cudaReal,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC,
               const int n)
    {
@@ -1814,8 +1814,8 @@ namespace {
    }
 
    // Vector-scalar multiplication, a[i] = b[i] * c (real).
-   void mulVS(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b,
+   void mulVS(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
               const cudaReal c,
               const int beginIdA, const int beginIdB,
               const int n)
@@ -1835,8 +1835,8 @@ namespace {
    }
 
    // Vector-scalar multiplication, a[i] = b[i] * c (complex).
-   void mulVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
+   void mulVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
               const cudaComplex c,
               const int beginIdA, const int beginIdB,
               const int n)
@@ -1855,8 +1855,8 @@ namespace {
    }
 
    // Vector-scalar multiplication, a[i] = b[i] * c (mixed).
-   void mulVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaReal> const & b,
+   void mulVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
               const cudaComplex c,
               const int beginIdA, const int beginIdB, const int n)
    {
@@ -1874,8 +1874,8 @@ namespace {
    }
 
    // Vector multiplication, a[i] = b[i] * c (mixed).
-   void mulVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
+   void mulVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
               const cudaReal c,
               const int beginIdA, const int beginIdB,
               const int n)
@@ -1894,9 +1894,9 @@ namespace {
    }
 
    // Vector division, a[i] = b[i] / c[i] (real).
-   void divVV(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b,
-              DeviceArray<cudaReal> const & c, const int beginIdA,
+   void divVV(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
+              DeviceArray<cudaReal,CUT> const & c, const int beginIdA,
               const int beginIdB, const int beginIdC, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -1916,9 +1916,9 @@ namespace {
    /*
    * Vector division, a[i] = b[i] / c[i] (mixed).
    */
-   void divVV(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
-              DeviceArray<cudaReal> const & c,
+   void divVV(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
+              DeviceArray<cudaReal,CUT> const & c,
               const int beginIdA, const int beginIdB, const int beginIdC, 
               const int n)
    {
@@ -1940,8 +1940,8 @@ namespace {
    /*
    * Vector-scalar division, a[i] = b[i] / c (real).
    */
-   void divVS(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b,
+   void divVS(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b,
               const cudaReal c,
               const int beginIdA, const int beginIdB,
               const int n)
@@ -1963,8 +1963,8 @@ namespace {
    /*
    * Vector division, a[i] = b[i] / c (mixed, c real).
    */
-   void divVS(DeviceArray<cudaComplex>& a,
-              DeviceArray<cudaComplex> const & b,
+   void divVS(DeviceArray<cudaComplex,CUT>& a,
+              DeviceArray<cudaComplex,CUT> const & b,
               const cudaReal c, 
               const int beginIdA, const int beginIdB,
               const int n)
@@ -1986,9 +1986,9 @@ namespace {
    /*
    * Division of scalar by  vector, a[i] = b / c[i] (real).
    */
-   void divSV(DeviceArray<cudaReal>& a,
+   void divSV(DeviceArray<cudaReal,CUT>& a,
               const cudaReal b,
-              DeviceArray<cudaReal> const & c,
+              DeviceArray<cudaReal,CUT> const & c,
               const int beginIdA, const int beginIdC, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2009,8 +2009,8 @@ namespace {
    /*
    * Vector addition in-place, a[i] += b[i] (real).
    */
-   void addEqV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b,
+   void addEqV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2029,8 +2029,8 @@ namespace {
    /*
    * Vector addition in-place, a[i] += b[i] (complex).
    */
-   void addEqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaComplex> const & b,
+   void addEqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaComplex,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2049,9 +2049,9 @@ namespace {
    /*
    * Vector addition in-place, a[i] += (b[i], c[i]) (complex, real/imag).
    */
-   void addEqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaReal> const & b,
-               DeviceArray<cudaReal> const & c,
+   void addEqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
+               DeviceArray<cudaReal,CUT> const & c,
                const int beginIdA, const int beginIdB, const int beginIdC,
 	       const int n)
    {
@@ -2074,8 +2074,8 @@ namespace {
    /*
    * Vector addition in-place, a[i] += b[i] (mixed).
    */
-   void addEqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaReal> const & b,
+   void addEqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, 
 	       const int n)
    {
@@ -2095,7 +2095,7 @@ namespace {
    /*
    * Vector-scalar in-place addition, a[i] += b (real).
    */
-   void addEqS(DeviceArray<cudaReal>& a,
+   void addEqS(DeviceArray<cudaReal,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n)
    {
@@ -2113,7 +2113,7 @@ namespace {
    /*
    * Vector-scalar in-place addition, a[i] += b (complex).
    */
-   void addEqS(DeviceArray<cudaComplex>& a,
+   void addEqS(DeviceArray<cudaComplex,CUT>& a,
                const cudaComplex b,
                const int beginIdA, const int n)
    {
@@ -2131,7 +2131,7 @@ namespace {
    /*
    * Vector-scalar in-place addition, a[i] += b (mixed).
    */
-   void addEqS(DeviceArray<cudaComplex>& a,
+   void addEqS(DeviceArray<cudaComplex,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n)
    {
@@ -2149,8 +2149,8 @@ namespace {
    /*
    * Vector in-place subtraction, a[i] -= b[i] (real).
    */
-   void subEqV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b,
+   void subEqV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2169,8 +2169,8 @@ namespace {
    /*
    * Vector in-place subtraction, a[i] -= b[i] (complex).
    */
-   void subEqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaComplex> const & b,
+   void subEqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaComplex,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2189,8 +2189,8 @@ namespace {
    /*
    * Vector in-place subtraction, a[i] -= b[i] (mixed).
    */
-   void subEqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaReal> const & b,
+   void subEqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2209,7 +2209,7 @@ namespace {
    /*
    * Vector-scalar in-place subtraction, a[i] -= b (real).
    */
-   void subEqS(DeviceArray<cudaReal>& a,
+   void subEqS(DeviceArray<cudaReal,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n)
    {
@@ -2227,7 +2227,7 @@ namespace {
    /*
    * Vector-scalar in-place subtraction, a[i] -= b (complex).
    */
-   void subEqS(DeviceArray<cudaComplex>& a,
+   void subEqS(DeviceArray<cudaComplex,CUT>& a,
                const cudaComplex b,
                const int beginIdA, const int n)
    {
@@ -2245,7 +2245,7 @@ namespace {
    /*
    * Vector-scalar in-place subtraction, a[i] -= b (mixed).
    */
-   void subEqS(DeviceArray<cudaComplex>& a,
+   void subEqS(DeviceArray<cudaComplex,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n)
    {
@@ -2263,8 +2263,8 @@ namespace {
    // In-place multiplication
 
    // Vector in-place multiplication, a[i] *= b[i] (real).
-   void mulEqV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b,
+   void mulEqV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2281,8 +2281,8 @@ namespace {
    }
 
    // Vector in-place multiplication, a[i] *= b[i] (cudaComplex).
-   void mulEqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaComplex> const & b,
+   void mulEqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaComplex,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2299,8 +2299,8 @@ namespace {
    }
 
    // Vector in-place multiplication, a[i] *= b[i] (mixed).
-   void mulEqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaReal> const & b,
+   void mulEqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2317,7 +2317,7 @@ namespace {
    }
 
    // Vector in-place multiplication, a[i] *= b (cudaReal).
-   void mulEqS(DeviceArray<cudaReal>& a,
+   void mulEqS(DeviceArray<cudaReal,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n)
    {
@@ -2333,7 +2333,7 @@ namespace {
    }
 
    // Vector in-place multiplication, a[i] *= b (cudaComplex).
-   void mulEqS(DeviceArray<cudaComplex>& a,
+   void mulEqS(DeviceArray<cudaComplex,CUT>& a,
                const cudaComplex b,
                const int beginIdA, const int n)
    {
@@ -2351,7 +2351,7 @@ namespace {
    /*
    * Vector in-place multiplication, a[i] *= b (mixed).
    */
-   void mulEqS(DeviceArray<cudaComplex>& a,
+   void mulEqS(DeviceArray<cudaComplex,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n)
    {
@@ -2371,8 +2371,8 @@ namespace {
    /*
    * Vector elementwise in-place division, a[i] /= b[i] (real).
    */
-   void divEqV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b,
+   void divEqV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2391,8 +2391,8 @@ namespace {
    /*
    * Vector elementwise in-place division, a[i] /= b[i] (mixed).
    */
-   void divEqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaReal> const & b,
+   void divEqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2411,7 +2411,7 @@ namespace {
    /*
    * Vector-scalar in-place division, a[i] /= b (real).
    */
-   void divEqS(DeviceArray<cudaReal>& a,
+   void divEqS(DeviceArray<cudaReal,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n)
    {
@@ -2429,7 +2429,7 @@ namespace {
    /*
    * Vector-scalar in-place division, a[i] /= b (mixed).
    */
-   void divEqS(DeviceArray<cudaComplex>& a,
+   void divEqS(DeviceArray<cudaComplex,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n)
    {
@@ -2449,8 +2449,8 @@ namespace {
    /*
    * Vector exponentiation, a[i] = exp(b[i]) (real).
    */
-   void expV(DeviceArray<cudaReal>& a,
-             DeviceArray<cudaReal> const & b,
+   void expV(DeviceArray<cudaReal,CUT>& a,
+             DeviceArray<cudaReal,CUT> const & b,
              const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2469,8 +2469,8 @@ namespace {
    /*
    * Vector exponentiation, a[i] = exp(b[i]) (complex).
    */
-   void expV(DeviceArray<cudaComplex>& a,
-             DeviceArray<cudaComplex> const & b,
+   void expV(DeviceArray<cudaComplex,CUT>& a,
+             DeviceArray<cudaComplex,CUT> const & b,
              const int beginIdA, const int beginIdB, const int n)
    {
       UTIL_CHECK(a.capacity() >= n + beginIdA);
@@ -2491,8 +2491,8 @@ namespace {
    /*
    * Vector elementwise square, a[i] = b[i]*b[i] (real).
    */
-   void sqV(DeviceArray<cudaReal>& a,
-            DeviceArray<cudaReal> const & b,
+   void sqV(DeviceArray<cudaReal,CUT>& a,
+            DeviceArray<cudaReal,CUT> const & b,
             const int beginIdA, const int beginIdB, 
             const int n)
    {
@@ -2512,8 +2512,8 @@ namespace {
    /*
    * Vector elementwise square, a[i] = b[i]*b[i] (complex).
    */
-   void sqV(DeviceArray<cudaComplex>& a,
-            DeviceArray<cudaComplex> const & b,
+   void sqV(DeviceArray<cudaComplex,CUT>& a,
+            DeviceArray<cudaComplex,CUT> const & b,
             const int beginIdA, const int beginIdB, 
             const int n)
    {
@@ -2535,8 +2535,8 @@ namespace {
    /*
    * Vector absolute magnitude, a[i] = abs(b[i]) (real).
    */
-   void absV(DeviceArray<cudaReal>& a,
-             DeviceArray<cudaReal> const & b,
+   void absV(DeviceArray<cudaReal,CUT>& a,
+             DeviceArray<cudaReal,CUT> const & b,
              const int beginIdA, const int beginIdB,
              const int n)
    {
@@ -2556,8 +2556,8 @@ namespace {
    /*
    * Vector absolute magnitude squared, a[i] = |b[i]|^2 (complex).
    */
-   void sqAbsV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaComplex> const & b,
+   void sqAbsV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaComplex,CUT> const & b,
                const int beginIdA, const int beginIdB, 
                const int n)
    {

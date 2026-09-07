@@ -167,7 +167,7 @@ namespace Prdc {
       * image, and so on. If isRealField is true, kSize is smaller than
       * the size of the real-space mesh. Otherwise, it is equal.
       */
-      DeviceArray<int> const & minImages_d() const;
+      DeviceArray<int,CUT> const & minImages_d() const;
 
       /**
       * Get minimum images as IntVec<D> objects on the host.
@@ -220,7 +220,7 @@ namespace Prdc {
       * This method will throw an error if isRealField == false, because
       * there are no implicit inverses in such a case.
       */
-      DeviceArray<bool> const & implicitInverse() const;
+      DeviceArray<bool,CUT> const & implicitInverse() const;
 
       /**
       * Get the sortedIds array by reference.
@@ -343,7 +343,7 @@ namespace Prdc {
       * real-space mesh. Otherwise, kSize_ is equal to the size of the
       * real-space mesh.
       */
-      DeviceArray<int> minImages_;
+      DeviceArray<int,CUT> minImages_;
 
       /**
       * Array of IntVec<D> minimum images for waves, stored on the host.
@@ -370,7 +370,7 @@ namespace Prdc {
       * The dimensions are kSize_ * nParam, where nParam is the number
       * of unit cell parameters.
       */
-      DeviceArray<cudaReal> dKSq_;
+      DeviceArray<cudaReal,CUT> dKSq_;
 
       /**
       * Array of RFields, where each RField is a slice of the dKSq_ array.
@@ -394,7 +394,7 @@ namespace Prdc {
       * This array is only allocated and used if isRealField_ is true,
       * in which case it has size kSize_.
       */
-      DeviceArray<bool> implicitInverse_;
+      DeviceArray<bool,CUT> implicitInverse_;
 
       /**
       * Wavevector ranks, sorted in ascending wavevector magnitude.
@@ -497,7 +497,7 @@ namespace Prdc {
 
    // Get the array of minimum images on the device by reference.
    template <int D> inline
-   DeviceArray<int> const & WaveList<D,CUT>::minImages_d() const
+   DeviceArray<int,CUT> const & WaveList<D,CUT>::minImages_d() const
    {
       UTIL_CHECK(hasMinImages_);
       return minImages_;
@@ -521,7 +521,7 @@ namespace Prdc {
 
    // Get the implicitInverse array by reference.
    template <int D> inline
-   DeviceArray<bool> const & WaveList<D,CUT>::implicitInverse() const
+   DeviceArray<bool,CUT> const & WaveList<D,CUT>::implicitInverse() const
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);

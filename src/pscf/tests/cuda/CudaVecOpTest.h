@@ -40,10 +40,10 @@ private:
 
    // Input and output arrays, real and complex
    HostArray<cudaReal> hInReal, hInReal2, hOutReal, hOutReal2;
-   DeviceArray<cudaReal> dInReal, dInReal2, dOutReal, dOutReal2;
+   DeviceArray<cudaReal,CUT> dInReal, dInReal2, dOutReal, dOutReal2;
 
    HostArray<cudaComplex> hInComplex, hInComplex2, hOutComplex;
-   DeviceArray<cudaComplex> dInComplex, dInComplex2, dOutComplex;
+   DeviceArray<cudaComplex,CUT> dInComplex, dInComplex2, dOutComplex;
 
    // Input scalars, real and complex
    cudaReal scalarReal;
@@ -1364,7 +1364,7 @@ public:
       printMethod(TEST_FUNC);
 
       // ~~~ Test addVMany ~~~
-      DArray<DeviceArray<cudaReal> const *> inVecs;
+      DArray<DeviceArray<cudaReal,CUT> const *> inVecs;
       inVecs.allocate(4);
       inVecs[0] = &dInReal;
       inVecs[1] = &dInReal2;
@@ -1377,7 +1377,7 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      DArray<DeviceArray<cudaReal> > inVecs2;
+      DArray<DeviceArray<cudaReal,CUT> > inVecs2;
       inVecs2.allocate(4);
       inVecs2[0].associate(dInReal, 0, dInReal.capacity());
       inVecs2[1].associate(dInReal2, 0, dInReal2.capacity());

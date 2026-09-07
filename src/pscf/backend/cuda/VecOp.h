@@ -93,8 +93,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void eqV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b,
+      void eqV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -106,8 +106,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void eqV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b)
+      void eqV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b)
       {  eqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -122,7 +122,7 @@ namespace Pscf {
       * \param n  number of elements in the slice
       */
       void eqV(Array<cudaReal>& a,
-               DeviceArray<cudaReal> const & b,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -135,7 +135,7 @@ namespace Pscf {
       */
       inline
       void eqV(Array<cudaReal>& a,
-               DeviceArray<cudaReal> const & b)
+               DeviceArray<cudaReal,CUT> const & b)
       {  eqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -149,7 +149,7 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void eqV(DeviceArray<cudaReal>& a,
+      void eqV(DeviceArray<cudaReal,CUT>& a,
                Array<cudaReal> const & b,
                const int beginIdA, const int beginIdB, const int n);
 
@@ -162,7 +162,7 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void eqV(DeviceArray<cudaReal>& a,
+      void eqV(DeviceArray<cudaReal,CUT>& a,
                Array<cudaReal> const & b)
       {  eqV(a, b, 0, 0, a.capacity()); }
 
@@ -177,8 +177,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void eqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaComplex> const & b,
+      void eqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaComplex,CUT> const & b,
                const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -190,8 +190,8 @@ namespace Pscf {
       * \param b  input array (RHS)
       */
       inline
-      void eqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaComplex> const & b)
+      void eqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaComplex,CUT> const & b)
       {  eqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -204,7 +204,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void eqS(DeviceArray<cudaReal>& a,
+      void eqS(DeviceArray<cudaReal,CUT>& a,
                const cudaReal b,
                const int beginIdA, const int n);
 
@@ -217,7 +217,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void eqS(DeviceArray<cudaReal>& a, const cudaReal b)
+      void eqS(DeviceArray<cudaReal,CUT>& a, const cudaReal b)
       {  eqS(a, b, 0, a.capacity()); }
 
       /**
@@ -230,7 +230,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void eqS(DeviceArray<cudaComplex>& a,
+      void eqS(DeviceArray<cudaComplex,CUT>& a,
                const cudaComplex b,
                const int beginIdA, const int n);
 
@@ -243,7 +243,7 @@ namespace Pscf {
       * \param b  complex scalar (RHS)
       */
       inline
-      void eqS(DeviceArray<cudaComplex>& a, const cudaComplex b)
+      void eqS(DeviceArray<cudaComplex,CUT>& a, const cudaComplex b)
       {  eqS(a, b, 0, a.capacity()); }
 
       // Addition operations
@@ -261,9 +261,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void addVV(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaReal> const & c,
+      void addVV(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c,
                  const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -277,9 +277,9 @@ namespace Pscf {
       * \param c  real array (RHS)
       */
       inline
-      void addVV(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaReal> const & c)
+      void addVV(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c)
       {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -295,9 +295,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void addVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaComplex> const & c,
+      void addVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c,
                  const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -311,9 +311,9 @@ namespace Pscf {
       * \param c  complex array (RHS)
       */
       inline
-      void addVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaComplex> const & c)
+      void addVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c)
       {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -329,9 +329,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void addVV(DeviceArray<cudaComplex> & a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaComplex> const & c,
+      void addVV(DeviceArray<cudaComplex,CUT> & a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c,
                  const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -345,9 +345,9 @@ namespace Pscf {
       * \param c  complex array (RHS)
       */
       inline
-      void addVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaComplex> const & c)
+      void addVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c)
       {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -363,9 +363,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void addVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaReal> const & c,
+      void addVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c,
                  const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -379,9 +379,9 @@ namespace Pscf {
       * \param c  real array (RHS)
       */
       inline
-      void addVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaReal> const & c)
+      void addVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c)
       {  addVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -396,8 +396,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void addVS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
+      void addVS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaReal c,
                  const int beginIdA, const int beginIdB,
                  const int n);
@@ -412,8 +412,8 @@ namespace Pscf {
       * \param c  real scalar (RHS)
       */
       inline
-      void addVS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
+      void addVS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaReal c)
       {  addVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -429,8 +429,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void addVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void addVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaComplex c,
                  const int beginIdA, const int beginIdB,
                  const int n);
@@ -445,8 +445,8 @@ namespace Pscf {
       * \param c  complex scalar (RHS)
       */
       inline
-      void addVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void addVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaComplex c)
       {  addVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -462,8 +462,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void addVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
+      void addVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaComplex c,
                  const int beginIdA, const int beginIdB, const int n);
 
@@ -477,8 +477,8 @@ namespace Pscf {
       * \param c  complex scalar (RHS)
       */
       inline
-      void addVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
+      void addVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaComplex c)
       {  addVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -494,8 +494,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void addVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void addVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaReal c,
                  const int beginIdA, const int beginIdB, const int n);
 
@@ -509,8 +509,8 @@ namespace Pscf {
       * \param c  real scalar (RHS)
       */
       inline
-      void addVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void addVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaReal c)
       {  addVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -530,9 +530,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void subVV(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaReal> const & c,
+      void subVV(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c,
       	   const int beginIdA, const int beginIdB, const int beginIdC,
       	   const int n);
 
@@ -546,8 +546,8 @@ namespace Pscf {
       * \param c  real array (RHS)
       */
       inline
-      void subVV(DeviceArray<cudaReal>& a, DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaReal> const & c)
+      void subVV(DeviceArray<cudaReal,CUT>& a, DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c)
       {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -563,9 +563,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void subVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaComplex> const & c, const int beginIdA,
+      void subVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c, const int beginIdA,
                  const int beginIdB, const int beginIdC, const int n);
 
       /**
@@ -578,9 +578,9 @@ namespace Pscf {
       * \param c  input array (RHS)
       */
       inline
-      void subVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaComplex> const & c)
+      void subVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c)
       {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -596,9 +596,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void subVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaComplex> const & c,
+      void subVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c,
                  const int beginIdA,
                  const int beginIdB, const int beginIdC,
                  const int n);
@@ -613,9 +613,9 @@ namespace Pscf {
       * \param c  complex array (RHS)
       */
       inline
-      void subVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaComplex> const & c)
+      void subVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c)
       {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -631,9 +631,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void subVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaReal> const & c,
+      void subVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c,
                  const int beginIdA,
                  const int beginIdB, const int beginIdC, const int n);
 
@@ -647,9 +647,9 @@ namespace Pscf {
       * \param c  real  array (RHS)
       */
       inline
-      void subVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaReal> const & c)
+      void subVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c)
       {  subVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -664,8 +664,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void subVS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
+      void subVS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaReal c,
                  const int beginIdA, const int beginIdB,
                  const int n);
@@ -680,8 +680,8 @@ namespace Pscf {
       * \param c  real scalar (RHS)
       */
       inline
-      void subVS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
+      void subVS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaReal c)
       {  subVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -697,8 +697,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void subVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void subVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaComplex c,
                  const int beginIdA, const int beginIdB, const int n);
 
@@ -712,8 +712,8 @@ namespace Pscf {
       * \param c  complex scalar (RHS)
       */
       inline
-      void subVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void subVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaComplex c)
       {  subVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -729,8 +729,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void subVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
+      void subVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaComplex c,
       	   const int beginIdA, const int beginIdB, const int n);
 
@@ -744,8 +744,8 @@ namespace Pscf {
       * \param c  complex scalar (RHS)
       */
       inline
-      void subVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
+      void subVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaComplex c)
       {  subVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -761,8 +761,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void subVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void subVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaReal c,
                  const int beginIdA, const int beginIdB, const int n);
 
@@ -776,8 +776,8 @@ namespace Pscf {
       * \param c  real scalar (RHS)
       */
       inline
-      void subVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void subVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaReal c)
       {  subVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -797,9 +797,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void mulVV(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaReal> const & c,
+      void mulVV(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c,
       	   const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -813,9 +813,9 @@ namespace Pscf {
       * \param c  real array (RHS)
       */
       inline
-      void mulVV(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaReal> const & c)
+      void mulVV(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c)
       {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -831,9 +831,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void mulVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaComplex> const & c,
+      void mulVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c,
                  const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -847,9 +847,9 @@ namespace Pscf {
       * \param c  complex array (RHS)
       */
       inline
-      void mulVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaComplex> const & c)
+      void mulVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c)
       {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -865,9 +865,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void mulVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaComplex> const & c, const int beginIdA,
+      void mulVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c, const int beginIdA,
                  const int beginIdB, const int beginIdC, const int n);
 
       /**
@@ -880,9 +880,9 @@ namespace Pscf {
       * \param c  input array (RHS)
       */
       inline
-      void mulVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaComplex> const & c)
+      void mulVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaComplex,CUT> const & c)
       {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -898,9 +898,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void mulVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaReal> const & c,
+      void mulVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c,
                  const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -914,9 +914,9 @@ namespace Pscf {
       * \param c  real array (RHS)
       */
       inline
-      void mulVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaReal> const & c)
+      void mulVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c)
       {  mulVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -931,8 +931,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void mulVS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
+      void mulVS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaReal c,
                  const int beginIdA, const int beginIdB,
                  const int n);
@@ -947,8 +947,8 @@ namespace Pscf {
       * \param c  real scalar (RHS)
       */
       inline
-      void mulVS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
+      void mulVS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaReal c)
       {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -964,8 +964,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void mulVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void mulVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaComplex c,
                  const int beginIdA, const int beginIdB, const int n);
 
@@ -979,8 +979,8 @@ namespace Pscf {
       * \param c  complex scalar (RHS)
       */
       inline
-      void mulVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void mulVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
       	   const cudaComplex c)
       {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -996,8 +996,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void mulVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
+      void mulVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaComplex c,
                  const int beginIdA, const int beginIdB, const int n);
 
@@ -1011,8 +1011,8 @@ namespace Pscf {
       * \param c  complex scalar (RHS)
       */
       inline
-      void mulVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaReal> const & b,
+      void mulVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
       	   const cudaComplex c)
       {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -1028,8 +1028,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void mulVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void mulVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaReal c,
                  const int beginIdA, const int beginIdB, const int n);
 
@@ -1043,8 +1043,8 @@ namespace Pscf {
       * \param c  real scalar (RHS)
       */
       inline
-      void mulVS(DeviceArray<cudaComplex>& a,
-                        DeviceArray<cudaComplex> const & b,
+      void mulVS(DeviceArray<cudaComplex,CUT>& a,
+                        DeviceArray<cudaComplex,CUT> const & b,
                         const cudaReal c)
       {  mulVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -1064,9 +1064,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void divVV(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaReal> const & c,
+      void divVV(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c,
                  const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -1080,9 +1080,9 @@ namespace Pscf {
       * \param c  real array (RHS)
       */
       inline
-      void divVV(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
-                 DeviceArray<cudaReal> const & c)
+      void divVV(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c)
       {  divVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -1098,9 +1098,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void divVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaReal> const & c,
+      void divVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c,
                  const int beginIdA, const int beginIdB, const int beginIdC,
                  const int n);
 
@@ -1114,9 +1114,9 @@ namespace Pscf {
       * \param c  real array (RHS)
       */
       inline
-      void divVV(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
-                 DeviceArray<cudaReal> const & c)
+      void divVV(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
+                 DeviceArray<cudaReal,CUT> const & c)
       {  divVV(a, b, c, 0, 0, 0, a.capacity()); }
 
       /**
@@ -1131,8 +1131,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void divVS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
+      void divVS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaReal c, const int beginIdA,
                  const int beginIdB, const int n);
 
@@ -1146,8 +1146,8 @@ namespace Pscf {
       * \param c  real scalar (RHS)
       */
       inline
-      void divVS(DeviceArray<cudaReal>& a,
-                 DeviceArray<cudaReal> const & b,
+      void divVS(DeviceArray<cudaReal,CUT>& a,
+                 DeviceArray<cudaReal,CUT> const & b,
                  const cudaReal c)
       {  divVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -1163,8 +1163,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void divVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void divVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaReal c,
                  const int beginIdA, const int beginIdB, const int n);
 
@@ -1178,8 +1178,8 @@ namespace Pscf {
       * \param c  real scalar (RHS)
       */
       inline
-      void divVS(DeviceArray<cudaComplex>& a,
-                 DeviceArray<cudaComplex> const & b,
+      void divVS(DeviceArray<cudaComplex,CUT>& a,
+                 DeviceArray<cudaComplex,CUT> const & b,
                  const cudaReal c)
       {  divVS(a, b, c, 0, 0, a.capacity()); }
 
@@ -1195,9 +1195,9 @@ namespace Pscf {
       * \param beginIdC  index of first element in a slice of array c
       * \param n  number of elements in the slice
       */
-      void divSV(DeviceArray<cudaReal>& a,
+      void divSV(DeviceArray<cudaReal,CUT>& a,
                  const cudaReal b,
-                 DeviceArray<cudaReal> const & c,
+                 DeviceArray<cudaReal,CUT> const & c,
                  const int beginIdA, const int beginIdC, const int n);
 
       /**
@@ -1210,9 +1210,9 @@ namespace Pscf {
       * \param c  real array (RHS)
       */
       inline
-      void divSV(DeviceArray<cudaReal>& a,
+      void divSV(DeviceArray<cudaReal,CUT>& a,
                  const cudaReal b,
-                 DeviceArray<cudaReal> const & c)
+                 DeviceArray<cudaReal,CUT> const & c)
       {  divSV(a, b, c, 0, 0, a.capacity()); }
 
       // In-place addition
@@ -1228,8 +1228,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void addEqV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b,
+      void addEqV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1241,8 +1241,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void addEqV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b)
+      void addEqV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b)
       {  addEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1256,8 +1256,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void addEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaComplex> const & b,
+      void addEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaComplex,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1269,8 +1269,8 @@ namespace Pscf {
       * \param b  complex array (RHS)
       */
       inline
-      void addEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaComplex> const & b)
+      void addEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaComplex,CUT> const & b)
       {  addEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1284,8 +1284,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void addEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaReal> const & b,
+      void addEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1297,8 +1297,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void addEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaReal> const & b)
+      void addEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b)
       {  addEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1311,7 +1311,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void addEqS(DeviceArray<cudaReal>& a,
+      void addEqS(DeviceArray<cudaReal,CUT>& a,
                   const cudaReal b,
                   const int beginIdA, const int n);
 
@@ -1324,7 +1324,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void addEqS(DeviceArray<cudaReal>& a, const cudaReal b)
+      void addEqS(DeviceArray<cudaReal,CUT>& a, const cudaReal b)
       {  addEqS(a, b, 0, a.capacity()); }
 
       /**
@@ -1337,7 +1337,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void addEqS(DeviceArray<cudaComplex>& a,
+      void addEqS(DeviceArray<cudaComplex,CUT>& a,
                   const cudaComplex b,
                   const int beginIdA, const int n);
 
@@ -1350,7 +1350,7 @@ namespace Pscf {
       * \param b  input scalar (RHS)
       */
       inline
-      void addEqS(DeviceArray<cudaComplex>& a, const cudaComplex b)
+      void addEqS(DeviceArray<cudaComplex,CUT>& a, const cudaComplex b)
       {  addEqS(a, b, 0, a.capacity()); }
 
       /**
@@ -1363,7 +1363,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void addEqS(DeviceArray<cudaComplex>& a,
+      void addEqS(DeviceArray<cudaComplex,CUT>& a,
                   const cudaReal b,
                   const int beginIdA, const int n);
 
@@ -1376,7 +1376,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void addEqS(DeviceArray<cudaComplex>& a, const cudaReal b)
+      void addEqS(DeviceArray<cudaComplex,CUT>& a, const cudaReal b)
       {  addEqS(a, b, 0, a.capacity()); }
 
 
@@ -1393,8 +1393,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void subEqV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b,
+      void subEqV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1406,8 +1406,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void subEqV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b)
+      void subEqV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b)
       {  subEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1421,8 +1421,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void subEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaComplex> const & b,
+      void subEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaComplex,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1434,8 +1434,8 @@ namespace Pscf {
       * \param b  input array (RHS)
       */
       inline
-      void subEqV(DeviceArray<cudaComplex>& a,
-                         DeviceArray<cudaComplex> const & b)
+      void subEqV(DeviceArray<cudaComplex,CUT>& a,
+                         DeviceArray<cudaComplex,CUT> const & b)
       {  subEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1449,8 +1449,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void subEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaReal> const & b,
+      void subEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1462,8 +1462,8 @@ namespace Pscf {
       * \param b  input array (RHS)
       */
       inline
-      void subEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaReal> const & b)
+      void subEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b)
       {  subEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1476,7 +1476,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void subEqS(DeviceArray<cudaReal>& a, const cudaReal b,
+      void subEqS(DeviceArray<cudaReal,CUT>& a, const cudaReal b,
                   const int beginIdA, const int n);
 
       /**
@@ -1488,7 +1488,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void subEqS(DeviceArray<cudaReal>& a, const cudaReal b)
+      void subEqS(DeviceArray<cudaReal,CUT>& a, const cudaReal b)
       {  subEqS(a, b, 0, a.capacity()); }
 
       /**
@@ -1501,7 +1501,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void subEqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
+      void subEqS(DeviceArray<cudaComplex,CUT>& a, const cudaComplex b,
                   const int beginIdA, const int n);
 
       /**
@@ -1513,7 +1513,7 @@ namespace Pscf {
       * \param b  complex scalar (RHS)
       */
       inline
-      void subEqS(DeviceArray<cudaComplex>& a, const cudaComplex b)
+      void subEqS(DeviceArray<cudaComplex,CUT>& a, const cudaComplex b)
       {  subEqS(a, b, 0, a.capacity()); }
 
       /**
@@ -1526,7 +1526,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void subEqS(DeviceArray<cudaComplex>& a,
+      void subEqS(DeviceArray<cudaComplex,CUT>& a,
                   const cudaReal b,
                   const int beginIdA, const int n);
 
@@ -1539,7 +1539,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void subEqS(DeviceArray<cudaComplex>& a, const cudaReal b)
+      void subEqS(DeviceArray<cudaComplex,CUT>& a, const cudaReal b)
       {  subEqS(a, b, 0, a.capacity()); }
 
 
@@ -1556,8 +1556,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void mulEqV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b,
+      void mulEqV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1569,8 +1569,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void mulEqV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b)
+      void mulEqV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b)
       {  mulEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1584,8 +1584,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void mulEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaComplex> const & b,
+      void mulEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaComplex,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1597,8 +1597,8 @@ namespace Pscf {
       * \param b  complex array (RHS)
       */
       inline
-      void mulEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaComplex> const & b)
+      void mulEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaComplex,CUT> const & b)
       {  mulEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1612,8 +1612,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void mulEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaReal> const & b,
+      void mulEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1625,8 +1625,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void mulEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaReal> const & b)
+      void mulEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b)
       {  mulEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1639,7 +1639,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void mulEqS(DeviceArray<cudaReal>& a, const cudaReal b,
+      void mulEqS(DeviceArray<cudaReal,CUT>& a, const cudaReal b,
                   const int beginIdA, const int n);
 
       /**
@@ -1651,7 +1651,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void mulEqS(DeviceArray<cudaReal>& a, const cudaReal b)
+      void mulEqS(DeviceArray<cudaReal,CUT>& a, const cudaReal b)
       {  mulEqS(a, b, 0, a.capacity()); }
 
       /**
@@ -1664,7 +1664,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void mulEqS(DeviceArray<cudaComplex>& a, const cudaComplex b,
+      void mulEqS(DeviceArray<cudaComplex,CUT>& a, const cudaComplex b,
                   const int beginIdA, const int n);
 
       /**
@@ -1676,7 +1676,7 @@ namespace Pscf {
       * \param b  complex scalar (RHS)
       */
       inline
-      void mulEqS(DeviceArray<cudaComplex>& a, const cudaComplex b)
+      void mulEqS(DeviceArray<cudaComplex,CUT>& a, const cudaComplex b)
       {  mulEqS(a, b, 0, a.capacity()); }
 
       /**
@@ -1689,7 +1689,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void mulEqS(DeviceArray<cudaComplex>& a,
+      void mulEqS(DeviceArray<cudaComplex,CUT>& a,
                   const cudaReal b,
                   const int beginIdA, const int n);
 
@@ -1702,7 +1702,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void mulEqS(DeviceArray<cudaComplex>& a, const cudaReal b)
+      void mulEqS(DeviceArray<cudaComplex,CUT>& a, const cudaReal b)
       {  mulEqS(a, b, 0, a.capacity()); }
 
 
@@ -1719,8 +1719,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void divEqV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b,
+      void divEqV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1732,8 +1732,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void divEqV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b)
+      void divEqV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b)
       {  divEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1747,8 +1747,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void divEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaReal> const & b,
+      void divEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
                   const int beginIdA, const int beginIdB, const int n);
 
       /**
@@ -1760,8 +1760,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void divEqV(DeviceArray<cudaComplex>& a,
-                  DeviceArray<cudaReal> const & b)
+      void divEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b)
       {  divEqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1774,7 +1774,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void divEqS(DeviceArray<cudaReal>& a,
+      void divEqS(DeviceArray<cudaReal,CUT>& a,
                   const cudaReal b,
                   const int beginIdA, const int n);
 
@@ -1787,7 +1787,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void divEqS(DeviceArray<cudaReal>& a, const cudaReal b)
+      void divEqS(DeviceArray<cudaReal,CUT>& a, const cudaReal b)
       {  divEqS(a, b, 0, a.capacity()); }
 
       /**
@@ -1800,7 +1800,7 @@ namespace Pscf {
       * \param beginIdA  index of first element in a slice of array a
       * \param n  number of elements in the slice
       */
-      void divEqS(DeviceArray<cudaComplex>& a,
+      void divEqS(DeviceArray<cudaComplex,CUT>& a,
                   const cudaReal b,
                   const int beginIdA, const int n);
 
@@ -1813,7 +1813,7 @@ namespace Pscf {
       * \param b  real scalar (RHS)
       */
       inline
-      void divEqS(DeviceArray<cudaComplex>& a, const cudaReal b)
+      void divEqS(DeviceArray<cudaComplex,CUT>& a, const cudaReal b)
       {  divEqS(a, b, 0, a.capacity()); }
 
       // Exponentiation operations
@@ -1829,8 +1829,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void expV(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaReal> const & b,
+      void expV(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b,
                 const int beginIdA, const int beginIdB,
                 const int n);
 
@@ -1843,8 +1843,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void expV(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaReal> const & b)
+      void expV(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b)
       {  expV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1858,8 +1858,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void expV(DeviceArray<cudaComplex>& a,
-                DeviceArray<cudaComplex> const & b,
+      void expV(DeviceArray<cudaComplex,CUT>& a,
+                DeviceArray<cudaComplex,CUT> const & b,
                 const int beginIdA, const int beginIdB,
                 const int n);
 
@@ -1872,8 +1872,8 @@ namespace Pscf {
       * \param b  complex array (RHS)
       */
       inline
-      void expV(DeviceArray<cudaComplex>& a,
-                DeviceArray<cudaComplex> const & b)
+      void expV(DeviceArray<cudaComplex,CUT>& a,
+                DeviceArray<cudaComplex,CUT> const & b)
       {  expV(a, b, 0, 0, a.capacity()); }
 
       // Vector (element-wise) square
@@ -1889,8 +1889,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void sqV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b,
+      void sqV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b,
                const int beginIdA, const int beginIdB,
                const int n);
 
@@ -1903,8 +1903,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void sqV(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b)
+      void sqV(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b)
       {  sqV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1918,8 +1918,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  number of elements in the slice
       */
-      void sqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaComplex> const & b,
+      void sqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaComplex,CUT> const & b,
                const int beginIdA, const int beginIdB,
                const int n);
 
@@ -1932,8 +1932,8 @@ namespace Pscf {
       * \param b  complex array (RHS)
       */
       inline
-      void sqV(DeviceArray<cudaComplex>& a,
-               DeviceArray<cudaComplex> const & b)
+      void sqV(DeviceArray<cudaComplex,CUT>& a,
+               DeviceArray<cudaComplex,CUT> const & b)
       {  sqV(a, b, 0, 0, a.capacity()); }
 
       // Absolute magnitude
@@ -1949,8 +1949,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  size of arrays
       */
-      void absV(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaReal> const & b,
+      void absV(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b,
                 const int beginIdA, const int beginIdB,
                 const int n);
 
@@ -1963,8 +1963,8 @@ namespace Pscf {
       * \param b  real array (RHS)
       */
       inline
-      void absV(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaReal> const & b)
+      void absV(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b)
       {  absV(a, b, 0, 0, a.capacity()); }
 
       /**
@@ -1978,8 +1978,8 @@ namespace Pscf {
       * \param beginIdB  index of first element in a slice of array b
       * \param n  size of arrays
       */
-      void sqAbsV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaComplex> const & b,
+      void sqAbsV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaComplex,CUT> const & b,
                   const int beginIdA, const int beginIdB,
                   const int n);
 
@@ -1992,8 +1992,8 @@ namespace Pscf {
       * \param b  conplex array (RHS)
       */
       inline
-      void sqAbsV(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaComplex> const & b)
+      void sqAbsV(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaComplex,CUT> const & b)
       {  sqAbsV(a, b, 0, 0, a.capacity()); }
 
    } // namespace VecOp

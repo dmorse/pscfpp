@@ -21,7 +21,7 @@ namespace Prdc {
    */
    template <int D>
    CField<D,CUT>::CField()
-    : DeviceArray<cudaComplex>()
+    : DeviceArray<cudaComplex,CUT>()
    {}
 
    /**
@@ -29,7 +29,7 @@ namespace Prdc {
    */
    template <int D>
    CField<D,CUT>::CField(IntVec<D> const & meshDimensions)
-    : DeviceArray<cudaComplex>()
+    : DeviceArray<cudaComplex,CUT>()
    {  allocate(meshDimensions); }
 
    /*
@@ -44,7 +44,7 @@ namespace Prdc {
    */
    template <int D>
    CField<D,CUT>::CField(const CField<D,CUT>& other)
-    : DeviceArray<cudaComplex>(other),
+    : DeviceArray<cudaComplex,CUT>(other),
       meshDimensions_(0)
    {
       meshDimensions_ = other.meshDimensions_;
@@ -56,7 +56,7 @@ namespace Prdc {
    template <int D>
    CField<D,CUT>& CField<D,CUT>::operator = (const CField<D,CUT>& other)
    {
-      DeviceArray<cudaComplex>::operator = (other);
+      DeviceArray<cudaComplex,CUT>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
@@ -80,7 +80,7 @@ namespace Prdc {
       }
 
       // Use base class assignment operator to copy elements
-      DeviceArray<cudaComplex>::operator = (other);
+      DeviceArray<cudaComplex,CUT>::operator = (other);
 
       return *this;
    }
@@ -97,7 +97,7 @@ namespace Prdc {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<cudaComplex>::allocate(size);
+      DeviceArray<cudaComplex,CUT>::allocate(size);
    }
 
    /*
@@ -105,7 +105,7 @@ namespace Prdc {
    */
    template <int D>
    void CField<D,CUT>::associate(
-                             DeviceArray<cudaComplex>& arr, 
+                             DeviceArray<cudaComplex,CUT>& arr, 
                              int beginId, 
                              IntVec<D> const & meshDimensions)
    {
@@ -115,7 +115,7 @@ namespace Prdc {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<cudaComplex>::associate(arr, beginId, size);
+      DeviceArray<cudaComplex,CUT>::associate(arr, beginId, size);
    }
 
 }

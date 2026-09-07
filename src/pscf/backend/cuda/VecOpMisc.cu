@@ -360,9 +360,9 @@ namespace VecOp {
    /*
    * Add two scaled vectors, a[i] = b1[i]*c1 + b2[i]*c2.
    */
-   void addVcVc(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaReal> const & b1, cudaReal const c1,
-                DeviceArray<cudaReal> const & b2, cudaReal const c2)
+   void addVcVc(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b1, cudaReal const c1,
+                DeviceArray<cudaReal,CUT> const & b2, cudaReal const c2)
    {
       const int n = a.capacity();
       UTIL_CHECK(b1.capacity() >= n);
@@ -382,8 +382,8 @@ namespace VecOp {
    /*
    * Add a scaled vector and a scalar, a[i] = b[i]*c + s.
    */
-   void addVcS(DeviceArray<cudaReal>& a,
-               DeviceArray<cudaReal> const & b, cudaReal const c,
+   void addVcS(DeviceArray<cudaReal,CUT>& a,
+               DeviceArray<cudaReal,CUT> const & b, cudaReal const c,
                cudaReal const s)
    {
       const int n = a.capacity();
@@ -401,10 +401,10 @@ namespace VecOp {
    /*
    * Add 3 scaled vectors, a[i] = b1[i]*c1 + b2[i]*c2 + b3[i]*c3).
    */
-   void addVcVcVc(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b1, cudaReal const c1,
-                  DeviceArray<cudaReal> const & b2, cudaReal const c2,
-                  DeviceArray<cudaReal> const & b3, cudaReal const c3)
+   void addVcVcVc(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b1, cudaReal const c1,
+                  DeviceArray<cudaReal,CUT> const & b2, cudaReal const c2,
+                  DeviceArray<cudaReal,CUT> const & b3, cudaReal const c3)
    {
       const int n = a.capacity();
       UTIL_CHECK(b1.capacity() >= n);
@@ -426,9 +426,9 @@ namespace VecOp {
    /*
    * Add 2 scaled vectors and scalar, a[i] = b1[i]*c1 + b2[i]*c2 + s;
    */
-   void addVcVcS(DeviceArray<cudaReal>& a,
-                  DeviceArray<cudaReal> const & b1, cudaReal const c1,
-                  DeviceArray<cudaReal> const & b2, cudaReal const c2,
+   void addVcVcS(DeviceArray<cudaReal,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b1, cudaReal const c1,
+                  DeviceArray<cudaReal,CUT> const & b2, cudaReal const c2,
                   cudaReal const s)
    {
       const int n = a.capacity();
@@ -452,8 +452,8 @@ namespace VecOp {
    /*
    * Add scaled vector in-place, a[i] += b[i] * c.
    */
-   void addEqVc(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaReal> const & b,
+   void addEqVc(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b,
                 cudaReal const c)
    {
       const int n = a.capacity();
@@ -471,8 +471,8 @@ namespace VecOp {
    /*
    * Vector in-place division by scaled vector, a[i] /= (b[i] * c).
    */
-   void divEqVc(DeviceArray<cudaComplex>& a,
-                DeviceArray<cudaReal> const & b, cudaReal const c)
+   void divEqVc(DeviceArray<cudaComplex,CUT>& a,
+                DeviceArray<cudaReal,CUT> const & b, cudaReal const c)
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() >= n);
@@ -489,8 +489,8 @@ namespace VecOp {
    /*
    * Vector exponentiation w/ coefficient, a[i] = exp(b[i]*c).
    */
-   void expVc(DeviceArray<cudaReal>& a,
-              DeviceArray<cudaReal> const & b, cudaReal const c)
+   void expVc(DeviceArray<cudaReal,CUT>& a,
+              DeviceArray<cudaReal,CUT> const & b, cudaReal const c)
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() >= n);
@@ -507,8 +507,9 @@ namespace VecOp {
    /*
    * Vector assignment in pairs, ax[i] = s[i].
    */
-   void eqVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2,
-                DeviceArray<cudaReal> const & s)
+   void eqVPair(DeviceArray<cudaReal,CUT>& a1, 
+                DeviceArray<cudaReal,CUT>& a2,
+                DeviceArray<cudaReal,CUT> const & s)
    {
       const int n = a1.capacity();
       UTIL_CHECK(a2.capacity() == n);
@@ -527,10 +528,11 @@ namespace VecOp {
    /*
    * Vec. mul. in pairs, ax[i] = bx[i] * s[i].
    */
-   void mulVVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2,
-                  DeviceArray<cudaReal> const & b1,
-                  DeviceArray<cudaReal> const & b2,
-                  DeviceArray<cudaReal> const & s)
+   void mulVVPair(DeviceArray<cudaReal,CUT>& a1, 
+                  DeviceArray<cudaReal,CUT>& a2,
+                  DeviceArray<cudaReal,CUT> const & b1,
+                  DeviceArray<cudaReal,CUT> const & b2,
+                  DeviceArray<cudaReal,CUT> const & s)
    {
       const int n = a1.capacity();
       UTIL_CHECK(a2.capacity() == n);
@@ -552,8 +554,8 @@ namespace VecOp {
    /*
    * In-place vec. mul. in pairs, ax[i] *= s[i].
    */
-   void mulEqVPair(DeviceArray<cudaReal>& a1, DeviceArray<cudaReal>& a2,
-                   DeviceArray<cudaReal> const & s)
+   void mulEqVPair(DeviceArray<cudaReal,CUT>& a1, DeviceArray<cudaReal,CUT>& a2,
+                   DeviceArray<cudaReal,CUT> const & s)
    {
       const int n = a1.capacity();
       UTIL_CHECK(a2.capacity() == n);
@@ -572,8 +574,8 @@ namespace VecOp {
    /*
    * Add an undefined number of vectors pointwise.
    */
-   void addVMany(DeviceArray<cudaReal>& a,
-                 DArray<DeviceArray<cudaReal> > const & vecs)
+   void addVMany(DeviceArray<cudaReal,CUT>& a,
+                 DArray<DeviceArray<cudaReal,CUT> > const & vecs)
    {
       int nVecs = vecs.capacity();
       UTIL_CHECK(nVecs > 1);
@@ -589,7 +591,7 @@ namespace VecOp {
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i].cArray();
       }
-      DeviceArray<cudaReal const *> vecs_d(nVecs);
+      DeviceArray<cudaReal const *, CUT> vecs_d(nVecs);
       vecs_d = vecs_h; // transfer array of pointers to device
 
       // GPU resources
@@ -605,8 +607,8 @@ namespace VecOp {
    /*
    * Add an undefined number of vectors pointwise.
    */
-   void addVMany(DeviceArray<cudaReal>& a,
-                 DArray<DeviceArray<cudaReal> const *> const & vecs)
+   void addVMany(DeviceArray<cudaReal,CUT>& a,
+                 DArray<DeviceArray<cudaReal,CUT> const *> const & vecs)
    {
       int nVecs = vecs.capacity();
       UTIL_CHECK(nVecs > 1);
@@ -622,7 +624,7 @@ namespace VecOp {
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i]->cArray();
       }
-      DeviceArray<cudaReal const *> vecs_d(nVecs);
+      DeviceArray<cudaReal const *, CUT> vecs_d(nVecs);
       vecs_d = vecs_h; // transfer array of pointers to device
 
       // GPU resources
@@ -638,8 +640,8 @@ namespace VecOp {
    /*
    * Multiply an undefined number of vectors pointwise.
    */
-   void mulVMany(DeviceArray<cudaReal>& a,
-                 DArray<DeviceArray<cudaReal> > const & vecs)
+   void mulVMany(DeviceArray<cudaReal,CUT>& a,
+                 DArray<DeviceArray<cudaReal,CUT> > const & vecs)
    {
       int nVecs = vecs.capacity();
       UTIL_CHECK(nVecs > 1);
@@ -655,7 +657,7 @@ namespace VecOp {
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i].cArray();
       }
-      DeviceArray<cudaReal const *> vecs_d(nVecs);
+      DeviceArray<cudaReal const *, CUT> vecs_d(nVecs);
       vecs_d = vecs_h; // transfer array of pointers to device
 
       // GPU resources
@@ -671,8 +673,8 @@ namespace VecOp {
    /*
    * Multiply an undefined number of vectors pointwise.
    */
-   void mulVMany(DeviceArray<cudaReal>& a,
-                 DArray<DeviceArray<cudaReal> const *> const & vecs)
+   void mulVMany(DeviceArray<cudaReal,CUT>& a,
+                 DArray<DeviceArray<cudaReal,CUT> const *> const & vecs)
    {
       int nVecs = vecs.capacity();
       UTIL_CHECK(nVecs > 1);
@@ -688,7 +690,7 @@ namespace VecOp {
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i]->cArray();
       }
-      DeviceArray<cudaReal const *> vecs_d(nVecs);
+      DeviceArray<cudaReal const *, CUT> vecs_d(nVecs);
       vecs_d = vecs_h; // transfer array of pointers to device
 
       // GPU resources
@@ -704,8 +706,8 @@ namespace VecOp {
    /*
    * Fourth power of magnitude of complex vector, a[i] = |b[i]|^4.
    */
-   void sqSqAbsV(DeviceArray<cudaReal>& a,
-                DeviceArray<cudaComplex> const & b)
+   void sqSqAbsV(DeviceArray<cudaReal,CUT>& a,
+                DeviceArray<cudaComplex,CUT> const & b)
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() >= n);
