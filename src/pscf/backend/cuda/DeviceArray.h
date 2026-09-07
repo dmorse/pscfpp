@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/CUT.h>        // template argument
 #include <util/misc/ReferenceCounter.h>   // member
 #include <util/misc/CountedReference.h>   // member
 
@@ -18,6 +17,7 @@ namespace Util {
 }
 namespace Pscf {
    class DeviceMemory;
+   class CUT;
 }
 
 namespace Pscf {

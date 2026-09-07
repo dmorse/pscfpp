@@ -111,10 +111,10 @@ namespace Rp {
    * \param c  input array 2 (complex)
    * \param d  input array 3 (real)
    */
-   void realMulVConjVV(DeviceArray<cudaReal>& a,
-                       DeviceArray<cudaComplex> const & b,
-                       DeviceArray<cudaComplex> const & c,
-                       DeviceArray<cudaReal> const & d)
+   void realMulVConjVV(DeviceArray<cudaReal,CUT>& a,
+                       DeviceArray<cudaComplex,CUT> const & b,
+                       DeviceArray<cudaComplex,CUT> const & c,
+                       DeviceArray<cudaReal,CUT> const & d)
    {
       int n = a.capacity();
       UTIL_CHECK(b.capacity() >= n);
@@ -138,10 +138,10 @@ namespace Rp {
    * \param qr2  input array 2 (a propagator slice)
    * \param expW2  input array 3 (exp(-W[i]*ds/4) array)
    */
-   void richardsonEx(DeviceArray<cudaReal>& qNew,
-                     DeviceArray<cudaReal> const & qr,
-                     DeviceArray<cudaReal> const & qr2,
-                     DeviceArray<cudaReal> const & expW2)
+   void richardsonEx(DeviceArray<cudaReal,CUT>& qNew,
+                     DeviceArray<cudaReal,CUT> const & qr,
+                     DeviceArray<cudaReal,CUT> const & qr2,
+                     DeviceArray<cudaReal,CUT> const & expW2)
    {
       int n = qNew.capacity();
       UTIL_CHECK(qr.capacity() == n);
@@ -166,9 +166,9 @@ namespace Rp {
    * \param c  input array 2
    * \param d  input scalar
    */
-   void addEqMulVVc(DeviceArray<cudaReal>& a, 
-                    DeviceArray<cudaReal> const & b,
-                    DeviceArray<cudaReal> const & c, 
+   void addEqMulVVc(DeviceArray<cudaReal,CUT>& a, 
+                    DeviceArray<cudaReal,CUT> const & b,
+                    DeviceArray<cudaReal,CUT> const & c, 
                     cudaReal const d)
    {
       int n = a.capacity();
@@ -187,10 +187,10 @@ namespace Rp {
    /*
    * Element-wise calculation of a[i] = b[i]*c[i]*d[i], kernel wrapper
    */
-   void addEqMulVVV(DeviceArray<cudaReal>& a,
-                    DeviceArray<cudaReal> const & b,
-                    DeviceArray<cudaReal> const & c,
-                    DeviceArray<cudaReal> const & d)
+   void addEqMulVVV(DeviceArray<cudaReal,CUT>& a,
+                    DeviceArray<cudaReal,CUT> const & b,
+                    DeviceArray<cudaReal,CUT> const & c,
+                    DeviceArray<cudaReal,CUT> const & d)
    {
       int n = a.capacity();
       UTIL_CHECK(b.capacity() >= n);

@@ -48,7 +48,7 @@ namespace Rp {
       *
       * \param fields  unfolded array of new w fields (input)
       */
-      void setRGrid(DeviceArray<cudaReal>& fields);
+      void setRGrid(DeviceArray<cudaReal,CUT>& fields);
 
       // Declaration to avoid hiding overloaded base class method 
       using WFieldsBase<D,CUT>::setRGrid;

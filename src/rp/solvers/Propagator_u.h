@@ -78,7 +78,7 @@ namespace Rp {
       /**
       * Return the full array of q-fields as an unrolled 1D array.
       */
-      DeviceArray<cudaReal> const & qAll();
+      DeviceArray<cudaReal,CUT> const & qAll();
 
    protected:
 
@@ -108,7 +108,7 @@ namespace Rp {
       * or de-allocate functions, and destroyed by the dissociateQFields
       * function.
       */
-      DeviceArray<cudaReal> qFieldsAll_;
+      DeviceArray<cudaReal,CUT> qFieldsAll_;
 
       /**
       * Dissociate all qFields_ from associated slices of qFieldsAll_.
@@ -123,7 +123,7 @@ namespace Rp {
    * Return the full array of q-fields.
    */
    template <int D> inline
-   DeviceArray<cudaReal> const & Propagator<D,CUT>::qAll()
+   DeviceArray<cudaReal,CUT> const & Propagator<D,CUT>::qAll()
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFieldsAll_;

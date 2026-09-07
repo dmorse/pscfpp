@@ -23,7 +23,7 @@ namespace Rp {
    * Set new w-field values, using unfolded array of r-grid fields.
    */
    template <int D>
-   void WFields<D,CUT>::setRGrid(DeviceArray<cudaReal>& fields)
+   void WFields<D,CUT>::setRGrid(DeviceArray<cudaReal,CUT>& fields)
    {
       // Create DArray tmp with RField<D,CUT> elements
       DArray< RField<D,CUT> > tmp;
