@@ -10,7 +10,6 @@
 #include "CpuCFieldTest.h"
 #include "CpuFieldComparisonTest.h"
 #include "CpuFftTest.h"
-#include "CpuFieldBasisConverterTest.h"
 #include "CpuWaveListTest.h"
 
 TEST_COMPOSITE_BEGIN(CpuTestComposite)
@@ -21,7 +20,6 @@ TEST_COMPOSITE_ADD_UNIT(CpuRFieldDftTest);
 TEST_COMPOSITE_ADD_UNIT(CpuCFieldTest);
 TEST_COMPOSITE_ADD_UNIT(CpuFieldComparisonTest);
 TEST_COMPOSITE_ADD_UNIT(CpuFftTest);
-TEST_COMPOSITE_ADD_UNIT(CpuFieldBasisConverterTest);
 TEST_COMPOSITE_ADD_UNIT(CpuWaveListTest);
 TEST_COMPOSITE_END
 

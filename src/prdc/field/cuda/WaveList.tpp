@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_WAVE_LIST_TPP
-#define PRDC_CUDA_WAVE_LIST_TPP
+#ifndef PRDC_WAVE_LIST_CU_TPP
+#define PRDC_WAVE_LIST_CU_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field

@@ -1,5 +1,5 @@
-#ifndef RPG_HOST_D_ARRAY_COMPLEX_H
-#define RPG_HOST_D_ARRAY_COMPLEX_H
+#ifndef PRDC_HOST_D_ARRAY_COMPLEX_CU_H
+#define PRDC_HOST_D_ARRAY_COMPLEX_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

@@ -1,5 +1,5 @@
-#ifndef PRDC_CUDA_FFT_BATCHED_TPP
-#define PRDC_CUDA_FFT_BATCHED_TPP
+#ifndef PRDC_FFT_BATCHED_CU_TPP
+#define PRDC_FFT_BATCHED_CU_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field 
