@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_R_FIELD_DFT_H
-#define PRDC_CPU_R_FIELD_DFT_H
+#ifndef PRDC_R_FIELD_DFT_CP_H
+#define PRDC_R_FIELD_DFT_CP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>         // class template argument
-#include <pscf/backend/cpp/FftwDRArray.h>   // base class
-#include <pscf/math/IntVec.h>       // member
+#include <pscf/backend/cpp/FftwDRArray.h>  // base class
+#include <pscf/backend/cpp/CPT.h>          // backend identifier class
+#include <pscf/math/IntVec.h>              // member
 
 #include <fftw3.h>
 

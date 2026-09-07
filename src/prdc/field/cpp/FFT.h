@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>             // class template argument
+#include <pscf/backend/cpp/CPT.h>       // backend identifier class
 #include <prdc/field/cpp/RFieldDft.h>   // member
 #include <pscf/math/IntVec.h>           // member
 

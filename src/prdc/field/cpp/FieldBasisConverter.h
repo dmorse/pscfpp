@@ -1,5 +1,5 @@
-#ifndef PRDC_FIELD_BASIS_CONVERTER_H
-#define PRDC_FIELD_BASIS_CONVERTER_H
+#ifndef PRDC_FIELD_BASIS_CONVERTER_CP_H
+#define PRDC_FIELD_BASIS_CONVERTER_CP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/backend/cpp/CPT.h>      // backend identifier class
 #include <util/containers/DMatrix.h>   // member
-#include <pscf/backend/cpp/CPT.h>            // backend type
 
 // Forward declaratation
 namespace Util {

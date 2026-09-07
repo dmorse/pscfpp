@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>        // template argument (backend)
 #include <pscf/backend/cpp/FftwDRArray.h>  // base class
-#include <pscf/math/IntVec.h>      // member
+#include <pscf/backend/cpp/CPT.h>          // backend identifier class
+#include <pscf/math/IntVec.h>              // member
 
 namespace Pscf {
 namespace Prdc {

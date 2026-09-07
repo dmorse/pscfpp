@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_C_FIELD_H
-#define PRDC_CPU_C_FIELD_H
+#ifndef PRDC_C_FIELD_CP_H
+#define PRDC_C_FIELD_CP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>         // backend 
-#include <pscf/backend/cpp/FftwDRArray.h>   // base class
-#include <pscf/math/IntVec.h>       // member
+#include <pscf/backend/cpp/FftwDRArray.h>  // base class
+#include <pscf/backend/cpp/CPT.h>          // backend identifier class
+#include <pscf/math/IntVec.h>              // member
 
 #include <fftw3.h>
 
@@ -23,7 +23,7 @@ namespace Prdc {
    template <int D, class T> class CField;
 
    /**
-   * Field of complex double precision values on a mesh (CPU).
+   * Field of complex double precision values on a mesh (CPP).
    * 
    * \ingroup Prdc_Cpu_Module 
    */

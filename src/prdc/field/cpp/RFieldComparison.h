@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_R_FIELD_COMPARISON_H
-#define PRDC_CPU_R_FIELD_COMPARISON_H
+#ifndef PRDC_CPP_R_FIELD_COMPARISON_H
+#define PRDC_CPP_R_FIELD_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>             // specialized argument
 #include <pscf/math/FieldComparison.h>  // base class template
-#include "RField.h"                     // base class template argument
+#include <pscf/backend/cpp/CPT.h>       // backend identifier class
+#include <prdc/field/cpp/RField.h>      // template argument
 
 namespace Pscf {
 namespace Prdc {

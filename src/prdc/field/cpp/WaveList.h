@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_WAVE_LIST_H
-#define PRDC_CPU_WAVE_LIST_H
+#ifndef PRDC_WAVE_LIST_CP_H
+#define PRDC_WAVE_LIST_CP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,13 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>          // specialized template argument
-#include <prdc/field/cpp/RField.h>   // member
-#include <pscf/math/IntVec.h>        // member
-#include <util/containers/DArray.h>  // member
-#include <util/containers/GArray.h>  // member
-#include <util/containers/Pair.h>    // member
-#include <util/global.h>
+#include <pscf/backend/cpp/CPT.h>     // backend identifier class
+#include <prdc/field/cpp/RField.h>    // member
+#include <pscf/math/IntVec.h>         // member
+#include <util/containers/DArray.h>   // member
+#include <util/containers/GArray.h>   // member
+#include <util/containers/Pair.h>     // member
+#include <util/global.h>              // inline functions
 
 // Forward declarations
 namespace Pscf {
