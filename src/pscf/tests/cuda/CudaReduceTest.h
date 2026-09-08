@@ -7,7 +7,7 @@
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cuda/complex.h>
 #include <pscf/backend/cuda/Reduce.h>
-#include <pscf/backend/cuda/CudaVecRandom.h>
+#include <pscf/backend/cuda/VecRandom.h>
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/math/IntVec.h>
