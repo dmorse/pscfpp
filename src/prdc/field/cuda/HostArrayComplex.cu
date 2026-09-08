@@ -16,21 +16,21 @@ namespace Prdc {
    * Default constructor.
    */
    HostArrayComplex::HostArrayComplex() 
-    : HostArray<cudaComplex>()
+    : HostArray<cudaComplex,CUT>()
    {}
 
    /*
    * Allocating constructor.
    */
    HostArrayComplex::HostArrayComplex(int capacity)
-    : HostArray<cudaComplex>(capacity)
+    : HostArray<cudaComplex,CUT>(capacity)
    {}
 
    /*
    * Copy constructor.
    */
    HostArrayComplex::HostArrayComplex(HostArrayComplex const& other)
-    : HostArray<cudaComplex>(other)
+    : HostArray<cudaComplex,CUT>(other)
    {}
 
    /*

@@ -41,8 +41,8 @@ namespace Rp {
       }
 
       WaveList<D,CUT> const & waveList = AnalyzerT::system().waveList();
-      HostArray<double> kSq = waveList.kSq();
-      HostArray<bool> implicit = waveList.implicitInverse();
+      HostArray<double,CUT> kSq = waveList.kSq();
+      HostArray<bool,CUT> implicit = waveList.implicitInverse();
       Base::findWaveBunches(kSq, implicit);
    }
 

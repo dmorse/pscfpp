@@ -82,17 +82,17 @@ namespace Prdc {
       RFieldDft<D,CUT>& operator = (RFieldDft<D,CUT> const & other);
 
       /**
-      * Assignment operator, assignment from a HostArray<cudaComplex>.
+      * Assignment operator, assignment from a HostArray<cudaComplex,CUT>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
       * RFieldDft<D,CUT> from host memory to device memory.
       *
-      * The RHS HostArray<cudaComplex> and LHS RFieldDft<D,CUT> must 
+      * The RHS HostArray<cudaComplex,CUT> and LHS RFieldDft<D,CUT> must 
       * both be allocated and have equal capacity values on entry. 
       * 
-      * \param other the RHS HostArray<cudaComplex>
+      * \param other the RHS HostArray<cudaComplex,CUT>
       */
-      RFieldDft<D,CUT>& operator = (HostArray<cudaComplex> const & other);
+      RFieldDft<D,CUT>& operator = (HostArray<cudaComplex,CUT> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -200,7 +200,7 @@ namespace Prdc {
       }
 
       if (isAllocated()) {
-         HostArray<cudaComplex> tempData(capacity);
+         HostArray<cudaComplex,CUT> tempData(capacity);
          tempData = this; // copy this object's data from device to host
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i].x;

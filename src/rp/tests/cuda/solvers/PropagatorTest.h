@@ -234,7 +234,7 @@ public:
       int nx = mesh.size();
       RField<1,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal> w_h(nx);
+      HostArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
@@ -287,7 +287,7 @@ public:
       int nx = mesh.size();
       RField<2,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal> w_h(nx);
+      HostArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
@@ -388,7 +388,7 @@ public:
       int nx = mesh.size();
       RField<3,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal> w_h(nx);
+      HostArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
@@ -439,7 +439,7 @@ public:
       int nx = mesh.size();
       RField<1,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal> w_h(nx);
+      HostArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
@@ -455,8 +455,8 @@ public:
       RField<1,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
-      HostArray<cudaReal> qin(nx);
-      HostArray<cudaReal> qout(nx);
+      HostArray<cudaReal,CUT> qin(nx);
+      HostArray<cudaReal,CUT> qout(nx);
 
       // Run block step
       double twoPi = 2.0*Constants::Pi;
@@ -483,8 +483,8 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      HostArray<cudaReal> propHead(nx);
-      HostArray<cudaReal> propTail(nx);
+      HostArray<cudaReal,CUT> propHead(nx);
+      HostArray<cudaReal,CUT> propTail(nx);
       propHead = block.propagator(0).head();
       propTail = block.propagator(0).tail();
 
@@ -549,7 +549,7 @@ public:
       qout.allocate(mesh.dimensions());
 
       // Initialize qin as a cosine(kx)
-      HostArray<cudaReal> qin_h(nx);
+      HostArray<cudaReal,CUT> qin_h(nx);
       double twoPi = 2.0*Constants::Pi;
       for (int i=0; i < nx; ++i) {
          qin_h[i] = cos(twoPi*double(i)/double(nx));
@@ -558,7 +558,7 @@ public:
 
       // Take a step
       block.stepBead(qin, qout);
-      HostArray<cudaReal> qout_h(nx);
+      HostArray<cudaReal,CUT> qout_h(nx);
       qout_h = qout;
 
       // Test qout_h
@@ -577,7 +577,7 @@ public:
       p0.solve();
 
       // Check head slice
-      HostArray<cudaReal> qh_h(nx);
+      HostArray<cudaReal,CUT> qh_h(nx);
       qh_h = p0.head();
       expected = 1.0;
       for (int i = 0; i < nx; ++i) {
@@ -592,7 +592,7 @@ public:
       }
       
       // Check tail slice
-      HostArray<cudaReal> qt_h(nx);
+      HostArray<cudaReal,CUT> qt_h(nx);
       qt_h = p0.q(nBead);
       expected = exp(-wc*nBead);
       for (int i = 0; i < nx; ++i) {
@@ -649,7 +649,7 @@ public:
       int nx = mesh.size();
       RField<2,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal> w_h(nx);
+      HostArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
@@ -665,8 +665,8 @@ public:
       RField<2,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
-      HostArray<cudaReal> qin(nx);
-      HostArray<cudaReal> qout(nx);
+      HostArray<cudaReal,CUT> qin(nx);
+      HostArray<cudaReal,CUT> qout(nx);
 
       // Run block step
       MeshIterator<2> iter(mesh.dimensions());
@@ -702,8 +702,8 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      HostArray<cudaReal> propHead(nx);
-      HostArray<cudaReal> propTail(nx);
+      HostArray<cudaReal,CUT> propHead(nx);
+      HostArray<cudaReal,CUT> propTail(nx);
       propHead = block.propagator(0).head();
       propTail = block.propagator(0).tail();
 
@@ -758,7 +758,7 @@ public:
       int nx = mesh.size();
       RField<3,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal> w_h(nx);
+      HostArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
@@ -774,8 +774,8 @@ public:
       RField<3,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
-      HostArray<cudaReal> qin(nx);
-      HostArray<cudaReal> qout(nx);
+      HostArray<cudaReal,CUT> qin(nx);
+      HostArray<cudaReal,CUT> qout(nx);
 
       // Run block step
       MeshIterator<3> iter(mesh.dimensions());
@@ -814,8 +814,8 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      HostArray<cudaReal> propHead(nx);
-      HostArray<cudaReal> propTail(nx);
+      HostArray<cudaReal,CUT> propHead(nx);
+      HostArray<cudaReal,CUT> propTail(nx);
       propHead = block.propagator(0).head();
       propTail = block.propagator(0).tail();
 

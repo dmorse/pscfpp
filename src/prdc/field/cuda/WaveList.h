@@ -177,7 +177,7 @@ namespace Prdc {
       * the minimum image of one wavevector in the k-space mesh used for
       * discrete Fourier transforms.
       */
-      HostArray< IntVec<D> > const & minImages_h() const;
+      HostArray<IntVec<D>,CUT> const & minImages_h() const;
 
       /**
       * Get the kSq array on the device by reference.
@@ -355,7 +355,7 @@ namespace Prdc {
       * kSize_ is equal to the size of the real space mesh.
       */
       mutable
-      HostArray< IntVec<D> > minImages_h_;
+      HostArray<IntVec<D>,CUT> minImages_h_;
 
       /**
       * Array containing values of kSq_, stored on the device.

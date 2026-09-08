@@ -39,10 +39,10 @@ private:
    const static int n = 2048;
 
    // Input and output arrays, real and complex
-   HostArray<cudaReal> hInReal, hInReal2, hOutReal, hOutReal2;
+   HostArray<cudaReal,CUT> hInReal, hInReal2, hOutReal, hOutReal2;
    DeviceArray<cudaReal,CUT> dInReal, dInReal2, dOutReal, dOutReal2;
 
-   HostArray<cudaComplex> hInComplex, hInComplex2, hOutComplex;
+   HostArray<cudaComplex,CUT> hInComplex, hInComplex2, hOutComplex;
    DeviceArray<cudaComplex,CUT> dInComplex, dInComplex2, dOutComplex;
 
    // Input scalars, real and complex
@@ -133,7 +133,7 @@ public:
       }
    }
 
-   void checkEqualComplex(HostArray<cudaComplex>& a,
+   void checkEqualComplex(HostArray<cudaComplex,CUT>& a,
                           DArray<std::complex<numType> >& b)
    {
       int n = a.capacity();

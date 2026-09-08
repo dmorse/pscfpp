@@ -32,8 +32,8 @@ namespace Prdc {
       int nPoints = a.capacity();
 
       // Copy fields a,b to local arrays ha, hb on the host CPU
-      HostArray<cudaReal> ha(nPoints);
-      HostArray<cudaReal> hb(nPoints);
+      HostArray<cudaReal,CUT> ha(nPoints);
+      HostArray<cudaReal,CUT> hb(nPoints);
       ha = a;
       hb = b;
 
@@ -54,7 +54,7 @@ namespace Prdc {
       int nPoints = a[0].capacity();
 
       // Copy fields to HostArray containers on CPU host
-      DArray< HostArray<cudaReal> > ha, hb;
+      DArray< HostArray<cudaReal,CUT> > ha, hb;
       ha.allocate(nFields);
       hb.allocate(nFields);
       for (int i = 0; i < nFields; i++) {

@@ -64,7 +64,7 @@ public:
       RFieldDft<1,CUT> cosFK;
       cosF.allocate(dimensions);
       cosFK.allocate(dimensions);
-      HostArray<cudaReal> cosF_h;
+      HostArray<cudaReal,CUT> cosF_h;
       cosF_h.allocate(meshSize);
       PolymerSpecies<cudaReal> const & polymer = system.mixture().polymerSpecies(0);
       for (int k = 0; k < meshSize; k++){

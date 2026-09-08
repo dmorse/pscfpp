@@ -77,7 +77,7 @@ public:
          rand_.normal(num, (cudaReal)2.0, (cudaReal)0.5);
 
          // Copy test data to host
-         HostArray<cudaReal> num_h(n);
+         HostArray<cudaReal,CUT> num_h(n);
          num_h = num;
 
          // Determine highest power of 2 less than n
@@ -158,7 +158,7 @@ public:
          rand_.normal(num, (cudaReal)2.0, (cudaReal)0.5);
 
          // Copy test data to host
-         HostArray<cudaReal> num_h(n);
+         HostArray<cudaReal,CUT> num_h(n);
          num_h = num;
 
          // Determine highest power of 2 less than n
@@ -229,12 +229,12 @@ public:
          // Generate random test data,
          // normally distributed about 0.5 with stdev = 2
          DeviceArray<cudaReal,CUT> num_dr(2*n);
-         HostArray<cudaReal>  num_hr(2*n);
+         HostArray<cudaReal,CUT>  num_hr(2*n);
          rand_.normal(num_dr, (cudaReal)2.0, (cudaReal)0.5);
          num_hr = num_dr;
 
           // Copy data to cudaComplex arrays
-         HostArray<cudaComplex>  num_h(n);
+         HostArray<cudaComplex,CUT>  num_h(n);
          DeviceArray<cudaComplex,CUT> num_d(n);
          //cudaComplex sum0 = makeComplex(0.0, 0.0);
          for (int i = 0; i < n; ++i) {
@@ -333,12 +333,12 @@ public:
          // Generate random test data,
          // normally distributed about 0.5 with stdev = 2
          DeviceArray<cudaReal,CUT> num_dr(2*n);
-         HostArray<cudaReal>  num_hr(2*n);
+         HostArray<cudaReal,CUT>  num_hr(2*n);
          rand_.normal(num_dr, (cudaReal)2.0, (cudaReal)0.5);
          num_hr = num_dr;
 
           // Copy data to cudaComplex arrays
-         HostArray<cudaComplex>  num_h(n);
+         HostArray<cudaComplex,CUT>  num_h(n);
          DeviceArray<cudaComplex,CUT> num_d(n);
          //cudaComplex sum0 = makeComplex(0.0, 0.0);
          for (int i = 0; i < n; ++i) {
@@ -416,7 +416,7 @@ public:
 
          // Generate random test data on host and device,
          // normally distributed about 0.001 with stdev = 1.0
-         HostArray<cudaReal> num_h(n);
+         HostArray<cudaReal,CUT> num_h(n);
          DeviceArray<cudaReal,CUT> num_d(n);
          rand_.normal(num_d, (cudaReal)1.0, (cudaReal)0.01);
          num_h = num_d;
@@ -512,12 +512,12 @@ public:
          // Generate random test data,
          // normally distributed about 0.001 with stdev = 1.0
          DeviceArray<cudaReal,CUT> num_dr(2*n);
-         HostArray<cudaReal>  num_hr(2*n);
+         HostArray<cudaReal,CUT>  num_hr(2*n);
          rand_.normal(num_dr, (cudaReal)1.0, (cudaReal)0.001);
          num_hr = num_dr;
 
           // Copy data to cudaComplex arrays num_h and num_d
-         HostArray<cudaComplex>  num_h(n);
+         HostArray<cudaComplex,CUT>  num_h(n);
          DeviceArray<cudaComplex,CUT> num_d(n);
 	 cudaReal valx, valy;
 	 cudaComplex valSq;
@@ -630,7 +630,7 @@ public:
          rand_.normal(b, (cudaReal)1.0, (cudaReal)2.0);
 
          // Copy test data to host
-         HostArray<cudaReal> a_h(n), b_h(n);
+         HostArray<cudaReal,CUT> a_h(n), b_h(n);
          a_h = a;
          b_h = b;
 
@@ -712,7 +712,7 @@ public:
          rand_.normal(num, (cudaReal)3.0, (cudaReal)7.0);
 
          // Copy test data to host
-         HostArray<cudaReal> num_h(n);
+         HostArray<cudaReal,CUT> num_h(n);
          num_h = num;
 
          // Find max on host
@@ -776,7 +776,7 @@ public:
          rand_.normal(num, (cudaReal)3.0, (cudaReal)7.0);
 
          // Copy test data to host
-         HostArray<cudaReal> num_h(n);
+         HostArray<cudaReal,CUT> num_h(n);
          num_h = num;
 
          // Find max on host
@@ -842,7 +842,7 @@ public:
          rand_.normal(num, (cudaReal)3.0, (cudaReal)-1.0);
 
          // Copy test data to host
-         HostArray<cudaReal> num_h(n);
+         HostArray<cudaReal,CUT> num_h(n);
          num_h = num;
 
          // Find max on host
@@ -906,7 +906,7 @@ public:
          rand_.normal(num, (cudaReal)3.0, (cudaReal)7.0);
 
          // Copy test data to host
-         HostArray<cudaReal> num_h(n);
+         HostArray<cudaReal,CUT> num_h(n);
          num_h = num;
 
          // Find min on host
@@ -969,7 +969,7 @@ public:
          rand_.normal(num, (cudaReal)3.0, (cudaReal)-1.0);
 
          // Copy test data to host
-         HostArray<cudaReal> num_h(n);
+         HostArray<cudaReal,CUT> num_h(n);
          num_h = num;
 
          // Find min on host

@@ -73,7 +73,7 @@ namespace Rp {
    private:
 
       // Copy of wk_ on host CPU
-      HostArray<cudaComplex> wkHost_;
+      HostArray<cudaComplex,CUT> wkHost_;
 
    };
 

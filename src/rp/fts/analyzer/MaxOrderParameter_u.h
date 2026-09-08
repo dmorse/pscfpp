@@ -56,7 +56,7 @@ namespace Rp {
 
    private:
 
-      HostArray<cudaReal> psiHost_;
+      HostArray<cudaReal,CUT> psiHost_;
 
       /// Alias for base class.
       using Base = MaxOrderParameterBase<D,CUT>;

@@ -523,7 +523,7 @@ namespace Prdc {
       if (isRealField_) {
          implicitInverse_.allocate(kSize_);
          MeshIterator<D> kItr(kMeshDimensions_);
-         HostArray<bool> implicitInverse_h(kSize_);
+         HostArray<bool,CUT> implicitInverse_h(kSize_);
          int inverseId;
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             if (kItr.position(D-1) == 0) {
@@ -579,7 +579,7 @@ namespace Prdc {
       UTIL_CHECK(minImages_.capacity() == kSize_ * D);
 
       // Set initial array of images to contain the k-grid points
-      HostArray<int> imagesTmp(D*kSize_);
+      HostArray<int,CUT> imagesTmp(D*kSize_);
       MeshIterator<D> kItr(kMeshDimensions_);
       for (int i = 0; i < D; i++) {
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
@@ -589,8 +589,8 @@ namespace Prdc {
       minImages_ = imagesTmp; // copy to device
 
       // Get kBasis and meshDims and store on device
-      HostArray<cudaReal> kBasis_h(D*D);
-      HostArray<int> meshDims_h(D);
+      HostArray<cudaReal,CUT> kBasis_h(D*D);
+      HostArray<int,CUT> meshDims_h(D);
       DeviceArray<cudaReal,CUT> kBasis(D*D);
       DeviceArray<int,CUT> meshDims(D);
       int idx = 0;
@@ -666,7 +666,7 @@ namespace Prdc {
       UTIL_CHECK(isAllocated_);
 
       // Get kBasis and store on device
-      HostArray<cudaReal> kBasis_h(D*D);
+      HostArray<cudaReal,CUT> kBasis_h(D*D);
       DeviceArray<cudaReal,CUT> kBasis(D*D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
@@ -712,7 +712,7 @@ namespace Prdc {
 
       // Calculate dkkBasis and store on device
       int idx;
-      HostArray<cudaReal> dkkBasis_h(unitCell().nParameter() * D * D);
+      HostArray<cudaReal,CUT> dkkBasis_h(unitCell().nParameter() * D * D);
       DeviceArray<cudaReal,CUT> dkkBasis;
       for (int i = 0 ; i < unitCell().nParameter(); ++i) {
          for (int j = 0; j < D; ++j) {
@@ -767,7 +767,7 @@ namespace Prdc {
       }
 
       // Copy values of kSq to host
-      HostArray<cudaReal> kSq_h = kSq_;
+      HostArray<cudaReal,CUT> kSq_h = kSq_;
 
       // Construct Sort::Item objects with value = kSq, id = wave id
       std::vector< Sort::Item<double> > items;
@@ -823,11 +823,11 @@ namespace Prdc {
    * Gather data from device and re-arrange if necessary.
    */
    template <int D>
-   HostArray< IntVec<D> > const & WaveList<D,CUT>::minImages_h() const
+   HostArray<IntVec<D>,CUT> const & WaveList<D,CUT>::minImages_h() const
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {
-         HostArray<int> minImages_temp;
+         HostArray<int,CUT> minImages_temp;
          minImages_temp = minImages_;
          int i, j, k;
          for (j = 0; j < D; ++j) {

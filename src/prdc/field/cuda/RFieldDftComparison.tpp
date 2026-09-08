@@ -35,8 +35,8 @@ namespace Prdc {
       UTIL_CHECK(a.capacity() == b.capacity());
       int capacity = a.capacity();
 
-      HostArray<cudaComplex> ha;
-      HostArray<cudaComplex> hb;
+      HostArray<cudaComplex,CUT> ha;
+      HostArray<cudaComplex,CUT> hb;
       ha.allocate(capacity);
       hb.allocate(capacity);
       ha = a;
@@ -73,8 +73,8 @@ namespace Prdc {
       int capacity = a[0].capacity();
       int nFields = a.capacity();
 
-      DArray< HostArray<cudaComplex> > ha;
-      DArray< HostArray<cudaComplex> > hb;
+      DArray< HostArray<cudaComplex,CUT> > ha;
+      DArray< HostArray<cudaComplex,CUT> > hb;
       ha.allocate(nFields);
       hb.allocate(nFields);
       for (int i = 0; i < nFields; i++) {

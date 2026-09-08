@@ -106,17 +106,17 @@ namespace Prdc {
       operator = (RField<D,CUT> const & other);
 
       /**
-      * Assignment operator, assignment from a HostArray<cudaReal>.
+      * Assignment operator, assignment from a HostArray<cudaReal,CUT>.
       *
       * Performs a deep copy, by copying all elements of the RHS RField
       * from host memory to device memory.
       *
-      * The RHS HostArray<cudaReal> and LHS RField must both be
+      * The RHS HostArray<cudaReal,CUT> and LHS RField must both be
       * allocated with equal capacity values on entry.
       *
-      * \param other the RHS HostArray<cudaReal>
+      * \param other the RHS HostArray<cudaReal,CUT>
       */
-      RField<D,CUT>& operator = (const HostArray<cudaReal>& other);
+      RField<D,CUT>& operator = (const HostArray<cudaReal,CUT>& other);
 
       /**
       * Return mesh dimensions by constant reference.
@@ -181,7 +181,7 @@ namespace Prdc {
       }
 
       if (isAllocated()) {
-         HostArray<cudaReal> tempData(capacity);
+         HostArray<cudaReal,CUT> tempData(capacity);
          tempData = this; // copy this object's data from device to host
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];

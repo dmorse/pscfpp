@@ -587,7 +587,7 @@ namespace VecOp {
       }
 
       // Create array of pointers to arrays on host
-      HostArray<cudaReal const *> vecs_h(nVecs);
+      HostArray<cudaReal const *, CUT> vecs_h(nVecs);
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i].cArray();
       }
@@ -620,7 +620,7 @@ namespace VecOp {
       }
 
       // Create array of pointers to arrays on host
-      HostArray<cudaReal const *> vecs_h(nVecs);
+      HostArray<cudaReal const *, CUT> vecs_h(nVecs);
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i]->cArray();
       }
@@ -653,7 +653,7 @@ namespace VecOp {
       }
 
       // Create array of pointers to arrays on host
-      HostArray<cudaReal const *> vecs_h(nVecs);
+      HostArray<cudaReal const *, CUT> vecs_h(nVecs);
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i].cArray();
       }
@@ -686,7 +686,7 @@ namespace VecOp {
       }
 
       // Create array of pointers to arrays on host
-      HostArray<cudaReal const *> vecs_h(nVecs);
+      HostArray<cudaReal const *, CUT> vecs_h(nVecs);
       for (int i = 0; i < nVecs; i++) {
          vecs_h[i] = vecs[i]->cArray();
       }

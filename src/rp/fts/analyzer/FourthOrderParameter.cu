@@ -35,7 +35,7 @@ namespace Rp {
    void FourthOrderParameter<D,CUT>::computePrefactor()
    {
       // Allocate CPU host array
-      HostArray<cudaReal> prefactor_h(Base::kSize_);
+      HostArray<cudaReal,CUT> prefactor_h(Base::kSize_);
       VecOp::eqS(prefactor_h, 0.0);
 
       // Perform computation on host

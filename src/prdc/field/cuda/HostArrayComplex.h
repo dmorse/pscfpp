@@ -21,7 +21,7 @@ namespace Prdc {
    *
    * Defined to add typedefs.
    */
-   class HostArrayComplex : public HostArray<cudaComplex>
+   class HostArrayComplex : public HostArray<cudaComplex,CUT>
    {
 
    public:
@@ -41,7 +41,7 @@ namespace Prdc {
       /**
       * Base class type.
       */
-      using Base = HostArray<cudaComplex>;
+      using Base = HostArray<cudaComplex,CUT>;
 
       // Member functions
 

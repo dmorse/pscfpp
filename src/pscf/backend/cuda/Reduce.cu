@@ -96,7 +96,7 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
 
          // Copy to host and return value
-         HostArray<cudaReal> out_h;
+         HostArray<cudaReal,CUT> out_h;
          out_h.allocate(1);
          out_h = out;
          return out_h[0];
@@ -131,7 +131,7 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
 
          // Copy to host and return value
-         HostArray<cudaComplex> out_h(1);
+         HostArray<cudaComplex,CUT> out_h(1);
          out_h = out;
          return std::complex<cudaReal>(out_h[0].x, out_h[0].y);
       }
@@ -161,7 +161,7 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
 
          // Copy to host and return value
-         HostArray<cudaReal> out_h(1);
+         HostArray<cudaReal,CUT> out_h(1);
          out_h = out;
          return out_h[0];
       }
@@ -191,7 +191,7 @@ namespace Reduce {
          UTIL_CHECK(error == cudaSuccess);
 
          // Copy to host and return value
-         HostArray<cudaReal> out_h(1);
+         HostArray<cudaReal,CUT> out_h(1);
          out_h = out;
          return out_h[0];
       }

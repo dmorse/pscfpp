@@ -25,7 +25,7 @@ public:
    void testConstructors()
    {
       printMethod(TEST_FUNC);
-      HostArray<double> h;
+      HostArray<double,CUT> h;
       DeviceArray<double,CUT> d;
 
       TEST_ASSERT(h.capacity() == 0 );
@@ -38,7 +38,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      HostArray<double> h;
+      HostArray<double,CUT> h;
       DeviceArray<double,CUT> d;
 
       int capacity = 32;
@@ -92,10 +92,10 @@ public:
       // Host arrays
       DArray<double> in;
       in.allocate(nx);
-      HostArray<double> out1(nx);
-      HostArray<double> out2(nx);
-      HostArray<double> out3(nx);
-      HostArray<double> out4(nx/2);
+      HostArray<double,CUT> out1(nx);
+      HostArray<double,CUT> out2(nx);
+      HostArray<double,CUT> out3(nx);
+      HostArray<double,CUT> out4(nx/2);
 
       // Generate data
       double twoPi = 2.0*Constants::Pi;

@@ -90,7 +90,7 @@ void CudaFieldTest::testRFieldRoundTrip()
       int capacity = 6;
 
       // Initialize host (cpu) data in field vh1
-      HostArray<cudaReal> vh1;
+      HostArray<cudaReal,CUT> vh1;
       vh1.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          vh1[i] = (i+1)*10.0 ;
@@ -103,7 +103,7 @@ void CudaFieldTest::testRFieldRoundTrip()
       TEST_ASSERT(vd.capacity() == vh1.capacity());
 
       // Copy device field vd to host host field vh2
-      HostArray<cudaReal> vh2;
+      HostArray<cudaReal,CUT> vh2;
       vh2 = vd;
 
       TEST_ASSERT(vh2.capacity() == vh1.capacity());
@@ -127,7 +127,7 @@ void CudaFieldTest::testCFieldRoundTrip()
       int capacity = 6;
 
       // Initialize host (cpu) data in field vh1
-      HostArray<cudaComplex> vh1;
+      HostArray<cudaComplex,CUT> vh1;
       vh1.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          vh1[i].x = (i+1)*10.0 ;
@@ -141,7 +141,7 @@ void CudaFieldTest::testCFieldRoundTrip()
       TEST_ASSERT(vd.capacity() == vh1.capacity());
 
       // Copy device field vd to host host field vh2
-      HostArray<cudaComplex> vh2;
+      HostArray<cudaComplex,CUT> vh2;
       vh2 = vd;
 
       TEST_ASSERT(vh2.capacity() == vh1.capacity());
@@ -172,7 +172,7 @@ void CudaFieldTest::testRFieldDftRoundTrip()
       int capacity = vd.capacity();
 
       // Initialize host (cpu) complex data in field vh1
-      HostArray<cudaComplex> vh1;
+      HostArray<cudaComplex,CUT> vh1;
       vh1.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          vh1[i].x = (i+1)*10.0 ;
@@ -184,7 +184,7 @@ void CudaFieldTest::testRFieldDftRoundTrip()
       TEST_ASSERT(vd.capacity() == vh1.capacity());
 
       // Copy device field vd to host host field vh2
-      HostArray<cudaComplex> vh2;
+      HostArray<cudaComplex,CUT> vh2;
       vh2 = vd;
 
       TEST_ASSERT(vh2.capacity() == vh1.capacity());

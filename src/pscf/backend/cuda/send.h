@@ -24,7 +24,7 @@ namespace Pscf {
    * \param deviceArray  device array, which must be allocated on entry
    */
    template <typename Data>
-   void setupHostArray(HostArray<Data> & hostArray, 
+   void setupHostArray(HostArray<Data,CUT> & hostArray, 
 		       DeviceArray<Data,CUT> const & deviceArray)
    {
       UTIL_CHECK(deviceArray.isAllocated());
@@ -45,7 +45,7 @@ namespace Pscf {
    * \param out  output host array into which data is copied
    */
    template <typename Data>
-   void sendToHost(HostArray<Data>& out, DeviceArray<Data,CUT> const & in)
+   void sendToHost(HostArray<Data,CUT>& out, DeviceArray<Data,CUT> const & in)
    {  out = in; }
 
    /**
@@ -58,7 +58,7 @@ namespace Pscf {
    * \param out  output device array into which data is copied
    */
    template <typename Data>
-   void sendToDevice(DeviceArray<Data,CUT> & out, HostArray<Data> const & in)
+   void sendToDevice(DeviceArray<Data,CUT> & out, HostArray<Data,CUT> const & in)
    {  out = in; }
 
    /**
@@ -72,7 +72,7 @@ namespace Pscf {
    * \param array  host array to be released
    */
    template <typename Data>
-   void releaseHostArray(HostArray<Data> & array)
+   void releaseHostArray(HostArray<Data,CUT> & array)
    {}
 
 }

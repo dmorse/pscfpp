@@ -60,10 +60,10 @@ namespace Rp {
    private:
 
       // Work space on CPU for unshifted field
-      HostArray<cudaReal> wOld_;
+      HostArray<cudaReal,CUT> wOld_;
 
       // Work space on CPU for a shifted field
-      HostArray<cudaReal> wNew_;
+      HostArray<cudaReal,CUT> wNew_;
 
       using ShiftMoveBaseT = ShiftMoveBase<D,CUT>;
 

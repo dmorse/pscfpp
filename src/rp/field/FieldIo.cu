@@ -39,7 +39,7 @@ namespace Rp {
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Allocate host arrays
-      DArray< HostArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal,CUT> > hostFields;
       allocateArrays(hostFields, nMonomer, mesh().size());
 
       // Read data
@@ -65,7 +65,7 @@ namespace Rp {
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Allocate host arrays
-      DArray< HostArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal,CUT> > hostFields;
       allocateArrays(hostFields, nMonomer, mesh().size());
 
       // Read data section of file
@@ -94,7 +94,7 @@ namespace Rp {
       checkAllocateField(field, mesh().dimensions());
 
       // Allocate host field
-      HostArray<cudaReal> hostField;
+      HostArray<cudaReal,CUT> hostField;
       hostField.allocate(mesh().size());
 
       // Read data section with one field
@@ -136,7 +136,7 @@ namespace Rp {
       }
 
       // Copy field data to host container
-      DArray< HostArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal,CUT> > hostFields;
       allocateArrays(hostFields, nMonomer, meshSize);
       copyArrays(hostFields, fields);
 
@@ -167,7 +167,7 @@ namespace Rp {
       }
 
       // Copy field (device) to hostField
-      HostArray<cudaReal> hostField;
+      HostArray<cudaReal,CUT> hostField;
       hostField.allocate(meshSize);
       hostField = field;
 
@@ -360,7 +360,7 @@ namespace Rp {
       int capacity = fields[0].capacity();
 
       // Copy k-grid input to hostField
-      DArray< HostArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal,CUT> > hostFields;
       allocateArrays(hostFields, nMonomer, capacity);
       copyArrays(hostFields, fields);
 
@@ -387,7 +387,7 @@ namespace Rp {
       int capacity = fields[0].capacity();
 
       // Copy k-grid input fields to hostFields
-      DArray< HostArray<cudaReal> > hostFields;
+      DArray< HostArray<cudaReal,CUT> > hostFields;
       allocateArrays(hostFields, nMonomer, capacity);
       copyArrays(hostFields, fields);
 

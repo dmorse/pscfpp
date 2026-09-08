@@ -32,8 +32,8 @@ namespace Prdc {
       int capacity = a.capacity();
 
       // Allocate arrays on CPU host
-      HostArray<cudaComplex> ha;
-      HostArray<cudaComplex> hb;
+      HostArray<cudaComplex,CUT> ha;
+      HostArray<cudaComplex,CUT> hb;
       ha.allocate(capacity);
       hb.allocate(capacity);
 
@@ -72,8 +72,8 @@ namespace Prdc {
       int nFields = a.capacity();
 
       // Allocate arrays on host
-      DArray< HostArray<cudaComplex> > ha;
-      DArray< HostArray<cudaComplex> > hb;
+      DArray< HostArray<cudaComplex,CUT> > ha;
+      DArray< HostArray<cudaComplex,CUT> > hb;
       ha.allocate(nFields);
       hb.allocate(nFields);
       for (int i = 0; i < nFields; i++) {

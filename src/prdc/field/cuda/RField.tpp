@@ -97,11 +97,11 @@ namespace Prdc {
    */
    template <int D>
    RField<D,CUT>& 
-   RField<D,CUT>::operator = (const HostArray<cudaReal>& other)
+   RField<D,CUT>::operator = (const HostArray<cudaReal,CUT>& other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostArray<cudaReal> is not allocated.");
+         UTIL_THROW("Error: RHS HostArray<cudaReal,CUT> is not allocated.");
       }
       if (!isAllocated()) {
          UTIL_THROW("Error: LHS RField is not allocated.");

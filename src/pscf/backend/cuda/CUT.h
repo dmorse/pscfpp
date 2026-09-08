@@ -40,7 +40,7 @@ namespace Pscf {
       using Complex = cudaComplex;
 
       template <typename T> using DevArray = DeviceArray<T,CUT>;
-      template <typename T> using LocArray = HostArray<T>;
+      template <typename T> using LocArray = HostArray<T,CUT>;
 
       using RDevArray = DevArray<Real>;
       using RLocArray = LocArray<Real>;
