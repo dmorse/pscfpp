@@ -195,6 +195,13 @@ namespace Pscf {
    }
 
    /*
+   * Associate this object with a slice of a different FftwDRArray.
+   */
+   template <typename Data>
+   void FftwDRArray<Data>::associate(FftwDRArray<Data>& owner)
+   {  associate(owner, 0, owner.capacity()); }
+
+   /*
    * Dissociate this object from array slice owned by another object.
    */
    template <typename Data>

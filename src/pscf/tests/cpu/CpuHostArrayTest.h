@@ -217,6 +217,12 @@ void CpuHostArrayTest::testAssignFromDevice()
       TEST_ASSERT(v.capacity() == capacity);
 
       // Data user
+      u.associate(v);
+      TEST_ASSERT(u.capacity() == capacity);
+      TEST_ASSERT(u.isAllocated());
+      TEST_ASSERT(u.isAssociated());
+      TEST_ASSERT(!u.isOwner());
+
       u = v;
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());

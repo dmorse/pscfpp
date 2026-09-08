@@ -68,11 +68,12 @@ namespace Pscf {
       {}
 
       /**
-      * Assignment from a HostArray<Data,CPT> container.
+      * Assign from a HostArray<Data,CPT> unless they already share data.
       *
-      * This operator performs a shallow copy, if possible. 
+      * If this and the other array already point to the same address,
+      * do nothing and return. Otherwise, perform a deep copy of data.
       *
-      * \throw Exception if other array is not allocated
+      * \throw Exception if the other array is not allocated
       * \throw Exception if arrays are allocated with unequal capacities
       *
       * \param other  array container on RHS of assigment (input)
@@ -89,8 +90,14 @@ namespace Pscf {
   template <typename Data>
   DeviceArray<Data,CPT>& 
   DeviceArray<Data,CPT>::operator = (HostArray<Data,CPT>& other)
-  {  
-     FftwDRArray<Data>::associate(other, 0, other.capacity()); 
+  {
+     Data* data = Array<Data>::data_;
+     bool same =  (bool)data && data == other.cArray();
+     if (same) {
+        UTIL_CHECK(Array<Data>::capacity() == other.capacity());
+     } else {
+        FftwDRArray<Data>::operator = (other); 
+     }
      return *this;
   }
 
