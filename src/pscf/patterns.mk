@@ -18,6 +18,10 @@ LIBS=$(PSCF_LIBS)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
+# Add header include, library paths to FFTW Fast Fourier transform library
+INCLUDES+=$(FFTW_INC)
+LIBS+=$(FFTW_LIB) 
+
 # Conditionally add CUDA header include and library paths
 ifdef PSCF_CUDA
   INCLUDES+=$(CUDA_INC)

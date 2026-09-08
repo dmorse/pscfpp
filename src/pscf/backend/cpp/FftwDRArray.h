@@ -177,12 +177,13 @@ namespace Pscf {
       * will return false.
       *
       * \throw Exception if this array is allocated on entry.
+      * \throw Exception if other array is not a data owner on entry.
       *
-      * \param arr  parent array that owns the data
-      * \param beginId  index in the parent array at which this array starts
-      * \param capacity  number of elements associated with this container
+      * \param other  parent array that owns the data
+      * \param beginId  index in of other array at which slice begins
+      * \param capacity  number of elements in the slice
       */
-      void associate(FftwDRArray<Data>& arr, int beginId, int capacity);
+      void associate(FftwDRArray<Data>& other, int beginId, int capacity);
 
       /**
       * Dissociate this object from an externally owned array slice.

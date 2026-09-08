@@ -167,30 +167,30 @@ namespace Pscf {
    }
 
    /*
-   * Associate this object with a slice of a different FftwDRArray.
+   * Associate this object with a slice of another FftwDRArray.
    */
    template <typename Data>
-   void FftwDRArray<Data>::associate(FftwDRArray<Data>& owner,
-                                 int beginId, int capacity)
+   void FftwDRArray<Data>::associate(FftwDRArray<Data>& other,
+                                     int beginId, int capacity)
    {
-      UTIL_CHECK(owner.isAllocated());
-      UTIL_CHECK(owner.isOwner());
+      UTIL_CHECK(other.isAllocated());
+      UTIL_CHECK(other.isOwner());
       UTIL_CHECK(beginId >= 0);
       UTIL_CHECK(capacity > 0);
-      UTIL_CHECK(beginId + capacity <= owner.capacity());
-      UTIL_CHECK(!data_);
+      UTIL_CHECK(beginId + capacity <= other.capacity());
+      UTIL_CHECK(!isAllocated());
       UTIL_CHECK(!ref_.isAssociated());
 
       // Copy data pointer and capacity
-      data_ = owner.cArray() + beginId;
+      data_ = other.cArray() + beginId;
       capacity_ = capacity;
 
-      // Associate private ReferencecCounter of the data owner with the
+      // Associate private ReferencecCounter of the other array with the
       // CountedReference ref_ member variable of this data user.
-      ref_.associate(owner.refCounter_);
+      ref_.associate(other.refCounter_);
 
       // On exit from CountedReference::associate, the ReferenceCounter
-      // of the data owner is incremented and the CountedReference of
+      // of the data other is incremented and the CountedReference of
       // this data user has a pointer to that ReferenceCounter.
    }
 

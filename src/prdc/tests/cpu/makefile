@@ -1,35 +1,36 @@
 include ../../../config.mk
 include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/prdc/tests/cpu/sources.mk
+include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/prdc/patterns.mk
 
-TEST=prdc/tests/cpu/Test
+TEST=$(BLD_DIR)/prdc/tests/cpu/Test
 
-all: $(prdc_tests_cpu_OBJS) $(BLD_DIR)/$(TEST)
+all: $(TEST).o $(TEST)
 
-run: $(prdc_tests_cpu_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/
+$(TEST): $(TEST).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
-run-quiet: $(prdc_tests_cpu_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/ > log
+run:    $(TEST).o $(TEST)
+	@$(TEST) $(SRC_DIR)/prdc/tests/cpu/ 
+
+run-quiet: $(TEST).o $(TEST)
+	@$(TEST) $(SRC_DIR)/prdc/tests/cpu/ > log
 	@echo `grep failed log` ", "\
-              `grep successful log` "in prdc/tests/log" > count
+              `grep successful log` "in prdc/tests/cpu/log" > count
 	@cat count
 
 clean-outputs:
-	rm -f log count out/*
+	rm -f log count 
 
 clean:
-	rm -f $(prdc_tests_cpu_OBJS)
-	rm -f $(prdc_tests_cpu_DEPS)
-	rm -f $(BLD_DIR)/$(TEST)
+	rm -f $(TEST).o $(TEST).d
+	rm -f $(TEST)
 	$(MAKE) clean-outputs
 
-.PHONY: all run run-quiet clean-outputs clean
+.PHONY= all run run-quiet clean-outputs clean
 
--include $(prdc_tests_cpu_DEPS)
+-include $(TEST).d
 -include $(prdc_DEPS)
 -include $(pscf_DEPS)
 -include $(util_DEPS)
