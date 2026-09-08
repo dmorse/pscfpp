@@ -53,10 +53,6 @@ namespace Prdc {
             maxDiff_ = diff;
          }
          rmsDiff_ += diffSq;
-         //std::cout << i
-         //          << " " << a[i][0]  << " " << a[i][1]
-         //          << " " << b[i][0]  << " " << b[i][1]
-         //          << " " << diff << std::endl;
       }
       rmsDiff_ = rmsDiff_/double(n);
       rmsDiff_ = sqrt(rmsDiff_);

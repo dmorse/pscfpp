@@ -21,16 +21,9 @@ namespace Prdc {
    */
    template <int D>
    RFieldDft<D,CPT>::RFieldDft()
-    : FftwDRArray<fftw_complex>(),
+    : DeviceArray<fftw_complex,CPT>(),
       meshDimensions_(0),
       dftDimensions_(0)
-   {}
-
-   /*
-   * Destructor.
-   */
-   template <int D>
-   RFieldDft<D,CPT>::~RFieldDft()
    {}
 
    /*
@@ -40,7 +33,7 @@ namespace Prdc {
    */
    template <int D>
    RFieldDft<D,CPT>::RFieldDft(const RFieldDft<D,CPT>& other)
-    : FftwDRArray<fftw_complex>(),
+    : DeviceArray<fftw_complex,CPT>(),
       meshDimensions_(0),
       dftDimensions_(0)
    {
@@ -53,6 +46,13 @@ namespace Prdc {
          data_[i][1] = other.data_[i][1];
       }
    }
+
+   /*
+   * Destructor.
+   */
+   template <int D>
+   RFieldDft<D,CPT>::~RFieldDft()
+   {}
 
    /*
    * Assignment, element-by-element.
@@ -113,7 +113,7 @@ namespace Prdc {
    }
 
    /*
-   * Dellocate the underlying C array and clear dimensions.
+   * Deallocate the underlying C array and clear dimensions.
    */
    template <int D>
    void RFieldDft<D,CPT>::deallocate()
