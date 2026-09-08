@@ -21,7 +21,7 @@ namespace Prdc {
    */
    template <int D>
    CField<D,CPT>::CField()
-    : FftwDRArray<fftw_complex>(),
+    : DeviceArray<fftw_complex,CPT>(),
       meshDimensions_()
    {}
 
@@ -39,7 +39,7 @@ namespace Prdc {
    */
    template <int D>
    CField<D,CPT>::CField(const CField<D,CPT>& other)
-    : FftwDRArray<fftw_complex>(),
+    : DeviceArray<fftw_complex,CPT>(),
       meshDimensions_()
    {
       if (other.isAllocated() && other.capacity_ > 0) {

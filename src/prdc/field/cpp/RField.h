@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/FftwDRArray.h>  // base class
+#include <pscf/backend/cpp/DeviceArray.h>  // base class
 #include <pscf/backend/cpp/CPT.h>          // backend identifier class
 #include <pscf/math/IntVec.h>              // member
 
@@ -26,7 +26,7 @@ namespace Prdc {
    * \ingroup Prdc_Cpu_Module 
    */
    template <int D>
-   class RField<D,CPT> : public FftwDRArray<double>
+   class RField<D,CPT> : public DeviceArray<double,CPT>
    {
 
    public:

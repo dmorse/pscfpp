@@ -16,7 +16,7 @@ run:    $(TEST).o $(TEST)
 run-quiet: $(TEST).o $(TEST)
 	@$(TEST) $(SRC_DIR)/pscf/tests/chem/ > log
 	@echo `grep failed log` ", "\
-              `grep successful log` "in pscf/tests/log" > count
+              `grep successful log` "in pscf/tests/chem/log" > count
 	@cat count
 
 clean-outputs:

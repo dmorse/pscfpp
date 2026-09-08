@@ -11,7 +11,7 @@
 #include "RField.h"
 #include <util/global.h>
 
-#include <pscf/backend/cpp/FftwDRArray.tpp>  // base class implementation
+//#include <pscf/backend/cpp/FftwDRArray.tpp>  // base class implementation
 
 namespace Pscf {
 namespace Prdc {
@@ -23,7 +23,7 @@ namespace Prdc {
    */
    template <int D>
    RField<D,CPT>::RField()
-    : FftwDRArray<double>(),
+    : DeviceArray<double,CPT>(),
       meshDimensions_(0)
    {}
 
@@ -43,7 +43,7 @@ namespace Prdc {
    */
    template <int D>
    RField<D,CPT>::RField(RField<D,CPT> const & other)
-    : FftwDRArray<double>(),
+    : DeviceArray<double,CPT>(),
       meshDimensions_(0)
    {
       if (other.isAllocated()) {
