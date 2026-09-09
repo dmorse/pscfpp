@@ -66,17 +66,19 @@ namespace Pscf {
       {}
 
       /**
-      * Assign a DeviceArray to this unless they already share data.
+      * Create association with a DeviceArray, or do nothing if associated.
       *
-      * If both arrays are allocated and point to the same address, do
-      * nothing and return.
+      * If both arrays are allocated and point to the same address on 
+      * entry, do nothing and return. Otherwise, if this is not allocated,
+      * create an association of this with the DeviceArray (i.e., create
+      * a shallow copy).
       *
       * \throw Exception if other array is not allocated
-      * \throw Exception if arrays are allocated with unequal capacities
+      * \throw Exception if this is allocated and not associated with other
       *
       * \param other  array container on RHS of assigment (input)
       */
-      HostArray<Data,CPT>& operator = (DeviceArray<Data,CPT> const & other);
+      HostArray<Data,CPT>& operator = (DeviceArray<Data,CPT> & other);
 
    };
 
@@ -86,18 +88,18 @@ namespace Pscf {
 namespace Pscf {
 
   /*
-  * Assign a DeviceArray to this unless they share data.
+  * Create an association with a DeviceArray, or do nothing if associated.
   */
   template <typename Data>
   HostArray<Data,CPT>&
-  HostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> const & other)
+  HostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> & other)
   {
      Data* data = Array<Data>::data_;
      bool same =  (bool)data && data == other.cArray();
      if (same) {
         UTIL_CHECK(Array<Data>::capacity() == other.capacity());
      } else {
-        FftwDRArray<Data>::operator = (other); 
+        FftwDRArray<Data>::associate(other); 
      }
      return *this;
   }
