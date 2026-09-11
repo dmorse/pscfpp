@@ -7,7 +7,7 @@
 
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/Reduce.h>
-#include <pscf/backend/cpp/FftwDArray.h>
+#include <pscf/backend/cpp/FftwDRArray.h>
 #include <pscf/backend/cpp/CPT.h>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp>

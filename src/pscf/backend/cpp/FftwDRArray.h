@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/Array.h>        // base class
-#include <util/misc/ReferenceCounter.h>   // member
+//#include <util/containers/Array.h>        // base class
+//#include <util/misc/ReferenceCounter.h>   // member
+#include <util/containers/ArraySource.h>  // base class
 #include <util/misc/CountedReference.h>   // member
 #include <util/misc/Memory.h>             // member
 #include <util/global.h>
@@ -68,7 +69,7 @@ namespace Pscf {
    * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
-   class FftwDRArray : public Array<Data>
+   class FftwDRArray : public ArraySource<Data>
    {
 
    public:
@@ -188,13 +189,17 @@ namespace Pscf {
       /**
       * Associate this object with all of a different FftwDRArray.
       *
+      * This function associates this FftwDRArray with all of another
+      * FftwDRArray that is a data owner. The function associate(other)
+      * is equivalent to associate(other, 0, other.capacity()).
+      *
       * On entry, this object must be not be allocated, i.e., it must
       * not have data that it either owns or references, while the other
-      * array must own data. After exit, isAllocated() and isAssociated() 
+      * array must own data. After exit, isAllocated() and isAssociated()
       * will return true, while isOwner() will return false.
       *
-      * \throw Exception if this array is allocated on entry
-      * \throw Exception if other array is not a data owner on entry
+      * \throw Exception if this array is allocated
+      * \throw Exception if other array is not a data owner
       *
       * \param other  array that owns the data
       */
@@ -206,12 +211,17 @@ namespace Pscf {
       * After exit, isAllocated(), isOwner(), and isAssociated() will
       * all return false.
       *
-      * \throw Exception if this is not associated with external data
+      * \throw Exception if this is not associated with another array
       */
       void dissociate();
 
       /**
       * Serialize an FftwDRArray to/from an Archive.
+      *
+      * Precondition: To serialize to a write archive, this array must
+      * be unallocated or a data owner.
+      *
+      * \throw Exception if a write is attempted for a data user
       *
       * \param ar       archive
       * \param version  archive version id
@@ -249,9 +259,6 @@ namespace Pscf {
 
    private:
 
-      /// Counter for any containers that reference data owned by this.
-      ReferenceCounter refCounter_;
-
       /// Reference to a container that owns memory referenced by this.
       CountedReference ref_;
 
@@ -278,7 +285,7 @@ namespace Pscf {
    */
    template <typename Data>
    template <class Archive>
-   void FftwDRArray<Data>::serialize(Archive& ar, 
+   void FftwDRArray<Data>::serialize(Archive& ar,
                                      const unsigned int version)
    {
       int capacity;

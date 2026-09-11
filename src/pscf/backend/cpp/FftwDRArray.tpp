@@ -22,7 +22,7 @@ namespace Pscf {
    */
    template <typename Data>
    FftwDRArray<Data>::FftwDRArray()
-    : Array<Data>()
+    : ArraySource<Data>()
    {}
 
    /*
@@ -30,7 +30,7 @@ namespace Pscf {
    */
    template <typename Data>
    FftwDRArray<Data>::FftwDRArray(int capacity)
-    : Array<Data>()
+    : ArraySource<Data>()
    {  allocate(capacity); }
 
    /*
@@ -38,7 +38,7 @@ namespace Pscf {
    */
    template <typename Data>
    FftwDRArray<Data>::FftwDRArray(FftwDRArray<Data> const & other)
-    : Array<Data>()
+    : ArraySource<Data>()
    {
       if (!other.isAllocated()) {
          UTIL_THROW("Other FftwDRArray must be allocated.");
@@ -59,20 +59,15 @@ namespace Pscf {
          if (ref_.isAssociated()) {
             ref_.dissociate();
          } else {
-            if (refCounter_.hasRefs()) {
-               int nRef = refCounter_.nRef();
+            fftw_free(data_); // void C function, cannot throw Exception
+            Memory::sub<Data>(capacity_);
+            if (ReferenceCounter::hasRefs()) {
+               int nr = ReferenceCounter::nRef();
                std::cout
-                  << std::endl
-                  << "Error: Destroying FftwDRArray that is referenced by "
-                  << nRef << " other(s)" << std::endl;
-            }
-            try {
-               fftw_free(data_);
-               Memory::sub<Data>(capacity_);
-            } catch (...) {
-               std::cout
-                  << std::endl
-                  << "Error in deallocation in FftwDRArray destructor";
+                 << std::endl
+                 << "Error: Destroying FftwDRArray that is referenced by "
+                 << nr << " other(s), thus creating dangling references." 
+                 << std::endl;
             }
          }
       }
@@ -163,34 +158,34 @@ namespace Pscf {
       data_ = nullptr;
       Memory::sub<Data>(capacity_);
       capacity_ = 0;
-      UTIL_CHECK(!refCounter_.hasRefs());
+      UTIL_CHECK(!ReferenceCounter::hasRefs());
    }
 
    /*
    * Associate this object with a slice of another FftwDRArray.
    */
    template <typename Data>
-   void FftwDRArray<Data>::associate(FftwDRArray<Data>& other,
+   void FftwDRArray<Data>::associate(FftwDRArray<Data>& owner,
                                      int beginId, int capacity)
    {
-      UTIL_CHECK(other.isAllocated());
-      UTIL_CHECK(other.isOwner());
+      UTIL_CHECK(owner.isAllocated());
+      UTIL_CHECK(owner.isOwner());
       UTIL_CHECK(beginId >= 0);
       UTIL_CHECK(capacity > 0);
-      UTIL_CHECK(beginId + capacity <= other.capacity());
+      UTIL_CHECK(beginId + capacity <= owner.capacity());
       UTIL_CHECK(!isAllocated());
       UTIL_CHECK(!ref_.isAssociated());
 
       // Copy data pointer and capacity
-      data_ = other.cArray() + beginId;
+      data_ = owner.cArray() + beginId;
       capacity_ = capacity;
 
-      // Associate private ReferencecCounter of the other array with the
-      // CountedReference ref_ member variable of this data user.
-      ref_.associate(other.refCounter_);
+      // Associate the ReferencecCounter base sub-object of the owner array 
+      // with the CountedReference ref_ member variable of this data user.
+      ref_.associate(owner);
 
       // On exit from CountedReference::associate, the ReferenceCounter
-      // of the data other is incremented and the CountedReference of
+      // of the data owner is incremented and the CountedReference of
       // this data user has a pointer to that ReferenceCounter.
    }
 
@@ -212,7 +207,7 @@ namespace Pscf {
 
       data_ = nullptr;
       capacity_ = 0;
-      ref_.dissociate(); // decrements counter mainained by owner
+      ref_.dissociate(); // decrements counter mainained by data owner
    }
 
 } // namespace Pscf
