@@ -255,18 +255,18 @@ namespace Pscf {
    *
    * GPU specialization allocates host array if not done previously. 
    */
-   template <typename Data,CUT>
+   template <typename Data>
    void associate(DeviceArray<Data,CUT> const & deviceArray)
    {
       UTIL_CHECK(deviceArray.isAllocated());
       const int n = deviceArray.capacity();
-      if (isAllocated() && capacity() != n) {
-         deallocate(n);
+      if (DArray<Data>::isAllocated() && Array<Data>::capacity() != n) {
+         DArray<Data>::deallocate(n);
       }
-      if (!isAllocated()) {
-         allocate(n);
+      if (!DArray<Data>::isAllocated()) {
+         DArray<Data>::allocate(n);
       }
-      UTIL_CHECK(capacity() == n);
+      UTIL_CHECK(Array<Data>::capacity() == n);
    }
 
 }
