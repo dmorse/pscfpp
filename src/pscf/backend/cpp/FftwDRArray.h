@@ -8,8 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-//#include <util/containers/Array.h>        // base class
-//#include <util/misc/ReferenceCounter.h>   // member
 #include <util/containers/ArraySource.h>  // base class
 #include <util/misc/CountedReference.h>   // member
 #include <util/misc/Memory.h>             // member
@@ -261,6 +259,13 @@ namespace Pscf {
 
       /// Reference to a container that owns memory referenced by this.
       CountedReference ref_;
+
+      // Prohibit public access to the reference counter.
+      using ReferenceCounter::hasRefs;
+      using ReferenceCounter::nRef;
+
+      // Note: ReferenceCounter::nRef_ is declared mutable, so changes
+      // to this variable should not be visible in the public interface.
 
    };
 

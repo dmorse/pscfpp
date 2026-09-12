@@ -91,16 +91,16 @@ namespace Pscf {
       * HostArray<D>, by copying the underlying data from device memory
       * to host memory.
       *
-      * Preconditions: The RHS DeviceArray<Data,CUT> object must be allocated.  
-      * If this LHS HostArray<D> is not allocated, the required memory
-      * will be allocated before values are copied. Otherwise, if this LHS 
-      * array is allocated on entry, capacites for LHS and RHS objects 
-      * must be equal. 
+      * Preconditions: The RHS DeviceArray<Data,CUT> object must be 
+      * allocated.  If this LHS HostArray<D> is not allocated, the 
+      * required memory will be allocated before values are copied. 
+      * Otherwise, if this LHS array is allocated on entry, capacites 
+      * for LHS and RHS objects must be equal. 
       *
       * \throw Exception if the RHS array is not allocated on entry
       * \throw Exception if LHS and RHS have unequal nonzero capacities
       *
-      * \param other DeviceArray<Data,CUT>  array on RHS of assignment (input)
+      * \param other  DeviceArray<Data,CUT> on RHS of assignment (input)
       */
       HostArray<Data,CUT>& operator = (DeviceArray<Data,CUT> const & other);
 
@@ -120,6 +120,24 @@ namespace Pscf {
       * \param beginId  index of other array at which slice begins
       */
       void copySlice(DeviceArray<Data,CUT> const & other, int beginId);
+
+      /**
+      * Setup host array for use with a device array.
+      *
+      * GPU specialization allocates host array with same dimensions as
+      * the device array, unless this is already the case.
+      *
+      * \param deviceArray  device array (must be allocated on entry)
+      */
+      void associate(DeviceArray<Data,CUT> const & deviceArray);
+
+      /**
+      * Release host array.
+      *
+      * GPU specialization does nothing.
+      */
+      void dissociate()
+      {}
 
    };
 
@@ -230,6 +248,25 @@ namespace Pscf {
                                  other.cArray() + beginId, 
                                  DArray<Data>::capacity() * sizeof(Data), 
                                  cudaMemcpyDeviceToHost) );
+   }
+
+   /*
+   * Setup host array for use.
+   *
+   * GPU specialization allocates host array if not done previously. 
+   */
+   template <typename Data,CUT>
+   void associate(DeviceArray<Data,CUT> const & deviceArray)
+   {
+      UTIL_CHECK(deviceArray.isAllocated());
+      const int n = deviceArray.capacity();
+      if (isAllocated() && capacity() != n) {
+         deallocate(n);
+      }
+      if (!isAllocated()) {
+         allocate(n);
+      }
+      UTIL_CHECK(capacity() == n);
    }
 
 }

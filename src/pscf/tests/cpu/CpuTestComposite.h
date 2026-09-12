@@ -10,6 +10,7 @@
 #include "CpuFftwDRArrayTest.h"
 #include "CpuDeviceArrayTest.h"
 #include "CpuHostArrayTest.h"
+#include "CpuConstHostArrayTest.h"
 
 TEST_COMPOSITE_BEGIN(CpuTestComposite)
 TEST_COMPOSITE_ADD_UNIT(CpuComplexTest);
@@ -19,6 +20,7 @@ TEST_COMPOSITE_ADD_UNIT(CpuFftwDArrayTest);
 TEST_COMPOSITE_ADD_UNIT(CpuFftwDRArrayTest);
 TEST_COMPOSITE_ADD_UNIT(CpuDeviceArrayTest);
 TEST_COMPOSITE_ADD_UNIT(CpuHostArrayTest);
+TEST_COMPOSITE_ADD_UNIT(CpuConstHostArrayTest);
 TEST_COMPOSITE_END
 
 #endif

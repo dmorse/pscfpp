@@ -29,9 +29,10 @@ namespace Pscf {
    * The key difference from the FftwDRArray base class is that assignment
    * (operator = ) from a DeviceArray<Data,CTP> to a HostArray<Data,CTP>
    * creates a shallow copy of the DeviceArray (a shared pointer) rather
-   * than a deep copy. This allows the creation of a shallow copy to be 
-   * used to imitate the syntax of an actual device-to-host data copy in 
-   * template code that must work with either backend.
+   * than a deep copy. This allows the inexpensive creation of a shallow 
+   * copy to be used to imitate the syntax of an actual device-to-host data 
+   * copy in template code that must work with CPU or GPU backend, without
+   * the cost of an unnecessary copy.
    *
    * \ingroup Pscf_Backend_Cpp_Module
    */

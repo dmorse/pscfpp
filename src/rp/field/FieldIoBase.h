@@ -313,7 +313,7 @@ namespace Rp {
       virtual
       bool readFieldsRGrid(
                      std::istream& in,
-                     DArray<RField<D,T> >& fields,
+                     DArray< RField<D,T> >& fields,
                      UnitCell<D> & unitCell) const = 0;
 
       /**
@@ -332,7 +332,7 @@ namespace Rp {
       */
       bool readFieldsRGrid(
                      std::string filename,
-                     DArray<RField<D,T> >& fields,
+                     DArray< RField<D,T> >& fields,
                      UnitCell<D> & unitCell) const;
 
       /**
@@ -353,7 +353,7 @@ namespace Rp {
       virtual
       void readFieldsRGridData(
                      std::istream& in,
-                     DArray<RField<D,T> >& fields,
+                     DArray< RField<D,T> >& fields,
                      int nMonomer) const = 0;
 
       /**
@@ -412,7 +412,7 @@ namespace Rp {
       virtual
       void writeFieldsRGrid(
                      std::ostream& out,
-                     DArray<RField<D,T> > const & fields,
+                     DArray< RField<D,T> > const & fields,
                      UnitCell<D> const & unitCell,
                      bool writeHeader = true,
                      bool isSymmetric = true,
@@ -433,7 +433,7 @@ namespace Rp {
       */
       void writeFieldsRGrid(
                      std::string filename,
-                     DArray<RField<D,T> > const & fields,
+                     DArray< RField<D,T> > const & fields,
                      UnitCell<D> const & unitCell,
                      bool isSymmetric = true) const;
 
@@ -502,7 +502,7 @@ namespace Rp {
       virtual
       void readFieldsKGrid(
                      std::istream& in,
-                     DArray<RFieldDft<D,T> >& fields,
+                     DArray< RFieldDft<D,T> >& fields,
                      UnitCell<D> & unitCell) const = 0;
 
       /**
@@ -514,12 +514,12 @@ namespace Rp {
       * takes a std::istream& argument is called to read the file.
       *
       * \param filename  name of input file
-      * \param fields  array of k-space (typename T::RFieldDft) fields
+      * \param fields  array of k-space (RFieldDft) fields
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(
                      std::string filename,
-                     DArray<RFieldDft<D,T> >& fields,
+                     DArray< RFieldDft<D,T> >& fields,
                      UnitCell<D> & unitCell) const;
 
       /**
@@ -538,7 +538,7 @@ namespace Rp {
       virtual
       void writeFieldsKGrid(
                      std::ostream& out,
-                     DArray<RFieldDft<D,T> > const & fields,
+                     DArray< RFieldDft<D,T> > const & fields,
                      UnitCell<D> const & unitCell,
                      bool isSymmetric = true) const = 0;
 
@@ -556,7 +556,7 @@ namespace Rp {
       */
       void writeFieldsKGrid(
                      std::string filename,
-                     DArray<RFieldDft<D,T> > const & fields,
+                     DArray< RFieldDft<D,T> > const & fields,
                      UnitCell<D> const & unitCell,
                      bool isSymmetric = true) const;
 
@@ -586,7 +586,7 @@ namespace Rp {
       */
       void convertBasisToKGrid(
                      DArray< DArray<double> > const & in,
-                     DArray<RFieldDft<D,T> >& out) const;
+                     DArray< RFieldDft<D,T> >& out) const;
 
       /**
       * Convert a single field from Fourier (k-grid) to basis form.
@@ -622,7 +622,7 @@ namespace Rp {
       * \param epsilon  error tolerance for symmetry test (if any)
       */
       void convertKGridToBasis(
-                     DArray<RFieldDft<D,T> > const & in,
+                     DArray< RFieldDft<D,T> > const & in,
                      DArray< DArray<double> > & out,
                      bool checkSymmetry = true,
                      double epsilon = 1.0e-8) const;
@@ -682,7 +682,7 @@ namespace Rp {
       * \param epsilon error threshhold for symmetry test
       */
       void convertRGridToBasis(
-                     DArray<RField<D,T> > const & in,
+                     DArray< RField<D,T> > const & in,
                      DArray< DArray<double> > & out,
                      bool checkSymmetry = true,
                      double epsilon = 1.0e-8) const;
@@ -696,8 +696,8 @@ namespace Rp {
       * \param out  fields defined on real-space grid (r-grid)
       */
       void convertKGridToRGrid(
-                     DArray<RFieldDft<D,T> > const & in,
-                     DArray<RField<D,T> > & out) const;
+                     DArray< RFieldDft<D,T> > const & in,
+                     DArray< RField<D,T> > & out) const;
 
       /**
       * Convert a single field from k-grid to r-grid format.
@@ -1013,7 +1013,7 @@ namespace Rp {
       * \param fields  array of r-grid fields to be rescaled
       * \param factor  factor by which to multiply every field element
       */
-      void scaleFieldsRGrid(DArray<RField<D,T> > & fields, double factor) const;
+      void scaleFieldsRGrid(DArray< RField<D,T> > & fields, double factor) const;
 
       /**
       * Multiply all fields in an r-grid field file by a scalar.
@@ -1096,7 +1096,7 @@ namespace Rp {
       */
       virtual
       void replicateUnitCell(std::ostream& out,
-                             DArray<RField<D,T> > const & fields,
+                             DArray< RField<D,T> > const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const = 0;
 
@@ -1114,7 +1114,7 @@ namespace Rp {
       * \param replicas  number of unit cell replicas in each direction
       */
       void replicateUnitCell(std::string filename,
-                             DArray<RField<D,T> > const & fields,
+                             DArray< RField<D,T> > const & fields,
                              UnitCell<D> const & unitCell,
                              IntVec<D> const & replicas) const;
 
@@ -1155,7 +1155,7 @@ namespace Rp {
       */
       virtual
       void expandRGridDimension(std::ostream &out,
-                                DArray<RField<D,T> > const & fields,
+                                DArray< RField<D,T> > const & fields,
                                 UnitCell<D> const & unitCell,
                                 int d,
                                 DArray<int> const& newGridDimensions)
@@ -1176,7 +1176,7 @@ namespace Rp {
       * \param newGridDimensions  number of grid points in added dimensions
       */
       void expandRGridDimension(std::string filename,
-                                DArray<RField<D,T> > const & fields,
+                                DArray< RField<D,T> > const & fields,
                                 UnitCell<D> const & unitCell,
                                 int d,
                                 DArray<int> newGridDimensions) const;
@@ -1411,10 +1411,10 @@ namespace Rp {
       mutable DArray< DArray<double> > tmpFieldsBasis_;
 
       /// Work array of fields on real space grid (r-grid).
-      mutable DArray<RField<D,T> > tmpFieldsRGrid_;
+      mutable DArray< RField<D,T> > tmpFieldsRGrid_;
 
       /// Work array of fields on Fourier grid (k-grid).
-      mutable DArray<RFieldDft<D,T> > tmpFieldsKGrid_;
+      mutable DArray< RFieldDft<D,T> > tmpFieldsKGrid_;
 
       /// K-grid work space (single field)
       mutable RFieldDft<D,T> workDft_;
