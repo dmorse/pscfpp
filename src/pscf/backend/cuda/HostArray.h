@@ -251,12 +251,11 @@ namespace Pscf {
    }
 
    /*
-   * Setup host array for use.
-   *
-   * GPU specialization allocates host array if not done previously. 
+   * Setup host array for use with device array. Allocate if necessary.
    */
    template <typename Data>
-   void associate(DeviceArray<Data,CUT> const & deviceArray)
+   void HostArray<Data,CUT>::associate(
+                                 DeviceArray<Data,CUT> const & deviceArray)
    {
       UTIL_CHECK(deviceArray.isAllocated());
       const int n = deviceArray.capacity();
@@ -266,6 +265,7 @@ namespace Pscf {
       if (!DArray<Data>::isAllocated()) {
          DArray<Data>::allocate(n);
       }
+      // Note: If this was allocated with capacity() == n, nothing changes.
       UTIL_CHECK(Array<Data>::capacity() == n);
    }
 
