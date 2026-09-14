@@ -9,6 +9,7 @@
 */
 
 #include "RField.h"
+#include <pscf/backend/cuda/HostArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -67,8 +68,9 @@ namespace Prdc {
    * Associate this object with a slice of another DeviceArray.
    */
    template <int D>
-   void RField<D,CUT>::associate(DeviceArray<cudaReal,CUT>& arr, int beginId, 
-                             IntVec<D> const & meshDimensions)
+   void RField<D,CUT>::associate(DeviceArray<cudaReal,CUT>& arr, 
+                                 int beginId, 
+                                 IntVec<D> const & meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -100,15 +102,9 @@ namespace Prdc {
    RField<D,CUT>::operator = (const HostArray<cudaReal,CUT>& other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
-      if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostArray<cudaReal,CUT> is not allocated.");
-      }
-      if (!isAllocated()) {
-         UTIL_THROW("Error: LHS RField is not allocated.");
-      }
-      if (capacity_ != other.capacity()) {
-         UTIL_THROW("Cannot assign Fields of unequal capacity");
-      }
+      UTIL_CHECK(other.isAllocated());
+      UTIL_CHECK((DeviceArray<cudaReal,CUT>::isAllocated()));
+      UTIL_CHECK((DeviceArray<cudaReal,CUT>::capacity() == other.capacity()));
 
       // Use base class assignment operator to copy elements
       DeviceArray<cudaReal,CUT>::operator = (other);

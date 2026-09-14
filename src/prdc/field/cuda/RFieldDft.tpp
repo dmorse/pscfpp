@@ -10,6 +10,7 @@
 
 #include "RFieldDft.h"
 #include "FFT.h"
+#include <pscf/backend/cuda/HostArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -75,15 +76,9 @@ namespace Prdc {
    RFieldDft<D,CUT>::operator = (HostArray<cudaComplex,CUT> const & other)
    {
       // Preconditions: Both arrays must be allocated with equal capacities
-      if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostArray<cudaComplex,CUT> is not allocated.");
-      }
-      if (!isAllocated()) {
-         UTIL_THROW("Error: LHS RFieldDft<D,CUT> is not allocated.");
-      }
-      if (capacity_ != other.capacity()) {
-         UTIL_THROW("Cannot assign Fields of unequal capacity");
-      }
+      UTIL_CHECK(other.isAllocated());
+      UTIL_CHECK(isAllocated());
+      UTIL_CHECK(capacity() == other.capacity());
 
       // Use base class assignment operator to copy elements
       DeviceArray<cudaComplex,CUT>::operator = (other);

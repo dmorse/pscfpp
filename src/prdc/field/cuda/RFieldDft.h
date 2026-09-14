@@ -11,9 +11,17 @@
 #include <pscf/backend/cuda/CUT.h>
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
+
+// Forward declarations
+namespace Pscf {
+   template <typename Data, class T> class HostArray;
+   namespace Prdc {
+      // Declaration of primary template
+      template <int D, class T> class RField;
+   }
+}
 
 namespace Pscf {
 namespace Prdc {
@@ -85,14 +93,15 @@ namespace Prdc {
       * Assignment operator, assignment from a HostArray<cudaComplex,CUT>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
-      * RFieldDft<D,CUT> from host memory to device memory.
+      * HostArray<cudaComplex,CUT> from host memory to device memory.
       *
       * The RHS HostArray<cudaComplex,CUT> and LHS RFieldDft<D,CUT> must 
       * both be allocated and have equal capacity values on entry. 
       * 
       * \param other the RHS HostArray<cudaComplex,CUT>
       */
-      RFieldDft<D,CUT>& operator = (HostArray<cudaComplex,CUT> const & other);
+      RFieldDft<D,CUT>& 
+      operator = (HostArray<cudaComplex,CUT> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -112,7 +121,8 @@ namespace Prdc {
       * \param beginId index in the parent array at which this array starts
       * \param meshDimensions number of grid points in each dimension
       */
-      void associate(DeviceArray<cudaComplex,CUT>& arr, int beginId, 
+      void associate(DeviceArray<cudaComplex,CUT>& arr, 
+                     int beginId, 
                      IntVec<D> const & meshDimensions);
 
       /**

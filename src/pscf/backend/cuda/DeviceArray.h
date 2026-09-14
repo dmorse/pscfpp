@@ -13,7 +13,7 @@
 
 // Forward declarations
 namespace Util {
-   template <typename Data> class DArray;
+   template <typename Data> class Array;
 }
 namespace Pscf {
    class DeviceMemory;
@@ -128,11 +128,11 @@ namespace Pscf {
       DeviceArray(DeviceArray<Data,CUT> const & other);
 
       /**
-      * Copy constructor, deep copy DArray<Data> from host to device.
+      * Copy constructor, deep copy Array<Data> from host to device.
       *
-      * \param other  DArray<Data> to be copied (input)
+      * \param other  Array<Data> to be copied (input)
       */
-      DeviceArray(DArray<Data> const & other);
+      DeviceArray(Array<Data> const & other);
 
       /**
       * Destructor.
@@ -232,21 +232,21 @@ namespace Pscf {
       DeviceArray<Data,CUT>& operator=(DeviceArray<Data,CUT> const& other);
 
       /**
-      * Assignment operator, assignment from Util::DArray<Data> host array.
+      * Assignment operator, assignment from Util::Array<Data> host array.
       *
-      * Performs a deep copy from a RHS DArray<Data> host array to this 
+      * Performs a deep copy from a RHS Array<Data> host array to this 
       * LHS DeviceArray<Data,CUT>, by copying underlying C array from host 
       * memory to device memory.
       *
       * If this (LHS) DeviceArray<Data,CUT> is not allocated on entry, 
       * memory will be allocated before data is copied.  If this LHS object
       * is already allocated, it must have the same capacity as the RHS 
-      * DArray<Data>.
+      * Array<Data>.
       *
-      * \param other  DArray<Data> on RHS of assignent (input)
+      * \param other  Array<Data> on RHS of assignent (input)
       */
       virtual
-      DeviceArray<Data,CUT>& operator = (const DArray<Data>& other);
+      DeviceArray<Data,CUT>& operator = (const Array<Data>& other);
 
       /**
       * Return array capacity.
@@ -338,7 +338,7 @@ namespace Pscf {
 
 #include "DeviceMemory.h"
 #include "cudaErrorCheck.h"
-#include <util/containers/DArray.h>
+#include <util/containers/Array.h>
 #include <util/global.h>
 #include <cuda_runtime.h>
 
@@ -383,12 +383,12 @@ namespace Pscf {
    }
 
    /*
-   * Copy constructor, deep copy from host DArray<Data>
+   * Copy constructor, deep copy from host Array<Data>
    *
    * Allocates new memory and copies all elements by value.
    */
    template <typename Data>
-   DeviceArray<Data,CUT>::DeviceArray(const DArray<Data>& other)
+   DeviceArray<Data,CUT>::DeviceArray(const Array<Data>& other)
     : dataPtr_(nullptr),
       capacity_(0)
    {
@@ -559,15 +559,15 @@ namespace Pscf {
    }
 
    /*
-   * Assignment from RHS Util::DArray<Data>.
+   * Assignment from RHS Util::Array<Data>.
    */
    template <typename Data>
    DeviceArray<Data,CUT>&
-   DeviceArray<Data,CUT>::operator = (Util::DArray<Data> const& other)
+   DeviceArray<Data,CUT>::operator = (Util::Array<Data> const& other)
    {
       // Precondition
       if (!other.isAllocated()) {
-         UTIL_THROW("RHS DArray<Data> must be allocated.");
+         UTIL_THROW("RHS Array<Data> must be allocated.");
       }
 
       // Allocate this if necessary

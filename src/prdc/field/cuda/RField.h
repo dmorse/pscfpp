@@ -13,8 +13,17 @@
 #include <pscf/backend/cuda/cudaTypes.h>      // base class argument
 #include <pscf/math/IntVec.h>         // class member
 
-#include <pscf/backend/cuda/HostArray.h>
+//#include <pscf/backend/cuda/HostArray.h>
 #include <util/global.h>
+
+// Forward declarations
+namespace Pscf {
+   template <typename Data, class T> class HostArray;
+   namespace Prdc {
+      // Declaration of primary template
+      template <int D, class T> class RField;
+   }
+}
 
 namespace Pscf {
 namespace Prdc {
@@ -22,7 +31,7 @@ namespace Prdc {
    using namespace Util;
 
    // Declaration of primary template
-   template <int D, class T> class RField;
+   //template <int D, class T> class RField;
 
    /**
    * Field of real values on a regular mesh, allocated on a GPU device.
@@ -106,7 +115,7 @@ namespace Prdc {
       operator = (RField<D,CUT> const & other);
 
       /**
-      * Assignment operator, assignment from a HostArray<cudaReal,CUT>.
+      * Assignment from a HostArray<cudaReal,CUT>.
       *
       * Performs a deep copy, by copying all elements of the RHS RField
       * from host memory to device memory.
@@ -116,7 +125,7 @@ namespace Prdc {
       *
       * \param other the RHS HostArray<cudaReal,CUT>
       */
-      RField<D,CUT>& operator = (const HostArray<cudaReal,CUT>& other);
+      RField<D,CUT>& operator = (HostArray<cudaReal,CUT> const & other);
 
       /**
       * Return mesh dimensions by constant reference.
