@@ -8,17 +8,22 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/WFieldsBase.h>  // base class template
-#include <pscf/backend/cuda/CUT.h>      // base class template argument
+#include <rp/field/WFieldsBase.h>     // base class template
+#include <pscf/backend/cuda/CUT.h>    // base class template argument
+
+// Forward declaration
+namespace Pscf {
+   template <typename Data, class T> class DeviceArray;
+   namespace Rp {
+      // Primary template
+      template <int D, class T> class WFields;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
-
-   // Declare primary template
-   template <int D, class T> class WFields;
 
    /**
    * A container of fields stored in both basis and r-grid format.

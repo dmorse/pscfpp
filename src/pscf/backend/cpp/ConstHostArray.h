@@ -27,8 +27,8 @@ namespace Pscf {
    * This class is used for in template code in which data is copied from
    * a psuedo-device array to a pseudo-host array if the device array is
    * const and/or if the host array may be treated read only. It is
-   * derived from Util::ArrayView, and is equivalent to this base class
-   * except for the definition of a specialized assignment operator.
+   * derived from Util::ConstArrayView, and is equivalent to this base 
+   * base except for the definition of a specialized assignment operator.
    *
    * Assignment from a DeviceArray<Data,CTP> const reference to a
    * ConstHostArray<Data,CTP> (operator =) creates a shallow read-only
@@ -50,7 +50,7 @@ namespace Pscf {
    * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
-   class ConstHostArray<Data, CPT> : public Util::ConstArrayView<Data>
+   class ConstHostArray<Data, CPT> : public ConstArrayView<Data>
    {
 
    public:
@@ -85,6 +85,9 @@ namespace Pscf {
       */
       ConstHostArray<Data,CPT>& operator = (DeviceArray<Data,CPT> & other);
 
+      // Inherited member function (to prevent hiding)
+      using ConstArrayView<Data>::operator =;
+
    };
 
 } // namespace Pscf
@@ -99,7 +102,7 @@ namespace Pscf {
   ConstHostArray<Data,CPT>&
   ConstHostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> & other)
   {
-     const Data* data = ConstArrayView<Data>::cArray();
+     Data const * data = ConstArrayView<Data>::cArray();
      if ((bool)data && other.cArray() == data) {
         UTIL_CHECK(other.capacity() == ConstArrayView<Data>::size());
         // If this is already associated with the other array, do nothing

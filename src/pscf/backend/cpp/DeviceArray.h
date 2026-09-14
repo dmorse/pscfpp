@@ -49,13 +49,6 @@ namespace Pscf {
       // Copy constructor
       DeviceArray(DeviceArray<Data,CPT> const & other) = default;
 
-      // Destructor
-      ~DeviceArray() = default;
-
-      // Assignment
-      DeviceArray<Data,CPT>& 
-      operator = (DeviceArray<Data,CPT> const&) = default;
-
       /**
       * Allocating constructor.
       *
@@ -66,6 +59,13 @@ namespace Pscf {
       DeviceArray(int capacity)
        : FftwDRArray<Data>(capacity)
       {}
+
+      // Destructor
+      ~DeviceArray() = default;
+
+      // Assignment
+      DeviceArray<Data,CPT>& 
+      operator = (DeviceArray<Data,CPT> const&) = default;
 
       /**
       * Create association with a HostArray, or do nothing if associated.
@@ -81,6 +81,9 @@ namespace Pscf {
       * \param other  array container on RHS of assigment (input)
       */
       DeviceArray<Data,CPT>& operator = (HostArray<Data,CPT> & other);
+
+      // Inherited public function (to prevent hiding)
+      using FftwDRArray<Data>::operator =;
 
    };
 

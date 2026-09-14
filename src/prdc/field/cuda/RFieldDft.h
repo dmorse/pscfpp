@@ -12,7 +12,6 @@
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/math/IntVec.h>
-#include <util/global.h>
 
 // Forward declarations
 namespace Pscf {
@@ -168,7 +167,21 @@ namespace Prdc {
 
    };
 
-   // Inline and templated member functions
+   // Explicit instantiation declarations
+   extern template class RFieldDft<1,CUT>;
+   extern template class RFieldDft<2,CUT>;
+   extern template class RFieldDft<3,CUT>;
+
+} // namespace Prdc
+} // namespace Pscf
+
+
+#include <pscf/backend/cuda/HostArray.h>
+#include <util/global.h>
+
+// Inline and templated member functions
+namespace Pscf {
+namespace Prdc {
    
    /*
    * Return mesh dimensions by constant reference.
@@ -219,10 +232,6 @@ namespace Prdc {
       }
       ar & meshDimensions_;
    }
-
-   extern template class RFieldDft<1,CUT>;
-   extern template class RFieldDft<2,CUT>;
-   extern template class RFieldDft<3,CUT>;
 
 } // namespace Prdc
 } // namespace Pscf

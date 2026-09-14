@@ -44,8 +44,8 @@ namespace Pscf {
       // Default constructor (default)
       ConstHostArray() = default;
 
-      // Copy constructor (default)
-      ConstHostArray(ConstHostArray<Data,CUT> const & other) = default;
+      // Copy constructor (deleted)
+      ConstHostArray(ConstHostArray<Data,CUT> const & other) = delete;
 
       /**
       * Copy constructor (copies from device to host).
@@ -57,9 +57,9 @@ namespace Pscf {
       // Destructor
       ~ConstHostArray() = default;
 
-      // Assignment (default)
+      // Assignment (deleted)
       ConstHostArray<Data,CUT>&
-      operator = (ConstHostArray<Data,CUT> const & other) = default;
+      operator = (ConstHostArray<Data,CUT> const & other) = delete;
 
       /**
       * Assignment from a DeviceArray<Data,CUT>.
@@ -100,7 +100,7 @@ namespace Pscf {
       void copySlice(DeviceArray<Data,CUT> const & other, int beginId);
 
       /**
-      * Setup host array for use with a device array.
+      * Allocate host array for use with a device array, if needed.
       *
       * GPU specialization allocates host array with same dimensions as
       * the device array, unless this is already the case.
@@ -116,6 +116,15 @@ namespace Pscf {
       */
       void dissociate()
       {}
+
+      // Inherited public member functions (selected)
+      using ConstArray<Data>::capacity;
+      using ConstArray<Data>::isAllocated;
+      using ConstArray<Data>::cArray;
+      using ConstArray<Data>::operator [];
+      using ConstDArray<Data>::allocate;
+      using ConstDArray<Data>::deallocate;
+      using ConstDArray<Data>::operator =;
 
    };
 
@@ -140,15 +149,15 @@ namespace Pscf {
       UTIL_CHECK(other.isAllocated());
 
       // If necessary, allocate this array
-      if (!ConstArray<Data>::isAllocated()) {
-          ConstDArray<Data>::allocate(other.capacity());
+      if (!isAllocated()) {
+          allocate(other.capacity());
       }
 
       // Copy data
       cudaErrorCheck( 
          cudaMemcpy(ConstArray<Data>::data_,
                     other.cArray(),
-                    ConstArray<Data>::capacity()*sizeof(Data),
+                    capacity()*sizeof(Data),
                     cudaMemcpyDeviceToHost) 
       );
    }
@@ -166,11 +175,11 @@ namespace Pscf {
 
       // If necessary, allocate this array
       if (!ConstDArray<Data>::isAllocated()) {
-         ConstDArray<Data>::allocate(other.capacity());
+         allocate(other.capacity());
       }
 
       // Require equal capacities
-      if (ConstArray<Data>::capacity() != other.capacity()) {
+      if (capacity() != other.capacity()) {
          UTIL_THROW("Cannot assign arrays of unequal capacity");
       }
 
@@ -178,7 +187,7 @@ namespace Pscf {
       cudaErrorCheck(
          cudaMemcpy(ConstArray<Data>::data_,
                     other.cArray(),
-                    ConstArray<Data>::capacity() * sizeof(Data),
+                    capacity() * sizeof(Data),
                     cudaMemcpyDeviceToHost)
       );
 
@@ -195,14 +204,14 @@ namespace Pscf {
    {
       // Preconditions
       UTIL_CHECK (other.isAllocated());
-      UTIL_CHECK(ConstArray<Data>::isAllocated());
-      UTIL_CHECK(ConstArray<Data>::capacity() + beginId <= other.capacity());
+      UTIL_CHECK(isAllocated());
+      UTIL_CHECK(capacity() + beginId <= other.capacity());
 
       // Copy all elements
       cudaErrorCheck(
          cudaMemcpy(ConstArray<Data>::data_,
                     other.cArray() + beginId,
-                    ConstArray<Data>::capacity() * sizeof(Data),
+                    capacity() * sizeof(Data),
                     cudaMemcpyDeviceToHost)
       );
 
@@ -217,16 +226,15 @@ namespace Pscf {
    {
       UTIL_CHECK(deviceArray.isAllocated());
       const int n = deviceArray.capacity();
-      if (ConstArray<Data>::isAllocated() && 
-          ConstArray<Data>::capacity() != n) 
+      if (isAllocated() && capacity() != n) 
       {
-         ConstDArray<Data>::deallocate(n);
+         deallocate();
       }
-      if (!ConstArray<Data>::isAllocated()) {
-         ConstDArray<Data>::allocate(n);
+      if (!isAllocated()) {
+         allocate(n);
       }
       // Note: If this was allocated with capacity() == n, nothing changes.
-      UTIL_CHECK(Array<Data>::capacity() == n);
+      UTIL_CHECK(capacity() == n);
    }
 
 }

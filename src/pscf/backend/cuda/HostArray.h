@@ -114,7 +114,7 @@ namespace Pscf {
       *
       * \param deviceArray  device array (must be allocated on entry)
       */
-      void associate(DeviceArray<Data,CUT> const & deviceArray);
+      void associate(DeviceArray<Data,CUT>& deviceArray);
 
       /**
       * Release host array.
@@ -124,12 +124,21 @@ namespace Pscf {
       void dissociate()
       {}
 
+      // Inherited public member functions (selected)
+      using Array<Data>::capacity;
+      using Array<Data>::isAllocated;
+      using Array<Data>::operator [];
+      using Array<Data>::cArray;
+      using DArray<Data>::allocate;
+      using DArray<Data>::deallocate;
+
    };
 
 } // namespace Pscf
 
-#include "DeviceArray.h"
-#include "cudaErrorCheck.h"
+#include <pscf/backend/cuda/CUT.h> 
+#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/cudaErrorCheck.h>
 #include <util/global.h>
 #include <cuda_runtime.h>
 
@@ -144,11 +153,11 @@ namespace Pscf {
    {  
       // Precondition - RHS array must be allocated
       UTIL_CHECK(other.isAllocated());
-      DArray<Data>::allocate(other.capacity());
+      allocate(other.capacity());
       cudaErrorCheck( 
-         cudaMemcpy(Array<Data>::cArray(), 
+         cudaMemcpy(Array<Data>::data_, 
                     other.cArray(), 
-                    Array<Data>::capacity() * sizeof(Data), 
+                    capacity() * sizeof(Data), 
                     cudaMemcpyDeviceToHost) 
       );
    }
@@ -164,18 +173,18 @@ namespace Pscf {
       UTIL_CHECK(other.isAllocated());
 
       // Allocate this if necessary 
-      if (!DArray<Data>::isAllocated()) {
-         DArray<Data>::allocate(other.capacity());
+      if (!isAllocated()) {
+         allocate(other.capacity());
       } 
 
       // Require equal capacities
-      UTIL_CHECK(DArray<Data>::capacity() == other.capacity());
+      UTIL_CHECK(capacity() == other.capacity());
 
       // Copy all elements
       cudaErrorCheck( 
-         cudaMemcpy(DArray<Data>::cArray(), 
-		    other.cArray(), 
-                    DArray<Data>::capacity() * sizeof(Data), 
+         cudaMemcpy(Array<Data>::data_, 
+                    other.cArray(), 
+                    capacity() * sizeof(Data), 
                     cudaMemcpyDeviceToHost) 
       );
 
@@ -191,14 +200,14 @@ namespace Pscf {
    {
       // Preconditions 
       UTIL_CHECK(other.isAllocated());
-      UTIL_CHECK(DArray<Data>::isAllocated());
-      UTIL_CHECK(DArray<Data>::capacity() + beginId <= other.capacity());
+      UTIL_CHECK(isAllocated());
+      UTIL_CHECK(capacity() + beginId <= other.capacity());
 
       // Copy all elements
       cudaErrorCheck( 
-         cudaMemcpy(DArray<Data>::cArray(), 
+         cudaMemcpy(Array<Data>::data_, 
                     other.cArray() + beginId, 
-                    DArray<Data>::capacity() * sizeof(Data), 
+                    capacity() * sizeof(Data), 
                     cudaMemcpyDeviceToHost) 
       );
    }
@@ -208,18 +217,18 @@ namespace Pscf {
    */
    template <typename Data>
    void HostArray<Data,CUT>::associate(
-                                 DeviceArray<Data,CUT> const & deviceArray)
+                                 DeviceArray<Data,CUT>& deviceArray)
    {
       UTIL_CHECK(deviceArray.isAllocated());
       const int n = deviceArray.capacity();
-      if (DArray<Data>::isAllocated() && Array<Data>::capacity() != n) {
-         DArray<Data>::deallocate(n);
+      if (isAllocated() && capacity() != n) {
+         deallocate();
       }
-      if (!DArray<Data>::isAllocated()) {
-         DArray<Data>::allocate(n);
+      if (!isAllocated()) {
+         allocate(n);
       }
       // Note: If this was allocated with capacity() == n, nothing changes.
-      UTIL_CHECK(Array<Data>::capacity() == n);
+      UTIL_CHECK(capacity() == n);
    }
 
 }

@@ -53,7 +53,7 @@ namespace Rp {
    {  delete correlationMixturePtr_; }
 
    /*
-   * Compute k-space array of intramolecular correlation functions.
+   * Compute k-space array of intramolecular correlation functions (on device).
    */
    template<int D, class T>
    void
@@ -61,18 +61,17 @@ namespace Rp {
    {
       getMeshDimensions();
       int nk = kSize();
+      UTIL_CHECK(correlations.isAllocated());
       UTIL_CHECK(correlations.capacity() == nk);
 
-      setupHostArray(correlations_, correlations);
-
-      computeOmegaTotalArray(correlations_);
-
-      sendToDevice(correlations, correlations_);
-      releaseHostArray(correlations_);
+      correlations_h_.associate(correlations);
+      computeOmegaTotalArray(correlations_h_);
+      correlations = correlations_h_;
+      correlations_h_.dissociate();
    }
 
    /*
-   * Compute k-space array of intramolecular correlation functions.
+   * Compute k-space array of intramolecular correlation functions (on host).
    */
    template <int D, class T>
    void
@@ -97,11 +96,11 @@ namespace Rp {
       meshDimensions_ = system().domain().mesh().dimensions();
 
       // Compute k-space mesh dimensions kMeshDimensions_ and size Size_
-      FFTT::computeKMesh(meshDimensions_, kMeshDimensions_, kSize_);
+      FFT<D,T>::computeKMesh(meshDimensions_, kMeshDimensions_, kSize_);
    }
 
    /*
-   * Construct array of squared wavevector values.
+   * Construct array of squared wavevector values (on host).
    */
    template <int D, class T>
    void IntraCorrelation<D,T>::computeGsq()

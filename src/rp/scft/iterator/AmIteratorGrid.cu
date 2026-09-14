@@ -5,12 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/RField.h>
-#include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/CUT.h>
-
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/Reduce.h>
+#include <pscf/backend/cuda/DeviceArray.h>
+#include <prdc/field/RField.h>
 
 #include <rp/scft/iterator/AmIteratorGrid.tpp> // template implementation
 

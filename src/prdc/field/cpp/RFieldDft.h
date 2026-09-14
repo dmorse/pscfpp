@@ -119,6 +119,9 @@ namespace Prdc {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
+      // Inherited public member function (to prevent hiding)
+      using DeviceArray<fftw_complex,CPT>::operator =;
+
    private:
 
       // Vector containing number of grid points in each direction.
@@ -127,6 +130,7 @@ namespace Prdc {
       // Vector containing dimensions of dft (Fourier) grid.
       IntVec<D> dftDimensions_;
 
+      // Make private to prevent allocation with mesh dimensions.
       using FftwDRArray<fftw_complex>::allocate;
 
    };

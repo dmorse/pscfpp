@@ -9,8 +9,6 @@
 */
 
 #include <pscf/backend/BackendId.h>
-#include <pscf/backend/cpp/FftwDRArray.h>
-
 #include <fftw3.h>
 
 // Forward declarations
@@ -39,13 +37,6 @@ namespace Pscf {
 
       using Real = double;
       using Complex = fftw_complex;
-
-      //using VecRandom = CpuVecRandom;
-
-      template <typename T> using DevArray = FftwDRArray<T>;
-      template <typename T> using LocArray = FftwDRArray<T>;
-      using RDevArray = DevArray<Real>;
-      using RLocArray = LocArray<Real>;
 
       // Static members
 

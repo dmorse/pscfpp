@@ -10,8 +10,6 @@
 
 #include <pscf/backend/BackendId.h>
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <pscf/backend/cuda/DeviceArray.h>
-#include <pscf/backend/cuda/HostArray.h>
 
 // Forward declarations
 namespace Util {
@@ -38,12 +36,6 @@ namespace Pscf {
 
       using Real = cudaReal;
       using Complex = cudaComplex;
-
-      template <typename T> using DevArray = DeviceArray<T,CUT>;
-      template <typename T> using LocArray = HostArray<T,CUT>;
-
-      using RDevArray = DevArray<Real>;
-      using RLocArray = LocArray<Real>;
 
       // Static members
 

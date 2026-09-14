@@ -210,36 +210,45 @@ void CpuHostArrayTest::testAssignFromDevice()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
-   HostArray<Data,CPT> u;
    {
-      // Data owner
+      // Data owner (device array)
       DeviceArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(!v.isAssociated());
+      TEST_ASSERT(v.isOwner());
 
-      // Data user
+      // Data user (host array)
+      HostArray<Data,CPT> u;
       u.associate(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isAssociated());
       TEST_ASSERT(!u.isOwner());
 
+      // Set data in device array
+      for (int i=0; i < capacity; i++ ) {
+         v[i] = (i+1)*10.0 ;
+      }
+
+      // Copy device -> host
       u = v;
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isAssociated());
       TEST_ASSERT(!u.isOwner());
 
-      for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0 ;
-      }
-
+      // Test equality after assignment
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 20.0));
       TEST_ASSERT(eq(v[2], 30.0));
       TEST_ASSERT(eq(u[0], 10.0));
       TEST_ASSERT(eq(u[1], 20.0));
       TEST_ASSERT(eq(u[2], 30.0));
+
+      // Modify on host
       u[1] = 25.0;
+      TEST_ASSERT(eq(u[1], 25.0));
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 25.0));
       long int tot = Memory::total();
@@ -253,8 +262,8 @@ void CpuHostArrayTest::testAssignFromDevice()
       TEST_ASSERT(!u.isAssociated());
       TEST_ASSERT(!u.isOwner());
       TEST_ASSERT(v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
       TEST_ASSERT(v.isOwner());
+      TEST_ASSERT(!v.isAssociated());
 
       v.deallocate();
       TEST_ASSERT(v.capacity() == 0);

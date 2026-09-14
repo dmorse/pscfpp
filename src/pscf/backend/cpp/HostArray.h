@@ -50,13 +50,6 @@ namespace Pscf {
       // Copy constructor
       HostArray(HostArray<Data,CPT> const & other) = default;
 
-      // Destructor
-      ~HostArray() = default;
-
-      // Assignment
-      HostArray<Data,CPT>& 
-      operator = (HostArray<Data,CPT> const&) = default;
-
       /**
       * Allocating constructor.
       *
@@ -65,6 +58,13 @@ namespace Pscf {
       HostArray(int capacity)
        : FftwDRArray<Data>(capacity)
       {}
+
+      // Destructor
+      ~HostArray() = default;
+
+      // Assignment
+      HostArray<Data,CPT>& 
+      operator = (HostArray<Data,CPT> const&) = default;
 
       /**
       * Create association with a DeviceArray, or do nothing if associated.
@@ -81,6 +81,9 @@ namespace Pscf {
       */
       HostArray<Data,CPT>& operator = (DeviceArray<Data,CPT> & other);
 
+      // Inherited public function (to prevent hiding).
+      using FftwDRArray<Data>::operator =;
+
    };
 
 } // namespace Pscf
@@ -96,7 +99,7 @@ namespace Pscf {
   HostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> & other)
   {
      Data* data = Array<Data>::data_;
-     bool same =  (bool)data && data == other.cArray();
+     bool same = (bool)data && data == other.cArray();
      if (same) {
         UTIL_CHECK(Array<Data>::capacity() == other.capacity());
      } else {

@@ -8,13 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/CUT.h>         // class template argument
+#include <pscf/backend/cuda/CUT.h>            // template argument
 #include <pscf/backend/cuda/DeviceArray.h>    // base class template
 #include <pscf/backend/cuda/cudaTypes.h>      // base class argument
-#include <pscf/math/IntVec.h>         // class member
-
-//#include <pscf/backend/cuda/HostArray.h>
-#include <util/global.h>
+#include <pscf/math/IntVec.h>                 // member
 
 // Forward declarations
 namespace Pscf {
@@ -157,6 +154,21 @@ namespace Prdc {
 
    };
 
+   // Explicit instantiation declarations
+   extern template class RField<1,CUT>;
+   extern template class RField<2,CUT>;
+   extern template class RField<3,CUT>;
+
+} // namespace Prdc
+} // namespace Pscf
+
+#include <pscf/backend/cuda/HostArray.h> 
+#include <util/global.h>
+
+// Inline and template member functions
+namespace Pscf {
+namespace Prdc {
+
    /*
    * Return mesh dimensions by constant reference.
    */
@@ -198,11 +210,6 @@ namespace Prdc {
       }
       ar & meshDimensions_;
    }
-
-   // Explicit instantiation declarations
-   extern template class RField<1,CUT>;
-   extern template class RField<2,CUT>;
-   extern template class RField<3,CUT>;
 
 } // namespace Prdc
 } // namespace Pscf

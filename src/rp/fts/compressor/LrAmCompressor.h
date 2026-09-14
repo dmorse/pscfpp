@@ -10,7 +10,9 @@
 
 #include <pscf/iterator/AmIteratorTmpl.h>       // base class template
 #include <rp/fts/compressor/Compressor.h>       // base template argument
-#include <rp/fts/compressor/IntraCorrelation.h> // base template argument
+#include <pscf/backend/DeviceArray.h>           // base template argument
+
+#include <rp/fts/compressor/IntraCorrelation.h> // member
 #include <prdc/field/RField.h>                  // member
 #include <prdc/field/RFieldDft.h>               // member
 #include <pscf/math/IntVec.h>                   // member
@@ -27,8 +29,6 @@ namespace Pscf {
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
-      template <int D, class T> class Compressor;
-      template <int D, class T> class IntraCorrelation;
    }
 }
 
@@ -58,7 +58,7 @@ namespace Rp {
    */
    template <int D, class T>
    class LrAmCompressor
-    : public AmIteratorTmpl<Compressor<D,T>, typename T::RDevArray>
+    : public AmIteratorTmpl<Compressor<D,T>, DeviceArray<typename T::Real,T> >
    {
 
    public:
@@ -119,17 +119,15 @@ namespace Rp {
 
    private:
 
-      /// Alias for base class.
-      using CompressorT = Compressor<D,T>;
+      // Private type aliases
 
       /// Type of field and residual vectors.
-      using VectorT = typename T::RDevArray;
+      using VectorT = DeviceArray<typename T::Real,T>;
 
       /// Typename alias for base class.
       using AmTmpl = AmIteratorTmpl< Compressor<D,T>, VectorT >;
 
-      /// Typename alias for FFT class
-      using FFTT = FFT<D,T>;
+      // Private member variables
 
       /**
       * Initial values of all w fields.
@@ -181,7 +179,7 @@ namespace Rp {
       */
       bool isAllocated_;
 
-      // Private AM algorithm operations
+      // Private AM algorithm member functions (overridden)
 
       /**
       * Compute and return the number of elements in a field vector.

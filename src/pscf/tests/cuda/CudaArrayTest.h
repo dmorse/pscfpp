@@ -100,13 +100,9 @@ public:
       DeviceArray<double,CUT> d1(nx);
       DeviceArray<double,CUT> d2(nx);
 
-      // Host arrays
-      DArray<double> in;
-      in.allocate(nx);
-      HostArray<double,CUT> out1(nx);
-      HostArray<double,CUT> out2(nx);
-      HostArray<double,CUT> out3(nx);
-      HostArray<double,CUT> out4(nx/2);
+      // Input host arrays
+      HostArray<double,CUT> in;
+      in.associate(d1);
 
       // Generate data
       double twoPi = 2.0*Constants::Pi;
@@ -114,29 +110,44 @@ public:
          in[i] = cos(twoPi*double(i)/double(nx));
       }
 
+      // Output host arrays
+      HostArray<double,CUT> host1(nx);
+      HostArray<double,CUT> host2(nx);
+      HostArray<double,CUT> host3(nx);
+
       // Copy to device, then copy back to host
       d1 = in;
-      out1 = d1;
+      host1 = d1;
 
-      // Copy on device, then copy back to host
+      // Copy from device -> device, then copy back to host
       d2 = d1;
-      out2 = d2;
+      host2 = d2;
 
       // Copy on host
-      out3 = in;
+      host3 = in;
 
-      // Check that out1, out2, and out3 all match in
+      // Check that host1, host2, and host3 all match in
       for (int i = 0; i < nx; ++i ) {
-         TEST_ASSERT(eq(in[i], out1[i]));
-         TEST_ASSERT(eq(in[i], out2[i]));
-         TEST_ASSERT(eq(in[i], out3[i]));
+         TEST_ASSERT(eq(in[i], host1[i]));
+         TEST_ASSERT(eq(in[i], host2[i]));
+         TEST_ASSERT(eq(in[i], host3[i]));
       }
 
       // Copy a slice of d1, check that it is correct
-      out4.copySlice(d1, 3);
+      HostArray<double,CUT> host4(nx/2);
+      host4.copySlice(d1, 3);
       for (int i = 0; i < nx/2; ++i ) {
-         TEST_ASSERT(eq(in[i+3], out4[i]));
+         TEST_ASSERT(eq(in[i+3], host4[i]));
       }
+
+      // Copy from d1 to a ConstHostArray
+      ConstHostArray<double,CUT> host5;
+      //host5.associate(d1);
+      host5 = d1;
+      for (int i = 0; i < nx; ++i ) {
+         TEST_ASSERT(eq(in[i], host5[i]));
+      }
+
    }
 
    void testConstAssignmentOperators()
@@ -149,9 +160,9 @@ public:
       DeviceArray<double,CUT> d1(nx);
       DeviceArray<double,CUT> d2(nx);
 
-      // Input arrays
+      // Input array
       HostArray<double,CUT> in;
-      in.allocate(nx);
+      in.associate(d1);
 
       // Generate data
       double twoPi = 2.0*Constants::Pi;
@@ -159,14 +170,16 @@ public:
          in[i] = cos(twoPi*double(i)/double(nx));
       }
 
+      // Copy host -> device, then copy back to host
+      d1 = in;
+
       // Host arrays
       ConstHostArray<double,CUT> out1(nx);
-      ConstHostArray<double,CUT> out2(nx);
+      ConstHostArray<double,CUT> out2;
       ConstHostArray<double,CUT> out3(nx);
       ConstHostArray<double,CUT> out4(nx/2);
 
-      // Copy host -> device, then copy back to host
-      d1 = in;
+      // Copy back to host
       out1 = d1;
 
       // Copy device -> device, then copy to host

@@ -35,7 +35,7 @@ namespace Rp {
    */
    template <int D, class T>
    LrCompressor<D,T>::LrCompressor(System<D,T>& system)
-    : CompressorT(system),
+    : Compressor<D,T>(system),
       intra_(system),
       errorType_("rms"),
       epsilon_(0.0),
@@ -111,7 +111,7 @@ namespace Rp {
       // Solve MDE
       timerMDE_.start();
       system().compute();
-      ++CompressorT::mdeCounter_;
+      ++Compressor<D,T>::mdeCounter_;
       timerMDE_.stop();
 
       // Iterative loop
@@ -159,13 +159,13 @@ namespace Rp {
 
             return 0; // Success
 
-         } else{
+         } else {
 
             // Not yet converged.
             updateWFields();
             timerMDE_.start();
             system().compute();
-            ++CompressorT::mdeCounter_;
+            ++Compressor<D,T>::mdeCounter_;
             timerMDE_.stop();
 
          }
@@ -257,7 +257,7 @@ namespace Rp {
    {
       timerTotal_.clear();
       timerMDE_.clear();
-      CompressorT::mdeCounter_ = 0;
+      Compressor<D,T>::mdeCounter_ = 0;
       totalItr_ = 0;
    }
 

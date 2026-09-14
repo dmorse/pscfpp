@@ -111,15 +111,12 @@ namespace Rp {
 
    protected:
 
-      // Inherited protected members
-      using CompressorT = Compressor<D,T>;
-      using CompressorT::mdeCounter_;
-      using CompressorT::system;
+      // Inherited protected member (for convenience)
+      using Compressor<D,T>::system;
 
    private:
 
-      // IntraCorrelation object
-      IntraCorrelation<D,T> intra_;
+      // Private member variables
 
       // Template w Field used in update function
       DArray< RField<D,T> > wFieldTmp_;
@@ -132,6 +129,9 @@ namespace Rp {
 
       // Intramolecular correlation in Fourier space
       RField<D,T> intraCorrelationK_;
+
+      // IntraCorrelation object
+      IntraCorrelation<D,T> intra_;
 
       // Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;

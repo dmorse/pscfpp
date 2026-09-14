@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>            // member
-#include <util/containers/DArray.h>      // member
+#include <pscf/math/IntVec.h>           // member
+#include <util/containers/DArray.h>     // member
+#include <pscf/backend/HostArray.h>     // member
 #include <pscf/backend/TmplDeclare.h>   // declaration macros
 
 // Forward declarations
@@ -59,19 +60,48 @@ namespace Rp {
       /**
       * Compute total intramolecular correlation function (all blocks).
       *
-      * \param correlations  omega values on a k-space mesh
+      * \param correlations  omega values on a k-space mesh (on device)
       */
       virtual
       void computeOmegaTotal(RField<D,T>& correlations);
 
-   protected:
+   private:
+
+      // Private type aliases
+      using RealT = typename T::Real;
+      //using FFTT = FFT<D,T>;
+
+      // Private member variables
+
+      /// Pointer to parent system object.
+      System<D,T> const * systemPtr_;
+
+      /// Pointer to child Correlation::Mixture object.
+      Correlation::Mixture<RealT>* correlationMixturePtr_;
+
+      /// Host array of square magnitudes for wavevectors on a k-grid.
+      DArray<RealT> Gsq_;
+
+      /// Host array of omega values on a k-grid.
+      HostArray<RealT, T> correlations_h_;
+
+      /// Dimensions of r-space mesh.
+      IntVec<D> meshDimensions_;
+
+      /// Dimensions of k-space mesh for DFT of a real function.
+      IntVec<D> kMeshDimensions_;
+
+      /// Number of wavevectors in the k-space mesh.
+      int kSize_;
+
+      // Private member functions
 
       /**
       * Compute total intramolecular correlation function (all blocks).
       *
-      * \param correlations  omega values on a k-space mesh
+      * \param correlations  omega values on a k-space mesh (on host)
       */
-      void computeOmegaTotalArray(Array<typename T::Real>& correlations);
+      void computeOmegaTotalArray(Array<RealT>& correlations);
 
       /**
       * Get and store r-grid and kgrid-mesh dimensions.
@@ -96,33 +126,6 @@ namespace Rp {
       * Get the parent system by const ref.
       */
       System<D,T> const & system() const;
-
-   private:
-
-      using RealT = typename T::Real;
-
-      /// Pointer to parent system object.
-      System<D,T> const * systemPtr_;
-
-      /// Pointer to child Correlation::Mixture object.
-      Correlation::Mixture<RealT>* correlationMixturePtr_;
-
-      /// Array of square magnitudes for wavevectors on a k-grid.
-      DArray<RealT> Gsq_;
-
-      /// Local (host) array of omega values on a k-grid.
-      typename T::RLocArray correlations_;
-
-      /// Dimensions of r-space mesh.
-      IntVec<D> meshDimensions_;
-
-      /// Dimensions of k-space mesh for DFT of a real function.
-      IntVec<D> kMeshDimensions_;
-
-      /// Number of wavevectors in the k-space mesh.
-      int kSize_;
-
-      using FFTT = FFT<D,T>;
 
    };
 

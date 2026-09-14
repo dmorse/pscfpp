@@ -210,25 +210,27 @@ void CpuDeviceArrayTest::testAssignFromHost()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
-   DeviceArray<Data,CPT> u;
+   DeviceArray<Data,CPT> u(capacity);
    {
-      // Data owner
-      HostArray<Data,CPT> v(capacity);
-      TEST_ASSERT(v.capacity() == capacity);
-
       // Data user
-      u.associate(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isAssociated());
-      TEST_ASSERT(!u.isOwner());
+      TEST_ASSERT(u.isOwner());
+
+      // Host array
+      HostArray<Data,CPT> v;
+      v.associate(u);
+      TEST_ASSERT(v.capacity() == capacity);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.isAssociated());
 
       // Assignment should do nothing in this case
       u = v;
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isAssociated());
-      TEST_ASSERT(!u.isOwner());
+      TEST_ASSERT(u.isOwner());
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.isAssociated());
 
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
@@ -237,31 +239,34 @@ void CpuDeviceArrayTest::testAssignFromHost()
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 20.0));
       TEST_ASSERT(eq(v[2], 30.0));
+
       TEST_ASSERT(eq(u[0], 10.0));
       TEST_ASSERT(eq(u[1], 20.0));
       TEST_ASSERT(eq(u[2], 30.0));
+
       u[1] = 25.0;
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 25.0));
+      TEST_ASSERT(eq(u[1], 25.0));
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
-      // v.deallocate(); // Intentional error
+      // u.deallocate(); // Intentional error
 
-      u.dissociate();
-      TEST_ASSERT(u.capacity() == 0);
-      TEST_ASSERT(!u.isAllocated());
-      TEST_ASSERT(!u.isAssociated());
-      TEST_ASSERT(!u.isOwner());
-      TEST_ASSERT(v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
-      TEST_ASSERT(v.isOwner());
-
-      v.deallocate();
+      v.dissociate();
       TEST_ASSERT(v.capacity() == 0);
       TEST_ASSERT(!v.isAllocated());
       TEST_ASSERT(!v.isAssociated());
       TEST_ASSERT(!v.isOwner());
+      TEST_ASSERT(u.isAllocated());
+      TEST_ASSERT(u.isOwner());
+      TEST_ASSERT(!u.isAssociated());
+
+      u.deallocate();
+      TEST_ASSERT(u.capacity() == 0);
+      TEST_ASSERT(!u.isAllocated());
+      TEST_ASSERT(!u.isAssociated());
+      TEST_ASSERT(!u.isOwner());
 
    }
    TEST_ASSERT(Memory::total() == memory_);

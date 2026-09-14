@@ -98,11 +98,14 @@ namespace Prdc {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
+      using DeviceArray<double,CPT>::operator =;
+
    private:
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
+      // Make private to prevent allocation with mesh size.
       using FftwDRArray<double>::allocate;
 
    };

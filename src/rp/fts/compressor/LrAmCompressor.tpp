@@ -37,7 +37,7 @@ namespace Rp {
       isIntraCalculated_(false),
       isAllocated_(false)
    {
-      CompressorT::setSystem(system);  
+      Compressor<D,T>::setSystem(system);  
       ParamComposite::setClassName("LrAmCompressor"); 
    }
 
@@ -69,7 +69,7 @@ namespace Rp {
 
       const int nMonomer = system().mixture().nMonomer();
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-      FFTT::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+      FFT<D,T>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
 
       // Allocate memory required by compressor, if not done earlier
       if (!isAllocated_) {
@@ -126,7 +126,7 @@ namespace Rp {
    void LrAmCompressor<D,T>::clearTimers()
    {
       AmTmpl::clearTimers();
-      CompressorT::mdeCounter_ = 0;
+      Compressor<D,T>::mdeCounter_ = 0;
    }
 
    // Private virtual AM algorithm operation functions
@@ -170,7 +170,7 @@ namespace Rp {
    void LrAmCompressor<D,T>::evaluate()
    {
       system().compute();
-      ++(CompressorT::mdeCounter_);
+      ++(Compressor<D,T>::mdeCounter_);
    }
 
    /*

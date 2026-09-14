@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>   // base class template
-#include <rp/fts/compressor/Compressor.h>   // template argument
-#include <prdc/field/RField.h>              // member
-#include <util/containers/DArray.h>         // member
-
+#include <pscf/iterator/AmIteratorTmpl.h>  // base class template
+#include <rp/fts/compressor/Compressor.h>  // template argument
+#include <pscf/backend/DeviceArray.h>      // template argument
+#include <prdc/field/RField.h>             // member
+#include <util/containers/DArray.h>        // member
 #include <pscf/backend/TmplDeclare.h>      // declaration macros
 
 // Forward declarations
@@ -51,7 +51,7 @@ namespace Rp {
    */
    template <int D, class T>
    class AmCompressor 
-    : public AmIteratorTmpl< Compressor<D,T>, typename T::RDevArray >
+    : public AmIteratorTmpl< Compressor<D,T>, DeviceArray<typename T::Real,T> >
    {
 
    public:
@@ -118,7 +118,7 @@ namespace Rp {
       using CompressorT = Compressor<D,T>;
 
       /// Type for state and residual vectors.
-      using VectorT = typename T::RDevArray;
+      using VectorT = DeviceArray<typename T::Real,T>;
 
       /// Typename alias for base class.
       using AmTmplT = AmIteratorTmpl< CompressorT, VectorT>;
