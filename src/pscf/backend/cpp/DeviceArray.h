@@ -8,13 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FftwDRArray.h"                  // base class
+#include "FftwDRArray.h"         // base class
+#include "CPT.h"                 // template argument
 
 // Forward declarations
 namespace Pscf {
    template <typename Data, typename T> class DeviceArray;
    template <typename Data, typename T> class HostArray;
-   class CPT;
 }
 
 namespace Pscf {
@@ -86,6 +86,10 @@ namespace Pscf {
       using FftwDRArray<Data>::operator =;
 
    };
+
+   // Explicit instantiation declarations
+   extern template class DeviceArray<double,CPT>; 
+   extern template class DeviceArray<fftw_complex,CPT>; 
 
 } // namespace Pscf
 

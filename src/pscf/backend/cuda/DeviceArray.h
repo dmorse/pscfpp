@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "CUT.h"                          // template argument
 #include <util/misc/ReferenceCounter.h>   // member
 #include <util/misc/CountedReference.h>   // member
+
 
 // Forward declarations
 namespace Util {
@@ -17,15 +19,12 @@ namespace Util {
 }
 namespace Pscf {
    class DeviceMemory;
-   class CUT;
+   template <typename Data, typename T> class DeviceArray;
 }
 
 namespace Pscf {
 
    using namespace Util;
-
-   // Declare primary template
-   template <typename Data, typename T> class DeviceArray;
 
    /**
    * Dynamic array on the GPU device with aligned data.
@@ -303,6 +302,10 @@ namespace Pscf {
       CountedReference ref_;
 
    };
+
+   // Explicit instantiation declarations
+   extern template class DeviceArray<cudaReal,CUT>; 
+   extern template class DeviceArray<cudaComplex,CUT>; 
 
    // Inline member function definitions
 
