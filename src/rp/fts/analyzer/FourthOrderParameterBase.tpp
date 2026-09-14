@@ -154,6 +154,29 @@ namespace Rp {
       }
    }
 
+   /*
+   * Initialize prefactor_ protected member variable.
+   */
+   template <int D, class T>
+   void FourthOrderParameterBase<D,T>::computePrefactor()
+   {
+      // Precondition - prefactor_ must be allocated
+      int kSize = kSize_;
+      UTIL_CHECK(prefactor_.capacity() == kSize);
+
+      // Initialize host array
+      HostArray<cudaReal,T> prefactor_h;
+      prefactor_h.associate(prefactor_);
+      UTIL_CHECK(prefactor_h.capacity() == kSize_);
+
+      // Perform computation on host
+      computePrefactor(prefactor_h);
+
+      // Copy to device and dissociate host array
+      prefactor_ = prefactor_h;
+      prefactor_h.dissociate();
+   }
+
 }
 }
 #endif

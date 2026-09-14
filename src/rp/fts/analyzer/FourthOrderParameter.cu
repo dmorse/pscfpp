@@ -34,15 +34,21 @@ namespace Rp {
    template <int D>
    void FourthOrderParameter<D,CUT>::computePrefactor()
    {
-      // Allocate CPU host array
-      HostArray<cudaReal,CUT> prefactor_h(Base::kSize_);
-      VecOp::eqS(prefactor_h, 0.0);
+      // Precondition - check allocation
+      int kSize = Base::kSize_;
+      UTIL_CHECK(Base::prefactor_.capacity() == kSize);
+
+      // Initialize host array
+      HostArray<cudaReal,CUT> prefactor_h;
+      prefactor_h.associate(Base::prefactor_);
+      UTIL_CHECK(prefactor_h.capacity() == Base::kSize_);
 
       // Perform computation on host
       Base::computePrefactor(prefactor_h);
 
-      // Copy from from cpu(host) to gpu(device)
+      // Copy to device and dissociate host array
       Base::prefactor_ = prefactor_h;
+      prefactor_h.dissociate();
    }
 
 }

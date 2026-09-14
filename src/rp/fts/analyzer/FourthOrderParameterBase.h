@@ -126,12 +126,9 @@ namespace Rp {
       bool isInitialized_;
 
       /**
-      * Initialize prefactor_ member array.
-      *
-      * The GPU version of this function must compute values on
-      * on the CPU host and then copy them to a device array. 
+      * Initialize member variable prefactor_.
       */
-      virtual void computePrefactor() = 0;
+      virtual void computePrefactor();
 
       using FFTT = FFT<D,T>;
 
