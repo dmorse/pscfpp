@@ -22,7 +22,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Read-only  psuedo-"host" array for use with C++ backend.
+   * Read-only psuedo-"host" array for use with C++ backend.
    *
    * This class is used for in template code in which data is copied from
    * a psuedo-device array to a pseudo-host array if the device array is
@@ -60,26 +60,35 @@ namespace Pscf {
       // Default constructor
       ConstHostArray() = default;
 
+      /**
+      * Copy construction from a DeviceArray.
+      *
+      * Create an association (shallow copy) with memory owned by
+      * the pre-existing device array.
+      *
+      * \param other  array container 
+      */
+      ConstHostArray(DeviceArray<Data,CPT> const & other);
+
+      // Prohibit copy construction from another ConstHostArray.
+      ConstHostArray(ConstHostArray<Data,CPT> const & other) = default;
+
       // Destructor
       ~ConstHostArray() = default;
 
-      // Prohibit copy construction.
-      ConstHostArray(ConstHostArray<Data,CPT> const & other) = default;
-
-      // Prohibit assignment.
+      // Prohibit assignment from another ConstHostArray.
       ConstHostArray<Data,CPT>&
       operator = (ConstHostArray<Data,CPT> const&) = delete;
 
       /**
       * Create read-only association with a DeviceArray, if needed.
       *
-      * If both arrays are allocated and point to the same memory block on
-      * entry, do nothing and return. Otherwise, if this is not allocated,
-      * create an association of this with the DeviceArray (i.e., create
-      * a shallow copy).
+      * If this is already associated with other (the device array), 
+      * do nothing and return. Otherwise, create an association of this 
+      * with the other device array (i.e., create a shallow copy).
       *
       * \throw Exception if other array is not allocated
-      * \throw Exception if this is allocated and not associated with other
+      * \throw Exception if this is associated with other with wrong size
       *
       * \param other  array container on RHS of assigment (input)
       */
@@ -96,18 +105,29 @@ namespace Pscf {
 namespace Pscf {
 
   /*
-  * Create an association with a DeviceArray, or do nothing if associated.
+  * Copy construction from a DeviceArray.
+  */
+  template <typename Data>
+  ConstHostArray<Data,CPT>::ConstHostArray(
+                                 DeviceArray<Data,CPT> const & other)
+   : ConstArrayView<Data>()
+  {  ConstArrayView<Data>::associate(other); }
+
+  /*
+  * Create an association with a DeviceArray, unless association exists.
   */
   template <typename Data>
   ConstHostArray<Data,CPT>&
   ConstHostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> & other)
   {
+     UTIL_CHECK(other.isAllocated());
      Data const * data = ConstArrayView<Data>::cArray();
      if ((bool)data && other.cArray() == data) {
         UTIL_CHECK(other.capacity() == ConstArrayView<Data>::size());
         // If this is already associated with the other array, do nothing
      } else {
-        // Otherwise, create an association
+        // Otherwise, attempt to create an association
+        // Attempt fails if this is associated with a different array.
         ConstArrayView<Data>::associate(other);
      }
      return *this;
