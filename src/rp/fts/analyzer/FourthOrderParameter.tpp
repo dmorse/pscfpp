@@ -1,7 +1,7 @@
-#ifndef RP_FOURTH_ORDER_PARAMETER_BASE_TPP
-#define RP_FOURTH_ORDER_PARAMETER_BASE_TPP
+#ifndef RP_FOURTH_ORDER_PARAMETER_TPP
+#define RP_FOURTH_ORDER_PARAMETER_TPP
 
-#include "FourthOrderParameterBase.h"
+#include "FourthOrderParameter.h"
 
 #include <rp/system/System.h>
 #include <rp/fts/simulator/Simulator.h>
@@ -13,6 +13,7 @@
 #include <prdc/field/FFT.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
+#include <pscf/backend/HostArray.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 
@@ -35,7 +36,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   FourthOrderParameterBase<D,T>::FourthOrderParameterBase(
+   FourthOrderParameter<D,T>::FourthOrderParameter(
                                        Simulator<D,T>& simulator,
                                        System<D,T>& system)
     : AverageAnalyzer<D,T>(simulator, system),
@@ -47,7 +48,7 @@ namespace Rp {
    * Setup before the main loop.
    */
    template <int D, class T>
-   void FourthOrderParameterBase<D,T>::setup()
+   void FourthOrderParameter<D,T>::setup()
    {
       // Precondition: The system must have exactly two monomer types
       UTIL_CHECK(system().mixture().nMonomer() == 2);
@@ -74,7 +75,7 @@ namespace Rp {
    * Compute and return the order parameter.
    */
    template <int D, class T>
-   double FourthOrderParameterBase<D,T>::compute()
+   double FourthOrderParameter<D,T>::compute()
    {
       UTIL_CHECK(isInitialized_);
       UTIL_CHECK(wK_.capacity() == kSize_);
@@ -105,7 +106,7 @@ namespace Rp {
    */
    template <int D, class T>
    void 
-   FourthOrderParameterBase<D,T>::computePrefactor(Array<double>& prefactor)
+   FourthOrderParameter<D,T>::computePrefactor(Array<double>& prefactor)
    {
       IntVec<D> G;
       IntVec<D> Gmin;
@@ -158,7 +159,7 @@ namespace Rp {
    * Initialize prefactor_ protected member variable.
    */
    template <int D, class T>
-   void FourthOrderParameterBase<D,T>::computePrefactor()
+   void FourthOrderParameter<D,T>::computePrefactor()
    {
       // Precondition - prefactor_ must be allocated
       int kSize = kSize_;
