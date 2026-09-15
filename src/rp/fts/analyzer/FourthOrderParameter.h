@@ -85,28 +85,6 @@ namespace Rp {
       */
       double compute() override;
 
-      /**
-      * Compute prefactor for each Fourier wavevector.
-      *
-      * For the real-valued function W_, each Fourier
-      * coefficient G satisfies W_(G) = W_(-G). This function
-      * uses Brillouin Zone (BZ) indices representation. After
-      * applying fftw, if both the wavevector G and its
-      * inverse -G exist in k-space, the prefactor is
-      * assigned to be 1/2 for both G and -G. Otherwise,
-      * it is assigned to be 1.
-      */
-      void computePrefactor(Array<double>& prefactor);
-
-      /// Prefactor for each Fourier component.
-      RField<D,T> prefactor_;
-
-      /// Number of wavevectors in Fourier space (k-grid) mesh.
-      int  kSize_;
-
-      // Alias for base class
-      using AverageAnalyzerT = AverageAnalyzer<D,T>;
-
       // Inherited protected member functions (selected).
       using AverageAnalyzer<D,T>::simulator;
       using AverageAnalyzer<D,T>::system;
@@ -119,26 +97,40 @@ namespace Rp {
       /// Fourth powers of Fourier magnitudes, with prefactors.
       RField<D,T> psi_;
 
+      /// Prefactor for each Fourier component.
+      RField<D,T> prefactor_;
+
       /// Dimensions of Fourier space (k-grid) mesh for a real field.
       IntVec<D> kMeshDimensions_;
+
+      /// Number of wavevectors in Fourier space (k-grid) mesh.
+      int  kSize_;
 
       /// Has setup been completed?
       bool isInitialized_;
 
       /**
-      * Initialize member variable prefactor_.
+      * Initialize member variable prefactor_ (device array).
       */
-      virtual void computePrefactor();
+      void computePrefactor();
 
-      using FFTT = FFT<D,T>;
+      /**
+      * Compute prefactor for each Fourier wavevector (on host).
+      *
+      * For the real-valued function W_, each Fourier
+      * coefficient G satisfies W_(G) = W_(-G). This function
+      * uses Brillouin Zone (BZ) index representation. 
+      * If both the wavevector G and its inverse -G are in the
+      * half-spaced used for a real field, the prefactor is
+      * assigned to be 1/2 for both G and -G. Otherwise, the
+      * prefactor assigned to be 1.
+      */
+      void computePrefactor(Array<double>& prefactor);
 
    };
 
    // Explicit instantiation declarations
    PSCF_TMPL_DECLARE(FourthOrderParameter)
-
-   // Primary template declaration for subclasses
-   template <int D, class T> class FourthOrderParameter;
 
 }
 }

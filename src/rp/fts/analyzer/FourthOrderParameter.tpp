@@ -57,7 +57,7 @@ namespace Rp {
 
       // Compute k-space mesh kMeshDimensions_ and kSize_
       IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-      FFTT::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+      FFT<D,T>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
 
       // Allocate variables
       if (!isInitialized_){
@@ -99,6 +99,29 @@ namespace Rp {
       orderParameter = std::pow(orderParameter, 0.25);
 
       return orderParameter;
+   }
+
+   /*
+   * Initialize private prefactor_ member variable.
+   */
+   template <int D, class T>
+   void FourthOrderParameter<D,T>::computePrefactor()
+   {
+      // Precondition - prefactor_ must be allocated
+      int kSize = kSize_;
+      UTIL_CHECK(prefactor_.capacity() == kSize);
+
+      // Initialize host array
+      HostArray<cudaReal,T> prefactor_h;
+      prefactor_h.associate(prefactor_);
+      UTIL_CHECK(prefactor_h.capacity() == kSize_);
+
+      // Perform computation on host
+      computePrefactor(prefactor_h);
+
+      // Copy to device and dissociate host array
+      prefactor_ = prefactor_h;
+      prefactor_h.dissociate();
    }
 
    /*
@@ -153,29 +176,6 @@ namespace Rp {
          }
 
       }
-   }
-
-   /*
-   * Initialize prefactor_ protected member variable.
-   */
-   template <int D, class T>
-   void FourthOrderParameter<D,T>::computePrefactor()
-   {
-      // Precondition - prefactor_ must be allocated
-      int kSize = kSize_;
-      UTIL_CHECK(prefactor_.capacity() == kSize);
-
-      // Initialize host array
-      HostArray<cudaReal,T> prefactor_h;
-      prefactor_h.associate(prefactor_);
-      UTIL_CHECK(prefactor_h.capacity() == kSize_);
-
-      // Perform computation on host
-      computePrefactor(prefactor_h);
-
-      // Copy to device and dissociate host array
-      prefactor_ = prefactor_h;
-      prefactor_h.dissociate();
    }
 
 }
