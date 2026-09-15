@@ -112,7 +112,7 @@ namespace Rp {
       UTIL_CHECK(prefactor_.capacity() == kSize);
 
       // Initialize host array
-      HostArray<cudaReal,T> prefactor_h;
+      HostArray<typename T::Real,T> prefactor_h;
       prefactor_h.associate(prefactor_);
       UTIL_CHECK(prefactor_h.capacity() == kSize_);
 
