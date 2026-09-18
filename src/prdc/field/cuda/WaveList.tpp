@@ -484,7 +484,7 @@ namespace Prdc {
    /*
    * Allocate memory.
    *
-   * This function allocates and construct implicitInverse_ if and
+   * This function allocates and construct implicitInverse_d_ if and
    * only if isRealField_ == true.
    */
    template <int D>
@@ -518,12 +518,15 @@ namespace Prdc {
          dKSqSlices_[i].associate(dKSq_, i*kSize_, kMeshDimensions_);
       }
 
-      // Allocate and set up implicitInverse_ array if isRealField_ == true
+      // Allocate and fill implicitInverse arrays if isRealField_ == true
       // (only depends on mesh dimensions, only used for real fields)
       if (isRealField_) {
-         implicitInverse_.allocate(kSize_);
+         implicitInverse_d_.allocate(kSize_);
+         implicitInverse_h_.allocate(kSize_);
+         HostArray<bool,CUT> implicitTemp(kSize_);
          MeshIterator<D> kItr(kMeshDimensions_);
-         HostArray<bool,CUT> implicitInverse_h(kSize_);
+         int rank;
+         #if 0
          int inverseId;
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             if (kItr.position(D-1) == 0) {
@@ -531,13 +534,23 @@ namespace Prdc {
             } else {
                inverseId = mesh().dimension(D-1) - kItr.position(D-1);
             }
+            rank = kItr.rank();
             if (inverseId >= kMeshDimensions_[D-1]) {
-               implicitInverse_h[kItr.rank()] = true;
+               implicitInverse_h_[rank] = true;
             } else {
-               implicitInverse_h[kItr.rank()] = false;
+               implicitInverse_h_[rank] = false;
             }
+            implicitTemp[rank] = implicitInverse_h_[rank];
          }
-         implicitInverse_ = implicitInverse_h; // transfer to device memory
+         #endif
+         for (kItr.begin(); !kItr.atEnd(); ++kItr) {
+            rank = kItr.rank();
+            implicitTemp[rank] = 
+               FFT<D,CUT>::hasImplicitInverse(kItr.position(), 
+                                              meshDimensions);
+            implicitInverse_h_[rank] = implicitTemp[rank];
+         }
+         implicitInverse_d_ = implicitTemp; // copy to device memory
       }
 
       clearUnitCellData();
@@ -737,8 +750,8 @@ namespace Prdc {
       UTIL_CHECK(minImages_.isAllocated());
       bool const * implicitInversePtr = nullptr;
       if (isRealField_) {
-         UTIL_CHECK(implicitInverse_.isAllocated());
-         implicitInversePtr = implicitInverse_.cArray();
+         UTIL_CHECK(implicitInverse_d_.isAllocated());
+         implicitInversePtr = implicitInverse_d_.cArray();
       }
 
       // Launch kernel to calculate dKSq on device

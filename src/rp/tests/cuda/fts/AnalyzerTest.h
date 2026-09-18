@@ -152,43 +152,6 @@ public:
       TEST_ASSERT(checkValue("H_total", total, totalRef, 1.0E-3));
    }
 
-   #if 0
-   void checkBinaryStructureFactorGrid()
-   {
-      // Open data file
-      std::string filename = "out/binaryStructureFactorGrid";
-      std::ifstream file;
-      openInputFile(filename, file);
-
-      // Read and discard line with column labels
-      std::string line;
-      std::getline(file, line);
-
-      // Obtain the first three lines of q and S(q)
-      double q, Sq;
-
-      file >> q >> Sq;
-      double qDiff = fabs(0.0 - q);
-      TEST_ASSERT(qDiff < 1.0E-4);
-      double SqDiff = fabs(-1.13103186e+00 - Sq);
-      TEST_ASSERT(SqDiff < 1.0E-4);
-
-      file >> q >> Sq;
-      qDiff = fabs(1.90978277e+00 - q);
-      TEST_ASSERT(qDiff < 1.0E-4);
-      SqDiff = fabs(-5.13521218e-01 - Sq);
-      TEST_ASSERT(SqDiff < 1.0E-4);
-
-      file >> q >> Sq;
-      qDiff = fabs(2.70084069e+00 - q);
-      TEST_ASSERT(qDiff < 1.0E-4);
-      SqDiff = fabs(2.32910285e+00 - Sq);
-      TEST_ASSERT(SqDiff < 1.0E-4);
-
-      file.close();
-   }
-   #endif
-
    void checkBinaryStructureFactor()
    {
       // Open data file

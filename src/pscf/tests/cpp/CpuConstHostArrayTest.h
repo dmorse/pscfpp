@@ -38,7 +38,7 @@ void CpuConstHostArrayTest::testDefaultConstructor()
    {
       ConstHostArray<Data,CPT> v;
       TEST_ASSERT(v.size() == 0 );
-      TEST_ASSERT(!v.isAssociated());
+      TEST_ASSERT(!v.isAllocated());
    }
 }
 
@@ -52,14 +52,15 @@ void CpuConstHostArrayTest::testAssignFromDevice()
       DeviceArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
 
-      // Data user
-      u = v;
-      TEST_ASSERT(u.size() == capacity);
-      TEST_ASSERT(u.isAssociated());
-
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
+
+      // Data user
+      DeviceArray<Data,CPT> const & w = v;
+      u = w;
+      TEST_ASSERT(u.size() == capacity);
+      TEST_ASSERT(u.isAllocated());
 
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 20.0));
@@ -77,7 +78,7 @@ void CpuConstHostArrayTest::testAssignFromDevice()
       u.dissociate();
       TEST_ASSERT(u.size() == 0);
       TEST_ASSERT(u.cArray() == nullptr);
-      TEST_ASSERT(!u.isAssociated());
+      TEST_ASSERT(!u.isAllocated());
 
       v.deallocate();
       TEST_ASSERT(v.capacity() == 0);

@@ -66,6 +66,10 @@ namespace Rp {
       using Base::computeW;
       using Base::computeS;
 
+   private:
+
+      HostArray<fftw_complex,CPT> wkHost_;
+
    };
 
 }

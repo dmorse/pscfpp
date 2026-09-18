@@ -19,6 +19,7 @@
 
 #include <util/param/ParamComposite.h>
 #include <util/containers/Array.h>
+#include <util/containers/ConstArray.h>
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
 #include <util/format/Int.h>
@@ -108,7 +109,7 @@ namespace Rp {
    */
    template <int D, class T>
    void BinaryStructureFactorBase<D,T>::findWaveBunches(
-                                  Array<double> const & kSq,
+                                  ConstArray<double> const & kSq,
                                   Array<bool> const & implicit)
    {
       UTIL_CHECK(kSq.capacity() == nWave_);

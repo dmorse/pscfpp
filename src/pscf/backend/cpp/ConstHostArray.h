@@ -71,14 +71,14 @@ namespace Pscf {
       ConstHostArray(DeviceArray<Data,CPT> const & other);
 
       // Prohibit copy construction from another ConstHostArray.
-      ConstHostArray(ConstHostArray<Data,CPT> const & other) = default;
+      ConstHostArray(ConstHostArray<Data,CPT> const & other) = delete;
 
       // Destructor
       ~ConstHostArray() = default;
 
       // Prohibit assignment from another ConstHostArray.
       ConstHostArray<Data,CPT>&
-      operator = (ConstHostArray<Data,CPT> const&) = delete;
+      operator = (ConstHostArray<Data,CPT> const & other) = delete;
 
       /**
       * Create read-only association with a DeviceArray, if needed.
@@ -92,7 +92,7 @@ namespace Pscf {
       *
       * \param other  array container on RHS of assigment (input)
       */
-      ConstHostArray<Data,CPT>& operator = (DeviceArray<Data,CPT> & other);
+      ConstHostArray<Data,CPT>& operator = (DeviceArray<Data,CPT> const & other);
 
       // Inherited member function (to prevent hiding)
       using ConstArrayView<Data>::operator =;
@@ -118,7 +118,7 @@ namespace Pscf {
   */
   template <typename Data>
   ConstHostArray<Data,CPT>&
-  ConstHostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> & other)
+  ConstHostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> const & other)
   {
      UTIL_CHECK(other.isAllocated());
      Data const * data = ConstArrayView<Data>::cArray();

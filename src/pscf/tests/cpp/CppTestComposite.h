@@ -1,5 +1,5 @@
-#ifndef PSCF_CPU_TEST_COMPOSITE_H
-#define PSCF_CPU_TEST_COMPOSITE_H
+#ifndef PSCF_CPP_TEST_COMPOSITE_H
+#define PSCF_CPP_TEST_COMPOSITE_H
 
 #include <test/CompositeTestRunner.h>
 
@@ -12,7 +12,7 @@
 #include "CpuHostArrayTest.h"
 #include "CpuConstHostArrayTest.h"
 
-TEST_COMPOSITE_BEGIN(CpuTestComposite)
+TEST_COMPOSITE_BEGIN(CppTestComposite)
 TEST_COMPOSITE_ADD_UNIT(CpuComplexTest);
 TEST_COMPOSITE_ADD_UNIT(CpuVecOpTest);
 TEST_COMPOSITE_ADD_UNIT(CpuVecRandomTest);

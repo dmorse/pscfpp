@@ -7,6 +7,7 @@
 
 #include "BinaryStructureFactor_c.h"
 
+#include <pscf/backend/cpp/ConstHostArray.h>
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/VecOpCx.h>
 #include <pscf/backend/cpp/complex.h>
@@ -36,8 +37,12 @@ namespace Rp {
    void BinaryStructureFactor<D,CPT>::setup()
    {
       allocate();
+
       WaveList<D,CPT> const & waveList = AnalyzerT::system().waveList();
-      findWaveBunches(waveList.kSq(), waveList.implicitInverse());
+      ConstHostArray<double,CPT> kSq(waveList.kSq());
+      DArray<bool> const & implicit = waveList.implicitInverse();
+      Base::findWaveBunches(kSq, implicit);
+      //findWaveBunches(waveList.kSq(), waveList.implicitInverse());
    }
 
    /*
@@ -48,7 +53,9 @@ namespace Rp {
    {
       if (AnalyzerT::isAtInterval(iStep)) {
          computeW();
+	 wkHost_ = wk_;
          computeS(wk_);
+	 wkHost_.dissociate();
       }
    }
 

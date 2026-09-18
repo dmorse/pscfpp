@@ -4,7 +4,7 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
 TEST_CUDA=$(BLD_DIR)/pscf/tests/cudaTest
-TEST_CPU=$(BLD_DIR)/pscf/tests/cpuTest
+TEST_CPP=$(BLD_DIR)/pscf/tests/cppTest
 TEST_DIR=$(SRC_DIR)/pscf/tests
 
 ifdef PSCF_CUDA
@@ -12,15 +12,15 @@ TEST=$(TEST_CUDA)
 TEST_OBJ=$(TEST).ou
 TEST_DEP=$(TEST).du
 else
-TEST=$(TEST_CPU)
+TEST=$(TEST_CPP)
 TEST_OBJ=$(TEST).o
 TEST_DEP=$(TEST).d
 endif
 
 all: $(TEST)
 
-$(TEST_CPU): $(TEST_CPU).o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $(TEST_CPU) $(TEST_CPU).o $(LIBS)
+$(TEST_CPP): $(TEST_CPP).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST_CPP) $(TEST_CPP).o $(LIBS)
 
 $(TEST_CUDA): $(TEST_CUDA).ou $(PSCF_LIBS)
 	@cp $(TEST_CUDA).ou $(TEST_CUDA).o
@@ -52,7 +52,7 @@ clean:
 	rm -f $(TEST_OBJ)
 	rm -f $(TEST_DEP)
 	rm -f $(TEST)
-	rm -f cpuTest cudaTest
+	rm -f cppTest cudaTest
 	rm -f *.o *.d 
 	rm -f *.ou *.du
 	rm -f log count 

@@ -7,6 +7,7 @@
 
 #include "BinaryStructureFactor_u.h"
 
+#include <pscf/backend/cuda/ConstHostArray.h>
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/complex.h>
 
@@ -41,8 +42,8 @@ namespace Rp {
       }
 
       WaveList<D,CUT> const & waveList = AnalyzerT::system().waveList();
-      HostArray<double,CUT> kSq = waveList.kSq();
-      HostArray<bool,CUT> implicit = waveList.implicitInverse();
+      ConstHostArray<double,CUT> kSq(waveList.kSq());
+      DArray<bool> const & implicit = waveList.implicitInverse();
       Base::findWaveBunches(kSq, implicit);
    }
 

@@ -220,7 +220,7 @@ namespace Prdc {
       * This method will throw an error if isRealField == false, because
       * there are no implicit inverses in such a case.
       */
-      DeviceArray<bool,CUT> const & implicitInverse() const;
+      DArray<bool> const & implicitInverse() const;
 
       /**
       * Get the sortedIds array by reference.
@@ -389,12 +389,21 @@ namespace Prdc {
       DArray< RField<D,CUT> > dKSqSlices_;
 
       /**
-      * Array indicating whether a given gridpoint has an implicit partner.
+      * Array indicates whether a wavevector has an implicit partner (device).
       *
-      * This array is only allocated and used if isRealField_ is true,
-      * in which case it has size kSize_.
+      * This array is only allocated and used if isRealField_ is true, in
+      * which case it has size kSize_. The copy in device memory is only
+      * used internally, and is not accessible through the public interface.
       */
-      DeviceArray<bool,CUT> implicitInverse_;
+      DeviceArray<bool,CUT> implicitInverse_d_;
+
+      /**
+      * Array indicates whether a wavevector has an implicit partner (host).
+      *
+      * This array is only allocated and used if isRealField_ is true, in
+      * which case it has size kSize_.
+      */
+      DArray<bool> implicitInverse_h_;
 
       /**
       * Wavevector ranks, sorted in ascending wavevector magnitude.
@@ -521,11 +530,11 @@ namespace Prdc {
 
    // Get the implicitInverse array by reference.
    template <int D> inline
-   DeviceArray<bool,CUT> const & WaveList<D,CUT>::implicitInverse() const
+   DArray<bool> const & WaveList<D,CUT>::implicitInverse() const
    {
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(isRealField_);
-      return implicitInverse_;
+      return implicitInverse_h_;
    }
 
    // Get the sortedIds array by const reference.

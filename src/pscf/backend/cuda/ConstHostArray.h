@@ -47,19 +47,25 @@ namespace Pscf {
       // Copy constructor (deleted)
       ConstHostArray(ConstHostArray<Data,CUT> const & other) = delete;
 
-      /**
-      * Copy constructor (copies from device to host).
-      *
-      * \param other DeviceArray<Data,CUT> to be copied (input)
-      */
-      ConstHostArray(DeviceArray<Data,CUT> const & other);
-
       // Destructor
       ~ConstHostArray() = default;
 
       // Assignment (deleted)
       ConstHostArray<Data,CUT>&
       operator = (ConstHostArray<Data,CUT> const & other) = delete;
+
+      /**
+      * Copy constructor (copies from device to host).
+      *
+      * Performs a deep copy from a RHS DeviceArray<Data,CUT> to this LHS
+      * ConstHostArray<D>, by copying the underlying data from device memory
+      * to host memory.
+      *
+      * \throw Exception if the RHS array is not allocated on entry
+      *
+      * \param other DeviceArray<Data,CUT> to be copied (input)
+      */
+      ConstHostArray(DeviceArray<Data,CUT> const & other);
 
       /**
       * Assignment from a DeviceArray<Data,CUT>.
@@ -100,7 +106,7 @@ namespace Pscf {
       void copySlice(DeviceArray<Data,CUT> const & other, int beginId);
 
       /**
-      * Allocate host array for use with a device array, if needed.
+      * Setup host array for use with device array. Allocate if necessary.
       *
       * GPU specialization allocates host array with same dimensions as
       * the device array, unless this is already the case.
@@ -119,6 +125,7 @@ namespace Pscf {
 
       // Inherited public member functions (selected)
       using ConstArray<Data>::capacity;
+      using ConstArray<Data>::size;
       using ConstArray<Data>::isAllocated;
       using ConstArray<Data>::cArray;
       using ConstArray<Data>::operator [];
@@ -174,13 +181,13 @@ namespace Pscf {
       UTIL_CHECK(other.isAllocated());
 
       // If necessary, allocate this array
-      if (!ConstDArray<Data>::isAllocated()) {
+      if (!isAllocated()) {
          allocate(other.capacity());
       }
 
       // Require equal capacities
       if (capacity() != other.capacity()) {
-         UTIL_THROW("Cannot assign arrays of unequal capacity");
+         UTIL_THROW("Cannot assign arrays of unequal size");
       }
 
       // Copy all elements
@@ -227,9 +234,7 @@ namespace Pscf {
       UTIL_CHECK(deviceArray.isAllocated());
       const int n = deviceArray.capacity();
       if (isAllocated() && capacity() != n) 
-      {
-         deallocate();
-      }
+      { deallocate(); }
       if (!isAllocated()) {
          allocate(n);
       }

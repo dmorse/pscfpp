@@ -21,6 +21,7 @@
 // Forward declaration
 namespace Util {
    template <typename T> class Array;
+   template <typename T> class ConstArray;
 }
 namespace Pscf {
    namespace Prdc {
@@ -107,7 +108,7 @@ namespace Rp {
       * \param implicit  bools indicating existence of implicit inverse
       */
       void findWaveBunches(
-                 Array<double> const & kSq,
+                 ConstArray<double> const & kSq,
                  Array<bool> const & implicit);
 
       /**
