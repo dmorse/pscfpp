@@ -1,11 +1,10 @@
-#ifndef PSCF_CPU_HOST_ARRAY_TEST_H
-#define PSCF_CPU_HOST_ARRAY_TEST_H
+#ifndef PRDC_CPP_FFTW_DRARRAY_TEST_H
+#define PRDC_CPP_FFTW_DRARRAY_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cpp/HostArray.h>
-#include <pscf/backend/cpp/DeviceArray.h>
+#include <pscf/backend/cpp/FftwDRArray.h>
 
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
@@ -17,7 +16,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CpuHostArrayTest : public UnitTest
+class CppFftwDRArrayTest : public UnitTest
 {
 private:
 
@@ -39,12 +38,11 @@ public:
    void testSubscript();
    void testSubscriptCmplx();
    void testAssociate();
-   void testAssignFromDevice();
+   void testIterator();
    void testCopyConstructor();
    void testCopyConstructorCmplx();
    void testAssignment();
    void testAssignmentCmplx();
-   void testIterator();
    void testBaseClassReference();
 
    void testSerialize1Memory();
@@ -55,24 +53,25 @@ public:
 };
 
 
-void CpuHostArrayTest::testDefaultConstructor()
+void CppFftwDRArrayTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      HostArray<Data,CPT> v;
+      FftwDRArray<Data> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
       TEST_ASSERT(!v.isOwner());
       TEST_ASSERT(!v.isAssociated());
    }
+   TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testAllocateConstructor()
+void CppFftwDRArrayTest::testAllocateConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
    {
-      HostArray<Data,CPT> v(capacity);
+      FftwDRArray<Data> v(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
@@ -90,12 +89,12 @@ void CpuHostArrayTest::testAllocateConstructor()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testAllocate()
+void CppFftwDRArrayTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
    {
-      HostArray<Data,CPT> v;
+      FftwDRArray<Data> v;
 
       // Allocate array
       v.allocate(capacity);
@@ -116,12 +115,12 @@ void CpuHostArrayTest::testAllocate()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testSubscript()
+void CppFftwDRArrayTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      HostArray<Data,CPT> v(capacity);
+      FftwDRArray<Data> v(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
@@ -135,35 +134,14 @@ void CpuHostArrayTest::testSubscript()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testSubscriptCmplx()
+void CppFftwDRArrayTest::testAssociate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
-   {
-      HostArray< std::complex<Data>, CPT> v;
-      v.allocate(capacity);
-      for (int i=0; i < capacity; i++ ) {
-         v[i].real((i+1)*10.0);
-         v[i].imag((i+1)*10.0 + 0.1);
-      }
-
-      TEST_ASSERT(eq(v[0].real(), 10.0));
-      TEST_ASSERT(eq(v[1].imag(), 20.1));
-      TEST_ASSERT(eq(v[2].real(), 30.0));
-      long int tot = Memory::total();
-      TEST_ASSERT(tot == (long int)(capacity*sizeof(std::complex<Data>)));
-   }
-   TEST_ASSERT(Memory::total() == memory_);
-}
-
-void CpuHostArrayTest::testAssociate()
-{
-   printMethod(TEST_FUNC);
-   TEST_ASSERT(Memory::total() == memory_);
-   HostArray<Data,CPT> u;
+   FftwDRArray<Data> u;
    {
       // Data owner
-      HostArray<Data,CPT> v(capacity);
+      FftwDRArray<Data> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
 
       // Data user
@@ -206,82 +184,34 @@ void CpuHostArrayTest::testAssociate()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testAssignFromDevice()
+void CppFftwDRArrayTest::testSubscriptCmplx()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      // Data owner (device array)
-      DeviceArray<Data,CPT> v(capacity);
-      TEST_ASSERT(v.capacity() == capacity);
-      TEST_ASSERT(v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
-      TEST_ASSERT(v.isOwner());
-
-      // Data user (host array)
-      HostArray<Data,CPT> u;
-      u.associate(v);
-      TEST_ASSERT(u.capacity() == capacity);
-      TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isAssociated());
-      TEST_ASSERT(!u.isOwner());
-
-      // Set data in device array
+      FftwDRArray< std::complex<Data> > v;
+      v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0 ;
+         v[i].real((i+1)*10.0);
+         v[i].imag((i+1)*10.0 + 0.1);
       }
 
-      // Copy device -> host
-      u = v;
-      TEST_ASSERT(u.capacity() == capacity);
-      TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isAssociated());
-      TEST_ASSERT(!u.isOwner());
-
-      // Test equality after assignment
-      TEST_ASSERT(eq(v[0], 10.0));
-      TEST_ASSERT(eq(v[1], 20.0));
-      TEST_ASSERT(eq(v[2], 30.0));
-      TEST_ASSERT(eq(u[0], 10.0));
-      TEST_ASSERT(eq(u[1], 20.0));
-      TEST_ASSERT(eq(u[2], 30.0));
-
-      // Modify on host
-      u[1] = 25.0;
-      TEST_ASSERT(eq(u[1], 25.0));
-      TEST_ASSERT(eq(v[0], 10.0));
-      TEST_ASSERT(eq(v[1], 25.0));
+      TEST_ASSERT(eq(v[0].real(), 10.0));
+      TEST_ASSERT(eq(v[1].imag(), 20.1));
+      TEST_ASSERT(eq(v[2].real(), 30.0));
       long int tot = Memory::total();
-      TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
-
-      // v.deallocate(); // Intentional error
-
-      u.dissociate();
-      TEST_ASSERT(u.capacity() == 0);
-      TEST_ASSERT(!u.isAllocated());
-      TEST_ASSERT(!u.isAssociated());
-      TEST_ASSERT(!u.isOwner());
-      TEST_ASSERT(v.isAllocated());
-      TEST_ASSERT(v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
-
-      v.deallocate();
-      TEST_ASSERT(v.capacity() == 0);
-      TEST_ASSERT(!v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
-      TEST_ASSERT(!v.isOwner());
-
+      TEST_ASSERT(tot == (long int)(capacity*sizeof(std::complex<Data>)));
    }
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testCopyConstructor()
+void CppFftwDRArrayTest::testCopyConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
       // Data owner
-      HostArray<Data,CPT> v(capacity);
+      FftwDRArray<Data> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
@@ -292,7 +222,7 @@ void CpuHostArrayTest::testCopyConstructor()
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
-      HostArray<Data,CPT> u(v);
+      FftwDRArray<Data> u(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isOwner());
@@ -317,11 +247,11 @@ void CpuHostArrayTest::testCopyConstructor()
    TEST_ASSERT(Memory::total() == (long int)memory_);
 }
 
-void CpuHostArrayTest::testCopyConstructorCmplx()
+void CppFftwDRArrayTest::testCopyConstructorCmplx()
 {
    printMethod(TEST_FUNC);
    {
-      HostArray< std::complex<Data>, CPT> v;
+      FftwDRArray< std::complex<Data> > v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
 
@@ -333,7 +263,7 @@ void CpuHostArrayTest::testCopyConstructorCmplx()
          v[i].imag((i+1)*10.0 + 0.1);
       }
 
-      HostArray< std::complex<Data>, CPT> u(v);
+      FftwDRArray< std::complex<Data> > u(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner());
@@ -350,19 +280,19 @@ void CpuHostArrayTest::testCopyConstructorCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testAssignment()
+void CppFftwDRArrayTest::testAssignment()
 {
    printMethod(TEST_FUNC);
 
    {
-      HostArray<Data,CPT> v;
+      FftwDRArray<Data> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3 );
       TEST_ASSERT(v.isAllocated() );
       TEST_ASSERT(v.isOwner() );
       TEST_ASSERT(!v.isAssociated() );
 
-      HostArray<Data,CPT> u;
+      FftwDRArray<Data> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -387,17 +317,17 @@ void CpuHostArrayTest::testAssignment()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testAssignmentCmplx()
+void CppFftwDRArrayTest::testAssignmentCmplx()
 {
    printMethod(TEST_FUNC);
 
    {
-      HostArray< std::complex<Data>, CPT> v;
+      FftwDRArray< std::complex<Data> > v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3);
       TEST_ASSERT(v.isAllocated());
 
-      HostArray< std::complex<Data>, CPT> u;
+      FftwDRArray< std::complex<Data> > u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -421,12 +351,12 @@ void CpuHostArrayTest::testAssignmentCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testIterator()
+void CppFftwDRArrayTest::testIterator()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT((int)Memory::total() == 0);
    {
-      HostArray<Data,CPT> v;
+      FftwDRArray<Data> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -452,11 +382,11 @@ void CpuHostArrayTest::testIterator()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testBaseClassReference()
+void CppFftwDRArrayTest::testBaseClassReference()
 {
    printMethod(TEST_FUNC);
    {
-      HostArray<Data,CPT> v;
+      FftwDRArray<Data> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -469,11 +399,11 @@ void CpuHostArrayTest::testBaseClassReference()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuHostArrayTest::testSerialize1Memory()
+void CppFftwDRArrayTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
-      HostArray<double,CPT> v;
+      FftwDRArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -494,7 +424,7 @@ void CpuHostArrayTest::testSerialize1Memory()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      HostArray<double,CPT> u;
+      FftwDRArray<double> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -550,11 +480,11 @@ void CpuHostArrayTest::testSerialize1Memory()
 
 }
 
-void CpuHostArrayTest::testSerialize2Memory()
+void CppFftwDRArrayTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
-      HostArray<double,CPT> v;
+      FftwDRArray<double> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -571,9 +501,9 @@ void CpuHostArrayTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      HostArray<double,CPT> u;
+      FftwDRArray<double> u;
    
-      // Note: We do not allocate HostArray<double,CPT> u in this test.
+      // Note: We do not allocate FftwDRArray<double> u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -591,11 +521,11 @@ void CpuHostArrayTest::testSerialize2Memory()
    }
 }
 
-void CpuHostArrayTest::testSerialize1File()
+void CppFftwDRArrayTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
-      HostArray<double,CPT> v;
+      FftwDRArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -605,7 +535,7 @@ void CpuHostArrayTest::testSerialize1File()
       int i2;
 
       BinaryFileOArchive oArchive;
-      openOutputFile("out/HostArray.arx", oArchive.file());
+      openOutputFile("out/FftwDRArray.arx", oArchive.file());
       oArchive << v;
       oArchive << i1;
       oArchive.file().close();
@@ -614,11 +544,11 @@ void CpuHostArrayTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      HostArray<double,CPT> u;
+      FftwDRArray<double> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
-      openInputFile("out/HostArray.arx", iArchive.file());
+      openInputFile("out/FftwDRArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
       iArchive.file().close();
@@ -634,7 +564,7 @@ void CpuHostArrayTest::testSerialize1File()
       i2 = 0;
    
       // Reload into u and i2
-      openInputFile("out/HostArray.arx", iArchive.file());
+      openInputFile("out/FftwDRArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
    
@@ -644,11 +574,11 @@ void CpuHostArrayTest::testSerialize1File()
    }
 }
 
-void CpuHostArrayTest::testSerialize2File()
+void CppFftwDRArrayTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
-      HostArray<double,CPT> v;
+      FftwDRArray<double> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -658,7 +588,7 @@ void CpuHostArrayTest::testSerialize2File()
       int i2;
   
       BinaryFileOArchive oArchive;
-      openOutputFile("out/HostArray.arx", oArchive.file());
+      openOutputFile("out/FftwDRArray.arx", oArchive.file());
       oArchive << v;
       oArchive << i1;
       oArchive.file().close();
@@ -667,14 +597,14 @@ void CpuHostArrayTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      HostArray<double,CPT> u;
+      FftwDRArray<double> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 
       // from the previous test
    
       BinaryFileIArchive iArchive;
-      openInputFile("out/HostArray.arx", iArchive.file());
+      openInputFile("out/FftwDRArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
       iArchive.file().close();
@@ -690,7 +620,7 @@ void CpuHostArrayTest::testSerialize2File()
       i2 = 0;
    
       // Reload into u and i2
-      openInputFile("out/HostArray.arx", iArchive.file());
+      openInputFile("out/FftwDRArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
    
@@ -700,26 +630,25 @@ void CpuHostArrayTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(CpuHostArrayTest)
-TEST_ADD(CpuHostArrayTest, testDefaultConstructor)
-TEST_ADD(CpuHostArrayTest, testAllocateConstructor)
-TEST_ADD(CpuHostArrayTest, testAllocate)
-TEST_ADD(CpuHostArrayTest, testSubscript)
-TEST_ADD(CpuHostArrayTest, testSubscriptCmplx)
-TEST_ADD(CpuHostArrayTest, testAssociate)
-TEST_ADD(CpuHostArrayTest, testAssignFromDevice)
-TEST_ADD(CpuHostArrayTest, testCopyConstructor)
-TEST_ADD(CpuHostArrayTest, testCopyConstructorCmplx)
-TEST_ADD(CpuHostArrayTest, testAssignment)
-TEST_ADD(CpuHostArrayTest, testAssignmentCmplx)
-TEST_ADD(CpuHostArrayTest, testIterator)
-TEST_ADD(CpuHostArrayTest, testBaseClassReference)
+TEST_BEGIN(CppFftwDRArrayTest)
+TEST_ADD(CppFftwDRArrayTest, testDefaultConstructor)
+TEST_ADD(CppFftwDRArrayTest, testAllocateConstructor)
+TEST_ADD(CppFftwDRArrayTest, testAllocate)
+TEST_ADD(CppFftwDRArrayTest, testSubscript)
+TEST_ADD(CppFftwDRArrayTest, testSubscriptCmplx)
+TEST_ADD(CppFftwDRArrayTest, testAssociate)
+TEST_ADD(CppFftwDRArrayTest, testCopyConstructor)
+TEST_ADD(CppFftwDRArrayTest, testCopyConstructorCmplx)
+TEST_ADD(CppFftwDRArrayTest, testAssignment)
+TEST_ADD(CppFftwDRArrayTest, testAssignmentCmplx)
+TEST_ADD(CppFftwDRArrayTest, testIterator)
+TEST_ADD(CppFftwDRArrayTest, testBaseClassReference)
 
-TEST_ADD(CpuHostArrayTest, testSerialize1Memory)
-TEST_ADD(CpuHostArrayTest, testSerialize2Memory)
-TEST_ADD(CpuHostArrayTest, testSerialize1File)
-TEST_ADD(CpuHostArrayTest, testSerialize2File)
+TEST_ADD(CppFftwDRArrayTest, testSerialize1Memory)
+TEST_ADD(CppFftwDRArrayTest, testSerialize2Memory)
+TEST_ADD(CppFftwDRArrayTest, testSerialize1File)
+TEST_ADD(CppFftwDRArrayTest, testSerialize2File)
 
-TEST_END(CpuHostArrayTest)
+TEST_END(CppFftwDRArrayTest)
 
 #endif

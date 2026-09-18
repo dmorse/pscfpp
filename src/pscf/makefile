@@ -20,8 +20,9 @@ clean:
 	rm -f $(pscf_OBJS)
 	rm -f $(pscf_DEPS)
 	rm -f $(pscf_LIB)
-	rm -f *.o */*.o
-	rm -f *.d */*.d
+	rm -f *.o */*.o */*/*.o
+	rm -f *.d */*.d */*/*.d
+	rm -f backend/cuda/*.ou backend/cuda/*.du
 	cd tests; $(MAKE) clean
 
 veryclean:

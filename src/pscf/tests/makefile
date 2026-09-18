@@ -45,7 +45,7 @@ clean-outputs:
 	-cd $(TEST_DIR)/math; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/mesh; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/solvers; $(MAKE) clean-outputs
-	-cd $(TEST_DIR)/cpu; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/cpp; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/cuda; $(MAKE) clean-outputs
 
 clean:
@@ -63,7 +63,7 @@ clean:
 	-cd $(TEST_DIR)/math; $(MAKE) clean
 	-cd $(TEST_DIR)/mesh; $(MAKE) clean
 	-cd $(TEST_DIR)/solvers; $(MAKE) clean
-	-cd $(TEST_DIR)/cpu; $(MAKE) clean
+	-cd $(TEST_DIR)/cpp; $(MAKE) clean
 	-cd $(TEST_DIR)/cuda; $(MAKE) clean
 
 .PHONY: all run run-quiet clean-outputs clean

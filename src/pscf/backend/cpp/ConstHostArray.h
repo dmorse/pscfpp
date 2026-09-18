@@ -24,29 +24,38 @@ namespace Pscf {
    /**
    * Read-only psuedo-"host" array for use with C++ backend.
    *
-   * This class is used for in template code in which data is copied from
-   * a psuedo-device array to a pseudo-host array if the device array is
-   * const and/or if the host array may be treated read only. It is
-   * derived from Util::ConstArrayView, and is equivalent to this base 
-   * base except for the definition of a specialized assignment operator.
+   * This class template partial specialization may be used in template 
+   * code in which data is copied from a psuedo-device array to a 
+   * pseudo-host array when the device array is const and/or if the host 
+   * array only requires read access. Specializations of this template
+   * are directly derived from Util::ConstArrayView<Data>, and indirectly 
+   * derived from Util::ConstArray<Data>.
    *
-   * Assignment from a DeviceArray<Data,CTP> const reference to a
-   * ConstHostArray<Data,CTP> (operator =) creates a shallow read-only
-   * copy of memory memory owned by the DeviceArray, as a Data const *
-   * pointer owned by the ConstHostArray, or does nothing if such an
-   * association already exists. This allows inexpensive creation of a
-   * shallow read-only copy to be used to imitate the syntax of an
-   * actual device-to-host data copy in template code that must work with
-   * both CPU or GPU backends, without an unnecessary deep copy. Because
-   * this assignment operator takes a const reference as its input, it
-   * can can be used in contexts in which the device array is const.
+   * Construction or assignment (operator =)from a DeviceArray<Data,CPT> 
+   * to a ConstHostArray<Data,CPT> creates a shallow read-only copy of a
+   * C array that is owned by the device array. Assignment does nothing 
+   * if such an association already exists.  Because the relevant 
+   * constructor and assignment operator each take a const reference to
+   * a DeviceArray<Data,CPT> as a parameter, they can be used in contexts 
+   * in which the device array is declared const. This class template
+   * hides the associate member functions of ConstArray<Data> by declaring 
+   * these functions as private, so that construction and assignment are
+   * the only allowed methods of creating a shallow copy.
+   * 
+   * The use of construction or an assignment (=) operator to create a 
+   * shallow copy allows this class to be used in template code to 
+   * imitate the syntax of an actual device-to-host data copy that 
+   * would be performed by a ConstHostArray<Data, CUT> in a template
+   * specialization that is designed to use a GPU.
    *
-   * After an instance of this class creates an association with a
-   * DeviceArray, this object must either be destroyed or explicitly
-   * call ConstArrayView::dissociate before the associated DeviceArray
-   * is de-allocated or destroyed. The destructor automatically releases
-   * the association.
-   *
+   * An association with a device array can be released by calling the
+   * inherited dissociate function, or will be released upon destruction.
+   * Such an association must be released by one of these two methods 
+   * before the device array that owns the associated data is 
+   * de-allocated or destroyed. A reference counting system detects and
+   * reports de-allocation of a source array that is still referred to
+   * by one or more other array view containers.
+   * 
    * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
@@ -71,14 +80,14 @@ namespace Pscf {
       ConstHostArray(DeviceArray<Data,CPT> const & other);
 
       // Prohibit copy construction from another ConstHostArray.
-      ConstHostArray(ConstHostArray<Data,CPT> const & other) = delete;
+      ConstHostArray(ConstHostArray<Data,CPT> const & other) = default;
 
       // Destructor
       ~ConstHostArray() = default;
 
       // Prohibit assignment from another ConstHostArray.
       ConstHostArray<Data,CPT>&
-      operator = (ConstHostArray<Data,CPT> const & other) = delete;
+      operator = (ConstHostArray<Data,CPT> const&) = delete;
 
       /**
       * Create read-only association with a DeviceArray, if needed.
@@ -94,8 +103,10 @@ namespace Pscf {
       */
       ConstHostArray<Data,CPT>& operator = (DeviceArray<Data,CPT> const & other);
 
-      // Inherited member function (to prevent hiding)
-      using ConstArrayView<Data>::operator =;
+   private:
+
+      // Hide associate functions defined by base class.
+      using ConstArrayView<Data>::associate;
 
    };
 
@@ -106,6 +117,8 @@ namespace Pscf {
 
   /*
   * Copy construction from a DeviceArray.
+  *
+  * Creates an association with a DeviceArray, which must own the data.
   */
   template <typename Data>
   ConstHostArray<Data,CPT>::ConstHostArray(
@@ -114,7 +127,9 @@ namespace Pscf {
   {  ConstArrayView<Data>::associate(other); }
 
   /*
-  * Create an association with a DeviceArray, unless association exists.
+  * Assignment from a DeviceArray.
+  *
+  * Creates an association with a DeviceArray, which must own the data.
   */
   template <typename Data>
   ConstHostArray<Data,CPT>&
@@ -123,8 +138,8 @@ namespace Pscf {
      UTIL_CHECK(other.isAllocated());
      Data const * data = ConstArrayView<Data>::cArray();
      if ((bool)data && other.cArray() == data) {
+        // If this is already associated with other, do nothing
         UTIL_CHECK(other.capacity() == ConstArrayView<Data>::size());
-        // If this is already associated with the other array, do nothing
      } else {
         // Otherwise, attempt to create an association
         // Attempt fails if this is associated with a different array.

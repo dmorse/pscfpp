@@ -1,5 +1,5 @@
-#ifndef PSCF_CPU_CONST_HOST_ARRAY_TEST_H
-#define PSCF_CPU_CONST_HOST_ARRAY_TEST_H
+#ifndef PSCF_CPP_CONST_HOST_ARRAY_TEST_H
+#define PSCF_CPP_CONST_HOST_ARRAY_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -10,7 +10,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CpuConstHostArrayTest : public UnitTest
+class CppConstHostArrayTest : public UnitTest
 {
 private:
 
@@ -32,7 +32,7 @@ public:
 };
 
 
-void CpuConstHostArrayTest::testDefaultConstructor()
+void CppConstHostArrayTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
@@ -42,7 +42,7 @@ void CpuConstHostArrayTest::testDefaultConstructor()
    }
 }
 
-void CpuConstHostArrayTest::testAssignFromDevice()
+void CppConstHostArrayTest::testAssignFromDevice()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -90,9 +90,9 @@ void CpuConstHostArrayTest::testAssignFromDevice()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-TEST_BEGIN(CpuConstHostArrayTest)
-TEST_ADD(CpuConstHostArrayTest, testDefaultConstructor)
-TEST_ADD(CpuConstHostArrayTest, testAssignFromDevice)
-TEST_END(CpuConstHostArrayTest)
+TEST_BEGIN(CppConstHostArrayTest)
+TEST_ADD(CppConstHostArrayTest, testDefaultConstructor)
+TEST_ADD(CppConstHostArrayTest, testAssignFromDevice)
+TEST_END(CppConstHostArrayTest)
 
 #endif

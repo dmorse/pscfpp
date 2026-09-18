@@ -3,24 +3,24 @@
 
 #include <test/CompositeTestRunner.h>
 
-#include "CpuComplexTest.h"
-#include "CpuVecOpTest.h"
-#include "CpuVecRandomTest.h"
-#include "CpuFftwDArrayTest.h"
-#include "CpuFftwDRArrayTest.h"
-#include "CpuDeviceArrayTest.h"
-#include "CpuHostArrayTest.h"
-#include "CpuConstHostArrayTest.h"
+#include "CppComplexTest.h"
+#include "CppVecOpTest.h"
+#include "CppVecRandomTest.h"
+#include "CppFftwDArrayTest.h"
+#include "CppFftwDRArrayTest.h"
+#include "CppDeviceArrayTest.h"
+#include "CppHostArrayTest.h"
+#include "CppConstHostArrayTest.h"
 
 TEST_COMPOSITE_BEGIN(CppTestComposite)
-TEST_COMPOSITE_ADD_UNIT(CpuComplexTest);
-TEST_COMPOSITE_ADD_UNIT(CpuVecOpTest);
-TEST_COMPOSITE_ADD_UNIT(CpuVecRandomTest);
-TEST_COMPOSITE_ADD_UNIT(CpuFftwDArrayTest);
-TEST_COMPOSITE_ADD_UNIT(CpuFftwDRArrayTest);
-TEST_COMPOSITE_ADD_UNIT(CpuDeviceArrayTest);
-TEST_COMPOSITE_ADD_UNIT(CpuHostArrayTest);
-TEST_COMPOSITE_ADD_UNIT(CpuConstHostArrayTest);
+TEST_COMPOSITE_ADD_UNIT(CppComplexTest);
+TEST_COMPOSITE_ADD_UNIT(CppVecOpTest);
+TEST_COMPOSITE_ADD_UNIT(CppVecRandomTest);
+TEST_COMPOSITE_ADD_UNIT(CppFftwDArrayTest);
+TEST_COMPOSITE_ADD_UNIT(CppFftwDRArrayTest);
+TEST_COMPOSITE_ADD_UNIT(CppDeviceArrayTest);
+TEST_COMPOSITE_ADD_UNIT(CppHostArrayTest);
+TEST_COMPOSITE_ADD_UNIT(CppConstHostArrayTest);
 TEST_COMPOSITE_END
 
 #endif

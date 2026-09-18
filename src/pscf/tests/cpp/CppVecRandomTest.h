@@ -1,5 +1,5 @@
-#ifndef PSCF_CPU_VEC_RANDOM_TEST_H
-#define PSCF_CPU_VEC_RANDOM_TEST_H
+#ifndef PSCF_CPP_VEC_RANDOM_TEST_H
+#define PSCF_CPP_VEC_RANDOM_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -15,7 +15,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CpuVecRandomTest : public UnitTest 
+class CppVecRandomTest : public UnitTest 
 {
 private:
 
@@ -174,11 +174,11 @@ public:
 
 };
 
-TEST_BEGIN(CpuVecRandomTest)
-TEST_ADD(CpuVecRandomTest, testConstructor)
-TEST_ADD(CpuVecRandomTest, testUniform)
-TEST_ADD(CpuVecRandomTest, testUniformRange)
-TEST_ADD(CpuVecRandomTest, testNormal)
-TEST_END(CpuVecRandomTest)
+TEST_BEGIN(CppVecRandomTest)
+TEST_ADD(CppVecRandomTest, testConstructor)
+TEST_ADD(CppVecRandomTest, testUniform)
+TEST_ADD(CppVecRandomTest, testUniformRange)
+TEST_ADD(CppVecRandomTest, testNormal)
+TEST_END(CppVecRandomTest)
 
 #endif

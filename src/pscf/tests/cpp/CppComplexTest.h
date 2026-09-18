@@ -1,5 +1,5 @@
-#ifndef PSCF_CPU_COMPLEX_TEST_H
-#define PSCF_CPU_COMPLEX_TEST_H
+#ifndef PSCF_CPP_COMPLEX_TEST_H
+#define PSCF_CPP_COMPLEX_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -9,7 +9,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CpuComplexTest : public UnitTest
+class CppComplexTest : public UnitTest
 {
 
 public:
@@ -352,23 +352,23 @@ public:
 
 };
 
-TEST_BEGIN(CpuComplexTest)
-TEST_ADD(CpuComplexTest, testAddCc)
-TEST_ADD(CpuComplexTest, testAddCr)
-TEST_ADD(CpuComplexTest, testAddEqCc)
-TEST_ADD(CpuComplexTest, testAddEqCr)
-TEST_ADD(CpuComplexTest, testSubCc)
-TEST_ADD(CpuComplexTest, testSubCr)
-TEST_ADD(CpuComplexTest, testSubEqCc)
-TEST_ADD(CpuComplexTest, testSubEqCr)
-TEST_ADD(CpuComplexTest, testMulCc)
-TEST_ADD(CpuComplexTest, testMulCr)
-TEST_ADD(CpuComplexTest, testMulEqCc)
-TEST_ADD(CpuComplexTest, testMulEqCr)
-TEST_ADD(CpuComplexTest, testDivCc)
-TEST_ADD(CpuComplexTest, testDivCr)
-TEST_ADD(CpuComplexTest, testDivEqCc)
-TEST_ADD(CpuComplexTest, testDivEqCr)
-TEST_END(CpuComplexTest)
+TEST_BEGIN(CppComplexTest)
+TEST_ADD(CppComplexTest, testAddCc)
+TEST_ADD(CppComplexTest, testAddCr)
+TEST_ADD(CppComplexTest, testAddEqCc)
+TEST_ADD(CppComplexTest, testAddEqCr)
+TEST_ADD(CppComplexTest, testSubCc)
+TEST_ADD(CppComplexTest, testSubCr)
+TEST_ADD(CppComplexTest, testSubEqCc)
+TEST_ADD(CppComplexTest, testSubEqCr)
+TEST_ADD(CppComplexTest, testMulCc)
+TEST_ADD(CppComplexTest, testMulCr)
+TEST_ADD(CppComplexTest, testMulEqCc)
+TEST_ADD(CppComplexTest, testMulEqCr)
+TEST_ADD(CppComplexTest, testDivCc)
+TEST_ADD(CppComplexTest, testDivCr)
+TEST_ADD(CppComplexTest, testDivEqCc)
+TEST_ADD(CppComplexTest, testDivEqCr)
+TEST_END(CppComplexTest)
 
 #endif
