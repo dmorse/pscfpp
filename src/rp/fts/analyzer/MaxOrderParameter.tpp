@@ -81,8 +81,8 @@ namespace Rp {
       computePsi();
 
       // Associate host array psi_h with device array psi
-      psi_h_.associate(psi_);
-      UTIL_CHECK(psi_h_.size() == kSize);
+      // psi_h_.associate(psi_);
+      // UTIL_CHECK(psi_h_.size() == kSize);
 
       // Copy device array psi_ to host array psi_h_
       psi_h_ = psi_;

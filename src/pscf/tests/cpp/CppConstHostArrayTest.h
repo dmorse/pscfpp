@@ -27,6 +27,7 @@ public:
 
    void tearDown() {}
    void testDefaultConstructor();
+   void testConstructFromDevice();
    void testAssignFromDevice();
 
 };
@@ -42,6 +43,52 @@ void CppConstHostArrayTest::testDefaultConstructor()
    }
 }
 
+void CppConstHostArrayTest::testConstructFromDevice()
+{
+   printMethod(TEST_FUNC);
+   TEST_ASSERT(Memory::total() == memory_);
+   {
+      // Data owner
+      DeviceArray<Data,CPT> v(capacity);
+      TEST_ASSERT(v.capacity() == capacity);
+
+      for (int i=0; i < capacity; i++ ) {
+         v[i] = (i+1)*10.0 ;
+      }
+
+      // Data user
+      DeviceArray<Data,CPT> const & w = v;
+      ConstHostArray<Data,CPT> u(w);
+      TEST_ASSERT(u.size() == capacity);
+      TEST_ASSERT(u.isAllocated());
+
+      TEST_ASSERT(eq(v[0], 10.0));
+      TEST_ASSERT(eq(v[1], 20.0));
+      TEST_ASSERT(eq(v[2], 30.0));
+
+      TEST_ASSERT(eq(u[0], 10.0));
+      TEST_ASSERT(eq(u[1], 20.0));
+      TEST_ASSERT(eq(u[2], 30.0));
+
+      long int tot = Memory::total();
+      TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
+
+      // v.deallocate(); // Intentional error
+
+      u.dissociate();
+      TEST_ASSERT(u.size() == 0);
+      TEST_ASSERT(u.cArray() == nullptr);
+      TEST_ASSERT(!u.isAllocated());
+
+      v.deallocate();
+      TEST_ASSERT(v.capacity() == 0);
+      TEST_ASSERT(!v.isAllocated());
+      TEST_ASSERT(!v.isAssociated());
+      TEST_ASSERT(!v.isOwner());
+
+   }
+   TEST_ASSERT(Memory::total() == memory_);
+}
 void CppConstHostArrayTest::testAssignFromDevice()
 {
    printMethod(TEST_FUNC);
@@ -92,6 +139,7 @@ void CppConstHostArrayTest::testAssignFromDevice()
 
 TEST_BEGIN(CppConstHostArrayTest)
 TEST_ADD(CppConstHostArrayTest, testDefaultConstructor)
+TEST_ADD(CppConstHostArrayTest, testConstructFromDevice)
 TEST_ADD(CppConstHostArrayTest, testAssignFromDevice)
 TEST_END(CppConstHostArrayTest)
 
