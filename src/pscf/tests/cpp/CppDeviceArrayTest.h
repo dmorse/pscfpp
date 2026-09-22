@@ -63,7 +63,6 @@ void CppDeviceArrayTest::testDefaultConstructor()
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
       TEST_ASSERT(!v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
    }
 }
 
@@ -76,7 +75,6 @@ void CppDeviceArrayTest::testAllocateConstructor()
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
@@ -102,7 +100,6 @@ void CppDeviceArrayTest::testAllocate()
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
@@ -170,7 +167,6 @@ void CppDeviceArrayTest::testAssociate()
       u.associate(v, 1, capacity - 1);
       TEST_ASSERT(u.capacity() == capacity - 1);
       TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isAssociated());
       TEST_ASSERT(!u.isOwner());
 
       for (int i=0; i < capacity; i++ ) {
@@ -193,13 +189,11 @@ void CppDeviceArrayTest::testAssociate()
       u.dissociate();
       TEST_ASSERT(u.capacity() == 0);
       TEST_ASSERT(!u.isAllocated());
-      TEST_ASSERT(!u.isAssociated());
       TEST_ASSERT(!u.isOwner());
 
       v.deallocate();
       TEST_ASSERT(v.capacity() == 0);
       TEST_ASSERT(!v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
       TEST_ASSERT(!v.isOwner());
 
    }
@@ -222,7 +216,6 @@ void CppDeviceArrayTest::testAssignFromHost()
       v.associate(u);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
-      TEST_ASSERT(v.isAssociated());
 
       // Assignment should do nothing in this case
       u = v;
@@ -230,7 +223,6 @@ void CppDeviceArrayTest::testAssignFromHost()
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isOwner());
       TEST_ASSERT(v.isAllocated());
-      TEST_ASSERT(v.isAssociated());
 
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
@@ -256,16 +248,12 @@ void CppDeviceArrayTest::testAssignFromHost()
       v.dissociate();
       TEST_ASSERT(v.capacity() == 0);
       TEST_ASSERT(!v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
-      TEST_ASSERT(!v.isOwner());
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isOwner());
-      TEST_ASSERT(!u.isAssociated());
 
       u.deallocate();
       TEST_ASSERT(u.capacity() == 0);
       TEST_ASSERT(!u.isAllocated());
-      TEST_ASSERT(!u.isAssociated());
       TEST_ASSERT(!u.isOwner());
 
    }
@@ -282,7 +270,6 @@ void CppDeviceArrayTest::testCopyConstructor()
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
@@ -293,7 +280,6 @@ void CppDeviceArrayTest::testCopyConstructor()
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isOwner());
-      TEST_ASSERT(!u.isAssociated());
 
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 20.0));
@@ -334,7 +320,6 @@ void CppDeviceArrayTest::testCopyConstructorCmplx()
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner());
-      TEST_ASSERT(!u.isAssociated());
       TEST_ASSERT(real(v[0]) == 10.0 );
       TEST_ASSERT(imag(v[1]) == 20.1 );
       TEST_ASSERT(real(v[2]) == 30.0 );
@@ -357,14 +342,12 @@ void CppDeviceArrayTest::testAssignment()
       TEST_ASSERT(v.capacity() == 3 );
       TEST_ASSERT(v.isAllocated() );
       TEST_ASSERT(v.isOwner() );
-      TEST_ASSERT(!v.isAssociated() );
 
       DeviceArray<Data,CPT> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner() );
-      TEST_ASSERT(!u.isAssociated() );
 
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10;
@@ -375,7 +358,6 @@ void CppDeviceArrayTest::testAssignment()
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner() );
-      TEST_ASSERT(!u.isAssociated() );
       TEST_ASSERT(v[0] == 10.0);
       TEST_ASSERT(v[2] == 30.0);
       TEST_ASSERT(u[0] == 10.0);

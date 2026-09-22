@@ -9,10 +9,10 @@
 */
 
 #include <util/containers/ConstArray.h>  // base class
+#include <util/misc/CountedReference.h>  // member
 
 // Forward declarations
 namespace Pscf {
-   template <typename Data, typename T> class ConstHostArray;
    template <typename Data, typename T> class DeviceArray;
    class CPT;
 }
@@ -20,6 +20,9 @@ namespace Pscf {
 namespace Pscf {
 
    using namespace Util;
+
+   // Declare primary template
+   template <typename Data, typename T> class ConstHostArray;
 
    /**
    * Read-only psuedo-"host" array for use with C++ backend.
@@ -32,13 +35,13 @@ namespace Pscf {
    * Construction or assignment (operator =)from a DeviceArray<Data,CPT>
    * to a ConstHostArray<Data,CPT> creates a shallow read-only copy of a
    * C array that is owned by the device array. Assignment does nothing
-   * if such an association already exists.  Because the relevant
+   * if such an association already exists.  Because the relevant conversion
    * constructor and assignment operator each take a const reference to
    * a DeviceArray<Data,CPT> as a parameter, they can be used in contexts
    * in which the device array is declared const. 
    *
    * The use of construction or an assignment (=) operator to create a
-   * shallow copy allows this class to be used in template code to
+   * shallow copy allows this class to be used in template code to 
    * imitate the syntax of an actual device-to-host data copy that
    * would be performed by a ConstHostArray<Data, CUT> in a template
    * specialization that is designed to use a GPU.
@@ -50,6 +53,10 @@ namespace Pscf {
    * destroyed. A reference counting system detects and reports erroneous
    * de-allocation of a source array that is still referred to by one or 
    * more other array view containers.
+   *
+   * The ConstHostArray template does not define an explicit "associate" 
+   * member function. By convention, association is created by the 
+   * conversion constructor or assignment.
    *
    * \ingroup Pscf_Backend_Cpp_Module
    */
@@ -65,7 +72,7 @@ namespace Pscf {
       ConstHostArray();
 
       /**
-      * Copy construction from a DeviceArray.
+      * Conversion construction from a DeviceArray.
       *
       * Create an association (shallow copy) with memory owned by
       * the pre-existing device array.
@@ -75,7 +82,7 @@ namespace Pscf {
       ConstHostArray(DeviceArray<Data,CPT> const & other);
 
       // Prohibit copy construction from another ConstHostArray.
-      ConstHostArray(ConstHostArray<Data,CPT> const & other) = default;
+      ConstHostArray(ConstHostArray<Data,CPT> const & other) = delete;
 
       /**
       * Destructor.
@@ -87,18 +94,20 @@ namespace Pscf {
       operator = (ConstHostArray<Data,CPT> const&) = delete;
 
       /**
-      * Create read-only association with a DeviceArray.
+      * Create a read-only association with a DeviceArray.
       *
       * If this is already associated with other (the device array),
       * do nothing and return. Otherwise, create an association of this
-      * with the other device array (i.e., create a shallow copy).
+      * with the other device array, thus creating a shallow copy that
+      * points to the same memory as the device array.
       *
       * \throw Exception if other array is not allocated
       * \throw Exception if this is associated with other with wrong size
       *
       * \param other  array container on RHS of assigment (input)
       */
-      ConstHostArray<Data,CPT>& operator = (DeviceArray<Data,CPT> const & other);
+      ConstHostArray<Data,CPT>& 
+      operator = (DeviceArray<Data,CPT> const & other);
 
       /**
       * Release association with a device array.
@@ -109,6 +118,9 @@ namespace Pscf {
 
       /// Reference to a device array that owns memory referenced by this.
       CountedReference ref_;
+
+      using ConstArray<Data>::data_;
+      using ConstArray<Data>::capacity_;
 
       /**
       * Associate this object with source array.
@@ -121,9 +133,6 @@ namespace Pscf {
       * \param source  array that owns the data
       */
       void associate(DeviceArray<Data,CPT> const & source);
-
-      using ConstArray<Data>::data_;
-      using ConstArray<Data>::capacity_;
 
    };
 
@@ -174,7 +183,7 @@ namespace Pscf {
    */
    template <typename Data>
    ConstHostArray<Data,CPT>&
-   ConstHostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> const & other)
+   ConstHostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> const& other)
    {
       UTIL_CHECK(other.isAllocated());
       Data const * data = ConstArray<Data>::cArray();
@@ -206,7 +215,8 @@ namespace Pscf {
    * Associate this object with a device array.
    */
    template <typename Data>
-   void ConstHostArray<Data,CPT>::associate(DeviceArray<Data,CPT> const & source)
+   void 
+   ConstHostArray<Data,CPT>::associate(DeviceArray<Data,CPT> const & source)
    {
       UTIL_CHECK(source.isAllocated());
       UTIL_CHECK(!ref_.isAssociated());
@@ -215,17 +225,16 @@ namespace Pscf {
       data_ = const_cast<Data*>( source.cArray() );
       capacity_ = source.capacity();
 
-      // Note: const_cast to non-const pointer is permissible because
-      // the ConstArray<Data> class public interface is designed to
-      // prevent modification of individual array elements.
+      // Note: The const_cast to non-const pointer is permissible because
+      // the public interface of the ConstArray<Data> base class is designed
+      // prevent modification of values of array elements.
 
-      // Associate ReferencecCounter base class of the source array with
-      // the CountedReference ref_ member variable of this data user.
+      // Associate ReferenceCounter of the source array with this 
       ref_.associate(source);
 
-      // On exit, the ReferenceCounter of the data source is incremented
-      // and the ref_ CountedReference member variable of this object
-      // holds a pointer to that ReferenceCounter.
+      // On exit, the ReferenceCounter sub-object of the data source is 
+      // incremented and the ref_ CountedReference member variable of 
+      // this object holds a pointer to that ReferenceCounter.
    }
 
 }

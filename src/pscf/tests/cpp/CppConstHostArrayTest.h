@@ -27,8 +27,8 @@ public:
 
    void tearDown() {}
    void testDefaultConstructor();
-   void testConstructFromDevice();
-   void testAssignFromDevice();
+   void testConversionConstructor();
+   void testAssign();
 
 };
 
@@ -43,7 +43,7 @@ void CppConstHostArrayTest::testDefaultConstructor()
    }
 }
 
-void CppConstHostArrayTest::testConstructFromDevice()
+void CppConstHostArrayTest::testConversionConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -83,28 +83,26 @@ void CppConstHostArrayTest::testConstructFromDevice()
       v.deallocate();
       TEST_ASSERT(v.capacity() == 0);
       TEST_ASSERT(!v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
       TEST_ASSERT(!v.isOwner());
 
    }
    TEST_ASSERT(Memory::total() == memory_);
 }
-void CppConstHostArrayTest::testAssignFromDevice()
+void CppConstHostArrayTest::testAssign()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
-   ConstHostArray<Data,CPT> u;
    {
-      // Data owner
+      // Data owner (device array)
       DeviceArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
-
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
-
-      // Data user
       DeviceArray<Data,CPT> const & w = v;
+
+      // Data user (host array u)
+      ConstHostArray<Data,CPT> u;
       u = w;
       TEST_ASSERT(u.size() == capacity);
       TEST_ASSERT(u.isAllocated());
@@ -130,7 +128,6 @@ void CppConstHostArrayTest::testAssignFromDevice()
       v.deallocate();
       TEST_ASSERT(v.capacity() == 0);
       TEST_ASSERT(!v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
       TEST_ASSERT(!v.isOwner());
 
    }
@@ -139,8 +136,8 @@ void CppConstHostArrayTest::testAssignFromDevice()
 
 TEST_BEGIN(CppConstHostArrayTest)
 TEST_ADD(CppConstHostArrayTest, testDefaultConstructor)
-TEST_ADD(CppConstHostArrayTest, testConstructFromDevice)
-TEST_ADD(CppConstHostArrayTest, testAssignFromDevice)
+TEST_ADD(CppConstHostArrayTest, testConversionConstructor)
+TEST_ADD(CppConstHostArrayTest, testAssign)
 TEST_END(CppConstHostArrayTest)
 
 #endif

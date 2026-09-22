@@ -26,12 +26,46 @@ namespace Pscf {
    *
    * Derived from FftwDRArray, and largely equivalent. 
    * 
-   * The key difference from the base class is that assignment 
-   * (operator = ) from a HostArray<Data,CTP> to a DeviceArray<Data,CTP> 
-   * creates a shallow copy of the HostArray (a shared pointer) rather 
-   * than a deep copy. This allows the creation of a shallow copy to be
-   * used to imitate the syntax of an actual host-to-device data copy in 
-   * template code that must work with either backend.
+   * The main difference from the base class is the addition of assignment 
+   * (operator = ) from a HostArray<Data,CTP> to a DeviceArray<Data,CTP>.
+   * This operator checks for the existence of an association between the
+   * device array (LHS) and host array (RHS) in which both point to the
+   * same memory, throws an Exception if such an association does not
+   * already exist, or does nothing if it does. Reason for this usage is
+   * discussed below.
+   *
+   * In order to transfer data from HostArray<Data,CPT> u to a
+   * DeviceArray<Data,CPT> v one must:
+   *
+   *    - Allocate the device array
+   *
+   *    - Create an association either by using the conversion constructor
+   *      HostArray<Data,CPT> u(v) to create the host array or by calling 
+   *      the host array associate function u.associate(v).
+   *
+   *    - Initialize data on the host array u
+   *
+   *    - Invoke the assignment operator: v = u;
+   *
+   *    - Destroy the association, either by explicitly invoking the
+   *      dissociate function u.dissociate() on the host array or by 
+   *      allowing a host array that is a local object to be destroyed
+   *      when it goes out of scope
+   *
+   * Comments:
+   *
+   *    - The operator v = u that assigns from host u to device v merely
+   *      checks that an association already exists and does nothing if
+   *      it does. This is because the association must exist before the 
+   *      data is initialized on the host array, which must occur before
+   *      the assignment operator is invoked. In analogous GPU code, the
+   *      assignment operator would instead transfer data from CPU to GPU
+   *      memory.
+   *
+   *    - The lifetime of association between host and device arrays 
+   *      may never be allowed to extend beyond the function in which it 
+   *      was created. This is necessary to guarantee that an association 
+   *      will never still exist when the shared array is deallocated.
    *
    * \ingroup Pscf_Backend_Cpp_Module
    */
@@ -46,37 +80,36 @@ namespace Pscf {
       // Default constructor
       DeviceArray() = default;
 
-      // Copy constructor
-      DeviceArray(DeviceArray<Data,CPT> const & other) = default;
-
       /**
       * Allocating constructor.
       *
-      * This function calls allocate(capacity) internally.
-      *
       * \param capacity number of elements to allocate
       */
-      DeviceArray(int capacity)
-       : FftwDRArray<Data>(capacity)
-      {}
+      DeviceArray(int capacity);
 
-      // Destructor
+      // Copy constructor.
+      DeviceArray(DeviceArray<Data,CPT> const & other) = default;
+
+      // Destructor.
       ~DeviceArray() = default;
 
-      // Assignment
+      // Assignment.
       DeviceArray<Data,CPT>& 
       operator = (DeviceArray<Data,CPT> const&) = default;
 
       /**
-      * Create association with a HostArray, or do nothing if associated.
+      * Pseudo-assignment from a host array.
       *
-      * If both arrays are allocated and refer to the same memory block on 
-      * entry, do nothing and return. Otherwise, if this is not allocated,
-      * create an association of this with the HostArray (i.e., create
-      * a shallow copy).
+      * This functions checks that both arrays are allocated and refer to
+      * the same underlying C array, and throws an Exception if this is 
+      * not the case. Rationale: Since the host array acts as a shallow
+      * copy of this device array, the association must have been created
+      * before data was initialized on the host array, which occurs before
+      * the transaction is finalized by the assignment operator.
       *
+      * \throw Exception if this is not allocated
       * \throw Exception if other array is not allocated
-      * \throw Exception if this is allocated and not associated with other
+      * \throw Exception if this and other do not point to the same memory
       *
       * \param other  array container on RHS of assigment (input)
       */
@@ -96,22 +129,27 @@ namespace Pscf {
 #include "HostArray.h"
 namespace Pscf {
 
-  /*
-  * Create an association with a HostArray, or do nothing if associated.
-  */
-  template <typename Data>
-  DeviceArray<Data,CPT>& 
-  DeviceArray<Data,CPT>::operator = (HostArray<Data,CPT> & other)
-  {
-     Data* data = Array<Data>::data_;
-     bool same = (bool)data && data == other.cArray();
-     if (same) {
-        UTIL_CHECK(Array<Data>::capacity() == other.capacity());
-     } else {
-        FftwDRArray<Data>::associate(other); 
-     }
-     return *this;
-  }
+   /*
+   * Allocating constructor.
+   */
+   template <typename Data>
+   DeviceArray<Data,CPT>::DeviceArray(int capacity)
+    : FftwDRArray<Data>(capacity)
+   {}
+
+   /*
+   * Check for a pre-existing association with a HostArray.
+   */
+   template <typename Data>
+   DeviceArray<Data,CPT>& 
+   DeviceArray<Data,CPT>::operator = (HostArray<Data,CPT> & other)
+   {
+      UTIL_CHECK(Array<Data>::isAllocated());
+      UTIL_CHECK(other.isAllocated());
+      UTIL_CHECK(Array<Data>::cArray() == other.cArray());
+      UTIL_CHECK(Array<Data>::capacity() == other.capacity());
+      return *this;
+   }
 
 }
 #endif
