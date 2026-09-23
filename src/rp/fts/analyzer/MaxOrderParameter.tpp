@@ -78,44 +78,19 @@ namespace Rp {
       UTIL_CHECK(psi_.capacity() == kSize);
 
       // Compute device array psi_ of squared Fourier magnitudes
-      computePsi();
-
-      // Associate host array psi_h with device array psi
-      // psi_h_.associate(psi_);
-      // UTIL_CHECK(psi_h_.size() == kSize);
-
-      // Copy device array psi_ to host array psi_h_
-      psi_h_ = psi_;
-
-      // Compute maximum from host array
-      findMaximum();
-
-      // Release psi_h_
-      psi_h_.dissociate();
-
-      return maxPsi_;
-   }
-
-   /*
-   * Compute array psi_ of squared Fourier amplitudes.
-   */
-   template <int D, class T>
-   void MaxOrderParameter<D,T>::computePsi()
-   {
+      //computePsi();
       UTIL_CHECK(system().w().hasData());
       if (!simulator().hasWc()){
          simulator().computeWc();
       }
       system().domain().fft().forwardTransform(simulator().wc(0), wK_);
       VecOp::sqAbsV(psi_, wK_);
-   }
 
-   /*
-   * Search for and return maximum Fourier amplitude.
-   */
-   template <int D, class T> void 
-   MaxOrderParameter<D,T>::findMaximum()
-   {
+      // Copy device array psi_ to const host array psi_h_
+      psi_h_ = psi_;
+
+      // Compute maximum from host array
+      // findMaximum();
       // Identify index of maximum element of array psi_h_
       maxPsi_ = psi_h_[1];
       int maxIndex = 1;
@@ -131,6 +106,11 @@ namespace Rp {
       Gmax_ = kMesh.position(maxIndex);
       UnitCell<D> const & unitCell = system().domain().unitCell();
       Gmax_ = shiftToMinimum(Gmax_, meshDimensions_, unitCell);
+
+      // Release psi_h_
+      psi_h_.dissociate();
+
+      return maxPsi_;
    }
 
    /*

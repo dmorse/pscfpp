@@ -45,10 +45,8 @@ namespace Prdc {
 
       // Member functions
 
-      /**
-      * Default constructor.
-      */
-      HostArrayComplex();
+      // Default constructor.
+      HostArrayComplex() = default;
 
       /**
       * Allocating constructor.
@@ -59,28 +57,26 @@ namespace Prdc {
       */
       HostArrayComplex(int capacity);
 
-      /**
-      * Copy constructor.
-      *
-      * Perform a deep copy of all array elements.
-      *
-      * \param other  other object being copied to this one.
-      */
-      HostArrayComplex(HostArrayComplex const & other);
+      // Copy constructor (delete).
+      HostArrayComplex(HostArrayComplex const & other) = delete;
 
-      /**
-      * Destructor.
-      */
-      ~HostArrayComplex();
+      // Destructor (default).
+      ~HostArrayComplex() = default;
+
+      // Assignment (delete).
+      HostArrayComplex& 
+      operator = (HostArrayComplex const & other) = delete;
 
       // Inherited member functions
+      using Base::associate;
+      using Base::dissociate;
       using Base::allocate;
       using Base::deallocate;
       using Base::operator =;
       using Base::operator [];
-      using Base::capacity;
       using Base::cArray;
       using Base::isAllocated;
+      using Base::capacity;
 
    };
 

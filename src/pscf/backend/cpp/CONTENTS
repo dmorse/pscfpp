@@ -1,5 +1,5 @@
 This src/pscf/cpu directory contains utility functions and classes that 
-are analogous to other defined in the src/pscf/cuda directory, but that 
+are analogous to others defined in the src/pscf/cuda directory, but that 
 use different hardware: All code defined in this directory is written in
 standard C++ and uses standard CPU hardware, whereas analogous code in 
 the pscf/cuda directory uses C++/CUDA code to perform some computations 

@@ -8,13 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/Array.h>       // base class
+#include <util/containers/Array.h>       // base class template
 #include <util/misc/CountedReference.h>  // member
+#include <pscf/backend/cpp/CPT.h>        // template argument
 
-// Forward declarations
+// Forward declaration
 namespace Pscf {
    template <typename Data, typename T> class DeviceArray;
-   class CPT;
 }
 
 namespace Pscf {
@@ -28,28 +28,27 @@ namespace Pscf {
    * Psuedo-"host" array that provides read-write access.
    *
    * This class template partial specialization may be used in template
-   * code in which data is assigned to or from a psuedo-device array to 
-   * or from a pseudo-host array, in cases when read-write access to the 
+   * code in which data is assigned to or from a psuedo-device array to
+   * or from a pseudo-host array, in cases when read-write access to the
    * host array is required. A ConstHostArray<Data> should be used for
    * device-to-host data transfer in which only read access is required
    * on the host, and/or the device array is declared const.
    *
    * Construction or assignment (operator =)from a DeviceArray<Data,CPT>
-   * and the "associate" member function all create a shallow read-only 
-   * copy of a C array that is owned by an associated device array. The
-   * assignment operator does nothing if the desired association already
-   * exists. Each of these functions takes a non-const reference to the
+   * and the "associate" member function all create a shallow read-only
+   * copy of a C array that is owned by an associated device array. 
+   * Each of these functions takes a non-const reference to the 
    * DeviceArray<Data,CPT> as a parameter, which is not a const reference
    * because they all provide write access to the underlying shared array.
    *
-   * The lifetime of an association with a device array must not be 
+   * The lifetime of an association with a device array must not be
    * allowed to extend beyond the function in which the association is
    * created. This is necessary to guarantee that no associations remain
-   * when the device array is deallocated or destroyed.  Such an 
-   * association can be released by calling the dissociate function of 
-   * the host array, or will be released upon destruction of the host 
-   * array.  A reference counting system is used to detect and report 
-   * erroneous de-allocation of a device array when it is still referred 
+   * when the device array is deallocated or destroyed. Such an
+   * association can be released by calling the dissociate function of
+   * the host array, or will be released upon destruction of the host
+   * array.  A reference counting system is used to detect and report
+   * erroneous de-allocation of a device array when it is still referred
    * to by one or more other host arrays.
    *
    * \ingroup Pscf_Backend_Cpp_Module
@@ -61,19 +60,31 @@ namespace Pscf {
    public:
 
       /**
-      * Default constructor.
+      * Backend identifier class typename alias.
       */
-      HostArray();
+      using BackendIdClass = CPT;
 
-      // Prohibit copy construction from another HostArray.
+      // Default constructor.
+      HostArray() = default;
+
+      // Copy construction (delete).
       HostArray(HostArray<Data,CPT> const & other) = delete;
+
+      /**
+      * Destructor.
+      */
+      ~HostArray();
+
+      // Assignment from another HostArray (delete).
+      HostArray<Data,CPT>&
+      operator = (HostArray<Data,CPT> const&) = delete;
 
       /**
       * Conversion constructor from a device array.
       *
       * Create an association (shallow copy) with memory owned by the
       * pre-existing device array, thus creating a shallow copy that
-      * points to the same memory. This is equivalent to default 
+      * points to the same memory. This is equivalent to default
       * construction followed by the associate function.
       *
       * \throw Exception if the other device array is not allocated
@@ -83,19 +94,10 @@ namespace Pscf {
       HostArray(DeviceArray<Data,CPT> & other);
 
       /**
-      * Destructor.
-      */
-      ~HostArray();
-
-      // Prohibit assignment from another HostArray.
-      HostArray<Data,CPT>&
-      operator = (HostArray<Data,CPT> const&) = delete;
-
-      /**
       * Associate this object with a device array.
       *
       * Associates this object with a device array, thus creating a
-      * shallow copy that points to the same memory. After successful 
+      * shallow copy that points to the same memory. After successful
       * return, isAllocated() will return true.
       *
       * \throw Exception if source array is not allocated on entry
@@ -115,11 +117,11 @@ namespace Pscf {
       * device array, thus creating a shallow copy.
       *
       * \throw Exception if RHS device array is not allocated
-      * \throw Exception if this is associated with any other data source
+      * \throw Exception if this array is already associated
       *
-      * \param other  device array on RHS of assignment 
+      * \param other  device array on RHS of assignment
       */
-      HostArray<Data,CPT>& 
+      HostArray<Data,CPT>&
       operator = (DeviceArray<Data,CPT> & other);
 
       /**
@@ -142,6 +144,10 @@ namespace Pscf {
 
    };
 
+   // Explicit instantiation declarations
+   extern template class HostArray<double,CPT>;
+   extern template class HostArray<fftw_complex,CPT>;
+
 } // namespace Pscf
 
 #include <pscf/backend/cpp/DeviceArray.h>
@@ -151,6 +157,7 @@ namespace Pscf {
 
    // Member functions
 
+   #if 0
    /*
    * Default constructor.
    */
@@ -159,6 +166,7 @@ namespace Pscf {
     : Array<Data>(),
       ref_()
    {}
+   #endif
 
    /*
    * Conversion construction from a device array.
@@ -186,7 +194,7 @@ namespace Pscf {
    * Associate this object with a device array.
    */
    template <typename Data>
-   void 
+   void
    HostArray<Data,CPT>::associate(DeviceArray<Data,CPT> & source)
    {
       UTIL_CHECK(source.isAllocated());
@@ -200,33 +208,22 @@ namespace Pscf {
       // the public interface of the Array<Data> base class is designed
       // prevent modification of the values of array elements.
 
-      // Associate ReferenceCounter of the source array with this 
+      // Associate ReferenceCounter of the source array with this
       ref_.associate(source);
 
-      // On exit, the ReferenceCounter sub-object of the data source is 
-      // incremented and the ref_ CountedReference member variable of 
+      // On exit, the ReferenceCounter sub-object of the data source is
+      // incremented and the ref_ CountedReference member variable of
       // this object holds a pointer to that ReferenceCounter.
    }
 
    /*
-   * Assignment from a DeviceArray.
-   *
-   * Creates an association with a DeviceArray, or do nothing if the
-   * association already exists.
+   * Assignment from a DeviceArray (creates an association).
    */
    template <typename Data>
    HostArray<Data,CPT>&
    HostArray<Data,CPT>::operator = (DeviceArray<Data,CPT>& other)
    {
-      UTIL_CHECK(other.isAllocated());
-      if (!ref_.isAssociated()) {
-         associate(other);
-      } else {
-         Data * data = Array<Data>::cArray();
-         UTIL_CHECK((bool)data);
-         UTIL_CHECK(other.cArray() == data);
-         UTIL_CHECK(other.capacity() == Array<Data>::capacity());
-      }
+      associate(other);
       return *this;
    }
 

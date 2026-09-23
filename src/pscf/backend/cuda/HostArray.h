@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>   // base class
+#include <util/containers/DArray.h>   // base class template
+#include <pscf/backend/cuda/CUT.h>    // template argument
 
 namespace Pscf {
 
    // Forward declarations
    template <typename Data, typename T> class HostArray;
    template <typename Data, typename T> class DeviceArray;
-   class CUT;
 
    using namespace Util;
 
@@ -49,25 +49,42 @@ namespace Pscf {
       */
       using ValueType = Data;
 
+      /**
+      * Backend identifier class type.
+      */
+      using BackendIdClass = CUT;
+
+      // Public member functions
+
       // Default constructor (default)
       HostArray() = default;
 
-      // Copy constructor (default)
-      HostArray(HostArray<Data,CUT> const & other) = default;
-
       /**
-      * Copy constructor (copies from device to host).
-      * 
-      * \param other DeviceArray<Data,CUT> to be copied (input)
+      * Allocating constructor.
+      *
+      * \param capacity  number of elements to allocate
       */
-      HostArray(DeviceArray<Data,CUT> const & other);
+      HostArray(int capacity);
+
+      // Copy constructor (deleted)
+      HostArray(HostArray<Data,CUT> const & other) = delete;
 
       // Destructor (default).
       ~HostArray() = default;
 
-      // Assignment (default)
+      // Assignment (deleted).
       HostArray<Data,CUT>& 
-      operator = (HostArray<Data,CUT> const & other) = default;
+      operator = (HostArray<Data,CUT> const & other) = delete;
+
+      /**
+      * Setup host array for use with a device array.
+      *
+      * GPU specialization allocates host array with same dimensions as
+      * the device array, unless this is already the case.
+      *
+      * \param deviceArray  device array (must be allocated on entry)
+      */
+      void associate(DeviceArray<Data,CUT>& deviceArray);
 
       /**
       * Assignment operator, assign from a DeviceArray<Data,CUT>.
@@ -107,16 +124,6 @@ namespace Pscf {
       void copySlice(DeviceArray<Data,CUT> const & other, int beginId);
 
       /**
-      * Setup host array for use with a device array.
-      *
-      * GPU specialization allocates host array with same dimensions as
-      * the device array, unless this is already the case.
-      *
-      * \param deviceArray  device array (must be allocated on entry)
-      */
-      void associate(DeviceArray<Data,CUT>& deviceArray);
-
-      /**
       * Release host array.
       *
       * GPU specialization does nothing.
@@ -125,18 +132,21 @@ namespace Pscf {
       {}
 
       // Inherited public member functions (selected)
-      using Array<Data>::capacity;
-      using Array<Data>::isAllocated;
       using Array<Data>::operator [];
       using Array<Data>::cArray;
+      using Array<Data>::isAllocated;
+      using Array<Data>::capacity;
       using DArray<Data>::allocate;
       using DArray<Data>::deallocate;
 
    };
 
+   // Explicit instantiation declarations
+   extern template class HostArray<cudaReal,CUT>;
+   extern template class HostArray<cudaComplex,CUT>;
+
 } // namespace Pscf
 
-#include <pscf/backend/cuda/CUT.h> 
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/cudaErrorCheck.h>
 #include <util/global.h>
@@ -145,22 +155,12 @@ namespace Pscf {
 namespace Pscf {
 
    /*
-   * Copy constructor - deep copy DeviceArray from device to host.
+   * Allocating constructor.
    */
    template <typename Data>
-   HostArray<Data,CUT>::HostArray(DeviceArray<Data,CUT> const& other)
-    : DArray<Data>() 
-   {  
-      // Precondition - RHS array must be allocated
-      UTIL_CHECK(other.isAllocated());
-      allocate(other.capacity());
-      cudaErrorCheck( 
-         cudaMemcpy(Array<Data>::data_, 
-                    other.cArray(), 
-                    capacity() * sizeof(Data), 
-                    cudaMemcpyDeviceToHost) 
-      );
-   }
+   HostArray<Data,CUT>::HostArray(int capacity)
+    : DArray<Data>(capacity) 
+   {}
 
    /*
    * Assignment from a DeviceArray<Data,CUT> RHS device array.
@@ -213,7 +213,7 @@ namespace Pscf {
    }
 
    /*
-   * Setup host array for use with device array. Allocate if necessary.
+   * Setup host array for use with device array. Allocate if unallocated.
    */
    template <typename Data>
    void HostArray<Data,CUT>::associate(
@@ -221,14 +221,12 @@ namespace Pscf {
    {
       UTIL_CHECK(deviceArray.isAllocated());
       const int n = deviceArray.capacity();
-      if (isAllocated() && capacity() != n) {
-         deallocate();
-      }
       if (!isAllocated()) {
-         allocate(n);
+         allocate(deviceArray.capacity());
       }
-      // Note: If this was allocated with capacity() == n, nothing changes.
+      UTIL_CHECK(isAllocated());
       UTIL_CHECK(capacity() == n);
+      // Note: If this was allocated with capacity() == n, nothing changes.
    }
 
 }

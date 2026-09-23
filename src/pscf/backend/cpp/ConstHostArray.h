@@ -10,11 +10,11 @@
 
 #include <util/containers/ConstArray.h>  // base class
 #include <util/misc/CountedReference.h>  // member
+#include <pscf/backend/cpp/CPT.h>        // template argument
 
 // Forward declarations
 namespace Pscf {
    template <typename Data, typename T> class DeviceArray;
-   class CPT;
 }
 
 namespace Pscf {
@@ -67,42 +67,47 @@ namespace Pscf {
    public:
 
       /**
-      * Default constructor.
+      * Backend identifier class typename alias.
       */
-      ConstHostArray();
+      using BackendIdClass = CPT;
+
+      // Default constructor.
+      ConstHostArray() = default;
+
+      // Copy construction (delete)
+      ConstHostArray(ConstHostArray<Data,CPT> const & other) = delete;
+
+      /**
+      * Destructor.
+      *
+      * Releases any remaining association.
+      */
+      ~ConstHostArray();
+
+      // Assignment from another ConstHostArray (delete)
+      ConstHostArray<Data,CPT>&
+      operator = (ConstHostArray<Data,CPT> const&) = delete;
 
       /**
       * Conversion construction from a DeviceArray.
       *
-      * Create an association (shallow copy) with memory owned by
-      * the pre-existing device array.
+      * Create an association the other device array, thus
+      * creating a shallow copy that points to the memory owned by
+      * the device array.
       *
       * \param other  array container
       */
       ConstHostArray(DeviceArray<Data,CPT> const & other);
 
-      // Prohibit copy construction from another ConstHostArray.
-      ConstHostArray(ConstHostArray<Data,CPT> const & other) = delete;
-
-      /**
-      * Destructor.
-      */
-      ~ConstHostArray();
-
-      // Prohibit assignment from another ConstHostArray.
-      ConstHostArray<Data,CPT>&
-      operator = (ConstHostArray<Data,CPT> const&) = delete;
-
       /**
       * Create a read-only association with a DeviceArray.
       *
-      * If this is already associated with other (the device array),
-      * do nothing and return. Otherwise, create an association of this
-      * with the other device array, thus creating a shallow copy that
-      * points to the same memory as the device array.
+      * Create an association with the other device array, thus
+      * creating a shallow copy that points to the memory owned by
+      * the device array.
       *
       * \throw Exception if other array is not allocated
-      * \throw Exception if this is associated with other with wrong size
+      * \throw Exception if this is already associated with an array
       *
       * \param other  array container on RHS of assigment (input)
       */
@@ -111,6 +116,8 @@ namespace Pscf {
 
       /**
       * Release association with a device array.
+      *
+      * \throw Exception if no such association exists.
       */
       void dissociate();
 
@@ -118,9 +125,6 @@ namespace Pscf {
 
       /// Reference to a device array that owns memory referenced by this.
       CountedReference ref_;
-
-      using ConstArray<Data>::data_;
-      using ConstArray<Data>::capacity_;
 
       /**
       * Associate this object with source array.
@@ -134,7 +138,14 @@ namespace Pscf {
       */
       void associate(DeviceArray<Data,CPT> const & source);
 
+      using ConstArray<Data>::data_;
+      using ConstArray<Data>::capacity_;
+
    };
+
+   // Explicit instantiation declarations
+   extern template class ConstHostArray<double,CPT>;
+   extern template class ConstHostArray<fftw_complex,CPT>;
 
 } // namespace Pscf
 
@@ -143,16 +154,7 @@ namespace Pscf {
 
 namespace Pscf {
 
-   // Member functions
-
-   /*
-   * Default constructor.
-   */
-   template <typename Data>
-   ConstHostArray<Data,CPT>::ConstHostArray()
-    : ConstArray<Data>(),
-      ref_()
-   {}
+   // Public member function definitions
 
    /*
    * Destructor.
@@ -168,7 +170,7 @@ namespace Pscf {
    /*
    * Copy construction from a DeviceArray.
    *
-   * Creates an association with a DeviceArray, which must own the data.
+   * Creates an association with a DeviceArray that owns the data.
    */
    template <typename Data>
    ConstHostArray<Data,CPT>::ConstHostArray(
@@ -179,19 +181,13 @@ namespace Pscf {
    /*
    * Assignment from a DeviceArray.
    *
-   * Creates an association with a DeviceArray, which must own the data.
+   * Creates an association with a DeviceArray that owns the data.
    */
    template <typename Data>
    ConstHostArray<Data,CPT>&
    ConstHostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> const& other)
    {
-      UTIL_CHECK(other.isAllocated());
-      Data const * data = ConstArray<Data>::cArray();
-      if ((bool)data && other.cArray() == data) {
-         UTIL_CHECK(other.capacity() == ConstArray<Data>::capacity());
-      } else {
-         associate(other);
-      }
+      associate(other);
       return *this;
    }
 

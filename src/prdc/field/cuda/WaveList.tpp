@@ -14,6 +14,7 @@
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/hasVariableAngle.h>
+#include <pscf/backend/cuda/ConstHostArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -523,26 +524,10 @@ namespace Prdc {
       if (isRealField_) {
          implicitInverse_d_.allocate(kSize_);
          implicitInverse_h_.allocate(kSize_);
-         HostArray<bool,CUT> implicitTemp(kSize_);
+         HostArray<bool,CUT> implicitTemp;
+         implicitTemp.allocate(kSize_);
          MeshIterator<D> kItr(kMeshDimensions_);
          int rank;
-         #if 0
-         int inverseId;
-         for (kItr.begin(); !kItr.atEnd(); ++kItr) {
-            if (kItr.position(D-1) == 0) {
-               inverseId = 0;
-            } else {
-               inverseId = mesh().dimension(D-1) - kItr.position(D-1);
-            }
-            rank = kItr.rank();
-            if (inverseId >= kMeshDimensions_[D-1]) {
-               implicitInverse_h_[rank] = true;
-            } else {
-               implicitInverse_h_[rank] = false;
-            }
-            implicitTemp[rank] = implicitInverse_h_[rank];
-         }
-         #endif
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
             rank = kItr.rank();
             implicitTemp[rank] = 
@@ -604,8 +589,6 @@ namespace Prdc {
       // Get kBasis and meshDims and store on device
       HostArray<cudaReal,CUT> kBasis_h(D*D);
       HostArray<int,CUT> meshDims_h(D);
-      DeviceArray<cudaReal,CUT> kBasis(D*D);
-      DeviceArray<int,CUT> meshDims(D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
          for (int k = 0; k < D; ++k) {
@@ -614,6 +597,9 @@ namespace Prdc {
          }
          meshDims_h[j] = mesh().dimension(j);
       }
+
+      DeviceArray<cudaReal,CUT> kBasis(D*D);
+      DeviceArray<int,CUT> meshDims(D);
       kBasis = kBasis_h;
       meshDims = meshDims_h;
 
@@ -780,7 +766,7 @@ namespace Prdc {
       }
 
       // Copy values of kSq to host
-      HostArray<cudaReal,CUT> kSq_h = kSq_;
+      ConstHostArray<cudaReal,CUT> kSq_h(kSq_);
 
       // Construct Sort::Item objects with value = kSq, id = wave id
       std::vector< Sort::Item<double> > items;
@@ -840,7 +826,7 @@ namespace Prdc {
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {
-         HostArray<int,CUT> minImages_temp;
+         ConstHostArray<int,CUT> minImages_temp;
          minImages_temp = minImages_;
          int i, j, k;
          for (j = 0; j < D; ++j) {

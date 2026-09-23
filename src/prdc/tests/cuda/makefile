@@ -5,15 +5,20 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/prdc/tests/cuda/sources.mk
 include $(SRC_DIR)/prdc/patterns.mk
 
-TEST=prdc/tests/cuda/Test
+TEST=$(BLD_DIR)/prdc/tests/cuda/Test
 
-all: $(prdc_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
+all: $(prdc_tests_cuda_OBJS) $(TEST)
 
-run: $(prdc_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/cuda/
+$(TEST): $(TEST).ou $(PSCF_LIBS)
+	@cp $(TEST).ou $(TEST).o
+	$(NVXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
+	@rm $(TEST).o
 
-run-quiet: $(prdc_tests_cuda_OBJS) $(BLD_DIR)/$(TEST)
-	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/prdc/tests/ > log
+run: $(prdc_tests_cuda_OBJS) $(TEST)
+	$(TEST) $(SRC_DIR)/prdc/tests/cuda/
+
+run-quiet: $(prdc_tests_cuda_OBJS) $(TEST)
+	@$(TEST) $(SRC_DIR)/prdc/tests/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in prdc/tests/cuda/log" > count
 	@cat count
@@ -24,7 +29,7 @@ clean-outputs:
 clean:
 	rm -f $(prdc_tests_cuda_OBJS)
 	rm -f $(prdc_tests_cuda_DEPS)
-	rm -f $(BLD_DIR)/$(TEST)
+	rm -f $(TEST)
 	$(MAKE) clean-outputs
 
 .PHONY: all run run-quiet clean-outputs clean

@@ -7,6 +7,8 @@
 #include <pscf/backend/cpp/ConstHostArray.h>
 #include <pscf/backend/cpp/DeviceArray.h>
 
+#include <util/containers/DArray.h>
+
 using namespace Util;
 using namespace Pscf;
 
@@ -29,6 +31,7 @@ public:
    void testDefaultConstructor();
    void testConversionConstructor();
    void testAssign();
+   void testDArrayOuter();
 
 };
 
@@ -88,6 +91,7 @@ void CppConstHostArrayTest::testConversionConstructor()
    }
    TEST_ASSERT(Memory::total() == memory_);
 }
+
 void CppConstHostArrayTest::testAssign()
 {
    printMethod(TEST_FUNC);
@@ -134,10 +138,53 @@ void CppConstHostArrayTest::testAssign()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
+void CppConstHostArrayTest::testDArrayOuter()
+{
+   printMethod(TEST_FUNC);
+
+   int m = 2;
+
+   // Initialize array of device arrays
+   DArray< DeviceArray<Data,CPT> > v;
+   v.allocate(m);
+   for (int i = 0; i < m; ++i) {
+      v[i].allocate(capacity);
+      for (int j=0; j < capacity; j++ ) {
+         v[i][j] = (j+1)*10.0 + i;
+      }
+   }
+
+   // Associate array of const host arrays
+   DArray< ConstHostArray<Data,CPT> > u;
+   u.allocate(m);
+   for (int i = 0; i < m; ++i) {
+      u[i] = v[i];
+   }
+
+   // Test equality
+   for (int i = 0; i < m; ++i) {
+      for (int j=0; j < capacity; j++ ) {
+         TEST_ASSERT(eq(u[i][j],(j+1)*10.0 + i));
+      }
+   }
+
+   // Dissociate host arrays
+   for (int i = 0; i < m; ++i) {
+      u[i].dissociate();
+   }
+
+   // De-allocate device arrays
+   for (int i = 0; i < m; ++i) {
+      v[i].deallocate();
+   }
+
+}
+
 TEST_BEGIN(CppConstHostArrayTest)
 TEST_ADD(CppConstHostArrayTest, testDefaultConstructor)
 TEST_ADD(CppConstHostArrayTest, testConversionConstructor)
 TEST_ADD(CppConstHostArrayTest, testAssign)
+TEST_ADD(CppConstHostArrayTest, testDArrayOuter)
 TEST_END(CppConstHostArrayTest)
 
 #endif

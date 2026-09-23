@@ -11,15 +11,17 @@
 #include "FftwDRArray.h"         // base class
 #include "CPT.h"                 // template argument
 
-// Forward declarations
+// Forward declaration
 namespace Pscf {
-   template <typename Data, typename T> class DeviceArray;
    template <typename Data, typename T> class HostArray;
 }
 
 namespace Pscf {
 
    using namespace Util;
+
+   // Declare primary template
+   template <typename Data, typename T> class DeviceArray;
 
    /**
    * Pseudo "device" array for use with C++ backend.
@@ -76,6 +78,11 @@ namespace Pscf {
    public:
 
       using typename FftwDRArray<Data>::ValueType;
+
+      /**
+      * Backend identifier class typename aliase.
+      */
+      using BackendIdClass = CPT;
 
       // Default constructor
       DeviceArray() = default;

@@ -9,6 +9,7 @@
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/backend/cuda/ConstHostArray.h> 
 #include <pscf/backend/cuda/HostArray.h> 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -119,8 +120,8 @@ public:
       wavelist.allocate(mesh1, cell1);
 
       // compute minimum images (and ksq) on device, transfer to host
-      HostArray<int,CUT> minImages_h;
-      HostArray<cudaReal,CUT> ksq_h;
+      ConstHostArray<int,CUT> minImages_h;
+      ConstHostArray<cudaReal,CUT> ksq_h;
       wavelist.computeMinimumImages(); 
       minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
@@ -434,7 +435,7 @@ public:
       wavelist.computeKSq(); 
       int kSize = wavelist.kSize();
       TEST_ASSERT(kSize > 0);
-      HostArray<cudaReal,CUT> const & ksq = wavelist.kSq();
+      ConstHostArray<cudaReal,CUT> const & ksq = wavelist.kSq();
 
       wavelist.sortWaves();
       int nBunch = wavelist.nBunch(); 
