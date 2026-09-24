@@ -25,8 +25,9 @@ namespace Pscf {
    * This class is derived from Util::ConstDArray<Data> and is almost
    * identical to this base class. The key difference is the addition of
    * specialized conversion constructor and assignment operators that 
-   * allow construction and assignment from a DeviceArray<Data,CUT>,
-   * both of which copy data from GPU device memory to host CPU memory.
+   * allow construction and assignment from a DeviceArray<Data,CUT>.
+   * Both of these functions copy an array from GPU device memory to 
+   * host CPU memory.
    *
    * \ingroup Pscf_Backend_Cuda_Module
    */
@@ -36,15 +37,19 @@ namespace Pscf {
 
    public:
 
+      // Public types
+
       /**
-      * Data type of each element.
+      * Alias for data type of each array element.
       */
       using ValueType = Data;
 
       /**
-      * Backend identifier class type.
+      * Alias for backend identifier class.
       */
       using BackendIdClass = CUT;
+
+      // Public member functions
 
       // Default constructor (default)
       ConstHostArray() = default;
@@ -52,7 +57,7 @@ namespace Pscf {
       // Copy constructor (delete)
       ConstHostArray(ConstHostArray<Data,CUT> const & other) = delete;
 
-      // Destructor
+      // Destructor (default)
       ~ConstHostArray() = default;
 
       // Assignment (delete)
@@ -63,8 +68,9 @@ namespace Pscf {
       * Conversion constructor (copies from device to host).
       *
       * Performs a deep copy from a RHS DeviceArray<Data,CUT> to this LHS
-      * ConstHostArray<D>, by copying the underlying data from device 
-      * memory to host memory.
+      * ConstHostArray<D>, by allocating this array with the required 
+      * capacity and then copying the underlying array from device memory
+      * to host memory.
       *
       * \throw Exception if the RHS array is not allocated on entry
       *
@@ -75,15 +81,9 @@ namespace Pscf {
       /**
       * Assignment from a DeviceArray<Data,CUT>.
       *
-      * Performs a deep copy from a RHS DeviceArray<Data,CUT> to this LHS
-      * ConstHostArray<D>, by copying the underlying data from device
-      * memory to host memory.
-      *
-      * Preconditions: The RHS DeviceArray<Data,CUT> object must be
-      * allocated.  If this LHS ConstHostArray<D> is not allocated, the
-      * required memory will be allocated before values are copied.
-      * Otherwise, if this LHS array is allocated on entry, capacites
-      * for LHS and RHS objects must be equal.
+      * Performs a deep copy from a RHS DeviceArray<Data,CUT> to this 
+      * LHS ConstHostArray<D>, by first allocating if necessary, and then
+      * copying the underlying data from device memory to host memory.
       *
       * \throw Exception if the RHS array is not allocated on entry
       * \throw Exception if LHS and RHS have unequal nonzero capacities
@@ -94,16 +94,20 @@ namespace Pscf {
       operator = (DeviceArray<Data,CUT> const & other);
 
       /**
-      * Copy a slice of the data from a larger DeviceArray into this array.
+      * Copy a slice of data from a larger DeviceArray into this array.
       *
-      * This method will populate this ConstHostArray with data from a slice
-      * of a DeviceArray. The size of the slice is the capacity of this
-      * ConstHostArray (i.e., this entire array will be populated), and the
-      * position of the slice within the DeviceArray is indicated by the
-      * input parameter beginId.
+      * This function populate this ConstHostArray with data from a slice
+      * of a DeviceArray. The size of the slice is equal to the capacity of
+      * this LHS ConstHostArray, so that this entire array will be fully
+      * populated. The position of the beginning of the slice within the 
+      * RHS DeviceArray is indicated by input parameter beginId. The
+      * capacity of the RHS DeviceArray must thus be greater than or equal
+      * to the sum of beginId and the capacity of this LHS ConstHostArray.
       *
-      * The capacity of the RHS DeviceArray must thus be greater than or
-      * equal to the sum of beginId and the capacity of this ConstHostArray.
+      * \throw Exception if RHS array is not allocated
+      * \throw Exception if LHS array is not allocated
+      * \throw Exception if beginId is negative
+      * \throw Exception if the slice extends beyond the end of the RHS
       *
       * \param other DeviceArray<Data,CUT>  object from which to copy slice
       * \param beginId  index of other array at which slice begins
@@ -111,9 +115,12 @@ namespace Pscf {
       void copySlice(DeviceArray<Data,CUT> const & other, int beginId);
 
       /**
-      * Release host array.
+      * Release this array after finishing all reading.
       *
-      * GPU specialization does nothing.
+      * In template code that must work with either CPU or GPU, this should
+      * be called after all code that requires read access to this array.
+      * This GPU specialization (T=CUT) does nothing. The CPU specialization
+      * (T=CPT) deletes the assocation with the device array.
       */
       void dissociate()
       {}
@@ -131,10 +138,12 @@ namespace Pscf {
    private:
 
       /**
-      * Setup host array for use with device array. Allocate if necessary.
+      * Allocate if not allocated previously.
       *
-      * GPU specialization allocates host array with same dimensions as
-      * the device array, unless this is already the case.
+      * If this is not allocated, allocate with a capacity equal to that
+      * of the device array. 
+      *
+      * \throw Exception if allocated previously with wrong capacity
       *
       * \param deviceArray  device array (must be allocated on entry)
       */
@@ -159,7 +168,7 @@ namespace Pscf
    /*
    * Conversion constructor from DeviceArray<Data,CUT>.
    *
-   * Perform a deep copy from device to host.
+   * Allocate and perform a deep copy from device to host.
    */
    template <typename Data>
    ConstHostArray<Data,CUT>::ConstHostArray(
@@ -178,15 +187,16 @@ namespace Pscf
    }
 
    /*
-   * Assignment from a DeviceArray<Data,CUT> RHS device array.
+   * Assignment from a DeviceArray<Data,CUT>.
    *
-   * Perform a deep copy from device to host.
+   * Allocate if necessary, and perform a deep copy from device to host.
    */
    template <typename Data>
    ConstHostArray<Data,CUT>&
    ConstHostArray<Data,CUT>::operator = (
                                   DeviceArray<Data,CUT> const & other)
    {
+      // Allocate if not allocated previously, check capacities otherwise.
       associate(other);
 
       // Copy all elements
@@ -211,6 +221,7 @@ namespace Pscf
       // Preconditions
       UTIL_CHECK (other.isAllocated());
       UTIL_CHECK(isAllocated());
+      UTIL_CHECK(beginId >= 0);
       UTIL_CHECK(capacity() + beginId <= other.capacity());
 
       // Copy all elements
@@ -226,7 +237,7 @@ namespace Pscf
    // Private member function
 
    /*
-   * Setup host array for use with device array. Allocate if necessary.
+   * Check allocation status, allocate if not allocated.
    */
    template <typename Data>
    void ConstHostArray<Data,CUT>::associate(
@@ -238,7 +249,8 @@ namespace Pscf
          allocate(n);
       }
       UTIL_CHECK(capacity() == n);
-      // If this was allocated with capacity() == n, do nothing
+      // If this was allocated with capacity() == n, do nothing.
+      // If this was allocated with capacity() != n, throw Exception.
    }
 
 }

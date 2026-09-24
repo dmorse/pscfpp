@@ -77,7 +77,7 @@ namespace Pscf {
       operator = (HostArray<Data,CUT> const & other) = delete;
 
       /**
-      * Setup host array for use with a device array.
+      * Allocate if not allocated previously. 
       *
       * GPU specialization allocates host array with same dimensions as
       * the device array, unless this is already the case.
@@ -178,6 +178,7 @@ namespace Pscf {
       } 
 
       // Require equal capacities
+      UTIL_CHECK(isAllocated);
       UTIL_CHECK(capacity() == other.capacity());
 
       // Copy all elements
@@ -201,6 +202,7 @@ namespace Pscf {
       // Preconditions 
       UTIL_CHECK(other.isAllocated());
       UTIL_CHECK(isAllocated());
+      UTIL_CHECK(beginId >= 0);
       UTIL_CHECK(capacity() + beginId <= other.capacity());
 
       // Copy all elements
@@ -213,7 +215,7 @@ namespace Pscf {
    }
 
    /*
-   * Setup host array for use with device array. Allocate if unallocated.
+   * Allocate if not done previously. 
    */
    template <typename Data>
    void HostArray<Data,CUT>::associate(
@@ -226,7 +228,8 @@ namespace Pscf {
       }
       UTIL_CHECK(isAllocated());
       UTIL_CHECK(capacity() == n);
-      // Note: If this was allocated with capacity() == n, nothing changes.
+      // If this was allocated with capacity() == n, do nothing.
+      // If this was allocated with capacity() != n, throw Exception.
    }
 
 }
