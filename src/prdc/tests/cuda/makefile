@@ -38,3 +38,4 @@ clean:
 -include $(prdc_DEPS)
 -include $(util_DEPS)
 -include $(pscf_DEPS)
+-include $(TEST).du

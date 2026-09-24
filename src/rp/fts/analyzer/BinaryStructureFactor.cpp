@@ -54,7 +54,7 @@ namespace Rp {
       if (AnalyzerT::isAtInterval(iStep)) {
          computeW();
 	 wkHost_ = wk_;
-         computeS(wk_);
+         computeS(wkHost_);
 	 wkHost_.dissociate();
       }
    }

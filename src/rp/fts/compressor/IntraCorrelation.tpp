@@ -67,7 +67,6 @@ namespace Rp {
       correlations_h_.associate(correlations);
       computeOmegaTotalArray(correlations_h_);
       correlations = correlations_h_;
-      correlations_h_.dissociate();
    }
 
    /*

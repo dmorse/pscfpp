@@ -149,12 +149,26 @@ namespace Prdc {
    void copyArrays(DArray<OAT>& out, DArray<IAT> const& in) 
    {
       int n = in.capacity();
+      if (!out.isAllocated()) {
+         out.allocate(n);
+      }
       UTIL_CHECK(out.capacity() == n);
       for (int i = 0; i < n; ++i) {
-	 UTIL_CHECK(in[i].isAllocated());
-	 UTIL_CHECK(out[i].isAllocated());
-	 UTIL_CHECK(in[i].capacity() == out[i].capacity());
          out[i] = in[i];
+      }
+   }
+
+   template <class HAT, class DAT>
+   void associateArrays(DArray<HAT>& host, DArray<DAT> & device) 
+   {
+      int n = device.capacity();
+      if (!host.isAllocated()) {
+         host.allocate(n);
+      }
+      UTIL_CHECK(host.capacity() == n);
+      for (int i = 0; i < n; ++i) {
+	 UTIL_CHECK(device[i].isAllocated());
+         host[i].associate(device[i]);
       }
    }
 

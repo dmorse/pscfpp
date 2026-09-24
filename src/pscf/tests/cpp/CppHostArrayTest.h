@@ -35,9 +35,9 @@ public:
 
    void tearDown() {}
    void testDefaultConstructor();
-   void testConversionConstructor();
-   void testConversionConstructorCmplx();
-   void testAssign();
+   void testAssociate();
+   void testAssociateCmplx();
+   //void testAssign();
    void testBaseClassReference();
    void testDArrayOuter();
 
@@ -54,7 +54,7 @@ void CppHostArrayTest::testDefaultConstructor()
    }
 }
 
-void CppHostArrayTest::testConversionConstructor()
+void CppHostArrayTest::testAssociate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -64,7 +64,8 @@ void CppHostArrayTest::testConversionConstructor()
          w[i] = (i+1)*10.0 ;
       }
 
-      HostArray<Data,CPT> v(w);
+      HostArray<Data,CPT> v;
+      v.associate(w);
       TEST_ASSERT(v[0] == 10.0);
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v[2] == 30.0);
@@ -74,7 +75,7 @@ void CppHostArrayTest::testConversionConstructor()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppHostArrayTest::testConversionConstructorCmplx()
+void CppHostArrayTest::testAssociateCmplx()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -88,7 +89,8 @@ void CppHostArrayTest::testConversionConstructorCmplx()
       }
 
       // Copy construct
-      HostArray<std::complex<Data>, CPT> v(w);
+      HostArray<std::complex<Data>, CPT> v;
+      v.associate(w);
 
       // Test elements
       TEST_ASSERT(eq(v[0].real(), 10.0));
@@ -100,6 +102,7 @@ void CppHostArrayTest::testConversionConstructorCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
+#if 0
 void CppHostArrayTest::testAssign()
 {
    printMethod(TEST_FUNC);
@@ -158,18 +161,20 @@ void CppHostArrayTest::testAssign()
    }
    TEST_ASSERT(Memory::total() == memory_);
 }
+#endif
 
 void CppHostArrayTest::testBaseClassReference()
 {
    printMethod(TEST_FUNC);
    {
-      DeviceArray<Data,CPT> w;
-      w.allocate(3);
+      // Data owner (device array)
+      DeviceArray<Data,CPT> w(3);
+
+      HostArray<Data,CPT> v;
+      v.associate(w);
       for (int i=0; i < capacity; i++ ) {
-         w[i] = (i+1)*10.0;
+         v[i] = (i+1)*10.0;
       }
-      HostArray<Data,CPT> v(w);
-      
 
       Array<Data>& u = v;
       TEST_ASSERT(u[0] == 10.0);
@@ -205,7 +210,7 @@ void CppHostArrayTest::testDArrayOuter()
       }
    }
 
-   // Assign (does nothing for T=CPT)
+   // Assign (dissociates for T=CPT)
    for (int i = 0; i < m; ++i) {
       v[i] = u[i];
    }
@@ -214,13 +219,7 @@ void CppHostArrayTest::testDArrayOuter()
    for (int i = 0; i < m; ++i) {
       for (int j=0; j < capacity; j++ ) {
          TEST_ASSERT(eq(v[i][j], (j+1)*10.0 + i));
-         TEST_ASSERT(eq(u[i][j], v[i][j]));
       }
-   }
-
-   // Dissociate host arrays
-   for (int i = 0; i < m; ++i) {
-      u[i].dissociate();
    }
 
    // De-allocate device arrays
@@ -232,9 +231,9 @@ void CppHostArrayTest::testDArrayOuter()
 
 TEST_BEGIN(CppHostArrayTest)
 TEST_ADD(CppHostArrayTest, testDefaultConstructor)
-TEST_ADD(CppHostArrayTest, testConversionConstructor)
-TEST_ADD(CppHostArrayTest, testConversionConstructorCmplx)
-TEST_ADD(CppHostArrayTest, testAssign)
+TEST_ADD(CppHostArrayTest, testAssociate)
+TEST_ADD(CppHostArrayTest, testAssociateCmplx)
+//TEST_ADD(CppHostArrayTest, testAssign)
 TEST_ADD(CppHostArrayTest, testBaseClassReference)
 TEST_ADD(CppHostArrayTest, testDArrayOuter)
 

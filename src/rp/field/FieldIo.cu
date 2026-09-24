@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/cuda/HostArrayComplex.h>
-//#include <prdc/fieldIo/fieldCheck.h>
+#include <prdc/fieldIo/fieldCheck.h>
+#include <pscf/backend/cuda/ConstHostArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/complex.h>
@@ -38,9 +38,9 @@ namespace Rp {
       readMeshDimensions(in, mesh().dimensions());
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
-      // Allocate host arrays
-      DArray< HostArray<cudaReal,CUT> > hostFields;
-      allocateArrays(hostFields, nMonomer, mesh().size());
+      // Setup host arrays
+      DArray< HostArray<RealT,CUT> > hostFields;
+      associateArrays(hostFields, fields);
 
       // Read data
       Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
@@ -65,8 +65,8 @@ namespace Rp {
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Allocate host arrays
-      DArray< HostArray<cudaReal,CUT> > hostFields;
-      allocateArrays(hostFields, nMonomer, mesh().size());
+      DArray< HostArray<RealT,CUT> > hostFields;
+      associateArrays(hostFields, fields);
 
       // Read data section of file
       Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
@@ -94,13 +94,13 @@ namespace Rp {
       checkAllocateField(field, mesh().dimensions());
 
       // Allocate host field
-      HostArray<cudaReal,CUT> hostField;
-      hostField.allocate(mesh().size());
+      HostArray<RealT,CUT> hostField;
+      hostField.associate(field);
 
       // Read data section with one field
       Prdc::readRGridData(in, hostField, mesh().dimensions());
 
-      // Copy device <- host
+      // Copy to device from host
       field = hostField;
 
       // Return true iff the header contains a space group declaration
@@ -136,8 +136,7 @@ namespace Rp {
       }
 
       // Copy field data to host container
-      DArray< HostArray<cudaReal,CUT> > hostFields;
-      allocateArrays(hostFields, nMonomer, meshSize);
+      DArray< ConstHostArray<RealT,CUT> > hostFields;
       copyArrays(hostFields, fields);
 
       // Write data section
@@ -167,8 +166,7 @@ namespace Rp {
       }
 
       // Copy field (device) to hostField
-      HostArray<cudaReal,CUT> hostField;
-      hostField.allocate(meshSize);
+      ConstHostArray<RealT,CUT> hostField;
       hostField = field;
 
       // Write data from hostField
@@ -196,8 +194,8 @@ namespace Rp {
       int capacity = fields[0].capacity();
 
       // Allocate hostFields
-      DArray< HostArrayComplex > hostFields;
-      allocateArrays(hostFields, nMonomer, capacity);
+      DArray< HostArray<ComplexT,CUT> > hostFields;
+      associateArrays(hostFields, fields);
 
       // Read data into hostFields
       Prdc::readKGridData(in, hostFields, nMonomer, dftDimensions);
@@ -229,8 +227,7 @@ namespace Rp {
       writeMeshDimensions(out, meshDimensions);
 
       // Copy data from device to hostFields
-      DArray< HostArrayComplex > hostFields;
-      allocateArrays(hostFields, nMonomer, capacity);
+      DArray< ConstHostArray<ComplexT,CUT> > hostFields;
       copyArrays(hostFields, fields);
 
       // Write data from hostFields
@@ -251,8 +248,8 @@ namespace Rp {
       UTIL_CHECK(out.meshDimensions() == mesh().dimensions());
 
       // Allocate hostField
-      HostArrayComplex hostField;
-      hostField.allocate(out.capacity());
+      HostArray<ComplexT,CUT> hostField;
+      hostField.associate(out);
 
       // Convert basis to k-grid on hostField
       Prdc::convertBasisToKGrid(in, hostField, basis(),
@@ -278,8 +275,7 @@ namespace Rp {
       UTIL_CHECK(out.capacity() > 0);
 
       // Copy k-grid input to hostField
-      HostArrayComplex hostField;
-      hostField.allocate(in.capacity());
+      ConstHostArray<ComplexT,CUT> hostField;
       hostField = in;
 
       // Convert k-grid host field to basis format
@@ -301,8 +297,7 @@ namespace Rp {
       UTIL_CHECK(in.meshDimensions() == mesh().dimensions());
 
       // Copy k-grid input to hostField
-      HostArrayComplex hostField;
-      hostField.allocate(in.capacity());
+      ConstHostArray<ComplexT,CUT> hostField;
       hostField = in;
 
       // Check symmetry of hostField
@@ -359,11 +354,11 @@ namespace Rp {
       UTIL_CHECK(meshDimensions == mesh().dimensions());
       int capacity = fields[0].capacity();
 
-      // Copy k-grid input to hostField
-      DArray< HostArray<cudaReal,CUT> > hostFields;
-      allocateArrays(hostFields, nMonomer, capacity);
+      // Copy r-grid input from device to host
+      DArray< ConstHostArray<RealT,CUT> > hostFields;
       copyArrays(hostFields, fields);
 
+      // Compute replicated fields and write to a file
       Prdc::replicateUnitCell(out, hostFields, meshDimensions,
                               unitCell, replicas);
    }
@@ -387,8 +382,7 @@ namespace Rp {
       int capacity = fields[0].capacity();
 
       // Copy k-grid input fields to hostFields
-      DArray< HostArray<cudaReal,CUT> > hostFields;
-      allocateArrays(hostFields, nMonomer, capacity);
+      DArray< ConstHostArray<RealT,CUT> > hostFields;
       copyArrays(hostFields, fields);
 
       Prdc::expandRGridDimension(out, hostFields, meshDimensions,

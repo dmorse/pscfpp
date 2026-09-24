@@ -305,6 +305,11 @@ namespace Rp {
       using Base::group;
       using Base::fft;
 
+   private:
+
+      using RealT = cudaReal;
+      using ComplexT = cudaComplex;
+
    };
 
    // Explicit instantation declarations

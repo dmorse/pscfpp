@@ -251,7 +251,7 @@ namespace Rp {
    */
    template <int D, class T>
    void BinaryStructureFactorBase<D,T>::computeS(
-                                    Array<typename T::Complex> const & wk)
+                                    ConstArray<typename T::Complex> const & wk)
    {
       // Preconditions
       UTIL_CHECK(isInitialized_);

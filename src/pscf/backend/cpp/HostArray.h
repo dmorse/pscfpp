@@ -25,31 +25,28 @@ namespace Pscf {
    template <typename Data, typename T> class HostArray;
 
    /**
-   * Psuedo-"host" array that provides read-write access.
+   * Psuedo-"host" array used for host-to-device data transfer.
    *
-   * This class template partial specialization may be used in template
-   * code in which data is assigned to or from a psuedo-device array to
-   * or from a pseudo-host array, in cases when read-write access to the
-   * host array is required. A ConstHostArray<Data> should be used for
-   * device-to-host data transfer in which only read access is required
-   * on the host, and/or the device array is declared const.
+   * This class template partial specialization may be used in 
+   * template code in which any array is copied from host to device.  A 
+   * ConstHostArray<Data> should be used for device-to-host transfers.
    *
-   * Construction or assignment (operator =)from a DeviceArray<Data,CPT>
-   * and the "associate" member function all create a shallow read-only
+   * The "associate" member function creates a shallow read-only
    * copy of a C array that is owned by an associated device array. 
-   * Each of these functions takes a non-const reference to the 
-   * DeviceArray<Data,CPT> as a parameter, which is not a const reference
-   * because they all provide write access to the underlying shared array.
+   * This functions takes a non-const reference to the associated
+   * DeviceArray<Data,CPT> as a parameter, which is not const because
+   * it provides write access to the underlying shared array.
    *
    * The lifetime of an association with a device array must not be
    * allowed to extend beyond the function in which the association is
    * created. This is necessary to guarantee that no associations remain
    * when the device array is deallocated or destroyed. Such an
-   * association can be released by calling the dissociate function of
-   * the host array, or will be released upon destruction of the host
-   * array.  A reference counting system is used to detect and report
-   * erroneous de-allocation of a device array when it is still referred
-   * to by one or more other host arrays.
+   * association can be released by the host-to-device assignment 
+   * operator or by calling the dissociate function of the host array.
+   * It will also be released upon destruction of the host array.  A 
+   * reference counting system is used to detect and report erroneous 
+   * de-allocation of a device array when it is still referred to by 
+   * one or more other host arrays.
    *
    * \ingroup Pscf_Backend_Cpp_Module
    */
@@ -79,6 +76,7 @@ namespace Pscf {
       HostArray<Data,CPT>&
       operator = (HostArray<Data,CPT> const&) = delete;
 
+      #if 0
       /**
       * Conversion constructor from a device array.
       *
@@ -92,6 +90,7 @@ namespace Pscf {
       * \param other  associated device array
       */
       HostArray(DeviceArray<Data,CPT> & other);
+      #endif
 
       /**
       * Associate this object with a device array.
@@ -107,6 +106,7 @@ namespace Pscf {
       */
       void associate(DeviceArray<Data,CPT> & other);
 
+      #if 0
       /**
       * Pseudo-assignment from a Device array.
       *
@@ -123,6 +123,7 @@ namespace Pscf {
       */
       HostArray<Data,CPT>&
       operator = (DeviceArray<Data,CPT> & other);
+      #endif
 
       /**
       * Release association with a device array.
@@ -168,6 +169,7 @@ namespace Pscf {
    {}
    #endif
 
+   #if 0
    /*
    * Conversion construction from a device array.
    *
@@ -178,6 +180,7 @@ namespace Pscf {
     : Array<Data>(),
       ref_()
    {  associate(other); }
+   #endif
 
    /*
    * Destructor.
@@ -216,6 +219,7 @@ namespace Pscf {
       // this object holds a pointer to that ReferenceCounter.
    }
 
+   #if 0
    /*
    * Assignment from a DeviceArray (creates an association).
    */
@@ -226,6 +230,7 @@ namespace Pscf {
       associate(other);
       return *this;
    }
+   #endif
 
    /*
    * Release pre-existing association with a device array.

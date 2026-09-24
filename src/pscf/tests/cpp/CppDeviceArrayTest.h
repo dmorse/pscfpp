@@ -217,13 +217,6 @@ void CppDeviceArrayTest::testAssignFromHost()
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
 
-      // Assignment should do nothing in this case
-      u = v;
-      TEST_ASSERT(u.capacity() == capacity);
-      TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isOwner());
-      TEST_ASSERT(v.isAllocated());
-
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
@@ -232,24 +225,28 @@ void CppDeviceArrayTest::testAssignFromHost()
       TEST_ASSERT(eq(v[1], 20.0));
       TEST_ASSERT(eq(v[2], 30.0));
 
-      TEST_ASSERT(eq(u[0], 10.0));
-      TEST_ASSERT(eq(u[1], 20.0));
-      TEST_ASSERT(eq(u[2], 30.0));
-
       u[1] = 25.0;
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 25.0));
       TEST_ASSERT(eq(u[1], 25.0));
+
+      // Assignment destroys the association
+      u = v;
+      TEST_ASSERT(u.capacity() == capacity);
+      TEST_ASSERT(u.isAllocated());
+      TEST_ASSERT(u.isOwner());
+      TEST_ASSERT(v.capacity() == 0);
+      TEST_ASSERT(!v.isAllocated());
+
+      TEST_ASSERT(eq(u[0], 10.0));
+      TEST_ASSERT(eq(u[1], 25.0));
+      TEST_ASSERT(eq(u[2], 30.0));
+
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
       // u.deallocate(); // Intentional error
 
-      v.dissociate();
-      TEST_ASSERT(v.capacity() == 0);
-      TEST_ASSERT(!v.isAllocated());
-      TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isOwner());
 
       u.deallocate();
       TEST_ASSERT(u.capacity() == 0);

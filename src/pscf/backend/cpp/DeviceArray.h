@@ -114,6 +114,15 @@ namespace Pscf {
       * before data was initialized on the host array, which occurs before
       * the transaction is finalized by the assignment operator.
       *
+      * This function also dissociates the host array from this device array. 
+      * Rationale: In assignment from host to device, the assignment operator 
+      * marks the end of the transaction. In the corresponding code with T=CUT,
+      * the persistent data on the finalized is finalized by this operator. 
+      * In this specialization, with T=CPT, leaving an association live would 
+      * allow later modification of data on the host to change data in the 
+      * device array, which is inconsistent with the behavior of the CUDA
+      * specialization. 
+      *
       * \throw Exception if this is not allocated
       * \throw Exception if other array is not allocated
       * \throw Exception if this and other do not point to the same memory
@@ -155,6 +164,7 @@ namespace Pscf {
       UTIL_CHECK(other.isAllocated());
       UTIL_CHECK(Array<Data>::cArray() == other.cArray());
       UTIL_CHECK(Array<Data>::capacity() == other.capacity());
+      other.dissociate();
       return *this;
    }
 

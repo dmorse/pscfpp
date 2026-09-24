@@ -174,6 +174,19 @@ namespace Prdc {
    template <class OAT, class IAT>
    void copyArrays(DArray<OAT>& out, DArray<IAT> const& in);
 
+   /**
+   * Associate device arrays with host arrays.
+   *
+   * On input, the device arrays must be allocated.
+   *
+   * \ingroup Prdc_Field_Module
+   *
+   * \param host  DArray of host arrays (lhs, out)
+   * \param device  DArray of device arrays (rhs, in)
+   */
+   template <class HAT, class DAT>
+   void associateArrays(DArray<HAT>& host, DArray<DAT> & device);
+
 } // namespace Prdc
 } // namespace Pscf
 #include "fieldCheck.tpp"

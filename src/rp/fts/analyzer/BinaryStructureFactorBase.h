@@ -119,7 +119,7 @@ namespace Rp {
       /**
       * Complete calculation of current structure factors.
       */
-      void computeS(Array<typename T::Complex> const & wk);
+      void computeS(ConstArray<typename T::Complex> const & wk);
 
       /// Discrete Fourier transform (DFT) of wm_ . 
       RFieldDft<D,T> wk_;

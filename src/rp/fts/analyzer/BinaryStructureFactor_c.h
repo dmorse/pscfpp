@@ -9,7 +9,8 @@
 */
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
-#include <pscf/backend/cpp/CPT.h>                         // base argument
+#include <pscf/backend/cpp/CPT.h>                      // base argument
+#include <pscf/backend/cpp/ConstHostArray.h>           // member
 
 namespace Pscf {
 namespace Rp {
@@ -68,7 +69,7 @@ namespace Rp {
 
    private:
 
-      HostArray<fftw_complex,CPT> wkHost_;
+      ConstHostArray<fftw_complex,CPT> wkHost_;
 
    };
 
