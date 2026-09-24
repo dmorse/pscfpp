@@ -1,7 +1,7 @@
-#ifndef RP_BINARY_STRUCTURE_FACTOR_BASE_TPP
-#define RP_BINARY_STRUCTURE_FACTOR_BASE_TPP
+#ifndef RP_BINARY_STRUCTURE_FACTOR_TPP
+#define RP_BINARY_STRUCTURE_FACTOR_TPP
 
-#include "BinaryStructureFactorBase.h"
+#include "BinaryStructureFactor.h"
 
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/system/System.h>
@@ -34,11 +34,13 @@ namespace Rp {
    using namespace Util;
    using namespace Pscf::Prdc;
 
+   // Public member functions
+
    /*
    * Constructor.
    */
    template <int D, class T>
-   BinaryStructureFactorBase<D,T>::BinaryStructureFactorBase(
+   BinaryStructureFactor<D,T>::BinaryStructureFactor(
                                 Simulator<D,T>& simulator,
                                 System<D,T>& system)
     : Analyzer<D,T>(simulator, system),
@@ -56,7 +58,7 @@ namespace Rp {
    * Read parameters from file, and allocate memory.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::readParameters(std::istream& in)
+   void BinaryStructureFactor<D,T>::readParameters(std::istream& in)
    {
       // Precondition: Require that the system has two monomer types
       UTIL_CHECK(system().mixture().nMonomer() == 2);
@@ -72,7 +74,7 @@ namespace Rp {
    * Setup before entering main loop.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::setup()
+   void BinaryStructureFactor<D,T>::setup()
    {
       allocate();
 
@@ -86,21 +88,23 @@ namespace Rp {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::sample(long iStep)
+   void BinaryStructureFactor<D,T>::sample(long iStep)
    {
       if (AnalyzerT::isAtInterval(iStep)) {
          computeW();
-         wkHost_ = wk_d_;
-         computeS(wkHost_);
-	 wkHost_.dissociate();
+         wk_h_ = wk_d_;
+         computeS(wk_h_);
+	 wk_h_.dissociate();
       }
    }
+
+   // Private member functions
 
    /*
    * Allocate memory arrays with dimensions that depend only on mesh.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::allocate()
+   void BinaryStructureFactor<D,T>::allocate()
    {
       UTIL_CHECK(isInitialized_);
 
@@ -136,7 +140,7 @@ namespace Rp {
    * Allocate and initialize data structures that involve wave bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::findWaveBunches(
+   void BinaryStructureFactor<D,T>::findWaveBunches(
                                   ConstArray<double> const & kSq,
                                   Array<bool> const & implicit)
    {
@@ -257,7 +261,7 @@ namespace Rp {
    * Compute W_{-} and it Fourier transform.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::computeW()
+   void BinaryStructureFactor<D,T>::computeW()
    {
       // Preconditions
       UTIL_CHECK(isInitialized_);
@@ -278,7 +282,7 @@ namespace Rp {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::computeS(
+   void BinaryStructureFactor<D,T>::computeS(
                                     ConstArray<typename T::Complex> const & wk)
    {
       // Preconditions
@@ -329,7 +333,7 @@ namespace Rp {
    * Output final results to output file.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::output()
+   void BinaryStructureFactor<D,T>::output()
    {
       std::string filename;
       std::ofstream file;
