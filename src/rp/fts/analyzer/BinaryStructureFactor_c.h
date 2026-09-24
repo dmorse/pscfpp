@@ -44,33 +44,6 @@ namespace Rp {
       BinaryStructureFactor(Simulator<D,CPT>& simulator, 
                             System<D,CPT>& system);
 
-      /**
-      * Setup before the main loop.
-      */
-      void setup() override;
-
-      /**
-      * Compute structure factors and add to accumulators.
-      *
-      * \param iStep step counter
-      */
-      void sample(long iStep) override;
-
-   protected:
-
-      using Base = BinaryStructureFactorBase<D,CPT>;
-      using AnalyzerT = Analyzer<D,CPT>;
-
-      using Base::wk_;
-      using Base::allocate;
-      using Base::findWaveBunches;
-      using Base::computeW;
-      using Base::computeS;
-
-   private:
-
-      ConstHostArray<fftw_complex,CPT> wkHost_;
-
    };
 
 }

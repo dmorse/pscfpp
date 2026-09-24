@@ -178,7 +178,7 @@ namespace Pscf {
       } 
 
       // Require equal capacities
-      UTIL_CHECK(isAllocated);
+      UTIL_CHECK(isAllocated());
       UTIL_CHECK(capacity() == other.capacity());
 
       // Copy all elements

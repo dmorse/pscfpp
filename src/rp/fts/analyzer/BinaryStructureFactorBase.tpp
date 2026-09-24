@@ -69,6 +69,34 @@ namespace Rp {
    }
 
    /*
+   * Setup before entering main loop.
+   */
+   template <int D, class T>
+   void BinaryStructureFactorBase<D,T>::setup()
+   {
+      allocate();
+
+      WaveList<D,T> const & waveList = AnalyzerT::system().waveList();
+      ConstHostArray<double,T> kSq(waveList.kSq());
+      DArray<bool> const & implicit = waveList.implicitInverse();
+      findWaveBunches(kSq, implicit);
+   }
+
+   /*
+   * Compute structure factors for all wavevectors and bunches.
+   */
+   template <int D, class T>
+   void BinaryStructureFactorBase<D,T>::sample(long iStep)
+   {
+      if (AnalyzerT::isAtInterval(iStep)) {
+         computeW();
+         wkHost_ = wk_d_;
+         computeS(wkHost_);
+	 wkHost_.dissociate();
+      }
+   }
+
+   /*
    * Allocate memory arrays with dimensions that depend only on mesh.
    */
    template <int D, class T>
@@ -83,11 +111,11 @@ namespace Rp {
 
       // If needed, allocate arrays indexed by wave id
       if (!wm_.isAllocated()){
-         UTIL_CHECK(!wk_.isAllocated());
+         UTIL_CHECK(!wk_d_.isAllocated());
          UTIL_CHECK(!waveBunchIds_.isAllocated());
          UTIL_CHECK(!waveWeights_.isAllocated());
          wm_.allocate(rMeshDimensions);
-         wk_.allocate(rMeshDimensions);
+         wk_d_.allocate(rMeshDimensions);
          waveBunchIds_.allocate(nWave_);
          waveWeights_.allocate(nWave_);
          if (writeWaveData_) {
@@ -96,7 +124,7 @@ namespace Rp {
          }
       }
       UTIL_CHECK(wm_.capacity() == mesh.size());
-      UTIL_CHECK(wk_.capacity() == nWave_);
+      UTIL_CHECK(wk_d_.capacity() == nWave_);
       UTIL_CHECK(waveBunchIds_.capacity() == nWave_);
       UTIL_CHECK(waveWeights_.capacity() == nWave_);
       if (writeWaveData_) {
@@ -234,7 +262,7 @@ namespace Rp {
       // Preconditions
       UTIL_CHECK(isInitialized_);
       UTIL_CHECK(nWave_ > 0);
-      UTIL_CHECK(wk_.capacity() == nWave_);
+      UTIL_CHECK(wk_d_.capacity() == nWave_);
 
       // Compute W_{-}(r)
       RField<D,T> const & wa = system().w().rgrid(0);
@@ -243,7 +271,7 @@ namespace Rp {
       VecOp::mulEqS(wm_, 0.5);
 
       // Fourier transform W_{-}(r)
-      system().domain().fft().forwardTransform(wm_, wk_);
+      system().domain().fft().forwardTransform(wm_, wk_d_);
    }
 
    /*

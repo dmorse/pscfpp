@@ -10,8 +10,6 @@
 
 #include <rp/fts/analyzer/BinaryStructureFactorBase.h> // base template
 #include <pscf/backend/cuda/CUT.h>                     // base argument
-#include <pscf/backend/cuda/ConstHostArray.h>          // member
-#include <pscf/backend/cuda/cudaTypes.h>               // member
 
 namespace Pscf {
 namespace Rp {
@@ -45,35 +43,6 @@ namespace Rp {
       BinaryStructureFactor(
          Simulator<D,CUT>& simulator, 
          System<D,CUT>& system);
-
-      /**
-      * Setup before the main loop.
-      */
-      void setup() override;
-
-      /**
-      * Compute structure factors and add to accumulators.
-      *
-      * \param iStep step counter
-      */
-      void sample(long iStep) override;
-
-   protected:
-
-      using Base = BinaryStructureFactorBase<D,CUT>;
-      using AnalyzerT = Analyzer<D,CUT> ;
-
-      using Base::allocate;
-      using Base::findWaveBunches;
-      using Base::computeW;
-      using Base::computeS;
-
-      using Base::wk_;
-
-   private:
-
-      // Copy of wk_ on host CPU
-      ConstHostArray<cudaComplex,CUT> wkHost_;
 
    };
 

@@ -29,37 +29,6 @@ namespace Rp {
     : BinaryStructureFactorBase<D,CUT>(simulator, system)
    {}
 
-   /*
-   * Setup before entering main loop.
-   */
-   template <int D>
-   void BinaryStructureFactor<D,CUT>::setup()
-   {
-      allocate();
-      UTIL_CHECK(wk_.isAllocated());
-      if (!wkHost_.isAllocated()) {
-         wkHost_.allocate(wk_.capacity());
-      }
-
-      WaveList<D,CUT> const & waveList = AnalyzerT::system().waveList();
-      ConstHostArray<double,CUT> kSq(waveList.kSq());
-      DArray<bool> const & implicit = waveList.implicitInverse();
-      Base::findWaveBunches(kSq, implicit);
-   }
-
-   /*
-   * Compute structure factors for all wavevectors and bunches.
-   */
-   template <int D>
-   void BinaryStructureFactor<D,CUT>::sample(long iStep)
-   {
-      if (AnalyzerT::isAtInterval(iStep)) {
-         Base::computeW();
-         wkHost_ = wk_;  // Copy wk_ from device to host
-         Base::computeS(wkHost_);
-      }
-   }
-
 }
 }
 

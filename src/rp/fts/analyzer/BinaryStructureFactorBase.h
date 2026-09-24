@@ -12,6 +12,7 @@
 #include <pscf/math/IntVec.h>                 // member
 #include <prdc/field/RField.h>                // member
 #include <prdc/field/RFieldDft.h>             // member
+#include <pscf/backend/ConstHostArray.h>      // member
 #include <util/accumulators/Average.h>        // member
 #include <util/containers/DArray.h>           // member
 
@@ -84,7 +85,17 @@ namespace Rp {
       */
       void readParameters(std::istream& in) override;
 
-      // Virual setup and sample functions are implemented by subclasses
+      /**
+      * Setup before the main loop.
+      */
+      void setup() override;
+
+      /**
+      * Compute structure factors and add to accumulators.
+      *
+      * \param iStep step counter
+      */
+      void sample(long iStep) override;
 
       /**
       * Output results to predefined output file.
@@ -112,7 +123,7 @@ namespace Rp {
                  Array<bool> const & implicit);
 
       /**
-      * Compute member variables wm_ and wk_.
+      * Compute member variables wm_ and wk_d_.
       */
       void computeW();
 
@@ -121,8 +132,13 @@ namespace Rp {
       */
       void computeS(ConstArray<typename T::Complex> const & wk);
 
+      using ComplexT = typename T::Complex;
+
       /// Discrete Fourier transform (DFT) of wm_ . 
-      RFieldDft<D,T> wk_;
+      RFieldDft<D,T> wk_d_;
+
+      // Copy of wk_d_ on host
+      ConstHostArray<ComplexT,T> wkHost_;
 
       /// Alias for base class
       using AnalyzerT = Analyzer<D,T>;

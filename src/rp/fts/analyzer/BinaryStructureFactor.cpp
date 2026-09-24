@@ -7,6 +7,7 @@
 
 #include "BinaryStructureFactor_c.h"
 
+#include <pscf/backend/cpp/CPT.h>
 #include <pscf/backend/cpp/ConstHostArray.h>
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/VecOpCx.h>
@@ -29,35 +30,6 @@ namespace Rp {
                                   System<D,CPT>& system)
     : BinaryStructureFactorBase<D,CPT>(simulator, system)
    {}
-
-   /*
-   * Setup before entering main loop.
-   */
-   template <int D>
-   void BinaryStructureFactor<D,CPT>::setup()
-   {
-      allocate();
-
-      WaveList<D,CPT> const & waveList = AnalyzerT::system().waveList();
-      ConstHostArray<double,CPT> kSq(waveList.kSq());
-      DArray<bool> const & implicit = waveList.implicitInverse();
-      Base::findWaveBunches(kSq, implicit);
-      //findWaveBunches(waveList.kSq(), waveList.implicitInverse());
-   }
-
-   /*
-   * Compute structure factors for all wavevectors and bunches.
-   */
-   template <int D>
-   void BinaryStructureFactor<D,CPT>::sample(long iStep)
-   {
-      if (AnalyzerT::isAtInterval(iStep)) {
-         computeW();
-	 wkHost_ = wk_;
-         computeS(wkHost_);
-	 wkHost_.dissociate();
-      }
-   }
 
 }
 }
