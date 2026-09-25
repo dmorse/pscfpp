@@ -228,6 +228,229 @@ namespace Rp {
       writeFieldsBasis(out, fields, unitCell);
    }
 
+   // Field IO in r-grid format
+
+   /*
+   * Read an array of fields in r-grid format.
+   */
+   template <int D, class T>
+   bool FieldIoBase<D,T>::readFieldsRGrid(
+                              std::istream &in,
+                              DArray< RField<D,T> >& fields,
+                              UnitCell<D>& unitCell) const
+   {
+      // Read header and check fields dimensions
+      int nMonomer;
+      bool isSymmetric;
+      readFieldHeader(in, nMonomer, unitCell, isSymmetric);
+      readMeshDimensions(in, mesh().dimensions());
+      checkAllocateFields(fields, nMonomer, mesh().dimensions());
+
+      // Setup local host arrays
+      DArray< HostArray<RealT,T> > hostFields;
+      associateArrays(hostFields, fields);
+
+      // Read data
+      Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
+
+      // Copy host -> device 
+      copyArrays(fields, hostFields);
+      dissociateArrays(hostFields);
+
+      // Return true iff the header contains a space group declaration
+      return isSymmetric;
+   }
+
+   /*
+   * Read the data section of an array of fields in r-grid format.
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::readFieldsRGridData(
+                              std::istream& in,
+                              DArray< RField<D,T> >& fields,
+                              int nMonomer) const
+   {
+      // Precondition: Check dimensions of fields
+      checkAllocateFields(fields, nMonomer, mesh().dimensions());
+
+      // Setup local host arrays
+      DArray< HostArray<RealT,T> > hostFields;
+      associateArrays(hostFields, fields);
+
+      // Read data section of file
+      Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
+
+      // Copy host -> device 
+      copyArrays(fields, hostFields);
+      dissociateArrays(hostFields);
+   }
+
+   /*
+   * Read a single field in r-grid format.
+   */
+   template <int D, class T>
+   bool FieldIoBase<D,T>::readFieldRGrid(
+                              std::istream &in,
+                              RField<D,T> & field,
+                              UnitCell<D>& unitCell) const
+   {
+
+      // Read header and check field dimensions
+      int nMonomer;
+      bool isSymmetric;
+      readFieldHeader(in, nMonomer, unitCell, isSymmetric);
+      UTIL_CHECK(nMonomer == 1);
+      readMeshDimensions(in, mesh().dimensions());
+      checkAllocateField(field, mesh().dimensions());
+
+      // Setup local host array
+      HostArray<RealT,T> hostField;
+      hostField.associate(field);
+
+      // Read data section with one field
+      Prdc::readRGridData(in, hostField, mesh().dimensions());
+
+      // Copy from host to device 
+      field = hostField;
+      hostField.dissociate();
+
+      // Return true iff the header contains a space group declaration
+      return isSymmetric;
+   }
+
+   /*
+   * Write an array of fields in r-grid format.
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldsRGrid(
+                              std::ostream &out,
+                              DArray< RField<D,T> > const & fields,
+                              UnitCell<D> const & unitCell,
+                              bool writeHeader,
+                              bool isSymmetric,
+                              bool writeMeshSize) const
+   {
+      // Inspect fields array, check field dimensions
+      int nMonomer;
+      IntVec<D> meshDimensions;
+      inspectFields(fields, nMonomer, meshDimensions);
+      UTIL_CHECK(meshDimensions == mesh().dimensions());
+      int meshSize = mesh().size();
+      UTIL_CHECK(fields[0].capacity() == meshSize);
+
+      // Write header
+      if (writeHeader){
+         writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
+      }
+      if (writeMeshSize){
+         writeMeshDimensions(out, meshDimensions);
+      }
+
+      // Copy field data to host container
+      DArray< ConstHostArray<RealT,T> > hostFields;
+      copyArrays(hostFields, fields);
+
+      // Write data section
+      Prdc::writeRGridData(out, hostFields, nMonomer, meshDimensions);
+
+      dissociateArrays(hostFields);
+   }
+
+   /*
+   * Write a single field in r-grid format.
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldRGrid(
+                              std::ostream &out,
+                              RField<D,T> const & field,
+                              UnitCell<D> const & unitCell,
+                              bool writeHeader,
+                              bool isSymmetric) const
+   {
+      IntVec<D> meshDimensions = field.meshDimensions();
+      int meshSize = field.capacity();
+      UTIL_CHECK(meshDimensions == mesh().dimensions());
+      UTIL_CHECK(meshSize == mesh().size());
+
+      // Write header
+      if (writeHeader) {
+         writeFieldHeader(out, 1, unitCell, isSymmetric);
+         writeMeshDimensions(out, meshDimensions);
+      }
+
+      // Copy field data to host container
+      ConstHostArray<RealT,T> hostField;
+      hostField = field;
+
+      // Write data from hostField
+      Prdc::writeRGridData(out, hostField, meshDimensions);
+
+      hostField.dissociate();
+   }
+
+   // Field IO in k-grid format
+
+   /*
+   * Read an array of fields in k-grid format
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::readFieldsKGrid(
+                              std::istream &in,
+                              DArray< RFieldDft<D,T> >& fields,
+                              UnitCell<D>& unitCell) const
+   {
+      // Read header and validate field mesh dimensions
+      int nMonomer;
+      bool isSymmetric;
+      readFieldHeader(in, nMonomer, unitCell, isSymmetric);
+      readMeshDimensions(in, mesh().dimensions());
+      checkAllocateFields(fields, nMonomer, mesh().dimensions());
+      IntVec<D> dftDimensions = fields[0].dftDimensions();
+
+      // Allocate hostFields
+      DArray< HostArray<ComplexT,T> > hostFields;
+      associateArrays(hostFields, fields);
+
+      // Read data into hostFields
+      Prdc::readKGridData(in, hostFields, nMonomer, dftDimensions);
+
+      // Copy host to device
+      copyArrays(fields, hostFields);
+
+      dissociateArrays(hostFields);
+   }
+
+   /*
+   * Write an array of fields in k-grid format
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::writeFieldsKGrid(
+                              std::ostream &out,
+                              DArray< RFieldDft<D,T> > const & fields,
+                              UnitCell<D> const & unitCell,
+                              bool isSymmetric) const
+   {
+      // Read header and validate field mesh dimensions
+      int nMonomer;
+      IntVec<D> meshDimensions;
+      inspectFields(fields, nMonomer, meshDimensions);
+      UTIL_CHECK(mesh().dimensions() == meshDimensions);
+      IntVec<D> dftDimensions = fields[0].dftDimensions();
+
+      // Write header
+      writeFieldHeader(out, nMonomer, unitCell, isSymmetric);
+      writeMeshDimensions(out, meshDimensions);
+
+      // Copy data from device to host container
+      DArray< ConstHostArray<ComplexT,T> > hostFields;
+      copyArrays(hostFields, fields);
+
+      // Write data from host container
+      Prdc::writeKGridData(out, hostFields, nMonomer, dftDimensions);
+
+      dissociateArrays(hostFields);
+   }
+
    /*
    * File IO wrapper functions:
    *
@@ -399,6 +622,60 @@ namespace Rp {
    }
 
    // Field Format Conversion Functions - Basis <-> KGrid
+
+   /*
+   * Convert a single field from basis to k-grid format.
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertBasisToKGrid(
+                              DArray<double> const & in,
+                              RFieldDft<D,T>& out) const
+   {
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(out.isAllocated());
+      UTIL_CHECK(in.capacity() > 0);
+      UTIL_CHECK(out.meshDimensions() == mesh().dimensions());
+
+      // Setup host container for k-grid data
+      HostArray<ComplexT,T> hostField;
+      hostField.associate(out);
+
+      // Convert basis to k-grid on host
+      Prdc::convertBasisToKGrid(in, hostField, basis(),
+                                out.dftDimensions());
+
+      // Copy from host to device
+      out = hostField;
+
+      hostField.dissociate();
+   }
+
+   /*
+   * Write an array of fields from k-grid to basis format.
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::convertKGridToBasis(
+                              RFieldDft<D,T> const & in,
+                              DArray<double>& out,
+                              bool checkSymmetry,
+                              double epsilon) const
+   {
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(out.isAllocated());
+      UTIL_CHECK(in.meshDimensions() == mesh().dimensions());
+      UTIL_CHECK(out.capacity() > 0);
+
+      // Copy k-grid data from device to const host container
+      ConstHostArray<ComplexT,T> hostField;
+      hostField = in;
+
+      // Convert from k-grid to basis format on host
+      Prdc::convertKGridToBasis(hostField, out, basis(),
+                                in.dftDimensions(),
+                                checkSymmetry, epsilon);
+
+      hostField.dissociate();
+   }
 
    /*
    * Convert array of fields from basis to k-grid format.
@@ -678,6 +955,29 @@ namespace Rp {
    }
 
    // Field Inspection
+
+   /*
+   * Test if an real field DFT has the declared space group symmetry.
+   */
+   template <int D, class T>
+   bool FieldIoBase<D,T>::hasSymmetry(
+                              RFieldDft<D,T> const & in,
+                              double epsilon,
+                              bool verbose) const
+   {
+      UTIL_CHECK(in.isAllocated());
+      UTIL_CHECK(in.meshDimensions() == mesh().dimensions());
+
+      // Copy k-grid data from device to const host container
+      ConstHostArray<ComplexT,T> hostField;
+      hostField = in;
+
+      // Check symmetry of k-grid data on host, return result
+      return Prdc::hasSymmetry(hostField, basis(), in.dftDimensions(),
+                               epsilon, verbose);
+
+      hostField.dissociate();
+   }
 
    /*
    * Test if a single r-grid field has declared space group symmetry.
@@ -966,6 +1266,61 @@ namespace Rp {
 
 
    // Grid manipulation utilities
+
+   /*
+   * Replicate the unit cell for an array of r-grid fields.
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::replicateUnitCell(
+                              std::ostream &out,
+                              DArray< RField<D,T> > const & fields,
+                              UnitCell<D> const & unitCell,
+                              IntVec<D> const & replicas) const
+
+   {
+      // Inspect fields to obtain nMonomer and meshDimensions
+      int nMonomer;
+      IntVec<D> meshDimensions;
+      inspectFields(fields, nMonomer, meshDimensions);
+      UTIL_CHECK(meshDimensions == mesh().dimensions());
+
+      // Copy r-grid input from device to host
+      DArray< ConstHostArray<RealT,T> > hostFields;
+      copyArrays(hostFields, fields);
+
+      // Compute replicated fields and write to a file
+      Prdc::replicateUnitCell(out, hostFields, meshDimensions,
+                              unitCell, replicas);
+
+      dissociateArrays(hostFields);
+   }
+
+   /*
+   * Expand spatial dimension of an array of r-grid fields.
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::expandRGridDimension(
+                              std::ostream &out,
+                              DArray< RField<D,T> > const & fields,
+                              UnitCell<D> const & unitCell,
+                              int d,
+                              DArray<int> const& newGridDimensions) const
+   {
+      // Inspect fields to obtain nMonomer and meshDimensions
+      int nMonomer;
+      IntVec<D> meshDimensions;
+      inspectFields(fields, nMonomer, meshDimensions);
+      UTIL_CHECK(meshDimensions == mesh().dimensions());
+
+      // Copy k-grid data from device to const host container
+      DArray< ConstHostArray<RealT,T> > hostFields;
+      copyArrays(hostFields, fields);
+
+      Prdc::expandRGridDimension(out, hostFields, meshDimensions,
+                                 unitCell, d, newGridDimensions);
+
+      dissociateArrays(hostFields);
+   }
 
    /*
    * Replicate unit cell a specified number of times in each direction.

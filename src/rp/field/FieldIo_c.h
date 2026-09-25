@@ -41,6 +41,7 @@ namespace Rp {
       FieldIo() = default;
       virtual ~FieldIo() = default;
 
+      #if 0
       /**
       * Read array of RField objects (r-grid fields) from a stream.
       *
@@ -261,6 +262,7 @@ namespace Rp {
 
       using typename Base::RealT; 
       using typename Base::ComplexT;
+   #endif
 
    };
 

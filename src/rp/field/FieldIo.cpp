@@ -14,6 +14,7 @@
 #include <rp/field/FieldIoBase.tpp>   // base class implementation
 #include <rp/field/FieldIo_c.h>       // class header
 
+#if 0
 namespace Pscf {
 namespace Rp {
 
@@ -377,6 +378,7 @@ namespace Rp {
 
 } // namespace Rp
 } // namespace Pscf
+#endif
 
 // Explicit specialization definitions
 namespace Pscf {

@@ -314,7 +314,7 @@ namespace Rp {
       bool readFieldsRGrid(
                      std::istream& in,
                      DArray< RField<D,T> >& fields,
-                     UnitCell<D> & unitCell) const = 0;
+                     UnitCell<D> & unitCell) const;
 
       /**
       * Read an array of r-grid fields from a named file.
@@ -354,7 +354,7 @@ namespace Rp {
       void readFieldsRGridData(
                      std::istream& in,
                      DArray< RField<D,T> >& fields,
-                     int nMonomer) const = 0;
+                     int nMonomer) const;
 
       /**
       * Read a single r-grid field from an input stream.
@@ -372,7 +372,7 @@ namespace Rp {
       bool readFieldRGrid(
                      std::istream &in,
                      RField<D,T> & field,
-                     UnitCell<D>& unitCell) const = 0;
+                     UnitCell<D>& unitCell) const;
 
       /**
       * Read a single r-grid field from a named file.
@@ -416,7 +416,7 @@ namespace Rp {
                      UnitCell<D> const & unitCell,
                      bool writeHeader = true,
                      bool isSymmetric = true,
-                     bool writeMeshSize = true) const = 0;
+                     bool writeMeshSize = true) const;
 
       /**
       * Write an array of r-grid fields to a named file.
@@ -457,7 +457,7 @@ namespace Rp {
                      RField<D,T> const & field,
                      UnitCell<D> const & unitCell,
                      bool writeHeader = true,
-                     bool isSymmetric = true) const = 0;
+                     bool isSymmetric = true) const;
 
       /**
       * Write a single r-grid field to a named file.
@@ -503,7 +503,7 @@ namespace Rp {
       void readFieldsKGrid(
                      std::istream& in,
                      DArray< RFieldDft<D,T> >& fields,
-                     UnitCell<D> & unitCell) const = 0;
+                     UnitCell<D> & unitCell) const;
 
       /**
       * Read an array of k-grid fields from a named file.
@@ -540,7 +540,7 @@ namespace Rp {
                      std::ostream& out,
                      DArray< RFieldDft<D,T> > const & fields,
                      UnitCell<D> const & unitCell,
-                     bool isSymmetric = true) const = 0;
+                     bool isSymmetric = true) const;
 
       /**
       * Write an array of k-grid fields to a named file.
@@ -573,7 +573,7 @@ namespace Rp {
       virtual
       void convertBasisToKGrid(
                      DArray<double> const & components,
-                     RFieldDft<D,T>& dft) const = 0;
+                     RFieldDft<D,T>& dft) const;
 
       /**
       * Convert an array of fields from basis to Fourier (k-grid) form.
@@ -606,7 +606,7 @@ namespace Rp {
                      RFieldDft<D,T> const & in,
                      DArray<double> & out,
                      bool checkSymmetry = true,
-                     double epsilon = 1.0e-8) const = 0;
+                     double epsilon = 1.0e-8) const;
 
       /**
       * Convert an array of fields from Fourier (k-grid) to basis form.
@@ -865,7 +865,7 @@ namespace Rp {
       virtual
       bool hasSymmetry(RFieldDft<D,T> const & in,
                        double epsilon = 1.0e-8,
-                       bool verbose = true) const = 0;
+                       bool verbose = true) const;
 
       /**
       * Check if an r-grid field has the declared space group symmetry.
@@ -1098,7 +1098,7 @@ namespace Rp {
       void replicateUnitCell(std::ostream& out,
                              DArray< RField<D,T> > const & fields,
                              UnitCell<D> const & unitCell,
-                             IntVec<D> const & replicas) const = 0;
+                             IntVec<D> const & replicas) const;
 
       /**
       * Write r-grid fields in a replicated unit cell to a named file.
@@ -1158,8 +1158,8 @@ namespace Rp {
                                 DArray< RField<D,T> > const & fields,
                                 UnitCell<D> const & unitCell,
                                 int d,
-                                DArray<int> const& newGridDimensions)
-      const = 0;
+                                DArray<int> const & newGridDimensions) 
+      const;
 
       /**
       * Increase D for an array of r-grid fields, write to a named file.
