@@ -2,7 +2,7 @@
 #define PRDC_R_FIELD_CP_H
 
 /*
-* PSCF - Polymer Self-Consistent Field 
+* PSCF - Polymer Self-Consistent Field
 *
 * Copyright 2015 - 2026, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
@@ -11,6 +11,11 @@
 #include <pscf/backend/cpp/DeviceArray.h>  // base class
 #include <pscf/backend/cpp/CPT.h>          // backend identifier class
 #include <pscf/math/IntVec.h>              // member
+
+// Forward declaration
+namespace Pscf {
+   template <typename Data, class T> class HostArray;
+}
 
 namespace Pscf {
 namespace Prdc {
@@ -22,8 +27,8 @@ namespace Prdc {
 
    /**
    * Field of real double precision values on a regular mesh.
-   * 
-   * \ingroup Prdc_Cpu_Module 
+   *
+   * \ingroup Prdc_Cpu_Module
    */
    template <int D>
    class RField<D,CPT> : public DeviceArray<double,CPT>
@@ -31,9 +36,9 @@ namespace Prdc {
 
    public:
 
-      // Public type alias 
+      // Public type alias
 
-      using FftwDRArray<double>::ValueType;
+      using typename FftwDRArray<double>::ValueType;
 
       // Public member functions
 
@@ -49,7 +54,7 @@ namespace Prdc {
       *
       *\param other the RField to be copied.
       */
-      RField(const RField& other);
+      RField(const RField<D,CPT>& other);
 
       /**
       * Destructor.
@@ -66,9 +71,24 @@ namespace Prdc {
       * If this and the other Field are both allocated, the capacities must
       * be exactly equal. If so, this method copies all elements.
       *
-      * \param other the RHS RField
+      * \param other  the RHS RField
       */
-      RField& operator = (RField const& other);
+      RField<D,CPT>& operator = (RField<D,CPT> const& other);
+
+      /**
+      * Pseudo-assignment from an associated HostArray.
+      *
+      * This function simply calls the corresponding assignment operator
+      * of the DeviceArray base class, then returns this RFieldDft object.
+      * It checks if an association exists between the LHS and RHS arrays,
+      * and does nothing if this is the case.
+      *
+      * \throw Exception if other (RHS) is not allocated
+      * \throw Exception if other (RHS) is not associated with this (LHS)
+      *
+      * \param other  the RHS host array
+      */
+      RField<D,CPT>& operator = (HostArray<double,CPT> const & other);
 
       /**
       * Allocate the underlying C array for values on a regular mesh.
@@ -98,23 +118,27 @@ namespace Prdc {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
-      using DeviceArray<double,CPT>::operator =;
-
    private:
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      // Make private to prevent allocation with mesh size.
-      using FftwDRArray<double>::allocate;
+      // Make private to prevent allocation without mesh dimensions.
+      using DeviceArray<double,CPT>::allocate;
+
+      // Make private to prevent association without mesh dimensions.
+      using DeviceArray<double,CPT>::associate;
+
+      // Make private to prevent assignment without mesh dimensions.
+      using DeviceArray<double,CPT>::operator =;
 
    };
 
    /*
    * Return mesh dimensions by constant reference.
    */
-   template <int D> inline 
-   IntVec<D> const & 
+   template <int D> inline
+   IntVec<D> const &
    RField<D,CPT>::meshDimensions() const
    {  return meshDimensions_; }
 
@@ -123,7 +147,7 @@ namespace Prdc {
    */
    template <int D>
    template <class Archive>
-   void RField<D,CPT>::serialize(Archive& ar, 
+   void RField<D,CPT>::serialize(Archive& ar,
 		                        const unsigned int version)
    {
       FftwDRArray<double>::serialize(ar, version);
@@ -138,3 +162,4 @@ namespace Prdc {
 } // namespace Prdc
 } // namespace Pscf
 #endif
+

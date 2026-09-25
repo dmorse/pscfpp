@@ -187,31 +187,6 @@ namespace Rp {
                        bool verbose = true) const override;
 
       /**
-      * Compare two fields in r-grid format, output a report.
-      *
-      * Outputs maximum and root-mean-squared differences to the standard
-      * Log file.
-      *
-      * \param field1  first array of fields (r-grid format)
-      * \param field2  second array of fields (r-grid format)
-      */
-      void compareFieldsRGrid(DArray< RField<D,CPT> > const & field1,
-                              DArray< RField<D,CPT> > const & field2) 
-      const override;
-
-      /**
-      * Rescale a single r-grid field by a scalar factor.
-      *
-      * See documentation of analogous function in FieldIoBase.
-      * Multiplication is done in-place, and so modifies the input.
-      *
-      * \param field  real space (r-grid) field (in-out)
-      * \param factor  real scalar by which to multiply all elements
-      */
-      void scaleFieldRGrid(RField<D,CPT>& field, double factor) 
-      const override;
-
-      /**
       * Write r-grid fields in a replicated unit cell to std::ostream.  
       *
       * See documentation of analogous function in FieldIoBase.
@@ -268,6 +243,24 @@ namespace Rp {
       using Base::convertKGridToBasis;
       using Base::hasSymmetry;
       using Base::compareFieldsRGrid;
+
+      using Base::readFieldHeader;
+      using Base::writeFieldHeader;
+      using Base::mesh;
+      using Base::basis;
+      using Base::fileMaster;
+
+   protected:
+
+      // Inherited protected member functions
+      using Base::lattice;
+      using Base::hasGroup;
+      using Base::groupName;
+      using Base::group;
+      using Base::fft;
+
+      using typename Base::RealT; 
+      using typename Base::ComplexT;
 
    };
 

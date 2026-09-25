@@ -65,7 +65,8 @@ namespace Prdc {
    * \param other the rhs Field
    */
    template <int D>
-   RFieldDft<D,CPT>& RFieldDft<D,CPT>::operator = (const RFieldDft<D,CPT>& other)
+   RFieldDft<D,CPT>& 
+   RFieldDft<D,CPT>::operator = (RFieldDft<D,CPT> const & other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -89,6 +90,17 @@ namespace Prdc {
          data_[i][1] = other.data_[i][1];
       }
 
+      return *this;
+   }
+
+   /*
+   * Pseudo-assignment from an associated HostArray.
+   */
+   template <int D>
+   RFieldDft<D,CPT>&
+   RFieldDft<D,CPT>::operator = (HostArray<fftw_complex,CPT> const & other)
+   {
+      DeviceArray<fftw_complex,CPT>::operator = (other);
       return *this;
    }
 

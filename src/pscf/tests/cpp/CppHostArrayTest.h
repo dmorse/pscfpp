@@ -213,6 +213,7 @@ void CppHostArrayTest::testDArrayOuter()
    // Assign (dissociates for T=CPT)
    for (int i = 0; i < m; ++i) {
       v[i] = u[i];
+      u[i].dissociate();
    }
 
    // Test equality

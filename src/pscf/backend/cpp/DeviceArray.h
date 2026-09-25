@@ -107,21 +107,15 @@ namespace Pscf {
       /**
       * Pseudo-assignment from a host array.
       *
-      * This functions checks that both arrays are allocated and refer to
-      * the same underlying C array, and throws an Exception if this is 
-      * not the case. Rationale: Since the host array acts as a shallow
-      * copy of this device array, the association must have been created
-      * before data was initialized on the host array, which occurs before
-      * the transaction is finalized by the assignment operator.
+      * This fucnction performs a sanity check and does nothing if the 
+      * check is passed. It checks that both LHS and RHS are allocated
+      * and refer to the to the same underlying C array on entry, and
+      * throws an Exception if this is not the case. 
       *
-      * This function also dissociates the host array from this device array. 
-      * Rationale: In assignment from host to device, the assignment operator 
-      * marks the end of the transaction. In the corresponding code with T=CUT,
-      * the persistent data on the finalized is finalized by this operator. 
-      * In this specialization, with T=CPT, leaving an association live would 
-      * allow later modification of data on the host to change data in the 
-      * device array, which is inconsistent with the behavior of the CUDA
-      * specialization. 
+      * Rationale: Since the host array acts as a shallow copy of this 
+      * device array, the association must have been created before data 
+      * was initialized on the host array, which must occurs before this
+      * transaction is finalized by the assignment operator.
       *
       * \throw Exception if this is not allocated
       * \throw Exception if other array is not allocated
@@ -129,7 +123,7 @@ namespace Pscf {
       *
       * \param other  array container on RHS of assigment (input)
       */
-      DeviceArray<Data,CPT>& operator = (HostArray<Data,CPT> & other);
+      DeviceArray<Data,CPT>& operator = (HostArray<Data,CPT> const & other);
 
       // Inherited public function (to prevent hiding)
       using FftwDRArray<Data>::operator =;
@@ -158,13 +152,12 @@ namespace Pscf {
    */
    template <typename Data>
    DeviceArray<Data,CPT>& 
-   DeviceArray<Data,CPT>::operator = (HostArray<Data,CPT> & other)
+   DeviceArray<Data,CPT>::operator = (HostArray<Data,CPT> const & other)
    {
       UTIL_CHECK(Array<Data>::isAllocated());
       UTIL_CHECK(other.isAllocated());
       UTIL_CHECK(Array<Data>::cArray() == other.cArray());
       UTIL_CHECK(Array<Data>::capacity() == other.capacity());
-      other.dissociate();
       return *this;
    }
 

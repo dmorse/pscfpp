@@ -235,6 +235,10 @@ void CppDeviceArrayTest::testAssignFromHost()
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isOwner());
+      TEST_ASSERT(v.capacity() == capacity);
+      TEST_ASSERT(v.isAllocated());
+
+      v.dissociate();
       TEST_ASSERT(v.capacity() == 0);
       TEST_ASSERT(!v.isAllocated());
 

@@ -14,6 +14,11 @@
 
 #include <fftw3.h>
 
+// Forward declaration
+namespace Pscf {
+   template <typename Data, class T> class HostArray;
+}
+
 namespace Pscf {
 namespace Prdc {
 
@@ -72,15 +77,33 @@ namespace Prdc {
       /**
       * Assignment operator.
       *
-      * If this Field is not allocated, allocates and copies all elements.
+      * Perform a deep copy of all elements of another RFieldDft array.
+      * If this Field is not allocated, it first allocates this array.
+      * If this and the other Field are both allocated on entry, the 
+      * capacities must match. 
       *
-      * If this and the other Field are both allocated, the capacities must
-      * be exactly equal. If so, this method copies all elements.
+      * \throw Exception if other is not allocated
+      * \throw Exception if this and other have unequal nonzero capacities
       *
-      * \param other the RHS Field
+      * \param other  the field on the RHS of assignment
       */
       RFieldDft<D,CPT>& 
       operator = (RFieldDft<D,CPT> const & other);
+
+      /**
+      * Pseudo-assignment from an associated HostArray.
+      *
+      * This function simply calls the corresponding assignment operator 
+      * of the DeviceArray base class, then returns this RFieldDft object.
+      * It checks if an association exists between the LHS and RHS arrays,
+      * and does nothing if this is the case.
+      *
+      * \throw Exception if other (RHS) is not allocated
+      * \throw Exception if other (RHS) is not associated with this (LHS)
+      *
+      * \param other  the RHS host array
+      */
+      RFieldDft<D,CPT>& operator = (HostArray<fftw_complex,CPT> const & other);
 
       /**
       * Allocate the underlying C array and set mesh dimensions.
@@ -119,9 +142,6 @@ namespace Prdc {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
-      // Inherited public member function (to prevent hiding)
-      using DeviceArray<fftw_complex,CPT>::operator =;
-
    private:
 
       // Vector containing number of grid points in each direction.
@@ -130,8 +150,14 @@ namespace Prdc {
       // Vector containing dimensions of dft (Fourier) grid.
       IntVec<D> dftDimensions_;
 
-      // Make private to prevent allocation with mesh dimensions.
-      using FftwDRArray<fftw_complex>::allocate;
+      // Declare private to prevent allocation without mesh dimensions.
+      using DeviceArray<fftw_complex,CPT>::allocate;
+
+      // Declare private to prevent association without mesh dimensions.
+      using DeviceArray<fftw_complex,CPT>::associate;
+
+      // Declare private to prevent assignment without mesh dimensions.
+      using DeviceArray<fftw_complex,CPT>::operator =;
 
    };
 

@@ -2,16 +2,15 @@
 #define PRDC_R_FIELD_CP_TPP
 
 /*
-* PSCF - Polymer Self-Consistent Field 
+* PSCF - Polymer Self-Consistent Field
 *
 * Copyright 2015 - 2026, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
 #include "RField.h"
+#include <pscf/backend/cpp/HostArray.h>  
 #include <util/global.h>
-
-//#include <pscf/backend/cpp/FftwDRArray.tpp>  // base class implementation
 
 namespace Pscf {
 namespace Prdc {
@@ -65,20 +64,17 @@ namespace Prdc {
    * \param other the rhs Field
    */
    template <int D>
-   RField<D,CPT>& 
+   RField<D,CPT>&
    RField<D,CPT>::operator = (RField<D,CPT> const & other)
    {
       // Check for self assignment
       if (this == &other) return *this;
 
-      // Precondition
-      if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
-      }
-
+      // Preconditions
+      UTIL_CHECK (other.isAllocated());
       if (!isAllocated()) {
          allocate(other.meshDimensions_);
-      } 
+      }
       UTIL_CHECK(capacity_ == other.capacity_);
       UTIL_CHECK(meshDimensions_ == other.meshDimensions_);
 
@@ -87,6 +83,17 @@ namespace Prdc {
          data_[i] = other[i];
       }
 
+      return *this;
+   }
+
+   /*
+   * Pseudo-assignment from an associated HostArray.
+   */
+   template <int D>
+   RField<D,CPT>&
+   RField<D,CPT>::operator = (HostArray<double,CPT> const & other)
+   {
+      DeviceArray<double,CPT>::operator = (other);
       return *this;
    }
 

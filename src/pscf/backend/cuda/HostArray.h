@@ -126,7 +126,9 @@ namespace Pscf {
       /**
       * Release host array.
       *
-      * GPU specialization does nothing.
+      * GPU specialization (T=CUT) does nothing. The CPU specialization
+      * (T=CPT) removes an association between the host array and some
+      * other array. 
       */
       void dissociate()
       {}

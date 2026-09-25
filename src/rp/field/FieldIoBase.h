@@ -936,7 +936,7 @@ namespace Rp {
       virtual
       void compareFieldsRGrid(
                      DArray< RField<D,T> > const & field1,
-                     DArray< RField<D,T> > const & field2) const = 0;
+                     DArray< RField<D,T> > const & field2) const;
 
       /**
       * Compare two r-grid field files, write a report to Log file.
@@ -1001,7 +1001,7 @@ namespace Rp {
       * \param factor  factor by which to multiply every field element
       */
       virtual
-      void scaleFieldRGrid(RField<D,T>& field, double factor) const = 0;
+      void scaleFieldRGrid(RField<D,T>& field, double factor) const;
 
       /**
       * Scale an array of r-grid fields by a scalar.
@@ -1375,6 +1375,9 @@ namespace Rp {
       * \param inFileName  name of field file
       */
       void checkAllocateBasis(std::string const & inFileName) const;
+
+      using RealT = typename T::Real;
+      using ComplexT = typename T::Complex;
 
    private:
 

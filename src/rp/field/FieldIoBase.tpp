@@ -752,6 +752,25 @@ namespace Rp {
       compareFieldsBasis(fields1, fields2);
    }
 
+   /*
+   * Compare arrays of fields in r-grid format, output report to Log file.
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::compareFieldsRGrid(
+                             DArray< RField<D,T> > const & field1,
+                             DArray< RField<D,T> > const & field2) const
+   {
+      RFieldComparison<D,T> comparison;
+      comparison.compare(field1, field2);
+
+      Log::file() << "\n Real-space field comparison results"
+                  << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   "
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   "
+                  << comparison.rmsDiff() << "\n" << std::endl;
+   }
+
    template <int D, class T>
    void FieldIoBase<D,T>::compareFieldsRGrid(
                                 std::string const & filename1,
@@ -783,7 +802,7 @@ namespace Rp {
    }
 
    /*
-   * Rescale an array of fields in basis format by a constant factor.
+   * Rescale an array of basis format fields by a constant factor.
    */
    template <int D, class T>
    void FieldIoBase<D,T>::scaleFieldsBasis(
@@ -800,7 +819,7 @@ namespace Rp {
    }
 
    /*
-   * Rescale fields in files by a constant factor.
+   * Rescale basis format fields in files by a constant factor.
    */
    template <int D, class T>
    void FieldIoBase<D,T>::scaleFieldsBasis(
@@ -816,7 +835,19 @@ namespace Rp {
    }
 
    /*
-   * Rescale fields in r-grid format by a constant factor.
+   * Rescale a single r-grid field by a constant factor. 
+   */
+   template <int D, class T>
+   void FieldIoBase<D,T>::scaleFieldRGrid(
+                             RField<D,T> & field,
+                             double factor) const
+   {
+      UTIL_CHECK(field.isAllocated());
+      VecOp::mulEqS(field, factor);
+   }
+
+   /*
+   * Rescale r-grid fields by a constant factor.
    */
    template <int D, class T>
    void FieldIoBase<D,T>::scaleFieldsRGrid(
@@ -830,7 +861,7 @@ namespace Rp {
    }
 
    /*
-   * Rescale fields by a constant factor, read and write to file.
+   * Rescale r-grid fields in files by a constant factor.
    */
    template <int D, class T>
    void FieldIoBase<D,T>::scaleFieldsRGrid(

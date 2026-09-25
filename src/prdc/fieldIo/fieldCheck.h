@@ -163,19 +163,19 @@ namespace Prdc {
    /**
    * Copy a DArray of 1D arrays.
    *
-   * The input and output containers may contain the same number of
-   * inner arrays, each of the same positive capacity. 
+   * If DArray out is not allocated, it will be allocated.
+   * Then out[i] = in[i] is invoked for each element of then arrays.
    *
    * \ingroup Prdc_Field_Module
    *
-   * \param out  DArray of arrays (lhs, out)
-   * \param in  DArray of arrays (rhs, in)
+   * \param out  DArray of arrays (LHS, output)
+   * \param in  DArray of arrays (RHS, input)
    */
    template <class OAT, class IAT>
    void copyArrays(DArray<OAT>& out, DArray<IAT> const& in);
 
    /**
-   * Associate device arrays with host arrays.
+   * Associate host arrays with device arrays.
    *
    * On input, the device arrays must be allocated.
    *
@@ -186,6 +186,18 @@ namespace Prdc {
    */
    template <class HAT, class DAT>
    void associateArrays(DArray<HAT>& host, DArray<DAT> & device);
+
+   /**
+   * Dissociate an array of host arrays.
+   *
+   * On input, the host arrays must be associated.
+   *
+   * \ingroup Prdc_Field_Module
+   *
+   * \param host  DArray of host arrays
+   */
+   template <class HAT>
+   void dissociateArrays(DArray<HAT>& host);
 
 } // namespace Prdc
 } // namespace Pscf

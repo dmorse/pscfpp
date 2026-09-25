@@ -198,31 +198,6 @@ namespace Rp {
                        bool verbose = true) const override;
 
       /**
-      * Compare two fields in r-grid format, output a report.
-      *
-      * Outputs maximum and root-mean-squared differences to the
-      * standard Log file.
-      *
-      * \param field1  first array of fields (r-grid format)
-      * \param field2  second array of fields (r-grid format)
-      */
-      void compareFieldsRGrid(DArray< RField<D,CUT> > const & field1,
-                              DArray< RField<D,CUT> > const & field2)
-      const override;
-
-      /**
-      * Rescale a single r-grid field by a scalar factor.
-      *
-      * See documentation of analogous function in FieldIoBase.
-      * Multiplication is done in-place, and so modifies the input.
-      *
-      * \param field  real space (r-grid) field (in-out)
-      * \param factor  real scalar by which to multiply all elements
-      */
-      void scaleFieldRGrid(RField<D,CUT>& field, double factor)
-      const override;
-
-      /**
       * Expand spatial dimension of an array of r-grid fields.
       *
       * See documentation of analogous function in FieldIoBase.
@@ -290,6 +265,7 @@ namespace Rp {
       using Base::scaleFieldsRGrid;
       using Base::replicateUnitCell;
       using Base::expandRGridDimension;
+
       using Base::readFieldHeader;
       using Base::writeFieldHeader;
       using Base::mesh;
@@ -305,10 +281,8 @@ namespace Rp {
       using Base::group;
       using Base::fft;
 
-   private:
-
-      using RealT = cudaReal;
-      using ComplexT = cudaComplex;
+      using typename Base::RealT; 
+      using typename Base::ComplexT;
 
    };
 
