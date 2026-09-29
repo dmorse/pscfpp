@@ -6,11 +6,11 @@
 
 The Rp namespace contains a set of class templates that are used to
 construct the pscf_rpc and pscf_rpg executables. Every class template
-defined in this namespaces takes the dimension of space, D, and a 
-backend parameter, T, as template parameters.  The pscf_rpc executable 
-is constructed using a set of specializations of these templates that
-all have a backend template argument T=CPT, while pscf_rpg is built 
-using specializations with T=CUT.
+defined in this namespace takes the dimension of space, D, and a 
+backend identifier class, T, as template parameters.  The pscf_rpc 
+executable is constructed using a set of specializations of these 
+templates that all have a backend template argument T=CPT, while 
+pscf_rpg is built using specializations with T=CUT.
 
 Each of executable programs constructed by the PSCF package is 
 designed using a hierarchical system of object ownership. Almost every 

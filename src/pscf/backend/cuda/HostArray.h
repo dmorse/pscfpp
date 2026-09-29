@@ -22,20 +22,71 @@ namespace Pscf {
    /**
    * Template for dynamic array stored in host CPU memory.
    *
-   * This class is provided as a convenience to allow the use of 
-   * assigment (=) operators to copy data from device to host memory.
-   * A HostArray<Data,CUT> stores data in a dynamically allocated array 
-   * in host CPU memory, whereas a DeviceArray<Data,CUT> stores analogous 
-   * data in global GPU device memory. Each of these classes defines  
-   * an assignment operation that allows assignment from the other, 
-   * which silently copies the underlying arrays between device and 
-   * host memory. Additionally, a method HostArray::copySlice is
-   * provided, which populates a HostArray with a slice of a larger
-   * DeviceArray.
+   * This class template should be used in device-independent template
+   * code in which an array is copied from host to device.  The
+   * DeviceArray<Data,CPT> template defines an assignment operator
+   * that assigns from a host array to a device array. 
    *
-   * Otherwise, this class is identical to Util::DArray, with the
-   * addition of an allocating constructor.
+   * The "associate" member function allocates the array if not allocated
+   * previously, or does nothing if the array is already allocated with
+   * the correct capacity.
    *
+   * The assignment (=) operator that copies a host array (RHS) to a
+   * device array (LHS) performs a deep copy from host to device memory.
+   * This function is a member function of the device array, defined by
+   * the DeviceArray<Data,CUT> class template. 
+   *
+   * <b> Usage </b>: 
+   *
+   * Typical usage for backend-independent template code is shown 
+   * below for host-to-device transfer to a long lived instance of 
+   * DeviceArray<Data,CPT> named dArray from a shorter lived instance of 
+   * HostArray<Data,CPT> named hArray. Here, the alias Data denotes the 
+   * type of each array element.
+   *
+   * \code
+   *    HostArray<Data,CPT> hArray;
+   *    hArray.associate(dArray);
+   *
+   *    \\ ( Initialize data in hArray )
+   *
+   *    dArray = hArray
+   *    hArray.dissociate();
+   * \endcode
+   *
+   * Comments:
+   *
+   *   - In this specialization for a CUDA backend (T=CUT), the associate
+   *     function allocates the host array, if not allocated previously,
+   *     or does nothing if it is already allocated with the same 
+   *     capacity as the device array. In the specialization for a C++
+   *     backend (T=CPT), the associate function creates an association 
+   *     that make the host array refer to memory owned by the device 
+   *     array.
+   *     
+   *   - In this specialization for a CUDA backend (T=CUT), the 
+   *     assignment (=) operator that assigns a RHS HostArray<Data,CPT> 
+   *     to a LHS DeviceArray<Data,CPT> template copies all elements of
+   *     an array from CPU host memory to GPU device memory. In the 
+   *     corresponding specialization for a C++ backend (T=CPT), the
+   *     assignment operator does nothing. 
+   * 
+   *   - In this specialization for a CUDA backend (T=CUT), the dissociate
+   *     function does nothing. In the corresponding specialization for a
+   *     C++ backend (T=CPT), this function destroys the association 
+   *     between  the host and device arrays, by nullifying a pointer 
+   *     held by the host array. 
+   *
+   *   - The host array may never be used to modify data after the 
+   *     assignment operator and before the dissociate function is
+   *     invoked. Doing so would modify data owned by the device array
+   *     in CPU code (T=CPT) but would have no effect on data owned by
+   *     the device array in GPU code (T=CUT), causing inconsistent
+   *     behavior. To enforce this, it is good practice to invoke the 
+   *     dissociate member function immediately after host-to-device 
+   *     assignment, as shown above.
+   *
+   * \see Pscf::HostArray<Data,CPT>
    * \ingroup Pscf_Backend_Cuda_Module
    */
    template <typename Data>

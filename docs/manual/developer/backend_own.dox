@@ -1,0 +1,93 @@
+/*! \page developer_backend_own_page Ownership Hierarchy
+
+\ref developer_backend_id_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_device_page  (Next)    &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Each executable program created by the PSCF package is designed 
+using a hierarchical system of object ownership. All but one of the 
+objects used in a PSCF program is a "child" that is owned by an instance 
+of some higher-level "parent" class.  In this system, each "child" object 
+is either a member variable of its parent, or a dynamically allocated 
+object that is accessed through a pointer that is a member variable of 
+the parent object. Each parent is responsible for creating and 
+destroying its children.
+
+The top of the ownership hierarchy used by the pscf_rpc and pscf_rpg
+programs is an instance of a specialization of the System \<D,T\> class 
+template. For this and may other templates in the Pscf::Prdc and Pscf::Rp 
+namespaces, D is an int template parameter that represents the dimension 
+of space, while T is typename parameter that takes a backend identifier 
+class as its argument. The top-level object used by the pscf_rpc program
+is an instance of a specialization System\<D,T\> with T=Pscf::CPT, while
+the top-level object used by pscf_rpc program is an instance of a 
+specialization with T=Pscf::CUT.  A value for the integer D is passed 
+to the pscf_rpc and pscf_rpg programs as a command line parameter, as 
+the parameter of command line option -d.  Thus, for example, if the 
+pscf_rpg program is invoked with a command line option "-d 3", as
+\code
+   pscf_rpg -d 3 -p param -c command
+\endcode
+then this program constructs an instance of the class 
+Rp::System\<3, CUT\>.  Member functions of this System object are then 
+invoked to read the parameter and command files, whose names are also 
+passed to the program as command line parameters.
+
+In the Rp namespace, the same arguments for the parameters D and 
+T are used through objects in the ownership hierarchy: 
+An object that is an instance of a class template specialization with 
+a specific pair of arguments for D and T may own children that are 
+instances of templates specializations with the same two template 
+arguments, and may be a child of a parent that is an instance of 
+another class template specialization with the same two values for 
+these two parameter.
+
+For exmaple, the children of an instance of System\<D,T\> include 
+instances of the following class template specializations:
+    - Rp::Mixture\<D,T\>
+    - Rp::Domain \<D,T\>
+    - Rp::CFields \<D,T\>
+    - Rp::WFields \<D,T\>
+
+Here and hereafter, we will often use Rp:: to denote the namespace
+Pscf::Rp.  
+
+An instance of Rp::Mixture\<D,T\> owns a set of children that each solve
+the modified diffusion equation for particular molecular species. Among
+these are objects associated with particular block polymer species, which 
+are instances of Rp::Polymer\<D,T\>, and other objects associated with 
+particular solvent species, which are instances of Rp::Solvent\<D,T\>). 
+Each instance of Rp::Polymer\<D,T\> has a set of child objects associated 
+with different blocks within a block polymer, which are instances of 
+Rp::Block\<D,T\>), as well as objects associated with propagators, which
+are instances of Rp::Propagator\<D,T\>. Each propagator is associated 
+with traversal of a block in one of two possible directions. 
+
+An instance of Rp::WFields \<D,T\> owns a set of objects that store 
+chemical potential fields associated with different monomer types. 
+An instance of Rp::CFields\<D,T\> owns a set of objects that store 
+monomer concentration fields associated with different monomer types. 
+
+A instance of Rp::Domain\<D,T\> owns an instance of UnitCell\<D,T\>
+that contains information about the periodic simulation unit cell, 
+as well as other objects that contain information about space group
+symmetries.
+
+An instance of System \<D,T\> with a specific choice of values for the 
+template parameters D and T thus directly or indirectly owns a large set 
+of instances of other class template specializations that use the same 
+arguments for these two template parameters. All of these objects are 
+thus designed to use the same computational backend, and to treat 
+systems with the same spatial dimension D.
+
+The ability to create separate template specializations for models with 
+different values of D is used primarily for SCFT calculations, for which 
+on might use D=1 to treat a lamellar phase or D=2 to treat a 2D hexagonal 
+phase. PS-FTS simulations generally use a value D=3, in order to allow 
+the fluctuating fields to depends on three spatial coordinates.
+
+<BR>
+\ref developer_backend_page         (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_device_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

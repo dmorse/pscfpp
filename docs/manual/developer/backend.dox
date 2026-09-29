@@ -1,4 +1,4 @@
-/*! \page developer_backend_page Supporting Multiple Backends
+/*! \page developer_backend_page Computational Backends
 
 \ref developer_container_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page       (Next)
@@ -8,25 +8,39 @@ The PSCF package builds two executable files, that are pscf_rpc and
 pscf_rpg, that are designed to solve the same set of problems involving 
 real periodic fields, but that are specialized to use different hardware. 
 The pscf_rpg executable performs makes use of a GPU, while the pscf_rpg 
-executable uses only a CPU. The primary difference in the implementation 
-of these two programs arises differences in code that implements a few 
-basic mathematical operations that are performed on large arrays, such 
-as elementwise linear algebra operations on arrays, array reductions, and 
-fast Fourier transforms.  In pscf_rpg, these operations are performed on 
-a GPU, where in pscf_rpc they are performed on the CPU.  
+executable uses only a CPU. 
+
+The key difference in the implementation of these two programs arises 
+from differences in:
+
+   - Where are arrays of data stored (CPU vs. GPU memory) ?
+
+   - Where are mathematical operations on large arrays performed?
+
+In pscf_rpc, all data structures that use arrays that are allocated on
+the heap memory use arrays that are allocated in CPU main memory, and
+all computations are performed on the CPU.
+In pscf_rpg, most large array data structures are instead allocated
+in GPU global memory, and all basic mathematical operations that are 
+performed on these arrays are performed directly on the GPU. 
+In both cases, mathematical operations that are performed on arrays
+include elementwise mathematical operations on arrays such a 
+vecctor-vector addition and scalar-vector multiplication, array 
+reductions, and fast Fourier transforms.  
 
 We describe these differences in what follows by saying that analogous 
-executable files use different computational "backends" for these core
-mathematical operations. The subpages linked below describe the design 
-of the conventions used in the PSCF source to allow the use of different 
-backends with minimal code duplication. As described in more detail in 
-these subpages, the system used by PSCF relies heavily on the use of 
-C++ templates.
+executable files use different computational "backends". The system
+used by PSCF to support the use of more than one backend relies on 
+heavy use of C++ class templates.  The subpages linked below describe 
+this system.
 
 <ol>
  <li> \subpage developer_backend_id_page </li>
+ <li> \subpage developer_backend_own_page </li>
+ <li> \subpage developer_backend_device_page </li>
+ <li> \subpage developer_backend_math_page </li>
+ <li> \subpage developer_backend_complex_page </li>
  <li> \subpage developer_backend_field_page </li>
- <li> \subpage developer_backend_rp_page </li>
 </ol>
 
 
