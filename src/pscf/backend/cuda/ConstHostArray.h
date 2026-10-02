@@ -22,12 +22,72 @@ namespace Pscf {
    /**
    * Template for read-only dynamic array stored in host CPU memory.
    *
-   * This class is derived from Util::ConstDArray<Data> and is almost
-   * identical to this base class. The key difference is the addition of
-   * specialized conversion constructor and assignment operators that 
-   * allow construction and assignment from a DeviceArray<Data,CUT>.
-   * Both of these functions copy an array from GPU device memory to 
-   * host CPU memory.
+   * This class template should be used in backend-independent template
+   * code in which data is copied from a device array to a host array.
+   * This template is derived from ConstArray<Data>, and thus provides 
+   * read-only access to the data.
+   *
+   * Conversion construction or assignment (operator =) from an instance 
+   * of DeviceArray<Data,CUT> to a ConstHostArray<Data,CUT> allocates the
+   * array if it is not allocated and then copies all elements of the 
+   * array from global GPU device memory to host memory. Conversion
+   * construction from a device array is equivalent to default 
+   * construction followed by assignment.
+   *
+   * <b> Usage: </b>
+   *
+   * Typical usage is shown below for backend-indepent template code 
+   * for device-to-host transfer from a longer lived instance of 
+   * DeviceArray<Data,CUT> named dArray (the device array) to a 
+   * shorter lived instance of ConstHostArray<Data,CUT> named hArray
+   * (the host array). The type of each array element is denoted by Data.
+   *
+   * \code
+   *    ConstHostArray<Data,CUT> hArray;
+   *    hArray = dArray
+   *
+   *    // (Read and use the data in dArray)
+   *
+   *    hArray.dissociate();
+   * \endcode
+   * The default constructor and assignment operations may instead be 
+   * combined into a single call of the conversion constructor, giving 
+   * the shorter version
+   * \code
+   *    ConstHostArray<Data,CUT> hArray(dArray)
+   *
+   *    // Read and use the data in dArray
+   *
+   *    hArray.dissociate();
+   * \endcode
+   * The dissociate function does nothing in GPU code, but is used
+   * for compatibility with corresponding CPU code, as discussed below.
+   *
+   * Comments:
+   * 
+   *  - In this specialization for a CUDA backend (T=CUT), the assignment
+   *    operator and conversion constructor each perform a deep copy of 
+   *    data from GPU device memory to CPU host memory. The corresponding 
+   *    specialization for a GPU backend (T=CUT) would instead create a
+   *    an association, i.e., a shallow copy, in which the host array
+   *    owns a pointer to memory owned by the device array.
+   *
+   *  - In this specialization for a CUDA backend (T=CUT), the dissociate 
+   *    function does nothing. It is used in backend-independent code to
+   *    maintain compatibility with the syntax used by the specialization
+   *    for a C++ backend (T=CPT), for which the dissociation member
+   *    function releases the association with the device array, by 
+   *    nullifying a pointer owned by the host array. 
+   *
+   *  - The dissociate function call must occur after all statements 
+   *    that access elements of the host array. In the specialization 
+   *    for a C++ backend (T=CPT), the host array has no access to data 
+   *    after the dissociate function is called.
+   *
+   *  - If data that is copied from device to host needs to be modified
+   *    on the host, it must first be copied to a container that provides
+   *    read-write access. The ConstHostArray class template that is used
+   *    for data transfer only provides read access.
    *
    * \ingroup Pscf_Backend_Cuda_Module
    */

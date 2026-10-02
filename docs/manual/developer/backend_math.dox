@@ -1,0 +1,14 @@
+/*! \page developer_backend_math_page Array Operations
+
+\ref developer_backend_device_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_complex_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Describe vector operations (Pscf::VecOp) and reductions.
+
+<BR>
+\ref developer_backend_device_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_complex_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

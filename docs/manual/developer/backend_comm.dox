@@ -1,0 +1,14 @@
+/*! \page developer_backend_comm_page Device - Host Communication
+
+\ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_test_page          (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Explain usage patterns for HostArray and ConstHostArray templates.
+
+<BR>
+\ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page       (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_test_page          (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

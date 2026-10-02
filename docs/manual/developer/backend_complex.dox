@@ -1,0 +1,102 @@
+/*! \page developer_backend_complex_page Complex Numbers
+
+\ref developer_backend_math_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_field_page (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Some mathematical operations performed by PSCF require manipulations 
+of complex numbers, and storage of arrays of complex numbers. The 
+use of complex numbers arises in large part from the use of Fourier 
+transforms in the psuedo-spectral solution of the MDE, since the 
+discrete Fourier transform of a real-valued field defined on an array 
+yields an array of complex-valued numbers. 
+
+\section developer_backend_complex_types_sec Complex Number Types
+
+Throughout the PSCF source code, template specializations that use
+the CUDA and C++ computational backends use different data structures 
+to store the real and imaginary parts of a single complex number. 
+This difference is a result of the fact that these different backends 
+rely on different external libraries to perform fast Fourier 
+transform (FFT) operations, and these different FFT libraries use 
+different representations complex numbers. 
+
+The C++ backend uses the external FFTW library to perform FFT 
+operations on a CPU, using a version that is compiled to use double 
+precision real numbers.  The FFTW library uses a data type named 
+fftw_complex to represent a complex number. This typename is defined 
+within the fftw3.h header file for FFTW as an alias for an array 
+containing two double precision numbers, representing the real and 
+imaginary parts of a complex number.
+
+The CUDA backend uses the cufft library that is provided as part 
+of NVIDIA CUDA toolkit to perform FFT operations on a GPU. 
+The cufft library can perform transforms using either single or
+double precision for real numbers, but PSCF uses double precision 
+by default. The types used by cufft for real and complex numbers
+are referred to throughout the PSCF source code by typename 
+aliases cudaReal and cudaComplex that are defined in the file
+src/pscf/backend/cuda/cudaTypes.h. The cudaComplex type is an alias
+for a struct with fields named x and y that represent real and 
+imaginary parts of a complex number, respectively.
+
+\section developer_backend_complex_aliases_sec Aliases in Backend Identifier Classes
+
+Each of the backend identifer classes Pscf::CPT and Pscf::CUT 
+container definitions of a type aliases named Real and Complex
+that are aliases for the types used for real and complex numbers 
+by the FFT library used by the associated backend. 
+
+
+The definition of class Pscf::CPT thus reads, in part
+\code
+namespace Pscf {
+
+    class CPT {
+       
+        static const BackendId id = BackendId::Cpp;
+
+        using Real = double;
+        using Complex = fftw_complex;
+
+        // ...
+        
+    };
+
+}
+\endcode
+Here fftw_complex is the complex number type used by the FFTW
+fast Fourier transform library.
+
+The corresponding definition of Pscf::CUT reads, in part
+\code
+namespace Pscf {
+
+    class CUT {
+       
+        static const BackendId id = BackendId::Cuda;
+
+        using Real = cudaReal
+        using Complex = cudaComplex;
+
+        // ...
+        
+    };
+
+}
+\endcode
+Here, cudaReal and cudaComplex are aliases defined with the
+PSCF package for the real and complex types used by the 
+cufft library.
+
+Within template code in which a template parameter T represents
+a backend identifier class, the names "typename T::Real" and 
+"typename T::Complex" can thus be used to refer generically to
+the real and complex types used by the associated FFT class.
+
+<BR>
+\ref developer_backend_math_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_field_page (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

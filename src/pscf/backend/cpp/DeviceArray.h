@@ -36,23 +36,26 @@ namespace Pscf {
    * already exist, or does nothing if it does. Reason for this usage is
    * discussed below.
    *
-   * In order to transfer data from HostArray<Data,CPT> u to a
-   * DeviceArray<Data,CPT> v one must:
+   * Host to device data transfer:
+   * 
+   * Usage for transfer of data from an instance of HostArray<Data,CPT>
+   * to an instance of DeviceArray<Data,CPT> is discussed in the class
+   * documentation for the HostArray class template. The most explicit
+   * version of this pattern involves the following steps:
    *
-   *    - Allocate the device array
+   *    - Construct and allocate a device array (denoted by dArray)
    *
-   *    - Create an association either by using the conversion constructor
-   *      HostArray<Data,CPT> u(v) to create the host array or by calling 
-   *      the host array associate function u.associate(v).
+   *    - Default construct a host array (denoted by hArray)
+   * 
+   *    - Create an association: hArray.associate(dArray)
    *
-   *    - Initialize data on the host array u
+   *    - Initialize elements of hArray
    *
-   *    - Invoke the assignment operator: v = u;
+   *    - Assign from host to device: dArray = hArray;
    *
-   *    - Destroy the association, either by explicitly invoking the
-   *      dissociate function u.dissociate() on the host array or by 
-   *      allowing a host array that is a local object to be destroyed
-   *      when it goes out of scope
+   *    - Destroy the association: hArray.dissociate()
+   *
+   *    - Deallocate or destroy the device array dArray
    *
    * Comments:
    *
@@ -61,13 +64,17 @@ namespace Pscf {
    *      it does. This is because the association must exist before the 
    *      data is initialized on the host array, which must occur before
    *      the assignment operator is invoked. In analogous GPU code, the
-   *      assignment operator would instead transfer data from CPU to GPU
-   *      memory.
+   *      assignment operator would instead actually transfer data from 
+   *      CPU to GPU memory.
    *
-   *    - The lifetime of association between host and device arrays 
-   *      may never be allowed to extend beyond the function in which it 
-   *      was created. This is necessary to guarantee that an association 
-   *      will never still exist when the shared array is deallocated.
+   *    - The dissociate member function of the host array class destroys
+   *      an association in CPU code (T=CPT) but does nothing in analogous 
+   *      GPU code (T=CUT).
+   *
+   *    - The host array must never be used to modify data after the 
+   *      dissociate function is invoked. To enforce this, dissociate
+   *      should usually be called immediately after the assignment 
+   *      operator. 
    *
    * \ingroup Pscf_Backend_Cpp_Module
    */
