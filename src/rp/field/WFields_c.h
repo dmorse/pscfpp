@@ -30,9 +30,28 @@ namespace Rp {
    * \ingroup Rp_Field_Module
    */
    template <int D>
-   class WFields<D,CPT> 
-    : public Rp::WFieldsBase<D,CPT>
-   {};
+   class WFields<D,CPT> : public Rp::WFieldsBase<D,CPT>
+   {
+
+      /**
+      * Set new w fields, in unfolded real-space (r-grid) format.
+      *
+      * The input array fields is an unfolded array that contains fields 
+      * for all monomer types, with the field for monomer 0 first, etc.
+      *
+      * \param fields  unfolded array of new w fields (input)
+      */
+      void setRGrid(DeviceArray<cudaReal,CPT>& fields);
+
+      // Declaration to avoid hiding overloaded base class method 
+      using WFieldsBase<D,CPT>::setRGrid;
+
+   private:
+
+      /// Alias for base class (implementation convenience).
+      using Base = WFieldsBase<D,CPT>;
+
+   };
 
    // Explicit instantiation declarations
    PSCF_TMPL_DECLARE_CPP(WFields);

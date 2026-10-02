@@ -63,6 +63,8 @@ namespace Rp {
       isAllocatedKGrid_(false)
    {}
 
+   // Default destructor
+
    // Initialization functions
 
    /*
@@ -148,6 +150,22 @@ namespace Rp {
    }
 
    /*
+   * Open-close a file and read a set of fields in basis format.
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::readFieldsBasis(
+                              std::string filename,
+                              DArray<DArray<double> >& fields,
+                              UnitCell<D>& unitCell) const
+   {
+
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsBasis(file, fields, unitCell);
+      file.close();
+   }
+
+   /*
    * Read a single field in basis format from an input stream
    */
    template <int D, class T>
@@ -181,6 +199,21 @@ namespace Rp {
    }
 
    /*
+   * Open-close a file and read a single field in basis format.
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::readFieldBasis(
+                              std::string filename,
+                              DArray<double>& field,
+                              UnitCell<D>& unitCell) const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldBasis(file, field, unitCell);
+      file.close();
+   }
+
+   /*
    * Write an array of fields in basis format to an output stream.
    */
    template <int D, class T>
@@ -209,6 +242,21 @@ namespace Rp {
    }
 
    /*
+   * Open-close a file, and write an array of fields in basis format.
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::writeFieldsBasis(
+                              std::string filename,
+                              DArray<DArray<double> > const & fields,
+                              UnitCell<D> const & unitCell) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsBasis(file, fields, unitCell);
+      file.close();
+   }
+
+   /*
    * Write a single field in basis format to an output stream.
    */
    template <int D, class T>
@@ -226,6 +274,21 @@ namespace Rp {
       fields[0] = field;
 
       writeFieldsBasis(out, fields, unitCell);
+   }
+
+   /*
+   * Open-close a file, and write a single field in basis format.
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::writeFieldBasis(
+                              std::string filename,
+                              DArray<double> const & field,
+                              UnitCell<D> const & unitCell) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldBasis(file, field, unitCell);
+      file.close();
    }
 
    // Field IO in r-grid format
@@ -258,6 +321,23 @@ namespace Rp {
       dissociateArrays(hostFields);
 
       // Return true iff the header contains a space group declaration
+      return isSymmetric;
+   }
+
+   /*
+   * Open-close a file, and write an array of fields in r-grid format
+   */
+   template <int D, class T>
+   bool FieldIo<D,T>::readFieldsRGrid(
+                              std::string filename,
+                              DArray< RField<D,T> >& fields,
+                              UnitCell<D>& unitCell) const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      bool isSymmetric;
+      isSymmetric = readFieldsRGrid(file, fields, unitCell);
+      file.close();
       return isSymmetric;
    }
 
@@ -319,6 +399,23 @@ namespace Rp {
    }
 
    /*
+   * Open-close a file, and read a single field in r-grid format
+   */
+   template <int D, class T>
+   bool FieldIo<D,T>::readFieldRGrid(
+                              std::string filename,
+                              RField<D,T> & field,
+                              UnitCell<D>& unitCell) const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      bool isSymmetric;
+      isSymmetric = readFieldRGrid(file, field, unitCell);
+      file.close();
+      return isSymmetric;
+   }
+
+   /*
    * Write an array of fields in r-grid format.
    */
    template <int D, class T>
@@ -357,6 +454,25 @@ namespace Rp {
    }
 
    /*
+   * Open-close a file, and write an array of fields in r-grid format
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::writeFieldsRGrid(
+                              std::string filename,
+                              DArray< RField<D,T> > const & fields,
+                              UnitCell<D> const & unitCell,
+                              bool isSymmetric) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      bool writeHeader = true;
+      bool writeMeshSize = true;
+      writeFieldsRGrid(file, fields, unitCell,
+                       writeHeader, isSymmetric, writeMeshSize);
+      file.close();
+   }
+
+   /*
    * Write a single field in r-grid format.
    */
    template <int D, class T>
@@ -386,6 +502,22 @@ namespace Rp {
       Prdc::writeRGridData(out, hostField, meshDimensions);
 
       hostField.dissociate();
+   }
+
+   /*
+   * Open-close a file, and write a single field in r-grid format
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::writeFieldRGrid(
+                              std::string filename,
+                              RField<D,T> const & field,
+                              UnitCell<D> const & unitCell,
+                              bool isSymmetric) const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldRGrid(file, field, unitCell, isSymmetric);
+      file.close();
    }
 
    // Field IO in k-grid format
@@ -421,6 +553,21 @@ namespace Rp {
    }
 
    /*
+   * Open-close a file, and read an array of fields in k-grid format
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::readFieldsKGrid(
+                              std::string filename,
+                              DArray< RFieldDft<D,T> >& fields,
+                              UnitCell<D>& unitCell) const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsKGrid(file, fields, unitCell);
+      file.close();
+   }
+
+   /*
    * Write an array of fields in k-grid format
    */
    template <int D, class T>
@@ -452,161 +599,7 @@ namespace Rp {
    }
 
    /*
-   * File IO wrapper functions:
-   *
-   * These functions take a file name as an argument, and simply wrap
-   * file open and close operations around a function of the same name
-   * that takes an io stream argument. These functions can use the same
-   * implementation in Rpc and Rpg.
-   */
-
-   /*
-   * Open-close a file and read a set of fields in basis format.
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::readFieldsBasis(
-                              std::string filename,
-                              DArray<DArray<double> >& fields,
-                              UnitCell<D>& unitCell) const
-   {
-
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      readFieldsBasis(file, fields, unitCell);
-      file.close();
-   }
-
-   /*
-   * Open-close a file and read a single field in basis format.
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::readFieldBasis(
-                              std::string filename,
-                              DArray<double>& field,
-                              UnitCell<D>& unitCell) const
-   {
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      readFieldBasis(file, field, unitCell);
-      file.close();
-   }
-
-   /*
-   * Open-close a file, and write an array of fields in basis format.
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::writeFieldsBasis(
-                              std::string filename,
-                              DArray<DArray<double> > const & fields,
-                              UnitCell<D> const & unitCell) const
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeFieldsBasis(file, fields, unitCell);
-      file.close();
-   }
-
-   /*
-   * Open-close a file, and write a single field in basis format.
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::writeFieldBasis(
-                              std::string filename,
-                              DArray<double> const & field,
-                              UnitCell<D> const & unitCell) const
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeFieldBasis(file, field, unitCell);
-      file.close();
-   }
-
-   /*
-   * Open-close a file, and write an array of fields in r-grid format
-   */
-   template <int D, class T>
-   bool FieldIo<D,T>::readFieldsRGrid(
-                              std::string filename,
-                              DArray< RField<D,T> >& fields,
-                              UnitCell<D>& unitCell) const
-   {
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      bool isSymmetric;
-      isSymmetric = readFieldsRGrid(file, fields, unitCell);
-      file.close();
-      return isSymmetric;
-   }
-
-   /*
-   * Open-close a file, and read a single field in r-grid format
-   */
-   template <int D, class T>
-   bool FieldIo<D,T>::readFieldRGrid(
-                              std::string filename,
-                              RField<D,T> & field,
-                              UnitCell<D>& unitCell) const
-   {
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      bool isSymmetric;
-      isSymmetric = readFieldRGrid(file, field, unitCell);
-      file.close();
-      return isSymmetric;
-   }
-
-   /*
-   * Open-close a file, and write an array of fields in r-grid format
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::writeFieldsRGrid(
-                              std::string filename,
-                              DArray< RField<D,T> > const & fields,
-                              UnitCell<D> const & unitCell,
-                              bool isSymmetric) const
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      bool writeHeader = true;
-      bool writeMeshSize = true;
-      writeFieldsRGrid(file, fields, unitCell,
-                       writeHeader, isSymmetric, writeMeshSize);
-      file.close();
-   }
-
-   /*
-   * Open-close a file, and write a single field in r-grid format
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::writeFieldRGrid(
-                              std::string filename,
-                              RField<D,T> const & field,
-                              UnitCell<D> const & unitCell,
-                              bool isSymmetric) const
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeFieldRGrid(file, field, unitCell, isSymmetric);
-      file.close();
-   }
-
-   /*
-   * Open-close a file, and read an array of fields in k-grid format
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::readFieldsKGrid(
-                              std::string filename,
-                              DArray< RFieldDft<D,T> >& fields,
-                              UnitCell<D>& unitCell) const
-   {
-      std::ifstream file;
-      fileMaster().openInputFile(filename, file);
-      readFieldsKGrid(file, fields, unitCell);
-      file.close();
-   }
-
-   /*
-   * Open-close a file, and read an array of fields in k-grid format
+   * Open-close a file, and write an array of fields in k-grid format
    */
    template <int D, class T>
    void FieldIo<D,T>::writeFieldsKGrid(
@@ -651,7 +644,46 @@ namespace Rp {
    }
 
    /*
-   * Write an array of fields from k-grid to basis format.
+   * Convert array of fields from basis to k-grid format.
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::convertBasisToKGrid(
+                              DArray< DArray <double> > const & in,
+                              DArray< RFieldDft<D,T> >& out) const
+   {
+      // Inspect input and output field containers
+      int nMonomer, nMonomerOut, capacity;
+      inspectArrays(in, nMonomer, capacity);
+      IntVec<D> dimensions;
+      inspectFields(out, nMonomerOut, dimensions);
+      UTIL_CHECK(nMonomer == nMonomerOut);
+      UTIL_CHECK(capacity == basis().nBasis());
+      UTIL_CHECK(dimensions == mesh().dimensions());
+
+      // Convert fields for all monomer types
+      for (int i = 0; i < nMonomer; ++i) {
+         convertBasisToKGrid(in[i], out[i]);
+      }
+   }
+
+   /*
+   * Convert a field file from basis to k-grid format.
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::convertBasisToKGrid(
+                                std::string const & inFileName,
+                                std::string const & outFileName) const
+   {
+      checkAllocateKGrid();
+      checkAllocateBasis(inFileName);
+      UnitCell<D> tmpUnitCell;
+      readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
+      writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
+   }
+
+   /*
+   * Write a single field from k-grid to basis format.
    */
    template <int D, class T>
    void FieldIo<D,T>::convertKGridToBasis(
@@ -675,29 +707,6 @@ namespace Rp {
                                 checkSymmetry, epsilon);
 
       hostField.dissociate();
-   }
-
-   /*
-   * Convert array of fields from basis to k-grid format.
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::convertBasisToKGrid(
-                              DArray< DArray <double> > const & in,
-                              DArray< RFieldDft<D,T> >& out) const
-   {
-      // Inspect input and output field containers
-      int nMonomer, nMonomerOut, capacity;
-      inspectArrays(in, nMonomer, capacity);
-      IntVec<D> dimensions;
-      inspectFields(out, nMonomerOut, dimensions);
-      UTIL_CHECK(nMonomer == nMonomerOut);
-      UTIL_CHECK(capacity == basis().nBasis());
-      UTIL_CHECK(dimensions == mesh().dimensions());
-
-      // Convert fields for all monomer types
-      for (int i = 0; i < nMonomer; ++i) {
-         convertBasisToKGrid(in[i], out[i]);
-      }
    }
 
    /*
@@ -739,22 +748,6 @@ namespace Rp {
       writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
    }
 
-   /*
-   * Convert a field file from basis to k-grid format.
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::convertBasisToKGrid(
-                                std::string const & inFileName,
-                                std::string const & outFileName) const
-   {
-      checkAllocateKGrid();
-      checkAllocateBasis(inFileName);
-      UnitCell<D> tmpUnitCell;
-      readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
-      convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
-      writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
-   }
-
    // Field Format Conversion Functions - Basis <-> RGrid
 
    /*
@@ -790,6 +783,23 @@ namespace Rp {
          convertBasisToKGrid(in[i], workDft_);
          fft().inverseTransformUnsafe(workDft_, out[i]);
       }
+   }
+
+   /*
+   * Convert a field file from basis to r-grid format.
+   */
+   template <int D, class T>
+   void FieldIo<D,T>::convertBasisToRGrid(
+                                std::string const & inFileName,
+                                std::string const & outFileName) const
+   {
+      checkAllocateRGrid();
+      checkAllocateBasis(inFileName);
+      UnitCell<D> tmpUnitCell;
+
+      readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
+      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
    }
 
    /*
@@ -831,23 +841,6 @@ namespace Rp {
          fft().forwardTransform(in[i], workDft_);
          convertKGridToBasis(workDft_, out[i], checkSymmetry, epsilon);
       }
-   }
-
-   /*
-   * Convert a field file from basis to r-grid format.
-   */
-   template <int D, class T>
-   void FieldIo<D,T>::convertBasisToRGrid(
-                                std::string const & inFileName,
-                                std::string const & outFileName) const
-   {
-      checkAllocateRGrid();
-      checkAllocateBasis(inFileName);
-      UnitCell<D> tmpUnitCell;
-
-      readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
-      convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
-      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
    }
 
    /*

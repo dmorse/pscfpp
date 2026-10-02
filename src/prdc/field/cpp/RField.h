@@ -64,6 +64,32 @@ namespace Prdc {
       virtual ~RField();
 
       /**
+      * Allocate the underlying C array for values on a regular mesh.
+      *
+      * \throw Exception if the RField is already allocated.
+      *
+      * \param meshDimensions vector of numbers of grid points per direction
+      */
+      void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Deallocate memory and return to empty state.
+      */
+      virtual void deallocate();
+
+      /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<double,CPT>& arr, int beginId,
+                     IntVec<D> const & meshDimensions);
+
+      /**
       * Assignment operator.
       *
       * If this Field is not allocated, allocates and copies all elements.
@@ -89,20 +115,6 @@ namespace Prdc {
       * \param other  the RHS host array
       */
       RField<D,CPT>& operator = (HostArray<double,CPT> const & other);
-
-      /**
-      * Allocate the underlying C array for values on a regular mesh.
-      *
-      * \throw Exception if the RField is already allocated.
-      *
-      * \param meshDimensions vector of numbers of grid points per direction
-      */
-      void allocate(IntVec<D> const & meshDimensions);
-
-      /**
-      * Deallocate memory and return to empty state.
-      */
-      virtual void deallocate();
 
       /**
       * Return mesh dimensions by constant reference.

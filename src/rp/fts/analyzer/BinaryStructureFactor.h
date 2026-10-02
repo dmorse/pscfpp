@@ -107,42 +107,12 @@ namespace Rp {
 
    private:
 
-      /// Alias for base class
-      using AnalyzerT = Analyzer<D,T>;
-
       /// Alias for complex number type
       using ComplexT = typename T::Complex;
 
-      // Private member functions
-
-      /**
-      * Allocate member arrays with dimensions that depend only on mesh.
-      */
-      void allocate();
-
-      /**
-      * Allocate and initialize data structures involving wave bunches.
-      * 
-      * \param kSq  values of square wavenumbers
-      * \param implicit  bools indicating existence of implicit inverse
-      */
-      void findWaveBunches(
-                 ConstArray<double> const & kSq,
-                 Array<bool> const & implicit);
-
-      /**
-      * Compute member variables wm_ and wk_d_.
-      */
-      void computeW();
-
-      /**
-      * Complete calculation of current structure factors.
-      */
-      void computeS(ConstArray<typename T::Complex> const & wk);
-
       // Private member variables
 
-      /// Exchange field W_(r):  wm = (wa-wb)/2  .
+      /// Exchange field W_{-}(r):  wm = (wa-wb)/2  .
       RField<D,T> wm_;
 
       /// Discrete Fourier transform (DFT) of wm_ , on device.
@@ -187,12 +157,30 @@ namespace Rp {
       /// Has readParameters been called?
       bool isInitialized_;
 
-      // Alias for FFT wrapper class
-      using FFTT = FFT<D,T>;
+      // Private member functions
 
-      // Inherited protected member functions (selected)
-      using AnalyzerT::system;
-      using AnalyzerT::simulator;
+      /**
+      * Allocate member arrays with dimensions that depend only on mesh.
+      */
+      void allocate();
+
+      /**
+      * Allocate and initialize data structures involving wave bunches.
+      */
+      void setupWaveBunches();
+
+      /**
+      * Compute device arrays wm_ and wk_d_.
+      */
+      void computeW();
+
+      /**
+      * Complete calculation of current structure factors.
+      */
+      void computeS();
+
+      // Inherited member function (selected for convenience)
+      using Analyzer<D,T>::system;
 
    };
 

@@ -33,6 +33,15 @@ namespace Prdc {
    {  allocate(meshDimensions); }
 
    /*
+   * Copy constructor.
+   */
+   template <int D>
+   CField<D,CUT>::CField(const CField<D,CUT>& other)
+    : DeviceArray<cudaComplex,CUT>(other),
+      meshDimensions_(0)
+   {  meshDimensions_ = other.meshDimensions_; }
+
+   /*
    * Destructor.
    */
    template <int D>
@@ -40,14 +49,48 @@ namespace Prdc {
    {}
 
    /*
-   * Copy constructor.
+   * Allocate the underlying C array sized for an associated mesh.
    */
    template <int D>
-   CField<D,CUT>::CField(const CField<D,CUT>& other)
-    : DeviceArray<cudaComplex,CUT>(other),
-      meshDimensions_(0)
+   void CField<D,CUT>::allocate(IntVec<D> const & meshDimensions)
    {
-      meshDimensions_ = other.meshDimensions_;
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
+      }
+      DeviceArray<cudaComplex,CUT>::allocate(size);
+   }
+
+   /*
+   * Deallocate the underlying C array and zero grid dimensions.
+   */
+   template <int D>
+   void CField<D,CUT>::deallocate()
+   {
+      DeviceArray<cudaComplex,CUT>::deallocate();
+      for (int i = 0; i < D; ++i) {
+         meshDimensions_[i] = 0;
+      }
+   }
+
+   /*
+   * Associate this object with a slice of another DeviceArray.
+   */
+   template <int D>
+   void CField<D,CUT>::associate(
+                             DeviceArray<cudaComplex,CUT>& arr, 
+                             int beginId, 
+                             IntVec<D> const & meshDimensions)
+   {
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
+      }
+      DeviceArray<cudaComplex,CUT>::associate(arr, beginId, size);
    }
 
    /*
@@ -83,39 +126,6 @@ namespace Prdc {
       DeviceArray<cudaComplex,CUT>::operator = (other);
 
       return *this;
-   }
-
-   /*
-   * Allocate the underlying C array sized for an associated mesh.
-   */
-   template <int D>
-   void CField<D,CUT>::allocate(IntVec<D> const & meshDimensions)
-   {
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         size *= meshDimensions[i];
-      }
-      DeviceArray<cudaComplex,CUT>::allocate(size);
-   }
-
-   /*
-   * Associate this object with a slice of another DeviceArray.
-   */
-   template <int D>
-   void CField<D,CUT>::associate(
-                             DeviceArray<cudaComplex,CUT>& arr, 
-                             int beginId, 
-                             IntVec<D> const & meshDimensions)
-   {
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         size *= meshDimensions[i];
-      }
-      DeviceArray<cudaComplex,CUT>::associate(arr, beginId, size);
    }
 
 }

@@ -77,11 +77,7 @@ namespace Rp {
    void BinaryStructureFactor<D,T>::setup()
    {
       allocate();
-
-      WaveList<D,T> const & waveList = AnalyzerT::system().waveList();
-      ConstHostArray<double,T> kSq(waveList.kSq());
-      DArray<bool> const & implicit = waveList.implicitInverse();
-      findWaveBunches(kSq, implicit);
+      setupWaveBunches();
    }
 
    /*
@@ -90,11 +86,9 @@ namespace Rp {
    template <int D, class T>
    void BinaryStructureFactor<D,T>::sample(long iStep)
    {
-      if (AnalyzerT::isAtInterval(iStep)) {
+      if (Analyzer<D,T>::isAtInterval(iStep)) {
          computeW();
-         wk_h_ = wk_d_;
-         computeS(wk_h_);
-	 wk_h_.dissociate();
+         computeS();
       }
    }
 
@@ -111,7 +105,7 @@ namespace Rp {
       // Compute and compute mesh dimensions
       Mesh<D> const & mesh = system().domain().mesh();
       IntVec<D> const & rMeshDimensions = mesh.dimensions();
-      FFTT::computeKMesh(rMeshDimensions, kMeshDimensions_, nWave_);
+      FFT<D,T>::computeKMesh(rMeshDimensions, kMeshDimensions_, nWave_);
 
       // If needed, allocate arrays indexed by wave id
       if (!wm_.isAllocated()){
@@ -140,20 +134,24 @@ namespace Rp {
    * Allocate and initialize data structures that involve wave bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::findWaveBunches(
-                                  ConstArray<double> const & kSq,
-                                  Array<bool> const & implicit)
+   void BinaryStructureFactor<D,T>::setupWaveBunches()
    {
-      UTIL_CHECK(kSq.capacity() == nWave_);
-      UTIL_CHECK(implicit.capacity() == nWave_);
-
-      // Sort waves in WaveList and set nBunch_
       WaveList<D,T>& waveList = system().waveList();
       UTIL_CHECK(waveList.isRealField());
+
+      // If necessary, compute KSq
       if (!waveList.hasKSq()) {
          waveList.computeKSq();
       }
       UTIL_CHECK(waveList.kSize() == nWave_);
+
+      // Create local references to kSq and implicit arrays
+      ConstHostArray<double,T> kSq(waveList.kSq());
+      DArray<bool> const & implicit = waveList.implicitInverse();
+      UTIL_CHECK(kSq.capacity() == nWave_);
+      UTIL_CHECK(implicit.capacity() == nWave_);
+
+      // Sort waves in WaveList and set nBunch_
       waveList.sortWaves();
       nBunch_ = waveList.nBunch();
       UTIL_CHECK(nBunch_ > 0);
@@ -282,8 +280,7 @@ namespace Rp {
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactor<D,T>::computeS(
-                                    ConstArray<typename T::Complex> const & wk)
+   void BinaryStructureFactor<D,T>::computeS()
    {
       // Preconditions
       UTIL_CHECK(isInitialized_);
@@ -295,7 +292,6 @@ namespace Rp {
       UTIL_CHECK(bunchValues_.capacity() >= m);
       UTIL_CHECK(waveBunchIds_.capacity() == nWave_);
       UTIL_CHECK(waveWeights_.capacity() == nWave_);
-      UTIL_CHECK(wk.capacity() == nWave_);
 
       // Initialize bunch average values to zero
       for (int ib = 0; ib < nBunch_; ++ib) {
@@ -309,11 +305,15 @@ namespace Rp {
       double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
       double b_ = 0.5 / (chi * vMonomer);
 
+      // Create const host copy wk_h_ of device array wk_d_
+      wk_h_ = wk_d_;
+      UTIL_CHECK(wk_h_.capacity() == nWave_);
+
       // Compute structure factors for all waves, add to bunchValues_
       double value;
       int ib;
       for (int iw = 0; iw < nWave_; ++iw) {
-         value = a_ * absSq( wk[iw] );
+         value = a_ * absSq( wk_h_[iw] );
          value -= b_;
          if (writeWaveData_) {
             waveAccumulators_[iw].sample(value);
@@ -321,6 +321,9 @@ namespace Rp {
          ib = waveBunchIds_[iw];
          bunchValues_[ib] += waveWeights_[iw] * value;
       }
+
+      // Release host array
+      wk_h_.dissociate();
 
       // Pass bunchValues_ to bunchAccumulators_
       for (ib = 0; ib < nBunch_; ++ib) {

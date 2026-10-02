@@ -48,13 +48,8 @@ namespace Rp {
    *
    * <b>Template parameters:</b>
    *
-   *    - D    : integer dimension of space, i.e., 1, 2, or 3
+   *    - D : integer dimension of space, i.e., 1, 2, or 3
    *    - T : backend identifier class (CPT or CUT)
-   *
-   * <b>Subclasses:</b>
-   * The FieldIo template is a base class for specializations of a
-   * template named FieldIo with the same two template parameters. Partial
-   * specializations are defined for T=CppTp<D> and T=CudaTp<D>.
    *
    * <b>Basis construction as side effect of reading field files:</b>
    * Every member function that reads fields from a file may construct a
@@ -65,13 +60,6 @@ namespace Rp {
    * symmetry-adapted basis has not yet been initialized, then the
    * readFieldHeader function will initialize the associated Basis<D> 
    * object using the unit cell parameters found in the field file header.
-   *
-   * <b> Pure virtual member functions </b>: This class template defines
-   * several pure virtual functions for which different implementations
-   * are required for Cpu and Cuda code. Cpu and Cuda implementations
-   * of these functions, which are defined in the Rpc::FieldIo<D> and
-   * Rpg::FieldIo<D> subclasses, generally differ because the Cuda 
-   * versions must explicitly transfer data between Cpu and Gpu memory.
    *
    * \ingroup Rp_Field_Module
    */
@@ -1010,7 +998,6 @@ namespace Rp {
       * \param field  field in r-grid form to be rescaled
       * \param factor  factor by which to multiply every field element
       */
-      virtual
       void scaleFieldRGrid(RField<D,T>& field, double factor) const;
 
       /**
@@ -1023,7 +1010,8 @@ namespace Rp {
       * \param fields  array of r-grid fields to be rescaled
       * \param factor  factor by which to multiply every field element
       */
-      void scaleFieldsRGrid(DArray< RField<D,T> > & fields, double factor) const;
+      void scaleFieldsRGrid(DArray< RField<D,T> > & fields, 
+		            double factor) const;
 
       /**
       * Multiply all fields in an r-grid field file by a scalar.
@@ -1040,7 +1028,7 @@ namespace Rp {
                             double factor) const;
 
       ///@}
-      /// \name Computing Estimated W Fields
+      /// \name Estimated W Fields
       ///@{
 
       /**
