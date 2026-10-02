@@ -1,7 +1,7 @@
-/*! \page developer_backend_page Computational Backends
+/*! \page developer_backend_page CUDA vs. C++ Backends
 
 \ref developer_container_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_test_page       (Next)
+\ref developer_test_page      (Next)
 <BR>
 
 The PSCF package builds two executable files, that are pscf_rpc and 
@@ -37,10 +37,12 @@ this system.
 <ol>
  <li> \subpage developer_backend_id_page </li>
  <li> \subpage developer_backend_own_page </li>
+ <li> \subpage developer_backend_build_page </li>
  <li> \subpage developer_backend_device_page </li>
  <li> \subpage developer_backend_math_page </li>
  <li> \subpage developer_backend_complex_page </li>
  <li> \subpage developer_backend_field_page </li>
+ <li> \subpage developer_backend_comm_page </li>
 </ol>
 
 

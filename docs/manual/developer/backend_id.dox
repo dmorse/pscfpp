@@ -99,31 +99,6 @@ identify the chosen backend at run time.  In template code that uses a
 template parameter T to represent a backend identifier class, the value 
 of T::id can be tested to identify the backend at run time.
 
-\section developer_backend_id_build_sec Conditional Compilation
-
-When PSCF is compiled, instantiation of template specializations that 
-take particular backend identifier classes as template arguments is 
-controlled by a system of makefile variables and associated C/C++
-preprocessor macros:
-
- - Source files that use a GPU are all compiled if and only if only if 
-   the preprocessor macro PSCF_CUDA is defined. Among these are all 
-   source files that define class template specializations that take 
-   a class template identifier argument T=Pscf::CUT. The pscf_rpg 
-   main program is also compiled if and only if PSCF_CUDA is defined.
-
- - All template specializations with T=Pscf::CPT, which are designed
-   to be used only with a C++ backend, are instantiated if and only 
-   if the preprocessor macro PSCF_CPP is defined. The pscf_rpc main 
-   program is also compiled if and only if PSCF_CPP is defined.
-
-When instantiating class templates that take the spatial dimension D 
-as a template parameter, specializations are explicitly instantiated 
-for D=1, 2, and 3, for each possible value of T and any other template
-parameters.  When both C++ and Cuda backends are enabled, by defining 
-both PSCF_CUDA and PSCF_CPP, 6 specializations are instantiated for
-each class template with template parameter D and T.
-
 <BR>
 \ref developer_backend_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_own_page  (Next)    &nbsp; &nbsp; &nbsp; &nbsp;

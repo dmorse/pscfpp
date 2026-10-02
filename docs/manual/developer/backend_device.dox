@@ -1,6 +1,6 @@
 /*! \page developer_backend_device_page Device Arrays
 
-\ref developer_backend_own_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_build_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_math_page   (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
@@ -56,7 +56,7 @@ when using a CUDA backend (T=CUT) but that should allocated on the CPU
 when using a C++ backend (T=CPT). 
 
 <BR>
-\ref developer_backend_own_page     (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_build_page   (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_page         (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_math_page    (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 
