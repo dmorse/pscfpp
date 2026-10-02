@@ -1,5 +1,5 @@
-#ifndef PSCF_CPU_VEC_OP_TEST_H
-#define PSCF_CPU_VEC_OP_TEST_H
+#ifndef PSCF_CPP_VEC_OP_TEST_H
+#define PSCF_CPP_VEC_OP_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -17,7 +17,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CpuVecOpTest : public UnitTest
+class CppVecOpTest : public UnitTest
 {
 
 private:
@@ -732,20 +732,20 @@ public:
 
 };
 
-TEST_BEGIN(CpuVecOpTest)
-TEST_ADD(CpuVecOpTest, testEq)
-TEST_ADD(CpuVecOpTest, testAdd)
-TEST_ADD(CpuVecOpTest, testSub)
-TEST_ADD(CpuVecOpTest, testMul)
-TEST_ADD(CpuVecOpTest, testDiv)
-TEST_ADD(CpuVecOpTest, testAddEq)
-TEST_ADD(CpuVecOpTest, testSubEq)
-TEST_ADD(CpuVecOpTest, testMulEq)
-TEST_ADD(CpuVecOpTest, testDivEq)
-TEST_ADD(CpuVecOpTest, testExp)
-TEST_ADD(CpuVecOpTest, testSq)
-TEST_ADD(CpuVecOpTest, testMisc)
+TEST_BEGIN(CppVecOpTest)
+TEST_ADD(CppVecOpTest, testEq)
+TEST_ADD(CppVecOpTest, testAdd)
+TEST_ADD(CppVecOpTest, testSub)
+TEST_ADD(CppVecOpTest, testMul)
+TEST_ADD(CppVecOpTest, testDiv)
+TEST_ADD(CppVecOpTest, testAddEq)
+TEST_ADD(CppVecOpTest, testSubEq)
+TEST_ADD(CppVecOpTest, testMulEq)
+TEST_ADD(CppVecOpTest, testDivEq)
+TEST_ADD(CppVecOpTest, testExp)
+TEST_ADD(CppVecOpTest, testSq)
+TEST_ADD(CppVecOpTest, testMisc)
 
-TEST_END(CpuVecOpTest)
+TEST_END(CppVecOpTest)
 
 #endif

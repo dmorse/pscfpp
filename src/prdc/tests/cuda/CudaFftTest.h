@@ -10,6 +10,7 @@
 #include <prdc/field/cuda/RFieldDft.h>
 #include <prdc/field/cuda/CField.h>
 
+#include <pscf/backend/cuda/ConstHostArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/math/IntVec.h>
 
@@ -73,19 +74,23 @@ void CudaFftTest::testTransformReal1D()
    IntVec<1> d;
    d[0] = n;
 
-   // Instantiate and allocate objects
+   // Allocate device arrays
    Prdc::RField<1,CUT> rField(d);
    Prdc::RFieldDft<1,CUT> kField(d);
-   HostArray<cudaReal,CUT> rField1_h(rSize), 
-                        rField2_h(rSize), 
-                        rField3_h(rSize);
-   HostArray<cudaComplex,CUT> kField1_h(kField.capacity()), 
-                           kField2_h(kField.capacity());
+   int kSize = kField.capacity();
+
+   // Allocate non-const host array
+   HostArray<cudaReal,CUT> rField1_h;
+   rField1_h.associate(rField);
+
+   // Allocate const host arrays
+   ConstHostArray<cudaReal,CUT> rField2_h(rSize), rField3_h(rSize);
+   ConstHostArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
 
    Prdc::FFT<1,CUT> v;
    v.setup(d);
 
-   // Initialize input data in host memory 
+   // Initialize input data in host array rField1_h
    double x;
    double twoPi = 2.0*Constants::Pi;
    for (int i = 0; i < n; ++i) {
@@ -132,7 +137,7 @@ void CudaFftTest::testTransformReal2D()
 {
    printMethod(TEST_FUNC);
    
-   // create mesh
+   // Create mesh
    int n1 = 12;
    int n2 = 32;
    int rSize = n1*n2;
@@ -140,19 +145,22 @@ void CudaFftTest::testTransformReal2D()
    d[0] = n1;
    d[1] = n2;
 
-   // Instantiate and allocate objects
+   // Allocate device arrays
    Prdc::RField<2,CUT> rField(d);
    Prdc::RFieldDft<2,CUT> kField(d);
-   HostArray<cudaReal,CUT> rField1_h(rSize), 
-                        rField2_h(rSize), 
-                        rField3_h(rSize);
-   HostArray<cudaComplex,CUT> kField1_h(kField.capacity()), 
-                           kField2_h(kField.capacity());
+   int kSize = kField.capacity();
+
+   // Instantiate non-const host array
+   HostArray<cudaReal,CUT> rField1_h(rSize);
+
+   // Instantiate const host array
+   ConstHostArray<cudaReal,CUT>    rField2_h(rSize), rField3_h(rSize);
+   ConstHostArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
 
    Prdc::FFT<2,CUT> v;
    v.setup(d);
 
-   // Initialize input data in host memory 
+   // Initialize input data in host array rField1_h
    int rank = 0;
    double x, y, cx, sy;
    double twoPi = 2.0*Constants::Pi;
@@ -216,17 +224,15 @@ void CudaFftTest::testTransformReal3D()
    d[1] = n2;
    d[2] = n3;
 
-   // Instantiate and allocate objects
+   // Allocate Field arrays on device
    Prdc::RField<3,CUT> rField(d);
    Prdc::RFieldDft<3,CUT> kField(d);
-   HostArray<cudaReal,CUT> rField1_h(rSize), 
-                        rField2_h(rSize), 
-                        rField3_h(rSize);
-   HostArray<cudaComplex,CUT> kField1_h(kField.capacity()), 
-                           kField2_h(kField.capacity());
+   int kSize = kField.capacity();
 
-   Prdc::FFT<3,CUT> v;
-   v.setup(d);
+   // Instantiate and allocate objects
+   HostArray<cudaReal,CUT> rField1_h(rSize);
+   ConstHostArray<cudaReal,CUT> rField2_h(rSize), rField3_h(rSize);
+   ConstHostArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
 
    // Initialize input data in host memory 
    int rank = 0;
@@ -243,6 +249,8 @@ void CudaFftTest::testTransformReal3D()
    rField = rField1_h;
 
    // Transform forward, r to k
+   Prdc::FFT<3,CUT> v;
+   v.setup(d);
    v.forwardTransform(rField, kField);
 
    // Save a copy of rField on host
@@ -690,13 +698,15 @@ void CudaFftTest::testBatchedTransformReal3D()
    // Number of FFTs in batch
    int batchSize = 3;
 
-   // Instantiate and allocate objects
+   // Allocate device arrrays
    DeviceArray<cudaReal,CUT> rField(batchSize * rSize);
    DeviceArray<cudaComplex,CUT> kField(batchSize * kSize);
-   HostArray<cudaReal,CUT> rField1_h(rField.capacity()), 
-                        rField2_h(rField.capacity()), 
-                        rField3_h(rField.capacity());
-   HostArray<cudaComplex,CUT> kField_h(kField.capacity());
+
+   // Instantiate and allocate objects
+   HostArray<cudaReal,CUT> rField1_h(rField.capacity());
+   ConstHostArray<cudaReal,CUT> rField2_h(rField.capacity()), 
+	                        rField3_h(rField.capacity());
+   ConstHostArray<cudaComplex,CUT> kField_h(kField.capacity());
 
    Prdc::FFTBatched<3> v;
    v.setup(d, batchSize);
@@ -716,7 +726,7 @@ void CudaFftTest::testBatchedTransformReal3D()
       }
    }
 
-   // Copy data to device
+   // Copy input data to device
    rField = rField1_h;
 
    // First, calculate FFT using FFT<3> object
@@ -726,7 +736,7 @@ void CudaFftTest::testBatchedTransformReal3D()
    rFieldAlt.associate(rField, 0, d);
    Prdc::RFieldDft<3,CUT> kFieldAlt(d);
    altFFT.forwardTransform(rFieldAlt, kFieldAlt);
-   HostArray<cudaComplex,CUT> kFieldAlt_h(kFieldAlt.capacity());
+   ConstHostArray<cudaComplex,CUT> kFieldAlt_h(kFieldAlt.capacity());
    kFieldAlt_h = kFieldAlt; 
 
    // Transform forward, r to k

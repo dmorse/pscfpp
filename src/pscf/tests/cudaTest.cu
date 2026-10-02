@@ -11,7 +11,7 @@
 #include "floryHuggins/FloryHugginsTestComposite.h"
 #include "correlation/CorrelationTestComposite.h"
 #include "mesh/MeshTestComposite.h"
-#include "cpu/CpuTestComposite.h"
+#include "cpp/CppTestComposite.h"
 #include "cuda/CudaTestComposite.h"
 
 #include <util/param/BracketPolicy.h>
@@ -25,7 +25,7 @@ addChild(new InteractionTestComposite, "interaction/");
 addChild(new FloryHugginsTestComposite, "floryHuggins/");
 addChild(new CorrelationTestComposite, "correlation/");
 addChild(new MeshTestComposite, "mesh/");
-addChild(new CpuTestComposite, "cpu/");
+addChild(new CppTestComposite, "cpp/");
 addChild(new CudaTestComposite, "cuda/");
 TEST_COMPOSITE_END
 

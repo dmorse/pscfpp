@@ -119,9 +119,8 @@ namespace Rp {
       // Perform computation on host
       computePrefactor(prefactor_h);
 
-      // Copy to device and dissociate host array
+      // Copy to device 
       prefactor_ = prefactor_h;
-      prefactor_h.dissociate();
    }
 
    /*

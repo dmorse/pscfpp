@@ -19,12 +19,14 @@ namespace Util {
 }
 namespace Pscf {
    class DeviceMemory;
-   template <typename Data, typename T> class DeviceArray;
 }
 
 namespace Pscf {
 
    using namespace Util;
+
+   // Declare primary template
+   template <typename Data, typename T> class DeviceArray;
 
    /**
    * Dynamic array on the GPU device with aligned data.
@@ -92,6 +94,9 @@ namespace Pscf {
    * must thus be released, by calling the dissociate() member function
    * of each data user, before the data owner can be safely destroyed.
    *
+   * Assignment from an Array<Data> copies all elements of an array from
+   * CPU to GPU memory.
+   *
    * \ingroup Pscf_Backend_Cuda_Module
    */
    template <typename Data>
@@ -100,10 +105,19 @@ namespace Pscf {
 
    public:
 
+      // Public typename aliases
+
       /**
       * Data type of each element.
       */
       typedef Data ValueType;
+
+      /**
+      * Backend identifier class type.
+      */
+      using BackendIdClass = CUT;
+
+      // Public member functions
 
       /**
       * Default constructor.
@@ -166,7 +180,7 @@ namespace Pscf {
       * \param beginId  index in the parent array at which this array starts
       * \param capacity  number of elements associated with this container
       */
-      void associate(DeviceArray<Data,CUT>& arr, 
+      void associate(DeviceArray<Data,CUT>& arr,
                      int beginId, int capacity);
 
       /**
@@ -216,31 +230,37 @@ namespace Pscf {
       void addReference(CountedReference& reference);
 
       /**
-      * Assignment operator, assign from other DeviceArray<Data,CUT>. 
+      * Assignment operator, assign from other DeviceArray<Data,CUT>.
       *
-      * Performs a deep copy, by copying values of all elements from
-      * device memory to device memory.
+      * Performs a deep copy, by copying values of all elements.
       *
       * This function will allocate memory if this (LHS) array is not
       * allocated.  If this array is arleady allocated, it must have the
       * same capacity as the other (RHS) DeviceArray<Data,CUT>.
       *
-      * \param other DeviceArray<Data,CUT> on rhs of assignent (input)
+      * \throw Exception if RHS other array is not allocated
+      * \throw Exception if RHS and LHS have unequal nonzero capacities
+      *
+      * \param other  DeviceArray<Data,CUT> on RHS of assignent (input)
       */
       virtual
-      DeviceArray<Data,CUT>& operator=(DeviceArray<Data,CUT> const& other);
+      DeviceArray<Data,CUT>& 
+      operator = (DeviceArray<Data,CUT> const& other);
 
       /**
       * Assignment operator, assignment from Util::Array<Data> host array.
       *
-      * Performs a deep copy from a RHS Array<Data> host array to this 
-      * LHS DeviceArray<Data,CUT>, by copying underlying C array from host 
+      * Performs a deep copy from a RHS Array<Data> host array to this
+      * LHS DeviceArray<Data,CUT>, by copying underlying C array from host
       * memory to device memory.
       *
-      * If this (LHS) DeviceArray<Data,CUT> is not allocated on entry, 
+      * If this (LHS) DeviceArray<Data,CUT> is not allocated on entry,
       * memory will be allocated before data is copied.  If this LHS object
-      * is already allocated, it must have the same capacity as the RHS 
+      * is already allocated, it must have the same capacity as the RHS
       * Array<Data>.
+      *
+      * \throw Exception if RHS other array is not allocated
+      * \throw Exception if RHS and LHS have unequal nonzero capacities
       *
       * \param other  Array<Data> on RHS of assignent (input)
       */
@@ -304,8 +324,8 @@ namespace Pscf {
    };
 
    // Explicit instantiation declarations
-   extern template class DeviceArray<cudaReal,CUT>; 
-   extern template class DeviceArray<cudaComplex,CUT>; 
+   extern template class DeviceArray<cudaReal,CUT>;
+   extern template class DeviceArray<cudaComplex,CUT>;
 
    // Inline member function definitions
 

@@ -58,15 +58,19 @@ public:
       IntVec<1> const & dimensions = system.domain().mesh().dimensions();
       int nMonomer = system.mixture().nMonomer();
       double vMonomer = system.mixture().vMonomer();
-      
-      // Cos pressure field perturbation per chain: A * cos(2pi * f* i/meshSize)
+     
+      // Allocate fields on device
       RField<1,CUT> cosF;
       RFieldDft<1,CUT> cosFK;
       cosF.allocate(dimensions);
       cosFK.allocate(dimensions);
+
+      // Cos pressure field perturbation per chain: A * cos(2pi * f* i/meshSize)
       HostArray<cudaReal,CUT> cosF_h;
-      cosF_h.allocate(meshSize);
-      PolymerSpecies<cudaReal> const & polymer = system.mixture().polymerSpecies(0);
+      //cosF_h.allocate(meshSize);
+      cosF_h.associate(cosF);
+      PolymerSpecies<cudaReal> 
+	             const & polymer = system.mixture().polymerSpecies(0);
       for (int k = 0; k < meshSize; k++){
          cosF_h[k] = A * std::cos(2 * M_PI * k * f / meshSize);
          

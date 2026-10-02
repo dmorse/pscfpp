@@ -6,6 +6,9 @@
 
 #include <prdc/field/cpp/RField.h>
 
+#include <pscf/backend/cpp/ConstHostArray.h>
+#include <pscf/backend/cpp/HostArray.h>
+
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
 #include <util/archives/MemoryCounter.h>
@@ -34,6 +37,7 @@ public:
    void testSubscript();
    void testCopyConstructor();
    void testAssignment();
+   void testConstHostArray();
    void testSerialize1Memory();
    void testSerialize2Memory();
    void testSerialize1File();
@@ -161,6 +165,56 @@ void CpuRFieldTest::testAssignment()
       TEST_ASSERT(v[2] == 30.0);
       TEST_ASSERT(u[0] == 10.0);
       TEST_ASSERT(u[2] == 30.0);
+   }
+} 
+
+void CpuRFieldTest::testConstHostArray()
+{
+   printMethod(TEST_FUNC);
+   {
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+
+      // Allocate and initialize w
+      RField<3,CPT> w;
+      w.allocate(d);
+      int capacity = w.capacity();
+      for (int i=0; i < capacity; i++ ) {
+         w[i] = (i+1)*10.0;
+      }
+
+      // Create const reference v
+      RField<3,CPT> const & v = w;
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(capacity == 24);
+      TEST_ASSERT(v.meshDimensions() == d);
+      TEST_ASSERT(v[0] == 10.0);
+      TEST_ASSERT(v[2] == 30.0);
+  
+      // Test copy construction of u from const reference v
+      ConstHostArray<double,CPT> u(v);
+      TEST_ASSERT(u.isAllocated() );
+      TEST_ASSERT(u.capacity() == capacity);
+      TEST_ASSERT(u[0] == 10.0);
+      TEST_ASSERT(u[2] == 30.0);
+      TEST_ASSERT(v[0] == 10.0);
+      TEST_ASSERT(v[2] == 30.0);
+
+      // Dissociate from v
+      u.dissociate();
+      TEST_ASSERT(!u.isAllocated() );
+      TEST_ASSERT(u.capacity() == 0);
+
+      // Test assignment from v
+      u = v;
+      TEST_ASSERT(u.isAllocated() );
+      TEST_ASSERT(u.capacity() == capacity);
+      TEST_ASSERT(u[0] == 10.0);
+      TEST_ASSERT(u[2] == 30.0);
+      TEST_ASSERT(v[0] == 10.0);
+   
    }
 } 
 
@@ -441,6 +495,7 @@ TEST_ADD(CpuRFieldTest, testAllocate3)
 TEST_ADD(CpuRFieldTest, testSubscript)
 TEST_ADD(CpuRFieldTest, testCopyConstructor)
 TEST_ADD(CpuRFieldTest, testAssignment)
+TEST_ADD(CpuRFieldTest, testConstHostArray)
 TEST_ADD(CpuRFieldTest, testSerialize1Memory)
 TEST_ADD(CpuRFieldTest, testSerialize2Memory)
 TEST_ADD(CpuRFieldTest, testSerialize1File)

@@ -1,5 +1,5 @@
-#ifndef PSCF_CPU_DEVICE_ARRAY_TEST_H
-#define PSCF_CPU_DEVICE_ARRAY_TEST_H
+#ifndef PSCF_CPP_DEVICE_ARRAY_TEST_H
+#define PSCF_CPP_DEVICE_ARRAY_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -17,7 +17,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CpuDeviceArrayTest : public UnitTest
+class CppDeviceArrayTest : public UnitTest
 {
 private:
 
@@ -55,7 +55,7 @@ public:
 };
 
 
-void CpuDeviceArrayTest::testDefaultConstructor()
+void CppDeviceArrayTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
@@ -63,11 +63,10 @@ void CpuDeviceArrayTest::testDefaultConstructor()
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
       TEST_ASSERT(!v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
    }
 }
 
-void CpuDeviceArrayTest::testAllocateConstructor()
+void CppDeviceArrayTest::testAllocateConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
@@ -76,7 +75,6 @@ void CpuDeviceArrayTest::testAllocateConstructor()
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
@@ -90,7 +88,7 @@ void CpuDeviceArrayTest::testAllocateConstructor()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testAllocate()
+void CppDeviceArrayTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
@@ -102,7 +100,6 @@ void CpuDeviceArrayTest::testAllocate()
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
@@ -116,7 +113,7 @@ void CpuDeviceArrayTest::testAllocate()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testSubscript()
+void CppDeviceArrayTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -135,7 +132,7 @@ void CpuDeviceArrayTest::testSubscript()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testSubscriptCmplx()
+void CppDeviceArrayTest::testSubscriptCmplx()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -156,7 +153,7 @@ void CpuDeviceArrayTest::testSubscriptCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testAssociate()
+void CppDeviceArrayTest::testAssociate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -170,7 +167,6 @@ void CpuDeviceArrayTest::testAssociate()
       u.associate(v, 1, capacity - 1);
       TEST_ASSERT(u.capacity() == capacity - 1);
       TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isAssociated());
       TEST_ASSERT(!u.isOwner());
 
       for (int i=0; i < capacity; i++ ) {
@@ -193,20 +189,18 @@ void CpuDeviceArrayTest::testAssociate()
       u.dissociate();
       TEST_ASSERT(u.capacity() == 0);
       TEST_ASSERT(!u.isAllocated());
-      TEST_ASSERT(!u.isAssociated());
       TEST_ASSERT(!u.isOwner());
 
       v.deallocate();
       TEST_ASSERT(v.capacity() == 0);
       TEST_ASSERT(!v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
       TEST_ASSERT(!v.isOwner());
 
    }
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testAssignFromHost()
+void CppDeviceArrayTest::testAssignFromHost()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -222,15 +216,6 @@ void CpuDeviceArrayTest::testAssignFromHost()
       v.associate(u);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
-      TEST_ASSERT(v.isAssociated());
-
-      // Assignment should do nothing in this case
-      u = v;
-      TEST_ASSERT(u.capacity() == capacity);
-      TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isOwner());
-      TEST_ASSERT(v.isAllocated());
-      TEST_ASSERT(v.isAssociated());
 
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
@@ -240,39 +225,43 @@ void CpuDeviceArrayTest::testAssignFromHost()
       TEST_ASSERT(eq(v[1], 20.0));
       TEST_ASSERT(eq(v[2], 30.0));
 
-      TEST_ASSERT(eq(u[0], 10.0));
-      TEST_ASSERT(eq(u[1], 20.0));
-      TEST_ASSERT(eq(u[2], 30.0));
-
       u[1] = 25.0;
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 25.0));
       TEST_ASSERT(eq(u[1], 25.0));
+
+      // Assignment destroys the association
+      u = v;
+      TEST_ASSERT(u.capacity() == capacity);
+      TEST_ASSERT(u.isAllocated());
+      TEST_ASSERT(u.isOwner());
+      TEST_ASSERT(v.capacity() == capacity);
+      TEST_ASSERT(v.isAllocated());
+
+      v.dissociate();
+      TEST_ASSERT(v.capacity() == 0);
+      TEST_ASSERT(!v.isAllocated());
+
+      TEST_ASSERT(eq(u[0], 10.0));
+      TEST_ASSERT(eq(u[1], 25.0));
+      TEST_ASSERT(eq(u[2], 30.0));
+
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
       // u.deallocate(); // Intentional error
 
-      v.dissociate();
-      TEST_ASSERT(v.capacity() == 0);
-      TEST_ASSERT(!v.isAllocated());
-      TEST_ASSERT(!v.isAssociated());
-      TEST_ASSERT(!v.isOwner());
-      TEST_ASSERT(u.isAllocated());
-      TEST_ASSERT(u.isOwner());
-      TEST_ASSERT(!u.isAssociated());
 
       u.deallocate();
       TEST_ASSERT(u.capacity() == 0);
       TEST_ASSERT(!u.isAllocated());
-      TEST_ASSERT(!u.isAssociated());
       TEST_ASSERT(!u.isOwner());
 
    }
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testCopyConstructor()
+void CppDeviceArrayTest::testCopyConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -282,7 +271,6 @@ void CpuDeviceArrayTest::testCopyConstructor()
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
-      TEST_ASSERT(!v.isAssociated());
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
@@ -293,7 +281,6 @@ void CpuDeviceArrayTest::testCopyConstructor()
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isOwner());
-      TEST_ASSERT(!u.isAssociated());
 
       TEST_ASSERT(eq(v[0], 10.0));
       TEST_ASSERT(eq(v[1], 20.0));
@@ -314,7 +301,7 @@ void CpuDeviceArrayTest::testCopyConstructor()
    TEST_ASSERT(Memory::total() == (long int)memory_);
 }
 
-void CpuDeviceArrayTest::testCopyConstructorCmplx()
+void CppDeviceArrayTest::testCopyConstructorCmplx()
 {
    printMethod(TEST_FUNC);
    {
@@ -334,7 +321,6 @@ void CpuDeviceArrayTest::testCopyConstructorCmplx()
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner());
-      TEST_ASSERT(!u.isAssociated());
       TEST_ASSERT(real(v[0]) == 10.0 );
       TEST_ASSERT(imag(v[1]) == 20.1 );
       TEST_ASSERT(real(v[2]) == 30.0 );
@@ -347,7 +333,7 @@ void CpuDeviceArrayTest::testCopyConstructorCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testAssignment()
+void CppDeviceArrayTest::testAssignment()
 {
    printMethod(TEST_FUNC);
 
@@ -357,14 +343,12 @@ void CpuDeviceArrayTest::testAssignment()
       TEST_ASSERT(v.capacity() == 3 );
       TEST_ASSERT(v.isAllocated() );
       TEST_ASSERT(v.isOwner() );
-      TEST_ASSERT(!v.isAssociated() );
 
       DeviceArray<Data,CPT> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner() );
-      TEST_ASSERT(!u.isAssociated() );
 
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10;
@@ -375,7 +359,6 @@ void CpuDeviceArrayTest::testAssignment()
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner() );
-      TEST_ASSERT(!u.isAssociated() );
       TEST_ASSERT(v[0] == 10.0);
       TEST_ASSERT(v[2] == 30.0);
       TEST_ASSERT(u[0] == 10.0);
@@ -384,7 +367,7 @@ void CpuDeviceArrayTest::testAssignment()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testAssignmentCmplx()
+void CppDeviceArrayTest::testAssignmentCmplx()
 {
    printMethod(TEST_FUNC);
 
@@ -418,7 +401,7 @@ void CpuDeviceArrayTest::testAssignmentCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testIterator()
+void CppDeviceArrayTest::testIterator()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT((int)Memory::total() == 0);
@@ -449,7 +432,7 @@ void CpuDeviceArrayTest::testIterator()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testBaseClassReference()
+void CppDeviceArrayTest::testBaseClassReference()
 {
    printMethod(TEST_FUNC);
    {
@@ -466,7 +449,7 @@ void CpuDeviceArrayTest::testBaseClassReference()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuDeviceArrayTest::testSerialize1Memory()
+void CppDeviceArrayTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
@@ -547,7 +530,7 @@ void CpuDeviceArrayTest::testSerialize1Memory()
 
 }
 
-void CpuDeviceArrayTest::testSerialize2Memory()
+void CppDeviceArrayTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
@@ -588,7 +571,7 @@ void CpuDeviceArrayTest::testSerialize2Memory()
    }
 }
 
-void CpuDeviceArrayTest::testSerialize1File()
+void CppDeviceArrayTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
@@ -641,7 +624,7 @@ void CpuDeviceArrayTest::testSerialize1File()
    }
 }
 
-void CpuDeviceArrayTest::testSerialize2File()
+void CppDeviceArrayTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
@@ -697,26 +680,26 @@ void CpuDeviceArrayTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(CpuDeviceArrayTest)
-TEST_ADD(CpuDeviceArrayTest, testDefaultConstructor)
-TEST_ADD(CpuDeviceArrayTest, testAllocateConstructor)
-TEST_ADD(CpuDeviceArrayTest, testAllocate)
-TEST_ADD(CpuDeviceArrayTest, testSubscript)
-TEST_ADD(CpuDeviceArrayTest, testSubscriptCmplx)
-TEST_ADD(CpuDeviceArrayTest, testAssociate)
-TEST_ADD(CpuDeviceArrayTest, testAssignFromHost)
-TEST_ADD(CpuDeviceArrayTest, testCopyConstructor)
-TEST_ADD(CpuDeviceArrayTest, testCopyConstructorCmplx)
-TEST_ADD(CpuDeviceArrayTest, testAssignment)
-TEST_ADD(CpuDeviceArrayTest, testAssignmentCmplx)
-TEST_ADD(CpuDeviceArrayTest, testIterator)
-TEST_ADD(CpuDeviceArrayTest, testBaseClassReference)
+TEST_BEGIN(CppDeviceArrayTest)
+TEST_ADD(CppDeviceArrayTest, testDefaultConstructor)
+TEST_ADD(CppDeviceArrayTest, testAllocateConstructor)
+TEST_ADD(CppDeviceArrayTest, testAllocate)
+TEST_ADD(CppDeviceArrayTest, testSubscript)
+TEST_ADD(CppDeviceArrayTest, testSubscriptCmplx)
+TEST_ADD(CppDeviceArrayTest, testAssociate)
+TEST_ADD(CppDeviceArrayTest, testAssignFromHost)
+TEST_ADD(CppDeviceArrayTest, testCopyConstructor)
+TEST_ADD(CppDeviceArrayTest, testCopyConstructorCmplx)
+TEST_ADD(CppDeviceArrayTest, testAssignment)
+TEST_ADD(CppDeviceArrayTest, testAssignmentCmplx)
+TEST_ADD(CppDeviceArrayTest, testIterator)
+TEST_ADD(CppDeviceArrayTest, testBaseClassReference)
 
-TEST_ADD(CpuDeviceArrayTest, testSerialize1Memory)
-TEST_ADD(CpuDeviceArrayTest, testSerialize2Memory)
-TEST_ADD(CpuDeviceArrayTest, testSerialize1File)
-TEST_ADD(CpuDeviceArrayTest, testSerialize2File)
+TEST_ADD(CppDeviceArrayTest, testSerialize1Memory)
+TEST_ADD(CppDeviceArrayTest, testSerialize2Memory)
+TEST_ADD(CppDeviceArrayTest, testSerialize1File)
+TEST_ADD(CppDeviceArrayTest, testSerialize2File)
 
-TEST_END(CpuDeviceArrayTest)
+TEST_END(CppDeviceArrayTest)
 
 #endif

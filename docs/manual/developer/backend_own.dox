@@ -1,0 +1,112 @@
+/*! \page developer_backend_own_page Ownership Hierarchy
+
+\ref developer_backend_id_page     (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_build_page  (Next)    &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Each executable program created by the PSCF package is designed 
+using a hierarchical system of object ownership. All but one of the 
+objects used in a PSCF program is a "child" that is owned by an instance 
+of some higher-level "parent" class.  In this system, each "child" object 
+is either a member variable of its parent, or a dynamically allocated 
+object that is accessed through a pointer that is a member variable of 
+the parent object. Each parent is responsible for creating and 
+destroying its children.
+
+The Pscf::Rp namespace contains a large number of definitions for class
+templates that take the dimension of space, D, and a backend identifer 
+class as template parameters. Throughout this namespace, the same
+arguments for these two template parameters are used throughout objects 
+the ownership hierarchy of objects used by a executable program.
+An instance of a class template specialization with a specific pair 
+of arguments for D and T may own children that are instances of 
+other template specializations with the same values for these two
+template arguments, and may be a child of a parent that is an instance 
+of yet another class template specialization with the same arguments
+of these parameters.
+
+\section developer_backend_own_system_sec System class
+
+The top of the ownership hierarchy used by the pscf_rpc and pscf_rpg
+programs is an instance of a specialization of the Pscf::Rp::System 
+class template.  The top-level object used by the pscf_rpc program is 
+an instance of a specialization of this template  with T=Pscf::CPT and 
+D=1, 2, or 3, while the top-level object used by pscf_rpc program is 
+an instance of a specialization with T=Pscf::CUT.  
+
+A value for the integer D is passed to the pscf_rpc and pscf_rpg programs 
+as a command line parameter, as the parameter of command line option -d.  
+Thus, for example, if the pscf_rpg program is invoked with a command line 
+option "-d 3", as
+\code
+   pscf_rpg -d 3 -p param -c command
+\endcode
+then this program constructs an instance of the class 
+\code
+   Pscf::Rp::System \<3, CUT\>
+\endcode
+Member functions of this top-level System object are then invoked to 
+read the parameter and command files, which are given in the above 
+example as files named "param" and "command". 
+
+\section developer_backend_own_children_sec Top-Level Children 
+
+An instance of System \<D,T\> with a specific choice of values for the 
+template parameters D and T directly or indirectly owns instances of 
+many other class template specializations that all use the same 
+arguments for these two template parameters. All of these objects in
+the hierarchy of objects used by a particular executable are thereby
+configured at compile time to use the same computational backend, and 
+to treat systems with the same spatial dimension D.
+
+The creation of separate template specializations for models with 
+different values of D is used primarily for SCFT calculations, for which 
+on might use D=1 to treat a lamellar phase or D=2 to treat a 2D hexagonal 
+phase. PS-FTS simulations generally use a value D=3, in order to allow 
+the fluctuating fields to depends on three spatial coordinates.
+
+The direct children of an instance of System \<D,T\> include instances 
+of the following class template specializations:
+    - Pscf::Rp::Mixture \<D,T\>
+    - Pscf::Rp::Domain \<D,T\>
+    - Pscf::Rp::CFields \<D,T\>
+    - Pscf::Rp::WFields \<D,T\>
+
+Several of these top-level children are discussed separately below:
+
+<b> Mixture </b>:
+An instance of Pscf::Rp::Mixture \<D,T\> owns a set of children that each 
+solve the modified diffusion equation for particular molecular species. 
+Among these are objects associated with particular block polymer species, 
+which are instances of Pscf::Rp::Polymer \<D,T\>, and other objects 
+associated with particular solvent species, which are instances of 
+Pscf::Rp::Solvent \<D,T\>).  Each instance of Pscf::Rp::Polymer \<D,T\> 
+has a set of child objects associated with different blocks within a block 
+polymer, which are instances of Rp::Block \<D,T\>, as well as objects 
+associated with propagators, which are instances of 
+Pscf::Rp::Propagator \<D,T\>. Each propagator is associated with traversal 
+of a block in one of two possible directions. 
+
+<b> Domain </b>:
+An instance of Pscf::Rp::Domain \<D,T\> owns an instance of 
+Pscf::Prdc::UnitCell \<D,T\> that contains information about the periodic 
+simulation unit cell, and instance of Pscf::Mesh \<D\> that defines the
+periodic mesh used for all numerical calculations. This "Domain" object 
+also owns owns several other children that contain information about 
+space group symmetries and symmetry adapted basis functions, which are 
+used in SCFT calculations that search for solutions with a specified 
+space group symmetry. 
+
+<b> WFields </b>:
+An instance of Pscf::Rp::WFields \<D,T\> owns a set of objects that store 
+chemical potential fields associated with different monomer types. 
+
+<b> CFields </b>:
+An instance of Pscf::Rp::CFields \<D,T\> owns a set of objects that store 
+monomer concentration fields associated with different monomer types. 
+
+<BR>
+\ref developer_backend_page        (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_build_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FFTW_D_ARRAY_TEST_H
-#define PRDC_CPU_FFTW_D_ARRAY_TEST_H
+#ifndef PRDC_CPP_FFTW_D_ARRAY_TEST_H
+#define PRDC_CPP_FFTW_D_ARRAY_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -15,7 +15,7 @@
 using namespace Util;
 using namespace Pscf; 
 
-class CpuFftwDArrayTest : public UnitTest 
+class CppFftwDArrayTest : public UnitTest 
 {
 
 private:
@@ -39,7 +39,7 @@ public:
 };
 
 
-void CpuFftwDArrayTest::testConstructor()
+void CppFftwDArrayTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
@@ -49,7 +49,7 @@ void CpuFftwDArrayTest::testConstructor()
    }
 } 
 
-void CpuFftwDArrayTest::testAllocate()
+void CppFftwDArrayTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    {
@@ -60,7 +60,7 @@ void CpuFftwDArrayTest::testAllocate()
    }
 } 
 
-void CpuFftwDArrayTest::testSubscript()
+void CppFftwDArrayTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    {
@@ -75,7 +75,7 @@ void CpuFftwDArrayTest::testSubscript()
    }
 } 
 
-void CpuFftwDArrayTest::testSerialize1Memory()
+void CppFftwDArrayTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
@@ -156,7 +156,7 @@ void CpuFftwDArrayTest::testSerialize1Memory()
 
 }
 
-void CpuFftwDArrayTest::testSerialize2Memory()
+void CppFftwDArrayTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
@@ -197,7 +197,7 @@ void CpuFftwDArrayTest::testSerialize2Memory()
    }
 }
 
-void CpuFftwDArrayTest::testSerialize1File()
+void CppFftwDArrayTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
@@ -250,7 +250,7 @@ void CpuFftwDArrayTest::testSerialize1File()
    }
 }
 
-void CpuFftwDArrayTest::testSerialize2File()
+void CppFftwDArrayTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
@@ -306,14 +306,14 @@ void CpuFftwDArrayTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(CpuFftwDArrayTest)
-TEST_ADD(CpuFftwDArrayTest, testConstructor)
-TEST_ADD(CpuFftwDArrayTest, testAllocate)
-TEST_ADD(CpuFftwDArrayTest, testSubscript)
-TEST_ADD(CpuFftwDArrayTest, testSerialize1Memory)
-TEST_ADD(CpuFftwDArrayTest, testSerialize2Memory)
-TEST_ADD(CpuFftwDArrayTest, testSerialize1File)
-TEST_ADD(CpuFftwDArrayTest, testSerialize2File)
-TEST_END(CpuFftwDArrayTest)
+TEST_BEGIN(CppFftwDArrayTest)
+TEST_ADD(CppFftwDArrayTest, testConstructor)
+TEST_ADD(CppFftwDArrayTest, testAllocate)
+TEST_ADD(CppFftwDArrayTest, testSubscript)
+TEST_ADD(CppFftwDArrayTest, testSerialize1Memory)
+TEST_ADD(CppFftwDArrayTest, testSerialize2Memory)
+TEST_ADD(CppFftwDArrayTest, testSerialize1File)
+TEST_ADD(CppFftwDArrayTest, testSerialize2File)
+TEST_END(CppFftwDArrayTest)
 
 #endif

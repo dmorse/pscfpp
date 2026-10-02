@@ -117,9 +117,10 @@ namespace Prdc {
                       int nMonomer,
                       IntVec<D> const& dftDimensions)
    {
-      //using RT = typename ACT::RealType;
+      using T = typename ACT::BackendIdClass;
+      using RealT = typename T::Real;
+      RealT x, y;
 
-      typename ACT::RealType x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, i, j, idum;
       i = 0;
@@ -144,10 +145,10 @@ namespace Prdc {
                       ACT& field,
                       IntVec<D> const& dftDimensions)
    {
-      //using RT = typename ACT::RealType;
+      using T = typename ACT::BackendIdClass;
+      using RealT = typename T::Real;
+      RealT x, y;
 
-      //RT x, y;
-      typename ACT::RealType x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, idum;
       int i = 0;
@@ -174,10 +175,10 @@ namespace Prdc {
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nMonomer == fields.capacity());
 
-      //using RT = typename ACT::RealType;
+      using T = typename ACT::BackendIdClass;
+      using RealT = typename T::Real;
+      RealT x, y;
 
-      //RT x, y;
-      typename ACT::RealType x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank;
       int i = 0;
@@ -203,10 +204,10 @@ namespace Prdc {
                        ACT const& field,
                        IntVec<D> const& dftDimensions)
    {
-      //using RT = typename ACT::RealType;
+      using T = typename ACT::BackendIdClass;
+      using RealT = typename T::Real;
+      RealT x, y;
 
-      //RT x, y;
-      typename ACT::RealType x, y;
       MeshIterator<D> iter(dftDimensions);
       int rank, i;
       i = 0;

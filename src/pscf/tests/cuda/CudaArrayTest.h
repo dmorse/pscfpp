@@ -113,7 +113,6 @@ public:
       // Output host arrays
       HostArray<double,CUT> host1(nx);
       HostArray<double,CUT> host2(nx);
-      HostArray<double,CUT> host3(nx);
 
       // Copy to device, then copy back to host
       d1 = in;
@@ -123,14 +122,11 @@ public:
       d2 = d1;
       host2 = d2;
 
-      // Copy on host
-      host3 = in;
 
-      // Check that host1, host2, and host3 all match in
+      // Check that host1 and host2 match
       for (int i = 0; i < nx; ++i ) {
          TEST_ASSERT(eq(in[i], host1[i]));
          TEST_ASSERT(eq(in[i], host2[i]));
-         TEST_ASSERT(eq(in[i], host3[i]));
       }
 
       // Copy a slice of d1, check that it is correct

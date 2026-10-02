@@ -8,34 +8,85 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/DArray.h>   // base class
+#include <util/containers/DArray.h>   // base class template
+#include <pscf/backend/cuda/CUT.h>    // template argument
 
 namespace Pscf {
 
    // Forward declarations
    template <typename Data, typename T> class HostArray;
    template <typename Data, typename T> class DeviceArray;
-   class CUT;
 
    using namespace Util;
 
    /**
    * Template for dynamic array stored in host CPU memory.
    *
-   * This class is provided as a convenience to allow the use of 
-   * assigment (=) operators to copy data from device to host memory.
-   * A HostArray<Data,CUT> stores data in a dynamically allocated array 
-   * in host CPU memory, whereas a DeviceArray<Data,CUT> stores analogous 
-   * data in global GPU device memory. Each of these classes defines  
-   * an assignment operation that allows assignment from the other, 
-   * which silently copies the underlying arrays between device and 
-   * host memory. Additionally, a method HostArray::copySlice is
-   * provided, which populates a HostArray with a slice of a larger
-   * DeviceArray.
+   * This class template should be used in device-independent template
+   * code in which an array is copied from host to device.  The
+   * DeviceArray<Data,CPT> template defines an assignment operator
+   * that assigns from a host array to a device array. 
    *
-   * Otherwise, this class is identical to Util::DArray, with the
-   * addition of an allocating constructor.
+   * The "associate" member function allocates the array if not allocated
+   * previously, or does nothing if the array is already allocated with
+   * the correct capacity.
    *
+   * The assignment (=) operator that copies a host array (RHS) to a
+   * device array (LHS) performs a deep copy from host to device memory.
+   * This function is a member function of the device array, defined by
+   * the DeviceArray<Data,CUT> class template. 
+   *
+   * <b> Usage </b>: 
+   *
+   * Typical usage for backend-independent template code is shown 
+   * below for host-to-device transfer to a long lived instance of 
+   * DeviceArray<Data,CPT> named dArray from a shorter lived instance of 
+   * HostArray<Data,CPT> named hArray. Here, the alias Data denotes the 
+   * type of each array element.
+   *
+   * \code
+   *    HostArray<Data,CPT> hArray;
+   *    hArray.associate(dArray);
+   *
+   *    \\ ( Initialize data in hArray )
+   *
+   *    dArray = hArray
+   *    hArray.dissociate();
+   * \endcode
+   *
+   * Comments:
+   *
+   *   - In this specialization for a CUDA backend (T=CUT), the associate
+   *     function allocates the host array, if not allocated previously,
+   *     or does nothing if it is already allocated with the same 
+   *     capacity as the device array. In the specialization for a C++
+   *     backend (T=CPT), the associate function creates an association 
+   *     that make the host array refer to memory owned by the device 
+   *     array.
+   *     
+   *   - In this specialization for a CUDA backend (T=CUT), the 
+   *     assignment (=) operator that assigns a RHS HostArray<Data,CPT> 
+   *     to a LHS DeviceArray<Data,CPT> template copies all elements of
+   *     an array from CPU host memory to GPU device memory. In the 
+   *     corresponding specialization for a C++ backend (T=CPT), the
+   *     assignment operator does nothing. 
+   * 
+   *   - In this specialization for a CUDA backend (T=CUT), the dissociate
+   *     function does nothing. In the corresponding specialization for a
+   *     C++ backend (T=CPT), this function destroys the association 
+   *     between  the host and device arrays, by nullifying a pointer 
+   *     held by the host array. 
+   *
+   *   - The host array may never be used to modify data after the 
+   *     assignment operator and before the dissociate function is
+   *     invoked. Doing so would modify data owned by the device array
+   *     in CPU code (T=CPT) but would have no effect on data owned by
+   *     the device array in GPU code (T=CUT), causing inconsistent
+   *     behavior. To enforce this, it is good practice to invoke the 
+   *     dissociate member function immediately after host-to-device 
+   *     assignment, as shown above.
+   *
+   * \see Pscf::HostArray<Data,CPT>
    * \ingroup Pscf_Backend_Cuda_Module
    */
    template <typename Data>
@@ -49,25 +100,42 @@ namespace Pscf {
       */
       using ValueType = Data;
 
+      /**
+      * Backend identifier class type.
+      */
+      using BackendIdClass = CUT;
+
+      // Public member functions
+
       // Default constructor (default)
       HostArray() = default;
 
-      // Copy constructor (default)
-      HostArray(HostArray<Data,CUT> const & other) = default;
-
       /**
-      * Copy constructor (copies from device to host).
-      * 
-      * \param other DeviceArray<Data,CUT> to be copied (input)
+      * Allocating constructor.
+      *
+      * \param capacity  number of elements to allocate
       */
-      HostArray(DeviceArray<Data,CUT> const & other);
+      HostArray(int capacity);
+
+      // Copy constructor (deleted)
+      HostArray(HostArray<Data,CUT> const & other) = delete;
 
       // Destructor (default).
       ~HostArray() = default;
 
-      // Assignment (default)
+      // Assignment (deleted).
       HostArray<Data,CUT>& 
-      operator = (HostArray<Data,CUT> const & other) = default;
+      operator = (HostArray<Data,CUT> const & other) = delete;
+
+      /**
+      * Allocate if not allocated previously. 
+      *
+      * GPU specialization allocates host array with same dimensions as
+      * the device array, unless this is already the case.
+      *
+      * \param deviceArray  device array (must be allocated on entry)
+      */
+      void associate(DeviceArray<Data,CUT>& deviceArray);
 
       /**
       * Assignment operator, assign from a DeviceArray<Data,CUT>.
@@ -107,36 +175,31 @@ namespace Pscf {
       void copySlice(DeviceArray<Data,CUT> const & other, int beginId);
 
       /**
-      * Setup host array for use with a device array.
-      *
-      * GPU specialization allocates host array with same dimensions as
-      * the device array, unless this is already the case.
-      *
-      * \param deviceArray  device array (must be allocated on entry)
-      */
-      void associate(DeviceArray<Data,CUT>& deviceArray);
-
-      /**
       * Release host array.
       *
-      * GPU specialization does nothing.
+      * GPU specialization (T=CUT) does nothing. The CPU specialization
+      * (T=CPT) removes an association between the host array and some
+      * other array. 
       */
       void dissociate()
       {}
 
       // Inherited public member functions (selected)
-      using Array<Data>::capacity;
-      using Array<Data>::isAllocated;
       using Array<Data>::operator [];
       using Array<Data>::cArray;
+      using Array<Data>::isAllocated;
+      using Array<Data>::capacity;
       using DArray<Data>::allocate;
       using DArray<Data>::deallocate;
 
    };
 
+   // Explicit instantiation declarations
+   extern template class HostArray<cudaReal,CUT>;
+   extern template class HostArray<cudaComplex,CUT>;
+
 } // namespace Pscf
 
-#include <pscf/backend/cuda/CUT.h> 
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/cudaErrorCheck.h>
 #include <util/global.h>
@@ -145,22 +208,12 @@ namespace Pscf {
 namespace Pscf {
 
    /*
-   * Copy constructor - deep copy DeviceArray from device to host.
+   * Allocating constructor.
    */
    template <typename Data>
-   HostArray<Data,CUT>::HostArray(DeviceArray<Data,CUT> const& other)
-    : DArray<Data>() 
-   {  
-      // Precondition - RHS array must be allocated
-      UTIL_CHECK(other.isAllocated());
-      allocate(other.capacity());
-      cudaErrorCheck( 
-         cudaMemcpy(Array<Data>::data_, 
-                    other.cArray(), 
-                    capacity() * sizeof(Data), 
-                    cudaMemcpyDeviceToHost) 
-      );
-   }
+   HostArray<Data,CUT>::HostArray(int capacity)
+    : DArray<Data>(capacity) 
+   {}
 
    /*
    * Assignment from a DeviceArray<Data,CUT> RHS device array.
@@ -178,6 +231,7 @@ namespace Pscf {
       } 
 
       // Require equal capacities
+      UTIL_CHECK(isAllocated());
       UTIL_CHECK(capacity() == other.capacity());
 
       // Copy all elements
@@ -201,6 +255,7 @@ namespace Pscf {
       // Preconditions 
       UTIL_CHECK(other.isAllocated());
       UTIL_CHECK(isAllocated());
+      UTIL_CHECK(beginId >= 0);
       UTIL_CHECK(capacity() + beginId <= other.capacity());
 
       // Copy all elements
@@ -213,7 +268,7 @@ namespace Pscf {
    }
 
    /*
-   * Setup host array for use with device array. Allocate if necessary.
+   * Allocate if not done previously. 
    */
    template <typename Data>
    void HostArray<Data,CUT>::associate(
@@ -221,14 +276,13 @@ namespace Pscf {
    {
       UTIL_CHECK(deviceArray.isAllocated());
       const int n = deviceArray.capacity();
-      if (isAllocated() && capacity() != n) {
-         deallocate();
-      }
       if (!isAllocated()) {
-         allocate(n);
+         allocate(deviceArray.capacity());
       }
-      // Note: If this was allocated with capacity() == n, nothing changes.
+      UTIL_CHECK(isAllocated());
       UTIL_CHECK(capacity() == n);
+      // If this was allocated with capacity() == n, do nothing.
+      // If this was allocated with capacity() != n, throw Exception.
    }
 
 }

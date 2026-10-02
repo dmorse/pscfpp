@@ -274,7 +274,7 @@ namespace Prdc {
    {
       int i = wavevector[D-1];
       int d = meshDimensions[D-1];
-      UTIL_CHECK(i >= 0 && i < D);
+      UTIL_CHECK(i >= 0 && i < d);
       if ( (i != 0) && (d - i > d / 2) ) {
          return true;
       } else {

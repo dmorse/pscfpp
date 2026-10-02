@@ -1,6 +1,9 @@
 pscf_backend_cpp_CPP= \
   pscf/backend/cpp/CPT.cpp \
   pscf/backend/cpp/complex.cpp \
+  pscf/backend/cpp/ConstHostArray.cpp \
+  pscf/backend/cpp/HostArray.cpp \
+  pscf/backend/cpp/DeviceArray.cpp \
   pscf/backend/cpp/VecOp.cpp \
   pscf/backend/cpp/VecOpCx.cpp \
   pscf/backend/cpp/Reduce.cpp \

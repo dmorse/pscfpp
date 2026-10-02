@@ -9,6 +9,7 @@
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/backend/cuda/ConstHostArray.h> 
 #include <pscf/backend/cuda/HostArray.h> 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -119,8 +120,8 @@ public:
       wavelist.allocate(mesh1, cell1);
 
       // compute minimum images (and ksq) on device, transfer to host
-      HostArray<int,CUT> minImages_h;
-      HostArray<cudaReal,CUT> ksq_h;
+      ConstHostArray<int,CUT> minImages_h;
+      ConstHostArray<cudaReal,CUT> ksq_h;
       wavelist.computeMinimumImages(); 
       minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
@@ -149,8 +150,8 @@ public:
       wavelist.allocate(mesh2, cell2);
 
       // compute minimum images (and ksq) on device, transfer to host
-      HostArray<int,CUT> minImages_h;
-      HostArray<cudaReal,CUT> ksq_h;
+      ConstHostArray<int,CUT> minImages_h;
+      ConstHostArray<cudaReal,CUT> ksq_h;
       wavelist.computeMinimumImages(); 
       minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
@@ -180,8 +181,8 @@ public:
       wavelist.allocate(mesh3, cell3);
 
       // compute minimum images (and ksq) on device, transfer to host
-      HostArray<int,CUT> minImages_h;
-      HostArray<cudaReal,CUT> ksq_h;
+      ConstHostArray<int,CUT> minImages_h;
+      ConstHostArray<cudaReal,CUT> ksq_h;
       wavelist.computeMinimumImages(); 
       minImages_h = wavelist.minImages_d();
       ksq_h = wavelist.kSq();
@@ -211,8 +212,8 @@ public:
       WaveList<1,CUT> wavelist;
       wavelist.allocate(mesh1, cell1);
 
-      // compute kSq on device two different ways, transfer to host
-      HostArray<cudaReal,CUT> ksq_h, ksq_h2;
+      // Compute kSq on device two different ways, transfer to host
+      ConstHostArray<cudaReal,CUT> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
@@ -251,7 +252,7 @@ public:
       wavelist.allocate(mesh2, cell);
 
       // compute kSq on device two different ways, transfer to host
-      HostArray<cudaReal,CUT> ksq_h, ksq_h2;
+      ConstHostArray<cudaReal,CUT> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
@@ -290,7 +291,7 @@ public:
       wavelist.allocate(mesh3, cell);
 
       // compute kSq on device two different ways, transfer to host
-      HostArray<cudaReal,CUT> ksq_h, ksq_h2;
+      ConstHostArray<cudaReal,CUT> ksq_h, ksq_h2;
       wavelist.computeMinimumImages(); // calculates kSq
       ksq_h = wavelist.kSq();
       wavelist.clearUnitCellData(); // resets kSq but not min images
@@ -322,7 +323,7 @@ public:
 
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      HostArray<cudaReal,CUT> dksq_h;
+      ConstHostArray<cudaReal,CUT> dksq_h;
       dksq_h = wavelist.dKSq(0);
 
       // compute dKSq on host and compare
@@ -434,7 +435,7 @@ public:
       wavelist.computeKSq(); 
       int kSize = wavelist.kSize();
       TEST_ASSERT(kSize > 0);
-      HostArray<cudaReal,CUT> const & ksq = wavelist.kSq();
+      ConstHostArray<cudaReal,CUT> const & ksq = wavelist.kSq();
 
       wavelist.sortWaves();
       int nBunch = wavelist.nBunch(); 
@@ -499,13 +500,13 @@ public:
       wavelist.computedKSq(); // computes min images, ksq, and dksq
 
       // Transfer results to host
-      HostArray<int,CUT> minImages_h;
+      ConstHostArray<int,CUT> minImages_h;
       minImages_h = wavelist.minImages_d();
 
-      HostArray<cudaReal,CUT> ksq_h;
+      ConstHostArray<cudaReal,CUT> ksq_h;
       ksq_h = wavelist.kSq();
 
-      DArray< HostArray<cudaReal,CUT> > dksq_h;
+      DArray< ConstHostArray<cudaReal,CUT> > dksq_h;
       dksq_h.allocate(cell3.nParameter());
       for (int n = 0; n < cell3.nParameter() ; ++n) {
         dksq_h[n] = wavelist.dKSq(n);

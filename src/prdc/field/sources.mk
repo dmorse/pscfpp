@@ -1,3 +1,10 @@
+#-----------------------------------------------------------------------
+# Include source list files from subdirectories
+
+include $(SRC_DIR)/prdc/field/cpp/sources.mk
+include $(SRC_DIR)/prdc/field/cuda/sources.mk
+
+#-----------------------------------------------------------------------
 
 # Standard C++ source files from directory prdc/field/cpp
 include $(SRC_DIR)/prdc/field/cpp/sources.mk

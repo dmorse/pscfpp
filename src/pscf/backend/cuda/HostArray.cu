@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "DeviceArray.h"
+#include "HostArray.h"
 
 namespace Pscf {
 
    // Explicit instantiation definitions
-   template class DeviceArray<double,CPT>;
-   template class DeviceArray<fftw_complex,CPT>;
+   template class HostArray<cudaReal,CUT>;
+   template class HostArray<cudaComplex,CUT>;
 
-}
+} // namespace Pscf

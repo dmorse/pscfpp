@@ -1,5 +1,5 @@
-#ifndef PRDC_CPU_FFTW_DRARRAY_TEST_H
-#define PRDC_CPU_FFTW_DRARRAY_TEST_H
+#ifndef PRDC_CPP_FFTW_DRARRAY_TEST_H
+#define PRDC_CPP_FFTW_DRARRAY_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -16,7 +16,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CpuFftwDRArrayTest : public UnitTest
+class CppFftwDRArrayTest : public UnitTest
 {
 private:
 
@@ -53,7 +53,7 @@ public:
 };
 
 
-void CpuFftwDRArrayTest::testDefaultConstructor()
+void CppFftwDRArrayTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
@@ -66,7 +66,7 @@ void CpuFftwDRArrayTest::testDefaultConstructor()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testAllocateConstructor()
+void CppFftwDRArrayTest::testAllocateConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
@@ -89,7 +89,7 @@ void CpuFftwDRArrayTest::testAllocateConstructor()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testAllocate()
+void CppFftwDRArrayTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
@@ -115,7 +115,7 @@ void CpuFftwDRArrayTest::testAllocate()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testSubscript()
+void CppFftwDRArrayTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -134,7 +134,7 @@ void CpuFftwDRArrayTest::testSubscript()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testAssociate()
+void CppFftwDRArrayTest::testAssociate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -184,7 +184,7 @@ void CpuFftwDRArrayTest::testAssociate()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testSubscriptCmplx()
+void CppFftwDRArrayTest::testSubscriptCmplx()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -205,7 +205,7 @@ void CpuFftwDRArrayTest::testSubscriptCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testCopyConstructor()
+void CppFftwDRArrayTest::testCopyConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -247,7 +247,7 @@ void CpuFftwDRArrayTest::testCopyConstructor()
    TEST_ASSERT(Memory::total() == (long int)memory_);
 }
 
-void CpuFftwDRArrayTest::testCopyConstructorCmplx()
+void CppFftwDRArrayTest::testCopyConstructorCmplx()
 {
    printMethod(TEST_FUNC);
    {
@@ -280,7 +280,7 @@ void CpuFftwDRArrayTest::testCopyConstructorCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testAssignment()
+void CppFftwDRArrayTest::testAssignment()
 {
    printMethod(TEST_FUNC);
 
@@ -317,7 +317,7 @@ void CpuFftwDRArrayTest::testAssignment()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testAssignmentCmplx()
+void CppFftwDRArrayTest::testAssignmentCmplx()
 {
    printMethod(TEST_FUNC);
 
@@ -351,7 +351,7 @@ void CpuFftwDRArrayTest::testAssignmentCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testIterator()
+void CppFftwDRArrayTest::testIterator()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT((int)Memory::total() == 0);
@@ -382,7 +382,7 @@ void CpuFftwDRArrayTest::testIterator()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testBaseClassReference()
+void CppFftwDRArrayTest::testBaseClassReference()
 {
    printMethod(TEST_FUNC);
    {
@@ -399,7 +399,7 @@ void CpuFftwDRArrayTest::testBaseClassReference()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CpuFftwDRArrayTest::testSerialize1Memory()
+void CppFftwDRArrayTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
@@ -480,7 +480,7 @@ void CpuFftwDRArrayTest::testSerialize1Memory()
 
 }
 
-void CpuFftwDRArrayTest::testSerialize2Memory()
+void CppFftwDRArrayTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
@@ -521,7 +521,7 @@ void CpuFftwDRArrayTest::testSerialize2Memory()
    }
 }
 
-void CpuFftwDRArrayTest::testSerialize1File()
+void CppFftwDRArrayTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
@@ -574,7 +574,7 @@ void CpuFftwDRArrayTest::testSerialize1File()
    }
 }
 
-void CpuFftwDRArrayTest::testSerialize2File()
+void CppFftwDRArrayTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
@@ -630,25 +630,25 @@ void CpuFftwDRArrayTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(CpuFftwDRArrayTest)
-TEST_ADD(CpuFftwDRArrayTest, testDefaultConstructor)
-TEST_ADD(CpuFftwDRArrayTest, testAllocateConstructor)
-TEST_ADD(CpuFftwDRArrayTest, testAllocate)
-TEST_ADD(CpuFftwDRArrayTest, testSubscript)
-TEST_ADD(CpuFftwDRArrayTest, testSubscriptCmplx)
-TEST_ADD(CpuFftwDRArrayTest, testAssociate)
-TEST_ADD(CpuFftwDRArrayTest, testCopyConstructor)
-TEST_ADD(CpuFftwDRArrayTest, testCopyConstructorCmplx)
-TEST_ADD(CpuFftwDRArrayTest, testAssignment)
-TEST_ADD(CpuFftwDRArrayTest, testAssignmentCmplx)
-TEST_ADD(CpuFftwDRArrayTest, testIterator)
-TEST_ADD(CpuFftwDRArrayTest, testBaseClassReference)
+TEST_BEGIN(CppFftwDRArrayTest)
+TEST_ADD(CppFftwDRArrayTest, testDefaultConstructor)
+TEST_ADD(CppFftwDRArrayTest, testAllocateConstructor)
+TEST_ADD(CppFftwDRArrayTest, testAllocate)
+TEST_ADD(CppFftwDRArrayTest, testSubscript)
+TEST_ADD(CppFftwDRArrayTest, testSubscriptCmplx)
+TEST_ADD(CppFftwDRArrayTest, testAssociate)
+TEST_ADD(CppFftwDRArrayTest, testCopyConstructor)
+TEST_ADD(CppFftwDRArrayTest, testCopyConstructorCmplx)
+TEST_ADD(CppFftwDRArrayTest, testAssignment)
+TEST_ADD(CppFftwDRArrayTest, testAssignmentCmplx)
+TEST_ADD(CppFftwDRArrayTest, testIterator)
+TEST_ADD(CppFftwDRArrayTest, testBaseClassReference)
 
-TEST_ADD(CpuFftwDRArrayTest, testSerialize1Memory)
-TEST_ADD(CpuFftwDRArrayTest, testSerialize2Memory)
-TEST_ADD(CpuFftwDRArrayTest, testSerialize1File)
-TEST_ADD(CpuFftwDRArrayTest, testSerialize2File)
+TEST_ADD(CppFftwDRArrayTest, testSerialize1Memory)
+TEST_ADD(CppFftwDRArrayTest, testSerialize2Memory)
+TEST_ADD(CppFftwDRArrayTest, testSerialize1File)
+TEST_ADD(CppFftwDRArrayTest, testSerialize2File)
 
-TEST_END(CpuFftwDRArrayTest)
+TEST_END(CppFftwDRArrayTest)
 
 #endif

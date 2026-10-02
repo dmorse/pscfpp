@@ -37,6 +37,7 @@ public:
    void testSubscript();
    void testCopyConst();
    void testAssignment();
+   void testAssignmentFromHost();
    void testSerialize1Memory();
    void testSerialize2Memory();
    void testSerialize1File();
@@ -194,6 +195,56 @@ void CpuRFieldDftTest::testAssignment()
       TEST_ASSERT(eq(u[1][1], 20.1));
       TEST_ASSERT(eq(u[2][0], 30.0));
       TEST_ASSERT(eq(u[2][1], 30.1));
+   }
+} 
+
+void CpuRFieldDftTest::testAssignmentFromHost()
+{
+   printMethod(TEST_FUNC);
+
+   {
+      // Mesh dimensions
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+
+      // Construct and allocate RFieldDft<3> u
+      RFieldDft<3,CPT> u;
+      u.allocate(d);
+      TEST_ASSERT(u.isAllocated());
+      TEST_ASSERT(u.capacity() == 18);
+      TEST_ASSERT(d == u.meshDimensions());
+      int capacity = u.capacity();
+
+      HostArray<fftw_complex,CPT> v;
+      v.associate(u);
+      TEST_ASSERT(v.capacity() == capacity);
+      TEST_ASSERT(v.isAllocated() );
+   
+      for (int i=0; i < capacity; i++ ) {
+         v[i][0] = (i+1)*10.0 ;
+         v[i][1] = (i+1)*10.0 + 0.1;
+      }
+  
+      // Assign from HostArray 
+      u  = v;
+   
+      TEST_ASSERT(u.capacity() == capacity);
+      TEST_ASSERT(u.isAllocated());
+      TEST_ASSERT(eq(v[0][0], 10.0));
+      TEST_ASSERT(eq(v[0][1], 10.1));
+      TEST_ASSERT(eq(v[1][0], 20.0));
+      TEST_ASSERT(eq(v[1][1], 20.1));
+      v.dissociate();
+
+      TEST_ASSERT(eq(u[0][0], 10.0));
+      TEST_ASSERT(eq(u[0][1], 10.1));
+      TEST_ASSERT(eq(u[1][0], 20.0));
+      TEST_ASSERT(eq(u[1][1], 20.1));
+      TEST_ASSERT(eq(u[2][0], 30.0));
+      TEST_ASSERT(eq(u[2][1], 30.1));
+
    }
 } 
 
@@ -526,6 +577,7 @@ TEST_ADD(CpuRFieldDftTest, testAllocate3)
 TEST_ADD(CpuRFieldDftTest, testSubscript)
 TEST_ADD(CpuRFieldDftTest, testCopyConst)
 TEST_ADD(CpuRFieldDftTest, testAssignment)
+TEST_ADD(CpuRFieldDftTest, testAssignmentFromHost)
 TEST_ADD(CpuRFieldDftTest, testSerialize1Memory)
 TEST_ADD(CpuRFieldDftTest, testSerialize2Memory)
 TEST_ADD(CpuRFieldDftTest, testSerialize1File)

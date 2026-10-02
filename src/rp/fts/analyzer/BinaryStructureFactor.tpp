@@ -1,7 +1,7 @@
-#ifndef RP_BINARY_STRUCTURE_FACTOR_BASE_TPP
-#define RP_BINARY_STRUCTURE_FACTOR_BASE_TPP
+#ifndef RP_BINARY_STRUCTURE_FACTOR_TPP
+#define RP_BINARY_STRUCTURE_FACTOR_TPP
 
-#include "BinaryStructureFactorBase.h"
+#include "BinaryStructureFactor.h"
 
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/system/System.h>
@@ -19,6 +19,7 @@
 
 #include <util/param/ParamComposite.h>
 #include <util/containers/Array.h>
+#include <util/containers/ConstArray.h>
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
 #include <util/format/Int.h>
@@ -33,11 +34,13 @@ namespace Rp {
    using namespace Util;
    using namespace Pscf::Prdc;
 
+   // Public member functions
+
    /*
    * Constructor.
    */
    template <int D, class T>
-   BinaryStructureFactorBase<D,T>::BinaryStructureFactorBase(
+   BinaryStructureFactor<D,T>::BinaryStructureFactor(
                                 Simulator<D,T>& simulator,
                                 System<D,T>& system)
     : Analyzer<D,T>(simulator, system),
@@ -55,7 +58,7 @@ namespace Rp {
    * Read parameters from file, and allocate memory.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::readParameters(std::istream& in)
+   void BinaryStructureFactor<D,T>::readParameters(std::istream& in)
    {
       // Precondition: Require that the system has two monomer types
       UTIL_CHECK(system().mixture().nMonomer() == 2);
@@ -68,10 +71,40 @@ namespace Rp {
    }
 
    /*
+   * Setup before entering main loop.
+   */
+   template <int D, class T>
+   void BinaryStructureFactor<D,T>::setup()
+   {
+      allocate();
+
+      WaveList<D,T> const & waveList = AnalyzerT::system().waveList();
+      ConstHostArray<double,T> kSq(waveList.kSq());
+      DArray<bool> const & implicit = waveList.implicitInverse();
+      findWaveBunches(kSq, implicit);
+   }
+
+   /*
+   * Compute structure factors for all wavevectors and bunches.
+   */
+   template <int D, class T>
+   void BinaryStructureFactor<D,T>::sample(long iStep)
+   {
+      if (AnalyzerT::isAtInterval(iStep)) {
+         computeW();
+         wk_h_ = wk_d_;
+         computeS(wk_h_);
+	 wk_h_.dissociate();
+      }
+   }
+
+   // Private member functions
+
+   /*
    * Allocate memory arrays with dimensions that depend only on mesh.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::allocate()
+   void BinaryStructureFactor<D,T>::allocate()
    {
       UTIL_CHECK(isInitialized_);
 
@@ -82,11 +115,11 @@ namespace Rp {
 
       // If needed, allocate arrays indexed by wave id
       if (!wm_.isAllocated()){
-         UTIL_CHECK(!wk_.isAllocated());
+         UTIL_CHECK(!wk_d_.isAllocated());
          UTIL_CHECK(!waveBunchIds_.isAllocated());
          UTIL_CHECK(!waveWeights_.isAllocated());
          wm_.allocate(rMeshDimensions);
-         wk_.allocate(rMeshDimensions);
+         wk_d_.allocate(rMeshDimensions);
          waveBunchIds_.allocate(nWave_);
          waveWeights_.allocate(nWave_);
          if (writeWaveData_) {
@@ -95,7 +128,7 @@ namespace Rp {
          }
       }
       UTIL_CHECK(wm_.capacity() == mesh.size());
-      UTIL_CHECK(wk_.capacity() == nWave_);
+      UTIL_CHECK(wk_d_.capacity() == nWave_);
       UTIL_CHECK(waveBunchIds_.capacity() == nWave_);
       UTIL_CHECK(waveWeights_.capacity() == nWave_);
       if (writeWaveData_) {
@@ -107,8 +140,8 @@ namespace Rp {
    * Allocate and initialize data structures that involve wave bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::findWaveBunches(
-                                  Array<double> const & kSq,
+   void BinaryStructureFactor<D,T>::findWaveBunches(
+                                  ConstArray<double> const & kSq,
                                   Array<bool> const & implicit)
    {
       UTIL_CHECK(kSq.capacity() == nWave_);
@@ -228,12 +261,12 @@ namespace Rp {
    * Compute W_{-} and it Fourier transform.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::computeW()
+   void BinaryStructureFactor<D,T>::computeW()
    {
       // Preconditions
       UTIL_CHECK(isInitialized_);
       UTIL_CHECK(nWave_ > 0);
-      UTIL_CHECK(wk_.capacity() == nWave_);
+      UTIL_CHECK(wk_d_.capacity() == nWave_);
 
       // Compute W_{-}(r)
       RField<D,T> const & wa = system().w().rgrid(0);
@@ -242,15 +275,15 @@ namespace Rp {
       VecOp::mulEqS(wm_, 0.5);
 
       // Fourier transform W_{-}(r)
-      system().domain().fft().forwardTransform(wm_, wk_);
+      system().domain().fft().forwardTransform(wm_, wk_d_);
    }
 
    /*
    * Compute structure factors for all wavevectors and bunches.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::computeS(
-                                    Array<typename T::Complex> const & wk)
+   void BinaryStructureFactor<D,T>::computeS(
+                                    ConstArray<typename T::Complex> const & wk)
    {
       // Preconditions
       UTIL_CHECK(isInitialized_);
@@ -300,7 +333,7 @@ namespace Rp {
    * Output final results to output file.
    */
    template <int D, class T>
-   void BinaryStructureFactorBase<D,T>::output()
+   void BinaryStructureFactor<D,T>::output()
    {
       std::string filename;
       std::ofstream file;

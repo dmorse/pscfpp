@@ -122,22 +122,6 @@ namespace Rp {
       /// Number of wavevectors in Fourier space (k-grid) mesh.
       int  kSize_;
 
-      // Private member functions
-
-      /**
-      * Compute the psi_ array of squared Fourier coefficients.
-      */
-      void computePsi();
-
-      /**
-      * Find the wavevector of maximum Fourier magnitude.
-      *
-      * Results for the maximum square magnitude and the indices
-      * of the wavevector for which this occured are stored in
-      * maxPsi_ and Gmax_, respectively.
-      */
-      void findMaximum();
-
    };
 
    // Explicit instantiation declarations

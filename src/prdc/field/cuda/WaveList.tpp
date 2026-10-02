@@ -14,6 +14,7 @@
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/hasVariableAngle.h>
+#include <pscf/backend/cuda/ConstHostArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -484,7 +485,7 @@ namespace Prdc {
    /*
    * Allocate memory.
    *
-   * This function allocates and construct implicitInverse_ if and
+   * This function allocates and construct implicitInverse_d_ if and
    * only if isRealField_ == true.
    */
    template <int D>
@@ -518,26 +519,23 @@ namespace Prdc {
          dKSqSlices_[i].associate(dKSq_, i*kSize_, kMeshDimensions_);
       }
 
-      // Allocate and set up implicitInverse_ array if isRealField_ == true
+      // Allocate and fill implicitInverse arrays if isRealField_ == true
       // (only depends on mesh dimensions, only used for real fields)
       if (isRealField_) {
-         implicitInverse_.allocate(kSize_);
+         implicitInverse_d_.allocate(kSize_);
+         implicitInverse_h_.allocate(kSize_);
+         HostArray<bool,CUT> implicitTemp;
+         implicitTemp.allocate(kSize_);
          MeshIterator<D> kItr(kMeshDimensions_);
-         HostArray<bool,CUT> implicitInverse_h(kSize_);
-         int inverseId;
+         int rank;
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
-            if (kItr.position(D-1) == 0) {
-               inverseId = 0;
-            } else {
-               inverseId = mesh().dimension(D-1) - kItr.position(D-1);
-            }
-            if (inverseId >= kMeshDimensions_[D-1]) {
-               implicitInverse_h[kItr.rank()] = true;
-            } else {
-               implicitInverse_h[kItr.rank()] = false;
-            }
+            rank = kItr.rank();
+            implicitTemp[rank] = 
+               FFT<D,CUT>::hasImplicitInverse(kItr.position(), 
+                                              meshDimensions);
+            implicitInverse_h_[rank] = implicitTemp[rank];
          }
-         implicitInverse_ = implicitInverse_h; // transfer to device memory
+         implicitInverse_d_ = implicitTemp; // copy to device memory
       }
 
       clearUnitCellData();
@@ -591,8 +589,6 @@ namespace Prdc {
       // Get kBasis and meshDims and store on device
       HostArray<cudaReal,CUT> kBasis_h(D*D);
       HostArray<int,CUT> meshDims_h(D);
-      DeviceArray<cudaReal,CUT> kBasis(D*D);
-      DeviceArray<int,CUT> meshDims(D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
          for (int k = 0; k < D; ++k) {
@@ -601,6 +597,9 @@ namespace Prdc {
          }
          meshDims_h[j] = mesh().dimension(j);
       }
+
+      DeviceArray<cudaReal,CUT> kBasis(D*D);
+      DeviceArray<int,CUT> meshDims(D);
       kBasis = kBasis_h;
       meshDims = meshDims_h;
 
@@ -737,8 +736,8 @@ namespace Prdc {
       UTIL_CHECK(minImages_.isAllocated());
       bool const * implicitInversePtr = nullptr;
       if (isRealField_) {
-         UTIL_CHECK(implicitInverse_.isAllocated());
-         implicitInversePtr = implicitInverse_.cArray();
+         UTIL_CHECK(implicitInverse_d_.isAllocated());
+         implicitInversePtr = implicitInverse_d_.cArray();
       }
 
       // Launch kernel to calculate dKSq on device
@@ -767,7 +766,7 @@ namespace Prdc {
       }
 
       // Copy values of kSq to host
-      HostArray<cudaReal,CUT> kSq_h = kSq_;
+      ConstHostArray<cudaReal,CUT> kSq_h(kSq_);
 
       // Construct Sort::Item objects with value = kSq, id = wave id
       std::vector< Sort::Item<double> > items;
@@ -827,7 +826,7 @@ namespace Prdc {
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {
-         HostArray<int,CUT> minImages_temp;
+         ConstHostArray<int,CUT> minImages_temp;
          minImages_temp = minImages_;
          int i, j, k;
          for (j = 0; j < D; ++j) {
