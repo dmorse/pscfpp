@@ -16,6 +16,7 @@
 namespace Pscf {
 namespace Rp {
 
+   #if 0
    /*
    * Set new w-field values, using unfolded array of r-grid fields.
    */
@@ -38,6 +39,7 @@ namespace Rp {
       bool isSymmetric = false;
       Base::setRGrid(tmp, isSymmetric);
    }
+   #endif
 
    // Explicit instantiation definitions - base class
    template class WFieldsBase<1,CPT>;

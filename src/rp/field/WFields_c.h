@@ -33,6 +33,7 @@ namespace Rp {
    class WFields<D,CPT> : public Rp::WFieldsBase<D,CPT>
    {
 
+      #if 0
       /**
       * Set new w fields, in unfolded real-space (r-grid) format.
       *
@@ -41,7 +42,7 @@ namespace Rp {
       *
       * \param fields  unfolded array of new w fields (input)
       */
-      void setRGrid(DeviceArray<cudaReal,CPT>& fields);
+      void setRGrid(DeviceArray<double,CPT>& fields);
 
       // Declaration to avoid hiding overloaded base class method 
       using WFieldsBase<D,CPT>::setRGrid;
@@ -50,6 +51,7 @@ namespace Rp {
 
       /// Alias for base class (implementation convenience).
       using Base = WFieldsBase<D,CPT>;
+      #endif
 
    };
 

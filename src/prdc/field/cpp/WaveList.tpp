@@ -259,7 +259,9 @@ namespace Prdc {
          bunchIds_.allocate(kSize_);
       }
       UTIL_CHECK(bunchIds_.capacity() == kSize_);
-      int begin, end, ib, iw;
+      int begin = 0;
+      int end = 0;
+      int ib, iw;
       for (ib = 0; ib < nBunch_; ++ib) {
          begin = sortedBunches_[ib][0];
          end = sortedBunches_[ib][1];

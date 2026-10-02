@@ -17,6 +17,7 @@ namespace Rp {
    using namespace Util;
    using namespace Pscf::Prdc;
 
+   #if 0
    // Public member function
 
    /*
@@ -41,6 +42,7 @@ namespace Rp {
       bool isSymmetric = false;
       Base::setRGrid(tmp, isSymmetric);
    }
+   #endif
 
    // Explicit instantiation definitions - base class
    template class WFieldsBase<1,CUT>;

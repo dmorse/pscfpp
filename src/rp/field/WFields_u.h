@@ -45,6 +45,7 @@ namespace Rp {
       WFields() = default;
       virtual ~WFields() = default;
 
+      #if 0
       /**
       * Set new w fields, in unfolded real-space (r-grid) format.
       *
@@ -62,6 +63,7 @@ namespace Rp {
 
       /// Alias for base class (implementation convenience).
       using Base = WFieldsBase<D,CUT>;
+      #endif
 
    };
 

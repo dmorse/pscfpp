@@ -19,6 +19,7 @@ namespace Util {
    template <> class Signal<void>;
 }
 namespace Pscf {
+   template <typename Data, class T> class DeviceArray;
    namespace Prdc {
       template <int D> class UnitCell;
       template <int D, class T> class RField;
@@ -65,7 +66,7 @@ namespace Rp {
    *
    * The setBasis and readBasis functions allow the user to input new
    * components in basis format, and both internally recompute the values
-   * in r-grid format.  The setRGrid and readRGrid functions allow the
+   * in r-grid format.  The setRGrid and setBasis functions allow the
    * user to input the fields in r-grid format, and compute corresponding
    * components in basis format if and only if the user declares that the
    * fields are known to be invariant under all symmetries of the space
@@ -88,6 +89,9 @@ namespace Rp {
    {
 
    public:
+
+      // Alias for real number type
+      using RealT = typename T::Real;
 
       /// \name Initialization and Memory Management
       ///@{
@@ -195,6 +199,16 @@ namespace Rp {
       */
       void setRGrid(DArray<RField<D,T> > const & fields,
                     bool isSymmetric = false);
+
+      /**
+      * Set new w fields, in unfolded real-space (r-grid) format.
+      *
+      * The input array fields is an unfolded array that contains fields 
+      * for all monomer types, with the field for monomer 0 first, etc.
+      *
+      * \param fields  unfolded array of new w fields (input)
+      */
+      void setRGrid(DeviceArray<RealT,T>& fields);
 
       /**
       * Read fields from an input stream in symmetrized basis format.

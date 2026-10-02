@@ -244,6 +244,29 @@ namespace Rp {
    }
 
    /*
+   * Set new w-field values, using unfolded array of r-grid fields.
+   */
+   template <int D, class T>
+   void WFieldsBase<D,T>::setRGrid(DeviceArray<RealT,T>& fields)
+   {
+      UTIL_CHECK(fields.isAllocated());
+      UTIL_CHECK(fields.capacity() == meshSize_ * nMonomer_);
+
+      // Create DArray tmp with RField<D,T> elements
+      DArray< RField<D,T> > tmp;
+      tmp.allocate(nMonomer_);
+
+      // Associate each RField<D,T> with a slice of the unfolded array
+      for (int i = 0; i < nMonomer_; i++) {
+         tmp[i].associate(fields, i*meshSize_, meshDimensions_);
+      }
+
+      // Use tmp array to set w-fields for all monomer types
+      bool isSymmetric = false;
+      setRGrid(tmp, isSymmetric);
+   }
+
+   /*
    * Read fields from an input stream in basis format.
    *
    * This function also computes and stores the corresponding r-grid
