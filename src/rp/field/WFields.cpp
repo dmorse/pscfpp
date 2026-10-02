@@ -9,8 +9,8 @@
 #include <prdc/field/cpp/RField.h>
 #include <util/containers/DArray.h>
 
-#include <rp/field/WFieldsBase.tpp> // base class implementation
-#include <rp/field/WFields_c.h>     // class specialization
+#include <rp/field/WFields.tpp> 
+//#include <rp/field/WFields_c.h>     // class specialization
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -39,12 +39,12 @@ namespace Rp {
       bool isSymmetric = false;
       Base::setRGrid(tmp, isSymmetric);
    }
-   #endif
 
    // Explicit instantiation definitions - base class
    template class WFieldsBase<1,CPT>;
    template class WFieldsBase<2,CPT>;
    template class WFieldsBase<3,CPT>;
+   #endif
 
    // Explicit instantiation definitions - this subclass
    template class WFields<1,CPT>;

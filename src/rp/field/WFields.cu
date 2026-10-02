@@ -8,8 +8,8 @@
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/DeviceArray.h>
 
-#include <rp/field/WFieldsBase.tpp>   // base class implementation
-#include <rp/field/WFields_u.h>       // class specialziation
+#include <rp/field/WFields.tpp>   
+//#include <rp/field/WFields_u.h>       // class specialziation
 
 namespace Pscf {
 namespace Rp {
@@ -42,12 +42,12 @@ namespace Rp {
       bool isSymmetric = false;
       Base::setRGrid(tmp, isSymmetric);
    }
-   #endif
 
    // Explicit instantiation definitions - base class
    template class WFieldsBase<1,CUT>;
    template class WFieldsBase<2,CUT>;
    template class WFieldsBase<3,CUT>;
+   #endif
 
    // Explicit instantiation definitions - this class
    template class WFields<1,CUT>;

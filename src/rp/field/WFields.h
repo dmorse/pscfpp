@@ -1,5 +1,5 @@
-#ifndef RP_W_FIELDS_C_H
-#define RP_W_FIELDS_C_H
+#ifndef RP_W_FIELDS_H
+#define RP_W_FIELDS_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,8 +8,26 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/field/WFieldsBase.h>       // base class template
-#include <pscf/backend/TmplDeclare.h>  // explicit declaration macros
+#include <pscf/math/IntVec.h>            // member
+#include <util/containers/DArray.h>      // member
+#include <pscf/backend/TmplDeclare.h>   // template declaration macros
+#include <util/global.h>
+
+// Forward declarations
+namespace Util {
+   template <typename T> class Signal;
+   template <> class Signal<void>;
+}
+namespace Pscf {
+   template <typename Data, class T> class DeviceArray;
+   namespace Prdc {
+      template <int D> class UnitCell;
+      template <int D, class T> class RField;
+   }
+   namespace Rp {
+      template <int D, class T> class FieldIo;
+   }
+}
 
 namespace Pscf {
 namespace Rp {
@@ -18,28 +36,562 @@ namespace Rp {
    using namespace Prdc;
 
    /**
-   * A container of fields stored in both basis and r-grid format.
+   * A container of w fields stored in both basis and r-grid format.
    *
-   * This primary template is used for the CPU specialization, for which
-   * T = CppTp<D>. A partial specializations is defined for the CUDA 
-   * backend.
+   * <b> Template parameters </b>: The template parameters represent:
+   *
+   *     - D  : integer dimensionality of space, D=1,2, or 3
+   *     - T  : a backend type class (e.g. (CPT or CUT))
+   *
+   * <b> Subclasses </b>: Specializations of Rp::WFields are used as 
+   * base classes for corresponding specializations of Rp::WFields.
+   *
+   * <b> Field Representations </b>: A WFields object contains a list 
+   * of nMonomer chemical potential (w) fields that are each associated 
+   * with a monomer type. The fields may be stored in two different 
+   * formats:
+   *
+   *  - A DArray of RField containers holds valus of each field on
+   *    the nodes of a regular grid. This is accessed by the rgrid()
+   *    and rgrid(int) member functions.
+   *
+   *  - A DArray of DArray<double> containers holds components of each
+   *    field in a symmetry-adapted Fourier expansion (i.e., in basis
+   *    format). This is accessed by the basis() and basis(int) member
+   *    functions.
+   *
+   * A WFields is designed to automatically update one of these
+   * representations when the other is modified, as appropriate. 
+   * An associated FieldIo object is used for these conversions.
+   *
+   * The setBasis and readBasis functions allow the user to input new
+   * components in basis format, and both internally recompute the values
+   * in r-grid format.  The setRGrid and setBasis functions allow the
+   * user to input the fields in r-grid format, and compute corresponding
+   * components in basis format if and only if the user declares that the
+   * fields are known to be invariant under all symmetries of the space
+   * group. A boolean flag named isSymmetric is used to keep track of
+   * whether the current field is symmetric, and thus whether the basis
+   * format exists.
+   *
+   * <b> Signal </b>: A WFields object owns an instance of class
+   * Util::Signal<void> that notifies all observers whenever the fields
+   * owned by this object are modified. This signal object may be
+   * accessed by reference using the signal() member function. The
+   * Util::Signal<void>::addObserver function may used to add "observer"
+   * objects and indicate a zero-parameter member function of each
+   * observer that will be called whenever the fields are modified.
    *
    * \ingroup Rp_Field_Module
    */
    template <int D, class T>
-   class WFields : public Rp::WFieldsBase<D,T>
-   {};
+   class WFields
+   {
 
-   #ifdef PSCF_CPP
-   // Declare explicit specializations for CPU backend
-   PSCF_TMPL_DECLARE_CPP(WFields);
-   #endif
+   public:
+
+      // Alias for real number type
+      using RealT = typename T::Real;
+
+      /// \name Construction, Destruction, and Initialization 
+      ///@{
+
+      /**
+      * Constructor.
+      */
+      WFields();
+
+      /**
+      * Destructor.
+      */
+      ~WFields();
+
+      /**
+      * Create association with a FieldIo object (store pointer).
+      *
+      * \param fieldIo  associated FieldIo object
+      */
+      void setFieldIo(FieldIo<D,T> const & fieldIo);
+
+      /**
+      * Set unit cell used when reading field files.
+      *
+      * This function creates a stored pointer to a UnitCell<D> that is
+      * used by the readBasis and readRGrid functions, which reset the
+      * unit cell parameters in this object to those read from the field
+      * file header. This function may only be called once.
+      *
+      * \param cell  unit cell that is modified by readBasis and readRGrid.
+      */
+      void setReadUnitCell(UnitCell<D>& cell);
+
+      /**
+      * Set unit cell used when writing field files.
+      *
+      * This function creates a stored pointer to a UnitCell<D> that is
+      * is used by the writeBasis and writeRGrid functions, which each
+      * write the unit cell parameters from in this object to a field
+      * file header. This function may only be called once.
+      *
+      * \param cell  unit cell that is used by writeBasis and writeRGrid.
+      */
+      void setWriteUnitCell(UnitCell<D> const & cell);
+
+      /**
+      * Set stored value of nMonomer.
+      *
+      * May only be called once.
+      *
+      * \param nMonomer number of monomer types.
+      */
+      void setNMonomer(int nMonomer);
+
+      /**
+      * Allocate or re-allocate memory for fields in rgrid format.
+      *
+      * \param dimensions  dimensions of spatial mesh
+      */
+      void allocateRGrid(IntVec<D> const & dimensions);
+
+      /**
+      * Allocate or re-allocate memory for fields in basis format.
+      *
+      * \param nBasis  number of basis functions
+      */
+      void allocateBasis(int nBasis);
+
+      /**
+      * Allocate memory for all fields.
+      *
+      * This function may only be called once.
+      *
+      * \param nMonomer  number of monomer types
+      * \param nBasis  number of basis functions
+      * \param dimensions  dimensions of spatial mesh
+      */
+      void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
+
+      ///@}
+      /// \name Field Modifiers
+      ///@{
+
+      /**
+      * Set field component values, in symmetrized Fourier format.
+      *
+      * This function also computes and stores the corresponding r-grid
+      * representation. On return, hasData and isSymmetric are both true.
+      *
+      * The associated basis must be initialized on entry.  As needed,
+      * r-grid and/or basis fields may be allocated within this function.
+      *
+      * \param fields  array of new fields in basis format
+      */
+      void setBasis(DArray< DArray<double> > const & fields);
+
+      /**
+      * Set fields values in real-space (r-grid) format.
+      *
+      * If the isSymmetric parameter is true, this function assumes that
+      * the fields are known to be symmetric and so computes and stores
+      * the corresponding basis components. If isSymmetric is false, it
+      * only sets the values in the r-grid format.
+      *
+      * On return, hasData is true and the persistent isSymmetric flag
+      * defined by the class is set to the value of the isSymmetric
+      * input parameter.
+      *
+      * As needed, r-grid and/or basis fields may be allocated within this
+      * function. If the isSymmetric parameter is true, the a basis must
+      * be initialized prior to entry.
+      *
+      * \param fields  array of new fields in r-grid format
+      * \param isSymmetric is this field symmetric under the space group?
+      */
+      void setRGrid(DArray<RField<D,T> > const & fields,
+                    bool isSymmetric = false);
+
+      /**
+      * Set new w fields, in unfolded real-space (r-grid) format.
+      *
+      * The input array fields is an unfolded array that contains fields 
+      * for all monomer types, with the field for monomer 0 first, etc.
+      *
+      * \param fields  unfolded array of new w fields (input)
+      */
+      void setRGrid(DeviceArray<RealT,T>& fields);
+
+      /**
+      * Read fields from an input stream in symmetrized basis format.
+      *
+      * This function also computes and stores the corresponding r-grid
+      * representation. On return, hasData and isSymmetric are both true.
+      *
+      * As needed, r-grid and/or basis fields can be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
+      *
+      * \param in  input stream from which to read fields
+      */
+      void readBasis(std::istream& in);
+
+      /**
+      * Read fields from a named file, in symmetrized basis format.
+      *
+      * This function also computes and stores the corresponding
+      * r-grid representation. On return, hasData and isSymmetric
+      * are both true.
+      *
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
+      *
+      * \param filename  file from which to read fields
+      */
+      void readBasis(std::string filename);
+
+      /**
+      * Reads fields from an input stream in real-space (r-grid) format.
+      *
+      * If the isSymmetric parameter is true, this function assumes that
+      * the fields are known to be symmetric and so computes and stores
+      * the corresponding basis components. If isSymmetric is false, it
+      * only sets the values in the r-grid format.
+      *
+      * On return, hasData is true and the persistent isSymmetric flag
+      * defined by the class is set to the value of the isSymmetric
+      * input parameter.
+      *
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
+      *
+      * \param in  input stream from which to read fields
+      * \param isSymmetric  is this field symmetric under the space group?
+      */
+      void readRGrid(std::istream& in, bool isSymmetric = false);
+
+      /**
+      * Reads fields from a named file in real-space (r-grid) format.
+      *
+      * If the isSymmetric parameter is true, this function assumes that
+      * the fields are known to be symmetric and so computes and stores
+      * the corresponding basis components. If isSymmetric is false, it
+      * only sets the values in the r-grid format.
+      *
+      * On return, hasData is true and the persistent isSymmetric flag
+      * defined by the class is set to the value of the isSymmetric input
+      * parameter.
+      *
+      * As needed, r-grid and/or basis fields may be allocated within
+      * this function, if not allocated on entry. An associated basis
+      * will be initialized if not initialized on entry.
+      *
+      * \param filename  file from which to read fields
+      * \param isSymmetric  Is this field symmetric under the space group?
+      */
+      void readRGrid(std::string filename, bool isSymmetric = false);
+
+      /**
+      * Symmetrize r-grid fields, compute corresponding basis components.
+      *
+      * This function may be used after setting or reading w fields in
+      * r-grid format that are known to be symmetric under the space
+      * group to remove small deviations from symmetry and generate
+      * basis components.
+      *
+      * The function symmetrizes the fields by converting from r-grid
+      * to basis format and then back again, while also storing the
+      * resulting basis components and setting isSymmetric() true.
+      *
+      * This function assumes that the current wFieldsRGrid fields
+      * are known by the user to be symmetric, and does NOT check this.
+      * Applying this function to fields that are not symmetric will
+      * silently corrupt the fields.
+      *
+      * On entry, hasData() must be true and isSymmetric() must be false.
+      * On exit, isSymmetric() is true.
+      */
+      void symmetrize();
+
+      /**
+      * Clear data stored in this object without deallocating.
+      */
+      void clear();
+
+      /**
+      * Get a signal that notifies observers of field modification.
+      */
+      Signal<void>& signal();
+
+      ///@}
+      /// \name Field Output
+      ///@{
+
+      /**
+      * Write fields to an input stream in symmetrized basis format.
+      *
+      * \param out  output stream to which to write fields
+      */
+      void writeBasis(std::ostream& out) const;
+
+      /**
+      * Write fields to a named file, in symmetrized basis format.
+      *
+      * \param filename  file to which to write fields
+      */
+      void writeBasis(std::string filename) const;
+
+      /**
+      * Writes fields to an input stream in real-space (r-grid) format.
+      *
+      * \param out  output stream to which to write fields
+      */
+      void writeRGrid(std::ostream& out) const;
+
+      /**
+      * Writes fields to a named file in real-space (r-grid) format.
+      *
+      * \param filename  file to which to write fields
+      */
+      void writeRGrid(std::string filename) const;
+
+      ///@}
+      /// \name Field Accessors (by const reference)
+      ///@{
+
+      /**
+      * Get array of all fields in basis format.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
+      DArray< DArray<double> > const & basis() const;
+
+      /**
+      * Get the field for one monomer type in basis format.
+      *
+      * An Exception is thrown if isSymmetric is false.
+      *
+      * \param monomerId integer monomer type index (0,...,nMonomer-1)
+      */
+      DArray<double> const & basis(int monomerId) const;
+
+      /**
+      * Get array of all fields in r-space grid format.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
+      DArray<RField<D,T> > const & rgrid() const;
+
+      /**
+      * Get the field for one monomer type in r-space grid format.
+      *
+      * \param monomerId integer monomer type index (0,..,nMonomer-1)
+      */
+      RField<D,T> const & rgrid(int monomerId) const;
+
+      ///@}
+      /// \name Boolean Queries
+      ///@{
+
+      /**
+      * Has memory been allocated for fields in r-grid format?
+      */
+      bool isAllocatedRGrid() const;
+
+      /**
+      * Has memory been allocated for fields in basis format?
+      */
+      bool isAllocatedBasis() const;
+
+      /**
+      * Has field data been set in either format?
+      *
+      * This flag is set true in setBasis and setRGrid.
+      */
+      bool hasData() const;
+
+      /**
+      * Are fields symmetric under all elements of the space group?
+      *
+      * A valid basis format exists if and only if isSymmetric is true.
+      * This flag is set true when the fields are input in basis format
+      * by the function setBasis or readBasis, or when they are set in
+      * grid format by calling the function setRGrid or readRGrid with
+      * function parameter isSymmetric == true.
+      */
+      bool isSymmetric() const;
+
+      ///@}
+
+   protected:
+
+   private:
+
+      /**
+      * Array of fields in symmetry-adapted basis format.
+      *
+      * Element basis_[i] is an array that contains the components
+      * of the field associated with monomer i, in a symmetry-adapted
+      * Fourier expansion.
+      */
+      DArray< DArray<double> > basis_;
+
+      /**
+      * Array of fields in real-space grid (r-grid) format.
+      *
+      * Element basis_[i] is an RField that contains values of the
+      * field associated with monomer i on the nodes of a regular mesh.
+      */
+      DArray<RField<D,T> > rgrid_;
+
+      /**
+      * Integer vector of grid dimensions.
+      *
+      * Element i is the number of grid points along direction i
+      */
+      IntVec<D> meshDimensions_;
+
+      /**
+      * Total number grid points (product of mesh dimensions).
+      */
+      int meshSize_;
+
+      /**
+      * Number of basis functions in symmetry-adapted basis.
+      */
+      int nBasis_;
+
+      /**
+      * Number of monomer types (number of fields).
+      */
+      int nMonomer_;
+
+      /**
+      * Pointer to unit cell modified by read functions.
+      */
+      UnitCell<D> * readUnitCellPtr_;
+
+      /**
+      * Pointer to unit cell access by write functions.
+      */
+      UnitCell<D> const * writeUnitCellPtr_;
+
+      /**
+      * Pointer to an associated FieldIo object.
+      */
+      FieldIo<D,T> const * fieldIoPtr_;
+
+      /**
+      * Pointer to a Signal that is triggered by field modification.
+      *
+      * The Signal is constructed and owned by this field container.
+      */
+      Signal<void>* signalPtr_;
+
+      /**
+      * Has memory been allocated for fields in r-grid format?
+      */
+      bool isAllocatedRGrid_;
+
+      /**
+      * Has memory been allocated for fields in basis format?
+      */
+      bool isAllocatedBasis_;
+
+      /**
+      * Has field data been initialized ?
+      */
+      bool hasData_;
+
+      /**
+      * Are the fields symmetric under space group operations?
+      *
+      * Set true when fields are set using the symmetry adapted basis
+      * format via function setBasis. False by otherwise.
+      */
+      bool isSymmetric_;
+
+      // Private member function
+
+      /**
+      * Get associated FieldIo object (const reference).
+      */
+      FieldIo<D,T> const & fieldIo() const;
+
+   };
+
+   // Public inline member functions
+
+   // Clear data stored in this object without deallocating
+   template <int D, class T> inline
+   void WFields<D,T>::clear()
+   {  hasData_ = false; }
+
+   // Get array of all fields in basis format (const)
+   template <int D, class T> inline
+   DArray< DArray<double> > const & WFields<D,T>::basis() const
+   {
+      UTIL_ASSERT(isAllocatedBasis_);
+      return basis_;
+   }
+
+   // Get one field in basis format (const)
+   template <int D, class T> inline
+   DArray<double> const & WFields<D,T>::basis(int id) const
+   {
+      UTIL_ASSERT(isAllocatedBasis_);
+      return basis_[id];
+   }
+
+   // Get all fields in r-grid format (const)
+   template <int D, class T> inline
+   DArray<RField<D,T> > const & WFields<D,T>::rgrid() const
+   {
+      UTIL_ASSERT(isAllocatedRGrid_);
+      return rgrid_;
+   }
+
+   // Get one field in r-grid format (const)
+   template <int D, class T> inline
+   RField<D,T> const & WFields<D,T>::rgrid(int id) const
+   {
+      UTIL_ASSERT(isAllocatedRGrid_);
+      return rgrid_[id];
+   }
+
+   // Has memory been allocated for fields in r-grid format?
+   template <int D, class T> inline
+   bool WFields<D,T>::isAllocatedRGrid() const
+   {  return isAllocatedRGrid_; }
+
+   // Has memory been allocated for fields in basis format?
+   template <int D, class T> inline
+   bool WFields<D,T>::isAllocatedBasis() const
+   {  return isAllocatedBasis_; }
+
+   // Has field data been initialized ?
+   template <int D, class T> inline
+   bool WFields<D,T>::hasData() const
+   {  return hasData_; }
+
+   // Are the fields symmetric under space group operations?
+   template <int D, class T> inline
+   bool WFields<D,T>::isSymmetric() const
+   {  return isSymmetric_; }
+
+   // Private inline member function
+
+   // Associated FieldIo object (const reference).
+   template <int D, class T> inline
+   FieldIo<D,T> const & WFields<D,T>::fieldIo() const
+   {
+      UTIL_CHECK(fieldIoPtr_);
+      return *fieldIoPtr_;
+   }
+
+   // Explicit instantiation declarations for WFields
+   PSCF_TMPL_DECLARE(WFields)
 
 } // namespace Rp
 } // namespace Pscf
-
-#ifdef PSCF_CUDA
-#include <rp/field/WFields_u.h>
-#endif
-
 #endif
