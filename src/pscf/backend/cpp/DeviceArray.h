@@ -105,7 +105,7 @@ namespace Pscf {
       DeviceArray(DeviceArray<Data,CPT> const & other) = default;
 
       // Destructor.
-      ~DeviceArray() = default;
+      ~DeviceArray() override = default;
 
       // Assignment.
       DeviceArray<Data,CPT>& 
@@ -114,7 +114,7 @@ namespace Pscf {
       /**
       * Pseudo-assignment from a host array.
       *
-      * This fucnction performs a sanity check and does nothing if the 
+      * This function performs a sanity check and does nothing if the 
       * check is passed. It checks that both LHS and RHS are allocated
       * and refer to the to the same underlying C array on entry, and
       * throws an Exception if this is not the case. 

@@ -27,13 +27,6 @@ namespace Prdc {
    {}
 
    /*
-   * Destructor.
-   */
-   template <int D>
-   RField<D,CPT>::~RField()
-   {}
-
-   /*
    * Copy constructor.
    *
    * Allocates new memory and copies all elements by value.

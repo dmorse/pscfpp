@@ -1,14 +1,136 @@
-/*! \page developer_backend_math_page Array Operations
+/*! \page developer_backend_math_page Vector and Reduction Operations
 
-\ref developer_backend_device_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_backend_complex_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_comm_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
-Describe vector operations (Pscf::VecOp) and reductions.
+PSCF provides a set of templates for classes and functions that perform 
+basic mathematical operations on arrays of numbers. The FFT class template,
+which performs discrete Fourier transforms, has been discussed on the
+previous page.  This page discusses functions that perform two additional
+types of operation that we refer to as vector operations and reductions:
+
+   - <b> Vector operations </b> take one or more arrays as inputs and 
+     produce a single array as an output, such that each element of the 
+     output array can be computed elementwise from corresponding 
+     elements of all input arrays. Such operations include vector-vector 
+     addition, vector-scalar multiplication, and elementwise vector-vector 
+     multiplication. Vector operations are performed by functions defined
+     in namespace Pscf::VecOp.
+
+   - <b> Reduction operations </b>: take one or more arrays as inputs 
+     and return a scalar output. Such operations include calculation 
+     of a dot product of two arrays and identification of minimum or 
+     maximum elements of an array. Reduction operations are performed
+     by functions defined namespace Pscf::Reduce.
+
+For each function name that is defined in the Pscf::VecOp and Pscf::Reduce
+namespaces, overloaded versions are defined that are designed to be used 
+with different backends. Versions of each functions that are designed to 
+be used with different backends are distinguished by the types declared 
+for their array-valued input and output parameters:
+
+   - Functions that are designed to be used with a CUDA backend 
+     take array parameters with types that are specializations of 
+     Pscf::DeviceArray \<Data, Pscf::CUT \>, with Data = cudaReal for 
+     arrays with real elements and Data = cudaComplex for arrays with 
+     complex elements.
+
+   - Functions that are designed to be used with a CUDA backend instead
+     take array parameters with types that are specializations of 
+     Util::Array \<Data \>, with Data = double for arrays with real 
+     elements and Data = fftw_complex for arrays with complex elements.
+
+These interfaces allow RField, RFieldDft and CField classes to be passed
+to such functions because the field classes with a backend identifier
+class T=Pscf::CUT that are used with a Cuda backend are all derived 
+from specializations of DeviceArray \<Data, T\> with T=Pscf::CUT, while 
+the field classes with T=PSCF::CPT are all indirectly derived from 
+corresponding specializations of Util::Array \<Data\>. 
+
+Vector operation and reduction functions that are designed for use with a 
+CUDA backend are defined in files located in the src/pscf/backend/cuda 
+directory. Corresponding functions that are designed for use with a C++
+backend are defined in files located in the src/pscf/backend/cpp directory.
+
+<b> Example </b>: 
+
+The function Pscf::VecOp::addVV is used to perform
+binary vector-vector addition.  The file src/pscf/backend/cpp/VecOp.h 
+declares a version of this function that uses a C++ backend to add two 
+real arrays, which is declared within namespace Pscf::VecOp as:
+\code
+    void addVV(Array<double>& a, 
+               Array<double> const & b, 
+               Array<double> const & c);
+\endcode
+where Array<double> is used to denote Util::Array<double>.
+The file src/pscf/backend/cuda/VecOp.h declares an overloaded version 
+of this function that uses a Cuda backend, which is declared in 
+namespace Pscf::VecOp as
+\code
+    void addVV(DeviceArray<cudaReal, CUT>& a, 
+               DeviceArray<cudaReal, CUT> const & b, 
+               DeviceArray<cudaReal, CUT> const & c);
+\endcode
+where DeviceArray<cudaReal> is used to denotes Pscf::DeviceArray<cudaReal>.
+Two other overloaded versions of the function addVV are also defined that
+can perform addition of complex-valued arrays using either backend,
+though the declarations for these overloads are not shown here. 
+In the interface for addVV and almost all other functions in namespace 
+VecOp, the first parameter (a) is an output parameter that is used to 
+return the result of a calculation, which is passed to the function by 
+non-const reference, while the remaining parameters are input 
+parameters.
+
+As shown in this example, analogous functions that perform the same 
+mathematical operation but use different backends are assigned the same 
+function name, thus defining overloaded variants of that function. This 
+usage relies on the C++ system for function overload resolution to find 
+the correct version of each function by inspecting the types of the 
+arguments passed to the function in code where the function is called. 
+For example, suppose that the function Pscf::VecOp::addVV is used to add 
+two real-valued arrays (or vectors) within a member function of a class 
+template that takes a backend identifier class T as a template parameter. 
+In specializations of that class template with T=Pscf::CPT, the addVV 
+will always be passed arguments that are instances of subclasses of 
+Util::Array<double>. In specializations with T=Pscf::CUT, the same
+function invocation may be passed arguments that are instances of the 
+class DeviceArray<cudaReal,CUT> or its subclasses.  The template type
+system used by PSCF, in which different data types are used for arrays 
+in specializations that use different backends, allows the compiler to 
+choose the correct overload for functions defined in Pscf::VecOp and 
+Pscf::Reduce when instantiating each such template specialization.
+
+<b> Function Name Conventions </b>: 
+
+The names of functions in namespace Pscf::VecOp follow a scheme in which
+function names usually starts with a shortened form of the name of a 
+mathematical operation (e.g., "add" for addition or "mul" for 
+multiplication) followed by a code that indicates the nature of the 
+inputs (e.g. "VV" for an operations with two vector inputs or "VS" for 
+an operation with a vector and scalar input).  The function name "addVV" 
+thus indicates a function that adds to vectors, while "mulVS" is a 
+function that performs vector-scalar multiplication. The string "Eq" 
+can be added after the name of the binary operation to indicate 
+functions in which the first argument is used as an input that is
+modified to store the output, as done by the C compound arithmetic 
+operators such as +=, *=, etc.  The function addEqV(a,b) thus yields 
+an ouput array a for which a[i] += b[i] for each element with index 
+i. 
+
+Conventions used for function names and argument types in the 
+Pscf::VecOp and Pscf::Reduce namespaces are discussed in more detail 
+in the doxygen documention for these namespaces.
+
+\see Pscf_Cuda_VecOp_Module
+\see Pscf_Cuda_Reduce_Module
+\see Pscf_Cpp_VecOp_Module
+\see Pscf_Cpp_Reduce_Module
 
 <BR>
-\ref developer_backend_device_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_backend_page         (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_backend_complex_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_field_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page       (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_comm_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

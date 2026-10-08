@@ -1,4 +1,4 @@
-/*! \page developer_backend_page CUDA vs. C++ Backends
+/*! \page developer_backend_page Supporting GPU and CPU Backends
 
 \ref developer_container_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page      (Next)
@@ -7,41 +7,37 @@
 The PSCF package builds two executable files, that are pscf_rpc and 
 pscf_rpg, that are designed to solve the same set of problems involving 
 real periodic fields, but that are specialized to use different hardware. 
-The pscf_rpg executable performs makes use of a GPU, while the pscf_rpg 
-executable uses only a CPU. 
+The pscf_rpg executable makes use of a GPU, while the pscf_rpg executable 
+uses only a CPU.
 
-The key difference in the implementation of these two programs arises 
-from differences in:
+The differences between two programs arise primarily from differences in:
 
-   - Where are arrays of data stored (CPU vs. GPU memory) ?
+   - Where are large arrays of data stored (in CPU vs. GPU memory) ?
 
-   - Where are mathematical operations on large arrays performed?
+   - Where and how are mathematical operations on such arrays performed 
+     (on the CPU or GPU)?
 
-In pscf_rpc, all data structures that use arrays that are allocated on
-the heap memory use arrays that are allocated in CPU main memory, and
-all computations are performed on the CPU.
-In pscf_rpg, most large array data structures are instead allocated
-in GPU global memory, and all basic mathematical operations that are 
-performed on these arrays are performed directly on the GPU. 
-In both cases, mathematical operations that are performed on arrays
-include elementwise mathematical operations on arrays such a 
-vecctor-vector addition and scalar-vector multiplication, array 
-reductions, and fast Fourier transforms.  
+We summarize these differences in what follows by saying that these two 
+programs use different computational "backends".  In pscf_rpg, which 
+uses a Cuda backend, almost all large arrays are allocated in GPU global 
+memory, and basic mathematical operations that are performed on these 
+arrays are generally performed on the GPU within CUDA kernels.  In 
+pscf_rpc, which uses a C++ backend, all data structures that use heap 
+memory are allocated in CPU main memory, and all computations are 
+performed on the CPU.
 
-We describe these differences in what follows by saying that analogous 
-executable files use different computational "backends". The system
-used by PSCF to support the use of more than one backend relies on 
-heavy use of C++ class templates.  The subpages linked below describe 
-this system.
+The system used by PSCF to support the use of more than one backend is 
+based on the use of C++ class templates to minimize code duplication. 
+The subpages linked below describe this system.
 
 <ol>
  <li> \subpage developer_backend_id_page </li>
  <li> \subpage developer_backend_own_page </li>
  <li> \subpage developer_backend_build_page </li>
  <li> \subpage developer_backend_device_page </li>
- <li> \subpage developer_backend_math_page </li>
  <li> \subpage developer_backend_complex_page </li>
  <li> \subpage developer_backend_field_page </li>
+ <li> \subpage developer_backend_math_page </li>
  <li> \subpage developer_backend_comm_page </li>
 </ol>
 

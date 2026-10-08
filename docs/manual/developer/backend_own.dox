@@ -1,7 +1,7 @@
 /*! \page developer_backend_own_page Ownership Hierarchy
 
-\ref developer_backend_id_page     (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_backend_build_page  (Next)    &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_id_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_build_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 Each executable program created by the PSCF package is designed 
@@ -15,18 +15,24 @@ destroying its children.
 
 The Pscf::Rp namespace contains a large number of definitions for class
 templates that take the dimension of space, D, and a backend identifer 
-class as template parameters. Throughout this namespace, the same
-arguments for these two template parameters are used throughout objects 
-the ownership hierarchy of objects used by a executable program.
+class as template parameters. Throughout this namespace, the same pair 
+of arguments for these two template parameters are used throughout 
+objects in the hierarchy of objects used by a particular executable.
 An instance of a class template specialization with a specific pair 
-of arguments for D and T may own children that are instances of 
-other template specializations with the same values for these two
-template arguments, and may be a child of a parent that is an instance 
-of yet another class template specialization with the same arguments
-of these parameters.
+of arguments for D and T may own children that are instances of other 
+template specializations with the same values for these two template 
+arguments, and may be a child of a parent that is an instance of yet 
+another class template specialization with the same arguments of these 
+parameters. Construction of the highest level object in this hierarchy 
+thus automatically creates a large set of descendant objects that are
+all instances of template specializations that take the same values 
+for D and T, which are all thus designed to describe systems with 
+the same spatial dimension using the same computational backend. 
+The owership hierarchy used by pscf_rpc and pscf_rpg is described 
+briefly below.
 
-\section developer_backend_own_system_sec System class
 
+<b> System </b>:
 The top of the ownership hierarchy used by the pscf_rpc and pscf_rpg
 programs is an instance of a specialization of the Pscf::Rp::System 
 class template.  The top-level object used by the pscf_rpc program is 
@@ -49,24 +55,9 @@ Member functions of this top-level System object are then invoked to
 read the parameter and command files, which are given in the above 
 example as files named "param" and "command". 
 
-\section developer_backend_own_children_sec Top-Level Children 
-
-An instance of System \<D,T\> with a specific choice of values for the 
-template parameters D and T directly or indirectly owns instances of 
-many other class template specializations that all use the same 
-arguments for these two template parameters. All of these objects in
-the hierarchy of objects used by a particular executable are thereby
-configured at compile time to use the same computational backend, and 
-to treat systems with the same spatial dimension D.
-
-The creation of separate template specializations for models with 
-different values of D is used primarily for SCFT calculations, for which 
-on might use D=1 to treat a lamellar phase or D=2 to treat a 2D hexagonal 
-phase. PS-FTS simulations generally use a value D=3, in order to allow 
-the fluctuating fields to depends on three spatial coordinates.
-
-The direct children of an instance of System \<D,T\> include instances 
-of the following class template specializations:
+The children of an instance of System \<D,T\> with a specified choice
+for D and T include instances of the following class template 
+specializations:
     - Pscf::Rp::Mixture \<D,T\>
     - Pscf::Rp::Domain \<D,T\>
     - Pscf::Rp::CFields \<D,T\>
@@ -105,8 +96,29 @@ chemical potential fields associated with different monomer types.
 An instance of Pscf::Rp::CFields \<D,T\> owns a set of objects that store 
 monomer concentration fields associated with different monomer types. 
 
+<b> RField </b>: The WFields, CFields, Block and Propagator classes 
+templates all have children that represent real-valued fields that 
+are defined on the nodes of a regular periodic mesh. All such objects 
+are defined as instances of specializations of a class template 
+Pscf::Prdc::RField \<D, T\>, which is discussed in detail 
+\ref developer_backend_field_page "elsewhere".  Each such RField \<D,T\>
+object is defined using the same arguments for the template parameters 
+D and T as those used by their parent class.  Specializations of 
+RField with T=Pscf::CUT allocate the underlying array of field data 
+in GPU global memory, while specializations with T=Pscf::CPT allocate
+this array in CPU heap memory.
+
+An instance of System \<D,T\> with a specific choice of values for the 
+template parameters D and T thus directly or indirectly owns instances 
+of many other class template specializations that all use the same 
+arguments for these two template parameters. All of these objects in 
+this hierarchy are thereby configured at compile time to use the same 
+computational backend, and to treat systems with the same spatial 
+dimension D.
+
 <BR>
-\ref developer_backend_page        (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_backend_build_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_id_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_build_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

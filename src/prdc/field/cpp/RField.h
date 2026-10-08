@@ -58,10 +58,8 @@ namespace Prdc {
 
       /**
       * Destructor.
-      *
-      * Deletes underlying C array, if allocated previously.
       */
-      virtual ~RField();
+      ~RField() override = default;
 
       /**
       * Assignment operator.
@@ -102,12 +100,12 @@ namespace Prdc {
       /**
       * Deallocate memory and return to empty state.
       */
-      virtual void deallocate();
+      void deallocate() override;
 
       /**
       * Return mesh dimensions by constant reference.
       */
-      const IntVec<D>& meshDimensions() const;
+      IntVec<D> const & meshDimensions() const;
 
       /**
       * Serialize a Field to/from an Archive.
@@ -138,8 +136,7 @@ namespace Prdc {
    * Return mesh dimensions by constant reference.
    */
    template <int D> inline
-   IntVec<D> const &
-   RField<D,CPT>::meshDimensions() const
+   IntVec<D> const & RField<D,CPT>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*

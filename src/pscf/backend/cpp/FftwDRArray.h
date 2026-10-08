@@ -107,7 +107,7 @@ namespace Pscf {
       * one or more other FftwDRArray objects, an error message is written
       * to std::cout.
       */
-      ~FftwDRArray();
+      virtual ~FftwDRArray();
 
       /**
       * Assignment from another FftwDRArray<Data> container.
@@ -165,7 +165,7 @@ namespace Pscf {
       *
       * \throw Exception if this object does not own data.
       */
-      void deallocate();
+      virtual void deallocate();
 
       /**
       * Associate this object with a slice of a different FftwDRArray.

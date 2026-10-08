@@ -86,9 +86,26 @@ The enum value BackendId::Cpp represents the C++  CPU backend, while
 BackendId::Cuda represents the Cuda Gpu backend.
 
 The backend identifier classes Pscf::CPT and Pscf::CUT each define a 
-const static member variable named "id" that is an instance of BackendId. 
-The value of the const member variable CPT::id is BackendId::Cpp, while 
-the value of CUT::id is BackendId::Cuda.  
+const static member variable named "id" that is an instance of the 
+BackendId enum class. This variable is assigned the appropriate constant
+value in each backend identifier class.  The definition of the class 
+Pscf::CUT thus reads, in part
+\code
+namespace Pscf {
+
+    class CUT {
+       
+        static const BackendId id = BackendId::Cuda;
+
+        // ...
+        
+    };
+
+}
+\endcode
+while the corresponding definition of the class Pscf::CPT instead 
+contains the statement "static const BackendId id = BackendId::Cpp".
+
 
 A backend identifier class and a value of the BackendId enum are designed 
 to identify a choice of backend in different contexts. A backend 

@@ -4,7 +4,226 @@
 \ref developer_test_page          (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
-Explain usage patterns for HostArray and ConstHostArray templates.
+Some operations performed by the pscf_rpg program require arrays to
+be explicitly copied between CPU host memory and GPU device memory. 
+The two most common situations that require this are:
+
+   - Field input and output operations that must be performed on
+     the CPU host but that require access to field data that is
+     allocated in GPU memory.
+
+   - Calculations that must read or write arrays that are allocated
+     on the GPU host but that are difficult to implement as parallel
+     CUDA kernels, and so are instead performed on the CPU host.
+
+The data transfer operations that are performed for these purposes
+in template specializations that are used by pscf_rpg are generally 
+unnecessary in corresponding specializations used by pscf_rpc, since
+this program does not use GPU device and allocates all arrays in
+CPU memory.
+
+PSCF provides a pair of class templates named Pscf::HostArray and 
+Pscf::ConstHostArray that each take a backend identifier class T as 
+a parameter argument, and that are designed to be used in operations 
+that require copying of data between the GPU device and the CPU host 
+in template specializations with T=Pscf::CUT. The two templates are
+declared as
+\code
+namespace Pscf {
+   template <typename Data, typename T> class HostArray;
+   template <typename Data, typename T> class ConstHostArray;
+}
+\endcode
+where the parameter Data is the type of each array element and 
+T is backend identifier class. Specializations of these templates
+with T=Pscf::CUT are designed to provide a convenient syntax for
+operations that copy arrays between the CPU host and CPU device,
+in either direction. Specializations with T=Pscf::CPT are designed 
+to use the same syntax but to not actually perform any unnecessary 
+copy operations. This is done by requiring that the sequence of
+function calls that is used to actual perform a "deep" copy of 
+data between GPU and CPU arrays when used with specializations 
+of these templates with T=Pscf::CUT instead create a "shallow" 
+copy that simply makes two arrays point to the same data when 
+used with specializations with T=Pscf::CPT.
+
+The design of these two templates is based on the assumption 
+that most large, long-lived arrays in PSCF are allocated on 
+the GPU in specializations with T = Pscf::CUT, and are thus 
+defined in template code as instances of DeviceArray<Data,T> 
+or a subclass thereof.  The design is designed to allow 
+operations that copy data between a long-lived DeviceArray 
+and a shorter-lived HostArray or ConstHostArray, for which 
+the data in the HostArray or ConstHostArray only needs to 
+be accessed within the scope of a single function. 
+
+The template HostArray is designed to be used for CPU-to-GPU 
+copy operations, while ConstHostArray is designed to be used for 
+GPU-to-CPU copy operations.  A HostArray defines a subscript
+([]) operator that allows read and write access to elements
+of the array, which is needed to allow elements to be assigned
+values before they are copied to the device array.  The 
+ConstHostArray instead defines a subscript operator that 
+only allows read access to elements, allowing elements to be 
+read after they are copied from the associated DeviceArray.
+
+\section developer_backend_HostToDev Host-to-Device Copy
+
+The pseudo-code shown below outlines the required usage to 
+transfer data from an instance of a HostArray<Data,T> named 
+hostArray to an instance of DeviceArray<Data,T> named devArray. 
+We assume that the devArray container has been declared and 
+allocated prior to entry to this code segment.
+\code
+    HostArray<Data,T> hostArray;
+    hostArray.associate(devArray);
+
+    // Assign values to all elements of hostArray
+
+    devArray = hostArray;
+    hostArray.dissociate();
+\endcode
+In this code snippet, the associate function, assignment 
+operator, and dissociate member function perform completely
+different operations for specializations with T=Pscf:CUT and 
+T=Pscf:CPT.
+
+In specializations with T=Pscf::CUT (Cuda backend):
+   - The statement hostArray.associate(devArray) checks if 
+     hostArray is allocated and, if it is not, allocates it with
+     the same capacity as that of the devArray container that is
+     passed to the associate function.
+   - The statement devArray = hostArray copies all elements 
+     of hostArray to devArray, by performing a CPU-to-GPU
+     copy of the array.
+   - The statement hostArray.dissociate() does nothing.
+
+In specializations with T=Pscf::CPT (C++ backend):
+   - The statement hostArray.associate(devArray) sets a
+     pointer owned by hostArray to be a copy of the pointer
+     to the array owned by devArray, thus making hostArray
+     a shallow copy of devArray.
+   - The statement devArray = hostArray does nothing.
+   - The statement hostArray.dissociate() nullifies the 
+     pointer member of hostArray that points to an 
+     array, thus destroying the association between the 
+     two arrays.
+
+In specializations with T=Pscf::CPT, assignment of values to
+the elements of hostArray thus automatically also assigns
+values to elements of devArray, because the two containers 
+temporarily refer to the same memory. In this case, the use
+of a shallow copy avoids the need to actually copy any data,
+while allowing the same function template to be used with 
+either backend.
+
+In specializations with T=Pscf::CPT, the pointer owned by the 
+host array is null after the call to hostArray.dissociate(), 
+and so does not have any access to data after this point.
+To use this pattern safely in template code that must be
+valid for either backend, the associate function, assignment 
+operator, and dissociate function must all be called within 
+the same function, and elements of hostArray may only be 
+assigned values between the call to the associate member
+function and the assignment (=) operator.
+
+In specializations with T=Pscf::CUT, the HostArray owns
+a separate block of CPU heap memory that can be allocated by 
+the associate function. The dissociate function does not deallocate 
+this memory, but the destructor function for a HostArray 
+deallocates any associated memory that remains when the object 
+is destroyed. If the ConstHostArray is a local variable that 
+is defined within a function, as in the above example, this 
+memory will thus be deallocated when the function ends and 
+the host array goes out of scope.  If the ConstHostArray is 
+instead a class member variable that is used in a class member 
+function, then the associated memory will be allocated the 
+first time the associate function is called, and can be 
+re-used in multiple calls to the same or other member 
+function, as long as the associated device array always has 
+the same number of elements. The associate member function
+throws an Exception if a ConstHostArray is already allocated
+on entry but its capacity is not equal to that of the device
+array that is passed as a function argument. The decision to
+not use the dissociate function to deallocate host memory was 
+made to allow this reuse of memory if desired. 
+
+\section developer_backend_DevToHost Device-to-Host Copy
+
+The pseudo-code shown below outlines the usage for transferring
+data from a long-lived instance of DeviceArray<Data,T> named 
+devArray to a temporary instance of ConstHostArray<Data,T> 
+named hostArray:
+\code
+    ConstHostArray<Data,T> hostArray;
+
+    hostArray.associate(devArray);
+    hostArray = devArray;
+
+    // Read elements of hostArray and use them to 
+    // do any required computation.
+
+    hostArray.dissociate();
+\endcode
+In this pattern, all read access to elements of hostArray must 
+occur after the assignment statement "hostArray = devArray" and 
+before the statement "hostArray.dissociate()". The interface of
+the ConstHostArray does not allow values of individual elements
+to be modified. 
+
+The associate, assignment, and dissociate member functions of 
+the ConstHostArray perform completely different operations for
+specializations with T=Pscf:CUT and T=Pscf:CPT. 
+
+In specializations with T=Pscf::CUT (Cuda backend):
+   - The statement hostArray.associate(devArray) checks if
+     the host is allocated and, if it is not, allocates it with
+     the same dimension as that of devArray, which must already
+     be allocated.
+   - The statement hostArray = devArray copies all elements of
+     the array from devArray to hostArray, by performing a 
+     GPU-to-CPU copy.
+   - The statement hostArray.dissociate() does nothing.
+
+In specializations with T=Pscf::CPT (C++ backend):
+
+   - The statement hostArray.associate(devArray) sets a
+     pointer owned by hostArray to be a copy of the pointer
+     to the array owned by devArray, thus making hostArray
+     a shallow, temporary read-only copy of devArray.
+   - The statement hostArray = devArray does nothing.
+   - The statement hostArray.dissociate() nullifies the pointer
+     member of hostArray that points to an array, thus 
+     destroying the association between the two arrays.
+
+In order for this pattern to be used safely in template code
+that must work correctly with both backends, the associate 
+function, assignment operator, and dissociate function should 
+all be called within the same function, and elements of 
+hostArray may only accessed only between the calls to the
+assignment operator and the dissociate member function.
+
+The class template ConstHostArray that is used to receive 
+data during a device-to-host copy is designed to provide 
+read-only access to array elements in order to guarantee 
+that specializations that use different backends behave in 
+equivalent ways. If write access were allowed to elements
+of the array that recieved such a Device-to-Host copy, 
+modifying elements of the host array could modify 
+corresponding elements of the device array when used with 
+C++ backend, which uses a shallow copy in which the host and 
+device arrays temporarily point to the same memory, but would 
+have no effect on data in the device array when used with a 
+Cuda backend, for which these two arrays uses distinct 
+memory blocks allocated on different chips.  Write access 
+is thus prohibited to prevent the creation of code that
+produces different results with different backends.
+
+Management of memory owned by a ConstHostArray specialization 
+with T=Pscf::CUT is very similar to management of memory owned 
+by a corresponding HostArray. Memory is allocated by the 
+associate member function and deallocated by the destructor, 
+and is not de-allocated by the dissociate member function.
 
 <BR>
 \ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
