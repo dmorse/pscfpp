@@ -65,6 +65,18 @@ namespace Prdc {
    }
 
    /*
+   * Deallocate the underlying C array and zero grid dimensions.
+   */
+   template <int D>
+   void RField<D,CUT>::deallocate()
+   {
+      DeviceArray<cudaReal,CUT>::deallocate();
+      for (int i = 0; i < D; ++i) {
+         meshDimensions_[i] = 0;
+      }
+   }
+
+   /*
    * Associate this object with a slice of another DeviceArray.
    */
    template <int D>

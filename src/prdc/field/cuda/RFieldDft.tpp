@@ -52,6 +52,61 @@ namespace Prdc {
    }
 
    /*
+   * Allocate underlying DeviceArray<cudaComplex,CUT> for the DFT mesh.
+   */
+   template <int D>
+   void RFieldDft<D,CUT>::allocate(const IntVec<D>& meshDimensions)
+   {
+      // Copy and validate dimensions of real space grid
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+      }
+
+      // Compute dimensions and size of Fourier space mesh
+      int size;
+      FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
+
+      // Allocate complex array on the GPU with size of DFT mesh
+      DeviceArray<cudaComplex,CUT>::allocate(size);
+   }
+
+   /*
+   * Deallocate the underlying C array and zero grid dimensions.
+   */
+   template <int D>
+   void RFieldDft<D,CUT>::deallocate()
+   {
+      DeviceArray<cudaComplex,CUT>::deallocate();
+      for (int i = 0; i < D; ++i) {
+         meshDimensions_[i] = 0;
+      }
+   }
+
+   /*
+   * Associate this with a slice of a DeviceArray<cudaComplex,CUT>.
+   */
+   template <int D>
+   void RFieldDft<D,CUT>::associate(
+                DeviceArray<cudaComplex,CUT>& arr,
+                int beginId,
+                IntVec<D> const & meshDimensions)
+   {
+      // Copy and validate dimensions of real space grid
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+      }
+
+      // Compute dimensions and size of Fourier space mesh
+      int size;
+      FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
+
+      // Associate data with a slice of input array arr
+      DeviceArray<cudaComplex,CUT>::associate(arr, beginId, size);
+   }
+
+   /*
    * Assignment from another RFieldDft.
    */
    template <int D>
@@ -84,49 +139,6 @@ namespace Prdc {
       DeviceArray<cudaComplex,CUT>::operator = (other);
 
       return *this;
-   }
-
-   /*
-   * Allocate underlying DeviceArray<cudaComplex,CUT> for the DFT mesh.
-   */
-   template <int D>
-   void RFieldDft<D,CUT>::allocate(const IntVec<D>& meshDimensions)
-   {
-      // Copy and validate dimensions of real space grid
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-      }
-
-      // Compute dimensions and size of Fourier space mesh
-      int size;
-      FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
-
-      // Allocate complex array on the GPU with size of DFT mesh
-      DeviceArray<cudaComplex,CUT>::allocate(size);
-   }
-
-   /*
-   * Associate this with a slice of a DeviceArray<cudaComplex,CUT>.
-   */
-   template <int D>
-   void RFieldDft<D,CUT>::associate(
-                DeviceArray<cudaComplex,CUT>& arr,
-                int beginId,
-                IntVec<D> const & meshDimensions)
-   {
-      // Copy and validate dimensions of real space grid
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-      }
-
-      // Compute dimensions and size of Fourier space mesh
-      int size;
-      FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
-
-      // Associate data with a slice of input array arr
-      DeviceArray<cudaComplex,CUT>::associate(arr, beginId, size);
    }
 
 } // namespace Prdc

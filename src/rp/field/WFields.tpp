@@ -1,5 +1,5 @@
-#ifndef RP_W_FIELDS_BASE_TPP
-#define RP_W_FIELDS_BASE_TPP
+#ifndef RP_W_FIELDS_TPP
+#define RP_W_FIELDS_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WFieldsBase.h"
+#include "WFields.h"
 
 #include <rp/field/FieldIo.h>
 #include <prdc/field/RField.h>
@@ -31,7 +31,7 @@ namespace Rp {
    * Constructor.
    */
    template <int D, class T>
-   WFieldsBase<D,T>::WFieldsBase()
+   WFields<D,T>::WFields()
     : basis_(),
       rgrid_(),
       meshDimensions_(),
@@ -54,7 +54,7 @@ namespace Rp {
    * Destructor.
    */
    template <int D, class T>
-   WFieldsBase<D,T>::~WFieldsBase()
+   WFields<D,T>::~WFields()
    {
       delete signalPtr_;
    }
@@ -63,14 +63,14 @@ namespace Rp {
    * Create an association with a FieldIo object.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::setFieldIo(FieldIo<D,T> const & fieldIo)
+   void WFields<D,T>::setFieldIo(FieldIo<D,T> const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Set the unit cell that is modified by reading a field file.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::setReadUnitCell(UnitCell<D>& cell)
+   void WFields<D,T>::setReadUnitCell(UnitCell<D>& cell)
    {
       UTIL_CHECK(!readUnitCellPtr_);
       readUnitCellPtr_ = &cell;
@@ -80,7 +80,7 @@ namespace Rp {
    * Set the unit cell that whose parameters are written to a field header.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::setWriteUnitCell(UnitCell<D> const & cell)
+   void WFields<D,T>::setWriteUnitCell(UnitCell<D> const & cell)
    {
       UTIL_CHECK(!writeUnitCellPtr_);
       writeUnitCellPtr_ = &cell;
@@ -90,7 +90,7 @@ namespace Rp {
    * Set the stored value of nMonomer (this may only be called once).
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::setNMonomer(int nMonomer)
+   void WFields<D,T>::setNMonomer(int nMonomer)
    {
       UTIL_CHECK(nMonomer_ == 0);
       UTIL_CHECK(nMonomer > 0);
@@ -102,7 +102,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFieldsBase<D,T>::allocateRGrid(IntVec<D> const & meshDimensions)
+   WFields<D,T>::allocateRGrid(IntVec<D> const & meshDimensions)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(!hasData_);
@@ -129,7 +129,7 @@ namespace Rp {
    * Allocate memory for fields in basis format.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::allocateBasis(int nBasis)
+   void WFields<D,T>::allocateBasis(int nBasis)
    {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(nBasis > 0);
@@ -148,7 +148,7 @@ namespace Rp {
    * Allocate memory for all fields.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::allocate(int nMonomer,
+   void WFields<D,T>::allocate(int nMonomer,
                                      int nBasis,
                                      IntVec<D> const & meshDimensions)
    {
@@ -164,7 +164,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFieldsBase<D,T>::setBasis(DArray< DArray<double> > const & fields)
+   WFields<D,T>::setBasis(DArray< DArray<double> > const & fields)
    {
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
@@ -208,7 +208,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFieldsBase<D,T>::setRGrid(DArray<RField<D,T> > const & fields,
+   WFields<D,T>::setRGrid(DArray<RField<D,T> > const & fields,
                           bool isSymmetric)
    {
       // Allocate r-grid fields as needed
@@ -244,6 +244,29 @@ namespace Rp {
    }
 
    /*
+   * Set new w-field values, using unfolded array of r-grid fields.
+   */
+   template <int D, class T>
+   void WFields<D,T>::setRGrid(DeviceArray<RealT,T>& fields)
+   {
+      UTIL_CHECK(fields.isAllocated());
+      UTIL_CHECK(fields.capacity() == meshSize_ * nMonomer_);
+
+      // Create DArray tmp with RField<D,T> elements
+      DArray< RField<D,T> > tmp;
+      tmp.allocate(nMonomer_);
+
+      // Associate each RField<D,T> with a slice of the unfolded array
+      for (int i = 0; i < nMonomer_; i++) {
+         tmp[i].associate(fields, i*meshSize_, meshDimensions_);
+      }
+
+      // Use tmp array to set w-fields for all monomer types
+      bool isSymmetric = false;
+      setRGrid(tmp, isSymmetric);
+   }
+
+   /*
    * Read fields from an input stream in basis format.
    *
    * This function also computes and stores the corresponding r-grid
@@ -251,7 +274,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFieldsBase<D,T>::readBasis(std::istream& in)
+   WFields<D,T>::readBasis(std::istream& in)
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -304,7 +327,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFieldsBase<D,T>::readBasis(std::string filename)
+   WFields<D,T>::readBasis(std::string filename)
    {
       std::ifstream file;
       fieldIo().fileMaster().openInputFile(filename, file);
@@ -325,7 +348,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFieldsBase<D,T>::readRGrid(std::istream& in,
+   WFields<D,T>::readRGrid(std::istream& in,
                                         bool isSymmetric)
    {
       // Preconditions
@@ -363,7 +386,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFieldsBase<D,T>::readRGrid(std::string filename,
+   WFields<D,T>::readRGrid(std::string filename,
                                         bool isSymmetric)
    {
       std::ifstream file;
@@ -376,7 +399,7 @@ namespace Rp {
    * Symmetrize r-grid fields, convert to basis format.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::symmetrize()
+   void WFields<D,T>::symmetrize()
    {
       UTIL_CHECK(hasData_);
       fieldIo().convertRGridToBasis(rgrid_, basis_);
@@ -393,7 +416,7 @@ namespace Rp {
    * Write fields to an output stream in basis format.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::writeBasis(std::ostream& out) const
+   void WFields<D,T>::writeBasis(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -410,7 +433,7 @@ namespace Rp {
    * Write fields to a file in basis format, by filename.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::writeBasis(std::string filename) const
+   void WFields<D,T>::writeBasis(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -422,7 +445,7 @@ namespace Rp {
    * Write fields to an output stream in real-space (r-grid) format.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::writeRGrid(std::ostream& out) const
+   void WFields<D,T>::writeRGrid(std::ostream& out) const
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -441,7 +464,7 @@ namespace Rp {
    * Write fields to a file in r-grid format, by filename.
    */
    template <int D, class T>
-   void WFieldsBase<D,T>::writeRGrid(std::string filename) const
+   void WFields<D,T>::writeRGrid(std::string filename) const
    {
       std::ofstream file;
       fieldIo().fileMaster().openOutputFile(filename, file);
@@ -455,7 +478,7 @@ namespace Rp {
    * Get the Signal<void> that is triggered by field modification.
    */
    template <int D, class T>
-   Signal<void>& WFieldsBase<D,T>::signal()
+   Signal<void>& WFields<D,T>::signal()
    {
       UTIL_CHECK(signalPtr_);
       return *signalPtr_;

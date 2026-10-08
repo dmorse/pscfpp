@@ -77,6 +77,33 @@ namespace Prdc {
       virtual ~RFieldDft();
 
       /**
+      * Allocate the underlying C array for an FFT grid.
+      *
+      * \throw Exception if the RFieldDft is already allocated.
+      *
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Deallocate the underlying array.
+      */
+      void deallocate();
+
+      /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<cudaComplex,CUT>& arr, 
+                     int beginId, 
+                     IntVec<D> const & meshDimensions);
+
+      /**
       * Assignment operator, assignment from another RFieldDft<D,CUT>.
       *
       * If this Field is not allocated, allocates and copies all elements.
@@ -101,28 +128,6 @@ namespace Prdc {
       */
       RFieldDft<D,CUT>& 
       operator = (HostArray<cudaComplex,CUT> const & other);
-
-      /**
-      * Allocate the underlying C array for an FFT grid.
-      *
-      * \throw Exception if the RFieldDft is already allocated.
-      *
-      * \param meshDimensions number of grid points in each dimension
-      */
-      void allocate(IntVec<D> const & meshDimensions);
-
-      /**
-      * Associate this object with a slice of another DeviceArray.
-      *
-      * \throw Exception if the array is already allocated.
-      *
-      * \param arr parent array that owns the data
-      * \param beginId index in the parent array at which this array starts
-      * \param meshDimensions number of grid points in each dimension
-      */
-      void associate(DeviceArray<cudaComplex,CUT>& arr, 
-                     int beginId, 
-                     IntVec<D> const & meshDimensions);
 
       /**
       * Return vector of real-space mesh dimensions by constant reference.

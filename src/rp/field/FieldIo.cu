@@ -11,8 +11,7 @@
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/complex.h>
 
-#include <rp/field/FieldIoBase.tpp>   // base class implementation
-#include <rp/field/FieldIo_u.h>       // class header
+#include <rp/field/FieldIo.tpp>   // base class implementation
 
 #if 0
 namespace Pscf {
@@ -384,9 +383,6 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class FieldIoBase<1,CUT>;
-      template class FieldIoBase<2,CUT>;
-      template class FieldIoBase<3,CUT>;
       template class FieldIo<1,CUT>;
       template class FieldIo<2,CUT>;
       template class FieldIo<3,CUT>;

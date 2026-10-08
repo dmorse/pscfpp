@@ -114,15 +114,14 @@ namespace Pscf {
       /**
       * Pseudo-assignment from a host array.
       *
-      * This function performs a sanity check and does nothing if the 
-      * check is passed. It checks that both LHS and RHS are allocated
-      * and refer to the to the same underlying C array on entry, and
-      * throws an Exception if this is not the case. 
+      * This function performs a sanity test and does nothing if the test
+      * passes. It checks that both LHS and RHS are allocated and both 
+      * refer to the to the same underlying C array.
       *
       * Rationale: Since the host array acts as a shallow copy of this 
       * device array, the association must have been created before data 
-      * was initialized on the host array, which must occurs before this
-      * transaction is finalized by the assignment operator.
+      * was initialized on the host array, which must occurs before the
+      * pseudo host-to-device transfer is finalized by this operator.
       *
       * \throw Exception if this is not allocated
       * \throw Exception if other array is not allocated

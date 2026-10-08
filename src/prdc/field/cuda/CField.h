@@ -67,6 +67,32 @@ namespace Prdc {
       virtual ~CField();
 
       /**
+      * Allocate the underlying C array for data on a regular mesh.
+      *
+      * \throw Exception if the CField is already allocated.
+      *
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Deallocate the underlying array.
+      */
+      void deallocate();
+
+      /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<cudaComplex,CUT>& arr, int beginId, 
+                     IntVec<D> const & meshDimensions);
+
+      /**
       * Assignment operator, assignment from another CField<D,CUT>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
@@ -93,27 +119,6 @@ namespace Prdc {
       * \param other the RHS HostArray<cudaComplex,CUT>
       */
       CField<D,CUT>& operator = (HostArray<cudaComplex,CUT> const & other);
-
-      /**
-      * Allocate the underlying C array for data on a regular mesh.
-      *
-      * \throw Exception if the CField is already allocated.
-      *
-      * \param meshDimensions number of grid points in each dimension
-      */
-      void allocate(IntVec<D> const & meshDimensions);
-
-      /**
-      * Associate this object with a slice of another DeviceArray.
-      *
-      * \throw Exception if the array is already allocated.
-      *
-      * \param arr parent array that owns the data
-      * \param beginId index in the parent array at which this array starts
-      * \param meshDimensions number of grid points in each dimension
-      */
-      void associate(DeviceArray<cudaComplex,CUT>& arr, int beginId, 
-                     IntVec<D> const & meshDimensions);
 
       /**
       * Return mesh dimensions by constant reference.

@@ -47,6 +47,50 @@ namespace Prdc {
    }
 
    /*
+   * Allocate the underlying C array for an FFT grid.
+   */
+   template <int D>
+   void RField<D,CPT>::allocate(const IntVec<D>& meshDimensions)
+   {
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
+      }
+      FftwDRArray<double>::allocate(size);
+   }
+
+   /*
+   * Dellocate the underlying C array and clear meshDimensions.
+   */
+   template <int D>
+   void RField<D,CPT>::deallocate()
+   {
+      FftwDRArray<double>::deallocate();
+      for (int i = 0; i < D; ++i) {
+         meshDimensions_[i] = 0;
+      }
+   }
+
+   /*
+   * Associate this object with a slice of another DeviceArray.
+   */
+   template <int D>
+   void RField<D,CPT>::associate(DeviceArray<double,CPT>& arr, 
+                                 int beginId, 
+                                 IntVec<D> const & meshDimensions)
+   {
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
+      }
+      DeviceArray<double,CPT>::associate(arr, beginId, size);
+   }
+
+   /*
    * Assignment, element-by-element.
    *
    * This operator will allocate memory if not allocated previously.
@@ -88,33 +132,6 @@ namespace Prdc {
    {
       DeviceArray<double,CPT>::operator = (other);
       return *this;
-   }
-
-   /*
-   * Allocate the underlying C array for an FFT grid.
-   */
-   template <int D>
-   void RField<D,CPT>::allocate(const IntVec<D>& meshDimensions)
-   {
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         size *= meshDimensions[i];
-      }
-      FftwDRArray<double>::allocate(size);
-   }
-
-   /*
-   * Dellocate the underlying C array and clear meshDimensions.
-   */
-   template <int D>
-   void RField<D,CPT>::deallocate()
-   {
-      FftwDRArray<double>::deallocate();
-      for (int i = 0; i < D; ++i) {
-         meshDimensions_[i] = 0;
-      }
    }
 
 }

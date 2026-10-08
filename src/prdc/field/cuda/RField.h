@@ -75,13 +75,18 @@ namespace Prdc {
       virtual ~RField();
 
       /**
-      * Allocate the underlying C array for data on a regular mesh.
+      * Allocate the underlying array for data on a regular mesh.
       *
       * \throw Exception if the RField is already allocated.
       *
       * \param meshDimensions number of grid points in each dimension
       */
       void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Deallocate the underlying array.
+      */
+      void deallocate();
 
       /**
       * Associate this object with a slice of another DeviceArray.

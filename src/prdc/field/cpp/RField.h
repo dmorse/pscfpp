@@ -103,6 +103,18 @@ namespace Prdc {
       void deallocate() override;
 
       /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<double,CPT>& arr, int beginId,
+                     IntVec<D> const & meshDimensions);
+
+      /**
       * Return mesh dimensions by constant reference.
       */
       IntVec<D> const & meshDimensions() const;
@@ -115,6 +127,8 @@ namespace Prdc {
       */
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
+
+      using DeviceArray<double,CPT>::dissociate;
 
    private:
 

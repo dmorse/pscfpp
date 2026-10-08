@@ -11,8 +11,8 @@
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/complex.h>
 
-#include <rp/field/FieldIoBase.tpp>   // base class implementation
-#include <rp/field/FieldIo_c.h>       // class header
+#include <rp/field/FieldIo.tpp>   // base class implementation
+//#include <rp/field/FieldIo_c.h>       // class header
 
 #if 0
 namespace Pscf {
@@ -383,9 +383,6 @@ namespace Rp {
 // Explicit specialization definitions
 namespace Pscf {
    namespace Rp {
-      template class Rp::FieldIoBase<1,CPT>;
-      template class Rp::FieldIoBase<2,CPT>;
-      template class Rp::FieldIoBase<3,CPT>;
       template class Rp::FieldIo<1,CPT>;
       template class Rp::FieldIo<2,CPT>;
       template class Rp::FieldIo<3,CPT>;
