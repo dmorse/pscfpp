@@ -8,11 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/ConstArray.h>  // base class
-#include <util/misc/CountedReference.h>  // member
-#include <pscf/backend/cpp/CPT.h>        // template argument
+#include <pscf/backend/cpp/CPT.h>                     // template argument
+#include <util/misc/CountedReference.h>               // member
 
 // Forward declarations
+namespace Util {
+   template <typename Data> class ConstArrayIterator;
+}
 namespace Pscf {
    template <typename Data, typename T> class DeviceArray;
 }
@@ -28,9 +30,11 @@ namespace Pscf {
    * Read-only pseudo-"host" array for use with C++ backend.
    *
    * This template specialization should be used in backend-independent 
-   * template code in which data is copied from a device array to a
-   * a host array. This is derived from ConstArray<Data>, and thus 
-   * provides read-only access to the underlying data.
+   * template code as the host array that receives data when an array 
+   * is copied from a device array to a host array. This specialization
+   * is a sequence container that supports random read-only access to 
+   * elements via a subscript ([]) operator that returns a const 
+   * reference, or via a ConstArrayIterator. 
    *
    * Conversion construction and assignment (operator =) from an instance 
    * of DeviceArray<Data,CPT> to a ConstHostArray<Data,CPT> each create a 
@@ -124,7 +128,7 @@ namespace Pscf {
    * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
-   class ConstHostArray<Data, CPT> final : public ConstArray<Data>
+   class ConstHostArray<Data, CPT> final
    {
 
    public:
@@ -134,11 +138,10 @@ namespace Pscf {
       */
       using BackendIdClass = CPT;
 
-      // Default constructor.
-      ConstHostArray() = default;
-
-      // Copy construction (delete)
-      ConstHostArray(ConstHostArray<Data,CPT> const & other) = delete;
+      /**
+      * Default constructor.
+      */
+      ConstHostArray();
 
       /**
       * Destructor.
@@ -147,7 +150,10 @@ namespace Pscf {
       */
       ~ConstHostArray();
 
-      // Assignment from another ConstHostArray (delete)
+      // Prohibit copy construction
+      ConstHostArray(ConstHostArray<Data,CPT> const & other) = delete;
+
+      // Prohibit assignment 
       ConstHostArray<Data,CPT>&
       operator = (ConstHostArray<Data,CPT> const&) = delete;
 
@@ -185,9 +191,63 @@ namespace Pscf {
       */
       void dissociate();
 
+      /**
+      * Get an element by const reference.
+      *
+      * Mimics C-array subscripting.
+      *
+      * \param i array index
+      * \return const reference to element i
+      */
+      Data const & operator [] (int i) const;
+
+      /**
+      * Set a const iterator to begin this ConstHostArray.
+      *
+      * On return, iterator points to the first element of the array,
+      * and the iterator end pointer points one past the last element.
+      *
+      * \param iterator ConstArrayIterator, initialized on output
+      */
+      void begin(ConstArrayIterator<Data>& iterator) const;
+
+      /**
+      * Return a read-only pointer to the underlying C array.
+      */
+      Data const * cArray() const;
+
+      /**
+      * Does this array have associated data?
+      *
+      * Return false if the pointer to data is null, true otherwise.
+      */
+      bool isAllocated() const;
+
+      /**
+      * Return logical size of this array.
+      *
+      * Currently, capacity() == size(), always.
+      *
+      * \return number of elements in this array
+      */
+      int size() const;
+
+      /**
+      * Return allocated size of this array.
+      *
+      * \return number of elements allocated in array
+      */
+      int capacity() const;
+
    private:
 
-      /// Reference to a device array that owns memory referenced by this.
+      /// Pointer to an array of Data elements.
+      Data* data_;
+
+      /// Allocated size of the data_ array.
+      int capacity_;
+
+      /// Reference to an array that owns memory referenced by this.
       CountedReference ref_;
 
       /**
@@ -204,9 +264,6 @@ namespace Pscf {
       */
       void associate(DeviceArray<Data,CPT> const & source);
 
-      using ConstArray<Data>::data_;
-      using ConstArray<Data>::capacity_;
-
    };
 
    // Explicit instantiation declarations
@@ -216,11 +273,63 @@ namespace Pscf {
 } // namespace Pscf
 
 #include <pscf/backend/cpp/DeviceArray.h>
+#include <util/containers/ConstArrayIterator.h>
 #include <util/global.h>
 
 namespace Pscf {
 
-   // Public member function definitions
+   // Public member function definitions (inline)
+
+   /*
+   * Get an element by const reference (C-array subscripting)
+   */
+   template <typename Data> inline 
+   Data const & ConstHostArray<Data,CPT>::operator [] (int i) const
+   {
+      assert(data_);
+      assert(i >= 0 );
+      assert(i < capacity_);
+      return *(data_ + i);
+   }
+
+   /*
+   * Get a pointer to the underlying C array (pointer to const data).
+   */
+   template <typename Data> inline 
+   Data const * ConstHostArray<Data,CPT>::cArray() const
+   {  return data_; }
+
+   /*
+   * Return true iff the data pointer is non-null, false otherwise.
+   */
+   template <typename Data> inline
+   bool ConstHostArray<Data,CPT>::isAllocated() const
+   {  return (bool)data_; }
+
+   /*
+   * Return logical size of this array.
+   */
+   template <typename Data> inline 
+   int ConstHostArray<Data,CPT>::size() const
+   {  return capacity_; }
+
+   /*
+   * Return allocated capacity.
+   */
+   template <typename Data> inline 
+   int ConstHostArray<Data,CPT>::capacity() const
+   {  return capacity_; }
+
+   // Public member function definitions (non-inline)
+
+   /*
+   * Default constructor.
+   */
+   template <typename Data> inline
+   ConstHostArray<Data,CPT>::ConstHostArray()
+    : data_(nullptr),
+      capacity_(0)
+   {}
 
    /*
    * Destructor.
@@ -234,14 +343,13 @@ namespace Pscf {
    }
 
    /*
-   * Copy construction from a DeviceArray.
+   * Conversion construction from a DeviceArray.
    *
    * Creates an association with a DeviceArray that owns the data.
    */
    template <typename Data>
    ConstHostArray<Data,CPT>::ConstHostArray(
                                     DeviceArray<Data,CPT> const & other)
-    : ConstArray<Data>()
    {  associate(other); }
 
    /*
@@ -258,7 +366,7 @@ namespace Pscf {
    }
 
    /*
-   * Release association with a device array.
+   * Release association with a DeviceArray.
    */
    template <typename Data>
    void ConstHostArray<Data,CPT>::dissociate()
@@ -269,6 +377,19 @@ namespace Pscf {
       data_ = nullptr;
       capacity_ = 0;
       ref_.dissociate(); // decrements reference counter of source array
+   }
+
+   /*
+   * Set a ConstArrayIterator to begin this ConstHostArray.
+   */
+   template <typename Data> 
+   void ConstHostArray<Data,CPT>::begin(
+                     ConstArrayIterator<Data> &iterator) const
+   {
+      assert(data_);
+      assert(capacity_ > 0);
+      iterator.setCurrent(data_);
+      iterator.setEnd(data_ + capacity_);
    }
 
    // Private function
