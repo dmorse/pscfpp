@@ -156,8 +156,6 @@ devArray to a temporary instance of ConstHostArray<Data,T>
 named hostArray:
 \code
     ConstHostArray<Data,T> hostArray;
-
-    hostArray.associate(devArray);
     hostArray = devArray;
 
     // Read elements of hostArray and use them to 
@@ -171,15 +169,11 @@ before the statement "hostArray.dissociate()". The interface of
 the ConstHostArray does not allow values of individual elements
 to be modified. 
 
-The associate, assignment, and dissociate member functions of 
-the ConstHostArray perform completely different operations for
-specializations with T=Pscf:CUT and T=Pscf:CPT. 
+The assignment and dissociate member functions of the ConstHostArray 
+perform completely different operations for specializations with 
+T=Pscf:CUT and T=Pscf:CPT. 
 
 In specializations with T=Pscf::CUT (Cuda backend):
-   - The statement hostArray.associate(devArray) checks if
-     the host is allocated and, if it is not, allocates it with
-     the same dimension as that of devArray, which must already
-     be allocated.
    - The statement hostArray = devArray copies all elements of
      the array from devArray to hostArray, by performing a 
      GPU-to-CPU copy.
@@ -187,43 +181,71 @@ In specializations with T=Pscf::CUT (Cuda backend):
 
 In specializations with T=Pscf::CPT (C++ backend):
 
-   - The statement hostArray.associate(devArray) sets a
-     pointer owned by hostArray to be a copy of the pointer
-     to the array owned by devArray, thus making hostArray
-     a shallow, temporary read-only copy of devArray.
-   - The statement hostArray = devArray does nothing.
-   - The statement hostArray.dissociate() nullifies the pointer
-     member of hostArray that points to an array, thus 
-     destroying the association between the two arrays.
+   - The hostArray = devArray assigns a pointer member of
+     hostArray the address of the array owned by devArray,
+     thus making hostArray a shallow, temporary read-only 
+     copy of devArray.
+   - The statement hostArray.dissociate() nullifies the 
+     pointer member of hostArray, thus destroying the 
+     association between the two arrays.
 
 In order for this pattern to be used safely in template code
-that must work correctly with both backends, the associate 
-function, assignment operator, and dissociate function should 
-all be called within the same function, and elements of 
-hostArray may only accessed only between the calls to the
-assignment operator and the dissociate member function.
+that must work correctly with both backends, the assignment
+operator, and dissociate function should all be called within 
+the same function, and elements of hostArray may only accessed 
+only between the calls to the assignment operator and the 
+dissociate member function.
 
-The class template ConstHostArray that is used to receive 
-data during a device-to-host copy is designed to provide 
-read-only access to array elements in order to guarantee 
-that specializations that use different backends behave in 
-equivalent ways. If write access were allowed to elements
-of the array that recieved such a Device-to-Host copy, 
-modifying elements of the host array could modify 
-corresponding elements of the device array when used with 
-C++ backend, which uses a shallow copy in which the host and 
-device arrays temporarily point to the same memory, but would 
-have no effect on data in the device array when used with a 
-Cuda backend, for which these two arrays uses distinct 
-memory blocks allocated on different chips.  Write access 
-is thus prohibited to prevent the creation of code that
-produces different results with different backends.
+This pattern can be simplified somewhat in code in which
+the hostArray is a local variable that is defined within
+a function, while the array owned by the deviceArray exists
+before and after the lifetime of the host array. In this
+case:
 
-Management of memory owned by a ConstHostArray specialization 
-with T=Pscf::CUT is very similar to management of memory owned 
-by a corresponding HostArray. Memory is allocated by the 
-associate member function and deallocated by the destructor, 
-and is not de-allocated by the dissociate member function.
+  - The default constructor and assignment operator can 
+    be combined into a call to a conversion operator that
+    takes takes the device array as an argument. This
+    effect of this conversion constructor is equivalent 
+    to default construction followed by assignment.
+
+  - The dissociate function may sometimes be omitted,
+    because the destructor of ConstHostArray class 
+    template will delete any memory owned by the array
+    for (for T=Pscf::CUT) or release any remaining 
+    association (for T=Pscf::CPT) when the function
+    ends and the hostArray is destroyed. 
+
+The most concise version of this pattern, for use with a
+host array that is a local variable, is thus:
+\code
+    ConstHostArray<Data,T> hostArray(devArray);
+    hostArray = devArray;
+
+    // Read elements of hostArray and use them to 
+    // do any required computation.
+
+\endcode
+There is, however, no harm in calling the dissociate
+function explicitly in this situation, to documment the
+need to release resources.
+
+The class template ConstHostArray is designed to provide read-only access 
+to array elements in order to guarantee that specializations that use 
+different backends yield equivalent behavior in template code that involves 
+a device-to-host copy.  If write access were allowed to elements of the 
+array that received such a Device-to-Host copy, modifying elements of the 
+host array would modify corresponding elements of the device array when 
+used with C++ backend, because of the existence of a shallow copy, but
+would have no effect on data in the device array when used with a Cuda 
+backend, because in this case these two arrays uses distinct memory 
+blocks allocated on different devices.  Write access is thus prohibited 
+to prevent this inconsistency. 
+
+Management of memory owned by a ConstHostArray specialization with 
+T=Pscf::CUT is analogous to management of memory owned by a corresponding 
+HostArray. Memory is allocated by conversion constructor or the 
+assignment operator, and deallocated by the destructor, but is not 
+de-allocated by the dissociate member function.
 
 <BR>
 \ref developer_backend_field_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
