@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-//#include <pscf/backend/cpp/FftwDRArray.h>
 #include <util/misc/Memory.h> 
 
 #include <fftw3.h>
@@ -22,7 +21,6 @@ namespace Pscf {
    */
    template <typename Data>
    FftwDRArray<Data>::FftwDRArray()
-    : ArraySource<Data>()
    {}
 
    /*
@@ -30,7 +28,6 @@ namespace Pscf {
    */
    template <typename Data>
    FftwDRArray<Data>::FftwDRArray(int capacity)
-    : ArraySource<Data>()
    {  allocate(capacity); }
 
    /*
@@ -38,7 +35,6 @@ namespace Pscf {
    */
    template <typename Data>
    FftwDRArray<Data>::FftwDRArray(FftwDRArray<Data> const & other)
-    : ArraySource<Data>()
    {
       if (!other.isAllocated()) {
          UTIL_THROW("Other FftwDRArray must be allocated.");

@@ -8,23 +8,22 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/ArraySource.h>  // base class
+#include <util/containers/Array.h>        // base class
+#include <util/misc/ReferenceCounter.h>   // base class
 #include <util/misc/CountedReference.h>   // member
-#include <util/misc/Memory.h>             // member
 #include <util/global.h>
 
-#include <fftw3.h>
-
-using namespace Util;
+//#include <fftw3.h>
 
 namespace Pscf {
+
+   using namespace Util;
 
    /**
    * Dynamic reference counted array for use with FFTW library.
    *
    * The allocate and deallocate functions of this class use functions
    * provided by the FFTW library to allocate and free aligned memory.
-   * This class is otherwise identical to the Util::DRArray class.
    *
    * A FftwDRArray may be in any of three states:
    *
@@ -38,36 +37,38 @@ namespace Pscf {
    *   true, and isAssociated() returns false.
    *
    *   (3) A data user: In this case, this object has a pointer to a C
-   *   array that is owned by a different FftwDRArray object. We describe
-   *   this by saying that this FftwDRArray (the data user) is "associated"
-   *   with a C array that is owned by another object (the data owner), or
-   *   that the data user "references" that array. In this state, capacity()
-   *   returns a positive value, isAllocated() and isAssociated() return
-   *   true, and isOwner() returns false.
+   *   array that is owned by a different FftwDRArray object. In this 
+   *   state, capacity() returns a positive value, isAllocated() and 
+   *   isAssociated() return true, and isOwner() returns false.
+   *
+   * An FftwDArray that is a data user is said to be "associated" with
+   * a C array that is owned by another object (the data owner), or to
+   * "reference" that array. 
+   * 
+   * An FftwDRArray is said to be "allocated" if it refers to memory, as 
+   * either a data owner or a data user.  When an FftwDRArray is allocated,
+   * array elements may be accessed via a subscript ([]) operator that
+   * is inherited from the Array<Data> base class.  
    *
    * A FftwDRArray that owns a C array that is referenced by one or more
    * other associated FftwDRArray objects maintains a count of how many
    * other such objects reference its data. This counter is automatically
-   * incremented when a reference is created and decremented when an
-   * existing reference is destroyed.
+   * incremented when an association is created and decremented when such
+   * an association is released.
    *
-   * When a FftwDArray is allocated (i.e., either a data owner or user)
-   * array elements may be accessed via a subscript operator (an
-   * overloaded operator []) that is inherited from the Array<Data> base
-   * class.  Member functions for memory management allow a FftwDRArray
-   * to allocate or deallocate a C array that it owns, or to create or
-   * release an association with an array slice that it does not own.
-   *
-   * It is a logical error to invoke the deallocate() member function of
-   * a FftwDRArray that is unallocated or that references data that it does
-   * not own. In either case, an Exception is thrown.  It is also an error
-   * to attempt to deallocate an FftwDRArray that is referenced by one
+   * Member functions allow a FftwDRArray to allocate or deallocate a C 
+   * array that it owns, or to create or release an association with an 
+   * array slice that it references but does not own.  It is a logical 
+   * error to invoke the deallocate() member function of a FftwDRArray 
+   * that is not allocated or that references data that it does not own.
+   * In either case, an Exception is thrown.  It is also an error to 
+   * attempt to deallocate an FftwDRArray that is referenced by one
    * other associated FftwDRArray data users.
    *
    * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
-   class FftwDRArray : public ArraySource<Data>
+   class FftwDRArray : public Array<Data>, public ReferenceCounter
    {
 
    public:
@@ -286,7 +287,7 @@ namespace Pscf {
    {  return ((bool) data_ && ref_.isAssociated()); }
 
    /*
-   * Serialize a FftwDArray to/from an Archive.
+   * Serialize a FftwDRArray to/from an Archive.
    */
    template <typename Data>
    template <class Archive>
