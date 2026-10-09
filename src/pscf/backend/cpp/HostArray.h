@@ -28,15 +28,21 @@ namespace Pscf {
    * Psuedo-"host" array used for host-to-device data transfer.
    *
    * This class template should be used in device-independent template
-   * code in which an array is copied from host to device.  The
-   * DeviceArray<Data,CPT> template defines an assignment operator
-   * that assigns from a host array to a device array. 
+   * code in contexts in which the specialization for the CUDA backend
+   * (T=Pscf:CUT) would copy an array from the CPU host to the GPU device.  
+   * This specialization for the C++ backend (T=Pscf::CPT) instead creates
+   * a temporary shallow copy of the associated device array to mimic the
+   * syntax of a copy operation without the cost of an actual deep copy.
    *
-   * The "associate" member function creates a shallow copy of a C 
-   * array that is owned by an associated device array.  This function 
-   * takes a non-const reference to the associated DeviceArray<Data,CPT> 
-   * its only parameter. This parameter is non-const because the shallow 
-   * copy provides write access to the underlying shared array.
+   * The "associate" member function creates a shallow copy of a C array
+   * that is owned by an associated device array.  This function takes a 
+   * non-const reference to an instance of DeviceArray<Data,CPT> as its
+   * parameter. This parameter is non-const because the shallow copy 
+   * provides write access to the underlying shared array. After an
+   * association is created, elements of this host array can be modified
+   * in order to modify the data owned by the device array. After the
+   * modification is complete, the temporary association should be
+   * released. 
    *
    * The lifetime of an association with a device array should not be
    * allowed to extend beyond the function in which the association is
@@ -45,8 +51,8 @@ namespace Pscf {
    * association may be released by calling the dissociate member function 
    * of the host array, or will be released by the host array destructor.
    * A reference counting system is used to detect and report erroneous 
-   * de-allocation of a device array when it is still referred to by 
-   * one or more other containers.
+   * de-allocation of a device array when it is still referred to by one
+   * or more other containers, which would create dangling references.
    *
    * <b> Usage </b>: 
    *
