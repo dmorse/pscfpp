@@ -9,7 +9,7 @@
 */
 
 #include "RField.h"
-#include <pscf/backend/cuda/HostArray.h>
+#include <pscf/backend/cuda/HostSendArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -107,11 +107,11 @@ namespace Prdc {
    }
 
    /*
-   * Assignment of this RField from RHS HostArray.
+   * Assignment of this RField from RHS HostSendArray.
    */
    template <int D>
    RField<D,CUT>& 
-   RField<D,CUT>::operator = (const HostArray<cudaReal,CUT>& other)
+   RField<D,CUT>::operator = (const HostSendArray<cudaReal,CUT>& other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       UTIL_CHECK(other.isAllocated());

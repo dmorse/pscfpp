@@ -6,8 +6,6 @@
 */
 
 #include <prdc/fieldIo/fieldCheck.h>
-#include <pscf/backend/cuda/HostRecvArray.h>
-#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/complex.h>
 

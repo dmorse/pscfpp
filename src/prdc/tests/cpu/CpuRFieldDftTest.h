@@ -217,7 +217,7 @@ void CpuRFieldDftTest::testAssignmentFromHost()
       TEST_ASSERT(d == u.meshDimensions());
       int capacity = u.capacity();
 
-      HostArray<fftw_complex,CPT> v;
+      HostSendArray<fftw_complex,CPT> v;
       v.associate(u);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated() );
@@ -227,7 +227,7 @@ void CpuRFieldDftTest::testAssignmentFromHost()
          v[i][1] = (i+1)*10.0 + 0.1;
       }
   
-      // Assign from HostArray 
+      // Assign from HostSendArray 
       u  = v;
    
       TEST_ASSERT(u.capacity() == capacity);

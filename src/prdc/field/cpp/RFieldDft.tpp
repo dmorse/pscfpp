@@ -94,11 +94,11 @@ namespace Prdc {
    }
 
    /*
-   * Pseudo-assignment from an associated HostArray.
+   * Pseudo-assignment from an associated HostSendArray.
    */
    template <int D>
    RFieldDft<D,CPT>&
-   RFieldDft<D,CPT>::operator = (HostArray<fftw_complex,CPT> const & other)
+   RFieldDft<D,CPT>::operator = (HostSendArray<fftw_complex,CPT> const & other)
    {
       DeviceArray<fftw_complex,CPT>::operator = (other);
       return *this;

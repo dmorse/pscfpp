@@ -3,7 +3,7 @@ pscf_backend_cpp_CPP= \
   pscf/backend/cpp/complex.cpp \
   pscf/backend/cpp/DeviceArray.cpp \
   pscf/backend/cpp/HostRecvArray.cpp \
-  pscf/backend/cpp/HostArray.cpp \
+  pscf/backend/cpp/HostSendArray.cpp \
   pscf/backend/cpp/VecOp.cpp \
   pscf/backend/cpp/VecOpCx.cpp \
   pscf/backend/cpp/Reduce.cpp \

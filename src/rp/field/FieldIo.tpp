@@ -23,6 +23,8 @@
 #include <prdc/field/RField.h>
 #include <prdc/fieldIo/rFieldIo.h>
 
+#include <pscf/backend/HostRecvArray.h>
+#include <pscf/backend/HostSendArray.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/MeshIteratorFortran.h>
@@ -310,7 +312,7 @@ namespace Rp {
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Setup local host arrays
-      DArray< HostArray<RealT,T> > hostFields;
+      DArray< HostSendArray<RealT,T> > hostFields;
       associateArrays(hostFields, fields);
 
       // Read data
@@ -354,7 +356,7 @@ namespace Rp {
       checkAllocateFields(fields, nMonomer, mesh().dimensions());
 
       // Setup local host arrays
-      DArray< HostArray<RealT,T> > hostFields;
+      DArray< HostSendArray<RealT,T> > hostFields;
       associateArrays(hostFields, fields);
 
       // Read data section of file
@@ -384,7 +386,7 @@ namespace Rp {
       checkAllocateField(field, mesh().dimensions());
 
       // Setup local host array
-      HostArray<RealT,T> hostField;
+      HostSendArray<RealT,T> hostField;
       hostField.associate(field);
 
       // Read data section with one field
@@ -540,7 +542,7 @@ namespace Rp {
       IntVec<D> dftDimensions = fields[0].dftDimensions();
 
       // Allocate hostFields
-      DArray< HostArray<ComplexT,T> > hostFields;
+      DArray< HostSendArray<ComplexT,T> > hostFields;
       associateArrays(hostFields, fields);
 
       // Read data into hostFields
@@ -630,7 +632,7 @@ namespace Rp {
       UTIL_CHECK(out.meshDimensions() == mesh().dimensions());
 
       // Setup host container for k-grid data
-      HostArray<ComplexT,T> hostField;
+      HostSendArray<ComplexT,T> hostField;
       hostField.associate(out);
 
       // Convert basis to k-grid on host

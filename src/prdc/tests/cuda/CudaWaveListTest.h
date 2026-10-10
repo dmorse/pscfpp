@@ -10,7 +10,7 @@
 #include <prdc/crystal/UnitCell.h>
 
 #include <pscf/backend/cuda/HostRecvArray.h> 
-#include <pscf/backend/cuda/HostArray.h> 
+#include <pscf/backend/cuda/HostSendArray.h> 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 
@@ -352,7 +352,7 @@ public:
 
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      DArray< HostArray<cudaReal,CUT> > dksq_h;
+      DArray< HostSendArray<cudaReal,CUT> > dksq_h;
       dksq_h.allocate(cell2.nParameter());
       for (int n = 0; n < cell2.nParameter() ; ++n) {
         dksq_h[n] = wavelist.dKSq(n);
@@ -388,7 +388,7 @@ public:
 
       // compute dKSq on device, transfer to host
       wavelist.computedKSq();
-      DArray< HostArray<cudaReal,CUT> > dksq_h;
+      DArray< HostSendArray<cudaReal,CUT> > dksq_h;
       dksq_h.allocate(cell3.nParameter());
       for (int n = 0; n < cell3.nParameter() ; ++n) {
         dksq_h[n] = wavelist.dKSq(n);

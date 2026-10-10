@@ -72,7 +72,7 @@ namespace Prdc {
       bool compared_;
 
       // Use FieldComparison template via composition
-      FieldComparison< HostArray<cudaReal,CUT> > fieldComparison_;
+      FieldComparison< HostSendArray<cudaReal,CUT> > fieldComparison_;
 
    };
 

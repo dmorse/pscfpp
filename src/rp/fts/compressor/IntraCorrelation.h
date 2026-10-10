@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>           // member
-#include <util/containers/DArray.h>     // member
-#include <pscf/backend/HostArray.h>     // member
-#include <pscf/backend/TmplDeclare.h>   // declaration macros
+#include <pscf/math/IntVec.h>             // member
+#include <util/containers/DArray.h>       // member
+#include <pscf/backend/HostSendArray.h>   // member
+#include <pscf/backend/TmplDeclare.h>     // declaration macros
 
 // Forward declarations
 namespace Pscf {
@@ -83,7 +83,7 @@ namespace Rp {
       DArray<RealT> Gsq_;
 
       /// Host array of omega values on a k-grid.
-      HostArray<RealT, T> correlations_h_;
+      HostSendArray<RealT, T> correlations_h_;
 
       /// Dimensions of r-space mesh.
       IntVec<D> meshDimensions_;

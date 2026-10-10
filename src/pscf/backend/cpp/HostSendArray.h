@@ -1,5 +1,5 @@
-#ifndef PSCF_HOST_ARRAY_CP_H
-#define PSCF_HOST_ARRAY_CP_H
+#ifndef PSCF_HOST_SEND_ARRAY_CP_H
+#define PSCF_HOST_SEND_ARRAY_CP_H
 
 /*
 * Util Package - C++ Utilities for Scientific Computation
@@ -22,7 +22,7 @@ namespace Pscf {
    using namespace Util;
 
    // Declare primary template
-   template <typename Data, typename T> class HostArray;
+   template <typename Data, typename T> class HostSendArray;
 
    /**
    * Psuedo-"host" array used for host-to-device data transfer.
@@ -58,10 +58,10 @@ namespace Pscf {
    *
    * Typical usage is shown below for host-to-device transfer to a long
    * lived instance of DeviceArray<Data,CPT> named dArray from a shorter
-   * lived instance of HostArray<Data,CPT> named hArray, where Data
+   * lived instance of HostSendArray<Data,CPT> named hArray, where Data
    * denotes the type of each array element:
    * \code
-   *    HostArray<Data,CPT> hArray;
+   *    HostSendArray<Data,CPT> hArray;
    *    hArray.associate(dArray);
    *
    *    \\ ( Initialize data in hArray )
@@ -73,7 +73,7 @@ namespace Pscf {
    * Comments:
    *
    *   - In this specialization for a CPU backend (T=CPT), the 
-   *     assignment (=) operator that assigns a RHS HostArray<Data,CPT> 
+   *     assignment (=) operator that assigns a RHS HostSendArray<Data,CPT> 
    *     to a LHS DeviceArray<Data,CPT> template normally does nothing.
    *     It is provided for compatability with the syntax required for
    *     GPU code, with T=CUT, for which the analogous assignment operator
@@ -105,7 +105,7 @@ namespace Pscf {
    * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
-   class HostArray<Data, CPT> final : public Array<Data> 
+   class HostSendArray<Data, CPT> final : public Array<Data> 
    {
 
    public:
@@ -116,19 +116,19 @@ namespace Pscf {
       using BackendIdClass = CPT;
 
       // Default constructor.
-      HostArray() = default;
+      HostSendArray() = default;
 
       // Copy construction (delete).
-      HostArray(HostArray<Data,CPT> const &) = delete;
+      HostSendArray(HostSendArray<Data,CPT> const &) = delete;
 
       /**
       * Destructor.
       */
-      ~HostArray();
+      ~HostSendArray();
 
       // Assignment (delete).
-      HostArray<Data,CPT>& 
-      operator = (HostArray<Data,CPT> const&) = delete;
+      HostSendArray<Data,CPT>& 
+      operator = (HostSendArray<Data,CPT> const&) = delete;
 
       /**
       * Associate this object with a device array.
@@ -165,8 +165,8 @@ namespace Pscf {
    };
 
    // Explicit instantiation declarations
-   extern template class HostArray<double,CPT>;
-   extern template class HostArray<fftw_complex,CPT>;
+   extern template class HostSendArray<double,CPT>;
+   extern template class HostSendArray<fftw_complex,CPT>;
 
 } // namespace Pscf
 
@@ -181,7 +181,7 @@ namespace Pscf {
    * Destructor.
    */
    template <typename Data>
-   HostArray<Data,CPT>::~HostArray()
+   HostSendArray<Data,CPT>::~HostSendArray()
    {
       if (ref_.isAssociated()) {
          ref_.dissociate(); // decrements counter of source array
@@ -193,7 +193,7 @@ namespace Pscf {
    */
    template <typename Data>
    void
-   HostArray<Data,CPT>::associate(DeviceArray<Data,CPT> & source)
+   HostSendArray<Data,CPT>::associate(DeviceArray<Data,CPT> & source)
    {
       UTIL_CHECK(source.isAllocated());
       UTIL_CHECK(!ref_.isAssociated());
@@ -214,7 +214,7 @@ namespace Pscf {
    * Release pre-existing association with a device array.
    */
    template <typename Data>
-   void HostArray<Data,CPT>::dissociate()
+   void HostSendArray<Data,CPT>::dissociate()
    {
       UTIL_CHECK(data_);
       UTIL_CHECK(ref_.isAssociated());

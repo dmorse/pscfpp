@@ -18,7 +18,7 @@
 
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cuda/HostRecvArray.h>
-#include <pscf/backend/cuda/HostArray.h>
+#include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
@@ -235,7 +235,7 @@ public:
       int nx = mesh.size();
       RField<1,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> w_h(nx);
+      HostSendArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
@@ -288,7 +288,7 @@ public:
       int nx = mesh.size();
       RField<2,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> w_h(nx);
+      HostSendArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
@@ -389,7 +389,7 @@ public:
       int nx = mesh.size();
       RField<3,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> w_h(nx);
+      HostSendArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       
@@ -440,7 +440,7 @@ public:
       int nx = mesh.size();
       RField<1,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> w_h(nx);
+      HostSendArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
@@ -456,7 +456,7 @@ public:
       RField<1,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> qin(nx);
+      HostSendArray<cudaReal,CUT> qin(nx);
       HostRecvArray<cudaReal,CUT> qout(nx);
 
       // Run block step
@@ -550,7 +550,7 @@ public:
       qout.allocate(mesh.dimensions());
 
       // Initialize qin as a cosine(kx)
-      HostArray<cudaReal,CUT> qin_h(nx);
+      HostSendArray<cudaReal,CUT> qin_h(nx);
       double twoPi = 2.0*Constants::Pi;
       for (int i=0; i < nx; ++i) {
          qin_h[i] = cos(twoPi*double(i)/double(nx));
@@ -650,7 +650,7 @@ public:
       int nx = mesh.size();
       RField<2,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> w_h(nx);
+      HostSendArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
@@ -666,7 +666,7 @@ public:
       RField<2,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> qin(nx);
+      HostSendArray<cudaReal,CUT> qin(nx);
       HostRecvArray<cudaReal,CUT> qout(nx);
 
       // Run block step
@@ -759,7 +759,7 @@ public:
       int nx = mesh.size();
       RField<3,CUT> w;
       w.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> w_h(nx);
+      HostSendArray<cudaReal,CUT> w_h(nx);
 
       TEST_ASSERT(w.capacity() == mesh.size());
       double wc = 0.3;
@@ -775,7 +775,7 @@ public:
       RField<3,CUT> d_qin, d_qout;
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
-      HostArray<cudaReal,CUT> qin(nx);
+      HostSendArray<cudaReal,CUT> qin(nx);
       HostRecvArray<cudaReal,CUT> qout(nx);
 
       // Run block step

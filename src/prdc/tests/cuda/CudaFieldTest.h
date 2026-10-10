@@ -10,7 +10,7 @@
 #include <prdc/field/cuda/resources.h>
 
 #include <pscf/backend/cuda/HostRecvArray.h>
-#include <pscf/backend/cuda/HostArray.h>
+#include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/math/IntVec.h>
 
 using namespace Util;
@@ -96,7 +96,7 @@ void CudaFieldTest::testRFieldRoundTrip()
       vd.allocate(d);
 
       // Initialize host (cpu) data in field vh1
-      HostArray<cudaReal,CUT> vh1;
+      HostSendArray<cudaReal,CUT> vh1;
       vh1.associate(vd);
       //vh1.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
@@ -136,7 +136,7 @@ void CudaFieldTest::testCFieldRoundTrip()
       vd.allocate(d);
 
       // Initialize host (cpu) data in field vh1
-      HostArray<cudaComplex,CUT> vh1;
+      HostSendArray<cudaComplex,CUT> vh1;
       //vh1.allocate(capacity);
       vh1.associate(vd);
       for (int i=0; i < capacity; i++ ) {
@@ -180,7 +180,7 @@ void CudaFieldTest::testRFieldDftRoundTrip()
       int capacity = vd.capacity();
 
       // Initialize host (cpu) complex data in field vh1
-      HostArray<cudaComplex,CUT> vh1;
+      HostSendArray<cudaComplex,CUT> vh1;
       vh1.associate(vd);
       //vh1.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {

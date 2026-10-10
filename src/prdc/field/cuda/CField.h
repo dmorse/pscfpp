@@ -12,7 +12,7 @@
 #include <pscf/backend/cuda/DeviceArray.h>   // base class template
 #include <pscf/backend/cuda/cudaTypes.h>     // base class argument
 
-#include <pscf/backend/cuda/HostArray.h>
+#include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -108,17 +108,17 @@ namespace Prdc {
       CField<D,CUT>& operator = (CField<D,CUT> const & other);
 
       /**
-      * Assignment operator, assignment from a HostArray<cudaComplex,CUT>.
+      * Assignment operator, assignment from a HostSendArray<cudaComplex,CUT>.
       *
       * Performs a deep copy, by copying all elements of the RHS 
       * CField<D,CUT> from host memory to device memory.
       *
-      * The RHS HostArray<cudaComplex,CUT> and LHS CField<D,CUT> must both be 
+      * The RHS HostSendArray<cudaComplex,CUT> and LHS CField<D,CUT> must both be 
       * allocated with equal capacity values on entry. 
       * 
-      * \param other the RHS HostArray<cudaComplex,CUT>
+      * \param other the RHS HostSendArray<cudaComplex,CUT>
       */
-      CField<D,CUT>& operator = (HostArray<cudaComplex,CUT> const & other);
+      CField<D,CUT>& operator = (HostSendArray<cudaComplex,CUT> const & other);
 
       /**
       * Return mesh dimensions by constant reference.
@@ -182,7 +182,7 @@ namespace Prdc {
       }
 
       if (isAllocated()) {
-         HostArray<cudaComplex,CUT> tempData(capacity);
+         HostSendArray<cudaComplex,CUT> tempData(capacity);
          tempData = this; // copy this object's data from device to host
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i].x;

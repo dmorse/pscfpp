@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cpp/HostArray.h>
+#include <pscf/backend/cpp/HostSendArray.h>
 #include <pscf/backend/cpp/DeviceArray.h>
 
 #include <util/containers/DArray.h>
@@ -18,7 +18,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CppHostArrayTest : public UnitTest
+class CppHostSendArrayTest : public UnitTest
 {
 private:
 
@@ -44,17 +44,17 @@ public:
 };
 
 
-void CppHostArrayTest::testDefaultConstructor()
+void CppHostSendArrayTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      HostArray<Data,CPT> v;
+      HostSendArray<Data,CPT> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
 }
 
-void CppHostArrayTest::testAssociate()
+void CppHostSendArrayTest::testAssociate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -64,7 +64,7 @@ void CppHostArrayTest::testAssociate()
          w[i] = (i+1)*10.0 ;
       }
 
-      HostArray<Data,CPT> v;
+      HostSendArray<Data,CPT> v;
       v.associate(w);
       TEST_ASSERT(v[0] == 10.0);
       TEST_ASSERT(v[1] == 20.0);
@@ -75,7 +75,7 @@ void CppHostArrayTest::testAssociate()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppHostArrayTest::testAssociateCmplx()
+void CppHostSendArrayTest::testAssociateCmplx()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -89,7 +89,7 @@ void CppHostArrayTest::testAssociateCmplx()
       }
 
       // Copy construct
-      HostArray<std::complex<Data>, CPT> v;
+      HostSendArray<std::complex<Data>, CPT> v;
       v.associate(w);
 
       // Test elements
@@ -103,7 +103,7 @@ void CppHostArrayTest::testAssociateCmplx()
 }
 
 #if 0
-void CppHostArrayTest::testAssign()
+void CppHostSendArrayTest::testAssign()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -120,7 +120,7 @@ void CppHostArrayTest::testAssign()
       }
 
       // Data user (host array)
-      HostArray<Data,CPT> u;
+      HostSendArray<Data,CPT> u;
       TEST_ASSERT(u.capacity() == 0);
       TEST_ASSERT(!u.isAllocated());
 
@@ -163,14 +163,14 @@ void CppHostArrayTest::testAssign()
 }
 #endif
 
-void CppHostArrayTest::testBaseClassReference()
+void CppHostSendArrayTest::testBaseClassReference()
 {
    printMethod(TEST_FUNC);
    {
       // Data owner (device array)
       DeviceArray<Data,CPT> w(3);
 
-      HostArray<Data,CPT> v;
+      HostSendArray<Data,CPT> v;
       v.associate(w);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -183,7 +183,7 @@ void CppHostArrayTest::testBaseClassReference()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppHostArrayTest::testDArrayOuter()
+void CppHostSendArrayTest::testDArrayOuter()
 {
    printMethod(TEST_FUNC);
 
@@ -197,7 +197,7 @@ void CppHostArrayTest::testDArrayOuter()
    }
 
    // Allocate and associate array of host arrays
-   DArray< HostArray<Data,CPT> > u;
+   DArray< HostSendArray<Data,CPT> > u;
    u.allocate(m);
    for (int i = 0; i < m; ++i) {
       u[i].associate(v[i]);
@@ -230,14 +230,14 @@ void CppHostArrayTest::testDArrayOuter()
 
 }
 
-TEST_BEGIN(CppHostArrayTest)
-TEST_ADD(CppHostArrayTest, testDefaultConstructor)
-TEST_ADD(CppHostArrayTest, testAssociate)
-TEST_ADD(CppHostArrayTest, testAssociateCmplx)
-//TEST_ADD(CppHostArrayTest, testAssign)
-TEST_ADD(CppHostArrayTest, testBaseClassReference)
-TEST_ADD(CppHostArrayTest, testDArrayOuter)
+TEST_BEGIN(CppHostSendArrayTest)
+TEST_ADD(CppHostSendArrayTest, testDefaultConstructor)
+TEST_ADD(CppHostSendArrayTest, testAssociate)
+TEST_ADD(CppHostSendArrayTest, testAssociateCmplx)
+//TEST_ADD(CppHostSendArrayTest, testAssign)
+TEST_ADD(CppHostSendArrayTest, testBaseClassReference)
+TEST_ADD(CppHostSendArrayTest, testDArrayOuter)
 
-TEST_END(CppHostArrayTest)
+TEST_END(CppHostSendArrayTest)
 
 #endif

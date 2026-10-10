@@ -9,7 +9,7 @@
 */
 
 #include "RField.h"
-#include <pscf/backend/cpp/HostArray.h>  
+#include <pscf/backend/cpp/HostSendArray.h>  
 #include <util/global.h>
 
 namespace Pscf {
@@ -124,11 +124,11 @@ namespace Prdc {
    }
 
    /*
-   * Pseudo-assignment from an associated HostArray.
+   * Pseudo-assignment from an associated HostSendArray.
    */
    template <int D>
    RField<D,CPT>&
-   RField<D,CPT>::operator = (HostArray<double,CPT> const & other)
+   RField<D,CPT>::operator = (HostSendArray<double,CPT> const & other)
    {
       DeviceArray<double,CPT>::operator = (other);
       return *this;

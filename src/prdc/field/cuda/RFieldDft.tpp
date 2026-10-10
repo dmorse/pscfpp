@@ -10,7 +10,7 @@
 
 #include "RFieldDft.h"
 #include "FFT.h"
-#include <pscf/backend/cuda/HostArray.h>
+#include <pscf/backend/cuda/HostSendArray.h>
 
 namespace Pscf {
 namespace Prdc {
@@ -124,11 +124,11 @@ namespace Prdc {
    }
 
    /*
-   * Assignment from RHS HostArray<cudaComplex,CUT>.
+   * Assignment from RHS HostSendArray<cudaComplex,CUT>.
    */
    template <int D>
    RFieldDft<D,CUT>&
-   RFieldDft<D,CUT>::operator = (HostArray<cudaComplex,CUT> const & other)
+   RFieldDft<D,CUT>::operator = (HostSendArray<cudaComplex,CUT> const & other)
    {
       // Preconditions: Both arrays must be allocated with equal capacities
       UTIL_CHECK(other.isAllocated());

@@ -16,7 +16,7 @@
 
 // Forward declaration
 namespace Pscf {
-   template <typename Data, class T> class HostArray;
+   template <typename Data, class T> class HostSendArray;
 }
 
 namespace Pscf {
@@ -91,7 +91,7 @@ namespace Prdc {
       operator = (RFieldDft<D,CPT> const & other);
 
       /**
-      * Pseudo-assignment from an associated HostArray.
+      * Pseudo-assignment from an associated HostSendArray.
       *
       * This function simply calls the corresponding assignment operator 
       * of the DeviceArray base class, then returns this RFieldDft object.
@@ -103,7 +103,7 @@ namespace Prdc {
       *
       * \param other  the RHS host array
       */
-      RFieldDft<D,CPT>& operator = (HostArray<fftw_complex,CPT> const & other);
+      RFieldDft<D,CPT>& operator = (HostSendArray<fftw_complex,CPT> const & other);
 
       /**
       * Allocate the underlying C array and set mesh dimensions.

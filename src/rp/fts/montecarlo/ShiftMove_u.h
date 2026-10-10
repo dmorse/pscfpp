@@ -10,7 +10,7 @@
 
 #include <rp/fts/montecarlo/ShiftMoveBase.h>  // base class template
 #include <pscf/backend/cuda/CUT.h>                // base class argument
-#include <pscf/backend/cuda/HostArray.h>             // member
+#include <pscf/backend/cuda/HostSendArray.h>             // member
 #include <pscf/backend/cuda/cudaTypes.h>              // member
 
 namespace Pscf {
@@ -60,10 +60,10 @@ namespace Rp {
    private:
 
       // Work space on CPU for unshifted field
-      HostArray<cudaReal,CUT> wOld_;
+      HostSendArray<cudaReal,CUT> wOld_;
 
       // Work space on CPU for a shifted field
-      HostArray<cudaReal,CUT> wNew_;
+      HostSendArray<cudaReal,CUT> wNew_;
 
       using ShiftMoveBaseT = ShiftMoveBase<D,CUT>;
 

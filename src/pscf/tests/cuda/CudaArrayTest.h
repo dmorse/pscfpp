@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/backend/cuda/DeviceArray.h>
-#include <pscf/backend/cuda/HostArray.h>
+#include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/backend/cuda/HostRecvArray.h>
 #include <util/math/Constants.h>
 
@@ -26,7 +26,7 @@ public:
    void testConstructors()
    {
       printMethod(TEST_FUNC);
-      HostArray<double,CUT> h;
+      HostSendArray<double,CUT> h;
       HostRecvArray<double,CUT> c;
       DeviceArray<double,CUT> d;
 
@@ -42,8 +42,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      HostArray<double,CUT> h;
-      HostArray<double,CUT> c;
+      HostSendArray<double,CUT> h;
+      HostSendArray<double,CUT> c;
       DeviceArray<double,CUT> d;
 
       int capacity = 32;
@@ -101,7 +101,7 @@ public:
       DeviceArray<double,CUT> d2(nx);
 
       // Input host arrays
-      HostArray<double,CUT> in;
+      HostSendArray<double,CUT> in;
       in.associate(d1);
 
       // Generate data
@@ -111,8 +111,8 @@ public:
       }
 
       // Output host arrays
-      HostArray<double,CUT> host1(nx);
-      HostArray<double,CUT> host2(nx);
+      HostSendArray<double,CUT> host1(nx);
+      HostSendArray<double,CUT> host2(nx);
 
       // Copy to device, then copy back to host
       d1 = in;
@@ -130,7 +130,7 @@ public:
       }
 
       // Copy a slice of d1, check that it is correct
-      HostArray<double,CUT> host4(nx/2);
+      HostSendArray<double,CUT> host4(nx/2);
       host4.copySlice(d1, 3);
       for (int i = 0; i < nx/2; ++i ) {
          TEST_ASSERT(eq(in[i+3], host4[i]));
@@ -157,7 +157,7 @@ public:
       DeviceArray<double,CUT> d2(nx);
 
       // Input array
-      HostArray<double,CUT> in;
+      HostSendArray<double,CUT> in;
       in.associate(d1);
 
       // Generate data

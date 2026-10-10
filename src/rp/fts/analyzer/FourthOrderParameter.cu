@@ -9,7 +9,6 @@
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cuda/Reduce.h>
-#include <pscf/backend/cuda/HostArray.h>
 
 #include <rp/fts/analyzer/FourthOrderParameter.tpp>
 

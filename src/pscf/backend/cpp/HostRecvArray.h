@@ -103,7 +103,7 @@ namespace Pscf {
    *    association.
    *
    *  - The HostRecvArray template does not define an public 
-   *    "associate" member function like that defined by the HostArray
+   *    "associate" member function like that defined by the HostSendArray
    *    template. By convention, an association may only be created by
    *    the conversion constructor or the assignment operator. 
    *

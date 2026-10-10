@@ -7,7 +7,7 @@
 #include <prdc/field/cpp/RField.h>
 
 #include <pscf/backend/cpp/HostRecvArray.h>
-#include <pscf/backend/cpp/HostArray.h>
+#include <pscf/backend/cpp/HostSendArray.h>
 
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>

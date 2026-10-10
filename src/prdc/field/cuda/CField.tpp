@@ -106,14 +106,14 @@ namespace Prdc {
    }
 
    /*
-   * Assignment from RHS HostArray<Data> host array.
+   * Assignment from RHS HostSendArray<Data> host array.
    */
    template <int D>
-   CField<D,CUT>& CField<D,CUT>::operator = (HostArray<cudaComplex,CUT> const & other)
+   CField<D,CUT>& CField<D,CUT>::operator = (HostSendArray<cudaComplex,CUT> const & other)
    {
       // Preconditions: both arrays must be allocated with equal capacities
       if (!other.isAllocated()) {
-         UTIL_THROW("Error: RHS HostArray<cudaComplex,CUT> is not allocated.");
+         UTIL_THROW("Error: RHS HostSendArray<cudaComplex,CUT> is not allocated.");
       }
       if (!isAllocated()) {
          UTIL_THROW("Error: LHS CField<D,CUT> is not allocated.");

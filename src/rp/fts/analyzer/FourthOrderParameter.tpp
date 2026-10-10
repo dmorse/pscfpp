@@ -13,7 +13,7 @@
 #include <prdc/field/FFT.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
-#include <pscf/backend/HostArray.h>
+#include <pscf/backend/HostSendArray.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 
@@ -112,7 +112,7 @@ namespace Rp {
       UTIL_CHECK(prefactor_.capacity() == kSize);
 
       // Initialize host array
-      HostArray<typename T::Real,T> prefactor_h;
+      HostSendArray<typename T::Real,T> prefactor_h;
       prefactor_h.associate(prefactor_);
       UTIL_CHECK(prefactor_h.capacity() == kSize_);
 

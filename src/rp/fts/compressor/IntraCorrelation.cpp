@@ -5,9 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/DeviceArray.h>
 #include <pscf/backend/cpp/CPT.h>
-
 #include <rp/fts/compressor/IntraCorrelation.tpp>
 
 // Explicit instantiation definitions

@@ -15,7 +15,7 @@
 
 // Forward declarations
 namespace Pscf {
-   template <typename Data, class T> class HostArray;
+   template <typename Data, class T> class HostSendArray;
    namespace Prdc {
       // Declaration of primary template
       template <int D, class T> class RField;
@@ -117,17 +117,17 @@ namespace Prdc {
       operator = (RField<D,CUT> const & other);
 
       /**
-      * Assignment from a HostArray<cudaReal,CUT>.
+      * Assignment from a HostSendArray<cudaReal,CUT>.
       *
       * Performs a deep copy, by copying all elements of the RHS RField
       * from host memory to device memory.
       *
-      * The RHS HostArray<cudaReal,CUT> and LHS RField must both be
+      * The RHS HostSendArray<cudaReal,CUT> and LHS RField must both be
       * allocated with equal capacity values on entry.
       *
-      * \param other the RHS HostArray<cudaReal,CUT>
+      * \param other the RHS HostSendArray<cudaReal,CUT>
       */
-      RField<D,CUT>& operator = (HostArray<cudaReal,CUT> const & other);
+      RField<D,CUT>& operator = (HostSendArray<cudaReal,CUT> const & other);
 
       /**
       * Return mesh dimensions by constant reference.
@@ -167,7 +167,7 @@ namespace Prdc {
 } // namespace Prdc
 } // namespace Pscf
 
-#include <pscf/backend/cuda/HostArray.h> 
+#include <pscf/backend/cuda/HostSendArray.h> 
 #include <util/global.h>
 
 // Inline and template member functions
@@ -207,7 +207,7 @@ namespace Prdc {
       }
 
       if (isAllocated()) {
-         HostArray<cudaReal,CUT> tempData(capacity);
+         HostSendArray<cudaReal,CUT> tempData(capacity);
          tempData = this; // copy this object's data from device to host
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];

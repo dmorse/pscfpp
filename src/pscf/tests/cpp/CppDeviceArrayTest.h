@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/backend/cpp/DeviceArray.h>
-#include <pscf/backend/cpp/HostArray.h>
+#include <pscf/backend/cpp/HostSendArray.h>
 
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
@@ -212,7 +212,7 @@ void CppDeviceArrayTest::testAssignFromHost()
       TEST_ASSERT(u.isOwner());
 
       // Host array
-      HostArray<Data,CPT> v;
+      HostSendArray<Data,CPT> v;
       v.associate(u);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());

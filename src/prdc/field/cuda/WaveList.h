@@ -11,7 +11,7 @@
 #include <pscf/backend/cuda/CUT.h>        // specialized template argument
 #include <prdc/field/cuda/RField.h>  // member
 #include <pscf/backend/cuda/DeviceArray.h>   // member
-#include <pscf/backend/cuda/HostArray.h>    // member
+#include <pscf/backend/cuda/HostSendArray.h>    // member
 #include <pscf/math/IntVec.h>        // member
 #include <util/containers/DArray.h>  // member
 #include <util/containers/GArray.h>  // member
@@ -177,7 +177,7 @@ namespace Prdc {
       * the minimum image of one wavevector in the k-space mesh used for
       * discrete Fourier transforms.
       */
-      HostArray<IntVec<D>,CUT> const & minImages_h() const;
+      HostSendArray<IntVec<D>,CUT> const & minImages_h() const;
 
       /**
       * Get the kSq array on the device by reference.
@@ -355,7 +355,7 @@ namespace Prdc {
       * kSize_ is equal to the size of the real space mesh.
       */
       mutable
-      HostArray<IntVec<D>,CUT> minImages_h_;
+      HostSendArray<IntVec<D>,CUT> minImages_h_;
 
       /**
       * Array containing values of kSq_, stored on the device.

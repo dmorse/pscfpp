@@ -66,7 +66,7 @@ public:
       cosFK.allocate(dimensions);
 
       // Cos pressure field perturbation per chain: A * cos(2pi * f* i/meshSize)
-      HostArray<cudaReal,CUT> cosF_h;
+      HostSendArray<cudaReal,CUT> cosF_h;
       //cosF_h.allocate(meshSize);
       cosF_h.associate(cosF);
       PolymerSpecies<cudaReal> 

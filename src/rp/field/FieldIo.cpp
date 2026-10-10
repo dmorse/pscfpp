@@ -6,8 +6,6 @@
 */
 
 #include <prdc/fieldIo/fieldCheck.h>
-#include <pscf/backend/cpp/HostRecvArray.h>
-#include <pscf/backend/cpp/HostArray.h>
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/complex.h>
 

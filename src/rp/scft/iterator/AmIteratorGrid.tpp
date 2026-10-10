@@ -284,7 +284,6 @@ namespace Rp {
          const int nParam = system().domain().unitCell().nParameter();
          const int nFlex = Iterator<D,T>::nFlexibleParams();
          DArray<RealT> stressTmp(nFlex);
-         //HostArrayT<RealT> stressTmp(nFlex);
          int counter = 0;
          for (int i = 0; i < nParam ; i++) {
             if (flexibleParams_[i]) {
@@ -297,9 +296,6 @@ namespace Rp {
 
          // Copy stress residuals to the end of the resid array
          VecOp::eqV(resid, stressTmp, nMonomer*nMesh, 0, nFlex);
-         //slice.associate(resid, nMonomer * nMesh, nFlex);
-         //slice = stressTmp; // copy from host to device, for GPU code
-         //slice.dissociate();
       }
 
    }
@@ -388,7 +384,7 @@ namespace Rp {
          // Copy parameter entries from newState to a local array
          DArray<RealT> paramTmp(nFlex);
          VecOp::eqV(paramTmp, newState, 0, nMonomer*nMesh, nFlex);
-         //HostArrayT<RealT> paramTmp(nFlex);
+         //HostSendArrayT<RealT> paramTmp(nFlex);
          //slice.associate(newState, nMonomer*nMesh, nFlex);
          //paramTmp = slice;
          //slice.dissociate();

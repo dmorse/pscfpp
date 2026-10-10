@@ -13,7 +13,7 @@
 
 // Forward declaration
 namespace Pscf {
-   template <typename Data, typename T> class HostArray;
+   template <typename Data, typename T> class HostSendArray;
 }
 
 namespace Pscf {
@@ -29,7 +29,7 @@ namespace Pscf {
    * Derived from FftwDRArray, and largely equivalent. 
    * 
    * The main difference from the base class is the addition of assignment 
-   * (operator = ) from a HostArray<Data,CTP> to a DeviceArray<Data,CTP>.
+   * (operator = ) from a HostSendArray<Data,CTP> to a DeviceArray<Data,CTP>.
    * This operator checks for the existence of an association between the
    * device array (LHS) and host array (RHS) in which both point to the
    * same memory, throws an Exception if such an association does not
@@ -38,9 +38,9 @@ namespace Pscf {
    *
    * Host to device data transfer:
    * 
-   * Usage for transfer of data from an instance of HostArray<Data,CPT>
+   * Usage for transfer of data from an instance of HostSendArray<Data,CPT>
    * to an instance of DeviceArray<Data,CPT> is discussed in the class
-   * documentation for the HostArray class template. The most explicit
+   * documentation for the HostSendArray class template. The most explicit
    * version of this pattern involves the following steps:
    *
    *    - Construct and allocate a device array (denoted by dArray)
@@ -129,7 +129,7 @@ namespace Pscf {
       *
       * \param other  array container on RHS of assigment (input)
       */
-      DeviceArray<Data,CPT>& operator = (HostArray<Data,CPT> const & other);
+      DeviceArray<Data,CPT>& operator = (HostSendArray<Data,CPT> const & other);
 
       // Inherited public function (to prevent hiding)
       using FftwDRArray<Data>::operator =;
@@ -142,7 +142,7 @@ namespace Pscf {
 
 } // namespace Pscf
 
-#include "HostArray.h"
+#include "HostSendArray.h"
 namespace Pscf {
 
    /*
@@ -154,11 +154,11 @@ namespace Pscf {
    {}
 
    /*
-   * Check for a pre-existing association with a HostArray.
+   * Check for a pre-existing association with a HostSendArray.
    */
    template <typename Data>
    DeviceArray<Data,CPT>& 
-   DeviceArray<Data,CPT>::operator = (HostArray<Data,CPT> const & other)
+   DeviceArray<Data,CPT>::operator = (HostSendArray<Data,CPT> const & other)
    {
       UTIL_CHECK(Array<Data>::isAllocated());
       UTIL_CHECK(other.isAllocated());

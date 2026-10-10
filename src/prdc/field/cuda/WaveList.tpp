@@ -15,7 +15,7 @@
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/hasVariableAngle.h>
 #include <pscf/backend/cuda/HostRecvArray.h>
-#include <pscf/backend/cuda/HostArray.h>
+#include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/Sort.h>
@@ -524,7 +524,7 @@ namespace Prdc {
       if (isRealField_) {
          implicitInverse_d_.allocate(kSize_);
          implicitInverse_h_.allocate(kSize_);
-         HostArray<bool,CUT> implicitTemp;
+         HostSendArray<bool,CUT> implicitTemp;
          implicitTemp.allocate(kSize_);
          MeshIterator<D> kItr(kMeshDimensions_);
          int rank;
@@ -577,7 +577,7 @@ namespace Prdc {
       UTIL_CHECK(minImages_.capacity() == kSize_ * D);
 
       // Set initial array of images to contain the k-grid points
-      HostArray<int,CUT> imagesTmp(D*kSize_);
+      HostSendArray<int,CUT> imagesTmp(D*kSize_);
       MeshIterator<D> kItr(kMeshDimensions_);
       for (int i = 0; i < D; i++) {
          for (kItr.begin(); !kItr.atEnd(); ++kItr) {
@@ -587,8 +587,8 @@ namespace Prdc {
       minImages_ = imagesTmp; // copy to device
 
       // Get kBasis and meshDims and store on device
-      HostArray<cudaReal,CUT> kBasis_h(D*D);
-      HostArray<int,CUT> meshDims_h(D);
+      HostSendArray<cudaReal,CUT> kBasis_h(D*D);
+      HostSendArray<int,CUT> meshDims_h(D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
          for (int k = 0; k < D; ++k) {
@@ -665,7 +665,7 @@ namespace Prdc {
       UTIL_CHECK(isAllocated_);
 
       // Get kBasis and store on device
-      HostArray<cudaReal,CUT> kBasis_h(D*D);
+      HostSendArray<cudaReal,CUT> kBasis_h(D*D);
       DeviceArray<cudaReal,CUT> kBasis(D*D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
@@ -711,7 +711,7 @@ namespace Prdc {
 
       // Calculate dkkBasis and store on device
       int idx;
-      HostArray<cudaReal,CUT> dkkBasis_h(unitCell().nParameter() * D * D);
+      HostSendArray<cudaReal,CUT> dkkBasis_h(unitCell().nParameter() * D * D);
       DeviceArray<cudaReal,CUT> dkkBasis;
       for (int i = 0 ; i < unitCell().nParameter(); ++i) {
          for (int j = 0; j < D; ++j) {
@@ -822,7 +822,7 @@ namespace Prdc {
    * Gather data from device and re-arrange if necessary.
    */
    template <int D>
-   HostArray<IntVec<D>,CUT> const & WaveList<D,CUT>::minImages_h() const
+   HostSendArray<IntVec<D>,CUT> const & WaveList<D,CUT>::minImages_h() const
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {

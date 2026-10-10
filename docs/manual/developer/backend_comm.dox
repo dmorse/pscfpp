@@ -22,7 +22,7 @@ unnecessary in corresponding specializations used by pscf_rpc, since
 this program does not use GPU device and allocates all arrays in
 CPU memory.
 
-PSCF provides a pair of class templates named Pscf::HostArray and 
+PSCF provides a pair of class templates named Pscf::HostSendArray and 
 Pscf::HostRecvArray that each take a backend identifier class T as 
 a parameter argument, and that are designed to be used in operations 
 that require copying of data between the GPU device and the CPU host 
@@ -30,7 +30,7 @@ in template specializations with T=Pscf::CUT. The two templates are
 declared as
 \code
 namespace Pscf {
-   template <typename Data, typename T> class HostArray;
+   template <typename Data, typename T> class HostSendArray;
    template <typename Data, typename T> class HostRecvArray;
 }
 \endcode
@@ -53,13 +53,13 @@ the GPU in specializations with T = Pscf::CUT, and are thus
 defined in template code as instances of DeviceArray<Data,T> 
 or a subclass thereof.  The design is designed to allow 
 operations that copy data between a long-lived DeviceArray 
-and a shorter-lived HostArray or HostRecvArray, for which 
-the data in the HostArray or HostRecvArray only needs to 
+and a shorter-lived HostSendArray or HostRecvArray, for which 
+the data in the HostSendArray or HostRecvArray only needs to 
 be accessed within the scope of a single function. 
 
-The template HostArray is designed to be used for CPU-to-GPU 
+The template HostSendArray is designed to be used for CPU-to-GPU 
 copy operations, while HostRecvArray is designed to be used for 
-GPU-to-CPU copy operations.  A HostArray defines a subscript
+GPU-to-CPU copy operations.  A HostSendArray defines a subscript
 ([]) operator that allows read and write access to elements
 of the array, which is needed to allow elements to be assigned
 values before they are copied to the device array.  The 
@@ -70,12 +70,12 @@ read after they are copied from the associated DeviceArray.
 \section developer_backend_HostToDev Host-to-Device Copy
 
 The pseudo-code shown below outlines the required usage to 
-transfer data from an instance of a HostArray<Data,T> named 
+transfer data from an instance of a HostSendArray<Data,T> named 
 hostArray to an instance of DeviceArray<Data,T> named devArray. 
 We assume that the devArray container has been declared and 
 allocated prior to entry to this code segment.
 \code
-    HostArray<Data,T> hostArray;
+    HostSendArray<Data,T> hostArray;
     hostArray.associate(devArray);
 
     // Assign values to all elements of hostArray
@@ -127,10 +127,10 @@ the same function, and elements of hostArray may only be
 assigned values between the call to the associate member
 function and the assignment (=) operator.
 
-In specializations with T=Pscf::CUT, the HostArray owns
+In specializations with T=Pscf::CUT, the HostSendArray owns
 a separate block of CPU heap memory that can be allocated by 
 the associate function. The dissociate function does not deallocate 
-this memory, but the destructor function for a HostArray 
+this memory, but the destructor function for a HostSendArray 
 deallocates any associated memory that remains when the object 
 is destroyed. If the HostRecvArray is a local variable that 
 is defined within a function, as in the above example, this 
@@ -243,7 +243,7 @@ to prevent this inconsistency.
 
 Management of memory owned by a HostRecvArray specialization with 
 T=Pscf::CUT is analogous to management of memory owned by a corresponding 
-HostArray. Memory is allocated by conversion constructor or the 
+HostSendArray. Memory is allocated by conversion constructor or the 
 assignment operator, and deallocated by the destructor, but is not 
 de-allocated by the dissociate member function.
 

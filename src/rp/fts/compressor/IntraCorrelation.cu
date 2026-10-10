@@ -5,8 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/DeviceArray.h>
-#include <pscf/backend/cuda/HostArray.h>
 #include <pscf/backend/cuda/CUT.h>
 
 #include <rp/fts/compressor/IntraCorrelation.tpp>
