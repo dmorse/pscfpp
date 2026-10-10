@@ -6,7 +6,7 @@
 */
 
 #include <pscf/backend/cuda/CUT.h>
-#include <pscf/backend/cuda/ConstHostArray.h>
+#include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/complex.h>
 

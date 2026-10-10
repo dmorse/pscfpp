@@ -6,7 +6,7 @@
 */
 
 #include <pscf/backend/cpp/CPT.h>
-#include <pscf/backend/cpp/ConstHostArray.h>
+#include <pscf/backend/cpp/HostRecvArray.h>
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/VecOpCx.h>
 #include <pscf/backend/cpp/complex.h>

@@ -12,7 +12,7 @@
 #include <pscf/math/IntVec.h>                 // member
 #include <prdc/field/RField.h>                // member
 #include <prdc/field/RFieldDft.h>             // member
-#include <pscf/backend/ConstHostArray.h>      // member
+#include <pscf/backend/HostRecvArray.h>      // member
 #include <util/accumulators/Average.h>        // member
 #include <util/containers/DArray.h>           // member
 
@@ -119,7 +119,7 @@ namespace Rp {
       RFieldDft<D,T> wk_d_;
 
       /// Discrete Fourier transform (DFT) of wm_ , on host.
-      ConstHostArray<ComplexT,T> wk_h_;
+      HostRecvArray<ComplexT,T> wk_h_;
 
       /// Bunch ids, indexed by wave id (id of bunch containing a wave).
       DArray<int> waveBunchIds_;

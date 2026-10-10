@@ -6,7 +6,7 @@
 
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/HostArray.h>
-#include <pscf/backend/cuda/ConstHostArray.h>
+#include <pscf/backend/cuda/HostRecvArray.h>
 #include <util/math/Constants.h>
 
 using namespace Util;
@@ -27,7 +27,7 @@ public:
    {
       printMethod(TEST_FUNC);
       HostArray<double,CUT> h;
-      ConstHostArray<double,CUT> c;
+      HostRecvArray<double,CUT> c;
       DeviceArray<double,CUT> d;
 
       TEST_ASSERT(h.capacity() == 0 );
@@ -136,8 +136,8 @@ public:
          TEST_ASSERT(eq(in[i+3], host4[i]));
       }
 
-      // Copy from d1 to a ConstHostArray
-      ConstHostArray<double,CUT> host5;
+      // Copy from d1 to a HostRecvArray
+      HostRecvArray<double,CUT> host5;
       //host5.associate(d1);
       host5 = d1;
       for (int i = 0; i < nx; ++i ) {
@@ -170,10 +170,10 @@ public:
       d1 = in;
 
       // Host arrays
-      ConstHostArray<double,CUT> out1(nx);
-      ConstHostArray<double,CUT> out2;
-      ConstHostArray<double,CUT> out3(nx);
-      ConstHostArray<double,CUT> out4(nx/2);
+      HostRecvArray<double,CUT> out1(nx);
+      HostRecvArray<double,CUT> out2;
+      HostRecvArray<double,CUT> out3(nx);
+      HostRecvArray<double,CUT> out4(nx/2);
 
       // Copy back to host
       out1 = d1;

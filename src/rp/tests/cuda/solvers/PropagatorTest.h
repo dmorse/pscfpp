@@ -17,7 +17,7 @@
 //#include <prdc/field/cuda/resources.h>
 
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <pscf/backend/cuda/ConstHostArray.h>
+#include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -457,7 +457,7 @@ public:
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostArray<cudaReal,CUT> qin(nx);
-      ConstHostArray<cudaReal,CUT> qout(nx);
+      HostRecvArray<cudaReal,CUT> qout(nx);
 
       // Run block step
       double twoPi = 2.0*Constants::Pi;
@@ -484,8 +484,8 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      ConstHostArray<cudaReal,CUT> propHead(nx);
-      ConstHostArray<cudaReal,CUT> propTail(nx);
+      HostRecvArray<cudaReal,CUT> propHead(nx);
+      HostRecvArray<cudaReal,CUT> propTail(nx);
       propHead = block.propagator(0).head();
       propTail = block.propagator(0).tail();
 
@@ -559,7 +559,7 @@ public:
 
       // Take a step
       block.stepBead(qin, qout);
-      ConstHostArray<cudaReal,CUT> qout_h(nx);
+      HostRecvArray<cudaReal,CUT> qout_h(nx);
       qout_h = qout;
 
       // Test qout_h
@@ -578,7 +578,7 @@ public:
       p0.solve();
 
       // Check head slice
-      ConstHostArray<cudaReal,CUT> qh_h(nx);
+      HostRecvArray<cudaReal,CUT> qh_h(nx);
       qh_h = p0.head();
       expected = 1.0;
       for (int i = 0; i < nx; ++i) {
@@ -593,7 +593,7 @@ public:
       }
       
       // Check tail slice
-      ConstHostArray<cudaReal,CUT> qt_h(nx);
+      HostRecvArray<cudaReal,CUT> qt_h(nx);
       qt_h = p0.q(nBead);
       expected = exp(-wc*nBead);
       for (int i = 0; i < nx; ++i) {
@@ -667,7 +667,7 @@ public:
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostArray<cudaReal,CUT> qin(nx);
-      ConstHostArray<cudaReal,CUT> qout(nx);
+      HostRecvArray<cudaReal,CUT> qout(nx);
 
       // Run block step
       MeshIterator<2> iter(mesh.dimensions());
@@ -703,8 +703,8 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      ConstHostArray<cudaReal,CUT> propHead(nx);
-      ConstHostArray<cudaReal,CUT> propTail(nx);
+      HostRecvArray<cudaReal,CUT> propHead(nx);
+      HostRecvArray<cudaReal,CUT> propTail(nx);
       propHead = block.propagator(0).head();
       propTail = block.propagator(0).tail();
 
@@ -776,7 +776,7 @@ public:
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
       HostArray<cudaReal,CUT> qin(nx);
-      ConstHostArray<cudaReal,CUT> qout(nx);
+      HostRecvArray<cudaReal,CUT> qout(nx);
 
       // Run block step
       MeshIterator<3> iter(mesh.dimensions());
@@ -815,8 +815,8 @@ public:
       block.propagator(0).solve();
 
       // Copy results from propagator solve
-      ConstHostArray<cudaReal,CUT> propHead(nx);
-      ConstHostArray<cudaReal,CUT> propTail(nx);
+      HostRecvArray<cudaReal,CUT> propHead(nx);
+      HostRecvArray<cudaReal,CUT> propTail(nx);
       propHead = block.propagator(0).head();
       propTail = block.propagator(0).tail();
 

@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cpp/ConstHostArray.h>
+#include <pscf/backend/cpp/HostRecvArray.h>
 #include <pscf/backend/cpp/DeviceArray.h>
 
 #include <util/containers/DArray.h>
@@ -12,7 +12,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CppConstHostArrayTest : public UnitTest
+class CppHostRecvArrayTest : public UnitTest
 {
 private:
 
@@ -36,17 +36,17 @@ public:
 };
 
 
-void CppConstHostArrayTest::testDefaultConstructor()
+void CppHostRecvArrayTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      ConstHostArray<Data,CPT> v;
+      HostRecvArray<Data,CPT> v;
       TEST_ASSERT(v.size() == 0 );
       TEST_ASSERT(!v.isAllocated());
    }
 }
 
-void CppConstHostArrayTest::testConversionConstructor()
+void CppHostRecvArrayTest::testConversionConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -61,7 +61,7 @@ void CppConstHostArrayTest::testConversionConstructor()
 
       // Data user
       DeviceArray<Data,CPT> const & w = v;
-      ConstHostArray<Data,CPT> u(w);
+      HostRecvArray<Data,CPT> u(w);
       TEST_ASSERT(u.size() == capacity);
       TEST_ASSERT(u.isAllocated());
 
@@ -92,7 +92,7 @@ void CppConstHostArrayTest::testConversionConstructor()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppConstHostArrayTest::testAssign()
+void CppHostRecvArrayTest::testAssign()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
@@ -106,7 +106,7 @@ void CppConstHostArrayTest::testAssign()
       DeviceArray<Data,CPT> const & w = v;
 
       // Data user (host array u)
-      ConstHostArray<Data,CPT> u;
+      HostRecvArray<Data,CPT> u;
       u = w;
       TEST_ASSERT(u.size() == capacity);
       TEST_ASSERT(u.isAllocated());
@@ -138,7 +138,7 @@ void CppConstHostArrayTest::testAssign()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppConstHostArrayTest::testDArrayOuter()
+void CppHostRecvArrayTest::testDArrayOuter()
 {
    printMethod(TEST_FUNC);
 
@@ -155,7 +155,7 @@ void CppConstHostArrayTest::testDArrayOuter()
    }
 
    // Associate array of const host arrays
-   DArray< ConstHostArray<Data,CPT> > u;
+   DArray< HostRecvArray<Data,CPT> > u;
    u.allocate(m);
    for (int i = 0; i < m; ++i) {
       u[i] = v[i];
@@ -180,11 +180,11 @@ void CppConstHostArrayTest::testDArrayOuter()
 
 }
 
-TEST_BEGIN(CppConstHostArrayTest)
-TEST_ADD(CppConstHostArrayTest, testDefaultConstructor)
-TEST_ADD(CppConstHostArrayTest, testConversionConstructor)
-TEST_ADD(CppConstHostArrayTest, testAssign)
-TEST_ADD(CppConstHostArrayTest, testDArrayOuter)
-TEST_END(CppConstHostArrayTest)
+TEST_BEGIN(CppHostRecvArrayTest)
+TEST_ADD(CppHostRecvArrayTest, testDefaultConstructor)
+TEST_ADD(CppHostRecvArrayTest, testConversionConstructor)
+TEST_ADD(CppHostRecvArrayTest, testAssign)
+TEST_ADD(CppHostRecvArrayTest, testDArrayOuter)
+TEST_END(CppHostRecvArrayTest)
 
 #endif

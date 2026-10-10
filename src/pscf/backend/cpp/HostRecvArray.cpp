@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ConstHostArray.h"
+#include "HostRecvArray.h"
 
 namespace Pscf {
 
    // Explicit instantiation definitions
-   template class ConstHostArray<double,CPT>;
-   template class ConstHostArray<fftw_complex,CPT>;
+   template class HostRecvArray<double,CPT>;
+   template class HostRecvArray<fftw_complex,CPT>;
 
 }

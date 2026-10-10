@@ -23,7 +23,7 @@ this program does not use GPU device and allocates all arrays in
 CPU memory.
 
 PSCF provides a pair of class templates named Pscf::HostArray and 
-Pscf::ConstHostArray that each take a backend identifier class T as 
+Pscf::HostRecvArray that each take a backend identifier class T as 
 a parameter argument, and that are designed to be used in operations 
 that require copying of data between the GPU device and the CPU host 
 in template specializations with T=Pscf::CUT. The two templates are
@@ -31,7 +31,7 @@ declared as
 \code
 namespace Pscf {
    template <typename Data, typename T> class HostArray;
-   template <typename Data, typename T> class ConstHostArray;
+   template <typename Data, typename T> class HostRecvArray;
 }
 \endcode
 where the parameter Data is the type of each array element and 
@@ -53,17 +53,17 @@ the GPU in specializations with T = Pscf::CUT, and are thus
 defined in template code as instances of DeviceArray<Data,T> 
 or a subclass thereof.  The design is designed to allow 
 operations that copy data between a long-lived DeviceArray 
-and a shorter-lived HostArray or ConstHostArray, for which 
-the data in the HostArray or ConstHostArray only needs to 
+and a shorter-lived HostArray or HostRecvArray, for which 
+the data in the HostArray or HostRecvArray only needs to 
 be accessed within the scope of a single function. 
 
 The template HostArray is designed to be used for CPU-to-GPU 
-copy operations, while ConstHostArray is designed to be used for 
+copy operations, while HostRecvArray is designed to be used for 
 GPU-to-CPU copy operations.  A HostArray defines a subscript
 ([]) operator that allows read and write access to elements
 of the array, which is needed to allow elements to be assigned
 values before they are copied to the device array.  The 
-ConstHostArray instead defines a subscript operator that 
+HostRecvArray instead defines a subscript operator that 
 only allows read access to elements, allowing elements to be 
 read after they are copied from the associated DeviceArray.
 
@@ -132,17 +132,17 @@ a separate block of CPU heap memory that can be allocated by
 the associate function. The dissociate function does not deallocate 
 this memory, but the destructor function for a HostArray 
 deallocates any associated memory that remains when the object 
-is destroyed. If the ConstHostArray is a local variable that 
+is destroyed. If the HostRecvArray is a local variable that 
 is defined within a function, as in the above example, this 
 memory will thus be deallocated when the function ends and 
-the host array goes out of scope.  If the ConstHostArray is 
+the host array goes out of scope.  If the HostRecvArray is 
 instead a class member variable that is used in a class member 
 function, then the associated memory will be allocated the 
 first time the associate function is called, and can be 
 re-used in multiple calls to the same or other member 
 function, as long as the associated device array always has 
 the same number of elements. The associate member function
-throws an Exception if a ConstHostArray is already allocated
+throws an Exception if a HostRecvArray is already allocated
 on entry but its capacity is not equal to that of the device
 array that is passed as a function argument. The decision to
 not use the dissociate function to deallocate host memory was 
@@ -152,10 +152,10 @@ made to allow this reuse of memory if desired.
 
 The pseudo-code shown below outlines the usage for transferring
 data from a long-lived instance of DeviceArray<Data,T> named 
-devArray to a temporary instance of ConstHostArray<Data,T> 
+devArray to a temporary instance of HostRecvArray<Data,T> 
 named hostArray:
 \code
-    ConstHostArray<Data,T> hostArray;
+    HostRecvArray<Data,T> hostArray;
     hostArray = devArray;
 
     // Read elements of hostArray and use them to 
@@ -166,10 +166,10 @@ named hostArray:
 In this pattern, all read access to elements of hostArray must 
 occur after the assignment statement "hostArray = devArray" and 
 before the statement "hostArray.dissociate()". The interface of
-the ConstHostArray does not allow values of individual elements
+the HostRecvArray does not allow values of individual elements
 to be modified. 
 
-The assignment and dissociate member functions of the ConstHostArray 
+The assignment and dissociate member functions of the HostRecvArray 
 perform completely different operations for specializations with 
 T=Pscf:CUT and T=Pscf:CPT. 
 
@@ -209,7 +209,7 @@ case:
     to default construction followed by assignment.
 
   - The dissociate function may sometimes be omitted,
-    because the destructor of ConstHostArray class 
+    because the destructor of HostRecvArray class 
     template will delete any memory owned by the array
     for (for T=Pscf::CUT) or release any remaining 
     association (for T=Pscf::CPT) when the function
@@ -218,7 +218,7 @@ case:
 The most concise version of this pattern, for use with a
 host array that is a local variable, is thus:
 \code
-    ConstHostArray<Data,T> hostArray(devArray);
+    HostRecvArray<Data,T> hostArray(devArray);
     hostArray = devArray;
 
     // Read elements of hostArray and use them to 
@@ -229,7 +229,7 @@ There is, however, no harm in calling the dissociate
 function explicitly in this situation, to documment the
 need to release resources.
 
-The class template ConstHostArray is designed to provide read-only access 
+The class template HostRecvArray is designed to provide read-only access 
 to array elements in order to guarantee that specializations that use 
 different backends yield equivalent behavior in template code that involves 
 a device-to-host copy.  If write access were allowed to elements of the 
@@ -241,7 +241,7 @@ backend, because in this case these two arrays uses distinct memory
 blocks allocated on different devices.  Write access is thus prohibited 
 to prevent this inconsistency. 
 
-Management of memory owned by a ConstHostArray specialization with 
+Management of memory owned by a HostRecvArray specialization with 
 T=Pscf::CUT is analogous to management of memory owned by a corresponding 
 HostArray. Memory is allocated by conversion constructor or the 
 assignment operator, and deallocated by the destructor, but is not 

@@ -9,7 +9,7 @@
 #include <prdc/field/cuda/RFieldDft.h>
 #include <prdc/field/cuda/resources.h>
 
-#include <pscf/backend/cuda/ConstHostArray.h>
+#include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/math/IntVec.h>
 
@@ -108,7 +108,7 @@ void CudaFieldTest::testRFieldRoundTrip()
       TEST_ASSERT(vd.capacity() == vh1.capacity());
 
       // Copy device field vd to host host field vh2
-      ConstHostArray<cudaReal,CUT> vh2;
+      HostRecvArray<cudaReal,CUT> vh2;
       vh2 = vd;
 
       TEST_ASSERT(vh2.capacity() == vh1.capacity());
@@ -149,7 +149,7 @@ void CudaFieldTest::testCFieldRoundTrip()
       TEST_ASSERT(vd.capacity() == vh1.capacity());
 
       // Copy device field vd to host host field vh2
-      ConstHostArray<cudaComplex,CUT> vh2;
+      HostRecvArray<cudaComplex,CUT> vh2;
       vh2 = vd;
 
       TEST_ASSERT(vh2.capacity() == vh1.capacity());
@@ -193,7 +193,7 @@ void CudaFieldTest::testRFieldDftRoundTrip()
       TEST_ASSERT(vd.capacity() == vh1.capacity());
 
       // Copy device field vd to host host field vh2
-      ConstHostArray<cudaComplex,CUT> vh2;
+      HostRecvArray<cudaComplex,CUT> vh2;
       vh2 = vd;
 
       TEST_ASSERT(vh2.capacity() == vh1.capacity());

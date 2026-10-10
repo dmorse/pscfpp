@@ -10,7 +10,7 @@
 #include <prdc/field/cuda/RFieldDft.h>
 #include <prdc/field/cuda/CField.h>
 
-#include <pscf/backend/cuda/ConstHostArray.h>
+#include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/math/IntVec.h>
 
@@ -84,8 +84,8 @@ void CudaFftTest::testTransformReal1D()
    rField1_h.associate(rField);
 
    // Allocate const host arrays
-   ConstHostArray<cudaReal,CUT> rField2_h(rSize), rField3_h(rSize);
-   ConstHostArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
+   HostRecvArray<cudaReal,CUT> rField2_h(rSize), rField3_h(rSize);
+   HostRecvArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
 
    Prdc::FFT<1,CUT> v;
    v.setup(d);
@@ -154,8 +154,8 @@ void CudaFftTest::testTransformReal2D()
    HostArray<cudaReal,CUT> rField1_h(rSize);
 
    // Instantiate const host array
-   ConstHostArray<cudaReal,CUT>    rField2_h(rSize), rField3_h(rSize);
-   ConstHostArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
+   HostRecvArray<cudaReal,CUT>    rField2_h(rSize), rField3_h(rSize);
+   HostRecvArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
 
    Prdc::FFT<2,CUT> v;
    v.setup(d);
@@ -231,8 +231,8 @@ void CudaFftTest::testTransformReal3D()
 
    // Instantiate and allocate objects
    HostArray<cudaReal,CUT> rField1_h(rSize);
-   ConstHostArray<cudaReal,CUT> rField2_h(rSize), rField3_h(rSize);
-   ConstHostArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
+   HostRecvArray<cudaReal,CUT> rField2_h(rSize), rField3_h(rSize);
+   HostRecvArray<cudaComplex,CUT> kField1_h(kSize), kField2_h(kSize);
 
    // Initialize input data in host memory 
    int rank = 0;
@@ -704,9 +704,9 @@ void CudaFftTest::testBatchedTransformReal3D()
 
    // Instantiate and allocate objects
    HostArray<cudaReal,CUT> rField1_h(rField.capacity());
-   ConstHostArray<cudaReal,CUT> rField2_h(rField.capacity()), 
+   HostRecvArray<cudaReal,CUT> rField2_h(rField.capacity()), 
 	                        rField3_h(rField.capacity());
-   ConstHostArray<cudaComplex,CUT> kField_h(kField.capacity());
+   HostRecvArray<cudaComplex,CUT> kField_h(kField.capacity());
 
    Prdc::FFTBatched<3> v;
    v.setup(d, batchSize);
@@ -736,7 +736,7 @@ void CudaFftTest::testBatchedTransformReal3D()
    rFieldAlt.associate(rField, 0, d);
    Prdc::RFieldDft<3,CUT> kFieldAlt(d);
    altFFT.forwardTransform(rFieldAlt, kFieldAlt);
-   ConstHostArray<cudaComplex,CUT> kFieldAlt_h(kFieldAlt.capacity());
+   HostRecvArray<cudaComplex,CUT> kFieldAlt_h(kFieldAlt.capacity());
    kFieldAlt_h = kFieldAlt; 
 
    // Transform forward, r to k

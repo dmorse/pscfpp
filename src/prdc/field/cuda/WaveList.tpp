@@ -14,7 +14,7 @@
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/hasVariableAngle.h>
-#include <pscf/backend/cuda/ConstHostArray.h>
+#include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/HostArray.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -766,7 +766,7 @@ namespace Prdc {
       }
 
       // Copy values of kSq to host
-      ConstHostArray<cudaReal,CUT> kSq_h(kSq_);
+      HostRecvArray<cudaReal,CUT> kSq_h(kSq_);
 
       // Construct Sort::Item objects with value = kSq, id = wave id
       std::vector< Sort::Item<double> > items;
@@ -826,7 +826,7 @@ namespace Prdc {
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {
-         ConstHostArray<int,CUT> minImages_temp;
+         HostRecvArray<int,CUT> minImages_temp;
          minImages_temp = minImages_;
          int i, j, k;
          for (j = 0; j < D; ++j) {

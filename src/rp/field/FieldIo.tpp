@@ -444,7 +444,7 @@ namespace Rp {
       }
 
       // Copy field data to host container
-      DArray< ConstHostArray<RealT,T> > hostFields;
+      DArray< HostRecvArray<RealT,T> > hostFields;
       copyArrays(hostFields, fields);
 
       // Write data section
@@ -495,7 +495,7 @@ namespace Rp {
       }
 
       // Copy field data to host container
-      ConstHostArray<RealT,T> hostField;
+      HostRecvArray<RealT,T> hostField;
       hostField = field;
 
       // Write data from hostField
@@ -589,7 +589,7 @@ namespace Rp {
       writeMeshDimensions(out, meshDimensions);
 
       // Copy data from device to host container
-      DArray< ConstHostArray<ComplexT,T> > hostFields;
+      DArray< HostRecvArray<ComplexT,T> > hostFields;
       copyArrays(hostFields, fields);
 
       // Write data from host container
@@ -698,7 +698,7 @@ namespace Rp {
       UTIL_CHECK(out.capacity() > 0);
 
       // Copy k-grid data from device to const host container
-      ConstHostArray<ComplexT,T> hostField;
+      HostRecvArray<ComplexT,T> hostField;
       hostField = in;
 
       // Convert from k-grid to basis format on host
@@ -962,7 +962,7 @@ namespace Rp {
       UTIL_CHECK(in.meshDimensions() == mesh().dimensions());
 
       // Copy k-grid data from device to const host container
-      ConstHostArray<ComplexT,T> hostField;
+      HostRecvArray<ComplexT,T> hostField;
       hostField = in;
 
       // Check symmetry of k-grid data on host, return result
@@ -1278,7 +1278,7 @@ namespace Rp {
       UTIL_CHECK(meshDimensions == mesh().dimensions());
 
       // Copy r-grid input from device to host
-      DArray< ConstHostArray<RealT,T> > hostFields;
+      DArray< HostRecvArray<RealT,T> > hostFields;
       copyArrays(hostFields, fields);
 
       // Compute replicated fields and write to a file
@@ -1306,7 +1306,7 @@ namespace Rp {
       UTIL_CHECK(meshDimensions == mesh().dimensions());
 
       // Copy k-grid data from device to const host container
-      DArray< ConstHostArray<RealT,T> > hostFields;
+      DArray< HostRecvArray<RealT,T> > hostFields;
       copyArrays(hostFields, fields);
 
       Prdc::expandRGridDimension(out, hostFields, meshDimensions,

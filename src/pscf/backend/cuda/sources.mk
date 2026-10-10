@@ -3,7 +3,7 @@ pscf_backend_cuda_CU =\
    pscf/backend/cuda/ThreadArray.cu \
    pscf/backend/cuda/ThreadMesh.cu \
    pscf/backend/cuda/DeviceMemory.cu \
-   pscf/backend/cuda/ConstHostArray.cu \
+   pscf/backend/cuda/HostRecvArray.cu \
    pscf/backend/cuda/HostArray.cu \
    pscf/backend/cuda/Reduce.cu \
    pscf/backend/cuda/VecOp.cu \

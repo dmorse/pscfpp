@@ -1,5 +1,5 @@
-#ifndef PSCF_CONST_HOST_ARRAY_CU_H
-#define PSCF_CONST_HOST_ARRAY_CU_H
+#ifndef PSCF_HOST_RECV_ARRAY_CU_H
+#define PSCF_HOST_RECV_ARRAY_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -16,7 +16,7 @@ namespace Util {
    template <typename Data> class Array;
 }
 namespace Pscf {
-   template <typename Data, typename T> class ConstHostArray;
+   template <typename Data, typename T> class HostRecvArray;
    template <typename Data, typename T> class DeviceArray;
 }
 
@@ -25,7 +25,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Host array for host-to-device data transfer.
+   * Host array to receive host-to-device data transfers.
    *
    * This class template should be used in backend-independent template
    * code in which data is copied from a GPU device array to a CPU host 
@@ -33,7 +33,7 @@ namespace Pscf {
    * provides read-only access to the data.
    *
    * Conversion construction or assignment (operator =) from an instance 
-   * of DeviceArray<Data,CUT> to a ConstHostArray<Data,CUT> allocates 
+   * of DeviceArray<Data,CUT> to a HostRecvArray<Data,CUT> allocates 
    * the array if it is not allocated and then copies all elements of 
    * the array from global GPU device memory to host memory. Conversion
    * construction from a device array is equivalent to default 
@@ -44,10 +44,10 @@ namespace Pscf {
    * Typical usage is shown below for backend-indepent template code 
    * for device-to-host transfer from a longer lived instance of 
    * DeviceArray<Data,CUT> named deviceArray to a local object that is
-   * an instance of ConstHostArray<Data,CUT> named hostArray. The type
+   * an instance of HostRecvArray<Data,CUT> named hostArray. The type
    * type of each array element is denoted by Data.
    * \code
-   *    ConstHostArray<Data,CUT> hostArray;
+   *    HostRecvArray<Data,CUT> hostArray;
    *    hostArray = deviceArray
    *
    *    // Read data from the hostArray 
@@ -59,7 +59,7 @@ namespace Pscf {
    * assignment operations may instead be combined into a single 
    * call of the conversion constructor, giving the shorter version
    * \code
-   *    ConstHostArray<Data,CUT> hostArray(deviceArray)
+   *    HostRecvArray<Data,CUT> hostArray(deviceArray)
    *
    *    // Read data from the hostArray 
    *
@@ -92,7 +92,7 @@ namespace Pscf {
    * \ingroup Pscf_Backend_Cuda_Module
    */
    template <typename Data>
-   class ConstHostArray<Data,CUT> : public ConstArray<Data>
+   class HostRecvArray<Data,CUT> : public ConstArray<Data>
    {
 
    public:
@@ -114,17 +114,17 @@ namespace Pscf {
       /**
       * Default constructor.
       */
-      ConstHostArray() = default;
+      HostRecvArray() = default;
 
       /**
       * Allocating constructor.
       *
       * \param capacity  number of elements to allocate
       */
-      ConstHostArray(int capacity);
+      HostRecvArray(int capacity);
 
       // Default copy constructor (delete).
-      ConstHostArray(ConstHostArray<Data,CUT> const &) = delete;
+      HostRecvArray(HostRecvArray<Data,CUT> const &) = delete;
 
       /**
       * Conversion constructor (copies from device to host).
@@ -139,18 +139,18 @@ namespace Pscf {
       *
       * \param other DeviceArray<Data,CUT> to be copied (input)
       */
-      ConstHostArray(DeviceArray<Data,CUT> const & other);
+      HostRecvArray(DeviceArray<Data,CUT> const & other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~ConstHostArray();
+      virtual ~HostRecvArray();
 
       // Default assignment (delete)
-      ConstHostArray<Data,CUT>& 
-      operator = (ConstHostArray<Data,CUT> const &) = delete;
+      HostRecvArray<Data,CUT>& 
+      operator = (HostRecvArray<Data,CUT> const &) = delete;
 
       /**
       * Assignment from an Array<Data> container.
@@ -166,13 +166,13 @@ namespace Pscf {
       *
       * \param other  array container on RHS of assigment (input)
       */
-      ConstHostArray<Data,CUT>& operator = (Array<Data> const & other);
+      HostRecvArray<Data,CUT>& operator = (Array<Data> const & other);
 
       /**
       * Assignment from a DeviceArray<Data,CUT>.
       *
       * Performs a deep copy from a RHS DeviceArray<Data,CUT> to this 
-      * LHS ConstHostArray<D>, by first allocating if necessary, and then
+      * LHS HostRecvArray<D>, by first allocating if necessary, and then
       * copying the underlying data from device memory to host memory.
       *
       * \throw Exception if the RHS array is not allocated on entry
@@ -180,19 +180,19 @@ namespace Pscf {
       *
       * \param other  DeviceArray<Data,CUT> on RHS of assignment (input)
       */
-      ConstHostArray<Data,CUT>&
+      HostRecvArray<Data,CUT>&
       operator = (DeviceArray<Data,CUT> const & other);
 
       /**
       * Copy a slice of data from a larger DeviceArray into this array.
       *
-      * This function populate this ConstHostArray with data from a slice
+      * This function populate this HostRecvArray with data from a slice
       * of a DeviceArray. The size of the slice is equal to the capacity of
-      * this LHS ConstHostArray, so that this entire array will be fully
+      * this LHS HostRecvArray, so that this entire array will be fully
       * populated. The position of the beginning of the slice within the 
       * RHS DeviceArray is indicated by input parameter beginId. The
       * capacity of the RHS DeviceArray must thus be greater than or equal
-      * to the sum of beginId and the capacity of this LHS ConstHostArray.
+      * to the sum of beginId and the capacity of this LHS HostRecvArray.
       *
       * \throw Exception if RHS array is not allocated
       * \throw Exception if LHS array is not allocated
@@ -207,7 +207,7 @@ namespace Pscf {
       /**
       * Allocate the underlying C array.
       *
-      * \throw Exception if the ConstHostArray is already allocated
+      * \throw Exception if the HostRecvArray is already allocated
       *
       * \param capacity  number of elements to allocate
       */
@@ -216,7 +216,7 @@ namespace Pscf {
       /**
       * Deallocate the underlying C array.
       *
-      * \throw Exception if the ConstHostArray is not allocated
+      * \throw Exception if the HostRecvArray is not allocated
       */
       void deallocate();
 
@@ -246,7 +246,7 @@ namespace Pscf {
       {}
 
       /**
-      * Serialize a ConstHostArray to/from an Archive.
+      * Serialize a HostRecvArray to/from an Archive.
       *
       * \param ar       archive
       * \param version  archive version id
@@ -270,8 +270,8 @@ namespace Pscf {
    };
 
    // Explicit instantiation declarations
-   extern template class ConstHostArray<cudaReal,CUT>;
-   extern template class ConstHostArray<cudaComplex,CUT>;
+   extern template class HostRecvArray<cudaReal,CUT>;
+   extern template class HostRecvArray<cudaComplex,CUT>;
 
 } // namespace Pscf
 
@@ -288,7 +288,7 @@ namespace Pscf {
    * Allocating constructor.
    */
    template <typename Data>
-   ConstHostArray<Data,CUT>::ConstHostArray(int capacity)
+   HostRecvArray<Data,CUT>::HostRecvArray(int capacity)
     : ConstArray<Data>()
    {  allocate(capacity); }
 
@@ -298,7 +298,7 @@ namespace Pscf {
    * Allocate and perform a deep copy from device to host.
    */
    template <typename Data>
-   ConstHostArray<Data,CUT>::ConstHostArray(
+   HostRecvArray<Data,CUT>::HostRecvArray(
       DeviceArray<Data,CUT> const& other)
     : ConstArray<Data>()
    {  (*this) = other; }
@@ -307,14 +307,14 @@ namespace Pscf {
    * Destructor.
    */
    template <typename Data>
-   ConstHostArray<Data,CUT>::~ConstHostArray()
+   HostRecvArray<Data,CUT>::~HostRecvArray()
    {
       if (isAllocated()) {
          try {
             Memory::deallocate<Data>(data_, capacity_);
          } catch (...) {
             data_ = nullptr;
-            std::cout << "Exception in ConstHostArray destructor";
+            std::cout << "Exception in HostRecvArray destructor";
          }
          capacity_ = 0;
       }
@@ -324,8 +324,8 @@ namespace Pscf {
    * Assignment from an Array<Data> (deep copy on host).
    */
    template <typename Data>
-   ConstHostArray<Data,CUT>& 
-   ConstHostArray<Data,CUT>::operator = (Array<Data> const & other)
+   HostRecvArray<Data,CUT>& 
+   HostRecvArray<Data,CUT>::operator = (Array<Data> const & other)
    {
       // Check for pseudo self assignment
       if (dynamic_cast< Array<Data>* >(this) == &other) return *this;
@@ -356,8 +356,8 @@ namespace Pscf {
    * Allocate if necessary, and perform a deep copy from device to host.
    */
    template <typename Data>
-   ConstHostArray<Data,CUT>&
-   ConstHostArray<Data,CUT>::operator = (
+   HostRecvArray<Data,CUT>&
+   HostRecvArray<Data,CUT>::operator = (
                                   DeviceArray<Data,CUT> const & other)
    {
       // Preconditions on other array
@@ -388,7 +388,7 @@ namespace Pscf {
    * Copy a slice of the data from a larger DeviceArray into this array.
    */
    template <typename Data>
-   void ConstHostArray<Data,CUT>::copySlice(
+   void HostRecvArray<Data,CUT>::copySlice(
                                     DeviceArray<Data,CUT> const & other,
                                     int beginId)
    {
@@ -412,13 +412,13 @@ namespace Pscf {
    * Allocate the underlying C array.
    */
    template <typename Data>
-   void ConstHostArray<Data,CUT>::allocate(int capacity)
+   void HostRecvArray<Data,CUT>::allocate(int capacity)
    {
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
       }
       if (isAllocated()) {
-         UTIL_THROW("Attempt to re-allocate a ConstHostArray");
+         UTIL_THROW("Attempt to re-allocate a HostRecvArray");
       }
       Memory::allocate<Data>(data_, capacity);
       capacity_ = capacity;
@@ -428,7 +428,7 @@ namespace Pscf {
    * Deallocate the underlying C array.
    */
    template <typename Data>
-   void ConstHostArray<Data,CUT>::deallocate()
+   void HostRecvArray<Data,CUT>::deallocate()
    {
       if (!isAllocated()) {
          UTIL_THROW("Array is not allocated");
@@ -442,7 +442,7 @@ namespace Pscf {
    * Reallocate the underlying C array, if necessary.
    */
    template <typename Data>
-   void ConstHostArray<Data,CUT>::reallocate(int capacity)
+   void HostRecvArray<Data,CUT>::reallocate(int capacity)
    {
       UTIL_CHECK(capacity >= 0);
       if (capacity == capacity_) return;
@@ -458,11 +458,11 @@ namespace Pscf {
    #endif
 
    /*
-   * Serialize a ConstHostArray to/from an Archive.
+   * Serialize a HostRecvArray to/from an Archive.
    */
    template <typename Data>
    template <class Archive>
-   void ConstHostArray<Data,CUT>::serialize(Archive& ar, 
+   void HostRecvArray<Data,CUT>::serialize(Archive& ar, 
                                             const unsigned int version)
    {
       int capacity;
@@ -477,7 +477,7 @@ namespace Pscf {
             }
          } else {
             if (capacity != capacity_) {
-               UTIL_THROW("Inconsistent ConstHostArray capacities");
+               UTIL_THROW("Inconsistent HostRecvArray capacities");
             }
          }
       }

@@ -1,5 +1,5 @@
-#ifndef PSCF_CONST_HOST_ARRAY_H
-#define PSCF_CONST_HOST_ARRAY_H
+#ifndef PSCF_HOST_RECV_ARRAY_H
+#define PSCF_HOST_RECV_ARRAY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -13,11 +13,11 @@
 // for use by the build system.
 
 #ifdef PSCF_CPP
-#include <pscf/backend/cpp/ConstHostArray.h>
+#include <pscf/backend/cpp/HostRecvArray.h>
 #endif
 
 #ifdef PSCF_CUDA
-#include <pscf/backend/cuda/ConstHostArray.h>
+#include <pscf/backend/cuda/HostRecvArray.h>
 #endif
 
 #endif

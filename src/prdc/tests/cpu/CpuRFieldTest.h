@@ -6,7 +6,7 @@
 
 #include <prdc/field/cpp/RField.h>
 
-#include <pscf/backend/cpp/ConstHostArray.h>
+#include <pscf/backend/cpp/HostRecvArray.h>
 #include <pscf/backend/cpp/HostArray.h>
 
 #include <util/archives/MemoryOArchive.h>
@@ -37,7 +37,7 @@ public:
    void testSubscript();
    void testCopyConstructor();
    void testAssignment();
-   void testConstHostArray();
+   void testHostRecvArray();
    void testSerialize1Memory();
    void testSerialize2Memory();
    void testSerialize1File();
@@ -168,7 +168,7 @@ void CpuRFieldTest::testAssignment()
    }
 } 
 
-void CpuRFieldTest::testConstHostArray()
+void CpuRFieldTest::testHostRecvArray()
 {
    printMethod(TEST_FUNC);
    {
@@ -194,7 +194,7 @@ void CpuRFieldTest::testConstHostArray()
       TEST_ASSERT(v[2] == 30.0);
   
       // Test copy construction of u from const reference v
-      ConstHostArray<double,CPT> u(v);
+      HostRecvArray<double,CPT> u(v);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u[0] == 10.0);
@@ -495,7 +495,7 @@ TEST_ADD(CpuRFieldTest, testAllocate3)
 TEST_ADD(CpuRFieldTest, testSubscript)
 TEST_ADD(CpuRFieldTest, testCopyConstructor)
 TEST_ADD(CpuRFieldTest, testAssignment)
-TEST_ADD(CpuRFieldTest, testConstHostArray)
+TEST_ADD(CpuRFieldTest, testHostRecvArray)
 TEST_ADD(CpuRFieldTest, testSerialize1Memory)
 TEST_ADD(CpuRFieldTest, testSerialize2Memory)
 TEST_ADD(CpuRFieldTest, testSerialize1File)

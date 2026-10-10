@@ -11,7 +11,7 @@
 #include "AverageAnalyzer.h"              // base class template
 #include <prdc/field/RField.h>            // member
 #include <prdc/field/RFieldDft.h>         // member
-#include <pscf/backend/ConstHostArray.h>  // member
+#include <pscf/backend/HostRecvArray.h>  // member
 #include <pscf/math/IntVec.h>             // member
 
 #include <pscf/backend/TmplDeclare.h>
@@ -105,7 +105,7 @@ namespace Rp {
       RField<D,T> psi_;
 
       /// Square magnitude |W_|^2 in Fourier space (on host).
-      ConstHostArray<typename T::Real, T> psi_h_;
+      HostRecvArray<typename T::Real, T> psi_h_;
 
       /// Maximum square magnitude (value of maximum element of psi_).
       double maxPsi_;

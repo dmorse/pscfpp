@@ -146,7 +146,7 @@ namespace Rp {
       UTIL_CHECK(waveList.kSize() == nWave_);
 
       // Create local references to kSq and implicit arrays
-      ConstHostArray<double,T> kSq(waveList.kSq());
+      HostRecvArray<double,T> kSq(waveList.kSq());
       DArray<bool> const & implicit = waveList.implicitInverse();
       UTIL_CHECK(kSq.capacity() == nWave_);
       UTIL_CHECK(implicit.capacity() == nWave_);

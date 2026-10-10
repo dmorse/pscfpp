@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ConstHostArray.h"
+#include "HostRecvArray.h"
 
 namespace Pscf {
 
    // Explicit instantiation definitions
-   template class ConstHostArray<cudaReal,CUT>;
-   template class ConstHostArray<cudaComplex,CUT>;
+   template class HostRecvArray<cudaReal,CUT>;
+   template class HostRecvArray<cudaComplex,CUT>;
 
 } // namespace Pscf

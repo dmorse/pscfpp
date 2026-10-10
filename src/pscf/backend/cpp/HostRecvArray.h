@@ -1,5 +1,5 @@
-#ifndef PSCF_CONST_HOST_ARRAY_CP_H
-#define PSCF_CONST_HOST_ARRAY_CP_H
+#ifndef PSCF_HOST_RECV_ARRAY_CP_H
+#define PSCF_HOST_RECV_ARRAY_CP_H
 
 /*
 * Util Package - C++ Utilities for Scientific Computation
@@ -22,7 +22,7 @@ namespace Pscf {
    using namespace Util;
 
    // Declare primary template
-   template <typename Data, typename T> class ConstHostArray;
+   template <typename Data, typename T> class HostRecvArray;
 
    /**
    * Array for pseudo device-to-host array transfer with C++ backend.
@@ -38,7 +38,7 @@ namespace Pscf {
    * via a ConstArrayIterator. 
    *
    * Conversion construction and assignment (operator =) from an instance 
-   * of DeviceArray<Data,CPT> to a ConstHostArray<Data,CPT> each create a 
+   * of DeviceArray<Data,CPT> to a HostRecvArray<Data,CPT> each create a 
    * shallow read-only copy of a C array that is owned by the associated
    * device array, via a private pointer to this shared array.  These two 
    * functions each take a const reference to DeviceArray<Data,CPT> as a 
@@ -59,12 +59,12 @@ namespace Pscf {
    *
    * Typical usage is shown below for a pseudo device-to-host transfer 
    * from a longer lived instance of DeviceArray<Data,CPT> named 
-   * deviceArray to a shorter lived instance of ConstHostArray<Data,CPT> 
+   * deviceArray to a shorter lived instance of HostRecvArray<Data,CPT> 
    * named hostArray. The alias Data denotes the data type of each array 
    * element.
    *
    * \code
-   *    ConstHostArray<Data,CPT> hostArray;
+   *    HostRecvArray<Data,CPT> hostArray;
    *    hostArray = deviceArray
    *
    *    // Read the data in hostArray, and possibly peform a computation 
@@ -75,7 +75,7 @@ namespace Pscf {
    * into a single call of the conversion constructor, giving the shorter 
    * version:
    * \code
-   *    ConstHostArray<Data,CPT> hostArray(deviceArray)
+   *    HostRecvArray<Data,CPT> hostArray(deviceArray)
    *
    *    // Read the data in hostArray, and possibly peform a computation 
    *
@@ -102,16 +102,16 @@ namespace Pscf {
    *    function ends and the host array is destroyed.
    *    association.
    *
-   *  - The ConstHostArray template does not define an public 
+   *  - The HostRecvArray template does not define an public 
    *    "associate" member function like that defined by the HostArray
    *    template. By convention, an association may only be created by
    *    the conversion constructor or the assignment operator. 
    *
-   * \see Pscf::ConstHostArray<Data, CUT>
+   * \see Pscf::HostRecvArray<Data, CUT>
    * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
-   class ConstHostArray<Data, CPT> final : public ConstArray<Data>
+   class HostRecvArray<Data, CPT> final : public ConstArray<Data>
    {
 
    public:
@@ -122,21 +122,21 @@ namespace Pscf {
       using BackendIdClass = CPT;
 
       // Default constructor.
-      ConstHostArray() = default;
+      HostRecvArray() = default;
 
       // Copy construction (delete)
-      ConstHostArray(ConstHostArray<Data,CPT> const & other) = delete;
+      HostRecvArray(HostRecvArray<Data,CPT> const & other) = delete;
 
       /**
       * Destructor.
       *
       * Releases any remaining association.
       */
-      ~ConstHostArray();
+      ~HostRecvArray();
 
-      // Assignment from another ConstHostArray (delete)
-      ConstHostArray<Data,CPT>&
-      operator = (ConstHostArray<Data,CPT> const&) = delete;
+      // Assignment from another HostRecvArray (delete)
+      HostRecvArray<Data,CPT>&
+      operator = (HostRecvArray<Data,CPT> const&) = delete;
 
       /**
       * Conversion construction from a DeviceArray.
@@ -147,7 +147,7 @@ namespace Pscf {
       *
       * \param other  array container
       */
-      ConstHostArray(DeviceArray<Data,CPT> const & other);
+      HostRecvArray(DeviceArray<Data,CPT> const & other);
 
       /**
       * Create a read-only association with a DeviceArray.
@@ -161,7 +161,7 @@ namespace Pscf {
       *
       * \param other  array container on RHS of assigment (input)
       */
-      ConstHostArray<Data,CPT>& 
+      HostRecvArray<Data,CPT>& 
       operator = (DeviceArray<Data,CPT> const & other);
 
       /**
@@ -196,8 +196,8 @@ namespace Pscf {
    };
 
    // Explicit instantiation declarations
-   extern template class ConstHostArray<double,CPT>;
-   extern template class ConstHostArray<fftw_complex,CPT>;
+   extern template class HostRecvArray<double,CPT>;
+   extern template class HostRecvArray<fftw_complex,CPT>;
 
 } // namespace Pscf
 
@@ -212,7 +212,7 @@ namespace Pscf {
    * Destructor.
    */
    template <typename Data>
-   ConstHostArray<Data,CPT>::~ConstHostArray()
+   HostRecvArray<Data,CPT>::~HostRecvArray()
    {
       if (ref_.isAssociated()) {
          ref_.dissociate(); // decrements counter of source array
@@ -225,7 +225,7 @@ namespace Pscf {
    * Creates an association with a DeviceArray that owns the data.
    */
    template <typename Data>
-   ConstHostArray<Data,CPT>::ConstHostArray(
+   HostRecvArray<Data,CPT>::HostRecvArray(
                                     DeviceArray<Data,CPT> const & other)
     : ConstArray<Data>()
    {  associate(other); }
@@ -236,8 +236,8 @@ namespace Pscf {
    * Creates an association with a DeviceArray that owns the data.
    */
    template <typename Data>
-   ConstHostArray<Data,CPT>&
-   ConstHostArray<Data,CPT>::operator = (DeviceArray<Data,CPT> const& other)
+   HostRecvArray<Data,CPT>&
+   HostRecvArray<Data,CPT>::operator = (DeviceArray<Data,CPT> const& other)
    {
       associate(other);
       return *this;
@@ -247,7 +247,7 @@ namespace Pscf {
    * Release association with a device array.
    */
    template <typename Data>
-   void ConstHostArray<Data,CPT>::dissociate()
+   void HostRecvArray<Data,CPT>::dissociate()
    {
       UTIL_CHECK(data_);
       UTIL_CHECK(ref_.isAssociated());
@@ -264,7 +264,7 @@ namespace Pscf {
    */
    template <typename Data>
    void 
-   ConstHostArray<Data,CPT>::associate(DeviceArray<Data,CPT> const & source)
+   HostRecvArray<Data,CPT>::associate(DeviceArray<Data,CPT> const & source)
    {
       UTIL_CHECK(source.isAllocated());
       UTIL_CHECK(!ref_.isAssociated());
