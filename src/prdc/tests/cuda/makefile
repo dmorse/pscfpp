@@ -27,9 +27,7 @@ clean-outputs:
 	rm -f log count 
 
 clean:
-	rm -f $(prdc_tests_cuda_OBJS)
-	rm -f $(prdc_tests_cuda_DEPS)
-	rm -f $(TEST)
+	rm -f $(TEST) $(TEST).ou $(TEST).du
 	$(MAKE) clean-outputs
 
 .PHONY: all run run-quiet clean-outputs clean
