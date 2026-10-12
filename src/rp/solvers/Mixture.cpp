@@ -1,40 +1,12 @@
 /*
-* PSCF - Mixture Self-Consistent Field Theory
+* PSCF - Polymer Self-Consistent Field Theory
 *
 * Copyright 2015 - 2026, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
 #include <pscf/backend/cpp/VecOp.h>
-
-#include <rp/solvers/MixtureBase.tpp>
-#include <rp/solvers/Mixture_c.h>
-
-#if 0
-namespace Pscf {
-namespace Rp {
-
-   using namespace Prdc;
-
-   /*
-   * Allocate memory for all blocks.
-   */
-   template <int D>
-   void Mixture<D,CPT>::allocateBlocks()
-   {
-      const double ds = RpMixtureT::ds();
-      const int np = CompositionT::nPolymer();
-      int i, j;
-      for (i = 0; i < np; ++i) {
-         for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).allocate(ds, useBatchedFFT_);
-         }
-      }
-   }
-
-} 
-} 
-#endif
+#include <rp/solvers/Mixture.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -45,9 +17,6 @@ namespace Pscf {
    template 
    class MixtureTmpl< Rp::Polymer<3,CPT>, Rp::Solvent<3,CPT> >;
    namespace Rp { 
-      template class MixtureBase<1,CPT>;
-      template class MixtureBase<2,CPT>;
-      template class MixtureBase<3,CPT>;
       template class Mixture<1,CPT>;
       template class Mixture<2,CPT>;
       template class Mixture<3,CPT>;

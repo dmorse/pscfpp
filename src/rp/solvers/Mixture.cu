@@ -5,59 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
 #include <pscf/backend/cuda/VecOp.h>
-
-#include <rp/solvers/MixtureBase.tpp>  // base class implementation
-#include <rp/solvers/Mixture_u.h>      // class header
-
-#if 0
-namespace Pscf {
-namespace Rp {
-
-   using namespace Prdc;
-
-   /*
-   * Constructor
-   */
-   template <int D>
-   Mixture<D,CUT>::Mixture()
-    : Rp::MixtureBase<D,CUT>()
-      useBatchedFFT_(true)
-   {}
-
-   /*
-   * Read all parameters and initialize.
-   */
-   template <int D>
-   void Mixture<D,CUT>::readParameters(std::istream& in)
-   {
-      RpMixtureT::readParameters(in);
-
-      // Optionally read useBatchedFFT boolean
-      useBatchedFFT_ = true;
-      ParamComposite::readOptional(in, "useBatchedFFT", useBatchedFFT_);
-   }
-
-   /*
-   * Allocate memory for all blocks.
-   */
-   template <int D>
-   void Mixture<D,CUT>::allocateBlocks()
-   {
-      const double ds = RpMixtureT::ds();
-      const int np = Composition<cudaReal>::nPolymer();
-      int i, j;
-      for (i = 0; i < np; ++i) {
-         for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).allocate(ds, useBatchedFFT_);
-         }
-      }
-   }
-
-} // namespace Rp
-} // namespace Pscf
-#endif
+#include <rp/solvers/Mixture.tpp> 
 
 // Explicit instantiation definitions
 namespace Pscf {
@@ -68,9 +17,6 @@ namespace Pscf {
    template 
    class MixtureTmpl< Rp::Polymer<3,CUT>, Rp::Solvent<3,CUT> >;
    namespace Rp {
-      template class MixtureBase<1,CUT>;
-      template class MixtureBase<2,CUT>;
-      template class MixtureBase<3,CUT>;
       template class Mixture<1,CUT>;
       template class Mixture<2,CUT>;
       template class Mixture<3,CUT>;
