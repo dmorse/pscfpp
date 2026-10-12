@@ -11,7 +11,7 @@
 // Explicit instantiation definitions
 namespace Pscf {
 
-   // Base class instantiations
+   // Base class template specializations
    template class 
    PolymerTmpl< Rp::Block<1,CPT>, Rp::Propagator<1,CPT> >;
    template class 
@@ -19,6 +19,7 @@ namespace Pscf {
    template class 
    PolymerTmpl< Rp::Block<3,CPT>, Rp::Propagator<3,CPT> >;
 
+   // This class template
    namespace Rp {
       template class Polymer<1,CPT>;
       template class Polymer<2,CPT>;

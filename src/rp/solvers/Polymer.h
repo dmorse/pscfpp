@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/solvers/PolymerTmpl.h>   // base class template
-#include <util/containers/FSArray.h>    // member template
+#include <pscf/solvers/PolymerTmpl.h>  // base class template
+#include <util/containers/FSArray.h>   // member template
+
 #include <pscf/backend/TmplDeclare.h>  // template declaration macros
 
 // Forward declarations
@@ -41,7 +42,7 @@ namespace Rp {
    *   - T  backend identifier class
    *
    * This template adds functions required for periodic systems to an
-   * appropriate specialization of the Pscf::PolymerTmpl base class 
+   * appropriate specialization of the Pscf::PolymerTmpl base class
    * template.
    *
    * \sa \ref user_param_polymer_sec "Manual Page"
@@ -49,7 +50,7 @@ namespace Rp {
    * \ingroup Rp_Solver_Module
    */
    template <int D, class T>
-   class Polymer 
+   class Polymer
      : public PolymerTmpl<Block<D,T>, Propagator<D,T>, double>
    {
 
@@ -167,7 +168,7 @@ namespace Rp {
 
    };
 
-   /// Get stress component n.
+   // Get stress component n.
    template <int D, class T> inline
    double Polymer<D,T>::stress(int n) const
    {  return stress_[n]; }
@@ -177,4 +178,27 @@ namespace Rp {
 
 } // namespace Rp
 } // namespace Pscf
+
+// Explicit instantiation declarations for base class specializations
+namespace Pscf {
+   #ifdef PSCF_CPP
+   class CPT;
+   extern template
+   class PolymerTmpl<Rp::Block<1,CPT>, Rp::Propagator<1,CPT>, double>;
+   extern template
+   class PolymerTmpl<Rp::Block<2,CPT>, Rp::Propagator<2,CPT>, double>;
+   extern template
+   class PolymerTmpl<Rp::Block<3,CPT>, Rp::Propagator<3,CPT>, double>;
+   #endif
+   #ifdef PSCF_CUDA
+   class CUT;
+   extern template
+   class PolymerTmpl<Rp::Block<1,CUT>, Rp::Propagator<1,CUT>, double>;
+   extern template
+   class PolymerTmpl<Rp::Block<2,CUT>, Rp::Propagator<2,CUT>, double>;
+   extern template
+   class PolymerTmpl<Rp::Block<3,CUT>, Rp::Propagator<3,CUT>, double>;
+   #endif
+}
+
 #endif

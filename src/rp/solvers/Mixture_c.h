@@ -17,6 +17,8 @@ namespace Rp {
    using namespace Util;
    using namespace Pscf::Prdc;
 
+   template <int D, class T> class Mixture;
+
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
    *
@@ -30,33 +32,12 @@ namespace Rp {
    template <int D>
    class Mixture<D,CPT> 
     : public Rp::MixtureBase<D,CPT>
-   {
-
-   #if 0
-
-   public:
-      /// Direct base class
-      using RpMixtureT = typename Rp::MixtureBase<D,CPT>;
-
-      // Inherited names
-      using typename RpMixtureT::CompositionT;
-      using typename RpMixtureT::MixtureTmplT;
-      using typename RpMixtureT::FieldT;
-      using MixtureTmplT::polymer;
-
-   private:
-
-      /**
-      * Allocate memory for all blocks
-      */
-      void allocateBlocks() override;
-   #endif
-
-   };
+   {};
 
 } // namespace Rp
 } // namespace Pscf
 
+#if 0
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
@@ -69,9 +50,8 @@ namespace Pscf {
       extern template class MixtureBase<1,CPT>;
       extern template class MixtureBase<2,CPT>;
       extern template class MixtureBase<3,CPT>;
-      extern template class Mixture<1,CPT>;
-      extern template class Mixture<2,CPT>;
-      extern template class Mixture<3,CPT>;
    }
 }
+#endif
+
 #endif

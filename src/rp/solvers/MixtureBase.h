@@ -9,7 +9,9 @@
 */
 
 #include <pscf/solvers/MixtureTmpl.h>   // base class template
-#include <util/containers/FSArray.h>    // member template (stress_)
+#include <util/containers/FSArray.h>    // member 
+
+#include <pscf/backend/TmplDeclare.h> 
 #include <iostream>
 
 // Forward declarations
@@ -25,8 +27,8 @@ namespace Pscf {
       template <int D, class T> class WaveList; 
    }
    namespace Rp {
+      template <int D, class T> class Polymer; 
       template <int D, class T> class Solvent; 
-      template <int D, class T> class Polymer;
       template <int D, class T> class Block; 
       template <int D, class T> class Propagator; 
       template <int D, class T> class FieldIo; 
@@ -65,8 +67,8 @@ namespace Rp {
    * \ref user_param_mixture_page "Manual Page"
    */
    template <int D, class T>
-   class MixtureBase : public 
-      MixtureTmpl<Polymer<D,T>, Solvent<D,T>, double>
+   class MixtureBase 
+    : public MixtureTmpl<Polymer<D,T>, Solvent<D,T>, double>
    {
 
    public:
@@ -482,9 +484,35 @@ namespace Rp {
       return stress_[parameterId];
    }
 
+   // Explicit instantiation declarations
+   PSCF_TMPL_DECLARE(MixtureBase)
+
    // Primary template declaration for subclasses.
    template <int D, class T> class Mixture;
 
 } // namespace Rp
 } // namespace Pscf
+
+// Explicit instantiation declarations for base class specializations
+namespace Pscf {
+   #ifdef PSCF_CPP
+   class CPT;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<1,CPT>, Rp::Solvent<1,CPT> >;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<2,CPT>, Rp::Solvent<2,CPT> >;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<3,CPT>, Rp::Solvent<3,CPT> >;
+   #endif
+   #ifdef PSCF_CUDA
+   class CUT;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<1,CUT>, Rp::Solvent<1,CUT> >;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<2,CUT>, Rp::Solvent<2,CUT> >;
+   extern template 
+   class MixtureTmpl< Rp::Polymer<3,CUT>, Rp::Solvent<3,CUT> >;
+   #endif
+}
+
 #endif

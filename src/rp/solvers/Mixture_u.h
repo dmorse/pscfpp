@@ -11,20 +11,13 @@
 #include <rp/solvers/MixtureBase.h>   // base class template
 #include <pscf/backend/cuda/CUT.h>    // template argument
 
-// Forward declarations
-namespace Pscf {
-   namespace Rp {
-      template <int D, class T> class Polymer;
-      template <int D, class T> class Solvent;
-      template <int D, class T> class Mixture;
-   }
-}
-
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
    using namespace Prdc;
+
+   template <int D, class T> class Mixture;
 
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
@@ -41,49 +34,12 @@ namespace Rp {
    template <int D>
    class Mixture<D,CUT> 
      : public Rp::MixtureBase<D,CUT>
-   {
-      #if 0
-
-   public:
-
-      // Public member functions
-
-      /**
-      * Constructor.
-      */
-      Mixture();
-
-      /**
-      * Read body of parameter file block and initialize.
-      *
-      * \param in  input parameter stream
-      */
-      void readParameters(std::istream& in) override;
-
-      /// Base class type aliases
-      using RpMixtureT = typename Rp::MixtureBase<D,CUT>;
-      using typename RpMixtureT::MixtureTmplT;
-      using typename RpMixtureT::CompositionT;
-      using typename RpMixtureT::FieldT;
-
-      using MixtureTmplT::polymer;
-
-   private:
-
-      /// Use batched FFTs to compute stress? (faster, but 2x memory)
-      bool useBatchedFFT_;
-
-      /**
-      * Allocate memory for all blocks
-      */
-      virtual void allocateBlocks() override;
-
-      #endif
-   };
+   {};
 
 } // namespace Rp
 } // namespace Pscf
 
+#if 0
 // Explicit instantiation declarations
 namespace Pscf {
    extern template 
@@ -96,9 +52,8 @@ namespace Pscf {
       extern template class MixtureBase<1,CUT>;
       extern template class MixtureBase<2,CUT>;
       extern template class MixtureBase<3,CUT>;
-      extern template class Mixture<1,CUT>;
-      extern template class Mixture<2,CUT>;
-      extern template class Mixture<3,CUT>;
    }
 }
+#endif
+
 #endif

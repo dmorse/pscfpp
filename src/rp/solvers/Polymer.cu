@@ -8,9 +8,10 @@
 #include <rp/solvers/Polymer.tpp>
 #include <pscf/backend/cuda/CUT.h>
 
+// Explicit template instantiation definitions
 namespace Pscf {
 
-   // Base class instantiations
+   // Base class template specializations
    template 
    class PolymerTmpl< Rp::Block<1,CUT>, Rp::Propagator<1,CUT> >;
    template 
@@ -18,6 +19,7 @@ namespace Pscf {
    template 
    class PolymerTmpl< Rp::Block<3,CUT>, Rp::Propagator<3,CUT> >;
 
+   // This class template
    namespace Rp {
       template class Polymer<1,CUT>;
       template class Polymer<2,CUT>;
