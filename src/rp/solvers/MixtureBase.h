@@ -450,12 +450,15 @@ namespace Rp {
       // Set true iff the w fields used in the MDE are symmetric
       bool isSymmetric_;
 
-      // Private member functions (pure virtual)
+      /// Use batched FFTs to compute stress? (faster, but 2x memory)
+      bool useBatchedFFT_;
+
+      // Private member function
 
       /**
-      * Allocate all blocks of all polymers.
+      * Allocate memory for all blocks
       */
-      virtual void allocateBlocks() = 0; 
+      void allocateBlocks();
 
    };
 

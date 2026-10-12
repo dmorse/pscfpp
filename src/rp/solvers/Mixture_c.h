@@ -1,5 +1,5 @@
-#ifndef RPC_MIXTURE_H
-#define RPC_MIXTURE_H
+#ifndef RP_MIXTURE_C_H
+#define RP_MIXTURE_C_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -31,8 +31,10 @@ namespace Rp {
    class Mixture<D,CPT> 
     : public Rp::MixtureBase<D,CPT>
    {
-   public:
 
+   #if 0
+
+   public:
       /// Direct base class
       using RpMixtureT = typename Rp::MixtureBase<D,CPT>;
 
@@ -48,6 +50,7 @@ namespace Rp {
       * Allocate memory for all blocks
       */
       void allocateBlocks() override;
+   #endif
 
    };
 

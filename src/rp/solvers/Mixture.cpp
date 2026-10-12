@@ -10,6 +10,7 @@
 #include <rp/solvers/MixtureBase.tpp>
 #include <rp/solvers/Mixture_c.h>
 
+#if 0
 namespace Pscf {
 namespace Rp {
 
@@ -26,13 +27,14 @@ namespace Rp {
       int i, j;
       for (i = 0; i < np; ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).allocate(ds);
+            polymer(i).block(j).allocate(ds, useBatchedFFT_);
          }
       }
    }
 
 } 
 } 
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {

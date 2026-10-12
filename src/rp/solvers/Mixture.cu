@@ -11,6 +11,7 @@
 #include <rp/solvers/MixtureBase.tpp>  // base class implementation
 #include <rp/solvers/Mixture_u.h>      // class header
 
+#if 0
 namespace Pscf {
 namespace Rp {
 
@@ -21,7 +22,7 @@ namespace Rp {
    */
    template <int D>
    Mixture<D,CUT>::Mixture()
-    : Rp::MixtureBase<D,CUT>(),
+    : Rp::MixtureBase<D,CUT>()
       useBatchedFFT_(true)
    {}
 
@@ -56,6 +57,7 @@ namespace Rp {
 
 } // namespace Rp
 } // namespace Pscf
+#endif
 
 // Explicit instantiation definitions
 namespace Pscf {

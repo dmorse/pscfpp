@@ -1,5 +1,5 @@
-#ifndef RPC_BLOCK_H
-#define RPC_BLOCK_H
+#ifndef RP_BLOCK_C_H
+#define RP_BLOCK_C_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -82,7 +82,7 @@ namespace Rp {
       *
       * This function creates associations of this block with the Mesh,
       * FFT, UnitCell and WaveList objects by storing their addresses.
-      * It must be called before allocate().
+      * It must be called before the allocate function.
       *
       * \param mesh  Mesh<D> object, spatial discretization meth
       * \param fft  FFT<D,CPT> object, Fast Fourier Transform
@@ -117,9 +117,13 @@ namespace Rp {
       *
       * The value of input parameter ds is ignored for the bead model.
       *
+      * The value of input parameter useBatchedFFT is is ignored for 
+      * the C++ backend (T=Pscf::CPT).
+      *
       * \param ds desired (optimal) value for contour length step
+      * \param useBatchedFFT  unused flag (used for other backend)
       */
-      void allocate(double ds);
+      void allocate(double ds, bool useBatchedFFT = false);
 
       /**
       * Clear all internal data that depends on the unit cell parameters

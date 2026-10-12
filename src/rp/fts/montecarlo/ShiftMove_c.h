@@ -1,5 +1,5 @@
-#ifndef RPC_SHIFT_MOVE_C_H
-#define RPC_SHIFT_MOVE_C_H
+#ifndef RP_SHIFT_MOVE_C_H
+#define RP_SHIFT_MOVE_C_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

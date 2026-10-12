@@ -18,6 +18,8 @@
 namespace Pscf {
 namespace Rp {
 
+   // Construction, destruction and initialization
+
    /*
    * Constructor
    */
@@ -39,8 +41,8 @@ namespace Rp {
    template <int D, class T>
    void MixtureModifier<D,T>::associate(Mixture<D,T>& mixture)
    {
-      UTIL_CHECK(!mixturePtr_);  
-      mixturePtr_ = &mixture; 
+      UTIL_CHECK(!mixturePtr_);
+      mixturePtr_ = &mixture;
    }
 
    // Parameter Modifiers
@@ -56,7 +58,7 @@ namespace Rp {
    * Set volume fraction for a polymer.
    */
    template <int D, class T>
-   void MixtureModifier<D,T>::setPhiPolymer(int polymerId, 
+   void MixtureModifier<D,T>::setPhiPolymer(int polymerId,
                                                double phi)
    {  mixture().polymer(polymerId).setPhi(phi); }
 
@@ -64,7 +66,7 @@ namespace Rp {
    * Set chemical potential for a polymer.
    */
    template <int D, class T>
-   void MixtureModifier<D,T>::setMuPolymer(int polymerId, 
+   void MixtureModifier<D,T>::setMuPolymer(int polymerId,
                                                double mu)
    {  mixture().polymer(polymerId).setMu(mu); }
 
@@ -72,7 +74,7 @@ namespace Rp {
    * Set the length of a polymer block.
    */
    template <int D, class T>
-   void MixtureModifier<D,T>::setBlockLength(int polymerId, 
+   void MixtureModifier<D,T>::setBlockLength(int polymerId,
                                                 int blockId,
                                                 double length)
    {  mixture().polymer(polymerId).block(blockId).setLength(length); }
@@ -81,7 +83,7 @@ namespace Rp {
    * Set the volume fraction for a solvent.
    */
    template <int D, class T>
-   void MixtureModifier<D,T>::setPhiSolvent(int solventId, 
+   void MixtureModifier<D,T>::setPhiSolvent(int solventId,
                                                double phi)
    {  mixture().solvent(solventId).setPhi(phi); }
 
@@ -89,7 +91,7 @@ namespace Rp {
    * Set the chemical potential for a solvent species.
    */
    template <int D, class T>
-   void MixtureModifier<D,T>::setMuSolvent(int solventId, 
+   void MixtureModifier<D,T>::setMuSolvent(int solventId,
                                               double mu)
    {  mixture().solvent(solventId).setMu(mu); }
 
@@ -97,7 +99,7 @@ namespace Rp {
    * Set the size of solvent species.
    */
    template <int D, class T>
-   void MixtureModifier<D,T>::setSolventSize(int solventId, 
+   void MixtureModifier<D,T>::setSolventSize(int solventId,
                                                 double size)
    {  mixture().solvent(solventId).setSize(size); }
 
@@ -117,7 +119,7 @@ namespace Rp {
    void MixtureModifier<D,T>::clearUnitCellData()
    {  mixture().clearUnitCellData(); }
 
-   // Private memmber function
+   // Private member function
 
    /*
    * Get the associated mixture by reference
@@ -126,7 +128,7 @@ namespace Rp {
    Mixture<D,T>& MixtureModifier<D,T>::mixture()
    {
       UTIL_CHECK(mixturePtr_);
-      return *mixturePtr_;  
+      return *mixturePtr_;
    }
 
 } // namespace Rp

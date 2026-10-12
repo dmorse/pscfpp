@@ -1,5 +1,5 @@
-#ifndef RPG_BLOCK_H
-#define RPG_BLOCK_H
+#ifndef RP_BLOCK_U_H
+#define RP_BLOCK_U_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

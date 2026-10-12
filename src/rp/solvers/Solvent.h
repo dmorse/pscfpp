@@ -25,12 +25,12 @@ namespace Rp {
    /**
    * Solver and descriptor for a solvent species.
    *
-   * \ref user_param_solvent_sec "Manual Page"
-   *
    * <b> Template parameters </b>:
    *
    *   - D : dimension of space (1, 2, or 3)
    *   - T : backend identifier class (CPT or CUT)
+   *
+   * \sa \ref user_param_solvent_sec "Manual Page"
    *
    * \ingroup Rp_Solver_Module
    */
@@ -39,12 +39,6 @@ namespace Rp {
    {
 
    public:
-
-      /// Alias for direct (parent) base class.
-      using SolventSpeciesT = SolventSpecies<double>;
-
-      /// Alias for indirect (grandparent) base class.
-      using SpeciesT = Species<double>;
 
       // Public member functions
 
@@ -115,6 +109,12 @@ namespace Rp {
       /// Pointer to associated mesh.
       Mesh<D> const *  meshPtr_;
 
+      /// Alias for direct (parent) base class.
+      using SolventSpeciesT = SolventSpecies<double>;
+
+      /// Alias for indirect (grandparent) base class.
+      using SpeciesT = Species<double>;
+
    };
 
    /*
@@ -126,6 +126,7 @@ namespace Rp {
 
    // Explicit instantiation declarations
    PSCF_TMPL_DECLARE(Solvent)
+
 }
 }
 #endif

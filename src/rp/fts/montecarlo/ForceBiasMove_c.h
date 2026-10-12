@@ -1,5 +1,5 @@
-#ifndef RPC_FORCE_BIAS_MOVE_H
-#define RPC_FORCE_BIAS_MOVE_H
+#ifndef RP_FORCE_BIAS_MOVE_C_H
+#define RP_FORCE_BIAS_MOVE_C_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

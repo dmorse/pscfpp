@@ -47,7 +47,8 @@ namespace Rp {
       fieldIoPtr_(nullptr),
       nParam_(0),
       hasStress_(false),
-      isSymmetric_(false)
+      isSymmetric_(false),
+      useBatchedFFT_(false)
    {  ParamComposite::setClassName("Mixture"); }
 
    /*
@@ -77,6 +78,11 @@ namespace Rp {
          // Bead model (set to 1.0, but unused)
          ds_ = 1.0;
       }
+
+      // Optionally read useBatchedFFT boolean
+      useBatchedFFT_ = true;
+      ParamComposite::readOptional(in, "useBatchedFFT", useBatchedFFT_);
+
    }
 
    /*
@@ -546,6 +552,23 @@ namespace Rp {
             << std::endl;
       }
       out << std::endl;
+   }
+
+   // Private allocation function
+
+   /*
+   * Allocate memory for all blocks.
+   */
+   template <int D, class T>
+   void MixtureBase<D,T>::allocateBlocks()
+   {
+      const int np = CompositionT::nPolymer();
+      int i, j;
+      for (i = 0; i < np; ++i) {
+         for (j = 0; j < polymer(i).nBlock(); ++j) {
+            polymer(i).block(j).allocate(ds_, useBatchedFFT_);
+         }
+      }
    }
 
 } // namespace Rp

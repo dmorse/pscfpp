@@ -55,23 +55,6 @@ namespace Rp {
 
    public:
 
-      // Public type name aliases
-
-      /// Block type, for a block within a block polymer.
-      using BlockT = Block<D,T>;
-
-      /// Propagator type, for one direction within a block.
-      using PropagatorT = Propagator<D,T>;
-
-      /// Direct base class, specialization of PolymerTmpl class template.
-      using PolymerTmplT = PolymerTmpl<BlockT, PropagatorT, double>;
-
-      /// Indirect base, specialization of PolymerSpecies (inherited).
-      using typename PolymerTmplT::PolymerSpeciesT;
-
-      /// Indirect base, specialization of Species (inherited).
-      using typename PolymerTmplT::SpeciesT;
-
       // Public member functions
 
       /**
@@ -142,6 +125,23 @@ namespace Rp {
       * \param n  unit cell parameter index
       */
       double stress(int n) const;
+
+      // Public type name aliases
+
+      /// Block type, for a block within a block polymer.
+      using BlockT = Block<D,T>;
+
+      /// Propagator type, for one direction within a block.
+      using PropagatorT = Propagator<D,T>;
+
+      /// Direct base class, specialization of PolymerTmpl class template.
+      using PolymerTmplT = PolymerTmpl<BlockT, PropagatorT, double>;
+
+      /// Indirect base, specialization of PolymerSpecies (inherited).
+      using typename PolymerTmplT::PolymerSpeciesT;
+
+      /// Indirect base, specialization of Species (inherited).
+      using typename PolymerTmplT::SpeciesT;
 
       // Inherited non-dependent public member functions (for convenience)
       using PolymerTmplT::block;

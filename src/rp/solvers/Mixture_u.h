@@ -1,5 +1,5 @@
-#ifndef RPG_MIXTURE_H
-#define RPG_MIXTURE_H
+#ifndef RP_MIXTURE_U_H
+#define RP_MIXTURE_U_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -42,6 +42,7 @@ namespace Rp {
    class Mixture<D,CUT> 
      : public Rp::MixtureBase<D,CUT>
    {
+      #if 0
 
    public:
 
@@ -77,6 +78,7 @@ namespace Rp {
       */
       virtual void allocateBlocks() override;
 
+      #endif
    };
 
 } // namespace Rp

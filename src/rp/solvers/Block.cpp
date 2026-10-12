@@ -82,9 +82,11 @@ namespace Rp {
 
    /*
    * Compute number of contour steps and allocate all memory.
+   *
+   * The useBatchedFFT parameter is unused.
    */
    template <int D>
-   void Block<D,CPT>::allocate(double ds)
+   void Block<D,CPT>::allocate(double ds, bool useBatchedFFT)
    {
       UTIL_CHECK(ds > 0.0);
       UTIL_CHECK(meshPtr_);

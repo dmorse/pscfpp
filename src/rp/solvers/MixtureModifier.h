@@ -19,23 +19,24 @@ namespace Rp {
    /**
    * Modifier for parameters of an associated mixture.
    *
-   * Template parameter MT is a mixture class type, which is set to
-   * a Mixture<D> class in each of the implementations for real periodic
-   * fields.
-   *
    * A MixtureModifier provides an interface for a limited number of
    * non-const operations that modify the parameters of an associated
-   * Mixture object. This interface is used to implement sweep and ramp 
-   * operations that need to modify these parameters.
-   * 
-   * Each PSCF implementation for real periodic fields defines a class 
-   * template int \<D\> MixtureModifier that is derived from a template 
-   * specialization MixtureModifier\< Mixture\<D\> \>. The System\<D\> 
-   * class provides public access to its Mixture<D> only through a const 
-   * reference, but provides a non-const reference to an associated 
-   * MixtureModifier. The MixtureModifier template thus defines a set of 
-   * operations that modify parameters of the mixture that may be called 
-   * via a non-const reference to a System.
+   * Mixture object that are initialized in the parameter file. These
+   * include changes in species volume fractions or chemical potential, 
+   * changes in kuhn lengths, changes in block lengths, and changes in
+   * solvent sizes. The System\<D, T\> class template provides public
+   * access to a child instance of  Mixture \<D, \T> only through a 
+   * const reference, but provides a non-const reference to an associated 
+   * MixtureModifier. The MixtureModifier template defines a limited set
+   * of non-const operations that modify parameters of the mixture that
+   * may be applied via a non-const reference to a System. This interface
+   * is used to implement sweep and ramp operations that may need to 
+   * modify these parameters during program execution.
+   *
+   * The MixtureModifier class also provides public access to the
+   * Mixture::clearUnitCell function, which clears all data owned by
+   * a Mixture that depends upon values of the unit cell parameters
+   * (i.e., marks this data as outdated).
    *
    * \ingroup Rp_Solver_Module
    */
