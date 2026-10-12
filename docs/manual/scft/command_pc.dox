@@ -834,10 +834,6 @@ column of numbers containing the values of the associated propagator
 slice on the nodes of the regular spatial mesh used throughout the
 computation.
 
-<em> Comment for readers who read the source code </em>: This command
-calls the function Rpc::System::writeQ, which defines the output
-format, and is defined in the C++ file src/rpc/System.tpp.
-
 \anchor scft_command_pc_writeqall_sub
 <b> WRITE_Q_ALL </b>:
 The command WRITE_Q_ALL writes all slices of every propagator of every

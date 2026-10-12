@@ -1,5 +1,5 @@
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
 /*! 
 \page rp_RealMove_page RealMove

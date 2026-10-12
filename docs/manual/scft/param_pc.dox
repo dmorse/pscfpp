@@ -1,5 +1,5 @@
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
 /*! \page scft_param_pc_page Parameter File - pscf_rpc and pscf_rpg
 
@@ -163,7 +163,7 @@ The above example does not contains a Sweep block.
 \section scft_param_pc_seealso_sec See Also:
 
 <ul>
- <li> \subpage rp_System_page "(Rpc|Rpg)::System"  </li>
+ <li> \subpage rp_System_page "System"  </li>
  <li> \ref user_param_mixture_page "Mixture"  </li>
  <li> \ref user_param_example_interaction "Interaction"  </li>
  <li> \subpage user_param_domain_pc_page "Domain" </li>

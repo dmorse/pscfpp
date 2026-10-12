@@ -1,5 +1,5 @@
-namespace Pscf{
-namespace Rpc{
+namespace Pscf {
+namespace Rp {
 
 /*! 
 \page rp_LinearRamp_page LinearRamp

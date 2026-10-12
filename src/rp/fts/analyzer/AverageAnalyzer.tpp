@@ -149,5 +149,5 @@ namespace Rp {
    }
 
 } // namespace Rp
-} // namespace Rpc
+} // namespace Pscf
 #endif

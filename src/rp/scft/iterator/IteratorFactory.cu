@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-// Subclasses of Rpc::Iterator 
+// Subclasses of Rp::Iterator 
 #include <rp/scft/iterator/AmIteratorBasis.h>
 #include <rp/scft/iterator/AmIteratorGrid.h>
 

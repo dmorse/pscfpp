@@ -20,13 +20,8 @@ namespace Rp {
    using namespace Util;
 
    /**
-   * Linear ramp - parameters vary linearly with step index.
+   * Linear ramp - on or more parameters vary linearly with step index.
    * 
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, both also named LinearRamp,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *   - D : dimension

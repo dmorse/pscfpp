@@ -1,5 +1,5 @@
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
 /*! 
 \page rp_AnalyzerManager_page AnalyzerManager

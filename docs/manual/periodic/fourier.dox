@@ -267,18 +267,16 @@ discrete DFT extend only over a finite number of values
 a finite rather than an infinite sum.
 
 <em> Relationship to source code: </em>  The D-dimensional forward and
-inverse DFT, defined using the conventions given above, are implemented for
-the field container classes used by pscf_rpc by the member functions
-forwardTransform and inverseTransform defined in the class Pscf::Rpc::FFT<D>,
-respectively. The class Pscf::Rpc::FFT<D> is an instantiation of the class
-template Pscf::Rpc::FFT , in which D=1, 2, or 3 is a template parameter
-that represents the dimensionality of space.  These member functions are
-simple wrappers around functions provided by the open source FFTW package.
-
-Equivalent operations are implemented for the field container classes used
-by pscf_rpg by corresponding member functions of the class template
-Pscf::Rpg::FFT that are wrappers around functions provided by the
-cuFFT CUDA library, which implements FFTs on a GPU.
+inverse DFT, defined using the conventions given above, are implemented 
+by the member functions forwardTransform and inverseTransform defined 
+in specializations of the class template Pscf::Prdc::FFT \<D, T\>, in
+which the template parameter D is the integer dimenension of space,
+while T is a "backend identifier class" that can be assigned different
+values to generate specializations that use different "backends" for
+core computations. These member functions are simple wrappers around 
+functions provided around a corresponding external FFT library.
+Specializations that use a C++ CPU backend use the FFTW library, while
+specializations that use CUDA GPU backend use the NVIDIA cufft library.
 
 \subsection prdc_fourier_dft_alias_sub Wavevector Aliasing
 

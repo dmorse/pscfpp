@@ -25,9 +25,7 @@ namespace Rp {
    *
    * This class computes and stores values for the SCFT Helmholtz free
    * energy and pressure, and free energy components (ideal, interaction,
-   * external). Specializations of this template are used as base classes 
-   * for class templates named ScftThermo<D> that are defined in Rpc and 
-   * Rpg namespaces.
+   * and external). 
    *
    * Template parameters:
    *

@@ -153,28 +153,26 @@ algorithm provided by a class with this name).
 <em>Technical note: </em>
 Source code files that are specific to different PSCF
 programs are defined in different C++ implementation level namespaces
-(i.e., in Pscf::R1d, Pscf::Rpc and Pscf::Rpg). This allows classes
-that play analogous roles in different programs to be given the same
-name. The LinearSweep classes for the pscf_r1d, pscf_rpc and pscf_rpg
-programs are actually different classes defined in different namespaces
-that have identical or nearly identical user interfaces and implement
-closely analogous algorithms.  The common user interface for these
-classes is described here.
+(i.e., in Pscf::R1d or Pscf::Rp), but are often given the same name. 
+The pscf_r1d program uses a class Pscf::R1d::LinearSweep, while the
+pscf_rpc and pscf_rpg programs use specializations of the class template
+Pscf::Rp::LinearSweep.  The common user interface for these classes is 
+described here.
 
 \subsection scft_sweep_linear_param_sub Parameter file format
 
 The parameter file format for a LinearSweep is summarized below:
 \code
   LinearSweep{
-       ns                int
-       baseFileName      string
-       historyCapacity*  int
-       reuseState*       bool
-       writeCRGrid*+     bool
-       writeCBasis*+     bool
-       writeWRGrid*+     bool
-       nParameter        int
-       parameters        Array [ SweepParameter ]
+     ns                int
+     baseFileName      string
+     historyCapacity*  int
+     reuseState*       bool
+     writeCRGrid*+     bool
+     writeCBasis*+     bool
+     writeWRGrid*+     bool
+     nParameter        int
+     parameters        Array [ SweepParameter ]
   }
 \endcode
 Parameters marked with an asterisk are optional. Parameters marked

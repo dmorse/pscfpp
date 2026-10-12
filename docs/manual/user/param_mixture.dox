@@ -218,13 +218,14 @@ Comments:
 
 The source code for PCSF is defined within a C++ namespace named Pscf.
 This top-level namespace contains several enclosed namespaces named
-Prdc, R1d, Rpc, and Rpg. Namespace Pscf::Prdc contains code relevant
-to problems involving periodic boundary conditions, which is used to
-construct both pscf_rpc and pscf_rpg.  The enclosed namespaces named R1d,
-Rpc, and each contain code that is only used by one executable program
-(e.g., pscf_r1d, pscf_rpc or pscf_rpg, respectively).
+Prdc, R1d, and Rp. Namespace Pscf::Prdc contains code relevant to 
+problems involving periodic boundary conditions, which is used to
+construct both pscf_rpc and pscf_rpg.  The enclosed namespaces named 
+R1d and Rp each code that is only used by a single executable program 
+(pscf_r1d) a set of programs that perform the same calculations using
+different hardward (pscf_rpc and pscf_rpg). 
 
-We refer to the enclosed namespaces R1d, Rpc, and Rpg throughout this
+We refer to the enclosed namespaces R1d and Rp throughout this
 documentation as program-level namespaces, because each contains files
 that are only used within a single executable program. By convention,
 code defined in a program-level namespace may not use names defined in
@@ -234,15 +235,14 @@ identical names to be used for several analogous classes in different
 program-level namespaces without causing name clashes or ambiguity.
 
 Each program-level namespace contains a class or class template named
-Mixture. The R1d namespace contains a class named Mixture. The Rpc and
-Rpg namespaces each contain a class template Mixture<int D>, for which
-the integer dimensionality of space D is a template parameter.  The
-Mixture object used by the pscf_rpc program to treat a 2D periodic
-structure is thus a instance of class Pscf::Rpc::Mixture<2>, for which
-the dimensionality of space is specified by the template parameter D=2.
+Mixture. The R1d namespace contains a class named Mixture. The Rp 
+namespace contain a class template Mixture<int D, typename T>, for 
+which the integer dimensionality of space D is a template parameter
+and T is a "backend identifier class" that is used to distinguish
+template specializations that use C++ (CPU) or CUDA (GPU) "backends".
 All of the Mixture classes and class templates defined in program-level
-namespaces are derived from instantions of a base class template named
-Pscf::MixtureTmpl. All of these Mixture classes use very similar
+namespaces are derived from specializations of a base class template 
+named Pscf::MixtureTmpl. All of these Mixture classes use very similar
 parameter file formats, as described above. Most elements of this format
 are defined in the member function Pscf::MixtureTmpl::readParameters of
 the shared base class template.
@@ -329,7 +329,7 @@ branched polymers are discussed separately below.
 
 <i> Technical comment (for users who examine the source code)</i>:
 A class or class template named Polymer is defined in each program-level
-namespace of the top-level Pscf namespace (i.e., in the R1d, Rpc and Rpg
+namespace of the top-level Pscf namespace (i.e., in the R1d and Rp 
 sub-namespaces of Pscf). These Polymer classes all use the same parameter
 file format, which is described above. Each of these Polymer classes is
 indirectly derived from a common base class named Pscf::PolymerSpecies.
@@ -472,18 +472,18 @@ length of 1.0 given in each line of the blocks array would be replaced by
 an integer value of 50.
 
 <i> Technical comment (for users who examine the source code)</i>:
-A class or class template named Block is defined in each of the
-program-level namespaces, Pscf::R1d, Pscf::Rpc and Pscf::Rpg. Each such
-Block class is derived from a common base class named Pscf::Edge. The
-data for each line of the "blocks" array is read in using an overloaded
-insertion (>>) operator for an Edge, which is a function with an
-interface std::istream& Pscf::operator>>(std::istream&,Pscf::Edge&) .
+A class or class template named Block is defined in each of the 
+program-level namespaces, Pscf::R1d and Pscf::Rp. Each such Block class 
+or class template is derived from a common base class named Pscf::Edge. 
+The data for each line of the "blocks" array is read in using an 
+overloaded insertion (>>) operator for an Edge, which is a function with 
+an interface std::istream& Pscf::operator>>(std::istream&,Pscf::Edge&) .
 The implementation of this insertion operator thus defines the text
 representation of the data required in a single line of the "blocks"
 array in any PSCF program.  The required text representation depends
-both on whether the block is
-part of a linear or branched polymer, and on whether the program is
-using the thread or bead model.
+both on whether the block is part of a linear or branched polymer, and 
+also on whether the program is using the continuous thread or discrete
+bead model for polymer conformations. 
 
 \section user_param_solvent_sec Solvent
 
@@ -519,11 +519,11 @@ for both phi and mu or to omit both parameters.
 
 <i> Technical comment (for users who examine the source code)</i>:
 A class or class template named Solvent is defined in each of the
-program-level namespaces, Pscf::R1d, Pscf::Rpc and Pscf::Rpg. Each
-such class or class template is derived from a common base class named
+program-level namespaces, Pscf::R1d and Pscf::Rp. Each such class or 
+class template is derived from a common base class named 
 Pscf::SolventSpecies. The parameter file format that is described above,
-which is used by all PSCF programs, is defined by the inherited member
-function Pscf::SolventSpecies::readParameters .
+which is used by all PSCF programs, is defined by the inherited public
+gember function Pscf::SolventSpecies::readParameters .
 
 <BR>
 \ref user_param_format_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

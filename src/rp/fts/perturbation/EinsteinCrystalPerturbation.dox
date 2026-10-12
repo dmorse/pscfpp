@@ -1,16 +1,14 @@
 namespace Pscf {
-namespace Rpc {
+namespace Rp {
 
 /*! 
 \page rp_EinsteinCrystalPerturbation_page EinsteinCrystalPerturbation
 
-EinsteinCrystalPerturbation class templates in namespaces Rpc and Rpg
-are designed to enable use of Einstein crystal method of computing free 
-energies by thermodynamic integration.
+The EinsteinCrystalPerturbation class template enables the Einstein 
+crystal thermodynamic integration method of computing free energies.
 
 \see 
 <ul>
-  <li> Rpc::EinsteinCrystalPerturbation (Class) </li>
   <li> \ref psfts_perturb_page "Manual Page" </li>
 </ul>
 

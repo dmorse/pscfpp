@@ -667,18 +667,15 @@ generalizing the definitions of both \f$ H_{\rm f} \f$ and
 <em> Comment (for users that read the source code) </em>: Many of the data
 structures and algorithms that are required to implement this symmetric
 formulation of polymer field theory, but that are not needed for SCFT, are
-provided by the Simulator class template defined in either the Pscf::Rpc
-and Pscf::Rpg namespaces.  These two closely analogous class templates each
-takes the dimension D of space as a template parameter, and only differ in
-that Pscf::Rpc::Simulator is designed for a CPU, while Pscf::Rpg::Simulator
-is designed to use a GPU.  In either namespace, the Simulator class template
-provides code to construct and diagonalize the projected chi matrix, and
-to compute the field theoretic Hamiltonian \f$ H \f$ and its functional
-derivatives. Instances of the Simulator template are used as base classes
-for \ref rp_BdSimulator_page "BdSimulator" and
-\ref rp_McSimulator_page "McSimulator" classes that provide more specialized
-algorithms and data structures that are needed for Brownian dynamics (BD) or
-Monte Carlo (MC) samplying algorithms, respectively.
+provided by the Simulator class template defined in the Pscf::Rp namespace.
+The Simulator class template provides code to construct and diagonalize the 
+projected chi matrix and to compute the field theoretic Hamiltonian \f$ H \f$ 
+and its functional derivatives. Specializations of the Simulator class
+template are used as base classes for corresponding specializations of the 
+\ref rp_BdSimulator_page "BdSimulator" and 
+\ref rp_McSimulator_page "McSimulator" class templates, which provide more 
+specialized algorithms and data structures that are needed for Brownian 
+dynamics (BD) or Monte Carlo (MC) algorithms, respectively.
 
 \anchor psfts_theory_general_AB_sub
 <b> Standard AB Systems (Revisited): </b>

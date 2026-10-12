@@ -8,16 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>    // base class
-#include <rp/fts/simulator/SimState.h>    // member
-#include <prdc/field/RField.h>            // member
-#include <util/containers/DArray.h>       // member (template)
-#include <util/containers/DMatrix.h>      // member (template)
+#include <util/param/ParamComposite.h>   // base class
+#include <rp/fts/simulator/SimState.h>   // member
+#include <prdc/field/RField.h>           // member
+#include <util/containers/DArray.h>      // member (template)
+#include <util/containers/DMatrix.h>     // member (template)
 #include <pscf/backend/TmplDeclare.h>    // declaration macros
 
 #include <iostream>
 
-// Forward declaration
+// Forward declarations
 namespace Util { 
    class Random; 
 }
@@ -42,19 +42,32 @@ namespace Rp {
    /**
    * Base class for field theoretic PS-FTS simulator.
    *
+   * <b> Template parameters </b>:
+   *
+   *    D - integer dimensionality of space (D=1, 2, or 3)
+   *    T - Backend identifier class (CppTp<D> or CudaTp<D>)
+   *
    * <b> Purpose </b>: A Simulator base class provides tools needed in 
    * field-theoretic simulations that are based on a partial saddle-point 
-   * approximation. In the Rpc and Rpg program-level namespaces, subclasses
-   * designed for field theoretic Monte Carlo (MC) and Brownian dynamics
-   * (BD) simulations, named McSimulator and BdSimulator, provide more
-   * specialized algorithms and data structures needed by these two
-   * sampling methods.
+   * approximation for an incompressible system. Subclasses designed for
+   * field theoretic Monte Carlo (MC) and Brownian dynamics (BD) 
+   * simulations, named McSimulator and BdSimulator, provide more 
+   * specialized algorithms and data structures needed by these two 
+   * sampling methods. Each specialization of the class templates 
+   * BdSimulator\<D, T\> and McSimulator \<D, T\> is a thus derived 
+   * from a corresponding specialization Simulator\<D, T\>.
    *
-   * The Simulator class provides functions to compute and diagonalize
-   * a projected chi matrix, functions to access components of several
-   * types of fields in a basis of eigenvectors of the projected chi
-   * matrix, and functions to compute and return contributions to the
-   * field theoretic Hamiltonian and its components.
+   * The Simulator class template provides functions to:
+   *
+   *   - Compute and diagonalize a projected chi matrix
+   *   - Compute and return the field theoretic Hamiltonian and its 
+   *     components
+   *   - Compute functional derivatives of the Hamiltonian with 
+   *     respect to chemical potential (w) field components
+   *   - Compute and access components of several types of fields in 
+   *     a basis of eigenvectors of the projected chi matrix
+   *
+   * <b> Projected Chi Matrix </b>:
    *
    * The analyzeChi function constructs and diagonalizes the projected
    * chi matrix. This is a singular nMonomer x nMonomer matrix defined
@@ -63,25 +76,14 @@ namespace Rp {
    * The eigenvalues and eigenvectors of this matrix are accessed via
    * the chiEvals and chiEvecs functions, respectively.
    *
+   * <b> Field Components </b>:
+   *
    * The functions computeWc, computeCc and computeDc compute components
    * of various types of multi-component fields (i.e., fields that are
    * associated with a monomer type index) in a basis of eigenvectors of
    * the projected chi matrix. Names such as wc, cc and dc that end with
    * a suffix "c" refer to components of multi-component fields that are
    * defined using this eigenvector basis.
-   *
-   * <b> Usage </b>: A specialization of Rp::Simulator\<D, T\> serves 
-   * as a base class for for each Simulation\<D\> class defined in 
-   * namespaces Rpc and Rpg, for D=1, 2 and 3. In this usage, template 
-   * parameter T is an instance of a template \<int D\> class Types that
-   * is defined in each of these two program-level namespaces, and that 
-   * defines a set of typename aliases for classes used in each such
-   * namespace, for the relevant value of D.
-   *
-   * <b> Template parameters and typename aliases </b>:
-   *
-   *    D - integer dimensionality of space (D=1, 2, or 3)
-   *    T - Types class, CppTp<D> or CudaTp<D>)
    *
    * \see \ref rp_BdSimulator_page  (manual page)
    * \see \ref rp_McSimulator_page  (manual page)
@@ -179,50 +181,13 @@ namespace Rp {
       /**
       * Clear field eigen-components and Hamiltonian components.
       *
-      * On return from this function, hasHamiltonian(), hasWc(), hasCc(),
-      * and hasDc() will all return false.
+      * This function should be called whenever any of the inputs to the
+      * calculations of the fields or Hamiltonian is changed, to indicate
+      * that Hamiltonian and field data stored in this class is outdated.
+      * On return, the functions hasHamiltonian(), hasWc(), hasCc(), and
+      * hasDc() will all return false.
       */
       void clearData();
-
-      ///@}
-      /// \name Timers and Counters
-      ///@{
-
-      /**
-      * Output timing results
-      *
-      * Empty default implementation.
-      *
-      * \param out  output stream
-      */
-      virtual void outputTimers(std::ostream& out) const;
-
-      /**
-      * Output MDE counter.
-      *
-      * Output the number of times the modified diffusion equation has
-      * been solved.
-      *
-      * \param out  output stream
-      */
-      virtual void outputMdeCounter(std::ostream& out) const;
-
-      /**
-      * Clear timers.
-      *
-      * Empty default implementation.
-      */
-      virtual void clearTimers();
-
-      /**
-      * Return the current converged simulation step index.
-      */
-      long iStep();
-
-      /**
-      * Return the current simulation step index.
-      */
-      long iTotalStep();
 
       ///@}
       /// \name Projected Chi Matrix
@@ -560,6 +525,46 @@ namespace Rp {
       * clear the stored state and indicate acceptance.
       */
       void clearState();
+
+      ///@}
+      /// \name Timers and Counters
+      ///@{
+
+      /**
+      * Output timing results
+      *
+      * Empty default implementation.
+      *
+      * \param out  output stream
+      */
+      virtual void outputTimers(std::ostream& out) const;
+
+      /**
+      * Output MDE counter.
+      *
+      * Output the number of times the modified diffusion equation has
+      * been solved.
+      *
+      * \param out  output stream
+      */
+      virtual void outputMdeCounter(std::ostream& out) const;
+
+      /**
+      * Clear timers.
+      *
+      * Empty default implementation.
+      */
+      virtual void clearTimers();
+
+      /**
+      * Return the current converged simulation step index.
+      */
+      long iStep();
+
+      /**
+      * Return the current simulation step index.
+      */
+      long iTotalStep();
 
       ///@}
       /// \name Miscellaneous (Accessors and Boolean Flags)

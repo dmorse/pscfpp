@@ -77,30 +77,33 @@ other types of optional elements:
 
 In the source code of PSCF, different algorithms of the same type are
 generally implemented by C++ classes that are subclasses of a common
-base class. The generic names that we use in this documentation to
+base class. The generic names that we use in this documentation to 
 describe different types of algorithm generally correspond to the names 
-of the corresponding base class or base class template. Specifically,
-within each relevant program level namespace (Pscf::Rpc or Pscf::Rpg):
+of a base class template defined in namespace Pscf::Rp. Specifically:
 
-   - Brownian dynamics step algorithms are implemented by subclasses of 
-     a class named BdStep
+   - Brownian dynamics step algorithms are implemented by subclasses 
+     of specializations of the class template BdStep
 
-   - Monte Carlo moves are implemented by subclasses of McMove
+   - Monte Carlo moves are implemented by subclasses of specializations
+     of McMove.
 
    - File Io and data analysis operations are implemented by subclasses
-     of Analyzer.
+     of specializations of Analyzer.
 
-   - Algorithms for continuous variation of parameters are implemented by
-     subclasses of Ramp
+   - Algorithms for continuous variation of parameters are implemented 
+     by subclasses of specializations of Ramp
 
    - Classes that define additive changes to the field theoretic
-     Hamiltonian are subclasses of a base class named Perturbation
+     Hamiltonian are subclasses of specializations of Perturbation
+
+Each of the base class and subclass templates take the dimension of
+space and a backend identifier class as template parameters.
 
 The PSCF parameter file format uses selectable parameter file blocks 
 to allow a user to either choose one algorithm from a set of different 
 algorithms of the same type (as is appropriate for BdStep or Compressor 
 algorithms) or to choose a set one or more algorithms from among a list 
-of available algorithms of the same type (as is appropriate for McMove 
+of available algorithms of the same type (as appropriate for McMove 
 and Analyzer algorithms).
 
 <BR>

@@ -34,15 +34,16 @@ namespace Rp {
    /**
    * Manager for a set of McMove objects.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, both also named McMoveManager,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension
    *    - T : backend identifier class (CPT or CUT)
+   *
+   * An McMoveManager is a container that holds pointers to a set of
+   * heap-allocated instances of subclasses of McMove \<D, T\>. Each
+   * such McMove is assigned a probability that it will be chosen by
+   * the McMoveManager::chooseMove function as the move that should 
+   * be attempted during one step of an MC simulation. 
    *
    * \ingroup Rp_Fts_MonteCarlo_Module
    */

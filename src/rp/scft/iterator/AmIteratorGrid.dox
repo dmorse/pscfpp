@@ -1,27 +1,21 @@
+namespace Pscf {
+namespace Rp {
+
 /*! 
 \page rp_AmIteratorGrid_page AmIteratorGrid
 
-The AmIteratorGrid algorithm available in the pscf_rpc or pscf_rpg programs
-uses an Anderson mixing algorithm in which residual equations and field 
-updates are formulated using values defined on the nodes of a regular 
-spatial grid. The algorithm can be used to either solve the SCFT equations 
-for a rigid unit cell or to solve the SCFT equations and also optimize the 
-unit cell parameters of a flexible unit cell so as to minimize the free 
-energy density. Closely analogous classes to implement this algorithm are
-defined in the Pscf::Rpc and Pscf::Rpg namespaces.
+The AmIteratorGrid class template uses an Anderson mixing algorithm in 
+which residual equations and field updates are formulated using values 
+defined on the nodes of a regular spatial grid or mesh. The algorithm can 
+be used to either solve the SCFT equations for a rigid unit cell or to 
+solve the SCFT equations and also optimize the unit cell parameters.
 
 In contrast tot the AmIteratorBasis algorithm, AmIteratorGrid algorithm
-does not impose any specified space-group symmetry on the solution.  If 
-given an initial guess that is close to a solution that does exhibit a 
-nontrivial symmetry, the algorithm will often to such a symmetric 
-solution.
+does not impose any space-group symmetry on the solution.  If given an 
+initial guess that is close to a solution that does exhibit a nontrivial 
+symmetry, the algorithm will often converge to this symmetric solution.
 
-Class API documentation:
-<ul>
-   <li> Pscf::Rpc::AmIteratorBasis </li>
-   <li> Pscf::Rpg::AmIteratorBasis </li>
-</ul>
-
+\sa AmIteratorGrid
 \sa \ref pscf_AmIteratorTmpl_page "Anderson mixing algorithms"
 
 \section rp_AmIteratorGrid_param_sec Parameter file
@@ -164,3 +158,6 @@ density times the monomer reference volume) in units in which
 given by the parameter scaleStress, which is set to 10.0 by default.
 
 */
+
+}
+}

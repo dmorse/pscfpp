@@ -34,19 +34,14 @@ namespace Rp {
    /**
    * McMove is an abstract base class for Monte Carlo moves.
    *
-   * The virtual move() function must generate a trial move, decide whether
-   * to accept or reject it, and update the associated System fields if
-   * the move is accepted.
-   *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, both also named McMove, that 
-   * are defined in Rpc and Rpg namespaces and used in the pscf_rpc and 
-   * pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension
    *    - T : backend identifier class (CPT or CUT)
+   *
+   * The virtual move() function must generate a trial move, decide 
+   * wether to accept or reject it, and update or restore the w-fields 
+   * owned by the associated System.
    *
    * \ingroup Rp_Fts_MonteCarlo_Module
    */

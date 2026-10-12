@@ -30,9 +30,14 @@ namespace Rp {
    using namespace Util;
 
    /**
-   * Class for storing data about an individual linear ramp parameter.
+   * Data about an individual linear ramp parameter.
    *
-   * This class stores the information required to ramp a single
+   * Template parameters:
+   *
+   *   - D : dimension
+   *   - T : backend identifier class (CPT or CUT)
+   *
+   * This class template stores information required to ramp a single
    * parameter value of any of several types.  The parameter type is
    * indicated in the public interface and parameter file format by a
    * string identifier with any of several allowed values. Most types
@@ -92,16 +97,6 @@ namespace Rp {
    * and change is the a floating point value for the change in parameter
    * value. The corresponding format for a parameter that requires two
    * indices (e.g., block or chi) is instead: "type id(0) id(1) change".
-   *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named RampParameter,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
-   * Template parameters:
-   *
-   *   - D : dimension
-   *   - T : backend identifier class (CPT or CUT)
    *
    * \see \ref rp_LinearRamp_page "Manual Page"
    * \ingroup Rp_Fts_Ramp_Module

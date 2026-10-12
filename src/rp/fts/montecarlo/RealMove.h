@@ -9,8 +9,8 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>  // base class
-#include <util/containers/DArray.h>    // member
 #include <prdc/field/RField.h>         // member
+#include <util/containers/DArray.h>    // member
 
 #include <pscf/backend/TmplDeclare.h>
 #include <iostream>
@@ -30,11 +30,6 @@ namespace Rp {
 
    /**
    * RealMove generates spatially uncorrelated random field changes.
-   *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named RealMove, that
-   * are defined in Rpc and Rpg namespaces for use in the pscf_rpc and
-   * pscf_rpg programs, respectively.
    *
    * Template parameters:
    *

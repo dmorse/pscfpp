@@ -4,9 +4,9 @@
 \ref developer_test_page          (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
-Some operations performed by the pscf_rpg program require arrays to
-be explicitly copied between CPU host memory and GPU device memory. 
-The two most common situations that require this are:
+Some operations performed by the pscf_rpg program require arrays to be 
+explicitly copied between CPU host memory and GPU device memory.  The 
+two most common situations that require this are:
 
    - Field input and output operations that must be performed on
      the CPU host but that require access to field data that is
@@ -16,64 +16,61 @@ The two most common situations that require this are:
      on the GPU host but that are difficult to implement as parallel
      CUDA kernels, and so are instead performed on the CPU host.
 
-The data transfer operations that are performed for these purposes
-in template specializations that are used by pscf_rpg are generally 
+The data transfer operations that are performed for these purposes in 
+template specializations that are used by pscf_rpg are generally 
 unnecessary in corresponding specializations used by pscf_rpc, since
-this program does not use GPU device and allocates all arrays in
-CPU memory.
+this program does not use GPU device and allocates all arrays in CPU 
+memory.
 
 PSCF provides a pair of class templates named Pscf::HostSendArray and 
-Pscf::HostRecvArray that each take a backend identifier class T as 
-a parameter argument, and that are designed to be used in operations 
-that require copying of data between the GPU device and the CPU host 
-in template specializations with T=Pscf::CUT. The two templates are
-declared as
+Pscf::HostRecvArray that each take a backend identifier class T as a 
+parameter argument, and that are designed to be used in operations that 
+require copying of data between the GPU device and the CPU host in 
+template specializations with T=Pscf::CUT. The two templates are declared 
+as
 \code
 namespace Pscf {
    template <typename Data, typename T> class HostSendArray;
    template <typename Data, typename T> class HostRecvArray;
 }
 \endcode
-where the parameter Data is the type of each array element and 
-T is backend identifier class. Specializations of these templates
-with T=Pscf::CUT are designed to provide a convenient syntax for
-operations that copy arrays between the CPU host and CPU device,
-in either direction. Specializations with T=Pscf::CPT are designed 
-to use the same syntax but to not actually perform any unnecessary 
-copy operations. This is done by requiring that the sequence of
-function calls that is used to actual perform a "deep" copy of 
-data between GPU and CPU arrays when used with specializations 
-of these templates with T=Pscf::CUT instead create a "shallow" 
-copy that simply makes two arrays point to the same data when 
-used with specializations with T=Pscf::CPT.
+where the parameter Data is the type of each array element and T is 
+backend identifier class. Specializations of these templates with 
+T=Pscf::CUT are designed to provide a convenient syntax for operations 
+that copy arrays between the CPU host and CPU device, in either 
+direction. Specializations with T=Pscf::CPT are designed to use the 
+same syntax but to not actually perform any unnecessary copy operations. 
+This is done by requiring that the sequence of function calls that is 
+used to actual perform a "deep" copy of data between GPU and CPU arrays 
+when used with specializations of these templates with T=Pscf::CUT 
+instead create a "shallow" copy that simply makes two arrays point to 
+the same data when used with specializations with T=Pscf::CPT.
 
-The design of these two templates is based on the assumption 
-that most large, long-lived arrays in PSCF are allocated on 
-the GPU in specializations with T = Pscf::CUT, and are thus 
-defined in template code as instances of DeviceArray<Data,T> 
-or a subclass thereof.  The design is designed to allow 
-operations that copy data between a long-lived DeviceArray 
-and a shorter-lived HostSendArray or HostRecvArray, for which 
-the data in the HostSendArray or HostRecvArray only needs to 
-be accessed within the scope of a single function. 
+The design of these two templates is based on the assumption that 
+most large, long-lived arrays in PSCF are allocated on the GPU in 
+specializations with T = Pscf::CUT, and are thus defined in template code 
+as instances of DeviceArray<Data,T> or a subclass thereof.  The design 
+is designed to allow operations that copy data between a long-lived 
+DeviceArray and a shorter-lived HostSendArray or HostRecvArray, for 
+which the data in the HostSendArray or HostRecvArray only needs to be 
+accessed within the scope of a single function. 
 
-The template HostSendArray is designed to be used for CPU-to-GPU 
-copy operations, while HostRecvArray is designed to be used for 
-GPU-to-CPU copy operations.  A HostSendArray defines a subscript
-([]) operator that allows read and write access to elements
-of the array, which is needed to allow elements to be assigned
-values before they are copied to the device array.  The 
-HostRecvArray instead defines a subscript operator that 
-only allows read access to elements, allowing elements to be 
-read after they are copied from the associated DeviceArray.
+The template HostSendArray is designed to be used for CPU-to-GPU copy 
+operations, while HostRecvArray is designed to be used for GPU-to-CPU 
+copy operations.  A HostSendArray defines a subscript ([]) operator 
+that allows read and write access to elements of the array, which is 
+needed to allow elements to be assigned values before they are copied 
+to the device array.  The HostRecvArray instead defines a subscript 
+operator that only allows read access to elements, allowing elements 
+to be read after they are copied from the associated DeviceArray.
 
 \section developer_backend_HostToDev Host-to-Device Copy
 
-The pseudo-code shown below outlines the required usage to 
-transfer data from an instance of a HostSendArray<Data,T> named 
-hostArray to an instance of DeviceArray<Data,T> named devArray. 
-We assume that the devArray container has been declared and 
-allocated prior to entry to this code segment.
+The pseudo-code shown below outlines the required usage to transfer data 
+from an instance of a HostSendArray<Data,T> named hostArray to an instance 
+of DeviceArray<Data,T> named devArray.  We assume that the devArray 
+container has been declared and allocated prior to entry to this code 
+segment.
 \code
     HostSendArray<Data,T> hostArray;
     hostArray.associate(devArray);
@@ -89,25 +86,22 @@ different operations for specializations with T=Pscf:CUT and
 T=Pscf:CPT.
 
 In specializations with T=Pscf::CUT (Cuda backend):
-   - The statement hostArray.associate(devArray) checks if 
-     hostArray is allocated and, if it is not, allocates it with
-     the same capacity as that of the devArray container that is
-     passed to the associate function.
-   - The statement devArray = hostArray copies all elements 
-     of hostArray to devArray, by performing a CPU-to-GPU
-     copy of the array.
+   - The statement hostArray.associate(devArray) checks if hostArray is 
+     allocated and, if it is not, allocates it with the same capacity as 
+     that of the devArray container that is passed to the associate 
+     function.
+   - The statement devArray = hostArray copies all elements of hostArray 
+     to devArray, by performing a CPU-to-GPU copy of the array.
    - The statement hostArray.dissociate() does nothing.
 
 In specializations with T=Pscf::CPT (C++ backend):
-   - The statement hostArray.associate(devArray) sets a
-     pointer owned by hostArray to be a copy of the pointer
-     to the array owned by devArray, thus making hostArray
-     a shallow copy of devArray.
-   - The statement devArray = hostArray does nothing.
-   - The statement hostArray.dissociate() nullifies the 
-     pointer member of hostArray that points to an 
-     array, thus destroying the association between the 
-     two arrays.
+   - The statement hostArray.associate(devArray) sets a pointer owned by 
+     hostArray to be a copy of the pointer to the array owned by devArray, 
+     thus making hostArray a shallow copy of devArray.
+   - The statement devArray = hostArray does nothing.  
+   - The statement hostArray.dissociate() nullifies the pointer member of 
+     hostArray that points to an array, thus destroying the association 
+     between the two arrays.
 
 In specializations with T=Pscf::CPT, assignment of values to
 the elements of hostArray thus automatically also assigns
@@ -117,35 +111,31 @@ of a shallow copy avoids the need to actually copy any data,
 while allowing the same function template to be used with 
 either backend.
 
-In specializations with T=Pscf::CPT, the pointer owned by the 
-host array is null after the call to hostArray.dissociate(), 
-and so does not have any access to data after this point.
-To use this pattern safely in template code that must be
-valid for either backend, the associate function, assignment 
-operator, and dissociate function must all be called within 
-the same function, and elements of hostArray may only be 
-assigned values between the call to the associate member
-function and the assignment (=) operator.
+In specializations with T=Pscf::CPT, the pointer owned by the host array 
+is null after the call to hostArray.dissociate(), and so does not have any 
+access to data after this point.  To use this pattern safely in template 
+code that must be valid for either backend, the associate function, 
+assignment operator, and dissociate function must all be called within 
+the same function, and elements of hostArray may only be assigned values 
+between the call to the associate member function and the assignment (=) 
+operator.
 
-In specializations with T=Pscf::CUT, the HostSendArray owns
-a separate block of CPU heap memory that can be allocated by 
-the associate function. The dissociate function does not deallocate 
-this memory, but the destructor function for a HostSendArray 
-deallocates any associated memory that remains when the object 
-is destroyed. If the HostRecvArray is a local variable that 
-is defined within a function, as in the above example, this 
-memory will thus be deallocated when the function ends and 
-the host array goes out of scope.  If the HostRecvArray is 
-instead a class member variable that is used in a class member 
-function, then the associated memory will be allocated the 
-first time the associate function is called, and can be 
-re-used in multiple calls to the same or other member 
-function, as long as the associated device array always has 
-the same number of elements. The associate member function
-throws an Exception if a HostRecvArray is already allocated
-on entry but its capacity is not equal to that of the device
-array that is passed as a function argument. The decision to
-not use the dissociate function to deallocate host memory was 
+In specializations with T=Pscf::CUT, the HostSendArray owns a separate 
+block of CPU heap memory that can be allocated by the associate function. 
+The dissociate function does not deallocate this memory, but the 
+destructor function for a HostSendArray does deallocates any heap memory
+that it owns when the object is destroyed. If the HostRecvArray is a 
+local variable that is defined within a function, as in the above example, 
+this memory will thus be deallocated when the function ends and the host 
+array goes out of scope.  If the HostRecvArray is instead a class member 
+variable that is used in a class member function, then the associated 
+memory will be allocated the first time the associate function is called, 
+and can be re-used in multiple calls to the same or other member function, 
+as long as the associated device array always has the same number of 
+elements. The associate member function throws an Exception if a 
+HostRecvArray is already allocated on entry but its capacity is not equal 
+to that of the device array that is passed as a function argument. The 
+decision to not use the dissociate function to deallocate host memory was 
 made to allow this reuse of memory if desired. 
 
 \section developer_backend_DevToHost Device-to-Host Copy
@@ -158,16 +148,14 @@ named hostArray:
     HostRecvArray<Data,T> hostArray;
     hostArray = devArray;
 
-    // Read elements of hostArray and use them to 
-    // do any required computation.
+    // Read elements of hostArray 
 
     hostArray.dissociate();
 \endcode
-In this pattern, all read access to elements of hostArray must 
-occur after the assignment statement "hostArray = devArray" and 
-before the statement "hostArray.dissociate()". The interface of
-the HostRecvArray does not allow values of individual elements
-to be modified. 
+In this pattern, all read access to elements of hostArray must occur 
+after the assignment statement "hostArray = devArray" and before the 
+statement "hostArray.dissociate()". The interface of the HostRecvArray 
+does not allow values of individual elements to be modified. 
 
 The assignment and dissociate member functions of the HostRecvArray 
 perform completely different operations for specializations with 
@@ -189,18 +177,16 @@ In specializations with T=Pscf::CPT (C++ backend):
      pointer member of hostArray, thus destroying the 
      association between the two arrays.
 
-In order for this pattern to be used safely in template code
-that must work correctly with both backends, the assignment
-operator, and dissociate function should all be called within 
-the same function, and elements of hostArray may only accessed 
-only between the calls to the assignment operator and the 
-dissociate member function.
+In order for this pattern to be used safely in template code that 
+must work correctly with both backends, the assignment operator, and 
+dissociate function should all be called within the same function, and 
+elements of hostArray may only accessed only between the calls to the 
+assignment operator and the dissociate member function.
 
-This pattern can be simplified somewhat in code in which
-the hostArray is a local variable that is defined within
-a function, while the array owned by the deviceArray exists
-before and after the lifetime of the host array. In this
-case:
+This pattern can be simplified somewhat in code in which the hostArray 
+is a local variable that is defined within a function, while the array 
+owned by the deviceArray exists before and after the lifetime of the 
+host array. In this case:
 
   - The default constructor and assignment operator can 
     be combined into a call to a conversion operator that
@@ -215,19 +201,16 @@ case:
     association (for T=Pscf::CPT) when the function
     ends and the hostArray is destroyed. 
 
-The most concise version of this pattern, for use with a
-host array that is a local variable, is thus:
+The most concise version of this pattern, for use with a host array that 
+is a local variable, is thus:
 \code
     HostRecvArray<Data,T> hostArray(devArray);
-    hostArray = devArray;
 
-    // Read elements of hostArray and use them to 
-    // do any required computation.
+    // Read elements of hostArray 
 
 \endcode
-There is, however, no harm in calling the dissociate
-function explicitly in this situation, to documment the
-need to release resources.
+There is, however, also no harm in calling the dissociate function 
+explicitly in this situation, to documment the need to release resources.
 
 The class template HostRecvArray is designed to provide read-only access 
 to array elements in order to guarantee that specializations that use 

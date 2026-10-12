@@ -12,7 +12,8 @@
 #include <rp/scft/iterator/Iterator.h>       // base template argument
 #include <util/containers/DArray.h>          // base template argument
 #include <pscf/iterator/AmbdInteraction.h>   // direct base member 
-#include <pscf/backend/TmplDeclare.h>       // declaration macros
+
+#include <pscf/backend/TmplDeclare.h>        // declaration macros
 
 namespace Pscf {
 namespace Rp {
@@ -22,18 +23,15 @@ namespace Rp {
    /**
    * Anderson Mixing iterator with imposed space-group symmetry.
    * 
-   * This variant of the Anderson mixing algorithm uses an expansion in
-   * symmetry-adapted Fourier basis functions to represent all fields,
-   * thus automatically imposing a user-specified space group symmetry.
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named AmIteratorBasis,
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
-   * and pscf_rpg programs, respectively. 
-   *
    * Template parameters:
    *
    *   - D : dimension
    *   - T : backend identifier class (CPT or CUT)
+   *
+   * This variant of the Anderson mixing algorithm uses an expansion in
+   * symmetry-adapted Fourier basis functions to represent all fields,
+   * thus automatically imposing a user-specified space group symmetry
+   * throughout the iteration.
    *
    * \see \ref rp_AmIteratorBasis_page "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page  "AM Iteration Algorithm"

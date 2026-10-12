@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 
-// Forward declaration
+// Forward declarations
 namespace Util { 
    template <class T> class Factory; 
 }
@@ -37,15 +37,10 @@ namespace Rp {
    /**
    * Monte-Carlo simulation coordinator.
    * 
-   * An McSimulator provides tools that are specific to MC simulation, 
-   * in addition to those inherited from the Simulator base class. An
+   * An McSimulator provides tools that are specific to MC simulation. An
    * McSimulator has an McMoveManager and an AnalyzerManager, in addition
-   * data members inherited from the Simulator class.
-   *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named McSimulator, that
-   * are defined in Rpc and Rpg namespaces for use in the pscf_rpc and
-   * pscf_rpg programs, respectively.
+   * to member functions and variables inherited from the Simulator base
+   * class.
    *
    * Template parameters:
    *

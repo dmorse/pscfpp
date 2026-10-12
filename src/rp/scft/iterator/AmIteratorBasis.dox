@@ -1,27 +1,31 @@
+namespace Pscf {
+namespace Rp {
+
 /*! 
 \page rp_AmIteratorBasis_page AmIteratorBasis
 
-The AmIteratorBasis algorithm used by either the pscf_rpc program or
-pscf_rpg solves the SCFT equations for a periodic system using the 
-Anderson Mixing algorithm. Closely analogous classes to implement
-this algorithm are defined in the Pscf::Rpc and Pscf::Rpg namespaces.
+The AmIteratorBasis class template solves the SCFT equations for a periodic 
+system using the Anderson Mixing algorithm. 
 
 Class API documentation:
 <ul>
-   <li> Pscf::Rpc::AmIteratorBasis </li>
-   <li> Pscf::Rpg::AmIteratorBasis </li>
+   <li> Pscf::Rp::AmIteratorBasis </li>
 </ul>
 
 \section rp_AmIteratorBasis_algorithm_sec Algorithm
 
-The variant of Anderson mixing implemented by the AmIteratorBasis 
-classes is very similar to that described in a paper by Arora et al.  
-[Arora, Morse, Bates, and Dorfman, J. Chem.  Phys. vol. 146, 244902 (2017)], 
-which was written as a description of an algorithm used in the older
-Fortran version of PSCF.  The version of this algorithm used by 
-AmIteratorBasis adjusts the fields by adjusting the compoments of each 
-field in a basis of symmetry adapated basis functions, thereby preserving 
-the space-group symmetry of the fields throughout the iteration.
+The variant of Anderson mixing implemented by the AmIteratorBasis class
+template is very similar to that described in a paper by Arora et al.
+[Arora, Morse, Bates, and Dorfman, J. Chem.  Phys. vol. 146, 244902 (2017)].
+This paper which was written as a description of an algorithm used in the 
+older Fortran version of PSCF, but also describes the version of this
+algorithm used in the current version. 
+
+The version of this algorithm used by AmIteratorBasis adjusts the fields 
+by adjusting the compoments of each field in a basis of symmetry adapted 
+basis functions. Expansion in a symmetry-adapted bases automatically 
+preserves the space-group symmetry of the fields throughout the iteration.
+
 The algorithm can be used to either solve the SCFT equations for a rigid 
 unit cell or to solve the SCFT equations and also optimize some or all 
 of the unit cell parameters of a flexible unit cell so as to minimize 
@@ -43,7 +47,7 @@ below:
     isFlexible   1
   }
 \endcode
-The format of this block is described more formally below:
+The allowed format of this block is described more completely below:
 \code
 AmIteratorBasis{
    epsilon          real 
@@ -213,3 +217,6 @@ the spatial average of the Laplace multiplier field \f$ \xi({\bf r}) \f$
 is implicitly set to zero by convention.
 
 */
+
+} // namespace Rp
+} // namespace Pscf

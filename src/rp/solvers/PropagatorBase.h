@@ -35,13 +35,25 @@ namespace Rp {
    /**
    * MDE solver for one direction of one block.
    *
-   * A fully initialized Propagator has associations with a parent Block 
-   * object that owns this propagator, and with a partner Propagator that 
-   * solves the MDE within the same block in the opposite direction. It 
-   * also has an association with a Mesh<D> that describes a spatial grid, 
-   * and associations with zero or more source Propagator objects that 
-   * are used to compute an initial condition for this propagator at its 
-   * head vertex.
+   * <b> Template parameters </b>:
+   *
+   *   - D  dimension of space
+   *   - T  class with aliases for use in a program-level namespace.
+   *
+   * <b> Description </b>:
+   *
+   * Explicit partial specializations of the Propagator \<D, T\> class
+   * template with different values for the template identifier class T 
+   * are derived from corresponding specializations of the PropagatorBase
+   * class template. 
+   *
+   * A fully initialized PropagatorBase has associations with a parent 
+   * Block object that owns this propagator, and with a partner Propagator 
+   * that solves the MDE within the same block in the opposite direction. 
+   * It also has an association with a Mesh<D> that describes a spatial 
+   * grid, and associations with zero or more source Propagator objects 
+   * that are used to compute an initial condition for this propagator 
+   * at its head vertex.
    *
    * The parent Block stores information required to numerically
    * solve the modified diffusion equation (MDE), including quantities
@@ -49,19 +61,9 @@ namespace Rp {
    * cell parameters and (in the thread model) the contour step size.
    * These quantities are set and stored by the block because their values
    * are the same for the two propagators owned by each block, but may be
-   * different for different blocks.  The algorithm used by a Propagator
+   * different for different blocks.  The algorithm used by a propagator
    * to solve the MDE repeatedly calls step functions provided by the
    * parent Block.
-   *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named Propagator, that 
-   * are defined in the Rpc and Rpg program-level name spaces for use in 
-   * the pscf_rpc and pscf_rpg programs, respectively. 
-   *
-   * <b> Template parameters </b>:
-   *
-   *   - D  dimension of space
-   *   - T  class with aliases for use in a program-level namespace.
    *
    * \ingroup Rp_Solver_Module
    */

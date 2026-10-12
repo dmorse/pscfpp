@@ -38,16 +38,11 @@ namespace Rp {
    /**
    * Linear response compressor.
    *
-   * This class implements a compressor that is an approximate Newton's
-   * method in which the Jacobian is approximated by the analytically
-   * calculated linear response of a homogeneous liquid with the same
-   * composition as the system of interest.
+   * This class template implements a compressor that is an approximate 
+   * Newton's method in which the Jacobian is approximated by the 
+   * analytically calculated linear response of a homogeneous liquid with 
+   * the same overall composition as the system of interest.
 
-   * Specializations of this class template are used as base classes for
-   * two closely analogous class templates, also both named LrCompressor,
-   * that are defined in Rpc and Rpg namespaces for use in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *   - D : dimension of space (D=1, 2, or 3)

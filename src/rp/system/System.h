@@ -55,34 +55,18 @@ namespace Rp {
    * <b> Template parameters and typename aliases</b>:
    *
    *    D - integer dimensionality of space (D=1, 2, or 3)
-   *    T - "Types" class collection of aliases for other classes
+   *    T - backend identifier class
    *
-   * <b> Usage </b>: A specialization of Rp::System\<D, T\> is used as
-   * a base class for each System\<D\> class defined in the Rpc and Rpg
-   * program-level namespaces, for D=1, 2, or 3.  In this usage, template
-   * parameter T is an instance of a class template named Types that
-   * is defined in each of these two namespaces.  For example, in the
-   * Pscf::Rpc namespace, for each value of D, class Rpc::System\<D\>
-   * is derived from the class Prdc::System\< D, Cpp\<D\> >.
-   *
-   * For each such specialization, class T = Types\<D\> defines a set
-   * of typename aliases for classes used in the relevant program-level
-   * namespace, for the specified value of D.  For example, for each value
-   * of D, the typename Cpp\<D\>::Mixture is an alias for the type
-   * Rpc::Mixture<D> that used to represent a mixture in the Rpc namespace
-   * for systems of spatial dimension D. See the definitions of Cpp
-   * and Cuda (src/pscf/backends/CPT.h and src/pscf/backends/CUT.h)
-   * for lists of all of the typenames defined in these class templates.
-   *
-   * In the remainder of this documentation for the Rp::System template,
-   * unqualified names such as "Mixture", "Iterator", etc. are used as
-   * shorthand for typename aliases such as T::Mixture or T::Iterator
-   * that are defined in the types class T (i.e., in Cpp\<D\> or
-   * Cuda\<D\>), which are aliases for class names such as
-   * Rpc::Mixture<D> or Rpg::Iterator<D>.
+   * An instance of System \<D, T\> owns a set of child objects, most
+   * of which are instances of specializations of templates that also
+   * take D and T as template parameters. For simplicity, in the 
+   * remainder of the documentation for the System class templates,
+   * we use names of class templates such as "Mixture" or "Iterator" 
+   * as shorthand for names of corresponding specializations of those
+   * templates, such as Mixture \<D, T\> or Iterator \<D, T\>.
    *
    * <b> Class Components </b>:
-   * A System object has (among other components):
+   * A System has (among other components):
    *
    *    - a Mixture (container for polymer and solvent solvers)
    *    - an %Interaction (list of binary interaction parameters)
@@ -101,26 +85,33 @@ namespace Rp {
    *
    * A System may also optionally have:
    *
-   *    - an %Environment
    *    - an Iterator
+   *    - an %Environment
    *    - a Sweep,
    *    - a Simulator
    *
    * Each optional component is constructed if and only if the parameter
    * file that is used to initialize the System contains a corresponding
-   * optional parameter file block. An %Environment is used to generate
-   * external and mask fields to describe inhomogeneous environments, and
-   * is omitted in standard calculations for structures formed in a
-   * homogeneous environment.  An Iterator is used for SCFT calculations.
-   * A Sweep is used for "sweep" calculations that solve a sequence of
-   * SCFT problems along a path through parameter space.  A Simulator is
-   * only used for PS-FTS calculations,  i.e., field theoretic simulations
-   * based on a partial saddle-point approximation. The Iterator and Sweep
-   * objects is thus normally omitted for PS-FTS calculations, while the
-   * Simulator object is normally omitted for SCFT calculations. The
-   * hasEnvironment(), hasIterator(), hasSweep(), and hasSimulator() bool
-   * member functions may be queried after processing of the parameter
-   * file to determine which of these optional components exist.
+   * optional parameter file block. 
+   *
+   *    - An Iterator is only used for SCFT calculations.
+   *    - An %Environment is used in SCFT calculations to generate 
+   *      external and mask fields to describe inhomogeneous environments,
+   *      and is omitted in standard SCFT calculations for structures 
+   *      formed in a homogeneous environment.  
+   *    - A Sweep is used for "sweep" calculations that solve a sequence 
+   *      of SCFT problems along a path through parameter space.  
+   *    - A Simulator is only used for PS-FTS calculations,  i.e., 
+   *      field theoretic simulations based on a partial saddle-point 
+   *      approximation. 
+   *
+   * The Iterator, Environment and Sweep objects are thus all normally 
+   * omitted in parameter files used for PS-FTS calculations, while the
+   * Simulator object is normally omitted in parameter files for SCFT 
+   * calculations. The hasEnvironment(), hasIterator(), hasSweep(), and 
+   * hasSimulator() bool member functions may be queried after processing 
+   * of the parameter file to determine which of these optional components 
+   * exist.
    *
    * See also:
    * <ul>
@@ -307,9 +298,9 @@ namespace Rp {
       void simulate(int nStep);
 
       /**
-      * Mark c-fields and free energy as outdated or invalid.
+      * Mark c-fields, propagators and free energies as outdated.
       *
-      * This function should be called whenever any of the inputs to the
+      * This function must be called whenever any of the inputs to the
       * solution of the modified diffusion equation are modified, including
       * the w fields, unit cell parameters, external fields, or mask. Upon
       * return, c().hasData(), scft().hasData(), and mixture().hasStress()

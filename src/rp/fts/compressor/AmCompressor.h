@@ -36,11 +36,6 @@ namespace Rp {
    /**
    * Anderson mixing compressor.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, both also named AmCompressor,
-   * that are defined in Rpc and Rpg namespaces and used in the pscf_rpc
-   * and pscf_rpg programs, respectively.
-   *
    * Template parameters:
    *
    *    - D : dimension of space (D=1, 2, or 3)

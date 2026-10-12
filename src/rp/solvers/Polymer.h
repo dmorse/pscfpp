@@ -35,21 +35,16 @@ namespace Rp {
    /**
    * Descriptor and MDE solver for one polymer species.
    *
-   * \ref user_param_polymer_sec "Manual Page"
+   * <b> Template parameters </b>:
+   *
+   *   - D  dimension of space
+   *   - T  backend identifier class
    *
    * This template adds functions required for periodic systems to an
    * appropriate specialization of the Pscf::PolymerTmpl base class 
    * template.
    *
-   * Specializations of this class template are used as base classes for 
-   * two closely analogous class templates, also named Polymer, that are
-   * defined in the Rpc and Rpg program-level name spaces for use in the
-   * pscf_rpc and pscf_rpg programs, respectively. 
-   *
-   * <b> Template parameters </b>:
-   *
-   *   - D  dimension of space
-   *   - T  Types class (CppTp<D> or CudaTp<D>)
+   * \sa \ref user_param_polymer_sec "Manual Page"
    *
    * \ingroup Rp_Solver_Module
    */

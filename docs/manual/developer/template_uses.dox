@@ -82,13 +82,12 @@ to maximize performance in production code.
 
 Throughout the code for systems with periodic boundary conditions, the
 dimension of space, denoted by D, is treated as a template parameter.  
-Almost all of the classes used defined namespaces Prdc, Rpc and Rpg are 
+Almost all of the classes used defined namespaces Prdc and Rp are 
 defined as specializations of class templates in which D is a template 
-parameter, often the only template parameter.  For example, classes used 
-by pscf_rpc to represent a block within a block polymer and an entire 
-polymer are defined as specializations of templates that are declared 
-within namespace Pscf::Rpc as "template <int D> class Block" and 
-"template <int D> class Polymer", respectively. For each class template 
+parameter.  For example, classes used by pscf_rpc and pscf_rpg to 
+represent a unit cell within a D-dimensional crystal are defined as
+specializations of a templates that are declared within namespace 
+Pscf::Rp as "template <int D> class UnitCell". For each class template 
 for which D is the only template parameter, the PSCF build system actually 
 explicitly instantiates (i.e., compiles code for) three specializations 
 corresponding to the three possible values of D = 1, 2, and 3.
@@ -110,14 +109,15 @@ exhibits a periodic dependence on only one or two coordinates.
 
 The decision to treat D as a template parameter in PSCF was originally 
 made to simplify design and improve performance of parts of the code that 
-deal with unit cells, crystallography, and periodic fields. Treating D as 
-a template parameter allows algorithms that involve description of unit 
-cells, reciprocal lattice vectors, symmetry operations, space groups, and 
-mesh dimensions to be implemented using data structures that represent 
-D-dimensional vectors and D \f$ \times \f$ D matrices using memory blocks 
-whose sizes are known at compile time, and that can thus be created on
-the stack, rather than needing to dynamically allocate memory for all 
-such small data structures on the heap at run time. 
+deal with unit cells, crystallography, and periodic fields for SCFT
+calculations. Treating D as a template parameter allows algorithms that 
+involve description of unit cells, reciprocal lattice vectors, symmetry 
+operations, space groups, and mesh dimensions to be implemented using 
+data structures that represent D-dimensional vectors and D \f$ \times \f$ 
+D matrices using memory blocks whose sizes are known at compile time, and
+that can thus be created on the stack, rather than needing to dynamically 
+allocate memory for all such small data structures on the heap at run 
+time. 
 
 \subsection developer_template_uses_algorithm_sub C. Algorithm templates
 
@@ -141,57 +141,24 @@ to represent residual vectors and solution vectors.
 
 PSCF currently contains code for three programs (pscf_r1d, pscf_rpc and 
 pscf_rpg, respectively) that are constructed using source code from 
-three corresonding program-level namespaces named Pscf:R1d, Pscf::Rpc, 
-and Pscf::Rpg, respectively. Many of the data structures and algorithms 
-used in different PSCF programs are closely analogous, but are 
-implemented as distinct but analogous classes defined in different program 
-level namespaces. Analogous classes defined in different program-level 
-namespaces are generally given the same name. Name clashes are prevented
-by a convention requiring that classes and function that are defined in 
-one program-level PSCF namespace may never use or refer to classes or 
+two corresonding program-level namespaces named Pscf:R1d and Pscf::Rp.
+Many of the data structures and algorithms used in different PSCF 
+programs are closely analogous, but are implemented as distinct but 
+analogous classes defined in different program level namespaces. 
+Analogous classes defined in different program-level namespaces are 
+generally given the same name. Name clashes are prevented by a 
+convention requiring that classes and function that are defined in one 
+program-level PSCF namespace may never use or refer to classes or 
 functions that are defined in a different program-level namespace. 
 
-For example, each of the three program-level namespaces uses a class or 
+For example, each of the two program-level namespaces uses a class or 
 class template named Polymer that represents one block polymer species.
 The executable pscf_r1d uses a class named Polymer that is defined in 
-namespace Pscf::R1d, while pscf_rpc uses a class template named Polymer 
-that is defined namespaces Pscf::Rpc, which takes D as a single template 
-parameter.  Each of the program-level namespaces also contain classes or 
-class templates named Propagator, Block, Mixture, Solvent, System, among 
-other common names. 
-
-The analogies between classes defined in the Rpc and Rpg namespaces
-for use in the pscf_rpc and pscf_rpg are particularly close. These two
-programs are designed to solve the same class of problems, and provide
-exactly the same features, but differ simply because on of them 
-(pscf_rpg) is designed to use a GPU, while the other is (pscf_rpc) is
-not. This difference in hardware causes these classes to use different
-types of classes to represent fields (functions of position): The
-pscf_rpc program uses a class template Rpg::Field<D> that wraps a
-block of memory that is allocated in CPU memory, while the program
-pscf_rpg uses an analogous template Rpg::Field<D> that wraps a block
-of memory that is allocated in global GPU memory. The use of different
-classes to represent fields necessarily effects the design of other
-classes that compute or manipulate fields, forcing a design in which
-these two programs are based on distinct but very closely analogous 
-sets of class definitions.
-
-Class templates that are designed to be used as base classes for
-analogous classes used in different programs appear in the following 
-directories:
-
-   - The directory src/pscf/solvers contains a set of class templates
-     named PropagatorTmpl, BlockTmpl, PolymerTmpl, and MixtureTmpl that
-     are used as base classes for classes that are used to solve the
-     modified diffusion equation (MDE) and thereby compute properties
-     of an ideal gas reference system, which are used in every PSCF 
-     program. 
-
-   - The directory src/rp and namespace Pscf::Rp contain a set of 
-     class templates that designed so that specializations of each
-     template can be used as a base class for a pair of closely
-     analogous classes of the same name that are defined in the
-     Rpc and Prg namespaces for used in pscf_rpc and pscf_rpg.
+namespace Pscf::R1d, while pscf_rpc and pscf_rpg use different 
+specializations of a class template named Polymer that is defined 
+namespace Pscf::Rp.  Each of the program-level namespaces also contain 
+classes or class templates named Propagator, Block, Mixture, Solvent, 
+System, among other common names. 
 
 <BR>
 \ref developer_template_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;

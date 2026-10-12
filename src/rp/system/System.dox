@@ -1,23 +1,17 @@
-namespace Pscf{
-namespace Rp{
+namespace Pscf {
+namespace Rp {
 /*! 
 \page rp_System_page System
 
-The main object in a pscf_rpc or pscf_rpg program is an instance of a class
-named System<D>, in which the integer template parameter D is the dimension 
-of space. The value of D is specified by the argument of the "-d" command 
-line option of the main program.  Closely analogous class templates named 
-System are defined in the Pscf::Rpc and Pscf::Rpg namespaces for use in 
-pscf_rpc and pscf_rpg, respectively. Both of these analogous class templates 
-are derived from partial specializations of a class template named 
-Pscf::Prdc::SystemTmpl, which defines a skeleton parameter file format 
-that is used by both classes. 
+The main object in a pscf_rpc or pscf_rpg program is an instance of a 
+specialization of the class template System \<D, T\>, in which the integer 
+template parameter D is the dimension of space and T is backend identifier
+class. The value of D is specified by the argument of the "-d" command 
+line option of the main program.  
 
 Class API Documentation:
 <ul> 
     <li> Pscf::Rp::System </li>
-    <li> Pscf::Rpc::System </li>
-    <li> Pscf::Rpg::System </li>
 </ul>
 
 \section rp_System_param_sec Parameter file format
@@ -100,28 +94,27 @@ parameters and enclosed blocks are described below:
     <td>
     A Sweep object performs a sequence of SCFT calculations along a 
     user-prescribed 1D path through parameter space, as described
-    \ref scft_sweep_page "here". A Sweep may only be added if 
-    an Iterator exists.  The Sweep block is optional and selectable, 
-    but the only option that is currently implemented for either 
-    pscf_rpc or pscf_rpg is a LinearSweep (class Rpc::LinearSweep or
-    (Rpg::LinearSweep). LinearSweep thus also the default choice 
-    obtained using the generic block name "Sweep".  (optional and 
-    selectable)
+    \ref scft_sweep_page "here". A Sweep may only be added if an 
+    Iterator exists.  The Sweep block is optional and selectable, but the 
+    only option that is currently implemented for either pscf_rpc or 
+    pscf_rpg is a LinearSweep (template Pscf::Rp::LinearSweep \<D, T\> ).
+    LinearSweep thus also the default choice obtained using the generic 
+    block name "Sweep".  (optional and selectable)
     </td>
   </tr>
   <tr>
     <td> Simulator#* </td>
     <td>
     The selectable \ref psfts_param_page "Simulator" block contains 
-    parameters for all of the algorithms that used to perform and
+    parameters for all of the algorithms that are used to perform and
     analyze a partial saddle-point field theoretic simulation (PS-FTS), 
     but that are not used for SCFT.  Users may currently select either 
-    a \ref rp_BdSimulator_page "BdSimulator" block (which creates 
-    an instance of a class named BdSimulator \<D\>) to perform a 
-    Brownian dynamics PS-FTS or a \ref rp_McSimulator_page McSimulator 
-    block (which creates an instance of a class named McSimulator \<D\>) 
-    to perform a field theoretic Monte-Carlo simulation.
-    (optional and selectable).
+    a \ref rp_BdSimulator_page "BdSimulator" block (which creates an
+    instance of Pscf::Rp::BdSimulator \<D, T\>) to perform a Brownian 
+    dynamics PS-FTS or a \ref rp_McSimulator_page McSimulator block 
+    (which creates an instance of Pscf::Rp::McSimulator \<D, T\>) to 
+    perform a field theoretic Monte-Carlo simulation.  (optional and 
+    selectable).
     </td>
   </tr>
 </table>

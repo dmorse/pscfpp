@@ -500,11 +500,10 @@ Example:
 
 \section developer_standards_template_sec Use of C++ templates
 
-  - In code for periodic systems defined in namespaces Pscf::Prdc,
-    Pscf::Rpc and Pscf::Rpg, the dimension D of space is always treated
-    as a template parameter. As a result, most of the files in
-    directories src/prdc, src/rpc, and src/rpg define class templates
-    for which D is a template parameter.
+  - In code for periodic systems defined in namespaces Pscf::Prdc and 
+    Pscf::Rp, the dimension D of space is always treated as a template 
+    parameter. As a result, most of the files in directories src/prdc, 
+    and src/rp define class templates for which D is a template parameter.
 
   - Specializations of class templates in which the dimension of space 
     D is the only template parameter should be explicitly instantiated 
