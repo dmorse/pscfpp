@@ -5,11 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/VecOpRl.h>
 #include <pscf/backend/cpp/Reduce.h>
 
-#include <pscf/backend/cpp/CPT.h>
 #include <rp/solvers/PropagatorBase.tpp>
+#include <pscf/backend/cpp/CPT.h>
 #include "Propagator_c.h"
 
 namespace Pscf {

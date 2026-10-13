@@ -12,9 +12,7 @@
 // the header for every explicit specialization that is enabled
 // for use by the build system.
 
-#ifdef PSCF_CPP
 #include <pscf/backend/cpp/VecRandom.h>
-#endif
 
 #ifdef PSCF_CUDA
 #include <pscf/backend/cuda/VecRandom.h>

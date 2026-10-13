@@ -7,14 +7,17 @@
 
 #include "AmCompressorBase.h"
 
-#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/VecOpRl.h>
 #include <pscf/backend/cpp/Reduce.h>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp>
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class AmIteratorTmpl< Rp::Compressor<1,CPT>, DeviceArray<double,CPT> >;
-   template class AmIteratorTmpl< Rp::Compressor<2,CPT>, DeviceArray<double,CPT> >; 
-   template class AmIteratorTmpl< Rp::Compressor<3,CPT>, DeviceArray<double,CPT> >;
+   template 
+   class AmIteratorTmpl< Rp::Compressor<1,CPT>, DeviceArray<double,CPT> >;
+   template 
+   class AmIteratorTmpl< Rp::Compressor<2,CPT>, DeviceArray<double,CPT> >; 
+   template 
+   class AmIteratorTmpl< Rp::Compressor<3,CPT>, DeviceArray<double,CPT> >;
 }

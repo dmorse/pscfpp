@@ -22,9 +22,12 @@
 #include <prdc/field/RFieldComparison.h>
 #include <prdc/field/RField.h>
 #include <prdc/fieldIo/rFieldIo.h>
+#include <prdc/fieldIo/fieldCheck.h>
 
 #include <pscf/backend/HostRecvArray.h>
 #include <pscf/backend/HostSendArray.h>
+#include <pscf/backend/VecOp.h>
+#include <pscf/backend/complex.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/MeshIteratorFortran.h>

@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>
 #include "CFields.tpp"
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

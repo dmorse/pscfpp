@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/VecOpRl.h>
 #include <pscf/backend/cpp/Reduce.h>
 
 #include <pscf/backend/cuda/CUT.h>

@@ -5,8 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
-#include "VecOp.h"
+#include "VecOpRl.h"
 #include <util/containers/Array.h>
 #include <cmath>
 

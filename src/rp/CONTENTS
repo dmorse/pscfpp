@@ -1,7 +1,7 @@
 
 The src/rp directory is a program-level directory that contains a set 
 of class templates that are defined in namespace Pscf::Rp and are used 
-to construct the programs pscf_rpc and pscf_rpg.
+to construct the pscf_rpc and pscf_rpg executable files.
 
 Class templates defined in this directory and the associated namespace
 are designed so that different specializations of each template can be 
@@ -31,9 +31,10 @@ fts/          - partial saddle-point field theoretic simulation (PS-FTS)
 scft/         - self-consistent field theory (SCFT)
 solvers/      - modified diffusion equation (MDE) solvers
 system/       - main System class template
+tests/        - unit tests
 
 Main programs:
 
-The files pscf_rpc.cpp and pscf_rpg.cpp contain main functions for the
-pscf_rpc and pscf_rpg programs. Both of these functions use a function
-template that is defined in the file run.h.
+The files pscf_rpc.cpp and pscf_rpg.cu contain main functions for the
+pscf_rpc and pscf_rpg executable files. Both of these functions use a 
+function template that is defined in the file run.h.

@@ -18,6 +18,9 @@
 #include <rp/field/Domain.h>
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
+
+#include <pscf/backend/VecRandom.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/math/IntVec.h>
 
 namespace Pscf {

@@ -8,9 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>       // base class template
-#include <rp/fts/compressor/Compressor.h>       // base template argument
-#include <pscf/backend/DeviceArray.h>           // base template argument
+#include <rp/fts/compressor/AmCompressorBase.h> // base specialization
 
 #include <rp/fts/compressor/IntraCorrelation.h> // member
 #include <prdc/field/RField.h>                  // member
@@ -18,17 +16,12 @@
 #include <pscf/math/IntVec.h>                   // member
 #include <util/containers/DArray.h>             // member
 
-#include <pscf/backend/TmplDeclare.h>          // declaration macros
+#include <pscf/backend/TmplDeclare.h>           // declaration macros
 
-// Forward declarations
+// Forward declaration
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RFieldDft;
-      template <int D, class T> class FFT;
-   }
    namespace Rp {
       template <int D, class T> class System;
-      template <int D, class T> class Simulator;
    }
 }
 

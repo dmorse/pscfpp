@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "VecOp.h"
+#include "VecOpRl.h"
 #include <fftw3.h>
 
 // Forward declaration

@@ -20,6 +20,8 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/backend/Reduce.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/iterator/NanException.h>
 #include <util/containers/DArray.h>

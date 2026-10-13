@@ -5,11 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/fieldIo/fieldCheck.h>
-#include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/complex.h>
 
-#include <rp/field/FieldIo.tpp>   // base class implementation
+#include <rp/field/FieldIo.tpp>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit specialization definitions
 namespace Pscf {

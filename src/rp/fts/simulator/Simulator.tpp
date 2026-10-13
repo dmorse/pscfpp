@@ -28,6 +28,9 @@
 
 #include <prdc/field/RField.h>
 
+#include <pscf/backend/VecRandom.h>
+#include <pscf/backend/Reduce.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/math/IntVec.h>

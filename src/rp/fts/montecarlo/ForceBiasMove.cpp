@@ -6,7 +6,7 @@
 */
 
 
-#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/VecOpRl.h>
 #include <pscf/backend/cpp/Reduce.h>
 #include <pscf/backend/cpp/VecRandom.h>
 

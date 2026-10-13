@@ -5,13 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>
-#include <pscf/backend/cpp/HostRecvArray.h>
-#include <pscf/backend/cpp/VecOp.h>
-#include <pscf/backend/cpp/VecOpCx.h>
-#include <pscf/backend/cpp/complex.h>
-
 #include <rp/fts/analyzer/BinaryStructureFactor.tpp>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

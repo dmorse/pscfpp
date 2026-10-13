@@ -5,11 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecOp.h>
-#include <pscf/backend/cpp/Reduce.h>
-#include <pscf/backend/cpp/CPT.h>
-
 #include <rp/fts/perturbation/EinsteinCrystalPerturbation.tpp>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

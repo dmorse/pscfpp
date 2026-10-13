@@ -5,9 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecRandom.h>
-#include <pscf/backend/cpp/VecOp.h>
-
 #include <rp/fts/brownian/LMBdStep.tpp>  // base class implementation
 
 // Explicit instantiation definitions

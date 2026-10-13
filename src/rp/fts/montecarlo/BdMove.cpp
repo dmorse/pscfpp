@@ -5,17 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecRandom.h>
-#include <pscf/backend/cpp/VecOp.h>
+#include <rp/fts/montecarlo/BdMove.tpp> 
 #include <pscf/backend/cpp/CPT.h>
-
-#include <rp/fts/montecarlo/BdMove.tpp>     // base class implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Rp::BdMove<1,CPT>;
-      template class Rp::BdMove<2,CPT>;
-      template class Rp::BdMove<3,CPT>;
+      template class BdMove<1,CPT>;
+      template class BdMove<2,CPT>;
+      template class BdMove<3,CPT>;
    }
 }

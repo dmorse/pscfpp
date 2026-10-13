@@ -8,12 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>  // base class template
-#include <rp/fts/compressor/Compressor.h>  // template argument
-#include <pscf/backend/DeviceArray.h>      // template argument
-#include <prdc/field/RField.h>             // member
-#include <util/containers/DArray.h>        // member
-#include <pscf/backend/TmplDeclare.h>      // declaration macros
+//#include <pscf/iterator/AmIteratorTmpl.h>  // base class template
+#include <rp/fts/compressor/AmCompressorBase.h> // base class specialization
+#include <prdc/field/RField.h>                  // member
+#include <util/containers/DArray.h>             // member
+
+#include <pscf/backend/TmplDeclare.h>            // declaration macros
 
 // Forward declarations
 namespace Pscf {

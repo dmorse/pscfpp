@@ -17,10 +17,14 @@
 #include <rp/field/CFields.h>
 
 #include <prdc/field/RField.h>
+
+#include <pscf/backend/Reduce.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
-#include <pscf/iterator/AmIteratorTmpl.tpp>
+#include <pscf/iterator/AmIteratorTmpl.tpp>  // base class implementation
+
 
 namespace Pscf {
 namespace Rp {

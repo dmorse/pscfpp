@@ -16,16 +16,21 @@
 #include <rp/solvers/Block.h>
 #include <rp/solvers/Propagator.h>
 #include <rp/field/FieldIo.h>
+
 #include <prdc/field/FFT.h>
 #include <prdc/field/RField.h>
 #include <prdc/crystal/UnitCell.h>
-#include <pscf/solvers/MixtureTmpl.tpp>
+
+#include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/chem/Monomer.h>
 #include <pscf/chem/PolymerModel.h>
+
 #include <util/containers/DArray.h>
 #include <util/misc/ioUtil.h>
 #include <util/misc/FileMaster.h>
+
+#include <pscf/solvers/MixtureTmpl.tpp>
 
 namespace Pscf {
 namespace Rp {

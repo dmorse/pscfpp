@@ -11,11 +11,15 @@
 #include "WFields.h"
 
 #include <rp/field/FieldIo.h>
+
 #include <prdc/field/RField.h>
 #include <prdc/fieldIo/rFieldIo.h>
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
+
+#include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>
+
 #include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>
 

@@ -12,6 +12,9 @@
 #include <prdc/field/FFT.h>
 #include <prdc/field/WaveList.h>
 
+#include <pscf/backend/HostRecvArray.h>
+#include <pscf/backend/VecOp.h>
+#include <pscf/backend/complex.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>

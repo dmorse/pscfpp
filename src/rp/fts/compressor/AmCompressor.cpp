@@ -5,18 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>
-#include <pscf/backend/cpp/VecOp.h>
-#include <pscf/backend/cpp/Reduce.h>
-
-#include <pscf/iterator/AmIteratorTmpl.tpp>
 #include <rp/fts/compressor/AmCompressor.tpp>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {
-   template class AmIteratorTmpl< Rp::Compressor<1,CPT>, DeviceArray<double,CPT> >;
-   template class AmIteratorTmpl< Rp::Compressor<2,CPT>, DeviceArray<double,CPT> >; 
-   template class AmIteratorTmpl< Rp::Compressor<3,CPT>, DeviceArray<double,CPT> >;
    namespace Rp {
       template class AmCompressor<1,CPT>;
       template class AmCompressor<2,CPT>;

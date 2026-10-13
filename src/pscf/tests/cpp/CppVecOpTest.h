@@ -4,7 +4,6 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/VecOpCx.h>
 #include <pscf/backend/cpp/complex.h>
 

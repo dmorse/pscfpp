@@ -12,7 +12,7 @@
 #include <r1d/solvers/Solvent.h>
 #include <pscf/chem/Ensemble.h>
 #include <pscf/iterator/NanException.h>
-#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/VecOpRl.h>
 #include <pscf/backend/cpp/Reduce.h>
 #include <util/global.h>
 

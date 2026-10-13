@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>            // member
-#include <util/containers/DArray.h>      // member
+#include <pscf/math/IntVec.h>           // member
+#include <util/containers/DArray.h>     // member
+
 #include <pscf/backend/TmplDeclare.h>   // template declaration macros
 #include <util/global.h>
 

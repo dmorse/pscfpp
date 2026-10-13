@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecOp.h>
 #include <rp/solvers/Mixture.tpp>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

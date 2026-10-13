@@ -5,10 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecOp.h>
-#include <pscf/backend/cpp/VecRandom.h>
-
-#include <rp/fts/brownian/PredCorrBdStep.tpp>  // class implementation
+#include <rp/fts/brownian/PredCorrBdStep.tpp>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

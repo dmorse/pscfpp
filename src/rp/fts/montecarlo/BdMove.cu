@@ -7,15 +7,15 @@
 
 #include <pscf/backend/cuda/VecRandom.h>
 #include <pscf/backend/cuda/VecOp.h>
-#include <pscf/backend/cuda/CUT.h>
 
-#include <rp/fts/montecarlo/BdMove.tpp>     // base class implementation
+#include <rp/fts/montecarlo/BdMove.tpp>
+#include <pscf/backend/cuda/CUT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {
    namespace Rp {
-      template class Rp::BdMove<1,CUT>;
-      template class Rp::BdMove<2,CUT>;
-      template class Rp::BdMove<3,CUT>;
+      template class BdMove<1,CUT>;
+      template class BdMove<2,CUT>;
+      template class BdMove<3,CUT>;
    }
 }

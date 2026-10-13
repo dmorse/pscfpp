@@ -9,11 +9,12 @@
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
-
 #include <prdc/crystal/UnitCell.h>
-#include <util/global.h>
 
-// Also need VecOp and Reduce classes
+#include <pscf/backend/VecOp.h>
+#include <pscf/backend/Reduce.h>
+
+#include <util/global.h>
 
 namespace Pscf {
 namespace Rp {

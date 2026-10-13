@@ -6,6 +6,7 @@ ifdef PSCF_CPP
   rp_fts_compressor_CPP= \
     rp/fts/compressor/Compressor.cpp \
     rp/fts/compressor/IntraCorrelation.cpp \
+    rp/fts/compressor/AmCompressorBase.cpp \
     rp/fts/compressor/AmCompressor.cpp \
     rp/fts/compressor/LrCompressor.cpp \
     rp/fts/compressor/LrAmCompressor.cpp \
@@ -20,6 +21,7 @@ ifdef PSCF_CUDA
   rp_fts_compressor_CU= \
     rp/fts/compressor/Compressor.cu \
     rp/fts/compressor/IntraCorrelation.cu \
+    rp/fts/compressor/AmCompressorBase.cu \
     rp/fts/compressor/AmCompressor.cu \
     rp/fts/compressor/LrCompressor.cu \
     rp/fts/compressor/LrAmCompressor.cu \
