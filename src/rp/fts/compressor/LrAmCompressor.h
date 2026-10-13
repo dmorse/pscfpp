@@ -9,7 +9,6 @@
 */
 
 #include <rp/fts/compressor/AmCompressorBase.h> // base specialization
-
 #include <rp/fts/compressor/IntraCorrelation.h> // member
 #include <prdc/field/RField.h>                  // member
 #include <prdc/field/RFieldDft.h>               // member

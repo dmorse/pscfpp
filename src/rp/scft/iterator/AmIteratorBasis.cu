@@ -5,11 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecOpRl.h>
-#include <pscf/backend/cpp/Reduce.h>
-
+#include <rp/scft/iterator/AmIteratorBasis.tpp>
 #include <pscf/backend/cuda/CUT.h>
-#include <rp/scft/iterator/AmIteratorBasis.tpp> // template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {

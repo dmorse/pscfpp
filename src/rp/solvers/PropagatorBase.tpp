@@ -11,6 +11,9 @@
 #include <rp/solvers/PropagatorBase.h>
 #include <rp/solvers/Block.h>
 #include <prdc/field/RField.h>
+
+#include <pscf/backend/Reduce.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>
 
 namespace Pscf {

@@ -5,10 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/VecOp.h>
-#include <pscf/backend/cpp/VecOpRl.h>
-#include <pscf/backend/cuda/Reduce.h>
-
 #include <rp/fts/analyzer/FourthOrderParameter.tpp>
 #include <pscf/backend/cuda/CUT.h>
 

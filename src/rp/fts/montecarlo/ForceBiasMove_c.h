@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <rp/fts/montecarlo/ForceBiasMoveBase.h>   // base class template
-#include <pscf/backend/cpp/CPT.h>           
+#include <rp/fts/montecarlo/ForceBiasMoveBase.h> // base class template
+#include <pscf/backend/cpp/CPT.h>                // template argument
 
 namespace Pscf {
 namespace Rp {
@@ -25,15 +25,15 @@ namespace Rp {
    *
    * This class implements a Monte Carlo move in which the unconstrained
    * attempted move is created by an explicit Euler-Maruyama Brownian
-   * dynamics step. 
+   * dynamics step.
    *
    * \see ForceBiasMove
    * \see \ref rp_ForceBiasMove_page "Manual Page"
    * \ingroup Rp_Fts_MonteCarlo_Module
    */
    template <int D>
-   class ForceBiasMove<D,CPT> 
-     : public ForceBiasMoveBase<D,CPT>
+   class ForceBiasMove<D,CPT>
+    : public ForceBiasMoveBase<D,CPT>
    {
 
    public:

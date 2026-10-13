@@ -14,8 +14,8 @@
 #include <prdc/crystal/shiftToMinimum.h>
 
 #include <pscf/backend/HostSendArray.h>
-#include <pscf/backend/VecOp.h>
 #include <pscf/backend/Reduce.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/MeshIterator.h>
 
