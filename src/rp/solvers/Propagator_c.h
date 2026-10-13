@@ -85,16 +85,16 @@ namespace Rp {
    protected:
 
       /// Direct (parent) base class.
-      using RpPropagatorT = PropagatorBase<D,CPT>;
+      using PropagatorBaseT = PropagatorBase<D,CPT>;
 
       /// Inherited typename alias for indirect (grandparent) base class.
-      using typename RpPropagatorT::PropagatorTmplT;
+      using typename PropagatorBaseT::PropagatorTmplT;
 
       /// Inherited non-dependent class members.
-      using RpPropagatorT::qFields_;
-      using RpPropagatorT::ns_;
-      using RpPropagatorT::isAllocated_;
-      using RpPropagatorT::computeHead;
+      using PropagatorBaseT::qFields_;
+      using PropagatorBaseT::ns_;
+      using PropagatorBaseT::isAllocated_;
+      using PropagatorBaseT::computeHead;
 
    };
 

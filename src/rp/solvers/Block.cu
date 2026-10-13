@@ -206,7 +206,7 @@ namespace Rp {
                                           c.cArray(), d.cArray(), n);
    }
 
-   // Rp::Block member functions:
+   // Block class template member functions:
 
    /*
    * Constructor.
@@ -597,8 +597,8 @@ namespace Rp {
       VecOp::eqS(cField(), 0.0);
 
       // References to forward and reverse propagators
-      Rp::Propagator<D,CUT> const & p0 = propagator(0);
-      Rp::Propagator<D,CUT> const & p1 = propagator(1);
+      Propagator<D,CUT> const & p0 = propagator(0);
+      Propagator<D,CUT> const & p1 = propagator(1);
 
       addEqMulVVc(cField(), p0.q(0), p1.q(ns_ - 1), 1.0);
       addEqMulVVc(cField(), p0.q(ns_ - 1), p1.q(0), 1.0);
@@ -633,8 +633,8 @@ namespace Rp {
       VecOp::eqS(cField(), 0.0);
 
       // References to forward and reverse propagators
-      Rp::Propagator<D,CUT> const & p0 = propagator(0);
-      Rp::Propagator<D,CUT> const & p1 = propagator(1);
+      Propagator<D,CUT> const & p0 = propagator(0);
+      Propagator<D,CUT> const & p1 = propagator(1);
 
       // Internal beads (j = 1, ..., nbead, with nbead = ns_ -2)
       for (int j = 1; j < ns_ - 1; ++j) {
@@ -665,8 +665,8 @@ namespace Rp {
       UTIL_CHECK(mesh().dimensions() == fft().meshDimensions());
 
       // References to forward and reverse propagators
-      Rp::Propagator<D,CUT>& p0 = propagator(0);
-      Rp::Propagator<D,CUT>& p1 = propagator(1);
+      Propagator<D,CUT>& p0 = propagator(0);
+      Propagator<D,CUT>& p1 = propagator(1);
       UTIL_CHECK(p0.isSolved());
       UTIL_CHECK(p1.isSolved());
 
@@ -782,8 +782,8 @@ namespace Rp {
       UTIL_CHECK(ns_ > 0);
 
       // References to forward and reverse propagators
-      Rp::Propagator<D,CUT>& p0 = propagator(0);
-      Rp::Propagator<D,CUT>& p1 = propagator(1);
+      Propagator<D,CUT>& p0 = propagator(0);
+      Propagator<D,CUT>& p1 = propagator(1);
       UTIL_CHECK(p0.isSolved());
       UTIL_CHECK(p1.isSolved());
 

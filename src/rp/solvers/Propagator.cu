@@ -26,7 +26,7 @@ namespace Rp {
    */
    template <int D>
    Propagator<D,CUT>::Propagator()
-    : RpPropagatorT()
+    : PropagatorBaseT()
    {}
 
    /*
@@ -52,7 +52,7 @@ namespace Rp {
    template <int D>
    void Propagator<D,CUT>::allocate(int ns, const Mesh<D>& mesh)
    {
-      RpPropagatorT::allocate(ns, mesh);
+      PropagatorBaseT::allocate(ns, mesh);
 
       const int meshSize = mesh.size();
       IntVec<D> const & meshDimensions = mesh.dimensions();
@@ -76,7 +76,7 @@ namespace Rp {
    template <int D>
    void Propagator<D,CUT>::reallocate(int ns)
    {
-      RpPropagatorT::reallocate(ns);
+      PropagatorBaseT::reallocate(ns);
 
       // Deallocate memory previously used by this propagator.
       dissociateQFields();      // dissociate, nulliify data pointers
@@ -84,7 +84,7 @@ namespace Rp {
       qFieldsAll_.deallocate(); // destroy contiguous data block
 
       // Store mesh properties
-      Mesh<D> const & mesh = RpPropagatorT::mesh();
+      Mesh<D> const & mesh = PropagatorBaseT::mesh();
       const int meshSize = mesh.size();
       IntVec<D> const & meshDimensions = mesh.dimensions();
 

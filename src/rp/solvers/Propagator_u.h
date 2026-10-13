@@ -21,15 +21,14 @@ namespace Rp {
    template <int D, class T> class Propagator;
 
    /**
-   * MDE solver for one direction of one block, CUDA variant.
+   * MDE solver for one direction of one block, CUDA specialization.
    *
    * \see PropagatorBase
    * \see Pscf::PropagatorTmpl
    * \ingroup Rp_Solver_Module
    */
    template <int D>
-   class Propagator<D,CUT> 
-    : public Rp::PropagatorBase<D,CUT>
+   class Propagator<D,CUT> : public PropagatorBase<D,CUT>
    {
 
    public:
@@ -83,27 +82,27 @@ namespace Rp {
    protected:
 
       /// Direct base class.
-      using RpPropagatorT = Rp::PropagatorBase<D,CUT>;
+      using PropagatorBaseT = PropagatorBase<D,CUT>;
 
       // Inherited typename alias
-      using typename RpPropagatorT::PropagatorTmplT;
+      using typename PropagatorBaseT::PropagatorTmplT;
 
-      using RpPropagatorT::qFields_;
-      using RpPropagatorT::ns_;
-      using RpPropagatorT::isAllocated_;
-      using RpPropagatorT::computeHead;
+      using PropagatorBaseT::qFields_;
+      using PropagatorBaseT::ns_;
+      using PropagatorBaseT::isAllocated_;
+      using PropagatorBaseT::computeHead;
 
    private:
 
       /**
-      * Array containing the entire propagator, stored on the device.
+      * Array containing the entire propagator, stored on the GPU device.
       *
       * The propagator data is stored contiguously to allow batched FFTs
       * to be performed on all contour steps simultaneously, which occurs
       * in Block::computeStress.
-      * 
-      * Each element of the qFields_ container is an RField<D,CUT> that acts
-      * as a reference array that points to a slice of the contiguous
+      *
+      * Each element of the qFields_ container is an RField<D,CUT> that
+      * acts as a reference array that points to a slice of the contiguous
       * array qFieldsAll_.  This association is created in the allocate
       * or de-allocate functions, and destroyed by the dissociateQFields
       * function.

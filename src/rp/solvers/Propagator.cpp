@@ -22,7 +22,7 @@ namespace Rp {
    */
    template <int D>
    Propagator<D,CPT>::Propagator()
-    : RpPropagatorT()
+    : PropagatorBaseT()
    {}
 
    /*
@@ -38,8 +38,8 @@ namespace Rp {
    template <int D>
    void Propagator<D,CPT>::allocate(int ns, const Mesh<D>& mesh)
    {
-      RpPropagatorT::allocate(ns, mesh);
-      UTIL_CHECK(RpPropagatorT::ns() == ns);
+      PropagatorBaseT::allocate(ns, mesh);
+      UTIL_CHECK(PropagatorBaseT::ns() == ns);
 
       qFields_.allocate(ns);
       for (int i = 0; i < ns; ++i) {
@@ -56,8 +56,8 @@ namespace Rp {
    template <int D>
    void Propagator<D,CPT>::reallocate(int ns)
    {
-      RpPropagatorT::reallocate(ns);
-      UTIL_CHECK(RpPropagatorT::ns() == ns);
+      PropagatorBaseT::reallocate(ns);
+      UTIL_CHECK(PropagatorBaseT::ns() == ns);
 
       // Deallocate all memory previously used by this propagator.
       qFields_.deallocate();
@@ -67,13 +67,14 @@ namespace Rp {
       // ptr is a pointer to the underlying C array. The C++ delete [] 
       // command calls the destructor for each RField<D,CPT> array element
       // before deleting the parent array. The RField<D,CPT> destructor 
-      // deletes the double* array that stores the field associated 
-      // with each slice of the propagator. All memory is thus released.
+      // deletes the double* array that stores the field associated with
+      // each slice of the propagator. All memory is thereby properly
+      // released.
 
       // Allocate new memory for qFields_ using the new value of ns
       qFields_.allocate(ns);
       for (int i = 0; i < ns; ++i) {
-         qFields_[i].allocate(RpPropagatorT::mesh().dimensions());
+         qFields_[i].allocate(PropagatorBaseT::mesh().dimensions());
       }
 
       PropagatorTmplT::setIsSolved(false);

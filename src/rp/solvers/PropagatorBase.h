@@ -147,12 +147,12 @@ namespace Rp {
       *
       * \param i  step index, 0 <= i < ns
       */
-      const RField<D,T>& q(int i) const;
+      RField<D,T> const & q(int i) const;
 
       /**
       * Return q-field at the initial (head) vertex.
       */
-      const RField<D,T>& head() const;
+      RField<D,T> const & head() const;
 
       /**
       * Return q-field at the terminal (tail) vertex.
@@ -162,7 +162,7 @@ namespace Rp {
       * for this propagator is a chain end (i.e., if isTailEnd() == true).
       * In this case, the tail slice is not needed, and so is not computed.
       */
-      const RField<D,T>& tail() const;
+      RField<D,T> const & tail() const;
 
       /**
       * Get the associated Block object by const reference.
