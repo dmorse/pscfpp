@@ -12,7 +12,7 @@
 // It includes the header for every all functions that are compiled by
 // the build system.
 
-#include <pscf/backend/cpp/ReduceCx.h>
+#include <pscf/backend/cpp/Reduce.h>
 
 #ifdef PSCF_CUDA
 #include <pscf/backend/cuda/Reduce.h>

@@ -13,7 +13,7 @@
 #include <pscf/chem/Ensemble.h>
 #include <pscf/iterator/NanException.h>
 #include <pscf/backend/cpp/VecOp.h>
-#include <pscf/backend/cpp/ReduceCx.h>
+#include <pscf/backend/cpp/Reduce.h>
 #include <util/global.h>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp>

@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "ReduceCx.h"
+#include "Reduce.h"
 #include <util/containers/Array.h>
 
 namespace Pscf {

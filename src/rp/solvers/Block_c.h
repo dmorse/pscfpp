@@ -13,6 +13,7 @@
 
 #include <prdc/field/cpp/RField.h>        // member
 #include <prdc/field/cpp/RFieldDft.h>     // member
+#include <pscf/math/IntVec.h>             // member
 #include <util/containers/FSArray.h>      // member
 
 // Forward declarations

@@ -5,14 +5,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/VecOp.h>
-#include <pscf/backend/cuda/Reduce.h>
 #include <pscf/backend/cuda/ThreadArray.h>
-#include <pscf/backend/cuda/VecRandom.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 
-#include <rp/fts/montecarlo/ForceBiasMove_u.h>
 #include <rp/fts/montecarlo/ForceBiasMoveBase.tpp>
+#include <rp/fts/montecarlo/ForceBiasMove_u.h>
 
 // Anonymous namespace for CUDA kernel
 namespace Pscf {

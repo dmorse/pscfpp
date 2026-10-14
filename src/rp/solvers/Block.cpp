@@ -16,12 +16,11 @@
 #include <pscf/chem/Edge.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pscf/math/IntVec.h>
-#include <pscf/solvers/BlockTmpl.tpp>
 
 #include <util/containers/DMatrix.h>
 #include <util/containers/DArray.h>
-#include <util/containers/FSArray.h>
+
+#include <pscf/solvers/BlockTmpl.tpp>
 
 namespace Pscf {
 namespace Rp {

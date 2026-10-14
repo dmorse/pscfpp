@@ -7,7 +7,7 @@ pscf_backend_cpp_CPP= \
   pscf/backend/cpp/VecOpRl.cpp \
   pscf/backend/cpp/VecOp.cpp \
   pscf/backend/cpp/ReduceRl.cpp \
-  pscf/backend/cpp/ReduceCx.cpp \
+  pscf/backend/cpp/Reduce.cpp \
   pscf/backend/cpp/DeviceArray.cpp \
   pscf/backend/cpp/VecRandom.cpp 
 

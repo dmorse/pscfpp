@@ -10,11 +10,15 @@
 
 #include <prdc/field/cuda/WaveList.h>
 #include <prdc/field/cuda/FFT.h>
-#include <prdc/field/cuda/resources.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/backend/cuda/Reduce.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/ThreadArray.h>
+#include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
+
 #include <pscf/solvers/BlockTmpl.tpp>
 
 namespace Pscf {

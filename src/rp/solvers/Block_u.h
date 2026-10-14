@@ -16,8 +16,6 @@
 #include <pscf/backend/cuda/DeviceArray.h>  // member
 #include <util/containers/FSArray.h>        // member
 
-#include <prdc/field/cuda/resources.h>
-
 // Forward declarations
 namespace Pscf {
    template <int D> class Mesh;

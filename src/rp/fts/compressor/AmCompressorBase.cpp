@@ -8,7 +8,7 @@
 #include "AmCompressorBase.h"
 
 #include <pscf/backend/cpp/VecOp.h>
-#include <pscf/backend/cpp/ReduceCx.h>
+#include <pscf/backend/cpp/Reduce.h>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp>
 
