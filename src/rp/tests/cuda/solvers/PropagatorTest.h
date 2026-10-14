@@ -12,13 +12,13 @@
 #include <prdc/field/cuda/RField.h>
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/field/cuda/WaveList.h>
-
 #include <prdc/crystal/UnitCell.h>
-//#include <prdc/field/cuda/resources.h>
 
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/HostSendArray.h>
+#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
