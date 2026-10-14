@@ -5,9 +5,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/VecOpCx.h>
-#include <pscf/backend/cpp/Reduce.h>
 #include <pscf/backend/cpp/VecRandom.h>
+#include <pscf/backend/cpp/ReduceCx.h>
+#include <pscf/backend/cpp/VecOpCx.h>
 
 #include "ForceBiasMove_c.h"
 #include <rp/fts/montecarlo/ForceBiasMoveBase.tpp>

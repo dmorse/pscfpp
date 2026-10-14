@@ -5,9 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/CUT.h>
-
 #include <rp/fts/compressor/IntraCorrelation.tpp>
+#include <pscf/backend/cuda/CUT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

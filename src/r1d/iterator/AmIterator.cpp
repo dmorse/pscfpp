@@ -12,8 +12,8 @@
 #include <r1d/solvers/Solvent.h>
 #include <pscf/chem/Ensemble.h>
 #include <pscf/iterator/NanException.h>
-#include <pscf/backend/cpp/VecOpRl.h>
-#include <pscf/backend/cpp/Reduce.h>
+#include <pscf/backend/cpp/VecOpCx.h>
+#include <pscf/backend/cpp/ReduceCx.h>
 #include <util/global.h>
 
 #include <pscf/iterator/AmIteratorTmpl.tpp>

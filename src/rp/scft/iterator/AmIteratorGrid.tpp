@@ -20,6 +20,7 @@
 #include <prdc/field/RField.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/backend/DeviceArray.h>
 #include <pscf/backend/Reduce.h>
 #include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>

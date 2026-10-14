@@ -5,10 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/Reduce.h>
-#include <pscf/backend/cpp/CPT.h>
-
 #include <rp/fts/analyzer/CubicLengthDerivative.tpp>
+#include <pscf/backend/cpp/CPT.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

@@ -5,12 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/VecOp.h>
-#include <pscf/backend/cuda/Reduce.h>
-#include <pscf/backend/cuda/CUT.h>
-
-#include <pscf/iterator/AmIteratorTmpl.tpp>
 #include <rp/fts/compressor/AmCompressor.tpp>
+#include <pscf/backend/cuda/CUT.h>
 
 // Explicit instantiation definitions
 namespace Pscf {

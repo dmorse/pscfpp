@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Reduce.h"
+#include "ReduceRl.h"
 #include <util/containers/Array.h>
 #include <cmath>
 

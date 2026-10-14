@@ -5,12 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "CubicLengthDerivative.h"
-
-#include <pscf/backend/cuda/Reduce.h>
-#include <pscf/backend/cuda/CUT.h>
-
 #include <rp/fts/analyzer/CubicLengthDerivative.tpp>
+#include <pscf/backend/cuda/CUT.h>
 
 // Explicit instantiation declarations
 namespace Pscf {

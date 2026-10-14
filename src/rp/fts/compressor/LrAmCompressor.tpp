@@ -17,11 +17,13 @@
 #include <rp/field/CFields.h>
 
 #include <prdc/field/FFT.h>
+#include <prdc/field/RField.h>
 
 #include <pscf/backend/VecRandom.h>
 #include <pscf/backend/Reduce.h>
 #include <pscf/backend/VecOp.h>
 #include <pscf/math/IntVec.h>
+
 #include <util/global.h>
 
 namespace Pscf {

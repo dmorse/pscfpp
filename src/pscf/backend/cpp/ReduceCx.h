@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Reduce.h"
+#include "ReduceRl.h"
 #include <fftw3.h>
 #include <complex.h>
 

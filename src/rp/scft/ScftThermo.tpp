@@ -21,6 +21,7 @@
 #include <prdc/crystal/Basis.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/backend/Reduce.h>
 #include <pscf/chem/PolymerSpecies.h>
 #include <pscf/chem/SolventSpecies.h>
 #include <pscf/interaction/Interaction.h>

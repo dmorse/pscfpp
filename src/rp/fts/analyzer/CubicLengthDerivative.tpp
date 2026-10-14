@@ -16,6 +16,7 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
+#include <pscf/backend/Reduce.h>
 #include <util/global.h>
 
 namespace Pscf {

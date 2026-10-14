@@ -19,6 +19,8 @@
 #include <prdc/field/FFT.h>
 #include <prdc/crystal/shiftToMinimum.h>
 
+#include <pscf/backend/Reduce.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/iterator/NanException.h>
 

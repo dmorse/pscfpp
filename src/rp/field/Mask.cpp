@@ -5,10 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/Reduce.h>
+#include <rp/field/Mask.tpp>
 #include <pscf/backend/cpp/CPT.h>
-
-#include <rp/field/Mask.tpp>        // class template implementation
 
 // Explicit instantiation definitions
 namespace Pscf {
