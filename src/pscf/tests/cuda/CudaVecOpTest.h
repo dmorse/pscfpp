@@ -4,11 +4,10 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cuda/VecOp.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/backend/cuda/complex.h>
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <pscf/backend/cpp/VecOpRl.h>
 #include <pscf/math/FieldComparison.h>
 
 #include <util/math/Constants.h>

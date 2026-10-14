@@ -5,10 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/CUT.h>
-#include <pscf/backend/cuda/VecOp.h>
-
 #include <rp/fts/analyzer/MaxOrderParameter.tpp>
+#include <pscf/backend/cuda/CUT.h>
 
 namespace Pscf {
 namespace Rp {

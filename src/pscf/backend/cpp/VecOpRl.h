@@ -62,11 +62,11 @@ namespace Pscf {
    namespace VecOp {
 
       /*
-      * This file and VecOp.cpp only contain declarations and definitions
+      * This file and VecOpRl.cpp only contain declarations and definitions
       * for operations that involve only real arrays and scalars.
       * Corresponding declarations and definitions for vector operations
       * that involve complex-valued arrays and/or scalars are given in the
-      * files VecOpCx.h and VecOpCx.cpp, respectively.
+      * files VecOp.h and VecOp.cpp, respectively.
       */
 
       // Assignment

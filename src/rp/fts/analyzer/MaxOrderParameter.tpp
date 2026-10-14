@@ -13,6 +13,7 @@
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 
+#include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
 

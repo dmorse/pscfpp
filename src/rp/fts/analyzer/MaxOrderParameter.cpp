@@ -5,10 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>
-#include <pscf/backend/cpp/VecOpCx.h>
-
 #include <rp/fts/analyzer/MaxOrderParameter.tpp>
+#include <pscf/backend/cpp/CPT.h>
 
 namespace Pscf {
 namespace Rp {

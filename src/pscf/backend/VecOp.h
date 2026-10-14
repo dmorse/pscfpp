@@ -12,7 +12,7 @@
 // It includes the header for every all functions that are compiled by
 // the build system.
 
-#include <pscf/backend/cpp/VecOpCx.h>
+#include <pscf/backend/cpp/VecOp.h>
 
 #ifdef PSCF_CUDA
 #include <pscf/backend/cuda/VecOp.h>
