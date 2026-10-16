@@ -54,7 +54,7 @@ New Data Structures in UnitCell<D>:
 Basis<D> class:
 
    This requires more thought. The real question has to do with the basis
-   field file format : Should this use labelling scheme for characteristic
+   field file format : Should this use a labelling scheme for characteristic
    waves of each start that are based on components defined using a 
    standard basis, or based on components in the non-standard basis?
    It appears that this would only effect the identification of a 
@@ -74,7 +74,7 @@ Basis<D> class:
   B) Use a labelling scheme for characteristic waves of each start and
   ordering of waves within a star that is based a standard basis, and 
   modify the field file header to optionally contain information about 
-  the non-standard.
+  the non-standard basis.
 
   Possible algorithm for option (B): 
 
