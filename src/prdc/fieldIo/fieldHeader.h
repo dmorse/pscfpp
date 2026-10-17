@@ -13,17 +13,13 @@
 // Forward class declarations 
 namespace Pscf {
    template <int D> class Mesh;
-   namespace Prdc {
-      template <int D> class UnitCell;
-      template <int D> class Basis;
-   }
+   template <int D> class UnitCell;
+   template <int D> class Basis;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-   using namespace Pscf;
 
    /**
    * Read common part of field header (fortran PSCF format).
@@ -95,7 +91,6 @@ namespace Prdc {
    void writeMeshDimensions(std::ostream &out,
                             IntVec<D> const& meshDimensions);
 
-} // namespace Prdc
 } // namespace Pscf
 #include "fieldHeader.tpp"
 #endif

@@ -8,7 +8,6 @@
 #include "rFieldIo.h"
 
 namespace Pscf {
-namespace Prdc {
 
    /*
    * Read the number of basis functions from a field file header.
@@ -47,5 +46,4 @@ namespace Prdc {
           << "             " << nBasis << std::endl;
    }
 
-} // namespace Prdc
 } // namespace Pscf

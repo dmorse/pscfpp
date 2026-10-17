@@ -15,7 +15,6 @@
 #include <iomanip>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -587,6 +586,5 @@ namespace Prdc {
    extern std::istream& operator >> (std::istream& in, 
                                 UnitCell<3>::LatticeSystem const& lattice);
 
-}
 }
 #endif

@@ -9,7 +9,6 @@
 */
 
 namespace Pscf{
-namespace Prdc{
 
    /*
    * Get dimension of space from command line options.
@@ -20,6 +19,5 @@ namespace Prdc{
    */
    int getDimension(int argc, char **argv);
 
-}
 }
 #endif

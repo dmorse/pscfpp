@@ -19,9 +19,7 @@
 // Forward declarations
 namespace Pscf {
    template <int D> class Mesh;
-   namespace Prdc {
-      template <int D> class UnitCell;
-   }
+   template <int D> class UnitCell;
 }
 
 namespace Pscf {

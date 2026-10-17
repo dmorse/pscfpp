@@ -8,7 +8,6 @@
 #include <prdc/crystal/SpaceGroup.tpp>
 
 namespace Pscf {
-namespace Prdc {
 
    template class SpaceGroup<1>;
    template class SpaceGroup<2>;
@@ -22,5 +21,4 @@ namespace Prdc {
    template void writeGroup(std::string, SpaceGroup<2> const&);
    template void writeGroup(std::string, SpaceGroup<3> const&);
 
-}
 }

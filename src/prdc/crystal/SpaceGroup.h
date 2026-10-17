@@ -16,7 +16,6 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -177,6 +176,5 @@ namespace Prdc {
    extern template void writeGroup(std::string, SpaceGroup<2> const &);
    extern template void writeGroup(std::string, SpaceGroup<3> const &);
 
-}
 }
 #endif

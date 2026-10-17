@@ -11,7 +11,6 @@
 */
 
 namespace Pscf { 
-namespace Prdc { 
 
    /**
    * Return true if lattice type has variable angle parameters.
@@ -36,6 +35,5 @@ namespace Prdc {
    template <>
    bool hasVariableAngle<3>(typename UnitCell<3>::LatticeSystem lattice);
 
-}
 }
 #endif

@@ -14,8 +14,8 @@
 
 // Forward declarations
 namespace Pscf {
+   template <int D> class UnitCell;
    namespace Prdc {
-      template <int D> class UnitCell;
       template <int D, class T> class RField;
    }
    namespace Rp {

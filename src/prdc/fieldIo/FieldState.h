@@ -12,10 +12,8 @@
 #include <util/containers/DArray.h>       // member template
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Record of a state of a periodic system (fields + unit cell).
@@ -241,6 +239,5 @@ namespace Prdc {
       }
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

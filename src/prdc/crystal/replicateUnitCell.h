@@ -10,13 +10,14 @@
 
 #include <pscf/math/IntVec.h>   // Template with a default parameter
 
+//Forward declaration
 namespace Pscf {
-namespace Prdc {
-
    template <int D> class UnitCell;
-   using namespace Util;
-   using namespace Pscf;
+}
 
+namespace Pscf {
+
+   using namespace Util;
 
    /**
    * Create a replicated UnitCell<D> (base template).
@@ -113,6 +114,5 @@ namespace Prdc {
                           UnitCell<3> const & cellIn,
                           UnitCell<3> & cellOut);
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

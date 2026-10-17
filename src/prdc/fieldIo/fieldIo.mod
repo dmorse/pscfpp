@@ -1,5 +1,4 @@
 namespace Pscf{
-namespace Prdc{
 
    /**
    * \defgroup Prdc_Field_Module Field Utilities
@@ -9,5 +8,4 @@ namespace Prdc{
    * \ingroup Pscf_Prdc_Module
    */
 
-}
 }

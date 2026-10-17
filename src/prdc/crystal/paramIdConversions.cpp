@@ -8,7 +8,6 @@
 #include "paramIdConversions.h"
 
 namespace Pscf {
-namespace Prdc {
 
    template <> 
    int convertFullParamIdToReduced<1>(const int fullId, 
@@ -166,5 +165,4 @@ namespace Prdc {
       }
    }
 
-}
 }

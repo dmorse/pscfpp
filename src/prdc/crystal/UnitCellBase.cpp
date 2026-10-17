@@ -10,7 +10,6 @@
 #include <util/math/Constants.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -18,5 +17,4 @@ namespace Prdc {
    template class UnitCellBase<2>;
    template class UnitCellBase<3>;
 
-}
 }

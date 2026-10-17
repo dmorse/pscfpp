@@ -19,8 +19,8 @@ namespace Util {
 }
 namespace Pscf {
    class Interaction;
+   template <int D> class UnitCell;
    namespace Prdc {
-      template <int D> class UnitCell;
       template <int D, class T> class WaveList;
       class Environment;
    }

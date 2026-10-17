@@ -25,7 +25,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * FieldState for fields in symmetry-adapted basis format.

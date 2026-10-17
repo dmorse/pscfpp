@@ -16,17 +16,13 @@ namespace Util {
 }
 namespace Pscf {
    template <int D> class Mesh;
-   namespace Prdc {
-      template <int D> class UnitCell;
-      template <int D> class Basis;
-   }
+   template <int D> class UnitCell;
+   template <int D> class Basis;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-   using namespace Pscf;
 
    // Field data IO in r-grid file format
 
@@ -453,7 +449,6 @@ namespace Prdc {
                              int d,
                              DArray<int> newGridDimensions);
 
-} // namespace Prdc
 } // namespace Pscf
 #include "rFieldIo.tpp"
 #endif

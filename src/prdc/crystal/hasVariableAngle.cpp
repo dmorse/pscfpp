@@ -8,7 +8,6 @@
 #include <prdc/crystal/hasVariableAngle.h>
 
 namespace Pscf { 
-namespace Prdc { 
 
    template <>
    bool hasVariableAngle<1>(typename UnitCell<1>::LatticeSystem lattice)
@@ -39,5 +38,4 @@ namespace Prdc {
       }
    }
 
-}
 }

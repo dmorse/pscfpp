@@ -311,7 +311,7 @@ namespace Rp {
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read data in basis form (array basis_)
-      Prdc::readBasisData(in, basis_,
+      Pscf::readBasisData(in, basis_,
                           *readUnitCellPtr_, mesh, basis, nBasisIn);
 
       // Convert to r-grid form (array rgrid_)

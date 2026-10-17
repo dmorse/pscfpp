@@ -21,7 +21,6 @@ namespace Util {
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -382,6 +381,5 @@ namespace Prdc {
    extern template class UnitCellBase<2>;
    extern template class UnitCellBase<3>;
 
-}
 }
 #endif

@@ -63,7 +63,7 @@ public:
       TEST_ASSERT(domain.mesh().dimension(0) == 32);
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
-      TEST_ASSERT(domain.unitCell().lattice() == Prdc::UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.unitCell().lattice() == Pscf::UnitCell<3>::Cubic);
       TEST_ASSERT(domain.group().size() == 96);
       if (domain.basis().isInitialized()) {
          TEST_ASSERT(domain.basis().nBasis() == 489);
@@ -81,7 +81,7 @@ public:
       TEST_ASSERT(domain.mesh().dimension(0) == 32);
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
-      TEST_ASSERT(domain.unitCell().lattice() == Prdc::UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.unitCell().lattice() == Pscf::UnitCell<3>::Cubic);
       TEST_ASSERT(domain.group().size() == 96);
       TEST_ASSERT(domain.basis().isInitialized());
       TEST_ASSERT(domain.basis().nBasis() == 489);

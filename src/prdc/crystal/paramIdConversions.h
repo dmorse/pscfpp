@@ -11,7 +11,6 @@
 #include "UnitCell.h"
 
 namespace Pscf { 
-namespace Prdc { 
 
    /** 
    * Convert full lattice parameter index to a reduced index.
@@ -90,6 +89,5 @@ namespace Prdc {
    int convertReducedParamIdToFull<3>(const int reducedId, 
                   const typename UnitCell<3>::LatticeSystem lattice);
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

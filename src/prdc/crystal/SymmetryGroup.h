@@ -12,7 +12,6 @@
 #include <vector>
 
 namespace Pscf {
-namespace Prdc {
 
    /**
    * Class template for a group of elements.
@@ -193,6 +192,5 @@ namespace Prdc {
    extern template class SymmetryGroup< SpaceSymmetry<3> >;
    #endif
 
-}
 }
 #endif

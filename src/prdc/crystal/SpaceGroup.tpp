@@ -12,7 +12,6 @@
 #include <prdc/crystal/groupFile.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -205,6 +204,5 @@ namespace Prdc {
       out << group;
    }
 
-}
 }
 #endif

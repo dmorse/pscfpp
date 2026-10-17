@@ -16,7 +16,6 @@ namespace Util {
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -112,7 +111,6 @@ namespace Prdc {
                         AT const& field,
                         IntVec<D> const& dimensions);
 
-} // namespace Prdc
 } // namespace Pscf
 #include "cFieldIo.tpp"
 #endif

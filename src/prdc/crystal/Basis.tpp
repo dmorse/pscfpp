@@ -26,7 +26,6 @@
 #include <fstream>
 
 namespace Pscf {
-namespace Prdc {
 
    /*
    * Constructor.
@@ -1446,6 +1445,5 @@ namespace Prdc {
       return *signalPtr_;
    }
 
-}
 }
 #endif

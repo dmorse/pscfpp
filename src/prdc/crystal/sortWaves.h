@@ -13,17 +13,12 @@
 #include <util/containers/GArray.h>
 #include <vector>
 
-// Forward declarations
+// Forward declaration
 namespace Pscf {
-   namespace Prdc {
-      template <int D> class UnitCell;
-   }
+   template <int D> class UnitCell;
 }
 
 namespace Pscf {
-namespace Prdc {
-
-   using namespace Prdc;
 
    /**
    * Generate sorted waves and identify "bunches" of equal magnitude.
@@ -82,6 +77,5 @@ namespace Prdc {
                      std::vector< Sort::Item<double> >& , 
                      GArray< Sort::Bunch >& , double, bool);
 
-}
 }
 #endif

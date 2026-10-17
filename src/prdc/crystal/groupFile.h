@@ -11,7 +11,6 @@
 #include <string>
 
 namespace Pscf { 
-namespace Prdc { 
 
    /**
    * Generates the file name from a group name.
@@ -23,6 +22,5 @@ namespace Prdc {
    std::string makeGroupFileName(int D, std::string groupName);
 
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

@@ -22,9 +22,9 @@ namespace Util {
    template <> class Signal<void>;
 }
 namespace Pscf {
+   template <int D> class SpaceGroup;
+   template <int D> class Basis;
    namespace Prdc {
-      template <int D> class SpaceGroup;
-      template <int D> class Basis;
       template <int D, class T> class FFT;
       template <int D, class T> class WaveList;
    }

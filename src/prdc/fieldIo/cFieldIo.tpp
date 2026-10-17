@@ -16,7 +16,6 @@
 #include <util/format/Dbl.h>
 
 namespace Pscf {
-namespace Prdc {
 
    template <int D, class AT>
    void readCFieldsData(std::istream& in, 
@@ -100,6 +99,5 @@ namespace Prdc {
       }
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

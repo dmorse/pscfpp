@@ -31,7 +31,6 @@
 #include <string>
 
 namespace Pscf {
-namespace Prdc {
 
    // RGrid File Io Templates
 
@@ -692,7 +691,7 @@ namespace Prdc {
          if (!symmetric) {
             Log::file() << std::endl
                << "WARNING: Conversion of asymmetric field to"
-               << "symmetry-adapted basis in Prdc::convertKgridToBasis." 
+               << "symmetry-adapted basis in convertKgridToBasis." 
                << std::endl << std::endl;
          }
       }
@@ -961,7 +960,7 @@ namespace Prdc {
       int v1 = 1;
       int v2 = 0;
       std::string gName = "";
-      Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
+      Pscf::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
       writeMeshDimensions(out, repDimensions);
 
       // Write field data
@@ -1027,7 +1026,7 @@ namespace Prdc {
          }
 
          // Write Header
-         Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
+         Pscf::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
          out << "mesh " <<  std::endl
              << "           " << dimensions << std::endl;
 
@@ -1068,7 +1067,7 @@ namespace Prdc {
          }
 
          // Write Header
-         Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
+         Pscf::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
          out << "mesh " <<  std::endl
              << "           " << dimensions << std::endl;
 
@@ -1166,7 +1165,7 @@ namespace Prdc {
       int v1 = 1;
       int v2 = 0;
       std::string gName = "";
-      Pscf::Prdc::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
+      Pscf::writeFieldHeader(out, v1, v2, cell, gName, nMonomer);
       out << "mesh " <<  std::endl
           << "           " << dimensions << std::endl;
 
@@ -1196,6 +1195,5 @@ namespace Prdc {
 
    {  UTIL_THROW("expandRGridDimension is invalid when D = 3."); }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

@@ -19,14 +19,11 @@ namespace Util {
    template <> class Signal<void>;
 }
 namespace Pscf {
-  namespace Prdc {
-     template <int D> class UnitCell;
-     template <int D> class SpaceGroup;
-  }
+  template <int D> class UnitCell;
+  template <int D> class SpaceGroup;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -904,6 +901,5 @@ namespace Prdc {
    extern template class Basis<2>;
    extern template class Basis<3>;
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

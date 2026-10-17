@@ -13,10 +13,8 @@
 #include <pscf/math/IntVec.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Sorted waves and identify bunches of equal magnitude.
@@ -35,8 +33,8 @@ namespace Prdc {
       IntVec<D> kMeshDimensions;
       int kMeshSize;
       if (isRealField) {
-         FFT<D,CPT>::computeKMesh(meshDimensions,
-                                   kMeshDimensions, kMeshSize);
+          Prdc::FFT<D,CPT>::computeKMesh(meshDimensions,
+                                         kMeshDimensions, kMeshSize);
       } else {
          kMeshSize = 1;
          for (int i = 0; i < D; ++i) {
@@ -81,5 +79,4 @@ namespace Prdc {
                      std::vector< Sort::Item<double> >&,
                      GArray< Sort::Bunch >&, double, bool);
 
-}
 }

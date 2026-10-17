@@ -9,7 +9,6 @@
 #include <util/math/Constants.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -139,5 +138,4 @@ namespace Prdc {
       return out;
    }
 
-}
 }

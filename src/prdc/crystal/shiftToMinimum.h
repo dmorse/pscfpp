@@ -13,7 +13,6 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -49,6 +48,5 @@ namespace Prdc {
                             IntVec<3> const & d, 
                             UnitCell<3> const & cell);
 
-}
 }
 #endif

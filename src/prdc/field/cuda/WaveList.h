@@ -8,20 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/CUT.h>        // specialized template argument
-#include <prdc/field/cuda/RField.h>  // member
+#include <pscf/backend/cuda/CUT.h>           // template argument
+#include <prdc/field/cuda/RField.h>          // member
 #include <pscf/backend/cuda/DeviceArray.h>   // member
-#include <pscf/backend/cuda/HostSendArray.h>    // member
-#include <pscf/math/IntVec.h>        // member
-#include <util/containers/DArray.h>  // member
-#include <util/containers/GArray.h>  // member
-#include <util/containers/Pair.h>    // member
+#include <pscf/backend/cuda/HostSendArray.h> // member
+#include <pscf/math/IntVec.h>                // member
+#include <util/containers/DArray.h>          // member
+#include <util/containers/GArray.h>          // member
+#include <util/containers/Pair.h>            // member
 
 // Forward declarations
 namespace Pscf {
    template <int D> class Mesh;
+   template <int D> class UnitCell;
    namespace Prdc {
-      template <int D> class UnitCell;
       template <int D, class T> class WaveList;
    }
 }

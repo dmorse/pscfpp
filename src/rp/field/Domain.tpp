@@ -22,7 +22,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /*
    * Constructor.
@@ -140,7 +139,7 @@ namespace Rp {
 
       // Read common section of standard field header
       int ver1, ver2;
-      Pscf::Prdc::readFieldHeader(in, ver1, ver2,
+      Pscf::readFieldHeader(in, ver1, ver2,
                                   unitCell_, groupName_, nMonomer);
 
       // Set lattice_ (lattice system identifier)

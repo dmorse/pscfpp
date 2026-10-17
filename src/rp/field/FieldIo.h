@@ -22,12 +22,12 @@ namespace Util {
 }
 namespace Pscf {
    template <int D> class Mesh;
+   template <int D> class SpaceGroup;
+   template <int D> class Basis;
    namespace Prdc {
       template <int D, class T> class RField;
       template <int D, class T> class RFieldDft;
       template <int D, class T> class FFT;
-      template <int D> class Basis;
-      template <int D> class SpaceGroup;
    }
 }
 

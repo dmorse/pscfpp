@@ -20,9 +20,9 @@ namespace Util {
    template <> class Signal<void>;
 }
 namespace Pscf {
+   template <int D> class UnitCell;
    template <typename Data, class T> class DeviceArray;
    namespace Prdc {
-      template <int D> class UnitCell;
       template <int D, class T> class RField;
    }
    namespace Rp {

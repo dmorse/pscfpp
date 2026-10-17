@@ -151,7 +151,7 @@ namespace Rp {
       }
 
       // Read field data (components in basis)
-      Prdc::readBasisData(in, fields, unitCell, mesh(), basis(), nBasisIn);
+      Pscf::readBasisData(in, fields, unitCell, mesh(), basis(), nBasisIn);
    }
 
    /*
@@ -243,7 +243,7 @@ namespace Rp {
       writeNBasis(out, nBasis);
 
       // Write data (field components)
-      Prdc::writeBasisData(out, fields, basis());
+      Pscf::writeBasisData(out, fields, basis());
    }
 
    /*
@@ -319,7 +319,7 @@ namespace Rp {
       associateArrays(hostFields, fields);
 
       // Read data
-      Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
+      Pscf::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
 
       // Copy host -> device 
       copyArrays(fields, hostFields);
@@ -363,7 +363,7 @@ namespace Rp {
       associateArrays(hostFields, fields);
 
       // Read data section of file
-      Prdc::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
+      Pscf::readRGridData(in, hostFields, nMonomer, mesh().dimensions());
 
       // Copy host -> device 
       copyArrays(fields, hostFields);
@@ -393,7 +393,7 @@ namespace Rp {
       hostField.associate(field);
 
       // Read data section with one field
-      Prdc::readRGridData(in, hostField, mesh().dimensions());
+      Pscf::readRGridData(in, hostField, mesh().dimensions());
 
       // Copy from host to device 
       field = hostField;
@@ -453,7 +453,7 @@ namespace Rp {
       copyArrays(hostFields, fields);
 
       // Write data section
-      Prdc::writeRGridData(out, hostFields, nMonomer, meshDimensions);
+      Pscf::writeRGridData(out, hostFields, nMonomer, meshDimensions);
 
       dissociateArrays(hostFields);
    }
@@ -504,7 +504,7 @@ namespace Rp {
       hostField = field;
 
       // Write data from hostField
-      Prdc::writeRGridData(out, hostField, meshDimensions);
+      Pscf::writeRGridData(out, hostField, meshDimensions);
 
       hostField.dissociate();
    }
@@ -549,7 +549,7 @@ namespace Rp {
       associateArrays(hostFields, fields);
 
       // Read data into hostFields
-      Prdc::readKGridData(in, hostFields, nMonomer, dftDimensions);
+      Pscf::readKGridData(in, hostFields, nMonomer, dftDimensions);
 
       // Copy host to device
       copyArrays(fields, hostFields);
@@ -598,7 +598,7 @@ namespace Rp {
       copyArrays(hostFields, fields);
 
       // Write data from host container
-      Prdc::writeKGridData(out, hostFields, nMonomer, dftDimensions);
+      Pscf::writeKGridData(out, hostFields, nMonomer, dftDimensions);
 
       dissociateArrays(hostFields);
    }
@@ -639,7 +639,7 @@ namespace Rp {
       hostField.associate(out);
 
       // Convert basis to k-grid on host
-      Prdc::convertBasisToKGrid(in, hostField, basis(),
+      Pscf::convertBasisToKGrid(in, hostField, basis(),
                                 out.dftDimensions());
 
       // Copy from host to device
@@ -707,7 +707,7 @@ namespace Rp {
       hostField = in;
 
       // Convert from k-grid to basis format on host
-      Prdc::convertKGridToBasis(hostField, out, basis(),
+      Pscf::convertKGridToBasis(hostField, out, basis(),
                                 in.dftDimensions(),
                                 checkSymmetry, epsilon);
 
@@ -971,7 +971,7 @@ namespace Rp {
       hostField = in;
 
       // Check symmetry of k-grid data on host, return result
-      return Prdc::hasSymmetry(hostField, basis(), in.dftDimensions(),
+      return Pscf::hasSymmetry(hostField, basis(), in.dftDimensions(),
                                epsilon, verbose);
 
       hostField.dissociate();
@@ -1249,7 +1249,7 @@ namespace Rp {
       UTIL_CHECK(isSymmetric);
 
       // Read c field data into tmpFieldsBasis_
-      Prdc::readBasisData(in, tmpFieldsBasis_,
+      Pscf::readBasisData(in, tmpFieldsBasis_,
                           tmpUnitCell, mesh(), basis(), nBasisIn);
       in.close();
 
@@ -1287,7 +1287,7 @@ namespace Rp {
       copyArrays(hostFields, fields);
 
       // Compute replicated fields and write to a file
-      Prdc::replicateUnitCell(out, hostFields, meshDimensions,
+      Pscf::replicateUnitCell(out, hostFields, meshDimensions,
                               unitCell, replicas);
 
       dissociateArrays(hostFields);
@@ -1314,7 +1314,7 @@ namespace Rp {
       DArray< HostRecvArray<RealT,T> > hostFields;
       copyArrays(hostFields, fields);
 
-      Prdc::expandRGridDimension(out, hostFields, meshDimensions,
+      Pscf::expandRGridDimension(out, hostFields, meshDimensions,
                                  unitCell, d, newGridDimensions);
 
       dissociateArrays(hostFields);
@@ -1417,8 +1417,8 @@ namespace Rp {
       int ver1, ver2;
       std::string groupNameIn;
 
-      Pscf::Prdc::readFieldHeader(in, ver1, ver2, unitCell,
-                                  groupNameIn, nMonomer);
+      Pscf::readFieldHeader(in, ver1, ver2, unitCell,
+                            groupNameIn, nMonomer);
       // Note: Function definition in prdc/fieldIo/fieldHeader.tpp
 
       // Checks of data from header
@@ -1497,8 +1497,8 @@ namespace Rp {
          UTIL_CHECK(hasGroup());
          gName = groupName();
       }
-      Pscf::Prdc::writeFieldHeader(out, v1, v2, unitCell,
-                                   gName, nMonomer);
+      Pscf::writeFieldHeader(out, v1, v2, unitCell,
+                             gName, nMonomer);
       // Note: This function is defined in prdc/fieldIo/fieldHeader.tpp
    }
 

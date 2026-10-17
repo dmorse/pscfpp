@@ -11,7 +11,6 @@
 #include "SpaceSymmetry.h"
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -160,6 +159,5 @@ namespace Prdc {
       normalize();
    }
 
-}
 }
 #endif

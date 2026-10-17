@@ -8,12 +8,10 @@
 #include "BFieldComparison.h"
 
 namespace Pscf {
-namespace Prdc {
 
    // Constructor
    BFieldComparison::BFieldComparison(int begin)
     : FieldComparison< DArray<double> > (begin)
    {};
 
-}
 }

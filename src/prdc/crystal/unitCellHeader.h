@@ -16,7 +16,6 @@
 #include <iomanip>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -91,6 +90,5 @@ namespace Prdc {
       out << std::endl;
    }
 
-}
 }
 #endif

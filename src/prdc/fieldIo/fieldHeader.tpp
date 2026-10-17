@@ -23,7 +23,6 @@
 #include <string>
 
 namespace Pscf {
-namespace Prdc {
 
    /*
    * Read common part of field header (fortran PSCF format).
@@ -144,6 +143,5 @@ namespace Prdc {
           << "           " << meshDimensions << std::endl;
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

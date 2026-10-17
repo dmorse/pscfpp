@@ -13,7 +13,6 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Prdc {
 
    // Arrays of fields 
 
@@ -184,6 +183,5 @@ namespace Prdc {
       }
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

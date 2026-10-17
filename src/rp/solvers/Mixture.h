@@ -20,8 +20,8 @@ namespace Util {
 }
 namespace Pscf {
    template <int D> class Mesh;
+   template <int D> class UnitCell;
    namespace Prdc {
-      template <int D> class UnitCell;
       template <int D, class T> class RField; 
       template <int D, class T> class FFT; 
       template <int D, class T> class WaveList; 

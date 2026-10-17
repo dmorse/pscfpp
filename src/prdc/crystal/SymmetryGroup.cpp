@@ -9,11 +9,9 @@
 #include <prdc/crystal/SpaceSymmetry.tpp>
 
 namespace Pscf {
-namespace Prdc {
 
    template class SymmetryGroup< SpaceSymmetry<1> >;
    template class SymmetryGroup< SpaceSymmetry<2> >;
    template class SymmetryGroup< SpaceSymmetry<3> >;
 
-}
 }

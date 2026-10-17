@@ -11,7 +11,6 @@
 #include <pscf/math/IntVec.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -83,6 +82,5 @@ namespace Prdc {
 
    };
 
-} // namespace Pscf::Prdc
 } // namespace Pscf
 #endif

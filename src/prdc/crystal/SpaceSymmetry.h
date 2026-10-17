@@ -17,7 +17,6 @@
 #include <iostream>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -505,6 +504,5 @@ namespace Prdc {
    extern template class SpaceSymmetry<2>;
    extern template class SpaceSymmetry<3>;
 
-}
 }
 #endif

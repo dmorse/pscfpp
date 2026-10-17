@@ -8,7 +8,6 @@
 #include "SpaceSymmetry.tpp"
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -103,5 +102,4 @@ namespace Prdc {
    template class SpaceSymmetry<2>;
    template class SpaceSymmetry<3>;
 
-}
 }

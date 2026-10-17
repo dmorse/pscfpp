@@ -15,7 +15,6 @@
 #include <util/containers/FSArray.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -197,6 +196,5 @@ namespace Prdc {
       }
    }
 
-}
 }
 #endif

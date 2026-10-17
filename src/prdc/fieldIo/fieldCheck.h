@@ -16,10 +16,8 @@ namespace Util {
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-   using namespace Pscf;
 
    /**
    * Allocate a DArray of fields.
@@ -199,7 +197,6 @@ namespace Prdc {
    template <class HAT>
    void dissociateArrays(DArray<HAT>& host);
 
-} // namespace Prdc
 } // namespace Pscf
 #include "fieldCheck.tpp"
 #endif

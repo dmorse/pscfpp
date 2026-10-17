@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 {
 
    // Extract the dimension of space from argument of -d option
-   int D = Pscf::Prdc::getDimension(argc, argv);
+   int D = Pscf::getDimension(argc, argv);
    std::cout << "dimension    " << D << std::endl;
 
    if (1 == D) {
