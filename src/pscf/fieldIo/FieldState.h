@@ -38,7 +38,7 @@ namespace Pscf {
    * FieldState is a standard class template, in which all member
    * function definitions are located in this header file.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    */
    template <int D, class FT, class ST>
    class FieldState 

@@ -44,7 +44,7 @@ namespace Pscf {
    * more associated wavevectors, and every wavevector belongs to a
    * unique bunch. 
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    * 
    * \param cell  crystallographic unit cell (in)
    * \param meshDimensions  dimensions of real space mesh (in)

@@ -34,7 +34,7 @@ namespace Pscf {
    * Valid complex array types include DArray<fftw_complex> and 
    * HostSendArray<cudaReal>.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param in  input file stream
    * \param fields  array of complex fields (out)
@@ -56,7 +56,7 @@ namespace Pscf {
    * of type that supports assignment from double precision real and
    * imaginary parts, assign(CT& , double const& , double const&).
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param in  input file stream
    * \param field  array containing a single complex field (out)
@@ -78,7 +78,7 @@ namespace Pscf {
    * a type CT for which there exist real(CT const&) and imag(CT const&) 
    * functions that return real and imaginary parts. 
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param out  output file stream
    * \param fields  array of complex fields (in)
@@ -100,7 +100,7 @@ namespace Pscf {
    * type CT for which there exist real(CT const&) and imag(CT const&) 
    * functions that return real and imaginary parts. 
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param out  output file stream
    * \param field  array containing a single complex field (out)

@@ -48,7 +48,7 @@ namespace Pscf {
    * cell type) and a list of one or more unit cell parameters (lengths
    * and angles), as described \ref prdc_unitcell_page "here".
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    class UnitCell : public UnitCellBase<D>
@@ -65,7 +65,7 @@ namespace Pscf {
    * \param  in  input stream
    * \param  cell  UnitCell<D> to be read
    * \return modified input stream
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    std::istream& operator >> (std::istream& in, UnitCell<D>& cell);
@@ -76,7 +76,7 @@ namespace Pscf {
    * \param out  output stream
    * \param  cell  UnitCell<D> to be written
    * \return modified output stream
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    std::ostream& operator << (std::ostream& out, UnitCell<D> const& cell);
@@ -87,7 +87,7 @@ namespace Pscf {
    * \param ar  input or output archive
    * \param cell  UnitCell<D> object to be serialized
    * \param version  archive version id
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <class Archive, int D>
    void 
@@ -98,7 +98,7 @@ namespace Pscf {
    /**
    * 1D crystal unit cell.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <>
    class UnitCell<1> : public UnitCellBase<1>
@@ -206,7 +206,7 @@ namespace Pscf {
    * \param in  input stream
    * \param lattice  UnitCell<1>::LatticeSystem to be read
    * \return modified input stream
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    std::istream& operator >> (std::istream& in,
                               UnitCell<1>::LatticeSystem& lattice);
@@ -217,7 +217,7 @@ namespace Pscf {
    * \param out  output stream
    * \param lattice  UnitCell<1>::LatticeSystem to be written
    * \return modified output stream
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    std::ostream& operator << (std::ostream& out,
                               UnitCell<1>::LatticeSystem lattice);
@@ -241,7 +241,7 @@ namespace Pscf {
    /**
    * 2D crystal unit cell.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <>
    class UnitCell<2> : public UnitCellBase<2>
@@ -349,7 +349,7 @@ namespace Pscf {
    * \param  in       input stream
    * \param  lattice  UnitCell<2>::LatticeSystem to be read
    * \return modified input stream
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    std::istream& operator >> (std::istream& in,
                               UnitCell<2>::LatticeSystem& lattice);
@@ -383,7 +383,7 @@ namespace Pscf {
    /**
    * 3D crystal unit cell.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <>
    class UnitCell<3> : public UnitCellBase<3>
@@ -493,7 +493,7 @@ namespace Pscf {
    * \param  in       input stream
    * \param  lattice  UnitCell<3>::LatticeSystem to be read
    * \return modified input stream
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    std::istream& operator >> (std::istream& in,
                               UnitCell<3>::LatticeSystem& lattice);
@@ -504,7 +504,7 @@ namespace Pscf {
    * \param  out      output stream
    * \param  lattice  UnitCell<3>::LatticeSystem to be written
    * \return modified output stream
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    std::ostream& operator << (std::ostream& out,
                               UnitCell<3>::LatticeSystem lattice);

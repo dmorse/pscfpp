@@ -10,8 +10,8 @@
 
 #include "FieldIo.h"
 
-#include <prdc/fieldIo/fieldCheck.h>
-#include <prdc/fieldIo/rFieldIo.h>
+#include <pscf/fieldIo/fieldCheck.h>
+#include <pscf/fieldIo/rFieldIo.h>
 #include <prdc/crystal/shiftToMinimum.h>
 #include <prdc/crystal/UnitCell.h>
 #include <prdc/crystal/Basis.h>
@@ -21,8 +21,8 @@
 #include <prdc/field/FFT.h>
 #include <prdc/field/RFieldComparison.h>
 #include <prdc/field/RField.h>
-#include <prdc/fieldIo/rFieldIo.h>
-#include <prdc/fieldIo/fieldCheck.h>
+#include <pscf/fieldIo/rFieldIo.h>
+#include <pscf/fieldIo/fieldCheck.h>
 
 #include <pscf/backend/HostRecvArray.h>
 #include <pscf/backend/HostSendArray.h>
@@ -1419,7 +1419,7 @@ namespace Rp {
 
       Pscf::readFieldHeader(in, ver1, ver2, unitCell,
                             groupNameIn, nMonomer);
-      // Note: Function definition in prdc/fieldIo/fieldHeader.tpp
+      // Note: Function definition in pscf/fieldIo/fieldHeader.tpp
 
       // Checks of data from header
       UTIL_CHECK(ver1 == 1);
@@ -1499,7 +1499,7 @@ namespace Rp {
       }
       Pscf::writeFieldHeader(out, v1, v2, unitCell,
                              gName, nMonomer);
-      // Note: This function is defined in prdc/fieldIo/fieldHeader.tpp
+      // Note: This function is defined in pscf/fieldIo/fieldHeader.tpp
    }
 
    // Protected functions to check and allocate private workspace arrays

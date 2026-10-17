@@ -19,7 +19,7 @@ namespace Pscf {
    /**
    * Returns minimum magnitude image of DFT wavevector.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    *
    * \param v  IntVec<D> containing integer indices of a wavevector
    * \param d  dimensions of the discrete Fourier transform grid

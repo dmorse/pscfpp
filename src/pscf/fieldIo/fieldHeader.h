@@ -70,7 +70,7 @@ namespace Pscf {
    * An Exception is thrown if the mesh dimensions in the file do not
    * match those given by the input vector meshDimensions.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param in  input stream
    * \param meshDimensions  expected values for mesh dimensions
@@ -82,7 +82,7 @@ namespace Pscf {
    /**
    * Write mesh dimensions to a field file header.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    * 
    * \param out output stream
    * \param meshDimensions  vector of integer mesh dimensions

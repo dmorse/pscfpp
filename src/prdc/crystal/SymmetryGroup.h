@@ -29,7 +29,7 @@ namespace Pscf {
    *  - A method Symmetry::inverse() must return the inverse of a Symmetry. 
    *  - A static method Symmetry::identity() must return the identity.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <class Symmetry>    
    class SymmetryGroup 

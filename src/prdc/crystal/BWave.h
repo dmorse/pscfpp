@@ -17,7 +17,7 @@ namespace Pscf {
    /**
    * Wave struct designed for use within Basis construction.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    struct BWave
@@ -33,7 +33,7 @@ namespace Pscf {
    *
    * Used to sort in ascending order of wavevector norm.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    struct BWaveNormComp {
@@ -51,7 +51,7 @@ namespace Pscf {
    *
    * Used to sort set of unique waves in ascending order of std indices.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    struct BWaveStdComp {
@@ -69,7 +69,7 @@ namespace Pscf {
    *
    * Used to sort in descending order of minimal indices.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    struct BWaveMinComp {

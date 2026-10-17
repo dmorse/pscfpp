@@ -59,7 +59,7 @@ namespace Pscf {
    * function is used to implement the REPLICATE_UNIT_CELL command of
    * the pscf_rpc and pscf_rpg programs.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    * 
    * \param replicas  number of replicas in each direction (in)
    * \param cellIn  original unit cell (in)
@@ -75,7 +75,7 @@ namespace Pscf {
    /**
    * Create a replicated UnitCell<1>.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    * 
    * \param replicas  number of replicas in each direction (in)
    * \param cellIn  original unit cell (in)
@@ -89,7 +89,7 @@ namespace Pscf {
    /**
    * Create a replicated UnitCell<2>.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    * 
    * \param replicas  number of replicas in each direction (in)
    * \param cellIn  original unit cell (in)
@@ -103,7 +103,7 @@ namespace Pscf {
    /**
    * Create a replicated UnitCell<3>.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    * 
    * \param replicas  number of replicas in each direction (in)
    * \param cellIn  original unit cell (in)

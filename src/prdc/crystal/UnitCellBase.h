@@ -27,7 +27,7 @@ namespace Pscf {
    /**
    * Base class template for a crystallographic unit cell.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    class UnitCellBase

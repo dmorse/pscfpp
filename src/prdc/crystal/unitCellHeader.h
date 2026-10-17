@@ -31,7 +31,7 @@ namespace Pscf {
    *
    * \param  in  input stream
    * \param  cell  UnitCell<D> to be read
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    void readUnitCellHeader(std::istream& in, UnitCell<D>& cell);
@@ -41,7 +41,7 @@ namespace Pscf {
    *
    * \param out  output stream
    * \param  cell  UnitCell<D> to be written
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    void writeUnitCellHeader(std::ostream& out, UnitCell<D> const& cell);

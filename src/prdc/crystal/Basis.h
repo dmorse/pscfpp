@@ -374,7 +374,7 @@ namespace Pscf {
    * objects and register a zero-parameter function for each observer
    * that will be called when the basis is constructed.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    class Basis

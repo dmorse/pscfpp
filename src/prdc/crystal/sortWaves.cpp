@@ -19,7 +19,7 @@ namespace Pscf {
    /**
    * Sorted waves and identify bunches of equal magnitude.
    *
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    void sortWaves(UnitCell<D> const & cell,

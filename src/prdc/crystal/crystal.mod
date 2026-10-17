@@ -2,11 +2,11 @@
 namespace Pscf{
 
    /**
-   * \defgroup Prdc_Crystal_Module Crystallography
+   * \defgroup Pscf_Crystal_Module Crystal Lattice
    *
    * Unit cells, symmetries and symmetry-adapted basis.
    *
-   * \ingroup Pscf_Prdc_Module
+   * \ingroup Pscf_Base_Module
    */
 
 }

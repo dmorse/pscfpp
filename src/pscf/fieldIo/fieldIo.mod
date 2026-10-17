@@ -1,7 +1,7 @@
 namespace Pscf{
 
    /**
-   * \defgroup Prdc_Field_Module Field Utilities
+   * \defgroup Pscf_FieldIo_Module Field IO Utilities
    *
    * Utilities for manipulating periodic fields.
    *

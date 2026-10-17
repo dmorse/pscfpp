@@ -34,7 +34,7 @@ namespace Pscf {
    * fixed at 90° in a tetragonal lattice, so a fullId value of 3, 
    * 4, or 5 would result in a reducedId of -1.
    * 
-   * \ingroup Prdc_Crystal_Module 
+   * \ingroup Pscf_Crystal_Module 
    *
    * \param fullId  the value of fullId to convert
    * \param lattice  the lattice system
@@ -54,7 +54,7 @@ namespace Pscf {
    * index of a parameter in the reduced list, reducedId, into the 
    * corresponding index in the full list, fullId. 
    * 
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    *
    * \param reducedId  the value of reducedId to convert
    * \param lattice  the lattice system 

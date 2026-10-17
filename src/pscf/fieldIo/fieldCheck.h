@@ -46,7 +46,7 @@ namespace Pscf {
    * fields is not allocated on entry, it is allocated with the
    * correct dimensions.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param field  field object of type FT
    * \param dimensions  required mesh dimensions
@@ -71,7 +71,7 @@ namespace Pscf {
    * If the arrray is not allocated on entry, it is allocated with
    * the required dimensions.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param fields  DArray of fields of type FT (in/out)
    * \param nMonomer  required number of monomer types (in)
@@ -92,7 +92,7 @@ namespace Pscf {
    * An Exception is thrown if fields is not allocated, or if the fields
    * do not all have the same positive list of dimensions.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param fields  DArray of fields (in)
    * \param nMonomer  number of fields, or monomer types (out)
@@ -130,7 +130,7 @@ namespace Pscf {
    * checked, and an Exception is thrown if any are violated.  If arrays is
    * not allocated on entry, it is allocated with the required dimensions.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param arrays  DArray of arrays, each of type AT (in/out)
    * \param nMonomer  required number of arrays, or monomer types (in)
@@ -147,7 +147,7 @@ namespace Pscf {
    * An Exception is thrown if the arrays container is not allocated, or
    * if the 1D arrays do not all have the same positive capacity.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param arrays  DArray of arrays (in)
    * \param nMonomer  number of arrays, or monomer types (out)
@@ -164,7 +164,7 @@ namespace Pscf {
    * If DArray out is not allocated, it will be allocated.
    * Then out[i] = in[i] is invoked for each element of then arrays.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param out  DArray of arrays (LHS, output)
    * \param in  DArray of arrays (RHS, input)
@@ -177,7 +177,7 @@ namespace Pscf {
    *
    * On input, the device arrays must be allocated.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param host  DArray of host arrays (lhs, out)
    * \param device  DArray of device arrays (rhs, in)
@@ -190,7 +190,7 @@ namespace Pscf {
    *
    * On input, the host arrays must be associated.
    *
-   * \ingroup Prdc_Field_Module
+   * \ingroup Pscf_FieldIo_Module
    *
    * \param host  DArray of host arrays
    */
