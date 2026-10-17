@@ -16,7 +16,11 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Statistical ensemble type for the number of molecules of one species.
+   * Statistical ensemble for the number of molecules of one species.
+   *
+   * A closed ensemble has a constant number of molecules of a particular
+   * species. An open ensemble has a variable number of molecules of that
+   * species, controlled by a constant chemical potential. 
    *
    * \ingroup Pscf_Chem_Module
    */

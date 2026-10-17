@@ -17,7 +17,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Utilities for sorting real values.
+   * Utilities for sorting values.
    *
    * \defgroup Pscf_Math_Sort_Module Sorting Utilities
    * \ingroup Pscf_Math_Module

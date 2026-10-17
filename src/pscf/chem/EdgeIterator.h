@@ -59,7 +59,7 @@ namespace Pscf {
       void begin(int sourceId, int targetId);
 
       /**
-      * Increment operator - move to next vertex.
+      * Increment operator - move to next edge.
       */
       EdgeIterator<WT>& operator ++ ();
 
@@ -118,6 +118,7 @@ namespace Pscf {
 
    };
 
+   // Explicit instantiation declaration
    extern template class EdgeIterator<double>;
 
 }

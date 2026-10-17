@@ -34,36 +34,34 @@ namespace Pscf
    * function required to solve the modified diffusion equation (MDE), 
    * and so is a descriptor but not a solver for a polymer species. 
    *
-   * PolymerSpecies is an abstract base class for classes that act as
-   * MDE solvers as well as descriptors.  Each implementation level 
-   * sub-namespace of Pscf (i.e., R1d, Rpc or Rpg) contains a subclass 
-   * of PolymerSpecies named Polymer that defines a function named 
+   * PolymerSpecies is an abstract base class for classes that act as MDE
+   * solvers as well as descriptors for polymer species. Each program
+   * level sub-namespace of Pscf (i.e., R1d or Rp) contains a class or
+   * class template named Polymer that is derived from PolymerSpecies.
+   * Each such Polymer class or class template defines a function named
    * compute() that solves the MDE for all blocks of a block polymer.  
-   * Each such implementation level sub-namespace also contains a 
-   * subclass of Edge named Block that is an MDE solver and descriptor 
+   * Each such program level sub-namespace also contains a class or 
+   * class template named Block that is a subclass of Edge. Each such
+   * Block class or class template is an MDE solver and descriptor 
    * for a single block within a block polymer.
    *
-   * The Polymer class in each program-level namespace is derived 
-   * directly from an template specialization Pscf::PolymerTmpl<Block> of 
-   * the class template Pscf::PolymerTmpl, while PolymerTmpl<Block> is 
-   * derived directly from PolymerSpecies. A PolymerTmpl<Block> has a 
-   * private member variable that is an array of Block solver objects. 
-   * The PolymerTmpl template must defines implementations of edge(int id) 
-   * functions, which are declared as pure virtual functions of 
-   * PolymerSpecies. Each such function must return a specific Block 
-   * solver object as a reference to an Edge.
+   * The Polymer class or class template in each program-level namespace 
+   * is derived directly from a specialization the class template 
+   * Pscf::PolymerTmpl<Block> , while PolymerTmpl<Block> is derived
+   * directly from PolymerSpecies. A PolymerTmpl<Block> has a private
+   * member variable that is an array of Block solver objects. The
+   * PolymerTmpl template defines an implementations of the edge(int id)
+   * functions that are declared as pure virtual functions of 
+   * PolymerSpecies. Each such function returns a reference to the 
+   * Edge subobject of the corresponding Block object. 
    *
    * The PolymerSpecies class provides a generic description of polymer
    * structure that only uses names of generic descriptor types (such as
    * as Edge and Vertex) that are defined directly in the Pscf namespace.
-   * The PolymerSpecies interface does not use any of the specialized 
-   * MDE solver classes that are defined in each program-level enclosed
-   * namespace of Pscf, such as the different Block and Polymer classes 
-   * defined in different program-level namespaces for use in different 
-   * programs. A reference to such a specialized Polymer solver object
-   * as a PolymerSpecies can thus be used as an argument to a function
-   * that requires a description of the polymer molecular structure, but 
-   * that does not actually need to solve the MDE.
+   * A reference to the PolymerSpecies subobject of Polymer solver object
+   * can thus be used as an argument to a function that requires a 
+   * description of the polymer molecular structure, but that does not 
+   * actually need to solve the MDE.
    * 
    * \ingroup Pscf_Chem_Module
    */

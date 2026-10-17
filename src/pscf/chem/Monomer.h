@@ -30,8 +30,8 @@ namespace Pscf
    *
    * Data for all monomers in a system is normally read from a parameter
    * file into an array-valued parameter named "monomers" in which each
-   * element is a Monomer object. The id of each Monomer should be set 
-   * to its element index within this array.
+   * element is a Monomer object. The id of each Monomer should be set to
+   * its element index within this array.
    *
    * \ingroup Pscf_Chem_Module
    */

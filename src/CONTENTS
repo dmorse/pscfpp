@@ -10,19 +10,19 @@ Subdirectories (with corresponding C++ namespace names in parentheses):
 
   util - general utilities for scientific computation (Util)
   pscf - classes accessible throughout the PSCF package (Pscf)
-  r1d  - real fields, one-dimensional SCFT (Pscf::R1d)
   prdc - periodic systems (Pscf::Prdc)
+  r1d  - real fields, one-dimensional SCFT (Pscf::R1d)
   rp   - SCFT & PS-FTS with real periodic fields (Pscf::Rp)
   test - unit testing framework (base classes)
 
   Program-level directories:
-  Directories r1d and rp are "program level" directories, which each 
-  contain files that generate one or more executables. All code in
-  each program-level directory is defined within a corresponding 
+  Directories r1d and rp are "program level" directories, which each
+  contain files to construct a single program or type of program. All 
+  code in each program-level directory is defined within a corresponding 
   program-level namespace (i.e., Pscf::R1d or Pscf::Rp). By convention, 
-  code within a program-level namespace and directory may not use 
-  names defined in a different program-level namespace, and may not
-  include header files from a different program-level directory.
+  code within one program-level namespace and directory may not include
+  header files from a different program-level directory, and may not
+  use names defined in a different program-level namespace.
 
   Dependencies among directories:
   Names of classes and other entitites defined in files located in 
@@ -37,7 +37,7 @@ Files (maintained in the git repository):
   programs.mod - doxygen page for program command-line interfaces
   CONTENTS - this file
 
-Files (installed by the configure script):
+Files (created by the configure script):
 
   config.mk - main configuration file (editable makefile fragment)
 

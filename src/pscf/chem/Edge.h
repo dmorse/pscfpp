@@ -20,9 +20,12 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Descriptor for a block within a block polymer.
+   * Descriptor for one block within a block polymer.
    *
-   * An Edge has:
+   * An Edge is a descriptor for one block within a block polymer, 
+   * corresponding to one edge within a graph used to describe the
+   * connectivity of blocks within a molecule. An Edge has member 
+   * variables that store the following information:
    *
    *    - a monomer type id
    *    - a length (thread model) or number of beads (bead model)
@@ -30,11 +33,11 @@ namespace Pscf
    *    - vertex ids for the two vertices at which it terminates
    *
    * Edge is a direct base class for the BlockTmpl class template, and an
-   * indirect base class for a class named Block in each program-level 
-   * sub-namespace of Pscf (i.e., in R1d, Rpc, or Rpg).
+   * indirect base class for a class or class template named Block in each 
+   * program-level namespace of Pscf (i.e., R1d or Rp).
    *
    * An Edge is a descriptor for a block within a block polymer, but 
-   * does not provide functions or data structure needed to solve the 
+   * does not provide functions or data structures needed to solve the 
    * modified diffusion equation (MDE).  The Block class defined in each 
    * program-level namespace is a subclass of Edge that is an MDE solver
    * as well as a descriptor.

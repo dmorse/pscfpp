@@ -24,8 +24,8 @@ namespace Pscf {
    * must be provided as a parameter in the parameter file, thereby also
    * determining the choice of ensemble.  A subclass of Species that 
    * actually solves the single single-molecule statistical mechanics 
-   * problem must use the function setQ(WT) to set set the value of 
-   * the molecular partition function q and to compute a new value 
+   * problem must use the protected function setQ(WT) to set the value 
+   * of the molecular partition function q and to compute a new value 
    * for either mu or phi, depending on the ensemble. 
    *
    * \ingroup Pscf_Chem_Module
