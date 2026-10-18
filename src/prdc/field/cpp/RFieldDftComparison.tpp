@@ -14,7 +14,6 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Prdc {
 
    /*
    * Default constructor.
@@ -105,6 +104,5 @@ namespace Prdc {
       return maxDiff_;
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

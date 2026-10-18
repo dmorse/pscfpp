@@ -12,10 +12,8 @@
 #include <pscf/backend/cuda/HostSendArray.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-   using namespace Pscf;
 
    /**
    * Default constructor.
@@ -124,6 +122,5 @@ namespace Prdc {
       return *this;
    }
 
-}
 }
 #endif

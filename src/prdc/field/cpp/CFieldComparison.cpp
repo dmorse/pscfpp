@@ -9,9 +9,7 @@
 
 // Explicit instantiation definitions
 namespace Pscf {
-   namespace Prdc {
-      template class CFieldComparison<1,CPT>;
-      template class CFieldComparison<2,CPT>;
-      template class CFieldComparison<3,CPT>;
-   }
+   template class CFieldComparison<1,CPT>;
+   template class CFieldComparison<2,CPT>;
+   template class CFieldComparison<3,CPT>;
 }

@@ -20,8 +20,6 @@ namespace Pscf {
 namespace Pscf {
 namespace Rp {
 
-   using namespace Prdc;
-
    /**
    * Solver and descriptor for a solvent species.
    *

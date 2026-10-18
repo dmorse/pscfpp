@@ -7,12 +7,9 @@
 
 #include "CField.tpp"
 
+// Explicit instantiation definitions
 namespace Pscf {
-namespace Prdc {
-
    template class CField<1,CPT>;
    template class CField<2,CPT>;
    template class CField<3,CPT>;
-
-}
 }

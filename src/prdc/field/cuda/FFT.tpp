@@ -57,7 +57,6 @@
 */
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -292,6 +291,5 @@ namespace Prdc {
       }
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

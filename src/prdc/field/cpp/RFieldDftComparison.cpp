@@ -8,9 +8,7 @@
 #include "RFieldDftComparison.tpp"
 
 namespace Pscf {
-   namespace Prdc {
-      template class RFieldDftComparison<1,CPT>;
-      template class RFieldDftComparison<2,CPT>;
-      template class RFieldDftComparison<3,CPT>;
-   }
+   template class RFieldDftComparison<1,CPT>;
+   template class RFieldDftComparison<2,CPT>;
+   template class RFieldDftComparison<3,CPT>;
 }

@@ -25,7 +25,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    // CUDA kernels (anonymous namespace - only used in this file)
    namespace {
@@ -928,11 +927,11 @@ namespace Rp {
 namespace Pscf {
 
    template class 
-   BlockTmpl< Rp::Propagator<1,CUT>, Prdc::RField<1,CUT> >;
+   BlockTmpl< Rp::Propagator<1,CUT>, RField<1,CUT> >;
    template class 
-   BlockTmpl< Rp::Propagator<2,CUT>, Prdc::RField<2,CUT> >;
+   BlockTmpl< Rp::Propagator<2,CUT>, RField<2,CUT> >;
    template class 
-   BlockTmpl< Rp::Propagator<3,CUT>, Prdc::RField<3,CUT> >;
+   BlockTmpl< Rp::Propagator<3,CUT>, RField<3,CUT> >;
 
    namespace Rp {
       template class Block<1,CUT>;

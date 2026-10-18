@@ -9,9 +9,7 @@
 
 // Explicit instantiation definitions
 namespace Pscf {
-namespace Prdc {
    template class RField<1,CUT>;
    template class RField<2,CUT>;
    template class RField<3,CUT>;
-}
 }

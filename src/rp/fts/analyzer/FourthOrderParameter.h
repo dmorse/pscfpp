@@ -20,16 +20,13 @@ namespace Util {
    template <typename T> class Array;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class FFT;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * FourthOrderParameter is used to detect an order-disorder transition.

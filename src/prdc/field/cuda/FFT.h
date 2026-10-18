@@ -17,19 +17,14 @@
 
 // Forward declarations
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class CField;
-   }
+   template <int D, class T> class CField;
+   template <int D, class T> class RField;
+   template <int D, class T> class FFT;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-
-   // Declare primary template
-   template <int D, class T> class FFT;
 
    /**
    * Fourier transform wrapper for real or complex data.
@@ -287,6 +282,5 @@ namespace Prdc {
    extern template class FFT<2,CUT>;
    extern template class FFT<3,CUT>;
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

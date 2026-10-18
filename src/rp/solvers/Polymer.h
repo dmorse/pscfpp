@@ -18,9 +18,7 @@ namespace Util {
    template <typename T> class DArray;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
    namespace Rp {
       template <int D, class T> class Propagator;
       template <int D, class T> class Block;
@@ -31,7 +29,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Descriptor and MDE solver for one polymer species.

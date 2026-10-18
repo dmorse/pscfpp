@@ -13,7 +13,7 @@
 #include <util/archives/BinaryFileIArchive.h>
 
 using namespace Util;
-using namespace Pscf::Prdc;
+using namespace Pscf;
 
 class CpuCFieldTest : public UnitTest 
 {

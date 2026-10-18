@@ -16,7 +16,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class CudaFieldComparisonTest : public UnitTest 
 {
@@ -52,14 +51,14 @@ public:
       }
 
       // Copy data to fields on the device
-      Prdc::RField<1,CUT> da, db;
+      RField<1,CUT> da, db;
       da.allocate(dimensions);
       db.allocate(dimensions);
       da = ha;
       db = hb;
 
       // Make comparison
-      Prdc::RFieldComparison<1,CUT> comparison;
+      Pscf::RFieldComparison<1,CUT> comparison;
       comparison.compare(da, db);
 
 
@@ -103,14 +102,14 @@ public:
       }
 
       // Copy data to fields da and db on the GPU device
-      Prdc::RField<2,CUT> da, db;
+      RField<2,CUT> da, db;
       da.allocate(dimensions);
       db.allocate(dimensions);
       da = ha;
       db = hb;
 
       // Make comparison
-      Prdc::RFieldComparison<2,CUT> comparison;
+      Pscf::RFieldComparison<2,CUT> comparison;
       comparison.compare(da, db);
 
       if (verbose() > 0) {
@@ -158,8 +157,8 @@ public:
       }
 
       // Copy data to fields da and db on the GPU device
-      DArray< Prdc::RField<2,CUT> > da;
-      DArray< Prdc::RField<2,CUT> > db;
+      DArray< RField<2,CUT> > da;
+      DArray< RField<2,CUT> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -170,7 +169,7 @@ public:
       }
 
       // Make comparison
-      Prdc::RFieldComparison<2,CUT> comparison;
+      Pscf::RFieldComparison<2,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -199,8 +198,8 @@ public:
       d[2] = 3;
 
       // Allocate device arrays da and db
-      Prdc::RFieldDft<3,CUT> da;
-      Prdc::RFieldDft<3,CUT> db;
+      Pscf::RFieldDft<3,CUT> da;
+      Pscf::RFieldDft<3,CUT> db;
       da.allocate(d);
       db.allocate(d);
       int capacity = da.capacity();
@@ -227,7 +226,7 @@ public:
       TEST_ASSERT(da.capacity() == capacity);
 
       // Make comparison
-      Prdc::RFieldDftComparison<3,CUT> comparison;
+      Pscf::RFieldDftComparison<3,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -258,8 +257,8 @@ public:
       dimensions[2] = 3;
 
       // Allocate device arrays da and db
-      DArray< Prdc::RFieldDft<3,CUT> > da;
-      DArray< Prdc::RFieldDft<3,CUT> > db;
+      DArray< Pscf::RFieldDft<3,CUT> > da;
+      DArray< Pscf::RFieldDft<3,CUT> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -298,7 +297,7 @@ public:
       }
 
       // Make comparison
-      Prdc::RFieldDftComparison<3,CUT> comparison;
+      Pscf::RFieldDftComparison<3,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -327,8 +326,8 @@ public:
       d[2] = 3;
 
       // Allocate device arrays da and db
-      Prdc::CField<3,CUT> da;
-      Prdc::CField<3,CUT> db;
+      Pscf::CField<3,CUT> da;
+      Pscf::CField<3,CUT> db;
       da.allocate(d);
       db.allocate(d);
       int capacity = da.capacity();
@@ -355,7 +354,7 @@ public:
       TEST_ASSERT(da.capacity() == capacity);
 
       // Make comparison
-      Prdc::CFieldComparison<3,CUT> comparison;
+      Pscf::CFieldComparison<3,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);
@@ -386,8 +385,8 @@ public:
       dimensions[2] = 3;
 
       // Allocate device arrays da and db
-      DArray< Prdc::CField<3,CUT> > da;
-      DArray< Prdc::CField<3,CUT> > db;
+      DArray< Pscf::CField<3,CUT> > da;
+      DArray< Pscf::CField<3,CUT> > db;
       da.allocate(nMonomer);
       db.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -426,7 +425,7 @@ public:
       }
 
       // Make comparison
-      Prdc::CFieldComparison<3,CUT> comparison;
+      Pscf::CFieldComparison<3,CUT> comparison;
       comparison.compare(da, db);
 
       //setVerbose(1);

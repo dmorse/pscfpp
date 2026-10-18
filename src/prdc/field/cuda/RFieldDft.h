@@ -16,19 +16,12 @@
 // Forward declarations
 namespace Pscf {
    template <typename Data, class T> class HostSendArray;
-   namespace Prdc {
-      // Declaration of primary template
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RFieldDft;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-
-   // Declare primary template
-   template <int D, class T> class RFieldDft;
 
    /**
    * Discrete Fourier Transform (DFT) of a real field, allocated on a GPU.
@@ -177,7 +170,6 @@ namespace Prdc {
    extern template class RFieldDft<2,CUT>;
    extern template class RFieldDft<3,CUT>;
 
-} // namespace Prdc
 } // namespace Pscf
 
 
@@ -186,7 +178,6 @@ namespace Prdc {
 
 // Inline and templated member functions
 namespace Pscf {
-namespace Prdc {
    
    /*
    * Return mesh dimensions by constant reference.
@@ -238,6 +229,5 @@ namespace Prdc {
       ar & meshDimensions_;
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

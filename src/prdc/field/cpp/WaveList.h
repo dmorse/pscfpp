@@ -23,7 +23,6 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -516,6 +515,5 @@ namespace Prdc {
    extern template class WaveList<2,CPT>;
    extern template class WaveList<3,CPT>;
 
-} // Prdc
 } // Pscf
 #endif

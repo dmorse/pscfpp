@@ -8,8 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-//#include "RField.h"
-//#include "RFieldDft.h"
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cuda/DeviceArray.h>
 #include <pscf/math/IntVec.h>
@@ -18,7 +16,6 @@
 #include <cufft.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -141,23 +138,19 @@ namespace Prdc {
    };
 
    // Return the dimensions of the grid for which this was allocated.
-   template <int D>
-   inline const IntVec<D>& FFTBatched<D>::meshDimensions() const
+   template <int D> inline 
+   const IntVec<D>& FFTBatched<D>::meshDimensions() const
    {  return meshDimensions_; }
 
    // Has the setup method been called?
-   template <int D>
-   inline bool FFTBatched<D>::isSetup() const
+   template <int D> inline 
+   bool FFTBatched<D>::isSetup() const
    { return isSetup_; }
 
-   #ifndef PRDC_CUDA_FFT_BATCHED_TPP
    // Explicit instantiation declarations
    extern template class FFTBatched<1>;
    extern template class FFTBatched<2>;
    extern template class FFTBatched<3>;
-   #endif
 
 }
-}
-
 #endif

@@ -13,7 +13,6 @@
 #include <pscf/backend/cuda/HostSendArray.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -141,6 +140,5 @@ namespace Prdc {
       return *this;
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

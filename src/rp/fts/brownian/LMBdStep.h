@@ -18,7 +18,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Leimkuhler-Matthews Brownian dynamics stepper.

@@ -21,11 +21,9 @@ namespace Util {
 namespace Pscf {
    template <int D> class Mesh;
    template <int D> class UnitCell;
-   namespace Prdc {
-      template <int D, class T> class RField; 
-      template <int D, class T> class FFT; 
-      template <int D, class T> class WaveList; 
-   }
+   template <int D, class T> class WaveList; 
+   template <int D, class T> class FFT; 
+   template <int D, class T> class RField; 
    namespace Rp {
       template <int D, class T> class Polymer; 
       template <int D, class T> class Solvent; 
@@ -39,7 +37,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Solver and descriptor for a mixture of polymers and solvents.

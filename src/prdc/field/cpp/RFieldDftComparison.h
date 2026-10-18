@@ -15,13 +15,10 @@ namespace Util {
    template <typename T> class DArray;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RFieldDft;
-   }   
+   template <int D, class T> class RFieldDft;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -111,6 +108,5 @@ namespace Prdc {
    extern template class RFieldDftComparison<2,CPT>;
    extern template class RFieldDftComparison<3,CPT>;
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

@@ -22,21 +22,17 @@
 // Forward declaration
 namespace Util {
    template <typename T> class Array;
-   template <typename T> class ConstArray;
+   template <int D, class T> class FFT;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class RFieldDft;
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class RFieldDft;
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Spherically averaged structure factor for a two-monomer system.

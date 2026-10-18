@@ -8,11 +8,7 @@
 #include "CField.tpp"
 
 namespace Pscf {
-namespace Prdc {
-
    template class CField<1,CUT>;
    template class CField<2,CUT>;
    template class CField<3,CUT>;
-
-} // namespace Prdc
-} // namespace Pscf
+}

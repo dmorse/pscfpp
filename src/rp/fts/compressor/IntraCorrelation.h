@@ -15,16 +15,14 @@
 
 // Forward declarations
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class FFT;
+   template <int D, class T> class FFT;
+   template <int D, class T> class RField;
+   namespace Correlation {
+      template <typename WT> class Mixture;
    }
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
-   }
-   namespace Correlation {
-      template <typename WT> class Mixture;
    }
 }
 
@@ -32,7 +30,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Intramolecular correlation analyzer.

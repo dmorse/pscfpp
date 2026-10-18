@@ -13,7 +13,6 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -103,6 +102,5 @@ namespace Prdc {
    extern template class CFieldComparison<3,CUT>;
 
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

@@ -24,18 +24,15 @@ namespace Pscf {
    template <int D> class Mesh;
    template <int D> class SpaceGroup;
    template <int D> class Basis;
-   namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class RFieldDft;
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class FFT;
+   template <int D, class T> class RFieldDft;
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * File input/output, format conversions and other utilities for fields.

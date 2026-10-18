@@ -20,10 +20,8 @@
 namespace Pscf {
    template <int D> class Mesh;
    template <int D> class UnitCell;
-   namespace Prdc {
-      template <int D, class T> class FFT;
-      template <int D, class T> class WaveList;
-   }
+   template <int D, class T> class WaveList;
+   template <int D, class T> class FFT;
    namespace Rp {
       template <int D, class T> class Propagator;
       template <int D, class T> class Block;
@@ -34,7 +32,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Block within a branched polymer, for Cpp backend.
@@ -488,11 +485,11 @@ namespace Rp {
 namespace Pscf {
 
    extern template
-   class BlockTmpl< Rp::Propagator<1,CUT>, Prdc::RField<1,CUT> >;
+   class BlockTmpl< Rp::Propagator<1,CUT>, RField<1,CUT> >;
    extern template
-   class BlockTmpl< Rp::Propagator<2,CUT>, Prdc::RField<2,CUT> >;
+   class BlockTmpl< Rp::Propagator<2,CUT>, RField<2,CUT> >;
    extern template
-   class BlockTmpl< Rp::Propagator<3,CUT>, Prdc::RField<3,CUT> >;
+   class BlockTmpl< Rp::Propagator<3,CUT>, RField<3,CUT> >;
 
    namespace Rp {
       extern template class Block<1,CUT>;

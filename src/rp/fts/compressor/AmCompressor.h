@@ -17,9 +17,7 @@
 
 // Forward declarations
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class FFT;
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
@@ -31,7 +29,6 @@ namespace Rp {
 
    // Namespaces that can be used implicitly
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Anderson mixing compressor.

@@ -8,7 +8,6 @@
 #include "FFT.tpp"
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -75,5 +74,4 @@ namespace Prdc {
    template class FFT<2,CPT>;
    template class FFT<3,CPT>;
 
-} // namespace Prdc
 } // namespace Pscf

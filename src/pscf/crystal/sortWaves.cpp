@@ -33,7 +33,7 @@ namespace Pscf {
       IntVec<D> kMeshDimensions;
       int kMeshSize;
       if (isRealField) {
-          Prdc::FFT<D,CPT>::computeKMesh(meshDimensions,
+          FFT<D,CPT>::computeKMesh(meshDimensions,
                                          kMeshDimensions, kMeshSize);
       } else {
          kMeshSize = 1;

@@ -8,11 +8,7 @@
 #include "RField.tpp"
 
 namespace Pscf {
-namespace Prdc {
-
    template class RField<1,CPT>;
    template class RField<2,CPT>;
    template class RField<3,CPT>;
-
-}
 }

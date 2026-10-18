@@ -20,9 +20,7 @@ namespace Util {
 }
 namespace Pscf {
    template <int D> class UnitCell;
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
    namespace Rp {
       template <int D, class T> class FieldIo;
    }
@@ -32,7 +30,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * A field that specifies an inhomogeneous total monomer concentration.

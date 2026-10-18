@@ -13,7 +13,6 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -134,6 +133,5 @@ namespace Prdc {
       return *this;
    }
 
-}
 }
 #endif

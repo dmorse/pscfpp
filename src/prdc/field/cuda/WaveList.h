@@ -21,13 +21,10 @@
 namespace Pscf {
    template <int D> class Mesh;
    template <int D> class UnitCell;
-   namespace Prdc {
-      template <int D, class T> class WaveList;
-   }
+   template <int D, class T> class WaveList;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -567,6 +564,5 @@ namespace Prdc {
    extern template class WaveList<2,CUT>;
    extern template class WaveList<3,CUT>;
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

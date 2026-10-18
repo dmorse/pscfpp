@@ -11,10 +11,8 @@
 #include "CField.h"
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-   using namespace Pscf;
 
    /**
    * Default constructor.
@@ -128,6 +126,5 @@ namespace Prdc {
       return *this;
    }
 
-}
 }
 #endif

@@ -17,16 +17,13 @@
 
 // Forward declaration
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * RealMove generates spatially uncorrelated random field changes.

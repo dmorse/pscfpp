@@ -15,7 +15,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class CudaFieldTest : public UnitTest
 {
@@ -38,9 +37,9 @@ void CudaFieldTest::testConstructors()
 {
    printMethod(TEST_FUNC);
    {
-      Prdc::RField<1,CUT> r;
-      Prdc::CField<1,CUT> c;
-      Prdc::RFieldDft<1,CUT> d;
+      RField<1,CUT> r;
+      Pscf::CField<1,CUT> c;
+      Pscf::RFieldDft<1,CUT> d;
       TEST_ASSERT(r.capacity() == 0 );
       TEST_ASSERT(!r.isAllocated() );
       TEST_ASSERT(c.capacity() == 0 );
@@ -54,9 +53,9 @@ void CudaFieldTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    {
-      Prdc::RField<2,CUT> r;
-      Prdc::CField<2,CUT> c;
-      Prdc::RFieldDft<2,CUT> d;
+      RField<2,CUT> r;
+      Pscf::CField<2,CUT> c;
+      Pscf::RFieldDft<2,CUT> d;
       IntVec<2> meshDims, dftDims;
       meshDims[0] = 5;
       meshDims[1] = 7;
@@ -92,7 +91,7 @@ void CudaFieldTest::testRFieldRoundTrip()
       int capacity = 6;
 
       // Allocate device array vd
-      Prdc::RField<3,CUT> vd;
+      RField<3,CUT> vd;
       vd.allocate(d);
 
       // Initialize host (cpu) data in field vh1
@@ -132,7 +131,7 @@ void CudaFieldTest::testCFieldRoundTrip()
       int capacity = 6;
 
       // Allocate device array vd
-      Prdc::CField<3,CUT> vd;
+      Pscf::CField<3,CUT> vd;
       vd.allocate(d);
 
       // Initialize host (cpu) data in field vh1
@@ -175,7 +174,7 @@ void CudaFieldTest::testRFieldDftRoundTrip()
       d[2] = 3;
 
       // Allocate memory on device
-      Prdc::RFieldDft<3,CUT> vd;
+      Pscf::RFieldDft<3,CUT> vd;
       vd.allocate(d);
       int capacity = vd.capacity();
 

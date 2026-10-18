@@ -16,14 +16,11 @@
 
 // Forward declarations
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class CField;
-   }
+   template <int D, class T> class CField;
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -306,6 +303,5 @@ namespace Prdc {
    extern template class FFT<2,CPT>;
    extern template class FFT<3,CPT>;
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

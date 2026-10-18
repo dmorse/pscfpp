@@ -13,7 +13,6 @@
 #include "RField.h"
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -80,6 +79,5 @@ namespace Prdc {
    extern template class RFieldComparison<2,CUT>;
    extern template class RFieldComparison<3,CUT>;
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

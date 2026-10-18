@@ -15,39 +15,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
-
-   #if 0
-   // Public member function
-
-   /*
-   * Set new w-field values, using unfolded array of r-grid fields.
-   */
-   template <int D>
-   void WFields<D,CUT>::setRGrid(DeviceArray<cudaReal,CUT>& fields)
-   {
-      // Create DArray tmp with RField<D,CUT> elements
-      DArray< RField<D,CUT> > tmp;
-      const int nMonomer = Base::nMonomer();
-      tmp.allocate(nMonomer);
-
-      // Associate each RField<D,CUT> with a slice of the unfolded array
-      IntVec<D> const & meshDimensions = Base::meshDimensions();
-      const int meshSize = Base::meshSize();
-      for (int i = 0; i < nMonomer; i++) {
-         tmp[i].associate(fields, i*meshSize, meshDimensions);
-      }
-
-      // Use tmp array to set w-fields for all monomer types
-      bool isSymmetric = false;
-      Base::setRGrid(tmp, isSymmetric);
-   }
-
-   // Explicit instantiation definitions - base class
-   template class WFieldsBase<1,CUT>;
-   template class WFieldsBase<2,CUT>;
-   template class WFieldsBase<3,CUT>;
-   #endif
 
    // Explicit instantiation definitions - this class
    template class WFields<1,CUT>;

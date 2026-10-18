@@ -27,7 +27,6 @@ namespace Rp {
 
    // Namespaces from which names may be used without qualification
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /*
    * Constructor.
@@ -745,9 +744,9 @@ namespace Rp {
 // Explicit instantiation definitions
 namespace Pscf { 
 
-   template class BlockTmpl< Rp::Propagator<1,CPT>, Prdc::RField<1,CPT> >;
-   template class BlockTmpl< Rp::Propagator<2,CPT>, Prdc::RField<2,CPT> >;
-   template class BlockTmpl< Rp::Propagator<3,CPT>, Prdc::RField<3,CPT> >;
+   template class BlockTmpl< Rp::Propagator<1,CPT>, RField<1,CPT> >;
+   template class BlockTmpl< Rp::Propagator<2,CPT>, RField<2,CPT> >;
+   template class BlockTmpl< Rp::Propagator<3,CPT>, RField<3,CPT> >;
 
    namespace Rp {
       template class Block<1,CPT>;

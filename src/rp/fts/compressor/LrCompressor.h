@@ -20,9 +20,7 @@
 
 // Forward declarations
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class FFT;
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
@@ -33,7 +31,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Linear response compressor.

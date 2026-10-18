@@ -18,7 +18,6 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -170,7 +169,6 @@ namespace Prdc {
    extern template class RField<2,CPT>;
    extern template class RField<3,CPT>;
 
-} // namespace Prdc
 } // namespace Pscf
 #endif
 

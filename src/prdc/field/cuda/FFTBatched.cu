@@ -9,9 +9,7 @@
 
 // Explicit instantiation definitions
 namespace Pscf {
-   namespace Prdc {
-      template class FFTBatched<1>;
-      template class FFTBatched<2>;
-      template class FFTBatched<3>;
-   } 
+   template class FFTBatched<1>;
+   template class FFTBatched<2>;
+   template class FFTBatched<3>;
 } 

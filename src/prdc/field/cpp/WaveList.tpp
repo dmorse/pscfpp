@@ -20,7 +20,6 @@
 #include <pscf/math/Sort.h>
 
 namespace Pscf {
-namespace Prdc {
 
    /*
    * Constructor.
@@ -275,6 +274,5 @@ namespace Prdc {
       isSorted_ = true;
    }
 
-}
 }
 #endif

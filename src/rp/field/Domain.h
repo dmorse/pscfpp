@@ -24,10 +24,8 @@ namespace Util {
 namespace Pscf {
    template <int D> class SpaceGroup;
    template <int D> class Basis;
-   namespace Prdc {
-      template <int D, class T> class FFT;
-      template <int D, class T> class WaveList;
-   }
+   template <int D, class T> class WaveList;
+   template <int D, class T> class FFT;
    namespace Rp {
       template <int D, class T> class FieldIo;
    }
@@ -37,7 +35,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Spatial domain for a periodic structure with real fields.

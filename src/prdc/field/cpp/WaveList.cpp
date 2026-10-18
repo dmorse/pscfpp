@@ -9,9 +9,7 @@
 
 // Explicit instantiation definitions
 namespace Pscf { 
-   namespace Prdc { 
-      template class WaveList<1,CPT>;
-      template class WaveList<2,CPT>;
-      template class WaveList<3,CPT>;
-   }
+   template class WaveList<1,CPT>;
+   template class WaveList<2,CPT>;
+   template class WaveList<3,CPT>;
 }

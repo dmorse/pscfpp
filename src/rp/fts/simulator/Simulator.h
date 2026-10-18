@@ -37,7 +37,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Base class for field theoretic PS-FTS simulator.

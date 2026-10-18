@@ -22,7 +22,6 @@
 #include <pscf/math/IntVec.h>
 
 namespace Pscf {
-namespace Prdc {
 
    // CUDA kernels:
    // (defined in an anonymous namespace, used only in this file)
@@ -840,6 +839,5 @@ namespace Prdc {
       return minImages_h_;
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

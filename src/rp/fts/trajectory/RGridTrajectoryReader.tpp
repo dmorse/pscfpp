@@ -27,7 +27,6 @@ namespace Rp {
    template <int D, class T> class FieldIo;
 
    using namespace Util;
-   using namespace Prdc;
 
    /*
    * Constructor.

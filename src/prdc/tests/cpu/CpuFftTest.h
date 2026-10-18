@@ -13,7 +13,7 @@
 #include <util/format/Dbl.h>
 
 using namespace Util;
-using namespace Pscf::Prdc;
+using namespace Pscf;
 
 class CpuFftTest : public UnitTest 
 {

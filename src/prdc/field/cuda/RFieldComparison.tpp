@@ -13,7 +13,6 @@
 #include <pscf/backend/cuda/HostSendArray.h>
 
 namespace Pscf {
-namespace Prdc {
 
    /*
    * Default constructor.
@@ -69,6 +68,5 @@ namespace Prdc {
       return fieldComparison_.maxDiff();
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

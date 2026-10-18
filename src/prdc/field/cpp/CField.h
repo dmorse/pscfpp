@@ -15,7 +15,6 @@
 #include <fftw3.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -141,6 +140,5 @@ namespace Prdc {
    extern template class CField<2,CPT>;
    extern template class CField<3,CPT>;
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

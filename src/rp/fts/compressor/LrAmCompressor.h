@@ -28,7 +28,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Anderson mixing compressor with linear-response correction step.

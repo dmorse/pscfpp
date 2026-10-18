@@ -17,7 +17,6 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
 
@@ -196,6 +195,5 @@ namespace Prdc {
    extern template class CField<2,CUT>;
    extern template class CField<3,CUT>;
 
-}
 }
 #endif

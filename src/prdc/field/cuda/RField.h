@@ -16,19 +16,12 @@
 // Forward declarations
 namespace Pscf {
    template <typename Data, class T> class HostSendArray;
-   namespace Prdc {
-      // Declaration of primary template
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
-namespace Prdc {
 
    using namespace Util;
-
-   // Declaration of primary template
-   //template <int D, class T> class RField;
 
    /**
    * Field of real values on a regular mesh, allocated on a GPU device.
@@ -164,7 +157,6 @@ namespace Prdc {
    extern template class RField<2,CUT>;
    extern template class RField<3,CUT>;
 
-} // namespace Prdc
 } // namespace Pscf
 
 #include <pscf/backend/cuda/HostSendArray.h> 
@@ -172,7 +164,6 @@ namespace Prdc {
 
 // Inline and template member functions
 namespace Pscf {
-namespace Prdc {
 
    /*
    * Return mesh dimensions by constant reference.
@@ -216,6 +207,5 @@ namespace Prdc {
       ar & meshDimensions_;
    }
 
-} // namespace Prdc
 } // namespace Pscf
 #endif

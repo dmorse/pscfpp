@@ -19,7 +19,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Brownian dynamics Monte-Carlo move.
