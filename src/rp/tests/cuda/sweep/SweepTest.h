@@ -13,8 +13,8 @@
 #include <rp/scft/sweep/SweepFactory.h>
 #include <rp/scft/sweep/LinearSweep.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/BFieldComparison.h>
 
 #include <pscf/chem/Monomer.h>
 #include <pscf/sweep/ParameterType.h>

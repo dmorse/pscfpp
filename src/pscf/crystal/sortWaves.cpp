@@ -7,8 +7,8 @@
 
 #include "sortWaves.h"
 #include <prdc/field/cpp/FFT.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 

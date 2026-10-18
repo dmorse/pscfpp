@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pscf/math/IntVec.h>
 #include <iostream>
 

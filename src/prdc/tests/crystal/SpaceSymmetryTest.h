@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/crystal/SpaceSymmetry.h>
+#include <pscf/crystal/SpaceSymmetry.h>
 #include <util/math/Constants.h>
 
 #include <iostream>

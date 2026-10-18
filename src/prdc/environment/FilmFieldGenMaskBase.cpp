@@ -6,7 +6,7 @@
 */
 
 #include "FilmFieldGenMaskBase.tpp"
-#include <prdc/crystal/paramIdConversions.h>
+#include <pscf/crystal/paramIdConversions.h>
 
 namespace Pscf {
 namespace Prdc

@@ -11,7 +11,7 @@
 #include <rp/field/CFields.h>
 
 #include <prdc/field/FFT.h>
-#include <prdc/crystal/shiftToMinimum.h>
+#include <pscf/crystal/shiftToMinimum.h>
 
 #include <pscf/backend/HostSendArray.h>
 #include <pscf/backend/Reduce.h>

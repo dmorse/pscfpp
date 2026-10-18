@@ -4,9 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/replicateUnitCell.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/replicateUnitCell.h>
 
 #include <util/signal/Signal.h>
 #include <util/math/Constants.h>

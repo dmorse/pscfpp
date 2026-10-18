@@ -34,8 +34,8 @@
 #include <prdc/field/RField.h>
 #include <prdc/field/RFieldDft.h>
 #include <prdc/environment/Environment.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/Mesh.h>

@@ -6,7 +6,7 @@
 */
 
 #include <rp/run.h>
-#include <prdc/crystal/getDimension.h>
+#include <pscf/crystal/getDimension.h>
 #include <pscf/backend/cuda/CUT.h>
 #include <iostream>
 

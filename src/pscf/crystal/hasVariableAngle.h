@@ -1,7 +1,7 @@
 #ifndef PRDC_HAS_VARIABLE_ANGLE_H
 #define PRDC_HAS_VARIABLE_ANGLE_H
 
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 /*
 * PSCF - Polymer Self-Consistent Field

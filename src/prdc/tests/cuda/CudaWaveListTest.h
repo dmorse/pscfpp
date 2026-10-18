@@ -6,8 +6,8 @@
 
 #include <prdc/field/cuda/WaveList.h>
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/cuda/HostRecvArray.h> 
 #include <pscf/backend/cuda/HostSendArray.h> 

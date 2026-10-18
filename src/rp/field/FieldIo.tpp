@@ -12,12 +12,12 @@
 
 #include <pscf/fieldIo/fieldCheck.h>
 #include <pscf/fieldIo/rFieldIo.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/SpaceGroup.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/SpaceGroup.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/BFieldComparison.h>
 #include <prdc/field/FFT.h>
 #include <prdc/field/RFieldComparison.h>
 #include <prdc/field/RField.h>

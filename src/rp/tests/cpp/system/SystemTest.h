@@ -19,7 +19,7 @@
 
 #include <prdc/field/cpp/RField.h>
 #include <prdc/field/cpp/RFieldComparison.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/BFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>

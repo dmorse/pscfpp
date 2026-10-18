@@ -15,8 +15,8 @@
 #include <rp/field/WFields.h>
 
 #include <prdc/field/cpp/RFieldComparison.h>
-#include <prdc/crystal/BFieldComparison.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/BFieldComparison.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/interaction/Interaction.h>
 

@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/replicateUnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/replicateUnitCell.h>
 #include <pscf/fieldIo/fieldHeader.h>
 
 #include <pscf/mesh/Mesh.h>
@@ -952,7 +952,7 @@ namespace Pscf {
       }
 
       // Create a replicated UnitCell<D> object 
-      // Use function declared in prdc/crystal/replicateUnitCell.h
+      // Use function declared in pscf/crystal/replicateUnitCell.h
       UnitCell<D> cell;
       replicateUnitCell(replicas, unitCell, cell);
 

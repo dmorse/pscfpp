@@ -5,8 +5,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/SymmetryGroup.tpp>
-#include <prdc/crystal/SpaceSymmetry.tpp>
+#include <pscf/crystal/SymmetryGroup.tpp>
+#include <pscf/crystal/SpaceSymmetry.tpp>
 
 namespace Pscf {
 

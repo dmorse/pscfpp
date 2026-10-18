@@ -10,8 +10,8 @@
 #include <rp/field/WFields.h>
 
 #include <prdc/field/FFT.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>

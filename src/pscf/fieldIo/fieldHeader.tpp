@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/unitCellHeader.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/unitCellHeader.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>

@@ -9,7 +9,7 @@
 */
 
 #include "FilmFieldGenExtBase.h"
-#include <prdc/crystal/SpaceGroup.h>
+#include <pscf/crystal/SpaceGroup.h>
 #include <pscf/sweep/ParameterType.h>
 #include <util/param/ParamComponent.h>
 #include <util/containers/GArray.h>

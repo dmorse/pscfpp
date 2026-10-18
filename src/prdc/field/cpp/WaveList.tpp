@@ -11,9 +11,9 @@
 #include "WaveList.h"
 
 #include <prdc/field/cpp/FFT.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/hasVariableAngle.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/hasVariableAngle.h>
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>

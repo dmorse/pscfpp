@@ -9,8 +9,8 @@
 */
 
 #include "FilmFieldGenMaskBase.h"
-#include "prdc/crystal/SpaceGroup.h"
-#include "util/param/ScalarParam.h"
+#include <pscf/crystal/SpaceGroup.h>
+#include <util/param/ScalarParam.h>
 #include <cmath>
 
 namespace Pscf {

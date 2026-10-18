@@ -12,8 +12,8 @@
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/BFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>
 
 #include <fstream>

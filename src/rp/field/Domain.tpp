@@ -12,8 +12,8 @@
 #include <rp/field/FieldIo.h>
 #include <prdc/field/FFT.h>
 #include <prdc/field/WaveList.h>
-#include <prdc/crystal/SpaceGroup.h>
-#include <prdc/crystal/Basis.h>
+#include <pscf/crystal/SpaceGroup.h>
+#include <pscf/crystal/Basis.h>
 #include <pscf/fieldIo/fieldHeader.h>
 #include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>

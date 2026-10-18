@@ -12,7 +12,7 @@
 #include <prdc/field/cuda/RField.h>
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/field/cuda/WaveList.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/backend/cuda/HostRecvArray.h>

@@ -13,9 +13,9 @@
 #include <prdc/field/cuda/RFieldDftComparison.h>
 #include <prdc/field/cuda/FFT.h>
 
-#include <prdc/crystal/BFieldComparison.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>

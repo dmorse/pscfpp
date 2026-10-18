@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/SpaceGroup.h>
-#include <prdc/crystal/groupFile.h>
+#include <pscf/crystal/SpaceGroup.h>
+#include <pscf/crystal/groupFile.h>
 
 namespace Pscf {
 

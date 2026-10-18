@@ -10,9 +10,9 @@
 #include <prdc/field/cpp/RField.h>
 #include <prdc/field/cpp/RFieldDft.h>
 #include <prdc/field/cpp/FFT.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/SpaceGroup.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/SpaceGroup.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
 

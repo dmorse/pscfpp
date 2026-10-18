@@ -9,7 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>  // base class
-#include <prdc/crystal/UnitCell.h>      // member
+#include <pscf/crystal/UnitCell.h>      // member
 #include <pscf/mesh/Mesh.h>             // member
 #include <pscf/backend/TmplDeclare.h>  // template declaration macros
 

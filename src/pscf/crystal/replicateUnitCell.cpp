@@ -6,7 +6,7 @@
 */
 
 #include "replicateUnitCell.h"
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pscf/math/IntVec.h>
 #include <util/containers/FArray.h>
 #include <util/containers/FSArray.h>

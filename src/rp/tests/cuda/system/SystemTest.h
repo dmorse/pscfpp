@@ -16,7 +16,7 @@
 #include <rp/field/Mask.h>
 #include <prdc/field/cuda/RField.h>
 #include <prdc/field/cuda/resources.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>

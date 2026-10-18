@@ -16,7 +16,7 @@
 #include <prdc/field/cuda/RField.h>
 #include <prdc/field/cuda/FFT.h>
 #include <prdc/field/cuda/WaveList.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/Mesh.h>

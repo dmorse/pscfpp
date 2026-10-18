@@ -10,7 +10,7 @@
 
 #include <prdc/field/cuda/WaveList.h>
 #include <prdc/field/cuda/FFT.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/cuda/Reduce.h>
 #include <pscf/backend/cuda/VecOp.h>

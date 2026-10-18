@@ -15,8 +15,8 @@
 #include <rp/scft/iterator/Iterator.h>
 
 #include <prdc/field/cpp/RField.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/paramIdConversions.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/paramIdConversions.h>
 #include <pscf/math/IntVec.h>
 
 #include <cmath>

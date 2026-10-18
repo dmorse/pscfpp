@@ -18,7 +18,7 @@
 #include <rp/solvers/Block.h>
 #include <rp/field/Domain.h>
 
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/interaction/Interaction.h>
 #include <pscf/sweep/ParameterModifier.h>

@@ -10,8 +10,8 @@
 
 #include <prdc/field/cpp/WaveList.h>
 #include <prdc/field/cpp/FFT.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
 
 #include <pscf/chem/Edge.h>
 #include <pscf/mesh/Mesh.h>

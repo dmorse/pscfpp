@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/SpaceGroup.tpp>
+#include <pscf/crystal/SpaceGroup.tpp>
 
 namespace Pscf {
 

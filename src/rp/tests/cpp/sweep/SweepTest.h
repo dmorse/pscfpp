@@ -12,7 +12,7 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/BFieldComparison.h>
 
 #include <pscf/sweep/ParameterType.h>
 #include <pscf/interaction/Interaction.h>

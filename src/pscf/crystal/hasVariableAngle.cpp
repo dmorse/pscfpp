@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/hasVariableAngle.h>
+#include <pscf/crystal/hasVariableAngle.h>
 
 namespace Pscf { 
 

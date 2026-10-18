@@ -10,7 +10,7 @@
 #include <prdc/field/cpp/RField.h>
 #include <prdc/field/cpp/FFT.h>
 #include <prdc/field/cpp/WaveList.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/Mesh.h>

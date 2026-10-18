@@ -17,8 +17,8 @@
 
 #include <prdc/field/cuda/RField.h>
 #include <prdc/field/cuda/resources.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/BFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>

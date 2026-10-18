@@ -9,7 +9,7 @@
 */
 
 #include <prdc/environment/FieldGenerator.h>  // Base class
-#include <prdc/crystal/UnitCell.h>            // Function parameter
+#include <pscf/crystal/UnitCell.h>            // Function parameter
 #include <pscf/math/RealVec.h>                // container
 #include <iostream>
 #include <string>

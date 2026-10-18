@@ -1,7 +1,6 @@
 #-----------------------------------------------------------------------
 # Include source list files from subdirectories
 
-include $(SRC_DIR)/prdc/crystal/sources.mk
 include $(SRC_DIR)/prdc/field/sources.mk
 include $(SRC_DIR)/prdc/environment/sources.mk
 
@@ -9,12 +8,10 @@ include $(SRC_DIR)/prdc/environment/sources.mk
 # Object and dependency file lists for src/prdc
 
 prdc_OBJS= \
-  $(prdc_crystal_OBJS) \
   $(prdc_field_OBJS) \
   $(prdc_environment_OBJS)
 
 prdc_DEPS= \
-  $(prdc_crystal_DEPS) \
   $(prdc_field_DEPS) \
   $(prdc_environment_DEPS)
 

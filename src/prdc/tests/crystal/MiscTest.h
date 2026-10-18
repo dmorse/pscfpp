@@ -5,8 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <prdc/field/cpp/FFT.h>
-#include <prdc/crystal/sortWaves.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/sortWaves.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/Sort.h>
 #include <util/math/Constants.h>

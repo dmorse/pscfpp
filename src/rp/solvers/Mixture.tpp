@@ -19,7 +19,7 @@
 
 #include <prdc/field/FFT.h>
 #include <prdc/field/RField.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>

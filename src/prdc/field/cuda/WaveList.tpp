@@ -12,8 +12,8 @@
 
 #include <prdc/field/cuda/resources.h>
 #include <prdc/field/cuda/FFT.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/hasVariableAngle.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/hasVariableAngle.h>
 #include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/mesh/Mesh.h>

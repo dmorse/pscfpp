@@ -4,10 +4,10 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/BWave.h>
-#include <prdc/crystal/groupFile.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/BWave.h>
+#include <pscf/crystal/groupFile.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 

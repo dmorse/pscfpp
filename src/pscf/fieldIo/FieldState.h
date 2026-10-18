@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/UnitCell.h>        // member
+#include <pscf/crystal/UnitCell.h>        // member
 #include <util/containers/DArray.h>       // member template
 
 namespace Pscf {

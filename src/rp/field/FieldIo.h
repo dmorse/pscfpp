@@ -9,7 +9,7 @@
 */
 
 #include <prdc/field/RFieldDft.h>       // member
-#include <prdc/crystal/UnitCell.h>      // nested LatticeSystem enum
+#include <pscf/crystal/UnitCell.h>      // nested LatticeSystem enum
 #include <pscf/math/IntVec.h>           // template with default
 #include <util/containers/DArray.h>     // member
 #include <pscf/backend/TmplDeclare.h>  // template declaration macros

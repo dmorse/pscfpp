@@ -14,8 +14,8 @@
 
 #include <prdc/field/RField.h>
 #include <pscf/fieldIo/rFieldIo.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>

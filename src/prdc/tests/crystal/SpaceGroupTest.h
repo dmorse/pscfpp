@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/crystal/SpaceGroup.h>
+#include <pscf/crystal/SpaceGroup.h>
 
 #include <iostream>
 #include <fstream>

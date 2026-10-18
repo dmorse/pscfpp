@@ -18,7 +18,7 @@
 #include <rp/field/WFields.h>
 
 #include <prdc/field/RField.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>

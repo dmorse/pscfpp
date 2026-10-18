@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/crystal/SpaceSymmetry.h>
-#include <prdc/crystal/SymmetryGroup.h>
+#include <pscf/crystal/SpaceSymmetry.h>
+#include <pscf/crystal/SymmetryGroup.h>
 #include <pscf/math/IntVec.h>
 #include <util/containers/FSArray.h>
 #include <util/param/Label.h>

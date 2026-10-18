@@ -10,9 +10,9 @@
 #include <rp/field/FieldIo.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/BFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>
 
 #include <pscf/mesh/Mesh.h>
