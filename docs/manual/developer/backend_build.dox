@@ -70,14 +70,14 @@ associated makefile variables:
    same name are both defined.  Among these are all files that contain 
    explicit instantiation definitions for templates that take 
    T = Pscf::CUT as a template argument, as well as the main program 
-   file for the pscf_rpg program. 
+   file for the pscf_rpg executable.
 
  - Source files that are used only with the C++ backend are compiled 
    if and only if the preprocessor macro PSCF_CPP and a C/C++ 
    preprocessor macro of the same name are both defined. Among these 
    are all files that contain explicit instantiation definitions for 
    templates that take T=Pscf::CPT as a template argument, as well as 
-   the main program file for the pscf_rpc program. 
+   the main program file for the pscf_rpc executable.
 
 When both C++ and Cuda backends are enabled, by defining both the 
 PSCF_CUDA and PSCF_CPP macros, 6 specializations are instantiated for 

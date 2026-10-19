@@ -25,9 +25,9 @@ Pscf::CPT and Pscf::CUT, for which:
 
 Template specializations for which Pscf::CPT is a template argument 
 thus use the C++ backend, and are used to construct the pscf_rpc 
-program. Template specializations for which Pscf:CUT is a template 
+executable. Template specializations for which Pscf:CUT is a template 
 argument instead use a CUDA GPU backend, and are used to construct
-the pscf_rpg program.  
+the pscf_rpg executable.  
 
 A template parameter that is designed to take one of these backend 
 identifier classes as its argument is sometimes referred to here as 

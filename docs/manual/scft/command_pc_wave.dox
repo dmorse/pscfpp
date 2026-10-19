@@ -1,10 +1,11 @@
-/*! \page scft_command_pc_wave_page Command for pscf_rpc: WRITE_WAVES
+/*! \page scft_command_pc_wave_page Command for pscf_rp: WRITE_WAVES
 \ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_thermo_page      (Next)
 <BR>
 
-THE WRITE_WAVES command accepted by pscf_rpc and pscf_rpg programs writes a
-detailed description of the symmetry-adapted basis used by these programs.
+THE WRITE_WAVES command accepted by the pscf_rp program writes a 
+detailed description of the symmetry-adapted basis used by this program
+to treat structures with a known space group symmetry.
 Closely related information about the basis is also provided by the
 \ref scft_command_pc_star_page "WRITE_STARS" command.
 
@@ -18,11 +19,10 @@ that discuss crystallographic space group
 \ref prdc_symmetry_page "symmetry operations" and
 \ref prdc_basis_page "symmetry-adapted bases".
 
-The type of symmetry-adapated Fourier basis used by the pscf_rpc and
-pscf_rpg programs is constructed by grouping all of the reciprocal lattice
-wavevectors used in a discrete Fourier transform of periodic functions
-into subsets of wavevectors that are related to one another by space
-group symmetry operations.
+The type of symmetry-adapated Fourier basis used by pscf_rp is constructed 
+by grouping all of the reciprocal lattice wavevectors used in a discrete 
+Fourier transform of periodic functions into subsets of wavevectors that 
+are related to one another by space group symmetry operations.
 We refer to each such subset of symmetry-related wavevectors as a
 \ref user_field_basis_star_sec "star" of wavevectors.
 A basis function that is invariant under all operations of the space group,

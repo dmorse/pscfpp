@@ -24,14 +24,13 @@ namespace Rp {
    * Mixture object that are initialized in the parameter file. These
    * include changes in species volume fractions or chemical potential, 
    * changes in kuhn lengths, changes in block lengths, and changes in
-   * solvent sizes. The System\<D, T\> class template provides public
-   * access to a child instance of  Mixture \<D, \T> only through a 
+   * solvent sizes. The parent System\<D, T\> class template provides 
+   * public access to a child instance of  Mixture \<D, T\> only through a 
    * const reference, but provides a non-const reference to an associated 
    * MixtureModifier. The MixtureModifier template defines a limited set
-   * of non-const operations that modify parameters of the mixture that
-   * may be applied via a non-const reference to a System. This interface
-   * is used to implement sweep and ramp operations that may need to 
-   * modify these parameters during program execution.
+   * of non-const operations that modify parameters of the mixture. This
+   * interface is used to implement sweep and ramp operations that may 
+   * need to modify these parameters during program execution.
    *
    * The MixtureModifier class also provides public access to the
    * Mixture::clearUnitCell function, which clears all data owned by

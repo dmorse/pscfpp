@@ -82,8 +82,8 @@ System{
 }
 \endcode
 The above parameter file could be used by either the pscf_rpc or pscf_rpg
-program, which provide identical capabilities and identical user
-interfaces for PS-FTS calculations.
+executable, which provide identical capabilities and identical user
+interfaces.
 
 \section psfts_param_overview_sec Parameter file (overview)
 
@@ -98,8 +98,8 @@ but slightly different formats, which must differ somewhat because
 they contain computational parameters for different types of sampling
 algorithms.
 
-The format of the main System block of any pscf_rpc or pscf_rpg parameter
-file, including all allowed elements, is shown below in skeleton form:
+The format of the main System block of any pscf_rp parameter file, 
+including all allowed child elements, is shown below in skeleton form:
 \code
 System{
   Mixture{ ... }
@@ -113,9 +113,9 @@ System{
 Note that only the Mixture, Interaction, and Domain blocks are required.
 The optional Iterator and Sweep blocks are only used for SCFT calculations,
 and so would normally be omitted from a parameter file used to initialize
-a BD or MC simulation.  The "Simulator" block is an optional, selectable
-block that is only used only for FTS, and is thus normally omitted from
-parameter files used for SCFT calculations.
+a PS-FTS simulation.  The "Simulator" block is an optional, selectable
+block that is used only for PS-FTS simulations, and so is normally omitted 
+from parameter files used for SCFT calculations.
 
 The typical format of a parameter file for a Brownian dynamics simulation,
 is thus, in skeleton form:
@@ -305,8 +305,8 @@ See also: \ref rp_BdSimulator_page "BdSimulator parameter file format"
 
 <b> BD Step Algorithms: </b>
 
-The BD step algorithms that are available for use with pscf_rpc or pscf_rpg
-are listed below, with each indicated by the name that would be used as
+The BD step algorithms that are available for use with pscf_rp are 
+listed below, with each indicated by the name that would be used as
 the label of the BdStep parameter file block. Each such label is a
 clickable link to a file containing documentation of the algorithm and
 associated parameter file format.
@@ -441,10 +441,10 @@ exchange field at each grid point.
 See also: \ref rp_McSimulator_page "McSimulator parameter file format"
 
 <b> MC Move Algorithms: </b>
-The MC move algorithms that are available for use with pscf_rpc or
-pscf_rpg are listed below, labelled by the name that is used in the first
-line of a corresponding parameter file block. Further information about
-each MC move can be obtained by clicking on the associated link.
+The MC move algorithms that are available for use with pscf_rp are listed 
+below, with each labelled by the name that would be used as a label in the 
+first line of a corresponding parameter file block. Further information 
+about each MC move can be obtained by clicking on the associated link.
 <ul>
   <li> \ref rp_ForceBiasMove_page "ForceBiasMove" </li>
   <li> \ref rp_RealMove_page "RealMove" </li>

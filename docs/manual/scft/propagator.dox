@@ -295,9 +295,8 @@ Initial conditions for \f$ q_{1} \f$ and \f$ q_{2} \f$ are analogous.
 
 <em> Boundary Conditions </em>:
 
-In the pscf_rpc and pscf_rpg programs, the MDE for propagators in a
-periodic structure is solved within a single unit cell, subject to
-periodic boundary conditions.
+The pscf_rp program solves the MDE for propagators in a unit cell
+with periodic boundary conditions.
 
 In the pscf_r1d program, the MDE for each propagator \f$ q(x,s) \f$
 is solved within a range of values of the single spatial coordinate
@@ -713,11 +712,10 @@ an incompressible liquid in the form implemented in PSCF, for calculations in
 a fixed spatial domain.  We simplify the discussion by restricting ourselves
 here to calculation that are carried out in a fixed one-dimensional or periodic
 spatial domain. Extension to SCFT calculations in a periodic unit cell with
-flexible parameters, as performed by pscf_rpc or pscf_rpg programs, would
-require an additional set of working equations to impose a requirement that
-the free energy density be minimized with respect to  variation of the unit
-cell parameters.  The working equations for a PSCF SCFT calculation in a fixed
-spatial domain are:
+flexible parameters, as performed by pscf_rp, would require an additional set 
+of working equations to impose a requirement that the free energy density be 
+minimized with respect to  variation of the unit cell parameters.  The 
+working equations for a PSCF SCFT calculation in a fixed spatial domain are:
 
    - The modified diffusion equation
      [Eqs. (4) and (5)]
@@ -791,8 +789,7 @@ used in the solution of SCFT equations. The option of entering a
 value is provided because:
 
   - A value for \f$ v \f$ is required as an input to field
-    theoretic simulations that can be performed by pscf_rpc
-    and pscf_rpg.
+    theoretic simulations that can be performed by pscf_rp.
 
   - A value for \f$ v \f$ is required to compute some physical
     quantities that can be inferred from solution of a SCFT

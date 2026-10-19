@@ -154,10 +154,9 @@ algorithm provided by a class with this name).
 Source code files that are specific to different PSCF
 programs are defined in different C++ implementation level namespaces
 (i.e., in Pscf::R1d or Pscf::Rp), but are often given the same name. 
-The pscf_r1d program uses a class Pscf::R1d::LinearSweep, while the
-pscf_rpc and pscf_rpg programs use specializations of the class template
-Pscf::Rp::LinearSweep.  The common user interface for these classes is 
-described here.
+The pscf_r1d program uses a class Pscf::R1d::LinearSweep, while 
+pscf_rp uses specializations of the class template Pscf::Rp::LinearSweep.  
+The common user interface for these classes is described here.
 
 \subsection scft_sweep_linear_param_sub Parameter file format
 
@@ -176,8 +175,8 @@ The parameter file format for a LinearSweep is summarized below:
   }
 \endcode
 Parameters marked with an asterisk are optional. Parameters marked
-with a plus sign are only relevant to pscf_rpc and pscf_rpg, and cannot
-be used in pscf_r1d. The purpose of the parameters in this block are
+with a plus sign are only relevant to pscf_rp, and cannot be used 
+in pscf_r1d. The purpose of the parameters in this block are
 explained below:
 <table>
   <tr>
@@ -380,9 +379,9 @@ automatically also update chi(j, i) for \f$ i \neq j \f$, thus preserving
 the symmetry of the matrix.
 
 Parameters of type "cell_param" are only usable in simulations of
-periodic structure performed using a pscf_rpc or pscf_rpg program, for
-simulations with a rigid unit cell in which the parameters are not
-automatically optimized so as to minimize the free energy density.
+periodic structure performed using pscf_rp, for simulations with a 
+rigid unit cell in which the parameters are not automatically optimized 
+so as to minimize the free energy density.
 In this case, a "unit_cell" parameter is one of the parameters that
 determine the the size and shape of the crystal unit for a system of
 specified latttice type. Examples include the length of each edge of
@@ -396,10 +395,10 @@ The uid index for a cell_parameter is a zero based integer index
 that identifies which parameter in such a list is being varied.
 
 The chi_top and chi_bottom parameters are only applicable to
-simulations of thin films performed with thepscf_rpc or pscf_rpg program,
-as discussed \ref scft_thin_films_page "here". These are used to vary the
-effective interaction parameters for interactions of a specific monomer
-type with the top or bottom surface of a thin film.
+simulations of thin films performed with pscf_rp, as discussed 
+\ref scft_thin_films_page "here". These are used to vary the effective 
+interaction parameters for interactions of a specific monomer type with 
+the top or bottom surface of a thin film.
 
 \section scft_sweep_output_sec Output files
 
@@ -428,15 +427,16 @@ files. These always include a converged chemical potential field file
 concentration (a c field file).  Formats and file name extensions for
 these files are different for different programs.
 
-In the case of the pscf_r1d program, both a chemical potential field
-and a monomer concentration field are always output, and are both
-output in the \ref user_field_r1d_page "1D field file" used by
-pscf_r1d. Names for these files end with filename extension ".w" for
-chemical potential fields and ".c" for monomer concentration fields.
+When a sweep is performed by the pscf_r1d program, both a chemical 
+potential field and a monomer concentration field are always output, 
+and are both output in the \ref user_field_r1d_page "1D field file" 
+used by pscf_r1d. Names for these files end with filename extension 
+".w" for chemical potential fields and ".c" for monomer concentration 
+fields.
 
-In the case of the pscf_rpc and pscf_rpg programs, only the converged
-chemical potential fields are output by default. If these converged
-fields were obtained using an iterator that preserves space group
+When a sweep is performed by the pscf_rp program, only the converged
+chemical potential fields are output by default. If these converged 
+fields were obtained using an iterator that preserves space group 
 symmetry, such as AmIteratorBasis, they are output in
 \ref user_field_basis_page "basis format", to files with names that
 begin with an integer state index end with a suffix "_w.bf", such as

@@ -67,9 +67,9 @@ the legacy Fortran version include the following:
 
 ## Programs
 
-PSCF provides source code for the following three executable programs:
+PSCF provides source code for the following two programs:
 
-   - **pscf_r1d** : The pscf_r1d program is is designed to perform SCFT
+   - **pscf_1d** : The pscf_1d program is is designed to perform SCFT
      calculations for one-dimensional (1D) problems in Cartesian,
      cylindrical or spherical coordinates. A finite difference spatial
      discretization is used to solve the underlying partial differential
@@ -77,24 +77,22 @@ PSCF provides source code for the following three executable programs:
      program can be used to treat problems involving flat and curved
      interfaces, as well as cylindrical and spherical micelles.
 
-   - **pscf_rpc** : The pscf_rpc program can be used to perform SCFT and
+   - **pscf_rp** : The pscf_rp program can be used to perform SCFT and
      PS-FTS calculations for systems that are periodic in 1, 2 or 3
-     spatial dimensions, using standard CPU hardware. A pseudo-spectral
-     algorithm is used to solve the MDE. This program provides capabilities
-     for SCFT calculations analogous to those of the older Fortran PSCF
-     program, as well as tools for PS-FTS calculations.  The suffix
-     "rpc" stands for "real periodic CPU".
+     spatial dimensions. A pseudo-spectral algorithm is used to solve 
+     the MDE. This program provides capabilities for SCFT calculations 
+     analogous to those of the older Fortran PSCF program, as well as 
+     a complete set of tools for PS-FTS calculations.  The suffix "rp" 
+     stands for "real periodic".
 
-   - **pscf_rpg** : The pscf_rpg program is a GPU-accelerated version of
-     pscf_rpc that can also perform SCFT and PS-FTS calculations for
-     periodic systems. The pscf_rpc and pscf_rpg programs use identical
-     algorithms and provide identical features. They only difference is
-     that pscf_rpg uses a GPU, and provides much higher performance for
-     some calculations. The suffix "rpg" stands for "real periodic GPU".
+The pscf_rp program can be compiled to create versions that can use a
+NVIDIA GPU or run standard CPU hardware.  The executable file that must
+be invoked to run the standard CPU version is named pscf_rpc. The 
+executable file for the GPU-enabled version is named pscf_rpg.
 
 ## Features
 
-All three PSCF programs are designed to treat an incompressible mixture
+Both PSCF programs are designed to treat an incompressible mixture
 containing any number of block polymers, homopolymer and small molecule
 (point-like) solvent molecular species. Polymer species may be modelled
 using either the standard Gaussian model of polymer conformations as
@@ -125,7 +123,7 @@ Features for SCFT (all programs):
     calculations with different parameters along a 1D path through
     parameter space.
 
-Features for SCFT or PS-FTS for periodic systems (pscf_rpc and pscf_rpg):
+Features for SCFT or PS-FTS for periodic systems (pscf_rp):
 
   - Pseudo-spectral solution of the modified diffusion equation
 
@@ -140,7 +138,7 @@ Features for SCFT or PS-FTS for periodic systems (pscf_rpc and pscf_rpg):
   - A companion Matlab package for visualization of periodic structures:
     [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
 
-Features for SCFT on periodic systems (pscf_rpc and pscf_rpg):
+Features for SCFT on periodic systems (pscf_rp):
 
   - Automatic optimization of unit cell parameters so as to minimize the
     SCFT free energy density
@@ -159,7 +157,7 @@ Features for SCFT on periodic systems (pscf_rpc and pscf_rpg):
   - Tools for thin polymer films (using a mask to represent confinement
     and external fields for selective surface interactions)
 
-Features for PS-FTS (pscf_rpc and pscf_rpg):
+Features for PS-FTS (pscf_rp):
 
   - Brownian dynamics (BD) and Monte Carlo (MC) sampling algorithms
 
@@ -250,22 +248,23 @@ which is the main page of the web manual.
 PSCF has been developed and tested on both linux and and Mac OS X operating
 systems, and is designed to be compiled on these or other unix-like systems.
 
-The pscf_1d and pscf_rpc CPU programs depend on the following external
+The pscf_1d program the version of pscf_rp that uses standard CPU hardware
+(executable pscf_rpc) depend on the following external
 libraries:
 
   - [GSL](<https://www.gnu.org/software/gsl/>) - GNU Scientific Library
 
   - [FFTW](<https://www.fftw.org/>) Fast Fourier Transform library
 
-The pscf_1d one-dimensional program pscf_1d requires only GSL, while
-the pscf_rpc program used both GSL and FFTW.
+The pscf_1d one-dimensional program pscf_1d requires only GSL, while the 
+pscf_rpc executable used both GSL and FFTW.
 
-The GPU-accelerated pscf_rpg program can only be compiled and run on a
-computer with an appropriate Nvidia GPU and an Nvidia CUDA development
-kit. All GPU-accelerated libraries used by pscf_rpg, such as the FFT
-library cuFFT, are provided as part of this kit. The pscf_rpg program
-cannot be run on Mac OS X, because no Apple computer uses the required
-type of GPU.
+The GPU-accelerated pscf_rpg executable can only be compiled and run on 
+a computer with an appropriate Nvidia GPU and an Nvidia CUDA development
+kit. All GPU-accelerated libraries used by the GPU-enabled version of
+pscf_rp (executable pscf_rpg), including the FFT library cuFFT, are 
+provided as part of this kit. The resulting program cannot be run on Mac 
+OS X, because no Apple computer uses the required type of GPU.
 
 Procedures for installing the required dependencies are different for
 different operating system environments and for different package
@@ -274,8 +273,8 @@ web manual.
 
 ## Compiling
 
-The PSCF source code is written using C++ as the primary language,
-with CUDA C++ used in pscf_rpg for GPU acceleration. PSCF is only 
+The PSCF source code is written using C++ as the primary language, with 
+CUDA C++ used in the GPU-enabled version of pscf_rp. PSCF is only 
 provided in source code format, and so must be compiled by the user.
 
 The build system used to compile and install PSCF uses the unix "make"
@@ -308,12 +307,12 @@ the pscfpp git repository and installing all of the required dependencies
      [web manual](<https://dmorse.github.io/pscfpp-man>) for more
      information about this script.
 
-   - To compile and install only the CPU-based programs (pscf_rpc and
-     and pscf_rpc), simply enter "make" from the pscfpp root directory
-     immediately after running the configure script.
+   - To compile and install only the CPU-based programs (pscf_1d and
+     and the pscf_rpc executable), simply enter "make" from the pscfpp 
+     root directory immediately after running the configure script.
 
    - Some further configuration is required to compile the GPU-enabled
-     pscf_rpg program. Compilation of pscf_rpg is only possible on a
+     pscf_rpg executable. Compilation of pscf_rpg is only possible on a
      machine that has an appropriate NVIDA GPU and a CUDA development kit.
      To enable compilation of CUDA code, first enter "./setopts -c1" from
      the pscfpp directory.  Then use the -a option of the same setopts
@@ -341,10 +340,10 @@ environment variable to allow the unix shell to find executable files.
 
 ## Command line usage
 
-The PSCF package provides three executable programs (pscf_1d, pscf_rpc,
-and pscf_rpg) with different capabilities but very similar command line
-interfaces. To perform a calculation, each PSCF program must read at
-least two files, which we refer to as a parameter file and a command
+The PSCF package can construct executables for two programs 
+(pscf_1d and pscf_rp) with different capabilities but very similar command 
+line interfaces. To perform a calculation, each PSCF program must read 
+at least two files, which we refer to as a parameter file and a command
 file. The parameter file, which is processed first, is a fixed format
 file that contains physical and algorithmic parameters required to
 describe the system of interest and initialize the program.  The command
@@ -385,9 +384,9 @@ to standard output as this file is being processed. Use of this option
 makes it easier to debug failures that arise from syntax errors in the 
 parameter file.
 
-**pscf_rpc and pscf_rpg** : The command line interfaces for the pscf_rpc and
-pscf_rpg programs take the same required and optional elements as pscf_1d,
-but also require a value for the dimension of space as an additional
+**pscf_rp** : The command line interface for the pscf_rpc or pscf_rpg 
+executable file take the same required and optional elements as pscf_1d,
+but also requires a value for the dimension of space as an additional
 parameter.  This is an integer parameter of the -d option that must have
 a value 1, 2 or 3. This parameter specifies the number of coordinates 
 along which the structure is periodic.  The usual syntax for invoking 
@@ -401,14 +400,17 @@ Here, "param" and "command" again denote names of parameter and command
 files. The syntax for an SCFT calculation for a one-dimensionally periodic
 lamellar phase would instead contain an option "-d 1", while an SCFT
 calculation for a 2D periodic phase of hexagonally packed cylinders would
-use an option "-d 2".  The syntax for invoking pscf_rpg is the same as that
-for pscf_rpc, except for the use of the program name pscf_rpg rather than
-pscf_rpc.
+use an option "-d 2".  
 
-The pscf_rpc and pscf_rpg programs can also perform PS-FTS calculations.
-Such simulations usually allow field fluctuations to vary in all three
-spatial dimensions. As a result pscf_rpc and pscf_rpg are normally invoked
-using an option "-d 3" when used for PS-FTS calculations.
+The syntax for invoking the GPU-enabled version of pscf_rp is the same 
+as that shown above, except for the use of the executable file name 
+pscf_rpg rather than pscf_rpc.
+
+The pscf_rp program can perform PS-FTS simulations, as well as SCFT 
+calculations.  PS-FTS simulations usually allow field fluctuations to vary 
+in all three spatial dimensions. The pscf_rpc or pscf_rpg executable is
+thus normally invoked using the option "-d 3" when used for a PS-FTS 
+simulation.
 
 **Output redirection** : Programs that are invoked as shown in the above
 examples would write log output that is produced during execution to the
@@ -429,8 +431,8 @@ The quickest way to become familiar with PSCF parameter and command files
 is by examinng examples.  The directory pscfpp/examples contains input
 files for examples of a variety of different types of SCFT and PS-FTS
 calculations.  Top level subdirectories of the examples directory named
-r1d, rpc and rpg contain examples for the three different PSCF programs,
-pscf_r1d, pscf_rpc, and pscf_rpg.
+1d, rpc and rpg contain examples for the three different PSCF executable
+files named pscf_1d, pscf_rpc, and pscf_rpg.
 
 Subdirectory examples/1d contains examples of SCFT calculations for the
 1D finite-difference program pscf_1d. Top level subdirectories of the
@@ -444,7 +446,7 @@ of SCFT and PS-FTS calculations, respectively. Top level subdirectories
 of directory examples/rpc/scf contain examples of input files for SCFT
 calculations performed on different types of physical system.  For example,
 the directory examples/rpc/scf/diblock contains SCFT examples for a diblock
-copolymer melt.  Subdirectories of examples/rpc/scf/diblock contain examples
+copolymer melt. Subdirectories of examples/rpc/scf/diblock contain examples
 for lamellar, hexagonal, and BCC structures, among others.
 
 Subdirectory examples/rpg contains examples for the pscf_rpg program for
@@ -465,10 +467,10 @@ subdirectory named "/out".
 
 Example directories that contain files for a single example usually
 contain a shell script named "run" that can be executed to run the example
-using the supplied input files.  The simplest way to run such an example
-is thus to change directory (cd) to the relevant example directory and
-enter "./run" from within that directory. (Note the use of the prefix "./",
-which tells the operating system to look for the run script in the current
+using the supplied input files. The simplest way to run such an example is 
+thus to change directory (cd) to the relevant example directory and enter 
+"./run" from within that directory. (Note the use of the prefix "./", 
+which tells the operating system to look for the run script in the current 
 working directory.) Users may inspect the text of such run scripts to see
 the command and command line options that are being used to run an example.
 Example directories that contain input files for two or more closely

@@ -82,8 +82,8 @@ not shown here, is discussed in more detail on a
 
 <b> Example 2 </b>:
 
-The src/rp directory contains code for two closely analogous executable 
-programs, pscf_rpc and pscf_rpg, that can perform identical calculations,
+The src/rp directory contains code for two closely analogous executable
+files, pscf_rpc and pscf_rpg, that can perform identical calculations,
 but simply use different hardware: The pscf_rpc executable uses standard 
 CPU hardware, whereas pscf_rpg uses a GPU and uses some classes and 
 functions that are programmed in CUDA. The src/rp directory and its 

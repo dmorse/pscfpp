@@ -111,14 +111,13 @@ so the numerical value reported for species \f$ a \f$ is actually equal to
 
 The final section, labeled "cellParams", lists the lattice parameters
 for the converged SCFT solution. This section appears in the output
-of SCFT calculations for periodic systems performed using pscf_rpc or
-pscf_rpg programs. It does not appear in the output of calculations
-for one-dimensional systems performed using pscf_r1d, since the domain
-size is fixed such 1D calculations. In pscf_rpc and pscf_rpg calculations,
-some or all of the lattice parameters may be flexible, and are adjusted
-during the SCFT calculation so as to minimize the free energy density.
-In this case, the converged values of lattice parameters values that
-are allowed to vary are important results of the calculation.
+of an SCFT calculation performed using pscf_rp.  It does not appear 
+in the output of calculations for one-dimensional systems performed 
+using pscf_r1d, since the domain size is fixed such 1D calculations. 
+In pscf_rp calculations, some or all of the lattice parameters may 
+be flexible, and are adjusted during the SCFT calculation so as to 
+minimize the free energy density.  In this case, the converged values 
+of lattice parameters values are important outputs of the calculation.
 
 If an SCFT calculation on a periodic structure is performed using a
 rigid unit cell, with no adjustable lattice parameters, lattice
@@ -337,9 +336,9 @@ field \f$ \xi({\bf r}) \f$.
 
 Different conventions for this additional constraint on
 \f$ \xi({\bf r}) \f$ are used in different PSCF programs.  The
-implementations of the pscf_rpc and pscf_rpg programs for periodic
-microstructures obtain equations with a unique solution by requiring, as
-a matter of convention, that the spatial average of \f$ \xi(\textbf{r}) \f$
+implementation of the pscf_rp program for periodic microstructures 
+defines equations with a unique solution by requiring, as a matter 
+of convention, that the spatial average of \f$ \xi(\textbf{r}) \f$
 must vanish in canonical ensemble. The pscf_r1d code for one-dimensional
 problems instead uses a convention that requires that, in canonical
 ensemble, the value of \f$ w_{i}({\bf r}) \f$ must vanish for
@@ -347,9 +346,10 @@ the last monomer type (\f$ \alpha = C-1 \f$) at the last grid point
 of a one-dimensional mesh.
 
 A homogeneous shift in the \f$ \xi({\bf r}) \f$ field by a constant
-\f$ C \f$ physically to changes in the hydrostatic pressure to which 
-a closed system is subjected by an amount \f$ \Delta P = k_{B}T C / v \f$,
-or to a change in dimensionless pressure \f$ p \f$ of the form
+\f$ C \f$ is physically equivalent to a change in the hydrostatic 
+pressure to which a closed system is subjected by an amount 
+\f$ \Delta P = k_{B}T C / v \f$, or to a change in dimensionless 
+pressure \f$ p \f$ of the form
 \f[
     p \rightarrow p + C
 \f]

@@ -111,7 +111,7 @@ rp) each have at least one source file that contains the main program
 function for an assoicated executable programs.  The base name of this 
 main program file is the same as the name of the executable file that 
 is created from it. For example, the main program source file for
-the pscf_rpc program is a file named pscf_rpc.cpp that is located
+the pscf_rpc executable is a file named pscf_rpc.cpp that is located
 in directory directory src/rpc.
 
 When the code in one of the three program-level directories of the 

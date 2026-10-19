@@ -6,24 +6,31 @@
 
 \section scft_environment_overview_sec Overview
 
-The SCFT iterators used by pscf_rpc and pscf_rpg allow users to define two
-different types of externally imposed fields to describe situations in
-which a polymeric material interacts with an inhomogeneous environment. A
-"mask" field is used to describe geometric confinement to a specified
-region in a manner that does not distinguish among different monomer types.
-External potential fields instead specify monomer-specific potential energy
-landscapes that can induce preferential accumulation of particular monomer
-types in specific locations. The two features can be used together to
-allow SCFT calculations to describe situations in which a material is
-confined to a region, such a thin film, in which the confining surfaces
-exhibit preferential wetting, using external fields that are nonzero only
-in narrow regions near the confining surfaces to induce wetting. As
-described below, a mask field is implemented as a modification of the
-incompressibility constraint, whereas the external fields are implemented
-via addition of an external field term to the self-consistent field
-equation for each monomer type. The resulting framework is designed to be
-quite general and extensible by users. The current version of PSCF is
-distributed with a set of tools that use this framework to simulate
+The pscf_rp program allows users to define two different types of 
+externally imposed fields to describe situations in which a polymeric 
+material interacts with an inhomogeneous environment:
+
+  - A "mask" field is used to describe geometric confinement to a 
+    specified region in a manner that does not distinguish among 
+    different monomer types.
+
+  - External potential fields instead specify monomer-specific potential 
+    energy landscapes that can induce preferential accumulation of 
+    particular monomer types in specific locations. 
+
+The two features can be used together to allow SCFT calculations to 
+describe situations in which a material is confined to a region, such 
+a thin film, and in which the confining surfaces exhibit preferential 
+wetting. Preferential interactions with a surface can be represented
+using  external fields that are nonzero only in narrow regions near 
+the confining surfaces. 
+
+As described below, a mask field is implemented as a modification of 
+the incompressibility constraint, whereas the external fields are 
+implemented via addition of an external field term to the self-consistent 
+field equation for each monomer type. The resulting framework is designed 
+to be quite general and extensible by users. The current version of PSCF 
+is distributed with a set of tools that use this framework to simulate
 confinement of polymer to a thin film with chemically homogeneous but
 selective top and bottom surfaces.
 
@@ -53,7 +60,7 @@ generator is described in detail on the
 \ref scft_thin_films_page "Thin Films" page.
 
 The declared space-group symmetry of an SCFT calculation with imposed
-fields must be chosen so as to guarantee that the mask and external
+fields must be chosen so as to guarantee that the imposed mask and external
 fields are invariant under all elements of the declared space group.
 The space group that best describes a given system is that which contains
 every symmetry operation shared by the mask, the external fields, and
@@ -66,14 +73,14 @@ page.
 
 \section scft_environment_mask_sec Mask field
 
-The iterators used in pscf_rpc and pscf_rpg allow users to define a "mask"
-field that imposes geometric confinement within the unit cell by modifying
-the incompressibility constraint. A mask field is a dimensionless function
-of position, denoted here by \f$ m({\bf r}) \f$, that has a value very
-close to 1 throughout a region to which the polymer material is confined
-and a value very close to 0 throughout a region from which the material is
-being excluded. The incompressibility constraint for a system that is
-subjected to a mask is modified so as to require that
+The pscf_rp program allow users to define a "mask" field that imposes 
+geometric confinement within the unit cell by modifying the incompressibility 
+constraint. A mask field is a dimensionless function of position, denoted 
+here by \f$ m({\bf r}) \f$, that has a value very close to 1 throughout a 
+region to which the polymer material is confined and a value very close 
+to 0 throughout a region from which the material is being excluded. The 
+incompressibility constraint for a system that is subjected to a mask is 
+modified so as to require that
 \f[
    v \sum_{\alpha=1} c_\alpha({\bf r}) = m({\bf r})
 \f]
@@ -122,10 +129,10 @@ symmetry-adapated basis.
 
 \section scft_environment_external_sec External fields
 
-The pscf_rpc and pscf_rpg programs also allows users to define an external
-potential field associated with each type of monomer in the system. In what
-follows, let \f$ h_{\alpha}({\bf r}) \f$ denote the external field imposed
-on monomers of type \f$ \alpha \f$.  When nonzero external fields have been
+The pscf_rp program also allows users to define an external potential 
+field associated with each type of monomer in the system. In what follows, 
+let \f$ h_{\alpha}({\bf r}) \f$ denote the external field imposed on 
+monomers of type \f$ \alpha \f$.  When nonzero external fields have been
 set, the self-consistent field equation for monomers of type \f$ \alpha \f$
 becomes
 \f[

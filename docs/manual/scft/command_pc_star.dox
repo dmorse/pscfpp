@@ -1,14 +1,13 @@
-/*! \page scft_command_pc_star_page Command for pscf_rpc: WRITE_STARS
+/*! \page scft_command_pc_star_page Command for pscf_rp: WRITE_STARS
 \ref scft_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref scft_thermo_page      (Next)
 <BR>
 
-THE WRITE_STARS command accepted by pscf_rpc and pscf_rpg programs writes
-a compact report of information about the stars of wavevectors that are
-related by space group symmetries. A more detailed report that contains
-information about individual wavevectors within each such star may be
-obtained by invoking the \ref scft_command_pc_wave_page "WRITE_WAVES"
-command.
+THE WRITE_STARS command accepted by the pscf_rp program writes a compact 
+report of information about the stars of wavevectors that are related by 
+space group symmetries. A more detailed report that contains information 
+about individual wavevectors within each such star may be obtained by 
+invoking the \ref scft_command_pc_wave_page "WRITE_WAVES" command.
 
 <em> Conceptual background </em>: As background, before reading this
 description of the output of the WRITE_STARS, we strongly recommend

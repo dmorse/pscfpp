@@ -1,24 +1,26 @@
-/*! \page scft_command_pc_page Commands - pscf_rpc and pscf_rpg
+/*! \page scft_command_pc_page Commands - pscf_rp
 
- \ref scft_command_1d_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref scft_thermo_page (Next)
+ \ref scft_command_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref scft_thermo_page      (Next)
 <BR>
 
-The pscf_rpc and pscf_rpg programs accept identical set of commands,
-which are described on this page. These programs for periodic systems
-accept a larger set of commands than the simpler pscf_r1d program,
-though many basic commands are similar. The number of available commands
-is larger, in part, as a result of the fact that pscf_rpc and pscf_rpg can
-read and write several different formats for field files.  By convention,
-the names of commands that read or write a field file in symmetry-adapted
-basis format end with a suffix _BASIS, while names of commands that read
-or write files in read-space grid (r-grid) format end with a suffic
-_RGRID.  The pscf_rpc and pscf_rpg programs also accept a set of commands
-that can be used convert between different possible field file formats.
+This page describes commands accepted by either the CPU or GPU-enabled 
+version of the pscf_rp program for perioidic systems, which are run by 
+invoking executable files pscf_rpc or pscf_rpg.  This program accepts 
+a larger set of commands than the simpler pscf_r1d program, though many 
+basic commands are similar. 
+
+The pscf_rp program read and write several different formats for field 
+files.  By convention, the names of commands that read or write a field 
+file in symmetry-adapted basis format end with a suffix _BASIS, while 
+names of commands that read or write files in read-space grid (r-grid) 
+format end with a suffic _RGRID.  This program also accepts a set of 
+commands that can be used convert between different possible field file 
+formats.
 
 \section scft_command_pc_scft_sec Example: SCFT calculation
 
-Below is an example of a simple command file for using pscf_rpc to
+Below is an example of a simple command file for using pscf_rp to
 perform a single SCFT calculation, using field files and an iterator
 algorithm that impose a specified space group symmetry that must be
 declared in the parameter file.
@@ -80,9 +82,9 @@ step in the sweep.
 
 \section scft_command_pc_commands_sec Commands
 
-The following table shows a list of available commands for pscf_rpc or
-pscf_rpg that are relevant to SCFT calculations. A few additional
-commands that are only relevant to PS-FTS calculations are discussed on
+The following table shows a list of available commands for pscf_rp 
+that are relevant to SCFT calculations. A few additional commands 
+that are only relevant to PS-FTS calculations are discussed on
 a \ref psfts_command_page "separate page" within the manual chapter
 that discusses such simulations.
 
@@ -522,7 +524,7 @@ basis functions that appear in the input file but that do not exist in the
 current basis.
 
 * *Technical note* :
-The symmetry-adapted basis used by pscf_rpc is normally created during
+The symmetry-adapted basis used by pscf_rp is normally created during
 the process of reading the first field file that that the program is
 instructed to read.  This basis is constructed immediately after
 reading the header of that file, which contains a list of values for
@@ -553,24 +555,12 @@ The READ_W_RGRID command cannot be used to initialize w fields for
 subsequent use in an SCFT simulation of a structure with a specified
 symmetry, for reasons that are explained below.  Users who wish to perform
 an SCFT calculation for a structure with a specified space group should
-thus initialize the w fields using either the READ_W_BASIS command, rather
-than READ_W_RGRID.  The r-grid file format can represent a field with no
-particular space group symmetry. When w fields are read in r-grid format
-using this command, pscf_rpc thus assumes that the w fields and any fields
-that are computed from them may not be symmetric under the elements of the
-space group declared in the parameter file. Because the existing iteration
-algorithms for pscf_rpc all use an expansion of the fields in
-symmetry-adapted basis, the ITERATE and SWEEP command thus cannot be
-invoked when the current w fields were initialized using the READ_W_RGRID
-command. W fields that were initialize with the READ_W_RGRID command may,
-however, be used by the COMPUTE command, which uses an algorithm that does
-not assume the existence of any space group symmetry.
-
-The READ_W_RGRID command is thus currently of very limited utility
-in pscf_rpc. It was implemented as a starting point for later
-development of stochastic field theoretic simulation algorithms in
-which the fluctuating field generally do not exhibit any special
-symmetry.
+thus initialize the w fields using the READ_W_BASIS command.  When w 
+fields are read in r-grid format using this command, pscf_rp assumes 
+that the w fields and any fields that are computed from them may not 
+be symmetric under the elements of the space group declared in the 
+parameter file, and will prohibit the use of an iteration algorithm
+that assumes the existence of the specified space group symmetry.
 
 \section scft_command_pc_unitcell_sec Unit Cell Initialization
 
@@ -766,7 +756,7 @@ accessible slice may be identified by a integer contour step index
 originates, and increases with increasing distance \f$ s \f$ from that
 vertex.
 
-The pscf_rpc program accepts several commands that output propagators
+The pscf_rp program accepts several commands that output propagators
 and propagator slices to one or more files. The names for these commands
 start with a string "WRITE_Q", followed by a suffix that describes what
 information is output by invoking the command. All of these commands take
@@ -1012,7 +1002,7 @@ could be used to convert the result of a 1D SCFT calculation for
 a lamellar phase into a file format that could be read in as the
 initial field configuration for a 3D FTS simulation of a lamellar
 phase. To this, the command would be used within a command file for
-pscf_rpc invoked with a command line option -d 1 (thus setting D=1)
+pscf_rp invoked with a command line option -d 1 (thus setting D=1)
 to read in the converged file for a lamellar phase, and with a
 command parameter d=3 in order to output a file in the format
 appropriate for a 3D calculation. In order to expand the number
@@ -1039,7 +1029,7 @@ cell along direction i, for 0 <= i < D.
 
 \section scft_command_pc_external_sec External fields
 
-The pscf_rpc program accepts several commands that allow users to input
+The pscf_rp program accepts several commands that allow users to input
 and output external chemical potential fields that act on monomers of
 each type, in addition to the internally generated fields that arise
 in a self-consistent field approximation from interactions. External

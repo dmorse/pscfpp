@@ -6,10 +6,10 @@
 
 The input files required to run a field theoretic simulation (FTS)
 are closely analogous to those required an SCFT calculation for a
-periodic system. The pscf_rpc or pscf_rpg program must be invoked
-with command line parameters that specify the names of a parameter
-file and a command file.  The main difference in the command file
-is simply that a SIMULATE command is used to run a stochastic
+periodic system. The pscf_rpc or pscf_rpg executable file must be
+invoked with command line parameters that specify the names of a 
+parameter file and a command file.  The main difference in the command 
+file is simply that a SIMULATE command is used to run a stochastic
 simulation, rather than the ITERATE or SWEEP command used to run an
 SCFT calculation or an SCFT parameter sweep.
 
@@ -73,18 +73,18 @@ an McSimulation block for an MC simulation.
 
 \section psfts_command_commands_sec Commands for FTS
 
-The commands that can be used for SCFT calculations performed with
-pscf_rpc have already been listed here \ref scft_command_pc_page "here".
-Most of these commands can also be used in a command file for pscf_rpg.
-Specifically, commands for reading and writing field files such as
-READ_W_RGRID and WRITE_W_RGRID can be used in either context, as can
-the timer commands and many of the utility commands for manipulating
-field files.
+All commands that are relevant to the use of pscf_rp to perform SCFT 
+calculations have already been listed here \ref scft_command_pc_page "here".
+Many of these commands can also be used in a command file use to 
+initialize a PS-FTS simulation.  Specifically, commands for reading and 
+writing field files such as READ_W_RGRID and WRITE_W_RGRID can be used 
+in either context, as can the timer commands and many of the utility 
+commands for manipulating field files.
 
-The following table lists a set of commands that are accepted by either
-pscf_rpc or and pscf_rpg that are only meaningful in the context of an
-FTS simulation, and that were thus not listed among the commands that
-can be used for SCFT calculations.
+The following table lists a set of commands that are accepted by 
+pscf_rp that are only meaningful in the context of an FTS simulation, 
+and that were thus not listed previously among the commands that are
+potentially useful for SCFT calculations.
 
 <table>
   <tr>

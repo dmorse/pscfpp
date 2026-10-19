@@ -4,7 +4,7 @@
 \ref psfts_ramp_page    (Next)
 <BR>
 
-The pscf_rpc and pscf_rpg can both use the available analyzer classes
+The pscf_rp program can both use the available analyzer classes
 to compute, output and analyze some set of physical variables by
 either of two methods.
 
@@ -72,9 +72,9 @@ that can read and write other formats as needed.
 
 To postprocess such a trajectory file, one must invoke pscf_rpc or
 pscf_rpg a second time, using a command file that contains an ANALYZE
-command. When an ANALYZE command is encountered, pscf_rpc or pscf_rpg
-reads and processes a sequence of frames from a trajectory file whose
-name is given as an argument of the command.
+command. When an ANALYZE command is encountered, either version of
+pscf_rp will read and processes a sequence of frames from a trajectory 
+file whose name is given as an argument of the command.
 
 The parameter file used to initialize a postprocessing operation
 normally has an AnalyzerManager block containing a set of analyzer
@@ -91,8 +91,7 @@ index between min and max, inclusive.
 
 The "fileName" parameter gives the name of the trajectory file that
 should be read and processed. This file name is given as a path that,
-is defined relative to the directory from which the pscf_rpc or
-pscf_rpg command was invoked.
+is defined relative to the directory from which pscf_rp was invoked.
 
 The readerName parameter is a string that gives the name of a class that
 will be used to read the parameter file. In the current version of PSCF,
@@ -148,9 +147,9 @@ default interval value of 1 and thus analyze every frame.
 Suppose that a BD simulation similar to one used in a previous example
 used a TrajectoryWriter analyzer to create a trajectory file named
 "out/trajectory" that contains 5000 frames. The parameter file shown
-below could be used to setup pscf_rpc or pscf_rpg to analyze this file,
-and to enable compution of  the average Hamiltonian value and the
-structure factor:
+below could be used to setup pscf_rp to analyze this file, and to 
+enable compution of  the average Hamiltonian value and the structure 
+factor:
 \code
 System{
   Mixture{

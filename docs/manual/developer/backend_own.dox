@@ -28,22 +28,21 @@ thus automatically creates a large set of descendant objects that are
 all instances of template specializations that take the same values 
 for D and T, which are all thus designed to describe systems with 
 the same spatial dimension using the same computational backend. 
-The owership hierarchy used by pscf_rpc and pscf_rpg is described 
-briefly below.
+The owership hierarchy used by pscf_rp is described briefly below.
 
 
 <b> System </b>:
-The top of the ownership hierarchy used by the pscf_rpc and pscf_rpg
-programs is an instance of a specialization of the Pscf::Rp::System 
-class template.  The top-level object used by the pscf_rpc program is 
-an instance of a specialization of this template  with T=Pscf::CPT and 
-D=1, 2, or 3, while the top-level object used by pscf_rpc program is 
-an instance of a specialization with T=Pscf::CUT.  
+The top of the ownership hierarchy used by pscf_rp is an instance
+of a specialization of the Pscf::Rp::System class template.  The 
+top-level object used by the pscf_rpc executable is an instance of 
+a specialization with T=Pscf::CPT and D=1, 2, or 3, while the 
+top-level object used pscf_rpg is an instance of a specialization 
+with T=Pscf::CUT.  
 
-A value for the integer D is passed to the pscf_rpc and pscf_rpg programs 
-as a command line parameter, as the parameter of command line option -d.  
-Thus, for example, if the pscf_rpg program is invoked with a command line 
-option "-d 3", as
+A value for the integer D is passed to the main pscf_rp program as a 
+command line parameter, as the parameter of command line option -d.  
+Thus, for example, if the pscf_rpg executable is invoked with a 
+command line option "-d 3", as
 \code
    pscf_rpg -d 3 -p param -c command
 \endcode

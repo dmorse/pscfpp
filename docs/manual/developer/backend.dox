@@ -4,11 +4,10 @@
 \ref developer_test_page      (Next)
 <BR>
 
-The PSCF package builds two executable files, that are pscf_rpc and 
-pscf_rpg, that are designed to solve the same set of problems involving 
-real periodic fields, but that are specialized to use different hardware. 
-The pscf_rpg executable makes use of a GPU, while the pscf_rpg executable 
-uses only a CPU.
+The PSCF package can builds two executable files, named pscf_rpc and 
+pscf_rpg, that are variants of the pscf_rp program that are specialized
+to use different hardware.  The pscf_rpg executable makes use of a GPU, 
+while the pscf_rpg executable uses only a CPU.
 
 The differences between two programs arise primarily from differences in:
 
@@ -17,14 +16,14 @@ The differences between two programs arise primarily from differences in:
    - Where and how are mathematical operations on such arrays performed 
      (on the CPU or GPU)?
 
-We summarize these differences in what follows by saying that these two 
-programs use different computational "backends".  In pscf_rpg, which 
-uses a Cuda backend, almost all large arrays are allocated in GPU global 
-memory, and basic mathematical operations that are performed on these 
-arrays are generally performed on the GPU within CUDA kernels.  In 
-pscf_rpc, which uses a C++ backend, all data structures that use heap 
-memory are allocated in CPU main memory, and all computations are 
-performed on the CPU.
+We summarize these differences in what follows by saying that these two
+versions of pscf_rp use different computational "backends".  In the 
+pscf_rpg executable, which uses a Cuda backend, almost all large arrays 
+are allocated in GPU global memory, and basic mathematical operations 
+that are performed on these arrays are generally performed on the GPU 
+within CUDA kernels.  In the pscf_rpc executable, which uses a C++ backend, 
+all data structures that use heap memory are allocated in CPU main memory, 
+and all computations are performed on the CPU.
 
 The system used by PSCF to support the use of more than one backend is 
 based on the use of C++ class templates to minimize code duplication. 

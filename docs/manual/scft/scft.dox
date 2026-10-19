@@ -17,14 +17,14 @@ information about PS-FTS calculations.
    <li> \subpage scft_param_page
      <ul>
        <li> \ref scft_param_1d_page "One-dimensional systems (pscf_r1d) </li>
-       <li> \ref scft_param_1d_page "Periodic systems (pscf_rpc and pscf_rpg)
+       <li> \ref scft_param_1d_page "Periodic systems (pscf_rp)
             </li>
      </ul>
    </li>
    <li> \subpage scft_command_page
      <ul>
        <li> \ref scft_command_1d_page "One-dimensional systems (pscf_r1d)" </li>
-       <li> \ref scft_command_pc_page "Periodic systems (pscf_rpc and pscf_rpg)
+       <li> \ref scft_command_pc_page "Periodic systems (pscf_rp)
             </li>
      </ul>
    </li>

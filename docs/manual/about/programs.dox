@@ -5,36 +5,40 @@
 \ref about_features_page (Next)
 <BR>
 
-The PSCF package currently contains source code for three executable
-programs named pscf_r1d, pscf_rpc and pscf_rpg. The purpose and
-capabilties of each are summarized below;
+The PSCF package currently contains source code for two programs 
+named pscf_rp and pscf_r1d. The purpose and capabilties of each
+are summarized below;
+
+<b>pscf_rp</b>:
+
+The pscf_rp program can perform either SCFT or PS-FTS calculations 
+for systems with periodic boundary conditions in 1, 2 or 3 dimensions.
+This program provides capabilities for SCFT analogous to those of the 
+older Fortran PSCF program, and also provides a complete set of tools
+for PS-FTS simulations.  The suffix "rp" stands for "real periodic".
+
+The pscf_rp program can be compiled to create either an executable that
+uses only CPU hardware or a GPU-enabled executable that uses an NVIDIA
+GPU. The CPU-only version is compiled to create an executable file named 
+pscf_rpc, while the GPU-enabled version is compiled to create an executable 
+named pscf_rpg. These two executable files provide identical capabilities, 
+use identical formats for all input and output files, and produce 
+identical results to within small differences in round-off errors. 
+The pscf_rpc and pscf_rpg executables are described throughout this 
+manual as different versions of the same program, which we refer to by 
+the generic program name pscf_rp. 
 
 <b>pscf_r1d</b>:
 
-The pscf_r1d program is designed for SCFT calculations for one-dimensional
-problems in Cartesian, cylindrical or spherical coordinates. A simple
-finite difference spatial discretization is used to solve the underlying
-modified diffusion equation (MDE). This program is useful for SCFT problems
-involving flat or curved interfaces, and for simulating spherical or
-cylindrical micelles.  The pscf_r1d program cannot perform stochastic field
-theoretic simulations.
-
-<b>pscf_rpc</b>:
-
-The pscf_rpc program can perform both SCFT and PS-FTS calculations on
-systems with periodic boundary conditions in 1, 2 or 3 dimensions, using
-conventional CPU hardware.  This program provides capabilities for SCFT
-analogous to those of the older Fortran PSCF program.  The suffix "rpc"
-stands for "real periodic, CPU".
-
-<b>pscf_rpg</b>:
-
-The pscf_rpg program is a GPU-accelerated sister of pscf_rpc that can also
-perform SCFT and PS-FTS calculations on systems with periodic boundary
-conditions.  The pscf_rpc and pscf_rpg programs provide identical features
-and user interfaces, but pscf_rpg provide higher performance for problems
-involving a large number of grid points per unit cell.  The suffix "rpg"
-stands for "real periodic, GPU".
+The pscf_r1d program is a comparatively simple CPU program for 
+one-dimensional SCFT calculations. Calculations can performed for 
+problems with planar, cylindrical or spherical symmetry, using Cartesian, 
+cylindrical or spherical coordinate systems. A finite-difference spatial 
+discretization scheme is used to solve the underlying modified diffusion 
+equation (MDE). This program is useful for SCFT problems involving flat 
+or curved interfaces, and for simulating spherical or cylindrical 
+micelles. The pscf_r1d program uses standard CPU hardware, and cannot 
+perform stochastic field theoretic simulations.
 
 <BR>
 \ref about_history_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

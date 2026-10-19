@@ -11,11 +11,11 @@ SCFT calculations.
 
 \section psfts_algo_overview_operations_sec Required Operations
 
-The pscf_rpc and pscf_rpg programs can perform PS-FTS calculations
-using either a Brownian dynamics (BD) or Monte Carlo (MC) method to
-stochastically sample a fluctuating field or fields.  BD and MC sampling
-algorithms for PS-FTS have a similar structure.  A single BD step or MC
-move generally involves generation of a random change in one or more
+The pscf_rp program can perform PS-FTS calculations using either a 
+Brownian dynamics (BD) or Monte Carlo (MC) method to stochastically 
+sample a fluctuating field or fields.  BD and MC sampling algorithms 
+for PS-FTS have a similar structure.  A single BD step or MC move 
+generally involves generation of a random change in one or more
 exchange fields, followed by use of an iterative algorithm to identify
 a new partial-saddle point field configuration. Throughout the PSCF
 documentation and source code, iterative algorithms that are used to

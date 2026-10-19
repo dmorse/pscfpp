@@ -19,8 +19,8 @@ of some higher-level "parent" class.  In this system, each "child" object
 is either a member variable of its parent, or is a dynamically allocated 
 object that is accessed through a pointer that is a member of the parent 
 object, which the parent is responsible for creating and destroying the 
-child.  The top of this ownership hierarchy for pscf_rpc and pscf_rpc is 
-a class template named System \<D,T\> that directly or indirectly owns 
+child.  The top of this ownership hierarchy for either variant of pscf_rp
+is a class template named System \<D,T\> that directly or indirectly owns 
 every object used by the program.  
 
 In the Rp namespace, the same arguments for the parameters D and T 
