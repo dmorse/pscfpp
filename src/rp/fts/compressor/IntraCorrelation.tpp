@@ -14,8 +14,8 @@
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 
-#include <prdc/field/FFT.h>
-#include <prdc/field/RField.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/RField.h>
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/crystal/UnitCell.h>
 

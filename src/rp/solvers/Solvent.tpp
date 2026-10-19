@@ -9,7 +9,7 @@
 */
 
 #include "Solvent.h"
-#include <prdc/field/RField.h>
+#include <pscf/field/RField.h>
 #include <pscf/backend/Reduce.h>
 #include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>

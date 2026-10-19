@@ -1,5 +1,5 @@
-#ifndef PRDC_HAS_VARIABLE_ANGLE_H
-#define PRDC_HAS_VARIABLE_ANGLE_H
+#ifndef PSCF_HAS_VARIABLE_ANGLE_H
+#define PSCF_HAS_VARIABLE_ANGLE_H
 
 #include <pscf/crystal/UnitCell.h>
 

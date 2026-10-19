@@ -16,7 +16,7 @@
 #include <rp/field/CFields.h>
 #include <rp/field/Mask.h>
 
-#include <prdc/field/cpp/RField.h>
+#include <pscf/field/cpp/RField.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/paramIdConversions.h>

@@ -9,8 +9,8 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/field/FFT.h>
-#include <prdc/field/WaveList.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/WaveList.h>
 
 #include <pscf/backend/HostRecvArray.h>
 #include <pscf/backend/VecOp.h>

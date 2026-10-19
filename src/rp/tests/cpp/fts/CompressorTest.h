@@ -16,7 +16,7 @@
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
 
-#include <prdc/field/cpp/RFieldComparison.h>
+#include <pscf/field/cpp/RFieldComparison.h>
 
 #include <pscf/mesh/Mesh.h>
 

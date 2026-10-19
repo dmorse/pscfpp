@@ -1,5 +1,5 @@
-#ifndef PRDC_UNIT_CELL_BASE_TPP
-#define PRDC_UNIT_CELL_BASE_TPP
+#ifndef PSCF_UNIT_CELL_BASE_TPP
+#define PSCF_UNIT_CELL_BASE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field

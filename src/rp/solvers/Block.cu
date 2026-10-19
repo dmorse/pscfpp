@@ -8,8 +8,8 @@
 #include "Block_u.h"
 #include "Propagator_u.h"
 
-#include <prdc/field/cuda/WaveList.h>
-#include <prdc/field/cuda/FFT.h>
+#include <pscf/field/cuda/WaveList.h>
+#include <pscf/field/cuda/FFT.h>
 #include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/cuda/Reduce.h>

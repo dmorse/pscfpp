@@ -1,5 +1,5 @@
-#ifndef PRDC_BWAVE_H
-#define PRDC_BWAVE_H
+#ifndef PSCF_BWAVE_H
+#define PSCF_BWAVE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

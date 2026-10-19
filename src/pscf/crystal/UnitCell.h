@@ -1,5 +1,5 @@
-#ifndef PRDC_UNIT_CELL_H
-#define PRDC_UNIT_CELL_H
+#ifndef PSCF_UNIT_CELL_H
+#define PSCF_UNIT_CELL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

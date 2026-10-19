@@ -10,7 +10,7 @@
 
 #include "CFields.h"
 #include <rp/field/FieldIo.h>
-#include <prdc/field/RField.h>
+#include <pscf/field/RField.h>
 #include <pscf/crystal/UnitCell.h>
 #include <util/misc/FileMaster.h>
 

@@ -2,7 +2,7 @@
 #define RP_EINSTEIN_CRYSTAL_PERTURBATION_H
 
 #include <rp/fts/perturbation/Perturbation.h>  // base class template
-#include <prdc/field/RField.h>                 // member
+#include <pscf/field/RField.h>                 // member
 #include <util/containers/DArray.h>            // member
 
 #include <pscf/backend/TmplDeclare.h>

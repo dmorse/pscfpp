@@ -1,5 +1,5 @@
-#ifndef PRDC_GET_DIMENSION_H
-#define PRDC_GET_DIMENSION_H
+#ifndef PSCF_GET_DIMENSION_H
+#define PSCF_GET_DIMENSION_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

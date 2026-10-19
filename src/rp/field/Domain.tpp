@@ -10,8 +10,8 @@
 
 #include "Domain.h"
 #include <rp/field/FieldIo.h>
-#include <prdc/field/FFT.h>
-#include <prdc/field/WaveList.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/WaveList.h>
 #include <pscf/crystal/SpaceGroup.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/fieldIo/fieldHeader.h>

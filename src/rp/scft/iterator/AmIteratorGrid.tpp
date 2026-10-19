@@ -17,7 +17,7 @@
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
-#include <prdc/field/RField.h>
+#include <pscf/field/RField.h>
 #include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/DeviceArray.h>

@@ -1,5 +1,5 @@
-#ifndef PRDC_CFIELD_IO_TPP
-#define PRDC_CFIELD_IO_TPP
+#ifndef PSCF_CFIELD_IO_TPP
+#define PSCF_CFIELD_IO_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field

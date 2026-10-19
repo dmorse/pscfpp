@@ -1,5 +1,5 @@
-#ifndef PRDC_FIELD_CHECK_H
-#define PRDC_FIELD_CHECK_H
+#ifndef PSCF_FIELD_CHECK_H
+#define PSCF_FIELD_CHECK_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

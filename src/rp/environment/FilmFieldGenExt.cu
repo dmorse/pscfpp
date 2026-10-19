@@ -15,8 +15,8 @@
 #include <rp/field/WFields.cu>
 #include <rp/field/Mask.cu>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cuda/resources.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cuda/resources.h>
 
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>

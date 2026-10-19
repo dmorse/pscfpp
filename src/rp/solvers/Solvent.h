@@ -9,7 +9,7 @@
 */
 
 #include <pscf/chem/SolventSpecies.h>   // base class
-#include <prdc/field/RField.h>          // member
+#include <pscf/field/RField.h>          // member
 #include <pscf/backend/TmplDeclare.h>   // template declaration macros
 
 // Forward declaration

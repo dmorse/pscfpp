@@ -18,9 +18,9 @@
 #include <pscf/crystal/SpaceGroup.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/BFieldComparison.h>
-#include <prdc/field/FFT.h>
-#include <prdc/field/RFieldComparison.h>
-#include <prdc/field/RField.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/RFieldComparison.h>
+#include <pscf/field/RField.h>
 #include <pscf/fieldIo/rFieldIo.h>
 #include <pscf/fieldIo/fieldCheck.h>
 

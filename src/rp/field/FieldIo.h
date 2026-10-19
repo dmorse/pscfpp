@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/RFieldDft.h>       // member
+#include <pscf/field/RFieldDft.h>       // member
 #include <pscf/crystal/UnitCell.h>      // nested LatticeSystem enum
 #include <pscf/math/IntVec.h>           // template with default
 #include <util/containers/DArray.h>     // member

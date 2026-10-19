@@ -4,11 +4,11 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/field/cuda/FFT.h>
-#include <prdc/field/cuda/FFTBatched.h>
-#include <prdc/field/cuda/RField.h>
-#include <prdc/field/cuda/RFieldDft.h>
-#include <prdc/field/cuda/CField.h>
+#include <pscf/field/cuda/FFT.h>
+#include <pscf/field/cuda/FFTBatched.h>
+#include <pscf/field/cuda/RField.h>
+#include <pscf/field/cuda/RFieldDft.h>
+#include <pscf/field/cuda/CField.h>
 
 #include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/HostSendArray.h>

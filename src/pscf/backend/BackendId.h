@@ -1,5 +1,5 @@
-#ifndef PRDC_BACKEND_ID_H
-#define PRDC_BACKEND_ID_H
+#ifndef PSCF_BACKEND_ID_H
+#define PSCF_BACKEND_ID_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 

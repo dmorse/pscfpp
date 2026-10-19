@@ -10,7 +10,7 @@
 
 #include "Mask.h"
 #include <rp/field/FieldIo.h> 
-#include <prdc/field/RField.h> 
+#include <pscf/field/RField.h> 
 #include <pscf/fieldIo/rFieldIo.h> 
 #include <pscf/crystal/Basis.h> 
 #include <pscf/crystal/UnitCell.h> 

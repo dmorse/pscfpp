@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/field/cpp/RField.h>
+#include <pscf/field/cpp/RField.h>
 
 #include <pscf/backend/cpp/HostRecvArray.h>
 #include <pscf/backend/cpp/HostSendArray.h>

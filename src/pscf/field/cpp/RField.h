@@ -1,0 +1,174 @@
+#ifndef PSCF_R_FIELD_CP_H
+#define PSCF_R_FIELD_CP_H
+
+/*
+* PSCF - Polymer Self-Consistent Field
+*
+* Copyright 2015 - 2026, The Regents of the University of Minnesota
+* Distributed under the terms of the GNU General Public License.
+*/
+
+#include <pscf/backend/cpp/DeviceArray.h>  // base class
+#include <pscf/backend/cpp/CPT.h>          // backend identifier class
+#include <pscf/math/IntVec.h>              // member
+
+// Forward declaration
+namespace Pscf {
+   template <typename Data, class T> class HostSendArray;
+}
+
+namespace Pscf {
+
+   using namespace Util;
+
+   // Declaration of primary class template
+   template <int D, class T> class RField;
+
+   /**
+   * Field of real double precision values on a regular mesh.
+   *
+   * \ingroup Prdc_Cpu_Module
+   */
+   template <int D>
+   class RField<D,CPT> : public DeviceArray<double,CPT>
+   {
+
+   public:
+
+      // Public type alias
+
+      using typename FftwDRArray<double>::ValueType;
+
+      // Public member functions
+
+      /**
+      * Default constructor.
+      */
+      RField();
+
+      /**
+      * Copy constructor.
+      *
+      * Allocates new memory and copies all elements by value.
+      *
+      *\param other the RField to be copied.
+      */
+      RField(const RField<D,CPT>& other);
+
+      /**
+      * Destructor.
+      */
+      ~RField() override = default;
+
+      /**
+      * Assignment operator.
+      *
+      * If this Field is not allocated, allocates and copies all elements.
+      *
+      * If this and the other Field are both allocated, the capacities must
+      * be exactly equal. If so, this method copies all elements.
+      *
+      * \param other  the RHS RField
+      */
+      RField<D,CPT>& operator = (RField<D,CPT> const& other);
+
+      /**
+      * Pseudo-assignment from an associated HostSendArray.
+      *
+      * This function simply calls the corresponding assignment operator
+      * of the DeviceArray base class, then returns this RFieldDft object.
+      * It checks if an association exists between the LHS and RHS arrays,
+      * and does nothing if this is the case.
+      *
+      * \throw Exception if other (RHS) is not allocated
+      * \throw Exception if other (RHS) is not associated with this (LHS)
+      *
+      * \param other  the RHS host array
+      */
+      RField<D,CPT>& operator = (HostSendArray<double,CPT> const & other);
+
+      /**
+      * Allocate the underlying C array for values on a regular mesh.
+      *
+      * \throw Exception if the RField is already allocated.
+      *
+      * \param meshDimensions vector of numbers of grid points per direction
+      */
+      void allocate(IntVec<D> const & meshDimensions);
+
+      /**
+      * Deallocate memory and return to empty state.
+      */
+      void deallocate() override;
+
+      /**
+      * Associate this object with a slice of another DeviceArray.
+      *
+      * \throw Exception if the array is already allocated.
+      *
+      * \param arr parent array that owns the data
+      * \param beginId index in the parent array at which this array starts
+      * \param meshDimensions number of grid points in each dimension
+      */
+      void associate(DeviceArray<double,CPT>& arr, int beginId,
+                     IntVec<D> const & meshDimensions);
+
+      /**
+      * Return mesh dimensions by constant reference.
+      */
+      IntVec<D> const & meshDimensions() const;
+
+      /**
+      * Serialize a Field to/from an Archive.
+      *
+      * \param ar       archive
+      * \param version  archive version id
+      */
+      template <class Archive>
+      void serialize(Archive& ar, const unsigned int version);
+
+      using DeviceArray<double,CPT>::dissociate;
+
+   private:
+
+      // Vector containing number of grid points in each direction.
+      IntVec<D> meshDimensions_;
+
+      // Make private to prevent allocation without mesh dimensions.
+      using DeviceArray<double,CPT>::allocate;
+
+      // Make private to prevent association without mesh dimensions.
+      using DeviceArray<double,CPT>::associate;
+
+      // Make private to prevent assignment without mesh dimensions.
+      using DeviceArray<double,CPT>::operator =;
+
+   };
+
+   /*
+   * Return mesh dimensions by constant reference.
+   */
+   template <int D> inline
+   IntVec<D> const & RField<D,CPT>::meshDimensions() const
+   {  return meshDimensions_; }
+
+   /*
+   * Serialize a Field to/from an Archive.
+   */
+   template <int D>
+   template <class Archive>
+   void RField<D,CPT>::serialize(Archive& ar,
+		                        const unsigned int version)
+   {
+      FftwDRArray<double>::serialize(ar, version);
+      ar & meshDimensions_;
+   }
+
+   // Explicit instantiation declarations
+   extern template class RField<1,CPT>;
+   extern template class RField<2,CPT>;
+   extern template class RField<3,CPT>;
+
+} // namespace Pscf
+#endif
+

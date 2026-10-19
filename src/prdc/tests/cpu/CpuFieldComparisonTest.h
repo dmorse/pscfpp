@@ -4,14 +4,14 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cpp/RFieldComparison.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cpp/RFieldComparison.h>
 
-#include <prdc/field/cpp/RFieldDft.h>
-#include <prdc/field/cpp/RFieldDftComparison.h>
+#include <pscf/field/cpp/RFieldDft.h>
+#include <pscf/field/cpp/RFieldDftComparison.h>
 
-#include <prdc/field/cpp/CField.h>
-#include <prdc/field/cpp/CFieldComparison.h>
+#include <pscf/field/cpp/CField.h>
+#include <pscf/field/cpp/CFieldComparison.h>
 
 #include <util/format/Dbl.h>
 

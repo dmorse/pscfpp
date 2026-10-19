@@ -14,7 +14,7 @@
 #include <rp/field/Mask.h>
 #include <rp/scft/iterator/Iterator.h>
 
-#include <prdc/field/cpp/RField.h>
+#include <pscf/field/cpp/RField.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/paramIdConversions.h>
 #include <pscf/math/IntVec.h>

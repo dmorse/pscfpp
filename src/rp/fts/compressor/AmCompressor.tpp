@@ -16,7 +16,7 @@
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
 
-#include <prdc/field/RField.h>
+#include <pscf/field/RField.h>
 
 #include <pscf/backend/Reduce.h>
 #include <pscf/backend/VecOp.h>

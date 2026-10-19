@@ -17,8 +17,8 @@
 #include <rp/solvers/Propagator.h>
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/FFT.h>
-#include <prdc/field/RField.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/RField.h>
 #include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/VecOp.h>

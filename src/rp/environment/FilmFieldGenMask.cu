@@ -16,11 +16,11 @@
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
-#include <prdc/field/RField.h>
+#include <pscf/field/RField.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/paramIdConversions.h>
-#include <prdc/field/cuda/resources.h>
+#include <pscf/field/cuda/resources.h>
 
 #include <pscf/interaction/Interaction.h>
 

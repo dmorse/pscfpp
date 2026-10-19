@@ -9,7 +9,7 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/field/FFT.h>
+#include <pscf/field/FFT.h>
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/crystal/UnitCell.h>
 

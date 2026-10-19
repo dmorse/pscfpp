@@ -10,9 +10,9 @@
 
 #include <pscf/solvers/BlockTmpl.h>         // base class template
 #include <pscf/backend/cuda/CUT.h>          // template argument
-#include <prdc/field/cuda/RField.h>         // member
-#include <prdc/field/cuda/RFieldDft.h>      // member
-#include <prdc/field/cuda/FFTBatched.h>     // member
+#include <pscf/field/cuda/RField.h>         // member
+#include <pscf/field/cuda/RFieldDft.h>      // member
+#include <pscf/field/cuda/FFTBatched.h>     // member
 #include <pscf/backend/cuda/DeviceArray.h>  // member
 #include <util/containers/FSArray.h>        // member
 

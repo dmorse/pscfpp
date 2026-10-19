@@ -17,8 +17,8 @@
 #include <rp/field/Mask.h>
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cpp/RFieldComparison.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cpp/RFieldComparison.h>
 #include <pscf/crystal/BFieldComparison.h>
 
 #include <util/misc/FileMaster.h>

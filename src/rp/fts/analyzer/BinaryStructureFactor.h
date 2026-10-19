@@ -10,8 +10,8 @@
 
 #include <rp/fts/analyzer/Analyzer.h>         // base class
 #include <pscf/math/IntVec.h>                 // member
-#include <prdc/field/RField.h>                // member
-#include <prdc/field/RFieldDft.h>             // member
+#include <pscf/field/RField.h>                // member
+#include <pscf/field/RFieldDft.h>             // member
 #include <pscf/backend/HostRecvArray.h>      // member
 #include <util/accumulators/Average.h>        // member
 #include <util/containers/DArray.h>           // member

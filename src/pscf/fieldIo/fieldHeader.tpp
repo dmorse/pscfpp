@@ -1,5 +1,5 @@
-#ifndef PRDC_FIELD_HEADER_TPP
-#define PRDC_FIELD_HEADER_TPP
+#ifndef PSCF_FIELD_HEADER_TPP
+#define PSCF_FIELD_HEADER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field

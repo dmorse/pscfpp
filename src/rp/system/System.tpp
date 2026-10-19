@@ -29,10 +29,10 @@
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
 
-#include <prdc/field/WaveList.h>
-#include <prdc/field/FFT.h>
-#include <prdc/field/RField.h>
-#include <prdc/field/RFieldDft.h>
+#include <pscf/field/WaveList.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/RField.h>
+#include <pscf/field/RFieldDft.h>
 #include <prdc/environment/Environment.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>

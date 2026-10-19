@@ -7,11 +7,11 @@
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cpp/RFieldDft.h>
-#include <prdc/field/cpp/RFieldComparison.h>
-#include <prdc/field/cpp/RFieldDftComparison.h>
-#include <prdc/field/cpp/FFT.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cpp/RFieldDft.h>
+#include <pscf/field/cpp/RFieldComparison.h>
+#include <pscf/field/cpp/RFieldDftComparison.h>
+#include <pscf/field/cpp/FFT.h>
 #include <pscf/crystal/BFieldComparison.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>

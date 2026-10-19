@@ -1,5 +1,5 @@
-#ifndef PRDC_PARAM_ID_CONVERSIONS_H
-#define PRDC_PARAM_ID_CONVERSIONS_H
+#ifndef PSCF_PARAM_ID_CONVERSIONS_H
+#define PSCF_PARAM_ID_CONVERSIONS_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>   // base class
 #include <rp/fts/simulator/SimState.h>   // member
-#include <prdc/field/RField.h>           // member
+#include <pscf/field/RField.h>           // member
 #include <util/containers/DArray.h>      // member (template)
 #include <util/containers/DMatrix.h>     // member (template)
 #include <pscf/backend/TmplDeclare.h>    // declaration macros

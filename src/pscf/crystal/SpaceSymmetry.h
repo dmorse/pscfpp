@@ -1,5 +1,5 @@
-#ifndef PRDC_SPACE_SYMMETRY_H
-#define PRDC_SPACE_SYMMETRY_H
+#ifndef PSCF_SPACE_SYMMETRY_H
+#define PSCF_SPACE_SYMMETRY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

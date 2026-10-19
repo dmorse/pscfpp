@@ -1,5 +1,5 @@
-#ifndef PRDC_GROUP_FILE_H
-#define PRDC_GROUP_FILE_H
+#ifndef PSCF_GROUP_FILE_H
+#define PSCF_GROUP_FILE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

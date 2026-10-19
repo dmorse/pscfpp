@@ -1,5 +1,5 @@
-#ifndef PRDC_CPP_FFTW_DRARRAY_TEST_H
-#define PRDC_CPP_FFTW_DRARRAY_TEST_H
+#ifndef PSCF_CPP_FFTW_DRARRAY_TEST_H
+#define PSCF_CPP_FFTW_DRARRAY_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

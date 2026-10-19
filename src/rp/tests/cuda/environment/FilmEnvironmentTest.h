@@ -13,8 +13,8 @@
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
-#include <prdc/field/cuda/RField.h>
-#include <prdc/field/cuda/RFieldComparison.h>
+#include <pscf/field/cuda/RField.h>
+#include <pscf/field/cuda/RFieldComparison.h>
 #include <prdc/environment/FieldGenerator.h>
 
 #include <util/misc/FileMaster.h>

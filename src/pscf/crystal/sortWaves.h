@@ -1,5 +1,5 @@
-#ifndef PRDC_SORT_WAVES_H
-#define PRDC_SORT_WAVES_H
+#ifndef PSCF_SORT_WAVES_H
+#define PSCF_SORT_WAVES_H
 
 /*
 * PSCF - Polymer Self-Consistent Field

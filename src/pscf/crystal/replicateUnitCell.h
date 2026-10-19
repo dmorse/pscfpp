@@ -1,5 +1,5 @@
-#ifndef PRDC_REPLICATE_UNIT_CELL_H
-#define PRDC_REPLICATE_UNIT_CELL_H
+#ifndef PSCF_REPLICATE_UNIT_CELL_H
+#define PSCF_REPLICATE_UNIT_CELL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -50,15 +50,6 @@ namespace Pscf {
    * This base template is declared but not defined. Explicit 
    * specializations are defined for D=1, 2, and 3.  
    * 
-   * Explicit specializations of this function template are called 
-   * within the replicateUnitCell function template defined in file 
-   * src/prdc/fieldIos/fieldIoUtil.tpp. This function takes an array of
-   * fields as an input and writes a replicated version of those fields
-   * to an r-grid field file. The header of the resulting file contains a 
-   * description of the unit cell obtained here. That field replication 
-   * function is used to implement the REPLICATE_UNIT_CELL command of
-   * the pscf_rpc and pscf_rpg programs.
-   *
    * \ingroup Pscf_Crystal_Module
    * 
    * \param replicas  number of replicas in each direction (in)

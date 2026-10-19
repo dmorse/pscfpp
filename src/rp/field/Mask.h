@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/RField.h>            // member
+#include <pscf/field/RField.h>            // member
 #include <pscf/math/IntVec.h>             // member
 #include <util/containers/DArray.h>       // member template
 #include <pscf/backend/TmplDeclare.h>    // declaration macros

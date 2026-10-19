@@ -16,8 +16,8 @@
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
 
-#include <prdc/field/FFT.h>
-#include <prdc/field/RField.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/RField.h>
 
 #include <pscf/backend/VecRandom.h>
 #include <pscf/backend/Reduce.h>

@@ -13,9 +13,9 @@
 #include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 
-#include <prdc/field/cuda/RField.h>
-#include <prdc/field/cuda/FFT.h>
-#include <prdc/field/cuda/WaveList.h>
+#include <pscf/field/cuda/RField.h>
+#include <pscf/field/cuda/FFT.h>
+#include <pscf/field/cuda/WaveList.h>
 #include <pscf/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>
