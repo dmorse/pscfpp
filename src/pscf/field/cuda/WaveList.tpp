@@ -622,7 +622,7 @@ namespace Pscf {
          ThreadArray::setThreadsLogical(kSize_*threadsPerGP, nBlocks, nThreads);
 
          // If the above was successful, print warning
-         Log::file() << "Warning: "
+         Log::file() << "\nWarning: "
                      << "nThreads too small for computeMinimumImages.\n"
                      << "Setting nThreads equal to 128." << std::endl;
       }
