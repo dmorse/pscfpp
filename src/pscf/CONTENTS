@@ -1,6 +1,6 @@
-The src/pscf directory contains source files for classes and functions that
-are defined in the Pscf C++ namespace and that can be used by any program 
-in the PSCF package.  
+The src/pscf directory contains source files for classes and functions 
+that are defined in the Pscf C++ namespace and that are accessible to 
+any program built by the PSCF package.  
 
 Subdirectories:
 ---------------
@@ -8,7 +8,9 @@ Subdirectories:
    backend/      - utilities for different computational backends
    chem/         - molecular structure descriptors
    correlation/  - correlation functions for homogeneous gas
+   crystal/      - unit cell, space group and symmetry-adapted basis
    environment/  - generation of imposed mask and external fields
+   field/        - periodic fields and FFT (multiple backends)
    floryHuggins/ - Flory-Huggins theory for homogeneous mixtures
    inter/        - interaction (excess) free energy 
    iterator/     - utilities for iterator algorithms
@@ -17,15 +19,6 @@ Subdirectories:
    solvers/      - templates for modified diffusion eqn (MDE) solvers 
    sweep/        - utilities for SCFT sweep algorithms
    tests/        - unit tests for code in src/pscf
-
-   Most named entitites in the src/pscf directory are defined directly
-   in the top-level Pscf namespace. The most important exceptions are:
-
-   - All classes in subdirectory pscf/floryHuggins are defined in a 
-     nested namespace named Pscf::FloryHuggins. 
- 
-   - All classes and functions in subdirectory pscf/correlation are 
-     defined in a nested namespace named Pscf::Correlation
 
 C++ file:
 ---------
@@ -43,4 +36,22 @@ Doxygen documentation file:
 ---------------------------
 
 pscf.mod     - definition of Pscf_NS_Module doxygen topics module 
+
+Enclosed namespaces:
+--------------------
+
+   Most named entitites in the src/pscf directory are defined directly
+   in the top-level Pscf namespace. The most important exceptions are:
+
+   - All classes in subdirectory pscf/floryHuggins are defined in a 
+     nested namespace named Pscf::FloryHuggins. 
+ 
+   - All classes and functions in subdirectory pscf/correlation are 
+     defined in a nested namespace named Pscf::Correlation
+
+   - Functions in src/backend that perform operations with array inputs
+     and an array output are defined in namespace Pscf::VecOp
+
+   - Functions that perform reduction operations with one or more array
+     inputs and a scalar output are defined in namespace Pscf::Reduce
 
