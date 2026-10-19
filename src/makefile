@@ -50,7 +50,6 @@ rp:
 test:
 	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
 ifdef PSCF_CPP
 	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
@@ -60,7 +59,6 @@ ifdef PSCF_CUDA
 endif
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
-	@cat prdc/tests/count >> count
 	@cat r1d/tests/count >> count
 ifdef PSCF_CPP
 	@cat rp/tests/cpp/count >> count
@@ -77,14 +75,12 @@ endif
 test-cpu:
 	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd prdc/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
 ifdef PSCF_CPP
 	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
 endif
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
-	@cat prdc/tests/count >> count
 	@cat r1d/tests/count >> count
 ifdef PSCF_CPP
 	@cat rp/tests/cpp/count >> count

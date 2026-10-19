@@ -20,10 +20,6 @@ clean:
 	rm -f $(prdc_OBJS)
 	rm -f $(prdc_DEPS)
 	rm -f $(prdc_LIB)
-	rm -f *.o */*.o */*/*.o
-	rm -f *.d */*.d */*/*.d
-	rm -f field/cuda/*.ou field/cuda/*.du 
-	cd tests; $(MAKE) clean
 
 .PHONY: all clean
 
