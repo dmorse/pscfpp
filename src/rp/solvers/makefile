@@ -21,4 +21,4 @@ clean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(rp_solvers_DEPS)
+-include $(rp_DEPS)

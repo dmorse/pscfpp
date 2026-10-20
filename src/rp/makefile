@@ -10,7 +10,6 @@
 include ../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/rp/sources.mk
 include $(SRC_DIR)/rp/patterns.mk
 
@@ -85,6 +84,5 @@ endif
 
 -include $(util_DEPS)
 -include $(pscf_DEPS)
--include $(prdc_DEPS)
 -include $(rp_DEPS)
 -include $(PSCF_RP_DEPS)
