@@ -1,9 +1,9 @@
 This src/ directory contains all C++ and CUDA C++ source code for the PSCF 
-package.  The subdirectories util, pscf, r1d, prdc, and rp, each contain 
-source code for classes and functions defined in a particular C++ 
-namespace.  The test subdirectory contains source code for a unit test 
-framework.  Subdirectories util/ and test/ are maintained as separate 
-github repositories that are installed as submodules of the pscfpp git 
+package.  The subdirectories util, pscf, r1d, and rp, each contain source 
+code for classes and functions defined in a particular C++ namespace. 
+The test subdirectory contains source code for a unit test framework.  
+Subdirectories util/ and test/ are maintained as separate github 
+repositories that are installed as submodules of the pscfpp git 
 repository when the repository is cloned using the --recursive option.
 
 Subdirectories (with corresponding C++ namespace names in parentheses):

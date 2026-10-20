@@ -1,5 +1,5 @@
 /*
-* This program runs all unit tests in the prdc/tests/cpu directory.
+* This program runs all unit tests in the pscf/tests/field/cpp directory.
 */ 
 
 #include "FieldCppTestComposite.h"
