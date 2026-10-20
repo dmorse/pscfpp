@@ -22,9 +22,9 @@ avoid a clash with the name "pscf" of the repository containing the older
 Fortran version.
 
 The current C++/CUDA version of PSCF is intended to supersede the Fortran
-version. The current version provides almost all of the capabilities of
-the Fortran program, as well as some important new capabilities. New users
-of PSCF should use the current version documented here, while users of the
+version. The current version provides almost all of the capabilities of the 
+Fortran program, as well as several important new capabilities. New users
+of PSCF should use the current version documented here, and users of the
 Fortran version should consider switching to the current version whenever
 they can. Differences bewtween the two packages are described below.
 
@@ -34,17 +34,12 @@ Characteristics of the current version of PSCF that distinguish it from
 the legacy Fortran version include the following:
 <ul>
   <li>
-  The current version is an extensible package of several programs designed
-  for different geometries, algorithms and/or computer hardware. The legacy
-  Fortran version is a single program for SCFT of periodic structures.
-  </li>
-  <li>
-  The current version can simulate mixtures containing acyclic branched block
-  polymers. The Fortran version can only treat linear block polymers.
-  </li>
-  <li>
   The current version can use a graphics processing units (GPU) to
   accelerate calculations for large systems.
+  </li>
+  <li>
+  The current version can simulate mixtures containing acyclic branched 
+  block polymers. The Fortran version can only treat linear block polymers.
   </li>
   <li>
   The current version can perform partial-saddle point field theoretic

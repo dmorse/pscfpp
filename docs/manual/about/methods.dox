@@ -6,26 +6,25 @@
 <BR>
 
 PSCF is a package of several programs that are designed to predict
-equilibrium properties of inhomogeneous states in polymer liquids,
-including block polymer materials. PSCF is designed primarily to describe
-materials that contain flexible polymers in which the formation of
-inhomogeneous states is driven by a tendency of constituents to phase
-separate.  The current version of PSCF can be used to perform either
-self-consistent field theory calculations or stochastic field-theoretic
-simulations that rely on a partial-saddle point approximation, as
-discussed below.
+equilibrium properties of inhomogeneous states in polymer liquids.
+PSCF is designed primarily to describe materials that contain flexible 
+block polymers or homopolymers in which the formation of inhomogeneous 
+states is driven by a tendency of constituents to phase separate. The 
+current version of PSCF can be used to perform either self-consistent 
+field theory calculations or stochastic field-theoretic simulations 
+that rely on a partial-saddle point approximation, as discussed below.
 
-All PSCF programs currently use a coarse-grained model that treats polymer
-conformations as flexible random walks, and that treats the polymer
-material as incompressible. Some program in the package may use either
-a "thread" model of polymers as continuous random walks or a "bead"
-model of polymers as sequences of discrete beads connected by harmonic
-springs.  Systems modeled by PSCF may be either one-component block
-polymer melts or mixtures that may contain one or more polymer species.
-To allow simulation of solutions, such mixtures may also optionally
-contain one or more small molecule solvent species that are treated as
-structureless particles that occupy a specified volume per molecule.
-Each polymeric species may have a linear or acyclic branched structure.
+PSCF uses a coarse-grained model that treats polymer conformations 
+as flexible random walks, and that treats the polymer material as 
+incompressible. In most contexts, users may use either a "thread" 
+model of polymers as continuous random walks or a "bead" model of 
+polymers as sequences of discrete beads connected by harmonic springs. 
+PSCF may be used to model either one-component block polymer melts or 
+mixtures that may contain one or more polymer species. To allow 
+treatment of solutions, such mixtures may also contain zero or more 
+small molecule solvent species that are treated as structureless 
+particles that occupy a specified volume per molecule.  Each polymeric 
+species may have a linear or acyclic branched structure.
 Interactions among different types of monomer are described by binary
 Flory-Huggins interaction parameters. The model and parameters are
 described in greater detail \ref user_model_page "elsewhere" in this
@@ -92,11 +91,13 @@ optimal field configuration. The theory underlying FTS methods is based
 upon an exact transformation of the partition function for a system of
 interacting particles from an integral over particle positions into a
 functional integral over all possible configurations of a set of
-fluctuating auxiliary w fields.  There exist two distinct classes of
-FTS methods, which we refer to here as fully fluctuating (FF-FTS) and
-partial-saddle point (PS-FTS) field theoretic simulation methods. Both
-are discussed briefly below for context, but only the PS-FTS method is
-implemented in the current version of PSCF.
+fluctuating auxiliary w fields.  
+
+There exist two distinct classes of FTS methods, which we refer to here 
+as fully fluctuating (FF-FTS) and partial-saddle point (PS-FTS) field 
+theoretic simulation methods. Both are discussed briefly below for 
+context, but only the PS-FTS method is implemented in the current version 
+of PSCF.
 
 <b> Fully-fluctuating field theoretic simulation (FF-FTS): </b>
 
@@ -136,40 +137,41 @@ implemented in PSCF.
 <b> Partial saddle-point field theoretic simulation (PS-FTS): </b>
 
 FTS methods that are implemented in the current version of PSCF are
-instead based on a so-called "partial saddle-point" approximation to the
-fully fluctuating field theory. This is an approximation in which a field
+based on a so-called "partial saddle-point" approximation to the fully 
+fluctuating field theory. This is an approximation in which a field
 component that enforces the incompressibility constraint, sometimes
 referred to as a pressure field, is treated at a self-consistent field
 level, while other field component or components that couple to
-composition fluctuations are allowed to fluctuate freely. The use of a
-self-consistent field approximation for the pressure field can be shown
-to be equivalent to approximating this field by its value at a partial
-saddle-point configuration, which is a field configuration in which the
-functional derivative of the field theoretic Hamiltonian with respect
-to this field component vanishes.  We refer to any simulation that
+composition fluctuations are allowed to fluctuate freely. The resulting
+approximation for the pressure field can be shown to be equivalent to 
+approximating this pressure field by its value at a partial saddle-point 
+configuration, which is a field configuration in which the functional 
+derivative of the field theoretic Hamiltonian with respect to the
+pressure-like field component vanishes.  We refer to a simulation that
 relies on this approximation as a partial saddle-point field theoretic
 simulation (PS-FTS).
 
 When the partial saddle-point approximation is applicable, it leads to
 an expression for the partition function as a functional integral in
-which the fields and statistical weights are are real, rather than
-complex-valued.  PSCF implements several Brownian dynamics and
-Monte-Carlo algorithms for sampling the ensemble defined by the partial
-saddle-point approximation. The Brownian dynamics method is generally
-more efficient that Monte-Carlo for large systems, and is recommended
-for most applications. Brownian dynamics PS-FTS simulations are also
-generally more stable and efficient than complex Langevin simulations,
-at a modest cost in accuracy when used to simulate liquids of sufficiently
-long, strongly overlapping polymers.
+which the fields and statistical weights are are all real-valued
+quantities, rather than complex-valued.  PSCF implements several Brownian 
+dynamics and Monte-Carlo algorithms for sampling the ensemble defined by 
+the partial saddle-point approximation. The Brownian dynamics method is 
+generally more efficient that Monte-Carlo for large systems, and is 
+recommended for most applications. Brownian dynamics PS-FTS simulations 
+are also generally more stable and efficient than complex Langevin 
+simulations of the fully fluctuating theory, at a modest cost in 
+accuracy when used to simulate liquids of very long, strongly 
+overlapping polymers.
 
-The PS-FTS method cannot be applied to as wide a range of different
-types of systems as the complex Langevin method.  At the time of writing,
-it has only been applied in published work to systems with two monomer
-types (AB systems) with a positive Flory-Huggins interaction parameter.
-The implemention of the partial-saddle point approximation that is used
-in PSCF is designed to allow application to a slightly wider range of
-systems, including some systems with three monomer types, but still
-imposes some constraints on the allowed values of interaction parameters.
+The PS-FTS method cannot be applied to as wide a range of different types 
+of systems as the complex Langevin method.  At the time of writing, it 
+has only been applied in published work to systems with two monomer types 
+(AB systems) with a positive Flory-Huggins interaction parameter.  The 
+implemention of the partial-saddle point approximation that is used in 
+PSCF is designed to allow application to a slightly wider range of systems, 
+including some systems with three monomer types, but still imposes some 
+constraints on the allowed values of interaction parameters.
 
 Work on the development and application of PS-FTS calculations for
 copolymer melts and polymer mixtures has been driven in recent years

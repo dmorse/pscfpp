@@ -5,8 +5,8 @@
 <BR>
 
 
-All PSCF executable programs are designed to be run from a unix command line,
-and all have a similar command line interface. The names of the required
+Both PSCF programs are designed to be run from a unix command line, 
+and have a similar command line interface. The names of the required
 parameter and command files are passed to the program as arguments of the
 "-p" and "-c" command line options, respectively.  Names of other input and
 output files are provided as arguments to commands in the command file.
@@ -23,17 +23,30 @@ one would enter
    pscf_r1d -p param -c commands
 \endcode
 
-<b> pscf_rpc and pscf_rpg</b>:
-The syntax to invoke either the pscf_rpc or pscf_rpg programs for periodic
-microstructures is similar, but requires that parameter also pass the
-spatial dimensionality as a parameter of the -d option. For example,
-to use pscf_rpc to perform a calculation involving a three-dimensional
-periodic microstructures, one could enter
+<b> pscf_rp</b>:
+The pscf_rp program may be run either by invoking the pscf_rpc executable
+to run a version that uses standard CPU hardware, or by invoking pscf_rpg 
+to run a GPU-enabled version on a machine that supports this.  The command
+line interface for either version of pscf_rp is similar to that used for 
+pscf_r1d, except for the fact that it requires that user to provide the 
+dimension of space as an additional parameter, which must be given as an
+parameter of the -d option.  
+
+For example, to use the pscf_rpc executable to perform either an SCFT 
+calculation for a three-dimensional periodic microstructure or a PS-FTS 
+simulation, one could enter
 \code
    pscf_rpc -d 3  -p param -c commands
 \endcode
-The command line interface for pscf_rpg is identical to the interface
-for pscf_rpc.
+The command required to invoke pscf_rpg is identical except for the use 
+of pscf_rpg rather than pscf_rpg as the executable file name.  
+
+The ability to specify a spatial dimension less 3 is normally used only 
+for SCFT calculations for periodic lamellar or columnar structures in 
+which all fields are periodic functions only one coordinate (for a lamellar 
+phase) or of two coordinates (for a two-dimensional structure such as a
+columnar phase of hexagonally packed cylinders).  PS-FTS calculations are 
+normally invoked using an option "-d 3". 
 
 <b> Redirecting log output </b>:
 During execution, some information is written to standard output, which
@@ -77,12 +90,12 @@ any such errors.
 \section user_usage_options_sec Command line options
 
 The table shown below lists all command line options accepted by PSCF
-programs. The second column, which describes the option parameter, is
-left empty for options that do not take a parameter.  All but one of the
-options listed below can be used with any of the three PSCF programs.
+programs. The second column, which describes an associated parameter, 
+is left empty for options that do not take a parameter.  All but one of 
+the options listed below can be used with either pscf_r1d or pscf_rp.
 The only exception to this is the -d option, which is a required input
-to the pscf_rpc and pscf_rpg programs, but is not a valid option for
-pscf_r1d.
+for pscf_rp (i.e., for pscf_rpc or pscf_rpg), but is not a valid option 
+for pscf_r1d.
 <table>
   <tr>
      <td> <b> Option </b> </td>
@@ -124,9 +137,9 @@ pscf_r1d.
   </tr>
 </table>
 The -p and -c options are required, while the -e, -i, -o options are
-not.  The -d option only exists for the pscf_rpc and pscf_rpg programs,
-and is required by those two programs. The -e option does not take a
-parameter.
+not.  The -d option only exists for the pscf_rp program (or the
+pscf_rpc or pscf_rpg executable) and is a required input for that 
+program. The -e option does not take a parameter.
 
 \section user_usage_prefixes_sec File name prefixes
 
@@ -147,9 +160,9 @@ The command
 \code
    pscf_rpc -d 3 -e -p param -c commands -i in/ -o out/ > log
 \endcode
-would run the pscf_rpc program using a parameter file named "param" and
-a command file named "commands" in the current working directory, while
-echoing the parameter file, reading all input files other than the
+would run the pscf_rpc executable using a parameter file named "param" 
+and a command file named "commands" in the current working directory, 
+while echoing the parameter file, reading all input files other than the
 parameter and command files from subdirectory of the current working
 directory named "in", and writing all output files to a subdirectory
 named "out".

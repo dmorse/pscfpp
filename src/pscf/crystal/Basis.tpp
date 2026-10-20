@@ -699,7 +699,7 @@ namespace Pscf {
                      waves_[k].inverseId = j;
                   } else {
                      // Inverse not in expected position, search full star
-                     // (this usually occurs for stars on the edge of the
+                     // (this may occur for stars on the edge of the
                      // Brillouin zone)
                      for (k = j; k < stars_[i].endId; ++k) {
                         if (nVec == waves_[k].indicesStd) {
@@ -812,7 +812,7 @@ namespace Pscf {
                      waves_[k].inverseId = j;
                   } else {
                      // Inverse not in expected position, search full star
-                     // (this usually occurs for stars on the edge of the
+                     // (this may occur for stars on the edge of the
                      // Brillouin zone)
                      k = stars_[i+1].beginId;
                      for ( ; k < stars_[i+1].endId; ++k) {

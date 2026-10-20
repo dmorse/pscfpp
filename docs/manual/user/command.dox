@@ -22,16 +22,17 @@ described on a \ref psfts_command_page "separate page".
 
 \section user_command_example_sec Example
 
-Suppose that pscf_rpc is used to perform an SCFT calculation, and is
-invoked from a directory that contains a parameter file named "param"
-and a command file named "command", using the command
+Suppose that the pscf_rpc executable is used to perform an SCFT calculation 
+for a 3D structure, and is invoked from a directory that contains a parameter 
+file named "param" and a command file named "command", using the command
 \code
-   pscf_rpc -e -p param -c command > log
+   pscf_rpc -d 3 -p param -c command -e > log
 \endcode
 Also suppose that the current working directory has subdirectories named
-"in" and "out", such that the "in" directory contains an initial w-field
-file named w.bf that is written in symmetry-adapted basis format, while
-all output files are written to the "out" directory.
+"in" and "out", where "in" directory contains a file named w.bf that 
+contains initial guess for the w-field in symmetry-adapted basis format.
+In the example given below, all output field files are written to the out 
+directory.
 
 An example of a minimal command file for a SCFT calculation of a structure
 with a specified space group symmetry is shown below:
@@ -42,10 +43,7 @@ WRITE_W_BASIS   out/w.bf
 WRITE_C_RGRID   out/c.rf
 FINISH
 \endcode
-This command file could also be used by the GPU accelerated pscf_rpg
-program, which accepts the same set of commands and input file formats
-as scf_pc.  This command file instructs the program to perform the
-following actions:
+This command file instructs the program to perform the following actions:
 
 - READ_W_BASIS: Read in an initial set of chemical potential fields
   (w-fields) from the file in/w.bf in symmetry-adapted Fourier basis

@@ -1,6 +1,6 @@
 /*! \page user_param_example_page Parameter File - Example
 
-\ref user_param_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_syntax_page (Next)
 <BR>
 
@@ -12,7 +12,7 @@ for a periodic structure.
 
 The text shown below is a complete parameter file for an SCFT calculation
 of a 3D periodic structure that could be used as an input file for either
-the pscf_rpc or pscf_rpg program:
+the CPU or GPU-enabled variant of the pscf_rp program:
 
 \code
 System{
@@ -111,8 +111,8 @@ This parameter is input as a string with only two possible valid values,
 "thread" or "bead". These values enable use of the continuous thread or
 discrete bead model for polymer conformations, respectively.  The
 polymerModel parameter is an optional element in parameter files for
-pscf_rpc and pscf_rpg. If this parameter entry is omitted, the thread
-model is used by default.
+pscf_rp.  If this parameter entry is omitted, the thread model is used 
+by default.
 
 The remainder of the System block in this example contains a sequence of
 four nested subblocks. The purposes of data contained in each of these
@@ -378,9 +378,8 @@ example.
 \anchor user_param_example_domain
 <b> Domain block </b>:
 
-This Domain block in this example has the format required by either
-pscf_rpc and pscf_rpg to simulate a 3D cubic phase with a specified
-space group symmetry.
+This Domain block in this example has the format required by pscf_rp
+to simulate a 3D cubic phase with a specified space group symmetry.
 
 The "mesh" parameter is a vector-valued parameter that specifies the
 number of grid points used to discretize the period domain in each
@@ -425,17 +424,16 @@ line of an Iterator block can either be the generic label "Iterator",
 as in this example, which is used to indicate that the user would like
 to use the default choice for the iterator algorithm, or it can be the
 name of the class that implements a specific algorithm.  The default
-iterator algorithm for the pscf_rpc program is an Anderson-mixing
-algorithm that is implemented by a class named AmIterator. This default
-iterator algorithm can thus be invoked either using the generic label
-"Iterator", as in the above example, or, more explicitly, by using the
-class name "AmIterator" as the block label in the first line of the
-block.
+iterator algorithm for pscf_rp is an Anderson-mixing algorithm that 
+is implemented by a class named AmIterator. This default iterator 
+algorithm can thus be invoked either using the generic label "Iterator", 
+as in the above example, or, more explicitly, by using the class name 
+"AmIterator" as the block label in the first line of the block.
 
 By convention, the first parameter for each iterator algorithm is a
 required parameter named epsilon that represents an error tolerance.
-This is actually the only required parameter for default AmIterator
-algorithm.
+This is the only required parameter for the default AmIterator algorithm,
+and the only parameter in the iterator block of the above example.
 
 In general, each iteration algorithm may accept a different list of
 required and optional parameters, and thus require a different format
@@ -446,11 +444,11 @@ the parameter file format for each algorithm, including all required
 and optional parameters for each algorithm.
 
 For simplicity, almost all of the examples shown in this user manual
-use the default iterator algorithm. The default iterator classes for all
-three PSCF programs are currently based on an Anderson-mixing algorithm.
-Most SCFT examples in this manual thus contain an iterator block that
-starts with the string "Iterator{"  on a line by itself, indicating
-the use of the default iterator.
+use the default iterator algorithm. The default iterator classes for 
+both pscf_r1d and pscf_rp are currently based on an Anderson-mixing 
+algorithm.  Most SCFT examples in this manual thus contain an iterator 
+block that starts with the string "Iterator{"  on a line by itself, 
+indicating the use of the default iterator.
 
 <BR>
 \ref user_param_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp;

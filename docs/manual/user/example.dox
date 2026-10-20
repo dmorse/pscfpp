@@ -11,17 +11,18 @@ various types of calculation are provided in the pscfpp/examples
 directory of the repository.
 
 Each top level subdirectory of the examples/ directory contains examples
-of calculations performed using one of the three available PSCF programs.
-For example, the pc/ directory contains examples that use the pscf_rpc
-CPU program for systems with periodic boundary conditiobs.  Lower levels
-in this directory tree organizes examples by the type of calculation
-(SCFT or PS-FTS) and the type of physical system.  For example, the
-pc/scft/diblock/ subdirectory contains examples of SCFT calculations
-involving periodic structures of diblock copolymer melts. Lower level
-subdirectories such as pc/scf/diblock/gyroid each contain input files
-for one or more example computations for a specific crystal structure.
-Many directories in this directory tree contain a file named CONTENTS
-that explains the organization of examples in that directory.
+of calculations performed using one of the three available PSCF executable
+files, pscf_r1d, pscf_rpc and pscf_rpg. For example, the rpc/ directory 
+contains examples that use the pscf_rpc CPU program for systems with 
+periodic boundary conditiobs.  Lower levels in this directory tree organize 
+examples by the type of calculation (SCFT or PS-FTS) and the type of 
+physical system.  For example, the rpc/scft/diblock/ subdirectory contains 
+several examples of SCFT calculations involving different periodic 
+structures of diblock copolymer melts. Lower level subdirectories such 
+as rpc/scf/diblock/gyroid each contain input files for one or more example 
+computations for a specific crystal structure.  Many directories in 
+this directory tree contain a file named CONTENTS that explains the 
+contents of that directory.
 
 \section examples_layout_sec Input files
 
@@ -46,7 +47,7 @@ following names:
        w.bf
     out/
 \endcode
-Here, in/ and out/ are names of subdirectories. The file in/w.bf is the
+Here, in/ and out/ are names of subdirectories. The file in/w.bf is an
 input chemical potential field.  The out/ subdirectory is initially empty.
 The files named "run" and "clean" are unix shell scripts that users may
 execute to run the simulation and clean up afterwards, respectively.
@@ -66,8 +67,8 @@ To use a "run" script, simply issue the command
 \endcode
 from within the directory containing the example and the "run" script
 file. Note the use of the prefix "./" before the script name, which is
-used to tell the unix shell to look for the script in the current
-directory.
+necessary to tell the unix shell to look for the "run" script in the 
+current working directory.
 
 To use pscf_rpc to run a simple example computation with the above
 directory structure, one could change directory (cd) to the relevant
@@ -93,7 +94,7 @@ After running an example, you may run the command
 \code
  ./clean
 \endcode
-from within the example directory in order to execute a script that
+from within an example directory in order to execute a script that
 removes any output data files created by the example. Most output
 files are created in the out/ directory, so this script usually
 removes all files in this directory.

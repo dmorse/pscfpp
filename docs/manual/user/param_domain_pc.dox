@@ -1,16 +1,16 @@
 namespace Pscf {
 
-/*! \page user_param_domain_pc_page Periodic domains (pscf_rpc and pscf_rpg)
+/*! \page user_param_domain_pc_page Periodic domains (pscf_rp)
 
 \ref user_param_domain_1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_command_page  (Next)
 <BR>
 
-The Domain block of the parameter file for pscf_rpc or pscf_rpg contains
-information about the periodic unit cell and discretization mesh for a
-D-dimensional periodic structure. Here D is the dimension of space
-specified by the argument of the "-d" command line option used to
-invoked pscf_rpc or pscf_rpg.
+The Domain block of the parameter file for pscf_rp contains information 
+about the periodic unit cell and discretization mesh for a D-dimensional 
+periodic structure. Hereafter, D denotes is the dimension of space 
+specified by the argument of the "-d" command line option used to invoke 
+pscf_rpc or pscf_rpg.
 
 \section user_param_domain_pc_example_sec Example
 

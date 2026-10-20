@@ -523,7 +523,7 @@ program-level namespaces, Pscf::R1d and Pscf::Rp. Each such class or
 class template is derived from a common base class named 
 Pscf::SolventSpecies. The parameter file format that is described above,
 which is used by all PSCF programs, is defined by the inherited public
-gember function Pscf::SolventSpecies::readParameters .
+member function Pscf::SolventSpecies::readParameters .
 
 <BR>
 \ref user_param_format_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

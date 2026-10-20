@@ -19,26 +19,30 @@ for PS-FTS simulations.  The suffix "rp" stands for "real periodic".
 
 The pscf_rp program can be compiled to create either an executable that
 uses only CPU hardware or a GPU-enabled executable that uses an NVIDIA
-GPU. The CPU-only version is compiled to create an executable file named 
-pscf_rpc, while the GPU-enabled version is compiled to create an executable 
-named pscf_rpg. These two executable files provide identical capabilities, 
-use identical formats for all input and output files, and produce 
-identical results to within small differences in round-off errors. 
-The pscf_rpc and pscf_rpg executables are described throughout this 
-manual as different versions of the same program, which we refer to by 
-the generic program name pscf_rp. 
+GPU, or both. The executable file for the CPU-only version is named
+pscf_rpc, while the executable file for the GPU-enabled version is 
+named pscf_rpg. Because these two executables provide identical 
+capabilities, with identical user interfaces, they are described in
+this manual as different versions of a single program that we refer
+to by the generic program name pscf_rp. 
 
 <b>pscf_r1d</b>:
 
 The pscf_r1d program is a comparatively simple CPU program for 
-one-dimensional SCFT calculations. Calculations can performed for 
-problems with planar, cylindrical or spherical symmetry, using Cartesian, 
-cylindrical or spherical coordinate systems. A finite-difference spatial 
-discretization scheme is used to solve the underlying modified diffusion 
-equation (MDE). This program is useful for SCFT problems involving flat 
-or curved interfaces, and for simulating spherical or cylindrical 
-micelles. The pscf_r1d program uses standard CPU hardware, and cannot 
-perform stochastic field theoretic simulations.
+one-dimensional (1D) SCFT calculations. This program can be used to 
+treat 1D problems with planar, cylindrical or spherical symmetry, 
+using a formulation of the modified diffusion equation (MDE) in 
+Cartesian, cylindrical or spherical coordinate systems, and simple 
+1D finite-difference spatial discretization.  It is useful for 
+SCFT problems involving flat or curved interfaces, and for 
+modelling spherical or cylindrical micelles. The pscf_r1d program 
+uses standard CPU hardware, and cannot perform stochastic field 
+theoretic simulations.
+
+The pscf_rp program allows the user to choose between a continuous 
+Gaussian thread model or a discrete bead-spring model of polymer 
+conformations, while pscf_r1d can only treat the continuous thread 
+model. 
 
 <BR>
 \ref about_history_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

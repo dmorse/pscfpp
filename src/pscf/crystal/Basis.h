@@ -396,16 +396,16 @@ namespace Pscf {
          std::complex<double> coeff;
 
          /**
-         * Integer indices of wave, on a discrete Fourier transform mesh.
+         * Integer indices of wave, in standard form.
          *
          * Components of this vector are non-negative. Component i lies in
          * the range [0, meshDimension(i) - 1], where meshDimension(i) is
-         * the number of grid points.
+         * the number of grid points along direction i.
          */
          IntVec<D> indicesStd;
 
          /**
-         * Integer indices of wave, in first Brillouin zone.
+         * Integer indices of wave, for minimal image.
          *
          * Components of this IntVec\<D\> may be negative or positive, and
          * differ from corresponding components of indicesStd by integer

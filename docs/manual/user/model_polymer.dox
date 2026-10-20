@@ -8,10 +8,10 @@ This page discusses models of polymeric species in more detail.
 
 \section user_model_polymer_model_sec Continuous vs discrete chain models
 
-The pscf_rpc and pscf_rpg programs for systems with periodic boundary
-conditions can treat polymer conformations using either of two slightly
-different mathematical models, which we refer to as the continuous
-"thread" model and the discrete "bead" model.
+The pscf_rp program for systems with periodic boundary conditions can 
+treat polymer conformations using either of two slightly different 
+mathematical models, which we refer to as the continuous "thread" model 
+and the discrete "bead" model.
 
 <ul>
 
@@ -26,12 +26,11 @@ block of a block polymer as a sequence of discrete point particles, or
 </li>
 
 </ul>
-The pscf_rpc and pscf_rpg programs can both perform either SCFT or PS-FTS
-calculations, and can both use either the thread or bead model for either
-type of calculation.  In both of these programs, the choice of bead or
-thread model is global - the same model (bead or thread) must be used
-for all blocks of all polymer species in the system throughout program
-execution.
+The pscf_rp program can both perform either SCFT or PS-FTS calculations, 
+and can both use either the thread or bead model for either type of 
+calculation.  In this program, the choice of bead or thread model is 
+global - the same model (bead or thread) must be used for all blocks 
+of all polymer species in the system throughout program execution.
 
 Calculations that use the thread model use numerical algorithms that
 that discretize the contour length of each block into steps of some
@@ -46,14 +45,13 @@ reproduce the properties of a discrete model with a specified integer
 number of beads in each block, and to converge to the exact solution for
 this model in the limit of infinitely fine spatial mesh resolution.
 
-We generally recommend the use of the thread model in pscf_rpc and
-pscf_rpg for SCFT calculations, because it provides more universal
-results that depend on a smaller number of physical model parameters.
-Both bead and thread models have been used in recent published work
-on PS-FTS calculations.
+We generally recommend the use of the thread model for SCFT calculations, 
+because it provides more universal results that depend on a smaller 
+number of physical model parameters.  Both bead and thread models have 
+been used in recent published work on PS-FTS calculations.
 
-The pscf_r1d program for one-dimensional systems can only use the thread
-model, and can only perform SCFT calculations.
+The pscf_r1d program for one-dimensional systems can only use the 
+thread model, and can only perform SCFT calculations.
 
 \subsection user_model_polymer_continuous_sub Continuous "thread" model
 
@@ -187,7 +185,7 @@ format for information about blocks in a linear block copolymer, in which
 values of the indices of the attached vertices do not need to be
 explicitly entered by the user.
 
-\section user_model_bead_vertex_sec Vertices in the bead model
+\section user_model_bead_vertex_sec Junction and branch vertices in the bead model
 
 To completely define a bead model, one must introduce an additional
 convention for the treatment of bonds that are connected to junction

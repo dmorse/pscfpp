@@ -11,20 +11,17 @@ theoretic calculation. These are:
 
   - Partial Saddle-Point Field Theoretic Simulation (PS-FTS)
 
-SCFT calculations can be performed with any of the three PSCF programs
-(pscf_r1d, pscf_rpc and pscf_rpg).  PS-FTS calculations that use either
-Brownian dynamics or Monte-Carlo sampling techniques can be performed
-with the pscf_rpc and pscf_rpg programs for periodic systems, but not with
-the pscf_r1d program.
+SCFT calculations can be performed with either pscf_rp or pscf_r1d, 
+while PS-FTS simulations can be performed with pscf_rp but not pscf_r1d.
 
-All three PSCF programs can also perform SCFT parameter sweeps.
+Both pscf_rp and pscf_r1d can also perform SCFT parameter sweeps.
 A \ref scft_sweep_page "parameter sweep" is an operations that
 performs a sequence of SCFT calculations for slightly different choices
 of parameter values spaced along a path through parameter space, as
 discussed in more detail \ref scft_sweep_page "here".
 
-Each of the PSCF programs is initialized using data in a parameter file
-and then executes a series of commands specified in a command file.
+Each PSCF program is initialized using data provided in a parameter 
+file and then executes a series of commands specified in a command file.
 Each of the following commands performs one of the types of calculation
 described above:
 
@@ -37,7 +34,7 @@ described above:
 The format of a parameter file contains some optional elements that are
 required for some types of calculations but unnecessary for others. The
 required format of a parameter file thus depends to some extent on what
-type of commands are used in the associated command file.
+type of commands will be invoked in the associated command file.
 
 <BR>
 \ref user_usage_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

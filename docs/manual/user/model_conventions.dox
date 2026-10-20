@@ -81,7 +81,7 @@ systems for which it is known that predictions of coarse-grained models
 for relevant thermodynamic properties can be parameterized by a small
 set of dimensionless parameters.
 
-\section user_model_conventions_experimentalist_sec Experimentalist conventions
+\section user_model_conventions_experimentalist_sec "Experimentalist" conventions
 
 In an "experimentalist" convention, a monomer (i.e., a unit of contour
 length) is defined for each monomer type so as to correspond to a
@@ -145,7 +145,7 @@ statistical segment length for that monomer definition divided by the
 molecular weight per monomer. In experimentalist conventions, Angstrom
 or nanometer units are usually used for all lengths.
 
-\section user_model_conventions_theorist_sec Theorist conventions
+\section user_model_conventions_theorist_sec "Theorist" conventions
 
 In a "theorist" convention, contour coordinates are often scaled so as to
 define the overall contour length of some reference chain or chain segment
@@ -242,7 +242,7 @@ fluctuations can be characterized by a dimensionless parameter
 \f]
 known as the invariant degree of polymerization.  SCFT predictions
 are recovered in the limit \f$ \overline{N} \rightarrow \infty \f$ or,
-equivalenty, in the limit \f$ v \rightarrow \infty \f$.
+equivalenty, in the limit \f$ v \rightarrow 0 \f$.
 
 <b> Example (thread model) </b>: When performing a PS-FTS calculation for
 a one-component diblock polymer melt using the thread model, one could
@@ -254,10 +254,18 @@ could use \f$ v = 10^{-2} \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
 <b> Example (bead model) </b>: When performing a PS-FTS calculation for
 a one-component diblock polymer melt using a discrete bead model for a
 chain of \f$ N = 100 \f$ beads, one could choose \f$ b = 1 \f$ for both
-monomer types (thus defining the root-mean-squared bond length as the
-unit of length) and then choose a value of \f$ v \f$ so as to obtain
-a desired value for \f$ \overline{N} \f$. For example, in this case,
-we could set \f$ v = 0.1 \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
+monomer types, thus defining the root-mean-squared bond length as the 
+unit of length. One must then choose a value of \f$ v \f$ so as to 
+obtain a desired value for \f$ \overline{N} \f$. For example, in this 
+case, we could set \f$ v = 0.1 \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
+
+<b> Example (bead model) </b>: When performing a PS-FTS calculation for
+a one-component diblock polymer melt using a discrete bead model for a
+chain of \f$ N = 100 \f$ beads, one could instead choose \f$ b = 0.1 \f$ 
+for both monomer types, thus setting \f$ N b^{2} = 1 \f$, and thereby 
+taking the root-mean-squared polymer end-to-end length \f$ \sqrt{N}b \f$
+as a unit of length. With these conventions, one would have to choose
+\f$ v = 10^{-4} \f$ to obtain \f$ \overline{N} = 10^{4} \f$.
 
 <BR>
 \ref user_model_solvent_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

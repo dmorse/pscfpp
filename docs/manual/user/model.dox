@@ -5,9 +5,9 @@
 <BR>
 
 The manual pages linked below discuss the physical models used by PSCF
-for either SCFT or PS-FTS calculations, with an emphasis on explaining
-the physical information that a user must provide. Discussion of file
-formats for input files is deferred to subsequent pages.
+for either SCFT or PS-FTS calculations, with an emphasis on the meaning
+of input parameters.  Discussion of file formats for input files is 
+deferred to subsequent pages.
 
 <h2> Contents:</h2>
 
