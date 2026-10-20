@@ -24,10 +24,10 @@ locations:
      the makefile (i.e., in that directory and any enclosed subdirectories).
 
    - **Namespace-level (not program-level) subdirectories of src or bld**:
-     The "all" target of makefiles in the util, pscf, and prdc
-     namespace-level directories in both the src or bld directory each 
-     creates a static library file, in addition to compiling all of the
-     source files in that directory tree.
+     The "all" target of makefiles in the util and pscf namespace-level 
+     directories in both the src or bld directory each creates a static 
+     library file, in addition to compiling all of the source files in 
+     that directory tree.
 
    - **Program-level subdirectories of src or bld (not program level)**:
      The "all" target of makefiles in the r1d and rp directories of both
@@ -168,9 +168,9 @@ object file is or is not out-of-date.
 As already discussed, the src/ and bld/ directories have analogous
 internal structures, and either can be used as the "build" directory
 for, respectively, out-of-source or in-source builds.  The src and bld
-directories each contain 5 subdirectories named named util/, pscf/,
-prdc/ r1d/, and rp/ that we refer to as namespace-level directories.
-Each namespace-level subdirectories in the bld/ directory contains a
+directories each contain 5 subdirectories named named util/, pscf/, 
+r1d/, and rp/ that we refer to as namespace-level directories.  Each 
+namespace-level subdirectories in the bld/ directory contains a
 makefiles that is a copy of the makefile located in the corresponding 
 subdirectories of the src/ directory. These makefiles in the bld/
 directory are created by the configure script by copying corresponding
@@ -182,11 +182,11 @@ files that each define the main function for an executable program.
 We refer to these two directories as program-level directories. 
 Makefiles in program-level directories contain additional rules to 
 compile any main program files and create one or more executables.  
-The remainder of this section discusses the makefiles in the three 
-namespace-level directories named util/, pscf/ and prdc/ that are 
-**not** also program-level directories.
+The remainder of this section discusses the makefiles in the util/
+and pscf/ namespace-level directories that are **not** also program-level 
+directories.
 
-The main difference between the makefiles in the util/, pscf/ and prdc/
+The main difference between the makefiles in the util/ and pscf/ 
 namepace-level directories and those found in lower level subdirectories 
 of the src directory is that the makefile in each namespace-level directory 
 builds a static library that contains the contents of all of the object
@@ -195,28 +195,28 @@ is defined in the sources.mk file in each of these namespace-level
 directories.
 
 <b> Example </b>: As an example, the body of the makefile in the 
-src/prdc directory is shown below. The makefile variable value \$(prdc_LIB) 
-is defined in the included file \$(SRC_DIR)/prdc/sources.mk file, and 
-gives the path \$(BLD_DIR)/prdc/libprdc.a to the static library file 
-target in the prdc namespace-level directory of the build directory.
+src/pscf directory is shown below. The makefile variable value \$(pscf_LIB) 
+is defined in the included file \$(SRC_DIR)/pscf/sources.mk file, and 
+gives the path \$(BLD_DIR)/pscf/libpscf.a to the static library file 
+target in the pscf namespace-level directory of the build directory.
 
 \verbatim
 #-----------------------------------------------------------------------
 # Include *.mk makefile fragments
 
 include ../config.mk
-include $(SRC_DIR)/prdc/sources.mk
-include $(SRC_DIR)/prdc/patterns.mk
+include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/pscf/patterns.mk
 
 #-----------------------------------------------------------------------
 # Main targets
 
-all: $(prdc_LIB)
+all: $(pscf_LIB)
 
 clean:
-	rm -f $(prdc_OBJS)
-	rm -f $(prdc_DEPS)
-	rm -f $(prdc_LIB)
+	rm -f $(pscf_OBJS)
+	rm -f $(pscf_DEPS)
+	rm -f $(pscf_LIB)
 	rm -f *.o */*.o */*/*.o
 	rm -f *.d */*.d */*/*.d
 	cd tests; $(MAKE) clean
@@ -226,7 +226,7 @@ clean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(prdc_DEPS)
+-include $(pscf_DEPS)
 
 \endverbatim
 
@@ -234,11 +234,11 @@ The main difference between the structure of this file and that of the
 makefiles in lower-level subdirectories of src is that, in this example,
 the rule for the "all" target contains the path $(PRDC_LIB) to a static
 library file target as its only pre-requisite. The rule to build the
-library $(PRDC_LIB), which is defined in the file src/prdc/sources.mk,
-gives the associated object file list \$(prdc_OBJS) as a prerequisite.
-As a result, any attempt to build or update the library file will 
-force creation or recreation of any out-of-date object files in the 
-list \$(prdc_OBJS), as needed.  
+library $(PRDC_LIB), which is defined in the file src/pscf/sources.mk,
+gives the associated object file list \$(pscf_OBJS) as a prerequisite.
+As a result, any attempt to build or update the library file will force 
+creation or recreation of any out-of-date object files in the list 
+\$(pscf_OBJS), as needed.  
 
 \section developer_build_makefile_program_sec Makefiles in program-level directories
 
@@ -312,7 +312,7 @@ $(PSCF_R1D_EXE): $(PSCF_R1D).o $(PSCF_LIBS)
 \endverbatim
 
 Note the following elements of this file that are not present in the
-makefiles in the util, pscf, and prdc namespace-level directories:
+makefiles in the util and pscf namespace-level directories:
 
   - Definition of a variable PSCF_R1D = \$(BLD_DIR)/r1d/pscf_r1d that 
     gives the common part of the paths for the object and dependency 
@@ -346,8 +346,8 @@ namespace-level directory is defined in the sources.mk file in that
 directory, which is included by this makefile.
 
 Inclusion of source list and dependency files from other namespace-level
-directories is **not** necessary in the makefiles located in the util,
-pscf, and prdc directories (i.e., namespace-level directories that are
+directories is **not** necessary in the makefiles located in the util
+and pscf directories (i.e., namespace-level directories that are
 not program-level directories) because these makefiles do not define a 
 rule that links static libraries from different namespace-level 
 directories to create an executable.
@@ -388,7 +388,6 @@ all-cpu:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd r1d; $(MAKE) all
-	cd prdc; $(MAKE) all
 	cd rpc; $(MAKE) all
 
    .
@@ -426,8 +425,8 @@ relevant config.mk configuration file.
 
 The "all" target is the first target in the identical makefiles located
 in the src and bld directory, and is the default target. Invoking "make"
-with no target from either of these directories is thus equivalent
-to invoking "make all" from the same location.
+with no target from either of these directories is thus equivalent to 
+invoking "make all" from the same location.
 
 The remainder of this makefile defines a number of other targets that
 enable the user to compile only part of the package, to run unit tests,
