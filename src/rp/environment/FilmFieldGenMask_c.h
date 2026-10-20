@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
+#include <rp/environment/FilmFieldGenMaskBase.h>  // base class
 #include <pscf/backend/cpp/CPT.h>                       // template parameter
 #include <rp/system/System.h>
 
@@ -24,7 +24,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Field Generator for thin-film masks.

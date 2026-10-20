@@ -1,5 +1,5 @@
-#ifndef PRDC_FILM_FIELD_GEN_EXT_BASE_TPP
-#define PRDC_FILM_FIELD_GEN_EXT_BASE_TPP
+#ifndef RP_FILM_FIELD_GEN_EXT_BASE_TPP
+#define RP_FILM_FIELD_GEN_EXT_BASE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -15,7 +15,7 @@
 #include <util/containers/GArray.h>
 
 namespace Pscf {
-namespace Prdc {
+namespace Rp {
 
    using namespace Util;
 

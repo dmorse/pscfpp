@@ -1,5 +1,5 @@
-#ifndef PRDC_FILM_MASK_FG_BASE_H
-#define PRDC_FILM_MASK_FG_BASE_H
+#ifndef RP_FILM_MASK_FG_BASE_H
+#define RP_FILM_MASK_FG_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/environment/FieldGenerator.h>  // Base class
+#include <rp/environment/FieldGenerator.h>  // Base class
 #include <pscf/crystal/UnitCell.h>            // Function parameter
 #include <pscf/math/RealVec.h>                // container
 #include <iostream>
 #include <string>
 
 namespace Pscf {
-namespace Prdc {
+namespace Rp {
 
    using namespace Util;
 
@@ -33,7 +33,7 @@ namespace Prdc {
    * excludedThickness, and interfaceThickness. See \ref 
    * scft_thin_films_page for more information. 
    * 
-   * \ingroup Prdc_Environment_Module
+   * \ingroup Rp_Environment_Module
    */
    template <int D>
    class FilmFieldGenMaskBase : public FieldGenerator
@@ -274,7 +274,7 @@ namespace Prdc {
    {  return hasFBulk_; }
 
    // Explicit instantiation declarations
-   #ifndef PRDC_FILM_MASK_FG_BASE_TPP
+   #ifndef RP_FILM_MASK_FG_BASE_TPP
    extern template class FilmFieldGenMaskBase<1>;
    extern template class FilmFieldGenMaskBase<2>;
    extern template class FilmFieldGenMaskBase<3>;

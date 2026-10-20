@@ -9,7 +9,7 @@
 */
 
 #include <util/param/Factory.h>            // base class template
-#include <prdc/environment/Environment.h>  // base class argument
+#include <rp/environment/Environment.h>  // base class argument
 #include <pscf/backend/TmplDeclare.h>     // preprocessor macros
 
 #include <string>
@@ -27,7 +27,6 @@ namespace Rp {
 
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Factory for subclasses of Environment.

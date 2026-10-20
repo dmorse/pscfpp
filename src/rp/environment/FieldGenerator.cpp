@@ -8,7 +8,7 @@
 #include "FieldGenerator.h"
 
 namespace Pscf {
-namespace Prdc {
+namespace Rp {
 
    // Constructor
    FieldGenerator::FieldGenerator()
@@ -29,5 +29,5 @@ namespace Prdc {
    const
    {  return stress; }
 
-} // namespace Prdc
+} // namespace Rp
 } // namespace Pscf

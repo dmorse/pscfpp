@@ -1,5 +1,5 @@
-#ifndef PRDC_FILM_FIELD_GEN_EXT_BASE_H
-#define PRDC_FILM_FIELD_GEN_EXT_BASE_H
+#ifndef RP_FILM_FIELD_GEN_EXT_BASE_H
+#define RP_FILM_FIELD_GEN_EXT_BASE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/environment/FieldGenerator.h>  // Base class
+#include <rp/environment/FieldGenerator.h>  // Base class
 #include <pscf/math/RealVec.h>                // member
 #include <util/containers/DArray.h>           // member
 
@@ -24,7 +24,7 @@ namespace Pscf {
 
 
 namespace Pscf {
-namespace Prdc {
+namespace Rp {
 
    using namespace Util;
 
@@ -44,7 +44,7 @@ namespace Prdc {
    * the bottom, through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
    * 
-   * \ingroup Prdc_Environment_Module
+   * \ingroup Rp_Environment_Module
    */
    template <int D>
    class FilmFieldGenExtBase : public FieldGenerator

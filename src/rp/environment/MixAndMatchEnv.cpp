@@ -8,7 +8,7 @@
 #include "MixAndMatchEnv.h"
 
 namespace Pscf {
-namespace Prdc {
+namespace Rp {
 
    /*
    * Constructor.
@@ -48,5 +48,5 @@ namespace Prdc {
       return stress;
    }
 
-} // namespace Prdc
+} // namespace Rp
 } // namespace Pscf

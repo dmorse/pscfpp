@@ -55,9 +55,8 @@ is the Fourier transform of the exchange field
 The Fourier transform \f$ \hat{W}_{-}({\bf q}) \f$ that is defined above 
 as a spatial integral is approximated internally by the product of the 
 system volume \f$ V \f$ and the normalized discrete Fourier transform 
-(DFT) of \f$ W_{-}({\bf r}) \f$ that is computed by either 
-Prdc::Cpu::FFT::forwardTransform or
-Prdc::Cuda::FFT::forwardTransform .
+(DFT) of \f$ W_{-}({\bf r}) \f$ that is computed by 
+FFT<D,T>::forwardTransform.
 
 \section rp_BinaryStructureFactor_parameter_sec Parameter file
 

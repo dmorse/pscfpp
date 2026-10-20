@@ -9,7 +9,7 @@
 #include <pscf/crystal/paramIdConversions.h>
 
 namespace Pscf {
-namespace Prdc
+namespace Rp
 {
 
    using namespace Util;

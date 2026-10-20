@@ -12,10 +12,11 @@
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
+#include <rp/environment/FieldGenerator.h>
 
 #include <pscf/field/cuda/RField.h>
 #include <pscf/field/cuda/RFieldComparison.h>
-#include <prdc/environment/FieldGenerator.h>
+#include <pscf/backend/cuda/CUT.h>
 
 #include <util/misc/FileMaster.h>
 
@@ -23,7 +24,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class FilmEnvironmentTest : public UnitTest
 {
@@ -71,8 +71,8 @@ public:
 
       // Check that the parameters that are publicly accessible were 
       // read correctly
-      TEST_ASSERT(env.fieldGenerator1().type() == FieldGenerator::Mask);
-      TEST_ASSERT(env.fieldGenerator2().type() == FieldGenerator::External);
+      TEST_ASSERT(env.fieldGenerator1().type() == Rp::FieldGenerator::Mask);
+      TEST_ASSERT(env.fieldGenerator2().type() == Rp::FieldGenerator::External);
       
       DArray<int> ids;
       ids.allocate(1);

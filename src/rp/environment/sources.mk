@@ -1,17 +1,24 @@
 rp_environment_OBJS_=
 rp_environment_DEPS_=
 
+rp_environment_CPP= \
+  rp/environment/Environment.cpp \
+  rp/environment/FieldGenerator.cpp \
+  rp/environment/MixAndMatchEnv.cpp \
+  rp/environment/FilmFieldGenMaskBase.cpp \
+  rp/environment/FilmFieldGenExtBase.cpp
+
 ifdef PSCF_CPP
-  rp_environment_CPP= \
+  rp_environment_CPP+= \
      rp/environment/FilmFieldGenExt.cpp \
      rp/environment/FilmFieldGenMask.cpp \
      rp/environment/FilmEnvironment.cpp \
      rp/environment/EnvironmentFactory.cpp
-  rp_environment_OBJS+= \
-       $(addprefix $(BLD_DIR)/, $(rp_environment_CPP:.cpp=.o))
-  rp_environment_DEPS+= \
-       $(addprefix $(BLD_DIR)/, $(rp_environment_CPP:.cpp=.d))
 endif
+rp_environment_OBJS+= \
+       $(addprefix $(BLD_DIR)/, $(rp_environment_CPP:.cpp=.o))
+rp_environment_DEPS+= \
+       $(addprefix $(BLD_DIR)/, $(rp_environment_CPP:.cpp=.d))
 
 ifdef PSCF_CUDA
   rp_environment_CU= \

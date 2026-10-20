@@ -9,7 +9,7 @@
 
 // Explicit instantiation definitions
 namespace Pscf {
-   namespace Prdc {
+   namespace Rp {
       template class FilmFieldGenExtBase<1>;
       template class FilmFieldGenExtBase<2>;
       template class FilmFieldGenExtBase<3>;

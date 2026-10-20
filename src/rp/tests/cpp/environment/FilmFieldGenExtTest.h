@@ -9,11 +9,11 @@
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 #include <rp/field/WFields.h>
+#include <rp/environment/FieldGenerator.h>
 
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/BFieldComparison.h>
-#include <prdc/environment/FieldGenerator.h>
 
 #include <pscf/mesh/Mesh.h>
 
@@ -25,7 +25,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class FilmFieldGenExtTest : public UnitTest
 {
@@ -83,7 +82,7 @@ public:
       TEST_ASSERT(eq(ext.chiBottom(1), 0.0));
       TEST_ASSERT(eq(ext.chiTop(0), 2.0));
       TEST_ASSERT(eq(ext.chiTop(1), 10.0));
-      TEST_ASSERT(ext.type() == FieldGenerator::External);
+      TEST_ASSERT(ext.type() == Rp::FieldGenerator::External);
    }
 
    void testCheckCompatibility() // test FieldGenerator::checkCompatibility()

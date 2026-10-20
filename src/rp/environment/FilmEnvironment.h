@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/environment/MixAndMatchEnv.h>
+#include <rp/environment/MixAndMatchEnv.h>
 
 // Forward declarations
 namespace Pscf {

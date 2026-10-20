@@ -1,5 +1,5 @@
-#ifndef PRDC_FIELD_GENERATOR_H
-#define PRDC_FIELD_GENERATOR_H
+#ifndef RP_FIELD_GENERATOR_H
+#define RP_FIELD_GENERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -11,7 +11,7 @@
 #include <pscf/environment/FieldGeneratorBase.h> // base class
 
 namespace Pscf {
-namespace Prdc {
+namespace Rp {
 
    using namespace Util;
 
@@ -19,18 +19,18 @@ namespace Prdc {
    * Base class field generator for MixAndMatchEnv in variable-cell SCFT.
    * 
    * The classes Environment, FieldGenerator, and MixAndMatchEnv in the
-   * Prdc namespace are extensions of EnvironmentBase, FieldGeneratorBase,
+   * Rp namespace are extensions of EnvironmentBase, FieldGeneratorBase,
    * and MixAndMatchEnvTmpl in the Pscf namespace, respectively. These
-   * Prdc classes are designed to simply add a feature that is not 
+   * Rp classes are designed to simply add a feature that is not 
    * defined in the corresponding Pscf classes: the ability to calculate, 
    * store, and write an environment-modified stress that will be used to 
    * optimize the lattice parameters of the periodic unit cell. 
    * 
    * Therefore, this class is simply a subclass of FieldGeneratorBase that 
    * defines two additional methods, stress() and modifyStress(), which 
-   * are used by Prdc::MixAndMatchEnv.
+   * are used by MixAndMatchEnv.
    * 
-   * \ingroup Prdc_Environment_Module
+   * \ingroup Rp_Environment_Module
    */
    class FieldGenerator : public FieldGeneratorBase
    {
@@ -98,6 +98,6 @@ namespace Prdc {
 
    };
 
-} // namespace Prdc
+} // namespace Rp
 } // namespace Pscf
 #endif

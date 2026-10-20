@@ -8,7 +8,7 @@
 #include "Environment.h"
 
 namespace Pscf {
-namespace Prdc {
+namespace Rp {
 
    // Constructor
    Environment::Environment()
@@ -78,5 +78,5 @@ namespace Prdc {
       nParam_ = nParams;
    }
 
-} // namespace Prdc
+} // namespace Rp
 } // namespace Pscf
