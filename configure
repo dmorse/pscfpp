@@ -174,7 +174,6 @@ cp src/util/config.mk bld/util/config.mk
 cp src/makefile bld/makefile
 cp src/util/makefile bld/util/makefile
 cp src/pscf/makefile bld/pscf/makefile
-cp src/prdc/makefile bld/prdc/makefile
 cp src/r1d/makefile bld/r1d/makefile
 cp src/rp/makefile bld/rp/makefile
 
