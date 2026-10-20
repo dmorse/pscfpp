@@ -8,7 +8,7 @@
 # Variables used in pattern rules
 
 # List of relevant static libraries defined by PSCF (the order matters)
-PSCF_LIBS=$(rp_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
+PSCF_LIBS=$(rp_LIB) $(pscf_LIB) $(util_LIB)
 
 # List of all libraries needed in src/rp (including external libraries)
 LIBS=$(PSCF_LIBS)

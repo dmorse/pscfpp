@@ -17,9 +17,7 @@ namespace Pscf {
    template <int D> class Mesh;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
    namespace Rp {
       template <int D, class T> class Propagator;
       template <int D, class T> class Block;
@@ -30,7 +28,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * MDE solver for one direction of one block.

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>  // base class
-#include <prdc/field/RField.h>         // member
+#include <pscf/field/RField.h>         // member
 #include <pscf/math/IntVec.h>          // template with defaults
 #include <util/containers/DArray.h>    // member
 
@@ -30,7 +30,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * ShiftMove rigidly translates all w fields.

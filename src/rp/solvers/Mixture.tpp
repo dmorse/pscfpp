@@ -17,9 +17,9 @@
 #include <rp/solvers/Propagator.h>
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/FFT.h>
-#include <prdc/field/RField.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/RField.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>
@@ -36,7 +36,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    // Construction, destruction, and initialization
 

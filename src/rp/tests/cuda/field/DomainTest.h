@@ -7,10 +7,10 @@
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/cuda/FFT.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/SpaceGroup.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/field/cuda/FFT.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/SpaceGroup.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
 
@@ -23,7 +23,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class DomainTest : public LogFileUnitTest 
 {
@@ -63,7 +62,7 @@ public:
       TEST_ASSERT(domain.mesh().dimension(0) == 32);
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
-      TEST_ASSERT(domain.unitCell().lattice() == Prdc::UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.unitCell().lattice() == Pscf::UnitCell<3>::Cubic);
       TEST_ASSERT(domain.group().size() == 96);
       if (domain.basis().isInitialized()) {
          TEST_ASSERT(domain.basis().nBasis() == 489);
@@ -81,7 +80,7 @@ public:
       TEST_ASSERT(domain.mesh().dimension(0) == 32);
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
-      TEST_ASSERT(domain.unitCell().lattice() == Prdc::UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.unitCell().lattice() == Pscf::UnitCell<3>::Cubic);
       TEST_ASSERT(domain.group().size() == 96);
       TEST_ASSERT(domain.basis().isInitialized());
       TEST_ASSERT(domain.basis().nBasis() == 489);

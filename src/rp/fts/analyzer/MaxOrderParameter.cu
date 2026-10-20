@@ -12,7 +12,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    // Explicit instantiation definitions
    //PSCF_TMPL_DEFINE_CUDA(MaxOrderParameter)

@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/environment/FilmFieldGenMaskBase.h>  // base class
-#include <pscf/backend/cuda/CUT.h>                      // template argument
+#include <rp/environment/FilmFieldGenMaskBase.h>  // base class
+#include <pscf/backend/cuda/CUT.h>                  // template argument
 #include <rp/system/System.h>
 
 // Forward declarations
@@ -24,7 +24,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Field generator for thin-film masks.
@@ -37,7 +36,7 @@ namespace Rp {
    * contain two parallel hard surfaces ("walls"), confining the
    * polymers/solvents to a "thin film" region of the unit cell.
    *
-   * \ingroup Rp_Field_Module
+   * \ingroup Rp_Environment_Module
    */
    template <int D>
    class FilmFieldGenMask<D,CUT> 

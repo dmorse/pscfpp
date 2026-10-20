@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/environment/FilmFieldGenExtBase.h>  // base class template
+#include <rp/environment/FilmFieldGenExtBase.h>  // base class template
 #include <pscf/backend/cuda/CUT.h>                     // base class argument
 #include <rp/system/System.h>
 
@@ -24,7 +24,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Field Generator for external fields in thin-film systems.
@@ -42,7 +41,7 @@ namespace Rp {
    * through user input arrays chi_bottom and chi_top. See 
    * \ref scft_thin_films_page for more information. 
    *
-   * \ingroup Rp_Field_Module
+   * \ingroup Rp_Environment_Module
    */
    template <int D>
    class FilmFieldGenExt<D,CUT> 

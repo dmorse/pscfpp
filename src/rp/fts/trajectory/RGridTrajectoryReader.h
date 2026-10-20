@@ -9,7 +9,7 @@
 */
 
 #include "TrajectoryReader.h"           // base class
-#include <prdc/field/RField.h>          // member
+#include <pscf/field/RField.h>          // member
 #include <pscf/math/IntVec.h>           // member
 #include <util/containers/DArray.h>     // member
 
@@ -21,7 +21,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Trajectory file reader.

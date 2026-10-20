@@ -4,7 +4,6 @@
 include ../../../../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/prdc/sources.mk
 include $(SRC_DIR)/rp/sources.mk
 include $(SRC_DIR)/rp/patterns.mk
 
@@ -40,6 +39,5 @@ clean:
 
 -include Test.d
 -include $(rp_DEPS)
--include $(prdc_DEPS)
 -include $(pscf_DEPS)
 -include $(util_DEPS)

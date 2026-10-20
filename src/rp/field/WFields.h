@@ -20,11 +20,9 @@ namespace Util {
    template <> class Signal<void>;
 }
 namespace Pscf {
+   template <int D> class UnitCell;
    template <typename Data, class T> class DeviceArray;
-   namespace Prdc {
-      template <int D> class UnitCell;
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
    namespace Rp {
       template <int D, class T> class FieldIo;
    }
@@ -34,7 +32,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * A container of w fields stored in both basis and r-grid format.

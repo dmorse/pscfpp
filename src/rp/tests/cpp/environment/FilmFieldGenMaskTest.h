@@ -11,11 +11,11 @@
 #include <rp/field/FieldIo.h>
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
+#include <rp/environment/FieldGenerator.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/BFieldComparison.h>
-#include <prdc/environment/FieldGenerator.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/BFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/misc/Exception.h>
@@ -24,7 +24,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class FilmFieldGenMaskTest : public UnitTest
 {
@@ -79,7 +78,7 @@ public:
       TEST_ASSERT(eq(mask.excludedThickness(),0.4));
       TEST_ASSERT(eq(mask.fBulk(), 2.98468253989));
       TEST_ASSERT(mask.hasFBulk());
-      TEST_ASSERT(mask.type() == FieldGenerator::Mask);
+      TEST_ASSERT(mask.type() == Rp::FieldGenerator::Mask);
    }
 
    void testCheckCompatibility() // test FieldGenerator::checkCompatibility()

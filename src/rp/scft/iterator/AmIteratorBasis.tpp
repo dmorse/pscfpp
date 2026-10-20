@@ -17,8 +17,8 @@
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/Reduce.h>
 #include <pscf/backend/VecOp.h>
@@ -35,7 +35,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    // Public member functions
 

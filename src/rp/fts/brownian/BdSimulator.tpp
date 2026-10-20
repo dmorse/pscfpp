@@ -27,7 +27,7 @@
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/field/RField.h>
+#include <pscf/field/RField.h>
 
 #include <util/param/Factory.h>
 #include <util/param/ParamComposite.h>

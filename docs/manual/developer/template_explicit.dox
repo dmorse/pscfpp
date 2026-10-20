@@ -162,14 +162,14 @@ In PSCF, code for most explicit class templates is organized as follows:
 Placing explicit specialization declarations for all required 
 specializations in the header file guarantees that implicit instantiation
 will be suppressed in any file that includes the header file.  Most of 
-the class templates in the src/prdc and src/rp namespaces have code that 
-is organized as described above.
+the class templates in the src/rp namespaces have code that is organized 
+as described above.
 
 Separate \*.cpp and \*.cu files are created for class templates for which 
 it is necessary to compile different specializations that use different 
 computational backends, and that must be compiled by different compilers.
 This applies to all of the classes in the src/rp directory, and to the
-field classes in the src/prdc/field directory
+field classes in the src/pscf/field directory
 
 \section developer_template_explicit_example_sec Example
 
@@ -178,7 +178,7 @@ parameter are always written using the simple pattern described above. As
 a simple example of this, we consider the three source code files associated 
 with the class template Pscf::Prdc::Basis. 
 
-The header file src/prdc/crystal/Basis.h contains a definition of the 
+The header file src/pscf/crystal/Basis.h contains a definition of the 
 class template Pscf::Prdc::Basis, but does not contain definitions of any 
 non-inline member functions.  The key contents of this file, in skeleton 
 form, look like this:

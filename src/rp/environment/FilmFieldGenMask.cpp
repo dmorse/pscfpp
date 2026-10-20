@@ -16,10 +16,10 @@
 #include <rp/field/CFields.h>
 #include <rp/field/Mask.h>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/paramIdConversions.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/paramIdConversions.h>
 
 #include <pscf/interaction/Interaction.h>
 #include <pscf/math/IntVec.h>
@@ -30,7 +30,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /*
    * Default constructor

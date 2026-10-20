@@ -17,10 +17,10 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
+#include <rp/environment/Environment.h>
 
-#include <prdc/environment/Environment.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/interaction/Interaction.h>
 

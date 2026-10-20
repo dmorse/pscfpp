@@ -2,7 +2,7 @@
 #define RP_EINSTEIN_CRYSTAL_PERTURBATION_H
 
 #include <rp/fts/perturbation/Perturbation.h>  // base class template
-#include <prdc/field/RField.h>                 // member
+#include <pscf/field/RField.h>                 // member
 #include <util/containers/DArray.h>            // member
 
 #include <pscf/backend/TmplDeclare.h>
@@ -10,16 +10,13 @@
 
 // Forward declaration
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Perturbation for Einstein crystal thermodynamic integration.

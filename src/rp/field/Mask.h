@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/RField.h>            // member
+#include <pscf/field/RField.h>            // member
 #include <pscf/math/IntVec.h>             // member
 #include <util/containers/DArray.h>       // member template
 #include <pscf/backend/TmplDeclare.h>    // declaration macros
@@ -19,10 +19,8 @@ namespace Util {
    template <> class Signal<void>;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D> class UnitCell;
-      template <int D, class T> class RField;
-   }
+   template <int D> class UnitCell;
+   template <int D, class T> class RField;
    namespace Rp {
       template <int D, class T> class FieldIo;
    }
@@ -32,7 +30,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * A field that specifies an inhomogeneous total monomer concentration.

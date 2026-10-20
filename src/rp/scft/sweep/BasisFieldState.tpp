@@ -15,14 +15,13 @@
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 #include <rp/field/WFields.h>
-#include <prdc/crystal/Basis.h>
+#include <pscf/crystal/Basis.h>
 #include <util/global.h>
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /*
    * Default constructor.

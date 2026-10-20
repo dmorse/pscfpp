@@ -14,8 +14,8 @@
 
 #include <rp/fts/compressor/Compressor.h>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cpp/RFieldComparison.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cpp/RFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
@@ -24,7 +24,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class BdSimulatorTest : public LogFileUnitTest
 {

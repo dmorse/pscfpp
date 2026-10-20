@@ -9,7 +9,7 @@
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/VecOp.h>
 #include <pscf/backend/Reduce.h>

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/brownian/BdStep.h>    // base class
-#include <prdc/field/RField.h>         // member
+#include <pscf/field/RField.h>         // member
 #include <util/containers/DArray.h>    // member
 
 #include <pscf/backend/TmplDeclare.h>
@@ -18,7 +18,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Explicit Euler-Maruyama Brownian dynamics step.

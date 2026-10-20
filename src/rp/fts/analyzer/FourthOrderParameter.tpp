@@ -10,8 +10,8 @@
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
 
-#include <prdc/field/FFT.h>
-#include <prdc/crystal/shiftToMinimum.h>
+#include <pscf/field/FFT.h>
+#include <pscf/crystal/shiftToMinimum.h>
 
 #include <pscf/backend/HostSendArray.h>
 #include <pscf/backend/Reduce.h>
@@ -32,7 +32,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /*
    * Constructor.

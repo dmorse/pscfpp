@@ -20,7 +20,7 @@ directory
 # Variables used in pattern rules
 
 # List of relevant static libraries defined by PSCF (the order matters)
-PSCF_LIBS=$(rp_LIB) $(prdc_LIB) $(pscf_LIB) $(util_LIB)
+PSCF_LIBS=$(rp_LIB) $(pscf_LIB) $(util_LIB)
 
 # List of all libraries needed in src/rp (including external libraries)
 LIBS=$(PSCF_LIBS)
@@ -98,13 +98,13 @@ values of variables such as \$(util_LIB), \$(pscf_LIB), etc. that
 contain absolute paths to static library files that are created by the
 PSCF build system. Each of these variables is defined in a sources.mk
 file is located in the same namepace-level directory as the source files
-that are compiled to create the relevant library. The value of
-PSCF_LIBS that is defined in the patterns.mk file in each namespace-level
-directory only includes libraries associated with that namespace-level
-directory and other such directories that it depends upon. In this
-example, the value of PSCF_LIB thus contains paths to libraries
-associated with the util, pscf, prdc, and rp namespace-level
-directories, but not with the r1d program-level directories.
+that are compiled to create the relevant library. The value of PSCF_LIBS 
+that is defined in the patterns.mk file in each namespace-level directory 
+only includes libraries associated with that namespace-level directory 
+and other such directories that it depends upon. In this example, the 
+value of PSCF_LIB thus contains paths to libraries associated with the 
+util, pscf, and rp namespace-level directories, but not with the r1d 
+program-level directories.
 
 <b> LIBS </b>: The variable LIBS is created by initializing its value
 to PSCF_LIB, and then adding makefile variables that contain compiler

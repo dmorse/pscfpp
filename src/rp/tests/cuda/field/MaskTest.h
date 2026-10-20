@@ -8,12 +8,12 @@
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cpp/RFieldDft.h>
-#include <prdc/field/cpp/RFieldComparison.h>
-#include <prdc/crystal/BFieldComparison.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cpp/RFieldDft.h>
+#include <pscf/field/cpp/RFieldComparison.h>
+#include <pscf/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>

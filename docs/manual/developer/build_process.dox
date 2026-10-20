@@ -100,8 +100,8 @@ internal directory structure analogous to that of the src directory.
 The library file that is created by compiling all the source files in 
 a namespace level directory of the src directory is placed in the root 
 of the corresponding namespace level directory of the chosen build 
-directory. The file libprdc.a is thus placed in the directory 
-bld/prdc during an out-of-source build or in directory src/prdc
+directory. The file libpscf.a is thus placed in the directory 
+bld/pscf during an out-of-source build or in directory src/pscf
 during an in-source build.
 
 <b> Main program files and executable files </b>
@@ -134,14 +134,14 @@ creates an executable file links to library files located in other
 namespace-level directories on which the relevant program-level depends.
 Thus, for example, the rule to create the pscf_rpc executable (which
 is defined in the file src/rp/makefile) links the object file
-src/rpc/pscf_rpc.o that is created by compiling the main program file
-src/rpc/pscf_rpc.cpp to library files src/util/libutil.a,
-src/pscf/libpscf.a, src/prdc/libprdc.a, and src/rpc/librpc.a, in 
-addition to external libraries. Each of these library files is also 
-listed as a prerequisite to the rule that creates the executable 
-file, which forces the build system to create or recreate any 
-non-existent or out-of-date libraries as needed before attempting 
-to create an executable.
+src/rpc/pscf_rpc.o that is created by compiling the main program 
+file src/rpc/pscf_rpc.cpp to library files src/util/libutil.a,
+src/pscf/libpscf.a, and src/rpc/librpc.a, in addition to external 
+libraries. Each of these library files is also listed as a 
+prerequisite to the rule that creates the executable file, which 
+forces the build system to create or recreate any non-existent or 
+out-of-date libraries as needed before attempting to create an 
+executable.
 
 <BR>
 \ref developer_build_page         (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;

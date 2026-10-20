@@ -28,14 +28,14 @@
 #include <rp/field/Mask.h>
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
+#include <rp/environment/Environment.h>
 
-#include <prdc/field/WaveList.h>
-#include <prdc/field/FFT.h>
-#include <prdc/field/RField.h>
-#include <prdc/field/RFieldDft.h>
-#include <prdc/environment/Environment.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/field/WaveList.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/RField.h>
+#include <pscf/field/RFieldDft.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/interaction/Interaction.h>
 #include <pscf/mesh/Mesh.h>
@@ -59,7 +59,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /*
    * Constructor.

@@ -11,7 +11,9 @@
 #include "floryHuggins/FloryHugginsTestComposite.h"
 #include "correlation/CorrelationTestComposite.h"
 #include "mesh/MeshTestComposite.h"
-#include "cpp/CppTestComposite.h"
+#include "crystal/CrystalTestComposite.h"
+#include "backend/cpp/BackendCppTestComposite.h"
+#include "field/cpp/FieldCppTestComposite.h"
 
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
@@ -24,7 +26,9 @@ addChild(new InteractionTestComposite, "interaction/");
 addChild(new FloryHugginsTestComposite, "floryHuggins/");
 addChild(new CorrelationTestComposite, "correlation/");
 addChild(new MeshTestComposite, "mesh/");
-addChild(new CppTestComposite, "cpp/");
+addChild(new CrystalTestComposite, "crystal/");
+addChild(new BackendCppTestComposite, "backend/cpp/");
+addChild(new FieldCppTestComposite, "field/cpp/");
 TEST_COMPOSITE_END
 
 using namespace Pscf;

@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>  // base class
-#include <prdc/field/RField.h>         // member
+#include <pscf/field/RField.h>         // member
 #include <util/containers/DArray.h>    // member
 
 #include <pscf/backend/TmplDeclare.h>
@@ -17,16 +17,13 @@
 
 // Forward declaration
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * RealMove generates spatially uncorrelated random field changes.

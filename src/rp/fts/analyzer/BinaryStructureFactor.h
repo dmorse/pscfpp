@@ -10,8 +10,8 @@
 
 #include <rp/fts/analyzer/Analyzer.h>         // base class
 #include <pscf/math/IntVec.h>                 // member
-#include <prdc/field/RField.h>                // member
-#include <prdc/field/RFieldDft.h>             // member
+#include <pscf/field/RField.h>                // member
+#include <pscf/field/RFieldDft.h>             // member
 #include <pscf/backend/HostRecvArray.h>      // member
 #include <util/accumulators/Average.h>        // member
 #include <util/containers/DArray.h>           // member
@@ -22,21 +22,17 @@
 // Forward declaration
 namespace Util {
    template <typename T> class Array;
-   template <typename T> class ConstArray;
+   template <int D, class T> class FFT;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class RFieldDft;
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class RFieldDft;
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Spherically averaged structure factor for a two-monomer system.

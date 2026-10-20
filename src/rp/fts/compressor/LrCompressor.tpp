@@ -16,8 +16,8 @@
 #include <rp/field/WFields.h>
 #include <rp/field/CFields.h>
 
-#include <prdc/field/FFT.h>
-#include <prdc/crystal/shiftToMinimum.h>
+#include <pscf/field/FFT.h>
+#include <pscf/crystal/shiftToMinimum.h>
 
 #include <pscf/backend/Reduce.h>
 #include <pscf/backend/VecOp.h>

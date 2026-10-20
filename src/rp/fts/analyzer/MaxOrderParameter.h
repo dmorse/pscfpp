@@ -9,8 +9,8 @@
 */
 
 #include "AverageAnalyzer.h"              // base class template
-#include <prdc/field/RField.h>            // member
-#include <prdc/field/RFieldDft.h>         // member
+#include <pscf/field/RField.h>            // member
+#include <pscf/field/RFieldDft.h>         // member
 #include <pscf/backend/HostRecvArray.h>  // member
 #include <pscf/math/IntVec.h>             // member
 
@@ -19,16 +19,13 @@
 
 // Forward declaration
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class FFT;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Evaluate max of square magnitude of Fourier modes for exchange field.

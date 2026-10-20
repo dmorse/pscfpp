@@ -9,9 +9,9 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/field/FFT.h>
-#include <prdc/crystal/shiftToMinimum.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/field/FFT.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>
@@ -28,7 +28,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /*
    * Constructor.

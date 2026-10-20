@@ -15,7 +15,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * ForceBiasMove attempts a Brownian dynamics move.

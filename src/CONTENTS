@@ -10,25 +10,20 @@ Subdirectories (with corresponding C++ namespace names in parentheses):
 
   util - general utilities for scientific computation (Util)
   pscf - classes accessible throughout the PSCF package (Pscf)
-  prdc - periodic systems (Pscf::Prdc)
   r1d  - real fields, one-dimensional SCFT (Pscf::R1d)
   rp   - SCFT & PS-FTS with real periodic fields (Pscf::Rp)
   test - unit testing framework (base classes)
 
-  Program-level directories:
-  Directories r1d and rp are "program level" directories, which each
-  contain files to construct a single program or type of program. All 
-  code in each program-level directory is defined within a corresponding 
+
+  Directories r1d and rp are "program level" directories that each
+  contain files that are used in only one program. All code in 
+  each program-level directory is defined within a corresponding 
   program-level namespace (i.e., Pscf::R1d or Pscf::Rp). By convention, 
   code within one program-level namespace and directory may not include
   header files from a different program-level directory, and may not
-  use names defined in a different program-level namespace.
-
-  Dependencies among directories:
-  Names of classes and other entitites defined in files located in 
-  the util and pscf directories may be used anywhere else in the PSCF 
-  package.  Names defined in the prdc directory are used in the rp 
-  directory but not in the util, pscf, or r1d directory.
+  use names defined in a different program-level namespace.  Names of 
+  classes and other entitites defined in the util and pscf directories 
+  may be used in either namespace level namespace or directory.
 
 Files (maintained in the git repository):
 

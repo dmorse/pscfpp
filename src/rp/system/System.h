@@ -19,12 +19,10 @@ namespace Util {
 }
 namespace Pscf {
    class Interaction;
-   namespace Prdc {
-      template <int D> class UnitCell;
-      template <int D, class T> class WaveList;
-      class Environment;
-   }
+   template <int D> class UnitCell;
+   template <int D, class T> class WaveList;
    namespace Rp {
+      class Environment;
       template <int D, class T> class WFields;
       template <int D, class T> class CFields;
       template <int D, class T> class Mask;
@@ -47,7 +45,6 @@ namespace Rp {
 
    // Namespaces that may be used implicitly
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Base class template for classes that represent a complete system.

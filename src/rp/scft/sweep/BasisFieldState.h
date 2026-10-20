@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/fieldIo/FieldState.h>      // base class
+#include <pscf/fieldIo/FieldState.h>      // base class
 #include <pscf/backend/TmplDeclare.h>    // preprocessor macros
 
 #include <string>
@@ -25,7 +25,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * FieldState for fields in symmetry-adapted basis format.

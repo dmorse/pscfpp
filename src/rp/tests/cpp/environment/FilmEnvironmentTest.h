@@ -11,16 +11,16 @@
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
+#include <rp/environment/FieldGenerator.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/BFieldComparison.h>
-#include <prdc/environment/FieldGenerator.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/BFieldComparison.h>
 
 #include <fstream>
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
+using namespace Pscf::Rp;
 
 class FilmEnvironmentTest : public UnitTest
 {

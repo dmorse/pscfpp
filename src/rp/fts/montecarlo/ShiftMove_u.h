@@ -17,7 +17,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * ShiftMove shifts field.

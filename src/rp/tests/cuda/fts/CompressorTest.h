@@ -18,8 +18,8 @@
 
 #include <rp/fts/compressor/Compressor.h>
 
-#include <prdc/field/cuda/RFieldComparison.h>
-#include <prdc/field/cuda/resources.h>
+#include <pscf/field/cuda/RFieldComparison.h>
+#include <pscf/field/cuda/resources.h>
 
 #include <pscf/backend/cuda/VecOp.h> 
 #include <pscf/backend/cuda/VecRandom.h> 
@@ -32,7 +32,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class CompressorTest : public LogFileUnitTest
 {

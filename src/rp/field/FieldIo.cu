@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/fieldIo/fieldCheck.h>
+#include <pscf/fieldIo/fieldCheck.h>
 #include <pscf/backend/cuda/VecOp.h>
 #include <pscf/backend/cuda/complex.h>
 

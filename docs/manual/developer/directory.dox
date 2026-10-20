@@ -127,72 +127,67 @@ These namespace-level subdirectories are listed below:
 <tr>
   <td> r1d </td>
   <td> Pscf::R1d </td>
-  <td> Code used only by the pscf_r1d program </td>
-</tr>
-<tr>
-  <td> prdc </td>
-  <td> Pscf::Prdc </td>
-  <td> Code for periodic systems </td>
+  <td> Code used only in the pscf_r1d program </td>
 </tr>
 <tr>
   <td> rp </td>
   <td> Pscf::Rp </td>
-  <td> Class templates used in programs for real periodic fields </td>
+  <td> Code used in only in pscf_rp programs for real periodic fields </td>
 </tr>
 </table>
 The src/pscf directory contains files that contain code for classes and
 functions that are accessible throughout the package, most of which are
-defined directly in the Pscf namespace. The src/prdc, src/r1d and src/rp
+defined directly in the Pscf namespace. The src/r1d and src/rp
 directories instead each contain code for entities that are defined in a 
-specific enclosed sub-namespace of Pscf, and that are used in only some 
-of the programs constructed by the package.
+specific enclosed sub-namespace of Pscf, and that are used in only one
+program.
 
 The PSCF makefile system constructs a static library file each of the 
 namespace-level directories that contains compilable source files.
-Specifically, static libraries are constructed in the pscf, r1d, prdc, and
-rp namespace-level directories. Each such static library contains 
+Specifically, static libraries are constructed in the util, pscf, r1d, 
+and rp namespace-level directories. Each such static library contains 
 the object code created by compiling all of the compilable source files 
 (with file extension .cpp or .cu) in the asssociated namespace-level 
 directory.  Each static library is a file with a name of the form 
 lib[namespace].a, where [namespace] represents the name of the relevant 
-namespace-level directory. For example, a library named libprdc.a is 
-created in the src/prdc directory.  
+namespace-level directory. For example, a library named libpscf.a is 
+created in the src/pscf directory.  
 
 * **Program-level namespaces and directories:**
 
 The Pscf::R1d and Pscf::Rp namespaces and the corresponding src/r1d and
 src/rp namespace-level subdirectories of src each contain code is used
-within a single executable program or (in the case of the Pscf::Rp
-namespace and directory src/rp) two or more very closely related programs
-that use different hardware (CPU vs. GPU).  These namespaces and 
-corresponding directories are referred to hereafter as program-level 
-namespaces and program-level directories, respectively. 
+only within a single program or (in the case of the Pscf::Rp namespace 
+and the src/rp directory) within multiple variants of a single program. 
+These two namespaces and corresponding directories are referred to 
+hereafter as program-level namespaces and program-level directories, 
+respectively. 
 
 Subdirectory src/r1d contains code that is only used by the pscf_r1d 
-program. 
+program for 1D SCFT problems
 
-Subdirectory src/rp contains code that is used to construct the pscf_rpc 
-and pscf_rpc programs for SCFT and PS-FTS calculations that involve real 
-perodic fields. These two programs offer identical functionality, and
-are simply variants of the same program that are specialized to use 
-different hardware.
+Subdirectory src/rp contains code that is used only within the pscf_rp
+program for SCFT and PS-FTS calculations that involve real perodic 
+fields. Code in src/rp is used to construct two executable files, named
+pscf_rpc and pscf_rpg, which are variants of the same program that are
+specialized to use different hardware.
 
-By convention, code within in any program-level PSCF namespace may not 
+By convention, code within in a program-level PSCF namespace may not 
 use named entities (e.g., classes or functions) that are defined in a
-different program-level namespace. This rule allows the same name to be 
-used for analogous classes defined for use in different programs without 
-causing name clashes.
+different program-level namespace. This rule allows the same name to 
+be used for analogous classes defined for use in different programs 
+without causing name clashes.
 
 Each of the two program-level directories contains one or more main 
 program source files that each defines a main C++ function for an 
 associated executable program. The base name of each such main program
 file is the same as the executable name, followed by a suffix .cpp or 
 .cu. For example, the file src/rp/pscf_rpc.cpp is the main program 
-file for pscf_rpc program.
+file for pscf_rpc executable file. 
 
-Subdirectories util, pscf, and prdc are namespace-level directories 
-but do not contain any main program files, and so are not also 
-program-level directories. 
+Subdirectories util and pscf are namespace-level directories but do 
+not contain any main program files, and so are not also program-level 
+directories. 
 
 * **Dependencies among namespace-level directories:**
 
@@ -221,27 +216,22 @@ upon in this sense:
   <td> pscf, util </td>
 </tr>
 <tr>
-  <td> prdc </td>
+  <td> rp </td>
   <td> pscf, util </td>
 </tr>
-<tr>
-  <td> rp </td>
-  <td> prdc, pscf, util </td>
-</tr>
 </table>
-Note that every directory other than util depends on util, and all
-directories other than util and pscf depend on both util and pscf. 
-The pr directory depends on the prdc diretory in addition to pscf
+Note that every directory other than util depends on util, and that
+the two namespace-leavel directories depend on both util and pscf.
 and util.
 
 * **Unit test framework:**
 
 In addition to these namespace-level subdirectories, the src directory
-has one additional top-level subdirectory named "test". This directory
+has an additional top-level subdirectory named "test". This directory
 contains files that define a C++ unit test framework that is used
 throughout PSCF to construct unit tests. This framework contains only
-header (\*.h) files, and thus does not contain any source files that need
-to be compiled or linked.
+header (\*.h) files, and thus does not contain any source files that 
+need to be compiled or linked.
 
 The unit test framework used by PSCF is maintained on github in a
 separate repository (dmorse/test) and is imported into the src/test
@@ -249,12 +239,11 @@ directory of the PSCF repository as a submodule.
 
 * **Namespace-level unit test directories:**
 
-Each of the namespace-level directories that contains compilable source
-code files contains a subdirectory named "tests". Each such directory 
+Each of the four namespace-level directories that contain compilable 
+source files contains a subdirectory named "tests". Each such directory 
 contains unit tests for classes and functions defined in the parent 
 namespace-level directory.  These unit tests are not automatically 
-compiled or run by the makefile targets that build the PSCF executable 
-programs.
+compiled or run by the makefile targets that build executable programs.
 
 All of the PSCF unit tests can be compiled and run by changing directory
 to the desired build directory (i.e., src or bld) and entering the

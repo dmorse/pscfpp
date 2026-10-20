@@ -14,9 +14,9 @@
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/field/cpp/RFieldComparison.h>
-#include <prdc/crystal/BFieldComparison.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/field/cpp/RFieldComparison.h>
+#include <pscf/crystal/BFieldComparison.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/interaction/Interaction.h>
 
@@ -28,7 +28,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class SimulatorTest : public LogFileUnitTest
 {

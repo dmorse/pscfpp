@@ -11,8 +11,11 @@
 #include "floryHuggins/FloryHugginsTestComposite.h"
 #include "correlation/CorrelationTestComposite.h"
 #include "mesh/MeshTestComposite.h"
-#include "cpp/CppTestComposite.h"
-#include "cuda/CudaTestComposite.h"
+#include "crystal/CrystalTestComposite.h"
+#include "backend/cpp/BackendCppTestComposite.h"
+#include "backend/cuda/BackendCudaTestComposite.h"
+#include "field/cpp/FieldCppTestComposite.h"
+#include "field/cuda/FieldCudaTestComposite.h"
 
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
@@ -25,8 +28,11 @@ addChild(new InteractionTestComposite, "interaction/");
 addChild(new FloryHugginsTestComposite, "floryHuggins/");
 addChild(new CorrelationTestComposite, "correlation/");
 addChild(new MeshTestComposite, "mesh/");
-addChild(new CppTestComposite, "cpp/");
-addChild(new CudaTestComposite, "cuda/");
+addChild(new CrystalTestComposite, "crystal/");
+addChild(new BackendCppTestComposite, "backend/cpp/");
+addChild(new BackendCudaTestComposite, "backend/cuda/");
+addChild(new FieldCppTestComposite, "field/cpp/");
+addChild(new FieldCudaTestComposite, "field/cuda/");
 TEST_COMPOSITE_END
 
 using namespace Pscf;

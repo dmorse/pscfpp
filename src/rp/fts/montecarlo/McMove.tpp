@@ -16,7 +16,7 @@
 #include <rp/fts/compressor/Compressor.h>
 #include <rp/system/System.h>
 #include <rp/field/CFields.h>
-#include <prdc/field/RField.h>
+#include <pscf/field/RField.h>
 #include <util/random/Random.h>
 #include <util/archives/Serializable_includes.h>
 

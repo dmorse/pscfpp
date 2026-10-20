@@ -10,8 +10,8 @@
 
 #include <rp/fts/compressor/Compressor.h>        // base class
 #include <rp/fts/compressor/IntraCorrelation.h>  // member
-#include <prdc/field/RField.h>                   // member
-#include <prdc/field/RFieldDft.h>                // member
+#include <pscf/field/RField.h>                   // member
+#include <pscf/field/RFieldDft.h>                // member
 #include <pscf/math/IntVec.h>                    // member
 #include <util/containers/DArray.h>              // member
 #include <util/misc/Timer.h>                     // member
@@ -20,9 +20,7 @@
 
 // Forward declarations
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class FFT;
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
@@ -33,7 +31,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Linear response compressor.

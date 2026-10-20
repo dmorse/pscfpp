@@ -8,8 +8,8 @@
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/brownian/BdSimulator.h>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cpp/RFieldComparison.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cpp/RFieldComparison.h>
 
 #include <util/tests/LogFileUnitTest.h>
 
@@ -17,7 +17,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class PerturbationTest : public LogFileUnitTest
 {

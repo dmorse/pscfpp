@@ -9,7 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>  // base class
-#include <prdc/crystal/UnitCell.h>      // member
+#include <pscf/crystal/UnitCell.h>      // member
 #include <pscf/mesh/Mesh.h>             // member
 #include <pscf/backend/TmplDeclare.h>  // template declaration macros
 
@@ -22,12 +22,10 @@ namespace Util {
    template <> class Signal<void>;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D> class SpaceGroup;
-      template <int D> class Basis;
-      template <int D, class T> class FFT;
-      template <int D, class T> class WaveList;
-   }
+   template <int D> class SpaceGroup;
+   template <int D> class Basis;
+   template <int D, class T> class WaveList;
+   template <int D, class T> class FFT;
    namespace Rp {
       template <int D, class T> class FieldIo;
    }
@@ -37,7 +35,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Spatial domain for a periodic structure with real fields.
@@ -51,22 +48,17 @@ namespace Rp {
    *  - a FFT Fast Fourier Transform calculator (T::FFT)
    *  - a WaveList container for wavevector properties (T::WaveList)
    *  - a FieldIo object for field IO & conversion (T::FieldIo)
-   *  - a lattice system enum (type Prdc::UnitCell\<D\>::LatticeSystem)
+   *  - a lattice system enum (type UnitCell\<D\>::LatticeSystem)
    *  - a groupName string
    *
-   * Note: Class names Pscf::Mesh, Prdc::UnitCell, etc. mentioned above
-   * refer to class templates with an integer template parameter D. Actual
-   * class names are Mesh \<D\>, Prdc::UnitCell \<D\>, etc. with D=1, 2,
-   * or 3.
+   * Note: Class names Mesh, UnitCell, etc. mentioned above refer to class
+   * templates with an integer template parameter D. Actual class names are 
+   * Mesh \<D\>, UnitCell \<D\>, etc. with D=1, 2, or 3.
    *
    * <b> Template Parameters </b>:
    *
    *   - D  : integer dimension of space (D=1, 2, or 3)
    *   - T : backend identifier class (CPT or CUT)
-   *
-   * <b> Subclasses </b>: Partial specializations of the Domain class
-   * template are used as base classes for classes Rpc::Domain \<D\> and
-   * Rpg::Domain \<D\>.
    *
    * \ingroup Rp_Field_Module
    */

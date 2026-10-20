@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/field/RFieldDft.h>       // member
-#include <prdc/crystal/UnitCell.h>      // nested LatticeSystem enum
+#include <pscf/field/RFieldDft.h>       // member
+#include <pscf/crystal/UnitCell.h>      // nested LatticeSystem enum
 #include <pscf/math/IntVec.h>           // template with default
 #include <util/containers/DArray.h>     // member
 #include <pscf/backend/TmplDeclare.h>  // template declaration macros
@@ -22,20 +22,17 @@ namespace Util {
 }
 namespace Pscf {
    template <int D> class Mesh;
-   namespace Prdc {
-      template <int D, class T> class RField;
-      template <int D, class T> class RFieldDft;
-      template <int D, class T> class FFT;
-      template <int D> class Basis;
-      template <int D> class SpaceGroup;
-   }
+   template <int D> class SpaceGroup;
+   template <int D> class Basis;
+   template <int D, class T> class FFT;
+   template <int D, class T> class RFieldDft;
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * File input/output, format conversions and other utilities for fields.

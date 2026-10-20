@@ -9,8 +9,8 @@
 */
 
 #include <rp/fts/analyzer/AverageAnalyzer.h>   // base class template
-#include <prdc/field/RField.h>                 // member
-#include <prdc/field/RFieldDft.h>              // member
+#include <pscf/field/RField.h>                 // member
+#include <pscf/field/RFieldDft.h>              // member
 #include <pscf/math/IntVec.h>                  // member
 
 #include <pscf/backend/TmplDeclare.h>
@@ -20,16 +20,13 @@ namespace Util {
    template <typename T> class Array;
 }
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class FFT;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * FourthOrderParameter is used to detect an order-disorder transition.

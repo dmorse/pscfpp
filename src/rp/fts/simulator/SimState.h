@@ -14,16 +14,13 @@
 
 // Forward declaration
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class RField;
-   }
+   template <int D, class T> class RField;
 }
 
 namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * SimState stores the state used by a FTS simulation.

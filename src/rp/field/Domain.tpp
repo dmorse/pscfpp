@@ -10,11 +10,11 @@
 
 #include "Domain.h"
 #include <rp/field/FieldIo.h>
-#include <prdc/field/FFT.h>
-#include <prdc/field/WaveList.h>
-#include <prdc/crystal/SpaceGroup.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/fieldIo/fieldHeader.h>
+#include <pscf/field/FFT.h>
+#include <pscf/field/WaveList.h>
+#include <pscf/crystal/SpaceGroup.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/fieldIo/fieldHeader.h>
 #include <util/signal/Signal.h>
 #include <util/misc/FileMaster.h>
 
@@ -22,7 +22,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /*
    * Constructor.
@@ -140,7 +139,7 @@ namespace Rp {
 
       // Read common section of standard field header
       int ver1, ver2;
-      Pscf::Prdc::readFieldHeader(in, ver1, ver2,
+      Pscf::readFieldHeader(in, ver1, ver2,
                                   unitCell_, groupName_, nMonomer);
 
       // Set lattice_ (lattice system identifier)

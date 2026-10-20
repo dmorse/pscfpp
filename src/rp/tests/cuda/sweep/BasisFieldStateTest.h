@@ -8,8 +8,8 @@
 #include <rp/scft/sweep/BasisFieldState.h>
 #include <rp/field/WFields.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/BFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
@@ -18,7 +18,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class BasisFieldStateTest : public LogFileUnitTest
 {

@@ -15,12 +15,12 @@
 #include <rp/field/WFields.cu>
 #include <rp/field/Mask.cu>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cuda/resources.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cuda/resources.h>
 
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
-#include <prdc/crystal/paramIdConversions.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/paramIdConversions.h>
 
 #include <cmath>
 
@@ -28,7 +28,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    // CUDA kernels: 
    // (defined in anonymous namespace, used only in this file)

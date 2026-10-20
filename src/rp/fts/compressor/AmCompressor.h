@@ -10,16 +10,14 @@
 
 //#include <pscf/iterator/AmIteratorTmpl.h>  // base class template
 #include <rp/fts/compressor/AmCompressorBase.h> // base class specialization
-#include <prdc/field/RField.h>                  // member
+#include <pscf/field/RField.h>                  // member
 #include <util/containers/DArray.h>             // member
 
 #include <pscf/backend/TmplDeclare.h>            // declaration macros
 
 // Forward declarations
 namespace Pscf {
-   namespace Prdc {
-      template <int D, class T> class FFT;
-   }
+   template <int D, class T> class FFT;
    namespace Rp {
       template <int D, class T> class System;
       template <int D, class T> class Simulator;
@@ -31,7 +29,6 @@ namespace Rp {
 
    // Namespaces that can be used implicitly
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * Anderson mixing compressor.

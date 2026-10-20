@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <prdc/environment/FilmFieldGenExtBase.h>  // base class template
+#include <rp/environment/FilmFieldGenExtBase.h>  // base class template
 #include <pscf/backend/cpp/CPT.h>                      // base class argument
 #include <rp/system/System.h>
 
@@ -24,7 +24,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Pscf::Prdc;
 
    /**
    * Field Generator for external fields in thin-film systems.

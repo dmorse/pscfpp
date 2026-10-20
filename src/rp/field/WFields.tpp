@@ -12,10 +12,10 @@
 
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/RField.h>
-#include <prdc/fieldIo/rFieldIo.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/field/RField.h>
+#include <pscf/fieldIo/rFieldIo.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/backend/VecOp.h>
 #include <pscf/mesh/Mesh.h>
@@ -27,7 +27,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    // Public member functions
 
@@ -311,7 +310,7 @@ namespace Rp {
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read data in basis form (array basis_)
-      Prdc::readBasisData(in, basis_,
+      Pscf::readBasisData(in, basis_,
                           *readUnitCellPtr_, mesh, basis, nBasisIn);
 
       // Convert to r-grid form (array rgrid_)

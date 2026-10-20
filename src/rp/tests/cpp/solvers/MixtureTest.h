@@ -9,10 +9,10 @@
 #include <rp/solvers/Block.h>
 #include <rp/solvers/Propagator.h>
 
-#include <prdc/field/cpp/RField.h>
-#include <prdc/field/cpp/FFT.h>
-#include <prdc/field/cpp/WaveList.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cpp/FFT.h>
+#include <pscf/field/cpp/WaveList.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/chem/PolymerModel.h>
 #include <pscf/mesh/Mesh.h>
@@ -25,7 +25,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class MixtureTest : public UnitTest
 {

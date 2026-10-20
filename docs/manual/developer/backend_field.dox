@@ -89,15 +89,15 @@ returned by a public member function naned "meshDimensions".
 
 The field and FFT class templates are are implemented by defining 
 separate partial specializations for different values of the backend 
-identifier class T.  The directory src/prdc/field/cuda contains a set 
+identifier class T.  The directory src/pscf/field/cuda contains a set 
 of partial specializations of these classes for a template argument 
 T=Pscf::CUT, which are written in CUDA C++ and enable use of a GPU. 
-The directory src/prdc/cpu contains an analogous set of partial 
+The directory src/pscf/field/cpu contains an analogous set of partial 
 specializations for a template argument T=Pscf::CPT, which are written 
 in standard C++ and designed to use standard CPU hardware.  
 
 For example, the partial specialization of RField \<D,T\> for T=Pscf::CPT 
-is defined in the file prdc/field/cpu/RField.h as a template
+is defined in the file pscf/field/cpu/RField.h as a template
 \code
 namespace Pscf {
 namespace Prdc {
@@ -137,7 +137,7 @@ namespace Prdc {
 \endcode
 This defines a container that owns a block of CPU main memory. The 
 corresponding partial specialization of RField \<D,T\> for T=Pscf::CUT 
-is defined in file prdc/field/cuda/RField.h, and is derived from 
+is defined in file pscf/field/cuda/RField.h, and is derived from 
 DeviceArray<cudaReal,Pscf::CUT>, thus creating a container that owns a 
 raw array in GPU global memory. The allocate member function for either 
 partial specialization of RField takes the IntVec<D> meshDimensions

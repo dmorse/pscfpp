@@ -7,15 +7,15 @@
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 
-#include <prdc/field/cuda/RField.h>
-#include <prdc/field/cuda/RFieldDft.h>
-#include <prdc/field/cuda/RFieldComparison.h>
-#include <prdc/field/cuda/RFieldDftComparison.h>
-#include <prdc/field/cuda/FFT.h>
+#include <pscf/field/cuda/RField.h>
+#include <pscf/field/cuda/RFieldDft.h>
+#include <pscf/field/cuda/RFieldComparison.h>
+#include <pscf/field/cuda/RFieldDftComparison.h>
+#include <pscf/field/cuda/FFT.h>
 
-#include <prdc/crystal/BFieldComparison.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/UnitCell.h>
+#include <pscf/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -31,7 +31,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class FieldIoTest : public LogFileUnitTest 
 {

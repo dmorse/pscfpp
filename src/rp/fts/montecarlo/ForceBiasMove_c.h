@@ -15,7 +15,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    // Declare primary template
    template <int D, class T> class ForceBiasMove;

@@ -15,10 +15,10 @@
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 
-#include <prdc/field/cuda/RField.h>
-#include <prdc/field/cuda/resources.h>
-#include <prdc/crystal/Basis.h>
-#include <prdc/crystal/BFieldComparison.h>
+#include <pscf/field/cuda/RField.h>
+#include <pscf/field/cuda/resources.h>
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/BFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
@@ -27,7 +27,6 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Prdc;
 
 class AmIteratorBasisTest : public LogFileUnitTest
 {

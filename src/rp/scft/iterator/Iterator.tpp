@@ -13,7 +13,7 @@
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
-#include <prdc/environment/Environment.h>
+#include <rp/environment/Environment.h>
 
 namespace Pscf {
 namespace Rp {

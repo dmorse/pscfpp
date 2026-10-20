@@ -9,7 +9,7 @@
 */
 
 #include <rp/fts/montecarlo/McMove.h>    // base class
-#include <prdc/field/RField.h>           // member
+#include <pscf/field/RField.h>           // member
 #include <util/containers/DArray.h>      // member
 
 #include <pscf/backend/TmplDeclare.h>
@@ -19,7 +19,6 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
-   using namespace Prdc;
 
    /**
    * ForceBiasMoveBase attempts a Brownian dynamics move.
