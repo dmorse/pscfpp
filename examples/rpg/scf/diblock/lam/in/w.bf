@@ -1,15 +1,15 @@
  format  1  0
-dim                 
+dim
                    1
-crystal_system      
+crystal_system
           lamellar
-N_cell_param        
+N_cell_param
                    1
-cell_param          
+cell_param
     1.3835952906E+00
-group_name          
+group_name
                 P_-1
-N_monomer           
+N_monomer
                    2
 N_basis
                   21

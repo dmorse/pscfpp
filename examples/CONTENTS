@@ -1,9 +1,9 @@
-Different subdirectories of this examples/ directory contain examples of 
+Dfferent subdirectories of this examples/ directory contain examples of 
 calculations that use different PSCF programs:
 
   Directory    Program     Description
   ---------    --------    -------------
-  r1d/         pscf_r1d    one-dimensional (CPU)
+  1d/          pscf_1d     one-dimensional (CPU)
   rpc/         pscf_rpc    periodic  (CPU)
   rpg/         pscf_rpg    periodic  (GPU)
 
