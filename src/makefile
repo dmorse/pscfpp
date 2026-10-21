@@ -23,8 +23,8 @@ pscf:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 
-# Build pscf_r1d program (install in BIN_DIR)
-pscf_r1d: 
+# Build pscf_1d program (install in BIN_DIR)
+pscf_1d: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd r1d; $(MAKE) all

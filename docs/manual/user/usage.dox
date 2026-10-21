@@ -13,14 +13,14 @@ output files are provided as arguments to commands in the command file.
 
 \section user_usage_example_sec Examples
 
-<b> pscf_r1d </b>:
-As a first example, consider use of the program pscf_r1d, which is used
+<b> pscf_1d </b>:
+As a first example, consider use of the program pscf_1d, which is used
 to simulate problems in which the fields depend on a single coordinate.
 To run this program using a parameter file named "param" and command
 file named "commands" that are both in the current working directory,
 one would enter
 \code
-   pscf_r1d -p param -c commands
+   pscf_1d -p param -c commands
 \endcode
 
 <b> pscf_rp</b>:
@@ -28,7 +28,7 @@ The pscf_rp program may be run either by invoking the pscf_rpc executable
 to run a version that uses standard CPU hardware, or by invoking pscf_rpg 
 to run a GPU-enabled version on a machine that supports this.  The command
 line interface for either version of pscf_rp is similar to that used for 
-pscf_r1d, except for the fact that it requires that user to provide the 
+pscf_1d, except for the fact that it requires that user to provide the 
 dimension of space as an additional parameter, which must be given as an
 parameter of the -d option.  
 
@@ -92,10 +92,10 @@ any such errors.
 The table shown below lists all command line options accepted by PSCF
 programs. The second column, which describes an associated parameter, 
 is left empty for options that do not take a parameter.  All but one of 
-the options listed below can be used with either pscf_r1d or pscf_rp.
+the options listed below can be used with either pscf_1d or pscf_rp.
 The only exception to this is the -d option, which is a required input
 for pscf_rp (i.e., for pscf_rpc or pscf_rpg), but is not a valid option 
-for pscf_r1d.
+for pscf_1d.
 <table>
   <tr>
      <td> <b> Option </b> </td>

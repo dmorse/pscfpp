@@ -12,7 +12,7 @@ directory of the repository.
 
 Each top level subdirectory of the examples/ directory contains examples
 of calculations performed using one of the three available PSCF executable
-files, pscf_r1d, pscf_rpc and pscf_rpg. For example, the rpc/ directory 
+files, pscf_1d, pscf_rpc and pscf_rpg. For example, the rpc/ directory 
 contains examples that use the pscf_rpc CPU program for systems with 
 periodic boundary conditiobs.  Lower levels in this directory tree organize 
 examples by the type of calculation (SCFT or PS-FTS) and the type of 
@@ -86,7 +86,7 @@ instead enter
 \endcode
 A command to execute a different PSCF program would have a similar
 syntax except for the use of a different executable name, such as
-pscf_r1d or pscf_rpg.
+pscf_1d or pscf_rpg.
 
 \section examples_clean_sec Cleaning up
 

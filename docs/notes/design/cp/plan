@@ -164,7 +164,7 @@ Interaction Class:
   - The existing Pscf::Interaction class, which is apppopriate for
     an incompressible Flory-Huggins theory with local interactions,
     will be moved to namespace Pscf::FH. Code used by the existing
-    pscf_r1d, pscf_rpc and pscf_rpg programs will initially be 
+    pscf_1d, pscf_rpc and pscf_rpg programs will initially be 
     modified to use FH::Interaction. (done)
 
   - Create a class Pscf::Cp::Interaction that is designed for use in 

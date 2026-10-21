@@ -154,9 +154,9 @@ equations.
 </ul>
 
 The format of parameter file required to perform a 1D SCFT calculation
-using pscf_r1d would have a broadly analogous structure, with analogous top
+using pscf_1d would have a broadly analogous structure, with analogous top
 level subblocks appearing in the same order. The polymerModel parameter
-would not appear in a pscf_r1d parameter file, however, because the pscf_r1d
+would not appear in a pscf_1d parameter file, however, because the pscf_1d
 program can only use the thread model.  All three PSCF programs use the
 same formats for the Mixture and Interaction blocks, but somewhat different
 formats for other blocks.
@@ -445,7 +445,7 @@ and optional parameters for each algorithm.
 
 For simplicity, almost all of the examples shown in this user manual
 use the default iterator algorithm. The default iterator classes for 
-both pscf_r1d and pscf_rp are currently based on an Anderson-mixing 
+both pscf_1d and pscf_rp are currently based on an Anderson-mixing 
 algorithm.  Most SCFT examples in this manual thus contain an iterator 
 block that starts with the string "Iterator{"  on a line by itself, 
 indicating the use of the default iterator.

@@ -127,7 +127,7 @@ These namespace-level subdirectories are listed below:
 <tr>
   <td> r1d </td>
   <td> Pscf::R1d </td>
-  <td> Code used only in the pscf_r1d program </td>
+  <td> Code used only in the pscf_1d program </td>
 </tr>
 <tr>
   <td> rp </td>
@@ -163,7 +163,7 @@ These two namespaces and corresponding directories are referred to
 hereafter as program-level namespaces and program-level directories, 
 respectively. 
 
-Subdirectory src/r1d contains code that is only used by the pscf_r1d 
+Subdirectory src/r1d contains code that is only used by the pscf_1d 
 program for 1D SCFT problems
 
 Subdirectory src/rp contains code that is used only within the pscf_rp

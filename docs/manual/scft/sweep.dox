@@ -70,7 +70,7 @@ to indicate that these are both optional selectable blocks. Different
 options for the Sweep block can define different types of paths through
 parameter space.
 
-Below, we show an example of a pscf_r1d parameter file that extends the
+Below, we show an example of a pscf_1d parameter file that extends the
 example parameter file shown \ref user_param_example_page "previously" by
 appending a Sweep parameter file block to the end of the main System
 block, using the default algorithm.
@@ -154,7 +154,7 @@ algorithm provided by a class with this name).
 Source code files that are specific to different PSCF
 programs are defined in different C++ implementation level namespaces
 (i.e., in Pscf::R1d or Pscf::Rp), but are often given the same name. 
-The pscf_r1d program uses a class Pscf::R1d::LinearSweep, while 
+The pscf_1d program uses a class Pscf::R1d::LinearSweep, while 
 pscf_rp uses specializations of the class template Pscf::Rp::LinearSweep.  
 The common user interface for these classes is described here.
 
@@ -176,7 +176,7 @@ The parameter file format for a LinearSweep is summarized below:
 \endcode
 Parameters marked with an asterisk are optional. Parameters marked
 with a plus sign are only relevant to pscf_rp, and cannot be used 
-in pscf_r1d. The purpose of the parameters in this block are
+in pscf_1d. The purpose of the parameters in this block are
 explained below:
 <table>
   <tr>
@@ -216,7 +216,7 @@ explained below:
     <td>
     boolean, set to 1 (true) to write the concentration fields in r-grid
     format at each step of the sweep, or set to 0 (false) to do nothing.
-    Optional, and false by default. Not relevant for pscf_r1d. </td>
+    Optional, and false by default. Not relevant for pscf_1d. </td>
   </tr>
   <tr>
     <td> writeCBasis* </td>
@@ -224,14 +224,14 @@ explained below:
     boolean, set to 1 (true) to write the concentration fields in
     symmetry-adapted basis format at each step of the sweep, or set to 0
     (false) to do nothing. Optional, and false by default. Not relevant
-    for pscf_r1d. </td>
+    for pscf_1d. </td>
   </tr>
   <tr>
     <td> writeWRGrid* </td>
     <td>
     boolean, set to 1 (true) to write the potential fields in r-grid
     format at each step of the sweep, or set to 0 (false) to do nothing.
-    Optional, and false by default. Not relevant for pscf_r1d. </td>
+    Optional, and false by default. Not relevant for pscf_1d. </td>
   </tr>
   <tr>
     <td> nParameter </td>
@@ -309,7 +309,7 @@ The table shown below gives all allowed values for the parameter type
 string identifer for a LinearSweep for a periodic microstructure with
 with the number and meaning of any associated index or indices. All
 but one of these types of parameter are also valid in a linear sweep
-performed by pscf_r1d one-dimensional finite difference program, as
+performed by pscf_1d one-dimensional finite difference program, as
 discussed below.  To indicate the meaning of each index in this table,
 we use the following notation:
 
@@ -427,10 +427,10 @@ files. These always include a converged chemical potential field file
 concentration (a c field file).  Formats and file name extensions for
 these files are different for different programs.
 
-When a sweep is performed by the pscf_r1d program, both a chemical 
+When a sweep is performed by the pscf_1d program, both a chemical 
 potential field and a monomer concentration field are always output, 
 and are both output in the \ref user_field_r1d_page "1D field file" 
-used by pscf_r1d. Names for these files end with filename extension 
+used by pscf_1d. Names for these files end with filename extension 
 ".w" for chemical potential fields and ".c" for monomer concentration 
 fields.
 

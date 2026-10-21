@@ -298,7 +298,7 @@ Initial conditions for \f$ q_{1} \f$ and \f$ q_{2} \f$ are analogous.
 The pscf_rp program solves the MDE for propagators in a unit cell
 with periodic boundary conditions.
 
-In the pscf_r1d program, the MDE for each propagator \f$ q(x,s) \f$
+In the pscf_1d program, the MDE for each propagator \f$ q(x,s) \f$
 is solved within a range of values of the single spatial coordinate
 \f$ x \f$, where \f$ x \f$ may represent either a Cartesian normal
 coordinate for a system with the geometry of a flat film or a radial
@@ -313,7 +313,7 @@ represent a point that lies deep within homogeneous region, such
 as bulk region surrounding a micelle or a bulk phase far from an
 interface. In these cases, it is also appropriate to set
 \f$ \partial q/\partial x = 0 \f$ at these boundaries. In light of
-these considerations, the pscf_r1d program is designed to apply
+these considerations, the pscf_1d program is designed to apply
 von Neumann boundary conditions requiring that
 \f$ \partial q/\partial x = 0 \f$ at both upper and lower limiting
 values of \f$ x \f$.
@@ -810,7 +810,7 @@ properties include, for example, the aggregation number and
 total excess free energy of a spherical micelle, the interfacial
 tension of an interface, and the excess concentration per area
 (adsorbed molecules per area) of a species that absorbs to an
-interface.  The pscf_r1d program provides specialized commands
+interface.  The pscf_1d program provides specialized commands
 that can compute several of these properties of micelles and
 interfaces, but that require a value for \f$ v \f$ to be provided
 in the parameter file.

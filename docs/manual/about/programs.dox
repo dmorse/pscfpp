@@ -6,7 +6,7 @@
 <BR>
 
 The PSCF package currently contains source code for two programs 
-named pscf_rp and pscf_r1d. The purpose and capabilties of each
+named pscf_rp and pscf_1d. The purpose and capabilties of each
 are summarized below;
 
 <b>pscf_rp</b>:
@@ -26,22 +26,22 @@ capabilities, with identical user interfaces, they are described in
 this manual as different versions of a single program that we refer
 to by the generic program name pscf_rp. 
 
-<b>pscf_r1d</b>:
+<b>pscf_1d</b>:
 
-The pscf_r1d program is a comparatively simple CPU program for 
+The pscf_1d program is a comparatively simple CPU program for 
 one-dimensional (1D) SCFT calculations. This program can be used to 
 treat 1D problems with planar, cylindrical or spherical symmetry, 
 using a formulation of the modified diffusion equation (MDE) in 
 Cartesian, cylindrical or spherical coordinate systems, and simple 
 1D finite-difference spatial discretization.  It is useful for 
 SCFT problems involving flat or curved interfaces, and for 
-modelling spherical or cylindrical micelles. The pscf_r1d program 
+modelling spherical or cylindrical micelles. The pscf_1d program 
 uses standard CPU hardware, and cannot perform stochastic field 
 theoretic simulations.
 
 The pscf_rp program allows the user to choose between a continuous 
 Gaussian thread model or a discrete bead-spring model of polymer 
-conformations, while pscf_r1d can only treat the continuous thread 
+conformations, while pscf_1d can only treat the continuous thread 
 model. 
 
 <BR>

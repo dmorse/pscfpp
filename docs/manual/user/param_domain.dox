@@ -10,7 +10,7 @@ Every PSCF parameter file contains a block labelled "Domain" that
 appears after the %Mixture and %Interaction Blocks. This block contains 
 information about the spatial domain within which a SCFT or PS-FTS 
 calculation will be performed.  Different formats for the Domain block
-are required by pscf_r1d and pscf_rp, as described in the two pages
+are required by pscf_1d and pscf_rp, as described in the two pages
 linked below:
 
 <ol>

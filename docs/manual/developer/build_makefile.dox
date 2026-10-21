@@ -256,7 +256,7 @@ source list (sources.mk) and dependency files (*.d) files from other
 namespace-level directories.
 
 <b> Example </b>: As an example, here is the body of the makefile in the
-src/r1d program-level directory, which creates the pscf_r1d executable:
+src/r1d program-level directory, which creates the pscf_1d executable:
 
 \verbatim
 #------------------------------------------------------------------------
@@ -269,13 +269,13 @@ include $(SRC_DIR)/r1d/sources.mk
 include $(SRC_DIR)/r1d/patterns.mk
 
 #-----------------------------------------------------------------------
-# Paths to pscf_r1d program files
+# Paths to pscf_1d program files
 
-# Base path for pscf_r1d.o and pscf_r1d.d intermediate files 
-PSCF_R1D=$(BLD_DIR)/r1d/pscf_r1d
+# Base path for pscf_1d.o and pscf_1d.d intermediate files 
+PSCF_R1D=$(BLD_DIR)/r1d/pscf_1d
 
-# Path to pscf_r1d executable file
-PSCF_R1D_EXE=$(BIN_DIR)/pscf_r1d
+# Path to pscf_1d executable file
+PSCF_R1D_EXE=$(BIN_DIR)/pscf_1d
 
 #-----------------------------------------------------------------------
 # Main targets 
@@ -291,7 +291,7 @@ clean:
 	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
 
-# Executable pscf_r1d file (linking)
+# Executable pscf_1d file (linking)
 $(PSCF_R1D_EXE): $(PSCF_R1D).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_R1D_EXE) $(PSCF_R1D).o $(LIBS) 
 
@@ -299,7 +299,7 @@ $(PSCF_R1D_EXE): $(PSCF_R1D).o $(PSCF_LIBS)
 # PSCF-specific libraries as prerequisiites, but link to the list 
 # $(LIBS) that also includes relevant external libraries.
 
-.PHONY: all clean pscf_r1d
+.PHONY: all clean pscf_1d
 
 #-----------------------------------------------------------------------
 # Include dependency files
@@ -314,12 +314,12 @@ $(PSCF_R1D_EXE): $(PSCF_R1D).o $(PSCF_LIBS)
 Note the following elements of this file that are not present in the
 makefiles in the util and pscf namespace-level directories:
 
-  - Definition of a variable PSCF_R1D = \$(BLD_DIR)/r1d/pscf_r1d that 
+  - Definition of a variable PSCF_R1D = \$(BLD_DIR)/r1d/pscf_1d that 
     gives the common part of the paths for the object and dependency 
     files that are created by compiling the program source file 
-    src/r1d/pscf_r1d.cpp, without the .o and .d file name suffixes.
+    src/r1d/pscf_1d.cpp, without the .o and .d file name suffixes.
 
-  - Definition of a variable PSCF_R1D_EXE = \$(BIN_DIR)/pscf_r1d that 
+  - Definition of a variable PSCF_R1D_EXE = \$(BIN_DIR)/pscf_1d that 
     gives the absolute path to the resulting executable file, which 
     is installed in the in bin directory by default. 
 
@@ -401,14 +401,14 @@ Here \$(MAKE) is the value of a standard variable that represents the
 name of the unix make command. The two target shown here both contain
 recipes that instruct the system to repeatedly descend into a namespace
 level directories. The "all-cpu" target is designed to build only the
-two programs that use standard CPU hardware, pscf_r1d and pscf_rpc. The
+two programs that use standard CPU hardware, pscf_1d and pscf_rpc. The
 "all" target is designed to also create the pscf_rpg executable if
 compilation of CUDA code has been enabled by defining the PSCF_CUDA
 makefile variable.
 
 The phony "all-cpu" target simply invokes make all within 5 of the
 6 namespace-level subdirectories, including the two program-level
-subdirectories r1d and rpc that build the CPU programs pscf_r1d and
+subdirectories r1d and rpc that build the CPU programs pscf_1d and
 pscf_rpc, but excluding subdirectory rpg that contains CUDA C++ code
 for pscf_rpg.
 
