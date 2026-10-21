@@ -34,20 +34,24 @@ pscf_chem_CPP
 \endverbatim
 Here, the directory path pscf/chem defined relative to the src directory
 has been converted into the variable name pscf_chem_ . The value of this
-variable is a list of paths to all compilable source files that are located
-in the directory tree rooted at the directory that contains this sources.mk
-file. Each path in this list must be given as a relative path, defined
-relative to the root of the src directory tree.
+variable is a list of paths to all compilable C++ sources files with 
+filename extension \*.cpp that are located in the directory tree rooted 
+at the directory that contains this sources.mk file. Each path in this 
+list must be given as a relative path, defined relative to the root of 
+the src directory tree.
 
-Each directory that contain \*.cu CUDA C++ files also contains an analogous 
-variable whose value is a list of all of the \*.cu source files in that 
-directory and all nested subdirectories. The name of this variable is a 
-string of the form
+Each directory that contains \*.cu CUDA C++ files also contains an 
+analogous variable whose value is a list of all of the \*.cu source 
+files in that directory and all nested subdirectories. The name of 
+this variable is a string of the form
 \verbatim
 [directory]_CU
 \endverbatim
 in which "[directory]" denotes a mangled form fo the directory name of
 the same form as that used to construct the [directory]_CPP variable.
+The value of this variable is a list of paths to \*.cu CUDA C++ files
+in the relevant directory tree, in which all paths are defined relative 
+to the src directory.
 
 If a directory with the src directory tree contains both standard \*.cpp 
 C++ files and \*.cu CUDA C++ files, then the source file list in that 
@@ -65,7 +69,7 @@ makefile variable with a name of the form
 \verbatim
 [directory]_OBJS 
 \endverbatim
-in which [directory]_OBJS is a mangled form of the path to the 
+in which [directory]_OBJS is a mangled form of the path to the parent
 directory.  For example, the file src/pscf/chem/sources.mk defines a 
 variable named
 \verbatim
@@ -80,8 +84,8 @@ as an object file list.
 Every path in an object file list must be an absolute path to a file
 in the build directory, defined relative to the root of the entire 
 file system. Note that this is different from the convention used for 
-source file lists, in which the path to each file is a relative path, 
-defined relative to the root of the src directory tree. 
+source file lists, in which the path to each file is a relative 
+path, defined relative to the root of the src directory tree. 
 
 The object file is in each directory is created automatically by 
 applying some simple text manipulation operations to the source file 

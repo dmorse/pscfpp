@@ -232,9 +232,9 @@ clean:
 
 The main difference between the structure of this file and that of the
 makefiles in lower-level subdirectories of src is that, in this example,
-the rule for the "all" target contains the path $(PRDC_LIB) to a static
+the rule for the "all" target contains the path $(pscf_LIB) to a static
 library file target as its only pre-requisite. The rule to build the
-library $(PRDC_LIB), which is defined in the file src/pscf/sources.mk,
+library $(pscf_LIB), which is defined in the file src/pscf/sources.mk,
 gives the associated object file list \$(pscf_OBJS) as a prerequisite.
 As a result, any attempt to build or update the library file will force 
 creation or recreation of any out-of-date object files in the list 
@@ -272,28 +272,28 @@ include $(SRC_DIR)/r1d/patterns.mk
 # Paths to pscf_1d program files
 
 # Base path for pscf_1d.o and pscf_1d.d intermediate files 
-PSCF_R1D=$(BLD_DIR)/r1d/pscf_1d
+PSCF_1D=$(BLD_DIR)/r1d/pscf_1d
 
 # Path to pscf_1d executable file
-PSCF_R1D_EXE=$(BIN_DIR)/pscf_1d
+PSCF_1D_EXE=$(BIN_DIR)/pscf_1d
 
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(PSCF_R1D_EXE)
+all: $(PSCF_1D_EXE)
 
 clean:
 	rm -f $(r1d_OBJS)
 	rm -f $(r1d_DEPS)
 	rm -f $(r1d_LIB)
-	rm -f $(PSCF_R1D).o $(PSCF_R1D).d
+	rm -f $(PSCF_1D).o $(PSCF_1D).d
 	rm -f *.o */*.o
 	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
 
 # Executable pscf_1d file (linking)
-$(PSCF_R1D_EXE): $(PSCF_R1D).o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_R1D_EXE) $(PSCF_R1D).o $(LIBS) 
+$(PSCF_1D_EXE): $(PSCF_1D).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_1D_EXE) $(PSCF_1D).o $(LIBS) 
 
 # Note: In the rule for pcsf_r1d, we include the list $(PSCF_LIBS) of 
 # PSCF-specific libraries as prerequisiites, but link to the list 
@@ -307,33 +307,33 @@ $(PSCF_R1D_EXE): $(PSCF_R1D).o $(PSCF_LIBS)
 -include $(util_DEPS)
 -include $(pscf_DEPS)
 -include $(r1d_DEPS)
--include $(PSCF_R1D).d
+-include $(PSCF_1D).d
 
 \endverbatim
 
 Note the following elements of this file that are not present in the
 makefiles in the util and pscf namespace-level directories:
 
-  - Definition of a variable PSCF_R1D = \$(BLD_DIR)/r1d/pscf_1d that 
+  - Definition of a variable PSCF_1D = \$(BLD_DIR)/r1d/pscf_1d that 
     gives the common part of the paths for the object and dependency 
     files that are created by compiling the program source file 
     src/r1d/pscf_1d.cpp, without the .o and .d file name suffixes.
 
-  - Definition of a variable PSCF_R1D_EXE = \$(BIN_DIR)/pscf_1d that 
+  - Definition of a variable PSCF_1D_EXE = \$(BIN_DIR)/pscf_1d that 
     gives the absolute path to the resulting executable file, which 
     is installed in the in bin directory by default. 
 
-  - A rule to build the executable file \$(PSCF_R1D_EXE) by linking the main
-    program object file \$(PSCF_R1D).o to all relevant library files.
+  - A rule to build the executable file \$(PSCF_1D_EXE) by linking the main
+    program object file \$(PSCF_1D).o to all relevant library files.
 
-  - The "all" target lists the main program executable \$(PSCF_R1D_EXE) as
+  - The "all" target lists the main program executable \$(PSCF_1D_EXE) as
     a prerequisite.
 
   - Include directives to source.mk files and dependency files that are
     located in the util and pscf namespace-level directories, as well as 
     those located in the r1d directory that contains this makefile.
 
-  - An include directive to include the dependency file \$(PSCF_R1D).d
+  - An include directive to include the dependency file \$(PSCF_1D).d
     associated with the main program source file.
 
 Inclusion of sources.mk and dependency files from other namespace level
@@ -352,17 +352,17 @@ not program-level directories) because these makefiles do not define a
 rule that links static libraries from different namespace-level 
 directories to create an executable.
 
-In this example, the object file \$(PSCF_R1D).o is created by compiling
-the main program file h$(SRC_DIR)/rpc/pscf_rpc.cpp. This object file will
+In this example, the object file \$(PSCF_1D).o is created by compiling
+the main program file h$(SRC_DIR)/rp/pscf_rpc.cpp. This object file will
 be created by the "make all" target before the executable file because 
 this object file is listed as a prerequisite of the executable file 
 target. 
 
 The main program object file is not included in the list of files that
 are archived to create an associated static library. For example, in the
-rpc namespace-level directory, the file \$(PSCF_R1D).o is not included in
-the list \$(rpc_OBJS) of object files that are collected into the library
-file \$(BLD_DIR)/rpc/librpc.a . 
+rp namespace-level directory, the file \$(PSCF_1D).o is not included in
+the list \$(rp_OBJS) of object files that are collected into the library
+file \$(BLD_DIR)/rp/librp.a . 
 
 \section developer_build_makefile_upper_sec Makefiles in src and bld directories
 
@@ -388,7 +388,7 @@ all-cpu:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd r1d; $(MAKE) all
-	cd rpc; $(MAKE) all
+	cd rp; $(MAKE) all
 
    .
    .
@@ -408,7 +408,7 @@ makefile variable.
 
 The phony "all-cpu" target simply invokes make all within 5 of the
 6 namespace-level subdirectories, including the two program-level
-subdirectories r1d and rpc that build the CPU programs pscf_1d and
+subdirectories r1d and rp that build the CPU programs pscf_1d and
 pscf_rpc, but excluding subdirectory rpg that contains CUDA C++ code
 for pscf_rpg.
 
