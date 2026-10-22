@@ -1,5 +1,5 @@
-#ifndef R1D_SYSTEM_TEST_H
-#define R1D_SYSTEM_TEST_H
+#ifndef R1_SYSTEM_TEST_H
+#define R1_SYSTEM_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -15,7 +15,7 @@
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::R1d;
+using namespace Pscf::R1;
 
 class SystemTest : public UnitTest 
 {

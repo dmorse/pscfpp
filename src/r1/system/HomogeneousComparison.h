@@ -1,5 +1,5 @@
-#ifndef R1D_HOMOGENEOUS_COMPARISON_H
-#define R1D_HOMOGENEOUS_COMPARISON_H
+#ifndef R1_HOMOGENEOUS_COMPARISON_H
+#define R1_HOMOGENEOUS_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -16,12 +16,12 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    /**
    * Command to compute properties of homogeneous reference system.
    *
-   * \ingroup R1d_System_Module
+   * \ingroup R1_System_Module
    */
    class HomogeneousComparison : public SystemAccess
    {
@@ -144,6 +144,6 @@ namespace R1d {
 
    };
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 #endif

@@ -1,5 +1,5 @@
-#ifndef R1D_MIXTURE_H
-#define R1D_MIXTURE_H
+#ifndef R1_MIXTURE_H
+#define R1_MIXTURE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -15,7 +15,7 @@ namespace Util {
    template <typename T> class DArray;
 }
 namespace Pscf {
-   namespace R1d {
+   namespace R1 {
       class Domain;
       class Polymer;
       class Solvent;
@@ -23,7 +23,7 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    /**
    * Solver and descriptor for a mixture of polymers and solvents.
@@ -41,7 +41,7 @@ namespace R1d {
    * problem.
    *
    * \ref user_param_mixture_page "Parameter File Format"
-   * \ingroup R1d_Solver_Module
+   * \ingroup R1_Solver_Module
    */
    class Mixture : public MixtureTmpl<Polymer, Solvent>
    {
@@ -164,11 +164,11 @@ namespace R1d {
       return *domainPtr_;
    }
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 
 // Explicit instantiation declaration
 namespace Pscf {
-   extern template class MixtureTmpl<R1d::Polymer, R1d::Solvent, double>;
+   extern template class MixtureTmpl<R1::Polymer, R1::Solvent, double>;
 }
 #endif

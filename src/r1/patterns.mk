@@ -3,7 +3,7 @@
 #
 # This makefile contains the pattern rule used to compile all sources
 # files in the directory tree rooted at the src/r1 directory, which
-# contains all source code for the Pscf::R1d namespace. It is included
+# contains all source code for the Pscf::R1 namespace. It is included
 # by all "makefile" files in this directory tree. 
 #-----------------------------------------------------------------------
 # Definitions of variables used in pattern rules

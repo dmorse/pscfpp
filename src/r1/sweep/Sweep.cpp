@@ -16,19 +16,19 @@
 #include <util/format/Dbl.h>
 
 namespace Pscf {
-namespace R1d
+namespace R1
 {
 
    using namespace Util;
 
    // Define maximum number of stored states = order of continuation + 1
-   #define R1D_HISTORY_CAPACITY 3
+   #define R1_HISTORY_CAPACITY 3
 
    /*
    * Constructor.
    */
    Sweep::Sweep(System& sys)
-    : Base(R1D_HISTORY_CAPACITY),
+    : Base(R1_HISTORY_CAPACITY),
       SystemAccess(sys),
       homogeneousMode_(-1),
       comparison_(sys),
@@ -105,7 +105,7 @@ namespace R1d
    */
    void Sweep::setParameters(double s) 
    {  
-      UTIL_THROW("Called un-implemented R1d::Sweep::setParameters");
+      UTIL_THROW("Called un-implemented R1::Sweep::setParameters");
    };
 
    /*
@@ -262,5 +262,5 @@ namespace R1d
       }
    }
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf

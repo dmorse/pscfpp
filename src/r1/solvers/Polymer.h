@@ -1,5 +1,5 @@
-#ifndef R1D_POLYMER_H
-#define R1D_POLYMER_H
+#ifndef R1_POLYMER_H
+#define R1_POLYMER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -12,14 +12,14 @@
 
 // Forward declarations
 namespace Pscf {
-   namespace R1d {
+   namespace R1 {
       class Block;
       class Propagator;
    }
 }
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    using namespace Util;
 
@@ -36,7 +36,7 @@ namespace R1d {
    * Pscf::PolymerSpecies.
    * 
    * \ref user_param_polymer_sec "Parameter File Format"
-   * \ingroup R1d_Solver_Module
+   * \ingroup R1_Solver_Module
    */
    class Polymer : public PolymerTmpl<Block, Propagator, double>
    {
@@ -71,11 +71,11 @@ namespace R1d {
 
    };
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 
 // Explicit instantiation declaration
 namespace Pscf {
-   extern template class PolymerTmpl<R1d::Block, R1d::Propagator, double>;
+   extern template class PolymerTmpl<R1::Block, R1::Propagator, double>;
 }
 #endif

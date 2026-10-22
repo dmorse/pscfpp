@@ -9,7 +9,7 @@
 
 #include <test/CompositeTestRunner.h>
 
-using namespace R1d;
+using namespace R1;
 using namespace Util;
 
 int main(int argc, char* argv[])

@@ -1,5 +1,5 @@
-#ifndef R1D_BINARY_RELAX_ITERATOR_H
-#define R1D_BINARY_RELAX_ITERATOR_H
+#ifndef R1_BINARY_RELAX_ITERATOR_H
+#define R1_BINARY_RELAX_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -17,7 +17,7 @@
 
 
 namespace Pscf {
-namespace R1d
+namespace R1
 {
 
    using namespace Util;
@@ -34,7 +34,7 @@ namespace R1d
    *
    * \see \ref r1_BinaryRelaxIterator_page "Manual Page"
    *
-   * \ingroup R1d_Iterator_Module
+   * \ingroup R1_Iterator_Module
    */
    class BinaryRelaxIterator : public Iterator
    {
@@ -153,6 +153,6 @@ namespace R1d
                          
    };
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 #endif

@@ -1,5 +1,5 @@
-#ifndef R1D_SWEEP_H
-#define R1D_SWEEP_H
+#ifndef R1_SWEEP_H
+#define R1_SWEEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -17,7 +17,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace R1d
+namespace R1
 {
 
    using namespace Util;
@@ -25,7 +25,7 @@ namespace R1d
    /**
    * Solve a sequence of problems along a line in parameter space.
    *
-   * \ingroup R1d_Sweep_Module
+   * \ingroup R1_Sweep_Module
    */
    class Sweep : public SweepTmpl< DArray<System::WField> >, 
                  public SystemAccess
@@ -146,6 +146,6 @@ namespace R1d
 
    };
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 #endif

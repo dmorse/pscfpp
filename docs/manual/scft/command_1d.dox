@@ -474,7 +474,7 @@ propagator slice on the nodes of the regular spatial mesh used throughout
 the computation.
 
 <em> Comment for readers who read the source code </em>: This command
-calls the function R1d::System::writeQ, which defines the output
+calls the function R1::System::writeQ, which defines the output
 format, and is defined in the C++ file src/r1/System.cpp.
 
 \anchor scft_command_1d_writeqall_sub

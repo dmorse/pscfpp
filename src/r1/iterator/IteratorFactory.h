@@ -1,5 +1,5 @@
-#ifndef R1D_ITERATOR_FACTORY_H
-#define R1D_ITERATOR_FACTORY_H
+#ifndef R1_ITERATOR_FACTORY_H
+#define R1_ITERATOR_FACTORY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -15,7 +15,7 @@
 #include <string>
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    using namespace Util;
 
@@ -25,7 +25,7 @@ namespace R1d {
    * The default iterator, invoked by className Iterator, is the
    * Anderson mixing iterator (className AmIterator).
    * 
-   * \ingroup R1d_Iterator_Module
+   * \ingroup R1_Iterator_Module
    */
    class IteratorFactory : public Factory<Iterator> 
    {

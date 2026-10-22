@@ -20,7 +20,7 @@
 #include <iomanip>
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    using namespace Util;
 

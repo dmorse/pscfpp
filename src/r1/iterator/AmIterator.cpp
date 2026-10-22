@@ -20,11 +20,11 @@
 
 // Explicit instantiation of base class
 namespace Pscf {
-   template class AmIteratorTmpl< R1d::Iterator, DArray<double> > ;
+   template class AmIteratorTmpl< R1::Iterator, DArray<double> > ;
 }
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    using namespace Util;
 
@@ -81,7 +81,7 @@ namespace R1d {
 
    bool AmIterator::hasInitialGuess()
    {
-      // R1d::System doesn't have an appropriate query function
+      // R1::System doesn't have an appropriate query function
       return true;
    }
 

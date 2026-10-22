@@ -126,7 +126,7 @@ These namespace-level subdirectories are listed below:
 </tr>
 <tr>
   <td> r1 </td>
-  <td> Pscf::R1d </td>
+  <td> Pscf::R1 </td>
   <td> Code used only in the pscf_1d program </td>
 </tr>
 <tr>
@@ -155,7 +155,7 @@ created in the src/pscf directory.
 
 * **Program-level namespaces and directories:**
 
-The Pscf::R1d and Pscf::Rp namespaces and the corresponding src/r1 and
+The Pscf::R1 and Pscf::Rp namespaces and the corresponding src/r1 and
 src/rp namespace-level subdirectories of src each contain code is used
 only within a single program or (in the case of the Pscf::Rp namespace 
 and the src/rp directory) within multiple variants of a single program. 

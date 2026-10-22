@@ -16,7 +16,7 @@
 #include <math.h>
 
 namespace Pscf {
-namespace R1d
+namespace R1
 {
 
    using namespace Util;
@@ -374,5 +374,5 @@ namespace R1d
       return 1;
    }
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf

@@ -17,11 +17,11 @@
 
 // Explicit instantiation of base class
 namespace Pscf { 
-   template class MixtureTmpl<R1d::Polymer, R1d::Solvent, double>;
+   template class MixtureTmpl<R1::Polymer, R1::Solvent, double>;
 }
 
 namespace Pscf { 
-namespace R1d { 
+namespace R1 { 
 
    /*
    * Constructor.
@@ -173,5 +173,5 @@ namespace R1d {
 
    }
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf

@@ -9,7 +9,7 @@
 #include <r1/field/Domain.h>
 
 namespace Pscf {
-namespace R1d { 
+namespace R1 { 
 
    /*
    * Constructor.

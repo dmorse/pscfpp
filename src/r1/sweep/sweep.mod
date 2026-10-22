@@ -1,13 +1,13 @@
 
 namespace Pscf{
-namespace R1d{
+namespace R1 {
 
    /**
-   * \defgroup R1d_Sweep_Module Sweep
+   * \defgroup R1_Sweep_Module Sweep
    *
    * Sweep (continuation) classes.
    *
-   * \ingroup Pscf_R1d_Module
+   * \ingroup Pscf_R1_Module
    */
 
 }

@@ -12,14 +12,14 @@
 /**
 * Main function for pscf_1d program.
 *
-* \ingroup Pscf_R1d_Module
+* \ingroup Pscf_R1_Module
 *
 * \param argc number of command line parameter strings
 * \param argv array of command line parameter strings
 */
 int main(int argc, char **argv)
 {
-   Pscf::R1d::System system;
+   Pscf::R1::System system;
 
    // Process command line options
    system.setOptions(argc, argv);

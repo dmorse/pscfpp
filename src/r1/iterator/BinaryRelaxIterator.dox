@@ -1,7 +1,7 @@
 namespace Pscf{
-namespace R1d{
+namespace R1 {
 /*! 
-\page r1_BinaryRelaxIterator_page R1d::BinaryRelaxIterator
+\page r1_BinaryRelaxIterator_page R1::BinaryRelaxIterator
 
 An BinaryRelaxIterator solves is an iterator that uses the simple 
 relaxation method presented by F. Drolet and G.H. Fredrickson to solve 

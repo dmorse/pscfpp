@@ -1,5 +1,5 @@
-#ifndef R1D_SWEEP_PARAMETER_H
-#define R1D_SWEEP_PARAMETER_H
+#ifndef R1_SWEEP_PARAMETER_H
+#define R1_SWEEP_PARAMETER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -17,7 +17,7 @@
 using namespace Util;
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    class System;
 
@@ -99,7 +99,7 @@ namespace R1d {
    * also be a subclass of ParameterModifier so that it can add sweepable
    * parameters at run time.
    *
-   * \ingroup R1d_Sweep_Module
+   * \ingroup R1_Sweep_Module
    */
    class SweepParameter
    {

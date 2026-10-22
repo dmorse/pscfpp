@@ -12,11 +12,11 @@
 #include <pscf/solvers/BlockTmpl.tpp>
 
 namespace Pscf {
-   template class BlockTmpl< R1d::Propagator, Util::DArray<double> >;
+   template class BlockTmpl< R1::Propagator, Util::DArray<double> >;
 }
 
 namespace Pscf { 
-namespace R1d {
+namespace R1 {
 
    using namespace Util;
 

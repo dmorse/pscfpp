@@ -1,5 +1,5 @@
-#ifndef R1D_AM_ITERATOR_H
-#define R1D_AM_ITERATOR_H
+#ifndef R1_AM_ITERATOR_H
+#define R1_AM_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -14,7 +14,7 @@
 #include <pscf/iterator/AmbdInteraction.h>  // member
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    // Forward declaration
    class System;
@@ -26,7 +26,7 @@ namespace R1d {
    *
    * \see \ref r1_AmIterator_page      "Manual Page"
    * \see \ref pscf_AmIteratorTmpl_page "AM Iterator Algorithm"
-   * \ingroup R1d_Iterator_Module
+   * \ingroup R1_Iterator_Module
    */
    class AmIterator : public AmIteratorTmpl<Iterator, DArray<double> >
    {
@@ -123,11 +123,11 @@ namespace R1d {
 
    };
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 
 // Explicit instantiation declaration
 namespace Pscf {
-   extern template class AmIteratorTmpl< R1d::Iterator, DArray<double> >;
+   extern template class AmIteratorTmpl< R1::Iterator, DArray<double> >;
 }
 #endif

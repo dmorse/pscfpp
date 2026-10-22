@@ -23,7 +23,7 @@
 #include <string>
 
 namespace Pscf {
-namespace R1d
+namespace R1
 {
 
    using namespace Util;
@@ -377,5 +377,5 @@ namespace R1d
 
    }
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf

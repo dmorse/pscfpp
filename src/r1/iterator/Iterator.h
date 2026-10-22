@@ -1,5 +1,5 @@
-#ifndef R1D_ITERATOR_H
-#define R1D_ITERATOR_H
+#ifndef R1_ITERATOR_H
+#define R1_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -15,7 +15,7 @@
 #include <r1/sweep/Sweep.h>
 
 namespace Pscf {
-namespace R1d
+namespace R1
 {
 
    using namespace Util;
@@ -23,7 +23,7 @@ namespace R1d
    /**
    * Base class for iterative solvers for SCF equations.
    *
-   * \ingroup R1d_Iterator_Module
+   * \ingroup R1_Iterator_Module
    */
    class Iterator : public ParamComposite, public SystemAccess, 
                     public ParameterModifier
@@ -58,6 +58,6 @@ namespace R1d
 
    };
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 #endif

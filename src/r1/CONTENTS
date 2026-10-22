@@ -1,6 +1,6 @@
 This directory contains C++ files specific to the implementation of 
 a one-dimensional finite difference implementation of polymer SCFT.
-All code in this directory is defined in C++ namespace Pscf::R1d.
+All code in this directory is defined in C++ namespace Pscf::R1.
 
 Subdirectories:
 ---------------

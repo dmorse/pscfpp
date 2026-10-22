@@ -1,5 +1,5 @@
-#ifndef R1D_TEST_COMPOSITE_H
-#define R1D_TEST_COMPOSITE_H
+#ifndef R1_TEST_COMPOSITE_H
+#define R1_TEST_COMPOSITE_H
 
 #include <test/CompositeTestRunner.h>
 

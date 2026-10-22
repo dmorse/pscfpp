@@ -153,8 +153,8 @@ algorithm provided by a class with this name).
 <em>Technical note: </em>
 Source code files that are specific to different PSCF
 programs are defined in different C++ implementation level namespaces
-(i.e., in Pscf::R1d or Pscf::Rp), but are often given the same name. 
-The pscf_1d program uses a class Pscf::R1d::LinearSweep, while 
+(i.e., in Pscf::R1 or Pscf::Rp), but are often given the same name. 
+The pscf_1d program uses a class Pscf::R1::LinearSweep, while 
 pscf_rp uses specializations of the class template Pscf::Rp::LinearSweep.  
 The common user interface for these classes is described here.
 

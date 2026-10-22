@@ -1,5 +1,5 @@
-#ifndef R1D_SOLVENT_H
-#define R1D_SOLVENT_H
+#ifndef R1_SOLVENT_H
+#define R1_SOLVENT_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -12,7 +12,7 @@
 #include <r1/solvers/Propagator.h>     // typedefs
 
 namespace Pscf { 
-namespace R1d { 
+namespace R1 { 
 
    class Domain;
    using namespace Util;
@@ -21,7 +21,7 @@ namespace R1d {
    * Solver and descriptor for a solvent species in a mixture.
    *
    * \ref user_param_solvent_sec "Parameter File Format"
-   * \ingroup R1d_Solver_Module
+   * \ingroup R1_Solver_Module
    */
    class Solvent : public SolventSpecies<double>
    {

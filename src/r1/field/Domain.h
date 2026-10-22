@@ -1,5 +1,5 @@
-#ifndef R1D_DOMAIN_H
-#define R1D_DOMAIN_H
+#ifndef R1_DOMAIN_H
+#define R1_DOMAIN_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -13,7 +13,7 @@
 #include <util/containers/DArray.h>        // function parameter
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    using namespace Util;
 
@@ -21,7 +21,7 @@ namespace R1d {
    * One-dimensional spatial domain and discretization grid.
    *
    * \ref r1_Domain_page "Parameter File Format"
-   * \ingroup R1d_Field_Module
+   * \ingroup R1_Field_Module
    */
    class Domain : public ParamComposite
    {
@@ -231,6 +231,6 @@ namespace R1d {
    inline bool Domain::isShell() const
    {  return isShell_; }
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 #endif

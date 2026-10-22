@@ -1,5 +1,5 @@
-#ifndef R1D_BLOCK_H
-#define R1D_BLOCK_H
+#ifndef R1_BLOCK_H
+#define R1_BLOCK_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -14,7 +14,7 @@
 #include <util/containers/DArray.h>       // member
 
 namespace Pscf { 
-namespace R1d { 
+namespace R1 { 
 
    // Forward declarations
    class Domain;
@@ -29,7 +29,7 @@ namespace R1d {
    * indirectry form Pscf::Edge. A Block has two Propagator members and a
    * monomer concentration field. 
    *
-   * \ingroup R1d_Solver_Module
+   * \ingroup R1_Solver_Module
    */
    class Block : public BlockTmpl<Propagator, DArray<double> >
    {
@@ -158,12 +158,12 @@ namespace R1d {
    inline int Block::ns() const
    {  return ns_; }
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 
 // Explicit instantiation declaration
 namespace Pscf { 
    extern template 
-   class BlockTmpl<R1d::Propagator, Util::DArray<double> >;
+   class BlockTmpl<R1::Propagator, Util::DArray<double> >;
 }
 #endif

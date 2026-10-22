@@ -5,9 +5,9 @@
 This file documents changes to the C++/CUDA version of PSCF. Source code 
 for this project is in the dmorse/pscfpp github.com repository.
 
-Executable program names have changed over time.  The executables for 
-models with real periodic fields that are now named pscf_rpc and pscf_rpg 
-have been called pscf_pc and pscf_pg in some earlier versions. The 1D SCFT 
+Executable file names have changed over time.  The executables for models 
+with real periodic fields that are now named pscf_rpc and pscf_rpg have 
+been called pscf_pc and pscf_pg in some earlier versions. The 1D SCFT 
 program that is now called pscf_1d has been called pscf_r1d and pscf_fd in 
 earlier versions. 
 
@@ -18,7 +18,7 @@ Significant re-organization of code for periodic systems that can use
 either a C++ or CUDA "backend" for mathematical operations on large 
 arrays.  The use of subclasses and separate namespaces to distinguish 
 specializations for different backends has been replaced by a pattern
-that relies uses a template parameter as an identifier.
+that relies on use of a template parameter as an identifier.
 
 User visible changes
 --------------------
@@ -27,7 +27,7 @@ User visible changes
     controlled by the -c option (which previously controlled CUDA code)
   - Conditional compilation of the pscf_rpg CUDA C++ executable is now 
     controlled by a new -u option
-* Changed name of pscf_r1d program back to pscf_1d
+* Name of 1D SCFT program changed back to pscf_1d
 
 Developer-visible changes
 -------------------------
@@ -49,12 +49,14 @@ Changes to source code organization::
 * Namespace Pscf::Prdc and corresponding directory src/prdc have been
   removed, and their contents redistributed among the Pscf and Pscf::Rp 
   namespaces and corresponding directories.
-* Directory src/r1d has been renamed src/r1.
+* Namespace Pscf::R1d and directory src/r1d have been renamed Pscf::R1
+  and src/r1, respectively.
 
 Documentation
 -------------
 * A new manual section explains the use of backend identifier classes
-  to support multiple backends.
+  as template parameters to support multiple backends.
+
   
 Version 1.4.0 (6/01/2026)
 =========================================

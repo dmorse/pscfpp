@@ -1,5 +1,5 @@
-#ifndef R1D_LINEAR_SWEEP_H
-#define R1D_LINEAR_SWEEP_H
+#ifndef R1_LINEAR_SWEEP_H
+#define R1_LINEAR_SWEEP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -15,7 +15,7 @@
 #include <iostream>
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    class System;
 
@@ -26,7 +26,7 @@ namespace R1d {
    * linearly with the sweep variable. 
    * 
    * \ref scft_sweep_linear_sec "Parameter File Format"
-   * \ingroup R1d_Sweep_Module
+   * \ingroup R1_Sweep_Module
    */
    class LinearSweep : public Sweep
    {

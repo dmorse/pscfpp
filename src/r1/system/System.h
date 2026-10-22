@@ -1,5 +1,5 @@
-#ifndef R1D_SYSTEM_H
-#define R1D_SYSTEM_H
+#ifndef R1_SYSTEM_H
+#define R1_SYSTEM_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -20,7 +20,7 @@
 // Forward declarations
 namespace Pscf {
    class Interaction;
-   namespace R1d {
+   namespace R1 {
       class Iterator;
       class IteratorFactory;
       class Sweep;
@@ -30,12 +30,12 @@ namespace Pscf {
 }
 
 namespace Pscf {
-namespace R1d {
+namespace R1 {
 
    /**
    * Main class in SCFT simulation of one system.
    *
-   * An R1d::System is designed to perform SCFT calculations of 
+   * An R1::System is designed to perform SCFT calculations of 
    * one-dimension SCFT problems in Cartesian, spherical or cylindrical
    * coordinates. Such a System has (among other components):
    *
@@ -52,7 +52,7 @@ namespace R1d {
    * might look something like this:
    * \code
    *   int main(int argc, char **argv) {
-   *      Pscf::R1d::System system;
+   *      Pscf::R1::System system;
    *      system.setOptions(argc, argv);
    *      system.readParam();
    *      system.readCommands();
@@ -61,7 +61,7 @@ namespace R1d {
    * The actual main program is given in the file pscf_1d.cpp.
    *
    * \ref scft_param_1d_page "Parameter File Format"
-   * \ingroup R1d_System_Module
+   * \ingroup R1_System_Module
    */
    class System : public ParamComposite
    {
@@ -665,6 +665,6 @@ namespace R1d {
    inline double System::pressure() const
    {  return pressure_; }
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 #endif

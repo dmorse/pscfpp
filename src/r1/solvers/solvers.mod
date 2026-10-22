@@ -1,13 +1,13 @@
 
 namespace Pscf{
-namespace R1d{
+namespace R1 {
 
    /**
-   * \defgroup R1d_Solver_Module Solvers
+   * \defgroup R1_Solver_Module Solvers
    *
    * Modified diffusion solvers for 1D code.
    *
-   * \ingroup Pscf_R1d_Module
+   * \ingroup Pscf_R1_Module
    */
 
 }

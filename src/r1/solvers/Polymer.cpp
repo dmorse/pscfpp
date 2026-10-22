@@ -12,11 +12,11 @@
 
 // Explicit instantiation of base class
 namespace Pscf {
-   template class PolymerTmpl<R1d::Block, R1d::Propagator, double>;
+   template class PolymerTmpl<R1::Block, R1::Propagator, double>;
 }
 
 namespace Pscf {
-namespace R1d { 
+namespace R1 { 
 
    /*
    * Constructor

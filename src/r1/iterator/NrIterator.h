@@ -1,5 +1,5 @@
-#ifndef R1D_NR_ITERATOR_H
-#define R1D_NR_ITERATOR_H
+#ifndef R1_NR_ITERATOR_H
+#define R1_NR_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -16,7 +16,7 @@
 #include <util/containers/DMatrix.h>
 
 namespace Pscf {
-namespace R1d
+namespace R1
 {
 
    using namespace Util;
@@ -26,7 +26,7 @@ namespace R1d
    *
    * \see \ref r1_NrIterator_page "Manual Page"
    * 
-   * \ingroup R1d_Iterator_Module
+   * \ingroup R1_Iterator_Module
    */
    class NrIterator : public Iterator
    {
@@ -160,6 +160,6 @@ namespace R1d
 
    };
 
-} // namespace R1d
+} // namespace R1
 } // namespace Pscf
 #endif
