@@ -22,9 +22,9 @@ periodic systems, as described below:
 \section scft_iterator_1d_sec One-dimensional systems (pscf_1d)
 
 Users of pscf_1d may choose from among 3 SCFT iterators, named
-\ref r1d_AmIterator_page "AmIterator",
-\ref r1d_NrIterator_page "NrIterator", and
-\ref r1d_BinaryRelaxIterator_page "BinaryRelaxiterator".
+\ref r1_AmIterator_page "AmIterator",
+\ref r1_NrIterator_page "NrIterator", and
+\ref r1_BinaryRelaxIterator_page "BinaryRelaxiterator".
 More detailed documentation of the input format for each available
 pscf_1d iterator is given in the links in the table below:
 
@@ -34,15 +34,15 @@ pscf_1d iterator is given in the links in the table below:
 <td> <b> Description </b> </td>
 </tr>
 <tr>
-<td> \subpage r1d_AmIterator_page "AmIterator" </td>
+<td> \subpage r1_AmIterator_page "AmIterator" </td>
 <td> Anderson-Mixing iterator (default) </td>
 </tr>
 <tr>
-<td> \subpage r1d_NrIterator_page "NrIterator" </td>
+<td> \subpage r1_NrIterator_page "NrIterator" </td>
 <td> Newton-Raphson iterator </td>
 </tr>
 <tr>
-<td> \subpage r1d_BinaryRelaxIterator_page "BinaryRelaxIterator" </td>
+<td> \subpage r1_BinaryRelaxIterator_page "BinaryRelaxIterator" </td>
 <td> Simple relaxation algorithm for AB (two monomer) systems, as
      described by Drolet and Fredrickson. </td>
 </tr>

@@ -5,25 +5,20 @@
 This file documents changes to the C++/CUDA version of PSCF. Source code 
 for this project is in the dmorse/pscfpp github.com repository.
 
-The following labels are used below to indicate which programs or sets of
-programs are affected by specific changes:
-
-  rpc  - CPU code for periodic structures (pscf_rpc)
-  rpg  - GPU code for periodic structures (pscf_rpg)
-  r1d  - CPU finite difference code for 1D problems (pscf_r1d)
-  all - all programs (rpc, rpg, and r1d)
-
-Executable program names have changed over time.  In version 1.2, the 
-program names were scf_pc, pscf_pg and pscf_1d.  The 1D finite-difference
-SCFT program that is now called pscf_r1d was called pscf_fd before version
-1.2, and pscf_1d in versions 1.2 and 1.3.
-
+Executable program names have changed over time.  The executables for 
+models with real periodic fields that are now named pscf_rpc and pscf_rpg 
+have been called pscf_pc and pscf_pg in some earlier versions. The 1D SCFT 
+program that is now called pscf_1d has been called pscf_r1d and pscf_fd in 
+earlier versions. 
 
 Version 1.5.0 (10/30/2026)
 =========================================
 
 Significant re-organization of code for periodic systems that can use 
-either a C++ or CUDA "backend" for mathematical operations on large arrays.
+either a C++ or CUDA "backend" for mathematical operations on large 
+arrays.  The use of subclasses and separate namespaces to distinguish 
+specializations for different backends has been replaced by a pattern
+that relies uses a template parameter as an identifier.
 
 User visible changes
 --------------------
@@ -32,6 +27,7 @@ User visible changes
     controlled by the -c option (which previously controlled CUDA code)
   - Conditional compilation of the pscf_rpg CUDA C++ executable is now 
     controlled by a new -u option
+* Changed name of pscf_r1d program back to pscf_1d
 
 Developer-visible changes
 -------------------------
@@ -41,22 +37,24 @@ Changes to source code organization::
   for use as template arguments that identify a specific backend.
 * Classes that provide basic data structure and algorithm that must be
   specialized for use with different backends, such as the RField, 
-  RFieldDft and FFT classes, have been rewritten as specializations
+  RFieldDft and FFT classes, have been converted to specializations
   of class templates that take a backend identifier class as a parameter.
-* All code specific to the pscf_rp program (or executables pscf_rpc and
+* All code specific to the pscf_rp program (executables pscf_rpc and
   pscf_rpg) has been consolidated into a single namespace, Pscf::Rp, and 
-  a single directory, src/rp, which now contain many class templates 
-  that take a backend identifer class as a template parameter.
+  a single directory, src/rp. These now contain many class templates that
+  take a the dimension of space and backend identifer class as template 
+  parameters.
 * Namespaces Pscf::Rpc and Pscf::Rpg and corresponding directories src/rpc 
   and src/rpg have been removed.
 * Namespace Pscf::Prdc and corresponding directory src/prdc have been
   removed, and their contents redistributed among the Pscf and Pscf::Rp 
   namespaces and corresponding directories.
+* Directory src/r1d has been renamed src/r1.
 
 Documentation
 -------------
-* A new manual section explains the system of template used to support 
-  multiple backends.
+* A new manual section explains the use of backend identifier classes
+  to support multiple backends.
   
 Version 1.4.0 (6/01/2026)
 =========================================
@@ -76,7 +74,7 @@ User visible changes
 Developer-visible changes
 --------------------------
 * Removed almost all duplication of code between src/rpc and src/rpg:
- - Created Rp namespace, directory src/rp, for base class templates 
+ - Created Rp namespace and directory src/rp, for base class templates 
  - Created shared template base classes for most classes in Rpc and Rpg
 * Add sorting of waves by magnitude to WaveList classes
 
@@ -147,6 +145,9 @@ Version 1.3.0 (8/15/2025)
 =========================================
 
 Added option of using discrete chain model .
+
+[Labels rpc and prg indicate changes relevant to pscf_rpc 
+(periodic, CPU) and pscf_rpg (periodic, GPU) programs.]
 
 User-visible features
 ---------------------
@@ -349,6 +350,10 @@ Version 0.8.1
 
 Version 0.8.0  (3/11/2022)
 ==========================
+
+Labels fd, pc and pg in parenthesis indicate changes relevant to 
+pscf_fd (1D finite difference SCFT), pscf_pc (periodic, CPU) and 
+pscf_pg (periodic, GPU) programs.
 
 User-visible features
 ---------------------

@@ -16,7 +16,7 @@ format or formats for w and c fields.  In each such file format, a
 single file contains a description of the w or c fields associated with
 all of the different types of monomer present in a system.
 
-Different field file formats are used by different programs.  The r1d
+Different field file formats are used by different programs.  The r1
 program for one-dimensional problems uses a simple format that lists
 values of fields on the nodes of a one-dimensional grid.  The pscf_rpc
 and pscf_rpg programs, which both treat periodic structures, use the
@@ -28,7 +28,7 @@ several of the sub-pages linked below.
 
 <ol>
   <li> \subpage user_field_types_page  </li>
-  <li> \subpage user_field_r1d_page "One-dimensional Fields (pscf_1d)"  </li>
+  <li> \subpage user_field_r1_page "One-dimensional Fields (pscf_1d)"  </li>
   <li> \subpage user_field_periodic_page "Periodic Fields (pscf_rpc and pscf_rpg)"
     <ul>
       <li> \ref user_field_header_page "Field File Header" </li>

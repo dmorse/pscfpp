@@ -16,7 +16,7 @@ the range of values of this coordinate over which the SCFT equations
 should be solved, and the number of nodes of a regular mesh that is used
 to discretize that domain.
 
-See also: \subpage r1d_Domain_page
+See also: \subpage r1_Domain_page
 
 \section user_param_domain_1d_example_sec Examples
 

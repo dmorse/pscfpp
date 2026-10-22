@@ -125,7 +125,7 @@ These namespace-level subdirectories are listed below:
   <td> Code defined directly in Pscf, used by all PSCF programs </td>
 </tr>
 <tr>
-  <td> r1d </td>
+  <td> r1 </td>
   <td> Pscf::R1d </td>
   <td> Code used only in the pscf_1d program </td>
 </tr>
@@ -137,14 +137,14 @@ These namespace-level subdirectories are listed below:
 </table>
 The src/pscf directory contains files that contain code for classes and
 functions that are accessible throughout the package, most of which are
-defined directly in the Pscf namespace. The src/r1d and src/rp
+defined directly in the Pscf namespace. The src/r1 and src/rp
 directories instead each contain code for entities that are defined in a 
 specific enclosed sub-namespace of Pscf, and that are used in only one
 program.
 
 The PSCF makefile system constructs a static library file each of the 
 namespace-level directories that contains compilable source files.
-Specifically, static libraries are constructed in the util, pscf, r1d, 
+Specifically, static libraries are constructed in the util, pscf, r1, 
 and rp namespace-level directories. Each such static library contains 
 the object code created by compiling all of the compilable source files 
 (with file extension .cpp or .cu) in the asssociated namespace-level 
@@ -155,7 +155,7 @@ created in the src/pscf directory.
 
 * **Program-level namespaces and directories:**
 
-The Pscf::R1d and Pscf::Rp namespaces and the corresponding src/r1d and
+The Pscf::R1d and Pscf::Rp namespaces and the corresponding src/r1 and
 src/rp namespace-level subdirectories of src each contain code is used
 only within a single program or (in the case of the Pscf::Rp namespace 
 and the src/rp directory) within multiple variants of a single program. 
@@ -163,7 +163,7 @@ These two namespaces and corresponding directories are referred to
 hereafter as program-level namespaces and program-level directories, 
 respectively. 
 
-Subdirectory src/r1d contains code that is only used by the pscf_1d 
+Subdirectory src/r1 contains code that is only used by the pscf_1d 
 program for 1D SCFT problems
 
 Subdirectory src/rp contains code that is used only within the pscf_rp
@@ -212,7 +212,7 @@ upon in this sense:
   <td> util </td>
 </tr>
 <tr>
-  <td> r1d </td>
+  <td> r1 </td>
   <td> pscf, util </td>
 </tr>
 <tr>

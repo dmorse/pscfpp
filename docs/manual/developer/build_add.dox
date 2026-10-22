@@ -21,30 +21,30 @@ added to this list in the sources.mk file within the directory that
 contains the new source file.
 
 <b> Example 1 </b>:
-For example, consider the sources.mk file in the directory src/r1d/iterator.
+For example, consider the sources.mk file in the directory src/r1/iterator.
 This directory contains source code files for several classes that
 implement different SCFT iteration algorithms that can used by the pscf_1d
 program, and a few related classses.  The relevant part of the sources file
 in this directory, which appears at the top of the file, is a makefile 
 statement that looks like this:
 \code
-r1d_iterator_=\
-  r1d/iterator/Iterator.cpp \
-  r1d/iterator/IteratorFactory.cpp \
-  r1d/iterator/NrIterator.cpp \
-  r1d/iterator/BinaryRelaxIterator.cpp \
-  r1d/iterator/AmIterator.cpp
+r1_iterator_=\
+  r1/iterator/Iterator.cpp \
+  r1/iterator/IteratorFactory.cpp \
+  r1/iterator/NrIterator.cpp \
+  r1/iterator/BinaryRelaxIterator.cpp \
+  r1/iterator/AmIterator.cpp
 \endcode
-In this statement, the string r1d_iterator_ is the name of a makefile
+In this statement, the string r1_iterator_ is the name of a makefile
 variable whose value is a space separated list of names of compilable
-source files in the relevant directory r1d/iterator. The name of the
+source files in the relevant directory r1/iterator. The name of the
 corresponding variable defined in the sources.mk in each subdirectory
 of the src directory is given by mangled form of the path to that
 subdirectory from the src directory, in which the slash characters that
 separate directory names in the actual directory path are replaced by
 understores, and an extra underscore is appended at the end. In this
-example, the path r1d/iterator of the relevant directory relative to
-the src directory is translated into a variable name r1d_iterator_. The
+example, the path r1/iterator of the relevant directory relative to
+the src directory is translated into a variable name r1_iterator_. The
 value of this variable must be a space-separated list containing paths
 to all of the source files in this directory that should be compiled
 by the build system. The path for each file in this list must be given
@@ -63,15 +63,15 @@ named NewIterator.cpp To add a the new source file to the build system,
 one would simply add a backslash to the end of the last line of the
 existing definition of rpc_iterator_, and then add the path to the
 new source file as an additional line. The modified definition of
-r1d_iterator_ would like like this:
+r1_iterator_ would like like this:
 \code
-r1d_iterator_=\
-  r1d/iterator/Iterator.cpp \
-  r1d/iterator/IteratorFactory.cpp \
-  r1d/iterator/NrIterator.cpp \
-  r1d/iterator/BinaryRelaxIterator.cpp \
-  r1d/iterator/AmIterator.cpp \
-  r1d/iterator/NewIterator.cpp
+r1_iterator_=\
+  r1/iterator/Iterator.cpp \
+  r1/iterator/IteratorFactory.cpp \
+  r1/iterator/NrIterator.cpp \
+  r1/iterator/BinaryRelaxIterator.cpp \
+  r1/iterator/AmIterator.cpp \
+  r1/iterator/NewIterator.cpp
 \endcode
 The path to each new file must be given as a path relative to the src
 directory, as for existing files.

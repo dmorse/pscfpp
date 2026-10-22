@@ -429,7 +429,7 @@ these files are different for different programs.
 
 When a sweep is performed by the pscf_1d program, both a chemical 
 potential field and a monomer concentration field are always output, 
-and are both output in the \ref user_field_r1d_page "1D field file" 
+and are both output in the \ref user_field_r1_page "1D field file" 
 used by pscf_1d. Names for these files end with filename extension 
 ".w" for chemical potential fields and ".c" for monomer concentration 
 fields.

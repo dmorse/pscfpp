@@ -30,7 +30,7 @@ locations:
      that directory tree.
 
    - **Program-level subdirectories of src or bld (not program level)**:
-     The "all" target of makefiles in the r1d and rp directories of both
+     The "all" target of makefiles in the r1 and rp directories of both
      src or bld directory each creates one or more executable files, in
      addition to building a library and compiling source files located
      in that directory.
@@ -169,14 +169,14 @@ As already discussed, the src/ and bld/ directories have analogous
 internal structures, and either can be used as the "build" directory
 for, respectively, out-of-source or in-source builds.  The src and bld
 directories each contain 5 subdirectories named named util/, pscf/, 
-r1d/, and rp/ that we refer to as namespace-level directories.  Each 
+r1/, and rp/ that we refer to as namespace-level directories.  Each 
 namespace-level subdirectories in the bld/ directory contains a
 makefiles that is a copy of the makefile located in the corresponding 
 subdirectories of the src/ directory. These makefiles in the bld/
 directory are created by the configure script by copying corresponding
 makefiles located in the src/ directory.
 
-The namespace-level directories named r1d/ and rp/ are distinguished by 
+The namespace-level directories named r1/ and rp/ are distinguished by 
 the fact that each of these directories contains at one or more source 
 files that each define the main function for an executable program.
 We refer to these two directories as program-level directories. 
@@ -242,7 +242,7 @@ creation or recreation of any out-of-date object files in the list
 
 \section developer_build_makefile_program_sec Makefiles in program-level directories
 
-We now consider makefiles located in the r1d and rp program-level
+We now consider makefiles located in the r1 and rp program-level
 subdirectories of the src and bld directories. These makefiles each define
 two additional types of rules that do not exist in makefiles located in 
 the other namespace-level directories. The first additional type of rule 
@@ -256,7 +256,7 @@ source list (sources.mk) and dependency files (*.d) files from other
 namespace-level directories.
 
 <b> Example </b>: As an example, here is the body of the makefile in the
-src/r1d program-level directory, which creates the pscf_1d executable:
+src/r1 program-level directory, which creates the pscf_1d executable:
 
 \verbatim
 #------------------------------------------------------------------------
@@ -265,14 +265,14 @@ src/r1d program-level directory, which creates the pscf_1d executable:
 include ../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/r1d/sources.mk
-include $(SRC_DIR)/r1d/patterns.mk
+include $(SRC_DIR)/r1/sources.mk
+include $(SRC_DIR)/r1/patterns.mk
 
 #-----------------------------------------------------------------------
 # Paths to pscf_1d program files
 
 # Base path for pscf_1d.o and pscf_1d.d intermediate files 
-PSCF_1D=$(BLD_DIR)/r1d/pscf_1d
+PSCF_1D=$(BLD_DIR)/r1/pscf_1d
 
 # Path to pscf_1d executable file
 PSCF_1D_EXE=$(BIN_DIR)/pscf_1d
@@ -283,9 +283,9 @@ PSCF_1D_EXE=$(BIN_DIR)/pscf_1d
 all: $(PSCF_1D_EXE)
 
 clean:
-	rm -f $(r1d_OBJS)
-	rm -f $(r1d_DEPS)
-	rm -f $(r1d_LIB)
+	rm -f $(r1_OBJS)
+	rm -f $(r1_DEPS)
+	rm -f $(r1_LIB)
 	rm -f $(PSCF_1D).o $(PSCF_1D).d
 	rm -f *.o */*.o
 	rm -f *.d */*.d
@@ -295,7 +295,7 @@ clean:
 $(PSCF_1D_EXE): $(PSCF_1D).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_1D_EXE) $(PSCF_1D).o $(LIBS) 
 
-# Note: In the rule for pcsf_r1d, we include the list $(PSCF_LIBS) of 
+# Note: In the rule for pcsf_r1, we include the list $(PSCF_LIBS) of 
 # PSCF-specific libraries as prerequisiites, but link to the list 
 # $(LIBS) that also includes relevant external libraries.
 
@@ -306,7 +306,7 @@ $(PSCF_1D_EXE): $(PSCF_1D).o $(PSCF_LIBS)
 
 -include $(util_DEPS)
 -include $(pscf_DEPS)
--include $(r1d_DEPS)
+-include $(r1_DEPS)
 -include $(PSCF_1D).d
 
 \endverbatim
@@ -314,10 +314,10 @@ $(PSCF_1D_EXE): $(PSCF_1D).o $(PSCF_LIBS)
 Note the following elements of this file that are not present in the
 makefiles in the util and pscf namespace-level directories:
 
-  - Definition of a variable PSCF_1D = \$(BLD_DIR)/r1d/pscf_1d that 
+  - Definition of a variable PSCF_1D = \$(BLD_DIR)/r1/pscf_1d that 
     gives the common part of the paths for the object and dependency 
     files that are created by compiling the program source file 
-    src/r1d/pscf_1d.cpp, without the .o and .d file name suffixes.
+    src/r1/pscf_1d.cpp, without the .o and .d file name suffixes.
 
   - Definition of a variable PSCF_1D_EXE = \$(BIN_DIR)/pscf_1d that 
     gives the absolute path to the resulting executable file, which 
@@ -331,7 +331,7 @@ makefiles in the util and pscf namespace-level directories:
 
   - Include directives to source.mk files and dependency files that are
     located in the util and pscf namespace-level directories, as well as 
-    those located in the r1d directory that contains this makefile.
+    those located in the r1 directory that contains this makefile.
 
   - An include directive to include the dependency file \$(PSCF_1D).d
     associated with the main program source file.
@@ -387,7 +387,7 @@ endif
 all-cpu:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
-	cd r1d; $(MAKE) all
+	cd r1; $(MAKE) all
 	cd rp; $(MAKE) all
 
    .
@@ -408,7 +408,7 @@ makefile variable.
 
 The phony "all-cpu" target simply invokes make all within 5 of the
 6 namespace-level subdirectories, including the two program-level
-subdirectories r1d and rp that build the CPU programs pscf_1d and
+subdirectories r1 and rp that build the CPU programs pscf_1d and
 pscf_rpc, but excluding subdirectory rpg that contains CUDA C++ code
 for pscf_rpg.
 
