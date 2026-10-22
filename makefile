@@ -1,6 +1,6 @@
 include bld/config.mk
 # =========================================================================
-.PHONY:  all pscf_r1d pscf_rp html html-dev \
+.PHONY:  all pscf_1d pscf_rp html html-dev \
          clean clean-tests clean-bin clean-html veryclean 
 
 # =========================================================================
@@ -17,9 +17,9 @@ include bld/config.mk
 all:
 	cd bld; $(MAKE) all
 
-# Build the pscf_r1d 1D SCFT program
-pscf_r1d:
-	cd bld; $(MAKE) pscf_r1d
+# Build the pscf_1d 1D SCFT program
+pscf_1d:
+	cd bld; $(MAKE) pscf_1d
 
 # Build the pscf_rpc and/or pscf_rpg programs for periodic systems
 pscf_rp:

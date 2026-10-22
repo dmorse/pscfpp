@@ -55,9 +55,9 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #-----------------------------------------------------------------------
 # Compiler Pattern Rules (patterns.mk files):
 #
-# The top level subdirectories of src/ named util/, pscf/, prdc, r1d/, 
-# rpc/ and rpg/ each contain the source code defined in a particular
-# namespace, and are referred to here as namespace-level directories.
+# The top level subdirectories of src/ named util/, pscf/, prdc, r1/, 
+# and rp/ each contain the source code defined in a particular namespace,
+# and are referred to here as namespace-level directories.
 #
 # Each such namespace-level directory contains makefile fragments named
 # sources.mk and patterns.mk. The purposes of these files are as follows:
@@ -159,20 +159,20 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # defined in the sources.mk file located in the relevant namespace-level 
 # subdirectory of the src directory. 
 #
-# As an example,the rule for rpc directory, defined in src/rpc/sources.mk,
+# As an example,the rule for rc directory, defined in src/rp/sources.mk,
 # is of the form
 #
-# $(rpc_LIB): $(rpc_OBJS)
-# 	$(AR) rcs $(rpc_LIB) $(rpc_OBJS)
+# $(rp_LIB): $(rp_OBJS)
+# 	$(AR) rcs $(rp_LIB) $(rp_OBJS)
 #
 # Meanings of the makefile variables used in this example are:
 #
 #     - $(AR) is the name of archiver command used to create a library
 #
-#     - $(rpc_LIB) is an absolute path for the library file target
+#     - $(rp_LIB) is an absolute path for the library file target
 #
-#     - $(rpc_OBJS) is a string that contains a list of absolute paths
-#       for *.o object files in directory $(BLD_DIR)/rpc
+#     - $(rp_OBJS) is a string that contains a list of absolute paths
+#       for *.o object files in directory $(BLD_DIR)/rp
 #
 # The value of AR is defined in this config.mk file.  Rules for creating
 # libraries in other namespace-level directories are analogous.
@@ -187,7 +187,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # directory. 
 #
 # As an example, the recipe for creating the pscf_rpc executable is defined 
-# in the file rpc/makefile within the relevant build directory (bld or 
+# in the file rp/makefile within the relevant build directory (bld or 
 # src), and is of the form:
 #
 # $(PSCF_RPC_EXE): $(PSCF_RPC).o $(PSCF_LIBS) 
@@ -201,12 +201,12 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #     - $(PSCF_RPC) is the path to the object file for the main program, 
 #       with no file name extension, so that $(PSCF_RPC).o is the path to 
 #       the object file. In this example, $(PSCF_RPC) is given by 
-#       $(BLD_DIR)/rpc/pscf_rpc .
+#       $(BLD_DIR)/rp/pscf_rpc .
 #
 #     - $(PSCF_LIBS) is a list of options to add relevant static libraries 
 #       that are defined within the PSCF repository, in which each library 
 #       is added using the "-l" option. In this example, this is set to
-#       "-l$(RPC_LIB) -l$(PRDC_LIB) -l$(PSCF_LIB) -l$(UTIL_LIB)", where
+#       "-l$(RP_LIB) -l$(PRDC_LIB) -l$(PSCF_LIB) -l$(UTIL_LIB)", where
 #       each $(..._LIB) variable is the path to a static library.
 #
 #     - $(LIBS) is a list of all relevant libraries, including those
@@ -216,8 +216,8 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #     - $(LDFLAGS) is a list of options that are passed to the linker.
 #
 # The value of $(LDFLAGS) is defined in this config.mk file, and is 
-# empty by default. Values of $(PSCF_LIBS) and $(LIBS) are defined in 
-# the relevant patterns.mk file. Values of $(PSCF_EXE) and $(PSCF_RPC) 
+# empty by default. Values of $(PSCF_LIBS) and $(LIBS) are defined in the
+# relevant patterns.mk file. Values of $(PSCF_RPC_EXE) and $(PSCF_RPC) 
 # are defined within the makefile that defines this rule. The value 
 # of the $(PSCF_LIB) variable defined in each patterns.mk file is 
 # constructed using values of variables that give paths to PSCF libararies
