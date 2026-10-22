@@ -1,0 +1,68 @@
+/*
+* PSCF - Polymer Self-Consistent Field
+*
+* Copyright 2015 - 2026, The Regents of the University of Minnesota
+* Distributed under the terms of the GNU General Public License.
+*/
+
+#include "Solvent.h"
+#include <r1/field/Domain.h>
+
+namespace Pscf {
+namespace R1 { 
+
+   /*
+   * Constructor.
+   */
+   Solvent::Solvent() 
+    : SolventSpecies()  
+   {  setClassName("Solvent"); }
+
+   /*
+   * Destructor.
+   */
+   Solvent::~Solvent()
+   {}
+
+   /*
+   * Set association with Domain and allocate concentration field.
+   */
+   void Solvent::setDiscretization(Domain const & domain)
+   {
+      domainPtr_ = &domain;
+      int nx = domain.nx();
+      if (nx > 0) {
+         cField_.allocate(nx);
+      }
+   }
+
+   /*
+   * Compute concentration, q, and phi or mu.
+   */ 
+   void Solvent::compute(FieldT const & wField)
+   {
+      UTIL_CHECK(cField_.isAllocated());
+
+      // Evaluate unnormalized concentration, Boltzmann weight
+      int nx = domain().nx();
+      double s = size();
+      for (int i = 0; i < nx; ++i) {
+          cField_[i] = exp(-s*wField[i]);
+      }
+
+      // Compute spatial average q
+      double Q = domain().spatialAverage(cField_);
+
+      // Set q and compute mu or phi (depending on ensemble)
+      Species::setQ(Q);
+
+      // Normalize concentration 
+      double prefactor = phi()/Q;
+      for (int i = 0; i < nx; ++i) {
+          cField_[i] *= prefactor;
+      }
+    
+   }
+
+}
+}

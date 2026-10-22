@@ -71,7 +71,7 @@ expression str(thermo), and can be printed to screen using print(thermo).
 
 <b> Homogeneous comparison </b>
 
-In r1d, one can use the \ref scft_command_1d_homo_page
+In r1, one can use the \ref scft_command_1d_homo_page
 "COMPARE_HOMOGENEOUS" command to write data to a thermo file that
 compares the results to a corresponding homogeneous phase. This block
 of the thermo file is read into a Thermo object in the form of two

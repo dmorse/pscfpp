@@ -174,13 +174,13 @@ cp src/util/config.mk bld/util/config.mk
 cp src/makefile bld/makefile
 cp src/util/makefile bld/util/makefile
 cp src/pscf/makefile bld/pscf/makefile
-cp src/r1d/makefile bld/r1d/makefile
+cp src/r1/makefile bld/r1/makefile
 cp src/rp/makefile bld/rp/makefile
 
 # Copy makefiles in namespace level test directories
 cp src/util/tests/makefile bld/util/tests/makefile
 cp src/pscf/tests/makefile bld/pscf/tests/makefile
-cp src/r1d/tests/makefile bld/r1d/tests/makefile
+cp src/r1/tests/makefile bld/r1/tests/makefile
 cp src/rp/tests/cpp/makefile bld/rp/tests/cpp/makefile
 cp src/rp/tests/cuda/makefile bld/rp/tests/cuda/makefile
 

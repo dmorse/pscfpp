@@ -1,6 +1,6 @@
 include config.mk
 
-.PHONY: all util pscf r1d rp \
+.PHONY: all util pscf r1 rp \
         test test-cpu test-gpu \
         clean clean-tests veryclean
 
@@ -11,7 +11,7 @@ include config.mk
 all: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
-	cd r1d; $(MAKE) all
+	cd r1; $(MAKE) all
 	cd rp; $(MAKE) all
 
 # Build code in Util names (general scientific utilities)
@@ -27,7 +27,7 @@ pscf:
 pscf_1d: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
-	cd r1d; $(MAKE) all
+	cd r1; $(MAKE) all
 
 # Build pscf_rpc and/or pscf_rpg (install in BIN_DIR)
 rp: 
@@ -42,7 +42,7 @@ rp:
 test:
 	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
+	@cd r1/tests; $(MAKE) all; $(MAKE) run-quiet
 ifdef PSCF_CPP
 	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
 endif
@@ -51,7 +51,7 @@ ifdef PSCF_CUDA
 endif
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
-	@cat r1d/tests/count >> count
+	@cat r1/tests/count >> count
 ifdef PSCF_CPP
 	@cat rp/tests/cpp/count >> count
 endif
@@ -67,13 +67,13 @@ endif
 test-cpu:
 	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd r1d/tests; $(MAKE) all; $(MAKE) run-quiet
+	@cd r1/tests; $(MAKE) all; $(MAKE) run-quiet
 ifdef PSCF_CPP
 	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
 endif
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
-	@cat r1d/tests/count >> count
+	@cat r1/tests/count >> count
 ifdef PSCF_CPP
 	@cat rp/tests/cpp/count >> count
 endif
@@ -92,14 +92,14 @@ test-gpu:
 clean:
 	cd util; $(MAKE) clean
 	cd pscf; $(MAKE) clean
-	cd r1d;  $(MAKE) clean
+	cd r1;  $(MAKE) clean
 	cd rp;   $(MAKE) clean
 
 # Clean unit tests
 clean-tests:
 	cd util/tests; $(MAKE) clean
 	cd pscf/tests; $(MAKE) clean
-	cd r1d/tests; $(MAKE) clean
+	cd r1/tests; $(MAKE) clean
 	cd rp/tests/cpp;  $(MAKE) clean
 	cd rp/tests/cuda;  $(MAKE) clean
 
@@ -107,17 +107,17 @@ clean-tests:
 veryclean:
 	cd util; $(MAKE) veryclean
 	cd pscf; $(MAKE) veryclean
-	cd r1d; $(MAKE) clean
+	cd r1; $(MAKE) clean
 	cd rp;  $(MAKE) clean
 	rm -f util/config.mk
 ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/makefile
 	rm -f pscf/makefile
-	rm -f r1d/makefile
+	rm -f r1/makefile
 	rm -f rp/makefile
 	rm -f util/tests/makefile
 	rm -f pscf/tests/makefile
-	rm -f r1d/tests/makefile
+	rm -f r1/tests/makefile
 	rm -f rp/tests/cpp/makefile
 	rm -f rp/tests/cuda/makefile
 	rm -f setopts

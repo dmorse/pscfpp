@@ -103,8 +103,8 @@ that is defined in the patterns.mk file in each namespace-level directory
 only includes libraries associated with that namespace-level directory 
 and other such directories that it depends upon. In this example, the 
 value of PSCF_LIB thus contains paths to libraries associated with the 
-util, pscf, and rp namespace-level directories, but not with the r1d 
-program-level directories.
+util, pscf, and rp namespace-level directories, but not with the r1 
+program-level directory.
 
 <b> LIBS </b>: The variable LIBS is created by initializing its value
 to PSCF_LIB, and then adding makefile variables that contain compiler

@@ -154,7 +154,7 @@ functions that are defined in a different program-level namespace.
 For example, each of the two program-level namespaces uses a class or 
 class template named Polymer that represents one block polymer species.
 The executable pscf_1d uses a class named Polymer that is defined in 
-namespace Pscf::R1d, while pscf_rpc and pscf_rpg use different 
+namespace Pscf::R1, while pscf_rpc and pscf_rpg use different 
 specializations of a class template named Polymer that is defined 
 namespace Pscf::Rp.  Each of the program-level namespaces also contain 
 classes or class templates named Propagator, Block, Mixture, Solvent, 

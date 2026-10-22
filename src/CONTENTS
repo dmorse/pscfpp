@@ -1,5 +1,5 @@
 This src/ directory contains all C++ and CUDA C++ source code for the PSCF 
-package.  The subdirectories util, pscf, r1d, and rp, each contain source 
+package.  The subdirectories util, pscf, r1, and rp, each contain source 
 code for classes and functions defined in a particular C++ namespace. 
 The test subdirectory contains source code for a unit test framework.  
 Subdirectories util/ and test/ are maintained as separate github 
@@ -10,15 +10,15 @@ Subdirectories (with corresponding C++ namespace names in parentheses):
 
   util - general utilities for scientific computation (Util)
   pscf - classes accessible throughout the PSCF package (Pscf)
-  r1d  - real fields, one-dimensional SCFT (Pscf::R1d)
+  r1  - real fields, one-dimensional SCFT (Pscf::R1)
   rp   - SCFT & PS-FTS with real periodic fields (Pscf::Rp)
   test - unit testing framework (base classes)
 
 
-  Directories r1d and rp are "program level" directories that each
+  Directories r1 and rp are "program level" directories that each
   contain files that are used in only one program. All code in 
   each program-level directory is defined within a corresponding 
-  program-level namespace (i.e., Pscf::R1d or Pscf::Rp). By convention, 
+  program-level namespace (i.e., Pscf::R1 or Pscf::Rp). By convention, 
   code within one program-level namespace and directory may not include
   header files from a different program-level directory, and may not
   use names defined in a different program-level namespace.  Names of 

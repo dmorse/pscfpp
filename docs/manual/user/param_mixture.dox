@@ -473,7 +473,7 @@ an integer value of 50.
 
 <i> Technical comment (for users who examine the source code)</i>:
 A class or class template named Block is defined in each of the 
-program-level namespaces, Pscf::R1d and Pscf::Rp. Each such Block class 
+program-level namespaces, Pscf::R1 and Pscf::Rp. Each such Block class 
 or class template is derived from a common base class named Pscf::Edge. 
 The data for each line of the "blocks" array is read in using an 
 overloaded insertion (>>) operator for an Edge, which is a function with 
@@ -519,7 +519,7 @@ for both phi and mu or to omit both parameters.
 
 <i> Technical comment (for users who examine the source code)</i>:
 A class or class template named Solvent is defined in each of the
-program-level namespaces, Pscf::R1d and Pscf::Rp. Each such class or 
+program-level namespaces, Pscf::R1 and Pscf::Rp. Each such class or 
 class template is derived from a common base class named 
 Pscf::SolventSpecies. The parameter file format that is described above,
 which is used by all PSCF programs, is defined by the inherited public

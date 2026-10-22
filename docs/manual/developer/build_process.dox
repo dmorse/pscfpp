@@ -106,7 +106,7 @@ during an in-source build.
 
 <b> Main program files and executable files </b>
 
-The two program-level subdirectories of the src directory (named r1d,
+The two program-level subdirectories of the src directory (named r1,
 rp) each have at least one source file that contains the main program 
 function for an assoicated executable programs.  The base name of this 
 main program file is the same as the name of the executable file that 

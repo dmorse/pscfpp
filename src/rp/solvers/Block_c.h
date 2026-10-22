@@ -488,7 +488,7 @@ namespace Rp {
       return *waveListPtr_;
    }
 
-} // namespace R1d
+} // namespace Rp
 } // namespace Pscf
 
 // Explicit instantiation declarations

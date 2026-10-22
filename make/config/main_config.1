@@ -1,15 +1,14 @@
 #=========================================================================
 # file: $(BLD_DIR)/config.mk
 #
-# This makefile fragment is the main configuration file for the pscf
+# This makefile fragment is the main configuration file for the PSCF
 # build system.  A copy of this file is included by all other makefiles. 
 # This file is installed by the "configure" script, and may be edited 
-# by the user if needed. Copies of this file are installed in the src/
-# directory and in the bld directory. The copy in the src directory
-# controls in-source compilation, in which intermediate files are created
-# in the src directory tree, and the copy in the bld directory controls
-# out-of-source compilation in which these files are created in the bld
-# directory.
+# by the user as needed. Copies of this file are installed in the src/
+# and bld/ directories. The copy in the src/ directory controls in-source 
+# compilation, in which intermediate files are created in the src/
+# directory tree. The copy in the bld/ directory controls out-of-source 
+# compilation in which intermediate files are created in the bld/ directory.
 #
 # This file contains definitions of several types of makefile variables:
 # 
@@ -26,24 +25,28 @@
 #  - A variable PSCF_CPP that, if defined, enables compilation of code
 #    that uses a serial backend programmed in standard C++.
 #
-#  - Several variables that specify the names of the C++ and C++/CUDA 
+#  - Several variables that specify the names of the C++ and CUDA C++
 #    compilers, and command line options passed to both compilers.
 # 
-#  - Variable MAKEDEP and MAKEDEP_CUDA that give names for scripts used
-#    to automatically generate dependency (*.d) files.
+#  - Variables MAKEDEP and MAKEDEP_CUDA that give names for scripts used
+#    to automatically generate dependency files.
 #
+# The setopts script in the src/ or bld/ directory may be used to
+# define or undefine UTIL_DEBUG, PSCF_CUDA and PSCF_CPP from the command
+# line.
 #=========================================================================
 # Variables that define absolute directory paths
 #
-# In the config.mk file installed in each build directory (src or bld), 
+# In the config.mk file installed in each build directory (src/ or bld/), 
 # values of these variables are set by the configure script, and should
 # usually not need to be modified by users. If the pscf root directory
-# is moved, rerun the configure script to reset these variables.
+# is moved, however, one must rerun the configure script to reset these 
+# variables.
 
 # Absolute path to the pscfpp/ root directory
 ROOT_DIR=PWD
 
-# Path to the build directory (location for intermediate generated files)
+# Path to the build directory (location for intermediate files).
 # This should be the directory that contains this config.mk file
 BLD_DIR=$(ROOT_DIR)/=OWD
 
@@ -73,8 +76,8 @@ DAT_DIR=$(ROOT_DIR)/data
 #PSCF_CUDA=1
  
 # Note: The setopts script may be used to uncomment or comment out this
-# definition, by entering "./setopts -c1" to enable (uncomment) or 
-# "./setopts -c0" to disable (comment out) compilation of CUDA files.
+# definition, by entering "./setopts -u1" to enable (uncomment) or 
+# "./setopts -u0" to disable (comment out) compilation of CUDA files.
 #======================================================================
 # Conditional compilation of code that uses a CPU backend.
  
@@ -83,6 +86,6 @@ DAT_DIR=$(ROOT_DIR)/data
 PSCF_CPP=1
  
 # Note: The setopts script may be used to uncomment or comment out this
-# definition, by entering "./setopts -p1" to enable (uncomment) or
-# "./setopts -p0" to disable (comment out) the relevant C++ files.
+# definition, by entering "./setopts -c1" to enable (uncomment) or
+# "./setopts -c0" to disable (comment out) the relevant C++ files.
 #======================================================================
