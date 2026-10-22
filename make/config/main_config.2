@@ -35,10 +35,12 @@ MAKEDEP=$(BIN_DIR)/makeDepCpp
 MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 
 # The files $(BIN_DIR)/makeDepCpp and $(BIN_DIR)/makeDepCuda are 
-# executable python scripts that are installed in the $(BIN_DIR) by
-# the configure script.  These scripts are used during compilation to 
-# analyze dependencies among source and header files, and create *.d 
-# dependency files. Both scripts import a python module named pscfpp.make 
+# executable python scripts that are installed in the $(BIN_DIR) by the
+# configure script.  These scripts are used during compilation to analyze
+# dependencies among source and header files, and create dependency files.
+# A dependency file is a makefile fragment that lists the prerequisites
+# of an associated object file target as a makefile rule for creating
+# that target. Both scripts import a python module named pscfpp.make 
 # that is located in the $(ROOT_DIR)/lib/python/pscfpp directory. For 
 # the python interpreter to find this, directory $(ROOT_DIR)/lib/python 
 # must be in the users PYTHON_PATH environment variable.
@@ -55,26 +57,19 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #-----------------------------------------------------------------------
 # Compiler Pattern Rules (patterns.mk files):
 #
-# The top level subdirectories of src/ named util/, pscf/, prdc, r1/, 
-# and rp/ each contain the source code defined in a particular namespace,
-# and are referred to here as namespace-level directories.
+# The top level subdirectories of src/ named util/, pscf/, prdc/, r1/, 
+# and rp/ each contain the source code defined in a particular C++
+# namespace, and are referred to here as namespace-level directories.
 #
-# Each such namespace-level directory contains makefile fragments named
-# sources.mk and patterns.mk. The purposes of these files are as follows:
+# Each such namespace-level directory contains files named sources.mk and
+# patterns contain makefile fragments that are included by other makefiles.
+# The purposes of these files are as follows:
 # 
 #    sources.mk  defines a list of source files in the directory
 #    patterns.mk defines pattern rules for compilation 
 # 
-# The makefile files within each namespace-level directory includes the 
-# sources.mk and patterns.mk files from that namespace-level directory
-# and the sources.mk files from any other namespace-level directories on
-# which that one depends.
-#
-# The use of a different patterns.mk rule in different namespace-level
-# directory allows for the possibility of slightly different pattern rules
-# in different directories. This freedom is currently not used in PSCF -
-# identical pattern rules for C++ and CUDA C++ files are used in all
-# namespace-level directories.
+# All makefiles within each namespace-level directory includes the 
+# sources.mk and patterns.mk files from that namespace-level directory.
 #
 # Compiling standard C++ (*.cpp) source files
 # -------------------------------------------
@@ -105,11 +100,11 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # The variable $(CPPFLAGS) defines flags that are used by the C/C++ 
 # preprocessor. This may include strings that use the -D option to pass
 # definitions of preprocessor variables to the compiler. This string
-# normally contains the string "-DUTIL_CXX11", which enables compilation
+# normally contains the string "-D UTIL_CXX11", which enables compilation
 # of code that uses features of the C++11 standard in the some files in
-# the src/util directory. When debuggin is enabled (i.e., when the
+# the src/util/ directory. When debugging is enabled (i.e., when the
 # makefile variable UTIL_DEBUG is defined), it also contains a string
-# "-DUTIL_DEBUG" that defines a corresponding C preprocessor variable
+# "-D UTIL_DEBUG" that defines a corresponding C preprocessor variable
 # named UTIL_DEBUG.
 #
 # The variable $(CXXFLAGS) specifies additonal compiler options that are 
