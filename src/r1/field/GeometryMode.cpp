@@ -8,7 +8,7 @@
 #include <util/global.h>     // uses UTIL_THROW
 #include "GeometryMode.h"    // class header
 
-namespace Pscf{
+namespace Pscf {
 namespace R1
 {
 

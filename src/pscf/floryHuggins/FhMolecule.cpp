@@ -7,7 +7,7 @@
 
 #include "FhMolecule.h"  
 
-namespace Pscf{ 
+namespace Pscf { 
 
    /*
    * Constructor.

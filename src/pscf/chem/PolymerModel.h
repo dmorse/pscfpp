@@ -12,7 +12,7 @@
 #include <iostream>
 
 
-namespace Pscf{
+namespace Pscf {
 
    /**
    * Enumeration and functions to specify a model for polymer chains.

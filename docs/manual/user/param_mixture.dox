@@ -216,16 +216,13 @@ Comments:
 
 <i> Technical comments (for users who examine the source code) </i>:
 
-The source code for PCSF is defined within a C++ namespace named Pscf.
-This top-level namespace contains several enclosed namespaces named
-Prdc, R1d, and Rp. Namespace Pscf::Prdc contains code relevant to 
-problems involving periodic boundary conditions, which is used to
-construct both pscf_rpc and pscf_rpg.  The enclosed namespaces named 
-R1d and Rp each code that is only used by a single executable program 
-(pscf_1d) a set of programs that perform the same calculations using
-different hardward (pscf_rpc and pscf_rpg). 
+The source code for PCSF is defined within a C++ namespace named Pscf
+that contains several enclosed namespaces. Enclosed namespaces named 
+R1 and Rp each contain code that is only used by a single executable
+(pscf_1d) or several executables that perform the same calculations 
+using different backends (pscf_rpc and pscf_rpg). 
 
-We refer to the enclosed namespaces R1d and Rp throughout this
+We refer to the enclosed namespaces R1 and Rp throughout this
 documentation as program-level namespaces, because each contains files
 that are only used within a single executable program. By convention,
 code defined in a program-level namespace may not use names defined in
@@ -235,7 +232,7 @@ identical names to be used for several analogous classes in different
 program-level namespaces without causing name clashes or ambiguity.
 
 Each program-level namespace contains a class or class template named
-Mixture. The R1d namespace contains a class named Mixture. The Rp 
+Mixture. The R1 namespace contains a class named Mixture. The Rp 
 namespace contain a class template Mixture<int D, typename T>, for 
 which the integer dimensionality of space D is a template parameter
 and T is a "backend identifier class" that is used to distinguish
@@ -329,7 +326,7 @@ branched polymers are discussed separately below.
 
 <i> Technical comment (for users who examine the source code)</i>:
 A class or class template named Polymer is defined in each program-level
-namespace of the top-level Pscf namespace (i.e., in the R1d and Rp 
+namespace of the top-level Pscf namespace (i.e., in the R1 and Rp 
 sub-namespaces of Pscf). These Polymer classes all use the same parameter
 file format, which is described above. Each of these Polymer classes is
 indirectly derived from a common base class named Pscf::PolymerSpecies.

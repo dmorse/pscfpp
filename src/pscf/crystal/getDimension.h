@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-namespace Pscf{
+namespace Pscf {
 
    /*
    * Get dimension of space from command line options.

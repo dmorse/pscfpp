@@ -141,7 +141,7 @@ to represent residual vectors and solution vectors.
 
 PSCF currently contains code for three programs (pscf_1d, pscf_rpc and 
 pscf_rpg, respectively) that are constructed using source code from 
-two corresonding program-level namespaces named Pscf:R1d and Pscf::Rp.
+two corresonding program-level namespaces named Pscf:R1 and Pscf::Rp.
 Many of the data structures and algorithms used in different PSCF 
 programs are closely analogous, but are implemented as distinct but 
 analogous classes defined in different program level namespaces. 

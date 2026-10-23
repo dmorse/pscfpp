@@ -952,10 +952,8 @@ INPUT                  = manual/main.dox \
                          ../src/programs.mod \
                          ../src/util \
                          ../src/pscf \
-                         ../src/prdc \
-                         ../src/r1d \
-                         ../src/rpc \
-                         ../src/rpg \
+                         ../src/r1 \
+                         ../src/rp \
                          ../src/test \
                          ../lib/python/pscfpp
 

@@ -11,7 +11,7 @@
 #include <util/archives/serialize.h>
 #include <iostream>
 
-namespace Pscf{
+namespace Pscf {
 namespace R1
 {
 
