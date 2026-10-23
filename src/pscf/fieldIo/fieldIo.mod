@@ -5,7 +5,7 @@ namespace Pscf{
    *
    * Utilities for manipulating periodic fields.
    *
-   * \ingroup Pscf_Prdc_Module
+   * \ingroup Pscf_Base_Module
    */
 
 }

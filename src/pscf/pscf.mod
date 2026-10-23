@@ -12,7 +12,7 @@ namespace Pscf{
    */
 
    /**
-   * \defgroup Pscf_Base_Module Pscf - Base Module
+   * \defgroup Pscf_Base_Module Pscf - Base
    *
    * Classes and functions accessible throughout PSCF.
    *

@@ -10,24 +10,21 @@ Subdirectories (with corresponding C++ namespace names in parentheses):
 
   util - general utilities for scientific computation (Util)
   pscf - classes accessible throughout the PSCF package (Pscf)
-  r1  - real fields, one-dimensional SCFT (Pscf::R1)
-  rp   - SCFT & PS-FTS with real periodic fields (Pscf::Rp)
+  r1 - real fields, one-dimensional SCFT (Pscf::R1)
+  rp - SCFT & PS-FTS with real periodic fields (Pscf::Rp)
   test - unit testing framework (base classes)
 
 
-  Directories r1 and rp are "program level" directories that each
-  contain files that are used in only one program. All code in 
-  each program-level directory is defined within a corresponding 
-  program-level namespace (i.e., Pscf::R1 or Pscf::Rp). By convention, 
-  code within one program-level namespace and directory may not include
-  header files from a different program-level directory, and may not
-  use names defined in a different program-level namespace.  Names of 
-  classes and other entitites defined in the util and pscf directories 
-  may be used in either namespace level namespace or directory.
+  Directories r1 and rp are "program level" directories that each contain
+  code to build one or more executables.  All code in each program-level 
+  directory is defined within a corresponding program-level namespace, 
+  Pscf::R1 or Pscf::Rp. By convention, code in one program-level directory
+  and namespace and may not include header files or use names from a 
+  different program-level directory and namespace.
 
 Files (maintained in the git repository):
 
-  setopts  - script for managing compile-time options
+  setopts - bash script for managing compile-time options
   makefile - main makefile for in-source compilation (build in src)
   programs.mod - doxygen page for program command-line interfaces
   CONTENTS - this file

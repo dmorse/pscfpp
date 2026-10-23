@@ -35,7 +35,7 @@ namespace Pscf {
    * an interface to specializations of the field container templates
    * RField, RFieldDf, and CField with a backend T=CppTp<D>.
    *
-   * \ingroup Prdc_Cpu_Module
+   * \ingroup Pscf_Field_Cpp_Module
    */
    template <int D>
    class FFT<D,CPT>

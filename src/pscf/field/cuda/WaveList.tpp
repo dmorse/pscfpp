@@ -821,7 +821,8 @@ namespace Pscf {
    * Gather data from device and re-arrange if necessary.
    */
    template <int D>
-   HostSendArray<IntVec<D>,CUT> const & WaveList<D,CUT>::minImages_h() const
+   HostSendArray<IntVec<D>,CUT> const & 
+   WaveList<D,CUT>::minImages_h() const
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {

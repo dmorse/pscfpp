@@ -22,7 +22,7 @@ namespace Pscf {
    /**
    * Comparator for CField (k-grid) arrays, defined in device memory.
    *
-   * \ingroup Prdc_Cuda_Module
+   * \ingroup Pscf_Field_Cuda_Module
    */
    template <int D>
    class CFieldComparison<D,CUT>

@@ -26,7 +26,7 @@ namespace Pscf {
    /**
    * Field of complex values on a regular mesh, allocated on a GPU device.
    *
-   * \ingroup Prdc_Cuda_Module 
+   * \ingroup Pscf_Field_Cuda_Module 
    */
    template <int D>
    class CField<D,CUT>
@@ -45,7 +45,7 @@ namespace Pscf {
       *
       * Calls allocate(meshDimension) internally. 
       *
-      * \param meshDimensions numbers of grid points in each dimension
+      * \param meshDimensions  numbers of grid points in each dimension
       */
       CField(IntVec<D> const & meshDimensions);
 
@@ -54,9 +54,9 @@ namespace Pscf {
       *
       * Allocates new memory and copies all elements by value.
       *
-      * \param other the CField to be copied.
+      * \param other  the CField to be copied.
       */
-      CField(CField const & other);
+      CField(CField<D,CUT> const & other);
 
       /**
       * Destructor.
@@ -70,7 +70,7 @@ namespace Pscf {
       *
       * \throw Exception if the CField is already allocated.
       *
-      * \param meshDimensions number of grid points in each dimension
+      * \param meshDimensions  number of grid points in each dimension
       */
       void allocate(IntVec<D> const & meshDimensions);
 
@@ -84,9 +84,9 @@ namespace Pscf {
       *
       * \throw Exception if the array is already allocated.
       *
-      * \param arr parent array that owns the data
-      * \param beginId index in the parent array at which this array starts
-      * \param meshDimensions number of grid points in each dimension
+      * \param arr  parent array that owns the data
+      * \param beginId  index in the parent array at which this array starts
+      * \param meshDimensions  number of grid points in each dimension
       */
       void associate(DeviceArray<cudaComplex,CUT>& arr, int beginId, 
                      IntVec<D> const & meshDimensions);
@@ -102,7 +102,7 @@ namespace Pscf {
       * both LHS and RHS objects are allocated on entry, the 
       * capacities must be equal. 
       * 
-      * \param other the RHS CField<D,CUT>
+      * \param other  the RHS CField<D,CUT>
       */
       CField<D,CUT>& operator = (CField<D,CUT> const & other);
 
@@ -115,7 +115,7 @@ namespace Pscf {
       * The RHS HostSendArray<cudaComplex,CUT> and LHS CField<D,CUT> must both be 
       * allocated with equal capacity values on entry. 
       * 
-      * \param other the RHS HostSendArray<cudaComplex,CUT>
+      * \param other  the RHS HostSendArray<cudaComplex,CUT>
       */
       CField<D,CUT>& operator = (HostSendArray<cudaComplex,CUT> const & other);
 
@@ -127,7 +127,7 @@ namespace Pscf {
       /**
       * Serialize a Field to/from an Archive.
       *
-      * \param ar       archive
+      * \param ar  archive
       * \param version  archive version id
       */
       template <class Archive>

@@ -28,7 +28,7 @@ namespace Pscf {
    *
    * Type cudaReal is float or double, depending on preprocessor macro.
    *
-   * \ingroup Prdc_Cuda_Module
+   * \ingroup Pscf_Field_Cuda_Module
    */
    template <int D>
    class RField<D,CUT>

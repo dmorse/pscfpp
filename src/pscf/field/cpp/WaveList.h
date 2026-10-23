@@ -8,12 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/CPT.h>     // backend identifier class
+#include <pscf/backend/cpp/CPT.h>     // template argument
 #include <pscf/field/cpp/RField.h>    // member
 #include <pscf/math/IntVec.h>         // member
 #include <util/containers/DArray.h>   // member
 #include <util/containers/GArray.h>   // member
 #include <util/containers/Pair.h>     // member
+
 #include <util/global.h>              // inline functions
 
 // Forward declarations
@@ -61,7 +62,7 @@ namespace Pscf {
    * properties as being outdated, indicating that they are outdated and
    * thus must be recalculated before the next use.
    *
-   * \ingroup Prdc_Cpu_Module
+   * \ingroup Pscf_Field_Cpp_Module
    */
    template <int D>
    class WaveList<D,CPT>
@@ -82,6 +83,10 @@ namespace Pscf {
       * Destructor
       */
       ~WaveList();
+
+      // Prohibit copy construction and assignment.
+      WaveList(WaveList<D,CPT> const &) = delete;
+      WaveList<D,CPT>& operator = (WaveList<D,CPT> const &) = delete;
 
       /**
       * Allocate memory and set association with a Mesh and UnitCell object.

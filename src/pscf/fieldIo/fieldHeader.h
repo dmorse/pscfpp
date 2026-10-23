@@ -33,7 +33,7 @@ namespace Pscf {
    * \param cell  UnitCell<D> object (output)
    * \param groupName  string identifier for space group (output)
    * \param nMonomer  number of monomers (output)
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_FieldIo_Module
    */
    template <int D>
    void readFieldHeader(std::istream& in, int& ver1, int& ver2, 
@@ -55,7 +55,7 @@ namespace Pscf {
    * \param cell  UnitCell<D> object (input)
    * \param groupName  string identifier for space group (input)
    * \param nMonomer  number of monomers (input)
-   * \ingroup Prdc_Crystal_Module
+   * \ingroup Pscf_FieldIo_Module
    */
    template <int D>
    void writeFieldHeader(std::ostream &out, int ver1, int ver2,
@@ -74,6 +74,7 @@ namespace Pscf {
    *
    * \param in  input stream
    * \param meshDimensions  expected values for mesh dimensions
+   * \ingroup Pscf_FieldIo_Module
    */
    template <int D>
    void readMeshDimensions(std::istream& in,
@@ -86,6 +87,7 @@ namespace Pscf {
    * 
    * \param out output stream
    * \param meshDimensions  vector of integer mesh dimensions
+   * \ingroup Pscf_FieldIo_Module
    */
    template <int D>
    void writeMeshDimensions(std::ostream &out,

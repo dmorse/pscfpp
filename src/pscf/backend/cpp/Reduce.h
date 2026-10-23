@@ -31,12 +31,12 @@ namespace Pscf {
    * values because the fftw_complex type is an alias for an array types,
    * double[2], that cannot be returned by value.
    *
-   * \defgroup Pscf_Cpp_Reduce_Module Reduce (C++ backend)
+   * \defgroup Pscf_Reduce_Cpp_Module Reduce (C++ backend)
    * \ingroup Pscf_Backend_Cpp_Module
    */
 
    /**
-   * Functions that perform array reductions (C++ backend).
+   * Functions that perform array reductions.
    */
    namespace Reduce {
 
@@ -45,7 +45,7 @@ namespace Pscf {
       /**
       * Compute sum of array elements (real).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       * \return  sum of all array elements
@@ -55,7 +55,7 @@ namespace Pscf {
       /**
       * Compute sum of elements of an array slice (real).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       * \param begin  index of first element in slice
@@ -67,7 +67,7 @@ namespace Pscf {
       /**
       * Compute sum of of squares of array elements (real).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       */
@@ -76,7 +76,7 @@ namespace Pscf {
       /**
       * Compute sum of all elements of an array (complex).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param a  input array
       * \return sum of all elements of complex array a
@@ -86,7 +86,7 @@ namespace Pscf {
       /**
       * Compute sum of elements of an array slice (complex).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param a  input array
       * \param begin  index of first element of slice
@@ -99,7 +99,7 @@ namespace Pscf {
       /**
       * Compute sum of squares of elements of a complex array.
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param a  input array
       * \return complex sum of squares of elements of array a
@@ -111,7 +111,7 @@ namespace Pscf {
       /**
       * Compute Euclidean inner product of two real arrays .
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param a  first input array
       * \param b  second input array
@@ -122,7 +122,7 @@ namespace Pscf {
       /**
       * Compute sum of complex products of elements of two arrays (complex).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param a  first input array
       * \param b  second input array
@@ -136,7 +136,7 @@ namespace Pscf {
       /**
       * Get maximum of array elements (real).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       */
@@ -145,7 +145,7 @@ namespace Pscf {
       /**
       * Get value of maximum element in an array slice (real).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       * \param begin  index of first element in slice
@@ -157,7 +157,7 @@ namespace Pscf {
       /**
       * Get maximum absolute magnitude of array elements .
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       * \return  maximum absolute value
@@ -169,7 +169,7 @@ namespace Pscf {
       /**
       * Get minimum of array elements .
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       * \return  value of minimum element
@@ -179,7 +179,7 @@ namespace Pscf {
       /**
       * Get value of minimum element in an array slice (real).
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       * \param begin  index of first element in slice
@@ -191,7 +191,7 @@ namespace Pscf {
       /**
       * Get minimum absolute magnitude of array elements .
       *
-      * \ingroup Pscf_Cpp_Reduce_Module
+      * \ingroup Pscf_Reduce_Cpp_Module
       *
       * \param in  input array
       * \return  value of minimum absolute value of all elements

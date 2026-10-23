@@ -22,7 +22,7 @@ namespace Pscf {
    /**
    * Comparator for fields in real-space (r-grid) format.
    * 
-   * \ingroup Prdc_Cpu_Module
+   * \ingroup Pscf_Field_Cpp_Module
    */
    template <int D>
    class RFieldComparison<D,CPT>

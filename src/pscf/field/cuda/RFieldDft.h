@@ -30,7 +30,7 @@ namespace Pscf {
    * located in global GPU memory. All member functions are C++ functions 
    * that can be called from the host CPU. 
    *
-   * \ingroup Prdc_Cuda_Module
+   * \ingroup Pscf_Field_Cuda_Module
    */
    template <int D>
    class RFieldDft<D,CUT>

@@ -15,7 +15,7 @@
 namespace Pscf {
 
    /**
-   * \defgroup Pscf_Math_Arithmetic_Module Arithmetic Functions
+   * \defgroup Pscf_Math_Arithmetic_Module Arithmetic
    *
    * Overloaded functions and function templates for arithmetic operations 
    * using built-in real types and/or C++ standard library complex types.

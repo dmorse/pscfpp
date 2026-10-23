@@ -66,7 +66,7 @@ namespace Pscf {
       /**
       * Set the molecular volume of this solvent species.
       *
-      * The ``size" is the ratio (solvent molecule volume) / vMonomer,
+      * The size is the ratio (solvent molecule volume) / vMonomer,
       * where vMonomer is the monomer reference volume, i.e., the
       * volume per monomer (or unit contour length) of any polymer.
       *

@@ -8,25 +8,29 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/CUT.h>           // template argument
-#include <pscf/field/cuda/RField.h>          // member
-#include <pscf/backend/cuda/DeviceArray.h>   // member
-#include <pscf/backend/cuda/HostSendArray.h> // member
-#include <pscf/math/IntVec.h>                // member
-#include <util/containers/DArray.h>          // member
-#include <util/containers/GArray.h>          // member
-#include <util/containers/Pair.h>            // member
+#include <pscf/backend/cuda/CUT.h>            // template argument
+#include <pscf/field/cuda/RField.h>           // member
+//#include <pscf/backend/cuda/DeviceArray.h>    // member
+//#include <pscf/backend/cuda/HostSendArray.h>  // member
+#include <pscf/math/IntVec.h>                 // member
+#include <util/containers/DArray.h>           // member
+#include <util/containers/GArray.h>           // member
+#include <util/containers/Pair.h>             // member
+
+#include <util/global.h>                      // inline functions
 
 // Forward declarations
 namespace Pscf {
    template <int D> class Mesh;
    template <int D> class UnitCell;
-   template <int D, class T> class WaveList;
 }
 
 namespace Pscf {
 
    using namespace Util;
+
+   // Declare primary template
+   template <int D, class T> class WaveList;
 
    /**
    * Class to compute and store properties associated with wavevectors.
@@ -60,7 +64,7 @@ namespace Pscf {
    * properties as being outdated, indicating that they are outdated and
    * thus must be recalculated before the next use.
    *
-   * \ingroup Prdc_Cuda_Module
+   * \ingroup Pscf_Field_Cuda_Module
    */
    template <int D>
    class WaveList<D,CUT>
@@ -78,12 +82,16 @@ namespace Pscf {
       WaveList(bool isRealField = true);
 
       /**
-      * Destructor
+      * Destructor.
       */
       ~WaveList();
 
+      // Prohibit copy construction and assignment
+      WaveList(WaveList<D,CUT> const&) = delete;
+      WaveList<D,T>& operator = (WaveList<D,CUT> const&) = delete;
+
       /**
-      * Allocate memory and set association with a Mesh and UnitCell object.
+      * Allocate memory and associate with Mesh and UnitCell objects.
       *
       * \param m  spatial discretization mesh (input)
       * \param c  crystallographic unit cell (input)
@@ -202,7 +210,7 @@ namespace Pscf {
       * In the latter case, there are no implicit waves, so the prefactor
       * is always 1.0.
       *
-      * \param i index of lattice parameter
+      * \param i  index of lattice parameter
       */
       RField<D,CUT> const & dKSq(int i) const;
 
@@ -256,7 +264,7 @@ namespace Pscf {
       DArray<int> const & bunchIds() const;
 
       /**
-      * Return the dimensions of the k-space mesh.
+      * Get the dimensions of the k-space mesh.
       *
       * If isRealField() == true, the reciprocal-space grid is smaller
       * than the real-space grid. Otherwise, the two grids are identical.
@@ -265,7 +273,7 @@ namespace Pscf {
       {  return kMeshDimensions_; }
 
       /**
-      * Return the number of points in the k-space mesh.
+      * Get the number of points in the k-space mesh.
       *
       * If isRealField() == true, kSize is approximately half the size
       * of the real-space grid.  Otherwise, the two grids are identical.
@@ -275,7 +283,7 @@ namespace Pscf {
       {  return kSize_; }
 
       /**
-      * Return the number of bunches of sorted waves.
+      * Get the number of bunches of sorted waves.
       */
       int nBunch() const
       {
@@ -342,7 +350,7 @@ namespace Pscf {
       */
       DeviceArray<int,CUT> minImages_;
 
-      /**
+      /*
       * Array of IntVec<D> minimum images for waves, stored on the host.
       *
       * Each element of minImageVecs_ contains all D coordinates of the
@@ -373,10 +381,10 @@ namespace Pscf {
       * Array of RFields, where each RField is a slice of the dKSq_ array.
       *
       * The number of elements is equal to nParam, the number of unit cell
-      * parameters.  Element dKSqSlices_[i] is an  RField<D,CUT> element that
-      * is associated with a slice of the larger dKSq_ device array, and
-      * that contains derivatives of square wavevectors with respect to
-      * unit cell parameter number i.
+      * parameters.  Element dKSqSlices_[i] is an  RField<D,CUT> element
+      * that is associated with a slice of the larger dKSq_ device array,
+      * and that contains derivatives of square wavevectors with respect
+      * to unit cell parameter number i.
       *
       * The dKSqSlices_ container should appear after dKSq_ in the
       * declaration of class members in order to gurantee that the
@@ -386,7 +394,7 @@ namespace Pscf {
       DArray< RField<D,CUT> > dKSqSlices_;
 
       /**
-      * Array indicates whether a wavevector has an implicit partner (device).
+      * Array indicates if a wavevector has an implicit partner (device).
       *
       * This array is only allocated and used if isRealField_ is true, in
       * which case it has size kSize_. The copy in device memory is only
@@ -435,8 +443,8 @@ namespace Pscf {
       /**
       * Dimensions of the mesh in reciprocal space.
       *
-      * If isRealField_ is true, kMeshDimensions_ is equal to the vector
-      * of dimensions of the reciprocal space grid used by a RFieldDft<D,CUT>
+      * If isRealField_ is true, kMeshDimensions_ is equal to the vector of
+      * dimensions of the reciprocal space grid used by a RFieldDft<D,CUT>
       * container to store the discrete Fourier transform of a real field.
       * One dimension of this mesh is approximately half the corresponding
       * dimension of the associated real space grid.  If isRealField_
@@ -461,7 +469,7 @@ namespace Pscf {
       */
       int nBunch_;
 
-      /// Has memory been allocated for private member arrays?
+      /// Has memory been allocated for private member arrays ?
       bool isAllocated_;
 
       /// Do valid minimum images exist (array minImages_) ?
@@ -483,19 +491,19 @@ namespace Pscf {
       /// Will this WaveList be used for real-valued fields?
       bool isRealField_;
 
-      /// Pointer to associated UnitCell<D> object
+      /// Pointer to associated UnitCell<D> object.
       UnitCell<D> const * unitCellPtr_;
 
-      /// Pointer to associated Mesh<D> object
+      /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
 
       // Private member functions
 
-      /// Access associated UnitCell<D> by reference.
+      /// Access associated UnitCell<D> by const reference.
       UnitCell<D> const & unitCell() const
       {  return *unitCellPtr_; }
 
-      /// Access associated Mesh<D> by reference.
+      /// Access associated Mesh<D> by const reference.
       Mesh<D> const & mesh() const
       {  return *meshPtr_; }
 

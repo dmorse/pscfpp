@@ -28,7 +28,7 @@ namespace Pscf {
    /**
    * Comparator for CField (k-grid) arrays.
    *
-   * \ingroup Prdc_Cpu_Module
+   * \ingroup Pscf_Field_Cpp_Module
    */
    template <int D>
    class CFieldComparison<D,CPT>

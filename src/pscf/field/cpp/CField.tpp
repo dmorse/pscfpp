@@ -37,7 +37,7 @@ namespace Pscf {
    * Allocates new memory and copies all elements by value.
    */
    template <int D>
-   CField<D,CPT>::CField(const CField<D,CPT>& other)
+   CField<D,CPT>::CField(CField<D,CPT> const & other)
     : DeviceArray<fftw_complex,CPT>(),
       meshDimensions_()
    {

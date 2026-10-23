@@ -1,6 +1,7 @@
 include bld/config.mk
 # =========================================================================
-.PHONY:  all pscf_1d pscf_rp html html-dev \
+.PHONY:  all pscf_1d pscf_rp test \
+         html html-dev \
          clean clean-tests clean-bin clean-html veryclean 
 
 # =========================================================================
@@ -33,21 +34,11 @@ pscf_rp:
 test:
 	cd bld; $(MAKE) test
  
-test-cpu:
-	cd bld; $(MAKE) test-cpu
- 
-test-gpu:
-	cd bld; $(MAKE) test-gpu
- 
-
 # =========================================================================
 # HTML Documentation
  
 html:
 	cd docs; $(MAKE) html
-
-html-dev:
-	cd docs; $(MAKE) html-dev
 
 # =========================================================================
 # Clean-up targets

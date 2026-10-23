@@ -40,7 +40,7 @@ namespace Pscf {
    * take standard Array containers as inputs and perform calculations
    * on the CPU.
    *
-   * \defgroup Pscf_Cuda_Reduce_Module Reduce (Cuda)
+   * \defgroup Pscf_Reduce_Cuda_Module Reduce (Cuda)
    * \ingroup Pscf_Backend_Cuda_Module
    */
 
@@ -56,7 +56,7 @@ namespace Pscf {
       /**
       * Return sum of elements of a real array.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \return  sum of elements
@@ -66,7 +66,7 @@ namespace Pscf {
       /**
       * Return sum of elements of a real array slice.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \param begin  index of first element of slice
@@ -78,7 +78,7 @@ namespace Pscf {
       /**
       * Return sum of all elements of a complex array.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  complex input array
       * \return  complex sum of elements
@@ -88,7 +88,7 @@ namespace Pscf {
       /**
       * Return sum of elements of a complex array slice.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \param begin  index of first element of slice
@@ -106,7 +106,7 @@ namespace Pscf {
       * This function returns the square of the Euclidean norm for a
       * real array.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \return  sum of squares of elements
@@ -119,7 +119,7 @@ namespace Pscf {
       * This function returns the complex sum of complex squares of
       * elements. This is not the square of the Hilbert space norm.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \return  sum of complex squares of elements
@@ -133,7 +133,7 @@ namespace Pscf {
       * magnitude of all elements of a complex array. This is the square
       * of the conventional Hilbert space norm.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \return  sum of squared absolute magnitude of elements
@@ -143,7 +143,7 @@ namespace Pscf {
       /**
       * Return the inner product of two real arrays.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param a  first real input array
       * \param b  second real input array
@@ -157,7 +157,7 @@ namespace Pscf {
       /**
       * Return maximum of all real array elements.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \return  value of maximum element
@@ -167,7 +167,7 @@ namespace Pscf {
       /**
       * Return maximum of elements of a real array slice.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \param begin  index of first element of slice
@@ -179,7 +179,7 @@ namespace Pscf {
       /**
       * Get maximum absolute magnitude of real array elements.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \return  magnitude of element of maximum magnitude
@@ -191,7 +191,7 @@ namespace Pscf {
       /**
       * Return minimum of all real array elements.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \return  value of minimum element
@@ -201,7 +201,7 @@ namespace Pscf {
       /**
       * Return minimum of elements of a real array slice.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \param begin  index of first element of slice
@@ -213,7 +213,7 @@ namespace Pscf {
       /**
       * Return minimum absolute magnitude of real array elements.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       *
       * \param in  real input array
       * \return  magnitude of element of minimum magnitude
@@ -225,7 +225,7 @@ namespace Pscf {
       /**
       * Free any private work space currently allocated for reductions.
       *
-      * \ingroup Pscf_Cuda_Reduce_Module
+      * \ingroup Pscf_Reduce_Cuda_Module
       */
       void freeWorkSpace();
 

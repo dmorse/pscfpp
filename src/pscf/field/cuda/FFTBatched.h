@@ -22,7 +22,7 @@ namespace Pscf {
    /**
    * Batched Fourier transform wrapper for real data.
    *
-   * \ingroup Prdc_Cuda_Module
+   * \ingroup Pscf_Field_Cuda_Module
    */
    template <int D>
    class FFTBatched

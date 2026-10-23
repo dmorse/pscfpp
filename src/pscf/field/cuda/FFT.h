@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cuda/CUT.h>   // class template argument
-#include "RFieldDft.h"          // member
-#include <pscf/math/IntVec.h>   // member
+#include <pscf/backend/cuda/CUT.h>  // class template argument
+#include "RFieldDft.h"              // member
+#include <pscf/math/IntVec.h>       // member
 
 #include <util/global.h>
 #include <cufft.h>
@@ -34,7 +34,7 @@ namespace Pscf {
    * providing an interface to the field container classes RField<D,CUT>, 
    * RField<Dft>, and CField<D,CUT> in namespace Pscf::Prdc::Cuda.
    *
-   * \ingroup Prdc_Cuda_Module
+   * \ingroup Pscf_Field_Cuda_Module
    */
    template <int D>
    class FFT<D,CUT>
@@ -53,9 +53,9 @@ namespace Pscf {
       virtual ~FFT();
 
       /**
-      * Setup grid dimensions, plans and work space.
+      * Setup mesh dimensions, plans and work space.
       *
-      * \param meshDimensions Dimensions of real-space grid.
+      * \param meshDimensions  dimensions of the real-space mesh
       */
       void setup(IntVec<D> const & meshDimensions);
 

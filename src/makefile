@@ -1,7 +1,6 @@
 include config.mk
 
-.PHONY: all util pscf r1 rp \
-        test test-cpu test-gpu \
+.PHONY: all util pscf r1 rp test \
         clean clean-tests veryclean
 
 # ======================================================================
@@ -62,28 +61,6 @@ endif
 	@echo "Summary"
 	@cat count
 	@rm -f count
-
-# Run all CPU unit tests
-test-cpu:
-	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
-	@cd r1/tests; $(MAKE) all; $(MAKE) run-quiet
-ifdef PSCF_CPP
-	@cd rp/tests/cpp; $(MAKE) all; $(MAKE) run-quiet
-endif
-	@cat util/tests/count > count
-	@cat pscf/tests/count >> count
-	@cat r1/tests/count >> count
-ifdef PSCF_CPP
-	@cat rp/tests/cpp/count >> count
-endif
-	@echo " "
-	@echo "Summary"
-	@cat count
-	@rm -f count
-
-test-gpu:
-	@cd rp/tests/cuda; @$(MAKE) all; $(MAKE) run-quiet
 
 # ======================================================================
 # Clean targets

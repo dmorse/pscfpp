@@ -19,7 +19,7 @@ namespace Pscf {
    /**
    * Utilities for sorting values.
    *
-   * \defgroup Pscf_Math_Sort_Module Sorting Utilities
+   * \defgroup Pscf_Math_Sort_Module Sorting
    * \ingroup Pscf_Math_Module
    */
    namespace Sort {

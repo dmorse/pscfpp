@@ -29,7 +29,7 @@ namespace Pscf {
    /**
    * Fourier transform of a real field on an FFT mesh (CPU version).
    *
-   * \ingroup Prdc_Cpu_Module
+   * \ingroup Pscf_Field_Cpp_Module
    */
    template <int D>
    class RFieldDft<D,CPT>

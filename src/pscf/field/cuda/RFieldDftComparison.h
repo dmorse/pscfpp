@@ -22,7 +22,7 @@ namespace Pscf {
    /**
    * Comparator for RFieldDft (k-grid) arrays (CUDA).
    *
-   * \ingroup Prdc_Cuda_Module
+   * \ingroup Pscf_Field_Cuda_Module
    */
    template <int D>
    class RFieldDftComparison<D,CUT> 

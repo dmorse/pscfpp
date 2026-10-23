@@ -1,13 +1,11 @@
-namespace Pscf{
-namespace Prdc{
+namespace Pscf {
 
    /**
-   * \defgroup Prdc_Cuda_Module Fields (CUDA)
+   * \defgroup Pscf_Field_Cuda_Module Fields (CUDA)
    *
-   * Fields and FFT class for use in CUDA code.
+   * Periodic fields and FFT (CUDA backend).
    *
-   * \ingroup Pscf_Prdc_Module
+   * \ingroup Pscf_Field_Module
    */
 
-}
 }

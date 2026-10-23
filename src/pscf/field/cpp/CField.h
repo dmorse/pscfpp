@@ -24,7 +24,7 @@ namespace Pscf {
    /**
    * Field of complex double precision values on a mesh (CPP).
    * 
-   * \ingroup Prdc_Cpu_Module 
+   * \ingroup Pscf_Field_Cpp_Module 
    */
    template <int D>
    class CField<D,CPT> 
@@ -56,7 +56,7 @@ namespace Pscf {
       *
       *\param other the CField to be copied.
       */
-      CField(const CField& other);
+      CField(CField<D,CPT> const & other);
 
       /**
       * Destructor.
@@ -76,7 +76,7 @@ namespace Pscf {
       *
       * \param other the RHS CField
       */
-      CField& operator = (const CField& other);
+      CField& operator = (CField<D,CPT> const & other);
 
       /**
       * Allocate the underlying C array for an FFT grid.

@@ -27,7 +27,7 @@ namespace Pscf {
    /**
    * Field of real double precision values on a regular mesh.
    *
-   * \ingroup Prdc_Cpu_Module
+   * \ingroup Pscf_Field_Cpp_Module
    */
    template <int D>
    class RField<D,CPT> : public DeviceArray<double,CPT>
