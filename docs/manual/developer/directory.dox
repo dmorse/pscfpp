@@ -97,14 +97,21 @@ in the src/util directory.
 
 The Pscf namespace contains all of source code files that are contained in
 the dmorse/pscfpp github repository, all of which are specific to the PSCF
-package.  The Pscf namespace contains several enclosed sub-namespaces.
-All source code for each such enclosed namespace is located within a
-specific subdirectory of the src directory, as discussed below.
+package.  The Pscf namespace contains several enclosed sub-namespaces, as
+discussed below.
+
+Code that is enclosed within the Pscf namespace is allowed to use 
+"using namespace Util" directives to use names that are defined in the 
+Util namespace without using the "Util::" namespace qualifier. In fact, 
+this directive appears in most files that contain code that is wrapped
+in the Pscf namespace. Names defined in the Util namespace may thus be
+used anyhwere in the Pscf namespace without an explicit Util namespace
+qualifier. 
 
 * **Namespace-level directories:**
 
-The src directory contains six subdirectories that each contain source
-code defined in a specific C++ namespace.  These six directories will be
+The src directory contains four subdirectories that each contain source
+code defined in a specific C++ namespace.  These four directories will be
 referred to in what follows as "namespace-level" subdirectories of src.
 These namespace-level subdirectories are listed below:
 
@@ -122,7 +129,7 @@ These namespace-level subdirectories are listed below:
 <tr>
   <td> pscf </td>
   <td> Pscf </td>
-  <td> Code defined directly in Pscf, used by all PSCF programs </td>
+  <td> Code defined in Pscf that is accessible in all PSCF programs </td>
 </tr>
 <tr>
   <td> r1 </td>
@@ -132,36 +139,34 @@ These namespace-level subdirectories are listed below:
 <tr>
   <td> rp </td>
   <td> Pscf::Rp </td>
-  <td> Code used in only in pscf_rp programs for real periodic fields </td>
+  <td> Code used in only in pscf_rp program for real periodic fields </td>
 </tr>
 </table>
+The src/util directory contains code for classes and functions that are
+defined in the Util namespace.
 The src/pscf directory contains files that contain code for classes and
-functions that are accessible throughout the package, most of which are
-defined directly in the Pscf namespace. The src/r1 and src/rp
-directories instead each contain code for entities that are defined in a 
-specific enclosed sub-namespace of Pscf, and that are used in only one
-program.
+functions that are defined in the Pscf namespace, and are accessible 
+throughout the package.
+The src/r1 and src/rp directories instead each contain code for entities 
+that are defined in a specific enclosed sub-namespace of Pscf, and that 
+are used in only one program.
 
-The PSCF makefile system constructs a static library file each of the 
-namespace-level directories that contains compilable source files.
-Specifically, static libraries are constructed in the util, pscf, r1, 
-and rp namespace-level directories. Each such static library contains 
-the object code created by compiling all of the compilable source files 
-(with file extension .cpp or .cu) in the asssociated namespace-level 
-directory.  Each static library is a file with a name of the form 
-lib[namespace].a, where [namespace] represents the name of the relevant 
-namespace-level directory. For example, a library named libpscf.a is 
-created in the src/pscf directory.  
+The PSCF makefile system constructs a static library file each of 
+these four namespace-level directories.  Each such static library 
+contains the object code created by compiling all of the compilable 
+source files (with filename suffix .cpp or .cu) in the asssociated 
+namespace-level directory.  Each static library is a file with a name 
+of the form lib[directory].a, where [directory] represents the name 
+of the relevant namespace-level directory. For example, a library 
+named libpscf.a is created in the src/pscf directory.  
 
 * **Program-level namespaces and directories:**
 
 The Pscf::R1 and Pscf::Rp namespaces and the corresponding src/r1 and
 src/rp namespace-level subdirectories of src each contain code is used
-only within a single program or (in the case of the Pscf::Rp namespace 
-and the src/rp directory) within multiple variants of a single program. 
-These two namespaces and corresponding directories are referred to 
-hereafter as program-level namespaces and program-level directories, 
-respectively. 
+only within a single program.  These two namespaces and corresponding 
+directories are referred to as program-level namespaces and program-level 
+directories, respectively. 
 
 Subdirectory src/r1 contains code that is only used by the pscf_1d 
 program for 1D SCFT problems
@@ -172,11 +177,12 @@ fields. Code in src/rp is used to construct two executable files, named
 pscf_rpc and pscf_rpg, which are variants of the same program that are
 specialized to use different hardware.
 
-By convention, code within in a program-level PSCF namespace may not 
-use named entities (e.g., classes or functions) that are defined in a
-different program-level namespace. This rule allows the same name to 
-be used for analogous classes defined for use in different programs 
-without causing name clashes.
+By convention, code within in a program-level PSCF namespace and
+directory may not use names of classes or functions) that are defined 
+in a different program-level namespace, and may not include header 
+files that are located in a different program-level directory. This 
+rule allows the same name to be used for analogous classes defined 
+for use in different programs without causing name clashes.
 
 Each of the two program-level directories contains one or more main 
 program source files that each defines a main C++ function for an 
@@ -220,9 +226,9 @@ upon in this sense:
   <td> pscf, util </td>
 </tr>
 </table>
-Note that every directory other than util depends on util, and that
-the two namespace-leavel directories depend on both util and pscf.
-and util.
+Note that every directory other than util depends on util.
+The two namespace-leavel directories depend on both util and pscf,
+but not on each other.
 
 * **Unit test framework:**
 

@@ -121,13 +121,13 @@ namespace Util
   - To save horizontal space, namespace declarations for two or more
     nested namespaces that enclose most or all of the code in a file
     may each start in the first column. A file that contains code 
-    that is declared in namespace Pscf::Prdc may thus be enclosed in
+    that is declared in namespace Pscf::Rp may thus be enclosed in
     namespace declarations that are formatted as shown below:
 \code
 namespace Pscf {
-namespace Prdc {
+namespace Rp {
 
-   \\ Omitted code for entities declared in Pscf::Prdc
+   \\ Omitted code for entities declared in Pscf::Rp
 
 }
 }

@@ -1,40 +1,42 @@
 /*! \page developer_backend_build_page Explicit Template Instantiation
 
-\ref developer_backend_own_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_backend_device_page  (Next)    &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_comm_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_test_page         (Next) &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 The PSCF build system is designed to explicitly instantiation 
 specializations of templates for which there are only a few possible 
 valid specializations. Specifically, it is designed to explicitly 
-instantiate all relevant specializations for class templates that the 
-dimension of space and/or a template identifier class as their only 
-template parameters. For a class template that takes both the spatial
-dimension D and a backend identifier T as template parameters, on a
-system that is configured to compile code for both the C++ and Cuda
-backends, this can lead to instantiation of up to 6 specializations, 
-corresponding to cases with D=1, 2, or 3 and with T=Pscf::CPT or
-T=Pscf::CUT.
+instantiate all relevant specializations for class templates that take 
+the dimension of space and/or a template identifier class as their only 
+template parameters. For a class template that takes both the spatial 
+dimension D and a backend identifier T as template parameters, on a 
+system that is configured to compile code for both the C++ and Cuda 
+backends, this can lead to instantiation of up to 6 specializations,
+corresponding to cases with D=1, 2, or 3 and T=Pscf::CPT or Pscf::CUT.
 
 \section developer_backend_build_file_sec Source File Organization 
 
-The pattern rules used by the PSCF build system require that compilable 
-source files that contain only standard C++ have names with a file 
-name suffix *.cpp, which are compiled by a standarad C++ compiler, 
-but that source files that contain CUDA code have names that end in
-a suffix .cu, which are compiled by the nvcc CUDA compiler. This rule
-effects the organization files that contain explicit instantiation
-declarations for template specializations that take a backend identifier 
-class as an argument: Template specializations that take T=Pscf::CPT as 
-a template identifier class argument are declared in files with a
+The makefile pattern rules used by the PSCF build system use file name
+extension to distinguish standard C++ files and CUDA C++ files. These
+rules require that compilable source files that contain only standard 
+C++ have names with a file name suffix *.cpp, which are compiled by a 
+standard C++ compiler, and that source files that contain CUDA C++ must 
+instead have names that end in a suffix .cu, which are compiled by the 
+NVIDIA nvcc CUDA compiler. 
+
+These rules effects the organization files that contain explicit 
+instantiation definitions for templates that take a backend identifier 
+class as an argument: Template specializations that take T=Pscf::CPT 
+as a template identifier class argument are declared in files with a
 file name suffix .cpp, whereas specializations that take T=Pscf::CUT 
 must be placed in files with file name suffix .cu.
 
 A class template that takes a backend identifier class as a template
 parameter is usually associated with four different C++/CUDA files 
-that have a the same base name but different filename suffixes given
-by .h, .tpp, .cpp and .cu. We refer to these files in what follows 
-as the header (.h) file, implementation (.tpp) file, C++ source
+that have the same base name but different filename suffixes given
+by .h, .tpp, .cpp and .cu. We refer to these files in what follows as 
+the header (.h) file, template implementation (.tpp) file, C++ source
 (.cpp) file, and a CUDA source (.cu) file.  The shared base name of 
 these four files is always the same as the name of the class template.
 For example, the files associated with the class template 
@@ -46,7 +48,8 @@ Pscf::Rp::System are located in directory src/rp/system, and are named
 
 The contents of these four files are:
    - The header (.h) file contains the class template definition
-   - The implementation (.tpp) contains definitions of member functions
+   - The template implementation (.tpp) contains definitions of
+     non-inline member functions
    - The C++  (.cpp) source file contains explicit instantiation 
      definitions for specializations with T=Pscf::CPT
    - The CUDA (.cu) source file contains explicit instantiation 
@@ -56,12 +59,17 @@ The template implementation (.tpp) file normally includes the header
 (.h) file, while the .cpp and .cu compilable source files each include 
 the implementation file. The .cpp file is compiled by a standard C++
 compiler, while the .cu file is compiled by the nvcc CUDA compiler.
+The use of a separate template implementation file allows non-inline
+member function definitions to be included by the .cpp and .cu file 
+without requiring that they also be included by the header file. 
+This pattern prevents class member functions from being unnecessarily
+included by other files that include the class header file,
 
 \section developer_backend_build_conditional_sec Conditional Compilation 
 
 The PSCF build system can be configured to enable or disable use of
 particular computational backends. The enabling and disabling of 
-backends is controlled by a system of C/C++ preprocessor variables and 
+backends is controlled by a set of C/C++ preprocessor variables and 
 associated makefile variables:
 
  - Source files with file name suffix .cu, which are only used with the 
@@ -222,7 +230,8 @@ explicitly in each such file, as shown in the excerpts from the
 System.cpp and System.cu files that are displayed above.
 
 <BR>
-\ref developer_backend_own_page     (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_backend_device_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_comm_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_page      (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_test_page         (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

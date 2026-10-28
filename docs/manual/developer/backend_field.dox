@@ -7,100 +7,101 @@
 The most important data structures used by the PSCF programs for 
 periodic systems are arrays that store values of periodic fields 
 (i.e., functions of position) on the nodes of a regular periodic 
-mesh.  PSCF defines a set of class templates in namespace Pscf::Prdc 
-that represent such periodic fields and Fourier transforms of such 
-fields.  This namespace also contains a definition of a template for 
-a class named Prdc::FFT that provides member functions that perform 
+mesh.  PSCF defines a set of class templates in namespace Pscf that 
+represent such periodic fields and Fourier transforms of such 
+fields. This namespace also contains a definition of a template for 
+a class named Pscf::FFT that provides member functions that perform 
 forward and inverse fast Fourier transform on such fields.  
 
-Each of these class templates takes the dimension of space, denoted by 
-D, and a backend identifier class, denoted by T, as their only template
-parameters.  For example, the class template RField represents a 
-real-valued field defined on the nodes of periodic mesh, and is declared
-within the Pscf::Prdc namespace as a template 
+The field and FFT class templates each take the dimension of space, denoted
+by D, and a backend identifier class, denoted by T, as template parameters.
+For example, the class template RField represents a real-valued field 
+defined on the nodes of periodic mesh, and is declared as a template
 \code
-     template <int D, class T> class RField;
+namespace Pscf {
+   template <int D, class T> class RField;
+}
 \endcode
-The specialization RField \<3, CUT\> is thus a container for a real field 
-defined on a 3-dimensional periodic mesh that allocates an underlying 
-array in GPU global memory. A specialization RField \<2, CPT\> instead a 
-container for a 2D real field that allocates an array in CPU heap memory.
+The specialization Pscf::RField \<3, CUT\> is thus a container for a 
+real field defined on a 3-dimensional periodic mesh for which the 
+underlying array is allocated in GPU memory.  A specialization 
+Pscf::RField \<2, CPT\> instead a container for a 2D real field that 
+allocates an array in CPU heap memory.
 
-The Pscf::Prdc namespace defines four basic class templates named 
-RField, RFieldDft, CField, and FFT to store and manipulate periodic 
-fields. Each of these four class templates takes the integer dimension 
-of space D and a backend identifier class T as template parameters:
+Four class templates named RField, RFieldDft, CField, and FFT are
+used to store and manipulate periodic fields. All of these class
+templates are defined in namespaces Pscf, and so the Pscf:: 
+qualifier is often omitted in what follows.  For each choice of 
+values for the integer D and backend identifier class T:
 
-   - An RField \<D, T\> object contains values of a real-valued 
-     periodic field on the nodes of a regular periodic D-dimensional 
-     mesh.
+   - A instance of RField \<D, T\> object contains values of a 
+     real-valued periodic field on the nodes of a regular periodic 
+     D-dimensional mesh.
 
-   - An RFieldDft \<D, T\> object contains complex values of the 
-     discrete Fourier transform (DFT) of a real-valued periodic field.
+   - A instance of RFieldDft \<D, T\> object contains complex values 
+     of the discrete Fourier transform (DFT) of a real-valued periodic 
+     field.
 
-   - A CField \<D, T\> object can store either the values of a 
-     complex-valued field on the nodes of a D-dimensional periodic 
-     mesh, or the DFT of such a field. 
+   - An instance of CField \<D, T\> object can store either the 
+     values of a complex-valued field on the nodes of a D-dimensional 
+     periodic mesh, or the complex-valued DFT of such a field. 
 
-   - FFT \<D,T\> is a wrapper around a fast Fourier transform library
-     that can transform a RField \<D,T\> to or from an RFieldDft \<D,T\>, 
-     or that can apply a forward or inverse complex-to-complex Fourier 
-     transform to a CField \<D, T\> object.
+   - An instance of FFT \<D,T\> provide an interface for D-dimensional
+     fast Fourier transform operations. 
 
-For each of these templates, D must be an integer 1, 2, 3, and T must 
-be either Pscf::CPT or Pscf::CUT.  
-
-The RFieldDft and CField class templates both be used to store arrays 
-of complex numbers that represent discrete Fourier transform (DFT) of 
-a field defined on a real-space mesh. A specialized class template 
-RFieldDft is defined to store the DFT of a real field because the 
-number of complex values needed to represent the DFT of a real field 
-is approximately half the number of nodes in the real-space mesh on 
-which the real-space field was defined, requiring the use of a container 
-for which the dimension of the Fourier-space mesh used to defined the
-DFT is different from the dimensions of the corresponding real-space 
-mesh. The class template CField can, however, be used to store either 
-a complex field or its DFT, because the DFT of a complex-valued field 
-is stored on a Fourier-space mesh with the same dimensions as the 
-corresponding real-space mesh.
+An instance of FFT \<D, T\> can transform a RField \<D,T\> to or 
+from an RFieldDft \<D,T\>, or can apply a forward or inverse 
+complex-to-complex Fourier transform to a CField \<D, T\>.
 
 \section developer_backend_field_field_sec Field Class Templates
 
 Specializations of the three field class templates RField, RFieldDft, and 
-CField are derived from corresponding specializations of the class 
-template DeviceArray \< Data, T \> with the same argument for parameter T
-and the appropriate type for parameter Data.  Valid specializations of 
-RField \<D, T\> with D=1, 2, or 3 are thus derived from specializations 
-of DeviceArray \< Data, T \> in which Data is the appropriate type for 
-real numbers used with the chosen backend, i.e., Data=double for 
-T=Pscf::CPT or Data=cudaReal for T=Pscf::CUT).  Valid specializations of 
-RFieldDft \< D, T \> and CField \< D, T \> are instead derived from 
-specializations of DeviceArray \< Data, T \> in which Data is the 
-corresponding complex type, i.e., Data=fftw_complex for T=Pscf::CPT or 
-Data=cudaComplex for T=Pscf::CUT). 
+CField are all derived from corresponding specializations of the class 
+template DeviceArray \< Data, T \> with the same argument for parameter T 
+and an appropriate type for the elment type parameter Data. Specializations
+of RField \<D, T\> with D=1, 2, or 3 are derived from specializations of 
+DeviceArray \< Data, T \> in which Data is the appropriate type for real 
+numbers used with the chosen backend, i.e., Data=double for T=Pscf::CPT 
+or Data=cudaReal for T=Pscf::CUT.  Specializations of RFieldDft \< D, T \> 
+and CField \< D, T \> are instead derived from specializations of 
+DeviceArray \< Data, T \> in which Data is the corresponding complex 
+type, which is Data=fftw_complex for T=Pscf::CPT or Data=cudaComplex 
+for T=Pscf::CUT. 
 
-The main difference between the field and DeviceArray class templates
-is that each field class stores information about the dimensions of 
-the mesh on which the field is is defined, in addition to the actual
-field data. These mesh dimensions is stored in each field class 
-(i.e., in RField, RFieldDft and CField) as a member variable named
-meshDimensions_ that is an instance of IntVec \<D\>, and that is 
-returned by a public member function naned "meshDimensions".
+The main difference between the field and DeviceArray class templates 
+is that each field class templat stores information about the dimensions 
+of the mesh on which the field is is defined, in addition to the actual
+field data and the total number of elements. The vector of mesh dimensions 
+is stored in each field class template (i.e., in RField, RFieldDft and 
+CField) as a member variable named meshDimensions_ that is an instance 
+of Pscf:: IntVec \<D\>, and that is returned by a public member function 
+naned "meshDimensions".
 
-The field and FFT class templates are are implemented by defining 
-separate partial specializations for different values of the backend 
-identifier class T.  The directory src/pscf/field/cuda contains a set 
-of partial specializations of these classes for a template argument 
-T=Pscf::CUT, which are written in CUDA C++ and enable use of a GPU. 
-The directory src/pscf/field/cpu contains an analogous set of partial 
-specializations for a template argument T=Pscf::CPT, which are written 
-in standard C++ and designed to use standard CPU hardware.  
+A specialized class template named RFieldDft is used to hold the DFT of 
+a real field because the number of complex values needed to represent 
+the DFT of a real field is approximately half the number of nodes in 
+the real-space mesh on which the original field was defined. 
+The number of elements array used by RFieldDft to store values of the 
+DFT is thus different from the number elements in the corresponding 
+real-space mesh, and is not simply equal to the produce of the mesh
+dimensions. Instances of CField \<D, T\> with the same mesh dimensions 
+can, however, be used to store either a complex field or its DFT, 
+because the DFT of a complex-valued field is stored on a Fourier-space 
+mesh with the same dimensions as the corresponding real-space mesh.
+
+For each field class templates, explicit partial specializations are
+defined for each allowed value of the backend identifier class parameter
+T.  The directory src/pscf/field/cuda contains a set of partial 
+specializations of these classes for a template argument T=Pscf::CUT, 
+which are written in CUDA C++ and enable use of a GPU.  The directory 
+src/pscf/field/cpu contains an analogous set of partial specializations 
+for a template argument T=Pscf::CPT, which are written in standard C++ 
+and use standard CPU hardware.  
 
 For example, the partial specialization of RField \<D,T\> for T=Pscf::CPT 
 is defined in the file pscf/field/cpu/RField.h as a template
 \code
 namespace Pscf {
-namespace Prdc {
 
     template <int D>
     class RField<D, CPT> : public DeviceArray<double,CPT>
@@ -133,39 +134,67 @@ namespace Prdc {
     }
 
 }
-}
 \endcode
 This defines a container that owns a block of CPU main memory. The 
 corresponding partial specialization of RField \<D,T\> for T=Pscf::CUT 
 is defined in file pscf/field/cuda/RField.h, and is derived from 
-DeviceArray<cudaReal,Pscf::CUT>, thus creating a container that owns a 
-raw array in GPU global memory. The allocate member function for either 
+DeviceArray<cudaReal,Pscf::CUT>, thus creating a container that owns 
+a block of GPU global memory. The allocate member function for either 
 partial specialization of RField takes the IntVec<D> meshDimensions
 as an argument and allocates an array in which the number of elements 
 is equal to the product of the D elements of this vector, corresponding
 to the number of nodes in the resulting mesh.
 
 Specializations of the field class templates with T=Pscf::CPT are 
-indirectly derived from the Util::Array class template, because 
-DeviceArray \<Data, T \> is derived from Util::Array \< Data \>. These 
-specializations thus inherit the overloaded subscript (square bracket) 
-operator that is defined by the Util::Array template, which provides 
-access to individual array elements on the CPU. Specializations of the 
-field classes with T=Pscf::CUT instead allow access to individual 
-elements only from the GPU, within CUDA kernels. 
+indirectly derived from the Util::Array class template, because the
+partial specialization DeviceArray \<Data, Pscf::CPT \> is derived 
+from Util::Array \< Data \>. Specializations that use C++ hardware
+thus inherit the overloaded subscript (square bracket) operator that 
+is defined by the Util::Array template, which provides access to 
+individual array elements from within code that runs on the CPU. 
+Specializations of the field classes with T=Pscf::CUT instead allow 
+access to individual elements within CUDA kernels that can access 
+GPU global memory.
 
 \section developer_backend_field_fft_sec FFT Class Templates
 
-The partial specializations of the template FFT \<D,T\> for arguments
-T=Pscf::CPT and T=Pscf::CUT are wrappers around different underlying FFT 
-libraries.  An instance of FFT \<D, CPT\> with D=1,2, or 3 is a wrapper 
-for the open-source FFTW library, which uses standard CPU hardware. A 
-corresponding instance of Pscf::Cuda::FFT \<D, CUT\> is instead a wrapper 
-around the NVIDIA cufft library, which performs FFT operations on a GPU. 
-These specializations provide analogous interfaces for D-dimensional 
-real-to-complex, complex-to-real, and complex-to-complex transforms,
-allowing them to be used interchangeably in class and function 
-templates.
+Partial specializations of the template FFT \<D,T\> with arguments
+T=Pscf::CPT and T=Pscf::CUT are wrappers around different external
+FFT libraries.  
+
+An instance of FFT \<D, CPT\> with D=1,2, or 3 is a wrapper for the 
+open-source FFTW library, which uses standard CPU hardware. This 
+partial specialization is defined in the file pscf/field/cpp/FFT.h .
+
+An instance of Pscf::Cuda::FFT \<D, CUT\> with D=1, 2, or 3 is instead 
+a wrapper around the NVIDIA cufft library, which performs FFT operations 
+on a GPU. This partial specialization is defined in the file
+pscf/field/cuda/FFT.h.
+
+Specializations of the FFT template that use different backends provide 
+analogous interfaces for forward and inverse D-dimensional transforms, in 
+which specializations of the field class templates are used as function 
+parameter types. For either allowed value of T, the partial specialization 
+FFT \<D, T\> defines member functions that perform forward real-to-complex 
+transform and inverse complex-to-real transforms with signatures of the 
+form
+\code
+   void forwardTransform(RField<D,T> const & in, RFieldDft<D,T> & out) const;
+   void inverseTransform(RFieldDft<D,T> const & in, RField<D,T> & out) const;
+\endcode
+Each partial specialization of the FFT template also defines a pair of
+functions for forward and inverse transformations on complex-valued fields,
+with signatures of the form
+\code
+   void forwardTransform(CField<D,T> const & in, CField<D,T> & out) const;
+   void inverseTransform(CField<D,T> const & in, CField<D,T> & out) const;
+\endcode
+For each of these pairs of functions, "round-trip" application of the
+forwardTransform and inverseTransform functions returns the original field.
+The use of analogous function interfaces by specializations of the FFT 
+template that use different backends allow these specializations to be 
+used interchangeably within function templates that take a backend
+identifier class as a template parameter. 
 
 <BR>
 \ref developer_backend_complex_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;

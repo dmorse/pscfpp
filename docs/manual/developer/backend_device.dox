@@ -1,37 +1,37 @@
 /*! \page developer_backend_device_page Device Arrays
 
-\ref developer_backend_build_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_backend_complex_page   (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_own_page      (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_complex_page  (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 In code that uses a GPU, arrays may be allocated either in the main
 memory of the CPU host or in the global memory of the GPU device. 
 Arrays that are allocated in GPU memory when using a CUDA backend are 
 declared in PSCF as instances of specializations of a class template 
-named Pscf::DeviceArray. The class template Pscf::DeviceArray takes 
-two template paramters, and is declared as:
+named Pscf::DeviceArray. 
+
+The class template Pscf::DeviceArray takes two template parameters, and 
+is declared as:
 \code
    template <typename Data, class T> class DeviceArray
 \endcode
-The argument of template parameter Data is the type of each element 
-in the array. The argument of parameter T must be a backend identifer 
-class. Partial specializations of the DeviceArray template with 
-T=Pscf::CUT and T=Pscf::CPT are defined to be used with a CUDA GPU 
-backend or a C++ CPU backend, respectively.
+Template parameter Data is the type of each element in the array, while
+parameter T is a backend identifer class. Partial specializations of the 
+DeviceArray template with T=Pscf::CUT and T=Pscf::CPT are defined to be 
+used with a CUDA GPU backend or a C++ CPU backend, respectively.
 
-Definining DeviceArray as a class template that takes a backend identifier 
-class as a template parameter allows a DeviceArray object to be used in 
-backend-independent template code within the definitions of other class 
-templates that also take T as a template parameter.  In such templates, 
-an instance of DeviceArray<Data,T> can be used to represent an array with 
-elements of type Data that is allocated in GPU memory in template 
-specializations that use a CUDA backend (T=Pscf::CUT) but that is allocated 
-in CPU main memory in specializations that use a C++ backend (T=Pscf::CPT). 
+The use of a backend identifier class as a template parameter allows the 
+DeviceArray template to be used within definitions of other class templates
+that also take T as a template parameter. In such templates, an instance of
+Pscf::DeviceArray<Data,T> represents an array that is allocated allocated 
+in GPU memory when it appears in a template specialization that uses a 
+CUDA backend (with T=Pscf::CUT) but that is allocated in CPU heap memory 
+in specializations that use a C++ backend (with T=Pscf::CPT). 
 
-Partial specializations of DeviceArray for different values of T are 
-defined in different files, as discussed below.
+Partial specializations of DeviceArray that are designed for use with
+different backents are discussed below.
 
-<b> CUDA backend </b>:
+<b> CUDA backend (CUT) </b>:
 
 The partial specialization of DeviceArray with T=Pscf::CUT is a wrapper
 for an underlying array that is allocated in global GPU device memory,
@@ -42,31 +42,30 @@ an array of double precision numbers that is allocated in GPU memory.
 Specializations of DeviceArray<Data,T> with T=Pscf::CUT do not allow 
 access to individual elements of the array from the CPU host, and 
 instead only allow array elements to be accessed within CUDA kernels. 
-Mathematical operations on such arrays must thus be performed by 
-CUDA kernels. 
+Mathematical operations on such arrays are thus always performed by 
+functions that launch CUDA kernels.
 
-<b> C++ backend </b>:
-
+<b> C++ backend (CPT) </b>:
 
 The partial specialization of DeviceArray with T=Pscf::CPT is a wrapper 
-for a conventional array that is allocated in CPU host memory, and is
-is defined in the file src/pscf/backend/cpp/DeviceArray.h.  For example, 
+for a underlying array that is allocated in CPU host memory, and is 
+defined in the file src/pscf/backend/cpp/DeviceArray.h.  For example, 
 an instance of class DeviceArray<double,Pscf::CPT> is thus an array of 
-double precision numbers that is allocated in CPU memory.  One technical 
-feature of a DeviceArray<Data,Pscf::CPT>, which distinguishes it from a 
-DArray<Data> container, is that a DeviceArray<Data,Pscf::CPT> allocates 
+double precision numbers that is allocated in CPU memory. Such an array
+is similar in many respects to an instance of DArray<double>.  One 
+feature of the DeviceArray<Data,Pscf::CPT> template that distinguishes 
+it from DArray<Data>, is that a DeviceArray<Data,Pscf::CPT> allocates 
 memory using functions provided by the FFTW fast Fourier transform 
-library, which aligns memory in a manner that is designed to optimize
-the performance of that library. 
+library, which align memory in a manner that optimizes the performance 
+of that library. 
 
-Each specialization of DeviceArray<Data,T> with T=CPT is indirectly 
-derived from a specialization of Util::Array<Data> with the same argument
-for the typename parameter Data. The Util::Array template provides an 
-interface for access to individual elements on the CPU host via a 
-subscript operator.  
+Each specialization of DeviceArray<Data,T> with T=CPT is derived from
+a corresponding specialization of the template Util::Array<Data>. The 
+Util::Array template defines a subscript operator that provides access 
+to individual array elements within code that runs on the CPU host.
 
 <BR>
-\ref developer_backend_build_page   (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_backend_own_page     (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_page         (Up)    &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_backend_complex_page (Next)  &nbsp; &nbsp; &nbsp; &nbsp;
 

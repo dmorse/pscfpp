@@ -82,7 +82,7 @@ to maximize performance in production code.
 
 Throughout the code for systems with periodic boundary conditions, the
 dimension of space, denoted by D, is treated as a template parameter.  
-Almost all of the classes used defined namespaces Prdc and Rp are 
+Almost all of the classes defined in the Pscf::Rp namespace are 
 defined as specializations of class templates in which D is a template 
 parameter.  For example, classes used by pscf_rpc and pscf_rpg to 
 represent a unit cell within a D-dimensional crystal are defined as

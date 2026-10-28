@@ -16,35 +16,30 @@ The differences between two programs arise primarily from differences in:
    - Where and how are mathematical operations on such arrays performed 
      (on the CPU or GPU)?
 
-These differences are encapsulated within the implementation of a limited
-number of class templates that implement the relevant data structures and
-algorithms for basic mathematical operations.
-
 We summarize these differences in what follows by saying that these two
 versions of pscf_rp use different computational "backends".  In the 
 pscf_rpg executable, which uses a Cuda backend, almost all large arrays 
-are allocated in GPU global memory, and basic mathematical operations 
-that are performed on these arrays are performed on the GPU within 
-CUDA kernels.  In the pscf_rpc executable, which uses a C++ backend, all 
-data structures that use heap memory are allocated in CPU main memory, 
-and all computations are performed on the CPU using code written in 
-standard C++.
+are allocated in GPU global memory, and basic mathematical operations on 
+these arrays are performed on the GPU in CUDA kernels.  In the pscf_rpc 
+executable, which uses a C++ backend, all data structures that use heap 
+memory are allocated in CPU main memory, and all computations are 
+performed on the CPU using code written in standard C++.
 
-The system used by PSCF to support the use of more than one backend is 
-based on the use of C++ class templates to minimize code duplication. 
-The subpages linked below describe this system.
+The system used by PSCF to support the use of more than one backend 
+is based on the use of C++ class templates in which a template 
+parameter is used to identify a choice of computational backend.  The 
+subpages linked below describe this system.
 
 <ol>
  <li> \subpage developer_backend_id_page </li>
  <li> \subpage developer_backend_own_page </li>
- <li> \subpage developer_backend_build_page </li>
  <li> \subpage developer_backend_device_page </li>
  <li> \subpage developer_backend_complex_page </li>
  <li> \subpage developer_backend_field_page </li>
  <li> \subpage developer_backend_math_page </li>
  <li> \subpage developer_backend_comm_page </li>
+ <li> \subpage developer_backend_build_page </li>
 </ol>
-
 
 <BR>
 \ref developer_container_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

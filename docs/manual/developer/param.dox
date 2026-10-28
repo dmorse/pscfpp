@@ -94,32 +94,47 @@ implementation for this function.  Each subclass of ParamComposite may
 override this by defining non-trivial implementation in order to define 
 a format for the body of the associated parameter file block. 
 
-The readParameters function is usually called by another virtual protected 
-member function of ParamComposite named Util::ParamComposite::readParam. 
-Like the readParameters function, the readParam function takes a 
-std::iostream input stream as its only parameter. The difference is that 
-the readParam function reads the lines containing the opening and closing 
-braces of a parameter file block, in addition to the body of the block, 
-while readParameters only reads the body of the block that appears indented
-between the opening and closing lines. ParamComposite defines a default 
-implementation of the readParam function that reads the opening line of 
-a parameter file block, checks the block label, calls the virtual 
-readParameters function to read the body of the block, and then reads 
-the line containing a closing brace.  The readParam method is also 
-declared virtual, but most subclasses use the default implementation.
+The readParameters function is usually called by virtual protected member 
+functions of ParamComposite named Util::ParamComposite::readParam and 
+Util::ParamComposite::readOptional. The readParam function is used to read 
+required parameter file blocks, while the readParamOptional function is 
+used to read optional blocks. The readParam and readParamOptional 
+functions each take a std::istream input stream as their only parameter. 
+The readParam or readParamOptional each read an entire parameter file 
+block, including the opening and closing lines that contain curly 
+braces, while readParameters only reads the body of the block that 
+appears indented between these opening and closing lines.
+
+ParamComposite defines default implementations of the readParam and
+readParamOptional functions that call the readParameters function to
+read the body of a parameter file block.  The default implementations of 
+both readParam and readParamOptional first read the opening line of a 
+parameter file block, and then check whether block label that appears 
+in that opening line matches the expected value that is set by calling 
+"ParamComposite::setClassName".  If the block label matches, both 
+functions calls the virtual readParameters function to read the body 
+of the block, and then read the line containing the closing brace. 
+The difference between the readParam and readParamOptional functions 
+involves how they behave if the block label that appears in the input 
+stream does not match the expected value. In the block label does not 
+match, the readParam function prints an error message that explains 
+the nature of the error, and then throws an Exception that usually 
+terminates program execution. If the block label does not match, the 
+readParamOptional function instead stops reading, returns, and allows 
+the calling function to continue trying to read the parameter file.
 
 Most subclasses of ParamComposite override the readParameters function 
-to define the format for the body of the parameter block, and simply use 
-the default implementation of the inherited readParam function to add 
-opening and closing lines.  
+to define a format for the body of the associated parameter block, 
+but use the default implementations ParamComposite::readParam 
+and ParamComposite::readParamOptional functions.
 
 \section developer_param_parameters_sec Reading individual parameters
 
 The implementation of an overridden readParameters() function normally
 uses a set of protected function templates that are inherited from the 
-Util::ParamComposite class to read parameters and subblocks. The simplest 
-of these are the read and readOptional function templates, either of 
-which can be used to read a single parameter of any type.
+Util::ParamComposite class to read parameters and nest subblocks. The 
+simplest of these are the read and readOptional function templates, 
+which are functions that read a single parameter.
 
 Util::ParamComposite::read is a function template that takes the type
 of the value of a parameter as a template parameter.  The input interface 
@@ -150,37 +165,40 @@ For both of these function templates:
    - parameter "data" is a reference to the variable that will hold 
      the parameter value extracted from the parameter file.
 
-For simplicity, the type of the value that is returned by either of 
-these functions has been omitted from both of the above function
-signatures.  The return type has been hidden in the above descriptions
-the return value is actually almost never retained or used, and because
-the return value is an instance of somewhat a specialized type, 
-Util::ScalarParam<T>.  Both of these function templates are thus 
-usually used as if they were void functions, with no return value.
+For simplicity, the type of the value that is returned by either the
+read or readOptional function templates has been omitted from both 
+of the above function signatures.  The return type has been hidden 
+in the above descriptions the return value is actually almost never 
+retained or used, and because the return value is an instance of 
+somewhat a specialized type, Util::ScalarParam<T>.  Both of these 
+function templates are thus usually used as if they were void 
+functions, with no return value.
 
 The Util::ParamComposite::read function template is used for required 
 parameters. If this function reads a line that begins with a string that 
 does not exactly match the string passed as the "label" parameter, it 
 prints a message that shows both the expected label and the label that 
 was actually read, and then throws an Exception to halt program execution.
-The readOptional function template is used for optional parametrs, and so 
-will exit without throwing an Exception if it reads a label that does not
-match the "label" parameter, allowing the program to continue processing
-the parameter file block. When the readOptional reads a label that does
-not match its "label" parameter, it stores the label was read from file
-in a buffer that is accessed by other functions that read parameters or 
-subblocks, until one such function either matches that label or throws
-an Exception. 
+
+The readOptional function template is instead used for optional parameters.
+If this function reads a label that does match the "label" parameter, it
+returns without throwing an Exception, and allows the calling function 
+to continue processing the parameter file block. When the readOptional 
+reads a label that does not match its "label" parameter, it stores the 
+actual label in a buffer that is accessed by other functions that read 
+parameters. Attempts to match such a parameter label will continue 
+until such a function either finds a match for that label or throws an 
+Exception in response to an incorrect label for a required parameter.
 
 The read and readOptional function templates can be used to read a 
-parameter of any primitive C/C++ type such as int or double, or parameters 
-that are instances of any class for which there exists overloaded stream 
-input (\>\>) and stream output (\<\<) operators. A separate set of 
-inherited function templates are used for array-valued parameters, as 
-discussed below.
+parameter of any primitive C/C++ type such as int or double, or any
+parameter that is an instances of a class for which there exists 
+overloaded stream input (\>\>) and stream output (\<\<) operators. A 
+separate set of inherited function templates are used to read 
+array- and matrix-valued parameters, as discussed below.
 
-<b>Example</b>: As a simple example, consider the following 
-skeleton of the definition for a class named A: 
+<b>Example</b>: As a simple example, consider the following skeleton 
+of the definition for a class named A: 
 \code
 
    using namepace Util;
