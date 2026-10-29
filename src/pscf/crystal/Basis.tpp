@@ -166,21 +166,21 @@ namespace Pscf {
       * Each bunch contains one or more complete stars. Bunches are
       * identified as an intermediate step in identification of stars.
       *
-      * During initial processing, wavevectors are temporarily stored in 
-      * BWave<D> objects.  The following local containers of BWave<D> 
+      * During initial processing, wavevectors are temporarily stored in
+      * BWave<D> objects.  The following local containers of BWave<D>
       * objects are used:
       *
-      *   bunch - a set of waves of equal norm 
+      *   bunch - a set of waves of equal norm
       *   star - a set of symmetry-related waves
       *   starList - a sorted star, sorted by descending indicesMin
       *   bunchList - a sorted bunch, with contiguous sorted stars
       *
-      * The bunch and star containers are std::set< BWave<D> > objects. 
-      * The starList container is a std::vector< BWave<D> > objects. 
+      * The bunch and star containers are std::set< BWave<D> > objects.
+      * The starList container is a std::vector< BWave<D> > objects.
       * The use of std::set simplifies addition of waves, by allowing
       * easy identification of duplicates, as well as later removal.
-      * The use of std::vector for the starList allows the use of the 
-      * C++ std::sort algorithm to sort stars by standard wavevector 
+      * The use of std::vector for the starList allows the use of the
+      * C++ std::sort algorithm to sort stars by standard wavevector
       * indices.
       */
 
@@ -206,7 +206,7 @@ namespace Pscf {
       IntVec<D> rootVecStd;  // Std indices for root of this star
       IntVec<D> vec;         // Indices of temporary wavevector
       IntVec<D> nVec;        // Indices of inverse of a wavevector
-      int bunchBegin = 0;    // id of first wave in this bunch 
+      int bunchBegin = 0;    // id of first wave in this bunch
       int bunchEnd = 0;      // (id of last wave in this bunch) + 1
       int bunchSize;         // bunchEnd - bunchBegin
       int starBegin = 0;     // id of first wave in this star
@@ -427,19 +427,22 @@ namespace Pscf {
 
                // Construct a star from root vector, by applying every
                // symmetry operation in the group to the root wavevector.
+               // The root vector will always be added, with zero phase, 
+               // because a group always includes the identity operation
+
                for (j = 0; j < group.size(); ++j) {
 
                   // Apply symmetry (i.e., multiply by rotation matrix)
                   // vec = rotated wavevector.
                   vec = rootVecMin*group[j];
 
-                  // Check that rotated vector has same norm as root.
+                  // Check that rotated vector has the same norm as root
                   UTIL_CHECK(std::abs(Gsq - unitCell().ksq(vec)) < epsilon);
 
                   // Initialize BWave object associated with rotated wave
                   wave.sqNorm = Gsq;
                   wave.indicesMin = shiftToMinimum(vec, meshDimensions,
-                                                  *unitCellPtr_);
+                                                   *unitCellPtr_);
                   wave.indicesStd = vec;
                   mesh().shift(wave.indicesStd);
 
@@ -455,14 +458,20 @@ namespace Pscf {
                   while (wave.phase <= -0.5) {
                      wave.phase += 1.0;
                   }
+
+                  // Convert phase to radians, in range [-Pi, Pi]
                   wave.phase *= twoPi;
 
-                  // Check for cancellation of star: The star is
-                  // cancelled if application of any symmetry operation
-                  // in the group to the root vector yields a rotated
-                  // vector equivalent to the root vector but with a
-                  // nonzero phase, creating a contradiction.
+                  // Check for cancellation of star: The star is cancelled
+                  // if application of any symmetry operation in the group 
+                  // to the root vector yields a rotated wavevector that 
+                  // is either:
+                  // - Equivalent to the root vector, but with a nonzero
+                  //   relative phase
+                  // - Equivalent to another wavevector that has already 
+                  //   been added to the star, with an inequivalent phase
 
+                  // Check if the rotated wavevector is equal to the root
                   if (wave.indicesStd == rootVecStd) {
                      if (std::abs(wave.phase) > 1.0E-6) {
                         cancel = true;
@@ -470,26 +479,27 @@ namespace Pscf {
                   }
 
                   // Search for an equivalent wave already in the star.
-                  // Note: Equivalent waves have equal standard indices.
+                  // Equivalent waves have equal standard indices.
                   setItr = star.find(wave);
 
                   if (setItr == star.end()) {
 
-                     // If no equivalent wave is found in the star,
+                     // If no equivalent wave was found in the star,
                      // then add this wave to the star
+
                      star.insert(wave);
 
                   } else {
 
-                     // If an equivalent wave is found, check if the
-                     // phases are equivalent. If not, the star is
-                     // cancelled.
+                     // If an equivalent wave was found, check if the
+                     // phases are equivalent. If the phases are not
+                     // equivalent, the star is cancelled.
 
                      phase_diff = setItr->phase - wave.phase;
-                     while (phase_diff > 0.5) {
+                     while (phase_diff > Constants::Pi) {
                         phase_diff -= 1.0;
                      }
-                     while (phase_diff <= -0.5) {
+                     while (phase_diff <= - Constants::Pi) {
                         phase_diff += 1.0;
                      }
                      if (std::abs(phase_diff) > 1.0E-6) {
@@ -497,6 +507,9 @@ namespace Pscf {
                      }
 
                   }
+
+                  // Note: Construction of the star is completed whether 
+                  // or not the star is cancelled
 
                }
 
@@ -538,7 +551,7 @@ namespace Pscf {
                if (nextInvert == -1) {
 
                   // If this star is 2nd of a pair related by inversion,
-                  // set root for next star to 1st wave of remaining 
+                  // set root for next star to 1st wave of remaining
                   // bunch.
 
                   newStar.invertFlag = -1;
@@ -568,8 +581,8 @@ namespace Pscf {
 
                   if (inverseFound) {
 
-                     // If this star is closed under inversion, the root 
-                     // of the next star is the 1st vector of remaining 
+                     // If this star is closed under inversion, the root
+                     // of the next star is the 1st vector of remaining
                      // bunch.
 
                      newStar.invertFlag = 0;
@@ -645,7 +658,7 @@ namespace Pscf {
 
             // Processing of this bunch is now complete.
             // Here, waves_[k].coeff has unit absolute magnitude, and
-            // correct relative phases for waves within a star, but 
+            // correct relative phases for waves within a star, but
             // the coeff may not be unity for the first or last wave
             // in the star.
 
@@ -666,7 +679,7 @@ namespace Pscf {
       *     coefficient is pure imaginary, the imaginary part must
       *     be negative.
       *   - In a pair of open stars that are related by inversion
-      *     symmetry, the coefficients of the first wave of the first 
+      *     symmetry, the coefficients of the first wave of the first
       *     star and its inverse must have real coefficients.
       */
 
@@ -1436,12 +1449,12 @@ namespace Pscf {
    }
 
    /*
-   * Get the associated signal (notifies observers of basis initialization).
+   * Get associated signal (notifies observers of basis initialization).
    */
    template <int D>
    Signal<void>& Basis<D>::signal()
    {
-      UTIL_CHECK(signalPtr_); 
+      UTIL_CHECK(signalPtr_);
       return *signalPtr_;
    }
 
