@@ -58,8 +58,7 @@ in the build system are summarized in the table below:
  |configuration|config.mk   | configuration file, defines global variables |
  |source list  |sources.mk  | list source files and object file targets    |
  |pattern rule |patterns.mk | pattern rules for object files targets       |
- |dependency   |*.d         | list prerequisites of a single *.o target    |
- |dependency   |*.du        | list prerequisites of a single *.ou target   |
+ |dependency   |*.d or .du  | prerequisites of a single *.o or .ou target  |
 
 Each of these types of file is described in a bit more detail below, and
 then in greater detail in subsequent pages about different types of file:

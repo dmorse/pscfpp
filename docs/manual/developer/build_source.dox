@@ -27,25 +27,28 @@ name of the subdirectory of src that contains the source list file.
 Specifically, the [directory] string in each such variable name is 
 constructed by taking the relative path from the src/ directory to a 
 subdirectory of interest and replacing each "/" directory separator 
-in this path an underscore ("_").  As an example, the file 
-src/pscf/chem/sources.mk defines a variable named
+in this path an underscore ("_").  
+
+<b>Example </b>: The file src/pscf/chem/sources.mk defines a variable 
+named
 \verbatim
 pscf_chem_CPP
 \endverbatim
-Here, the directory path pscf/chem defined relative to the src directory
-has been converted into the variable name pscf_chem_ . The value of this
-variable is a list of paths to all compilable C++ sources files with 
-filename extension \*.cpp that are located in the directory tree rooted 
-at the directory that contains this sources.mk file. Each path in this 
-list must be given as a relative path, defined relative to the root of 
-the src directory tree.
+Here, the directory path pscf/chem, defined relative to the src 
+directory, has been converted into the variable name pscf_chem_ . 
+
+The value of the variable [directory]_CPP is a list of paths to all 
+compilable C++ sources files with filename extension \*.cpp that are 
+located in the directory tree rooted at the relevant directory. Each 
+path in such a list must be given as a relative path, defined relative 
+to the root of the src directory tree.
 
 Each directory that contains \*.cu CUDA C++ files also contains an 
 analogous variable whose value is a list of all of the \*.cu source 
 files in that directory and all nested subdirectories. The name of 
 this variable is a string of the form
 \verbatim
-[directory]_CU
+[directory]_CUDA
 \endverbatim
 in which "[directory]" denotes a mangled form fo the directory name of
 the same form as that used to construct the [directory]_CPP variable.
@@ -56,11 +59,11 @@ to the src directory.
 If a directory with the src directory tree contains both standard \*.cpp 
 C++ files and \*.cu CUDA C++ files, then the source file list in that 
 directory will define two different makefile variables, with suffixes 
-_CPP and _CU, that contain lists of these two different types of file. 
+_CPP and _CUDA, that contain lists of these two different types of file. 
 
-Source files lists are not directly used by the build system, but are 
-used simply as inputs to text manipulation commands that use them to
-build object and dependency file lists of the types discussed below.
+Source files lists are used as inputs to text manipulation commands 
+that use them to build corresonding lists of object and dependency 
+files, as discussed below.
 
 \section developer_build_list_objdep_sec Object file lists
 
@@ -266,12 +269,17 @@ named LMBdStep. The implementation of this class template, which
 is define in a file named LMBdStep.tpp, defines an algorithm for
 the Leimkuhler-Matthews Brownian dynamics step algorithm used in 
 PS-FTS simulations. The file LMBDStep.cpp, which is compiled by 
-a standard C++ compiler, instantiates a specialization of a the 
-LMBDStep class template that is designed to be used as part of 
-the pscf_rpc program, and to use standard CPU hardware.  The file 
-BdStep.cu instead instantiates a specialization of the LMBDStep 
-template that is designed to be used as part of the pscf_rpg 
-program, and that is designed to use a GPU.
+a standard C++ compiler, instantiates several specialization of 
+the LMBDStep class template that is designed to be used as part 
+of the pscf_rpc program, and to use standard CPU hardware.  
+Specifically, LMBdStep.cpp instantiates three specializations
+of this template with different values for a template argument
+D=1, 2 and 3 that represents the dimension of space, but the 
+same value for a template argument T=Pscf::CPT that is used to 
+indicate the use of a C++ backend that uses standard hardware.
+The file BdStep.cu instead instantiates 3 specializations of 
+the LMBDStep template that are designed to be used as part of 
+the pscf_rpg program, and that is designed to use a GPU.
 
 Conditional compilation of the \*.cpp and \*.cu files in the src/rp 
 directory tree is controlled by the makefile variables PSCF_CPP and 
@@ -280,10 +288,9 @@ file. These two variables also control construction of the pscf_rpc
 and and pscf_rpg programs, respectively.  The \*.cu files in the 
 src/rp directory tree are all compiled if and only if PSCF_CUDA is 
 defined, thus enabling construction of the pscf_rpg program. The 
-\*.cpp files in this directory tree are all compiled if and only 
-if PSCF_CPP is defined, thus enabling construction of the pscf_rpc 
-program.  Understanding of this logic is necessary to understand the 
-structure of the source list files in this directory tree.
+\*.cpp files in this directory tree are all compiled if and only if 
+PSCF_CPP is defined, thus enabling construction of the pscf_rpc 
+program.  
 
 The content of the file src/rp/fts/brownian/sources.mk is shown
 below as an example:
@@ -333,19 +340,11 @@ commands that add the absolute paths to corresponding object and
 dependency files to the object and dependency file lists.
 
 The block that is executed only if PSCF_CUDA is defined instead 
-creates a source list rp_fts_brownian_CU that contains relative paths 
+creates a source list rp_fts_brownian_CUDA that contains relative paths 
 to all of the \*.cu CUDA files in this directory. The definition of
 this variable is followed within this block by two commands that add 
 paths to the corresponding object and dependency files to the object 
 and dependency file lists.
-
-Observe that the commands that create lists of object and dependency 
-files use different file name suffixes for object and dependency files 
-that are created by compiling different types of source files. The 
-commands that manipulate the variable rp_fts_brownian_CPP use a suffix 
-.o for object files and .d for dependency files.  The corresponding 
-commands that manipulate rp_fts_brownian_CU instead use a suffix .ou
-for object files and .du for dependency files.
 
 \subsection developer_build_list_example2_sub Directories with subdirectories (not namespace-level)
 
@@ -418,9 +417,8 @@ is a list of all of the assocated dependency files.
 \subsection developer_build_list_example3_sub Namespace-level directories
 
 The source list file in each the namespace-level subdirectory of src
-contains a rule for constructing an associated static library, in
-addition to code that constructs source and object file lists similar
-to that shown above.
+contains an additional rule to construct an associated static library.
+in addition to code that constructs source and object file lists.
 
 <b> Example </b> : Here is the content of the file src/rp/sources.mk
 located in the src/rp namespace-level directory
@@ -482,19 +480,19 @@ $(rp_LIB). This is assigned a value \$(BLD_DIR)/rp/librp.a that gives
 the absolute path to a file named librp.a in the rp subdirectory of the
 relevant build directory.
 
-The rule to construct the library constructs the target file \$(rp_LIB)
-by archiving the contents of all of the object files in the src/rp
-directory tree. The recipe of this rule variable \$(AR) to represent the
-name of the archiver program that is used for this purpose. The value of AR
-is defined in the config.mk file in the build directory, and is set to
-"ar" by default.  The resulting library incorporates the contents of all
-of the object files in the list \$(rp_OBJS).
+The rule to construct the library constructs the target file \$(rp_LIB) by 
+archiving the contents of all of the object files in the list \$(rp_OBJS).
+The recipe for this rule uses the variable value \$(AR) to represent the 
+name of the archiver program that is used for this purpose.  The value of
+\$(AR) is defined in the config.mk file in the build directory. By default,
+\$(AR) is set to "ar", which is the name of the standard unix archiver.  
 
 The sources.mk file in every other namespace-level directory of src
-defines an analogous rule for constructing a library file. A makefile
-that includes a sources.mk file located in a namespace-level directory
-has access to the object file list for that directory, the name of the
-associated library file, and a rule to construct that library.
+defines an analogous rule for constructing a library file. A makefile 
+that includes a sources.mk file located in a namespace-level directory 
+thus has access to the object file list for that directory, the name of 
+the associated library file, and a rule that can be used construct or
+reconstruct that library if needed.
 
 <BR>
 \ref developer_build_config_page      (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

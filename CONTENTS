@@ -15,7 +15,7 @@ Subdirectories:
 Files: 
 
   CONTENTS  - this file
-  HISTORY   - summary of package version development
+  HISTORY   - summary of changes for each package version
   LICENSE   - GNU GPL v3 license
   README.md - brief intro to package (as displayed on github page)
   configure - shell script for initial set up of the build system 

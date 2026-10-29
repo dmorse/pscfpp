@@ -23,11 +23,11 @@ Polymer Self-Consistent Field, reflecting this origin.
 
 PSCF now also provides tools for stochastic field theoretic simulation
 (FTS). Specifically, PSCF can now be used for partial saddle-point field 
-theoretic simulation (PS-FTS). Such simulations can be performed using 
-ether Brownian dynamics (BD) or Monte-Carlo (MC) sampling methods.
+theoretic simulation (PS-FTS), using ether Brownian dynamics (BD) or 
+Monte-Carlo (MC) sampling methods.
 
 The partial saddle-point approximation for FTS used in PSCF is an 
-approximation for simulations of incompressible models in which a
+approximation for simulations of an incompressible model in which a
 pressure-like field that imposes a constraint on the total monomer
 concentration is approximated at a mean-field (or saddle-point) level,
 while fields that couple to composition fluctuations are allowed to
@@ -41,17 +41,17 @@ complex-valued fields.
 
 ## History
 
-The current C++/CUDA version of PSCF originated as a rewrite of an
-older Fortran SCFT program of the same name.  This older Fortran PSCF
-package built a single program that was designed for SCFT calculations
-on systems that may contain mixtures of linear block polymers and small
-molecule solvents in a domain with periodic boundary conditions.  The
-current C++/CUDA version of PSCF is intended to supersede the Fortran
-version, which is no longer being developed or actively maintained.
-The Fortran PSCF package is still available in a separate github.com
-repository at https://github.com/dmorse/pscf.  The newer C++/CUDA
-version provides almost all of the capabilities of the Fortran PSCF
-program, and several important new capabilities, as discussed below.
+The C++/CUDA version of PSCF originated as a rewrite of an older Fortran 
+SCFT program of the same name.  This older Fortran PSCF package built a 
+single program that was designed for SCFT calculations on systems that 
+may contain a mixture of linear block polymers and small molecule solvents 
+in a domain with periodic boundary conditions.  The current C++/CUDA 
+version of PSCF is intended to supersede the Fortran version, which is 
+no longer being developed or actively maintained.  The Fortran PSCF 
+package is still available in a separate github.com repository at 
+https://github.com/dmorse/pscf.  The newer C++/CUDA version provides 
+almost all of the capabilities of the Fortran PSCF program, and several 
+important new capabilities, as discussed below.
 
 Functional differences between the current C++/CUDA version of PSCF and
 the legacy Fortran version include the following:
@@ -88,9 +88,9 @@ PSCF provides source code for the following two programs:
 The pscf_rp program can be compiled to create either a standard C++
 version that uses only conventional CPU hardware or a CUDA C++ version
 that uses an NVIDIA GPU. Executable files for these different versions
-are assigned different names.  The executable file for the standard
-C++ version is named pscf_rpc, while the executable file for the CUDA
-GPU-enabled version is named pscf_rpg.
+of pscf_rp are assigned different names.  The executable file for the 
+standard C++ version is named pscf_rpc, while the executable file for 
+the CUDA GPU-enabled version is named pscf_rpg.
 
 ## Features
 
@@ -153,20 +153,20 @@ Features for SCFT on periodic systems (pscf_rp):
   - Built-in database of symmetry operations for all 230 3D space groups
     and 17 2D plane groups
 
-  - Inhomogeneous density constraint (a "mask") for systems in
+  - Inhomogeneous density constraint (a "mask") to describe systems in
     a confined geometry
 
   - External fields
 
-  - Tools for thin polymer films (using a mask to represent confinement
-    and external fields for selective surface interactions)
+  - Tools for thin polymer films, using a mask to represent confinement
+    and external fields for selective surface interactions
 
 Features for PS-FTS (pscf_rp):
 
   - Brownian dynamics (BD) and Monte Carlo (MC) sampling algorithms
 
-  - BD algorithms: Leimkuhler-Matthews and predictor-corrector BD step
-    algorithms
+  - BD algorithms: Leimkuhler-Matthews, predictor-corrector and 
+    explicit Euler-Maruyama BD step algorithms
 
   - MC algorithms: real-space and "smart"/force-bias MC moves
 
@@ -182,7 +182,7 @@ Features for PS-FTS (pscf_rp):
   - "Analyzer" classes to compute and analyze quantities of physical
     interest, including the structure factor, order parameters used to
     identify phase transitions, and derivatives of the Hamiltonian
-    needed to for thermodynamic integration calculations
+    needed for thermodynamic integration calculations
 
   - Tools for performing data analysis either during a simulation or
     by postprocessing field trajectory files that are created during
@@ -207,16 +207,16 @@ a machine with a git client installed, enter the command:
 ```
 git clone --recursive https://github.com/dmorse/pscfpp.git
 ```
-Note the use of the --recursive option of the git clone command. Use of
-this option is necessary with PSCF to clone and install two git submodules
+Note the use of the --recursive option of the git clone command. This
+option is necessary in order to clone and install two git submodules 
 that are maintained in separate github repositories. This command will
 create a new directory called pscfpp that contains all of the source code
 and associated documentation, including the two required git submodules.
 
 We do *not* recommend that users obtain the source code by simply
 downloading and unpackng a zip or tar file of a tagged release from the
-PSCF github repository. Doing so would create a pscfpp directory that does
-not contain source code for two git repositories that are automatically
+PSCF github repository. Doing so would create a repository directory that
+does not contain source code for two git repositories that are automatically
 installed as submodules by the above git command. It is possible to install
 these submodules after the fact, but simpler to follow the instructions
 given above.
@@ -233,18 +233,16 @@ in greater detail.
 
 If desired, users can use the [doxygen](<https://www.doxygen.nl/index.html>)
 documentation generation program to generate a local copy of the web manual.
-The resulting html pages will be installed within the docs/html subdirectory
-of the pscfpp root directory.  To do this, the doxygen application must be
-installed on your computer, and the directory containing the doxygen
-executable must be in the unix command search PATH variable. To generate a
-local copy of the web manual:
+To do this, the doxygen application must be installed on your computer, and
+the directory containing the doxygen executable must be in the unix command
+search PATH variable. To generate a local copy of the web manual:
 
    - Change directory (cd) to the pscfpp root directory
 
    - Enter "make html"
 
 This should create many html files in the pscfpp/docs/html directory. To
-begin reading, point a web browser at the file pscfpp/docs/html/index.html ,
+begin reading, point a web browser at the file pscfpp/docs/html/index.html,
 which is the main page of the web manual.
 
 ## Dependencies
@@ -285,9 +283,9 @@ The build system used to compile and install PSCF uses the unix "make"
 utility, which is available in any unix-like command-line environment.
 To compile and run this or other unix software on Mac OS X, the user
 must first install the Mac OS X unix command line tools, which creates
-such a unix-like environment. The build system also uses some Python
-modules that are provided within the package repository, and so requires 
-access to a Python 3 interpreter.
+such a unix-like environment. The PSCF build system also uses several 
+Python modules that are provided within the package repository, and so 
+also requires access to a Python 3 interpreter.
 
 Complete instructions for compiling PSCF are provided in section 2 of
 the [web manual](<https://dmorse.github.io/pscfpp-man>).  A brief summary
@@ -353,8 +351,8 @@ file that contains physical and algorithmic parameters required to
 describe the system of interest and initialize the program.  The command
 file, which is processed after the parameter file, is a script that
 contains a sequence of commands that are interpreted and executed in
-the order that they appear. Contents and syntax for PSCF parameter
-and command files are discussed in Secs. 3-5 of the web manual.
+the order that they appear. Contents and syntax for PSCF parameter and 
+command files are discussed in Secs. 3-5 of the web manual.
 
 A PSCF command file normally contains commands to read and write several
 field data files. The names of these field files are provided as arguments
@@ -363,11 +361,10 @@ either a SCFT or PS-FTS calculation normally contains a command to read
 an input file that contains an initial set of monomer chemical potential 
 fields.  This initial state may be used in SCFT as an initial guess for 
 an iterative SCFT solver, or in PS-FTS as the initial state of a 
-stochastic simulation. A command file for either an SCFT or FTS calculation 
-usually also contains commands to output final chemical potential and 
-monomer concentration fields to output files (i.e., either a converged 
-solution for a SCFT calculation or the fields obtained after the last 
-step of a stochastic simulation).
+stochastic simulation. A command file for either an SCFT calculation or 
+PS-FTS simulation usually also contains commands to run the desired 
+calculation, and commands to output final chemical potential and 
+monomer concentration fields to one or more output files.
 
 Command line usage for different programs is described below, starting
 with the simple case of the pscf_1d program for one-dimensional SCFT
@@ -379,7 +376,7 @@ program is
 pscf_1d -p param -c command -e
 ```
 Here, the string "param" denotes the name of a parameter file, and
-"command" denotes the name of a command file.  The -p and -c options
+"command" denotes the name of a command file. The -p and -c options
 are required.
 
 The "-e" command line option in the above example is optional, but
@@ -388,15 +385,15 @@ to standard output as this file is being processed. Use of this option
 makes it easier to debug failures that arise from syntax errors in the
 parameter file.
 
-**pscf_rp** : The command line interface for the pscf_rpc or pscf_rpg
-executable files take the same required and optional elements as pscf_1d,
-but also requires a value for the dimension of space as an additional
-parameter.  This is an integer parameter of the -d option that must have
-a value 1, 2 or 3. This integer specifies the number of coordinates
-along which the structure is periodic.  The usual syntax for invoking
-pscf_rpc for an SCFT calculation of a three dimensionally periodic
-structure (e.g., a network structure or a 3D arrangement of spheres),
-while also using the -e option, is thus
+**pscf_rp** : The command line interface for invoking the pscf_rpc or 
+pscf_rpg executable file take the same required and optional elements 
+as pscf_1d, and also requires a value for the dimension of space as an 
+additional parameter.  This is an integer parameter of the -d option that 
+must have a value 1, 2 or 3. This integer specifies the number of 
+coordinates along which the structure is periodic.  The usual syntax 
+for invoking pscf_rpc for an SCFT calculation of a three dimensionally 
+periodic structure (e.g., a 3D network structure or a 3D arrangement of 
+spheres), while also using the -e option, is thus
 ```
 pscf_rpc -d 3 -p param -c command -e
 ```
@@ -411,20 +408,20 @@ as that shown above for the CPU version, except for the use of the
 executable file name pscf_rpg rather than pscf_rpc.
 
 The pscf_rp program can perform PS-FTS simulations, as well as SCFT
-calculations.  PS-FTS simulations usually allow field fluctuations to vary
-in all three spatial dimensions. The pscf_rpc or pscf_rpg executable is
-thus normally invoked using the option "-d 3" when used for a PS-FTS
-simulation.
+calculations.  PS-FTS simulations normally allow field fluctuations to 
+vary in all three spatial dimensions. The pscf_rpc or pscf_rpg executable 
+is thus normally invoked using the option "-d 3" when it is being used 
+to run a PS-FTS simulation.
 
 **Output redirection** : Programs that are invoked as shown in the above
-examples would write log output that is produced during execution to 
-the user's screen (i.e., to standard output).  This log output may be 
+examples would write log output that is produced during execution to the 
+user's screen (i.e., to standard output).  This log output may be 
 redirected to a file by using the unix ">" output redirection operator.
 For example, the command
 ```
 pscf_rpc -d 3 -p param -c command -e > log
 ```
-would redirect information that written to standard output during
+would redirect information that is written to standard output during
 execution to a file named "log" in the current working directory. Standard 
 output is usually redirected to a log file for long calculations, or when 
 a program is run in a queue on a shared computing facility.

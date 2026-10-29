@@ -113,14 +113,16 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # should be used, and may contain options that specify the optimization 
 # level and the strictness of compiler warnings.
 #
-# The INCLUDES variable uses the -I option to list paths that the 
-# preprocessor should search for header files. The INCLUDES variable is 
-# initialized in this config.mk file with a default value "-I$(SRC_DIR) that
-# instructs the preprocessor to search the source directory, $(SRC_DIR), 
-# for header files that are part of the PSCF package. Additional paths to
-# specific libraries may then be appended to the value of this variable in
-# the patterns.mk file in each namespace-level subdirectory of the src 
-# directory.
+# The INCLUDES variable uses the -I option to list additional paths that 
+# the preprocessor should search for header files. The CPPFLAGS variable 
+# always contains a string "-I$(SRC_DIR) that instructs the preprocessor 
+# to search the PSCF src/ directory, $(SRC_DIR), for header files that 
+# are part of the PSCF package. The INCLUDES variable instead contains
+# options that add paths to directories that contain header files 
+# required to use relevant external libraries. The value of INCLUDES is 
+# initialized to an empty string in this config.mk file, and may be
+# extended in the patterns.mk file in each namespace-level subdirectory 
+# of the src/ directory.
 # 
 # Compiling C++ CUDA (*.cu) source files:
 # ---------------------------------------

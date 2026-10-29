@@ -99,7 +99,7 @@ member functions so as to apply to a particular set of possible
 template parameter lists.
 
 
-\section developer_template_defs_explicit_sec Implicit vs. Explicit instantiation
+\section developer_template_defs_explicit_sec Implicit vs. explicit instantiation
 
 A specialization of a class template may be instantiated by either 
 <b> implicit </b> or <b> explicit </b> instantiation.

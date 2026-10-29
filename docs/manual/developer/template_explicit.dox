@@ -138,17 +138,19 @@ will be suppressed for all such specializations in any file that includes
 the header file. Most of the class templates in the Pscf::Rp namespace 
 have code that is organized as described above.
 
-\section developer_template_explicit_example1_sec Example 1: Class Basis<D>
+\section developer_template_explicit_example1_sec Example 1: Pscf::Basis<D>
 
 Class templates for which the dimension of space, D, is the only template 
 parameter are always written using the simple pattern described above. 
-As a simple example of this, we consider the three source code files 
-associated with the class template Pscf::Basis. 
+In this case, the PSCF build system always explicitly instantiates three 
+specializations with the three allowed template argument values of
+ D=1, 2, and 3.  As an example of this, we consider the three source 
+code files associated with the class template Pscf::Basis. 
 
-The header file src/pscf/crystal/Basis.h contains a definition of the class 
-template Pscf::Basis, definitions of a few inline functions, and explicit 
-specialization declarations.  The key contents of this file, in skeleton 
-form, look like this:
+The header file src/pscf/crystal/Basis.h contains a definition of the 
+class template Pscf::Basis, definitions of a few inline functions, and 
+explicit specialization declarations.  The key contents of this file, in 
+skeleton form, look like this:
 \code
 #ifndef PSCF_BASIS_H
 #define PSCF_BASIS_H
@@ -158,13 +160,15 @@ namespace Pscf {
    // Class definition
    template <int D>
    class Basis {
-      ...
-   }
+
+      // Member declarations
+
+   };
 
    // Inline member function definitions
    ...
 
-   // External instantiation declarations
+   // Explicit instantiation declarations
    extern template class Basis<1>;
    extern template class Basis<2>;
    extern template class Basis<3>;
@@ -172,8 +176,8 @@ namespace Pscf {
 }
 #endif
 \endcode
-Note that the header file contains explicit instantiation declarations for 
-all three possible valid specializations.
+Note that the header file contains explicit instantiation declarations 
+for all valid specializations.
 
 An associated template implementation file, src/pscf/crystal/Basis.tpp, 
 contains definitions of all non-inline member functions for the Basis 
@@ -213,31 +217,31 @@ namespace Pscf {
 }
 \endcode
 The PSCF build system compiles the file src/pscf/crystal/Basis.cpp and
-places the resulting object code for all three valid specializations 
-Basis<1>, Basis<2> and Basis<3> in an object file named Basis.o. The 
-contents of this object file are then incorporated into the static 
-library file src/pscf/libpscf.a. 
+places the resulting object code for the three specializations Basis<1>, 
+Basis<2> and Basis<3> in an object file named Basis.o. The contents of 
+this object file are then incorporated into the static library file 
+src/pscf/libpscf.a. 
 
 Separation of the code for this sort of class template into three files, 
 as in the above example, is common in PSCF but is not the only possible 
-organization for the type of class discussed above. If explicit 
-instantiation definitions for all required specializations are given 
-in a single \*.cpp file, as in the above example, then definitions of 
-the non-line functions could also be placed directly in the \*.cpp file, 
-thus combining the contents of the \*.tpp and \*.cpp files. 
+organization. If explicit instantiation definitions for all required 
+specializations are given in a single \*.cpp file, as in the above 
+example, then definitions of non-line functions could instead be placed 
+directly in the \*.cpp file, thus making the \*.tpp file unecessary.
+The next example, however, discusses a case in which the use of a
+separate \*.tpp file is a more important part of the design.
 
-\section developer_template_explicit_example2_sec Example 2: Class System<D,T>
+\section developer_template_explicit_example2_sec Example 2: Pscf::Rp::System<D,T>
 
-The Pscf::Rp namespace defines a large set of class templates that are
-used to construct different variants of the pscf_rp program for 
-periodic systems. These templates are used to construct two different
-executable files for variants of this program that provide the same
-functionality but use different computational "backends". The pscf_rpc
-executable uses a C++ backend that uses standard CPU hardware, whereas
-the pscf_rpg executable uses a CUDA backend that can uses a GPU for
-mathematical operations on large arrays.
+The Pscf::Rp namespace defines a large set of class templates that are 
+used to construct two different executable files for variants of the 
+pscf_rp program that provide the equivalent features but use different 
+computational "backends". The pscf_rpc executable uses a C++ backend 
+that relies on standard CPU hardware, whereas the pscf_rpg executable 
+uses a CUDA backend that uses a GPU for mathematical operations on 
+large arrays.
 
-Almost all of class template in the Pscf::Rp accept two template
+Almost all of class template in the Pscf::Rp namespace accept two template
 parameters:
 
    - An int parameter D that represents the dimension of space
@@ -247,32 +251,31 @@ parameters:
 
 A "backend identifier class" is a class that is designed specifically to 
 be used as a template argument that identifies a choice of computational 
-backend.  There are currently two backend identifier classes named 
+backend.  PSCF currently defines two backend identifier classes named 
 Pscf::CPT and Pscf::CUT. Use of class T=Pscf::CPT as template argument 
-specifies the use of a C++ backend in the resulting template 
-specialization. Use of T=Pscf::CUT instead indicates the use of the
-GPU-enabled CUDA backend. 
+specifies the use of the C++ backend in the resulting template 
+specialization. Use of T=Pscf::CUT as an argument instead indicates the 
+use of the CUDA backend. 
 
-We focus here  on how the use of both standard C++ and CUDA C++ in order 
-to support the use different backends effects the required organization of 
-source code files for class templates. Files that contain standard C++ and 
-CUDA C++ must be compiled using different compilers. The pattern rules 
+We focus here  on how the use of a combination of standard C++ and CUDA 
+C++ in order to support the use different backends affects the organization
+of source code files for class templates. Files that contain standard C++ 
+and CUDA C++ must be compiled using different compilers. The pattern rules 
 used by the PSCF makefile system require that files that end with the file 
 name suffix \*.cpp must be standard C++ files that can be compiled by a 
 standard C++ compiler (e.g., the gcc or clang compiler). Files with a file 
 name suffix \*.cu are assumed to be CUDA C++ files that must be compiled 
-by the NVIDIA nvcc compiler.  Any specialzation of the type of class 
+by the NVIDIA nvcc compiler.  Any specialization of the type of class 
 template discussed here that uses T=Pscf::CUT as a template argument 
-must be allowed to contain CUDA code in order to enable use of a GPU, 
-and thus must be compiled by the NVIDIA nvcc compiler. Any specialization 
-of such a template that uses a template argument T=Pscf::CPT must instead 
-contain only standard C++ code, and should thus be compiled using a 
-conventional C++ compiler.  These considerations imply that, for each 
-class template that takes a template identifier class as a template 
-parameter, we must create both a \*.cpp file that contains all required 
-explicit instantiation definitions for specializations with T=Pscf::CPT 
-and a \*.cu file that contains explicit instantiation definitions for 
-specializations with T=Pscf::CPT.
+may contain CUDA code, and thus must be compiled by the NVIDIA nvcc 
+compiler. Any specialization of such a template that uses a template 
+argument T=Pscf::CPT can only contain standard C++ code, and so should
+be compiled using a conventional C++ compiler.  These conventions require
+that, for each class template that takes a template identifier class as 
+a template parameter, we must create both a \*.cpp file that contains 
+all required explicit instantiation definitions for specializations 
+with T=Pscf::CPT and a \*.cu file that contains explicit instantiation 
+definitions for specializations with T=Pscf::CPT.
 
 As an simple example of this, we consider the source code files associated
 with the class template Pscf::Rp::System. This template is declared in the 
@@ -284,27 +287,29 @@ namespace Rp {
 }
 }
 \endcode
+where template parameter T represents a backend identifier class.
 There are four files associated with this class template, all of which 
 are located in the directory src/rp/system:
 
    - A header file named System.h that contains the class template 
-     definition and explicit instantiation declarations for all 
-     allowed specializations of the template.
+     definition, definitions of inline member functions, and explicit 
+     instantiation declarations for all allowed specializations of the 
+     template.
 
    - A template implementation file named %System.tpp that includes the
-     header and contains definitions for all non-inline member
+     header file and contains definitions for all non-inline member
      functions.
 
    - A compilable C++ file named System.cpp contains explicit 
-     instantiation definitions for specializations with D=1,2,3 and 
-     T=Pscf::CPT.
+     instantiation definitions for three specializations with D=1,2,3 
+     and T=Pscf::CPT.
 
    - A compilable CUDA C++ file named System.cu that contains explicit
      instantiation definitions for specializations with D=1,2,3 and 
      T=Pscf::CUT.
 
-The System.cpp and %System.cu files both include the System.tpp
-file, and thus both indirectly include the System.h header file.
+The System.cpp and %System.cu files both include the System.tpp file, 
+and thus also both indirectly include the System.h header file.
 
 The contents of the System.cpp file thus look something like this:
 \code
@@ -341,13 +346,13 @@ namespace Rp {
 }
 }
 \endcode
-The use of a separate template implementation file is essential in this 
-case, because it allows the same implementation file to be included by 
-both the \*.cpp and \*.cu files, without including non-inline function 
-definitions in the header file.
+The use of a separate template implementation file is essential to this
+design, because it allows the same implementation file to be included 
+by both the \*.cpp and \*.cu files, without also including non-inline 
+function definitions in the header file.
 
-The template system used by PSCF to support the use of multiple backends 
-is discussed in much greater detail \ref developer_backend_page "here".
+The system used by PSCF to support the use of multiple backends is 
+discussed in much greater detail \ref developer_backend_page "here".
 
 <BR>
 \ref developer_template_defs_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

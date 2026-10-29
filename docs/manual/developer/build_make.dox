@@ -18,32 +18,33 @@ The "make" command is a standard unix utility that is used to control
 compilation and installation of software packages. It is invoked from a
 terminal command line by typing the command name "make", usually followed
 by one or more arguments that are known as "targets".  Each target
-specifies either the name of a file that should create or a label for a
-specific action.
+specifies either the name of a file that should be created or a label 
+for some other type of action.
 
 Whenever make is invoked, it searches for an associated "makefile" that
-specifies actions that can be performed by make when it is invoked from the
-current working directory. This makefile must be a file named "makefile"
-or "Makefile" that is located in the current working directory (i.e,.
-in the directory from which the make command was invoked). Each possible
-target that may be given as an argument of the make command must be the
-target of a "rule" in the associated makefile.
+specifies actions that can be performed by make when it is invoked from 
+the current working directory. This must be a file named "makefile" or 
+"Makefile" that is located in the current working directory (i.e,.  in 
+the directory from which the make command was invoked). Each target that 
+may be given as an argument of the make command must be associated with
+a "rule" in the associated makefile.
 
 \section developer_build_make_rules_sec Makefile rules
 
-Each makefile defines a set of "rules".  Each rule provide instructions for
-how to perfom a specific action or type of action. The general syntax for a
+Each makefile defines a set of "rules" that provide instructions for how 
+to perfom specific actions or types of action. The general syntax for a
 makefile rule is:
 \code
 target:  prerequisites
 	recipe
 \endcode
 The "target" is a character string that may be either the name of a file
-that would be created by the associated action or a arbitrary label for
+that would be created by the associated action or an arbitrary label for
 the rule.  The "recipe" associated with a rule is a unix shell command or
 a sequence of such commands that must be invoked to perform the action.
 The "prerequisites" entry is a list of the names of files that are
-required as inputs to the recipe.
+required as inputs to the recipe, and that must be up-to-date before
+the recipe can be applied.
 
 The list of prerequisites must appear on the same line as the target,
 separated from the target by a colon.  The recipe must start on the line
@@ -114,13 +115,13 @@ or up-to-date.  When a rule is invoked to build a target file, such as
 an object file, the recipe associated with the rule is actually applied
 only if the target file either does not exist or if it already exists
 but is out-of-date.  An existing target file is considered out-of-date
-if any of its pre-requisistes is a file that has been modified after the
-last time the target file was modified.
+if any of its pre-requisites is a C/C++ file that been modified after 
+the last time the target file was modified.
 
 Consider a simple case in which a user invoke the rule to build a
 particular object file *.o target twice in a row, without editing any
 prerequisite C++ files in between. In this case, make would not invoke
-the recipe to recreate the object file the second time the rule is
+the recipe to recreate that object file the second time the rule is
 invoked, because it would be able to determine that the target object
 file is newer than all of its prerequisites, and that it is thus already
 up to date.
@@ -129,8 +130,8 @@ The decision regarding whether an existing target of a rule is older than
 any of its prequisites is based on examination of file time stamps for
 files listed as prerequisites.  Time stamps are metadata associated with
 files in a unix file system, which indicate when the file was created,
-and the most recent time that a file was modified.  An existing file that
-is the target of a makefile rule is considered out-of-date if any
+and the most recent time that a file was modified.  An existing file 
+that is the target of a makefile rule is considered out-of-date if any
 prerequisite of that target either:
 
    - is a file that has been modified since the last time that the target
@@ -142,28 +143,28 @@ prerequisite of that target either:
 A target file that does not yet exist is always considered to be
 out-of-date, as are phony targets (targets that are not file names).
 
-In a system with properly constructed prerequisites, the rule to
-construct a *.o object file by compiling an associated *.cpp or *.cu
+In a makefile system with properly constructed prerequisites, the rule 
+to construct a *.o object file by compiling an associated *.cpp or *.cu
 source file should list all of the header files that are directly or
 indirectly included by the source file. If a header file is directly
 or indirectly included by multiple source files, then modification of
 that header will cause all of the associated object files to become
-outdated.
+out-of-date.
 
-\section developer_build_make_recursive_sec Recursive updating of prerequisites
+\section developer_build_make_recursive_sec Recursive updates
 
 When a makefile rule is invoked, the make command first checks if any of
 the prerequisites of that rule are targets of other rules and, if so,
 whether any such prerequisites are out-of-date. If any prerequisites are
-found to be out of date, make first applies the rules required to update
-all out-of-date prerequisite files before applying the required recipe
-to update the primary target.
+found to be out of date targets of other rules, make attempts to update
+all out-of-date prerequisite files before attempting to update the 
+primary target.
 
 This recursive behavior is only relevant to rules that have prerequisites
-that are intermediate files that are created by the build system, using
-instructions given other rules. Specifically, it effects the behavior of
-rules that create libraries by archiving object files, and of rules that
-create executable files by linking object files and libraries.
+that are files that are created by the build system.  Specifically, it 
+effects the behavior of rules that create libraries by archiving a set
+of object files, and of rules that create executable files by linking 
+object files and libraries. 
 
 As an example of this behavior, consider the case of a rule that builds
 an executable file. The rule for constructing an executable file often
@@ -179,13 +180,13 @@ included by the source file. Invocation of a rule to build an executable
 file can thus cause a cascade of events in which the make utility first
 compiles a set of source files, in order to create or update any
 non-existent or out-of-date object files, then uses an archiver to
-create or update any outdated library files, and finally use a linker
+create or update any outdated library files, and finally uses a linker
 to create the requested executable file.
 
 This recursive behavior normally has no affect on rules that create
-object file targets. The prerequisites of such rules are usually C++
-files that are not created by the build system, and so are not targets
-of other rules.
+an object file target. The prerequisites of such rules are usually all
+C++ files that are not created by the build system, and which are thus
+not targets of other rules.
 
 \section developer_build_make_pattern_sec Pattern rules
 
@@ -245,31 +246,41 @@ here </a>.
 
 \section developer_build_make_empty_sec Rules with prerequisites but no recipe
 
-A pattern rule may be used to construct a target file for which there 
-exists an explicit rule that lists prerequisites, but that does not define
-a recipe. When the make command tries to build the target of such a rule, 
-it searches for an applicable pattern-rule and uses the recipe for such 
-a pattern rule when possible. 
+Make allows the existence of rules that contain prerequisites but no recipe, 
+and also allows more than one rule to match the same file name target. If 
+more than one rule matches the same target but only of those rules defines 
+a recipe, make uses that recipe, while using a prerequisite list that 
+combines that pre-requisites of all applicable rules.  This behavior is 
+useful because it allows make to use a rule with no recipe to specify the
+pre-requisites for a specific target file, while using a recipe that is
+given by a pattern rule to construct that target.
 
 For example, conside the following hypothetical rule for an object file
 target named A.o:
 \code
 A.o:   A.cpp A.h B.h
 \endcode
-This rule contains a target and prerequisites, but no recipe. If the make
-command needs to construct A.o, and finds this rule, it will look for a
-applicable pattern rule to provide a recipe. In this case, it would
-succeed if it finds a pattern rule to create an object file target that
-matches %.o by compling a source file that matches %.cpp (i.e., a *.cpp
-file with the same base name as the target), and if A.cpp and the other
-prerequisites of A.o all exist.
+This rule contains a target and prerequisites, but no recipe. If make
+command needs to construct A.o, and finds this rule, it will look for 
+another applicable rule to provide a recipe. In this case, the recipe
+could be provided by a pattern rule that creates an object file target
+that matches %.o by compiling a source file that matches %.cpp 
+(i.e., a *.cpp file with the same base name as the target).
 
-In the PSCF build system, each *.d dependency file contains a makefile
-rule that contains an object file as the target, and that list C++ file
-prerequisites, but that contains no recipe. Recipes used to create *.o 
-files are instead obtained from pattern rules that provide general 
-recipes for compiling *.cpp files (using a C++ compiler) and for 
-compiling *.cu files (using the NVIDIA CUDA compiler).
+In the PSCF build system, each of the pattern rules that creates an 
+object file target also creates a dependency file as a side effect of 
+compilation. The dependency file is a file with a file name suffix 
+.d (for standard C++ source files) or .du (for CUDA source files) 
+that contains a makefile rule that lists all of the pre-requisites 
+of the associated object file, but that that does not contain recipe. 
+Recipes used to create object files are instead defined by pattern 
+rules that provide general recipes for compiling \*.cpp files to 
+create \*.o object files (using a C++ compiler) and for compiling 
+*.cu files to create \*.ou files (using the NVIDIA nvcc compiler).
+Each makefile imports a set of dependency files to provide access
+to information about pre-requisites of object files that can be 
+created by that makefile.
+
 
 \section developer_build_make_phony_sec Phony targets
 

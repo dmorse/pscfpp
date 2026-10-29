@@ -76,17 +76,18 @@ several pattern rules.
 \section developer_build_pattern_var_sec Makefile variable definitions
 
 The first part of this file defines several variables that are used in
-the actual pattern rules, some of which are also used in makefiles that
-include this pattern rule file. Among these are:
+pattern rules and in makefiles that include this patterns.mk file. Among 
+these variables are:
 
    - PSCF_LIB : List of paths to relevant static libraries that are
      created by the PSCF build system
 
-   - LIBS : A list of paths or names of all relevant libraries, including
-     those associated with any relevant external packages
+   - LIBS : A list of search paths or names for all relevant binary 
+     library files, including any relevant external libraries in 
+     addition to those that are created by PSCF
 
-   - INCLUDES : A list of any additional paths to non-standard directories
-     containing header files for external libraries
+   - INCLUDES : A list of paths to non-standard directories that should
+     be searched for header files for external libraries
 
    - MAKEDEP_ARGS : A list of options that is passed to a python script
      that is used to construct dependency files.
@@ -131,40 +132,42 @@ FFTW_LIB=-lfftw3
 \endverbatim
 by default on a standard linux system.
 
-<b> INCLUDES </b>: The variable INCLUDES may contains compiler options
+<b> INCLUDES </b>: The variable INCLUDES may contain compiler options
 that add paths to non-standard directories that should be searched for
 header files that are included into PSCF source code files via C
-preprocessor \#include directives. Such additional search paths are
-generally needed only to find header files for external libraries have
-been installed in non-standard locations.  The INCLUDES variable is
-initialized to an empty string in the config.mk file, and is then
-completed within each patterns.mk file by adding variable values that
-may contain options to add additional search paths for directories
-containing header files for particular libraries.  In the above example,
-the final value of INCLUDES is given by a concatenation
+preprocessor \#include directives.  The PSCF makefile system is always
+configured to search the PSCF src/ directory for header files that are
+part of the PSCF package, by including the string "-I $(SRC_DIR)" in 
+the value of the CPPFLAGS variables that is set in the config.mk file. 
+The INCLUDES variable thus only needs to contains options that direct
+the compiler to search additional directories for header files for
+external libraries that are located in non-standard locations. The 
+INCLUDES variable is initialized to an empty string in the config.mk 
+file, and is then completed within each patterns.mk file by appending
+options to add search paths for directories containing header files 
+for particular libraries.  In the above example, the final value of 
+INCLUDES is given by a concatenation
 \verbatim
 INCLUDES = $(GSL_INC) $(FFTW_INC)
 \endverbatim
-The value of each variable such as GSL_INC and FFTW_INC may be empty,
-or may contain an option to add a non-standard directory that contains
-the header for a particular library to the list of directories that
-will be searched by the preprocessor. The value of each variable such
-as GSL_INC and FFTW_INC is defined in the config.mk file, and is set
-to an empty string for any library whose header file is installed in
-a standard locations such as /usr/include or /usr/local/include that
-the compiler searches by default.
+The value of each variable such as GSL_INC and FFTW_INC may contain
+an option to add a non-standard directory that contains any required
+header files for an associated library (e.g., the Gnu scientific 
+library or the FFTW library) to the list of directories that will 
+be searched by the preprocessor. Alternatively, such a variables be 
+set to an empty string if all header files for the associated library
+are installed in a standard location such as /usr/include or 
+/usr/local/include that the compiler searches by default. 
 
-For each library that installs a header file in a non-standard 
-directory, the associated \*_INC variable may instead be set to a string
-that starts with the "-I" compiler option, followed by the absolute path
-to a directory containing any required header file.  For example, on a
-particular Apple laptop on which the GSL library was installed by
-homebrew, the value
+Values for variables such as GSL_INC and FFTW_INC are assigned in the 
+config.mk file in each build directory.  For example, on an Apple 
+laptop on which version 2.8 of the Gnu Scientific Library (GSL) 
+library was installed by homebrew, the command
 \verbatim
 GSL_INC=-I /opt/homebrew/Cellar/gsl/2.8/include
 \endverbatim
-was required to tell the compiler where to find header files for a
-particular version of GSL.
+might be used  to tell the compiler where to find header files for 
+a particular version of GSL.
 
 Use of GSL is simplified by the fact this package installs a utility
 named gsl-config that reports where different types of file were
