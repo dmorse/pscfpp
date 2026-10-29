@@ -61,7 +61,7 @@ namespace Rp {
       ParamComposite::resetParam();
 
       // Make sure inputs are valid
-      if (normalVecId_ > D || normalVecId_ < 0) {
+      if (normalVecId_ >= D || normalVecId_ < 0) {
          UTIL_THROW("bad value for normalVecId, must be in [0,D)");
       }
       if (interfaceThickness_ > excludedThickness_) {
