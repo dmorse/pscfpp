@@ -817,22 +817,23 @@ namespace Pscf {
 
    /*
    * Get minimum images on the host by reference.
-   *
-   * Gather data from device and re-arrange if necessary.
    */
    template <int D>
-   HostSendArray<IntVec<D>,CUT> const & 
+   DArray< IntVec<D> > const & 
    WaveList<D,CUT>::minImages_h() const
    {
       UTIL_CHECK(hasMinImages_);
       if (!hasMinImages_h_) {
+         if (!minImages_h_.isAllocated()) {
+            minImages_h_.allocate(kSize_);
+         }
          HostRecvArray<int,CUT> minImages_temp;
          minImages_temp = minImages_;
-         int i, j, k;
-         for (j = 0; j < D; ++j) {
-            k = D*j;
-            for (i = 0; i < kSize_; ++i) {
-               minImages_h_[i][j] = minImages_temp[i + k];
+         int offset;
+         for (int j = 0; j < D; ++j) {
+            offset = j*kSize_;
+            for (int i = 0; i < kSize_; ++i) {
+               minImages_h_[i][j] = minImages_temp[i + offset];
             }
          }
          hasMinImages_h_ = true;

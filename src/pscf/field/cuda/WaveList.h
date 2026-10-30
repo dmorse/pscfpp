@@ -10,8 +10,8 @@
 
 #include <pscf/backend/cuda/CUT.h>            // template argument
 #include <pscf/field/cuda/RField.h>           // member
-//#include <pscf/backend/cuda/DeviceArray.h>    // member
-//#include <pscf/backend/cuda/HostSendArray.h>  // member
+#include <pscf/backend/cuda/DeviceArray.h>    // member
+#include <pscf/backend/cuda/HostSendArray.h>  // member
 #include <pscf/math/IntVec.h>                 // member
 #include <util/containers/DArray.h>           // member
 #include <util/containers/GArray.h>           // member
@@ -88,7 +88,7 @@ namespace Pscf {
 
       // Prohibit copy construction and assignment
       WaveList(WaveList<D,CUT> const&) = delete;
-      WaveList<D,T>& operator = (WaveList<D,CUT> const&) = delete;
+      WaveList<D,CUT>& operator = (WaveList<D,CUT> const&) = delete;
 
       /**
       * Allocate memory and associate with Mesh and UnitCell objects.
@@ -171,6 +171,8 @@ namespace Pscf {
       * elements of the array contain the first index of each minimum
       * image, and so on. If isRealField is true, kSize is smaller than
       * the size of the real-space mesh. Otherwise, it is equal.
+      *
+      * \throw Exception if hasMinImages() == false
       */
       DeviceArray<int,CUT> const & minImages_d() const;
 
@@ -181,8 +183,10 @@ namespace Pscf {
       * element is an IntVec<D> containing the integer coordinates of
       * the minimum image of one wavevector in the k-space mesh used for
       * discrete Fourier transforms.
+      *
+      * \throw Exception if hasMinImages() == false
       */
-      HostSendArray<IntVec<D>,CUT> const & minImages_h() const;
+      DArray< IntVec<D> > const & minImages_h() const;
 
       /**
       * Get the kSq array on the device by reference.
@@ -191,6 +195,8 @@ namespace Pscf {
       * square magnitude |k|^2 of a wavevector k in the k-space mesh used
       * for a DFT. If isRealField is true, this k-space mesh is smaller
       * than the real-space mesh. Otherwise, it is the same size.
+      *
+      * \throw Exception if hasKSq() == false
       */
       RField<D,CUT> const & kSq() const;
 
@@ -209,6 +215,8 @@ namespace Pscf {
       * smaller than the real-space mesh. Otherwise, it is the same size.
       * In the latter case, there are no implicit waves, so the prefactor
       * is always 1.0.
+      *
+      * \throw Exception if hasdKSq() == false
       *
       * \param i  index of lattice parameter
       */
@@ -353,14 +361,14 @@ namespace Pscf {
       /*
       * Array of IntVec<D> minimum images for waves, stored on the host.
       *
-      * Each element of minImageVecs_ contains all D coordinates of the
+      * Each element of minImage_h_ contains all D coordinates of the
       * minimum image for a single wavevector, stored on the host as an
       * IntVec<D>. The array has capacity kSize_. If isRealField is true,
       * kSize_ is smaller than the size of the real-space mesh. Otherwise,
       * kSize_ is equal to the size of the real space mesh.
       */
       mutable
-      HostSendArray<IntVec<D>,CUT> minImages_h_;
+      DArray< IntVec<D> > minImages_h_;
 
       /**
       * Array containing values of kSq_, stored on the device.
@@ -472,10 +480,10 @@ namespace Pscf {
       /// Has memory been allocated for private member arrays ?
       bool isAllocated_;
 
-      /// Do valid minimum images exist (array minImages_) ?
+      /// Do valid minimum images exist on the device (array minImages_) ?
       bool hasMinImages_;
 
-      /// Have minimum image vectors been re-ordered in minImageVecs_ ?
+      /// Do minimum image vectors exist on the host (array minImages_h_) ?
       mutable
       bool hasMinImages_h_;
 
