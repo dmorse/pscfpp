@@ -201,13 +201,15 @@ namespace Rp {
 
       // Start timer
       Timer timer;
-      Timer analyzerTimer;
       timer.start();
 
       // Analysis for initial state (if any)
+      Timer analyzerTimer;
       analyzerTimer.start();
-      if (analyzerManager().size() > 0) {
-         analyzerManager().sample(iStep_);
+      if (analyzerBaseInterval != 0) {
+         if (analyzerManager().size() > 0) {
+            analyzerManager().sample(iStep_);
+         }
       }
       analyzerTimer.stop();
 

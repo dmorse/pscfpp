@@ -191,14 +191,18 @@ namespace Rp {
       int analyzerBaseInterval = Analyzer<D,T>::baseInterval;
       Log::file() << std::endl;
 
-      // Start timers
+      // Start timer
       Timer timer;
-      Timer analyzerTimer;
       timer.start();
 
       // Analyze initial step
+      Timer analyzerTimer;
       analyzerTimer.start();
-      analyzerManager().sample(iStep_);
+      if (analyzerBaseInterval != 0) {
+         if (analyzerManager().size() > 0) {
+            analyzerManager().sample(iStep_);
+         }
+      }
       analyzerTimer.stop();
 
       // Main Monte Carlo loop
@@ -218,8 +222,8 @@ namespace Rp {
             // Analysis (if any)
             analyzerTimer.start();
             if (analyzerBaseInterval != 0) {
-               if (iStep_ % analyzerBaseInterval == 0) {
-                  if (analyzerManager().size() > 0) {
+               if (analyzerManager().size() > 0) {
+                  if (iStep_ % analyzerBaseInterval == 0) {
                      analyzerManager().sample(iStep_);
                   }
                }
