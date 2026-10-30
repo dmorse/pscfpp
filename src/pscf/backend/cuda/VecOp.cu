@@ -712,8 +712,8 @@ namespace {
       /*
       * Vector in-place addition, a[i] += b[i] (complex).
       *
-      * \param a  output array (LHS)
-      * \param b  input array (RHS)
+      * \param a  complex array (LHS)
+      * \param b  complex array (RHS)
       * \param n  size of arrays
       */
       __global__ 
@@ -2066,7 +2066,7 @@ namespace {
       // Launch kernel
       _addEqV<<<nBlocks, nThreads>>>(a.cArray() + beginIdA,
                                      b.cArray() + beginIdB, 
-                                     c.cArray() + beginIdB, 
+                                     c.cArray() + beginIdC, 
 				     n);
       cudaErrorCheck( cudaGetLastError() );
    }

@@ -1302,6 +1302,46 @@ namespace Pscf {
       {  addEqV(a, b, 0, 0, a.capacity()); }
 
       /**
+      * Vector-vector in-place addition, a[i] += (b[i], c[i]) (mixed).
+      *
+      * Computes a += b + ic, where i = sqrt(-1).
+      *
+      * \ingroup Pscf_VecOp_Cuda_Module
+      *
+      * \param a  complex array (LHS)
+      * \param b  real array, increment to real part (RHS)
+      * \param c  real array, increment to imag part (RHS)
+      * \param beginIdA  index of first element in a slice of array a
+      * \param beginIdB  index of first element in a slice of array b
+      * \param beginIdC  index of first element in a slice of array c
+      * \param n  number of elements in the slice
+      */
+      void addEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
+                  DeviceArray<cudaReal,CUT> const & c,
+                  const int beginIdA, 
+		  const int beginIdB, 
+		  const int beginIdC,
+		  const int n);
+
+      /**
+      * Vector-vector in-place addition, a[i] += (b[i], c[i]) (mixed).
+      *
+      * Computes a += b + ic, where i = sqrt(-1).
+      *
+      * \ingroup Pscf_VecOp_Cuda_Module
+      *
+      * \param a  complex array (LHS)
+      * \param b  real array, increment to real part (RHS)
+      * \param c  real array, increment to imag part (RHS)
+      */
+      inline
+      void addEqV(DeviceArray<cudaComplex,CUT>& a,
+                  DeviceArray<cudaReal,CUT> const & b,
+                  DeviceArray<cudaReal,CUT> const & c)
+      {  addEqV(a, b, c, 0, 0, 0, a.capacity()); }
+
+      /**
       * Vector-scalar in-place addition, a[i] += b, (real).
       *
       * \ingroup Pscf_VecOp_Cuda_Module
