@@ -99,7 +99,7 @@ public:
             }
          }
       }
-      TEST_ASSERT(itot == items.size());
+      TEST_ASSERT(itot == (int) items.size());
    }
 
    void testSortWavesComplex() 
@@ -167,7 +167,7 @@ public:
             }
          }
       }
-      TEST_ASSERT(itot == items.size());
+      TEST_ASSERT(itot == (int) items.size());
    }
 
 };

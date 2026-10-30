@@ -2,7 +2,7 @@
 #define PSCF_FFT_BATCHED_CU_H
 
 /*
-* PSCF - Polymer Self-Consistent Field 
+* PSCF - Polymer Self-Consistent Field
 *
 * Copyright 2015 - 2026, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
@@ -43,59 +43,72 @@ namespace Pscf {
       /**
       * Set up FFT calculation (get grid dimensions and make FFT plan)
       *
+      * This function may only be called once, and isSetup() = true after
+      * it is called. It sets the grid dimensions, which are immutable
+      * thereafter, sets and initial batch size, and makes FFT plans for
+      * forward and inverse batched transformations.
+      *
+      * \throw Exception if isSetup() == false
+      *
       * \param meshDimensions  dimensions of real-space grid
       * \param batchSize  number of simultaneous FFTs to perform
       */
       void setup(IntVec<D> const & meshDimensions, int batchSize);
-      
+
+      /**
+      * Set the batch size to a new value.
+      *
+      * This function must be called after setup.
+      *
+      * \throw Exception if isSetup() == false
+      *
+      * \param batchSize  new batch size.
+      */
+      void resetBatchSize(int batchSize);
+
       /**
       * Compute batched forward (real-to-complex) DFTs.
-      * 
-      * The resulting complex array is the output of cuFFT's batched 
-      * forward transform method scaled by a factor of 1/N (where N is 
+      *
+      * The resulting complex array is the output of cuFFT's batched
+      * forward transform method scaled by a factor of 1/N (where N is
       * the number of grid points). The scaling ensures that a round-trip
       * Fourier transform (forward + inverse) reproduces the original
       * input array.
-      * 
-      * The number of Fourier transforms performed per batch is pre-set
-      * by the setup() method.
-      * 
-      * This transform is inherently "safe", meaning that the input array 
+      *
+      * The number of Fourier transforms performed per batch, known as the
+      * batch size, is initialized by the setup() function and may be reset
+      * by the resetBatchSize() function.
+      *
+      * This transform is inherently "safe", meaning that the input array
       * will not be modified during the DFT.
       *
       * \param rFields  real values on r-grid (input, gpu mem)
       * \param kFields  complex values on k-grid (output, gpu mem)
       */
-      void forwardTransform(DeviceArray<cudaReal,CUT> const & rFields, 
+      void forwardTransform(DeviceArray<cudaReal,CUT> const & rFields,
                             DeviceArray<cudaComplex,CUT>& kFields) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
-      * 
-      * The resulting real array is the unaltered output of cuFFT's inverse 
+      *
+      * The resulting real array is the unaltered output of cuFFT's inverse
       * transform function.
-      * 
+      *
       * This transform is inherently "unsafe", meaning that the input array
       * will be overwritten during the DFT. Accordingly, the input array
-      * kField is not const like it is in all the other transform methods.
+      * is not const, as it is for safe transform methods.
       *
       * \param kFields  complex values on k-grid (input, gpu mem)
       * \param rFields  real values on r-grid (output, gpu mem)
       */
-      void inverseTransformUnsafe(DeviceArray<cudaComplex,CUT>& kFields, 
-                                  DeviceArray<cudaReal,CUT>& rFields) const;
+      void inverseTransformUnsafe(
+                       DeviceArray<cudaComplex,CUT>& kFields,
+                       DeviceArray<cudaReal,CUT>& rFields) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
       */
       const IntVec<D>& meshDimensions() const;
-
-      /**
-      * Set the batch size to a new value. isSetup() must already be true.
-      * 
-      * \param batchSize  The new batch size.
-      */
-      void resetBatchSize(int batchSize);
 
       /**
       * Has the setup method been called?
@@ -128,22 +141,31 @@ namespace Pscf {
       /// Have array dimension and plan been initialized?
       bool isSetup_;
 
+      // Private member functions
+
       /**
       * Make cuFFT plans for transform and inverse transform.
-      * 
+      *
       * \param batchSize  number of simultaneous FFTs to perform
       */
       void makePlans(int batchSize);
 
+      /**
+      * Destroy any existing plans.
+      */
+      void destroyPlans();
+
    };
 
+   // Inline member functions
+
    // Return the dimensions of the grid for which this was allocated.
-   template <int D> inline 
+   template <int D> inline
    const IntVec<D>& FFTBatched<D>::meshDimensions() const
    {  return meshDimensions_; }
 
    // Has the setup method been called?
-   template <int D> inline 
+   template <int D> inline
    bool FFTBatched<D>::isSetup() const
    { return isSetup_; }
 
