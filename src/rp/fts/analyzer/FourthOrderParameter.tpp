@@ -27,6 +27,7 @@
 #include <util/global.h>
 
 #include <iostream>
+#include <cmath>
 
 namespace Pscf {
 namespace Rp {
@@ -148,12 +149,15 @@ namespace Rp {
          GminList[itr.rank()] = Gmin;
       }
 
+      // Initialize prefactor to zero for all elements
+      VecOp::eqS(prefactor, 0.0);
+
       // Compute prefactor for each wavevector
       for (itr.begin(); !itr.atEnd(); ++itr){
          bool inverseFound = false;
 
          // If prefactor of current wavevector has not been assigned
-         if (prefactor[itr.rank()] == 0){
+         if (std::abs(prefactor[itr.rank()]) < 1.0E-6) {
             Gmin = GminList[itr.rank()];
 
             // Compute inverse of wavevector
