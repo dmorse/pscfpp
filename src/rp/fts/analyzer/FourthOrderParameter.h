@@ -108,21 +108,12 @@ namespace Rp {
 
       /**
       * Initialize member variable prefactor_ (device array).
+      *
+      * For each wavevector G, if both G and -G are in the half-space
+      * used for the DFT of a real field, prefactor is assigned a value
+      * 1/2, otherwise it is assigned to be 1.
       */
       void computePrefactor();
-
-      /**
-      * Compute prefactor for each Fourier wavevector (on host).
-      *
-      * For the real-valued function W_, each Fourier
-      * coefficient G satisfies W_(G) = W_(-G). This function
-      * uses Brillouin Zone (BZ) index representation. 
-      * If both the wavevector G and its inverse -G are in the
-      * half-spaced used for a real field, the prefactor is
-      * assigned to be 1/2 for both G and -G. Otherwise, the
-      * prefactor assigned to be 1.
-      */
-      void computePrefactor(Array<double>& prefactor);
 
    };
 

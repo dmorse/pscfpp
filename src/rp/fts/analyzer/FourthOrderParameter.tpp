@@ -11,6 +11,7 @@
 #include <rp/field/CFields.h>
 
 #include <pscf/field/FFT.h>
+#include <pscf/field/WaveList.h>
 #include <pscf/crystal/shiftToMinimum.h>
 
 #include <pscf/backend/HostSendArray.h>
@@ -113,73 +114,26 @@ namespace Rp {
       int kSize = kSize_;
       UTIL_CHECK(prefactor_.capacity() == kSize);
 
-      // Initialize host array
+      // Setup prefactor_h host array
       HostSendArray<typename T::Real,T> prefactor_h;
       prefactor_h.associate(prefactor_);
       UTIL_CHECK(prefactor_h.capacity() == kSize_);
 
-      // Perform computation on host
-      computePrefactor(prefactor_h);
+      // Setup prefactor_h values
+      DArray<bool> const & implicit = system().waveList().implicitInverse();
+      UTIL_CHECK(implicit.size() == kSize_);
+      for (int i = 0; i < kSize_; ++i) {
+         if (implicit[i]) {
+            prefactor_h[i] = 1.0;
+         } else {
+            prefactor_h[i] = 0.5;
+         }
+      }
 
       // Copy to device 
       prefactor_ = prefactor_h;
-   }
 
-   /*
-   * Compute prefactors for all wavevectors.
-   */
-   template <int D, class T>
-   void 
-   FourthOrderParameter<D,T>::computePrefactor(Array<double>& prefactor)
-   {
-      IntVec<D> G;
-      IntVec<D> Gmin;
-      IntVec<D> nGmin;
-      DArray< IntVec<D> > GminList;
-      GminList.allocate(kSize_);
-      MeshIterator<D> itr(kMeshDimensions_);
-      MeshIterator<D> searchItr(kMeshDimensions_);
-
-      // Calculate GminList
-      IntVec<D> meshDimensions = system().domain().mesh().dimensions();
-      UnitCell<D> const & unitCell = system().domain().unitCell();
-      for (itr.begin(); !itr.atEnd(); ++itr){
-         G = itr.position();
-         Gmin = shiftToMinimum(G, meshDimensions, unitCell);
-         GminList[itr.rank()] = Gmin;
-      }
-
-      // Initialize prefactor to zero for all elements
-      VecOp::eqS(prefactor, 0.0);
-
-      // Compute prefactor for each wavevector
-      for (itr.begin(); !itr.atEnd(); ++itr){
-         bool inverseFound = false;
-
-         // If prefactor of current wavevector has not been assigned
-         if (std::abs(prefactor[itr.rank()]) < 1.0E-6) {
-            Gmin = GminList[itr.rank()];
-
-            // Compute inverse of wavevector
-            nGmin.negate(Gmin);
-
-            // Search for inverse of wavevector
-            searchItr = itr;
-            for (; !searchItr.atEnd(); ++searchItr){
-               if (nGmin == GminList[searchItr.rank()]){
-                  prefactor[itr.rank()] = 1.0/2.0;
-                  prefactor[searchItr.rank()] = 1.0/2.0;
-                  inverseFound = true;
-               }
-            }
-
-            if (inverseFound == false){
-               prefactor[itr.rank()]  = 1.0;
-            }
-
-         }
-
-      }
+      prefactor_h.dissociate();
    }
 
 }

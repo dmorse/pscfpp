@@ -97,7 +97,8 @@ public:
       double ref;
 
       filename = "out/fourthOrder.ave";
-      ref = 3.5756726e-01;
+      //ref = 3.5756726e-01;   // old code, with computePrefactor
+      ref = 3.5317562e-01;     // new code, with WaveList::implicitInverse
       TEST_ASSERT(checkAverage(filename, ref));
 
       filename = "out/maxOrder.ave";
