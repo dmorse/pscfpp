@@ -166,6 +166,10 @@ namespace Rp {
    template <int D, class T>
    void AmIteratorBasis<D,T>::getCurrent(VectorT& state)
    {
+      // Preconditions
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(system().w().isSymmetric());
+
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
       const int nEle = nElements();
@@ -173,6 +177,7 @@ namespace Rp {
 
       // Copy all w-fields into a linear array
       int begin;
+      UTIL_CHECK(system().w().basis().capacity() == nMonomer);
       for (int i = 0; i < nMonomer; i++) {
          DArray<double> const & field = system().w().basis(i);
          begin = i*nBasis;
@@ -213,10 +218,24 @@ namespace Rp {
    template <int D, class T>
    void AmIteratorBasis<D,T>::getResidual(VectorT& resid)
    {
+      // Preconditions 
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(system().w().isSymmetric());
+      UTIL_CHECK(system().c().hasData());
+      UTIL_CHECK(system().c().isSymmetric());
+      if (system().h().hasData()) {
+         UTIL_CHECK(system().h().isSymmetric());
+      }
+      if (system().mask().hasData()) {
+         UTIL_CHECK(system().mask().isSymmetric());
+      }
+
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
       const int n = nElements();
       UTIL_CHECK(resid.capacity() == n);
+      UTIL_CHECK(system().w().basis().capacity() == nMonomer);
+      UTIL_CHECK(system().c().basis().capacity() == nMonomer);
 
       // Local variables
       double chi, p;
@@ -235,8 +254,11 @@ namespace Rp {
             p = interaction_.p(i,j);
             DArray<double> const & c = system().c().basis(j);
             DArray<double> const & w = system().w().basis(j);
+            UTIL_CHECK(c.capacity() == nBasis);
+            UTIL_CHECK(w.capacity() == nBasis);
             if (system().h().hasData()) {
                DArray<double> const & h = system().h().basis(j);
+               UTIL_CHECK(h.capacity() == nBasis);
                for (k = 0; k < nBasis; ++k) {
                   resid[begin + k] += chi*c[k] + p*(h[k] - w[k]);
                }
@@ -254,6 +276,7 @@ namespace Rp {
          DArray<double> const & mask = system().mask().basis();
          for (i = 0; i < nMonomer; ++i) {
             begin = i*nBasis;
+            UTIL_CHECK(mask.capacity() == nBasis);
             for (k = 0; k < nBasis; ++k) {
                resid[begin + k] += shift*mask[k];
             }
