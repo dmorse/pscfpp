@@ -377,8 +377,8 @@ namespace Pscf {
                   // This is a pair of open stars written in the same
                   // order as in this basis. Check preconditions:
                   UTIL_CHECK(starPtr2->invertFlag == -1);
-                  UTIL_CHECK(starId2 = starId + 1);
-                  UTIL_CHECK(basisId2 = basisId + 1);
+                  UTIL_CHECK(starId2 == starId + 1);
+                  UTIL_CHECK(basisId2 == basisId + 1);
                   UTIL_CHECK(starPtr->waveMin == waveIn);
                   UTIL_CHECK(starPtr2->waveMin == waveIn2);
 
