@@ -114,6 +114,10 @@ namespace Rp {
    template <int D, class T>
    void Sweep<D,T>::setup()
    {
+      // Precondition - require a symmetric iterator
+      UTIL_CHECK(system().iterator().isSymmetric());
+
+      // Initialize base class sub-object
       SweepTmplT::initialize();
       checkAllocation(trial_);
 

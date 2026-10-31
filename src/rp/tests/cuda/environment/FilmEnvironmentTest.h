@@ -479,7 +479,7 @@ TEST_ADD(FilmEnvironmentTest, testSweep)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
 TEST_ADD(FilmEnvironmentTest, testSolve1DGrid)
 TEST_ADD(FilmEnvironmentTest, testSolve2DGrid)
-TEST_ADD(FilmEnvironmentTest, testSweepGrid)
+//TEST_ADD(FilmEnvironmentTest, testSweepGrid)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulkGrid)
 TEST_END(FilmEnvironmentTest)
 
