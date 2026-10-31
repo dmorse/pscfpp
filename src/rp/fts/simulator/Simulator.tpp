@@ -243,7 +243,11 @@ namespace Rp {
             }
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-08) {
-               idealHamiltonian_ += phi * ( mu - 1.0 ) / length;
+               if (polymerPtr->ensemble() == Ensemble::Closed) {
+                  idealHamiltonian_ += phi * ( mu - 1.0 ) / length;
+               } else {
+                  idealHamiltonian_ -= phi / length;
+               }
             }
          }
       }
@@ -259,7 +263,11 @@ namespace Rp {
             size = solventPtr->size();
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-8) {
-               idealHamiltonian_ += phi * ( mu - 1.0 ) / size;
+               if (solventPtr->ensemble() == Ensemble::Closed) {
+                  idealHamiltonian_ += phi * ( mu - 1.0 ) / size;
+               } else {
+                  idealHamiltonian_ -= phi / size;
+               }
             }
          }
       }
