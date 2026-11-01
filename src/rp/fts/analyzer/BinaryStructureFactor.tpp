@@ -303,7 +303,7 @@ namespace Rp {
       // Set coefficients a_ and b_
       double const vSystem  = system().domain().unitCell().volume();
       double const vMonomer = system().mixture().vMonomer();
-      double const chi = system().interaction().chi(0,1);
+      double const chi = -simulator().chiEval(0);
       double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
       double b_ = 0.5 / (chi * vMonomer);
 
