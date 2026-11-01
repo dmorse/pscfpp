@@ -813,14 +813,15 @@ namespace Pscf {
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
       std::complex<double> waveCoeff;         // coefficient from wave
       std::complex<double> rootCoeff;         // coefficient from root
-      std::complex<double> diff;              // coefficient difference
       int is;                                 // star index
       int iw;                                 // wave index
       int beginId, endId;                     // star begin, end ids
       int rank;                               // dft grid rank of wave
 
+      double error;                 // error in current wave coefficent
       double cancelledError(0.0);   // max error from cancelled stars
       double uncancelledError(0.0); // max error from uncancelled stars
+      bool result = true;           // true iff field has symmetry
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dftDimensions);
@@ -838,13 +839,12 @@ namespace Pscf {
                wavePtr = &basis.wave(iw);
                if (!wavePtr->implicit) {
                   rank = dftMesh.rank(wavePtr->indicesStd);
-                  //waveCoeff 
-                  //   = std::complex<double>(in[rank][0], in[rank][1]);
                   assign(waveCoeff, in[rank]);
-                  if (std::abs(waveCoeff) > cancelledError) {
-                     cancelledError = std::abs(waveCoeff);
-                     if ((!verbose) && (cancelledError > epsilon)) {
-                        return false;
+                  error = std::abs(waveCoeff);
+                  if (error > cancelledError) {
+                     cancelledError = error;
+                     if (cancelledError > epsilon) {
+                        result = false;
                      }
                   }
                }
@@ -863,16 +863,28 @@ namespace Pscf {
                   assign(waveCoeff, in[rank]);
                   waveCoeff /= wavePtr->coeff;
                   if (hasRoot) {
-                     diff = waveCoeff - rootCoeff;
-                     if (std::abs(diff) > uncancelledError) {
-                        uncancelledError = std::abs(diff);
-                        if ((!verbose) && (uncancelledError > epsilon)) {
-                           return false;
+                     error = std::abs(waveCoeff - rootCoeff);
+                     if (error > uncancelledError) {
+                        uncancelledError = error;
+                        if (uncancelledError > epsilon) {
+                           result = false;
                         }
                      }
                   } else {
+                     // First explicit wave is the root
                      rootCoeff = waveCoeff;
                      hasRoot = true;
+                  }
+               }
+            }
+
+            // Require that rootCoeff be real for closed stars
+            if (starPtr->invertFlag == 0) {
+               error = std::abs(rootCoeff.imag());
+               if (error > uncancelledError) {
+                  uncancelledError = error;
+                  if (uncancelledError > epsilon) {
+                     result = false;
                   }
                }
             }
@@ -881,9 +893,8 @@ namespace Pscf {
 
       } //  end loop over star index is
 
-      if ((cancelledError < epsilon) && (uncancelledError < epsilon)) {
-         return true;
-      } else if (verbose) {
+      // Verbose report on failure
+      if (!result && verbose) {
          Log::file() 
               << std::endl
               << "Maximum coefficient of a cancelled star: "
@@ -891,7 +902,8 @@ namespace Pscf {
               << "Maximum error of coefficient for an uncancelled star: "
               << uncancelledError << std::endl;
       }
-      return false;
+
+      return result;
    }
 
    // Field file manipulations
