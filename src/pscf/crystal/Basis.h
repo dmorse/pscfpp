@@ -500,6 +500,14 @@ namespace Pscf {
          int endId;
 
          /**
+         * Wave index of the wavevector that is used as the root of the star.
+         *
+	 * The coefficient of the root of a star is real and positive in the
+	 * expansion of the associated star basis function. 
+         */
+         int rootId;
+
+         /**
          * Index for inversion symmetry of star.
          *
          * A star is said to be closed under inversion iff, for each vector
@@ -582,6 +590,7 @@ namespace Pscf {
           : size(0),
             beginId(0),
             endId(0),
+            rootId(0),
             invertFlag(0),
             waveMin(0),
             starId(0),

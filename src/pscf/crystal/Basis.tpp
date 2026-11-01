@@ -748,6 +748,7 @@ namespace Pscf {
             // Set the root to be the first wave in the star
 
             rootId = stars_[i].beginId;
+            stars_[i].rootId = rootId;
             stars_[i].waveMin = waves_[rootId].indicesMin;
 
             if (stars_[i].cancel) {
@@ -853,11 +854,13 @@ namespace Pscf {
             // Identify root of this star (star i)
             // Set the root to be the first wave in the star
             rootId = stars_[i].beginId;
+            stars_[i].rootId = rootId;
             stars_[i].waveMin = waves_[rootId].indicesMin;
 
             // Identify root of the next star (star i+1)
             // Set the root to be the inverse of the root of star i
             partId = waves_[rootId].inverseId;
+            stars_[i+1].rootId = partId;
             stars_[i+1].waveMin = waves_[partId].indicesMin;
 
             if (stars_[i].cancel) {
