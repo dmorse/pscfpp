@@ -177,6 +177,7 @@ namespace Rp {
 
       // Inherited member function (selected for convenience)
       using Analyzer<D,T>::system;
+      using Analyzer<D,T>::simulator;
 
    };
 

@@ -50,7 +50,7 @@ namespace Rp {
       const double vMonomer = system().mixture().vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
       const int meshSize = system().domain().mesh().size();
-      double chi = system().interaction().chi(0,1);
+      const double chi = -simulator().chiEval(0);
 
       // Pre-requisite computations
       if (!system().c().hasData()) {
