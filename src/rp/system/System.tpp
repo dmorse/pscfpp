@@ -11,7 +11,6 @@
 #include "System.h"
 
 #include <rp/fts/simulator/Simulator.h>
-#include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/simulator/SimulatorFactory.h>
 #include <rp/fts/compressor/Compressor.h>
 #include <rp/fts/compressor/CompressorFactory.h>
@@ -423,7 +422,10 @@ namespace Rp {
          simulatorPtr_ =
             simulatorFactoryPtr_->readObjectOptional(in, *this,
                                                      className, isEnd);
-         if (!simulatorPtr_ && ParamComponent::echo()) {
+         if (simulatorPtr_) {
+            w().signal().addObserver(simulator(), &Simulator<D,T>::clearData);
+         } else 
+         if (ParamComponent::echo()) {
             Log::file() << indent() << "  Simulator{ [absent] }\n";
          }
       }

@@ -72,35 +72,42 @@ namespace Rp {
    template <int D, class T>
    bool BdMove<D,T>::move()
    {
-      // Start total timer
+      // Start timers
       McMoveT::totalTimer_.start();
 
-      // Preconditions
-      UTIL_CHECK(simulator().hasWc());
-      UTIL_CHECK(simulator().hasCc());
-      UTIL_CHECK(simulator().hasDc());
-      UTIL_CHECK(simulator().hasHamiltonian());
-
-      // Run BD simulation of nStep steps
+      // Setup BD simulation
       McMoveT::attemptMoveTimer_.start();
       McMoveT::incrementNAttempt();
       bdSetup();
 
+      UTIL_CHECK(simulator().hasWc());
+      UTIL_CHECK(simulator().hasCc());
+      UTIL_CHECK(simulator().hasDc());
+
+      // Run BD simulation of nStep steps
       for (int i=0; i < nStep_; ++i) {
          bdStep();
       }
       McMoveT::attemptMoveTimer_.stop();
 
-      UTIL_CHECK(simulator().hasWc());
-      UTIL_CHECK(simulator().hasCc());
-      UTIL_CHECK(simulator().hasDc());
-      simulator().computeHamiltonian();
+      // Compute required properties in final state
+      simulator().computeWc();
+      if (simulator().needsCc() || simulator().needsDc()) {
+         if (!simulator().hasCc()) {
+            simulator().computeCc();
+         }
+      }
+      if (simulator().needsDc() && !simulator().hasDc()) {
+         simulator().computeDc();
+      }
+      if (!simulator().hasHamiltonian()) {
+         simulator().computeHamiltonian();
+      }
 
-      simulator().clearState();
       McMoveT::incrementNAccept();
       McMoveT::totalTimer_.stop();
 
-      return true;  // isConverged
+      return true;
    }
 
    /*
@@ -112,20 +119,20 @@ namespace Rp {
       UTIL_CHECK(system().w().hasData());
       
       // Compute field components as needed
+      if (!system().c().hasData()){
+         system().compute();
+      }
       if (!simulator().hasWc()) {
          simulator().computeWc();
       }
       if (!simulator().hasCc()) {
-         if (!system().c().hasData()){
-            system().compute();
-         }
          simulator().computeCc();
       }
       if (!simulator().hasDc()) {
-         if (!system().c().hasData()){
-            system().compute();
-         }
          simulator().computeDc();
+      }
+      if (!simulator().hasHamiltonian()) {
+         simulator().computeHamiltonian();
       }
 
       // Check array capacities
@@ -155,10 +162,7 @@ namespace Rp {
    {
       // Preconditions
       UTIL_CHECK(system().w().hasData());
-      UTIL_CHECK(simulator().hasWc());
-      UTIL_CHECK(simulator().hasCc());
       UTIL_CHECK(simulator().hasDc());
-      UTIL_CHECK(simulator().hasHamiltonian());
 
       // Save current state
       simulator().saveState();
@@ -193,29 +197,41 @@ namespace Rp {
       system().w().setRGrid(w_);
 
       // Enforce incompressibility (also solves MDE repeatedly)
-      bool isConverged = false;
       int compress = simulator().compressor().compress();
-      if (compress != 0){
-         simulator().restoreState();
-      } else {
-         isConverged = true;
-         UTIL_CHECK(system().c().hasData());
 
-         // Compute components and derivatives at wp_
+      // Accept move or restore state
+      UTIL_CHECK(system().w().hasData());
+      if (compress == 0){
+         UTIL_CHECK(system().c().hasData());
          simulator().clearState();
          simulator().clearData();
          simulator().computeWc();
          simulator().computeCc();
          simulator().computeDc();
-
-         // Compute new Hamiltonian
          simulator().computeHamiltonian();
-
-         // Exchange old and new random fields
-         exchangeOldNew();
+      } else {
+         simulator().restoreState();
+         UTIL_CHECK(system().w().hasData());
+         UTIL_CHECK(!system().c().hasData());
+         UTIL_CHECK(simulator().hasWc());
+         UTIL_CHECK(simulator().hasHamiltonian());
+         bool needCc = false;
+         if (simulator().needsCc() || !simulator().hasDc()) {
+            needCc = true;
+         }
+         if (needCc && !simulator().hasCc()) {
+            system().compute();
+            simulator().computeCc();
+         }
+         if (!simulator().hasDc()) {
+            simulator().computeDc();
+         }
       }
 
-      return isConverged;
+      // Exchange old and new random fields
+      exchangeOldNew();
+
+      return true;
    }
 
    /*
