@@ -70,12 +70,12 @@ namespace R1
       }
       isAllocated_ = true;
    }
- 
-   void BinaryRelaxIterator::computeDW(Array<FieldT> const & wOld, 
+
+   void BinaryRelaxIterator::computeDW(Array<FieldT> const & wOld,
                               Array<FieldT> const & cFields,
                               Array<FieldT> & dW,
                               double & dWNorm)
-   
+
    {
       double dWm, dWp, c0, c1, w0, w1, wm;
       double dWmNorm = 0.0;
@@ -112,7 +112,7 @@ namespace R1
       int i;                         // monomer index
       int j;                         // grid point index
       double w0, w1;
-      
+
       // Add dW
       for (j = 0; j < nx; j++){
          w0 = wOld[0][j];
@@ -120,7 +120,7 @@ namespace R1
          wNew[0][j] = w0 + dW[0][j];
          wNew[1][j] = w1 + dW[1][j];
        }
-    
+
       // If canonical, shift such that last element is exactly zero
       if (isCanonical_) {
          double shift = wNew[nm-1][nx-1];
@@ -135,18 +135,16 @@ namespace R1
 
    int BinaryRelaxIterator::solve(bool isContinuation)
    {
-      //Declare Timer
+      // Start overall timer
       Timer timerTotal;
-      
+      timerTotal.start();
+
       int nm = mixture().nMonomer();  // number of monomer types
       UTIL_CHECK(nm == 2);
       int np = mixture().nPolymer();  // number of polymer species
       int ns = mixture().nSolvent();  // number of solvent species
       int nx = domain().nx();         // number of grid points
-      
-      // Start overall timer 
-      timerTotal.start();
-      
+
       // Determine if isCanonical (iff all species ensembles are closed)
       isCanonical_ = true;
       Ensemble ensemble;
@@ -170,7 +168,7 @@ namespace R1
             }
          }
       }
-    
+
       // If isCanonical, shift so that last element is zero.
       // Note: This is one of the residuals in this case.
       if (isCanonical_) {
@@ -182,33 +180,35 @@ namespace R1
             }
          }
       }
-      
+
       // Compute initial dWNorm.
       mixture().compute(system().wFields(), system().cFields());
       computeDW(system().wFields(), system().cFields(), dW_, dWNorm_);
-    
+
       // Iterative loop
       int i, j, k;
       for (i = 0; i < maxItr_; ++i) {
          Log::file() << "iteration " << i
          << " , error = " << dWNorm_
          << std::endl;
-        
+
          if (dWNorm_ < epsilon_) {
             // Stop timers
             timerTotal.stop();
-            
+
             Log::file() << "The epsilon is " << epsilon_<< std::endl;
             Log::file() << "Converged" << std::endl;
             system().computeFreeEnergy();
             // Success
             Log::file() << "\n\n";
             // Output timing resultsl;
-            Log::file() << "Total time:                             "  
+            Log::file() << "Total time:                             "
                         << timerTotal.time()   << " s  "  << std::endl;
-            Log::file() << "Average time cost of each iteration:    "  
+            Log::file() << "Average time cost of each iteration:    "
                         << timerTotal.time()/i  << " s  " << std::endl;
             Log::file() << "\n\n";
+
+            // Success (iterated to convergence)
             return 0;
          }
 
@@ -216,28 +216,28 @@ namespace R1
          updateWFields(system().wFields(), dW_, wFieldsNew_);
          mixture().compute(wFieldsNew_, cFieldsNew_);
          computeDW(wFieldsNew_, cFieldsNew_, dWNew_, dWNormNew_);
-         
+
          // Decrease increment if necessary
          j = 0;
          while (dWNormNew_ > dWNorm_ && j < 3) {
-            //double dWNormDecrease_;
-            Log::file() << "      error = " 
+            Log::file() << "      error = "
                         << dWNormNew_ << ", decreasing increment" << std::endl;
             lambdaPlus_ *= 0.5;
             lambdaMinus_ *= 0.5;
-            //Print lambdaPlus_ and lambdaMinus_ 
-            Log::file() << "      lambdaPlus = " 
+            //Print lambdaPlus_ and lambdaMinus_
+            Log::file() << "      lambdaPlus = "
                         << lambdaPlus_ << std::endl;
-            Log::file() << "      lambdaMinus = " 
-                        << lambdaMinus_<< std::endl;                        
-            computeDW(system().wFields(),system().cFields(), dWNew_, 
-                      dWNormNew_);
+            Log::file() << "      lambdaMinus = "
+                        << lambdaMinus_<< std::endl;
+            computeDW(system().wFields(), system().cFields(),
+                      dWNew_, dWNormNew_);
             updateWFields(system().wFields(), dWNew_, wFieldsNew_);
             mixture().compute(wFieldsNew_, cFieldsNew_);
+            computeDW(wFieldsNew_, cFieldsNew_, dWNew_, dWNormNew_);
             ++j;
          }
-         
-         // Accept or reject update
+
+         // Accept update or declare failure and break iteration loop
          if (dWNormNew_ < dWNorm_) {
             // Update system fields
             for (j = 0; j < nm; ++j) {
@@ -245,17 +245,18 @@ namespace R1
                   system().wField(j)[k] = wFieldsNew_[j][k];
                   system().cField(j)[k] = cFieldsNew_[j][k];
                   dW_[j][k] = dWNew_[j][k];
-                }
-            dWNorm_ = dWNormNew_;
+               }
             }
-        } else {
+            dWNorm_ = dWNormNew_;
+         } else {
             Log::file() << "Iteration failed, norm = "
-            << dWNormNew_ << std::endl;
+                        << dWNormNew_ << std::endl;
             break;
-          }
-        
+         }
+
       }
-      // Failure
+
+      // Failure (no convergence after maxIter iterations)
       return 1;
    }
 
