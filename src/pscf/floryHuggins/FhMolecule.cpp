@@ -42,12 +42,16 @@ namespace Pscf {
    }
 
    /*
-   * Allocate memory for specified number of clumps.
+   * Allocate or resize array of clumps, as needed.
    */
    void FhMolecule::setNClump(int nClump)
    {
-      UTIL_ASSERT(clumps_.capacity() == 0);
-
+      UTIL_CHECK(nClump > 0);
+      if (clumps_.isAllocated()) {
+         if (clumps_.capacity() == nClump) return;
+         clumps_.deallocate();
+      }
+      UTIL_CHECK(!clumps_.isAllocated());
       nClump_ = nClump;
       clumps_.allocate(nClump_);
    }
