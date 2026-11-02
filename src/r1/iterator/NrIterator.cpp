@@ -9,6 +9,7 @@
 #include <r1/system/System.h>
 #include <r1/solvers/Mixture.h>
 #include <r1/solvers/Polymer.h>
+#include <r1/solvers/Solvent.h>
 #include <pscf/interaction/Interaction.h>
 #include <pscf/chem/Ensemble.h>
 #include <util/misc/Log.h>
@@ -236,6 +237,7 @@ namespace R1
    {
       int nm = system().mixture().nMonomer();  // number of monomer types
       int np = system().mixture().nPolymer();  // number of polymer species
+      int ns = system().mixture().nSolvent();  // number of solvent species
       int nx = domain().nx();         // number of grid points
       int nr = nm*nx;                 // number of residual elements
 
@@ -249,6 +251,17 @@ namespace R1
          }
          if (ensemble == Ensemble::Open) {
             isCanonical_ = false;
+         }
+      }
+      if (ns > 0) {
+         for (int i = 0; i < ns; ++i) {
+            ensemble = system().mixture().solvent(i).ensemble();
+            if (ensemble == Ensemble::Unknown) {
+               UTIL_THROW("Unknown species ensemble");
+            }
+            if (ensemble == Ensemble::Open) {
+               isCanonical_ = false;
+            }
          }
       }
 
