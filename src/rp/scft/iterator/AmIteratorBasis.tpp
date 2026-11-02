@@ -23,7 +23,6 @@
 #include <pscf/backend/Reduce.h>
 #include <pscf/backend/VecOp.h>
 #include <pscf/interaction/Interaction.h>
-#include <pscf/iterator/NanException.h>
 #include <util/containers/DArray.h>
 
 #include <util/global.h>
@@ -146,7 +145,7 @@ namespace Rp {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().domain().basis().nBasis();
 
-      int nEle = nMonomer*nBasis;
+      int nEle = nMonomer * nBasis;
       if (Iterator<D,T>::isFlexible_) {
          nEle += Iterator<D,T>::nFlexibleParams();
       }

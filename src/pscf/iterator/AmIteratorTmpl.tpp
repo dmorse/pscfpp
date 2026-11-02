@@ -79,12 +79,6 @@ namespace Pscf
       // verbose_ = 3 => report all error measures every iteration
       readOptional(in, "verbose", verbose_);
 
-      #if 0
-      // Ramping parameter for correction step
-      // Default set to 0.9. lambda = 1 - r_^nBasis for nBasis < maxHist
-      readOptional(in, "r", r_);
-      #endif
-
       #ifdef PSCF_AM_TEST
       // Default set to be false
       readOptional(in, "hasAmTest", hasAmTest_);
@@ -142,9 +136,11 @@ namespace Pscf
          timerError_.start();
          try {
             error_ = computeError(verbose_);
-         } catch (const NanException&) {
+         } catch (NanException const &) {
             Log::file() << ",  error  =             NaN" << std::endl;
-            break; // Exit loop if a NanException is caught
+            break; 
+            // If a NanException is caught, break from iterative loop.
+            // Completing the loop is treated as failure to converge.
          }
          if (verbose_ > 0 && verbose_ < 3) {
             Log::file() << ",  error  = " << Dbl(error_, 15)
@@ -224,7 +220,9 @@ namespace Pscf
 
       }
 
-      // Failure: Counter itr_ reached maxItr_ without converging
+      // Failure: Counter itr_ reached maxItr_ without converging,
+      // or loop was exited because of NaN error
+
       timerTotal_.stop();
       Log::file() << "Iterator failed to converge.\n";
       return 1;
@@ -641,36 +639,57 @@ namespace Pscf
    {
       double error = 0.0;
 
-      // Find max residual vector element
-      double maxRes  = maxAbs(residTrial);
-
-      // Find norm of residual vector
+      // Compute L2 norm of the residual vector
       double normRes = norm(residTrial);
 
       // Check if calculation has diverged (normRes will be NaN)
-      UTIL_CHECK(!std::isnan(normRes));
-
-      // Find root-mean-squared residual element value
-      double rmsRes = normRes/sqrt(nElements());
-
-      // Find norm of residual vector relative to state
-      double normField = norm(stateTrial);
-      double relNormRes = normRes/normField;
-
-      // Set error value
-      if (errorType == "maxResid") {
-         error = maxRes;
-      } else if (errorType == "normResid") {
-         error = normRes;
-      } else if (errorType == "rmsResid") {
-         error = rmsRes;
-      } else if (errorType == "relNormResid") {
-         error = relNormRes;
-      } else {
-         UTIL_THROW("Invalid iterator error type in parameter file.");
+      if (std::isnan(normRes)) {
+         throw NanException("AmIteratorTmpl::computeError", 
+                             __FILE__, __LINE__);
+         // Catch in solve method, which breaks the iteration loop
       }
 
-      if (verbose > 1) {
+      if (verbose < 2) {
+
+         // Set error value
+         if (errorType == "maxResid") {
+            error  = maxAbs(residTrial);
+         } else if (errorType == "normResid") {
+            error = normRes;
+         } else if (errorType == "rmsResid") {
+            error = normRes/sqrt(nElements());
+         } else if (errorType == "relNormResid") {
+            double normField = norm(stateTrial);
+            error = normRes/normField;
+         } else {
+            UTIL_THROW("Invalid iterator error type in parameter file.");
+         }
+
+      } else {
+
+         // Find max residual vector element
+         double maxRes  = maxAbs(residTrial);
+
+         // Find root-mean-squared residual element value
+         double rmsRes = normRes/sqrt(nElements());
+   
+         // Find norm of residual vector relative to state
+         double normField = norm(stateTrial);
+         double relNormRes = normRes/normField;
+   
+         // Set error value
+         if (errorType == "maxResid") {
+            error = maxRes;
+         } else if (errorType == "normResid") {
+            error = normRes;
+         } else if (errorType == "rmsResid") {
+            error = rmsRes;
+         } else if (errorType == "relNormResid") {
+            error = relNormRes;
+         } else {
+            UTIL_THROW("Invalid iterator error type in parameter file.");
+         }
+   
          Log::file() << "\n";
          Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
          Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
@@ -691,7 +710,6 @@ namespace Pscf
       return computeError(residualHistory_[0], stateHistory_[0], 
                           errorType_, verbose);
    }
-
 
    /*
    * Update a list of basis vectors.

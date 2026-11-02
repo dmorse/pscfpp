@@ -132,7 +132,7 @@ namespace Rp {
          double error;
          try {
             error = computeError(verbose_);
-         } catch (const NanException&) {
+         } catch (NanException const &) {
             Log::file() << ",  error  =             NaN" << std::endl;
             break; // Exit loop if a NanException is caught
          }
@@ -174,11 +174,12 @@ namespace Rp {
 
       }
 
-      // Failure: iteration counter itr reached maxItr without converging
+      // Failure: Iteration counter itr reached maxItr without converging
+      // or if loop breaks because of NaN error
+
       timerTotal_.stop();
       Log::file() << "Iterator failed to converge.\n";
       return 1;
-
    }
 
    /*
@@ -269,33 +270,52 @@ namespace Rp {
    template <int D, class T>
    double LrCompressor<D,T>::computeError(int verbose)
    {
-      const int meshSize = system().domain().mesh().size();
       double error = 0.0;
 
-      // Find max residual vector element
-      double maxRes  = Reduce::maxAbs(resid_);
-      // Find norm of residual vector
-      double normRes = sqrt(Reduce::sumSq(resid_));
-      // Find root-mean-squared residual element value
-      double rmsRes = normRes/sqrt(meshSize);
-      if (errorType_ == "max") {
-         error = maxRes;
-      } else if (errorType_ == "norm") {
-         error = normRes;
-      } else if (errorType_ == "rms") {
-         error = rmsRes;
-      } else {
-         UTIL_THROW("Invalid iterator error type in parameter file.");
+      // Compute normSq error and check for NaN error
+      double normSq = Reduce::sumSq(resid_);
+      if (std::isnan(normSq)) {
+         throw NanException("LrCompressor::computeError", 
+                            __FILE__, __LINE__);
+         // Catch in the solve method, which breaks the iteration loop
       }
 
-      if (verbose > 1) {
+      if (verbose < 2) {
+
+         if (errorType_ == "max") {
+            error  = Reduce::maxAbs(resid_);
+         } else if (errorType_ == "norm") {
+            error = sqrt(normSq);
+         } else if (errorType_ == "rms") {
+            int meshSize = system().domain().mesh().size();
+            error = sqrt(normSq/double(meshSize));
+         } else {
+            UTIL_THROW("Invalid iterator error type in parameter file.");
+         }
+
+      } else {
+
+         int meshSize = system().domain().mesh().size();
+
+         double maxRes = Reduce::maxAbs(resid_);
+         double normRes = sqrt(normSq);
+         double rmsRes = sqrt(normSq/double(meshSize));
+
+         if (errorType_ == "max") {
+            error = maxRes;
+         } else if (errorType_ == "norm") {
+            error = normRes;
+         } else if (errorType_ == "rms") {
+            error = rmsRes;
+         } else {
+            UTIL_THROW("Invalid iterator error type in parameter file.");
+         }
+
          Log::file() << "\n";
          Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
          Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
          Log::file() << "RMS Residual  = " << Dbl(rmsRes,15) << "\n";
 
-         // Check if calculation has diverged (normRes will be NaN)
-         UTIL_CHECK(!std::isnan(normRes));
       }
       return error;
    }
