@@ -74,7 +74,8 @@ namespace Rp {
 
       // Term arising from ln N
       int const meshSize = system().domain().mesh().size();
-      dFdL -= 3.0 * double(meshSize) / (2.0 * l);
+      int const nMonomer = system().mixture().nMonomer();
+      dFdL -= 3.0 * double( (nMonomer-1) * meshSize ) / (2.0 * l);
 
       return dFdL;
    }
