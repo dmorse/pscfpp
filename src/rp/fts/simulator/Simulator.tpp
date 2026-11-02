@@ -209,21 +209,24 @@ namespace Rp {
    template <int D, class T>
    void Simulator<D,T>::computeHamiltonian()
    {
+      // Preconditions
       UTIL_CHECK(isAllocated_);
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().c().hasData());
-      UTIL_CHECK(hasWc_);
-      hasHamiltonian_ = false;
+
+      // Update wc fields if necessary
+      if (!hasWc_) computeWc();
 
       Mixture<D,T> const & mixture = system().mixture();
       Domain<D,T> const & domain = system().domain();
 
       const int nMonomer = mixture.nMonomer();
       const int meshSize = domain.mesh().size();
-
       const int np = mixture.nPolymer();
       const int ns = mixture.nSolvent();
       double phi, mu;
+
+      hasHamiltonian_ = false;
 
       // Compute field Hamiltonian contribution
       idealHamiltonian_ = 0.0;
@@ -482,6 +485,7 @@ namespace Rp {
    void Simulator<D,T>::computeWc()
    {
       UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(system().w().hasData());
 
       double vec;
       int i, j;

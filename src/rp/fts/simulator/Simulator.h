@@ -281,6 +281,9 @@ namespace Rp {
 
       /**
       * Compute the Hamiltonian used in PS-FTS.
+      *
+      * \throw Exception if !system().w().hasData()
+      * \throw Exception if !system().c().hasData()
       */
       void computeHamiltonian();
 
@@ -374,6 +377,8 @@ namespace Rp {
       * where \f$ w_{i}({\bf r}) \f$ is the w-field associated with
       * monomer type \f$ i \f$, \f$ v_{ai} \f$ is eigenvector a of
       * the projected chi matrix, and M = nMonomer.
+      *
+      * \throw Exception if !system().w().hasData()
       */
       void computeWc();
 
@@ -410,6 +415,8 @@ namespace Rp {
       * Compute and store the components of the values of the c fields
       * on nodes of a real-space grid (r-grid) in a basis of the
       * eigenvectors of the projected chi matrix.
+      *
+      * \throw Exception if !system().c().hasData()
       */
       void computeCc();
 
@@ -461,6 +468,13 @@ namespace Rp {
       * Compute and store the functional derivatives of the field
       * theoretic Hamiltonian with respect to eigenvector components of
       * the w fields (i.e., with respect to components of wc).
+      *
+      * This function requires eigenvector components wc and cc of the 
+      * w and c, but will compute them from monomer components by calling
+      * computeWc and computeCc as needed.
+      *
+      * \throw Exception if !system().w().hasData()
+      * \throw Exception if !system().c().hasData()
       */
       void computeDc();
 
@@ -507,7 +521,7 @@ namespace Rp {
       * Restore the system to the saved state.
       *
       * This function and saveState() are intended to be used together
-      * in the implementation of FTS moves. If an attempted Monte-Carlo
+      * in the implementation of MC moves. If an attempted Monte-Carlo
       * move is rejected, or if the compressor fails to converge after
       * any attempted FTS move, restoreState() is called to restore the
       * fields and Hamiltonian value that were saved by a previous call
