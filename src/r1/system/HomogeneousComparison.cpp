@@ -92,6 +92,9 @@ namespace R1
          for (int i = 0; i < np; ++i) {
             p_[i] = mixture().polymer(i).phi();
          }
+         for (int i = 0; i < ns; ++i) {
+            p_[i + np] = mixture().solvent(i).phi();
+         }
          fhMixture().setComposition(p_);
          double xi = 0.0;
          fhMixture().computeMu( fhInteraction(), xi );
@@ -99,6 +102,7 @@ namespace R1
       } else 
       if (mode == 1 || mode == 2) {
 
+         // Chemical potentials
          if (!m_.isAllocated()) {
             m_.allocate(np+ns);
          }
@@ -106,7 +110,12 @@ namespace R1
          for (int i = 0; i < np; ++i) {
             m_[i] = mixture().polymer(i).mu(); 
          }
-         int ix; // Grid index from which we obtain guess of composition
+         for (int i = 0; i < ns; ++i) {
+            m_[i + np] = mixture().solvent(i).mu(); 
+         }
+
+         // Grid index from which we obtain guess of composition
+         int ix; 
          if (mode == 1) {
             ix = domain().nx() - 1;
          } else 
@@ -114,14 +123,18 @@ namespace R1
             ix = 0;
          }
 
-         // Compute array p_
-         // Define: p_[i] = volume fraction of all blocks of polymer i
+         // Compute initial guess for array p_ of species volume fractions
+         // Initial guess taken from boundary point with index ix
          for (int i = 0; i < np; ++i) {
+            // For polymers, use sum of phi values for all blocks 
             p_[i] = 0.0;
             int nb = mixture().polymer(i).nBlock();
             for (int j = 0; j < nb; ++j) {
                p_[i] += mixture().polymer(i).block(j).cField()[ix];
             }
+         }
+         for (int i = 0; i < ns; ++i) {
+            p_[i + np] = mixture().solvent(i).cField()[ix];
          }
 
          double xi = 0.0;
@@ -141,12 +154,17 @@ namespace R1
    * Output properties of homogeneous system and free energy difference.
    *
    * Mode 0:      Outputs fHomo (Helmholtz) and difference df
-   * Mode 1 or 2: Outputs Helhmoltz, pressure and difference dp
+   * Mode 1 or 2: Outputs Helhmoltz, pressure and difference dV
    */
    void HomogeneousComparison::output(int mode, std::ostream& out) const
    {
-      // Precondition
+      int np = mixture().nPolymer();
+      int ns = mixture().nSolvent();
+      int nt = np + ns;
+
+      // Preconditions
       UTIL_CHECK(hasData_);
+      UTIL_CHECK(fhMixture().nMolecule() == nt);
 
       if (mode == 0) {
 
@@ -166,7 +184,7 @@ namespace R1
              << "      mu(homo)      "
              << "      phi(homo)     "
              << std::endl;
-         for (int i = 0; i < fhMixture().nMolecule(); ++i) {
+         for (int i = 0; i < nt; ++i) {
             out << Int(i,5)
                 << "  " << Dbl(fhMixture().mu(i), 18, 11)
                 << "  " << Dbl(fhMixture().phi(i), 18, 11) 
@@ -209,7 +227,9 @@ namespace R1
              << "      phi(homo)     "
              << "      deltaV        " 
              << std::endl;
-         for (int i = 0; i < fhMixture().nMolecule(); ++i) {
+
+         // Polymers
+         for (int i = 0; i < np; ++i) {
             dV = mixture().polymer(i).phi() - fhMixture().phi(i);
             dV *= V;
             out << Int(i,5)
@@ -218,8 +238,21 @@ namespace R1
                 << "  " << Dbl(dV, 18, 11)
                 << std::endl;
          }
-         out << std::endl;
 
+         // Solvents
+         int j;
+         for (int i = 0; i < ns; ++i) {
+            j = i + np;
+            dV = mixture().solvent(i).phi() - fhMixture().phi(j);
+            dV *= V;
+            out << Int(j,5)
+                << "  " << Dbl(fhMixture().mu(j), 18, 11)
+                << "  " << Dbl(fhMixture().phi(j), 18, 11) 
+                << "  " << Dbl(dV, 18, 11)
+                << std::endl;
+         }
+
+         out << std::endl;
       }
 
    }
