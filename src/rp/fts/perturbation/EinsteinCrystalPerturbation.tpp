@@ -51,11 +51,25 @@ namespace Rp {
       }
 
       // Optionally read array of epsilon parameters
+      // hasEpsilon_ is set true iff epsilon values are present
       int nc = nMonomer - 1;
-      hasEpsilon_ = ParamComposite::readOptionalDArray(in, "epsilon", 
-                                                  epsilon_, nc).isActive();
+      hasEpsilon_ 
+          = ParamComposite::readOptionalDArray(in, "epsilon", 
+                                               epsilon_, nc).isActive();
 
       ParamComposite::read(in, "fieldFileName", fieldFileName_);
+
+      // Allocate work space for w fields 
+      const IntVec<D> meshDimensions
+                      = system().domain().mesh().dimensions();
+      w0_.allocate(nMonomer);
+      wc0_.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         w0_[i].allocate(meshDimensions);
+         wc0_[i].allocate(meshDimensions);
+      }
+      dw_.allocate(meshDimensions);
+
    }
 
    /*
@@ -67,15 +81,16 @@ namespace Rp {
       const int nMonomer = system().mixture().nMonomer();
       const IntVec<D> meshDimensions
                       = system().domain().mesh().dimensions();
+      const int meshSize = system().domain().mesh().size();
 
-      // Allocate memory for reference field
-      w0_.allocate(nMonomer);
-      wc0_.allocate(nMonomer);
+      // Check allocation of work space for fields
+      UTIL_CHECK(w0_.capacity() == nMonomer);
+      UTIL_CHECK(wc0_.capacity() == nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         w0_[i].allocate(meshDimensions);
-         wc0_[i].allocate(meshDimensions);
+         UTIL_CHECK(w0_[i].capacity() == meshSize);
+         UTIL_CHECK(wc0_[i].capacity() == meshSize);
       }
-      dw_.allocate(meshDimensions);
+      UTIL_CHECK(dw_.capacity() == meshSize);
 
       /*
       * If the user did not input epsilon_ values, set values to -1.0

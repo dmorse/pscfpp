@@ -55,6 +55,7 @@ namespace Rp {
          w_[i].allocate(meshDimensions);
       }
       dwc_.allocate(meshDimensions);
+      gaussianField_.allocate(meshDimensions);
    }
 
    /*
@@ -70,9 +71,12 @@ namespace Rp {
       UTIL_CHECK(w_.capacity() == nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
          UTIL_CHECK(w_[i].capacity() == meshSize);
+         UTIL_CHECK(w_[i].meshDimensions() == meshDimensions);
       }
       UTIL_CHECK(dwc_.capacity() == meshSize);
-      gaussianField_.allocate(meshDimensions);
+      UTIL_CHECK(dwc_.meshDimensions() == meshDimensions);
+      UTIL_CHECK(gaussianField_.capacity() == meshSize);
+      UTIL_CHECK(gaussianField_.meshDimensions() == meshDimensions);
    }
 
    /*
