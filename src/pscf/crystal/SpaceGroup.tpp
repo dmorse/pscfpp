@@ -99,7 +99,7 @@ namespace Pscf {
       }
 
       // Check that mesh dimensions are multiples of required divisor
-      for (int i = 1; i < D; ++i) {
+      for (int i = 0; i < D; ++i) {
          if (dimensions[i]%divisors[i] != 0) {
             Log::file() 
                << "\n"
