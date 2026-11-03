@@ -77,11 +77,14 @@ public:
       return isValid;
    }
 
+   /*
+   * Checks consistency of drBasis and dkBasis
+   */
    template <int D>
-   bool isValidDerivative(UnitCell<D> const & cell)
+   bool isConsistentDerivative(UnitCell<D> const & cell)
    {
       double sum;
-      double nParams = cell.nParameter();
+      int nParams = cell.nParameter();
       int i, j, k, m;
       for (k = 0; k < nParams; ++k) {
          for (i = 0; i < D; ++i) {
@@ -96,6 +99,57 @@ public:
                return false;
             }
          }
+      }
+      return true;
+   }
+
+   /*
+   * Checks accuracy of drBasis.
+   */
+   template <int D>
+   bool isValidDerivative(UnitCell<D> const & cell)
+   {
+      FSArray<double, 6> p, pp, pm;
+      RealVec<D> ap, am, da, drBasis;
+      int nParams = cell.nParameter();
+
+      p = cell.parameters();
+      UTIL_CHECK(p.size() == nParams);
+      UnitCell<D> cp, cm;
+      cp = cell;
+      cm = cell;
+
+      double delta = 0.01;
+      double max = 0.0;
+      double diff;
+      int i, j, k;
+      for (k = 0; k < nParams; ++k) {
+
+         pp = p;
+         UTIL_CHECK(pp.size() == nParams);
+         pp[k] += delta;
+         cp.setParameters(pp);
+
+         pm = p;
+         pm[k] -= delta;
+         UTIL_CHECK(pm.size() == nParams);
+         cm.setParameters(pm);
+
+         for (i = 0; i < D; ++i) {
+            ap = cp.rBasis(i);
+            am = cm.rBasis(i);
+            for (j = 0; j < D; ++j) {
+               da[j] = (ap[j] - am[j])/(2.0*delta);
+               drBasis[j] = cell.drBasis(k,i,j);
+               diff = std::abs(da[j] - drBasis[j]);
+               if (diff > max) max = diff;
+            }
+         }
+      }
+
+      if (max > 1.0E-3) {
+         std::cout << "maximum error = " << max << std::endl;
+         return false;
       }
       return true;
    }
@@ -116,6 +170,7 @@ public:
       TEST_ASSERT(eq(v.kBasis(0)[0], twoPi/param));
       TEST_ASSERT(eq(v.volume(), param));
       TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test ksq function
@@ -138,7 +193,7 @@ public:
       TEST_ASSERT(eq(u.drBasis(0,0,0), 1.0));
       TEST_ASSERT(eq(u.kBasis(0)[0], twoPi/param));
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       #if 1
       if (verbose() > 1) {
@@ -175,6 +230,7 @@ public:
       in >> v;
       TEST_ASSERT(v.nParameter() == 1);
       TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test volume
@@ -230,7 +286,7 @@ public:
          TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<2> replicas;
@@ -271,6 +327,7 @@ public:
       in >> v;
       TEST_ASSERT(v.nParameter() == 1);
       TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       if (verbose() > 0) {
@@ -323,7 +380,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<2> replicas;
@@ -351,7 +408,7 @@ public:
       in >> v;
       TEST_ASSERT(v.nParameter() == 2);
       TEST_ASSERT(isValidReciprocal(v));
-      TEST_ASSERT(isValidDerivative(v));
+      TEST_ASSERT(isConsistentDerivative(v));
 
       // Test volume
       double a = v.parameter(0);
@@ -368,6 +425,7 @@ public:
          TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
       }
       TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isConsistentDerivative(u));
       TEST_ASSERT(isValidDerivative(u));
 
       // Test replication
@@ -396,6 +454,7 @@ public:
       in >> v;
       TEST_ASSERT(v.nParameter() == 2);
       TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test volume
@@ -422,7 +481,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<2> replicas;
@@ -450,6 +509,7 @@ public:
       in >> v;
       TEST_ASSERT(v.nParameter() == 3);
       TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test volume
@@ -477,7 +537,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<2> replicas;
@@ -507,6 +567,7 @@ public:
 
       TEST_ASSERT(v.nParameter() == 1);
       TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test volume
@@ -585,7 +646,7 @@ public:
          TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<3> replicas;
@@ -643,6 +704,7 @@ public:
 
       TEST_ASSERT(v.nParameter() == 2);
       TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test volume
@@ -672,7 +734,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<3> replicas;
@@ -718,6 +780,7 @@ public:
 
       TEST_ASSERT(v.nParameter() == 3);
       TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test volume
@@ -787,6 +850,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isConsistentDerivative(u));
       TEST_ASSERT(isValidDerivative(u));
 
       // Test replication
@@ -824,6 +888,7 @@ public:
       bool isReciprocal = isValidReciprocal(v);          // Quiet test
       //bool isReciprocal = isValidReciprocal(v, true);  // Verbose test
       TEST_ASSERT(isReciprocal);
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test volume
@@ -852,7 +917,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<3> replicas;
@@ -909,6 +974,7 @@ public:
       //bool isReciprocal = isValidReciprocal(v, true);  // Verbose test
       TEST_ASSERT(isReciprocal);
 
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test assignment
@@ -932,7 +998,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<3> replicas;
@@ -966,6 +1032,7 @@ public:
       bool isReciprocal = isValidReciprocal(v);          // Quiet test
       //bool isReciprocal = isValidReciprocal(v, true);  // Verbose test
       TEST_ASSERT(isReciprocal);
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test volume
@@ -996,6 +1063,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isConsistentDerivative(u));
       TEST_ASSERT(isValidDerivative(u));
 
       // Test replication
@@ -1033,6 +1101,7 @@ public:
       //bool isReciprocal = isValidReciprocal(v, true);  // Verbose test
       TEST_ASSERT(isReciprocal);
 
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(isValidDerivative(v));
 
       // Test assignment
@@ -1056,7 +1125,7 @@ public:
          }
       }
       TEST_ASSERT(isValidReciprocal(u));
-      TEST_ASSERT(isValidDerivative(u));
+      TEST_ASSERT(isConsistentDerivative(u));
 
       // Test replication
       IntVec<3> replicas;
@@ -1109,7 +1178,7 @@ public:
 
       TEST_ASSERT(v.nParameter() == 2);
       TEST_ASSERT(isValidReciprocal(v));
-      TEST_ASSERT(isValidDerivative(v));
+      TEST_ASSERT(isConsistentDerivative(v));
       TEST_ASSERT(observer1.notified);
       TEST_ASSERT(observer2.notified);
       TEST_ASSERT(v.signal().nObserver() == 2);

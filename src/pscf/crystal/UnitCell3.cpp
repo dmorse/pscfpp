@@ -152,7 +152,7 @@ namespace Pscf {
          // theta is the angle of all basis vectors from the z axis
 
          /*
-         * Bravais lattice vectora a_i with i=0, 1, or 2 have form:
+         * Bravais lattice vectors a_i with i=0, 1, or 2 have form:
          *
          *    a_i = a * (z * cos(theta) + u_i * sin(theta) )
          * 
@@ -218,7 +218,7 @@ namespace Pscf {
          drBasis_[0](2,2) = cosT;
 
          // Define alpha = d(theta)/d(beta)
-         double alpha = -sin(beta)/(3.0*cosT*sinT);
+         double alpha = sin(beta)/(3.0*cosT*sinT);
 
          // Derivatives with respect to beta
          drBasis_[1](0,0) = cosT * alpha * a;
@@ -265,8 +265,8 @@ namespace Pscf {
          drBasis_[1](1,1) = 1.0;
          drBasis_[2](2,0) = cb;
          drBasis_[2](2,2) = sb;
-         drBasis_[3](2,0) = c*sb;
-         drBasis_[3](2,2) = -c*cb;
+         drBasis_[3](2,0) = -c*sb;
+         drBasis_[3](2,2) = c*cb;
 
          // Reciprocal lattice vectors
          kBasis_[0][0] = twoPi/a;

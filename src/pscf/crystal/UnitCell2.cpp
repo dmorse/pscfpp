@@ -135,12 +135,15 @@ namespace Pscf {
          rBasis_[1][0] = cg*b;
          rBasis_[1][1] = sg*b;
 
+         // parameters_[0] => a
          drBasis_[0](0, 0) = 1.0;
          drBasis_[0](0, 1) = 0.0;
+         // parameters_[1] => b
          drBasis_[1](1, 0) = cg;
          drBasis_[1](1, 1) = sg;
-         drBasis_[1](1, 0) = -sg*b;
-         drBasis_[1](1, 1) =  cg*b;
+         // parameters_[2] => gamma
+         drBasis_[2](1, 0) = -sg*b;
+         drBasis_[2](1, 1) =  cg*b;
 
          kBasis_[0][0] = twoPi/a;
          kBasis_[0][1] = -twoPi*cg/(sg*a);
