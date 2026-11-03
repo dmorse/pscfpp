@@ -247,7 +247,7 @@ namespace Rp {
           normalVecId(), nMonomer, ThreadMesh::meshDims());
       
       // Integrate resulting fields to get the stress
-      double stress;
+      double stress = 0.0;
       for (int i = 0; i < nMonomer; i++) {
          stress += Reduce::innerProduct(hDerivatives[i], system().c().rgrid(i));
       }

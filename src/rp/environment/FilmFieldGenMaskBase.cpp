@@ -37,7 +37,7 @@ namespace Rp
       b = systemLatticeVector(1);
 
       double gamma = dot(a,b);
-      if (gamma > 1e-8) { // Dot product between a and b should be 0
+      if (std::abs(gamma) > 1e-8) { // Dot product between a and b should be 0
          UTIL_THROW("ERROR: Lattice basis vectors must be orthogonal");
       }
    } 
@@ -61,7 +61,7 @@ namespace Rp
       alpha = dot(b,c);
 
       if (normalVecId() == 0) {
-         if (beta > 1e-8 || gamma > 1e-8) {
+         if (std::abs(beta) > 1e-8 || std::abs(gamma) > 1e-8) {
             UTIL_THROW("ERROR: beta and gamma must be 90 degrees");
          }
       } else if (normalVecId() == 1) {
@@ -69,7 +69,7 @@ namespace Rp
             UTIL_THROW("ERROR: alpha and gamma must be 90 degrees");
          }
       } else { // normalVecId == 2
-         if (alpha > 1e-8 || beta > 1e-8) {
+         if (std::abs(alpha) > 1e-8 || beta > 1e-8) {
             UTIL_THROW("ERROR: alpha and beta must be 90 degrees");
          }
       }
