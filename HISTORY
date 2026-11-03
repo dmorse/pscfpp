@@ -57,6 +57,12 @@ Documentation
 * A new manual section explains the use of backend identifier classes
   as template parameters to support multiple backends.
 
+Bug-fixes
+---------
+* Fixed errors in expressions for derivatives of Bravais vectors 
+  for 2D oblique, 3D monoclinic and 3D rhombohedral unit cells.
+  These bugs affected stress components for these unit cell types.
+* Fixed mistake in 2D plane group p_2_g_g, file data/2/p_2_g_g
   
 Version 1.4.0 (6/01/2026)
 =========================================

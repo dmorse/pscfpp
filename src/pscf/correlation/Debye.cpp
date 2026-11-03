@@ -19,7 +19,7 @@ namespace Correlation {
       double x = length*ksq*kuhn*kuhn/6.0;
       double d;
       if (x < 1.0E-5) {
-         d = 1.0 - ((x*x)/3.0);
+         d = 1.0 - (x/3.0) + (x*x/12.0);
       } else {
          d = 2.0 * (std::exp(-x) - 1.0 + x) / (x * x);
       }
@@ -36,7 +36,7 @@ namespace Correlation {
       double x = nBead*y;
       double d;
       if (x < 1.0E-5) {
-         d = 1.0 - (x*x)/3.0;
+         d = 1.0 - x/3.0;
          d *= nBead*nBead;
       } else {
          double z = std::exp(-y);
