@@ -30,19 +30,19 @@ namespace Correlation {
    /*
    * Intrablock correlation function (bead model)
    */
-   double db(double ksq, double nBead, double kuhn)
+   double db(double ksq, double n, double kuhn)
    {
       double y = ksq*kuhn*kuhn/6.0;
-      double x = nBead*y;
+      double x = n*y;
       double d;
       if (x < 1.0E-5) {
-         d = 1.0 - x/3.0;
-         d *= nBead*nBead;
+         double nSq = n*n;
+         d = nSq - x*(nSq - 1.0)/3.0 + x*x*(nSq - 1.0)/12.0;
       } else {
-         double z = std::exp(-y);
-         double u = 1 - z;
-         d = 2.0 * z * (std::exp(-x) + nBead*u - 1.0) / (u*u);
-         d += nBead;
+         const double z = std::exp(-y);
+         const double u = 1 - z;
+         d = 2.0 * z * (std::exp(-x) + n*u - 1.0) / (u*u);
+         d += n;
       }
       return d;
    }
@@ -66,17 +66,17 @@ namespace Correlation {
    /*
    * End factor for one block (bead model)
    */
-   double eb(double ksq, double nBead, double kuhn)
+   double eb(double ksq, double n, double kuhn)
    {
       double y = ksq*kuhn*kuhn/6.0;
-      double x = nBead*y;
+      double x = n*y;
       double e;
       if (x < 1.0E-5) {
-         e = 1.0 - x/2.0 + x*x/6.0;
-         e *= nBead;
+         e = n - x*(n - 1.0)/2.0;
+         e += x*y*(n*n - 1.5*n + 0.5)/6.0;
       } else {
-         double z = std::exp(-y);
-         e = (1.0 - std::exp(-x)) / (1 - z);
+         const double z = std::exp(-y);
+         e = (1.0 - std::exp(-n*y)) / (1 - z);
       }
       return e;
    }
