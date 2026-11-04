@@ -57,18 +57,18 @@ complex-to-complex Fourier transform to a CField \<D, T\>.
 
 Specializations of the three field class templates RField, RFieldDft, and 
 CField are all derived from corresponding specializations of the class 
-template DeviceArray \< Data, T \> with the same argument for parameter T 
+template BackendArray \< Data, T \> with the same argument for parameter T 
 and an appropriate type for the elment type parameter Data. Specializations
 of RField \<D, T\> with D=1, 2, or 3 are derived from specializations of 
-DeviceArray \< Data, T \> in which Data is the appropriate type for real 
+BackendArray \< Data, T \> in which Data is the appropriate type for real 
 numbers used with the chosen backend, i.e., Data=double for T=Pscf::CPT 
 or Data=cudaReal for T=Pscf::CUT.  Specializations of RFieldDft \< D, T \> 
 and CField \< D, T \> are instead derived from specializations of 
-DeviceArray \< Data, T \> in which Data is the corresponding complex 
+BackendArray \< Data, T \> in which Data is the corresponding complex 
 type, which is Data=fftw_complex for T=Pscf::CPT or Data=cudaComplex 
 for T=Pscf::CUT. 
 
-The main difference between the field and DeviceArray class templates 
+The main difference between the field and BackendArray class templates 
 is that each field class templat stores information about the dimensions 
 of the mesh on which the field is is defined, in addition to the actual
 field data and the total number of elements. The vector of mesh dimensions 
@@ -104,7 +104,7 @@ is defined in the file pscf/field/cpu/RField.h as a template
 namespace Pscf {
 
     template <int D>
-    class RField<D, CPT> : public DeviceArray<double,CPT>
+    class RField<D, CPT> : public BackendArray<double,CPT>
     {
     public:
 
@@ -138,7 +138,7 @@ namespace Pscf {
 This defines a container that owns a block of CPU main memory. The 
 corresponding partial specialization of RField \<D,T\> for T=Pscf::CUT 
 is defined in file pscf/field/cuda/RField.h, and is derived from 
-DeviceArray<cudaReal,Pscf::CUT>, thus creating a container that owns 
+BackendArray<cudaReal,Pscf::CUT>, thus creating a container that owns 
 a block of GPU global memory. The allocate member function for either 
 partial specialization of RField takes the IntVec<D> meshDimensions
 as an argument and allocates an array in which the number of elements 
@@ -147,7 +147,7 @@ to the number of nodes in the resulting mesh.
 
 Specializations of the field class templates with T=Pscf::CPT are 
 indirectly derived from the Util::Array class template, because the
-partial specialization DeviceArray \<Data, Pscf::CPT \> is derived 
+partial specialization BackendArray \<Data, Pscf::CPT \> is derived 
 from Util::Array \< Data \>. Specializations that use C++ hardware
 thus inherit the overloaded subscript (square bracket) operator that 
 is defined by the Util::Array template, which provides access to 

@@ -173,14 +173,14 @@ namespace Pscf {
    void copyArrays(DArray<OAT>& out, DArray<IAT> const& in);
 
    /**
-   * Associate host arrays with device arrays.
+   * Associate host arrays with backend arrays.
    *
-   * On input, the device arrays must be allocated.
+   * On input, the backend arrays must be allocated.
    *
    * \ingroup Pscf_FieldIo_Module
    *
    * \param host  DArray of host arrays (lhs, out)
-   * \param device  DArray of device arrays (rhs, in)
+   * \param device  DArray of backend arrays (rhs, in)
    */
    template <class HAT, class DAT>
    void associateArrays(DArray<HAT>& host, DArray<DAT> & device);

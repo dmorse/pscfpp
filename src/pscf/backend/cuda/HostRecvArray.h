@@ -28,7 +28,7 @@ namespace Pscf {
    * Host array to receive host-to-device data transfers.
    *
    * This class template should be used in backend-independent template
-   * code in which data is copied from a GPU device array to a CPU host 
+   * code in which data is copied from a GPU backend array to a CPU host 
    * array.  This template is derived from ConstArray<Data>, and thus 
    * provides read-only access to the data.
    *
@@ -36,7 +36,7 @@ namespace Pscf {
    * of BackendArray<Data,CUT> to a HostRecvArray<Data,CUT> allocates 
    * the array if it is not allocated and then copies all elements of 
    * the array from global GPU device memory to host memory. Conversion
-   * construction from a device array is equivalent to default 
+   * construction from a backend array is equivalent to default 
    * construction followed by assignment.
    *
    * <b> Usage: </b>
@@ -84,7 +84,7 @@ namespace Pscf {
    *    function does nothing. It is used in backend-independent code to
    *    maintain compatibility with the syntax used by the specialization
    *    for a C++ backend (T=CPT), for which the dissociate function
-   *    releases an association with the device array.
+   *    releases an association with the backend array.
    *
    *  - Any call to the dissociate function must occur after all statements 
    *    that read data from the host array. 
@@ -131,7 +131,7 @@ namespace Pscf {
       *
       * Conversion construction is equivalent to default construction 
       * followed by assignment. This function first allocates this array
-      * with a capacity equal to that of the other device array, and then
+      * with a capacity equal to that of the other backend array, and then
       * performs a deep copy of the underlying array from GPU device 
       * memory to CPU host memory.
       *

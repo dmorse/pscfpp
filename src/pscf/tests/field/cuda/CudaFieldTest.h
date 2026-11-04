@@ -90,7 +90,7 @@ void CudaFieldTest::testRFieldRoundTrip()
       d[2] = 3;
       int capacity = 6;
 
-      // Allocate device array vd
+      // Allocate backend array vd
       RField<3,CUT> vd;
       vd.allocate(d);
 
@@ -130,7 +130,7 @@ void CudaFieldTest::testCFieldRoundTrip()
       d[2] = 3;
       int capacity = 6;
 
-      // Allocate device array vd
+      // Allocate backend array vd
       Pscf::CField<3,CUT> vd;
       vd.allocate(d);
 

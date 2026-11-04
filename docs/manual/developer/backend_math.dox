@@ -32,7 +32,7 @@ backends. Versions that are designed to be used with different backends
 are distinguished by the types used for array-valued function parameters:
 
    - Functions that used with a CUDA backend take array parameters that
-     are specializations of Pscf::DeviceArray \<Data, Pscf::CUT \>, with 
+     are specializations of Pscf::BackendArray \<Data, Pscf::CUT \>, with 
      Data = cudaReal for arrays with real elements and Data = cudaComplex 
      for arrays with complex elements.
 
@@ -44,7 +44,7 @@ are distinguished by the types used for array-valued function parameters:
 These interfaces allow specializations of the RField, RFieldDft and CField 
 class templates to be passed to such functions because the field class
 specializations with a backend identifier class T=Pscf::CUT are all 
-derived from specializations of DeviceArray \<Data, Pscf::CUT \>, while 
+derived from specializations of BackendArray \<Data, Pscf::CUT \>, while 
 the field classes with T=PSCF::CPT are all indirectly derived from 
 corresponding specializations of Util::Array \<Data\>. 
 
@@ -69,12 +69,12 @@ The file src/pscf/backend/cuda/VecOp.h declares an overloaded version
 of this function that instead uses a Cuda backend, which is declared in 
 namespace Pscf::VecOp as
 \code
-    void addVV(DeviceArray<cudaReal, CUT>& a, 
-               DeviceArray<cudaReal, CUT> const & b, 
-               DeviceArray<cudaReal, CUT> const & c);
+    void addVV(BackendArray<cudaReal, CUT>& a, 
+               BackendArray<cudaReal, CUT> const & b, 
+               BackendArray<cudaReal, CUT> const & c);
 \endcode
-where DeviceArray<cudaReal, CUT> denotes 
-Pscf::DeviceArray<cudaReal, Pscf::CUT>.
+where BackendArray<cudaReal, CUT> denotes 
+Pscf::BackendArray<cudaReal, Pscf::CUT>.
 In interfaces for addVV and almost all other functions in namespace 
 VecOp, the first function parameter is an output parameter that is used 
 to return the result of a calculation, while the remaining parameters 
@@ -91,7 +91,7 @@ In specializations of that class template with T=Pscf::CPT, the addVV
 will always be passed arguments that are instances of subclasses of 
 Util::Array<double>. In specializations with T=Pscf::CUT, the same
 function invocation may be passed arguments that are instances of the 
-class DeviceArray<cudaReal,CUT> or its subclasses.  The template type
+class BackendArray<cudaReal,CUT> or its subclasses.  The template type
 system used by PSCF, in which different data types are used for arrays 
 in specializations that use different backends, allows the compiler to 
 choose the correct overload for functions defined in Pscf::VecOp and 

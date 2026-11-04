@@ -197,7 +197,7 @@ public:
       d[1] = 1;
       d[2] = 3;
 
-      // Allocate device arrays da and db
+      // Allocate backend arrays da and db
       Pscf::RFieldDft<3,CUT> da;
       Pscf::RFieldDft<3,CUT> db;
       da.allocate(d);
@@ -256,7 +256,7 @@ public:
       dimensions[1] = 1;
       dimensions[2] = 3;
 
-      // Allocate device arrays da and db
+      // Allocate backend arrays da and db
       DArray< Pscf::RFieldDft<3,CUT> > da;
       DArray< Pscf::RFieldDft<3,CUT> > db;
       da.allocate(nMonomer);
@@ -325,7 +325,7 @@ public:
       d[1] = 1;
       d[2] = 3;
 
-      // Allocate device arrays da and db
+      // Allocate backend arrays da and db
       Pscf::CField<3,CUT> da;
       Pscf::CField<3,CUT> db;
       da.allocate(d);
@@ -384,7 +384,7 @@ public:
       dimensions[1] = 1;
       dimensions[2] = 3;
 
-      // Allocate device arrays da and db
+      // Allocate backend arrays da and db
       DArray< Pscf::CField<3,CUT> > da;
       DArray< Pscf::CField<3,CUT> > db;
       da.allocate(nMonomer);

@@ -31,7 +31,7 @@ namespace Pscf {
    * The main difference from the base class is the addition of assignment 
    * (operator = ) from a HostSendArray<Data,CTP> to a BackendArray<Data,CTP>.
    * This operator checks for the existence of an association between the
-   * device array (LHS) and host array (RHS) in which both point to the
+   * backend array (LHS) and host array (RHS) in which both point to the
    * same memory, throws an Exception if such an association does not
    * already exist, or does nothing if it does. Reason for this usage is
    * discussed below.
@@ -43,7 +43,7 @@ namespace Pscf {
    * documentation for the HostSendArray class template. The most explicit
    * version of this pattern involves the following steps:
    *
-   *    - Construct and allocate a device array (denoted by dArray)
+   *    - Construct and allocate a backend array (denoted by dArray)
    *
    *    - Default construct a host array (denoted by hArray)
    * 
@@ -55,7 +55,7 @@ namespace Pscf {
    *
    *    - Destroy the association: hArray.dissociate()
    *
-   *    - Deallocate or destroy the device array dArray
+   *    - Deallocate or destroy the backend array dArray
    *
    * Comments:
    *
@@ -119,7 +119,7 @@ namespace Pscf {
       * refer to the to the same underlying C array.
       *
       * Rationale: Since the host array acts as a shallow copy of this 
-      * device array, the association must have been created before data 
+      * backend array, the association must have been created before data 
       * was initialized on the host array, which must occurs before the
       * pseudo host-to-device transfer is finalized by this operator.
       *

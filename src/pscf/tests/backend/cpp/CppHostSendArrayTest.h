@@ -80,7 +80,7 @@ void CppHostSendArrayTest::testAssociateCmplx()
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      // Initialize device array
+      // Initialize backend array
       BackendArray< std::complex<Data>, CPT> w;
       w.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
@@ -108,13 +108,13 @@ void CppHostSendArrayTest::testAssign()
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      // Data owner (device array)
+      // Data owner (backend array)
       BackendArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
 
-      // Set data in device array
+      // Set data in backend array
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
@@ -167,7 +167,7 @@ void CppHostSendArrayTest::testBaseClassReference()
 {
    printMethod(TEST_FUNC);
    {
-      // Data owner (device array)
+      // Data owner (backend array)
       BackendArray<Data,CPT> w(3);
 
       HostSendArray<Data,CPT> v;
@@ -189,7 +189,7 @@ void CppHostSendArrayTest::testDArrayOuter()
 
    int m = 2;
 
-   // Allocate array of device arrays
+   // Allocate array of backend arrays
    DArray< BackendArray<Data,CPT> > v;
    v.allocate(m);
    for (int i = 0; i < m; ++i) {
@@ -223,7 +223,7 @@ void CppHostSendArrayTest::testDArrayOuter()
       }
    }
 
-   // De-allocate device arrays
+   // De-allocate backend arrays
    for (int i = 0; i < m; ++i) {
       v[i].deallocate();
    }

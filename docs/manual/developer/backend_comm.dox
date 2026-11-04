@@ -48,9 +48,9 @@ point to the same data when used with specializations with T=Pscf::CPT.
 The design of these two templates is based on the assumption that 
 most large, long-lived arrays in PSCF are allocated on the GPU in 
 specializations with T = Pscf::CUT, and are thus defined in template code 
-as instances of DeviceArray<Data,T> or a subclass thereof.  The design 
+as instances of BackendArray<Data,T> or a subclass thereof.  The design 
 is designed to allow operations that copy data between a long-lived 
-DeviceArray and a shorter-lived HostSendArray or HostRecvArray, for 
+BackendArray and a shorter-lived HostSendArray or HostRecvArray, for 
 which the data in the HostSendArray or HostRecvArray only needs to be 
 accessed within the scope of a single function. 
 
@@ -59,16 +59,16 @@ operations, while HostRecvArray is designed to be used for GPU-to-CPU
 copy operations.  A HostSendArray defines a subscript ([]) operator 
 that allows read and write access to elements of the array, which is
 needed to allow elements to be assigned values on the CPU host before 
-they are copied to the device array.  The HostRecvArray instead defines 
+they are copied to the backend array.  The HostRecvArray instead defines 
 a subscript operator that only allows read access to elements, allowing 
 elements to be read after they are copied from the associated 
-DeviceArray.
+BackendArray.
 
 \section developer_backend_HostToDev Host-to-Device Copy
 
 The pseudo-code shown below outlines the required usage to transfer data 
 from an instance of a HostSendArray<Data,T> named hostArray to an instance 
-of DeviceArray<Data,T> named devArray.  We assume that the devArray 
+of BackendArray<Data,T> named devArray.  We assume that the devArray 
 container has been declared and allocated prior to entry to this code 
 segment.
 \code
@@ -131,17 +131,17 @@ array goes out of scope.  If the HostRecvArray is instead a class member
 variable that is used in a class member function, then the associated 
 memory will be allocated the first time the associate function is called, 
 and can be re-used in multiple calls to the same or other member function, 
-as long as the associated device array always has the same number of 
+as long as the associated backend array always has the same number of 
 elements. The associate member function throws an Exception if a 
 HostRecvArray is already allocated on entry but its capacity is not equal 
-to that of the device array that is passed as a function argument. The 
+to that of the backend array that is passed as a function argument. The 
 decision to not use the dissociate function to deallocate host memory was 
 made to allow this reuse of memory if desired. 
 
 \section developer_backend_DevToHost Device-to-Host Copy
 
 The pseudo-code shown below outlines the usage for transferring
-data from a long-lived instance of DeviceArray<Data,T> named 
+data from a long-lived instance of BackendArray<Data,T> named 
 devArray to a temporary instance of HostRecvArray<Data,T> 
 named hostArray:
 \code
@@ -190,7 +190,7 @@ host array. In this case:
 
   - The default constructor and assignment operator can 
     be combined into a call to a conversion operator that
-    takes takes the device array as an argument. This
+    takes takes the backend array as an argument. This
     effect of this conversion constructor is equivalent 
     to default construction followed by assignment.
 
@@ -217,9 +217,9 @@ to array elements in order to guarantee that specializations that use
 different backends yield equivalent behavior in template code that involves 
 a device-to-host copy.  If write access were allowed to elements of the 
 array that received such a Device-to-Host copy, modifying elements of the 
-host array would modify corresponding elements of the device array when 
+host array would modify corresponding elements of the backend array when 
 used with C++ backend, because of the existence of a shallow copy, but
-would have no effect on data in the device array when used with a Cuda 
+would have no effect on data in the backend array when used with a Cuda 
 backend, because in this case these two arrays uses distinct memory 
 blocks allocated on different devices.  Write access is thus prohibited 
 to prevent this inconsistency. 

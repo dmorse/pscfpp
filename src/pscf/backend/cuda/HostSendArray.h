@@ -25,15 +25,15 @@ namespace Pscf {
    * This class template should be used in device-independent template
    * code in which an array is copied from host to device.  The
    * BackendArray<Data,CPT> template defines an assignment operator
-   * that assigns from a host array to a device array. 
+   * that assigns from a host array to a backend array. 
    *
    * The "associate" member function allocates the array if not allocated
    * previously, or does nothing if the array is already allocated with
    * the correct capacity.
    *
    * The assignment (=) operator that copies a host array (RHS) to a
-   * device array (LHS) performs a deep copy from host to device memory.
-   * This function is a member function of the device array, defined by
+   * backend array (LHS) performs a deep copy from host to device memory.
+   * This function is a member function of the backend array, defined by
    * the BackendArray<Data,CUT> class template. 
    *
    * <b> Usage </b>: 
@@ -59,7 +59,7 @@ namespace Pscf {
    *   - In this specialization for a CUDA backend (T=CUT), the associate
    *     function allocates the host array, if not allocated previously,
    *     or does nothing if it is already allocated with the same 
-   *     capacity as the device array. In the specialization for a C++
+   *     capacity as the backend array. In the specialization for a C++
    *     backend (T=CPT), the associate function creates an association 
    *     that make the host array refer to memory owned by the device 
    *     array.
@@ -74,14 +74,14 @@ namespace Pscf {
    *   - In this specialization for a CUDA backend (T=CUT), the dissociate
    *     function does nothing. In the corresponding specialization for a
    *     C++ backend (T=CPT), this function destroys the association 
-   *     between  the host and device arrays, by nullifying a pointer 
+   *     between  the host and backend arrays, by nullifying a pointer 
    *     held by the host array. 
    *
    *   - The host array may never be used to modify data after the 
    *     assignment operator and before the dissociate function is
-   *     invoked. Doing so would modify data owned by the device array
+   *     invoked. Doing so would modify data owned by the backend array
    *     in CPU code (T=CPT) but would have no effect on data owned by
-   *     the device array in GPU code (T=CUT), causing inconsistent
+   *     the backend array in GPU code (T=CUT), causing inconsistent
    *     behavior. To enforce this, it is good practice to invoke the 
    *     dissociate member function immediately after host-to-device 
    *     assignment, as shown above.
@@ -131,9 +131,9 @@ namespace Pscf {
       * Allocate if not allocated previously. 
       *
       * GPU specialization allocates host array with same dimensions as
-      * the device array, unless this is already the case.
+      * the backend array, unless this is already the case.
       *
-      * \param deviceArray  device array (must be allocated on entry)
+      * \param deviceArray  backend array (must be allocated on entry)
       */
       void associate(BackendArray<Data,CUT>& deviceArray);
 
@@ -216,7 +216,7 @@ namespace Pscf {
    {}
 
    /*
-   * Assignment from a BackendArray<Data,CUT> RHS device array.
+   * Assignment from a BackendArray<Data,CUT> RHS backend array.
    */
    template <typename Data>
    HostSendArray<Data,CUT>& 

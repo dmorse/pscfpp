@@ -390,7 +390,7 @@ namespace Pscf {
       *
       * The number of elements is equal to nParam, the number of unit cell
       * parameters.  Element dKSqSlices_[i] is an  RField<D,CUT> element
-      * that is associated with a slice of the larger dKSq_ device array,
+      * that is associated with a slice of the larger dKSq_ backend array,
       * and that contains derivatives of square wavevectors with respect
       * to unit cell parameter number i.
       *

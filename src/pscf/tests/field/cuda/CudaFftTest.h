@@ -73,7 +73,7 @@ void CudaFftTest::testTransformReal1D()
    IntVec<1> d;
    d[0] = n;
 
-   // Allocate device arrays
+   // Allocate backend arrays
    Pscf::RField<1,CUT> rField(d);
    Pscf::RFieldDft<1,CUT> kField(d);
    int kSize = kField.capacity();
@@ -144,7 +144,7 @@ void CudaFftTest::testTransformReal2D()
    d[0] = n1;
    d[1] = n2;
 
-   // Allocate device arrays
+   // Allocate backend arrays
    Pscf::RField<2,CUT> rField(d);
    Pscf::RFieldDft<2,CUT> kField(d);
    int kSize = kField.capacity();

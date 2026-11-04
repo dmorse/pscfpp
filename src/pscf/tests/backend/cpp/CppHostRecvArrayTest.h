@@ -97,7 +97,7 @@ void CppHostRecvArrayTest::testAssign()
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      // Data owner (device array)
+      // Data owner (backend array)
       BackendArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
       for (int i=0; i < capacity; i++ ) {
@@ -144,7 +144,7 @@ void CppHostRecvArrayTest::testDArrayOuter()
 
    int m = 2;
 
-   // Initialize array of device arrays
+   // Initialize array of backend arrays
    DArray< BackendArray<Data,CPT> > v;
    v.allocate(m);
    for (int i = 0; i < m; ++i) {
@@ -173,7 +173,7 @@ void CppHostRecvArrayTest::testDArrayOuter()
       u[i].dissociate();
    }
 
-   // De-allocate device arrays
+   // De-allocate backend arrays
    for (int i = 0; i < m; ++i) {
       v[i].deallocate();
    }

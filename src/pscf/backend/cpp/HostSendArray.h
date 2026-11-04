@@ -31,27 +31,27 @@ namespace Pscf {
    * code in contexts in which the specialization for the CUDA backend
    * (T=Pscf:CUT) would copy an array from the CPU host to the GPU device.  
    * This specialization for the C++ backend (T=Pscf::CPT) instead creates
-   * a temporary shallow copy of the associated device array to mimic the
+   * a temporary shallow copy of the associated backend array to mimic the
    * syntax of a copy operation without the cost of an actual deep copy.
    *
    * The "associate" member function creates a shallow copy of a C array
-   * that is owned by an associated device array.  This function takes a 
+   * that is owned by an associated backend array.  This function takes a 
    * non-const reference to an instance of BackendArray<Data,CPT> as its
    * parameter. This parameter is non-const because the shallow copy 
    * provides write access to the underlying shared array. After an
    * association is created, elements of this host array can be modified
-   * in order to modify the data owned by the device array. After the
+   * in order to modify the data owned by the backend array. After the
    * modification is complete, the temporary association should be
    * released. 
    *
-   * The lifetime of an association with a device array should not be
+   * The lifetime of an association with a backend array should not be
    * allowed to extend beyond the function in which the association is
    * created. This is necessary to guarantee that no such association
-   * remains when the device array is deallocated or destroyed. Such an
+   * remains when the backend array is deallocated or destroyed. Such an
    * association may be released by calling the dissociate member function 
    * of the host array, or will be released by the host array destructor.
    * A reference counting system is used to detect and report erroneous 
-   * de-allocation of a device array when it is still referred to by one
+   * de-allocation of a backend array when it is still referred to by one
    * or more other containers, which would create dangling references.
    *
    * <b> Usage </b>: 
@@ -88,9 +88,9 @@ namespace Pscf {
    *
    *   - The host array should never be used to modify data after the 
    *     assignment operator and before the dissociate function is
-   *     invoked. Doing so would modify data owned by the device array
+   *     invoked. Doing so would modify data owned by the backend array
    *     in CPU code (T=CPT) but would have no effect on data owned by
-   *     the device array in GPU code (T=CUT), causing inconsistent
+   *     the backend array in GPU code (T=CUT), causing inconsistent
    *     behavior. To enforce this, it is good practice to invoke the 
    *     dissociate member function immediately after host-to-device 
    *     assignment, as shown above.
@@ -99,7 +99,7 @@ namespace Pscf {
    *     the host array is a local variable that is defined within 
    *     a function and the assignment operator occurs near the end
    *     of that function, because any remaining association with a
-   *     device array will be destroyed by the host array destructor 
+   *     backend array will be destroyed by the host array destructor 
    *     function when the host array goes out of scope.
    *
    * \ingroup Pscf_Backend_Cpp_Module
@@ -131,21 +131,21 @@ namespace Pscf {
       operator = (HostSendArray<Data,CPT> const&) = delete;
 
       /**
-      * Associate this object with a device array.
+      * Associate this object with a backend array.
       *
-      * Associates this object with a device array, thus creating a
+      * Associates this object with a backend array, thus creating a
       * shallow copy that points to the same memory. After successful
       * return, isAllocated() will return true.
       *
       * \throw Exception if source array is not allocated on entry
       * \throw Exception if this array is already associated
       *
-      * \param other  device array that owns the data
+      * \param other  backend array that owns the data
       */
       void associate(BackendArray<Data,CPT> & other);
 
       /**
-      * Release association with a device array.
+      * Release association with a backend array.
       *
       * Upon successful return, isAllocated() will return false.
       *
@@ -155,7 +155,7 @@ namespace Pscf {
 
    private:
 
-      /// Reference to a device array that has an array referenced by this.
+      /// Reference to a backend array that has an array referenced by this.
       CountedReference ref_;
 
       // Hide inherited protected members by making them private
@@ -189,7 +189,7 @@ namespace Pscf {
    }
 
    /*
-   * Associate this object with a device array.
+   * Associate this object with a backend array.
    */
    template <typename Data>
    void
@@ -211,7 +211,7 @@ namespace Pscf {
    }
 
    /*
-   * Release pre-existing association with a device array.
+   * Release pre-existing association with a backend array.
    */
    template <typename Data>
    void HostSendArray<Data,CPT>::dissociate()

@@ -8,38 +8,38 @@ In code that uses a GPU, arrays may be allocated either in the main
 memory of the CPU host or in the global memory of the GPU device. 
 Arrays that are allocated in GPU memory when using a CUDA backend are 
 declared in PSCF as instances of specializations of a class template 
-named Pscf::DeviceArray. 
+named Pscf::BackendArray. 
 
-The class template Pscf::DeviceArray takes two template parameters, and 
+The class template Pscf::BackendArray takes two template parameters, and 
 is declared as:
 \code
-   template <typename Data, class T> class DeviceArray
+   template <typename Data, class T> class BackendArray
 \endcode
 Template parameter Data is the type of each element in the array, while
 parameter T is a backend identifer class. Partial specializations of the 
-DeviceArray template with T=Pscf::CUT and T=Pscf::CPT are defined to be 
+BackendArray template with T=Pscf::CUT and T=Pscf::CPT are defined to be 
 used with a CUDA GPU backend or a C++ CPU backend, respectively.
 
 The use of a backend identifier class as a template parameter allows the 
-DeviceArray template to be used within definitions of other class templates
+BackendArray template to be used within definitions of other class templates
 that also take T as a template parameter. In such templates, an instance of
-Pscf::DeviceArray<Data,T> represents an array that is allocated allocated 
+Pscf::BackendArray<Data,T> represents an array that is allocated allocated 
 in GPU memory when it appears in a template specialization that uses a 
 CUDA backend (with T=Pscf::CUT) but that is allocated in CPU heap memory 
 in specializations that use a C++ backend (with T=Pscf::CPT). 
 
-Partial specializations of DeviceArray that are designed for use with
+Partial specializations of BackendArray that are designed for use with
 different backents are discussed below.
 
 <b> CUDA backend (CUT) </b>:
 
-The partial specialization of DeviceArray with T=Pscf::CUT is a wrapper
+The partial specialization of BackendArray with T=Pscf::CUT is a wrapper
 for an underlying array that is allocated in global GPU device memory,
-and is defined in the file src/pscf/backend/cuda/DeviceArray.h.  For
-example, the specialization Pscf::DeviceArray<double,Pscf::CUT> is thus 
+and is defined in the file src/pscf/backend/cuda/BackendArray.h.  For
+example, the specialization Pscf::BackendArray<double,Pscf::CUT> is thus 
 an array of double precision numbers that is allocated in GPU memory.  
 
-Specializations of DeviceArray<Data,T> with T=Pscf::CUT do not allow 
+Specializations of BackendArray<Data,T> with T=Pscf::CUT do not allow 
 access to individual elements of the array from the CPU host, and 
 instead only allow array elements to be accessed within CUDA kernels. 
 Mathematical operations on such arrays are thus always performed by 
@@ -47,19 +47,19 @@ functions that launch CUDA kernels.
 
 <b> C++ backend (CPT) </b>:
 
-The partial specialization of DeviceArray with T=Pscf::CPT is a wrapper 
+The partial specialization of BackendArray with T=Pscf::CPT is a wrapper 
 for a underlying array that is allocated in CPU host memory, and is 
-defined in the file src/pscf/backend/cpp/DeviceArray.h.  For example, 
-an instance of class DeviceArray<double,Pscf::CPT> is thus an array of 
+defined in the file src/pscf/backend/cpp/BackendArray.h.  For example, 
+an instance of class BackendArray<double,Pscf::CPT> is thus an array of 
 double precision numbers that is allocated in CPU memory. Such an array
 is similar in many respects to an instance of DArray<double>.  One 
-feature of the DeviceArray<Data,Pscf::CPT> template that distinguishes 
-it from DArray<Data>, is that a DeviceArray<Data,Pscf::CPT> allocates 
+feature of the BackendArray<Data,Pscf::CPT> template that distinguishes 
+it from DArray<Data>, is that a BackendArray<Data,Pscf::CPT> allocates 
 memory using functions provided by the FFTW fast Fourier transform 
 library, which align memory in a manner that optimizes the performance 
 of that library. 
 
-Each specialization of DeviceArray<Data,T> with T=CPT is derived from
+Each specialization of BackendArray<Data,T> with T=CPT is derived from
 a corresponding specialization of the template Util::Array<Data>. The 
 Util::Array template defines a subscript operator that provides access 
 to individual array elements within code that runs on the CPU host.

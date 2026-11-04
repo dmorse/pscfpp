@@ -32,7 +32,7 @@ namespace Pscf {
    * for the CUDA backend (T=Pscf:CUT) would copy an array from the GPU
    * device to the CPU host. This specialization for the C++ backend
    * (T=Pscf::CPT) instead makes the host array a shallow copy of the
-   * device array, thus avoiding the cost of an actual deep copy. This
+   * backend array, thus avoiding the cost of an actual deep copy. This
    * specialization supports random read-only access to array elements 
    * via a subscript ([]) operator that returns a const reference, or 
    * via a ConstArrayIterator. 
@@ -40,18 +40,18 @@ namespace Pscf {
    * Conversion construction and assignment (operator =) from an instance 
    * of BackendArray<Data,CPT> to a HostRecvArray<Data,CPT> each create a 
    * shallow read-only copy of a C array that is owned by the associated
-   * device array, via a private pointer to this shared array.  These two 
+   * backend array, via a private pointer to this shared array.  These two 
    * functions each take a const reference to BackendArray<Data,CPT> as a 
-   * parameter, and so can be used in contexts in which the device array
+   * parameter, and so can be used in contexts in which the backend array
    * must be passed as a const reference. Conversion construction is
    * equivalent to default construction followed by assignment.
    *
-   * An association with a device array can be released by calling the
+   * An association with a backend array can be released by calling the
    * dissociate member function, or will be released upon destruction of
    * this host array. Such an association must be released by one of these 
-   * two methods before the device array that owns the associated data is 
+   * two methods before the backend array that owns the associated data is 
    * de-allocated or destroyed. A reference counting system is used to 
-   * detect and report dangerous de-allocation of a device array that 
+   * detect and report dangerous de-allocation of a backend array that 
    * is still referred to by one or more other containers, which would
    * create a dangling reference.
    *
@@ -89,7 +89,7 @@ namespace Pscf {
    *    that is owned by deviceArray.
    *
    *  - The dissociate member function releases the association with the 
-   *    device array, by nullifying the private Data* pointer member of 
+   *    backend array, by nullifying the private Data* pointer member of 
    *    host array that is used to point to an array.
    *
    *  - A call to the dissociate function call must occur after all 
@@ -141,9 +141,9 @@ namespace Pscf {
       /**
       * Conversion construction from a BackendArray.
       *
-      * Create a read-only association with the device array, thus
+      * Create a read-only association with the backend array, thus
       * creating a shallow copy that points to the memory owned by
-      * the device array.
+      * the backend array.
       *
       * \param other  array container
       */
@@ -152,9 +152,9 @@ namespace Pscf {
       /**
       * Create a read-only association with a BackendArray.
       *
-      * Create an association with the other device array, thus
+      * Create an association with the other backend array, thus
       * creating a shallow copy that points to the memory owned by
-      * the device array. This array may not be allocated on entry.
+      * the backend array. This array may not be allocated on entry.
       *
       * \throw Exception if other array is not allocated
       * \throw Exception if this is already associated with an array
@@ -165,7 +165,7 @@ namespace Pscf {
       operator = (BackendArray<Data,CPT> const & other);
 
       /**
-      * Release association with a device array.
+      * Release association with a backend array.
       *
       * \throw Exception if no such association exists.
       */
@@ -173,7 +173,7 @@ namespace Pscf {
 
    private:
 
-      /// Reference to a device array that owns memory referenced by this.
+      /// Reference to a backend array that owns memory referenced by this.
       CountedReference ref_;
 
       /**
@@ -244,7 +244,7 @@ namespace Pscf {
    }
 
    /*
-   * Release association with a device array.
+   * Release association with a backend array.
    */
    template <typename Data>
    void HostRecvArray<Data,CPT>::dissociate()
@@ -260,7 +260,7 @@ namespace Pscf {
    // Private function
 
    /*
-   * Associate this object with a device array.
+   * Associate this object with a backend array.
    */
    template <typename Data>
    void 
