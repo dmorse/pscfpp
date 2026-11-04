@@ -74,4 +74,25 @@ namespace Pscf {
       }
    }
 
+   // Free functions
+
+   /*
+   * Associate vector and scalar random number generators, if needed.
+   *
+   * GPU-enabled code would instead do nothing.
+   */
+   template <>
+   void linkVecRandom<CPT>(VecRandom<CPT>& vr, Random & sr)
+   {  vr.associate(sr); }
+
+   /*
+   * Set vector RNG seed, if needed (do nothing for CPU code).
+   *
+   * GPU-enabled code would instead set the seed.
+   */
+   template <>
+   void seedVecRandom<CPT>(VecRandom<CPT>& vr, long seed)
+   {}
+
+
 } // namespace Pscf

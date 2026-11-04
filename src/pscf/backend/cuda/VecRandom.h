@@ -13,10 +13,24 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+// Forward declarations
+namespace Util {
+   class Random;
+}
 namespace Pscf {
 
-   // Declare primary template
    template <typename T> class VecRandom;
+
+   template <class T>
+   void linkVecRandom(VecRandom<T>& vr, Util::Random & sr);
+
+   template <class T>
+   void seedVecRandom(VecRandom<T>& vr, long seed);
+}
+
+namespace Pscf {
+
+   using namespace Util;
 
    /**
    * Random number generator on GPU.
@@ -133,12 +147,39 @@ namespace Pscf {
       void errorCheck(curandStatus_t const & error);
    
    };
+
+   // Inline member function
  
    /* 
    * Returns value of random seed (private member variable idum)
    */
    inline long VecRandom<CUT>::seed() 
    {  return seed_; }
+
+   // Related free functions
+ 
+   /**
+   * Link vector and scalar random number generators, if needed.
+   *
+   * The Cuda GPU implementation does nothing, because the host and
+   * device RNGs are independent.
+   *
+   * \param vr  vector RNG
+   * \param sr  scalar RNG
+   */
+   template <>
+   void linkVecRandom(VecRandom<CUT>& vr, Random & sr);
+
+   /**
+   * Set the vector random number generator seed, if needed.
+   *
+   * The Cuda GPU implementation sets a seed for the device RNG.
+   *
+   * \param vr  vector RNG to be initialized
+   * \param seed  random seed value
+   */
+   template <>
+   void seedVecRandom(VecRandom<CUT>& vr, long seed);
 
 } 
 #endif 
