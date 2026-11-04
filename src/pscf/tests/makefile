@@ -3,29 +3,26 @@ include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
-TEST_CUDA=$(BLD_DIR)/pscf/tests/cudaTest
-TEST_CPP=$(BLD_DIR)/pscf/tests/cppTest
 TEST_DIR=$(SRC_DIR)/pscf/tests
-
-ifdef PSCF_CUDA
-TEST=$(TEST_CUDA)
-TEST_OBJ=$(TEST).ou
-TEST_DEP=$(TEST).du
-else
-TEST=$(TEST_CPP)
-TEST_OBJ=$(TEST).o
-TEST_DEP=$(TEST).d
-endif
+TEST=$(BLD_DIR)/pscf/tests/Test
 
 all: $(TEST)
 
-$(TEST_CPP): $(TEST_CPP).o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $(TEST_CPP) $(TEST_CPP).o $(LIBS)
+ifdef PSCF_CUDA
+TEST_OBJ=$(TEST).ou
+TEST_DEP=$(TEST).du
 
-$(TEST_CUDA): $(TEST_CUDA).ou $(PSCF_LIBS)
-	@cp $(TEST_CUDA).ou $(TEST_CUDA).o
-	$(NVXX) $(LDFLAGS) -o $(TEST_CUDA) $(TEST_CUDA).o $(LIBS)
-	@rm $(TEST_CUDA).o
+$(TEST): $(TEST).ou $(PSCF_LIBS)
+	@cp $(TEST).ou $(TEST).o
+	$(NVXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
+	@rm $(TEST).o
+else
+TEST_OBJ=$(TEST).o
+TEST_DEP=$(TEST).d
+
+$(TEST): $(TEST).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
+endif
 
 run: $(TEST)
 	@$(TEST) $(SRC_DIR)/pscf/tests/ 

@@ -3,7 +3,7 @@ include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
-TEST=$(BLD_DIR)/pscf/tests/backend/cuda/cudaTest
+TEST=$(BLD_DIR)/pscf/tests/backend/cuda/Test
 
 all: $(TEST)
 

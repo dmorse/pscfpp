@@ -5,7 +5,7 @@ include $(SRC_DIR)/pscf/patterns.mk
 
 TEST=$(BLD_DIR)/pscf/tests/field/cpp/Test
 
-all: $(TEST).o $(TEST)
+all: $(TEST)
 
 $(TEST): $(TEST).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
