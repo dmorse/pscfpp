@@ -519,8 +519,8 @@ void CudaFftTest::testBatchedTransformReal1D()
    int batchSize = 3;
 
    // Instantiate and allocate objects
-   DeviceArray<cudaReal,CUT> rField(batchSize * rSize);
-   DeviceArray<cudaComplex,CUT> kField(batchSize * kSize);
+   BackendArray<cudaReal,CUT> rField(batchSize * rSize);
+   BackendArray<cudaComplex,CUT> kField(batchSize * kSize);
    HostSendArray<cudaReal,CUT> rField1_h(rField.capacity()), 
                         rField2_h(rField.capacity()), 
                         rField3_h(rField.capacity());
@@ -604,8 +604,8 @@ void CudaFftTest::testBatchedTransformReal2D()
    int batchSize = 3;
 
    // Instantiate and allocate objects
-   DeviceArray<cudaReal,CUT> rField(batchSize * rSize);
-   DeviceArray<cudaComplex,CUT> kField(batchSize * kSize);
+   BackendArray<cudaReal,CUT> rField(batchSize * rSize);
+   BackendArray<cudaComplex,CUT> kField(batchSize * kSize);
    HostSendArray<cudaReal,CUT> rField1_h(rField.capacity()), 
                         rField2_h(rField.capacity()), 
                         rField3_h(rField.capacity());
@@ -698,8 +698,8 @@ void CudaFftTest::testBatchedTransformReal3D()
    int batchSize = 3;
 
    // Allocate device arrrays
-   DeviceArray<cudaReal,CUT> rField(batchSize * rSize);
-   DeviceArray<cudaComplex,CUT> kField(batchSize * kSize);
+   BackendArray<cudaReal,CUT> rField(batchSize * rSize);
+   BackendArray<cudaComplex,CUT> kField(batchSize * kSize);
 
    // Instantiate and allocate objects
    HostSendArray<cudaReal,CUT> rField1_h(rField.capacity());

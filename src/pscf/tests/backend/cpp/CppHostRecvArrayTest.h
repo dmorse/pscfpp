@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/backend/cpp/HostRecvArray.h>
-#include <pscf/backend/cpp/DeviceArray.h>
+#include <pscf/backend/cpp/BackendArray.h>
 
 #include <util/containers/DArray.h>
 
@@ -52,7 +52,7 @@ void CppHostRecvArrayTest::testConversionConstructor()
    TEST_ASSERT(Memory::total() == memory_);
    {
       // Data owner
-      DeviceArray<Data,CPT> v(capacity);
+      BackendArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
 
       for (int i=0; i < capacity; i++ ) {
@@ -60,7 +60,7 @@ void CppHostRecvArrayTest::testConversionConstructor()
       }
 
       // Data user
-      DeviceArray<Data,CPT> const & w = v;
+      BackendArray<Data,CPT> const & w = v;
       HostRecvArray<Data,CPT> u(w);
       TEST_ASSERT(u.size() == capacity);
       TEST_ASSERT(u.isAllocated());
@@ -98,12 +98,12 @@ void CppHostRecvArrayTest::testAssign()
    TEST_ASSERT(Memory::total() == memory_);
    {
       // Data owner (device array)
-      DeviceArray<Data,CPT> v(capacity);
+      BackendArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
-      DeviceArray<Data,CPT> const & w = v;
+      BackendArray<Data,CPT> const & w = v;
 
       // Data user (host array u)
       HostRecvArray<Data,CPT> u;
@@ -145,7 +145,7 @@ void CppHostRecvArrayTest::testDArrayOuter()
    int m = 2;
 
    // Initialize array of device arrays
-   DArray< DeviceArray<Data,CPT> > v;
+   DArray< BackendArray<Data,CPT> > v;
    v.allocate(m);
    for (int i = 0; i < m; ++i) {
       v[i].allocate(capacity);

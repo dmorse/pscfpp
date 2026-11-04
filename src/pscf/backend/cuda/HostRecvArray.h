@@ -17,7 +17,7 @@ namespace Util {
 }
 namespace Pscf {
    template <typename Data, typename T> class HostRecvArray;
-   template <typename Data, typename T> class DeviceArray;
+   template <typename Data, typename T> class BackendArray;
 }
 
 namespace Pscf {
@@ -33,7 +33,7 @@ namespace Pscf {
    * provides read-only access to the data.
    *
    * Conversion construction or assignment (operator =) from an instance 
-   * of DeviceArray<Data,CUT> to a HostRecvArray<Data,CUT> allocates 
+   * of BackendArray<Data,CUT> to a HostRecvArray<Data,CUT> allocates 
    * the array if it is not allocated and then copies all elements of 
    * the array from global GPU device memory to host memory. Conversion
    * construction from a device array is equivalent to default 
@@ -43,7 +43,7 @@ namespace Pscf {
    *
    * Typical usage is shown below for backend-indepent template code 
    * for device-to-host transfer from a longer lived instance of 
-   * DeviceArray<Data,CUT> named deviceArray to a local object that is
+   * BackendArray<Data,CUT> named deviceArray to a local object that is
    * an instance of HostRecvArray<Data,CUT> named hostArray. The type
    * type of each array element is denoted by Data.
    * \code
@@ -137,9 +137,9 @@ namespace Pscf {
       *
       * \throw Exception if the RHS array is not allocated on entry
       *
-      * \param other DeviceArray<Data,CUT> to be copied (input)
+      * \param other BackendArray<Data,CUT> to be copied (input)
       */
-      HostRecvArray(DeviceArray<Data,CUT> const & other);
+      HostRecvArray(BackendArray<Data,CUT> const & other);
 
       /**
       * Destructor.
@@ -169,29 +169,29 @@ namespace Pscf {
       HostRecvArray<Data,CUT>& operator = (Array<Data> const & other);
 
       /**
-      * Assignment from a DeviceArray<Data,CUT>.
+      * Assignment from a BackendArray<Data,CUT>.
       *
-      * Performs a deep copy from a RHS DeviceArray<Data,CUT> to this 
+      * Performs a deep copy from a RHS BackendArray<Data,CUT> to this 
       * LHS HostRecvArray<D>, by first allocating if necessary, and then
       * copying the underlying data from device memory to host memory.
       *
       * \throw Exception if the RHS array is not allocated on entry
       * \throw Exception if LHS and RHS have unequal nonzero capacities
       *
-      * \param other  DeviceArray<Data,CUT> on RHS of assignment (input)
+      * \param other  BackendArray<Data,CUT> on RHS of assignment (input)
       */
       HostRecvArray<Data,CUT>&
-      operator = (DeviceArray<Data,CUT> const & other);
+      operator = (BackendArray<Data,CUT> const & other);
 
       /**
-      * Copy a slice of data from a larger DeviceArray into this array.
+      * Copy a slice of data from a larger BackendArray into this array.
       *
       * This function populate this HostRecvArray with data from a slice
-      * of a DeviceArray. The size of the slice is equal to the capacity of
+      * of a BackendArray. The size of the slice is equal to the capacity of
       * this LHS HostRecvArray, so that this entire array will be fully
       * populated. The position of the beginning of the slice within the 
-      * RHS DeviceArray is indicated by input parameter beginId. The
-      * capacity of the RHS DeviceArray must thus be greater than or equal
+      * RHS BackendArray is indicated by input parameter beginId. The
+      * capacity of the RHS BackendArray must thus be greater than or equal
       * to the sum of beginId and the capacity of this LHS HostRecvArray.
       *
       * \throw Exception if RHS array is not allocated
@@ -199,10 +199,10 @@ namespace Pscf {
       * \throw Exception if beginId is negative
       * \throw Exception if the slice extends beyond the end of the RHS
       *
-      * \param other DeviceArray<Data,CUT>  object from which to copy slice
+      * \param other BackendArray<Data,CUT>  object from which to copy slice
       * \param beginId  index of other array at which slice begins
       */
-      void copySlice(DeviceArray<Data,CUT> const & other, int beginId);
+      void copySlice(BackendArray<Data,CUT> const & other, int beginId);
 
       /**
       * Allocate the underlying C array.
@@ -275,7 +275,7 @@ namespace Pscf {
 
 } // namespace Pscf
 
-#include "DeviceArray.h"
+#include "BackendArray.h"
 #include "cudaErrorCheck.h"
 #include <util/containers/Array.h>
 #include <util/misc/Memory.h>
@@ -293,13 +293,13 @@ namespace Pscf {
    {  allocate(capacity); }
 
    /*
-   * Conversion constructor from DeviceArray<Data,CUT>.
+   * Conversion constructor from BackendArray<Data,CUT>.
    *
    * Allocate and perform a deep copy from device to host.
    */
    template <typename Data>
    HostRecvArray<Data,CUT>::HostRecvArray(
-      DeviceArray<Data,CUT> const& other)
+      BackendArray<Data,CUT> const& other)
     : ConstArray<Data>()
    {  (*this) = other; }
 
@@ -351,14 +351,14 @@ namespace Pscf {
    }
 
    /*
-   * Assignment from a DeviceArray<Data,CUT> (device-to-host copy).
+   * Assignment from a BackendArray<Data,CUT> (device-to-host copy).
    *
    * Allocate if necessary, and perform a deep copy from device to host.
    */
    template <typename Data>
    HostRecvArray<Data,CUT>&
    HostRecvArray<Data,CUT>::operator = (
-                                  DeviceArray<Data,CUT> const & other)
+                                  BackendArray<Data,CUT> const & other)
    {
       // Preconditions on other array
       UTIL_CHECK(other.isAllocated());
@@ -385,11 +385,11 @@ namespace Pscf {
    }
 
    /*
-   * Copy a slice of the data from a larger DeviceArray into this array.
+   * Copy a slice of the data from a larger BackendArray into this array.
    */
    template <typename Data>
    void HostRecvArray<Data,CUT>::copySlice(
-                                    DeviceArray<Data,CUT> const & other,
+                                    BackendArray<Data,CUT> const & other,
                                     int beginId)
    {
       // Preconditions

@@ -12,11 +12,11 @@
 namespace Pscf {
 
    template class
-   AmIteratorTmpl< Rp::Iterator<1,CUT>, DeviceArray<cudaReal,CUT> >;
+   AmIteratorTmpl< Rp::Iterator<1,CUT>, BackendArray<cudaReal,CUT> >;
    template class
-   AmIteratorTmpl< Rp::Iterator<2,CUT>, DeviceArray<cudaReal,CUT> >;
+   AmIteratorTmpl< Rp::Iterator<2,CUT>, BackendArray<cudaReal,CUT> >;
    template class
-   AmIteratorTmpl< Rp::Iterator<3,CUT>, DeviceArray<cudaReal,CUT> >;
+   AmIteratorTmpl< Rp::Iterator<3,CUT>, BackendArray<cudaReal,CUT> >;
 
    namespace Rp {
       template class AmIteratorGrid<1,CUT>;

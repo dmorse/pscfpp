@@ -1,5 +1,5 @@
-#ifndef PSCF_DEVICE_ARRAY_CP_H
-#define PSCF_DEVICE_ARRAY_CP_H
+#ifndef PSCF_BACKEND_ARRAY_CP_H
+#define PSCF_BACKEND_ARRAY_CP_H
 
 /*
 * Util Package - C++ Utilities for Scientific Computation
@@ -21,7 +21,7 @@ namespace Pscf {
    using namespace Util;
 
    // Declare primary template
-   template <typename Data, typename T> class DeviceArray;
+   template <typename Data, typename T> class BackendArray;
 
    /**
    * Pseudo "device" array for use with C++ backend.
@@ -29,7 +29,7 @@ namespace Pscf {
    * Derived from FftwDRArray, and largely equivalent. 
    * 
    * The main difference from the base class is the addition of assignment 
-   * (operator = ) from a HostSendArray<Data,CTP> to a DeviceArray<Data,CTP>.
+   * (operator = ) from a HostSendArray<Data,CTP> to a BackendArray<Data,CTP>.
    * This operator checks for the existence of an association between the
    * device array (LHS) and host array (RHS) in which both point to the
    * same memory, throws an Exception if such an association does not
@@ -39,7 +39,7 @@ namespace Pscf {
    * Host to device data transfer:
    * 
    * Usage for transfer of data from an instance of HostSendArray<Data,CPT>
-   * to an instance of DeviceArray<Data,CPT> is discussed in the class
+   * to an instance of BackendArray<Data,CPT> is discussed in the class
    * documentation for the HostSendArray class template. The most explicit
    * version of this pattern involves the following steps:
    *
@@ -79,7 +79,7 @@ namespace Pscf {
    * \ingroup Pscf_Backend_Cpp_Module
    */
    template <typename Data>
-   class DeviceArray<Data, CPT> : public FftwDRArray<Data>
+   class BackendArray<Data, CPT> : public FftwDRArray<Data>
    {
 
    public:
@@ -92,24 +92,24 @@ namespace Pscf {
       using BackendIdClass = CPT;
 
       // Default constructor
-      DeviceArray() = default;
+      BackendArray() = default;
 
       /**
       * Allocating constructor.
       *
       * \param capacity number of elements to allocate
       */
-      DeviceArray(int capacity);
+      BackendArray(int capacity);
 
       // Copy constructor.
-      DeviceArray(DeviceArray<Data,CPT> const & other) = default;
+      BackendArray(BackendArray<Data,CPT> const & other) = default;
 
       // Destructor.
-      ~DeviceArray() override = default;
+      ~BackendArray() override = default;
 
       // Assignment.
-      DeviceArray<Data,CPT>& 
-      operator = (DeviceArray<Data,CPT> const&) = default;
+      BackendArray<Data,CPT>& 
+      operator = (BackendArray<Data,CPT> const&) = default;
 
       /**
       * Pseudo-assignment from a host array.
@@ -129,7 +129,7 @@ namespace Pscf {
       *
       * \param other  array container on RHS of assigment (input)
       */
-      DeviceArray<Data,CPT>& operator = (HostSendArray<Data,CPT> const & other);
+      BackendArray<Data,CPT>& operator = (HostSendArray<Data,CPT> const & other);
 
       // Inherited public function (to prevent hiding)
       using FftwDRArray<Data>::operator =;
@@ -137,8 +137,8 @@ namespace Pscf {
    };
 
    // Explicit instantiation declarations
-   extern template class DeviceArray<double,CPT>; 
-   extern template class DeviceArray<fftw_complex,CPT>; 
+   extern template class BackendArray<double,CPT>; 
+   extern template class BackendArray<fftw_complex,CPT>; 
 
 } // namespace Pscf
 
@@ -149,7 +149,7 @@ namespace Pscf {
    * Allocating constructor.
    */
    template <typename Data>
-   DeviceArray<Data,CPT>::DeviceArray(int capacity)
+   BackendArray<Data,CPT>::BackendArray(int capacity)
     : FftwDRArray<Data>(capacity)
    {}
 
@@ -157,8 +157,8 @@ namespace Pscf {
    * Check for a pre-existing association with a HostSendArray.
    */
    template <typename Data>
-   DeviceArray<Data,CPT>& 
-   DeviceArray<Data,CPT>::operator = (HostSendArray<Data,CPT> const & other)
+   BackendArray<Data,CPT>& 
+   BackendArray<Data,CPT>::operator = (HostSendArray<Data,CPT> const & other)
    {
       UTIL_CHECK(Array<Data>::isAllocated());
       UTIL_CHECK(other.isAllocated());

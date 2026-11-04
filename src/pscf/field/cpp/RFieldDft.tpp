@@ -20,7 +20,7 @@ namespace Pscf {
    */
    template <int D>
    RFieldDft<D,CPT>::RFieldDft()
-    : DeviceArray<fftw_complex,CPT>(),
+    : BackendArray<fftw_complex,CPT>(),
       meshDimensions_(0),
       dftDimensions_(0)
    {}
@@ -32,7 +32,7 @@ namespace Pscf {
    */
    template <int D>
    RFieldDft<D,CPT>::RFieldDft(const RFieldDft<D,CPT>& other)
-    : DeviceArray<fftw_complex,CPT>(),
+    : BackendArray<fftw_complex,CPT>(),
       meshDimensions_(0),
       dftDimensions_(0)
    {
@@ -99,7 +99,7 @@ namespace Pscf {
    RFieldDft<D,CPT>&
    RFieldDft<D,CPT>::operator = (HostSendArray<fftw_complex,CPT> const & other)
    {
-      DeviceArray<fftw_complex,CPT>::operator = (other);
+      BackendArray<fftw_complex,CPT>::operator = (other);
       return *this;
    }
 

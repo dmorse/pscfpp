@@ -9,7 +9,7 @@
 */
 
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/BackendArray.h>
 #include <complex>
 
 namespace Pscf {
@@ -24,7 +24,7 @@ namespace Pscf {
    * two real arrays.
    *
    * A public function is provided for each reduction operation, which
-   * takes one or more DeviceArray containers as inputs and returns a
+   * takes one or more BackendArray containers as inputs and returns a
    * single value. Each wrapper function is a standard C++ function that
    * may be called on the host CPU. The implementation of each such
    * wrapper function calls one of the device-wide algorithms defined
@@ -61,7 +61,7 @@ namespace Pscf {
       * \param in  real input array
       * \return  sum of elements
       */
-      cudaReal sum(DeviceArray<cudaReal,CUT> const & in);
+      cudaReal sum(BackendArray<cudaReal,CUT> const & in);
 
       /**
       * Return sum of elements of a real array slice.
@@ -73,7 +73,7 @@ namespace Pscf {
       * \param end  index one past last element
       * \return  sum of elements
       */
-      cudaReal sum(DeviceArray<cudaReal,CUT> const & in, int begin, int end);
+      cudaReal sum(BackendArray<cudaReal,CUT> const & in, int begin, int end);
 
       /**
       * Return sum of all elements of a complex array.
@@ -83,7 +83,7 @@ namespace Pscf {
       * \param in  complex input array
       * \return  complex sum of elements
       */
-      std::complex<cudaReal> sum(DeviceArray<cudaComplex,CUT> const & in);
+      std::complex<cudaReal> sum(BackendArray<cudaComplex,CUT> const & in);
 
       /**
       * Return sum of elements of a complex array slice.
@@ -95,7 +95,7 @@ namespace Pscf {
       * \param end  index one past last element of slice
       * \return  sum of elements
       */
-      std::complex<cudaReal> sum(DeviceArray<cudaComplex,CUT> const & in,
+      std::complex<cudaReal> sum(BackendArray<cudaComplex,CUT> const & in,
                                  int begin, int end);
 
       // Sum of squares and array products
@@ -111,7 +111,7 @@ namespace Pscf {
       * \param in  real input array
       * \return  sum of squares of elements
       */
-      cudaReal sumSq(DeviceArray<cudaReal,CUT> const & in);
+      cudaReal sumSq(BackendArray<cudaReal,CUT> const & in);
 
       /**
       * Return sum of squares of elements of a complex array.
@@ -124,7 +124,7 @@ namespace Pscf {
       * \param in  real input array
       * \return  sum of complex squares of elements
       */
-      std::complex<cudaReal> sumSq(DeviceArray<cudaComplex,CUT> const & in);
+      std::complex<cudaReal> sumSq(BackendArray<cudaComplex,CUT> const & in);
 
       /**
       * Return sum of squared magnitudes of elements of a complex array.
@@ -138,7 +138,7 @@ namespace Pscf {
       * \param in  real input array
       * \return  sum of squared absolute magnitude of elements
       */
-      cudaReal sumSqAbs(DeviceArray<cudaComplex,CUT> const & in);
+      cudaReal sumSqAbs(BackendArray<cudaComplex,CUT> const & in);
 
       /**
       * Return the inner product of two real arrays.
@@ -149,8 +149,8 @@ namespace Pscf {
       * \param b  second real input array
       * \return  Euclidean inner product
       */
-      cudaReal innerProduct(DeviceArray<cudaReal,CUT> const & a,
-                            DeviceArray<cudaReal,CUT> const & b);
+      cudaReal innerProduct(BackendArray<cudaReal,CUT> const & a,
+                            BackendArray<cudaReal,CUT> const & b);
 
       // Maxima - real array inputs
 
@@ -162,7 +162,7 @@ namespace Pscf {
       * \param in  real input array
       * \return  value of maximum element
       */
-      cudaReal max(DeviceArray<cudaReal,CUT> const & in);
+      cudaReal max(BackendArray<cudaReal,CUT> const & in);
 
       /**
       * Return maximum of elements of a real array slice.
@@ -174,7 +174,7 @@ namespace Pscf {
       * \param end  index one past last element
       * \return  value of maximum element
       */
-      cudaReal max(DeviceArray<cudaReal,CUT> const & in, int begin, int end);
+      cudaReal max(BackendArray<cudaReal,CUT> const & in, int begin, int end);
 
       /**
       * Get maximum absolute magnitude of real array elements.
@@ -184,7 +184,7 @@ namespace Pscf {
       * \param in  real input array
       * \return  magnitude of element of maximum magnitude
       */
-      cudaReal maxAbs(DeviceArray<cudaReal,CUT> const & in);
+      cudaReal maxAbs(BackendArray<cudaReal,CUT> const & in);
 
       // Minima - real array inputs
 
@@ -196,7 +196,7 @@ namespace Pscf {
       * \param in  real input array
       * \return  value of minimum element
       */
-      cudaReal min(DeviceArray<cudaReal,CUT> const & in);
+      cudaReal min(BackendArray<cudaReal,CUT> const & in);
 
       /**
       * Return minimum of elements of a real array slice.
@@ -208,7 +208,7 @@ namespace Pscf {
       * \param end  index one past last element
       * \return  value of minimum element
       */
-      cudaReal min(DeviceArray<cudaReal,CUT> const & in, int begin, int end);
+      cudaReal min(BackendArray<cudaReal,CUT> const & in, int begin, int end);
 
       /**
       * Return minimum absolute magnitude of real array elements.
@@ -218,7 +218,7 @@ namespace Pscf {
       * \param in  real input array
       * \return  magnitude of element of minimum magnitude
       */
-      cudaReal minAbs(DeviceArray<cudaReal,CUT> const & in);
+      cudaReal minAbs(BackendArray<cudaReal,CUT> const & in);
 
       // Memory management
 

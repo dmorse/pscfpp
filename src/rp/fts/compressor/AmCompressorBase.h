@@ -10,27 +10,27 @@
 
 #include <pscf/iterator/AmIteratorTmpl.h>  // base class template
 #include <rp/fts/compressor/Compressor.h>  // template argument
-#include <pscf/backend/DeviceArray.h>      // template argument
+#include <pscf/backend/BackendArray.h>      // template argument
 
 // Explicit instantiation declarations
 namespace Pscf {
    #ifdef PSCF_CPP
    class CPT;
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<1,CPT>, DeviceArray<double,CPT> >;
+   class AmIteratorTmpl< Rp::Compressor<1,CPT>, BackendArray<double,CPT> >;
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<2,CPT>, DeviceArray<double,CPT> >; 
+   class AmIteratorTmpl< Rp::Compressor<2,CPT>, BackendArray<double,CPT> >; 
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<3,CPT>, DeviceArray<double,CPT> >;
+   class AmIteratorTmpl< Rp::Compressor<3,CPT>, BackendArray<double,CPT> >;
    #endif
    #ifdef PSCF_CUDA
    class CUT;
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<1,CUT>, DeviceArray<double,CUT> >;
+   class AmIteratorTmpl< Rp::Compressor<1,CUT>, BackendArray<double,CUT> >;
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<2,CUT>, DeviceArray<double,CUT> >; 
+   class AmIteratorTmpl< Rp::Compressor<2,CUT>, BackendArray<double,CUT> >; 
    extern template 
-   class AmIteratorTmpl< Rp::Compressor<3,CUT>, DeviceArray<double,CUT> >;
+   class AmIteratorTmpl< Rp::Compressor<3,CUT>, BackendArray<double,CUT> >;
    #endif
 }
 

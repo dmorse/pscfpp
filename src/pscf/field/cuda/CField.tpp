@@ -19,7 +19,7 @@ namespace Pscf {
    */
    template <int D>
    CField<D,CUT>::CField()
-    : DeviceArray<cudaComplex,CUT>()
+    : BackendArray<cudaComplex,CUT>()
    {}
 
    /**
@@ -27,7 +27,7 @@ namespace Pscf {
    */
    template <int D>
    CField<D,CUT>::CField(IntVec<D> const & meshDimensions)
-    : DeviceArray<cudaComplex,CUT>()
+    : BackendArray<cudaComplex,CUT>()
    {  allocate(meshDimensions); }
 
    /*
@@ -35,7 +35,7 @@ namespace Pscf {
    */
    template <int D>
    CField<D,CUT>::CField(const CField<D,CUT>& other)
-    : DeviceArray<cudaComplex,CUT>(other),
+    : BackendArray<cudaComplex,CUT>(other),
       meshDimensions_(0)
    {  meshDimensions_ = other.meshDimensions_; }
 
@@ -58,7 +58,7 @@ namespace Pscf {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<cudaComplex,CUT>::allocate(size);
+      BackendArray<cudaComplex,CUT>::allocate(size);
    }
 
    /*
@@ -67,18 +67,18 @@ namespace Pscf {
    template <int D>
    void CField<D,CUT>::deallocate()
    {
-      DeviceArray<cudaComplex,CUT>::deallocate();
+      BackendArray<cudaComplex,CUT>::deallocate();
       for (int i = 0; i < D; ++i) {
          meshDimensions_[i] = 0;
       }
    }
 
    /*
-   * Associate this object with a slice of another DeviceArray.
+   * Associate this object with a slice of another BackendArray.
    */
    template <int D>
    void CField<D,CUT>::associate(
-                             DeviceArray<cudaComplex,CUT>& arr, 
+                             BackendArray<cudaComplex,CUT>& arr, 
                              int beginId, 
                              IntVec<D> const & meshDimensions)
    {
@@ -88,7 +88,7 @@ namespace Pscf {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<cudaComplex,CUT>::associate(arr, beginId, size);
+      BackendArray<cudaComplex,CUT>::associate(arr, beginId, size);
    }
 
    /*
@@ -97,7 +97,7 @@ namespace Pscf {
    template <int D>
    CField<D,CUT>& CField<D,CUT>::operator = (const CField<D,CUT>& other)
    {
-      DeviceArray<cudaComplex,CUT>::operator = (other);
+      BackendArray<cudaComplex,CUT>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
@@ -121,7 +121,7 @@ namespace Pscf {
       }
 
       // Use base class assignment operator to copy elements
-      DeviceArray<cudaComplex,CUT>::operator = (other);
+      BackendArray<cudaComplex,CUT>::operator = (other);
 
       return *this;
    }

@@ -20,9 +20,9 @@
 // Explicit instantiation definitions
 namespace Pscf {
    template 
-   class AmIteratorTmpl< Rp::Compressor<1,CUT>, DeviceArray<cudaReal,CUT> >;
+   class AmIteratorTmpl< Rp::Compressor<1,CUT>, BackendArray<cudaReal,CUT> >;
    template 
-   class AmIteratorTmpl< Rp::Compressor<2,CUT>, DeviceArray<cudaReal,CUT> >; 
+   class AmIteratorTmpl< Rp::Compressor<2,CUT>, BackendArray<cudaReal,CUT> >; 
    template 
-   class AmIteratorTmpl< Rp::Compressor<3,CUT>, DeviceArray<cudaReal,CUT> >;
+   class AmIteratorTmpl< Rp::Compressor<3,CUT>, BackendArray<cudaReal,CUT> >;
 }

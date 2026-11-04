@@ -597,8 +597,8 @@ namespace Pscf {
          meshDims_h[j] = mesh().dimension(j);
       }
 
-      DeviceArray<cudaReal,CUT> kBasis(D*D);
-      DeviceArray<int,CUT> meshDims(D);
+      BackendArray<cudaReal,CUT> kBasis(D*D);
+      BackendArray<int,CUT> meshDims(D);
       kBasis = kBasis_h;
       meshDims = meshDims_h;
 
@@ -665,7 +665,7 @@ namespace Pscf {
 
       // Get kBasis and store on device
       HostSendArray<cudaReal,CUT> kBasis_h(D*D);
-      DeviceArray<cudaReal,CUT> kBasis(D*D);
+      BackendArray<cudaReal,CUT> kBasis(D*D);
       int idx = 0;
       for (int j = 0; j < D; ++j) {
          for (int k = 0; k < D; ++k) {
@@ -711,7 +711,7 @@ namespace Pscf {
       // Calculate dkkBasis and store on device
       int idx;
       HostSendArray<cudaReal,CUT> dkkBasis_h(unitCell().nParameter() * D * D);
-      DeviceArray<cudaReal,CUT> dkkBasis;
+      BackendArray<cudaReal,CUT> dkkBasis;
       for (int i = 0 ; i < unitCell().nParameter(); ++i) {
          for (int j = 0; j < D; ++j) {
             for (int k = 0; k < D; ++k) {

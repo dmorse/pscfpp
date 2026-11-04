@@ -102,7 +102,7 @@ namespace Rp {
    *
    * These associations must be destroyed before qFieldsAll_ is
    * de-allocated or destroyed, because it is an error to deallocate
-   * a DeviceArray<T> container that is still referred to by one or
+   * a BackendArray<T> container that is still referred to by one or
    * more other such containers. Associations are kept track of via
    * a private ReferenceCounter owned by qFieldsAll_ (which stores
    * the number of remaining references), and via a data pointer and

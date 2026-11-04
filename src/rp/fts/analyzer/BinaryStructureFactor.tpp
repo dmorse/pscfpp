@@ -307,7 +307,7 @@ namespace Rp {
       double a_ = vSystem / (chi * chi * vMonomer * vMonomer);
       double b_ = 0.5 / (chi * vMonomer);
 
-      // Create const host copy wk_h_ of device array wk_d_
+      // Create const host copy wk_h_ of backend array wk_d_
       wk_h_ = wk_d_;
       UTIL_CHECK(wk_h_.capacity() == nWave_);
 

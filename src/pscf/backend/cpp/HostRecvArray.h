@@ -14,7 +14,7 @@
 
 // Forward declarations
 namespace Pscf {
-   template <typename Data, typename T> class DeviceArray;
+   template <typename Data, typename T> class BackendArray;
 }
 
 namespace Pscf {
@@ -38,10 +38,10 @@ namespace Pscf {
    * via a ConstArrayIterator. 
    *
    * Conversion construction and assignment (operator =) from an instance 
-   * of DeviceArray<Data,CPT> to a HostRecvArray<Data,CPT> each create a 
+   * of BackendArray<Data,CPT> to a HostRecvArray<Data,CPT> each create a 
    * shallow read-only copy of a C array that is owned by the associated
    * device array, via a private pointer to this shared array.  These two 
-   * functions each take a const reference to DeviceArray<Data,CPT> as a 
+   * functions each take a const reference to BackendArray<Data,CPT> as a 
    * parameter, and so can be used in contexts in which the device array
    * must be passed as a const reference. Conversion construction is
    * equivalent to default construction followed by assignment.
@@ -58,7 +58,7 @@ namespace Pscf {
    * <b> Usage: </b>
    *
    * Typical usage is shown below for a pseudo device-to-host transfer 
-   * from a longer lived instance of DeviceArray<Data,CPT> named 
+   * from a longer lived instance of BackendArray<Data,CPT> named 
    * deviceArray to a shorter lived instance of HostRecvArray<Data,CPT> 
    * named hostArray. The alias Data denotes the data type of each array 
    * element.
@@ -139,7 +139,7 @@ namespace Pscf {
       operator = (HostRecvArray<Data,CPT> const&) = delete;
 
       /**
-      * Conversion construction from a DeviceArray.
+      * Conversion construction from a BackendArray.
       *
       * Create a read-only association with the device array, thus
       * creating a shallow copy that points to the memory owned by
@@ -147,10 +147,10 @@ namespace Pscf {
       *
       * \param other  array container
       */
-      HostRecvArray(DeviceArray<Data,CPT> const & other);
+      HostRecvArray(BackendArray<Data,CPT> const & other);
 
       /**
-      * Create a read-only association with a DeviceArray.
+      * Create a read-only association with a BackendArray.
       *
       * Create an association with the other device array, thus
       * creating a shallow copy that points to the memory owned by
@@ -162,7 +162,7 @@ namespace Pscf {
       * \param other  array container on RHS of assigment (input)
       */
       HostRecvArray<Data,CPT>& 
-      operator = (DeviceArray<Data,CPT> const & other);
+      operator = (BackendArray<Data,CPT> const & other);
 
       /**
       * Release association with a device array.
@@ -188,7 +188,7 @@ namespace Pscf {
       *
       * \param source  array that owns the data
       */
-      void associate(DeviceArray<Data,CPT> const & source);
+      void associate(BackendArray<Data,CPT> const & source);
 
       using ConstArray<Data>::data_;
       using ConstArray<Data>::capacity_;
@@ -201,7 +201,7 @@ namespace Pscf {
 
 } // namespace Pscf
 
-#include <pscf/backend/cpp/DeviceArray.h>
+#include <pscf/backend/cpp/BackendArray.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -220,24 +220,24 @@ namespace Pscf {
    }
 
    /*
-   * Copy construction from a DeviceArray.
+   * Copy construction from a BackendArray.
    *
-   * Creates an association with a DeviceArray that owns the data.
+   * Creates an association with a BackendArray that owns the data.
    */
    template <typename Data>
    HostRecvArray<Data,CPT>::HostRecvArray(
-                                    DeviceArray<Data,CPT> const & other)
+                                    BackendArray<Data,CPT> const & other)
     : ConstArray<Data>()
    {  associate(other); }
 
    /*
-   * Assignment from a DeviceArray.
+   * Assignment from a BackendArray.
    *
-   * Creates an association with a DeviceArray that owns the data.
+   * Creates an association with a BackendArray that owns the data.
    */
    template <typename Data>
    HostRecvArray<Data,CPT>&
-   HostRecvArray<Data,CPT>::operator = (DeviceArray<Data,CPT> const& other)
+   HostRecvArray<Data,CPT>::operator = (BackendArray<Data,CPT> const& other)
    {
       associate(other);
       return *this;
@@ -264,7 +264,7 @@ namespace Pscf {
    */
    template <typename Data>
    void 
-   HostRecvArray<Data,CPT>::associate(DeviceArray<Data,CPT> const & source)
+   HostRecvArray<Data,CPT>::associate(BackendArray<Data,CPT> const & source)
    {
       UTIL_CHECK(source.isAllocated());
       UTIL_CHECK(!ref_.isAssociated());

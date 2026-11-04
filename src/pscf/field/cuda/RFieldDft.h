@@ -9,7 +9,7 @@
 */
 
 #include <pscf/backend/cuda/CUT.h>
-#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/BackendArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/math/IntVec.h>
 
@@ -34,7 +34,7 @@ namespace Pscf {
    */
    template <int D>
    class RFieldDft<D,CUT>
-    : public DeviceArray<cudaComplex,CUT>
+    : public BackendArray<cudaComplex,CUT>
    {
 
    public:
@@ -84,7 +84,7 @@ namespace Pscf {
       void deallocate();
 
       /**
-      * Associate this object with a slice of another DeviceArray.
+      * Associate this object with a slice of another BackendArray.
       *
       * \throw Exception if the array is already allocated.
       *
@@ -92,7 +92,7 @@ namespace Pscf {
       * \param beginId index in the parent array at which this array starts
       * \param meshDimensions number of grid points in each dimension
       */
-      void associate(DeviceArray<cudaComplex,CUT>& arr, 
+      void associate(BackendArray<cudaComplex,CUT>& arr, 
                      int beginId, 
                      IntVec<D> const & meshDimensions);
 
@@ -155,13 +155,13 @@ namespace Pscf {
       IntVec<D> dftDimensions_;
 
       // Make private to prevent allocation without setting meshDimensions.
-      using DeviceArray<cudaComplex,CUT>::allocate;
+      using BackendArray<cudaComplex,CUT>::allocate;
 
       // Make private to prevent association without setting meshDimensions.
-      using DeviceArray<cudaComplex,CUT>::associate;
+      using BackendArray<cudaComplex,CUT>::associate;
 
       // Make private to prevent assignment without setting meshDimensions.
-      using DeviceArray<cudaComplex,CUT>::operator =;
+      using BackendArray<cudaComplex,CUT>::operator =;
 
    };
 

@@ -4,7 +4,7 @@
 #include <pscf/backend/cuda/cudaTypes.h>     // typedefs for real and complex 
 #include <pscf/backend/cuda/VecOp.h>         // Vector operations 
 #include <pscf/backend/cuda/Reduce.h>        // Parallel reduction algorithms
-#include <pscf/backend/cuda/DeviceArray.h>   // Array container on device
+#include <pscf/backend/cuda/BackendArray.h>   // Array container on device
 #include <pscf/backend/cuda/HostSendArray.h> // Host array for host -> device transfer
 #include <pscf/backend/cuda/HostRecvArray.h> // Host array for device -> host transfer
 #include <pscf/backend/cuda/ThreadArray.h>   // Manager of GPU execution configuration

@@ -2,7 +2,7 @@
 #define PSCF_VEC_RANDOM_CU_H
 
 #include "CUT.h"
-#include "DeviceArray.h"
+#include "BackendArray.h"
 
 #include <curand.h>
 
@@ -71,14 +71,14 @@ namespace Pscf {
       *  
       * \param data  array to populate
       */
-      void uniform(DeviceArray<float,CUT>& data);
+      void uniform(BackendArray<float,CUT>& data);
 
       /**
       * Populate array with uniform random doubles in (0, 1].
       *  
       * \param data  array to populate
       */
-      void uniform(DeviceArray<double,CUT>& data);
+      void uniform(BackendArray<double,CUT>& data);
    
       /**
       * Populate array with uniform random floats in (min, max].
@@ -87,7 +87,7 @@ namespace Pscf {
       * \param min  minimum of range
       * \param max  maximum of range
       */
-      void uniform(DeviceArray<float,CUT>& data, float min, float max);
+      void uniform(BackendArray<float,CUT>& data, float min, float max);
 
       /**
       * Populate array with uniform random doubles in (min, max].
@@ -96,7 +96,7 @@ namespace Pscf {
       * \param min  minimum of range
       * \param max  maximum of range
       */
-      void uniform(DeviceArray<double,CUT>& data, double min, double max);
+      void uniform(BackendArray<double,CUT>& data, double min, double max);
 
       /**
       * Populate array on device with normal-distributed random floats.
@@ -109,7 +109,7 @@ namespace Pscf {
       * \param stddev  standard deviation (input)
       * \param mean  mean value (input, default = 0.0)
       */
-      void normal(DeviceArray<float,CUT>& data, 
+      void normal(BackendArray<float,CUT>& data, 
                   float stddev, float mean = 0.0);
 
       /**
@@ -123,7 +123,7 @@ namespace Pscf {
       * \param stddev  standard deviation (input)
       * \param mean  mean value (input, default = 0.0)
       */
-      void normal(DeviceArray<double,CUT>& data, 
+      void normal(BackendArray<double,CUT>& data, 
                   double stddev, double mean = 0.0);
    
       /**

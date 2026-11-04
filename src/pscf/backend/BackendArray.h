@@ -1,5 +1,5 @@
-#ifndef PSCF_DEVICE_ARRAY_H
-#define PSCF_DEVICE_ARRAY_H
+#ifndef PSCF_BACKEND_ARRAY_H
+#define PSCF_BACKEND_ARRAY_H
 
 /*
 * PSCF - Polymer Self-Consistent Field 
@@ -12,10 +12,10 @@
 // the header for every explicit specialization that is enabled
 // for use by the build system.
 
-#include <pscf/backend/cpp/DeviceArray.h>
+#include <pscf/backend/cpp/BackendArray.h>
 
 #ifdef PSCF_CUDA
-#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/BackendArray.h>
 #endif
 
 #endif

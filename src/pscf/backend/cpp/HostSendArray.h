@@ -14,7 +14,7 @@
 
 // Forward declaration
 namespace Pscf {
-   template <typename Data, typename T> class DeviceArray;
+   template <typename Data, typename T> class BackendArray;
 }
 
 namespace Pscf {
@@ -36,7 +36,7 @@ namespace Pscf {
    *
    * The "associate" member function creates a shallow copy of a C array
    * that is owned by an associated device array.  This function takes a 
-   * non-const reference to an instance of DeviceArray<Data,CPT> as its
+   * non-const reference to an instance of BackendArray<Data,CPT> as its
    * parameter. This parameter is non-const because the shallow copy 
    * provides write access to the underlying shared array. After an
    * association is created, elements of this host array can be modified
@@ -57,7 +57,7 @@ namespace Pscf {
    * <b> Usage </b>: 
    *
    * Typical usage is shown below for host-to-device transfer to a long
-   * lived instance of DeviceArray<Data,CPT> named dArray from a shorter
+   * lived instance of BackendArray<Data,CPT> named dArray from a shorter
    * lived instance of HostSendArray<Data,CPT> named hArray, where Data
    * denotes the type of each array element:
    * \code
@@ -74,7 +74,7 @@ namespace Pscf {
    *
    *   - In this specialization for a CPU backend (T=CPT), the 
    *     assignment (=) operator that assigns a RHS HostSendArray<Data,CPT> 
-   *     to a LHS DeviceArray<Data,CPT> template normally does nothing.
+   *     to a LHS BackendArray<Data,CPT> template normally does nothing.
    *     It is provided for compatability with the syntax required for
    *     GPU code, with T=CUT, for which the analogous assignment operator
    *     actually copies data from the CPU host memory to GPU device 
@@ -142,7 +142,7 @@ namespace Pscf {
       *
       * \param other  device array that owns the data
       */
-      void associate(DeviceArray<Data,CPT> & other);
+      void associate(BackendArray<Data,CPT> & other);
 
       /**
       * Release association with a device array.
@@ -170,7 +170,7 @@ namespace Pscf {
 
 } // namespace Pscf
 
-#include <pscf/backend/cpp/DeviceArray.h>
+#include <pscf/backend/cpp/BackendArray.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -193,7 +193,7 @@ namespace Pscf {
    */
    template <typename Data>
    void
-   HostSendArray<Data,CPT>::associate(DeviceArray<Data,CPT> & source)
+   HostSendArray<Data,CPT>::associate(BackendArray<Data,CPT> & source)
    {
       UTIL_CHECK(source.isAllocated());
       UTIL_CHECK(!ref_.isAssociated());

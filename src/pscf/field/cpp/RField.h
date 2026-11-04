@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/DeviceArray.h>  // base class
+#include <pscf/backend/cpp/BackendArray.h>  // base class
 #include <pscf/backend/cpp/CPT.h>          // backend identifier class
 #include <pscf/math/IntVec.h>              // member
 
@@ -30,7 +30,7 @@ namespace Pscf {
    * \ingroup Pscf_Field_Cpp_Module
    */
    template <int D>
-   class RField<D,CPT> : public DeviceArray<double,CPT>
+   class RField<D,CPT> : public BackendArray<double,CPT>
    {
 
    public:
@@ -76,7 +76,7 @@ namespace Pscf {
       * Pseudo-assignment from an associated HostSendArray.
       *
       * This function simply calls the corresponding assignment operator
-      * of the DeviceArray base class, then returns this RFieldDft object.
+      * of the BackendArray base class, then returns this RFieldDft object.
       * It checks if an association exists between the LHS and RHS arrays,
       * and does nothing if this is the case.
       *
@@ -102,7 +102,7 @@ namespace Pscf {
       void deallocate() override;
 
       /**
-      * Associate this object with a slice of another DeviceArray.
+      * Associate this object with a slice of another BackendArray.
       *
       * \throw Exception if the array is already allocated.
       *
@@ -110,7 +110,7 @@ namespace Pscf {
       * \param beginId index in the parent array at which this array starts
       * \param meshDimensions number of grid points in each dimension
       */
-      void associate(DeviceArray<double,CPT>& arr, int beginId,
+      void associate(BackendArray<double,CPT>& arr, int beginId,
                      IntVec<D> const & meshDimensions);
 
       /**
@@ -127,7 +127,7 @@ namespace Pscf {
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
 
-      using DeviceArray<double,CPT>::dissociate;
+      using BackendArray<double,CPT>::dissociate;
 
    private:
 
@@ -135,13 +135,13 @@ namespace Pscf {
       IntVec<D> meshDimensions_;
 
       // Make private to prevent allocation without mesh dimensions.
-      using DeviceArray<double,CPT>::allocate;
+      using BackendArray<double,CPT>::allocate;
 
       // Make private to prevent association without mesh dimensions.
-      using DeviceArray<double,CPT>::associate;
+      using BackendArray<double,CPT>::associate;
 
       // Make private to prevent assignment without mesh dimensions.
-      using DeviceArray<double,CPT>::operator =;
+      using BackendArray<double,CPT>::operator =;
 
    };
 

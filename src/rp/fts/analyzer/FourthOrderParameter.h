@@ -107,7 +107,7 @@ namespace Rp {
       bool isInitialized_;
 
       /**
-      * Initialize member variable prefactor_ (device array).
+      * Initialize member variable prefactor_ .
       *
       * For each wavevector G, if both G and -G are in the half-space
       * used for the DFT of a real field, prefactor is assigned a value

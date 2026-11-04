@@ -217,7 +217,7 @@ namespace Rp {
 
       DArray< RField<D,CUT> > hDerivatives;
       HostSendArray<cudaReal*,CUT> hDerivPtrs_h(nMonomer);
-      DeviceArray<cudaReal*,CUT> hDerivPtrs(nMonomer);
+      BackendArray<cudaReal*,CUT> hDerivPtrs(nMonomer);
 
       hDerivatives.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
@@ -227,7 +227,7 @@ namespace Rp {
       hDerivPtrs = hDerivPtrs_h;
 
       HostSendArray<cudaReal,CUT>  chiBottom_h(nMonomer), chiTop_h(nMonomer);
-      DeviceArray<cudaReal,CUT> chiBottom_d(nMonomer), chiTop_d(nMonomer);
+      BackendArray<cudaReal,CUT> chiBottom_d(nMonomer), chiTop_d(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
          chiBottom_h[i] = chiBottom(i);
          chiTop_h[i] = chiTop(i);
@@ -286,7 +286,7 @@ namespace Rp {
 
       DArray< RField<D,CUT> > hFields;
       HostSendArray<cudaReal*,CUT> hPtrs_h(nMonomer);
-      DeviceArray<cudaReal*,CUT> hPtrs(nMonomer);
+      BackendArray<cudaReal*,CUT> hPtrs(nMonomer);
 
       hFields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
@@ -296,7 +296,7 @@ namespace Rp {
       hPtrs = hPtrs_h;
 
       HostSendArray<cudaReal,CUT>  chiBottom_h(nMonomer), chiTop_h(nMonomer);
-      DeviceArray<cudaReal,CUT> chiBottom_d(nMonomer), chiTop_d(nMonomer);
+      BackendArray<cudaReal,CUT> chiBottom_d(nMonomer), chiTop_d(nMonomer);
       for (int i = 0; i < nMonomer; i++) {
          chiBottom_h[i] = chiBottom(i);
          chiTop_h[i] = chiTop(i);

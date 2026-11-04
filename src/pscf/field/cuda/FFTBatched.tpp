@@ -126,8 +126,8 @@ namespace Pscf {
    */
    template <int D>
    void FFTBatched<D>::forwardTransform(
-                          DeviceArray<cudaReal,CUT> const & rFields,
-                          DeviceArray<cudaComplex,CUT>& kFields) const
+                          BackendArray<cudaReal,CUT> const & rFields,
+                          BackendArray<cudaComplex,CUT>& kFields) const
    {
       // Preconditions
       UTIL_CHECK(isSetup_);
@@ -161,8 +161,8 @@ namespace Pscf {
    */
    template <int D>
    void FFTBatched<D>::inverseTransformUnsafe(
-                           DeviceArray<cudaComplex,CUT>& kFields,
-                           DeviceArray<cudaReal,CUT>& rFields) const
+                           BackendArray<cudaComplex,CUT>& kFields,
+                           BackendArray<cudaReal,CUT>& rFields) const
    {
       // Preconditions
       UTIL_CHECK(isSetup_);

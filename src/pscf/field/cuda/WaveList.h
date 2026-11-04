@@ -10,7 +10,7 @@
 
 #include <pscf/backend/cuda/CUT.h>            // template argument
 #include <pscf/field/cuda/RField.h>           // member
-#include <pscf/backend/cuda/DeviceArray.h>    // member
+#include <pscf/backend/cuda/BackendArray.h>    // member
 #include <pscf/backend/cuda/HostSendArray.h>  // member
 #include <pscf/math/IntVec.h>                 // member
 #include <util/containers/DArray.h>           // member
@@ -174,7 +174,7 @@ namespace Pscf {
       *
       * \throw Exception if hasMinImages() == false
       */
-      DeviceArray<int,CUT> const & minImages_d() const;
+      BackendArray<int,CUT> const & minImages_d() const;
 
       /**
       * Get minimum images as IntVec<D> objects on the host.
@@ -356,7 +356,7 @@ namespace Pscf {
       * real-space mesh. Otherwise, kSize_ is equal to the size of the
       * real-space mesh.
       */
-      DeviceArray<int,CUT> minImages_;
+      BackendArray<int,CUT> minImages_;
 
       /*
       * Array of IntVec<D> minimum images for waves, stored on the host.
@@ -383,7 +383,7 @@ namespace Pscf {
       * The dimensions are kSize_ * nParam, where nParam is the number
       * of unit cell parameters.
       */
-      DeviceArray<cudaReal,CUT> dKSq_;
+      BackendArray<cudaReal,CUT> dKSq_;
 
       /**
       * Array of RFields, where each RField is a slice of the dKSq_ array.
@@ -408,7 +408,7 @@ namespace Pscf {
       * which case it has size kSize_. The copy in device memory is only
       * used internally, and is not accessible through the public interface.
       */
-      DeviceArray<bool,CUT> implicitInverse_d_;
+      BackendArray<bool,CUT> implicitInverse_d_;
 
       /**
       * Array indicates whether a wavevector has an implicit partner (host).
@@ -519,7 +519,7 @@ namespace Pscf {
 
    // Get the array of minimum images on the device by reference.
    template <int D> inline
-   DeviceArray<int,CUT> const & WaveList<D,CUT>::minImages_d() const
+   BackendArray<int,CUT> const & WaveList<D,CUT>::minImages_d() const
    {
       UTIL_CHECK(hasMinImages_);
       return minImages_;

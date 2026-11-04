@@ -10,7 +10,7 @@
 
 #include <rp/solvers/PropagatorBase.h>       // base class template
 #include <pscf/backend/cuda/CUT.h>           // template argument
-#include <pscf/backend/cuda/DeviceArray.h>   // member
+#include <pscf/backend/cuda/BackendArray.h>   // member
 
 namespace Pscf {
 namespace Rp {
@@ -77,7 +77,7 @@ namespace Rp {
       /**
       * Return the full array of q-fields as an unrolled 1D array.
       */
-      DeviceArray<cudaReal,CUT> const & qAll();
+      BackendArray<cudaReal,CUT> const & qAll();
 
    protected:
 
@@ -107,7 +107,7 @@ namespace Rp {
       * or de-allocate functions, and destroyed by the dissociateQFields
       * function.
       */
-      DeviceArray<cudaReal,CUT> qFieldsAll_;
+      BackendArray<cudaReal,CUT> qFieldsAll_;
 
       /**
       * Dissociate all qFields_ from associated slices of qFieldsAll_.
@@ -122,7 +122,7 @@ namespace Rp {
    * Return the full array of q-fields.
    */
    template <int D> inline
-   DeviceArray<cudaReal,CUT> const & Propagator<D,CUT>::qAll()
+   BackendArray<cudaReal,CUT> const & Propagator<D,CUT>::qAll()
    {
       UTIL_CHECK(PropagatorTmplT::isSolved());
       return qFieldsAll_;

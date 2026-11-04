@@ -21,7 +21,7 @@ namespace Pscf {
    */
    template <int D>
    RField<D,CPT>::RField()
-    : DeviceArray<double,CPT>(),
+    : BackendArray<double,CPT>(),
       meshDimensions_(0)
    {}
 
@@ -34,7 +34,7 @@ namespace Pscf {
    */
    template <int D>
    RField<D,CPT>::RField(RField<D,CPT> const & other)
-    : DeviceArray<double,CPT>(),
+    : BackendArray<double,CPT>(),
       meshDimensions_(0)
    {
       if (other.isAllocated()) {
@@ -73,10 +73,10 @@ namespace Pscf {
    }
 
    /*
-   * Associate this object with a slice of another DeviceArray.
+   * Associate this object with a slice of another BackendArray.
    */
    template <int D>
-   void RField<D,CPT>::associate(DeviceArray<double,CPT>& arr, 
+   void RField<D,CPT>::associate(BackendArray<double,CPT>& arr, 
                                  int beginId, 
                                  IntVec<D> const & meshDimensions)
    {
@@ -86,7 +86,7 @@ namespace Pscf {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<double,CPT>::associate(arr, beginId, size);
+      BackendArray<double,CPT>::associate(arr, beginId, size);
    }
 
    /*
@@ -129,7 +129,7 @@ namespace Pscf {
    RField<D,CPT>&
    RField<D,CPT>::operator = (HostSendArray<double,CPT> const & other)
    {
-      DeviceArray<double,CPT>::operator = (other);
+      BackendArray<double,CPT>::operator = (other);
       return *this;
    }
 

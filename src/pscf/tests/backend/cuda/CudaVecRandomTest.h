@@ -40,7 +40,7 @@ public:
       random.setSeed(6712983651284);
 
       int n = 100000;
-      DeviceArray<float,CUT> d_(n);
+      BackendArray<float,CUT> d_(n);
       HostSendArray<float,CUT> h_(n);
 
       random.uniform(d_);
@@ -91,7 +91,7 @@ public:
       random.setSeed(6712983651284);
 
       int n = 100000;
-      DeviceArray<float,CUT> df_(n);
+      BackendArray<float,CUT> df_(n);
       HostSendArray<float,CUT> hf_(n);
 
       random.uniform(df_);
@@ -141,7 +141,7 @@ public:
       random.setSeed(6712983651284);
 
       int n = 100000;
-      DeviceArray<float,CUT> d_(n);
+      BackendArray<float,CUT> d_(n);
       HostSendArray<float,CUT> h_(n);
 
       const double min = -1.34;
@@ -195,7 +195,7 @@ public:
       random.setSeed(6712983651284);
       
       int n = 100000;
-      DeviceArray<float,CUT> d_(n);
+      BackendArray<float,CUT> d_(n);
       HostSendArray<float,CUT> h_(n);
 
       double mean = 1.0;
@@ -238,7 +238,7 @@ public:
       random.setSeed(6712983651284);
 
       int n = 100000;
-      DeviceArray<float,CUT> df_(n);
+      BackendArray<float,CUT> df_(n);
       HostSendArray<float,CUT> hf_(n);
 
       float mean = 1.0;

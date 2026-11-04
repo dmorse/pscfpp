@@ -9,7 +9,7 @@
 */
 
 #include <pscf/backend/cuda/cudaTypes.h>
-#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/BackendArray.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -85,8 +85,8 @@ namespace Pscf {
       * \param rFields  real values on r-grid (input, gpu mem)
       * \param kFields  complex values on k-grid (output, gpu mem)
       */
-      void forwardTransform(DeviceArray<cudaReal,CUT> const & rFields,
-                            DeviceArray<cudaComplex,CUT>& kFields) const;
+      void forwardTransform(BackendArray<cudaReal,CUT> const & rFields,
+                            BackendArray<cudaComplex,CUT>& kFields) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
@@ -102,8 +102,8 @@ namespace Pscf {
       * \param rFields  real values on r-grid (output, gpu mem)
       */
       void inverseTransformUnsafe(
-                       DeviceArray<cudaComplex,CUT>& kFields,
-                       DeviceArray<cudaReal,CUT>& rFields) const;
+                       BackendArray<cudaComplex,CUT>& kFields,
+                       BackendArray<cudaReal,CUT>& rFields) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.

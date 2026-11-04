@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/DeviceArray.h>  // base class
+#include <pscf/backend/cpp/BackendArray.h>  // base class
 #include <pscf/backend/cpp/CPT.h>          // backend identifier class
 #include <pscf/math/IntVec.h>              // member
 
@@ -28,7 +28,7 @@ namespace Pscf {
    */
    template <int D>
    class CField<D,CPT> 
-    : public DeviceArray<fftw_complex,CPT>
+    : public BackendArray<fftw_complex,CPT>
    {
 
    public:

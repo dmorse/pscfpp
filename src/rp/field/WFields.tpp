@@ -250,7 +250,7 @@ namespace Rp {
    * Set new w-field values, using unfolded array of r-grid fields.
    */
    template <int D, class T>
-   void WFields<D,T>::setRGrid(DeviceArray<RealT,T>& fields)
+   void WFields<D,T>::setRGrid(BackendArray<RealT,T>& fields)
    {
       UTIL_CHECK(fields.isAllocated());
       UTIL_CHECK(fields.capacity() == meshSize_ * nMonomer_);

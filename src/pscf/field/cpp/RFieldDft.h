@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/backend/cpp/DeviceArray.h>  // base class
+#include <pscf/backend/cpp/BackendArray.h>  // base class
 #include <pscf/backend/cpp/CPT.h>          // backend identifier class
 #include <pscf/math/IntVec.h>              // member
 
@@ -33,7 +33,7 @@ namespace Pscf {
    */
    template <int D>
    class RFieldDft<D,CPT>
-    : public DeviceArray<fftw_complex,CPT>
+    : public BackendArray<fftw_complex,CPT>
    {
 
    public:
@@ -93,7 +93,7 @@ namespace Pscf {
       * Pseudo-assignment from an associated HostSendArray.
       *
       * This function simply calls the corresponding assignment operator 
-      * of the DeviceArray base class, then returns this RFieldDft object.
+      * of the BackendArray base class, then returns this RFieldDft object.
       * It checks if an association exists between the LHS and RHS arrays,
       * and does nothing if this is the case.
       *
@@ -150,13 +150,13 @@ namespace Pscf {
       IntVec<D> dftDimensions_;
 
       // Declare private to prevent allocation without mesh dimensions.
-      using DeviceArray<fftw_complex,CPT>::allocate;
+      using BackendArray<fftw_complex,CPT>::allocate;
 
       // Declare private to prevent association without mesh dimensions.
-      using DeviceArray<fftw_complex,CPT>::associate;
+      using BackendArray<fftw_complex,CPT>::associate;
 
       // Declare private to prevent assignment without mesh dimensions.
-      using DeviceArray<fftw_complex,CPT>::operator =;
+      using BackendArray<fftw_complex,CPT>::operator =;
 
    };
 

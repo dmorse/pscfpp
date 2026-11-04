@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "DeviceArray.h"
+#include "BackendArray.h"
 
 namespace Pscf {
 
    // Explicit instantiation definitions
-   template class DeviceArray<cudaReal,CUT>;
-   template class DeviceArray<cudaComplex,CUT>;
+   template class BackendArray<cudaReal,CUT>;
+   template class BackendArray<cudaComplex,CUT>;
 
 }

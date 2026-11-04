@@ -43,7 +43,7 @@ namespace Rp {
    */
    template <int D, class T>
    class AmCompressor 
-    : public AmIteratorTmpl< Compressor<D,T>, DeviceArray<typename T::Real,T> >
+    : public AmIteratorTmpl< Compressor<D,T>, BackendArray<typename T::Real,T> >
    {
 
    public:
@@ -110,7 +110,7 @@ namespace Rp {
       using CompressorT = Compressor<D,T>;
 
       /// Type for state and residual vectors.
-      using VectorT = DeviceArray<typename T::Real,T>;
+      using VectorT = BackendArray<typename T::Real,T>;
 
       /// Typename alias for base class.
       using AmTmplT = AmIteratorTmpl< CompressorT, VectorT>;

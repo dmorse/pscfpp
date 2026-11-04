@@ -3,7 +3,7 @@ include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
-TEST=$(BLD_DIR)/pscf/tests/cpp/Test
+TEST=$(BLD_DIR)/pscf/tests/backend/cpp/Test
 
 all: $(TEST).o $(TEST)
 
@@ -11,12 +11,12 @@ $(TEST): $(TEST).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
 run: $(TEST).o $(TEST)
-	$(TEST) $(SRC_DIR)/pscf/tests/cpp/
+	$(TEST) $(SRC_DIR)/pscf/tests/backend/cpp/
 
 run-quiet: $(TEST).o $(TEST)
-	@$(TEST) $(SRC_DIR)/pscf/tests/cpp/ > log
+	@$(TEST) $(SRC_DIR)/pscf/tests/backend/cpp/ > log
 	@echo `grep failed log` ", "\
-              `grep successful log` "in pscf/tests/cpp/log" > count
+              `grep successful log` "in pscf/tests/cpp/backend/log" > count
 	@cat count
 
 clean-outputs:

@@ -13,11 +13,11 @@ namespace Pscf {
 
    // Base class template specializations
    template class
-   AmIteratorTmpl< Rp::Iterator<1,CPT>, DeviceArray<double,CPT> >;
+   AmIteratorTmpl< Rp::Iterator<1,CPT>, BackendArray<double,CPT> >;
    template class
-   AmIteratorTmpl< Rp::Iterator<2,CPT>, DeviceArray<double,CPT> >;
+   AmIteratorTmpl< Rp::Iterator<2,CPT>, BackendArray<double,CPT> >;
    template class
-   AmIteratorTmpl< Rp::Iterator<3,CPT>, DeviceArray<double,CPT> >;
+   AmIteratorTmpl< Rp::Iterator<3,CPT>, BackendArray<double,CPT> >;
 
    namespace Rp {
       template class AmIteratorGrid<1,CPT>;

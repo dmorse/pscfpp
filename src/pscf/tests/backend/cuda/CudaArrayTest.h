@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/BackendArray.h>
 #include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/backend/cuda/HostRecvArray.h>
 #include <util/math/Constants.h>
@@ -28,7 +28,7 @@ public:
       printMethod(TEST_FUNC);
       HostSendArray<double,CUT> h;
       HostRecvArray<double,CUT> c;
-      DeviceArray<double,CUT> d;
+      BackendArray<double,CUT> d;
 
       TEST_ASSERT(h.capacity() == 0 );
       TEST_ASSERT(!h.isAllocated() );
@@ -44,7 +44,7 @@ public:
 
       HostSendArray<double,CUT> h;
       HostSendArray<double,CUT> c;
-      DeviceArray<double,CUT> d;
+      BackendArray<double,CUT> d;
 
       int capacity = 32;
       h.allocate(capacity);
@@ -74,8 +74,8 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      DeviceArray<double,CUT> d1;
-      DeviceArray<double,CUT> d2;
+      BackendArray<double,CUT> d1;
+      BackendArray<double,CUT> d2;
 
       int capacity = 128;
       d1.allocate(capacity);
@@ -97,8 +97,8 @@ public:
       int nx = 10;
 
       // Device arrays
-      DeviceArray<double,CUT> d1(nx);
-      DeviceArray<double,CUT> d2(nx);
+      BackendArray<double,CUT> d1(nx);
+      BackendArray<double,CUT> d2(nx);
 
       // Input host arrays
       HostSendArray<double,CUT> in;
@@ -153,8 +153,8 @@ public:
       int nx = 10;
 
       // Device arrays
-      DeviceArray<double,CUT> d1(nx);
-      DeviceArray<double,CUT> d2(nx);
+      BackendArray<double,CUT> d1(nx);
+      BackendArray<double,CUT> d2(nx);
 
       // Input array
       HostSendArray<double,CUT> in;

@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/backend/cpp/DeviceArray.h>
+#include <pscf/backend/cpp/BackendArray.h>
 #include <pscf/backend/cpp/HostSendArray.h>
 
 #include <util/archives/MemoryOArchive.h>
@@ -17,7 +17,7 @@
 using namespace Util;
 using namespace Pscf;
 
-class CppDeviceArrayTest : public UnitTest
+class CppBackendArrayTest : public UnitTest
 {
 private:
 
@@ -55,23 +55,23 @@ public:
 };
 
 
-void CppDeviceArrayTest::testDefaultConstructor()
+void CppBackendArrayTest::testDefaultConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      DeviceArray<Data,CPT> v;
+      BackendArray<Data,CPT> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
       TEST_ASSERT(!v.isOwner());
    }
 }
 
-void CppDeviceArrayTest::testAllocateConstructor()
+void CppBackendArrayTest::testAllocateConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
    {
-      DeviceArray<Data,CPT> v(capacity);
+      BackendArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
@@ -88,12 +88,12 @@ void CppDeviceArrayTest::testAllocateConstructor()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testAllocate()
+void CppBackendArrayTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == 0);
    {
-      DeviceArray<Data,CPT> v;
+      BackendArray<Data,CPT> v;
 
       // Allocate array
       v.allocate(capacity);
@@ -113,12 +113,12 @@ void CppDeviceArrayTest::testAllocate()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testSubscript()
+void CppBackendArrayTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      DeviceArray<Data,CPT> v(capacity);
+      BackendArray<Data,CPT> v(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
       }
@@ -132,12 +132,12 @@ void CppDeviceArrayTest::testSubscript()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testSubscriptCmplx()
+void CppBackendArrayTest::testSubscriptCmplx()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      DeviceArray< std::complex<Data>, CPT> v;
+      BackendArray< std::complex<Data>, CPT> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i].real((i+1)*10.0);
@@ -153,14 +153,14 @@ void CppDeviceArrayTest::testSubscriptCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testAssociate()
+void CppBackendArrayTest::testAssociate()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
-   DeviceArray<Data,CPT> u;
+   BackendArray<Data,CPT> u;
    {
       // Data owner
-      DeviceArray<Data,CPT> v(capacity);
+      BackendArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
 
       // Data user
@@ -200,11 +200,11 @@ void CppDeviceArrayTest::testAssociate()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testAssignFromHost()
+void CppBackendArrayTest::testAssignFromHost()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
-   DeviceArray<Data,CPT> u(capacity);
+   BackendArray<Data,CPT> u(capacity);
    {
       // Data user
       TEST_ASSERT(u.capacity() == capacity);
@@ -261,13 +261,13 @@ void CppDeviceArrayTest::testAssignFromHost()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testCopyConstructor()
+void CppBackendArrayTest::testCopyConstructor()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
       // Data owner
-      DeviceArray<Data,CPT> v(capacity);
+      BackendArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
@@ -277,7 +277,7 @@ void CppDeviceArrayTest::testCopyConstructor()
       long int tot = Memory::total();
       TEST_ASSERT(tot == (long int)(memory_ + capacity*sizeof(Data)));
 
-      DeviceArray<Data,CPT> u(v);
+      BackendArray<Data,CPT> u(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.isOwner());
@@ -301,11 +301,11 @@ void CppDeviceArrayTest::testCopyConstructor()
    TEST_ASSERT(Memory::total() == (long int)memory_);
 }
 
-void CppDeviceArrayTest::testCopyConstructorCmplx()
+void CppBackendArrayTest::testCopyConstructorCmplx()
 {
    printMethod(TEST_FUNC);
    {
-      DeviceArray< std::complex<Data>, CPT> v;
+      BackendArray< std::complex<Data>, CPT> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
 
@@ -317,7 +317,7 @@ void CppDeviceArrayTest::testCopyConstructorCmplx()
          v[i].imag((i+1)*10.0 + 0.1);
       }
 
-      DeviceArray< std::complex<Data>, CPT> u(v);
+      BackendArray< std::complex<Data>, CPT> u(v);
       TEST_ASSERT(u.capacity() == capacity);
       TEST_ASSERT(u.isAllocated() );
       TEST_ASSERT(u.isOwner());
@@ -333,18 +333,18 @@ void CppDeviceArrayTest::testCopyConstructorCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testAssignment()
+void CppBackendArrayTest::testAssignment()
 {
    printMethod(TEST_FUNC);
 
    {
-      DeviceArray<Data,CPT> v;
+      BackendArray<Data,CPT> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3 );
       TEST_ASSERT(v.isAllocated() );
       TEST_ASSERT(v.isOwner() );
 
-      DeviceArray<Data,CPT> u;
+      BackendArray<Data,CPT> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -367,17 +367,17 @@ void CppDeviceArrayTest::testAssignment()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testAssignmentCmplx()
+void CppBackendArrayTest::testAssignmentCmplx()
 {
    printMethod(TEST_FUNC);
 
    {
-      DeviceArray< std::complex<Data>, CPT> v;
+      BackendArray< std::complex<Data>, CPT> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3);
       TEST_ASSERT(v.isAllocated());
 
-      DeviceArray< std::complex<Data>, CPT> u;
+      BackendArray< std::complex<Data>, CPT> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -401,12 +401,12 @@ void CppDeviceArrayTest::testAssignmentCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testIterator()
+void CppBackendArrayTest::testIterator()
 {
    printMethod(TEST_FUNC);
    TEST_ASSERT((int)Memory::total() == 0);
    {
-      DeviceArray<Data,CPT> v;
+      BackendArray<Data,CPT> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -432,11 +432,11 @@ void CppDeviceArrayTest::testIterator()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testBaseClassReference()
+void CppBackendArrayTest::testBaseClassReference()
 {
    printMethod(TEST_FUNC);
    {
-      DeviceArray<Data,CPT> v;
+      BackendArray<Data,CPT> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -449,11 +449,11 @@ void CppDeviceArrayTest::testBaseClassReference()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
-void CppDeviceArrayTest::testSerialize1Memory()
+void CppBackendArrayTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
-      DeviceArray<double,CPT> v;
+      BackendArray<double,CPT> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -474,7 +474,7 @@ void CppDeviceArrayTest::testSerialize1Memory()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      DeviceArray<double,CPT> u;
+      BackendArray<double,CPT> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -530,11 +530,11 @@ void CppDeviceArrayTest::testSerialize1Memory()
 
 }
 
-void CppDeviceArrayTest::testSerialize2Memory()
+void CppBackendArrayTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
-      DeviceArray<double,CPT> v;
+      BackendArray<double,CPT> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -551,9 +551,9 @@ void CppDeviceArrayTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      DeviceArray<double,CPT> u;
+      BackendArray<double,CPT> u;
    
-      // Note: We do not allocate DeviceArray<double,CPT> u in this test.
+      // Note: We do not allocate BackendArray<double,CPT> u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -571,11 +571,11 @@ void CppDeviceArrayTest::testSerialize2Memory()
    }
 }
 
-void CppDeviceArrayTest::testSerialize1File()
+void CppBackendArrayTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
-      DeviceArray<double,CPT> v;
+      BackendArray<double,CPT> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -585,7 +585,7 @@ void CppDeviceArrayTest::testSerialize1File()
       int i2;
 
       BinaryFileOArchive oArchive;
-      openOutputFile("out/DeviceArray.arx", oArchive.file());
+      openOutputFile("out/BackendArray.arx", oArchive.file());
       oArchive << v;
       oArchive << i1;
       oArchive.file().close();
@@ -594,11 +594,11 @@ void CppDeviceArrayTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      DeviceArray<double,CPT> u;
+      BackendArray<double,CPT> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
-      openInputFile("out/DeviceArray.arx", iArchive.file());
+      openInputFile("out/BackendArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
       iArchive.file().close();
@@ -614,7 +614,7 @@ void CppDeviceArrayTest::testSerialize1File()
       i2 = 0;
    
       // Reload into u and i2
-      openInputFile("out/DeviceArray.arx", iArchive.file());
+      openInputFile("out/BackendArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
    
@@ -624,11 +624,11 @@ void CppDeviceArrayTest::testSerialize1File()
    }
 }
 
-void CppDeviceArrayTest::testSerialize2File()
+void CppBackendArrayTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
-      DeviceArray<double,CPT> v;
+      BackendArray<double,CPT> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -638,7 +638,7 @@ void CppDeviceArrayTest::testSerialize2File()
       int i2;
   
       BinaryFileOArchive oArchive;
-      openOutputFile("out/DeviceArray.arx", oArchive.file());
+      openOutputFile("out/BackendArray.arx", oArchive.file());
       oArchive << v;
       oArchive << i1;
       oArchive.file().close();
@@ -647,14 +647,14 @@ void CppDeviceArrayTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      DeviceArray<double,CPT> u;
+      BackendArray<double,CPT> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 
       // from the previous test
    
       BinaryFileIArchive iArchive;
-      openInputFile("out/DeviceArray.arx", iArchive.file());
+      openInputFile("out/BackendArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
       iArchive.file().close();
@@ -670,7 +670,7 @@ void CppDeviceArrayTest::testSerialize2File()
       i2 = 0;
    
       // Reload into u and i2
-      openInputFile("out/DeviceArray.arx", iArchive.file());
+      openInputFile("out/BackendArray.arx", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
    
@@ -680,26 +680,26 @@ void CppDeviceArrayTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(CppDeviceArrayTest)
-TEST_ADD(CppDeviceArrayTest, testDefaultConstructor)
-TEST_ADD(CppDeviceArrayTest, testAllocateConstructor)
-TEST_ADD(CppDeviceArrayTest, testAllocate)
-TEST_ADD(CppDeviceArrayTest, testSubscript)
-TEST_ADD(CppDeviceArrayTest, testSubscriptCmplx)
-TEST_ADD(CppDeviceArrayTest, testAssociate)
-TEST_ADD(CppDeviceArrayTest, testAssignFromHost)
-TEST_ADD(CppDeviceArrayTest, testCopyConstructor)
-TEST_ADD(CppDeviceArrayTest, testCopyConstructorCmplx)
-TEST_ADD(CppDeviceArrayTest, testAssignment)
-TEST_ADD(CppDeviceArrayTest, testAssignmentCmplx)
-TEST_ADD(CppDeviceArrayTest, testIterator)
-TEST_ADD(CppDeviceArrayTest, testBaseClassReference)
+TEST_BEGIN(CppBackendArrayTest)
+TEST_ADD(CppBackendArrayTest, testDefaultConstructor)
+TEST_ADD(CppBackendArrayTest, testAllocateConstructor)
+TEST_ADD(CppBackendArrayTest, testAllocate)
+TEST_ADD(CppBackendArrayTest, testSubscript)
+TEST_ADD(CppBackendArrayTest, testSubscriptCmplx)
+TEST_ADD(CppBackendArrayTest, testAssociate)
+TEST_ADD(CppBackendArrayTest, testAssignFromHost)
+TEST_ADD(CppBackendArrayTest, testCopyConstructor)
+TEST_ADD(CppBackendArrayTest, testCopyConstructorCmplx)
+TEST_ADD(CppBackendArrayTest, testAssignment)
+TEST_ADD(CppBackendArrayTest, testAssignmentCmplx)
+TEST_ADD(CppBackendArrayTest, testIterator)
+TEST_ADD(CppBackendArrayTest, testBaseClassReference)
 
-TEST_ADD(CppDeviceArrayTest, testSerialize1Memory)
-TEST_ADD(CppDeviceArrayTest, testSerialize2Memory)
-TEST_ADD(CppDeviceArrayTest, testSerialize1File)
-TEST_ADD(CppDeviceArrayTest, testSerialize2File)
+TEST_ADD(CppBackendArrayTest, testSerialize1Memory)
+TEST_ADD(CppBackendArrayTest, testSerialize2Memory)
+TEST_ADD(CppBackendArrayTest, testSerialize1File)
+TEST_ADD(CppBackendArrayTest, testSerialize2File)
 
-TEST_END(CppDeviceArrayTest)
+TEST_END(CppBackendArrayTest)
 
 #endif

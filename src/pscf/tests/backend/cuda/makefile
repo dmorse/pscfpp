@@ -3,7 +3,7 @@ include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/pscf/patterns.mk
 
-TEST=$(BLD_DIR)/pscf/tests/cuda/cudaTest
+TEST=$(BLD_DIR)/pscf/tests/backend/cuda/cudaTest
 
 all: $(TEST)
 
@@ -13,12 +13,12 @@ $(TEST): $(TEST).ou $(PSCF_LIBS)
 	@rm $(TEST).o
 
 run: $(TEST)
-	$(TEST) $(SRC_DIR)/pscf/tests/cuda 
+	$(TEST) $(SRC_DIR)/pscf/tests/backend/cuda 
 
 run-quiet: $(TEST)
-	@$(TEST) $(SRC_DIR)/pscf/tests/cuda > log
+	@$(TEST) $(SRC_DIR)/pscf/tests/backend/cuda > log
 	@echo `grep failed log` ", "\
-              `grep successful log` "in pscf/tests/log" > count
+              `grep successful log` "in pscf/tests/backend/cuda/log" > count
 	@cat count
 
 clean-outputs:

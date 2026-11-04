@@ -1,5 +1,5 @@
-#ifndef PSCF_DEVICE_ARRAY_CU_H
-#define PSCF_DEVICE_ARRAY_CU_H
+#ifndef PSCF_BACKEND_ARRAY_CU_H
+#define PSCF_BACKEND_ARRAY_CU_H
 
 /*
 * PSCF - Polymer Self-Consistent Field
@@ -26,7 +26,7 @@ namespace Pscf {
    using namespace Util;
 
    // Declare primary template
-   template <typename Data, typename T> class DeviceArray;
+   template <typename Data, typename T> class BackendArray;
 
    /**
    * Dynamic array on the GPU device with aligned data.
@@ -36,7 +36,7 @@ namespace Pscf {
    * be called from the CPU host, but this class does not offer access
    * to individual elements via the subscript operator, operator[].
    *
-   * A DeviceArray can be in any of three states:
+   * A BackendArray can be in any of three states:
    *
    *   (1) Unallocated: In this state, there is no associated memory,
    *   so capacity() returns 0, while isAllocated(), isOwner() and
@@ -49,21 +49,21 @@ namespace Pscf {
    *
    *   (3) A data user: In this case, this object has a pointer to a block
    *   of device memory that is owned by a different container. We describe
-   *   this by saying this DeviceArray (the data user) is "associated"
+   *   this by saying this BackendArray (the data user) is "associated"
    *   with or "references" memory owned by another container (the data
    *   owner). In this state, capacity() returns a positive
    *   value, isAllocated() and isAssociated() return true, and
    *   isOwner() returns false.
    *
-   * Memory that is owned by a DeviceArray may be allocated and
+   * Memory that is owned by a BackendArray may be allocated and
    * deallocated by the allocate() and deallocate() member functions.
-   * Memory owned by a DeviceArray is also dellocated when the
-   * DeviceArray is destroyed.
+   * Memory owned by a BackendArray is also dellocated when the
+   * BackendArray is destroyed.
    *
-   * A DeviceArray<Data,CUT> object may be associated as a data user with:
+   * A BackendArray<Data,CUT> object may be associated as a data user with:
    *
    *   - A slice of an array of Data objects owned by another
-   *     DeviceArray<Data,CUT>, or
+   *     BackendArray<Data,CUT>, or
    *
    *   - A block of bare memory owned by a DeviceMemory container
    *
@@ -73,23 +73,23 @@ namespace Pscf {
    * Exception to be thrown if the requested slice of shared data
    * would exceed the bounds of the block owned by the data owner.
    *
-   * A DeviceArray<Data,CUT> that serves as an owner of data that is used
-   * by one or more other associated DeviceArray<Data,CUT> objects maintains
+   * A BackendArray<Data,CUT> that serves as an owner of data that is used
+   * by one or more other associated BackendArray<Data,CUT> objects maintains
    * a count of how many associated objects refer to its data. This
    * counter is incremented when an association is created by a data
    * user and decremented when the user destroys the association.
    *
-   * When a DeviceArray<Data,CUT> object is destroyed, any data that it
+   * When a BackendArray<Data,CUT> object is destroyed, any data that it
    * owns is automatically deallocated, and any association with
    * external data is destroyed.
    *
-   * It is an error to deallocate memory owned by a DeviceArray or
+   * It is an error to deallocate memory owned by a BackendArray or
    * DeviceMemory container that is still referred to by one or more
-   * associated DeviceArray data users. Doing so is illegal because it
+   * associated BackendArray data users. Doing so is illegal because it
    * creates dangling pointers. Attempts to prematurely deallocate such
    * a shared memory block either cause an Exception to be thrown, if
    * it occurs within the deallocate function, or cause an error message
-   * to be written to std::cout if the error occurs in the DeviceArray
+   * to be written to std::cout if the error occurs in the BackendArray
    * destructor function. All references to such a shared data block
    * must thus be released, by calling the dissociate() member function
    * of each data user, before the data owner can be safely destroyed.
@@ -100,7 +100,7 @@ namespace Pscf {
    * \ingroup Pscf_Backend_Cuda_Module
    */
    template <typename Data>
-   class DeviceArray<Data,CUT>
+   class BackendArray<Data,CUT>
    {
 
    public:
@@ -122,7 +122,7 @@ namespace Pscf {
       /**
       * Default constructor.
       */
-      DeviceArray();
+      BackendArray();
 
       /**
       * Allocating constructor.
@@ -131,28 +131,28 @@ namespace Pscf {
       *
       * \param capacity  number of elements to allocate
       */
-      DeviceArray(int capacity);
+      BackendArray(int capacity);
 
       /**
       * Copy constructor.
       *
-      * \param other  DeviceArray<Data,CUT> to be copied (input)
+      * \param other  BackendArray<Data,CUT> to be copied (input)
       */
-      DeviceArray(DeviceArray<Data,CUT> const & other);
+      BackendArray(BackendArray<Data,CUT> const & other);
 
       /**
       * Copy constructor, deep copy Array<Data> from host to device.
       *
       * \param other  Array<Data> to be copied (input)
       */
-      DeviceArray(Array<Data> const & other);
+      BackendArray(Array<Data> const & other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~DeviceArray();
+      virtual ~BackendArray();
 
       /**
       * Allocate the underlying C array on the device.
@@ -172,7 +172,7 @@ namespace Pscf {
       void deallocate();
 
       /**
-      * Associate this object with a slice of a different DeviceArray.
+      * Associate this object with a slice of a different BackendArray.
       *
       * \throw Exception if the array is already allocated.
       *
@@ -180,13 +180,13 @@ namespace Pscf {
       * \param beginId  index in the parent array at which this array starts
       * \param capacity  number of elements associated with this container
       */
-      void associate(DeviceArray<Data,CUT>& arr,
+      void associate(BackendArray<Data,CUT>& arr,
                      int beginId, int capacity);
 
       /**
       * Associate this object with a DeviceMemory container.
       *
-      * When a DeviceArray<Data,CUT> is associated with a DeviceMemory
+      * When a BackendArray<Data,CUT> is associated with a DeviceMemory
       * container, the shared data block begins at the first byte of
       * the block owned by the DeviceMemory. The number of byes in such
       * a shared block is equal to capacity * sizeof(Data). This must
@@ -205,7 +205,7 @@ namespace Pscf {
       * Dissociate this object from an externally owned memory block.
       *
       * This function can destroy an association with either another
-      * DeviceArray or with a DeviceMemory. After successful exit,
+      * BackendArray or with a DeviceMemory. After successful exit,
       * isAllocated() and isAssociated() will both return false.
       *
       * \throw Exception if this is not associated with external memory
@@ -230,31 +230,31 @@ namespace Pscf {
       void addReference(CountedReference& reference);
 
       /**
-      * Assignment operator, assign from other DeviceArray<Data,CUT>.
+      * Assignment operator, assign from other BackendArray<Data,CUT>.
       *
       * Performs a deep copy, by copying values of all elements.
       *
       * This function will allocate memory if this (LHS) array is not
       * allocated.  If this array is arleady allocated, it must have the
-      * same capacity as the other (RHS) DeviceArray<Data,CUT>.
+      * same capacity as the other (RHS) BackendArray<Data,CUT>.
       *
       * \throw Exception if RHS other array is not allocated
       * \throw Exception if RHS and LHS have unequal nonzero capacities
       *
-      * \param other  DeviceArray<Data,CUT> on RHS of assignent (input)
+      * \param other  BackendArray<Data,CUT> on RHS of assignent (input)
       */
       virtual
-      DeviceArray<Data,CUT>& 
-      operator = (DeviceArray<Data,CUT> const& other);
+      BackendArray<Data,CUT>& 
+      operator = (BackendArray<Data,CUT> const& other);
 
       /**
       * Assignment operator, assignment from Util::Array<Data> host array.
       *
       * Performs a deep copy from a RHS Array<Data> host array to this
-      * LHS DeviceArray<Data,CUT>, by copying underlying C array from host
+      * LHS BackendArray<Data,CUT>, by copying underlying C array from host
       * memory to device memory.
       *
-      * If this (LHS) DeviceArray<Data,CUT> is not allocated on entry,
+      * If this (LHS) BackendArray<Data,CUT> is not allocated on entry,
       * memory will be allocated before data is copied.  If this LHS object
       * is already allocated, it must have the same capacity as the RHS
       * Array<Data>.
@@ -265,7 +265,7 @@ namespace Pscf {
       * \param other  Array<Data> on RHS of assignent (input)
       */
       virtual
-      DeviceArray<Data,CUT>& operator = (const Array<Data>& other);
+      BackendArray<Data,CUT>& operator = (const Array<Data>& other);
 
       /**
       * Return array capacity.
@@ -277,7 +277,7 @@ namespace Pscf {
       /**
       * Return true if the array has allocated data, false otherwise.
       *
-      * A DeviceArray is considered allocated if it has non-null pointer
+      * A BackendArray is considered allocated if it has non-null pointer
       * to an data block, which may either be a block that it owns or a
       * block owned by another container.
       */
@@ -324,8 +324,8 @@ namespace Pscf {
    };
 
    // Explicit instantiation declarations
-   extern template class DeviceArray<cudaReal,CUT>;
-   extern template class DeviceArray<cudaComplex,CUT>;
+   extern template class BackendArray<cudaReal,CUT>;
+   extern template class BackendArray<cudaComplex,CUT>;
 
    // Inline member function definitions
 
@@ -333,28 +333,28 @@ namespace Pscf {
    * Return array capacity.
    */
    template <typename Data> inline
-   int DeviceArray<Data,CUT>::capacity() const
+   int BackendArray<Data,CUT>::capacity() const
    {  return capacity_; }
 
    /*
    * Return true if this object has access to a memory block.
    */
    template <typename Data> inline
-   bool DeviceArray<Data,CUT>::isAllocated() const
+   bool BackendArray<Data,CUT>::isAllocated() const
    {  return (bool) dataPtr_; }
 
    /*
    * Does this object own data?
    */
    template <typename Data> inline
-   bool DeviceArray<Data,CUT>::isOwner() const
+   bool BackendArray<Data,CUT>::isOwner() const
    {  return ((bool) dataPtr_ && !ref_.isAssociated()); }
 
    /*
    * Is this object associated with data it does not own?
    */
    template <typename Data> inline
-   bool DeviceArray<Data,CUT>::isAssociated() const
+   bool BackendArray<Data,CUT>::isAssociated() const
    {  return ((bool) dataPtr_ && ref_.isAssociated()); }
 
 }
@@ -371,7 +371,7 @@ namespace Pscf {
    * Default constructor.
    */
    template <typename Data>
-   DeviceArray<Data,CUT>::DeviceArray()
+   BackendArray<Data,CUT>::BackendArray()
     : dataPtr_(nullptr),
       capacity_(0)
    {}
@@ -380,7 +380,7 @@ namespace Pscf {
    * Allocating constructor.
    */
    template <typename Data>
-   DeviceArray<Data,CUT>::DeviceArray(int capacity)
+   BackendArray<Data,CUT>::BackendArray(int capacity)
     : dataPtr_(nullptr),
       capacity_(0)
    {  allocate(capacity); }
@@ -391,7 +391,7 @@ namespace Pscf {
    * Allocates new memory and copies all elements by value.
    */
    template <typename Data>
-   DeviceArray<Data,CUT>::DeviceArray(const DeviceArray<Data,CUT>& other)
+   BackendArray<Data,CUT>::BackendArray(const BackendArray<Data,CUT>& other)
     : dataPtr_(nullptr),
       capacity_(0)
    {
@@ -411,7 +411,7 @@ namespace Pscf {
    * Allocates new memory and copies all elements by value.
    */
    template <typename Data>
-   DeviceArray<Data,CUT>::DeviceArray(const Array<Data>& other)
+   BackendArray<Data,CUT>::BackendArray(const Array<Data>& other)
     : dataPtr_(nullptr),
       capacity_(0)
    {
@@ -429,12 +429,12 @@ namespace Pscf {
    * Destructor.
    */
    template <typename Data>
-   DeviceArray<Data,CUT>::~DeviceArray()
+   BackendArray<Data,CUT>::~BackendArray()
    {
       if (isOwner()) {
          if (refCounter_.hasRefs()) {
             std::cout
-                << "Error: Destroying DeviceArray that is referred"
+                << "Error: Destroying BackendArray that is referred"
                 << "to by at least one CountedReference"
                 << std::endl;
          }
@@ -449,7 +449,7 @@ namespace Pscf {
    * Allocate device memory, with this object then owns.
    */
    template <typename Data>
-   void DeviceArray<Data,CUT>::allocate(int capacity)
+   void BackendArray<Data,CUT>::allocate(int capacity)
    {
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
@@ -470,7 +470,7 @@ namespace Pscf {
    * Deallocate device memory owned by this object, if any.
    */
    template <typename Data>
-   void DeviceArray<Data,CUT>::deallocate()
+   void BackendArray<Data,CUT>::deallocate()
    {
       UTIL_CHECK(dataPtr_);
       UTIL_CHECK(!ref_.isAssociated());
@@ -481,10 +481,10 @@ namespace Pscf {
    }
 
    /*
-   * Associate this object with memory owned by a different DeviceArray.
+   * Associate this object with memory owned by a different BackendArray.
    */
    template <typename Data>
-   void DeviceArray<Data,CUT>::associate(DeviceArray<Data,CUT>& arr,
+   void BackendArray<Data,CUT>::associate(BackendArray<Data,CUT>& arr,
                                          int beginId, int capacity)
    {
       UTIL_CHECK(arr.isAllocated());
@@ -507,7 +507,7 @@ namespace Pscf {
    * Associate this object with memory owned by a DeviceMemory object.
    */
    template <typename Data>
-   void DeviceArray<Data,CUT>::associate(DeviceMemory& arr, int capacity)
+   void BackendArray<Data,CUT>::associate(DeviceMemory& arr, int capacity)
    {
       UTIL_CHECK(arr.isAllocated());
       UTIL_CHECK(capacity > 0);
@@ -527,7 +527,7 @@ namespace Pscf {
    * Dissociate this object from external device memory
    */
    template <typename Data>
-   void DeviceArray<Data,CUT>::dissociate()
+   void BackendArray<Data,CUT>::dissociate()
    {
       UTIL_CHECK(dataPtr_);
       UTIL_CHECK(ref_.isAssociated());
@@ -545,22 +545,22 @@ namespace Pscf {
    * should be owned by the data user.
    */
    template <typename Data>
-   void DeviceArray<Data,CUT>::addReference(CountedReference& ref)
+   void BackendArray<Data,CUT>::addReference(CountedReference& ref)
    {  ref.associate(refCounter_); }
 
    /*
-   * Assignment from another DeviceArray<Data,CUT>.
+   * Assignment from another BackendArray<Data,CUT>.
    */
    template <typename Data>
-   DeviceArray<Data,CUT>&
-   DeviceArray<Data,CUT>::operator = (const DeviceArray<Data,CUT>& other)
+   BackendArray<Data,CUT>&
+   BackendArray<Data,CUT>::operator = (const BackendArray<Data,CUT>& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
 
-      // Precondition - RHS DeviceArray<Data,CUT> must be allocated
+      // Precondition - RHS BackendArray<Data,CUT> must be allocated
       if (!other.isAllocated()) {
-         UTIL_THROW("Other DeviceArray<Data,CUT> must be allocated.");
+         UTIL_THROW("Other BackendArray<Data,CUT> must be allocated.");
       }
 
       // If this is not allocated, then allocate
@@ -585,8 +585,8 @@ namespace Pscf {
    * Assignment from RHS Util::Array<Data>.
    */
    template <typename Data>
-   DeviceArray<Data,CUT>&
-   DeviceArray<Data,CUT>::operator = (Util::Array<Data> const& other)
+   BackendArray<Data,CUT>&
+   BackendArray<Data,CUT>::operator = (Util::Array<Data> const& other)
    {
       // Precondition
       if (!other.isAllocated()) {
@@ -615,7 +615,7 @@ namespace Pscf {
    * Get a pointer to the underlying C array.
    */
    template <typename Data>
-   Data* DeviceArray<Data,CUT>::cArray()
+   Data* BackendArray<Data,CUT>::cArray()
    {
       UTIL_CHECK(dataPtr_);
       return dataPtr_;
@@ -625,7 +625,7 @@ namespace Pscf {
    * Get a pointer to const to the underlying C array.
    */
    template <typename Data>
-   const Data* DeviceArray<Data,CUT>::cArray() const
+   const Data* BackendArray<Data,CUT>::cArray() const
    {
       UTIL_CHECK(dataPtr_);
       return dataPtr_;

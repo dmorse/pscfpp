@@ -1,12 +1,11 @@
 pscf_backend_cpp_CPP= \
   pscf/backend/cpp/CPT.cpp \
   pscf/backend/cpp/complex.cpp \
-  pscf/backend/cpp/DeviceArray.cpp \
+  pscf/backend/cpp/BackendArray.cpp \
   pscf/backend/cpp/HostRecvArray.cpp \
   pscf/backend/cpp/HostSendArray.cpp \
   pscf/backend/cpp/VecOp.cpp \
   pscf/backend/cpp/Reduce.cpp \
-  pscf/backend/cpp/DeviceArray.cpp \
   pscf/backend/cpp/VecRandom.cpp 
 
 pscf_backend_cpp_OBJS=\

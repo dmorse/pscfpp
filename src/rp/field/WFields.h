@@ -21,7 +21,7 @@ namespace Util {
 }
 namespace Pscf {
    template <int D> class UnitCell;
-   template <typename Data, class T> class DeviceArray;
+   template <typename Data, class T> class BackendArray;
    template <int D, class T> class RField;
    namespace Rp {
       template <int D, class T> class FieldIo;
@@ -216,7 +216,7 @@ namespace Rp {
       *
       * \param fields  unfolded array of new w fields (input)
       */
-      void setRGrid(DeviceArray<RealT,T>& fields);
+      void setRGrid(BackendArray<RealT,T>& fields);
 
       /**
       * Read fields from an input stream in symmetrized basis format.

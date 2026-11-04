@@ -15,7 +15,7 @@ namespace Pscf {
 
    // Forward declarations
    template <typename Data, typename T> class HostSendArray;
-   template <typename Data, typename T> class DeviceArray;
+   template <typename Data, typename T> class BackendArray;
 
    using namespace Util;
 
@@ -24,7 +24,7 @@ namespace Pscf {
    *
    * This class template should be used in device-independent template
    * code in which an array is copied from host to device.  The
-   * DeviceArray<Data,CPT> template defines an assignment operator
+   * BackendArray<Data,CPT> template defines an assignment operator
    * that assigns from a host array to a device array. 
    *
    * The "associate" member function allocates the array if not allocated
@@ -34,13 +34,13 @@ namespace Pscf {
    * The assignment (=) operator that copies a host array (RHS) to a
    * device array (LHS) performs a deep copy from host to device memory.
    * This function is a member function of the device array, defined by
-   * the DeviceArray<Data,CUT> class template. 
+   * the BackendArray<Data,CUT> class template. 
    *
    * <b> Usage </b>: 
    *
    * Typical usage for backend-independent template code is shown 
    * below for host-to-device transfer to a long lived instance of 
-   * DeviceArray<Data,CPT> named dArray from a shorter lived instance of 
+   * BackendArray<Data,CPT> named dArray from a shorter lived instance of 
    * HostSendArray<Data,CPT> named hArray. Here, the alias Data denotes the 
    * type of each array element.
    *
@@ -66,7 +66,7 @@ namespace Pscf {
    *     
    *   - In this specialization for a CUDA backend (T=CUT), the 
    *     assignment (=) operator that assigns a RHS HostSendArray<Data,CPT> 
-   *     to a LHS DeviceArray<Data,CPT> template copies all elements of
+   *     to a LHS BackendArray<Data,CPT> template copies all elements of
    *     an array from CPU host memory to GPU device memory. In the 
    *     corresponding specialization for a C++ backend (T=CPT), the
    *     assignment operator does nothing. 
@@ -135,16 +135,16 @@ namespace Pscf {
       *
       * \param deviceArray  device array (must be allocated on entry)
       */
-      void associate(DeviceArray<Data,CUT>& deviceArray);
+      void associate(BackendArray<Data,CUT>& deviceArray);
 
       /**
-      * Assignment operator, assign from a DeviceArray<Data,CUT>.
+      * Assignment operator, assign from a BackendArray<Data,CUT>.
       *
-      * Performs a deep copy from a RHS DeviceArray<Data,CUT> to this LHS
+      * Performs a deep copy from a RHS BackendArray<Data,CUT> to this LHS
       * HostSendArray<D>, by copying the underlying data from device memory
       * to host memory.
       *
-      * Preconditions: The RHS DeviceArray<Data,CUT> object must be 
+      * Preconditions: The RHS BackendArray<Data,CUT> object must be 
       * allocated.  If this LHS HostSendArray<D> is not allocated, the 
       * required memory will be allocated before values are copied. 
       * Otherwise, if this LHS array is allocated on entry, capacites 
@@ -153,26 +153,26 @@ namespace Pscf {
       * \throw Exception if the RHS array is not allocated on entry
       * \throw Exception if LHS and RHS have unequal nonzero capacities
       *
-      * \param other  DeviceArray<Data,CUT> on RHS of assignment (input)
+      * \param other  BackendArray<Data,CUT> on RHS of assignment (input)
       */
-      HostSendArray<Data,CUT>& operator = (DeviceArray<Data,CUT> const & other);
+      HostSendArray<Data,CUT>& operator = (BackendArray<Data,CUT> const & other);
 
       /**
-      * Copy a slice of the data from a larger DeviceArray into this array.
+      * Copy a slice of the data from a larger BackendArray into this array.
       * 
       * This method will populate this HostSendArray with data from a slice
-      * of a DeviceArray. The size of the slice is the capacity of this
+      * of a BackendArray. The size of the slice is the capacity of this
       * HostSendArray (i.e., this entire array will be populated), and the
-      * position of the slice within the DeviceArray is indicated by the
+      * position of the slice within the BackendArray is indicated by the
       * input parameter beginId. 
       * 
-      * The capacity of the RHS DeviceArray must thus be greater than or
+      * The capacity of the RHS BackendArray must thus be greater than or
       * equal to the sum of beginId and the capacity of this HostSendArray.
       * 
-      * \param other DeviceArray<Data,CUT>  object from which to copy slice
+      * \param other BackendArray<Data,CUT>  object from which to copy slice
       * \param beginId  index of other array at which slice begins
       */
-      void copySlice(DeviceArray<Data,CUT> const & other, int beginId);
+      void copySlice(BackendArray<Data,CUT> const & other, int beginId);
 
       /**
       * Release host array.
@@ -200,7 +200,7 @@ namespace Pscf {
 
 } // namespace Pscf
 
-#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/BackendArray.h>
 #include <pscf/backend/cuda/cudaErrorCheck.h>
 #include <util/global.h>
 #include <cuda_runtime.h>
@@ -216,11 +216,11 @@ namespace Pscf {
    {}
 
    /*
-   * Assignment from a DeviceArray<Data,CUT> RHS device array.
+   * Assignment from a BackendArray<Data,CUT> RHS device array.
    */
    template <typename Data>
    HostSendArray<Data,CUT>& 
-   HostSendArray<Data,CUT>::operator = (DeviceArray<Data,CUT> const & other)
+   HostSendArray<Data,CUT>::operator = (BackendArray<Data,CUT> const & other)
    {
       // Precondition - RHS array must be allocated
       UTIL_CHECK(other.isAllocated());
@@ -246,10 +246,10 @@ namespace Pscf {
    }
 
    /*
-   * Copy a slice of the data from a larger DeviceArray into this array.
+   * Copy a slice of the data from a larger BackendArray into this array.
    */
    template <typename Data>
-   void HostSendArray<Data,CUT>::copySlice(DeviceArray<Data,CUT> const & other,
+   void HostSendArray<Data,CUT>::copySlice(BackendArray<Data,CUT> const & other,
                                        int beginId)
    {
       // Preconditions 
@@ -272,7 +272,7 @@ namespace Pscf {
    */
    template <typename Data>
    void HostSendArray<Data,CUT>::associate(
-                                 DeviceArray<Data,CUT>& deviceArray)
+                                 BackendArray<Data,CUT>& deviceArray)
    {
       UTIL_CHECK(deviceArray.isAllocated());
       const int n = deviceArray.capacity();

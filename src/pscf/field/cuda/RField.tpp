@@ -20,7 +20,7 @@ namespace Pscf {
    */
    template <int D>
    RField<D,CUT>::RField()
-    : DeviceArray<cudaReal,CUT>()
+    : BackendArray<cudaReal,CUT>()
    {}
 
    /**
@@ -28,7 +28,7 @@ namespace Pscf {
    */
    template <int D>
    RField<D,CUT>::RField(IntVec<D> const & meshDimensions)
-    : DeviceArray<cudaReal,CUT>()
+    : BackendArray<cudaReal,CUT>()
    {  allocate(meshDimensions); }
 
    /*
@@ -36,7 +36,7 @@ namespace Pscf {
    */
    template <int D>
    RField<D,CUT>::RField(RField<D,CUT> const & other)
-    : DeviceArray<cudaReal,CUT>(other),
+    : BackendArray<cudaReal,CUT>(other),
       meshDimensions_(0)
    {  meshDimensions_ = other.meshDimensions_; }
 
@@ -59,7 +59,7 @@ namespace Pscf {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<cudaReal,CUT>::allocate(size);
+      BackendArray<cudaReal,CUT>::allocate(size);
    }
 
    /*
@@ -68,17 +68,17 @@ namespace Pscf {
    template <int D>
    void RField<D,CUT>::deallocate()
    {
-      DeviceArray<cudaReal,CUT>::deallocate();
+      BackendArray<cudaReal,CUT>::deallocate();
       for (int i = 0; i < D; ++i) {
          meshDimensions_[i] = 0;
       }
    }
 
    /*
-   * Associate this object with a slice of another DeviceArray.
+   * Associate this object with a slice of another BackendArray.
    */
    template <int D>
-   void RField<D,CUT>::associate(DeviceArray<cudaReal,CUT>& arr, 
+   void RField<D,CUT>::associate(BackendArray<cudaReal,CUT>& arr, 
                                  int beginId, 
                                  IntVec<D> const & meshDimensions)
    {
@@ -88,7 +88,7 @@ namespace Pscf {
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DeviceArray<cudaReal,CUT>::associate(arr, beginId, size);
+      BackendArray<cudaReal,CUT>::associate(arr, beginId, size);
    }
 
    /*
@@ -98,7 +98,7 @@ namespace Pscf {
    RField<D,CUT>& 
    RField<D,CUT>::operator = (const RField<D,CUT>& other)
    {
-      DeviceArray<cudaReal,CUT>::operator = (other);
+      BackendArray<cudaReal,CUT>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
@@ -113,11 +113,11 @@ namespace Pscf {
    {
       // Preconditions: both arrays must be allocated with equal capacities
       UTIL_CHECK(other.isAllocated());
-      UTIL_CHECK((DeviceArray<cudaReal,CUT>::isAllocated()));
-      UTIL_CHECK((DeviceArray<cudaReal,CUT>::capacity() == other.capacity()));
+      UTIL_CHECK((BackendArray<cudaReal,CUT>::isAllocated()));
+      UTIL_CHECK((BackendArray<cudaReal,CUT>::capacity() == other.capacity()));
 
       // Use base class assignment operator to copy elements
-      DeviceArray<cudaReal,CUT>::operator = (other);
+      BackendArray<cudaReal,CUT>::operator = (other);
 
       return *this;
    }

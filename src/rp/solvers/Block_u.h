@@ -13,7 +13,7 @@
 #include <pscf/field/cuda/RField.h>         // member
 #include <pscf/field/cuda/RFieldDft.h>      // member
 #include <pscf/field/cuda/FFTBatched.h>     // member
-#include <pscf/backend/cuda/DeviceArray.h>  // member
+#include <pscf/backend/cuda/BackendArray.h>  // member
 #include <util/containers/FSArray.h>        // member
 
 // Forward declarations
@@ -352,7 +352,7 @@ namespace Rp {
       * allow batched FFTs to be performed on both fields simultaneously,
       * which occurs in stepThread().
       */
-      mutable DeviceArray<cudaReal,CUT> qrPair_;
+      mutable BackendArray<cudaReal,CUT> qrPair_;
 
       /**
       * Workspace array containing two k-grid fields, stored on the device.
@@ -361,7 +361,7 @@ namespace Rp {
       * allow batched FFTs to be performed on both fields simultaneously,
       * which occurs in stepThread().
       */
-      mutable DeviceArray<cudaComplex,CUT> qkPair_;
+      mutable BackendArray<cudaComplex,CUT> qkPair_;
 
       // R-grid work space (used in productAverage)
       mutable RField<D,CUT> qr_;
@@ -370,10 +370,10 @@ namespace Rp {
       mutable RFieldDft<D,CUT> qk_;
 
       /// Container for batched FFTs of q0 (forward) in contiguous memory
-      mutable DeviceArray<cudaComplex,CUT> q0kBatched_;
+      mutable BackendArray<cudaComplex,CUT> q0kBatched_;
 
       /// Container for batched FFTs of q1 (reverse) in contiguous memory
-      mutable DeviceArray<cudaComplex,CUT> q1kBatched_;
+      mutable BackendArray<cudaComplex,CUT> q1kBatched_;
 
       // Slices of forward and reverse propagator on a k-grid (for stress)
       mutable RFieldDft<D,CUT> q0k_;

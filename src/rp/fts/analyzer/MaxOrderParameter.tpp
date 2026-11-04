@@ -77,7 +77,7 @@ namespace Rp {
       UTIL_CHECK(kSize > 0);
       UTIL_CHECK(psi_.capacity() == kSize);
 
-      // Compute device array psi_ of squared Fourier magnitudes
+      // Compute backend array psi_ of squared Fourier magnitudes
       //computePsi();
       UTIL_CHECK(system().w().hasData());
       if (!simulator().hasWc()){
@@ -86,7 +86,7 @@ namespace Rp {
       system().domain().fft().forwardTransform(simulator().wc(0), wK_);
       VecOp::sqAbsV(psi_, wK_);
 
-      // Copy device array psi_ to const host array psi_h_
+      // Copy backend array psi_ to const host array psi_h_
       psi_h_ = psi_;
 
       // Compute maximum from host array

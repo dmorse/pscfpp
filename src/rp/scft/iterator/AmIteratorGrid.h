@@ -11,7 +11,7 @@
 #include <pscf/iterator/AmIteratorTmpl.h>   // base class template
 #include <rp/scft/iterator/Iterator.h>      // base class argument
 #include <pscf/iterator/AmbdInteraction.h>  // member
-#include <pscf/backend/DeviceArray.h>       // member
+#include <pscf/backend/BackendArray.h>       // member
 #include <pscf/backend/TmplDeclare.h>       // declaration macros
 
 #include <iostream>
@@ -43,7 +43,7 @@ namespace Rp {
    */
    template <int D, class T>
    class AmIteratorGrid
-    : public AmIteratorTmpl< Iterator<D,T>, DeviceArray<typename T::Real, T> >
+    : public AmIteratorTmpl< Iterator<D,T>, BackendArray<typename T::Real, T> >
    {
 
    public:
@@ -84,7 +84,7 @@ namespace Rp {
       void setup(bool isContinuation) override;
 
       /// Alias for type of state and residual vectors.
-      using VectorT = DeviceArray<typename T::Real, T>;
+      using VectorT = BackendArray<typename T::Real, T>;
 
       /// Alias for base class.
       using AmIterTmplT = AmIteratorTmpl< Iterator<D,T> , VectorT >;

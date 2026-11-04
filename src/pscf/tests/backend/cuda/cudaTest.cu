@@ -3,7 +3,7 @@
 */ 
 
 #include <util/global.h>
-#include "CudaTestComposite.h"
+#include "BackendCudaTestComposite.h"
 
 #include <test/CompositeTestRunner.h>
 
@@ -12,7 +12,7 @@ using namespace Util;
 
 int main(int argc, char* argv[])
 {
-   CudaTestComposite runner;
+   BackendCudaTestComposite runner;
 
    if (argc > 2) {
       UTIL_THROW("Too many arguments");

@@ -166,7 +166,7 @@ namespace Rp {
       void setupWaveBunches();
 
       /**
-      * Compute device arrays wm_ and wk_d_.
+      * Compute backend arrays wm_ and wk_d_.
       */
       void computeW();
 

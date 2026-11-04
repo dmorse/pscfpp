@@ -21,7 +21,7 @@ namespace Pscf {
    */
    template <int D>
    RFieldDft<D,CUT>::RFieldDft()
-    : DeviceArray<cudaComplex,CUT>()
+    : BackendArray<cudaComplex,CUT>()
    {}
 
    /*
@@ -29,7 +29,7 @@ namespace Pscf {
    */
    template <int D>
    RFieldDft<D,CUT>::RFieldDft(IntVec<D> const & meshDimensions)
-    : DeviceArray<cudaComplex,CUT>()
+    : BackendArray<cudaComplex,CUT>()
    {  allocate(meshDimensions); }
 
    /*
@@ -44,14 +44,14 @@ namespace Pscf {
    */
    template <int D>
    RFieldDft<D,CUT>::RFieldDft(const RFieldDft<D,CUT>& other)
-    : DeviceArray<cudaComplex,CUT>(other)
+    : BackendArray<cudaComplex,CUT>(other)
    {
       meshDimensions_ = other.meshDimensions_;
       dftDimensions_ = other.dftDimensions_;
    }
 
    /*
-   * Allocate underlying DeviceArray<cudaComplex,CUT> for the DFT mesh.
+   * Allocate underlying BackendArray<cudaComplex,CUT> for the DFT mesh.
    */
    template <int D>
    void RFieldDft<D,CUT>::allocate(const IntVec<D>& meshDimensions)
@@ -67,7 +67,7 @@ namespace Pscf {
       FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Allocate complex array on the GPU with size of DFT mesh
-      DeviceArray<cudaComplex,CUT>::allocate(size);
+      BackendArray<cudaComplex,CUT>::allocate(size);
    }
 
    /*
@@ -76,18 +76,18 @@ namespace Pscf {
    template <int D>
    void RFieldDft<D,CUT>::deallocate()
    {
-      DeviceArray<cudaComplex,CUT>::deallocate();
+      BackendArray<cudaComplex,CUT>::deallocate();
       for (int i = 0; i < D; ++i) {
          meshDimensions_[i] = 0;
       }
    }
 
    /*
-   * Associate this with a slice of a DeviceArray<cudaComplex,CUT>.
+   * Associate this with a slice of a BackendArray<cudaComplex,CUT>.
    */
    template <int D>
    void RFieldDft<D,CUT>::associate(
-                DeviceArray<cudaComplex,CUT>& arr,
+                BackendArray<cudaComplex,CUT>& arr,
                 int beginId,
                 IntVec<D> const & meshDimensions)
    {
@@ -102,7 +102,7 @@ namespace Pscf {
       FFT<D,CUT>::computeKMesh(meshDimensions, dftDimensions_, size);
 
       // Associate data with a slice of input array arr
-      DeviceArray<cudaComplex,CUT>::associate(arr, beginId, size);
+      BackendArray<cudaComplex,CUT>::associate(arr, beginId, size);
    }
 
    /*
@@ -113,7 +113,7 @@ namespace Pscf {
    RFieldDft<D,CUT>::operator = (RFieldDft<D,CUT> const & other)
    {
       // Assign data and size of underlying array
-      DeviceArray<cudaComplex,CUT>::operator = (other);
+      BackendArray<cudaComplex,CUT>::operator = (other);
 
       // Assign more specialized data members
       meshDimensions_ = other.meshDimensions_;
@@ -135,7 +135,7 @@ namespace Pscf {
       UTIL_CHECK(capacity() == other.capacity());
 
       // Use base class assignment operator to copy elements
-      DeviceArray<cudaComplex,CUT>::operator = (other);
+      BackendArray<cudaComplex,CUT>::operator = (other);
 
       return *this;
    }

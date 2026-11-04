@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/backend/cpp/HostSendArray.h>
-#include <pscf/backend/cpp/DeviceArray.h>
+#include <pscf/backend/cpp/BackendArray.h>
 
 #include <util/containers/DArray.h>
 #include <util/archives/MemoryOArchive.h>
@@ -59,7 +59,7 @@ void CppHostSendArrayTest::testAssociate()
    printMethod(TEST_FUNC);
    TEST_ASSERT(Memory::total() == memory_);
    {
-      DeviceArray<Data,CPT> w(capacity);
+      BackendArray<Data,CPT> w(capacity);
       for (int i=0; i < capacity; i++ ) {
          w[i] = (i+1)*10.0 ;
       }
@@ -81,7 +81,7 @@ void CppHostSendArrayTest::testAssociateCmplx()
    TEST_ASSERT(Memory::total() == memory_);
    {
       // Initialize device array
-      DeviceArray< std::complex<Data>, CPT> w;
+      BackendArray< std::complex<Data>, CPT> w;
       w.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          w[i].real((i+1)*10.0);
@@ -109,7 +109,7 @@ void CppHostSendArrayTest::testAssign()
    TEST_ASSERT(Memory::total() == memory_);
    {
       // Data owner (device array)
-      DeviceArray<Data,CPT> v(capacity);
+      BackendArray<Data,CPT> v(capacity);
       TEST_ASSERT(v.capacity() == capacity);
       TEST_ASSERT(v.isAllocated());
       TEST_ASSERT(v.isOwner());
@@ -168,7 +168,7 @@ void CppHostSendArrayTest::testBaseClassReference()
    printMethod(TEST_FUNC);
    {
       // Data owner (device array)
-      DeviceArray<Data,CPT> w(3);
+      BackendArray<Data,CPT> w(3);
 
       HostSendArray<Data,CPT> v;
       v.associate(w);
@@ -190,7 +190,7 @@ void CppHostSendArrayTest::testDArrayOuter()
    int m = 2;
 
    // Allocate array of device arrays
-   DArray< DeviceArray<Data,CPT> > v;
+   DArray< BackendArray<Data,CPT> > v;
    v.allocate(m);
    for (int i = 0; i < m; ++i) {
       v[i].allocate(capacity);

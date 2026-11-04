@@ -20,7 +20,7 @@ namespace Pscf {
    */
    template <int D>
    CField<D,CPT>::CField()
-    : DeviceArray<fftw_complex,CPT>(),
+    : BackendArray<fftw_complex,CPT>(),
       meshDimensions_()
    {}
 
@@ -38,7 +38,7 @@ namespace Pscf {
    */
    template <int D>
    CField<D,CPT>::CField(CField<D,CPT> const & other)
-    : DeviceArray<fftw_complex,CPT>(),
+    : BackendArray<fftw_complex,CPT>(),
       meshDimensions_()
    {
       if (other.isAllocated() && other.capacity_ > 0) {

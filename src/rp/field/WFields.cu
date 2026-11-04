@@ -6,7 +6,7 @@
 */
 
 #include <pscf/backend/cuda/VecOp.h>
-#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/BackendArray.h>
 
 #include <rp/field/WFields.tpp>   
 //#include <rp/field/WFields_u.h>       // class specialziation

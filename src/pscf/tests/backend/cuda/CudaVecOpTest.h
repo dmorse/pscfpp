@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/backend/VecOp.h>
-#include <pscf/backend/cuda/DeviceArray.h>
+#include <pscf/backend/cuda/BackendArray.h>
 #include <pscf/backend/cuda/complex.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/math/FieldComparison.h>
@@ -39,10 +39,10 @@ private:
 
    // Input and output arrays, real and complex
    HostSendArray<cudaReal,CUT> hInReal, hInReal2, hOutReal, hOutReal2;
-   DeviceArray<cudaReal,CUT> dInReal, dInReal2, dOutReal, dOutReal2;
+   BackendArray<cudaReal,CUT> dInReal, dInReal2, dOutReal, dOutReal2;
 
    HostSendArray<cudaComplex,CUT> hInComplex, hInComplex2, hOutComplex;
-   DeviceArray<cudaComplex,CUT> dInComplex, dInComplex2, dOutComplex;
+   BackendArray<cudaComplex,CUT> dInComplex, dInComplex2, dOutComplex;
 
    // Input scalars, real and complex
    cudaReal scalarReal;
@@ -1363,7 +1363,7 @@ public:
       printMethod(TEST_FUNC);
 
       // ~~~ Test addVMany ~~~
-      DArray<DeviceArray<cudaReal,CUT> const *> inVecs;
+      DArray<BackendArray<cudaReal,CUT> const *> inVecs;
       inVecs.allocate(4);
       inVecs[0] = &dInReal;
       inVecs[1] = &dInReal2;
@@ -1376,7 +1376,7 @@ public:
       }
       checkEqualReal(hOutReal, refOutReal);
 
-      DArray<DeviceArray<cudaReal,CUT> > inVecs2;
+      DArray<BackendArray<cudaReal,CUT> > inVecs2;
       inVecs2.allocate(4);
       inVecs2[0].associate(dInReal, 0, dInReal.capacity());
       inVecs2[1].associate(dInReal2, 0, dInReal2.capacity());
