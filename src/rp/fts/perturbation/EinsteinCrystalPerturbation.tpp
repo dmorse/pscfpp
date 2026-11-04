@@ -79,8 +79,6 @@ namespace Rp {
    void EinsteinCrystalPerturbation<D,T>::setup()
    {
       const int nMonomer = system().mixture().nMonomer();
-      const IntVec<D> meshDimensions
-                      = system().domain().mesh().dimensions();
       const int meshSize = system().domain().mesh().size();
 
       // Check allocation of work space for fields
