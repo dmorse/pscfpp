@@ -35,15 +35,16 @@ run-quiet: $(TEST_OBJ) $(TEST)
 
 clean-outputs:
 	rm -f log count 
+	-cd $(TEST_DIR)/backend/cpp; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/backend/cuda; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/chem; $(MAKE) clean-outputs
-	-cd $(TEST_DIR)/floryHuggins; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/correlation; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/crystal; $(MAKE) clean-outputs
+	-cd $(TEST_DIR)/floryHuggins; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/interaction; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/math; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/mesh; $(MAKE) clean-outputs
 	-cd $(TEST_DIR)/solvers; $(MAKE) clean-outputs
-	-cd $(TEST_DIR)/backend/cpp; $(MAKE) clean-outputs
-	-cd $(TEST_DIR)/backend/cuda; $(MAKE) clean-outputs
 
 clean:
 	rm -f $(TEST_OBJ)
@@ -53,15 +54,16 @@ clean:
 	rm -f *.o *.d 
 	rm -f *.ou *.du
 	rm -f log count 
+	-cd $(TEST_DIR)/backend/cpp; $(MAKE) clean
+	-cd $(TEST_DIR)/backend/cuda; $(MAKE) clean
 	-cd $(TEST_DIR)/chem; $(MAKE) clean
-	-cd $(TEST_DIR)/floryHuggins; $(MAKE) clean
 	-cd $(TEST_DIR)/correlation; $(MAKE) clean
+	-cd $(TEST_DIR)/crystal; $(MAKE) clean
+	-cd $(TEST_DIR)/floryHuggins; $(MAKE) clean
 	-cd $(TEST_DIR)/interaction; $(MAKE) clean
 	-cd $(TEST_DIR)/math; $(MAKE) clean
 	-cd $(TEST_DIR)/mesh; $(MAKE) clean
 	-cd $(TEST_DIR)/solvers; $(MAKE) clean
-	-cd $(TEST_DIR)/backend/cpp; $(MAKE) clean
-	-cd $(TEST_DIR)/backend/cuda; $(MAKE) clean
 
 .PHONY: all run run-quiet clean-outputs clean
 

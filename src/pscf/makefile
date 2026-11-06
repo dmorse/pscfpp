@@ -23,6 +23,7 @@ clean:
 	rm -f *.o */*.o */*/*.o
 	rm -f *.d */*.d */*/*.d
 	rm -f backend/cuda/*.ou backend/cuda/*.du
+	rm -f field/cuda/*.ou field/cuda/*.du
 	cd tests; $(MAKE) clean
 
 veryclean:
