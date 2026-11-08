@@ -1,0 +1,74 @@
+This contributor license agreement ("Agreement") documents the rights granted by a contributor to the PSCF C++ software project to the maintainer or maintainers of that project. PSCF is currently maintained by David Morse (morse012@umn.edu) in github repository github.com/dmorse/pscfpp . This agreement is intended to cover rights associated with all past and future contributions by an individual contributor.
+
+1. Definitions
+
+“You” means the individual who submits a contribution to us.
+
+"We or Us" means the maintainer or maintainers of the PSCF software package.
+
+“Contribution” means any work of authorship that is submitted by you to us, which was designed to be incorporated into the PSCF software or documentation, and in which you own or assert ownership of the copyright. 
+
+“Copyright” means all rights protecting works of authorship owned or controlled by you.
+
+“Material” means a work of authorship which is made available by us to third parties. After you submit a contribution, it may be included in such material.
+
+“Submit” means any form of electronic or written communication sent to us, including but not limited to pull requests and issue reports submitted via github, and email, but excluding any communication that is explicitly designated in writing by you as not being intended to be a contribution.
+
+“Submission Date” means the date on which you submit a contribution to us.
+
+“Effective Date” means the date you execute this agreement or the date you first submit a contribution to us, whichever is earlier.
+
+2. Grant of Rights
+2.1 Copyright License
+
+(a) You retain ownership of the copyright in your contributions to PSCF and have the same rights to use or license your contributions that you would have had without entering into this agreement.
+
+(b) To the maximum extent permitted by the relevant law, you grant to us a perpetual, worldwide, non-exclusive, transferable, royalty-free, irrevocable license under the copyrights covering all of your contributions to PSCF, with the right to sublicense such rights through multiple tiers of sublicensees, to reproduce, modify, display, perform and distribute your contributions as part of material provided to third parties; provided that this license is conditioned upon compliance with Section 2.3. This applies to contributions submitted either before or after the date that you execute this agreement.
+
+2.2 Patent License
+
+For patent claims including, without limitation, method, process, and apparatus claims that you own, control or have the right to grant, now or in the future, you grant to us a perpetual, worldwide, non-exclusive, transferable, royalty-free, irrevocable patent license, with the right to sublicense these rights to multiple tiers of sublicensees, to make, have made, use, import and otherwise transfer your contributions and these contributions in combination with the material (and portions of such combination). This license is granted only to the extent that the exercise of the licensed rights infringes such patent claims; and provided that this license is conditioned upon compliance with Section 2.3. 
+
+2.3 Outbound License
+
+If we include all or part of a contribution from you in material that is made available to others, we agree to license the contribution only under the terms of the GNU General Public License version 3, or other licenses that are approved by the Open Source Initiative on or after the effective date of this agreement, including both permissive and copyleft licenses, whether or not such licenses are subsequently disapproved (including any right to adopt any future version of a license if permitted). 
+
+2.4 Moral Rights.
+
+If moral rights apply to the contribution, to the maximum extent permitted by law, you waive and agree not to assert such moral rights against us or our successors in interest, or any of our licensees, either direct or indirect.
+
+2.5 Contributions by University of Minnesota Employees
+
+Any contribution that you submit that is the result of work that you did as an employee of the University of Minnesota may be subject to University of Minnesota policies governing any university claims to copyright or patent rights arising from work performed by employees. These policies may limit your patent or copyright rights, and may thereby limit the relevance of other clauses that apply only to contributions for which you own the copyright or have valid patent claims.
+
+2.6 Our Rights.
+
+You acknowledge that we are not obligated to use any contribution as part of material made available to others, and may decide to include or exclude any contribution, as we consider appropriate
+
+2.7 Reservation of Rights.
+
+Any rights not expressly licensed under this section are expressly reserved by you.
+
+3. Agreement
+
+You confirm that:
+
+(a) You have the legal authority to enter into this agreement.
+
+(b) The grant of rights under Section 2 does not violate any grant of rights which you have made to third parties, including any employer. If you have contributed results of work that was performed as an employee of an employer other than the University of Minnesota, you have had your employer approve this agreement.
+
+4. Disclaimer
+
+EXCEPT FOR THE EXPRESS WARRANTIES IN SECTION 3, THE CONTRIBUTION IS PROVIDED "AS IS". MORE PARTICULARLY, ALL EXPRESS OR IMPLIED WARRANTIES INCLUDING, WITHOUT LIMITATION, ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE EXPRESSLY DISCLAIMED BY YOU TO US. TO THE EXTENT THAT ANY SUCH WARRANTIES CANNOT BE DISCLAIMED, SUCH WARRANTY IS LIMITED IN DURATION TO THE MINIMUM PERIOD PERMITTED BY LAW.
+
+5. Consequential Damage Waiver
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT WILL YOU BE LIABLE FOR ANY LOSS OF PROFITS, LOSS OF ANTICIPATED SAVINGS, LOSS OF DATA, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL AND EXEMPLARY DAMAGES ARISING OUT OF THIS AGREEMENT REGARDLESS OF THE LEGAL OR EQUITABLE THEORY (CONTRACT, TORT OR OTHERWISE) UPON WHICH THE CLAIM IS BASED.
+
+6. Miscellaneous
+
+6.1 This agreement sets out the entire agreement between you and us for your contributions to us and overrides all other agreements or understandings.
+
+6.2 If you or we assign the rights or obligations received through this agreement to a third party, as a condition of the assignment, that third party must agree in writing to abide by all the rights and obligations in the agreement.
+
+6.3 If any provision of this agreement is found void and unenforceable, such provision will be replaced to the extent possible with a provision that comes closest to the meaning of the original provision and which is enforceable. The terms and conditions set forth in this agreement shall apply notwithstanding any failure of essential purpose of this agreement or any limited remedy to the maximum extent possible under law.
