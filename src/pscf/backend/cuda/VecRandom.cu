@@ -274,20 +274,20 @@ namespace Pscf {
    /*
    * Link vector and scalar random number generators, if needed.
    *
-   * The Cuda GPU implementation does nothing, because host and device 
-   * RNGs are are independent for this code. The CPU implementation would
-   * link the two RNGs.
+   * This specialization for a CUDA backend (T=CUT) does nothing, because 
+   * scalar and vector RNGs are are independent in this case. The 
+   * specialization for a C++ backend (T=CPT) instead links the two RNGs.
    */
    template <>
    void linkVecRandom<CUT>(VecRandom<CUT>& vr, Random & sr)
    {}
 
    /*
-   * Set vector RNG seed, if needed (do nothing for CPU code).
+   * Set vector RNG seed, if needed.
    *
-   * The Cuda GPU implementation sets the seed for the GPU vector RNG.
-   * The CPU implementation would do nothing, because the RNGs are linked
-   * in this case.
+   * This specialization for a CUDA backend (T=CUT) sets the seed for the 
+   * vector RNG. The specialization for a C++ backend (T=CPT) instead does
+   * nothing.
    */
    template <>
    void seedVecRandom<CUT>(VecRandom<CUT>& vr, long seed)

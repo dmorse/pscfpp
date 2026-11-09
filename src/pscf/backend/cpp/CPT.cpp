@@ -24,20 +24,4 @@ namespace Pscf {
    void CPT::setThreadCount(int nThread)
    {}
 
-   /*
-   * Associate vector and scalar random number generators, if needed.
-   *
-   * GPU-enabled code would instead do nothing.
-   */
-   void CPT::linkVecRandom(VecRandom<CPT>& vr, Random & sr)
-   {  vr.associate(sr); }
-
-   /*
-   * Set vector RNG seed, if needed (do nothing for CPU code).
-   *
-   * GPU-enabled code would instead set the seed.
-   */
-   void CPT::seedVecRandom(VecRandom<CPT>& vr, long seed)
-   {}
-
 }

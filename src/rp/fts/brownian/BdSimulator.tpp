@@ -65,16 +65,25 @@ namespace Rp {
    template <int D, class T>
    BdSimulator<D,T>::~BdSimulator()
    {
-      delete analyzerManagerPtr_;
+      // Created in constructor
+      if (analyzerManagerPtr_) {
+         delete analyzerManagerPtr_;
+      }
       if (bdStepFactoryPtr_) {
          delete bdStepFactoryPtr_;
-      }
-      if (bdStepPtr_) {
-         delete bdStepPtr_;
       }
       if (trajectoryReaderFactoryPtr_) {
          delete trajectoryReaderFactoryPtr_;
       }
+
+      // Created in readParameters function
+      if (bdStepPtr_) {
+         delete bdStepPtr_;
+      }
+
+      // Note: There is no pointer member variable that points to a 
+      // TrajectoryReader<D,T> because an instance of this class is
+      // both created and destroyed within the analyze member function.
    }
 
    /*
@@ -298,7 +307,7 @@ namespace Rp {
       UTIL_CHECK((Analyzer<D,T>::baseInterval > 0));
       UTIL_CHECK(analyzerManager().size() > 0);
 
-      // Construct TrajectoryReader
+      // Construct a TrajectoryReader
       TrajectoryReader<D,T>* trajectoryReaderPtr;
       trajectoryReaderPtr = trajectoryReaderFactory().factory(classname);
       if (!trajectoryReaderPtr) {

@@ -29,24 +29,4 @@ namespace Pscf {
       ThreadMesh::setThreadsPerBlock(nThread);
    }
 
-   /*
-   * Link vector and scalar random number generators, if needed.
-   *
-   * The Cuda GPU implementation does nothing, because host and device 
-   * RNGs are are independent for this code. The CPU implementation would
-   * link the two RNGs.
-   */
-   void CUT::linkVecRandom(VecRandom<CUT>& vr, Random & sr)
-   {}
-
-   /*
-   * Set vector RNG seed, if needed (do nothing for CPU code).
-   *
-   * The Cuda GPU implementation sets the seed for the GPU vector RNG.
-   * The CPU implementation would do nothing, because the RNGs are linked
-   * in this case.
-   */
-   void CUT::seedVecRandom(VecRandom<CUT>& vr, long seed)
-   {  vr.setSeed(seed); }
-
 }

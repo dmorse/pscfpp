@@ -74,12 +74,12 @@ namespace Pscf {
       }
    }
 
-   // Free functions
+   // Free functions, used to initialize the vector RNG.
 
    /*
    * Associate vector and scalar random number generators, if needed.
    *
-   * GPU-enabled code would instead do nothing.
+   * The specialization for a CUDA backend would instead do nothing.
    */
    template <>
    void linkVecRandom<CPT>(VecRandom<CPT>& vr, Random & sr)
@@ -88,7 +88,7 @@ namespace Pscf {
    /*
    * Set vector RNG seed, if needed (do nothing for CPU code).
    *
-   * GPU-enabled code would instead set the seed.
+   * The specialization for a CUDA backend would instead set the seed.
    */
    template <>
    void seedVecRandom<CPT>(VecRandom<CPT>& vr, long seed)

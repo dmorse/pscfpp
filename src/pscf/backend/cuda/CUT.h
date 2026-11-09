@@ -24,7 +24,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Type class for the Cuda GPU backend.
+   * Backend identifier class for the GPU-enabled CUDA backend.
    *
    * \ingroup Pscf_Backend_Cuda_Module
    */
@@ -55,29 +55,6 @@ namespace Pscf {
       * \param nThread  number of threads
       */
       static void setThreadCount(int nThread);
-
-      /**
-      * Link vector and scalar random number generators, if needed.
-      *
-      * The Cuda GPU implementation does nothing, because the host and
-      * device RNGs are independent.
-      *
-      * \param vr  vector RNG
-      * \param sr  scalar RNG
-      */
-      static
-      void linkVecRandom(VecRandom<CUT>& vr, Random & sr);
-
-      /**
-      * Set the vector random number generator seed, if needed.
-      *
-      * The Cuda GPU implementation sets a seed for the device RNG.
-      *
-      * \param vr  vector RNG to be initialized
-      * \param seed  random seed value
-      */
-      static
-      void seedVecRandom(VecRandom<CUT>& vr, long seed);
 
    };
 

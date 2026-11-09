@@ -24,7 +24,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Type class for the C++ serial CPU backend.
+   * Backend identifier class for the C++ serial CPU backend.
    *
    * \ingroup Pscf_Backend_Cpp_Module
    */
@@ -56,30 +56,6 @@ namespace Pscf {
       * \param nThread  number of threads
       */
       static void setThreadCount(int nThread);
-
-      /**
-      * Link vector and scalar random number generators, if needed.
-      *
-      * The implementation for CPU code associates the two generators.
-      * In CPU code, the vector RNG simply calls the scalar RNG.
-      *
-      * \param vr vector RNG
-      * \param sr scalar RNG
-      */
-      static
-      void linkVecRandom(VecRandom<CPT>& vr, Random & sr);
-
-      /**
-      * Set the vector random number generator seed, if needed.
-      *
-      * The implementation for CPU code does nothing, because the vector
-      * RNG is simply a facade for the scalar RNG.
-      *
-      * \param vr  vector RNG to be initialized
-      * \param seed  random seed value
-      */
-      static
-      void seedVecRandom(VecRandom<CPT>& vr, long seed);
 
    };
 

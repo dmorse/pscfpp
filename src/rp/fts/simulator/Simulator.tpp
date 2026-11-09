@@ -81,7 +81,7 @@ namespace Rp {
              = new PerturbationFactory<D,T>(*this);
       rampFactoryPtr_ = new RampFactory<D,T>(*this);
 
-      T::linkVecRandom(vecRandom(), random());
+      linkVecRandom(vecRandom(), random());
    }
 
    /*
@@ -90,20 +90,29 @@ namespace Rp {
    template <int D, class T>
    Simulator<D,T>::~Simulator()
    {
+      // Required children (created in constructor)
+      if (vecRandomPtr_) {
+         delete vecRandomPtr_;
+      }
+      if (randomPtr_) {
+         delete randomPtr_;
+      }
       if (compressorFactoryPtr_) {
          delete compressorFactoryPtr_;
-      }
-      if (compressorPtr_) {
-         delete compressorPtr_;
       }
       if (perturbationFactoryPtr_) {
          delete perturbationFactoryPtr_;
       }
-      if (perturbationPtr_) {
-         delete perturbationPtr_;
-      }
       if (rampFactoryPtr_) {
          delete rampFactoryPtr_;
+      }
+
+      // Optional children (created in readParameters)
+      if (compressorPtr_) {
+         delete compressorPtr_;
+      }
+      if (perturbationPtr_) {
+         delete perturbationPtr_;
       }
       if (rampPtr_) {
          delete rampPtr_;
@@ -745,7 +754,7 @@ namespace Rp {
       // Default value seed_ = 0 uses the clock time.
       random().setSeed(seed_);
 
-      T::seedVecRandom(vecRandom(), seed_);
+      seedVecRandom(vecRandom(), seed_);
       // CPU version does nothing, GPU version sets the seed.
    }
 

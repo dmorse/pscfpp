@@ -105,13 +105,16 @@ namespace Pscf {
 
    };
 
-   // Related free functions
+   // Related free functions. Used for initialization.
 
    /**
    * Link vector and scalar random number generators, if needed.
    *
-   * The implementation for CPU code associates the two generators.
-   * In CPU code, the vector RNG simply calls the scalar RNG.
+   * This specialization for the C++ backend (T=CPT) associates the two 
+   * generators. In this specialization, the vector RNG provides a facade
+   * for the scalar random generator. The specialization of this function
+   * for a CUDA backend (T=CUT) does nothing, since in this case the two
+   * generators are independent. 
    *
    * \param vr vector RNG
    * \param sr scalar RNG
@@ -122,8 +125,10 @@ namespace Pscf {
    /**
    * Set the vector random number generator seed, if needed.
    *
-   * The implementation for CPU code does nothing, because the vector
-   * RNG is simply a facade for the scalar RNG.
+   * This specialization for a C++ backend (T=CPT) code does nothing, 
+   * because the vector RNG is simply a facade for the scalar RNG. The
+   * specialization for a CUDA backend (T=CUT) instead actually sets a
+   * seed for the independent vector RNG.
    *
    * \param vr  vector RNG to be initialized
    * \param seed  random seed value
