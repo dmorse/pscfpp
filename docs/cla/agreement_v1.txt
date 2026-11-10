@@ -10,7 +10,7 @@ This contributor license agreement ("Agreement") documents the rights granted by
 
 “Copyright” means all rights protecting works of authorship owned or controlled by you.
 
-“Material” means a work of authorship which is made available by us to third parties. After you submit a contribution, it may be included in such material.
+“Material” means a work of authorship that is made available by us to third parties. After you submit a contribution, it may be included in such material.
 
 “Submit” means any form of electronic or written communication sent to us, including but not limited to pull requests and issue reports submitted via github, and email, but excluding any communication that is explicitly designated in writing by you as not being intended to be a contribution.
 
@@ -23,7 +23,7 @@ This contributor license agreement ("Agreement") documents the rights granted by
 
 (a) You retain ownership of the copyright in your contributions to PSCF and have the same rights to use or license your contributions that you would have had without entering into this agreement.
 
-(b) To the maximum extent permitted by the relevant law, you grant to us a perpetual, worldwide, non-exclusive, transferable, royalty-free, irrevocable license under the copyrights covering all of your contributions to PSCF, with the right to sublicense such rights through multiple tiers of sublicensees, to reproduce, modify, display, perform and distribute your contributions as part of material provided to third parties; provided that this license is conditioned upon compliance with Section 2.3. This applies to contributions submitted either before or after the date that you execute this agreement.
+(b) To the maximum extent permitted by the relevant law, you grant to us a perpetual, worldwide, non-exclusive, transferable, royalty-free, irrevocable license under the copyrights covering all of your contributions to PSCF, with the right to sublicense such rights through multiple tiers of sublicensees, to reproduce, modify, display, perform and distribute your contributions as part of material provided to third parties; provided that this license is conditioned upon compliance with Section 2.3. This applies to all contributions to PSCF that you submit either before or after the date that you execute this agreement.
 
 2.2 Patent License
 

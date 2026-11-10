@@ -4,12 +4,12 @@
 PSCF has thus far been developed primarily at the University of Minnesota 
 by David Morse and student co-authors, but we welcome contributions from
 elsewhere.  It is currently maintained by David Morse (morse012@umn.edu) in 
-repository github.com/dmorse/pscfpp.  Users are encouraged to contribute to 
+repository github.com/dmorse/pscfpp. Users are encouraged to contribute to 
 PSCF by submitting github issues to report bugs, by submitting github pull 
-requests, and by participating in discussions.
+requests, and by participating in the discussion forum.
 
-PSCF is free, open source software. It is distributed under the terms 
-of the GNU General Public License (GPL) as published by the Free Software 
+PSCF is free, open source software. It is distributed under the terms of 
+the GNU General Public License (GPL) as published by the Free Software 
 Foundation, either version 3 of the License or (at your option) any 
 later version. PSCF is distributed without any warranty, without even 
 the implied warranty of merchantability or fitness for a particular 
@@ -18,35 +18,35 @@ or the <a href=http://www.gnu.org/licenses/>gnu web page</a> for details.
 
 ## Issues, Pull Requests and Discussions:
 
-The github interfaces for issues, pull requests and discussions provide 
+The GitHub interfaces for issues, pull requests and discussions provide 
 complementary methods of discussing bugs, problems, and proposed 
 improvements:
 
-   - Submit github Issues to report bugs. 
+   - Use the PSCF Discussions forum to ask questions about usage and to 
+     discuss possible improvements.
 
-   - Submit github pull requests for proposed contributions to the source 
+   - Submit GitHub Issues to report bugs. 
+
+   - Submit pull requests for proposed contributions to the source 
      code and/or documentation. 
-
-   - Use the github Discussions page to ask questions about usage and to 
-     carry on conversations about limitations of the sofware and possible 
-     improvements.
 
 Users may also directly email David Morse (morse012@umn.edu) to discuss 
 usage or proposed improvements. 
 
 ## Issues:
 
-Any user may submit an Issue via github to report an error:
+Any user may submit an Issue via the github web interface to report an 
+error. The following guidelines apply:
 
-  - Issues should be used to report both bugs in the source code and 
-    errors in any documentation.
+  - Issues may be submitted to report bugs in the source code and
+    errors in the documentation.
 
   - If you are unsure whether a problem that you encounter when using
     PSCF is the result of a bug, consider first sending an email to 
     morse012@umn.edu or using the github Discussions page to discuss 
-    the problem. 
+    the problem.
 
-  - The maintainer(s) of PSCF often use github Issues to document plans 
+  - The maintainer(s) of PSCF often use github Issues to describe plans 
     for new features and other proposed changes. We ask, however, that 
     all others instead use email and/or github discussions to discuss 
     proposed changes that are not bug or error reports.
@@ -58,19 +58,19 @@ have created a private version of pscfpp in their github account by
 forking the main PSCF repository, dmorse/pscfpp.  Pull requests may 
 then be submitted via the github web interface. 
 
-  - The first pull request from a new user should be the one in which
-    the user accepts the contributor licensing agreement. See 
-    discussion of this below.
-
   - All pull requests should be directed to the "feature-pull" branch 
     of the pscfpp repository, and not to the "devel" or "main" branch. 
     To do this, use the menu provided in the github web interface for 
-    submitting a pull request that allowed you choose the branch to
+    submitting a pull request that allows you choose the branch to
     which the pull request should be applied.  If a pull request is 
-    accepted, the maintainer will first merge it into the "feature-pull" 
+    accepted, the maintainer will first appply it to the "feature-pull" 
     branch, and then do some testing in that branch before merging it 
     into the devel branch.  The "feature-pull" branch is generally 
     kept synchronized with the devel branch. 
+
+  - The first pull request from a new contributor should be one in which 
+    they accept the contributor licensing agreement. See discussion of 
+    this below.
 
   - Before submitting a pull request that introduces a new feature, 
     we recommend that you discuss the proposal with the maintainer,
@@ -78,34 +78,36 @@ then be submitted via the github web interface.
     discussion in the github Discussions space. More generally, we 
     recommend prior discussion of most nontrivial design decisions.
 
-  - Before submitting a pull request, merge the "devel" branch of the
-    main repository into the branch from which you will be submitting 
-    the pull request and resolve any conflicts or problems that arise.
+  - Pull requests should be created by starting from a branch that is 
+    identical to a recent version of the devel branch and making the
+    minimum modifications necessary for the intended purpose. We 
+    recommend that you merge the "devel" branch back into the branch
+    that you are using to create a pull request shortly before
+    submitting the request, in order to incorporate any recent changes 
+    to this branch made by others.
 
   - Contributors are expected to thoroughly test all code before 
     submitting a pull request. At a minimum, you must run all relevant 
     PSCF unit tests. If you modify any code that could be used by the 
     GPU-enabled version of pscf_rp, you must run all unit tests that 
-    are compiled when both C++ and CUDA variants of that program have 
-    been enabled (e.g., by invoking ./setopts -c1 -u1). Running tests
-    that use CUDA requires access to an NVIDIA CPU.  It is necessary 
-    to run all GPU-enabled tests if you modify any code in the 
-    src/pscf or src/rp directories, since code in these directories 
-    is accessible to the GPU-enabled version of pscf_rp. 
+    are compiled when both C++ and CUDA specializations of that program 
+    have been enabled, e.g., by invoking ./setopts -c1 -u1. To run tests 
+    that use CUDA, you will need access to computer that has the NVIDIA 
+    developer toolkit and an appropriate NVIDIA GPU installed.
 
   - Pull requests that add new features should include new unit tests 
     that validate the correctness of any new features.
 
-  - A commit that fixes an issue should include the text 
-    "Fix #(number)" in the brief commit message, where (number) 
-    denotes the number assigned to the relevant issue, which should
-    be preceded by a bash (#) symbol. For example, the brief 
-    message for a commit that fixes issue 268 should contain the 
-    text "Fix #268".
+  - A commit that fixes an issue should include the text "Fix #(number)" 
+    in the brief commit message, where (number) denotes the number 
+    assigned to the relevant issue, preceded by a bash (#) symbol. For 
+    example, the brief message for a commit that fixes Issue 268 should 
+    contain the text "Fix #268".
 
-  - Each pull request should be documented by a comment that 
-    summarizes the purpose of the pull request and the nature 
-    of associated changes.
+  - Each pull request should be documented by a comment that summarizes 
+    the purpose of the pull request and the nature of associated changes.
+    This comment can be provided in the web interface for comments on 
+    pull requests.
 
 ## Contributor Licensing Agreement (CLA):
 
@@ -122,25 +124,23 @@ that is distributed under the GNU GPL copyleft license or another open
 source license. Please see the file docs/cla/agreement_v1.txt for full 
 details.  
 
-To accept the PSCF CLA, please send a pull request to feature-pull that 
+To execute the PSCF CLA, please send a pull request to feature-pull that 
 contains a single commit in which you should:
 
   - Add your own name to the list of contributors given in the file 
     docs/cla/contributors.txt, followed by the date. This is a list of 
-    contributors who have executed the CLA, in which the date listed 
-    after each contributors name is the date on which the agreement 
-    was executed by that contributor. Do not change anything else in 
-    this file. 
+    contributors who have executed the CLA, in which the date listed after 
+    each name is the date on which the agreement was executed by that 
+    contributor. Do not change anything else in this file. 
 
-  - Give this commit a brief comment that says "Accepting CLA"
+  - Give this commit a brief message that says "Accepting CLA"
 
-  - Add a longer comment to that commit that says "I accept the terms of 
-    the contributor licensing agreement given in the file 
+  - Add a longer message to that commit that says "I agree to the terms 
+    of the PSCF contributor licensing agreement given in the file 
     docs/cla/agreement_v1.txt." 
 
-The git commit and pull request that are used to accept the CLA 
-should not contain changes to any files other than the file 
-docs/cla/contributors.txt.
+The git commit and pull request that are used to accept the CLA should 
+not changes any files other than the file docs/cla/contributors.txt.
 
 Each contributor only needs to go through this process once to execute
 the agreement. The agreement is written so as to apply to all past and
