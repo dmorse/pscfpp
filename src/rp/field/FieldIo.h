@@ -39,9 +39,11 @@ namespace Rp {
    *
    * This class template provides functions to read and write real-valued
    * fields in any of three representations (symmetry-adapted basis,
-   * real-space r-grid, or Fourier space k-grid form), functions to
+   * real-space r-grid, or Fourier space k-grid form), functions to 
    * convert among these three representations, and other utilities for
-   * manipulating fields and field files.
+   * manipulating fields and field files. Functions that provide these 
+   * services are all declared const., and can thus be accessed via a
+   * const reference to a FieldIo object.
    *
    * <b>Template parameters:</b>
    *
@@ -1261,35 +1263,23 @@ namespace Rp {
                             bool isSymmetric = true) const;
 
       ///@}
-      /// \name Accessor functions (const references)
+      /// \name Accessors for associated objects (const references)
       ///@{
 
       /**
-      * Get spatial discretization mesh by const reference.
+      * Get the associated spatial discretization mesh by const reference.
       */
-      Mesh<D> const & mesh() const
-      {
-         UTIL_ASSERT(meshPtr_);
-         return *meshPtr_;
-      }
+      Mesh<D> const & mesh() const;
 
       /**
       * Get the associated Basis by const reference.
       */
-      Basis<D> const & basis() const
-      {
-         UTIL_ASSERT(basisPtr_);
-         return *basisPtr_;
-      }
+      Basis<D> const & basis() const;
 
       /**
-      * Get associated FileMaster by const reference.
+      * Get the associated FileMaster by const reference.
       */
-      FileMaster const & fileMaster() const
-      {
-         UTIL_ASSERT(fileMasterPtr_);
-         return *fileMasterPtr_;
-      }
+      FileMaster const & fileMaster() const;
 
       ///@}
 
@@ -1352,47 +1342,27 @@ namespace Rp {
       /**
       * Get the lattice type enum value by const reference.
       */
-      typename UnitCell<D>::LatticeSystem const & lattice() const
-      {
-         UTIL_ASSERT(latticePtr_);
-         return *latticePtr_;
-      }
+      typename UnitCell<D>::LatticeSystem const & lattice() const;
 
       /**
       * Has a space group been declared externally ?
       */
-      bool hasGroup() const
-      {
-         UTIL_ASSERT(hasGroupPtr_);
-         return *hasGroupPtr_;
-      }
+      bool hasGroup() const;
 
       /**
       * Get an associated group name string by const reference.
       */
-      std::string const & groupName() const
-      {
-         UTIL_ASSERT(groupNamePtr_);
-         return *groupNamePtr_;
-      }
+      std::string const & groupName() const;
 
       /**
-      * Get an associated SpaceGroup<D> by const reference.
+      * Get an associated SpaceGroup by const reference.
       */
-      SpaceGroup<D> const & group() const
-      {
-         UTIL_ASSERT(groupPtr_);
-         return *groupPtr_;
-      }
+      SpaceGroup<D> const & group() const;
 
       /**
       * Get FFT object by const reference
       */
-      FFT<D,T> const & fft() const
-      {
-         UTIL_ASSERT(fftPtr_);
-         return *fftPtr_;
-      }
+      FFT<D,T> const & fft() const;
 
       /**
       * Check if r-grid workspace is allocated, allocate if necessary.
@@ -1419,6 +1389,91 @@ namespace Rp {
       using ComplexT = typename T::Complex;
 
    };
+
+   // Public inline member functions
+
+   /*
+   * Get the associated spatial discretization Mesh by const reference.
+   */
+   template <int D, class T> inline
+   Mesh<D> const & FieldIo<D,T>::mesh() const
+   {
+      UTIL_ASSERT(meshPtr_);
+      return *meshPtr_;
+   }
+
+   /*
+   * Get the associated Basis by const reference.
+   */
+   template <int D, class T> inline
+   Basis<D> const & FieldIo<D,T>::basis() const
+   {
+      UTIL_ASSERT(basisPtr_);
+      return *basisPtr_;
+   }
+
+   /*
+   * Get the associated FileMaster by const reference.
+   */
+   template <int D, class T> inline
+   FileMaster const & FieldIo<D,T>::fileMaster() const
+   {
+      UTIL_ASSERT(fileMasterPtr_);
+      return *fileMasterPtr_;
+   }
+
+   // Private inline member functions
+
+   /**
+   * Get the lattice type enum value by const reference.
+   */
+   template <int D, class T> inline
+   typename UnitCell<D>::LatticeSystem const & 
+   FieldIo<D,T>::lattice() const
+   {
+      UTIL_ASSERT(latticePtr_);
+      return *latticePtr_;
+   }
+
+   /*
+   * Has a space group been declared externally ?
+   */
+   template <int D, class T> inline
+   bool FieldIo<D,T>::hasGroup() const
+   {
+      UTIL_ASSERT(hasGroupPtr_);
+      return *hasGroupPtr_;
+   }
+
+   /*
+   * Get an associated group name string by const reference.
+   */
+   template <int D, class T> inline
+   std::string const & FieldIo<D,T>::groupName() const
+   {
+      UTIL_ASSERT(groupNamePtr_);
+      return *groupNamePtr_;
+   }
+
+   /*
+   * Get an associated SpaceGroup<D> by const reference.
+   */
+   template <int D, class T> inline
+   SpaceGroup<D> const & FieldIo<D,T>::group() const
+   {
+      UTIL_ASSERT(groupPtr_);
+      return *groupPtr_;
+   }
+
+   /*
+   * Get FFT object by const reference
+   */
+   template <int D, class T> inline
+   FFT<D,T> const & FieldIo<D,T>::fft() const
+   {
+      UTIL_ASSERT(fftPtr_);
+      return *fftPtr_;
+   }
 
    // Explicit instantiation declarations
    PSCF_TMPL_DECLARE(FieldIo)

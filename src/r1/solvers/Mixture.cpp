@@ -140,7 +140,8 @@ namespace R1 {
                UTIL_CHECK(monomerId >= 0);
                UTIL_CHECK(monomerId < nm);
                FieldT& monomerField = cFields[monomerId];
-               FieldT const & blockField = polymer(i).block(j).cField();
+               Block const & block = polymer(i).block(j);
+               FieldT const & blockField = block.cField();
                for (k = 0; k < nx; ++k) {
                   monomerField[k] += blockField[k];
                }

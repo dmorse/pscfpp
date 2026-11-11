@@ -205,8 +205,8 @@ namespace Rp {
                UTIL_CHECK(monomerId >= 0);
                UTIL_CHECK(monomerId < nm);
                FieldT& monomerField = cFields[monomerId];
-               FieldT const & blockField = polymer(i).block(j).cField();
-               VecOp::addEqV(monomerField, blockField);
+               Block<D,T> const & block = polymer(i).block(j);
+               VecOp::addEqV(monomerField, block.cField());
             }
          }
 

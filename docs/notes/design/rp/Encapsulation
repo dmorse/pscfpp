@@ -37,46 +37,44 @@ Domain
      members of Domain (unitCell, mesh, basis) (done).
 
    - Make System return domain by const reference, so that members of 
-     domain cannot be directly modified outside of System class.
+     domain cannot be directly modified outside of System class (none)
+
+   - Provide an System member function that returns a non-const reference
+     to the WaveList, to allow public access to functions that update
+     data structures owned by the wavelist. (done)
 
 C-Fields
 --------
 
-   - Make System<D> cField accessor c() return constant reference (done).
+   - Make System<D,T> cField accessor c() return constant reference (done).
 
      Rationale: There is no reason to allow users to modify the concentration 
      field, which should be computed internally.
 
-   - Make System<D> wField accessor w() return constant references (done).
+   - Make System<D,T> wField accessor w() return constant references (done).
 
      Users must use a read or set function to set the w-field, which can
-     set flags to invalidate variables that depend on w. 
+     set flags to invalidate variables that depend on w.  (done)
 
      
 W-Fields
 --------
 
-   - Make all System<D> wField accessors return constant references
+   - Make all System<D,T> wField accessors return constant references (done)
 
    - Add setter functions:
 
-         System<D>::setFieldsBasis(DArray<DArray<double> > & ) 
-         System<D>::setFieldBasis(int monomerId, DArray<double>& ) 
+         System<D,T>::setFieldsBasis(DArray<DArray<double> > & ) 
+         System<D,T>::setFieldRGrid(int MonomerId, WField& )
 
-         System<D>::setFieldsRGrid(DArray<WField>& )
-         System<D>::setFieldRGrid(int MonomerId, WField& )
-
-     Setter functions will ensure consistency of Basis and RGrid forms.
+     Use of setter functions will ensure consistency of Basis and RGrid 
+     forms.
 
 FieldIo
 -------
 
-   - Check const-correctness on FieldIo: It seems that all the Field
-     Io, conversion and symmetry checking functions could be marked
-     const. 
-
-   - If we can make all functions except associate const, we can change
-     System<D> so as to return a const reference?
+   - Check const-correctness on FieldIo: It seems that all the Field Io, 
+     conversion and symmetry checking functions could be marked const. (done)
 
 ======================================================================
 Changes that could affect the GPU code:
@@ -92,7 +90,7 @@ BlockTmpl:
 
   - Make cField_ protected, to allow derived classes to compute it
 
-  - Change BlockTmpl::cField(int i) to return a const reference.
+  - Change BlockTmpl::cField() to return a const reference.
 
 MixtureTmpl 
 -----------
@@ -100,7 +98,7 @@ MixtureTmpl
   - Change MixtureTmpl::monomer(int i) to return a const reference.
 
   The only property we should ever need to change is kuhn, and that
-  should only be changed by System<D>::setKuhn(int i, double value).
+  should only be changed by System<D,T>::setKuhn(int i, double value).
 
 
 Basis
@@ -109,8 +107,9 @@ Basis
    - Check if Basis::Wave::sqNorm and Basis::Star::eigen are actually used.
 
    - If not, see if they can be removed. The need to keep them updated is
-     dangerous.
+     dangerous. (Done. Wave::sqNorm is private and Star::eigen has been
+     removed).
 
-   - If we can remove the Basis<D>::update function, we can make System<D>
-     return a const reference.
+   - If we can remove the Basis<D>::update function, we can make 
+     Domain<D,T> return a const reference. (done)
 

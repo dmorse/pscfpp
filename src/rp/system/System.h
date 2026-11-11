@@ -423,9 +423,9 @@ namespace Rp {
       * This function provides direct non-const access to the WaveList.
       * The WaveList is owned by the Domain, and const (i.e., read-only)
       * access is also provided via the domain() member function. This
-      * function exists to allow access to non-const member functions
-      * that update data structures that are maintained by the WaveList
-      * via a reference to the parent system.
+      * function exists to allow a non-const reference to the parent 
+      * system to be used to access to non-const member functions of the
+      * WaveList that update data structures maintained by the WaveList.
       */
       WaveList<D,T> & waveList();
 

@@ -1,0 +1,78 @@
+
+It is useful to divide the main physical parameters and state variables 
+associated with a system into several categories:
+
+  - Immutable parameters: These are physical and computational input 
+    parameters that are set during initialiation, based on parameters given 
+    the parameter file, but that cannot be modified after initialization is 
+    completed.
+
+  - Mutable parameters: These are physical input parameters that are 
+    required to specify an equilibrium state of a system, but that can be 
+    modified by sweep and ramp algorithms.
+
+  - Independent state variables: These are independent variables that may 
+    be modified repeatedly either by an SCFT iteration algorithm during the 
+    search for a state of minimal free energy or by a stochastic field 
+    theoretic simulation algorithm.
+
+  - Dependent state variables: These are variables whose values are computed
+    from the parameters and the current state variables.
+
+Immutable parameters:
+
+  - Polymer model (thread or bead model)
+  - Number of monomer types
+  - Number of polymer species
+  - Number of solvent species
+  - Polymer topology (number of blocks and connectivity for each species)
+  - Ensemble for each species (open or closed)
+  - Unit cell lattice system (cubic, orthorhombic, etc.)
+  - Space group name (if any)
+  - Space group (if any)
+  - Mesh dimensions
+
+  The symmetry-adapted basis used in some types of SCFT calculations is also
+  an immutable state variable, in a sense, because the set of required basis 
+  functions is uniquely determined by a mesh and a space group.
+
+Mutable parameters (modified by sweep and ramp parameters):
+
+  - Kuhn lengths
+  - Block lengths (for thread model)
+  - Solvent sizes
+  - Species volume fractions or chemical potentials
+  - Flory-Huggins interaction parameters
+  - vMonomer
+
+Independent state variables:
+
+  - W fields for all monomer types [ WFields<D,T> ]
+  - Unit cell parameters (edge lengths and angles) 
+    [ Domain<D,T>::unitCell ]
+
+Dependent state variables:
+
+  - Data structures maintained by WaveList<D,T> that depend on unit cell
+    parameters, including minimalIndices, values for squared wavevectors,
+    derivatives o squared wavevectors w/ respect to unit cell parameters,
+    etc. 
+
+  - MDE solutions for each block and direction (Propagator<D,T>)
+
+  - Single-molecule partition functions for each species (Polymer<D,T>)
+
+  - Concentration fields for each block (Block<D,T>::cField)
+
+  - Stress contributions for each block (Block<D,T>::stress)
+
+  - Concentration fields for each monomer type (CFields<D,T>::rgrid)
+
+  - Overall stress values (summed over block contributions) (Mixture<D,T>)
+
+  - SCFT free energy and its components (ScftThermo<D,T>)
+
+  - Chi-eigenvector field components maintained by Simulator<D,T>
+
+  - FTS Hamiltonina (Simulator<D,T>)
+

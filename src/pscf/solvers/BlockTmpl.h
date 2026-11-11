@@ -132,7 +132,7 @@ namespace Pscf {
       virtual void setKuhn(double kuhn);
 
       /**
-      * Get a Propagator for a specified direction.
+      * Get a Propagator for a specified direction (non-const reference).
       *
       * For a block with v0 = vertexId(0) and v1 = vertexId(1),
       * propagator(0) propagates from vertex v0 to v1, while
@@ -143,21 +143,18 @@ namespace Pscf {
       QT& propagator(int directionId);
 
       /**
-      * Get a const Propagator for a specified direction.
+      * Get a Propagator for a specified direction (const reference).
       *
-      * See above for number conventions.
+      * For a block with v0 = vertexId(0) and v1 = vertexId(1),
+      * propagator(0) propagates from vertex v0 to v1, while
+      * propagator(1) propagates from vertex v1 to v0.
       *
       * \param directionId integer index for direction (0 or 1)
       */
       QT const & propagator(int directionId) const;
 
       /**
-      * Get the associated monomer concentration field.
-      */
-      FT& cField();
-
-      /**
-      * Get the associated const monomer concentration field.
+      * Get the associated monomer concentration field (const reference).
       */
       FT const & cField() const;
 
@@ -177,6 +174,11 @@ namespace Pscf {
       * Destructor.
       */
       ~BlockTmpl() = default;
+
+      /**
+      * Get associated monomer concentration field (non-const reference).
+      */
+      FT& cField();
 
    private:
 
@@ -210,14 +212,14 @@ namespace Pscf {
    {  return propagators_[directionId]; }
 
    /*
-   * Get the monomer concentration field.
+   * Get the monomer concentration field (non-const reference).
    */
    template <class QT, class FT> inline
    FT& BlockTmpl<QT,FT>::cField()
    {  return cField_; }
 
    /*
-   * Get the const monomer concentration field.
+   * Get the monomer concentration field (const reference).
    */
    template <class QT, class FT> inline
    FT const & BlockTmpl<QT,FT>::cField() const

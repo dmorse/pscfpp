@@ -300,14 +300,15 @@ namespace Pscf {
    * of open stars that are related by inversion, and -1 if it is the
    * second member of such a pair of stars.
    *
-   * Each star is assigned a unique characteristic wave that can be 
-   * used as a unique identifier for the star.  Local class Star has an
-   * IntVec\<D\> member named waveMin that lists the minimal indices of 
-   * the characteristic wave of the star. The characteristic wave is taken
-   * to be the first wave in the star for stars with starInvert = 0 or
-   * starInvert = 1. In stars with startInvert = -1, the characteristic
-   * wave is taken to be the negation of the characteristic wave of its
-   * partner, which is the previous star.
+   * Each star is assigned a root wave whose minimal indices can be used
+   * used as a unique identifier for the star.  Local class Basis<D>::Star 
+   * has and an int member rootId equal to the waveindex of the root wave 
+   * and an IntVec\<D\> member named waveMin that lists the minimal indices
+   * of the root wave of the star. The root wave is taken to be the first 
+   * wave in the star for stars with starInvert = 0 or starInvert = 1. 
+   * In stars with startInvert = -1, the characteristic wave is taken to 
+   * be the negation of the root wave of its partner, which is always the 
+   * previous star.
    *
    * See also: \ref prdc_basis_page
    *
@@ -320,30 +321,32 @@ namespace Pscf {
    * coefficient associated with each wavevector and its negation are 
    * complex conjugates. This requirement, together with the 
    * normalization condition, determines the basis function to within 
-   * an overall sign. The sign of the basis function is fixed by 
-   * requiring that the coefficient of the characteristic wave of the 
-   * star (the first wave listed) has a non-negative real part, and a 
-   * negative imaginary part in the special case in which the coefficient 
-   * must be chosen to be pure imaginary.
+   * an overall sign. The sign of the basis function is fixed by requiring
+   * that the coefficient of the root wave of the star has a non-negative 
+   * real part, and a negative imaginary part in the special case in which 
+   * the coefficient must be chosen to be pure imaginary.
    *
-   * Basis functions associated with pairs of stars that are related
-   * by inversion are defined so as to be complex conjugates of one
-   * another. This is done by requiring that the coefficient of the
-   * characteristic wave of each such star is real and positive.
+   * Basis functions associated with pairs of stars that are related by
+   * inversion are defined so as to be complex conjugates of one another. 
+   * This is done by requiring that the coefficient of the root wave of 
+   * each such star is real and positive, and that root waves of stars
+   * that are related by inversion are negations of one another.
    *
    * <b> Fourier expansion of a symmetric real function </b>
    *
    * The expansion of a real function with a specified space group
    * symmetry is specified by specifying a real coefficient for each
-   * closed star and a pair of real coefficients for each pair of closed
-   * stars. The number of required real coefficients is thus the same 
-   * as the same number as the number of uncancelled stars or basis
+   * uncancelled closed star and a pair of real coefficients (or a 
+   * single complex coefficient) for each uncancelled pair of closed
+   * stars. The number of required real coefficients is thus always 
+   * equal to the number as the number of uncancelled stars or basis
    * functions. By convention, these coefficients should be stored in
    * an array in which the index of the coefficient of a basis function
    * associated with a closed star is the same as the basis index of
    * the closed star, and the indices of the two real coefficients of
    * each pair of basis functions arising from open stars that are
-   * related by inversion correspond to the indices of these two stars.
+   * related by inversion correspond to the neighboring indices of these 
+   * two stars.
    *
    * Suppose two open stars stars that are related by inversion appear
    * in the stars array with indices j and j+1. Let f(r) denote the
@@ -360,8 +363,8 @@ namespace Pscf {
    * in which i denotes the square root of -1.
    *
    * The contribution of a basis function f(r) associated with a closed
-   * star is simply given by the product of the associated real 
-   * coefficient and this real basis function.
+   * star with index i is simply given by the product of the associated 
+   * real coefficient A[i] and the real basis function f(r).
    *
    * <b> Signals </b>
    *
@@ -392,6 +395,9 @@ namespace Pscf {
 
          /**
          * Coefficient of wave within the associated star basis function.
+         *
+         * Coefficients of waves in a star are defined such that the sum
+         * of squared absolute magnitudes equals unity. 
          */
          std::complex<double> coeff;
 
@@ -433,14 +439,16 @@ namespace Pscf {
          * Is this wave represented implicitly in DFT of real field?
          *
          * In the discrete Fourier transform (DFT) of a real function,
-         * the coefficients of nonzero wavevector G and -G must be
+         * the coefficients of nonzero wavevectors G and -G must be
          * complex conjugates.  As a result, only one of these two
-         * coefficients is stored in the container RFieldDft used to
-         * store the DFT of a real function. For each such pair, the
-         * member variable Basis::Wave::implicit is set false for the
-         * the wavevector whose coefficient is represented explicitly,
-         * and is set true for the wavevector whose coefficient is
-         * left implicit.
+         * coefficients must be stored in the container RFieldDft used 
+         * to store the DFT of a real function. For each such pair, the
+         * member variable Basis::Wave::implicit is set false for any
+         * wavevector for which the integer components fall within the
+         * range stored in the RFieldDft container, and for which the
+         * coefficient is represented explicitly, and is set true for 
+         * any wavevector for which the wavevevector falls outside this
+         * range, and for which the field coefficient is thus implicit. 
          */
          bool implicit;
 
@@ -460,10 +468,17 @@ namespace Pscf {
       private:
 
          /**
-         * Square magnitude of associated wavevector
+         * Initial square magnitude of associated wavevector.
+         * 
+         * The value of this member is set and used during construction 
+         * of a Basis in order to sort waves by wavenumber, but is never
+         * updated thereafter. It is thus always the square magnitude used 
+         * during Basis construction. Limited access to it is provided
+         * by making Basis<D> a friend of Basis<D>::Wave (see below).
          */
          double sqNorm;
 
+         // Provide access to sqNorm member variable. 
          friend class Basis<D>;
 
       };
@@ -487,12 +502,12 @@ namespace Pscf {
          int size;
 
          /**
-         * Wave index of first wavevector in star.
+         * Wave index of the first wavevector in this star.
          */
          int beginId;
 
          /**
-         * Wave index of first wavevector of the next star.
+         * Wave index of the first wavevector of the next star.
          *
          * This index is one past the wave index of the last wavevector of
          * this star.
@@ -500,10 +515,15 @@ namespace Pscf {
          int endId;
 
          /**
-         * Wave index of the wavevector that is used as the root of the star.
+         * Wave index of the wavevector that is the root of the star.
          *
-	 * The coefficient of the root of a star is real and positive in the
-	 * expansion of the associated star basis function. 
+	 * The coefficient of the root of a star is real and positive in 
+	 * the expansion of the associated star basis function. For a
+         * star with invertFlag = 0 or 1, the root wave is the first wave
+         * in the star, after waves are listed in decreasing lexographical 
+         * order by minimal wave indices. For a star with invertFlag = -1, 
+         * the root wave is the negation of the root wave of the partner 
+         * star for which invertFlag = 1.
          */
          int rootId;
 
@@ -525,27 +545,21 @@ namespace Pscf {
          *
          * In a centro-symmetric group (i.e., a group that includes the
          * inversion operation, with an inversion center at the origin
-         * of the coordinate system), all stars are closed under
-         * inversion. In this case, all stars in the basis must thus
-         * have starInvert = 0.
+         * of the coordinate system), all stars are closed under inversion.
+         * In this case, all stars must thus have starInvert = 0.
          *
          * In a non-centro-symmetric group, a stars may either be closed
          * closed under inversion (starInvert = 0) or belong to a pair
          * of consecutive stars that are related by inversion
-         * (starInver = +1 or -1).
+         * (starInvert = +1 or -1).
          */
          int invertFlag;
 
          /**
-         * Integer indices indicesMin of a characteristic wave of this star.
+         * Minimal indices of the root wave of this star.
          *
-         * Wave given here is the value of indicesMin for a characteristic
-         * wave for the star.  For invertFlag = 0 or 1, the characteristic
-         * wave is the first wave in the star.  For invertFlag = -1, this
-         * is the negation of the waveMin of the partner star for which
-         * invertFlag = 1.
-         *
-         * The coefficient of wave waveMin is always real and positive.
+         * Wave given here is the value of indicesMin for the root wave 
+         * for the star, which has a wave index given by member rootId. 
          */
          IntVec<D> waveMin;
 

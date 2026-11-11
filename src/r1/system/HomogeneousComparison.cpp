@@ -130,7 +130,8 @@ namespace R1
             p_[i] = 0.0;
             int nb = mixture().polymer(i).nBlock();
             for (int j = 0; j < nb; ++j) {
-               p_[i] += mixture().polymer(i).block(j).cField()[ix];
+               Block const & block = mixture().polymer(i).block(j);
+               p_[i] += block.cField()[ix];
             }
          }
          for (int i = 0; i < ns; ++i) {

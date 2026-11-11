@@ -240,6 +240,7 @@ namespace Pscf
       return monomers_[id]; 
    }
 
+   // Explicit instantiation declaration
    extern template class Composition<double>;
 
 }
