@@ -2,11 +2,10 @@
 # Contributing to PSCF 
 
 PSCF has thus far been developed primarily at the University of Minnesota,
-but we welcome contributions from elsewhere.  It is maintained by 
-David Morse (morse012@umn.edu) in repository github.com/dmorse/pscfpp. 
-Users are encouraged to contribute to PSCF by submitting github issues 
-to report bugs, submitting github pull requests, or participating in 
-the discussion forum.
+but we welcome contributions from anyone.  It is maintained by David Morse 
+(morse012@umn.edu) in repository github.com/dmorse/pscfpp.  Users are 
+encouraged to contribute to PSCF by reporting bugs, submitting code, or
+participating in the discussion forum.
 
 PSCF is free, open source software. It is distributed under the terms of 
 the GNU General Public License (GPL) as published by the Free Software 
@@ -18,27 +17,27 @@ or the <a href=http://www.gnu.org/licenses/>gnu web page</a> for details.
 
 ## Issues, Pull Requests and Discussions:
 
-The github interfaces for issues, pull requests and discussions provide 
-complementary methods of discussing bugs, problems, and proposed 
-improvements:
+The github interfaces for discussions, issues, and pull requests provide 
+complementary methods of discussing PSCF, identifying bugs and submitting
+contributions:
 
    - Use the PSCF discussions forum (linked via the github repository)
      to ask questions about usage and to discuss possible improvements.
 
    - Submit issues to report bugs. 
 
-   - Submit pull requests for proposed contributions to the source 
+   - Submit pull requests with proposed contributions to the source 
      code and/or documentation. 
 
 Users may also email David Morse (morse012@umn.edu) to discuss usage 
-problems or proposed improvements. 
+or proposed improvements. 
 
 ## Issues:
 
-Any user may submit an issue via the github web interface to report an 
-error. The following guidelines apply:
+Any user may submit an issue via the github web interface to report 
+errors. The following guidelines apply:
 
-  - Issues may be submitted to report bugs in the source code and
+  - Issues should be submitted to report bugs in the source code and
     errors in the documentation.
 
   - If you are unsure whether a problem that you encounter when using
@@ -62,11 +61,11 @@ submitted via the github web interface.
     of the pscfpp repository, and not to the "devel" or "main" branch. 
     To do this, use the menu provided in the github web interface for 
     submitting a pull request that allows you choose the branch to
-    which the pull request should be applied.  If a pull request is 
-    accepted, the maintainer will first appply it to the "feature-pull" 
-    branch, and later merge that branch into the devel branch.  The 
-    "feature-pull" branch is generally kept synchronized with the 
-    devel branch. 
+    which the pull request should be applied.  After a pull request is 
+    reviewed and accepted, the maintainer will first appply it to the 
+    "feature-pull" branch for further testing, and later merge that 
+    branch into the devel branch.  The "feature-pull" branch is kept 
+    synchronized with the devel branch. 
 
   - The first pull request from a new contributor should be one in which 
     they accept the contributor licensing agreement. See discussion of 
@@ -78,13 +77,15 @@ submitted via the github web interface.
     in the github Discussions space. More generally, we recommend prior 
     discussion of contributions that involve nontrivial design decisions.
 
-  - Pull requests should be created by starting from a branch that is 
-    identical to a recent version of the devel branch and making the
-    minimum necessary modifications. We recommend that you merge the 
-    "devel" branch of the main repository back into the branch that 
-    you are using to create a pull request shortly before submitting 
-    the request, in order to incorporate any recent changes to this 
-    branch made by others.
+  - Pull requests should be created by starting from a branch in your
+    own fork of pscfpp that is identical to a recent version of the 
+    devel branch and making the minimum necessary modifications. We 
+    recommend that you merge the "devel" branch of the dmorse/pscfpp
+    repository back into the branch in which you are working on a pull 
+    request shortly before you submit the request, in order to merge 
+    any recent changes made to the devel branch by others. If this 
+    merge causes any conflicts, you must resolve the conflicts before
+    submitting the pull request. 
 
   - Contributors are expected to thoroughly test modified code before 
     submitting a pull request. At a minimum, you must run all relevant 
