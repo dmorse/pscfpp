@@ -300,6 +300,57 @@ public:
       TEST_ASSERT(std::abs(system.scft().pressure() + 12.0498211637) < 1e-4);
    }
 
+   /*
+   * WRITE_MASK_BASIS and WRITE_H_BASIS after SET_UNIT_CELL write the
+   * mask and the wall fields of the new unit cell.
+   */
+   void testWriteFieldsAfterCellChange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestWriteFieldsAfterCellChange.log");
+
+      // Reference: film of thickness 2.6
+      Rp::System<1,CPT> ref;
+      createSystem(ref, "in/system1DEnv");
+      std::istringstream refCommands(
+         "READ_W_BASIS in/wIn1D.bf\nSET_UNIT_CELL lamellar 2.6\n"
+         "COMPUTE\nFINISH\n");
+      ref.readCommands(refCommands);
+
+      // Film of thickness 2.1 (cell of in/wIn1D.bf), then 2.6
+      Rp::System<1,CPT> system;
+      createSystem(system, "in/system1DEnv");
+      std::istringstream commands(
+         "READ_W_BASIS in/wIn1D.bf\nCOMPUTE\nSET_UNIT_CELL lamellar 2.6\n"
+         "WRITE_MASK_BASIS out/FilmEnvTestCellChange_mask.bf\n"
+         "WRITE_H_BASIS out/FilmEnvTestCellChange_h.bf\nFINISH\n");
+      system.readCommands(commands);
+
+      // Compare the fields written to file with the reference
+      UnitCell<1> unitCell;
+      DArray<double> mask;
+      DArray< DArray<double> > h;
+      system.domain().fieldIo().readFieldBasis(
+                       "out/FilmEnvTestCellChange_mask.bf", mask, unitCell);
+      TEST_ASSERT(eq(unitCell.parameter(0), 2.6));
+      system.domain().fieldIo().readFieldsBasis(
+                       "out/FilmEnvTestCellChange_h.bf", h, unitCell);
+      double maxDiff = 0.0;
+      int nBasis = system.domain().basis().nBasis();
+      for (int k = 0; k < nBasis; ++k) {
+         double diff = std::abs(mask[k] - ref.mask().basis()[k]);
+         if (diff > maxDiff) maxDiff = diff;
+         for (int i = 0; i < 2; ++i) {
+            diff = std::abs(h[i][k] - ref.h().basis(i)[k]);
+            if (diff > maxDiff) maxDiff = diff;
+         }
+      }
+      if (verbose() > 0) {
+         std::cout << "\nMax difference = " << maxDiff << "\n";
+      }
+      TEST_ASSERT(maxDiff < 1.0E-8);
+   }
+
    void testSolveWithFBulk() // solve a 1D system w/ flexible film thickness
    {
       printMethod(TEST_FUNC);
@@ -376,6 +427,7 @@ TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
 TEST_ADD(FilmEnvironmentTest, testComputeNoIterator)
 TEST_ADD(FilmEnvironmentTest, testSweep)
+TEST_ADD(FilmEnvironmentTest, testWriteFieldsAfterCellChange)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
 TEST_END(FilmEnvironmentTest)
 
