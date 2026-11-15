@@ -69,6 +69,13 @@ namespace Pscf
       * \param inv inverse of matrix A (output)
       */  
       void inverse (Matrix<double>& inv); 
+
+      /**
+      * Does the last LU decomposition have a zero pivot?
+      *
+      * If so, solve() and inverse() abort through the GSL error handler.
+      */
+      bool isSingular() const;
  
    private:
 

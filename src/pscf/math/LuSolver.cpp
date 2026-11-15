@@ -98,6 +98,18 @@ namespace Pscf
       x_.data = 0;
    }
 
+   /*
+   * Does the LU decomposition have a zero pivot (GSL's singular test)?
+   */
+   bool LuSolver::isSingular() const
+   {
+      UTIL_CHECK(n_ > 0);
+      for (int i = 0; i < n_; ++i) {
+         if (gsl_matrix_get(luPtr_, i, i) == 0.0) return true;
+      }
+      return false;
+   }
+
    /*  
    * Find inverse 
    */  

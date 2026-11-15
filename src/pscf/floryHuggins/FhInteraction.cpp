@@ -115,13 +115,13 @@ namespace Pscf {
       UTIL_CHECK(chi_.isAllocated());
       UTIL_CHECK(chiInverse_.isAllocated());
 
+      // A singular chi is valid input; its inverse is then undefined
+      hasChiInverse_ = false;
       if (nMonomer() == 2) {
          double det = chi_(0,0)*chi_(1, 1) - chi_(0,1)*chi_(1,0);
          double norm = chi_(0,0)*chi_(0, 0) + chi_(1,1)*chi_(1,1)
                      + 2.0*chi_(0,1)*chi_(1,0);
-         if (fabs(det/norm) < 1.0E-8) {
-            UTIL_THROW("Singular chi matrix");
-         }
+         if (!(fabs(det) > 1.0E-8*norm)) return;
          chiInverse_(0,1) = -chi_(0,1)/det;
          chiInverse_(1,0) = -chi_(1,0)/det;
          chiInverse_(1,1) = chi_(0,0)/det;
@@ -131,8 +131,10 @@ namespace Pscf {
          LuSolver solver;
          solver.allocate(nMonomer());
          solver.computeLU(chi_);
+         if (solver.isSingular()) return;
          solver.inverse(chiInverse_);
       }
+      hasChiInverse_ = true;
 
    }
 
@@ -243,6 +245,7 @@ namespace Pscf {
                             Array<double>& c, double& xi)
    const
    {
+      UTIL_CHECK(hasChiInverse_);
       double sum1 = 0.0;
       double sum2 = 0.0;
       int i, j;
@@ -268,6 +271,7 @@ namespace Pscf {
    FhInteraction::computeXi(Array<double> const & w, double& xi)
    const
    {
+      UTIL_CHECK(hasChiInverse_);
       double sum1 = 0.0;
       double sum2 = 0.0;
       int i, j;
