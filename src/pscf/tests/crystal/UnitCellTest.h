@@ -10,6 +10,8 @@
 #include <pscf/crystal/unitCellHeader.h>
 
 #include <util/signal/Signal.h>
+#include <util/archives/MemoryOArchive.h>
+#include <util/archives/MemoryIArchive.h>
 #include <util/math/Constants.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -1205,6 +1207,82 @@ public:
       TEST_ASSERT(!cell.isInitialized());
    }
 
+   /*
+   * Save a unit cell to an archive, and load it into a new cell and
+   * into a cell with other parameters. The loaded cells must have the
+   * geometry of the saved cell, and observers must be notified.
+   */
+   void testSerialize()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<3> v;
+      std::ifstream in;
+      openInputFile("in/Triclinic", in);
+      in >> v;
+      in.close();
+
+      MemoryOArchive oar;
+      oar.allocate(1000);
+      oar << v;
+
+      // Cells into which the archive is loaded
+      UnitCell<3> u;
+      UnitCell<3> w;
+      std::istringstream text("triclinic 1.0 1.2 1.4 0.3 0.4 1.2");
+      text >> w;
+      Signal<void> signal;
+      w.setSignal(signal);
+      Observer observer;
+      w.signal().addObserver(observer, &Observer::receive);
+
+      MemoryIArchive iar1;
+      iar1 = oar;
+      iar1 >> u;
+      MemoryIArchive iar2;
+      iar2 = oar;
+      iar2 >> w;
+
+      TEST_ASSERT(u.isInitialized());
+      TEST_ASSERT(w.isInitialized());
+      TEST_ASSERT(observer.notified);
+      for (int i = 0; i < 3; ++i) {
+         for (int j = 0; j < 3; ++j) {
+            TEST_ASSERT(eq(u.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(u.kBasis(i)[j], v.kBasis(i)[j]));
+            TEST_ASSERT(eq(w.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(w.kBasis(i)[j], v.kBasis(i)[j]));
+            for (int k = 0; k < 6; ++k) {
+               TEST_ASSERT(eq(u.dkBasis(k, i, j), v.dkBasis(k, i, j)));
+               TEST_ASSERT(eq(w.dkBasis(k, i, j), v.dkBasis(k, i, j)));
+            }
+         }
+      }
+
+      // A singular cell (monoclinic with beta = 0) is rejected on load
+      UnitCell<3> singular;
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      parameters.append(1.2);
+      parameters.append(1.4);
+      parameters.append(0.0);
+      singular.set(UnitCell<3>::Monoclinic, parameters);
+      MemoryOArchive oar2;
+      oar2.allocate(1000);
+      oar2 << singular;
+      MemoryIArchive iar3;
+      iar3 = oar2;
+      UnitCell<3> t;
+      bool thrown = false;
+      try {
+         iar3 >> t;
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+      TEST_ASSERT(!t.isInitialized());
+   }
+
    void test3DSignal() 
    {
       printMethod(TEST_FUNC);
@@ -1278,6 +1356,7 @@ TEST_ADD(UnitCellTest, test3DRhombohedral)
 TEST_ADD(UnitCellTest, test3DMonoclinic)
 TEST_ADD(UnitCellTest, test3DTriclinic)
 TEST_ADD(UnitCellTest, testSingularCell)
+TEST_ADD(UnitCellTest, testSerialize)
 TEST_ADD(UnitCellTest, test3DSignal)
 TEST_END(UnitCellTest)
 
