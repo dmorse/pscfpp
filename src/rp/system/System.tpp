@@ -59,6 +59,25 @@ namespace Rp {
 
    using namespace Util;
 
+   namespace {
+
+      /*
+      * Stop if the arguments of a command could not be read (used in
+      * readCommands). Without this, the command would be executed with
+      * unset or old argument values.
+      */
+      inline
+      void checkCommandInput(std::istream& in, std::string const & command)
+      {
+         if (in.fail()) {
+            Log::file() << "\nError reading the arguments of command "
+                        << command << std::endl;
+            UTIL_THROW("Error reading command arguments");
+         }
+      }
+
+   }
+
    /*
    * Constructor.
    */
@@ -470,13 +489,14 @@ namespace Rp {
       bool readNext = true;
       while (readNext) {
 
+         // Stop when no further command can be read. (A test of eof()
+         // here would skip a last command that is not followed by a
+         // newline.)
          in >> command;
-
-         if (in.eof()) {
+         if (in.fail()) {
             break;
-         } else {
-            Log::file() << command << std::endl;
          }
+         Log::file() << command << std::endl;
 
          if (command == "FINISH") {
             Log::file() << std::endl;
@@ -503,6 +523,7 @@ namespace Rp {
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
             in >> unitCell;
+            checkCommandInput(in, command);
             Log::file() << "   " << unitCell << std::endl;
             setUnitCell(unitCell);
             UTIL_CHECK(domain_().unitCell().isInitialized());
@@ -536,6 +557,7 @@ namespace Rp {
             // Perform a field theoretic simulation
             int nStep;
             in >> nStep;
+            checkCommandInput(in, command);
             Log::file() << "   "  << nStep << "\n";
             simulate(nStep);
          } else
@@ -544,6 +566,7 @@ namespace Rp {
             int min, max;
             in >> min;
             in >> max;
+            checkCommandInput(in, command);
             Log::file() << "   "  << min ;
             Log::file() << "   "  << max << "\n";
             std::string classname;
@@ -607,6 +630,7 @@ namespace Rp {
             in >> blockId;
             in >> directionId;
             in >> segmentId;
+            checkCommandInput(in, command);
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
@@ -622,6 +646,7 @@ namespace Rp {
             in >> polymerId;
             in >> blockId;
             in >> directionId;
+            checkCommandInput(in, command);
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
@@ -634,6 +659,7 @@ namespace Rp {
             in >> polymerId;
             in >> blockId;
             in >> directionId;
+            checkCommandInput(in, command);
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
@@ -736,6 +762,7 @@ namespace Rp {
             // Read expanded spatial dimension d
             int d;
             in >> d;
+            checkCommandInput(in, command);
             UTIL_CHECK(d > D);
             Log::file() << Str("Expand dimension to: ") << d << "\n";
 
@@ -745,6 +772,7 @@ namespace Rp {
             for (int i = 0; i < d-D; i++) {
                in >> newGridDimensions[i];
             }
+            checkCommandInput(in, command);
             Log::file()
                << Str("Numbers of grid points in added dimensions :  ");
             for (int i = 0; i < d-D; i++) {
@@ -765,6 +793,7 @@ namespace Rp {
             for (int i = 0; i < D; i++){
                in >> replicas[i];
             }
+            checkCommandInput(in, command);
             for (int i = 0; i < D; i++){
                Log::file() << "Replicate unit cell in direction "
                            << i << " : ";

@@ -34,6 +34,24 @@ namespace R1
 
    using namespace Util;
 
+   namespace {
+
+      /*
+      * Stop if the arguments of a command could not be read (used in
+      * readCommands). Without this, the command would be executed with
+      * unset or old argument values.
+      */
+      void checkCommandInput(std::istream& in, std::string const & command)
+      {
+         if (in.fail()) {
+            Log::file() << "\nError reading the arguments of command "
+                        << command << std::endl;
+            UTIL_THROW("Error reading command arguments");
+         }
+      }
+
+   }
+
    /*
    * Constructor.
    */
@@ -270,13 +288,14 @@ namespace R1
       bool readNext = true;
       while (readNext) {
 
+         // Stop when no further command can be read. (A test of eof()
+         // here would skip a last command that is not followed by a
+         // newline.)
          inBuffer >> command;
-
-         if (inBuffer.eof()) {
+         if (inBuffer.fail()) {
             break;
-         } else {
-            Log::file() << command;
          }
+         Log::file() << command;
 
          if (command == "FINISH") {
             Log::file() << std::endl;
@@ -321,6 +340,7 @@ namespace R1
          if (command == "COMPARE_HOMOGENEOUS") {
             int mode;
             inBuffer >> mode;
+            checkCommandInput(inBuffer, command);
 
             readEcho(inBuffer, filename);
             Log::file() << std::endl;
@@ -353,6 +373,7 @@ namespace R1
             inBuffer >> blockId;
             inBuffer >> directionId;
             inBuffer >> segmentId;
+            checkCommandInput(inBuffer, command);
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId << "\n"
@@ -366,6 +387,7 @@ namespace R1
             inBuffer >> polymerId;
             inBuffer >> blockId;
             inBuffer >> directionId;
+            checkCommandInput(inBuffer, command);
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId << "\n";
@@ -374,13 +396,16 @@ namespace R1
          if (command == "WRITE_Q_VERTEX") {
             int polymerId, vertexId;
             inBuffer >> polymerId;
+            checkCommandInput(inBuffer, command);
             Log::file() << std::endl;
             Log::file() << "polymerId = " 
                         << Int(polymerId, 5) << std::endl;
             inBuffer >> vertexId;
+            checkCommandInput(inBuffer, command);
             Log::file() << "vertexId  = " 
                         << Int(vertexId, 5) << std::endl;
             inBuffer >> filename;
+            checkCommandInput(inBuffer, command);
             Log::file() << "outfile   = " 
                         << Str(filename, 20) << std::endl;
             fieldIo_.writeVertexQ(mixture_, polymerId, vertexId, filename);  
@@ -391,6 +416,7 @@ namespace R1
             inBuffer >> polymerId;
             inBuffer >> blockId;
             inBuffer >> directionId;
+            checkCommandInput(inBuffer, command);
             Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId << "\n";
@@ -403,18 +429,22 @@ namespace R1
          if (command == "REMESH_W") {
             int nx;
             inBuffer >> nx;
+            checkCommandInput(inBuffer, command);
             Log::file() << std::endl;
             Log::file() << "nx      = " << Int(nx, 20) << std::endl;
             inBuffer >> filename;
+            checkCommandInput(inBuffer, command);
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
             fieldIo_.remesh(wFields(), nx, filename);
          } else
          if (command == "EXTEND_W") {
             int m;
             inBuffer >> m;
+            checkCommandInput(inBuffer, command);
             Log::file() << std::endl;
             Log::file() << "m       = " << Int(m, 20) << std::endl;
             inBuffer >> filename;
+            checkCommandInput(inBuffer, command);
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
             fieldIo_.extend(wFields(), m, filename);
          } else {
@@ -443,6 +473,9 @@ namespace R1
    void System::readEcho(std::istream& in, std::string& string) const
    {
       in >> string;
+      if (in.fail()) {
+         UTIL_THROW("Unable to read a string parameter.");
+      }
       Log::file() << "  " << Str(string, 20) << std::endl;
    }
 
