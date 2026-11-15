@@ -542,6 +542,43 @@ public:
    }
 
    /*
+   * Free energy and pressure after the COMPUTE command.
+   */
+   void testComputeThermo()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestComputeThermo.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      std::istringstream in1("READ_W in/planar.w\nITERATE\nFINISH\n");
+      sys.readCommands(in1);
+      double f0 = sys.fHelmholtz();
+
+      // Perturb the converged w fields, and solve without iteration
+      int nx = sys.domain().nx();
+      for (int i = 0; i < nx; ++i) {
+         sys.wField(0)[i] += 0.5*cos(Constants::Pi*double(i)/double(nx-1));
+      }
+      std::istringstream in2("COMPUTE\nFINISH\n");
+      sys.readCommands(in2);
+      double f1 = sys.fHelmholtz();
+      double p1 = sys.pressure();
+
+      // The values must be those of the perturbed fields
+      sys.computeFreeEnergy();
+      TEST_ASSERT(std::abs(f1 - f0) > 1.0E-4);
+      TEST_ASSERT(std::abs(f1 - sys.fHelmholtz()) < 1.0E-12);
+      TEST_ASSERT(std::abs(p1 - sys.pressure()) < 1.0E-12);
+   }
+
+   /*
    * Free energy and pressure of a homogeneous blend of two homopolymers
    * of length 1 with volume fractions 1 - 5.0E-9 and 5.0E-9, in a field
    * w = 0, which include the terms of the dilute species.
@@ -671,6 +708,7 @@ TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testThermoSmallPhi)
 TEST_ADD(SystemTest, testReadCommandsInput)
+TEST_ADD(SystemTest, testComputeThermo)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
 TEST_ADD(SystemTest, testLinearSweepPhiMixed)
 TEST_ADD(SystemTest, testLinearSweepPhiSum)
