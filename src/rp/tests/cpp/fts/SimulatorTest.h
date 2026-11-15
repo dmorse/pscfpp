@@ -289,6 +289,49 @@ public:
 
    }
 
+   /*
+   * The Hamiltonian of a homogeneous blend of two homopolymers of
+   * length 1 with volume fractions 1 - 5.0E-9 and 5.0E-9 must not
+   * depend on a uniform shift of the fields (w = 0 or w = 20).
+   */
+   void testHamiltonianSmallPhi()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testHamiltonianSmallPhi.log");
+
+      Rp::System<1,CPT> system1;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 2"
+         " Polymer{ type linear nBlock 1 blocks[ 0 1.0 ] phi 0.999999995 }"
+         " Polymer{ type linear nBlock 1 blocks[ 1 1.0 ] phi 5.0e-9 }"
+         " vMonomer 0.01 ds 0.05 } Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 8 lattice lamellar } }\n");
+      system1.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      system1.setUnitCell(parameters);
+      Rp::Simulator<1,CPT> simulator(system1);
+      simulator.allocate();
+      simulator.analyzeChi();
+      DArray< RField<1,CPT> > w;
+      w.allocate(2);
+      w[0].allocate(system1.domain().mesh().dimensions());
+      w[1].allocate(system1.domain().mesh().dimensions());
+      double h[2];
+      for (int j = 0; j < 2; ++j) {
+         for (int m = 0; m < 8; ++m) {
+            w[0][m] = w[1][m] = 20.0*j;
+         }
+         system1.w().setRGrid(w);
+         system1.compute();
+         simulator.clearData();
+         simulator.computeWc();
+         simulator.computeHamiltonian();
+         h[j] = simulator.hamiltonian();
+      }
+      TEST_ASSERT(std::abs(h[1] - h[0]) < 1.0E-9);
+   }
+
    void testRampParameterIdRange()
    {
       printMethod(TEST_FUNC);
@@ -381,6 +424,7 @@ TEST_ADD(SimulatorTest, testAnalyzeChi)
 TEST_ADD(SimulatorTest, testSaddlePointField)
 TEST_ADD(SimulatorTest, testComputeHamiltonian)
 TEST_ADD(SimulatorTest, testDc)
+TEST_ADD(SimulatorTest, testHamiltonianSmallPhi)
 TEST_ADD(SimulatorTest, testRampParameterIdRange)
 TEST_ADD(SimulatorTest, testLinearRampPhiMixed)
 TEST_ADD(SimulatorTest, testLinearRampPhiSum)

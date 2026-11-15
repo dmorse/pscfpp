@@ -18,6 +18,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -495,6 +496,39 @@ public:
       in.close();
    }
 
+   /*
+   * Free energy and pressure of a homogeneous blend of two homopolymers
+   * of length 1 with volume fractions 1 - 5.0E-9 and 5.0E-9, in a field
+   * w = 0, which include the terms of the dilute species.
+   */
+   void testThermoSmallPhi()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestThermoSmallPhi.log");
+
+      System sys;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 2"
+         " Polymer{ type linear nBlock 1 blocks 0 1.0 phi 0.999999995 }"
+         " Polymer{ type linear nBlock 1 blocks 1 1.0 phi 5.0e-9 }"
+         " ds 0.05 } Interaction{ chi( 0 1 10.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 1.0 nx 5 }"
+         " NrIterator{ epsilon 0.00001 } }\n");
+      sys.readParam(param);
+      for (int m = 0; m < 5; ++m) {
+         sys.wFields()[0][m] = 0.0;
+         sys.wFields()[1][m] = 0.0;
+      }
+      sys.compute();
+      sys.computeFreeEnergy();
+      double phi = 5.0E-9;
+      double fExact = (1.0 - phi)*(std::log(1.0 - phi) - 1.0)
+                    + phi*(std::log(phi) - 1.0) + 10.0*phi*(1.0 - phi);
+      double pExact = 1.0 - 10.0*phi*(1.0 - phi);
+      TEST_ASSERT(std::abs(sys.fHelmholtz() - fExact) < 5.0E-11);
+      TEST_ASSERT(std::abs(sys.pressure() - pExact) < 5.0E-11);
+   }
+
    void testSweepParameterIdRange()
    {
       printMethod(TEST_FUNC);
@@ -590,6 +624,7 @@ TEST_ADD(SystemTest, testIteratorSphericalNr3)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
+TEST_ADD(SystemTest, testThermoSmallPhi)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
 TEST_ADD(SystemTest, testLinearSweepPhiMixed)
 TEST_ADD(SystemTest, testLinearSweepPhiSum)

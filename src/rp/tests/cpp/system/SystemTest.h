@@ -28,6 +28,9 @@
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -566,6 +569,59 @@ public:
 
    }
 
+   /*
+   * Free energy and pressure of homogeneous blends of two homopolymers
+   * of length 1 with volume fractions 1 - phi and phi, in fields w = 0
+   * (basis) and w = 20 (r-grid), which have exact values. The terms of
+   * phi = 5.0E-9 and of chi = 1.0E-9 must be included.
+   */
+   void testThermoSmallTerms()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testThermoSmallTerms.log");
+
+      double phis[] = {5.0E-9, 0.5};
+      double chis[] = {10.0, 1.0E-9};
+      for (int k = 0; k < 2; ++k) {
+         double phi = phis[k];
+         double chi = chis[k];
+         std::ostringstream text;
+         text << std::setprecision(17) << "System{ Mixture{ nMonomer 2"
+              << " monomers[ 1.0 1.0 ] nPolymer 2"
+              << " Polymer{ type linear nBlock 1 blocks[ 0 1.0 ] phi "
+              << 1.0 - phi << " } Polymer{ type linear nBlock 1"
+              << " blocks[ 1 1.0 ] phi " << phi << " } ds 0.05 }"
+              << " Interaction{ chi( 1 0 " << chi << " ) }"
+              << " Domain{ mesh 8 lattice lamellar groupName P_-1 } }\n";
+         Rp::System<1,CPT> system;
+         std::istringstream in(text.str());
+         system.readParam(in);
+         FSArray<double, 6> parameters;
+         parameters.append(1.0);
+         system.setUnitCell(parameters);
+         double fExact = (1.0 - phi)*(std::log(1.0 - phi) - 1.0)
+                       + phi*(std::log(phi) - 1.0) + chi*phi*(1.0 - phi);
+         DArray< RField<1,CPT> > w;
+         w.allocate(2);
+         w[0].allocate(system.domain().mesh().dimensions());
+         w[1].allocate(system.domain().mesh().dimensions());
+         for (int j = 0; j < 2; ++j) {
+            for (int m = 0; m < 8; ++m) {
+               w[0][m] = w[1][m] = 20.0*j;
+            }
+            // Symmetric (basis) fields for w = 0, r-grid fields for 20
+            system.w().setRGrid(w, j == 0);
+            system.compute();
+            system.scft().compute();
+            double f = system.scft().fHelmholtz();
+            double p = system.scft().pressure();
+            double pExact = 20.0*j + 1.0 - chi*phi*(1.0 - phi);
+            TEST_ASSERT(std::abs(f - fExact) < 2.0E-11);
+            TEST_ASSERT(std::abs(p - pExact) < 2.0E-11);
+         }
+      }
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -575,6 +631,7 @@ TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
+TEST_ADD(SystemTest, testThermoSmallTerms)
 TEST_END(SystemTest)
 
 #endif
