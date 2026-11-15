@@ -145,8 +145,8 @@ namespace R1 {
       * computation of molecular partition functions for all species, 
       * computation of concentration fields for blocks and solvents, and 
       * computation of overall concentrations for all monomer types. 
-      * This function does not compute the canonical (Helmholtz) free 
-      * energy or grand-canonical free energy (i.e., pressure). 
+      * It then computes the Helmholtz free energy and the pressure of
+      * these fields (see computeFreeEnergy).
       * Upon return, the flag hasCFields is set true.
       */
       void compute();

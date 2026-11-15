@@ -491,6 +491,10 @@ namespace R1
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(wFields(), cFields_);
 
+      // Free energy and pressure of these fields, so that WRITE_THERMO
+      // and COMPARE_HOMOGENEOUS after COMPUTE report the current state
+      computeFreeEnergy();
+
       //hasCFields_ = true;
    }
 
