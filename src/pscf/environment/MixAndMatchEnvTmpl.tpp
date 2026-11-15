@@ -144,6 +144,13 @@ namespace Pscf {
          a1.append(a2[i]);
       }
 
+      // Route these parameters through this Environment, so that a
+      // change calls setParameter() below, which calls reset(), and
+      // the fields are regenerated
+      for (int i = 0; i < a1.size(); i++) {
+         a1[i].modifierPtr = this;
+      }
+
       return a1;
    }
 

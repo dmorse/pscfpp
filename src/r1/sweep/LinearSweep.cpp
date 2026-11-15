@@ -38,17 +38,23 @@ namespace R1 {
       readDArray< SweepParameter >(in, "parameters", 
                                    parameters_, nParameter_);
 
-      // Verify net zero change in volume fractions if being swept
-      double sum = 0.0;
-      for (int i = 0; i < nParameter_; ++i) {
-         if (parameters_[i].type() == "phi_polymer" 
-             || parameters_[i].type() == "phi_solvent") 
-         {
-            sum += parameters_[i].change();
+      // Verify net zero change in volume fractions if being swept and
+      // every species is closed (open species take up the rest of the
+      // volume, so closed volume fractions may then change freely)
+      if (mixture().isCanonical()) {
+         double sum = 0.0;
+         for (int i = 0; i < nParameter_; ++i) {
+            if (parameters_[i].type() == "phi_polymer"
+                || parameters_[i].type() == "phi_solvent")
+            {
+               sum += parameters_[i].change();
+            }
+         }
+         if (sum > 1.0E-10 || sum < -1.0E-10) {
+            UTIL_THROW("Changes of the volume fractions of a closed "
+                       "mixture must add up to zero");
          }
       }
-      UTIL_CHECK(sum > -0.000001);
-      UTIL_CHECK(sum < 0.000001);
    }
 
    void LinearSweep::setup()

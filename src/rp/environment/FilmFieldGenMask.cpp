@@ -220,7 +220,11 @@ namespace Rp {
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
       UTIL_CHECK(normalVecId() >= 0);
-      if (system().iterator().isSymmetric()) {
+      // Store a symmetric mask if the Iterator is symmetric (a system
+      // may have no Iterator)
+      bool isSymmetric = system().hasIterator()
+                         && system().iterator().isSymmetric();
+      if (isSymmetric) {
          UTIL_CHECK(system().domain().basis().isInitialized());
       }
       
@@ -269,7 +273,7 @@ namespace Rp {
       }
 
       // Store this mask in System
-      system().mask().setRGrid(rGrid, system().iterator().isSymmetric());
+      system().mask().setRGrid(rGrid, isSymmetric);
 
       // Store lattice vector normal to film used to construct this mask
       normalVecCurrent_ = systemLatticeVector(normalVecId());
@@ -283,7 +287,7 @@ namespace Rp {
    void FilmFieldGenMask<D,CPT>::setFlexibleParams() const
    {
       UTIL_CHECK(sysPtr_);
-      if (system().iterator().isFlexible()) {
+      if (system().hasIterator() && system().iterator().isFlexible()) {
          FSArray<bool,6> updated;
          updated = modifyFlexibleParams(system().iterator().flexibleParams(),
                                         system().domain().unitCell());

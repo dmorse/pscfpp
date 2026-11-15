@@ -24,16 +24,18 @@ int main(int argc, char **argv)
    int D = Pscf::getDimension(argc, argv);
    std::cout << "dimension    " << D << std::endl;
 
+   // The exit status is 1 if a command failed
    if (1 == D) {
-      Pscf::Rp::run<1, Pscf::CUT>(argc, argv);
+      return Pscf::Rp::run<1, Pscf::CUT>(argc, argv);
    } else
    if (2 == D) {
-      Pscf::Rp::run<2, Pscf::CUT>(argc, argv);
+      return Pscf::Rp::run<2, Pscf::CUT>(argc, argv);
    } else
    if (3 == D) {
-      Pscf::Rp::run<3, Pscf::CUT>(argc, argv);
+      return Pscf::Rp::run<3, Pscf::CUT>(argc, argv);
    } else {
       std::cout << " Invalid dimension = " << D << std::endl;
+      return 1;
    }
 
 }

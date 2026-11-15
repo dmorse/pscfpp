@@ -7,6 +7,8 @@
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/ramp/LinearRamp.h>
+#include <rp/fts/ramp/RampParameter.h>
 #include <rp/scft/ScftThermo.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
@@ -23,8 +25,11 @@
 #include <util/tests/LogFileUnitTest.h>
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
+#include <util/misc/Exception.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
 
 using namespace Util;
 using namespace Pscf;
@@ -284,6 +289,134 @@ public:
 
    }
 
+   /*
+   * The Hamiltonian of a homogeneous blend of two homopolymers of
+   * length 1 with volume fractions 1 - 5.0E-9 and 5.0E-9 must not
+   * depend on a uniform shift of the fields (w = 0 or w = 20).
+   */
+   void testHamiltonianSmallPhi()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testHamiltonianSmallPhi.log");
+
+      Rp::System<1,CPT> system1;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 2"
+         " Polymer{ type linear nBlock 1 blocks[ 0 1.0 ] phi 0.999999995 }"
+         " Polymer{ type linear nBlock 1 blocks[ 1 1.0 ] phi 5.0e-9 }"
+         " vMonomer 0.01 ds 0.05 } Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 8 lattice lamellar } }\n");
+      system1.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      system1.setUnitCell(parameters);
+      Rp::Simulator<1,CPT> simulator(system1);
+      simulator.allocate();
+      simulator.analyzeChi();
+      DArray< RField<1,CPT> > w;
+      w.allocate(2);
+      w[0].allocate(system1.domain().mesh().dimensions());
+      w[1].allocate(system1.domain().mesh().dimensions());
+      double h[2];
+      for (int j = 0; j < 2; ++j) {
+         for (int m = 0; m < 8; ++m) {
+            w[0][m] = w[1][m] = 20.0*j;
+         }
+         system1.w().setRGrid(w);
+         system1.compute();
+         simulator.clearData();
+         simulator.computeWc();
+         simulator.computeHamiltonian();
+         h[j] = simulator.hamiltonian();
+      }
+      TEST_ASSERT(std::abs(h[1] - h[0]) < 1.0E-9);
+   }
+
+   void testRampParameterIdRange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testRampParameterIdRange.log");
+
+      // Diblock melt, 1 lattice parameter. Parameters with an index out
+      // of range must be rejected by getInitial, with a message that
+      // says so.
+      Rp::System<1,CPT> system1;
+      system1.fileMaster().setInputPrefix(filePrefix());
+      std::ifstream in;
+      openInputFile("in/param_system_1D_diblock_thread", in);
+      system1.readParam(in);
+      in.close();
+      Rp::Simulator<1,CPT> simulator(system1);
+      std::string bad[] = {"phi_polymer 1 0.1", "cell_param 1 0.1"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::RampParameter<1,CPT> parameter(simulator);
+         std::istringstream in(bad[i]);
+         in >> parameter;
+         std::string message;
+         try {
+            parameter.getInitial();
+         } catch (Exception& e) {
+            message = e.message();
+         }
+         TEST_ASSERT(message.find("out of range") != std::string::npos);
+      }
+   }
+
+   void testLinearRampPhiMixed()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearRampPhiMixed.log");
+
+      // Diblock (closed) in an open solvent: a ramp of the volume
+      // fraction of the diblock alone must be accepted
+      Rp::System<1,CPT> system1;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1 nSolvent 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 0.8 }"
+         " Solvent{ monomerId 1 size 0.1 mu 1.0 }"
+         " vMonomer 0.01 ds 0.01 }"
+         " Interaction{ chi( 1 0 12.0 ) }"
+         " Domain{ mesh 40 lattice lamellar } }\n");
+      system1.readParam(param);
+      Rp::Simulator<1,CPT> simulator(system1);
+      Rp::LinearRamp<1,CPT> ramp(simulator);
+      std::istringstream in("LinearRamp{"
+                            " nParameter 1 parameters phi_polymer 0 -0.1 }\n");
+      bool thrown = false;
+      try {
+         ramp.readParam(in);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+   }
+
+   void testLinearRampPhiSum()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearRampPhiSum.log");
+
+      // Closed diblock melt: a change of phi of 1.0E-8 must be rejected
+      Rp::System<1,CPT> system1;
+      std::ifstream in;
+      openInputFile("in/param_system_1D_diblock_thread", in);
+      system1.readParam(in);
+      in.close();
+      Rp::Simulator<1,CPT> simulator(system1);
+      Rp::LinearRamp<1,CPT> ramp(simulator);
+      std::istringstream rampIn("LinearRamp{ nParameter 1"
+                                " parameters phi_polymer 0 1.0e-8 }\n");
+      std::string message;
+      try {
+         ramp.readParam(rampIn);
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("add up to zero") != std::string::npos);
+   }
+
 };
 
 TEST_BEGIN(SimulatorTest)
@@ -291,6 +424,10 @@ TEST_ADD(SimulatorTest, testAnalyzeChi)
 TEST_ADD(SimulatorTest, testSaddlePointField)
 TEST_ADD(SimulatorTest, testComputeHamiltonian)
 TEST_ADD(SimulatorTest, testDc)
+TEST_ADD(SimulatorTest, testHamiltonianSmallPhi)
+TEST_ADD(SimulatorTest, testRampParameterIdRange)
+TEST_ADD(SimulatorTest, testLinearRampPhiMixed)
+TEST_ADD(SimulatorTest, testLinearRampPhiSum)
 TEST_END(SimulatorTest)
 
 #endif

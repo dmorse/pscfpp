@@ -17,6 +17,7 @@
 #include <rp/field/Mask.h>
 #include <rp/field/FieldIo.h>
 
+#include <pscf/chem/PolymerModel.h>
 #include <pscf/field/cpp/RField.h>
 #include <pscf/field/cpp/RFieldComparison.h>
 #include <pscf/crystal/BFieldComparison.h>
@@ -25,12 +26,35 @@
 #include <util/format/Dbl.h>
 #include <util/misc/FileMaster.h>
 
+#include <util/misc/Exception.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
+
+/*
+* Access to the FileMaster that a ScftThermo refers to, through the
+* protected member function fileMaster() of ScftThermo.
+*/
+template <int D>
+class ScftThermoProbe : public Rp::ScftThermo<D,CPT>
+{
+public:
+
+   static
+   FileMaster const * fileMasterPtr(Rp::ScftThermo<D,CPT> const & thermo)
+   {
+      FileMaster const & (Rp::SystemConstRef<D,CPT>::*get)() const
+                                    = &ScftThermoProbe::fileMaster;
+      return &(thermo.*get)();
+   }
+
+};
 
 class SystemTest : public LogFileUnitTest
 {
@@ -282,6 +306,14 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<1,CPT> system;
+   }
+
+   void testScftThermoFileMaster()
+   {
+      printMethod(TEST_FUNC);
+      Rp::System<1,CPT> system;
+      TEST_ASSERT(ScftThermoProbe<1>::fileMasterPtr(system.scft())
+                  == &system.fileMaster());
    }
 
    void testReadParameters1D()
@@ -566,15 +598,252 @@ public:
 
    }
 
+   /*
+   * Command scripts that end without a newline, or with an argument
+   * that cannot be read.
+   */
+   void testReadCommandsInput()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testReadCommandsInput.log");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam/param.flex", "");
+
+      // A last command without a newline must be executed
+      std::istringstream in1("READ_W_BASIS in/diblock/lam/omega.in\n"
+                             "COMPUTE");
+      system.readCommands(in1);
+      TEST_ASSERT(system.c().hasData());
+
+      // A missing argument at the end of the script must be reported
+      std::istringstream in2("WRITE_Q_TAIL out/testReadCommandsInput_q 0 0");
+      bool thrown = false;
+      try {
+         system.readCommands(in2);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+
+      // So must an argument that cannot be read
+      std::istringstream in3("WRITE_Q_TAIL out/testReadCommandsInput_q"
+                             " 0 x 1\nFINISH\n");
+      thrown = false;
+      try {
+         system.readCommands(in3);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+   }
+
+   /*
+   * Commands that write solver output after a change of the w fields
+   * or unit cell, without a new solution.
+   */
+   void testWriteNeedsSolution()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testWriteNeedsSolution.log");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam/param.flex", "");
+      std::istringstream in0("READ_W_BASIS in/diblock/lam/omega.in\n"
+                             "COMPUTE\nFINISH\n");
+      system.readCommands(in0);
+
+      std::string out = " out/testWriteNeedsSolution";
+      std::string commands[] = {"WRITE_STRESS" + out + "_stress",
+                                "WRITE_BLOCK_C_RGRID" + out + "_c.rf",
+                                "WRITE_Q_SLICE" + out + "_q 0 0 0 0",
+                                "WRITE_Q_TAIL" + out + "_q 0 0 0",
+                                "WRITE_Q" + out + "_q 0 0 0",
+                                "WRITE_Q_ALL" + out + "_qall"};
+      std::string changes[] = {"READ_W_BASIS in/diblock/lam/omega.in",
+                               "SET_UNIT_CELL lamellar 1.4"};
+      for (int i = 0; i < 6; ++i) {
+
+         // With a solution for the current w fields and unit cell
+         std::istringstream in1("COMPUTE\n" + commands[i] + "\nFINISH\n");
+         system.readCommands(in1);
+
+         // After a change, without a new solution
+         for (int j = 0; j < 2; ++j) {
+            std::istringstream in2(changes[j] + "\n" + commands[i]
+                                   + "\nFINISH\n");
+            bool thrown = false;
+            try {
+               system.readCommands(in2);
+            } catch (Exception& e) {
+               thrown = true;
+            }
+            TEST_ASSERT(thrown);
+         }
+      }
+   }
+
+   /*
+   * A parameter file written by WRITE_PARAM for a bead model system
+   * must be read as a bead model system.
+   */
+   void testWriteParamBead()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testWriteParamBead.log");
+
+      {
+         Rp::System<1,CPT> system;
+         setupSystem(system, "in/diblock/lam_bead/param.flex", "");
+         TEST_ASSERT(PolymerModel::isBead());
+         std::istringstream in("WRITE_PARAM out/testWriteParamBead.prm\n"
+                               "FINISH\n");
+         system.readCommands(in);
+      }
+
+      // The file must begin with "System{ polymerModel bead"
+      std::ifstream file;
+      openInputFile("out/testWriteParamBead.prm", file);
+      std::string label, value;
+      file >> label >> label >> value;
+      file.close();
+      TEST_ASSERT(label == "polymerModel");
+      TEST_ASSERT(value == "bead");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "out/testWriteParamBead.prm", "");
+      TEST_ASSERT(PolymerModel::isBead());
+      TEST_ASSERT(system.mixture().polymer(0).nBead() == 100);
+   }
+
+   /*
+   * Status returned by readCommands: 0 if no command failed, 1 after
+   * an unknown command or an ITERATE command that did not converge.
+   */
+   void testReadCommandsStatus()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testReadCommandsStatus.log");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam/param.flex", "");
+      std::istringstream in1("READ_W_BASIS in/diblock/lam/omega.in\n"
+                             "COMPUTE\nFINISH\n");
+      TEST_ASSERT(system.readCommands(in1) == 0);
+      std::istringstream in2("COMPUTE\n");
+      TEST_ASSERT(system.readCommands(in2) == 0);
+      std::istringstream in3("COMPUTEE\nFINISH\n");
+      TEST_ASSERT(system.readCommands(in3) == 1);
+
+      // An AmIterator with maxItr 1 cannot converge
+      Rp::System<1,CPT> system2;
+      system2.fileMaster().setInputPrefix(filePrefix());
+      system2.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 1 0 15.0 ) }"
+         " Domain{ mesh 32 lattice lamellar groupName P_-1 }"
+         " AmIteratorBasis{ epsilon 1.0e-10 maxItr 1 maxHist 10 } }\n");
+      system2.readParam(param);
+      std::istringstream in4("READ_W_BASIS in/diblock/lam/omega.in\n"
+                             "ITERATE\nFINISH\n");
+      TEST_ASSERT(system2.readCommands(in4) == 1);
+   }
+
+   /*
+   * ANALYZE in a system without a Simulator must throw an Exception.
+   */
+   void testAnalyzeNoSimulator()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzeNoSimulator.log");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam/param.flex", "");
+      TEST_ASSERT(!system.hasSimulator());
+      std::istringstream in("ANALYZE 0 1 RGridTrajectoryReader"
+                            " in/diblock/lam/omega.in\nFINISH\n");
+      bool thrown = false;
+      try {
+         system.readCommands(in);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+   }
+
+   /*
+   * Free energy and pressure of homogeneous blends of two homopolymers
+   * of length 1 with volume fractions 1 - phi and phi, in fields w = 0
+   * (basis) and w = 20 (r-grid), which have exact values. The terms of
+   * phi = 5.0E-9 and of chi = 1.0E-9 must be included.
+   */
+   void testThermoSmallTerms()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testThermoSmallTerms.log");
+
+      double phis[] = {5.0E-9, 0.5};
+      double chis[] = {10.0, 1.0E-9};
+      for (int k = 0; k < 2; ++k) {
+         double phi = phis[k];
+         double chi = chis[k];
+         std::ostringstream text;
+         text << std::setprecision(17) << "System{ Mixture{ nMonomer 2"
+              << " monomers[ 1.0 1.0 ] nPolymer 2"
+              << " Polymer{ type linear nBlock 1 blocks[ 0 1.0 ] phi "
+              << 1.0 - phi << " } Polymer{ type linear nBlock 1"
+              << " blocks[ 1 1.0 ] phi " << phi << " } ds 0.05 }"
+              << " Interaction{ chi( 1 0 " << chi << " ) }"
+              << " Domain{ mesh 8 lattice lamellar groupName P_-1 } }\n";
+         Rp::System<1,CPT> system;
+         std::istringstream in(text.str());
+         system.readParam(in);
+         FSArray<double, 6> parameters;
+         parameters.append(1.0);
+         system.setUnitCell(parameters);
+         double fExact = (1.0 - phi)*(std::log(1.0 - phi) - 1.0)
+                       + phi*(std::log(phi) - 1.0) + chi*phi*(1.0 - phi);
+         DArray< RField<1,CPT> > w;
+         w.allocate(2);
+         w[0].allocate(system.domain().mesh().dimensions());
+         w[1].allocate(system.domain().mesh().dimensions());
+         for (int j = 0; j < 2; ++j) {
+            for (int m = 0; m < 8; ++m) {
+               w[0][m] = w[1][m] = 20.0*j;
+            }
+            // Symmetric (basis) fields for w = 0, r-grid fields for 20
+            system.w().setRGrid(w, j == 0);
+            system.compute();
+            system.scft().compute();
+            double f = system.scft().fHelmholtz();
+            double p = system.scft().pressure();
+            double pExact = 20.0*j + 1.0 - chi*phi*(1.0 - phi);
+            TEST_ASSERT(std::abs(f - fExact) < 2.0E-11);
+            TEST_ASSERT(std::abs(p - pExact) < 2.0E-11);
+         }
+      }
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor1D)
+TEST_ADD(SystemTest, testScftThermoFileMaster)
 TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
+TEST_ADD(SystemTest, testThermoSmallTerms)
+TEST_ADD(SystemTest, testReadCommandsInput)
+TEST_ADD(SystemTest, testWriteNeedsSolution)
+TEST_ADD(SystemTest, testWriteParamBead)
+TEST_ADD(SystemTest, testReadCommandsStatus)
+TEST_ADD(SystemTest, testAnalyzeNoSimulator)
 TEST_END(SystemTest)
 
 #endif
