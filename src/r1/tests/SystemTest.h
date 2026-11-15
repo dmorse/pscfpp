@@ -10,8 +10,13 @@
 #include <r1/solvers/Polymer.h>
 #include <r1/iterator/Iterator.h>
 #include <r1/field/FieldIo.h>
+#include <r1/sweep/SweepParameter.h>
+
+#include <util/misc/Exception.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
 
 using namespace Util;
 using namespace Pscf;
@@ -489,6 +494,33 @@ public:
       in.close();
    }
 
+   void testSweepParameterIdRange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestSweepParameterIdRange.log");
+
+      // Diblock melt. Parameters with an index out of range must be
+      // rejected by getInitial, with a message that says so.
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr1.prm", in);
+      sys.readParam(in);
+      in.close();
+      std::string bad[] = {"phi_polymer 1 0.1", "block 0 2 0.1"};
+      for (int i = 0; i < 2; ++i) {
+         SweepParameter parameter(sys);
+         std::istringstream in(bad[i]);
+         in >> parameter;
+         std::string message;
+         try {
+            parameter.getInitial();
+         } catch (Exception& e) {
+            message = e.message();
+         }
+         TEST_ASSERT(message.find("out of range") != std::string::npos);
+      }
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -504,6 +536,7 @@ TEST_ADD(SystemTest, testIteratorSphericalNr3)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
+TEST_ADD(SystemTest, testSweepParameterIdRange)
 TEST_END(SystemTest)
 
 #endif

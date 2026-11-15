@@ -7,6 +7,7 @@
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/ramp/RampParameter.h>
 #include <rp/scft/ScftThermo.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
@@ -23,8 +24,11 @@
 #include <util/tests/LogFileUnitTest.h>
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
+#include <util/misc/Exception.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
 
 using namespace Util;
 using namespace Pscf;
@@ -284,6 +288,36 @@ public:
 
    }
 
+   void testRampParameterIdRange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testRampParameterIdRange.log");
+
+      // Diblock melt, 1 lattice parameter. Parameters with an index out
+      // of range must be rejected by getInitial, with a message that
+      // says so.
+      Rp::System<1,CPT> system1;
+      system1.fileMaster().setInputPrefix(filePrefix());
+      std::ifstream in;
+      openInputFile("in/param_system_1D_diblock_thread", in);
+      system1.readParam(in);
+      in.close();
+      Rp::Simulator<1,CPT> simulator(system1);
+      std::string bad[] = {"phi_polymer 1 0.1", "cell_param 1 0.1"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::RampParameter<1,CPT> parameter(simulator);
+         std::istringstream in(bad[i]);
+         in >> parameter;
+         std::string message;
+         try {
+            parameter.getInitial();
+         } catch (Exception& e) {
+            message = e.message();
+         }
+         TEST_ASSERT(message.find("out of range") != std::string::npos);
+      }
+   }
+
 };
 
 TEST_BEGIN(SimulatorTest)
@@ -291,6 +325,7 @@ TEST_ADD(SimulatorTest, testAnalyzeChi)
 TEST_ADD(SimulatorTest, testSaddlePointField)
 TEST_ADD(SimulatorTest, testComputeHamiltonian)
 TEST_ADD(SimulatorTest, testDc)
+TEST_ADD(SimulatorTest, testRampParameterIdRange)
 TEST_END(SimulatorTest)
 
 #endif

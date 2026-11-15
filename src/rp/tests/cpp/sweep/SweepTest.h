@@ -18,6 +18,7 @@
 #include <pscf/interaction/Interaction.h>
 
 #include <util/misc/FileMaster.h>
+#include <util/misc/Exception.h>
 #include <util/containers/GArray.h>
 #include <util/format/Dbl.h>
 #include <util/tests/LogFileUnitTest.h>
@@ -247,6 +248,33 @@ public:
       TEST_ASSERT(ps[2].isSpecialized());
    }
 
+   void testParameterIdRange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testParameterIdRange");
+
+      // Diblock melt, 1 lattice parameter. Parameters with an index out
+      // of range must be rejected by getInitial, with a message that
+      // says so.
+      Rp::System<1,CPT> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
+      std::string bad[] = {"phi_polymer 1 0.1", "cell_param 1 0.1",
+                           "block 0 2 0.1"};
+      for (int i = 0; i < 3; ++i) {
+         Rp::SweepParameter<1,CPT> parameter;
+         parameter.setSystem(system);
+         std::istringstream in(bad[i]);
+         in >> parameter;
+         std::string message;
+         try {
+            parameter.getInitial();
+         } catch (Exception& e) {
+            message = e.message();
+         }
+         TEST_ASSERT(message.find("out of range") != std::string::npos);
+      }
+   }
+
    void testLinearSweepRead()
    {
       printMethod(TEST_FUNC);
@@ -381,6 +409,7 @@ TEST_ADD(SweepTest, testParameterRead)
 TEST_ADD(SweepTest, testParameterGet)
 TEST_ADD(SweepTest, testParameterSet)
 TEST_ADD(SweepTest, testSpecializedParameter)
+TEST_ADD(SweepTest, testParameterIdRange)
 TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)
