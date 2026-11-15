@@ -274,6 +274,68 @@ public:
       TEST_ASSERT(rmsResidual(system) < 1.0E-8);
    }
 
+   /*
+   * Blend of two open homopolymers A and B, in fields w_A = a + 0.2*cos
+   * and w_B = a, so that the total volume fraction is about exp(-a).
+   */
+   void initOpenBlend(Rp::System<1,CPT>& system, double a)
+   {
+      // The volume fraction of each species is 0.5*exp(-w) in a
+      // homogeneous field w
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 2"
+         " Polymer{ type linear nBlock 1 blocks[ 0 1.0 ] mu -0.6931 }"
+         " Polymer{ type linear nBlock 1 blocks[ 1 1.0 ] mu -0.6931 }"
+         " vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 2.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      system.setUnitCell(parameters);
+      setW1D(system, a, 0.2, 1);
+   }
+
+   /*
+   * LR compressors in a blend of open species.
+   */
+   void testLrCompressorOpen()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLrCompressorOpen.log");
+
+      // LrCompressor, from a total volume fraction exp(-1): the
+      // correlation must follow the volume fractions at each step
+      Rp::System<1,CPT> system1;
+      initOpenBlend(system1, 1.0);
+      Rp::LrCompressor<1,CPT> lrCompressor(system1);
+      std::istringstream in1("LrCompressor{ epsilon 1.0e-9 maxItr 100 }\n");
+      lrCompressor.readParam(in1);
+      TEST_ASSERT(lrCompressor.compress() == 0);
+      TEST_ASSERT(rmsResidual(system1) < 1.0E-8);
+
+      // LrAmCompressor, from total volume fractions exp(-0.3) and
+      // exp(-1)
+      double a[2] = {0.3, 1.0};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system2;
+         initOpenBlend(system2, a[i]);
+         Rp::LrAmCompressor<1,CPT> lrAmCompressor(system2);
+         std::istringstream in2("LrAmCompressor{ epsilon 1.0e-9"
+                                " maxItr 100 maxHist 10 }\n");
+         lrAmCompressor.readParam(in2);
+         TEST_ASSERT(lrAmCompressor.compress() == 0);
+         TEST_ASSERT(rmsResidual(system2) < 1.0E-8);
+         if (i == 1) {
+            // Second compression by the same compressor, from exp(1)
+            setW1D(system2, -1.0, 0.2, 1);
+            TEST_ASSERT(lrAmCompressor.compress() == 0);
+            TEST_ASSERT(rmsResidual(system2) < 1.0E-8);
+         }
+      }
+   }
+
    #if 0
    void testLrAmPreCompressor()
    {
@@ -302,6 +364,7 @@ TEST_BEGIN(CompressorTest)
 TEST_ADD(CompressorTest, testAmCompressor)
 TEST_ADD(CompressorTest, testLrCompressor)
 TEST_ADD(CompressorTest, testLrCompressorCellChange)
+TEST_ADD(CompressorTest, testLrCompressorOpen)
 //TEST_ADD(CompressorTest, testLrAmPreCompressor)
 TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_END(CompressorTest)
