@@ -43,6 +43,7 @@ public:
    void testCopyConstructorCmplx();
    void testAssignment();
    void testAssignmentCmplx();
+   void testCopyFftwComplex();
    void testBaseClassReference();
 
    void testSerialize1Memory();
@@ -351,6 +352,46 @@ void CppFftwDRArrayTest::testAssignmentCmplx()
    TEST_ASSERT(Memory::total() == memory_);
 }
 
+void CppFftwDRArrayTest::testCopyFftwComplex()
+{
+   printMethod(TEST_FUNC);
+
+   {
+      FftwDRArray<fftw_complex> v;
+      v.allocate(capacity);
+      for (int i=0; i < capacity; i++ ) {
+         v[i][0] = (i+1)*10.0;
+         v[i][1] = (i+1)*10.0 + 0.1;
+      }
+
+      // Copy construction, assignment to unallocated and allocated
+      // arrays, and assignment from an Array<fftw_complex>
+      FftwDRArray<fftw_complex> u(v);
+      FftwDRArray<fftw_complex> w, x, y;
+      x.allocate(capacity);
+      w = v;
+      x = v;
+      Array<fftw_complex> const & a = v;
+      y = a;
+
+      TEST_ASSERT(u.isOwner());
+      TEST_ASSERT(w.isOwner());
+      TEST_ASSERT(y.isOwner());
+      TEST_ASSERT(u.capacity() == capacity);
+      TEST_ASSERT(w.capacity() == capacity);
+      TEST_ASSERT(y.capacity() == capacity);
+      for (int i=0; i < capacity; i++ ) {
+         for (int j=0; j < 2; j++ ) {
+            TEST_ASSERT(u[i][j] == v[i][j]);
+            TEST_ASSERT(w[i][j] == v[i][j]);
+            TEST_ASSERT(x[i][j] == v[i][j]);
+            TEST_ASSERT(y[i][j] == v[i][j]);
+         }
+      }
+   }
+   TEST_ASSERT(Memory::total() == memory_);
+}
+
 void CppFftwDRArrayTest::testIterator()
 {
    printMethod(TEST_FUNC);
@@ -641,6 +682,7 @@ TEST_ADD(CppFftwDRArrayTest, testCopyConstructor)
 TEST_ADD(CppFftwDRArrayTest, testCopyConstructorCmplx)
 TEST_ADD(CppFftwDRArrayTest, testAssignment)
 TEST_ADD(CppFftwDRArrayTest, testAssignmentCmplx)
+TEST_ADD(CppFftwDRArrayTest, testCopyFftwComplex)
 TEST_ADD(CppFftwDRArrayTest, testIterator)
 TEST_ADD(CppFftwDRArrayTest, testBaseClassReference)
 
