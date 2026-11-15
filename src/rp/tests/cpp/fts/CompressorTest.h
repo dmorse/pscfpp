@@ -435,6 +435,39 @@ public:
       TEST_ASSERT(compressor.compress() == 0);
       TEST_ASSERT(rmsResidual(system) < 1.0E-8);
    }
+
+   /*
+   * LrCompressor on a mesh on which kSq*b*b*ds/6 is much larger than 1
+   * at the largest wavenumber.
+   */
+   void testLrCompressorFineMesh()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLrCompressorFineMesh.log");
+
+      // Diblock with two segment lengths. On 16 grid points over a
+      // length 0.5, kSq*b*b*ds/6 = 16.8 (b = 1) and 37.9 (b = 1.5) at
+      // the largest wavenumber (n = 8).
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.5 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.25 1 0.75 ] phi 1.0 }"
+         " vMonomer 0.01 ds 0.01 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(0.5);
+      system.setUnitCell(parameters);
+      setW1D(system, 0.0, 0.1, 8);
+
+      Rp::LrCompressor<1,CPT> compressor(system);
+      std::istringstream in("LrCompressor{ epsilon 1.0e-10 maxItr 40 }\n");
+      compressor.readParam(in);
+      TEST_ASSERT(compressor.compress() == 0);
+      TEST_ASSERT(rmsResidual(system) < 1.0E-9);
+   }
    
 };
 
@@ -447,6 +480,7 @@ TEST_ADD(CompressorTest, testCompressCommandFailure)
 TEST_ADD(CompressorTest, testLrCompressorCellChange)
 TEST_ADD(CompressorTest, testLrCompressorOpen)
 TEST_ADD(CompressorTest, testLrCompressorMixed)
+TEST_ADD(CompressorTest, testLrCompressorFineMesh)
 TEST_END(CompressorTest)
 
 #endif

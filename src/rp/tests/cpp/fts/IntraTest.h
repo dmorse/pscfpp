@@ -21,6 +21,8 @@
 #include <util/random/Random.h>
 
 #include <fstream>
+#include <sstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -249,6 +251,79 @@ public:
 
    }
 
+   void testIntraThreadResponse()
+   {
+      // Compare the correlation of the thread model with the response
+      // of the MDE solution, at all wavenumbers of a mesh on which
+      // kSq*b*b*ds/6 is much larger than 1 at the largest ones
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIntraThreadResponse.log");
+
+      // Triblock with two segment lengths, and a solvent. On 16 grid
+      // points over a length 0.5, kSq*b*b*ds/6 = 16.8 (b = 1) and 37.9
+      // (b = 1.5) at the largest wavenumber
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.5 ]"
+         " nPolymer 1 nSolvent 1"
+         " Polymer{ type linear nBlock 3 blocks[ 0 0.25 1 0.5 0 0.25 ]"
+         " phi 0.8 }"
+         " Solvent{ monomerId 1 size 0.5 phi 0.2 }"
+         " vMonomer 0.01 ds 0.01 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(0.5);
+      system.setUnitCell(parameters);
+      const int meshSize = 16;
+      const int nMonomer = 2;
+      const double vMonomer = 0.01;
+
+      IntVec<1> kMeshDimensions;
+      kMeshDimensions[0] = meshSize/2 + 1;
+      RField<1,CPT> omega;
+      omega.allocate(kMeshDimensions);
+      Rp::IntraCorrelation<1,CPT> intra(system);
+      intra.computeOmegaTotal(omega);
+
+      // If all w fields change from 0 to eps*cos(2 pi n x/L), the total
+      // concentration changes by -eps*vMonomer*omega*cos(2 pi n x/L), to
+      // first order in eps
+      const double eps = 1.0E-4;
+      DArray< RField<1,CPT> > w;
+      w.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         w[i].allocate(system.domain().mesh().dimensions());
+      }
+      double maxDev = 0.0;
+      for (int n = 1; n <= meshSize/2; ++n) {
+         for (int j = 0; j < meshSize; ++j) {
+            for (int i = 0; i < nMonomer; ++i) {
+               w[i][j] = eps*std::cos(2.0*M_PI*n*j/meshSize);
+            }
+         }
+         system.w().setRGrid(w);
+         system.compute();
+         double dphi = 0.0;
+         for (int j = 0; j < meshSize; ++j) {
+            double phi = 0.0;
+            for (int i = 0; i < nMonomer; ++i) {
+               phi += system.c().rgrid(i)[j];
+            }
+            dphi += phi*std::cos(2.0*M_PI*n*j/meshSize);
+         }
+         dphi *= (2*n == meshSize) ? 1.0/meshSize : 2.0/meshSize;
+         double response = -dphi/(eps*vMonomer);
+         Log::file() << "n = " << n << "  response = " << response
+                     << "  omega = " << omega[n] << std::endl;
+         double dev = std::abs(response/omega[n] - 1.0);
+         TEST_ASSERT(dev < 1.0E-5);
+         if (dev > maxDev) maxDev = dev;
+      }
+      Log::file() << "Largest relative deviation " << maxDev << std::endl;
+   }
+
 };
 
 TEST_BEGIN(IntraTest)
@@ -258,6 +333,7 @@ TEST_ADD(IntraTest, testIntraDiblockBead)
 TEST_ADD(IntraTest, testIntraTriblockBead)
 TEST_ADD(IntraTest, testIntraHomoThread)
 TEST_ADD(IntraTest, testIntraHomoBead)
+TEST_ADD(IntraTest, testIntraThreadResponse)
 TEST_END(IntraTest)
 
 #endif
