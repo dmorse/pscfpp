@@ -89,11 +89,12 @@ parallel to the **a** and **b** lattice vectors, because this is the only
 orientation of the walls for which the third lattice vector is normal to
 the walls.
 
-The space group used to describe the system must accurately describe the
-symmetry of the mask and the external fields within a unit cell that
-satisfies the constraints described here. Determining the proper space
-group can be difficult in some cases, so an entire section is dedicated
-to this topic \ref scft_films_space_groups_sec "below."
+If a space group is used to describe the system, it must accurately
+describe the symmetry of the mask and the external fields within a unit
+cell that satisfies the constraints described here. Determining the
+proper space group can be difficult in some cases, so an entire section
+is dedicated to this topic \ref scft_films_space_groups_sec "below."
+A space group is optional (see \ref scft_films_no_group_sec "below").
 
 By default, the length of the lattice vector that is normal to the walls is
 not allowed to vary, so the film thickness will be held constant throughout
@@ -371,6 +372,18 @@ symmetry operations are those that describe every relevant field in the
 system: the mask, the external fields, and the polymer morphology. Thus, the
 selection of the appropriate space group for a thin film requires more
 substantial thought than is the case for bulk systems.
+
+\subsection scft_films_no_group_sec Thin films without a space group
+
+As for bulk systems, the groupName parameter of the Domain block may be
+omitted. No symmetry is then imposed, and the symmetry checks described
+in this section are skipped; the constraint on the unit-cell shape
+described \ref scft_films_unitcell_sec "above" still applies. Fields must
+then be read and written in r-grid (or k-grid) format, and the Iterator
+must be one that does not use a symmetry-adapted basis, such as
+\ref rp_AmIteratorGrid_page "AmIteratorGrid". The initial guess is then
+a set of w fields in r-grid format, because the ESTIMATE_W_BASIS command
+used \ref scft_films_initial_guess_sec "below" requires a space group.
 
 \subsection scft_films_correct_sg_sec Identifying the correct space group
 

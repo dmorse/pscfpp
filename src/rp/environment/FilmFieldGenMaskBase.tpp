@@ -123,6 +123,7 @@ namespace Rp
    {
       // Setup
       std::string groupName = systemSpaceGroup();
+      if (groupName.empty()) return; // no space group, nothing to check
       SpaceGroup<D> group;
       std::ifstream in;
 
