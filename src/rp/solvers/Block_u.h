@@ -398,6 +398,7 @@ namespace Rp {
       int kSize_;
 
       /// Contour length step size (actual step size for this block)
+      // In bead model, ds=1 by definition.
       double ds_;
 
       /// Contour length step size (value input in param file)
