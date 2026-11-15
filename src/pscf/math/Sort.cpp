@@ -41,7 +41,7 @@ namespace Sort {
       if (size > 1) {
          for (int i = 1; i < size; ++i) {
             newVal = items[i].value;
-            UTIL_CHECK(newVal > oldVal - epsilon);
+            UTIL_CHECK(newVal >= oldVal - epsilon);
             if (newVal > oldVal + epsilon) {
                bunch[1] = i;
                UTIL_CHECK(bunch[1] > bunch[0]);
