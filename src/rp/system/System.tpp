@@ -568,7 +568,15 @@ namespace Rp {
          if (command == "COMPRESS") {
             // Impose incompressibility
             UTIL_CHECK(hasSimulator());
-            simulator().compressor().compress();
+            int fail = simulator().compressor().compress();
+            // As for ITERATE, stop on failure: later commands would act
+            // on fields that do not satisfy the constraint
+            if (fail) {
+               Log::file() << std::endl
+                           << "COMPRESS failed; no further commands "
+                           << "are executed" << std::endl;
+               readNext = false;
+            }
          } else
          if (command == "SIMULATE") {
             // Perform a field theoretic simulation
