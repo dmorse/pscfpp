@@ -100,10 +100,6 @@ namespace Pscf {
 
       /**
       * Populate array on device with normal-distributed random floats.
-      * 
-      * Note: the input array must have an even number of elements. This 
-      * is a requirement imposed by cuRAND, the random number generator 
-      * library used by VecRandom.
       *
       * \param data  array to populate
       * \param stddev  standard deviation (input)
@@ -114,10 +110,6 @@ namespace Pscf {
 
       /**
       * Populate array on device with normal-distributed random doubles.
-      * 
-      * Note: the input array must have an even number of elements. This 
-      * is a requirement imposed by cuRAND, the random number generator 
-      * software used by VecRandom.
       *
       * \param data  array to populate
       * \param stddev  standard deviation (input)
@@ -143,6 +135,12 @@ namespace Pscf {
 
       /// Has a seed been set by readParam() or setSeed()?
       bool isInitialized_;
+
+      /// Work array for normal(), for floats that cannot be written directly.
+      BackendArray<float,CUT> floatWork_;
+
+      /// Work array for normal(), for doubles that cannot be written directly.
+      BackendArray<double,CUT> doubleWork_;
 
       void errorCheck(curandStatus_t const & error);
    
