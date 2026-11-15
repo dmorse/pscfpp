@@ -74,6 +74,7 @@ namespace Pscf {
          in >> std::setprecision(15) >> cell.parameters_[i];
       }   
       cell.setLattice();
+      cell.checkBasis();
    }
 
    template <int D>

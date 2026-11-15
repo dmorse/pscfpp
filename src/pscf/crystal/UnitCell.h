@@ -552,6 +552,7 @@ namespace Pscf {
          in >> cell.parameters_[i];
       }
       cell.setLattice();
+      cell.checkBasis();
       return in;
    }
 
