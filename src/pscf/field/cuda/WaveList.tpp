@@ -96,9 +96,9 @@ namespace Pscf {
       * wavevectors, with the steps of the function minimumImage in
       * shiftToMinimum.cpp: it starts from the image with components in
       * (-meshDims[i]/2, meshDims[i]/2], moves it by the image shift in
-      * shifts that lowers kSq most, while one lowers it by more than
-      * epsilon, and then to the largest neighboring image of equal kSq,
-      * repeatedly.
+      * shifts that lowers kSq most, while one lowers it by more than a
+      * fraction epsilon, and then to the largest neighboring image of
+      * equal kSq (within a fraction epsilon), repeatedly.
       *
       * When launched, this kernel requires no dynamic memory allocation.
       */
@@ -113,11 +113,12 @@ namespace Pscf {
          int nThreads = blockDim.x * gridDim.x;
          int startID = blockIdx.x * blockDim.x + threadIdx.x;
 
-         // Set epsilon
+         // Set epsilon, the relative tolerance for equal kSq (relative,
+         // so that the choice of image does not depend on length units)
          #ifdef SINGLE_PRECISION
          cudaReal epsilon = 1.0E-4;
          #else
-         cudaReal epsilon = 1.0E-8;
+         cudaReal epsilon = 1.0E-12;
          #endif
 
          int r[D], u[D];
@@ -133,13 +134,13 @@ namespace Pscf {
             // Move r by the image shift that lowers kSq most
             for (;;) {
                int jBest = -1;
-               cudaReal kSqBest = kSqMin - epsilon;
+               cudaReal kSqBest = kSqMin;
                for (int j = 0; j < shifts.n; ++j) {
                   for (int k = 0; k < D; ++k) {
                      u[k] = r[k] + shifts.v[D*j + k];
                   }
                   cudaReal g = _kSqImage<D>(u, kBasis);
-                  if (g < kSqBest) {
+                  if (g < kSqBest - epsilon*(g > kSqBest ? g : kSqBest)) {
                      jBest = j;
                      kSqBest = g;
                   }
@@ -160,7 +161,8 @@ namespace Pscf {
                   for (int k = 0; k < D; ++k) {
                      u[k] = r[k] + shifts.v[D*j + k];
                   }
-                  if (_kSqImage<D>(u, kBasis) < kSqMin + epsilon) {
+                  cudaReal g = _kSqImage<D>(u, kBasis);
+                  if (fabs(g - kSqMin) <= epsilon*(g > kSqMin ? g : kSqMin)) {
                      bool less = false;  // Is r < u?
                      for (int k = 0; k < D; ++k) {
                         if (r[k] > u[k]) break;

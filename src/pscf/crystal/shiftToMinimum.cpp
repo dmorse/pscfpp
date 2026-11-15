@@ -9,6 +9,7 @@
 #include <pscf/math/RealVec.h>
 #include <util/containers/FArray.h>
 #include <util/global.h>
+#include <algorithm>
 #include <cmath>
 
 namespace Pscf {
@@ -82,7 +83,10 @@ namespace Pscf {
       IntVec<D> minimumImage(IntVec<D> const & v, IntVec<D> const & d,
                              UnitCell<D> const & cell)
       {
-         const double epsilon = 1.0E-8;
+         // Values of |k|^2 are compared relative to their magnitude, so
+         // that the choice of image does not depend on the length unit,
+         // and zero is never tied with a nonzero value.
+         const double epsilon = 1.0E-12;
          FSArray<IntVec<D>, 14> const & nb = cachedNeighbors<D>(d, cell);
          const int n = nb.size();
 
@@ -96,17 +100,17 @@ namespace Pscf {
          }
 
          // Move r by the vector nb[j] that lowers |k|^2 most, for as
-         // long as one lowers it by more than epsilon. No vector nb[j]
-         // then lowers |k|^2, so r is a minimum image.
+         // long as one lowers it by more than a fraction epsilon. No
+         // vector nb[j] then lowers |k|^2, so r is a minimum image.
          double Gsq = cell.ksq(r);
          IntVec<D> u;
          for (;;) {
             int jBest = -1;
-            double GsqBest = Gsq - epsilon;
+            double GsqBest = Gsq;
             for (int j = 0; j < n; ++j) {
                u.add(r, nb[j]);
                double g = cell.ksq(u);
-               if (g < GsqBest) {
+               if (g < GsqBest - epsilon*std::max(g, GsqBest)) {
                   jBest = j;
                   GsqBest = g;
                }
@@ -125,7 +129,9 @@ namespace Pscf {
             changed = false;
             for (int j = 0; j < n; ++j) {
                u.add(r, nb[j]);
-               if ((cell.ksq(u) < Gsq + epsilon) && (r < u)) {
+               double g = cell.ksq(u);
+               if ((std::abs(g - Gsq) <= epsilon*std::max(g, Gsq))
+                   && (r < u)) {
                   r = u;
                   changed = true;
                }

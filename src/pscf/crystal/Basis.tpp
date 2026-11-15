@@ -32,11 +32,11 @@ namespace Pscf {
       /*
       * Are two squared norms of wavevectors equal?
       *
-      * They are taken to be equal if they differ by at most 1.0E-8,
-      * the tolerance for ties in shiftToMinimum, or by at most 1.0E-10
-      * relative to the larger one. The relative tolerance allows for
-      * rounding errors of large squared norms, and for cell parameters
-      * rounded to the 11 significant digits of field file headers.
+      * They are taken to be equal if they differ by at most 1.0E-8, or
+      * by at most 1.0E-10 relative to the larger one. The relative
+      * tolerance allows for rounding errors of large squared norms, and
+      * for cell parameters rounded to the 11 significant digits of
+      * field file headers.
       */
       bool equalNorm(double a, double b)
       {
