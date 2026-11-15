@@ -429,6 +429,30 @@ public:
       TEST_ASSERT(!thrown);
    }
 
+   void testLinearSweepCellParam()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepCellParam");
+
+      // Diblock melt with a flexible unit cell: a sweep of the lattice
+      // parameter must stop with an Exception at its first step
+      Rp::System<1,CPT> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
+      system.w().readBasis("in/block/w.bf");
+      TestLinearSweep<1> sweep(system);
+      std::istringstream in("ns 2"
+                            " baseFileName out/testLinearSweepCellParam_"
+                            " nParameter 1 parameters cell_param 0 0.1\n");
+      sweep.readParameters(in);
+      std::string message;
+      try {
+         sweep.sweep();
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("flexible") != std::string::npos);
+   }
+
    void testLinearSweepExactS()
    {
       printMethod(TEST_FUNC);
@@ -604,6 +628,7 @@ TEST_ADD(SweepTest, testLinearSweepReadNs)
 TEST_ADD(SweepTest, testLinearSweepPhiMixed)
 TEST_ADD(SweepTest, testLinearSweepPhiSum)
 TEST_ADD(SweepTest, testLinearSweepExactS)
+TEST_ADD(SweepTest, testLinearSweepCellParam)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)
 TEST_ADD(SweepTest, testLinearSweepKuhn)
