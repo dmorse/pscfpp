@@ -76,9 +76,6 @@ namespace Rp {
       // If this point is reached, stress contribution must be calculated
       UTIL_CHECK(system().mask().hasData());
       
-      // Get the length of the lattice basis vector normal to the walls
-      double nvLength = domain.unitCell().parameter(paramId);
-
       // Get the volume fraction of the unit cell occupied by polymers
       double phiTot = system().mask().phiTot();
 
@@ -166,8 +163,15 @@ namespace Rp {
          sysPtr_->scft().compute();
       }
       double pSys = system().scft().pressure();
-      double pTerm = pSys * excludedThickness() / 
-                     (phiTot * nvLength * nvLength);
+
+      // d(phiTot)/dL is the spatial average of deriv. (The ratio
+      // excludedThickness()/L^2 is exact only for a sharp interface.)
+      double dPhiTot = 0.0;
+      for (int i = 0; i < nx; i++) {
+         dPhiTot += deriv[i];
+      }
+      dPhiTot /= double(nx);
+      double pTerm = pSys * dPhiTot / phiTot;
       
       return pTerm - intTerm;
    }
