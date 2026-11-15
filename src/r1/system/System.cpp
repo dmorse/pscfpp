@@ -275,7 +275,7 @@ namespace R1
    /*
    * Read and execute commands from a specified command file.
    */
-   void System::readCommands(std::istream &in)
+   int System::readCommands(std::istream &in)
    {
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(hasDomain_);
@@ -284,6 +284,9 @@ namespace R1
       std::string filename;
 
       std::istream& inBuffer = in;
+
+      // Set to 1 if a command fails, which also stops execution
+      int status = 0;
 
       bool readNext = true;
       while (readNext) {
@@ -315,6 +318,7 @@ namespace R1
             bool isContinuation = false;
             int fail = iterate(isContinuation);
             if (fail) {
+               status = 1;
                readNext = false;
             }
          } else
@@ -450,21 +454,23 @@ namespace R1
          } else {
             Log::file() << "  Error: Unknown command  " 
                         << command << std::endl;
+            status = 1;
             readNext = false;
          }
 
       }
+      return status;
    }
 
    /*
    * Read and execute commands from the default command file.
    */
-   void System::readCommands()
+   int System::readCommands()
    {  
       if (fileMaster().commandFileName().empty()) {
          UTIL_THROW("Empty command file name");
       }
-      readCommands(fileMaster().commandFile()); 
+      return readCommands(fileMaster().commandFile());
    }
 
    /*

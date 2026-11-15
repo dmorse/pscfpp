@@ -13,7 +13,10 @@ begins with a command name that is given in upper case letters.  Some
 commands take one or more parameters, which must appear after the
 command name on the same line, separated by whitespace.  The program
 stops execution and returns control to the operating system when it
-encounters the command name 'FINISH' on a line by itself.
+encounters the command name 'FINISH' on a line by itself. The program
+also stops, without executing the remaining commands and with a nonzero
+exit status, if an ITERATE or COMPRESS command fails to converge or if
+a command name is not recognized.
 
 Full descriptions of all of the commands used by different PSCF programs
 that are relevant to SCFT calculations given \ref scft_command_page "here".
