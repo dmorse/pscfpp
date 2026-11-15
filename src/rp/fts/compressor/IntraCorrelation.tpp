@@ -13,9 +13,11 @@
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/solvers/Polymer.h>
+#include <rp/solvers/Block.h>
 #include <rp/solvers/Solvent.h>
 #include <rp/field/Domain.h>
 #include <pscf/chem/Ensemble.h>
+#include <pscf/chem/PolymerModel.h>
 
 #include <pscf/field/FFT.h>
 #include <pscf/field/RField.h>
@@ -35,6 +37,75 @@ namespace Pscf {
 namespace Rp {
 
    using namespace Util;
+
+   namespace {
+
+      /*
+      * Correlation factors of one thread block with a discrete contour.
+      *
+      * The MDE solver takes ns - 1 contour steps of length
+      * ds = length/(ns - 1), each by Richardson extrapolation of one
+      * full and two half pseudo-spectral steps, and integrates the
+      * concentration over the ns contour points by Simpson's rule. To
+      * first order in a change of the field of a homogeneous state, a
+      * step then acts as if the field were applied at its two ends and
+      * its midpoint with weights ds/6, 4ds/6 and ds/6. With
+      * x = kSq*kuhn*kuhn/6 and r = exp(-x*ds), this gives
+      *
+      *   eC = sum_j c_j r^j  (Simpson weights c_j of the contour points)
+      *   eW = s*(1 - r^(ns-1))/(1 - r),  s = ds*(1 + 4*r^(1/2) + r)/6
+      *   d  = 2*s*(length - eC)/(1 - r)
+      *
+      * Here d is the intra-block correlation (length^2 times the Debye
+      * function for a continuous chain), and eC and eW are the end
+      * factors of the concentration points and of the field points
+      * (both (1 - exp(-x*length))/x for a continuous chain). All three
+      * tend to their continuous values as ds -> 0, but d tends to
+      * length*ds/3 rather than 2*length/x for x*ds >> 1.
+      */
+      void threadFactors(double kSq, double length, double kuhn, int ns,
+                         double& d, double& eC, double& eW)
+      {
+         const double x = kSq*kuhn*kuhn/6.0;
+         if (x == 0.0) {
+            d = length*length;
+            eC = length;
+            eW = length;
+            return;
+         }
+         const int n = ns - 1;                 // even number of steps
+         const double ds = length/double(n);
+         const double a = x*ds;
+         const double xl = x*length;
+         const double r = std::exp(-a);
+         const double omr = -std::expm1(-a);        // 1 - r
+         const double omr2 = -std::expm1(-2.0*a);   // 1 - r^2
+         const double s = ds*(1.0 + 4.0*std::exp(-0.5*a) + r)/6.0;
+
+         // Simpson sum, with geometric sums over odd j and over even
+         // j (0 < j < n), written with expm1 to avoid cancellation
+         eC = 1.0 + std::exp(-xl);
+         eC += 4.0*r*(-std::expm1(-xl))/omr2;
+         eC += 2.0*r*r*(-std::expm1(-(xl - 2.0*a)))/omr2;
+         eC *= ds/3.0;
+
+         eW = s*(-std::expm1(-xl))/omr;
+
+         // length - eC, summed term by term where it would cancel
+         double diff;
+         if (xl < 0.1) {
+            diff = -std::expm1(-xl);
+            for (int j = 1; j < n; ++j) {
+               diff += (j % 2 ? 4.0 : 2.0)*(-std::expm1(-a*double(j)));
+            }
+            diff *= ds/3.0;
+         } else {
+            diff = length - eC;
+         }
+         d = 2.0*s*diff/omr;
+      }
+
+   }
 
    /*
    * Constructor.
@@ -139,7 +210,13 @@ namespace Rp {
          correlationMixturePtr_->allocate();
       }
       correlationMixturePtr_->setup();
-      correlationMixturePtr_->computeOmegaTotal(Gsq_, correlations);
+      if (PolymerModel::isThread()) {
+         // Response of the MDE solution with a discrete contour
+         computeThreadOmegaTotal(correlations);
+      } else {
+         // The bead model is discrete as it stands
+         correlationMixturePtr_->computeOmegaTotal(Gsq_, correlations);
+      }
 
       // The LR compressors use the correlation as the response of the
       // total concentration to the pressure-like field. A uniform change
@@ -174,6 +251,69 @@ namespace Rp {
       }
       if (hasOpen && hasClosed) {
          correlations[0] = omegaOpen;
+      }
+   }
+
+   /*
+   * Compute the total correlation for the thread model (on host).
+   */
+   template <int D, class T>
+   void
+   IntraCorrelation<D,T>::computeThreadOmegaTotal(Array<RealT>& correlations)
+   {
+      Mixture<D,T> const & mixture = system().mixture();
+      const double vMonomer = mixture.vMonomer();
+      UTIL_CHECK(correlations.capacity() == kSize_);
+      UTIL_CHECK(Gsq_.capacity() == kSize_);
+
+      for (int j = 0; j < kSize_; ++j) {
+         correlations[j] = 0.0;
+      }
+
+      // Polymer species: the continuous-chain sum over pairs of blocks,
+      // with the factors of threadFactors for the Debye functions and
+      // end factors of the blocks.
+      DArray<double> d, eC, eW;
+      for (int ip = 0; ip < mixture.nPolymer(); ++ip) {
+         Polymer<D,T> const & polymer = mixture.polymer(ip);
+         Correlation::Polymer<RealT> const & cPolymer
+                                     = correlationMixturePtr_->polymer(ip);
+         const int nBlock = polymer.nBlock();
+         const double prefactor
+                    = cPolymer.phi()/(cPolymer.totalLength()*vMonomer);
+         d.allocate(nBlock);
+         eC.allocate(nBlock);
+         eW.allocate(nBlock);
+         for (int j = 0; j < kSize_; ++j) {
+            const double kSq = Gsq_[j];
+            for (int ia = 0; ia < nBlock; ++ia) {
+               threadFactors(kSq, polymer.block(ia).length(),
+                             polymer.block(ia).kuhn(),
+                             polymer.block(ia).ns(),
+                             d[ia], eC[ia], eW[ia]);
+            }
+            double omega = 0.0;
+            for (int ia = 0; ia < nBlock; ++ia) {
+               omega += d[ia];
+               for (int ib = 0; ib < ia; ++ib) {
+                  omega += std::exp(-cPolymer.rSq(ia, ib)*kSq/6.0)
+                           * (eC[ia]*eW[ib] + eW[ia]*eC[ib]);
+               }
+            }
+            correlations[j] += prefactor*omega;
+         }
+         d.deallocate();
+         eC.deallocate();
+         eW.deallocate();
+      }
+
+      // Solvent species (point particles)
+      for (int i = 0; i < mixture.nSolvent(); ++i) {
+         const double c = mixture.solvent(i).phi()*mixture.solvent(i).size()
+                          / vMonomer;
+         for (int j = 0; j < kSize_; ++j) {
+            correlations[j] += c;
+         }
       }
    }
 
