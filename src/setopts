@@ -100,26 +100,26 @@ while getopts "d:c:u:a:qh" opt; do
       FILE=config.mk
       ;;
     q)
-      if [ `grep "^ *UTIL_DEBUG *= *1" config.mk` ]; then
+      if grep -q "^[[:blank:]]*UTIL_DEBUG[[:blank:]]*=[[:blank:]]*1" config.mk; then
          echo "-d ON     - debugging" >&2
       else
          echo "-d OFF    - debugging" >&2
       fi
-      if [ `grep "^ *PSCF_CPP *= *1" config.mk` ]; then
+      if grep -q "^[[:blank:]]*PSCF_CPP[[:blank:]]*=[[:blank:]]*1" config.mk; then
          echo "-c ON     - C++ CPU backend" >&2
       else
          echo "-c OFF    - C++ CPU backend" >&2
       fi
       HASCUDA=""
-      if [ `grep "^ *PSCF_CUDA *= *1" config.mk` ]; then
+      if grep -q "^[[:blank:]]*PSCF_CUDA[[:blank:]]*=[[:blank:]]*1" config.mk; then
          echo "-u ON     - CUDA GPU backend" >&2
          HASCUDA=1
       else
          echo "-u OFF    - CUDA GPU backend" >&2
       fi
       if [ -n "$HASCUDA" ]; then
-         ARCH=`grep "^ *NVARCH *=" config.mk | sed "s/^ *NVARCH *= *"//g`
-         ARCH="${ARCH// /}"
+         ARCH=`grep "^[[:blank:]]*NVARCH[[:blank:]]*=" config.mk | sed "s/^[[:blank:]]*NVARCH[[:blank:]]*=//"`
+         ARCH="${ARCH//[[:blank:]]/}"
          echo "$ARCH     - CUDA architecture identifier" >&2
          unset ARCH
       fi
@@ -192,28 +192,28 @@ while getopts "d:c:u:a:qh" opt; do
     
     case $OPTARG in
     0)  # Disable (comment out) the macro=1 definition
-      if [ `grep "^ *$MACRO *= *1" "$FILE"` ]; then
+      if grep -q "^[[:blank:]]*$MACRO[[:blank:]]*=[[:blank:]]*1" "$FILE"; then
          echo "Disabling $MACRO in file $FILE" >&2
-         sed "s/$MACRO *=.*$/$MACRO=1/" "$FILE" > temp
-         sed "s/^ *$MACRO=/#$MACRO=/" temp > "$FILE"
+         sed "s/$MACRO[[:blank:]]*=.*$/$MACRO=1/" "$FILE" > temp
+         sed "s/^[[:blank:]]*$MACRO=/#$MACRO=/" temp > "$FILE"
          rm temp
       else
          echo "$MACRO already disabled in file $FILE" >&2
       fi
       ;;
     1) # Enable (uncomment) the macro=1 definition
-      if [ `grep "^ *$MACRO *= *1" "$FILE"` ]; then
+      if grep -q "^[[:blank:]]*$MACRO[[:blank:]]*=[[:blank:]]*1" "$FILE"; then
          echo "$MACRO already enabled in file $FILE" >&2
       else
          echo "Enabling $MACRO in file $FILE" >&2
-         sed "s/$MACRO *=.*$/$MACRO=1/" "$FILE" > temp
-         sed "s/^ *# *$MACRO=/$MACRO=/" temp > "$FILE"
+         sed "s/$MACRO[[:blank:]]*=.*$/$MACRO=1/" "$FILE" > temp
+         sed "s/^[[:blank:]]*#[[:blank:]]*$MACRO=/$MACRO=/" temp > "$FILE"
          rm temp
       fi
       ;;
     *)
       echo "Setting $MACRO to $OPTARG in file $FILE" >&2
-      sed "s/$MACRO *=.*$/$MACRO=$OPTARG/" "$FILE" > temp
+      sed "s/$MACRO[[:blank:]]*=.*$/$MACRO=$OPTARG/" "$FILE" > temp
       mv temp $FILE
     esac
   fi
