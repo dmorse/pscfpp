@@ -398,25 +398,36 @@ a filename string as a parameter, and all but one of them take values of
 several integer indices needed to identify a particular propagator or
 slice.
 
-All of these commands use file formats that report values of slices
-on the nodes of the regular real-space grid that is used internally in
-computations, analogous to the r-grid file format for w and c fields.
-The file format always starts with a header section identical to that
-of an r-grid field file, followed by a data section in which the values
-of each slice are output in a format analogous to that of a r-grid
-field file for a system with only one monomer type, in which all values
-are output in a single column, with nodes listed in the same order as
-in an r-grid field file.
+All of these commands report values of propagator slices on the nodes
+of the regular grid that is used internally in computations, with nodes
+listed in the same order as in a \ref user_field_r1_page "pscf_1d field file"
+(i.e., from xMin to xMax). Their formats differ from that of a w or
+c field file, as described below for each command: the headers differ,
+and the rows that contain the values of a slice do not start with a grid
+point index, except in files written by WRITE_Q_VERTEX.
 
 \anchor scft_command_1d_writeqslice_sub
 <b> WRITE_Q_SLICE </b>:
 The command WRITE_Q_SLICE write the values of a propagator slice at
 a specified contour variable index \f$ is \f$ to an output file.
 This command named must be followed by the name of the output file,
-and values for the polymer index \f$ ip \f$, the block index \f$ ib \f$
-and the direction index \f$ id \f$, in that order.
-The data section for output by this function is the same as that of
-an r-grid field file for a system with one monomer type.
+and values for the polymer index \f$ ip \f$, the block index \f$ ib \f$,
+the direction index \f$ id \f$ and the contour variable index
+\f$ is \f$, in that order.
+The output file starts with a single header line that contains the
+label nx followed by the number of grid points. This is followed by nx
+lines that each contain the value of the slice at one grid point, in a
+single column without a grid point index. For example, for a grid with
+101 nodes, the file has the form
+\code
+nx     101
+   8.46351797850e+03
+   8.44965813412e+03
+          .
+          .
+          .
+   8.46351779611e+03
+\endcode
 
 \anchor scft_command_1d_writeqtail_sub
 <b> WRITE_Q_TAIL </b>:
@@ -424,9 +435,9 @@ The command WRITE_Q_TAIL write the values of a propagator slice at a
 value of \f$ s \f$ equal to the length of the block, corresponding to
 the slice evaluated at the vertex at which the propagator terminates.
 This command named must be followed by the name of the output file, and
-values for the polymer index \f$ ip \f$ and the block index \f$ ib \f$,
-in that order.  The resulting output file has the same format as that
-used by WRITE_Q_SLICE.
+values for the polymer index \f$ ip \f$, the block index \f$ ib \f$ and
+the direction index \f$ id \f$, in that order.  The resulting output
+file has the same format as that used by WRITE_Q_SLICE.
 
 Users may instead output the value of slice of a propagator
 corresponding to the vertex at which it originates (i.e., the propagator
@@ -438,14 +449,30 @@ variable index \f$ is = 0 \f$, corresponding to a contour variable
 <b> WRITE_Q_VERTEX </b>:
 The command WRITE_Q_VERTEX writes values of the point-wise product of all
 incoming propagators at a specific vertex of a specific polymer species.
-This command named must be followed by the name of the output file, and
-values for the polymer index \f$ ip \f$ and vertex index \f$ iv \f$.
+This command named must be followed by values for the polymer index
+\f$ ip \f$ and vertex index \f$ iv \f$, followed by the name of the
+output file, in that order.
 Vertex indices for a n-block linear block polymer are labelled from 0
-from one end, with vertices 0 and n representing the chain ends. The
-resulting output file has the same format as that used by WRITE_Q_SLICE
-and WRITE_Q_TAIL commands.  The resulting field is proportional to the
-probability density for the location of the specified vertex. The spatial
-average of this field should have the same value for any vertex, within
+from one end, with vertices 0 and n representing the chain ends.
+The resulting output file has no header. It contains one row per grid
+point, in which the first column is the grid point index, the next nb
+columns contain the values of the tails of the nb propagators that
+terminate at the vertex, where nb is the number of blocks attached to
+the vertex (nb = 1 for a chain end, nb = 2 for a junction within a
+linear polymer), and the last column contains their product.
+For example, for the junction (vertex 1) of a diblock copolymer on a
+grid with 101 nodes, the file has the form
+\code
+    0  8.46351798e+03  1.04196558e+02  8.81869440e+05
+    1  8.44965813e+03  1.05721201e+02  8.93308004e+05
+          .               .               .
+          .               .               .
+          .               .               .
+  100  8.46351780e+03  1.04196560e+02  8.81869441e+05
+\endcode
+The product in the last column is proportional to the probability
+density for the location of the specified vertex. The spatial average
+of this product should have the same value for any vertex, within
 numerical error, and is equal to the molecular partitition function
 \f$ Q \f$ for a molecule of type \f$ ip \f$.
 
@@ -453,29 +480,44 @@ numerical error, and is equal to the molecular partitition function
 <b> WRITE_Q </b>:
 The command WRITE_Q writes all slices of a specified propagator to a
 single file.  This command name must be followed by the name of the
-output file and values for the polymer index \f$ ip \f$ and block
-index \f$ ib \f$, in that order.
+output file and values for the polymer index \f$ ip \f$, block
+index \f$ ib \f$ and direction index \f$ id \f$, in that order.
 
 The output file produced by this command contains a header section
 followed by a sequence of data sections, in which each data section
 contains the data for a single slice at an integer value of the countour
 variable index. Data sections are listed in order of increasing countour
-variable index. The header section is similar to that of an r-grid file,
-except for the addition of line at the end that contain the word "nslice"
-followed by the value of the number of slices.  Each data section begins
-with a line containing the word "slice" followed by value of the contour
-variable index for the slice represented by that section. The value of
-the slice index ranges from 0 for the first slice (the "head") to
-nslice - 1 for the last (the "tail"). The format of the remainder of
-each data section is the same as that of the data section of an r-grid
-field file for a system containing one monomer type, which consists of
-a single column of numbers containing the values of the associated
-propagator slice on the nodes of the regular spatial mesh used throughout
-the computation.
+variable index. The header section contains four lines: a line with
+the label "ngrid", a line with the number of grid points, a line with
+the label "nslice", and a line with the number of slices. Each data
+section begins with a line containing the word "slice" followed by value
+of the contour variable index for the slice represented by that section.
+The value of the slice index ranges from 0 for the first slice (the
+"head") to nslice - 1 for the last (the "tail"). The remainder of each
+data section contains the values of the slice at all grid points in a
+single column without a grid point index, as in the data section of a
+file written by WRITE_Q_SLICE. For example, for a grid with 101 nodes
+and a propagator with 51 slices, the file has the form
+\code
+ngrid
+          101
+nslice
+          51
+slice 0
+   1.00000000000e+00
+   1.00000000000e+00
+          .
+          .
+          .
+slice 1
+          .
+          .
+          .
+\endcode
 
 <em> Comment for readers who read the source code </em>: This command
 calls the function R1::System::writeQ, which defines the output
-format, and is defined in the C++ file src/r1/System.cpp.
+format, and is defined in the C++ file src/r1/system/System.cpp.
 
 \anchor scft_command_1d_writeqall_sub
 <b> WRITE_Q_ALL </b>:
@@ -490,11 +532,11 @@ Each of files created by this command has the same format as that of
 a file created by the \ref scft_command_1d_writeq_sub "WRITE_Q" command.
 The name of the file containing the propagator associated with polymer
 ip, block ib, and direction id is given by a string of the form
-(basename)_(ip)_(ib)_(id).rf, where (basename) denotes the value of
+(basename)_(ip)_(ib)_(id), where (basename) denotes the value of
 the basename command parameter, and where (ip), (ib), and (id) denote
 string representations of the values of the non-negative integers ip,
 ib, and id. Thus, for example, if the command is passed a basename
-parameter out/q, then the file out/q_0_2_1.rf will contain all slices
+parameter out/q, then the file out/q_0_2_1 will contain all slices
 of the propagator associated with polymer 0, block 2 and direction 1.
 
 \section scft_command_1d_mesh_sec Mesh manipulation
