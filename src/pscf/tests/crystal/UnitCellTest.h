@@ -218,6 +218,29 @@ public:
 
    }
 
+   /*
+   * Derivative of |k|^2 for a wave index of 50000, as on 1D meshes of
+   * 100000 points: the square of the index exceeds the range of int.
+   */
+   void test1DLamellarLargeIndex()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<1> cell;
+      FSArray<double, 6> parameters;
+      double L = 2.0;
+      parameters.append(L);
+      cell.set(UnitCell<1>::Lamellar, parameters);
+      IntVec<1> v;
+      v[0] = 50000;
+
+      // |k|^2 = (2 pi v/L)^2, d|k|^2/dL = -2 (2 pi v)^2/L^3
+      double k = 2.0*Constants::Pi*v[0];
+      double expected = -2.0*k*k/(L*L*L);
+      TEST_ASSERT(std::abs(cell.dksq(v, 0) - expected)
+                  < 1.0E-10*std::abs(expected));
+   }
+
    void test2DSquare() 
    {
       printMethod(TEST_FUNC);
@@ -1207,6 +1230,7 @@ public:
 
 TEST_BEGIN(UnitCellTest)
 TEST_ADD(UnitCellTest, test1DLamellar)
+TEST_ADD(UnitCellTest, test1DLamellarLargeIndex)
 TEST_ADD(UnitCellTest, test2DSquare)
 TEST_ADD(UnitCellTest, test2DHexagonal)
 TEST_ADD(UnitCellTest, test2DRectangular)
