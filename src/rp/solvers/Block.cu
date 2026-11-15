@@ -313,7 +313,7 @@ namespace Rp {
       } else
       if (PolymerModel::isBead()) {
 
-         ds_ = ds;
+         ds_ = 1.0;
          ns_ = Edge::nBead() + 2;
 
       }
