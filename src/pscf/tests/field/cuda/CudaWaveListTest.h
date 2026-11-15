@@ -245,6 +245,54 @@ public:
       }
    }
 
+   /*
+   * The minimum images must not depend on the unit of length: the
+   * device images in square cells with lengths 1.0E-6 and 1.0E+6 must
+   * equal those of shiftToMinimum in a cell of length 1, and the zero
+   * wavevector must keep kSq = 0.
+   */
+   void testComputeMinimumImagesUnits()
+   {
+      printMethod(TEST_FUNC);
+
+      IntVec<2> d;
+      d[0] = 8;
+      d[1] = 8;
+      Mesh<2> mesh(d);
+      IntVec<2> kDims = d;
+      kDims[1] = d[1]/2 + 1;
+      int kSize = kDims[0]*kDims[1];
+
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      UnitCell<2> cell;
+      cell.set(UnitCell<2>::Square, parameters);
+
+      double scales[2] = {1.0E-6, 1.0E+6};
+      for (int is = 0; is < 2; ++is) {
+         parameters[0] = scales[is];
+         UnitCell<2> scaledCell;
+         scaledCell.set(UnitCell<2>::Square, parameters);
+
+         WaveList<2,CUT> wavelist;
+         wavelist.allocate(mesh, scaledCell);
+         wavelist.computeMinimumImages();
+         HostRecvArray<int,CUT> minImages_h;
+         HostRecvArray<cudaReal,CUT> ksq_h;
+         minImages_h = wavelist.minImages_d();
+         ksq_h = wavelist.kSq();
+         TEST_ASSERT(ksq_h[0] == 0.0);
+
+         IntVec<2> r;
+         MeshIterator<2> iter(kDims);
+         for (iter.begin(); !iter.atEnd(); ++iter) {
+            r = shiftToMinimum(iter.position(), d, cell);
+            TEST_ASSERT(r[0] == minImages_h[iter.rank()]);
+            TEST_ASSERT(r[1] == minImages_h[iter.rank() + kSize]);
+         }
+      }
+   }
+
    void testComputeMinimumImages1D()
    {
       printMethod(TEST_FUNC);
@@ -682,6 +730,7 @@ TEST_BEGIN(CudaWaveListTest)
 TEST_ADD(CudaWaveListTest, testAllocate)
 TEST_ADD(CudaWaveListTest, testComputeMinimumImagesSkewed)
 TEST_ADD(CudaWaveListTest, testComputeMinimumImagesLarge3D)
+TEST_ADD(CudaWaveListTest, testComputeMinimumImagesUnits)
 TEST_ADD(CudaWaveListTest, testComputeMinimumImages1D)
 TEST_ADD(CudaWaveListTest, testComputeMinimumImages2D)
 TEST_ADD(CudaWaveListTest, testComputeMinimumImages3D)
