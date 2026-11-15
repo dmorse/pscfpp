@@ -76,6 +76,23 @@ namespace Rp {
          }
       }
 
+      /*
+      * Stop if the solver output (block concentrations, propagators,
+      * stress) would not belong to the current w fields and unit cell.
+      * SET_UNIT_CELL and READ_W_* clear the c fields, but not the
+      * propagators and block concentrations of the previous solution.
+      */
+      inline
+      void checkHasSolution(bool hasData, std::string const & command)
+      {
+         if (!hasData) {
+            Log::file() << "\n" << command << " needs a solution for the "
+                        << "current w fields and unit cell (COMPUTE or "
+                        << "ITERATE first)" << std::endl;
+            UTIL_THROW("No solution for the current w fields and unit cell");
+         }
+      }
+
    }
 
    /*
@@ -592,6 +609,9 @@ namespace Rp {
          if (command == "WRITE_STRESS") {
             readEcho(in, filename);
             std::ofstream file;
+            // The stress requires the propagators of the current w
+            // fields and unit cell
+            checkHasSolution(c().hasData(), command);
             if (!mixture_().hasStress()) {
                computeStress();
             }
@@ -621,6 +641,7 @@ namespace Rp {
          } else
          if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
+            checkHasSolution(c().hasData(), command);
             mixture_().writeBlockCRGrid(filename);
          } else
          if (command == "WRITE_Q_SLICE") {
@@ -637,6 +658,7 @@ namespace Rp {
                         << "\n"
                         << Str("segment ID  ", 21) << segmentId
                         << std::endl;
+            checkHasSolution(c().hasData(), command);
             mixture_().writeQSlice(filename, polymerId, blockId,
                                  directionId, segmentId);
          } else
@@ -651,6 +673,7 @@ namespace Rp {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
+            checkHasSolution(c().hasData(), command);
             mixture_().writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
@@ -664,10 +687,12 @@ namespace Rp {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
+            checkHasSolution(c().hasData(), command);
             mixture_().writeQ(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q_ALL") {
             readEcho(in, filename);
+            checkHasSolution(c().hasData(), command);
             mixture_().writeQAll(filename);
          } else
          if (command == "WRITE_STARS") {
