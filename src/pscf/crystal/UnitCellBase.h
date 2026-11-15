@@ -200,6 +200,18 @@ namespace Pscf {
       */
       void setLattice();
 
+      /**
+      * Check that the Bravais basis vectors span a cell of finite volume.
+      *
+      * If the basis vectors are linearly dependent or nearly so (the
+      * volume of the cell is at most 1.0E-6 times the product of their
+      * lengths), or if an element is not finite, this function marks
+      * the unit cell as not initialized and throws an Exception. It is
+      * called after setLattice() where the parameters are read from
+      * input (operator >> and readUnitCellHeader).
+      */
+      void checkBasis();
+
       // Protected member variables
 
       /**

@@ -13,6 +13,11 @@
 #include <util/signal/Signal.h>
 #include <util/math/Constants.h>
 #include <util/containers/FSArray.h>
+#include <util/global.h>
+
+#include <cmath>
+#include <sstream>
+#include <string>
 
 namespace Pscf {
 
@@ -179,6 +184,47 @@ namespace Pscf {
          }
       }
 
+   }
+
+   /*
+   * Check that the Bravais basis vectors span a cell of finite volume.
+   */
+   template <int D>
+   void UnitCellBase<D>::checkBasis()
+   {
+      // Matrix of basis vectors (rows), padded to 3x3 by the identity,
+      // and product of the lengths of the basis vectors
+      double m[3][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
+      double lengthProduct = 1.0;
+      for (int i = 0; i < D; ++i) {
+         double sq = 0.0;
+         for (int j = 0; j < D; ++j) {
+            m[i][j] = rBasis_[i][j];
+            sq += m[i][j]*m[i][j];
+         }
+         lengthProduct *= std::sqrt(sq);
+      }
+
+      // Generalized volume of the cell (determinant)
+      double volume = m[0][0]*(m[1][1]*m[2][2] - m[1][2]*m[2][1])
+                    - m[0][1]*(m[1][0]*m[2][2] - m[1][2]*m[2][0])
+                    + m[0][2]*(m[1][0]*m[2][1] - m[1][1]*m[2][0]);
+
+      // |volume|/lengthProduct is 1 for orthogonal basis vectors and 0
+      // for linearly dependent ones. The test also fails if a length is
+      // zero or if a value is NaN or infinite.
+      if (!(std::abs(volume) > 1.0E-6*lengthProduct)) {
+         isInitialized_ = false;
+         std::ostringstream msg;
+         msg.precision(15);
+         msg << "Singular unit cell: the basis vectors are linearly "
+             << "dependent or nearly so. Cell parameters:";
+         for (int i = 0; i < nParameter_; ++i) {
+            msg << " " << parameters_[i];
+         }
+         std::string str = msg.str();
+         UTIL_THROW(str.c_str());
+      }
    }
 
    /*
