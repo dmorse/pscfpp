@@ -12,6 +12,7 @@
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 #include <rp/environment/FieldGenerator.h>
+#include <rp/environment/Environment.h>
 
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>
@@ -19,8 +20,13 @@
 
 #include <util/misc/FileMaster.h>
 #include <util/misc/Exception.h>
+#include <util/math/Constants.h>
+#include <util/containers/FSArray.h>
 
 #include <fstream>
+#include <string>
+#include <sstream>
+#include <initializer_list>
 
 using namespace Util;
 using namespace Pscf;
@@ -410,6 +416,152 @@ public:
       return pass;
    }
 
+
+   /*
+   * Generate the fields of a film (group p_1 or P_1) with walls normal
+   * to lattice vector nv and the given unit cell parameters. Returns
+   * true iff an Exception is thrown. If flexible, all cell parameters
+   * are flexible on input, and flexString() then gives the flexible
+   * parameters chosen for the film.
+   */
+   template <int D>
+   bool filmThrows(std::string const & lattice, int nv,
+                   std::initializer_list<double> cell,
+                   bool flexible = false)
+   {
+      std::ostringstream param;
+      param << "System{\n"
+            << "  Mixture{\n"
+            << "    nMonomer  2\n"
+            << "    monomers[  1.0  1.0  ]\n"
+            << "    nPolymer  1\n"
+            << "    Polymer{\n"
+            << "      type    linear\n"
+            << "      nBlock  2\n"
+            << "      blocks[\n  0  0.5\n  1  0.5\n  ]\n"
+            << "      phi     1.0\n"
+            << "    }\n"
+            << "    ds   0.1\n"
+            << "  }\n"
+            << "  Interaction{\n"
+            << "    chi(\n  1   0   10.0\n    )\n"
+            << "  }\n"
+            << "  Domain{\n"
+            << "    mesh       " << ((D == 2) ? "4 4" : "4 4 4") << "\n"
+            << "    lattice    " << lattice << "\n"
+            << "    groupName  " << ((D == 2) ? "p_1" : "P_1") << "\n"
+            << "  }\n"
+            << "  FilmEnvironment{\n"
+            << "    normalVecId        " << nv << "\n"
+            << "    interfaceThickness 0.2\n"
+            << "    excludedThickness  0.4\n"
+            << "    chiBottom[  0.0  0.0  ]\n"
+            << "    chiTop[  0.0  0.0  ]\n"
+            << "  }\n"
+            << "  AmIteratorBasis{\n"
+            << "    epsilon      1.0e-8\n"
+            << "    maxItr       1\n"
+            << "    maxHist      1\n"
+            << "    isFlexible   " << (flexible ? 1 : 0) << "\n"
+            << "  }\n"
+            << "}\n";
+
+      Rp::System<D,CPT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream in(param.str());
+      system.readParam(in);
+      FSArray<double, 6> parameters;
+      for (double p : cell) parameters.append(p);
+      system.setUnitCell(parameters);
+
+      bool thrown = false;
+      try {
+         system.environment().generate();
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      flexible_ = system.iterator().flexibleParams();
+      return thrown;
+   }
+
+   // Flexible parameters after the last call of filmThrows, e.g. "011010"
+   std::string flexString() const
+   {
+      std::string s;
+      for (int i = 0; i < flexible_.size(); ++i) {
+         s += (flexible_[i] ? '1' : '0');
+      }
+      return s;
+   }
+
+   /*
+   * Angles on either side of 90 degrees are rejected at any length
+   * scale, and right angles rounded to the 11 significant digits of
+   * field file headers are accepted at any length scale (issue #292).
+   */
+   void testCheckOrthogonality()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/filmFieldGenMaskTestCheckOrthogonality.log");
+      double pi = Constants::Pi;
+      double up = 1.5707963268;    // cos = -5.1e-12
+      double down = 1.5707963267;  // cos = +9.5e-11
+
+      // Obtuse angles between the wall normal and a parallel vector
+      TEST_ASSERT(filmThrows<3>("triclinic", 1, {2, 2.5, 2, 0, 0.25, 2.0}));
+      TEST_ASSERT(filmThrows<3>("triclinic", 1,
+                                {2, 2.5, 2, -0.5*pi, 0.3, up}));
+      TEST_ASSERT(filmThrows<3>("monoclinic", 2, {2, 2, 2.5, 1.75}));
+
+      // An angle 1e-6 from 90 degrees in a small cell
+      TEST_ASSERT(filmThrows<2>("oblique", 0,
+                                {0.05, 0.0625, 0.5*pi + 1.0E-6}));
+
+      // Rounded right angles in large cells
+      TEST_ASSERT(!filmThrows<2>("oblique", 0, {100, 125, up}));
+      TEST_ASSERT(!filmThrows<3>("triclinic", 0,
+                                 {50, 62.5, 50, up, 0.25, up}));
+      TEST_ASSERT(!filmThrows<3>("triclinic", 1,
+                                 {50, 62.5, 50, 0, 0.25, down}));
+   }
+
+   /*
+   * The flexible angle of a triclinic film (a, b, c, phi, theta, gamma)
+   * is theta for walls normal to a (phi = pi/2) or b (phi = 0), and
+   * gamma for walls normal to c. The length normal to the walls is
+   * rigid.
+   */
+   void testTriclinicFlexibleAngle()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/filmFieldGenMaskTestTriclinicFlexibleAngle.log");
+      double pi = Constants::Pi;
+      double right = 0.5*pi;
+
+      TEST_ASSERT(!filmThrows<3>("triclinic", 0,
+                                 {2, 2.2, 2.4, right, 0.2, right}, true));
+      TEST_ASSERT(flexString() == "011010");
+      TEST_ASSERT(!filmThrows<3>("triclinic", 1,
+                                 {2, 2.2, 2.4, 0, 0.2, right}, true));
+      TEST_ASSERT(flexString() == "101010");
+      TEST_ASSERT(!filmThrows<3>("triclinic", 2,
+                                 {2, 2.2, 2.4, 0.3, 0, 1.9}, true));
+      TEST_ASSERT(flexString() == "110001");
+
+      // At theta = 0 any phi passes the orthogonality check, but theta
+      // is the in-plane angle only for the values of phi above.
+      TEST_ASSERT(filmThrows<3>("triclinic", 0,
+                                {2, 2.2, 2.4, 0, 0, right}, true));
+      TEST_ASSERT(filmThrows<3>("triclinic", 1,
+                                {2, 2.2, 2.4, right, 0, right}, true));
+      TEST_ASSERT(!filmThrows<3>("triclinic", 1,
+                                 {2, 2.2, 2.4, right, 0, right}));
+   }
+
+   // Flexible parameters after the last call of filmThrows
+   FSArray<bool, 6> flexible_;
+
 };
 
 TEST_BEGIN(FilmFieldGenMaskTest)
@@ -420,6 +572,8 @@ TEST_ADD(FilmFieldGenMaskTest, testGenerate)
 TEST_ADD(FilmFieldGenMaskTest, testRegenerate)
 TEST_ADD(FilmFieldGenMaskTest, testStress)
 TEST_ADD(FilmFieldGenMaskTest, testModifyStress)
+TEST_ADD(FilmFieldGenMaskTest, testCheckOrthogonality)
+TEST_ADD(FilmFieldGenMaskTest, testTriclinicFlexibleAngle)
 TEST_END(FilmFieldGenMaskTest)
 
 #endif
