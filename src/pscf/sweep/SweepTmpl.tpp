@@ -78,6 +78,14 @@ namespace Pscf {
       // Initial setup, before a sweep
       setup();
 
+      // The contour variable is s = k/den for integers k and den. The
+      // step ds = 1/den starts at 1/ns, and is halved on backtracking
+      // by doubling den and k. Computing s from these integers, rather
+      // than by repeated addition of ds, puts every state at an exact
+      // multiple of ds, and the last state at exactly s = 1.
+      long k = 0;
+      long den = ns_;
+
       // Solve for initial state of sweep
       double sNew = 0.0;
       Log::file() << std::endl;
@@ -102,8 +110,8 @@ namespace Pscf {
          error = 1;
          while (error) {
 
-            // Set a new contour variable value sNew
-            sNew = s(0) + ds; 
+            // Set a new contour variable value sNew = s(0) + ds
+            sNew = double(k + 1)/double(den);
             Log::file() << std::endl;
             Log::file() << "===========================================\n";
             Log::file() << "Attempt s = " << sNew << std::endl;
@@ -130,6 +138,8 @@ namespace Pscf {
 
                // Decrease ds by half
                ds *= 0.50;
+               den *= 2;
+               k *= 2;
                if (ds < 0.1*ds0) {
                   UTIL_THROW("Sweep decreased ds too many times.");
                }
@@ -138,10 +148,11 @@ namespace Pscf {
 
                // Upon successful convergence, update history and nAccept
                accept(sNew);
+               ++k;
 
             }
          }
-         if (sNew + ds > 1.0000001) {
+         if (k >= den) {
             finished = true;
          }
       }
