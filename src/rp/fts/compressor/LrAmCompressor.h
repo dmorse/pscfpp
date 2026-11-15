@@ -103,6 +103,11 @@ namespace Rp {
       */
       void clearTimers() override;
 
+      /**
+      * Mark the intramolecular correlation for recomputation.
+      */
+      void clearCache() override;
+
    protected:
 
       // Inherited member function.
@@ -159,11 +164,6 @@ namespace Rp {
       * Number of points in k-space wavevector mesh.
       */
       int kSize_;
-
-      /**
-      * Has intraCorrelationK_ been calculated?
-      */
-      bool isIntraCalculated_;
 
       /**
       * Has required memory been allocated?
