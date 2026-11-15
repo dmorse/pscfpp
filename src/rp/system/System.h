@@ -309,7 +309,7 @@ namespace Rp {
       * the w fields, unit cell parameters, external fields, or mask. Upon
       * return, c().hasData(), scft().hasData(), and mixture().hasStress()
       * will all return false. If the system has an %Environment, then
-      * environment().needsUpdate() will also return true.
+      * environment().hasStress() will also return false.
       */
       void clearCFields();
 
