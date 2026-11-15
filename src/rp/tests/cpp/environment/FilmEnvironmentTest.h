@@ -96,6 +96,52 @@ public:
    }
 
    /*
+   * Read the parameters of in/environment1 from a stream that cannot
+   * seek, as for a parameter file read from a pipe.
+   */
+   void testReadParametersNoSeek()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestReadParametersNoSeek.log");
+
+      Rp::System<1,CPT> system;
+      createSystem(system, "in/system1DEnv");
+      Rp::FilmEnvironment<1,CPT> env(system);
+
+      // Stream buffer with the text of in/environment1 that cannot
+      // seek (std::streambuf::seekoff and seekpos return -1)
+      class NoSeekBuf : public std::streambuf
+      {
+      public:
+         NoSeekBuf(std::string const & text)
+          : text_(text)
+         {  setg(&text_[0], &text_[0], &text_[0] + text_.size()); }
+      private:
+         std::string text_;
+      };
+      std::ifstream file;
+      openInputFile("in/environment1", file);
+      std::stringstream text;
+      text << file.rdbuf();
+      file.close();
+      NoSeekBuf buf(text.str());
+      std::istream in(&buf);
+      TEST_ASSERT(in.tellg() == std::streampos(-1));
+
+      env.readParam(in);
+      TEST_ASSERT(env.fieldGenerator1().type() == FieldGenerator::Mask);
+      TEST_ASSERT(env.fieldGenerator2().type() == FieldGenerator::External);
+      DArray<int> ids;
+      ids.allocate(1);
+      ids[0] = 0;
+      TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_bottom",ids), 5.0));
+      TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_top",ids), 2.0));
+      ids[0] = 1;
+      TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_bottom",ids), 0.0));
+      TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_top",ids), 10.0));
+   }
+
+   /*
    * A change of chi_bottom through the sweep parameter types of the
    * Environment, as made by a LinearSweep, must reset the Environment,
    * so that the wall fields are regenerated.
@@ -646,6 +692,7 @@ public:
 TEST_BEGIN(FilmEnvironmentTest)
 TEST_ADD(FilmEnvironmentTest, testConstructor)
 TEST_ADD(FilmEnvironmentTest, testReadParameters)
+TEST_ADD(FilmEnvironmentTest, testReadParametersNoSeek)
 TEST_ADD(FilmEnvironmentTest, testWallChiParameter)
 TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
