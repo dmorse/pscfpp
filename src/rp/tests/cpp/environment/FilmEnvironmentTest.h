@@ -260,6 +260,54 @@ public:
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
    }
 
+   /*
+   * A film without a space group, with walls that are not identical,
+   * has the same mask and free energy as with space group P_1.
+   */
+   void testNoSpaceGroup()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestNoSpaceGroup.log");
+
+      // Reference: the system of in/system1DEnv, with space group P_1
+      Rp::System<1,CPT> ref;
+      createSystem(ref, "in/system1DEnv");
+      ref.w().readBasis("in/wIn1D.bf");
+      ref.w().writeRGrid("out/FilmEnvTestNoSpaceGroup_w.rf");
+      ref.compute();
+      ref.scft().compute();
+
+      // The same system without a space group, with AmIteratorGrid
+      Rp::System<1,CPT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } ds 0.0025 }"
+         " Interaction{ chi( 1 0 20.0 ) }"
+         " Domain{ mesh 96 lattice lamellar }"
+         " FilmEnvironment{ normalVecId 0 interfaceThickness 0.2"
+         " excludedThickness 0.4 chiBottom[ 0.0 0.0 ]"
+         " chiTop[ 40.0 0.0 ] }"
+         " AmIteratorGrid{ epsilon 1.0e-12 maxItr 10 maxHist 10"
+         " isFlexible 0 } }\n");
+      system.readParam(param);
+      TEST_ASSERT(!system.domain().hasGroup());
+      system.w().readRGrid("out/FilmEnvTestNoSpaceGroup_w.rf");
+      system.compute();
+      system.scft().compute();
+      TEST_ASSERT(system.mask().hasData());
+      TEST_ASSERT(system.h().hasData());
+      TEST_ASSERT(eq(system.mask().phiTot(), ref.mask().phiTot()));
+      double diff = std::abs(system.scft().fHelmholtz() 
+                             - ref.scft().fHelmholtz());
+      if (verbose() > 0) {
+         std::cout << "\nFree energy difference = " << diff << "\n";
+      }
+      TEST_ASSERT(diff < 1.0E-10);
+   }
+
    void testSweep() // test sweep along chiBottom and lattice parameter
    {
       // NOTE: this also tests that the ParameterModifier methods work
@@ -436,6 +484,7 @@ TEST_ADD(FilmEnvironmentTest, testWallChiParameter)
 TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
 TEST_ADD(FilmEnvironmentTest, testComputeNoIterator)
+TEST_ADD(FilmEnvironmentTest, testNoSpaceGroup)
 TEST_ADD(FilmEnvironmentTest, testSweep)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
 TEST_ADD(FilmEnvironmentTest, testStressFiniteDifference1D)
