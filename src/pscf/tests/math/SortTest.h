@@ -6,6 +6,7 @@
 
 #include <pscf/math/Sort.h>
 #include <util/containers/GArray.h>
+#include <util/misc/Exception.h>
 
 #include <vector>
 #include <iostream>
@@ -100,12 +101,60 @@ public:
       }
    }
 
+   /*
+   * Equal values form one bunch also if the tolerance is less than the
+   * spacing of floating point numbers near these values.
+   */
+   void testBunchSmallEpsilon()
+   {
+      printMethod(TEST_FUNC);
+
+      // Double values 1e9, 1e9, 2e9, epsilon 1.0E-8
+      items.clear();
+      Sort::Item<double> item;
+      item.value = 1.0E+9;
+      item.id = 0;
+      items.push_back(item);
+      item.id = 1;
+      items.push_back(item);
+      item.value = 2.0E+9;
+      item.id = 2;
+      items.push_back(item);
+      bool thrown = false;
+      try {
+         Sort::findBunches(items, bunches, 1.0E-8);
+      } catch (Util::Exception&) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+      TEST_ASSERT(bunches.size() == 2);
+      TEST_ASSERT(bunches[0][0] == 0);
+      TEST_ASSERT(bunches[0][1] == 2);
+
+      // Float values 1, 1, epsilon 1.0E-8
+      std::vector< Sort::Item<float> > fItems(2);
+      fItems[0].value = 1.0;
+      fItems[0].id = 0;
+      fItems[1].value = 1.0;
+      fItems[1].id = 1;
+      thrown = false;
+      try {
+         Sort::findBunches(fItems, bunches, float(1.0E-8));
+      } catch (Util::Exception&) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+      TEST_ASSERT(bunches.size() == 1);
+      TEST_ASSERT(bunches[0][1] == 2);
+   }
+
 };
 
 TEST_BEGIN(SortTest)
 //TEST_ADD(SortTest, testItem)
 TEST_ADD(SortTest, testSort)
 TEST_ADD(SortTest, testBunch)
+TEST_ADD(SortTest, testBunchSmallEpsilon)
 TEST_END(SortTest)
 
 #endif
