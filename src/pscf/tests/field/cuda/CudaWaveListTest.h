@@ -15,6 +15,9 @@
 #include <pscf/mesh/MeshIterator.h>
 
 #include <util/math/Constants.h>
+#include <util/containers/FSArray.h>
+
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -541,6 +544,138 @@ public:
       }
    }
 
+   /*
+   * Skewed cells on meshes with very different grid spacings, for
+   * which the minimum images of some wavevectors lie more than two
+   * image shifts away from the wavevector.
+   */
+   void testComputeMinimumImagesSkewed()
+   {
+      printMethod(TEST_FUNC);
+
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      parameters.append(2.0);
+      parameters.append(2.4);
+      UnitCell<2> cell2;
+      cell2.set(UnitCell<2>::Oblique, parameters);
+      IntVec<2> d2;
+      d2[0] = 8;
+      d2[1] = 64;
+      checkMinimumImages<2>(cell2, d2);
+
+      parameters[2] = 2.0;
+      parameters.append(2.8);
+      UnitCell<3> cell3;
+      cell3.set(UnitCell<3>::Monoclinic, parameters);
+      IntVec<3> d3;
+      d3[0] = 4;
+      d3[1] = 2;
+      d3[2] = 32;
+      checkMinimumImages<3>(cell3, d3);
+
+      parameters[0] = 1.0;
+      parameters[1] = 1.0;
+      parameters[2] = 1.0;
+      parameters[3] = 0.0;
+      parameters.append(1.2);
+      parameters.append(0.5*Constants::Pi);
+      UnitCell<3> triclinic;
+      triclinic.set(UnitCell<3>::Triclinic, parameters);
+      d3[1] = 4;
+      checkMinimumImages<3>(triclinic, d3);
+   }
+
+   /*
+   * Check the device minimum images and kSq for a cell and mesh: each
+   * image must be the image given by shiftToMinimum, and its kSq must
+   * be the |k|^2 of this image.
+   */
+   template <int D>
+   void checkMinimumImages(UnitCell<D> const & cell, IntVec<D> const & d)
+   {
+      Mesh<D> mesh(d);
+      IntVec<D> kDims = d;
+      kDims[D-1] = d[D-1]/2 + 1;
+      int kSize = 1;
+      for (int i = 0; i < D; ++i) kSize *= kDims[i];
+
+      WaveList<D,CUT> wavelist;
+      wavelist.allocate(mesh, cell);
+      wavelist.computeMinimumImages();
+      HostRecvArray<int,CUT> minImages_h;
+      HostRecvArray<cudaReal,CUT> ksq_h;
+      minImages_h = wavelist.minImages_d();
+      ksq_h = wavelist.kSq();
+
+      IntVec<D> r;
+      double kSq;
+      MeshIterator<D> iter(kDims);
+      for (iter.begin(); !iter.atEnd(); ++iter) {
+         r = shiftToMinimum(iter.position(), d, cell);
+         for (int i = 0; i < D; ++i) {
+            TEST_ASSERT(r[i] == minImages_h[iter.rank() + i*kSize]);
+         }
+         kSq = cell.ksq(r);
+         TEST_ASSERT(std::abs(ksq_h[iter.rank()] - kSq)
+                     < tolerance_*(1.0 + kSq));
+      }
+   }
+
+   /*
+   * A 3D mesh with more than 2^24 wavevectors in the k-grid. In this
+   * orthorhombic cell, each component of the minimum image is the one
+   * of smallest magnitude (d[i]/2 for ties).
+   */
+   void testComputeMinimumImagesLarge3D()
+   {
+      printMethod(TEST_FUNC);
+
+      IntVec<3> d;
+      d[0] = 256;
+      d[1] = 256;
+      d[2] = 512;
+      Mesh<3> mesh(d);
+      IntVec<3> kDims = d;
+      kDims[2] = d[2]/2 + 1;
+      int kSize = kDims[0]*kDims[1]*kDims[2];
+      TEST_ASSERT(kSize > (1 << 24));
+
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      parameters.append(2.5);
+      parameters.append(3.0);
+      UnitCell<3> cell;
+      cell.set(UnitCell<3>::Orthorhombic, parameters);
+
+      WaveList<3,CUT> wavelist;
+      wavelist.allocate(mesh, cell);
+      wavelist.computeMinimumImages();
+      HostRecvArray<int,CUT> minImages_h;
+      HostRecvArray<cudaReal,CUT> ksq_h;
+      minImages_h = wavelist.minImages_d();
+      ksq_h = wavelist.kSq();
+
+      double b[3];
+      for (int i = 0; i < 3; ++i) {
+         b[i] = 2.0*Constants::Pi/parameters[i];
+      }
+      IntVec<3> v;
+      int m;
+      double kSq;
+      MeshIterator<3> iter(kDims);
+      for (iter.begin(); !iter.atEnd(); ++iter) {
+         v = iter.position();
+         kSq = 0.0;
+         for (int i = 0; i < 3; ++i) {
+            m = (2*v[i] > d[i]) ? v[i] - d[i] : v[i];
+            TEST_ASSERT(minImages_h[iter.rank() + i*kSize] == m);
+            kSq += (b[i]*m)*(b[i]*m);
+         }
+         TEST_ASSERT(std::abs(ksq_h[iter.rank()] - kSq) <= tolerance_*kSq);
+      }
+   }
+
 };
 
 TEST_BEGIN(CudaWaveListTest)
@@ -556,6 +691,8 @@ TEST_ADD(CudaWaveListTest, testComputedKSq2D)
 TEST_ADD(CudaWaveListTest, testComputedKSq3D)
 TEST_ADD(CudaWaveListTest, testSortWaves3D)
 TEST_ADD(CudaWaveListTest, testComplex)
+TEST_ADD(CudaWaveListTest, testComputeMinimumImagesSkewed)
+TEST_ADD(CudaWaveListTest, testComputeMinimumImagesLarge3D)
 TEST_END(CudaWaveListTest)
 
 #endif
