@@ -28,14 +28,14 @@ System{
     groupName      P_1
   }
   BdSimulator{
+    LMBdStep{
+      mobility  1.0E-3
+    }
     AmCompressor{
       epsilon      1.0e-10
       maxItr       300
       maxHist      50 
       errorType    normResid
-    }
-    LMBdStep{
-      mobility  1.0E-3
     }
   }
 }

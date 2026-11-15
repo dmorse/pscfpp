@@ -28,14 +28,14 @@ System{
     groupName      P_1
   }
   BdSimulator{
-    LrCompressor{
-      epsilon      1.0e-10
-      maxItr       300
-      verbose      1
-      errorType    normResid
-    }
     LMBdStep{
       mobility  1.0E-3
+    }
+    LrCompressor{
+      epsilon      1.0e-9
+      maxItr       300
+      verbose      1
+      errorType    norm
     }
   }
 }
