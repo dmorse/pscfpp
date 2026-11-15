@@ -6,8 +6,14 @@
 
 #include <pscf/crystal/SpaceGroup.h>
 
+#include <util/misc/Exception.h>
+
 #include <iostream>
 #include <fstream>
+#include <string>
+
+#include <sys/stat.h>
+#include <unistd.h>
 
 using namespace Util;
 using namespace Pscf;
@@ -228,6 +234,28 @@ public:
       //std::cout << g << std::endl;
    }
 
+   /*
+   * A directory in the current directory with the name of a standard
+   * group is not a group file: readGroup must read the standard group.
+   */
+   void test2DreadGroupDirectory()
+   {
+      printMethod(TEST_FUNC);
+
+      std::string name = "p_6_m_m";
+      TEST_ASSERT(mkdir(name.c_str(), 0755) == 0);
+      SpaceGroup<2> g;
+      bool thrown = false;
+      try {
+         readGroup(name, g);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(rmdir(name.c_str()) == 0);
+      TEST_ASSERT(!thrown);
+      TEST_ASSERT(12 == g.size());
+   }
+
    void test3D_I_a_3b_d() 
    {
       printMethod(TEST_FUNC);
@@ -321,6 +349,7 @@ TEST_ADD(SpaceGroupTest, test2Dmake2)
 TEST_ADD(SpaceGroupTest, test2Dmake3)
 TEST_ADD(SpaceGroupTest, test3Dmake)
 TEST_ADD(SpaceGroupTest, test2Dread)
+TEST_ADD(SpaceGroupTest, test2DreadGroupDirectory)
 TEST_ADD(SpaceGroupTest, test3D_I_a_3b_d) 
 TEST_ADD(SpaceGroupTest, test3D_F_d_3b_m) 
 TEST_END(SpaceGroupTest)
