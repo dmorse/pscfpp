@@ -93,8 +93,8 @@ group identifier I_a_-3_d. This is the space group of the double gyroid
 phase of a diblock copolymer. Because this space group is centrosymmetric
 (i.e., has an inversion center), all stars are closed under inversion,
 and so a value of starInvert = 0 is thus listed for every star. An
-example of the output file created by the MAKE_WAVES command for the
-same system is shown \ref scft_command_pc_star_gyroid_sec "here".
+example of the output file created by the WRITE_WAVES command for the
+same system is shown \ref scft_command_pc_wave_gyroid_sec "here".
 
 Because \f$ I a \overline{3} \f$ space group has an inversion center,
 every star of this space group is closed under inversion. For this
@@ -113,8 +113,6 @@ cell_param
       3.5985168166e+00
 group_name
           I_a_-3_d
-N_monomer
-          2
 N_basis
                  357
      0     0    1       0       1   0     0     0     0
@@ -179,8 +177,6 @@ cell_param
       2.2348701435e+00
 group_name
           I_41_3_2
-N_monomer
-          3
 N_basis
                  987
      0     0    1       0       1   0     0     0     0
