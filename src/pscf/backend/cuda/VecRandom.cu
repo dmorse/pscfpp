@@ -3,6 +3,7 @@
 #include "ThreadArray.h"
 #include <util/global.h>
 #include <sys/time.h>
+#include <cstdint>
 #include <string>
 
 namespace Pscf {
@@ -178,13 +179,15 @@ namespace Pscf {
          setSeed(0);
       }
 
-      // cuRAND generates normal values in pairs, and requires an even
-      // number of values. For odd n, generate n+1 values in a work array
-      // and copy the required values to data.
+      // cuRAND generates normal values in pairs. It requires an even
+      // number of values and an output array aligned to the size of a
+      // pair. Otherwise, generate an even number of values in an aligned
+      // work array and copy the required values to data.
       int n = data.capacity();
       int nGen = n + (n % 2);
       float* ptr = data.cArray();
-      if (nGen != n) {
+      std::uintptr_t address = reinterpret_cast<std::uintptr_t>(ptr);
+      if (nGen != n || address % (2*sizeof(float)) != 0) {
          if (floatWork_.capacity() < nGen) {
             if (floatWork_.isAllocated()) {
                floatWork_.deallocate();
@@ -214,13 +217,15 @@ namespace Pscf {
          setSeed(0);
       }
 
-      // cuRAND generates normal values in pairs, and requires an even
-      // number of values. For odd n, generate n+1 values in a work array
-      // and copy the required values to data.
+      // cuRAND generates normal values in pairs. It requires an even
+      // number of values and an output array aligned to the size of a
+      // pair. Otherwise, generate an even number of values in an aligned
+      // work array and copy the required values to data.
       int n = data.capacity();
       int nGen = n + (n % 2);
       double* ptr = data.cArray();
-      if (nGen != n) {
+      std::uintptr_t address = reinterpret_cast<std::uintptr_t>(ptr);
+      if (nGen != n || address % (2*sizeof(double)) != 0) {
          if (doubleWork_.capacity() < nGen) {
             if (doubleWork_.isAllocated()) {
                doubleWork_.deallocate();
