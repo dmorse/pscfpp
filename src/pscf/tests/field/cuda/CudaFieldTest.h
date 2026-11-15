@@ -13,6 +13,15 @@
 #include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/math/IntVec.h>
 
+#include <pscf/field/cpp/RField.h>
+#include <pscf/field/cpp/RFieldDft.h>
+#include <pscf/field/cpp/CField.h>
+
+#include <util/archives/MemoryOArchive.h>
+#include <util/archives/MemoryIArchive.h>
+
+#include <cstring>
+
 using namespace Util;
 using namespace Pscf;
 
@@ -30,6 +39,7 @@ public:
    void testRFieldRoundTrip();
    void testCFieldRoundTrip();
    void testRFieldDftRoundTrip();
+   void testSerialize();
 
 };
 
@@ -208,12 +218,112 @@ void CudaFieldTest::testRFieldDftRoundTrip()
    }
 }
 
+void CudaFieldTest::testSerialize()
+{
+   printMethod(TEST_FUNC);
+
+   IntVec<2> d;
+   d[0] = 3;
+   d[1] = 5;
+
+   // GPU fields with nonuniform data, and C++ fields with the same data
+   RField<2,CUT> r(d);
+   Pscf::RFieldDft<2,CUT> k(d);
+   Pscf::CField<2,CUT> c(d);
+   RField<2,CPT> rc;
+   Pscf::RFieldDft<2,CPT> kc;
+   Pscf::CField<2,CPT> cc;
+   rc.allocate(d);
+   kc.allocate(d);
+   cc.allocate(d);
+   HostSendArray<cudaReal,CUT> r_h(r.capacity());
+   HostSendArray<cudaComplex,CUT> k_h(k.capacity()), c_h(c.capacity());
+   for (int i = 0; i < r.capacity(); ++i) {
+      r_h[i] = 0.5*i - 2.0;
+      rc[i] = r_h[i];
+   }
+   for (int i = 0; i < k.capacity(); ++i) {
+      k_h[i].x = 1.0 + i;
+      k_h[i].y = -0.25*i;
+      kc[i][0] = k_h[i].x;
+      kc[i][1] = k_h[i].y;
+   }
+   for (int i = 0; i < c.capacity(); ++i) {
+      c_h[i].x = 2.0 - i;
+      c_h[i].y = 0.75*i;
+      cc[i][0] = c_h[i].x;
+      cc[i][1] = c_h[i].y;
+   }
+   r = r_h;
+   k = k_h;
+   c = c_h;
+
+   // Save the GPU fields and the C++ fields, each followed by an int,
+   // to two archives, which must be identical
+   int i1 = 13;
+   MemoryOArchive gpuArchive, cppArchive;
+   gpuArchive.allocate(4096);
+   cppArchive.allocate(4096);
+   gpuArchive << r;
+   gpuArchive << k;
+   gpuArchive << c;
+   gpuArchive << i1;
+   cppArchive << rc;
+   cppArchive << kc;
+   cppArchive << cc;
+   cppArchive << i1;
+   int size = gpuArchive.cursor() - gpuArchive.begin();
+   TEST_ASSERT(cppArchive.cursor() - cppArchive.begin() == size);
+   TEST_ASSERT(std::memcmp(gpuArchive.begin(), cppArchive.begin(), size)
+               == 0);
+
+   // Load the archive into new GPU fields
+   RField<2,CUT> r2;
+   Pscf::RFieldDft<2,CUT> k2;
+   Pscf::CField<2,CUT> c2;
+   int i2 = 0;
+   MemoryIArchive iArchive;
+   iArchive = gpuArchive;
+   iArchive >> r2;
+   iArchive >> k2;
+   iArchive >> c2;
+   iArchive >> i2;
+   iArchive.release();
+   TEST_ASSERT(i2 == 13);
+
+   TEST_ASSERT(r2.capacity() == r.capacity());
+   TEST_ASSERT(r2.meshDimensions() == d);
+   TEST_ASSERT(k2.capacity() == k.capacity());
+   TEST_ASSERT(k2.meshDimensions() == d);
+   TEST_ASSERT(k2.dftDimensions() == k.dftDimensions());
+   TEST_ASSERT(c2.capacity() == c.capacity());
+   TEST_ASSERT(c2.meshDimensions() == d);
+
+   HostRecvArray<cudaReal,CUT> r2_h(r.capacity());
+   HostRecvArray<cudaComplex,CUT> k2_h(k.capacity()), c2_h(c.capacity());
+   r2_h = r2;
+   k2_h = k2;
+   c2_h = c2;
+   for (int i = 0; i < r.capacity(); ++i) {
+      TEST_ASSERT(r2_h[i] == r_h[i]);
+   }
+   for (int i = 0; i < k.capacity(); ++i) {
+      TEST_ASSERT(k2_h[i].x == k_h[i].x);
+      TEST_ASSERT(k2_h[i].y == k_h[i].y);
+   }
+   for (int i = 0; i < c.capacity(); ++i) {
+      TEST_ASSERT(c2_h[i].x == c_h[i].x);
+      TEST_ASSERT(c2_h[i].y == c_h[i].y);
+   }
+}
+
 TEST_BEGIN(CudaFieldTest)
 TEST_ADD(CudaFieldTest, testConstructors)
 TEST_ADD(CudaFieldTest, testAllocate)
 TEST_ADD(CudaFieldTest, testRFieldRoundTrip)
 TEST_ADD(CudaFieldTest, testCFieldRoundTrip)
 TEST_ADD(CudaFieldTest, testRFieldDftRoundTrip)
+TEST_ADD(CudaFieldTest, testSerialize)
 TEST_END(CudaFieldTest)
 
 #endif
