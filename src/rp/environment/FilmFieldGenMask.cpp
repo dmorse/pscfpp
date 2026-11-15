@@ -192,11 +192,13 @@ namespace Rp {
             UTIL_THROW("fBulk must be set before calculating this stress.");
          }
 
-         // Get system free energy
+         // Get the semi-grand potential (fHelmholtz if all species
+         // are closed), of which the stress is the derivative
          if (!system().scft().hasData()) {
             sysPtr_->scft().compute();
          }
-         double fSys = system().scft().fHelmholtz();
+         double fSys = FilmFieldGenMaskBase<D>::semiGrandPotential(
+                         system().mixture(), system().scft().fHelmholtz());
 
          // Get the length L of the basis vector normal to the walls
          double L = system().domain().unitCell().parameter(paramId);

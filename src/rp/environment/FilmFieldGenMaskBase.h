@@ -11,6 +11,11 @@
 #include <rp/environment/FieldGenerator.h>  // Base class
 #include <pscf/crystal/UnitCell.h>            // Function parameter
 #include <pscf/math/RealVec.h>                // container
+#include <pscf/chem/Ensemble.h>               // semiGrandPotential
+#include <pscf/chem/PolymerModel.h>           // semiGrandPotential
+#include <pscf/chem/PolymerSpecies.h>         // semiGrandPotential
+#include <pscf/chem/SolventSpecies.h>         // semiGrandPotential
+#include <util/misc/Log.h>                    // semiGrandPotential
 #include <iostream>
 #include <string>
 
@@ -117,8 +122,9 @@ namespace Rp {
       * The "stress" calculated by the System object is used to minimize
       * fHelmholtz with respect to a given lattice parameter. In a thin 
       * film it is useful to instead minimize the excess free energy 
-      * per unit area, (fHelmholtz - fRef) * Delta, where fRef is a 
-      * reference free energy and Delta is the film thickness. The 
+      * per unit area, (g - fRef) * Delta, where g is the value of 
+      * semiGrandPotential (fHelmholtz if all species are closed), fRef
+      * is a reference value and Delta is the film thickness. The 
       * information needed to perform such a modification is contained 
       * within this object. This method performs this modification. The
       * stress will not be modified for lattice parameters that are 
@@ -134,6 +140,61 @@ namespace Rp {
       virtual double modifyStress(int paramId, double stress) const = 0;
 
    protected:
+
+      /**
+      * Semi-grand potential per monomer reference volume.
+      *
+      * Returns fHelmholtz minus phi*mu/N for each open species, where N
+      * is the polymer length (thread model) or number of beads (bead
+      * model), or the solvent size. This is the potential whose
+      * derivative is the SCFT stress at fixed mu of the open species
+      * and fixed phi of the closed species. It is equal to fHelmholtz
+      * if all species are closed. If some species are open, the first
+      * call writes a note to the log file.
+      *
+      * \param mixture  Mixture of the system
+      * \param fHelmholtz  Helmholtz free energy per monomer
+      */
+      template <class MixtureT>
+      double semiGrandPotential(MixtureT const & mixture, 
+                                double fHelmholtz) const
+      {
+         double g = fHelmholtz;
+         double phi, length;
+         bool hasOpen = false;
+         for (int i = 0; i < mixture.nPolymer(); ++i) {
+            if (mixture.polymerSpecies(i).ensemble() == Ensemble::Open) {
+               hasOpen = true;
+               phi = mixture.polymerSpecies(i).phi();
+               if (PolymerModel::isThread()) {
+                  length = mixture.polymerSpecies(i).length();
+               } else {
+                  length = (double) mixture.polymerSpecies(i).nBead();
+               }
+               if (phi > 0.0) {
+                  g -= phi * mixture.polymerSpecies(i).mu() / length;
+               }
+            }
+         }
+         for (int i = 0; i < mixture.nSolvent(); ++i) {
+            if (mixture.solventSpecies(i).ensemble() == Ensemble::Open) {
+               hasOpen = true;
+               phi = mixture.solventSpecies(i).phi();
+               if (phi > 0.0) {
+                  g -= phi * mixture.solventSpecies(i).mu() 
+                       / mixture.solventSpecies(i).size();
+               }
+            }
+         }
+         if (hasOpen && !hasSemiGrandNote_) {
+            Util::Log::file() << "Note: fBulk is used as the bulk "
+                              << "semi-grand potential g (fHelmholtz - "
+                              << "sum of phi*mu/N of the open species)."
+                              << std::endl;
+            hasSemiGrandNote_ = true;
+         }
+         return g;
+      }
 
       /**
       * Compute the field and store where the System can access
@@ -243,6 +304,9 @@ namespace Rp {
 
       /// Does this object have a value of fBulk from the parameter file?
       bool hasFBulk_;
+
+      /// Has semiGrandPotential written its note to the log file?
+      mutable bool hasSemiGrandNote_;
 
       using FieldGenerator::type_;
 
