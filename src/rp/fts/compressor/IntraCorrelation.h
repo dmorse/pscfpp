@@ -135,6 +135,20 @@ namespace Rp {
       void computeOmegaTotalArray(Array<RealT>& correlations);
 
       /**
+      * Compute total intramolecular correlation for the thread model.
+      *
+      * The result is the linear response of the total concentration to
+      * the pressure-like field in a homogeneous state, for the contour
+      * steps and the integration rule of the MDE solver. It tends to the
+      * correlation of a continuous chain as the contour step ds tends
+      * to zero, but differs from it where kSq*b*b*ds/6 is not small.
+      * Requires Gsq_ and the Correlation::Mixture setup.
+      *
+      * \param correlations  omega values on a k-space mesh (on host)
+      */
+      void computeThreadOmegaTotal(Array<RealT>& correlations);
+
+      /**
       * Get and store r-grid and kgrid-mesh dimensions.
       *
       * Results are stored in private member variables for later use.
