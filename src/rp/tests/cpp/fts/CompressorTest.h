@@ -268,6 +268,77 @@ public:
       TEST_ASSERT(std::abs(system1.domain().unitCell().parameter(0) - 1.0)
                   < 1.0E-12);
    }
+
+   /*
+   * Set the w fields of a 1D system to w_0 = a + b*cos(2 pi n x/L) and
+   * w_i = a for i > 0.
+   */
+   void setW1D(Rp::System<1,CPT>& system, double a, double b, int n)
+   {
+      int nMonomer = system.mixture().nMonomer();
+      int meshSize = system.domain().mesh().size();
+      DArray< RField<1,CPT> > w;
+      w.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         w[i].allocate(system.domain().mesh().dimensions());
+         for (int k = 0; k < meshSize; ++k) {
+            w[i][k] = a;
+            if (i == 0) w[i][k] += b*std::cos(2.0*M_PI*n*k/meshSize);
+         }
+      }
+      system.w().setRGrid(w);
+   }
+
+   /*
+   * Root-mean-square deviation of the total concentration from 1.
+   */
+   double rmsResidual(Rp::System<1,CPT>& system)
+   {
+      int nMonomer = system.mixture().nMonomer();
+      int meshSize = system.domain().mesh().size();
+      double sumSq = 0.0;
+      for (int k = 0; k < meshSize; ++k) {
+         double error = -1.0;
+         for (int i = 0; i < nMonomer; ++i) {
+            error += system.c().rgrid(i)[k];
+         }
+         sumSq += error*error;
+      }
+      return std::sqrt(sumSq/double(meshSize));
+   }
+
+   /*
+   * COMPRESS with an LrCompressor after the unit cell has changed.
+   */
+   void testLrCompressorCellChange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLrCompressorCellChange.log");
+
+      // Diblock melt, with an LrCompressor
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.01 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar }"
+         " BdSimulator{ seed 1234 LMBdStep{ mobility 0.01 }"
+         " LrCompressor{ epsilon 1.0e-9 maxItr 100 } } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      system.setUnitCell(parameters);
+      setW1D(system, 0.0, 1.0, 1);
+
+      // Compress, triple the cell length, and compress again
+      std::istringstream in("COMPRESS\nSET_UNIT_CELL lamellar 3.0\n"
+                            "COMPRESS\nFINISH\n");
+      system.readCommands(in);
+      TEST_ASSERT(system.c().hasData());
+      TEST_ASSERT(rmsResidual(system) < 1.0E-8);
+   }
    
 };
 
@@ -277,6 +348,7 @@ TEST_ADD(CompressorTest, testLrCompressor)
 //TEST_ADD(CompressorTest, testLrAmPreCompressor)
 TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_ADD(CompressorTest, testCompressCommandFailure)
+TEST_ADD(CompressorTest, testLrCompressorCellChange)
 TEST_END(CompressorTest)
 
 #endif

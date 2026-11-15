@@ -21,6 +21,9 @@
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -147,6 +150,45 @@ public:
                      "in/w_LMBd_diblock_ref.rf", 
                      "out/testLMBdStepDiblocks.log");                                                               
    }
+
+   /*
+   * Ramp of vMonomer, with an LrCompressor: every step must converge.
+   */
+   void testVMonomerRampLrCompressor()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testVMonomerRampLrCompressor.log");
+
+      // Diblock melt, vMonomer ramp from 0.01 to 0.002
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar }"
+         " BdSimulator{ seed 1234 LMBdStep{ mobility 0.001 }"
+         " LrCompressor{ epsilon 1.0e-8 maxItr 100 }"
+         " LinearRamp{ nParameter 1 parameters v_monomer -0.008 } } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.5);
+      system.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      w.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(system.domain().mesh().dimensions());
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? std::cos(2.0*M_PI*k/16.0) : 0.0;
+         }
+      }
+      system.w().setRGrid(w);
+
+      system.simulate(20);
+      TEST_ASSERT(system.simulator().iStep() == 20);
+      TEST_ASSERT(std::abs(system.mixture().vMonomer() - 0.002) < 1.0E-12);
+   }
    
    void testLMBdStepTriblocks()
    {
@@ -212,6 +254,7 @@ public:
 
 TEST_BEGIN(BdSimulatorTest)
 TEST_ADD(BdSimulatorTest, testLMBdStepDiblocks)
+TEST_ADD(BdSimulatorTest, testVMonomerRampLrCompressor)
 TEST_ADD(BdSimulatorTest, testLMBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepTriblocks)
