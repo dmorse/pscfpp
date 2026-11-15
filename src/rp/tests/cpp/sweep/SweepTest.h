@@ -284,6 +284,36 @@ public:
       SweepTest::SetUpSystem(system, "in/block/param");
    }
 
+   void testLinearSweepReadNs()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepReadNs");
+
+      Rp::System<1,CPT> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
+
+      // The number of steps ns and historyCapacity must be positive
+      std::string bad[] = {"ns 0", "ns -2", "ns 4 historyCapacity 0"};
+      for (int i = 0; i < 3; ++i) {
+         Rp::LinearSweep<1,CPT> sweep(system);
+         std::istringstream in(bad[i]
+                               + " nParameter 1 parameters chi 0 1 1.0\n");
+         bool thrown = false;
+         try {
+            sweep.readParameters(in);
+         } catch (Exception& e) {
+            thrown = true;
+         }
+         TEST_ASSERT(thrown);
+      }
+
+      // Positive values
+      Rp::LinearSweep<1,CPT> sweep(system);
+      std::istringstream in("ns 4 historyCapacity 2"
+                            " nParameter 1 parameters chi 0 1 1.0\n");
+      sweep.readParameters(in);
+   }
+
    void testLinearSweepBlock()
    {
       printMethod(TEST_FUNC);
@@ -411,6 +441,7 @@ TEST_ADD(SweepTest, testParameterSet)
 TEST_ADD(SweepTest, testSpecializedParameter)
 TEST_ADD(SweepTest, testParameterIdRange)
 TEST_ADD(SweepTest, testLinearSweepRead)
+TEST_ADD(SweepTest, testLinearSweepReadNs)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)
 TEST_ADD(SweepTest, testLinearSweepKuhn)
