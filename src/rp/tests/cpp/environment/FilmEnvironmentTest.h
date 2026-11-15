@@ -5,6 +5,9 @@
 #include <test/UnitTestRunner.h>
 
 #include <rp/environment/FilmEnvironment.h>
+#include <rp/scft/sweep/SweepParameter.h>
+#include <pscf/sweep/ParameterType.h>
+#include <util/containers/GArray.h>
 
 #include <rp/system/System.h>
 #include <rp/scft/ScftThermo.h>
@@ -16,6 +19,7 @@
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/BFieldComparison.h>
 
+#include <sstream>
 #include <fstream>
 
 using namespace Util;
@@ -81,6 +85,33 @@ public:
       ids[0] = 1;
       TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_bottom",ids), 0.0));
       TEST_ASSERT(eq(env.fieldGenerator2().getParameter("chi_top",ids), 10.0));
+   }
+
+   /*
+   * A change of chi_bottom through the sweep parameter types of the
+   * Environment, as made by a LinearSweep, must reset the Environment,
+   * so that the wall fields are regenerated.
+   */
+   void testWallChiParameter()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestWallChiParameter.log");
+
+      Rp::System<1,CPT> system;
+      createSystem(system, "in/system1DEnv");
+      system.w().readBasis("in/wIn1D.bf");
+      system.compute();
+      TEST_ASSERT(!system.environment().needsUpdate());
+
+      GArray<ParameterType> types = system.environment().getParameterTypes();
+      Rp::SweepParameter<1,CPT> parameter;
+      parameter.setSystem(system);
+      parameter.setParameterTypesArray(types);
+      std::istringstream in("chi_bottom 0 5.0");
+      in >> parameter;
+      parameter.getInitial();
+      parameter.update(parameter.initial() + 5.0);
+      TEST_ASSERT(system.environment().needsUpdate());
    }
 
    void testSolve1D() // solve a 1D system with an FilmEnvironment
@@ -304,6 +335,7 @@ public:
 TEST_BEGIN(FilmEnvironmentTest)
 TEST_ADD(FilmEnvironmentTest, testConstructor)
 TEST_ADD(FilmEnvironmentTest, testReadParameters)
+TEST_ADD(FilmEnvironmentTest, testWallChiParameter)
 TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
 TEST_ADD(FilmEnvironmentTest, testSweep)
