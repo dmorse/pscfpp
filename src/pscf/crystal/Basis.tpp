@@ -497,10 +497,10 @@ namespace Pscf {
 
                      phase_diff = setItr->phase - wave.phase;
                      while (phase_diff > Constants::Pi) {
-                        phase_diff -= 1.0;
+                        phase_diff -= twoPi;
                      }
                      while (phase_diff <= - Constants::Pi) {
-                        phase_diff += 1.0;
+                        phase_diff += twoPi;
                      }
                      if (std::abs(phase_diff) > 1.0E-6) {
                         cancel = true;
