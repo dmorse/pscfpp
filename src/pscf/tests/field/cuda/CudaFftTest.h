@@ -54,6 +54,8 @@ public:
    void testBatchedTransformReal2D();
    void testBatchedTransformReal3D();
 
+   void testTransformRealSlice();
+
 };
 
 void CudaFftTest::testConstructor()
@@ -775,7 +777,81 @@ void CudaFftTest::testBatchedTransformReal3D()
 
 }
 
+/*
+* Real transforms of fields that are slices of a larger array.
+*
+* On a mesh with an odd number of points, the second of two consecutive
+* fields in one array (like one contour step of a propagator) is not
+* aligned to the size of a complex element.
+*/
+void CudaFftTest::testTransformRealSlice()
+{
+   printMethod(TEST_FUNC);
 
+   // Mesh with an odd number of points
+   IntVec<3> d;
+   d[0] = 5;
+   d[1] = 7;
+   d[2] = 9;
+   int rSize = d[0]*d[1]*d[2];
+
+   // Input data: a separate field, and a pair of fields with guard
+   // values in the first and the same data in the second
+   HostSendArray<cudaReal,CUT> rField_h(rSize), rPair_h(2*rSize);
+   for (int i = 0; i < rSize; ++i) {
+      rField_h[i] = 0.4 + cos(0.37*i) + 0.5*sin(0.013*i*i);
+      rPair_h[i] = -2.0;
+      rPair_h[rSize + i] = rField_h[i];
+   }
+   Pscf::RField<3,CUT> rField(d);
+   rField = rField_h;
+   BackendArray<cudaReal,CUT> rPair(2*rSize), outPair(2*rSize);
+   rPair = rPair_h;
+   outPair = rPair_h;
+   Pscf::RField<3,CUT> rSlice, outSlice;
+   rSlice.associate(rPair, rSize, d);
+   outSlice.associate(outPair, rSize, d);
+
+   Pscf::FFT<3,CUT> v;
+   v.setup(d);
+
+   // Forward transforms of the separate field and of the slice, and
+   // inverse transform of the result into the slice of outPair
+   Pscf::RFieldDft<3,CUT> kField(d), kSlice(d);
+   bool thrown = false;
+   try {
+      v.forwardTransform(rField, kField);
+      v.forwardTransform(rSlice, kSlice);
+      v.inverseTransformSafe(kSlice, outSlice);
+   } catch (Exception& e) {
+      thrown = true;
+   }
+   TEST_ASSERT(!thrown);
+
+   // The transform of the slice equals that of the separate field
+   int kSize = kField.capacity();
+   HostRecvArray<cudaComplex,CUT> kField_h(kSize), kSlice_h(kSize);
+   kField_h = kField;
+   kSlice_h = kSlice;
+   for (int i = 0; i < kSize; ++i) {
+      TEST_ASSERT(fabs(kSlice_h[i].x - kField_h[i].x) < tolerance_);
+      TEST_ASSERT(fabs(kSlice_h[i].y - kField_h[i].y) < tolerance_);
+   }
+
+   // The input is unchanged, and the inverse transform recovers it
+   // without changing the first field of outPair
+   HostRecvArray<cudaReal,CUT> rPair2_h(2*rSize), outPair_h(2*rSize);
+   rPair2_h = rPair;
+   outPair_h = outPair;
+   for (int i = 0; i < 2*rSize; ++i) {
+      TEST_ASSERT(rPair2_h[i] == rPair_h[i]);
+      TEST_ASSERT(fabs(outPair_h[i] - rPair_h[i]) < tolerance_);
+   }
+   for (int i = 0; i < rSize; ++i) {
+      TEST_ASSERT(outPair_h[i] == rPair_h[i]);
+   }
+
+}
 
 TEST_BEGIN(CudaFftTest)
 TEST_ADD(CudaFftTest, testConstructor)
@@ -788,6 +864,7 @@ TEST_ADD(CudaFftTest, testTransformComplex3D)
 TEST_ADD(CudaFftTest, testBatchedTransformReal1D)
 TEST_ADD(CudaFftTest, testBatchedTransformReal2D)
 TEST_ADD(CudaFftTest, testBatchedTransformReal3D)
+TEST_ADD(CudaFftTest, testTransformRealSlice)
 TEST_END(CudaFftTest)
 
 #endif
