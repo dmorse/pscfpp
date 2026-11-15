@@ -3,6 +3,8 @@
 
 #include "LinearRamp.h"
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -31,16 +33,20 @@ namespace Rp {
                                  nParameter_);
 
       // Verify net zero change in volume fractions, if these are swept
-      double sum = 0.0;
-      for (int i = 0; i < nParameter_; ++i) {
-         if (parameters_[i].type() == "phi_polymer" ||
-             parameters_[i].type() == "phi_solvent")
-         {
-            sum += parameters_[i].change();
+      // and every species is closed (open species take up the rest of
+      // the volume, so closed volume fractions may then change freely)
+      if (Ramp<D,T>::simulator().system().mixture().isCanonical()) {
+         double sum = 0.0;
+         for (int i = 0; i < nParameter_; ++i) {
+            if (parameters_[i].type() == "phi_polymer" ||
+                parameters_[i].type() == "phi_solvent")
+            {
+               sum += parameters_[i].change();
+            }
          }
+         UTIL_CHECK(sum > -0.0000001);
+         UTIL_CHECK(sum < 0.0000001);
       }
-      UTIL_CHECK(sum > -0.0000001);
-      UTIL_CHECK(sum < 0.0000001);
    }
 
    template <int D, class T>

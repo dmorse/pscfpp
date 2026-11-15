@@ -10,6 +10,7 @@
 
 #include "LinearSweep.h"
 #include <rp/system/System.h>
+#include <rp/solvers/Mixture.h>
 
 namespace Pscf {
 namespace Rp {
@@ -41,14 +42,19 @@ namespace Rp {
       ParamComposite::readDArray(in, "parameters", parameters_,nParameter_);
 
       // Verify net zero change in volume fractions, if these are swept
-      double sum = 0.0;
-      for (int i = 0; i < nParameter_; ++i) {
-         if (parameters_[i].type() == "phi_polymer" ||
-             parameters_[i].type() == "phi_solvent")
-         {  sum += parameters_[i].change(); }
+      // and every species is closed (with open species, which take up
+      // the rest of the volume, the closed volume fractions may change
+      // independently)
+      if (system().mixture().isCanonical()) {
+         double sum = 0.0;
+         for (int i = 0; i < nParameter_; ++i) {
+            if (parameters_[i].type() == "phi_polymer" ||
+                parameters_[i].type() == "phi_solvent")
+            {  sum += parameters_[i].change(); }
+         }
+         UTIL_CHECK(sum > -0.000001);
+         UTIL_CHECK(sum < 0.000001);
       }
-      UTIL_CHECK(sum > -0.000001);
-      UTIL_CHECK(sum < 0.000001);
    }
 
    template <int D, class T>
