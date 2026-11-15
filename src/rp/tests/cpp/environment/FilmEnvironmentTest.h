@@ -318,7 +318,7 @@ public:
       
       // Check that the right film thickness was found
       double paramVal = system.domain().unitCell().parameter(0);
-      double paramRef = 2.06121822708647739475e+00;
+      double paramRef = 2.06125919708e+00; // changed for #272
       double paramErr = std::abs(paramVal - paramRef);
       //double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
       if (verbose() > 0) {
@@ -346,12 +346,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "\nFree energy error = " 
-                   << (system.scft().fHelmholtz() - 3.80033554388) << "\n";
+                   << (system.scft().fHelmholtz() - 3.80031009905) << "\n";
          std::cout << "\nPressure error = " 
-                   << (system.scft().pressure() + 12.9408830685) << "\n";
+                   << (system.scft().pressure() + 12.9405443827) << "\n";
       }
-      TEST_ASSERT(std::abs(system.scft().fHelmholtz() - 3.80033554388) < 1e-5);
-      TEST_ASSERT(std::abs(system.scft().pressure() + 12.9408830685) < 1e-4);
+      TEST_ASSERT(std::abs(system.scft().fHelmholtz() - 3.80031009905) < 1e-5);
+      TEST_ASSERT(std::abs(system.scft().pressure() + 12.9405443827) < 1e-4);
    }
 
    // Read parameter file to create a System object

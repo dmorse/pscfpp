@@ -272,7 +272,7 @@ public:
       // Check that the right film thickness was found
       double param = system.domain().unitCell().parameter(0);
       //double paramRef = 2.061207269;  // old value
-      double paramRef = 2.06121822708647739475e+00; // changed v1.3.4
+      double paramRef = 2.06125919708e+00; // changed for #272
       double paramErr = std::abs(param - paramRef);
       if (verbose() > 0) {
          std::cout << "\nFilm thickness       = " << Dbl(param, 20, 12);
@@ -297,12 +297,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "\nFree Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.80033554388);
+                   << (system.scft().fHelmholtz() - 3.80031009905);
          std::cout << "\nPressure error = " 
-                   << (system.scft().pressure() + 12.9408830685);
+                   << (system.scft().pressure() + 12.9405443827);
       }
-      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1e-5);
-      TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80031009905) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.9405443827) < 1e-4);
    }
 
    void testSolve1DGrid() // solve a 1D system with an FilmEnvironment
@@ -458,7 +458,7 @@ public:
       // Check that the right film thickness was found
       double param = system.domain().unitCell().parameter(0);
       //double paramRef = 2.061207269; // old reference value
-      double paramRef = 2.06121822708647739475e+00; // changed v1.3.4
+      double paramRef = 2.06125919708e+00; // changed for #272
       //double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
       double paramErr = param - paramRef;
       if (verbose() > 0) {
@@ -484,12 +484,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "\nFree Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.80033554388);
+                   << (system.scft().fHelmholtz() - 3.80031009905);
          std::cout << "\nPressure error = " 
-                   << (system.scft().pressure() + 12.9408830685);
+                   << (system.scft().pressure() + 12.9405443827);
       }
-      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1.0e-5);
-      TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1.0e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80031009905) < 1.0e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.9405443827) < 1.0e-4);
    }
 
    // Read parameter file to create a System object
