@@ -9,7 +9,9 @@
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 #include <rp/field/WFields.h>
+#include <rp/field/Mask.h>
 #include <rp/environment/FieldGenerator.h>
+#include <rp/environment/Environment.h>
 
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>
@@ -22,6 +24,8 @@
 #include <util/misc/FileMaster.h>
 
 #include <fstream>
+#include <sstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -315,6 +319,56 @@ public:
       TEST_ASSERT(std::abs(ext.stress(1) + 0.163552584) < 1e-5);
    }
 
+   /*
+   * The wall fields of 1D films with different walls, with an even and
+   * an odd number of grid points: grid points at a reduced coordinate
+   * d < 1/2 get chiBottom, and the others chiTop.
+   */
+   void testMidpoint()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/extTestMidpoint.log");
+
+      double chiBottom[2] = {1.0, 2.0};
+      double chiTop[2] = {5.0, 3.0};
+      for (int n = 32; n <= 33; ++n) {
+         Rp::System<1,CPT> system;
+         system.fileMaster().setInputPrefix(filePrefix());
+         system.fileMaster().setOutputPrefix(filePrefix());
+         std::ostringstream param;
+         param << "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+               << " nPolymer 1 Polymer{ type linear nBlock 2"
+               << " blocks[ 0 0.5 1 0.5 ] phi 1.0 } ds 0.01 }"
+               << " Interaction{ chi( 1 0 20.0 ) }"
+               << " Domain{ mesh " << n << " lattice lamellar"
+               << " groupName P_1 }"
+               << " FilmEnvironment{ normalVecId 0"
+               << " interfaceThickness 0.2 excludedThickness 0.8"
+               << " chiBottom[ 1.0 2.0 ] chiTop[ 5.0 3.0 ] } }\n";
+         std::istringstream in(param.str());
+         system.readParam(in);
+         FSArray<double, 6> parameters;
+         parameters.append(1.0);
+         system.setUnitCell(parameters);
+         system.environment().generate();
+
+         RField<1,CPT> const & mask = system.mask().rgrid();
+         double maxDiff = 0.0;
+         for (int i = 0; i < 2; ++i) {
+            RField<1,CPT> const & h = system.h().rgrid(i);
+            for (int k = 0; k < n; ++k) {
+               double chi = (2*k < n) ? chiBottom[i] : chiTop[i];
+               double diff = std::abs(h[k] - (1.0 - mask[k])*chi);
+               if (diff > maxDiff) maxDiff = diff;
+            }
+         }
+         if (verbose() > 0) {
+            std::cout << "\nn = " << n << ", max error = " << maxDiff;
+         }
+         TEST_ASSERT(maxDiff < 1.0E-12);
+      }
+   }
+
    // Read parameter file to create a System object
    template <int D>
    void createSystem(Rp::System<D,CPT>& system, std::string fname)
@@ -374,6 +428,7 @@ TEST_ADD(FilmFieldGenExtTest, testCheckCompatibility)
 TEST_ADD(FilmFieldGenExtTest, testGenerate)
 TEST_ADD(FilmFieldGenExtTest, testRegenerate)
 TEST_ADD(FilmFieldGenExtTest, testStress)
+TEST_ADD(FilmFieldGenExtTest, testMidpoint)
 TEST_END(FilmFieldGenExtTest)
 
 #endif
