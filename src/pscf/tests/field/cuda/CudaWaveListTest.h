@@ -724,6 +724,45 @@ public:
       }
    }
 
+   /*
+   * kSq and dKSq on a 1D mesh of 100000 points, with wave indices up
+   * to 50000, whose squares exceed the range of int.
+   */
+   void testComputedKSqLarge1D()
+   {
+      printMethod(TEST_FUNC);
+
+      FSArray<double, 6> parameters;
+      double L = 2.0;
+      parameters.append(L);
+      UnitCell<1> cell;
+      cell.set(UnitCell<1>::Lamellar, parameters);
+      IntVec<1> d;
+      d[0] = 100000;
+      Mesh<1> mesh(d);
+
+      WaveList<1,CUT> wavelist;
+      wavelist.allocate(mesh, cell);
+      wavelist.computeKSq();
+      wavelist.computedKSq();
+      HostRecvArray<cudaReal,CUT> ksq_h, dksq_h;
+      ksq_h = wavelist.kSq();
+      dksq_h = wavelist.dKSq(0);
+
+      // k-grid point i < 50000 is its own minimum image, and stands also
+      // for its inverse (factor 2 in dKSq); 50000 is its own inverse.
+      // |k|^2 = (2 pi i/L)^2, d|k|^2/dL = -2 (2 pi i)^2/L^3
+      double k, kSq, dKSq;
+      for (int i = 0; i <= d[0]/2; ++i) {
+         k = 2.0*Constants::Pi*i/L;
+         kSq = k*k;
+         dKSq = -2.0*kSq/L;
+         if (i < d[0]/2) dKSq *= 2.0;
+         TEST_ASSERT(std::abs(ksq_h[i] - kSq) <= tolerance_*kSq);
+         TEST_ASSERT(std::abs(dksq_h[i] - dKSq) <= tolerance_*std::abs(dKSq));
+      }
+   }
+
 };
 
 TEST_BEGIN(CudaWaveListTest)
@@ -742,6 +781,7 @@ TEST_ADD(CudaWaveListTest, testComplex)
 TEST_ADD(CudaWaveListTest, testComputeMinimumImagesSkewed)
 TEST_ADD(CudaWaveListTest, testComputeMinimumImagesLarge3D)
 TEST_ADD(CudaWaveListTest, testComputeMinimumImagesUnits)
+TEST_ADD(CudaWaveListTest, testComputedKSqLarge1D)
 TEST_END(CudaWaveListTest)
 
 #endif
