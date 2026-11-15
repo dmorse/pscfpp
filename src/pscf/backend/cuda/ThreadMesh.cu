@@ -110,6 +110,9 @@ namespace ThreadMesh {
          if (D > 1) { if (meshDims[1] != MESH_DIMS.y) match = false; }
          if (D > 2) { if (meshDims[2] != MESH_DIMS.z) match = false; }
       }
+      // Dimensions absent from the requested mesh must equal 1
+      if (D < 2) { if (MESH_DIMS.y != 1) match = false; }
+      if (D < 3) { if (MESH_DIMS.z != 1) match = false; }
 
       if (match) {
          // Do nothing. Reuse previous execution configuration.
