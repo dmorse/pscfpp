@@ -367,6 +367,45 @@ public:
       TEST_ASSERT(!ThreadMesh::hasUnusedThreads());
    }
 
+   void testThreadMeshLowerDimension()
+   {
+      printMethod(TEST_FUNC);
+
+      dim3 blockDims, gridDims, meshDims;
+
+      // A 3D mesh, then 2D and 1D meshes with the same leading dimensions
+      IntVec<3> mesh3;
+      mesh3[0] = 16;
+      mesh3[1] = 8;
+      mesh3[2] = 4;
+      ThreadMesh::setConfig(mesh3, false);
+      meshDims = ThreadMesh::meshDims();
+      TEST_ASSERT(meshDims.z == 4);
+
+      IntVec<2> mesh2;
+      mesh2[0] = 16;
+      mesh2[1] = 8;
+      ThreadMesh::setConfig(mesh2, false);
+      blockDims = ThreadMesh::blockDims();
+      gridDims = ThreadMesh::gridDims();
+      meshDims = ThreadMesh::meshDims();
+      TEST_ASSERT(meshDims.x == 16);
+      TEST_ASSERT(meshDims.y == 8);
+      TEST_ASSERT(meshDims.z == 1);
+      TEST_ASSERT(blockDims.z * gridDims.z == 1);
+
+      IntVec<1> mesh1;
+      mesh1[0] = 16;
+      ThreadMesh::setConfig(mesh1, false);
+      blockDims = ThreadMesh::blockDims();
+      gridDims = ThreadMesh::gridDims();
+      meshDims = ThreadMesh::meshDims();
+      TEST_ASSERT(meshDims.x == 16);
+      TEST_ASSERT(meshDims.y * meshDims.z == 1);
+      TEST_ASSERT(blockDims.y * blockDims.z == 1);
+      TEST_ASSERT(gridDims.y * gridDims.z == 1);
+   }
+
 };
 
 TEST_BEGIN(CudaThreadGridTest)
@@ -374,6 +413,7 @@ TEST_ADD(CudaThreadGridTest, testThreadArray)
 TEST_ADD(CudaThreadGridTest, testThreadMesh1D)
 TEST_ADD(CudaThreadGridTest, testThreadMesh2D)
 TEST_ADD(CudaThreadGridTest, testThreadMesh3D)
+TEST_ADD(CudaThreadGridTest, testThreadMeshLowerDimension)
 TEST_END(CudaThreadGridTest)
 
 #endif
