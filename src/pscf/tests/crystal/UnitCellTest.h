@@ -7,14 +7,18 @@
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/crystal/replicateUnitCell.h>
+#include <pscf/crystal/unitCellHeader.h>
 
 #include <util/signal/Signal.h>
 #include <util/math/Constants.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
+#include <util/misc/Exception.h>
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <string>
 
 using namespace Util;
 using namespace Pscf;
@@ -1147,6 +1151,60 @@ public:
 
    }
 
+   /*
+   * Read a unit cell from a string. Return true if an Exception is
+   * thrown.
+   */
+   template <int D>
+   bool readThrows(std::string const & text)
+   {
+      UnitCell<D> cell;
+      std::istringstream in(text);
+      try {
+         in >> cell;
+      } catch (Exception& e) {
+         return true;
+      }
+      return false;
+   }
+
+   /*
+   * Unit cells with linearly dependent basis vectors must be rejected.
+   */
+   void testSingularCell()
+   {
+      printMethod(TEST_FUNC);
+
+      TEST_ASSERT(readThrows<1>("lamellar 0.0"));
+      TEST_ASSERT(readThrows<2>("oblique 1.5 1.5 0.0"));
+      TEST_ASSERT(readThrows<2>("oblique 1.5 1.5 3.141592653589793"));
+      TEST_ASSERT(readThrows<2>("rhombic 1.5 0.0"));
+      TEST_ASSERT(readThrows<3>("cubic 0.0"));
+      TEST_ASSERT(readThrows<3>("rhombohedral 1.0 2.0943951023931953"));
+      TEST_ASSERT(readThrows<3>("monoclinic 1.0 1.2 1.4 0.0"));
+      TEST_ASSERT(readThrows<3>(
+                  "triclinic 1.0 1.2 1.4 0.3 1.5707963267948966 1.2"));
+
+      // Cells close to these are accepted
+      TEST_ASSERT(!readThrows<2>("oblique 1.5 1.5 0.01"));
+      TEST_ASSERT(!readThrows<3>("rhombohedral 1.0 2.0"));
+      TEST_ASSERT(!readThrows<3>("monoclinic 1.0 1.2 1.4 0.01"));
+      TEST_ASSERT(!readThrows<3>("triclinic 1.0 1.2 1.4 0.3 1.56 1.2"));
+
+      // Unit cell in a field file header
+      UnitCell<2> cell;
+      std::istringstream in("crystal_system oblique N_cell_param 3"
+                            " cell_param 1.5 1.5 0.0");
+      bool thrown = false;
+      try {
+         readUnitCellHeader(in, cell);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+      TEST_ASSERT(!cell.isInitialized());
+   }
+
    void test3DSignal() 
    {
       printMethod(TEST_FUNC);
@@ -1219,6 +1277,7 @@ TEST_ADD(UnitCellTest, test3DHexagonal)
 TEST_ADD(UnitCellTest, test3DRhombohedral)
 TEST_ADD(UnitCellTest, test3DMonoclinic)
 TEST_ADD(UnitCellTest, test3DTriclinic)
+TEST_ADD(UnitCellTest, testSingularCell)
 TEST_ADD(UnitCellTest, test3DSignal)
 TEST_END(UnitCellTest)
 
