@@ -170,6 +170,11 @@ namespace Rp {
       */
       bool isAllocated_;
 
+      /**
+      * Is the next correction the first one of the current solve?
+      */
+      bool isFirstCorrection_;
+
       // Private AM algorithm member functions (overridden)
 
       /**

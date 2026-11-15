@@ -88,9 +88,6 @@ namespace Rp {
          }
          isAllocated_ = true;
       }
-
-      // Compute intraCorrelation, if not up to date
-      intra_.update(intraCorrelationK_);
    }
 
    /*
@@ -202,6 +199,10 @@ namespace Rp {
    {
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();
+
+      // Intramolecular correlation, for the volume fractions of open
+      // species given by the last MDE solution
+      intra_.update(intraCorrelationK_);
 
       // Convert residual to Fourier Space
       system().domain().fft().forwardTransform(resid_, residK_);
