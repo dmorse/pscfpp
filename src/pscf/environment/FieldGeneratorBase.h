@@ -101,10 +101,11 @@ namespace Pscf {
       * own. 
       * 
       * During readParameters, the parent object will first allow the 
-      * independent FieldGeneratorBase to read its own parameters. It will 
-      * then rewind the istream to allow the dependent FieldGeneratorBase
-      * to read the parameters of the object on which it is dependent,
-      * followed by its own parameters.
+      * independent FieldGeneratorBase to read its own parameters, and
+      * record the text that it reads. It will then give this text again,
+      * followed by the rest of the istream, to the dependent 
+      * FieldGeneratorBase, which reads the parameters of the object on
+      * which it is dependent, followed by its own parameters.
       * 
       * Therefore, a dependent FieldGeneratorBase must be the second of two
       * FieldGeneratorBases stored in a parent MixAndMatchEnvTmpl, and two
