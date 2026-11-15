@@ -69,7 +69,7 @@ functional of the form
 in which \f$ H_{0} \f$ is the standard unperturbed Hamiltonian functional,
 \f$ H_{{\rm EC}} \f$ is the Hamiltonian for an Einstein crystal model
 (described below), and \f$ \lambda \f$ is a parameter that must be in
-the range \f$ 0 \leq f \leq 1 \f$.
+the range \f$ 0 \leq \lambda \leq 1 \f$.
 
 In the common case of a standard AB system with \f$ \chi > 0 \f$, the
 EinsteinCrystalPerturbation class defines a harmonic functional
@@ -232,7 +232,7 @@ System{
       fieldFileName    in/ecReference.rf
     }
     Ramp{
-      nParameters  1
+      nParameter   1
       parameters[
          lambda_pert    1.0
       ]

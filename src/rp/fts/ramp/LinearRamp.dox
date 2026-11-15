@@ -30,7 +30,7 @@ A simple example of the parameter file block for a LinearRamp is shown
 below:
 \code
   LinearRamp{
-     nParameters      2
+     nParameter       2
      parameters[
         chi            0     1    2.0
         v_monomer                 0.005
@@ -39,8 +39,8 @@ below:
 \endcode
 This parameter file block varies the parameter chi(0,1) (i.e., the 
 Flory-Huggins interaction parameter controlling interactions between 
-monomers of types \f$ 0 \f$ and \f$ 1 \f$, and the length of block 1 
-of polymer species 1 (i.e., the second block of the first species).
+monomers of types \f$ 0 \f$ and \f$ 1 \f$) and the monomer reference
+volume v_monomer.
 The last parameter in each line specifies how much the associated
 parameter will be changed over the course of a simulation.
 
