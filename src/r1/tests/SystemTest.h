@@ -552,6 +552,29 @@ public:
       TEST_ASSERT(!thrown);
    }
 
+   void testLinearSweepPhiSum()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestLinearSweepPhiSum.log");
+
+      // Closed diblock melt: a change of phi of 5.0E-7 must be rejected
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr1.prm", in);
+      sys.readParam(in);
+      in.close();
+      LinearSweep sweep(sys);
+      std::istringstream sweepIn("ns 4 nParameter 1"
+                                 " parameters phi_polymer 0 5.0e-7\n");
+      std::string message;
+      try {
+         sweep.readParameters(sweepIn);
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("add up to zero") != std::string::npos);
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -569,6 +592,7 @@ TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
 TEST_ADD(SystemTest, testLinearSweepPhiMixed)
+TEST_ADD(SystemTest, testLinearSweepPhiSum)
 TEST_END(SystemTest)
 
 #endif

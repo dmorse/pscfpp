@@ -350,6 +350,30 @@ public:
       TEST_ASSERT(!thrown);
    }
 
+   void testLinearRampPhiSum()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearRampPhiSum.log");
+
+      // Closed diblock melt: a change of phi of 1.0E-8 must be rejected
+      Rp::System<1,CPT> system1;
+      std::ifstream in;
+      openInputFile("in/param_system_1D_diblock_thread", in);
+      system1.readParam(in);
+      in.close();
+      Rp::Simulator<1,CPT> simulator(system1);
+      Rp::LinearRamp<1,CPT> ramp(simulator);
+      std::istringstream rampIn("LinearRamp{ nParameter 1"
+                                " parameters phi_polymer 0 1.0e-8 }\n");
+      std::string message;
+      try {
+         ramp.readParam(rampIn);
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("add up to zero") != std::string::npos);
+   }
+
 };
 
 TEST_BEGIN(SimulatorTest)
@@ -359,6 +383,7 @@ TEST_ADD(SimulatorTest, testComputeHamiltonian)
 TEST_ADD(SimulatorTest, testDc)
 TEST_ADD(SimulatorTest, testRampParameterIdRange)
 TEST_ADD(SimulatorTest, testLinearRampPhiMixed)
+TEST_ADD(SimulatorTest, testLinearRampPhiSum)
 TEST_END(SimulatorTest)
 
 #endif

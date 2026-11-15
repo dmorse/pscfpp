@@ -394,6 +394,41 @@ public:
       TEST_ASSERT(!thrown);
    }
 
+   void testLinearSweepPhiSum()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepPhiSum");
+
+      // Closed diblock and solvent: changes of phi that add up to
+      // 7.0E-7 instead of 0 must be rejected
+      Rp::System<1,CPT> system;
+      SweepTest::SetUpSystem(system, "in/phi/param");
+      Rp::LinearSweep<1,CPT> sweep(system);
+      std::istringstream in("ns 4 nParameter 2 parameters"
+                            " phi_polymer 0 0.2 phi_solvent 0 -0.1999993\n");
+      std::string message;
+      try {
+         sweep.readParameters(in);
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("add up to zero") != std::string::npos);
+
+      // Changes +0.1, +0.2 and -0.3, whose sum in floating point
+      // arithmetic is 5.6E-17, must be accepted
+      Rp::LinearSweep<1,CPT> sweep2(system);
+      std::istringstream in2("ns 4 nParameter 3 parameters"
+                             " phi_polymer 0 0.1 phi_polymer 0 0.2"
+                             " phi_solvent 0 -0.3\n");
+      bool thrown = false;
+      try {
+         sweep2.readParameters(in2);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+   }
+
    void testLinearSweepExactS()
    {
       printMethod(TEST_FUNC);
@@ -567,6 +602,7 @@ TEST_ADD(SweepTest, testParameterIdRange)
 TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepReadNs)
 TEST_ADD(SweepTest, testLinearSweepPhiMixed)
+TEST_ADD(SweepTest, testLinearSweepPhiSum)
 TEST_ADD(SweepTest, testLinearSweepExactS)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)
