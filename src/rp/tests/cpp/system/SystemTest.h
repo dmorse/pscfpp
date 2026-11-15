@@ -611,6 +611,51 @@ public:
    }
 
    /*
+   * Commands that write solver output after a change of the w fields
+   * or unit cell, without a new solution.
+   */
+   void testWriteNeedsSolution()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testWriteNeedsSolution.log");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam/param.flex", "");
+      std::istringstream in0("READ_W_BASIS in/diblock/lam/omega.in\n"
+                             "COMPUTE\nFINISH\n");
+      system.readCommands(in0);
+
+      std::string out = " out/testWriteNeedsSolution";
+      std::string commands[] = {"WRITE_STRESS" + out + "_stress",
+                                "WRITE_BLOCK_C_RGRID" + out + "_c.rf",
+                                "WRITE_Q_SLICE" + out + "_q 0 0 0 0",
+                                "WRITE_Q_TAIL" + out + "_q 0 0 0",
+                                "WRITE_Q" + out + "_q 0 0 0",
+                                "WRITE_Q_ALL" + out + "_qall"};
+      std::string changes[] = {"READ_W_BASIS in/diblock/lam/omega.in",
+                               "SET_UNIT_CELL lamellar 1.4"};
+      for (int i = 0; i < 6; ++i) {
+
+         // With a solution for the current w fields and unit cell
+         std::istringstream in1("COMPUTE\n" + commands[i] + "\nFINISH\n");
+         system.readCommands(in1);
+
+         // After a change, without a new solution
+         for (int j = 0; j < 2; ++j) {
+            std::istringstream in2(changes[j] + "\n" + commands[i]
+                                   + "\nFINISH\n");
+            bool thrown = false;
+            try {
+               system.readCommands(in2);
+            } catch (Exception& e) {
+               thrown = true;
+            }
+            TEST_ASSERT(thrown);
+         }
+      }
+   }
+
+   /*
    * Free energy and pressure of homogeneous blends of two homopolymers
    * of length 1 with volume fractions 1 - phi and phi, in fields w = 0
    * (basis) and w = 20 (r-grid), which have exact values. The terms of
@@ -674,6 +719,7 @@ TEST_ADD(SystemTest, testConversion3D_bcc)
 TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testThermoSmallTerms)
 TEST_ADD(SystemTest, testReadCommandsInput)
+TEST_ADD(SystemTest, testWriteNeedsSolution)
 TEST_END(SystemTest)
 
 #endif
