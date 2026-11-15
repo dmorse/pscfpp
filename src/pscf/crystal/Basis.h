@@ -9,6 +9,7 @@
 
 #include <pscf/math/IntVec.h>             // inline waveId
 #include <pscf/mesh/Mesh.h>               // inline waveId
+#include <pscf/crystal/UnitCell.h>        // member
 #include <util/containers/DArray.h>       // member
 #include <util/containers/GArray.h>       // member
 #include <util/signal/Signal.h>           // member
@@ -19,7 +20,6 @@ namespace Util {
    template <> class Signal<void>;
 }
 namespace Pscf {
-  template <int D> class UnitCell;
   template <int D> class SpaceGroup;
 }
 
@@ -762,6 +762,14 @@ namespace Pscf {
       int waveId(IntVec<D> vector) const;
 
       /**
+      * Get the unit cell from which this basis was constructed.
+      *
+      * This is a copy of the unit cell passed to makeBasis. Waves are
+      * ordered by the magnitudes of their wavevectors in this cell.
+      */
+      UnitCell<D> const & unitCell() const;
+
+      /**
       * Returns true iff this basis is fully initialized.
       */
       bool isInitialized() const;
@@ -840,9 +848,9 @@ namespace Pscf {
       Signal<>* signalPtr_;
 
       /**
-      * Pointer to an associated UnitCell.
+      * Copy of the unit cell from which this basis was constructed.
       */
-      UnitCell<D> const * unitCellPtr_;
+      UnitCell<D> unitCell_;
 
       /**
       * Pointer to an associated Mesh.
@@ -869,12 +877,6 @@ namespace Pscf {
       */
       Mesh<D> const & mesh() const
       { return *meshPtr_; }
-
-      /**
-      * Get associated UnitCell<D> by const reference.
-      */
-      UnitCell<D> const & unitCell() const
-      { return *unitCellPtr_; }
 
    };
 
@@ -914,6 +916,10 @@ namespace Pscf {
       int rank = mesh().rank(vector);
       return waveIds_[rank];
    }
+
+   template <int D>
+   inline UnitCell<D> const & Basis<D>::unitCell() const
+   {  return unitCell_; }
 
    template <int D>
    inline bool Basis<D>::isInitialized() const

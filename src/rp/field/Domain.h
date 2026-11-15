@@ -213,6 +213,9 @@ namespace Rp {
       *
       * This function opens a file with the specified filename, calls
       * Basis<D>::outputWaves, and closes the file before returning.
+      * The header gives the system unit cell or, if its parameters
+      * have not been set, the unit cell from which the basis was
+      * constructed.
       *
       * \param filename name of output file
       */
@@ -223,6 +226,9 @@ namespace Rp {
       *
       * This function opens a file with the specified filename, calls
       * Basis<D>::outputStars, and closes the file before returning.
+      * The header gives the system unit cell or, if its parameters
+      * have not been set, the unit cell from which the basis was
+      * constructed.
       *
       * \param filename name of output file
       */
