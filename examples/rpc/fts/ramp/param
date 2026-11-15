@@ -50,7 +50,7 @@ System{
         interval        100
       }
 
-      ChiDerivative{
+      BinaryChiDerivative{
         interval        1
         outputFileName  out/dHdchi
       }
