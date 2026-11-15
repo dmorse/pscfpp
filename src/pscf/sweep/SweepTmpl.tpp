@@ -46,12 +46,18 @@ namespace Pscf {
 
       // Read parameters
       read<int>(in, "ns", ns_);
+      if (ns_ <= 0) {
+         UTIL_THROW("Sweep parameter ns (number of steps) must be "
+                    "positive");
+      }
       readOptional<std::string>(in, "baseFileName", baseFileName_);
       readOptional<int>(in, "historyCapacity", historyCapacity_);
+      if (historyCapacity_ <= 0) {
+         UTIL_THROW("Sweep parameter historyCapacity must be positive");
+      }
       readOptional<bool>(in, "reuseState", reuseState_);
 
       // Allocate required arrays
-      UTIL_CHECK(historyCapacity_ > 0);
       states_.allocate(historyCapacity_);
       stateHistory_.allocate(historyCapacity_);
       sHistory_.allocate(historyCapacity_);
