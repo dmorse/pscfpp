@@ -50,8 +50,10 @@ namespace R1 {
                sum += parameters_[i].change();
             }
          }
-         UTIL_CHECK(sum > -0.000001);
-         UTIL_CHECK(sum < 0.000001);
+         if (sum > 1.0E-10 || sum < -1.0E-10) {
+            UTIL_THROW("Changes of the volume fractions of a closed "
+                       "mixture must add up to zero");
+         }
       }
    }
 

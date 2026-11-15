@@ -377,6 +377,11 @@ The two indices for a Flory-Huggins chi parameter refer to indices in
 the chi matrix maintained by Interaction. Changes to element chi(i, j)
 automatically also update chi(j, i) for \f$ i \neq j \f$, thus preserving
 the symmetry of the matrix.
+If every species is closed (i.e., has a given volume fraction), the
+changes of the swept volume fractions (phi_polymer and phi_solvent)
+must add up to zero. If some species are open (i.e., have a given
+chemical potential), the volume fractions of closed species may be
+changed independently.
 
 Parameters of type "cell_param" are only usable in simulations of
 periodic structure performed using pscf_rp, for simulations with a 
