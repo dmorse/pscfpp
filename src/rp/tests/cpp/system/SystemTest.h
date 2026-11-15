@@ -690,6 +690,43 @@ public:
    }
 
    /*
+   * Status returned by readCommands: 0 if no command failed, 1 after
+   * an unknown command or an ITERATE command that did not converge.
+   */
+   void testReadCommandsStatus()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testReadCommandsStatus.log");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam/param.flex", "");
+      std::istringstream in1("READ_W_BASIS in/diblock/lam/omega.in\n"
+                             "COMPUTE\nFINISH\n");
+      TEST_ASSERT(system.readCommands(in1) == 0);
+      std::istringstream in2("COMPUTE\n");
+      TEST_ASSERT(system.readCommands(in2) == 0);
+      std::istringstream in3("COMPUTEE\nFINISH\n");
+      TEST_ASSERT(system.readCommands(in3) == 1);
+
+      // An AmIterator with maxItr 1 cannot converge
+      Rp::System<1,CPT> system2;
+      system2.fileMaster().setInputPrefix(filePrefix());
+      system2.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 1 0 15.0 ) }"
+         " Domain{ mesh 32 lattice lamellar groupName P_-1 }"
+         " AmIteratorBasis{ epsilon 1.0e-10 maxItr 1 maxHist 10 } }\n");
+      system2.readParam(param);
+      std::istringstream in4("READ_W_BASIS in/diblock/lam/omega.in\n"
+                             "ITERATE\nFINISH\n");
+      TEST_ASSERT(system2.readCommands(in4) == 1);
+   }
+
+   /*
    * Free energy and pressure of homogeneous blends of two homopolymers
    * of length 1 with volume fractions 1 - phi and phi, in fields w = 0
    * (basis) and w = 20 (r-grid), which have exact values. The terms of
@@ -755,6 +792,7 @@ TEST_ADD(SystemTest, testThermoSmallTerms)
 TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_ADD(SystemTest, testWriteNeedsSolution)
 TEST_ADD(SystemTest, testWriteParamBead)
+TEST_ADD(SystemTest, testReadCommandsStatus)
 TEST_END(SystemTest)
 
 #endif

@@ -579,6 +579,46 @@ public:
    }
 
    /*
+   * Status returned by readCommands: 0 if no command failed, 1 after
+   * an unknown command or an ITERATE command that did not converge.
+   */
+   void testReadCommandsStatus()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestReadCommandsStatus.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      std::istringstream in1("READ_W in/planar.w\nCOMPUTE\nFINISH\n");
+      TEST_ASSERT(sys.readCommands(in1) == 0);
+      std::istringstream in2("COMPUTE\n");
+      TEST_ASSERT(sys.readCommands(in2) == 0);
+      std::istringstream in3("COMPUTEE\nFINISH\n");
+      TEST_ASSERT(sys.readCommands(in3) == 1);
+
+      // An NrIterator with maxItr 1 cannot converge
+      System sys2;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks 0 0.5 1 0.5 phi 1.0 }"
+         " ds 0.01 }"
+         " Interaction{ chi( 0 1 30.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 0.8 nx 101 }"
+         " NrIterator{ epsilon 1.0e-12 maxItr 1 } }\n");
+      sys2.readParam(param);
+      sys2.fileMaster().setInputPrefix(filePrefix());
+      sys2.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream in4("READ_W in/planar.w\nITERATE\nFINISH\n");
+      TEST_ASSERT(sys2.readCommands(in4) == 1);
+   }
+
+   /*
    * Free energy and pressure of a homogeneous blend of two homopolymers
    * of length 1 with volume fractions 1 - 5.0E-9 and 5.0E-9, in a field
    * w = 0, which include the terms of the dilute species.
@@ -709,6 +749,7 @@ TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testThermoSmallPhi)
 TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_ADD(SystemTest, testComputeThermo)
+TEST_ADD(SystemTest, testReadCommandsStatus)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
 TEST_ADD(SystemTest, testLinearSweepPhiMixed)
 TEST_ADD(SystemTest, testLinearSweepPhiSum)

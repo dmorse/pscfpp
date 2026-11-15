@@ -264,7 +264,7 @@ public:
 
       std::istringstream in("COMPRESS\nSET_UNIT_CELL lamellar 1.5\n"
                             "FINISH\n");
-      system1.readCommands(in);
+      TEST_ASSERT(system1.readCommands(in) == 1);
       TEST_ASSERT(std::abs(system1.domain().unitCell().parameter(0) - 1.0)
                   < 1.0E-12);
    }
