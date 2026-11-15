@@ -116,22 +116,44 @@ reference field normally contains spatially homogeneous fields.
 <b> Thermodynamic Integration </b>:
 The EinsteinCrystalPerturbation and PerturbationDerivative classes must
 be used together to compute free energies by the Einstein crystal method.
-When applied to a standard AB system, with chi(0,0) = chi(1,1) = 0.0
-and \f$ \chi = \f$ chi(0,1) = chi(1,0), with the default choice of
-\f$ \epsilon = \chi \f$, the free energy \f$ F \f$ of the interacting
-system with \f$ \lambda = 1 \f$ can be expressed as a sum
+The free energy \f$ F \f$ of the interacting system with \f$ \lambda = 1 \f$
+can be expressed as a sum
 \f[
-   F = H_{0}^{({\rm r})} + \int\limits_{0}^{1}\! d \lambda \;
+   F = F_{{\rm EC}} + \int\limits_{0}^{1}\! d \lambda \;
        \left \langle
         \frac{\partial H(\lambda)}{\partial \lambda}
-        \right \rangle \quad.
+        \right \rangle \quad,
 \f]
-in which \f$ H_{0}^{({\rm r})} \f$ denotes the value of the standard
-unperturbed Hamiltonian in the reference state used by the Einstein
-crystal Hamiltonian.  In this expression, the value of the integrand
-at each value of \f$ \lambda \in [0, 1]\f$ is an equilibrium average
-for a system governed by a perturbed Hamiltonian
-\f$ H(\lambda) \rangle \f$.
+in which \f$ F_{{\rm EC}} \f$ is the free energy of the Einstein crystal,
+i.e., of the system with \f$ \lambda = 0 \f$.  In this expression, the
+value of the integrand at each value of \f$ \lambda \in [0, 1]\f$ is an
+equilibrium average of \f$ \partial H/\partial \lambda = H_{0} - H_{{\rm EC}} \f$
+for a system governed by the perturbed Hamiltonian \f$ H(\lambda) \f$.
+This is the quantity sampled by the PerturbationDerivative analyzer.
+
+Because \f$ H_{{\rm EC}} \f$ is a Gaussian functional of the fields,
+\f$ F_{{\rm EC}} \f$ is known exactly. With the convention for the
+normalization constant \f$ N \f$ of the partition function that is
+described on the \ref psfts_thermoint_page "thermodynamic integration"
+page, for a standard AB system with chi(0,0) = chi(1,1) = 0.0 and
+\f$ \chi = \f$ chi(0,1) = chi(1,0) > 0 on a mesh of \f$ G \f$ grid
+points,
+\f[
+   F_{{\rm EC}} = \frac{G}{2} \ln \left ( \frac{\chi}{\epsilon} \right )
+   \quad.
+\f]
+For the default choice \f$ \epsilon = \chi \f$, \f$ F_{{\rm EC}} = 0 \f$,
+so that \f$ F \f$ is given by the integral alone. More generally, for a
+system with \f$ M \f$ monomer types, \f$ F_{{\rm EC}} \f$ is a sum of
+\f$ M - 1 \f$ terms of the form \f$ (G/2) \ln (|\lambda_{i}|/\epsilon_{i}) \f$,
+in which \f$ \lambda_{i} \f$ here denotes eigenvalue \f$ i \f$ of the
+projected \f$ \chi \f$ matrix, and so is also zero for the default
+values \f$ \epsilon_{i} = -\lambda_{i} \f$.
+The Einstein crystal Hamiltonian \f$ H_{{\rm EC}} \f$ defined above
+contains no constant term: it vanishes when the fields are equal to
+the reference fields. The value of the unperturbed Hamiltonian
+\f$ H_{0} \f$ in the reference field configuration must therefore not
+be added to the above expression for \f$ F \f$.
 
 The required integral with respect to \f$ \lambda \f$ can be evaluated
 by either of two methods:
@@ -244,9 +266,10 @@ label Perturbation for this block without changing the result.
 
 In the EinsteinCrystalPerturbation block, we set an initial value
 lambda = 0.0 for the perturbation parameter, corresponding to a pure
-Einstein crystal Hamiltonian.  The epsilon parameter has been set equal
-to the value 14.0 that is assigned to chi(0,1) in the interaction block,
-using the convention alpha = chi(0,1) recommended above.  The reference
+Einstein crystal Hamiltonian.  The optional epsilon parameter is
+omitted, so that it takes its default value \f$ \epsilon = \chi = 14.0 \f$,
+the value assigned to chi(0,1) in the interaction block, for which
+\f$ F_{{\rm EC}} = 0 \f$.  The reference
 field is read from an r-grid field file named ecReference.rf in
 subdirectory in/ of the current working directory (i.e., the directory
 from which the program was invoked).
