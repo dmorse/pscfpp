@@ -580,6 +580,94 @@ public:
 
    }
 
+   /*
+   * Group p_1 in a skewed oblique cell on a mesh with very different
+   * grid spacings, where minimum images lie more than two image shifts
+   * away from some wavevectors. Every wave forms its own star.
+   */
+   void testMake2DBasis_p_1_oblique()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<2> unitCell;
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      parameters.append(2.0);
+      parameters.append(2.8);
+      unitCell.set(UnitCell<2>::Oblique, parameters);
+      IntVec<2> d;
+      d[0] = 8;
+      d[1] = 64;
+      Mesh<2> mesh(d);
+
+      Basis<2> basis;
+      basis.makeBasis(mesh, unitCell, std::string("p_1"));
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nWave(), 512));
+      TEST_ASSERT(eq(basis.nStar(), 512));
+      TEST_ASSERT(eq(basis.nBasis(), 512));
+   }
+
+   /*
+   * Groups without inversion in skewed cells on a mesh with very
+   * different grid spacings, where tied minimum images lie several
+   * image shifts apart.
+   */
+   void testMake3DBasis_P_1_triclinic()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<3> unitCell;
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      parameters.append(1.0);
+      parameters.append(1.0);
+      parameters.append(0.0);
+      parameters.append(1.2);
+      parameters.append(0.5*Constants::Pi);
+      unitCell.set(UnitCell<3>::Triclinic, parameters);
+      IntVec<3> d;
+      d[0] = 4;
+      d[1] = 4;
+      d[2] = 32;
+      Mesh<3> mesh(d);
+
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, std::string("P_1"));
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nStar(), 512));
+      TEST_ASSERT(eq(basis.nBasis(), 512));
+   }
+
+   /*
+   * The 512 waves form 264 stars: the 16 waves with h in {0, 2} and
+   * l in {0, 16} are invariant under the 2-fold axis along b, and the
+   * other 496 waves form 248 pairs.
+   */
+   void testMake3DBasis_P_1_2_1_monoclinic()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<3> unitCell;
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      parameters.append(1.0);
+      parameters.append(1.0);
+      parameters.append(2.8);
+      unitCell.set(UnitCell<3>::Monoclinic, parameters);
+      IntVec<3> d;
+      d[0] = 4;
+      d[1] = 4;
+      d[2] = 32;
+      Mesh<3> mesh(d);
+
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, std::string("P_1_2_1"));
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nStar(), 264));
+      TEST_ASSERT(eq(basis.nBasis(), 264));
+   }
+
 
    /*
    * Make the basis of a hexagonal 3D group on a 12x12x12 mesh, and
@@ -641,6 +729,9 @@ TEST_ADD(BasisTest, testMake3DBasis_I_a_3b_d)
 TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_2)
 TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_1)
 TEST_ADD(BasisTest, testMake3DBasis_I_41_3_2)
+TEST_ADD(BasisTest, testMake2DBasis_p_1_oblique)
+TEST_ADD(BasisTest, testMake3DBasis_P_1_triclinic)
+TEST_ADD(BasisTest, testMake3DBasis_P_1_2_1_monoclinic)
 TEST_ADD(BasisTest, testMake3DBasis_R_3b_c_H)
 TEST_ADD(BasisTest, testMake3DBasis_R_3_c_H)
 TEST_END(BasisTest)
