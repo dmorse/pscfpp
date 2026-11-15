@@ -142,6 +142,8 @@ namespace Rp {
 
       /**
       * Check that space group is compatible with the mask.
+      *
+      * Does nothing if the system has no space group.
       */
       void checkSpaceGroup() const;
 
@@ -200,7 +202,7 @@ namespace Rp {
       virtual void setFlexibleParams() const = 0;
 
       /**
-      * Get the space group name for this system.
+      * Get the space group name for this system (empty if none).
       */
       virtual std::string systemSpaceGroup() const = 0;
 
