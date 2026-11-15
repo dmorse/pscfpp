@@ -37,6 +37,25 @@
 using namespace Util;
 using namespace Pscf;
 
+/*
+* Access to the FileMaster that a ScftThermo refers to, through the
+* protected member function fileMaster() of ScftThermo.
+*/
+template <int D>
+class ScftThermoProbe : public Rp::ScftThermo<D,CPT>
+{
+public:
+
+   static
+   FileMaster const * fileMasterPtr(Rp::ScftThermo<D,CPT> const & thermo)
+   {
+      FileMaster const & (Rp::SystemConstRef<D,CPT>::*get)() const
+                                    = &ScftThermoProbe::fileMaster;
+      return &(thermo.*get)();
+   }
+
+};
+
 class SystemTest : public LogFileUnitTest
 {
 
@@ -287,6 +306,14 @@ public:
    {
       printMethod(TEST_FUNC);
       Rp::System<1,CPT> system;
+   }
+
+   void testScftThermoFileMaster()
+   {
+      printMethod(TEST_FUNC);
+      Rp::System<1,CPT> system;
+      TEST_ASSERT(ScftThermoProbe<1>::fileMasterPtr(system.scft())
+                  == &system.fileMaster());
    }
 
    void testReadParameters1D()
@@ -805,6 +832,7 @@ public:
 
 TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor1D)
+TEST_ADD(SystemTest, testScftThermoFileMaster)
 TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
