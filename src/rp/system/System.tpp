@@ -139,9 +139,12 @@ namespace Rp {
       mixtureModifierPtr_ = new MixtureModifier<D,T>();
       interactionPtr_ = new Interaction();
       domainPtr_ = new Domain<D,T>();
-      scftPtr_ = new ScftThermo<D,T>(*this);
       fileMasterPtr_ = new FileMaster();
       tmpUnitCellPtr_ = new UnitCell<D>();
+
+      // Create ScftThermo after all the components that its base class
+      // SystemConstRef refers to, including the FileMaster
+      scftPtr_ = new ScftThermo<D,T>(*this);
 
       // Create Factories for optional components
       environmentFactoryPtr_ 
