@@ -25,6 +25,7 @@
 #include <util/format/Dbl.h>
 #include <util/misc/FileMaster.h>
 
+#include <util/misc/Exception.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
@@ -570,6 +571,46 @@ public:
    }
 
    /*
+   * Command scripts that end without a newline, or with an argument
+   * that cannot be read.
+   */
+   void testReadCommandsInput()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testReadCommandsInput.log");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam/param.flex", "");
+
+      // A last command without a newline must be executed
+      std::istringstream in1("READ_W_BASIS in/diblock/lam/omega.in\n"
+                             "COMPUTE");
+      system.readCommands(in1);
+      TEST_ASSERT(system.c().hasData());
+
+      // A missing argument at the end of the script must be reported
+      std::istringstream in2("WRITE_Q_TAIL out/testReadCommandsInput_q 0 0");
+      bool thrown = false;
+      try {
+         system.readCommands(in2);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+
+      // So must an argument that cannot be read
+      std::istringstream in3("WRITE_Q_TAIL out/testReadCommandsInput_q"
+                             " 0 x 1\nFINISH\n");
+      thrown = false;
+      try {
+         system.readCommands(in3);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+   }
+
+   /*
    * Free energy and pressure of homogeneous blends of two homopolymers
    * of length 1 with volume fractions 1 - phi and phi, in fields w = 0
    * (basis) and w = 20 (r-grid), which have exact values. The terms of
@@ -632,6 +673,7 @@ TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testThermoSmallTerms)
+TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_END(SystemTest)
 
 #endif

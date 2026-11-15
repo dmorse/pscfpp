@@ -497,6 +497,51 @@ public:
    }
 
    /*
+   * Command scripts that end without a newline, or with an argument
+   * that cannot be read.
+   */
+   void testReadCommandsInput()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestReadCommandsInput.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      // A last command without a newline must be executed
+      std::istringstream in1("READ_W in/planar.w\nITERATE");
+      sys.readCommands(in1);
+      TEST_ASSERT(sys.fHelmholtz() != 0.0);
+
+      // A missing argument at the end of the script must be reported
+      std::istringstream in2("WRITE_W out/SystemTestReadCommandsInput.w\n"
+                             "REMESH_W 51");
+      bool thrown = false;
+      try {
+         sys.readCommands(in2);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+
+      // So must an argument that cannot be read
+      std::istringstream in3("REMESH_W x out/SystemTestReadCommandsInput.w"
+                             "\nFINISH\n");
+      thrown = false;
+      try {
+         sys.readCommands(in3);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+   }
+
+   /*
    * Free energy and pressure of a homogeneous blend of two homopolymers
    * of length 1 with volume fractions 1 - 5.0E-9 and 5.0E-9, in a field
    * w = 0, which include the terms of the dilute species.
@@ -625,6 +670,7 @@ TEST_ADD(SystemTest, testIteratorPlanarAm1)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testThermoSmallPhi)
+TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
 TEST_ADD(SystemTest, testLinearSweepPhiMixed)
 TEST_ADD(SystemTest, testLinearSweepPhiSum)
