@@ -523,6 +523,13 @@ namespace Pscf {
       for (int i = 0; i < cell.nParameter_; ++i) {
          ar & cell.parameters_[i];
       }
+      // After loading parameters, compute the basis vectors, their
+      // derivatives and the volume, notify observers, and check the
+      // basis, as >> does
+      if (Archive::is_loading() && cell.nParameter_ > 0) {
+         cell.setLattice();
+         cell.checkBasis();
+      }
    }
 
    /**

@@ -208,7 +208,7 @@ namespace Pscf {
       * lengths), or if an element is not finite, this function marks
       * the unit cell as not initialized and throws an Exception. It is
       * called after setLattice() where the parameters are read from
-      * input (operator >> and readUnitCellHeader).
+      * input (operator >>, readUnitCellHeader and serialize).
       */
       void checkBasis();
 
