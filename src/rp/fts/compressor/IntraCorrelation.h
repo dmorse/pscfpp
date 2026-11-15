@@ -10,8 +10,11 @@
 
 #include <pscf/math/IntVec.h>             // member
 #include <util/containers/DArray.h>       // member
+#include <util/containers/FSArray.h>      // member
 #include <pscf/backend/HostSendArray.h>   // member
 #include <pscf/backend/TmplDeclare.h>     // declaration macros
+
+#include <vector>                         // member
 
 // Forward declarations
 namespace Pscf {
@@ -66,7 +69,11 @@ namespace Rp {
       * Compute the correlation function if it may have changed.
       *
       * This function calls computeOmegaTotal, unless it has done so
-      * before and clearCache has not been called since then.
+      * before, clearCache has not been called since then, and the
+      * volume fraction of each open species (each species with a given
+      * chemical potential) differs from its value at that time by at
+      * most 0.1 percent. It must be called after an MDE solution for
+      * the current fields, which gives these volume fractions.
       *
       * \param correlations  omega values on a k-space mesh (on device)
       */
@@ -112,6 +119,12 @@ namespace Rp {
       /// Was the correlation computed by update, without later clearCache?
       bool isCurrent_;
 
+      /// Volume fractions of open species used by update.
+      std::vector<double> openPhi_;
+
+      /// Unit cell parameters for which Gsq_ was computed.
+      FSArray<double, 6> gsqParameters_;
+
       // Private member functions
 
       /**
@@ -131,7 +144,8 @@ namespace Rp {
       /**
       * Compute array of squared wavevectors.
       *
-      * Results are stored in a private member variable.
+      * Results are stored in a private member variable. They are only
+      * recomputed if the unit cell parameters have changed.
       */
       void computeGsq();
 
