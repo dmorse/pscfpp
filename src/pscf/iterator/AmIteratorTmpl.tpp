@@ -138,7 +138,11 @@ namespace Pscf
             error_ = computeError(verbose_);
          } catch (NanException const &) {
             Log::file() << ",  error  =             NaN" << std::endl;
-            break; 
+            // Stop the timers started in this iteration, so that the
+            // next call to solve() can restart them.
+            timerError_.stop();
+            timerAM_.stop();
+            break;
             // If a NanException is caught, break from iterative loop.
             // Completing the loop is treated as failure to converge.
          }
@@ -222,6 +226,12 @@ namespace Pscf
 
       // Failure: Counter itr_ reached maxItr_ without converging,
       // or loop was exited because of NaN error
+
+      // Discard the history and basis vectors of the failed solve. A
+      // caller that retries (e.g., a sweep that backtracks with
+      // isContinuation = true) would otherwise reapply the displacement
+      // that led to the failure at the first iteration of the retry.
+      clear();
 
       timerTotal_.stop();
       Log::file() << "Iterator failed to converge.\n";
