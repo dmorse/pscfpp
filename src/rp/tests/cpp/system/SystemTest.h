@@ -17,6 +17,7 @@
 #include <rp/field/Mask.h>
 #include <rp/field/FieldIo.h>
 
+#include <pscf/chem/PolymerModel.h>
 #include <pscf/field/cpp/RField.h>
 #include <pscf/field/cpp/RFieldComparison.h>
 #include <pscf/crystal/BFieldComparison.h>
@@ -656,6 +657,39 @@ public:
    }
 
    /*
+   * A parameter file written by WRITE_PARAM for a bead model system
+   * must be read as a bead model system.
+   */
+   void testWriteParamBead()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testWriteParamBead.log");
+
+      {
+         Rp::System<1,CPT> system;
+         setupSystem(system, "in/diblock/lam_bead/param.flex", "");
+         TEST_ASSERT(PolymerModel::isBead());
+         std::istringstream in("WRITE_PARAM out/testWriteParamBead.prm\n"
+                               "FINISH\n");
+         system.readCommands(in);
+      }
+
+      // The file must begin with "System{ polymerModel bead"
+      std::ifstream file;
+      openInputFile("out/testWriteParamBead.prm", file);
+      std::string label, value;
+      file >> label >> label >> value;
+      file.close();
+      TEST_ASSERT(label == "polymerModel");
+      TEST_ASSERT(value == "bead");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "out/testWriteParamBead.prm", "");
+      TEST_ASSERT(PolymerModel::isBead());
+      TEST_ASSERT(system.mixture().polymer(0).nBead() == 100);
+   }
+
+   /*
    * Free energy and pressure of homogeneous blends of two homopolymers
    * of length 1 with volume fractions 1 - phi and phi, in fields w = 0
    * (basis) and w = 20 (r-grid), which have exact values. The terms of
@@ -720,6 +754,7 @@ TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testThermoSmallTerms)
 TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_ADD(SystemTest, testWriteNeedsSolution)
+TEST_ADD(SystemTest, testWriteParamBead)
 TEST_END(SystemTest)
 
 #endif
