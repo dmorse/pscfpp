@@ -10,6 +10,7 @@
 #include <r1/solvers/Polymer.h>
 #include <r1/iterator/Iterator.h>
 #include <r1/field/FieldIo.h>
+#include <r1/sweep/LinearSweep.h>
 #include <r1/sweep/SweepParameter.h>
 
 #include <util/misc/Exception.h>
@@ -521,6 +522,36 @@ public:
       }
    }
 
+   void testLinearSweepPhiMixed()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestLinearSweepPhiMixed.log");
+
+      // Diblock (closed) in an open solvent: a sweep of the volume
+      // fraction of the diblock alone must be accepted
+      System sys;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0"
+         " nPolymer 1 nSolvent 1"
+         " Polymer{ type linear nBlock 2 blocks 0 2.0 1 3.0 phi 0.8 }"
+         " Solvent{ monomerId 1 size 0.05 mu 1.0 }"
+         " vMonomer 0.05 ds 0.01 }"
+         " Interaction{ chi( 0 1 4.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 4.0 nx 33 }"
+         " NrIterator{ epsilon 0.00001 } }\n");
+      sys.readParam(param);
+      LinearSweep sweep(sys);
+      std::istringstream in("ns 2 nParameter 1"
+                            " parameters phi_polymer 0 -0.1\n");
+      bool thrown = false;
+      try {
+         sweep.readParameters(in);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -537,6 +568,7 @@ TEST_ADD(SystemTest, testIteratorPlanarAm1)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
+TEST_ADD(SystemTest, testLinearSweepPhiMixed)
 TEST_END(SystemTest)
 
 #endif

@@ -7,6 +7,7 @@
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/ramp/LinearRamp.h>
 #include <rp/fts/ramp/RampParameter.h>
 #include <rp/scft/ScftThermo.h>
 #include <rp/solvers/Mixture.h>
@@ -318,6 +319,37 @@ public:
       }
    }
 
+   void testLinearRampPhiMixed()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearRampPhiMixed.log");
+
+      // Diblock (closed) in an open solvent: a ramp of the volume
+      // fraction of the diblock alone must be accepted
+      Rp::System<1,CPT> system1;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1 nSolvent 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 0.8 }"
+         " Solvent{ monomerId 1 size 0.1 mu 1.0 }"
+         " vMonomer 0.01 ds 0.01 }"
+         " Interaction{ chi( 1 0 12.0 ) }"
+         " Domain{ mesh 40 lattice lamellar } }\n");
+      system1.readParam(param);
+      Rp::Simulator<1,CPT> simulator(system1);
+      Rp::LinearRamp<1,CPT> ramp(simulator);
+      std::istringstream in("LinearRamp{"
+                            " nParameter 1 parameters phi_polymer 0 -0.1 }\n");
+      bool thrown = false;
+      try {
+         ramp.readParam(in);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+   }
+
 };
 
 TEST_BEGIN(SimulatorTest)
@@ -326,6 +358,7 @@ TEST_ADD(SimulatorTest, testSaddlePointField)
 TEST_ADD(SimulatorTest, testComputeHamiltonian)
 TEST_ADD(SimulatorTest, testDc)
 TEST_ADD(SimulatorTest, testRampParameterIdRange)
+TEST_ADD(SimulatorTest, testLinearRampPhiMixed)
 TEST_END(SimulatorTest)
 
 #endif

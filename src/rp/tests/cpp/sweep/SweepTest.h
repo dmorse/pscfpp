@@ -364,6 +364,36 @@ public:
       sweep.readParameters(in);
    }
 
+   void testLinearSweepPhiMixed()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepPhiMixed");
+
+      // Diblock (closed) in an open solvent: a sweep of the volume
+      // fraction of the diblock alone must be accepted
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1 nSolvent 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 0.8 }"
+         " Solvent{ monomerId 1 size 0.1 mu 1.0 } ds 0.01 }"
+         " Interaction{ chi( 1 0 12.0 ) }"
+         " Domain{ mesh 40 lattice lamellar groupName P_-1 }"
+         " AmIteratorBasis{ epsilon 1.0e-8 maxItr 100 maxHist 10 } }\n");
+      system.readParam(param);
+      Rp::LinearSweep<1,CPT> sweep(system);
+      std::istringstream in("ns 2 nParameter 1"
+                            " parameters phi_polymer 0 -0.1\n");
+      bool thrown = false;
+      try {
+         sweep.readParameters(in);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+   }
+
    void testLinearSweepExactS()
    {
       printMethod(TEST_FUNC);
@@ -536,6 +566,7 @@ TEST_ADD(SweepTest, testSpecializedParameter)
 TEST_ADD(SweepTest, testParameterIdRange)
 TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepReadNs)
+TEST_ADD(SweepTest, testLinearSweepPhiMixed)
 TEST_ADD(SweepTest, testLinearSweepExactS)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)
