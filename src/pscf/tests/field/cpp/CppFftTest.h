@@ -32,6 +32,8 @@ public:
    void testTransformComplex2D();
    void testTransformComplex3D();
 
+   void testTransformRealSlice();
+
 };
 
 void CppFftTest::testConstructor()
@@ -413,6 +415,66 @@ void CppFftTest::testTransformComplex3D()
 
 }
 
+/*
+* Real transforms of a field that is a slice of a larger array.
+*
+* A slice that begins at index 1 of an array of doubles is not aligned
+* like the arrays allocated by fftw_malloc.
+*/
+void CppFftTest::testTransformRealSlice()
+{
+   printMethod(TEST_FUNC);
+
+   int n = 64;
+   IntVec<1> d;
+   d[0] = n;
+
+   FFT<1,CPT> v;
+   v.setup(d);
+
+   // A separate field, and the same data in a slice beginning at
+   // index 1 of a larger array, with guard values at both ends
+   RField<1,CPT> field;
+   field.allocate(d);
+   BackendArray<double,CPT> pair(n+2), outPair(n+2);
+   for (int i = 0; i < n+2; ++i) {
+      pair[i] = -2.0;
+      outPair[i] = -2.0;
+   }
+   RField<1,CPT> slice, outSlice;
+   slice.associate(pair, 1, d);
+   outSlice.associate(outPair, 1, d);
+   for (int i = 0; i < n; ++i) {
+      field[i] = 0.4 + cos(0.37*i) + 0.5*sin(0.013*i*i);
+      slice[i] = field[i];
+   }
+
+   // Forward transforms of the field and of the slice
+   RFieldDft<1,CPT> k, kSlice;
+   k.allocate(d);
+   kSlice.allocate(d);
+   v.forwardTransform(field, k);
+   v.forwardTransform(slice, kSlice);
+   for (int i = 0; i < k.capacity(); i++) {
+      TEST_ASSERT(eq(kSlice[i][0], k[i][0]));
+      TEST_ASSERT(eq(kSlice[i][1], k[i][1]));
+   }
+
+   // Inverse transform into a slice of another array
+   v.inverseTransformSafe(kSlice, outSlice);
+   for (int i = 0; i < n; i++) {
+      TEST_ASSERT(slice[i] == field[i]);
+      TEST_ASSERT(eq(outSlice[i], field[i]));
+   }
+   TEST_ASSERT(pair[0] == -2.0);
+   TEST_ASSERT(pair[n+1] == -2.0);
+   TEST_ASSERT(outPair[0] == -2.0);
+   TEST_ASSERT(outPair[n+1] == -2.0);
+
+   slice.dissociate();
+   outSlice.dissociate();
+}
+
 TEST_BEGIN(CppFftTest)
 TEST_ADD(CppFftTest, testConstructor)
 TEST_ADD(CppFftTest, testTransformReal1D)
@@ -421,6 +483,7 @@ TEST_ADD(CppFftTest, testTransformReal3D)
 TEST_ADD(CppFftTest, testTransformComplex1D)
 TEST_ADD(CppFftTest, testTransformComplex2D)
 TEST_ADD(CppFftTest, testTransformComplex3D)
+TEST_ADD(CppFftTest, testTransformRealSlice)
 TEST_END(CppFftTest)
 
 #endif
