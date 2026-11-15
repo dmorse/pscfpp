@@ -971,17 +971,19 @@ namespace Pscf {
       } else {
          out << "             " << nBasisWave_ << std::endl;
       }
+      // Each integer column is preceded by a space, so that columns
+      // stay separated when a value fills its field width
       int i, j, k, starId;
       k = 0;
       for (i = 0; i < nWave_; ++i) {
          starId = waves_[i].starId;
          if (outputAll || (!stars_[starId].cancel)) {
-            out << Int(k, 8);
-            out << Int(i, 8);
+            out << ' ' << Int(k, 7);
+            out << ' ' << Int(i, 7);
             for (j = 0; j < D; ++j) {
-               out << Int(waves_[i].indicesMin[j], 5);
+               out << ' ' << Int(waves_[i].indicesMin[j], 4);
             }
-            out << Int(waves_[i].starId, 6);
+            out << ' ' << Int(waves_[i].starId, 5);
             out << "  " << Dbl(waves_[i].coeff.real(), 15);
             out << "  " << Dbl(waves_[i].coeff.imag(), 15);
             out << std::endl;
@@ -1003,21 +1005,22 @@ namespace Pscf {
               << "                 " << nBasis_ << std::endl;
       }
 
-      // Loop over stars
+      // Loop over stars. Each integer column is preceded by a space,
+      // so that columns stay separated when a value fills its width.
       int i, j;
       for (i = 0; i < nStar_; ++i) {
          if (outputAll || (!stars_[i].cancel)) {
-            out << Int(stars_[i].basisId, 6);  // basisId
-            out << Int(i, 6);                  // starId
-            out << Int(stars_[i].size, 5)
-                << Int(stars_[i].beginId, 8)
-                << Int(stars_[i].endId, 8)
-                << Int(stars_[i].invertFlag, 4);
+            out << ' ' << Int(stars_[i].basisId, 5);  // basisId
+            out << ' ' << Int(i, 5);                  // starId
+            out << ' ' << Int(stars_[i].size, 4)
+                << ' ' << Int(stars_[i].beginId, 7)
+                << ' ' << Int(stars_[i].endId, 7)
+                << ' ' << Int(stars_[i].invertFlag, 3);
             if (outputAll) {
-               out << Int(stars_[i].cancel, 4);
+               out << ' ' << Int(stars_[i].cancel, 3);
             }
             for (j = 0; j < D; ++j) {
-               out << Int(stars_[i].waveMin[j], 6);
+               out << ' ' << Int(stars_[i].waveMin[j], 5);
             }
             out << std::endl;
          }
