@@ -641,6 +641,70 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
+   /*
+   * Write and read a basis file for a rectangular 2 x 20002 mesh with
+   * group p_1, with Miller indices from -10000 to 10001. The indices
+   * and the star size must be separate words.
+   */
+   void testBasisIo_wideIndices()
+   {
+      printMethod(TEST_FUNC);
+
+      std::stringstream header;
+      header << "format 1 0\ndim\n2\ncrystal_system\nrectangular\n"
+             << "N_cell_param\n2\ncell_param\n0.5 5000.5\n"
+             << "group_name\np_1\nN_monomer\n1\nmesh\n2 20002\n";
+      Rp::Domain<2,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      domain.readRGridFieldHeader(header, nMonomer_);
+      Basis<2> const & basis = domain.basis();
+      int nBasis = basis.nBasis();
+      TEST_ASSERT(eq(nBasis, 40004));
+
+      DArray< DArray<double> > bf_0;
+      allocateFields(1, nBasis, bf_0);
+      DArray< DArray<double> > bf_1;
+      allocateFields(1, nBasis, bf_1);
+      for (int i = 0; i < nBasis; ++i) {
+         bf_0[0][i] = 1.0/double(i + 1);
+      }
+      std::stringstream file;
+      domain.fieldIo().writeFieldsBasis(file, bf_0, domain.unitCell());
+
+      // Each data line: coefficient, two indices and star size
+      std::string line;
+      do {
+         std::getline(file, line);
+      } while (line.find("N_basis") == std::string::npos);
+      std::getline(file, line);
+      int i0, i1, size;
+      for (int is = 0; is < basis.nStar(); ++is) {
+         Basis<2>::Star const & star = basis.star(is);
+         if (star.cancel) continue;
+         std::getline(file, line);
+         std::istringstream words(line);
+         std::string word;
+         int nWord = 0;
+         while (words >> word) {
+            ++nWord;
+         }
+         TEST_ASSERT(eq(nWord, 4));
+         words.clear();
+         words.str(line);
+         words >> word >> i0 >> i1 >> size;
+         TEST_ASSERT(eq(i0, star.waveMin[0]));
+         TEST_ASSERT(eq(i1, star.waveMin[1]));
+         TEST_ASSERT(eq(size, star.size));
+      }
+
+      file.clear();
+      file.seekg(0);
+      domain.fieldIo().readFieldsBasis(file, bf_1, domain.unitCell());
+      BFieldComparison comparison;
+      comparison.compare(bf_0, bf_1);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+   }
+
    void testConvertBasisKGridBasis_c15_1() 
    {
       printMethod(TEST_FUNC);
@@ -1141,6 +1205,7 @@ TEST_ADD(FieldIoTest, testRGridIo_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG)
+TEST_ADD(FieldIoTest, testBasisIo_wideIndices)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_c15_1)
 TEST_ADD(FieldIoTest, testEstimateWBasis)
 TEST_ADD(FieldIoTest, testKGridIo_bcc)
