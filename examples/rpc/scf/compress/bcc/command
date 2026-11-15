@@ -3,7 +3,3 @@ COMPRESS
 WRITE_W_RGRID   out/w_rf
 WRITE_C_RGRID    out/c_rf
 FINISH
-
-
-FINISH
-
