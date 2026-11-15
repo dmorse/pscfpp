@@ -1167,6 +1167,20 @@ public:
       checkEqualComplex(hOutComplex, refOutComplex);
    }
 
+   // Test VecOp::expV with the same input and output array (complex)
+   void testExpInPlace()
+   {
+      printMethod(TEST_FUNC);
+
+      dOutComplex = dInComplex;
+      VecOp::expV(dOutComplex, dOutComplex);
+      hOutComplex = dOutComplex;
+      for (int i = 0; i < n; i++) {
+         refOutComplex[i] = exp(refInComplex[i]);
+      }
+      checkEqualComplex(hOutComplex, refOutComplex);
+   }
+
    // Test VecOp::sqV
    void testSq()
    {
@@ -1414,6 +1428,7 @@ TEST_ADD(CudaVecOpTest, testSubEq)
 TEST_ADD(CudaVecOpTest, testMulEq)
 TEST_ADD(CudaVecOpTest, testDivEq)
 TEST_ADD(CudaVecOpTest, testExp)
+TEST_ADD(CudaVecOpTest, testExpInPlace)
 TEST_ADD(CudaVecOpTest, testSq)
 TEST_ADD(CudaVecOpTest, testSqAbs)
 TEST_ADD(CudaVecOpTest, testComposite)
