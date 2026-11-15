@@ -401,6 +401,40 @@ public:
          }
       }
    }
+
+   /*
+   * LrCompressor for a closed diblock and an open homopolymer.
+   */
+   void testLrCompressorMixed()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLrCompressorMixed.log");
+
+      // The homopolymer has a volume fraction 0.2*exp(-w) in a
+      // homogeneous field w
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 2"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ] phi 0.8 }"
+         " Polymer{ type linear nBlock 1 blocks[ 1 1.0 ] mu -1.6094 }"
+         " vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      system.setUnitCell(parameters);
+      setW1D(system, 0.5, 0.3, 1);
+
+      // The k = 0 residual decreases by a factor of about 0.8 per
+      // iteration with the k = 0 response of all species
+      Rp::LrCompressor<1,CPT> compressor(system);
+      std::istringstream in("LrCompressor{ epsilon 1.0e-9 maxItr 30 }\n");
+      compressor.readParam(in);
+      TEST_ASSERT(compressor.compress() == 0);
+      TEST_ASSERT(rmsResidual(system) < 1.0E-8);
+   }
    
 };
 
@@ -412,6 +446,7 @@ TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_ADD(CompressorTest, testCompressCommandFailure)
 TEST_ADD(CompressorTest, testLrCompressorCellChange)
 TEST_ADD(CompressorTest, testLrCompressorOpen)
+TEST_ADD(CompressorTest, testLrCompressorMixed)
 TEST_END(CompressorTest)
 
 #endif
