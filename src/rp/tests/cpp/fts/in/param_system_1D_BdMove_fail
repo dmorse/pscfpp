@@ -1,0 +1,47 @@
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+             1.0
+             1.0
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0   0.5
+              1   0.5
+      ]
+      phi     1.0
+    }
+    vMonomer  0.01
+    ds   0.05
+  }
+  Interaction{
+    chi(
+        1   0   10.0
+    )
+  }
+  Domain{
+    mesh        4
+    lattice     lamellar
+  }
+  McSimulator{
+     seed              1784106389
+     McMoveManager{
+        BdMove{
+           probability   1.0
+           mobility      5.0e-2
+           nStep         2
+        }
+     }
+     LrAmCompressor{
+        epsilon      1.0e-8
+        maxItr       1
+        maxHist      20
+        verbose      0
+        errorType    rms
+     }
+  }
+}
