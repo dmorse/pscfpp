@@ -134,7 +134,7 @@ namespace Rp {
       
       for (int in = 0; in < nMonomer; in++) {
          chi = system().interaction().chi(0,in);
-         if (fabs(chi) > 1e-6) { // if chi is nonzero
+         if (chi != 0.0) {
             RField<D,CPT> const & cfield = system().c().rgrid(in);
             for (int i = 0; i < nx; i++) {
                //xi[i] -= system().c().rgrid(in)[i] * chi;

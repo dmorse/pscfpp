@@ -218,7 +218,7 @@ namespace Rp {
       int nMonomer = system().mixture().nMonomer();
       for (int i = 0; i < nMonomer; i++) {
          double chi = system().interaction().chi(0, i);
-         if (fabs(chi) > 1e-6) { // if chi is nonzero
+         if (chi != 0.0) {
             VecOp::addEqVc(xi, system().c().rgrid(i), -1.0 * chi);
          }
       }
