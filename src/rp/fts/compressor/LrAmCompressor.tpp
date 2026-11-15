@@ -39,7 +39,6 @@ namespace Rp {
    template <int D, class T>
    LrAmCompressor<D,T>::LrAmCompressor(System<D,T>& system)
     : intra_(system),
-      isIntraCalculated_(false),
       isAllocated_(false)
    {
       Compressor<D,T>::setSystem(system);  
@@ -90,11 +89,8 @@ namespace Rp {
          isAllocated_ = true;
       }
 
-      // Compute intraCorrelationK_
-      if (!isIntraCalculated_){
-         intra_.computeOmegaTotal(intraCorrelationK_);
-         isIntraCalculated_ = true;
-      }
+      // Compute intraCorrelationK_, if not up to date
+      intra_.update(intraCorrelationK_);
 
       // Store initial values of monomer chemical potential fields
       for (int i = 0; i < nMonomer; ++i) {
@@ -133,6 +129,13 @@ namespace Rp {
       AmTmpl::clearTimers();
       Compressor<D,T>::mdeCounter_ = 0;
    }
+
+   /*
+   * Mark the intramolecular correlation for recomputation.
+   */
+   template <int D, class T>
+   void LrAmCompressor<D,T>::clearCache()
+   {  intra_.clearCache(); }
 
    // Private virtual AM algorithm operation functions
 

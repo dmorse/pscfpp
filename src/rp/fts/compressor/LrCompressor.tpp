@@ -45,8 +45,7 @@ namespace Rp {
       maxItr_(100),
       totalItr_(0),
       verbose_(0),
-      isAllocated_(false),
-      isIntraCalculated_(false)
+      isAllocated_(false)
    {  ParamComposite::setClassName("LrCompressor"); }
 
    /*
@@ -90,11 +89,8 @@ namespace Rp {
          isAllocated_ = true;
       }
 
-      // Compute intraCorrelation
-      if (!isIntraCalculated_){
-         intra_.computeOmegaTotal(intraCorrelationK_);
-         isIntraCalculated_ = true;
-      }
+      // Compute intraCorrelation, if not up to date
+      intra_.update(intraCorrelationK_);
    }
 
    /*
@@ -263,6 +259,13 @@ namespace Rp {
       Compressor<D,T>::mdeCounter_ = 0;
       totalItr_ = 0;
    }
+
+   /*
+   * Mark the intramolecular correlation for recomputation.
+   */
+   template <int D, class T>
+   void LrCompressor<D,T>::clearCache()
+   {  intra_.clearCache(); }
 
    /*
    * Compute and return the scalar error.

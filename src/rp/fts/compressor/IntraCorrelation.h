@@ -62,6 +62,24 @@ namespace Rp {
       virtual
       void computeOmegaTotal(RField<D,T>& correlations);
 
+      /**
+      * Compute the correlation function if it may have changed.
+      *
+      * This function calls computeOmegaTotal, unless it has done so
+      * before and clearCache has not been called since then.
+      *
+      * \param correlations  omega values on a k-space mesh (on device)
+      */
+      void update(RField<D,T>& correlations);
+
+      /**
+      * Mark the correlation function for recomputation by update.
+      *
+      * Call this function when the unit cell or a parameter of the
+      * mixture may have changed.
+      */
+      void clearCache();
+
    private:
 
       // Private type aliases
@@ -90,6 +108,9 @@ namespace Rp {
 
       /// Number of wavevectors in the k-space mesh.
       int kSize_;
+
+      /// Was the correlation computed by update, without later clearCache?
+      bool isCurrent_;
 
       // Private member functions
 

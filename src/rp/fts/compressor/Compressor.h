@@ -73,6 +73,17 @@ namespace Rp {
       virtual void clearTimers() = 0;
 
       /**
+      * Discard data that the compressor derived from model parameters.
+      *
+      * A compressor may store data that depend on the unit cell and on
+      * parameters of the mixture, such as the intramolecular correlation
+      * of the linear-response compressors. This function must be called
+      * whenever such a parameter may have changed. The default
+      * implementation does nothing.
+      */
+      virtual void clearCache() {}
+
+      /**
       * Get the number of times the MDE has been solved.
       */
       int mdeCounter() const;

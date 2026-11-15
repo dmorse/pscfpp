@@ -970,6 +970,12 @@ namespace Rp {
       Log::file() << std::endl;
       Log::file() << std::endl;
 
+      // The sweep changes parameters from which a compressor may have
+      // derived data
+      if (hasSimulator() && simulator().hasCompressor()) {
+         simulator().compressor().clearCache();
+      }
+
       // Perform sweep
       sweepPtr_->sweep();
    }
@@ -1069,6 +1075,9 @@ namespace Rp {
       domain_().waveList().clearUnitCellData();
       if (hasEnvironment()) {
          environment().reset();
+      }
+      if (hasSimulator() && simulator().hasCompressor()) {
+         simulator().compressor().clearCache();
       }
    }
 

@@ -38,7 +38,8 @@ namespace Rp {
                                      System<D,T> const & system)
     : systemPtr_(&system),
       correlationMixturePtr_(nullptr),
-      kSize_(-1)
+      kSize_(-1),
+      isCurrent_(false)
    {
       correlationMixturePtr_
           = new Pscf::Correlation::Mixture<RealT>(system.mixture());
@@ -66,7 +67,30 @@ namespace Rp {
       correlations_h_.associate(correlations);
       computeOmegaTotalArray(correlations_h_);
       correlations = correlations_h_;
+
+      // Release the association, so that the correlations can be
+      // computed again
+      correlations_h_.dissociate();
    }
+
+   /*
+   * Compute the correlation function if it may have changed.
+   */
+   template <int D, class T>
+   void IntraCorrelation<D,T>::update(RField<D,T>& correlations)
+   {
+      if (!isCurrent_) {
+         computeOmegaTotal(correlations);
+         isCurrent_ = true;
+      }
+   }
+
+   /*
+   * Mark the correlation function for recomputation.
+   */
+   template <int D, class T>
+   void IntraCorrelation<D,T>::clearCache()
+   {  isCurrent_ = false; }
 
    /*
    * Compute k-space array of intramolecular correlation functions (on host).
