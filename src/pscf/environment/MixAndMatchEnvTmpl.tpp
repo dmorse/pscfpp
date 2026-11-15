@@ -9,8 +9,71 @@
 */
 
 #include <util/param/Label.h>
+#include <istream>
+#include <streambuf>
+#include <string>
 
 namespace Pscf {
+
+   namespace MixAndMatchEnvDetail {
+
+      /*
+      * Stream buffer that returns a given text, then the characters of
+      * another stream buffer, and records the characters that it takes
+      * from that other stream buffer.
+      */
+      class ReplayStreamBuf : public std::streambuf
+      {
+      public:
+
+         /*
+         * Constructor.
+         *
+         * \param source  stream buffer read after the text
+         * \param text  text returned first
+         */
+         ReplayStreamBuf(std::streambuf* source, 
+                         std::string const & text = "")
+          : text_(text),
+            sourcePtr_(source)
+         {
+            if (!text_.empty()) {
+               char* begin = &text_[0];
+               setg(begin, begin, begin + text_.size());
+            }
+         }
+
+         /*
+         * Get the characters taken from the source so far.
+         */
+         std::string const & record() const
+         {  return record_; }
+
+      protected:
+
+         // Get the next character of the source, without extracting it
+         int_type underflow()
+         {  return sourcePtr_->sgetc(); }
+
+         // Extract and record the next character of the source
+         int_type uflow()
+         {
+            int_type c = sourcePtr_->sbumpc();
+            if (!traits_type::eq_int_type(c, traits_type::eof())) {
+               record_ += traits_type::to_char_type(c);
+            }
+            return c;
+         }
+
+      private:
+
+         std::string text_;
+         std::string record_;
+         std::streambuf* sourcePtr_;
+
+      };
+
+   }
 
    /*
    * Constructor.
@@ -42,8 +105,10 @@ namespace Pscf {
    * as parameters of the parent MaxAndMatchEnv object, without enclosed curly
    * bracket delimiters around blocks for each generator.
    *
-   * If the second generator is "dependent", it backs up and re-reads the
-   * block of the first generator.
+   * If the second generator is "dependent", it re-reads the block of the
+   * first generator. The text read by the first generator is recorded and
+   * given again to the second one, followed by the rest of the stream, so
+   * that the stream is never rewound (a pipe cannot be).
    */
    template <class Env, class FG>
    void MixAndMatchEnvTmpl<Env,FG>::readParameters(std::istream& in)
@@ -53,8 +118,13 @@ namespace Pscf {
       // Before reading parameters, create FieldGenerator objects
       createGenerators();
 
-      // Save current istream position (allows for possible rewind to here)
-      std::streampos pos = in.tellg();
+      // If the second FieldGenerator is dependent, the first one reads
+      // through a stream that records the text it reads
+      bool isDependent2 = (fieldGenPtr2_ != nullptr)
+                          && fieldGenPtr2_->isDependent();
+      MixAndMatchEnvDetail::ReplayStreamBuf recordBuf(in.rdbuf());
+      std::istream recordIn(&recordBuf);
+      std::istream& in1 = isDependent2 ? recordIn : in;
 
       // Read first FieldGenerator
       if (fieldGenPtr1_ != nullptr) {
@@ -67,7 +137,7 @@ namespace Pscf {
 
          // Read parameters for this FieldGenerator.
          // Reads body without indentation or curly bracket delimiters
-         fieldGenPtr1_->readParameters(in);
+         fieldGenPtr1_->readParameters(in1);
 
          if (fieldGenPtr1_->type() == FG::Mask) {
             generatesMask = true;
@@ -97,19 +167,24 @@ namespace Pscf {
             UTIL_THROW("fieldGenPtr2_ must have type Mask or External.");
          }
 
-         // If this FieldGenerator is dependent, rewind the istream
-         if (fieldGenPtr2_->isDependent()) {
-            in.seekg(pos);
-            Label::clear();
-         }
-
          // Make this FieldGenerator a child ParamComponent of this object
          bool next = false; // Set indentation to be same as that of parent
          addParamComposite(*fieldGenPtr2_, next);
 
          // Read parameters for this FieldGenerator.
          // Reads body without indentation or curly bracket delimiters
-         fieldGenPtr2_->readParameters(in);
+         if (isDependent2) {
+            // Read the text read by the first FieldGenerator, then the
+            // rest of the stream. (A label left in the Label buffer by 
+            // the first FieldGenerator is part of that text.)
+            Label::clear();
+            MixAndMatchEnvDetail::ReplayStreamBuf 
+                                replayBuf(in.rdbuf(), recordBuf.record());
+            std::istream replayIn(&replayBuf);
+            fieldGenPtr2_->readParameters(replayIn);
+         } else {
+            fieldGenPtr2_->readParameters(in);
+         }
       }
 
       setGenerateBools(generatesMask, generatesExt);
