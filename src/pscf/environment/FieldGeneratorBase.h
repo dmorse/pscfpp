@@ -56,7 +56,14 @@ namespace Pscf {
       ~FieldGeneratorBase();
       
       /**
-      * Checks if fields need to be (re)generated. If so, generates them. 
+      * Checks compatibility, and (re)generates the fields if needed.
+      *
+      * The system is checked by checkCompatibility on every call, and
+      * the fields are computed only if needsUpdate() is true. A change
+      * of the system can make it incompatible with fields that would
+      * not change (e.g., a change of an angle of the unit cell that 
+      * leaves the lattice vector normal to the walls of a thin film 
+      * unchanged).
       */
       void generate();
 
