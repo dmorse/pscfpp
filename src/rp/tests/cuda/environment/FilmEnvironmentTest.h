@@ -210,6 +210,63 @@ public:
       TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
    }
 
+   /*
+   * In a film with a space group but without an Iterator, the mask and
+   * the wall fields are symmetric, and equal to those of the same system
+   * with AmIteratorBasis, so they can be written in basis format.
+   */
+   void testSymmetricFieldsNoIterator()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestSymmetricFieldsNoIterator.log");
+
+      // Reference: the system of in/system1DEnv, with AmIteratorBasis
+      Rp::System<1,CUT> ref;
+      createSystem(ref, "in/system1DEnv");
+      ref.w().readBasis("in/wIn1D.bf");
+      ref.compute();
+      TEST_ASSERT(ref.mask().isSymmetric());
+      TEST_ASSERT(ref.h().isSymmetric());
+
+      // The same system without an Iterator
+      Rp::System<1,CUT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } ds 0.0025 }"
+         " Interaction{ chi( 1 0 20.0 ) }"
+         " Domain{ mesh 96 lattice lamellar groupName P_1 }"
+         " FilmEnvironment{ normalVecId 0 interfaceThickness 0.2"
+         " excludedThickness 0.4 chiBottom[ 0.0 0.0 ]"
+         " chiTop[ 40.0 0.0 ] } }\n");
+      system.readParam(param);
+      TEST_ASSERT(!system.hasIterator());
+      std::istringstream in(
+         "READ_W_BASIS in/wIn1D.bf\nCOMPUTE\n"
+         "WRITE_MASK_BASIS out/FilmEnvTestSymmetric_mask.bf\n"
+         "WRITE_H_BASIS out/FilmEnvTestSymmetric_h.bf\n"
+         "FINISH\n");
+      system.readCommands(in);
+      TEST_ASSERT(system.mask().isSymmetric());
+      TEST_ASSERT(system.h().isSymmetric());
+
+      double maxDiff = 0.0;
+      int nBasis = system.domain().basis().nBasis();
+      for (int k = 0; k < nBasis; ++k) {
+         double diff = std::abs(system.mask().basis()[k] 
+                                - ref.mask().basis()[k]);
+         if (diff > maxDiff) maxDiff = diff;
+         for (int i = 0; i < 2; ++i) {
+            diff = std::abs(system.h().basis(i)[k] 
+                            - ref.h().basis(i)[k]);
+            if (diff > maxDiff) maxDiff = diff;
+         }
+      }
+      TEST_ASSERT(maxDiff < 1.0E-12);
+   }
+
    void testSweep() // test sweep along chiBottom and lattice parameter
    {
       // NOTE: this also tests that the ParameterModifier methods work
@@ -512,6 +569,7 @@ TEST_ADD(FilmEnvironmentTest, testReadParameters)
 TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
 TEST_ADD(FilmEnvironmentTest, testComputeNoIterator)
+TEST_ADD(FilmEnvironmentTest, testSymmetricFieldsNoIterator)
 TEST_ADD(FilmEnvironmentTest, testSweep)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
 TEST_ADD(FilmEnvironmentTest, testSolve1DGrid)
