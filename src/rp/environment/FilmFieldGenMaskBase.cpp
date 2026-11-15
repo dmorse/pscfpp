@@ -214,9 +214,31 @@ namespace Rp
          updated[4] = false;
          updated[5] = false;
 
-         // Allow the angle between the two lattice basis vectors that are 
-         // not normalVecId to be flexible
-         updated[normalVecId_+3] = current[normalVecId_+3];
+         // Allow the angle between the two lattice basis vectors that are
+         // not normalVecId to be flexible. The triclinic parameters are
+         // (a, b, c, phi, theta, gamma): b lies in the x-y plane at angle
+         // gamma from a, and c has polar angle theta and azimuth phi.
+         //  - normalVecId = 2: theta = 0; the free angle is gamma (5).
+         //  - normalVecId = 1: gamma = 90 deg, phi = 0; the angle between
+         //    a and c is 90 deg - theta, so the free angle is theta (4).
+         //  - normalVecId = 0: gamma = phi = 90 deg; the angle between
+         //    b and c is 90 deg - theta, so the free angle is theta (4).
+         //    (phi would tilt c out of the plane normal to a.)
+         int angleId = (normalVecId_ == 2) ? 5 : 4;
+         updated[angleId] = current[angleId];
+
+         // Theta is the in-plane angle only if phi has the value assumed
+         // above. At theta = 0 the orthogonality check passes for any
+         // phi, but relaxing theta would then tilt c toward the wall
+         // normal. Require phi explicitly when theta is flexible.
+         if (angleId == 4 && updated[4]) {
+            double phi = cell.parameter(3);
+            double t = (normalVecId_ == 0) ? std::cos(phi) : std::sin(phi);
+            if (std::abs(t) > 1.0E-8) {
+               UTIL_THROW("Flexible theta in a triclinic film needs phi = "
+                          "pi/2 (normalVecId 0) or 0 (normalVecId 1)");
+            }
+         }
 
       }
       
