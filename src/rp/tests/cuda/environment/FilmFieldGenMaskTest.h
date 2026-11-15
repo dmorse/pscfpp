@@ -18,9 +18,13 @@
 #include <pscf/crystal/BFieldComparison.h>
 #include <pscf/backend/cuda/CUT.h>
 
+#include <util/misc/FileMaster.h>
 #include <util/misc/Exception.h>
+#include <util/containers/FSArray.h>
 
 #include <fstream>
+#include <cmath>
+#include <sstream>
 
 using namespace Util;
 using namespace Pscf;
@@ -298,6 +302,67 @@ public:
       TEST_ASSERT(bComparison.maxDiff() < 1.0E-7);
    }
 
+   /*
+   * The same 1D film described with a monomer reference volume equal to
+   * the chain volume (N = 1, chi = 20) and with one 1.0E8 times smaller
+   * (N = 1.0E8, chi = 2.0E-7). The stress of the mask times N must be
+   * the same in both cases.
+   */
+   void testStressSmallChi()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/maskTestStressSmallChi.log");
+
+      double stress[2];
+      for (int j = 0; j < 2; ++j) {
+         double n = (j == 0) ? 1.0 : 1.0E8;
+         Rp::System<1,CUT> system;
+         system.fileMaster().setInputPrefix(filePrefix());
+         system.fileMaster().setOutputPrefix(filePrefix());
+         std::ostringstream param;
+         param.precision(17);
+         param << "System{ Mixture{ nMonomer 2 monomers[ "
+               << 1.0/std::sqrt(n) << " " << 1.0/std::sqrt(n) << " ]"
+               << " nPolymer 1 Polymer{ type linear nBlock 2 blocks[ 0 "
+               << 0.5*n << " 1 " << 0.5*n << " ] phi 1.0 }"
+               << " vMonomer " << 1.0/n << " ds " << 0.01*n << " }"
+               << " Interaction{ chi( 1 0 " << 20.0/n << " ) }"
+               << " Domain{ mesh 32 lattice lamellar groupName P_-1 } }\n";
+         std::istringstream in(param.str());
+         system.readParam(in);
+         FSArray<double, 6> parameters;
+         parameters.append(1.6);
+         system.setUnitCell(parameters);
+
+         // Mask
+         Rp::FilmFieldGenMask<1,CUT> mask(system);
+         std::istringstream maskIn("normalVecId 0  interfaceThickness 0.2"
+                                   "  excludedThickness 0.4\n");
+         mask.readParameters(maskIn);
+         mask.generate();
+
+         // Homogeneous w fields
+         int nBasis = system.domain().basis().nBasis();
+         DArray< DArray<double> > w;
+         w.allocate(2);
+         for (int i = 0; i < 2; ++i) {
+            w[i].allocate(nBasis);
+            for (int k = 0; k < nBasis; ++k) {
+               w[i][k] = 0.0;
+            }
+         }
+         system.w().setBasis(w);
+         system.compute();
+         stress[j] = n * mask.stress(0);
+      }
+      double diff = std::abs(stress[1] - stress[0]);
+      if (verbose() > 0) {
+         std::cout << "\nN = 1:     " << stress[0]
+                   << "\nN = 1.0E8: " << stress[1] << std::endl;
+      }
+      TEST_ASSERT(diff < 1.0E-8 * std::abs(stress[0]));
+   }
+
    void testStress() // test FilmFieldGenMask::stress
    {
       printMethod(TEST_FUNC);
@@ -426,6 +491,7 @@ TEST_ADD(FilmFieldGenMaskTest, testCheckCompatibility)
 TEST_ADD(FilmFieldGenMaskTest, testGenerate)
 TEST_ADD(FilmFieldGenMaskTest, testRegenerate)
 TEST_ADD(FilmFieldGenMaskTest, testStress)
+TEST_ADD(FilmFieldGenMaskTest, testStressSmallChi)
 TEST_ADD(FilmFieldGenMaskTest, testModifyStress)
 TEST_END(FilmFieldGenMaskTest)
 
