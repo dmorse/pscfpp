@@ -316,7 +316,7 @@ the pscfpp git repository and installing all of the required dependencies
    - Some further configuration is required to compile the GPU-enabled
      pscf_rpg executable. Compilation of pscf_rpg is only possible on a
      machine that has an appropriate NVIDA GPU and a CUDA development kit.
-     To enable compilation of CUDA code, first enter "./setopts -c1" from
+     To enable compilation of CUDA code, first enter "./setopts -u1" from
      the pscfpp directory.  Then use the -a option of the same setopts
      script to set the correct GPU architecture for your system. For
      example, to compile for a V100 GPU with CUDA compute capability 7.0,

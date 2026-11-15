@@ -57,8 +57,8 @@ may be modified by running the setopts script, as discussed in more
 detail \ref install_setopts_page "elsewhere".  
 By default, "make all" builds pscf_1d and pscf_rpc but not pscf_rpg.
 Compilation of CUDA code and building of pscf_rpg may be enabled or 
-disabled by using the -c option of the setopts script, e.g., by 
-entering "./setopts -c1" to enable CUDA compilation.
+disabled by using the -u option of the setopts script, e.g., by 
+entering "./setopts -u1" to enable CUDA compilation.
 
 <h2> pscf_1d: </h2>
 
@@ -107,7 +107,7 @@ This command will cause the system to:
 <h2> pscf_rpg: </h2>
 
 This pscf_rpg target only functions if CUDA has been enabled (e.g., by
-entering "./setopts -c1") on a computer with an appropriate NVIDIA GPU
+entering "./setopts -u1") on a computer with an appropriate NVIDIA GPU
 and CUDA development kit.  To compile the pscf_rpg GPU-enabled program
 for periodic structures on such a computer, enter
 \code
