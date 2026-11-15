@@ -25,6 +25,7 @@
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/correlation/Mixture.h>
+#include <pscf/correlation/Polymer.h>
 
 #include <util/global.h>
 
@@ -139,6 +140,41 @@ namespace Rp {
       }
       correlationMixturePtr_->setup();
       correlationMixturePtr_->computeOmegaTotal(Gsq_, correlations);
+
+      // The LR compressors use the correlation as the response of the
+      // total concentration to the pressure-like field. A uniform change
+      // of this field does not change the concentration of a closed
+      // species, whose amount is fixed. In a mixed ensemble, the k = 0
+      // value (rank 0) is thus the sum of the values phi*N/v of the
+      // open species alone. (In a closed system the k = 0 residual is
+      // zero, and in an open one every species responds.)
+      Mixture<D,T> const & mixture = system().mixture();
+      const double vMonomer = mixture.vMonomer();
+      bool hasOpen = false;
+      bool hasClosed = false;
+      double omegaOpen = 0.0;
+      for (int i = 0; i < mixture.nPolymer(); ++i) {
+         if (mixture.polymer(i).ensemble() == Ensemble::Open) {
+            Correlation::Polymer<RealT> const & polymer
+                                     = correlationMixturePtr_->polymer(i);
+            omegaOpen += polymer.phi()*polymer.totalLength()/vMonomer;
+            hasOpen = true;
+         } else {
+            hasClosed = true;
+         }
+      }
+      for (int i = 0; i < mixture.nSolvent(); ++i) {
+         if (mixture.solvent(i).ensemble() == Ensemble::Open) {
+            omegaOpen += mixture.solvent(i).phi()*mixture.solvent(i).size()
+                         / vMonomer;
+            hasOpen = true;
+         } else {
+            hasClosed = true;
+         }
+      }
+      if (hasOpen && hasClosed) {
+         correlations[0] = omegaOpen;
+      }
    }
 
    /*
