@@ -45,8 +45,7 @@ namespace Rp {
       maxItr_(100),
       totalItr_(0),
       verbose_(0),
-      isAllocated_(false),
-      isIntraCalculated_(false)
+      isAllocated_(false)
    {  ParamComposite::setClassName("LrCompressor"); }
 
    /*
@@ -88,12 +87,6 @@ namespace Rp {
             wFieldTmp_[i].allocate(dimensions);
          }
          isAllocated_ = true;
-      }
-
-      // Compute intraCorrelation
-      if (!isIntraCalculated_){
-         intra_.computeOmegaTotal(intraCorrelationK_);
-         isIntraCalculated_ = true;
       }
    }
 
@@ -207,6 +200,10 @@ namespace Rp {
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();
 
+      // Intramolecular correlation, for the volume fractions of open
+      // species given by the last MDE solution
+      intra_.update(intraCorrelationK_);
+
       // Convert residual to Fourier Space
       system().domain().fft().forwardTransform(resid_, residK_);
 
@@ -263,6 +260,13 @@ namespace Rp {
       Compressor<D,T>::mdeCounter_ = 0;
       totalItr_ = 0;
    }
+
+   /*
+   * Mark the intramolecular correlation for recomputation.
+   */
+   template <int D, class T>
+   void LrCompressor<D,T>::clearCache()
+   {  intra_.clearCache(); }
 
    /*
    * Compute and return the scalar error.

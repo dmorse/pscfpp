@@ -103,6 +103,11 @@ namespace Rp {
       */
       void clearTimers() override;
 
+      /**
+      * Mark the intramolecular correlation for recomputation.
+      */
+      void clearCache() override;
+
    protected:
 
       // Inherited member function.
@@ -161,14 +166,14 @@ namespace Rp {
       int kSize_;
 
       /**
-      * Has intraCorrelationK_ been calculated?
-      */
-      bool isIntraCalculated_;
-
-      /**
       * Has required memory been allocated?
       */
       bool isAllocated_;
+
+      /**
+      * Is the next correction the first one of the current solve?
+      */
+      bool isFirstCorrection_;
 
       // Private AM algorithm member functions (overridden)
 

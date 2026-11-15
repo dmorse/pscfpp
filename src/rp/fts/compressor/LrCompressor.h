@@ -101,6 +101,11 @@ namespace Rp {
       */
       void clearTimers();
 
+      /**
+      * Mark the intramolecular correlation for recomputation.
+      */
+      void clearCache() override;
+
    protected:
 
       // Inherited protected member (for convenience)
@@ -152,9 +157,6 @@ namespace Rp {
 
       // Has required memory been allocated?
       bool isAllocated_;
-
-      // Has the IntraCorrelation been calculated?
-      bool isIntraCalculated_;
 
       // Private member functions
 

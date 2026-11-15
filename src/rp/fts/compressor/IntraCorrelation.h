@@ -10,8 +10,11 @@
 
 #include <pscf/math/IntVec.h>             // member
 #include <util/containers/DArray.h>       // member
+#include <util/containers/FSArray.h>      // member
 #include <pscf/backend/HostSendArray.h>   // member
 #include <pscf/backend/TmplDeclare.h>     // declaration macros
+
+#include <vector>                         // member
 
 // Forward declarations
 namespace Pscf {
@@ -62,6 +65,28 @@ namespace Rp {
       virtual
       void computeOmegaTotal(RField<D,T>& correlations);
 
+      /**
+      * Compute the correlation function if it may have changed.
+      *
+      * This function calls computeOmegaTotal, unless it has done so
+      * before, clearCache has not been called since then, and the
+      * volume fraction of each open species (each species with a given
+      * chemical potential) differs from its value at that time by at
+      * most 0.1 percent. It must be called after an MDE solution for
+      * the current fields, which gives these volume fractions.
+      *
+      * \param correlations  omega values on a k-space mesh (on device)
+      */
+      void update(RField<D,T>& correlations);
+
+      /**
+      * Mark the correlation function for recomputation by update.
+      *
+      * Call this function when the unit cell or a parameter of the
+      * mixture may have changed.
+      */
+      void clearCache();
+
    private:
 
       // Private type aliases
@@ -91,6 +116,15 @@ namespace Rp {
       /// Number of wavevectors in the k-space mesh.
       int kSize_;
 
+      /// Was the correlation computed by update, without later clearCache?
+      bool isCurrent_;
+
+      /// Volume fractions of open species used by update.
+      std::vector<double> openPhi_;
+
+      /// Unit cell parameters for which Gsq_ was computed.
+      FSArray<double, 6> gsqParameters_;
+
       // Private member functions
 
       /**
@@ -99,6 +133,20 @@ namespace Rp {
       * \param correlations  omega values on a k-space mesh (on host)
       */
       void computeOmegaTotalArray(Array<RealT>& correlations);
+
+      /**
+      * Compute total intramolecular correlation for the thread model.
+      *
+      * The result is the linear response of the total concentration to
+      * the pressure-like field in a homogeneous state, for the contour
+      * steps and the integration rule of the MDE solver. It tends to the
+      * correlation of a continuous chain as the contour step ds tends
+      * to zero, but differs from it where kSq*b*b*ds/6 is not small.
+      * Requires Gsq_ and the Correlation::Mixture setup.
+      *
+      * \param correlations  omega values on a k-space mesh (on host)
+      */
+      void computeThreadOmegaTotal(Array<RealT>& correlations);
 
       /**
       * Get and store r-grid and kgrid-mesh dimensions.
@@ -110,7 +158,8 @@ namespace Rp {
       /**
       * Compute array of squared wavevectors.
       *
-      * Results are stored in a private member variable.
+      * Results are stored in a private member variable. They are only
+      * recomputed if the unit cell parameters have changed.
       */
       void computeGsq();
 

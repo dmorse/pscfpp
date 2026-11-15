@@ -2,6 +2,7 @@
 #define RP_LINEAR_RAMP_TPP
 
 #include "LinearRamp.h"
+#include <rp/fts/compressor/Compressor.h>
 #include <rp/fts/simulator/Simulator.h>
 #include <util/global.h>
 
@@ -70,6 +71,10 @@ namespace Rp {
          // Update chiEvals and chiEvecs if parameter is chi
          if (parameters_[i].type() == "chi") {
             Ramp<D,T>::simulator().analyzeChi();
+         } else
+         if (parameters_[i].type() != "lambda_pert") {
+            // Other parameters may change data stored by the compressor
+            Ramp<D,T>::simulator().compressor().clearCache();
          }
 
       }
