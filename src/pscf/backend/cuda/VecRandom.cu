@@ -178,14 +178,29 @@ namespace Pscf {
          setSeed(0);
       }
 
+      // cuRAND generates normal values in pairs, and requires an even
+      // number of values. For odd n, generate n+1 values in a work array
+      // and copy the required values to data.
       int n = data.capacity();
-      if (n % 2 == 1) {
-         UTIL_THROW("normal() requires array size to be an even number.");
+      int nGen = n + (n % 2);
+      float* ptr = data.cArray();
+      if (nGen != n) {
+         if (floatWork_.capacity() < nGen) {
+            if (floatWork_.isAllocated()) {
+               floatWork_.deallocate();
+            }
+            floatWork_.allocate(nGen);
+         }
+         ptr = floatWork_.cArray();
       }
 
       curandStatus_t status;
-      status = curandGenerateNormal(gen_, data.cArray(), n, mean, stddev);
+      status = curandGenerateNormal(gen_, ptr, nGen, mean, stddev);
       errorCheck(status);
+      if (ptr != data.cArray()) {
+         cudaErrorCheck( cudaMemcpy(data.cArray(), ptr, n*sizeof(float),
+                                    cudaMemcpyDeviceToDevice) );
+      }
    }
 
    /*
@@ -199,15 +214,29 @@ namespace Pscf {
          setSeed(0);
       }
 
+      // cuRAND generates normal values in pairs, and requires an even
+      // number of values. For odd n, generate n+1 values in a work array
+      // and copy the required values to data.
       int n = data.capacity();
-      if (n % 2 == 1) {
-         UTIL_THROW("normal() requires array size to be an even number.");
+      int nGen = n + (n % 2);
+      double* ptr = data.cArray();
+      if (nGen != n) {
+         if (doubleWork_.capacity() < nGen) {
+            if (doubleWork_.isAllocated()) {
+               doubleWork_.deallocate();
+            }
+            doubleWork_.allocate(nGen);
+         }
+         ptr = doubleWork_.cArray();
       }
 
       curandStatus_t status;
-      status = curandGenerateNormalDouble(gen_, data.cArray(),
-                                          n, mean, stddev);
+      status = curandGenerateNormalDouble(gen_, ptr, nGen, mean, stddev);
       errorCheck(status);
+      if (ptr != data.cArray()) {
+         cudaErrorCheck( cudaMemcpy(data.cArray(), ptr, n*sizeof(double),
+                                    cudaMemcpyDeviceToDevice) );
+      }
    }
 
    /*
