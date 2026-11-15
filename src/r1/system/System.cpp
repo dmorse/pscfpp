@@ -520,7 +520,7 @@ namespace R1
             mu = polymerPtr->mu();
             // Recall: mu = ln(phi/q)
             length = polymerPtr->length();
-            if (phi > 1E-08) {
+            if (phi > 0.0) {
                fHelmholtz_ += phi*( mu - 1.0 )/length;
             }
          }
@@ -536,7 +536,7 @@ namespace R1
             mu = solventPtr->mu();
             // Recall: mu = ln(phi/q)
             size = solventPtr->size();
-            if (phi > 1E-08) {
+            if (phi > 0.0) {
                fHelmholtz_ += phi*( mu - 1.0 )/size;
             }
          }
@@ -584,7 +584,7 @@ namespace R1
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             length = polymerPtr->length();
-            if (phi > 1E-08) {
+            if (phi > 0.0) {
                pressure_ += phi*mu/length;
             }
          }
@@ -597,7 +597,7 @@ namespace R1
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
-            if (phi > 1E-08) {
+            if (phi > 0.0) {
                pressure_ += phi*mu/size;
             }
          }
