@@ -14,6 +14,7 @@
 #include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include <util/math/Constants.h>
+#include <util/misc/Exception.h>
 #include <util/format/Dbl.h>
 
 #include <iostream>
@@ -240,6 +241,58 @@ public:
          basis.outputStars(out);   
       }
 
+   }
+
+   /*
+   * Make a 2D basis. Return the number of basis functions, or -1 if an
+   * Exception is thrown.
+   */
+   int nBasis2D(std::string const & cell, int n, std::string groupName)
+   {
+      UnitCell<2> unitCell;
+      std::istringstream in(cell);
+      in >> unitCell;
+      IntVec<2> d;
+      d[0] = n;
+      d[1] = n;
+      Mesh<2> mesh(d);
+      Basis<2> basis;
+      try {
+         basis.makeBasis(mesh, unitCell, groupName);
+      } catch (Exception& e) {
+         return -1;
+      }
+      return basis.nBasis();
+   }
+
+   /*
+   * Squared norms of waves are compared with a tolerance relative to
+   * their magnitude, so that bases can be made for small cells and for
+   * cell parameters rounded to the 11 significant digits of field
+   * files.
+   */
+   void testMake2DBasis_normTolerance()
+   {
+      printMethod(TEST_FUNC);
+
+      // Hexagonal cells of different sizes, p_6_m_m on a 24 x 24 mesh
+      TEST_ASSERT(eq(nBasis2D("hexagonal 1.0", 24, "p_6_m_m"), 61));
+      TEST_ASSERT(eq(nBasis2D("hexagonal 0.01", 24, "p_6_m_m"), 61));
+      TEST_ASSERT(eq(nBasis2D("hexagonal 1.0E-4", 24, "p_6_m_m"), 61));
+
+      // Rhombic cell with gamma = 2 pi/3, exact and rounded
+      std::string exact = "rhombic 1.7 2.0943951023931953";
+      std::string rounded = "rhombic 1.7 2.0943951024";
+      TEST_ASSERT(eq(nBasis2D(exact, 16, "p_2"), 130));
+      TEST_ASSERT(eq(nBasis2D(rounded, 16, "p_2"), 130));
+      TEST_ASSERT(eq(nBasis2D(exact, 16, "p_6_m_m"), 30));
+      TEST_ASSERT(eq(nBasis2D(rounded, 16, "p_6_m_m"), 30));
+      TEST_ASSERT(eq(nBasis2D(exact, 13, "p_6_m_m"), 21));
+      TEST_ASSERT(eq(nBasis2D(rounded, 13, "p_6_m_m"), 21));
+
+      // A rhombic angle that does not have hexagonal symmetry
+      std::string other = "rhombic 1.7 2.0944051024";
+      TEST_ASSERT(eq(nBasis2D(other, 16, "p_6_m_m"), -1));
    }
 
    void testMake3DBasis_I()
@@ -581,6 +634,7 @@ TEST_ADD(BasisTest, testMake1DBasis_Ib)
 TEST_ADD(BasisTest, testMake2DBasis_square_33)
 TEST_ADD(BasisTest, testMake2DBasis_square_44)
 TEST_ADD(BasisTest, testMake2DBasis_hex)
+TEST_ADD(BasisTest, testMake2DBasis_normTolerance)
 TEST_ADD(BasisTest, testMake3DBasis_I)
 TEST_ADD(BasisTest, testMake3DBasis_I_m_3b_m)
 TEST_ADD(BasisTest, testMake3DBasis_I_a_3b_d) 
