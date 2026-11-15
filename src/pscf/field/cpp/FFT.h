@@ -10,6 +10,7 @@
 
 #include <pscf/backend/cpp/CPT.h>       // backend identifier class
 #include <pscf/field/cpp/RFieldDft.h>   // member
+#include <pscf/field/cpp/RField.h>      // member
 #include <pscf/math/IntVec.h>           // member
 
 #include <fftw3.h>
@@ -208,6 +209,18 @@ namespace Pscf {
 
       /// Private k-space array for performing safe transforms.
       mutable RFieldDft<D,CPT> kFieldCopy_;
+
+      /**
+      * Private r-space array for transforms of misaligned real data.
+      *
+      * The FFTW plans are made for arrays allocated by fftw_malloc, and
+      * may only be executed with arrays of the same alignment. An RField
+      * that is a slice of a larger array, for example one that begins
+      * at an odd index of an array of doubles, may be misaligned. The
+      * data of such a field is copied through this array, which is
+      * allocated when it is first needed.
+      */
+      mutable RField<D,CPT> rFieldCopy_;
 
       /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;

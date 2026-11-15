@@ -158,10 +158,16 @@ namespace Pscf {
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
-      // Execute preplanned forward transform
+      // Copy misaligned input to an aligned array (see rFieldCopy_)
       // (See note at top of file explaining this use of const_cast)
-      fftw_execute_dft_r2c(rcfPlan_, const_cast<double*>(&rField[0]),
-                           &kField[0]);
+      double* rPtr = const_cast<double*>(&rField[0]);
+      if (fftw_alignment_of(rPtr) != 0) {
+         rFieldCopy_ = rField;
+         rPtr = &rFieldCopy_[0];
+      }
+
+      // Execute preplanned forward transform
+      fftw_execute_dft_r2c(rcfPlan_, rPtr, &kField[0]);
 
       // Rescale the resulting array
       double scale = 1.0/double(rSize_);
@@ -187,8 +193,18 @@ namespace Pscf {
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
+      // Write misaligned output to an aligned array (see rFieldCopy_)
+      bool isAligned = (fftw_alignment_of(&rField[0]) == 0);
+      if (!isAligned && !rFieldCopy_.isAllocated()) {
+         rFieldCopy_.allocate(meshDimensions_);
+      }
+      double* rPtr = isAligned ? &rField[0] : &rFieldCopy_[0];
+
       // Execute preplanned inverse transform
-      fftw_execute_dft_c2r(criPlan_, &kField[0], &rField[0]);
+      fftw_execute_dft_c2r(criPlan_, &kField[0], rPtr);
+      if (!isAligned) {
+         rField = rFieldCopy_;
+      }
    }
 
    /*
