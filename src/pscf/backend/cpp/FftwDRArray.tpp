@@ -11,6 +11,7 @@
 #include <util/misc/Memory.h> 
 
 #include <fftw3.h>
+#include <cstring>
 
 namespace Pscf {
 
@@ -40,9 +41,7 @@ namespace Pscf {
          UTIL_THROW("Other FftwDRArray must be allocated.");
       }
       allocate(other.capacity_);
-      for (int i = 0; i < capacity_; ++i) {
-         data_[i] = other.data_[i];
-      }
+      std::memmove(data_, other.cArray(), capacity_*sizeof(Data));
    }
 
    /*
@@ -91,9 +90,7 @@ namespace Pscf {
 
       // Copy elements
       UTIL_CHECK(capacity_ == other.capacity_);
-      for (int i = 0; i < capacity_; ++i) {
-         data_[i] = other[i];
-      }
+      std::memmove(data_, other.cArray(), capacity_*sizeof(Data));
 
       return *this;
    }
@@ -118,9 +115,7 @@ namespace Pscf {
 
       // Copy all elements
       UTIL_CHECK(capacity_ == other.capacity());
-      for (int i = 0; i < capacity_; ++i) {
-         data_[i] = other[i];
-      }
+      std::memmove(data_, other.cArray(), capacity_*sizeof(Data));
 
       return *this;
    }
