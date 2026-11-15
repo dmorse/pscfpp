@@ -256,6 +256,22 @@ public:
       TEST_ASSERT(12 == g.size());
    }
 
+   /*
+   * Reading the identity group "I" into a group must replace the
+   * elements that the group held before.
+   */
+   void test2DreadIdentity()
+   {
+      printMethod(TEST_FUNC);
+
+      SpaceGroup<2> g;
+      readGroup("p_6_m_m", g);
+      TEST_ASSERT(12 == g.size());
+      readGroup("I", g);
+      TEST_ASSERT(1 == g.size());
+      TEST_ASSERT(g.isValid());
+   }
+
    void test3D_I_a_3b_d() 
    {
       printMethod(TEST_FUNC);
@@ -350,6 +366,7 @@ TEST_ADD(SpaceGroupTest, test2Dmake3)
 TEST_ADD(SpaceGroupTest, test3Dmake)
 TEST_ADD(SpaceGroupTest, test2Dread)
 TEST_ADD(SpaceGroupTest, test2DreadGroupDirectory)
+TEST_ADD(SpaceGroupTest, test2DreadIdentity)
 TEST_ADD(SpaceGroupTest, test3D_I_a_3b_d) 
 TEST_ADD(SpaceGroupTest, test3D_F_d_3b_m) 
 TEST_END(SpaceGroupTest)
