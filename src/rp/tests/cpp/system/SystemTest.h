@@ -727,6 +727,28 @@ public:
    }
 
    /*
+   * ANALYZE in a system without a Simulator must throw an Exception.
+   */
+   void testAnalyzeNoSimulator()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzeNoSimulator.log");
+
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam/param.flex", "");
+      TEST_ASSERT(!system.hasSimulator());
+      std::istringstream in("ANALYZE 0 1 RGridTrajectoryReader"
+                            " in/diblock/lam/omega.in\nFINISH\n");
+      bool thrown = false;
+      try {
+         system.readCommands(in);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+   }
+
+   /*
    * Free energy and pressure of homogeneous blends of two homopolymers
    * of length 1 with volume fractions 1 - phi and phi, in fields w = 0
    * (basis) and w = 20 (r-grid), which have exact values. The terms of
@@ -793,6 +815,7 @@ TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_ADD(SystemTest, testWriteNeedsSolution)
 TEST_ADD(SystemTest, testWriteParamBead)
 TEST_ADD(SystemTest, testReadCommandsStatus)
+TEST_ADD(SystemTest, testAnalyzeNoSimulator)
 TEST_END(SystemTest)
 
 #endif

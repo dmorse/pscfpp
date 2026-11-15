@@ -12,6 +12,7 @@
 #include <rp/system/System.h>
 #include <rp/scft/ScftThermo.h>
 #include <rp/field/Domain.h>
+#include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 #include <rp/environment/FieldGenerator.h>
@@ -219,6 +220,41 @@ public:
       TEST_ASSERT(std::abs(system.scft().pressure() + 12.8397347928) < 1e-4);
    }
 
+   /*
+   * A film system without an Iterator: COMPUTE must generate the mask
+   * and the wall fields and solve the MDE, and WRITE_STRESS must work.
+   */
+   void testComputeNoIterator()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestComputeNoIterator.log");
+
+      // The system of in/system1DEnv, without an Iterator
+      Rp::System<1,CPT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } ds 0.0025 }"
+         " Interaction{ chi( 1 0 20.0 ) }"
+         " Domain{ mesh 96 lattice lamellar groupName P_1 }"
+         " FilmEnvironment{ normalVecId 0 interfaceThickness 0.2"
+         " excludedThickness 0.4 chiBottom[ 0.0 0.0 ]"
+         " chiTop[ 40.0 0.0 ] } }\n");
+      system.readParam(param);
+      TEST_ASSERT(!system.hasIterator());
+
+      std::istringstream in("READ_W_BASIS in/wIn1D.bf\nCOMPUTE\n"
+                            "WRITE_STRESS out/FilmEnvTestComputeNoIterator\n"
+                            "FINISH\n");
+      system.readCommands(in);
+      TEST_ASSERT(system.mask().hasData());
+      TEST_ASSERT(system.h().hasData());
+      TEST_ASSERT(system.c().hasData());
+      TEST_ASSERT(eq(system.mask().phiTot(), 8.0951532073e-01));
+   }
+
    void testSweep() // test sweep along chiBottom and lattice parameter
    {
       // NOTE: this also tests that the ParameterModifier methods work
@@ -338,6 +374,7 @@ TEST_ADD(FilmEnvironmentTest, testReadParameters)
 TEST_ADD(FilmEnvironmentTest, testWallChiParameter)
 TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
+TEST_ADD(FilmEnvironmentTest, testComputeNoIterator)
 TEST_ADD(FilmEnvironmentTest, testSweep)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
 TEST_END(FilmEnvironmentTest)
