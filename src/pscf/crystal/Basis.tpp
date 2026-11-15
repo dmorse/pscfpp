@@ -27,6 +27,25 @@
 
 namespace Pscf {
 
+   namespace {
+
+      /*
+      * Are two squared norms of wavevectors equal?
+      *
+      * They are taken to be equal if they differ by at most 1.0E-8,
+      * the tolerance for ties in shiftToMinimum, or by at most 1.0E-10
+      * relative to the larger one. The relative tolerance allows for
+      * rounding errors of large squared norms, and for cell parameters
+      * rounded to the 11 significant digits of field file headers.
+      */
+      bool equalNorm(double a, double b)
+      {
+         double diff = std::abs(a - b);
+         return (diff <= 1.0E-8) || (diff <= 1.0E-10*std::max(a, b));
+      }
+
+   }
+
    /*
    * Constructor.
    */
@@ -201,7 +220,6 @@ namespace Pscf {
       double Gsq_max;
       double phase_diff;
       const double twoPi = 2.0*Constants::Pi;
-      const double epsilon = 1.0E-8;
       IntVec<D> meshDimensions = mesh().dimensions();
       IntVec<D> rootVecMin;  // Min indices for root of this star
       IntVec<D> rootVecStd;  // Std indices for root of this star
@@ -376,7 +394,7 @@ namespace Pscf {
             newList = true;
          } else {
             Gsq = waves_[i].sqNorm;
-            if (Gsq > Gsq_max + epsilon) {
+            if (!equalNorm(Gsq, Gsq_max)) {
                Gsq_max = Gsq;
                bunchEnd = i;
                bunchSize = bunchEnd - bunchBegin;
@@ -395,8 +413,8 @@ namespace Pscf {
                wave.indicesMin = waves_[j].indicesMin;
                wave.sqNorm = waves_[j].sqNorm;
                if (j > bunchBegin) {
-                  UTIL_CHECK( std::abs(wave.sqNorm-waves_[j].sqNorm)
-                                 < 2.0*epsilon );
+                  UTIL_CHECK(equalNorm(wave.sqNorm,
+                                       waves_[bunchBegin].sqNorm));
                }
                bunch.insert(wave);
             }
@@ -438,7 +456,7 @@ namespace Pscf {
                   vec = rootVecMin*group[j];
 
                   // Check that rotated vector has the same norm as root
-                  UTIL_CHECK(std::abs(Gsq - unitCell().ksq(vec)) < epsilon);
+                  UTIL_CHECK(equalNorm(Gsq, unitCell().ksq(vec)));
 
                   // Initialize BWave object associated with rotated wave
                   wave.sqNorm = Gsq;
@@ -1059,7 +1077,7 @@ namespace Pscf {
          // Check sqNorm
          v = waves_[iw].indicesMin;
          Gsq = unitCell().ksq(v);
-         if (std::abs(Gsq - waves_[iw].sqNorm) > 1.0E-8) {
+         if (!equalNorm(Gsq, waves_[iw].sqNorm)) {
             std::cout << "\n";
             std::cout << "Incorrect sqNorm:" << "\n"
                       << "wave.indicesMin = " << "\n"
