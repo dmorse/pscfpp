@@ -11,6 +11,8 @@
 #include <pscf/crystal/SpaceGroup.h>
 #include <pscf/crystal/groupFile.h>
 
+#include <sys/stat.h>
+
 namespace Pscf {
 
    using namespace Util;
@@ -165,8 +167,12 @@ namespace Pscf {
          group.makeCompleteGroup();
       } else {
          bool foundFile = false;
-         {
-            // Search first in this directory
+         // Search first in this directory, for a regular file with
+         // this name (a directory with this name, which an ifstream
+         // can also open, is not a group file)
+         struct stat status;
+         if (stat(groupName.c_str(), &status) == 0
+             && S_ISREG(status.st_mode)) {
             std::ifstream in;
             in.open(groupName);
             if (in.is_open()) {

@@ -146,6 +146,10 @@ namespace Pscf {
    /**
    * Open and read a group file.
    * 
+   * A regular file named groupName in the current directory is read
+   * first, if one exists. Otherwise, the standard group file of that
+   * name in the PSCF data directory is read.
+   *
    * \param groupName  name of group, or group file (input)
    * \param group  space group (output)
    *
