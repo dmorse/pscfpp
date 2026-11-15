@@ -1135,6 +1135,11 @@ namespace Rp {
    void System<D,T>::writeParamNoSweep(std::ostream& out) const
    {
       out << "System{" << std::endl;
+      // The optional polymerModel parameter (thread by default) must be
+      // written for the bead model
+      if (PolymerModel::isBead()) {
+         out << "  polymerModel  " << PolymerModel::model() << std::endl;
+      }
       mixture().writeParam(out);
       interaction().writeParam(out);
       domain().writeParam(out);
