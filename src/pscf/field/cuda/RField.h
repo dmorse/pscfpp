@@ -199,9 +199,14 @@ namespace Pscf {
 
       if (isAllocated()) {
          HostSendArray<cudaReal,CUT> tempData(capacity);
-         tempData = this; // copy this object's data from device to host
+         if (Archive::is_saving()) {
+            tempData = *this; // copy data from device to host
+         }
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];
+         }
+         if (Archive::is_loading()) {
+            *this = tempData; // copy data from host to device
          }
       }
       ar & meshDimensions_;
