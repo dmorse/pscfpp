@@ -133,12 +133,69 @@ public:
 
    }
 
+   /*
+   * Read the first cell parameter in the header of a file.
+   */
+   double readCellParam(std::string filename)
+   {
+      std::ifstream in;
+      openInputFile(filename, in);
+      std::string word;
+      double value = 0.0;
+      while (in >> word) {
+         if (word == "cell_param") {
+            in >> value;
+            break;
+         }
+      }
+      in.close();
+      return value;
+   }
+
+   /*
+   * Write star and wave lists when the basis is constructed from the
+   * header of a field file read into a local unit cell, as in the
+   * field conversion commands, so that the unit cell of the Domain is
+   * not set. The headers must give the cell of the field file.
+   */
+   void testWriteStarsWaves()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<3,CPT> domain;
+      fileMaster_.setRootPrefix(UnitTest::filePrefix());
+      domain.setFileMaster(fileMaster_);
+      std::ifstream in;
+      openInputFile("in/Domain.prm", in);
+      domain.readParam(in);
+      in.close();
+
+      {
+         UnitCell<3> unitCell;
+         bool isSymmetric;
+         openInputFile("in/w_bcc.rf", in);
+         domain.fieldIo().readFieldHeader(in, nMonomer_, unitCell,
+                                          isSymmetric);
+         in.close();
+      }
+      TEST_ASSERT(domain.basis().nBasis() == 489);
+      TEST_ASSERT(!domain.unitCell().isInitialized());
+
+      domain.writeStars("out/stars_bcc");
+      domain.writeWaves("out/waves_bcc");
+      double a = readCellParam("in/w_bcc.rf");
+      TEST_ASSERT(a > 1.0);
+      TEST_ASSERT(eq(readCellParam("out/stars_bcc"), a));
+      TEST_ASSERT(eq(readCellParam("out/waves_bcc"), a));
+   }
+
 };
 
 TEST_BEGIN(DomainTest)
 //TEST_ADD(DomainTest, testReadParam)
 TEST_ADD(DomainTest, testReadParamHeader)
 TEST_ADD(DomainTest, testReadHeader)
+TEST_ADD(DomainTest, testWriteStarsWaves)
 TEST_END(DomainTest)
 
 #endif
