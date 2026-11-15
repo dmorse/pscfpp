@@ -284,10 +284,9 @@ namespace Rp {
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
-      // Store a symmetric mask if the Iterator is symmetric (a system
-      // may have no Iterator)
-      bool isSymmetric = system().hasIterator()
-                         && system().iterator().isSymmetric();
+      // The mask is invariant under the space group, if any (this is
+      // checked by checkCompatibility), with or without an Iterator
+      bool isSymmetric = system().domain().hasGroup();
       if (isSymmetric) {
          UTIL_CHECK(system().domain().basis().isInitialized());
       }
