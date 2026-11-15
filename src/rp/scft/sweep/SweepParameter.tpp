@@ -17,6 +17,7 @@
 #include <rp/solvers/Solvent.h>
 #include <rp/solvers/Block.h>
 #include <rp/field/Domain.h>
+#include <rp/scft/iterator/Iterator.h>
 
 #include <pscf/crystal/UnitCell.h>
 
@@ -291,6 +292,25 @@ namespace Rp {
       } else if (type_ == Solvent) {
          systemPtr_->mixtureModifier().setSolventSize(id(0), newVal);
       } else if (type_ == Cell_Param) {
+         // The iterator optimizes a flexible lattice parameter, and the
+         // sweep extrapolates it from previous states, which would undo
+         // the change. (Check here, not in setup: a thin film generator
+         // may change the flexibleParams array of the iterator when it
+         // generates the mask, before the first state is solved.)
+         if (systemPtr_->hasIterator()) {
+            Iterator<D,T> const & iterator = systemPtr_->iterator();
+            FSArray<bool,6> const flexParams = iterator.flexibleParams();
+            if (iterator.isFlexible() && id(0) < flexParams.size()
+                && flexParams[id(0)]) {
+               std::string msg = "Sweep parameter cell_param "
+                               + toString(id(0)) + ": lattice parameter"
+                               + " is flexible, so the iterator would"
+                               + " optimize it and undo the sweep; make"
+                               + " it rigid (isFlexible 0, or 0 in the"
+                               + " flexibleParams array)";
+               UTIL_THROW(msg.c_str());
+            }
+         }
          FSArray<double,6> params
                            = systemPtr_->domain().unitCell().parameters();
          params[id(0)] = newVal;

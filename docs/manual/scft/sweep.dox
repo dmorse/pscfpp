@@ -398,6 +398,9 @@ and 3 dimensional structures of various crystal lattice system types.
 These conventions are described \ref prdc_unitcell_page "here".
 The uid index for a cell_parameter is a zero based integer index
 that identifies which parameter in such a list is being varied.
+A sweep of a lattice parameter that the iterator treats as flexible
+stops with an error message at its first step. Other lattice parameters
+of the same unit cell may remain flexible.
 
 The chi_top and chi_bottom parameters are only applicable to
 simulations of thin films performed with pscf_rp, as discussed 
