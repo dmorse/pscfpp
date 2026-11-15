@@ -1078,6 +1078,9 @@ namespace Rp {
    {
       c_().setHasData(false);
       scft().clear();
+      if (hasEnvironment()) {
+         environment().clearStress();
+      }
    }
 
    // Unit Cell Modifiers

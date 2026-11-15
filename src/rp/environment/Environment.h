@@ -87,6 +87,15 @@ namespace Rp {
       void reset();
 
       /**
+      * Mark the environment-modified stress as outdated.
+      *
+      * Upon return, hasStress() is false. Unlike reset(), this does
+      * not require the fields to be regenerated. It is called when the
+      * w fields, the mask or the external fields change.
+      */
+      void clearStress();
+
+      /**
       * Compute and store the environment-modified SCFT stress.
       * 
       * First, the conventional SCFT stress is accessed from the Mixture
