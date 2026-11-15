@@ -25,9 +25,59 @@
 
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 using namespace Util;
 using namespace Pscf;
+
+/*
+* LinearSweep for tests of the sequence of states of a sweep.
+*
+* Records the value of s of each attempted state, and replaces the
+* iterative solution of each state by a solution of the MDE for the
+* current w fields. Solve number failSolve (counting from 0 for the
+* initial state) is reported as a failure to converge.
+*/
+template <int D>
+class TestLinearSweep : public Rp::LinearSweep<D,CPT>
+{
+
+public:
+
+   TestLinearSweep(Rp::System<D,CPT>& system)
+    : Rp::LinearSweep<D,CPT>(system),
+      failSolve(-1),
+      nSolve_(0)
+   {}
+
+   void setParameters(double s) override
+   {
+      sAttempt.push_back(s);
+      Rp::LinearSweep<D,CPT>::setParameters(s);
+   }
+
+   /// Values of s of all attempted states after the initial one.
+   std::vector<double> sAttempt;
+
+   /// Index of the solve to report as failure (-1 for none).
+   int failSolve;
+
+protected:
+
+   int solve(bool isContinuation) override
+   {
+      this->system().compute();
+      int error = (nSolve_ == failSolve) ? 1 : 0;
+      ++nSolve_;
+      return error;
+   }
+
+private:
+
+   /// Number of calls to solve.
+   int nSolve_;
+
+};
 
 class SweepTest : public LogFileUnitTest
 {
@@ -314,6 +364,50 @@ public:
       sweep.readParameters(in);
    }
 
+   void testLinearSweepExactS()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepExactS");
+
+      Rp::System<1,CPT> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
+      system.w().readBasis("in/block/w.bf");
+
+      // Without failures, the states must be at s = k/ns exactly, and
+      // the last state at s = 1 (with ns = 9, repeated addition of 1/9
+      // gives 1 + 2.2E-16)
+      {
+         TestLinearSweep<1> sweep(system);
+         std::istringstream in("ns 9"
+                               " baseFileName out/testLinearSweepExactS_"
+                               " nParameter 1 parameters chi 0 1 0.9\n");
+         sweep.readParameters(in);
+         sweep.sweep();
+         TEST_ASSERT(sweep.sAttempt.size() == 9);
+         for (int k = 1; k <= 9; ++k) {
+            TEST_ASSERT(sweep.sAttempt[k-1] == double(k)/9.0);
+         }
+      }
+
+      // With ns = 3 and a failure at s = 2/3, the step is halved, and
+      // the states must be at exact multiples of 1/6, the last at s = 1
+      {
+         system.w().readBasis("in/block/w.bf");
+         TestLinearSweep<1> sweep(system);
+         sweep.failSolve = 2;
+         std::istringstream in("ns 3"
+                               " baseFileName out/testLinearSweepExactS_"
+                               " nParameter 1 parameters chi 0 1 0.9\n");
+         sweep.readParameters(in);
+         sweep.sweep();
+         double s[] = {1.0/3.0, 2.0/3.0, 3.0/6.0, 4.0/6.0, 5.0/6.0, 1.0};
+         TEST_ASSERT(sweep.sAttempt.size() == 6);
+         for (int k = 0; k < 6; ++k) {
+            TEST_ASSERT(sweep.sAttempt[k] == s[k]);
+         }
+      }
+   }
+
    void testLinearSweepBlock()
    {
       printMethod(TEST_FUNC);
@@ -442,6 +536,7 @@ TEST_ADD(SweepTest, testSpecializedParameter)
 TEST_ADD(SweepTest, testParameterIdRange)
 TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepReadNs)
+TEST_ADD(SweepTest, testLinearSweepExactS)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)
 TEST_ADD(SweepTest, testLinearSweepKuhn)
