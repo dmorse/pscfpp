@@ -12,11 +12,13 @@
 #include <pscf/mesh/MeshIterator.h>
 
 #include <util/containers/DArray.h>
+#include <util/containers/FSArray.h>
 #include <util/math/Constants.h>
 #include <util/format/Dbl.h>
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace Util;
 using namespace Pscf;
@@ -525,6 +527,51 @@ public:
 
    }
 
+
+   /*
+   * Make the basis of a hexagonal 3D group on a 12x12x12 mesh, and
+   * check the numbers of stars and basis functions. The expected
+   * numbers were counted independently, as the orbits of the point
+   * group on the mesh and the orbits of grid points under the space
+   * group.
+   */
+   void checkHexagonalBasis(std::string groupName, int nStar, int nBasis)
+   {
+      UnitCell<3> unitCell;
+      FSArray<double, 6> parameters;
+      parameters.append(1.777035357);
+      parameters.append(2.5);
+      unitCell.set(UnitCell<3>::Hexagonal, parameters);
+      IntVec<3> d;
+      d[0] = 12;
+      d[1] = 12;
+      d[2] = 12;
+      Mesh<3> mesh(d);
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, groupName);
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nStar(), nStar));
+      TEST_ASSERT(eq(basis.nBasis(), nBasis));
+   }
+
+   /*
+   * In groups R_-3_c:H and R_3_c:H, a wave of a star can be reached
+   * with phases +pi and -pi (issue #256). Without wrapping phase
+   * differences by 2 pi, R_-3_c:H gave 56 basis functions, and R_3_c:H
+   * aborted in makeStars.
+   */
+   void testMake3DBasis_R_3b_c_H()
+   {
+      printMethod(TEST_FUNC);
+      checkHexagonalBasis("R_-3_c:H", 193, 57);
+   }
+
+   void testMake3DBasis_R_3_c_H()
+   {
+      printMethod(TEST_FUNC);
+      checkHexagonalBasis("R_3_c:H", 372, 100);
+   }
+
 };
 
 TEST_BEGIN(BasisTest)
@@ -540,6 +587,8 @@ TEST_ADD(BasisTest, testMake3DBasis_I_a_3b_d)
 TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_2)
 TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_1)
 TEST_ADD(BasisTest, testMake3DBasis_I_41_3_2)
+TEST_ADD(BasisTest, testMake3DBasis_R_3b_c_H)
+TEST_ADD(BasisTest, testMake3DBasis_R_3_c_H)
 TEST_END(BasisTest)
 
 #endif
