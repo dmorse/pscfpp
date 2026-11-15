@@ -1,0 +1,9 @@
+Polymer{
+   type branched
+   nBlock  2
+   blocks[
+       0  0.5  0  1
+       1  0.5  1  7
+   ]
+   phi  1.0
+}
