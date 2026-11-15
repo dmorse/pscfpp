@@ -121,6 +121,8 @@ if [ -n "$HAS_GSL" ]; then
   rm make/buf
   echo "Paths to GSL header and library files have been set in main config.mk files"
 else
+  # Use the compiler settings file unchanged
+  cp "$VARFILE" make/temp
   echo "Did not find gsl-config command for Gnu Scientific Library."
   echo "Check paths GSL_INC and GSL_LIB in (src|bld)/config.mk files."
 fi
