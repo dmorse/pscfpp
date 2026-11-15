@@ -141,7 +141,7 @@ namespace Pscf {
 
          if (fieldGenPtr1_->type() == FG::Mask) {
             generatesMask = true;
-         } else if (fieldGenPtr1_->type() == FG::Mask) {
+         } else if (fieldGenPtr1_->type() == FG::External) {
             generatesExt = true;
          } else {
             UTIL_THROW("fieldGenPtr1_ must have type Mask or External.");
