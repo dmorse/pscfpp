@@ -24,6 +24,7 @@
 #include <pscf/sweep/ParameterModifier.h>
 
 #include <util/containers/FSArray.h>
+#include <util/misc/ioUtil.h>
 #include <util/global.h>
 
 #include <algorithm>
@@ -148,11 +149,57 @@ namespace Rp {
    }
 
    /*
-   * Get and store initial (current) value from the parent system.
+   * Check the indices, get and store initial (current) value from the
+   * parent system.
    */
    template <int D, class T>
    void SweepParameter<D,T>::getInitial()
-   {  initial_ = get_(); }
+   {
+      checkIds();
+      initial_ = get_();
+   }
+
+   /*
+   * Check that the indices of this parameter are in range.
+   */
+   template <int D, class T>
+   void SweepParameter<D,T>::checkIds() const
+   {
+      UTIL_CHECK(systemPtr_);
+      Mixture<D,T> const & mixture = systemPtr_->mixture();
+      if (type_ == Block) {
+         checkId(0, mixture.nPolymer(), "polymer");
+         checkId(1, mixture.polymer(id(0)).nBlock(), "block");
+      } else if (type_ == Chi) {
+         checkId(0, mixture.nMonomer(), "monomer");
+         checkId(1, mixture.nMonomer(), "monomer");
+      } else if (type_ == Kuhn) {
+         checkId(0, mixture.nMonomer(), "monomer");
+      } else if (type_ == Phi_Polymer || type_ == Mu_Polymer) {
+         checkId(0, mixture.nPolymer(), "polymer");
+      } else if (type_ == Phi_Solvent || type_ == Mu_Solvent
+                 || type_ == Solvent) {
+         checkId(0, mixture.nSolvent(), "solvent");
+      } else if (type_ == Cell_Param) {
+         checkId(0, systemPtr_->domain().unitCell().nParameter(),
+                 "lattice parameter");
+      }
+   }
+
+   /*
+   * Throw an Exception if index id(i) is not in the range [0, n).
+   */
+   template <int D, class T>
+   void SweepParameter<D,T>::checkId(int i, int n,
+                                     std::string const & name) const
+   {
+      if (id(i) < 0 || id(i) >= n) {
+         std::string msg = "Sweep parameter " + type() + ": " + name
+                         + " index " + toString(id(i))
+                         + " out of range [0, " + toString(n) + ")";
+         UTIL_THROW(msg.c_str());
+      }
+   }
 
    /*
    * Set a new parameter value in the parent system.
