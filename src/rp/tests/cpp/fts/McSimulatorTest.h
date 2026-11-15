@@ -10,10 +10,13 @@
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
 
 #include <rp/fts/compressor/Compressor.h>
+#include <pscf/field/cpp/RFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
+#include <util/containers/FSArray.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
@@ -208,6 +211,61 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
    }
 
+
+   /*
+   * Are the c fields of the system those of its current w fields?
+   */
+   template <int D>
+   bool hasCurrentCFields(Rp::System<D,CPT>& system)
+   {
+      if (!system.c().hasData()) return false;
+      DArray< RField<D,CPT> > c;
+      allocateRGridFields(system, c);
+      for (int i = 0; i < c.capacity(); ++i) {
+         c[i] = system.c().rgrid()[i];
+      }
+      system.compute();
+      RFieldComparison<D,CPT> comparison;
+      comparison.compare(c, system.c().rgrid());
+      return (comparison.maxDiff() < 1.0E-10);
+   }
+
+   /*
+   * A BdMove whose compressor fails in every BD step (maxItr = 1), so
+   * also in the last one (issue #274). The McSimulator is that of the
+   * System, as in pscf_rpc. The move must complete and leave the c
+   * fields of the final w fields.
+   */
+   void testBdMoveFailedLastStep()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testBdMoveFailedLastStep.log");
+
+      Rp::System<1,CPT> system;
+      initSystem(system, "in/param_system_1D_BdMove_fail");
+      TEST_ASSERT(system.hasSimulator());
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      system.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      allocateRGridFields(system, w);
+      for (int i = 0; i < w.capacity(); ++i) {
+         for (int j = 0; j < w[i].capacity(); ++j) {
+            w[i][j] = 0.0;
+         }
+      }
+      system.w().setRGrid(w);
+
+      bool success = true;
+      try {
+         system.simulator().simulate(1);
+      } catch (Exception& e) {
+         success = false;
+      }
+      TEST_ASSERT(success);
+      TEST_ASSERT(hasCurrentCFields(system));
+   }
+
 };
 
 TEST_BEGIN(McSimulatorTest)
@@ -215,6 +273,7 @@ TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateBdMoveDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
+TEST_ADD(McSimulatorTest, testBdMoveFailedLastStep)
 TEST_END(McSimulatorTest)
 
 #endif
