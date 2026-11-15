@@ -92,7 +92,9 @@ namespace Pscf {
       for (int p = 0; p < D; ++p){
          for (int q = 0; q < D; ++q){
             element = dkkBasis(n, p, q);
-            value += vec[p]*vec[q]*element;
+            // Convert to double before the product, because the product
+            // vec[p]*vec[q] can overflow int
+            value += double(vec[p])*double(vec[q])*element;
          }
       }
 
