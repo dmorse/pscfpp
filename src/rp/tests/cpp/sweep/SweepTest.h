@@ -13,6 +13,7 @@
 #include <rp/field/WFields.h>
 
 #include <pscf/crystal/BFieldComparison.h>
+#include <pscf/crystal/Basis.h>
 
 #include <pscf/sweep/ParameterType.h>
 #include <pscf/interaction/Interaction.h>
@@ -20,12 +21,15 @@
 #include <util/misc/FileMaster.h>
 #include <util/misc/Exception.h>
 #include <util/containers/GArray.h>
+#include <util/containers/FSArray.h>
+#include <util/containers/DArray.h>
 #include <util/format/Dbl.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -36,7 +40,10 @@ using namespace Pscf;
 * Records the value of s of each attempted state, and replaces the
 * iterative solution of each state by a solution of the MDE for the
 * current w fields. Solve number failSolve (counting from 0 for the
-* initial state) is reported as a failure to converge.
+* initial state) is reported as a failure to converge. If cellRate is
+* nonzero, each solve also records lattice parameter 0 of the system,
+* and then sets it to a0 + cellRate*s, as if a flexible parameter had
+* been optimized (a0 is its value at the start of the initial state).
 */
 template <int D>
 class TestLinearSweep : public Rp::LinearSweep<D,CPT>
@@ -47,7 +54,9 @@ public:
    TestLinearSweep(Rp::System<D,CPT>& system)
     : Rp::LinearSweep<D,CPT>(system),
       failSolve(-1),
-      nSolve_(0)
+      cellRate(0.0),
+      nSolve_(0),
+      a0_(0.0)
    {}
 
    void setParameters(double s) override
@@ -62,11 +71,29 @@ public:
    /// Index of the solve to report as failure (-1 for none).
    int failSolve;
 
+   /// Rate of change of lattice parameter 0 with s (0 for none).
+   double cellRate;
+
+   /// Lattice parameter 0 of the system at the start of each solve.
+   std::vector<double> cellStart;
+
 protected:
 
    int solve(bool isContinuation) override
    {
-      this->system().compute();
+      Rp::System<D,CPT>& system = this->system();
+      if (cellRate != 0.0) {
+         FSArray<double, 6> parameters
+                            = system.domain().unitCell().parameters();
+         cellStart.push_back(parameters[0]);
+         if (nSolve_ == 0) {
+            a0_ = parameters[0];
+         }
+         double s = (nSolve_ == 0) ? 0.0 : sAttempt.back();
+         parameters[0] = a0_ + cellRate*s;
+         system.setUnitCell(parameters);
+      }
+      system.compute();
       int error = (nSolve_ == failSolve) ? 1 : 0;
       ++nSolve_;
       return error;
@@ -76,6 +103,9 @@ private:
 
    /// Number of calls to solve.
    int nSolve_;
+
+   /// Lattice parameter 0 at the start of the initial state.
+   double a0_;
 
 };
 
@@ -453,6 +483,61 @@ public:
       TEST_ASSERT(message.find("flexible") != std::string::npos);
    }
 
+   void testLinearSweepFlexibleCell()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepFlexibleCell");
+
+      // Diblock melt in a rectangular cell with a flexible parameter a
+      // and a rigid parameter b, and w = 0
+      Rp::System<2,CPT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } ds 0.02 }"
+         " Interaction{ chi( 1 0 12.0 ) }"
+         " Domain{ mesh 8 8 lattice rectangular groupName p_2_m_m }"
+         " AmIteratorBasis{ epsilon 1.0e-8 maxItr 100 maxHist 10"
+         " isFlexible 1 flexibleParams[ 1 0 ] } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      parameters.append(3.0);
+      system.setUnitCell(parameters);
+      int nBasis = system.domain().basis().nBasis();
+      DArray< DArray<double> > w;
+      w.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(nBasis);
+         for (int j = 0; j < nBasis; ++j) {
+            w[i][j] = 0.0;
+         }
+      }
+      system.w().setBasis(w);
+
+      // A chi sweep in which each solve sets a = 2.0 + 0.4*s. From the
+      // third state on, each state must start from the cell given by
+      // the extrapolation of the previous states, which is exact here.
+      TestLinearSweep<2> sweep(system);
+      sweep.cellRate = 0.4;
+      std::istringstream in("ns 4"
+                            " baseFileName out/testLinearSweepFlexibleCell_"
+                            " nParameter 1 parameters chi 0 1 1.0\n");
+      sweep.readParameters(in);
+      sweep.sweep();
+      TEST_ASSERT(sweep.sAttempt.size() == 4);
+      TEST_ASSERT(sweep.cellStart.size() == 5);
+      for (int k = 2; k < 5; ++k) {
+         double a = 2.0 + 0.4*sweep.sAttempt[k-1];
+         TEST_ASSERT(std::abs(sweep.cellStart[k] - a) < 1.0E-10);
+      }
+      TEST_ASSERT(std::abs(system.domain().unitCell().parameter(1) - 3.0)
+                  < 1.0E-12);
+   }
+
    void testLinearSweepExactS()
    {
       printMethod(TEST_FUNC);
@@ -629,6 +714,7 @@ TEST_ADD(SweepTest, testLinearSweepPhiMixed)
 TEST_ADD(SweepTest, testLinearSweepPhiSum)
 TEST_ADD(SweepTest, testLinearSweepExactS)
 TEST_ADD(SweepTest, testLinearSweepCellParam)
+TEST_ADD(SweepTest, testLinearSweepFlexibleCell)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)
 TEST_ADD(SweepTest, testLinearSweepKuhn)
