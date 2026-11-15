@@ -86,6 +86,10 @@ namespace Pscf
          edgePtr = &(edge(edgeId));
          vertexId0 = edgePtr->vertexId(0);
          vertexId1 = edgePtr->vertexId(1);
+         if (vertexId0 < 0 || vertexId0 >= nVertex_ ||
+             vertexId1 < 0 || vertexId1 >= nVertex_) {
+            UTIL_THROW("Vertex id out of range in polymer block");
+         }
          vertices_[vertexId0].addEdge(*edgePtr);
          vertices_[vertexId1].addEdge(*edgePtr);
       }
@@ -127,7 +131,9 @@ namespace Pscf
       Vertex* inVertexPtr = 0;
       int inVertexId = -1;
       bool isReady;
+      int nPrevious;
       while (nPropagator_ < nBlock_*2) {
+         nPrevious = nPropagator_;
          for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
             for (int iDirection = 0; iDirection < 2; ++iDirection) {
                if (isFinished(iBlock, iDirection) == false) {
@@ -151,6 +157,10 @@ namespace Pscf
                   }
                }
             }
+         }
+         // No propagator became ready in a pass: the blocks form a cycle
+         if (nPropagator_ == nPrevious) {
+            UTIL_THROW("Polymer blocks do not form a tree (cycle)");
          }
       }
 
