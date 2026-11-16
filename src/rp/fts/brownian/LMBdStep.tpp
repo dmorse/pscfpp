@@ -39,7 +39,8 @@ namespace Rp {
       dwc_(),
       etaNewPtr_(nullptr),
       etaOldPtr_(nullptr),
-      mobility_(0.0)
+      mobility_(0.0),
+      hasChain_(false)
    {  ParamComposite::setClassName("LmBdStep"); }
 
    /*
@@ -114,12 +115,16 @@ namespace Rp {
       }
       UTIL_CHECK(dwc_.capacity() == meshSize);
 
-      // Initialize pointers
-      etaOldPtr_ = &etaA_;
-      etaNewPtr_ = &etaB_;
-
-      generateEtaNew();
-      exchangeOldNew();
+      // The LM step adds etaOld + etaNew, where etaOld is the noise of
+      // the previous step. Draw the first etaOld in the first run only:
+      // a later SIMULATE command continues the chain, as one run would.
+      if (!hasChain_) {
+         etaOldPtr_ = &etaA_;
+         etaNewPtr_ = &etaB_;
+         generateEtaNew();
+         exchangeOldNew();
+         hasChain_ = true;
+      }
    }
 
    /*
