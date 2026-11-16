@@ -35,6 +35,32 @@ assert f.type == 'rgrid'
 assert f.data == rows
 assert list(f.header)[-1] == 'mesh' and f.header['mesh'] == [4]
 
+# Files of pscf_1d with three header lines (WRITE_BLOCK_C) and with one
+# header line and no grid point index (WRITE_Q_SLICE), read, written
+# and read again
+blockc = '''nx          3
+n_block     2
+n_solvent   1
+    0  9.0e-01  5.0e-02  5.0e-02
+    1  5.0e-01  4.0e-01  1.0e-01
+    2  1.0e-01  8.5e-01  5.0e-02
+'''
+qslice = '''nx     3
+   1.2e+00
+   1.1e+00
+   1.0e+00
+'''
+for text, values, nColumn in [(blockc, {'nx': 3, 'n_block': 2, 'n_solvent': 1}, 4),
+                              (qslice, {'nx': 3}, 1)]:
+   f = readText(text)
+   g = readText(str(f))
+   for h in [f, g]:
+      assert h.type == 'fd1d'
+      assert h.header == values
+      assert len(h.data) == 3
+      assert [len(row) for row in h.data] == [nColumn]*3
+   assert g.data == f.data
+
 f = Field('in/w.bf')
 
 print(f) 
