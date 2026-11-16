@@ -135,12 +135,35 @@ public:
                   != std::string::npos);
    }
 
+   /*
+   * Output to a stream set to fixed format: setf(scientific) without
+   * the floatfield mask gave hexadecimal output, which operator >>
+   * cannot read.
+   */
+   void testWriteFixedStream()
+   {
+      printMethod(TEST_FUNC);
+      PolymerModel::setModel(PolymerModel::Thread);
+
+      Edge v, u;
+      v.setMonomerId(1);
+      v.setVertexIds(2, 5);
+      v.setLength(1.25);
+      std::stringstream stream;
+      stream << std::fixed << v;
+      TEST_ASSERT(stream.str().find("0x") == std::string::npos);
+      stream >> u;
+      TEST_ASSERT(u.length() == 1.25);
+      TEST_ASSERT(u.vertexId(1) == 5);
+   }
+
 };
 
 TEST_BEGIN(EdgeTest)
 TEST_ADD(EdgeTest, testConstructor)
 TEST_ADD(EdgeTest, testReadWrite)
 TEST_ADD(EdgeTest, testWriteReadLength)
+TEST_ADD(EdgeTest, testWriteFixedStream)
 TEST_END(EdgeTest)
 
 #endif
