@@ -492,6 +492,34 @@ public:
       Rp::Analyzer<1,CPT>::initStatic();
    }
 
+   /*
+   * ANALYZE of a trajectory with frames 0 to 3 must fail if no frame
+   * is sampled: with no frame in [min, max] (ANALYZE 10 20), or with
+   * an analyzer whose interval (4) divides no index in [min, max]
+   * (ANALYZE 1 3).
+   */
+   void testAnalyzeNoSample()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzeNoSample.log");
+
+      writeTrajectory("out/trajectory1D.rf", 3);
+      std::string simulators[2] = {"BdSimulator", "McSimulator"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system;
+         initSystem1D(system, simulators[i]
+            + "{ AnalyzerManager{ HamiltonianAnalyzer{ interval 1"
+            " outputFileName out/analyzeNoFrame } } }");
+         TEST_ASSERT(!analyze(system, 10, 20, "out/trajectory1D.rf"));
+
+         Rp::System<1,CPT> system2;
+         initSystem1D(system2, simulators[i]
+            + "{ AnalyzerManager{ HamiltonianAnalyzer{ interval 4"
+            " outputFileName out/analyzeNoSample } } }");
+         TEST_ASSERT(!analyze(system2, 1, 3, "out/trajectory1D.rf"));
+      }
+   }
+
 };
 
 TEST_BEGIN(AnalyzerTest)
@@ -500,6 +528,7 @@ TEST_ADD(AnalyzerTest, testSimulateTwice)
 TEST_ADD(AnalyzerTest, testAnalyzeLastFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeFirstFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeBaseInterval)
+TEST_ADD(AnalyzerTest, testAnalyzeNoSample)
 TEST_END(AnalyzerTest)
 
 #endif
