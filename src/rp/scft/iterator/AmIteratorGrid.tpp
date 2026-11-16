@@ -101,6 +101,15 @@ namespace Rp {
          for (int i = 0; i < np; i++) {
             flexibleParams_.append(false); 
          }
+         // Accept a flexibleParams array with only false (0) values,
+         // as written by the WRITE_PARAM command if flexibleParams was
+         // read and no parameter is flexible
+         ParamComposite::readOptionalFSArray(in, "flexibleParams",
+                                             flexibleParams_, np);
+         if (Iterator<D,T>::nFlexibleParams() > 0) {
+            UTIL_THROW("flexibleParams has a true value, "
+                       "but isFlexible is false");
+         }
       }
 
       // Optionally read scaleStress value

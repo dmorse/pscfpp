@@ -109,7 +109,8 @@ parameters. The meaning of the various parameters are described below:
     <td> flexibleParams* </td>
     <td> Use flexibleParams to declare only *some* lattice parameters
          as flexible. **This optional entry is allowed only if the 
-         isFlexible parameter is true.** This array must contain one entry 
+         isFlexible parameter is true, or if all of its values are 0.**
+         This array must contain one entry 
          for each lattice parameter, with a value 1 (true) if the parameter 
          is flexible or 0 (false) if the parameter value is fixed.
          If isFlexible is true but flexibleParams is absent, then all
