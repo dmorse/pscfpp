@@ -83,6 +83,18 @@ namespace Rp {
    }
 
    /*
+   * Derivative of the perturbation term with respect to a cubic cell
+   * length (default).
+   */
+   template <int D, class T>
+   double Perturbation<D,T>::cubicLengthDerivative(double dH0dL) const
+   {
+      UTIL_THROW("This perturbation does not define "
+                 "cubicLengthDerivative");
+      return 0.0;
+   }
+
+   /*
    * Set a new value for the lambda_ parameter.
    */
    template <int D, class T>

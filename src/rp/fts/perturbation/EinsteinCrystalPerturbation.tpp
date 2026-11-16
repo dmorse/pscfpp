@@ -199,6 +199,22 @@ namespace Rp {
    }
 
    /*
+   * Derivative of the perturbation term with respect to the length of
+   * a cubic unit cell.
+   */
+   template <int D, class T>
+   double
+   EinsteinCrystalPerturbation<D,T>::cubicLengthDerivative(double dH0dL)
+   const
+   {
+      // H_EC is proportional to the volume L^3 at fixed fields
+      double const l = system().domain().unitCell().parameter(0);
+      double const dHecdL = 3.0*ecHamiltonian_/l;
+
+      return (1.0 - lambda_)*(dHecdL - dH0dL);
+   }
+
+   /*
    * Save any required internal state variables.
    */
    template <int D, class T>

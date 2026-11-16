@@ -12,6 +12,7 @@
 
 #include <rp/system/System.h>
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/perturbation/Perturbation.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
@@ -62,8 +63,9 @@ namespace Rp {
       // Length of cubic box
       double l = system().domain().unitCell().parameter(0);
 
-      // Term extensive in Hamiltonian
-      double const hamiltonian = simulator().hamiltonian();
+      // Term extensive in the unperturbed Hamiltonian H0
+      double const hamiltonian = simulator().hamiltonian()
+                               - simulator().perturbationHamiltonian();
       double dFdL = hamiltonian * (3.0 / l);
 
       // "Stress" term arising from changes in ln Q
@@ -71,6 +73,11 @@ namespace Rp {
       double const vSystem  = system().domain().unitCell().volume();
       double const vMonomer = system().mixture().vMonomer();
       dFdL += stress * vSystem / vMonomer;
+
+      // Add the derivative of the perturbation term of H, if any
+      if (simulator().hasPerturbation()) {
+         dFdL += simulator().perturbation().cubicLengthDerivative(dFdL);
+      }
 
       // Term arising from ln N
       int const meshSize = system().domain().mesh().size();
