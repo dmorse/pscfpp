@@ -525,6 +525,12 @@ namespace R1 {
       bool hasFields_;
 
       /**
+      * Are the c fields, propagators and thermodynamic properties those
+      * of the current w fields (after COMPUTE or a converged ITERATE)?
+      */
+      bool hasCFields_;
+
+      /**
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
