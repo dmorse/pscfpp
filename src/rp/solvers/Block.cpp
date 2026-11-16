@@ -201,6 +201,22 @@ namespace Rp {
    }
 
    /*
+   * Set or reset the number of beads in this block.
+   */
+   template <int D>
+   void Block<D,CPT>::setNBead(int nBead)
+   {
+      Edge::setNBead(nBead);
+
+      // Reallocate propagators if ns_ has changed
+      if (isAllocated_ && ns_ != nBead + 2) {
+         ns_ = nBead + 2;
+         propagator(0).reallocate(ns_);
+         propagator(1).reallocate(ns_);
+      }
+   }
+
+   /*
    * Set or reset the the block length.
    */
    template <int D>
