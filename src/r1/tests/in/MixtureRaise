@@ -1,0 +1,27 @@
+Mixture{
+   nMonomer  3
+   monomers  1.0
+             1.0
+             1.0
+   nPolymer  2
+   Polymer{
+      type    linear
+      nBlock  1
+      blocks  2   1000.0
+      phi     0.5
+   }
+   Polymer{
+      type    linear
+      nBlock  2
+      blocks  0   1000.0
+              1   1000.0
+      phi     0.5
+   }
+   ds   0.1
+}
+Domain{
+   mode Planar
+   xMin 0.0
+   xMax 0.1
+   nx   2
+}
