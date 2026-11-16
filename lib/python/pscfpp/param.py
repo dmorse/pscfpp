@@ -239,16 +239,25 @@ class Composite:
    # this Composite object. The parameter "file" must be a python
    # file object that is open for reading. Processing of the file stops
    # when the closing bracket "}" that matches the opening bracket is
-   # encountered. Blank lines are skipped.
+   # encountered. Blank lines are skipped. As in PSCF, the elements of
+   # an array or matrix may also be given without brackets, on lines
+   # that follow the line with the label and the first element.
    #
    # \param file  a python file object that is open for reading
    #
    def read(self, file):
       line = file.readline()
       l = line.split()
+      last = None    # Last Parameter, Array or Matrix without brackets
       while line != '':
          if len(l) == 0:
             # Skip a blank line
+            line = file.readline()
+            l = line.split()
+            continue
+         if last != None and not isinstance(getValue(l[0]), str):
+            # A line that starts with a number continues the last item
+            last = self._continue(last, l)
             line = file.readline()
             l = line.split()
             continue
@@ -307,9 +316,44 @@ class Composite:
                p = Parameter(label, val)
                #p = Parameter(l[0], val)
          self.addChild(p)
+         if isinstance(p, Parameter):
+            last = p
+         else:
+            last = None
          line = file.readline()
          l = line.split()
       # end while loop
+
+   ##
+   # Add a line of an array or matrix without brackets to the last item.
+   #
+   # A Parameter followed by such lines is replaced by an Array, or by a
+   # Matrix if its label is 'chi' (the only matrix-valued parameter of
+   # PSCF). Returns the item that holds the line.
+   #
+   # \param last  the last Parameter, Array or Matrix read
+   # \param l  list of the strings of the line
+   #
+   def _continue(self, last, l):
+      if isinstance(last, Parameter):
+         if last.label == 'chi':
+            item = Matrix(last.label, None)
+            item.addEntry(last.val)
+         else:
+            item = Array(last.label, None, [last.val])
+         # Replace last, the last child with its label, by item
+         if isinstance(self._children[last.label], list):
+            self._children[last.label][-1] = item
+         else:
+            self._children[last.label] = item
+         last = item
+      if isinstance(last, Matrix):
+         last.addEntry(l)
+      elif len(l) == 1:
+         last.val.append(getValue(l[0]))
+      else:
+         last.val.append([getValue(x) for x in l])
+      return last
 
    ##
    # Add a single child to this Composite.
@@ -706,7 +750,8 @@ class Matrix:
    def __init__(self, label, file):
       self.label = label
       self.val = []
-      self.read(file)
+      if file != None:
+         self.read(file)
 
    ##
    # Read the a parameter block from a file.
@@ -741,6 +786,24 @@ class Matrix:
       for i in range(0, len(att)):
          self.val[int(att[i][0])][int(att[i][1])] = getValue(att[i][2])
          self.val[int(att[i][1])][int(att[i][0])] = getValue(att[i][2])
+
+   ##
+   # Set elements (i, j) and (j, i) from a line 'i j value' of a matrix
+   # without brackets. The Matrix is enlarged as needed, with new
+   # elements set to 0.
+   #
+   # \param l  list of the row index, column index and value
+   #
+   def addEntry(self, l):
+      i = int(l[0])
+      j = int(l[1])
+      size = max(len(self.val), i+1, j+1)
+      for row in self.val:
+         row.extend([getValue('0')]*(size - len(row)))
+      while len(self.val) < size:
+         self.val.append([getValue('0')]*size)
+      self.val[i][j] = getValue(str(l[2]))
+      self.val[j][i] = getValue(str(l[2]))
 
    ##
    # String representation of this Matrix object.
