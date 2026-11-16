@@ -7,6 +7,7 @@
 #include <pscf/chem/Edge.h>
 
 #include <fstream>
+#include <sstream>
 
 using namespace Pscf;
 using namespace Util;
@@ -27,6 +28,39 @@ public:
    }
 
   
+   /*
+   * A number of beads that is not positive must be rejected.
+   */
+   void testNBeadPositive()
+   {
+      printMethod(TEST_FUNC);
+      PolymerModel::setModel(PolymerModel::Bead);
+
+      Edge v;
+      v.setPolymerType(PolymerType::Linear);
+      int nBead[3] = {1, 0, -2};
+      bool thrown;
+      for (int i = 0; i < 3; ++i) {
+         std::stringstream stream;
+         stream << "0  " << nBead[i];
+         thrown = false;
+         try {
+            stream >> v;
+         } catch (Exception&) {
+            thrown = true;
+         }
+         TEST_ASSERT(thrown == (nBead[i] <= 0));
+         thrown = false;
+         try {
+            v.setNBead(nBead[i]);
+         } catch (Exception&) {
+            thrown = true;
+         }
+         TEST_ASSERT(thrown == (nBead[i] <= 0));
+      }
+      TEST_ASSERT(v.nBead() == 1);
+   }
+
    void testConstructor()
    {
       printMethod(TEST_FUNC);
@@ -100,6 +134,7 @@ public:
 };
 
 TEST_BEGIN(EdgeTest)
+TEST_ADD(EdgeTest, testNBeadPositive)
 TEST_ADD(EdgeTest, testConstructor)
 TEST_ADD(EdgeTest, testReadWrite)
 TEST_END(EdgeTest)
