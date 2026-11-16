@@ -35,7 +35,8 @@ namespace Rp {
    RGridTrajectoryReader<D,T>::RGridTrajectoryReader(
                                          System<D,T>& system)
     : TrajectoryReader<D,T>(system),
-      isAllocated_(false)
+      isAllocated_(false),
+      hasFrameCell_(false)
    {}
 
    /*
@@ -79,6 +80,8 @@ namespace Rp {
       fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell,
                               hasSymmetry);
       system().setUnitCell(tmpUnitCell);
+      headerParameters_ = tmpUnitCell.parameters();
+      hasFrameCell_ = false;
       Log::file() << "Read Header" << "\n";
    }
 
@@ -113,10 +116,37 @@ namespace Rp {
       Log::file() << "step " << step << "\n";
       #endif
 
-      // Read mesh dimensions
+      // Read an optional "cell_param" line, written for a frame whose
+      // unit cell differs from the header cell (e.g., under a ramp of a
+      // cell parameter), and the "mesh" line
       notEnd = getNextLine(inputfile_, line);
       UTIL_CHECK(notEnd);
-      checkString(line, "mesh");
+      std::string label;
+      line >> label;
+      if (label == "cell_param") {
+         int nParameter = system().domain().unitCell().nParameter();
+         FSArray<double, 6> parameters;
+         double value;
+         for (int i = 0; i < nParameter; ++i) {
+            line >> value;
+            UTIL_CHECK(!line.fail());
+            parameters.append(value);
+         }
+         system().setUnitCell(parameters);
+         hasFrameCell_ = true;
+         notEnd = getNextLine(inputfile_, line);
+         UTIL_CHECK(notEnd);
+         line >> label;
+      } else
+      if (hasFrameCell_) {
+         // A frame without this line has the header cell
+         system().setUnitCell(headerParameters_);
+         hasFrameCell_ = false;
+      }
+      if (label != "mesh") {
+         Log::file() << "Expected \"mesh\", found \"" << label << "\"\n";
+         UTIL_THROW("Bad frame in r-grid trajectory file");
+      }
 
       // Read empty line
       notEnd = getNextLine(inputfile_, line);

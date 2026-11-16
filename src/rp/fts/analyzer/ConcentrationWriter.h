@@ -9,6 +9,7 @@
 */
 
 #include <rp/fts/analyzer/Analyzer.h> // base class template
+#include <util/containers/FSArray.h>  // member
 
 #include <pscf/backend/TmplDeclare.h>
 #include <iostream>
@@ -81,6 +82,9 @@ namespace Rp {
 
       /// Has readParam been called?
       long isInitialized_;
+
+      /// Unit cell parameters written in the file header.
+      FSArray<double, 6> headerParameters_;
 
       /**
       * Write data that should appear once, at beginning of the file.

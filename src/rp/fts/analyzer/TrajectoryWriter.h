@@ -9,6 +9,7 @@
 */
 
 #include <rp/fts/analyzer/Analyzer.h>   // base class template
+#include <util/containers/FSArray.h>    // member
 
 #include <iostream>
 #include <fstream>
@@ -98,6 +99,9 @@ namespace Rp {
 
       /// Has readParam been called?
       long isInitialized_;
+
+      /// Unit cell parameters written in the file header.
+      FSArray<double, 6> headerParameters_;
 
       // Inherited protected member functions (selected).
       using Analyzer<D,T>::simulator;

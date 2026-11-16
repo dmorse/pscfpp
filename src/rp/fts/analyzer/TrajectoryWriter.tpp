@@ -19,6 +19,7 @@
 
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
+#include <util/format/Dbl.h>
 
 namespace Pscf {
 namespace Rp {
@@ -90,6 +91,7 @@ namespace Rp {
       fieldIo.writeFieldHeader(out, nMonomer, domain.unitCell(),
                                isSymmetric);
       out << "\n";
+      headerParameters_ = domain.unitCell().parameters();
    }
 
    /*
@@ -99,6 +101,23 @@ namespace Rp {
    void TrajectoryWriter<D,T>::writeFrame(std::ofstream& out, long iStep)
    {
       out << "i = " << iStep << "\n";
+
+      // Write the unit cell of a frame whose cell differs from that of
+      // the header (e.g., under a ramp of a cell parameter)
+      FSArray<double, 6> parameters
+                           = system().domain().unitCell().parameters();
+      bool sameCell = (parameters.size() == headerParameters_.size());
+      for (int i = 0; sameCell && i < parameters.size(); ++i) {
+         sameCell = (parameters[i] == headerParameters_[i]);
+      }
+      if (!sameCell) {
+         out << "cell_param";
+         for (int i = 0; i < parameters.size(); ++i) {
+            out << " " << Dbl(parameters[i], 24, 16);
+         }
+         out << "\n";
+      }
+
       bool writeHeader = false;
       bool isSymmetric = false;
       Domain<D,T> const & domain = system().domain();

@@ -12,6 +12,7 @@
 #include <pscf/field/RField.h>          // member
 #include <pscf/math/IntVec.h>           // member
 #include <util/containers/DArray.h>     // member
+#include <util/containers/FSArray.h>    // member
 
 #include <pscf/backend/TmplDeclare.h>
 #include <fstream>
@@ -96,6 +97,12 @@ namespace Rp {
 
       // Has wField_ been allocated?
       bool isAllocated_;
+
+      // Unit cell parameters from the file header.
+      FSArray<double, 6> headerParameters_;
+
+      // Did the last frame set a unit cell other than the header cell?
+      bool hasFrameCell_;
 
       /**
       * Allocate required memory.
