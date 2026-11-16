@@ -520,6 +520,36 @@ public:
       }
    }
 
+   /*
+   * Timers of BD and MC simulators that have only an analyzer, and
+   * no compressor (WRITE_TIMERS and CLEAR_TIMERS after ANALYZE).
+   */
+   void testTimersWithoutCompressor()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testTimersWithoutCompressor.log");
+
+      writeTrajectory("out/trajectory1D.rf", 1);
+      std::string simulators[2] = {"BdSimulator", "McSimulator"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system;
+         initSystem1D(system, simulators[i]
+            + "{ AnalyzerManager{ HamiltonianAnalyzer{ interval 1"
+            " outputFileName out/timers } } }");
+         TEST_ASSERT(!system.simulator().hasCompressor());
+         TEST_ASSERT(analyze(system, 0, 1, "out/trajectory1D.rf"));
+         bool success = true;
+         try {
+            std::ostringstream out;
+            system.writeTimers(out);
+            system.clearTimers();
+         } catch (Exception& e) {
+            success = false;
+         }
+         TEST_ASSERT(success);
+      }
+   }
+
 };
 
 TEST_BEGIN(AnalyzerTest)
@@ -529,6 +559,7 @@ TEST_ADD(AnalyzerTest, testAnalyzeLastFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeFirstFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeBaseInterval)
 TEST_ADD(AnalyzerTest, testAnalyzeNoSample)
+TEST_ADD(AnalyzerTest, testTimersWithoutCompressor)
 TEST_END(AnalyzerTest)
 
 #endif
