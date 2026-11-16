@@ -45,8 +45,8 @@ System{
      homogeneousMode         1
      nParameter              2
      parameters[
-        phi_polymer    0     -0.01222
-        phi_polymer    1      0.01222
+        phi_polymer    0     -0.011609
+        phi_polymer    1      0.011609
      ]
   }
 }
