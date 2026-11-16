@@ -828,6 +828,53 @@ public:
       }
    }
 
+   /*
+   * COMPUTE for an open homopolymer B and an open solvent A (mu = 0),
+   * in fields for which phi of the homopolymer (w_B = -800) or of the
+   * solvent (w_A = -800) is above the range of a double: the command
+   * must stop with an Exception. For fields w = 0, it must not.
+   */
+   void testComputeOutOfRange1D()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testComputeOutOfRange1D.log");
+
+      double wA[3] = {0.0, -800.0, 0.0};
+      double wB[3] = {-800.0, 0.0, 0.0};
+      for (int k = 0; k < 3; ++k) {
+         Rp::System<1,CPT> system;
+         std::istringstream param(
+            "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+            " nPolymer 1 nSolvent 1"
+            " Polymer{ type linear nBlock 1 blocks[ 1 1.0 ] mu 0.0 }"
+            " Solvent{ monomerId 0 size 1.0 mu 0.0 } ds 0.01 }"
+            " Interaction{ chi( 1 0 1.0 ) }"
+            " Domain{ mesh 8 lattice lamellar } }\n");
+         system.readParam(param);
+         FSArray<double, 6> parameters;
+         parameters.append(2.0);
+         system.setUnitCell(parameters);
+         DArray< RField<1,CPT> > w;
+         w.allocate(2);
+         for (int m = 0; m < 2; ++m) {
+            w[m].allocate(system.domain().mesh().dimensions());
+            for (int i = 0; i < 8; ++i) {
+               w[m][i] = (m == 0) ? wA[k] : wB[k];
+            }
+         }
+         system.w().setRGrid(w);
+
+         std::istringstream commands("COMPUTE\nFINISH\n");
+         bool thrown = false;
+         try {
+            system.readCommands(commands);
+         } catch (Exception& e) {
+            thrown = true;
+         }
+         TEST_ASSERT(thrown == (k < 2));
+      }
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -839,6 +886,7 @@ TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testThermoSmallTerms)
+TEST_ADD(SystemTest, testComputeOutOfRange1D)
 TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_ADD(SystemTest, testWriteNeedsSolution)
 TEST_ADD(SystemTest, testWriteParamBead)
