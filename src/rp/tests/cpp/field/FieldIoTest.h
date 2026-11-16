@@ -783,6 +783,49 @@ public:
 
    }
 
+   /*
+   * Write k-grid fields with negative components that have three-digit
+   * exponents. Every data line must have 1 + 2*nMonomer columns.
+   */
+   void testKGridIo_columns()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<1,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_lam.rf", domain);
+
+      DArray< RFieldDft<1,CPT> > kf;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf);
+      for (int i = 0; i < nMonomer_; ++i) {
+         for (int j = 0; j < kf[i].capacity(); ++j) {
+            kf[i][j][0] = -1.5E-100;
+            kf[i][j][1] = -2.5E-100;
+         }
+      }
+      std::stringstream file;
+      domain.fieldIo().writeFieldsKGrid(file, kf, domain.unitCell());
+
+      // Skip the header, which ends with the mesh dimensions
+      std::string line;
+      while (std::getline(file, line)) {
+         if (line.find("mesh") != std::string::npos) break;
+      }
+      std::getline(file, line);
+
+      // Count the columns of every data line
+      int nLine = 0;
+      while (std::getline(file, line)) {
+         std::istringstream lineStream(line);
+         std::string word;
+         int nColumn = 0;
+         while (lineStream >> word) ++nColumn;
+         TEST_ASSERT(nColumn == 1 + 2*nMonomer_);
+         ++nLine;
+      }
+      TEST_ASSERT(nLine == kf[0].capacity());
+   }
+
    void testKGridIo_altG() 
    {
       printMethod(TEST_FUNC);
@@ -1144,6 +1187,7 @@ TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_c15_1)
 TEST_ADD(FieldIoTest, testEstimateWBasis)
 TEST_ADD(FieldIoTest, testKGridIo_bcc)
+TEST_ADD(FieldIoTest, testKGridIo_columns)
 TEST_ADD(FieldIoTest, testKGridIo_altG)
 TEST_ADD(FieldIoTest, testKGridIo_lam)
 TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_bcc)
