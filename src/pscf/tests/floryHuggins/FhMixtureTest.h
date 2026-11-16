@@ -11,6 +11,7 @@
 #include <util/misc/Log.h>
 
 #include <fstream>
+#include <limits>
 
 using namespace Pscf;
 using namespace Util;
@@ -327,6 +328,58 @@ public:
       TEST_ASSERT(std::abs(mixture.phi(0) - phiA) <= 1.0E-12*phiA);
    }
 
+   /*
+   * Blend of A and B homopolymers and an AB diblock, all of size 1, at
+   * chi = 1.5, in which the diblock is absent (a closed species with
+   * phi = 0, so mu = -infinity). computeFreeEnergy gave NaN for the
+   * composition (0.5, 0.5, 0), and computePhi with target mu = (0, 0,
+   * -infinity) gave NaN. Both must give the A/B blend with phi = 1/2.
+   */
+   void testComputePhiAbsent() {
+      printMethod(TEST_FUNC);
+
+      FhMixture mixture;
+      std::ifstream in;
+      openInputFile("in/FhMixtureBlend3", in);
+      mixture.readParam(in);
+      in.close();
+
+      FhInteraction interaction;
+      interaction.setNMonomer(2);
+      interaction.setChi(0, 1, 1.5);
+
+      DArray<double> mu, phi;
+      mu.allocate(3);
+      phi.allocate(3);
+      double f = std::log(0.5) - 1.0 + 1.5/4.0;
+
+      phi[0] = 0.5;
+      phi[1] = 0.5;
+      phi[2] = 0.0;
+      mixture.setComposition(phi);
+      mixture.computeMu(interaction, 0.0);
+      mixture.computeFreeEnergy(interaction);
+      TEST_ASSERT(eq(mixture.fHelmholtz(), f));
+      TEST_ASSERT(eq(mixture.mu(0), std::log(0.5) + 0.75));
+      TEST_ASSERT(eq(mixture.pressure(), -f + std::log(0.5) + 0.75));
+
+      mu[0] = 0.0;
+      mu[1] = 0.0;
+      mu[2] = -std::numeric_limits<double>::infinity();
+      phi[0] = 0.7;
+      phi[1] = 0.3;
+      double xi = 0.0;
+      mixture.computePhi(interaction, mu, phi, xi);
+      TEST_ASSERT(eq(mixture.phi(0), 0.5));
+      TEST_ASSERT(eq(mixture.phi(1), 0.5));
+      TEST_ASSERT(mixture.phi(2) == 0.0);
+      TEST_ASSERT(eq(mixture.mu(0), 0.0));
+      TEST_ASSERT(eq(mixture.mu(1), 0.0));
+      mixture.computeFreeEnergy(interaction);
+      TEST_ASSERT(eq(mixture.fHelmholtz(), f));
+      TEST_ASSERT(eq(mixture.pressure(), -f));
+   }
+
 };
 
 TEST_BEGIN(FhMixtureTest)
@@ -338,6 +391,7 @@ TEST_ADD(FhMixtureTest, testComputePhi)
 TEST_ADD(FhMixtureTest, testComputePhiSingular)
 TEST_ADD(FhMixtureTest, testComputePhiDilute)
 TEST_ADD(FhMixtureTest, testComputePhiDiluteLast)
+TEST_ADD(FhMixtureTest, testComputePhiAbsent)
 TEST_END(FhMixtureTest)
 
 #endif
