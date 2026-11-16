@@ -15,6 +15,7 @@
 #include <rp/field/FieldIo.h>
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
+#include <rp/fts/brownian/BdSimulator.h>
 
 #include <pscf/field/cpp/RFieldComparison.h>
 #include <pscf/crystal/BFieldComparison.h>
@@ -108,6 +109,46 @@ public:
                 << std::endl;
       #endif
 
+   }
+
+   /*
+   * analyzeChi() for a binary system with chi = 1.0E-9 and 1.0E+9 (the
+   * eigenvalues scale with chi) must give the eigenvalues -chi and 0. A
+   * chi of zero (two null eigenvalues) or a negative chi (a positive
+   * eigenvalue) must be rejected.
+   */
+   void testAnalyzeChiScale()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzeChiScale.log");
+
+      Rp::System<1,CPT> system1;
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 2 monomers[ 1 1 ] nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ] phi 1 }"
+         " ds 0.05 } Interaction{ chi( 0 1 10 ) }"
+         " Domain{ mesh 8 lattice lamellar } }\n");
+      system1.readParam(in);
+      Rp::BdSimulator<1,CPT> simulator(system1);
+      std::istringstream simulatorIn("BdSimulator{ seed 1234 }\n");
+      simulator.readParam(simulatorIn);
+
+      double chi[4] = {1.0E-9, 1.0E+9, 0.0, -1.0};
+      for (int i = 0; i < 4; ++i) {
+         system1.interaction().setChi(0, 1, chi[i]);
+         bool success = true;
+         try {
+            simulator.analyzeChi();
+         } catch (Exception& e) {
+            success = false;
+         }
+         TEST_ASSERT(success == (i < 2));
+         if (i < 2) {
+            TEST_ASSERT(std::abs(simulator.chiEval(0)/chi[i] + 1.0)
+                        < 1.0E-12);
+            TEST_ASSERT(simulator.chiEval(1) == 0.0);
+         }
+      }
    }
 
    void testSaddlePointField()
@@ -421,6 +462,7 @@ public:
 
 TEST_BEGIN(SimulatorTest)
 TEST_ADD(SimulatorTest, testAnalyzeChi)
+TEST_ADD(SimulatorTest, testAnalyzeChiScale)
 TEST_ADD(SimulatorTest, testSaddlePointField)
 TEST_ADD(SimulatorTest, testComputeHamiltonian)
 TEST_ADD(SimulatorTest, testDc)
